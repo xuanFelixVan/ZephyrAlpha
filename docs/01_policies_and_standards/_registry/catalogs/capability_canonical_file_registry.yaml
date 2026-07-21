@@ -4373,6 +4373,29 @@ capabilities:
       - make_rename_depgraph_sync_gate
 
   # --------------------------------------------------------------------------
+  - capability_id: new_file_depgraph_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py
+    aliases:
+      - NEW-FILE-DEPGRAPH-ENFORCEMENT
+      - new-file-depgraph-enforcement
+      - make_new_file_depgraph_gate
+      - new_file_depgraph_blocker
+      - ARCH-DEP-001-Phase-3
+      - L1铁律技术强制
+    description: >-
+      NEW-FILE-DEPGRAPH-ENFORCEMENT in-process 新建 .py 文件 depgraph 登记硬阻断门禁
+      （#ARCH-DEP-001 第三期，2026-07-21）。检测 staged 新增 .py 文件（src/zephyr/ 或
+      scripts/ 下，tests/ 豁免）在 depgraph nodes 表完全无记录（generated/planned/stable/
+      deprecated 任一状态均放行）。L1 铁律（依赖关系先行）从君子协定升级为技术强制。
+      bootstrap 豁免：现有 3811 个 generated 节点不受影响（gate 只检测本次 commit 新增文件）。
+      DB 不可达时 fail-open（对标 rename_depgraph_sync_gate 设计）。priority=58。in-process
+      DB 查询（不走 subprocess）。与 RENAME-DEPGRAPH-SYNC(39) 互补：rename 管 R，本 gate 管 A。
+    integrity_anchors:
+      - make_new_file_depgraph_gate
+      - _check_depgraph_has_file
+      - _get_staged_new_py_files
+
+  # --------------------------------------------------------------------------
   - capability_id: no_import_side_effect_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/no_import_side_effect_gate.py
     aliases:
@@ -5726,6 +5749,16 @@ creation_tokens:
     created_by: "session-sess-ai14-20260717"
     capability: "rename_depgraph_sync_gate"
 
+  # --- #ARCH-DEP-001 第三期 L1 铁律技术强制（2026-07-21）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py"
+    token: "auto-new-file-depgraph-gate-20260721"
+    created_by: "session-sess-24512-20260720104006"
+    capability: "new_file_depgraph_gate"
+  - file: "tests/governance/commit_gates/test_new_file_depgraph_gate.py"
+    token: "auto-new-file-depgraph-gate-test-20260721"
+    created_by: "session-sess-24512-20260720104006"
+    capability: "new_file_depgraph_gate"
+
   # --- #ARCH-DRIFT-PREVENTION-001 depgraph drift 防御体系（2026-07-17）---
   # domain_fk_gate.py: GATE-DOMAIN-FK [DOMAIN]头部域注册表FK校验（ADP-1, priority=78）
   - file: "src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py"
@@ -6433,6 +6466,12 @@ creation_tokens:
     token: "auto-budget-enforcement-rbac-bridge-shim-20260721"
     created_by: "sess-gov-test-fix-20260721"
     capability: "budget_enforcement_rbac_bridge_shim"
+  # --- #ARCH-ANY-GOVERNANCE-001 裁定文档（2026-07-21，5.145 系统性 Any 治理专项工程）---
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
+  - file: "docs/02_enterprise_architecture/ruling_any_governance_engineering.md"
+    token: "auto-ruling-any-governance-engineering-20260721"
+    created_by: "ARCH-ANY-GOVERNANCE-001"
+    capability: "any_governance_engineering_ruling"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
