@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-002 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_event_store_stress | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_event_store_stress.py — Event Store 压力测试（DW-0006）
