@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.verify_key_imports
+# [BLUEPRINT] MOD-GOV-verify_key_imports
+# [MODULE]# [MODULE] scripts.governance.verify_key_imports
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

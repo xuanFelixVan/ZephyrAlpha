@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.check_naming_convention
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__

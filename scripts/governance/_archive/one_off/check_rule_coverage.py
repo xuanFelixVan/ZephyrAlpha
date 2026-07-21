@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.check_rule_coverage
+# [BLUEPRINT] MOD-GOV-check_rule_coverage
+# [MODULE]# [MODULE] scripts.governance.check_rule_coverage
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

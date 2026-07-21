@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.dm90971_add_test_headers
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.__init__

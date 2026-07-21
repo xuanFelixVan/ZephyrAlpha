@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.d5_architecture.dm200912_query_domains
+# [BLUEPRINT] MOD-GOV-dm200912_query_domains
+# [MODULE]# [MODULE] scripts.governance.d5_architecture.dm200912_query_domains
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

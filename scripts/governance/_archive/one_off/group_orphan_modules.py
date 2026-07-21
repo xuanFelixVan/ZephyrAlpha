@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.group_orphan_modules
+# [BLUEPRINT] MOD-GOV-group_orphan_modules
+# [MODULE]# [MODULE] scripts.governance.group_orphan_modules
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.perf_depgraph_baseline
+# [BLUEPRINT] MOD-GOV-perf_depgraph_baseline
+# [MODULE]# [MODULE] scripts.governance.perf_depgraph_baseline
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

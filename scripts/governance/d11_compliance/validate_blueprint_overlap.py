@@ -10,7 +10,7 @@ timeout_seconds: 60
 warn_only: false
 """
 
-# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.governance.d11_compliance.validate_blueprint_overlap
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] scripts.governance._shared.frontmatter

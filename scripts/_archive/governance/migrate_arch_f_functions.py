@@ -1,4 +1,4 @@
-# [BLUEPRINT] ARCH-FUNC-DEP-001 | docs/02_enterprise_architecture/core_function_dependency_design.md | §十一
+# [BLUEPRINT] MOD-GOV-migrate_arch_f_functions | docs/02_enterprise_architecture/core_function_dependency_design.md | §十一
 # [MODULE] scripts.governance.migrate_arch_f_functions
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.apply_depgraph

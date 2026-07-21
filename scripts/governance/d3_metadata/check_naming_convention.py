@@ -101,12 +101,13 @@ except ImportError:
 # 大写文件白名单（治本：对齐 trae_028.yaml L190 + L224 根目录白名单）
 # 硬约束：AGENTS.md(Trae IDE)、Dockerfile(Docker build)
 # GitHub平台功能：LICENSE（大小写不敏感识别，社区约定大写）
-# 已移除：README.md/CONTRIBUTING.md/SECURITY.md（项目已迁移为小写，不再豁免）
+# 已移除：CONTRIBUTING.md/SECURITY.md（项目已迁移为小写，不再豁免）
 # 已移除：PKG_INFO/SOURCES.txt（Python setuptools 构建产物，应 gitignore，不应入库）
 FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
     "LICENSE",
+    "README.md",
 ]
 
 TECH_VERSION_TOKENS: list[str] = [

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §panorama-registry
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §panorama-registry
 # [MODULE] scripts.governance.d5_architecture.generators.generate_panorama_registry
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] _shared.constants (get_depgraph_pg_connection, REPO_ROOT); _common (DB_DISPLAY_NAME)

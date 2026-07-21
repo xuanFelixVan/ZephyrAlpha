@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.d5_architecture.generators.generate_capability_heatmap
+# [BLUEPRINT] MOD-GOV-generate_capability_heatmap
+# [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_capability_heatmap
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

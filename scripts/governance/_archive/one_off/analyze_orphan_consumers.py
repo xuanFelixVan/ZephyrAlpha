@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-# [BLUEPRINT]
-# [MODULE] scripts.governance.analyze_orphan_consumers
+# [BLUEPRINT] MOD-GOV-analyze_orphan_consumers
+# [MODULE]# [MODULE] scripts.governance.analyze_orphan_consumers
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

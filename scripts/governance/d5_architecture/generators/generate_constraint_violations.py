@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.d5_architecture.generators.generate_constraint_violations
+# [BLUEPRINT] MOD-GOV-generate_constraint_violations
+# [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_constraint_violations
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

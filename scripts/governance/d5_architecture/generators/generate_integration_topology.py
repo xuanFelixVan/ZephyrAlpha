@@ -1,5 +1,5 @@
-# [BLUEPRINT]
-# [MODULE] scripts.governance.d5_architecture.generators.generate_integration_topology
+# [BLUEPRINT] MOD-GOV-generate_integration_topology
+# [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_integration_topology
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]

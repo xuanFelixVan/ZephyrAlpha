@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-GOV | scripts/governance/ | AST import rewriter for directory migration
+# [BLUEPRINT] MOD-INF_GOV | scripts/governance/ | AST import rewriter for directory migration
 # [MODULE] scripts.governance.ast_import_rewriter
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib.ast, stdlib.argparse, stdlib.pathlib
@@ -9,7 +9,7 @@
 # [STABILITY] stable
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [A_config] module_id=SCRIPT-GOV-AST-REWRITER | layer=script | stability=stable | safety=H | ai_autonomy=ai_modifiable
+# [A_config] module_id=MOD-GOV-ast_import_rewriter | layer=script | stability=stable | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AST-based import rewriter for governance directory migration.
 

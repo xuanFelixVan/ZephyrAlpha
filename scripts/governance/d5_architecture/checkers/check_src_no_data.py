@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-# [A_full] module_id=CFG-check-src-no-data | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_full] module_id=MOD-GOV-check_src_no_data | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 #
 # GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录校验
