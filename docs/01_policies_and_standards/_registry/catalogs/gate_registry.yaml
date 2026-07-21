@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T08:50:28Z'
+generated_at: '2026-07-21T10:37:18Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -525,7 +525,7 @@ gates:
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=113）'
+    priority=109）'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
   files_trigger: ''

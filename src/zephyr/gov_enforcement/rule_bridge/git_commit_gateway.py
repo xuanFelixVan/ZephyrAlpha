@@ -174,6 +174,7 @@ from zephyr.gov_enforcement.commit_gates.rename_depgraph_sync_gate import make_r
 from zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate import make_new_file_depgraph_gate  # #ARCH-DEP-001 第三期 L1 铁律技术强制
 from zephyr.gov_enforcement.commit_gates.domain_fk_gate import make_domain_fk_gate
 from zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate import make_blueprint_amodule_consistency_gate
+from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import make_consumers_accuracy_gate  # #ARCH-CONSUMERS-ACCURACY-001 治本——CONSUMERS 字段准确性 warn-only 检测
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -468,6 +469,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS 治本 Phase 1，AI提交路径--no-verify绕过外部pre-commit，in-process stdlib AST硬阻断）
         self._gate_registry.register(make_import_integrity_gate())  # priority=107 治本悬空import硬阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001，检测staged文件中import的目标模块在staged+main HEAD可解析，防ba40fa5b75同型违规）
         self._gate_registry.register(make_capability_lookup_required_gate())  # priority=110 #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本（强制 AI 施工前调 rule_discovery/capability_lookup，audit log 在 .runtime/lookup_audit/<session_id>.jsonl）
+        self._gate_registry.register(make_consumers_accuracy_gate())  # priority=113 warn-only 治本 [CONSUMERS] 字段准确性（#ARCH-CONSUMERS-ACCURACY-001，检测 orphan+phantom 违规，passed=True + detail 不阻断 commit）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
