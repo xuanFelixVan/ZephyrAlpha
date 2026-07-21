@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——测量失败降级为 ReconcileResult(action="warn")
 # [TESTS] tests/governance/audit/test_git_performance_monitor_reconciler.py
-# [A_module] module_id=MOD-GOV-git_performance_monitor_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_git_performance_monitor_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """git_performance_monitor_reconciler.py — git 性能持续监控 + 早期预警（ARCH-GIT-CALL-BUDGET P3.5，2026-07-19）。

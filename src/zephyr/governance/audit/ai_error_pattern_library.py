@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-error_pattern_library | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1
+# [BLUEPRINT] MOD-GOV_error_pattern_library | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1
 # [MODULE] zephyr.governance.audit.ai_error_pattern_library
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.error_pattern_consumer_reconciler (compute_error_pattern_id); stdlib (json, logging, pathlib)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 加载/解析失败降级为空库（is_empty=True），所有查询返回 None 或空列表
 # [TESTS] tests/governance/audit/test_ai_error_pattern_library.py
-# [A_module] module_id=MOD-GOV-error_pattern_library | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_error_pattern_library | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ai_error_pattern_library.py — AI 错误模式库（只读查询接口）。
 

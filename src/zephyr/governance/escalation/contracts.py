@@ -26,6 +26,10 @@ from typing import Any
 
 from zephyr.shared.contracts.rollback_types import RollbackResult
 
+# G-CT-002: RollbackHandler re-export from infrastructure.rollback.contracts
+# (SSoT: tests/governance/audit/test_gct_002_audit_to_rollback.py imports from here)
+from zephyr.infrastructure.rollback.contracts import RollbackHandler  # noqa: E402,F401
+
 
 class EscalationContracts:
     """升级协议入口 — G-CT-003/004/006/008 消费端."""

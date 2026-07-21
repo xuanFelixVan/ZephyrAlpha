@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-runtime_violation_snapshot | docs/03_modules/_domain_governance/blueprint.md | §runtime-violation-snapshot
+# [BLUEPRINT] MOD-GOV_runtime_violation_snapshot | docs/03_modules/_domain_governance/blueprint.md | §runtime-violation-snapshot
 # [MODULE] zephyr.governance.audit.runtime_violation_snapshot
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] generate_snapshot 永不抛异常——单检测器失败降级为 error 字段；返回 dict 始终含 violations 字段
 # [TESTS] tests/governance/audit/test_runtime_violation_snapshot.py
-# [A_module] module_id=MOD-GOV-runtime_violation_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_runtime_violation_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """runtime_violation_snapshot.py — trae_060 §5 evidence 运行时快照（#ARCH-GOV-CONVERGENCE-META Phase 3.4b）。

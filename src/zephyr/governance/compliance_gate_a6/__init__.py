@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-GOV_compliance_gate_a6 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV___init__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.governance.compliance_gate_a6
 # [INVARIANTS] pending_review
