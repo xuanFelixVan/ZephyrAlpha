@@ -5246,7 +5246,7 @@ entries:
   last_updated: '2026-07-21'
 # --- #ARCH-CROSSDRIVE-RELPATH-001: 跨盘 os.path.relpath 失败治本（2026-07-21） ---
 - issue_id: '#ARCH-CROSSDRIVE-RELPATH-001'
-  title: reconciliation_registry.py 跨盘 D:/C: 导致 os.path.relpath 全量失败治本
+  title: reconciliation_registry.py 跨盘 D/C 导致 os.path.relpath 全量失败治本
   category: architecture_governance
   severity: P2
   adjudication: >-
