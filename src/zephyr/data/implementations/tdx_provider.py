@@ -49,6 +49,18 @@ log = logging.getLogger(__name__)
 _TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 _TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
 
+# bestip 可能选到不支持历史K线的服务器（实测 218.6.170.47:7709 的
+# bars/index_bars 返回0行，TCP通但不响应历史K线请求）。
+# 保留已知可靠服务器列表，bestip 验证失败时回退。
+_RELIABLE_SERVERS = [
+    ("115.238.56.198", 7709),
+    ("115.238.90.165", 7709),
+    ("117.184.140.156", 7709),
+    ("59.173.18.140", 7709),
+    ("218.75.126.9", 7709),
+    ("221.231.141.60", 7709),
+]
+
 
 class TDXProvider(DataSourceBase):
     """通达信数据源 Provider。
@@ -72,20 +84,41 @@ class TDXProvider(DataSourceBase):
     # ---- 生命周期 ----
 
     def connect(self) -> None:
-        """建立连接：用 mootdx Quotes.factory 创建客户端。"""
+        """建立连接：用 mootdx Quotes.factory 创建客户端。
+
+        bestip 自动选服务器，但部分服务器不支持历史K线查询（实测
+        218.6.170.47:7709 的 bars/index_bars 返回0行）。连接后验证
+        K线能力，失败则回退到已知可靠服务器。
+        """
         from mootdx.quotes import Quotes
-        # bestip 自动选最快服务器
         self._client = Quotes.factory(market="std")
-        self._connected = True
-        self._log.info("通达信已连接（bestip 自动选择）")
+        if self._verify_kline():
+            self._connected = True
+            self._log.info("通达信已连接（bestip 自动选择）")
+            return
+        self._log.warning("bestip 服务器不支持K线查询，尝试回退服务器")
+        for ip, port in _RELIABLE_SERVERS:
+            self._client = Quotes.factory(
+                market="std", bestip=False, server=(ip, port)
+            )
+            if self._verify_kline():
+                self._connected = True
+                self._log.info(f"通达信已连接（回退到 {ip}:{port}）")
+                return
+        raise RuntimeError("所有服务器均无法获取K线数据")
 
     def health_check(self) -> bool:
-        """探活：验证 client 可用。"""
+        """探活：验证 client 可用且服务器支持K线查询。"""
+        if not self._connected or self._client is None:
+            return False
+        return self._verify_kline()
+
+    def _verify_kline(self) -> bool:
+        """验证服务器支持历史K线查询（取1根浦发银行日线确认）。"""
         try:
-            from mootdx.quotes import Quotes  # noqa: F401
-            return self._connected and self._client is not None
-        except ImportError as e:
-            self._log.warning(f"通达信探活失败（mootdx 未安装）: {e}")
+            bars = self._client.bars(symbol="600000", frequency=9, start=0, offset=1)
+            return bars is not None and not bars.empty
+        except Exception:  # noqa: BLE001
             return False
 
     def disconnect(self) -> None:
