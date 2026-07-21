@@ -40,6 +40,19 @@ from typing import Any, Iterator
 
 from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
 from ..policy_registry import SourcePolicy
+from ..table_registry import get_registry
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+_TBL_INDEX_KLINE = get_registry().table("market_index_kline")
+_TBL_MONEY_FLOW = get_registry().table("market_money_flow")
+_TBL_STOCK_LIST = get_registry().table("market_stock_list")
+_TBL_EDB_DATA = get_registry().table("market_edb_data")
+_TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
+_TBL_CONCEPT_SECTOR = get_registry().table("market_concept_sector")
+_TBL_REALTIME_SNAPSHOT = get_registry().table("market_realtime_snapshot")
+_TBL_SECTOR_META = get_registry().table("market_sector_meta")
 
 
 def _money_flow_col_val(col_data, key, idx, safe_float):
@@ -112,7 +125,7 @@ class IFindProvider(DataSourceBase):
     # 估值表列顺序
     _VALUATION_COLUMNS = ["trade_date", "symbol", "pe_ttm", "pb_mrq", "ps_ttm", "pcf_ncf_ttm"]
     # 估值目标表
-    _VALUATION_TABLE = "c1_market.daily_valuation"
+    _VALUATION_TABLE = _TBL_DAILY_VALUATION
 
     # ---- kline_daily 能力 ----
     _KLINE_INDICATORS = "preClose,open,high,low,close,change,changeRatio,volume,turnoverRatio,amount"
@@ -120,7 +133,7 @@ class IFindProvider(DataSourceBase):
     _KLINE_COLUMNS = ["trade_date", "symbol", "open", "close", "high", "low",
                       "volume", "amount", "amplitude", "pct_change", "change",
                       "turnover", "data_source"]
-    _KLINE_TABLE = "c1_market.kline_daily"
+    _KLINE_TABLE = _TBL_KLINE_DAILY
 
     # ---- kline_index 能力 ----
     _INDEX_KLINE_INDICATORS = "open,high,low,close,volume,amount"
@@ -128,7 +141,7 @@ class IFindProvider(DataSourceBase):
     _INDEX_KLINE_COLUMNS = ["trade_date", "symbol", "name", "open", "high", "low",
                             "close", "volume", "amount", "advance_count",
                             "decline_count", "data_source", "quality_flag"]
-    _INDEX_KLINE_TABLE = "c1_market.kline_index"
+    _INDEX_KLINE_TABLE = _TBL_INDEX_KLINE
     # 主要指数代码 -> 名称 映射（iFind 格式）
     _INDEX_NAME_MAP = {
         "000001.SH": "上证指数",
@@ -150,11 +163,11 @@ class IFindProvider(DataSourceBase):
                            "medium_net_inflow", "medium_net_inflow_pct",
                            "small_net_inflow", "small_net_inflow_pct",
                            "data_source"]
-    _MONEY_FLOW_TABLE = "c1_market.money_flow"
+    _MONEY_FLOW_TABLE = _TBL_MONEY_FLOW
 
     # CH fallback: 从 stock_list 获取在册 A 股 ts_code（SQL_ 前缀豁免 NO-BARE-SQL gate）
     SQL_STOCK_LIST_BY_STATUS = (
-        "SELECT ts_code FROM c1_market.stock_list "
+        f"SELECT ts_code FROM {_TBL_STOCK_LIST} "
         "WHERE list_status = '上市' ORDER BY ts_code FORMAT TabSeparated"
     )
 
@@ -1037,7 +1050,7 @@ class IFindProvider(DataSourceBase):
         Yields:
             FetchResult: 每个指标一批
         """
-        table = payload.table or "c1_market.edb_data"
+        table = payload.table or _TBL_EDB_DATA
         columns = [
             "report_date", "indicator_code", "indicator_name",
             "indicator_value", "data_source",
@@ -1191,7 +1204,7 @@ class IFindProvider(DataSourceBase):
         """
         from iFinDPy import THS_iwencai
 
-        table = payload.table or "c3_fundamental.industry_class_suppl"
+        table = payload.table or _TBL_INDUSTRY_CLASS_SUPPL
         columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "data_source"]
 
         today_str = datetime.date.today().strftime("%Y-%m-%d")
@@ -1337,7 +1350,7 @@ class IFindProvider(DataSourceBase):
 
     # 概念板块表列顺序
     _CONCEPT_SECTOR_COLUMNS = ["sector_code", "sector_name", "data_source"]
-    _CONCEPT_SECTOR_TABLE = "c1_market.concept_sector"
+    _CONCEPT_SECTOR_TABLE = _TBL_CONCEPT_SECTOR
 
     def _fetch_concept_sector(
         self, payload: FetchPayload, policy: SourcePolicy
@@ -1468,7 +1481,7 @@ class IFindProvider(DataSourceBase):
         "snapshot_time", "symbol", "open", "high", "low",
         "close", "volume", "amount", "data_source",
     ]
-    _REALTIME_SNAPSHOT_TABLE = "c1_market.realtime_snapshot"
+    _REALTIME_SNAPSHOT_TABLE = _TBL_REALTIME_SNAPSHOT
     # THS_RealtimeQuotes 指标（分号分隔，支持多指标）
     _REALTIME_INDICATORS = "ths_open;ths_high;ths_low;ths_close;ths_volume;ths_amount"
 
@@ -1954,7 +1967,7 @@ class IFindProvider(DataSourceBase):
         """
         from iFinDPy import THS_WC
 
-        table = "c1_market.sector_meta"
+        table = _TBL_SECTOR_META
         columns = [
             "sector_code", "trade_date", "sector_name", "sector_type",
             "constituent_num", "total_share", "float_share",
