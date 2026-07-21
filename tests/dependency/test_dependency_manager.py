@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0738 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_dependency_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] tests.test_dependency_manager
 # [INVARIANTS] DEPENDENCIES contains at least one TIER1_CORE dep; get_by_tier returns subset

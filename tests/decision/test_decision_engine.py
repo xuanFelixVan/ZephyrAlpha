@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0715 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_decision_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_decision_engine
 # [INVARIANTS] test_coverage>=2_public_methods;boundary_tests_included

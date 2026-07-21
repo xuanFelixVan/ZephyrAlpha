@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0706 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_db_query | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] tests.test_db_query
 # [INVARIANTS] 只读查询; 不修改任务状态; TaskRepository 接口契约完整性验证

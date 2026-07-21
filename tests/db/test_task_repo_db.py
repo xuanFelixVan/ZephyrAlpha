@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1862 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_task_repo_db | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-489 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_task_repo
 # [STABILITY] evolving

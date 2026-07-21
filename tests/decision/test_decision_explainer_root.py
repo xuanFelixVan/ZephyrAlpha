@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0716 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_decision_explainer_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §tests
 # [MODULE] zephyr.security.access_control.decision_explainer
 # [INVARIANTS] none

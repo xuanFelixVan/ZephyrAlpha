@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1856 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_database_manager_db | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-484 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_database_manager
 # [STABILITY] evolving

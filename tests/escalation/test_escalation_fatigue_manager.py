@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0849 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_escalation_fatigue_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §tests
 # [MODULE] zephyr.governance.escalation.escalation_fatigue_manager
 # [INVARIANTS] 升级疲劳管理不可禁用;adaptive阈值不可手动覆盖

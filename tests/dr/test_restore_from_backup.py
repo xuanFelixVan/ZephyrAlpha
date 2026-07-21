@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2412 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_restore_from_backup | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §dr-drill
 # [MODULE] tests.dr.test_restore_from_backup
 # [STABILITY] volatile

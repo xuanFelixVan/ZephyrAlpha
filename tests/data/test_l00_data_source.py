@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1203 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_l00_data_source | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md | §test
 # [MODULE] zephyr.l00_data_source
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1865 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_drift_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-491 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.drift_detector.test_drift_core
 # [STABILITY] evolving

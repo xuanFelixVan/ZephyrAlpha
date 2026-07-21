@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0117 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_db_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] tests.db.test_db_integration
 # [STABILITY] evolving

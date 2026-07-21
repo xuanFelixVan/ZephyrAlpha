@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0813 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_e_merkle_audit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §8
 # [MODULE] tests.test_e_merkle_audit
 # [INVARIANTS] test完整性

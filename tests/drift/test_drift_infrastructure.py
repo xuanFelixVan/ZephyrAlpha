@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0778 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_drift_infrastructure | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_drift_infrastructure
 # [INVARIANTS] 基础设施不可禁用

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0796 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_e_error_budget_burst_limiter | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_e_error_budget_burst_limiter
 # [INVARIANTS] test完整性

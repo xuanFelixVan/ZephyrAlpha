@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0773 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_drift_detector_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_drift_detector_gate
 # [INVARIANTS] trigger_recovery always returns dict with 9 keys; hotfix_bypass only True when HotfixBypass.is_hotfix_commit returns True; scan_level invalid falls back to STANDARD

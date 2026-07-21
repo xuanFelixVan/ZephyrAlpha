@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0776 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_drift_fixer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_drift_fixer
 # [INVARIANTS] 测试覆盖scan/fix/validate/rollback;边界:空输入/None/异常

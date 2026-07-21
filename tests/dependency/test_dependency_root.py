@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0739 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_dependency_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_dependency
 # [INVARIANTS] DependencyExtractor.extract returns list[DependencyEdge]; build_dependency_graph produces DependencyGraph
