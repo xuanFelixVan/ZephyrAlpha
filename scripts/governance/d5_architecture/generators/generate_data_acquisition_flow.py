@@ -47,6 +47,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[4]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_ERROR
 try:
     from _common import DB_DISPLAY_NAME  # noqa: E402
 except ImportError:
@@ -509,8 +510,7 @@ def main() -> int:
     tasks = _parse_tasks_yaml()
     if not tasks:
         print(f"[ERROR] 未解析到任务，请检查 {TASKS_YAML}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     today = datetime.strptime(args.today, "%Y-%m-%d").date() if args.today else date.today()
 
     # 生成时间戳从真源文件 mtime 派生（幂等保证：输入不变→输出时间戳不变）
@@ -527,8 +527,6 @@ def main() -> int:
     print(f"[OK] 生成 {out_path}")
     print(f"     解析 {len(tasks)} 个采集任务，覆盖 {len({t['table'] for t in tasks})} 张唯一业务表")
     print(f"     运行日期: {today.isoformat()}")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

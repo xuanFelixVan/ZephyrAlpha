@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.execution.execution_report
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.contracts.execution_report
 # [CONSUMERS] pf_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,30 +14,14 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_execution_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""Re-export wrapper: ExecutionReport 真源在 zephyr.shared.contracts.execution_report（CTR-P1-007 codegen）
 
-# ==== BEGIN CODGEN:CTR-P1-007 ====
+治本修复: 原文件重复定义 ExecutionReport 类（多真源），导致 isinstance 跨模块判断失败。
+改为 re-export shared 层真源，消除多真源。
+SSoT: cross_layer_contracts.yaml -> CTR-P1-007 (codegen 生成 shared/contracts/execution_report.py)
+"""
+from __future__ import annotations
 
-from dataclasses import dataclass
-from decimal import Decimal
+from zephyr.shared.contracts.execution_report import ExecutionReport
 
-
-@dataclass(frozen=True)
-class ExecutionReport:
-    order_id: str
-    symbol: str
-    direction: str
-    intended_quantity: int
-    actual_quantity: int
-    intended_price: Decimal
-    vwap_price: Decimal
-    slippage_bps: float
-    commission: Decimal
-    execution_start: str
-    execution_end: str
-    broker_id: str
-    idempotency_key: str
-    algo_type: str = "NONE"
-    schema_version: str = "1.0"
-
-
-# ==== END CODGEN:CTR-P1-007 ====
+__all__ = ["ExecutionReport"]

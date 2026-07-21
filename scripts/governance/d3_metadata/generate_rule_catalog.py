@@ -52,7 +52,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import (  # noqa: E402
+from _shared.constants import EXIT_PASS
     EXCLUDE_DIRS,
     EXIT_FINDINGS,
     EXIT_PASS,
@@ -138,9 +138,7 @@ def _count_sections(sections) -> int:
     """计算 sections 字典的 section 数量。"""
     if isinstance(sections, dict):
         return len(sections)
-    return 0
-
-
+    return EXIT_PASS
 def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
     """Scan directory for .md and .yaml files, extract frontmatter."""
     results: list[dict] = []

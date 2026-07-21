@@ -55,6 +55,7 @@ if _GOV_DIR not in sys.path:
 
 # 治本(2026-06-30): REPO_ROOT 真源来自 _shared.constants (SSoT), 消除 parents[N] 硬编码
 from _shared.constants import DB_PATH, REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_ERROR
 
 _SRC_DIR = str(_REPO_ROOT / "src")
 if _SRC_DIR not in sys.path:
@@ -240,8 +241,7 @@ def main() -> int:
     db_path = Path(args.db)
     if not db_path.exists():
         print(f"[ERROR] governance.db 不存在: {db_path}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     broken = scan_all_post_sync(db_path)
 
     # 分离活跃 vs 终态
@@ -251,8 +251,7 @@ def main() -> int:
     if not active_broken and not terminal_broken:
         if not args.quiet:
             print(f"[CLEAN] 所有 post_sync 命令与回滚说明均合法（扫描 {db_path}）")
-        return 0
-
+        return EXIT_PASS
     # 活跃任务 broken = ERROR（会死锁 transition(COMPLETED)）
     if active_broken:
         total_active = sum(len(b.active_tasks) for b in active_broken)

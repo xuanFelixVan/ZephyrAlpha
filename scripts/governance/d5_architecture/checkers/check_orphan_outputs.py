@@ -69,12 +69,10 @@ def count_importers(module_path: str) -> int:
     try:
         result = subprocess.run(["rg", "-c", import_stmt, str(SRC_DIR)], capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
-            return 0
+            return EXIT_PASS
         return len([line for line in result.stdout.strip().splitlines() if line])
     except Exception:
-        return 0
-
-
+        return EXIT_PASS
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check orphan outputs across blueprints")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even if orphans found")

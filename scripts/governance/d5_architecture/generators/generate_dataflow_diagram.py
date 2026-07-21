@@ -57,6 +57,7 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     init_dataflow_db,
 )
 from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 # maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
@@ -515,8 +516,7 @@ def main() -> int:
         init_dataflow_db()
     except RuntimeError as e:
         print(f"[ERROR] {e}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     conn = get_dataflowgraph_pg_connection()
     try:
         datasets, jobs, edges = _fetch_dataflow_data(conn)
@@ -525,8 +525,7 @@ def main() -> int:
 
     if not datasets and not jobs:
         print("[WARN] dataflowgraph 表为空，请先运行 sync_yaml_to_depgraph.py 同步 dataflow_graph_registry.yaml")
-        return 2
-
+        return EXIT_ERROR
     # 创建输出目录
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -537,8 +536,6 @@ def main() -> int:
     print(f"[OK] 生成 dataflow_index.md（内嵌 4 张 Mermaid 图 + 统计 + Dataset/Job 清单）")
 
     print(f"\n输出目录: {out_dir}")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

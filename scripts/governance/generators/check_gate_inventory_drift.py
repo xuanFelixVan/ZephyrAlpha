@@ -35,6 +35,7 @@ Exit codes:
     2 = 错误（脚本异常）
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import re
@@ -84,13 +85,11 @@ def main() -> int:
         missing, extra = detect_drift()
     except Exception as e:
         print(f"ERROR: {e}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     actual = scan_actual_gates()
     if not missing and not extra:
         print(f"OK: commit_gates inventory in sync ({len(actual)} gates)")
-        return 0
-
+        return EXIT_PASS
     listed = scan_blueprint_listed()
     print(
         f"DRIFT: commit_gates inventory mismatch "
@@ -108,8 +107,6 @@ def main() -> int:
             print(f"    - commit_gates/{f}")
         bp_rel = BLUEPRINT_PATH.relative_to(REPO_ROOT).as_posix()
         print(f"  → 清理: 从 {bp_rel} §0.1 表格移除上述文件行")
-    return 1
-
-
+    return EXIT_FINDINGS
 if __name__ == "__main__":
     sys.exit(main())

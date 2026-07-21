@@ -64,7 +64,7 @@ try:
     import yaml
 except ImportError:
     print("[ERROR] PyYAML 未安装，请运行: pip install pyyaml")
-    sys.exit(1)
+    sys.exit(EXIT_FINDINGS)
 
 # _shared.constants 统一路径引用（裁定#206 / Bug H 修复——禁止硬编码绝对路径）
 _THIS_FILE = Path(__file__).resolve()
@@ -73,6 +73,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 # P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_FINDINGS
 import psycopg2  # noqa: E402
 
 # 治本（2026-06-27）：删除 DB_PATH = str(DEPGRAPH_DB_PATH)（路径污染源）。
@@ -2362,7 +2363,7 @@ def sync_all() -> bool:
         import traceback
 
         traceback.print_exc()
-        raise  # DM-3010: 用raise替代sys.exit(1)，让调用方可捕获
+        raise  # DM-3010: 用raise替代sys.exit(EXIT_FINDINGS)，让调用方可捕获
 
     finally:
         # 恢复只读触发器（无论同步成功/失败都必须恢复，否则DB无保护）
@@ -2395,7 +2396,7 @@ def main():
         return
     ok = sync_all()
     if not ok:
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
 
 if __name__ == "__main__":

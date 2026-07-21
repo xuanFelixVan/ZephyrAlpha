@@ -69,6 +69,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from zephyr.governance.capability_lookup import CapabilityLookup  # noqa: E402
 # 治本(2026-06-30): REPO_ROOT 真源来自 zephyr.shared.io.paths (SSoT), 消除路径派生对 parents[N] 的依赖
 from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT  # noqa: E402
@@ -84,8 +85,7 @@ def main() -> int:
     )
     if result.returncode != 0:
         print(f"GATE-SSOT: git diff 失败: {result.stderr}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     new_files = [
         f.strip() for f in result.stdout.strip().split("\n")
         if f.strip().startswith("src/zephyr/") and f.strip().endswith(".py")
@@ -100,8 +100,7 @@ def main() -> int:
         # fail-open：capability_lookup 不可用时不阻断
         # GitCommitGateway 内嵌门禁是主防线
         print(f"GATE-SSOT: capability_lookup 不可用，跳过: {e}", file=sys.stderr)
-        return 0
-
+        return EXIT_PASS
     # 构造 (abs_path, rel_path) 列表——L3 特有：跳过已从磁盘删除的 staged 文件
     new_py_files: list[tuple[str, str]] = []
     for rel_path in new_files:
@@ -124,8 +123,7 @@ def main() -> int:
             )
         print("  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）", file=sys.stderr)
         print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     # 硬层 2：能力重复（basename 撞 capability_id/alias → duplicate）
     # 治本（2a 共享方法）：检测逻辑唯一真源收拢到
     # capability_lookup.check_capability_duplicates，L2 gateway 已调用同一方法。
@@ -137,8 +135,7 @@ def main() -> int:
         for d in dups:
             print(f"  {d.rel_path}: {d.detail}", file=sys.stderr)
         print(f"  {CAPABILITY_DUPLICATE_FIX_HINT}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     # 硬层 3：module_id 全局唯一（P0-2 防再生门禁）
     id_conflicts = lookup.check_module_id_conflicts(new_py_files)
     if id_conflicts:
@@ -150,8 +147,7 @@ def main() -> int:
                 file=sys.stderr,
             )
         print("  修复指令：为新增文件分配新的 module_id，或删除新增文件复用已有文件", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     # 硬层 4：MODULE 声明域与物理路径域一致（P0-3 防再生门禁）
     domain_mismatches = lookup.check_module_domain_consistency(new_py_files)
     if domain_mismatches:
@@ -163,10 +159,7 @@ def main() -> int:
                 file=sys.stderr,
             )
         print("  修复指令：修正 [MODULE] module_path 使其与物理路径一致，或将文件移到正确域", file=sys.stderr)
-        return 1
-
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

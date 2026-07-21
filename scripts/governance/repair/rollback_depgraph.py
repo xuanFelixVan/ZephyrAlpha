@@ -57,6 +57,7 @@ while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.p
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
 
 DST = str(REPO_ROOT / "data" / "databases" / "depgraph")
@@ -78,19 +79,16 @@ def main():
     if len(sys.argv) < 2:
         print("[ERROR] 用法: python rollback_depgraph.py <备份路径>")
         print("示例: python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.backup.pre_migration")
-        return 1
-
+        return EXIT_FINDINGS
     src_backup = sys.argv[1]
 
     if not os.path.exists(src_backup):
         print(f"[ERROR] 备份文件不存在: {src_backup}")
-        return 1
-
+        return EXIT_FINDINGS
     src_size = os.path.getsize(src_backup)
     if src_size == 0:
         print(f"[ERROR] 备份文件大小为0: {src_backup}")
-        return 1
-
+        return EXIT_FINDINGS
     print(f"[INFO] 回滚源: {src_backup}")
     print(f"[INFO] 回滚源大小: {src_size} bytes")
     print(f"[INFO] 回滚目标: {DST}")
@@ -109,11 +107,8 @@ def main():
 
     if dst_size != src_size:
         print(f"[FAIL] 回滚后大小({dst_size})与备份({src_size})不一致")
-        return 1
-
+        return EXIT_FINDINGS
     print(f"[PASS] 回滚成功，大小一致: {src_size} == {dst_size}")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

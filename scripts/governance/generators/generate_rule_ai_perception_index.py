@@ -30,6 +30,7 @@
   python scripts/governance/generators/generate_rule_ai_perception_index.py          # 生成
   python scripts/governance/generators/generate_rule_ai_perception_index.py --check   # 漂移检测
 """
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import argparse
@@ -112,7 +113,7 @@ def _load_all_rules() -> list[dict]:
             data = yaml.safe_load(rf.read_text(encoding="utf-8"))
         except yaml.YAMLError as e:
             print(f"ERROR: parse {rf.name}: {e}", file=sys.stderr)
-            sys.exit(2)
+            sys.exit(EXIT_ERROR)
         if not isinstance(data, dict):
             continue
         entry = _extract_perception_entry(data, rf)
@@ -159,23 +160,21 @@ def check() -> int:
     generated = generate()
     if not OUTPUT_PATH.is_file():
         print(f"DRIFT: {OUTPUT_PATH.name} 不存在（首次生成请先运行无 --check）")
-        return 1
+        return EXIT_FINDINGS
     on_disk = OUTPUT_PATH.read_text(encoding="utf-8")
     # 忽略 generated_at 时间戳差异（只比较结构）
     gen_lines = [l for l in generated.splitlines() if not l.startswith("generated_at:")]
     disk_lines = [l for l in on_disk.splitlines() if not l.startswith("generated_at:")]
     if gen_lines == disk_lines:
         print(f"OK: {OUTPUT_PATH.name} 一致（{len(gen_lines)} 行）")
-        return 0
+        return EXIT_PASS
     print(f"DRIFT: {OUTPUT_PATH.name} 不一致")
     # 显示前5个差异
     import difflib
     diff = list(difflib.unified_diff(disk_lines, gen_lines, lineterm="", n=1))
     for line in diff[:20]:
         print(f"  {line}")
-    return 1
-
-
+    return EXIT_FINDINGS
 def main() -> int:
     parser = argparse.ArgumentParser(description="规则AI感知索引生成器")
     parser.add_argument("--check", action="store_true", help="漂移检测模式")
@@ -194,8 +193,6 @@ def main() -> int:
     print(f"  rules without gate_ids: {len(no_gates)}")
     if no_gates:
         print(f"    {', '.join(no_gates[:10])}{'...' if len(no_gates) > 10 else ''}")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

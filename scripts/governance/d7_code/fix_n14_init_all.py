@@ -50,6 +50,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 EXEMPT_DIRS: set[str] = {
     "tests",
@@ -174,13 +175,11 @@ def verify_fixes() -> int:
     print(f"\nN-14 violations: {count}")
     if count == 0:
         print("[OK] N-14 修复验证通过")
-        return 0
+        return EXIT_PASS
     print("[FAIL] N-14 仍有违规:")
     for line in n14_lines[:10]:
         print(f"  {line}")
-    return 1
-
-
+    return EXIT_FINDINGS
 def main() -> int:
     print("=" * 60)
     print("N-14 __init__.py 缺少 __all__ 批量修复脚本")

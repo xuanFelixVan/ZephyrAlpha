@@ -41,6 +41,7 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR), str(_GOV_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     acquire_dataflow_write_lock,
@@ -195,15 +196,13 @@ def _sync_to_dataflow(conn, module: dict) -> int:
                     (module["domain_id"], module["design_maturity"],
                      module["build_status"], mid, mid),
                 )
-                return 0
+                return EXIT_PASS
         cur.execute(
             _SQL_UPSERT_DATAFLOW_PLACEHOLDER,
             (mid, mid, module["domain_id"], module["design_maturity"],
              module["build_status"]),
         )
-        return 0
-
-
+        return EXIT_PASS
 def _sync_to_decision(conn, module: dict) -> int:
     """同步到 decision_layers 占位记录。
 
@@ -222,15 +221,13 @@ def _sync_to_decision(conn, module: dict) -> int:
                     (module["domain_id"], module["design_maturity"],
                      module["build_status"], mid, mid),
                 )
-                return 0
+                return EXIT_PASS
         cur.execute(
             _SQL_UPSERT_DECISION_PLACEHOLDER,
             (mid, mid, mid, mid, module["domain_id"],
              module["design_maturity"], module["build_status"]),
         )
-        return 0
-
-
+        return EXIT_PASS
 def sync_module_panorama(module_id: str) -> int:
     """同步单个模块的四图核心字段。
 
@@ -295,9 +292,7 @@ def sync_module_panorama(module_id: str) -> int:
         # stderr 最后一行打印结构化失败计数，供父 reconciler 解析（机器可读契约）
         print(f"FAILED_COUNT={failed_count} module={module_id}", file=sys.stderr)
         return 5
-    return 0
-
-
+    return EXIT_PASS
 def sync_all_panorama() -> int:
     """同步所有有 blueprint_id 的模块。
 
@@ -325,13 +320,11 @@ def sync_all_panorama() -> int:
     # P0-2: 汇总行打印结构化计数，供父 reconciler 解析
     print(f"[OK] 同步完成：{len(modules)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
     if failed > 0:
-        return 1
+        return EXIT_FINDINGS
     if partial > 0:
         # P0-2: 部分下游失败也返回非零，让父 reconciler 检测到（升级为 critical_warn）
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 def sync_modules_panorama(module_ids: list[str]) -> int:
     """增量同步指定的模块列表（#ARCH-PRE-EXISTING-DEBT-001 治本，2026-07-20）。
 
@@ -345,8 +338,7 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
     """
     if not module_ids:
         print("[WARN] sync_modules_panorama: 空模块列表，跳过", file=sys.stderr)
-        return 0
-
+        return EXIT_PASS
     failed = 0
     partial = 0
     for mid in module_ids:
@@ -358,10 +350,8 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
             failed += 1
     print(f"[OK] 增量同步完成：{len(module_ids)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
     if failed > 0 or partial > 0:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 def prune_orphans() -> dict:
     """删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）。
 
@@ -455,7 +445,7 @@ def main():
               f"dataflow deleted={result['deleted_dataflow']}, "
               f"orphan_decision={result['orphan_decision']}, "
               f"orphan_dataflow={result['orphan_dataflow']}")
-        return 0
+        return EXIT_PASS
     if args.all:
         return sync_all_panorama()
     if args.module_ids:

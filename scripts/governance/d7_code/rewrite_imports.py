@@ -77,7 +77,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_ERROR
 from _shared.file_utils import atomic_write  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT
@@ -376,18 +376,17 @@ def main() -> int:
     if args.mapping:
         if not args.mapping.exists():
             print(f"ERROR: 映射文件不存在: {args.mapping}", file=sys.stderr)
-            return 2
+            return EXIT_ERROR
         moves = load_mapping_from_yaml(args.mapping)
     else:
         if not args.new:
             print("ERROR: --old 需要配合 --new", file=sys.stderr)
-            return 2
+            return EXIT_ERROR
         moves = load_mapping_from_args(args.old, args.new)
 
     if not moves:
         print("ERROR: 未加载到任何移动映射", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     # 构建模块映射
     mapping = build_module_mapping(moves)
     if not mapping:

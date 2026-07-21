@@ -33,6 +33,7 @@ The YAML map format::
         new_path: src/zephyr/governance/subdir/foo.py
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from __future__ import annotations
 
 import argparse
@@ -324,13 +325,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.map.exists():
         print(f"Error: map file not found: {args.map}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     moves = load_move_map(args.map)
     if not moves:
         print("Error: no moves found in map file", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     rewriter = ImportRewriter(moves)
 
     def _progress(done: int, total: int) -> None:
@@ -346,8 +345,6 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print_report(results, args.dry_run)
 
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

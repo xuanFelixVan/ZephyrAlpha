@@ -22,7 +22,7 @@
 [STABILITY] stable
 [SAFETY] M
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] sys.exit(1)
+[ERROR_CONTRACT] sys.exit(EXIT_FINDINGS)
 [TESTS] tests/governance/test_d5_architecture.py
 """
 
@@ -44,6 +44,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
+from _shared.constants import EXIT_FINDINGS
 from zephyr.autonomy_core.agent_lifecycle.engine import SpecEngine
 from zephyr.autonomy_core.agent_lifecycle.skill_loader import SkillLoader
 

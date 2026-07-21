@@ -72,6 +72,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 CHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
 
 SCOPE_PREFIXES_ADDED = ["META", "DM", "TRAE"]
@@ -132,13 +133,11 @@ def verify_fixes() -> int:
     print(f"N-06 violations: {count}")
     if count == 0:
         print("[OK] N-06 修复验证通过")
-        return 0
+        return EXIT_PASS
     print("[FAIL] N-06 仍有违规:")
     for line in n06_lines:
         print(f"  {line}")
-    return 1
-
-
+    return EXIT_FINDINGS
 def main() -> int:
     print("=" * 60)
     print("N-06 module_id scope 前缀修复脚本")

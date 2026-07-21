@@ -64,6 +64,7 @@ Exit Codes
   非 merge commit 都必须带 [GW:] 标记）。默认 ``0``（启用白名单）。
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import json
@@ -277,8 +278,7 @@ def main(argv: list[str]) -> int:
             "       check_commit_message.py <base_sha>..<head_sha>",
             file=sys.stderr,
         )
-        return 2
-
+        return EXIT_ERROR
     # 解析参数：支持 "base..head" 和 "base head" 两种形式
     if len(argv) == 1 and ".." in argv[0]:
         base_sha, head_sha = argv[0].split("..", 1)
@@ -286,12 +286,10 @@ def main(argv: list[str]) -> int:
         base_sha, head_sha = argv[0], argv[1]
     else:
         print(f"Error: invalid arguments: {argv}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     if not base_sha or not head_sha:
         print(f"Error: empty base_sha or head_sha: base={base_sha!r} head={head_sha!r}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     strict = os.environ.get("ZEPHYR_COMMIT_MSG_GUARD_STRICT", "0") == "1"
 
     # 加载已注册 session
@@ -303,12 +301,10 @@ def main(argv: list[str]) -> int:
     except subprocess.CalledProcessError as e:
         print(f"Error: git log failed: {e}", file=sys.stderr)
         print(f"  stderr: {e.stderr}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     if not commits:
         print(f"No commits in range {base_sha[:8]}..{head_sha[:8]}")
-        return 0
-
+        return EXIT_PASS
     print(f"Checking {len(commits)} commit(s) in range {base_sha[:8]}..{head_sha[:8]}")
     print(f"  strict mode: {strict}")
     print(f"  registered sessions: {len(registered)}")
@@ -330,11 +326,8 @@ def main(argv: list[str]) -> int:
             "     或通过 GitCommitGateway 提交（自动添加 [GW:session_id] 标记）",
             file=sys.stderr,
         )
-        return 1
-
+        return EXIT_FINDINGS
     print(f"\nPASS: all {len(commits)} commit(s) compliant")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

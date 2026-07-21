@@ -87,6 +87,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 # 检测1：禁止路径前缀（小写，大小写不敏感比较——Windows 文件系统大小写不敏感）
 # 规则真源见 AGENTS.md §11.2 遗留项-3 VMS SSoT 声明，此处为校验执行逻辑非第二真源
@@ -197,14 +198,12 @@ def main():
 
     files = get_staged_files()
     if not files:
-        return 0
-
+        return EXIT_PASS
     violations_ssot = check_vms_ssot(files)
     violations_dead_method = check_dead_method_rebuild(files)
 
     if not violations_ssot and not violations_dead_method:
-        return 0
-
+        return EXIT_PASS
     print("[GATE-VMS-SSOT] 违规：VMS 单一真源 / dead code 治本约束被破坏", file=sys.stderr)
 
     if violations_ssot:
@@ -232,9 +231,7 @@ def main():
             )
 
     if args.ci:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

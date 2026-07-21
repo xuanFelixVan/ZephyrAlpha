@@ -41,13 +41,13 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import DB_PATH  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 
 def main():
     if not os.path.exists(DB_PATH):
         print(f"[ERROR] 数据库不存在: {DB_PATH}")
-        return 1
-
+        return EXIT_FINDINGS
     try:
         conn = sqlite3.connect(DB_PATH)
         rows = conn.execute(
@@ -58,8 +58,7 @@ def main():
         conn.close()
     except sqlite3.Error as e:
         print(f"[ERROR] 查询失败: {e}")
-        return 1
-
+        return EXIT_FINDINGS
     print(f"Phase 0 任务卡清单（共{len(rows)}张）")
     print("=" * 80)
     print(f"{'task_id':<15} {'status':<12} title")
@@ -80,11 +79,8 @@ def main():
 
     if len(rows) == 0:
         print("[FAIL] 无Phase 0任务卡")
-        return 1
-
+        return EXIT_FINDINGS
     print("[PASS] Phase 0任务卡列表生成完成")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

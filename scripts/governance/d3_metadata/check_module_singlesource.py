@@ -63,6 +63,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 # ── 配置：受保护文件名 → 声明 SSoT 路径 ──────────────────────────────
@@ -158,15 +159,12 @@ def main() -> int:
         violations = scan_violations()
     except Exception as e:
         print(f"[ERROR] scan failed: {e}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     report = format_report(violations)
     print(report)
 
     if violations and args.check:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

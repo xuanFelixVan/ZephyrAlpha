@@ -471,11 +471,9 @@ def main() -> int:
             "见裁定 #ARCH-TOOL-HEALTH-V1 Phase 6",
             file=sys.stderr,
         )
-        return 1
+        return EXIT_FINDINGS
     if result["status"] == "warn":
-        return 2
-    return 0
-
-
+        return EXIT_ERROR
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

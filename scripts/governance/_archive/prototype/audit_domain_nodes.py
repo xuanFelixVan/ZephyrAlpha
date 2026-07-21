@@ -34,6 +34,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_PASS
 
 
 # ============================================================================
@@ -336,7 +337,7 @@ def main():
     # P0-4: --check模式执行4类检测
     if args.check:
         run_4class_check()
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     conn = get_depgraph_pg_connection(autocommit=False)
     try:

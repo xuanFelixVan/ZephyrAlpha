@@ -102,6 +102,7 @@ from zephyr.governance.persistence.decisiongraph_schema import (
     load_track_ids,
 )
 from _shared.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05）
+from _shared.constants import EXIT_FINDINGS, EXIT_ERROR
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -139,16 +140,16 @@ def _load_yaml(yaml_path: Path) -> dict:
     """加载 YAML 真源。"""
     if not yaml_path.is_file():
         print(f"ERROR: YAML truth source not found: {yaml_path}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     try:
         with open(yaml_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError as e:
         print(f"ERROR: YAML parse failed: {e}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     if not isinstance(data, dict):
         print(f"ERROR: YAML root must be a mapping, got {type(data).__name__}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     return data
 
 
@@ -436,7 +437,7 @@ def sync_decision_graph(
         print("ERROR: YAML invariant violations:", file=sys.stderr)
         for e in errors:
             print(f"  - {e}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     if validate_only:
         print("[validate-only] YAML invariants passed:")

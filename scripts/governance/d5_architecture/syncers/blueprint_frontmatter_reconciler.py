@@ -37,6 +37,7 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _shared.constants import EXIT_PASS
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 try:
@@ -152,22 +153,26 @@ def _write_frontmatter_updates(bp_file: Path, module_id: str,
                                 domain_id: str, dm: str, bs: str) -> int:
     """读取蓝图文件，更新 frontmatter 核心字段。
 
-    v2.0.0：design_maturity/build_status 总是写入（depgraph 为真源），
-    不再只在已存在时更新——消除 align_panoramas 状态漂移。
+    module_id / responsibility_domain 总是写入（depgraph 为真源）。
+    design_maturity / build_status 仅在 frontmatter 已存在该字段时更新（不追加）。
     """
     content = bp_file.read_text(encoding="utf-8")
     updates = {
         "module_id": module_id,
         "responsibility_domain": domain_id,
-        "design_maturity": dm,
-        "build_status": bs,
     }
+    # design_maturity / build_status 仅在已存在时更新（不追加新字段）
+    fm_match = _FRONTMATTER_RE.match(content)
+    if fm_match:
+        fm_text = fm_match.group(1)
+        if re.search(rf"^design_maturity:[ \t]*", fm_text, re.MULTILINE):
+            updates["design_maturity"] = dm
+        if re.search(rf"^build_status:[ \t]*", fm_text, re.MULTILINE):
+            updates["build_status"] = bs
     new_content = _update_frontmatter(content, updates)
     if new_content != content:
         bp_file.write_text(new_content, encoding="utf-8")
-    return 0
-
-
+    return EXIT_PASS
 # 蓝图扫描根目录（fallback：bp_path 找不到文件时扫描匹配 module_id）
 _BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
 _BP_SCAN_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
@@ -238,9 +243,8 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
             # 更新所有匹配的文件（一个 module_id 可能有多个 .md 文件）
             for f in scanned:
                 _write_frontmatter_updates(f, module_id, domain_id, dm, bs)
-            return 0
+            return EXIT_PASS
         else:
             print(f"[WARN] blueprint not found, skip (marked missing): {bp_file}", file=sys.stderr)
-            return 0
-
+            return EXIT_PASS
     return _write_frontmatter_updates(bp_file, module_id, domain_id, dm, bs)

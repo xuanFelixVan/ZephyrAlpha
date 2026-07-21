@@ -48,6 +48,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS
 
 # ---------------------------------------------------------------------------
 # 特殊路径映射: (old_path, new_path, reason)
@@ -194,8 +195,7 @@ def fix_file(file_path: Path) -> int:
     try:
         content = file_path.read_text(encoding="utf-8", errors="replace")
     except Exception:
-        return 0
-
+        return EXIT_PASS
     original = content
     fix_count = 0
 
@@ -230,10 +230,8 @@ def fix_file(file_path: Path) -> int:
             return fix_count
         except Exception as e:
             print(f"  ERROR 写入失败 {file_path}: {e}")
-            return 0
-    return 0
-
-
+            return EXIT_PASS
+    return EXIT_PASS
 def main() -> int:
     print("=" * 70)
     print("N-15 BLUEPRINT 头部路径不存在批量修复")

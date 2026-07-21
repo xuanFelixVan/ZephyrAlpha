@@ -97,8 +97,8 @@ class DefaultEquityStrategy(StrategyBase):
         universe: list[str] | None = None,
         signals: dict[str, float] | None = None,
         constraints: dict[str, Any] | None = None,
-    ) -> dict[str, float]:
-        """生成目标权重（实现 StrategyBase 抽象方法，OCP-002 契约对齐）
+    ) -> list[Order]:
+        """生成目标权重对应的订单列表（实现 StrategyBase 抽象方法，OCP-002 契约对齐）
 
         Args:
             universe: 标的列表，若提供则覆盖 __init__ 设置
@@ -106,7 +106,7 @@ class DefaultEquityStrategy(StrategyBase):
             constraints: 风险约束，若提供则更新内部约束
 
         Returns:
-            dict[symbol, weight] 目标权重字典
+            list[Order] 目标权重对应的订单列表
         """
         if universe is not None:
             self._universe = universe
@@ -116,8 +116,8 @@ class DefaultEquityStrategy(StrategyBase):
             self._risk_limits.update(constraints)
 
         if not self._universe:
-            _logger.warning("Universe is empty, no weights generated")
-            return {}
+            _logger.warning("Universe is empty, no orders generated")
+            return []
 
         if self._mode is RebalanceMode.EQUAL_WEIGHT:
             weights = self._equal_weight_alloc()
@@ -126,15 +126,13 @@ class DefaultEquityStrategy(StrategyBase):
         else:
             weights = self._equal_weight_alloc()
 
-        _logger.info("Generated %d weights for strategy=%s mode=%s", len(weights), self.meta.strategy_id, self._mode)
-        return weights
+        orders = self._weights_to_orders(weights)
+        _logger.info("Generated %d orders for strategy=%s mode=%s", len(orders), self.meta.strategy_id, self._mode)
+        return orders
 
     def generate_orders(self) -> list[Order]:
-        """根据目标权重生成订单列表（便捷方法，调用 generate_target_weights + _weights_to_orders）"""
-        weights = self.generate_target_weights()
-        orders = self._weights_to_orders(weights)
-        _logger.info("Generated %d orders for strategy=%s", len(orders), self.meta.strategy_id)
-        return orders
+        """根据目标权重生成订单列表（便捷方法，调用 generate_target_weights）"""
+        return self.generate_target_weights()
 
     def update_signals(self, signals: dict[str, float]) -> None:
         """更新信号得分（供 D_SIGNAL 输入的 SynthesizedSignal）"""

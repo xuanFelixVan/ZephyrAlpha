@@ -37,6 +37,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from zephyr.governance.depgraph_schema import (  # noqa: E402
     _DDL_NODES_METADATA,
     _DDL_EDGES_METADATA,
@@ -126,11 +127,11 @@ def migrate(dry_run: bool = False) -> int:
             print(f"[MIGRATE] 提交完成: nodes_metadata={node_migrated}, edges_metadata={edge_migrated}")
             print("[MIGRATE] 下一步: 运行 generate_project_depgraph.py 验证 metadata UPSERT 逻辑")
 
-        return 0
+        return EXIT_PASS
     except Exception as e:
         conn.rollback()
         print(f"[MIGRATE] ERROR: {e}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     finally:
         conn.close()
 

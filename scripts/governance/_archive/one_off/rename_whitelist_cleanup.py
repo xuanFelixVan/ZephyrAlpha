@@ -40,6 +40,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 # 替换映射（按字符串长度降序排列，避免短串先匹配破坏长串）
 # 注意: 旧名为原始大写/kebab形式，新名为 snake_case。替换已执行完毕，
@@ -182,8 +183,7 @@ def replace_in_file(file_path: Path, dry_run: bool = False) -> int:
         raw = file_path.read_bytes()
         content = raw.decode("utf-8-sig")
     except (UnicodeDecodeError, PermissionError):
-        return 0
-
+        return EXIT_PASS
     original = content
     count = 0
     lines = content.split("\n")
@@ -268,8 +268,7 @@ def update_depgraph(dry_run: bool = False) -> int:
         finally:
             conn.close()
         print(f"\n{mode}总计: {total_changes} rows would be updated")
-        return 0
-
+        return EXIT_PASS
     conn = get_depgraph_pg_connection(autocommit=False)
     try:
         for desc, sql in updates:
@@ -281,14 +280,12 @@ def update_depgraph(dry_run: bool = False) -> int:
     except Exception as e:
         conn.rollback()
         print(f"[ERROR] SQL failed: {e}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     finally:
         conn.close()
 
     print(f"\n总计: {total_changes} rows updated")
-    return 0
-
-
+    return EXIT_PASS
 def main() -> int:
     parser = argparse.ArgumentParser(description="命名规范白名单清理替换脚本")
     parser.add_argument("--dry-run", action="store_true", help="预览替换结果，不修改文件")
@@ -334,8 +331,6 @@ def main() -> int:
 
     mode = "[DRY-RUN] " if args.dry_run else ""
     print(f"\n{mode}总计: {files_modified} 个文件, {total_replaced} 处替换")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

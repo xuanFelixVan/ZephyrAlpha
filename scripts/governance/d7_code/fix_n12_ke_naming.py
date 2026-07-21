@@ -50,6 +50,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS
 
 # KE 文件名模式: ke-{1-4位数字}-{snake_case_title}.md
 KE_VALID_PATTERN = re.compile(r"^ke-\d{1,4}-[a-z][a-z0-9_]+\.md$")
@@ -164,8 +165,7 @@ def update_references_in_file(file_path: Path, rename_map: dict[str, str]) -> in
     try:
         content = file_path.read_text(encoding="utf-8", errors="replace")
     except Exception:
-        return 0
-
+        return EXIT_PASS
     original = content
     total_replacements = 0
 
@@ -181,10 +181,8 @@ def update_references_in_file(file_path: Path, rename_map: dict[str, str]) -> in
             return total_replacements
         except Exception as e:
             print(f"  ERROR 写入失败 {file_path}: {e}")
-            return 0
-    return 0
-
-
+            return EXIT_PASS
+    return EXIT_PASS
 def should_skip_file(path: Path) -> bool:
     """检查路径是否应跳过（用于引用更新扫描）。"""
     parts = path.parts
@@ -213,8 +211,7 @@ def main() -> int:
 
     if not violations:
         print("无需修复")
-        return 0
-
+        return EXIT_PASS
     # 构建重命名映射
     rename_map: dict[str, str] = {}
     rename_pairs: list[tuple[Path, Path]] = []

@@ -66,6 +66,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_FINDINGS
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 # DB_DISPLAY_NAME 内联定义（避免 import _common 触发 IMPORT-INTEGRITY worktree 误报）
@@ -345,7 +346,7 @@ def main() -> None:
     wiki_path = Path(args.wiki_path)
     if not wiki_path.exists():
         print(f"[ERROR] code_wiki.md 不存在：{wiki_path}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     content = wiki_path.read_text(encoding="utf-8")
     original = content

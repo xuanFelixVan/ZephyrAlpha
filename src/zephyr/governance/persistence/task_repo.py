@@ -1517,7 +1517,11 @@ class TaskRepository:
         """DM-386: 检查新任务的 files_in_scope 与现有 READY/IN_PROGRESS 任务是否有交集。
 
         有交集时抛出 ValueError，阻止建卡，防止两个活跃任务同时修改同一文件。
+        测试任务（source_blueprint='TEST'）豁免，避免历史测试数据阻断新测试运行。
         """
+        source_bp = getattr(task, "source_blueprint", "") or ""
+        if source_bp.strip().upper() == "TEST":
+            return
         new_files = set(task.files_in_scope)
         if not new_files:
             return

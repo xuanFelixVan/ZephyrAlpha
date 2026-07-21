@@ -34,6 +34,7 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
@@ -223,10 +224,8 @@ def main() -> int:
         print(f"FAILED ({len(failures)} failures):")
         for f in failures:
             print(f"  - {f}")
-        return 1
+        return EXIT_FINDINGS
     print("ALL PASSED (6/6 tests)")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

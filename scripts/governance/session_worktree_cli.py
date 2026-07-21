@@ -38,6 +38,7 @@ Usage::
     python scripts/governance/session_worktree_cli.py sweep --max-age 60
     python scripts/governance/session_worktree_cli.py list
 """
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from __future__ import annotations
 
 import argparse
@@ -64,9 +65,7 @@ def _cmd_sweep(args: argparse.Namespace) -> int:
     if warnings and swept == 0:
         # 有 warning 但未清理任何——提示人工评估，但仍 exit 0（清理本身无错）
         print("有需人工评估的 stale worktree，请检查上方 WARNING", file=sys.stderr)
-    return 0
-
-
+    return EXIT_PASS
 def _cmd_list(args: argparse.Namespace) -> int:
     """list 子命令：列出当前所有 session worktree。"""
     manager = WorktreeManager(REPO_ROOT)
@@ -76,10 +75,10 @@ def _cmd_list(args: argparse.Namespace) -> int:
         # 修复（2026-07-17）：此前空 worktree 时先打印中文提示再 return，
         # 导致 --json 输出非合法 JSON（test_cli_list_json 在 registry 空时暴露）。
         print(json.dumps(worktrees, ensure_ascii=False, indent=2))
-        return 0
+        return EXIT_PASS
     if not worktrees:
         print("（无 session worktree）")
-        return 0
+        return EXIT_PASS
     print(f"共 {len(worktrees)} 个 session worktree:")
     for wt in worktrees:
         dirty_mark = " [dirty]" if wt.get("dirty") else ""
@@ -87,9 +86,7 @@ def _cmd_list(args: argparse.Namespace) -> int:
             f"  {wt.get('session_id', '?')}: {wt.get('path', '?')}"
             f" branch={wt.get('branch', '?')}{dirty_mark}"
         )
-    return 0
-
-
+    return EXIT_PASS
 def main() -> int:
     """CLI 主入口。"""
     parser = argparse.ArgumentParser(
@@ -114,8 +111,6 @@ def main() -> int:
         return args.func(args)
     except Exception as e:  # noqa: BLE001 — CLI 顶层兜底，所有异常转 exit 1
         print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)
-        return 1
-
-
+        return EXIT_FINDINGS
 if __name__ == "__main__":
     sys.exit(main())

@@ -40,6 +40,7 @@ for p in (str(_REPO_ROOT), str(_SRC)):
     if p not in sys.path:
         sys.path.insert(0, p)
 
+from _shared.constants import EXIT_ERROR
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -445,8 +446,7 @@ def main() -> int:
         print(f"[PG] 连接成功: {version[:60]}")
     except Exception as e:
         print(f"[PG] 连接失败: {e}")
-        return 2
-
+        return EXIT_ERROR
     try:
         _setup_test_table()
         test_t1_concurrent_insert()

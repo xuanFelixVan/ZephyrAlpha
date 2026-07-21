@@ -199,13 +199,13 @@ class FactorRegistry:
 
 def autodiscover_factors(package_path: str | None = None) -> None:
     """
-    扫描 factor/factors/ 目录，自动 import 所有因子模块。
+    扫描 factor/ 目录，自动 import 所有因子模块。
 
     每个模块只要包含 @FactorRegistry.register 装饰的类，
     import 时就会自动触发注册，无需手工维护列表。
 
     Args:
-        package_path: 可选，指定扫描目录。默认扫描本模块同级 factors/ 目录。
+        package_path: 可选，指定扫描目录。默认扫描本模块同级目录（factor/）。
 
     注：此函数在 factor 初始化时（factor/__init__.py）调用一次即可。
     """
@@ -215,12 +215,18 @@ def autodiscover_factors(package_path: str | None = None) -> None:
     import sys
 
     if package_path is None:
-        package_path = os.path.join(os.path.dirname(__file__), "factors")
+        package_path = os.path.dirname(__file__)
 
     if not os.path.isdir(package_path):
         return
 
+    # 跳过非因子模块：factor_base 重载会重置 FactorRegistry 类导致引用断裂；
+    # __init__ 是包初始化；alpha_signal_pipeline / bus_factor_defense 非 FactorBase 子类。
+    _skip_modules = {"factor_base", "__init__", "alpha_signal_pipeline", "bus_factor_defense"}
+
     for finder, module_name, _ in pkgutil.iter_modules([package_path]):
+        if module_name in _skip_modules:
+            continue
         full_name = f"zephyr.factor.{module_name}"
         try:
             if full_name in sys.modules:

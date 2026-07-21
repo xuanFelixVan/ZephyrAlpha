@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.execution.position
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.contracts.position
 # [CONSUMERS] ex_core; pf_core; risk; l11-ml-platform
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,29 +14,14 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_position | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# ==== BEGIN CODGEN:CTR-006 ====
+"""Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.contracts.position（CTR-006 codegen）
+
+治本修复: 原文件重复定义 PositionSnapshot 类（多真源），导致 isinstance 跨模块判断失败。
+改为 re-export shared 层真源，消除多真源。
+SSoT: cross_layer_contracts.yaml -> CTR-006 (codegen 生成 shared/contracts/position.py)
+"""
 from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime
-from decimal import Decimal
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.position import PositionSnapshot
 
-
-@dataclass(frozen=True)
-class PositionSnapshot:
-    as_of_timestamp: datetime
-    idempotency_key: str
-    portfolio_id: str
-    cash: Decimal = Decimal("0")
-    gross_leverage: float = 1.0
-    holdings: dict[str, Decimal] = field(default_factory=dict)
-    market_values: dict[str, Decimal] = field(default_factory=dict)
-    schema_version: str = "1.0"
-    total_market_value: Decimal = Decimal("0")
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-006 ====
+__all__ = ["PositionSnapshot"]

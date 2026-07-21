@@ -38,6 +38,7 @@ from pathlib import Path
 
 import yaml
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 PROJECT_ROOT = REPO_ROOT
 KEY_FACTS_PATH = PROJECT_ROOT / "data" / "rule_optimization" / "key_facts.yaml"
@@ -47,7 +48,7 @@ def load_key_facts() -> dict:
     """加载 key_facts.yaml。"""
     if not KEY_FACTS_PATH.exists():
         print(f"ERROR: key_facts.yaml 不存在: {KEY_FACTS_PATH}")
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     with open(KEY_FACTS_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
@@ -136,12 +137,12 @@ def main() -> None:
 
     if fail_count == 0:
         print("结论: 全部通过——规则文件与项目实际状态对齐")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     print("结论: 存在漂移——规则文件需要修复")
     if args.warn_only:
         print("（--warn-only 模式，不阻断）")
-        sys.exit(0)
-    sys.exit(1)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_FINDINGS)
 
 
 if __name__ == "__main__":

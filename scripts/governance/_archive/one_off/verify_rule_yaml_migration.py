@@ -37,6 +37,7 @@ from pathlib import Path
 
 import yaml
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 PROJECT_ROOT = REPO_ROOT
 DEFAULT_SOURCE_DIR = "docs/01_policies_and_standards/"
@@ -325,7 +326,7 @@ def main():
     ):
         parser.print_help()
         print("\nError: at least one check flag is required")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     print(f"Project root: {PROJECT_ROOT}")
     print(f"Source dir:   {source_dir}")
@@ -365,10 +366,10 @@ def main():
     print("=" * 50)
     if all_passed:
         print("ALL CHECKS PASSED")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     else:
         print("SOME CHECKS FAILED")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
 
 if __name__ == "__main__":

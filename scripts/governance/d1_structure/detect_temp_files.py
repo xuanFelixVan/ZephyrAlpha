@@ -24,7 +24,7 @@ from __future__ import annotations
 [STABILITY] stable
 [SAFETY] M
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] sys.exit(1)
+[ERROR_CONTRACT] sys.exit(EXIT_FINDINGS)
 [TESTS] tests/governance/test_d1_structure.py
 """
 
@@ -55,7 +55,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXCLUDE_DIRS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 

@@ -33,6 +33,7 @@ exit codes: 0=pass/warn, 1=cleanup_needed, 2=error
 
 from __future__ import annotations
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 __manifest__ = """
 args:
@@ -109,8 +110,7 @@ def cleanup_stashes(keep: int = KEEP_COUNT) -> int:
     total = len(stash_list)
 
     if total <= keep:
-        return 0
-
+        return EXIT_PASS
     delete_count = total - keep
     deleted = 0
 
@@ -144,19 +144,17 @@ def check_stashes(max_threshold: int = MAX_STASHES, critical_threshold: int = CR
 
     if count <= max_threshold:
         print(f"[OK] stash count = {count} (<= {max_threshold})")
-        return 0
+        return EXIT_PASS
     elif count <= critical_threshold:
         print(f"[WARNING] stash count = {count} (> {max_threshold}) — consider cleanup")
         for line in stash_list:
             print(f"  {line}")
-        return 0
+        return EXIT_PASS
     else:
         print(f"[CRITICAL] stash count = {count} (> {critical_threshold}) — cleanup needed!")
         for line in stash_list:
             print(f"  {line}")
-        return 1
-
-
+        return EXIT_FINDINGS
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="git stash 堆积治理（OPS-2026062501）")
@@ -170,7 +168,7 @@ def main() -> None:
 
     if not any([args.check, args.cleanup, args.archive]):
         print("Usage: cleanup_stash.py --check | --cleanup | --archive [--keep N] [--max M] [--critical C]")
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     if args.archive:
         archive_path = archive_stashes()
@@ -195,7 +193,7 @@ def main() -> None:
         for line in remaining:
             print(f"  {line}")
 
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

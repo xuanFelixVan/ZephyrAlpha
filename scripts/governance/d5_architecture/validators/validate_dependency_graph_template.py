@@ -22,7 +22,7 @@
 [STABILITY] stable
 [SAFETY] M
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] sys.exit(1)
+[ERROR_CONTRACT] sys.exit(EXIT_FINDINGS)
 [TESTS] tests/governance/test_d5_architecture.py
 """
 

@@ -44,6 +44,7 @@ import subprocess
 import sys
 from pathlib import Path
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR
 
 _PROJECT_ROOT = REPO_ROOT
 _COMPLIANCE_SCRIPT = _PROJECT_ROOT / "scripts" / "governance" / "check_blueprint_compliance.py"
@@ -54,7 +55,7 @@ logger = logging.getLogger(__name__)
 def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
     if not _COMPLIANCE_SCRIPT.exists():
         logger.error("合规脚本不存在: %s", _COMPLIANCE_SCRIPT)
-        return 2
+        return EXIT_ERROR
     cmd = [sys.executable, str(_COMPLIANCE_SCRIPT), blueprint_path]
     if warn_only:
         cmd.append("--warn-only")

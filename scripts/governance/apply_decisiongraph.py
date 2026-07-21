@@ -97,6 +97,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 
+from _shared.constants import EXIT_FINDINGS
 from zephyr.governance.persistence.decisiongraph_schema import (
     get_decisiongraph_pg_connection,
     load_build_status_order,
@@ -712,16 +713,16 @@ def cmd_batch(
     p = Path(batch_path)
     if not p.is_file():
         print(f"ERROR: batch file not found: {batch_path}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     try:
         with open(p, encoding="utf-8") as f:
             ops = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         print(f"ERROR: batch file parse failed: {e}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     if not isinstance(ops, list):
         print("ERROR: batch file must be a JSON array of op objects", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     conn = get_decisiongraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
     results: list[dict] = []
@@ -738,7 +739,7 @@ def cmd_batch(
                         file=sys.stderr,
                     )
                     print(f"  (transaction rolled back, {i} prior ops reverted)", file=sys.stderr)
-                    sys.exit(1)
+                    sys.exit(EXIT_FINDINGS)
         if dry_run:
             conn.rollback()
             print(f"[DRY-RUN] {len(results)} ops previewed, transaction rolled back")
@@ -936,7 +937,7 @@ build_status 状态机（单调推进，禁止跳态）：
     except ValueError as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     except Exception as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)

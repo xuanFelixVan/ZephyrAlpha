@@ -59,6 +59,7 @@ def _is_name_main_check(test: ast.expr) -> bool:
 
 def _is_sys_path_call(node: ast.expr) -> bool:
     """判断表达式是否是 sys.path.insert/append 调用（合法的 path 设置）。"""
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
     if not isinstance(node, ast.Call):
         return False
     func = node.func
@@ -161,8 +162,7 @@ def main() -> int:
     test_dir: Path = args.path
     if not test_dir.exists():
         print(f"[ERROR] 测试目录不存在: {test_dir}")
-        return 1
-
+        return EXIT_FINDINGS
     test_files = sorted(test_dir.rglob("test_*.py"))
     print(f"扫描 {len(test_files)} 个 test_*.py 文件...")
 
@@ -189,10 +189,10 @@ def main() -> int:
 
     if total_errors == 0 and total_warns == 0:
         print("  ALL CLEAN")
-        return 0
+        return EXIT_PASS
     if total_errors == 0:
         print("  仅有 WARN（不阻断）")
-        return 0
+        return EXIT_PASS
     print(f"  {'WARN-ONLY（不阻断）' if args.warn_only else 'BLOCKED by ERROR'}")
     return 0 if args.warn_only else 1
 

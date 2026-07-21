@@ -89,6 +89,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.constants import EXIT_FINDINGS, EXIT_ERROR
 
 
 def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
@@ -121,13 +122,13 @@ def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
 
 def _load_depgraph() -> dict:
     """加载 depgraph（内部使用，不暴露给 AI）。"""
-    # 治本（2026-06-27）：删除 if not DEPGRAPH_PATH.exists(): sys.exit(1) 守卫（latent bug）。
+    # 治本（2026-06-27）：删除 if not DEPGRAPH_PATH.exists(): sys.exit(EXIT_FINDINGS) 守卫（latent bug）。
     # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常。
     try:
         return _load_depgraph_from_db()
     except Exception as e:
         print(f"ERROR: Failed to load depgraph from PostgreSQL: {e}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
 
 def _write_output(data: dict | list, output_path: str | None) -> None:

@@ -36,7 +36,7 @@ try:
     import yaml
 except ImportError:
     print("[ERROR] PyYAML 未安装")
-    sys.exit(1)
+    sys.exit(EXIT_FINDINGS)
 
 # 从 _shared.constants 导入 REPO_ROOT（SSoT，禁止重新定义）
 _THIS_FILE = Path(__file__).resolve()
@@ -44,6 +44,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_FINDINGS
 
 SOURCE_YAML = REPO_ROOT / "architecture_model" / "data" / "data_sources_registry.yaml"
 OUTPUT_YAML = REPO_ROOT / "src" / "zephyr" / "data" / "config" / "policies.yaml"
@@ -53,7 +54,7 @@ def generate():
     """从 data_sources_registry.yaml 派生 policies.yaml"""
     if not SOURCE_YAML.exists():
         print(f"[ERROR] 真源不存在: {SOURCE_YAML}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     with open(SOURCE_YAML, encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}

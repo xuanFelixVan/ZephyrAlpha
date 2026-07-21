@@ -22,10 +22,11 @@
 [STABILITY] stable
 [SAFETY] M
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] sys.exit(1)
+[ERROR_CONTRACT] sys.exit(EXIT_FINDINGS)
 [TESTS] tests/governance/test_governance.py
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 __manifest__ = """
 args: []
 description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md
@@ -126,8 +127,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
     path = Path(blueprint_path)
     if not path.exists():
         print(f"ERROR: 文件不存在: {blueprint_path}")
-        return 2
-
+        return EXIT_ERROR
     content = path.read_text(encoding="utf-8")
     content_lower = content.lower()
     headings = re.findall(r"^##+\s+(.+)$", content, re.MULTILINE)
@@ -201,12 +201,10 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
         return 1 if not warn_only else 0
     elif warnings > 0:
         print(f"  结果: ⚠️ WARN ({warnings} 警告)")
-        return 0
+        return EXIT_PASS
     else:
         print("  结果: ✅ PASS")
-        return 0
-
-
+        return EXIT_PASS
 def main():
     parser = argparse.ArgumentParser(description="蓝图模板合规检查门禁")
     parser.add_argument("blueprint", nargs="+", help="蓝图文件路径")

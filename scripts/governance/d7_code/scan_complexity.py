@@ -41,6 +41,7 @@ NO-HIGH-COMPLEXITY gate (priority=85) 只检测**新增**函数的复杂度（�
   2 = src 目录缺失或参数错误
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import argparse
@@ -214,8 +215,7 @@ def main(argv: list[str] | None = None) -> int:
     src_dir = Path(args.src)
     if not src_dir.is_dir():
         print(f"[scan_complexity] 错误: src 目录不存在: {src_dir}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     findings, total_functions, all_complexities = scan_directory(
         src_dir, args.threshold
     )
@@ -243,9 +243,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  超阈值函数: {len(findings)} (阈值={args.threshold})")
 
     if args.ci and findings:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

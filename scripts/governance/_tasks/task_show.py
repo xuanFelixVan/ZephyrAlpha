@@ -48,6 +48,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT as _PROJECT_ROOT, DB_PATH  # noqa: E402
+from _shared.constants import EXIT_FINDINGS
 
 _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
@@ -117,7 +118,7 @@ def main() -> None:
         conn.close()
         if not rows:
             print(f"未找到匹配 '{args.like}' 的任务卡")
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
         print(f"\n匹配 '{args.like}' 的任务卡 ({len(rows)} 张):")
         for r in rows:
             print(f"  {r['task_id']:<24} [{r['status']:<12}] {r['priority']:<4} {r['title']}")
@@ -125,7 +126,7 @@ def main() -> None:
 
     if not args.task_ids:
         parser.print_help()
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     for task_id in args.task_ids:
         card = repo.get(task_id)

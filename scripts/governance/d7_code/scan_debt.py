@@ -39,6 +39,7 @@
   - 误报优先：宁可放过，不可误伤 commit 工作流
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import argparse
@@ -241,8 +242,7 @@ def main(argv: list[str] | None = None) -> int:
     root = Path(args.src)
     if not root.exists():
         print(f"ERROR: 扫描根目录不存在: {root}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     all_violations: list[DebtViolation] = list(scan_dir(root))
 
     # 按类别统计
@@ -264,9 +264,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"总违规 {len(all_violations)} 条: {by_code}")
 
     if args.ci and all_violations:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

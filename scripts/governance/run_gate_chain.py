@@ -15,6 +15,7 @@
 Usage:
     python scripts/governance/run_gate_chain.py script1.py,arg1,arg2 script2.py,arg3
 """
+from _shared.constants import EXIT_ERROR
 import subprocess
 import sys
 
@@ -35,7 +36,7 @@ def main() -> int:
     cmds = sys.argv[1:]
     if not cmds:
         print("Usage: run_gate_chain.py script1.py,arg1 script2.py,arg2", file=sys.stderr)
-        return 2
+        return EXIT_ERROR
     code = 0
     for cmd_str in cmds:
         parts = cmd_str.split(",")

@@ -46,6 +46,7 @@ import yaml
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 # ch_reader 在 src/zephyr/data/ 下
 _SRC_PATH = _REPO_ROOT / "src"
 if str(_SRC_PATH) not in sys.path:
@@ -326,14 +327,12 @@ def _query_single(sql: str) -> str:
 def _parse_int(s) -> int:
     """安全解析整数值。"""
     if s is None:
-        return 0
+        return EXIT_PASS
     s = str(s).strip().replace(",", "")
     try:
         return int(s)
     except (ValueError, TypeError):
-        return 0
-
-
+        return EXIT_PASS
 # ============================================================
 # 表扫描
 # ============================================================
@@ -653,7 +652,7 @@ def main() -> int:
     batch_tables = _get_all_tables_batch()
     if not batch_tables:
         print("[ERROR] 无法连接 ClickHouse 或未找到业务表", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     print(f"  获取到 {len(batch_tables)} 张表", file=sys.stderr)
 
     # 2. 批量获取所有列名
@@ -735,8 +734,6 @@ def main() -> int:
         f"数据总行数 {_fmt_rows(total_rows)}，"
         f"输出到 {OUTPUT_PATH}"
     )
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

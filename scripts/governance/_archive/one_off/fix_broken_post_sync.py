@@ -50,6 +50,7 @@ if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
 from _shared.constants import DB_PATH, REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 from zephyr.governance.persistence.task_repo import PostSyncValidationError, TaskRepository
 
@@ -140,8 +141,7 @@ def main() -> int:
     db_path = Path(args.db)
     if not db_path.exists():
         print(f"[ERROR] governance.db 不存在: {db_path}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     repo = TaskRepository(db_path=db_path, enable_gate=False)
 
     # 1. 扫描所有任务，找出需要修复的活跃任务
@@ -200,8 +200,7 @@ def main() -> int:
     if not to_fix:
         print("[DONE] 无活跃任务需要修复")
         repo.close()
-        return 0
-
+        return EXIT_PASS
     # 4. 展示修复方案
     for task_id, status, old, new in to_fix:
         print(f"  {task_id} ({status})")
@@ -211,8 +210,7 @@ def main() -> int:
     if args.dry_run:
         print(f"\n[DRY-RUN] 预览完成，未写入 DB。{len(to_fix)} 个任务待修复。")
         repo.close()
-        return 0
-
+        return EXIT_PASS
     # 5. 执行修复
     print(f"\n执行修复...")
     success = 0
@@ -238,11 +236,8 @@ def main() -> int:
         print("\n失败详情：", file=sys.stderr)
         for tid, err in failed:
             print(f"  {tid}: {err}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     print("[DONE] 所有活跃任务已修复")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     raise SystemExit(main())

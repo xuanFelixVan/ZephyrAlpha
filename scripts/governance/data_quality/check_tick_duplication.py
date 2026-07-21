@@ -57,7 +57,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_PASS, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_ERROR
 
 __manifest__ = """
 args: [--month, --market-type, --limit, --json]
@@ -325,13 +325,13 @@ def main() -> None:
 
     if not _validate_month(args.month):
         print(f"错误: --month 参数格式错误，应为 YYYYMM（6位数字），实际: {args.month}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     try:
         result = check_duplication(args.month, args.market_type, args.limit)
     except Exception as e:
         print(f"检查失败: {e}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))

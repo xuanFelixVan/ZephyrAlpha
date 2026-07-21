@@ -43,6 +43,7 @@ from _shared.constants import REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.constants import EXIT_PASS
 
 __manifest__ = """
 dimensions: [D1, D5]
@@ -136,7 +137,7 @@ def _compute_insert_position(content: str) -> int:
         if m:
             candidates.append(m.start())
         else:
-            return 0
+            return EXIT_PASS
     return max(candidates)
 
 

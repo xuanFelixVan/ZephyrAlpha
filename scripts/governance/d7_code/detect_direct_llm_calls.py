@@ -58,7 +58,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -392,7 +392,7 @@ def main() -> int:
     # RULE-LSG-001 模式：全量 API 调用检测
     exit_code, violations = scan_all(warn_only=args.warn_only)
     if violations and not (args.warn_only or args.ci):
-        return 1
+        return EXIT_FINDINGS
     return exit_code
 
 

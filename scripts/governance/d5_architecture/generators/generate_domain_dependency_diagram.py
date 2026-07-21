@@ -56,6 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_ERROR
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -290,7 +291,7 @@ def main() -> None:
         else:
             content = generate_dependency_diagram(args.domain_id, conn)
             if not content:
-                sys.exit(2)
+                sys.exit(EXIT_ERROR)
             safe_name = args.domain_id.replace("-", "_").lower()
             out_path = output_dir / f"{safe_name}_dependency.mmd"
             out_path.write_text(content, encoding="utf-8")

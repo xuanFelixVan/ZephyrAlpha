@@ -66,6 +66,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 DST_DB = "depgraph (PostgreSQL)"
 REPORT_PATH = os.getenv(
@@ -433,20 +434,20 @@ def main():
         non_insufficient_missing = len(missing) - len(info_insufficient)
         if non_insufficient_missing <= 0:
             print(f"\n[PASS] MIG-4 验收通过: 差距报告已生成，缺失项=0（信息不足项{len(info_insufficient)}个已豁免）")
-            sys.exit(0)
+            sys.exit(EXIT_PASS)
         else:
             print(
                 f"\n[FAIL] MIG-4 验收失败: 缺失项={len(missing)}，信息不足项={len(info_insufficient)}，非信息不足缺失={non_insufficient_missing}>0"
             )
             print(f"       需执行MIG-5 M5-2补缺步骤补入{non_insufficient_missing}个缺失项")
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
 
     except Exception as e:
         print(f"[ERROR] {e}")
         import traceback
 
         traceback.print_exc()
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     finally:
         conn.close()
 

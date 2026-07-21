@@ -581,7 +581,7 @@ def _fix_all_dict_lifecycle(tree: dict) -> int:
     """Walk entire tree and fix all dict lifecycle values. Returns count fixed."""
     fixed = 0
     if not isinstance(tree, dict):
-        return 0
+        return EXIT_PASS
     _fix_dict_lifecycle(tree)
     if isinstance(tree.get("lifecycle"), str):
         # Was just fixed

@@ -51,6 +51,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS
 
 # ---------------------------------------------------------------------------
 # 重命名映射: (old_relative_path, new_relative_path)
@@ -188,8 +189,7 @@ def update_references_in_file(file_path: Path) -> int:
     try:
         content = file_path.read_text(encoding="utf-8", errors="replace")
     except Exception:
-        return 0
-
+        return EXIT_PASS
     original = content
     total_replacements = 0
 
@@ -205,10 +205,8 @@ def update_references_in_file(file_path: Path) -> int:
             return total_replacements
         except Exception as e:
             print(f"  ERROR 写入失败 {file_path}: {e}")
-            return 0
-    return 0
-
-
+            return EXIT_PASS
+    return EXIT_PASS
 def rename_file(old_rel: str, new_rel: str) -> bool:
     """重命名文件。"""
     old_path = REPO_ROOT / old_rel
@@ -302,8 +300,6 @@ def main() -> int:
     print(f"修复完成: 重命名 {renamed_count} 个文件, 删除 {deleted_count} 个存根")
     print(f"          更新 {files_updated} 个文件中的 {total_replacements} 处引用")
     print("=" * 70)
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

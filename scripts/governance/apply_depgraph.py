@@ -105,7 +105,7 @@ if str(_GOV_DIR) not in sys.path:
 # 治本 #ARCH-TOOL-HEALTH-V1（2026-07-19）：deb695006f 批量重构 sys.exit→EXIT_* 时
 # 误删 get_depgraph_pg_connection import（替换整行而非追加），导致 56 处调用运行时 NameError。
 # 修复：在 EXIT_* 同一 import 语句中显式恢复 get_depgraph_pg_connection。
-from _shared.constants import (  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
     EXIT_ERROR,
     EXIT_FINDINGS,
     EXIT_PASS,
@@ -1653,8 +1653,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
 
             if not ghost_node_ids:
                 print("[OK] 无幽灵节点，无需清理")
-                return 0
-
+                return EXIT_PASS
             if dry_run:
                 print(f"[DRY RUN] 将删除 {len(ghost_node_ids)} 个幽灵节点（磁盘不存在但 depgraph 保留）:")
                 for nid, path in ghost_node_ids[:10]:
@@ -1701,8 +1700,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = None) -> int:
 
             if orphan_count == 0:
                 print("[OK] 无孤儿边，无需清理")
-                return 0
-
+                return EXIT_PASS
             if dry_run:
                 print(f"[DRY RUN] 将删除 {orphan_count} 条孤儿边")
                 samples = conn.execute(
@@ -2723,7 +2721,7 @@ def cmd_apply_domain_id_check(
         ).fetchone()
         if row["cnt"] > 0:
             print(f"  {mode} CHECK 约束 '{_CHECK_NAME}' 已存在，跳过", file=sys.stderr)
-            return 0
+            return EXIT_PASS
         # 2. 预检所有 domain_id 值（避免 ALTER 失败）
         invalid_rows = c.execute(
             "SELECT domain_id FROM domains WHERE NOT (domain_id ~ %s)",
@@ -2751,8 +2749,7 @@ def cmd_apply_domain_id_check(
             if own_conn:
                 c.commit()
         print(f"{mode} cmd_apply_domain_id_check: CHECK 约束已应用", file=sys.stderr)
-        return 0
-
+        return EXIT_PASS
     c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
     try:
         return _run(c)
@@ -2792,12 +2789,10 @@ def cmd_fix_domains_defaults(
 
         if current_default and "'planned'" in current_default:
             print(f"  {mode} DEFAULT 已是 'planned'，跳过", file=sys.stderr)
-            return 0
-
+            return EXIT_PASS
         if current_default and "'unbuilt'" not in current_default:
             print(f"  {mode} DEFAULT 既不是 'unbuilt' 也不是 'planned'，跳过（未知值）", file=sys.stderr)
-            return 0
-
+            return EXIT_PASS
         # 2. ALTER TABLE ALTER COLUMN SET DEFAULT
         print(f"  {mode} ALTER TABLE domains ALTER COLUMN build_status SET DEFAULT 'planned'", file=sys.stderr)
         if not dry_run:
@@ -2805,8 +2800,7 @@ def cmd_fix_domains_defaults(
             if own_conn:
                 c.commit()
         print(f"{mode} cmd_fix_domains_defaults: DEFAULT 已修复为 'planned'", file=sys.stderr)
-        return 0
-
+        return EXIT_PASS
     c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
     try:
         return _run(c)
@@ -3346,7 +3340,7 @@ def cmd_update_domain_name(
         mode = "[DRY RUN]" if dry_run else "[OK]"
         print(f"  {mode} domains.domain_name: '{row['domain_name']}' -> '{new_name}'", file=sys.stderr)
         if dry_run:
-            return 1
+            return EXIT_FINDINGS
         cur = c.execute("UPDATE domains SET domain_name=%s WHERE domain_id=%s", (new_name, domain_id))
         if own_conn:
             c.commit()
@@ -3552,8 +3546,7 @@ def cmd_update_path(
 
             if not updates:
                 print("WARNING: 没有需要更新的节点（全部跳过）", file=sys.stderr)
-                return 0
-
+                return EXIT_PASS
             if dry_run:
                 for node_id, old_path, new_path in updates:
                     print(f"[DRY RUN] 将 UPDATE node_id={node_id} path: {old_path} -> {new_path}", file=sys.stderr)
@@ -4818,7 +4811,7 @@ def main() -> None:
         # 输出 JSON 摘要供脚本消费
         import json as _json
         print(_json.dumps(result, ensure_ascii=False, indent=2))
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     if args.list_ops:
         # op 清单从注册表自动派生（§6.16 铁律：禁止手工同步到 docstring/AGENTS.md）

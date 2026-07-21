@@ -18,6 +18,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_FINDINGS
 
 VALID_BUILD_STATUS = {"planned", "generated", "testing", "stable", "deprecated"}  # noqa: gate-vocab  build_status 枚举，非 module_lifecycle_status
 VALID_DESIGN_MATURITY = {"design", "production", "prototype"}  # noqa: gate-vocab  design_maturity 业务子集（排除 legacy）
@@ -197,7 +198,7 @@ def clean_depgraph():
         conn.rollback()
         print(f"\n[ROLLBACK] Error: {e}", file=sys.stderr)
         print(f"All changes rolled back. {DB_DISPLAY_NAME} is unchanged.", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     finally:
         conn.close()
 

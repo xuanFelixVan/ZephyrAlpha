@@ -38,6 +38,7 @@
   Type D — 其他（多副本/测试文件等）
 """
 
+from _shared.constants import EXIT_ERROR
 from __future__ import annotations
 
 import argparse
@@ -229,13 +230,11 @@ def main() -> int:
 
     if not args.scan_existing:
         parser.print_help()
-        return 2
-
+        return EXIT_ERROR
     root = Path(args.root) if args.root else Path(__file__).resolve().parents[3]
     if not root.is_dir():
         print(f"ERROR: root not found: {root}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     result = scan_existing(root, src_only=args.src_only)
 
     if args.json:

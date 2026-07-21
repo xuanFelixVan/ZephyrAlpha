@@ -51,6 +51,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[4]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 try:
     from _common import DB_DISPLAY_NAME, cleanup_stale_files  # noqa: E402
 except ImportError:
@@ -1059,8 +1060,7 @@ def main() -> int:
         conn = get_decisiongraph_pg_connection()
     except Exception as e:
         print(f"[ERROR] decisiongraph 连接失败: {e}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     try:
         tracks, layers, nodes, edges = _fetch_decision_data(conn)
         bp_map = _resolve_blueprint_names(conn, layers)
@@ -1073,8 +1073,7 @@ def main() -> int:
 
     if not tracks and not layers:
         print("[WARN] decisiongraph 表为空，请先运行 generate_decision_graph.py 同步 decision_graph_model.yaml")
-        return 2
-
+        return EXIT_ERROR
     invariants = _load_invariants()
 
     out_dir = Path(args.output_dir)
@@ -1123,8 +1122,6 @@ def main() -> int:
         f"[OK] 生成 {total_files} 文件 (1 index + {len(tracks)} tracks + "
         f"{len(domain_index)} domains + 2 aux) 到 {out_dir}"
     )
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

@@ -29,6 +29,7 @@
 [TESTS] python scripts/governance/verify_key_imports.py
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from __future__ import annotations
 
 __manifest__ = """
@@ -70,9 +71,9 @@ def main() -> None:
         print(f"\n{len(failures)} 个模块导入失败:")
         for mod, err in failures:
             print(f"  {mod}: {err}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     print(f"\n全部 {len(KEY_MODULES)} 个关键模块导入成功")
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

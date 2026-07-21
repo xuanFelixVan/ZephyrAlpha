@@ -49,6 +49,7 @@
   - 误报优先：宁可放过，不可误伤 commit 工作流
 """
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import argparse
@@ -411,12 +412,10 @@ def main(argv: list[str] | None = None) -> int:
         ]
         if not file_list:
             print("[check_any_abuse] 无 src/zephyr/ 下的 .py 文件，跳过")
-            return 0
-
+            return EXIT_PASS
     if not args.src.exists() and not file_list:
         print(f"[check_any_abuse] 错误：src 目录不存在: {args.src}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     violations = scan_directory(args.src, file_list)
 
     # 过滤 ERROR 类型（文件读取/语法错误单独报告）
@@ -430,8 +429,7 @@ def main(argv: list[str] | None = None) -> int:
     if not real_violations:
         if not args.quiet:
             print("[check_any_abuse] clean — 无函数签名裸 Any 滥用")
-        return 0
-
+        return EXIT_PASS
     # 输出违规
     for v in real_violations:
         print(v.format())
@@ -450,9 +448,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     if args.ci:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

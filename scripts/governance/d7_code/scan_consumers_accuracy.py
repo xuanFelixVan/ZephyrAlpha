@@ -58,6 +58,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from _shared.constants import EXIT_FINDINGS
 from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (  # noqa: E402
     _check_module_path_exists,
     _is_abstract_code,
@@ -339,8 +340,7 @@ def main() -> int:
     project_root = Path(args.src).resolve()
     if not project_root.exists():
         print(f"错误: 项目根目录不存在: {project_root}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     check_stale = not args.no_stale
 
     # 查找所有 .py 文件

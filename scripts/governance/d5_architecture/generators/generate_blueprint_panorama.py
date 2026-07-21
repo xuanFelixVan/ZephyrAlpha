@@ -56,6 +56,7 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, str(_p))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     get_dataflowgraph_pg_connection,
@@ -737,8 +738,7 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
         panorama = _collect_panorama(module_id)
     except Exception as exc:
         print(f"[ERROR] 采集 {module_id} 数据失败: {exc}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     # depgraph 无此模块 → 跳过（ERROR_CONTRACT exit 3 语义，但此处返回 3 不退出）
     if panorama.depgraph is None:
         print(
@@ -753,8 +753,7 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
             f"[SKIP] {module_id}: 蓝图文件未找到（frontmatter.module_id 无匹配），跳过",
             file=sys.stderr,
         )
-        return 0
-
+        return EXIT_PASS
     new_s06 = _generate_s06_section(panorama)
     updated = _update_blueprint_file(
         panorama.blueprint, new_s06, dry_run=dry_run
@@ -768,9 +767,7 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
         )
     else:
         print(f"[OK] {module_id}: §0.6 已是最新，无需更新")
-    return 0
-
-
+    return EXIT_PASS
 def generate_all(*, dry_run: bool = False) -> int:
     """生成所有 depgraph 中有 blueprint_id 的模块的 §0.6。
 

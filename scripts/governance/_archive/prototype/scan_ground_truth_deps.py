@@ -27,6 +27,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC
 from pathlib import Path
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS
 
 PROJECT_ROOT = REPO_ROOT
 ZEPHYR_ROOT = PROJECT_ROOT / "src" / "zephyr"
@@ -668,8 +669,6 @@ def main():
         if len(cycles) > 0:
             print(f"[WARN] {len(cycles)} file-level cycles detected")
 
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

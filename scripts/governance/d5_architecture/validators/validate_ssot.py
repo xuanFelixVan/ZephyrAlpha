@@ -24,6 +24,7 @@ import re
 from pathlib import Path
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 __manifest__ = """
 args: []
@@ -490,10 +491,8 @@ def main() -> int:
         print(f"[FAIL] SSoT 覆盖范围一致性校验发现 {len(violations)} 个问题:")
         for v in violations:
             print(f"  - [{v.severity}] {v.check_id}: {v.description}")
-        return 1
+        return EXIT_FINDINGS
     print("[PASS] SSoT 覆盖范围一致性校验通过")
-    return 0
-
-
+    return EXIT_PASS
 if __name__ == "__main__":
     raise SystemExit(main())

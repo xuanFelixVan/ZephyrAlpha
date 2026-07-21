@@ -44,6 +44,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
+from _shared.constants import EXIT_PASS
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.persistence.dataflowgraph_schema import (
     get_dataflowgraph_pg_connection,
@@ -260,9 +261,7 @@ def _print_single_module(module_id: str) -> int:
         print("  （无）")
 
     print(f"{'=' * 60}")
-    return 0
-
-
+    return EXIT_PASS
 def _print_all_modules() -> int:
     """打印全项目蓝图级模块表。"""
     modules = _query_all_modules()
@@ -280,9 +279,7 @@ def _print_all_modules() -> int:
         print(f"{bp:<30s} {dom:<20s} {files:>5d} {dm:<15s} {bs:<12s} {entry:>5s}")
     print(f"{'-' * 100}")
     print(f"总计：{len(modules)} 个蓝图级模块")
-    return 0
-
-
+    return EXIT_PASS
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="模块全景查询入口（四图模块对齐 Step 5）"

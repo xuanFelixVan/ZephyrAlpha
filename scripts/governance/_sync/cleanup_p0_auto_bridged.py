@@ -44,13 +44,13 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import DB_PATH  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 
 def main() -> int:
     if not DB_PATH.exists():
         print(f"[ERROR] DB 不存在: {DB_PATH}")
-        return 1
-
+        return EXIT_FINDINGS
     conn = sqlite3.connect(str(DB_PATH))
     try:
         conn.execute("PRAGMA journal_mode=WAL")
@@ -72,8 +72,7 @@ def main() -> int:
 
         if total == 0:
             print("DB is clean.")
-            return 0
-
+            return EXIT_PASS
         downgraded = conn.execute(
             "UPDATE tasks SET priority = 'P1' "
             "WHERE tags LIKE '%auto-bridged%' "
@@ -96,7 +95,7 @@ def main() -> int:
         print("\n已完成:")
         print(f"  P0→P1 降级: {downgraded}")
         print(f"  PENDING→COMPLETED: {closed}")
-        return 0
+        return EXIT_PASS
     finally:
         conn.close()
 

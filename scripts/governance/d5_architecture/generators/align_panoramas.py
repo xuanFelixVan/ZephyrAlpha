@@ -57,6 +57,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[4]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 try:
     from _common import DB_DISPLAY_NAME  # noqa: E402
 except ImportError:
@@ -789,12 +790,10 @@ def main() -> int:
     except PanoramaEmptyError as e:
         # ERROR_CONTRACT: 三图（depgraph/dataflow/decision）任一为空 → exit 2
         print(f"ERROR: {e}", file=sys.stderr)
-        return 2
+        return EXIT_ERROR
     except Exception as e:
         print(f"ERROR: {e}", file=sys.stderr)
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

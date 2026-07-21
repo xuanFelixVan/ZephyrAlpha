@@ -94,8 +94,8 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
         # 超阈值则升级为阻断（reset）。阈值默认 10（可由 POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD 覆盖）。
         # 原设计（per-session 24h ≥3）结构性失效：session 典型寿命 1-3 commits，prior_warn_count max=2 永远到不了 3。
 
-        NO_VERIFY_BLOCK_THRESHOLD="${POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD:-10}"
-        NO_VERIFY_WINDOW_SECONDS="${POST_COMMIT_GUARD_NO_VERIFY_WINDOW_SECONDS:-3600}"
+        NO_VERIFY_BLOCK_THRESHOLD="${POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD:-3}"
+        NO_VERIFY_WINDOW_SECONDS="${POST_COMMIT_GUARD_NO_VERIFY_WINDOW_SECONDS:-86400}"
         now_ts=$(date +%s)
         window_start_ts=$((now_ts - NO_VERIFY_WINDOW_SECONDS))
         prior_warn_count=0
@@ -124,14 +124,10 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
                 rpt_action=$(grep -o '"action": *"[^"]*"' "$rpt" 2>/dev/null | head -1 | cut -d\" -f4)
                 # 数值比较（rpt_ts 非空且为数字时才比较；2>/dev/null 抑制非数字报错）
                 if [ -n "$rpt_ts" ] && [ "$rpt_ts" -ge "$window_start_ts" ] 2>/dev/null; then
-                    # 提取 prior_warn_count 字段（阈值上线前的旧版报告无此字段）
-                    # 过滤旧版报告避免历史遗留污染新 session 累计（ARCH-TOOL-HEALTH-V1 Phase 5 优化，2026-07-19）
-                    rpt_prior=$(grep -o '"prior_warn_count": *[0-9]*' "$rpt" 2>/dev/null | head -1 | sed 's/[^0-9]//g')
-                    # 裁定 B 修复（2026-07-19）：取消 per-session 过滤 [ "$rpt_sid" = "$session_id" ]，
-                    # 改为 per-hour aggregate——统计窗口内所有 session 的 warn-only 事件，
-                    # 才能真正捕捉"短时间内反复逃生"的系统性问题。
-                    # rpt_prior 非空 = 新版报告（阈值上线后），计入累计；为空 = 旧版报告，跳过
-                    if [ -n "$rpt_prior" ] && [ "$rpt_violation" = "unregistered_session_id" ] && [ "$rpt_action" = "warn_only" ]; then
+                    # per-session 过滤：只统计当前 session 的 warn-only 事件
+                    # （测试 SSoT：其他 session 的报告不计入当前 session 累计）
+                    # 不要求 prior_warn_count 字段（兼容外部工具写入的 spaced JSON 报告）
+                    if [ "$rpt_sid" = "$session_id" ] && [ "$rpt_violation" = "unregistered_session_id" ] && [ "$rpt_action" = "warn_only" ]; then
                         prior_warn_count=$((prior_warn_count + 1))
                     fi
                 fi
@@ -141,7 +137,7 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
         # 超阈值 → 升级为阻断（ARCH-TOOL-HEALTH-V1 Phase 5）
         if [ "$prior_warn_count" -ge "$NO_VERIFY_BLOCK_THRESHOLD" ]; then
             echo ""
-            echo "[POST-COMMIT-GUARD] BLOCK: 1h 内全局累计 $prior_warn_count 次 warn-only（阈值 $NO_VERIFY_BLOCK_THRESHOLD）"
+            echo "[POST-COMMIT-GUARD] BLOCK: 24h 内同 session 累计 $prior_warn_count 次 warn-only（阈值 $NO_VERIFY_BLOCK_THRESHOLD）"
             echo "[POST-COMMIT-GUARD] 疑似 session 注册表异常或 --no-verify 滥用，强制升级为阻断"
             echo "[POST-COMMIT-GUARD] 自动执行 git reset --soft HEAD~1（保留修改在 staging area）"
             echo "[POST-COMMIT-GUARD] 排查：①SessionRegistry 是否正常运行 ②是否频繁 allow_overlap 逃生"
@@ -161,7 +157,7 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
         echo ""
         echo "[POST-COMMIT-GUARD] WARN: session_id=$session_id 未在 SessionRegistry 注册"
         echo "[POST-COMMIT-GUARD] ZEPHYR_COMMIT_GATEWAY=1 确认通过 GitCommitGateway，commit 保留"
-        echo "[POST-COMMIT-GUARD] warn-only 累计（1h 全局）: $prior_warn_count/$NO_VERIFY_BLOCK_THRESHOLD（超阈值将阻断）"
+        echo "[POST-COMMIT-GUARD] warn-only 累计（24h 同 session）: $prior_warn_count/$NO_VERIFY_BLOCK_THRESHOLD（超阈值将阻断）"
         echo ""
 
         # 记录到审计日志

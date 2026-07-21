@@ -48,6 +48,7 @@ _SCRIPT_DIR = Path(__file__).resolve().parent
 _REPO_ROOT = _SCRIPT_DIR.parents[1]
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
+from _shared.constants import EXIT_ERROR
 from zephyr.shared.io.paths import REPO_ROOT
 
 SRC_ZEPHYR = REPO_ROOT / "src" / "zephyr"
@@ -69,7 +70,7 @@ def get_orphan_modules() -> tuple[list[dict], dict[str, list[str]]]:
     )
     if result.returncode not in (0, 1):
         print(f"ERROR: audit_registration.py 失败: {result.stderr}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
     data = json.loads(result.stdout)
     return data.get("orphan_modules", []), data.get("import_map", {})
 

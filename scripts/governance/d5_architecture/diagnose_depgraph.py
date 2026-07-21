@@ -45,6 +45,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.constants import EXIT_PASS
 from zephyr.shared.io.yaml_utils import load_vocabulary_entries, load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
 PROJECT_ROOT = REPO_ROOT
@@ -741,7 +742,7 @@ def main():
         if reason:
             print("    Reason: %s" % reason)
 
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

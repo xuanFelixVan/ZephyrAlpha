@@ -119,8 +119,7 @@ def cmd_add_design_dataset(args: argparse.Namespace) -> int:
             cur.execute("SELECT 1 FROM dataflow_datasets WHERE entity_name = %s", (args.entity_name,))
             if cur.fetchone() is not None:
                 print(f"ERROR: Dataset entity_name={args.entity_name!r} 已存在", file=sys.stderr)
-                return 1
-
+                return EXIT_FINDINGS
             extra = _parse_kv_pairs(args.extra)
             cur.execute("""
                 INSERT INTO dataflow_datasets
@@ -138,11 +137,11 @@ def cmd_add_design_dataset(args: argparse.Namespace) -> int:
             dataset_id = cur.fetchone()[0]
         conn.commit()
         print(f"OK: 新增设计态 Dataset dataset_id={dataset_id} entity_name={args.entity_name!r} (design_maturity=design, build_status=planned)")
-        return 0
+        return EXIT_PASS
     except Exception as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     finally:
         try:
             release_dataflow_write_lock(conn)
@@ -161,8 +160,7 @@ def cmd_add_design_job(args: argparse.Namespace) -> int:
             cur.execute("SELECT 1 FROM dataflow_jobs WHERE job_name = %s", (args.job_name,))
             if cur.fetchone() is not None:
                 print(f"ERROR: Job job_name={args.job_name!r} 已存在", file=sys.stderr)
-                return 1
-
+                return EXIT_FINDINGS
             cur.execute("""
                 INSERT INTO dataflow_jobs
                     (job_name, entity_type, scope, source_code_ref, trigger_type,
@@ -177,11 +175,11 @@ def cmd_add_design_job(args: argparse.Namespace) -> int:
             job_id = cur.fetchone()[0]
         conn.commit()
         print(f"OK: 新增设计态 Job job_id={job_id} job_name={args.job_name!r} (design_maturity=design, build_status=planned)")
-        return 0
+        return EXIT_PASS
     except Exception as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     finally:
         try:
             release_dataflow_write_lock(conn)
@@ -210,11 +208,11 @@ def cmd_add_design_edge(args: argparse.Namespace) -> int:
             edge_id = cur.fetchone()[0]
         conn.commit()
         print(f"OK: 新增设计态 Edge edge_id={edge_id} {args.from_type}({args.from_id}) --{args.edge_type}--> {args.to_type}({args.to_id})")
-        return 0
+        return EXIT_PASS
     except Exception as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     finally:
         try:
             release_dataflow_write_lock(conn)
@@ -257,14 +255,14 @@ def cmd_transition_build_status(args: argparse.Namespace) -> int:
             )
             if cur.rowcount == 0:
                 print(f"ERROR: 未找到 {args.entity_type} {args.entity_ref!r}", file=sys.stderr)
-                return 1
+                return EXIT_FINDINGS
         conn.commit()
         print(f"OK: {args.entity_type} {args.entity_ref!r} build_status -> {args.new_status}")
-        return 0
+        return EXIT_PASS
     except Exception as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)
-        return 1
+        return EXIT_FINDINGS
     finally:
         try:
             release_dataflow_write_lock(conn)
@@ -291,7 +289,7 @@ def cmd_list_datasets(args: argparse.Namespace) -> int:
         for row in rows:
             print(f"{row[0]:>4}  {row[1]:40}  {row[2]:18}  {row[3] or '-'!s:12}  {row[4] or '-'!s:14}  {row[5]:10}  {row[6]:10}")
         print(f"\n共 {len(rows)} 个 Dataset")
-        return 0
+        return EXIT_PASS
     finally:
         conn.close()
 
@@ -314,7 +312,7 @@ def cmd_list_jobs(args: argparse.Namespace) -> int:
         for row in rows:
             print(f"{row[0]:>4}  {row[1]:35}  {row[2]:18}  {row[3] or '-'!s:50}  {row[4] or '-'!s:12}  {row[5]:10}  {row[6]:10}")
         print(f"\n共 {len(rows)} 个 Job")
-        return 0
+        return EXIT_PASS
     finally:
         conn.close()
 
@@ -334,9 +332,7 @@ def cmd_list_ops() -> int:
     print("  --list-ops                  列出本帮助")
     print()
     print("写入互斥锁 key: %d（与 depgraph 的 424242 互不干扰）" % _DATAFLOW_ADVISORY_LOCK_KEY)
-    return 0
-
-
+    return EXIT_PASS
 # ---------------------------------------------------------------------------
 # CLI 定义
 # ---------------------------------------------------------------------------

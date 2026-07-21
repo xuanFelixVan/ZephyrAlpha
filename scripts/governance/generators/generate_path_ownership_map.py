@@ -54,6 +54,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT
 from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.constants import EXIT_FINDINGS
 from zephyr.governance.rule_patterns import MODULE_ID_RE  # noqa: E402  # SSoT 治本 2026-07-02 (ARCH-033 Phase 7)
 
 # v2.0.0: 数据源改为 depgraph.nodes（真源），不再解析蓝图 §0.1
@@ -332,7 +333,7 @@ def cmd_write() -> None:
 def cmd_check() -> None:
     if not OUTPUT_FILE.exists():
         print("[FAIL] path_ownership_map.yaml does not exist. Run with --write first.")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     generated = generate_yaml()
     current = OUTPUT_FILE.read_text(encoding="utf-8")
     gen_stripped = re.sub(r"generated_at: '[^']*'", "generated_at: ''", generated)
@@ -340,7 +341,7 @@ def cmd_check() -> None:
     if cur_stripped.strip() != gen_stripped.strip():
         print("[FAIL] path_ownership_map.yaml is OUT OF SYNC with blueprints.")
         print("       Run: python scripts/governance/generators/generate_path_ownership_map.py --write")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     else:
         print("[OK] path_ownership_map.yaml is in sync with blueprints.")
 
@@ -357,7 +358,7 @@ def cmd_conflicts() -> None:
         for claimant in c["claimants"]:
             print(f"    Claimed by: {claimant['blueprint']} ({claimant['claim_type']}) in {claimant['declared_in']}")
         print(f"    Resolution: {c['resolution']}")
-    sys.exit(1)
+    sys.exit(EXIT_FINDINGS)
 
 
 def main() -> None:

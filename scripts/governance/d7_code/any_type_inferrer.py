@@ -60,6 +60,7 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from scripts.governance.d7_code.check_any_abuse import (  # noqa: E402  project module per IMPORT-INTEGRITY gate
     _CALLABLE_TYPES,
     _CONTAINER_TYPES,
@@ -833,12 +834,10 @@ def main(argv: list[str] | None = None) -> int:
     file_list = _filter_file_list(args)
     if args.files and not file_list:
         print("[any_type_inferrer] 无 src/zephyr/ 下的 .py 文件，跳过")
-        return 0
-
+        return EXIT_PASS
     if not args.src.exists() and not file_list:
         print(f"[any_type_inferrer] 错误：src 目录不存在: {args.src}", file=sys.stderr)
-        return 2
-
+        return EXIT_ERROR
     findings = scan_directory(args.src, file_list)
     write_report(findings, args.output, args.src)
 
@@ -853,10 +852,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"(confidence >= {args.threshold})",
                 file=sys.stderr,
             )
-            return 1
-
-    return 0
-
-
+            return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

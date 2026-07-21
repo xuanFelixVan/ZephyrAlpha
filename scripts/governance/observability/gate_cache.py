@@ -42,6 +42,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.constants import EXIT_PASS
 
 _BUF_SIZE = 65536
 
@@ -180,8 +181,8 @@ def main() -> None:
     print(f"  total_size:    {st['total_size_bytes']} bytes")
 
     if args.warn_only:
-        sys.exit(0)
-    sys.exit(0)
+        sys.exit(EXIT_PASS)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

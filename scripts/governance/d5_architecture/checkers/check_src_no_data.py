@@ -45,6 +45,7 @@ if _GOV_DIR not in sys.path:
 
 import yaml as _yaml  # noqa: E402
 from _shared.constants import REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 # ── 真源加载：从 directory_contract.yaml 动态加载 forbidden prefixes ──
 _CONTRACT_PATH = (
@@ -114,12 +115,10 @@ def main():
 
     files = get_staged_files()
     if not files:
-        return 0
-
+        return EXIT_PASS
     violations = check_src_no_data(files)
     if not violations:
-        return 0
-
+        return EXIT_PASS
     msg = (
         f"[GATE-SRC-NO-DATA] 违规：src/ 下禁止 data/ 子目录（数据真源唯一位置为 data/）\n"
         f"  违规文件：{violations}\n"
@@ -130,9 +129,7 @@ def main():
     print(msg, file=sys.stderr)
 
     if args.ci:
-        return 1
-    return 0
-
-
+        return EXIT_FINDINGS
+    return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())

@@ -38,6 +38,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -54,7 +55,7 @@ def get_orphan_modules() -> list[dict]:
     )
     if result.returncode not in (0, 1):
         print(f"ERROR: audit_registration.py 失败: {result.stderr}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     data = json.loads(result.stdout)
     return data.get("orphan_modules", [])

@@ -41,14 +41,22 @@ SSoT: cross_layer_contracts.yaml -> CTR-001
 
 from __future__ import annotations
 
-from typing import Final
+from typing import TYPE_CHECKING, Final, Iterator
 import logging
 from datetime import UTC, datetime, timedelta
 
 import numpy as np
 import pandas as pd
 
-from zephyr.data.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.data.provider_base import (
+    DataSourceBase,
+    DataSourceMeta,
+    FetchPayload,
+    FetchResult,
+)
+
+if TYPE_CHECKING:
+    from zephyr.data.policy_registry import SourcePolicy
 
 _logger = logging.getLogger(__name__)
 
@@ -132,6 +140,7 @@ class MemoryProvider(DataSourceBase):
         base_prices: dict[str, float] | None = None,
         seed: int = 42,
     ):
+        super().__init__()
         self._symbols = symbols or DEFAULT_SYMBOLS
         self._start_date = start_date or datetime(2024, 1, 1, tzinfo=UTC)
         self._base_prices = base_prices or {
@@ -148,6 +157,58 @@ class MemoryProvider(DataSourceBase):
         }
         self._seed = seed
         self._cache: dict[str, pd.DataFrame] = {}
+
+    # ---- DataSourceBase 抽象方法实现 ----
+
+    def connect(self) -> None:
+        """建立连接。内存数据源无需外部资源，直接标记为已连接。"""
+        self._connected = True
+
+    def disconnect(self) -> None:
+        """断开连接。内存数据源无持久资源，仅重置状态。"""
+        self._connected = False
+
+    def health_check(self) -> bool:
+        """探活。内存数据源始终可用。"""
+        return True
+
+    def fetch(
+        self, payload: FetchPayload, policy: "SourcePolicy"
+    ) -> Iterator[FetchResult]:
+        """按 payload 拉取数据，返回 FetchResult 迭代器。
+
+        内存数据源将 fetch_historical 的 DataFrame 转换为 FetchResult。
+        每个 symbol 一批。
+        """
+        import time as _time
+
+        symbols = payload.symbols or self._symbols
+        start_dt = datetime.combine(payload.start, datetime.min.time(), tzinfo=UTC)
+        end_dt = datetime.combine(payload.end, datetime.min.time(), tzinfo=UTC)
+        columns = ["date", "open", "high", "low", "close", "volume", "amount"]
+
+        for sym in symbols:
+            t0 = _time.time()
+            try:
+                df = self.fetch_historical(sym, start_dt, end_dt)
+                rows = [tuple(row) for row in df.itertuples(index=False, name=None)]
+                last_key = str(payload.end)
+                yield FetchResult(
+                    table=payload.table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=_time.time() - t0,
+                )
+            except Exception as e:  # noqa: BLE001 — broad exception catch for data fetch
+                yield FetchResult(
+                    table=payload.table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=_time.time() - t0,
+                    error=f"memory fetch failed for {sym}: {e}",
+                )
 
     def fetch_historical(
         self,

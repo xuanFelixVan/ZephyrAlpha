@@ -53,6 +53,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS
 _CHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
 
 TARGET_RULES = {"N-03", "N-09", "N-10", "N-11", "N-16"}
@@ -135,10 +136,10 @@ def _to_snake_case(name: str) -> str:
 def _batch_update_references(renames: list[tuple[str, str]], dry_run: bool = False) -> int:
     """批量更新所有引用。单次 os.walk 遍历。renames = [(old_basename, new_basename), ...]"""
     if not renames:
-        return 0
+        return EXIT_PASS
     rename_map = {old: new for old, new in renames if old != new}
     if not rename_map:
-        return 0
+        return EXIT_PASS
     updated = 0
     extensions = (".py", ".yaml", ".yml", ".md", ".json", ".toml", ".cfg", ".ini", ".txt")
     # 跳过备份/归档/snapshot目录（不应修改）

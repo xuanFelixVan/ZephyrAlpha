@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.execution.fill
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.contracts.fill
 # [CONSUMERS] ex_core; pf_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,32 +14,14 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_fill | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# ==== BEGIN CODGEN:CTR-005 ====
+"""Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fill（CTR-005 codegen）
+
+治本修复: 原文件重复定义 Fill 类（多真源），导致 isinstance 跨模块判断失败。
+改为 re-export shared 层真源，消除多真源。
+SSoT: cross_layer_contracts.yaml -> CTR-005 (codegen 生成 shared/contracts/fill.py)
+"""
 from __future__ import annotations
-from dataclasses import dataclass
-from datetime import datetime
-from decimal import Decimal
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from zephyr.shared.contracts.trace_context import TraceContext
+from zephyr.shared.contracts.fill import Fill
 
-
-@dataclass(frozen=True)
-class Fill:
-    fill_id: str
-    fill_price: Decimal
-    fill_timestamp: datetime
-    filled_quantity: Decimal
-    idempotency_key: str
-    order_id: str
-    strategy_id: str
-    symbol: str
-    broker_fill_id: str | None = None
-    commission: Decimal = Decimal("0")
-    schema_version: str = "1.0"
-    slippage: Decimal | None = None
-    trace_context: TraceContext | None = None
-
-
-# ==== END CODGEN:CTR-005 ====
+__all__ = ["Fill"]

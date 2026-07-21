@@ -52,6 +52,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT as _REPO_ROOT  # noqa: E402  治本(2026-06-30): SSoT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 # Whitelist: depgraph_schema.py (depgraph.db migrations) + sqlite_schema.py (governance.db migrations)
 WHITELIST = {
     "src/zephyr/governance/depgraph_schema.py",
@@ -131,11 +132,9 @@ def run_ast_scan() -> int:
         print(f"  [FAIL] Found {len(all_violations)} violation(s):")
         for v in all_violations:
             print(f"    - {v}")
-        return 1
+        return EXIT_FINDINGS
     print("  [PASS] No _schema_version writes found outside whitelist.")
-    return 0
-
-
+    return EXIT_PASS
 def run_db_check() -> int:
     """DB state check: verify _schema_version.MAX(version) == _MIGRATIONS max version."""
     print("[G_TRAE_059] DB check: verifying schema version consistency...")
@@ -158,11 +157,9 @@ def run_db_check() -> int:
 
     if db_max != migrations_max:
         print(f"  [FAIL] Version mismatch: DB v{db_max} != MIGRATIONS v{migrations_max}")
-        return 1
+        return EXIT_FINDINGS
     print("  [PASS] DB version matches _MIGRATIONS max version.")
-    return 0
-
-
+    return EXIT_PASS
 def main() -> int:
     args = sys.argv[1:]
     if "--db-check" in args:

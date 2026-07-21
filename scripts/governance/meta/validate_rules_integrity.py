@@ -65,6 +65,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.constants import EXIT_FINDINGS
 
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _INTEGRITY_DB = _SCRIPTS_DIR / "meta" / "rules_integrity_db.json"
@@ -369,7 +370,7 @@ def main() -> None:
                 "GitCommitGateway commit（post-commit 自动注册基线）。",
                 file=sys.stderr,
             )
-            sys.exit(1)
+            sys.exit(EXIT_FINDINGS)
         result = register()
         print(f"[INTEGRITY] ✅ 已注册 {result['count']} 个规则文件的 Hash", file=sys.stderr)
     elif args.diff:

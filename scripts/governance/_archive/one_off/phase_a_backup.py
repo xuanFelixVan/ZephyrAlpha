@@ -52,6 +52,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_FINDINGS
 
 _MAX_WORKERS = 8
 
@@ -648,7 +649,7 @@ def main() -> None:
     if not any([args.tier0, args.tier1, args.tier2, args.all]):
         parser.print_help()
         print("\n[ERROR] 请至少指定一个操作模式 (--tier0/--tier1/--tier2/--all/--verify-only)", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     # Determine timestamp and backup directory
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")

@@ -61,6 +61,7 @@ import sys
 from pathlib import Path
 from typing import Any
 from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 _PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
@@ -340,8 +341,7 @@ def main() -> int:
         result = run_checks(args.file_path)
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)
-        return 1
-
+        return EXIT_FINDINGS
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
@@ -364,7 +364,7 @@ def main() -> int:
             print("  Action required: 修复以上 BLOCK 项后重试（RULE-THREE）")
 
     if args.warn_only:
-        return 0
+        return EXIT_PASS
     return 0 if result["safe"] else 1
 
 
