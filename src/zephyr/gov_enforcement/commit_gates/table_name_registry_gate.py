@@ -5,16 +5,16 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] warn-only——检测 staged .py added 行中的硬编码表名字符串（绕过 TableRegistry 真源）+ tasks.yaml 表名校验；命中返回 passed=True + warning detail（不阻断）；tests/豁免；docstring 行豁免；table_registry.py 自身豁免；fail-open（TableRegistry 空/不可用/git diff 不可达不阻断）；Phase 5 升级为 block
+# [INVARIANTS] block——检测 staged .py added 行中的硬编码表名字符串（绕过 TableRegistry 真源）+ tasks.yaml 表名校验；命中返回 passed=False + detail（阻断 commit）；tests/豁免；docstring 行豁免；table_registry.py 自身豁免；fail-open（TableRegistry 空/不可用/git diff 不可达不阻断）；Phase 5 已升级为 block
 # [MODIFY-GUARD] gate_id="TABLE-NAME-REGISTRY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——TableRegistry/git diff/YAML 异常降级为 fail-open（passed=True）
 # [TESTS] tests/governance/commit_gates/test_table_name_registry_gate.py
-# [A_module] module_id=MOD-GOV-table_name_registry_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_table_name_registry_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""table_name_registry_gate.py — TABLE-NAME-REGISTRY warn-only 门禁
+"""table_name_registry_gate.py — TABLE-NAME-REGISTRY block 门禁
 
 裁定 #ARCH-CH-024 Phase 4：SSoT 真源强制闭环。
 
@@ -40,8 +40,8 @@ Phase 2 已建立消费闭环（TableRegistry + scheduler WARN 校验），但�
 
 设计权衡
 --------
-1. **warn-only**：约 240 处存量硬编码一次性爆会瘫痪 commit 流程，先 WARN
-   收集数据，Phase 5 替换完毕后升级为 block（对标 #ARCH-CH-022 渐进式模式）。
+1. **block**（Phase 5 升级）：约 240 处存量硬编码已在 Phase 5 批量替换完毕，
+   gate 从 warn-only 升级为 block，阻断新增硬编码表名（对标 #ARCH-CH-022 渐进式模式）。
 2. **diff-based**：只检测 added 行；新文件全行 added 故必被检查；modified
    文件仅当含表名的行被改动时才检查（存量违规由 Phase 5 批量替换处理）。
 3. **AST 精确检测**：只检查 ast.Constant 字符串节点，不检查注释/变量名
@@ -50,7 +50,7 @@ Phase 2 已建立消费闭环（TableRegistry + scheduler WARN 校验），但�
    子串匹配捕获 ``sql = "SELECT * FROM c1_market.kline_daily"``。
 5. **fail-open**：TableRegistry 空/不可用 → 不阻断（开发环境友好）。
 6. **priority=120**：紧接 ISSUE-RESOLVED-INTEGRITY(117)/STASH-ACCUMULATION(118)/
-   NOQA-DENSITY(119)，作为最新 warn-only gate。
+   NOQA-DENSITY(119)，作为最新 block gate。
 
 Usage::
 
@@ -211,17 +211,18 @@ def check_tasks_yaml_tables(
 
 
 def make_table_name_registry_gate() -> GateSpec:
-    """构造 TABLE-NAME-REGISTRY pre-commit warn-only 门禁（priority=120）。
+    """构造 TABLE-NAME-REGISTRY pre-commit block 门禁（priority=120）。
 
     检测 staged .py added 行中的硬编码表名（绕过 TableRegistry 真源）+
-    tasks.yaml 表名校验。命中返回 (True, warning_detail) 不阻断 commit。
+    tasks.yaml 表名校验。命中返回 (False, detail) 阻断 commit。
 
-    裁定 #ARCH-CH-024 Phase 4：建立 SSoT 真源强制闭环。
-    Phase 5 替换完毕后升级为 block（passed=False）。
+    裁定 #ARCH-CH-024 Phase 4：建立 SSoT 真源强制闭环（warn-only 数据收集）。
+    Phase 5 升级为 block（passed=False）：约 240 处存量硬编码已批量替换完毕，
+    gate 阻断新增硬编码表名。
 
     Returns:
         GateSpec(gate_id="TABLE-NAME-REGISTRY", priority=120)。
-        warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
+        block：检出违规返回 (False, detail)，阻断 commit。
     """
 
     def _check(gateway, files: list[str], **_kwargs) -> tuple[bool, str]:
@@ -261,17 +262,17 @@ def make_table_name_registry_gate() -> GateSpec:
 
         if warnings:
             detail = (
-                "TABLE-NAME-REGISTRY (warn-only)：检测到硬编码表名绕过"
-                " TableRegistry 真源（#ARCH-CH-024 Phase 4 治本）\n"
-                "  病根：SSoT 真源强制闭环缺失——代码硬编码表名字符串"
+                "TABLE-NAME-REGISTRY (block)：检测到硬编码表名绕过"
+                " TableRegistry 真源（#ARCH-CH-024 Phase 5 治本）\n"
+                "  病根：SSoT 真源强制闭环被绕过——代码硬编码表名字符串"
                 "绕过 business_data_categories.yaml 真源。\n"
                 "  修复：将硬编码表名替换为 TableRegistry.table(category_id)"
-                " 常量引用（Phase 5 批量替换）。\n"
+                " 常量引用。\n"
                 + "\n".join(warnings[:30])
                 + (f"\n  ...(+{len(warnings) - 30} more)" if len(warnings) > 30 else "")
             )
-            logger.warning("TABLE-NAME-REGISTRY gate warn:\n%s", detail)
-            return True, detail  # warn-only：passed=True 不阻断
+            logger.error("TABLE-NAME-REGISTRY gate block:\n%s", detail)
+            return False, detail  # block：passed=False 阻断 commit
         return True, ""
 
     return GateSpec(

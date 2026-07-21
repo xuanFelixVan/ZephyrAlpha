@@ -348,14 +348,14 @@ class TestCheckClosure:
     @patch(
         "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
     )
-    def test_hardcoded_table_warn(self, mock_get_registry, tmp_path):
-        """staged .py 含硬编码表名 → warn（passed=True 不阻断）。"""
+    def test_hardcoded_table_block(self, mock_get_registry, tmp_path):
+        """staged .py 含硬编码表名 → block（passed=False 阻断 commit）。"""
         mock_get_registry.return_value = _make_test_registry()
         content = 'TABLE = "c1_market.kline_daily"\n'
         gw = _make_mock_gateway({"src/zephyr/data/foo.py": content})
         gate = make_table_name_registry_gate()
         passed, detail = gate.check(gw, ["src/zephyr/data/foo.py"])
-        assert passed is True  # warn-only
+        assert passed is False  # block
         assert "c1_market.kline_daily" in detail
         assert "TableRegistry" in detail
 
@@ -405,8 +405,8 @@ class TestCheckClosure:
     @patch(
         "zephyr.gov_enforcement.commit_gates.table_name_registry_gate.get_registry"
     )
-    def test_tasks_yaml_unregistered_warn(self, mock_get_registry, tmp_path):
-        """tasks.yaml 含未注册表名 → warn。"""
+    def test_tasks_yaml_unregistered_block(self, mock_get_registry, tmp_path):
+        """tasks.yaml 含未注册表名 → block（passed=False 阻断 commit）。"""
         mock_get_registry.return_value = _make_test_registry()
         tasks_content = (
             "tasks:\n"
@@ -420,7 +420,7 @@ class TestCheckClosure:
         passed, detail = gate.check(
             gw, ["src/zephyr/data/config/tasks.yaml"]
         )
-        assert passed is True  # warn-only
+        assert passed is False  # block
         assert "nonexistent" in detail
 
     @patch(
@@ -491,7 +491,7 @@ class TestCheckClosure:
             gw,
             ["src/zephyr/data/foo.py", "src/zephyr/data/config/tasks.yaml"],
         )
-        assert passed is True  # warn-only
+        assert passed is False  # block
         assert "c1_market.kline_daily" in detail  # Detection 1
         assert "nonexistent" in detail  # Detection 2
 
@@ -514,5 +514,5 @@ class TestCheckClosure:
             gw,
             ["src\\zephyr\\data\\config\\tasks.yaml"],
         )
-        assert passed is True  # warn-only
+        assert passed is False  # block
         assert "nonexistent" in detail

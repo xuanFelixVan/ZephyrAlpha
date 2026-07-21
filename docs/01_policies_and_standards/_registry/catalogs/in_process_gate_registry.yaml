@@ -512,9 +512,9 @@ gates:
   source: in_process
   register_line: 486
   enabled: true
-# #ARCH-CH-024 Phase 4（2026-07-22）：TABLE-NAME-REGISTRY warn-only gate
+# #ARCH-CH-024 Phase 5（2026-07-22）：TABLE-NAME-REGISTRY block gate
 # 防蔓延检测：staged .py added 行硬编码表名（绕过 TableRegistry 真源）+ tasks.yaml 表名校验
-# Phase 5 替换完毕后升级为 block
+# Phase 5 替换完毕已升级为 block（passed=False 阻断 commit）
 - gate_id: TABLE-NAME-REGISTRY
   module_path: zephyr.gov_enforcement.commit_gates.table_name_registry_gate
   factory_function: make_table_name_registry_gate
