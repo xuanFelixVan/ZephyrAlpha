@@ -617,6 +617,135 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
     )
 
 
+# ===== 真实数据适配器 (BacktestResult + Portfolio → BacktestPerformanceData) =====
+
+
+def _nav_to_yield_series(nav_curve: list[float]) -> list[float]:
+    """从单位净值序列计算累计收益率 %"""
+    if not nav_curve or nav_curve[0] == 0:
+        return [0.0] * len(nav_curve)
+    base = nav_curve[0]
+    return [(v / base - 1) * 100 for v in nav_curve]
+
+
+def _nav_to_daily_yield(nav_curve: list[float]) -> list[float]:
+    """从单位净值序列计算每日收益率 %"""
+    if len(nav_curve) < 2:
+        return [0.0] * len(nav_curve)
+    result: list[float] = [0.0]
+    for i in range(1, len(nav_curve)):
+        prev = nav_curve[i - 1]
+        result.append((nav_curve[i] / prev - 1) * 100 if prev != 0 else 0.0)
+    return result
+
+
+def _nav_to_drawdown(nav_curve: list[float]) -> list[float]:
+    """从单位净值序列计算回撤 %"""
+    drawdown: list[float] = []
+    peak = nav_curve[0] if nav_curve else 1.0
+    for v in nav_curve:
+        peak = max(peak, v)
+        drawdown.append((v / peak - 1) * 100 if peak != 0 else 0.0)
+    return drawdown
+
+
+def _trades_log_to_records(trades_log: list) -> list[PerfTradeRecord]:
+    """将 Portfolio.trades_log (dict 列表) 转为 PerfTradeRecord 列表"""
+    records: list[PerfTradeRecord] = []
+    for t in trades_log:
+        price = float(t.get("price", 0))
+        qty = int(t.get("quantity", 0))
+        records.append(PerfTradeRecord(
+            timestamp=str(t.get("date", "")),
+            symbol=str(t.get("symbol", "")),
+            side=str(t.get("side", "")).lower(),
+            price=price,
+            quantity=qty,
+            amount=price * qty,
+            fee=float(t.get("commission", 0)),
+        ))
+    return records
+
+
+def _build_perf_metrics_from_result(
+    result: Any, nav_curve: list[float], initial: float,
+) -> PerformanceMetrics:
+    """从 BacktestResult 标量 + 单位净值构造 PerformanceMetrics"""
+    final_asset = nav_curve[-1] * initial if nav_curve and initial > 0 else initial
+    return PerformanceMetrics(
+        initial_asset=initial,
+        final_asset=final_asset,
+        cumulative_pnl=final_asset - initial,
+        cumulative_return=result.total_return * 100,
+        annual_return=result.annual_return * 100,
+        max_drawdown=result.max_drawdown * 100,
+        win_rate=result.win_rate * 100,
+        sharpe=result.sharpe_ratio,
+        trading_days=len(nav_curve),
+    )
+
+
+def _build_trade_stats_from_nav(daily_yields: list[float], n: int) -> TradeStatistics:
+    """从每日收益率构造 TradeStatistics (基础统计)"""
+    up = sum(1 for r in daily_yields if r > 0)
+    down = sum(1 for r in daily_yields if r < 0)
+    return TradeStatistics(
+        trading_days=n,
+        up_days=up,
+        down_days=down,
+        daily_win_rate=up / n * 100 if n > 0 else 0.0,
+        max_daily_gain=max(daily_yields) if daily_yields else 0.0,
+        max_daily_loss=min(daily_yields) if daily_yields else 0.0,
+    )
+
+
+def backtest_result_to_performance_data(
+    result: Any, portfolio: Any,
+) -> BacktestPerformanceData:
+    """从 BacktestResult + Portfolio 构造 BacktestPerformanceData (真实数据适配器)
+
+    将回测引擎产出的 BacktestResult(标量指标) + Portfolio(净值曲线/交易日志)
+    转换为前端可视化的 BacktestPerformanceData 数据模型, 替代 demo 数据。
+
+    Args:
+        result: BacktestResult 实例 (含 sharpe/return/maxdd 等标量指标, 鸭子类型)
+        portfolio: Portfolio 实例 (含 nav_series/trades_log/initial_capital, 鸭子类型)
+
+    Returns:
+        BacktestPerformanceData 完整数据模型 (基准序列留空, 无外部基准数据)
+    """
+    raw_nav = portfolio.nav_series
+    initial = float(portfolio.initial_capital)
+    # 归一化为单位净值 (首日 = 1.0), 匹配 BacktestPerformanceData.nav_curve 语义
+    nav_curve = [float(v) / initial for v in raw_nav.values] if initial > 0 else [1.0]
+    timestamps = [
+        str(d) if d is not None else f"day_{i}"
+        for i, d in enumerate(raw_nav.index)
+    ]
+    strategy_yield = _nav_to_yield_series(nav_curve)
+    strategy_yield_daily = _nav_to_daily_yield(nav_curve)
+    strategy_drawdown = _nav_to_drawdown(nav_curve)
+    trades = _trades_log_to_records(portfolio.trades_log)
+    performance = _build_perf_metrics_from_result(result, nav_curve, initial)
+    trade_stats = _build_trade_stats_from_nav(strategy_yield_daily, len(nav_curve))
+    return BacktestPerformanceData(
+        backtest_id=getattr(result, "idempotency_key", "backtest"),
+        strategy_id=getattr(result, "strategy_id", "unknown"),
+        start_date=str(getattr(result, "start_date", ""))[:10],
+        end_date=str(getattr(result, "end_date", ""))[:10],
+        initial_asset=initial,
+        benchmark_symbol=getattr(result, "benchmark_symbol", "") or "",
+        timestamps=timestamps,
+        nav_curve=nav_curve,
+        strategy_yield=strategy_yield,
+        strategy_yield_daily=strategy_yield_daily,
+        strategy_drawdown=strategy_drawdown,
+        trades=trades,
+        performance=performance,
+        trade_stats=trade_stats,
+    )
+
+
 # ===== UI 辅助函数 =====
 
 def _kpi_card(label_zh: str, label_en: str, value: str, color: str = _TEXT) -> object:
@@ -1340,6 +1469,7 @@ __all__ = [
     "DailyCapitalRow",
     "OrderRecord",
     "BacktestPerformanceData",
+    "backtest_result_to_performance_data",
     "generate_demo_performance_data",
     "render_backtest_performance",
 ]

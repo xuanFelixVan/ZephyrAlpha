@@ -101,6 +101,7 @@ from zephyr.frontend.dashboard.components.backtest_results import (
 # 掘金风格 5-Tab 绩效分析 (v3.2.0, bt-visualizer + 掘金量化)
 from zephyr.frontend.dashboard.components.backtest_performance import (
     BacktestPerformanceData,
+    backtest_result_to_performance_data,
     generate_demo_performance_data,
     render_backtest_performance,
 )
@@ -160,6 +161,7 @@ class DashboardPanelApp:
         task_repo: object | None = None,
         olap_engine: object | None = None,
         backtest_result: object | None = None,
+        backtest_portfolio: object | None = None,
         tick_data: Optional[list] = None,
         miniqmt_provider: object | None = None,
         miniqmt_broker: object | None = None,
@@ -168,6 +170,7 @@ class DashboardPanelApp:
         self._task_repo = task_repo
         self._olap_engine = olap_engine
         self._backtest_result = backtest_result
+        self._backtest_portfolio = backtest_portfolio
         self._tick_data = tick_data
         self._miniqmt_provider = miniqmt_provider
         self._miniqmt_broker = miniqmt_broker
@@ -205,7 +208,13 @@ class DashboardPanelApp:
     def _tab_backtest_results(self) -> object:
         # v3.2.0: 掘金风格 5-Tab 绩效分析 (bt-visualizer + 掘金量化)
         # 5 子 Tab: 绩效概览 / 持仓分析 / 交易统计 / 每日明细 / 信号分析
-        perf_data = generate_demo_performance_data()
+        # v3.3.0: 优先用真实 BacktestResult+Portfolio, 无注入时回退 demo
+        if self._backtest_result is not None and self._backtest_portfolio is not None:
+            perf_data = backtest_result_to_performance_data(
+                self._backtest_result, self._backtest_portfolio,
+            )
+        else:
+            perf_data = generate_demo_performance_data()
         payload = render_backtest_performance(perf_data)
         return payload.get("_layout") or pn.pane.Markdown("回测绩效分析渲染失败")
 
@@ -295,6 +304,7 @@ class DashboardPanelApp:
             *tab_objects,
             tabs_location="left",
             sizing_mode="stretch_width",
+            dynamic=True,
         )
 
 

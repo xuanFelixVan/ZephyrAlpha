@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-BT-001-default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_vectorized_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """L_BACKTEST — Vectorized Backtest Engine
@@ -101,6 +101,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
             slippage_bps=self._config.slippage_bps,
         )
         self._results: list[BacktestResult] = []
+        self._last_portfolio: Optional[Portfolio] = None
 
     def run(
         self,
@@ -200,6 +201,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         )
 
         self._results.append(result)
+        self._last_portfolio = portfolio
         _logger.info(
             "Backtest completed: result_id=%s sharpe=%.2f return=%.2f%% trades=%d",
             result_id,
@@ -216,6 +218,14 @@ class DefaultBacktestEngine(BacktestEngineBase):
                 f"蓝图 §16.7 P0-9: 样本外Sharpe<70%样本内Sharpe 或 三维度任一不稳定"
             )
         return result
+
+    @property
+    def last_portfolio(self) -> Optional[Portfolio]:
+        """最近一次 run() 的 Portfolio 引用 (含 nav_series/trades_log/positions)
+
+        供前端可视化适配器取净值曲线与交易日志, 不修改 BacktestResult 契约。
+        """
+        return self._last_portfolio
 
     def _get_sorted_dates(self, data: pd.DataFrame) -> list[Any]:
         """获取排序后的日期列表"""

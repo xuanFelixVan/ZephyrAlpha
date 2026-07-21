@@ -81,10 +81,11 @@ def fetch_task_progress(task_repo: object = None) -> TaskProgressData:
             try:
                 tasks = task_repo.list_by_phase(phase)
                 pp.total_tasks = len(tasks)
-                pp.completed_tasks = sum(1 for t in tasks if t.status.value in (TaskStatus.COMPLETED, TaskStatus.VERIFIED))
-                pp.in_progress_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.IN_PROGRESS)
-                pp.failed_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.FAILED)
-                pp.pending_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.PENDING)
+                # TaskStatus 继承 (str, Enum): str 和 enum 成员可直接比较, 兼容 DB 返回的纯 str status
+                pp.completed_tasks = sum(1 for t in tasks if t.status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED))
+                pp.in_progress_tasks = sum(1 for t in tasks if t.status == TaskStatus.IN_PROGRESS)
+                pp.failed_tasks = sum(1 for t in tasks if t.status == TaskStatus.FAILED)
+                pp.pending_tasks = sum(1 for t in tasks if t.status == TaskStatus.PENDING)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in task_progress", exc_info=True)
         data.phases.append(pp)
