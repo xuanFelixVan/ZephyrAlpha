@@ -367,6 +367,7 @@ class TestClassifyAbuse:
         assert thresholds["allow_overlap_7d"] == _ALLOW_OVERLAP_7D_THRESHOLD
         assert thresholds["forged_gw_marker_24h"] == _FORGED_24H_THRESHOLD
         assert thresholds["non_gw_commit_24h"] == _NON_GW_24H_THRESHOLD
+        assert thresholds["force_merge_7d"] == _FORCE_MERGE_7D_THRESHOLD
 
 
 # ============================================================================
