@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GateEngine不可用返回degraded不阻塞; 空findings返回空
 # [TESTS] scripts/connect/script_gate.py --trigger
-# [A_module] module_id=MOD-INF_gate_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-gate_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Script->Gate 门禁桥接器 — submit_findings() 生产者
 

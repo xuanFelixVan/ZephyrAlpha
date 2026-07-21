@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MemoryBackendError on backend failure; WriteTraceMissing on missing provenance
 # [TESTS] tests/test_unified_memory_api.py; tests/test_vms_memory_backend.py
-# [A_module] module_id=MOD-INF-036-_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

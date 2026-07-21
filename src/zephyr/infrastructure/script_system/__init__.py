@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF_script_system | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-script_system | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md
 # [MODULE] zephyr.infrastructure.script_system
 # [INVARIANTS] pending_review

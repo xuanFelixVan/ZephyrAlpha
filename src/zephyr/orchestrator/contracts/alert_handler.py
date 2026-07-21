@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError 模块缺失; TaskCreationError 任务创建失败
 # [TESTS] scripts/connect/fle_orc.py --trigger
-# [A_module] module_id=MOD-ORC_alert_handler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-ORC-alert_handler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Orc 告警接收器 — handle_alert() 消费者
 

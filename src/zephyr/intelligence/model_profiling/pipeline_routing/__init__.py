@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF-034-pipeline_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing
 # [INVARIANTS] pipeline routing variant of model profiler

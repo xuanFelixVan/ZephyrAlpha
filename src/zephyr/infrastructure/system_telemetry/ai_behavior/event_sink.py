@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeatureFlag OFF->noop;ring buffer满->丢弃最旧
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。
