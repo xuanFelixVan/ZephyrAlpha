@@ -851,6 +851,8 @@ error_codes:
   class: SessionTransitionError
   module: zephyr.orchestrator.lifecycle.session_manager
   file: src/zephyr/orchestrator/lifecycle/session_manager.py
+  deprecated: '2026-07-21: #ARCH-WORKTREE-LIFECYCLE-001——session_manager.py 已删除（死代码），此 error_code 保留供历史引用查询'
+  replacement: ZA-TR-0018
 - code: ZA-TR-0012
   class: CoVeStepError
   module: zephyr.orchestrator.hallucination_detector
@@ -875,6 +877,11 @@ error_codes:
   class: RedBlueImportError
   module: zephyr.feedback_loop.gates.adversarial_validation
   file: src/zephyr/feedback_loop/gates/adversarial_validation.py
+- code: ZA-TR-0018
+  class: WorktreeTransitionError
+  module: zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
+  file: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py
+  introduced: '2026-07-21: #ARCH-WORKTREE-LIFECYCLE-001——WorktreeLifecycle 状态机非法转换异常'
 - code: ZA-XC-0001
   class: MiniQmtBrokerError
   module: zephyr.ex_core.adapters.miniqmt_broker

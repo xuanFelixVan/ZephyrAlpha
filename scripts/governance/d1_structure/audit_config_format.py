@@ -238,7 +238,7 @@ def main() -> None:
                         f"context-rules.yaml: rule '{rule.get('name', '?')}' threshold={threshold}",
                     )
 
-    ssm_path = CONFIG_DIR / "session_state_machine.yaml"
+    ssm_path = CONFIG_DIR / "worktree_state_machine.yaml"  # #ARCH-WORKTREE-LIFECYCLE-001
     if ssm_path.exists():
         ssm_data = yaml.safe_load(ssm_path.read_text(encoding="utf-8"))
         transitions = ssm_data.get("transitions", [])
@@ -248,7 +248,7 @@ def main() -> None:
                 continue
             key = (t.get("from", ""), t.get("to", ""))
             if key in seen_transitions:
-                report(issues, "ISSUE", "F3-DUP-TRANSITION", f"session_state_machine.yaml: duplicate transition {key}")
+                report(issues, "ISSUE", "F3-DUP-TRANSITION", f"worktree_state_machine.yaml: duplicate transition {key}")  # #ARCH-WORKTREE-LIFECYCLE-001
             seen_transitions.add(key)
 
     print("  \u2705 Safety levels and thresholds checked", file=sys.stderr)

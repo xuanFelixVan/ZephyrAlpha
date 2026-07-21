@@ -43,15 +43,16 @@ contracts:
   last_reviewed: '2026-05-06'
   resolution: '2026-05-06: CT-002 resolved by session-20260506-012'
 - contract_id: CT-003
-  source: config/session_state_machine.yaml
-  promise: SessionManager 将消费此状态机定义来管理 session 生命周期
-  actual_consumer: src/zephyr/orchestrator/session_manager.py (SessionManager v1.1)
-  gap: 已兑现——SessionManager 已创建，从 session_state_machine.yaml 加载状态定义和转换规则
+  source: config/worktree_state_machine.yaml
+  promise: WorktreeLifecycle 将消费此状态机定义来管理 worktree 生命周期
+  actual_consumer: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py (WorktreeLifecycle v1.0)
+  gap: 已兑现——WorktreeLifecycle 已创建，从 worktree_state_machine.yaml 加载状态定义和转换规则
   status: resolved
   target_phase: beta
-  risk: 实际的 session 状态管理与 YAML 定义脱节（如果已有临时实现）
-  last_reviewed: '2026-05-06'
-  resolution: '2026-05-06: CT-003 resolved by session-20260506-012'
+  risk: 实际的 worktree 状态管理与 YAML 定义脱节（如果已有临时实现）
+  last_reviewed: '2026-07-21'
+  resolution: '2026-07-21: CT-003 updated by #ARCH-WORKTREE-LIFECYCLE-001——session_state_machine.yaml + session_manager.py 已删除（死代码），替换为 worktree_state_machine.yaml + worktree_lifecycle.py'
+  previous_resolution: '2026-05-06: CT-003 resolved by session-20260506-012'
 - contract_id: CT-004
   source: config/capabilities.yaml
   promise: '{a,b} brace expansion glob 语法'
