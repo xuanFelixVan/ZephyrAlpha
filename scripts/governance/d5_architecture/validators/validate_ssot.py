@@ -13,12 +13,21 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-# P0-P3 任务优先级——业务常量（非治理词表），无 priority_vocabulary.yaml。
-# 治本说明（2026-06-30）：若未来纳入词表管理，改用 load_vocabulary_values("priority_vocabulary.yaml")。
-# 当前 GATE-VOCAB 检测1 漏检（PRIORITIES 不在后缀正则），检测4 值匹配漏检（无 priority 词表）。
+"""SSoT 文件头一致性校验器.
+
+校验 markdown 文件 frontmatter 中的 module_id / layer / status / priority / version
+字段的有效性和跨文件一致性。
+"""
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+from _shared.constants import REPO_ROOT
+
 __manifest__ = """
 args: []
-description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
+description: SSoT 文件头一致性校验器。
 dimensions:
 - D5
 priority: P2
@@ -28,61 +37,114 @@ warn_only: false
 
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
 
+_VERSION_PATTERN = re.compile(r"^\d+\.\d+(\.\d+)?$")
+_LEGACY_LAYER_PATTERN = re.compile(r"^L\d")
+
 
 def _load_valid_document_statuses() -> set[str]:
-    """从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
-
-    D-D-05 治本（2026-06-30）：收敛到 SSoT ``load_vocabulary_values``。
-    status_vocabulary.yaml v1.1.0 已将 approved→active、superseded→deprecated 迁移，
-    故合法值精简为 draft/active/deprecated 三值。
-    """
     from _shared.yaml_utils import load_vocabulary_values
 
     return load_vocabulary_values("status_vocabulary.yaml")
 
 
-from _shared.constants import REPO_ROOT
-
 VALID_DOCUMENT_STATUSES = _load_valid_document_statuses()
 
 
 class Contradiction:
-    def __init__(self, source="", target="", field="", source_value="", target_value=""):
-        self.source = source
-        self.target = target
-        self.field = field
-        self.source_value = source_value
-        self.target_value = target_value
+    """SSoT 矛盾条目."""
+
+    def __init__(self, severity="", check_id="", description="", files=None, values=None):
+        self.severity = severity
+        self.check_id = check_id
+        self.description = description
+        self.files = files or []
+        self.values = values or []
 
 
 class FileMeta:
-    def __init__(self, path="", module_id="", layer="", priority="", status="", owner=""):
+    """文件元数据."""
+
+    def __init__(self, path=None, rel_path=None, module_id=None, layer=None,
+                 status=None, priority=None, version=None):
         self.path = path
+        self.rel_path = rel_path
         self.module_id = module_id
         self.layer = layer
-        self.priority = priority
         self.status = status
-        self.owner = owner
+        self.priority = priority
+        self.version = version
 
 
 class ScanReport:
-    def __init__(self, total_files=0, valid_files=0, violations=None, timestamp=None):
-        self.total_files = total_files
-        self.valid_files = valid_files
-        self.violations = violations or []
-        self.timestamp = timestamp
+    """扫描报告."""
+
+    def __init__(self, scanned_files=0, parsed_files=0, scan_time=None, contradictions=None):
+        self.scanned_files = scanned_files
+        self.parsed_files = parsed_files
+        self.scan_time = scan_time
+        self.contradictions = contradictions if contradictions is not None else []
+
+    @property
+    def p0_count(self) -> int:
+        return sum(1 for c in self.contradictions if c.severity == "P0")
+
+    @property
+    def p1_count(self) -> int:
+        return sum(1 for c in self.contradictions if c.severity == "P1")
+
+    @property
+    def p2_count(self) -> int:
+        return sum(1 for c in self.contradictions if c.severity == "P2")
+
+    @property
+    def total_count(self) -> int:
+        return len(self.contradictions)
+
+    @property
+    def has_p0(self) -> bool:
+        return self.p0_count > 0
 
 
 class SsotValidator:
-    def __init__(self, config=None):
+    """SSoT 校验器."""
+
+    def __init__(self, scan_dir=None, repo_root=None, config=None):
+        self.scan_dir = Path(scan_dir) if scan_dir else None
+        self.repo_root = Path(repo_root) if repo_root else None
         self.config = config or {}
+
+    def run(self) -> ScanReport:
+        if self.scan_dir is None:
+            return ScanReport()
+        metas: list[FileMeta] = []
+        scanned = 0
+        parsed = 0
+        for md_file in sorted(self.scan_dir.rglob("*.md")):
+            scanned += 1
+            meta = parse_file(md_file, self.repo_root)
+            if meta is not None:
+                parsed += 1
+                metas.append(meta)
+        contradictions: list[Contradiction] = []
+        contradictions.extend(check_p0_layer_invalid(metas))
+        contradictions.extend(check_p0_duplicate_active_module_id(metas))
+        contradictions.extend(check_p1_status_invalid(metas))
+        contradictions.extend(check_p1_module_id_layer_conflict(metas))
+        contradictions.extend(check_p1_module_id_status_conflict(metas))
+        contradictions.extend(check_p2_priority_invalid(metas))
+        contradictions.extend(check_p2_version_format(metas))
+        return ScanReport(
+            scanned_files=scanned,
+            parsed_files=parsed,
+            contradictions=contradictions,
+        )
 
     def validate(self, path=None):
         violations = check_ssot_coverage_completeness()
         return ScanReport(
-            total_files=1,
-            valid_files=1 if not violations else 0,
-            violations=violations,
+            scanned_files=1,
+            parsed_files=1 if not violations else 0,
+            contradictions=violations,
         )
 
     def check_ssot(self, files=None):
@@ -90,46 +152,151 @@ class SsotValidator:
 
 
 def _get_valid_layers() -> list[str]:
-    """从 layer_vocabulary.yaml 加载合法 layer 值（SSoT 唯一真源）。
-
-    治本（2026-06-30 红蓝对抗）：收敛到 SSoT ``load_vocabulary_values``，
-    消除复制的 yaml.safe_load 词表加载逻辑（原实现被 GATE-VOCAB 检测5 漏检，
-    因函数名 _get_valid_layers 不匹配 _load_* 正则；行为检测 v2 已捕获）。
-    """
     from _shared.yaml_utils import load_vocabulary_values
 
     return sorted(load_vocabulary_values("layer_vocabulary.yaml", strict=False))
 
 
-def check_p0_duplicate_active_module_id(files):
-    # stub——勿实现。module_path 冲突检测真源在
-    # capability_lookup.check_ssot_conflicts()（L2/L3 共享）。
-    # CLI: python -m zephyr.governance.capability_lookup --list-conflicts
-    return []
+def check_p0_layer_invalid(files) -> list[Contradiction]:
+    valid_layers = set(_get_valid_layers())
+    contradictions: list[Contradiction] = []
+    for meta in files:
+        layer = meta.layer
+        if layer is None:
+            continue
+        if layer in valid_layers:
+            continue
+        if _LEGACY_LAYER_PATTERN.match(layer):
+            continue
+        contradictions.append(
+            Contradiction(
+                "P0", "P0-1", f"无效 layer: {layer}",
+                files=[meta.rel_path], values=[layer],
+            )
+        )
+    return contradictions
 
 
-def check_p0_layer_invalid(files):
-    return []
+def check_p0_duplicate_active_module_id(files) -> list[Contradiction]:
+    by_module: dict[str, list] = {}
+    for meta in files:
+        if not meta.module_id or not meta.status:
+            continue
+        if meta.status.lower() != "active":
+            continue
+        by_module.setdefault(meta.module_id, []).append(meta)
+    contradictions: list[Contradiction] = []
+    for module_id, group in by_module.items():
+        if len(group) < 2:
+            continue
+        file_list = [m.rel_path for m in group]
+        contradictions.append(
+            Contradiction(
+                "P0", "P0-2", f"module_id {module_id} 重复 Active",
+                files=file_list, values=[module_id],
+            )
+        )
+    return contradictions
 
 
-def check_p1_module_id_layer_conflict(files):
-    return []
+def check_p1_status_invalid(files) -> list[Contradiction]:
+    contradictions: list[Contradiction] = []
+    for meta in files:
+        status = meta.status
+        if not status:
+            continue
+        if status not in VALID_DOCUMENT_STATUSES:
+            contradictions.append(
+                Contradiction(
+                    "P1", "P1-1", f"无效 status: {status}",
+                    files=[meta.rel_path], values=[status],
+                )
+            )
+    return contradictions
 
 
-def check_p1_module_id_status_conflict(files):
-    return []
+def check_p1_module_id_layer_conflict(files) -> list[Contradiction]:
+    by_module: dict[str, list] = {}
+    for meta in files:
+        if not meta.module_id or not meta.layer:
+            continue
+        by_module.setdefault(meta.module_id, []).append(meta)
+    contradictions: list[Contradiction] = []
+    for module_id, group in by_module.items():
+        if len(group) < 2:
+            continue
+        layers = set(m.layer for m in group if m.layer)
+        if len(layers) > 1:
+            file_list = [m.rel_path for m in group]
+            value_list = list(layers)
+            contradictions.append(
+                Contradiction(
+                    "P1", "P1-2", f"module_id {module_id} layer 冲突",
+                    files=file_list, values=value_list,
+                )
+            )
+    return contradictions
 
 
-def check_p1_status_invalid(files):
-    return []
+def check_p1_module_id_status_conflict(files) -> list[Contradiction]:
+    by_module: dict[str, list] = {}
+    for meta in files:
+        if not meta.module_id or not meta.status:
+            continue
+        by_module.setdefault(meta.module_id, []).append(meta)
+    contradictions: list[Contradiction] = []
+    for module_id, group in by_module.items():
+        if len(group) < 2:
+            continue
+        statuses = [m.status.lower() for m in group if m.status]
+        has_active = any(s == "active" for s in statuses)
+        has_deprecated = any(s == "deprecated" for s in statuses)
+        has_retired = any(s == "retired" for s in statuses)
+        if has_active and (has_deprecated or has_retired):
+            file_list = [m.rel_path for m in group]
+            value_list = [m.status for m in group]
+            contradictions.append(
+                Contradiction(
+                    "P1", "P1-3", f"module_id {module_id} status 冲突",
+                    files=file_list, values=value_list,
+                )
+            )
+    return contradictions
 
 
-def check_p2_priority_invalid(files):
-    return []
+def check_p2_priority_invalid(files) -> list[Contradiction]:
+    contradictions: list[Contradiction] = []
+    for meta in files:
+        priority = meta.priority
+        if not priority:
+            continue
+        if priority not in VALID_PRIORITIES:
+            contradictions.append(
+                Contradiction(
+                    "P2", "P2-1", f"无效 priority: {priority}",
+                    files=[meta.rel_path], values=[priority],
+                )
+            )
+    return contradictions
 
 
-def check_p2_version_format(files):
-    return []
+def check_p2_version_format(files) -> list[Contradiction]:
+    contradictions: list[Contradiction] = []
+    for meta in files:
+        version = meta.version
+        if not version:
+            continue
+        v = version.strip("\'\"")
+        if v == "N/A":
+            continue
+        if not _VERSION_PATTERN.match(v):
+            contradictions.append(
+                Contradiction(
+                    "P2", "P2-2", f"无效 version: {version}",
+                    files=[meta.rel_path], values=[version],
+                )
+            )
+    return contradictions
 
 
 def check_p3_placeholder(files):
@@ -161,20 +328,7 @@ def check_p9_placeholder(files):
 
 
 def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
-    """裁定#207 R3-3: SSoT 覆盖范围一致性校验。
-
-    对比 trae_028 gov_doc_003_naming_ssot 的 conditions vs 规则注册表，
-    校验所有规则的 source_doc 有效且被 SSoT 收录。SSoT 必须满足 ALCOA+ Complete（无遗漏）。
-
-    当前覆盖：
-    - domain_naming_rules.yaml (NR-001~NR-005) vs trae_028 gov_doc_003_naming_ssot
-
-    校验项：
-    1. source_doc 指向的文件是否存在（防失效引用，裁定#207 R3-2）
-    2. 若 source_doc 指向 trae_028，rule_id 是否在 SSoT conditions 文本中出现（收录完整性，R3-3）
-    """
-    from pathlib import Path
-
+    """裁定#207 R3-3: SSoT 覆盖范围一致性校验."""
     import yaml
 
     project_root = REPO_ROOT
@@ -196,7 +350,6 @@ def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
 
     violations: list[Contradiction] = []
 
-    # 加载 trae_028 gov_doc_003_naming_ssot conditions 文本
     ssot_text = ""
     if trae_028_path.exists():
         trae_data = yaml.safe_load(trae_028_path.read_text(encoding="utf-8")) or {}
@@ -210,82 +363,135 @@ def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
             parts.append(str(c.get("fail", "")))
         ssot_text = " ".join(parts)
 
-    # 校验 domain_naming_rules.yaml 的每条规则
     if dnr_path.exists():
         dnr_data = yaml.safe_load(dnr_path.read_text(encoding="utf-8")) or {}
         for entry in dnr_data.get("entries", []) or []:
             rule_id = entry.get("rule_id", "")
             source_doc = entry.get("source_doc", "")
-            # 提取 source_doc 中的文件路径（§ 之前的部分）
             doc_path_str = source_doc.split("§")[0].strip() if source_doc else ""
             doc_path = project_root / doc_path_str if doc_path_str else None
 
-            # 校验1: source_doc 指向的文件是否存在
             if doc_path and not doc_path.exists():
                 violations.append(
                     Contradiction(
-                        source=f"domain_naming_rules.yaml {rule_id}",
-                        target=source_doc,
-                        field="source_doc 有效性",
-                        source_value=source_doc,
-                        target_value="文件不存在",
+                        "P0", "SSOT-COV",
+                        f"{rule_id} source_doc 有效性: {source_doc} -> 文件不存在",
+                        files=[source_doc], values=[source_doc],
                     )
                 )
-                continue  # 文件不存在则跳过收录校验
+                continue
 
-            # 校验2: 若 source_doc 指向 trae_028，rule_id 是否在 SSoT conditions 文本中出现
             if doc_path_str and "trae_028" in doc_path_str:
                 if rule_id and rule_id not in ssot_text:
                     violations.append(
                         Contradiction(
-                            source=f"domain_naming_rules.yaml {rule_id}",
-                            target="trae_028 gov_doc_003_naming_ssot",
-                            field="SSoT 收录完整性",
-                            source_value=rule_id,
-                            target_value="SSoT conditions 未引用此 rule_id",
+                            "P0", "SSOT-COV",
+                            f"{rule_id} SSoT 收录完整性: 未在 conditions 中引用",
+                            files=[rule_id], values=[rule_id],
                         )
                     )
 
     return violations
 
 
-def parse_file(filepath):
+def parse_file(filepath, root_path=None):
+    """解析 markdown 文件 frontmatter，返回 FileMeta 或 None."""
     from scripts.governance._shared.frontmatter import parse_frontmatter_from_file
 
-    return parse_frontmatter_from_file(filepath)
+    fp = Path(filepath)
+    if not fp.exists():
+        return None
+    fm = parse_frontmatter_from_file(fp)
+    if fm is None:
+        return None
+    if root_path:
+        try:
+            rel = fp.relative_to(root_path)
+            rel_path = str(rel).replace("\\", "/")
+        except (ValueError, TypeError):
+            rel_path = str(fp)
+    else:
+        rel_path = str(fp)
+    return FileMeta(
+        path=fp,
+        rel_path=rel_path,
+        module_id=fm.get("module_id"),
+        layer=fm.get("layer"),
+        status=fm.get("status"),
+        priority=fm.get("priority"),
+        version=fm.get("version"),
+    )
 
 
-def render_report(results, format="text"):
+def render_report(report, format="text") -> str:
+    """渲染扫描报告."""
     if format == "json":
         import json
-
-        return json.dumps(results, default=str)
-    return str(results)
+        return json.dumps(
+            {
+                "scanned_files": report.scanned_files,
+                "parsed_files": report.parsed_files,
+                "p0_count": report.p0_count,
+                "p1_count": report.p1_count,
+                "p2_count": report.p2_count,
+                "total_count": report.total_count,
+                "contradictions": [
+                    {
+                        "severity": c.severity,
+                        "check_id": c.check_id,
+                        "description": c.description,
+                        "files": c.files,
+                        "values": c.values,
+                    }
+                    for c in report.contradictions
+                ],
+            },
+            default=str,
+            ensure_ascii=False,
+        )
+    lines = [
+        "---",
+        "type: generated",
+        "ttl: 7d",
+        "---",
+        "",
+        "# SSoT 扫描报告",
+        f"- 扫描文件: {report.scanned_files}",
+        f"- 解析文件: {report.parsed_files}",
+        f"- P0: {report.p0_count}",
+        f"- P1: {report.p1_count}",
+        f"- P2: {report.p2_count}",
+        f"- 总计: {report.total_count}",
+        "",
+    ]
+    if not report.contradictions:
+        lines.append("无矛盾")
+    else:
+        for c in report.contradictions:
+            lines.append(f"## {c.severity}: {c.check_id}")
+            lines.append(c.description)
+            if c.files:
+                lines.append(f"文件: {', '.join(c.files)}")
+            if c.values:
+                lines.append(f"值: {', '.join(str(v) for v in c.values)}")
+            lines.append("")
+    return "\n".join(lines)
 
 
 def main() -> int:
-    """CLI 入口：运行 SSoT 覆盖范围一致性校验（裁定#207 R3-3）。
-
-    用法:
-      python scripts/governance/d5_architecture/validators/validate_ssot.py --scan
-    """
     import argparse
 
     parser = argparse.ArgumentParser(description="SSoT 完整性校验（裁定#207 R3-3）")
     parser.add_argument("--scan", action="store_true", help="运行 SSoT 覆盖范围一致性校验")
     args = parser.parse_args()
 
-    # 默认运行 scan（--scan 为显式标记，兼容无参调用）
     violations = check_ssot_coverage_completeness()
     if violations:
         print(f"[FAIL] SSoT 覆盖范围一致性校验发现 {len(violations)} 个问题:")
         for v in violations:
-            print(
-                f"  - {v.source} -> {v.target}: {v.field} "
-                f"({v.source_value} -> {v.target_value})"
-            )
+            print(f"  - [{v.severity}] {v.check_id}: {v.description}")
         return 1
-    print("[PASS] SSoT 覆盖范围一致性校验通过: 所有规则 source_doc 有效且被 SSoT 收录")
+    print("[PASS] SSoT 覆盖范围一致性校验通过")
     return 0
 
 
