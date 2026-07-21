@@ -410,7 +410,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
         self._gate_registry.register(make_ruling_reference_gate())  # priority=74 治本 裁定#NNN 悬空引用（裁定#20-B，阶段2 hard block 已启用 裁定#20-G，对标 ARCH-REFERENCE，紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后）
         self._gate_registry.register(make_rule_four_way_alignment_gate())  # priority=76 治本规则四方对齐（ARCH-020 补建，subprocess 调 check_rule_four_way_alignment.py --ci）
-        self._gate_registry.register(make_ruling_commit_verified_gate())  # priority=77 治本 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 盲区4 文档"已完成"声明 commit hash 真实性硬验证
+        self._gate_registry.register(make_ruling_commit_verified_gate())  # priority=109 治本 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 盲区4 文档"已完成"声明 commit hash 真实性硬验证（原 77 与 BLUEPRINT-FORMAT 撞号，#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 1 迁移至 109）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_rename_depgraph_sync_gate())  # priority=39 治本文件重命名后 depgraph 未同步（AI-14 审计：a2a_protocol_security→a2a_agent_blocklist 重命名导致 13 处 docs stale 引用根因；原 36 与 CH-BATCH-SIZE 冲突，迁移到 39）
         self._gate_registry.register(make_encoding_gate())  # priority=42 治本 --no-verify 绕过 pre-commit GATE-ENCODING（F-05 防御断层，subprocess 调 check_encoding.py 复用真源，fail-open on env error 裁定ARCH-TTL-DOC-001；40被CLAIM-REQUIRED占用，41预留给DATA-TASK迁移）

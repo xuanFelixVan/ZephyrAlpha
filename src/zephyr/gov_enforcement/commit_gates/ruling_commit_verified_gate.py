@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只检测 staged 触发文件中**新增的**"已完成（commit XXX）"声明（diff-based，不阻断历史）；fail-closed——commit hash 不存在时阻断；跳过 tests/ 豁免区；触发文件 ruling_*.md + architecture_issue_registry.yaml；正则匹配"已完成...commit <7-40 hex>"；用 git cat-file -e 验证 hash 存在性；非 git 仓库（tmp_path 测试）skip；逃生通道 commit msg 含 [no-verify-ruling:<reason>]
-# [MODIFY-GUARD] gate_id="RULING-COMMIT-VERIFIED"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；priority=77
+# [MODIFY-GUARD] gate_id="RULING-COMMIT-VERIFIED"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；priority=109
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -43,8 +43,12 @@ commit hash，用 ``git cat-file -e <hash>`` 验证存在性。只检测新增�
 2. **fail-closed**：commit hash 不存在 / git 异常时阻断——100% AI 场景下 warn 无效。
 3. **触发文件范围**：``docs/02_enterprise_architecture/ruling_*.md`` +
    ``architecture_issue_registry.yaml``——治本聚焦，不扫全项目。
-4. **priority=77**：紧跟 ARCH-REFERENCE(75) / RULE-FOUR-WAY-ALIGNMENT(76) 之后
-   ——同属"文档完整性"类检查。
+4. **priority=109**：原 77 与 BLUEPRINT-FORMAT 撞号（#ARCH-GATE-PRIORITY-UNIQUENESS-001
+   Phase 1 治本），后到者让位迁移至 109——紧邻 CAPABILITY-LOOKUP-REQUIRED(110)，
+   同属"AI 行为强制/文档真实性"类检查（RULING-COMMIT-VERIFIED 验证文档声明真实性，
+   CAPABILITY-LOOKUP-REQUIRED 强制 AI 查 capability，都是 AI 行为约束）。
+   历史先例（后到者让位）：DATA-TASK 78->41 / RENAME-DEPGRAPH-SYNC 36->39 /
+   ORPHAN-MODULE 86->89 / DOC-REF-BROKEN 88->91 / RULING-COMMIT-VERIFIED 77->109
 5. **正则提取**：``已完成.*?commit\\s+([0-9a-f]{7,40})`` 匹配
    "已完成（commit fadd3fdc）" / "已完成 2026-07-20，commit 2cee176f81，merge ..." 等。
 6. **逃生通道**：commit message 含 ``[no-verify-ruling:<reason>]`` 标记时 skip
@@ -251,9 +255,10 @@ def make_ruling_commit_verified_gate() -> GateSpec:
     """构造"已完成"声明 commit hash 硬验证门禁 GateSpec（fail-closed，阻断型）。
 
     Returns:
-        GateSpec(gate_id="RULING-COMMIT-VERIFIED", priority=77)。
-        priority=77——紧跟 ARCH-REFERENCE(75) / RULE-FOUR-WAY-ALIGNMENT(76) 之后
-        （同属"文档完整性"类检查）。
+        GateSpec(gate_id="RULING-COMMIT-VERIFIED", priority=109)。
+        priority=109——原 77 与 BLUEPRINT-FORMAT 撞号（#ARCH-GATE-PRIORITY-UNIQUENESS-001
+        Phase 1 治本），后到者让位迁移至 109，紧邻 CAPABILITY-LOOKUP-REQUIRED(110)，
+        同属"AI 行为强制/文档真实性"类检查.
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -273,4 +278,4 @@ def make_ruling_commit_verified_gate() -> GateSpec:
             return False, _format_violations_detail(violations)
         return True, ""
 
-    return GateSpec(gate_id="RULING-COMMIT-VERIFIED", check=_check, priority=77)
+    return GateSpec(gate_id="RULING-COMMIT-VERIFIED", check=_check, priority=109)

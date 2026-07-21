@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行
+# [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行
 # [MODIFY-GUARD] GateSpec 字段结构；GateResult 语义；TEST_EXEMPT_PREFIXES / is_test_exempt（tests/ 豁免真源）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -98,6 +98,7 @@ __all__ = [
     "GateResult",
     "GateSpec",
     "CommitGateRegistry",
+    "GateRegistrationError",
     "TEST_EXEMPT_PREFIXES",
     "is_test_exempt",
     "run_checker_script",
@@ -206,6 +207,22 @@ class GateResult:
     detail: str = ""
 
 
+class GateRegistrationError(RuntimeError):
+    """门禁注册异常——priority 冲突时抛出（fail-closed 治本）。
+
+    治本（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2，2026-07-21）：
+    100% AI 开发场景下，原 warn-only 不构成闭环（AI 把 warn 当"通过"，
+    与 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 同一病根）。升级为 fail-closed
+    阻断注册——新 AI 添加 priority 撞号的 gate 时立即抛异常，强制分配唯一 priority。
+
+    历史 warn-only 期间已存在的撞号（priority=77 BLUEPRINT-FORMAT vs
+    RULING-COMMIT-VERIFIED）已在 Phase 1 消除（RULING-COMMIT-VERIFIED 迁移至 109），
+    Phase 2 block 不会卡死现有系统。
+    """
+
+    error_code = "ZA-GV-0050"
+
+
 @dataclass
 class GateSpec:
     """单个 pre-commit 门禁声明。
@@ -235,20 +252,26 @@ class CommitGateRegistry:
         self._specs: dict[str, GateSpec] = {}
 
     def register(self, spec: GateSpec) -> None:
-        """注册门禁（幂等，同 gate_id 覆盖；同 priority 不同 gate_id 告警）。
+        """注册门禁（幂等，同 gate_id 覆盖；同 priority 不同 gate_id 阻断）。
 
-        治本（2026-07-17）：同 priority 不同 gate_id 会导致 sorted() 稳定排序
-        后执行顺序依赖 dict 插入顺序（非显式），违反"显式优于隐式"原则。
-        检测到 priority 重复时记录 WARNING（不阻断注册，兼容存量）。
+        治本（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2，2026-07-21）：
+        100% AI 开发场景下，原 warn-only 不构成闭环（AI 把 warn 当"通过"，
+        与 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 同一病根）。升级为 fail-closed
+        阻断注册——同 priority 不同 gate_id 抛 GateRegistrationError。
+
+        历史先例（后到者让位）：DATA-TASK 78->41 / RENAME-DEPGRAPH-SYNC 36->39 /
+        ORPHAN-MODULE 86->89 / DOC-REF-BROKEN 88->91 / RULING-COMMIT-VERIFIED 77->109
         """
         for existing_id, existing_spec in self._specs.items():
             if existing_spec.priority == spec.priority and existing_id != spec.gate_id:
-                logger.warning(
-                    "CommitGateRegistry: priority=%s 冲突——gate '%s' 与已注册的 '%s' 同 priority，"
-                    "执行顺序依赖注册顺序（非显式）。建议分配唯一 priority。",
-                    spec.priority, spec.gate_id, existing_id,
+                raise GateRegistrationError(
+                    f"priority={spec.priority} 冲突——gate '{spec.gate_id}' 与已注册的 "
+                    f"'{existing_id}' 同 priority. 执行顺序依赖注册顺序（非显式），"
+                    f"违反'显式优于隐式'原则. 请分配唯一 priority. "
+                    f"历史先例（后到者让位）：DATA-TASK 78->41 / "
+                    f"RENAME-DEPGRAPH-SYNC 36->39 / ORPHAN-MODULE 86->89 / "
+                    f"DOC-REF-BROKEN 88->91 / RULING-COMMIT-VERIFIED 77->109"
                 )
-                break
         self._specs[spec.gate_id] = spec
 
     def check_all(self, gateway: object, files: list[str], **kwargs: Any) -> list[GateResult]:

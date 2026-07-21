@@ -4967,3 +4967,99 @@ entries:
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_054 (备份先行), trae_060 (向内收三原则), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+# --- #ARCH-GATE-PRIORITY-UNIQUENESS-001: commit gate priority 唯一性 fail-closed 治本（2026-07-21，2 Phase）---
+# 关联裁定：#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (100% AI 场景 warn=通过病根，同源治本), Ruling:100PCT-AI-GOVERNANCE
+- issue_id: '#ARCH-GATE-PRIORITY-UNIQUENESS-001'
+  title: commit gate priority 撞号治本——BLUEPRINT-FORMAT 与 RULING-COMMIT-VERIFIED 同 priority=77，升级 register() warn->block
+  category: architecture_governance
+  severity: P2
+  adjudication: >-
+    2026-07-21 立项裁定。#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 3 落地后
+    发现 RULING-COMMIT-VERIFIED gate (priority=77) 与已存在的 BLUEPRINT-FORMAT
+    gate (priority=77) 撞号——两者都注释"紧跟 RULE-FOUR-WAY-ALIGNMENT(76)
+    之后"，但 77 已被 BLUEPRINT-FORMAT 占用。CommitGateRegistry.register()
+    检测到冲突时仅 logger.warning（warn-only），不阻断注册。
+
+
+    病根分析（第一性原理·100% AI 场景）：
+
+
+    - priority 是排序契约，67 个 gate 的执行顺序。同 priority 时 sorted() 稳定
+      排序，按 dict 插入顺序（即 register() 调用顺序）——这是隐式依赖，违反
+      "显式优于隐式"原则
+
+    - 100% AI 场景下 warn-only 不构成闭环（AI 把 warn 当"通过"，与
+      #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 同一病根）—— register() warn-only
+      不阻断注册，撞号 gate 仍被写入 _specs
+
+    - 历史 5+ 次撞号先例（DATA-TASK 78->41 / RENAME-DEPGRAPH-SYNC 36->39 /
+      ORPHAN-MODULE 86->89 / DOC-REF-BROKEN 88->91 / MANUAL-ONLY-PERMANENT
+      36->43 / NO-DOMAIN-NAME-ZH 67->72 / CH-BATCH-SIZE 34->36）证明这是
+      反复发生的系统性问题，非偶发
+
+    - 无中央 priority 登记表——新 AI 选 priority 时只能 grep 或随机选，
+      gate_registry.yaml stale（5 处不一致）误导
+
+
+    治本方案（2 Phase 渐进）：
+
+
+    Phase 1（消除当前撞号，后到者让位）：
+
+      - RULING-COMMIT-VERIFIED priority 77->109（后到者让位，符合历史先例）
+
+      - 选 109：紧邻 CAPABILITY-LOOKUP-REQUIRED(110)，同属"AI 行为强制/文档
+        真实性"类检查
+
+      - 77-80 区间已满（77=BLUEPRINT-FORMAT, 78=DOMAIN-FK, 79=BLUEPRINT-AMODULE,
+        80=VOCAB-HARDCODE），无法紧跟 RULE-FOUR-WAY(76)
+
+      - priority 唯一性是硬约束，语义聚类是软约束——硬约束优先
+
+
+    Phase 2（防止未来撞号，warn->block）：
+
+      - CommitGateRegistry.register() warn->block（fail-closed 治本）
+
+      - 新增 GateRegistrationError 异常类（error_code=ZA-GV-0050）
+
+      - 同 priority 不同 gate_id 抛异常阻断注册
+
+      - 错误信息含历史先例（后到者让位），引导新 AI 选择空闲 priority
+
+      - Phase 1 已消除现有撞号，Phase 2 block 不会卡死现有系统
+
+
+    架构师裁定（不实现项）：
+
+    - priority SSoT 化（新建 priority_allocation_registry.yaml）—— 过度工程，
+      "代码即真源"（每个 gate .py 的 return GateSpec(..., priority=N) 行）已足够，
+      中央登记表增加维护负担，不实现
+  fix_phase: |
+    Phase 1（已完成 2026-07-21）：
+      - ruling_commit_verified_gate.py: priority=77->109 + 注释 + [MODIFY-GUARD] + docstring
+      - git_commit_gateway.py: 注册注释 priority=77->109
+      - test_ruling_commit_verified_gate.py: priority 断言 77->109
+      - 36 tests passed
+
+    Phase 2（已完成 2026-07-21）：
+      - commit_gate_registry.py: 新增 GateRegistrationError 异常类（error_code=ZA-GV-0050）
+      - register() warn->block：检测同 priority 不同 gate_id 抛异常阻断
+      - 错误信息含历史先例（后到者让位）：DATA-TASK 78->41 / RENAME-DEPGRAPH-SYNC 36->39 /
+        ORPHAN-MODULE 86->89 / DOC-REF-BROKEN 88->91 / RULING-COMMIT-VERIFIED 77->109
+      - test_commit_gate_registry.py: test_register_multiple_distinct_gate_ids 改用不同 priority
+        + 新增 TestPriorityConflictBlock 7 测试
+      - 17 tests passed (原 10 + 新增 7)
+      - GitCommitGateway init OK: 69 gates 全部唯一 priority，零冲突
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py（Phase 1 priority 77->109 + 注释）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 1 注册注释）
+    - src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py（Phase 2 GateRegistrationError + register warn->block）
+    - tests/governance/commit_gates/test_ruling_commit_verified_gate.py（Phase 1 priority 断言）
+    - tests/governance/rule_bridge/test_commit_gate_registry.py（Phase 2 测试更新 + TestPriorityConflictBlock 7 新测试）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+  status: resolved
+  related_adjudication: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (100% AI 场景 warn=通过病根，同源治本), Ruling:100PCT-AI-GOVERNANCE (第一性原理), #ARCH-WORKTREE-002 (worktree 物理隔离，gate 注册制基础), #AD-001 (CommitGateRegistry 注册制架构债务治本)'
+  related_rules: 'trae_060 (向内收三原则 - 复用 CommitGateRegistry), trae_062 (SSoT 真源分类 - priority 真源是代码)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'

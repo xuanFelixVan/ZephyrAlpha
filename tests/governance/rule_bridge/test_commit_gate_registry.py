@@ -17,11 +17,15 @@
 - TestEmptyRegistry: 空 registry check_all 返回空列表
 - TestKwargsPassthrough: kwargs 透传给 gate check 函数
 - TestGet: get(gate_id) 按 gate_id 获取已注册 GateSpec（_commit_auto 复用 DCR gate 用，2026-06-30 治本）
+- TestPriorityConflictBlock: 同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）
 """
 from __future__ import annotations
 
+import pytest
+
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     CommitGateRegistry,
+    GateRegistrationError,
     GateResult,
     GateSpec,
 )
@@ -46,10 +50,10 @@ class TestRegister:
         assert results[0].detail == "override"
 
     def test_register_multiple_distinct_gate_ids(self):
-        """不同 gate_id 各自保留。"""
+        """不同 gate_id 各自保留（必须用不同 priority——Phase 2 fail-closed 后同 priority 抛异常）。"""
         registry = CommitGateRegistry()
         registry.register(GateSpec(gate_id="A", check=lambda gw, f, **kw: (True, ""), priority=100))
-        registry.register(GateSpec(gate_id="B", check=lambda gw, f, **kw: (True, ""), priority=100))
+        registry.register(GateSpec(gate_id="B", check=lambda gw, f, **kw: (True, ""), priority=101))
         results = registry.check_all(None, [])
         assert {r.gate_id for r in results} == {"A", "B"}
 
@@ -160,3 +164,105 @@ class TestGateResultDefaults:
     def test_detail_defaults_empty(self):
         r = GateResult(gate_id="G", passed=True)
         assert r.detail == ""
+
+
+class TestPriorityConflictBlock:
+    """同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2）。
+
+    治本背景（2026-07-21）：100% AI 开发场景下，原 warn-only 不构成闭环
+    （AI 把 warn 当"通过"，与 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 同一病根）。
+    升级为 fail-closed 阻断注册——新 AI 添加 priority 撞号的 gate 时立即抛异常。
+    """
+
+    def test_same_priority_different_gate_id_raises(self):
+        """同 priority 不同 gate_id 抛 GateRegistrationError。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="FIRST", check=lambda gw, f, **kw: (True, ""), priority=77,
+        ))
+        with pytest.raises(GateRegistrationError) as exc_info:
+            registry.register(GateSpec(
+                gate_id="SECOND", check=lambda gw, f, **kw: (True, ""), priority=77,
+            ))
+        # 错误信息含 priority 值 + 两个 gate_id
+        msg = str(exc_info.value)
+        assert "77" in msg
+        assert "FIRST" in msg
+        assert "SECOND" in msg
+
+    def test_same_priority_same_gate_id_no_raise(self):
+        """同 priority 同 gate_id（幂等覆盖）不抛异常。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="G1", check=lambda gw, f, **kw: (True, "old"), priority=100,
+        ))
+        # 不应抛异常——幂等覆盖语义
+        registry.register(GateSpec(
+            gate_id="G1", check=lambda gw, f, **kw: (False, "new"), priority=100,
+        ))
+        got = registry.get("G1")
+        assert got.check(None, [])[0] is False  # 新 spec 生效
+
+    def test_different_priority_no_raise(self):
+        """不同 priority 不抛异常。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(gate_id="A", check=lambda gw, f, **kw: (True, ""), priority=100))
+        registry.register(GateSpec(gate_id="B", check=lambda gw, f, **kw: (True, ""), priority=200))
+        results = registry.check_all(None, [])
+        assert {r.gate_id for r in results} == {"A", "B"}
+
+    def test_blocked_gate_not_registered(self):
+        """抛异常后，撞号 gate 未被注册（_specs 不含 SECOND）。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="FIRST", check=lambda gw, f, **kw: (True, ""), priority=77,
+        ))
+        with pytest.raises(GateRegistrationError):
+            registry.register(GateSpec(
+                gate_id="SECOND", check=lambda gw, f, **kw: (True, ""), priority=77,
+            ))
+        # SECOND 未被注册
+        assert registry.get("SECOND") is None
+        assert registry.get("FIRST") is not None
+
+    def test_error_message_contains_historical_precedent(self):
+        """错误信息含历史先例（后到者让位），引导新 AI 选择空闲 priority。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="EXISTING", check=lambda gw, f, **kw: (True, ""), priority=85,
+        ))
+        with pytest.raises(GateRegistrationError) as exc_info:
+            registry.register(GateSpec(
+                gate_id="NEW", check=lambda gw, f, **kw: (True, ""), priority=85,
+            ))
+        msg = str(exc_info.value)
+        # 含至少一个历史先例
+        assert "RULING-COMMIT-VERIFIED 77->109" in msg or "DATA-TASK 78->41" in msg
+
+    def test_error_code_attribute(self):
+        """GateRegistrationError 含 error_code 属性（对标 GatewayError 模式）。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="FIRST", check=lambda gw, f, **kw: (True, ""), priority=50,
+        ))
+        with pytest.raises(GateRegistrationError) as exc_info:
+            registry.register(GateSpec(
+                gate_id="SECOND", check=lambda gw, f, **kw: (True, ""), priority=50,
+            ))
+        assert exc_info.value.error_code == "ZA-GV-0050"
+
+    def test_first_registration_unaffected(self):
+        """第一个 gate 注册成功，不受后续撞号影响。"""
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="FIRST", check=lambda gw, f, **kw: (True, "first"), priority=77,
+        ))
+        with pytest.raises(GateRegistrationError):
+            registry.register(GateSpec(
+                gate_id="SECOND", check=lambda gw, f, **kw: (True, "second"), priority=77,
+            ))
+        # FIRST 仍可正常 check
+        results = registry.check_all(None, [])
+        assert len(results) == 1
+        assert results[0].gate_id == "FIRST"
+        assert results[0].passed is True
