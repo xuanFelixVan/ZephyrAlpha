@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SelfHealError
 # [TESTS] tests/semantic-auditor/
-# [A_module] module_id=MOD-GOV_self_healer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-self_healer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: _build_forbidden_fallback与yaml_utils._build_ttl_fallback是同类frozenset包装器,趋同演化非复制粘贴;两者服务于不同词表(stability vs ttl)
 

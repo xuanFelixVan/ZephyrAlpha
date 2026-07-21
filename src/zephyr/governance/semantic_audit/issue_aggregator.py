@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入返回空 SemanticAuditReport
 # [TESTS] tests/semantic-auditor/test_issue_aggregator.py
-# [A_module] module_id=MOD-GOV_issue_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-issue_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 问题聚合器 Stage 5

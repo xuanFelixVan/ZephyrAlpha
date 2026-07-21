@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on empty input to get_top_n with n<=0; ValueError on invalid weights
 # [TESTS] tests/semantic-auditor/test_fix_prioritizer.py
-# [A_module] module_id=MOD-SEM_fix_prioritizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEM-fix_prioritizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
