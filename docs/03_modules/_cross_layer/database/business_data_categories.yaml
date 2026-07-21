@@ -914,7 +914,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [ifind]
+  data_source: [tdx, ifind]
   blueprint: null
 
 - category_id: market_sector_kline_880

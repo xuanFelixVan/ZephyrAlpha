@@ -206,8 +206,8 @@ data_sources:
     auth_method: "无"
     rate_limit: "无"
     status: active
-    coverage: "A股K线/指数K线/实时报价/分时/个股分笔(仅最近交易日)/本地文件/财务数据/港股/期货"
-    limitations: "无板块分笔历史数据/无历史个股分笔/无复权/估值/EDB/新闻/研报/不支持美股"
+    coverage: "A股K线/指数K线/实时报价/分时/个股分笔(仅最近交易日)/本地文件/财务数据/港股/期货/881xxx标准行业板块K线(index_bars)/标准板块成分股(block API)"
+    limitations: "无板块分笔历史数据/无历史个股分笔/无复权/估值/EDB/新闻/研报/不支持美股/扩展市场(ext)接口已失效无法取880xxx K线及成分股(实测2026-07-22)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §8"
     policy:
@@ -336,7 +336,8 @@ data_sources:
     auth_method: "tq.initialize（本地 SDK）"
     rate_limit: "无明确QPS限制"
     status: active
-    coverage: "880xxx板块指数K线/板块成分股"
+    coverage: "880xxx板块指数K线/板块成分股/板块实时快照(subscribe_hq推送独有)"
+    coverage_reason: "mootdx扩展市场接口已失效，880xxx K线及成分股只能由tqcenter取；subscribe_hq实时推送是tqcenter独有能力，mootdx无此能力(实测2026-07-22)"
     owner: ZephyrAlpha-Owner
     operation_manual: null
     policy:
