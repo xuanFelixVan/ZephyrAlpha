@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；_ts_to_date 按 UTC 解释避免跨日
 # [TESTS] tests/zephyr/data/test_providers.py::TestMiniQMTHelpers
-# [A_module] module_id=MOD-L00-004-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。
@@ -38,6 +38,44 @@ from typing import Iterator
 from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta, CapabilityContract
 from ..policy_registry import SourcePolicy
 from .. import ch_reader
+from ..table_registry import get_registry
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_ADJ_FACTOR = get_registry().table("market_adj_factor")
+_TBL_AUCTION_BOOK = get_registry().table("market_auction_book")
+_TBL_AUCTION_SNAPSHOT = get_registry().table("market_auction_snapshot")
+_TBL_BLOCK_TRADE_QMT = get_registry().table("market_block_trade_qmt")
+_TBL_CONVERTIBLE_BOND_IV = get_registry().table("market_cb_iv")
+_TBL_DIVIDEND = get_registry().table("fund_dividend")
+_TBL_DRAGON_TIGER_QMT = get_registry().table("market_dragon_tiger_qmt")
+_TBL_ETF_NAV = get_registry().table("market_etf_nav")
+_TBL_FUTURES_POSITION = get_registry().table("market_futures_position")
+_TBL_FUTURES_TERM_STRUCTURE = get_registry().table("market_futures_term")
+_TBL_HK_KLINE = get_registry().table("market_hk_kline")
+_TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+_TBL_INDEX_QUOTE = get_registry().table("market_index_quote")
+_TBL_INDEX_WEIGHT = get_registry().table("market_index_weight")
+_TBL_KLINE_CB = get_registry().table("market_cb_kline")
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+_TBL_KLINE_DAILY_HFQ = get_registry().table("market_kline_daily_hfq")
+_TBL_KLINE_FUTURES_QMT = get_registry().table("market_futures_kline_qmt")
+_TBL_KLINE_INDEX = get_registry().table("market_index_kline")
+_TBL_KLINE_MONTHLY = get_registry().table("market_kline_monthly")
+_TBL_KLINE_MONTHLY_HFQ = get_registry().table("market_kline_monthly_hfq")
+_TBL_KLINE_US_DAILY = get_registry().table("market_us_kline_daily")
+_TBL_KLINE_WEEKLY = get_registry().table("market_kline_weekly")
+_TBL_KLINE_WEEKLY_HFQ = get_registry().table("market_kline_weekly_hfq")
+_TBL_L2_TICK = get_registry().table("market_l2_tick")
+_TBL_LOF_LIST = get_registry().table("market_lof_list")
+_TBL_MARGIN_TRADING_QMT = get_registry().table("market_margin_trading_qmt")
+_TBL_OPTION_GREEKS = get_registry().table("market_option_greeks")
+_TBL_OPTION_IV_SURFACE = get_registry().table("market_option_iv")
+_TBL_OPTION_KLINE = get_registry().table("market_option_kline")
+_TBL_REPURCHASE = get_registry().table("fund_repurchase")
+_TBL_SECTOR_LIST = get_registry().table("market_sector_list")
+_TBL_SHAREHOLDER_COUNT = get_registry().table("fund_shareholder_count")
+_TBL_STOCK_LIST = get_registry().table("market_stock_list")
+_TBL_TICK_DATA = get_registry().table("market_tick")
+
 
 
 # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
@@ -320,8 +358,8 @@ class _OptionCtx:
 def _resolve_kline_aggregated_table(freq, payload, dividend_type):
     is_hfq = (dividend_type == "back")
     if freq == "W":
-        return payload.table or ("c1_market.kline_weekly_hfq" if is_hfq else "c1_market.kline_weekly")
-    return payload.table or ("c1_market.kline_monthly_hfq" if is_hfq else "c1_market.kline_monthly")
+        return payload.table or (_TBL_KLINE_WEEKLY_HFQ if is_hfq else _TBL_KLINE_WEEKLY)
+    return payload.table or (_TBL_KLINE_MONTHLY_HFQ if is_hfq else _TBL_KLINE_MONTHLY)
 
 
 class MiniQMTProvider(DataSourceBase):
@@ -520,12 +558,12 @@ class MiniQMTProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """Kline 路由：处理 LOF 特殊情况（sector=None → 从 c1_market.lof_list 表加载标的）。"""
         if sector is None:
-            lof_symbols = self._load_symbols_from_table("c1_market.lof_list")
+            lof_symbols = self._load_symbols_from_table(_TBL_LOF_LIST)
             if not lof_symbols:
                 yield FetchResult(
                     table=payload.table or "", columns=[], rows=[],
                     last_key="", elapsed_sec=0.0,
-                    error="c1_market.lof_list 表无标的，请先运行 lof_list_refresh 任务",
+                    error=f"{_TBL_LOF_LIST} 表无标的，请先运行 lof_list_refresh 任务",
                 )
                 return
             payload = dataclasses.replace(payload, symbols=lof_symbols)
@@ -540,7 +578,7 @@ class MiniQMTProvider(DataSourceBase):
         本方法用 ch_reader 查询 code 列，返回标的代码列表。
 
         Args:
-            table: 表名（如 "c1_market.lof_list"）
+            table: 表名（如 _TBL_LOF_LIST）
 
         Returns:
             标的代码列表（如 ["161725.SZ", "501050.SH", ...]），查询失败返回空列表
@@ -599,7 +637,7 @@ class MiniQMTProvider(DataSourceBase):
 
         is_hfq = (dividend_type == "back")
         # 后复权日K落入 kline_daily_hfq 表，普通日K落入 kline_daily 表
-        default_table = "c1_market.kline_daily_hfq" if is_hfq else "c1_market.kline_daily"
+        default_table = _TBL_KLINE_DAILY_HFQ if is_hfq else _TBL_KLINE_DAILY
         table = payload.table or default_table
         is_daily = (period == "1d")
         columns = self._kline_columns(table, is_daily, is_hfq)
@@ -813,7 +851,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or f"c3_fundamental.{table_list.lower()}"
+        table = payload.table or f"c3_fundamental.{table_list.lower()}"  # noqa: table-name-registry — 动态表名（table_list 是 xtquant 报表名，payload.table 由 tasks.yaml 设置时此 fallback 不执行）
         start_str = self._date_to_str(payload.start)
         end_str = self._date_to_str(payload.end)
 
@@ -925,7 +963,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.index_constituent"
+        table = payload.table or _TBL_INDEX_CONSTITUENT
         columns = ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
 
         trade_date = payload.end.isoformat()
@@ -1000,7 +1038,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.kline_index"
+        table = payload.table or _TBL_KLINE_INDEX
         columns = [
             "trade_date", "symbol", "name",
             "open", "high", "low", "close",
@@ -1139,7 +1177,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.adj_factor"
+        table = payload.table or _TBL_ADJ_FACTOR
         columns = ["trade_date", "symbol", "adj_factor", "data_source"]
 
         # 日期范围过滤（"YYYY-MM-DD" 字符串可直接字典序比较）
@@ -1369,7 +1407,7 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个合约一批
         """
-        table = payload.table or "c1_market.futures_position"
+        table = payload.table or _TBL_FUTURES_POSITION
         columns = [
             "trade_date", "symbol", "long_position", "short_position",
             "long_volume", "short_volume", "exchange", "data_source",
@@ -1509,7 +1547,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c3_fundamental.shareholder_count"
+        table = payload.table or _TBL_SHAREHOLDER_COUNT
         columns = ["symbol", "end_date", "holder_count", "data_source"]
         start_str = self._date_to_str(payload.start)
         end_str = self._date_to_str(payload.end)
@@ -1637,7 +1675,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or f"c3_fundamental.{table_list.lower()}"
+        table = payload.table or f"c3_fundamental.{table_list.lower()}"  # noqa: table-name-registry — 动态表名（table_list 是 xtquant 报表名，payload.table 由 tasks.yaml 设置时此 fallback 不执行）
         start_str = self._date_to_str(payload.start)
         end_str = self._date_to_str(payload.end)
 
@@ -1717,7 +1755,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c3_fundamental.dividend"
+        table = payload.table or _TBL_DIVIDEND
         columns = [
             "trade_date", "symbol", "divid_per_share",
             "split_per_share", "funds_per_share", "data_source",
@@ -1866,7 +1904,7 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个期权一批
         """
-        table = payload.table or "c1_market.option_iv_surface"
+        table = payload.table or _TBL_OPTION_IV_SURFACE
         columns = [
             "trade_date", "symbol", "underlying", "strike", "expiry",
             "opt_type", "iv", "data_source",
@@ -1979,7 +2017,7 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每只可转债一批
         """
-        table = payload.table or "c1_market.convertible_bond_iv"
+        table = payload.table or _TBL_CONVERTIBLE_BOND_IV
         columns = [
             "trade_date", "symbol", "underlying", "iv",
             "delta", "gamma", "theta", "vega", "conversion_premium",
@@ -2185,7 +2223,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.futures_term_structure"
+        table = payload.table or _TBL_FUTURES_TERM_STRUCTURE
         columns = [
             "trade_date", "symbol", "front_contract", "next_contract",
             "front_price", "next_price", "basis", "data_source",
@@ -2293,7 +2331,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.tick_data"
+        table = payload.table or _TBL_TICK_DATA
         columns = [
             "trade_date", "timestamp", "symbol", "market_type", "price",
             "volume", "amount", "direction", "data_source",
@@ -2438,7 +2476,7 @@ class MiniQMTProvider(DataSourceBase):
             FetchResult: 含 error 的占位结果
         """
         yield FetchResult(
-            table=payload.table or "c1_market.auction_snapshot",
+            table=payload.table or _TBL_AUCTION_SNAPSHOT,
             columns=[], rows=[], last_key="",
             elapsed_sec=0.0,
             error="集合竞价快照需实时订阅，暂未实现",
@@ -2467,7 +2505,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.index_quote"
+        table = payload.table or _TBL_INDEX_QUOTE
         columns = [
             "trade_date", "timestamp", "symbol",
             "price", "volume", "amount", "data_source",
@@ -2559,7 +2597,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.stock_list"
+        table = payload.table or _TBL_STOCK_LIST
         columns = [
             "ts_code", "symbol", "name", "area", "industry", "fullname",
             "enname", "cn_spell", "market", "exchange", "currency",
@@ -2759,7 +2797,7 @@ class MiniQMTProvider(DataSourceBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取可转债板块失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_cb")
+        yield from self._fetch_simple_kline(payload, policy, _TBL_KLINE_CB)
 
     # ============== 期权K线 ==============
 
@@ -2801,7 +2839,7 @@ class MiniQMTProvider(DataSourceBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期权列表失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.option_kline")
+        yield from self._fetch_simple_kline(payload, policy, _TBL_OPTION_KLINE)
 
     # ============== 期权Greeks ==============
 
@@ -2822,7 +2860,7 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个期权一批
         """
-        table = payload.table or "c1_market.option_greeks"
+        table = payload.table or _TBL_OPTION_GREEKS
         columns = [
             "trade_date", "symbol", "underlying", "strike", "expiry",
             "opt_type", "delta", "gamma", "theta", "vega", "data_source",
@@ -3034,7 +3072,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.index_weight"
+        table = payload.table or _TBL_INDEX_WEIGHT
         columns = ["trade_date", "index_code", "symbol", "weight", "data_source"]
         trade_date = payload.end.isoformat()
         # 默认核心指数
@@ -3096,7 +3134,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.sector_list"
+        table = payload.table or _TBL_SECTOR_LIST
         columns = ["trade_date", "sector_name", "symbol", "data_source"]
         trade_date = payload.end.isoformat()
         extra = payload.extra or {}
@@ -3155,7 +3193,7 @@ class MiniQMTProvider(DataSourceBase):
         # scheduler 的 fallback 机制会自动降级到 tick_snapshot（五档快照）
         if not self._probe_l2_permission():
             yield FetchResult(
-                table=payload.table or "c1_market.l2_tick",
+                table=payload.table or _TBL_L2_TICK,
                 columns=[], rows=[], last_key="",
                 elapsed_sec=0.0,
                 error="L2行情权限缺失，已自动降级到tick_snapshot五档快照",
@@ -3165,7 +3203,7 @@ class MiniQMTProvider(DataSourceBase):
         from xtquant import xtdata
         import numpy as np
 
-        table = payload.table or "c1_market.l2_tick"
+        table = payload.table or _TBL_L2_TICK
         columns = [
             "trade_date", "timestamp", "symbol", "price", "volume",
             "amount", "bid_price", "ask_price", "data_source",
@@ -3265,7 +3303,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.auction_snapshot"
+        table = payload.table or _TBL_AUCTION_SNAPSHOT
         # 字段名与表 schema 严格对齐（曾因字段名不一致导致写入0值）
         columns = [
             "trade_date", "auction_time", "symbol", "auction_price",
@@ -3405,7 +3443,7 @@ class MiniQMTProvider(DataSourceBase):
         """
         from xtquant import xtdata
 
-        table = payload.table or "c1_market.auction_book"
+        table = payload.table or _TBL_AUCTION_BOOK
         columns = [
             "trade_date", "timestamp", "symbol", "last_price", "volume",
             "amount", "open", "high", "low", "pre_close",
@@ -3496,7 +3534,7 @@ class MiniQMTProvider(DataSourceBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期货合约列表失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_futures_qmt")
+        yield from self._fetch_simple_kline(payload, policy, _TBL_KLINE_FUTURES_QMT)
 
     # ============== 港股K线 ==============
 
@@ -3533,7 +3571,7 @@ class MiniQMTProvider(DataSourceBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取港股列表失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.hk_kline")
+        yield from self._fetch_simple_kline(payload, policy, _TBL_HK_KLINE)
 
     # ============== 美股K线 ==============
 
@@ -3555,13 +3593,13 @@ class MiniQMTProvider(DataSourceBase):
         """
         if not payload.symbols:
             yield FetchResult(
-                table=payload.table or "c1_market.kline_us_daily",
+                table=payload.table or _TBL_KLINE_US_DAILY,
                 columns=[], rows=[], last_key="",
                 elapsed_sec=0.0,
                 error="QMT 无美股板块，需在 tasks.yaml 中手动指定 symbols（如 ['AAPL.US', 'MSFT.US']），且需开通美股行情权限",
             )
             return
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_us_daily")
+        yield from self._fetch_simple_kline(payload, policy, _TBL_KLINE_US_DAILY)
 
     # ============== ETF净值 ==============
 
@@ -3583,7 +3621,7 @@ class MiniQMTProvider(DataSourceBase):
         # miniQMT get_etf_info 客户端不支持（function not realize，需升级投研版）
         # 返回明确错误，避免每次调度 FAILED 浪费资源
         yield FetchResult(
-            table=payload.table or "c1_market.etf_nav",
+            table=payload.table or _TBL_ETF_NAV,
             columns=[], rows=[],
             last_key=self._date_to_str(payload.end),
             elapsed_sec=0.0,
@@ -3605,7 +3643,7 @@ class MiniQMTProvider(DataSourceBase):
             FetchResult: 含 error 的占位结果
         """
         yield FetchResult(
-            table=payload.table or "c1_market.repurchase",
+            table=payload.table or _TBL_REPURCHASE,
             columns=[], rows=[], last_key="",
             elapsed_sec=0.0,
             error="QMT无回购数据接口，建议使用AKShare stock_repurchase_em",
@@ -3626,7 +3664,7 @@ class MiniQMTProvider(DataSourceBase):
             FetchResult: 含 error 的占位结果
         """
         yield FetchResult(
-            table=payload.table or "c1_market.margin_trading_qmt",
+            table=payload.table or _TBL_MARGIN_TRADING_QMT,
             columns=[], rows=[], last_key="",
             elapsed_sec=0.0,
             error="QMT无融资融券接口，已由AKShare Provider覆盖（margin_trading_incremental）",
@@ -3647,7 +3685,7 @@ class MiniQMTProvider(DataSourceBase):
             FetchResult: 含 error 的占位结果
         """
         yield FetchResult(
-            table=payload.table or "c1_market.dragon_tiger_qmt",
+            table=payload.table or _TBL_DRAGON_TIGER_QMT,
             columns=[], rows=[], last_key="",
             elapsed_sec=0.0,
             error="QMT无龙虎榜接口，已由AKShare Provider覆盖（dragon_tiger_incremental）",
@@ -3668,7 +3706,7 @@ class MiniQMTProvider(DataSourceBase):
             FetchResult: 含 error 的占位结果
         """
         yield FetchResult(
-            table=payload.table or "c1_market.block_trade_qmt",
+            table=payload.table or _TBL_BLOCK_TRADE_QMT,
             columns=[], rows=[], last_key="",
             elapsed_sec=0.0,
             error="QMT无大宗交易接口，已由AKShare Provider覆盖（block_trade_incremental）",

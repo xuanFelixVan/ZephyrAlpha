@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestAKShareHelpers
-# [A_module] module_id=MOD-L00-004-akshare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-akshare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -43,8 +43,48 @@ from ..provider_base import (
 )
 from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_ANALYST_FORECAST = get_registry().table("fund_analyst_forecast")
+_TBL_AUDIT_OPINION = get_registry().table("fund_audit_opinion")
+_TBL_BLOCK_TRADE = get_registry().table("market_block_trade")
+_TBL_BLOCK_TRADE_DETAIL = get_registry().table("market_block_trade_detail")
+_TBL_CONCEPT_BOARD = get_registry().table("market_concept_board")
+_TBL_CONCEPT_BOARD_CONSTITUENT = get_registry().table("market_concept_board_constituent")
+_TBL_CONVERTIBLE_BOND_LIST = get_registry().table("market_cb_list")
+_TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
+_TBL_DISCLOSURE_PLAN = get_registry().table("fund_disclosure_plan")
+_TBL_DIVIDEND = get_registry().table("fund_dividend")
+_TBL_DRAGON_TIGER = get_registry().table("market_dragon_tiger")
+_TBL_EQUITY_PLEDGE_DETAIL = get_registry().table("fund_equity_pledge_detail")
+_TBL_EQUITY_PLEDGE_SUMMARY = get_registry().table("fund_equity_pledge_summary")
+_TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
+_TBL_ETF_LIST = get_registry().table("market_etf_list")
+_TBL_ETF_NAV = get_registry().table("market_etf_nav")
+_TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
+_TBL_HK_STOCK_LIST = get_registry().table("market_hk_stock_list")
+_TBL_HK_TRADE_CALENDAR = get_registry().table("market_hk_trade_calendar")
+_TBL_INDEX_LIST = get_registry().table("market_index_list")
+_TBL_KLINE_FUTURES = get_registry().table("market_futures_kline")
+_TBL_LIMIT_UP_DOWN = get_registry().table("market_limit_up_down")
+_TBL_LOF_LIST = get_registry().table("market_lof_list")
+_TBL_MACRO_DATA = get_registry().table("market_macro_data")
+_TBL_MARGIN_TRADING = get_registry().table("market_margin_trading")
+_TBL_MONEY_FLOW = get_registry().table("market_money_flow")
+_TBL_NEWS_DATA = get_registry().table("fund_news_data")
+_TBL_REPURCHASE = get_registry().table("fund_repurchase")
+_TBL_RESTRICTED_SHARES = get_registry().table("fund_restricted_shares")
+_TBL_RIGHTS_ISSUE = get_registry().table("fund_rights_issue")
+_TBL_SHARE_CHANGE = get_registry().table("fund_share_change")
+_TBL_SHARE_UNLOCK = get_registry().table("fund_share_unlock")
+_TBL_STOCK_INDICATOR = get_registry().table("market_stock_indicator")
+_TBL_STOCK_LIST = get_registry().table("market_stock_list")
+_TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
+_TBL_TOP10_CIRCULATING_SHAREHOLDERS = get_registry().table("fund_top10_circulating_shareholders")
+_TBL_TOP10_SHAREHOLDERS = get_registry().table("fund_top10_shareholders")
 
 
 # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
@@ -113,7 +153,7 @@ def _build_top10_shareholder_row(row, sym, qe, ratio_col, type_col):
 # CH fallback: 从 stock_list 获取 A 股 6 位代码（SQL_ 前缀豁免 NO-BARE-SQL gate）
 SQL_STOCK_CODE_FROM_LIST = (
     "SELECT splitByChar('.', ts_code)[1] AS code "
-    "FROM c1_market.stock_list "
+    f"FROM {_TBL_STOCK_LIST} "
     "WHERE list_status = '上市' ORDER BY ts_code FORMAT TabSeparated"
 )
 
@@ -229,7 +269,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.macro_data"
+        table = _TBL_MACRO_DATA
         columns = ["report_date", "indicator_name", "indicator_value", "unit", "frequency"]
         last_key = datetime.date.today().isoformat()
 
@@ -415,7 +455,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.daily_valuation"
+        table = _TBL_DAILY_VALUATION
         columns = [
             "trade_date", "symbol", "open", "high", "low", "close",
             "preclose", "volume", "amount", "turnover", "pct_change",
@@ -519,7 +559,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.margin_trading"
+        table = _TBL_MARGIN_TRADING
         columns = [
             "trade_date", "symbol", "margin_balance",
             "margin_buy", "margin_repay", "short_balance",
@@ -571,7 +611,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.block_trade"
+        table = _TBL_BLOCK_TRADE
         columns = [
             "trade_date", "symbol", "price", "volume", "amount",
             "buyer", "seller",
@@ -628,7 +668,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.dragon_tiger"
+        table = _TBL_DRAGON_TIGER
         columns = [
             "trade_date", "symbol", "name", "reason",
             "net_buy", "buy_amount", "sell_amount",
@@ -689,7 +729,7 @@ class AKShareProvider(DataSourceBase):
         import requests
         import akshare as ak  # 用于 _get_all_a_symbols 获取标的列表（裁定 #ARCH-CH-018）
 
-        table = "c1_market.money_flow"
+        table = _TBL_MONEY_FLOW
         columns = [
             "trade_date", "symbol", "close", "pct_change",
             "main_net_inflow", "main_net_inflow_pct",
@@ -789,7 +829,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.share_unlock"
+        table = _TBL_SHARE_UNLOCK
         columns = ["symbol", "unlock_date", "shares", "ratio", "amount"]
         last_key = payload.end.isoformat()
         t0 = time.time()
@@ -843,7 +883,7 @@ class AKShareProvider(DataSourceBase):
         AKShare 暂无专用审计意见接口，需通过财报接口间接获取，
         此处直接 yield error 说明原因。
         """
-        table = "c3_fundamental.audit_opinion"
+        table = _TBL_AUDIT_OPINION
         columns = [
             "symbol", "announce_date", "report_period", "audit_result",
             "audit_fee", "accounting_firm", "signing_accountant", "data_source",
@@ -868,7 +908,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.equity_pledge_detail"
+        table = _TBL_EQUITY_PLEDGE_DETAIL
         columns = [
             "symbol", "end_date", "pledge_count",
             "pledge_ratio", "total_shares", "pledge_end_date",
@@ -922,7 +962,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.equity_pledge_summary"
+        table = _TBL_EQUITY_PLEDGE_SUMMARY
         columns = [
             "symbol", "end_date", "pledge_count", "unrestricted_pledge",
             "restricted_pledge", "total_shares", "pledge_ratio", "data_source",
@@ -976,7 +1016,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.dividend"
+        table = _TBL_DIVIDEND
         columns = [
             "symbol", "ex_date", "record_date", "announce_date",
             "dividend_per_10_shares", "stock_div_per_10_shares",
@@ -1037,7 +1077,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.restricted_shares"
+        table = _TBL_RESTRICTED_SHARES
         columns = [
             "symbol", "release_date", "release_shares", "release_ratio",
             "pre_float_shares", "post_float_shares",
@@ -1128,7 +1168,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         symbols = payload.symbols
         if not symbols:
@@ -1170,7 +1210,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         last_key = payload.end.isoformat()
         batch_rows: list[tuple] = []
@@ -1204,7 +1244,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         last_key = payload.end.isoformat()
         batch_rows: list[tuple] = []
@@ -1238,7 +1278,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         t0 = time.time()
 
@@ -1271,7 +1311,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         t0 = time.time()
 
@@ -1308,7 +1348,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.analyst_forecast"
+        table = _TBL_ANALYST_FORECAST
         columns = [
             "report_date", "symbol", "forecast_year",
             "forecast_eps", "forecast_pe", "rating", "analyst_count",
@@ -1397,7 +1437,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.rights_issue"
+        table = _TBL_RIGHTS_ISSUE
         columns = [
             "symbol", "company_name", "rights_date", "rights_price",
             "rights_ratio", "rights_shares", "total_funds", "data_source",
@@ -1477,7 +1517,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         symbols = payload.symbols
         if not symbols:
@@ -1555,7 +1595,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.hk_connect_flow"
+        table = _TBL_HK_CONNECT_FLOW
         columns = [
             "trade_date", "channel", "net_buy_amount", "buy_amount",
             "sell_amount", "cumulative_net_buy", "daily_inflow",
@@ -1622,7 +1662,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.limit_up_down"
+        table = _TBL_LIMIT_UP_DOWN
         columns = [
             "trade_date", "symbol", "name", "close", "pct_change",
             "amount", "limit_type", "data_source",
@@ -1670,7 +1710,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.share_change"
+        table = _TBL_SHARE_CHANGE
         columns = [
             "symbol", "announce_date", "change_type",
             "change_amount", "total_shares_after", "data_source",
@@ -1750,7 +1790,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.st_stock_list"
+        table = _TBL_ST_STOCK_LIST
         columns = ["trade_date", "symbol", "name", "st_type", "data_source"]
         iso_date = datetime.date.today().isoformat()
         batch_rows: list[tuple] = []
@@ -1818,8 +1858,8 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        board_table = "c1_market.concept_board"
-        cons_table = "c1_market.concept_board_constituent"
+        board_table = _TBL_CONCEPT_BOARD
+        cons_table = _TBL_CONCEPT_BOARD_CONSTITUENT
         board_cols = ["board_code", "board_name", "data_source"]
         cons_cols = ["board_code", "symbol", "data_source"]
         iso_date = datetime.date.today().isoformat()
@@ -1900,7 +1940,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.stock_indicator"
+        table = _TBL_STOCK_INDICATOR
         columns = [
             "trade_date", "symbol", "pe", "pb", "ps", "pcf",
             "dividend_yield", "data_source",
@@ -1961,7 +2001,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.block_trade_detail"
+        table = _TBL_BLOCK_TRADE_DETAIL
         columns = [
             "trade_date", "symbol", "price", "volume", "amount",
             "buyer", "seller",
@@ -2028,7 +2068,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c1_market.kline_futures"
+        table = _TBL_KLINE_FUTURES
         columns = [
             "trade_date", "timestamp", "symbol", "open", "high", "low",
             "close", "volume", "amount", "open_interest", "period",
@@ -2124,7 +2164,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.top10_shareholders"
+        table = _TBL_TOP10_SHAREHOLDERS
         columns = [
             "symbol", "announce_date", "report_period", "shareholder_name",
             "hold_shares", "hold_ratio", "float_ratio", "hold_change",
@@ -2193,7 +2233,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.top10_circulating_shareholders"
+        table = _TBL_TOP10_CIRCULATING_SHAREHOLDERS
         columns = [
             "symbol", "announce_date", "report_period", "shareholder_name",
             "hold_shares", "hold_ratio", "float_ratio", "hold_change",
@@ -2259,7 +2299,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.disclosure_plan"
+        table = _TBL_DISCLOSURE_PLAN
         columns = [
             "symbol", "report_period", "announce_date",
             "scheduled_date", "actual_date", "data_source", "quality_flag",
@@ -2355,7 +2395,7 @@ class AKShareProvider(DataSourceBase):
         """
         import akshare as ak
 
-        table = "c3_fundamental.repurchase"
+        table = _TBL_REPURCHASE
         columns = [
             "announce_date", "symbol", "name", "plan_price_range",
             "plan_qty_min", "plan_qty_max", "plan_pct_min", "plan_pct_max",
@@ -2421,7 +2461,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """可转债列表全量刷新，写入 c1_market.convertible_bond_list。"""
         import akshare as ak
-        table = "c1_market.convertible_bond_list"
+        table = _TBL_CONVERTIBLE_BOND_LIST
         columns = [
             "bond_code", "bond_name", "bond_short_name", "convert_code",
             "stock_code", "stock_name", "issue_term", "par_value",
@@ -2490,7 +2530,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """ETF基金列表全量刷新，写入 c1_market.etf_list。"""
         import akshare as ak
-        table = "c1_market.etf_list"
+        table = _TBL_ETF_LIST
         columns = [
             "etf_code", "etf_name", "etf_abbr", "full_name",
             "index_code", "index_name", "setup_date", "list_date",
@@ -2539,7 +2579,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """LOF基金列表全量刷新，写入 c1_market.lof_list。"""
         import akshare as ak
-        table = "c1_market.lof_list"
+        table = _TBL_LOF_LIST
         columns = ["code", "name"]
         t0 = time.time()
         try:
@@ -2566,7 +2606,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """港股列表全量刷新，写入 c1_market.hk_stock_list。"""
         import akshare as ak
-        table = "c1_market.hk_stock_list"
+        table = _TBL_HK_STOCK_LIST
         columns = ["code", "name"]
         t0 = time.time()
         try:
@@ -2593,7 +2633,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """港股交易日历全量刷新，写入 c1_market.hk_trade_calendar。"""
         import akshare as ak
-        table = "c1_market.hk_trade_calendar"
+        table = _TBL_HK_TRADE_CALENDAR
         columns = ["cal_date", "is_open", "pretrade_date"]
         t0 = time.time()
         try:
@@ -2626,7 +2666,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """指数列表全量刷新，写入 c1_market.index_list。"""
         import akshare as ak
-        table = "c1_market.index_list"
+        table = _TBL_INDEX_LIST
         columns = [
             "ts_code", "name", "market", "publisher", "category",
             "base_date", "base_point", "list_date", "symbol_num", "market_id",
@@ -2669,7 +2709,7 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """ETF基准指数列表全量刷新，写入 c1_market.etf_benchmark。"""
         import akshare as ak
-        table = "c1_market.etf_benchmark"
+        table = _TBL_ETF_BENCHMARK
         columns = [
             "index_code", "index_full_name", "index_short_name",
             "publisher", "publish_date", "base_date", "base_point",
@@ -2699,7 +2739,7 @@ class AKShareProvider(DataSourceBase):
         表 schema: (trade_date, symbol, etf_code, nav, cash_balance, data_source)
         """
         import akshare as ak
-        table = payload.table or "c1_market.etf_nav"
+        table = payload.table or _TBL_ETF_NAV
         columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
         symbols = payload.symbols or []
         if not symbols:
