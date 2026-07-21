@@ -70,6 +70,7 @@ _NOQA_RE = re.compile(r"#\s*noqa:\s*([a-zA-Z][a-zA-Z0-9_-]*)")
 # ruff/flake8 标准码格式：大写字母+数字（如 E402/BLE001/S324/W503/F401）
 _STANDARD_CODE_RE = re.compile(r"^[A-Z]+\d+$")
 _REASON_MIN_LENGTH = 10  # 理由文本最小长度（字符），阻断裸豁免
+_NOQA_DENSITY_THRESHOLD = 10  # 单文件已登记 noqa 标记密度阈值（红蓝对抗维度10修复，防滥用）
 
 # registry 缓存（进程级，避免每次 commit 重复加载 YAML）
 _REGISTRY_CACHE: dict[str, Any] | None = None
@@ -167,6 +168,40 @@ def _scan_file_noqa(abs_path: str, registered: frozenset[str]) -> list[str]:
     return violations
 
 
+def _check_noqa_density(abs_path: str, registered: frozenset[str]) -> str | None:
+    """检测单文件已登记 noqa 标记密度（防滥用，红蓝对抗维度10修复）。
+
+    单文件已登记 noqa 标记超过 _NOQA_DENSITY_THRESHOLD 时返回违规消息。
+    理由：已登记标记合法但无上限检测——攻击者可大量标注绕过多个 gate。
+
+    Args:
+        abs_path: 文件绝对路径。
+        registered: 已登记标记集合。
+
+    Returns:
+        违规消息字符串；None=无违规。
+    """
+    try:
+        with open(abs_path, encoding="utf-8") as f:
+            source = f.read()
+    except Exception:  # noqa: BLE001 — fail-open
+        return None
+    count = 0
+    for line in source.splitlines():
+        for match in _NOQA_RE.finditer(line):
+            marker = match.group(1)
+            if _STANDARD_CODE_RE.match(marker):
+                continue
+            if marker in registered:
+                count += 1
+    if count > _NOQA_DENSITY_THRESHOLD:
+        return (
+            f"{abs_path}: 已登记 noqa 标记密度={count}（>{_NOQA_DENSITY_THRESHOLD}）"
+            "——疑似滥用豁免机制，请重构代码而非大量标注 noqa"
+        )
+    return None
+
+
 def make_noqa_validation_gate() -> GateSpec:
     """构造 noqa 标记合规性门禁 GateSpec（硬阻断型）。
 
@@ -190,10 +225,13 @@ def make_noqa_validation_gate() -> GateSpec:
         violations: list[str] = []
         for fp in abs_files:
             violations.extend(_scan_file_noqa(fp, registered))
+            density_violation = _check_noqa_density(fp, registered)
+            if density_violation:
+                violations.append(density_violation)
         if violations:
             detail = "\n".join(violations[:20])
             return False, (
-                "NOQA_VALIDATION_VIOLATION——检出未登记或无理由的自定义 noqa 标记"
+                "NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记"
                 "（ARCH-NOQA-GOV-001）：\n"
                 + detail
             )

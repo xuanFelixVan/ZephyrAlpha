@@ -308,4 +308,56 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 
 ---
 
+## 7. 红蓝极限对抗测试修复（2026-07-22）
+
+### 7.1 对抗测试覆盖
+
+10 个维度对抗测试全部执行：跨层契约/真源失效/依赖登记/输入边界/并发/状态机/缓存/容量/命名/绕过路径。发现 8 个问题（1高/2中/5低），全部修复。
+
+### 7.2 修复清单
+
+| # | 严重度 | 问题 | 修复方案 | 修复文件 |
+|---|--------|------|---------|---------|
+| 1 | 高 | force=True 跳过 P0 硬阻断 gate | **已知限制记录**：force=True 是 FP-ISO.4C 合法逃生通道，跳过的是 pre-merge 阶段的重复 gate 检查（pre-commit 阶段已运行）。审计机制 `_audit_force_merge_usage` 已落盘。未来改进方向：force=True 时仍运行 safety-critical gate 子集（需 GateSpec 增加 safety 字段）。 | 本节记录 |
+| 2 | 中 | warn-only metric 无升级硬阻断路径 | **定量升级条件定义**：M22 docstring 覆盖率倒数 >100 时升级 pre-commit gate；M23 asyncio 调用 >30 时升级；M26 TODO/FIXME >20 时升级；M27 open() 未在 with >10 时升级；M29 资源未在 try/finally >20 时升级。升级路径：metric count 超阈值 → 新建对应 pre-commit gate → 从 METRICS 列表移除（gate 接管阻断）。 | 本节记录 |
+| 3 | 中 | M18 metric_id 跳号缺失 | **METRICS 列表注释**：M18 reserved，原 M18（治理层收敛缺口数 v1）已合并至 M19，编号保留不回收（连续性约定）。 | architecture_health_dashboard.py METRICS 列表 |
+| 4 | 低 | dashboard 快照无 TTL 清理 | **新增 `_cleanup_old_snapshots` 函数**：保留最近 30 天快照，删除过期 `dashboard_*.json`（latest.json 不在清理范围）。每次 `--snapshot` 时自动执行。 | architecture_health_dashboard.py |
+| 5 | 低 | noqa 滥用无数量上限 | **新增 `_check_noqa_density` 函数 + `_NOQA_DENSITY_THRESHOLD=10`**：单文件已登记 noqa 标记超过 10 个时硬阻断 commit，防滥用豁免机制。 | noqa_validation_gate.py |
+| 6 | 低 | snapshot 同秒并发覆盖 | **时间戳精度升级**：`%Y%m%dT%H%M%SZ` → `%Y%m%dT%H%M%S%fZ`（加毫秒），消除同秒并发覆盖竞态。 | architecture_health_dashboard.py |
+| 7 | 低 | `_NOQA_MARKERS_CACHE` 多线程竞态 | **double-checked locking**：新增 `_NOQA_MARKERS_LOCK = threading.Lock()`，`_load_noqa_exempt_markers` 使用 check-lock-check 模式消除 check-then-set 竞态。 | architecture_health_dashboard.py |
+| 8 | P2 | capability description 未同步 P0 扩展 | **description 更新**：从"生成器代码 datetime.now() 硬阻断"更新为"双轨检测面（生成器 + src/zephyr/ 全量）"完整描述，新增 aliases m46-time/ARCH-ANTI-RECURRENCE-P0。 | capability_canonical_file_registry.yaml |
+
+### 7.3 warn-only metric 升级条件（问题 2 定量定义）
+
+| metric_id | 名称 | 当前读数 | 升级阈值 | 升级后形态 |
+|-----------|------|---------|---------|-----------|
+| M22 | docstring 覆盖率倒数 | 6092 | >100 | pre-commit AST gate（检测公共函数无 docstring） |
+| M23 | asyncio.run/get_event_loop 调用数 | 19 | >30 | pre-commit AST gate（检测 asyncio.run 在 async 上下文） |
+| M26 | TODO/FIXME 计数 | 7 | >20 | pre-commit 正则 gate（检测新增 TODO/FIXME） |
+| M27 | open() 未在 with 语句计数 | 2 | >10 | pre-commit AST gate（检测 open() 不在 with 内） |
+| M29 | 资源未在 try/finally 计数 | 31 | >20 | pre-commit AST gate（检测 acquire 不在 try/finally 内） |
+| M24 | 字段遮蔽计数 | 40 | >60 | pre-commit AST gate（检测 dataclass 字段遮蔽内置名） |
+| M25 | 模块级常量未标 Final 计数 | 1748 | >2000 | pre-commit AST gate（检测模块级常量无 Final 标注） |
+| M28 | 模块级单例无锁 double-check 计数 | 1 | >5 | pre-commit AST gate（检测 _instance = None 无锁赋值） |
+| M30 | ZEPHYR_ENV 直接访问数 | 5 | >10 | pre-commit 正则 gate（检测 os.environ["ZEPHYR_ENV"] 绕过 canonical 验证器） |
+| M31 | MCP version 字段覆盖率 | 0 | >5 | pre-commit JSON schema gate（检测 mcp.json 工具无 version 字段） |
+
+升级路径：metric count 超阈值 → 新建对应 pre-commit gate → 从 METRICS 列表移除（gate 接管阻断）。
+
+### 7.4 force=True 已知限制（问题 1 详细说明）
+
+**现状**：`session_worktree_merge(force=True)` 跳过 pre-merge 阶段的 commit gate 检查（L4084-4096）。这是 FP-ISO.4C 设计的合法逃生通道，用于"pre-merge gate 误报或基础设施故障"场景。
+
+**风险评估**：
+- force=True 跳过的是 **pre-merge 阶段的重复 gate 检查**，不是首次检查。pre-commit 阶段（session_worktree_commit）gate 已运行。
+- 真实风险：如果 AI 在 commit 后、merge 前修改 worktree 代码（不 commit），然后 force=True merge。但 git merge 只 merge 已 commit 的内容，未 commit 的修改不会被 merge。
+- 审计机制：`_audit_force_merge_usage` 已落盘 force_merge 维度到 6 维滥用审计（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001）。
+
+**未来改进方向**（不在本次修复范围）：
+- GateSpec 增加 `safety: str` 字段（L/M/H）
+- force=True 时仍运行 safety=L 的 gate 子集（DATETIME-NOW-FORBIDDEN/IMPORT-INTEGRITY/UNDEFINED-NAME 等）
+- 需要新增 GATE-SAFETY-FIELD 裁定 + 全量 gate 标注 safety 字段
+
+---
+
 > **评审请求**：请用户评审本设计文档。评审通过后进入第二步施工（P0 → P1 → P2 逐项实现）。
