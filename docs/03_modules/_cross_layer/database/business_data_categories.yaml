@@ -1095,6 +1095,57 @@
   data_source: [exchange]
   blueprint: null
 
+# --- QMT 占位表（MiniQMT 无对应接口，返回 error，由 AKShare 覆盖）---
+# 裁定 #ARCH-CH-024 Phase 5：占位表名也需在真源注册，确保 SSoT 完整性
+
+- category_id: market_margin_trading_qmt
+  name: "融资融券（QMT占位，无实际写入，由AKShare margin_trading覆盖）"
+  engine: clickhouse
+  database: c1_market
+  table: margin_trading_qmt
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [qmt]
+  blueprint: null
+
+- category_id: market_dragon_tiger_qmt
+  name: "龙虎榜（QMT占位，无实际写入，由AKShare dragon_tiger覆盖）"
+  engine: clickhouse
+  database: c1_market
+  table: dragon_tiger_qmt
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [qmt]
+  blueprint: null
+
+- category_id: market_block_trade_qmt
+  name: "大宗交易（QMT占位，无实际写入，由AKShare block_trade覆盖）"
+  engine: clickhouse
+  database: c1_market
+  table: block_trade_qmt
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [qmt]
+  blueprint: null
+
 - category_id: market_limit_up_down
   name: "涨跌停统计"
   engine: clickhouse

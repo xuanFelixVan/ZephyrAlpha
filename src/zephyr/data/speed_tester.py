@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测速异常->返回error字段不抛出；Provider连接失败->api_status=blocked
 # [TESTS] tests/zephyr/data/test_speed_tester.py
-# [A_module] module_id=MOD-L00-004-speed_tester | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-speed_tester | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """数据源测速器（MOD-L00-004 §8.5）。
 
@@ -38,6 +38,7 @@ from typing import Optional
 
 from zephyr.data.provider_base import FetchPayload, FetchResult
 from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
+from zephyr.data.table_registry import get_registry
 
 log = logging.getLogger(__name__)
 
@@ -47,6 +48,52 @@ SAMPLE_START = datetime.date(2026, 6, 30)
 SAMPLE_END = datetime.date(2026, 7, 9)
 SAMPLE_SNAPSHOT_DATES = ["2026-06-30", "2026-07-09"]
 
+# ============== Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）==============
+_TBL_ADJ_FACTOR = get_registry().table("market_adj_factor")
+_TBL_BALANCE_SHEET = get_registry().table("fund_balance_sheet")
+_TBL_BLOCK_TRADE = get_registry().table("market_block_trade")
+_TBL_CASHFLOW_STATEMENT = get_registry().table("fund_cashflow_statement")
+_TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
+_TBL_DRAGON_TIGER = get_registry().table("market_dragon_tiger")
+_TBL_FINANCIAL_INDICATOR = get_registry().table("fund_financial_indicator")
+_TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
+_TBL_INCOME_STATEMENT = get_registry().table("fund_income_statement")
+_TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+_TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
+_TBL_KLINE_15MIN = get_registry().table("market_kline_15min")
+_TBL_KLINE_1MIN = get_registry().table("market_kline_1min")
+_TBL_KLINE_30MIN = get_registry().table("market_kline_30min")
+_TBL_KLINE_5MIN = get_registry().table("market_kline_5min")
+_TBL_KLINE_60MIN = get_registry().table("market_kline_60min")
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+_TBL_KLINE_DAILY_HFQ = get_registry().table("market_kline_daily_hfq")
+_TBL_KLINE_ETF_15MIN = get_registry().table("market_etf_kline_15min")
+_TBL_KLINE_ETF_1MIN = get_registry().table("market_etf_kline_1min")
+_TBL_KLINE_ETF_30MIN = get_registry().table("market_etf_kline_30min")
+_TBL_KLINE_ETF_5MIN = get_registry().table("market_etf_kline_5min")
+_TBL_KLINE_ETF_60MIN = get_registry().table("market_etf_kline_60min")
+_TBL_KLINE_FUTURES = get_registry().table("market_futures_kline")
+_TBL_KLINE_INDEX = get_registry().table("market_index_kline")
+_TBL_KLINE_LOF_15MIN = get_registry().table("market_lof_kline_15min")
+_TBL_KLINE_LOF_1MIN = get_registry().table("market_lof_kline_1min")
+_TBL_KLINE_LOF_30MIN = get_registry().table("market_lof_kline_30min")
+_TBL_KLINE_LOF_5MIN = get_registry().table("market_lof_kline_5min")
+_TBL_KLINE_LOF_60MIN = get_registry().table("market_lof_kline_60min")
+_TBL_KLINE_MONTHLY = get_registry().table("market_kline_monthly")
+_TBL_KLINE_MONTHLY_HFQ = get_registry().table("market_kline_monthly_hfq")
+_TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
+_TBL_KLINE_US_DAILY = get_registry().table("market_us_kline_daily")
+_TBL_KLINE_WEEKLY = get_registry().table("market_kline_weekly")
+_TBL_KLINE_WEEKLY_HFQ = get_registry().table("market_kline_weekly_hfq")
+_TBL_MACRO_DATA = get_registry().table("market_macro_data")
+_TBL_MAIN_BUSINESS = get_registry().table("fund_main_business")
+_TBL_MARGIN_TRADING = get_registry().table("market_margin_trading")
+_TBL_MONEY_FLOW = get_registry().table("market_money_flow")
+_TBL_NEWS_DATA = get_registry().table("fund_news_data")
+_TBL_RESTRICTED_SHARES = get_registry().table("fund_restricted_shares")
+_TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
+_TBL_US_INDEX = get_registry().table("market_us_index")
+
 # ============== 测速矩阵 ==============
 # (source, capability, target_table, extra, symbols_override, start_override, end_override)
 # start_override/end_override 为 None 时用 SAMPLE_START/SAMPLE_END
@@ -54,92 +101,92 @@ SAMPLE_SNAPSHOT_DATES = ["2026-06-30", "2026-07-09"]
 _YEAR_AGO = datetime.date(2025, 7, 10)
 TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.date], Optional[datetime.date]]] = [
     # kline_daily 三源对比
-    ("miniqmt", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"}, None, None, None),
-    ("ifind", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"}, None, None, None),
-    ("baostock", "kline_daily", "c1_market.kline_daily", {"capability": "kline_daily"},
+    ("miniqmt", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"}, None, None, None),
+    ("ifind", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"}, None, None, None),
+    ("baostock", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"},
      ["sh.600000", "sz.000001", "sz.000002"], None, None),
 
     # daily_valuation 两源对比
-    ("akshare", "daily_valuation", "c1_market.daily_valuation", {"capability": "daily_valuation"}, None, None, None),
-    ("ifind", "daily_valuation", "c1_market.daily_valuation",
+    ("akshare", "daily_valuation", _TBL_DAILY_VALUATION, {"capability": "daily_valuation"}, None, None, None),
+    ("ifind", "daily_valuation", _TBL_DAILY_VALUATION,
      {"capability": "daily_valuation", "snapshot_dates": SAMPLE_SNAPSHOT_DATES}, None, None, None),
 
     # kline_index 两源对比
-    ("miniqmt", "kline_index", "c1_market.kline_index", {"capability": "kline_index"},
+    ("miniqmt", "kline_index", _TBL_KLINE_INDEX, {"capability": "kline_index"},
      ["000300.SH", "000905.SH", "000001.SH"], None, None),
-    ("ifind", "kline_index", "c1_market.kline_index", {"capability": "kline_index"},
+    ("ifind", "kline_index", _TBL_KLINE_INDEX, {"capability": "kline_index"},
      ["000300.SH", "000905.SH", "000001.SH"], None, None),
 
     # index_constituent 两源对比
-    ("miniqmt", "index_constituent", "c1_market.index_constituent",
+    ("miniqmt", "index_constituent", _TBL_INDEX_CONSTITUENT,
      {"capability": "index_constituent"}, None, None, None),
-    ("baostock", "index_constituent", "c1_market.index_constituent",
+    ("baostock", "index_constituent", _TBL_INDEX_CONSTITUENT,
      {"capability": "index_constituent"}, None, None, None),
 
     # money_flow: iFind 唯一
-    ("ifind", "money_flow", "c1_market.money_flow", {"capability": "money_flow"}, None, None, None),
+    ("ifind", "money_flow", _TBL_MONEY_FLOW, {"capability": "money_flow"}, None, None, None),
 
     # adj_factor: miniQMT 唯一（事件驱动，改用 1 年范围重测）
-    ("miniqmt", "adj_factor", "c1_market.adj_factor", {"capability": "adj_factor"},
+    ("miniqmt", "adj_factor", _TBL_ADJ_FACTOR, {"capability": "adj_factor"},
      ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
 
     # AKShare 快源
-    ("akshare", "margin_trading", "c1_market.margin_trading", {"capability": "margin_trading"}, None, None, None),
-    ("akshare", "block_trade", "c1_market.block_trade", {"capability": "block_trade"}, None, None, None),
-    ("akshare", "dragon_tiger", "c1_market.dragon_tiger", {"capability": "dragon_tiger"}, None, None, None),
-    ("akshare", "macro_data", "c1_market.macro_data", {"capability": "macro_data"}, None, None, None),
+    ("akshare", "margin_trading", _TBL_MARGIN_TRADING, {"capability": "margin_trading"}, None, None, None),
+    ("akshare", "block_trade", _TBL_BLOCK_TRADE, {"capability": "block_trade"}, None, None, None),
+    ("akshare", "dragon_tiger", _TBL_DRAGON_TIGER, {"capability": "dragon_tiger"}, None, None, None),
+    ("akshare", "macro_data", _TBL_MACRO_DATA, {"capability": "macro_data"}, None, None, None),
 
     # 财务报表（季度数据，用 1 年范围）
-    ("miniqmt", "balance_sheet", "c3_fundamental.balance_sheet",
+    ("miniqmt", "balance_sheet", _TBL_BALANCE_SHEET,
      {"capability": "balance_sheet"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "income_statement", "c3_fundamental.income_statement",
+    ("miniqmt", "income_statement", _TBL_INCOME_STATEMENT,
      {"capability": "income_statement"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "cashflow_statement", "c3_fundamental.cashflow_statement",
+    ("miniqmt", "cashflow_statement", _TBL_CASHFLOW_STATEMENT,
      {"capability": "cashflow_statement"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "financial_indicator", "c3_fundamental.financial_indicator",
+    ("miniqmt", "financial_indicator", _TBL_FINANCIAL_INDICATOR,
      {"capability": "financial_indicator"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
-    ("miniqmt", "main_business", "c3_fundamental.main_business",
+    ("miniqmt", "main_business", _TBL_MAIN_BUSINESS,
      {"capability": "main_business"}, ["000001.SZ", "600000.SH"], _YEAR_AGO, None),
 
     # trade_calendar
-    ("baostock", "trade_calendar", "c1_market.trade_calendar",
+    ("baostock", "trade_calendar", _TBL_TRADE_CALENDAR,
      {"capability": "trade_calendar"}, None, None, None),
 
     # 复权日K
-    ("miniqmt", "kline_daily_hfq", "c1_market.kline_daily_hfq",
+    ("miniqmt", "kline_daily_hfq", _TBL_KLINE_DAILY_HFQ,
      {"capability": "kline_daily_hfq"}, None, None, None),
 
     # 周/月K（日K聚合）
-    ("miniqmt", "kline_weekly", "c1_market.kline_weekly",
+    ("miniqmt", "kline_weekly", _TBL_KLINE_WEEKLY,
      {"capability": "kline_weekly"}, ["000001.SZ", "600000.SH"], None, None),
-    ("miniqmt", "kline_monthly", "c1_market.kline_monthly",
+    ("miniqmt", "kline_monthly", _TBL_KLINE_MONTHLY,
      {"capability": "kline_monthly"}, ["000001.SZ", "600000.SH"], None, None),
 
     # 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "kline_1min", "c1_market.kline_1min",
+    ("miniqmt", "kline_1min", _TBL_KLINE_1MIN,
      {"capability": "kline_1min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_5min", "c1_market.kline_5min",
+    ("miniqmt", "kline_5min", _TBL_KLINE_5MIN,
      {"capability": "kline_5min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_15min", "c1_market.kline_15min",
+    ("miniqmt", "kline_15min", _TBL_KLINE_15MIN,
      {"capability": "kline_15min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_30min", "c1_market.kline_30min",
+    ("miniqmt", "kline_30min", _TBL_KLINE_30MIN,
      {"capability": "kline_30min"}, ["000001.SZ"], None, None),
-    ("miniqmt", "kline_60min", "c1_market.kline_60min",
+    ("miniqmt", "kline_60min", _TBL_KLINE_60MIN,
      {"capability": "kline_60min"}, ["000001.SZ"], None, None),
 
     # ===== 4 个未验证源（P2）=====
     # tickflow 美股数据
-    ("tickflow", "kline_us_daily", "c1_market.kline_us_daily",
+    ("tickflow", "kline_us_daily", _TBL_KLINE_US_DAILY,
      {"capability": "kline_us_daily"}, ["SPY.US", "AAPL.US"], None, None),
-    ("tickflow", "us_index", "c1_market.us_index",
+    ("tickflow", "us_index", _TBL_US_INDEX,
      {"capability": "us_index"}, None, None, None),
 
     # tushare 新闻数据（统一写入 news_data，需 TUSHARE_TOKEN）
-    ("tushare", "news_data", "c3_fundamental.news_data",
+    ("tushare", "news_data", _TBL_NEWS_DATA,
      {"capability": "news_data"}, None, None, None),
 
     # rss 财经新闻（symbols_override 传 RSS feed URL，非股票代码）
-    ("rss", "news_data", "c3_fundamental.news_data",
+    ("rss", "news_data", _TBL_NEWS_DATA,
      {"capability": "news_data"},
      ["https://36kr.com/feed",
       f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",
@@ -148,52 +195,52 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
      None, None),
 
     # akshare 研报/北向资金/期货
-    ("akshare", "research_report", "c3_fundamental.news_data",
+    ("akshare", "research_report", _TBL_NEWS_DATA,
      {"capability": "research_report"}, ["000001.SZ", "600000.SH"], None, None),
-    ("akshare", "hk_connect_flow", "c1_market.hk_connect_flow",
+    ("akshare", "hk_connect_flow", _TBL_HK_CONNECT_FLOW,
      {"capability": "hk_connect_flow"}, None, None, None),
-    ("akshare", "kline_futures", "c1_market.kline_futures",
+    ("akshare", "kline_futures", _TBL_KLINE_FUTURES,
      {"capability": "kline_futures"}, None, None, None),
 
     # tdx 通达信板块数据
-    ("tdx", "industry_class", "c1_market.industry_class",
+    ("tdx", "industry_class", _TBL_INDUSTRY_CLASS,
      {"capability": "industry_class"}, None, None, None),
-    ("tdx", "kline_sector", "c1_market.kline_sector",
+    ("tdx", "kline_sector", _TBL_KLINE_SECTOR,
      {"capability": "kline_sector"}, ["sh.000001"], None, None),
 
     # ===== 新增能力测速（2026-07-11）=====
     # ETF 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "kline_etf_1min", "c1_market.kline_etf_1min",
+    ("miniqmt", "kline_etf_1min", _TBL_KLINE_ETF_1MIN,
      {"capability": "kline_etf_1min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_5min", "c1_market.kline_etf_5min",
+    ("miniqmt", "kline_etf_5min", _TBL_KLINE_ETF_5MIN,
      {"capability": "kline_etf_5min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_15min", "c1_market.kline_etf_15min",
+    ("miniqmt", "kline_etf_15min", _TBL_KLINE_ETF_15MIN,
      {"capability": "kline_etf_15min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_30min", "c1_market.kline_etf_30min",
+    ("miniqmt", "kline_etf_30min", _TBL_KLINE_ETF_30MIN,
      {"capability": "kline_etf_30min"}, ["510050.SH"], None, None),
-    ("miniqmt", "kline_etf_60min", "c1_market.kline_etf_60min",
+    ("miniqmt", "kline_etf_60min", _TBL_KLINE_ETF_60MIN,
      {"capability": "kline_etf_60min"}, ["510050.SH"], None, None),
 
     # LOF 分钟K线（数据量大，用 1 只样本）
-    ("miniqmt", "kline_lof_1min", "c1_market.kline_lof_1min",
+    ("miniqmt", "kline_lof_1min", _TBL_KLINE_LOF_1MIN,
      {"capability": "kline_lof_1min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_5min", "c1_market.kline_lof_5min",
+    ("miniqmt", "kline_lof_5min", _TBL_KLINE_LOF_5MIN,
      {"capability": "kline_lof_5min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_15min", "c1_market.kline_lof_15min",
+    ("miniqmt", "kline_lof_15min", _TBL_KLINE_LOF_15MIN,
      {"capability": "kline_lof_15min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_30min", "c1_market.kline_lof_30min",
+    ("miniqmt", "kline_lof_30min", _TBL_KLINE_LOF_30MIN,
      {"capability": "kline_lof_30min"}, ["161725.SZ"], None, None),
-    ("miniqmt", "kline_lof_60min", "c1_market.kline_lof_60min",
+    ("miniqmt", "kline_lof_60min", _TBL_KLINE_LOF_60MIN,
      {"capability": "kline_lof_60min"}, ["161725.SZ"], None, None),
 
     # 后复权周/月K线（日K聚合）
-    ("miniqmt", "kline_weekly_hfq", "c1_market.kline_weekly_hfq",
+    ("miniqmt", "kline_weekly_hfq", _TBL_KLINE_WEEKLY_HFQ,
      {"capability": "kline_weekly_hfq"}, ["000001.SZ", "600000.SH"], None, None),
-    ("miniqmt", "kline_monthly_hfq", "c1_market.kline_monthly_hfq",
+    ("miniqmt", "kline_monthly_hfq", _TBL_KLINE_MONTHLY_HFQ,
      {"capability": "kline_monthly_hfq"}, ["000001.SZ", "600000.SH"], None, None),
 
     # 限售股明细
-    ("akshare", "restricted_shares", "c3_fundamental.restricted_shares",
+    ("akshare", "restricted_shares", _TBL_RESTRICTED_SHARES,
      {"capability": "restricted_shares"}, ["000001.SZ", "600000.SH"], None, None),
 ]
 
