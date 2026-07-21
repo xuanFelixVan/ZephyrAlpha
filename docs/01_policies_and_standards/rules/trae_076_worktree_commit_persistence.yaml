@@ -1,0 +1,202 @@
+rule_id: TRAE-076
+title: worktree commit 持久性 + start fail-closed 铁律（Worktree Commit Persistence + Start Fail-Closed，裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001）
+name: worktree commit 持久性铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-076
+priority: 66
+depends_on:
+- TRAE-068
+- TRAE-074
+tags:
+- TRAE
+- worktree_commit_persistence
+- L1_foundation
+- session_lifecycle
+- anti_schrodinger_rollback
+- fail_closed
+- start_fail_closed
+- RULE-WORKTREE-COMMIT-PERSISTENCE
+- ARCH-WORKTREE-COMMIT-PERSISTENCE-001
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-WORKTREE-COMMIT-PERSISTENCE
+- commit 持久性
+- commit persistence
+- start fail-closed
+- WORKSPACE_DRIFT_BLOCKED
+- SCHRODINGER_ROLLBACK_DETECTED
+- ARCH-WORKTREE-COMMIT-PERSISTENCE-001
+severity: critical
+scope: worktree_commit_persistence
+domain: TRAE
+triggers:
+- operation: session_worktree_commit
+- operation: session_worktree_merge
+- operation: session_worktree_abort
+- operation: session_worktree_start
+- operation: session_worktree_sweep
+- gate_id: WORKSPACE-CLEAN-CHECK
+sections:
+  worktree_commit_persistence:
+    section_type: procedure
+    title: worktree commit 持久性 + start fail-closed 铁律（RULE-WORKTREE-COMMIT-PERSISTENCE）
+    original_rules:
+    - RULE-WORKTREE-COMMIT-PERSISTENCE
+    - RULE-WORKSPACE-DRIFT-START-FAIL-CLOSED
+    - 裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展)
+    - 裁定 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展)
+    conditions:
+    - type: trigger
+      check: session_worktree_commit 成功创建 commit 后
+      pass: 写持久性标记到 .runtime/locks/commit_persisted_<sid>.json（含 commit_hash + timestamp）
+      fail: 标记写入失败不阻断 commit（fail-open——标记只是辅助 sweep 判据）
+    - type: trigger
+      check: session_worktree_sweep 检查 stale worktree 时（判据5）
+      pass: 有 24h 内的持久性标记 → sweep 免疫（跳过，不删除 worktree + 分支）
+      fail: 标记超龄（>24h）→ 允许清理（可能 session 崩溃后遗留）
+    - type: trigger
+      check: session_worktree_merge 合并前（Phase 3 验证）
+      pass: 读取标记中的 commit_hash，验证仍存在于 session 分支 tip → 继续正常 merge 流程
+      fail: commit_hash 与分支 tip 不匹配 → fail-closed 返回 SCHRODINGER_ROLLBACK_DETECTED（commit 被 sweep 或并发 session 删除）
+    - type: trigger
+      check: session_worktree_start 时工作区有非 auto-sync 产物的残留（Phase 4）
+      pass: 无真实代码残留（或仅 auto-sync 产物已自动 restore）→ 继续创建 session
+      fail: 有真实代码残留 → fail-closed 返回 WORKSPACE_DRIFT_BLOCKED（100% AI 场景下 warn 无效，必须阻断）
+    - type: escape_hatch
+      check: session_worktree_start(allow_workspace_drift=True) 显式逃生通道
+      pass: 跳过工作区残留 fail-closed 检查（对标 force=True 语义）
+      fail: 滥用风险——可能搭便车提交其他 session 的 WIP
+    - type: escape_hatch
+      check: session_worktree_merge(force=True) 跳过 commit 持久性验证
+      pass: 跳过 SCHRODINGER_ROLLBACK_DETECTED 检测（对标 base freshness check 的 force 语义）
+      fail: 滥用风险——可能引入薛定谔的回退
+    actions:
+    - type: mandatory
+      step: '铁律1: session_worktree_commit 成功创建 commit 后 MUST 调用 _write_commit_persisted_marker 写持久性标记——sweep 看到标记跳过，merge 前验证 commit 仍存在'
+    - type: mandatory
+      step: '铁律2: session_worktree_sweep（_sweep_one_dir）MUST 检查持久性标记（判据5）——24h 内的标记 → sweep 免疫，超龄 → 允许清理'
+    - type: mandatory
+      step: '铁律3: session_worktree_merge MUST 在 merge 前验证 commit 持久性——读取标记中的 commit_hash，验证仍存在于 session 分支 tip，不匹配则 fail-closed 返回 SCHRODINGER_ROLLBACK_DETECTED'
+    - type: mandatory
+      step: '铁律4: session_worktree_start MUST fail-closed 阻断有真实代码残留的 start——100% AI 场景下 warn 无效（AI 忽略 warning 直接启动），必须 fail-closed 强制 AI 先处理残留'
+    - type: mandatory
+      step: '铁律5: session_worktree_merge 成功后 MUST 清除持久性标记（_clear_commit_persisted_marker）'
+    - type: mandatory
+      step: '铁律6: session_worktree_abort MUST 清除持久性标记（_clear_commit_persisted_marker）'
+    - type: mandatory
+      step: '铁律7: session_worktree_start(allow_workspace_drift=True) 是逃生通道——跳过工作区残留 fail-closed 检查，但滥用风险高（可能搭便车提交其他 session 的 WIP）'
+    - type: forbidden
+      step: '禁止: session_worktree_sweep 删除有 24h 内持久性标记的 worktree——commit 会随 worktree + 分支删除而消失（薛定谔的回退）'
+    - type: forbidden
+      step: '禁止: session_worktree_start 在有真实代码残留时 fail-open 放行——100% AI 场景下 warn 无效，必须 fail-closed'
+    - type: forbidden
+      step: '禁止: session_worktree_merge 跳过 commit 持久性验证（除非 force=True 显式逃生）——commit 消失后 merge 会导致薛定谔的回退'
+    examples:
+    - scenario: commit 持久性标记防 sweep 删除（治本目标）
+      正确: session_worktree_commit 创建 commit → 写持久性标记 → AI 等待 merge → 并发 session 的 sweep 检查标记 → 24h 内 → 跳过 → commit 保留 → merge 成功
+      错误: session_worktree_commit 创建 commit → 无持久性标记 → AI 等待 merge → 并发 session 的 sweep 删除 worktree + 分支 → commit 消失 → merge 时 SCHRODINGER_ROLLBACK_DETECTED
+      reason: commit 只存在于 worktree 分支，sweep 删除 worktree + 分支后 commit 消失——持久性标记让 sweep 免疫有未合并 commit 的 worktree
+    - scenario: merge 前验证 commit 持久性（检测薛定谔的回退）
+      正确: session_worktree_merge 读取标记中的 commit_hash=abc123 → 验证 session 分支 tip=abc123 → 匹配 → 继续正常 merge
+      错误: session_worktree_merge 读取标记中的 commit_hash=abc123 → 验证 session 分支 tip=MISSING → fail-closed 返回 SCHRODINGER_ROLLBACK_DETECTED → AI 用 git reflog 恢复 commit 或重新 commit
+      reason: commit 消失后 merge 会导致薛定谔的回退——merge 报成功但 git log 无 merge commit
+    - scenario: start fail-closed 阻断工作区残留（治本 warn 无效）
+      正确: session_worktree_start 检测到工作区有真实代码残留 → fail-closed 返回 WORKSPACE_DRIFT_BLOCKED → AI 先处理残留（commit/stash/restore）→ 重新 start → 成功
+      错误: session_worktree_start 检测到工作区有真实代码残留 → fail-open warning → AI 忽略 warning 直接启动 → merge 时被 WORKSPACE-CLEAN-CHECK 阻断（浪费工作）或 stash 残留（导致 stash 堆积）
+      reason: 100% AI 场景下 warn 无效（AI 把 warn 当"通过"），必须 fail-closed 强制 AI 先处理残留
+    common_mistakes:
+    - '❌ session_worktree_commit 不写持久性标记——commit 被 sweep 删除后消失（薛定谔的回退）'
+    - '❌ session_worktree_sweep 删除有未合并 commit 的 worktree——commit 随分支删除而消失'
+    - '❌ session_worktree_start 在有真实代码残留时 fail-open——100% AI 场景下 warn 无效'
+    - '❌ session_worktree_merge 不验证 commit 持久性——commit 消失后 merge 导致薛定谔的回退'
+    - '❌ 滥用 allow_workspace_drift=True 绕过真实残留——可能搭便车提交其他 session 的 WIP'
+    background:
+      source: 2026-07-22 裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001（治本过程中薛定谔的回退连续 3 次阻击，循环依赖暴露）
+      rationale: |
+        #ARCH-WORKTREE-BASE-FRESHNESS-001 治本目标是防薛定谔的回退，但治本过程本身
+        被薛定谔的回退阻击 3 次：
+
+        1. 280f747307（并发 session）覆盖 807f0af9b1 的 base freshness 代码
+        2. commit 323df2fa11 消失——session_worktree_commit 和 session_worktree_merge
+           之间的窗口期，worktree 被 sweep 删除，commit 随分支删除而消失
+        3. commit 105917c872 消失——同上
+
+        循环依赖的本质：
+        - 要治本薛定谔的回退 → 需要用 session_worktree 机制提交治本代码
+        - 但 session_worktree 机制自身受薛定谔的回退影响 → commit 被 sweep 删除
+        - 最终只能用 git update-ref 底层命令绕过 session_worktree 机制强制落地
+
+        病根（第一性原理）：
+        1. session_worktree_commit 创建 commit 后，commit 只存在于 worktree 分支
+        2. 在 AI 等待 merge 的窗口期，并发 session 的 sweep 可能删除 worktree + 分支
+        3. commit 随分支删除而消失——merge 时 commit 已不存在
+        4. session_worktree_start 时 fail-open warning 无效（100% AI 场景下 AI 忽略 warning）
+
+        治本方案（5 Phase）：
+        - Phase 1: commit 持久性标记（session_worktree_commit 写标记 + merge/abort 清标记）
+        - Phase 2: sweep 判据加固（_sweep_one_dir 检查标记跳过）
+        - Phase 3: merge 前验证 commit 持久性（检测薛定谔的回退）
+        - Phase 4: 工作区残留 start 时 fail-closed（原 fail-open warning 无效）
+        - Phase 5: 本规则文件 + AGENTS.md + registry 同步
+
+        与现有裁定的关系：
+        - 扩展 #ARCH-WORKTREE-BASE-FRESHNESS-001（TRAE-074）：该裁定治本 base 新鲜度检测，
+          但未覆盖 commit 创建后如何保证不被删除——本裁定补
+        - 扩展 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001：该裁定引入 WORKSPACE-CLEAN-CHECK，
+          但 start 时 fail-open——本裁定将 start 改为 fail-closed
+        - 遵循 #ARCH-PREVENTABILITY-LAYER-001（TRAE-068）：100% AI 场景下 warn 无效，
+          必须 fail-closed 或自动处理
+      related_arch: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展), #19-B (扩展)'
+references:
+  rule_ids:
+  - TRAE-068
+  - TRAE-074
+  scripts:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+  - tests/governance/rule_bridge/test_session_worktree.py
+  - tests/governance/rule_bridge/test_session_worktree_workspace_clean.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  modules:
+  - MOD-GOV-SESSION_WORKTREE
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §FP-ISO.4C
+  - AGENTS.md §RULE-WORKTREE-COMMIT-PERSISTENCE
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+enforcement:
+  paired_gate_id: null  # 本规则是文档型 + 代码内嵌检测（_sweep_one_dir 判据5 + merge 前验证 + start fail-closed），无独立 commit gate
+  type: code_embedded_plus_doc
+  executors:
+  - session_worktree_commit_marker
+  - session_worktree_sweep_check
+  - session_worktree_merge_verify
+  - session_worktree_start_fail_closed
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: true
+  bypass_markers:
+  - force=True
+  - allow_workspace_drift=True
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-WORKTREE-BASE-FRESHNESS-001, #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
+provenance:
+  extracted_at: '2026-07-22'
+  extracted_by: sess-54776-20260722005342
+  source: '裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001（Phase 1-5 落地 sess-54776-20260722005342）'

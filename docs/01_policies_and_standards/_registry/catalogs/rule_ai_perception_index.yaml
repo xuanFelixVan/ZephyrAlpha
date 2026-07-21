@@ -1972,3 +1972,40 @@ rules:
   - ARCH-STASH-ACCUMULATION-001
   paired_gate_id: STASH-ACCUMULATION
   rule_file: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml
+- rule_id: TRAE-076
+  title: worktree commit 持久性 + start fail-closed 铁律（Worktree Commit Persistence + Start Fail-Closed，裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001）
+  module_id: TRAE-076
+  scope: worktree_commit_persistence
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - session_worktree_commit
+  - session_worktree_merge
+  - session_worktree_abort
+  - session_worktree_start
+  - session_worktree_sweep
+  gate_ids:
+  - WORKSPACE-CLEAN-CHECK
+  tags:
+  - TRAE
+  - worktree_commit_persistence
+  - L1_foundation
+  - session_lifecycle
+  - anti_schrodinger_rollback
+  - fail_closed
+  - start_fail_closed
+  - RULE-WORKTREE-COMMIT-PERSISTENCE
+  - ARCH-WORKTREE-COMMIT-PERSISTENCE-001
+  aliases:
+  - RULE-WORKTREE-COMMIT-PERSISTENCE
+  - commit 持久性
+  - commit persistence
+  - start fail-closed
+  - WORKSPACE_DRIFT_BLOCKED
+  - SCHRODINGER_ROLLBACK_DETECTED
+  - ARCH-WORKTREE-COMMIT-PERSISTENCE-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml

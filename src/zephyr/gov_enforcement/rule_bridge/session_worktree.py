@@ -856,6 +856,79 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
             pass
 
 
+# ---------------------------------------------------------------------------
+# #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: commit 持久性标记（2026-07-22）
+# ---------------------------------------------------------------------------
+# 病根：session_worktree_commit 创建 commit 后，commit 只存在于 worktree 分支。
+# 在 AI 等待 merge 的窗口期，并发 session 的 sweep 可能删除 worktree + 分支，
+# 导致 commit 随分支删除而消失（薛定谔的回退的又一表现）。
+# 治本：commit 成功后写持久性标记文件，sweep 看到标记就跳过；merge 前验证
+# commit 仍存在，消失则 fail-closed 报告薛定谔的回退。
+
+
+def _commit_persisted_marker_path(root: Path, session_id: str) -> Path:
+    """返回 commit 持久性标记文件路径。"""
+    return root / ".runtime" / "locks" / f"commit_persisted_{session_id}.json"
+
+
+def _write_commit_persisted_marker(
+    root: Path, session_id: str, commit_hash: str,
+) -> None:
+    """commit 成功后写持久性标记（原子写入）。
+
+    标记文件含 commit_hash + timestamp，供 sweep 判据和 merge 前验证使用。
+    fail-open：写入失败不阻断 commit（commit 已创建，标记只是辅助 sweep 判据）。
+    """
+    import time as _time
+    try:
+        marker = _commit_persisted_marker_path(root, session_id)
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "session_id": session_id,
+            "commit_hash": commit_hash,
+            "timestamp": _time.time(),  # noqa: m46-time — 审计事件时间戳
+        }
+        tmp = marker.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+        os.replace(tmp, marker)
+    except Exception:  # noqa: BLE001 — fail-open，标记只是辅助
+        logger.debug(
+            "commit_persisted marker write failed (non-blocking): %s",
+            session_id, exc_info=True,
+        )
+
+
+def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
+    """merge/abort 成功后清除持久性标记。fail-open：删除失败不阻断。"""
+    try:
+        marker = _commit_persisted_marker_path(root, session_id)
+        marker.unlink(missing_ok=True)
+    except Exception:  # noqa: BLE001 — fail-open
+        logger.debug(
+            "commit_persisted marker clear failed (non-blocking): %s",
+            session_id, exc_info=True,
+        )
+
+
+def _read_commit_persisted_marker(
+    root: Path, session_id: str,
+) -> dict | None:
+    """读取持久性标记。返回 None 表示标记不存在（未 commit 或已 merge）。"""
+    try:
+        marker = _commit_persisted_marker_path(root, session_id)
+        if not marker.exists():
+            return None
+        data = json.loads(marker.read_text(encoding="utf-8"))
+        if isinstance(data, dict) and "commit_hash" in data:
+            return data
+        return None
+    except Exception:  # noqa: BLE001 — fail-open
+        logger.debug(
+            "commit_persisted marker read failed: %s", session_id, exc_info=True,
+        )
+        return None
+
+
 def _sweep_one_dir(
     manager: WorktreeManager,
     registry: SessionRegistry,
@@ -891,11 +964,24 @@ def _sweep_one_dir(
     # 判据 2：活跃 session
     if sid in active_sids:
         return 0, 1, []
+    # 判据 5（#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, 2026-07-22）: commit 持久性标记
+    # 有标记 = session_worktree_commit 已创建 commit 但尚未 merge——sweep 必须跳过，
+    # 否则 commit 随 worktree + 分支删除而消失（薛定谔的回退）。标记超龄（>24h）才强制清理。
+    warnings: list[str] = []
+    marker = _read_commit_persisted_marker(manager.repo_root, sid)
+    if marker is not None:
+        import time as _time
+        marker_age = _time.time() - float(marker.get("timestamp", 0))
+        if marker_age < 86400:  # 24h 内的标记 → sweep 免疫
+            return 0, 1, [f"{sid}: commit_persisted marker found (age={int(marker_age)}s < 86400s, commit={marker.get('commit_hash', '')[:8]}), sweep 免疫"]
+        # 超龄标记 fall through（可能 session 崩溃后遗留，允许清理）
+        warnings.append(
+            f"{sid}: commit_persisted marker 超龄（age={int(marker_age)}s > 86400s），允许清理"
+        )
     # 判据 3：分支 tip 在 main（有未合并提交时检测是否已被取代）
     branch = manager._branch_name(sid)
     r_v = manager._run_git(["git", "rev-parse", "--verify", branch])
     has_branch = r_v.returncode == 0
-    warnings: list[str] = []
     if has_branch:
         r_mb = manager._run_git(
             ["git", "merge-base", "--is-ancestor", branch, "HEAD"]
@@ -1340,6 +1426,7 @@ def session_worktree_start(
     task_files: list[str] | None = None,
     allow_duplicate: bool = False,
     depends_on_sessions: list[str] | None = None,
+    allow_workspace_drift: bool = False,
 ) -> StartResult:
     """AI 对话启动第一步：注册 session + 创建独立 worktree。
 
@@ -1364,6 +1451,9 @@ def session_worktree_start(
             （#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
             commit 时 _check_cross_commit_deps 检查依赖 session 是否仍活跃——
             仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED），避免悬空 import 污染 main 分支。
+        allow_workspace_drift: 逃生通道（#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4），
+            True 时跳过工作区残留 fail-closed 检查。用于确认残留是安全的（如其他 session
+            的合法 WIP 不会影响本 session）或基础设施故障时逃生。默认 False（阻断）。
 
     Returns:
         {
@@ -1402,19 +1492,27 @@ def session_worktree_start(
             "session_worktree_start 健康度自检通过 (session=%s)", sid,
         )
 
-    # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1: start 时工作区 clean 检查（fail-open）
-    # start 不阻断（业务流程不应卡死），仅告警让 AI 知情——主工作区有残留时
-    # 提醒 AI 先处理，否则 merge 时会被 WORKSPACE-CLEAN-CHECK 阻断。
-    try:
-        _ws_passed, _ws_detail = _workspace_clean_check_start(root, sid)
-        if "real code modified" in _ws_detail or "restore failed" in _ws_detail:
-            print("\n" + "=" * 80, file=sys.stderr)
-            print("[WORKSPACE-CLEAN-CHECK] WARNING: 主工作区检测到残留（session=%s）" % sid, file=sys.stderr)
-            print(f"  详情: {_ws_detail}", file=sys.stderr)
-            print("  建议: 先处理残留（commit/stash/restore）再开始新任务，否则 merge 时会被 WORKSPACE-CLEAN-CHECK 阻断。", file=sys.stderr)
-            print("=" * 80 + "\n", file=sys.stderr)
-    except Exception as _ws_err:  # noqa: BLE001 — fail-open
-        logger.warning("[start] workspace clean check failed: %s", _ws_err)
+    # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1 + #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4:
+    # start 时工作区 clean 检查（fail-closed）。
+    # 病根：原 fail-open warning 无效（100% AI 场景下 AI 忽略 warning 直接启动），
+    # 导致 merge 时被 WORKSPACE-CLEAN-CHECK 阻断（浪费工作）或 stash 残留（导致 stash 堆积）。
+    # 治本：fail-closed 阻断 start，强制 AI 先处理残留。allow_workspace_drift=True 逃生。
+    if not allow_workspace_drift:
+        try:
+            _ws_passed, _ws_detail = _workspace_clean_check_start(root, sid)
+            if not _ws_passed:
+                return {
+                    "ok": False,
+                    "session_id": sid,
+                    "worktree_path": "",
+                    "branch": "",
+                    "registered": False,
+                    "created": False,
+                    "error": "WORKSPACE_DRIFT_BLOCKED",
+                    "detail": _ws_detail,
+                }
+        except Exception as _ws_err:  # noqa: BLE001 — fail-open（检测本身失败不阻断）
+            logger.warning("[start] workspace clean check failed: %s", _ws_err)
 
     # P4-4: session 启动推送近期高频错误提醒（#ARCH-PREVENTABILITY-LAYER-001 Phase 4）
     # fail-open——加载/打印失败不阻断 session 创建
@@ -2609,6 +2707,13 @@ def session_worktree_commit(
             commit_result["reconcile_results"] = _run_post_commit_reconcile(
                 root, rel_files, session_id,
             )
+            # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 1:
+            # commit 成功后写持久性标记——sweep 看到标记跳过，merge 前验证 commit 仍存在。
+            # 治本薛定谔的回退：commit 创建后到 merge 之前的窗口期，sweep 可能删除
+            # worktree + 分支导致 commit 消失。标记让 sweep 免疫有未合并 commit 的 worktree。
+            _write_commit_persisted_marker(
+                root, session_id, commit_result.get("commit_hash", ""),
+            )
         return commit_result
 
 
@@ -3702,6 +3807,39 @@ def session_worktree_merge(
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass  # heartbeat 失败不阻断 merge（TTL 未过期则 session 仍存活）
 
+    # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 3: merge 前验证 commit 持久性
+    # 读取持久性标记，验证 commit 仍存在于 session 分支 tip。如果 commit 消失
+    # （被 sweep 删除或被并发 session 回退），fail-closed 报告薛定谔的回退。
+    # force=True 时跳过（逃生通道，对标 base freshness check 的 force 语义）。
+    if not force:
+        _marker = _read_commit_persisted_marker(root, session_id)
+        if _marker is not None:
+            _expected_hash = _marker.get("commit_hash", "")
+            _branch = manager._branch_name(session_id)
+            _r_tip = manager._run_git(
+                ["git", "rev-parse", "--short", _branch]
+            )
+            _actual_hash = _r_tip.stdout.strip() if _r_tip.returncode == 0 else ""
+            if _expected_hash and _actual_hash != _expected_hash:
+                # 薛定谔的回退已发生：commit 创建后消失了
+                return {
+                    "session_id": session_id,
+                    "merged": False,
+                    "message": (
+                        f"SCHRODINGER_ROLLBACK_DETECTED: commit {_expected_hash} "
+                        f"was created by session_worktree_commit but no longer exists "
+                        f"on branch {_branch} (tip={_actual_hash or 'MISSING'}). "
+                        f"薛定谔的回退已发生——commit 被 sweep 或并发 session 删除。"
+                        f"修复：用 git reflog 恢复 commit，或重新 commit。"
+                        f"（session_id={session_id}）"
+                    ),
+                    "cleaned": False,
+                    "unregistered": False,
+                    "schrodinger_rollback": True,
+                    "expected_commit": _expected_hash,
+                    "actual_tip": _actual_hash,
+                }
+
     # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-merge 告警横幅
     # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
     # 不阻断 merge（warn 语义），但确保上次 reconciler 失败不被忽视。
@@ -3912,6 +4050,8 @@ def session_worktree_merge(
                 cleanup_heartbeat_file(root, session_id)
             except Exception:  # noqa: BLE001 — best-effort
                 logger.debug("cleanup heartbeat file failed (best-effort)", exc_info=True)
+            # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: merge 成功后清除持久性标记
+            _clear_commit_persisted_marker(root, session_id)
             try:
                 unregistered = registry.unregister(session_id)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -4123,6 +4263,8 @@ def session_worktree_abort(
         cleanup_heartbeat_file(root, session_id)
     except Exception:  # noqa: BLE001 — best-effort
         logger.debug("cleanup heartbeat file failed (best-effort)", exc_info=True)
+    # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: abort 后清除持久性标记
+    _clear_commit_persisted_marker(root, session_id)
     try:
         unregistered = registry.unregister(session_id)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -4359,7 +4501,18 @@ def _evaluate_drift_after_restore(
             f"（auto-sync 产物已自动 restore {restored_count} 个；"
             f"session_id={session_id}）"
         )
-    # abort / start: fail-open 告警（不阻断业务流程）
+    if context == "start":
+        # fail-closed（#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4, 2026-07-22）：
+        # start 时有真实代码修改 = 其他 session 残留，新 session 若启动会在 merge 时
+        # 被阻断（浪费工作）或 stash 残留（导致 stash 堆积）。100% AI 场景下 warn 无效
+        # （AI 忽略 warning 直接启动），必须 fail-closed 强制 AI 先处理残留。
+        return False, (
+            f"WORKSPACE_DRIFT_BLOCKED: 主工作区有残留修改（{detail}）。"
+            f"修复：先 commit/stash/restore 这些文件再开始新 session。"
+            f"（auto-sync 产物已自动 restore {restored_count} 个；"
+            f"session_id={session_id}）"
+        )
+    # abort: fail-open 告警（abort 是"放弃"语义，不应被阻断）
     return True, f"workspace drift (fail-open for {context}): {detail}"
 
 
@@ -4380,8 +4533,10 @@ def _check_workspace_clean(
                worktree commit 涉及的文件列表（_get_session_branch_diff_files 返回值）。
     - "abort": auto-sync 产物自动 restore；真实代码修改 → fail-open（abort 不应被阻断，
                真实代码留主工作区不动，让 AI 显式处理；abort 是"放弃"语义，不应强行清理）
-    - "start": auto-sync 产物自动 restore；真实代码修改 → fail-open 告警（让 AI 知情处理，
-               不阻断 start，避免 start 卡死阻塞业务流程）
+    - "start": auto-sync 产物自动 restore；真实代码修改 → fail-closed 阻断 start
+               （#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4, 2026-07-22：
+               原 fail-open warning 无效，AI 忽略 warning 直接启动，导致 merge 时
+               被阻断或 stash 堆积。100% AI 场景下必须 fail-closed）
 
     fail-open 全局：git status 失败 / 异常时不阻断业务流程，仅返回 (True, detail)。
 
@@ -4474,7 +4629,11 @@ def _workspace_clean_check_abort(
 def _workspace_clean_check_start(
     root: Path, session_id: str,
 ) -> tuple[bool, str]:
-    """start 前工作区 clean 检查（fail-open，不阻断 start）。"""
+    """start 前工作区 clean 检查（fail-closed 阻断有残留的 start）。
+
+    #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4 (2026-07-22):
+    原 fail-open warning 无效（100% AI 场景下 AI 忽略 warning），改为 fail-closed。
+    """
     return _check_workspace_clean(root, session_id, context="start")
 
 

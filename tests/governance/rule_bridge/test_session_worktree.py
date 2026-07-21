@@ -1720,6 +1720,7 @@ class TestBaseFreshnessFullLifecycle:
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
+        monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
         assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
         wt_path = Path(r_start["worktree_path"])
@@ -1739,6 +1740,7 @@ class TestBaseFreshnessFullLifecycle:
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
+        monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[1])
         assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
         wt_path = Path(r_start["worktree_path"])
@@ -1762,6 +1764,7 @@ class TestBaseFreshnessFullLifecycle:
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
+        monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
         assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
         wt_path = Path(r_start["worktree_path"])

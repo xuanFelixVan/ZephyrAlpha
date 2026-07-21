@@ -225,7 +225,7 @@ class TestCheckWorkspaceCleanAbort:
 
 
 class TestCheckWorkspaceCleanStart:
-    """start context: fail-open 策略。"""
+    """start context: fail-closed 策略（#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4）。"""
 
     def test_clean_workspace_passes(self, tmp_path: Path):
         _init_git_repo(tmp_path)
@@ -233,12 +233,14 @@ class TestCheckWorkspaceCleanStart:
         passed, detail = _check_workspace_clean(tmp_path, "sess-test", context="start")
         assert passed is True
 
-    def test_real_code_fail_open(self, tmp_path: Path):
+    def test_real_code_fail_closed(self, tmp_path: Path):
+        """start 时有真实代码修改 → fail-closed 阻断（Phase 4 治本，原 fail-open 无效）。"""
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
         _make_real_code_dirty(tmp_path)
         passed, detail = _check_workspace_clean(tmp_path, "sess-test", context="start")
-        assert passed is True  # start 不阻断
+        assert passed is False  # start 阻断（Phase 4: fail-closed）
+        assert "WORKSPACE_DRIFT_BLOCKED" in detail
 
     def test_auto_sync_restored(self, tmp_path: Path):
         _init_git_repo(tmp_path)
@@ -294,12 +296,13 @@ class TestWrapperFunctions:
         passed, detail = _workspace_clean_check_abort(tmp_path, "sess-test")
         assert passed is True
 
-    def test_start_wrapper_never_blocks(self, tmp_path: Path):
+    def test_start_wrapper_fail_closed(self, tmp_path: Path):
+        """start wrapper: 有真实代码修改时 fail-closed（Phase 4 治本）。"""
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
         _make_real_code_dirty(tmp_path)
         passed, detail = _workspace_clean_check_start(tmp_path, "sess-test")
-        assert passed is True
+        assert passed is False  # Phase 4: start fail-closed
 
     def test_gate_id_constant(self):
         assert _WS_CLEAN_GATE_ID == "WORKSPACE-CLEAN-CHECK"
@@ -395,15 +398,19 @@ class TestEndToEndScenario:
         assert passed is False
         assert "real code" in detail.lower() or "阻断" in detail
 
-    def test_start_warns_on_residue(self, tmp_path: Path):
-        """start 时检测到残留 → fail-open 告警（不阻断）。"""
+    def test_start_blocks_on_residue(self, tmp_path: Path):
+        """start 时检测到真实代码残留 → fail-closed 阻断（Phase 4 治本，原 fail-open 无效）。
+
+        auto-sync 产物先自动 restore，真实代码残留仍然存在 → 阻断。
+        """
         _init_git_repo(tmp_path)
         _commit_initial(tmp_path)
         _make_real_code_dirty(tmp_path)
         _make_auto_sync_dirty(tmp_path)
         passed, detail = _workspace_clean_check_start(tmp_path, "sess-test")
-        # start 不阻断，但 auto-sync 已自动 restore
-        assert passed is True
+        # Phase 4: start fail-closed——真实代码残留阻断 start
+        assert passed is False
+        assert "WORKSPACE_DRIFT_BLOCKED" in detail
 
 
 # ============================================================================

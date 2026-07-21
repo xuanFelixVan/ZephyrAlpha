@@ -5724,6 +5724,84 @@ entries:
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), 铁律: 永久系统必须全自动'
   created: '2026-07-21'
   last_updated: '2026-07-21'
+# --- #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: worktree commit 持久性 + start fail-closed（2026-07-22）---
+# 扩展: #ARCH-WORKTREE-BASE-FRESHNESS-001（base 新鲜度治本，未覆盖 commit 创建后如何保证不被删除）
+# 扩展: #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001（WORKSPACE-CLEAN-CHECK start 时 fail-open，本裁定改 fail-closed）
+# 遵循: #ARCH-PREVENTABILITY-LAYER-001（TRAE-068，100% AI 场景下 warn 无效必须 fail-closed）
+- issue_id: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001'
+  title: 'worktree commit 持久性标记 + sweep 免疫 + merge 前验证 + start fail-closed——治本薛定谔的回退循环依赖'
+  category: architecture_governance
+  severity: P0
+  adjudication: |-
+    2026-07-22 立项裁定。#ARCH-WORKTREE-BASE-FRESHNESS-001 治本目标是防薛定谔的回退，
+    但治本过程本身被薛定谔的回退阻击 3 次（commit 323df2fa11 / 105917c872 消失、
+    807f0af9b1 被覆盖），暴露循环依赖：治本薛定谔的回退需用 session_worktree 机制，
+    但 session_worktree 机制自身受薛定谔的回退影响。
+
+    病根（第一性原理）：
+    1. session_worktree_commit 创建 commit 后，commit 只存在于 worktree 分支——AI 等待
+       merge 的窗口期，并发 session 的 sweep 可能删除 worktree + 分支，commit 随分支
+       删除而消失（薛定谔的回退）
+    2. session_worktree_start 时 fail-open warning 无效（100% AI 场景下 AI 忽略 warning
+       直接启动），工作区残留导致 merge 时被 WORKSPACE-CLEAN-CHECK 阻断（浪费工作）
+       或 stash 堆积
+    3. session_worktree_merge 不验证 commit 是否仍存在——commit 消失后 merge 导致
+       薛定谔的回退（merge 报成功但 git log 无 merge commit）
+
+    裁定：方案 A——commit 持久性标记 + sweep 免疫 + merge 前验证 + start fail-closed：
+    - Phase 1: session_worktree_commit 成功后写持久性标记
+      （.runtime/locks/commit_persisted_<sid>.json，含 commit_hash + timestamp）；
+      session_worktree_merge/abort 成功后清除标记
+    - Phase 2: _sweep_one_dir 判据5——24h 内的标记 → sweep 免疫（跳过）；
+      超龄（>24h）→ 允许清理
+    - Phase 3: session_worktree_merge merge 前验证 commit 持久性——读取标记中的
+      commit_hash，验证仍存在于 session 分支 tip，不匹配则 fail-closed 返回
+      SCHRODINGER_ROLLBACK_DETECTED
+    - Phase 4: session_worktree_start fail-closed 阻断有真实代码残留的 start
+      （原 fail-open warning 无效）；新增 allow_workspace_drift=True 逃生通道
+    - Phase 5: 规则外部化（trae_076 + AGENTS.md + registry 同步）
+
+    逃生通道：session_worktree_merge(force=True) 跳过 commit 持久性验证 + base freshness
+    check；session_worktree_start(allow_workspace_drift=True) 跳过工作区残留 fail-closed。
+
+    与现有裁定的关系：
+    - 扩展 #ARCH-WORKTREE-BASE-FRESHNESS-001（TRAE-074）：该裁定治本 base 新鲜度检测，
+      但未覆盖 commit 创建后如何保证不被删除——本裁定补
+    - 扩展 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001：该裁定引入 WORKSPACE-CLEAN-CHECK，
+      但 start 时 fail-open——本裁定将 start 改为 fail-closed
+    - 遵循 #ARCH-PREVENTABILITY-LAYER-001（TRAE-068）：100% AI 场景下 warn 无效，
+      必须 fail-closed 或自动处理
+  fix_phase: |
+    Phase 1-4（立即，2026-07-22）：
+      - session_worktree.py: 新增 _commit_persisted_marker_path /
+        _write_commit_persisted_marker / _clear_commit_persisted_marker /
+        _read_commit_persisted_marker 4 个 helper
+      - session_worktree.py: session_worktree_commit 成功路径写标记
+      - session_worktree.py: session_worktree_merge 成功路径 + abort 路径清标记
+      - session_worktree.py: _sweep_one_dir 加判据5（24h 免疫）
+      - session_worktree.py: session_worktree_merge merge 前验证 + SCHRODINGER_ROLLBACK_DETECTED
+      - session_worktree.py: session_worktree_start 新增 allow_workspace_drift 参数 + fail-closed
+      - session_worktree.py: _evaluate_drift_after_restore start 分支返回 WORKSPACE_DRIFT_BLOCKED
+      - test_session_worktree.py: 3 个 merge 测试加 start stub
+      - test_session_worktree_workspace_clean.py: 3 个 start 测试改为 fail-closed 断言
+    Phase 5（同步）：
+      - 新建 trae_076_worktree_commit_persistence.yaml
+      - AGENTS.md 加 commit 持久性 + start fail-closed 规则
+      - capability_canonical_file_registry.yaml 登记 worktree_commit_persistence
+      - rule_ai_perception_index.yaml 登记 TRAE-076（total_rules 71→72）
+      - architecture_issue_registry.yaml 登记（本条）
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（核心修改）
+    - tests/governance/rule_bridge/test_session_worktree.py（3 个测试加 stub）
+    - tests/governance/rule_bridge/test_session_worktree_workspace_clean.py（3 个测试改 fail-closed）
+    - docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml（规则外部化）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+    - .runtime/locks/commit_persisted_<sid>.json（持久性标记，运行时自动生成）
+  status: decided
+  related_adjudication: '#ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展，base 新鲜度治本), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展，start fail-closed), #ARCH-PREVENTABILITY-LAYER-001 (遵循，warn 无效), 裁定#19-B (worktree base 新鲜度检测)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_068 (preventability layer), trae_074 (worktree base freshness)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
 # --- #ARCH-STASH-ACCUMULATION-001: stash 累积系统性治理（2026-07-21）---
 # 父裁定: #ARCH-WORKTREE-002（缺陷4 stash 堆积治本）→ 本议题系统性扩展
 # 关联: #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001（WORKSPACE-CLEAN-CHECK 引入，stash 累积根因之一）

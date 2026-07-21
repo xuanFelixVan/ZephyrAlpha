@@ -4916,6 +4916,43 @@ capabilities:
       关联规则：TRAE-074（worktree_base_freshness）、裁定#19-B（扩展）。
 
   # --------------------------------------------------------------------------
+  - capability_id: worktree_commit_persistence
+    aliases:
+      - _write_commit_persisted_marker
+      - _clear_commit_persisted_marker
+      - _read_commit_persisted_marker
+      - _commit_persisted_marker_path
+      - commit_persisted
+      - commit 持久性
+      - commit persistence
+      - SCHRODINGER_ROLLBACK_DETECTED
+      - WORKSPACE_DRIFT_BLOCKED
+      - allow_workspace_drift
+      - start fail-closed
+      - sweep 免疫
+      - ARCH-WORKTREE-COMMIT-PERSISTENCE-001
+      - RULE-WORKTREE-COMMIT-PERSISTENCE
+      - TRAE-076
+    description: >-
+      worktree commit 持久性 + start fail-closed 能力（#ARCH-WORKTREE-COMMIT-PERSISTENCE-001，
+      2026-07-22，治本薛定谔的回退循环依赖）。#ARCH-WORKTREE-BASE-FRESHNESS-001 治本目标
+      是防薛定谔的回退，但治本过程本身被薛定谔的回退阻击 3 次（commit 323df2fa11 /
+      105917c872 消失、807f0af9b1 被覆盖），暴露循环依赖。本能力 5 Phase 治本：
+      Phase 1 _write_commit_persisted_marker / _clear_commit_persisted_marker /
+      _read_commit_persisted_marker / _commit_persisted_marker_path 4 个 helper
+      （commit 成功后写 .runtime/locks/commit_persisted_<sid>.json 含 commit_hash +
+      timestamp，merge/abort 成功后清标记）；Phase 2 _sweep_one_dir 判据5（24h 内的
+      持久性标记 → sweep 免疫，超龄 → 允许清理）；Phase 3 session_worktree_merge
+      merge 前验证 commit 持久性（commit_hash 与分支 tip 不匹配则 fail-closed 返回
+      SCHRODINGER_ROLLBACK_DETECTED）；Phase 4 session_worktree_start fail-closed
+      阻断有真实代码残留的 start（100% AI 场景下 warn 无效）+ allow_workspace_drift=True
+      逃生通道。canonical 真源在 session_worktree.py。解决发现性：新 AI 搜
+      "commit 持久性/薛定谔回退/sweep 免疫/WORKSPACE_DRIFT_BLOCKED" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建持久性标记逻辑。
+      关联规则：TRAE-076（worktree_commit_persistence）、裁定
+      #ARCH-WORKTREE-COMMIT-PERSISTENCE-001（扩展 #ARCH-WORKTREE-BASE-FRESHNESS-001）。
+
+  # --------------------------------------------------------------------------
   - capability_id: consumers_accuracy_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py
     aliases:
