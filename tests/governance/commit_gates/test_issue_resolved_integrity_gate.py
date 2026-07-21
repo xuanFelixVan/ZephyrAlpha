@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV-commit_gates | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """test_issue_resolved_integrity_gate.py — ISSUE-RESOLVED-INTEGRITY gate 测试
 
