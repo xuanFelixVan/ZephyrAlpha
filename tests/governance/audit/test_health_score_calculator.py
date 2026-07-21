@@ -69,11 +69,11 @@ class TestDefaultWeights:
         max_weight = max(_DEFAULT_WEIGHTS.values())
         assert _DEFAULT_WEIGHTS["forged_gw_marker_24h"] == max_weight
 
-    def test_five_dimensions_present(self):
-        """5 维都有权重。"""
+    def test_six_dimensions_present(self):
+        """6 维都有权重。"""
         expected = {
             "warn_only_24h", "emergency_commit_24h", "allow_overlap_7d",
-            "forged_gw_marker_24h", "non_gw_commit_24h",
+            "forged_gw_marker_24h", "non_gw_commit_24h", "force_merge_7d",
         }
         assert set(_DEFAULT_WEIGHTS.keys()) == expected
 
@@ -88,6 +88,7 @@ class TestCalculateHealthScoreBasic:
         "allow_overlap_7d": 30,
         "forged_gw_marker_24h": 3,
         "non_gw_commit_24h": 10,
+        "force_merge_7d": 5,
     }
 
     def test_all_zero_metrics_returns_zero_score(self):
@@ -106,10 +107,11 @@ class TestCalculateHealthScoreBasic:
             "allow_overlap_7d": 60,
             "forged_gw_marker_24h": 6,
             "non_gw_commit_24h": 20,
+            "force_merge_7d": 10,
         }
         result = calculate_health_score(metrics, self.THRESHOLDS)
-        assert result.score == 1.0
-        assert len(result.triggered_dimensions) == 5
+        assert abs(result.score - 1.0) < 1e-10
+        assert len(result.triggered_dimensions) == 6
 
     def test_single_dimension_partial_score(self):
         """单维部分得分：warn_only=25, threshold=50 → dim_score=0.5, weighted=0.5*0.15=0.075。"""
@@ -172,7 +174,7 @@ class TestCustomWeights:
     THRESHOLDS = {
         "warn_only_24h": 50, "emergency_commit_24h": 5,
         "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-        "non_gw_commit_24h": 10,
+        "non_gw_commit_24h": 10, "force_merge_7d": 5,
     }
 
     def test_custom_weights_used(self):
@@ -197,7 +199,7 @@ class TestCustomWeights:
         result = calculate_health_score(metrics, self.THRESHOLDS, weights=custom_weights)
         # 归一化后 warn_only=1.0, score = 1.0 * 1.0 = 1.0
         assert abs(result.weights["warn_only_24h"] - 1.0) < 1e-10
-        assert result.score == 1.0
+        assert abs(result.score - 1.0) < 1e-10
 
     def test_weights_zero_sum_fallback_to_defaults(self):
         """权重总和=0 → fallback 到默认权重（不抛异常）。"""
@@ -220,6 +222,7 @@ class TestUnknownDimensionsFiltered:
             "allow_overlap_7d": 0,
             "forged_gw_marker_24h": 0,
             "non_gw_commit_24h": 0,
+            "force_merge_7d": 0,
             # 非评分字段（应被忽略）
             "thresholds": {"warn_only_24h": 50},
             "effective_thresholds": {"warn_only_24h": 50},
@@ -228,10 +231,10 @@ class TestUnknownDimensionsFiltered:
         thresholds = {
             "warn_only_24h": 50, "emergency_commit_24h": 5,
             "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-            "non_gw_commit_24h": 10,
+            "non_gw_commit_24h": 10, "force_merge_7d": 5,
         }
         result = calculate_health_score(metrics, thresholds)
-        # 只应包含 5 维得分
+        # 只应包含 6 维得分
         assert set(result.dimension_scores.keys()) == set(_DEFAULT_WEIGHTS.keys())
         # warn_only=50/50=1.0, score = 1.0 * 0.15 = 0.15
         assert result.dimension_scores["warn_only_24h"] == 1.0
@@ -289,7 +292,7 @@ class TestFailSafeOnInvalidInput:
         """空 metrics → score=0.0（所有维度缺失，按 0 处理）。"""
         result = calculate_health_score({}, {})
         assert result.score == 0.0
-        assert len(result.dimension_scores) == 5  # 5 维都有得分（全 0）
+        assert len(result.dimension_scores) == 6  # 6 维都有得分（全 0）
 
 
 class TestAbuseMonitorIntegration:
@@ -298,7 +301,7 @@ class TestAbuseMonitorIntegration:
     THRESHOLDS = {
         "warn_only_24h": 50, "emergency_commit_24h": 5,
         "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-        "non_gw_commit_24h": 10,
+        "non_gw_commit_24h": 10, "force_merge_7d": 5,
     }
 
     def test_clean_scenario_low_score(self):
@@ -309,23 +312,25 @@ class TestAbuseMonitorIntegration:
             "allow_overlap_7d": 2,  # 2/30=0.067
             "forged_gw_marker_24h": 0,  # 0/3=0
             "non_gw_commit_24h": 1,  # 1/10=0.1
+            "force_merge_7d": 0,  # 0/5=0
         }
         result = calculate_health_score(metrics, self.THRESHOLDS)
         assert result.score < 0.7
         assert result.triggered_dimensions == []
 
     def test_forged_only_high_score(self):
-        """仅 forged 触发 → score 较高（forged 权重 0.35）。"""
+        """仅 forged 触发 → score 较高（forged 权重 0.30）。"""
         metrics = {
             "warn_only_24h": 0,
             "emergency_commit_24h": 0,
             "allow_overlap_7d": 0,
             "forged_gw_marker_24h": 4,  # 4/3=1.33 → 1.0
             "non_gw_commit_24h": 0,
+            "force_merge_7d": 0,
         }
         result = calculate_health_score(metrics, self.THRESHOLDS)
-        # forged 得分=1.0, 权重=0.35 → score=0.35
-        assert abs(result.score - 0.35) < 1e-10
+        # forged 得分=1.0, 权重=0.30 → score=0.30
+        assert abs(result.score - 0.30) < 1e-10
         assert result.triggered_dimensions == ["forged_gw_marker_24h"]
 
     def test_critical_scenario_high_score(self):
@@ -334,18 +339,19 @@ class TestAbuseMonitorIntegration:
             "warn_only_24h": 60,  # 60/50=1.2 → 1.0, weight 0.15
             "emergency_commit_24h": 8,  # 8/5=1.6 → 1.0, weight 0.20
             "allow_overlap_7d": 0,
-            "forged_gw_marker_24h": 5,  # 5/3=1.67 → 1.0, weight 0.35
+            "forged_gw_marker_24h": 5,  # 5/3=1.67 → 1.0, weight 0.30
             "non_gw_commit_24h": 0,
+            "force_merge_7d": 0,
         }
         result = calculate_health_score(metrics, self.THRESHOLDS)
-        # 3 维满分：0.15 + 0.20 + 0.35 = 0.70
-        assert abs(result.score - 0.70) < 1e-10
+        # 3 维满分：0.15 + 0.20 + 0.30 = 0.65
+        assert abs(result.score - 0.65) < 1e-10
         assert len(result.triggered_dimensions) == 3
 
     def test_block_next_scenario_very_high_score(self):
         """block_next 场景：所有维度触发 → score=1.0 > 0.9。"""
         metrics = {dim: 1000 for dim in self.THRESHOLDS}
         result = calculate_health_score(metrics, self.THRESHOLDS)
-        assert result.score == 1.0
+        assert abs(result.score - 1.0) < 1e-10
         assert result.score > 0.9
-        assert len(result.triggered_dimensions) == 5
+        assert len(result.triggered_dimensions) == 6

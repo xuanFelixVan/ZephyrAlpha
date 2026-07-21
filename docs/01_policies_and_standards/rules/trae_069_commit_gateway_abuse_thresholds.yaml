@@ -1,21 +1,23 @@
 # trae_069_commit_gateway_abuse_thresholds.yaml
-# Commit Gateway 滥用监控 5 维阈值配置（P3-1 治本，#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# Commit Gateway 滥用监控 6 维阈值配置（P3-1 治本，#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
 #
 # SSoT 真源分类（trae_062）：本文件是 commit_gateway_abuse_monitor_reconciler.py
-# 5 维阈值的规则数据真源。代码常量（_WARN_ONLY_24H_THRESHOLD 等）从此文件同步，
+# 6 维阈值的规则数据真源。代码常量（_WARN_ONLY_24H_THRESHOLD 等）从此文件同步，
 # 禁止直接修改代码常量（必须改本文件后通过 _load_thresholds_from_yaml 重载）。
 #
 # 历史（裁定 R3/R5/R6 + P1 治本链）：
 #   2026-07-19: 原阈值散落在代码常量（_WARN_ONLY_24H_THRESHOLD = 50 等）
 #   2026-07-20 P1-4: emergency 10→5 回滚（heartbeat 已落地 + scenario 过滤已引入）
 #   2026-07-20 P3-1: 提取到 YAML（本文件），代码常量改为从此文件加载（fail-open）
+#   2026-07-21 v1.3.0: 新增维度6 force_merge_abuse_7d（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展）
 #
-# 5 维滥用检测维度：
+# 6 维滥用检测维度：
 #   1. warn_only_sustained_24h: 持续 warn-only 低频（24h 窗口）
 #   2. emergency_commit_abuse_24h: emergency_commit 滥用（24h 窗口，仅 production scenario）
 #   3. allow_overlap_abuse_7d: allow_overlap=True 真实使用（7d 窗口，gate 层审计）
 #   4. forged_gw_marker_rate_24h: 伪造 GW 标记（24h 窗口，任何伪造都 serious）
 #   5. non_gw_commit_sustained_24h: 非 GW commit 持续（24h 窗口）
+#   6. force_merge_abuse_7d: session_worktree_merge(force=True) 真实使用（7d 窗口，gate 层审计）
 #
 # 判定规则（reconciler 永不 block post-commit，只 warn / critical_warn）：
 #   0 个维度触发 → clean
@@ -31,12 +33,12 @@
 meta:
   rule_id: trae_069
   rule_name: commit_gateway_abuse_thresholds
-  version: '1.2.0'
+  version: '1.3.0'
   created: '2026-07-20'
-  last_updated: '2026-07-20'
+  last_updated: '2026-07-21'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
   related_issue: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001'
-  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正), #ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-0/P3-6/P3-1/P3-2/P3-3)'
+  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2 + v1.3.0 6 维扩展), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正), #ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-0/P3-6/P3-1/P3-2/P3-3), #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (force_merge 逃生通道)'
 
 # enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
 # 本 YAML 是 commit_gateway_abuse_monitor_reconciler 的阈值真源（数据类规则，
@@ -53,11 +55,11 @@ enforcement:
   enforcement_strength: warn_only  # post-commit reconciler 只能 warn/critical_warn，不能 block
   description: >-
     本 YAML 是 commit_gateway_abuse_monitor_reconciler 的阈值数据真源（数据类规则，
-    非行为规则）。reconciler 读取 thresholds 段做 5 维滥用分类（clean/warn/critical_warn），
+    非行为规则）。reconciler 读取 thresholds 段做 6 维滥用分类（clean/warn/critical_warn），
     永不 block post-commit（commit 已入历史不可逆）。YAML 缺失/解析失败时 fail-open
     使用 _DEFAULT_THRESHOLDS（不阻断 reconciler）。
 
-# 5 维滥用阈值
+# 6 维滥用阈值
 thresholds:
   # 维度1: warn_only 持续低频（24h）
   # 治本理由：POST-COMMIT-GUARD per-hour 阈值 10/h 抓不到 5/h 持续（5×24=120 但每小时<10）
@@ -119,6 +121,22 @@ thresholds:
       P3 治本：原 sum(violations_count) 会因多报告覆盖同一 commit 膨胀，
       改用 violations[].hash distinct 计数。
 
+  # 维度6: force_merge 滥用（7d）
+  # #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 v1.3.0 6 维扩展（2026-07-21）
+  # session_worktree_merge(force=True) 逃生通道日常化 = pre-merge gate sys.path 问题
+  # 或 worktree 基础设施故障信号。gate 层审计 .runtime/gate_audit/force_merge_usage.jsonl 计数。
+  force_merge_abuse_7d:
+    value: 5
+    unit: count
+    window_seconds: 604800  # 7d
+    description: >-
+      7d 内真实 force=True session_worktree_merge 调用数阈值（gate 层审计
+      .runtime/gate_audit/force_merge_usage.jsonl 计数）。超过此值判定为
+      "逃生通道日常化"。force_merge 是 #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本
+      逃生通道，用于 pre-merge gate sys.path 误报或基础设施故障时绕过门禁。
+      日常不应使用——频繁使用说明 pre-merge gate sys.path 问题未治本或 worktree
+      基础设施存在故障。对标 allow_overlap 维度实现模式。
+
 # 判定规则（不变量）
 classification_rules:
   clean:
@@ -137,8 +155,9 @@ classification_rules:
 # P3-3 综合评分判定规则（health_score 优先于维度计数判定，2026-07-20 落地）
 # 评分阈值常量同步到 commit_gateway_abuse_monitor_reconciler.py：
 #   _CRITICAL_WARN_SCORE = 0.7 / _BLOCK_NEXT_SCORE = 0.9
-# 评分计算由 health_score_calculator.calculate_health_score() 完成（5 维加权，
-# forged=0.35 / emergency=0.20 / 其余 3 维各 0.15，归一化 min(count/threshold, 1.0)）
+# 评分计算由 health_score_calculator.calculate_health_score() 完成（6 维加权，
+# forged=0.30 / emergency=0.20 / warn_only=0.15 / allow_overlap=0.15 /
+# non_gw=0.10 / force_merge=0.10，归一化 min(count/threshold, 1.0)）
 health_score_classification:
   enabled: true  # P3-3 已落地（2026-07-20，commit b160c82a03 + merge 19dd6661c6）
   clean:
@@ -171,12 +190,13 @@ adaptive:
   health_score:  # P3-2/P3-3 已落地（2026-07-20，commit b160c82a03 + merge 19dd6661c6）
     enabled: true
     calculator: zephyr.governance.audit.health_score_calculator.calculate_health_score
-    weights:  # 5 维默认权重（总和=1.0）
+    weights:  # 6 维默认权重（总和=1.0，v1.3.0 重新归一化）
       warn_only_24h: 0.15
       emergency_commit_24h: 0.20
       allow_overlap_7d: 0.15
-      forged_gw_marker_24h: 0.35  # 最高权重（任何伪造都 serious）
-      non_gw_commit_24h: 0.15
+      forged_gw_marker_24h: 0.30  # 最高权重（任何伪造都 serious），v1.3.0 从 0.35 降
+      non_gw_commit_24h: 0.10    # v1.3.0 从 0.15 降
+      force_merge_7d: 0.10       # v1.3.0 新增
     score_thresholds:
       critical_warn: 0.7  # _CRITICAL_WARN_SCORE 同步到 commit_gateway_abuse_monitor_reconciler.py
       block_next: 0.9      # _BLOCK_NEXT_SCORE 同步到 commit_gateway_abuse_monitor_reconciler.py
@@ -193,21 +213,44 @@ adaptive:
       最终有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化
       （ruling §5.3 风险治本）。代码：_compute_adaptive_thresholds + _classify_abuse
     P3-2/P3-3 已落地（2026-07-20，commit b160c82a03 + merge 19dd6661c6）：
-    - P3-2: 5 维加权健康度评分（weighted_health_score）。代码：
+    - P3-2: 6 维加权健康度评分（weighted_health_score）。代码：
       src/zephyr/governance/audit/health_score_calculator.py（AbuseHealthScore +
       calculate_health_score，25/25 测试通过）。权重见 health_score.weights 段。
+      v1.3.0（2026-07-21）：从 5 维扩展到 6 维（新增 force_merge_7d），权重重新归一化
+      （forged 0.35→0.30, non_gw 0.15→0.10, force_merge 0.10 新增）。
     - P3-3: 综合评分接入 abuse_monitor _reconcile，优先于维度计数判定。
       score > 0.7 → critical_warn "ABUSE CRITICAL"；
       score > 0.9 → critical_warn "ABUSE BLOCK_NEXT" + "PAUSE subsequent commits"
       （post-commit 无法真正 block，降级为 critical_warn + PAUSE 横幅）。
       阈值见 health_score_classification 段（同步常量到代码 _CRITICAL_WARN_SCORE=0.7 /
       _BLOCK_NEXT_SCORE=0.9）。98/98 测试通过（25 health_score + 73 abuse_monitor）。
-    P3-4 待施工（本次任务）：
-    - P3-4: 阈值调整流程化（本 YAML v1.2.0 升级 + smoke test + architecture_issue_registry
-      fix_phase Phase 3 标注 + ruling §11.4 标注）
+    P3-4 已落地（v1.2.0，2026-07-20）。
+    v1.3.0 扩展（2026-07-21，#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维 + #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001）：
+    - 新增维度6 force_merge_abuse_7d（阈值=5/7d），对标 allow_overlap 维度实现模式。
+    - session_worktree_merge(force=True) 逃生通道使用落审计到
+      .runtime/gate_audit/force_merge_usage.jsonl（_audit_force_merge_usage）。
+    - _count_force_merge_usage 读取审计 JSONL 做真实计数（fail-open）。
+    - health_score 权重 6 维重新归一化（forged 0.35→0.30, non_gw 0.15→0.10, force_merge 0.10）。
 
 # changelog（每次修改必须追加记录）
 changelog:
+  - version: '1.3.0'
+    date: '2026-07-21'
+    change: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展：新增维度6 force_merge_abuse_7d（阈值=5/7d）；health_score 权重 6 维重新归一化（forged 0.35→0.30, non_gw 0.15→0.10, force_merge 0.10 新增）'
+    adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (v1.3.0 6 维扩展), #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (force_merge 逃生通道)'
+    notes: >-
+      #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 落地后，session_worktree_merge 新增 force=True
+      逃生通道（跳过 pre-merge gate）。force_merge 作为第 6 维加入滥用审计系统，对标
+      allow_overlap 维度实现模式：
+      1. session_worktree._audit_force_merge_usage 在 force=True 时落审计到
+         .runtime/gate_audit/force_merge_usage.jsonl（fail-open）。
+      2. _count_force_merge_usage 读取审计 JSONL 做真实计数（fail-open）。
+      3. _classify_abuse 新增 force_merge_count 参数 + 维度6 分支判定。
+      4. health_score_calculator _DEFAULT_WEIGHTS 从 5 维扩展到 6 维，权重重新归一化
+         （forged 0.35→0.30, non_gw 0.15→0.10, force_merge 0.10 新增，总和仍=1.0）。
+      5. trae_069 YAML 新增 force_merge_abuse_7d 阈值段（value=5, window=7d）。
+      阈值数值变更：仅新增 force_merge_abuse_7d=5，原 5 维阈值不变。
+      权重变更：forged 0.35→0.30, non_gw 0.15→0.10（重新归一化以容纳 force_merge 0.10）。
   - version: '1.2.0'
     date: '2026-07-20'
     change: 'P3-4 落地：新增 health_score_classification 段 + adaptive.health_score 段；description 更新 P3-2/P3-3 已落地状态'

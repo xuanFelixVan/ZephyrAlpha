@@ -24,7 +24,7 @@ post-commit 事件触发，扫描 ``.runtime/reconcile_reports/`` 下 ``post_com
 P3-6 + P3-1 扩展（#ARCH-PREVENTABILITY-LAYER-001 Phase 3，2026-07-20）
 -------------------------------------------------------------------
 - **P3-6**: 7d baseline 持久化到 ``.runtime/abuse_monitor/abuse_baseline.json``。
-  每次 reconcile 后将今日 5 维 metrics 追加到 baseline（同日覆盖，7d 滚动窗口裁剪）。
+  每次 reconcile 后将今日 6 维 metrics 追加到 baseline（同日覆盖，7d 滚动窗口裁剪）。
   系统层状态（类似 session_registry.json），由 reconciler 维护。
 - **P3-1**: 接入 ``AdaptiveThreshold``（P3-0 双模式扩展），从历史 7d baseline 计算
   EWMA 自适应阈值。最终有效阈值 = max(adaptive, static)，防止自适应阈值低于静态
@@ -45,7 +45,7 @@ POST-COMMIT-GUARD（Phase 5a，裁定 B）在 per-commit 层做 per-hour aggrega
 reconciler 是 post-commit（commit 已入历史不可逆），故只能 warn / critical_warn，
 不能 block。但 critical_warn 会打印横幅强制 AI 看到，确保失败不被忽视。
 
-五维滥用检测（warn-only，阈值见下方常量）
+六维滥用检测（warn-only，阈值见下方常量）
 -----------------------------------------
 1. **warn_only sustained (24h)**: >50 warn_only 事件/24h = 持续低频逃生通道滥用
 2. **emergency_commit abuse (24h)**: >5 [GW:*:emergency] commits/24h = 逃生通道日常化
@@ -54,6 +54,9 @@ reconciler 是 post-commit（commit 已入历史不可逆），故只能 warn / 
 4. **forged_gw_marker rate (24h)**: >3 forged_gw_marker/24h = 严重伪造（任何伪造都 serious）
 5. **non-GW commit sustained (24h)**: >10 non-GW commits/24h（commit_gw_audit violations
    sum）= 持续绕过 GitCommitGateway
+6. **force_merge abuse (7d)**: >5 次真实 force=True session_worktree_merge/7d（gate 层审计
+   ``.runtime/gate_audit/force_merge_usage.jsonl`` 计数）= pre-merge gate sys.path 问题
+   或 worktree 基础设施故障（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 v1.3.0 扩展，2026-07-21）
 
 判定
 ----
@@ -99,7 +102,7 @@ _GATE_ID = "GATE-COMMIT-GW-ABUSE-MONITOR"
 # priority=875: 晚于 git_performance_monitor(870)，早于 remediation_progress(900)
 _PRIORITY = 875
 
-# === 五维滥用阈值（warn-only，reconciler 不能 block post-commit）===
+# === 六维滥用阈值（warn-only，reconciler 不能 block post-commit）===
 # P3-1 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
 # 阈值真源已提取到 trae_069_commit_gateway_abuse_thresholds.yaml（SSoT 铁律：
 # 规则数据真源是 YAML 文件）。代码常量改为从此文件加载（fail-open：
@@ -116,12 +119,14 @@ _THRESHOLDS_YAML_PATH = (
 )
 
 # 代码内默认值（YAML 缺失/解析失败时 fallback，与 P1 治本后的值一致）
+# v1.3.0（2026-07-21）: 新增 force_merge_abuse_7d 维度（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展）
 _DEFAULT_THRESHOLDS = {
     "warn_only_sustained_24h": 50,
     "emergency_commit_abuse_24h": 5,
     "allow_overlap_abuse_7d": 30,
     "forged_gw_marker_rate_24h": 3,
     "non_gw_commit_sustained_24h": 10,
+    "force_merge_abuse_7d": 5,
 }
 
 
@@ -133,7 +138,7 @@ def _load_thresholds_from_yaml() -> dict[str, int]:
     （不阻断 reconciler，但记录 WARNING）。
 
     Returns:
-        dict[str, int] — 5 维阈值字典，key 为维度名，value 为阈值 int。
+        dict[str, int] — 6 维阈值字典，key 为维度名，value 为阈值 int。
     """
     try:
         if not _THRESHOLDS_YAML_PATH.exists():
@@ -183,6 +188,10 @@ _ALLOW_OVERLAP_7D_THRESHOLD = _THRESHOLD_CONFIG["allow_overlap_abuse_7d"]
 _FORGED_24H_THRESHOLD = _THRESHOLD_CONFIG["forged_gw_marker_rate_24h"]
 # 维度5: non-GW commit 持续率（24h）——commit_gw_audit violations sum
 _NON_GW_24H_THRESHOLD = _THRESHOLD_CONFIG["non_gw_commit_sustained_24h"]
+# 维度6: force_merge 滥用（7d）—— #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展（2026-07-21）
+# session_worktree_merge(force=True) 逃生通道日常化 = pre-merge gate sys.path 问题
+# 或 worktree 基础设施故障的信号。gate 层审计 .runtime/gate_audit/force_merge_usage.jsonl 计数。
+_FORCE_MERGE_7D_THRESHOLD = _THRESHOLD_CONFIG["force_merge_abuse_7d"]
 
 # 时间窗口（秒）
 _WINDOW_24H_SECONDS = 24 * 3600
@@ -192,7 +201,7 @@ _WINDOW_7D_SECONDS = 7 * 24 * 3600
 _GIT_LOG_TIMEOUT = 15
 
 # === P3-6: 7d baseline 持久化（#ARCH-PREVENTABILITY-LAYER-001 Phase 3）===
-# 系统层状态：5 维每日计数历史，由 reconciler 维护（类似 session_registry.json）。
+# 系统层状态：6 维每日计数历史，由 reconciler 维护（类似 session_registry.json）。
 # 存放在 .runtime/abuse_monitor/ 子目录（避免直写 .runtime 根，遵循 trae_071 三级分类）。
 # 用途：P3-1 接入 AdaptiveThreshold 的 7d EWMA 基线数据源。
 _BASELINE_WINDOW_DAYS = 7  # 滚动保留 7d
@@ -218,6 +227,7 @@ _METRICS_KEY_MAP = {
     "allow_overlap_7d": "allow_overlap_abuse_7d",
     "forged_gw_marker_24h": "forged_gw_marker_rate_24h",
     "non_gw_commit_24h": "non_gw_commit_sustained_24h",
+    "force_merge_7d": "force_merge_abuse_7d",
 }
 # 反向映射：标准 dim_name → _classify_abuse 的 metrics key（用于 _compute_adaptive_thresholds）
 _METRICS_KEY_MAP_REVERSE = {v: k for k, v in _METRICS_KEY_MAP.items()}
@@ -267,13 +277,13 @@ def _save_baseline(repo_root: Path, baseline: dict) -> None:
 def _record_daily_metrics(
     repo_root: Path, metrics: dict, now_ts: int,
 ) -> list[dict]:
-    """将今日 5 维 metrics 追加到 baseline 并保留 7d 滚动窗口（P3-6）。
+    """将今日 6 维 metrics 追加到 baseline 并保留 7d 滚动窗口（P3-6）。
 
     同日多次记录覆盖（按 date 去重，保留最新），超过 7d 的旧记录裁剪。
 
     Args:
         repo_root: 仓库根路径。
-        metrics: 5 维今日计数 dict（key 为 dim_name，value 为 int）。
+        metrics: 6 维今日计数 dict（key 为 dim_name，value 为 int）。
             期望 key 与 _DEFAULT_THRESHOLDS 一致。
         now_ts: 当前 Unix 时间戳。
 
@@ -288,7 +298,7 @@ def _record_daily_metrics(
     # UTC date 字符串作为 dedup key（reconciler 跨时区运行可能产生不同 date，但同一日只保留最新）
     today_str = time.strftime("%Y-%m-%d", time.gmtime(now_ts))
 
-    # 提取 5 维计数（按标准 dim_name 存储，metrics 中是简化 key，需映射）
+    # 提取 6 维计数（按标准 dim_name 存储，metrics 中是简化 key，需映射）
     daily_metrics = {
         dim_name: int(metrics.get(src_key, metrics.get(dim_name, 0)))
         for src_key, dim_name in _METRICS_KEY_MAP.items()
@@ -327,7 +337,7 @@ def _record_daily_metrics(
 def _compute_adaptive_thresholds(daily_records: list[dict]) -> dict:
     """从 7d baseline 计算各维度的自适应阈值（P3-1）。
 
-    接入 AdaptiveThreshold（P3-0）：为 5 维各自创建 COUNT 模式 state，
+    接入 AdaptiveThreshold（P3-0）：为 6 维各自创建 COUNT 模式 state，
     static_floor = 静态阈值（防止阈值过低掩盖问题），factor = _ADAPTIVE_FACTOR。
     遍历 baseline 7d daily_records 调 observe_count，最后 get_threshold 得到
     自适应阈值 = max(ewma * factor, static_floor)。
@@ -336,14 +346,14 @@ def _compute_adaptive_thresholds(daily_records: list[dict]) -> dict:
         daily_records: 7d baseline daily_records 列表（由 _record_daily_metrics 返回）。
 
     Returns:
-        dict — {dim_name: adaptive_threshold}，5 维自适应阈值。
+        dict — {dim_name: adaptive_threshold}，6 维自适应阈值。
         若 daily_records 为空，返回空 dict（调用方降级为纯静态阈值）。
     """
     if not daily_records:
         return {}
 
     at = AdaptiveThreshold()
-    # 为 5 维配置 COUNT 模式：static_floor = 静态阈值（防自适应阈值低于下限）
+    # 为 6 维配置 COUNT 模式：static_floor = 静态阈值（防自适应阈值低于下限）
     for dim_name, static_value in _DEFAULT_THRESHOLDS.items():
         at.set_count_config(
             dim_name,
@@ -365,7 +375,7 @@ def _compute_adaptive_thresholds(daily_records: list[dict]) -> dict:
             except (TypeError, ValueError):
                 continue  # 跳过无效计数
 
-    # 获取 5 维自适应阈值
+    # 获取 6 维自适应阈值
     return {
         dim_name: at.get_threshold(dim_name)
         for dim_name in _DEFAULT_THRESHOLDS
@@ -491,6 +501,39 @@ def _count_allow_overlap_usage(repo_root: Path, since_ts: int) -> int:
     return count
 
 
+def _count_force_merge_usage(repo_root: Path, since_ts: int) -> int:
+    """统计 7d 窗口内真实 force=True session_worktree_merge 调用数（维度6 真源）。
+
+    #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展（2026-07-21）：
+    对标 _count_allow_overlap_usage，读取 gate 层审计
+    ``.runtime/gate_audit/force_merge_usage.jsonl``
+    （session_worktree._audit_force_merge_usage 在 force=True 时落盘），
+    只计真实 force_merge 逃生通道使用。
+
+    fail-open：文件缺失/解析失败返回 0（无审计=无证据，不误报）。
+    """
+    audit_file = repo_root / ".runtime" / "gate_audit" / "force_merge_usage.jsonl"
+    if not audit_file.exists():
+        return 0
+    count = 0
+    try:
+        with audit_file.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if int(rec.get("timestamp", 0)) >= since_ts:
+                    count += 1
+    except OSError as e:
+        logger.warning("commit_gateway_abuse_monitor: read force_merge audit failed: %s", e)
+        return 0
+    return count
+
+
 def _classify_abuse(
     post_commit_reports: list[dict],
     audit_reports: list[dict],
@@ -498,12 +541,17 @@ def _classify_abuse(
     now_ts: int,
     allow_overlap_count: int = 0,
     adaptive_thresholds: dict | None = None,
+    force_merge_count: int = 0,
 ) -> dict:
-    """五维滥用分类（纯函数，无副作用，便于单测）。
+    """六维滥用分类（纯函数，无副作用，便于单测）。
 
     P3-1 扩展（#ARCH-PREVENTABILITY-LAYER-001 Phase 3）：
     若传入 adaptive_thresholds，最终阈值 = max(adaptive, static)。
     防止自适应阈值低于静态下限掩盖真实恶化（ruling §5.3 风险治本）。
+
+    v1.3.0 扩展（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001，2026-07-21）：
+    新增维度6 force_merge_abuse_7d——session_worktree_merge(force=True) 逃生通道
+    日常化检测。对标 allow_overlap 维度实现模式（gate 层审计 JSONL 计数）。
 
     Args:
         post_commit_reports: 7d 内的 post_commit_guard 报告列表。
@@ -514,6 +562,8 @@ def _classify_abuse(
             由调用方经 _count_allow_overlap_usage 传入）。
         adaptive_thresholds: P3-1 自适应阈值 dict（{dim_name: threshold}）。
             None 或空 dict 时降级为纯静态阈值（向后兼容）。
+        force_merge_count: 7d 内真实 force=True session_worktree_merge 调用数
+           （gate 层审计，由调用方经 _count_force_merge_usage 传入）。
 
     Returns:
         {
@@ -535,6 +585,10 @@ def _classify_abuse(
 
     # === 维度3: allow_overlap 滥用（7d）—— gate 层审计真实计数（由调用方传入）===
     allow_overlap_7d = allow_overlap_count
+
+    # === 维度6: force_merge 滥用（7d）—— gate 层审计真实计数（由调用方传入）===
+    # #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展（2026-07-21）
+    force_merge_7d = force_merge_count
 
     # === 维度4: forged_gw_marker 伪造率（24h）===
     forged_24h = sum(
@@ -578,6 +632,7 @@ def _classify_abuse(
     eff_allow_overlap = _effective(_ALLOW_OVERLAP_7D_THRESHOLD, "allow_overlap_abuse_7d")
     eff_forged = _effective(_FORGED_24H_THRESHOLD, "forged_gw_marker_rate_24h")
     eff_non_gw = _effective(_NON_GW_24H_THRESHOLD, "non_gw_commit_sustained_24h")
+    eff_force_merge = _effective(_FORCE_MERGE_7D_THRESHOLD, "force_merge_abuse_7d")
 
     dimensions_triggered: list[str] = []
     details: list[str] = []
@@ -622,6 +677,16 @@ def _classify_abuse(
             f"——持续绕过 GitCommitGateway，排查 --no-verify 滥用或 commit-tree 绕过"
         )
 
+    # 维度6: force_merge 滥用（7d）—— #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 扩展（2026-07-21）
+    if force_merge_7d > eff_force_merge:
+        dimensions_triggered.append("force_merge_abuse_7d")
+        details.append(
+            f"force_merge 滥用: {force_merge_7d}/7d > {eff_force_merge} 阈值"
+            f"（static={_FORCE_MERGE_7D_THRESHOLD}, adaptive={adaptive.get('force_merge_abuse_7d', 0):.1f}）"
+            f"——session_worktree_merge(force=True) 逃生通道日常化，"
+            f"排查 pre-merge gate sys.path 问题或 worktree 基础设施故障"
+        )
+
     return {
         "dimensions_triggered": dimensions_triggered,
         "details": details,
@@ -631,12 +696,14 @@ def _classify_abuse(
             "allow_overlap_7d": allow_overlap_7d,
             "forged_gw_marker_24h": forged_24h,
             "non_gw_commit_24h": non_gw_24h,
+            "force_merge_7d": force_merge_7d,
             "thresholds": {
                 "warn_only_24h": _WARN_ONLY_24H_THRESHOLD,
                 "emergency_commit_24h": _EMERGENCY_24H_THRESHOLD,
                 "allow_overlap_7d": _ALLOW_OVERLAP_7D_THRESHOLD,
                 "forged_gw_marker_24h": _FORGED_24H_THRESHOLD,
                 "non_gw_commit_24h": _NON_GW_24H_THRESHOLD,
+                "force_merge_7d": _FORCE_MERGE_7D_THRESHOLD,
             },
             # P3-1: 记录有效阈值与自适应阈值（供报告落盘 + 趋势追踪）
             "effective_thresholds": {
@@ -645,6 +712,7 @@ def _classify_abuse(
                 "allow_overlap_7d": eff_allow_overlap,
                 "forged_gw_marker_24h": eff_forged,
                 "non_gw_commit_24h": eff_non_gw,
+                "force_merge_7d": eff_force_merge,
             },
             "adaptive_thresholds": {
                 dim: float(adaptive.get(dim, 0.0)) for dim in _DEFAULT_THRESHOLDS
@@ -695,6 +763,11 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             # 现改为读取 gate 层审计 .runtime/gate_audit/allow_overlap_usage.jsonl
             allow_overlap_count = _count_allow_overlap_usage(project_root, since_7d)
 
+            # 3.5b 统计 7d 内真实 force=True session_worktree_merge 调用数（覆盖维度6 真源）
+            # #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维扩展（2026-07-21）：
+            # 对标 allow_overlap，读取 gate 层审计 .runtime/gate_audit/force_merge_usage.jsonl
+            force_merge_count = _count_force_merge_usage(project_root, since_7d)
+
             # 3.6 P3-1: 加载历史 baseline（不含今日）→ 计算自适应阈值
             # 自适应阈值基于历史 7d EWMA，今日计数稍后由 _record_daily_metrics 追加。
             # 这样自适应阈值反映"历史基线"，不包含今日（避免当日计数自我影响阈值）。
@@ -702,18 +775,19 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             historical_records = historical_baseline.get("daily_records", [])
             adaptive_thresholds = _compute_adaptive_thresholds(historical_records)
 
-            # 4. 五维分类（P3-1: 传入 adaptive_thresholds，有效阈值 = max(adaptive, static)）
+            # 4. 六维分类（P3-1: 传入 adaptive_thresholds，有效阈值 = max(adaptive, static)）
             classification = _classify_abuse(
                 post_commit_reports, audit_reports, emergency_count, now_ts,
                 allow_overlap_count=allow_overlap_count,
                 adaptive_thresholds=adaptive_thresholds,
+                force_merge_count=force_merge_count,
             )
 
             triggered = classification["dimensions_triggered"]
             details = classification["details"]
             metrics = classification["metrics"]
 
-            # 4.5 P3-6: 将今日 5 维 metrics 追加到 baseline（7d 滚动窗口持久化）
+            # 4.5 P3-6: 将今日 6 维 metrics 追加到 baseline（7d 滚动窗口持久化）
             # 注意：必须在 _classify_abuse 之后调用，因为 metrics 是今日计数。
             # _record_daily_metrics 内部会裁剪 7d 旧记录并 save。
             try:
@@ -721,7 +795,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             except Exception as e:  # noqa: BLE001 — baseline 持久化失败不阻断 reconciler
                 logger.warning("P3-6: record daily metrics failed: %s", e)
 
-            # 4.6 P3-3: 计算 5 维加权健康度评分
+            # 4.6 P3-3: 计算 6 维加权健康度评分
             # 综合评分 >0.7 critical_warn, >0.9 block_next（post-commit 无法 block，
             # 降级为 critical_warn + 横幅）。阈值用 metrics["effective_thresholds"]
             # （P3-1: 有效阈值 = max(adaptive, static)），确保评分基于生效阈值。
@@ -803,6 +877,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                         f"allow_overlap={metrics['allow_overlap_7d']}/7d, "
                         f"forged={metrics['forged_gw_marker_24h']}/24h, "
                         f"non_gw={metrics['non_gw_commit_24h']}/24h, "
+                        f"force_merge={metrics['force_merge_7d']}/7d, "
                         f"health_score={health_score:.3f}, "
                         f"report={report_path.name}"
                     ),
