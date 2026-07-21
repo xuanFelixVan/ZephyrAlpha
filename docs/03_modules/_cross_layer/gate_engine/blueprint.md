@@ -221,6 +221,7 @@ build_status: planned
 | `commit_gates/snapshot_drift_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/stash_accumulation_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/vocab_chain_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/blueprint_amodule_cross_check_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 

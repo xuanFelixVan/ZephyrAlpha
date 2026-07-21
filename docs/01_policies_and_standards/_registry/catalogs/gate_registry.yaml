@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T17:13:18Z'
+generated_at: '2026-07-21T20:14:56Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 117
+total_gates: 118
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -438,6 +438,16 @@ gates:
     priority=79）'
   entry: in-process (GitCommitGateway)
   description: '[A_module] 头部 module_id 格式一致性门禁'
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
+  name: 'BLUEPRINT-AMODULE-CROSS-CHECK: [BLUEPRINT] vs [A_module] 交叉校验门禁（CommitGate,
+    priority=119）'
+  entry: in-process (GitCommitGateway)
+  description: '[BLUEPRINT] vs [A_module] 交叉校验门禁'
   files_trigger: ''
   always_run: false
   category: commit_gate
