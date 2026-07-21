@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] FunctionalDomainOverlap->阻断创建;RegistryLoadError->降级为WARNING
 # [TESTS] tests/infrastructure/test_registry_governance.py
-# [A_module] module_id=MOD-INF_registry_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-registry_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [TTL] permanent
 """ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层数据路由

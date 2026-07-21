@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns SchedulerResult; logs error on failure; never raises in caller
 # [TESTS] tests/adversarial/test_rollback_scheduler.py
-# [A_module] module_id=MOD-INF_rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 注释中提及"cron"描述CI调用方式(L191),非实际cron代码;schedule_wal_gc是事件驱动(rollback_boot_integration调用),schedule_drill是CI job兜底(非daemon线程)
 """

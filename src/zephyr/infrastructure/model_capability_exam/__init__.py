@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF_model_capability_exam | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-model_capability_exam | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """[BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md
 
 # [MODULE] zephyr.infrastructure.model_capability_exam

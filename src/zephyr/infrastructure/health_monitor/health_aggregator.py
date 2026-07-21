@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] scripts/connect/health_check.py --trigger
-# [A_module] module_id=MOD-INF_health_monitor_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-health_monitor_aggregator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """全系统健康聚合 — check_all_systems()"""
 

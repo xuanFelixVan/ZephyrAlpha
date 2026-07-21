@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF_health_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-health_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.infrastructure.health_monitor
 # [INVARIANTS] pending_review
