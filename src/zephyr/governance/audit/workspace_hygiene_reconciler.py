@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，工作区卫生是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只自动 restore auto-sync 产物，不触碰真实代码修改
+# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，工作区卫生是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只自动 restore auto-sync 产物，不触碰真实代码修改；blueprint.md 不在 auto-sync 清单（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，混合文件文件级分类误伤正文）
 # [MODIFY-GUARD] _GATE_ID / _PRIORITY / _AUTO_SYNC_PATTERNS
 # [STABILITY] evolving
 # [SAFETY] L
@@ -59,7 +59,9 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 - ``data/audit-trail/`` —— 审计追踪日志（运行时，reconciler 追加）
 - ``data/cache/`` —— 缓存（运行时，reconciler 重生成）
 - ``scripts/governance/meta/rules_integrity_db.json`` —— 规则完整性
-- ``docs/03_modules/**/blueprint.md`` —— 蓝图 frontmatter（blueprint_frontmatter_reconciler 产物）
+- ``docs/03_modules/**/blueprint.md`` —— 已移除（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，2026-07-21）
+  原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级分类误伤正文编辑
+  frontmatter 变更由 blueprint_frontmatter_reconciler._commit_auto 自动提交，无需 auto-restore
 - ``architecture_model/index.yaml`` —— GATE-ARCH-MODEL reconciler 产物
 - ``docs/02_enterprise_architecture/architecture_debt_registry.md`` —— 架构债务注册表
 - ``data/budget/shutdown_snapshot.json`` —— 预算关闭快照
@@ -162,9 +164,10 @@ def _is_auto_sync_product(file_path: str) -> bool:
         if file_path.startswith(prefix):
             return True
 
-    # blueprint.md 特殊处理：仅 docs/03_modules/ 下的 blueprint.md 是 auto-sync 产物
-    if file_path.endswith("/blueprint.md") and file_path.startswith("docs/03_modules/"):
-        return True
+    # #ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 (2026-07-21): blueprint.md 已从 auto-sync 清单移除
+    # 原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级分类误伤正文编辑
+    # frontmatter 变更由 blueprint_frontmatter_reconciler._commit_auto 自动提交，无需 auto-restore
+    # 旧规则（已删除）：if file_path.endswith("/blueprint.md") and file_path.startswith("docs/03_modules/"): return True
 
     # registry catalogs 下的派生产物（rule_catalog_registry / registry_master_index）
     if file_path.startswith("docs/01_policies_and_standards/_registry/catalogs/"):
