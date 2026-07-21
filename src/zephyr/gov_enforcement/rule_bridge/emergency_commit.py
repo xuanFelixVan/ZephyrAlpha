@@ -523,6 +523,26 @@ def emergency_commit(
     tmp_msg_path = tmp_msg.name
 
     try:
+        # #ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 2.1: workspace vs HEAD consistency check (warn-only)
+        try:
+            _warn_files = []
+            for _abs, _rel in norm_files:
+                _diff_r = _run_git(["git", "diff", "--quiet", "HEAD", "--", _rel], cwd=str(root), timeout=10)
+                if _diff_r.returncode == 1:
+                    _warn_files.append(_rel)
+            if _warn_files:
+                logger.warning("emergency_commit: 主工作区文件与 HEAD 不一致: %s", _warn_files)
+                try:
+                    _ops_log = root / ".runtime" / "worktree_ops_log.jsonl"
+                    _ops_log.parent.mkdir(parents=True, exist_ok=True)
+                    import time as _t, json as _j
+                    with open(_ops_log, "a", encoding="utf-8") as _f:
+                        _f.write(_j.dumps({"ts": _t.time(), "session_id": session_id, "stage": "emergency_commit", "event": "workspace_head_diff", "files": _warn_files}, ensure_ascii=False) + "\n")
+                except OSError:
+                    pass
+        except Exception as _bf_err:
+            logger.debug("emergency_commit: base consistency check failed (non-blocking): %s", _bf_err)
+
         # Step 1: 临时 index 读取 HEAD tree
         env_index = {"GIT_INDEX_FILE": tmp_index_path}
         r = _run_git(
@@ -594,8 +614,10 @@ def emergency_commit(
 
         # Step 5: update-ref（更新分支指针到新 commit）
         # 这是 plumbing 命令，不触发 hook
+        # #ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 2.2: reflog message for audit traceability
+        _reflog_msg = f"emergency_commit: {session_id} reason={reason or 'unspecified'}"
         r = _run_git(
-            ["git", "update-ref", f"refs/heads/{branch}", commit_sha, parent_sha],
+            ["git", "update-ref", "-m", _reflog_msg, f"refs/heads/{branch}", commit_sha, parent_sha],
             cwd=str(root), timeout=30,
         )
         if r.returncode != 0:

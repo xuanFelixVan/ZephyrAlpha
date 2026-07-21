@@ -1652,3 +1652,114 @@ class TestCleanupWorktreeLocks:
         finally:
             monkeypatch.setattr(type(index_lock), "unlink", original_unlink)
 
+
+
+class TestBaseFreshnessFullLifecycle:
+    """#ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 4: base 新鲜度全生命周期测试。"""
+
+    def test_stage_param_accepted(self, _isolated_repo):
+        """_ensure_worktree_base_fresh 接受 stage 参数。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import _ensure_worktree_base_fresh
+        r = _ensure_worktree_base_fresh(_isolated_repo, _isolated_repo, "sess-test-stage", stage="commit")
+        assert r is None, f"Expected None for consistent base, got: {r}"
+
+    def test_telemetry_log_written(self, _isolated_repo):
+        """_log_base_freshness_event 写入 worktree_ops_log.jsonl。"""
+        import json
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import _log_base_freshness_event
+        _log_base_freshness_event(_isolated_repo, "sess-test-telemetry", "commit", "pass", main_head="abc12345", wt_head="abc12345")
+        log_path = _isolated_repo / ".runtime" / "worktree_ops_log.jsonl"
+        assert log_path.exists(), f"Telemetry log not created: {log_path}"
+        lines = log_path.read_text(encoding="utf-8").strip().split("\n")
+        last_entry = json.loads(lines[-1])
+        assert last_entry["session_id"] == "sess-test-telemetry"
+        assert last_entry["stage"] == "commit"
+        assert last_entry["event"] == "pass"
+
+    def test_run_git_with_retry_returns_on_success(self, _isolated_repo):
+        """_run_git_with_retry 成功时立即返回。"""
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        r = sw._run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
+        assert r is not None, "Expected CompletedProcess, got None"
+        assert r.returncode == 0
+
+    def test_run_git_with_retry_on_oserror(self, _isolated_repo, monkeypatch):
+        """_run_git_with_retry 遇到 OSError 时重试，最终返回 None。"""
+        import subprocess
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        call_count = [0]
+        original_run = subprocess.run
+        def _mock_run(*args, **kwargs):
+            cmd = args[0] if args else kwargs.get("args", [])
+            if cmd and "rev-parse" in " ".join(cmd):
+                call_count[0] += 1
+                raise OSError("test transient error")
+            return original_run(*args, **kwargs)
+        monkeypatch.setattr(sw.subprocess, "run", _mock_run)
+        r = sw._run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
+        assert r is None, f"Expected None after OSError, got: {r}"
+        assert call_count[0] == 3, f"Expected 3 retries, got: {call_count[0]}"
+
+    def test_fail_closed_on_rev_parse_failure(self, _isolated_repo, monkeypatch):
+        """_ensure_worktree_base_fresh 在 git 失败时 fail-closed。"""
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        def _failing_retry(cmd, cwd, retries=3, timeout=10):
+            return subprocess.CompletedProcess(args=cmd, returncode=1, stdout="", stderr="fatal: error")
+        monkeypatch.setattr(sw, "_run_git_with_retry", _failing_retry)
+        r = sw._ensure_worktree_base_fresh(_isolated_repo, _isolated_repo, "sess-test-fail", stage="commit")
+        assert r is not None, "Expected error dict (fail-closed), got None"
+        assert r.get("base_sync_failed") is True
+        assert r.get("stage") == "commit"
+
+    def test_merge_base_freshness_check_invoked(self, _isolated_repo):
+        """session_worktree_merge 调用 base freshness check。"""
+        r_start = session_worktree_start(_TEST_SIDS[0])
+        assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
+        wt_path = Path(r_start["worktree_path"])
+        marker = wt_path / _TEST_FILE_A
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text('{"session": "merge-bf"}\n', encoding="utf-8")
+        r_commit = session_worktree_commit(_TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge base freshness check")
+        assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
+        r_merge = session_worktree_merge(_TEST_SIDS[0])
+        assert r_merge.get("merged") is True, f"merge failed: {r_merge}"
+        kill_all_heartbeat_daemons(_isolated_repo)
+
+    def test_merge_force_skips_base_check(self, _isolated_repo, monkeypatch):
+        """session_worktree_merge(force=True) 跳过 base freshness check。"""
+        r_start = session_worktree_start(_TEST_SIDS[1])
+        assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
+        wt_path = Path(r_start["worktree_path"])
+        marker = wt_path / _TEST_FILE_B
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text('{"session": "merge-force"}\n', encoding="utf-8")
+        r_commit = session_worktree_commit(_TEST_SIDS[1], files=[_TEST_FILE_B], message="test: merge force skip base check")
+        assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        def _failing_bf(root, wt_path, session_id, stage="commit"):
+            return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base", "base_sync_failed": True, "stage": stage}
+        monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", _failing_bf)
+        r_merge = session_worktree_merge(_TEST_SIDS[1], force=True)
+        assert r_merge.get("merged") is True, f"force merge failed: {r_merge}"
+        kill_all_heartbeat_daemons(_isolated_repo)
+
+    def test_merge_blocks_on_stale_base(self, _isolated_repo, monkeypatch):
+        """session_worktree_merge 在 base 过期时 fail-closed 阻断。"""
+        r_start = session_worktree_start(_TEST_SIDS[0])
+        assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
+        wt_path = Path(r_start["worktree_path"])
+        marker = wt_path / _TEST_FILE_A
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text('{"session": "merge-block"}\n', encoding="utf-8")
+        r_commit = session_worktree_commit(_TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge block on stale base")
+        assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        def _failing_bf(root, wt_path, session_id, stage="commit"):
+            return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base for merge", "base_sync_failed": True, "stage": stage}
+        monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", _failing_bf)
+        r_merge = session_worktree_merge(_TEST_SIDS[0], force=False)
+        assert r_merge.get("merged") is False, f"Expected merge blocked, got: {r_merge}"
+        assert r_merge.get("base_sync_failed") is True
+        session_worktree_abort(_TEST_SIDS[0])
+        kill_all_heartbeat_daemons(_isolated_repo)
+
