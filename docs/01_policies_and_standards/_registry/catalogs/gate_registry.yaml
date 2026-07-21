@@ -525,7 +525,7 @@ gates:
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=109）'
+    priority=116)'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
   files_trigger: ''
