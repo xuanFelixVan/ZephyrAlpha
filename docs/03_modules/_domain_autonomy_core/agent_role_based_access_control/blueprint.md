@@ -42,7 +42,7 @@ references:
   - {id: "MOD-INF-022", at: "§2", why: "Escalation / Kill Switch——仅存 references（打破 018↔022 DAG 环）"}
 responsibility_domain: 
 design_maturity: prototype
-build_status: stable
+build_status: generated
 ---
 
 # Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
