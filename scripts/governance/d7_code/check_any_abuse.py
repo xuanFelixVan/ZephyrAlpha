@@ -49,7 +49,6 @@
   - 误报优先：宁可放过，不可误伤 commit 工作流
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
 
 import argparse
@@ -59,6 +58,13 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
+
+# d7_code/ 脚本需注入 scripts/governance/ 到 sys.path 才能解析 _shared
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 # ── 豁免模式 ──────────────────────────────────────────────────────────────
 # 这些 Any 用法是合理的，不报违规。

@@ -5159,11 +5159,12 @@ entries:
     Phase 1: 类型推断工具构建（1-2 session）
     Phase 2: 分批治理 8 batch（5-8 session）
     Phase 3: gate 升级 commit 阻断（1 session）
-  status: decided
+  status: resolved
   related_adjudication: 'R102 (5.145.13-26 原 RATIFY 重新审查), 裁定3 (DEFERRED-PERMANENT 分类法), #ARCH-WORKTREE-002 (worktree 治本模式参考)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_060 (向内收三原则), 裁定#208 R7 (GATE-ANY-ABUSE 防复发), trae_062 (SSoT 真源分类)'
   created: '2026-07-21'
-  last_updated: '2026-07-21'
+  last_updated: '2026-07-22'
+  resolution: 'Phase 1-3 全部治本完成（2026-07-22）。Phase 1 any_type_inferrer.py 构建完成；Phase 2 src/zephyr/ 全量 71 处裸 Any 清零（commit e494c72623）；Phase 3 GATE-ANY-ABUSE 升级为 commit 阻断 + noqa:any-abuse 行级豁免（merge b7a6e21765）。5.145 维度 PERMANENT-14 → FIXED。'
 
 # --- #ARCH-CROSS-COMMIT-ATOMICITY-002: Phase 2 君子协定治本收口 + GATE-IMPORT-INTEGRITY 友好提示增强 ---
 - issue_id: '#ARCH-CROSS-COMMIT-ATOMICITY-002'
