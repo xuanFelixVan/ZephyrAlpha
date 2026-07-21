@@ -59,13 +59,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
-# d7_code/ 脚本需注入 scripts/governance/ 到 sys.path 才能解析 _shared
-_SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-from _shared.yaml_utils import load_yaml_safe
+import yaml
+
+# ── EXIT 常量（对标 _shared/constants.py，避免 import 链引入 psycopg2）─────
+# check_any_abuse.py 是 commit-time gate，必须零重依赖（仅 stdlib + PyYAML），
+# 禁止 from _shared.constants import（会间接 import psycopg2 导致 gate 崩溃）
+EXIT_PASS = 0
+EXIT_FINDINGS = 1
+EXIT_ERROR = 2
 
 # ── 豁免模式 ──────────────────────────────────────────────────────────────
 # 这些 Any 用法是合理的，不报违规。
@@ -89,6 +90,16 @@ _NOQA_REGISTRY = (
     / "noqa_exempt_registry.yaml"
 )
 _NOQA_ANY_ABUSE_RE: re.Pattern[str] | None = None  # 懒加载缓存
+
+
+def _load_yaml_safe(path: Path) -> dict:
+    """最小化 YAML 加载（纯 PyYAML，避免 _shared.yaml_utils 引入 psycopg2）。"""
+    try:
+        with path.open(encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
 
 
 @dataclass
@@ -355,7 +366,7 @@ def _get_noqa_any_abuse_re() -> re.Pattern[str] | None:
     if _NOQA_ANY_ABUSE_RE is not None:
         return _NOQA_ANY_ABUSE_RE
     try:
-        data = load_yaml_safe(_NOQA_REGISTRY)
+        data = _load_yaml_safe(_NOQA_REGISTRY)
         for m in (data.get("markers") or []) if data else []:
             if m.get("marker") == "any-abuse":
                 _NOQA_ANY_ABUSE_RE = re.compile(r"#\s*noqa:\s*any-abuse\b")
