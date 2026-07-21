@@ -33,10 +33,11 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 
 - **历史规模**：去重后唯一违规点 **3193 个**（初轮 298 + 第 5-31 轮新增，执行摘要口径 177 个维度），归因于 5 个病根（§二）。其中 54 个维度展开逐条跟踪（原文 `### 5.x` 小节），其余维度仅有执行摘要计数。
 - **第 102 轮修复（2026-07-19）**：全部 DEFERRED 维度已清零——36 批提交，merge `44ebb73b26`。54 个已跟踪维度中 **39 个 FIXED（清零）**、**15 个残留 PERMANENT 项**（§四状态列）。
-- **R102 EXECUTE 治本施工（2026-07-21）+ #ARCH-ANY-GOVERNANCE-001 三阶段治本（2026-07-22）**：原 27 项 EXECUTE 已全部治本施工完成（详见 §5.0 工作清单 8 行 + §5.42/5.93/5.97/5.150/5.152/5.153/5.180 各节）；5.145 维度经 #ARCH-ANY-GOVERNANCE-001 三阶段治本（Phase 1 推断工具 + Phase 2 存量清零 commit `e494c72623` + Phase 3 GATE-ANY-ABUSE commit 阻断）从 PERMANENT-14 迁移至 FIXED；维度状态迁移后 **45 个 FIXED**、**9 个残留 PERMANENT 项**（5.33/5.93/5.100/5.101/5.140/5.143/5.150/5.153/5.160，全部 wontfix），剩余 46 项 = 0 EXECUTE + 46 wontfix。
+- **R102 EXECUTE 治本施工（2026-07-21）+ #ARCH-ANY-GOVERNANCE-001 三阶段治本（2026-07-22）**：原 27 项 EXECUTE 已全部治本施工完成（详见 §5.0 工作清单 8 行 + §5.42/5.93/5.97/5.150/5.152/5.153/5.180 各节）；5.145 维度经 #ARCH-ANY-GOVERNANCE-001 三阶段治本（Phase 1 推断工具 + Phase 2 存量清零 commit `e494c72623` + Phase 3 GATE-ANY-ABUSE commit 阻断）从 PERMANENT-14 迁移至 FIXED；维度状态迁移后 **48 个 FIXED**、**6 个残留 PERMANENT 项**（5.33/5.93/5.101/5.143/5.150/5.153，全部 wontfix），剩余 40 项 = 0 EXECUTE + 40 wontfix。
+- **R103 第一性原理重裁定（2026-07-22）**：对 5.100/5.140/5.160 三维度共 6 项 wontfix 重裁定——基于 (V1) 证据时效性 / (V2) 模式一致性 / (V3) 防复发机制成熟度三项新验证维度，裁定 5.100.15/16（asyncio API 弃用）、5.140.2（函数复杂度）、5.160.2（裸 SQL）从 RATIFY→EXECUTE 并已治本完成（commit `9d2b7d498f` 5.100+5.140 + commit `984d3bb772` 5.160）；6 项确认 wontfix 维持原裁定。
 - **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M31 实时基线自动发现，不再依赖人工调研快照。
-- **剩余未完成任务 = 46 项**（§五完整清单）：
-  - **wontfix（RATIFY 裁定关闭，防复发门禁在册）46 项**；
+- **剩余未完成任务 = 40 项**（§五完整清单）：
+  - **wontfix（RATIFY 裁定关闭，防复发门禁在册）40 项**；
   - **EXECUTE（R102 裁定立即治本施工，待执行/执行中）0 项**（原 27 项已于 2026-07-21 全部治本施工完成）；
   - **SKIP（SAFETY=H + human_gated，待人工/Owner 授权）0 项**（原 5.46.3 已由 Owner 授权治本修复）。
 - 另有 6 项 LOW/附注级残留（非 PERMANENT 裁定项，机会性清理或后续专项跟踪），**全部已 FIXED 或经裁定 CLOSED**（见 §五末尾附注）。
@@ -124,7 +125,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 > 本表是未来审计审查系统的**维度基座**：每维度保留抽象概念（核心问题 + 病根归属 + 防复发机制 + 当前状态），不保留逐项违规明细（历史明细见 git log，增量违规见仪表盘 M01-M31）。
 > 状态口径：`FIXED` = 该维度全部清零（DEFERRED=0 且 STILL_VALID=0）；`PERMANENT-N` = 残留 N 项未完成任务（wontfix/EXECUTE/SKIP，详情见 §五）。
-> 合计：**54 维度 = 45 FIXED + 9 PERMANENT（共 46 项未完成）**。原 R102 裁定时 39 FIXED + 15 PERMANENT（87 项未完成）；2026-07-21 27 项 EXECUTE 治本完成后状态迁移：5.42/5.93/5.97/5.150/5.152/5.153/5.180 维度从 PERMANENT 状态行迁移至 FIXED（5.93/5.150/5.153 仍保留 wontfix 子项故仍属 PERMANENT，但 PERMANENT 子项数减少）；2026-07-22 #ARCH-ANY-GOVERNANCE-001 三阶段治本完成后 5.145 维度从 PERMANENT-14 迁移至 FIXED。
+> 合计：**54 维度 = 48 FIXED + 6 PERMANENT（共 40 项未完成）**。原 R102 裁定时 39 FIXED + 15 PERMANENT（87 项未完成）；2026-07-21 27 项 EXECUTE 治本完成后状态迁移：5.42/5.93/5.97/5.150/5.152/5.153/5.180 维度从 PERMANENT 状态行迁移至 FIXED（5.93/5.150/5.153 仍保留 wontfix 子项故仍属 PERMANENT，但 PERMANENT 子项数减少）；2026-07-22 #ARCH-ANY-GOVERNANCE-001 三阶段治本完成后 5.145 维度从 PERMANENT-14 迁移至 FIXED；2026-07-22 R103 第一性原理重裁定后 5.100/5.140/5.160 三维度从 PERMANENT 迁移至 FIXED。
 
 | 维度号 | 维度名 | 核心问题 | 病根归属 | 防复发 gate/metric | 状态 |
 |---|---|---|---|---|---|
@@ -156,12 +157,12 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.96 | 布尔参数蔓延 | TriggerDecision 3 布尔冗余 + _calculate_trust 3 布尔 + 行为切换布尔 | 根因 5 | GATE-DEBT-BRIDGE（DEBT-1/2/3，commit + CI 双硬阻断） | FIXED |
 | 5.97 | 深层嵌套与圈复杂度 | evolve 148 行 5 层 + register_boot_hooks 130 行 7 闭包 + dispatch 104 行 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85） | FIXED |
 | 5.99 | 错误消息一致性 | SQL 泄露 + 中英混用 + 异常类型不一致 + MCP 错误码不统一 | 根因 5 | MSG-EXPOSURE（83）+ MSG-STYLE + error_code_registry.yaml SSoT | FIXED |
-| 5.100 | 异步资源生命周期 | limiter 锁反模式 + pipeline 死锁 + 阻塞 IO + get_event_loop 弃用 + asyncio.run 高频 | 根因 5 | M23 asyncio 调用监控（warn-only，AGENTS.md 异步 IO 最佳实践规则约束） | PERMANENT-2 |
+| 5.100 | 异步资源生命周期 | limiter 锁反模式 + pipeline 死锁 + 阻塞 IO + get_event_loop 弃用 + asyncio.run 高频 | 根因 5 | M23 asyncio 调用监控（warn-only，AGENTS.md 异步 IO 最佳实践规则约束）+ R103 治本（commit `9d2b7d498f`） | FIXED |
 | 5.101 | 变量遮蔽与命名冲突 | 参数遮蔽 id + 42 处数据类字段遮蔽内置名 + 6 处模块名冲突标准库 | 根因 5 | M24 字段遮蔽计数监控（warn-only，R80 裁定不新增 gate，directory_contract 维护模块名） | PERMANENT-12 |
 | 5.114 | Final/@final 强制 | 可变 dict 常量无 Final + 375 处模块级常量未标 Final + @final 零使用 | 根因 5 | M25 模块级常量未标 Final 监控（warn-only，已全量标注完成，安全敏感类已加 @final） | FIXED |
 | 5.138 | 循环引用风险 | 根 __init__ Timer 延迟规避循环 + 包内循环 + try/except ImportError 容错 | 根因 5 | —（实证无真实循环链，已改模块级直接 import） | FIXED |
 | 5.139 | TODO/FIXME 技术债务标记 | 仅 1 处真实 TODO（已关联工单），代码库技术债务标记极清洁 | —（零检出维度） | M26 TODO/FIXME 计数监控（warn-only） | FIXED |
-| 5.140 | 函数复杂度过高 | dispatch 461 行/7 层/30+ 分支 + integration 模块 8 个超标函数 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85） | PERMANENT-3 |
+| 5.140 | 函数复杂度过高 | dispatch 461 行/7 层/30+ 分支 + integration 模块 8 个超标函数 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85）+ R103 治本（commit `9d2b7d498f`） | FIXED |
 | 5.143 | API 契约一致性 | LSP 违规 + Protocol 误用为基类 + 13 组重复 ABC 各自独立 _registry | 根因 1/5 | ssot_redefinition_gate + cross_layer_contracts.yaml SSoT | PERMANENT-14 |
 | 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | M27 open() 未在 with 监控（warn-only，异常隔离 + finally 模式已批量落地） | FIXED |
 | 5.145 | 类型注解完整性 | 34 个文件 Any 滥用 >5 处 + audit_trail 三件套完全无类型 + 隐藏 NameError | 根因 5 | GATE-ANY-ABUSE（Phase 3 commit 阻断）+ mypy 加严（disallow_any_generics） | FIXED |
@@ -174,7 +175,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.157 | 文档与代码同步深度 | 连字符 vs 下划线路径漂移 27 文件 + 函数名颠倒 + 版本漂移 + shim 缺标记 | 根因 1 | DOC-REF-BROKEN gate | FIXED |
 | 5.158 | 循环复杂度 | _compute_metrics_generic 30+ + evaluate 4 路分发 + _run_once 5 阶段流水线 | 根因 5 | NO-HIGH-COMPLEXITY gate（85）+ scan_complexity.py 存量监控 | FIXED |
 | 5.159 | 死代码 | governance/governance 错位包 7 文件 + rollback/governance 5 文件 + 20 死重复文件 | 根因 1 | ORPHAN-MODULE gate + M07 指标 | FIXED |
-| 5.160 | 魔法数字/字符串 | task_repo 40+ 条裸 SQL + apply_depgraph 40+ SQL + 安全扫描器正则阈值不一致 | 根因 2 | NO-BARE-SQL gate（87）+ NO-HARDCODED-URL gate（94） | PERMANENT-1 |
+| 5.160 | 魔法数字/字符串 | task_repo 40+ 条裸 SQL + apply_depgraph 40+ SQL + 安全扫描器正则阈值不一致 | 根因 2 | NO-BARE-SQL gate（87）+ NO-HARDCODED-URL gate（94）+ R103 治本（commit `984d3bb772`） | FIXED |
 | 5.165 | 全局状态管理 | ~20 处模块级单例无锁 double-check + import 时启 Timer + asyncio+全局状态冲突 | 根因 5 | M28 单例无锁 double-check 监控（warn-only，Lock + 双重检查锁定模式已批量落地） | FIXED |
 | 5.169 | 文件句柄/资源泄漏 | fd 泄漏 + urlopen 未 close + 25 处 sqlite3 无 try/finally + os.open 泄漏 | 根因 5 | M29 资源未在 try/finally 监控（warn-only，try/finally 批量包装完成） | FIXED |
 | 5.171 | 类型注解缺失或不一致 | public API 无注解 + Any 滥用 + 返回类型不符 + stub-style 无注解 | 根因 5 | GATE-ANY-ABUSE + mypy 加严 | FIXED |
@@ -187,11 +188,12 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 ## 五、未完成任务（DEFERRED-PERMANENT / wontfix 项详情）
 
-> **本节是全部未完成任务的完整清单（90 项）**，按维度组织。每项保留：条目号、严重度、文件、问题一句话、**裁定结果与理由**。
+> **本节是全部未完成任务的完整清单（40 项 wontfix + 已治本项保留为历史记录）**，按维度组织。每项保留：条目号、严重度、文件、问题一句话、**裁定结果与理由**。
+> R103 重裁定真源：本节 §5.0.1（2026-07-22 第一性原理重裁定工作清单）。
 > 裁定口径：**EXECUTE** = R102（第 102 轮，2026-07-19，架构师受 Owner 委托）裁定立即治本施工，待执行/执行中；**wontfix（RATIFY）** = 确认前裁定关闭，防复发门禁已在册，不再施工；**SKIP** = SAFETY=H + human_gated，待人工/Owner 授权。
 > R102 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r102.md)（裁定原则：P1 防复发 > 存量修复；P2 无回归测试不做高风险重构；P3 实际风险=0 的"违规"非债务；P4 净收益必须为正；P5 可机械验证/执行的优先；P6 SSoT 唯一真源最高原则）。
 
-### 5.0 未完成总览（60 项 = EXECUTE 0 + wontfix 60）
+### 5.0 未完成总览（40 项 = EXECUTE 0 + wontfix 40）
 
 **EXECUTE 工作清单（0 项，原 27 项已于 2026-07-21 全部治本施工完成）**：
 
@@ -206,8 +208,22 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 7 | 惰性导出修复 | 5.93.3（shared/__init__.py __all__ 170 名零 import） | PEP 562 `__getattr__` 惰性导出或裁剪 `__all__` | ✅ FIXED（commit `4f3a9f9895` merge of `6c2856a4da`，PEP 562 __getattr__ + 88 符号→子模块映射） |
 | 8 | Owner 授权结构修复（2 项） | 5.42.4（baseline_manager.py 方法嵌套 bug）/ 5.97.6（audit_trail_cli.py 108 行 5 elif） | 按结构 bug 处理（Owner 已授权全权修复） | ✅ FIXED（commit `0acd7d885f`，5.42.4 方法正确嵌套至模块级；5.97.6 _AUDIT_DISPATCH 分发表 + _run_single_audit） |
 
-**wontfix 分布（46 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.100（2）/ 5.101（12）/ 5.140（3）/ 5.143（14）/ 5.150（2：5.150.6 Data Class + 5.150.16 Primitive Obsession）/ 5.153（9）/ 5.160（1）。
+**wontfix 分布（40 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.101（12）/ 5.143（14）/ 5.150（2：5.150.6 Data Class + 5.150.16 Primitive Obsession）/ 5.153（9）= 40。
 **SKIP（0 项）**：原 5.46.3（tiered_storage.py:44 naive datetime 混用）已由 Owner 授权治本修复（now_utc() + tz=UTC）。
+
+### 5.0.1 R103 第一性原理重裁定工作清单（2026-07-22）
+
+**裁定原则**：R103 对原 R102 RATIFY 项进行第一性原理重新审查，新增 3 项验证维度——(V1) 证据时效性（裁定时的证据是否仍成立）、(V2) 模式一致性（同类问题是否已有治本先例）、(V3) 防复发机制成熟度（防复发 gate 是否已从 warn-only 升级为硬阻断）。若原 RATIFY 理由在新验证维度下失效，则重裁定为 EXECUTE 并立即治本。
+
+**EXECUTE 治本项（3 项，均已治本完成）**：
+
+| # | 条目 | 原裁定 | 重裁定理由 | 治本 commit |
+|---|---|---|---|---|
+| 1 | 5.100.15/16（asyncio API 弃用） | R102 RATIFY | (V2) 5.52 已有 `async_utils.run_coroutine_sync` canonical 模式可复用；(V3) M23 warn-only 不足以防新增 | `9d2b7d498f` |
+| 2 | 5.140.2（函数复杂度） | R102 RATIFY | (V2) 5.97/5.158 已有 dispatch 表重构先例；(V3) NO-HIGH-COMPLEXITY gate 已硬阻断新增 | `9d2b7d498f` |
+| 3 | 5.160.2（裸 SQL） | R102 RATIFY | (V2) R89/R90 已提取 13 个 SQL_* 常量清 37 处先例；(V3) NO-BARE-SQL gate 已硬阻断新增 | `984d3bb772` |
+
+**确认 wontfix 项（6 项，维持原裁定）**：5.33.6/10（SPOF/密钥备份，过度工程）、5.93.1（daemon Timer 刻意设计）、5.101.5-17（LEGB 实际遮蔽=0）、5.143.20/7-19（Phase B 骨架/不可验证盲盒）、5.150.6/16（合法 DTO/契约冲击）、5.153.7/8/9/16-21（历史语义/契约冲击）。
 
 ---
 
@@ -237,7 +253,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 |---|---|---|---|---|
 | 5.97.6 | MEDIUM | `src/zephyr/gov_audit/cli.py:90-197`（原 `src/zephyr/governance/audit_trail/cli.py`） | `_run_single_audit` 函数体 108 行、5 个 elif 分支各含 try-except，圈复杂度 ~15（修复建议：改 dispatch 表 `_AUDITORS: dict[str, Callable]`） | ✅ **FIXED（commit `0acd7d885f`，2026-07-21）**：原 R72 SKIP（SAFETY=H + human_gated）；R102 裁定 EXECUTE（Owner 已授权）。治本：`_AUDIT_DISPATCH: dict[str, Callable[[str, str], tuple[str, Any]]]` 分发表（cli.py:191-197）+ `_run_single_audit`（cli.py:200-207）统一签名 `(scope, level) -> tuple[str, Any]`，5 个 audit 类型经 lambda 适配入表。维度 5.97 状态：PERMANENT-1 → FIXED |
 
-### 5.100 异步资源生命周期（PERMANENT-2，均 wontfix）
+### 5.100 异步资源生命周期（FIXED，原 PERMANENT-2 经 R103 重裁定为 EXECUTE 已治本）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
@@ -251,7 +267,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.101.5-5.101.13（9 项） | LOW | 42 处数据类/Pydantic 字段（id 15 + file 11 + type 3 + format 4 + hash 5 + open 3 + input 1 + round 1 + Enum 成员 file 1；代表文件：`governance/blind_spot_tracker.py`、`integration/vector_memory/hybrid_retriever.py`、`infrastructure/pipeline/models.py`、`trading/night_shift_queue.py`、`shared/infra/outbox.py` 等） | 数据类/Pydantic 字段名与 Python 内置名相同（风格性遮蔽） | **wontfix（R80 升级 PERMANENT + R102 RATIFY）**：LEGB 分析实例属性 `self.id` 不参与作用域链，方法体内 `id(obj)` 仍调用内置 `id()`，实际遮蔽风险=0；改名冲击 JSON 序列化键名 + DB 列映射 + API 契约，成本 > 收益（P3/P4） |
 | 5.101.15/16/17（3 项） | LOW | `shared/foundation/types.py`、`shared/security/secrets.py`、`security/llm_defense/llm_security/patterns/secrets.py` | 模块名与标准库 `types`/`secrets` 模块同名 | **wontfix（R80 + R102 RATIFY）**：Python 3 包内 import 不搜索同包目录，实测无遮蔽风险；改名涉及全仓 import 路径变更，净收益为负（P4）。注：5.101.14 `shared/secrets.py` 已删除（DRIFTED） |
 
-### 5.140 函数复杂度过高（PERMANENT-3，均 wontfix）
+### 5.140 函数复杂度过高（FIXED，原 PERMANENT-3 经 R103 重裁定为 EXECUTE 已治本）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
@@ -299,7 +315,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.153.9 | MEDIUM | `audit_orchestration/session_manager.py:106` vs `state/session_manager.py:113` vs `trading/orchestrator/session_manager.py` vs `infrastructure/a2a_protocol/governance/session_manager.py:21` | `create_session` 参数名跨模块不一致（session_id / task_id / agent_id），返回类型不同 | **wontfix（R102 RATIFY）**：同上（影响 A2A 协议契约） |
 | 5.153.16-5.153.21（6 项） | LOW | `governance/ops_governance/auto_runner.py:60`（success）、`governance/api_lifecycle.py:48`（expired）、`integration/vector_memory/in_process_vector_memory.py:105`（started）、`trading/verdict_engine.py:51,101,142`（gate_passed）、9 个 `ops/gates/safety_gate_l*.py`（slo_compliant/pnl_reconciled 等 30+ 字段）、`ops/gates/safety_gate_l1_l27.py:69`+`parameterized_safety_gate.py:95`（in_circuit_breaker 非标准 in_ 前缀） | 布尔属性/字段缺 is_ 前缀（30+ 字段），同文件内 has_/is_ 与裸名并存不一致 | **wontfix（R102 RATIFY）**：改名冲击序列化/契约，净收益为负（P4） |
 
-### 5.160 魔法数字/字符串（PERMANENT-1，wontfix）
+### 5.160 魔法数字/字符串（FIXED，原 PERMANENT-1 经 R103 重裁定为 EXECUTE 已治本）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
@@ -343,9 +359,9 @@ commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"�
 
 54 个已跟踪维度全部清零（STILL_VALID=0），第 102 轮 36 批提交（merge `44ebb73b26`）收尾；仪表盘驱动闭环（检测→治本修复→防复发约束）完成 M01-M14 清零（含 5.135 异常粒度 697 项、5.168 异常信息泄露 142 项两个最大未跟踪维度的治本裁定）。执行规则（裁定 5）：AI 修复 MUST 优先 DEFERRED 项、禁止自行修复 DEFERRED-PERMANENT 项、每轮更新维度状态行、修复 MUST 走 session_worktree_commit。
 
-### 6.4 Phase 3：治理层收敛（治本存量）——✅ EXECUTE 27 项全部治本完成（2026-07-21）
+### 6.4 Phase 3：治理层收敛（治本存量）——✅ R102 EXECUTE 27 项 + R103 EXECUTE 3 项全部治本完成（2026-07-22）
 
-目标：DEFERRED-PERMANENT 项清理。**当前状态**：第 102 轮（2026-07-19）已对全部 DEFERRED-PERMANENT 项完成逐项裁定（EXECUTE / RATIFY，裁定真源 `debt_permanent_rulings_r102.md`），原剩余 87 项见 §五——其中 **EXECUTE 27 项已于 2026-07-21 全部治本完成**（God Class 拆分 / 参数对象 / 跨层依赖逐边分析 / CT_ 类与 TraceContext 重命名 / run_checker_script 提取 / 2 项 Owner 授权结构修复），wontfix 60 项已关闭（防复发门禁在册）。元问题反思（原文 §四反思 1-3，保留结论）：L5 治理层 14 功能应收敛为 5-6 功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产）；治理组件数 > 被治理组件数时治理体系自身就是最大漂移源（实测：trae_060 §5 快照失效、GATE-VOCAB 60 处盲区、40 GATE 无反查——治理体系自身漂移已被实证）；100% AI 开发场景下"建议性规则"是反模式，应用强制消费链替代。战略建议（裁定 1）：暂停新增规则文档 6 个月。
+目标：DEFERRED-PERMANENT 项清理。**当前状态**：第 102 轮（2026-07-19）已对全部 DEFERRED-PERMANENT 项完成逐项裁定（EXECUTE / RATIFY，裁定真源 `debt_permanent_rulings_r102.md`），原剩余 87 项见 §五——其中 **EXECUTE 27 项已于 2026-07-21 全部治本完成**（God Class 拆分 / 参数对象 / 跨层依赖逐边分析 / CT_ 类与 TraceContext 重命名 / run_checker_script 提取 / 2 项 Owner 授权结构修复），wontfix 40 项已关闭（防复发门禁在册）。元问题反思（原文 §四反思 1-3，保留结论）：L5 治理层 14 功能应收敛为 5-6 功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产）；治理组件数 > 被治理组件数时治理体系自身就是最大漂移源（实测：trae_060 §5 快照失效、GATE-VOCAB 60 处盲区、40 GATE 无反查——治理体系自身漂移已被实证）；100% AI 开发场景下"建议性规则"是反模式，应用强制消费链替代。战略建议（裁定 1）：暂停新增规则文档 6 个月。
 
 ---
 
