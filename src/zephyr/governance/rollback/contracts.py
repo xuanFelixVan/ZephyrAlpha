@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-rollback | docs/03_modules/_domain_governance/rollback/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_rollback | docs/03_modules/_domain_governance/rollback/blueprint.md | §
 # [MODULE] zephyr.governance.rollback.contracts
 # [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES] zephyr.infrastructure.rollback.contracts (RollbackHandler)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回None
 # [TESTS] tests/governance/audit/test_p0_i2_construction_order.py
-# [A_module] module_id=MOD-GOV_rollback_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-rollback_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """rollback/contracts.py — G-CT-002 Rollback 契约（re-export）。"""
 

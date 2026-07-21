@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-worktree_manager | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §worktree-manager
+# [BLUEPRINT] MOD-GOV_worktree_manager | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §worktree-manager
 # [MODULE] zephyr.gov_enforcement.rule_bridge.worktree_manager
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT)

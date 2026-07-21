@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-emergency_commit | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-1
+# [BLUEPRINT] MOD-GOV_emergency_commit | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-1
 # [MODULE] zephyr.gov_enforcement.rule_bridge.emergency_commit
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (log_emergency_commit); zephyr.shared.io.paths (REPO_ROOT)

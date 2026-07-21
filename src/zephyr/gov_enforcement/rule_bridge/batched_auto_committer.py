@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-batched_auto_committer | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P2.3
+# [BLUEPRINT] MOD-GOV_batched_auto_committer | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P2.3
 # [MODULE] zephyr.gov_enforcement.rule_bridge.batched_auto_committer
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway (GitCommitGateway._commit_auto 复用)

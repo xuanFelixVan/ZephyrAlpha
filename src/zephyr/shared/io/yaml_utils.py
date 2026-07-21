@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FileNotFoundError(strict=True且文件不存在)
 # [TESTS] 手动测试：load_vocabulary_values("status_vocabulary.yaml") 返回3值
-# [A_module] module_id=MOD-SHR_io_yaml | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-io_yaml | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源）
 

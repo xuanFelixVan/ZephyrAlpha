@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-session_claim | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4B
+# [BLUEPRINT] MOD-GOV_session_claim | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4B
 # [MODULE] zephyr.gov_enforcement.rule_bridge.session_claim
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry)
