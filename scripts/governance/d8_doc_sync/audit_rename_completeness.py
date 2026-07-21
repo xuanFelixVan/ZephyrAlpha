@@ -3,7 +3,7 @@
 # [MODULE] scripts.governance.audit_rename_completeness
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants
-# [CONSUMERS] .pre_commit-config.yaml; scripts/governance/apply_depgraph.py
+# [CONSUMERS] scripts/governance/apply_depgraph.py
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 只读扫描;值扫描兜底覆盖全表TEXT列;排除规则示例表(domain_naming_rules)

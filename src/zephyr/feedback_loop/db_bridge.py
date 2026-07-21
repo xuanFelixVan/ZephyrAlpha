@@ -2,7 +2,7 @@
 # [MODULE] zephyr.feedback_loop.db_bridge
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.feedback_loop.metrics_collector; tests.test_db_bridge; tests.test_fl_db_bridge
+# [CONSUMERS] zephyr.feedback_loop.metrics_collector
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] fle_metrics表DDL与sqlite_schema.py规范DDL一致; INSERT列名匹配规范schema
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
 # [TESTS] python -m pytest tests/test_db_bridge.py tests/test_fl_db_bridge.py -q
-# [A_module] module_id=MOD-UNK_db_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-db_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics
 

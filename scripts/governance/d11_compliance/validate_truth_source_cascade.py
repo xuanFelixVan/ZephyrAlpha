@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.d11_compliance.validate_truth_source_cascade
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] scripts.governance._shared.frontmatter
-# [CONSUMERS] tests.unit.test_validate_truth_source_cascade_unit; tests.unit.governance.test_validate_truth_source_cascade_governance
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

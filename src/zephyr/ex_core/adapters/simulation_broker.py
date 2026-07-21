@@ -2,7 +2,7 @@
 # [MODULE] zephyr.ex_core.adapters.simulation_broker
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.simulation_broker
-# [CONSUMERS] tests.integration.test_e2e_pipeline; tests.integration.test_phase_g_perf; tests.integration.test_phase_e_main_flow; tests.unit.test_execution_engine_unit
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.d3_metadata.check_naming_convention
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
-# [CONSUMERS] .pre_commit-config.yaml GATE-11; .github/workflows/governance.yml; tests/test_gate11_naming_convention.py
+# [CONSUMERS] .pre_commit-config.yaml GATE-11 ; .github/workflows/governance.yml
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] N-01~N-16 rules are append-only; whitelist changes require Owner approval

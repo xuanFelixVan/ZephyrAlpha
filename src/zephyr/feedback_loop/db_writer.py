@@ -2,7 +2,7 @@
 # [MODULE] zephyr.feedback_loop.db_writer
 # [DOMAIN] D_FEEDBACK_LOOP
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.feedback_loop.__init__; zephyr.infrastructure.__init__
-# [CONSUMERS] zephyr.feedback_loop.metrics_collector; zephyr.feedback_loop.alert_dispatcher; zephyr.scheduler_collect_detect
+# [CONSUMERS] zephyr.feedback_loop.metrics_collector ; zephyr.feedback_loop.alert_dispatcher
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] fle_metrics/fle_alerts/fle_dispatch_log三张表幂等写入; 每次批量返回写入行数; 异常只抛日志不抛异常
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DBConnectionError写入失败抛日志; 空输入返回0不报错
 # [TESTS] scripts/connect/fle_db.py --verify
-# [A_module] module_id=MOD-UNK_db_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-db_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQLite
 

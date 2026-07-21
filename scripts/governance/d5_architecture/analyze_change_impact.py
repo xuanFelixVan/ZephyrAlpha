@@ -3,7 +3,7 @@
 # [MODULE] scripts.governance.analyze_change_impact
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.infrastructure.__init__
-# [CONSUMERS] run_incremental.py;phase_manager.py
+# [CONSUMERS] phase_manager.py
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] 影响分析必须包含传递依赖;增量扫描列表不可遗漏直接依赖

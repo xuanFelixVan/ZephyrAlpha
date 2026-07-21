@@ -1,5 +1,5 @@
 # [DOMAIN] D_FBL_DIAGNOSERS
-# [A_module] module_id=MOD-UNK_diagnosers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-diagnosers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.diagnosers
 # [INVARIANTS] __all__列表不变(公开叶子API不变); 旧路径diagnosers.<leaf>保持可导入(兼容垫片)

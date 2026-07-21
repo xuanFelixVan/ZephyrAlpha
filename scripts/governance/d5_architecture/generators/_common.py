@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.d5_architecture.generators._common
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] (none — pure stdlib)
-# [CONSUMERS] generate_domain_doc.py; generate_domain_architecture_diagram.py
+# [CONSUMERS] generate_domain_doc.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 纯 stdlib 解耦；不 import zephyr.*（便于 mutation testing）

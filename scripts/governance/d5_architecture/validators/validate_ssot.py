@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.d5_architecture.validators.validate_ssot
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] scripts.governance._shared.frontmatter
-# [CONSUMERS] tests.unit.test_validate_ssot_unit; tests.unit.governance.test_validate_ssot_governance
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

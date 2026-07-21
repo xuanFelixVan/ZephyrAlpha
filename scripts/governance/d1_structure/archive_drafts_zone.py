@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.d1_structure.archive_drafts_zone
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.frontmatter; scripts.governance._shared.constants
-# [CONSUMERS] tests.unit.test_drafts_zone_archiver_unit; tests.unit.governance.test_drafts_zone_archiver_governance
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] STATUS_ARBITRATED="arbitrated"(与 frontmatter 值一致);WARN_DAYS=30;ARCHIVE_DAYS=60

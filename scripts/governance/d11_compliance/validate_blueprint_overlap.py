@@ -14,7 +14,7 @@ warn_only: false
 # [MODULE] scripts.governance.d11_compliance.validate_blueprint_overlap
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] scripts.governance._shared.frontmatter
-# [CONSUMERS] tests.unit.test_validate_blueprint_overlap_unit; tests.unit.governance.test_validate_blueprint_overlap_governance
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]
