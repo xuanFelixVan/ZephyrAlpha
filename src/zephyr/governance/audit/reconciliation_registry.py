@@ -100,6 +100,7 @@ __all__ = [
     "make_arch_diagram_reconciler",
     "make_gate_inventory_sync_reconciler",
     "make_gate_registry_sync_reconciler",
+    "make_in_process_gate_registry_drift_reconciler",  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 6
     "make_tmp_cleanup_reconciler",
     "make_worktree_lifecycle_reconciler",
     "make_scripts_import_integrity_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 3
@@ -5533,6 +5534,98 @@ def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=830,  # 在 GATE-MODULE-INVENTORY-SYNC(820) 之后
+    )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架（复用 ReconciliationRegistry post-commit warn-only 漂移检测，
+# 对标 make_undefined_name_baseline_reconciler）。病根：auto_register_gates fail-open 仅 logger.warning，
+# 无 reconciler 则漂移不入 reconcile_execution_log。与 make_gate_registry_sync_reconciler 职责分离。
+# #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——in_process_gate_registry.yaml ↔ 内存注册表双向校验
+def make_in_process_gate_registry_drift_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 in_process_gate_registry.yaml ↔ 内存注册表双向漂移检测 reconciler。
+
+    #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——YAML 真源与运行时注册表对账。
+
+    auto_register_gates fail-open（import 失败仅 logger.warning），无 reconciler 则漂移
+    不入 reconcile_execution_log，违反"所有reconciler失败结果必须持久化记录"铁律。
+    本 reconciler 补强：post-commit 事件触发，对比 YAML 声明 gate_ids 与 fresh registry
+    注册 gate_ids，落盘漂移报告。
+
+    trigger: commit 触及 in_process_gate_registry.yaml / gate_auto_registrar.py /
+    commit_gates/*.py 时触发。
+    reconcile: 创建 fresh CommitGateRegistry，调用 auto_register_gates，对比：
+      - yaml-only gates（YAML 声明但未注册 = import/register 失败 或 gate_id 不匹配）
+      - in-memory-only gates（注册但 YAML 未声明 = factory 返回不同 gate_id）
+    返回 ReconcileResult(action="warn") 含漂移详情，持久化到 reconcile_execution_log。
+
+    设计权衡：
+    1. warn 不 auto-fix——漂移修复需人工判断（笔误 vs 故意删除 vs import 路径变更）
+    2. fresh registry——不复用 gateway._gate_registry（已被显式 register 污染）
+    3. priority=831——紧随 GATE-GATE-REGISTRY-SYNC(830)
+    """
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = _rel_path(f, str(project_root))
+            if rel == "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml":
+                return True
+            if rel == "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py":
+                return True
+            if rel.startswith("src/zephyr/gov_enforcement/commit_gates/") and rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
+        from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
+            auto_register_gates,
+            load_gate_entries,
+        )
+
+        entries = load_gate_entries(project_root)
+        if not entries:
+            return ReconcileResult(
+                action="warn",
+                detail="in_process_gate_registry.yaml: no entries loaded (YAML parse failed or empty)",
+            )
+
+        yaml_gate_ids = {e.get("gate_id", "") for e in entries if e.get("gate_id")}
+        yaml_disabled = {e.get("gate_id", "") for e in entries if not e.get("enabled", True) and e.get("gate_id")}
+
+        fresh_registry = CommitGateRegistry()
+        failures = auto_register_gates(fresh_registry, project_root)
+        registered_ids = set(fresh_registry.list_gate_ids())
+
+        # 双向对比
+        yaml_enabled = yaml_gate_ids - yaml_disabled
+        yaml_only = yaml_enabled - registered_ids  # YAML 声明了但内存中没有此 gate_id
+        in_memory_only = registered_ids - yaml_gate_ids  # 内存注册了但 YAML 没声明此 gate_id
+
+        drift_parts: list[str] = []
+        if failures:
+            fail_summary = "; ".join(f"{gid}: {err[:80]}" for gid, err in failures[:5])
+            drift_parts.append(f"{len(failures)} import/register failure(s): {fail_summary}")
+        if yaml_only:
+            drift_parts.append(f"{len(yaml_only)} yaml-only gate_id(s) (mismatch or failed): {sorted(yaml_only)[:5]}")
+        if in_memory_only:
+            drift_parts.append(f"{len(in_memory_only)} in-memory-only gate_id(s) (factory returns different id): {sorted(in_memory_only)[:5]}")
+        if not drift_parts:
+            return ReconcileResult(
+                action="clean",
+                detail=f"in_process_gate_registry drift check clean: YAML={len(yaml_gate_ids)} gates, registered={len(registered_ids)} gates",
+            )
+
+        return ReconcileResult(
+            action="warn",
+            detail=f"in_process_gate_registry drift detected: YAML={len(yaml_gate_ids)} gates ({len(yaml_disabled)} disabled), registered={len(registered_ids)} gates. " + " | ".join(drift_parts),
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-IN-PROCESS-REGISTRY-DRIFT",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=831,  # 紧随 GATE-GATE-REGISTRY-SYNC(830)
     )
 
 
