@@ -30,8 +30,9 @@
   python scripts/governance/generators/generate_rule_ai_perception_index.py          # 生成
   python scripts/governance/generators/generate_rule_ai_perception_index.py --check   # 漂移检测
 """
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import argparse
 import sys

@@ -29,8 +29,9 @@
 [TESTS] python scripts/governance/verify_key_imports.py
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 __manifest__ = """
 args: []

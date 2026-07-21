@@ -41,8 +41,9 @@ NO-HIGH-COMPLEXITY gate (priority=85) 只检测**新增**函数的复杂度（�
   2 = src 目录缺失或参数错误
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import argparse
 import ast

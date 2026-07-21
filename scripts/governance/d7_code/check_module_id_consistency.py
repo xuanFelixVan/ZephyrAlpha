@@ -38,8 +38,9 @@
   Type D — 其他（多副本/测试文件等）
 """
 
-from _shared.constants import EXIT_ERROR
 from __future__ import annotations
+
+from _shared.constants import EXIT_ERROR
 
 import argparse
 import json

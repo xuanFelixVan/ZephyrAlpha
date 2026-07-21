@@ -38,8 +38,9 @@ Usage::
     python scripts/governance/session_worktree_cli.py sweep --max-age 60
     python scripts/governance/session_worktree_cli.py list
 """
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 import argparse
 import json

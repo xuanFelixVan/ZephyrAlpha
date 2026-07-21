@@ -39,8 +39,9 @@
   - 误报优先：宁可放过，不可误伤 commit 工作流
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import argparse
 import ast

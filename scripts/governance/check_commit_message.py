@@ -64,8 +64,9 @@ Exit Codes
   非 merge commit 都必须带 [GW:] 标记）。默认 ``0``（启用白名单）。
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import json
 import os

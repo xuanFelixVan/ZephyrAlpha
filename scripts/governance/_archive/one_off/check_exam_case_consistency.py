@@ -33,8 +33,9 @@
 self_review/rule_comprehension 缺负例对照组。本脚本作为 CI 检查，
 防止下次题库扩展时同类问题复发（审查2.1/2.2 治本措施）。
 """
-from _shared.constants import EXIT_PASS
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS
 
 import argparse
 import sys

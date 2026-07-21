@@ -35,8 +35,9 @@ Exit codes:
     2 = 错误（脚本异常）
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import re
 import sys

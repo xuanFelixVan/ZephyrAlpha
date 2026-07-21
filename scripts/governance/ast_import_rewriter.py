@@ -33,8 +33,9 @@ The YAML map format::
         new_path: src/zephyr/governance/subdir/foo.py
 """
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from __future__ import annotations
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 import argparse
 import ast
