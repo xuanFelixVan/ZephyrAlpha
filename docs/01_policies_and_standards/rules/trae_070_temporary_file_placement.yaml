@@ -31,9 +31,9 @@
 meta:
   rule_id: trae_070
   rule_name: temporary_file_placement
-  version: '1.1.0'  # 1.0.0->1.1.0: paired_gate_id null->GATE-DIRECTORY-CONTRACT
+  version: '1.2.0'  # 1.1.0->1.2.0: 补 gw_* 进程 token 非 项目文件说明（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）
   created: '2026-07-20'
-  last_updated: '2026-07-20'
+  last_updated: '2026-07-22'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
   related_issue: '#ARCH-TEMP-FILE-PLACEMENT-001'
   related_adjudication: '#ARCH-TEMP-FILE-PLACEMENT-001'
@@ -55,6 +55,13 @@ enforcement:
     违规即阻断 commit（error 级）。例如 AI 把 .md 任务文档放到 .runtime/tmp/
     会被 DCR-006（forbidden）+ DCR-008（purpose mismatch）双重阻断。
   post_commit_reconciler: null  # 暂无 post-commit reconciler（DCR-008 已是 commit-time 阻断）
+
+# 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001（2026-07-22）澄清——gw_* 非 项目文件：
+# GitCommitGateway 的进程内 IPC token（gw_commit_msg_*.txt / gw_pathspec_*.txt）是
+# git -F / --pathspec-from-file 的进程通信令牌（存在时间 = 一次 git 子进程调用，零持久价值），
+# 其规范真源是 OS temp dir（tempfile.mkstemp 不传 dir= 即用 tempfile.gettempdir()），
+# 由 OS 管理生命周期/清理/隔离。gw_* 不在本规则 directory_purpose_classification 任何类别内，
+# 不归任何项目目录管辖，故不在本表登记任何 .runtime/gw_tmp/ 之类目录（新建即违反真源唯一/责任唯一）。
 
 # ============================================================
 # 1. 目录用途分类表（Directory Purpose Classification）

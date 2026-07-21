@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
+# [BLUEPRINT] MOD-GOV_reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
 # [MODULE] zephyr.governance.audit.reconciliation_registry
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] (none — pure stdlib)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile_for 永不抛异常——单个 reconciler 异常降级为 ReconcileResult(action="warn")
 # [TESTS] tests/test_reconciliation_registry.py (P3-T1)
-# [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 # noqa: m10-time-trigger  M10豁免: "cron"在注释中说明reconciler是事件触发(非cron/manual)
@@ -6625,4 +6625,225 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
         trigger=_trigger,
         reconcile=_reconcile,
         priority=220,  # 在 scripts_import_integrity@210 / undefined_name_baseline@211 之后
+    )
+
+
+# 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001（2026-07-22）：根目录临时文件清扫 reconciler。
+# 病根：策略层（trae_070/071 + directory_contract DCR-007）已完备，但 DCR-007 只看 staged
+# 文件，根目录临时文件全被 .gitignore 忽略→永不 staged→门禁永远看不见（结构性盲区）。
+# 本 reconciler 补盲区：post-commit FS 扫描根目录 depth-0 平铺文件，混合策略清扫。
+# 仅扫平铺文件不删目录（目录删除风险高——tmp/ 含 pg_backups 175MB，已实证）。
+def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-ROOT-TEMP-SWEEP post-commit 根目录临时文件清扫 reconciler.
+
+    治本（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001，事件驱动 FS 扫描补门禁盲区）：
+    - trigger: 任何 commit 都触发（扫描根目录 depth-0 平铺文件成本 <0.01s）
+    - reconcile: 扫描项目根目录 depth-0 平铺文件（不递归子目录），按混合策略处理：
+      * 进程 token（gw_*/tmp_commit_msg/*.log）：mtime>10min 删除（零持久价值）
+      * 疑似成果（tmp_*.py/.txt/.xml/.json/.md/.csv、.tmp_*）：移到 .runtime/tmp/
+        隔离（7 天 TTL 由 make_tmp_cleanup_reconciler 清理）
+    - 自维护/自关闭：每次 commit 后自动清扫，无需 AI 干预
+
+    保护规则（第一性原理：根目录平铺文件几乎都是临时产物，但需防误删正在写入的文件）：
+    - mtime < 10min 的文件：跳过（可能正在写入——pytest 运行中/commit 进行中）
+    - 不递归子目录：仅扫平铺文件（目录删除风险高）
+    - 合法根文件（.gitignore/AGENTS.md/pyproject.toml 等）天然不匹配临时模式，不误处理
+
+    向内收：扩展 ReconciliationRegistry 框架，复用 logger，零新真源。
+    """
+    import os
+    import re
+    import shutil
+    import time
+
+    project_root = gateway.project_root
+    _FRESH_SECONDS = 10 * 60  # 10 分钟安全阈值（避免删到正在写入的文件）
+    # 删除模式（进程 IPC token / 纯日志，零持久价值）
+    _DELETE_PATTERNS = (
+        re.compile(r"^gw_commit_msg_.*\.txt$"),
+        re.compile(r"^gw_pathspec_.*\.txt$"),
+        re.compile(r"^tmp_commit_msg\.txt$"),
+        re.compile(r"^.*\.log$"),  # 根目录 .log 全是临时产物（root_directory_whitelist 不含 .log）
+    )
+    # 移动模式（疑似成果，隔离到 .runtime/tmp/ 待 7 天 TTL 清理）
+    _MOVE_PATTERNS = (
+        re.compile(r"^tmp_.*\.(py|txt|xml|json|md|csv|log|sh|ps1)$"),
+        re.compile(r"^\.tmp_.*$"),
+    )
+
+    def _match_delete(name: str) -> bool:
+        return any(p.match(name) for p in _DELETE_PATTERNS)
+
+    def _match_move(name: str) -> bool:
+        return any(p.match(name) for p in _MOVE_PATTERNS)
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return True  # 根目录清扫与每次 commit 正相关
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        if not project_root.exists():
+            return ReconcileResult(action="skip", detail="root_temp_sweep: project_root not found")
+        now = time.time()
+        rt_tmp = project_root / ".runtime" / "tmp"
+        deleted = 0
+        moved = 0
+        errors = 0
+        skipped_fresh = 0
+        try:
+            entries = os.listdir(project_root)
+        except OSError as exc:
+            return ReconcileResult(action="warn", detail=f"root_temp_sweep: listdir failed: {exc}")
+        for name in entries:
+            full = os.path.join(str(project_root), name)
+            if not os.path.isfile(full):
+                continue  # 仅扫平铺文件，跳过目录
+            is_delete = _match_delete(name)
+            is_move = _match_move(name)
+            if not is_delete and not is_move:
+                continue  # 合法根文件，不匹配临时模式
+            try:
+                mtime = os.path.getmtime(full)
+            except OSError:
+                continue
+            if now - mtime < _FRESH_SECONDS:
+                skipped_fresh += 1
+                continue  # 正在写入，跳过
+            try:
+                if is_delete:
+                    os.remove(full)
+                    deleted += 1
+                    logger.info("GATE-ROOT-TEMP-SWEEP: deleted %s (process token/log)", name)
+                else:
+                    rt_tmp.mkdir(parents=True, exist_ok=True)
+                    dst = os.path.join(str(rt_tmp), name)
+                    if os.path.exists(dst):  # 防同名冲突
+                        stem, ext = os.path.splitext(name)
+                        dst = os.path.join(str(rt_tmp), f"{stem}.sweep{int(now)}{ext}")
+                    shutil.move(full, dst)
+                    moved += 1
+                    logger.info("GATE-ROOT-TEMP-SWEEP: moved %s -> .runtime/tmp/", name)
+            except OSError as exc:
+                errors += 1
+                logger.warning("GATE-ROOT-TEMP-SWEEP: process %s failed: %s", name, exc)
+
+        if deleted == 0 and moved == 0 and errors == 0:
+            return ReconcileResult(action="skip", detail="root_temp_sweep: 根目录无过期临时文件")
+        action = "clean" if errors == 0 else "warn"
+        return ReconcileResult(
+            action=action,
+            detail=(
+                f"root_temp_sweep: deleted={deleted} (token/log), moved={moved} "
+                f"(->.runtime/tmp/), errors={errors}, skipped_fresh={skipped_fresh}"
+            ),
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-ROOT-TEMP-SWEEP",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=803,  # session_staging=802 之后，gate_registry_sync=830 之前
+        # （根目录清扫是 FS 级兜底，紧跟暂存层清理）
+    )
+
+
+# 治本 #ARCH-TEMP-FILE-LIFECYCLE-001 / #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001（2026-07-22 落地）：
+# trae_071 §7 spec 了该 reconciler（priority=802）但一直未实现（被 sess-18504/sess-55092
+# 持有阻塞）。暂存层 .runtime/sessions/<sid>/staging/ 无生命周期治理：成果文件无声删除
+# （FINAL_resonance_rank.csv 事件）+ 历史会话遗留 staging 垃圾堆积。本 reconciler 补齐。
+# 注：merge/abort 事件对【特定 session】staging 的即时清理由 session_worktree.py 直接
+# rmtree 处理（事件语义=放弃/完成）；本 reconciler 负责所有【孤儿 session】staging 的
+# post-commit TTL 清理（>24h），两者正交互补。
+def make_session_staging_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-SESSION-STAGING-LIFECYCLE post-commit 暂存层 TTL 清理 reconciler.
+
+    治本（事件驱动 TTL 清理，对标 make_stash_lifecycle_reconciler priority=801）：
+    - trigger: 任何 commit 都触发（扫描 .runtime/sessions/*/staging/ 成本 <0.05s）
+    - reconcile: 枚举 .runtime/sessions/*/staging/，删除 mtime+24h<now 的文件；
+      检测疑似未 promote 成果（.md/.csv）并 warn（仍清理——staging 是草稿区）
+    - 自维护/自关闭：每次 commit 后自动清理
+
+    保护规则（第一性原理：staging 是会话级中间产物，24h TTL 对齐 stash_lifecycle）：
+    - mtime < 24h 的 staging 文件：可能当前 session 使用中，保留
+    - > 24h 的 staging 文件：过期安全删除
+    - 系统文件（.runtime/sessions/<sid>/ 下非 staging/ 的 heartbeat.jsonl 等）不触碰
+      （仅扫描 staging/ 子目录）
+
+    向内收：扩展 ReconciliationRegistry 框架，复用 _rel_path 跨盘兜底。
+    """
+    import os
+    import time
+
+    project_root = gateway.project_root
+    _STAGING_TTL_SECONDS = 24 * 3600  # 24h（对齐 make_stash_lifecycle_reconciler）
+    _SUSPECTED_OUTPUT_EXTS = (".md", ".csv")  # 疑似未 promote 成果
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return True
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        sessions_dir = project_root / ".runtime" / "sessions"
+        if not sessions_dir.exists():
+            return ReconcileResult(action="skip", detail="staging_lifecycle: .runtime/sessions/ not found")
+        now = time.time()
+        deleted = 0
+        errors = 0
+        warned_unpromoted = 0
+        scanned = 0
+        try:
+            session_entries = os.listdir(sessions_dir)
+        except OSError as exc:
+            return ReconcileResult(action="warn", detail=f"staging_lifecycle: listdir failed: {exc}")
+        for sid_name in session_entries:
+            staging = os.path.join(str(sessions_dir), sid_name, "staging")
+            if not os.path.isdir(staging):
+                continue
+            for dirpath, _dirnames, filenames in os.walk(staging):
+                for filename in filenames:
+                    filepath = os.path.join(dirpath, filename)
+                    scanned += 1
+                    try:
+                        mtime = os.path.getmtime(filepath)
+                    except OSError:
+                        continue
+                    if now - mtime < _STAGING_TTL_SECONDS:
+                        continue  # 仍在 TTL 内
+                    if filename.lower().endswith(_SUSPECTED_OUTPUT_EXTS):
+                        warned_unpromoted += 1
+                        logger.warning(
+                            "GATE-SESSION-STAGING-LIFECYCLE: 疑似未 promote 成果被清理: "
+                            "%s (mtime=%s，超过 24h TTL 视为草稿)",
+                            _rel_path(filepath, str(project_root)),
+                            time.strftime("%Y-%m-%d %H:%M", time.localtime(mtime)),
+                        )
+                    try:
+                        os.remove(filepath)
+                        deleted += 1
+                    except OSError:
+                        errors += 1
+            try:
+                if os.path.isdir(staging) and not os.listdir(staging):
+                    os.rmdir(staging)  # 清理空的 staging 目录（不删 session 目录——系统文件可能在其中）
+            except OSError:
+                pass
+
+        if deleted == 0 and errors == 0:
+            return ReconcileResult(
+                action="skip",
+                detail=f"staging_lifecycle: scanned={scanned}, 无 >24h 过期文件",
+            )
+        action = "clean" if errors == 0 else "warn"
+        return ReconcileResult(
+            action=action,
+            detail=(
+                f"staging_lifecycle: scanned={scanned}, deleted={deleted} (>24h TTL), "
+                f"warned_unpromoted={warned_unpromoted}, errors={errors}"
+            ),
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-SESSION-STAGING-LIFECYCLE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=802,  # worktree_lifecycle=800/stash_lifecycle=801 之后，
+        # root_temp_sweep=803 之前（暂存层清理先于根目录清扫）
     )

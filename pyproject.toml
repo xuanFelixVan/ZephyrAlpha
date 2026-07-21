@@ -87,6 +87,9 @@ addopts = [
     "--tb=short",
     "--strict-markers",
 ]
+# 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: pytest 缓存归位 .runtime/tmp/（gitignored），
+# 防止 .pytest_cache/ 污染项目根目录。路径相对 rootdir 解析（pytest 文档保证）。
+cache_dir = ".runtime/tmp/pytest_cache"
 markers = [
     "slow: marks slow tests (deselect with '-m \"not slow\"')",
     "e2e: marks end-to-end tests (deselect with '-m \"not e2e\"')",

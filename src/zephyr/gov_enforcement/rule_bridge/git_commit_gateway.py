@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GatewayError on lock timeout；CommitResult.status 暴露结果
 # [TESTS] tests/test_git_commit_gateway.py
-# [A_module] module_id=MOD-GOV-git_commit_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_git_commit_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是_GlobalCommitLock文件锁等待循环，非周期触发
 """GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）
@@ -79,6 +79,8 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_consumers_accuracy_baseline_reconciler,  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2（CONSUMERS baseline 全扫）
     make_capability_lookup_health_reconciler,  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺
     make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
+    make_session_staging_lifecycle_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802）
+    make_root_temp_sweep_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803）
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
@@ -563,6 +565,8 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
         self._reconciliation_registry.register(make_worktree_lifecycle_reconciler(self))  # worktree 残留事件驱动清理（P2，治本遗留项#2，2026-07-17，priority=800）
         self._reconciliation_registry.register(make_stash_lifecycle_reconciler(self))  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
+        self._reconciliation_registry.register(make_session_staging_lifecycle_reconciler(self))  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802，清理 .runtime/sessions/*/staging/ 下 >24h 文件）
+        self._reconciliation_registry.register(make_root_temp_sweep_reconciler(self))  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803，FS-scan 补强 DCR-007 commit gate 看不到 gitignored 文件的盲区）
         self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
         self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
         self._reconciliation_registry.register(make_consumers_accuracy_baseline_reconciler(self))  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2 CONSUMERS baseline 全扫（priority=212，post-commit 补强 CONSUMERS-ACCURACY gate 只扫 staged 的盲区）
@@ -1361,8 +1365,13 @@ class GitCommitGateway:
                 clean, err, _ = self._verify_staged_is_clean(target_files)
                 if not clean:
                     return None, f"staged 区不干净，自动 unstage 后仍不干净: {err}"
+        # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: gw_commit_msg_*.txt 是进程内 IPC
+        # token（git -F 传 commit message），零持久价值。真源唯一/责任唯一：进程临时文件
+        # 的规范真源是 OS temp dir（由 OS 管理生命周期/清理/隔离）。不传 dir= 即用
+        # tempfile.gettempdir()，避免在项目根建立平行真源。git -F 接受任意绝对路径，
+        # pathspec 内容用 os.path.relpath(abs, project_root) 计算，与 temp 文件存放位置无关。
         msg_fd, msg_path = tempfile.mkstemp(
-            prefix="gw_commit_msg_", suffix=".txt", dir=str(self.project_root)
+            prefix="gw_commit_msg_", suffix=".txt"
         )
         try:
             self._in_commit_flow = True  # 放行 _run_git 的 commit 守卫（红攻1治本）
@@ -1552,8 +1561,11 @@ class GitCommitGateway:
 
     def _write_pathspec_file(self, abs_files: list[str]) -> str:
         """将文件路径写入临时 pathspec 文件（:(icase) 前缀兼容 Windows 大小写不敏感）。"""
+        # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: gw_pathspec_*.txt 同为进程 IPC token
+        # （git --pathspec-from-file），归宿 OS temp dir。文件内容是 :(icase)relpath 行，
+        # git 按 cwd(project_root) 解释 pathspec，与 temp 文件存放位置无关。
         fd, path = tempfile.mkstemp(
-            prefix="gw_pathspec_", suffix=".txt", dir=str(self.project_root)
+            prefix="gw_pathspec_", suffix=".txt"
         )
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
             for abs_path in abs_files:

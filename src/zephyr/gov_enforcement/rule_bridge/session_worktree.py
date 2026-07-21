@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
+# [BLUEPRINT] MOD-GOV_session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] zephyr.gov_enforcement.rule_bridge.session_worktree
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.gov_enforcement.rule_bridge.session_claim (generate_session_id); zephyr.gov_enforcement.rule_bridge.worktree_pool (MOD-GOV_ENFORCEMENT_worktree_pool, ARCH-GIT-CALL-BUDGET P3.3 session_worktree_start 优先 lease); scripts.governance.d1_structure.check_directory_contract (subprocess 调用，DCR 检测真源); scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment (subprocess 调用，PRE-MERGE-TOPO-CHECK 检测真源，#ARCH-DEP-001 第二期)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 所有函数返回 dict（不抛异常）；WorktreeManager/SessionRegistry 异常时返回 error 字段；worktree 不存在时返回 not_found=True
 # [TESTS] tests/governance/rule_bridge/test_session_worktree.py
-# [A_module] module_id=MOD-GOV-session_worktree | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_session_worktree | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """session_worktree.py — AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）
 
@@ -906,6 +906,29 @@ def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
     except Exception:  # noqa: BLE001 — fail-open
         logger.debug(
             "commit_persisted marker clear failed (non-blocking): %s",
+            session_id, exc_info=True,
+        )
+
+
+def _cleanup_session_staging(root: Path, session_id: str) -> None:
+    """abort 后清理 session staging 目录（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）。
+
+    staging 目录（.runtime/sessions/<sid>/staging/）存放 AI Edit/Write 同步到 worktree
+    的中间产物。session abort 后该 session 不再使用，staging 立即沦为孤儿——
+    等待 staging TTL reconciler（priority=802，24h TTL）兜底会留下长尾残留。
+    故 abort 时立即清理。merge 不清理（session 继续，staging 被下次 commit 复用）。
+
+    fail-open：删除失败不阻断 abort。注意只删 staging/ 子目录，不删 session 目录
+    （heartbeat/emergency_count 等同级文件由各自生命周期管理）。
+    """
+    try:
+        import shutil as _shutil_staging
+        staging = root / ".runtime" / "sessions" / session_id / "staging"
+        if staging.exists():
+            _shutil_staging.rmtree(staging, ignore_errors=True)
+    except Exception:  # noqa: BLE001 — fail-open
+        logger.debug(
+            "session staging cleanup failed (non-blocking): %s",
             session_id, exc_info=True,
         )
 
@@ -1806,9 +1829,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
             "directory_contract_violation": True,
         }
     if dcr_result.returncode != 0:
-        detail = dcr_result.stderr.decode("utf-8", errors="replace").strip()
+        _stderr = dcr_result.stderr
+        _stdout = dcr_result.stdout
+        if isinstance(_stderr, bytes):
+            _stderr = _stderr.decode("utf-8", errors="replace")
+        if isinstance(_stdout, bytes):
+            _stdout = _stdout.decode("utf-8", errors="replace")
+        detail = _stderr.strip()
         if not detail:
-            detail = dcr_result.stdout.decode("utf-8", errors="replace").strip()
+            detail = _stdout.strip()
         return {
             "session_id": session_id,
             "status": "FAILED",
@@ -4387,6 +4416,9 @@ def session_worktree_abort(
         logger.debug("cleanup heartbeat file failed (best-effort)", exc_info=True)
     # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: abort 后清除持久性标记
     _clear_commit_persisted_marker(root, session_id)
+    # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: abort 后清理 session staging 目录
+    # （session 终止，staging 沦为孤儿，立即清理而非等 staging TTL reconciler 兜底）
+    _cleanup_session_staging(root, session_id)
     try:
         unregistered = registry.unregister(session_id)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

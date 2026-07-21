@@ -43,6 +43,30 @@ if _src_abs not in _existing_pp.split(_os.pathsep):
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
+
+def pytest_configure(config):
+    """治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: pytest 输出归位 .runtime/（gitignored）。
+
+    提供健壮的默认值，防止 AI/人工 pytest 调用在项目根目录留下 ad-hoc 临时文件/目录
+    （.testtmp2/、.pytest_tmp/、tmp_junit_*.xml 等）。所有默认值仅在调用方未显式指定
+    时生效（尊重 CLI 覆盖）。
+    """
+    import os as _os_conf
+
+    _rt_tmp = _PROJECT_ROOT / ".runtime" / "tmp"
+    _rt_tmp.mkdir(parents=True, exist_ok=True)
+    # basetemp：tmp_path fixture 的根。默认指向 .runtime/tmp/pytest（绝对路径，与 cwd 无关）。
+    if getattr(config.option, "basetemp", None) is None:
+        config.option.basetemp = str(_rt_tmp / "pytest")
+    # junitxml：AI 调用（ZEPHYR_AI_PYTEST=1）默认输出到 .runtime/tmp/junit.xml，
+    # 避免 AI 显式传 --junit-xml=tmp_junit_p0.xml 污染根目录。仅当未显式指定时生效。
+    if (
+        _os_conf.environ.get("ZEPHYR_AI_PYTEST") == "1"
+        and getattr(config.option, "xmlpath", None) is None
+    ):
+        config.option.xmlpath = str(_rt_tmp / "junit.xml")
+
+
 # MOD-INF-017: code_dedup_engine 裸名注入——部分 red_team 测试以 ``code_dedup_engine``
 # 裸名引用本引擎（无 import 语句）。pytest 会将 tests/ 加入 sys.path 以便加载
 # tests/governance/conftest.py（包模式导入），导致 tests/code_dedup_engine/ 优先于

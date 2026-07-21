@@ -39,9 +39,9 @@
 meta:
   rule_id: trae_071
   rule_name: temporary_file_lifecycle
-  version: '1.0.0'
+  version: '1.1.0'  # 1.0.0->1.1.0: registration_point 真源修正 boot_hooks.py→git_commit_gateway.py + root-sweep 803 配套标注（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）
   created: '2026-07-20'
-  last_updated: '2026-07-20'
+  last_updated: '2026-07-22'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
   related_issue: '#ARCH-TEMP-FILE-LIFECYCLE-001'  # 前向引用，Owner 需在 architecture_issue_registry.yaml 登记
   related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001'
@@ -351,13 +351,13 @@ promote_mechanism:
 # ============================================================
 # 7. Reconciler 规格（Reconciler Spec）
 # ============================================================
-# 本规则配套的 reconciler 实现 spec（Part B.4 落地，待 sess-18504/sess-55092 释放）
+# 本规则配套的 reconciler 实现 spec（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 Phase 3 落地，2026-07-22）
 # 范本：src/zephyr/governance/audit/reconciliation_registry.py 的 make_stash_lifecycle_reconciler
 # （priority=801，GATE-STASH-LIFECYCLE，事件驱动清理 >24h 的 session_worktree 临时 stash）
 
 reconciler_spec:
   function_name: "make_session_staging_lifecycle_reconciler"
-  module: "src/zephyr/governance/audit/reconciliation_registry.py"  # 待 sess-18504 释放后修改
+  module: "src/zephyr/governance/audit/reconciliation_registry.py"  # 已落地 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 Phase 3
   gate_id: "GATE-SESSION-STAGING-LIFECYCLE"
   priority: 802  # worktree_lifecycle=800, stash_lifecycle=801, session_staging_lifecycle=802
   trigger:
@@ -383,11 +383,16 @@ reconciler_spec:
       action: "对 session_worktree_merge/abort 事件，全量清理对应 session 的 staging 目录"
     - step: 5
       action: "检测 staging/ 内是否有疑似未 promote 的成果（.md/.csv 等），warn（不阻塞）"
-  registration_point: "src/zephyr/trading/boot_hooks.py（hook_registry.register）"
+  registration_point: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（GitCommitGateway._register_default_reconcilers）"  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 真源修正（原 boot_hooks.py 是 task lifecycle hooks 注册点 auto_unblock/auto_retry，与 reconciler 无关；reconciler 实例级注册于 GitCommitGateway.__init__）
   failure_handling:
     - "reconciler 失败必须持久化到 reconcile_execution_log 表"
     - "错误详情不允许截断"
     - "fail-open（reconciler 失败不阻塞主流程）"
+  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 配套兜底 reconciler（同模块同注册点）：
+  # make_root_temp_sweep_reconciler (priority=803, GATE-ROOT-TEMP-SWEEP) —— post-commit FS 扫描
+  # 根目录平铺临时文件（混合策略：gw_*/log 过程性删除 + tmp_* 疑似成果移到 .runtime/tmp/），
+  # 补强 DCR-007 commit gate 对 gitignored 文件的结构性盲区。priority=803 紧随
+  # session_staging=802，在 workspace_hygiene=890 之前（避免 git restore 误恢复被移走文件）。
 
 # ============================================================
 # 8. 判定流程（Decision Flow）

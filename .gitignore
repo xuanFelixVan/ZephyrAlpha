@@ -245,6 +245,10 @@ data/databases/depgraph_dirty.flag
 /tmp_*.sh
 /tmp_*.ps1
 /tmp_*.log
+# Root-only .tmp_* files (leading dot+underscore variant, #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 治本 2026-07-22)
+# 部分工具/AI 生成 .tmp_foo 这类隐藏前缀文件，原 /tmp_* 模式不匹配前导点，
+# 导致 .tmp_* 散落根目录成为可见性黑洞。前导 / 限定根目录。
+/.tmp_*
 # Root-only tmp_*/ directories (AI 会话 pytest --basetemp 过程性残留，ARCH-TTL-DOC-001 扩展 2026-07-17)
 # 原文件模式不覆盖目录，导致 tmp_clean/tmp_extreme*/tmp_pytest* 等 12 目录成为可见性黑洞
 /tmp_*/

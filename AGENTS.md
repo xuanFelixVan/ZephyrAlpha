@@ -445,7 +445,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - **`logs/`**：运行时日志，`.gitignore` 第 187 行整目录忽略，禁止入库。
 - **`session_logs/`**：Session Log 真源目录（snake_case），与 `session-logs/`（kebab-case，2026-07-05 AI-03 审计已删除）真源唯一；新 session yaml 落盘格式 `session_logs/YYYY/MM/session-YYYYMMDD-NNN.yaml`。
 - **`_journals/`**：AI 行为日志（`skill_telemetry.jsonl` / `skill_transitions.jsonl`），`.gitignore` 第 190 行整目录忽略，运行时写入不入库。
-- **根目录 `tmp_*` 文件/目录**：AI 会话临时产物（测试输出/调试残留），`.gitignore` `/tmp_*` 规则集全覆盖（文件 8 后缀 + `/tmp_*/` 目录，ARCH-TTL-DOC-001）。**pytest 必须使用 `--basetemp=tmp/<name>`**（落入 `tmp/` 退役区双重治理），禁止默认在项目根生成 `tmp_*/` 目录——根目录残留即使被 gitignore 也是可见性黑洞（2026-07-17 清理 12 个 `tmp_clean/tmp_extreme*/tmp_pytest*` 目录）。
+- **根目录 `tmp_*` 文件/目录**：AI 会话临时产物（测试输出/调试残留），`.gitignore` `/tmp_*` 规则集全覆盖（文件 8 后缀 + `/tmp_*/` 目录，ARCH-TTL-DOC-001）。**pytest basetemp 已由 conftest.py `pytest_configure` 默认指向 `.runtime/tmp/pytest`**（绝对路径，cwd 无关；尊重 `--basetemp` CLI 覆盖），AI 无需也不应传 `--basetemp=` 或 `--junit-xml=` 根目录相对路径——根目录残留即使被 gitignore 也是可见性黑洞（2026-07-17 清理 12 个 `tmp_clean/tmp_extreme*/tmp_pytest*` 目录；2026-07-22 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 清理 33 文件 + 5 ad-hoc 目录）。
 - **测试隔离红线（ARCH-BENCH-LEAK-001）**：测试禁止写入生产路径（`data/model_profiles/` 等 `data/` 业务目录），输出目录一律用 `tmp_path` fixture 或 `tmp/` 下路径；含周期线程/后台线程的被测对象，测试结尾必须调 `shutdown()` 并断言线程引用已清空——线程泄漏会将测试行为放大为生产路径 1Hz 写盘循环（2026-07-17 清理 1911 个零字节 `benchmark_*.jsonl`）。
 
 ### 6.2 临时文件分类存放铁律（ARCH-TEMP-FILE-PLACEMENT-001，2026-07-20 治本）
@@ -496,8 +496,20 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
 **当前落地状态**：
 - 规则真源：[	rae_071_temporary_file_lifecycle.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml)（v1.0.0，已 sync 到 DB）
 - paired_gate_id=null（暂无 pre-commit gate，.runtime/ 免跟踪区无 commit-time 拦截点；治理依赖 AI 自觉 + 事件驱动 reconciler 兜底）
-- reconciler 实现待落地（被 sess-18504 持有 
-econciliation_registry.py + sess-55092 持有 session_worktree.py 阻塞，待释放后实现 make_session_staging_lifecycle_reconciler 并注册到 oot_hooks.py）
+- reconciler 已落地（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001，2026-07-22）：`make_session_staging_lifecycle_reconciler`（priority=802）注册到 `git_commit_gateway.py::_register_default_reconcilers()`（实例级，非 boot_hooks.py）；merge 触发点复用 `_run_post_merge_reconcile`，abort 触发点在 `session_worktree_abort` 末尾补齐
+
+### 6.5 根目录临时文件零容忍铁律（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001，2026-07-22 治本）
+
+§6.2/§6.4 治理"临时文件放哪个目录 / 活多久"，本节治理"项目根目录零临时文件"——根目录是项目门面，任何临时文件（含 gitignored）都是可见性黑洞与清理责任悬空源。背景：2026-07-22 发现根目录堆积 33 个临时文件（`gw_commit_msg_*.txt`/`gw_pathspec_*.txt`/`tmp_*.txt`/`tmp_junit_*.xml`/`*.log`）+ 5 个 ad-hoc 测试目录，根因不是"策略缺失"而是"执行盲区"——策略层（trae_070/071 + directory_contract DCR-007）已完备，问题在①产生者写错位置（GitCommitGateway 硬编码 `dir=project_root`、AI 用相对路径调 pytest）②门禁对 gitignored 文件盲区（DCR-007 只看 staged，根目录临时文件全 gitignore→永不 staged→永远看不见）③无运行时 FS 扫描 reconciler。
+
+**铁律**：AI 禁止在项目根目录（depth-0）创建任何临时文件。诊断脚本/测试输出/分析中间产物 MUST 放 `.runtime/tmp/`（.py/.sh/.ps1/.txt/.log）或 `.runtime/logs/`（.log/.jsonl）；任务文档 MUST 放 `docs/_working/`。GitCommitGateway 进程 IPC token（`gw_*`）非项目文件，归宿为 OS temp dir（真源唯一/责任唯一：进程临时文件规范真源是 OS temp，由 OS 管理生命周期）。
+
+**三层防御（治本，不依赖 AI 自觉）**：
+1. **源头改写产生者**：GitCommitGateway 去 `dir=project_root`（gw_*→OS temp，2 行改动零治理面）；pytest `cache_dir`/`basetemp`/`xmlpath` 默认归位 `.runtime/tmp/`（conftest.py `pytest_configure`，绝对路径 cwd 无关，尊重 CLI 覆盖）。
+2. **root-sweep reconciler 兜底**：`make_root_temp_sweep_reconciler`（priority=803，gate=GATE-ROOT-TEMP-SWEEP）post-commit FS 扫描根目录 depth-0 平铺文件，混合策略——进程 token（`gw_*`/`*.log`/`tmp_commit_msg`）mtime>10min 删除；疑似成果（`tmp_*.py/.txt/.xml/.json/.md/.csv`、`.tmp_*`）移到 `.runtime/tmp/` 隔离（7 天 TTL 由 make_tmp_cleanup_reconciler 清理）。**仅扫平铺文件，不删目录**（目录删除风险高，由源头改写 Phase 1b 阻止产生 + 人工清理）。
+3. **DCR-007 第三道防线**：commit 时阻断 staged 根目录临时文件（已存在，目录契约 root_directory_whitelist）。
+
+**裁定要点**：驳回"新建 `.runtime/gw_tmp/`"方案——gw_* 是进程内 IPC token（git `-F`/`--pathspec-from-file` 传递介质，零持久价值），新建目录=在项目内建平行真源违反真源唯一/责任唯一，正确修复=去掉 `dir=` 让 tempfile 用 OS 默认。不新建任何目录（trae_070/071 + directory_contract 已穷尽定义所有临时文件类型合法归宿）。
 
 ## 7. 代码规范
 
