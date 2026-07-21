@@ -97,6 +97,7 @@ __all__ = [
     "make_consumers_accuracy_gate",
     "parse_consumers_field",
     "check_consumers_accuracy",
+    "scan_all_for_consumers_accuracy",
 ]
 
 # 扫描范围：与 IMPORT-INTEGRITY / BARE-SUBPROCESS 对齐
@@ -409,3 +410,57 @@ def make_consumers_accuracy_gate() -> GateSpec:
         check=_check,
         priority=116,
     )
+
+
+# ============================================================================
+# scan_all_for_consumers_accuracy — 全仓 baseline 扫描（post-commit reconciler 用）
+# 对标 undefined_name_gate.scan_all_for_undefined_names（DRY，零新真源）
+# ============================================================================
+def scan_all_for_consumers_accuracy(
+    project_root: Path,
+) -> tuple[list[str], str | None]:
+    """全仓 baseline 扫描 scripts/governance/** + src/**.py 的 [CONSUMERS] 字段准确性。
+
+    与 make_consumers_accuracy_gate（pre-commit warn-only）的区别：
+    gate 扫 staged 文件；本函数扫全仓磁盘文件，供 post-commit reconciler
+    baseline 全扫（warn 级）。与 gate 共享 check_consumers_accuracy（DRY）。
+
+    不检测 stale（git grep 反向查找性能差 N×500ms，post-commit 不适合全扫）。
+    stale 留给手动 scan_consumers_accuracy.py 脚本。
+
+    Returns:
+        (violations, error_msg)：error_msg 非 None 表示 fail-open（目录不存在），
+        调用方应降级为 ReconcileResult(action="skip")。
+    """
+    import glob
+
+    root = Path(str(project_root))
+    gov_dir = root / "scripts" / "governance"
+    src_dir = root / "src"
+    if not gov_dir.exists() and not src_dir.exists():
+        return [], "scripts/governance/ 与 src/ 均不存在"
+
+    violations: list[str] = []
+    for base, prefix in ((gov_dir, "scripts/governance/"), (src_dir, "src/")):
+        if not base.exists():
+            continue
+        for py_file_path in glob.glob(str(base / "**" / "*.py"), recursive=True):
+            # 排除 _archive 目录（归档代码不参与扫描）
+            if "_archive" in py_file_path:
+                continue
+            rel = py_file_path.replace("\\", "/")
+            idx = rel.find(prefix)
+            if idx < 0:
+                continue
+            py_file = rel[idx:]
+            # 排除 tests/ 文件
+            if "/tests/" in py_file or py_file.startswith("tests/"):
+                continue
+            try:
+                with open(py_file_path, encoding="utf-8", errors="replace") as fh:
+                    content = fh.read()
+            except OSError:
+                continue  # fail-open: 文件不可读
+            violations.extend(check_consumers_accuracy(py_file, content, root))
+
+    return violations, None
