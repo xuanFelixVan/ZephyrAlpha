@@ -659,8 +659,8 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
         except (yaml.YAMLError, OSError, UnicodeDecodeError):
             warnings.append("[L8] 无法解析 registry-master-index.yaml")
 
-    # 8C: session_state_machine.yaml 状态机完整性
-    ssm = yaml_data.get("/config/session_state_machine.yaml", {})
+    # 8C: worktree_state_machine.yaml 状态机完整性  # #ARCH-WORKTREE-LIFECYCLE-001
+    ssm = yaml_data.get("/config/worktree_state_machine.yaml  # #ARCH-WORKTREE-LIFECYCLE-001", {})
     if isinstance(ssm, dict):
         states = {s["name"] for s in ssm.get("states", []) if isinstance(s, dict) and "name" in s}
         transitions = ssm.get("transitions", [])
@@ -679,7 +679,7 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
                     changed = True
         unreachable = states - reachable_from_idle
         if unreachable:
-            warnings.append(f"[L8] session_state_machine.yaml: 不可达状态（从 idle 出发无法到达）: {unreachable}")
+            warnings.append(f"[L8] worktree_state_machine.yaml: 不可达状态（从 idle 出发无法到达）: {unreachable}")
 
         terminal_states = set()
         for t in transitions:
@@ -695,15 +695,15 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
             f = t.get("from", "")
             to = t.get("to", "")
             if f and f not in states:
-                errors.append(f'[L8] session_state_machine.yaml: transition from="{f}" 不在 states 中')
+                errors.append(f'[L8] worktree_state_machine.yaml: transition from="{f}" 不在 states 中')
             if to and to not in states:
-                errors.append(f'[L8] session_state_machine.yaml: transition to="{to}" 不在 states 中')
+                errors.append(f'[L8] worktree_state_machine.yaml: transition to="{to}" 不在 states 中')
 
     # 8D: implementation_status 标注检查
     for cfg_rel in [
         "/config/context-rules.yaml",
         "/config/embedding_model_registry.yaml",
-        "/config/session_state_machine.yaml",
+        "/config/worktree_state_machine.yaml  # #ARCH-WORKTREE-LIFECYCLE-001",
     ]:
         data = yaml_data.get(cfg_rel, {})
         if isinstance(data, dict) and "implementation_status" not in data:
