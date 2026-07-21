@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T20:14:56Z'
+generated_at: '2026-07-21T20:45:50Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 118
+total_gates: 119
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -1090,6 +1090,15 @@ gates:
   name: 'STASH-ACCUMULATION: stash 堆积阈值检测门禁（STASH-ACCUMULATION）（CommitGate, priority=118）'
   entry: in-process (GitCommitGateway)
   description: stash 堆积阈值检测门禁（STASH-ACCUMULATION）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: TABLE-NAME-REGISTRY
+  name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY warn-only 门禁（CommitGate, priority=120）'
+  entry: in-process (GitCommitGateway)
+  description: TABLE-NAME-REGISTRY warn-only 门禁
   files_trigger: ''
   always_run: false
   category: commit_gate
