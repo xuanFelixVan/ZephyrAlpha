@@ -1711,8 +1711,15 @@ class TestBaseFreshnessFullLifecycle:
         assert r.get("base_sync_failed") is True
         assert r.get("stage") == "commit"
 
-    def test_merge_base_freshness_check_invoked(self, _isolated_repo):
-        """session_worktree_merge 调用 base freshness check。"""
+    def test_merge_base_freshness_check_invoked(self, _isolated_repo, monkeypatch):
+        """session_worktree_merge 调用 base freshness check。
+
+        monkeypatch WORKSPACE-CLEAN-CHECK 放行——session 级 isolated_repo 共享，
+        前序测试可能残留 check_blueprint_code_alignment.py 修改（PRE-MERGE-TOPO
+        测试场景），干扰本测试 base freshness 检测路径。
+        """
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
         assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
         wt_path = Path(r_start["worktree_path"])
@@ -1744,7 +1751,12 @@ class TestBaseFreshnessFullLifecycle:
         kill_all_heartbeat_daemons(_isolated_repo)
 
     def test_merge_blocks_on_stale_base(self, _isolated_repo, monkeypatch):
-        """session_worktree_merge 在 base 过期时 fail-closed 阻断。"""
+        """session_worktree_merge 在 base 过期时 fail-closed 阻断。
+
+        monkeypatch WORKSPACE-CLEAN-CHECK 放行——同 test_merge_base_freshness_check_invoked。
+        """
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[0])
         assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
         wt_path = Path(r_start["worktree_path"])
@@ -1753,7 +1765,6 @@ class TestBaseFreshnessFullLifecycle:
         marker.write_text('{"session": "merge-block"}\n', encoding="utf-8")
         r_commit = session_worktree_commit(_TEST_SIDS[0], files=[_TEST_FILE_A], message="test: merge block on stale base")
         assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
-        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         def _failing_bf(root, wt_path, session_id, stage="commit"):
             return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base for merge", "base_sync_failed": True, "stage": stage}
         monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", _failing_bf)
