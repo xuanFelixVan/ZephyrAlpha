@@ -54,7 +54,7 @@ class _MockResult:
 def _make_gateway(staged_files=None, diff_fails=False, diff_raises=False):
     """构造 mock gateway：--name-only 返回新增文件列表。"""
     gw = MagicMock()
-    gw.project_root = str(_PROJECT_ROOT)
+    gw.project_root = _PROJECT_ROOT  # Path object — gate code uses project_root / "scripts"
 
     if diff_raises:
         def _raise(*a, **k):
@@ -121,6 +121,46 @@ class TestTokenize:
 
     def test_empty_returns_empty(self):
         assert _tokenize("") == set()
+
+    # --- #ARCH-CAPABILITY-OVERLAP-001 治本测试（2026-07-22）---
+
+    def test_gate_token_filtered_as_stopword(self):
+        """'gate' token 被 _STOP_WORDS 过滤——避免 *_gate.py 确定性误报。"""
+        assert "gate" not in _tokenize("issue_resolved_integrity_gate")
+        assert "gate" not in _tokenize("vocab_hardcode_gate")
+        assert "gate" not in _tokenize("data_loader_gate")
+
+    def test_test_token_filtered_as_stopword(self):
+        """'test' token 被 _STOP_WORDS 过滤。"""
+        assert "test" not in _tokenize("test_rollback_executor")
+        assert "test" not in _tokenize("rollback_test_helper")
+
+    def test_init_token_filtered_as_stopword(self):
+        """'init' token 被 _STOP_WORDS 过滤。"""
+        assert "init" not in _tokenize("init_loader")
+        assert "init" not in _tokenize("data_init")
+
+    def test_meaningful_4char_tokens_preserved(self):
+        """有诊断价值的 4 字符 token 保留（data/core/base 等不过滤）。"""
+        tokens = _tokenize("data_loader")
+        assert "data" in tokens  # 4 字符但非 stop-word
+        assert "loader" in tokens
+
+    def test_no_gate_overlap_between_gate_files(self):
+        """两个 *_gate.py 文件不应因 'gate' token 产生 overlap（治本验证）。"""
+        tokens_a = _tokenize("issue_resolved_integrity_gate")
+        tokens_b = _tokenize("vocab_hardcode_gate")
+        # 'gate' 被过滤后，两文件无共同 token（功能不重叠）
+        overlap = tokens_a & tokens_b
+        assert "gate" not in overlap
+        assert overlap == set(), f"意外 overlap: {overlap}"
+
+    def test_real_overlap_still_detected(self):
+        """真正功能重叠的文件名仍能检测（stop-word 不影响诊断价值）。"""
+        tokens_a = _tokenize("rollback_executor")
+        tokens_b = _tokenize("rollback_handler")
+        overlap = tokens_a & tokens_b
+        assert "rollback" in overlap  # 真正的语义重叠
 
 
 # ---------------------------------------------------------------------------

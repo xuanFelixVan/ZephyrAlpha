@@ -41,6 +41,8 @@ if str(_PROJECT_ROOT) not in sys.path:
 from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (  # noqa: E402
     _ABSTRACT_CODE_PREFIXES,
     _CONSUMERS_RE,
+    _classify_consumer_format,
+    _check_filepath_exists,
     _has_cjk,
     _is_abstract_code,
     _module_to_file_candidates,
@@ -323,6 +325,170 @@ class TestCheckConsumersAccuracyPhantom:
         )
         violations = check_consumers_accuracy(
             "src/zephyr/baz.py", content, tmp_path
+        )
+        assert violations == []
+
+
+# ---------------------------------------------------------------------------
+# TestConsumerFormatClassification (#ARCH-CONSUMERS-ACCURACY-004 治本)
+# ---------------------------------------------------------------------------
+class TestConsumerFormatClassification:
+    """consumer 声明格式分类——4 种格式分别处理（治本 phantom 误报）。"""
+
+    def test_classify_dotted_module_path(self):
+        """dotted 模块路径（a.b.c）→ 'dotted'。"""
+        assert _classify_consumer_format("zephyr.foo.bar") == "dotted"
+        assert _classify_consumer_format("zephyr.gov_enforcement.commit_gates.create_guard") == "dotted"
+
+    def test_classify_filepath_with_slash(self):
+        """slash 文件路径（含 /）→ 'filepath'。"""
+        assert _classify_consumer_format("scripts/git_commit.py") == "filepath"
+        assert _classify_consumer_format("scripts/governance/session_worktree_cli.py") == "filepath"
+        assert _classify_consumer_format("src/zephyr/governance/") == "filepath"
+
+    def test_classify_filepath_with_extension(self):
+        """以文件扩展名结尾（无 /）→ 'filepath'。"""
+        assert _classify_consumer_format("git_commit.py") == "filepath"
+        assert _classify_consumer_format("config.yaml") == "filepath"
+
+    def test_classify_glob_pattern(self):
+        """glob 模式（含 * 或 ?）→ 'glob'。"""
+        assert _classify_consumer_format("scripts/governance/*") == "glob"
+        assert _classify_consumer_format("scripts/governance/*.py") == "glob"
+        assert _classify_consumer_format("tests/test_*.py") == "glob"
+
+    def test_classify_descriptive_with_cjk(self):
+        """含 CJK 字符 → 'descriptive'。"""
+        assert _classify_consumer_format("AI 对话启动时调用") == "descriptive"
+        assert _classify_consumer_format("AI 同步 YAML→DB 时调用") == "descriptive"
+
+    def test_classify_descriptive_with_space(self):
+        """含空格 → 'descriptive'。"""
+        assert _classify_consumer_format("manual CLI") == "descriptive"
+        assert _classify_consumer_format("post-commit hook") == "descriptive"
+
+    def test_classify_descriptive_with_paren_prefix(self):
+        """以括号开头 → 'descriptive'。"""
+        assert _classify_consumer_format("(manual CLI)") == "descriptive"
+        assert _classify_consumer_format("(invoked by AI)") == "descriptive"
+
+    def test_check_filepath_exists_relative(self, tmp_path):
+        """文件路径存在性检查——相对路径。"""
+        (tmp_path / "scripts" / "git_commit.py").parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / "scripts" / "git_commit.py").write_text("# fake\n", encoding="utf-8")
+        assert _check_filepath_exists("scripts/git_commit.py", tmp_path) is True
+
+    def test_check_filepath_not_exists(self, tmp_path):
+        """文件路径不存在性检查。"""
+        assert _check_filepath_exists("scripts/nonexistent.py", tmp_path) is False
+
+    def test_check_filepath_exists_with_src_prefix(self, tmp_path):
+        """文件路径存在性检查——src/ 前缀路径。"""
+        (tmp_path / "zephyr" / "foo.py").parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / "zephyr" / "foo.py").write_text("# fake\n", encoding="utf-8")
+        assert _check_filepath_exists("src/zephyr/foo.py", tmp_path) is True
+
+
+# ---------------------------------------------------------------------------
+# TestConsumersAccuracyFilepathFormat (#ARCH-CONSUMERS-ACCURACY-004 治本)
+# ---------------------------------------------------------------------------
+class TestConsumersAccuracyFilepathFormat:
+    """filepath 格式的 [CONSUMERS] 声明不再误报 phantom（治本验证）。"""
+
+    def test_filepath_consumer_exists_no_phantom(self, tmp_path):
+        """文件路径格式的 consumer 文件存在 → 不报 phantom（治本核心用例）。
+
+        病根：原算法将 scripts/git_commit.py 当 dotted 路径处理，
+        _module_to_file_candidates 生成错误候选路径 → 误报 phantom。
+        """
+        (tmp_path / "scripts").mkdir(exist_ok=True)
+        (tmp_path / "scripts" / "git_commit.py").write_text("# fake\n", encoding="utf-8")
+        content = (
+            "# [CONSUMERS] scripts/git_commit.py\n"
+            "def func():\n"
+            "    pass\n"
+        )
+        violations = check_consumers_accuracy(
+            "src/zephyr/gateway.py", content, tmp_path
+        )
+        assert violations == []
+
+    def test_filepath_consumer_not_exists_phantom(self, tmp_path):
+        """文件路径格式的 consumer 文件不存在 → 报 phantom。"""
+        content = (
+            "# [CONSUMERS] scripts/nonexistent.py\n"
+            "def func():\n"
+            "    pass\n"
+        )
+        violations = check_consumers_accuracy(
+            "src/zephyr/gateway.py", content, tmp_path
+        )
+        assert len(violations) == 1
+        assert "phantom consumer 'scripts/nonexistent.py'" in violations[0]
+        assert "文件路径" in violations[0]
+
+    def test_glob_consumer_exempt(self, tmp_path):
+        """glob 模式的 consumer 豁免（不检测 phantom）。"""
+        content = (
+            "# [CONSUMERS] scripts/governance/*\n"
+            "def func():\n"
+            "    pass\n"
+        )
+        violations = check_consumers_accuracy(
+            "src/zephyr/foo.py", content, tmp_path
+        )
+        assert violations == []
+
+    def test_descriptive_consumer_exempt(self, tmp_path):
+        """描述性文字的 consumer 豁免（不检测 phantom）。"""
+        content = (
+            "# [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）\n"
+            "def func():\n"
+            "    pass\n"
+        )
+        violations = check_consumers_accuracy(
+            "src/zephyr/foo.py", content, tmp_path
+        )
+        assert violations == []
+
+    def test_mixed_formats(self, tmp_path):
+        """混合格式：dotted + filepath + glob + descriptive 同时存在。"""
+        (tmp_path / "src" / "zephyr" / "real_module.py").parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / "src" / "zephyr" / "real_module.py").write_text("# fake\n", encoding="utf-8")
+        (tmp_path / "scripts").mkdir(exist_ok=True)
+        (tmp_path / "scripts" / "real_cli.py").write_text("# fake\n", encoding="utf-8")
+        content = (
+            "# [CONSUMERS] zephyr.real_module; scripts/real_cli.py; "
+            "scripts/governance/*; AI 手动调用\n"
+            "def func():\n"
+            "    pass\n"
+        )
+        violations = check_consumers_accuracy(
+            "src/zephyr/foo.py", content, tmp_path
+        )
+        # 4 种格式：dotted 存在 + filepath 存在 + glob 豁免 + descriptive 豁免 → 无违规
+        assert violations == []
+
+    def test_real_world_git_commit_gateway_case(self, tmp_path):
+        """真实用例：git_commit_gateway.py 的 [CONSUMERS] 声明不再误报。
+
+        原声明: zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
+        """
+        # 模拟项目结构
+        (tmp_path / "src" / "zephyr" / "governance" / "persistence").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "src" / "zephyr" / "governance" / "persistence" / "task_repo.py").write_text(
+            "# fake\n", encoding="utf-8"
+        )
+        (tmp_path / "scripts").mkdir(exist_ok=True)
+        (tmp_path / "scripts" / "git_commit.py").write_text("# fake\n", encoding="utf-8")
+        content = (
+            "# [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py\n"
+            "def func():\n"
+            "    pass\n"
+        )
+        violations = check_consumers_accuracy(
+            "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py",
+            content, tmp_path
         )
         assert violations == []
 

@@ -131,6 +131,54 @@ def _has_cjk(text: str) -> bool:
     return bool(_CJK_RE.search(text))
 
 
+# === #ARCH-CONSUMERS-ACCURACY-004 治本（2026-07-22）===
+# [CONSUMERS] 字段真源允许 4 种格式，phantom 检测 MUST 按格式分类处理：
+#   - "dotted"      : dotted 模块路径（a.b.c）→ 候选文件 + 逐级缩短
+#   - "filepath"    : slash 文件路径（scripts/git_commit.py）→ 直接存在性检查
+#   - "glob"        : glob 模式（scripts/governance/*）→ 豁免（无法静态验证）
+#   - "descriptive" : 描述性文字（含空格/CJK/括号开头）→ 豁免（非路径声明）
+# 病根：原算法假设输入全是 dotted 格式，对 filepath/glob/descriptive 格式产生
+# 系统性误报（如 scripts/git_commit.py 文件实际存在但被误报 phantom）。
+_FILE_EXTENSIONS = (".py", ".yaml", ".json", ".yml")
+
+
+def _classify_consumer_format(consumer: str) -> str:
+    """识别 consumer 声明的格式类型（#ARCH-CONSUMERS-ACCURACY-004 治本）。
+
+    Args:
+        consumer: [CONSUMERS] 字段中单个消费者声明（括号前部分）
+
+    Returns:
+        "dotted" | "filepath" | "glob" | "descriptive"
+    """
+    # glob 模式（含 * 或 ?）
+    if "*" in consumer or "?" in consumer:
+        return "glob"
+    # 描述性文字（含 CJK、含空格、以括号开头）
+    if _has_cjk(consumer) or " " in consumer or consumer.startswith("("):
+        return "descriptive"
+    # 文件路径格式（含 / 或以文件扩展名结尾）
+    if "/" in consumer or consumer.endswith(_FILE_EXTENSIONS):
+        return "filepath"
+    # 默认：dotted 模块路径
+    return "dotted"
+
+
+def _check_filepath_exists(filepath: str, project_root: Path) -> bool:
+    """检查文件路径声明是否存在（phantom 检测——filepath 格式）。
+
+    支持相对路径（scripts/git_commit.py）和 src/ 前缀路径。
+    """
+    filepath = filepath.strip()
+    # 直接检查相对路径
+    if (project_root / filepath).exists():
+        return True
+    # 尝试去除 src/ 前缀（如 src/zephyr/foo.py → zephyr/foo.py）
+    if filepath.startswith("src/") and (project_root / filepath[4:]).exists():
+        return True
+    return False
+
+
 def _module_to_file_candidates(module_path: str) -> list[str]:
     """将模块路径转为文件系统候选路径（module.py 或 module/__init__.py）。
 
@@ -274,31 +322,46 @@ def check_consumers_accuracy(
         if _is_abstract_code(consumer):
             continue
 
-        # phantom 检测：消费者模块路径在项目内不存在
-        # 处理方法级声明：module.Class.method → 取到模块级
-        # 策略：从右往左尝试，去掉最后一段直到找到存在的文件
-        module_path = consumer
-        # 去掉方法级后缀（如 .__init__ / .Class.method）
-        # 但要保留模块路径——策略：尝试完整路径，如果不存在则逐级缩短
-        path_exists = _check_module_path_exists(module_path, project_root)
-        if not path_exists:
-            # 逐级缩短尝试（处理 module.Class.method 格式）
-            # 关键约束：至少保留 2 段——避免缩短到顶层包（如 zephyr）导致误判，
-            # 因为顶层包 __init__.py 总是存在（src/zephyr/__init__.py），
-            # 会使 zephyr.nonexistent.module 误判为"存在"。
-            parts = module_path.split(".")
-            found = False
-            for i in range(len(parts) - 1, 1, -1):
-                shortened = ".".join(parts[:i])
-                if _check_module_path_exists(shortened, project_root):
-                    found = True
-                    break
-            if not found:
+        # #ARCH-CONSUMERS-ACCURACY-004 治本：按格式分类处理 phantom 检测
+        fmt = _classify_consumer_format(consumer)
+
+        # glob / 描述性文字：豁免（无法静态验证）
+        if fmt in ("glob", "descriptive"):
+            continue
+
+        # 文件路径格式：直接存在性检查
+        if fmt == "filepath":
+            if not _check_filepath_exists(consumer, project_root):
                 violations.append(
                     f"  {py_file}: phantom consumer '{consumer}' "
-                    f"(模块路径在项目内不存在)"
+                    f"(文件路径在项目内不存在)"
                 )
-                continue  # phantom 违规，不再检测 orphan（模块都不存在）
+                continue  # phantom 违规，不再检测 orphan
+            # 文件存在，继续 orphan 检测
+        else:
+            # dotted 模块路径：现有逻辑（候选文件 + 逐级缩短）
+            # 处理方法级声明：module.Class.method → 取到模块级
+            # 策略：从右往左尝试，去掉最后一段直到找到存在的文件
+            module_path = consumer
+            path_exists = _check_module_path_exists(module_path, project_root)
+            if not path_exists:
+                # 逐级缩短尝试（处理 module.Class.method 格式）
+                # 关键约束：至少保留 2 段——避免缩短到顶层包（如 zephyr）导致误判，
+                # 因为顶层包 __init__.py 总是存在（src/zephyr/__init__.py），
+                # 会使 zephyr.nonexistent.module 误判为"存在"。
+                parts = module_path.split(".")
+                found = False
+                for i in range(len(parts) - 1, 1, -1):
+                    shortened = ".".join(parts[:i])
+                    if _check_module_path_exists(shortened, project_root):
+                        found = True
+                        break
+                if not found:
+                    violations.append(
+                        f"  {py_file}: phantom consumer '{consumer}' "
+                        f"(模块路径在项目内不存在)"
+                    )
+                    continue  # phantom 违规，不再检测 orphan（模块都不存在）
 
         # orphan 检测：括号内声明的函数名在当前文件中不存在
         if parens:
