@@ -3863,10 +3863,12 @@ def session_worktree_merge(
     Args:
         session_id: 已注册的 session_id。
         force: #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本逃生通道——True 时跳过
-            pre-merge gate（PRE-MERGE-TOPO-CHECK + commit gate），直接 merge。
+            可绕过类检测（WORKSPACE-CLEAN-CHECK + PRE-MERGE-TOPO-CHECK + commit gate），
             用于 pre-merge gate 误报或基础设施故障时逃生（对标 allow_overlap=True）。
-            滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维审计
-            （force_merge 维度），日常不应使用。
+            #ARCH-FORCE-MERGE-SAFETY-001（2026-07-22 治本）：force=True **不可绕过**
+            不可绕过类检测（commit 持久性验证 + base 新鲜度检测）——理由：无 post-merge
+            替代 + 跳过后不可挽回。滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001
+            6 维审计（force_merge 维度），日常不应使用。
 
     Returns:
         {
@@ -3895,35 +3897,39 @@ def session_worktree_merge(
     # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 3: merge 前验证 commit 持久性
     # 读取持久性标记，验证 commit 仍存在于 session 分支 tip。如果 commit 消失
     # （被 sweep 删除或被并发 session 回退），fail-closed 报告薛定谔的回退。
-    # force=True 时跳过（逃生通道，对标 base freshness check 的 force 语义）。
-    if not force:
-        _marker = _read_commit_persisted_marker(root, session_id)
-        if _marker is not None:
-            _expected_hash = _marker.get("commit_hash", "")
-            _branch = manager._branch_name(session_id)
-            _r_tip = manager._run_git(
-                ["git", "rev-parse", "--short", _branch]
-            )
-            _actual_hash = _r_tip.stdout.strip() if _r_tip.returncode == 0 else ""
-            if _expected_hash and _actual_hash != _expected_hash:
-                # 薛定谔的回退已发生：commit 创建后消失了
-                return {
-                    "session_id": session_id,
-                    "merged": False,
-                    "message": (
-                        f"SCHRODINGER_ROLLBACK_DETECTED: commit {_expected_hash} "
-                        f"was created by session_worktree_commit but no longer exists "
-                        f"on branch {_branch} (tip={_actual_hash or 'MISSING'}). "
-                        f"薛定谔的回退已发生——commit 被 sweep 或并发 session 删除。"
-                        f"修复：用 git reflog 恢复 commit，或重新 commit。"
-                        f"（session_id={session_id}）"
-                    ),
-                    "cleaned": False,
-                    "unregistered": False,
-                    "schrodinger_rollback": True,
-                    "expected_commit": _expected_hash,
-                    "actual_tip": _actual_hash,
-                }
+    #
+    # #ARCH-FORCE-MERGE-SAFETY-001（2026-07-22 治本）：commit 持久性验证为
+    # 不可绕过类——force=True 也不跳过。理由：无 post-merge 替代 + 跳过后
+    # 不可挽回（merge 报成功但不落盘）。force=True 只能绕过"可绕过类"检测
+    # （WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK / commit gate）。
+    _marker = _read_commit_persisted_marker(root, session_id)
+    if _marker is not None:
+        _expected_hash = _marker.get("commit_hash", "")
+        _branch = manager._branch_name(session_id)
+        _r_tip = manager._run_git(
+            ["git", "rev-parse", "--short", _branch]
+        )
+        _actual_hash = _r_tip.stdout.strip() if _r_tip.returncode == 0 else ""
+        if _expected_hash and _actual_hash != _expected_hash:
+            # 薛定谔的回退已发生：commit 创建后消失了
+            return {
+                "session_id": session_id,
+                "merged": False,
+                "message": (
+                    f"SCHRODINGER_ROLLBACK_DETECTED: commit {_expected_hash} "
+                    f"was created by session_worktree_commit but no longer exists "
+                    f"on branch {_branch} (tip={_actual_hash or 'MISSING'}). "
+                    f"薛定谔的回退已发生——commit 被 sweep 或并发 session 删除。"
+                    f"修复：用 git reflog 恢复 commit，或重新 commit。"
+                    f"（session_id={session_id}，force=True 不可绕过此项检测——"
+                    f"#ARCH-FORCE-MERGE-SAFETY-001 不可绕过类）"
+                ),
+                "cleaned": False,
+                "unregistered": False,
+                "schrodinger_rollback": True,
+                "expected_commit": _expected_hash,
+                "actual_tip": _actual_hash,
+            }
 
     # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-merge 告警横幅
     # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
@@ -4048,18 +4054,30 @@ def session_worktree_merge(
         }
 
     # #ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 1.2 (P0): merge base freshness check
+    #
+    # #ARCH-FORCE-MERGE-SAFETY-001（2026-07-22 治本）：base 新鲜度检测为
+    # 不可绕过类——force=True 也不跳过。理由：无 post-merge 替代 + 跳过后
+    # 不可挽回（base 不新鲜导致薛定谔的回退，merge 报成功但不落盘）。
+    # force=True 只能绕过"可绕过类"检测（有 post-merge reconciler 兜底的）。
     if force:
-        logger.warning("session_worktree_merge(force=True): 跳过 base 新鲜度检测（#ARCH-WORKTREE-BASE-FRESHNESS-001 逃生通道）。")
-    else:
-        _merge_base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="merge")
-        if _merge_base_err:
-            return {
-                "session_id": session_id, "merged": False,
-                "message": f"base freshness check (merge) 阻断: {_merge_base_err.get('message', 'unknown')}。治本：避免薛定谔的回退。逃生通道：force=True。",
-                "cleaned": False, "unregistered": False, "gate_violation": True,
-                "gate_results": [{"gate_id": "BASE-FRESHNESS-MERGE", "detail": _merge_base_err.get("message", "unknown")}],
-                "reconcile_results": [], "base_sync_failed": True,
-            }
+        logger.warning(
+            "session_worktree_merge(force=True): force 不再跳过 base 新鲜度检测"
+            "（#ARCH-FORCE-MERGE-SAFETY-001 不可绕过类，2026-07-22 治本）。"
+            "force=True 仅绕过可绕过类（WORKSPACE-CLEAN / TOPO / commit gate）。"
+        )
+    _merge_base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="merge")
+    if _merge_base_err:
+        return {
+            "session_id": session_id, "merged": False,
+            "message": (
+                f"base freshness check (merge) 阻断: {_merge_base_err.get('message', 'unknown')}。"
+                f"治本：避免薛定谔的回退。force=True 不可绕过此项检测"
+                f"（#ARCH-FORCE-MERGE-SAFETY-001 不可绕过类）。"
+            ),
+            "cleaned": False, "unregistered": False, "gate_violation": True,
+            "gate_results": [{"gate_id": "BASE-FRESHNESS-MERGE", "detail": _merge_base_err.get("message", "unknown")}],
+            "reconcile_results": [], "base_sync_failed": True,
+        }
 
     # P1-2 (2026-07-20): per-session active guard 防止 sweep 并发删除 worktree
     # ——_pre_merge_auto_clean / _pre_merge_gate_check（monkey-patch _run_git cwd=worktree）

@@ -14,6 +14,8 @@
 # [TESTS] tests/audit-orchestrator/test_log_rotation.py
 # [A_module] module_id=MOD-GOV_log_rotation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from __future__ import annotations
+
 import gzip
 import logging
 from datetime import datetime
@@ -132,14 +134,123 @@ class LogRotation:
 
 
 class LogRotationManager:
-    def __init__(self, config=None):
+    """审计日志轮转管理器——按天轮转 events.jsonl，支持压缩和过期清理。"""
+
+    _ACTIVE_LOG_NAME = "events.jsonl"
+    _ROTATED_PREFIX = "audit-trail-"
+
+    def __init__(
+        self,
+        data_dir: Path | str | None = None,
+        compress_rotated: bool = True,
+        max_rotated_days: int = 90,
+        config: dict | None = None,
+    ) -> None:
+        self._data_dir = Path(data_dir) if data_dir else Path("data/audit_history")
+        self._data_dir.mkdir(parents=True, exist_ok=True)
+        self._compress_rotated = compress_rotated
+        self._max_rotated_days = max_rotated_days
+        self._last_rotation_date: str | None = None
         self.config = config or {}
 
-    def rotate(self, log_path):
-        return True
+    @property
+    def _active_log_path(self) -> Path:
+        return self._data_dir / self._ACTIVE_LOG_NAME
 
-    def cleanup(self, max_age_days=30):
-        return 0
+    @staticmethod
+    def _extract_date(filename: str) -> str | None:
+        """从轮转文件名中提取日期（YYYY-MM-DD），无法提取返回 None。"""
+        import re
+
+        m = re.search(r"(\d{4}-\d{2}-\d{2})", filename)
+        return m.group(1) if m else None
+
+    def rotate(self, force: bool = False) -> RotationRecord | None:
+        """轮转活跃日志。返回 RotationRecord 或 None。"""
+        active = self._active_log_path
+        if not active.exists():
+            return None
+
+        content = active.read_text(encoding="utf-8")
+        if not content.strip():
+            return None
+
+        today = now_utc().strftime("%Y-%m-%d")
+        if not force and self._last_rotation_date == today:
+            return None
+
+        entries = sum(1 for line in content.splitlines() if line.strip())
+        rotated_name = f"{self._ROTATED_PREFIX}{today}.jsonl"
+        rotated_path = self._data_dir / rotated_name
+        compressed = False
+
+        if self._compress_rotated:
+            rotated_path = rotated_path.with_suffix(".jsonl.gz")
+            data = content.encode("utf-8")
+            with gzip.open(rotated_path, "wb") as gz:
+                gz.write(data)
+            compressed = True
+        else:
+            rotated_path.write_text(content, encoding="utf-8")
+
+        active.write_text("", encoding="utf-8")
+        self._last_rotation_date = today
+
+        return RotationRecord(
+            original_path=str(active),
+            rotated_path=str(rotated_path),
+            size_bytes=rotated_path.stat().st_size,
+            rotated_at=now_utc(),
+            entries_rotated=entries,
+            compressed=compressed,
+        )
+
+    def get_rotated_logs(self) -> list[RotatedLogInfo]:
+        """返回已轮转的日志文件列表。"""
+        logs: list[RotatedLogInfo] = []
+        for f in sorted(self._data_dir.glob(f"{self._ROTATED_PREFIX}*")):
+            if not f.is_file():
+                continue
+            logs.append(RotatedLogInfo(
+                original_path=str(self._active_log_path),
+                rotated_path=str(f),
+                size_bytes=f.stat().st_size,
+                rotated_at=f.stat().st_mtime,
+            ))
+        return logs
+
+    def cleanup_old_rotations(self) -> int:
+        """删除超过 max_rotated_days 天的轮转文件（按文件名日期判断），返回删除数。"""
+        from datetime import timedelta
+
+        cutoff_date = (now_utc() - timedelta(days=self._max_rotated_days)).date()
+        deleted = 0
+        for f in self._data_dir.glob(f"{self._ROTATED_PREFIX}*"):
+            if not f.is_file():
+                continue
+            date_str = self._extract_date(f.name)
+            if not date_str:
+                continue
+            try:
+                file_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                continue
+            if file_date < cutoff_date:
+                try:
+                    f.unlink()
+                    deleted += 1
+                except OSError:
+                    continue
+        return deleted
+
+    def cleanup(self, max_age_days: int = 30) -> int:
+        """兼容旧 API——委托至 cleanup_old_rotations。"""
+        old_max = self._max_rotated_days
+        self._max_rotated_days = max_age_days
+        try:
+            return self.cleanup_old_rotations()
+        finally:
+            self._max_rotated_days = old_max
 
 
 class RotatedLogInfo:
@@ -151,9 +262,20 @@ class RotatedLogInfo:
 
 
 class RotationRecord:
-    def __init__(self, record_id="", original_path="", rotated_path="", size_bytes=0, rotated_at=None):
+    def __init__(
+        self,
+        record_id: str = "",
+        original_path: str = "",
+        rotated_path: str = "",
+        size_bytes: int = 0,
+        rotated_at=None,
+        entries_rotated: int = 0,
+        compressed: bool = False,
+    ):
         self.record_id = record_id
         self.original_path = original_path
         self.rotated_path = rotated_path
         self.size_bytes = size_bytes
         self.rotated_at = rotated_at
+        self.entries_rotated = entries_rotated
+        self.compressed = compressed

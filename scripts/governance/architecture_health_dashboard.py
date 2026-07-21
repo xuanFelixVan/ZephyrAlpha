@@ -2316,7 +2316,7 @@ def _cleanup_old_snapshots(output_dir, max_age_days: int = 30) -> int:
             print(f"快照 TTL 清理：删除 {removed} 个过期快照（>{max_age_days}天）")
         return removed
     except Exception:  # noqa: BLE001 — 清理失败不阻断主流程
-        return 0
+        return EXIT_PASS  # noqa: any-abuse — best-effort cleanup, 0=success
 
 
 def main() -> int:

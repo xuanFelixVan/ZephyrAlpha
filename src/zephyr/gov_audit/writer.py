@@ -349,6 +349,15 @@ def _resolve_hmac_key(config=None) -> bytes:
     return b"zephyr-audit-hmac-default-key"
 
 
+def resolve_audit_hmac_secret() -> str:
+    """解析审计 HMAC 密钥为字符串（供 IntegrityVerifier 等消费方使用）。
+
+    委托至 _resolve_hmac_key() 并解码为 str。测试 SSoT：
+    IntegrityVerifier(hmac_key="") 时调用此函数获取密钥。
+    """
+    return _resolve_hmac_key().decode("utf-8")
+
+
 # 5.174-M6 治本：模块 import 时向 L0 shared 层 session_audit 注册审计写入器工厂——
 # 依赖注入消除 session_audit.append_record 原 L0→L2 延迟 import（shared 禁止向上
 # import governance；依赖方向 governance(L2)→shared(L0)，符合向下依赖原则）。

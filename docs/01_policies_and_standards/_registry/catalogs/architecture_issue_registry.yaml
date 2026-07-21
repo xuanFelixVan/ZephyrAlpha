@@ -6476,3 +6476,127 @@ entries:
   related_rules: 'pyproject.toml requires-python>=3.12'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+- issue_id: '#ARCH-FORCE-MERGE-SAFETY-001'
+  title: force=True 逃生通道安全分类治本（不可绕过类检测 force 也不跳过）
+  severity: P0最高
+  adjudication: |
+    病根（第一性原理）：
+    session_worktree_merge(force=True) 是 FP-ISO.4C 设计的逃生通道，用于 pre-merge gate
+    误报或基础设施故障时逃生。但 force=True 原设计跳过**所有** pre-merge 检测，包括两类
+    性质完全不同的检测：
+
+    1. 不可绕过类（无 post-merge 替代 + 跳过后不可挽回）：
+       - commit 持久性验证（薛定谔的回退防护）：commit 被 sweep 删除后 merge 报成功但不落盘
+       - base 新鲜度检测：base 不新鲜导致 merge 冲突或薛定谔的回退
+    2. 可绕过类（有 post-merge reconciler 兜底）：
+       - WORKSPACE-CLEAN-CHECK：post-merge 有 reconciler 扫描搭便车提交
+       - PRE-MERGE-TOPO-CHECK：post-merge 有 reconciler 扫描拓扑违规
+       - commit gate：pre-commit 阶段已运行，pre-merge 是重复检查
+
+    5处 force=True 跳过点风险评估：
+    | 检测点 | 跳过后果 | post-merge 替代 | 分类 |
+    |--------|---------|----------------|------|
+    | commit 持久性验证 | merge 报成功但不落盘 | 无 | 不可绕过类 |
+    | base 新鲜度检测 | 薛定谔的回退 | 无 | 不可绕过类 |
+    | WORKSPACE-CLEAN-CHECK | 搭便车提交 | 有（reconciler） | 可绕过类 |
+    | PRE-MERGE-TOPO-CHECK | 拓扑违规 | 有（reconciler） | 可绕过类 |
+    | commit gate | 重复检查跳过 | 有（pre-commit 已运行） | 可绕过类 |
+
+    治本方案（代码内嵌分类，不扩展 GateSpec）：
+    GateSpec 类仅 3 字段（gate_id/check/priority），扩展 safety 字段需全量 gate 标注，
+    工程量大且影响面广。本裁定通过代码内嵌分类实现——在 session_worktree.py 中直接
+    移除不可绕过类检测的 force 跳过逻辑，无需修改 GateSpec。
+
+    100% AI 开发场景考虑：
+    - AI 既是开发者又是被治理对象，force=True 是为打破循环依赖而设计
+    - 但不可绕过类检测跳过后不可挽回——AI 无法通过 post-merge 修复
+    - 可绕过类检测有 reconciler 兜底——跳过后 AI 可通过 post-merge 修复
+    - 因此分类标准：是否有 post-merge 替代 + 跳过后是否可挽回
+
+    与现有裁定的关系：
+    - 扩展 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001（TRAE-076）：该裁定引入 commit 持久性验证，
+      但 force=True 可跳过——本裁定将 force=True 改为不可跳过
+    - 扩展 #ARCH-WORKTREE-BASE-FRESHNESS-001（TRAE-074）：该裁定引入 base 新鲜度检测，
+      但 force=True 可跳过——本裁定将 force=True 改为不可跳过
+    - 遵循 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001：force_merge 维度审计已落盘
+    - 遵循 #ARCH-PREVENTABILITY-LAYER-001（TRAE-068）：100% AI 场景下 warn 无效，
+      必须 fail-closed 或自动处理
+  fix_phase: |
+    Phase 1（代码治本，2026-07-22）：
+      - session_worktree.py L3897-3932: commit 持久性验证移除 if not force 包裹
+      - session_worktree.py L4056-4080: base 新鲜度检测移除 if force / else 分支
+      - session_worktree.py L3865-3871: docstring 更新——force 参数明确不可绕过类
+    Phase 2（测试验证，2026-07-22）：
+      - test_session_worktree.py: 替换 test_merge_force_skips_base_check
+        为 test_merge_force_does_not_skip_base_freshness + test_merge_force_does_not_skip_commit_persistence
+    Phase 3（规则文件，2026-07-22）：
+      - 新建 trae_078_force_merge_safety.yaml
+      - 更新 trae_076_worktree_commit_persistence.yaml（escape_hatch + forbidden + bypass_markers）
+    Phase 4（registry 同步，2026-07-22）：
+      - rule_ai_perception_index.yaml: total_rules 72->73 + TRAE-078 条目
+      - architecture_issue_registry.yaml: 本条登记
+    Phase 5（文档更新，2026-07-22）：
+      - anti_recurrence_design.md 7.4: 从已知限制更新为已治本
+      - anti_recurrence_design.md 7.2 问题1: 从已知限制记录更新为已治本
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（commit 持久性验证 + base 新鲜度检测 + docstring）'
+    - 'tests/governance/rule_bridge/test_session_worktree.py（2 个新测试替换 1 个旧测试）'
+    - 'docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml（新建）'
+    - 'docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml（escape_hatch + forbidden + bypass_markers）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（total_rules + TRAE-078）'
+    - 'docs/_working/anti_recurrence_design.md（7.2 + 7.4）'
+  status: resolved
+  related_adjudication: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (扩展，commit 持久性验证不可绕过), #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展，base 新鲜度检测不可绕过), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (force_merge 审计), #ARCH-PREVENTABILITY-LAYER-001 (100% AI 场景 warn 无效)'
+  related_rules: 'trae_078 (force_merge_safety), trae_076 (worktree_commit_persistence), trae_074 (worktree_base_freshness), trae_068 (preventability_layer)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-FORCE-MERGE-SAFETY-001: force=True 逃生通道安全分类铁律（2026-07-22）---
+- issue_id: '#ARCH-FORCE-MERGE-SAFETY-001'
+  title: 'force=True 逃生通道安全分类——不可绕过类检测（commit 持久性 + base 新鲜度）禁止跳过'
+  category: architecture_governance
+  severity: P1
+  adjudication: |
+    2026-07-22 立项裁定。红蓝极限对抗测试发现 session_worktree_merge(force=True)
+    逃生通道跳过5处检测，其中2处（commit 持久性验证 + base 新鲜度检测）无 post-merge
+    替代且不可挽回（薛定谔的回退），MUST 分类为"不可绕过类"，force=True 也不跳过。
+
+    5处跳过风险评估：
+    | # | 检测 | post-merge 替代 | 可挽回 | 治本判定 |
+    |---|---|---|---|---|
+    | 1 | commit 持久性（薛定谔的回退） | 无 | 否 | 不可绕过 |
+    | 4 | base 新鲜度 | 无 | 否 | 不可绕过 |
+    | 2 | WORKSPACE-CLEAN-CHECK | 有 | 是 | 可绕过 |
+    | 3 | PRE-MERGE-TOPO-CHECK | 部分 | 是 | 可绕过 |
+    | 5 | 全部 commit gate | 强替代 | 是 | 可绕过 |
+
+    第一性原理：
+    - force=True 是为打破循环依赖而设计——基础设施故障时需逃生
+    - 但"逃生"不等于"无监管"——不可绕过类检测是薛定谔的回退最后防线
+    - 治本方案：分类管理（不可绕过类 + 可绕过类），而非完全移除 force
+
+    裁定条款：
+    条款1: force=True MUST NOT 跳过 commit 持久性验证（铁律1）
+    条款2: force=True MUST NOT 跳过 base 新鲜度检测（铁律2）
+    条款3: force=True MAY 跳过 WORKSPACE-CLEAN-CHECK（有 reconciler 兜底，铁律3）
+    条款4: force=True MAY 跳过 PRE-MERGE-TOPO-CHECK（有部分兜底，铁律4）
+    条款5: force=True MAY 跳过全部 commit gate（pre-commit 已运行，铁律5）
+    条款6: force=True 仍 MUST 落审计（_audit_force_merge_usage，铁律6）
+
+    不实施项：
+    - 完全移除 force=True（打破循环依赖的逃生通道仍需保留）
+    - 独立 commit gate（本规则是代码内嵌检测，无独立 gate）
+  fix_phase: |
+    Phase 1（代码治本）：session_worktree.py 中 session_worktree_merge(force=True) 路径
+    始终运行 commit 持久性验证 + base 新鲜度检测，仅跳过可绕过类
+    Phase 2（规则真源）：trae_078_force_merge_safety.yaml 规则文件
+    Phase 3（registry 登记）：architecture_issue_registry.yaml 本条登记
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（force 分类逻辑）'
+    - 'docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml（规则真源）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）'
+  status: resolved
+  related_adjudication: '#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (扩展), #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展), #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (扩展), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (force_merge 维度审计)'
+  related_rules: 'trae_078 (force merge 安全分类铁律), trae_069 (session lifecycle), trae_074 (base freshness), trae_076 (commit persistence)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

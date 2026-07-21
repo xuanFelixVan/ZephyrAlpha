@@ -101,7 +101,7 @@ class IntegrityVerifier:
     def __init__(
         self,
         event_log_path: Path | str | None = None,
-        hmac_key: str = "",
+        hmac_key: str | None = None,
     ) -> None:
         # 治本（裁定#6 路径SSoT）：默认路径必须为绝对路径（项目硬约束"禁止相对路径"），
         # 真源为 zephyr.shared.io.paths.AUDIT_DATA_DIR。
@@ -109,9 +109,10 @@ class IntegrityVerifier:
             self._event_log_path = AUDIT_DATA_DIR / "events.jsonl"
         else:
             self._event_log_path = Path(event_log_path)
-        # 5.62.2 治本：未显式传 hmac_key 时经 SecretProvider 统一密钥源解析
+        # 5.62.2 治本：未显式传 hmac_key（None）时经 SecretProvider 统一密钥源解析
         # （与 writer.py 签名方同一密钥源 ZEPHYR_AUDIT_HMAC_SECRET），禁止裸 os.environ。
-        if not hmac_key:
+        # 显式传 "" 表示禁用 HMAC（测试 SSoT：_hmac_key 应为 b""）。
+        if hmac_key is None:
             from zephyr.gov_audit.writer import resolve_audit_hmac_secret
 
             hmac_key = resolve_audit_hmac_secret()

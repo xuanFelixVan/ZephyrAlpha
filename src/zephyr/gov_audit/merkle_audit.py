@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.integrity import MerkleAggregator as _MerkleAggregator
+from zephyr.gov_audit.integrity import MerkleAggregator as _MerkleAggregator
 
 
 class MerkleTree:
