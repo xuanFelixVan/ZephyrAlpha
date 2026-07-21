@@ -43,7 +43,7 @@ references:
     section: "全篇"
     why: "YAML SSoT"
 responsibility_domain: 
-build_status: stable
+build_status: generated
 ---
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
