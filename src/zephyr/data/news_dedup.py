@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 去重异常->跳过去重直接返回原始数据（fail-open）
 # [TESTS] tests/zephyr/data/test_news_dedup.py
-# [A_module] module_id=MOD-L00-004-news_dedup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-news_dedup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """新闻数据去重模块（MOD-L00-004 §4.3）。
 
@@ -34,15 +34,19 @@ from datetime import datetime
 
 from . import ch_reader
 from .provider_base import FetchResult
+from .table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 # 查重窗口（天）
 _DEDUP_WINDOW_DAYS = 7
 
 # SQL 集中化：查询最近 N 天已有新闻标题
 _SQL_DEDUP_QUERY_TEMPLATE = (
-    "SELECT title FROM c3_fundamental.news_data "
+    f"SELECT title FROM {_TBL_NEWS_DATA} "
     "WHERE publish_time >= now() - INTERVAL {days} DAY"
 )
 

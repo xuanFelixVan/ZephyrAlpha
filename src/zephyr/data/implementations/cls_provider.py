@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestClsProvider
-# [A_module] module_id=MOD-L00-004-cls_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-cls_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """财联社电报数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -40,8 +40,12 @@ from ..provider_base import (
 )
 from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 # 财联社电报（通过本地 RSSHub 实例，财联社直连API需sign加密）
 # 部署：D:\RSSHub，npm start，监听 localhost:1200
@@ -121,7 +125,7 @@ class ClsProvider(DataSourceBase):
         """
         import requests
 
-        table = payload.table or "c3_fundamental.news_data"
+        table = payload.table or _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         t0 = time.time()
 
