@@ -1,0 +1,171 @@
+# --- 治理锚定 ---
+# blueprint: MOD-GOV_ENFORCEMENT_worktree_lifecycle | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §ARCH-WORKTREE-LIFECYCLE-001
+# module_id: MOD-GOV_ENFORCEMENT_worktree_lifecycle
+# stability: stable
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+module_id: MOD-GOV_ENFORCEMENT_worktree_lifecycle
+version: "1.0.0"
+schema_version: "1.0.0"
+doc_type: register
+title: "Worktree Lifecycle State Machine"
+status: active
+ttl: permanent
+implementation_status: "operational — consumed by src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py (WorktreeLifecycle v1.0 — #ARCH-WORKTREE-LIFECYCLE-001)"
+
+description: "Defines the lifecycle states and transitions for AI session worktrees in the ZephyrAlpha governance system. Replaces the dead-code session_state_machine.yaml (MOD-INF-002, SessionManager 5态) which had zero production consumers."
+
+states:
+  - name: created
+    description: "session_worktree_start completed, worktree physically created, awaiting construction"
+    entry_action: "Register session_id in SessionRegistry, create worktree directory"
+    exit_action: "Log first Edit/Write call timestamp"
+
+  - name: active
+    description: "AI is actively constructing (Edit/Write/commit in progress)"
+    entry_action: "Acquire worktree lock, start heartbeat daemon"
+    exit_action: "Checkpoint progress, persist uncommitted file list"
+
+  - name: idle
+    description: "Construction paused (awaiting user feedback / external dependency / cross-session coordination)"
+    entry_action: "Save context snapshot, keep worktree alive"
+    exit_action: "Reload context snapshot, verify worktree still clean"
+
+  - name: quarantined
+    description: "Sweep detected stale worktree with unmerged commits; branch tip saved to refs/quarantine/<sid> (72h recovery window)"
+    entry_action: "Save branch tip to refs/quarantine/<sid>, force-clean worktree directory"
+    exit_action: "Either recover (restore worktree from quarantine ref) or finalize sweep"
+
+  - name: swept
+    description: "Worktree physically cleaned, resources released, session record archived (terminal state)"
+    entry_action: "Delete worktree directory, delete session branch, archive lifecycle record"
+    exit_action: "None (terminal)"
+
+transitions:
+  - from: created
+    to: active
+    condition: "AI begins first Edit/Write operation"
+    action: "Transition to construction phase"
+    verifiable: true
+    verification_method: "Check Edit/Write call log for session_id"
+
+  - from: created
+    to: swept
+    condition: "session_worktree_abort called before any construction"
+    action: "Clean worktree directory, delete branch, archive record"
+    verifiable: true
+    verification_method: "Verify worktree directory removed, branch deleted"
+
+  - from: active
+    to: idle
+    condition: "AI pauses for user feedback OR cross-session dependency wait"
+    action: "Persist uncommitted state, keep worktree alive"
+    verifiable: true
+    verification_method: "Check heartbeat daemon paused, worktree still exists"
+
+  - from: active
+    to: swept
+    condition: "session_worktree_merge succeeded (committed changes integrated to main)"
+    action: "Delete worktree, delete branch, archive lifecycle record"
+    verifiable: true
+    verification_method: "Verify worktree directory removed, merge commit exists in main"
+
+  - from: idle
+    to: active
+    condition: "AI resumes construction after user feedback / dependency resolved"
+    action: "Reload context, resume heartbeat daemon"
+    verifiable: true
+    verification_method: "Check heartbeat daemon resumed, Edit/Write calls resume"
+
+  - from: idle
+    to: quarantined
+    condition: "session_worktree_sweep detected stale (>30min) + unmerged commits"
+    action: "Save branch tip to refs/quarantine/<sid>, force-clean worktree"
+    verifiable: true
+    verification_method: "Check refs/quarantine/<sid> exists, worktree directory removed"
+
+  - from: idle
+    to: swept
+    condition: "session_worktree_abort called on idle session (clean abort)"
+    action: "Clean worktree, delete branch, archive record"
+    verifiable: true
+    verification_method: "Verify worktree removed, branch deleted"
+
+  - from: quarantined
+    to: active
+    condition: "AI recovers quarantined worktree within 72h recovery window"
+    action: "Restore worktree from quarantine ref, resume construction"
+    verifiable: true
+    verification_method: "Check worktree restored, refs/quarantine/<sid> can be deleted"
+
+  - from: quarantined
+    to: swept
+    condition: "72h quarantine TTL expired OR AI confirms discard"
+    action: "Delete quarantine ref, finalize sweep, archive record"
+    verifiable: true
+    verification_method: "Check refs/quarantine/<sid> deleted, record state=swept"
+
+timeout_rules:
+  - state: active
+    max_duration: 4
+    duration_unit: hours
+    on_timeout: transition_to_idle
+    timeout_action: "Auto-idle session, log warning, preserve worktree"
+    verifiable: true
+    verification_method: "Verify auto-idle triggered after 4h active"
+
+  - state: idle
+    max_duration: 30
+    duration_unit: minutes
+    on_timeout: transition_to_quarantined
+    timeout_action: "Sweep triggers, branch tip saved to quarantine ref"
+    verifiable: true
+    verification_method: "Verify sweep triggered after 30min idle"
+
+  - state: quarantined
+    max_duration: 72
+    duration_unit: hours
+    on_timeout: transition_to_swept
+    timeout_action: "Auto-sweep quarantined worktree, delete quarantine ref"
+    verifiable: true
+    verification_method: "Verify auto-sweep triggered after 72h quarantine"
+
+exception_handling:
+  - exception: worktree_creation_failed
+    applicable_states: [created]
+    action: "Mark session as not registered, return error to AI"
+    recovery: "AI must call session_worktree_start again with new session_id"
+    verifiable: true
+    verification_method: "Check no record file exists for session_id"
+
+  - exception: heartbeat_lost
+    applicable_states: [active, idle]
+    action: "Reconciler detects stale heartbeat, transition to quarantined"
+    recovery: "AI may recover within 72h quarantine window"
+    verifiable: true
+    verification_method: "Check heartbeat file mtime, reconciler log"
+
+  - exception: merge_conflict
+    applicable_states: [active]
+    action: "Auto-restore main workspace, keep worktree for manual resolution"
+    recovery: "AI resolves conflict, retries merge OR aborts"
+    verifiable: true
+    verification_method: "Check worktree still exists, main workspace clean"
+
+  - exception: unrecoverable_error
+    applicable_states: [created, active, idle]
+    action: "Force transition to swept, preserve branch tip in refs/quarantine"
+    recovery: "No auto-recovery; manual intervention required"
+    verifiable: true
+    verification_method: "Check record state=swept, refs/quarantine exists"
+
+state_invariants:
+  - "Each session MUST have exactly one state at any time"
+  - "Transition from swept to any other state is forbidden (terminal state)"
+  - "Transition from quarantined to created/active is forbidden (must recover explicitly)"
+  - "Each session MUST have a unique session_id matching pattern sess-*-<timestamp>"
+  - "Lifecycle record MUST be written within 5 seconds of state change"
+  - "Quarantine ref MUST exist before quarantined state is recorded"
+  - "Swept state MUST imply worktree directory removed + branch deleted (or ref saved to quarantine)"

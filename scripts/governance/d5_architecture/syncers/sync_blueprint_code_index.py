@@ -256,7 +256,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "config_files": [
             "config/trigger_router.yaml",
             "config/capabilities.yaml",
-            "config/session_state_machine.yaml",
+            "config/worktree_state_machine.yaml",  # #ARCH-WORKTREE-LIFECYCLE-001
         ],
         "governance_scripts": [],
         "note": "运行时集成——orchestrator 9文件已实现",
