@@ -270,11 +270,31 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
                 )
 
             # 维度 2：stale worktree 累积（P3.5 配套预警）
+            # #ARCH-WORKTREE-AUTO-SWEEP-001 Phase 1（2026-07-21）：
+            # 从 warn-only 升级为 auto-sweep——sweep 三重保护保证安全
+            # （不会清理活跃 session 或有未合并提交的 worktree）
             if stale_count > _STALE_WORKTREE_WARN_THRESHOLD:
-                warnings.append(
-                    f"stale worktree 累积 {stale_count} > {_STALE_WORKTREE_WARN_THRESHOLD} "
-                    f"阈值——建议运行 session_worktree_sweep() 清理（P3.5 force-clean 已就绪）"
-                )
+                try:
+                    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+                        session_worktree_sweep,
+                    )
+                    sweep_result = session_worktree_sweep(
+                        project_root,
+                        max_age_minutes=30,
+                        force_clean_hours=0,
+                    )
+                    warnings.append(
+                        f"stale worktree {stale_count} > {_STALE_WORKTREE_WARN_THRESHOLD} 阈值，"
+                        f"auto-sweep 触发: swept={sweep_result.get('swept', 0)}, "
+                        f"skipped={sweep_result.get('skipped', 0)}, "
+                        f"warnings={len(sweep_result.get('warnings', []))}"
+                    )
+                except Exception as sweep_err:  # noqa: BLE001 — sweep 失败降级为 warn
+                    warnings.append(
+                        f"stale worktree {stale_count} > {_STALE_WORKTREE_WARN_THRESHOLD} 阈值，"
+                        f"auto-sweep 失败（降级为手动）: {sweep_err}——"
+                        f"建议手动运行 session_worktree_sweep()"
+                    )
 
             # 维度 3：退化趋势检测（连续 N 次计时递增）
             # 读最近 N+1 条（含本次刚写的）——但本次刚写未刷盘前读不到，

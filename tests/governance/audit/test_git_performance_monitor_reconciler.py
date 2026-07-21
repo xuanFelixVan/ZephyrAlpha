@@ -372,7 +372,8 @@ class TestReconcile:
         result = spec.reconcile([], "test-session")
 
         assert result.action == "warn"
-        assert "stale worktree 累积" in result.detail
+        assert "stale worktree" in result.detail
+        assert "auto-sweep" in result.detail  # ARCH-WORKTREE-AUTO-SWEEP-001 Phase 1
 
     @patch("zephyr.governance.audit.git_performance_monitor_reconciler._measure_git_status")
     @patch("zephyr.governance.audit.git_performance_monitor_reconciler._count_stale_worktrees")
