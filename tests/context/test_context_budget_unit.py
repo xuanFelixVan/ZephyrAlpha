@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1993 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_context_budget_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-610 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_context_budget
 # [STABILITY] evolving

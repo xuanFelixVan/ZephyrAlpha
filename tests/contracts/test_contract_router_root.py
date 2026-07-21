@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0622 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_contract_router_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_contract_router
 # [INVARIANTS] ROUTE_MAP keyed by contract_id; can_route=route_map+ai_read_only allowed

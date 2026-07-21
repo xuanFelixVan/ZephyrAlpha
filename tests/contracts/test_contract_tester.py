@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0623 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_contract_tester | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §contract_tester
 # [MODULE] tests.test_contract_tester
 # [INVARIANTS] ContractTester.test_contract必须返回ContractTestResult; ContractStatus为str Enum

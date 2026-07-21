@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0594 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_context_health_score | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_context_health_score
 # [INVARIANTS] score_0_to_100;healthy_ge70;degraded_ge40;critical_lt40;empty_100

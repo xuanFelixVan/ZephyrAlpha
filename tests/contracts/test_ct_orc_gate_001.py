@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0103 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_ct_orc_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-261 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_orc_gate_001
 # [STABILITY] evolving

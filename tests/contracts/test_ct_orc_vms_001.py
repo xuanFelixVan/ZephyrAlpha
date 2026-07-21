@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0105 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_ct_orc_vms | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-263 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_orc_vms_001
 # [STABILITY] evolving

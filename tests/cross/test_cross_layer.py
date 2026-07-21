@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0646 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_cross_layer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §test
 # [MODULE] zephyr.cross_asset.cross_market_data_adapter
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

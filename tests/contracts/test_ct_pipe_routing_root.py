@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0679 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_ct_pipe_routing_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_ct_pipe_routing
 # [INVARIANTS] CtPipeRoutingHints.task_type min_length=1; resolve_ct_pipe_orc001 decision tree invariants; modules_slice_from_node only accepts M1-M11
