@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FuseState
 # [TESTS] tests/context/test_context_pipeline_auto.py
-# [A_module] module_id=MOD-INF-001_kill_switch | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-kill_switch | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # SRC-0041 (P3 迁移恢复, 2026-07-02): 文件从 autonomy_core/kill_switch.py 迁移至
 #   infrastructure/capacity_assurance/kill_switch.py（blueprint actual_disk_path 真源）。

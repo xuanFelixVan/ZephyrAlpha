@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EscalationBridgeError
 # [TESTS] tests/auto-fix-engine/test_escalation_bridge.py
-# [A_module] module_id=MOD-INF_escalation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-escalation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

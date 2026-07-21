@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/autonomy/test_host_resource_governor.py
-# [A_module] module_id=MOD-INF-001_host_resource_governor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-host_resource_governor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # SRC-0041 (P3 迁移恢复, 2026-07-02): 文件从 autonomy_core/host_resource_governor.py 迁移至
 #   infrastructure/capacity_assurance/host_resource_governor.py（blueprint actual_disk_path 真源）。

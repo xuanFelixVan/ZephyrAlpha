@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CommunicationError;ConflictError;DelegationError
 # [TESTS] tests/test_a2a_protocol/
-# [A_module] module_id=MOD-INF_prompt_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-prompt_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

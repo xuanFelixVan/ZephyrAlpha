@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF_auto_fix_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-auto_fix_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 
 # [MODULE] zephyr.infrastructure.auto_fix_engine
