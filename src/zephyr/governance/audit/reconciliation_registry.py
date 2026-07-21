@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
+# [BLUEPRINT] MOD-GOV_reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
 # [MODULE] zephyr.governance.audit.reconciliation_registry
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] (none — pure stdlib)
@@ -6687,18 +6687,23 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
 def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-ROOT-TEMP-SWEEP post-commit 根目录临时文件清扫 reconciler.
 
-    治本（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001，事件驱动 FS 扫描补门禁盲区）：
+    治本（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 + #ARCH-ROOT-TEMP-WHITELIST-001）：
     - trigger: 任何 commit 都触发（扫描根目录 depth-0 平铺文件成本 <0.01s）
-    - reconcile: 扫描项目根目录 depth-0 平铺文件（不递归子目录），按混合策略处理：
-      * 进程 token（gw_*/tmp_commit_msg/*.log）：mtime>10min 删除（零持久价值）
-      * 疑似成果（tmp_*.py/.txt/.xml/.json/.md/.csv、.tmp_*）：移到 .runtime/tmp/
-        隔离（7 天 TTL 由 make_tmp_cleanup_reconciler 清理）
+    - reconcile: 白名单模式——扫描根目录 depth-0 平铺文件，不在白名单内的文件
+      按策略处理（.log 删除，其余移到 .runtime/tmp/ 隔离）
     - 自维护/自关闭：每次 commit 后自动清扫，无需 AI 干预
+
+    白名单模式（#ARCH-ROOT-TEMP-WHITELIST-001 治本，2026-07-22）：
+    原枚举模式（_DELETE_PATTERNS + _MOVE_PATTERNS）追不上 AI 造词速度——
+    AI 每次用新动词前缀（autofix_*/scan_*/fix_*/commit_*/verify_*/stage_*）创建
+    一次性脚本，枚举模式永远补不全。白名单模式从"追新动词"改为"封死未知"——
+    只有已知合法根文件在白名单内，其余一律清扫。
 
     保护规则（第一性原理：根目录平铺文件几乎都是临时产物，但需防误删正在写入的文件）：
     - mtime < 10min 的文件：跳过（可能正在写入——pytest 运行中/commit 进行中）
     - 不递归子目录：仅扫平铺文件（目录删除风险高）
-    - 合法根文件（.gitignore/AGENTS.md/pyproject.toml 等）天然不匹配临时模式，不误处理
+    - 白名单内的文件：跳过（已知合法根文件）
+    - .env*：跳过（含密钥，即使不在白名单也绝不触碰）
 
     向内收：扩展 ReconciliationRegistry 框架，复用 logger，零新真源。
     """
@@ -6709,24 +6714,23 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
     project_root = gateway.project_root
     _FRESH_SECONDS = 10 * 60  # 10 分钟安全阈值（避免删到正在写入的文件）
-    # 删除模式（进程 IPC token / 纯日志，零持久价值）
+    # 白名单（治本 #ARCH-ROOT-TEMP-WHITELIST-001）：已知合法根文件。
+    # 新增合法根文件时须更新此集合（git tracked 根目录平铺文件即合法）。
+    _ROOT_FILE_WHITELIST = frozenset({
+        ".dockerignore", ".editorconfig", ".env", ".env.example", ".gitattributes",
+        ".gitignore", ".importlinter", ".pre-commit-config.yaml", ".traeignore",
+        "AGENTS.md", "CONTRIBUTING.md", "docker-compose.yml", "Dockerfile",
+        "LICENSE", "MANIFEST.in", "py.ini", "pyproject.toml", "README.md",
+        "requirements.txt", "requirements-demo.txt", "requirements-dev.txt",
+        "SECURITY.md", "sitecustomize.py",
+    })
+    # 删除模式（零持久价值，直接删而非移动到 .runtime/tmp/）
     _DELETE_PATTERNS = (
-        re.compile(r"^gw_commit_msg_.*\.txt$"),
-        re.compile(r"^gw_pathspec_.*\.txt$"),
-        re.compile(r"^tmp_commit_msg\.txt$"),
-        re.compile(r"^.*\.log$"),  # 根目录 .log 全是临时产物（root_directory_whitelist 不含 .log）
-    )
-    # 移动模式（疑似成果，隔离到 .runtime/tmp/ 待 7 天 TTL 清理）
-    _MOVE_PATTERNS = (
-        re.compile(r"^tmp_.*\.(py|txt|xml|json|md|csv|log|sh|ps1)$"),
-        re.compile(r"^\.tmp_.*$"),
+        re.compile(r"^.*\.log$"),  # 根目录 .log 全是临时产物
     )
 
     def _match_delete(name: str) -> bool:
         return any(p.match(name) for p in _DELETE_PATTERNS)
-
-    def _match_move(name: str) -> bool:
-        return any(p.match(name) for p in _MOVE_PATTERNS)
 
     def _trigger(committed_files: list[str]) -> bool:
         return True  # 根目录清扫与每次 commit 正相关
@@ -6748,10 +6752,14 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
             full = os.path.join(str(project_root), name)
             if not os.path.isfile(full):
                 continue  # 仅扫平铺文件，跳过目录
+            # 密钥保护：.env* 文件绝不触碰（即使不在白名单，如 .env.local/.env.qmt）
+            if name.startswith(".env"):
+                continue
+            # 白名单检查（#ARCH-ROOT-TEMP-WHITELIST-001）：已知合法根文件跳过
+            if name in _ROOT_FILE_WHITELIST:
+                continue
+            # 非白名单文件 → 判定 delete（.log）或 move（其余非白名单文件）
             is_delete = _match_delete(name)
-            is_move = _match_move(name)
-            if not is_delete and not is_move:
-                continue  # 合法根文件，不匹配临时模式
             try:
                 mtime = os.path.getmtime(full)
             except OSError:

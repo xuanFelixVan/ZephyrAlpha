@@ -1,3 +1,9 @@
+---
+doc_type: index
+ttl: permanent
+title: "20个AI审计一键复制提示词"
+---
+
 # 20个AI审计一键复制提示词
 
 > **⚠️ 禁止删除本文件（PROTECTED FILE）** ⚠️

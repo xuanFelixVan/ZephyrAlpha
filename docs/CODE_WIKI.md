@@ -1,3 +1,9 @@
+---
+doc_type: index
+ttl: permanent
+title: "ZephyrAlpha Code Wiki"
+---
+
 # ZephyrAlpha Code Wiki
 
 > 版本: 2.0.0 | 生成日期: 2026-07-13
