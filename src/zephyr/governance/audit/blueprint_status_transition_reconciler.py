@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-blueprint_status_transition_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-d 蓝图状态单调推进检测
+# [BLUEPRINT] MOD-GOV_blueprint_status_transition_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-d 蓝图状态单调推进检测
 # [MODULE] zephyr.governance.audit.blueprint_status_transition_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, SQL_CREATE_DRIFT_AUDIT_FINDINGS, SQL_INSERT_DRIFT_AUDIT_FINDING); zephyr.governance.audit._git_helpers (git_show_file); stdlib (logging, os, re, sqlite3, uuid)
