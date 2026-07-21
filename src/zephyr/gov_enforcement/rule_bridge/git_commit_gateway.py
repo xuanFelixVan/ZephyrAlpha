@@ -171,6 +171,7 @@ from zephyr.gov_enforcement.commit_gates.blueprint_format_gate import make_bluep
 from zephyr.gov_enforcement.commit_gates.data_task_completeness_gate import make_data_task_completeness_gate
 from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import make_capability_consistency_gate
 from zephyr.gov_enforcement.commit_gates.rename_depgraph_sync_gate import make_rename_depgraph_sync_gate
+from zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate import make_new_file_depgraph_gate  # #ARCH-DEP-001 第三期 L1 铁律技术强制
 from zephyr.gov_enforcement.commit_gates.domain_fk_gate import make_domain_fk_gate
 from zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate import make_blueprint_amodule_consistency_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
@@ -413,6 +414,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_ruling_commit_verified_gate())  # priority=109 治本 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 盲区4 文档"已完成"声明 commit hash 真实性硬验证（原 77 与 BLUEPRINT-FORMAT 撞号，#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 1 迁移至 109）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_rename_depgraph_sync_gate())  # priority=39 治本文件重命名后 depgraph 未同步（AI-14 审计：a2a_protocol_security→a2a_agent_blocklist 重命名导致 13 处 docs stale 引用根因；原 36 与 CH-BATCH-SIZE 冲突，迁移到 39）
+        self._gate_registry.register(make_new_file_depgraph_gate())  # priority=58 #ARCH-DEP-001 第三期 L1 铁律技术强制（新建 .py 文件 depgraph 未登记硬阻断，bootstrap 豁免 3811 现有 generated 节点）
         self._gate_registry.register(make_encoding_gate())  # priority=42 治本 --no-verify 绕过 pre-commit GATE-ENCODING（F-05 防御断层，subprocess 调 check_encoding.py 复用真源，fail-open on env error 裁定ARCH-TTL-DOC-001；40被CLAIM-REQUIRED占用，41预留给DATA-TASK迁移）
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_unsafe_dict_spread_gate())  # priority=66 warn 级 防复发 5.147.5/5.147.12 **data 直接展开模式（schema 演进会 TypeError，SSoT filter_dataclass_fields 已治本，gate 防新 AI 制造同类债务）
