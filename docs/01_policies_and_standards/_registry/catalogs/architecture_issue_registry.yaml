@@ -5982,6 +5982,105 @@ entries:
   created: '2026-07-21'
   last_updated: '2026-07-21'
 
+# --- #ARCH-STASH-LIFECYCLE-FIX-001: stash_lifecycle_reconciler 反向匹配治本（2026-07-22）---
+# 父裁定: #ARCH-STASH-ACCUMULATION-001（Phase 1 reconciler 扩展，本议题修复其形同虚设 bug）
+# 关联: #ARCH-STASH-ACCUMULATION-002（施工路径裁定，5 Step 顺序修正）
+#       100PCT-AI-GOVERNANCE（100% AI 场景第一性原理——warn=通过治本须 fail-closed/反向匹配）
+- issue_id: '#ARCH-STASH-LIFECYCLE-FIX-001'
+  title: 'stash_lifecycle_reconciler 反向匹配治本——修复 _is_ai_generated 形同虚设 bug（reconciler 永不清理任何 stash）'
+  category: architecture_governance
+  severity: P1
+  adjudication: |
+    问题背景：
+    #ARCH-STASH-ACCUMULATION-001 Phase 1 落地 make_stash_lifecycle_reconciler 扩展
+    （TTL 4h + 8 个 AI 前缀 + aggressive 模式 + user-manual- 保护），设计上应能
+    自动清理过期 AI stash。但实测发现：reconciler 永不清理任何 stash——18 个 stash
+    堆积 2-20h 仍无一个被 drop。根因排查发现 _is_ai_generated 有两个致命 bug。
+
+    第一性原理病根（2 个 bug 叠加）：
+
+    Bug 1: "On <branch>: " 前缀导致 startswith 永不匹配
+    git stash list --format=%s 输出格式为 "On <branch>: <message>"（git 默认行为），
+    但 _is_ai_generated 用 message.startswith(_AI_STASH_PREFIXES) 检查。
+    "On dev: pre-merge-cleanup-xxx".startswith("pre-merge-cleanup") = False
+    → 所有 stash 都不匹配 AI 前缀 → _should_drop 永远返回 False → 永不 drop
+    → reconciler 形同虚设（18 个 stash 全部堆积）
+
+    Bug 2: AI 前缀列表不可穷举
+    原 _AI_STASH_PREFIXES 只有 8 个前缀（session_worktree_pre_merge / abort /
+    phase- / temp-stash-for- / pre-merge stash / pre-merge-stash / merge-prep- /
+    stash-for-merge），但实测 AI 手动创建 stash 有 7+ 种未知前缀：
+    - pre-merge-cleanup-sess-XXX（merge 前清理）
+    - other-session-wip-XXX（其他 session WIP）
+    - pre-construction stash: XXX（施工前 stash）
+    - auto-sync temp XXX（auto-sync 临时）
+    - unrelated XXX work-in-progress（无关 WIP）
+    - CONSUMERS-ACCURACY XXX（reconciler 调试）
+    - other-sessions-changes-before-merge（其他 session 修改）
+    即使修复 Bug 1，前缀列表仍不可穷举 = 永远漏清 = 治标不治本。
+
+    第一性原理分析：
+    100% AI 开发场景下，stash 创建者只有两类：
+    1. AI（代码自动 stash + AI 手动 stash）——应被清理
+    2. 用户手动 stash——应被保护
+    原方案用 AI 前缀列表（正向匹配）识别 AI stash，但 AI stash 命名模式不可穷举。
+    反向匹配更治本：user-manual- 是显式保护标记，非 user-manual- 前缀 = AI 创建。
+    这消除"未知前缀漏清"风险——无论 AI 用什么命名，只要不带 user-manual- 前缀都被清理。
+
+    治本方案：
+    1. 新增模块级 _strip_stash_branch_prefix 函数：去掉 "On <branch>: " 前缀
+       （修复 Bug 1：使 startswith 检查能正确工作）
+    2. _is_ai_generated 改为反向匹配：not _strip_stash_branch_prefix(message)
+       .startswith(_PROTECTED_STASH_PREFIXES)（修复 Bug 2：消除不可穷举前缀列表）
+    3. _is_protected 也用 _strip_stash_branch_prefix 处理前缀（保持一致）
+    4. 删除 _AI_STASH_PREFIXES 元组（不可穷举，已被反向匹配替代）
+
+    不实施项（避免过度工程）：
+    - per-prefix 测试覆盖——反向匹配后所有非 user-manual- 前缀等价处理，无需
+      per-prefix 测试，端到端测试覆盖核心逻辑即可
+    - 白名单扩展机制——user-manual- 是唯一白名单，未来如需扩展可加
+      _PROTECTED_STASH_PREFIXES 元组（当前无需）
+    - stash message 标准化——强制 AI 用固定前缀创建 stash（约束 AI 行为，
+      但反向匹配已治本，无需额外约束）
+
+    长期战略考虑（100% AI 开发场景）：
+    - 反向匹配是 100% AI 场景的治本范式——不可穷举的"应清理"列表 → 可穷举的
+      "应保护"列表（user-manual- 是显式标记）
+    - 同范式可推广到其他 reconciler：识别"AI 创建"的产物时，用反向匹配
+      （非 user-protected = AI 创建）替代不可穷举的 AI 标记列表
+  fix_phase: |
+    Step 1（代码修复，已落地，本次 commit）：
+      - reconciliation_registry.py: 新增模块级 _strip_stash_branch_prefix 函数
+      - reconciliation_registry.py: make_stash_lifecycle_reconciler 内部
+        _is_ai_generated 改为反向匹配 + _is_protected 用 strip 处理前缀
+      - reconciliation_registry.py: 删除 _AI_STASH_PREFIXES 元组
+      - reconciliation_registry.py: 新增 [TTL] permanent frontmatter
+    Step 2（测试覆盖，已落地，本次 commit）：
+      - test_stash_lifecycle.py: 新增 TestStripStashBranchPrefix（7 测试）
+        覆盖 On dev/main/feature/x 分支前缀 + 无前缀 / 无 ": " / 空字符串边界
+      - test_stash_lifecycle.py: 新增 TestStashLifecycleReconcilerReverseMatch
+        （6 测试）端到端验证反向匹配治本：
+        (a) aggressive 模式清理未知 AI 前缀（pre-merge-cleanup / other-session-wip）
+        (b) user-manual- 在 aggressive 模式下也保留
+        (c) 非 aggressive 模式下 age < TTL 的 AI stash 保留（不破坏 TTL 行为）
+        (d) 8 个真实场景未知前缀 stash 全部被识别为 AI stash（修复前 0 个识别）
+        (e) 原 8 个 AI 前缀（session_worktree_pre_merge 等）反向匹配仍识别（回归测试）
+        (f) 空 stash list → skip
+    Step 3（裁定登记，已落地，本次 commit）：
+      - architecture_issue_registry.yaml: 本条登记
+    逃生通道（君子协定）：
+      - WORKSPACE_DRIFT_BLOCKED（3036 个其他 session 残留 modified 文件）无法启动
+        worktree，按君子协定用 GitCommitGateway + allow_overlap 逃生通道
+  impact:
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（_strip_stash_branch_prefix 新增 + _is_ai_generated 反向匹配治本 + [TTL] frontmatter）'
+    - 'tests/governance/audit/test_stash_lifecycle.py（TestStripStashBranchPrefix + TestStashLifecycleReconcilerReverseMatch 共 13 测试）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）'
+  status: resolved
+  related_adjudication: '#ARCH-STASH-ACCUMULATION-001 (父裁定，Phase 1 reconciler 扩展——本议题修复其形同虚设 bug), #ARCH-STASH-ACCUMULATION-002 (施工路径裁定，5 Step 顺序修正)'
+  related_rules: 'trae_075 (stash 生命周期铁律), trae_062 (SSoT 真源分类), AGENTS.md FP-ISO.4C (worktree 君子协定)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
 # --- #ARCH-CONSUMERS-ACCURACY-003: P1-4 capability registry 收尾登记 + P1-9 baseline-scan 报告持久化策略裁定 ---
 - issue_id: '#ARCH-CONSUMERS-ACCURACY-003'
   title: 'CONSUMERS-ACCURACY Phase 1 收尾——capability registry 双重登记补全 + baseline-scan JSON 报告持久化策略裁定'

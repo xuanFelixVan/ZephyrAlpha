@@ -5,12 +5,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [TTL] permanent
-"""test_stash_lifecycle.py — stash 生命周期治本单测（裁定 #ARCH-STASH-LIFECYCLE-GAP-001）
+"""test_stash_lifecycle.py — stash 生命周期治本单测（裁定 #ARCH-STASH-LIFECYCLE-GAP-001 / #ARCH-STASH-LIFECYCLE-FIX-001）
 
 权威依据：
 - trae_075 STASH-LIFE-LAW-3: merge 完成后 MUST 调用 _drop_session_pre_merge_stash
 - session_worktree.py::_drop_session_pre_merge_stash
-- reconciliation_registry.py::make_stash_lifecycle_reconciler._AI_STASH_RE
+- reconciliation_registry.py::make_stash_lifecycle_reconciler
+- reconciliation_registry.py::_strip_stash_branch_prefix（#ARCH-STASH-LIFECYCLE-FIX-001 治本）
 
 测试组：
 - TestDropSessionPreMergeStash: _drop_session_pre_merge_stash 函数
@@ -24,12 +25,21 @@
   - 历史盲区命名（phase6.2-merge-tmp / pre-merge-batch5-stash3）匹配
   - WIP stash 不匹配（unrelated / CONSUMERS-ACCURACY / auto-sync temp）
   - user-manual- 永不匹配
+- TestStripStashBranchPrefix: _strip_stash_branch_prefix 函数（#ARCH-STASH-LIFECYCLE-FIX-001）
+  - "On <branch>: " 前缀正确剥离
+  - 含斜杠分支名正确处理
+  - 无前缀 / 无 ": " 分隔 / 空字符串 边界情况
+- TestStashLifecycleReconcilerReverseMatch: 反向匹配治本端到端测试（#ARCH-STASH-LIFECYCLE-FIX-001）
+  - aggressive 模式清理所有非 user-manual- 前缀 stash（含修复前不可识别的未知前缀）
+  - user-manual- 永不被清理
+  - 非 aggressive 模式下，age < TTL 的 AI stash 保留
 """
 from __future__ import annotations
 
 import re
 import subprocess
 import sys
+import types
 from pathlib import Path
 
 import pytest
@@ -40,6 +50,10 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from zephyr.gov_enforcement.rule_bridge.session_worktree import (  # noqa: E402
     _drop_session_pre_merge_stash,
+)
+from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
+    _strip_stash_branch_prefix,
+    make_stash_lifecycle_reconciler,
 )
 
 
@@ -189,3 +203,193 @@ def _get_stash_list(path: Path) -> list[str]:
     if result.returncode != 0 or not result.stdout.strip():
         return []
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+# ============================================================================
+# #ARCH-STASH-LIFECYCLE-FIX-001 治本测试（2026-07-22）
+# ============================================================================
+# 病根：原 reconciler 的 _is_ai_generated 用 message.startswith(_AI_STASH_PREFIXES)，
+# 但 git stash list --format=%s 输出格式为 "On <branch>: <message>"，startswith
+# 永不匹配；同时 AI 前缀列表不可穷举（实测有 7+ 种未知前缀）。
+# 治本：1) _strip_stash_branch_prefix 去掉 "On <branch>: " 前缀；
+#       2) _is_ai_generated 改为反向匹配（非 user-manual- = AI 生成）。
+
+
+class TestStripStashBranchPrefix:
+    """_strip_stash_branch_prefix 函数测试（#ARCH-STASH-LIFECYCLE-FIX-001 治本核心）。
+
+    git stash list --format=%s 输出格式为 ``On <branch>: <message>``，但
+    _PROTECTED_STASH_PREFIXES 是基于原始 message 的前缀匹配。本函数去掉分支前缀，
+    使 startswith 检查能正确工作。
+    """
+
+    def test_strip_on_dev_prefix(self) -> None:
+        """``On dev: <message>`` 前缀正确剥离。"""
+        assert _strip_stash_branch_prefix("On dev: pre-merge-cleanup-sess-xxx") == "pre-merge-cleanup-sess-xxx"
+
+    def test_strip_on_main_prefix(self) -> None:
+        """``On main: <message>`` 前缀正确剥离。"""
+        assert _strip_stash_branch_prefix("On main: user-manual-important") == "user-manual-important"
+
+    def test_strip_feature_branch_with_slash(self) -> None:
+        """含斜杠的分支名（feature/x）正确处理。"""
+        assert _strip_stash_branch_prefix("On feature/fix-123: stash-msg") == "stash-msg"
+
+    def test_no_prefix_unchanged(self) -> None:
+        """无 ``On `` 前缀的消息原样返回。"""
+        assert _strip_stash_branch_prefix("plain message") == "plain message"
+
+    def test_no_colon_separator_unchanged(self) -> None:
+        """``On `` 开头但无 ``: `` 分隔符的消息原样返回（不误剥）。"""
+        # "On something here" 没有 ": " 分隔符，不应剥成 "something here"
+        assert _strip_stash_branch_prefix("On something here") == "On something here"
+
+    def test_empty_string(self) -> None:
+        """空字符串原样返回。"""
+        assert _strip_stash_branch_prefix("") == ""
+
+    def test_only_prefix(self) -> None:
+        """只有 ``On dev: `` 前缀，message 为空 → 返回空字符串。"""
+        assert _strip_stash_branch_prefix("On dev: ") == ""
+
+
+class TestStashLifecycleReconcilerReverseMatch:
+    """反向匹配治本端到端测试（#ARCH-STASH-LIFECYCLE-FIX-001）。
+
+    修复前的 _is_ai_generated 用 8 个 AI 前缀列表 startswith 匹配，导致：
+    1. ``On <branch>: `` 前缀导致 startswith 永不匹配（reconciler 形同虚设）
+    2. AI 手动创建 stash 的 message 模式不可穷举（pre-merge-cleanup / other-session-wip
+       / pre-construction / auto-sync / unrelated / CONSUMERS-ACCURACY 等 7+ 种未知前缀）
+
+    修复后用反向匹配：非 ``user-manual-`` 前缀的 stash 都是 AI 创建的。
+    本测试组用 aggressive 模式（无视 age）验证反向匹配治本生效。
+    """
+
+    def test_aggressive_drops_unknown_ai_prefixes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """aggressive 模式清理未知 AI 前缀 stash（修复前不可识别）。
+
+        场景：3 个 stash，2 个是修复前不可识别的未知 AI 前缀（pre-merge-cleanup /
+        other-session-wip），1 个是 user-manual-。aggressive 模式应 drop 前 2 个，
+        保留 user-manual-。
+        """
+        _init_git_repo(tmp_path)
+        _create_stash(tmp_path, "pre-merge-cleanup-sess-12348-v4", "file1.txt")
+        _create_stash(tmp_path, "other-session-wip-module-id-naming-fix", "file2.txt")
+        _create_stash(tmp_path, "user-manual-important-work", "file3.txt")
+
+        monkeypatch.setenv("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "1")
+        spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
+        result = spec.reconcile(["some-file.py"], "test-session")
+
+        # 反向匹配治本：pre-merge-cleanup + other-session-wip 被 drop（共 2 个）
+        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
+        assert "dropped=2" in result.detail, f"detail: {result.detail}"
+        # user-manual- 保留
+        remaining = _get_stash_list(tmp_path)
+        assert len(remaining) == 1, f"remaining: {remaining}"
+        assert "user-manual-important-work" in remaining[0]
+
+    def test_protected_user_manual_always_kept(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """user-manual- 前缀 stash 在 aggressive 模式下也保留。"""
+        _init_git_repo(tmp_path)
+        _create_stash(tmp_path, "user-manual-1", "file1.txt")
+        _create_stash(tmp_path, "user-manual-2", "file2.txt")
+        _create_stash(tmp_path, "user-manual-3", "file3.txt")
+        _create_stash(tmp_path, "session_worktree_pre_merge: sess-xxx", "file4.txt")
+
+        monkeypatch.setenv("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "1")
+        spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
+        result = spec.reconcile(["some-file.py"], "test-session")
+
+        # 3 个 user-manual- 全部保留，1 个 AI stash drop
+        assert "dropped=1" in result.detail, f"detail: {result.detail}"
+        remaining = _get_stash_list(tmp_path)
+        assert len(remaining) == 3, f"remaining: {remaining}"
+        for msg in remaining:
+            assert "user-manual-" in msg, f"unexpected stash kept: {msg}"
+
+    def test_non_aggressive_keeps_fresh_ai_stash(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """非 aggressive 模式下，age < TTL 的 AI stash 保留（反向匹配不破坏 TTL 行为）。"""
+        _init_git_repo(tmp_path)
+        # 刚创建的 stash age < 4h TTL
+        _create_stash(tmp_path, "pre-merge-cleanup-fresh", "file1.txt")
+        _create_stash(tmp_path, "other-session-wip-fresh", "file2.txt")
+
+        monkeypatch.delenv("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", raising=False)
+        spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
+        result = spec.reconcile(["some-file.py"], "test-session")
+
+        # 全部 < TTL → skip（无 drop），stash 全部保留
+        assert result.action == "skip", f"expected skip, got {result.action}: {result.detail}"
+        remaining = _get_stash_list(tmp_path)
+        assert len(remaining) == 2, f"remaining: {remaining}"
+
+    def test_real_world_unknown_prefixes_recognized(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """真实场景未知前缀全部识别为 AI stash（修复前不可识别，导致 18+ stash 堆积）。
+
+        场景：实测 18 个 stash 堆积的真实 message（含 CONSUMERS-ACCURACY /
+        auto-sync temp / unrelated / pre-construction 等修复前不可识别前缀）。
+        aggressive 模式下全部 drop，证明反向匹配治本生效。
+        """
+        _init_git_repo(tmp_path)
+        real_world_messages = [
+            "CONSUMERS-ACCURACY work-in-progress from previous session",
+            "unrelated gov_audit/governance/trading work-in-progress",
+            "auto-sync temp file lifecycle changes",
+            "other-sessions-changes-before-merge",
+            "pre-construction stash: test_capability_overlap_gate",
+            "pre-construction stash: 3 files from other session",
+            "other-session-wip-before-redblue-fix",
+            "other-session-wip-module-id-naming-fix-20260722",
+        ]
+        for i, msg in enumerate(real_world_messages, 1):
+            _create_stash(tmp_path, msg, f"file{i}.txt")
+
+        monkeypatch.setenv("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "1")
+        spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
+        result = spec.reconcile(["some-file.py"], "test-session")
+
+        # 全部 8 个未知前缀 stash 被 drop（修复前 reconciler 形同虚设，0 个 drop）
+        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
+        assert "dropped=8" in result.detail, f"detail: {result.detail}"
+        remaining = _get_stash_list(tmp_path)
+        assert len(remaining) == 0, f"remaining: {remaining}"
+
+    def test_session_worktree_prefix_still_recognized(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """原 8 个 AI 前缀（session_worktree_pre_merge 等）反向匹配仍识别。
+
+        回归测试：反向匹配治本不破坏原 AI 前缀识别（session_worktree_pre_merge /
+        abort / phase- / temp-stash-for- / pre-merge stash / pre-merge-stash /
+        merge-prep- / stash-for-merge）。
+        """
+        _init_git_repo(tmp_path)
+        original_ai_prefixes = [
+            "session_worktree_pre_merge: sess-001",
+            "session_worktree_abort: sess-002",
+            "phase-6-merge-tmp",
+            "temp-stash-for-issue23-merge",
+            "pre-merge stash retry 4",
+            "pre-merge-stash sess-49896",
+            "merge-prep-2: 3 more files",
+            "stash-for-merge",
+        ]
+        for i, msg in enumerate(original_ai_prefixes, 1):
+            _create_stash(tmp_path, msg, f"file{i}.txt")
+
+        monkeypatch.setenv("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "1")
+        spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
+        result = spec.reconcile(["some-file.py"], "test-session")
+
+        # 全部 8 个原 AI 前缀 stash 被 drop（反向匹配覆盖原 8 个前缀）
+        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
+        assert "dropped=8" in result.detail, f"detail: {result.detail}"
+        remaining = _get_stash_list(tmp_path)
+        assert len(remaining) == 0, f"remaining: {remaining}"
+
+    def test_empty_stash_list_skips(self, tmp_path: Path) -> None:
+        """空 stash list → action=skip。"""
+        _init_git_repo(tmp_path)
+        spec = make_stash_lifecycle_reconciler(types.SimpleNamespace(project_root=tmp_path))
+        result = spec.reconcile(["some-file.py"], "test-session")
+        assert result.action == "skip", f"expected skip, got {result.action}: {result.detail}"
+
