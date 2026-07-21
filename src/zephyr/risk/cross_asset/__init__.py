@@ -1,4 +1,6 @@
-# [A_module] module_id=MOD-UNK_cross_asset | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
+# [A_module] module_id=MOD-UNK-cross_asset | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """cross_asset 包初始化。
 

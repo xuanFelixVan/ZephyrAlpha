@@ -1,4 +1,6 @@
-# [A_module] module_id=MOD-SEC_verifiers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
+# [A_module] module_id=MOD-SEC-verifiers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # Package marker for *_verifier.py modules (ARCH-035 suffix-based grouping)
 
