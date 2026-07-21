@@ -6445,3 +6445,25 @@ entries:
   related_rules: 'trae_060 (向内收三原则 + 元问题3 reconciler 审查标记), AGENTS.md FP-ISO.4C (worktree 君子协定)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+
+
+# --- #ARCH-MODULE-ID-DUAL-SPELLING-001: [BLUEPRINT] vs [A_module] same-module dual-spelling ---
+- issue_id: '#ARCH-MODULE-ID-DUAL-SPELLING-001'
+  title: '[BLUEPRINT] vs [A_module] header same-module dual-spelling cross-check gap'
+  category: architecture_governance
+  severity: P2
+  adjudication: |
+    11 .py files had [BLUEPRINT]=UNDERSCORE vs [A_module]=DASH for same module.
+    No gate cross-checked the two headers. New BLUEPRINT-AMODULE-CROSS-CHECK gate (priority=119)
+    blocks normalize-equal dual-spelling. 11 files unified to DASH.
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_cross_check_gate.py'
+    - 'tests/governance/commit_gates/test_blueprint_amodule_cross_check_gate.py'
+    - '11 files [BLUEPRINT] UNDERSCORE->DASH unified'
+  fix_phase: |
+    Phase 1 (2026-07-22): gate + 26 tests + 11 files unified + depgraph sync + registry
+  status: resolved
+  related_adjudication: '#ARCH-DRIFT-PREVENTION-001, #214'
+  related_rules: 'trae_060, AGENTS.md SSoT'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
