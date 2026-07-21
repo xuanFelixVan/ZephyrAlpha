@@ -1,0 +1,407 @@
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §ARCH-CONSUMERS-ACCURACY-001
+# [MODULE] zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate
+# [DOMAIN] D_GOV_CODE_QUALITY
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file, _collect_function_names); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] warn-only——检测 staged .py 文件的 [CONSUMERS] 字段准确性（#ARCH-CONSUMERS-ACCURACY-001 治本）；三类违规：orphan（括号内函数名在当前文件不存在，AST 精确检测）+ phantom（消费者模块路径在项目内不存在，文件系统查找）+ stale（消费者模块存在但不 import 当前模块，baseline-scan 专用 git grep，commit-time 不检测避免性能损耗）；命中返回 passed=True + warning detail（不阻断）；tests/ 豁免；抽象代号（MOD-XXX/SH-XXX）豁免（无法静态验证）；含中文括号内容跳过（描述性文字非函数名）；noqa: consumers-accuracy 行级逃生；git diff 不可达 fail-open
+# [MODIFY-GUARD] gate_id="CONSUMERS-ACCURACY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 warn-only（passed=True + detail）
+# [TESTS] tests/governance/commit_gates/test_consumers_accuracy_gate.py
+# [A_module] module_id=MOD-GOV-consumers_accuracy_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+"""consumers_accuracy_gate.py — CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
+
+#ARCH-CONSUMERS-ACCURACY-001 治本（2026-07-21 立项，P3低→P2中升级）：
+
+病根（第一性原理）
+-----------------
+[CONSUMERS] 头部字段是"反向依赖索引"——记录"哪些模块依赖此文件"。它的真源是
+"实际 import 关系"（depgraph 已有此数据），CONSUMERS 只是这个真源的人类可读
+派生形式。
+
+根本问题：派生数据被当作声明数据对待——让 AI 手工维护。AI 手工维护派生数据
+= 漂移温床（抽样 40% 不一致率实证，推算全项目 150-200 个文件有错误）。
+
+100% AI 开发的特殊致命性：
+- AI 上下文有限 → CONSUMERS 是 AI 评估修改影响的关键入口
+- AI 看到 CONSUMERS 就会信任它（即使不准）
+- AI 修改文件后不会自动同步 CONSUMERS
+- 247 个错误 CONSUMERS = 247 个 AI 决策污染源 = 系统性幻觉温床
+
+规则真源已隐含承认：
+- trae_009/012 §跨文件影响检查 设计为"读 CONSUMERS" + "Grep 所有引用"并列两步
+- 规则制定者已预期 CONSUMERS 不可信，但用君子协定（AI 自觉 Grep 兜底）而非
+  门禁强制弥补
+- 40% 不一致率证明君子协定失败
+
+治本方案
+--------
+在 GitCommitGateway pre-commit 阶段注册门禁（priority=109，紧接
+BARE-SUBPROCESS=108 之后）：
+  1. 对每个 staged .py 文件，读取 [CONSUMERS] 字段内容
+  2. 解析消费者声明（支持 4 种格式：简单模块路径/模块+函数名/抽象代号/方法级）
+  3. 三类违规检测：
+     (a) orphan（轻）：括号内声明的函数名在当前文件中不存在（AST 精确检测）
+     (b) phantom（重）：声明的消费者模块路径在项目内不存在（文件系统查找）
+     (c) stale（中）：消费者模块存在但不 import 当前模块（baseline-scan 专用，
+         commit-time 不检测避免性能损耗）
+  4. warn-only（passed=True + detail 不阻断）
+
+设计权衡
+--------
+1. **warn-only（P1）**：当前 warn-only 不阻断 commit，先建立检测能力 + 数据收集。
+   历史漂移（247 个文件）一次性爆会瘫痪 commit 流程。P2 升级为 block（待历史
+   漂移治理完成后）。
+2. **commit-time 只检测 orphan + phantom**：stale 检测需要 git grep 反向查找，
+   性能差（N × 500ms），commit-time 不检测。stale 留给 baseline-scan 脚本。
+3. **抽象代号豁免**：MOD-XXX/SH-XXX 格式无法静态验证（需 capability registry
+   映射），跳过避免假阳性。
+4. **含中文括号内容跳过**：括号内含中文等非 ASCII 字符 → 视为描述性文字非
+   函数名，跳过整个括号（宁可漏报不可误报）。
+5. **fail-open 原则**：git 失败 / ast 解析失败时不阻断 commit（与其他 gate 一致）。
+6. **priority=109**：紧接 BARE-SUBPROCESS=108，在 CAPABILITY-LOOKUP-REQUIRED=110
+   之前，作为第三个 warn-only gate。
+7. **noqa 行级逃生**：`# noqa: consumers-accuracy  <reason>` 标记当前文件豁免
+   （对标 bare-subprocess 模式）。
+
+Usage::
+
+    from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (
+        make_consumers_accuracy_gate,
+    )
+    registry.register(make_consumers_accuracy_gate())
+"""
+
+from __future__ import annotations
+
+import logging
+import re
+from pathlib import Path
+
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _collect_function_names,
+    _get_staged_py_files,
+    _read_staged_file,
+)
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+
+logger = logging.getLogger(__name__)
+
+__all__ = [
+    "make_consumers_accuracy_gate",
+    "parse_consumers_field",
+    "check_consumers_accuracy",
+]
+
+# 扫描范围：与 IMPORT-INTEGRITY / BARE-SUBPROCESS 对齐
+_SCAN_PREFIXES: tuple[str, ...] = ("scripts/governance/", "src/")
+
+# [CONSUMERS] 字段正则：匹配 `# [CONSUMERS] <content>` 行（允许前导空格）
+_CONSUMERS_RE = re.compile(r"^\s*#\s*\[CONSUMERS\]\s*(.*)$")
+
+# 抽象代号前缀（无法静态验证，豁免）
+_ABSTRACT_CODE_PREFIXES: tuple[str, ...] = ("MOD-", "SH-", "CFG-", "REG-")
+
+# 标识符正则（用于从括号内提取函数名）
+_IDENTIFIER_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+# 中文字符检测（含中文则跳过括号内容）
+_CJK_RE = re.compile(r"[\u4e00-\u9fff]")
+
+# noqa 行级逃生：`# noqa: consumers-accuracy  <reason>`（对标 bare-subprocess 模式）
+_CONSUMERS_ACCURACY_NOQA_RE = re.compile(
+    r"#\s*noqa:\s*consumers-accuracy",
+)
+
+
+def _is_abstract_code(consumer_decl: str) -> bool:
+    """判断是否为抽象代号（MOD-XXX/SH-XXX/CFG-XXX/REG-XXX）——无法静态验证，豁免。"""
+    return any(consumer_decl.startswith(prefix) for prefix in _ABSTRACT_CODE_PREFIXES)
+
+
+def _has_cjk(text: str) -> bool:
+    """检测文本是否含 CJK 字符（含中文则视为描述性文字，跳过括号内容）。"""
+    return bool(_CJK_RE.search(text))
+
+
+def _module_to_file_candidates(module_path: str) -> list[str]:
+    """将模块路径转为文件系统候选路径（module.py 或 module/__init__.py）。
+
+    Args:
+        module_path: 模块路径（如 zephyr.gov_enforcement.commit_gates.create_guard）
+
+    Returns:
+        候选相对路径列表（如 src/zephyr/gov_enforcement/commit_gates/create_guard.py）。
+    """
+    parts = module_path.split(".")
+    base = "/".join(parts)
+    return [
+        f"src/{base}.py",
+        f"src/{base}/__init__.py",
+        f"{base}.py",
+        f"{base}/__init__.py",
+    ]
+
+
+def _check_module_path_exists(
+    module_path: str, project_root: Path
+) -> bool:
+    """检查模块路径在项目内是否存在（phantom 检测）。
+
+    Args:
+        module_path: 模块路径（如 zephyr.gov_enforcement.commit_gates.create_guard）
+        project_root: 项目根目录
+
+    Returns:
+        True 如果模块文件存在，False 不存在（phantom 违规）。
+    """
+    candidates = _module_to_file_candidates(module_path)
+    for candidate in candidates:
+        full_path = project_root / candidate
+        if full_path.exists():
+            return True
+    return False
+
+
+def _extract_function_names_from_parens(parens_content: str) -> list[str]:
+    """从括号内容提取函数名（标识符）。
+
+    策略：
+    - 含 CJK 字符 → 跳过整个括号（描述性文字非函数名）
+    - 否则 → 按逗号/空格分割，提取每个标识符
+
+    Args:
+        parens_content: 括号内内容（如 "find_breaking_change_session, register_dependency"）
+
+    Returns:
+        函数名列表（如 ["find_breaking_change_session", "register_dependency"]）。
+        含 CJK 时返回空列表。
+    """
+    if _has_cjk(parens_content):
+        return []  # 描述性文字，跳过
+    # 按逗号/空格/分号分割
+    tokens = re.split(r"[,;\s]+", parens_content.strip())
+    return [t for t in tokens if t and _IDENTIFIER_RE.match(t)]
+
+
+def parse_consumers_field(file_content: str) -> list[tuple[str, str]]:
+    """解析 [CONSUMERS] 字段内容，返回 (consumer_decl, parens_content) 列表。
+
+    支持格式：
+    1. `module1; module2` — 简单模块路径（parens_content=""）
+    2. `module1 (func1, func2); module2 (func3)` — 模块+函数名
+    3. `MOD-INF-027(audit-orchestrator)` — 抽象代号（parens_content="audit-orchestrator"）
+    4. `module1.Class.method` — 方法级（取到模块级）
+
+    Args:
+        file_content: 文件内容
+
+    Returns:
+        [(consumer_decl, parens_content), ...] 列表。
+        consumer_decl 是括号前的模块路径/代号，parens_content 是括号内内容（无括号则空）。
+        未找到 [CONSUMERS] 字段时返回空列表。
+    """
+    # 只读前 30 行（与 CREATE-GUARD _check_field_header 对齐）
+    for line in file_content.splitlines()[:30]:
+        m = _CONSUMERS_RE.match(line)
+        if m:
+            content = m.group(1).strip()
+            if not content:
+                return []
+            # 按 `;` 分割消费者声明
+            declarations = [d.strip() for d in content.split(";") if d.strip()]
+            result: list[tuple[str, str]] = []
+            for decl in declarations:
+                # 提取括号内容（如果有）
+                paren_match = re.match(r"^([^(]+)\s*\(([^)]*)\)\s*$", decl)
+                if paren_match:
+                    consumer = paren_match.group(1).strip()
+                    parens = paren_match.group(2).strip()
+                    result.append((consumer, parens))
+                else:
+                    result.append((decl, ""))
+            return result
+    return []
+
+
+def check_consumers_accuracy(
+    py_file: str,
+    file_content: str,
+    project_root: Path,
+    noqa_files: set[str] | None = None,
+) -> list[str]:
+    """检查单个文件的 [CONSUMERS] 字段准确性，返回违规消息列表（空=通过）。
+
+    检测三类违规：
+    - orphan（轻）：括号内声明的函数名在当前文件中不存在
+    - phantom（重）：声明的消费者模块路径在项目内不存在
+
+    stale 检测（消费者模块存在但不 import 当前模块）需要 git grep，commit-time
+    不检测，留给 baseline-scan 脚本。
+
+    Args:
+        py_file: 文件相对路径（用于诊断消息）
+        file_content: 文件内容
+        project_root: 项目根目录
+        noqa_files: noqa 豁免文件集合（可选）
+
+    Returns:
+        违规消息列表（空=通过）。
+    """
+    if noqa_files and py_file in noqa_files:
+        return []
+
+    declarations = parse_consumers_field(file_content)
+    if not declarations:
+        return []  # 无 [CONSUMERS] 字段或为空，由 CREATE-GUARD 检测存在性
+
+    # 收集当前文件的所有函数名（用于 orphan 检测）
+    try:
+        defined_functions = _collect_function_names(file_content)
+    except Exception:  # noqa: BLE001 — fail-open
+        defined_functions = set()
+
+    violations: list[str] = []
+    for consumer, parens in declarations:
+        # 跳过抽象代号（MOD-XXX/SH-XXX 等，无法静态验证）
+        if _is_abstract_code(consumer):
+            continue
+
+        # phantom 检测：消费者模块路径在项目内不存在
+        # 处理方法级声明：module.Class.method → 取到模块级
+        # 策略：从右往左尝试，去掉最后一段直到找到存在的文件
+        module_path = consumer
+        # 去掉方法级后缀（如 .__init__ / .Class.method）
+        # 但要保留模块路径——策略：尝试完整路径，如果不存在则逐级缩短
+        path_exists = _check_module_path_exists(module_path, project_root)
+        if not path_exists:
+            # 逐级缩短尝试（处理 module.Class.method 格式）
+            parts = module_path.split(".")
+            found = False
+            for i in range(len(parts) - 1, 0, -1):
+                shortened = ".".join(parts[:i])
+                if _check_module_path_exists(shortened, project_root):
+                    found = True
+                    break
+            if not found:
+                violations.append(
+                    f"  {py_file}: phantom consumer '{consumer}' "
+                    f"(模块路径在项目内不存在)"
+                )
+                continue  # phantom 违规，不再检测 orphan（模块都不存在）
+
+        # orphan 检测：括号内声明的函数名在当前文件中不存在
+        if parens:
+            func_names = _extract_function_names_from_parens(parens)
+            for func_name in func_names:
+                if func_name not in defined_functions:
+                    violations.append(
+                        f"  {py_file}: orphan function '{func_name}' "
+                        f"声明在 [CONSUMERS] 括号内但不在当前文件中定义 "
+                        f"(consumer={consumer})"
+                    )
+
+    return violations
+
+
+def _extract_noqa_files(gateway, py_files: list[str]) -> set[str]:
+    """提取带 `# noqa: consumers-accuracy` 标记的文件集合（文件级豁免）。
+
+    策略：读取每个 staged 文件内容，检查是否含 noqa 标记。
+    """
+    noqa_files: set[str] = set()
+    for py_file in py_files:
+        content = _read_staged_file(gateway, py_file)
+        if content and _CONSUMERS_ACCURACY_NOQA_RE.search(content):
+            noqa_files.add(py_file)
+    return noqa_files
+
+
+def make_consumers_accuracy_gate() -> GateSpec:
+    """构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=110）。
+
+    检测 staged scripts/governance/** + src/**.py 的 [CONSUMERS] 字段准确性，
+    warn-only（passed=True + detail 不阻断）。
+
+    #ARCH-CONSUMERS-ACCURACY-001 治本（2026-07-21）：
+    防止 AI 手工维护 [CONSUMERS] 字段时的漂移——函数名拼写错/已删除函数仍标注/
+    消费者模块路径错。
+
+    Returns:
+        GateSpec(gate_id="CONSUMERS-ACCURACY", priority=109)。
+        warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
+    """
+
+    def _check(gateway, _files: list[str], **_kwargs) -> tuple[bool, str]:
+        py_files = [
+            f for f in _get_staged_py_files(gateway, "CONSUMERS-ACCURACY")
+            if not is_test_exempt(f)
+        ]
+        if not py_files:
+            return True, ""
+
+        # 提取 noqa 文件级豁免
+        try:
+            noqa_files = _extract_noqa_files(gateway, py_files)
+        except Exception:  # noqa: BLE001 — fail-open
+            noqa_files = set()
+
+        # 获取项目根目录
+        project_root = getattr(gateway, "project_root", None)
+        if project_root is None:
+            logger.warning(
+                "CONSUMERS-ACCURACY: gateway.project_root 不可达，fail-open 放行"
+            )
+            return True, ""
+        project_root = Path(project_root)
+
+        warnings: list[str] = []
+        for py_file in py_files:
+            if not py_file.startswith(_SCAN_PREFIXES):
+                continue
+            content = _read_staged_file(gateway, py_file)
+            if not content:
+                continue  # fail-open: 文件不可读
+
+            try:
+                file_warnings = check_consumers_accuracy(
+                    py_file, content, project_root, noqa_files
+                )
+                warnings.extend(file_warnings)
+            except Exception as e:  # noqa: BLE001 — fail-open
+                logger.debug(
+                    "CONSUMERS-ACCURACY: check_consumers_accuracy fail-open %s: %s",
+                    py_file, e,
+                )
+                continue
+
+        if warnings:
+            detail = (
+                "CONSUMERS-ACCURACY (warn-only)：[CONSUMERS] 字段准确性问题"
+                "（#ARCH-CONSUMERS-ACCURACY-001 治本）\n"
+                "  病根：[CONSUMERS] 是派生数据（真源=实际 import 关系），"
+                "但被当作声明数据让 AI 手工维护——漂移温床（抽样 40% 不一致）。\n"
+                "  影响：AI 修改文件前读 [CONSUMERS] 评估影响范围，不准的 CONSUMERS"
+                " = AI 决策污染源 = 系统性幻觉温床。\n"
+                "  修复：①核实声明的消费者模块路径是否正确；\n"
+                "        ②核实括号内函数名是否在当前文件中定义；\n"
+                "        ③若消费者模块不存在，删除该声明；\n"
+                "        ④若为抽象代号（MOD-XXX），保留（豁免检测）。\n"
+                + "\n".join(warnings[:50])
+                + (f"\n  ...(+{len(warnings) - 50} more)" if len(warnings) > 50 else "")
+                + "\n-> 逃生通道：文件内加 `# noqa: consumers-accuracy` 标记（整文件豁免）"
+            )
+            logger.warning("CONSUMERS-ACCURACY gate warn:\n%s", detail)
+            return True, detail  # warn-only：passed=True 不阻断
+        return True, ""
+
+    return GateSpec(
+        gate_id="CONSUMERS-ACCURACY",
+        check=_check,
+        priority=110,
+    )
