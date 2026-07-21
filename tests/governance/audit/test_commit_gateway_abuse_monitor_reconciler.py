@@ -15,7 +15,7 @@ ARCH-TOOL-HEALTH-V1 Phase 5b（commit gateway 持续滥用监控）
 - trigger 永远返回 True（任何 commit 都触发）
 - _read_json_reports 按时间窗口过滤 + 跳过损坏 JSON
 - _count_emergency_commits 统计 [GW:*:emergency] 标记（mock subprocess）
-- _classify_abuse 五维分类纯函数（各维度独立触发 + 多维组合）
+- _classify_abuse 六维分类纯函数（各维度独立触发 + 多维组合）
 - reconcile: clean / warn / critical_warn 判定 + 永不抛异常 + 报告落盘
 
 测试隔离：用 tmp_path + mock，不触碰生产 .runtime/ 目录。
@@ -46,6 +46,7 @@ from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  #
     _CRITICAL_WARN_SCORE,
     _EMERGENCY_24H_THRESHOLD,
     _FORGED_24H_THRESHOLD,
+    _FORCE_MERGE_7D_THRESHOLD,
     _GATE_ID,
     _NON_GW_24H_THRESHOLD,
     _PRIORITY,
@@ -54,6 +55,7 @@ from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  #
     _compute_adaptive_thresholds,
     _count_allow_overlap_usage,
     _count_emergency_commits,
+    _count_force_merge_usage,
     _load_baseline,
     _read_json_reports,
     _record_daily_metrics,
@@ -208,12 +210,12 @@ class TestCountEmergencyCommits:
 
 
 # ============================================================================
-# _classify_abuse 测试（纯函数，五维分类）
+# _classify_abuse 测试（纯函数，六维分类）
 # ============================================================================
 
 
 class TestClassifyAbuse:
-    """_classify_abuse 五维分类纯函数测试。"""
+    """_classify_abuse 六维分类纯函数测试。"""
 
     NOW_TS = 1784000000
 
@@ -535,7 +537,7 @@ class TestEmergencyThresholdRollback:
 class TestLoadThresholdsFromYaml:
     """P3-1 治本：阈值从 trae_069 YAML 加载（SSoT 铁律：规则数据真源是 YAML）。
 
-    治本原因：原 5 维阈值散落在代码常量（_WARN_ONLY_24H_THRESHOLD = 50 等），
+    治本原因：原 6 维阈值散落在代码常量（_WARN_ONLY_24H_THRESHOLD = 50 等），
     修改需改代码 + 重新部署。改为从 YAML 加载（trae_062 SSoT 铁律：规则数据
     真源是 YAML 文件），修改只需改 YAML + sync，无需改代码。
 
@@ -1007,17 +1009,19 @@ class TestComputeAdaptiveThresholds:
                 "allow_overlap_abuse_7d": 5,
                 "forged_gw_marker_rate_24h": 0,
                 "non_gw_commit_sustained_24h": 2,
+                "force_merge_abuse_7d": 0,
             },
         }]
         result = _compute_adaptive_thresholds(records)
-        # 5 维都应返回阈值
-        assert len(result) == 5
+        # 6 维都应返回阈值
+        assert len(result) == 6
         # 阈值 >= static_floor（因为 max(ewma*factor, static_floor)）
         assert result["warn_only_sustained_24h"] >= _WARN_ONLY_24H_THRESHOLD
         assert result["emergency_commit_abuse_24h"] >= _EMERGENCY_24H_THRESHOLD
         assert result["allow_overlap_abuse_7d"] >= _ALLOW_OVERLAP_7D_THRESHOLD
         assert result["forged_gw_marker_rate_24h"] >= _FORGED_24H_THRESHOLD
         assert result["non_gw_commit_sustained_24h"] >= _NON_GW_24H_THRESHOLD
+        assert result["force_merge_abuse_7d"] >= _FORCE_MERGE_7D_THRESHOLD
 
     def test_high_baseline_raises_threshold_above_static(self):
         """高基线（7d 平均高）→ 自适应阈值 > 静态阈值（ewma*factor > static_floor）。"""
@@ -1071,9 +1075,9 @@ class TestComputeAdaptiveThresholds:
             {"date": "2026-07-20", "timestamp": int(time.time()), "metrics": "not dict"},
             None,
         ]
-        # 不抛异常，返回 5 维阈值（基于空历史，应等于 static_floor）
+        # 不抛异常，返回 6 维阈值（基于空历史，应等于 static_floor）
         result = _compute_adaptive_thresholds(records)
-        assert len(result) == 5
+        assert len(result) == 6
 
 
 # ============================================================================
@@ -1172,7 +1176,7 @@ class TestReconcilePersistsBaseline:
         assert baseline_file.exists(), "P3-6: baseline 文件未写入"
 
     def test_reconcile_baseline_contains_today_metrics(self, tmp_path):
-        """baseline 包含今日 5 维 metrics（标准 dim_name）。"""
+        """baseline 包含今日 6 维 metrics（标准 dim_name）。"""
         gw = _FakeGateway(tmp_path)
         spec = make_commit_gateway_abuse_monitor_reconciler(gw)
         now = int(time.time())
@@ -1192,7 +1196,7 @@ class TestReconcilePersistsBaseline:
         rec = baseline["daily_records"][0]
         # 今日 warn_only 计数应为 15
         assert rec["metrics"]["warn_only_sustained_24h"] == 15
-        # 5 维都应有记录
+        # 6 维都应有记录
         assert "emergency_commit_abuse_24h" in rec["metrics"]
         assert "allow_overlap_abuse_7d" in rec["metrics"]
         assert "forged_gw_marker_rate_24h" in rec["metrics"]
@@ -1251,7 +1255,7 @@ class TestReconcilePersistsBaseline:
 
 
 class TestHealthScoreIntegration:
-    """P3-3: 5 维加权健康度评分接入 _reconcile 的端到端集成测试。
+    """P3-3: 6 维加权健康度评分接入 _reconcile 的端到端集成测试。
 
     验证：
     - score > 0.7 → critical_warn with "ABUSE CRITICAL"
@@ -1337,7 +1341,7 @@ class TestHealthScoreIntegration:
         )
 
     def test_block_next_score_returns_critical_warn_with_pause(self, tmp_path):
-        """5 维全触发 → score=1.0 > 0.9 → critical_warn with "ABUSE BLOCK_NEXT" + "PAUSE"。
+        """6 维全触发 → score=1.0 > 0.9 → critical_warn with "ABUSE BLOCK_NEXT" + "PAUSE"。
 
         post-commit 无法 block（commit 已入历史），降级为 critical_warn + PAUSE 横幅。
         """
@@ -1362,9 +1366,10 @@ class TestHealthScoreIntegration:
                 tmp_path, "commit_gateway_audit", now - 700 - i,
                 {"violations": [{"hash": f"h{i}"}]},
             )
-        # emergency_count=6 (dim2), allow_overlap_count=31 (dim3)
+        # emergency_count=6 (dim2), allow_overlap_count=31 (dim3), force_merge_count=6 (dim6: 6 > 5)
         with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=6), \
              patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_allow_overlap_usage", return_value=31), \
+             patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_force_merge_usage", return_value=6), \
              patch("time.time", return_value=now):
             result = spec.reconcile([], "sess-p3-3-block-next")
         assert result.action == "critical_warn"
@@ -1378,9 +1383,9 @@ class TestHealthScoreIntegration:
         )
         data = json.loads(reports_files[-1].read_text(encoding="utf-8"))
         assert data["health_score"] > _BLOCK_NEXT_SCORE, (
-            f"P3-3: 5 维全触发 score 应 > 0.9，实际={data['health_score']}"
+            f"P3-3: 6 维全触发 score 应 > 0.9，实际={data['health_score']}"
         )
-        assert len(data["health_triggered_dimensions"]) == 5
+        assert len(data["health_triggered_dimensions"]) == 6
 
     def test_warn_scenario_score_between_clean_and_critical(self, tmp_path):
         """1-2 维度触发但 score < 0.7 → 落入既有 warn 逻辑（P3-3 不升级）。"""

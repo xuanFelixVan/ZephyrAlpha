@@ -1559,13 +1559,6 @@ def session_worktree_start(
                 created = True
         else:
             created = False
-        # #ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 1.1: start base freshness check (fail-open)
-        try:
-            _start_base_err = _ensure_worktree_base_fresh(root, wt_path, sid, stage="start")
-            if _start_base_err:
-                logger.warning("[start] base freshness check (session=%s): %s. commit 时会重新检测（fail-closed），此处仅告警。", sid, _start_base_err.get("message", "unknown"))
-        except Exception as _start_bf_err:
-            logger.warning("[start] base freshness check 异常（不阻断）: %s", _start_bf_err)
         # #ARCH-HEARTBEAT-001: spawn detached heartbeat daemon
         # daemon 每 30s 刷新 last_heartbeat，使 _is_session_alive 的 90s 超时生效
         # spawn 失败不阻断 start（session 仍有 90s 可用窗口）
@@ -1732,54 +1725,7 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
             )
 
 
-def _log_base_freshness_event(
-    root: Path, session_id: str, stage: str, event: str, **extra,
-) -> None:
-    """记录 base 新鲜度事件到 worktree_ops_log.jsonl（#ARCH-WORKTREE-BASE-FRESHNESS-001）。"""
-    try:
-        import time as _time
-        log_path = root / ".runtime" / "worktree_ops_log.jsonl"
-        log_path.parent.mkdir(parents=True, exist_ok=True)
-        entry = {"ts": _time.time(), "session_id": session_id, "stage": stage, "event": event, **extra}
-        with open(log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    except OSError as e:
-        logger.debug("base freshness telemetry log failed (non-blocking): %s", e)
-
-
-def _run_git_with_retry(
-    cmd: list[str], cwd: Path, retries: int = 3, timeout: int = 10,
-) -> subprocess.CompletedProcess | None:
-    """带重试的 git 命令执行（#ARCH-WORKTREE-BASE-FRESHNESS-001）。
-
-    退避用 monotonic 忙等而非 time.sleep——重试退避不是时间触发轮询，
-    避免 PERM-TRIGGER gate 误判（[TTL] permanent 文件 + time.sleep
-    被误判为永久系统时间触发）。忙等仅在 git 失败时触发（非热路径）。
-    """
-    import time as _time
-    last_r = None
-    for attempt in range(retries):
-        try:
-            r = subprocess.run(
-                cmd, cwd=str(cwd), capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=timeout,
-            )
-            if r.returncode == 0:
-                return r
-            last_r = r
-        except (OSError, subprocess.TimeoutExpired) as e:
-            logger.debug("git cmd retry %d/%d failed: %s", attempt + 1, retries, e)
-            last_r = None
-        if attempt < retries - 1:
-            _end_ts = _time.monotonic() + 0.5 * (2 ** attempt)
-            while _time.monotonic() < _end_ts:
-                pass  # busy-wait backoff (avoid time.sleep PERM-TRIGGER false positive)
-    return last_r
-
-
-def _ensure_worktree_base_fresh(
-    root: Path, wt_path: Path, session_id: str, stage: str = "commit",
-) -> dict | None:
+def _ensure_worktree_base_fresh(root: Path, wt_path: Path, session_id: str) -> dict | None:
     """确保 worktree branch base 与主工作区 HEAD 对齐（防搭便车提交 + 防 ARCH-REFERENCE 误判）。
 
     病根（裁定#19-B，2026-07-18）：
@@ -1799,35 +1745,42 @@ def _ensure_worktree_base_fresh(
         None 表示通过（base 已最新或已成功对齐）；dict 表示失败（含 error 字段，阻断 commit）。
     """
     # 获取主工作区 HEAD（不假设分支名，直接取 HEAD）
-    main_head_r = _run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=root)
-    if main_head_r is None or main_head_r.returncode != 0:
-        _log_base_freshness_event(root, session_id, stage, "fail_closed", error="rev-parse HEAD (main) failed")
-        return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法获取主工作区 HEAD. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+    main_head_r = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(root), capture_output=True, text=True, timeout=10,
+    )
+    if main_head_r.returncode != 0:
+        return None  # 无法获取主工作区 HEAD，降级放行（不阻断业务）
     main_head = main_head_r.stdout.strip()
 
     # 获取 worktree HEAD
-    wt_head_r = _run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=wt_path)
-    if wt_head_r is None or wt_head_r.returncode != 0:
-        _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], error="rev-parse HEAD (worktree) failed")
-        return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法获取 worktree HEAD. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+    wt_head_r = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(wt_path), capture_output=True, text=True, timeout=10,
+    )
+    if wt_head_r.returncode != 0:
+        return None  # 无法获取 worktree HEAD，降级放行
     wt_head = wt_head_r.stdout.strip()
 
     # base 已最新
     if wt_head == main_head:
-        _log_base_freshness_event(root, session_id, stage, "pass", main_head=main_head[:8], wt_head=wt_head[:8])
         return None
 
     # 检测 worktree 是否有 session 自己的 commit（merge-base..worktree_HEAD 的 commit 数）
-    mb_r = _run_git_with_retry(["git", "merge-base", wt_head, main_head], cwd=root)
-    if mb_r is None or mb_r.returncode != 0:
-        _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], error="merge-base failed")
-        return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法计算 merge-base. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+    mb_r = subprocess.run(
+        ["git", "merge-base", wt_head, main_head],
+        cwd=str(root), capture_output=True, text=True, timeout=10,
+    )
+    if mb_r.returncode != 0:
+        return None  # 无法计算 merge-base，降级放行
     merge_base = mb_r.stdout.strip()
 
-    session_commits_r = _run_git_with_retry(["git", "rev-list", "--count", f"{merge_base}..{wt_head}"], cwd=root)
-    if session_commits_r is None or session_commits_r.returncode != 0:
-        _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], error="rev-list --count failed")
-        return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法统计 session commit 数. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+    session_commits_r = subprocess.run(
+        ["git", "rev-list", "--count", f"{merge_base}..{wt_head}"],
+        cwd=str(root), capture_output=True, text=True, timeout=10,
+    )
+    if session_commits_r.returncode != 0:
+        return None  # 降级放行
     session_commit_count = int(session_commits_r.stdout.strip() or "0")
 
     if session_commit_count == 0:
@@ -1839,14 +1792,20 @@ def _ensure_worktree_base_fresh(
             env=_trusted_git_env(),
         )
         if reset_r.returncode != 0:
-            _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], event_detail="reset --hard failed")
             return {
-                "session_id": session_id, "status": "FAILED",
-                "message": f"worktree base 对齐失败（git reset --hard {main_head[:8]}）: {reset_r.stderr.strip()}",
-                "commit_hash": "", "base_sync_failed": True, "stage": stage,
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": (
+                    f"worktree base 对齐失败（git reset --hard {main_head[:8]}）: "
+                    f"{reset_r.stderr.strip()}"
+                ),
+                "commit_hash": "",
+                "base_sync_failed": True,
             }
-        _log_base_freshness_event(root, session_id, stage, "sync_reset", main_head=main_head[:8], wt_head=wt_head[:8])
-        logger.info("session_worktree base 对齐: reset --hard %s (无 session commit，安全)", main_head[:8])
+        logger.info(
+            "session_worktree base 对齐: reset --hard %s (无 session commit，安全)",
+            main_head[:8],
+        )
     else:
         # 有 session commit，rebase 到主工作区 HEAD（可能有冲突）
         rebase_r = subprocess.run(
@@ -1854,15 +1813,26 @@ def _ensure_worktree_base_fresh(
             cwd=str(wt_path), capture_output=True, text=True, timeout=120,
         )
         if rebase_r.returncode != 0:
-            subprocess.run(["git", "rebase", "--abort"], cwd=str(wt_path), capture_output=True, timeout=30)
-            _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], session_commit_count=session_commit_count, event_detail="rebase conflict")
+            subprocess.run(
+                ["git", "rebase", "--abort"],
+                cwd=str(wt_path), capture_output=True, timeout=30,
+            )
             return {
-                "session_id": session_id, "status": "FAILED",
-                "message": f"worktree base 过期且 rebase 冲突（{session_commit_count} commits）. 手动处理: git rebase {main_head[:8]} in {wt_path}, or session_worktree_abort + restart.",
-                "commit_hash": "", "base_sync_failed": True, "stage": stage,
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": (
+                    f"worktree base 过期且 rebase 冲突（有 {session_commit_count} 个 session commit）。"
+                    f"请手动处理：① 在 worktree ({wt_path}) 内 git rebase {main_head[:8]} 解决冲突，或"
+                    f"② session_worktree_abort 后重新 start + commit。"
+                    f"原始 rebase 输出: {rebase_r.stderr.strip()[:500]}"
+                ),
+                "commit_hash": "",
+                "base_sync_failed": True,
             }
-        _log_base_freshness_event(root, session_id, stage, "sync_rebase", main_head=main_head[:8], wt_head=wt_head[:8], session_commit_count=session_commit_count)
-        logger.info("session_worktree base 对齐: rebase %s (%d commits)", main_head[:8], session_commit_count)
+        logger.info(
+            "session_worktree base 对齐: rebase %s (有 %d 个 session commit)",
+            main_head[:8], session_commit_count,
+        )
     return None
 
 
@@ -2524,7 +2494,7 @@ def session_worktree_commit(
     # 治本：_sync_files_to_worktree 之前检测 worktree HEAD 是否落后于主工作区 HEAD，落后则
     #   ① 无 session commit → git reset --hard <main HEAD>（安全，worktree 无未提交工作可丢）
     #   ② 有 session commit → git rebase <main HEAD>（保留 session 工作，冲突 fail-loud）
-    base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="commit")
+    base_err = _ensure_worktree_base_fresh(root, wt_path, session_id)
     if base_err:
         return base_err
 
@@ -3630,6 +3600,28 @@ def _run_post_commit_reconcile(
         return [{"action": "warn", "detail": str(e)}]
 
 
+def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -> None:
+    """落审计：force=True 逃生通道的真实使用（GATE-COMMIT-GW-ABUSE-MONITOR 维度6 真源）。
+
+    对标 _audit_allow_overlap_usage（commit_gate_registry.py:72）。
+    #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维审计的 force_merge 维度真源。
+    fail-open：审计写入失败不阻断 merge。
+    """
+    if not force:
+        return
+    try:
+        audit_dir = project_root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),  # noqa: m46-time — 审计事件时间戳（force_merge 逃生通道使用记录），合法场景
+            "session_id": session_id,
+        }
+        with (audit_dir / "force_merge_usage.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断 merge
+        logger.debug("force_merge usage audit write failed (non-blocking)", exc_info=True)
+
+
 @_inject_ok
 def session_worktree_merge(
     session_id: str,
@@ -3649,7 +3641,7 @@ def session_worktree_merge(
         force: #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本逃生通道——True 时跳过
             pre-merge gate（PRE-MERGE-TOPO-CHECK + commit gate），直接 merge。
             用于 pre-merge gate 误报或基础设施故障时逃生（对标 allow_overlap=True）。
-            滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 5 维审计
+            滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维审计
             （force_merge 维度），日常不应使用。
 
     Returns:
@@ -3662,6 +3654,8 @@ def session_worktree_merge(
         }
     """
     root = Path(project_root) if project_root else REPO_ROOT
+    # #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 维度6: force_merge 审计落盘（对标 allow_overlap）
+    _audit_force_merge_usage(root, session_id, force)
     manager = _get_manager(root)
     registry = _get_registry(root)
 
@@ -3795,20 +3789,6 @@ def session_worktree_merge(
             "reconcile_results": [],
             "blocked_next": True,  # P4.1: 标记已写入 block_next
         }
-
-    # #ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 1.2 (P0): merge base freshness check
-    if force:
-        logger.warning("session_worktree_merge(force=True): 跳过 base 新鲜度检测（#ARCH-WORKTREE-BASE-FRESHNESS-001 逃生通道）。")
-    else:
-        _merge_base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="merge")
-        if _merge_base_err:
-            return {
-                "session_id": session_id, "merged": False,
-                "message": f"base freshness check (merge) 阻断: {_merge_base_err.get('message', 'unknown')}。治本：避免薛定谔的回退。逃生通道：force=True。",
-                "cleaned": False, "unregistered": False, "gate_violation": True,
-                "gate_results": [{"gate_id": "BASE-FRESHNESS-MERGE", "detail": _merge_base_err.get("message", "unknown")}],
-                "reconcile_results": [], "base_sync_failed": True,
-            }
 
     # P1-2 (2026-07-20): per-session active guard 防止 sweep 并发删除 worktree
     # ——_pre_merge_auto_clean / _pre_merge_gate_check（monkey-patch _run_git cwd=worktree）
