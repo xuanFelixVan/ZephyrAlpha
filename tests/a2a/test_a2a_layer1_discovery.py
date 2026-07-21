@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0242 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_a2a_layer1_discovery | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md | §layer1_discovery
 # [MODULE] tests.test_a2a_layer1_discovery
 # [INVARIANTS] A2ARegistry.register/discover/get必须一致; IdentityVerifier.sign/verify必须可逆

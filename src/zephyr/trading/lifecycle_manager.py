@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-ORC_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=immutable_core
+# [A_module] module_id=MOD-ORC-lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=immutable_core
 # [CHANGE-NOTE] 2026-06-26: Owner 授权手术式修改——移除 CircadianScheduler 依赖（项目硬约束"废除CircadianScheduler定时触发机制"）。
 # [TTL] permanent
 #   删除 circadian_scheduler 参数（boot_sequence/shutdown_sequence）、_register_audit_tasks（no-op）、

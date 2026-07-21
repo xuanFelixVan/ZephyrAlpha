@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] psutil 不可用时返回空结果；kill 对已退出 PID 不报错；模式文件损坏时重置为空 dict
 # [TESTS]
-# [A_module] module_id=MOD-ORC_zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-ORC-zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: _kill_process的time.sleep是kill信号间等待(SIGTERM->terminate->kill升级),非周期轮询
 

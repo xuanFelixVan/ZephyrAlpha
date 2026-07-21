@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] start() 复用已有循环或创建新循环；stop() 幂等（多次调用安全）；run_coroutine 在已运行循环中抛 RuntimeError；run_in_executor 无循环时直接同步调用, 有运行循环时通过 ThreadPoolExecutor 提交并阻塞等待结果 (5.67.3)
 # [TESTS] tests/trading/runtime/test_async_runtime.py
-# [A_module] module_id=MOD-TRADING-RUNTIME-ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-TRADING_RUNTIME_ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations
