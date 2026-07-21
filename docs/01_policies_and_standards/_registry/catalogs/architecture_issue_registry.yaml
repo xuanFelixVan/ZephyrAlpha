@@ -6456,6 +6456,30 @@ entries:
   related_rules: 'trae_060 (向内收三原则 + 元问题3 reconciler 审查标记), AGENTS.md FP-ISO.4C (worktree 君子协定)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+
+# --- #ARCH-MODULE-ID-DUAL-SPELLING-001: [BLUEPRINT] vs [A_module] same-module dual-spelling cross-check gap ---
+- issue_id: '#ARCH-MODULE-ID-DUAL-SPELLING-001'
+  title: '[BLUEPRINT] vs [A_module] header same-module dual-spelling cross-check gap'
+  category: architecture_governance
+  severity: P2
+  adjudication: |
+    11 .py files had [BLUEPRINT]=UNDERSCORE vs [A_module]=DASH for same module.
+    No gate cross-checked the two headers. New BLUEPRINT-AMODULE-CROSS-CHECK gate (priority=119)
+    blocks normalize-equal dual-spelling. 11 files unified to DASH.
+
+    注：本条目曾因并发 session merge 数据丢失（参见 #ARCH-REGISTRY-MERGE-LOSS-001），
+    此处从历史 commit e258a0ad58 恢复补登。
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_cross_check_gate.py'
+    - 'tests/governance/commit_gates/test_blueprint_amodule_cross_check_gate.py'
+    - '11 files [BLUEPRINT] UNDERSCORE->DASH unified'
+  fix_phase: |
+    Phase 1 (2026-07-22): gate + 26 tests + 11 files unified + depgraph sync + registry
+  status: resolved
+  related_adjudication: '#ARCH-DRIFT-PREVENTION-001, #214, #ARCH-REGISTRY-MERGE-LOSS-001 (数据丢失恢复)'
+  related_rules: 'trae_060, AGENTS.md SSoT'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
 - issue_id: '#ARCH-ENV-PATH-001'
   title: TRAE IDE 运行时 PATH 注入导致 Python 3.10 优先（环境对齐君子协定）
   severity: P1高
@@ -6633,5 +6657,78 @@ entries:
   status: resolved
   related_adjudication: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD (父裁定，6 层闭环建立), #ARCH-PREVENTABILITY-LAYER-001 (TRAE-068 第 6 层可预防性)'
   related_rules: 'trae_068 (第 6 层可预防性铁律), trae_065 (capability_lookup_required 规则), trae_077 (本次新建——场景分类)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-REGISTRY-MERGE-LOSS-001: 并发 session merge 导致 YAML 条目静默丢失（2026-07-22）---
+- issue_id: '#ARCH-REGISTRY-MERGE-LOSS-001'
+  title: '并发 session merge 导致 append-only YAML 注册表条目静默丢失——无 post-merge 检测机制'
+  category: architecture_governance
+  severity: P1
+  adjudication: |
+    2026-07-22 立项裁定。100% AI 开发场景下多 session 并发无协调，append-only YAML
+    注册表（architecture_issue_registry.yaml / rule_ai_perception_index.yaml 等）在
+    并发 session_worktree_merge 时发生条目静默丢失。
+
+    实证（本次事故复盘）：
+    - session A 登记裁定 #ARCH-MODULE-ID-DUAL-SPELLING-001 到 registry（commit e258a0ad58）
+    - session B 并发 merge 另一裁定，git 3-way merge 末尾追加冲突
+    - merge 结果：session A 的条目被静默丢弃，无报错、无警告
+    - 后果：裁定登记"消失"，AI 查询 registry 得到错误结论（"该裁定不存在"）
+    - 类似事故：#ARCH-ENV-PATH-001 也曾因并发 merge 丢失（已补登注明）
+
+    第一性原理分析：
+    1. append-only YAML 注册表的物理结构：条目以 `- issue_id:` 列表项追加到文件末尾
+    2. 并发 merge 的物理本质：两个 session 同时在文件末尾追加新条目
+    3. git 3-way merge 的局限：对"末尾追加"冲突，可能选择一方丢弃另一方（无语义感知）
+    4. 100% AI 场景无人类视觉通道：丢失无报错 → AI 在错误数据上决策 → 幻觉/漂移根源
+
+    TRAE-068 6 层闭环模型分析：
+    - 可知性（L1）：❌ 条目丢失后无任何告警——AI 不知道发生了丢失
+    - 可达性（L2）：❌ 丢失的条目无法被查询到——查询返回"不存在"
+    - 可观察性（L3）：❌ bypass_audit.jsonl 不记录 merge 操作的条目变化
+    - 可逃生性（L4）：⚠️ 仅能从 git history 恢复（需人工介入，非自动）
+    - 可追溯性（L5）：⚠️ git log 可追溯历史 commit，但无法自动检测"应该存在但丢失"
+    - 可预防性（L6）：❌ 无 post-merge reconciler 检测条目丢失
+
+    病根（TRAE-068 第 6 层可预防性违反）：
+    无 post-merge 检测机制是根本缺陷。merge 操作本身不可靠（git 3-way merge 对
+    append-only 末尾追加有已知局限），但"merge 后不验证完整性"是可预防性违反——
+    应该有 reconciler 在 merge 后扫描"条目数量是否减少"或"已知 issue_id 是否消失"。
+
+    裁定条款：
+    条款1（数据恢复）：本次丢失的 #ARCH-MODULE-ID-DUAL-SPELLING-001 从历史 commit
+           e258a0ad58 恢复，重新补登到 registry。related_adjudication 字段注明
+           "#ARCH-REGISTRY-MERGE-LOSS-001 (数据丢失恢复)"。
+    条款2（长期方向——post-merge reconciler）：新建 registry_integrity_reconciler
+           （长期项，本次不实施），在每次 session_worktree_merge 后触发：
+           - 对比 merge 前/后的 registry 条目数量（issue_id 集合差集）
+           - 若发现条目消失（且非本次 session 主动删除），则 critical_warn
+           - 对比基准：merge 前 dev HEAD 的 registry 条目集合 ∪ 本次 session 新增条目
+           - 触发时机：session_worktree_merge 成功后（事件驱动，符合"reconciler 事件触发"铁律）
+    条款3（registry 条目排序约定）：建议（非强制）registry 条目按 issue_id 字典序
+           排列，减少末尾追加冲突概率（但不强制——字典序维护成本高，reconciler 是治本）
+    条款4（不迁移到 DB）：registry 仍是 YAML 真源（遵循 SSoT 分类铁律——规则数据真源
+           是 YAML），不因本次事故迁移到 DB。DB 是架构数据真源，YAML 是规则数据真源。
+
+    不实施项（避免过度工程）：
+    - 完全迁移 registry 到 DB（违反 SSoT 分类铁律，且 DB 也有并发写入问题）
+    - 强制 registry 条目字典序（维护成本高，reconciler 是更优治本方案）
+    - 禁止并发 session merge（100% AI 开发场景无法禁止，需协调机制而非禁止）
+    - 本次立即实施 registry_integrity_reconciler（需独立裁定 + 设计 + 测试，本次仅登记方向）
+  fix_phase: |
+    Phase 1（本次落地，2026-07-22）：
+      - #ARCH-MODULE-ID-DUAL-SPELLING-001 从 commit e258a0ad58 恢复补登
+      - 本裁定条目登记到 registry
+    长期方向（不实施，登记为后续独立裁定）：
+      - registry_integrity_reconciler（post-merge 条目丢失检测）
+      - 触发机制：session_worktree_merge 成功事件
+      - 检测逻辑：merge 前/后 issue_id 集合差集，消失条目（非主动删除）→ critical_warn
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（#ARCH-MODULE-ID-DUAL-SPELLING-001 恢复 + 本条登记）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml #ARCH-ENV-PATH-001 注明曾因并发 merge 丢失'
+  status: resolved
+  related_adjudication: '#ARCH-MODULE-ID-DUAL-SPELLING-001 (本次恢复的丢失条目), #ARCH-ENV-PATH-001 (同类事故先例), #ARCH-PREVENTABILITY-LAYER-001 (TRAE-068 第 6 层可预防性)'
+  related_rules: 'trae_068 (6 层闭环模型), trae_062 (SSoT 分类铁律——规则数据真源是 YAML), AGENTS.md (并发 session merge 无协调)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
