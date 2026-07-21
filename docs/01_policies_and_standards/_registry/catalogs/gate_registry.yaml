@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T21:53:48Z'
+generated_at: '2026-07-21T22:08:39Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -475,10 +475,10 @@ gates:
   source: commit-gate
 - gate_id: CAPABILITY-LOOKUP-REQUIRED
   name: 'CAPABILITY-LOOKUP-REQUIRED: Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
-    Phase 3.4a）（CommitGate, priority=31）'
+    Phase 3.4a, #ARCH-066）（CommitGate, priority=31）'
   entry: in-process (GitCommitGateway)
-  description: Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
-    Phase 3.4a）
+  description: 'Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
+    Phase 3.4a, #ARCH-066）'
   files_trigger: ''
   always_run: false
   category: commit_gate
