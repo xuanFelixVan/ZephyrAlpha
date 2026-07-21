@@ -5720,7 +5720,7 @@ entries:
     - tests/governance/rule_bridge/test_session_worktree.py（测试覆盖）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
     - .runtime/worktree_ops_log.jsonl（遥测日志，自动生成）
-  status: decided
+  status: resolved
   related_adjudication: '裁定#19-B (worktree base 新鲜度检测——commit-only), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (worktree 自愈同源), #ARCH-WORKTREE-AUTO-SWEEP-001 (worktree 自动清扫同源), #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本，force=True 安全分类，2026-07-22)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), trae_074 (worktree base freshness), trae_078 (force merge safety), 铁律: 永久系统必须全自动'
   created: '2026-07-21'
@@ -5801,7 +5801,7 @@ entries:
     - docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml（规则外部化）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
     - .runtime/locks/commit_persisted_<sid>.json（持久性标记，运行时自动生成）
-  status: decided
+  status: resolved
   related_adjudication: '#ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展，base 新鲜度治本), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展，start fail-closed), #ARCH-PREVENTABILITY-LAYER-001 (遵循，warn 无效), 裁定#19-B (worktree base 新鲜度检测), #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本，force=True 安全分类，2026-07-22)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_068 (preventability layer), trae_074 (worktree base freshness), trae_076 (commit persistence), trae_078 (force merge safety)'
   created: '2026-07-22'
