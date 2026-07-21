@@ -23,6 +23,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 __all__ = ["DriftBridge"]
+# TEST_PERSIST_MARKER
 
 
 class DriftBridge:

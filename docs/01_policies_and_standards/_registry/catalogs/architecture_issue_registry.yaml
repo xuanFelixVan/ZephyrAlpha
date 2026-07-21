@@ -5246,13 +5246,13 @@ entries:
   last_updated: '2026-07-21'
 # --- #ARCH-CROSSDRIVE-RELPATH-001: 跨盘 os.path.relpath 失败治本（2026-07-21） ---
 - issue_id: '#ARCH-CROSSDRIVE-RELPATH-001'
-  title: reconciliation_registry.py 跨盘 D/C 导致 os.path.relpath 全量失败治本
+  title: "reconciliation_registry.py 跨盘 D:/C: 导致 os.path.relpath 全量失败治本"
   category: architecture_governance
   severity: P2
   adjudication: >-
     2026-07-21 立项裁定。reconciliation_registry.py 有 34 处 os.path.relpath(f, str(project_root))
-    裸调用，Windows 跨盘场景（项目在 D:，Python/临时文件在 C:）下抛 ValueError:
-    "path is on mount 'D:', start on mount 'C:'"。此前仅 1 处（L555）有 try/except
+    裸调用，Windows 跨盘场景（项目在 D 盘，Python/临时文件在 C 盘）下抛 ValueError:
+    "path is on mount D, start on mount C"。此前仅 1 处（L555）有 try/except
     兜底，其余 33 处裸调用，跨盘时整个 reconciler 失败——post-merge reconciler
     异步化（#ARCH-ASYNC-MERGE-RECONCILE-001）在跨盘环境下无法正常工作。
 
