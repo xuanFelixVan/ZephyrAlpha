@@ -59,7 +59,7 @@ references:
 codification_level: L1
 codification_at: "2026-05-15"
 responsibility_domain: 
-design_maturity: design
+design_maturity: prototype
 build_status: generated
 ---
 
