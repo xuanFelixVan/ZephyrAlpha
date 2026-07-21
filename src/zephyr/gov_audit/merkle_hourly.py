@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_audit.merkle_hourly
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.gov_audit.integrity
-# [CONSUMERS] zephyr.governance.integrity(IntegrityGuard); zephyr.gov_audit.bridge(AuditBridge); zephyr.gov_audit.__init__(lazy re-export)
+# [CONSUMERS] zephyr.governance.integrity ; zephyr.gov_audit.bridge ; zephyr.gov_audit.__init__(lazy re-export)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-GOV_merkle_hourly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-merkle_hourly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

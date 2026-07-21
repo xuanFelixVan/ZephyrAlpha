@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.runbook_generator
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 手册生成格式不可变
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_runbook_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-runbook_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.adversarial_validation.injection_engine
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
-# [CONSUMERS] validator.py; game_day_runner.py; chaos_engine.py (external)
+# [CONSUMERS] validator.py ; game_day_runner.py ; chaos_engine.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] crash/exit_code injection points MUST have safety guard (blast_radius >= SYSTEM check); all injections MUST be recoverable
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] PermissionError on SYSTEM-level crash injection without confirmation; ValueError on unknown injection type
 # [TESTS] tests/red_blue/test_injection_engine.py
-# [A_module] module_id=MOD-SEC_injection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-injection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

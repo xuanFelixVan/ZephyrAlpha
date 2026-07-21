@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.artifact_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/compliance/artifact_scanner.py; tests/governance/security/test_artifact_scanner.py
+# [CONSUMERS] tests/governance/security/test_artifact_scanner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-GOV_artifact_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-artifact_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ==== BEGIN CODEGEN:ARTIFACT-SCAN ====

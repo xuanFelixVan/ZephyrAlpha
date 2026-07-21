@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.contract_drift_detector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/infra_ops/observability/contract_metrics.py(委托调用)
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] z-score>5.0判定为漂移;baseline_std==0时使用0.001防止除零;DriftAlert写入_drift_buffer
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] baseline不存在->返回None;z-score<=5.0->返回None
 # [TESTS] tests/telemetry/
-# [A_module] module_id=MOD-SEC_contract_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-contract_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """contract_drift_detector — 契约漂移检测器。

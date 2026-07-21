@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.drift_hotfix_bypass
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_drift.py; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py (+3 more)
+# [CONSUMERS] src/zephyr/gov_drift/_drift.py ; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py (+3 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 旁路必须72h自动过期
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_drift_hotfix_bypass | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-drift_hotfix_bypass | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

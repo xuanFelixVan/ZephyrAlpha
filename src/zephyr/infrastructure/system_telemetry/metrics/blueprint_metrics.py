@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics.blueprint_metrics
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.metrics.__init__
-# [CONSUMERS] src/zephyr/system-telemetry/facade.py;src/zephyr/system-telemetry/auto_bootstrap.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 蓝图读取事件MUST通过此模块记录;输出JSONL格式;RULE-ONE原子写入
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] JSONL写入失败->日志warning;不阻塞调用方
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF_blueprint_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-blueprint_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

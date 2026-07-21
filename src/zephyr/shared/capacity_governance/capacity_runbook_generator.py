@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.capacity_governance.capacity_runbook_generator
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.resource_optimization; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.trading.resource_optimization
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

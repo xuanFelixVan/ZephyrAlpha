@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.canary_controller
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/ba/test_ba_canary_controller.py; tests/canary/test_canary_controller.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/ba/test_ba_canary_controller.py ; tests/canary/test_canary_controller.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 金丝雀保护不可禁用
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_canary_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-canary_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

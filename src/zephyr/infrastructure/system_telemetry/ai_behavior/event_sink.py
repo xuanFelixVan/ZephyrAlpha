@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.ai_behavior.event_sink
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
-# [CONSUMERS] src/zephyr/system-telemetry/facade.py;src/zephyr/budget-enforcer/
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] ai_behavior字段命名MUST可映射到OTel gen_ai.*属性;独立ring buffer+独立SQLite表;FeatureFlag控制
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeatureFlag OFF->noop;ring buffer满->丢弃最旧
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。

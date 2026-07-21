@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.protocols.ports
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol
-# [CONSUMERS] zephyr.infrastructure_runtime_integration; zephyr.infrastructure.mcp_servers
+# [CONSUMERS] zephyr.infrastructure.mcp_servers
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocol classes MUST NOT import from zephyr.data; only structural subtyping
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError if runtime implementation does not satisfy Protocol
 # [TESTS] tests/utils/test_shared_core.py
-# [A_module] module_id=MOD-INF_ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-ports | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

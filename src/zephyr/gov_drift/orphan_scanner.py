@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.orphan_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; src/zephyr/gov_drift/brain_integration.py; tests/audit/test_orphan_scanner.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; src/zephyr/gov_drift/brain_integration.py ; tests/audit/test_orphan_scanner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 孤儿扫描不可跳过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_orphan_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-orphan_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.pipeline_orchestrator
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.gov_audit.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker; zephyr.infrastructure.pipeline.models; zephyr.infrastructure.pipeline.circuit_breaker_manager; zephyr.infrastructure.pipeline.cost_tracker; zephyr.infrastructure.pipeline.ct_pipe_routing; zephyr.infrastructure.pipeline.dead_letter_queue; zephyr.infrastructure.pipeline.model_router; zephyr.infrastructure.pipeline.pipeline_lock; zephyr.infrastructure.pipeline.preemption_manager; zephyr.infrastructure.pipeline.routing_plugins
-# [CONSUMERS] zephyr.trading.auto_runtime_core; tests/trading/test_pipeline_orchestrator_unit.py; tests/pipeline/test_pipeline_orchestrator.py
+# [CONSUMERS] zephyr.trading.auto_runtime_core ; tests/pipeline/test_pipeline_orchestrator.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] pending_review
@@ -1597,6 +1597,104 @@ class PipelineOrchestrator:
 
         return m3_result, m7_result, consensus
 
+    def _check_module_circuit_breaker(
+        self,
+        cb_key: str,
+        model: str,
+        module_id: str,
+        pipeline: str,
+        started: str,
+    ) -> ModuleResult | None:
+        if not self._cfg.circuit_breaker_enabled:
+            return None
+        if self._cb_manager.allow_request(cb_key, model):
+            return None
+        return ModuleResult(
+            module_id=module_id,
+            pipeline=pipeline,
+            model=model,
+            status=ModuleStatus.FAILURE,
+            errors=[f"CIRCUIT-OPEN: {model} 断路器已断开——短路跳过重试"],
+            started_at=started,
+            finished_at=now_utc().isoformat(),
+        )
+
+    def _apply_module_rate_limit(self, model: str, dry_run: bool) -> None:
+        if dry_run or not self._cfg.rate_limit_per_model:
+            return
+        rate_limited, wait_s = self._check_rate_limit(model)
+        if rate_limited:
+            time.sleep(wait_s)
+
+    def _execute_module_success(
+        self,
+        module_id: str,
+        pipeline: str,
+        model: str,
+        output: dict,
+        started: str,
+        cb_key: str,
+    ) -> ModuleResult:
+        output = validate_module_output(module_id, output)
+        confidence = self._generate_confidence(model, output)
+
+        cost_usd = output.get("cost_usd", 0.0)
+        self._cost_tracker.record_call(
+            model=model,
+            tokens_input=output.get("tokens_used", 0),
+            cost_usd=cost_usd,
+        )
+
+        if self._cfg.circuit_breaker_enabled:
+            self._cb_manager.record_result(cb_key, success=True)
+
+        return ModuleResult(
+            module_id=module_id,
+            pipeline=pipeline,
+            model=model,
+            status=ModuleStatus.SUCCESS,
+            output=output,
+            tokens_used=output.get("tokens_used", 0),
+            duration_ms=0,
+            started_at=started,
+            finished_at=now_utc().isoformat(),
+            confidence=confidence,
+        )
+
+    def _handle_module_retry_failure(self, exc: Exception, attempt: int, cb_key: str) -> str:
+        last_error = f"[{attempt}/{self._cfg.max_retries}] {type(exc).__name__}: {exc}"
+        if self._cfg.circuit_breaker_enabled:
+            self._cb_manager.record_result(cb_key, success=False)
+        if attempt < self._cfg.max_retries:
+            # 5.72.6 修复：原无jitter，多任务并发重试同一模型端点时可能产生惊群效应。
+            # 添加 ±10% 随机抖动，避免重试同步化。
+            delay = min(2**attempt, 30)
+            delay = delay + random.uniform(0, delay * 0.1)
+            time.sleep(delay)
+        return last_error
+
+    def _record_module_final_failure(
+        self,
+        module_id: str,
+        task: TaskCard,
+        pipeline: str,
+        model: str,
+        started: str,
+        last_error: str | None,
+    ) -> ModuleResult:
+        self._failure_log[module_id] = self._failure_log.get(module_id, 0) + 1
+        self._failure_log["_task_" + task.task_id] = self._failure_log.get("_task_" + task.task_id, 0) + 1
+
+        return ModuleResult(
+            module_id=module_id,
+            pipeline=pipeline,
+            model=model,
+            status=ModuleStatus.FAILURE,
+            errors=[last_error] if last_error else ["unknown failure"],
+            started_at=started,
+            finished_at=now_utc().isoformat(),
+        )
+
     def _execute_module(
         self,
         module_id: str,
@@ -1614,22 +1712,11 @@ class PipelineOrchestrator:
         divisor = token_divisor if token_divisor and token_divisor > 0 else len(M_MODULES)
 
         cb_key = f"{task.task_id}:{module_id}:{model}"
-        if self._cfg.circuit_breaker_enabled:
-            if not self._cb_manager.allow_request(cb_key, model):
-                return ModuleResult(
-                    module_id=module_id,
-                    pipeline=pipeline,
-                    model=model,
-                    status=ModuleStatus.FAILURE,
-                    errors=[f"CIRCUIT-OPEN: {model} 断路器已断开——短路跳过重试"],
-                    started_at=started,
-                    finished_at=now_utc().isoformat(),
-                )
+        cb_blocked = self._check_module_circuit_breaker(cb_key, model, module_id, pipeline, started)
+        if cb_blocked is not None:
+            return cb_blocked
 
-        if not dry_run and self._cfg.rate_limit_per_model:
-            rate_limited, wait_s = self._check_rate_limit(model)
-            if rate_limited:
-                time.sleep(wait_s)
+        self._apply_module_rate_limit(model, dry_run)
 
         for attempt in range(1, self._cfg.max_retries + 1):
             try:
@@ -1643,55 +1730,11 @@ class PipelineOrchestrator:
                     dry_run=dry_run,
                     skill_injection=skill_injection,
                 )
-                output = validate_module_output(module_id, output)
-
-                confidence = self._generate_confidence(model, output)
-
-                cost_usd = output.get("cost_usd", 0.0)
-                self._cost_tracker.record_call(
-                    model=model,
-                    tokens_input=output.get("tokens_used", 0),
-                    cost_usd=cost_usd,
-                )
-
-                if self._cfg.circuit_breaker_enabled:
-                    self._cb_manager.record_result(cb_key, success=True)
-
-                return ModuleResult(
-                    module_id=module_id,
-                    pipeline=pipeline,
-                    model=model,
-                    status=ModuleStatus.SUCCESS,
-                    output=output,
-                    tokens_used=output.get("tokens_used", 0),
-                    duration_ms=0,
-                    started_at=started,
-                    finished_at=now_utc().isoformat(),
-                    confidence=confidence,
-                )
+                return self._execute_module_success(module_id, pipeline, model, output, started, cb_key)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-                last_error = f"[{attempt}/{self._cfg.max_retries}] {type(exc).__name__}: {exc}"
-                if self._cfg.circuit_breaker_enabled:
-                    self._cb_manager.record_result(cb_key, success=False)
-                if attempt < self._cfg.max_retries:
-                    # 5.72.6 修复：原无jitter，多任务并发重试同一模型端点时可能产生惊群效应。
-                    # 添加 ±10% 随机抖动，避免重试同步化。
-                    delay = min(2**attempt, 30)
-                    delay = delay + random.uniform(0, delay * 0.1)
-                    time.sleep(delay)
+                last_error = self._handle_module_retry_failure(exc, attempt, cb_key)
 
-        self._failure_log[module_id] = self._failure_log.get(module_id, 0) + 1
-        self._failure_log["_task_" + task.task_id] = self._failure_log.get("_task_" + task.task_id, 0) + 1
-
-        return ModuleResult(
-            module_id=module_id,
-            pipeline=pipeline,
-            model=model,
-            status=ModuleStatus.FAILURE,
-            errors=[last_error] if last_error else ["unknown failure"],
-            started_at=started,
-            finished_at=now_utc().isoformat(),
-        )
+        return self._record_module_final_failure(module_id, task, pipeline, model, started, last_error)
 
     # ------------------------------------------------------------------
     # 本地模型集成 —— 24/7常驻 EmbeddingRouter + Reranker
@@ -1877,6 +1920,118 @@ class PipelineOrchestrator:
         return tokens_used, cost_usd, summary_content, True, model
 
     @staticmethod
+    def _build_context_overflow_response(
+        module_id: str,
+        pipeline: str,
+        model: str,
+        model_version: str,
+        task: TaskCard,
+        dry_run: bool,
+        context_limit: int,
+        skill_context: str,
+    ) -> dict:
+        return {
+            "module_id": module_id,
+            "pipeline": pipeline,
+            "model": model,
+            "model_version": model_version,
+            "task_id": task.task_id,
+            "simulated": True,
+            "dry_run": dry_run,
+            "tokens_used": 0,
+            "cost_usd": 0.0,
+            "summary": (
+                f"[CONTEXT-OVERFLOW] {module_id}: estimated_tokens={task.estimated_tokens} "
+                f"> model context_limit={context_limit} ——B170告警"
+            ),
+            "context_overflow": True,
+            "skill_context": skill_context,
+        }
+
+    @staticmethod
+    def _build_dry_run_response(
+        module_id: str,
+        pipeline: str,
+        model: str,
+        model_version: str,
+        task: TaskCard,
+        skill_context: str,
+    ) -> dict:
+        return {
+            "module_id": module_id,
+            "pipeline": pipeline,
+            "model": model,
+            "model_version": model_version,
+            "task_id": task.task_id,
+            "simulated": True,
+            "dry_run": True,
+            "tokens_used": 0,
+            "cost_usd": 0.0,
+            "summary": f"[DRY-RUN {pipeline}区] {model}({model_version}) -> {module_id}: {task.title[:60]}",
+            "skill_context": skill_context,
+        }
+
+    @staticmethod
+    def _build_llm_messages(
+        module_id: str,
+        pipeline: str,
+        task_id: str,
+        sanitized_title: str,
+        sanitized_desc: str,
+        skill_context: str,
+    ) -> list[dict]:
+        system_msg = (
+            f"You are an expert agent in the [{pipeline}] zone of ZephyrAlpha. "
+            f"Execute module [{module_id}] for task [{task_id}]. "
+            f"Follow the constraints below precisely."
+        )
+        user_msg = f"Task: {sanitized_title}\n\nDescription: {sanitized_desc}"
+
+        if skill_context:
+            system_msg += f"\n\n--- AGENT SKILL CONTEXT ---\n{skill_context}\n--- END SKILL CONTEXT ---"
+
+        return [
+            {"role": "system", "content": system_msg},
+            {"role": "user", "content": user_msg},
+        ]
+
+    @staticmethod
+    def _assemble_and_cache_output(
+        module_id: str,
+        pipeline: str,
+        model: str,
+        model_version: str,
+        task: TaskCard,
+        tokens_used: int,
+        cost_usd: float,
+        summary_content: str,
+        simulated: bool,
+        provider_used: str,
+        prior_artifacts: list | None,
+        skill_context: str,
+        cache_key: str,
+    ) -> dict:
+        artifact_keys = [a.artifact_key for a in (prior_artifacts or [])]
+        raw_output = {
+            "module_id": module_id,
+            "pipeline": pipeline,
+            "model": model,
+            "model_version": model_version,
+            "task_id": task.task_id,
+            "simulated": simulated,
+            "provider": provider_used,
+            "tokens_used": tokens_used,
+            "cost_usd": cost_usd,
+            "summary": summary_content,
+            "prior_artifact_keys": artifact_keys,
+            "skill_context": skill_context if skill_context else "",
+        }
+
+        PipelineOrchestrator._response_cache[cache_key] = (time.time(), dict(raw_output))
+
+        return PipelineOrchestrator._lsg_sanitize_output(module_id, raw_output)
+
+    @staticmethod
     def _call_model(
         module_id: str,
         pipeline: str,
@@ -1906,38 +2061,14 @@ class PipelineOrchestrator:
         context_limit = ModelRouter.MODEL_CONTEXT_LIMITS.get(model, 128_000)
 
         if task.estimated_tokens > context_limit:
-            return {
-                "module_id": module_id,
-                "pipeline": pipeline,
-                "model": model,
-                "model_version": model_version,
-                "task_id": task.task_id,
-                "simulated": True,
-                "dry_run": dry_run,
-                "tokens_used": 0,
-                "cost_usd": 0.0,
-                "summary": (
-                    f"[CONTEXT-OVERFLOW] {module_id}: estimated_tokens={task.estimated_tokens} "
-                    f"> model context_limit={context_limit} ——B170告警"
-                ),
-                "context_overflow": True,
-                "skill_context": skill_context,
-            }
+            return PipelineOrchestrator._build_context_overflow_response(
+                module_id, pipeline, model, model_version, task, dry_run, context_limit, skill_context
+            )
 
         if dry_run:
-            return {
-                "module_id": module_id,
-                "pipeline": pipeline,
-                "model": model,
-                "model_version": model_version,
-                "task_id": task.task_id,
-                "simulated": True,
-                "dry_run": True,
-                "tokens_used": 0,
-                "cost_usd": 0.0,
-                "summary": f"[DRY-RUN {pipeline}区] {model}({model_version}) -> {module_id}: {task.title[:60]}",
-                "skill_context": skill_context,
-            }
+            return PipelineOrchestrator._build_dry_run_response(
+                module_id, pipeline, model, model_version, task, skill_context
+            )
 
         cache_key = f"{task.task_id}:{module_id}:{model}"
         if cache_key in PipelineOrchestrator._response_cache:
@@ -1947,21 +2078,9 @@ class PipelineOrchestrator:
 
         sanitized_title = PipelineOrchestrator._lsg_sanitize_input(task.title)
         sanitized_desc = PipelineOrchestrator._lsg_sanitize_input(task.description)
-
-        system_msg = (
-            f"You are an expert agent in the [{pipeline}] zone of ZephyrAlpha. "
-            f"Execute module [{module_id}] for task [{task.task_id}]. "
-            f"Follow the constraints below precisely."
+        messages = PipelineOrchestrator._build_llm_messages(
+            module_id, pipeline, task.task_id, sanitized_title, sanitized_desc, skill_context
         )
-        user_msg = f"Task: {sanitized_title}\n\nDescription: {sanitized_desc}"
-
-        if skill_context:
-            system_msg += f"\n\n--- AGENT SKILL CONTEXT ---\n{skill_context}\n--- END SKILL CONTEXT ---"
-
-        messages = [
-            {"role": "system", "content": system_msg},
-            {"role": "user", "content": user_msg},
-        ]
 
         llm_resp = PipelineOrchestrator._call_llm_gateway(messages, model)
 
@@ -1982,25 +2101,10 @@ class PipelineOrchestrator:
                 task, token_divisor, model, pipeline, module_id, model_version, sanitized_title
             )
 
-        artifact_keys = [a.artifact_key for a in (prior_artifacts or [])]
-        raw_output = {
-            "module_id": module_id,
-            "pipeline": pipeline,
-            "model": model,
-            "model_version": model_version,
-            "task_id": task.task_id,
-            "simulated": simulated,
-            "provider": provider_used,
-            "tokens_used": tokens_used,
-            "cost_usd": cost_usd,
-            "summary": summary_content,
-            "prior_artifact_keys": artifact_keys,
-            "skill_context": skill_context if skill_context else "",
-        }
-
-        PipelineOrchestrator._response_cache[cache_key] = (time.time(), dict(raw_output))
-
-        return PipelineOrchestrator._lsg_sanitize_output(module_id, raw_output)
+        return PipelineOrchestrator._assemble_and_cache_output(
+            module_id, pipeline, model, model_version, task, tokens_used, cost_usd,
+            summary_content, simulated, provider_used, prior_artifacts, skill_context, cache_key
+        )
 
     @staticmethod
     def _determine_status(results: list[ModuleResult]) -> PipelineStatus:
@@ -2781,6 +2885,40 @@ class PipelineOrchestrator:
     # G6 蓝图合规检查 —— Phase 2 硬合规 (T-V2-011 G6)
     # ------------------------------------------------------------------
 
+    def _g6_should_skip(self) -> bool:
+        # G6 前置跳过检查：BlueprintSearchServer 不可用 / G6 未启用 / pytest 环境均跳过
+        try:
+            from zephyr.shared.protocols.a2a.layer3_coordination import BlueprintSearchServer  # noqa: F401
+        except ImportError:
+            return True
+        if not self._cfg.g6_enabled:
+            return True
+        # pytest 环境自动跳过 G6（测试不需要蓝图合规）
+        if os.environ.get("PYTEST_CURRENT_TEST"):
+            return True
+        return False
+
+    def _find_g6_candidates(self, task_card: TaskCard) -> list[dict]:
+        from zephyr.shared.protocols.a2a.layer3_coordination import BlueprintSearchServer
+
+        task_desc = getattr(task_card, "description", "") or task_card.title or ""
+        all_files: list[str] = []
+        for sf in getattr(task_card, "source_files", []) or []:
+            all_files.append(str(sf))
+
+        server = BlueprintSearchServer()
+        search_result = server._find_relevant_blueprint(task_desc, num_results=3)
+        return search_result.get("results", [])
+
+    def _check_g6_metrics_file(self, metrics_path: Path, candidates: list[dict]) -> str | None:
+        if metrics_path.exists():
+            return None
+        return (
+            f"G6-BLOCKED: No blueprint_reads.jsonl found ({metrics_path}). "
+            f"AI MUST call blueprint_search.find_relevant_blueprint() BEFORE code change. "
+            f"Top blueprint: {candidates[0].get('blueprint_id', 'N/A')}"
+        )
+
     def _check_g6_blueprint_compliance(self, task_card: TaskCard, modules: list[str]) -> str | None:
         """G6 Phase 2 硬合规——AI 在修改代码前 MUST 已读对应蓝图。
 
@@ -2793,42 +2931,23 @@ class PipelineOrchestrator:
 
         返回 None 表示通过，返回 str 表示 G6-BLOCKED 原因。
         """
-        try:
-            from zephyr.shared.protocols.a2a.layer3_coordination import BlueprintSearchServer
-        except ImportError:
+        if self._g6_should_skip():
             return None
 
-        if not self._cfg.g6_enabled:
-            return None
-
-        # pytest 环境自动跳过 G6（测试不需要蓝图合规）
-        if os.environ.get("PYTEST_CURRENT_TEST"):
-            return None
-
-        task_desc = getattr(task_card, "description", "") or task_card.title or ""
-        all_files: list[str] = []
-        for sf in getattr(task_card, "source_files", []) or []:
-            all_files.append(str(sf))
-
-        server = BlueprintSearchServer()
-        search_result = server._find_relevant_blueprint(task_desc, num_results=3)
-
-        candidates = search_result.get("results", [])
+        candidates = self._find_g6_candidates(task_card)
         if not candidates:
             return None
 
         metrics_path = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
-        if not metrics_path.exists():
-            return (
-                f"G6-BLOCKED: No blueprint_reads.jsonl found ({metrics_path}). "
-                f"AI MUST call blueprint_search.find_relevant_blueprint() BEFORE code change. "
-                f"Top blueprint: {candidates[0].get('blueprint_id', 'N/A')}"
-            )
+        file_blocked = self._check_g6_metrics_file(metrics_path, candidates)
+        if file_blocked is not None:
+            return file_blocked
 
         read_blueprints = _load_read_blueprint_ids(metrics_path)
         if read_blueprints is None:
             return f"G6-BLOCKED: Cannot read {metrics_path}. Confirm blueprint_read instrumentation is active."
 
+        task_desc = getattr(task_card, "description", "") or task_card.title or ""
         missing = _compute_missing_blueprint_ids(candidates, read_blueprints)
         if missing:
             return _format_g6_violation(missing, candidates, task_desc)

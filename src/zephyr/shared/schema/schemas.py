@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.schema.schemas
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
-# [CONSUMERS] gates; context-engine; orchestrator; kb; runtime; db; pipeline; mcp; core; shared.events; scripts; tests
+# [CONSUMERS] gates ; context-engine ; orchestrator ; kb ; runtime ; db ; pipeline ; mcp ; core ; scripts ; tests
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports; Task types canonical source is gates.task_types; severity types canonical source is shared.schema.severity_types; base config canonical source is shared.schema.base_config
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ImportError on missing sub-module
 # [TESTS] tests/test_schemas.py; tests/contract/test_schema_stability.py
-# [A_module] module_id=MOD-SHR_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
 

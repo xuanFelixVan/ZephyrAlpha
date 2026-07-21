@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.detector_dispatcher
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_detector_dispatcher.py
+# [CONSUMERS] tests/audit/test_detector_dispatcher.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 检测器调度不可绕过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_detector_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-detector_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 

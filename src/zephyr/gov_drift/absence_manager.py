@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.absence_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/audit/test_absence_manager.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_absence_manager.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 缺席管理不可禁用
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_absence_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-absence_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

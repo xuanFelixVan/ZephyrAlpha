@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.alert_router
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 告警路由不可绕过;去重窗口不可缩短
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_alert_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-alert_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

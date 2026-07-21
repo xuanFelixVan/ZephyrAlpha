@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.resource_optimization
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.lifecycle.daemon_registry; zephyr.shared.lifecycle.resource_optimization_models; zephyr.shared.io.io_cache; zephyr.shared.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.shared.lifecycle.lazy_loader; zephyr.shared.capacity_calibrator; zephyr.shared.capacity_digital_twin; zephyr.shared.capacity_fingerprint; zephyr.shared.capacity_governance_loop; zephyr.shared.capacity_runbook_generator; zephyr.shared.model_capacity_probe; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.gov_audit.bridge
-# [CONSUMERS] runtime.auto_runtime_core; runtime.health_monitor; shared.lifecycle (re-export)
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-ORC_resource_optimization | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-ORC-resource_optimization | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

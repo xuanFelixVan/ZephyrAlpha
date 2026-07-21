@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.audit.ai_error_pattern_library
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.error_pattern_consumer_reconciler (compute_error_pattern_id); stdlib (json, logging, pathlib)
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_print_startup_error_patterns)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 只读查询接口——不修改源聚合文件；加载失败降级为空库（fail-open）；所有查询方法 O(1) 或 O(n)

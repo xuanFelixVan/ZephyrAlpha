@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.cascading_failure_isolator
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_cascading_failure_isolator
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

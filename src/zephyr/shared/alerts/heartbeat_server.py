@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.alerts.heartbeat_server
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.infrastructure.capacity_assurance.modules.__init__; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.infrastructure.capacity_assurance.modules.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

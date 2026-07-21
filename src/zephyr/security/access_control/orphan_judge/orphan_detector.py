@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.orphan_judge.orphan_detector
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.security.access_control.orphan_judge.__init__; tests.test_orphan_detector
+# [CONSUMERS] zephyr.security.access_control.orphan_judge.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

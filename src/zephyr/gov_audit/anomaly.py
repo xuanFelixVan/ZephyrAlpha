@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_audit.anomaly
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity; bridges.audit_anomaly; governance.security.test_adversarial_contract_attacks
+# [CONSUMERS] audit-orchestrator.pipeline_runner ; integrity
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 双 API: (1) scan(events) 规则引擎 + detect(float) z-score 统计; (2) detect(dict) 桥接式可疑权限检测 (G-CT-002); 误报率低于10%
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 检测失败返回空结果; detect(dict) 无匹配返回 None
 # [TESTS] tests/audit/test_audit_anomaly.py; tests/bridges/test_bridges_anomaly.py
-# [A_module] module_id=MOD-GOV_anomaly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-anomaly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # 治本（裁定#18 G3 + G-CT-002）：本文件原为桩实现——AnomalyDetector 仅有 feed/detect/scan_series
 # （统计 z-score），无 scan 方法、无 _event_log_path；AnomalySignature 是普通类（非 Enum），

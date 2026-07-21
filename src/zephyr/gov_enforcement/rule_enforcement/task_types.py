@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.task_types
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
-# [CONSUMERS] db.task_repo; db.base_repo; db.transition; db.query; pipeline.pipeline_orchestrator; pipeline.preemptionManager; orchestrator.file_task_mapper; kb.kb_gate_task; kb.migration.kb_gate_task; mcp.task_manager_server; core.blueprint_decomposer; shared.events.event_schemas; core.models
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Task model fields MUST align with SQLite tasks table (KBG-0030 §4.2); Task=SSoT for all task card fields (was Task+TaskCard dual-source, merged 2026-05-28)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValidationError on invalid task_id format or field constraint violation
 # [TESTS] tests/task/test_task_types.py
-# [A_module] module_id=MOD-GOV_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

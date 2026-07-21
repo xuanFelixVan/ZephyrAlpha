@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance._shared.constants
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (gate); zephyr.governance.audit.reconciliation_registry.make_scripts_import_integrity_reconciler (Phase 3 baseline 全扫)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ ; zephyr.governance.audit.reconciliation_registry.make_scripts_import_integrity_reconciler (Phase 3 baseline 全扫)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged scripts/governance/**/*.py 文件中 _shared.constants 公开符号被使用但未 import 时阻断（#ARCH-DATAQUALITY-V1.4 核心治本）；豁免 _shared/constants.py（真源文件，不可自引用）；含 wildcard import 的文件跳过（无法静态推断）；_shared.constants 不可导入时 fail-open；ast.parse 失败 fail-open（语法错误文件本就会在其他阶段失败）

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.permission_mode_manager
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_permission_mode_manager
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

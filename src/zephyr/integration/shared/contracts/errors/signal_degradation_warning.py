@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.shared.contracts.errors.signal_degradation_warning
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
-# [CONSUMERS] zephyr.integration.shared.contracts.errors.__init__; tests.test_signal_generation
+# [CONSUMERS] zephyr.integration.shared.contracts.errors.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

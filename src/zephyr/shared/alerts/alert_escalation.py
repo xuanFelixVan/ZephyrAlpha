@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.alerts.alert_escalation
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] tests.unit.shared.test_orphan_integration
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

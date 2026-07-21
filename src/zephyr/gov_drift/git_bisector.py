@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.git_bisector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/git/test_git_bisector.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/git/test_git_bisector.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 溯源结果不可篡改
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_git_bisector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-git_bisector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

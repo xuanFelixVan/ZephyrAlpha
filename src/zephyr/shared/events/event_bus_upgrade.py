@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.events.event_bus_upgrade
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] orchestration.runtime_core.orchestrator.schema_migration
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_event_bus_upgrade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-event_bus_upgrade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

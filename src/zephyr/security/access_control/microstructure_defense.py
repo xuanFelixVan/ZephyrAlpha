@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.microstructure_defense
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_microstructure_defense
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] DEFENSE_STRATEGIES覆盖所有DefenseType;FidelityFactor.composite_ff公式固定

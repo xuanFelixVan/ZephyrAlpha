@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.core.enforcer
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] governance.rule_enforcement.invariants.en_003_contract_compatibility
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

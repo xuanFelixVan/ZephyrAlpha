@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.core.registry
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.infra.observer
-# [CONSUMERS] orchestration.runtime_core.orchestrator.contract_registry
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 

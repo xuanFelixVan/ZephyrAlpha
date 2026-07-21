@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.chaos_injector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_engine
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/ops_governance/phase_check_registry.py; src/zephyr/infrastructure/rollback/phase_check_registry.py (+3 more)
+# [CONSUMERS] src/zephyr/governance/ops_governance/phase_check_registry.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 混沌注入必须金丝雀保护
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_chaos_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-chaos_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

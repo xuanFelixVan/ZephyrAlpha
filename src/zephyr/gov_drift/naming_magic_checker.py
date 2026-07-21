@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.naming_magic_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_naming_magic_checker.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_naming_magic_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 命名约定检查不可跳过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_naming_magic_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-naming_magic_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

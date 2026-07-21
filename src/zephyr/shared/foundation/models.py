@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.foundation.models
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] db.task_repo; core.blueprint_decomposer; pipeline.*; orchestrator.*
+# [CONSUMERS] pipeline.* ; orchestrator.*
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] TaskCard = Task (PURE ALIAS — NOT a second model. SSoT: gates/task_types.py Task 70 fields. DO NOT add fields here.)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_schemas.py; tests/db/test_task_repo.py; tests/gate/test_gate_engine.py
-# [A_module] module_id=MOD-INF_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

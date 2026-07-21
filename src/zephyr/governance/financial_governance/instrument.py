@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.financial_governance.instrument
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
-# [CONSUMERS] data; factor; pf_core; ex_core; l10-compliance; shared.foundation.constants
+# [CONSUMERS] data ; factor ; pf_core ; ex_core ; l10-compliance
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-DAT_instrument | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-instrument | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from dataclasses import dataclass
 from datetime import date

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.guards.audit_log_guard
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_audit_log_guard; tests.agent_rbac.test_forensic_c
+# [CONSUMERS] tests.agent_rbac.test_forensic_c
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计日志注入防护; 控制字符与转义序列必须被净化

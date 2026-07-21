@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.incremental_scanner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_incremental_scanner.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_incremental_scanner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 增量扫描不可遗漏变更
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_incremental_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-incremental_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_code_quality.code_dedup.policy_tree_validator
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] tests/governance/rule_enforcement/test_policy_tree_validator.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/code_dedup/test_policy_tree_validator.py
-# [A_module] module_id=MOD-GCQ_policy_tree_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GCQ-policy_tree_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """策略树自动一致性校验器 — 虚线箭头影响分析."""

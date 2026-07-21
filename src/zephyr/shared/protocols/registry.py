@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.protocols.registry
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.__init__
-# [CONSUMERS] zephyr.infrastructure_runtime_integration; zephyr.infrastructure.mcp_servers
+# [CONSUMERS] zephyr.infrastructure.mcp_servers
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] ServiceRegistry is process-singleton; register() MUST be called before get(); no import from zephyr.data
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError on unregistered service; TypeError on factory returning wrong type
 # [TESTS] tests/utils/test_shared_core.py
-# [A_module] module_id=MOD-INF_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

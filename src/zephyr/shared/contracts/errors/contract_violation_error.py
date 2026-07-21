@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.errors.contract_violation_error
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
-# [CONSUMERS] shared.contract_bus
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_contract_violation_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-contract_violation_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ==== BEGIN CODGEN:CTR-ERR-006 ====
@@ -73,7 +73,6 @@ class ContractViolationError:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-ERR-006 ====
-
 
 
 

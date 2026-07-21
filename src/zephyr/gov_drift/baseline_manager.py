@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.baseline_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/audit/test_baseline_manager.py; tests/drift/test_drift_core.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/audit/test_baseline_manager.py ; tests/drift/test_drift_core.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 基线更新必须经过投毒防护
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_baseline_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-baseline_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 

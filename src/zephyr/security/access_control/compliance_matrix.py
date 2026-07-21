@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.compliance_matrix
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_compliance_matrix
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

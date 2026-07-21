@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.reconciler
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 自动修复必须验证闭环
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 

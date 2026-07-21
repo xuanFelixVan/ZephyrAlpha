@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.symlink_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_symlink_checker.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_symlink_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 软链接检查不可跳过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_symlink_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-symlink_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

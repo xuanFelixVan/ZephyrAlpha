@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.ai_construction_detectors
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py; tests/ai/test_ai_construction_detectors.py (+3 more)
+# [CONSUMERS] tests/ai/test_ai_construction_detectors.py (+3 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] AI施工检测不可跳过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_ai_construction_detectors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-ai_construction_detectors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: _read_single_source与self_test_verifier._read_single_py是同类源码读取工具,趋同演化非复制粘贴
 

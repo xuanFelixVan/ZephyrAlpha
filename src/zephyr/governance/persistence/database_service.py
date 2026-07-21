@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.persistence.database_service
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.database_service
-# [CONSUMERS] src/zephyr/governance/; scripts/database/; tests/db/test_db_auto_ops.py; tests/governance/data_layer/test_database_service.py
+# [CONSUMERS] src/zephyr/governance/ ; tests/db/test_db_auto_ops.py ; tests/governance/data_layer/test_database_service.py
 # [STARTUP] manual
 # [MATURITY] stable
 # [INVARIANTS] re-export canonical from infrastructure.database_service; 单真源派生层，禁止在此重复定义连接管理代码

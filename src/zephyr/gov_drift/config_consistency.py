@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.config_consistency
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_core.py; src/zephyr/gov_drift/_infrastructure.py; tests/config/test_config_consistency.py
+# [CONSUMERS] src/zephyr/gov_drift/_core.py ; src/zephyr/gov_drift/_infrastructure.py ; tests/config/test_config_consistency.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 配置一致性检查不可绕过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_config_consistency | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-config_consistency | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

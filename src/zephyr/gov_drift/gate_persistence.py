@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.gate_persistence
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/gate/test_gate_persistence.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/gate/test_gate_persistence.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 门禁结果不可篡改
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_gate_persistence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-gate_persistence | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

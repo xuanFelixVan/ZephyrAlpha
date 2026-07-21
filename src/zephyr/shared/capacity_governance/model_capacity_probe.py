@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.capacity_governance.model_capacity_probe
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.resource_optimization; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.trading.resource_optimization
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.rollback_bridge
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/rollback/test_rollback_bridge.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/rollback/test_rollback_bridge.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 漂移->回滚桥接不可禁用
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] BridgeError;RollbackTriggerFailed
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_rollback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-rollback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

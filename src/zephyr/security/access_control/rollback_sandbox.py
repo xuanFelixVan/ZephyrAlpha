@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.rollback_sandbox
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_rollback_sandbox; tests.agent_rbac.test_forensic_c
+# [CONSUMERS] tests.agent_rbac.test_forensic_c
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

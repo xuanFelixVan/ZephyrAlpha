@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.contracts
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_audit.contracts
-# [CONSUMERS] tests.test_contracts; tests.test_governance_contracts; tests.test_rbac_audit_bridge; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_001_rbac_to_audit; tests.governance.test_p0_i2_construction_order; tests.governance.test_p0_u1_contract_smoke
+# [CONSUMERS] tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_001_rbac_to_audit ; tests.governance.test_p0_i2_construction_order ; tests.governance.test_p0_u1_contract_smoke
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] RBACAuditBridge.check_and_log 总是返回 {granted, audit_record}; 权限白名单只允许 read/write/execute

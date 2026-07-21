@@ -6,7 +6,7 @@
 # [SAFETY] M
 # [INVARIANTS] PII自动脱敏;RULE-ONE原子写入;单Consumer线程串行化
 # [MODIFY-GUARD] structured_sink.py; facade.py
-# [CONSUMERS] facade.py; traces/span_stub.py
+# [CONSUMERS] facade.py
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败->stderr->内存缓冲(1000条)->丢弃+告警
 # [TESTS] tests/infrastructure/

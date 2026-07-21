@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.adversarial_validation.bypass_recorder
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
-# [CONSUMERS] validator.py; convergence_checker.py; escalation-engine (external)
+# [CONSUMERS] validator.py ; convergence_checker.py ; escalation-engine
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Bypass entries MUST be deduplicated by (scenario_id, gate_id); 3rd bypass on same scenario=gate pair triggers escalation
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] YAML write uses atomic os.replace; BypassLogNotFoundError if log dir missing
 # [TESTS] tests/red_blue/test_bypass_recorder.py
-# [A_module] module_id=MOD-SEC_bypass_recorder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-bypass_recorder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

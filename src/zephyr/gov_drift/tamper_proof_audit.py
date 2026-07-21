@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.tamper_proof_audit
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/audit/test_tamper_proof_audit.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/test_tamper_proof_audit.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计记录不可篡改
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_tamper_proof_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-tamper_proof_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.immutable_core
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] genesis_bootstrap._phase_immutable_core
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] immutable core integrity always intact in normal operation; verify never raises

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.ai_context_injector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/ai/test_ai_context_injector.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/ai/test_ai_context_injector.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 注入内容不可覆盖用户指令
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_ai_context_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-ai_context_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

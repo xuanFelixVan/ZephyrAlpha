@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_audit.cold_start
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] gov_audit.__init__ (lazy registry for BootstrapCache)
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 100 Session冷启动共享单例缓存; 缓存不可变
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 缓存未命中返回空字典
 # [TESTS] none
-# [A_module] module_id=MOD-GOV_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 BootstrapCache — 审计冷启动共享单例缓存。

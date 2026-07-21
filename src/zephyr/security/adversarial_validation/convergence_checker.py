@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.adversarial_validation.convergence_checker
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
-# [CONSUMERS] validator.py; escalation-engine (external)
+# [CONSUMERS] validator.py ; escalation-engine
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 3 consecutive rounds without improvement -> EscalationEngine trigger; blocked_rate threshold 95%; bypass_count MUST decrease monotonically
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ConvergenceFailureError on 3-round stagnation; EscalationTriggerError on escalation failure
 # [TESTS] tests/red_blue/test_convergence_checker.py
-# [A_module] module_id=MOD-SEC_convergence_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-convergence_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

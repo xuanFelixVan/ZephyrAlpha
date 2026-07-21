@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.suppression_learner
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/audit/test_suppression_learner.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/audit/test_suppression_learner.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 抑制规则必须经3次验证
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_suppression_learner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-suppression_learner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

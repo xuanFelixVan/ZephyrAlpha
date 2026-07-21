@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.capability_check
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_capability_check; tests.test_governance_capability_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_integration; tests.governance.test_p0_u1_contract_smoke; tests.governance.test_p0_u2_input_validation
+# [CONSUMERS] tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_integration ; tests.governance.test_p0_u1_contract_smoke ; tests.governance.test_p0_u2_input_validation
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] verify_capability_scope returns dict with approved/agent_id/capabilities-or-reason; restricted capabilities always denied; empty capabilities denied; >MAX_CAPABILITIES denied; rule priority restricted>empty>too_many>approved

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.ops_governance.service_registration
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__
-# [CONSUMERS] zephyr.trading.boot_hooks (startup); zephyr.__init__ (eager registration)
+# [CONSUMERS] zephyr.trading.boot_hooks ; zephyr.__init__ (eager registration)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] register_services() MUST be called before any D-INFRA code uses ServiceRegistry.get(); idempotent

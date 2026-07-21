@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_code_quality.code_dedup.ssot_registrar
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] tests/governance/rule_enforcement/test_ssot_registrar.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/code_dedup/test_ssot_registrar.py
-# [A_module] module_id=MOD-GCQ_ssot_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GCQ-ssot_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """SSoT注册器 — 提取函数自动注册到 shared API清单."""

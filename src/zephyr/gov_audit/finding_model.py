@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_audit.finding_model
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.schema.base_config
-# [CONSUMERS] finding_ingest.py; pipeline_runner.py; audit-trail.writer; _finding_lifecycle.py; create_task_from_finding.py
+# [CONSUMERS] finding_ingest.py ; pipeline_runner.py ; audit-trail.writer ; create_task_from_finding.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] AuditFinding is the single unified data contract between 144 governance scripts and 7 audit modules; all fields MUST be compatible with Finding Schema JSONL
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] from_jsonl() raises ValueError on malformed input; to_jsonl() never raises
 # [TESTS] tests/test_audit_finding_model.py
-# [A_module] module_id=MOD-UNK_finding_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-finding_model | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.io.yaml_utils
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.io.paths
-# [CONSUMERS] scripts/governance/_shared/yaml_utils.py(重新导出); src/zephyr/governance/triage.py
+# [CONSUMERS] scripts/governance/_shared/yaml_utils.py(重新导出)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] load_vocabulary_values 是 vocabulary YAML 合法值加载的唯一真源；strict=True fail-fast

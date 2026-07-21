@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.resource_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/resource/test_resource_guard.py
+# [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py ; tests/resource/test_resource_guard.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬限制不可突破
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_resource_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-resource_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

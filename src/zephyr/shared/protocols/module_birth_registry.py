@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.protocols.module_birth_registry
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.__init__; tests.unit.shared.test_orphan_integration
+# [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.key_hierarchy
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_key_hierarchy
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

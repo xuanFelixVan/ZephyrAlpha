@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.decision_explainer
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_decision_explainer_root; tests.agent_rbac.test_decision_explainer_agent_rbac; tests.unit.agent_rbac.test_rbac_core
+# [CONSUMERS] tests.agent_rbac.test_decision_explainer_agent_rbac
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Explanation.to_dict returns all 5 fields; structured_rejection auto-generates correction_suggestion when empty

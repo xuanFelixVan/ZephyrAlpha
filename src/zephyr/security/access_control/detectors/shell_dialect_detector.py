@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.detectors.shell_dialect_detector
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_shell_dialect_detector; tests.agent_rbac.test_forensic_b
+# [CONSUMERS] tests.agent_rbac.test_forensic_b
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] detect() returns ShellDialectResult with detected_dialect/dangerous_patterns/blocked; never raises

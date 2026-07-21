@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.events.event_schemas
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.infra.observer; zephyr.shared.schema.base_config
-# [CONSUMERS] orchestration.context_management.context_budget_tracker
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_event_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-event_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: "cron"是TimeEventPayload schema的trigger_kind枚举值，非实际cron调用
 

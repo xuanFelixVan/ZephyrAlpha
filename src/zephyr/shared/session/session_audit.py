@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.session.session_audit
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] gov_rule/constitutional_update/constitutional_update.py; gov_audit/writer.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_session_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-session_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

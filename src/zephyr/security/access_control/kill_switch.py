@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.kill_switch
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] genesis_bootstrap._phase_kill_switch; tests/agent_rbac/test_kill_switch_agent_rbac.py
+# [CONSUMERS] tests/agent_rbac/test_kill_switch_agent_rbac.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] KillSwitch default state is NORMAL; trigger only on critical failure; reset requires owner approval
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] trigger()/reset() never raise; return TriggerResult with success flag
 # [TESTS] tests/agent_rbac/test_kill_switch_agent_rbac.py
-# [A_module] module_id=MOD-SEC_kill_switch | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-SEC-kill_switch | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """KillSwitch — 熔断器.

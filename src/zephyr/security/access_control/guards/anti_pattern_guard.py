@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.guards.anti_pattern_guard
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_anti_pattern_guard_root
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

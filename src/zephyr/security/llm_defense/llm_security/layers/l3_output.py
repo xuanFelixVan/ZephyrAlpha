@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l3_output
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; tests.adversarial.test_cross_layer_systems_red_team; tests.llm_security.test_l3_output_security
+# [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway ; tests.llm_security.test_l3_output_security
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

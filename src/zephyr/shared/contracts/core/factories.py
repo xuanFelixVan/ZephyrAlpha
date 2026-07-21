@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.core.factories
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] trading.trading_contracts.factories
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """shared/contracts/factories.py — 跨层数据契约工厂方法

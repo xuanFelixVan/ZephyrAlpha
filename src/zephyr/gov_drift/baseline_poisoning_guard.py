@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.baseline_poisoning_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; tests/audit/test_baseline_poisoning_guard.py
+# [CONSUMERS] tests/audit/test_baseline_poisoning_guard.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 投毒防护不可禁用
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-baseline_poisoning_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

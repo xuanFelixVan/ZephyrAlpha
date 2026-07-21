@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.lifecycle.state_machine
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS] MOD-TASK_SYSTEM(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-RESOURCE_OPTIMIZATION_ENGINE(resource);MOD-INF-015(telemetry);governance.drift_detection.state_machine;infrastructure_runtime_integration.auto_fix_engine.state_machine
+# [CONSUMERS] MOD-TASK_SYSTEM(task) ; MOD-INF-023(drift) ; MOD-INF-021(rollback) ; MOD-INF-019(skill) ; MOD-INF-025(a2a) ; MOD-INF-018(rbac) ; MOD-RESOURCE_OPTIMIZATION_ENGINE(resource) ; MOD-INF-015(telemetry)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 状态转换必须合法;转换守卫必须同步;命名冲突必须注册
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidTransitionError;TransitionGuardError;StateMachineRegistryError
 # [TESTS] tests/test_state_machine.py
-# [A_module] module_id=MOD-SHR_state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

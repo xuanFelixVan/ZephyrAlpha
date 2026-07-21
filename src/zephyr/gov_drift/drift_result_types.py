@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.drift_result_types
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models; zephyr.gov_drift.drift_engine
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_drift.py; tests/drift/test_drift_result_types.py; tests/infrastructure/test_drift_extended_e2e.py
+# [CONSUMERS] src/zephyr/gov_drift/_drift.py ; tests/drift/test_drift_result_types.py ; tests/infrastructure/test_drift_extended_e2e.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 结果类型定义不可破坏兼容性
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_drift_result_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-drift_result_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

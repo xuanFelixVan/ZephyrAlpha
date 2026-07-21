@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.trading_contracts.risk.risk_validator_protocol
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES]
-# [CONSUMERS] ex_core.execution_engine; risk.risk_validator
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] ViolationDetail is SSoT for cross-layer risk violation data; l04 re-exports from here
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on negative limit_value
 # [TESTS] tests/risk/test_risk_validator.py; tests/ex_core/
-# [A_module] module_id=MOD-UNK_risk_validator_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-risk_validator_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

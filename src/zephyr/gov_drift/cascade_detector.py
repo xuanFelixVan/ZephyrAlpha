@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.cascade_detector
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py; tests/audit/test_cascade_detector.py
+# [CONSUMERS] src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py ; tests/audit/test_cascade_detector.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 级联检测不可禁用
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_cascade_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-cascade_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

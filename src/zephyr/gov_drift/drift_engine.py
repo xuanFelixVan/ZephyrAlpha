@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.drift_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_infrastructure; zephyr.gov_drift.drift_models; zephyr.gov_audit.finding_model; zephyr.gov_audit.__init__
-# [CONSUMERS] src/zephyr/gov_audit/bridges/drift_bridge.py; src/zephyr/gov_audit/cli.py; src/zephyr/governance/behavioral_auditor/__init__.py (+12 more)
+# [CONSUMERS] src/zephyr/gov_audit/cli.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 39检测器必须全部执行;不可跳过检测器
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_drift_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-drift_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

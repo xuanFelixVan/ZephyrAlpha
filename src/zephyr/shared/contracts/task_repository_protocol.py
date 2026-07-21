@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.task_repository_protocol
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading; zephyr.governance; zephyr.resilience
+# [CONSUMERS] zephyr.trading ; zephyr.governance
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Protocol MUST NOT import from zephyr.data; only structural subtyping
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError if runtime implementation does not satisfy Protocol
 # [TESTS] tests/utils/test_shared_core.py
-# [A_module] module_id=MOD-SHR_task_repository_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-task_repository_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

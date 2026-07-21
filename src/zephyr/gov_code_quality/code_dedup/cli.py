@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_code_quality.code_dedup.cli
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] pre-commit/verify_dedup.py; ct_deduplication.DeduplicationHandler; CI pipeline
+# [CONSUMERS] CI pipeline
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] exit codes: 0=PASS/1=WARN/2=ERROR/3=TOOL_ERROR/4=DEGRADED
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sys.exit with ExitCode enum values only
 # [TESTS] tests/test_code_dedup_engine.py
-# [A_module] module_id=MOD-GCQ_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GCQ-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """code-dedup-engine CLI——子命令映射+退出码+扫描入口."""

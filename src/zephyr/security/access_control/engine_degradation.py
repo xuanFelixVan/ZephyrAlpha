@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.engine_degradation
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] genesis_bootstrap._phase_engine_degradation
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] default level is NORMAL; degradation only escalates; recovery requires explicit action
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] trigger_degradation()/recover() never raise; return dict with success flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
-# [A_module] module_id=MOD-SEC_engine_degradation | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-SEC-engine_degradation | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """EngineDegradation — 引擎降级管理.
 

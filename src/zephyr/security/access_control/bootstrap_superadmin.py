@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.bootstrap_superadmin
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] genesis_bootstrap._phase_bootstrap_superadmin(); genesis_bootstrap.shutdown()
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] superadmin account created once; capabilities never include destructive ops; bootstrap is idempotent
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] check() never raises; returns dict with granted flag; bootstrap() never raises
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
-# [A_module] module_id=MOD-SEC_bootstrap_superadmin | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-SEC-bootstrap_superadmin | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """BootstrapSuperadmin — Superadmin 账户启动器.
 

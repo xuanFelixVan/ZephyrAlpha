@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.verifiers.post_action_verifier
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_post_action_verifier
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] stub
 # [INVARIANTS]

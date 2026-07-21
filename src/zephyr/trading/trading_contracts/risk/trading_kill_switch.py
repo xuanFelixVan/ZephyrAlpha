@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.trading_contracts.risk.trading_kill_switch
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.__init__
-# [CONSUMERS] MOD-INF-022;MOD-INF-020;shared/kill_switch.py
+# [CONSUMERS] MOD-INF-022 ; MOD-INF-020
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 交易风险熔断器;五级KillSwitch;Pydantic数据模型
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError;RuntimeError
 # [TESTS] tests/test_rollback/
-# [A_module] module_id=MOD-INF_trading_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-trading_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # SRC-0041: Copy file -- keep independent implementation, pending future review

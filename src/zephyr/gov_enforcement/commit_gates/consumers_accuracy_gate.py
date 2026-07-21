@@ -107,7 +107,7 @@ _SCAN_PREFIXES: tuple[str, ...] = ("scripts/governance/", "src/")
 _CONSUMERS_RE = re.compile(r"^\s*#\s*\[CONSUMERS\]\s*(.*)$")
 
 # 抽象代号前缀（无法静态验证，豁免）
-_ABSTRACT_CODE_PREFIXES: tuple[str, ...] = ("MOD-", "SH-", "CFG-", "REG-")
+_ABSTRACT_CODE_PREFIXES: tuple[str, ...] = ("MOD-", "SH-", "CFG-", "REG-", "OPS-")
 
 # 标识符正则（用于从括号内提取函数名）
 _IDENTIFIER_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
@@ -139,7 +139,10 @@ def _has_cjk(text: str) -> bool:
 #   - "descriptive" : 描述性文字（含空格/CJK/括号开头）→ 豁免（非路径声明）
 # 病根：原算法假设输入全是 dotted 格式，对 filepath/glob/descriptive 格式产生
 # 系统性误报（如 scripts/git_commit.py 文件实际存在但被误报 phantom）。
-_FILE_EXTENSIONS = (".py", ".yaml", ".json", ".yml")
+_FILE_EXTENSIONS = (
+    ".py", ".yaml", ".json", ".yml",
+    ".ps1", ".sh", ".bat", ".cmd", ".toml", ".cfg", ".ini", ".md", ".txt", ".csv", ".sql",
+)
 
 
 def _classify_consumer_format(consumer: str) -> str:
@@ -159,8 +162,23 @@ def _classify_consumer_format(consumer: str) -> str:
         return "descriptive"
     # 文件路径格式（含 / 或以文件扩展名结尾）
     if "/" in consumer or consumer.endswith(_FILE_EXTENSIONS):
+        # 含 / 但最后一段无文件扩展名 → 描述性引用（如 CI/CD, mcp/server）
+        if "/" in consumer and not consumer.endswith(_FILE_EXTENSIONS):
+            last_seg = consumer.rstrip("/").rsplit("/", 1)[-1]
+            if "." not in last_seg and not consumer.endswith("/"):
+                return "descriptive"
         return "filepath"
-    # 默认：dotted 模块路径
+    # 单词描述性标签（不含 . 的非抽象代号单词——不是模块路径）
+    if "." not in consumer:
+        return "descriptive"
+    # Class.method 引用（首段大写开头——PEP 8 类名，非模块路径）
+    if consumer[0].isupper():
+        return "descriptive"
+    # dotted 路径中有连字符段 → 描述性（Python 模块名不能含连字符）
+    parts = consumer.split(".")
+    if any("-" in p for p in parts):
+        return "descriptive"
+    # dotted 模块路径（含 .，首段小写，各段无连字符）
     return "dotted"
 
 
@@ -168,7 +186,10 @@ def _check_filepath_exists(filepath: str, project_root: Path) -> bool:
     """检查文件路径声明是否存在（phantom 检测——filepath 格式）。
 
     支持相对路径（scripts/git_commit.py）和 src/ 前缀路径。
+    文件名-only 路径（无目录前缀）递归搜索项目内同名文件。
     """
+    import glob as _glob
+
     filepath = filepath.strip()
     # 直接检查相对路径
     if (project_root / filepath).exists():
@@ -176,6 +197,17 @@ def _check_filepath_exists(filepath: str, project_root: Path) -> bool:
     # 尝试去除 src/ 前缀（如 src/zephyr/foo.py → zephyr/foo.py）
     if filepath.startswith("src/") and (project_root / filepath[4:]).exists():
         return True
+    # 文件名-only 路径递归搜索（如 phase_manager.py 实际在 scripts/governance/d5_architecture/ 下）
+    if "/" not in filepath:
+        for prefix in ("scripts/governance/", "scripts/", "src/zephyr/", "src/"):
+            if (project_root / prefix / filepath).exists():
+                return True
+        # 递归搜索作为兜底（短路径在深层子目录中）
+        matches = _glob.glob(str(project_root / "scripts" / "**" / filepath), recursive=True)
+        if not matches:
+            matches = _glob.glob(str(project_root / "src" / "**" / filepath), recursive=True)
+        if matches:
+            return True
     return False
 
 
@@ -223,20 +255,30 @@ def _extract_function_names_from_parens(parens_content: str) -> list[str]:
 
     策略：
     - 含 CJK 字符 → 跳过整个括号（描述性文字非函数名）
-    - 否则 → 按逗号/空格分割，提取每个标识符
+    - 按逗号/分号分割，每段必须是纯标识符——任何段含非标识符字符
+      （空格、+、-等）→ 整个括号视为描述性文字，返回空列表
 
     Args:
         parens_content: 括号内内容（如 "find_breaking_change_session, register_dependency"）
 
     Returns:
         函数名列表（如 ["find_breaking_change_session", "register_dependency"]）。
-        含 CJK 时返回空列表。
+        含 CJK 或描述性文字时返回空列表。
     """
     if _has_cjk(parens_content):
         return []  # 描述性文字，跳过
-    # 按逗号/空格/分号分割
-    tokens = re.split(r"[,;\s]+", parens_content.strip())
-    return [t for t in tokens if t and _IDENTIFIER_RE.match(t)]
+    # 按逗号/分号分割（不再按空格分割——描述性英文短语会被误提取）
+    tokens = re.split(r"[,;]", parens_content.strip())
+    result: list[str] = []
+    for token in tokens:
+        token = token.strip()
+        if not token:
+            continue
+        # 每个 token 必须是纯标识符（无空格、无特殊字符）
+        if not _IDENTIFIER_RE.match(token):
+            return []  # 有非标识符 token → 描述性文字，跳过整个括号
+        result.append(token)
+    return result
 
 
 def parse_consumers_field(file_content: str) -> list[tuple[str, str]]:
@@ -310,9 +352,16 @@ def check_consumers_accuracy(
     if not declarations:
         return []  # 无 [CONSUMERS] 字段或为空，由 CREATE-GUARD 检测存在性
 
-    # 收集当前文件的所有函数名（用于 orphan 检测）
+    # 收集当前文件的所有函数名+类名（用于 orphan 检测）
     try:
         defined_functions = _collect_function_names(file_content)
+        # 也收集类名（orphan 检测应识别 ClassDef）
+        import ast
+
+        tree = ast.parse(file_content)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                defined_functions.add(node.name)
     except Exception:  # noqa: BLE001 — fail-open
         defined_functions = set()
 
@@ -344,6 +393,10 @@ def check_consumers_accuracy(
             # 策略：从右往左尝试，去掉最后一段直到找到存在的文件
             module_path = consumer
             path_exists = _check_module_path_exists(module_path, project_root)
+            if not path_exists and "-" in module_path:
+                underscored = module_path.replace("-", "_")
+                if _check_module_path_exists(underscored, project_root):
+                    path_exists = True
             if not path_exists:
                 # 逐级缩短尝试（处理 module.Class.method 格式）
                 # 关键约束：至少保留 2 段——避免缩短到顶层包（如 zephyr）导致误判，
@@ -524,6 +577,9 @@ def scan_all_for_consumers_accuracy(
                     content = fh.read()
             except OSError:
                 continue  # fail-open: 文件不可读
+            # noqa 豁免：baseline scan 也识别 # noqa: consumers-accuracy 标记
+            if _CONSUMERS_ACCURACY_NOQA_RE.search(content):
+                continue
             violations.extend(check_consumers_accuracy(py_file, content, root))
 
     return violations, None

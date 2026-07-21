@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.scan_mutex
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_scan_mutex.py
+# [CONSUMERS] src/zephyr/gov_drift/_scanners.py ; tests/audit/test_scan_mutex.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 扫描互斥不可绕过
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_scan_mutex | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-scan_mutex | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

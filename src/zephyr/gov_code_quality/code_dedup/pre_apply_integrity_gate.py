@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_code_quality.code_dedup.pre_apply_integrity_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] tests/governance/rule_enforcement/test_pre_apply_integrity_gate.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/code_dedup/test_pre_apply_integrity_gate.py
-# [A_module] module_id=MOD-GCQ_pre_apply_integrity_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GCQ-pre_apply_integrity_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """Pre-Apply 完整性门 — SHA256重新验证."""

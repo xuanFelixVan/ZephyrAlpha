@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.cross_module_score
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/cross/test_cross_module_score.py
+# [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; tests/cross/test_cross_module_score.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 跨模块评分不可人为调整
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
-# [A_module] module_id=MOD-SEC_cross_module_score | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-cross_module_score | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

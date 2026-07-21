@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.lifecycle.resource_optimization_models
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
-# [CONSUMERS] shared.io.io_cache; shared.infra.process_pool; runtime.resource_optimization
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_resource_optimization_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-resource_optimization_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.archive.cold_stub
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.archive.__init__
-# [CONSUMERS] src/zephyr/system-telemetry/facade.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] TTL分级策略严格执行;成本超限->三级降级(CRITICAL/SEVERE/WARNING);SQLite backup使用RULE-ONE原子写入
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] gzip失败->跳过压缩保留原文;SQLite backup失败->日志warning不阻塞
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """遥测 · archive/cold_stub — 冷存储归档管道。

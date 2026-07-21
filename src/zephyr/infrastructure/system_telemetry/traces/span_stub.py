@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.system_telemetry.traces.span_stub
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
-# [CONSUMERS] src/zephyr/system-telemetry/facade.py;src/zephyr/system-telemetry/logs/structured_sink.py
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Span命名MUST遵循gen_ai.component.operation风格;跨进程MUST携带traceparent(W3C);禁止手动传递trace_id
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF_span_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-span_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。

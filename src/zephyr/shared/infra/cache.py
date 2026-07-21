@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.infra.cache
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS] orchestration.context_management.context_budget_tracker
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SHR_cache | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-cache | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

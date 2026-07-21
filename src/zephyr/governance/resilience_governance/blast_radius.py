@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.resilience_governance.blast_radius
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] semantic-auditor/__init__.py; fix_prioritizer.py
+# [CONSUMERS] fix_prioritizer.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] depgraph_path必须指向合法YAML; max_depth>=1; analyze输入finding.source_location非空时才计算文件级影响
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DepgraphLoadError on invalid YAML; ValueError on max_depth<1
 # [TESTS] tests/semantic-auditor/test_blast_radius.py
-# [A_module] module_id=MOD-SEM_blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEM-blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

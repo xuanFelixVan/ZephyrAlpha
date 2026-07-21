@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.persistence.dataflowgraph_schema
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (_PG_ENV_PATH, _load_pg_config, _build_pg_dsn); zephyr.shared.io.paths (REPO_ROOT); psycopg2
-# [CONSUMERS] apply_dataflowgraph.py; sync_yaml_to_depgraph.py (sync_dataflow_registry); generate_dataflow_diagram.py
+# [CONSUMERS] apply_dataflowgraph.py ; sync_yaml_to_depgraph.py ; generate_dataflow_diagram.py
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] dataflowgraph is PostgreSQL (同库不同表，共享 config/.env.postgres); init_dataflow_db must be idempotent

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.detectors.anomaly_detector
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_anomaly_detector; tests.agent_rbac.test_crosscut_d
+# [CONSUMERS] tests.agent_rbac.test_crosscut_d
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]

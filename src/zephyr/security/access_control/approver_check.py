@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.approver_check
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_approver_check; tests.test_governance_approver_check; tests.governance.test_adversarial_contract_attacks; tests.governance.test_gct_004_escalation_to_rbac; tests.governance.test_p0_u1_contract_smoke
+# [CONSUMERS] tests.governance.test_adversarial_contract_attacks ; tests.governance.test_gct_004_escalation_to_rbac ; tests.governance.test_p0_u1_contract_smoke
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] verify_approver returns dict with approved/approver_id/action/reason; superadmin always approved; restricted action requires superadmin; others approved as valid_approver

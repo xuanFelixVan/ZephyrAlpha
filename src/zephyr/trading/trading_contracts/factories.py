@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.trading_contracts.factories
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.order; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.trading.trading_contracts.risk.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics; zephyr.shared.contracts.core.factories
-# [CONSUMERS] shared/contracts/core/factories.py(已迁移)
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 工厂方法仅创建trading_contracts内定义的类型实例
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError: 参数越界
 # [TESTS] tests/test_trading_contracts_factories.py
-# [A_module] module_id=MOD-UNK_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """trading-contracts/factories.py — 交易域数据契约工厂方法

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.schema.severity_types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] gates.task_types; shared.schema.schemas; shared.schema.audit_types; kb.knowledge_types
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Priority P0-P4 MUST align with GOV-TASK-004 §2.2; AuditSeverity MUST be backward-compatible alias for Priority P0-P2
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError on invalid enum value
 # [TESTS] tests/test_schemas.py
-# [A_module] module_id=MOD-SHR_severity_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-severity_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
 

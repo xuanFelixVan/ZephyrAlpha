@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.schema.base_config
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] shared.schema.schemas; gates.task_types; shared.schema.audit_types; kb.knowledge_types
+# [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] BASE_CONFIG MUST align with ADR-0040 §4.2
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] N/A
 # [TESTS] tests/test_schemas.py
-# [A_module] module_id=MOD-SHR_base_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-base_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
 
