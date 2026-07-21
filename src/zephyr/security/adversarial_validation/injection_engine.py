@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] PermissionError on SYSTEM-level crash injection without confirmation; ValueError on unknown injection type
 # [TESTS] tests/red_blue/test_injection_engine.py
-# [A_module] module_id=MOD-SEC_injection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-injection_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件不可读时返回 has_value=False+is_uncertain=True,不抛异常
 # [TESTS] tests/orphan-judge/test_standalone_evaluator.py
-# [A_module] module_id=MOD-SEC_standalone_evaluator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-standalone_evaluator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-029 — L4 独立价值评估器

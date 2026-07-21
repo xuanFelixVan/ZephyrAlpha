@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] BootstrapVerificationError if bootstrap fails post-registration verification
 # [TESTS] tests/red_blue/test_cold_start.py
-# [A_module] module_id=MOD-SEC_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

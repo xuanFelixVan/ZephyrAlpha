@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-SEC_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
+# [A_module] module_id=MOD-SEC-gateway | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 
 import asyncio

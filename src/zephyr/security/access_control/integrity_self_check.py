@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_all never raises; returns list of IntegrityCheck
 # [TESTS] tests/agent_rbac/test_integrity_agent_rbac.py
-# [A_module] module_id=MOD-SEC_integrity_self_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-integrity_self_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """IntegritySelfCheck — 完整性自检.
 

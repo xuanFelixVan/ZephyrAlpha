@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 生成失败返回空标签
 # [TESTS] tests/orphan-judge/test_swid_tag.py
-# [A_module] module_id=MOD-SEC_swid_tag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-swid_tag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import hashlib
 import uuid

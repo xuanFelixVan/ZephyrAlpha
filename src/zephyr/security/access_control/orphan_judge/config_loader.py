@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] YAMLError on bad config file; 返回默认配置
 # [TESTS] tests/orphan-judge/test_config_loader.py
-# [A_module] module_id=MOD-SEC_config_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-config_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations
