@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_health_score_calculator | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2
+# [BLUEPRINT] MOD-GOV-health_score_calculator | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2
 # [MODULE] zephyr.governance.audit.health_score_calculator
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] stdlib (dataclasses, typing)

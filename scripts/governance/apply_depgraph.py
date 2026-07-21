@@ -105,7 +105,7 @@ if str(_GOV_DIR) not in sys.path:
 # 治本 #ARCH-TOOL-HEALTH-V1（2026-07-19）：deb695006f 批量重构 sys.exit→EXIT_* 时
 # 误删 get_depgraph_pg_connection import（替换整行而非追加），导致 56 处调用运行时 NameError。
 # 修复：在 EXIT_* 同一 import 语句中显式恢复 get_depgraph_pg_connection。
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import (
     EXIT_ERROR,
     EXIT_FINDINGS,
     EXIT_PASS,

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_cross_layer_contract_signature_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-b 跨层契约签名漂移检测
+# [BLUEPRINT] MOD-GOV-cross_layer_contract_signature_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-b 跨层契约签名漂移检测
 # [MODULE] zephyr.governance.audit.cross_layer_contract_signature_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, SQL_CREATE_DRIFT_AUDIT_FINDINGS, SQL_INSERT_DRIFT_AUDIT_FINDING); zephyr.governance.audit._git_helpers (git_show_file); stdlib (ast, logging, os, sqlite3, uuid, yaml)
