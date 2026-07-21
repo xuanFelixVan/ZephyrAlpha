@@ -58,7 +58,8 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 - ``data/classified/classified-assets.json`` —— 分类资产
 - ``data/audit-trail/`` —— 审计追踪日志（运行时，reconciler 追加）
 - ``data/cache/`` —— 缓存（运行时，reconciler 重生成）
-- ``scripts/governance/meta/rules_integrity_db.json`` —— 规则完整性
+- ``scripts/governance/meta/rules_integrity_db.json`` —— 已移除出 auto-sync（偏离1修复，2026-07-22）：
+  原因：该文件是 register() 写入产物（golden hash DB），列入 auto-sync 导致 hash 被还原回 HEAD
 - ``docs/03_modules/**/blueprint.md`` —— 已移除（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，2026-07-21）
   原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级分类误伤正文编辑
   frontmatter 变更由 blueprint_frontmatter_reconciler._commit_auto 自动提交，无需 auto-restore
@@ -69,7 +70,6 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 - ``data/runtime_violation_snapshot/latest.json`` —— 运行时违规快照
 - ``data/telemetry/blueprint_reads.jsonl`` —— 蓝图读取遥测
 - ``data/telemetry/dev/metrics.jsonl`` —— 开发指标
-- ``scripts/governance/meta/rules_integrity_db.json`` —— 规则完整性
 - ``scripts/governance/script_manifest.yaml`` / ``scripts/script_manifest.yaml`` —— 脚本清单
 - ``scripts/governance/migrate_sqlite_to_pg/03_create_*_schema.sql`` —— PG schema 产物
 
@@ -134,7 +134,10 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
     "data/telemetry/",
     "data/audit-trail/",
     "data/cache/",
-    "scripts/governance/meta/rules_integrity_db.json",
+    # rules_integrity_db.json 已移除出 auto-sync（偏离1修复，2026-07-22）：
+    # 该文件是 validate_rules_integrity.py --register 的写入产物（golden hash DB），
+    # 非"派生产物"。列入 auto-sync 导致 register() 写入的新 hash 被 git restore 还原回
+    # HEAD，形成"写入→还原"循环，post-commit reconciler 漏触发后 hash 永远停留旧值。
     "scripts/governance/script_manifest.yaml",
     "scripts/script_manifest.yaml",
     "architecture_model/index.yaml",
