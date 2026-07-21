@@ -479,7 +479,8 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
 **当前落地状态**：
 - 规则真源：[	rae_071_temporary_file_lifecycle.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml)（v1.0.0，已 sync 到 DB）
 - paired_gate_id=null（暂无 pre-commit gate，.runtime/ 免跟踪区无 commit-time 拦截点；治理依赖 AI 自觉 + 事件驱动 reconciler 兜底）
-- reconciler 实现待落地（被 sess-18504 持有 econciliation_registry.py + sess-55092 持有 session_worktree.py 阻塞，待释放后实现 make_session_staging_lifecycle_reconciler 并注册到 oot_hooks.py）
+- reconciler 实现待落地（被 sess-18504 持有 
+econciliation_registry.py + sess-55092 持有 session_worktree.py 阻塞，待释放后实现 make_session_staging_lifecycle_reconciler 并注册到 oot_hooks.py）
 
 ## 7. 代码规范
 
@@ -871,6 +872,26 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | 批量删除 | `Remove-Item xxx/*` | Python `pathlib.Path.unlink()` 循环 |
 
 **诊断**：用户弹窗 `检测到高风险命令 Remove-Item "D:\ZephyrAlpha\data\databases\depgraph_dirty.flag"` 即违反本规则。删除 `.flag` 标记文件应改用 `os.remove`。
+
+### 10.3 PRECOMMIT-OFFLINE：pre-commit hook 离线可运行纪律（#ARCH-PRECOMMIT-OFFLINE-001，2026-07-21）
+
+**病根**：`.pre-commit-config.yaml` 曾引用外部 GitHub repo `pre-commit/pre-commit-hooks`（rev v4.6.0），pre-commit 工具在缓存失效/首次安装时会 `git fetch origin --tags` 拉取远程 repo——代理（127.0.0.1:10808）未启动或离线环境会卡死所有 commit。
+
+**100% AI 场景下的定位**：GitCommitGateway 三层防御中，A 层（in-process gate 70+ 个）是主防线，永远用 `--no-verify` 绕过 pre-commit hook；C 层（pre-commit hook）仅在 AI 误用裸 `git commit` 时兜底。但 C 层依赖外部 repo 让"冗余防线"变成"单点故障"——防御措施本身成了攻击面。
+
+**铁律**（真源 `trae_073_precommit_offline_discipline.yaml`，5 条）：
+
+| # | 铁律 | 违反示例 |
+|---|------|---------|
+| 1 | 外部 repo 禁令：`.pre-commit-config.yaml` 禁止引用 `github.com/...` 等 external repo | `repo: https://github.com/pre-commit/pre-commit-hooks` ❌ |
+| 2 | `language: system` 强制：禁止 `pygrep`/`rust`/`python` 等 pre-commit 内置语言 | `language: pygrep` ❌ → `language: system` ✅ |
+| 3 | 纯 stdlib 实现：local hook entry 脚本 MUST 仅用 Python stdlib | `entry: python scripts/governance/d7_code/check_merge_conflict.py` ✅ |
+| 4 | 删除冗余双防线：能力已被项目内 gate/hook 等价覆盖的 external hook 禁止重复登记 | ruff format 已覆盖 trailing-whitespace，禁止再登记 external hook ❌ |
+| 5 | 逃生通道 `--no-verify`：GitCommitGateway 保留 `--no-verify` 绕过能力 | `gateway.commit(...)` 内部用 `--no-verify` ✅ |
+
+**强制执行**：`GATE-PRECOMMIT-OFFLINE`（priority=111，A 层 in-process gate）检测 `.pre-commit-config.yaml` 中外部 repo 引用 + `language` 非 `system`，硬阻断 commit。
+
+**替代脚本**（纯 stdlib，local hook entry）：`check_merge_conflict.py` / `detect_private_key.py` / `check_no_tests_unit.py`
 
 ## 11. depgraph 使用指引（唯一全景真源）
 

@@ -1,0 +1,167 @@
+rule_id: TRAE-073
+title: pre-commit hook 离线可运行纪律铁律（Pre-commit Offline Discipline）
+name: pre-commit hook 离线可运行纪律铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-073
+priority: 50
+depends_on:
+- TRAE-062
+tags:
+- TRAE
+- precommit_offline
+- L1_foundation
+- no_external_dependency
+- local_hooks
+- network_single_point_failure
+- offline_first
+ttl: permanent
+severity: high
+scope: precommit_offline_discipline
+domain: TRAE
+triggers:
+- operation: precommit_config_edit
+- operation: git_commit_invocation
+- operation: precommit_install
+- operation: precommit_run
+sections:
+  precommit_offline_discipline:
+    section_type: procedure
+    title: pre-commit hook 离线可运行纪律铁律
+    original_rules:
+    - RULE-PRECOMMIT-OFFLINE
+    conditions:
+    - type: trigger
+      check: AI 修改 .pre-commit-config.yaml 时
+      pass: "所有 hooks 使用 repo: local + language: system，无任何外部 GitHub repo 引用"
+      fail: "引入外部 repo（https:// / git@ 开头）导致 pre-commit 工具在缓存失效时尝试 git fetch 远程 repo"
+    - type: constraint
+      check: AI 在离线环境或代理失效环境执行 git commit 时
+      pass: "pre-commit hook 100% 离线可运行，无网络依赖"
+      fail: "pre-commit hook 尝试 git fetch origin --tags 连接 GitHub 失败，卡死所有 commit"
+    - type: constraint
+      check: GitCommitGateway 走 --no-verify 绕过 pre-commit 时
+      pass: "in-process gate（70+ 个）完全替代 pre-commit hook 能力，POST-COMMIT-GUARD 闭环标记验证"
+      fail: "pre-commit hook 是唯一防线但网络依赖导致无法触发（单点故障）"
+    actions:
+    - type: mandatory
+      step: '铁律1: .pre-commit-config.yaml 中 repos[] 不得包含任何外部 repo 引用。禁止 repo: https://... / repo: git@... / repo: http://... 等任何远程 URL。所有 hook MUST 使用 repo: local。'
+    - type: mandatory
+      step: '铁律2: 所有 local hook MUST 使用 language: system（直接调用系统 python / shell），禁止 language: python（会触发 pre-commit 创建虚拟环境并可能联网安装依赖）。'
+    - type: mandatory
+      step: '铁律3: 替代外部 hook 的 local hook MUST 纯 stdlib 实现，禁止依赖第三方库（避免 pip install 网络依赖）。检测脚本放 scripts/governance/d7_code/ 下，遵循 [BLUEPRINT] 头部规范。'
+    - type: mandatory
+      step: '铁律4: 外部 hook 能力可被 local hook 完全覆盖时，MUST 删除外部 hook 引用，禁止保留"双防线"——pre-commit hook 在 GitCommitGateway --no-verify 路径下不触发，本就是冗余第二防线，网络依赖让其变成单点故障。'
+    - type: mandatory
+      step: '铁律5: AI 在逃生场景下走裸 git commit 时 SHOULD 始终使用 --no-verify（与 GitCommitGateway 行为一致），POST-COMMIT-GUARD 闭环标记验证（[GW:session_id] 标记 + session_registry 真实性校验）。逃生通道文档见 AGENTS.md §10.1。'
+    - type: forbidden
+      step: '禁止: 在 .pre-commit-config.yaml 中引用 pre-commit/pre-commit-hooks / pre-commit/pygrep-hooks 等任何外部 GitHub repo'
+    - type: forbidden
+      step: '禁止: 在 local hook 中使用 language: python（改为 language: system）'
+    - type: forbidden
+      step: '禁止: 在替代脚本中 import 第三方库（如 yaml beyond stdlib / requests 等），仅允许 Python 标准库'
+    prohibitions:
+    - .pre-commit-config.yaml 中引用外部 GitHub repo（pre-commit/pre-commit-hooks 等）
+    - local hook 使用 language: python（触发虚拟环境创建 + 可能联网安装依赖）
+    - 替代脚本依赖第三方库（破坏离线可运行性）
+    - 保留"双防线"外部 hook 引用（网络单点故障）
+    invariants:
+    - id: RULE-PRECOMMIT-OFFLINE-INV-001
+      title: 外部 repo 引用禁令
+      description: .pre-commit-config.yaml 中 repos[].repo 字段 MUST 等于 "local"，禁止任何 http(s):// / git@ 开头的远程 URL
+      enforcement: GATE-PRECOMMIT-OFFLINE commit gate（priority=111，硬阻断）+ AI 自觉遵循
+      violation_action: reject_change
+    - id: RULE-PRECOMMIT-OFFLINE-INV-002
+      title: "language: system 强制"
+      description: "所有 local hook MUST 使用 language: system，禁止 language: python（避免虚拟环境 + 联网安装依赖）"
+      enforcement: GATE-PRECOMMIT-OFFLINE commit gate（priority=111，YAML 结构校验）+ AI 自觉遵循
+      violation_action: reject_change
+    - id: RULE-PRECOMMIT-OFFLINE-INV-003
+      title: 纯 stdlib 实现强制
+      description: 替代外部 hook 的 local hook 检测脚本 MUST 纯 stdlib 实现，禁止 import 第三方库
+      enforcement: AI 自觉遵循 + code review（无法静态检测 import 第三方库 vs stdlib，依赖人工审核）
+      violation_action: warn
+    examples:
+    - scenario: 禁止的外部 repo 引用
+      wrong_action: |
+        repos:
+          - repo: https://github.com/pre-commit/pre-commit-hooks
+            rev: v4.6.0
+            hooks:
+              - id: check-merge-conflict
+      correct_action: |
+        repos:
+          - repo: local
+            hooks:
+              - id: check-merge-conflict-marker
+                entry: python scripts/governance/d7_code/check_merge_conflict.py
+                language: system
+                pass_filenames: false
+      reason: 外部 repo 在缓存失效时会 git fetch 远程，代理失败/离线环境卡死 commit。local hook 纯 stdlib 等价替代
+    - scenario: "禁止的 language: python"
+      wrong_action: |
+        - id: my-hook
+          entry: my-script
+          language: python
+      correct_action: |
+        - id: my-hook
+          entry: python scripts/governance/d7_code/my_script.py
+          language: system
+      reason: "language: python 触发 pre-commit 创建虚拟环境，可能联网安装 additional_dependencies。language: system 直接调用系统 python，零网络依赖"
+    common_mistakes:
+    - '❌ 引用 pre-commit/pre-commit-hooks 等外部 GitHub repo——用 local hook 纯 stdlib 替代'
+    - '❌ local hook 用 language: python——改为 language: system'
+    - '❌ 替代脚本 import yaml/requests 等第三方库——纯 stdlib 实现'
+    - '❌ 保留"双防线"外部 hook——pre-commit hook 在 gateway --no-verify 路径下不触发，本就是冗余'
+    background:
+      source: 2026-07-21 实战诊断（#ARCH-CH-023 治本修复时 git commit 被 pre-commit hook 卡死）
+      rationale: |
+        100% AI 开发场景下，GitCommitGateway 永远使用 --no-verify 绕过 pre-commit hook
+        （in-process gate 70+ 个完全替代 pre-commit hook 能力）。pre-commit hook 仅在
+        AI 误用裸 git commit 时作为兜底防线触发。但 .pre-commit-config.yaml 引用外部
+        GitHub repo（pre-commit/pre-commit-hooks）导致 pre-commit 工具在缓存失效/首次
+        安装时尝试 git fetch origin --tags 拉取远程 repo——代理（127.0.0.1:10808）未启动
+        或离线环境会卡死所有 commit，包括合法的逃生通道提交。
+
+        根因是 pre-commit hook 的"冗余防线"定位与"网络单点故障"风险矛盾——网络依赖让
+        本应兜底的防线变成阻断点。治本是删除所有外部 repo 依赖，全部改为 local hook +
+        language: system + 纯 stdlib 实现，100% 离线可运行。
+
+        本规则与 trae_062（SSoT 真源分类）协同——.pre-commit-config.yaml 是 pre-commit
+        配置真源，本规则约束其结构；与 AGENTS.md §10.1 POST-COMMIT-GUARD 协同——
+        --no-verify 逃生通道的治理可见性由 post-commit hook 闭环。
+      related_arch: '#ARCH-PRECOMMIT-OFFLINE-001'
+references:
+  rule_ids:
+  - TRAE-062
+  - TRAE-064
+  scripts:
+  - scripts/governance/d7_code/check_merge_conflict.py
+  - scripts/governance/d7_code/detect_private_key.py
+  modules:
+  - MOD-GOV
+  - zephyr.gov_enforcement.commit_gates.precommit_offline_gate
+  blueprints:
+  - docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §10.1 POST-COMMIT-GUARD
+  - AGENTS.md §10.3 PRECOMMIT-OFFLINE
+enforcement:
+  paired_gate_id: GATE-PRECOMMIT-OFFLINE  # TRAE-073 落地：commit-time 硬阻断 gate（priority=111，YAML 结构校验 .pre-commit-config.yaml 中无外部 repo 引用）
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - static_scan_block
+  - commit_gate_precommit_offline  # 裁定 #ARCH-PRECOMMIT-OFFLINE-001 落地：GATE-PRECOMMIT-OFFLINE 硬阻断
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: M
+  modification_permission: ai_modifiable
+  superseded_by: null
+  related_arch: '#ARCH-PRECOMMIT-OFFLINE-001'
+provenance:
+  extracted_at: '2026-07-21'
+  extracted_by: sess-arch-precommit-offline-001
+  source: '实战诊断：#ARCH-CH-023 治本修复时 git commit 被 pre-commit hook 尝试 git fetch origin --tags 连接 GitHub 失败卡死，根因排查锁定 .pre-commit-config.yaml 外部 GitHub repo 依赖'
