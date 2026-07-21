@@ -183,6 +183,7 @@ def _run_script(script_path: Path, args: list[str] | None = None, timeout: int =
 
 
 _NOQA_MARKERS_CACHE: frozenset[str] | None = None
+_NOQA_MARKERS_LOCK = __import__("threading").Lock()
 
 
 def _load_noqa_exempt_markers() -> frozenset[str]:
@@ -191,19 +192,23 @@ def _load_noqa_exempt_markers() -> frozenset[str]:
     ARCH-NOQA-GOV-001 Phase 3 统一抽象：替代4处 inline
     ``if "# noqa: <marker>" in source: continue`` 重复模式。
     fail-open：registry 加载失败返回空集合（不阻断检测器运行）。
+    线程安全：double-checked locking 避免 check-then-set 竞态（红蓝对抗维度5修复）。
     """
     global _NOQA_MARKERS_CACHE
     if _NOQA_MARKERS_CACHE is not None:
         return _NOQA_MARKERS_CACHE
-    try:
-        data = load_yaml_safe(NOQA_EXEMPT_REGISTRY)
-        markers = frozenset(
-            m["marker"] for m in (data.get("markers") or []) if m.get("marker")
-        )
-        _NOQA_MARKERS_CACHE = markers
-        return markers
-    except Exception:  # noqa: BLE001 — fail-open 不阻断检测器
-        return frozenset()
+    with _NOQA_MARKERS_LOCK:
+        if _NOQA_MARKERS_CACHE is not None:
+            return _NOQA_MARKERS_CACHE
+        try:
+            data = load_yaml_safe(NOQA_EXEMPT_REGISTRY)
+            markers = frozenset(
+                m["marker"] for m in (data.get("markers") or []) if m.get("marker")
+            )
+            _NOQA_MARKERS_CACHE = markers
+            return markers
+        except Exception:  # noqa: BLE001 — fail-open 不阻断检测器
+            return frozenset()
 
 
 def _has_noqa_exempt(source: str, marker: str) -> bool:
@@ -2197,6 +2202,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M15", "depgraph新鲜度(>24h阻断数)", metric_15_depgraph_freshness),
     ("M16", "治本进度新鲜度(>90天超期数)", metric_16_remediation_progress_freshness),
     ("M17", "规则感知缺口(无门禁配对数)", metric_17_rule_perception_gap),
+    # M18 reserved: 原 M18 (治理层收敛缺口数 v1) 已合并至 M19，编号保留不回收（连续性约定）
     ("M19", "治理层收敛缺口数", metric_19_governance_convergence_gap),
     ("M20", "trae_060 §5 快照漂移数", metric_20_runtime_snapshot_drift),
     ("M21", "5病根×3要素覆盖缺口数", metric_21_root_cause_coverage),
@@ -2282,6 +2288,37 @@ def format_console_report(result: dict) -> str:
     return "\n".join(lines)
 
 
+def _cleanup_old_snapshots(output_dir, max_age_days: int = 30) -> int:
+    """清理过期 dashboard 快照文件（红蓝对抗维度7修复）。
+
+    保留最近 max_age_days 天的快照，删除更早的 dashboard_*.json。
+    latest.json 不在清理范围（始终保留最新）。
+
+    Args:
+        output_dir: 快照目录 Path。
+        max_age_days: 保留天数，默认 30。
+
+    Returns:
+        已删除的快照文件数。
+    """
+    import time as _time
+    try:
+        cutoff = _time.time() - max_age_days * 86400
+        removed = 0
+        for fp in output_dir.glob("dashboard_*.json"):
+            try:
+                if fp.stat().st_mtime < cutoff:
+                    fp.unlink()
+                    removed += 1
+            except OSError:
+                continue
+        if removed > 0:
+            print(f"快照 TTL 清理：删除 {removed} 个过期快照（>{max_age_days}天）")
+        return removed
+    except Exception:  # noqa: BLE001 — 清理失败不阻断主流程
+        return 0
+
+
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
@@ -2310,7 +2347,7 @@ def main() -> int:
 
     if args.snapshot:
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+        ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
         snapshot_path = OUTPUT_DIR / f"dashboard_{ts}.json"
         atomic_write_safe(snapshot_path, json.dumps(result, ensure_ascii=False, indent=2))
         if not args.json:
@@ -2318,6 +2355,8 @@ def main() -> int:
         # 同时更新 latest.json（供下游 always 读取最新）
         latest_path = OUTPUT_DIR / "latest.json"
         atomic_write_safe(latest_path, json.dumps(result, ensure_ascii=False, indent=2))
+        # 快照 TTL 清理：保留最近 30 天，删除过期快照（红蓝对抗维度7修复）
+        _cleanup_old_snapshots(OUTPUT_DIR, max_age_days=30)
 
     return EXIT_PASS  # warn-only 基线模式，始终 exit 0
 
