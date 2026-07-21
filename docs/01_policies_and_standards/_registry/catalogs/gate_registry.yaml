@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-20T14:04:17Z'
+generated_at: '2026-07-21T08:44:52Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 108
+total_gates: 114
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -148,14 +148,10 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-DIRECTORY-CONTRACT
-  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008，真源 directory_contract.yaml）'
+  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml）'
   entry: python scripts/governance/d1_structure/check_directory_contract.py
   description: 目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl +
-    白名单 + purpose_allowed_extensions），校验 staged 文件合规性。DCR-001/003~008 启用，
-    DCR-002 废弃（P3/P4 治本）。DCR-008 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：
-    校验 file extension ∈ directory_extensions[path].purpose_allowed_extensions，
-    配对 trae_070 temporary_file_placement 规则（paired_gate_id=GATE-DIRECTORY-CONTRACT），
-    error 级阻断 commit
+    白名单），校验 staged 文件合规性。DCR-001/003~007 启用，DCR-002 废弃（P3/P4 治本）
   files_trigger: ''
   always_run: false
   category: unknown
@@ -524,6 +520,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: CONSUMERS-ACCURACY
+  name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
+    priority=109）'
+  entry: in-process (GitCommitGateway)
+  description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: CREATE-GUARD
   name: 'CREATE-GUARD: 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30
     治本）（CommitGate, priority=60）'
@@ -574,11 +580,30 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: DEPGRAPH-PRE-REGISTRATION
+  name: 'DEPGRAPH-PRE-REGISTRATION: depgraph planned→production 流转强制门禁（DEPGRAPH-PRE-REGISTRATION）（CommitGate,
+    priority=58）'
+  entry: in-process (GitCommitGateway)
+  description: depgraph planned→production 流转强制门禁（DEPGRAPH-PRE-REGISTRATION）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: DEPGRAPH-WRITE-PATH
   name: 'DEPGRAPH-WRITE-PATH: depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）（CommitGate,
     priority=100）'
   entry: in-process (GitCommitGateway)
   description: depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: DERIVATION-ANNOTATION
+  name: 'DERIVATION-ANNOTATION: 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）（CommitGate, priority=65）'
+  entry: in-process (GitCommitGateway)
+  description: 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -665,6 +690,16 @@ gates:
     priority=33）'
   entry: in-process (GitCommitGateway)
   description: '文件放置与 TTL 一致性门禁（治本 #ARCH-049：防止临时文件乱放根目录）'
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: FOLDER-CAPACITY-HARD-LIMIT
+  name: 'FOLDER-CAPACITY-HARD-LIMIT: 文件夹容量硬上限门禁（FOLDER-CAPACITY-HARD-LIMIT）（CommitGate,
+    priority=112）'
+  entry: in-process (GitCommitGateway)
+  description: 文件夹容量硬上限门禁（FOLDER-CAPACITY-HARD-LIMIT）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -874,6 +909,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: GATE-PRECOMMIT-OFFLINE
+  name: 'GATE-PRECOMMIT-OFFLINE: pre-commit 配置离线可运行检测门禁（GATE-PRECOMMIT-OFFLINE）（CommitGate,
+    priority=111）'
+  entry: in-process (GitCommitGateway)
+  description: pre-commit 配置离线可运行检测门禁（GATE-PRECOMMIT-OFFLINE）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: PURE-ASSERTION
   name: 'PURE-ASSERTION: 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016 治本）（CommitGate, priority=69）'
   entry: in-process (GitCommitGateway)
@@ -912,6 +957,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: RELATIVE-PATH-LITERAL
+  name: 'RELATIVE-PATH-LITERAL: 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）（CommitGate, priority=115）'
+  entry: in-process (GitCommitGateway)
+  description: 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: RENAME-DEPGRAPH-SYNC
   name: 'RENAME-DEPGRAPH-SYNC: 文件重命名后 depgraph 未同步阻断门禁（RENAME-DEPGRAPH-SYNC）（CommitGate,
     priority=39）'
@@ -943,7 +997,7 @@ gates:
   source: commit-gate
 - gate_id: RULING-COMMIT-VERIFIED
   name: 'RULING-COMMIT-VERIFIED: 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）（CommitGate,
-    priority=77）'
+    priority=109）'
   entry: in-process (GitCommitGateway)
   description: 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）
   files_trigger: ''
