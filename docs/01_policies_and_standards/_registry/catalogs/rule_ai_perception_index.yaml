@@ -7,7 +7,7 @@ generated_at: '2026-07-21T00:00:00Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 72
+total_rules: 73
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -2009,3 +2009,36 @@ rules:
   - ARCH-WORKTREE-COMMIT-PERSISTENCE-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
+- rule_id: TRAE-077
+  title: capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001）
+  module_id: TRAE-077
+  scope: capability_lookup_bypass_stats
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations:
+  - capability_lookup_health_reconciler
+  - bypass_scene_classify
+  - bypass_audit_logging
+  gate_ids:
+  - CAPABILITY-LOOKUP-HEALTH
+  tags:
+  - TRAE
+  - capability_lookup_scene_classify
+  - L1_foundation
+  - bypass_scene_classification
+  - anti_false_alarm
+  - preventability
+  - RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+  - ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+  aliases:
+  - RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+  - bypass 场景分类
+  - bypass scene classification
+  - 白名单豁免
+  - exempt bypass
+  - ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
