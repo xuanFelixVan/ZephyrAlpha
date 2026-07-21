@@ -6576,3 +6576,33 @@ entries:
   related_rules: 'trae_068 (第 6 层可预防性铁律), trae_065 (capability_lookup_required 规则), trae_077 (本次新建——场景分类)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+- issue_id: '#ARCH-ENV-PATH-001'
+  title: TRAE IDE 运行时 PATH 注入导致 Python 3.10 优先（环境对齐君子协定）
+  severity: P1高
+  adjudication: |
+    根因：TRAE IDE 启动 shell 时临时注入内置 Python 3.10.11（ModularData\...\vm\tools\python\）
+    到 PATH 最前，覆盖 User PATH 中已优先的 Python 3.12.8。后果：datetime.UTC（3.11+ 新增）缺失
+    → GitCommitGateway 崩溃；psycopg2 未装 → 依赖 _shared 的 gate 崩溃；ruff 未装 → lint/format
+    gate 崩溃。Python 3.12.8 已装且依赖齐全（psycopg2-binary 2.9.12 / ruff 0.15.10 / PyYAML 6.0.3
+    / pre-commit 4.5.1），纯 PATH 优先级问题，非依赖缺失。
+    修复：AGENTS.md 新增 RULE-ENV 章节（第零件事），session 启动君子协定——在任何 python
+    调用前执行 PATH 调整命令（用 $env:LOCALAPPDATA 推导路径，符合 D-G-01a，不硬编码绝对路径）：
+    $env:PATH = "$env:LOCALAPPDATA\Programs\Python\Python312;$env:LOCALAPPDATA\Programs\Python\Python312\Scripts;" + $env:PATH
+    已排除方案（穷举验证均无效）：①default_language_version（pre-commit 对 language:system 无效）
+    ②.python-version（无 pyenv/pyenv-win 无效）③py -3.12（py launcher 未安装）④修改持久 User PATH
+    （TRAE 运行时注入覆盖，User PATH 已把 3.12 放最前但仍被覆盖）⑤PowerShell $PROFILE（TRAE shell
+    用 -NoProfile 启动，use-ds-pro 函数不可用验证）⑥pyenv（未安装）。
+    君子协定模式（对标 RULE-WORKTREE FP-ISO.4C）：无门禁强制（TRAE 不可 hook shell 启动），依赖
+    AI 自觉。必须先执行此命令再启动 session_worktree——zephyr 包使用 datetime.UTC 等 3.11+ 特性，
+    3.10 下 session_worktree_start 会崩溃。版本契约：pyproject.toml L14 requires-python>=3.12，
+    ruff target-version=py312。
+  fix_phase: |
+    Phase 1（文档治本）：AGENTS.md 新增 RULE-ENV 章节（第零件事）记录 PATH 调整君子协定
+    Phase 2（registry 同步）：architecture_issue_registry.yaml 本条登记
+  impact:
+    - 'AGENTS.md（RULE-ENV 章节）'
+  status: resolved
+  related_adjudication: '#ARCH-PRECOMMIT-OFFLINE-001 (local hook language:system 约束), FP-ISO.4C (君子协定模式先例)'
+  related_rules: 'pyproject.toml requires-python>=3.12'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

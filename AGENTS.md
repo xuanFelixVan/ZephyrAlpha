@@ -4,6 +4,20 @@
 > **施工指导**: [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)（详细规则/冷启动序列/方法论索引）
 > **内部 Agent 系统**: [`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)（22 个 skill_*.yaml，L0/L1/L2/L3 渐进披露，非 IDE AI 使用）
 
+## RULE-ENV：第零件事（环境对齐，2026-07-22 治本，#ARCH-ENV-PATH-001）
+
+> **AI session 启动第一命令（在任何 `python` 调用之前，含 RULE-GUARDIAN / RULE-WORKTREE / RULE-DEPGRAPH）**：
+> ```powershell
+> $env:PATH = "$env:LOCALAPPDATA\Programs\Python\Python312;$env:LOCALAPPDATA\Programs\Python\Python312\Scripts;" + $env:PATH
+> ```
+> **验证**：`python --version` 输出 `Python 3.12.x`。用 `$env:LOCALAPPDATA` 推导路径（符合 D-G-01a，不硬编码绝对路径）。
+>
+> **根因**：TRAE IDE 启动 shell 时临时注入内置 Python 3.10.11（`ModularData\...\vm\tools\python\`）到 PATH 最前，覆盖 User PATH 中已优先的 Python 3.12.8。后果：`datetime.UTC`（3.11+ 新增）缺失 → GitCommitGateway 崩溃；`psycopg2` 未装 → 依赖 `_shared` 的 gate 崩溃；`ruff` 未装 → lint/format gate 崩溃。**Python 3.12.8 已装且依赖齐全**（psycopg2-binary 2.9.12 / ruff 0.15.10 / PyYAML 6.0.3 / pre-commit 4.5.1），纯 PATH 优先级问题。
+>
+> **已排除方案（穷举验证）**：①`default_language_version`（pre-commit 对 `language: system` 无效）②`.python-version`（无 pyenv/pyenv-win 无效）③`py -3.12`（py launcher 未安装）④修改持久 User PATH（TRAE 运行时注入覆盖，User PATH 已把 3.12 放最前但仍被覆盖）⑤PowerShell `$PROFILE`（TRAE shell 用 `-NoProfile` 启动，`use-ds-pro` 函数不可用验证）⑥`pyenv`（未安装）。
+>
+> **君子协定**：无门禁强制（TRAE 不可 hook shell 启动），依赖 AI 自觉（对标 RULE-WORKTREE FP-ISO.4C 模式）。**必须先执行此命令再启动 session_worktree**——`zephyr` 包内部使用 `datetime.UTC` 等 3.11+ 特性，3.10 下 `session_worktree_start` 会崩溃。版本契约：[`pyproject.toml`](file:///d:/ZephyrAlpha/pyproject.toml) L14 `requires-python = ">=3.12"`，ruff `target-version = "py312"`。
+
 ## RULE-GUARDIAN：第一件事
 
 > **进入本项目的第一个命令（任何平台：Cursor/RooCode/Claude Code/Trae/VS Code）**：
@@ -143,6 +157,8 @@
 > **配套启动 smoke test（治本 G7）**：`session_worktree_start` 健康度自检——检测 `capability_lookup_required_gate.py` 能否正常 import、`.runtime/lookup_audit/` 目录是否可写。失败时 AI MUST 上报（escalate）而非静默 workaround（对标 §11.0.3 #ARCH-TOOL-HEALTH-V1）。
 >
 > **裁定引用**：[`#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml)（P0 严重度，DESIGN-IMPLEMENTATION-GAP 类型，含子裁定 S1-S7 对应 7 个 Gap 治本）。
+>
+> **逃生场景分类（#ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001，TRAE-077）**：CAPABILITY-LOOKUP-HEALTH reconciler 统计 bypass 频率时，按白名单关键词区分合法/违规——合法 bypass（`scene=exempt`）豁免统计，违规 bypass（`scene=violation`）计入统计。critical_warn 只在违规 bypass 超 5 次时触发（合法 bypass 不触发）。规则真源：[`trae_077_capability_lookup_scene_classify.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml)。白名单关键词（reason 含任一即豁免）：`gate-fix` / `test-fix` / `merge-prep` / `continuation`（已批准裁定续作）/ `investigated`（bug 修复已调研）/ `auto-fix` / `batch-treatment` / `batch-governance` / `architectural-refactor` / `sync`。新增合法场景时 MUST 同步更新 [`reconciliation_registry.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) 的 `_BYPASS_EXEMPT_KEYWORDS` 常量 + trae_077 文档。病根：误报 critical_warn 导致 AI 脱敏（狼来了效应），违反 TRAE-068 第 6 层可预防性——告警 MUST 精确。
 
 ## 1. 项目概述
 
