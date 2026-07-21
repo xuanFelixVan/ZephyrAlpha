@@ -341,6 +341,50 @@ class TestClassifyAbuse:
         assert "non_gw_commit_sustained_24h" in result["dimensions_triggered"]
         assert result["metrics"]["non_gw_commit_24h"] == 11
 
+    def test_dimension6_force_merge_abuse(self):
+        # 6 次 force=True merge（>5 阈值，7d 窗口，gate 层审计计数）
+        result = _classify_abuse(
+            post_commit_reports=[],
+            audit_reports=[],
+            emergency_count=0,
+            now_ts=self.NOW_TS,
+            force_merge_count=6,
+        )
+        assert "force_merge_abuse_7d" in result["dimensions_triggered"]
+        assert result["metrics"]["force_merge_7d"] == 6
+
+    def test_dimension6_below_threshold_not_triggered(self):
+        # 5 次 force=True merge（== 5 阈值，检测逻辑 count > threshold 严格大于 → 不触发）
+        result = _classify_abuse(
+            post_commit_reports=[],
+            audit_reports=[],
+            emergency_count=0,
+            now_ts=self.NOW_TS,
+            force_merge_count=5,
+        )
+        assert "force_merge_abuse_7d" not in result["dimensions_triggered"]
+        assert result["metrics"]["force_merge_7d"] == 5
+
+    def test_count_force_merge_usage(self, tmp_path):
+        # gate 层审计 JSONL 计数：窗口内 2 条 + 窗口外 1 条 + 1 条损坏行
+        audit_dir = tmp_path / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True)
+        now = int(time.time())
+        lines = [
+            json.dumps({"timestamp": now - 100, "session_id": "s1"}),
+            json.dumps({"timestamp": now - 200, "session_id": "s2"}),
+            json.dumps({"timestamp": now - 8 * 24 * 3600, "session_id": "s3"}),
+            "{broken json",
+        ]
+        (audit_dir / "force_merge_usage.jsonl").write_text(
+            "\n".join(lines) + "\n", encoding="utf-8"
+        )
+        assert _count_force_merge_usage(tmp_path, now - 7 * 24 * 3600) == 2
+
+    def test_count_force_merge_usage_missing_file(self, tmp_path):
+        # 审计文件缺失 → fail-open 返回 0（无审计=无证据，不误报）
+        assert _count_force_merge_usage(tmp_path, self.NOW_TS - 100) == 0
+
     def test_multiple_dimensions_triggered(self):
         # 同时触发维度1 + 维度2（emergency_count 15 > 10 阈值）
         reports = [
