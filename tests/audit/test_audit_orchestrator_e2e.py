@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0360 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_audit_orchestrator_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_audit_orchestrator_e2e
 # [INVARIANTS] AuditAdmissionController 5模块健康检查覆盖; ResourceAwarePool 双池路由正确

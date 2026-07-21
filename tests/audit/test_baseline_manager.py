@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0413 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_baseline_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §baseline_manager
 # [MODULE] tests.test_baseline_manager
 # [INVARIANTS] BaselineManager.capture必须写入版本化JSON; full_diff必须返回DiffReport

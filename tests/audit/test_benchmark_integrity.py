@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0424 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_benchmark_integrity | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §benchmark_integrity
 # [MODULE] tests.test_benchmark_integrity
 # [INVARIANTS] IntegrityDim为str Enum; PIT_MAX_DELAY_MINUTES=15

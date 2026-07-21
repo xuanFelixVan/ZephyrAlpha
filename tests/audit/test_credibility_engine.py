@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0637 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_credibility_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_credibility_engine
 # [INVARIANTS] 可信度评分不可人为调整

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0365 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_audit_self_healer_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §test
 # [MODULE] tests.test_audit_self_healer_e2e
 # [INVARIANTS] tmp_path隔离; rollback_handler注入; 禁止修改项目文件

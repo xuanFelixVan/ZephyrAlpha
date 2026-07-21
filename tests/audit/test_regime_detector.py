@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1438 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_regime_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] tests.test_regime_detector
 # [INVARIANTS] MacroFactor_enum_complete;MacroRegime_enum_complete;MACRO_INDICATORS_covers_all_factors

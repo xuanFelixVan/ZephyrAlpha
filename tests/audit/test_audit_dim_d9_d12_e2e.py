@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0350 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_audit_dim_d9_d12_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_audit_dim_d9_d12_e2e
 # [INVARIANTS] e2e_tests_must_pass
