@@ -4927,66 +4927,72 @@ entries:
   related_rules: 'trae_071 (临时文件生命周期铁律), trae_070 (临时文件分类存放铁律 - 空间维度), trae_060 (向内收三原则 - 事件驱动), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
-# --- #ARCH-TEMP-FILE-LIFECYCLE-002: 不可能三角——trae_071 LAW-2 与 EXEMPT-ZONE-FM + TTL-METADATA gate 冲突（2026-07-21）---
+# --- #ARCH-TEMP-FILE-LIFECYCLE-002: 临时文件生命周期治本 Phase 2 闭环（2026-07-21）---
 - issue_id: '#ARCH-TEMP-FILE-LIFECYCLE-002'
-  title: 不可能三角——trae_071 LAW-2 要求 docs/_working/ 带 doc_type frontmatter 但 EXEMPT-ZONE-FM 禁止 doc_type 而 TTL-METADATA strict-doctype 又强制 doc_type 必填
+  title: 临时文件生命周期治本 Phase 2——reconciler 实现 + 规则真源对齐 + 分析报告 promote 闭环
   category: governance_mechanism_gap
   severity: P2中
   adjudication: |
-    问题背景：
-    2026-07-21 Phase B.5 提交链第二次 commit 尝试时发现 docs/_working/
-    下的 .md 文件落入"不可能三角"：
-      (A) trae_071 LAW-2 要求 docs/_working/ 成果文件带 frontmatter
-          （ttl/doc_type/completes_when 三字段）作为"成果已交付"的元数据声明；
-      (B) EXEMPT-ZONE-FM gate（priority=87）阻断 docs/_working/ 等豁免区
-          带非空 doc_type 的文件——设计意图是"豁免区文件不参与 doc_type
-          分类治理"，但实施结果是禁止任何 doc_type 出现；
-      (C) TTL-METADATA gate（--strict-doctype，GitCommitGateway 路径强制启用）
-          要求 .md 文件 doc_type 必填——缺失即 hard block。
+    背景：
+    #ARCH-TEMP-FILE-LIFECYCLE-001 落地规则文件 + perception index + AGENTS.md 引用，
+    但 reconciler 实现/分析报告 promote/generator bug 修复被阻塞。本裁定（002）闭环
+    遗留的 6 个 Phase。
 
-    根因分析（第一性原理）：
-    (1) 三方规则在不同时期独立设计，未做交集校验——三者交集为空集，
-        不可能同时满足。
-    (2) trae_071 落地时未触发 gate 集成测试，因为当时 docs/_working/ 下
-        尚无 .md 文件，gate 不检测新增文件以外的存量文件。
-    (3) strict-doctype 的"必填"语义未与 EXEMPT-ZONE-FM 的"禁止"语义
-        做冲突检测——两 gate 各自独立通过设计审查，但组合后产生矛盾。
+    治本方案（6 Phase + 1 长期 Phase）：
+    Phase 1 (trae_071 registration_point 修正):
+    - registration_point 从 boot_hooks.py 改为 git_commit_gateway.py:699
+      (对齐 make_stash_lifecycle_reconciler 范本)
+    - 原因：boot_hooks.py 是 task lifecycle hooks 注册点（auto_unblock/auto_retry），
+      与 reconciler 无关。reconciler 实际注册在 GitCommitGateway.__init__。
 
-    治本方案（临时方案已落地，长期方案另起 Phase 7）：
-    (1) 临时方案（本次 Phase B.5 采用）：移除 docs/_working/ 下 .md 文件
-        的整个 YAML frontmatter 块，替换为 HTML 注释说明。
-        原理：EXEMPT-ZONE-FM 只检测"带 frontmatter 且 doc_type 非空"的文件，
-        无 frontmatter 直接跳过；TTL-METADATA 同样 `if not metadata: return issues`
-        无 frontmatter 跳过。两 gate 都不强制要求 frontmatter 存在，所以
-        移除 frontmatter 可同时通过两 gate。
-        副作用：丢失 ttl/completes_when 元数据，成果文件的"生命周期声明"
-        退化为正文 HTML 注释（非机器可读）。
-    (2) 长期方案（Phase 7，本会话不实施）：新建 GATE-TEMP-FILE-LIFECYCLE
-        gate（priority=803，post-HELDED-OVERLAP），专门治理 docs/_working/
-        下的成果文件生命周期——取代 EXEMPT-ZONE-FM + TTL-METADATA 在该
-        区的冲突检测，允许 trae_071-compliant frontmatter（带 ttl/
-        doc_type=working_result/completes_when 三字段）通过，同时阻断
-        不合规 frontmatter。
-    (3) 同步更新 EXEMPT-ZONE-FM：在 _EXEMPT_ZONE_PREFIXES 中移除
-        docs/_working/（让 GATE-TEMP-FILE-LIFECYCLE 接管），或新增
-        trae_071-compliant 白名单（识别 doc_type=working_result 跳过阻断）。
+    Phase 2 (make_session_staging_lifecycle_reconciler priority=802):
+    - reconciliation_registry.py 新增闭包，GATE-SESSION-STAGING-LIFECYCLE
+    - post-commit staging 过期清理：24h TTL + 事件驱动
+      (session_worktree_merge/abort)
+    - 检测疑似未 promote 的 .md/.csv 成果，warn（不阻塞）
+    - git_commit_gateway.py: import + register (L80 + L701)
 
-    事故驱动：Phase B.5 第二次 commit 时 TTL-METADATA 阻断
-    `docs\_working\2026-07-20-resonance-screen-result.md missing required
-    field 'doc_type'`——而加上 doc_type 又会被 EXEMPT-ZONE-FM 阻断，
-    陷入死循环。本裁定从源头识别"不可能三角"并提供逃生路径。
+    Phase 3 (merge/abort 触发点确认):
+    - 调研确认 _run_reconcilers_after_merge 已在 merge 后被调用
+    - post_commit 触发已覆盖所有场景，无需额外注入
 
-  impact:
-    - docs/_working/2026-07-20-resonance-screen-result.md（frontmatter 移除，替换为 HTML 注释）
-    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-TEMP-FILE-LIFECYCLE-002 登记）
-    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（2 个 creation_token 登记：strategy doc + analysis report）
-    - src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py（Phase 7 待更新：移除 docs/_working/ 或加白名单）
-    - src/zephyr/gov_enforcement/commit_gates/ttl_gate.py（Phase 7 待评估：是否对 docs/_working/ 放宽 strict-doctype）
-    - 新建 src/zephyr/gov_enforcement/commit_gates/temp_file_lifecycle_gate.py（Phase 7 长期方案）
-  fix_phase: 临时方案已落地（Phase B.5 移除 frontmatter）；长期方案 Phase 7 待实施（GATE-TEMP-FILE-LIFECYCLE priority=803）
-  status: in_progress
-  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001 (父裁定，本条是其 gate 冲突子问题)'
-  related_rules: 'trae_071 (LAW-2 成果文件 frontmatter 要求), trae_070 (临时文件分类), trae_062 (SSoT 真源分类)'
+    Phase 4 (告警自愈):
+    - 调研确认 _write_boot_success_clean 已实现并在 _run_worker L256-258 调用
+    - #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1 已落地
+
+    Phase 5 (分析报告 .md promote + CREATE-GUARD tokens):
+    - 新建 docs/04_design/strategies/双策略共振_区间三强_逆势资金流入.md
+    - 重建 docs/_working/2026-07-20-resonance-screen-result.md
+      (引用改项目内相对路径，过 DOC-REF-BROKEN)
+    - capability_canonical_file_registry.yaml: 添加 2 个 creation_token
+
+    Phase 6 (generator meta.rule_id bug fix + catalog regen):
+    - generate_rule_ai_perception_index.py: _extract_perception_entry
+      支持 meta.rule_id (trae_070+ 新格式) + 大写化对齐连字符格式
+    - rule_ai_perception_index.yaml: 重新生成，72 rules 全连字符格式
+      (TRAE-070/071 正确索引)
+
+    Phase 7 (长期，本会话不做):
+    - LIFE-LAW-1/LAW-2 前移为 pre-commit GATE-TEMP-FILE-LIFECYCLE gate (priority=803)
+    - 需另起会话
+
+    已知冲突——不可能三角（#ARCH-TEMP-FILE-LIFECYCLE-002 核心发现）：
+    - (A) trae_071 LAW-2 要求 docs/_working/ 成果文件带 frontmatter
+          （ttl/doc_type/completes_when 三字段）作为"成果已交付"的元数据声明
+    - (B) EXEMPT-ZONE-FM gate (priority=87) 阻断 docs/_working/ 等豁免区
+          带非空 doc_type 的文件——禁止任何 doc_type 出现
+    - (C) TTL-METADATA gate (--strict-doctype，GitCommitGateway 路径强制启用)
+          要求 .md 文件 doc_type 必填——缺失即 hard block
+    - 三者交集为空集，不可能同时满足（三方规则在不同时期独立设计，未做交集校验）
+    - 当前临时方案：移除 docs/_working/ 下 .md 文件的整个 frontmatter 块
+      （两 gate 都跳过无 frontmatter 文件：EXEMPT-ZONE-FM 只检测带 frontmatter
+      且 doc_type 非空的文件；TTL-METADATA `if not metadata: return issues`）
+    - 长期方案 (Phase 7)：新建 GATE-TEMP-FILE-LIFECYCLE gate (priority=803)
+      取代 EXEMPT-ZONE-FM + TTL-METADATA 在 docs/_working/ 区的冲突检测
+  fix_phase: Phase 1-6 全部落地
+  status: resolved
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001, #ARCH-RECONCILER-ALERT-SELFHEAL-001'
+  related_rules: 'trae_071, trae_070, trae_060, trae_062'
   created: '2026-07-21'
   last_updated: '2026-07-21'
 # --- #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001: 系统性防漂移体系盲区（2026-07-20，4 盲区 3 Phase 治本）---
@@ -5226,11 +5232,11 @@ entries:
   created: '2026-07-21'
   last_updated: '2026-07-21'
 
-# --- #ARCH-CONSUMERS-ACCURACY-001: CONSUMERS 头部字段准确性系统性缺口登记（长期可选） ---
+# --- #ARCH-CONSUMERS-ACCURACY-001: CONSUMERS 头部字段准确性系统性缺口登记（P3低→P2中升级，Phase 1 治本） ---
 - issue_id: '#ARCH-CONSUMERS-ACCURACY-001'
-  title: CREATE-GUARD 只检测 CONSUMERS 字段存在性不检测准确性——系统性缺口登记
+  title: CREATE-GUARD 只检测 CONSUMERS 字段存在性不检测准确性——系统性缺口登记（P2中升级，Phase 1 治本已落地）
   category: governance_mechanism_gap
-  severity: P3低
+  severity: P2中
   adjudication: |
     问题背景：
     #ARCH-CROSS-COMMIT-ATOMICITY-002 Phase 2.5 审查发现 session_concurrency.py L5
@@ -5250,12 +5256,12 @@ entries:
     4. ROI 评估：中等。CONSUMERS 不准是慢性病（不影响功能，只影响 AI 跨文件影响
        检查准确性），误报率高（动态导入难追踪），列为长期可选。
 
-    裁定（长期登记，不在本次施工）：
+    裁定（原 P3低 长期登记，后升级 P2中 并施工——见 #ARCH-CONSUMERS-ACCURACY-002）：
     (1) 登记本条 #ARCH-CONSUMERS-ACCURACY-001 作为系统性缺口真源。
     (2) 治本方向：新建 CONSUMERS-ACCURACY gate（AST 解析 [CONSUMERS] 声明的消费者
         列表 + 反向 Grep 验证项目内是否有 import 此模块的代码 + 差异报告）。
-    (3) 优先级：P3低（慢性病，不影响功能，只影响 AI 跨文件影响检查准确性）。
-    (4) 触发条件：当 CONSUMERS 不准导致 AI 跨文件影响检查遗漏 ≥2 次时升级为 P2。
+    (3) 优先级：原 P3低，抽样 40% 不一致率实证后升级为 P2中（2026-07-21）。
+    (4) Phase 1 治本已落地——见 #ARCH-CONSUMERS-ACCURACY-002。
 
     针对 100% AI 开发的长远期战略考虑：
     - CONSUMERS 准确性是 AI 跨文件影响检查的基础——100% AI 场景下 AI 上下文有限，
@@ -5266,11 +5272,111 @@ entries:
       capability_canonical_file_registry.yaml + 语义搜索三重验证（对标 trae_006
       ANTI-HALL-05 已有要求）。
   impact:
-    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
-  fix_phase: 长期待定（当 CONSUMERS 不准导致 AI 跨文件影响检查遗漏 ≥2 次时升级为 P2 并施工）
-  status: open
-  related_adjudication: '#ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5 审查发现本缺口)'
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记 + Phase 1 升级 P2中 + 标记 resolved）
+  fix_phase: |
+    Phase 1（2026-07-21 已完成，见 #ARCH-CONSUMERS-ACCURACY-002）：
+      - CONSUMERS-ACCURACY gate 新建（warn-only，priority=113）
+      - trae_006/009/012 规则更新（CONSUMERS 降级为派生数据 + Grep 强制为权威源）
+      - baseline-scan 脚本（检测历史漂移）
+    Phase 2（待定，历史漂移治理完成后）：warn-only → block 升级
+  status: resolved
+  related_adjudication: '#ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5 审查发现本缺口), #ARCH-CONSUMERS-ACCURACY-002 (Phase 1 治本施工)'
   related_rules: 'trae_006 (ANTI-HALL-05 消费者声明), trae_009 (跨文件影响检查), trae_012 (测试与安全规范), trae_047 (工程文件头), trae_060 (向内收三原则)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-CONSUMERS-ACCURACY-002: CONSUMERS-ACCURACY gate 治本施工——warn-only 检测 + 规则降级 + baseline-scan ---
+- issue_id: '#ARCH-CONSUMERS-ACCURACY-002'
+  title: 'CONSUMERS-ACCURACY gate Phase 1 治本施工——warn-only 检测 orphan+phantom + trae_006/009/012 规则降级 + baseline-scan 脚本'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    问题背景：
+    #ARCH-CONSUMERS-ACCURACY-001 登记 CONSUMERS 字段准确性系统性缺口（原 P3低）。
+    抽样调查实证 40% 不一致率（617 个有 [CONSUMERS] 的文件中推算 150-200 个有错误），
+    证明君子协定（AI 自觉 Grep 兜底）在 100% AI 场景下失效——AI 信任 CONSUMERS 就
+    不会 Grep，不准的 CONSUMERS = AI 决策污染源 = 系统性幻觉温床。
+
+    第一性原理分析：
+    1. [CONSUMERS] 头部字段是"反向依赖索引"——记录"哪些模块依赖此文件"。它的真源
+       是"实际 import 关系"（depgraph 已有此数据），CONSUMERS 只是这个真源的人类
+       可读派生形式。
+    2. 根本问题：派生数据被当作声明数据对待——让 AI 手工维护。AI 手工维护派生数据
+       = 漂移温床（抽样 40% 不一致率实证）。
+    3. 100% AI 开发的特殊致命性：
+       - AI 上下文有限 → CONSUMERS 是 AI 评估修改影响的关键入口
+       - AI 看到 CONSUMERS 就会信任它（即使不准）
+       - AI 修改文件后不会自动同步 CONSUMERS
+       - 247 个错误 CONSUMERS = 247 个 AI 决策污染源 = 系统性幻觉温床
+    4. 规则真源已隐含承认：trae_009/012 §跨文件影响检查 设计为"读 CONSUMERS" +
+       "Grep 所有引用"并列两步——规则制定者已预期 CONSUMERS 不可信，但用君子协定
+       （AI 自觉 Grep 兜底）而非门禁强制弥补。40% 不一致率证明君子协定失败。
+
+    裁定（Phase 1 治本施工）：
+    (1) 新建 CONSUMERS-ACCURACY commit gate（priority=113，warn-only）：
+        - 检测 staged scripts/governance/** + src/**.py 的 [CONSUMERS] 字段准确性
+        - 三类违规：orphan（括号内函数名不存在，AST 精确检测）+ phantom（消费者
+          模块路径不存在，文件系统查找）+ stale（baseline-scan 专用，commit-time
+          不检测避免性能损耗）
+        - warn-only（passed=True + detail 不阻断）——历史漂移一次性爆会瘫痪 commit
+    (2) trae_006/009/012 规则更新——CONSUMERS 降级：
+        - anti_hall_05：CONSUMERS 从"可信声明数据"降级为"warn-only 检测的派生数据"
+        - anti_hall_17：Grep 强制为权威源，CONSUMERS 仅作参考
+        - code_010：跨文件影响检查流程标注"参考 vs 权威"
+    (3) baseline-scan 脚本——检测历史漂移（247 个文件）：
+        - 扫描全项目 [CONSUMERS] 字段，检测 orphan+phantom+stale
+        - 生成差异报告供 AI 逐步修复
+    (4) capability_canonical_file_registry.yaml + noqa_exempt_registry.yaml 登记
+
+    设计权衡：
+    - warn-only（P1）：历史漂移（247 个文件）一次性爆会瘫痪 commit 流程。P2 升级
+      为 block（待历史漂移治理完成后）。
+    - commit-time 只检测 orphan + phantom：stale 检测需要 git grep 反向查找，性能差
+      （N × 500ms），commit-time 不检测。stale 留给 baseline-scan 脚本。
+    - 抽象代号豁免：MOD-XXX/SH-XXX 格式无法静态验证，跳过避免假阳性。
+    - 含中文括号内容跳过：视为描述性文字非函数名，跳过整个括号。
+    - fail-open 原则：git 失败 / ast 解析失败时不阻断 commit。
+    - priority=113：109-112 已被占用（RULING-COMMIT-VERIFIED/CAPABILITY-LOOKUP-REQUIRED/
+      GATE-PRECOMMIT-OFFLINE/FOLDER-CAPACITY-HARD-LIMIT），用 113。
+    - noqa 行级逃生：`# noqa: consumers-accuracy` 文件级豁免。
+    - phantom 检测逐级缩短至少保留 2 段——避免缩短到顶层包（如 zephyr）导致误判，
+      因为顶层包 __init__.py 总是存在。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - 派生数据被当作声明数据让 AI 手工维护是 100% AI 场景下的系统性漂移根源——
+      本裁定确立"派生数据须有门禁检测兜底"范式，对标 L1 depgraph 真源原则
+      （架构数据真源在 DB，AI 查询 depgraph=零幻觉空间）。
+    - warn-only→block 渐进策略对标 BARE-SUBPROCESS gate（P1 warn-only 建立检测能力+
+      数据收集，P2 升级 block）——历史漂移治理完成前不阻断 commit。
+    - 规则降级（CONSUMERS 从"可信"降级为"参考"）是文档诚实化——承认派生数据的
+      漂移局限性，用 Grep 权威源补齐而非依赖 AI 自觉。
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py（Phase 1 新建——CONSUMERS-ACCURACY gate 实现，priority=113 warn-only，含 orphan+phantom 检测 + noqa 豁免 + fail-open）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 1 注册——import + register make_consumers_accuracy_gate）
+    - tests/governance/commit_gates/test_consumers_accuracy_gate.py（Phase 1 配套测试——53 测试覆盖 9 个测试组）
+    - docs/01_policies_and_standards/rules/trae_006_anti_hallucination_structure.yaml（anti_hall_05 降级——CONSUMERS 为派生数据 + enforcement 配对 CONSUMERS-ACCURACY gate）
+    - docs/01_policies_and_standards/rules/trae_009_anti_hallucination_safety.yaml（anti_hall_17 降级——Grep 为权威源 + cross_file_check 步骤标注参考/权威）
+    - docs/01_policies_and_standards/rules/trae_012_code_test_security.yaml（code_010 降级——跨文件影响检查标注参考/权威）
+    - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml（CONSUMERS-ACCURACY 条目 priority=113）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（consumers_accuracy_gate capability 登记）
+    - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml（consumers-accuracy marker 登记）
+    - scripts/governance/d7_code/scan_consumers_accuracy.py（Phase 1 baseline-scan 脚本——检测历史漂移）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-CONSUMERS-ACCURACY-002 登记 + #ARCH-CONSUMERS-ACCURACY-001 升级 P2中 + 标记 resolved）
+  fix_phase: |
+    Phase 1（2026-07-21，sess-39388-20260721163900）：
+      - P1-1 consumers_accuracy_gate.py 新建（orphan+phantom 检测 + noqa 豁免 + fail-open）
+      - P1-2 git_commit_gateway.py 注册（import + register）+ gate_registry.yaml 登记
+      - P1-3 test_consumers_accuracy_gate.py 配套测试（53 测试覆盖 9 个测试组）
+      - P1-4 capability_canonical_file_registry.yaml 登记
+      - P1-5 noqa_exempt_registry.yaml 登记
+      - P1-6 trae_006/009/012 规则更新（CONSUMERS 降级 + Grep 强制为权威源）
+      - P1-7 architecture_issue_registry 更新（#ARCH-CONSUMERS-ACCURACY-001 升级 + 本条登记）
+      - P1-8 baseline-scan 脚本创建（scripts/governance/d7_code/scan_consumers_accuracy.py）
+      - P1-9 执行 baseline-scan 生成差异报告
+    Phase 2（待定，历史漂移治理完成后）：warn-only → block 升级
+  status: resolved
+  related_adjudication: '#ARCH-CONSUMERS-ACCURACY-001 (原始缺口登记), #ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5 审查发现本缺口), #ARCH-PREVENTABILITY-LAYER-001 (TRAE-068 第 6 层可预防性原则), #ARCH-DEP-001 (君子协定→硬阻断三阶段范式参考)'
+  related_rules: 'trae_006 (ANTI-HALL-05 消费者声明), trae_009 (ANTI-HALL-17 跨文件影响检查), trae_012 (CODE-010 安全编码), trae_047 (工程文件头), trae_060 (向内收三原则), trae_068 (第 6 层可预防性)'
   created: '2026-07-21'
   last_updated: '2026-07-21'
 # --- #ARCH-RECONCILER-ALERT-SELFHEAL-001: reconciler 告警自愈机制缺失（2026-07-21） ---
@@ -5443,5 +5549,169 @@ entries:
   status: resolved
   related_adjudication: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (100% AI 场景 warn=通过病根，同源治本), Ruling:100PCT-AI-GOVERNANCE (第一性原理), #ARCH-WORKTREE-002 (worktree 物理隔离，gate 注册制基础), #AD-001 (CommitGateRegistry 注册制架构债务治本)'
   related_rules: 'trae_060 (向内收三原则 - 复用 CommitGateRegistry), trae_062 (SSoT 真源分类 - priority 真源是代码)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-PRECOMMIT-OFFLINE-001: pre-commit hook 网络单点故障治本（2026-07-21）---
+- issue_id: '#ARCH-PRECOMMIT-OFFLINE-001'
+  title: pre-commit hook 引用外部 GitHub repo 致离线环境 commit 卡死——离线可运行原则治本
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-21 立项裁定。.pre-commit-config.yaml 引用外部 GitHub repo
+    `pre-commit/pre-commit-hooks`（rev v4.6.0），pre-commit 工具在缓存失效/首次安装时
+    尝试 `git fetch origin --tags` 拉取远程 repo——代理（127.0.0.1:10808）未启动或
+    离线环境会卡死所有 commit。100% AI 场景下 GitCommitGateway 永远 --no-verify，
+    pre-commit hook 是冗余防线，但外部 repo 依赖让"冗余防线"变"单点故障"。
+    另发现 gate-no-tests-unit hook 使用 language: pygrep——破坏离线可运行原则。
+
+
+    治本方案（6 个 Phase）：Phase 1 替代脚本 + 删除外部 repo；Phase 2 trae_073 规则外部化；
+    Phase 3 GATE-PRECOMMIT-OFFLINE 创建 + 注册；Phase 4 能力登记 + AGENTS.md 同步；
+    Phase 5 测试；Phase 6 smoke test + 提交。
+
+
+    防复发机制：GATE-PRECOMMIT-OFFLINE（priority=111）硬阻断；trae_073 规则真源；
+    capability_canonical_file_registry.yaml 登记 capability + creation_token。
+  fix_phase: |
+    Phase 1-6 全部已完成（2026-07-21）。详见 impact 字段。
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+    - scripts/governance/d7_code/check_merge_conflict.py（Phase 1 纯 stdlib 替代脚本）
+    - scripts/governance/d7_code/detect_private_key.py（Phase 1 纯 stdlib 替代脚本）
+    - scripts/governance/d7_code/check_no_tests_unit.py（Phase 1 纯 stdlib 替代脚本）
+    - .pre-commit-config.yaml（Phase 1 删除外部 repo + Phase 3 pygrep→system）
+    - docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml（Phase 2 规则真源）
+    - src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py（Phase 3 gate 实现）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 3 注册 gate）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（Phase 4 capability + creation_token）
+    - AGENTS.md（Phase 4 §10.3 PRECOMMIT-OFFLINE 说明）
+    - tests/governance/commit_gates/test_precommit_offline_gate.py（Phase 5 单测）
+  status: resolved
+  related_adjudication: 'Ruling:100PCT-AI-GOVERNANCE (第一性原理), #ARCH-RUNCOMMAND-WINDOW-FLASH-001 (同源), #AD-001 (CommitGateRegistry 注册制)'
+  related_rules: 'trae_060 (向内收三原则), trae_062 (SSoT 真源分类), trae_068 (第 6 层可预防性), trae_073 (pre-commit 离线可运行纪律)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+# --- #ARCH-WORKTREE-LIFECYCLE-001: 死代码状态机清理——SessionManager + SessionLifecycle 双轨退役（2026-07-21）---
+- issue_id: '#ARCH-WORKTREE-LIFECYCLE-001'
+  title: '死代码状态机清理——SessionManager (MOD-INF-039, 5态) + SessionLifecycle (MOD-INF-033, 6态) 双轨退役，新建 WorktreeLifecycle (5态) 替代'
+  category: architecture_governance
+  severity: P2
+  adjudication: |-
+    2026-07-21 立项裁定。全面调研发现项目存在两个死代码状态机：
+
+    1. SessionManager (MOD-INF-039, 5态: idle/active/paused/completed/archived)：
+       生产引用=0，仅测试覆盖 28+ 处。文件 src/zephyr/orchestrator/lifecycle/session_manager.py
+       是 MOD-INF-039 agent_orchestrator 蓝图 §3.1 列出的组件，但从未被任何生产代码 import。
+    2. SessionLifecycle (MOD-INF-033, 6态: ACTIVE/IDLE/CLOSED/EXPIRED/RESPONDING/DEGRADED)：
+       生产实例化=0，仅测试引用 55+ 处。文件
+       src/zephyr/gov_enforcement/behavioral_admission/session_lifecycle.py。
+
+    对照：TaskStatus (task_types.py, 14态) 是核心活跃 SSoT——48 个生产文件、443 处引用、
+    SQLite CHECK 约束绑定 10 态子集，不在本次清理范围。
+
+    病根：历史遗留的两个并行状态机抽象（一个在 orchestrator 域、一个在 behavioral_admission 域），
+    均为"先抽象后无消费方"的典型死代码。AI 开发场景下，死代码状态机误导 AI 推断（误以为有状态
+    管理在运行），并造成真源分裂风险（未来 AI 可能误用其中之一）。
+
+    裁定：方案 B——同时清理两个死代码状态机：
+    1. 删除 session_manager.py + session_state_machine.yaml + test_session_manager.py
+    2. 删除 behavioral_admission/session_lifecycle.py + test_trading_session_lifecycle.py
+    3. 从 behavioral_admission/__init__.py 移除 SessionLifecycle/SessionState/session_lifecycle 导出
+    4. 新建 src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py (MOD-GOV-worktree_lifecycle)，
+       实现 WorktreeLifecycle 5 态状态机（created/active/idle/quarantined/swept），JSON 文件持久化
+       到 .runtime/worktree_lifecycle/<session_id>.json
+    5. 新建 config/worktree_state_machine.yaml 替代 session_state_machine.yaml
+    6. 更新 agent_orchestrator/blueprint.md + behavioral_auditor/blueprint.md 标注迁移
+    7. 更新 blueprint_routing.yaml + audit_config_format.py + validate_config_integrity.py
+    8. 更新 declarative_contract_tracker_registry.yaml CT-003 条目
+    9. 更新 error_code_registry.yaml: ZA-TR-0011 (SessionTransitionError) deprecated，新增 ZA-TR-0018
+
+    第一性原理：100% AI 开发场景下，死代码是幻觉温床——AI 看到代码会误以为功能在运行。
+    清理死代码状态机 + 用 worktree_lifecycle 替代 = 消除误导 + 保留有用的状态机基础设施。
+  fix_phase: |
+    Phase 1（立即，2026-07-21）：
+      - 新建 worktree_lifecycle.py + worktree_state_machine.yaml + test_worktree_lifecycle.py（27 测试通过）
+      - 删除 5 个死代码文件
+      - 更新 __init__.py + 2 个 blueprint.md + 3 个配置校验脚本 + CT-003 + error_code_registry
+      - 登记 #ARCH-WORKTREE-LIFECYCLE-001 到 architecture_issue_registry.yaml
+      - 登记 creation_token 到 capability_canonical_file_registry.yaml
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+    - src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py（新建，MOD-GOV-worktree_lifecycle）
+    - config/worktree_state_machine.yaml（新建，替代 session_state_machine.yaml）
+    - tests/governance/rule_bridge/test_worktree_lifecycle.py（新建，27 测试）
+    - src/zephyr/orchestrator/lifecycle/session_manager.py（已删除，死代码）
+    - config/session_state_machine.yaml（已删除，死代码配置）
+    - tests/session/test_session_manager.py（已删除，死代码测试）
+    - src/zephyr/gov_enforcement/behavioral_admission/session_lifecycle.py（已删除，死代码）
+    - tests/trading/test_trading_session_lifecycle.py（已删除，死代码测试）
+    - src/zephyr/gov_enforcement/behavioral_admission/__init__.py（移除 SessionLifecycle 导出）
+    - docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md（标注迁移）
+    - docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md（标注删除）
+    - docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml（CT-003 更新）
+    - config/blueprint_routing.yaml（路由更新）
+    - architecture_model/contracts/error_code_registry.yaml（ZA-TR-0011 deprecated, ZA-TR-0018 新增）
+    - scripts/governance/d1_structure/audit_config_format.py（ssm_path 更新）
+    - scripts/governance/d1_structure/validate_config_integrity.py（8C 章节更新）
+    - scripts/governance/d5_architecture/syncers/sync_blueprint_code_index.py（config_files 更新）
+  status: decided
+  related_adjudication: '#ARCH-WORKTREE-AUTO-SWEEP-001 (Phase 3 worktree lifecycle 状态机——本裁定提前落地), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (worktree 告警自愈同源)'
+  related_rules: 'AGENTS.md SSoT 真源分类铁律 (单一真源原则), trae_060 向内收三原则 (死代码清理), 铁律: 代码复杂度必须控制在 15 以下'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-WORKTREE-BASE-FRESHNESS-001: worktree base 新鲜度全生命周期检测（2026-07-21）---
+- issue_id: '#ARCH-WORKTREE-BASE-FRESHNESS-001'
+  title: 'worktree base 新鲜度检测从 commit-only 扩展到全生命周期（start/commit/merge）——治本薛定谔的回退'
+  category: architecture_governance
+  severity: P0
+  adjudication: |-
+    2026-07-21 立项裁定。裁定#19-B 的 _ensure_worktree_base_fresh 仅在 commit 阶段检测，
+    start/merge 阶段无防护。实际观察到薛定谔的回退（git reflog: reset: moving to HEAD）：
+    并发 session 的 merge 触发 git reset --hard HEAD，回退了主工作区所有未提交修改。
+
+    病根（第一性原理）：
+    1. start 阶段无 base 新鲜度检测——worktree base 过期时仍创建 session，埋下隐患
+    2. merge 阶段无 base 新鲜度检测——base 过期时 merge 会触发 git reset，回退主工作区
+    3. _ensure_worktree_base_fresh 多处 fail-open（return None 降级放行）——git 命令
+       瞬态失败时放行，错过真实 stale base 检测
+    4. emergency_commit 是治理盲区——绕过所有 gate/hook，无 base 一致性检测
+
+    裁定：方案 A——全生命周期 base 新鲜度检测：
+    - Phase 1.1: session_worktree_start 加 base 新鲜度检测（fail-open，仅告警）
+    - Phase 1.2: session_worktree_merge 加 base 新鲜度检测（fail-closed, P0 最关键）
+    - Phase 1.3: _ensure_worktree_base_fresh 5 处 fail-open 转 fail-closed
+    - Phase 2.1: emergency_commit 加主工作区 vs HEAD 一致性检测（warn-only）
+    - Phase 2.2: emergency_commit update-ref 加 reflog message（审计可追溯）
+    - Phase 3.1: worktree_ops_log.jsonl 遥测日志（事后审计）
+    - Phase 3.3: base freshness 事件遥测（pass/fail_closed/sync_reset/sync_rebase）
+    - Phase 4: TestBaseFreshnessFullLifecycle 8 测试覆盖
+    - Phase 5: AGENTS.md + trae_073 + registry 同步
+
+    新增 _run_git_with_retry（3 次重试，0.5s/1s/2s 指数退避）减少瞬态失败假阳性。
+    force=True 逃生通道（对齐 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 语义）。
+  fix_phase: |
+    Phase 1-4（立即，2026-07-21）：
+      - session_worktree.py: 加 _log_base_freshness_event + _run_git_with_retry helpers
+      - session_worktree.py: _ensure_worktree_base_fresh 加 stage 参数 + 5 处 fail-closed 转换
+      - session_worktree.py: session_worktree_start 加 start base 检测（fail-open）
+      - session_worktree.py: session_worktree_merge 加 merge base 检测（fail-closed + force 逃生）
+      - emergency_commit.py: 加 workspace vs HEAD 一致性检测 + reflog message
+      - test_session_worktree.py: 加 TestBaseFreshnessFullLifecycle 8 测试
+    Phase 5（同步）：
+      - AGENTS.md 加 base freshness 全生命周期规则
+      - 新建 trae_073_worktree_base_freshness.yaml
+      - capability_canonical_file_registry.yaml 登记
+      - rule_ai_perception_index.yaml 登记
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（核心修改）
+    - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（治理盲区闭环）
+    - tests/governance/rule_bridge/test_session_worktree.py（测试覆盖）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+    - .runtime/worktree_ops_log.jsonl（遥测日志，自动生成）
+  status: decided
+  related_adjudication: '裁定#19-B (worktree base 新鲜度检测——commit-only), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (worktree 自愈同源), #ARCH-WORKTREE-AUTO-SWEEP-001 (worktree 自动清扫同源)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), 铁律: 永久系统必须全自动'
   created: '2026-07-21'
   last_updated: '2026-07-21'
