@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0296 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_ai_audit_logger | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_ai_audit_logger
 # [INVARIANTS] none

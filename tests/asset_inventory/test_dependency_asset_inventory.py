@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0070 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_dependency_asset_inventory | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-228 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_dependency
 # [STABILITY] evolving

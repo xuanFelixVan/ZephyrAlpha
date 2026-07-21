@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-RBAC-AUTO | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_rbac_auto_lifecycle | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §auto_lifecycle
 # [MODULE] tests.agent_rbac.test_rbac_auto_lifecycle
 # [INVARIANTS] none

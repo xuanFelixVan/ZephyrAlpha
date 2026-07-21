@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1817 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_rbac_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-447 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.agent_rbac.test_rbac_core
 # [STABILITY] evolving

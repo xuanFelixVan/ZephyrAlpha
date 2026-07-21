@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0065 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_money_and_docs | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-223 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.architecture.test_money_and_docs
 # [STABILITY] evolving

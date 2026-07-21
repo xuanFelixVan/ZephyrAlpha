@@ -1,4 +1,4 @@
-# [A_test] module_id=TEST-SES-STASH-RB | layer=test | stability=volatile | safety=L
+# [A_test] module_id=MOD-GOV_session_aware_stash_red_blue | layer=test | stability=volatile | safety=L
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ghost-commit-gateway
 # [MODULE] tests.red_blue.test_session_aware_stash_red_blue
 # [DOMAIN] D_GOVERNANCE

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0029 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_decision_explainer_agent_rbac | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_decision_explainer
 # [STABILITY] evolving

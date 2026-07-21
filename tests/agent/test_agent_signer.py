@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0291 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_agent_signer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §7
 # [MODULE] tests.test_agent_signer
 # [INVARIANTS] Ed25519 sign/verify roundtrip; signature hex format
