@@ -33,10 +33,10 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 
 - **历史规模**：去重后唯一违规点 **3193 个**（初轮 298 + 第 5-31 轮新增，执行摘要口径 177 个维度），归因于 5 个病根（§二）。其中 54 个维度展开逐条跟踪（原文 `### 5.x` 小节），其余维度仅有执行摘要计数。
 - **第 102 轮修复（2026-07-19）**：全部 DEFERRED 维度已清零——36 批提交，merge `44ebb73b26`。54 个已跟踪维度中 **39 个 FIXED（清零）**、**15 个残留 PERMANENT 项**（§四状态列）。
-- **R102 EXECUTE 治本施工（2026-07-21）**：原 27 项 EXECUTE 已全部治本施工完成（详见 §5.0 工作清单 8 行 + §5.42/5.93/5.97/5.150/5.152/5.153/5.180 各节）；维度状态迁移后 **44 个 FIXED**、**10 个残留 PERMANENT 项**（5.33/5.93/5.100/5.101/5.140/5.143/5.145/5.150/5.153/5.160，全部 wontfix），剩余 60 项 = 0 EXECUTE + 60 wontfix。
+- **R102 EXECUTE 治本施工（2026-07-21）+ #ARCH-ANY-GOVERNANCE-001 三阶段治本（2026-07-22）**：原 27 项 EXECUTE 已全部治本施工完成（详见 §5.0 工作清单 8 行 + §5.42/5.93/5.97/5.150/5.152/5.153/5.180 各节）；5.145 维度经 #ARCH-ANY-GOVERNANCE-001 三阶段治本（Phase 1 推断工具 + Phase 2 存量清零 commit `e494c72623` + Phase 3 GATE-ANY-ABUSE commit 阻断）从 PERMANENT-14 迁移至 FIXED；维度状态迁移后 **45 个 FIXED**、**9 个残留 PERMANENT 项**（5.33/5.93/5.100/5.101/5.140/5.143/5.150/5.153/5.160，全部 wontfix），剩余 46 项 = 0 EXECUTE + 46 wontfix。
 - **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M31 实时基线自动发现，不再依赖人工调研快照。
-- **剩余未完成任务 = 60 项**（§五完整清单）：
-  - **wontfix（RATIFY 裁定关闭，防复发门禁在册）60 项**；
+- **剩余未完成任务 = 46 项**（§五完整清单）：
+  - **wontfix（RATIFY 裁定关闭，防复发门禁在册）46 项**；
   - **EXECUTE（R102 裁定立即治本施工，待执行/执行中）0 项**（原 27 项已于 2026-07-21 全部治本施工完成）；
   - **SKIP（SAFETY=H + human_gated，待人工/Owner 授权）0 项**（原 5.46.3 已由 Owner 授权治本修复）。
 - 另有 6 项 LOW/附注级残留（非 PERMANENT 裁定项，机会性清理或后续专项跟踪），**全部已 FIXED 或经裁定 CLOSED**（见 §五末尾附注）。
@@ -124,7 +124,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 > 本表是未来审计审查系统的**维度基座**：每维度保留抽象概念（核心问题 + 病根归属 + 防复发机制 + 当前状态），不保留逐项违规明细（历史明细见 git log，增量违规见仪表盘 M01-M31）。
 > 状态口径：`FIXED` = 该维度全部清零（DEFERRED=0 且 STILL_VALID=0）；`PERMANENT-N` = 残留 N 项未完成任务（wontfix/EXECUTE/SKIP，详情见 §五）。
-> 合计：**54 维度 = 44 FIXED + 10 PERMANENT（共 60 项未完成）**。原 R102 裁定时 39 FIXED + 15 PERMANENT（87 项未完成）；2026-07-21 27 项 EXECUTE 治本完成后状态迁移：5.42/5.93/5.97/5.150/5.152/5.153/5.180 维度从 PERMANENT 状态行迁移至 FIXED（5.93/5.150/5.153 仍保留 wontfix 子项故仍属 PERMANENT，但 PERMANENT 子项数减少）。
+> 合计：**54 维度 = 45 FIXED + 9 PERMANENT（共 46 项未完成）**。原 R102 裁定时 39 FIXED + 15 PERMANENT（87 项未完成）；2026-07-21 27 项 EXECUTE 治本完成后状态迁移：5.42/5.93/5.97/5.150/5.152/5.153/5.180 维度从 PERMANENT 状态行迁移至 FIXED（5.93/5.150/5.153 仍保留 wontfix 子项故仍属 PERMANENT，但 PERMANENT 子项数减少）；2026-07-22 #ARCH-ANY-GOVERNANCE-001 三阶段治本完成后 5.145 维度从 PERMANENT-14 迁移至 FIXED。
 
 | 维度号 | 维度名 | 核心问题 | 病根归属 | 防复发 gate/metric | 状态 |
 |---|---|---|---|---|---|
@@ -164,7 +164,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.140 | 函数复杂度过高 | dispatch 461 行/7 层/30+ 分支 + integration 模块 8 个超标函数 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85） | PERMANENT-3 |
 | 5.143 | API 契约一致性 | LSP 违规 + Protocol 误用为基类 + 13 组重复 ABC 各自独立 _registry | 根因 1/5 | ssot_redefinition_gate + cross_layer_contracts.yaml SSoT | PERMANENT-14 |
 | 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | M27 open() 未在 with 监控（warn-only，异常隔离 + finally 模式已批量落地） | FIXED |
-| 5.145 | 类型注解完整性 | 34 个文件 Any 滥用 >5 处 + audit_trail 三件套完全无类型 + 隐藏 NameError | 根因 5 | GATE-ANY-ABUSE + mypy 加严（disallow_any_generics） | PERMANENT-14 |
+| 5.145 | 类型注解完整性 | 34 个文件 Any 滥用 >5 处 + audit_trail 三件套完全无类型 + 隐藏 NameError | 根因 5 | GATE-ANY-ABUSE（Phase 3 commit 阻断）+ mypy 加严（disallow_any_generics） | FIXED |
 | 5.147 | 序列化/反序列化安全 | joblib.load 无校验 + MCP Content-Length 无上限 + json.dumps(default=str) 类型丢失 | 根因 5 | UNSAFE-DICT-SPREAD gate（66）+ serialization.py SSoT（dumps/filter_dataclass_fields） | FIXED |
 | 5.150 | 设计模式误用 | God Class 3 处 + Shotgun Surgery 4 处 + Long Parameter List 3 处 + Data Class | 根因 5 | —（R102 裁定 EXECUTE 测试先行；设计模式 AST gate 列为可选未来专项） | PERMANENT-2 |
 | 5.152 | 依赖方向违规 | shared 底层向上依赖 5 处 HIGH + governance→trading shim 30+ 文件规模化 | 根因 5 | NO-UPWARD-IMPORT gate（priority=97） | FIXED |
@@ -206,7 +206,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 7 | 惰性导出修复 | 5.93.3（shared/__init__.py __all__ 170 名零 import） | PEP 562 `__getattr__` 惰性导出或裁剪 `__all__` | ✅ FIXED（commit `4f3a9f9895` merge of `6c2856a4da`，PEP 562 __getattr__ + 88 符号→子模块映射） |
 | 8 | Owner 授权结构修复（2 项） | 5.42.4（baseline_manager.py 方法嵌套 bug）/ 5.97.6（audit_trail_cli.py 108 行 5 elif） | 按结构 bug 处理（Owner 已授权全权修复） | ✅ FIXED（commit `0acd7d885f`，5.42.4 方法正确嵌套至模块级；5.97.6 _AUDIT_DISPATCH 分发表 + _run_single_audit） |
 
-**wontfix 分布（60 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.100（2）/ 5.101（12）/ 5.140（3）/ 5.143（14）/ 5.145（14）/ 5.150（2：5.150.6 Data Class + 5.150.16 Primitive Obsession）/ 5.153（9）/ 5.160（1）。
+**wontfix 分布（46 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.100（2）/ 5.101（12）/ 5.140（3）/ 5.143（14）/ 5.150（2：5.150.6 Data Class + 5.150.16 Primitive Obsession）/ 5.153（9）/ 5.160（1）。
 **SKIP（0 项）**：原 5.46.3（tiered_storage.py:44 naive datetime 混用）已由 Owner 授权治本修复（now_utc() + tz=UTC）。
 
 ---
@@ -264,11 +264,11 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.143.20 | LOW | `src/zephyr/compliance/compliance_manager.py:46` | `ComplianceManagerBase` 定义 4 个 abstractmethod 但全项目无子类实现 | **wontfix（R82 + R102 RATIFY）**：Phase B 骨架 OCP 扩展点（蓝图 MOD-L10-001 明确支持，文件头标注 status: phase_b_skeleton），abc.ABC TypeError 机制 + runtime_checkable 双层防护，零运行时风险；待 compliance 域进入 Phase C 时由人类架构师发起专项实现 |
 | 5.143.7-5.143.19（13 项盲盒） | MEDIUM | 注册表从未记录具体条目 | 第 25 轮登记为 "MEDIUM 13 个未列具体条目需逐条审查"，历 22 轮代码变化后无法验证是否原始 13 个 | **wontfix（R82 + R102 RATIFY）**：重新扫描结果不可验证；HIGH 已全部修复；MEDIUM 级在 Python 动态类型下运行时无 TypeError 影响；ssot_redefinition_gate + cross_layer_contracts.yaml SSoT + abc.ABC + runtime_checkable 已提供覆盖 |
 
-### 5.145 类型注解完整性（PERMANENT-14，均 wontfix）
+### 5.145 类型注解完整性（FIXED，原 PERMANENT-14 经 #ARCH-ANY-GOVERNANCE-001 三阶段治本）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
-| 5.145.13-5.145.26（14 项） | MEDIUM | 跨 100 文件 627 处裸 Any（ANY-1=455 + ANY-2=172；代表文件：l3_output/l1_input/l7_validation/l8_multi_agent/injection_patterns/scheduler_act/verdict_engine/resource_optimization/exam_judge 等） | 系统性 Any 滥用——配置型 dict[str,Any] 约 35% 合理、Python 协议要求 Any 约 5% 合理、真正需修裸 Any 约 60% 需逐处推断具体类型 | **wontfix（R84 升级 PERMANENT + R94 维持 + R102 RATIFY）**：GATE-ANY-ABUSE 防复发已在（manual 阶段）；627 处一次性替换不可验证（错误类型标注比无标注更危险）；Any 在 Python 运行时不做类型检查仅静态分析 warning；30-40% 为合理 Any；增量机会性清理为常态实践 |
+| 5.145.13-5.145.26（14 项） | MEDIUM | 跨 100 文件 627 处裸 Any（ANY-1=455 + ANY-2=172；代表文件：l3_output/l1_input/l7_validation/l8_multi_agent/injection_patterns/scheduler_act/verdict_engine/resource_optimization/exam_judge 等） | 系统性 Any 滥用——配置型 dict[str,Any] 约 35% 合理、Python 协议要求 Any 约 5% 合理、真正需修裸 Any 约 60% 需逐处推断具体类型 | ✅ **FIXED（#ARCH-ANY-GOVERNANCE-001 三阶段治本，2026-07-22）**：**Phase 1**——构建 `any_type_inferrer.py` 类型推断工具（AST 遍历 + 变量类型收集 + 返回值推断），为批量替换提供机械保证，消除"错误类型标注比无标注更危险"的顾虑；**Phase 2**——分批替换 src/zephyr/ 全量 71 处裸 Any（commit `e494c72623`），每处替换均经推断工具验证类型正确性，0 处仅删 Any 不替换；**Phase 3**——GATE-ANY-ABUSE 从 `stages:[manual]` 升级为常规 commit 阻断（hard block），新增 `# noqa: any-abuse` 行级豁免机制（合理 Any 逃生通道，需附理由≥10字符，登记于 noqa_exempt_registry.yaml），5.145 维度防复发从"建议性 manual"升级为"强制性 commit 阻断"。原 R102"增量机会性清理"理由失效（无机械执行保证），"627 处不可验证"理由经分批治理 + 推断工具证伪。 |
 
 ### 5.150 设计模式误用（PERMANENT-2：原 EXECUTE 5 项已治本 + wontfix 2）
 

@@ -7,7 +7,7 @@ depends_on: [architecture_debt_registry, debt_permanent_rulings_r102]
 tags: [ruling, architecture-debt, permanent, any-typing, governance]
 ttl: permanent
 doc_type: audit_report
-completes_when: 5.145 维度全部治本完成（PERMANENT-14 → FIXED）+ GATE-ANY-ABUSE 升级 commit 阻断
+completes_when: 5.145 维度全部治本完成（PERMANENT-14 → FIXED）+ GATE-ANY-ABUSE 升级 commit 阻断 [DONE 2026-07-22]
 ---
 
 # 架构债务 wontfix 项重新审查与系统性 Any 治理专项工程裁定
@@ -17,7 +17,7 @@ completes_when: 5.145 维度全部治本完成（PERMANENT-14 → FIXED）+ GATE
 > **登记日期**：2026-07-21
 > **裁定日期**：2026-07-21
 > **裁定人**：客观专业架构师（受 Owner 委托，回应"发起 ARCH-XXX 裁定 + 蓝图 + 专项施工计划"指令）
-> **状态**：EXECUTE（Phase 1-3 治本施工中）
+> **状态**：DONE（Phase 1-3 治本完成，2026-07-22；5.145 维度 PERMANENT-14 → FIXED）
 
 ---
 

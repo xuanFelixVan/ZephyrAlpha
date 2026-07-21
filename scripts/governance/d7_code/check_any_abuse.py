@@ -2,20 +2,20 @@
 # [BLUEPRINT] N/A | scripts/governance/d7_code/check_any_abuse.py | §
 # [MODULE] scripts.governance.d7_code.check_any_abuse
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse)
+# [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/re)
 # [CONSUMERS] .pre-commit-config.yaml gate-any-abuse
-# [STARTUP] manual
-# [MATURITY] prototype
+# [STARTUP] pre-commit
+# [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现，不依赖 ruff/mypy
 # [MODIFY-GUARD] 修改阈值需同步更新 AGENTS.md §8 GATE-ANY-ABUSE 条目
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=clean/warn-only / 1=--ci violations / 2=src dir missing
-# [TESTS] 手动验证: R70 基线 ANY-1=462 / ANY-2=172 / 总计 634（审查修复后 632: ANY-1=460 / ANY-2=172）
+# [ERROR_CONTRACT] exit 0=clean / 1=--ci violations / 2=src dir missing
+# [TESTS] 手动验证: R70 基线 ANY-1=462 / ANY-2=172 / 总计 634；#ARCH-ANY-GOVERNANCE-001 Phase 2 清零至 0
 # [TTL] permanent
 """
-类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入）。
+类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入，#ARCH-ANY-GOVERNANCE-001 Phase 3 升级为 commit 阻断）。
 
 检测函数签名中的"裸 Any 滥用"——AI 偷懒写法的典型模式：
   - ANY-1 函数参数类型为裸 Any（非 dict[str, Any] / list[Any] 等容器型）
@@ -29,6 +29,7 @@
   - **kwargs: Any（兼容旧 API 的合理模式）
   - stub 文件（.pyi）
   - __init__ 构造函数的返回值（无返回值注解不报）
+  - `# noqa: any-abuse` 行级标记（Phase 3：合理 Any 逃生通道，需附理由）
 
 病根对标：
   - 5.145.10/11/13-26 Any 滥用 = AI 偷懒的默认写法
@@ -43,7 +44,7 @@
   2 = src 目录缺失或参数错误
 
 设计原则（对标 scan_debt.py）：
-  - 纯 stdlib（ast + pathlib），不依赖 ruff/mypy 是否安装
+  - 纯 stdlib（ast + pathlib + re），不依赖 ruff/mypy 是否安装
   - 增量扫描：传文件列表时只扫这些文件；不传则扫 src/zephyr/
   - 误报优先：宁可放过，不可误伤 commit 工作流
 """
@@ -52,6 +53,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -68,6 +70,11 @@ _CALLABLE_TYPES = {"Callable", "callable"}
 
 # **kwargs: Any 兼容旧 API
 _KWARGS_ANY_OK = True
+
+# noqa 行级豁免标记（#ARCH-ANY-GOVERNANCE-001 Phase 3）
+# 合法的 Any 用法（如动态 Plugin 接口、Protocol 边界、第三方 API 边界）
+# 可用 `# noqa: any-abuse  any-abuse豁免: <理由>` 行级标记豁免
+_NOQA_ANY_ABUSE_RE = re.compile(r"#\s*noqa:\s*any-abuse\b")
 
 
 @dataclass
@@ -308,7 +315,32 @@ def scan_file(filepath: Path) -> list[AnyViolation]:
     rel_path = str(filepath).replace("\\", "/")
     scanner = _FunctionScanner(rel_path)
     scanner.visit(tree)
-    return scanner.violations
+    violations = scanner.violations
+
+    # noqa: any-abuse 行级豁免过滤（#ARCH-ANY-GOVERNANCE-001 Phase 3）
+    # 标记所在行的违规被豁免，需附理由（格式：`# noqa: any-abuse  any-abuse豁免: <理由>`）
+    if violations:
+        noqa_lines = _collect_noqa_any_abuse_lines(content)
+        if noqa_lines:
+            violations = [
+                v for v in violations
+                if v.kind not in ("ANY-1", "ANY-2") or v.line not in noqa_lines
+            ]
+
+    return violations
+
+
+def _collect_noqa_any_abuse_lines(content: str) -> set[int]:
+    """收集 content 中所有含 `# noqa: any-abuse` 标记的行号（1-based）。
+
+    #ARCH-ANY-GOVERNANCE-001 Phase 3：行级豁免机制，
+    与 noqa_exempt_registry.yaml 中登记的 any-abuse 标记对应。
+    """
+    lines: set[int] = set()
+    for idx, line in enumerate(content.splitlines(), start=1):
+        if _NOQA_ANY_ABUSE_RE.search(line):
+            lines.add(idx)
+    return lines
 
 
 def scan_directory(src_dir: Path, files: list[Path] | None = None) -> list[AnyViolation]:

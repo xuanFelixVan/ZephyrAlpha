@@ -258,6 +258,22 @@ markers:
     created: "2026-07-21"
     created_by: "ARCH-CROSS-COMMIT-ATOMICITY-001"
 
+  - marker: "any-abuse"
+    metric_id: "M145"  # 5.145 类型注解完整性防复发维度
+    description: "GATE-ANY-ABUSE gate 行级豁免——函数签名裸 Any 检测的合法特殊情况"
+    applicable_conditions:
+      - "动态 Plugin 接口边界（运行时加载的第三方插件，类型不可静态推断）"
+      - "Protocol 边界（runtime_checkable Protocol 的异构实现集，单一类型无法覆盖）"
+      - "第三方 API 边界（外部库返回 Any，本层无法收敛）"
+      - "桥接 API（同方法接受多种异构类型，用 isinstance 分派）"
+      - "测试 fixture / mock 注入点（测试框架 API 要求 Any）"
+    reason_required: true
+    reason_format: "any-abuse豁免: <具体理由>（必须说明为何不可替换为具体类型/Protocol）"
+    reason_min_length: 10
+    scope: "per-line"  # 行级豁免（per-line）——标记出现在裸 Any 参数/返回值所在行
+    created: "2026-07-22"
+    created_by: "ARCH-ANY-GOVERNANCE-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
