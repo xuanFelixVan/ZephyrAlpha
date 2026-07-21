@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 78
+total_gates: 79
 gates:
 # --- 76 个 in-process gate（从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21）---
 - gate_id: HELD-OVERLAP
@@ -511,4 +511,13 @@ gates:
   factory_function: make_issue_resolved_integrity_gate
   source: in_process
   register_line: 486
+  enabled: true
+# #ARCH-CH-024 Phase 4（2026-07-22）：TABLE-NAME-REGISTRY warn-only gate
+# 防蔓延检测：staged .py added 行硬编码表名（绕过 TableRegistry 真源）+ tasks.yaml 表名校验
+# Phase 5 替换完毕后升级为 block
+- gate_id: TABLE-NAME-REGISTRY
+  module_path: zephyr.gov_enforcement.commit_gates.table_name_registry_gate
+  factory_function: make_table_name_registry_gate
+  source: in_process
+  register_line: 487
   enabled: true

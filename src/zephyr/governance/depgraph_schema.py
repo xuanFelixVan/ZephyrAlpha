@@ -1265,6 +1265,11 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
 ]
 
+# 公共别名（裁定 #ARCH-CH-024 Task C 治本，2026-07-22）：
+# check_schema_version_writes.py 引用 MIGRATIONS 公共接口（非 _MIGRATIONS 私有列表）。
+# verify_schema_health.py 继续引用 _MIGRATIONS（保持不变）。
+MIGRATIONS: list[tuple[int, str, list[str]]] = _MIGRATIONS
+
 
 def _get_current_version(conn: object) -> int:
     """获取 PG schema 版本。

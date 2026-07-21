@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.governance.check_schema_version_writes
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
@@ -44,7 +44,8 @@ import sys
 from pathlib import Path
 
 # 治本(2026-06-30): _REPO_ROOT 删除, REPO_ROOT 真源来自 _shared.constants (SSoT)
-SCAN_DIRS = ["src/zephyr", "scripts", "tests"]
+# 治本(2026-07-22, #ARCH-CH-024 Task C): 移除 tests/ —— 测试夹具合法引用 _schema_version
+SCAN_DIRS = ["src/zephyr", "scripts"]
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
 _THIS_FILE = Path(__file__).resolve()

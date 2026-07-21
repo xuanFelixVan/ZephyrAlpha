@@ -6808,21 +6808,29 @@ entries:
       - sync_yaml_to_depgraph.py print 去硬编码（改打印通用标识，引用配置真源）
       - rollback_integration.py 补 SSoT 说明（已用 DATABASE_URL 配置源，裸连接为健康检查设计意图）
 
-    Phase 4（强制闭环，登记为后续独立裁定）：
-      - 新建 TABLE-NAME-REGISTRY commit gate（warn-only，对标 GATE-DOMAIN-FK 先例）
-      - 检测 tasks.yaml / provider 代码中的表名是否在 registry 注册
-      - 当前 WARN，稳定后升级为 block
+    Phase 4（强制闭环，本次落地）：
+      - 新建 TABLE-NAME-REGISTRY commit gate（warn-only priority=120，对标 GATE-DOMAIN-FK 先例）
+      - 检测模式 1（防蔓延）：staged .py added 行 AST Constant 匹配注册表名（精确+子串）→ WARN
+      - 检测模式 2（tasks.yaml 校验）：staged tasks.yaml → validate_tasks_yaml → WARN
+      - 当前 WARN（passed=True 不阻断），Phase 5 替换完毕后升级为 block
+      - 32 项单测全通过 + smoke test 验证（可构造/可自动注册/检测正常/99 表加载）
 
-    Phase 5（长期方向，登记为后续）：
+    Phase 5（长期方向，增量推进）：
       - 240 处硬编码表名替换为 TableRegistry.table() 常量引用
       - gate 升级为 block
+      - 本次执行首批 proof-of-pattern（增量推进，分批 commit）
+
+    Task C（独立问题治本，本次落地）：
+      - g_trae_059.yaml verification_method 路径错配修正（缺 d3_metadata/ 子目录）
+      - check_schema_version_writes.py MIGRATIONS ImportError 修复（depgraph_schema.py 添加公共别名）
+      - check_schema_version_writes.py tests/ 误报修复（移除 tests/ 扫描目录）
+      - C00 smoke test 通过（3046 文件 0 违规）；C01 smoke test 通过（DB v19 == MIGRATIONS v19）
+      - 注：任务描述称脚本"未实现"，实际已存在且功能完整（仅 2 个 bug），按"先查目标再改"原则修复
 
     不实施项（避免过度工程）：
       - 立即删除 rollback_integration.py 的 connection_pool_health_check（有测试调用方，
         且已用配置源 URL，裸连接为健康检查设计意图——非绕过 SSoT）
-      - Phase 5 的 240 处硬编码全量替换（量大且需逐个验证，登记为长期方向）
-      - 立即创建 check_schema_version_writes.py（g_trae_059 verification_method 悬空是
-        独立问题，本裁定仅治理其 db_path 硬编码；脚本实现登记为后续）
+      - Phase 5 的 240 处硬编码全量替换（量大且需逐个验证，增量推进中）
   fix_phase: |
     Phase 1（本次落地，2026-07-22）：
       - sector_kline_downloader.py 三重绕过消除（接入 ch_writer.write_result）
@@ -6837,9 +6845,18 @@ entries:
       - g_trae_059.yaml 删除死配置 db_path（localhost:5432）
       - sync_yaml_to_depgraph.py print 去硬编码 localhost:5432
       - rollback_integration.py 补 SSoT 说明（保留裸连接，已用 DATABASE_URL 配置源）
-    Phase 4（登记后续，不实施）：
-      - TABLE-NAME-REGISTRY commit gate（warn-only，对标 GATE-DOMAIN-FK）
-    Phase 5（长期方向，不实施）：
+    Phase 4（本次落地，2026-07-22）：
+      - 新建 src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py（warn-only priority=120）
+      - 新建 tests/governance/commit_gates/test_table_name_registry_gate.py（32 项单测全通过）
+      - in_process_gate_registry.yaml 注册 TABLE-NAME-REGISTRY gate 条目（total_gates 78→79）
+      - smoke test 验证：可构造/可自动注册/检测正常/99 表加载
+    Task C（本次落地，2026-07-22）：
+      - g_trae_059.yaml C00/C01 verification_method 路径修正（+d3_metadata/）
+      - g_trae_059.yaml C00 scan_targets 移除 tests/（消除误报）
+      - depgraph_schema.py 添加 MIGRATIONS 公共别名（修复 ImportError）
+      - check_schema_version_writes.py SCAN_DIRS 移除 tests（消除误报）
+      - smoke test：C00 通过（0 违规）；C01 通过（DB v19 == MIGRATIONS v19）
+    Phase 5（长期方向，增量推进）：
       - 240 处硬编码表名替换为 TableRegistry.table() 常量引用
       - gate 升级为 block
   impact:
@@ -6852,6 +6869,12 @@ entries:
     - 'src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml（删除死配置 db_path 硬编码 localhost:5432）'
     - 'scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（print 去硬编码 localhost:5432）'
     - 'src/zephyr/infrastructure/rollback/rollback_integration.py（补 SSoT 说明，保留裸连接健康检查设计）'
+    - 'src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py（新增——TABLE-NAME-REGISTRY warn-only gate，裁定 #ARCH-CH-024 Phase 4）'
+    - 'tests/governance/commit_gates/test_table_name_registry_gate.py（新增——32 项单测）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（注册 TABLE-NAME-REGISTRY gate 条目）'
+    - 'src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml（C00/C01 路径修正 + scan_targets 移除 tests/）'
+    - 'scripts/governance/d3_metadata/check_schema_version_writes.py（SCAN_DIRS 移除 tests/）'
+    - 'src/zephyr/governance/depgraph_schema.py（添加 MIGRATIONS 公共别名）'
   status: decided
   related_adjudication: '#ARCH-CH-017 (CH 连接配置单真源化——同构根因"巧合成功"), #ARCH-CH-022 (capability 契约可执行化——同构渐进式 WARN→block 模式), #ARCH-CH-019 (CH 配置 fail-closed)'
   related_rules: 'trae_062 (SSoT 分类铁律——表名是声明态规则数据真源是 YAML), AGENTS.md §11.0/§11.0.2 (SSoT 真源规则), AGENTS.md §11.4 (依赖关系先行)'

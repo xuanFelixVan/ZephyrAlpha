@@ -36,23 +36,23 @@ entry_conditions:
   type: ast_scan
   description: >
     AST 扫描：检测非 depgraph_schema.py 文件中对 _schema_version 表的
-    INSERT/UPDATE/REPLACE 操作。扫描范围 src/zephyr/、scripts/、tests/。
+    INSERT/UPDATE/REPLACE 操作。扫描范围 src/zephyr/、scripts/。
     白名单：src/zephyr/governance/depgraph_schema.py（唯一合法写入入口）。
   check: ast_scan_no_violations
   severity: error
   on_failure: reject
   verifiable: true
-  verification_method: python scripts/governance/check_schema_version_writes.py
+  verification_method: python scripts/governance/d3_metadata/check_schema_version_writes.py
   rule_ids:
   - TRAE-059
   anti_pattern:
     description: 非 depgraph_schema.py 脚本执行 INSERT/UPDATE/REPLACE INTO _schema_version
     example: generate_project_path_tree.py 中 INSERT OR REPLACE INTO _schema_version VALUES(4,...)
   params:
+    # 治本(2026-07-22, #ARCH-CH-024 Task C): 移除 tests/ —— 测试夹具合法引用 _schema_version
     scan_targets:
     - src/zephyr/
     - scripts/
-    - tests/
     scan_pattern: '_schema_version.*INSERT|INSERT.*_schema_version|UPDATE.*_schema_version|REPLACE.*_schema_version'
     whitelist:
     - src/zephyr/governance/depgraph_schema.py
@@ -66,18 +66,17 @@ entry_conditions:
   severity: error
   on_failure: reject
   verifiable: true
-  verification_method: python scripts/governance/check_schema_version_writes.py --db-check
+  verification_method: python scripts/governance/d3_metadata/check_schema_version_writes.py --db-check
   rule_ids:
   - TRAE-059
   anti_pattern:
     description: _schema_version 表中 MAX(version) 与 _MIGRATIONS 最大版本号不一致
     example: DB 中 MAX(version)=7 但 _MIGRATIONS 定义到 v8（迁移未完成或被手动篡改）
   params:
+    # 治本(2026-07-22, #ARCH-CH-024 Task C): 路径修正 d3_metadata/ + MIGRATIONS 公共别名已添加
     # 裁定 #ARCH-CH-024 Phase 3: 删除 db_path: postgresql://localhost:5432/depgraph（死配置 + 硬编码）
-    # 该 db_path 无消费方（check_schema_version_writes.py 未实现，verification_method 悬空），
-    # 且硬编码 localhost:5432 违反 SSoT（DB 连接真源是 config/.env.postgresql / DATABASE_URL）。
-    # DB 检查脚本实现时应通过 get_depgraph_pg_connection() 读取连接配置，禁止硬编码连接串。
-    migrations_module: zephyr.governance.depgraph_schema._MIGRATIONS
+    # DB 连接通过 get_depgraph_pg_connection() 读取配置（SSoT: config/.env.postgres / DATABASE_URL）
+    migrations_module: zephyr.governance.depgraph_schema.MIGRATIONS
 mutating_rules: []
 severity_levels:
   error: 硬阻断——任务不得推进，raise GateViolationError
