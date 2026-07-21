@@ -2,9 +2,13 @@
 graph LR
     subgraph SCRIPTS["scripts/ — Governance code / 治理代码"]
         GOV["governance/<br/>File governance automation<br/>文件治理自动化"]
-        AUDIT["audit/<br/>Audit &amp; scanning<br/>审计与扫描"]
+        ARCH_GUARD["arch_guard/<br/>Architecture guards<br/>架构守护"]
         HOOKS["hooks/<br/>Pre-commit &amp; local guards<br/>pre-commit 与本地守卫"]
-        CI["ci_audit/<br/>CI-side audit &amp; validation<br/>CI 侧审计与校验"]
+        PRECOMMIT["pre_commit/<br/>Pre-commit config &amp; scripts<br/>pre-commit 配置与脚本"]
+        REPORTS["reports/<br/>Report generation<br/>报告生成"]
+        MCP["mcp/<br/>MCP tools<br/>MCP 工具"]
+        OPS["ops/<br/>Ops scripts<br/>运维脚本"]
+        CONSTRUCTION["construction/<br/>Construction scripts<br/>施工脚本"]
     end
 
     subgraph SRC["src/zephyr/ — Product code / 产品代码"]
@@ -12,14 +16,18 @@ graph LR
     end
 
     HOOKS -->|"runs on commit / 提交时运行"| GOV
-    HOOKS -->|"runs on commit / 提交时运行"| AUDIT
-    CI -->|"runs on push / 推送时运行"| AUDIT
+    HOOKS -->|"runs on commit / 提交时运行"| ARCH_GUARD
+    PRECOMMIT -->|"runs on commit / 提交时运行"| GOV
     GOV -.->|"boundary: repo-level only<br/>边界：仅仓库级"| D10
 
     style SCRIPTS fill:#f8fafc,stroke:#94a3b8
     style SRC fill:#eff6ff,stroke:#3b82f6
     style HOOKS fill:#fef9c3,stroke:#ca8a04
     style GOV fill:#dcfce7,stroke:#16a34a
-    style AUDIT fill:#fce7f3,stroke:#db2777
-    style CI fill:#e0f2fe,stroke:#0284c7
+    style ARCH_GUARD fill:#fce7f3,stroke:#db2777
+    style PRECOMMIT fill:#e0f2fe,stroke:#0284c7
+    style REPORTS fill:#f0fdf4,stroke:#22c55e
+    style MCP fill:#fdf4ff,stroke:#a855f7
+    style OPS fill:#fffbeb,stroke:#f59e0b
+    style CONSTRUCTION fill:#f1f5f9,stroke:#cbd5e1
     style D10 fill:#eff6ff,stroke:#3b82f6

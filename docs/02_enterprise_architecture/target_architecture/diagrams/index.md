@@ -11,7 +11,7 @@ ttl: permanent
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图/治理激活甘特图**。
+本目录只存放：**架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图**。
 
 ## 文件清单
 
@@ -32,12 +32,8 @@ ttl: permanent
 | togaf_layer_stack.mmd | TOGAF 四层堆叠图（BA → IA → AA → TA）|
 | docs_drawer_topology.mmd | docs/ 抽屉拓扑图 |
 | scripts_topology.mmd | scripts/ 治理代码拓扑图 |
-| frontend_mfe_topology.mmd | 前端微前端拓扑（Module Federation Host + 4 Apps）|
 | integration_topology.mmd | 集成拓扑图（外部系统 + 内部层 + EI 契约编号）|
 | runtime_topology.mmd | 运行时拓扑（主进程内全域数据流 + 外部系统）|
-| runtime_planes_topology.mmd | Runtime Planes 三平面物理拓扑（Hot / Warm / Cold）|
-| view_dependencies.mmd | 视图间依赖关系图（BA/IA/AA/TA/DA/INTEG/SEC/OPS）|
-| readme_view_dependency_graph.mmd | README 视图依赖图（10视图 + 2正交视图节点关系）|
 
 ### 数据流图
 
@@ -47,7 +43,6 @@ ttl: permanent
 | data_flow.mmd | 跨域核心数据流图 |
 | dataflow_terminal.mmd | 终端数据流全景图（外部系统→D_MKT_DATA→各业务域→外部系统）|
 | deployment_experimental.mmd | experimental 部署拓扑（开发机单进程 + 本地存储）|
-| frontend_build_pipeline.mmd | 前端构建流水线（changeset→CI→lint→test→build→publish）|
 
 ### 序列图
 
@@ -65,7 +60,6 @@ ttl: permanent
 |------|------|
 | governance_d2b_loop.mmd | 治理 Design-to-Build 闭环（Policy→Factory→Runtime→Audit）|
 | governance_three_layers.mmd | 治理三层边界拓扑（被治理者 + Policy/Factory/Runtime）|
-| governance_activation_gantt.mmd | 治理架构激活甘特图（Sprint 9/10/11/T4 方案B）|
 | capability_heatmap_visual.mmd | 能力成熟度热力图可视化（53域 × 10能力域 L0-L5）|
 
 ## 排除规则

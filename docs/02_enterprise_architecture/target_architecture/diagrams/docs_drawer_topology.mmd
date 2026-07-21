@@ -6,7 +6,11 @@ graph TB
     end
 
     subgraph ARCH["架构层 / Architecture"]
-        A02["02_enterprise_architecture<br/>target_architecture/ + generated/<br/>03_governance_reports/<br/>04_architecture_principles_decisions/"]
+        A02["02_enterprise_architecture<br/>target_architecture/ + generated/<br/>04_architecture_principles_decisions/"]
+    end
+
+    subgraph DESIGN["设计层 / Design"]
+        D04["04_design<br/>技术设计文档 / RFC / 方案"]
     end
 
     subgraph MOD["模块蓝图层 / Module Blueprints"]
@@ -20,8 +24,9 @@ graph TB
     WS["docs/_working/<br/>过程区（task_bound）"]
     AR["docs/_archive/<br/>历史区（retired）"]
 
-    GOV -->|"政策 / 标准 / 风控"| ARCH
-    ARCH -->|"蓝图 / 施工图"| MOD
+    GOV -->|"政策 / 标准 / 风险"| ARCH
+    ARCH -->|"原则 / 决策"| DESIGN
+    DESIGN -->|"蓝图 / 施工图"| MOD
     MOD -->|"沉淀 / 反馈"| KB
     WS -->|"promote / 升格"| ARCH
     WS -->|"promote / 升格"| MOD
@@ -30,6 +35,7 @@ graph TB
 
     style GOV fill:#fef2f2,stroke:#ef4444
     style ARCH fill:#eff6ff,stroke:#3b82f6
+    style DESIGN fill:#fffbeb,stroke:#f59e0b
     style MOD fill:#f0fdf4,stroke:#22c55e
     style KB fill:#fdf4ff,stroke:#a855f7
     style WS fill:#f8fafc,stroke:#94a3b8
