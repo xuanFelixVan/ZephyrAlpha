@@ -1,7 +1,7 @@
-# [A_test] module_id: SRC-TST-0381 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
+# [A_test] module_id: MOD-GOV_auto_runtime_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
 from __future__ import annotations
 
-# [A_test] module_id=T-GEN_test_auto_runtime_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id=MOD-GOV_auto_runtime_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
 # [MODULE] tests.test_auto_runtime_core
 # [INVARIANTS] none

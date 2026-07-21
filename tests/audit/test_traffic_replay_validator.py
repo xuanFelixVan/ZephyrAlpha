@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1761 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_traffic_replay_validator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_traffic_replay_validator
 # [INVARIANTS] deviation_rate = (deviations+errors)/replay_count*100; should_abort when rate>threshold

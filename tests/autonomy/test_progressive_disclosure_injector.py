@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1403 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_progressive_disclosure_injector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_progressive_disclosure_injector
 # [INVARIANTS] none

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0690 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_curation_loop_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
 # [MODULE] zephyr.autonomy_core.curation_loop
 # [INVARIANTS] none

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-F15-RB | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_auto_fix_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_auto_fix_red_blue
 # [INVARIANTS] 红蓝对抗极端测试;覆盖修复爆炸/安全绕过/影子工作区泄露

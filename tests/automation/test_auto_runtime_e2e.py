@@ -1,4 +1,4 @@
-# [A_test] module_id=TEST-F1-E2E | layer=test | stability=evolving | safety=L
+# [A_test] module_id=MOD-GOV_auto_runtime_e2e | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
 # [MODULE] tests.test_auto_runtime_e2e
 # [INVARIANTS] 非mock端到端测试——使用真实LifecycleManager+真实CircadianScheduler+真实HealthMonitor; 仅mock外部依赖(ollama/VMS/A2A)

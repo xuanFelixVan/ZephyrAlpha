@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1384 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_poisoning_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_poisoning_monitor
 # [INVARIANTS] none

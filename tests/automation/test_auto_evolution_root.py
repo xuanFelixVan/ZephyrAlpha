@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0373 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_auto_evolution_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_auto_evolution
 # [INVARIANTS] AutoEvolutionEngine.detect_triggers returns list[AutoTrigger]; record_fitness appends to history

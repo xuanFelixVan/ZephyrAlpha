@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-F11RB | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_context_pipeline_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §red-blue
 # [MODULE] tests.red_blue.test_context_pipeline_red_blue
 # [STABILITY] evolving

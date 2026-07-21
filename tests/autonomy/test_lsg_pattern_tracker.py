@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1243 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_lsg_pattern_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_lsg_pattern_tracker
 # [INVARIANTS] none

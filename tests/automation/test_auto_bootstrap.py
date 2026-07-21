@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0370 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_auto_bootstrap | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_auto_bootstrap
 # [INVARIANTS] global state reset between tests; no side-effects on production registry

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_pipeline_bridge_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-211 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_pipeline_bridge_integration
 # [STABILITY] evolving

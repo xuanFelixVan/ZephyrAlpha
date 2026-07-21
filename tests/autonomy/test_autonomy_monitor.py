@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0390 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_autonomy_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-349 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_autonomy_monitor
 # [INVARIANTS] AutonomyLevel order: FULL>SUPERVISED>RESTRICTED>READ_ONLY; downgrade never goes up; upgrade never goes down

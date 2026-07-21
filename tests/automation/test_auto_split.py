@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-015 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
-# [A_test] module_id: SRC-TST-0382 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_auto_split | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import os
 import sys
