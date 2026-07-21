@@ -7196,9 +7196,160 @@ entries:
       保留有价值。竞态由 specific handler 兜底。
   impact:
     - 'src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py（L135-153 增加 specific NotADirectoryError/FileNotFoundError handler，TOCTOU 竞态明确诊断）'
-  fix_phase: Phase 1 治标落地（本次会话 2026-07-22）——specific handler + 明确诊断；Phase 2 根治（P1-2 跨进程互斥）长期方向不实施
+  fix_phase: Phase 1 治标落地（2026-07-22）——specific handler + 明确诊断 + TOCTOU retry (#ARCH-PANORAMA-TOCTOU-002)；Phase 2 根治（P1-2 跨进程互斥）已实施——见 #ARCH-SWEEP-ACTIVE-LOCKFILE-001
   status: resolved
-  related_adjudication: '#ARCH-WORKTREE-LIFECYCLE-001 (worktree 5态状态机——sweep 的来源), #ARCH-WORKTREE-002 (worktree lifecycle reconciler), P1-2 跨进程 lockfile (待治本长期方向)'
+  related_adjudication: '#ARCH-WORKTREE-LIFECYCLE-001 (worktree 5态状态机——sweep 的来源), #ARCH-WORKTREE-002 (worktree lifecycle reconciler), #ARCH-SWEEP-ACTIVE-LOCKFILE-001 (P1-2 跨进程 lockfile 已实施)'
   related_rules: 'AGENTS.md §6.4 (worktree 君子协定——escape hatch 场景), Ruling:100PCT-AI-GOVERNANCE P1-5 (gate fail-open 持久化)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-PANORAMA-TOCTOU-002: GATE-PANORAMA-ALIGNMENT TOCTOU 竞态治标增强——200ms retry（2026-07-22）---
+- issue_id: '#ARCH-PANORAMA-TOCTOU-002'
+  title: GATE-PANORAMA-ALIGNMENT TOCTOU 竞态增强治标——_run_git_diff_cached_with_retry 200ms 单次重试
+  category: governance_mechanism_gap
+  severity: P3低
+  adjudication: |
+    问题背景：
+    #ARCH-PANORAMA-TOCTOU-001 的 Phase 1 治标（specific handler + 明确诊断）仅提供
+    fail-open 诊断，不尝试恢复。当 worktree 在 isdir 检查后被 sweep 删除时，gate 直接
+    跳过检测（return True, ""），三图对齐检测被静默跳过。
+
+    裁定（本次实施——治标增强）：
+    新增 _run_git_diff_cached_with_retry 模块级辅助函数，在 _check 中替代直接
+    gateway._run_git 调用。捕获 (NotADirectoryError, FileNotFoundError) 后 200ms
+    backoff 单次重试。重试仍失败则 fall through 到 #ARCH-PANORAMA-TOCTOU-001 的
+    existing handler（fail-open + 持久化）。
+
+    200ms backoff 设计依据：sweep 是瞬态竞态，200ms 后 worktree 通常已重建或 cwd
+    回退到主仓库。单次重试（max_retries=1）避免阻塞 commit——若重试仍失败说明
+    worktree 确实被永久删除，应 fail-open 而非死等。
+
+    与根治措施的关系：
+    - #ARCH-PANORAMA-TOCTOU-001（Phase 1 治标）：specific handler + 明确诊断
+    - #ARCH-PANORAMA-TOCTOU-002（Phase 1 治标增强，本次）：TOCTOU 200ms retry
+    - #ARCH-SWEEP-ACTIVE-LOCKFILE-001（Phase 2 根治）：从源头阻止 sweep 在
+      commit/merge 期间删除 worktree，消除竞态窗口本身
+    三者叠加：lockfile 检查消除主路径竞态，retry 兜底边缘情况，specific handler
+    提供最终 fail-open 诊断。
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py（新增 _run_git_diff_cached_with_retry 模块级辅助函数 L94-122，_check 内调用该函数替代直接 _run_git）'
+  fix_phase: Phase 1 治标增强落地（2026-07-22）——200ms 单次重试覆盖瞬态竞态窗口
+  status: resolved
+  related_adjudication: '#ARCH-PANORAMA-TOCTOU-001 (Phase 1 治标——specific handler), #ARCH-SWEEP-ACTIVE-LOCKFILE-001 (Phase 2 根治——lockfile 互斥)'
+  related_rules: 'AGENTS.md §6.4 (worktree 君子协定——escape hatch 场景), Ruling:100PCT-AI-GOVERNANCE P1-5 (gate fail-open 持久化)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-SWEEP-ACTIVE-LOCKFILE-001: P1-2 跨进程互斥根治——sweep 判据 4 实际实现（2026-07-22）---
+- issue_id: '#ARCH-SWEEP-ACTIVE-LOCKFILE-001'
+  title: _sweep_one_dir 判据 4（per-session active lockfile 检查）缺失——写入端已实现但读取端未实现
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    P1-2 跨进程互斥方案（per-session active lockfile）的写入端已于 2026-07-20 实现：
+    - _session_active_guard 上下文管理器在 commit/merge 期间创建 lockfile
+    - session_worktree_commit (L11163) 和 session_worktree_merge (L16462) 均已使用 guard
+    但读取端（_sweep_one_dir 判据 4）从未实际实现——文档字符串（L3878-3882）和注释
+    （L11159, L16453）声称 sweep 检查 lockfile，但代码中根本没有这个检查。
+
+    根因分析：
+    前序评估将 P1-2 标记为"涉及 worktree 生命周期状态机重构，超出 gate 职责，长期方向不实施"，
+    这是错误判断。实际根因是：有人设计了 per-session active lockfile 方案，实现了写入端
+    （commit/merge 的 _session_active_guard），写了文档字符串和注释声称读取端也存在——
+    但从未在 _sweep_one_dir 中实际编写判据 4 的检查代码。导致 TOCTOU 竞态窗口仍然存在：
+      T1: session_worktree_commit 进入 _session_active_guard → 创建 lockfile
+      T2: pre-commit gate 执行 _run_git(cwd=wt_path)
+      T3: worktree_lifecycle_reconciler 并发 sweep → _sweep_one_dir 未检查 lockfile → 删除 worktree
+      T4: T2 的 _run_git 抛 NotADirectoryError
+
+    裁定（本次实施）：
+    在 _sweep_one_dir 判据 2（active_sids）之后、判据 5（commit_persisted marker）之前，
+    插入判据 4 的实际检查代码：
+    1. 检查 _session_active_lockfile(repo_root, sid) 是否存在
+    2. 若存在且未过期（age < _ACTIVE_LOCK_TTL_SECONDS=3600s）→ 跳过该 session（return 0, 1, [warning]）
+    3. 若存在但已过期 → 清理 stale lockfile，fall through（允许 sweep）
+    4. 若不存在 → fall through（正常流程）
+    5. lockfile 损坏（JSON 解析失败）→ 清理后 fall through
+
+    所有依赖（_session_active_lockfile, _ACTIVE_LOCK_TTL_SECONDS, json, time）均已存在，
+    无需新增 import 或基础设施。修复为 ~15 行代码插入，非状态机重构。
+
+    与治标措施的关系：
+    - #ARCH-PANORAMA-TOCTOU-001（Phase 1 治标）：specific handler + 明确诊断
+    - #ARCH-PANORAMA-TOCTOU-002（Phase 1 治标增强）：TOCTOU 200ms retry
+    - #ARCH-SWEEP-ACTIVE-LOCKFILE-001（Phase 2 根治，本次）：从源头阻止 sweep 在
+      commit/merge 期间删除 worktree，消除竞态窗口本身
+    三者叠加：lockfile 检查消除主路径竞态，retry 兜底边缘情况（lockfile 创建失败的降级场景），
+    specific handler 提供最终 fail-open 诊断。
+
+    不实施项：
+    - 用全局 _WorktreeLock 替代 per-session lockfile——_WorktreeLock 序列化所有 worktree
+      操作（包括其他 session 的 merge/sweep），pre-commit gate 持有期间会阻塞其他 session
+      的 merge（30s timeout），per-session lockfile 更细粒度，只保护当前 session 的 worktree。
+    - 在 _run_pre_commit_gates 内部加锁——侵入性更大，且 gate 可能在非 worktree 路径调用。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（_sweep_one_dir 判据 2 与判据 5 之间插入判据 4 实际检查代码——检查 _session_active_lockfile 存在性+TTL，未过期则跳过 sweep）'
+  fix_phase: Phase 2 根治落地（本次会话 2026-07-22）——_sweep_one_dir 判据 4 实际实现，从源头消除 TOCTOU 竞态窗口
+  status: resolved
+  related_adjudication: '#ARCH-PANORAMA-TOCTOU-001 (Phase 1 治标——specific handler), #ARCH-PANORAMA-TOCTOU-002 (Phase 1 治标增强——TOCTOU retry), #ARCH-WORKTREE-LIFECYCLE-001 (worktree 5态状态机——sweep 的来源), #ARCH-WORKTREE-002 (worktree lifecycle reconciler)'
+  related_rules: 'AGENTS.md §6.4 (worktree 君子协定——escape hatch 场景), AGENTS.md FP-ISO.4C (worktree 君子协定)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+# --- #ARCH-MODULE-ID-FORMAT-UNIFICATION-001: module_id 格式校验真源分裂治本 ---
+- issue_id: '#ARCH-MODULE-ID-FORMAT-UNIFICATION-001'
+  title: module_id 格式校验真源分裂——BLUEPRINT-AMODULE-CONSISTENCY gate 与 validate_module_id_naming.py 矛盾
+  category: architecture_governance
+  severity: P1高
+  adjudication: |
+    根因（第一性原理分析）：
+    项目中存在 4 个互相矛盾的 module_id 格式校验真源：
+    1. validate_module_id_naming.py 的 DOMAIN_DERIVED 正则 ^MOD-[A-Za-z]{1,20}(?:_[A-Za-z]{1,20})*(?:-[0-9]+)?\Z$
+       ——允许大小写混合下划线段
+    2. blueprint_amodule_consistency_gate.py 的 _MALFORMATION_RE = ^MOD-[A-Z]+_[a-z]
+       ——认为"层码后下划线+小写"是违规
+    3. derived_identifier_registry.yaml 的 format_pattern ^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$
+       ——仅大写
+    4. trae_028 L1046 描述派生轨为 MOD-{DOMAIN_FRAGMENT}[-NNN]——文字描述
+
+    矛盾点：
+    - malformation 正则认为 MOD-GOV_domain_fk_gate 是违规（层码后下划线+小写）
+    - is_valid_module_id() 认为 MOD-GOV_domain_fk_gate 是合法（大小写混合下划线段）
+    - malformation 正则认为 MOD-GOV-domain_fk_gate 是合法（DASH 后小写）
+    - is_valid_module_id() 认为 MOD-GOV-domain_fk_gate 是违规（DASH 后非数字）
+
+    后果（100% AI 开发场景下放大）：
+    并发 session 修复方向相反——session A 做 UNDERSCORE→DASH（遵循 malformation 正则），
+    session B 做 DASH→UNDERSCORE（遵循 is_valid_module_id 正则），循环修复无法归零，
+    GATE-BLUEPRINT-ID-LEGACY 报告 143+ violations 长期无法清零。
+
+    治本方案（统一到 is_valid_module_id() 真源）：
+    1. blueprint_amodule_consistency_gate.py: 废除 _MALFORMATION_RE，改用 is_valid_module_id()
+       统一校验（与 BLUEPRINT-FORMAT gate 共用真源，动态加载 ensure worktree 模式正确）
+    2. validate_module_id_naming.py: DOMAIN_DERIVED 正则放宽
+       [A-Za-z]{1,20} -> [A-Za-z][A-Za-z0-9]{0,19}
+       （允许段中含数字，兼容 v2/l27 等命名；首字符仍需字母）
+    3. derived_identifier_registry.yaml: format_pattern 同步到放宽后的正则
+    4. 批量修复 4046+ 文件 module_id 格式（DASH→UNDERSCORE 统一）
+
+    此治本后，gate 同时接受 UNDERSCORE 和 DASH 变体（因 is_valid_module_id 正则 [A-Za-z]
+    允许大小写混合），但 DASH 多段（如 MOD-GOV-domain_fk_gate）仍违规（-domain_fk_gate 非数字），
+    终止并发 session 修复方向冲突。
+
+    不实施项：
+    - 强制全大写或全小写——会破坏现有 4000+ 文件的命名约定，违反"治本不破坏存量"原则
+    - 删除派生轨只保留 layer-master 轨——裁定#208 双轨制是既定架构决策，不在本议题范围
+
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py（废除 _MALFORMATION_RE，改用 is_valid_module_id() 统一校验）'
+    - 'scripts/governance/d3_metadata/validate_module_id_naming.py（DOMAIN_DERIVED 正则放宽，允许段中含数字）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml（format_pattern 同步）'
+    - '4046+ .py 文件 [BLUEPRINT]/[A_module] 头部 module_id 格式批量修复（DASH→UNDERSCORE）'
+  fix_phase: |
+    Phase 1 (2026-07-22): 真源统一——3 个真源文件修改 + 批量修复 4046+ 文件 + 验证 0 violations
+    治本根因：消除 4 个互相矛盾的真源，统一到 is_valid_module_id() 单一真源
+  status: resolved
+  related_adjudication: '#ARCH-DRIFT-PREVENTION-001 (ADP-3 检测驱动→约束驱动), #214 (BLUEPRINT-FORMAT gate 裁定), #208 (module_id 双轨制裁定), #ARCH-MODULE-ID-DUAL-SPELLING-001 (同模块双拼写交叉检测 gap)'
+  related_rules: 'trae_028 (gov_doc_003 派生标识符), AGENTS.md §11.0.2 (SSoT 真源分类铁律)'
   created: '2026-07-22'
   last_updated: '2026-07-22'

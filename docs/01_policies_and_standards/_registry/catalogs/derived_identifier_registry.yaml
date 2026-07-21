@@ -23,7 +23,7 @@ entry_schema:
   derivation_rule: str       # 派生规则描述
   propagation_method: str    # exact_value_map | sequential_renumber
   sequence_required: bool    # 序号是否必填(裁定#208 R5: 派生轨=false可选, layer-master轨=true必填)
-  format_pattern: str        # 格式正则(裁定#208 R5: 派生轨=^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$)
+  format_pattern: str        # 格式正则(裁定#208 R5 + #ARCH-MODULE-ID-FORMAT-UNIFICATION-001: 派生轨=^MOD-[A-Za-z][A-Za-z0-9]{0,19}(?:_[A-Za-z][A-Za-z0-9]{0,19})*(?:-[0-9]+)?$，允许大小写混合下划线段)
   scope: str                 # 适用轨道(裁定#208 R5: layer-master | domain-functional)
   source_doc: str
 entries:
@@ -33,7 +33,7 @@ entries:
   derivation_rule: blueprint_id 域片段派生自 domain_id（去掉 D- 前缀后的片段），如 D_ASHARE_SIGNAL → MOD-ASHARE_SIGNAL[-NNN]（序号可选）；blueprint_id 命名格式见 trae_028 模块ID格式condition双轨制domain-functional轨
   propagation_method: exact_value_map
   sequence_required: false
-  format_pattern: "^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\\d+)?$"
+  format_pattern: "^MOD-[A-Za-z][A-Za-z0-9]{0,19}(?:_[A-Za-z][A-Za-z0-9]{0,19})*(?:-[0-9]+)?$"
   scope: domain-functional
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_derived_identifiers
 - derived_type: blueprint_id
@@ -42,7 +42,7 @@ entries:
   derivation_rule: 跟随 nodes.blueprint_id 同步传播（blueprint_links 为 nodes 的派生视图，由 sync_blueprint_links 重建）
   propagation_method: exact_value_map
   sequence_required: false
-  format_pattern: "^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\\d+)?$"
+  format_pattern: "^MOD-[A-Za-z][A-Za-z0-9]{0,19}(?:_[A-Za-z][A-Za-z0-9]{0,19})*(?:-[0-9]+)?$"
   scope: domain-functional
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_derived_identifiers
 - derived_type: node_path

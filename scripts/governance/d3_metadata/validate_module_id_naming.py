@@ -67,7 +67,7 @@ import re
 #   {1,20} 限制（防止超长输入如 10000 个 A 导致存储/日志膨胀）
 #   SH- 轨支持 _ 下划线（与派生轨一致，如 SH-LLM_SEC-042）
 MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")              # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填（LAYER_CODE 大写缩写）
-MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Za-z]{1,20}(?:_[A-Za-z]{1,20})*(?:-[0-9]+)?\Z")  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选（小写约定，兼容历史大写）
+MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Za-z][A-Za-z0-9]{0,19}(?:_[A-Za-z][A-Za-z0-9]{0,19})*(?:-[0-9]+)?\Z")  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选（每段首字符字母+后续可含数字，兼容 v2/l27 等）
 MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")           # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填（ABBR 大写缩写）
 
 # ---------------------------------------------------------------------------
