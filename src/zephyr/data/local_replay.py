@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] save_fallback永不抛异常（写入失败log+返回False）; replay_batch失败返回False不抛; has_backlog返回bool不抛
 # [TESTS] tests/zephyr/data/test_local_replay.py
-# [A_module] module_id=MOD-L00-004-local-replay | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-local_replay | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phase 1）。
 
@@ -244,6 +244,7 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
         by_table.setdefault(entry["table"], []).append(entry)
 
     remaining_entries: list[dict] = []
+    replayed_files: set[str] = set()
     processed = 0
 
     for table_entries in by_table.values():
@@ -257,6 +258,7 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
             status = _replay_one_file(entry, ch_writer)
             if status == "replayed":
                 result["replayed"] += 1
+                replayed_files.add(entry.get("file"))
             elif status == "failed":
                 result["failed"] += 1
                 remaining_entries.append(entry)
@@ -267,12 +269,21 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
     # 追加新条目到 manifest。直接 _write_manifest(remaining_entries) 会用 "w" 模式
     # 覆盖，丢失循环中新增的 fallback 条目，导致孤儿文件堆积。
     # 修复：重新读取 manifest 合并去重后再写入。
+    #
+    # #ARCH-CH-023 Phase 3 末尾逻辑 bug 修正（2026-07-22）：
+    # 原逻辑将 current_entries 中不在 existing_files 的 entry 全部加回 remaining，
+    # 但 current_entries 仍含已成功回灌的条目（manifest 尚未覆盖），导致已回灌
+    # entry 被误加回 remaining，remaining 计数错误且 manifest 保留孤儿条目。
+    # 修正：用 replayed_files 集合排除已回灌条目，只合并新增的 fallback 条目。
     current_entries = _read_manifest()
     existing_files = {e.get("file") for e in remaining_entries}
     for entry in current_entries:
-        if entry.get("file") not in existing_files:
+        f = entry.get("file")
+        if f in replayed_files:
+            continue
+        if f not in existing_files:
             remaining_entries.append(entry)
-            existing_files.add(entry.get("file"))
+            existing_files.add(f)
     result["remaining"] = len(remaining_entries)
     _write_manifest(remaining_entries)
 

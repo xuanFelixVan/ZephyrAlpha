@@ -202,10 +202,9 @@ class TestDrainAndRecovery:
             w.start()
             time.sleep(1.0)  # 等 drain 线程处理
             w.stop()
-            # 验证文件被回灌删除
-            # NOTE: 不验证 manifest 是否清空——replay_batch 既有 bug（#ARCH-CH-023
-            # Phase 3 末尾修复逻辑）会将已回灌 entry 误加回 remaining，导致 manifest 残留
+            # 验证文件被回灌删除 + manifest 清空（#ARCH-CH-023 Phase 3 bug 已修复）
             assert not tsv_path.exists()
+            assert not local_replay.has_backlog()
 
     def test_crash_recovery(self, tmp_path, monkeypatch):
         """崩溃恢复：实例1落盘段文件→replay_batch 回灌。
@@ -236,9 +235,9 @@ class TestDrainAndRecovery:
         with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
             result = local_replay.replay_batch()
         assert result["replayed"] == 1  # 回灌成功
-        # NOTE: remaining=1 是 replay_batch 既有 bug（#ARCH-CH-023 Phase 3 末尾修复
-        # 逻辑将已回灌 entry 误加回 remaining），不影响文件已删除的事实
+        assert result["remaining"] == 0  # 无残留（#ARCH-CH-023 Phase 3 bug 已修复）
         assert not tsv_path.exists()  # 文件已被回灌删除
+        assert not manifest.exists()  # manifest 清空（无剩余条目）
 
     def test_stop_flushes_residual(self, tmp_path, monkeypatch):
         """stop 时 flush 残留段。"""
