@@ -7016,3 +7016,90 @@ entries:
   related_rules: 'trae_070 (空间维度), trae_071 (时间维度), trae_062 (SSoT 真源分类), directory_contract.yaml (DCR-007 根目录临时文件阻断)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+
+# --- #ARCH-DEPGRAPH-OPS-TIMEOUT-001: GATE-DEPGRAPH-OPS reconciler 超时治本（2026-07-22）---
+# 关联裁定：#ARCH-DEPGRAPH-RECONCILER-FAILSILENT（reconciler fail-silent 治本——本裁定补充超时维度）
+- issue_id: '#ARCH-DEPGRAPH-OPS-TIMEOUT-001'
+  title: GATE-DEPGRAPH-OPS reconciler 全量扫描超时——timeout 余量不足 + 无 skip-if-recent 防冗余重跑
+  category: governance_mechanism_gap
+  severity: P3低
+  adjudication: |
+    问题背景：
+    commit 时 GATE-DEPGRAPH-OPS reconciler 每次 .py commit 都运行 generate_project_depgraph.py
+    --force 全量扫描（208-296s），原 timeout=300s 仅 4s 余量。2026-07-21 数据：317 次执行
+    中 13 次 critical_warn 超时（~4% 超时率），均在 20:16-20:28 高频 commit 窗口集中爆发。
+
+    根因分析（两个独立缺陷叠加）：
+    (1) timeout 余量不足：全量扫描典型耗时 208-296s，峰值 296.5s，300s timeout 仅 3.5s
+        余量（1.2%）。系统负载波动（磁盘 I/O / CPU 竞争）即可导致超时。
+    (2) 无 skip-if-recent 机制：每次 .py commit 都重跑 5 分钟全量扫描，100% AI 开发高频
+        commit 下（同一时段多次 commit）造成冗余重跑——第一次扫描刚完成 290s，第二次
+        commit 立即再跑 290s，而 depgraph 数据在两次 commit 间几乎无变化。
+
+    裁定（2 条）：
+    1. timeout 300s→600s（2x 余量）。典型 296s 运行有充足空间，即使系统过载也能完成。
+       不设更高（如 1200s）因超时=系统过载信号，过长 timeout 掩盖问题。
+    2. skip-if-recent marker（.runtime/depgraph_ops_last_attempt，600s cooldown）。marker
+       在 sync 开始前写入（非结束），故失败也有 cooldown——合理：超时=系统过载，立即
+       重试大概率再超时。600s = 典型扫描耗时 2x，确保上一次扫描大概率已完成。
+
+    不实施项：
+    - 增量同步（仅扫描变更文件）——generate_project_depgraph.py 已有 scan_cache.json
+      content_hash 增量（AST 解析 O(变更文件)），但 DB 写入仍为全量 DELETE+INSERT
+      （事务原子安全），故总耗时仍 200s+。增量 DB 写入需重构 schema，登记为长期方向。
+    - 降低扫描频率（如每日一次）——depgraph 是依赖关系真源，commit 后需即时反映，不能
+      降低频率。skip-if-recent 600s 已是合理折中。
+  impact:
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（make_depgraph_ops_reconciler 增加 skip-if-recent marker + timeout 300→600s）'
+  fix_phase: Phase 1 落地（本次会话 2026-07-22）——skip-if-recent marker + timeout 升级
+  status: resolved
+  related_adjudication: '#ARCH-DEPGRAPH-RECONCILER-FAILSILENT (reconciler fail-silent 治本——本裁定补充超时维度), 裁定#209 阶段1 (depgraph P1/P2 保护机制)'
+  related_rules: 'trae_062 (SSoT 真源分类——depgraph 是架构数据真源在 DB), AGENTS.md §11.0 (全景图是真源)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-PANORAMA-TOCTOU-001: GATE-PANORAMA-ALIGNMENT TOCTOU 竞态治本（2026-07-22）---
+# 关联裁定：#ARCH-WORKTREE-LIFECYCLE-001 (worktree 5态状态机), P1-2 跨进程 lockfile 待治本
+- issue_id: '#ARCH-PANORAMA-TOCTOU-001'
+  title: GATE-PANORAMA-ALIGNMENT git diff TOCTOU 竞态——isdir 检查与 _run_git 之间 worktree 被 sweep
+  category: governance_mechanism_gap
+  severity: P3低
+  adjudication: |
+    问题背景：
+    2026-07-21 15:59:18 GATE-PANORAMA-ALIGNMENT 报 critical_warn：
+    "git diff 异常(NotADirectoryError: [WinError 267] 目录名称无效。)，检测器失效"。
+    gate 永不阻断 commit（fail-open），但检测器失效意味着三图对齐检测被跳过。
+
+    根因分析（TOCTOU 竞态）：
+    P0-3 治本（2026-07-20）在 _check 开头加了 os.path.isdir(cwd_to_check) 检查，防 worktree
+    被 sweep 后 NotADirectoryError。但 isdir 检查与后续 gateway._run_git(["git","diff",...])
+    之间存在 TOCTOU（Time-of-Check-Time-of-Use）竞态窗口：
+      T1: os.path.isdir(project_root) → True（worktree 存在）
+      T2: worktree_lifecycle_reconciler 并发 sweep 删除 worktree 目录
+      T3: gateway._run_git(cwd=project_root) → NotADirectoryError (WinError 267)
+
+    P0-3 的 isdir 检查只能防"调用前已不存在"的情况，防不了"调用前存在、调用中被删除"的
+    竞态。worktree_lifecycle_reconciler 是 post-commit 异步扫描，与 gate 的 _check 并发
+    执行，无跨进程互斥。
+
+    裁定（2 条）：
+    1. 增加 specific except (NotADirectoryError, FileNotFoundError) handler（置于 broad
+       except Exception 之前），给出明确诊断"git diff cwd 被 sweep——worktree 在 isdir
+       检查后被并发删除（TOCTOU 竞态）"，而非泛化"git diff 异常"。fail-open 不变（gate
+       永不阻断 commit）。这是治标——让失败诊断更清晰，便于追踪。
+    2. 根治（P1-2 长期方向，本次不实施）：session_worktree_merge 与 worktree_lifecycle_
+       reconciler 之间需跨进程互斥（lockfile 或 IPC coordination），消除 TOCTOU 竞态窗口。
+       登记为长期方向，因涉及 worktree 生命周期状态机重构。
+
+    不实施项：
+    - 在 _run_git 内部加 retry——TOCTOU 竞态重试无意义（worktree 已被删除，retry 仍失败）。
+    - 取消 P0-3 isdir 检查——isdir 仍能防"调用前已不存在"的常见情况（非竞态），
+      保留有价值。竞态由 specific handler 兜底。
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py（L135-153 增加 specific NotADirectoryError/FileNotFoundError handler，TOCTOU 竞态明确诊断）'
+  fix_phase: Phase 1 治标落地（本次会话 2026-07-22）——specific handler + 明确诊断；Phase 2 根治（P1-2 跨进程互斥）长期方向不实施
+  status: resolved
+  related_adjudication: '#ARCH-WORKTREE-LIFECYCLE-001 (worktree 5态状态机——sweep 的来源), #ARCH-WORKTREE-002 (worktree lifecycle reconciler), P1-2 跨进程 lockfile (待治本长期方向)'
+  related_rules: 'AGENTS.md §6.4 (worktree 君子协定——escape hatch 场景), Ruling:100PCT-AI-GOVERNANCE P1-5 (gate fail-open 持久化)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

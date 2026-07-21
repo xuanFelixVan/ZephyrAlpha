@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——run_alignment/DB 异常降级为 fail-open + logger.error + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）；PanoramaEmptyError 为合法跳过（不持久化）；domain_mismatches>0 为确定性阻断（非异常路径）
 # [TESTS] tests/governance/commit_gates/test_panorama_alignment_gate.py
-# [A_module] module_id=MOD-GOV-panorama_alignment_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_panorama_alignment_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """panorama_alignment_gate.py — 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
 
@@ -132,6 +132,25 @@ def make_panorama_alignment_gate() -> GateSpec:
                 )
                 return True, ""
             staged_files = diff_result.stdout.strip().splitlines()
+        except (NotADirectoryError, FileNotFoundError) as e:
+            # #ARCH-PANORAMA-TOCTOU-001（2026-07-22）：P0-3 isdir 检查与 _run_git 之间的
+            # TOCTOU 竞态——worktree 在 isdir 通过后被 worktree_lifecycle_reconciler sweep。
+            # 特定 handler 给出明确诊断（"worktree 被 sweep"），而非泛化 "git diff 异常"。
+            # fail-open 不变（gate 永不阻断 commit）。
+            detail = (
+                f"git diff cwd 被 sweep({type(e).__name__}: {e})——"
+                f"worktree 在 isdir 检查后被 worktree_lifecycle_reconciler 并发删除（TOCTOU 竞态）。"
+                f"根因: session_worktree_merge 与 worktree_lifecycle_reconciler 缺跨进程互斥 (P1-2)"
+            )
+            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
+            try:
+                log_gate_failure(
+                    gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                    session_id=kwargs.get("session_id", ""),
+                )
+            except Exception:  # noqa: BLE001 — log 失败不阻断 gate
+                pass
+            return True, ""
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
             # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力

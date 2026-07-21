@@ -1362,6 +1362,32 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
         # --force 仅控制 DB 写入安全门禁（裁定#207 R2 C2），不影响 scan cache。
         # AST 解析已为 O(变更文件)，DB 写入仍为全量 DELETE+INSERT（事务原子安全）。
         import time
+        # #ARCH-DEPGRAPH-OPS-TIMEOUT-001（2026-07-22）治本：skip-if-recent + timeout 升级。
+        # 根因：generate_project_depgraph.py --force 全量扫描需 208-296s，原 timeout=300s
+        # 仅 4s 余量→~4% 超时率（13/317）。且每次 .py commit 都重跑（无 skip），100% AI
+        # 开发高频 commit 下浪费严重。治本：① marker 文件防并发+防冗余（600s cooldown，
+        # 在 sync 开始前写 marker，防止并发 commit 各自触发 5 分钟全量扫描）② timeout
+        # 300→600s（2x 余量，典型 296s 运行有充足空间）。marker 在 sync 开始前写入
+        # （非结束），故失败也有 cooldown——合理：超时=系统过载，立即重试大概率再超时。
+        _SKIP_WINDOW = 600  # 10 min cooldown after any attempt（success or failure）
+        _marker = project_root / ".runtime" / "depgraph_ops_last_attempt"
+        try:
+            if _marker.exists():
+                _last = float(_marker.read_text(encoding="utf-8").strip())
+                _elapsed = time.time() - _last
+                if _elapsed < _SKIP_WINDOW:
+                    return ReconcileResult(
+                        action="skip",
+                        detail=f"skip depgraph sync: last attempt {_elapsed:.0f}s ago < {_SKIP_WINDOW}s cooldown (#ARCH-DEPGRAPH-OPS-TIMEOUT-001)",
+                    )
+        except (ValueError, OSError):  # noqa: BLE001 — corrupt marker, proceed
+            pass
+        # 写 marker 在 sync 开始前（防并发 commit 触发多个 5 分钟全量扫描）
+        try:
+            _marker.parent.mkdir(parents=True, exist_ok=True)
+            _marker.write_text(str(time.time()), encoding="utf-8")
+        except OSError:  # noqa: BLE001 — marker 写失败不阻断 sync
+            pass
         start = time.time()
         _env = dict(os.environ)
         _src = str(project_root / "src")
@@ -1378,7 +1404,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=300,  # 全量扫描，给足 5 分钟
+            timeout=600,  # 全量扫描 208-296s，给 2x 余量（原 300s 仅 4s 余量→4% 超时率）
             env=_env,
         )
         elapsed = time.time() - start
