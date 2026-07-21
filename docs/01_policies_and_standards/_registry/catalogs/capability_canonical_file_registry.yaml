@@ -1945,6 +1945,29 @@ capabilities:
       - make_bare_subprocess_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: precommit_offline_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py
+    aliases:
+      - GATE-PRECOMMIT-OFFLINE
+      - gate-precommit-offline
+      - make_precommit_offline_gate
+      - precommit_external_repo_blocker
+      - precommit_offline_discipline
+    description: >-
+      GATE-PRECOMMIT-OFFLINE in-process pre-commit 配置离线可运行硬阻断门禁
+      （#ARCH-PRECOMMIT-OFFLINE-001 治本防复发，2026-07-21）。
+      检测 .pre-commit-config.yaml 中外部 GitHub repo 引用（https://github.com/...）
+      及 language: pygrep 违规——pre-commit 工具在缓存失效/首次安装时会 git fetch
+      远程 repo，代理未启动或离线环境会卡死所有 commit（单点故障）。
+      YAML 解析 + 外部 repo 检测（非 local 值即外部）+ language 非 system 检测。
+      100% AI 开发场景下 GitCommitGateway 永远 --no-verify 绕过 pre-commit hook，
+      pre-commit hook 仅在 AI 误用裸 git commit 时兜底——网络依赖让"冗余防线"变"单点故障"。
+      配套规则真源：trae_073_precommit_offline_discipline.yaml（5 条铁律 + 3 个 INV）。
+      fail-open（YAML 解析失败不阻断）。priority=111（紧接 CAPABILITY-LOOKUP-REQUIRED=110）。
+    integrity_anchors:
+      - make_precommit_offline_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: ruling_commit_verified_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py
     aliases:
@@ -6472,10 +6495,8 @@ creation_tokens:
     token: "auto-ruling-any-governance-engineering-20260721"
     created_by: "ARCH-ANY-GOVERNANCE-001"
     capability: "any_governance_engineering_ruling"
-
   # --- #ARCH-TEMP-FILE-LIFECYCLE-002 Phase 5（2026-07-21，analysis report + strategy doc tokens）---
   # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的分析报告/策略文档副本
-  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("dual_resonance_strategy_design") 可定位真源
   - file: "docs/04_design/strategies/双策略共振_区间三强_逆势资金流入.md"
     token: "auto-strategy-dual-resonance-20260721"
     created_by: "ARCH-TEMP-FILE-LIFECYCLE-002"
@@ -6484,6 +6505,50 @@ creation_tokens:
     token: "auto-resonance-screen-report-20260721"
     created_by: "ARCH-TEMP-FILE-LIFECYCLE-002"
     capability: "resonance_screen_report"
+
+  # --- #ARCH-WORKTREE-LIFECYCLE-001: worktree lifecycle 状态机（2026-07-21，死代码清理 + 新建替代）---
+  # 病根：SessionManager (5态) + SessionLifecycle (6态) 均为死代码，生产引用=0
+  # 治本：新建 WorktreeLifecycle (5态: created/active/idle/quarantined/swept) 替代
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("worktree_lifecycle") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 worktree_lifecycle.py 副本
+  # session: ARCH-WORKTREE-LIFECYCLE-001
+  - file: "src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py"
+    token: "auto-worktree-lifecycle-20260721"
+    created_by: "ARCH-WORKTREE-LIFECYCLE-001"
+    capability: "worktree_lifecycle"
+
+  # --- PRECOMMIT-OFFLINE pre-commit 配置离线可运行门禁（2026-07-21，#ARCH-PRECOMMIT-OFFLINE-001 治本）---
+  # 病根：.pre-commit-config.yaml 引用外部 GitHub repo，pre-commit 工具缓存失效时
+  #       git fetch 远程 repo——代理未启动或离线环境卡死所有 commit（单点故障）。
+  # 治本：删除外部 repo + local hooks + GATE-PRECOMMIT-OFFLINE 硬阻断 + trae_073 规则真源
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("precommit_offline") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 precommit_offline_gate / trae_073 / 替代脚本副本
+  # session: ARCH-PRECOMMIT-OFFLINE-001
+  - file: "src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py"
+    token: "auto-precommit-offline-gate-20260721"
+    created_by: "ARCH-PRECOMMIT-OFFLINE-001"
+    capability: "precommit_offline_gate"
+  - file: "docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml"
+    token: "auto-trae-073-precommit-offline-20260721"
+    created_by: "ARCH-PRECOMMIT-OFFLINE-001"
+    capability: "precommit_offline_discipline"
+  - file: "scripts/governance/d7_code/check_merge_conflict.py"
+    token: "auto-check-merge-conflict-local-20260721"
+    created_by: "ARCH-PRECOMMIT-OFFLINE-001"
+    capability: "precommit_offline_gate"
+  - file: "scripts/governance/d7_code/detect_private_key.py"
+    token: "auto-detect-private-key-local-20260721"
+    created_by: "ARCH-PRECOMMIT-OFFLINE-001"
+    capability: "precommit_offline_gate"
+  - file: "scripts/governance/d7_code/check_no_tests_unit.py"
+    token: "auto-check-no-tests-unit-local-20260721"
+    created_by: "ARCH-PRECOMMIT-OFFLINE-001"
+    capability: "precommit_offline_gate"
+  - file: "config/worktree_state_machine.yaml"
+    token: "auto-worktree-state-machine-20260721"
+    created_by: "ARCH-WORKTREE-LIFECYCLE-001"
+    capability: "worktree_lifecycle"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

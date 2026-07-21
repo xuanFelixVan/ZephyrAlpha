@@ -68,35 +68,29 @@
 default_install_hook_types: [pre-commit, post-commit, commit-msg]
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
-    hooks:
-      - id: trailing-whitespace
-        name: "修剪行尾空格（manual—避免pre-commit stash冲突）"
-        stages: [manual]
-      - id: end-of-file-fixer
-        name: "确保文件末尾换行（manual—避免pre-commit stash冲突）"
-        stages: [manual]
-      - id: check-yaml
-        name: "YAML 语法检查"
-        args: ["--unsafe"]
-      - id: check-json
-        name: "JSON 语法检查"
-      - id: check-merge-conflict
-        name: "检测未解决的合并冲突标记"
-      - id: detect-private-key
-        name: "检测意外提交的私钥"
-        exclude: |
-          (?x)^(
-              src/zephyr/security/llm_defense/llm_security/patterns/secrets\.py|
-              tests/test_fix_safety\.py|
-              tests/fix/test_auto_fix_core\.py|
-              tests/llm_security/test_secrets\.py|
-              tests/test_credential_rotation_trigger\.py
-          )$
-
   - repo: local
     hooks:
+      # ── 替代 external pre-commit-hooks（裁定 #ARCH-PRECOMMIT-OFFLINE-001）──
+      # 原 6 个 external hook 能力已被 local hook 等价覆盖：
+      #   trailing-whitespace / end-of-file-fixer：ruff format 替代
+      #   check-yaml / check-json：gate-encoding-safety + gate-frontmatter 覆盖
+      #   check-merge-conflict：→ check_merge_conflict.py（local 纯 stdlib）
+      #   detect-private-key：→ detect_private_key.py（local 纯 stdlib）
+      - id: check-merge-conflict-marker
+        name: "检测未解决的合并冲突标记（local 替代 external #ARCH-PRECOMMIT-OFFLINE-001）"
+        entry: python scripts/governance/d7_code/check_merge_conflict.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        description: "纯 stdlib 检测 staged 文件中 <<<<<<< / ======= / >>>>>>> 合并冲突标记，替代 external pre-commit-hooks check-merge-conflict"
+      - id: detect-private-key-local
+        name: "检测意外提交的私钥（local 替代 external #ARCH-PRECOMMIT-OFFLINE-001）"
+        entry: python scripts/governance/d7_code/detect_private_key.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        description: "纯 stdlib 检测 staged 文件中 PEM/SSH/PGP 私钥标记，替代 external pre-commit-hooks detect-private-key"
+
       - id: ruff
         name: "Ruff Lint"
         entry: python -m ruff check --no-cache
@@ -737,22 +731,11 @@ repos:
       # 模式：硬阻断（检测到 tests/unit/ 即 exit 1 拒绝提交）
       - id: gate-no-tests-unit
         name: "GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）"
-        entry: "tests/unit/"
-        language: pygrep
-        files: "\\.(py|md|yaml|yml)$"
-        exclude: |
-          (?x)^(
-              _archive/.*|
-              scripts/_archive/.*|
-              scripts/.*/_archive/.*|
-              session_logs/.*|
-              data/.*|
-              reports/.*|
-              docs/01_policies_and_standards/rules/trae_0(28|34)_.*|
-              \.pre-commit-config\.yaml|
-              AGENTS\.md
-          )$
-        description: "ARCH-029 漂移种子防复发——检测活跃代码/文档中 tests/unit/ 旧路径重引入，归档/历史/自动生成数据豁免"
+        entry: python scripts/governance/d7_code/check_no_tests_unit.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        description: "纯 stdlib 检测 staged 文件中 tests/unit/ 旧路径（local 替代 pygrep #ARCH-PRECOMMIT-OFFLINE-001）"
 
       # ── GATE-DEDUP: 代码重复检测门禁（code_dedup 引擎 pre-commit 入口）──
       # 权威依据：ARCH-027 §3b 管线未接通→三阶段强制接入（阶段1注册 / 阶段2 CI / 阶段3 commit阻断）
