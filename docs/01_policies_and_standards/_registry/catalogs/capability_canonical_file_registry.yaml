@@ -6472,6 +6472,18 @@ creation_tokens:
     token: "auto-ruling-any-governance-engineering-20260721"
     created_by: "ARCH-ANY-GOVERNANCE-001"
     capability: "any_governance_engineering_ruling"
+
+  # --- #ARCH-TEMP-FILE-LIFECYCLE-002 Phase 5（2026-07-21，analysis report + strategy doc tokens）---
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的分析报告/策略文档副本
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("dual_resonance_strategy_design") 可定位真源
+  - file: "docs/04_design/strategies/双策略共振_区间三强_逆势资金流入.md"
+    token: "auto-strategy-dual-resonance-20260721"
+    created_by: "ARCH-TEMP-FILE-LIFECYCLE-002"
+    capability: "dual_resonance_strategy_design"
+  - file: "docs/_working/2026-07-20-resonance-screen-result.md"
+    token: "auto-resonance-screen-report-20260721"
+    created_by: "ARCH-TEMP-FILE-LIFECYCLE-002"
+    capability: "resonance_screen_report"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
