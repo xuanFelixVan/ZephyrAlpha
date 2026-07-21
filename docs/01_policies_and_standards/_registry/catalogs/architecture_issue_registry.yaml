@@ -5962,3 +5962,67 @@ entries:
   related_rules: 'trae_060 (向内收三原则)'
   created: '2026-07-21'
   last_updated: '2026-07-21'
+
+# --- #ARCH-GATE-REGISTRY-AUTO-001: git_commit_gateway.py 硬编码注册瓶颈治本（2026-07-21）---
+- issue_id: '#ARCH-GATE-REGISTRY-AUTO-001'
+  title: 'git_commit_gateway.py 硬编码 75 个 gate 的 import + register——YAML 驱动自动注册治本'
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-21 立项裁定。git_commit_gateway.py 是 75 个 in-process gate 的硬编码注册中心，
+    每个 gate 需要 1 行 import + 1 行 register（共 150 行硬编码）。这导致三个问题：
+
+    1. 违反开闭原则——新增 gate 必须修改 git_commit_gateway.py（核心文件），
+       而非扩展配置文件。
+    2. 多 session 并发冲突——100% AI 开发场景下，多个 session 同时添加 gate 时，
+       git_commit_gateway.py 成为合并冲突热点（每次新增 gate 都修改同一文件）。
+    3. 与 trae_072 跨 commit 原子性铁律1冲突——gate 文件 + import + register 必须同一
+       commit 原子提交，但 import 先行会触发 IMPORT-INTEGRITY 硬阻断（import 目标文件
+       必须在 staged + main HEAD 可解析）。
+
+
+    治本方案（6 个 Phase）：
+
+    Phase 1: GATE-PRECOMMIT-OFFLINE 注册收尾（已完成，commit 7573fea9a4）。
+    Phase 2: 创建 in_process_gate_registry.yaml（76 个 gate 条目的注册真源 YAML）。
+    Phase 3: 创建 gate_auto_registrar.py（YAML 驱动动态 import + register）+ 单测。
+    Phase 4: 渐进式迁移——从 git_commit_gateway.py 删除 75 个显式 import + register，
+             改为调用 auto_register_gates()（每批 10 个 gate 迁移 + 验证）。
+    Phase 5: 过渡期协调协议——SessionRegistry 登记"git_commit_gateway.py 修改意图"
+             + GATE-GATEWAY-FILE-LOCK 门禁（防并发修改）。
+    Phase 6: 验证与监控——补 CommitGateRegistry.list_all() API + GateSpec.source 字段
+             + 扩展 gate_registry_sync_reconciler 为双向校验（YAML ↔ 内存注册表）+ baseline scan。
+
+
+    设计权衡：
+    - fail-open：YAML/import/getattr 异常不阻断 commit（registry 故障是环境异常，
+      fail-closed 会卡死所有 commit）。
+    - register 幂等共存：CommitGateRegistry.register 幂等（同 gate_id 覆盖），
+      auto_registrar 与显式注册可过渡期共存（Phase 4 渐进式迁移期间）。
+    - enabled 字段：YAML 中 enabled: false 的 gate 不会被 auto_registrar 注册
+      （不删除条目，保留历史）。
+
+
+    防复发机制：in_process_gate_registry.yaml 作为注册真源（SSoT）；
+    capability_canonical_file_registry.yaml 登记 capability + creation_token。
+  fix_phase: |
+    Phase 1: ✅ 完成（GATE-PRECOMMIT-OFFLINE 注册，commit 7573fea9a4）
+    Phase 2: ✅ 完成（in_process_gate_registry.yaml 创建，76 个 gate 条目）
+    Phase 3: ✅ 完成（gate_auto_registrar.py + test_gate_auto_registrar.py 创建，20 个测试）
+    Phase 4: ⏳ pending（渐进式迁移 75 个显式注册到 YAML 驱动）
+    Phase 5: ⏳ pending（过渡期协调协议——GATE-GATEWAY-FILE-LOCK 门禁）
+    Phase 6: ⏳ pending（验证与监控——reconciler 双向校验 + list_all API）
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+    - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（Phase 2 注册真源 YAML）
+    - src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py（Phase 3 自动注册器）
+    - tests/governance/rule_bridge/test_gate_auto_registrar.py（Phase 3 单测）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（capability 登记）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 4 迁移目标）
+    - src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py（Phase 6 list_all API 扩展）
+    - src/zephyr/governance/audit/reconciliation_registry.py（Phase 6 reconciler 双向校验扩展）
+  status: decided
+  related_adjudication: 'Ruling:100PCT-AI-GOVERNANCE (第一性原理), #ARCH-PRECOMMIT-OFFLINE-001 (Phase 1 收尾), #ARCH-CROSS-COMMIT-ATOMICITY-001 (trae_072 跨 commit 原子性), #AD-001 (CommitGateRegistry 注册制架构债务)'
+  related_rules: 'trae_060 (向内收三原则), trae_062 (SSoT 真源分类), trae_072 (跨 commit 原子性铁律1)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
