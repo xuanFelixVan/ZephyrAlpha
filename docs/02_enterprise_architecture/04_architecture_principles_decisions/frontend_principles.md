@@ -398,8 +398,8 @@ G0.5 与 G1 可共存——Panel 组件可嵌入 React（`pn.pane.HTML` + React 
 | 构建管线图 / 部署拓扑具体路径 | frontend/ 建立后由实现文档维护 |
 | App / package / 工具链清单 | frontend/ 建立后维护 |
 | G0.5 Python 过渡层具体技术栈版本号 | `architecture_model/technology/technology_landscape.yaml` |
-| 微前端拓扑图 | `diagrams/frontend_mfe_topology.mmd` |
-| 前端构建管线图 | `diagrams/frontend_build_pipeline.mmd` |
+| 微前端拓扑图 | ~~`diagrams/frontend_mfe_topology.mmd`~~（已删除：与实际 Panel 架构脱节） |
+| 前端构建管线图 | ~~`diagrams/frontend_build_pipeline.mmd`~~（已删除：实际无构建管线） |
 | 后端 全域 Python 后端架构 | `application_principles.md` |
 | API Gateway 集成（前后端唯一对接点）| `integration_principles.md` |
 | 运行平面 Hot Path 硬门槛定义 | `runtime_planes_principles.md` |

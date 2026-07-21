@@ -378,7 +378,7 @@ D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Tr
 | 全域 × 三平面完整映射矩阵 | `architecture_model/cross_cutting/runtime_planes.yaml` |
 | 按平面维度反查表 | 同 YAML 的 `planes.{hot,warm,cold}.modules[]` |
 | Tech Radar 当前状态 | `architecture_model/technology/technology_landscape.yaml` |
-| 三平面部署拓扑图 | `diagrams/runtime_planes_topology.mmd` |
+| 三平面部署拓扑图 | ~~`diagrams/runtime_planes_topology.mmd`~~（已删除：目标终态，与当前单进程 Python 现状脱节） |
 | 全局技术基线（Python/Redis/PostgreSQL）| `technology_principles.md` |
 | 全域业务分层（What）| `application_principles.md` |
 | 治理三层（Policy/Factory/Runtime）| `governance_principles.md` |
