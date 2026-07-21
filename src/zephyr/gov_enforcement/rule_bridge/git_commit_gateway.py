@@ -76,6 +76,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_worktree_lifecycle_reconciler,
     make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
     make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
+    make_consumers_accuracy_baseline_reconciler,  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2（CONSUMERS baseline 全扫）
     make_capability_lookup_health_reconciler,  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺
     make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
@@ -564,6 +565,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_stash_lifecycle_reconciler(self))  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
         self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
         self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
+        self._reconciliation_registry.register(make_consumers_accuracy_baseline_reconciler(self))  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2 CONSUMERS baseline 全扫（priority=212，post-commit 补强 CONSUMERS-ACCURACY gate 只扫 staged 的盲区）
         self._reconciliation_registry.register(make_capability_lookup_health_reconciler(self))  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺（priority=220，post-commit 检测 [no-lookup:] bypass 频率 + audit log 健康）
         self._reconciliation_registry.register(make_blueprint_id_legacy_reconciler(self))  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
         self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）

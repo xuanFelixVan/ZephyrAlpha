@@ -5960,6 +5960,89 @@ def make_undefined_name_baseline_reconciler(gateway: "object") -> ReconcilerSpec
     )
 
 
+# trae_060-reviewed: 对标 make_undefined_name_baseline_reconciler（第31个reconciler）。
+# 病根（#ARCH-CONSUMERS-ACCURACY-001/003）：pre-commit CONSUMERS-ACCURACY gate 只扫
+# staged 文件，有两个盲区：①gate 上线前的历史漂移（842 violations）永不命中 staged 扫描；
+# ②--no-verify 绕过。治本：post-commit baseline 全扫——扫描磁盘所有 src/**.py +
+# scripts/governance/**.py 的 [CONSUMERS] 字段准确性，报告 violations 为 warn。
+# 向内收：复用 consumers_accuracy_gate.scan_all_for_consumers_accuracy（与 gate 共享
+# check_consumers_accuracy），零新真源。lazy import 避免 import-time 耦合。
+# trae_060-reviewed: 通过——该 reconciler 与 make_undefined_name_baseline_reconciler 同构
+# （post-commit baseline 全扫模式），不可合并（扫描目标不同：UNDEFINED-NAME vs CONSUMERS-ACCURACY），
+# 是 CONSUMERS-ACCURACY gate 的 post-commit 补强（对标 undefined-name gate + reconciler 模式）。
+def make_consumers_accuracy_baseline_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-CONSUMERS-ACCURACY-BASELINE post-commit baseline 全扫 reconciler。
+
+    对标 make_undefined_name_baseline_reconciler（priority=211），本 reconciler
+    priority=212 紧接其后。
+
+    病根（#ARCH-CONSUMERS-ACCURACY-001/003）：pre-commit gate 只扫 staged 文件，
+    历史漂移（842 violations）+ --no-verify 绕过 = 两个盲区。
+
+    治本：post-commit baseline 全扫——扫描磁盘所有 src/**.py + scripts/governance/**.py，
+    报告 [CONSUMERS] 字段准确性 violations 为 warn（commit 已入库不可阻断；warn 供 AI 修复）。
+
+    向内收：复用 consumers_accuracy_gate.scan_all_for_consumers_accuracy（与 gate 共享
+    check_consumers_accuracy），零新真源。lazy import 避免 import-time 耦合
+    （reconciliation_registry 不应在模块加载时依赖 commit_gates.consumers_accuracy_gate）。
+
+    触发策略：committed_files 含 scripts/governance/**/*.py 或 src/**/*.py 时触发
+    （新违规只可能由这些路径的 .py 变更引入）；或含 consumers_accuracy_gate.py 自身变更时触发
+    （检测逻辑变更应重跑 baseline）。其他 commit 不触发（避免无谓全扫开销）。
+    """
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            normalized = f.replace("\\", "/")
+            if normalized.startswith("scripts/governance/") and normalized.endswith(".py"):
+                return True
+            if normalized.startswith("src/") and normalized.endswith(".py"):
+                return True
+            if "consumers_accuracy_gate.py" in normalized:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # lazy import 避免 import-time 耦合
+        from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (
+            scan_all_for_consumers_accuracy,
+        )
+
+        try:
+            violations, error_msg = scan_all_for_consumers_accuracy(project_root)
+        except Exception as e:  # noqa: BLE001 — reconciler 容错降级
+            return ReconcileResult(
+                action="warn",
+                detail=f"consumers accuracy baseline scan 异常（降级告警）: {e}",
+            )
+
+        if error_msg is not None:
+            return ReconcileResult(action="skip", detail=f"baseline scan skip: {error_msg}")
+
+        if violations:
+            detail = (
+                f"consumers accuracy baseline scan: {len(violations)} violation(s) detected"
+                "（#ARCH-CONSUMERS-ACCURACY-001/003 治本 baseline 全扫）\n"
+                + "\n".join(violations[:30])  # 截断到前 30 条避免日志过长
+                + (f"\n  ...(+{len(violations) - 30} more)" if len(violations) > 30 else "")
+            )
+            logger.warning("GATE-CONSUMERS-ACCURACY-BASELINE: %s", detail)
+            return ReconcileResult(action="warn", detail=detail)
+
+        return ReconcileResult(
+            action="clean",
+            detail="consumers accuracy baseline scan: 0 violations (clean)",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-CONSUMERS-ACCURACY-BASELINE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=212,  # post-commit baseline 全扫组（undefined-name=211 之后）
+    )
+
+
 # trae_060-reviewed: 该存在+可合并入已有框架（第30个reconciler）。病根（#ARCH-WORKTREE-002
 # 缺陷4）：session_worktree 在多处 stash 临时修改（_pre_merge_auto_clean 的
 # _execute_cleanups / _ensure_worktree_base_fresh / 手动 merge 前），但从不清理。
@@ -5974,32 +6057,59 @@ def make_undefined_name_baseline_reconciler(gateway: "object") -> ReconcilerSpec
 def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-STASH-LIFECYCLE post-commit stash 过期清理 reconciler.
 
-    病根（#ARCH-WORKTREE-002 缺陷4，2026-07-19）：session_worktree 在多处 stash
-    临时修改，但从不清理。auto-recover 机制修复了 stash 丢失 bug，但未清理过期
-    stash。实测 34 个 stash 堆积，部分 30+ 小时。
+    病根（#ARCH-WORKTREE-002 缺陷4 → #ARCH-STASH-ACCUMULATION-001 系统性扩展，
+    2026-07-21）：session_worktree 在多处 stash 临时修改，但从不清理。
+    auto-recover 机制修复了 stash 丢失 bug，但未清理过期 stash。实测 34-45 个
+    stash 堆积，部分 30+ 小时。原 reconciler 只清理 session_worktree 前缀 +
+    24h TTL，无法处理 AI 为 merge 准备创建的临时 stash 和 100% AI 开发场景下
+    多 session 并发产生的未知前缀 stash。
 
-    治本（事件驱动 TTL 清理）：
+    治本（#ARCH-STASH-ACCUMULATION-001 系统性扩展，事件驱动 TTL 清理）：
     - trigger: 任何非空 committed_files 触发（stash 堆积与 AI 活跃正相关，
       每次 commit 是清理过期 stash 的合适时机；扫描 stash list 成本 <0.1s）
     - reconcile: ``git stash list --format=%gd|%ct|%s`` 获取所有 stash 的
-      ref/timestamp/message，过滤 session_worktree 前缀 + age > 24h 的 stash，
+      ref/timestamp/message，过滤 AI 前缀 + age > 4h 的 stash，
       按索引降序 drop（避免 renumbering 问题）
     - 自维护/自关闭：每次 commit 后自动清理，无需 AI 干预
 
-    保护规则（第一性原理：只清 session_worktree 临时 stash，保留用户手动 stash）：
-    - 只清理 message 以 ``session_worktree_pre_merge`` 或 ``session_worktree_abort``
-      开头的 stash（session_worktree 创建的临时 stash）
-    - 保留 < 24h 的 stash（AI 可能还需要 pop 恢复修改）
-    - 不影响用户手动 stash（无 session_worktree 前缀）
+    保护规则（第一性原理：100% AI 场景下显式保护 user-manual- 前缀）：
+    - 清理 8 个 AI 前缀的 stash（session_worktree_pre_merge / abort /
+      phase- / temp-stash-for- / pre-merge stash / pre-merge-stash /
+      merge-prep- / stash-for-merge）
+    - 保留 < 4h 的 stash（AI session 典型生命周期 <4h，可能还需要 pop 恢复）
+    - user-manual- 前缀永不被清理（显式保护，aggressive 模式也不清理）
+    - aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1）：清理所有非
+      user-manual- 前缀 stash（无视 age，用于存量清理）
 
-    向内收：扩展 ReconciliationRegistry 框架（第30个 reconciler），不新建独立
-    清理系统。复用 _run_subprocess 统一 subprocess 解码策略。
+    向内收：扩展 ReconciliationRegistry 框架，不新建独立清理系统。
+    复用 _run_subprocess 统一 subprocess 解码策略。
     """
+    import os
     import time
 
     project_root = gateway.project_root
-    _STASH_TTL_SECONDS = 24 * 3600  # 24 小时
-    _STASH_PREFIXES = ("session_worktree_pre_merge", "session_worktree_abort")
+    _STASH_TTL_SECONDS = 4 * 3600  # 4 小时（AI session 典型生命周期，#ARCH-STASH-ACCUMULATION-001 Phase 1）
+    _AI_STASH_PREFIXES = (
+        "session_worktree_pre_merge", "session_worktree_abort",
+        "phase-", "temp-stash-for-", "pre-merge stash",
+        "pre-merge-stash", "merge-prep-", "stash-for-merge",
+    )
+    _PROTECTED_STASH_PREFIXES = ("user-manual-",)
+
+    def _is_protected(message: str) -> bool:
+        return message.startswith(_PROTECTED_STASH_PREFIXES)
+
+    def _is_ai_generated(message: str) -> bool:
+        return message.startswith(_AI_STASH_PREFIXES)
+
+    def _should_drop(message: str, age: float, aggressive: bool) -> bool:
+        if _is_protected(message):
+            return False
+        if aggressive:
+            return True
+        if not _is_ai_generated(message):
+            return False
+        return age >= _STASH_TTL_SECONDS
 
     def _stash_index(stash_ref: str) -> int:
         """从 stash ref（如 ``stash@{3}``）提取索引，用于降序排序避免 renumbering。"""
@@ -6032,8 +6142,10 @@ def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
             return ReconcileResult(action="skip", detail="stash lifecycle: 无 stash")
 
         now = time.time()
+        aggressive = os.environ.get("ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE", "") == "1"
         to_drop: list[tuple[str, float, str]] = []  # (stash_ref, age_hours, message)
         kept = 0
+        protected = 0
         for line in lines:
             parts = line.split("|", 2)
             if len(parts) < 3:
@@ -6044,21 +6156,20 @@ def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
             except ValueError:
                 continue
             age = now - stash_ts
-            # 只清理 session_worktree 前缀的 stash（不影响用户手动 stash）
-            if not message.startswith(_STASH_PREFIXES):
+            if _is_protected(message):
+                protected += 1
+                continue
+            if not _should_drop(message, age, aggressive):
                 kept += 1
                 continue
-            if age < _STASH_TTL_SECONDS:
-                kept += 1
-                continue  # 仍在 TTL 内，保留（AI 可能还需要 pop 恢复）
             to_drop.append((stash_ref, age / 3600, message))
 
         if not to_drop:
             return ReconcileResult(
                 action="skip",
                 detail=(
-                    f"stash lifecycle: {kept} stash(es) 全部在 TTL 内或非 "
-                    f"session_worktree 前缀，无需清理"
+                    f"stash lifecycle: {kept} stash(es) 全部在 TTL 内或受保护，"
+                    f"无需清理（protected={protected}, aggressive={aggressive}）"
                 ),
             )
 
@@ -6091,8 +6202,8 @@ def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
             action=action,
             detail=(
                 f"stash lifecycle: dropped={dropped} "
-                f"(>{_STASH_TTL_SECONDS // 3600}h session_worktree stash), "
-                f"kept={kept}, errors={errors}"
+                f"(>{_STASH_TTL_SECONDS // 3600}h AI stash, aggressive={aggressive}), "
+                f"kept={kept}, protected={protected}, errors={errors}"
             ),
         )
 

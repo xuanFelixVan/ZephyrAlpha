@@ -4967,6 +4967,27 @@ capabilities:
       - _check_stale_violation   # stale 检测(删则 stale 检测失效)
 
   # --------------------------------------------------------------------------
+  - capability_id: issue_resolved_integrity_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py
+    aliases:
+      - ISSUE-RESOLVED-INTEGRITY
+      - issue-resolved-integrity
+      - make_issue_resolved_integrity_gate
+      - ARCH-ISSUE-RESOLVED-INTEGRITY-001
+      - ARCH-CONSUMERS-ACCURACY-003
+    description: >-
+      ISSUE-RESOLVED-INTEGRITY in-process warn-only 门禁（#ARCH-CONSUMERS-ACCURACY-003
+      Phase 2 / #ARCH-ISSUE-RESOLVED-INTEGRITY-001 治本，2026-07-22，priority=117）。
+      病根："Resolved but incomplete" 系统性风险——AI 倾向于在主体工作完成后立即标记
+      resolved，遗漏收尾登记工作。治本：warn-only 门禁检测 status=resolved 的 issue 条目
+      的 impact 文件是否存在。canonical = issue_resolved_integrity_gate.py 的
+      make_issue_resolved_integrity_gate + check_impact_files_exist。
+    integrity_anchors:
+      - make_issue_resolved_integrity_gate  # gate 工厂(删则 gate 不注册)
+      - check_impact_files_exist            # 文件存在性检查(删则检测失效)
+      - extract_file_paths_from_impact      # impact 字段路径提取(删则提取失效)
+
+  # --------------------------------------------------------------------------
   - capability_id: gate_auto_registrar
     canonical_override: src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py
     aliases:
