@@ -1733,7 +1733,12 @@ class TestBaseFreshnessFullLifecycle:
         kill_all_heartbeat_daemons(_isolated_repo)
 
     def test_merge_force_skips_base_check(self, _isolated_repo, monkeypatch):
-        """session_worktree_merge(force=True) 跳过 base freshness check。"""
+        """session_worktree_merge(force=True) 跳过 base freshness check。
+
+        monkeypatch WORKSPACE-CLEAN-CHECK 放行——同 test_merge_base_freshness_check_invoked。
+        """
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
         r_start = session_worktree_start(_TEST_SIDS[1])
         assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
         wt_path = Path(r_start["worktree_path"])
