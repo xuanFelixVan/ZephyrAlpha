@@ -99,10 +99,12 @@ class TestGateSpecFields:
     def test_gate_id(self):
         assert make_consumers_accuracy_gate().gate_id == "CONSUMERS-ACCURACY"
 
-    def test_priority_is_113(self):
-        # 109-112 已被占用（RULING-COMMIT-VERIFIED/CAPABILITY-LOOKUP-REQUIRED/
-        # GATE-PRECOMMIT-OFFLINE/FOLDER-CAPACITY-HARD-LIMIT），用 113
-        assert make_consumers_accuracy_gate().priority == 113
+    def test_priority_is_116(self):
+        # 109-115 已被占用（RULING-COMMIT-VERIFIED/CAPABILITY-LOOKUP-REQUIRED/
+        # GATE-PRECOMMIT-OFFLINE/FOLDER-CAPACITY-HARD-LIMIT/DEPGRAPH-PRE-REGISTRATION/
+        # DERIVATION-ANNOTATION/RELATIVE-PATH-LITERAL），113 与 depgraph_pre_registration
+        # 冲突，迁移至 116
+        assert make_consumers_accuracy_gate().priority == 116
 
 
 # ---------------------------------------------------------------------------

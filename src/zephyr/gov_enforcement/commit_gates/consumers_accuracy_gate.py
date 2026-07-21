@@ -407,5 +407,5 @@ def make_consumers_accuracy_gate() -> GateSpec:
     return GateSpec(
         gate_id="CONSUMERS-ACCURACY",
         check=_check,
-        priority=113,
+        priority=116,
     )
