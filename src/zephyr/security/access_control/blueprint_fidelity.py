@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_field_count never raises; returns FidelityCheck
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
-# [A_module] module_id=MOD-SEC_blueprint_fidelity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-blueprint_fidelity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """BlueprintFidelity — 蓝图保真度检查.
 

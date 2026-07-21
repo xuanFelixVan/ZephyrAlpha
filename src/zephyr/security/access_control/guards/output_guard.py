@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check() never raises; returns OutputResult with decision
 # [TESTS] tests/agent_rbac/test_output_guard_agent_rbac.py
-# [A_module] module_id=MOD-SEC_output_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-output_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """OutputGuard — 输出内容守卫.
 

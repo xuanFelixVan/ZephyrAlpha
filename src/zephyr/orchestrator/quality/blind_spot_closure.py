@@ -14,7 +14,7 @@ from typing import Final
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-ORC_blind_spot_closure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-ORC-blind_spot_closure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """盲点关闭追踪器——Round 5 B-MOD-301~335 全三批关闭。"""

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_child_capabilities()/can_create() never raises; returns list/dict
 # [TESTS] tests/agent/test_agent_creation_policy.py; tests/agent_rbac/test_enhanced_security.py
-# [A_module] module_id=MOD-SEC_agent_creation_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-agent_creation_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AgentCreationPolicy — Agent 创建策略.
 

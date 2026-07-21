@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] profile_action never raises; returns dict with suspicious/suspicion_score
 # [TESTS] tests/agent_rbac/test_novel_attack.py; tests/agent_rbac/test_vibe_coding.py
-# [A_module] module_id=MOD-SEC_novel_attack_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-novel_attack_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """NovelAttackGuard — 新型攻击行为画像.
 

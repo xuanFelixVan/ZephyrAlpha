@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_owasp_coverage/assess_self_modification/assess_incentive_alignment never raise
 # [TESTS] tests/agent_rbac/test_adversarial_resilience.py
-# [A_module] module_id=MOD-SEC_adversarial_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-adversarial_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AdversarialResilience - adversarial resilience & OWASP coverage.
 

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_risk | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-risk | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk
 # [INVARIANTS] pending_review

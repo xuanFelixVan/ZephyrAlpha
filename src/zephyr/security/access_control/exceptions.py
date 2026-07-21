@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] construction never raises; all fields have defaults
 # [TESTS] tests/agent_rbac/test_exceptions_agent_rbac.py
-# [A_module] module_id=MOD-SEC_exceptions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-exceptions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AgentRbac 异常类型.
 

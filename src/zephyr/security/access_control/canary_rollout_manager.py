@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register/start_sampling never raise
 # [TESTS] tests/agent_rbac/test_permissions.py
-# [A_module] module_id=MOD-SEC_canary_rollout_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-canary_rollout_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """CanaryRolloutManager — 灰度发布管理器.
 

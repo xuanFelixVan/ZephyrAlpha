@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] check() never raises; returns dict with granted flag; bootstrap() never raises
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
-# [A_module] module_id=MOD-SEC_bootstrap_superadmin | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-SEC-bootstrap_superadmin | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """BootstrapSuperadmin — Superadmin 账户启动器.
 

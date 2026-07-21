@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_cross_market_data_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-cross_market_data_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.risk.cross_asset.cross_market_data_adapter
 # [INVARIANTS] pending_review

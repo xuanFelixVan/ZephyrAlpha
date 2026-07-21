@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SEC_access_control | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-access_control | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §
 # [MODULE] zephyr.security.access_control
 # [INVARIANTS] access_control 包——七层纵深防御权限强制执行器的根包；子模块按后缀簇归位 guards/verifiers/detectors/
