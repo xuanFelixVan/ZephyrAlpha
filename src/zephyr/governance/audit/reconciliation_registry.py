@@ -549,12 +549,7 @@ def _log_reconcile_results(
         db_path = _governance_db_path(project_root)
         files_summary = ""
         if committed_files:
-            rel_files = []
-            for f in committed_files[:20]:
-                try:
-                    rel_files.append(os.path.relpath(f, str(project_root)).replace("\\", "/"))
-                except (ValueError, OSError):
-                    rel_files.append(os.path.basename(f))
+            rel_files = [_rel_path(f, str(project_root)) for f in committed_files[:20]]
             files_summary = "; ".join(rel_files)
             if len(committed_files) > 20:
                 files_summary += f"; ...(+{len(committed_files) - 20} more)"
@@ -1080,7 +1075,7 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.startswith("scripts/") and rel.endswith(".py"):
                 return True
         return False
@@ -1164,7 +1159,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith((".py", ".yaml", ".yml")):
                 return True
         return False
@@ -1267,7 +1262,7 @@ def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith("blueprint.md") and rel.startswith("docs/03_modules/"):
                 return True
         return False
@@ -1353,7 +1348,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith(".py"):
                 return True
         return False
@@ -1458,7 +1453,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
         本函数捕获异常返回原路径，保证 trigger/extract 逻辑不崩溃。
         """
         try:
-            return os.path.relpath(f, str(project_root)).replace("\\", "/")
+            return _rel_path(f, str(project_root))
         except (ValueError, OSError):
             return f.replace("\\", "/")
 
@@ -1623,7 +1618,7 @@ def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith(".py"):
                 return True
         return False
@@ -1860,7 +1855,7 @@ def make_drift_fix_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith(".py"):
                 return True
         return False
@@ -1963,7 +1958,7 @@ def _classify_headerless_files(
     injected: list[tuple[str, str]] = []
     skipped: list[str] = []
     for abs_path in committed_files:
-        rel = os.path.relpath(abs_path, str(project_root)).replace("\\", "/")
+        rel = _rel_path(abs_path, str(project_root))
         if not rel.endswith(".py"):
             continue
         try:
@@ -2002,7 +1997,7 @@ def make_module_id_recommend_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith(".py"):
                 return True
         return False
@@ -2155,7 +2150,7 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if not rel.endswith((".yaml", ".yml")):
                 continue
             # 规则文件变更触发
@@ -2528,7 +2523,7 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel == _CONFIG_REL:
                 return True
         return False
@@ -2612,7 +2607,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel == _VOCAB_REL:
                 return True
         return False
@@ -2978,9 +2973,23 @@ _CONTRACT_FILES_FOR_DCR = frozenset({
 
 
 def _rel_path(f: str, project_root_str: str) -> str:
-    """文件路径归一化：os.path.relpath + replace("\\", "/")。"""
+    """文件路径归一化：os.path.relpath + replace("\\", "/")。
+
+    跨盘兜底（治本，2026-07-21）：
+    Windows 跨盘场景（项目在 D 盘，Python/临时文件在 C 盘）下，
+    ``os.path.relpath`` 抛 ``ValueError: path is on mount 'D:', start on mount 'C:'``。
+    此前 34 处调用点中仅 1 处（L555）有 try/except 兜底，其余 33 处裸调用，
+    跨盘时整个 reconciler 失败。本函数统一兜底：
+    - 跨盘 ValueError：fallback 到 ``os.path.basename(f)``（至少保留文件名）
+    - 其他 OSError：同上 fallback
+    - 正常同盘：返回相对路径（原行为不变）
+    """
     import os
-    return os.path.relpath(f, project_root_str).replace("\\", "/")
+    try:
+        return os.path.relpath(f, project_root_str).replace("\\", "/")
+    except (ValueError, OSError):
+        # 跨盘或路径无效——fallback 到 basename，至少保留文件名用于日志
+        return os.path.basename(f).replace("\\", "/")
 
 
 def _extract_doc_type(content: str, is_markdown: bool) -> str:
@@ -3567,7 +3576,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
         if _DEPGRAPH_DIRTY_FLAG.exists():
             return True
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel in _PG_WRITE_SCRIPTS:
                 return True
             # 文件删除也触发：layer 1 ghost 过滤确保重生后的文档不含幽灵节点
@@ -3656,7 +3665,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
     # === 旧 GATE-ARCH-MODEL 逻辑（内联自 _make_old_arch_model_reconciler）===
     def _trigger_arch_model(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel in _PG_WRITE_SCRIPTS:
                 return True
         return False
@@ -3718,7 +3727,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger_manifest(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith(".py") and rel.startswith("scripts/"):
                 return True
         return False
@@ -3817,7 +3826,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     # === 旧 GATE-RULE-CATALOG 逻辑（内联自 _make_old_rule_catalog_reconciler）===
     def _trigger_catalog(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.startswith(_RULES_PREFIX) and rel.endswith((".yaml", ".yml", ".md")):
                 return True
         return False
@@ -4066,7 +4075,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     # === 旧 GATE-REGISTRY-INDEX 逻辑（内联自 _make_old_registry_index_reconciler）===
     def _trigger_index(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel == _INFRA_REL:
                 return True
         return False
@@ -4125,7 +4134,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     # === 旧 GATE-REG-BL 逻辑（内联自 _make_old_baseline_aware_reconciler）===
     def _trigger_baseline(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.startswith("src/zephyr/") and rel.endswith(".py"):
                 return True
             if rel.startswith("scripts/governance/") and rel.endswith(".py"):
@@ -4136,7 +4145,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
         # 1. post-commit baseline-aware 扫描（非阻断）
         # 治本 Bug 1：改用 --files 传入精确 committed_files，替代 --incremental。
         rel_py_files = [
-            os.path.relpath(f, str(project_root)).replace("\\", "/")
+            _rel_path(f, str(project_root))
             for f in committed_files
             if f.endswith(".py")
         ]
@@ -4494,7 +4503,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if (rel == _REGISTRY_REL or rel == _TEMPLATE_REGISTRY_REL
                     or rel == _DEP_REGISTRY_REL or rel.startswith(_CONTRACTS_DIR)):
                 return True
@@ -4558,7 +4567,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
         checked = 0
 
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if not _is_target_file(rel):
                 continue
 
@@ -4658,7 +4667,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.startswith("src/zephyr/") and rel.endswith(".py"):
                 return True
             if rel in _REGISTRY_PATHS:
@@ -4823,7 +4832,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.endswith(".py"):
                 return True
         return False
@@ -4912,7 +4921,7 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             # 命中 session_logs/**/*.yaml，排除 index.yaml 本身和 _auto/ 派生产物
             if (
                 rel.startswith("session_logs/")
@@ -5122,7 +5131,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel in _PG_WRITE_SCRIPTS:
                 return True
             if rel in _YAML_SOURCES:
@@ -5248,7 +5257,7 @@ def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel in _PG_WRITE_SCRIPTS:
                 return True
         return False
@@ -5362,7 +5371,7 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.startswith("src/zephyr/gov_enforcement/commit_gates/") and rel.endswith(".py"):
                 return True
         return False
@@ -5461,7 +5470,7 @@ def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             # 三源覆盖：CommitGates 源 + pre-commit hooks 源 + 生成器自身
             if rel.startswith("src/zephyr/gov_enforcement/commit_gates/") and rel.endswith(".py"):
                 return True
@@ -5574,7 +5583,7 @@ def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
         errors = 0
         for dirpath, _dirnames, filenames in os.walk(tmp_dir):
             # 豁免自治轮转子目录（pg_backups/由 backup_runtime_state.py max_backups=10 自治）
-            rel_dir = os.path.relpath(dirpath, str(tmp_dir)).replace("\\", "/")
+            rel_dir = _rel_path(dirpath, str(tmp_dir))
             if any(rel_dir == d or rel_dir.startswith(f"{d}/") for d in _PROTECTED_DIRS):
                 continue
             for filename in filenames:
@@ -6255,7 +6264,7 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
     def _trigger(committed_files: list[str]) -> bool:
         """命中 src/zephyr/**/*.py 业务代码 commit。"""
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _rel_path(f, str(project_root))
             if rel.startswith("src/zephyr/") and rel.endswith(".py"):
                 return True
         return False
