@@ -45,6 +45,9 @@ build_status: planned
 
 # Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
 
+> **#ARCH-WORKTREE-LIFECYCLE-001 迁移公告 (2026-07-21)**: SessionManager (MOD-INF-039, 5态状态机) 已确认为死代码（生产引用=0），已删除。worktree 生命周期管理迁移至 `rule_bridge.worktree_lifecycle.WorktreeLifecycle`（5态：created→active→idle→quarantined→swept）。详见裁定 #ARCH-WORKTREE-LIFECYCLE-001。
+
+
 ## 概述
 
 本蓝图描述 Agent Orchestrator——ZephyrAlpha Vibe Coding 2.0 五大核心服务中的"任务引擎"。它接管 Agent 任务全生命周期——任务入队、Agent 拉取、沙箱执行、幻觉检测、指标上报、收尾归档。当前规模 55 顶层模块 + 14 子包模块，覆盖 state/ resilience/ core/ 三个子域。上游依赖 AutoRuntime Core（大脑调度 WorkDAG），下游消费 Pipeline 执行结果。

@@ -64,6 +64,9 @@ build_status: planned
 
 # Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控
 
+> **#ARCH-WORKTREE-LIFECYCLE-001 删除公告 (2026-07-21)**: SessionLifecycle (MOD-INF-033, 6态状态机) 已确认为死代码（生产引用=0），已删除。worktree 生命周期管理迁移至 `rule_bridge.worktree_lifecycle.WorktreeLifecycle`。详见裁定 #ARCH-WORKTREE-LIFECYCLE-001。
+
+
 > ⛔ **自动化准入门禁 (AUTOMATION-GATE)**
 >
 > | 条件 | 当前值 | 门槛 | 状态 |
