@@ -7,7 +7,7 @@ generated_at: '2026-07-21T00:00:00Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 71
+total_rules: 72
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1938,3 +1938,37 @@ rules:
   - ARCH-WORKTREE-BASE-FRESHNESS-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
+- rule_id: TRAE-075
+  title: stash 生命周期铁律（Stash Lifecycle，裁定 #ARCH-STASH-ACCUMULATION-001）
+  module_id: TRAE-075
+  scope: stash_lifecycle
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - session_worktree_commit
+  - session_worktree_merge
+  - session_worktree_abort
+  - git_stash_drop
+  gate_ids:
+  - STASH-ACCUMULATION
+  tags:
+  - TRAE
+  - stash_lifecycle
+  - L1_foundation
+  - anti_accumulation
+  - ttl_cleanup
+  - user_manual_protected
+  - aggressive_mode
+  - RULE-STASH-LIFECYCLE
+  - ARCH-STASH-ACCUMULATION-001
+  aliases:
+  - RULE-STASH-LIFECYCLE
+  - stash 生命周期
+  - stash accumulation
+  - stash TTL cleanup
+  - ARCH-STASH-ACCUMULATION-001
+  paired_gate_id: STASH-ACCUMULATION
+  rule_file: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml

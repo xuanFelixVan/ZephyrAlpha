@@ -1,0 +1,150 @@
+rule_id: TRAE-075
+title: stash 生命周期铁律（Stash Lifecycle，裁定 #ARCH-STASH-ACCUMULATION-001）
+name: stash 生命周期铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-075
+priority: 66
+depends_on:
+- TRAE-054
+- TRAE-060
+- TRAE-062
+tags:
+- TRAE
+- stash_lifecycle
+- L1_foundation
+- anti_accumulation
+- ttl_cleanup
+- user_manual_protected
+- aggressive_mode
+- RULE-STASH-LIFECYCLE
+- ARCH-STASH-ACCUMULATION-001
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-STASH-LIFECYCLE
+- stash 生命周期
+- stash accumulation
+- stash TTL cleanup
+- ARCH-STASH-ACCUMULATION-001
+severity: critical
+scope: stash_lifecycle
+domain: TRAE
+triggers:
+- operation: session_worktree_commit
+- operation: session_worktree_merge
+- operation: session_worktree_abort
+- operation: git_stash_drop
+- stage: commit
+- stage: merge
+- stage: post_commit
+sections:
+  stash_lifecycle:
+    section_type: procedure
+    title: stash 生命周期铁律（RULE-STASH-LIFECYCLE）
+    original_rules:
+    - RULE-STASH-LIFECYCLE
+    - 裁定 #ARCH-STASH-ACCUMULATION-001
+    conditions:
+    - type: trigger
+      check: session_worktree_commit 在 worktree 内提交前（STASH-ACCUMULATION gate 执行）
+      pass: git stash list 计数 <= 20 → 通过（passed=True, detail=""）
+      fail: 计数 > 40 → 阻断 commit（passed=False）；20 < 计数 <= 40 → warn 不阻断（passed=True + detail）
+    - type: trigger
+      check: session_worktree_commit 提交后（GATE-STASH-LIFECYCLE reconciler 执行）
+      pass: 扫描 git stash list，清理 AI 前缀 + age > 4h 的 stash
+      fail: fail-open（git stash list/drop 失败不阻断 commit，仅 warning）
+    - type: trigger
+      check: session_worktree_merge 合并后
+      pass: _drop_session_pre_merge_stash 清理本次 session 的 pre-merge stash
+      fail: fail-open（stash drop 失败不阻断 merge，仅 warning）
+    - type: constraint
+      check: ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1 环境变量设置时
+      pass: aggressive 模式——清理所有非 user-manual- 前缀 stash（无视 age，用于存量清理）
+      fail: 不影响 user-manual- 前缀 stash（aggressive 模式也不清理）
+    - type: escape_hatch
+      check: user-manual- 前缀的 stash
+      pass: 永不被自动清理（显式保护，aggressive 模式也不清理）
+      fail: 无——这是用户手动 stash 的保护机制
+    actions:
+    - type: mandatory
+      step: '铁律1（STASH-LIFE-LAW-1）: session_worktree_commit 的 stash message MUST 含 session_id（session_worktree_pre_merge: <sid> / session_worktree_abort: <sid>），便于 reconciler 识别 AI 生成的 stash'
+    - type: mandatory
+      step: '铁律2（STASH-LIFE-LAW-2）: stash TTL = 4 小时（AI session 典型生命周期），reconciler 清理 AI 前缀 + age > 4h 的 stash'
+    - type: mandatory
+      step: '铁律3（STASH-LIFE-LAW-3）: session_worktree_merge 完成后 MUST 调用 _drop_session_pre_merge_stash 清理本次 session 的 pre-merge stash（fail-open，不阻断 merge）'
+    - type: mandatory
+      step: '铁律4（STASH-LIFE-LAW-4）: STASH-ACCUMULATION pre-commit gate——stash 计数 > 40 阻断 commit（passed=False），> 20 warn（passed=True + detail），<= 20 通过'
+    - type: mandatory
+      step: '铁律5（STASH-LIFE-LAW-5）: user-manual- 前缀的 stash 永不被自动清理（显式保护，aggressive 模式也不清理）'
+    - type: mandatory
+      step: '铁律6: AI 生成的 stash 覆盖 8 个前缀（session_worktree_pre_merge / session_worktree_abort / phase- / temp-stash-for- / pre-merge stash / pre-merge-stash / merge-prep- / stash-for-merge）'
+    - type: mandatory
+      step: '铁律7: aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1）清理所有非 user-manual- 前缀 stash（无视 age，用于存量清理）'
+    - type: forbidden
+      step: '禁止: 用户手动 stash（无 AI 前缀）被自动清理——user-manual- 前缀是显式保护'
+    - type: forbidden
+      step: '禁止: stash 累积超过 40 个而不清理——STASH-ACCUMULATION gate 会阻断 commit'
+    - type: forbidden
+      step: '禁止: reconciler 失败时阻断 commit——stash 清理是 fail-open，不阻断业务流程'
+    examples:
+    - scenario: stash 累积阻断
+      正确: AI commit 时 stash count=45 > 40 → STASH-ACCUMULATION gate 阻断 → AI 先清理 stash（aggressive 模式或手动 drop）→ stash count < 40 → commit 成功
+      错误: stash 累积到 45 个不清理，AI 继续尝试 commit → 持续被阻断 → 死锁
+      reason: STASH-ACCUMULATION gate 是前置阻断，防止 stash 无限累积
+    - scenario: TTL 自动清理
+      正确: AI commit 后 → GATE-STASH-LIFECYCLE reconciler 扫描 stash list → 清理 AI 前缀 + age > 4h 的 stash → stash count 降低
+      错误: 无 TTL 清理，stash 永久累积 → git 对象存储膨胀 + AI 判断混淆
+      reason: 4h TTL 对应 AI session 典型生命周期，过期 stash 是孤儿
+    - scenario: aggressive 模式存量清理
+      正确: AI 设置 ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1 → commit 后 reconciler 清理所有非 user-manual- stash → 存量快速降低
+      错误: 用 aggressive 模式清理用户手动 stash → 用户工作丢失
+      reason: user-manual- 前缀是显式保护，aggressive 模式也不清理
+    common_mistakes:
+    - '❌ stash 累积超过 40 不清理——STASH-ACCUMULATION gate 阻断 commit'
+    - '❌ reconciler 清理 user-manual- 前缀 stash——用户手动工作丢失'
+    - '❌ reconciler 失败时阻断 commit——stash 清理是 fail-open'
+    - '❌ AI 生成的 stash 不含 session_id——reconciler 无法识别 AI stash'
+    background:
+      source: 2026-07-21 裁定 #ARCH-STASH-ACCUMULATION-001（stash 累积 34-45 个，reconciler 只清理 session_worktree 前缀 + 24h TTL，无法处理 AI merge 准备 stash）
+      rationale: |
+        100% AI 开发场景下，stash 累积问题系统性爆发：
+        1. WORKSPACE-CLEAN-CHECK 要求 merge 时主工作区 clean
+        2. 8 个活跃 session 各自通过 Edit/Write 写项目根（IDE 限制）
+        3. AI 在 merge 前 stash 临时修改，但从不清理
+        4. 原 reconciler 只清理 session_worktree_pre_merge / abort 前缀 + 24h TTL
+        5. AI 为 merge 准备创建的临时 stash（pre-merge stash / merge-prep- 等）无前缀匹配，永久累积
+
+        病根（第一性原理）：
+        1. 原 reconciler 前缀覆盖不足（2 个 → 8 个）
+        2. TTL 24h 过长（AI session 典型 <4h，4h 足够）
+        3. 无前置阻断（只有 post-commit 清理，无 pre-commit 检测）
+        4. 无显式保护机制（用户手动 stash 可能被误清理）
+
+        治本方案（7 Phase，裁定 #ARCH-STASH-ACCUMULATION-001）：
+        - Phase 1: reconciler 扩展（8 前缀 + 4h TTL + aggressive + user-manual- 保护）
+        - Phase 2: STASH-ACCUMULATION gate 文件创建
+        - Phase 3: gate 注册（in_process_gate_registry.yaml + gate_registry.yaml）
+        - Phase 4: session_worktree merge 后 auto drop pre-merge stash
+        - Phase 5: trae_075 规则真源
+        - Phase 6: rule_ai_perception_index 索引登记
+        - Phase 7: IDE 插件层拦截（长期方向，超出 AI 能力）
+
+        设计权衡：
+        - TTL 4h：AI session 典型生命周期 <4h，4h 足够 AI pop 恢复，过短会误清理活跃 stash
+        - 阈值 40：实测 34 个 stash 已致 AI 判断混淆，40 是"必须干预"红线
+        - warn 阈值 20：低于 20 是正常范围（活跃 session 各 1-2 个 stash），20+ 提醒
+        - aggressive 模式：用于存量清理，不作为常态（正常用 TTL 4h 自动清理）
+enforcement:
+  paired_gate_id: STASH-ACCUMULATION  # pre-commit gate（priority=114）+ post-commit reconciler（GATE-STASH-LIFECYCLE）
+  type: commit_gate_plus_reconciler
+  executors:
+  - stash_accumulation_gate
+  - make_stash_lifecycle_reconciler
+  - _drop_session_pre_merge_stash
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: false  # stash 累积阻断无逃生通道——必须清理后才能 commit
+  bypass_markers: []

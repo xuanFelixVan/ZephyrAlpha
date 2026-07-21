@@ -5835,6 +5835,70 @@ entries:
   created: '2026-07-21'
   last_updated: '2026-07-21'
 
+# --- #ARCH-STASH-ACCUMULATION-002: 施工路径裁定——修正 7 Phase 执行顺序 + 治理工具自启动原则 ---
+- issue_id: '#ARCH-STASH-ACCUMULATION-002'
+  title: 'stash 堆积治理施工路径裁定——修正 #ARCH-STASH-ACCUMULATION-001 的 7 Phase 执行顺序 + 引入治理工具自启动原则'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    问题背景：
+    #ARCH-STASH-ACCUMULATION-001 的 7 Phase 方案方向正确，但执行顺序存在缺陷：
+    原方案 Phase 1（reconciler 扩展）→ Phase 4（gate 注册）→ Phase 7（规则真源），
+    但未考虑"治理工具自身部署需要通过 commit 流程，而 commit 流程被治理工具
+    自身检测的状态（44 stash）阻断"的循环依赖。
+
+    上一会话认定为 catch-22 困境，实际是"循环依赖 + 顺序错位"：
+    - gate 只在 commit 时执行，注册本身不触发阻断
+    - 真正阻断条件：commit 时 stash >= 40
+    - 解法：先清理 stash < 30 → 再注册 gate → 再 commit（顺序修正）
+
+    第一性原理根因（深一层）：
+    真正根因不是 stash 累积，而是"AI 自我治理系统的循环依赖"——
+    治理工具自身（STASH-ACCUMULATION gate）的部署需要通过 commit 流程，
+    commit 流程被治理工具自身检测的状态（44 stash）阻断，
+    治理工具无法部署 → 状态无法被治理 → 死循环。
+    100% AI 开发的根本矛盾：AI 既是开发者，又是被治理对象。
+
+    裁定条款：
+    条款1：修正 7 Phase 执行顺序为 5 Step（Step 0 紧急清理 → Step 1 reconciler 扩展 →
+           Step 2 删重复裁定 → Step 3 gate 注册 → Step 4 索引登记 → Step 5 commit+merge）
+    条款2：引入"治理工具自启动"原则——治理工具自身部署必须有独立启动路径，不依赖
+           被治理对象状态。本次落地：手动清理 stash 作为独立启动路径。
+           长期方向：gate_deployment_exempt 标记（长期项，本次不实施）
+    条款3：裁定登记去重原则——完整裁定出现后，占位登记必须由原占位 session 删除。
+           本次：删除占位条目（已被完整裁定替代）
+    条款4：Phase 6（IDE 插件层）保持长期方向标注——从源头消除 stash 需求，
+           但超出 AI 能力，仅文档化
+    条款5：STASH-ACCUMULATION gate priority=114（原 113 与 DEPGRAPH-PRE-REGISTRATION
+           冲突，后到者让位，历史先例：CONSUMERS-ACCURACY 113→116）
+
+    不实施项（避免过度工程）：
+    - per-session stash_refs.json（reconciler 扫描 stash list 足够）
+    - stash pop 恢复自动化（误恢复风险 > 收益）
+    - abort stash auto drop（reconciler 4h TTL 兜底足够）
+    - gate_deployment_exempt 标记（长期方向，本次先手动清理）
+  fix_phase: |
+    Step 0（紧急止损）：手动 drop 30h+ 孤儿 stash 11 个（47→36，< 40 阈值）
+    Step 1（Phase 1）：reconciler 扩展——TTL 4h + 8 前缀 + aggressive + user-manual- 保护
+    Step 2（去重）：删除 architecture_issue_registry.yaml 重复占位条目
+    Step 3（Phase 4）：STASH-ACCUMULATION gate 注册（in_process_gate_registry + gate_registry）+ priority=114
+    Step 4（Phase 7）：trae_075 规则真源 + rule_ai_perception_index 登记 + enforcement 段
+    Step 5：session_worktree_commit + merge
+    长期方向（不实施）：IDE 插件层拦截 + gate_deployment_exempt 标记
+  impact:
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（Step 1 reconciler 扩展）'
+    - 'src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py（Step 3 gate，priority=114）'
+    - 'docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml（Step 4 规则真源 + enforcement）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（Step 3 gate 注册）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml（Step 3 gate 元数据）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（Step 4 索引）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记 + 去重）'
+  status: resolved
+  related_adjudication: '#ARCH-STASH-ACCUMULATION-001 (父裁定，7 Phase 方向), #ARCH-WORKTREE-002 (祖父裁定，缺陷4), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (同源)'
+  related_rules: 'trae_075 (stash 生命周期铁律), trae_062 (SSoT 真源分类), AGENTS.md FP-ISO.4C (worktree 君子协定)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
 # --- #ARCH-CONSUMERS-ACCURACY-003: P1-4 capability registry 收尾登记 + P1-9 baseline-scan 报告持久化策略裁定 ---
 - issue_id: '#ARCH-CONSUMERS-ACCURACY-003'
   title: 'CONSUMERS-ACCURACY Phase 1 收尾——capability registry 双重登记补全 + baseline-scan JSON 报告持久化策略裁定'
@@ -6035,3 +6099,33 @@ entries:
   related_rules: 'trae_060 (向内收三原则), trae_062 (SSoT 真源分类), trae_072 (跨 commit 原子性铁律1)'
   created: '2026-07-21'
   last_updated: '2026-07-21'
+
+# --- #ARCH-GOVERNANCE-SELF-BOOTSTRAP-001: 占位登记——治理工具自启动原则（长期方向，未实施） ---
+- issue_id: '#ARCH-GOVERNANCE-SELF-BOOTSTRAP-001'
+  title: '治理工具自启动原则——治理工具自身部署必须有独立启动路径，不依赖被治理对象状态（长期方向，占位登记）'
+  category: architecture_governance
+  severity: P3低
+  adjudication: |
+    占位登记说明：
+    本条目由 #ARCH-STASH-ACCUMULATION-001 裁定引用（L5867/L5898），作为长期方向登记。
+    原始上下文：STASH-ACCUMULATION gate 部署时遇到 catch-22——治理工具自身部署需要通过
+    commit 流程，而 commit 流程被治理工具检测的状态（stash 累积）阻断。手动清理 stash
+    作为独立启动路径解决了本次问题，但长期方向是设计 gate_deployment_exempt 标记。
+
+    病根：
+    100% AI 开发的根本矛盾——AI 既是开发者，又是被治理对象。治理工具自身部署需要通过
+    commit 流程，但 commit 流程被治理工具检测的状态阻断，形成循环依赖。
+
+    治本方向（长期，未实施）：
+    设计 gate_deployment_exempt=True 标记，允许治理工具自身部署绕过相关 gate 检测。
+    本次不实施——手动清理 stash 作为独立启动路径已解决当前问题。
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  fix_phase: |
+    长期方向（未实施）：
+      - 设计 gate_deployment_exempt 标记机制
+  status: decided
+  related_adjudication: '#ARCH-STASH-ACCUMULATION-001 (引用本编号作为长期方向)'
+  related_rules: 'trae_060 (向内收三原则)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
