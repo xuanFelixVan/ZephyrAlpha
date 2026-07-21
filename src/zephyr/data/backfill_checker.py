@@ -43,6 +43,7 @@ import yaml
 
 from zephyr.data import ch_reader
 from zephyr.data import ch_writer
+from zephyr.data.table_registry import get_registry
 from zephyr.data.tick_subscriber import _safe_int
 
 log = logging.getLogger(__name__)
@@ -59,13 +60,18 @@ _DEFAULT_BACKFILL_DAYS = 7
 _BATCH_SYMBOLS = 50
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+_TBL_TICK_DATA = get_registry().table("market_tick")
+
 _SQL_TRADE_CALENDAR = (
-    "SELECT cal_date FROM c1_market.trade_calendar "
+    f"SELECT cal_date FROM {_TBL_TRADE_CALENDAR} "
     "WHERE cal_date >= toDate('{start}') AND cal_date <= toDate('{today}') "
     "AND is_open = 1 ORDER BY cal_date"
 )
 _SQL_KLINE_DISTINCT = (
-    "SELECT DISTINCT trade_date FROM c1_market.kline_daily "
+    f"SELECT DISTINCT trade_date FROM {_TBL_KLINE_DAILY} "
     "WHERE trade_date >= toDate('{start}') AND trade_date <= toDate('{today}') "
     "ORDER BY trade_date"
 )
@@ -79,7 +85,7 @@ _TICK_DATA_COLS = (
     "(trade_date,timestamp,symbol,market_type,price,volume,amount,"
     "direction,data_source,bid_price,ask_price,bid_volume,ask_volume)"
 )
-_TICK_DATA_TABLE = "c1_market.tick_data"
+_TICK_DATA_TABLE = _TBL_TICK_DATA
 
 
 # ========== ClickHouse 查询（统一走 ch_reader，自动注入 FINAL） ==========
