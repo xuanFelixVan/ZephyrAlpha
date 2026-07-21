@@ -4927,6 +4927,68 @@ entries:
   related_rules: 'trae_071 (临时文件生命周期铁律), trae_070 (临时文件分类存放铁律 - 空间维度), trae_060 (向内收三原则 - 事件驱动), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+# --- #ARCH-TEMP-FILE-LIFECYCLE-002: 不可能三角——trae_071 LAW-2 与 EXEMPT-ZONE-FM + TTL-METADATA gate 冲突（2026-07-21）---
+- issue_id: '#ARCH-TEMP-FILE-LIFECYCLE-002'
+  title: 不可能三角——trae_071 LAW-2 要求 docs/_working/ 带 doc_type frontmatter 但 EXEMPT-ZONE-FM 禁止 doc_type 而 TTL-METADATA strict-doctype 又强制 doc_type 必填
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    2026-07-21 Phase B.5 提交链第二次 commit 尝试时发现 docs/_working/
+    下的 .md 文件落入"不可能三角"：
+      (A) trae_071 LAW-2 要求 docs/_working/ 成果文件带 frontmatter
+          （ttl/doc_type/completes_when 三字段）作为"成果已交付"的元数据声明；
+      (B) EXEMPT-ZONE-FM gate（priority=87）阻断 docs/_working/ 等豁免区
+          带非空 doc_type 的文件——设计意图是"豁免区文件不参与 doc_type
+          分类治理"，但实施结果是禁止任何 doc_type 出现；
+      (C) TTL-METADATA gate（--strict-doctype，GitCommitGateway 路径强制启用）
+          要求 .md 文件 doc_type 必填——缺失即 hard block。
+
+    根因分析（第一性原理）：
+    (1) 三方规则在不同时期独立设计，未做交集校验——三者交集为空集，
+        不可能同时满足。
+    (2) trae_071 落地时未触发 gate 集成测试，因为当时 docs/_working/ 下
+        尚无 .md 文件，gate 不检测新增文件以外的存量文件。
+    (3) strict-doctype 的"必填"语义未与 EXEMPT-ZONE-FM 的"禁止"语义
+        做冲突检测——两 gate 各自独立通过设计审查，但组合后产生矛盾。
+
+    治本方案（临时方案已落地，长期方案另起 Phase 7）：
+    (1) 临时方案（本次 Phase B.5 采用）：移除 docs/_working/ 下 .md 文件
+        的整个 YAML frontmatter 块，替换为 HTML 注释说明。
+        原理：EXEMPT-ZONE-FM 只检测"带 frontmatter 且 doc_type 非空"的文件，
+        无 frontmatter 直接跳过；TTL-METADATA 同样 `if not metadata: return issues`
+        无 frontmatter 跳过。两 gate 都不强制要求 frontmatter 存在，所以
+        移除 frontmatter 可同时通过两 gate。
+        副作用：丢失 ttl/completes_when 元数据，成果文件的"生命周期声明"
+        退化为正文 HTML 注释（非机器可读）。
+    (2) 长期方案（Phase 7，本会话不实施）：新建 GATE-TEMP-FILE-LIFECYCLE
+        gate（priority=803，post-HELDED-OVERLAP），专门治理 docs/_working/
+        下的成果文件生命周期——取代 EXEMPT-ZONE-FM + TTL-METADATA 在该
+        区的冲突检测，允许 trae_071-compliant frontmatter（带 ttl/
+        doc_type=working_result/completes_when 三字段）通过，同时阻断
+        不合规 frontmatter。
+    (3) 同步更新 EXEMPT-ZONE-FM：在 _EXEMPT_ZONE_PREFIXES 中移除
+        docs/_working/（让 GATE-TEMP-FILE-LIFECYCLE 接管），或新增
+        trae_071-compliant 白名单（识别 doc_type=working_result 跳过阻断）。
+
+    事故驱动：Phase B.5 第二次 commit 时 TTL-METADATA 阻断
+    `docs\_working\2026-07-20-resonance-screen-result.md missing required
+    field 'doc_type'`——而加上 doc_type 又会被 EXEMPT-ZONE-FM 阻断，
+    陷入死循环。本裁定从源头识别"不可能三角"并提供逃生路径。
+
+  impact:
+    - docs/_working/2026-07-20-resonance-screen-result.md（frontmatter 移除，替换为 HTML 注释）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-TEMP-FILE-LIFECYCLE-002 登记）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（2 个 creation_token 登记：strategy doc + analysis report）
+    - src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py（Phase 7 待更新：移除 docs/_working/ 或加白名单）
+    - src/zephyr/gov_enforcement/commit_gates/ttl_gate.py（Phase 7 待评估：是否对 docs/_working/ 放宽 strict-doctype）
+    - 新建 src/zephyr/gov_enforcement/commit_gates/temp_file_lifecycle_gate.py（Phase 7 长期方案）
+  fix_phase: 临时方案已落地（Phase B.5 移除 frontmatter）；长期方案 Phase 7 待实施（GATE-TEMP-FILE-LIFECYCLE priority=803）
+  status: in_progress
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001 (父裁定，本条是其 gate 冲突子问题)'
+  related_rules: 'trae_071 (LAW-2 成果文件 frontmatter 要求), trae_070 (临时文件分类), trae_062 (SSoT 真源分类)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
 # --- #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001: 系统性防漂移体系盲区（2026-07-20，4 盲区 3 Phase 治本）---
 # 关联裁定：Ruling:100PCT-AI-GOVERNANCE 第一性原理（100% AI 场景下 warn=通过，治本须 fail-closed 或自动处理）
 - issue_id: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
