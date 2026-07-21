@@ -4262,10 +4262,14 @@ capabilities:
     aliases:
       - DATETIME-NOW-FORBIDDEN
       - datetime_now_forbidden
+      - m46-time
+      - ARCH-ANTI-RECURRENCE-P0
     description: >-
-      DATETIME-NOW-FORBIDDEN 生成器代码 datetime.now() 硬阻断门禁。
-      检测生成器/构建脚本中使用 datetime.now()（应使用确定性时间源），
-      commit 时硬阻断。
+      DATETIME-NOW-FORBIDDEN 时间戳约定硬阻断门禁（双轨检测面，#ARCH-ANTI-RECURRENCE-P0 扩展）。
+      ①生成器代码（路径含 /generators/ 或文件名以 generate_ 开头）禁止 datetime.now() 任何形式（非幂等）；
+      ②src/zephyr/ 全量代码禁止 time.time() 和 datetime.now() 无参数（naive datetime，5.46 时区处理防复发）。
+      tests/ 豁免；import/注释/docstring 豁免；# noqa: m46-time 豁免（登记在 noqa_exempt_registry.yaml）。
+      git diff 不可达 fail-open；检出违规则 fail-closed 硬阻断 commit。priority=34。
 
   - capability_id: depgraph_write_path_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py
@@ -5047,6 +5051,32 @@ capabilities:
     integrity_anchors:
       - load_gate_entries         # YAML 加载(删则无 gate 可注册)
       - auto_register_gates       # 动态注册入口(删则注册失效)
+
+  # --------------------------------------------------------------------------
+  - capability_id: in_process_gate_registry_drift_reconciler
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
+    aliases:
+      - GATE-IN-PROCESS-REGISTRY-DRIFT
+      - make_in_process_gate_registry_drift_reconciler
+      - in_process_gate_registry_drift
+      - gate-registry-drift
+      - ARCH-GATE-REGISTRY-AUTO-001-Phase6
+    description: >-
+      in_process_gate_registry.yaml ↔ 内存注册表双向漂移检测 reconciler
+      （#ARCH-GATE-REGISTRY-AUTO-001 Phase 6，2026-07-22，priority=831）。
+      病根：auto_register_gates fail-open 仅 logger.warning，无 reconciler 则漂移不入
+      reconcile_execution_log，违反"所有reconciler失败结果必须持久化记录"铁律。
+      治本：post-commit 事件触发，创建 fresh CommitGateRegistry + auto_register_gates，
+      对比 YAML 声明 gate_ids 与注册 gate_ids：yaml-only（声明但未注册=import/register
+      失败或 gate_id 不匹配）+ in-memory-only（注册但 YAML 未声明=factory 返回不同 id）。
+      warn-only（不阻断 commit，落盘供监控）。trigger 三源：in_process_gate_registry.yaml
+      + gate_auto_registrar.py + commit_gates/*.py。与 make_gate_registry_sync_reconciler
+      职责分离——后者修 gate_registry.yaml 生成器产物，前者校验 in_process_gate_registry.yaml
+      YAML 真源。canonical = reconciliation_registry.py 的 make_in_process_gate_registry_drift_reconciler。
+      解决发现性：新 AI 通过 capability_lookup.find("in_process_gate_registry_drift") 可定位真源。
+    integrity_anchors:
+      - make_in_process_gate_registry_drift_reconciler  # reconciler 工厂(删则漂移检测失效)
+
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）

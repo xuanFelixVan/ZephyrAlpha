@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_bridge.commit_gate_registry
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] (none — pure stdlib)
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway; zephyr.governance.audit.reconciliation_registry.make_in_process_gate_registry_drift_reconciler (调用 list_gate_ids 进行 YAML↔内存双向校验, #ARCH-GATE-REGISTRY-AUTO-001 Phase 6)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行
