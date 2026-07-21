@@ -5721,10 +5721,10 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
     - .runtime/worktree_ops_log.jsonl（遥测日志，自动生成）
   status: decided
-  related_adjudication: '裁定#19-B (worktree base 新鲜度检测——commit-only), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (worktree 自愈同源), #ARCH-WORKTREE-AUTO-SWEEP-001 (worktree 自动清扫同源)'
-  related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), 铁律: 永久系统必须全自动'
+  related_adjudication: '裁定#19-B (worktree base 新鲜度检测——commit-only), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (worktree 自愈同源), #ARCH-WORKTREE-AUTO-SWEEP-001 (worktree 自动清扫同源), #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本，force=True 安全分类，2026-07-22)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), trae_074 (worktree base freshness), trae_078 (force merge safety), 铁律: 永久系统必须全自动'
   created: '2026-07-21'
-  last_updated: '2026-07-21'
+  last_updated: '2026-07-22'
 # --- #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: worktree commit 持久性 + start fail-closed（2026-07-22）---
 # 扩展: #ARCH-WORKTREE-BASE-FRESHNESS-001（base 新鲜度治本，未覆盖 commit 创建后如何保证不被删除）
 # 扩展: #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001（WORKSPACE-CLEAN-CHECK start 时 fail-open，本裁定改 fail-closed）
@@ -5762,8 +5762,11 @@ entries:
       （原 fail-open warning 无效）；新增 allow_workspace_drift=True 逃生通道
     - Phase 5: 规则外部化（trae_076 + AGENTS.md + registry 同步）
 
-    逃生通道：session_worktree_merge(force=True) 跳过 commit 持久性验证 + base freshness
-    check；session_worktree_start(allow_workspace_drift=True) 跳过工作区残留 fail-closed。
+    逃生通道：session_worktree_merge(force=True) **不可绕过** commit 持久性验证 + base freshness
+    check（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22：不可绕过类——无 post-merge 替代 +
+    跳过后不可挽回），仅跳过可绕过类检测（WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK /
+    commit gate）；session_worktree_start(allow_workspace_drift=True) 跳过工作区残留 fail-closed。
+    force=True 仍落审计（_audit_force_merge_usage）。
 
     与现有裁定的关系：
     - 扩展 #ARCH-WORKTREE-BASE-FRESHNESS-001（TRAE-074）：该裁定治本 base 新鲜度检测，
@@ -5799,8 +5802,8 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
     - .runtime/locks/commit_persisted_<sid>.json（持久性标记，运行时自动生成）
   status: decided
-  related_adjudication: '#ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展，base 新鲜度治本), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展，start fail-closed), #ARCH-PREVENTABILITY-LAYER-001 (遵循，warn 无效), 裁定#19-B (worktree base 新鲜度检测)'
-  related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_068 (preventability layer), trae_074 (worktree base freshness)'
+  related_adjudication: '#ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展，base 新鲜度治本), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展，start fail-closed), #ARCH-PREVENTABILITY-LAYER-001 (遵循，warn 无效), 裁定#19-B (worktree base 新鲜度检测), #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本，force=True 安全分类，2026-07-22)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_068 (preventability layer), trae_074 (worktree base freshness), trae_076 (commit persistence), trae_078 (force merge safety)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
 # --- #ARCH-STASH-ACCUMULATION-001: stash 累积系统性治理（2026-07-21）---
