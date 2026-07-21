@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] —
 # [TESTS] tests/governance/rule_enforcement/
-# [A_module] module_id=MOD-GOV_gate_engine | layer=package | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_module] module_id=MOD-GOV-gate_engine | layer=package | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 """gate_engine package — 门禁引擎模块集合（ARCH-042 阶段1 拆分产物）。
 

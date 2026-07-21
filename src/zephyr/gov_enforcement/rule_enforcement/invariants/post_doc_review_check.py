@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] modified_files.json不存在->PASS(无文档可审查); 解析失败->RED
 # [TESTS] tests/test_post_doc_review.py
-# [A_module] module_id=MOD-GOV_post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 PostDocReviewScanner — Session 关门时文档内容审查扫描器。

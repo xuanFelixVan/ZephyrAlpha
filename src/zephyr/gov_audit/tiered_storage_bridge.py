@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_tiered_storage_bridge.py
-# [A_module] module_id=MOD-GOV_tiered_storage_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-tiered_storage_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from typing import Any

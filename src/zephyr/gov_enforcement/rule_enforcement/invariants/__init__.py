@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-GOV_invariants | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-invariants | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
 
 from zephyr.gov_enforcement.rule_enforcement.invariants.post_doc_review_check import PostDocReviewScanner

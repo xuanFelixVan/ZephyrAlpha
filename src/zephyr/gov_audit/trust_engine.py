@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 评分失败返回trust_level=UNKNOWN
 # [TESTS] tests/audit-orchestrator/test_trust_engine.py
-# [A_module] module_id=MOD-GOV_trust_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-trust_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from datetime import UTC, datetime

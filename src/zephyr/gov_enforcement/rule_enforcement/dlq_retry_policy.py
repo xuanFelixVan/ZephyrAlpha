@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS] scripts/connect/dlq_retry.py --trigger
-# [A_module] module_id=MOD-DAT_dlq_retry_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-dlq_retry_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。
 

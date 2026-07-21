@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] —
 # [TESTS] tests/governance/rule_enforcement/
-# [A_module] module_id=MOD-GOV_rule_engine | layer=package | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_module] module_id=MOD-GOV-rule_engine | layer=package | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 """rule_engine package — 规则引擎模块集合（ARCH-042 阶段1 拆分产物）。
 

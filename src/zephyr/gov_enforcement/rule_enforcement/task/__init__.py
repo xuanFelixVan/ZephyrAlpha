@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-GOV_task | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-task | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.task
 # [INVARIANTS] pending_review
