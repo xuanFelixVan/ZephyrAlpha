@@ -4043,10 +4043,10 @@ entries:
   related_rules: 'trae_062_ssot_classification (规则数据真源原则)'
   created: '2026-07-19'
   last_updated: '2026-07-20'
-# --- #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001: Gate-Abuse 5 维滥用系统性审计（2026-07-19） ---
+# --- #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001: Gate-Abuse 6 维滥用系统性审计（2026-07-19） ---
 # 关联 #ARCH-P3-FOLLOWUP-TODOS-001 裁定 C 的 Layer 2 落地 + #ARCH-GUC-TRIGGER-FIX-001 Task 4 Phase 1 深化
 - issue_id: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001'
-  title: Gate-Abuse 5 维滥用系统性审计与治本路线图（emergency_commit / allow_overlap / warn_only / forged_gw_marker / non-GW commit）
+  title: Gate-Abuse 6 维滥用系统性审计与治本路线图（emergency_commit / allow_overlap / warn_only / forged_gw_marker / non-GW commit / force_merge）
   category: architecture_governance
   severity: P1
   adjudication: >-
@@ -4104,16 +4104,25 @@ entries:
       - pre-commit forgery gate（commit message [GW:*] 标记合法性检测）
       - server-side pre-receive hook（拦截 non-GW commit）
       - 长期 GPG 签名机制
+
+    维度6 force_merge 滥用审计落地（2026-07-21，commit 280f747307 + merge c7855fb6967b）：
+      - session_worktree.py: 新增 _audit_force_merge_usage 落盘 .runtime/gate_audit/force_merge_usage.jsonl
+      - commit_gateway_abuse_monitor_reconciler.py: 新增 _count_force_merge_usage + _classify_abuse 维度6 扩展
+      - health_score_calculator.py: 6 维权重重新归一化（forged 0.30/non_gw 0.10/force_merge 0.10）
+      - trae_069 YAML v1.3.0: 新增 force_merge_abuse_7d 阈值段（value=5, window=7d）
+      - 关联 #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 的 force=True 逃生通道滥用监控
   impact:
     - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（审计文档，Layer 2 已完成）
-    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（5 维检测器，治本后阈值可能调整）
-    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（heartbeat 机制改造点，P1 待实施）
+    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（6 维检测器，治本后阈值可能调整）
+    - src/zephyr/governance/audit/health_score_calculator.py（6 维加权健康度评分）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（force_merge 审计落盘 + heartbeat 机制改造点）
+    - docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml（6 维阈值 SSoT 真源 v1.3.0）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: open
-  related_adjudication: '#ARCH-P3-FOLLOWUP-TODOS-001 (裁定 C Layer 2), #ARCH-GUC-TRIGGER-FIX-001 (Task 4 Phase 1 深化), #ARCH-TOOL-HEALTH-V1 (abuse monitor 立项)'
+  related_adjudication: '#ARCH-P3-FOLLOWUP-TODOS-001 (裁定 C Layer 2), #ARCH-GUC-TRIGGER-FIX-001 (Task 4 Phase 1 深化), #ARCH-TOOL-HEALTH-V1 (abuse monitor 立项), #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (force_merge 逃生通道，维度6 审计对象)'
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型，TRAE-068 #ARCH-PREVENTABILITY-LAYER-001)'
   created: '2026-07-19'
-  last_updated: '2026-07-20'
+  last_updated: '2026-07-21'
 # --- #ARCH-ASYNC-MERGE-RECONCILE-001: session_worktree 异步化治本（2026-07-20） ---
 # 关联 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 的 P1 emergency_commit 治本路线图 + Ruling:100PCT-AI-GOVERNANCE R2 阈值调整
 - issue_id: '#ARCH-ASYNC-MERGE-RECONCILE-001'
