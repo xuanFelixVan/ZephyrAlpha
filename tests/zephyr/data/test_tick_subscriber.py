@@ -96,11 +96,32 @@ class TestInferMarketType:
     def test_etf(self):
         assert infer_market_type("159915.SZ") == "etf"
 
+    def test_etf_sh_51_prefix(self):
+        assert infer_market_type("510300.SH") == "etf"
+
+    def test_lof_sz_16_prefix(self):
+        assert infer_market_type("161725.SZ") == "lof"
+
+    def test_lof_sz_18_prefix(self):
+        assert infer_market_type("184801.SZ") == "lof"
+
+    def test_lof_sh_501_prefix(self):
+        assert infer_market_type("501000.SH") == "lof"
+
+    def test_cb_sz_12_prefix(self):
+        assert infer_market_type("113001.SZ") == "cb"
+
+    def test_cb_sz_11_prefix(self):
+        assert infer_market_type("110064.SZ") == "cb"
+
     def test_index_sh(self):
         assert infer_market_type("000300.SH") == "index"
 
     def test_index_sz(self):
         assert infer_market_type("399001.SZ") == "index"
+
+    def test_index_880(self):
+        assert infer_market_type("880001.SH") == "index"
 
     def test_bj(self):
         assert infer_market_type("430047.BJ") == "stock_bj"

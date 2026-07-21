@@ -51,12 +51,16 @@ def infer_market_type(stock_code: str) -> str:
         stock_code: QMT 格式，如 "000001.SZ"、"600000.SH"、"159915.SZ"
 
     Returns:
-        market_type 字符串（stock/stock_bj/index/etf/cb）
+        market_type 字符串（stock/stock_bj/index/etf/lof/cb）
     """
     if stock_code.endswith(".SH"):
         code = stock_code[:-3]
         if code.startswith("000") or code.startswith("880"):
             return "index"
+        if code.startswith("51"):   # 510xxx-519xxx = SH ETF
+            return "etf"
+        if code.startswith("50"):   # 501xxx-502xxx = SH LOF
+            return "lof"
         return "stock"
     if stock_code.endswith(".SZ"):
         code = stock_code[:-3]
@@ -64,7 +68,9 @@ def infer_market_type(stock_code: str) -> str:
             return "index"
         if code.startswith("159"):
             return "etf"
-        if code.startswith("12"):
+        if code.startswith("16") or code.startswith("18"):
+            return "lof"
+        if code.startswith("12") or code.startswith("11"):
             return "cb"
         return "stock"
     if stock_code.endswith(".BJ"):
@@ -267,11 +273,71 @@ class TickSubscriber:
         log.info("flush 线程结束")
 
     def _get_all_symbols(self) -> list[str]:
-        """获取全市场沪深A股标的列表。"""
+        """获取5市场+指数的完整标的列表（stock/stock_bj/etf/lof/cb/index）。
+
+        实测正确的 QMT 板块名（_qmt_sectors_v2.py 验证 2026-07-22）：
+        - 沪深A股: 5202 只 (stock 沪深主板+创业板)
+        - 京市A股: 359 只 (.BJ stock_bj)
+        - 沪深基金: 2218 只 (需过滤 159/51=ETF, 16/18=LOF)
+        - 沪深转债: 320 只 (12/11 前缀 cb)
+        - 沪深指数: 609 只 (000/399/980/395/988 官方指数)
+        """
         symbols = self._symbols
         if not symbols:
-            symbols = self._xtdata.get_stock_list_in_sector("沪深A股")
-            log.info("获取全市场标的: %d 只", len(symbols))
+            seen: set[str] = set()
+            symbols = []
+
+            def _add_batch(syms: list[str], sector_name: str) -> None:
+                added = 0
+                for s in syms:
+                    if s not in seen:
+                        seen.add(s)
+                        symbols.append(s)
+                        added += 1
+                log.info("板块 %s: 获取 %d 只，新增 %d", sector_name, len(syms), added)
+
+            # 1. 沪深A股（stock，5202只）
+            try:
+                _add_batch(self._xtdata.get_stock_list_in_sector("沪深A股"), "沪深A股")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning("获取板块 沪深A股 失败: %s", e)
+
+            # 2. 京市A股（stock_bj，359只）
+            try:
+                _add_batch(self._xtdata.get_stock_list_in_sector("京市A股"), "京市A股")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning("获取板块 京市A股 失败: %s", e)
+
+            # 3. 沪深基金 → 按代码前缀拆分为 ETF/LOF
+            try:
+                fund_list = self._xtdata.get_stock_list_in_sector("沪深基金")
+                etf_added = lof_added = 0
+                for s in fund_list:
+                    code = s.split(".")[0]
+                    if code.startswith("159") or code.startswith("51"):
+                        if s not in seen:
+                            seen.add(s); symbols.append(s); etf_added += 1
+                    elif code.startswith("16") or code.startswith("18"):
+                        if s not in seen:
+                            seen.add(s); symbols.append(s); lof_added += 1
+                log.info("板块 沪深基金: 获取 %d 只，新增 ETF %d / LOF %d",
+                         len(fund_list), etf_added, lof_added)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning("获取板块 沪深基金 失败: %s", e)
+
+            # 4. 沪深转债（cb，320只，12/11前缀）
+            try:
+                _add_batch(self._xtdata.get_stock_list_in_sector("沪深转债"), "沪深转债")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning("获取板块 沪深转债 失败: %s", e)
+
+            # 5. 沪深指数（index，609只）
+            try:
+                _add_batch(self._xtdata.get_stock_list_in_sector("沪深指数"), "沪深指数")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning("获取板块 沪深指数 失败: %s", e)
+
+            log.info("获取全市场标的: %d 只（去重后）", len(symbols))
         return symbols
 
     def start(self) -> bool:
