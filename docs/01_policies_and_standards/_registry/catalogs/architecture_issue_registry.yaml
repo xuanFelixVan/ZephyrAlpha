@@ -5715,3 +5715,109 @@ entries:
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), 铁律: 永久系统必须全自动'
   created: '2026-07-21'
   last_updated: '2026-07-21'
+
+# --- #ARCH-GATE-REGISTRY-AUTO-001: git_commit_gateway.py 硬编码注册瓶颈——YAML 驱动自动注册治本（2026-07-21 立项）---
+- issue_id: '#ARCH-GATE-REGISTRY-AUTO-001'
+  title: git_commit_gateway.py 硬编码注册瓶颈——74 个 gate 硬编码 import+register 致多 session 并发冲突，YAML 驱动自动注册治本
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-21 立项裁定。git_commit_gateway.py 是 74 个 gate 的硬编码注册中心，
+    每个 gate MUST 在此文件 __init__ 中 import + _gate_registry.register()。
+    100% AI 开发场景下 8 个活跃 session 并发，每个新 gate 都要修改此文件，
+    导致 HELD-OVERLAP 阻断 / heartbeat_daemon 还原竞态 / 文件膨胀。
+    更严重的是与 trae_072 跨 commit 原子性铁律1冲突——gate 文件 + import + register
+    MUST 同 commit（原子性），但多 session 并发修改同一文件时无法保证原子性。
+    这是架构性矛盾：铁律要求原子性，架构设计导致无法原子。
+
+
+    第一性原理病根：
+
+    1. 违反开闭原则——git_commit_gateway.py 对扩展封闭（每个新 gate 都要改此文件）
+
+    2. 单点瓶颈——74 个 gate 的注册集中于一文件，多 session 并发修改冲突频发
+
+    3. trae_072 铁律1冲突——gate 文件 + import + register MUST 同 commit，
+       但多 session 并发修改 git_commit_gateway.py 时无法保证原子性
+
+    4. 100% AI 场景放大——无人类视觉通道协调，HELD-OVERLAP 频发，
+       AI 误判为"代码缺陷"反复修改（如本会话误判 12 维度审计悬空 import）
+
+
+    直接诱因（2026-07-21 本会话）：
+
+    #ARCH-PRECOMMIT-OFFLINE-001 治本施工 Phase 1-6 完成后（commit 5ce97eeae0），
+    precommit_offline_gate.py 文件已落地，但 git_commit_gateway.py 未 import + register，
+    导致 gate 不生效。根因是 commit 时 git_commit_gateway.py 工作区有其他 session 的
+    飞行中修改，一并提交会触发 IMPORT-INTEGRITY 硬阻断（trae_072 铁律4）。
+    只能待其他 session merge 后单独 commit（commit 7573fea9a4）。
+
+
+    治本方向：gate_registry.yaml 作为注册真源，git_commit_gateway.py 动态加载
+
+    gate_registry.yaml 已存在（只登记 gate_id/name/priority 等元数据），
+    扩展 schema 增加 module_path + factory_function + enabled 字段，
+    新增 gate_auto_registrar.py 从 YAML 动态 import + register，
+    替代 git_commit_gateway.py 中的 74 个显式 import + register。
+
+
+    YAML 驱动优势：
+
+    1. 开闭原则——新 gate 只需在 YAML 追加条目，无需修改 git_commit_gateway.py
+
+    2. 消除并发冲突——YAML 列表追加比 Python 函数插入更易合并
+
+    3. trae_072 原子性——gate 文件 + YAML 条目可在同 commit 原子提交
+
+    4. SSoT 一致——gate_registry.yaml 已是规则数据真源（trae_062），
+       注册信息属于规则数据，YAML 比 Python 更合适
+
+
+    方案对比与选择：
+
+    | 方案 | 改动量 | 长期价值 | 风险 | 选择 |
+
+    |------|--------|---------|------|------|
+
+    | 1. 插件式自动发现（扫描目录）| 大 | 高 | 失去显式可见性 | 否 |
+
+    | 2. YAML 驱动注册 | 中 | 高 | 低（YAML 已存在）| 是 |
+
+    | 3. 分散注册点（按域拆分）| 大 | 中 | 重构成本高 | 否 |
+
+    | 4. 协调协议（短期治标）| 小 | 低 | 君子协定失效 | 过渡期 |
+  fix_phase:
+    - phase: 'Phase 1'
+      content: '立即修复当前待办——GATE-PRECOMMIT-OFFLINE 注册到 git_commit_gateway.py（import + register）'
+      status: done
+      commit: '7573fea9a4'
+      note: '本会话已完成，gate 总数 72 → 73，GATE-PRECOMMIT-OFFLINE priority=111 已生效'
+    - phase: 'Phase 2'
+      content: '扩展 gate_registry.yaml schema——增加 module_path / factory_function / enabled 字段，登记现有 73 个 gate'
+      status: pending
+      note: 'YAML 成为 import + register 的真源；schema 变更需 sync_yaml_to_depgraph.py 适配'
+    - phase: 'Phase 3'
+      content: '实现 gate_auto_registrar.py——从 YAML 动态 import + register，替代显式注册'
+      status: pending
+      note: '核心逻辑：importlib.import_module(module_path) + getattr(factory_function) + registry.register(factory())；fail-open on import error（logger.warning，不阻断 commit）'
+    - phase: 'Phase 4'
+      content: '渐进式迁移现有 73 个显式注册到 YAML 驱动——每批 10 个 gate 迁移 + 验证'
+      status: pending
+      note: '避免大爆炸式重构；每批迁移后跑 smoke test 验证 gate 总数一致；迁移完成的 gate 从 git_commit_gateway.py 删除显式 import + register'
+    - phase: 'Phase 5'
+      content: '建立 git_commit_gateway.py 协调协议（过渡期内 Phase 4 完成前）——SessionRegistry 登记"git_commit_gateway.py 修改意图" + GATE-GATEWAY-FILE-LOCK 门禁'
+      status: pending
+      note: '君子协定 + 自动检测；检测多 session 同时修改 git_commit_gateway.py 时阻断；Phase 4 完成后此门禁可删除'
+    - phase: 'Phase 6'
+      content: '验证与监控——smoke test 验证 73+ gate 全部正常注册 + 新增 reconciler 检测 YAML 与实际注册不一致 + baseline scan 确保无 gate 遗漏'
+      status: pending
+      note: 'make_gate_registry_sync_reconciler 已存在（post-commit priority=830），扩展为双向校验（YAML → 实际注册 + 实际注册 → YAML）'
+  impact:
+    - 'git_commit_gateway.py 从 1000+ 行硬编码注册缩减为 ~50 行 YAML 驱动 auto_registrar 调用'
+    - '新 gate 落地从"改 git_commit_gateway.py + gate 文件"两步简化为"YAML 追加 + gate 文件"一步'
+    - '消除多 session 并发修改 git_commit_gateway.py 的 HELD-OVERLAP 阻断'
+    - 'trae_072 跨 commit 原子性铁律1冲突解决——gate 文件 + YAML 条目可同 commit 原子提交'
+  related_adjudication: '#ARCH-PRECOMMIT-OFFLINE-001 (直接诱因), #ARCH-CROSS-COMMIT-ATOMICITY-001 (trae_072 铁律1冲突), #ARCH-CONSUMERS-ACCURACY-001 (CONSUMERS 字段准确性同源治理范式)'
+  related_rules: 'trae_072 (跨 commit 原子性), trae_062 (SSoT 真源分类——gate_registry.yaml 是规则数据真源), trae_060 (向内收三原则——gate 注册信息向 YAML 收敛)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
