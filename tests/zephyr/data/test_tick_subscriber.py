@@ -1,7 +1,7 @@
 # [TESTS] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
 # [TTL] task_bound
-"""tick_subscriber 单元测试。"""
+"""tick_subscriber 单元测试（含 Phase C: WalWriter + 批量出队 + 无锁计数）。"""
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
@@ -127,94 +127,130 @@ class TestInferMarketType:
         assert infer_market_type("430047.BJ") == "stock_bj"
 
 
+def _make_sub():
+    """构造最小可测试 TickSubscriber 实例（绕过 __init__ 的 xtdata 依赖）。"""
+    from zephyr.data.tick_subscriber import TickSubscriber
+    sub = TickSubscriber.__new__(TickSubscriber)
+    sub._tick_queue = queue.Queue()
+    sub._running = True
+    sub._received = 0
+    sub._written = 0
+    sub._errors = 0
+    sub._writer = None
+    sub._flush_thread = None
+    sub._xtdata = None
+    sub._subscribed = set()
+    return sub
+
+
 class TestTickSubscriber:
     def test_callback_puts_to_queue(self):
         """QMT callback 把 tick 放入队列（list[dict] 格式，subscribe_quote 实际回调）"""
-        from zephyr.data.tick_subscriber import TickSubscriber
-        sub = TickSubscriber.__new__(TickSubscriber)
-        sub._tick_queue = queue.Queue()
-        sub._running = True
-        sub._stats = {"received": 0, "written": 0, "errors": 0}
-        sub._lock = threading.Lock()
-
+        sub = _make_sub()
         # QMT subscribe_quote 回调: tick_data 是 list[dict]
         datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
-        TickSubscriber._on_tick(sub, datas)
+        sub._on_tick(datas)
 
         assert not sub._tick_queue.empty()
         symbol, tick = sub._tick_queue.get_nowait()
         assert symbol == "000001.SZ"
         assert tick["lastPrice"] == 10.5
-        assert sub._stats["received"] == 1
+        assert sub._received == 1  # 无锁计数
 
     def test_callback_handles_dict_format(self):
         """dict 格式 tick 向后兼容（subscribe_whole_quote 快照）"""
-        from zephyr.data.tick_subscriber import TickSubscriber
-        sub = TickSubscriber.__new__(TickSubscriber)
-        sub._tick_queue = queue.Queue()
-        sub._running = True
-        sub._stats = {"received": 0, "written": 0, "errors": 0}
-        sub._lock = threading.Lock()
-
+        sub = _make_sub()
         datas = {"000001.SZ": {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}}
-        TickSubscriber._on_tick(sub, datas)
+        sub._on_tick(datas)
 
         assert not sub._tick_queue.empty()
         symbol, tick = sub._tick_queue.get_nowait()
         assert symbol == "000001.SZ"
         assert tick["lastPrice"] == 10.5
-        assert sub._stats["received"] == 1
+        assert sub._received == 1
 
     def test_callback_handles_multi_tick_list(self):
         """list 包含多个 tick 时全部入队"""
-        from zephyr.data.tick_subscriber import TickSubscriber
-        sub = TickSubscriber.__new__(TickSubscriber)
-        sub._tick_queue = queue.Queue()
-        sub._running = True
-        sub._stats = {"received": 0, "written": 0, "errors": 0}
-        sub._lock = threading.Lock()
-
+        sub = _make_sub()
         datas = {"000001.SZ": [
             {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050},
             {"time": 1720838406000, "lastPrice": 10.6, "volume": 200, "amount": 2120},
         ]}
-        TickSubscriber._on_tick(sub, datas)
+        sub._on_tick(datas)
 
         assert sub._tick_queue.qsize() == 2
-        assert sub._stats["received"] == 2
+        assert sub._received == 2
 
-    def test_flush_thread_processes_queue(self):
-        """flush 线程从队列取数据，调用 BufferedWriter"""
-        from zephyr.data.tick_subscriber import TickSubscriber
-        sub = TickSubscriber.__new__(TickSubscriber)
-        sub._tick_queue = queue.Queue()
-        sub._running = True
-        sub._stats = {"received": 0, "written": 0, "errors": 0}
-        sub._lock = threading.Lock()
+    def test_drain_batch_single_tick(self):
+        """_drain_batch 取一条 tick 交给 WalWriter（Phase C: 替代 _flush_once）"""
+        sub = _make_sub()
         sub._writer = MagicMock()
         sub._writer.add.return_value = True
 
-        # 放入一条 tick
         sub._tick_queue.put(("000001.SZ", {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}))
 
-        # 运行一次 flush 循环（timeout=0.1 取不到就退出）
-        sub._flush_once(timeout=0.1)
-
-        # 验证 BufferedWriter.add 被调用
+        n = sub._drain_batch(timeout=0.1)
+        assert n == 1
         assert sub._writer.add.called
-        assert sub._stats["written"] == 1
+        assert sub._written == 1
+
+    def test_drain_batch_batch_output(self):
+        """_drain_batch 批量出队多个 tick，构造单个 FetchResult 交给 WalWriter（Phase C 核心改进）"""
+        sub = _make_sub()
+        sub._writer = MagicMock()
+        sub._writer.add.return_value = True
+
+        # 放入 3 条 tick
+        for i in range(3):
+            sub._tick_queue.put(("000001.SZ", {
+                "time": 1720838403000 + i * 1000,
+                "lastPrice": 10.5 + i,
+                "volume": 100,
+                "amount": 1050,
+            }))
+
+        n = sub._drain_batch(max_n=500, timeout=0.1)
+        assert n == 3
+        assert sub._written == 3
+        # writer.add 只被调用一次（批量构造单个多行 FetchResult）
+        assert sub._writer.add.call_count == 1
+
+    def test_drain_batch_empty_returns_zero(self):
+        """空队列 _drain_batch 返回 0"""
+        sub = _make_sub()
+        sub._writer = MagicMock()
+        n = sub._drain_batch(timeout=0.05)
+        assert n == 0
+        assert not sub._writer.add.called
+
+    def test_drain_batch_writer_failure_counts_errors(self):
+        """WalWriter.add 失败时 errors 递增"""
+        sub = _make_sub()
+        sub._writer = MagicMock()
+        sub._writer.add.return_value = False  # 写入失败
+
+        sub._tick_queue.put(("000001.SZ", {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}))
+        n = sub._drain_batch(timeout=0.1)
+        assert n == 0
+        assert sub._errors == 1
+
+    def test_stats_returns_all_fields(self):
+        """stats() 返回 received/written/errors/queue_size（无锁快照）"""
+        sub = _make_sub()
+        sub._received = 10
+        sub._written = 8
+        sub._errors = 2
+        sub._tick_queue.put(("s", {}))
+        sub._tick_queue.put(("s", {}))
+
+        stats = sub.stats()
+        assert stats == {"received": 10, "written": 8, "errors": 2, "queue_size": 2}
 
     def test_stop_sets_running_false(self):
         """stop() 设置 _running=False"""
-        from zephyr.data.tick_subscriber import TickSubscriber
-        sub = TickSubscriber.__new__(TickSubscriber)
+        sub = _make_sub()
         sub._running = True
-        sub._tick_queue = queue.Queue()
-        sub._flush_thread = None
-        sub._xtdata = None
-        sub._subscribed = set()
-        sub._stats = {"received": 0, "written": 0, "errors": 0}
-        TickSubscriber.stop(sub)
+        sub.stop()
         assert sub._running is False
 
 

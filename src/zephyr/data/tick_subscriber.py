@@ -1,23 +1,24 @@
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md | §
 # [MODULE] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.buffered_writer; zephyr.data.provider_base; zephyr.data.ch_writer
+# [DEPENDENCIES] zephyr.data.wal_writer; zephyr.data.provider_base; zephyr.data.table_registry; zephyr.shared.observability.metrics; zephyr.shared.observability.metrics_server
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）；flush 线程负责转换+写入；不复用 governance MiniQmtProvider（避免 DataFrame 24字段转换开销）；queue.Queue 解耦线程安全
+# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] start失败->返回False+log; flush失败->log+继续（不中断订阅）; xtquant导入失败->RuntimeError
+# [ERROR_CONTRACT] start失败->返回False+log; drain_batch失败->log+继续（不中断订阅）; xtquant导入失败->RuntimeError
 # [TESTS] tests/zephyr/data/test_tick_subscriber.py
 # [TTL] task_bound
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """QMT 实时 Tick 订阅服务——subscribe_quote 实时推送，写入 ClickHouse tick_data。
 
 独立常驻进程，不走 scheduler cron。QMT callback 线程把 tick dict 放入
-queue.Queue，后台 flush 线程从队列取数据转14字段 tuple，BufferedWriter 攒批写入。
+queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先落盘段文件
+再异步 drain 到 ClickHouse（P0-1 主动 WAL 架构，裁定 #ARCH-CH-013 升级）。
 
 启动: python -m zephyr.data.tick_subscriber
 """
@@ -33,6 +34,8 @@ from datetime import datetime
 from decimal import Decimal
 
 from zephyr.data.table_registry import get_registry
+from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
+from zephyr.shared.observability.metrics_server import start_metrics_server
 
 log = logging.getLogger(__name__)
 
@@ -47,6 +50,9 @@ _TICK_COLUMNS = [
 ]
 
 _DATA_SOURCE = "miniqmt"
+
+# P0-2: 批量出队上限（减少 WalWriter.add 调用次数）
+_DRAIN_BATCH_SIZE = 500
 
 
 def infer_market_type(stock_code: str) -> str:
@@ -167,34 +173,37 @@ def tick_to_row(stock_code: str, tick: dict) -> tuple | None:
 class TickSubscriber:
     """QMT 实时 Tick 订阅器——常驻订阅全市场 tick，写入 ClickHouse。
 
-    线程模型：
-      - QMT callback 线程：_on_tick → queue.put（最小开销）
-      - flush 线程：queue.get → tick_to_row → BufferedWriter.add → flush
+    线程模型（P0-1 主动 WAL 架构）：
+      - QMT callback 线程：_on_tick → queue.put_nowait（最小开销，无锁计数）
+      - flush 线程：_drain_batch 批量出队(500条) → WalWriter.add（先落盘段文件）
+      - WalWriter drain 线程：段文件 → ch_writer → ClickHouse（异步排空）
     """
 
     def __init__(
         self,
         symbols: list[str] | None = None,
-        batch_rows: int = 5000,
-        batch_seconds: float = 10.0,
+        batch_rows: int = 3000,
+        batch_seconds: float = 5.0,
     ):
         """初始化订阅器。
 
         Args:
             symbols: 订阅标的列表（None=自动获取全市场沪深A股）
-            batch_rows: BufferedWriter 攒批行数阈值
-            batch_seconds: BufferedWriter 攒批时间阈值（秒）
+            batch_rows: WalWriter 段落盘行数阈值（P0-3: 5000→3000）
+            batch_seconds: WalWriter 段落盘时间阈值（P0-3: 10.0→5.0）
         """
         self._symbols = symbols
         self._batch_rows = batch_rows
         self._batch_seconds = batch_seconds
 
         self._tick_queue: queue.Queue[tuple[str, dict]] = queue.Queue(maxsize=100000)
-        self._writer = None  # BufferedWriter，在 start() 中初始化
+        self._writer = None  # WalWriter，在 start() 中初始化
         self._flush_thread: threading.Thread | None = None
         self._running = False
-        self._lock = threading.Lock()
-        self._stats = {"received": 0, "written": 0, "errors": 0}
+        # P0-2: 无锁计数（CPython GIL 保证 int += 1 统计精度足够，消除锁竞争）
+        self._received = 0
+        self._written = 0
+        self._errors = 0
 
         # xtdata 模块（延迟导入）
         self._xtdata = None
@@ -223,58 +232,74 @@ class TickSubscriber:
                     continue
                 try:
                     self._tick_queue.put_nowait((symbol, tick))
-                    with self._lock:
-                        self._stats["received"] += 1
+                    self._received += 1  # 无锁计数
+                    _get_metrics_registry().inc("zephyr_tick_received_total")
                 except queue.Full:
                     log.warning("tick 队列已满，丢弃 tick symbol=%s", symbol)
+                    self._errors += 1
+                    _get_metrics_registry().inc("zephyr_tick_dropped_total")
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
-                    with self._lock:
-                        self._stats["errors"] += 1
+                    self._errors += 1
+                    _get_metrics_registry().inc("zephyr_tick_dropped_total")
 
-    def _flush_once(self, timeout: float = 1.0) -> None:
-        """从队列取一批 tick，转换并写入 BufferedWriter。"""
+    def _drain_batch(self, max_n: int = _DRAIN_BATCH_SIZE, timeout: float = 1.0) -> int:
+        """批量出队——阻塞等待第一条，然后非阻塞批量取剩余。
+
+        构造单个 FetchResult（多行）交给 WalWriter，减少 add 调用次数。
+
+        Returns:
+            本次写入 WalWriter 的行数（0=队列空或写入失败）。
+        """
+        # 阻塞等待第一条数据（触发器，避免 busy loop）
         try:
             symbol, tick = self._tick_queue.get(timeout=timeout)
         except queue.Empty:
-            return
-
+            return 0
+        rows: list[tuple] = []
         row = tick_to_row(symbol, tick)
-        if row is None:
-            return
-
-        # 构造 FetchResult 给 BufferedWriter
+        if row:
+            rows.append(row)
+        # 非阻塞批量取剩余
+        for _ in range(max_n - 1):
+            try:
+                symbol, tick = self._tick_queue.get_nowait()
+            except queue.Empty:
+                break
+            r = tick_to_row(symbol, tick)
+            if r:
+                rows.append(r)
+        if not rows:
+            return 0
         from zephyr.data.provider_base import FetchResult
         result = FetchResult(
             table=_TBL_TICK_DATA,
             columns=_TICK_COLUMNS,
-            rows=[row],
+            rows=rows,
             last_key="",
             elapsed_sec=0.0,
         )
-        if not self._writer.add(result):
-            log.error("BufferedWriter.add 失败，tick 数据可能丢失")
-            with self._lock:
-                self._stats["errors"] += 1
-            return
-
-        with self._lock:
-            self._stats["written"] += 1
+        if self._writer.add(result):
+            self._written += len(rows)
+            _get_metrics_registry().inc("zephyr_tick_written_total", n=len(rows))
+            return len(rows)
+        log.error("WalWriter.add 失败，%d 行 tick 数据可能丢失", len(rows))
+        self._errors += len(rows)
+        _get_metrics_registry().inc("zephyr_tick_dropped_total", n=len(rows))
+        return 0
 
     def _flush_loop(self) -> None:
-        """flush 线程主循环。"""
+        """flush 线程主循环——批量出队交给 WalWriter。"""
         log.info("flush 线程启动")
         while self._running:
-            self._flush_once(timeout=1.0)
-        # 退出前 flush 残留
+            self._drain_batch(max_n=_DRAIN_BATCH_SIZE, timeout=1.0)
+        # 退出前 drain 残留
         while not self._tick_queue.empty():
-            try:
-                self._flush_once(timeout=0.01)
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            if self._drain_batch(max_n=_DRAIN_BATCH_SIZE, timeout=0.01) == 0:
                 break
+        # flush 残留段到 WAL 文件（drain 线程由 stop() 停止）
         if self._writer:
             self._writer.flush()
-            log.info("flush 线程退出，最终 flush 完成")
         log.info("flush 线程结束")
 
     def _get_all_symbols(self) -> list[str]:
@@ -354,12 +379,16 @@ class TickSubscriber:
             return False
         self._xtdata = xtdata
 
-        from zephyr.data.buffered_writer import BufferedWriter
-        self._writer = BufferedWriter(
+        from zephyr.data.wal_writer import WalWriter
+        self._writer = WalWriter(
             _TBL_TICK_DATA,
-            max_rows=self._batch_rows,
-            max_seconds=self._batch_seconds,
+            segment_max_rows=self._batch_rows,
+            segment_max_seconds=self._batch_seconds,
         )
+        self._writer.start()  # 启动 drain 线程
+
+        # P1-5: 启动 Prometheus /metrics 端点
+        start_metrics_server()
 
         self._running = True
 
@@ -384,6 +413,9 @@ class TickSubscriber:
         self._running = False
         if self._flush_thread:
             self._flush_thread.join(timeout=30)
+        # WalWriter.stop: flush 残留段 + 停止 drain 线程
+        if self._writer:
+            self._writer.stop()
         # 取消订阅（unsubscribe_quote 不接受 period 参数，与 subscribe_quote 签名不一致）
         if self._xtdata:
             for symbol in self._subscribed:
@@ -391,12 +423,18 @@ class TickSubscriber:
                     self._xtdata.unsubscribe_quote(symbol, callback=self._on_tick)
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     pass
-        log.info("TickSubscriber 已停止: stats=%s", self._stats)
+        log.info("TickSubscriber 已停止: stats=%s", self.stats())
 
     def stats(self) -> dict:
-        """获取统计信息。"""
-        with self._lock:
-            return dict(self._stats)
+        """获取统计信息（无锁快照）。"""
+        qsize = self._tick_queue.qsize()
+        _get_metrics_registry().set_gauge("zephyr_tick_queue_size", qsize)
+        return {
+            "received": self._received,
+            "written": self._written,
+            "errors": self._errors,
+            "queue_size": qsize,
+        }
 
 
 def main() -> int:

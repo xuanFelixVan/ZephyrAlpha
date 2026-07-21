@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.observability.metrics
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS]
+# [CONSUMERS] zephyr.data.wal_writer; zephyr.data.tick_subscriber
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -123,12 +123,12 @@ class MetricsRegistry:
     def _label_key(self, labels: dict[str, str]) -> tuple[tuple[str, str], ...]:
         return tuple(sorted(labels.items()))
 
-    def inc(self, name: str, labels: dict[str, str] | None = None) -> None:
+    def inc(self, name: str, labels: dict[str, str] | None = None, n: float = 1.0) -> None:
         with self._lock:
             if name not in self._counters:
                 self._counters[name] = {}
             key = self._label_key(labels or {})
-            self._counters[name][key] = self._counters[name].get(key, 0.0) + 1.0
+            self._counters[name][key] = self._counters[name].get(key, 0.0) + n
 
     def set_gauge(self, name: str, value: float) -> None:
         with self._lock:

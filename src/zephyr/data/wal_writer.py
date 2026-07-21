@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.wal_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.local_replay; zephyr.data.ch_writer; zephyr.data.provider_base
+# [DEPENDENCIES] zephyr.data.local_replay; zephyr.data.ch_writer; zephyr.data.provider_base; zephyr.shared.observability.metrics
 # [CONSUMERS] zephyr.data.tick_subscriber
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 数据先落本地 WAL 段文件再异步排空到 CH（写入路径延迟稳定）；段落盘复用 local_replay.save_fallback（格式与回灌兼容）；drain 复用 local_replay.replay_batch；列过滤复用 ch_writer._get_table_columns_set；_segment/_cols_clause 加锁保护（add 与 stop/flush 跨线程）；WAL 容量 90% critical 背压阻断写入
+# [INVARIANTS] 数据先落本地 WAL 段文件再异步排空到 CH（写入路径延迟稳定）；段落盘复用 local_replay.save_fallback（格式与回灌兼容）；drain 复用 local_replay.replay_batch；列过滤复用 ch_writer._get_table_columns_set；_segment/_cols_clause 加锁保护（add 与 stop/flush 跨线程）；WAL 容量 90% critical 背压阻断写入；P1-5 metrics 埋点覆盖 segments/wal_dir_bytes/backlog_files/drain_replayed/drain_failed
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -50,6 +50,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from . import ch_writer, local_replay
+from zephyr.shared.observability.metrics import get_registry
 
 if TYPE_CHECKING:
     from .provider_base import FetchResult
@@ -188,6 +189,7 @@ class WalWriter:
         if ok:
             self._total_segmented += len(self._segment)
             self._segment_count += 1
+            get_registry().inc("zephyr_wal_segments_total")
             log.info("WalWriter(%s): 第%d段落盘 %d 行",
                      self._table, self._segment_count, len(self._segment))
             self._segment.clear()
@@ -206,6 +208,7 @@ class WalWriter:
         """检查 WAL 目录容量，返回 'ok'/'warning'/'critical'。"""
         # 复用 local_replay 的存储目录（WAL 段与 fallback 文件共用同一目录与 manifest）
         used = _dir_size_bytes(local_replay._FALLBACK_DIR)
+        get_registry().set_gauge("zephyr_wal_dir_bytes", used)
         ratio = used / self._wal_dir_max_bytes if self._wal_dir_max_bytes > 0 else 0
         if ratio >= _CRITICAL_RATIO:
             return "critical"
@@ -227,6 +230,7 @@ class WalWriter:
     def _drain_loop(self) -> None:
         """drain 线程主循环：轮询积压，回灌 CH（复用 local_replay.replay_batch）。"""
         fail_backoff = _DRAIN_IDLE_INTERVAL
+        reg = get_registry()
         while not self._stop_event.is_set():
             wait_sec = _DRAIN_IDLE_INTERVAL
             try:
@@ -235,12 +239,17 @@ class WalWriter:
                     remaining = result.get("remaining", 0)
                     replayed = result.get("replayed", 0)
                     fail_backoff = _DRAIN_IDLE_INTERVAL  # 成功，重置退避
+                    reg.set_gauge("zephyr_wal_backlog_files", remaining)
                     if replayed > 0:
+                        reg.inc("zephyr_drain_replayed_total", n=replayed)
                         log.info("WalWriter(%s) drain: 回灌 %d 段，剩余 %d",
                                  self._table, replayed, remaining)
                     if remaining > 0:
                         wait_sec = _DRAIN_FAST_INTERVAL
+                else:
+                    reg.set_gauge("zephyr_wal_backlog_files", 0)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                reg.inc("zephyr_drain_failed_total")
                 log.error("WalWriter(%s) drain 异常: %s，退避 %.1fs",
                           self._table, e, fail_backoff)
                 wait_sec = fail_backoff
