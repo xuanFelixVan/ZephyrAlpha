@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0768 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_draft_assistant | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-380 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_draft_assistant
 # [INVARIANTS] test_draft_assistant must cover DraftAssistant.generate_draft, render_blueprint_skeleton, and boundary conditions

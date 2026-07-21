@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0843 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_error_budget | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_error_budget
 # [INVARIANTS] ErrorBudgetManager._budgets keyed by contract_id; consumed_minutes never negative

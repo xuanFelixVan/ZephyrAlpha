@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0547 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_cold_stub | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] tests.test_cold_stub
 # [INVARIANTS] TTL分级策略严格执行;成本超限→三级降级;SQLite backup使用RULE-ONE原子写入

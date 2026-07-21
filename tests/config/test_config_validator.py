@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0575 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_config_validator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §config_validator
 # [MODULE] tests.test_config_validator
 # [INVARIANTS] ConfigValidator.validate必须返回ValidationResult; ValidationResult.valid反映errors存在

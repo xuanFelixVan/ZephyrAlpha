@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0434 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_blueprint_code_sync | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-351 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_blueprint_code_sync

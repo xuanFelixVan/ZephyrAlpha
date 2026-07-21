@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0533 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_degradation_edge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-361 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_code_dedup_engine.test_degradation_edge
 # [STABILITY] evolving

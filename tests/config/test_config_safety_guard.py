@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0573 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_config_safety_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_config_safety_guard
 # [INVARIANTS] domain_bounds_enforced;rejected_when_out_of_range;unknown_key_wide_domain

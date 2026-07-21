@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1831 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_context_assembler_context_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-459 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.context_engine.test_context_assembler
 # [STABILITY] evolving

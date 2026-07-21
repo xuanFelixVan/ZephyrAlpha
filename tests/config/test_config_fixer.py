@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0567 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_config_fixer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §test
 # [MODULE] tests.test_config_fixer
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

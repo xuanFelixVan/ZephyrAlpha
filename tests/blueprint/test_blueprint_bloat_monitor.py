@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0431 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_blueprint_bloat_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_blueprint_bloat_monitor
 # [INVARIANTS] MAX_BLUEPRINT_LINES=5000;MAX_TASK_CARDS=50;should_refactor_when_over_limit

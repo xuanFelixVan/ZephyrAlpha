@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0505 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_ce_kill_switch | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
 # [MODULE] zephyr.infrastructure.rollback.kill_switch
 # [INVARIANTS] none
