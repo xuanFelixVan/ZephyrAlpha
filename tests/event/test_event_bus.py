@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0862 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_event_bus | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-381 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_event_bus
 # [INVARIANTS] EventBus subscribe+publish must deliver events to all matching subscribers

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0901 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_f5_red_team_extreme | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §4
 # [MODULE] tests.test_f5_red_team_extreme
 # [INVARIANTS] Tests must not modify production state; All imports guarded by pytest.importorskip; Concurrency via ThreadPoolExecutor only

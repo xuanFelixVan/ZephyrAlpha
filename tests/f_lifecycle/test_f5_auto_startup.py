@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-F5-BOOT | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_f5_auto_startup | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §2
 # [MODULE] tests.test_f5_auto_startup
 # [INVARIANTS] on_startup returns BootResult; run_health_checks returns dict and never raises; register_startup_hook is idempotent

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0868 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_event_store | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §event_store
 # [MODULE] tests.test_event_store
 # [INVARIANTS] EventStore.record必须返回event_id; StoredEvent.to_row/from_row必须可逆

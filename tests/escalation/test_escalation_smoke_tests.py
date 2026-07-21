@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0860 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_escalation_smoke_tests | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_escalation_smoke_tests
 # [INVARIANTS] none

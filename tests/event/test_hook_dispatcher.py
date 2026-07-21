@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1098 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_hook_dispatcher | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-393 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_hook_dispatcher
 # [INVARIANTS] HookDispatcher must dispatch registered hooks on matching events

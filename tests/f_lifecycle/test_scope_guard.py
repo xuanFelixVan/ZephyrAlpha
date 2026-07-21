@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1537 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_scope_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-427 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_scope_guard
 # [INVARIANTS] ScopeGuard is per-instance; no shared state

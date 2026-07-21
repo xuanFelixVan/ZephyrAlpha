@@ -1,4 +1,4 @@
-# [A_test] module_id=TEST-F1-EVENT | layer=test | stability=evolving | safety=L
+# [A_test] module_id=MOD-GOV_f1_event_trigger | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §3.2
 # [MODULE] tests.test_f1_event_trigger
 # [INVARIANTS] 测试两套事件机制(shared.event_bus.EventBus/EventBusBackpressure)触发F1组件

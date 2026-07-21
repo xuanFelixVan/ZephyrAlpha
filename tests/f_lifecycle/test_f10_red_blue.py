@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2104 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_f10_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md | §tests
 # [MODULE] tests.test_f10_red_blue
 # [INVARIANTS] none

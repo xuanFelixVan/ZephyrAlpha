@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-F213 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_f21_auto_run | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] tests.test_f21_auto_run
 # [INVARIANTS] none
