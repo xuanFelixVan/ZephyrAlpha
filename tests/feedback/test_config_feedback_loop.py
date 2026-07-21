@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1872 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_config_feedback_loop | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 from zephyr.feedback_loop.config import FLEConfig
 

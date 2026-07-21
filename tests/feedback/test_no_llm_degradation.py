@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1310 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_no_llm_degradation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_no_llm_degradation
 # [INVARIANTS] rules_engine_active default=False

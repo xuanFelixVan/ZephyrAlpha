@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0861 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_eval_harness_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_eval_harness
 # [INVARIANTS] EvalHarness.run_all returns EvalReport; pass_rate = passed/total when total>0

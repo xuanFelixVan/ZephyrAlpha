@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1874 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_evolution_engine_feedback_loop | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-497 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.feedback_loop.test_evolution_engine
 # [STABILITY] evolving

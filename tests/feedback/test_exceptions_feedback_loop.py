@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1875 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_exceptions_feedback_loop | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import pytest
 
