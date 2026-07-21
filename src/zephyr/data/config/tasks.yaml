@@ -1483,11 +1483,15 @@ tasks:
       backfill_mode: detect_and_fill
       threshold: 5000000
 
-  # ============== tqcenter 板块K线（880xxx，独立脚本触发，裁定 #ARCH-CH-024）==============
+  # ============== tqcenter 880xxx板块数据（独立脚本触发，裁定 #ARCH-CH-024）==============
+  # manual_script 设计：schedule 填一个未在 schedule.yaml 注册的字面值（manual_script），
+  # 调度器 _filter_schedule_tasks 只匹配已注册时段，manual_script 不在其中→结构化排除自动调度。
+  # 比 trigger:manual_script 更安全（trigger 字段调度器不读仅作文档；schedule 才是调度依据）。
+  # tqcenter SDK 需 E:\tdx\PYPlugins 专用路径，由独立脚本触发，非 scheduler 自动调度。
   - task_id: kline_sector_880_incremental
     table: c1_market.kline_sector_880
     source: tqcenter
-    schedule: weekend_calibration
+    schedule: manual_script
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1496,3 +1500,44 @@ tasks:
     extra:
       description: "880xxx板块指数K线增量（tqcenter get_market_data，日K/1m/5m）"
       trigger: manual_script  # 非 scheduler 自动调度，由独立脚本触发（tqcenter SDK 需 E:\tdx\PYPlugins 路径）
+
+  - task_id: sector_constituent_refresh
+    table: c1_market.sector_constituent
+    source: tqcenter
+    schedule: manual_script
+    incremental: false  # 全量重建（约84,450条板块-成分股映射）
+    dependencies: []
+    capability: sector_constituent
+    symbols: null
+    extra:
+      description: "880xxx板块成分股映射全量刷新（tqcenter get_sector_list + get_stock_list_in_sector）"
+      trigger: manual_script
+      refresh_cycle: monthly
+
+  - task_id: sector_snapshot_incremental
+    table: c1_market.sector_snapshot
+    source: tqcenter
+    schedule: manual_script
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: sector_snapshot_collection
+    symbols: null
+    extra:
+      description: "880xxx板块实时快照增量（tqcenter subscribe_hq推送99只 + get_market_snapshot轮询584只）"
+      trigger: manual_script
+      ranking_engine: sector_ranking_engine.get_push_pool
+
+  - task_id: kline_sector_880_resample
+    table: c1_market.kline_sector_880
+    source: tqcenter
+    schedule: manual_script
+    incremental: true
+    date_col: trade_date
+    dependencies: ["kline_sector_880_incremental"]
+    capability: kline_resampling
+    symbols: null
+    extra:
+      description: "880xxx板块K线合成（ClickHouse DB内 toStartOfInterval 聚合，1m/5m→15m/30m/60m，幂等DELETE+INSERT）"
+      trigger: manual_script
+      resample_method: db_internal_aggregation

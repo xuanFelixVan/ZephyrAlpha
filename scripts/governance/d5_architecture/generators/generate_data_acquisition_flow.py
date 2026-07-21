@@ -80,6 +80,7 @@ _SOURCE_ZH: dict[str, str] = {
     "akshare": "AKShare",
     "ifind": "同花顺iFind",
     "tickflow": "TickFlow",
+    "tqcenter": "通达信tqcenter",
     "tdx": "通达信",
     "baostock": "BaoStock",
     "tushare": "Tushare",
@@ -92,6 +93,7 @@ _SOURCE_SUMMARY: dict[str, str] = {
     "akshare": "开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。",
     "ifind": "付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。",
     "tickflow": "美股数据源，采美股日K线和美股指数（ETF替代）。",
+    "tqcenter": "880xxx板块数据源，采板块K线、板块实时快照、板块成分股映射；99只推送+584只轮询混合模式，动态5因子排名调整推送池。",
     "tdx": "板块数据源，采通达信板块分类、板块K线、板块成分股。",
     "baostock": "开源数据源，采交易日历和沪深300成分股。",
     "tushare": "付费数据源，采新闻快讯和证券新闻。",
@@ -104,6 +106,7 @@ _SOURCE_MAIN: dict[str, str] = {
     "akshare": "估值、融资融券、龙虎榜、大宗交易、宏观",
     "ifind": "资金流向、股权质押、行业分类",
     "tickflow": "美股K线、美股指数",
+    "tqcenter": "板块K线、板块实时快照、板块成分股映射",
     "tdx": "板块分类、板块K线、板块成分股",
     "baostock": "交易日历、沪深300成分股",
     "tushare": "新闻快讯、证券新闻",
@@ -117,6 +120,7 @@ _SCHEDULE_TIME: dict[str, str] = {
     "daily_event": "盘后 18:00",
     "weekend_financial": "周六 10:00",
     "monthly_static": "月初 09:00",
+    "manual_script": "手动触发（独立脚本）",
 }
 
 # 调度时段 → 完整描述
@@ -126,6 +130,7 @@ _SCHEDULE_DESC: dict[str, str] = {
     "daily_event": "18:00 周一-五",
     "weekend_financial": "周六 10:00",
     "monthly_static": "月初 09:00",
+    "manual_script": "独立脚本手动触发",
 }
 
 # 调度时段 → 说明
@@ -135,6 +140,7 @@ _SCHEDULE_NOTE: dict[str, str] = {
     "daily_event": "新闻、股东、分红、质押、解禁、分析师预期",
     "weekend_financial": "财务报表、板块、期权可转债、Tick快照",
     "monthly_static": "交易日历、股票列表、行业分类、全量刷新",
+    "manual_script": "880xxx板块采集（tqcenter SDK需专用路径，独立脚本触发）",
 }
 
 # 调度时段排序优先级（用于排序）
@@ -144,6 +150,7 @@ _SCHEDULE_ORDER: dict[str, int] = {
     "daily_event": 3,
     "weekend_financial": 4,
     "monthly_static": 5,
+    "manual_script": 99,
 }
 
 # 已知问题（硬编码，基于实测经验，稳定知识）
@@ -151,6 +158,7 @@ _KNOWN_ISSUES: list[dict[str, str]] = [
     {"issue": "下载极慢", "task": "adj_factor_incremental", "note": "每只约11秒，5204只约需16小时，建议夜间运行"},
     {"issue": "API限流", "task": "daily_valuation_incremental", "note": "百度股市通API高频返回空响应，每只休眠1秒"},
     {"issue": "分类不兼容", "task": "tdx板块 vs 东财/同花顺/申万", "note": "通达信880xxx体系与其他分类不兼容，无法混用"},
+    {"issue": "SDK路径依赖", "task": "kline_sector_880_incremental", "note": "tqcenter SDK 需 E:\\tdx\\PYPlugins 专用路径，非 scheduler 自动调度，由独立脚本触发"},
 ]
 
 # 匹配末尾的括号技术备注（全角（）或半角()，内容不含嵌套括号）

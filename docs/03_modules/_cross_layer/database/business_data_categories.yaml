@@ -933,6 +933,38 @@
   data_source: [tqcenter]
   blueprint: null
 
+- category_id: market_sector_constituent_880
+  name: "880xxx板块成分股映射（tqcenter源，板块-成分股对应关系，约84,450条）"
+  engine: clickhouse
+  database: c1_market
+  table: sector_constituent
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 月频
+  data_source: [tqcenter]
+  blueprint: null
+
+- category_id: market_sector_snapshot_880
+  name: "880xxx板块实时快照（tqcenter源，26字段全量，含UpHome/DownHome等核心指标）"
+  engine: clickhouse
+  database: c1_market
+  table: sector_snapshot
+  schema_file: null
+  data_type: 原料
+  lifecycle: hot_90d
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 18秒
+  data_source: [tqcenter]
+  blueprint: null
+
 - category_id: market_industry_class
   name: "上市公司行业分类（申万/证监会行业分类）"
   engine: clickhouse

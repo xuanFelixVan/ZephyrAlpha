@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: 数据采集流图 / Data Acquisition Flow
 version: "2.0"
 status: active
-date: 2026-07-19
+date: 2026-07-22
 owner: auto-generator
 ttl: permanent
 ---
@@ -19,7 +19,7 @@ ttl: permanent
 
 ## 一句话说清楚（自动生成 · 生成器: generate_data_acquisition_flow.py）
 
-系统每天从 **11 个数据源**采集 **119 个任务**，灌进 ClickHouse 的 **2 个库**：
+系统每天从 **12 个数据源**采集 **123 个任务**，灌进 ClickHouse 的 **2 个库**：
 
 - `c1_market` — 行情库（K线、指数、期货、资金、估值等）
 - `c3_fundamental` — 基本面库（财务报表、新闻、股东、分红等）
@@ -30,10 +30,11 @@ ttl: permanent
 
 | 数据源 | 任务数 | 主要采什么 |
 |--------|--------|-----------|
-| **miniqmt**（迅投QMT） | 58 | K线行情、财务报表、股东数据、期权可转债 |
-| **akshare**（AKShare） | 39 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
+| **miniqmt**（迅投QMT） | 57 | K线行情、财务报表、股东数据、期权可转债 |
+| **akshare**（AKShare） | 40 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
 | **ifind**（同花顺iFind） | 8 | 资金流向、股权质押、行业分类 |
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
+| **tqcenter**（通达信tqcenter） | 4 | 板块K线、板块实时快照、板块成分股映射 |
 | **rss**（RSS） | 2 | 财经新闻 |
 | **tdx**（通达信） | 2 | 板块分类、板块K线、板块成分股 |
 | **baostock**（BaoStock） | 2 | 交易日历、沪深300成分股 |
@@ -41,13 +42,13 @@ ttl: permanent
 | eastmoney_news | 1 | - |
 | **tushare**（Tushare） | 1 | 新闻快讯、证券新闻 |
 | backfill | 1 | - |
-| **合计** | **119** | |
+| **合计** | **123** | |
 
 ---
 
 ## 各数据源详情（自动生成 · 生成器: generate_data_acquisition_flow.py）
 
-### 1. miniqmt（迅投QMT）— 58 个任务，主力数据源
+### 1. miniqmt（迅投QMT）— 57 个任务，主力数据源
 
 **一句话**：主力数据源，采 A股/港股/期货的 K线行情（日/周/月/分钟级）和财务报表、股东数据、期权可转债等。
 
@@ -56,7 +57,6 @@ ttl: permanent
 | 任务 | 灌到哪张表 | 什么时候采 | 说明 |
 |------|-----------|-----------|------|
 | adj_factor_incremental | c1_market.adj_factor | 盘后 16:30 | 复权因子增量 |
-| etf_nav_refresh | c1_market.etf_nav | 盘后 16:30 | ETF基金净值增量 |
 | kline_cb_incremental | c1_market.kline_cb | 盘后 16:30 | 可转债日K线增量 |
 | kline_daily_hfq_incremental | c1_market.kline_daily_hfq | 盘后 16:30 | 后复权日K线增量（依赖adj_factor_incremental） |
 | kline_daily_incremental | c1_market.kline_daily | 盘后 16:30 | 不复权日K线增量 |
@@ -119,7 +119,7 @@ ttl: permanent
 
 ---
 
-### 2. akshare（AKShare）— 39 个任务
+### 2. akshare（AKShare）— 40 个任务
 
 **一句话**：开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。
 
@@ -127,6 +127,7 @@ ttl: permanent
 
 | 任务 | 灌到哪张表 | 什么时候采 | 说明 |
 |------|-----------|-----------|------|
+| etf_nav_refresh | c1_market.etf_nav | 盘后 16:30 | ETF基金净值增量 |
 | stock_indicator_incremental | c1_market.stock_indicator | 盘后 16:30 | AKShare指标数据增量 |
 | block_trade_detail_incremental | c1_market.block_trade_detail | 盘后 17:00 | AKShare大宗交易每日统计增量 |
 | block_trade_incremental | c1_market.block_trade | 盘后 17:00 | 大宗交易增量 |
@@ -206,7 +207,25 @@ ttl: permanent
 
 ---
 
-### 5. rss（RSS）— 2 个任务
+### 5. tqcenter（通达信tqcenter）— 4 个任务
+
+**一句话**：880xxx板块数据源，采板块K线、板块实时快照、板块成分股映射；99只推送+584只轮询混合模式，动态5因子排名调整推送池。
+
+**采集明细**：
+
+| 任务 | 灌到哪张表 | 什么时候采 | 说明 |
+|------|-----------|-----------|------|
+| kline_sector_880_incremental | c1_market.kline_sector_880 | 手动触发（独立脚本） | 880xxx板块指数K线增量 |
+| kline_sector_880_resample | c1_market.kline_sector_880 | 手动触发（独立脚本） | 880xxx板块K线合成（依赖kline_sector_880_incremental） |
+| sector_constituent_refresh | c1_market.sector_constituent | 手动触发（独立脚本） | 880xxx板块成分股映射全量刷新 |
+| sector_snapshot_incremental | c1_market.sector_snapshot | 手动触发（独立脚本） | 880xxx板块实时快照增量 |
+
+**注意**：
+- `kline_sector_880_incremental`：tqcenter SDK 需 E:\tdx\PYPlugins 专用路径，非 scheduler 自动调度，由独立脚本触发
+
+---
+
+### 6. rss（RSS）— 2 个任务
 
 **一句话**：RSS爬虫，采财经新闻。
 
@@ -219,7 +238,7 @@ ttl: permanent
 
 ---
 
-### 6. tdx（通达信）— 2 个任务
+### 7. tdx（通达信）— 2 个任务
 
 **一句话**：板块数据源，采通达信板块分类、板块K线、板块成分股。
 
@@ -235,7 +254,7 @@ ttl: permanent
 
 ---
 
-### 7. baostock（BaoStock）— 2 个任务
+### 8. baostock（BaoStock）— 2 个任务
 
 **一句话**：开源数据源，采交易日历和沪深300成分股。
 
@@ -248,7 +267,7 @@ ttl: permanent
 
 ---
 
-### 8. cls（cls）— 1 个任务
+### 9. cls（cls）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -260,7 +279,7 @@ ttl: permanent
 
 ---
 
-### 9. eastmoney_news（eastmoney_news）— 1 个任务
+### 10. eastmoney_news（eastmoney_news）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -272,7 +291,7 @@ ttl: permanent
 
 ---
 
-### 10. tushare（Tushare）— 1 个任务
+### 11. tushare（Tushare）— 1 个任务
 
 **一句话**：付费数据源，采新闻快讯和证券新闻。
 
@@ -284,7 +303,7 @@ ttl: permanent
 
 ---
 
-### 11. backfill（backfill）— 1 个任务
+### 12. backfill（backfill）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -313,7 +332,8 @@ ttl: permanent
 | intraday_minute | intraday_minute | 15 | - |
 | auction_highfreq | auction_highfreq | 1 | - |
 | weekend_backfill | weekend_backfill | 1 | - |
-| **合计** | | **119** | |
+| 手动触发（独立脚本） | 独立脚本手动触发 | 4 | 880xxx板块采集（tqcenter SDK需专用路径，独立脚本触发） |
+| **合计** | | **123** | |
 
 ---
 
@@ -322,16 +342,17 @@ ttl: permanent
 ```mermaid
 flowchart LR
     subgraph 外部数据源
-        S6["miniqmt<br/>迅投QMT<br/>58任务"]
-        S0["akshare<br/>AKShare<br/>39任务"]
+        S6["miniqmt<br/>迅投QMT<br/>57任务"]
+        S0["akshare<br/>AKShare<br/>40任务"]
         S5["ifind<br/>同花顺iFind<br/>8任务"]
         S9["tickflow<br/>TickFlow<br/>4任务"]
+        S10["tqcenter<br/>通达信tqcenter<br/>4任务"]
         S7["rss<br/>RSS<br/>2任务"]
         S8["tdx<br/>通达信<br/>2任务"]
         S2["baostock<br/>BaoStock<br/>2任务"]
         S3["cls<br/>cls<br/>1任务"]
         S4["eastmoney_news<br/>eastmoney_news<br/>1任务"]
-        S10["tushare<br/>Tushare<br/>1任务"]
+        S11["tushare<br/>Tushare<br/>1任务"]
         S1["backfill<br/>backfill<br/>1任务"]
     end
 
@@ -353,7 +374,8 @@ flowchart LR
     S7 --> D1
     S8 --> D0
     S9 --> D0
-    S10 --> D1
+    S10 --> D0
+    S11 --> D1
 ```
 
 ---
@@ -365,6 +387,7 @@ flowchart LR
 | **下载极慢** | adj_factor_incremental | 每只约11秒，5204只约需16小时，建议夜间运行 |
 | **API限流** | daily_valuation_incremental | 百度股市通API高频返回空响应，每只休眠1秒 |
 | **分类不兼容** | tdx板块 vs 东财/同花顺/申万 | 通达信880xxx体系与其他分类不兼容，无法混用 |
+| **SDK路径依赖** | kline_sector_880_incremental | tqcenter SDK 需 E:\tdx\PYPlugins 专用路径，非 scheduler 自动调度，由独立脚本触发 |
 | **已禁用** | edb_data_incremental | EDB宏观数据增量 |
 | **已禁用** | kline_5min_history_backfill | 5分钟K线历史回补 |
 | **已禁用** | news_tushare_incremental | Tushare新闻增量 |
