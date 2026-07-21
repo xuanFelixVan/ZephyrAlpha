@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-07-20T05:29:59Z'
+generated_at: '2026-07-21T00:00:00Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 69
+total_rules: 70
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1764,6 +1764,46 @@ rules:
   - ARCH-PREVENTABILITY-LAYER-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+- rule_id: TRAE-069
+  title: Commit Gateway 滥用监控 5 维阈值配置（P3-1 治本，阈值真源从代码常量提取到 YAML）
+  module_id: TRAE-069
+  scope: commit_gateway_abuse_thresholds
+  domain: TRAE
+  severity: high
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - abuse_threshold_adjustment
+  - rule_data_externalization
+  - reconciler_threshold_reload
+  gate_ids: []  # 数据源类规则，无对应 enforcement gate（消费方为 reconciler 而非 gate）
+  tags:
+  - TRAE
+  - commit_gateway
+  - abuse_monitor
+  - thresholds
+  - rule_data
+  - SSoT
+  - trae_062_derived
+  - P3-1
+  - ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001
+  - ARCH-PREVENTABILITY-LAYER-001
+  aliases:
+  - commit_gateway_abuse_thresholds
+  - 滥用阈值
+  - abuse_thresholds
+  - 5维阈值
+  - five_dimension_thresholds
+  - warn_only_threshold
+  - emergency_commit_threshold
+  - allow_overlap_threshold
+  - forged_gw_marker_threshold
+  - non_gw_commit_threshold
+  - health_score_weights
+  - adaptive_thresholds
+  paired_gate_id: null  # 数据源类规则，无对应 enforcement gate
+  rule_file: docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml
 - rule_id: TRAE-070
   title: 临时文件分类存放铁律（Temporary File Placement，治本 #ARCH-TEMP-FILE-PLACEMENT-001）
   module_id: TRAE-070

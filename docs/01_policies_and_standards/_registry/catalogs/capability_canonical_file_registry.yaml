@@ -6261,6 +6261,15 @@ creation_tokens:
     created_by: "sess-39124-20260720180203"
     capability: "commit_gateway_abuse_monitor"
 
+  # --- trae_069 规则文件本身（2026-07-20，#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001 P3-1）---
+  # 5 维滥用阈值的规则数据真源（SSoT 铁律 trae_062：规则数据真源是 YAML 文件）
+  # 消费方：commit_gateway_abuse_monitor_reconciler.py 通过 _load_thresholds_from_yaml() 读取
+  # 治本（2c 防重建）：登记规则文件本身的 creation_token，AI 通过 capability 反查可发现
+  - file: "docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml"
+    token: "auto-trae-069-abuse-thresholds-20260720"
+    created_by: "sess-6620-20260720122343"
+    capability: "commit_gateway_abuse_monitor"
+
   # --- Phase 3 全链路集成 smoke test（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-5）---
   # 验证 AdaptiveThreshold / health_score / abuse_monitor 三组件端到端集成链路
   # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的集成 test 副本
@@ -6582,3 +6591,9 @@ di_seam_exemptions:
     token: "auto-rollback-bridge-contracts-20260720"
     created_by: "session-sess-18504-20260720123921"
     capability: "rollback_handler"
+  # --- #ARCH-ANY-GOVERNANCE-001 裁定文档（2026-07-21，5.145 系统性 Any 治理专项工程）---
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
+  - file: "docs/02_enterprise_architecture/ruling_any_governance_engineering.md"
+    token: "auto-ruling-any-governance-engineering-20260721"
+    created_by: "ARCH-ANY-GOVERNANCE-001"
+    capability: "any_governance_engineering_ruling"
