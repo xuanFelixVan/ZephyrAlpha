@@ -196,7 +196,7 @@ routes:
       - "src/zephyr/orchestration/runtime_core/orchestrator/**"
       - "src/zephyr/data/persistence/task_repo.py"
       - "src/zephyr/data/persistence/transition.py"
-      - "config/session_state_machine.yaml"
+      - "config/worktree_state_machine.yaml"  # #ARCH-WORKTREE-LIFECYCLE-001
 
     task_keywords:
       - "任务"
