@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2703 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_rule_execution_pairing_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_rule_execution_pairing_gate | docs/03_modules/_domain_governance/blueprint.md | §rule-execution-pairing-gate
 # [MODULE] tests.governance.commit_gates.test_rule_execution_pairing_gate
 # [TTL] task_bound

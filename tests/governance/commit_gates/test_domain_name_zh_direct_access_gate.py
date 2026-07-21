@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2267 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_domain_name_zh_direct_access_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_domain_name_zh_direct_access_gate
 # [STABILITY] evolving

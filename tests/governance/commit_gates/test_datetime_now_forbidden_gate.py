@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2151 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-commit_gates | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+# [A_test] module_id: MOD-GOV_datetime_now_forbidden_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_commit_gates | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] tests.governance.commit_gates.test_datetime_now_forbidden_gate
 # [STABILITY] evolving
 # [SAFETY] L

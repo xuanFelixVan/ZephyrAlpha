@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2101 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-held_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §held-overlap-gate
+# [A_test] module_id: MOD-GOV_held_overlap_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_held_overlap_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §held-overlap-gate
 # [MODULE] tests.test_held_overlap_gate
 # [STABILITY] evolving
 # [SAFETY] L

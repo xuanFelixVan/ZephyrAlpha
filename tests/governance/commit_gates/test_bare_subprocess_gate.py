@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-BARE-SUBPROCESS | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_bare_subprocess_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §ARCH-RUNCOMMAND-WINDOW-FLASH-001
 # [MODULE] tests.governance.commit_gates.test_bare_subprocess_gate
 # [STABILITY] evolving

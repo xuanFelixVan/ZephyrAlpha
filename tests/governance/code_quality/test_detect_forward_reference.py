@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2122 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_detect_forward_reference | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] tests.test_detect_forward_reference
 # [INVARIANTS] has_future_annotations; find_self_references excludes method body; scan_file exit codes

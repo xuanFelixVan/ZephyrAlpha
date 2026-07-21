@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2232 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [A_test] module_id: MOD-GOV_ch_batch_size_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_ch_batch_size_gate | §0.1
 # [MODULE] tests.governance.commit_gates.test_ch_batch_size_gate
 # [STABILITY] evolving
 # [SAFETY] L

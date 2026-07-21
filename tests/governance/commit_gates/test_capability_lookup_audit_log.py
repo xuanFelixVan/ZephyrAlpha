@@ -1,4 +1,4 @@
-# [A_test] module_id: MOD-GOV-capability_lookup_audit_log_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_capability_lookup_audit_log_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_capability_lookup_audit_log
 # [STABILITY] evolving

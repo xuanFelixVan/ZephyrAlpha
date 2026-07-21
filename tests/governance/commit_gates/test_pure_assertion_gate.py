@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-commit_gates | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-GOV_commit_gates | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """test_pure_assertion_gate.py — pure_assertion_gate.py 闭包测试。"""
 from unittest.mock import MagicMock, patch

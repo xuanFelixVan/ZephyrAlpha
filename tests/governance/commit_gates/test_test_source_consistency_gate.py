@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2233 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-test_source_consistency_gate | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [A_test] module_id: MOD-GOV_test_source_consistency_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_test_source_consistency_gate | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_test_source_consistency_gate
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1105 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_human_factors | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_human_factors
 # [INVARIANTS] 疲劳/情绪检测不可禁用;人因告警必须升级

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1890 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_gate11_naming_convention_governance | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-509 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.governance.test_gate11_naming_convention
 # [STABILITY] evolving

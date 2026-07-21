@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2202 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-bare_sql_gate | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [A_test] module_id: MOD-GOV_bare_sql_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_bare_sql_gate | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_bare_sql_gate
 # [STABILITY] evolving
 # [SAFETY] L
@@ -155,7 +155,7 @@ class TestSqlPattern:
 # TestSqlPatternExtended — R94 正则修正后新增覆盖（多列/DISTINCT/跨行等）
 # ---------------------------------------------------------------------------
 class TestSqlPatternExtended:
-    """覆盖旧正则 SELECT\s+\S+\s+FROM 漏检的 SQL 模式。
+    r"""覆盖旧正则 SELECT\s+\S+\s+FROM 漏检的 SQL 模式。
 
     旧正则中 \\S+ 只匹配单个非空白 token，无法覆盖：
     - 多列 SELECT (col1, col2 FROM)

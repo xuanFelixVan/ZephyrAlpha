@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2712 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_forged_gw_marker_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.test_forged_gw_marker_gate
 # [STABILITY] evolving

@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-ruling-ref-gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-ruling_reference_gate | docs/03_modules/_domain_governance/commit_gate_catalog/blueprint.md | §ruling-ref-gate
+# [A_test] module_id: MOD-GOV_ruling_reference_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_ruling_reference_gate | docs/03_modules/_domain_governance/commit_gate_catalog/blueprint.md | §ruling-ref-gate
 # [MODULE] tests.test_ruling_reference_gate
 # [STABILITY] evolving
 # [SAFETY] L
