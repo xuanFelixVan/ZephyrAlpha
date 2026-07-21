@@ -6279,3 +6279,54 @@ entries:
   related_rules: 'trae_060 (向内收三原则)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+
+
+# --- #ARCH-CREATE-GUARD-STALE-HEAD-001: CREATE-GUARD worktree stale HEAD 误报治本 ---
+- issue_id: '#ARCH-CREATE-GUARD-STALE-HEAD-001'
+  title: 'CREATE-GUARD gate worktree stale HEAD 误报——_check_reconciler_marker 用 HEAD 对比导致并发 session 的 reconciler 被误判为新增治本'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    2026-07-22 立项裁定。CREATE-GUARD gate 的 _check_reconciler_marker 检测逻辑
+    对比 staged vs HEAD:reconciliation_registry.py 的 make_*_reconciler 函数集，
+    新增函数需在 def 前 5 行内有 '# trae_060-reviewed:' 标记，否则硬阻断。
+
+    病根（第一性原理）：
+    worktree 模式下 HEAD 可能过时——并发 session 已 merge 新 reconciler 到 dev
+    分支，但当前 session 的 worktree HEAD 仍指向旧 commit（worktree 创建时的快照）。
+    用 HEAD 对比会把并发 session 已 merge 的 reconciler 误判为"新增"，触发误报
+    （误报函数未带 trae_060 标记）。
+
+    实证：上一会话施工 #ARCH-STASH-ACCUMULATION-002 时新增 make_consumers_accuracy_baseline_reconciler，
+    函数实际 EXISTS（reconciliation_registry.py L5973）且 marker 存在于 L5970，
+    但 CREATE-GUARD 误报为"未标记新增 reconciler"——根因是 worktree HEAD 过时。
+
+    治本方案（本次落地）：
+    1. 新增 _resolve_main_branch_ref helper：依次尝试 dev/main/master，返回第一个
+       存在的分支名作为对比基准。全部不存在时回退到 "HEAD"（保留原行为）。
+    2. 修改 _check_reconciler_marker：用主分支 ref 替代 HEAD 做对比，使已 merge
+       到主分支的 reconciler 不被误判为新增。
+
+    设计权衡：
+    1. 选 dev/main/master 顺序——本项目主分支是 dev，但保留 main/master 兼容性。
+    2. fail-open 设计——git rev-parse 失败时回退到 HEAD（不阻断 commit，避免
+       误伤正常场景）。
+    3. 不修改 [CONSUMERS] 字段或其他 gate——根因在 HEAD 对比逻辑，治本在单点。
+
+    不实施项（避免过度工程）：
+    - worktree 自动 rebase 主分支（超出本 gate 职责，应在 session_worktree 层解决）
+    - 跨 session 依赖登记机制（#ARCH-DEP-PREMERGE-ENFORCE 长期项已覆盖）
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/create_guard.py（_resolve_main_branch_ref 新增 + _check_reconciler_marker 主分支 ref 修改）'
+  fix_phase: |
+    Phase 1（本次落地，2026-07-22）：
+      - create_guard.py: 新增 _resolve_main_branch_ref 函数（dev/main/master 顺序探测）
+      - create_guard.py: _check_reconciler_marker 用 _main_ref 替代 HEAD 做对比
+      - docstring 注明 worktree 模式修复说明
+    长期方向（不实施）：
+      - worktree 自动 rebase 机制（session_worktree 层解决）
+  status: resolved
+  related_adjudication: '#ARCH-STASH-ACCUMULATION-002 (worktree 模式触发本误报的上下文), #ARCH-WORKTREE-002 (worktree 缺陷祖父裁定)'
+  related_rules: 'trae_060 (向内收三原则 + 元问题3 reconciler 审查标记), AGENTS.md FP-ISO.4C (worktree 君子协定)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

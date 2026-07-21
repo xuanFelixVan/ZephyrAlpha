@@ -187,18 +187,43 @@ def _find_unmarked_reconcilers(
     return unmarked
 
 
+def _resolve_main_branch_ref(gateway) -> str:
+    """解析主分支名（worktree 模式下 HEAD 可能过时，需对比主分支）。
+
+    依次尝试 dev / main / master，返回第一个存在的分支名。
+    全部不存在时返回 "HEAD"（回退到原行为）。
+    """
+    for _branch in ("dev", "main", "master"):
+        try:
+            _r = gateway._run_git(["git", "rev-parse", "--verify", f"refs/heads/{_branch}"])
+            if _r is not None and _r.returncode == 0:
+                return _branch
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            continue
+    return "HEAD"
+
+
 def _check_reconciler_marker(gateway, commit_files_rel: set[str]) -> tuple[bool, str]:
     """元问题3治本：新增 make_*_reconciler 需 trae_060 §4 审查标记。
 
     放在最前：reconciliation_registry.py 是已存在文件，不在 new_py_files 里，
     若等 new_py_files 过滤后检测，会被 "not new_py_files: return True" 提前返回跳过。
+
+    worktree 模式修复（#ARCH-CREATE-GUARD-STALE-HEAD-001）：
+    worktree HEAD 可能过时（并发 session 已 merge 新 reconciler 到 dev），
+    用 HEAD 对比会把并发 session 的 reconciler 误判为"新增"。
+    治本：对比主分支（dev/main/master）而非 worktree HEAD，
+    使已 merge 到主分支的 reconciler 不被误判为新增。
     """
     if _RECONCILER_REGISTRY_REL not in commit_files_rel:
         return True, ""
 
+    # 主分支 ref（worktree 模式下比 HEAD 更新，避免误判并发 session 的 reconciler）
+    _main_ref = _resolve_main_branch_ref(gateway)
+
     try:
         staged_res = gateway._run_git(["git", "show", f":{_RECONCILER_REGISTRY_REL}"])
-        head_res = gateway._run_git(["git", "show", f"HEAD:{_RECONCILER_REGISTRY_REL}"])
+        head_res = gateway._run_git(["git", "show", f"{_main_ref}:{_RECONCILER_REGISTRY_REL}"])
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         staged_res = head_res = None  # fail-open：git 故障时不阻断（避免误伤正常 commit）
 
