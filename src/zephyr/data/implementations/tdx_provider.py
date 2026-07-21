@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestTDXProvider
-# [A_module] module_id=MOD-L00-004-tdx_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-tdx_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """通达信数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -41,8 +41,13 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
+_TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
 
 
 class TDXProvider(DataSourceBase):
@@ -130,7 +135,7 @@ class TDXProvider(DataSourceBase):
 
         mootdx block() 返回 DataFrame: [blockname, block_type, code_index, code]。
         """
-        table = payload.table or "c1_market.industry_class"
+        table = payload.table or _TBL_INDUSTRY_CLASS
         columns = ["sector_code", "sector_name", "stock_code", "stock_name"]
         t0 = time.time()
         try:
@@ -165,7 +170,7 @@ class TDXProvider(DataSourceBase):
         mootdx index_bars(symbol, frequency=9, start, offset) 返回 DataFrame。
         frequency: 9=日线。
         """
-        table = payload.table or "c1_market.kline_sector"
+        table = payload.table or _TBL_KLINE_SECTOR
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume", "amount"]
         symbols = payload.symbols or []
         count = int(payload.extra.get("count", 100)) if payload.extra else 100

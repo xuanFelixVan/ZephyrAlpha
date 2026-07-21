@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；未登录->RuntimeError
 # [TESTS] tests/zephyr/data/test_providers.py::TestBaostockProvider
-# [A_module] module_id=MOD-L00-004-baostock_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-baostock_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -42,8 +42,14 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+_TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 
 
 class BaostockProvider(DataSourceBase):
@@ -156,7 +162,7 @@ class BaostockProvider(DataSourceBase):
         baostock API 变更：返回 3 列（updateDate/code/code_name），无 weight 列。
         """
         bs = self._tls.bs
-        table = payload.table or "c1_market.index_constituent"
+        table = payload.table or _TBL_INDEX_CONSTITUENT
         columns = ["update_date", "code", "code_name", "weight"]
         t0 = time.time()
         try:
@@ -190,7 +196,7 @@ class BaostockProvider(DataSourceBase):
         返回 2 列: calendar_date, is_trading_day。
         """
         bs = self._tls.bs
-        table = payload.table or "c1_market.trade_calendar"
+        table = payload.table or _TBL_TRADE_CALENDAR
         columns = ["calendar_date", "is_trading_day"]
         t0 = time.time()
         try:
@@ -226,7 +232,7 @@ class BaostockProvider(DataSourceBase):
         作为 iFind 降级源使用。数据滞后约1周。
         """
         bs = self._tls.bs
-        table = payload.table or "c1_market.kline_daily"
+        table = payload.table or _TBL_KLINE_DAILY
         columns = ["date", "code", "open", "high", "low", "close", "volume", "amount"]
         t0 = time.time()
         symbols = payload.symbols or ["sh.600000"]

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；token缺失->RuntimeError
 # [TESTS] tests/zephyr/data/test_providers.py::TestTushareProvider
-# [A_module] module_id=MOD-L00-004-tushare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-tushare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -42,8 +42,12 @@ from ..provider_base import (
 from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
+from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 
 class TushareProvider(DataSourceBase):
@@ -129,7 +133,7 @@ class TushareProvider(DataSourceBase):
 
         按 trade_date 分批拉取，每批一天。
         """
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         start = payload.start or datetime.date.today() - datetime.timedelta(days=30)
         end = payload.end or datetime.date.today()
@@ -180,7 +184,7 @@ class TushareProvider(DataSourceBase):
 
         按 trade_date 分批拉取，每批一天。
         """
-        table = "c3_fundamental.news_data"
+        table = _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         start = payload.start or datetime.date.today() - datetime.timedelta(days=30)
         end = payload.end or datetime.date.today()

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestTickFlowProvider
-# [A_module] module_id=MOD-L00-004-tickflow_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-tickflow_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """TickFlow 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -41,8 +41,13 @@ from ..provider_base import (
     FetchResult,
 )
 from ..policy_registry import SourcePolicy
+from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_KLINE_US_DAILY = get_registry().table("market_us_kline_daily")
+_TBL_US_INDEX = get_registry().table("market_us_index")
 
 
 # 默认美股标的清单（ETF 替代指数 + 科技龙头）
@@ -138,7 +143,7 @@ class TickFlowProvider(DataSourceBase):
         每个标的作为一批 yield FetchResult。
         免费版支持 A股/美股/港股日K线，用 period+count 参数（不支持 start_time/end_time）。
         """
-        table = payload.table or "c1_market.kline_us_daily"
+        table = payload.table or _TBL_KLINE_US_DAILY
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume"]
         symbols = payload.symbols or _DEFAULT_US_SYMBOLS
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
@@ -198,7 +203,7 @@ class TickFlowProvider(DataSourceBase):
         SPX->SPY, DJI->DIA, IXIC->QQQ。
         免费版支持美股日K线，用 period+count 参数。
         """
-        table = payload.table or "c1_market.us_index"
+        table = payload.table or _TBL_US_INDEX
         columns = ["trade_date", "index_code", "etf_code", "open", "high", "low", "close", "volume"]
         start = (payload.start or datetime.date.today() - datetime.timedelta(days=365))
         end = payload.end or datetime.date.today()

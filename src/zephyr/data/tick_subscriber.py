@@ -32,7 +32,12 @@ import time
 from datetime import datetime
 from decimal import Decimal
 
+from zephyr.data.table_registry import get_registry
+
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
+_TBL_TICK_DATA = get_registry().table("market_tick")
 
 # tick_data 表14字段
 _TICK_COLUMNS = [
@@ -241,7 +246,7 @@ class TickSubscriber:
         # 构造 FetchResult 给 BufferedWriter
         from zephyr.data.provider_base import FetchResult
         result = FetchResult(
-            table="c1_market.tick_data",
+            table=_TBL_TICK_DATA,
             columns=_TICK_COLUMNS,
             rows=[row],
             last_key="",
@@ -351,7 +356,7 @@ class TickSubscriber:
 
         from zephyr.data.buffered_writer import BufferedWriter
         self._writer = BufferedWriter(
-            "c1_market.tick_data",
+            _TBL_TICK_DATA,
             max_rows=self._batch_rows,
             max_seconds=self._batch_seconds,
         )

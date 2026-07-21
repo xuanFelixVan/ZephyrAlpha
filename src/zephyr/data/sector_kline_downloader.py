@@ -35,12 +35,14 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 
+from zephyr.data.table_registry import get_registry
+
 log = logging.getLogger(__name__)
 
 # 裁定 #ARCH-CH-024: 删除硬编码 IP/端口/库名（绕过 ch_config 真源治本）
 # 连接配置由 ch_writer 内部从 ch_config.load_ch_config() 读取（config/.env.clickhouse 真源）
-# 表名是业务标识（非连接配置），保留为模块常量（Phase 2 将改为 TableRegistry 派生）
-_CH_TABLE = "c1_market.kline_sector_880"
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（TableRegistry 消费层）
+_CH_TABLE = get_registry().table("market_sector_kline_880")
 
 _TQCENTER_PATH = r"E:\tdx\PYPlugins\user"
 
