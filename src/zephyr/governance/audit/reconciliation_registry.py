@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
+# [BLUEPRINT] MOD-GOV-reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
 # [MODULE] zephyr.governance.audit.reconciliation_registry
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] (none — pure stdlib)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile_for 永不抛异常——单个 reconciler 异常降级为 ReconcileResult(action="warn")
 # [TESTS] tests/test_reconciliation_registry.py (P3-T1)
-# [A_module] module_id=MOD-GOV_reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 # noqa: m10-time-trigger  M10豁免: "cron"在注释中说明reconciler是事件触发(非cron/manual)
