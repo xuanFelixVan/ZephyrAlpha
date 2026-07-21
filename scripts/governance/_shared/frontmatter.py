@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.governance._shared.frontmatter
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
@@ -134,8 +134,13 @@ PY_HEADER_PATTERN = re.compile(r"^#\s*\[([\w-]+)\]\s?(.*)")
 def parse_py_header(content: str) -> dict | None:
     """解析 .py/.sh/.ps1/.mmd 文件的注释行头部（A_full/A_test/E_shell 格式）。
 
-    扫描前 30 行，匹配 `# [FIELD] value` 注释行，返回字段名→值的 dict。
+    扫描前 200 行，匹配 `# [FIELD] value` 注释行，返回字段名→值的 dict。
     键名统一小写化（如 BLUEPRINT→blueprint）。
+
+    2026-07-22: 80→200 行——octuple-spaced 文件（如 session_worktree.py，
+    每字段间 7 空行 = 8 行/字段，15 字段跨 ~120 行）的 BLUEPRINT 头部末尾字段
+    （TTL 在 L121）超出 80 行扫描窗口，导致 TTL-METADATA 假阳性
+    （#ARCH-SWEEP-ACTIVE-LOCKFILE-001 commit 时 TTL-METADATA 假阳性）。
 
     Args:
         content: 文件内容字符串。
@@ -144,7 +149,7 @@ def parse_py_header(content: str) -> dict | None:
         字段 dict（无匹配时返回 None）。
     """
     fields: dict[str, str] = {}
-    for line in content.splitlines()[:30]:
+    for line in content.splitlines()[:200]:
         m = PY_HEADER_PATTERN.match(line.rstrip())
         if m:
             fields[m.group(1).lower()] = m.group(2).strip()
