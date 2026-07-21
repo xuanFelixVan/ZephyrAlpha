@@ -106,12 +106,6 @@ def make_directory_contract_gate() -> GateSpec:
             / "d1_structure"
             / "check_directory_contract.py"
         )
-        # 治本(2026-07-18): 区分"非 Zephyr 项目"（scripts/governance 目录不存在=skip）
-        # vs"Zephyr 项目但 checker 缺失"（fail-closed，环境损坏）。
-        # 原因：测试用 tmp_path 创建隔离 git 仓库，无 governance 结构，不应被 DCR 阻断。
-        governance_dir = project_root / "scripts" / "governance" / "d1_structure"
-        if not governance_dir.is_dir():
-            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping DCR"
         if not check_script.is_file():
             # fail-closed：Zephyr 项目但 checker 缺失是环境异常，必须阻断
             return False, f"check_directory_contract.py not found: {check_script}"
@@ -144,9 +138,14 @@ def make_directory_contract_gate() -> GateSpec:
         # 5. 解析结果——exit 0=通过，1=有违规，2=脚本异常
         if result.returncode == 0:
             return True, "directory contract check passed"
-        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        # Compat str/bytes: run_subprocess_hidden forces text mode
+        def _decode(s: object) -> str:
+            if isinstance(s, bytes):
+                return s.decode("utf-8", errors="replace").strip()
+            return str(s).strip() if s else ""
+        detail = _decode(result.stderr)
         if not detail:
-            detail = result.stdout.decode("utf-8", errors="replace").strip()
+            detail = _decode(result.stdout)
         return False, detail or "directory contract violation (unknown detail)"
 
     return GateSpec(gate_id="DIRECTORY-CONTRACT", check=_check, priority=30)
