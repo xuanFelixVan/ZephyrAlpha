@@ -57,10 +57,29 @@ __all__ = ["make_capability_overlap_gate"]
 _REGISTRY_PREFIX = "docs/01_policies_and_standards/_registry/"
 
 
+# #ARCH-CAPABILITY-OVERLAP-001 治本（2026-07-22）：
+# 高频共性 stop-word 集合——这些 token 在 commit_gates/ 目录下所有 *_gate.py 文件名
+# 中必然出现（如 gate），或在其他命名约定中高频出现（如 test/init）。保留这些 token
+# 作为 overlap 信号无诊断价值（任何 *_gate.py 都会与所有已注册 gate capability 产生
+# 'gate' token 交集 = 确定性误报）。原阈值 len>=4 使 gate（4 字符）通过过滤。
+# 方案 B（stop-word）比方案 A（阈值>=5）更精准——不会误过滤 data/core/base 等
+# 有诊断价值的 4 字符 token。
+_STOP_WORDS: frozenset[str] = frozenset({
+    "gate",   # 77 个 *_gate.py 文件的共性后缀
+    "test",   # 测试文件共性前缀
+    "init",   # __init__.py 的共性 token
+})
+
+
 def _tokenize(name: str) -> set[str]:
-    """文件名/alias 分词：按 ``_`` / ``-`` / ``.`` 拆分，过滤 <4 字符的 token。"""
+    """文件名/alias 分词：按 ``_`` / ``-`` / ``.`` 拆分，过滤 <4 字符的 token + stop-word。
+
+    #ARCH-CAPABILITY-OVERLAP-001 治本（2026-07-22）：新增 _STOP_WORDS 过滤，
+    排除 gate/test/init 等高频共性短 token，避免 *_gate.py 文件必然与已注册
+    gate capability 产生 'gate' token 交集的确定性误报。
+    """
     parts = re.split(r"[_\-\.]", name.lower())
-    return {p for p in parts if len(p) >= 4}
+    return {p for p in parts if len(p) >= 4 and p not in _STOP_WORDS}
 
 
 # === 裁定#217 Tier2 P1 Extract Method 重构（2026-07-15）===
