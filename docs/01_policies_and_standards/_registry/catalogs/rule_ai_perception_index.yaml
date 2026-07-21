@@ -7,7 +7,7 @@ generated_at: '2026-07-21T00:00:00Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 73
+total_rules: 74
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -2042,3 +2042,31 @@ rules:
   - ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
+- rule_id: TRAE-078
+  title: force=True 逃生通道安全分类铁律（Force Merge Safety Classification，裁定 #ARCH-FORCE-MERGE-SAFETY-001）
+  module_id: TRAE-078
+  scope: force_merge_safety
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - session_worktree_merge
+  gate_ids: []
+  tags:
+  - TRAE
+  - force_merge_safety
+  - L1_foundation
+  - non_bypassable
+  - bypassable
+  - escape_hatch
+  - ARCH-FORCE-MERGE-SAFETY-001
+  aliases:
+  - RULE-FORCE-MERGE-SAFETY
+  - force=True 安全分类
+  - 不可绕过类
+  - 可绕过类
+  - ARCH-FORCE-MERGE-SAFETY-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml

@@ -71,9 +71,9 @@ sections:
       pass: 跳过工作区残留 fail-closed 检查（对标 force=True 语义）
       fail: 滥用风险——可能搭便车提交其他 session 的 WIP
     - type: escape_hatch
-      check: session_worktree_merge(force=True) 跳过 commit 持久性验证
-      pass: 跳过 SCHRODINGER_ROLLBACK_DETECTED 检测（对标 base freshness check 的 force 语义）
-      fail: 滥用风险——可能引入薛定谔的回退
+      check: session_worktree_merge(force=True) 不可绕过 commit 持久性验证（#ARCH-FORCE-MERGE-SAFETY-001 治本）
+      pass: N/A——force=True 不再跳过 commit 持久性验证（2026-07-22 治本，不可绕过类）
+      fail: N/A——此项已从可绕过类移除，force=True 无效
     actions:
     - type: mandatory
       step: '铁律1: session_worktree_commit 成功创建 commit 后 MUST 调用 _write_commit_persisted_marker 写持久性标记——sweep 看到标记跳过，merge 前验证 commit 仍存在'
@@ -94,7 +94,7 @@ sections:
     - type: forbidden
       step: '禁止: session_worktree_start 在有真实代码残留时 fail-open 放行——100% AI 场景下 warn 无效，必须 fail-closed'
     - type: forbidden
-      step: '禁止: session_worktree_merge 跳过 commit 持久性验证（除非 force=True 显式逃生）——commit 消失后 merge 会导致薛定谔的回退'
+      step: '禁止: session_worktree_merge 跳过 commit 持久性验证——commit 消失后 merge 会导致薛定谔的回退（#ARCH-FORCE-MERGE-SAFETY-001 治本：force=True 也不可绕过此项检测）'
     examples:
     - scenario: commit 持久性标记防 sweep 删除（治本目标）
       正确: session_worktree_commit 创建 commit → 写持久性标记 → AI 等待 merge → 并发 session 的 sweep 检查标记 → 24h 内 → 跳过 → commit 保留 → merge 成功
@@ -188,8 +188,7 @@ enforcement:
   - ai_pre_action_check
   bypass_allowed: true
   bypass_markers:
-  - force=True
-  - allow_workspace_drift=True
+  - allow_workspace_drift=True  # force=True 已移除（#ARCH-FORCE-MERGE-SAFETY-001 治本，commit 持久性验证不可绕过）
 metadata:
   change_policy: evolving
   impact_level: H

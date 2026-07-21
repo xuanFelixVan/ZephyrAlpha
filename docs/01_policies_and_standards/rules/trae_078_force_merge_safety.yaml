@@ -1,0 +1,178 @@
+rule_id: TRAE-078
+title: force=True 逃生通道安全分类铁律（Force Merge Safety Classification，裁定 #ARCH-FORCE-MERGE-SAFETY-001）
+name: force merge 逃生通道安全分类铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-078
+priority: 66
+depends_on:
+- TRAE-069
+- TRAE-074
+- TRAE-076
+tags:
+- TRAE
+- force_merge_safety
+- L1_foundation
+- session_lifecycle
+- escape_hatch_classification
+- non_bypassable
+- RULE-FORCE-MERGE-SAFETY
+- ARCH-FORCE-MERGE-SAFETY-001
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-FORCE-MERGE-SAFETY
+- force merge 安全分类
+- force merge safety classification
+- 不可绕过类检测
+- non-bypassable checks
+- ARCH-FORCE-MERGE-SAFETY-001
+severity: critical
+scope: force_merge_safety_classification
+domain: TRAE
+triggers:
+- operation: session_worktree_merge
+- gate_id: WORKSPACE-CLEAN-CHECK
+- gate_id: PRE-MERGE-TOPO-CHECK
+- gate_id: BASE-FRESHNESS-MERGE
+- gate_id: SCHRODINGER_ROLLBACK_DETECTED
+sections:
+  force_merge_safety_classification:
+    section_type: procedure
+    title: force=True 逃生通道安全分类铁律（RULE-FORCE-MERGE-SAFETY）
+    original_rules:
+    - RULE-FORCE-MERGE-SAFETY
+    - 裁定 #ARCH-FORCE-MERGE-SAFETY-001
+    - 裁定 #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (扩展)
+    - 裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展)
+    - 裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (扩展)
+    conditions:
+    - type: classification
+      check: force=True 逃生通道安全分类——不可绕过类（non-bypassable）
+      pass: commit 持久性验证 + base 新鲜度检测——force=True 也不跳过
+      fail: N/A——此两类检测无 post-merge 替代 + 跳过后不可挽回（薛定谔的回退）
+    - type: classification
+      check: force=True 逃生通道安全分类——可绕过类（bypassable）
+      pass: WORKSPACE-CLEAN-CHECK + PRE-MERGE-TOPO-CHECK + 全部 commit gate——force=True 可跳过
+      fail: 有 post-merge reconciler 兜底（workspace_hygiene_reconciler / blueprint_frontmatter_reconciler / pre-commit 已运行）
+    - type: trigger
+      check: session_worktree_merge(force=True) 调用 commit 持久性验证
+      pass: 始终运行 _read_commit_persisted_marker + tip hash 对比
+      fail: hash 不匹配 → fail-closed 返回 SCHRODINGER_ROLLBACK_DETECTED（force=True 不可绕过）
+    - type: trigger
+      check: session_worktree_merge(force=True) 调用 base 新鲜度检测
+      pass: 始终运行 _ensure_worktree_base_fresh(stage="merge")
+      fail: base 不新鲜 → fail-closed 返回 base_sync_failed=True（force=True 不可绕过）
+    - type: escape_hatch
+      check: session_worktree_merge(force=True) 跳过可绕过类检测
+      pass: 跳过 WORKSPACE-CLEAN-CHECK + PRE-MERGE-TOPO-CHECK + commit gate（有 reconciler 兜底）
+      fail: 滥用风险——加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 6 维审计（force_merge 维度，7d >5 触发告警）
+    actions:
+    - type: mandatory
+      step: '铁律1: session_worktree_merge(force=True) MUST NOT 跳过 commit 持久性验证——无 post-merge 替代 + 跳过后不可挽回（薛定谔的回退）'
+    - type: mandatory
+      step: '铁律2: session_worktree_merge(force=True) MUST NOT 跳过 base 新鲜度检测——无 post-merge 替代 + 跳过后不可挽回（base 不新鲜导致 merge 报成功但不落盘）'
+    - type: mandatory
+      step: '铁律3: session_worktree_merge(force=True) MAY 跳过 WORKSPACE-CLEAN-CHECK——有 post-commit workspace_hygiene_reconciler 兜底'
+    - type: mandatory
+      step: '铁律4: session_worktree_merge(force=True) MAY 跳过 PRE-MERGE-TOPO-CHECK——有 post-merge blueprint_frontmatter_reconciler 部分兜底 + 是 sys.path 误报主战场'
+    - type: mandatory
+      step: '铁律5: session_worktree_merge(force=True) MAY 跳过全部 commit gate——pre-commit 阶段已运行 + _PRE_MERGE_SKIP_ALL_COMMIT_GATES 默认 True'
+    - type: mandatory
+      step: '铁律6: force=True 仍 MUST 落审计（_audit_force_merge_usage 写 .runtime/gate_audit/force_merge_usage.jsonl）——滥用监控依赖此真源'
+    - type: forbidden
+      step: '禁止: 新增任何检测到"不可绕过类"而不加安全分类——新增 force 跳过点 MUST 评估是否有 post-merge 替代 + 是否可挽回'
+    - type: forbidden
+      step: '禁止: 将"不可绕过类"检测降级为"可绕过类"——除非新增 post-merge reconciler 提供兜底'
+    examples:
+    - scenario: force=True 不可绕过 commit 持久性验证（治本目标）
+      正确: session_worktree_merge(force=True) → 仍运行 commit 持久性验证 → commit_hash 匹配 → 继续 merge
+      错误: session_worktree_merge(force=True) → 跳过 commit 持久性验证 → commit 已被 sweep 删除 → merge 报成功但 git log 无 merge commit（薛定谔的回退）
+      reason: commit 持久性验证是薛定谔的回退唯一事前防护——跳过后无可挽回
+    - scenario: force=True 不可绕过 base 新鲜度检测
+      正确: session_worktree_merge(force=True) → 仍运行 base 新鲜度检测 → base 新鲜 → 继续 merge
+      错误: session_worktree_merge(force=True) → 跳过 base 新鲜度检测 → base 已过期 → merge 报成功但不落盘（薛定谔的回退）
+      reason: base 不新鲜导致 merge-base 计算错误——跳过后无可挽回
+    - scenario: force=True 可绕过 WORKSPACE-CLEAN-CHECK（有 reconciler 兜底）
+      正确: session_worktree_merge(force=True) → 跳过 WORKSPACE-CLEAN-CHECK → merge 成功 → post-commit workspace_hygiene_reconciler 检测搭便车 → warn
+      错误: session_worktree_merge(force=True) → 跳过 WORKSPACE-CLEAN-CHECK → merge 成功 → 无 reconciler 兜底 → 搭便车提交未被发现
+      reason: WORKSPACE-CLEAN-CHECK 有 post-commit reconciler 兜底（虽 warn 非 fail-closed，但可追溯）
+    common_mistakes:
+    - '❌ force=True 跳过 commit 持久性验证——无 post-merge 替代 + 不可挽回（薛定谔的回退）'
+    - '❌ force=True 跳过 base 新鲜度检测——无 post-merge 替代 + 不可挽回'
+    - '❌ 新增 force 跳过点不评估安全分类——可能将"不可绕过类"误归为"可绕过类"'
+    - '❌ force=True 时不落审计——滥用监控失去真源'
+    background:
+      source: 2026-07-22 裁定 #ARCH-FORCE-MERGE-SAFETY-001（红蓝极限对抗测试发现 force=True 跳过5处检测中2处无替代且不可挽回）
+      rationale: |
+        红蓝极限对抗测试（2026-07-22）发现 force=True 逃生通道跳过5处检测，
+        其中2处（commit 持久性 + base 新鲜度）无 post-merge 替代且不可挽回：
+
+        5处跳过风险评估：
+        | # | 检测 | post-merge 替代 | 可挽回 | 治本判定 |
+        |---|---|---|---|---|
+        | 1 | commit 持久性（薛定谔的回退） | 无 | 否 | 不可绕过 |
+        | 4 | base 新鲜度 | 无 | 否 | 不可绕过 |
+        | 2 | WORKSPACE-CLEAN-CHECK | 有 | 是 | 可绕过 |
+        | 3 | PRE-MERGE-TOPO-CHECK | 部分 | 是 | 可绕过 |
+        | 5 | 全部 commit gate | 强替代 | 是 | 可绕过 |
+
+        第一性原理分析：
+        - 100% AI 开发的循环依赖：AI 既是开发者又是被治理对象
+        - force=True 是为打破循环依赖而设计——基础设施故障时需逃生
+        - 但"逃生"不等于"无监管"——不可绕过类检测是薛定谔的回退最后防线
+        - 治本方案：分类管理（不可绕过类 + 可绕过类），而非完全移除 force
+
+        与现有裁定的关系：
+        - 扩展 #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001：原裁定 force=True 跳过全部检测
+        - 扩展 #ARCH-WORKTREE-BASE-FRESHNESS-001：原裁定 force=True 可跳过 base 新鲜度
+        - 扩展 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001：原裁定 force=True 可跳过 commit 持久性
+        - 遵循 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001：force=True 仍落审计 + 滥用监控
+      related_arch: '#ARCH-FORCE-MERGE-SAFETY-001, #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (扩展), #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展), #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (扩展)'
+references:
+  rule_ids:
+  - TRAE-069
+  - TRAE-074
+  - TRAE-076
+  scripts:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+  - tests/governance/rule_bridge/test_session_worktree.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  modules:
+  - MOD-GOV-SESSION_WORKTREE
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §FP-ISO.4C
+  - AGENTS.md §RULE-FORCE-MERGE-SAFETY
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+enforcement:
+  paired_gate_id: null  # 本规则是代码内嵌检测（session_worktree_merge 中的 force 分类逻辑），无独立 commit gate
+  type: code_embedded_plus_doc
+  executors:
+  - session_worktree_merge_force_safety_guard
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: true  # force=True 仍可用（绕过可绕过类），但不可绕过类不可绕过
+  bypass_markers:
+  - force=True  # 仅绕过可绕过类（WORKSPACE-CLEAN / TOPO / commit gate），不可绕过类（commit 持久性 + base 新鲜度）不可绕过
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-FORCE-MERGE-SAFETY-001, #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001, #ARCH-WORKTREE-BASE-FRESHNESS-001, #ARCH-WORKTREE-COMMIT-PERSISTENCE-001'
+provenance:
+  extracted_at: '2026-07-22'
+  extracted_by: sess-38412-20260722025002
+  source: '裁定 #ARCH-FORCE-MERGE-SAFETY-001（红蓝极限对抗测试修复，sess-38412-20260722025002）'

@@ -318,7 +318,7 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 
 | # | 严重度 | 问题 | 修复方案 | 修复文件 |
 |---|--------|------|---------|---------|
-| 1 | 高 | force=True 跳过 P0 硬阻断 gate | **已知限制记录**：force=True 是 FP-ISO.4C 合法逃生通道，跳过的是 pre-merge 阶段的重复 gate 检查（pre-commit 阶段已运行）。审计机制 `_audit_force_merge_usage` 已落盘。未来改进方向：force=True 时仍运行 safety-critical gate 子集（需 GateSpec 增加 safety 字段）。 | 本节记录 |
+| 1 | 高 | force=True 跳过 P0 硬阻断 gate | **已治本**（#ARCH-FORCE-MERGE-SAFETY-001，2026-07-22）：force=True 不再跳过**不可绕过类**检测（commit 持久性验证 + base 新鲜度检测）。仅绕过**可绕过类**（有 reconciler 兜底的）。详见 §7.4。 | session_worktree.py + trae_078 + trae_076 |
 | 2 | 中 | warn-only metric 无升级硬阻断路径 | **定量升级条件定义**：M22 docstring 覆盖率倒数 >100 时升级 pre-commit gate；M23 asyncio 调用 >30 时升级；M26 TODO/FIXME >20 时升级；M27 open() 未在 with >10 时升级；M29 资源未在 try/finally >20 时升级。升级路径：metric count 超阈值 → 新建对应 pre-commit gate → 从 METRICS 列表移除（gate 接管阻断）。 | 本节记录 |
 | 3 | 中 | M18 metric_id 跳号缺失 | **METRICS 列表注释**：M18 reserved，原 M18（治理层收敛缺口数 v1）已合并至 M19，编号保留不回收（连续性约定）。 | architecture_health_dashboard.py METRICS 列表 |
 | 4 | 低 | dashboard 快照无 TTL 清理 | **新增 `_cleanup_old_snapshots` 函数**：保留最近 30 天快照，删除过期 `dashboard_*.json`（latest.json 不在清理范围）。每次 `--snapshot` 时自动执行。 | architecture_health_dashboard.py |
@@ -344,19 +344,22 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 
 升级路径：metric count 超阈值 → 新建对应 pre-commit gate → 从 METRICS 列表移除（gate 接管阻断）。
 
-### 7.4 force=True 已知限制（问题 1 详细说明）
+### 7.4 force=True 安全分类治本（问题 1 已修复）
 
-**现状**：`session_worktree_merge(force=True)` 跳过 pre-merge 阶段的 commit gate 检查（L4084-4096）。这是 FP-ISO.4C 设计的合法逃生通道，用于"pre-merge gate 误报或基础设施故障"场景。
+**现状**（#ARCH-FORCE-MERGE-SAFETY-001，2026-07-22 治本）：`session_worktree_merge(force=True)` 不再跳过**不可绕过类**检测。force=True 仅绕过**可绕过类**检测（有 post-merge reconciler 兜底的）。
 
-**风险评估**：
-- force=True 跳过的是 **pre-merge 阶段的重复 gate 检查**，不是首次检查。pre-commit 阶段（session_worktree_commit）gate 已运行。
-- 真实风险：如果 AI 在 commit 后、merge 前修改 worktree 代码（不 commit），然后 force=True merge。但 git merge 只 merge 已 commit 的内容，未 commit 的修改不会被 merge。
-- 审计机制：`_audit_force_merge_usage` 已落盘 force_merge 维度到 6 维滥用审计（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001）。
+**安全分类**（代码内嵌实现，不扩展 GateSpec）：
+- **不可绕过类**（force=True 也不跳过）：commit 持久性验证（薛定谔的回退防护）+ base 新鲜度检测。理由：无 post-merge 替代 + 跳过后不可挽回。
+- **可绕过类**（force=True 可跳过）：WORKSPACE-CLEAN-CHECK + PRE-MERGE-TOPO-CHECK + commit gate。理由：有 post-merge reconciler 兜底。
 
-**未来改进方向**（不在本次修复范围）：
-- GateSpec 增加 `safety: str` 字段（L/M/H）
-- force=True 时仍运行 safety=L 的 gate 子集（DATETIME-NOW-FORBIDDEN/IMPORT-INTEGRITY/UNDEFINED-NAME 等）
-- 需要新增 GATE-SAFETY-FIELD 裁定 + 全量 gate 标注 safety 字段
+**治本实现**（session_worktree.py）：
+- L3897-3932：commit 持久性验证移除 `if not force:` 包裹——force=True 也不跳过
+- L4056-4080：base 新鲜度检测移除 `if force:` / `else:` 分支——force=True 也不跳过
+- L3865-3871：docstring 更新——force 参数明确说明不可绕过类
+
+**审计机制**：`_audit_force_merge_usage` 已落盘 force_merge 维度到 6 维滥用审计（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001）。
+
+**规则文件**：TRAE-078（docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml）。
 
 ---
 

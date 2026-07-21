@@ -493,7 +493,7 @@ def test_worktree_abort_stashes_tracked_files(_isolated_repo):
 
 
 def test_breaking_change_error_references_section_9_7(_isolated_repo):
-    """S3-C: BREAKING_CHANGE 阻断消息引用 §9.7 治本标签（非陈旧行号 L391/L394）。
+    r"""S3-C: BREAKING_CHANGE 阻断消息引用 §9.7 治本标签（非陈旧行号 L391/L394）。
 
     陈旧行号引用（L391/L394）随 AGENTS.md 增长而失效——改为 §9.7 治本标签（与
     `_check_concurrency_block` docstring + AGENTS.md L554 内部标签一致）。
@@ -1733,10 +1733,11 @@ class TestBaseFreshnessFullLifecycle:
         assert r_merge.get("merged") is True, f"merge failed: {r_merge}"
         kill_all_heartbeat_daemons(_isolated_repo)
 
-    def test_merge_force_skips_base_check(self, _isolated_repo, monkeypatch):
-        """session_worktree_merge(force=True) 跳过 base freshness check。
+    def test_merge_force_does_not_skip_base_freshness(self, _isolated_repo, monkeypatch):
+        """#ARCH-FORCE-MERGE-SAFETY-001：force=True 不可绕过 base 新鲜度检测（不可绕过类）。
 
-        monkeypatch WORKSPACE-CLEAN-CHECK 放行——同 test_merge_base_freshness_check_invoked。
+        2026-07-22 治本：force=True 从"跳过 base freshness"改为"不跳过"。
+        理由：无 post-merge 替代 + 跳过后不可挽回（薛定谔的回退）。
         """
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
@@ -1746,15 +1747,48 @@ class TestBaseFreshnessFullLifecycle:
         wt_path = Path(r_start["worktree_path"])
         marker = wt_path / _TEST_FILE_B
         marker.parent.mkdir(parents=True, exist_ok=True)
-        marker.write_text('{"session": "merge-force"}\n', encoding="utf-8")
-        r_commit = session_worktree_commit(_TEST_SIDS[1], files=[_TEST_FILE_B], message="test: merge force skip base check")
+        marker.write_text('{"session": "merge-force-noskip"}\n', encoding="utf-8")
+        r_commit = session_worktree_commit(_TEST_SIDS[1], files=[_TEST_FILE_B], message="test: merge force does not skip base check")
         assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
-        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
         def _failing_bf(root, wt_path, session_id, stage="commit"):
-            return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base", "base_sync_failed": True, "stage": stage}
+            return {"session_id": session_id, "status": "FAILED", "message": "simulated stale base (force cannot bypass)", "base_sync_failed": True, "stage": stage}
         monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", _failing_bf)
         r_merge = session_worktree_merge(_TEST_SIDS[1], force=True)
-        assert r_merge.get("merged") is True, f"force merge failed: {r_merge}"
+        # force=True 不再跳过 base freshness check——应被阻断
+        assert r_merge.get("merged") is False, f"force=True 应被 base freshness 阻断（不可绕过类）, got: {r_merge}"
+        assert r_merge.get("base_sync_failed") is True, f"应返回 base_sync_failed=True, got: {r_merge}"
+        assert "不可绕过" in r_merge.get("message", ""), f"消息应含'不可绕过', got: {r_merge.get('message')}"
+        session_worktree_abort(_TEST_SIDS[1])
+        kill_all_heartbeat_daemons(_isolated_repo)
+
+    def test_merge_force_does_not_skip_commit_persistence(self, _isolated_repo, monkeypatch):
+        """#ARCH-FORCE-MERGE-SAFETY-001：force=True 不可绕过 commit 持久性验证（不可绕过类）。
+
+        2026-07-22 治本：commit 持久性验证（薛定谔的回退防护）从"force 可跳过"
+        改为"force 不可跳过"。理由：无 post-merge 替代 + 跳过后不可挽回。
+        """
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        monkeypatch.setattr(sw, "_workspace_clean_check_merge", lambda *a, **kw: (True, "stubbed"))
+        monkeypatch.setattr(sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"))
+        r_start = session_worktree_start(_TEST_SIDS[0])
+        assert r_start.get("created") or r_start.get("registered"), f"start failed: {r_start}"
+        wt_path = Path(r_start["worktree_path"])
+        marker = wt_path / _TEST_FILE_A
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text('{"session": "merge-force-persist"}\n', encoding="utf-8")
+        r_commit = session_worktree_commit(r_start["session_id"], files=[_TEST_FILE_A], message="test: merge force commit persistence")
+        assert r_commit["status"] == "OK", f"commit failed: {r_commit}"
+        # 模拟薛定谔的回退：commit 持久性标记存在但 tip hash 不匹配
+        _fake_marker = {"commit_hash": "deadbeef", "session_id": r_start["session_id"]}
+        monkeypatch.setattr(sw, "_read_commit_persisted_marker", lambda root, sid: _fake_marker)
+        # base freshness 放行（确保只有 commit 持久性阻断）
+        monkeypatch.setattr(sw, "_ensure_worktree_base_fresh", lambda *a, **kw: None)
+        r_merge = session_worktree_merge(r_start["session_id"], force=True)
+        # force=True 不再跳过 commit 持久性验证——应被阻断
+        assert r_merge.get("merged") is False, f"force=True 应被 commit 持久性阻断（不可绕过类）, got: {r_merge}"
+        assert r_merge.get("schrodinger_rollback") is True, f"应返回 schrodinger_rollback=True, got: {r_merge}"
+        assert "不可绕过" in r_merge.get("message", ""), f"消息应含'不可绕过', got: {r_merge.get('message')}"
+        session_worktree_abort(r_start["session_id"])
         kill_all_heartbeat_daemons(_isolated_repo)
 
     def test_merge_blocks_on_stale_base(self, _isolated_repo, monkeypatch):
