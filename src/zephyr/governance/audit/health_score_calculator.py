@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-health_score_calculator | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2
+# [BLUEPRINT] MOD-GOV_health_score_calculator | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2
 # [MODULE] zephyr.governance.audit.health_score_calculator
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] stdlib (dataclasses, typing)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] calculate_health_score 不抛异常——threshold=0 时该维得分返回 0.0（fail-safe，避免除零）；未知维度忽略
 # [TESTS] tests/governance/audit/test_health_score_calculator.py
-# [A_module] module_id=MOD-GOV-health_score_calculator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_health_score_calculator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）。
 

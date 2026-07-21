@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-3002 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_p3_integration_smoke | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-280 | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-5
 # [MODULE] tests.governance.audit.test_p3_integration_smoke
 # [DOMAIN] D_GOV_AUDIT
@@ -15,8 +15,8 @@
 
 验证 Phase 3 三个核心组件的端到端集成链路：
 1. **AdaptiveThreshold**（P3-0）：COUNT 模式，static_floor + EWMA + factor
-2. **_compute_adaptive_thresholds**（P3-1）：7d baseline → 5 维自适应阈值
-3. **calculate_health_score**（P3-2）：5 维 metrics + thresholds → AbuseHealthScore
+2. **_compute_adaptive_thresholds**（P3-1）：7d baseline → 6 维自适应阈值
+3. **calculate_health_score**（P3-2）：6 维 metrics + thresholds → AbuseHealthScore
 4. **_classify_abuse**（P3-1/P3-3）：reports + adaptive_thresholds → 触发维度 + effective thresholds
 
 集成链路（P3-5 验证目标）::
@@ -64,6 +64,7 @@ _SHORT_THRESHOLDS = {
     "allow_overlap_7d": 30,
     "forged_gw_marker_24h": 3,
     "non_gw_commit_24h": 10,
+    "force_merge_7d": 5,
 }
 
 
@@ -140,8 +141,8 @@ class TestComputeAdaptiveThresholds:
         result = reconciler_mod._compute_adaptive_thresholds([])
         assert result == {}, f"空 baseline 应返回空 dict，实际: {result}"
 
-    def test_7d_baseline_produces_5_dim_thresholds(self):
-        """7d baseline 产生 5 维自适应阈值。"""
+    def test_7d_baseline_produces_6_dim_thresholds(self):
+        """7d baseline 产生 6 维自适应阈值。"""
         # 构造 7d baseline daily_records
         daily_records = []
         for day in range(7):
@@ -153,11 +154,12 @@ class TestComputeAdaptiveThresholds:
                     "allow_overlap_7d": 10,
                     "forged_gw_marker_24h": 0,
                     "non_gw_commit_24h": 5,
+                    "force_merge_7d": 0,
                 },
             })
         result = reconciler_mod._compute_adaptive_thresholds(daily_records)
-        # 应返回 5 维阈值
-        assert len(result) == 5, f"应返回 5 维阈值，实际: {len(result)} 个"
+        # 应返回 6 维阈值
+        assert len(result) == 6, f"应返回 6 维阈值，实际: {len(result)} 个"
         # 每维阈值应 >= static_floor（_DEFAULT_THRESHOLDS 值）
         for dim_name, threshold in result.items():
             static_val = reconciler_mod._DEFAULT_THRESHOLDS.get(dim_name, 0)
@@ -172,7 +174,7 @@ class TestComputeAdaptiveThresholds:
             {"metrics": {
                 "warn_only_24h": 100, "emergency_commit_24h": 10,
                 "allow_overlap_7d": 50, "forged_gw_marker_24h": 5,
-                "non_gw_commit_24h": 20,
+                "non_gw_commit_24h": 20, "force_merge_7d": 10,
             }}
             for _ in range(7)
         ]
@@ -183,7 +185,7 @@ class TestComputeAdaptiveThresholds:
             {"metrics": {
                 "warn_only_24h": 5, "emergency_commit_24h": 0,
                 "allow_overlap_7d": 2, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 1,
+                "non_gw_commit_24h": 1, "force_merge_7d": 0,
             }}
             for _ in range(7)
         ]
@@ -213,6 +215,7 @@ class TestHealthScoreIntegration:
             "allow_overlap_7d": 2,
             "forged_gw_marker_24h": 0,
             "non_gw_commit_24h": 1,
+            "force_merge_7d": 0,
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
         assert health.score < 0.3, (
@@ -230,6 +233,7 @@ class TestHealthScoreIntegration:
             "allow_overlap_7d": 35,  # > 30
             "forged_gw_marker_24h": 0,  # 未触发
             "non_gw_commit_24h": 12,  # > 10
+            "force_merge_7d": 0,  # 未触发
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
         assert health.score > 0.5, (
@@ -247,17 +251,18 @@ class TestHealthScoreIntegration:
             "allow_overlap_7d": 60,  # 2x threshold
             "forged_gw_marker_24h": 6,  # 2x threshold
             "non_gw_commit_24h": 20,  # 2x threshold
+            "force_merge_7d": 10,  # 2x threshold
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
         assert health.score > 0.9, (
             f"block_next 场景 score={health.score} 应 > 0.9"
         )
-        assert len(health.triggered_dimensions) == 5, (
-            f"block_next 场景应 5 维全触发，实际: {health.triggered_dimensions}"
+        assert len(health.triggered_dimensions) == 6, (
+            f"block_next 场景应 6 维全触发，实际: {health.triggered_dimensions}"
         )
 
     def test_forged_gw_marker_has_highest_weight(self):
-        """forged_gw_marker 权重最高（0.35）—— 任何伪造都 serious。"""
+        """forged_gw_marker 权重最高（0.30）—— 任何伪造都 serious。"""
         # 仅 forged_gw_marker 超阈
         metrics = {
             "warn_only_24h": 0,
@@ -265,11 +270,12 @@ class TestHealthScoreIntegration:
             "allow_overlap_7d": 0,
             "forged_gw_marker_24h": 10,  # >> 3
             "non_gw_commit_24h": 0,
+            "force_merge_7d": 0,
         }
         health = calculate_health_score(metrics, dict(_SHORT_THRESHOLDS))
-        # forged_gw_marker 单维贡献 = 0.35 * 1.0 = 0.35
-        assert health.score == pytest.approx(0.35, rel=1e-6), (
-            f"forged_gw_marker 单维 score={health.score} 应 ≈ 0.35 (weight=0.35)"
+        # forged_gw_marker 单维贡献 = 0.30 * 1.0 = 0.30
+        assert health.score == pytest.approx(0.30, rel=1e-6), (
+            f"forged_gw_marker 单维 score={health.score} 应 ≈ 0.30 (weight=0.30)"
         )
 
 
@@ -297,6 +303,7 @@ class TestClassifyAbuseIntegration:
                 "allow_overlap_7d": 30.0,
                 "forged_gw_marker_24h": 3.0,
                 "non_gw_commit_24h": 10.0,
+                "force_merge_7d": 5.0,
             },
         )
         # 无违规 → 0 维度触发
@@ -353,7 +360,7 @@ class TestFullPipelineIntegration:
 
         Args:
             baseline_records: 7d baseline daily_records（full-name keys）
-            today_metrics: 今日 5 维原始计数（short-name keys，注入 metrics 模拟）
+            today_metrics: 今日 6 维原始计数（short-name keys，注入 metrics 模拟）
 
         Returns:
             (health_score, classify_result)
@@ -372,6 +379,7 @@ class TestFullPipelineIntegration:
             emergency_count=today_metrics.get("emergency_commit_24h", 0),
             now_ts=now_ts,
             allow_overlap_count=today_metrics.get("allow_overlap_7d", 0),
+            force_merge_count=today_metrics.get("force_merge_7d", 0),
             adaptive_thresholds=adaptive_thresholds if adaptive_thresholds else None,
         )
 
@@ -393,14 +401,14 @@ class TestFullPipelineIntegration:
             {"metrics": {
                 "warn_only_24h": 5, "emergency_commit_24h": 0,
                 "allow_overlap_7d": 2, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 1,
+                "non_gw_commit_24h": 1, "force_merge_7d": 0,
             }}
             for _ in range(7)
         ]
         today = {
             "warn_only_24h": 5, "emergency_commit_24h": 0,
             "allow_overlap_7d": 2, "forged_gw_marker_24h": 0,
-            "non_gw_commit_24h": 1,
+            "non_gw_commit_24h": 1, "force_merge_7d": 0,
         }
         health, result = self._run_full_pipeline(baseline, today)
         assert health.score < 0.7, (
@@ -409,17 +417,16 @@ class TestFullPipelineIntegration:
         assert len(result["dimensions_triggered"]) == 0
 
     def test_critical_pipeline(self):
-        """全链路 critical 场景：emergency + allow_overlap 超阈 + forged 部分贡献 → 0.7 < score <= 0.9。
+        """全链路 critical 场景：emergency + allow_overlap + warn_only + non_gw 超阈 + forged 部分贡献 → 0.7 < score <= 0.9。
 
-        权重设计：forged=0.35 最高。仅 emergency(0.20) + allow_overlap(0.15) 超阈
-        = 0.35 < 0.7。要达到 critical（>0.7），需 forged 部分贡献（count < threshold 但 > 0）。
-        例如 forged=2/3 → dim_score=0.667 → score = 0.35 + 0.35*0.667 ≈ 0.583，
-        再加 warn_only + non_gw 部分贡献（today 注入，_classify_abuse 空报告下为 0
-        但 today_metrics 覆盖到 health_score 计算的 metrics 中）。
+        权重设计（v1.3.0 6 维）：forged=0.30 最高。emergency(0.20) + allow_overlap(0.15)
+        + warn_only(0.15) + non_gw(0.10) 超阈 = 0.60。要达到 critical（>0.7），需 forged
+        部分贡献（count < threshold 但 > 0）。例如 forged=2/3 → dim_score=0.667
+        → score = 0.60 + 0.30*0.667 ≈ 0.80。
 
         注：_classify_abuse 从 post_commit_reports/audit_reports 计算 warn_only/
         forged/non_gw 维度（空报告下为 0，不触发 dimensions_triggered）。本测试
-        通过 today_metrics 注入完整 5 维计数到 calculate_health_score，验证 score
+        通过 today_metrics 注入完整 6 维计数到 calculate_health_score，验证 score
         计算的全链路正确性。dimensions_triggered 仅反映 _classify_abuse 输出
         （emergency + allow_overlap 2 维，由参数传入）。
         """
@@ -427,7 +434,7 @@ class TestFullPipelineIntegration:
             {"metrics": {
                 "warn_only_24h": 30, "emergency_commit_24h": 2,
                 "allow_overlap_7d": 10, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 5,
+                "non_gw_commit_24h": 5, "force_merge_7d": 0,
             }}
             for _ in range(7)
         ]
@@ -437,6 +444,7 @@ class TestFullPipelineIntegration:
             "allow_overlap_7d": 35,  # > 30 → dim_score=1.0（_classify_abuse 触发）
             "forged_gw_marker_24h": 2,  # < 3 → dim_score=0.667（部分贡献）
             "non_gw_commit_24h": 12,  # > 10 → dim_score=1.0（注入 health_score 计算）
+            "force_merge_7d": 0,  # 未触发
         }
         health, result = self._run_full_pipeline(baseline, today)
         assert health.score > 0.7, (
@@ -458,7 +466,7 @@ class TestFullPipelineIntegration:
             {"metrics": {
                 "warn_only_24h": 50, "emergency_commit_24h": 5,
                 "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-                "non_gw_commit_24h": 10,
+                "non_gw_commit_24h": 10, "force_merge_7d": 5,
             }}
             for _ in range(7)
         ]
@@ -468,13 +476,14 @@ class TestFullPipelineIntegration:
             "allow_overlap_7d": 60,  # 2x threshold
             "forged_gw_marker_24h": 6,  # 2x threshold
             "non_gw_commit_24h": 20,  # 2x threshold
+            "force_merge_7d": 10,  # 2x threshold
         }
         health, result = self._run_full_pipeline(baseline, today)
         assert health.score > 0.9, (
             f"block_next pipeline score={health.score} 应 > 0.9（_BLOCK_NEXT_SCORE）"
         )
-        assert len(health.triggered_dimensions) == 5, (
-            f"block_next pipeline 应 5 维全触发，实际: {health.triggered_dimensions}"
+        assert len(health.triggered_dimensions) == 6, (
+            f"block_next pipeline 应 6 维全触发，实际: {health.triggered_dimensions}"
         )
 
     def test_pipeline_with_high_baseline_raises_thresholds(self):
@@ -487,7 +496,7 @@ class TestFullPipelineIntegration:
             {"metrics": {
                 "warn_only_24h": 50, "emergency_commit_24h": 5,
                 "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-                "non_gw_commit_24h": 10,
+                "non_gw_commit_24h": 10, "force_merge_7d": 5,
             }}
             for _ in range(7)
         ]
@@ -495,7 +504,7 @@ class TestFullPipelineIntegration:
         today_at_static = {
             "warn_only_24h": 50, "emergency_commit_24h": 5,
             "allow_overlap_7d": 30, "forged_gw_marker_24h": 3,
-            "non_gw_commit_24h": 10,
+            "non_gw_commit_24h": 10, "force_merge_7d": 5,
         }
         health_high_baseline, _ = self._run_full_pipeline(
             high_baseline, today_at_static
@@ -506,7 +515,7 @@ class TestFullPipelineIntegration:
             {"metrics": {
                 "warn_only_24h": 1, "emergency_commit_24h": 0,
                 "allow_overlap_7d": 0, "forged_gw_marker_24h": 0,
-                "non_gw_commit_24h": 0,
+                "non_gw_commit_24h": 0, "force_merge_7d": 0,
             }}
             for _ in range(7)
         ]

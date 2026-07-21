@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-commit_gateway_abuse_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
+# [BLUEPRINT] MOD-GOV_commit_gateway_abuse_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
 # [MODULE] zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); zephyr.gov_enforcement.rule_enforcement.adaptive_threshold (AdaptiveThreshold, ThresholdMode — P3-1 接入); zephyr.governance.audit.health_score_calculator (calculate_health_score — P3-3 接入); stdlib (json, logging, subprocess, time, pathlib)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——读取/解析失败降级为 ReconcileResult(action="warn")
 # [TESTS] tests/governance/audit/test_commit_gateway_abuse_monitor_reconciler.py
-# [A_module] module_id=MOD-GOV-commit_gateway_abuse_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_commit_gateway_abuse_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """commit_gateway_abuse_monitor_reconciler.py — commit gateway 持续滥用监控（ARCH-TOOL-HEALTH-V1 Phase 5b，2026-07-19）。

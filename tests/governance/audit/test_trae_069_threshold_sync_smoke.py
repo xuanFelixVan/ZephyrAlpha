@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-3001 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_trae_threshold_sync_smoke | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-280 | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-4
 # [MODULE] tests.governance.audit.test_trae_069_threshold_sync_smoke
 # [DOMAIN] D_GOV_AUDIT
@@ -18,7 +18,7 @@ trae_069_commit_gateway_abuse_thresholds.yaml 是 commit_gateway_abuse_monitor_r
 1. YAML 文件能正确加载（YAML 解析无误）
 2. meta.version / health_score_classification / adaptive.health_score / changelog 结构完整
 3. 代码常量（_BLOCK_NEXT_SCORE/_CRITICAL_WARN_SCORE）与 YAML score_thresholds 一致
-4. 5 维权重总和 = 1.0（不变量）
+4. 6 维权重总和 = 1.0（不变量）
 5. P3-2/P3-3 落地摘要已登记到 changelog v1.2.0
 
 设计原则（对标 test_sync_yaml_to_depgraph_smoke.py）：
@@ -79,10 +79,10 @@ def reconciler_module():
 class TestYamlStructure:
     """验证 trae_069 YAML 真源结构完整（P3-4 新增字段已登记）。"""
 
-    def test_meta_version_is_1_2_0(self, trae_069_yaml):
-        """meta.version 必须为 1.2.0（P3-4 升级后）。"""
-        assert trae_069_yaml["meta"]["version"] == "1.2.0", (
-            f"meta.version 应为 1.2.0，实际: {trae_069_yaml['meta']['version']}"
+    def test_meta_version_is_1_3_0(self, trae_069_yaml):
+        """meta.version 必须为 1.3.0（v1.3.0 6 维扩展后）。"""
+        assert trae_069_yaml["meta"]["version"] == "1.3.0", (
+            f"meta.version 应为 1.3.0，实际: {trae_069_yaml['meta']['version']}"
         )
 
     def test_health_score_classification_section_exists(self, trae_069_yaml):
@@ -143,21 +143,22 @@ class TestYamlStructure:
         )
 
     def test_adaptive_health_score_weights(self, trae_069_yaml):
-        """adaptive.health_score.weights 5 维权重正确（forged=0.35 最高）。"""
+        """adaptive.health_score.weights 6 维权重正确（forged=0.30 最高，v1.3.0 6 维扩展）。"""
         hs = trae_069_yaml["adaptive"]["health_score"]
         weights = hs["weights"]
-        assert weights["forged_gw_marker_24h"] == 0.35, (
-            f"forged_gw_marker_24h 权重应为 0.35，实际: {weights['forged_gw_marker_24h']}"
+        assert weights["forged_gw_marker_24h"] == 0.30, (
+            f"forged_gw_marker_24h 权重应为 0.30，实际: {weights['forged_gw_marker_24h']}"
         )
         assert weights["emergency_commit_24h"] == 0.20, (
             f"emergency_commit_24h 权重应为 0.20，实际: {weights['emergency_commit_24h']}"
         )
         assert weights["warn_only_24h"] == 0.15
         assert weights["allow_overlap_7d"] == 0.15
-        assert weights["non_gw_commit_24h"] == 0.15
+        assert weights["non_gw_commit_24h"] == 0.10
+        assert weights["force_merge_7d"] == 0.10
 
     def test_adaptive_health_score_weights_sum_to_one(self, trae_069_yaml):
-        """5 维权重总和必须 = 1.0（不变量）。"""
+        """6 维权重总和必须 = 1.0（不变量）。"""
         hs = trae_069_yaml["adaptive"]["health_score"]
         weights = hs["weights"]
         total = sum(weights.values())
@@ -262,7 +263,7 @@ class TestYamlToCodeSync:
         )
 
     def test_code_thresholds_match_yaml_thresholds(self, trae_069_yaml, reconciler_module):
-        """代码 5 维阈值常量必须与 YAML thresholds 段一致。"""
+        """代码 6 维阈值常量必须与 YAML thresholds 段一致。"""
         yaml_thresholds = trae_069_yaml["thresholds"]
         # 代码常量名映射（_WARN_ONLY_24H_THRESHOLD 等）
         # 这里通过 _DEFAULT_THRESHOLDS 字典验证（若存在）
@@ -270,7 +271,7 @@ class TestYamlToCodeSync:
             code_defaults = reconciler_module._DEFAULT_THRESHOLDS
             # 验证至少 forged_gw_marker 维度一致（任何伪造都 serious，最关键）
             # 具体字段名映射由 reconciler 内部 _load_thresholds_from_yaml 处理
-            # smoke test 只验证关键不变量：YAML 5 维阈值都是正整数
+            # smoke test 只验证关键不变量：YAML 6 维阈值都是正整数
             for dim_name, config in yaml_thresholds.items():
                 assert config["value"] > 0, (
                     f"YAML thresholds.{dim_name}.value 应 > 0，实际: {config['value']}"
@@ -316,12 +317,12 @@ class TestP34LandingAnnotations:
         assert "P3-3" in desc, "adaptive.description 未提及 P3-3"
         assert "已落地" in desc, "adaptive.description 未标注 P3-3 已落地"
 
-    def test_adaptive_description_mentions_p3_4_in_progress(self, trae_069_yaml):
-        """adaptive.description 必须提及 P3-4 待施工/进行中。"""
+    def test_adaptive_description_mentions_p3_4_landed(self, trae_069_yaml):
+        """adaptive.description 必须提及 P3-4 已落地。"""
         desc = trae_069_yaml["adaptive"]["description"]
         assert "P3-4" in desc, "adaptive.description 未提及 P3-4"
-        assert "待施工" in desc or "进行中" in desc, (
-            "adaptive.description 未标注 P3-4 待施工/进行中"
+        assert "已落地" in desc, (
+            "adaptive.description 未标注 P3-4 已落地"
         )
 
     def test_adaptive_description_mentions_commit_hash(self, trae_069_yaml):
