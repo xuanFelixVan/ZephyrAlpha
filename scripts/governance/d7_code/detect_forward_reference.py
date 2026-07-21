@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=clean, exit 1=findings, exit 2=error
 # [TESTS] python scripts/governance/d7_code/detect_forward_reference.py --warn-only
-# [A_module] module_id=MOD-GOV_detect_forward_ref | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-detect_forward_ref | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """detect_forward_reference — 前向引用检测扫描器。
 

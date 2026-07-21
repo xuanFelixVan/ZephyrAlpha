@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-PRT_pf_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-PRT-pf_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md
 # [MODULE] zephyr.pf_core
 # [INVARIANTS] pending_review

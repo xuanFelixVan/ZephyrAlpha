@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=失败
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
-# [A_script] module_id=MOD-GOV_setup_git_guard_aliases | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_script] module_id=MOD-GOV-setup_git_guard_aliases | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 Setup/Remove Git Aliases for Git Guard — 自动化集成入口。

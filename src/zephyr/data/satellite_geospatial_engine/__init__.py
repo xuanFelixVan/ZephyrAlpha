@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-DAT_satellite_geospatial_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-satellite_geospatial_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
 # [MODULE] zephyr.data.satellite_geospatial_engine
 # [DOMAIN] D_DATA

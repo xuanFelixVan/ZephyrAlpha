@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=pass-through; exit 1=blocked; exit 2=internal error
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
-# [A_script] module_id=MOD-GOV_git_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_script] module_id=MOD-GOV-git_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。

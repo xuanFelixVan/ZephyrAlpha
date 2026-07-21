@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-CMP_zero_knowledge_audit_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-CMP-zero_knowledge_audit_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.compliance.zero_knowledge_audit_stub
 # [DOMAIN] D_COMPLIANCE

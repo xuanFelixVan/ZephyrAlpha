@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-CMP_behavioral_admission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-CMP-behavioral_admission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Re-export wrapper: behavioral-admission has migrated to zephyr.gov_enforcement.behavioral_admission.
 

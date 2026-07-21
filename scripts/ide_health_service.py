@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 导入失败时打印明确错误信息并exit 1;--status守护进程未运行时exit 0并打印stopped
 # [TESTS]
-# [A_module] module_id=MOD-SCR_ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SCR-ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """IDE健康守护进程CLI包装器
 
