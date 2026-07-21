@@ -73,7 +73,10 @@ entry_conditions:
     description: _schema_version 表中 MAX(version) 与 _MIGRATIONS 最大版本号不一致
     example: DB 中 MAX(version)=7 但 _MIGRATIONS 定义到 v8（迁移未完成或被手动篡改）
   params:
-    db_path: postgresql://localhost:5432/depgraph
+    # 裁定 #ARCH-CH-024 Phase 3: 删除 db_path: postgresql://localhost:5432/depgraph（死配置 + 硬编码）
+    # 该 db_path 无消费方（check_schema_version_writes.py 未实现，verification_method 悬空），
+    # 且硬编码 localhost:5432 违反 SSoT（DB 连接真源是 config/.env.postgresql / DATABASE_URL）。
+    # DB 检查脚本实现时应通过 get_depgraph_pg_connection() 读取连接配置，禁止硬编码连接串。
     migrations_module: zephyr.governance.depgraph_schema._MIGRATIONS
 mutating_rules: []
 severity_levels:

@@ -917,6 +917,22 @@
   data_source: [ifind]
   blueprint: null
 
+- category_id: market_sector_kline_880
+  name: "880xxx行业板块K线（tqcenter源）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_sector_880
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [tqcenter]
+  blueprint: null
+
 - category_id: market_industry_class
   name: "上市公司行业分类（申万/证监会行业分类）"
   engine: clickhouse

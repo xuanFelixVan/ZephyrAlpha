@@ -615,6 +615,23 @@ class IntegratorScheduler:
         else:
             log.warning("任务清单不存在: %s", tasks_path)
 
+        # 裁定 #ARCH-CH-024 Phase 2: 表名消费闭环校验
+        # 校验 tasks.yaml.table ⊆ business_data_categories.yaml（表名/品类真源），
+        # 不一致仅 WARN（不阻断启动，渐进式收紧；Phase 4 commit gate 将升级为 block）。
+        # 消除"tasks.yaml + registry 双真源漂移"风险（声明闭环→消费闭环）。
+        try:
+            from zephyr.data.table_registry import get_registry
+            registry = get_registry()
+            warnings = registry.validate_tasks_yaml(self._tasks)
+            for w in warnings:
+                log.warning("[TableRegistry] %s", w)
+            if warnings:
+                log.warning("[TableRegistry] tasks.yaml 与品类真源有 %d 处不一致", len(warnings))
+            else:
+                log.info("[TableRegistry] tasks.yaml 表名与品类真源一致")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            log.warning("[TableRegistry] 表名校验失败（不阻断启动）: %s", e)
+
     def reload_policies(self) -> bool:
         """热更新策略（手动调用或 config_changed 事件触发）。"""
         return self._policy_registry.maybe_reload(force=True)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.governance.sync_yaml_to_depgraph
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
@@ -2277,7 +2277,9 @@ def sync_all() -> bool:
 
     print("=" * 60)
     print("=== YAML→DB 同步开始 ===")
-    print("DB: PostgreSQL (localhost:5432/depgraph)")
+    # 裁定 #ARCH-CH-024 Phase 3: 删除硬编码 localhost:5432/depgraph（连接真源是 config/.env.postgresql）
+    # 实际连接由上方 get_depgraph_pg_connection() 读取，此处仅打印通用标识避免漂移
+    print("DB: PostgreSQL (depgraph) — 连接配置见 config/.env.postgresql")
     print(f"RULES_DIR: {RULES_DIR}")
     print("=" * 60)
 

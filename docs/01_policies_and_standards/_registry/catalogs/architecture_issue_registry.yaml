@@ -6736,3 +6736,124 @@ entries:
   related_rules: 'trae_068 (6 层闭环模型), trae_062 (SSoT 分类铁律——规则数据真源是 YAML), AGENTS.md (并发 session merge 无协调)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+
+# --- #ARCH-CH-024: 数据链路真源消费闭环治本（sector_kline_downloader 三重绕过 + 表名 registry 形同虚设 + 配置硬编码清零） ---
+- issue_id: '#ARCH-CH-024'
+  title: 数据链路真源消费闭环治本——sector_kline_downloader 三重绕过 + business_data_categories.yaml 零消费双真源 + 3 处 localhost:5432 硬编码
+  severity: P0高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    对回测数据下载链路做真源唯一性 / 责任唯一性审计，发现 5 处缺口（P0×1 / P1×2 / P2×2）：
+
+    🔴 P0：sector_kline_downloader.py 是唯一的"三重绕过"孤岛
+      - 绕过 ch_config（直连硬编码 _CH_HOST=172.24.30.100 / _CH_PORT=9000 / _CH_DB=c1_market）
+      - 绕过 ch_writer（自建 clickhouse_driver.Client + 手写 INSERT SQL）
+      - 绕过 DatabaseService（不经统一写入入口）
+      影响：板块回测数据可靠性，CH 迁移即暴露（与 #ARCH-CH-017 同类根因"巧合成功"）
+
+    🟡 P1：表名 registry（business_data_categories.yaml）未被代码消费，与 tasks.yaml 形成双真源
+      - business_data_categories.yaml 含 98 条品类记录（表名/品类真源），但 0 行代码 import 它
+      - tasks.yaml 各任务 table 字段 + 各 provider 内硬编码表名字符串 = 第二/第三真源
+      - 长期漂移必然发生（改名只改一处，其他真源遗忘）
+
+    🟡 P1：g_trae_059.yaml:76 硬编码 localhost:5432
+      - db_path: postgresql://localhost:5432/depgraph 是死配置
+      - check_schema_version_writes.py 未实现（verification_method 悬空），db_path 无消费方
+      - 硬编码 localhost 违反 SSoT（DB 连接真源是 config/.env.postgresql）
+
+    🟢 P2：rollback_integration.py:439 健康检查直连
+      - connection_pool_health_check 用裸 psycopg2.connect
+      - 实际已用 get_secret_or_default("DATABASE_URL") 取 URL（配置真源），裸连接为健康检查设计意图
+
+    🟢 P2：sync_yaml_to_depgraph.py:2280 print 硬编码 localhost:5432
+      - print("DB: PostgreSQL (localhost:5432/depgraph)") 纯诊断输出
+      - 实际连接由 get_depgraph_pg_connection() 读取，print 与真源脱钩
+
+    根因分析（第一性原理——三重闭环模型，100% AI 开发模式约束）：
+    真源治理的三重闭环模型：
+      (1) 声明闭环——真源文件存在（YAML/配置文件齐全）         ✅ 已建立
+      (2) 消费闭环——代码 import/读取真源派生数据               ❌ 缺失（registry 0 消费）
+      (3) 强制闭环——commit gate 阻断绕过真源的代码              ❌ 缺失（无表名校验 gate）
+
+    trae_062 SSoT 分类铁律：表名是"声明态规则数据"（schema 声明），
+    真源是 YAML（非 DB 实例态数据）。business_data_categories.yaml 是表名真源，
+    但消费闭环未建立——代码不 import 真源，强制闭环也不拦截绕过。
+    这与 #ARCH-CH-017 同构（CH 连接配置真源存在但代码绕过），根因都是
+    "声明闭环已建立但消费/强制闭环缺失"。100% AI 开发模式下，AI 不会主动 import
+    一个它不知道存在的 YAML——必须靠运行时校验 + commit gate 强制。
+
+    #ARCH-CH-017 先例：ch_writer 的硬编码默认值是"巧合成功"——它掩盖了配置真源的违反。
+    sector_kline_downloader 的三重绕过同理：硬编码 IP 恰好等于 .env.clickhouse 的值，
+    CH 迁移一次就暴露。表名双真源同理：当前恰好一致，改名一次就漂移。
+
+    治本方案（5 Phase 渐进式，对标 #ARCH-CH-017/#ARCH-CH-022 模式）：
+    Phase 1（P0 治本，本次落地）：
+      - sector_kline_downloader.py 删除三重绕过（硬编码 IP/直连 Client/手写 SQL），
+        改用 ch_writer.write_result（自动列过滤 + 二级降级 HTTP→本地落盘兜底）
+      - 补登 market_sector_kline_880 品类到 business_data_categories.yaml（声明闭环）
+      - 注册 DS-TQCENTER 到 data_sources_registry.yaml（数据源资产清单）
+      - 注册 kline_sector_880_incremental 任务到 tasks.yaml（任务清单真源）
+
+    Phase 2（P1 消费闭环，本次落地）：
+      - 新建 zephyr.data.table_registry 模块（TableRegistry 消费层）：
+        * 加载 business_data_categories.yaml，构建 category_id -> "{db}.{table}" 映射
+        * table(category_id) fail-closed（查不到抛 KeyError，禁止凭记忆编表名）
+        * all_tables() / is_registered(table) / validate_tasks_yaml(tasks)
+      - scheduler._load_config() 末尾调用 validate_tasks_yaml() 启动校验
+        （tasks.yaml.table ⊆ registry，不一致仅 WARN 不阻断——渐进式收紧）
+
+    Phase 3（P1/P2 配置硬编码清零，本次落地）：
+      - g_trae_059.yaml 删除死配置 db_path（localhost:5432，无消费方）
+      - sync_yaml_to_depgraph.py print 去硬编码（改打印通用标识，引用配置真源）
+      - rollback_integration.py 补 SSoT 说明（已用 DATABASE_URL 配置源，裸连接为健康检查设计意图）
+
+    Phase 4（强制闭环，登记为后续独立裁定）：
+      - 新建 TABLE-NAME-REGISTRY commit gate（warn-only，对标 GATE-DOMAIN-FK 先例）
+      - 检测 tasks.yaml / provider 代码中的表名是否在 registry 注册
+      - 当前 WARN，稳定后升级为 block
+
+    Phase 5（长期方向，登记为后续）：
+      - 240 处硬编码表名替换为 TableRegistry.table() 常量引用
+      - gate 升级为 block
+
+    不实施项（避免过度工程）：
+      - 立即删除 rollback_integration.py 的 connection_pool_health_check（有测试调用方，
+        且已用配置源 URL，裸连接为健康检查设计意图——非绕过 SSoT）
+      - Phase 5 的 240 处硬编码全量替换（量大且需逐个验证，登记为长期方向）
+      - 立即创建 check_schema_version_writes.py（g_trae_059 verification_method 悬空是
+        独立问题，本裁定仅治理其 db_path 硬编码；脚本实现登记为后续）
+  fix_phase: |
+    Phase 1（本次落地，2026-07-22）：
+      - sector_kline_downloader.py 三重绕过消除（接入 ch_writer.write_result）
+      - business_data_categories.yaml 补登 market_sector_kline_880 品类
+      - data_sources_registry.yaml 注册 DS-TQCENTER 数据源
+      - tasks.yaml 注册 kline_sector_880_incremental 任务
+    Phase 2（本次落地，2026-07-22）：
+      - 新建 src/zephyr/data/table_registry.py（TableRegistry 消费层，99 表注册）
+      - scheduler.py _load_config() 追加 validate_tasks_yaml() WARN 校验
+      - smoke test 通过（120 任务，3 处 placeholder WARN，非漂移）
+    Phase 3（本次落地，2026-07-22）：
+      - g_trae_059.yaml 删除死配置 db_path（localhost:5432）
+      - sync_yaml_to_depgraph.py print 去硬编码 localhost:5432
+      - rollback_integration.py 补 SSoT 说明（保留裸连接，已用 DATABASE_URL 配置源）
+    Phase 4（登记后续，不实施）：
+      - TABLE-NAME-REGISTRY commit gate（warn-only，对标 GATE-DOMAIN-FK）
+    Phase 5（长期方向，不实施）：
+      - 240 处硬编码表名替换为 TableRegistry.table() 常量引用
+      - gate 升级为 block
+  impact:
+    - 'src/zephyr/data/sector_kline_downloader.py（删除三重绕过，接入 ch_writer.write_result）'
+    - 'docs/03_modules/_cross_layer/database/business_data_categories.yaml（补登 market_sector_kline_880 品类）'
+    - 'architecture_model/data/data_sources_registry.yaml（注册 DS-TQCENTER 数据源）'
+    - 'src/zephyr/data/config/tasks.yaml（注册 kline_sector_880_incremental 任务）'
+    - 'src/zephyr/data/table_registry.py（新增——TableRegistry 消费层，裁定 #ARCH-CH-024 Phase 2）'
+    - 'src/zephyr/data/scheduler.py（_load_config 追加 validate_tasks_yaml WARN 校验）'
+    - 'src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml（删除死配置 db_path 硬编码 localhost:5432）'
+    - 'scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（print 去硬编码 localhost:5432）'
+    - 'src/zephyr/infrastructure/rollback/rollback_integration.py（补 SSoT 说明，保留裸连接健康检查设计）'
+  status: decided
+  related_adjudication: '#ARCH-CH-017 (CH 连接配置单真源化——同构根因"巧合成功"), #ARCH-CH-022 (capability 契约可执行化——同构渐进式 WARN→block 模式), #ARCH-CH-019 (CH 配置 fail-closed)'
+  related_rules: 'trae_062 (SSoT 分类铁律——表名是声明态规则数据真源是 YAML), AGENTS.md §11.0/§11.0.2 (SSoT 真源规则), AGENTS.md §11.4 (依赖关系先行)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

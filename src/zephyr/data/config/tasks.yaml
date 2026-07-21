@@ -1482,3 +1482,17 @@ tasks:
       backfill_days: 7
       backfill_mode: detect_and_fill
       threshold: 5000000
+
+  # ============== tqcenter 板块K线（880xxx，独立脚本触发，裁定 #ARCH-CH-024）==============
+  - task_id: kline_sector_880_incremental
+    table: c1_market.kline_sector_880
+    source: tqcenter
+    schedule: weekend_calibration
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: kline_sector_880
+    symbols: null  # null=全部880xxx板块（约684只）+9只市场指数
+    extra:
+      description: "880xxx板块指数K线增量（tqcenter get_market_data，日K/1m/5m）"
+      trigger: manual_script  # 非 scheduler 自动调度，由独立脚本触发（tqcenter SDK 需 E:\tdx\PYPlugins 路径）

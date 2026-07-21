@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF_rollback_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-rollback_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -424,6 +424,11 @@ class RollbackIntegration:
         )
 
     def connection_pool_health_check(self, db_url: str = "", max_retries: int = 3) -> tuple[bool, str, int]:
+        # 裁定 #ARCH-CH-024 Phase 3 说明：
+        # 本方法是健康检查——用裸 psycopg2.connect 测试原始连通性是设计意图
+        # （用连接池自身去测连接池健康是循环论证）。db_url 来自 get_secret_or_default
+        # ("DATABASE_URL") 即配置真源（config/.env.postgresql / DATABASE_URL 环境变量），
+        # 未绕过配置 SSoT。保留裸连接以独立验证连通性，URL 真源化已满足"经统一配置"。
         if not db_url:
             db_url = get_secret_or_default("DATABASE_URL", "")
 

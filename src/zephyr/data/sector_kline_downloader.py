@@ -37,10 +37,10 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-_CH_HOST = "172.24.30.100"
-_CH_PORT = 9000
-_CH_DB = "c1_market"
-_CH_TABLE = f"{_CH_DB}.kline_sector_880"
+# 裁定 #ARCH-CH-024: 删除硬编码 IP/端口/库名（绕过 ch_config 真源治本）
+# 连接配置由 ch_writer 内部从 ch_config.load_ch_config() 读取（config/.env.clickhouse 真源）
+# 表名是业务标识（非连接配置），保留为模块常量（Phase 2 将改为 TableRegistry 派生）
+_CH_TABLE = "c1_market.kline_sector_880"
 
 _TQCENTER_PATH = r"E:\tdx\PYPlugins\user"
 
@@ -56,8 +56,7 @@ _COLUMNS = [
     "forward_factor", "data_source",
 ]
 
-# SQL 集中化（NO-BARE-SQL gate 豁免 SQL_ 前缀）
-SQL_INSERT_KLINE = f"INSERT INTO {_CH_TABLE} ({', '.join(_COLUMNS)}) VALUES"
+# 裁定 #ARCH-CH-024: 删除手写 INSERT SQL，改用 ch_writer.write_result（含列过滤+二级降级）
 
 
 def _init_tqcenter():
@@ -165,13 +164,24 @@ def _parse_kline_df(df: dict, sector_codes: list[str], period: str) -> list[tupl
 
 
 def _write_to_ch(rows: list[tuple]) -> int:
-    """批量写入 ClickHouse。"""
+    """批量写入 ClickHouse（通过 ch_writer 统一入口，裁定 #ARCH-CH-024 治本）。
+
+    改造前：直连 clickhouse_driver.Client + 手写 INSERT SQL（绕过 ch_config/ch_writer/DatabaseService 三层）
+    改造后：通过 ch_writer.write_result（自动列过滤 + 二级降级 HTTP→本地落盘兜底）
+    """
     if not rows:
         return 0
-    from clickhouse_driver import Client
-    client = Client(host=_CH_HOST, port=_CH_PORT)
-    client.execute(SQL_INSERT_KLINE, rows)
-    return len(rows)
+    from zephyr.data.provider_base import FetchResult
+    from zephyr.data import ch_writer
+    result = FetchResult(
+        table=_CH_TABLE,
+        columns=_COLUMNS,
+        rows=rows,
+        last_key="",
+        elapsed_sec=0.0,
+    )
+    ok = ch_writer.write_result(result)
+    return len(rows) if ok else 0
 
 
 def download_period(tq, sector_codes: list[str], period: str, count: int) -> int:
