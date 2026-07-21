@@ -228,6 +228,21 @@ markers:
     created: "2026-07-20"
     created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
 
+  - marker: "consumers-accuracy"
+    metric_id: null  # 非 dashboard 指标，是 CONSUMERS-ACCURACY gate 文件级豁免
+    description: "CONSUMERS-ACCURACY gate 文件级豁免——[CONSUMERS] 字段准确性检测的逃生通道"
+    applicable_conditions:
+      - "[CONSUMERS] 字段含抽象代号（MOD-XXX/SH-XXX）无法静态验证（gate 已豁免，noqa 用于边界场景）"
+      - "[CONSUMERS] 字段含动态生成消费者（如 __init__.py 聚合 re-export，消费者为运行时拼接）"
+      - "测试文件中模拟 [CONSUMERS] 字段的测试用例（非真实消费者声明）"
+      - "迁移历史文件时 [CONSUMERS] 暂保留旧值（planned 治理，一次性豁免）"
+    reason_required: true
+    reason_format: "consumers-accuracy豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-file"  # 文件级豁免（per-file）
+    created: "2026-07-21"
+    created_by: "ARCH-CONSUMERS-ACCURACY-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

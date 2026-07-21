@@ -41,8 +41,8 @@
 
 治本方案
 --------
-在 GitCommitGateway pre-commit 阶段注册门禁（priority=109，紧接
-BARE-SUBPROCESS=108 之后）：
+在 GitCommitGateway pre-commit 阶段注册门禁（priority=113，紧接
+FOLDER-CAPACITY-HARD-LIMIT=112 之后）：
   1. 对每个 staged .py 文件，读取 [CONSUMERS] 字段内容
   2. 解析消费者声明（支持 4 种格式：简单模块路径/模块+函数名/抽象代号/方法级）
   3. 三类违规检测：
@@ -64,8 +64,9 @@ BARE-SUBPROCESS=108 之后）：
 4. **含中文括号内容跳过**：括号内含中文等非 ASCII 字符 → 视为描述性文字非
    函数名，跳过整个括号（宁可漏报不可误报）。
 5. **fail-open 原则**：git 失败 / ast 解析失败时不阻断 commit（与其他 gate 一致）。
-6. **priority=109**：紧接 BARE-SUBPROCESS=108，在 CAPABILITY-LOOKUP-REQUIRED=110
-   之前，作为第三个 warn-only gate。
+6. **priority=113**：紧接 FOLDER-CAPACITY-HARD-LIMIT=112，作为最新的 warn-only gate
+   （priority 冲突实证：109=RULING-COMMIT-VERIFIED, 110=CAPABILITY-LOOKUP-REQUIRED,
+   111=GATE-PRECOMMIT-OFFLINE, 112=FOLDER-CAPACITY-HARD-LIMIT 已占用）。
 7. **noqa 行级逃生**：`# noqa: consumers-accuracy  <reason>` 标记当前文件豁免
    （对标 bare-subprocess 模式）。
 
@@ -281,9 +282,12 @@ def check_consumers_accuracy(
         path_exists = _check_module_path_exists(module_path, project_root)
         if not path_exists:
             # 逐级缩短尝试（处理 module.Class.method 格式）
+            # 关键约束：至少保留 2 段——避免缩短到顶层包（如 zephyr）导致误判，
+            # 因为顶层包 __init__.py 总是存在（src/zephyr/__init__.py），
+            # 会使 zephyr.nonexistent.module 误判为"存在"。
             parts = module_path.split(".")
             found = False
-            for i in range(len(parts) - 1, 0, -1):
+            for i in range(len(parts) - 1, 1, -1):
                 shortened = ".".join(parts[:i])
                 if _check_module_path_exists(shortened, project_root):
                     found = True
@@ -323,7 +327,7 @@ def _extract_noqa_files(gateway, py_files: list[str]) -> set[str]:
 
 
 def make_consumers_accuracy_gate() -> GateSpec:
-    """构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=110）。
+    """构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=113）。
 
     检测 staged scripts/governance/** + src/**.py 的 [CONSUMERS] 字段准确性，
     warn-only（passed=True + detail 不阻断）。
@@ -333,7 +337,7 @@ def make_consumers_accuracy_gate() -> GateSpec:
     消费者模块路径错。
 
     Returns:
-        GateSpec(gate_id="CONSUMERS-ACCURACY", priority=109)。
+        GateSpec(gate_id="CONSUMERS-ACCURACY", priority=113)。
         warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
     """
 
@@ -403,5 +407,5 @@ def make_consumers_accuracy_gate() -> GateSpec:
     return GateSpec(
         gate_id="CONSUMERS-ACCURACY",
         check=_check,
-        priority=110,
+        priority=113,
     )
