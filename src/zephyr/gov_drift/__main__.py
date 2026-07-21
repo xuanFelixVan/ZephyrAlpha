@@ -40,7 +40,6 @@ Drift Detector MOD-INF-023 CLI — 漂移扫描入口。
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import sys
 
@@ -48,6 +47,7 @@ import sys
 def _cmd_scan(args: argparse.Namespace) -> int:
     try:
         from zephyr.gov_drift.drift_engine import ScanLevel, build_report, scan
+        from zephyr.shared.utils.async_utils import run_sync
 
     except ImportError as exc:
         print(f"ERROR: drift_engine import failed: {exc}", file=sys.stderr)
@@ -57,13 +57,9 @@ def _cmd_scan(args: argparse.Namespace) -> int:
     level = ScanLevel[args.level.upper()]
 
     try:
-        loop = asyncio.new_event_loop()
-
-        asyncio.set_event_loop(loop)
-
-        result = loop.run_until_complete(scan(level=level))
-
-        loop.close()
+        # 5.100.16 治本: 替换手动 new_event_loop + set_event_loop + run_until_complete，
+        # 改用 canonical run_sync()——自动处理有无运行 loop 两种场景
+        result = run_sync(scan(level=level))
 
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"ERROR: scan failed: {exc}", file=sys.stderr)

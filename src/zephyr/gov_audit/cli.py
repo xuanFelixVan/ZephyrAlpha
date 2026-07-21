@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SystemExit on invalid subcommand; ImportError->module unavailable in output
 # [TESTS] tests/audit-orchestrator/
-# [A_module] module_id=MOD-GOV_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations
@@ -161,20 +161,13 @@ def _audit_red_blue_validator() -> tuple[str, Any]:
 
 def _audit_behavioral_auditor(level: str) -> tuple[str, Any]:
     try:
-        import asyncio
-
         from zephyr.gov_drift.drift_engine import ScanLevel, scan
+        from zephyr.shared.utils.async_utils import run_sync
 
         level_enum = ScanLevel[level.upper()]
-        # 5.100.18 修复: 保存原 loop 并在 finally 中恢复, 避免污染调用方 loop 上下文
-        _prev_loop = asyncio.get_event_loop_policy().get_event_loop()
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            scan_result = loop.run_until_complete(scan(level=level_enum))
-        finally:
-            loop.close()
-            asyncio.set_event_loop(_prev_loop)
+        # 5.100.15 治本: 替换 get_event_loop_policy().get_event_loop()（3.12 弃用, 3.14 移除）
+        # + 手动 loop 管理，改用 canonical run_sync()——自动处理有无运行 loop 两种场景
+        scan_result = run_sync(scan(level=level_enum))
         return "ok", {
             "scan_id": scan_result.scan_id,
             "detectors_run": scan_result.detectors_run,

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/cold/test_cold_start.py
-# [A_module] module_id=MOD-SEC_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC-cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -202,19 +202,17 @@ def bootstrap(project_root: str) -> ColdStartResult:
 
 
 def _trigger_light_scan(project_root: str) -> bool:
-    import asyncio
+    from zephyr.shared.utils.async_utils import run_sync
 
     from .drift_engine import ScanLevel, scan
 
-    loop = asyncio.new_event_loop()
     try:
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(scan(level=ScanLevel.LIGHT))
+        # 5.100.16 治本: 替换手动 new_event_loop + set_event_loop + run_until_complete，
+        # 改用 canonical run_sync()——自动处理有无运行 loop 两种场景
+        result = run_sync(scan(level=ScanLevel.LIGHT))
         return result.detectors_run > 0
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
-    finally:
-        loop.close()
 
 
 def session_entry_activate(project_root: str) -> ColdStartResult:
