@@ -4965,6 +4965,30 @@ capabilities:
       - _scan_file               # 单文件扫描逻辑(删则检测失效)
       - _check_stale_violation   # stale 检测(删则 stale 检测失效)
 
+  # --------------------------------------------------------------------------
+  - capability_id: gate_auto_registrar
+    canonical_override: src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py
+    aliases:
+      - GATE-REGISTRY-AUTO
+      - gate-registry-auto
+      - auto_register_gates
+      - load_gate_entries
+      - in_process_gate_registry
+      - gate_auto_registrar
+    description: >-
+      YAML 驱动的 in-process gate 自动注册器（#ARCH-GATE-REGISTRY-AUTO-001 治本，2026-07-21）。
+      病根：git_commit_gateway.py 75 个 gate 的 import + register 全部硬编码于单文件，
+      违反开闭原则，多 session 并发修改冲突频发，与 trae_072 跨 commit 原子性铁律1冲突。
+      治本：in_process_gate_registry.yaml 作为注册真源（76 个 gate 条目），
+      gate_auto_registrar.py 从 YAML 动态 import + register，替代显式注册。
+      fail-open 设计（YAML/import/getattr 异常不阻断 commit）；
+      register 幂等共存（auto_registrar 与显式注册可过渡期共存）。
+      解决发现性：新 AI 通过 capability_lookup.find("gate_auto_registrar") 可定位真源。
+      解决防重建：CREATE-GUARD 阻断无 token 的 YAML/registrar/test 副本。
+    integrity_anchors:
+      - load_gate_entries         # YAML 加载(删则无 gate 可注册)
+      - auto_register_gates       # 动态注册入口(删则注册失效)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -6706,6 +6730,26 @@ creation_tokens:
     token: "auto-git-helpers-shared-20260721"
     created_by: "sess-46560-20260721162044"
     capability: "twelve_dimension_audit_automation"
+
+  # --- GATE-REGISTRY-AUTO in-process gate 注册自动化（2026-07-21，#ARCH-GATE-REGISTRY-AUTO-001 治本）---
+  # 病根：git_commit_gateway.py 75 个 gate 的 import + register 全部硬编码于单文件，
+  #       违反开闭原则，多 session 并发修改冲突频发，与 trae_072 跨 commit 原子性铁律1冲突。
+  # 治本：YAML 驱动自动注册——in_process_gate_registry.yaml 作为注册真源，
+  #       gate_auto_registrar.py 动态 import + register，替代显式注册。
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 YAML/registrar/test 副本
+  # session: ARCH-GATE-REGISTRY-AUTO-001
+  - file: "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml"
+    token: "auto-in-process-gate-registry-yaml-20260721"
+    created_by: "ARCH-GATE-REGISTRY-AUTO-001"
+    capability: "gate_auto_registrar"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py"
+    token: "auto-gate-auto-registrar-20260721"
+    created_by: "ARCH-GATE-REGISTRY-AUTO-001"
+    capability: "gate_auto_registrar"
+  - file: "tests/governance/rule_bridge/test_gate_auto_registrar.py"
+    token: "auto-test-gate-auto-registrar-20260721"
+    created_by: "ARCH-GATE-REGISTRY-AUTO-001"
+    capability: "gate_auto_registrar"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
