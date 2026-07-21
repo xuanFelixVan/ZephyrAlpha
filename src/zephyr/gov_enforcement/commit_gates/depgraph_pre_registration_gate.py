@@ -238,11 +238,6 @@ def make_depgraph_pre_registration_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 非 Zephyr 项目 skip（对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）
-        governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
-        if not governance_dir.is_dir():
-            return True, "non-Zephyr project, skipping DEPGRAPH-PRE-REGISTRATION"
-
         py_files = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""

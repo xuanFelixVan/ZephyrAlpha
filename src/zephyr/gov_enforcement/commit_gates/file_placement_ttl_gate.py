@@ -240,14 +240,6 @@ def make_file_placement_ttl_gate() -> GateSpec:
         allow_promote = kwargs.get("allow_promote", False)
         project_root = gateway.project_root
 
-        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
-        # 此 gate 依赖 directory_contract.yaml + ttl_vocabulary.yaml 真源文件，
-        # 测试用 tmp_path 临时仓库无这些文件，不应被 fail-closed 阻断。
-        # 对标 DIRECTORY-CONTRACT / SESSION-REQUIRED / TTL-METADATA gate 的非 Zephyr skip 逻辑。
-        governance_dir = project_root / "scripts" / "governance" / "d1_structure"
-        if not governance_dir.is_dir():
-            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping FILE-PLACEMENT-TTL"
-
         # 1. 动态加载真源（fail-closed：加载失败阻断）
         try:
             (

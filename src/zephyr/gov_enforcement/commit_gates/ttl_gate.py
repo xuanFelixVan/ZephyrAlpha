@@ -105,11 +105,6 @@ def make_ttl_gate() -> GateSpec:
             / "d3_metadata"
             / "check_frontmatter_metadata.py"
         )
-        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
-        # 对标 DIRECTORY-CONTRACT gate 的非 Zephyr skip 逻辑。
-        governance_dir = project_root / "scripts" / "governance" / "d1_structure"
-        if not governance_dir.is_dir():
-            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping TTL-METADATA"
         if not check_script.is_file():
             # fail-closed：checker 缺失是环境异常，必须阻断
             return False, f"check_frontmatter_metadata.py not found: {check_script}"
