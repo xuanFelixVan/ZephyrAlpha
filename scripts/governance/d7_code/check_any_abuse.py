@@ -65,6 +65,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.yaml_utils import load_yaml_safe
 
 # ── 豁免模式 ──────────────────────────────────────────────────────────────
 # 这些 Any 用法是合理的，不报违规。
@@ -78,10 +79,16 @@ _CALLABLE_TYPES = {"Callable", "callable"}
 # **kwargs: Any 兼容旧 API
 _KWARGS_ANY_OK = True
 
-# noqa 行级豁免标记（#ARCH-ANY-GOVERNANCE-001 Phase 3）
-# 合法的 Any 用法（如动态 Plugin 接口、Protocol 边界、第三方 API 边界）
-# 可用 `# noqa: any-abuse  any-abuse豁免: <理由>` 行级标记豁免
-_NOQA_ANY_ABUSE_RE = re.compile(r"#\s*noqa:\s*any-abuse\b")
+# noqa_exempt_registry.yaml SSoT 路径（真源唯一，禁止硬编码 marker 字符串）
+_NOQA_REGISTRY = (
+    Path(__file__).resolve().parents[3]
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "noqa_exempt_registry.yaml"
+)
+_NOQA_ANY_ABUSE_RE: re.Pattern[str] | None = None  # 懒加载缓存
 
 
 @dataclass
@@ -337,15 +344,40 @@ def scan_file(filepath: Path) -> list[AnyViolation]:
     return violations
 
 
+def _get_noqa_any_abuse_re() -> re.Pattern[str] | None:
+    """从 noqa_exempt_registry.yaml 动态加载 any-abuse marker（SSoT，禁止硬编码）。
+
+    #ARCH-ANY-GOVERNANCE-001 Phase 3 + 审查 P2 修复：
+    marker 字符串真源唯一在 noqa_exempt_registry.yaml，本函数动态加载并构建正则。
+    fail-open：registry 加载失败或 marker 不存在时返回 None（不阻断检测器运行）。
+    """
+    global _NOQA_ANY_ABUSE_RE
+    if _NOQA_ANY_ABUSE_RE is not None:
+        return _NOQA_ANY_ABUSE_RE
+    try:
+        data = load_yaml_safe(_NOQA_REGISTRY)
+        for m in (data.get("markers") or []) if data else []:
+            if m.get("marker") == "any-abuse":
+                _NOQA_ANY_ABUSE_RE = re.compile(r"#\s*noqa:\s*any-abuse\b")
+                return _NOQA_ANY_ABUSE_RE
+        # marker 未登记在 registry
+        return None
+    except Exception:
+        return None
+
+
 def _collect_noqa_any_abuse_lines(content: str) -> set[int]:
     """收集 content 中所有含 `# noqa: any-abuse` 标记的行号（1-based）。
 
     #ARCH-ANY-GOVERNANCE-001 Phase 3：行级豁免机制，
-    与 noqa_exempt_registry.yaml 中登记的 any-abuse 标记对应。
+    marker 真源在 noqa_exempt_registry.yaml（动态加载，禁止硬编码）。
     """
     lines: set[int] = set()
+    pattern = _get_noqa_any_abuse_re()
+    if pattern is None:
+        return lines  # registry 不可达或 marker 未登记 → 无豁免
     for idx, line in enumerate(content.splitlines(), start=1):
-        if _NOQA_ANY_ABUSE_RE.search(line):
+        if pattern.search(line):
             lines.add(idx)
     return lines
 
