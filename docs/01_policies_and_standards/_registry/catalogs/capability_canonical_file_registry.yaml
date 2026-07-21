@@ -5831,6 +5831,12 @@ creation_tokens:
     created_by: "session-sess-37904-20260706052842"
     capability: "data_source_provider_abstraction"
 
+  # --- 880xxx 板块K线下载器（2026-07-22，tqcenter 盘后日K/分钟K写入 ClickHouse）---
+  - file: "src/zephyr/data/sector_kline_downloader.py"
+    token: "auto-sector-kline-downloader-20260722"
+    created_by: "session-data-sector-kline"
+    capability: "sector_kline_download"
+
   # --- MOD-L00-004 数据源集成器阶段3（2026-07-06，5 新 Provider + metrics.py + 61 任务）---
   - file: "src/zephyr/data/implementations/baostock_provider.py"
     token: "auto-baostock-provider-20260706"
