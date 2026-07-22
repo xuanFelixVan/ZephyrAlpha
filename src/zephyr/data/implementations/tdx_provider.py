@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] bestip自动选最快服务器；单线程串行；板块K线+成分股；无板块分笔Tick
+# [INVARIANTS] bestip自动选最快服务器；单线程串行；板块K线(1d/5m/1m等全周期)+成分股；无板块分笔Tick；880xxx通过TCP直连盘中实时获取分钟K线(不依赖tdx客户端盘后下载)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
