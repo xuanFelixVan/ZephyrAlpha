@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.1"
+version: "0.2.2"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -139,7 +139,7 @@ END_REQUIRED_SECTIONS
 
 # Registry Governance 蓝图+施工图 — 注册表体系架构+功能域注册表+SSoT门禁
 
-> module_id: MOD-INF-037 | version: 0.2.1 | status: Draft | domain: infra_ops
+> module_id: MOD-INF-037 | version: 0.2.2 | status: Draft | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/ | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -1124,8 +1124,6 @@ class OverlapResult:
 | `data/asset_index/archive/migration_scripts/update_imports.py` | ✅ 已实现 | |
 | `data/asset_index/archive/migration_scripts/update_non_import_refs.py` | ✅ 已实现 | |
 | `data/asset_index/archive/migration_scripts/verify_batch.py` | ✅ 已实现 | |
-| `src/zephyr/governance/capability_lookup.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/registry_governance.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1147,6 +1145,7 @@ class OverlapResult:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

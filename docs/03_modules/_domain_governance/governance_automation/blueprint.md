@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.2
+version: 5.5.3
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -1453,12 +1453,9 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/ops_governance/auto_runner.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/script_system/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/script_system/finding.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/script_system/gate_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/script_system/kb_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/red_blue_validator/__init__.py` | ✅ 已实现 | |
 
 ### 14.2 测试文件
 
@@ -1475,6 +1472,9 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `tests/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
 | `tests/governance/rule_bridge/test_session_worktree_cli.py` | ✅ 已实现 | |
 | `tests/governance/shared/test_finding.py` | ✅ 已实现 | |
+| `tests/governance/test_architecture_health_dashboard_metrics.py` | ✅ 已实现 | |
+| `tests/governance/test_architecture_health_dashboard_metrics_p2.py` | ✅ 已实现 | |
+| `tests/governance/test_check_blueprint_code_alignment.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_f18_governance_adversarial.py` | ✅ 已实现 | |
 | `tests/task/test_task_repo_gateway_e2e.py` | ✅ 已实现 | |
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.1"
+version: "4.0.2"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -218,7 +218,7 @@ build_status: stable
 
 # Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
 
-> module_id: MOD-L02-001 | version: 4.0.1 | status: active | domain: factor
+> module_id: MOD-L02-001 | version: 4.0.2 | status: active | domain: factor
 > actual_disk_path: src/zephyr/factor/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-FACTOR-01~11+24（蓝图内部编号，不进blueprint_registry）
 
@@ -1105,9 +1105,6 @@ class FactorMeta(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/factor/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/bus_factor_defense.py` | ✅ 已实现 | |
-| `src/zephyr/factor/factor_base.py` | ✅ 已实现 | |
 | `src/zephyr/factor/momentum_factor.py` | ✅ 已实现 | |
 | `src/zephyr/factor/value_factor.py` | ✅ 已实现 | |
 | `src/zephyr/governance/engine/__init__.py` | ⚠️ 骨架 | |
@@ -1131,6 +1128,7 @@ class FactorMeta(BaseModel):
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

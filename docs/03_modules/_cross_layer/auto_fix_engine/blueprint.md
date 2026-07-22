@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/auto_fix_engine
 title: "Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行"
 doc_type: blueprint
 status: Active
-version: "5.1.1"
+version: "5.1.2"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -61,7 +61,7 @@ build_status: planned
 
 本蓝图描述 AutoFixEngine——ZephyrAlpha 的自动修复引擎。它解决了审计发现问题到自动修复执行的闭环问题。核心职责包括：三通道修复管道（结构→模板化100%确定 / 语义→LLM Bridge 95~98%置信 / 行为→Block+Alert永不自动修复）、8状态修复生命周期、WAL原子修复保证、病因修复法九阶链。当前规模 ~51模块/~268脚本/单Session，目标容量 1500模块/10000脚本/100 AI并发。上游依赖 DriftDetector(MOD-INF-023)/OrphanJudge(MOD-INF-029)/SemanticAuditor(MOD-INF-028) 提供审计发现，下游被 AuditOrchestrator(MOD-INF-027) 消费修复结果。
 
-> module_id: MOD-INF-031 | version: 5.1.1 | status: Active | layer: cross_layer
+> module_id: MOD-INF-031 | version: 5.1.2 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/auto-fix-engine/ | generation: 5 | construction_progress: design_only
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -1273,7 +1273,6 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/auto_fix_engine/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/__main__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/alignment_syncer.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/all_completer.py` | ✅ 已实现 | |
@@ -1281,28 +1280,7 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 | `src/zephyr/infrastructure/auto_fix_engine/compliance_auditor.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/config_fixer.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/dep_version_fixer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/drift_fixer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/engine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/escalation_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/event_hooks.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_budget.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_diff.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_health_check.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_pattern_miner.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_report.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_safety.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/auto_fix_engine/import_fixer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/models.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/scaffold_registrar.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/self_heal_agent.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/shadow_workspace.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/state_machine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1352,6 +1330,7 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

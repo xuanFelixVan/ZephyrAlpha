@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.1"
+version: "2.2.2"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1018,26 +1018,12 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 | `src/zephyr/infrastructure/model_profiler/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/benchmark_suite.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/capability_passport.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/case_assembler.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/cli.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_executor.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_judge.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_orchestrator.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_rubric.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/exam_test_cases.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/job_matcher.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/model_discovery.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/pipeline_routing/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/pipeline_routing/benchmark_suite.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/pipeline_routing/cli.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/pipeline_routing/profiler.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/pipeline_routing/results_writer.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/pipeline_routing/task_model_learner.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/profiler.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/provider_data.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/results_writer.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/task_model_learner.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
@@ -1072,6 +1058,7 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

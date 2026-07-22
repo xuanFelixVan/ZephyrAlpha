@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.2
+version: 1.3.3
 responsibility_domain: 
 design_maturity: prototype
 build_status: stable
@@ -975,23 +975,14 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/backtest/core/data_handler.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/decision_gate.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/engine_base.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/matching_engine.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/matching_logic.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/metrics.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/overfitting_detector.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/pit_manager.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/portfolio.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/tick_replay.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/walk_forward.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/implementations/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/implementations/event_driven_engine.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/implementations/vectorized_engine.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/backtest_result_sink.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/io/decisiongraph_adapter.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/result_repository.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
@@ -1016,3 +1007,5 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

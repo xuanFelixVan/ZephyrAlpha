@@ -3,7 +3,7 @@ module_id: MOD-GOV-SYNC-PANORAMA
 title: "四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐"
 doc_type: blueprint
 status: Active
-version: "1.1.1"
+version: "1.1.2"
 ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
@@ -37,7 +37,7 @@ build_status: generated
 
 # 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
 
-> module_id: MOD-GOV-SYNC-PANORAMA | version: 1.1.1 | status: Active
+> module_id: MOD-GOV-SYNC-PANORAMA | version: 1.1.2 | status: Active
 > actual_disk_path: sync_panorama_module.py + align_panoramas.py + blueprint_frontmatter_reconciler.py
 
 ## 概述
@@ -337,12 +337,11 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/governance/test_blueprint_frontmatter_reconciler.py` | ✅ 已实现 | |
-| `tests/governance/test_sync_panorama_module.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 
@@ -357,3 +356,5 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

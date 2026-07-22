@@ -4,7 +4,7 @@ submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
-version: "2.1.1"
+version: "2.1.2"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -45,7 +45,7 @@ build_status: generated
 design_maturity: prototype
 ---
 
-> module_id: MOD-L07-001 | version: 2.1.1 | status: active | domain: reporting
+> module_id: MOD-L07-001 | version: 2.1.2 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -843,10 +843,8 @@ class PerformanceAttributionReport:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/governance/audit/default_attribution_engine.py` | ⚠️ 骨架 | |
-| `src/zephyr/governance/audit/default_tca_engine.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/observability_governance/analytics_base.py` | ⚠️ 骨架 | |
 | `src/zephyr/reporting/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/reporting/analytics_base.py` | ✅ 已实现 | |
 | `src/zephyr/reporting/default_attribution_engine.py` | ✅ 已实现 | |
 | `src/zephyr/reporting/default_tca_engine.py` | ✅ 已实现 | |
 
@@ -869,6 +867,7 @@ class PerformanceAttributionReport:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

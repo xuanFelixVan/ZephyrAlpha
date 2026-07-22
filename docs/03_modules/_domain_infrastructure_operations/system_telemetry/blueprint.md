@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/system_telemetry
 title: "System Telemetry 蓝图+施工图 — 全系统可观测性"
 doc_type: blueprint
 status: Active
-version: "2.0.3"
+version: "2.0.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -58,7 +58,7 @@ design_maturity: prototype
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性
 
-> module_id: MOD-INF-015 | version: 2.0.3 | status: Active | layer: L0_infrastructure
+> module_id: MOD-INF-015 | version: 2.0.4 | status: Active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/system_telemetry/ | generation: 3 | construction_progress: completed
 
 ## 概述
@@ -1106,30 +1106,15 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/observability_governance/query_metrics.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/_budget_telemetry_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/_trace_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/ai_behavior/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/alerts/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/archive/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/archive/cold_stub.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/auto_bootstrap.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/contract_metrics.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/facade.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/health/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/health_aggregator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/health_probes.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/logs/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/metrics/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/metrics/blueprint_metrics.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/metrics_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/otel_instrumentation.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/profiles/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/schema/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/system_telemetry/traces/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/traces/span_stub.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/system_telemetry/watchdog.py` | ✅ 已实现 | |
 
@@ -1138,6 +1123,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/automation/test_auto_bootstrap.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_split.py` | ✅ 已实现 | |
 | `tests/blueprint/test_blueprint_metrics.py` | ✅ 已实现 | |
 | `tests/budget/test_budget_telemetry_bridge.py` | ✅ 已实现 | |
 | `tests/cold/test_cold_stub.py` | ✅ 已实现 | |

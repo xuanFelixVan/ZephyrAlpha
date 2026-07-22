@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
-version: "0.3.40"
+version: "0.3.41"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -797,23 +797,11 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/integration/mcp/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/_base_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/audit_logger.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/blueprint_search_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/doc_guard_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/error_codes.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/gate_engine_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/gateway_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/governance_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/handoff_auto_loader.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/knowledge_base_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/prompt_provider.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/rate_limiter.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/resource_provider.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/sandbox_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/sentinel_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/task_manager_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/telemetry_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/vector_memory_server.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
@@ -823,6 +811,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | `tests/a2a/test_mcp.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_mcp_boot_hooks_integration.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_mcp_full_lifecycle_e2e.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_mcp_gateway_version_ratelimit.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_mcp_health_check_recovery.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_mcp_idle_timeout.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_mcp_signal_shutdown.py` | ✅ 已实现 | |
