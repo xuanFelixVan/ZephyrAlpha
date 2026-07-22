@@ -236,7 +236,13 @@ class DatabaseService(DatabaseCRUDMixin):
             if hasattr(self._pg_tls, tls_attr):
                 setattr(self._pg_tls, tls_attr, None)
 
-        # clickhouse_driver.Client 无 close()，断开由 GC 处理
+        # clickhouse_driver.Client: 显式 disconnect() 关闭底层 socket，
+        # 避免 ResourceWarning（GC 关闭会导致 pytest PytestUnraisableExceptionWarning）
+        if self._clickhouse_conn is not None:
+            try:
+                self._clickhouse_conn.disconnect()
+            except Exception:  # noqa: BLE001 — 5.64.5：异常隔离
+                logger.warning("close_all: failed to disconnect ClickHouse", exc_info=True)
         self._clickhouse_conn = None
 
     # ========== governance.db + depgraph CRUD 方法 ==========

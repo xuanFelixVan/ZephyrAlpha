@@ -101,7 +101,9 @@ class TestDatabaseHealthStatus:
             integrity_ok=True,
             checked_at="",
         )
-        assert "HEALTHY" in repr(hs)
+        r = repr(hs)
+        assert "healthy=True" in r
+        assert "schema_version=3" in r
 
     def test_repr_unhealthy(self):
         hs = DatabaseHealthStatus(
@@ -114,8 +116,9 @@ class TestDatabaseHealthStatus:
             checked_at="",
             error="timeout",
         )
-        assert "UNHEALTHY" in repr(hs)
-        assert "timeout" in repr(hs)
+        r = repr(hs)
+        assert "healthy=False" in r
+        assert "timeout" in r
 
 
 class TestDatabaseManagerLifecycle:

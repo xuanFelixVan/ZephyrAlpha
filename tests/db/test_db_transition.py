@@ -33,13 +33,17 @@ class TestTaskStatusEnum:
     def test_all_status_values(self):
         expected = {
             "PENDING",
+            "CREATED",
+            "LOCKED",
+            "ASSIGNED",
             "IN_PROGRESS",
+            "READY",
+            "REVIEWING",
             "COMPLETED",
             "VERIFIED",
             "FAILED",
             "BLOCKED",
             "WAITING",
-            "READY",
             "RETRY",
             "CANCELLED",
         }
@@ -47,7 +51,7 @@ class TestTaskStatusEnum:
         assert actual == expected
 
     def test_member_count(self):
-        assert len(TaskStatus) == 10
+        assert len(TaskStatus) == 14
 
     def test_is_str_enum(self):
         assert isinstance(TaskStatus.PENDING, str)

@@ -35,6 +35,7 @@ import pytest
 
 from zephyr.governance.persistence.task_repo import (
     InvalidTransitionError,
+    RootCauseRequiredError,
     TaskNotFoundError,
     TaskRepository,
     allowed_transitions,
@@ -299,7 +300,6 @@ class TestTransition:
         [
             ("PENDING", "COMPLETED"),
             ("PENDING", "VERIFIED"),
-            ("PENDING", "FAILED"),
             ("COMPLETED", "CANCELLED"),
             ("RETRY", "CANCELLED"),
             ("VERIFIED", "PENDING"),
@@ -336,6 +336,37 @@ class TestTransition:
         repo.create(t)
         with pytest.raises(InvalidTransitionError):
             repo.transition(tid, to_s)
+
+    def test_failed_without_note_raises_root_cause_required(self, repo: TaskRepository) -> None:
+        """PENDING→FAILED 缺少 note 时抛 RootCauseRequiredError（MTH-006）。"""
+        now = datetime.now(_UTC)
+        tid = "SRC-900"
+        t = TaskCard(
+            task_id=tid,
+            namespace=TaskNamespace.SRC,
+            seq=900,
+            phase=1,
+            title="Test",
+            status=TaskStatus.PENDING,
+            execution_model="claude",
+            safety_level=SafetyLevel.M,
+            source_blueprint="test",
+            source_section="test",
+            description="根因：测试 FAILED 根因检查。治根：验证 MTH-006 根因强制。施工步骤：(1) 测试无 note 的 FAILED 转换。验收标准：抛出 RootCauseRequiredError。",
+            files_in_scope=["src/zephyr/db/task_repo.py"],
+            deliverables=["test"],
+            applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+            allowed_touch=["src/zephyr/db/task_repo.py"],
+            rollback_instructions="revert",
+            post_sync_standard=["echo ok"],
+            acceptance=["exit=0"],
+            dependency_type="none",
+            created_at=now,
+            updated_at=now,
+        )
+        repo.create(t)
+        with pytest.raises(RootCauseRequiredError):
+            repo.transition(tid, "FAILED")
 
     def test_transition_nonexistent_raises(self, repo: TaskRepository) -> None:
         with pytest.raises(TaskNotFoundError):

@@ -5,7 +5,9 @@
 """
 import datetime
 import math
+import sys
 import pytest
+from unittest.mock import MagicMock
 
 from src.zephyr.data.provider_base import FetchPayload, FetchResult
 from src.zephyr.data.policy_registry import SourcePolicy
@@ -304,25 +306,25 @@ class TestIFindNewCapabilities:
         assert called == ["kline_daily"]
 
     def test_index_kline_route(self, monkeypatch):
-        """fetch(capability=index_kline) 路由到 _fetch_index_kline。"""
+        """fetch(capability=kline_index) 路由到 _fetch_kline_index。"""
         p = IFindProvider()
         called = []
 
         def fake_fetch(self, payload, policy):
-            called.append("index_kline")
+            called.append("kline_index")
             yield FetchResult(
                 table="c1_market.index_kline", columns=[], rows=[],
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(IFindProvider, "_fetch_index_kline", fake_fetch)
+        monkeypatch.setattr(IFindProvider, "_fetch_kline_index", fake_fetch)
         payload = FetchPayload(
             table="c1_market.index_kline", symbols=["000300.SH"],
             start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 30),
-            extra={"capability": "index_kline"},
+            extra={"capability": "kline_index"},
         )
         list(p.fetch(payload, SourcePolicy()))
-        assert called == ["index_kline"]
+        assert called == ["kline_index"]
 
     def test_money_flow_route(self, monkeypatch):
         """fetch(capability=money_flow) 路由到 _fetch_money_flow。"""
@@ -618,6 +620,7 @@ class TestIFindNewCapabilities:
     def test_query_realtime_chunk_quota_error(self, monkeypatch):
         """_query_realtime_chunk 配额耗尽返回 fatal_error。"""
         p = IFindProvider()
+        monkeypatch.setitem(sys.modules, "iFinDPy", MagicMock())
 
         def fake_call_with_policy(func, policy, *args, **kwargs):
             return {"errorcode": -4318, "errmsg": "月度配额耗尽"}
@@ -633,6 +636,7 @@ class TestIFindNewCapabilities:
     def test_query_realtime_chunk_no_data(self, monkeypatch):
         """_query_realtime_chunk -4001 非交易时段不视为致命错误。"""
         p = IFindProvider()
+        monkeypatch.setitem(sys.modules, "iFinDPy", MagicMock())
 
         def fake_call_with_policy(func, policy, *args, **kwargs):
             return {"errorcode": -4001, "errmsg": "无数据"}
@@ -663,7 +667,7 @@ class TestMiniQMTNewCapabilities:
         p = MiniQMTProvider()
         called = {}
 
-        def fake_fetch_kline(self, payload, policy, period):
+        def fake_fetch_kline(self, payload, policy, period, **kwargs):
             called["period"] = period
             yield FetchResult(
                 table="c1_market.kline_1min", columns=[], rows=[],
@@ -684,7 +688,7 @@ class TestMiniQMTNewCapabilities:
         p = MiniQMTProvider()
         called = {}
 
-        def fake_fetch_kline(self, payload, policy, period):
+        def fake_fetch_kline(self, payload, policy, period, **kwargs):
             called["period"] = period
             yield FetchResult(
                 table="c1_market.kline_5min", columns=[], rows=[],
@@ -705,7 +709,7 @@ class TestMiniQMTNewCapabilities:
         p = MiniQMTProvider()
         called = {}
 
-        def fake_fetch_kline(self, payload, policy, period):
+        def fake_fetch_kline(self, payload, policy, period, **kwargs):
             called["period"] = period
             yield FetchResult(
                 table="c1_market.kline_daily", columns=[], rows=[],
@@ -783,9 +787,9 @@ class TestMiniQMTBatch2Capabilities:
         """验证 15 个新能力均已注册到 meta.capabilities。"""
         caps = MiniQMTProvider.meta.capabilities
         new_caps = [
-            "cb_kline", "option_kline", "option_greeks", "index_weight",
+            "kline_cb", "option_kline", "option_greeks", "index_weight",
             "sector_list", "l2_tick", "auction_data", "futures_kline_qmt",
-            "hk_kline", "us_kline", "etf_nav", "repurchase",
+            "hk_kline", "kline_us_daily", "etf_nav", "repurchase",
             "margin_trading_qmt", "dragon_tiger_qmt", "block_trade_qmt",
         ]
         for cap in new_caps:
@@ -814,18 +818,18 @@ class TestMiniQMTBatch2Capabilities:
         assert MiniQMTProvider._calc_bs_greeks(100, 100, 0, 0.05, 0.2, "call") is None
 
     def test_cb_kline_route(self, monkeypatch):
-        """fetch(capability=cb_kline) 路由到 _fetch_cb_kline。"""
+        """fetch(capability=kline_cb) 路由到 _fetch_kline_cb。"""
         p = MiniQMTProvider()
         called = []
 
         def fake(self, payload, policy):
-            called.append("cb_kline")
+            called.append("kline_cb")
             yield FetchResult(table="c1_market.cb_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_cb_kline", fake)
-        payload = FetchPayload(table="", symbols=["113001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "cb_kline"})
+        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline_cb", fake)
+        payload = FetchPayload(table="", symbols=["113001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_cb"})
         list(p.fetch(payload, SourcePolicy()))
-        assert called == ["cb_kline"]
+        assert called == ["kline_cb"]
 
     def test_option_kline_route(self, monkeypatch):
         """fetch(capability=option_kline) 路由到 _fetch_option_kline。"""
@@ -912,7 +916,7 @@ class TestMiniQMTBatch2Capabilities:
         assert called == ["auction_data"]
 
     def test_futures_kline_qmt_route(self, monkeypatch):
-        """fetch(capability=futures_kline_qmt) 路由到 _fetch_futures_kline_qmt。"""
+        """fetch(capability=futures_kline_qmt) 路由到 _fetch_kline_futures_qmt。"""
         p = MiniQMTProvider()
         called = []
 
@@ -920,7 +924,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("futures_kline_qmt")
             yield FetchResult(table="c1_market.futures_kline_qmt", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_futures_kline_qmt", fake)
+        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline_futures_qmt", fake)
         payload = FetchPayload(table="", symbols=["IF2407.CFFEX"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "futures_kline_qmt"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["futures_kline_qmt"]
@@ -940,18 +944,18 @@ class TestMiniQMTBatch2Capabilities:
         assert called == ["hk_kline"]
 
     def test_us_kline_route(self, monkeypatch):
-        """fetch(capability=us_kline) 路由到 _fetch_us_kline。"""
+        """fetch(capability=kline_us_daily) 路由到 _fetch_us_kline。"""
         p = MiniQMTProvider()
         called = []
 
         def fake(self, payload, policy):
-            called.append("us_kline")
+            called.append("kline_us_daily")
             yield FetchResult(table="c1_market.us_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
         monkeypatch.setattr(MiniQMTProvider, "_fetch_us_kline", fake)
-        payload = FetchPayload(table="", symbols=["AAPL.US"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "us_kline"})
+        payload = FetchPayload(table="", symbols=["AAPL.US"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_us_daily"})
         list(p.fetch(payload, SourcePolicy()))
-        assert called == ["us_kline"]
+        assert called == ["kline_us_daily"]
 
     def test_etf_nav_route(self, monkeypatch):
         """fetch(capability=etf_nav) 路由到 _fetch_etf_nav。"""

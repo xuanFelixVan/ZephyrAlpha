@@ -29,13 +29,23 @@ from zephyr.governance.persistence.database_manager import (
 
 @pytest.fixture
 def tmp_db_path():
+    import gc
+    import time
+
     fd, path = tempfile.mkstemp(suffix=".db", prefix="test_dm_")
     os.close(fd)
     yield Path(path)
+    gc.collect()
     for ext in ("", "-wal", "-shm"):
         p = Path(str(path) + ext)
         if p.exists():
-            p.unlink()
+            for _attempt in range(5):
+                try:
+                    p.unlink()
+                    break
+                except PermissionError:
+                    gc.collect()
+                    time.sleep(0.1)
 
 
 @pytest.fixture

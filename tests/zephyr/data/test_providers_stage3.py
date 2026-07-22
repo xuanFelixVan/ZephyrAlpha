@@ -127,11 +127,11 @@ class TestBaostockProvider:
         mock_rs = MagicMock()
         mock_rs.error_code = "0"
         mock_rs.next.side_effect = [True, False]
-        # baostock query_trade_date 返回: [product, calendar_date, is_trading_day]
+        # baostock query_trade_dates 返回: [calendar_date, is_trading_day]
         mock_rs.get_row_data.side_effect = [
-            ["product", "2026-07-05", "1"],
+            ["2026-07-05", "1"],
         ]
-        bs.query_trade_date.return_value = mock_rs
+        bs.query_trade_dates.return_value = mock_rs
 
         with patch.dict("sys.modules", {"baostock": bs}):
             p = self._make_provider()
@@ -223,10 +223,10 @@ class TestTushareProvider:
                 symbols=None,
                 start=datetime.date(2026, 7, 5),
                 end=datetime.date(2026, 7, 5),
-                extra={"capability": "news_news_info"},
+                extra={"capability": "news_data"},
             )
             results = list(p.fetch(payload, SourcePolicy()))
-            assert len(results) == 1
+            assert len(results) == 2  # news_data yields news_info + news_security
             assert results[0].error is None
             assert len(results[0].rows) == 1
 
@@ -290,7 +290,8 @@ class TestTickFlowProvider:
             "close": [153.0],
             "volume": [1000000],
         })
-        tf.klines.get.return_value = mock_df
+        # connect() 设置 self._client = tf.TickFlow.free()，故 mock 路径需经过 TickFlow.free
+        tf.TickFlow.free.return_value.klines.get.return_value = mock_df
 
         with patch.dict("sys.modules", {"tickflow": tf}):
             p = self._make_provider()
@@ -300,7 +301,7 @@ class TestTickFlowProvider:
                 symbols=["AAPL.US"],
                 start=datetime.date(2026, 7, 1),
                 end=datetime.date(2026, 7, 5),
-                extra={"capability": "us_daily_kline"},
+                extra={"capability": "kline_us_daily"},
             )
             results = list(p.fetch(payload, SourcePolicy()))
             assert len(results) == 1
@@ -320,7 +321,8 @@ class TestTickFlowProvider:
             "close": [403.0],
             "volume": [5000000],
         })
-        tf.klines.get.return_value = mock_df
+        # connect() 设置 self._client = tf.TickFlow.free()，故 mock 路径需经过 TickFlow.free
+        tf.TickFlow.free.return_value.klines.get.return_value = mock_df
 
         with patch.dict("sys.modules", {"tickflow": tf}):
             p = self._make_provider()
@@ -348,9 +350,12 @@ class TestTDXProvider:
 
     def _make_mootdx_mock(self):
         """构造 mootdx 模块 mock。"""
+        import pandas as pd
         mootdx = MagicMock()
         mock_client = MagicMock()
         mootdx.quotes.Quotes.factory.return_value = mock_client
+        # _verify_kline 调用 client.bars 验证K线能力，需返回非空 DataFrame
+        mock_client.bars.return_value = pd.DataFrame({"close": [10.0]})
         return mootdx, mock_client
 
     def test_source_name(self):
@@ -370,10 +375,12 @@ class TestTDXProvider:
     def test_fetch_industry_class(self):
         """获取板块分类。"""
         mootdx, mock_client = self._make_mootdx_mock()
-        # mootdx 返回格式：[(板块名, [(股票代码, 股票名称), ...]), ...]
-        mock_client.get_stock_list_in_sector.return_value = [
-            ("板块A", [("600000", "浦发银行"), ("600016", "民生银行")]),
-        ]
+        import pandas as pd
+        # mootdx block() 返回 DataFrame: [blockname, code]
+        mock_client.block.return_value = pd.DataFrame({
+            "blockname": ["板块A", "板块B"],
+            "code": ["600000", "600016"],
+        })
 
         with patch.dict("sys.modules", {"mootdx": mootdx, "mootdx.quotes": mootdx.quotes}):
             p = self._make_provider()
@@ -393,10 +400,13 @@ class TestTDXProvider:
     def test_fetch_sector_kline(self):
         """获取板块指数K线。"""
         mootdx, mock_client = self._make_mootdx_mock()
-        mock_client.index_bars.return_value = [
-            {"datetime": "2026-07-05", "open": 1000, "high": 1010,
-             "low": 995, "close": 1005, "vol": 50000, "amount": 5000000},
-        ]
+        import pandas as pd
+        mock_client.index_bars.return_value = pd.DataFrame({
+            "datetime": ["2026-07-05"],
+            "open": [1000], "high": [1010],
+            "low": [995], "close": [1005],
+            "vol": [50000], "amount": [5000000],
+        })
 
         with patch.dict("sys.modules", {"mootdx": mootdx, "mootdx.quotes": mootdx.quotes}):
             p = self._make_provider()
@@ -406,7 +416,7 @@ class TestTDXProvider:
                 symbols=["sh.880001"],
                 start=datetime.date(2026, 7, 1),
                 end=datetime.date(2026, 7, 6),
-                extra={"capability": "sector_kline", "count": 10},
+                extra={"capability": "kline_sector", "count": 10},
             )
             results = list(p.fetch(payload, SourcePolicy()))
             assert len(results) == 1
@@ -483,7 +493,7 @@ class TestRSSProvider:
             assert len(results) == 1
             assert results[0].error is None
             assert len(results[0].rows) == 1
-            assert results[0].rows[0][1] == "news1"
+            assert results[0].rows[0][2] == "news1"
 
     def test_fetch_unsupported(self):
         fp = MagicMock()

@@ -58,20 +58,16 @@ class TestE2E:
         assert count == 0
 
     def test_transition_has_dm401_reminder(self, repo):
-        """transition() 包含 DM-401 提醒代码。"""
-        source = inspect.getsource(repo.transition)
-        assert "DM-401" in source, "transition() 缺少 DM-401 标记"
+        """_post_completion_actions() 包含 DM-401 提醒代码。"""
+        source = inspect.getsource(repo._post_completion_actions)
+        assert "DM-401" in source, "_post_completion_actions() 缺少 DM-401 标记"
 
     def test_transition_no_session_id_guard(self, repo):
-        """transition() 提醒逻辑不再依赖 session_id（DM-401 修复）。"""
-        source = inspect.getsource(repo.transition)
-        # 找到 DM-401 标记后的代码块，确认没有 `and session_id` 条件
-        dm401_idx = source.index("DM-401")
-        return_idx = source.index("return _row_to_taskcard", dm401_idx)
-        reminder_block = source[dm401_idx:return_idx]
-        assert "if to_status == TaskStatus.COMPLETED:" in reminder_block
-        # 不应该有 `and session_id` 作为 if 条件的一部分
-        assert "and session_id" not in reminder_block.split("if to_status")[1].split(":")[0], (
+        """_post_completion_actions() 提醒逻辑不再依赖 session_id（DM-401 修复）。"""
+        source = inspect.getsource(repo._post_completion_actions)
+        # DM-401 提醒应使用 if/else 分支处理 session_id，而非 `and session_id` 条件
+        assert "DM-401" in source
+        assert "and session_id" not in source, (
             "DM-401 修复后不应有 `and session_id` 条件"
         )
 
@@ -117,12 +113,10 @@ class TestRedBlue:
 
     def test_transition_reminder_wrapped_in_try_except(self, repo):
         """提醒逻辑被 try/except 包裹，不阻断 transition。"""
-        source = inspect.getsource(repo.transition)
-        dm401_idx = source.index("DM-401")
-        return_idx = source.index("return _row_to_taskcard", dm401_idx)
-        reminder_block = source[dm401_idx:return_idx]
-        assert "try:" in reminder_block
-        assert "except Exception" in reminder_block
+        source = inspect.getsource(repo._post_completion_actions)
+        assert "DM-401" in source
+        assert "try:" in source
+        assert "except Exception" in source
 
     def test_session_close_check_command_works(self, repo):
         """Session 关门检查命令可执行。"""

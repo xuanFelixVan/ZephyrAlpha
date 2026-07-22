@@ -27,6 +27,7 @@ Phase E | Safety: MEDIUM (网络请求)
 from __future__ import annotations
 
 import logging
+import warnings
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -80,10 +81,12 @@ def _is_akshare_installed() -> bool:
     if _AKSHARE_OK is not None:
         return _AKSHARE_OK
     try:
-        import akshare  # noqa: F401
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            import akshare  # noqa: F401
 
         _AKSHARE_OK = True
-    except ImportError:
+    except Exception:
         _AKSHARE_OK = False
     return _AKSHARE_OK
 
@@ -100,13 +103,15 @@ def _akshare_has_usable_bar_data() -> bool:
         _AKSHARE_BARS_OK = False
         return False
     try:
-        from zephyr.data.akshare_provider import AkshareProvider
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            from zephyr.data.akshare_provider import AkshareProvider
 
-        provider = AkshareProvider()
-        end = datetime.now(UTC)
-        start = end - timedelta(days=120)
-        df = provider.fetch_historical("600519", start=start, end=end)
-        _AKSHARE_BARS_OK = df is not None and len(df) >= 10
+            provider = AkshareProvider()
+            end = datetime.now(UTC)
+            start = end - timedelta(days=120)
+            df = provider.fetch_historical("600519", start=start, end=end)
+            _AKSHARE_BARS_OK = df is not None and len(df) >= 10
     except Exception:
         _AKSHARE_BARS_OK = False
     return _AKSHARE_BARS_OK

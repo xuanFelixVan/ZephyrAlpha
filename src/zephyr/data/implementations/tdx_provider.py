@@ -248,6 +248,8 @@ class TDXProvider(DataSourceBase):
         880xxx 板块指数通过 TCP 直连盘中实时获取，不依赖 tdx 客户端盘后下载。
         """
         table = payload.table or _TBL_KLINE_SECTOR
+        frequency, period = self._resolve_frequency(payload.extra)
+        count = int(payload.extra.get("count", 100)) if payload.extra else 100
         # 分钟K线写入 kline_sector_intraday 表（DateTime + period 列），
         # 日线写入 kline_sector 表（Date，无 period 列）
         if period != "1d":
@@ -258,8 +260,6 @@ class TDXProvider(DataSourceBase):
         if not symbols:
             symbols = self._resolve_sector_symbols()
             self._log.info(f"symbols=None，从 sector_constituent 解析 {len(symbols)} 只板块")
-        count = int(payload.extra.get("count", 100)) if payload.extra else 100
-        frequency, period = self._resolve_frequency(payload.extra)
 
         for code in symbols:
             t0 = time.time()

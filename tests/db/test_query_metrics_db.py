@@ -93,7 +93,7 @@ class TestQueryMetricsLifecycle:
         conn = sqlite3.connect(str(db_path))
         try:
             conn.execute("CREATE TABLE IF NOT EXISTS t (x)")
-            qm.execute(conn, "test_op", "SELECT 1")
+            qm.execute(conn, "SELECT 1")
             assert len(qm.stats_all()) >= 1
             qm.reset()
             assert len(qm.stats_all()) == 0
@@ -106,10 +106,10 @@ class TestQueryMetricsLifecycle:
         conn = sqlite3.connect(str(db_path))
         try:
             conn.execute("CREATE TABLE IF NOT EXISTS t (x)")
-            qm.execute(conn, "op_stats", "SELECT 1")
+            qm.execute(conn, "SELECT 1")
             all_stats = qm.stats_all()
-            assert "op_stats" in all_stats
-            assert "p50_ms" in all_stats["op_stats"]
+            assert "SELECT" in all_stats
+            assert "p50_ms" in all_stats["SELECT"]
         finally:
             conn.close()
 
@@ -160,12 +160,12 @@ class TestQueryMetricsTracking:
         conn = sqlite3.connect(str(db_path))
         try:
             conn.execute("CREATE TABLE IF NOT EXISTS t (x)")
-            cursor = qm.execute(conn, "select_one", "SELECT 1")
+            cursor = qm.execute(conn, "SELECT 1")
             rows = cursor.fetchall()
             assert len(rows) == 1
             s = qm.stats_all()
-            assert "select_one" in s
-            assert s["select_one"]["count"] >= 1
+            assert "SELECT" in s
+            assert s["SELECT"]["count"] >= 1
         finally:
             conn.close()
 
