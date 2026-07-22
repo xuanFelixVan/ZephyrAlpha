@@ -7066,6 +7066,60 @@ entries:
   related_rules: 'trae_062 (SSoT 分类铁律——架构文档须与权威源对齐), AGENTS.md (文档维护同步)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+# --- #ARCH-066: CAPABILITY-LOOKUP bypass 策略共享模块 + gate-time 白名单检查（2026-07-22）---
+- issue_id: '#ARCH-066'
+  title: CAPABILITY-LOOKUP bypass 逃生通道零摩擦放行结构性不对称治本
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    CAPABILITY-LOOKUP-REQUIRED gate（priority=110）的逃生通道 [no-lookup:any-string]
+    零摩擦放行——任何非空 reason 都通过。白名单分类只在 post-commit reconciler
+    （CAPABILITY-LOOKUP-HEALTH，priority=220）做，导致 10/10 bypass 滥用 +
+    critical_warn 系统性误报。结构性不对称：gate 零摩擦 vs reconciler 无牙警告。
+
+    治本方案（层次 A+B 含治本）：
+    1. 共享策略模块 capability_lookup_bypass_policy.py——gate 和 reconciler 共用
+       BYPASS_MARKER_PREFIX / BYPASS_ENV_VAR / is_exempt_reason（含 _→- 归一化）/
+       has_bypass_marker / is_emergency_bypass / load_bypass_policy（fail-open 加载器）
+    2. gate-time 白名单检查——_check_bypass 中非白名单 reason 硬阻断（passed=False），
+       仅白名单 reason（16 项关键词）放行
+    3. trae_077 YAML 升级为 v2.0.0 数据真源——enforcement.type 从 code_embedded_plus_doc
+       升级为 code_loaded_from_yaml；bypass_exempt_keywords 结构化列表（16 项）+
+       thresholds 段；load_bypass_policy() fail-open 加载本文件
+    4. reconciler 迁移到共享模块——删除本地 _BYPASS_EXEMPT_KEYWORDS /
+       BYPASS_ESCALATION_THRESHOLD / BYPASS_WINDOW，委托 is_exempt_reason
+
+    16 项白名单关键词（原 10 + 扩充 6，基于 bypass_audit.jsonl 实证）：
+    gate-fix, test-fix, merge-prep, continuation, investigated, auto-fix,
+    batch-treatment, batch-governance, architectural-refactor, sync,
+    mechanical, completing, research, bugfix, root-cause, 调研
+
+    归一化：reason 中 _ 自动转 - 后匹配（root_cause_fix → root-cause）
+  fix_phase: |
+    本次落地（2026-07-22）：
+      - src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py（新建共享模块）
+      - src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py（gate 白名单检查）
+      - src/zephyr/governance/audit/reconciliation_registry.py（reconciler 迁移到共享模块）
+      - docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml（v2.0.0 数据真源）
+      - tests/governance/commit_gates/test_capability_lookup_bypass_policy.py（31 项测试）
+      - tests/governance/commit_gates/test_capability_lookup_required_gate.py（23 项测试，含白名单阻断+归一化）
+      - tests/governance/audit/test_capability_lookup_health_reconciler.py（26 项测试，含 16 关键词+归一化+mechanical）
+      - 本注册表追加 #ARCH-066 条目（self-referential 登记）
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py（新建共享策略模块）'
+    - 'src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py（gate-time 白名单检查）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（reconciler 迁移到共享模块）'
+    - 'docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml（v2.0.0 数据真源）'
+    - 'tests/governance/commit_gates/test_capability_lookup_bypass_policy.py（新建，31 项测试）'
+    - 'tests/governance/commit_gates/test_capability_lookup_required_gate.py（适配白名单阻断，23 项测试）'
+    - 'tests/governance/audit/test_capability_lookup_health_reconciler.py（适配 16 关键词，26 项测试）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（追加 #ARCH-066）'
+  status: resolved
+  related_adjudication: '#ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001 (trae_077 初始版本), #ARCH-GOV-CONVERGENCE-META Phase 3.4a (CAPABILITY-LOOKUP-REQUIRED gate 初始落地)'
+  related_rules: 'trae_077 (capability_lookup_bypass_scene_classify, v2.0.0), trae_062 (SSoT 分类铁律——规则数据真源是 YAML), AGENTS.md (capability lookup 强制)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
 # --- #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: 根目录临时文件零容忍治本（2026-07-22）---
 # 关联裁定：#ARCH-TEMP-FILE-LIFECYCLE-001/002（本裁定 Phase 3 实际完成 002 真源未落地的部分）
 - issue_id: '#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001'

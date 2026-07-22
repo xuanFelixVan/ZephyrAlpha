@@ -188,6 +188,7 @@ class TestBypass:
         assert "bypass" in msg.lower()
 
     def test_commit_msg_bypass_with_reason(self, tmp_path):
+        """白名单 reason（gate-fix）→ 放行。"""
         from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
             make_capability_lookup_required_gate,
         )
@@ -196,10 +197,10 @@ class TestBypass:
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         passed, msg = spec.check(
             gw, files, session_id="sess-test",
-            commit_message="fix: urgent patch [no-lookup:hotfix]",
+            commit_message="fix: urgent patch [no-lookup:gate-fix-urgent]",
         )
         assert passed is True
-        assert "no-lookup:hotfix" in msg
+        assert "gate-fix-urgent" in msg
 
     def test_commit_msg_bypass_empty_reason_blocked(self, tmp_path):
         """[no-lookup:] 标记但 reason 为空 → 阻断。"""
@@ -229,6 +230,36 @@ class TestBypass:
         )
         assert passed is True
         assert "merge" in msg.lower()
+
+    def test_non_whitelist_reason_blocked(self, tmp_path):
+        """非白名单 reason（new-feature-xxx）→ 硬阻断（#ARCH-066 治本核心）。"""
+        from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
+            make_capability_lookup_required_gate,
+        )
+        gw = _make_zephyr_gateway(tmp_path)
+        spec = make_capability_lookup_required_gate()
+        files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
+        passed, msg = spec.check(
+            gw, files, session_id="sess-test",
+            commit_message="feat: new feature [no-lookup:new-feature-xxx]",
+        )
+        assert passed is False
+        assert "不匹配白名单" in msg or "白名单" in msg
+
+    def test_whitelist_reason_normalization(self, tmp_path):
+        """归一化匹配：root_cause_fix（_ → -）匹配 root-cause → 放行。"""
+        from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
+            make_capability_lookup_required_gate,
+        )
+        gw = _make_zephyr_gateway(tmp_path)
+        spec = make_capability_lookup_required_gate()
+        files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
+        passed, msg = spec.check(
+            gw, files, session_id="sess-test",
+            commit_message="fix: root cause [no-lookup:root_cause_fix]",
+        )
+        assert passed is True
+        assert "root_cause_fix" in msg
 
 
 # ---------------------------------------------------------------------------

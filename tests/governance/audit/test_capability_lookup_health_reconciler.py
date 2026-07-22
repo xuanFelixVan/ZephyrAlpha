@@ -1,5 +1,5 @@
-# [A_test] module_id: MOD-GOV-capability_lookup_health_reconciler_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-reconciliation_registry | docs/03_modules/_domain_governance/blueprint.md | §P4
+# [A_test] module_id: MOD-GOV_capability_lookup_health_reconciler_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_reconciliation_registry | docs/03_modules/_domain_governance/blueprint.md | §P4
 # [MODULE] tests.governance.audit.test_capability_lookup_health_reconciler
 # [STABILITY] evolving
 # [SAFETY] L
@@ -512,7 +512,7 @@ class TestBypassSceneClassification:
         assert entries[0]["reason"] == "gate-fix-urgent-123"
 
     def test_all_whitelist_keywords_recognized(self, tmp_path):
-        """所有 10 个白名单关键词均被识别为 exempt。"""
+        """所有 16 个白名单关键词均被识别为 exempt。"""
         from zephyr.governance.audit.reconciliation_registry import (
             make_capability_lookup_health_reconciler,
         )
@@ -520,6 +520,7 @@ class TestBypassSceneClassification:
             "gate-fix", "test-fix", "merge-prep", "continuation", "investigated",
             "auto-fix", "batch-treatment", "batch-governance",
             "architectural-refactor", "sync",
+            "mechanical", "completing", "research", "bugfix", "root-cause", "调研",
         ]
         for keyword in whitelist_keywords:
             # 每个关键词独立 tmp_path（避免 bypass_audit.jsonl 累积）
@@ -538,6 +539,42 @@ class TestBypassSceneClassification:
             assert entries[0]["scene"] == "exempt", (
                 f"keyword={keyword} should be exempt, got {entries[0]['scene']}"
             )
+
+    def test_normalization_underscore_to_hyphen(self, tmp_path):
+        """归一化匹配：root_cause_fix（_ → -）匹配 root-cause → exempt。"""
+        from zephyr.governance.audit.reconciliation_registry import (
+            make_capability_lookup_health_reconciler,
+        )
+        spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
+        py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
+        msg = "fix: root cause [no-lookup:root_cause_fix]"
+        result = spec.reconcile([py_file], "sess-normalize", msg)
+        assert result.action == "clean"
+        bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
+        entries = [
+            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        assert entries[0]["scene"] == "exempt"
+        assert entries[0]["reason"] == "root_cause_fix"
+
+    def test_mechanical_batch_exempt(self, tmp_path):
+        """mechanical 批量场景（实证修复验证）：mechanical-header-format-fix-batch-3 → exempt。"""
+        from zephyr.governance.audit.reconciliation_registry import (
+            make_capability_lookup_health_reconciler,
+        )
+        spec = make_capability_lookup_health_reconciler(_MockGateway(tmp_path))
+        py_file = str(tmp_path / "src" / "zephyr" / "foo.py")
+        msg = "fix: mechanical [no-lookup:mechanical-header-format-fix-batch-3]"
+        result = spec.reconcile([py_file], "sess-mechanical", msg)
+        assert result.action == "clean"
+        bypass_log = tmp_path / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
+        entries = [
+            json.loads(line) for line in bypass_log.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        assert entries[0]["scene"] == "exempt"
+        assert entries[0]["reason"] == "mechanical-header-format-fix-batch-3"
 
     def test_empty_reason_treated_as_violation(self, tmp_path):
         """空 reason（无白名单关键词匹配）→ violation。"""
