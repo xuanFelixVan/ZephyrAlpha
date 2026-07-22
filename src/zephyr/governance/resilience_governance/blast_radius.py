@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DepgraphLoadError on invalid YAML; ValueError on max_depth<1
 # [TESTS] tests/semantic-auditor/test_blast_radius.py
-# [A_module] module_id=MOD-SEM_blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEM-blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

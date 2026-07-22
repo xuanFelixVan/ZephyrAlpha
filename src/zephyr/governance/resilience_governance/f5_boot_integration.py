@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns BootResult; logs error on failure; never raises during boot; run_health_checks returns dict
 # [TESTS] tests/test_f5_auto_startup.py
-# [A_module] module_id=MOD-GOV_f5_boot_integration | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-f5_boot_integration | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2).

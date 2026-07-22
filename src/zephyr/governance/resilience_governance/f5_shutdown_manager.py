@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns ShutdownResult; logs error on failure; never raises during shutdown; signal handler swallows exceptions
 # [TESTS] tests/test_f5_auto_shutdown.py
-# [A_module] module_id=MOD-GOV_f5_shutdown_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-f5_shutdown_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周期时间触发
 """

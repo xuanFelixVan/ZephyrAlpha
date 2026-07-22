@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-PRT_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-PRT-engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.governance.engine
 # [INVARIANTS] pending_review
