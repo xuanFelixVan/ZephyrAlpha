@@ -20,18 +20,18 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 1559 | 57.2% |
+| production（生产态） | 1563 | 57.1% |
 | design（设计态） | 49 | 1.8% |
-| prototype（原型态） | 1119 | 41.0% |
+| prototype（原型态） | 1124 | 41.1% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2727** | **100%** |
+| **总计** | **2736** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 3858 | 141.5% |
-| stable | 1593 | 58.4% |
+| generated | 3874 | 141.6% |
+| stable | 1602 | 58.6% |
 | planned | 31 | 1.1% |
 | deprecated | 4 | 0.1% |
 
@@ -48,7 +48,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 | 0 | 0 | 0 | 0 | 0 | N/A |
 | D_COMPLIANCE | 合规 | 2 | 0 | 0 | 2 | 0 | 0.0% |
 | D_CROSS_ASSET | 跨资产 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_DATA | 数据接入层 | 60 | 14 | 3 | 43 | 0 | 23.3% |
+| D_DATA | 数据接入层 | 67 | 17 | 3 | 47 | 0 | 25.4% |
 | D_DATA_ENG | 数据工程 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_DATA_GOV | 数据治理 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D_DATA_SEC | 数据安全与契约 | 7 | 0 | 0 | 7 | 0 | 0.0% |
@@ -94,10 +94,10 @@ ttl: permanent
 | D_POSITION | 仓位管理 | 1 | 1 | 0 | 0 | 0 | 100.0% |
 | D_REPORTING | 报告 | 3 | 1 | 0 | 2 | 0 | 33.3% |
 | D_RISK | 风控 | 11 | 9 | 0 | 2 | 0 | 81.8% |
-| D_SECURITY | 对抗验证 | 165 | 100 | 0 | 65 | 0 | 60.6% |
+| D_SECURITY | 对抗验证 | 166 | 100 | 0 | 66 | 0 | 60.2% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | 0 | N/A |
 | D_SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 0 | 0.0% |
-| D_SHARED | 共享服务 | 183 | 115 | 1 | 67 | 0 | 62.8% |
+| D_SHARED | 共享服务 | 184 | 116 | 1 | 67 | 0 | 63.0% |
 | D_SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | 0 | N/A |
 | D_SIGQC | 信号质量控制 | 2 | 0 | 0 | 2 | 0 | 0.0% |
 | D_SIMULATION | 仿真 | 2 | 2 | 0 | 0 | 0 | 100.0% |

@@ -76,7 +76,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 |  | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | 合规 |  | 0 | 150 | 0.0% | 空 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_DATA | 数据接入层 |  | 14 | 150 | 9.3% | 正常 |
+| D_DATA | 数据接入层 |  | 17 | 150 | 11.3% | 正常 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_DATA_SEC | 数据安全与契约 | L1_foundation | 0 | 150 | 0.0% | 空 |
@@ -125,7 +125,7 @@ ttl: permanent
 | D_SECURITY | 对抗验证 | L1_foundation | 100 | 150 | 66.7% | 正常 |
 | D_SECURITY_LLM | LLM防御 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_SELL_DECISION | 卖出决策 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_SHARED | 共享服务 | L1_foundation | 115 | 150 | 76.7% | 正常 |
+| D_SHARED | 共享服务 | L1_foundation | 116 | 150 | 77.3% | 正常 |
 | D_SIGLEGACY | 信号遗留设计态 |  | 0 | 150 | 0.0% | 空 |
 | D_SIGQC | 信号质量控制 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_SIMULATION | 仿真 | L2_domain | 2 | 150 | 1.3% | 正常 |

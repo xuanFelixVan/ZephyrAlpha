@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共260项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共262项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -19,15 +19,15 @@ ttl: permanent
 
 | 资产类型 | 数量 | 真源 |
 |----------|------|------|
-| 外部数据源 | 13 | data_sources_registry.yaml |
+| 外部数据源 | 15 | data_sources_registry.yaml |
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 34 | config/*.yaml |
-| 数据流作业 | 933 | dataflow_graph_registry.yaml |
+| 数据流作业 | 957 | dataflow_graph_registry.yaml |
 | 数据集 | 14 | dataflow_graph_registry.yaml |
-| **合计** | **260** | |
+| **合计** | **262** | |
 
 ## 2. 外部数据源资产
 
@@ -45,6 +45,8 @@ ttl: permanent
 | DS-TDX | 通达信 | open_source | market_data | 通达信 | active | 0 | A股K线/指数K线/实时报价/分时/个股分笔(仅最近交易日)/本地文件/财务数据/港股/期货/881xxx标准行业板块K线(index_bars)/标准板块成分股(block API) |
 | DS-TICKFLOW | TickFlow | open_source | market_data | 开源社区 | active | 0 | A股Tick数据 |
 | DS-YFINANCE | yfinance | open_source | market_data | 开源社区 | deprecated | 0 | 美股/港股(已废弃,分类体系不兼容) |
+| DS-CLS | 财联社电报 | open_source | news | 财联社 | active | 0 | 财联社电报(分钟级财经快讯) |
+| DS-EASTMONEY_NEWS | 东方财富新闻 | open_source | news | 东方财富 | active | 0 | 东方财富7x24快讯(实时财经新闻) |
 | DS-RSS | RSS | open_source | news | 开源 | active | 0 | 财经新闻RSS源 |
 
 ## 3. 服务资产
