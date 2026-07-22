@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_scanner_raw | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-364 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] tests.test_code_dedup_engine.test_scanner_raw
+# [MODULE] tests.gov_code_dedup.test_scanner_raw
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

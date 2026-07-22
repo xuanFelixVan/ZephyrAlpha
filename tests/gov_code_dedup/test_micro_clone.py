@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_micro_clone | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-362 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] tests.test_code_dedup_engine.test_micro_clone
+# [MODULE] tests.gov_code_dedup.test_micro_clone
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

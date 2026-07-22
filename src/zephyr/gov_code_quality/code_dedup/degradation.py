@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_code_quality.code_dedup.degradation
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] tests/code_dedup_engine/test_degradation_edge.py; tests/governance/budget/test_degradation.py
+# [CONSUMERS] tests/gov_code_dedup/test_degradation_edge.py; tests/governance/budget/test_degradation.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

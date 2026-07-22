@@ -68,18 +68,16 @@ def pytest_configure(config):
 
 
 # MOD-INF-017: code_dedup_engine 裸名注入——部分 red_team 测试以 ``code_dedup_engine``
-# 裸名引用本引擎（无 import 语句）。pytest 会将 tests/ 加入 sys.path 以便加载
-# tests/governance/conftest.py（包模式导入），导致 tests/code_dedup_engine/ 优先于
-# 真源被导入。直接将 sys.modules['code_dedup_engine'] 指向已加载的
-# zephyr.gov_code_quality.code_dedup 模块（真源），并注入 builtins 使测试函数作用域可见.
+# 裸名引用本引擎（无 import 语句，仅在测试函数体内运行时通过 builtins 解析）。
+# 治本(2026-07-22): 原 tests/code_dedup_engine/ 在 pytest prepend 模式下作为裸包
+# 导入并占位 sys.modules['code_dedup_engine']，故旧代码需 del 清缓存。已重命名为
+# tests/gov_code_dedup/ 消除包名冲突——del 不再必要，直接指向真源
+# zephyr.gov_code_quality.code_dedup 并注入 builtins 使测试函数作用域可见。
 try:
     import builtins as _builtins
     import importlib as _importlib_cde
     import sys as _sys
 
-    # 清除可能已被 tests/code_dedup_engine 占位的缓存
-    if "code_dedup_engine" in _sys.modules:
-        del _sys.modules["code_dedup_engine"]
     _cde = _importlib_cde.import_module("zephyr.gov_code_quality.code_dedup")
     _sys.modules["code_dedup_engine"] = _cde
     if not hasattr(_builtins, "code_dedup_engine"):

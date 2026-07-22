@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_self_scan_integrity | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-365 | docs/03_modules/_domain_governance/blueprint.md | §
-# [MODULE] tests.test_code_dedup_engine.test_self_scan_integrity
+# [MODULE] tests.gov_code_dedup.test_self_scan_integrity
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -17,26 +17,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 def test_engine_self_import():
     from zephyr.governance import __version__
 
-    assert __version__ == "0.10.0"
+    assert __version__ == "0.15.0"
 
 
 def test_all_modules_importable():
     modules = [
-        "cache_manager",
-        "diff_detector",
-        "signature_matcher",
         "scanner",
-        "ast_comparator",
-        "degradation",
-        "report",
-        "health-monitor",
-        "config",
-        "extraction_safety",
-        "doom_loop_guard",
-        "shared_lifecycle_manager",
         "monoculture_guard",
-        "grandfather_manager",
-        "atomic_fixer",
+        "self_scanner",
+        "decision_auditor",
+        "exit_codes",
+        "integration_hub",
+        "cli",
+        "config",
+        "function_discovery",
+        "auto_test_generator",
     ]
     for mod_name in modules:
         mod = __import__(
