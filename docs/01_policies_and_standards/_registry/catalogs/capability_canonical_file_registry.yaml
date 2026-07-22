@@ -6783,10 +6783,8 @@ creation_tokens:
     created_by: "ARCH-TEMP-FILE-LIFECYCLE-002"
     capability: "dual_resonance_strategy_design"
     # 2026-07-22 #ARCH-TTL-FAILOPEN-001 遗留项2：旧副本从 docs/04_design/strategies/（无约束裸奔目录）迁移到 docs/_working/（临时区，ttl: task_bound），旧路径已删除
-  - file: "docs/_working/2026-07-20-resonance-screen-result.md"
-    token: "auto-resonance-screen-report-20260721"
-    created_by: "ARCH-TEMP-FILE-LIFECYCLE-002"
-    capability: "resonance_screen_report"
+  # 2026-07-22 #ARCH-TTL-FAILOPEN-001 遗留项清理：resonance-screen-result.md 已过期(task_bound,2026-07-20)
+  # 且引用已删除的旧路径(DOC-REF-BROKEN)，文件已删除，token 条目同步移除
 
   # --- #ARCH-WORKTREE-LIFECYCLE-001: worktree lifecycle 状态机（2026-07-21，死代码清理 + 新建替代）---
   # 病根：SessionManager (5态) + SessionLifecycle (6态) 均为死代码，生产引用=0
