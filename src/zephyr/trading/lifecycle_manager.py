@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.log_rotation; zephyr.gov_audit.retention; zephyr.gov_audit.tiered_storage; zephyr.gov_audit.self_monitor; zephyr.governance.integrity; zephyr.infrastructure.auto_fix_engine.engine; zephyr.governance.semantic_audit.self_healer; zephyr.security.adversarial_validation.game_day_runner; zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md;并发修改需通过任务卡通道+Owner批准;已知接口漂移回归bug(4次):L134 retention.enforce(dry_run=True)非retention.dry_run;L139 tiered.migrate(dry_run=False)非tiered.auto_migrate;L247删除start_scheduler调用(SelfMonitor无此方法);禁止AI自主修改
 # [STABILITY] evolving

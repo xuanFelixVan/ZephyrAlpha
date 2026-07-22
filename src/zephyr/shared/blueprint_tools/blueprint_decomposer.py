@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.models; zephyr.shared.schema.task_types; zephyr.shared.__init__; zephyr.shared.schema.severity_types
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

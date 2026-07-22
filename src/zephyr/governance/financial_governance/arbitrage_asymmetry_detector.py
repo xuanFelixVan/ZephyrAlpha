@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.infrastructure.escalation
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 套利不对称检测不可跳过;自动平仓必须可用
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

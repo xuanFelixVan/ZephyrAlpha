@@ -10,7 +10,7 @@
 
 # [STARTUP] imported
 
-# [MATURITY] prototype
+# [MATURITY] design
 
 # [INVARIANTS] post-commit 事件触发（任何 commit 都触发，工作区卫生是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只自动 restore auto-sync 产物，不触碰真实代码修改；blueprint.md 不在 auto-sync 清单（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，混合文件文件级分类误伤正文）
 

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.orchestration_protocol
 # [CONSUMERS] zephyr.orchestrator.core.agent_orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] pre_step_hook MUST NOT block orchestrator execution; post_step_hook MUST recover all injected faults
 # [MODIFY-GUARD] Adding hook behaviors MUST update ChaosHookPolicy
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS] collection_manager; design_principles; sqlite_metadata_store; in_process_vector_memory; faiss_collection_manager; bridge_layer; provenance_enforcer; index_health_monitor; migrate_chroma_to_faiss; mcp/vector_memory_server; tests
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 8 collections; 2 dimensions (512, 1024); hot/cold separation; COLLECTION_SCHEMAS keys match COLLECTION_NAMES
 # [MODIFY-GUARD] collection_manager.py; design_principles.py; sqlite_metadata_store.py; in_process_vector_memory.py; faiss_collection_manager.py; bridge_layer.py; provenance_enforcer.py; index_health_monitor.py; migrate_chroma_to_faiss.py; mcp/vector_memory_server.py
 # [STABILITY] evolving

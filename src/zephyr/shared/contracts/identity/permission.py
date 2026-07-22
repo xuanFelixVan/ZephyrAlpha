@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.security.access_control.guards.permission_guard;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 权限判定枚举不可扩展
 # [MODIFY-GUARD] none
 # [STABILITY] stable

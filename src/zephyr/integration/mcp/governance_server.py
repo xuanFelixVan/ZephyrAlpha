@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.guards.permission_guard; zephyr.shared.contracts.skill_protocol; zephyr.gov_audit.writer; zephyr.infrastructure.__init__; zephyr.governance.__init__
 # [CONSUMERS] zephyr.integration.mcp.gateway_server; zephyr.integration.mcp.__init__
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

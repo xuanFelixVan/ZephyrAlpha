@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 修改 data/runtime_violation_snapshot/latest.json 时校验结构完整性 + generated_at 新鲜度（≤24h）+ commit_sha 与 HEAD 一致；任一校验失败则阻断 commit；JSON 解析失败 fail-closed（阻断）；HEAD SHA 获取失败 fail-open（不阻断）；本 gate 自身文件修改豁免
 # [MODIFY-GUARD] gate_id="SNAPSHOT-DRIFT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

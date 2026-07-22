@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml (SSoT，动态加载合法标记清单)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 硬阻断——staged .py 文件含未登记或无理由的自定义 noqa 标记时阻断 commit；ruff/flake8 标准码（E402/BLE001/S324 等）跳过；registry 加载失败 fail-open（不阻断）；只检 staged .py（增量检测，现存违规 grandfather）
 # [MODIFY-GUARD] gate_id="NOQA-VALIDATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] audit_orchestrator; cli; gates
 # [STARTUP] manual
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 9阶段管道顺序执行; audit()返回SemanticAuditReport; audit_batch()使用ThreadPoolExecutor并行; health_check()返回HealthStatus
 # [MODIFY-GUARD] blueprint.md §3,§4; semantic_audit/__init__.py __all__
 # [STABILITY] evolving

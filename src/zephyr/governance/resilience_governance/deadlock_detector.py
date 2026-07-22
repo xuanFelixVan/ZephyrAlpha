@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.intelligence_governance.delegation_engine;zephyr.infrastructure.a2a_protocol.layer3_coordination
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 循环检测必须覆盖所有活跃委托;检测不可跳过;Dijkstra排序保证无死锁
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

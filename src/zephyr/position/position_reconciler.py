@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 持仓对账必须执行;P0-FATAL必须触发硬中断;事件触发:ExecutionReport到达时自动对账(禁止时间触发)
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving

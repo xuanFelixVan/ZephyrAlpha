@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (dataclasses, typing)
 # [CONSUMERS] zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler (P3-3 接入综合评分判定)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 评分范围 [0.0, 1.0]（0=完全健康，1=完全失控）；权重总和=1.0；每维归一化得分=min(count/threshold, 1.0)；forged_gw_marker 权重最高（任何伪造都 serious）
 # [MODIFY-GUARD] _DEFAULT_WEIGHTS / _NORMALIZE_DIM_NAMES
 # [STABILITY] evolving

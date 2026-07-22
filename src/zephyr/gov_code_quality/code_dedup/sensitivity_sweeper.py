@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] tests/governance/security/test_sensitivity_sweeper.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

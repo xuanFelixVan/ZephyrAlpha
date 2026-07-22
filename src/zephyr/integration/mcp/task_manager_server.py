@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.models; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

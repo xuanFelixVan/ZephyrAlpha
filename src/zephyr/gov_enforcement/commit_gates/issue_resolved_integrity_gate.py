@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] warn-only——检测 staged architecture_issue_registry.yaml 中 status=resolved 的条目，验证其 impact 字段中提到的文件路径是否存在（#ARCH-CONSUMERS-ACCURACY-003 Phase 2 / #ARCH-ISSUE-RESOLVED-INTEGRITY-001 治本）；命中返回 passed=True + warning detail（不阻断）；只在 architecture_issue_registry.yaml 被 staged 时触发；跳过含"删除/待建/Phase 2/不本次执行"关键词的条目（合法的不存在）；fail-open（YAML 解析失败不阻断）
 # [MODIFY-GUARD] gate_id="ISSUE-RESOLVED-INTEGRITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

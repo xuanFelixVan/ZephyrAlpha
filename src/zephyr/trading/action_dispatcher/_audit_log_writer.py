@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.AUDIT_LOGS_DIR/ActionReport)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _audit 实例)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 审计日志写入器——write_triage_log 将异常分诊结果写入 JSONL；无状态（仅 dry_run 标志）；通过 _facade_mod 访问 patchable 模块级常量以支持 patch("...action_dispatcher.AUDIT_LOGS_DIR", ...) 测试
 # [MODIFY-GUARD] 公共方法 write_triage_log 签名变更需同步 facade thin wrapper 与测试
 # [STABILITY] stable

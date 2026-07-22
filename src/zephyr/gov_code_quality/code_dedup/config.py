@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.gov_code_quality.code_dedup.policy_tree_validator; tests/gov_code_dedup/test_config_test_code_dedup_engine.py; tests/gov_code_dedup/test_self_scan_integrity.py; tests/config/test_config_root.py; tests/governance/shared/test_app_config_yaml.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

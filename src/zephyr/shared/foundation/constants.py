@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.core.runtime_plane_tag; zephyr.shared.infra.observer; zephyr.shared.schema.schemas; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

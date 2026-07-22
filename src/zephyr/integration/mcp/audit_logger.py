@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.gov_audit.writer
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

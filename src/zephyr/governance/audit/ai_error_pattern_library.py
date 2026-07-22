@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.error_pattern_consumer_reconciler (compute_error_pattern_id); stdlib (json, logging, pathlib)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读查询接口——不修改源聚合文件；加载失败降级为空库（fail-open）；所有查询方法 O(1) 或 O(n)
 # [MODIFY-GUARD] _DEFAULT_PATTERNS_SUBDIR / _DEFAULT_PATTERNS_FILENAME / _SOURCE_ACTION_HINTS
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] src/zephyr/governance/ops_governance/budget_engine.py; tests/budget/test_budget_shutdown.py; tests/governance/budget/test_budget_enforcer_submodules.py; tests/governance/resilience/test_spiral_ews.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

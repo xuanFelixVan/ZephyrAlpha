@@ -4,7 +4,7 @@
 # [DEPENDENCIES] none（通过宿主类 self.get_governance_conn/get_depgraph_conn 间接调用）
 # [CONSUMERS] zephyr.governance.persistence.database_service, zephyr.infrastructure.database_service
 # [STARTUP] manual
-# [MATURITY] stable
+# [MATURITY] prototype
 # [INVARIANTS] 共享CRUD方法mixin; 宿主类MUST提供get_governance_conn(read_only)和get_depgraph_conn(read_only)
 # [MODIFY-GUARD] 修改需同步更新唯一真源 zephyr.infrastructure.database_service.DatabaseService（governance/persistence 版已收敛为 re-export，AI-14 审计 P1 修复）
 # [STABILITY] stable

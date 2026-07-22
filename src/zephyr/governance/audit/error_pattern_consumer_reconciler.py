@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); stdlib (json, hashlib, logging, time, pathlib)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] post-commit 事件触发；reconciler 永不抛异常（异常降级为 warn）；只读 telemetry JSONL，不修改源文件；输出到 .runtime/ai_error_patterns/aggregated_patterns.json；幂等（全量重扫覆盖输出）
 # [MODIFY-GUARD] _GATE_ID / _PRIORITY / _PATTERNS_VERSION / _PATTERN_ID_PREFIX / _TELEMETRY_GLOB
 # [STABILITY] evolving

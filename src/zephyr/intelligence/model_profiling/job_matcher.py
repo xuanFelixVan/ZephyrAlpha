@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport
 # [CONSUMERS] MOD-INF-034
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 岗位匹配矩阵真源=data/brain/job_matrix.yaml;幻觉率正常评分非硬门
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [STABILITY] evolving

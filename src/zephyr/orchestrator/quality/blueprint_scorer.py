@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.orchestrator.__init__
 # [CONSUMERS] zephyr.orchestrator.trigger_router; zephyr.shared.utils.blueprint_scorer (re-export); zephyr.shared.blueprint_scorer (re-export)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

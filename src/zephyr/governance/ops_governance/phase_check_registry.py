@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.gov_enforcement.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.shared.contracts.protocols; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

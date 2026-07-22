@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.__init__
 # [CONSUMERS] zephyr.feedback_loop.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] HealthReporter.report() returns dict with all 20 health keys
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

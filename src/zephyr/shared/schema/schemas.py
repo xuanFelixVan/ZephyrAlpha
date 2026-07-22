@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
 # [CONSUMERS] gates ; context-engine ; orchestrator ; kb ; runtime ; db ; pipeline ; mcp ; core ; scripts ; tests
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports; Task types canonical source is gates.task_types; severity types canonical source is shared.schema.severity_types; base config canonical source is shared.schema.base_config
 # [MODIFY-GUARD] ADR-0040; ADR-0030; GOV-TASK-004
 # [STABILITY] stable

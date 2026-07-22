@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.rollback.phase_check_registry
 # [STARTUP] imported
-# [MATURITY] stub
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

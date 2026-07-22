@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.escalation.escalation_engine;zephyr.governance.escalation;zephyr.governance.intelligence_governance.self_test
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] error_budget是022特有扩展;接口call()->bool;与shared/resilience/circuit_breaker(MOD-INF-016)是不同实现(016用call(func)->raises)
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

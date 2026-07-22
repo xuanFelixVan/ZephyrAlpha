@@ -5,7 +5,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)
 # [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
 # [STABILITY] evolving

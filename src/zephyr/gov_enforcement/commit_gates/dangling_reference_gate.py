@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只检测 staged 文件中**新增的** AGENTS.md §X.Y 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——AGENTS.md 缺失或 git 异常时阻断；跳过 tests/ 豁免区；不检测 blueprint.md §X.Y 或"蓝图 MOD-XXX §X.Y"（蓝图内部引用非 AGENTS.md）；扫描文件类型 .py/.yaml/.yml/.md；章节号从工作区 AGENTS.md 提取（commit 后的新真源）
 # [MODIFY-GUARD] gate_id="DANGLING-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

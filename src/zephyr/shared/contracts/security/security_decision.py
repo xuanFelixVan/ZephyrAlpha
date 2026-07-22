@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] l10-compliance ; llm-security.protocol
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] enum members are frozen; no additions without ADR
 # [MODIFY-GUARD] member changes require cross-package impact review
 # [STABILITY] stable

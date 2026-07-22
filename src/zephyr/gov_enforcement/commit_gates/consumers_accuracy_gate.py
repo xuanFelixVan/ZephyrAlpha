@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file, _collect_function_names); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] warn-only——检测 staged .py 文件的 [CONSUMERS] 字段准确性（#ARCH-CONSUMERS-ACCURACY-001 治本）；三类违规：orphan（括号内函数名在当前文件不存在，AST 精确检测）+ phantom（消费者模块路径在项目内不存在，文件系统查找）+ stale（消费者模块存在但不 import 当前模块，baseline-scan 专用 git grep，commit-time 不检测避免性能损耗）；命中返回 passed=True + warning detail（不阻断）；tests/ 豁免；抽象代号（MOD-XXX/SH-XXX）豁免（无法静态验证）；含中文括号内容跳过（描述性文字非函数名）；noqa: consumers-accuracy 行级逃生；git diff 不可达 fail-open
 # [MODIFY-GUARD] gate_id="CONSUMERS-ACCURACY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

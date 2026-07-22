@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] scripts/scaffold.py;scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 功能域注册表是功能域声明的唯一真源;SSoT门禁检查不可跳过;注册表不可被AI直接修改
 # [MODIFY-GUARD] docs/03_modules/_domain-governance/registry-governance/blueprint.md;docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml
 # [STABILITY] evolving

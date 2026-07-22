@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.orchestrator.__init__
 # [CONSUMERS] red-blue-validator.injection_engine; game_day_runner; zephyr.orchestrator.chaos_hooks
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] inject() MUST NOT leave system in degraded state; crash/exit_code injection requires CHAOS_CRASH_CONFIRMED=yes env var
 # [MODIFY-GUARD] Adding injection types MUST update INJECTION_POINTS and InjectType enum
 # [STABILITY] evolving

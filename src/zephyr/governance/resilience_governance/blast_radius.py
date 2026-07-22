@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] fix_prioritizer.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] depgraph_path必须指向合法YAML; max_depth>=1; analyze输入finding.source_location非空时才计算文件级影响
 # [MODIFY-GUARD] blueprint.md §3.1 Stage 9; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving

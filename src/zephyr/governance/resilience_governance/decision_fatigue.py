@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 升级裁决;四级约束;Kill Switch
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/escalation-engine/__init__.py
 # [STABILITY] evolving

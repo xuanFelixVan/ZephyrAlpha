@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.__init__
 # [CONSUMERS] zephyr.feedback_loop.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] CollectDetectHandler.run_collect/detect/diagnose return bool (should_early_return)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.database_service
 # [CONSUMERS] src/zephyr/governance/ ; tests/db/test_db_auto_ops.py ; tests/governance/data_layer/test_database_service.py
 # [STARTUP] manual
-# [MATURITY] stable
+# [MATURITY] production
 # [INVARIANTS] re-export canonical from infrastructure.database_service; 单真源派生层，禁止在此重复定义连接管理代码
 # [MODIFY-GUARD] 禁止修改——本模块为派生 re-export，真源在 zephyr.infrastructure.database_service
 # [STABILITY] stable

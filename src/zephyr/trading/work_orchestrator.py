@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.capability_registry; zephyr.trading.work_dag; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.io.serialization; zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.trading.status_dashboard; zephyr.trading.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] item_id全局唯一(uuid8hex); slot计数非负(release_slot下限0); _dags/_items/_slots读写均须持self._lock; complete_item须先完成依赖全部COMPLETED才提升PENDING→READY
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

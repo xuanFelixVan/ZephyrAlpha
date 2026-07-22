@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.security_governance.security_gateway_base; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.governance.intelligence_governance.aisg_sandbox; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

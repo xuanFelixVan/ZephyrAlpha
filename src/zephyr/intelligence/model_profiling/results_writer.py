@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.profiler
 # [CONSUMERS] MOD-INF-009;MOD-INF-036
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] benchmark结果持久化;JSONL格式;漂移检测
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] evolving

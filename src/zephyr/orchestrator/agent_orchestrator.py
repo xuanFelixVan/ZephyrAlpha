@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget; zephyr.shared.contracts.security.__init__; zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

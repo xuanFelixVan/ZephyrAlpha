@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.security.access_control.session_concurrency (SessionRegistry)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——commit message 含 [GW: 标记但 session_id 未在 SessionRegistry 注册且 ZEPHYR_COMMIT_GATEWAY env 未设置时阻断（passed=False，forged_gw_marker=intentional fraud）；无 [GW: 标记放行（non-GW commit 由 GATE-COMMIT-GW hook 兜底）；session_id 已注册放行（合法 GW commit）；ZEPHYR_COMMIT_GATEWAY=1 env 放行（GW 内部调用，逃生通道）；commit msg 缺失放行（其他 gate 已检查）；merge commit 放行（由 session_worktree 生成，标记合法）
 # [MODIFY-GUARD] gate_id="FORGED-GW-MARKER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；GW 标记正则 _GW_MARKER_RE；session_id 提取正则 _SESSION_ID_RE
 # [STABILITY] evolving

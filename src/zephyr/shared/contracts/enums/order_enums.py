@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.shared.contracts.order; zephyr.shared.contracts.enums.__init__; zephyr.trading.trading_contracts.execution.order
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 枚举值MUST不变(BUY="BUY"等)——序列化/DB列映射依赖值; __str__返回value用于日志统一
 # [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
 # [STABILITY] stable

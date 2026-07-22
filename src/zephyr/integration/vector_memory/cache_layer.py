@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.local_model.cache_layer
 # [CONSUMERS] in_process_vector_memory
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

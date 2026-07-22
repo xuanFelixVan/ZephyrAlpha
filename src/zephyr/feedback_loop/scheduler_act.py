@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.__init__; zephyr.shared.event_bus
 # [CONSUMERS] zephyr.feedback_loop.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] ActPhaseHandler.run_act returns ActResult; run_verify returns verification
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

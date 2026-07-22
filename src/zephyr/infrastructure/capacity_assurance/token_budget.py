@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.capacity_assurance.__init__
 # [CONSUMERS] zephyr.autonomy_core.*; zephyr.governance.context_governance.*; zephyr.orchestrator.*; zephyr.governance.audit_orchestration.*
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

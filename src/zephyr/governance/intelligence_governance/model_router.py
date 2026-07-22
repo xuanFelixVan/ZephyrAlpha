@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.ops_governance.budget_models; zephyr.intelligence.model_profiling.provider_data; zephyr.intelligence.model_profiling.results_writer
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

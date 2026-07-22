@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.runtime_types
 # [CONSUMERS] zephyr.trading.auto_runtime_core;zephyr.trading.lifecycle_manager;zephyr.trading.windows_service;zephyr.trading.__main__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] RuntimeConfig真源在zephyr.shared.contracts.runtime_types;本文件仅作向后兼容re-export
 # [MODIFY-GUARD] src/zephyr/shared/contracts/runtime_types.py
 # [STABILITY] evolving

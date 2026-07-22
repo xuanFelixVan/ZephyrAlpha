@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_schemas
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] core types imported from zephyr.shared.protocols.a2a; no duplicate definitions
 # [MODIFY-GUARD] none
 # [STABILITY] stable

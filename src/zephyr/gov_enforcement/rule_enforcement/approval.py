@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.approval_types
 # [CONSUMERS] zephyr.governance.services.adapter
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 审批请求必须包含完整上下文;审批结果不可伪造
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.orchestrator.__init__
 # [CONSUMERS] zephyr.orchestrator.chaos_engine;zephyr.orchestrator.chaos_hooks
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Registry entries MUST have inject()/recover() methods; preset templates are immutable
 # [MODIFY-GUARD] Adding fault templates MUST register in FaultTypeRegistry
 # [STABILITY] evolving

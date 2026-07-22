@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.__init__; zephyr.governance.integrity; zephyr.gov_drift.drift_engine; zephyr.infrastructure.auto_fix_engine.__init__; zephyr.infrastructure.__init__; zephyr.shared.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
 # [CONSUMERS] ide_health_service.py; auto_runtime_core.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

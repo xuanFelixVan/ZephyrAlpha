@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.contracts.telemetry_emitter; zephyr.trading.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.governance.audit.reconciliation_registry
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] fail-open（ast 语法错误/git 失败/文件不可读时放行，语法类问题由其他阶段检测）；wildcard import 跳过（导入集无法静态推断，权衡漏报优先零误报）；纯 stdlib AST 无第三方依赖
 # [MODIFY-GUARD] gate_id=UNDEFINED-NAME；priority=106；扫描范围 scripts/governance/** + src/**.py
 # [STABILITY] evolving

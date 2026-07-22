@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] task_repo;pipeline
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] _ALLOWED_TRANSITIONS 唯一转换表; 状态机不可绕过; 依赖重算幂等
 # [MODIFY-GUARD] base_repo.py 状态机表; task_repo.py 组合入口
 # [STABILITY] evolving

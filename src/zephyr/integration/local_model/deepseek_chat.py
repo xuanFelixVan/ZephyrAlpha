@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 使用requests库绕过openai SSL问题;接口兼容OllamaChat
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

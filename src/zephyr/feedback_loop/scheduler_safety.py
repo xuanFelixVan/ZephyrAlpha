@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.__init__
 # [CONSUMERS] zephyr.feedback_loop.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] SafetyGateManager.run_safety_gates returns dict[str, bool]
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

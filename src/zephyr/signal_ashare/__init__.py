@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

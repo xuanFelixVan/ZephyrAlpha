@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] AI session conductor loop (replaces manual AutoPilot.run_cycle + serial execution)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] plan_cycle() MUST detect file conflicts before grouping; _group_by_conflict MUST guarantee no two tasks in same group share files_in_scope/allowed_touch
 # [MODIFY-GUARD] conflict detection uses files_in_scope + allowed_touch — adding new conflict dimensions requires updating _get_task_files
 # [STABILITY] evolving

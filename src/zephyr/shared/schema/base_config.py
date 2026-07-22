@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] BASE_CONFIG MUST align with ADR-0040 §4.2
 # [MODIFY-GUARD] ADR-0040
 # [STABILITY] frozen

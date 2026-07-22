@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] pipeline.* ; orchestrator.*
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TaskCard = Task (PURE ALIAS — NOT a second model. SSoT: gates/task_types.py Task 70 fields. DO NOT add fields here.)
 # [MODIFY-GUARD] gates/task_types.py (SSoT for Task/GateLevel/TaskAuditFinding)
 # [STABILITY] frozen

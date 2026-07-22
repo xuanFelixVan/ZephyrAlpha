@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.writer; zephyr.gov_audit.models; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.gov_audit.anomaly; zephyr.gov_audit.indexer; zephyr.gov_audit.self_monitor; zephyr.gov_audit.bridge; zephyr.gov_audit.contracts
 # [CONSUMERS] tests/governance/audit/test_orchestrator.py
 # [STARTUP] imported
-# [MATURITY] compat
+# [MATURITY] production
 # [INVARIANTS] 兼容重导出层——不实现审计编排逻辑，仅 re-export audit_trail 子模块符号
 # [MODIFY-GUARD] audit_trail/_orchestrator_compat.py（自洽，不再依赖 __all__）
 # [STABILITY] evolving

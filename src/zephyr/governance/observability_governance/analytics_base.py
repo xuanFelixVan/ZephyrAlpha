@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.reporting.analytics_base
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] re-export shim only; canonical at zephyr.reporting.analytics_base
 # [MODIFY-GUARD] truth source at zephyr.reporting.analytics_base
 # [STABILITY] stable

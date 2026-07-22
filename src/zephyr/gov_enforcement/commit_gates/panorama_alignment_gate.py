@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.generators.align_panoramas (run_alignment, PanoramaEmptyError); zephyr.governance.audit.reconciliation_registry (log_gate_failure)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 四图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
 # [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving

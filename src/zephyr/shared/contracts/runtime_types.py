@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.base_config
 # [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.trading
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] RuntimeConfig是纯数据模型;由zephyr.trading.runtime_config重新导出以保持向后兼容
 # [MODIFY-GUARD] src/zephyr/runtime/runtime_config.py
 # [STABILITY] evolving

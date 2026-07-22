@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); zephyr.gov_enforcement.rule_enforcement.adaptive_threshold (AdaptiveThreshold, ThresholdMode — P3-1 接入); zephyr.governance.audit.health_score_calculator (calculate_health_score — P3-3 接入); stdlib (json, logging, subprocess, time, pathlib)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] post-commit 事件触发（任何 commit 都触发，滥用监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只读 post_commit_guard/commit_gateway_audit 报告，不修改它们；P3-1 有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化；P3-6 baseline 持久化失败不阻断 reconciler（fail-open）；P3-3 综合评分 >0.7 critical_warn / >0.9 block_next（post-commit 无法 block，降级为 critical_warn + 横幅，提示 PAUSE subsequent commits）；P3-3 评分失败降级 health_score=0.0（fail-open，不阻断 reconciler）
 # [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量 / _ADAPTIVE_FACTOR / _BASELINE_WINDOW_DAYS / _BLOCK_NEXT_SCORE / _CRITICAL_WARN_SCORE
 # [STABILITY] evolving

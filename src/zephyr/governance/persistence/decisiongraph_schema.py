@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); zephyr.shared.security.secrets (SecretsError, get_secret_from_file); psycopg2; zephyr.governance.depgraph_schema (复用 PG 连接)
 # [CONSUMERS] apply_decisiongraph.py; extract_decisiongraph.py; generate_decision_graph.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] decisiongraph shares PostgreSQL connection with depgraph (same DB, different tables); init_db must be idempotent
 # [MODIFY-GUARD] depgraph_schema.py; decisiongraph generators
 # [STABILITY] evolving

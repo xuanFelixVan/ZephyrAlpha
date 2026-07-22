@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec)
 # [CONSUMERS] zephyr.governance.audit.runtime_violation_snapshot_reconciler ; scripts.governance.architecture_health_dashboard
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] design
 # [INVARIANTS] snapshot 是 trae_060 §5 evidence 的 live 替代；baseline 是 frozen 历史快照；M20 drift = sum(|detected - claimed| > 0 的类别数)；reconciler 事件触发（post-commit），非 cron/manual；fail-open（检测器失败降级为 error 字段不中断其余）
 # [MODIFY-GUARD] BASELINE_FILE 路径；_CATEGORY_TO_METRIC 映射表
 # [STABILITY] evolving

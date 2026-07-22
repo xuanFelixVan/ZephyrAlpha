@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] behavioral_auditor包内所有模块
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 事件定义不可修改
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

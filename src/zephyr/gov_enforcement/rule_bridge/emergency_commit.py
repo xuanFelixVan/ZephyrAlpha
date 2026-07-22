@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (log_emergency_commit); zephyr.shared.io.paths (REPO_ROOT)
 # [CONSUMERS] AI 紧急提交场景（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset 时）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 用 git commit-tree plumbing 绕过所有 hook（pre-commit AND post-commit）；临时 index 原子化多文件提交；每次提交持久化到 reconcile_execution_log（action='emergency_commit'）+ .runtime/reconcile_reports/ 审计文件；commit message 含 [GW:{session_id}:emergency] 标记；不获取 _GlobalCommitLock（emergency 模式前提是锁不可用）
 # [MODIFY-GUARD] emergency_commit 函数签名；commit-tree 调用序列；[GW:...:emergency] 标记格式
 # [STABILITY] evolving

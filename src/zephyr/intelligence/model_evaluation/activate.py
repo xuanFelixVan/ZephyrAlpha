@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

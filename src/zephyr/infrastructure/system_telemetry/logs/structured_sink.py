@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] MUST使用shared.logging的TraceContext禁止定义第二个;PII自动脱敏;RULE-ONE原子写入
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

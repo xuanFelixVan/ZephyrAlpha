@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] session未注册->放行（测试/内部调用安全降级）；session已注册但目标文件未claim->阻断；allow_overlap=True时放行（逃生通道）；get_session异常->安全降级放行
 # [MODIFY-GUARD] gate_id="CLAIM-REQUIRED"；check闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

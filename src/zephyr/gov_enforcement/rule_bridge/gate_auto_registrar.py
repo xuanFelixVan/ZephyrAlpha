@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (CommitGateRegistry, GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] fail-open——YAML 解析失败/import 失败/getattr 失败时 logger.warning 不阻断 commit（registry 故障是环境异常，禁止阻断所有 commit）；enabled=false 跳过；register 幂等（同 gate_id 覆盖，与显式注册共存不冲突）；YAML 真源 in_process_gate_registry.yaml
 # [MODIFY-GUARD] gate_id="GATE-AUTO-REGISTRAR"（无独立 gate，本模块是注册器非门禁）
 # [STABILITY] evolving

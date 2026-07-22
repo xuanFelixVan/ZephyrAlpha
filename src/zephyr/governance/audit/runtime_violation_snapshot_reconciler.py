@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); zephyr.governance.audit.runtime_violation_snapshot
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] design
 # [INVARIANTS] post-commit 事件触发（committed_files 含 .py 或 trae_060 yaml 才触发）；reconciler 永不抛异常（异常降级为 warn）；快照生成失败不阻断 commit（warn-only Phase 0）
 # [MODIFY-GUARD] _TRIGGER_PATHS 触发路径；_PRIORITY 优先级
 # [STABILITY] evolving

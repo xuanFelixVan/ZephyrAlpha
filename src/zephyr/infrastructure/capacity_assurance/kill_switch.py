@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.autonomy_core.context.context_pipeline_auto
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] err_count>threshold -> fuse off; needs manual reset (DD110)
 # [MODIFY-GUARD] docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
 # [STABILITY] evolving

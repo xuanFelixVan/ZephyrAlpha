@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.ch_writer
 # [CONSUMERS] zephyr.data.scheduler.run_schedule("cross_validation")
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只校验不阻断; 结果写入 cross_validation_log 表; 使用 ch_reader 查询
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.observability_governance.projection_engine; zephyr.gov_audit.event_store
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] snapshot_json is valid JSON; last_event_timestamp tracks replay cutoff; create_snapshot is atomic
 # [MODIFY-GUARD] task_snapshots schema changes MUST go through sqlite_schema migration
 # [STABILITY] evolving

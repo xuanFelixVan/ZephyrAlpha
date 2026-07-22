@@ -51,7 +51,7 @@ sections:
     - type: mandatory
       step: '[STARTUP]启动方式——枚举auto_start/event_driven/manual/imported；scheduled禁止使用(见trae_060§3事件驱动全自动)；强制AI声明文件触发方式'
     - type: mandatory
-      step: '[MATURITY]设计成熟度——枚举design/prototype/production；强制AI声明设计态还是运营态'
+      step: '[MATURITY]物理存在性——枚举design/production；design=纸面无代码，production=有代码文件（ARCH-MM-002两档化）'
     - type: mandatory
       step: A_test格式：7字段简化版——[BLUEPRINT]/[MODULE]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[TESTS]/[TTL]
     - type: mandatory
@@ -477,7 +477,10 @@ sections:
       change: 新增gov_eng_002_directory_mapping section——格式-目录映射规则定死(永久区/临时区/根目录白名单/禁止规则);全格式加ttl字段(A_full 15/A_test 7/B_yaml 6/C_json 6/E_shell 5);合并docs/09_audit/+docs/decomposition/→docs/_working/统一临时区
     - version: 1.2.1
       date: '2026-07-06'
-      change: ARCH-MM-001裁定——明确[MATURITY]标记是声明(AI/人工声明的预期成熟度),depgraph nodes.design_maturity是验证(生成器根据has_test推导的实际成熟度);冲突时以depgraph为真源;生成器推导规则:tests/目录下test类型节点的import_depends边目标模块→production,无测试覆盖→prototype
+      change: ARCH-MM-001裁定——明确[MATURITY]标记是声明(AI/人工声明的预期成熟度),depgraph nodes.design_maturity是验证(生成器根据has_test推导的实际成熟度);冲突时以depgraph为真源;生成器推导规则:tests/目录下test类型节点的import_depends边目标模块→production,无测试覆盖→prototype（已被ARCH-MM-002 supersede）
+    - version: 2.0.0
+      date: '2026-07-23'
+      change: ARCH-MM-002裁定——design_maturity两档化(design/production)，删除prototype；职责单一(design_maturity只管纸面vs物理，build_status独占测试维度)；[MATURITY] header回归SSoT(两档下只声明客观事实，AI可靠判断)；rescan改读文件存在性(CODE_TYPES→production)
     - version: 1.3.0
       date: '2026-07-13'
       change: 新增gov_eng_002_module_id_naming section——module_id全局唯一性规则(子包__init__.py用{parent_id}_{child_name}/bridges文件用{parent_id}_bridge/禁止游离module_id声明行);P0-P1修复124→86冲突组(Type A/C 100%修复)后的规则固化
@@ -604,7 +607,7 @@ metadata:
     date: '2026-07-06'
     by: session-20260706-arch-mm-001
     changes:
-    - ARCH-MM-001裁定——明确[MATURITY]标记是"声明"（AI/人工声明的预期成熟度），depgraph nodes.design_maturity是"验证"（生成器根据has_test推导的实际成熟度）
+    - ARCH-MM-001裁定（已被ARCH-MM-002 supersede）——明确[MATURITY]标记是"声明"（AI/人工声明的预期成熟度），depgraph nodes.design_maturity是"验证"（生成器根据has_test推导的实际成熟度）
     - 生成器推导规则——tests/目录下test类型节点的import_depends边目标模块→production；无测试覆盖的模块→prototype
     - 冲突时以depgraph为真源（生成器是运营态唯一真源，见architecture_issue_registry.yaml#ARCH-MM-001）
     - AI/人工应在编写测试后运行generate_project_depgraph.py刷新depgraph，使声明与验证一致

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); stdlib (subprocess, time, json, logging, pathlib, datetime, collections)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] post-commit 事件触发（任何 commit 都触发，性能监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；测量失败不阻断 commit（warn-only）
 # [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量
 # [STABILITY] evolving

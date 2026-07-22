@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] zephyr.integration.shared.contracts.errors.__init__
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

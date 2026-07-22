@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.REPO_ROOT/_BRAIN_MARKER/_read_text/ActionReport; facade ref: _extract_module_name/_find_module_file/_find_capability_card/_find_blueprint_file/_find_file_by_name/_version_backup/_build_py_brain_block/_insert_brain_block/_update_brain_block)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _annotation 实例)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 注释写入器——annotate_py_file/tag_module/annotate_blueprint；通过 facade ref 访问 patchable 实例方法以支持 patch.object(d, "_method", ...) 测试；文件不存在/无 tags/无 points→skipped；内容不变→skipped
 # [MODIFY-GUARD] 公共方法 annotate_py_file/tag_module/annotate_blueprint 签名变更需同步 facade thin wrapper 与测试
 # [STABILITY] stable

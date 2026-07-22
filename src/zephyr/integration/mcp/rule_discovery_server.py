@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.io.paths
 # [CONSUMERS] AI session 冷启动；CAPABILITY-LOOKUP-REQUIRED gate（Phase 3.4a）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 真源是 rule_ai_perception_index.yaml（Phase 3.2a 生成器产出）；只读不写；fail-open（YAML缺失→空结果+error）；AI MUST 在施工前调用此工具查询适用规则（Phase 3.4a gate 强制）
 # [MODIFY-GUARD] tool name rule_discovery.discover_applicable_rules；input_schema 字段
 # [STABILITY] evolving

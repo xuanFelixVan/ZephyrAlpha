@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.drift_engine
 # [CONSUMERS] src/zephyr/compliance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; src/zephyr/gov_drift/brain_integration.py; src/zephyr/integration/mcp/governance_server.py; tests/cold/test_cold_start.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 冷启动必须完整
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

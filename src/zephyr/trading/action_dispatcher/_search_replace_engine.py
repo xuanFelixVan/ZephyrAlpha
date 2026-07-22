@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.REPO_ROOT/_read_text/ActionReport; facade ref: _extract_module_name/_find_module_file/_parse_file_path/_version_backup)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _search_replace 实例)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 搜索替换引擎——对 .py 源文件执行精确/宽松字符串替换；通过 facade ref 访问 patchable 实例方法以支持 patch.object(d, "_method", ...) 测试；apply_replacement_entries 为纯函数 @staticmethod（无 I/O，可独立测试）
 # [MODIFY-GUARD] 公共方法 search_replace_file/apply_replacement_entries/finalize_replacement 签名变更需同步 facade thin wrapper 与测试
 # [STABILITY] stable

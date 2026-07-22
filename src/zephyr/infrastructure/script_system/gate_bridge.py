@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.script_system.__init__
 # [CONSUMERS] zephyr.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 12维->gate_id 映射; 维度聚合后批量提交; gate不可用时仅日志不阻塞
 # [MODIFY-GUARD] CT-SCRIPT-GATE-001 维度映射表增删必须同步更新GateEngine注册表
 # [STABILITY] evolving

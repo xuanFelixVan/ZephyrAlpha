@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.security.secrets (SECRET_INDICATOR_PATTERNS, configure_secret_rotation)
 # [CONSUMERS] zephyr.__init__._deferred_bootstrap (auto_configure)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

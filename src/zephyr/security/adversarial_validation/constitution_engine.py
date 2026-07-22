@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] constitution_guard.py; bypass_recorder.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] New articles auto-generated from bypass patterns; article_id auto-assigned CONST-NNN; registry written with atomic os.replace
 # [MODIFY-GUARD] Template categories: security_boundary/data_sovereignty/transaction_integrity/audit_immutability/agent_safety/knowledge_safety
 # [STABILITY] evolving

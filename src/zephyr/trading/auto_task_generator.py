@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] zephyr.trading.boot_hooks._subscribe_eventbus_consumers
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); scripts.governance.d7_code.check_pure_shim (subprocess 调用，检测真源)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 硬阻断——staged .py 文件含纯 re-export shim（star import + 无实质代码）时阻断 commit（passed=False）；检测所有 staged .py（新增+修改），因修改文件也可能被退化为 shim；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；__init__.py 豁免由 check_pure_shim.is_pure_reexport_shim() 内部处理（包聚合豁免）；检测真源=check_pure_shim.py（subprocess 调用 --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_pure_shim.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断
 # [MODIFY-GUARD] gate_id="PURE-SHIM"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (json, hashlib, logging, datetime); zephyr.shared.io.paths (strip_session_worktree)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_log_workspace_op thin wrapper); zephyr.governance.semantic_audit.self_healer (_rollback telemetry)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] design
 # [INVARIANTS] 遥测降级不阻断主流程——所有 IO/路径异常仅 debug 日志；写入 worktree_ops_log.jsonl（主仓库 .runtime/ 下，非 worktree 内）
 # [MODIFY-GUARD] log_workspace_op / compute_content_hash 公共 API 签名
 # [STABILITY] stable

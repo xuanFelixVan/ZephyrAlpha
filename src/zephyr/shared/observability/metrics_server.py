@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.observability.metrics; http.server(标准库)
 # [CONSUMERS] zephyr.data.tick_subscriber
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] /metrics端点输出Prometheus文本; 端口默认9925; 独立daemon线程; 不阻塞主流程; 静默访问日志
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

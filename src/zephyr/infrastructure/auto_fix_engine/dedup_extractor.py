@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-017(code-dedup-engine)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 只提取≥3处重复;提取后原位置调用共享函数;不改变语义
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml dedup_extractor段
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.escalation.budget_alert; zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.services.adapter
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 预算告警必须触发升级;预算检查不可跳过
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

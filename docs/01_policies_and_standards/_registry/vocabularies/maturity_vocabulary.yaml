@@ -10,34 +10,37 @@
 # maturity 受控词表
 # 文件头 [MATURITY] 字段唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.2.0
+# 版本：2.0.0
 # 创建日期：2026-06-29
 #
-# 本词表定义 maturity 字段的所有合法值（3 种）。
+# 本词表定义 maturity 字段的所有合法值（2 种）。
 # 原先内联在 trae_047 §gov_eng_002_enum_definitions MATURITY-ENUM，已迁出为独立词表。
 # 校验器从本文件动态加载合法值。
 #
 # 对标标准：
 #   - depgraph.db nodes.design_maturity 字段（与本词表值完全一致，零冲突）
 #
-# ARCH-MM-001裁定（2026-07-06）：
-#   - [MATURITY] 文件头标记是"声明"（AI/人工声明的预期成熟度）
-#   - depgraph nodes.design_maturity 是"验证"（生成器根据has_test推导的实际成熟度）
-#   - 生成器推导规则：tests/目录下test类型节点的import_depends边目标模块→production；
-#     无测试覆盖的模块→prototype
-#   - 冲突时以 depgraph 为真源（生成器是运营态唯一真源）
-#   - AI/人工应在编写测试后运行 generate_project_depgraph.py 刷新 depgraph，使声明与验证一致
+# ARCH-MM-002裁定（2026-07-23，supersede ARCH-MM-001）：
+#   - design_maturity 两档化：design（纸面无代码）/ production（有代码文件）
+#   - 职责单一：design_maturity 只管"纸面 vs 物理"，build_status 独占测试覆盖维度
+#   - [MATURITY] 文件头回归 SSoT——两档下 header 只声明客观事实（文件存在性），AI 可靠判断
+#   - rescan 改读文件存在性（CODE_TYPES→production），不再用 has_test 推导 design_maturity
+#   - prototype 彻底移除：词表/枚举/CHECK约束/状态机/触发器/统计/文档全部清理
+#
+# ARCH-MM-001裁定（2026-07-06，已被 ARCH-MM-002 supersede）：
+#   - 原三档下 header 不可信（AI 会误判 prototype/production），故裁定 DB 为冲突真源
+#   - 两档化后 header 只声明客观事实，ARCH-MM-001 的前提消失，header 回归 SSoT
 
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-028
-version: "1.2.0"
+version: "2.0.0"
 title: "maturity 受控词表"
 status: active
 ttl: permanent
 owner: ZephyrAlpha-Owner
 vocabulary_name: maturity
-total_values: 3
+total_values: 2
 depends_on:
   - target: trae_047_engineering_file_header.yaml
     at: "§gov_eng_002_enum_definitions MATURITY-ENUM（原内联定义，已迁出）"
@@ -45,13 +48,9 @@ depends_on:
 
 values:
   - value: design
-    definition: "设计态——仅有蓝图无代码"
+    definition: "设计态——仅有蓝图无代码文件"
     ai_keywords: ["设计", "design", "蓝图", "无代码"]
 
-  - value: prototype
-    definition: "运营态——快速原型无测试"
-    ai_keywords: ["原型", "prototype", "快速", "无测试"]
-
   - value: production
-    definition: "运营态——生产级有测试"
-    ai_keywords: ["生产", "production", "有测试", "生产级"]
+    definition: "物理存在态——有代码文件，不区分测试覆盖度（测试覆盖由 build_status 表达）"
+    ai_keywords: ["生产", "production", "有代码", "物理存在"]

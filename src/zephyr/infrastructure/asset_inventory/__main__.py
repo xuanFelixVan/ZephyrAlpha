@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

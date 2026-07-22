@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] zephyr.trading.__init__; zephyr.trading.conductor
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] AutoPilot.run_cycle() MUST call claim_next() which uses Event Sourcing partial unique index for atomic claim; status_report() MUST reflect real DB state
 # [MODIFY-GUARD] claim_next uses idx_te_one_claim_per_task — do NOT change claim semantics without updating the partial unique index
 # [STABILITY] evolving

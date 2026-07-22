@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.shared.contracts.order; zephyr.trading.trading_contracts.execution.order
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 跨切面枚举真源——被 shared/trading/governance 三层消费，MUST定义在shared层
 # [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
 # [STABILITY] stable

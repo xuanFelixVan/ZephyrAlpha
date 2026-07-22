@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d3_metadata.check_vocab_hardcode (subprocess 调用，检测真源)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件含词表硬编码时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 13 个存量违规划死工作流，存量违规由第2期批量修复）；检测真源=check_vocab_hardcode.py（subprocess 调用 --files --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_vocab_hardcode.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断；worktree 适配——通过 git rev-parse --show-toplevel 获取 worktree root 作为 subprocess cwd
 # [MODIFY-GUARD] gate_id="VOCAB-HARDCODE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

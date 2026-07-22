@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); psycopg2
 # [CONSUMERS] scripts/governance/extract_decisiongraph.py; scripts/governance/apply_decisiongraph.py; scripts/governance/generate_decision_graph.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读查询; 参数化防注入; 懒加载连接; 与 depgraph 共享 PG 实例（不同表）
 # [MODIFY-GUARD] 修改需同步更新 tests/test_decision_graph_reader.py
 # [STABILITY] evolving

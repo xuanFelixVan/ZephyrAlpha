@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
 # [CONSUMERS] zephyr.infrastructure.budget_enforcement.budget_engine
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] callback must be set before first use; getter returns None if unset
 # [MODIFY-GUARD] auto_bootstrap.py; budget_engine.py
 # [STABILITY] evolving

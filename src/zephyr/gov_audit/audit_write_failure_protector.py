@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.writer
 # [CONSUMERS] zephyr.infrastructure.escalation
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 审计写入失败必须阻断;tip不可推进
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

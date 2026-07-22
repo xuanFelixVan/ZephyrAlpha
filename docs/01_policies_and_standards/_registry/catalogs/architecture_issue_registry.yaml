@@ -1784,13 +1784,54 @@ entries:
     (1) trae_047 v1.2.1 changelog明确声明vs验证关系
     (2) maturity_vocabulary v1.1.0添加ARCH-MM-001裁定说明
     (3) PROJECT_BACKGROUND_FOR_CLAUDE.md修订"7类运行时测试全部通过"为depgraph动态统计
-  status: resolved
+  status: superseded
+  superseded_by: '#ARCH-MM-002'
   related_rules:
   - maturity_vocabulary.yaml v1.1.0
   - trae_047_engineering_file_header.yaml v1.2.1
   - architecture_issue_registry.yaml#ARCH-061（生成器是运营态唯一真源）
   created: '2026-07-06'
-  last_updated: '2026-07-06'
+  last_updated: '2026-07-23'
+
+- issue_id: '#ARCH-MM-002'
+  title: 'design_maturity 三档→两档 + SSoT 重划——删除 prototype，header 回归 SSoT'
+  severity: P1高
+  adjudication: |
+    2026-07-23 裁定（supersede ARCH-MM-001 的 SSoT 结论）。
+
+    病根（第一性原理）：
+    ARCH-MM-001 裁定"DB 为真源，header 是声明"是基于三档下 header 不可信
+    （AI 会误判 prototype/production——prototype 混杂了"物理存在性"和"测试覆盖度"
+    两个正交维度，AI 无法可靠判断）。这导致 931 个 header/DB 不一致。
+
+    治本方案——字段语义重划（职责单一）：
+    - design_maturity 只管"纸面 vs 物理"（design=纸面无代码 / production=有代码文件）
+    - build_status 独占测试覆盖维度（generated=无测试 / stable=有测试）
+    - 两档下 header 只声明客观事实（文件存在性），AI 可靠判断，值得信任
+    - rescan 改读文件存在性（CODE_TYPES→production），不再用 has_test 推导
+    - prototype 彻底移除：词表/枚举/CHECK约束/状态机/触发器/统计/文档全部清理
+
+    与 ARCH-MM-001 的关系：
+    ARCH-MM-001 的"声明vs验证"框架保留，但验证维度从 design_maturity 移到 build_status。
+    两档化后 header 只声明客观事实，ARCH-MM-001 的前提（header 不可信）消失，
+    header 回归 SSoT。本裁定 supersede ARCH-MM-001 的 SSoT 结论。
+  fix_phase: |
+    Phase 0-8 按 ARCH-MM-002 施工方案执行：
+    P1: 规则真源（maturity_vocabulary v2.0.0, trae_047 v2.0.0）
+    P2: DB schema（CHECK约束改两值, 触发器简化, 数据迁移 prototype→production）
+    P3: rescan 逻辑（derive_design_maturity 简化, upgrade_tested_modules 删 design_maturity 升级）
+    P4: apply_depgraph.py 门禁（状态机 3态→2态）
+    P5: 文件头批量迁移（prototype→production, 非标准值清理）
+    P6: 文档/统计更新
+    P7: 测试更新
+    P8: commit gate 检查
+  status: decided
+  related_rules:
+  - maturity_vocabulary.yaml v2.0.0
+  - trae_047_engineering_file_header.yaml v2.0.0
+  - architecture_issue_registry.yaml#ARCH-MM-001（被本裁定 supersede）
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
 
 # --- #ARCH-CH-001~007: ClickHouse 数据架构裁定（2026-07-10~15，回溯登记自 data_source_integrator_blueprint.md §18） ---
 - issue_id: '#ARCH-CH-001'

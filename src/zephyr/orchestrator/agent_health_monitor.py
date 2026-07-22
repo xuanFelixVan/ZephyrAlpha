@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

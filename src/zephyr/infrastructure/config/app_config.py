@@ -5,7 +5,7 @@
 # [DEPENDENCIES] —
 # [CONSUMERS] zephyr.infrastructure.config (__init__.py re-export)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] AppConfig 为 frozen dataclass; ConfigHolder 线程安全(threading.Lock); load_config 支持 YAML+env 覆盖; reload_config 通过 _LAST_LOADED_CONFIG_PATH 记忆上次路径
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

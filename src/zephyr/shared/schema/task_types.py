@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TaskCard = Task (PURE ALIAS — SSoT: governance.rule_enforcement.task_types.Task); 本模块禁止添加字段
 # [MODIFY-GUARD] governance.rule_enforcement.task_types (SSoT)
 # [STABILITY] frozen

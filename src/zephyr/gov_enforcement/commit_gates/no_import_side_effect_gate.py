@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file, _get_added_lines); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged src/ .py 文件 added 行中模块级副作用调用阻断 commit（passed=False）；只检测 added 行（防误阻断现有 2288 文件存量违规，对标 TEST-SOURCE-CONSISTENCY 只防新增策略）；tests/ 豁免（is_test_exempt）；__main__.py 豁免（入口点，module-level 代码预期在 python -m 时执行）；if __name__ == "__main__" guard 块豁免（仅脚本直接执行时运行，import 时不触发）；FunctionDef/ClassDef 体豁免（非模块级）；检测两类：(1) I/O/网络/subprocess/DB 调用 open/urlopen/subprocess.*/requests.*/socket.socket/duckdb.connect 等 + Path(...).read_text/write_text/... 方法调用；(2) 急切单例实例化 UPPER_SNAKE 目标 = Capitalized 调用（如 TELEMETRY = InventorySelfMetrics()），allowlist 纯构造 TypeVar/NamedTuple/TypedDict/Enum/Path；AST/git 异常 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="NO-IMPORT-SIDE-EFFECT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；_SIDE_EFFECT_FUNCS / _PATH_IO_METHODS / _PURE_CAPITALIZED 集合
 # [STABILITY] evolving

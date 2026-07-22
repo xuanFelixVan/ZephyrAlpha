@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.gov_enforcement.rule_enforcement.drift_detector; zephyr.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

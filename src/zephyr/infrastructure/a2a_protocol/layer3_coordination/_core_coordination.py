@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor; zephyr.infrastructure.a2a_protocol.layer3_coordination.construction_verifier; zephyr.infrastructure.a2a_protocol.layer3_coordination.deadlock_guard; zephyr.infrastructure.a2a_protocol.layer3_coordination.livelock_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.cascade_guard; zephyr.infrastructure.a2a_protocol.layer3_coordination.conflict_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator; zephyr.infrastructure.a2a_protocol.layer3_coordination.semantic_diff
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] backward_compat: all exports must remain available from layer3_coordination
 # [MODIFY-GUARD] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STABILITY] frozen

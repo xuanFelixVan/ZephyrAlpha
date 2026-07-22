@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.contracts.core.base_event
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

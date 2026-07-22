@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.query; zephyr.gov_audit.anomaly
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

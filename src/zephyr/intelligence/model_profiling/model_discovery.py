@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.provider_data
 # [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 模型发现;Ollama本地模型;远程API模型
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] evolving

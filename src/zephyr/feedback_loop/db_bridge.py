@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.feedback_loop.metrics_collector
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] fle_metrics表DDL与sqlite_schema.py规范DDL一致; INSERT列名匹配规范schema
 # [MODIFY-GUARD] CT-FLE-DB-001 DDL变更必须同步更新sqlite_schema.py; 已知schema漂移bug: db_bridge.py曾有独立冲突DDL(metric_type/metric_value/recorded_at)导致db_writer.py INSERT失败
 # [STABILITY] evolving

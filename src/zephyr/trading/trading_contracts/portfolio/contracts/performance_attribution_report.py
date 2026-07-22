@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.performance_attribution_report
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] re-export shim only; canonical at zephyr.shared.contracts.performance_attribution_report
 # [MODIFY-GUARD] truth source at zephyr.shared.contracts.performance_attribution_report
 # [STABILITY] stable

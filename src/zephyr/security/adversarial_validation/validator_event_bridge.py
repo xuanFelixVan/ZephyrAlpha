@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.event_bus; zephyr.security.adversarial_validation.validator
 # [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] subscribe is idempotent; handler never raises; validator failure logged not propagated
 # [MODIFY-GUARD] event topic names must be "fix_completed"
 # [STABILITY] evolving

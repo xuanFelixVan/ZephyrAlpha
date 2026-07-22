@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.shared.security.secrets (SECRET_INDICATOR_PATTERNS)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件含裸 os.getenv/os.environ.get/os.environ["KEY"] 读取密钥类变量时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不触碰存量基线；检测模式真源=SECRET_INDICATOR_PATTERNS（zephyr.shared.security.secrets SSoT），不硬编码；只检测字符串字面量参数（变量参数不检测，因 secrets.py SSoT 自身用 os.environ.get(key) 变量参数）；AST/subprocess 异常 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="NO-BARE-GETENV"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

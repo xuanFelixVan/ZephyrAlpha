@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.escalation.escalation_models; zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

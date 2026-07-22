@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.compliance_rule
 # [CONSUMERS] l10-compliance
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] re-export shim only; truth source is zephyr.shared.contracts.compliance_rule
 # [MODIFY-GUARD] truth source MUST NOT be modified here; changes go to zephyr.shared.contracts.compliance_rule
 # [STABILITY] stable

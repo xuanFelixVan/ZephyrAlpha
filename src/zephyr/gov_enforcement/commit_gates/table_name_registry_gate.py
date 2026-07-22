@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _get_added_lines, _read_staged_file, _extract_docstring_lines); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.data.table_registry (get_registry, TableRegistry)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] block——检测 staged .py added 行中的硬编码表名字符串（绕过 TableRegistry 真源）+ tasks.yaml 表名校验；命中返回 passed=False + detail（阻断 commit）；tests/豁免；docstring 行豁免；table_registry.py 自身豁免；fail-open（TableRegistry 空/不可用/git diff 不可达不阻断）；Phase 5 已升级为 block
 # [MODIFY-GUARD] gate_id="TABLE-NAME-REGISTRY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

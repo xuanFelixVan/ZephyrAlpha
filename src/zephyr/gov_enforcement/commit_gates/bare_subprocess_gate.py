@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] warn-only——检测 staged .py added 行中裸 subprocess.run/Popen/check_output/check_call 调用（违反 trae_067 铁律2 CREATE_NO_WINDOW 强制）；命中返回 passed=True + warning detail（不阻断）；tests/ 豁免；6 个文件级例外（process_pool/diff_helpers/git_call_budget_gate/git_commit_gateway/bare_subprocess_gate 自身）；noqa: bare-subprocess 行级逃生；AST 精确检测；git diff 不可达 fail-open
 # [MODIFY-GUARD] gate_id="BARE-SUBPROCESS"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

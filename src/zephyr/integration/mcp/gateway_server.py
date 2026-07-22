@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.mcp.error_codes; zephyr.integration.mcp.audit_logger; zephyr.integration.mcp.rate_limiter; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.protocol; zephyr.integration.mcp.gate_engine_server; zephyr.integration.mcp.doc_guard_server; zephyr.integration.mcp.sentinel_server; zephyr.integration.mcp.blueprint_search_server; zephyr.integration.mcp.task_manager_server; zephyr.integration.mcp.governance_server; zephyr.integration.mcp.telemetry_server; zephyr.integration.mcp.vector_memory_server
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

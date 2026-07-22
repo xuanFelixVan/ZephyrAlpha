@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.orchestration_protocol; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

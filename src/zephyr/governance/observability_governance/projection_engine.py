@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.persistence.task_repo; zephyr.governance.audit.snapshot_manager
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] fold_to_current_state returns deterministic state for same event sequence; unknown event_types are no-op
 # [MODIFY-GUARD] _HANDLERS registry — new event types MUST register a handler
 # [STABILITY] evolving

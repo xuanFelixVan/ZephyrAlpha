@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] anchor路径永远返回anchor级别；Bloom Filter假阳性必须通过Trie精确二次验证
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving

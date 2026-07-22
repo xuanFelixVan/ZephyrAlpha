@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] audit-orchestrator.delegation_auditor(委托审计时上报)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 不实现委托逻辑; 仅桥接EscalationEngine.evaluate()/escalate()
 # [MODIFY-GUARD] EscalationEngine API变更时同步此桥接
 # [STABILITY] evolving

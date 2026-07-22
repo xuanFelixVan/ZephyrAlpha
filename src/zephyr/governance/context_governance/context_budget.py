@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.token_budget
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

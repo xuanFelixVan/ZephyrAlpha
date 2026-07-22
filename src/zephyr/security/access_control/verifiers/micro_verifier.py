@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] stub
+# [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

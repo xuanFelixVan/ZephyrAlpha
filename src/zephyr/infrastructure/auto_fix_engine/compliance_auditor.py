@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-020(audit-trail)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 每次修复MUST生成ComplianceEvidence;防篡改哈希MUST可验证
 # [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml compliance段
 # [STABILITY] evolving

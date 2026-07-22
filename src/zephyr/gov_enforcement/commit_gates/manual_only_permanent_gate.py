@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用 manual 触发模式（argparse.ArgumentParser / input() / __main__ + sys.argv 解析）但无事件订阅/自动触发注册时阻断 commit；tests/ 豁免；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open；本 gate 自身文件豁免（含检测模式字符串）；与 PERM-TRIGGER 互补——PERM-TRIGGER 检测时间触发，本 gate 检测 manual 触发
 # [MODIFY-GUARD] gate_id="MANUAL-ONLY-PERMANENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

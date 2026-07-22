@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] intelligence.model_profiling.deepseek_v4_chat, intelligence.model_profiling.capability_passport, infrastructure.pipeline.llm_gateway, infrastructure.asset_inventory.telemetry, integration.local_model.deepseek_chat, infrastructure.rollback.rollback_integration, governance.depgraph_schema, trading.feedback_loop.security.secret_rotation, security.llm_defense.llm_security.patterns.secrets(re-export)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

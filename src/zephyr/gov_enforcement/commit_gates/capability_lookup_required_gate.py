@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.shared.io.paths (REPO_ROOT); zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy (BYPASS_MARKER_PREFIX, BYPASS_ENV_VAR, has_bypass_marker, is_emergency_bypass, is_exempt_reason)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——commit 含 src/zephyr/**/*.py 业务代码变更但 session 未调 rule_discovery.discover_applicable_rules / capability_lookup.find 时阻断（passed=False）；tests/-only 放行；.md-only 放行；non-Zephyr 项目放行；merge commit 放行；audit log 目录缺失→fail-closed 阻断（防"删目录绕过"攻击向量）；session_id 缺失→放行（SESSION-REQUIRED gate 已先行阻断，本 gate 不重复检查）；commit msg 含 [no-lookup:reason] 标记→白名单匹配则放行，非白名单则硬阻断（#ARCH-066 gate-time 白名单检查）；ZEPHYR_BYPASS_LOOKUP=1 环境变量→放行（紧急逃生，与 ZEPHYR_COMMIT_GATEWAY=1 同级）
 # [MODIFY-GUARD] gate_id="CAPABILITY-LOOKUP-REQUIRED"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；audit log 路径 _LOOKUP_AUDIT_DIR；豁免前缀 _EXEMPT_PATH_PREFIXES；逃生标记 BYPASS_MARKER_PREFIX（共享模块）；白名单 is_exempt_reason（共享模块）
 # [STABILITY] evolving

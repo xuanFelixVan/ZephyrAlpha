@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件中顶层函数在**同目录其他文件**已存在相同 name + body hash 实现时阻断 commit（重复代码）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；只比顶层函数（不比方法）；scope 限同目录（避免扫描全代码库）；AST/subprocess 异常 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="FUNCTION-DUP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

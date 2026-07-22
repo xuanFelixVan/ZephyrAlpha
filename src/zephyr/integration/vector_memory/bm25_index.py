@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.vector_memory.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

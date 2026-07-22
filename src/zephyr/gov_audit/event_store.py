@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.governance.observability_governance.projection_engine; zephyr.governance.audit.snapshot_manager; zephyr.governance.persistence.task_repo
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] event_id is UUID4; timestamp is UTC ISO 8601; append_event is atomic within BEGIN IMMEDIATE
 # [MODIFY-GUARD] task_events schema changes MUST go through sqlite_schema migration
 # [STABILITY] evolving

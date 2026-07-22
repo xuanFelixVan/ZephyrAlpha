@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.lifecycle.resource_optimization_models
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

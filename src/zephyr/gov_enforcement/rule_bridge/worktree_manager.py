@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.commit
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] session worktree 物理隔离——每 AI session 独占一个 git worktree（.aidrafts/{session_id}/），消除多 session 共享工作目录导致的 stash 循环与互相覆盖；worktree 路径 {REPO_ROOT}/.aidrafts/{session_id}/；分支命名 session/{session_id}（基于当前 HEAD 创建）；创建/删除 worktree 用文件锁（.runtime/locks/worktree.lock）防并发冲突；merge 回主分支用 --no-ff 保留 session 提交拓扑；未 merge 的 cleanup 需显式确认（丢弃修改）
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；锁文件名 worktree.lock
 # [STABILITY] evolving

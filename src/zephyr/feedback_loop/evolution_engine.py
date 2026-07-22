@@ -6,7 +6,7 @@ from typing import Final
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

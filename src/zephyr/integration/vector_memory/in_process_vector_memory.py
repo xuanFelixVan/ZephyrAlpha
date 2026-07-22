@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.vector_memory.collection_manager; zephyr.integration.local_model.embedding_router; zephyr.integration.vector_memory.chunk_strategy_router; zephyr.integration.vector_memory.provenance_enforcer; zephyr.integration.vector_memory.retrieval_feedback; zephyr.integration.local_model.cache_layer; zephyr.integration.vector_memory.hybrid_retriever; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.bridge_layer; zephyr.integration.vector_memory.vector_bridge; zephyr.integration.vector_memory.in_memory_memory_backend
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

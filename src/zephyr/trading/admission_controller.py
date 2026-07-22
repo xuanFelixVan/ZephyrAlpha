@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TokenBucket全局桶50/s burst=100不可绕过；熔断器failure_threshold触发后所有请求CIRCUIT_OPEN
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving

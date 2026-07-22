@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.errors; zephyr.shared.metrics
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

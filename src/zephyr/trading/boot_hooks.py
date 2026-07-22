@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] register_boot_hooks is idempotent; hook_registry deduplicates by name
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

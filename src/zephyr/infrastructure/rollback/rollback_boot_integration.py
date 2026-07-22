@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] register_startup_hook is idempotent; on_startup initializes WAL+Verifier; on_shutdown flushes WAL+cleans temp
 # [MODIFY-GUARD] boot_hooks registration name must be "rollback_boot_init"
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.ops_governance.budget_models; zephyr.governance.ops_governance.budget_engine
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

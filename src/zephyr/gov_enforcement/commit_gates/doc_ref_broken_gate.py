@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点链接豁免；文件读取失败 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="DOC-REF-BROKEN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

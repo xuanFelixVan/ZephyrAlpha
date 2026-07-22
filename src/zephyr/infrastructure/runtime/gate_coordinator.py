@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
 # [CONSUMERS] zephyr.infrastructure.rollback.rollback_engine; zephyr.trading.boot_hooks
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] freeze -> thaw 原子配对; 空操作不报错
 # [MODIFY-GUARD] freeze/thaw流程变更必须同步Pipeline+Orc
 # [STABILITY] evolving

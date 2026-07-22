@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.integrity
 # [CONSUMERS] zephyr.governance.integrity ; zephyr.gov_audit.bridge ; zephyr.gov_audit.__init__(lazy re-export)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

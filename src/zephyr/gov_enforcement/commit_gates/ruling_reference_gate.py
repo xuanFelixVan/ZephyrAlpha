@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.gov_enforcement.commit_gates._reference_helpers
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只检测 staged 文件中**新增的** 裁定#NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md；正则支持纯数字/带字母后缀（裁定#6 / 裁定#19-A / 裁定#203-B 等）；ruling_id 从工作区 ruling_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（RULING_GAP_WARNING）——WARNING 不阻断；L2 同提交原子性门禁（RULING_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则 hard block；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None；**阶段2 hard block 已启用**（裁定#20-G，2026-07-18，_MANUAL_STAGE=False）——新增未登记 裁定#NNN 引用直接阻断
 # [MODIFY-GUARD] gate_id="RULING-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；_MANUAL_STAGE=False（阶段2 hard block，裁定#20-G）；priority=74（紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后，ARCH-REFERENCE(75) 之前——同属"引用完整性"类检查，集中执行）
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] tests/governance/code_quality/test_code_dedup_engine_red_team.py; tests/governance/integration/test_integration_hub.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

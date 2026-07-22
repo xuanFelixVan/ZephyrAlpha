@@ -10,7 +10,7 @@
 
 # [STARTUP] imported
 
-# [MATURITY] prototype
+# [MATURITY] design
 
 # [INVARIANTS] post-commit 事件触发（仅当 staged .py 文件含 [STABILITY] 或 [MATURITY] 头部标记时触发）；reconciler 永不抛异常（异常降级为 warn）；只读 git show HEAD~1:path 获取旧版本（不修改工作区）；后向状态转换（如 stable→evolving, production→prototype）持久化到 governance.db drift_audit_findings 表（severity=HIGH）；正则提取头部标记（不解析整文件）；非 Zephyr 项目 skip
 

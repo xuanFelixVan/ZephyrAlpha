@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] game_day_runner.py; validator.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Auto-pauses adversarial testing when defense stress exceeds threshold; 3 states: CLOSED->OPEN->HALF_OPEN->CLOSED; cool_down_ms = 30000
 # [MODIFY-GUARD] State transitions per blueprint §7.2 FSM; cool_down_ms MUST NOT be set below 10000
 # [STABILITY] evolving

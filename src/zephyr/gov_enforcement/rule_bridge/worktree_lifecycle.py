@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.foundation.errors
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree; zephyr.governance.audit.git_performance_monitor_reconciler
 # [STARTUP] imported
-# [MATURITY] stable
+# [MATURITY] design
 # [INVARIANTS] 状态记录持久化到 .runtime/worktree_lifecycle/；转换必须合法；幂等
 # [MODIFY-GUARD] 状态语义变更需同步 worktree_state_machine.yaml + 测试
 # [STABILITY] stable

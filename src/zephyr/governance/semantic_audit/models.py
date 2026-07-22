@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] trigger_engine;fix_prioritizer;llm_bridge;reference_extractor;safety_boundary;alignment_engine;issue_aggregator;self_health
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] severity必须为RED/YELLOW/INFO; SafetyDecision必须为PROCEED/HOLD/FORBIDDEN; TriggerResult.severity与Severity枚举一致
 # [MODIFY-GUARD] blueprint.md §4.2; semantic_audit/__init__.py __all__
 # [STABILITY] evolving

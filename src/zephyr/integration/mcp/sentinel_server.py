@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

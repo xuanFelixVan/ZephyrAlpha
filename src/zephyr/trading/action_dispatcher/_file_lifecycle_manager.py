@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.action_dispatcher (facade module: _facade_mod.REPO_ROOT/BRAIN_BACKUPS_DIR/BRAIN_TRASH_DIR/_read_text/_git_commit_hash/ActionReport/_MAX_BACKUPS_PER_FILE; facade ref: _extract_module_name/_find_module_file/_parse_file_path/_version_backup)
 # [CONSUMERS] zephyr.trading.action_dispatcher.ActionDispatcher.__init__ (构造 _file_lifecycle 实例); ActionDispatcher._version_backup (facade 委托)
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 文件生命周期管理——create_file/delete_file/version_backup；通过 facade ref 访问 patchable 实例方法以支持 patch.object(d, "_method", ...) 测试；version_backup 保留最近 N 份备份（_MAX_BACKUPS_PER_FILE）
 # [MODIFY-GUARD] 公共方法 create_file/delete_file/version_backup 签名变更需同步 facade thin wrapper 与测试
 # [STABILITY] stable

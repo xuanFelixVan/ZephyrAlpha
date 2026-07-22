@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件含 SSoT 文件路径硬编码（docs/01_*/.../*.yaml / docs/02_*/.../*.yaml / data/.../*.json）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线存量违规划死工作流）；AST 解析失败 fail-open（logger.warning）；本 gate 自身文件豁免（含路径模式字符串用于检测）；扩展 VOCAB-HARDCODE 覆盖面至 SSoT 引用消费链
 # [MODIFY-GUARD] gate_id="VOCAB-CHAIN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

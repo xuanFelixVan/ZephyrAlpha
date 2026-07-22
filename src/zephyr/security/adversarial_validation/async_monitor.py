@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.circuit_breaker; zephyr.security.adversarial_validation.bypass_recorder; zephyr.security.adversarial_validation.cleanup
 # [CONSUMERS] cli.py; mcp_endpoints.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Background daemon monitors: circuit_breaker state / bypass_backlog / convergence_stagnation / cleanup_pending; 30s polling interval
 # [MODIFY-GUARD] Adding monitors MUST register in _MONITORS; polling_interval_s MUST NOT be below 5
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.rollback_types; zephyr.shared.contracts.escalation.budget_alert
 # [CONSUMERS] zephyr.infrastructure.rollback;zephyr.governance.services.adapter
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 契约接口签名不可变;升级入口必须返回结构化结果
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

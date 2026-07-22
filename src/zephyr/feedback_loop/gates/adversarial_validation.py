@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.__init__
 # [CONSUMERS] feedback-loop.gates.__init__; _registry.yaml FLE-ADVERSARIAL-VALIDATION; RED-BLUE-GATE
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] challenge() maintains backward compat; run_adversarial_check() bridges to RedBlueValidator
 # [MODIFY-GUARD] challenge() return type MUST remain list[str] for backward compat
 # [STABILITY] evolving

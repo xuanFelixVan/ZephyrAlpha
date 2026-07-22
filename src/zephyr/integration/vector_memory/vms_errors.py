@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] collection_manager; design_principles; in_process_vector_memory; faiss_collection_manager; tests
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] VMSError is root; all VMS exceptions inherit from VMSError
 # [MODIFY-GUARD] collection_manager.py; design_principles.py; in_process_vector_memory.py; faiss_collection_manager.py
 # [STABILITY] stable

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.shared.lifecycle.daemon_registry; zephyr.gov_enforcement.rule_enforcement.compliance_rule; docs.03_modules._cross_layer.mcp_servers.blueprint.md; zephyr.feedback_loop.auto_evolution; zephyr.gov_enforcement.rule_enforcement.adaptive_threshold; docs.03_modules._domain_governance.audit_trail.blueprint.md; docs.03_modules._domain_governance.drift_detector.blueprint.md; docs.03_modules._domain_autonomy_perm.budget_enforcer.blueprint.md; docs.03_modules._domain_autonomy_core.agent_spec.blueprint.md; zephyr.integration.mcp.audit_logger
 # [CONSUMERS] zephyr.shared.lifecycle.daemon_registry; zephyr.trading.boot_hooks
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] scan_ghost_windows 必须零副作用（只读）；kill_ghost_windows 必须日志记录每个 killed PID；track_task_process 线程安全；kill_task_processes 幂等
 # [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving

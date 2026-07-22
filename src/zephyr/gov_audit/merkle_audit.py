@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.integrity
 # [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] SSoT=zephyr.gov_audit(MOD-INF-020);本文件为兼容别名
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Priority P0-P4 MUST align with GOV-TASK-004 §2.2; AuditSeverity MUST be backward-compatible alias for Priority P0-P2
 # [MODIFY-GUARD] GOV-TASK-004; ADR-0030
 # [STABILITY] stable

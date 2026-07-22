@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.offline_autonomy
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

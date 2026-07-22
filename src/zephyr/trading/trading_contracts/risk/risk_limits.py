@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] risk; pf_core
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

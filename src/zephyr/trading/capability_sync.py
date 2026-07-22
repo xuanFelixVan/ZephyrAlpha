@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] sync_a2a and sync_skills are idempotent; existing cap_ids are skipped
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

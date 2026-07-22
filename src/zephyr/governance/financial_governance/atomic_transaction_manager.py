@@ -10,7 +10,7 @@
 
 # [STARTUP] imported
 
-# [MATURITY] prototype
+# [MATURITY] production
 
 # [INVARIANTS] none
 

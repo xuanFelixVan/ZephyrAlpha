@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

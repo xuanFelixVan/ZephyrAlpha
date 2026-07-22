@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.strategy_base; zephyr.trading.trading_contracts.execution.order
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

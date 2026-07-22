@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.security_governance.default_security_gateway
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (subprocess, tarfile, io, pathlib, logging, typing)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (collector 批量化); zephyr.gov_enforcement.commit_gates.* (diff helpers 批量化); zephyr.governance.audit.workspace_hygiene_reconciler (auto-sync restore 批量化)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 所有方法返回 dict/list 结构，不抛异常——subprocess 失败返回空容器；git archive --format=tar 单次调用替代 N 次 git show；线程安全（无共享可变状态）
 # [MODIFY-GUARD] GitCommandBatcher 类名；git_show_batch/git_diff_cached_names/git_diff_names/git_ls_files_tracked/git_restore_batch 方法签名
 # [STABILITY] evolving

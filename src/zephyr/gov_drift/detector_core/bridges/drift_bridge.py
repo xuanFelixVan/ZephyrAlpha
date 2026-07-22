@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.event_bus; zephyr.gov_drift.drift_engine
 # [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] subscribe is idempotent; handler never raises; drift_engine failure logged not propagated
 # [MODIFY-GUARD] event topic names must be "gate_blocked" / "task_completed"
 # [STABILITY] evolving

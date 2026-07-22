@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.security.access_control.session_concurrency (SessionRegistry, Phase 2.5 find_target_in_active_sessions 懒导入)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (gate registration)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找；Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在其他活跃 session held_files 中，若是追加友好提示"等待该 session merge"（fail-open：SessionRegistry 不可用时不追加提示，不阻断）
 # [MODIFY-GUARD] gate_id="IMPORT-INTEGRITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

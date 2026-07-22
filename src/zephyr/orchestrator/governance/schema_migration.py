@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.events.event_bus_upgrade
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

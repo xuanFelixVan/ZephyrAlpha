@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

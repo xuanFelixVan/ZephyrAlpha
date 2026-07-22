@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); zephyr.shared.security.secrets (SecretsError, get_secret_from_file); psycopg2
 # [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] depgraph is PostgreSQL (连接串由 get_depgraph_pg_connection() 从环境变量派生); init_db must be idempotent
 # [MODIFY-GUARD] sqlite_schema.py; database_manager.py; depgraph generators
 # [STABILITY] evolving

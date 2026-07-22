@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.integration.mcp._base_server; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

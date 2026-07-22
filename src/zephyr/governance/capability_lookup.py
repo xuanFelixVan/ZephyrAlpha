@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts, check_capability_duplicates); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts, check_capability_duplicates)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] YAML 真源是人工裁定的能力索引（capability_id/aliases/description + 可选 override/manual 条目）；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/removed_duplicates 均由磁盘扫描+git log 自动派生，不持久化为第二真源
 # [MODIFY-GUARD] capability_canonical_file_registry.yaml (能力索引真源); governance/__init__.py __all__
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.events.observer
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] design_only
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.provider_base; zephyr.infrastructure.database_service
 # [CONSUMERS] zephyr.backtest.core.data_handler; zephyr.backtest.core.tick_replay; zephyr.ex_core.adapters.miniqmt_broker; zephyr.frontend.dashboard.components.order_book
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] Tick 18字段映射; 5档盘口完整性; DatabaseService访问ClickHouse(禁止裸clickhouse_driver.connect); 仅Windows
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

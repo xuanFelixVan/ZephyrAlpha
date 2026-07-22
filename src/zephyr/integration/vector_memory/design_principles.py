@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.vector_memory.collection_schemas; zephyr.integration.vector_memory.vms_errors; zephyr.integration.vector_memory.provenance_enforcer; zephyr.integration.vector_memory.vms_schemas
 # [CONSUMERS] collection_manager; in_process_vector_memory; faiss_collection_manager; tests
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] validate_dimension enforces ALLOWED_DIMENSIONS; validate_provenance enforces provenance metadata; hot/cold separation enforced
 # [MODIFY-GUARD] collection_manager.py; in_process_vector_memory.py; faiss_collection_manager.py
 # [STABILITY] evolving

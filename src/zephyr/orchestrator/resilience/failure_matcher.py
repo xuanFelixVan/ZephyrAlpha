@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.governance.ops_governance.event_hook
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

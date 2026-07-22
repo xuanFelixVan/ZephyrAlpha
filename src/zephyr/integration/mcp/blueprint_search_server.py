@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
