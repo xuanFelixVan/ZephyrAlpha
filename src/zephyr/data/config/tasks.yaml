@@ -1496,7 +1496,7 @@ tasks:
     date_col: trade_date
     dependencies: []
     capability: kline_sector_880
-    symbols: null  # null=全部880xxx板块（约684只）+9只市场指数
+    symbols: null  # null=全部880xxx板块（实测2026-07-22: 460只，tqcenter get_sector_list动态获取）+9只市场指数
     extra:
       description: "880xxx板块指数K线增量（tqcenter get_market_data，日K/1m/5m）"
       trigger: manual_script  # 非 scheduler 自动调度，由独立脚本触发（tqcenter SDK 需 E:\tdx\PYPlugins 路径）
@@ -1524,7 +1524,7 @@ tasks:
     capability: sector_snapshot_collection
     symbols: null
     extra:
-      description: "880xxx板块实时快照增量（tqcenter subscribe_hq推送99只 + get_market_snapshot轮询584只）"
+      description: "880xxx板块实时快照增量（tqcenter subscribe_hq推送99只 + get_market_snapshot全量轮询，轮询池从sector_constituent表动态获取，实测2026-07-22: 582只）"
       trigger: manual_script
       ranking_engine: sector_ranking_engine.get_push_pool
 
