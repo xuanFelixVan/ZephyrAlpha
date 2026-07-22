@@ -7712,3 +7712,52 @@ entries:
   related_rules: 'trae_071 (LAW-2 frontmatter 要求), trae_062 (SSoT 真源分类)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+# --- #ARCH-SSOT-REFERENCE-INTEGRITY-001: SSoT 引用完整性（2026-07-22 完整裁定）---
+- issue_id: '#ARCH-SSOT-REFERENCE-INTEGRITY-001'
+  title: SSoT 引用完整性无存在性强制的系统性缺口——schema_file 悬空 + 三重命名冲突 + depgraph 边无 commit-time 强制
+  category: architecture_governance
+  severity: P1高
+  adjudication: |
+    【问题发现】business_data_categories.yaml 引用 8 个 schema_file 路径，其中 7 个文件不存在
+    （87.5% SSoT 破裂率）——仅 market_tick.py 真实存在。SSoT 声明（YAML schema_file 字段）
+    与存在性（磁盘文件）之间无任何强制校验，AI/人工均可引用不存在的文件而无人察觉。
+    【三重 SSoT 命名冲突】表名/类别 ID 在三处定义且互不一致：
+      - 蓝图 c1_market_clickhouse.md §4.2: daily_kline / market_daily_kline
+      - YAML business_data_categories.yaml: kline_daily / market_kline_daily
+      - 部署脚本 apply_market_tables_ddl.py: kline_daily（与 YAML 一致）
+    裁定：以 business_data_categories.yaml 为 SSoT 准（kline_daily / market_kline_daily），蓝图命名废弃。
+    【引擎选型分歧】蓝图 §4.0 声明全部 ReplacingMergeTree(ingest_ts)，但 §4.2 DDL 未定义
+    ingest_ts 列（蓝图内部矛盾）。裁定：以可执行为准——使用 ReplacingMergeTree（无版本列）。
+    【depgraph 边变更无 commit-time 强制】L1 依赖关系先行铁律为君子协定，planned 占比仅
+    1.05%，NEW-FILE-DEPGRAPH-ENFORCEMENT gate 仅检查新文件节点存在性，不检查边变更登记。
+    tick_subscriber→wal_writer 边从未登记（buffered_writer.py 残留 prototype 节点）。
+    【第一性原理根因】SSoT 三层模型（声明层/存在层/消费层）缺少存在性强制——声明层
+    （YAML）可引用任意路径，存在层（磁盘）无对应文件时不报错，消费层（代码）按声明层
+    import 时才运行时崩溃。100% AI 开发场景下，AI 写 YAML 引用 schema_file 时不验证文件
+    存在性=系统性幻觉温床。
+    【治本方案（Phase 0-3）】
+      Phase 0（止血，本次执行）：补全 7 个缺失 schema 文件 + 修正命名冲突 + 登记 schemas/
+        目录到 directory_contract.yaml + 登记 depgraph 边
+      Phase 1（存在性强制）：新建 SCHEMA-FILE-EXISTS gate，commit 时校验 YAML schema_file
+        引用的文件必须存在（对标 ARCH-REFERENCE 对 #ARCH-NNN 的存在性强制）
+      Phase 2（消费层对齐）：apply_*.py 全部从 schema 文件导入 DDL（消除内联 DDL 双真源）
+      Phase 3（depgraph 边强制）：L1 升级为 commit-time 硬阻断（边变更必须登记）
+  impact:
+    - "7/8 schema_file 引用悬空（87.5% SSoT 破裂率）——AI 按声明层 import 时运行时崩溃"
+    - "三重命名冲突导致 AI 无法确定表名真源——kline_daily vs daily_kline"
+    - "蓝图引擎声明与 DDL 不一致——ReplacingMergeTree(ingest_ts) 但无 ingest_ts 列"
+    - "tick_subscriber→wal_writer 依赖未登记——depgraph 拓扑不完整"
+    - "schemas/ 目录未在 directory_contract.yaml 登记——FILE-PLACEMENT-TTL 阻断新文件"
+  fix_phase: |
+    Phase 0（止血）执行中（2026-07-22）：
+      0.1 新建 7 个 schema 文件（market_kline_daily/auction/index/option_iv/futures_position/futures_term/cb_iv）
+      0.2 修正蓝图 §4.2 命名冲突（daily_kline→kline_daily 等）
+      0.3 apply_market_tables_ddl.py KLINE_DAILY_DDL 改为从 schema 文件导入
+      0.4 登记 schemas/ 目录 + depgraph 边（wal_writer 节点 + tick_subscriber→wal_writer 边）
+      0.5 GitCommitGateway 提交
+    Phase 1-3 待启动。
+  status: in_progress
+  related_adjudication: '#ARCH-SSOT-REFERENCE-INTEGRITY-001 (本裁定), #ARCH-TEMP-FILE-LIFECYCLE-001 (directory_contract 登记), trae_062 (SSoT 真源分类铁律)'
+  related_rules: 'trae_062 (SSoT 真源分类——规则数据 YAML 为真源), trae_054 (备份先行——depgraph 变更前 git commit), L1 依赖关系先行铁律'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

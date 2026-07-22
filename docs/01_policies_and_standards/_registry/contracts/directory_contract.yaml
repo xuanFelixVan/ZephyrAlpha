@@ -139,6 +139,7 @@ directory_zones:
     paths:
       - "src/"
       - "scripts/"
+      - "schemas/"
       - "tests/"
       - "config/"
       - "data/"
@@ -238,6 +239,13 @@ directory_extensions:
       # PG schema 迁移真源目录——SQL 文件是该目录的核心产物（02_create_pg_schema.sql 等）
       - subdir: "governance/migrate_sqlite_to_pg/"
         extensions: [".sql"]
+
+  - path: "schemas/"
+    allowed: [".py"]
+    forbidden: [".bak", ".baseline", ".md", ".yaml", ".json", ".csv", ".sh", ".ps1"]
+    zone: neutral
+    allowed_doc_types: []
+    note: "DDL-as-Code SSoT 目录——表结构定义文件（schemas/categories/*.py），被 business_data_categories.yaml 的 schema_file 字段引用。仅允许 .py（DDL 常量 + BLUEPRINT 头部 + 表元数据）。裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase 0 登记"
 
   - path: "config/"
     allowed: [".yaml", ".yml", ".json"]
