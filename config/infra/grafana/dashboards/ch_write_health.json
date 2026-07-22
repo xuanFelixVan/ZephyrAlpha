@@ -1,0 +1,62 @@
+{
+  "uid": "zephyr-ch-write",
+  "title": "ZephyrAlpha — ClickHouse 写入健康",
+  "tags": ["zephyr", "data-layer", "p2-10"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {
+      "id": 1, "title": "CH 写入成功率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_ch_write_total{outcome=\"committed\"}[1m])", "legendFormat": "committed", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 2, "title": "CH 写入失败率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_ch_write_total{outcome!=\"committed\"}[1m])", "legendFormat": "failed", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 3, "title": "写入延迟 p50", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "histogram_quantile(0.5, rate(zephyr_ch_write_latency_seconds_bucket[5m]))", "legendFormat": "p50", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 4, "title": "写入延迟 p99", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "histogram_quantile(0.99, rate(zephyr_ch_write_latency_seconds_bucket[5m]))", "legendFormat": "p99", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 5, "title": "TCP 冷却状态", "type": "stat",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_ch_cooldown_active{channel=\"tcp\"}", "legendFormat": "tcp", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 6, "title": "HTTP 冷却状态", "type": "stat",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 16, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_ch_cooldown_active{channel=\"http\"}", "legendFormat": "http", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    }
+  ],
+  "templating": {"list": []},
+  "annotations": {"list": []}
+}

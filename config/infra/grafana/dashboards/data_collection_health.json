@@ -1,0 +1,62 @@
+{
+  "uid": "zephyr-data-collection",
+  "title": "ZephyrAlpha — 数据采集健康",
+  "tags": ["zephyr", "data-layer", "p2-10"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {
+      "id": 1, "title": "Tick 接收速率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_tick_received_total[1m])", "legendFormat": "{{instance}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 2, "title": "Tick 写入速率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_tick_written_total[1m])", "legendFormat": "{{instance}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 3, "title": "Tick 丢弃速率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_tick_dropped_total[1m])", "legendFormat": "{{instance}}", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 4, "title": "队列水位", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_tick_queue_size", "legendFormat": "queue_size", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 5, "title": "WAL 段文件总数", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_wal_segments_total", "legendFormat": "segments", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 6, "title": "WAL 目录大小 (Bytes)", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 16, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_wal_dir_bytes", "legendFormat": "wal_bytes", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    }
+  ],
+  "templating": {"list": []},
+  "annotations": {"list": []}
+}

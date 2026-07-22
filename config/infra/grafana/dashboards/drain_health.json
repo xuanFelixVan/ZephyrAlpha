@@ -1,0 +1,46 @@
+{
+  "uid": "zephyr-drain-health",
+  "title": "ZephyrAlpha — Drain 健康",
+  "tags": ["zephyr", "data-layer", "p2-10"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {
+      "id": 1, "title": "Drain 成功速率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_drain_replayed_total[1m])", "legendFormat": "replayed", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 2, "title": "Drain 失败速率", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "targets": [{"expr": "rate(zephyr_drain_failed_total[1m])", "legendFormat": "failed", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 3, "title": "积压文件数", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_wal_backlog_files", "legendFormat": "backlog", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    },
+    {
+      "id": 4, "title": "WAL 容量水位 (Bytes)", "type": "timeseries",
+      "datasource": {"uid": "prometheus", "type": "prometheus"},
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+      "targets": [{"expr": "zephyr_wal_dir_bytes", "legendFormat": "wal_bytes", "refId": "A"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}}
+    }
+  ],
+  "templating": {"list": []},
+  "annotations": {"list": []}
+}

@@ -1,0 +1,35 @@
+# Grafana ClickHouse Datasource Configuration — ZephyrAlpha
+# P2-10 双数据源仪表盘（MOD-INF-044）
+# 注意：需要安装 ClickHouse 数据源插件（grafana-clickhouse-datasource）
+#   docker-compose.yml 的 GF_INSTALL_PLUGINS 需追加 grafana-clickhouse-datasource
+#   或在 Grafana UI → Plugins → 搜索 "ClickHouse" → Install
+
+apiVersion: 1
+
+datasources:
+  - name: ClickHouse
+    type: clickhouse
+    access: proxy
+    uid: clickhouse
+    url: http://172.24.30.100:8123
+    isDefault: false
+    editable: true
+    jsonData:
+      defaultDatabase: c1_market
+      port: 8123
+      protocol: http
+      timeout: 30
+      enableSecureSocksProxy: false
+      # 使用 Native 协议时需配置 9000 端口，当前用 HTTP 8123
+      useYandexCloudAuthorization: false
+      # 超时设置（秒）
+      queryTimeout: 60
+      # 自动补全表/列名
+      usePOST: true
+      # TLS 配置（当前内网无 TLS）
+      tlsSkipVerify: false
+    secureJsonData:
+      # ClickHouse 默认无密码（内网开发环境）
+      # 生产环境需配置 user/password
+      username: default
+      password: ""
