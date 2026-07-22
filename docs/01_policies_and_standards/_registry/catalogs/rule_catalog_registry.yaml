@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-19T19:37:20Z'
+generated_at: '2026-07-22T01:49:26Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 166
+total_files: 178
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -754,7 +754,7 @@ files:
   title: 模块治理-准入与生命周期
   doc_type: ''
   status: ''
-  version: 1.1.2
+  version: 1.1.3
   rule_form: ''
   scope: module_governance
   stability: stable
@@ -1199,7 +1199,7 @@ files:
   title: 操作-模块/蓝图/代码创建完整工作流程
   doc_type: ''
   status: ''
-  version: 2.1.0
+  version: 2.2.0
   rule_form: procedural
   scope: module_creation_workflow
   stability: evolving
@@ -1399,6 +1399,227 @@ files:
   - RunCommand纯洁性
   - PowerShell禁止
   - 命令串联禁止
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml
+  module_id: TRAE-067
+  title: AI RunCommand 窗口闪现纪律铁律（Window Flash Discipline）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: runcommand_window_discipline
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: high
+  tier: ''
+  aliases:
+  - RULE-EIGHTEEN
+  - 窗口闪现纪律
+  - RunCommand窗口隐藏
+  - pythonw首选
+  - CREATE_NO_WINDOW
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+  module_id: TRAE-068
+  title: 第 6 层可预防性铁律（Preventability Layer，6 层闭环模型正式化，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: preventability_layer
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-PREVENTABILITY
+  - 可预防性
+  - preventability
+  - 第6层
+  - 6层闭环模型
+  - ARCH-PREVENTABILITY-LAYER-001
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml
+  module_id: TRAE-072
+  title: 跨 commit 原子性铁律（Cross-Commit Atomicity，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: cross_commit_atomicity
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-CROSS-COMMIT-ATOMICITY
+  - 跨 commit 原子性
+  - cross_commit_atomicity
+  - 悬空 import 防护
+  - dangling import prevention
+  - ARCH-CROSS-COMMIT-ATOMICITY-001
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml
+  module_id: TRAE-073
+  title: pre-commit hook 离线可运行纪律铁律（Pre-commit Offline Discipline）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: precommit_offline_discipline
+  stability: ''
+  layer: L1_foundation
+  superseded_by: ''
+  severity: high
+  tier: ''
+  aliases: []
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
+  module_id: TRAE-074
+  title: worktree base 新鲜度全生命周期铁律（Worktree Base Freshness Full Lifecycle，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: worktree_base_freshness
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-WORKTREE-BASE-FRESHNESS
+  - worktree base 新鲜度
+  - base freshness check
+  - 薛定谔回退防护
+  - schrodinger rollback prevention
+  - ARCH-WORKTREE-BASE-FRESHNESS-001
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml
+  module_id: TRAE-075
+  title: stash 生命周期铁律（Stash Lifecycle，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: stash_lifecycle
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-STASH-LIFECYCLE
+  - stash 生命周期
+  - stash accumulation
+  - stash TTL cleanup
+  - ARCH-STASH-ACCUMULATION-001
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
+  module_id: TRAE-076
+  title: worktree commit 持久性 + start fail-closed 铁律（Worktree Commit Persistence +
+    Start Fail-Closed，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: worktree_commit_persistence
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-WORKTREE-COMMIT-PERSISTENCE
+  - commit 持久性
+  - commit persistence
+  - start fail-closed
+  - WORKSPACE_DRIFT_BLOCKED
+  - SCHRODINGER_ROLLBACK_DETECTED
+  - ARCH-WORKTREE-COMMIT-PERSISTENCE-001
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
+  module_id: TRAE-077
+  title: capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定
+  doc_type: ''
+  status: ''
+  version: 2.0.0
+  rule_form: ''
+  scope: capability_lookup_bypass_stats
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: warning
+  tier: ''
+  aliases:
+  - RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+  - bypass 场景分类
+  - bypass scene classification
+  - 白名单豁免
+  - exempt bypass
+  - ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+  - ARCH-066
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml
+  module_id: TRAE-078
+  title: force=True 逃生通道安全分类铁律（Force Merge Safety Classification，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: force_merge_safety_classification
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-FORCE-MERGE-SAFETY
+  - force merge 安全分类
+  - force merge safety classification
+  - 不可绕过类检测
+  - non-bypassable checks
+  - ARCH-FORCE-MERGE-SAFETY-001
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+  module_id: TRAE-079
+  title: commit 临界区文件锁串行化铁律（Commit Critical Section Serialization，裁定
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: commit_critical_section_serialization
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-COMMIT-SERIALIZATION
+  - commit 临界区串行化
+  - commit critical section serialization
+  - 文件锁串行化提交
+  - 逃生链塌缩
+  - 原语倒置修正
+  - ARCH-COMMIT-SERIALIZATION-001
   section_count: 1
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
@@ -1630,7 +1851,7 @@ files:
   title: 架构议题注册表
   doc_type: register
   status: active
-  version: 1.3.4
+  version: 1.3.8
   rule_form: ''
   scope: ''
   stability: ''
@@ -1841,6 +2062,21 @@ files:
   doc_type: register
   status: active
   version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  module_id: CFG-IN-PROCESS-GATE-REGISTRY-001
+  title: In-Process Gate 注册真源（YAML 驱动自动注册）
+  doc_type: register
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2138,7 +2374,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
   module_id: PS-CTR-003
   title: Data Retention & Backtest Layering Contract
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 1.0.0
   rule_form: ''
@@ -2155,7 +2391,7 @@ files:
   title: Directory Contract
   doc_type: gate
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
