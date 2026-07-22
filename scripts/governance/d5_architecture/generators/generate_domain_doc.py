@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-generate_domain_doc
+# [BLUEPRINT] MOD-GOV_generate_domain_doc
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_domain_doc
 # [DOMAIN]
 # [DEPENDENCIES]

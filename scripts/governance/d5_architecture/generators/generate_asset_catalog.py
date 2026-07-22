@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-generate_asset_catalog
+# [BLUEPRINT] MOD-GOV_generate_asset_catalog
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_asset_catalog
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.shared.io.paths; _common; _shared.constants.get_depgraph_pg_connection

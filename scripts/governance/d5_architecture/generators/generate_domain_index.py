@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-generate_domain_index
+# [BLUEPRINT] MOD-GOV_generate_domain_index
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_domain_index
 # [DOMAIN]
 # [DEPENDENCIES]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-generate_capacity_report
+# [BLUEPRINT] MOD-GOV_generate_capacity_report
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_capacity_report
 # [DOMAIN]
 # [DEPENDENCIES]

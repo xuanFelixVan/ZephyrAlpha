@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-runtime_violation_snapshot_reconciler | docs/03_modules/_domain_governance/blueprint.md | §runtime-violation-snapshot-reconciler
+# [BLUEPRINT] MOD-GOV_runtime_violation_snapshot_reconciler | docs/03_modules/_domain_governance/blueprint.md | §runtime-violation-snapshot-reconciler
 # [MODULE] zephyr.governance.audit.runtime_violation_snapshot_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); zephyr.governance.audit.runtime_violation_snapshot

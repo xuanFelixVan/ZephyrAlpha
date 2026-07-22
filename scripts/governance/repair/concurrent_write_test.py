@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-concurrent_write_test
+# [BLUEPRINT] MOD-GOV_concurrent_write_test
 # [MODULE]# [MODULE] scripts.governance.repair.concurrent_write_test
 # [DOMAIN]
 # [DEPENDENCIES]

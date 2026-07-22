@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-dm200916_write_direct
+# [BLUEPRINT] MOD-GOV_dm200916_write_direct
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.dm200916_write_direct
 # [DOMAIN]
 # [DEPENDENCIES]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-migrate_metadata | scripts/governance/migrate_to_metadata_tables.py | §depgraph-stage2
+# [BLUEPRINT] MOD-GOV_migrate_metadata | scripts/governance/migrate_to_metadata_tables.py | §depgraph-stage2
 # [MODULE] scripts.governance.migrate_to_metadata_tables
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.depgraph_schema

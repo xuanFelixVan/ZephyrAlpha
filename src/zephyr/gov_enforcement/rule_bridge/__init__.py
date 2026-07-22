@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-commit_gate_registry | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-GOV_commit_gate_registry | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """gov_enforcement.rule_bridge — auto-generated package init."""
 
