@@ -6,7 +6,8 @@
 - _replay_one_file（mock ch_writer_mod.write_tsv）
   - 成功/失败/跳过/异常
   - 表名前缀补全（裸表名→<_DEFAULT_DB>.<table>，裁定 Phase 2）
-  - cols_clause 始终传 None（裁定 Phase 1 根因修复）
+  - cols_clause 从 manifest 读取（裁定 Phase 3 根因修复：防列数不匹配）
+  - create_fallback=False 防重复落盘（裁定 Phase 3）
 - replay_batch（mock ch_writer.write_tsv）
   - 空 manifest / 成功 / 失败保留 / max_files 限制
 
@@ -169,11 +170,11 @@ class TestReplayOneFile:
 
         assert status == "failed"
 
-    def test_cols_clause_always_none(self, tmp_path, monkeypatch):
-        """回灌时 cols_clause 始终传 None（裁定 #ARCH-CH-013 Phase 1 根因修复）。
+    def test_cols_clause_from_manifest(self, tmp_path, monkeypatch):
+        """回灌时使用 manifest 保存的 cols_clause（裁定 #ARCH-CH-013 Phase 3 根因修复）。
 
-        即使 manifest 中 cols_clause 有值，回灌时也必须传 None，
-        强制 ch_writer 重新查询表列，避免使用过期/无效列清单。
+        manifest 中 cols_clause 有值时，回灌传该值给 write_tsv，
+        确保 INSERT 列数与 TSV 字段数一致（防 Code: 27 parse error）。
         """
         monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
         tsv_path = tmp_path / "data.tsv"
@@ -189,9 +190,80 @@ class TestReplayOneFile:
 
         _replay_one_file(entry, mock_cw)
 
-        # 验证 write_tsv 第二个位置参数（columns）是 None
+        # 验证 write_tsv 第二个位置参数（columns）使用 manifest 保存的值
+        call_args = mock_cw.write_tsv.call_args
+        assert call_args[0][1] == "(a, b)"
+
+    def test_cols_clause_none_in_manifest(self, tmp_path, monkeypatch):
+        """manifest 中 cols_clause=None 时回灌传 None（让 ch_writer 重新查询表列）。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {
+            "table": "c1_market.test",
+            "file": "data.tsv",
+            "rows": 1,
+            "cols_clause": None,
+        }
+        mock_cw = MagicMock()
+        mock_cw.write_tsv.return_value = True
+
+        _replay_one_file(entry, mock_cw)
+
         call_args = mock_cw.write_tsv.call_args
         assert call_args[0][1] is None
+
+    def test_cols_clause_star_in_manifest(self, tmp_path, monkeypatch):
+        """manifest 中 cols_clause='*' 时回灌传 None（'*' 等价于让 CH 推断全部列）。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {
+            "table": "c1_market.test",
+            "file": "data.tsv",
+            "rows": 1,
+            "cols_clause": "*",
+        }
+        mock_cw = MagicMock()
+        mock_cw.write_tsv.return_value = True
+
+        _replay_one_file(entry, mock_cw)
+
+        call_args = mock_cw.write_tsv.call_args
+        assert call_args[0][1] is None
+
+    def test_cols_clause_missing_in_manifest(self, tmp_path, monkeypatch):
+        """manifest 条目无 cols_clause 键时回灌传 None（兼容历史积压）。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {
+            "table": "c1_market.test",
+            "file": "data.tsv",
+            "rows": 1,
+            # 无 cols_clause 键
+        }
+        mock_cw = MagicMock()
+        mock_cw.write_tsv.return_value = True
+
+        _replay_one_file(entry, mock_cw)
+
+        call_args = mock_cw.write_tsv.call_args
+        assert call_args[0][1] is None
+
+    def test_create_fallback_false_passed(self, tmp_path, monkeypatch):
+        """回灌时传 create_fallback=False（防重复 TSV 文件，裁定 #ARCH-CH-013 Phase 3）。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {"table": "c1_market.test", "file": "data.tsv", "rows": 1}
+        mock_cw = MagicMock()
+        mock_cw.write_tsv.return_value = True
+
+        _replay_one_file(entry, mock_cw)
+
+        call_kwargs = mock_cw.write_tsv.call_args[1]
+        assert call_kwargs["create_fallback"] is False
 
     def test_full_table_name_no_prefix(self, tmp_path, monkeypatch):
         """完整表名（含 db. 前缀）不补全。"""

@@ -193,9 +193,49 @@ class TestWriteTsv:
                 ok = write_tsv("c1_market.kline_daily", None, b"v1\tv2\n")
         assert ok is True
 
+    def test_write_outcome_create_fallback_false_skips_local(self):
+        """create_fallback=False + HTTP 失败→NOT_DURABLE，不调用 save_fallback。"""
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+            with patch("zephyr.data.local_replay.save_fallback") as mock_save:
+                outcome = write_tsv_outcome(
+                    "c1_market.kline_daily", "(col1)", b"v1\n",
+                    create_fallback=False,
+                )
+        assert outcome.disposition is WriteDisposition.NOT_DURABLE
+        assert outcome.is_ch_committed is False
+        mock_save.assert_not_called()
+
+    def test_write_outcome_create_fallback_true_calls_save(self):
+        """create_fallback=True（默认）+ HTTP 失败→LOCAL_DURABLE，调用 save_fallback。"""
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+            with patch("zephyr.data.local_replay.save_fallback", return_value=True) as mock_save:
+                outcome = write_tsv_outcome(
+                    "c1_market.kline_daily", "(col1)", b"v1\n",
+                    create_fallback=True,
+                )
+        assert outcome.disposition is WriteDisposition.LOCAL_DURABLE
+        assert outcome.is_ch_committed is False
+        mock_save.assert_called_once()
+
+    def test_write_tsv_create_fallback_false_returns_false_on_http_fail(self):
+        """write_tsv(create_fallback=False) + HTTP 失败→返回 False（兼容旧调用方）。"""
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+            with patch("zephyr.data.local_replay.save_fallback") as mock_save:
+                ok = write_tsv(
+                    "c1_market.kline_daily", "(col1)", b"v1\n",
+                    create_fallback=False,
+                )
+        assert ok is False
+        mock_save.assert_not_called()
+
 
 class TestWriteResult:
     """write_result 函数测试（mock _http_insert）。"""
+
+    def setup_method(self):
+        """清理模块级缓存，防止跨用例污染。"""
+        from src.zephyr.data import ch_writer
+        ch_writer._table_cols_cache.clear()
 
     def test_write_result_success(self):
         """成功写入 FetchResult。"""
@@ -206,7 +246,9 @@ class TestWriteResult:
             last_key="2026-07-05",
             elapsed_sec=1.0,
         )
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http, \
+             patch("src.zephyr.data.ch_writer._get_table_columns_set",
+                   return_value={"code", "date", "close"}):
             ok = write_result(result)
         assert ok is True
         # 验证 TSV 数据正确构造

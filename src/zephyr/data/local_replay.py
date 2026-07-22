@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 本地落盘文件原子写入（先写.tmp再rename）; manifest追加模式（JSONL）; 回灌成功后删除文件+manifest条目; 回灌失败保留文件等下次重试
+# [INVARIANTS] 本地落盘文件原子写入（先写.tmp再rename）; manifest追加模式（JSONL）; 回灌成功后删除文件+manifest条目; 回灌失败保留文件等下次重试; 回灌使用manifest保存的cols_clause(不重新查询表列,防列数不匹配); 回灌传create_fallback=False防重复落盘
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
