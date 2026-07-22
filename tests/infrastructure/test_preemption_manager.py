@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1396 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_preemption_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_preemption_manager
 # [INVARIANTS] P0/P1 can preempt P2/P3; preempt with None task_repo returns []; save_state/load_state roundtrip must be lossless

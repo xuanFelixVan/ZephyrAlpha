@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2138 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/verify_schema_health.py | §test
+# [A_test] module_id: MOD-GOV_verify_schema_health | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_SCRIPTS | scripts/governance/verify_schema_health.py | §test
 # [MODULE] tests.test_verify_schema_health
 # [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 漂移必拦截; 只读触发器必齐全; 版本必一致

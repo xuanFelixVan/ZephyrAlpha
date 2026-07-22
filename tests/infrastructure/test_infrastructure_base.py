@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1128 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_infrastructure_base | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §infrastructure_base
 # [MODULE] tests.test_infrastructure_base
 # [INVARIANTS] ABC子类必须实现所有抽象方法; SystemHealth为frozen dataclass

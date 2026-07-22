@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0703 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_db | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test
 # [MODULE] zephyr.governance.persistence
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

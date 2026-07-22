@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1751 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_depgraph_schema | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test_depgraph_schema
 # [MODULE] tests.test_depgraph_schema
 # [DOMAIN] D_GOVERNANCE

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1239 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_local_first_arch | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-404 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_local_first_arch
 # [INVARIANTS] LOCAL_FIRST.is_local_first() returns True by default

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1277 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_migration_strategy | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-408 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_migration_strategy
 # [INVARIANTS] MIGRATION_PIPELINE covers all MigrationPhase; get_next_phase returns successor or None

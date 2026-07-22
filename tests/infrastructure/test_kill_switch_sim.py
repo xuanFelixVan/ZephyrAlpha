@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1188 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_kill_switch_sim | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §kill_switch_sim
 # [MODULE] tests.test_kill_switch_sim
 # [INVARIANTS] KillSwitchProbe.latency_us<=target_ms*1000→target_met=True; probe必须有probe_id

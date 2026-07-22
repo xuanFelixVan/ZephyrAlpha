@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1667 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_span_stub | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] tests.test_span_stub
 # [INVARIANTS] Span命名遵循gen_ai.component.operation风格;W3C TraceContext传播;采样决策由TraceSampler控制

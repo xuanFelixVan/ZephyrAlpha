@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1910 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_input_sanitizer_unit_llm_security | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-529 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.llm_security.test_input_sanitizer
 # [STABILITY] evolving

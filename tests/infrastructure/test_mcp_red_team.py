@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0015 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_mcp_red_team | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-210 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_mcp_red_team
 # [STABILITY] evolving
