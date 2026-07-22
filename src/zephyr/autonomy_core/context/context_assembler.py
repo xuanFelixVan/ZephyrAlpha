@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.intelligence.model_evaluation.reranker; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

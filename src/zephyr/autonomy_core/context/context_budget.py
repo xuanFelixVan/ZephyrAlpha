@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.autonomy_core 内部模块; zephyr.orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MOD-CONTEXT_ENGINE 四阶段流水线不可绕过; Token 预算硬限制; 原子写入 temp-file+os.replace()
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.infra.observer; zephyr.autonomy_core.__init__; zephyr.shared.events.event_schemas; zephyr.shared.infra.cache
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

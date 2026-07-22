@@ -4,7 +4,7 @@
 # [DEPENDENCIES] none
 # [CONSUMERS] apply_market_tables_ddl; zephyr.data.implementations.miniqmt_provider
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] auction_book 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_market_tables_ddl.py 执行
 # [MODIFY-GUARD] schema-change
 # [STABILITY] stable

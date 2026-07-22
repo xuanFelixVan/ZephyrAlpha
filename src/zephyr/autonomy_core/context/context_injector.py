@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

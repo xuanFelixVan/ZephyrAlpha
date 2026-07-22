@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] MOD-INF-017; MOD-INF-018; MOD-INF-023; MOD-INF-033
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] rule_id 全局唯一; HOT 级别 ≤400 tokens; 注册后立即可 lookup
 # [MODIFY-GUARD] context_assembler.py; context_pipeline.py; __init__.py
 # [STABILITY] evolving

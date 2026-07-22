@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] skill registration must be atomic; progressive_load must not exceed L3; keyword routing must be O(log N)
 # [MODIFY-GUARD] skill-registry.yaml; engine.py; __init__.py
 # [STABILITY] stable

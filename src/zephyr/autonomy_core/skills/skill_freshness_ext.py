@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.event_bus
 # [CONSUMERS] auto_runtime_core.py, event_bus subscribers
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] scan_all and auto_deprecate must not be inlined into skill_freshness.py — they get lost on file overwrite
 # [MODIFY-GUARD] skill_freshness.py, skill_lifecycle.py
 # [STABILITY] evolving
