@@ -133,20 +133,35 @@ def _agent_bucket_id(project_root: str | Path) -> str:
     agent_id = os.environ.get("ZEPHYR_AGENT_ID", "").strip()
     if agent_id:
         return agent_id
-    # 2. git config user.email（项目层）
+    # 2. git config --local user.email（仅当 project_root 是 git 仓库根时读取）
+    # 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001 P1-2）：
+    # pytest basetemp 在项目 git 仓库子目录内（.runtime/tmp/pytest/），
+    # `git config --local` 会找到父仓库的 local config 并返回 email，
+    # 导致 fallback 链断裂。用 `git rev-parse --show-toplevel` 校验
+    # project_root 本身是 git 仓库根（而非子目录），只有根才读取 local config。
     try:
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
-        r = run_subprocess_hidden(
-            ["git", "config", "user.email"],
+        toplevel_r = run_subprocess_hidden(
+            ["git", "rev-parse", "--show-toplevel"],
             cwd=str(project_root),
             capture_output=True, text=True,
             encoding="utf-8", errors="replace",
             timeout=5,
         )
-        if r.returncode == 0:
-            email = r.stdout.strip()
-            if email:
-                return f"email:{email}"
+        if toplevel_r.returncode == 0:
+            toplevel = Path(toplevel_r.stdout.strip()).resolve()
+            if toplevel == Path(project_root).resolve():
+                cfg_r = run_subprocess_hidden(
+                    ["git", "config", "--local", "user.email"],
+                    cwd=str(project_root),
+                    capture_output=True, text=True,
+                    encoding="utf-8", errors="replace",
+                    timeout=5,
+                )
+                if cfg_r.returncode == 0:
+                    email = cfg_r.stdout.strip()
+                    if email:
+                        return f"email:{email}"
     except Exception:  # noqa: BLE001 — git 失败 fallback 下一个
         pass
     # 3. USER / USERNAME

@@ -98,6 +98,11 @@ _STALE_THRESHOLD_SECONDS: int = 1800  # 30 分钟
 # Status / payload 文件目录
 _REPORTS_SUBDIR: str = ".runtime/reconcile_reports"
 
+# 治本（#ARCH-HEARTBEAT-001-TEST-FAIL 同类）：保持 detached worker Popen 引用，
+# 避免 GC 回收触发 Popen.__del__ ResourceWarning（pytest filterwarnings=error 转为失败）。
+# worker 是 detached 进程，不应 wait——只需保持引用防止 GC。
+_WORKER_PROCS: dict[str, "subprocess.Popen[bytes]"] = {}
+
 
 class ReconcileStatus(TypedDict, total=False):
     """reconciler 链路异步执行状态（status file JSON schema）。"""
@@ -349,6 +354,8 @@ def launch_reconcile_async(
             creationflags=creationflags,
             start_new_session=(os.name != "nt"),  # POSIX: 新 session
         )
+    # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
+    _WORKER_PROCS[commit_sha] = proc
     except Exception as e:  # noqa: BLE001 — launch 失败 fail-open（sync 兜底）
         # spawn 失败：改 status 为 failed，调用方应回退 sync
         write_status_file(

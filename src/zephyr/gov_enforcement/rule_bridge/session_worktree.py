@@ -6710,6 +6710,25 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+            proc = _DAEMON_PROCS.get(session_id)
+            if proc is not None:
+                # 治本（#ARCH-HEARTBEAT-001-TEST-FAIL）：PID 文件不在 root 下（可能已被
+                # _kill_heartbeat_daemon unlink，或 daemon 属于其他 repo）。但 proc 引用
+                # 仍在 _DAEMON_PROCS 中——若不 reap，GC 会触发 Popen.__del__ ResourceWarning
+                # （pytest filterwarnings=error 转为测试失败）。
+                # 此函数仅用于测试 fixture teardown，安全 taskkill + reap 所有残留 proc。
+                try:
+                    if os.name == "nt":
+                        subprocess.run(
+                            ["taskkill", "/PID", str(proc.pid), "/F"],
+                            capture_output=True, timeout=5,
+                        )
+                    else:
+                        import signal
+                        os.kill(proc.pid, signal.SIGTERM)
+                except Exception:  # noqa: BLE001 — best-effort，proc 可能已死
+                    pass
+                _reap_daemon_proc(session_id)
             continue
 
 
