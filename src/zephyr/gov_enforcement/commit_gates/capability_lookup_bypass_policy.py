@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_bypass_policy | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 
 
 
