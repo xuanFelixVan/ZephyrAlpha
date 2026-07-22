@@ -221,6 +221,7 @@ class CapabilityEntry:
     YAML 声明字段（人工维护，低频）：
       capability_id / aliases / description
       + 可选 canonical_override / duplicates_manual / removed_duplicates_manual
+      + 可选 integrity_anchors / creation_tokens（元数据，供完整性校验与反查）
 
     派生字段（运行时算，不来自 YAML）：
       canonical_file / module_id / blueprint_id / domain / maturity / status /
@@ -234,6 +235,9 @@ class CapabilityEntry:
     canonical_override: str = ""
     duplicates_manual: list[dict] = field(default_factory=list)
     removed_duplicates_manual: list[dict] = field(default_factory=list)
+    # YAML 声明元数据（供 golden hash 完整性校验 + creation_tokens 反查）
+    integrity_anchors: list[str] = field(default_factory=list)
+    creation_tokens: list[str] = field(default_factory=list)
     # 派生字段
     canonical_file: str = ""
     module_id: str = ""
@@ -406,6 +410,8 @@ class CapabilityLookup:
                 canonical_override=(raw.get("canonical_override", "") or "").strip(),
                 duplicates_manual=list(raw.get("duplicates_manual", []) or []),
                 removed_duplicates_manual=list(raw.get("removed_duplicates_manual", []) or []),
+                integrity_anchors=list(raw.get("integrity_anchors", []) or []),
+                creation_tokens=list(raw.get("creation_tokens", []) or []),
             ))
         return caps
 
@@ -1391,6 +1397,8 @@ class CapabilityLookup:
             "canonical_alive": cap.canonical_alive,
             "aliases": list(cap.aliases),
             "description": cap.description,
+            "integrity_anchors": list(cap.integrity_anchors),
+            "creation_tokens": list(cap.creation_tokens),
             "duplicates": list(cap.duplicates),
             "removed_duplicates": list(cap.removed_duplicates),
             "pending_candidates": list(cap.pending_candidates),
