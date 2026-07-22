@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 升级裁决;四级约束;Kill Switch
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/escalation-engine/__init__.py
 # [STABILITY] evolving
@@ -99,6 +99,9 @@ def get_consequence(con_id: str) -> ConsequenceDeclaration | None:
 def activate_consequence(con_id: str) -> ConsequenceDeclaration | None:
     cd = CONSEQUENCE_REGISTRY.get(con_id)
     if cd is not None:
+        # 清除已解决状态，使 activate 语义为"重新激活"
+        # （治本：CONSEQUENCE_REGISTRY 是模块级共享单例，跨测试/跨调用需自清理）
+        cd.resolved_at = None
         cd.declare()
     return cd
 

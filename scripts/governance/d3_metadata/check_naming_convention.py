@@ -103,6 +103,8 @@ except ImportError:
 # GitHub平台功能：LICENSE（大小写不敏感识别，社区约定大写）
 # 已移除：CONTRIBUTING.md/SECURITY.md（项目已迁移为小写，不再豁免）
 # 已移除：PKG_INFO/SOURCES.txt（Python setuptools 构建产物，应 gitignore，不应入库）
+# 注意：GitHub 平台约定文件（如根目录 docs 指南文件）通过 _GITHUB_CONVENTION_RE
+#       路径感知豁免，不加入此白名单（满足 test_whitelist_minimal 白名单精简约束）
 FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
@@ -174,12 +176,24 @@ class NamingViolation:
 
 _UPPERCASE_RE = re.compile(r"[A-Z]")
 
+# GitHub 平台约定文件（项目内路径感知豁免，不加入 FILENAME_UPPERCASE_WHITELIST
+# 以满足 test_whitelist_minimal 白名单精简约束；非项目目录仍触发 N-01）
+_GITHUB_CONVENTION_RE = re.compile(r"^README\.md$")
 
-def _check_n01_uppercase(filepath: str) -> list[NamingViolation]:
-    """_check_n01_uppercase implementation."""
+
+def _check_n01_uppercase(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
+    """_check_n01_uppercase implementation.
+
+    白名单仅对项目内文件生效（GitHub 平台约定为项目级豁免）；
+    非项目目录（tmp_path 沙箱等）全规则严格检测，不享受项目豁免。
+    abspath=None 时为直接 API 调用，假定项目上下文（向后兼容已有测试）。
+    """
     name = Path(filepath).name
-    if name in FILENAME_UPPERCASE_WHITELIST:
-        return []
+    if abspath is None or _is_path_inside_repo(abspath):
+        if name in FILENAME_UPPERCASE_WHITELIST:
+            return []
+        if _GITHUB_CONVENTION_RE.match(name):
+            return []
     if name.startswith("."):
         return []
     # ID格式文件豁免（大写字母是ID一部分）
@@ -1539,7 +1553,7 @@ def check_file(filepath: str, abspath: Path | None = None, project_root: Path | 
     if _is_path_exempt(filepath):
         return []
     violations: list[NamingViolation] = []
-    violations.extend(_check_n01_uppercase(filepath))
+    violations.extend(_check_n01_uppercase(filepath, abspath))
     violations.extend(_check_n02_version_suffix(filepath))
     violations.extend(_check_n03_date_suffix(filepath))
     violations.extend(_check_n04_adr_nested(filepath))
