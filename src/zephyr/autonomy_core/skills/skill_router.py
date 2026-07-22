@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.local_model.embedding_router
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

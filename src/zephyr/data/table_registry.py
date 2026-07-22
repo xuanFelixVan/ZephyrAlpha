@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS] zephyr.data.scheduler; zephyr.data.implementations.*_provider
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] business_data_categories.yaml 是表名/品类唯一真源; TableRegistry.table() 返回 "{database}.{table}" 全限定名; validate_tasks_yaml 仅 WARN 不阻断（渐进式收紧 Phase 2）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

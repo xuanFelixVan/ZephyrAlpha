@@ -5,7 +5,7 @@
 # [DEPENDENCIES] clickhouse_driver
 # [CONSUMERS] zephyr.data.sector_snapshot_collector (push_pool selection)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 5因子复合排名动态调整99只推送池；每日盘前重算一次；sector_snapshot表无数据时回退到成分股数量Top99；百分位排名消除量纲差异；权重之和=1.0
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

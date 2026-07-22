@@ -5,7 +5,7 @@
 # [DEPENDENCIES] clickhouse_driver; tqcenter (external E:\tdx\PYPlugins\user); zephyr.data.ch_config; zephyr.data.sector_ranking_engine
 # [CONSUMERS] zephyr.data.sector_ranking_engine (reads sector_snapshot table)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 混合模式采集880xxx板块实时快照（99只推送+全量轮询30秒）写入sector_snapshot表；推送池由sector_ranking_engine.get_push_pool()动态选取；轮询池从sector_constituent表动态获取（实测2026-07-22: 582只=454个880xxx+128个881xxx，非设计时估算的584）；tqcenter SDK需E:\tdx\PYPlugins\user路径；盘前启动盘后停止
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

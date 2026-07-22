@@ -6,7 +6,7 @@ from typing import Final
 # [DEPENDENCIES] zephyr.feedback_loop.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

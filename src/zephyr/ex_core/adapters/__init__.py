@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.governance.adapters.risk_validation_bridge; zephyr.governance.adapters.simulation_broker; zephyr.ex_core.adapters.miniqmt_broker
 # [CONSUMERS] zephyr.ex_core.execution_engine; zephyr.ex_core.order_manager
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.local_replay; zephyr.data.ch_writer; zephyr.data.provider_base; zephyr.shared.observability.metrics
 # [CONSUMERS] zephyr.data.tick_subscriber
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 数据先落本地 WAL 段文件再异步排空到 CH（写入路径延迟稳定）；段落盘复用 local_replay.save_fallback（格式与回灌兼容）；drain 复用 local_replay.replay_batch；列过滤复用 ch_writer._get_table_columns_set；_segment/_cols_clause 加锁保护（add 与 stop/flush 跨线程）；WAL 容量 90% critical 背压阻断写入；P1-5 metrics 埋点覆盖 segments/wal_dir_bytes/backlog_files/drain_replayed/drain_failed
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -228,14 +228,23 @@ class WalWriter:
         return True
 
     def _drain_loop(self) -> None:
-        """drain 线程主循环：轮询积压，回灌 CH（复用 local_replay.replay_batch）。"""
+        """drain 线程主循环：轮询积压，回灌 CH（复用 local_replay.replay_batch）。
+
+        P2-5 Stage 5：replay_batch 回灌 CH 耗时度量（zephyr_tick_stage_wal_flush_seconds）。
+        """
         fail_backoff = _DRAIN_IDLE_INTERVAL
         reg = get_registry()
         while not self._stop_event.is_set():
             wait_sec = _DRAIN_IDLE_INTERVAL
             try:
                 if local_replay.has_backlog():
+                    # P2-5: Stage 5——replay_batch 回灌 ClickHouse 耗时
+                    t_flush = time.perf_counter()
                     result = local_replay.replay_batch()
+                    reg.observe(
+                        "zephyr_tick_stage_wal_flush_seconds",
+                        time.perf_counter() - t_flush,
+                    )
                     remaining = result.get("remaining", 0)
                     replayed = result.get("replayed", 0)
                     fail_backoff = _DRAIN_IDLE_INTERVAL  # 成功，重置退避

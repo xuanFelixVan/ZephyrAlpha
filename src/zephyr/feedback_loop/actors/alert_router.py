@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.alert_dispatcher
 # [CONSUMERS] zephyr.feedback_loop.actors
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] route() never raises; returns AlertRoutingDecision with channel list
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

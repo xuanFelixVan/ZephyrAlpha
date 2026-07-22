@@ -5,7 +5,7 @@
 # [DEPENDENCIES] clickhouse_driver; tqcenter (external E:\tdx\PYPlugins\user); pandas
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] design
 # [INVARIANTS] 盘后批量下载880xxx板块K线写入ClickHouse kline_sector_880表；支持1d/1m/5m三周期（15m/30m/60m后续从1m/5m合成）；50只/批分批下载避免tqcenter超时；ReplacingMergeTree幂等写入
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

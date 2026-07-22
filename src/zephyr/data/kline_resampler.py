@@ -5,7 +5,7 @@
 # [DEPENDENCIES] clickhouse_driver; zephyr.data.ch_config
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 从kline_sector_880表的1m/5m数据合成15m/30m/60m K线（ClickHouse toStartOfInterval聚合）；DELETE+INSERT幂等写入；盘后批量执行；argMin/argMax保证OHLC正确性
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] exchange_calendars(pip)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] stable
+# [MATURITY] prototype
 # [INVARIANTS] XSHG日历单例缓存; 纯本地计算不依赖网络/DB; exchange_calendars不可用时回退到weekday判断
 # [MODIFY-GUARD] none
 # [STABILITY] stable

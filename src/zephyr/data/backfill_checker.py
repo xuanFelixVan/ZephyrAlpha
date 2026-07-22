@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.tick_subscriber
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] production
+# [MATURITY] prototype
 # [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

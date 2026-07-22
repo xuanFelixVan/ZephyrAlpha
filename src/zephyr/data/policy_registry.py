@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.data.scheduler, zephyr.data.provider_base
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 策略 yaml 是真源，DEFAULT_POLICIES 是 fallback；maybe_reload 热更新
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

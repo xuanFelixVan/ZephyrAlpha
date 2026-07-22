@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.scheduler; zephyr.data.policy_registry; zephyr.data.progress_store
 # [CONSUMERS] integrator(CLI入口); python -m zephyr.data
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] argparse+subparsers; 8子命令(status/list/run/rerun-failed/pause/resume/start/speed-test); get_integrator()单例; pause/resume通过PolicyRegistry熔断
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
