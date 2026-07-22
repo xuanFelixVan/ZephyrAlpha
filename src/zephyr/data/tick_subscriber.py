@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.wal_writer; zephyr.data.provider_base; zephyr.data.table_registry; zephyr.shared.observability.metrics; zephyr.shared.observability.metrics_server
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
