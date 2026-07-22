@@ -7595,13 +7595,13 @@ entries:
     - 'src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py（逻辑检查降为辅助审计，主互斥交文件锁）'
     - 'src/zephyr/security/access_control/session_concurrency.py（SessionRegistry 与文件锁关系文档化）'
   fix_phase: |
-    Phase 0 (2026-07-22): 现状量化——统计最近 commit 路径分布 L1/L2/L3 占比，验证"worktree 几乎总是失效"假说
-    Phase 1 (待施工): commit 临界区文件锁——GitCommitGateway.commit 外层包锁 + pathspec 强制 + smoke test（真实多进程并发 commit 验证无搭便车 + kill 持锁进程验证自愈）
-    Phase 2 (待施工): worktree 降级 + 直提主分支评估——移除薛定谔的回退病根（commit 不再落临时分支）
-    Phase 3 (待施工): 退役冗余补偿控制——评估退役 allow_overlap 审计标记 / STASH-ACCUMULATION gate / trae_076 部分 Phase（每项独立 commit + 验证，不批量删除）
+    Phase 0 (2026-07-22 完成): 现状量化——统计最近 commit 路径分布 L1/L2/L3 占比，验证"worktree 几乎总是失效"假说
+    Phase 1 (2026-07-22 完成, commit d6ff41ad16): commit 临界区文件锁——GitCommitGateway.commit 外层包锁 + pathspec 强制 + smoke test（真实多进程并发 commit 验证无搭便车 + kill 持锁进程验证自愈）
+    Phase 2 (2026-07-22 已落地): worktree 降级为可选——session_worktree.py WORKSPACE_DRIFT_BLOCKED 错误消息更新为"TRAE-079 Phase 2：worktree 已降级为可选——无需清理工作区，直接走 GitCommitGateway 文件锁串行提交" + AGENTS.md §FP-ISO.4C 添加 worktree 降级为可选说明 + architecture_issue_registry.yaml 本条 Phase 2 状态同步
+    Phase 3 (2026-07-22 已落地): 退役冗余补偿控制——allow_overlap 降级为 last-resort 逃生通道（logger.warning + 审计） + 文件锁 fail-open 降级落审计（_audit_commit_lock_fallback -> .runtime/gate_audit/commit_lock_fallback.jsonl） + _commit_auto 路径同样覆盖 OSError fallback。AGENTS.md GitCommitGateway held_files 冲突阻断章节添加 TRAE-079 Phase 3 说明。
     治本根因：消除共享可变 index 下并发 commit 的搭便车，把强原语（文件锁）接到真临界区（commit），塌缩逃生链从 3 层到 1 层
-  status: decided
-  related_adjudication: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (收窄触发条件，非违反), #ARCH-FORCE-MERGE-SAFETY-001 (收窄并发场景，非违反), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (根因治本), #ARCH-CROSS-COMMIT-ATOMICITY-002 (互补，跨 commit 原子性仍由 GATE-IMPORT-INTEGRITY 保障)'
+  status: resolved
+  related_adjudication: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (收窄触发条件，非违反), #ARCH-FORCE-MERGE-SAFETY-001 (收窄并发场景，非违反), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (根因治本), #ARCH-CROSS-COMMIT-ATOMICITY-002 (互补，跨 commit 原子性仍由 GATE-IMPORT-INTEGRITY 保障), #ARCH-RECONCILER-WORKER-SESSION-001 (worker 并发与 commit 串行互补)'
   related_rules: 'trae_079 (commit 临界区文件锁串行化), trae_076 (worktree commit 持久性，收窄), trae_078 (force merge 安全分类，收窄), trae_001 (文件操作安全协议，lock_files.py 真源), AGENTS.md §FP-ISO.4C (worktree 君子协定)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
@@ -7749,15 +7749,136 @@ entries:
     - "tick_subscriber→wal_writer 依赖未登记——depgraph 拓扑不完整"
     - "schemas/ 目录未在 directory_contract.yaml 登记——FILE-PLACEMENT-TTL 阻断新文件"
   fix_phase: |
-    Phase 0（止血）执行中（2026-07-22）：
+    Phase 0（止血，2026-07-22 已完成）：
       0.1 新建 7 个 schema 文件（market_kline_daily/auction/index/option_iv/futures_position/futures_term/cb_iv）
       0.2 修正蓝图 §4.2 命名冲突（daily_kline→kline_daily 等）
       0.3 apply_market_tables_ddl.py KLINE_DAILY_DDL 改为从 schema 文件导入
       0.4 登记 schemas/ 目录 + depgraph 边（wal_writer 节点 + tick_subscriber→wal_writer 边）
       0.5 GitCommitGateway 提交
-    Phase 1-3 待启动。
-  status: in_progress
-  related_adjudication: '#ARCH-SSOT-REFERENCE-INTEGRITY-001 (本裁定), #ARCH-TEMP-FILE-LIFECYCLE-001 (directory_contract 登记), trae_062 (SSoT 真源分类铁律)'
+
+    Phase A-F（裁定补遗执行项，2026-07-22 已完成）：
+      A. 过期 planned 节点废弃：6615095 (kline_resampler) + 6615094 (sector_snapshot_collector) → deprecated
+      B. P2 depgraph 设计态登记：3 节点 + 3 边（MOD-L00-005/006/INF-044）
+      C. wal_writer 状态修正 (6810975) → stable/production
+      D. ch_writer metrics 埋点（Phase E 补齐）：5 个返回点 Counter + Histogram + 2 Gauge
+      E. metrics.py [CONSUMERS] 补登 ch_writer；depgraph 边 8644434 由 reconciler 自动登记
+      F. CH 表引擎验证：数据层 4 张高频表全部 ReplacingMergeTree
+         - auction_book/sector_snapshot 引擎从 MergeTree 治本迁移到 ReplacingMergeTree（CREATE+INSERT+RENAME swap）
+         - 新建 schemas/categories/market_auction_book.py + market_sector_snapshot.py 作为 DDL 真源
+         - sector_snapshot_collector.py 内联 DDL 迁移到 schema 文件（消除双真源，Phase 2 治本）
+         - apply_market_tables_ddl.py 4 张表全部从 schema 文件导入 DDL
+         - ch_writer 节点 6860205 → build_status=stable, design_maturity=production
+
+    Phase 1（SCHEMA-FILE-EXISTS gate）+ Phase 3（depgraph 边 commit-time 硬阻断）：
+      未实现，作为 follow-up 跟踪——
+      - Phase 1: 新建 SCHEMA-FILE-EXISTS commit gate，校验 YAML schema_file 引用的文件必须存在
+      - Phase 3: 已拆分为独立裁定 #ARCH-DEP-PREMERGE-ENFORCE（第三期落地，pre-merge 拓扑硬阻断）
+
+    附带治本修复（2026-07-22，循环检查发现）：
+      - apply_depgraph.py backup import 容错（line 5115 顶层导入失败 → fallback 到 _GOV_DIR 相对导入）
+        根因：sys.path 仅含 _GOV_DIR 不含 REPO_ROOT，参照 line 121-128 模式加 try/except ImportError fallback
+  status: resolved
+  related_adjudication: '#ARCH-SSOT-REFERENCE-INTEGRITY-001 (本裁定), #ARCH-TEMP-FILE-LIFECYCLE-001 (directory_contract 登记), trae_062 (SSoT 真源分类铁律), #ARCH-DEP-PREMERGE-ENFORCE (Phase 3 拆分独立裁定)'
   related_rules: 'trae_062 (SSoT 真源分类——规则数据 YAML 为真源), trae_054 (备份先行——depgraph 变更前 git commit), L1 依赖关系先行铁律'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-LINE-ENDING-CORRUPTION-001: 行尾腐败 + 空行膨胀（双 CR 未检测）---
+- issue_id: '#ARCH-LINE-ENDING-CORRUPTION-001'
+  title: 行尾腐败治本——_normalize_eol 双 CR bug + encoding gate 双 CR 检测缺失 + 空行膨胀
+  category: architecture_governance
+  severity: P1高
+  adjudication: |
+    根因（第一性原理分析）：
+    项目 .gitattributes 策略正确（* text=auto eol=lf, *.py text eol=lf），但历史 blob 未 renormalize，
+    且工作树文件在 .gitattributes 生效前 checkout（core.autocrlf=true 时代），导致 CRLF 残留。
+    更严重的是，部分文件出现 \r\r\n（双 CR）腐败和空行膨胀（连续空行数量异常增加）。
+
+    三层缺陷：
+    1. _normalize_eol bug（validate_rules_integrity.py L151-161）：
+       data.replace(b"\r\n", b"\n") 只替换 \r\n→\n，不处理 \r\r\n。
+       \r\r\n 经 replace 后变为 \r\n（仅最后一个 \r\n 被替换），残留 \r。
+       导致含双 CR 的文件在 register/check hash 比较时不一致，TAMPERED 误报或漏报。
+    2. encoding_gate.py / check_encoding.py 仅对 CRLF 给 WARNING，不检测双 CR（\r\r\n）：
+       双 CR 不是正常 Windows/Linux 行尾，是文件腐败的标志，应硬阻断。
+    3. 空行膨胀：部分文件因 EOL 腐败导致连续空行异常增加（如 2 行变 10+ 行），
+       git status 因 normalize 比较显示干净，但文件实际内容已膨胀，影响可读性和维护。
+
+    治本方案：
+    1. 修复 _normalize_eol：先替换 \r\r\n→\n，再替换 \r\n→\n（顺序敏感）
+    2. encoding_gate.py / check_encoding.py 增加双 CR 检测，硬阻断（非 WARNING）
+    3. 空行膨胀文件：从 HEAD blob 重建（git restore），保留有价值的真实编辑
+    4. \r\r\n 文件：renormalize 或从 HEAD 重建
+    5. 确认 git config core.autocrlf=false + .gitattributes eol=lf 生效
+
+  impact:
+    - 'scripts/governance/meta/validate_rules_integrity.py（_normalize_eol L151-161 双 CR bug）'
+    - 'src/zephyr/gov_enforcement/commit_gates/encoding_gate.py（CRLF 仅 WARNING，不检测双 CR）'
+    - 'scripts/governance/d7_code/check_encoding.py（L240-242 仅 WARNING，不检测双 CR）'
+    - '.gitattributes（策略正确但历史 blob 未 renormalize）'
+  fix_phase: |
+    Phase A（止血 + 代码修复）：
+      A.1 修复 _normalize_eol：增加 \r\r\n→\n 替换（顺序在 \r\n→\n 之前）
+      A.2 encoding_gate.py + check_encoding.py 增加双 CR 检测（BLOCK 非 WARNING）
+      A.3 空行膨胀文件从 HEAD blob 重建（git restore -- <file>）
+      A.4 \r\r\n 文件 renormalize 或从 HEAD 重建
+      A.5 确认 git config core.autocrlf=false
+    Phase B（验证）：
+      B.1 运行 validate_rules_integrity.py --register 重建基线
+      B.2 全仓扫描确认 0 双 CR 文件
+      B.3 encoding gate smoke test 验证双 CR 阻断
+  status: decided
+  related_adjudication: '#ARCH-TTL-FAILOPEN-001 (文件元数据校验同源), #ARCH-COMMIT-SERIALIZATION-001 (commit 路径 EOL 一致性)'
+  related_rules: 'trae_001 (文件操作安全协议), AGENTS.md §RULE-ENV (环境一致性)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-RECONCILER-WORKER-SESSION-001: worker 未注册为逻辑 session + 零并发控制 ---
+- issue_id: '#ARCH-RECONCILER-WORKER-SESSION-001'
+  title: reconciler worker 治本——注册为逻辑 session + 并发上限（消除失控 worker）
+  category: architecture_governance
+  severity: P1高
+  adjudication: |
+    根因（第一性原理分析）：
+    launch_reconcile_async（reconcile_runner.py L262）每次 commit 都 spawn 一个 detached worker
+    subprocess，零并发控制——N 个并发 commit 产生 N 个并发 worker，每个 worker 构造完整的
+    GitCommitGateway 并执行全部 reconciler 链路。
+
+    _run_worker（reconcile_worker.py L168）不注册为逻辑 session（SessionRegistry），
+    导致：
+    1. worker 不受 session 并发上限约束——3+ worker 可同时运行，争抢 DB 连接 / 文件锁 / git index
+    2. worker 的 heartbeat 不被 tracking——孤儿 worker 进程死亡后无人清理
+    3. worktree_lifecycle_reconciler 不识别 worker——可能误 sweep worker 正在使用的资源
+
+    100% AI 多 session 并发开发下，每 session 的 commit 都触发 worker spawn，
+    worker 数量随 session 数量线性增长，无上限 = 环境失控（本次 3 并发 worker +
+    8 孤儿 heartbeat 即此问题表现）。
+
+    治本方案：
+    1. worker 注册为逻辑 session：_run_worker 启动时调 SessionRegistry.register，
+       session_id 格式 worker-{commit_sha}-{pid}，死亡时自动 unregister
+    2. 并发上限：launch_reconcile_async spawn 前检查活跃 worker 数，超上限则
+       合并到现有 worker 队列（或拒绝 spawn + 告警），上限默认 2
+    3. heartbeat tracking：worker 复用 session heartbeat 机制，超时自动标记 stale
+    4. worktree_lifecycle_reconciler 识别 worker session——不 sweep worker 正在使用的资源
+
+    不实施项：
+    - 不改为同步执行（异步是正确设计，问题在无上限）
+    - 不引入外部任务队列（如 Celery）——纯标准库，遵循项目原则
+
+  impact:
+    - 'src/zephyr/governance/audit/reconcile_runner.py（launch_reconcile_async L262 零并发控制）'
+    - 'src/zephyr/governance/audit/reconcile_worker.py（_run_worker L168 未注册为 session）'
+    - 'src/zephyr/security/access_control/session_concurrency.py（SessionRegistry 需扩展支持 worker）'
+  fix_phase: |
+    Phase C（worker 治本）：
+      C.1 _run_worker 启动时注册为逻辑 session（worker-{sha}-{pid}）
+      C.2 launch_reconcile_async 增加并发上限检查（默认 2，超限合并或拒绝）
+      C.3 worker heartbeat tracking（复用 session heartbeat）
+      C.4 worktree_lifecycle_reconciler 识别 worker session
+      C.5 smoke test：多并发 commit 验证 worker 不超限
+  status: decided
+  related_adjudication: '#ARCH-COMMIT-SERIALIZATION-001 (commit 串行化与 worker 并发互补), #ARCH-PANORAMA-TOCTOU-001 (worker sweep 资源竞态)'
+  related_rules: 'trae_079 (commit 串行化), AGENTS.md §FP-ISO.4C (session 管理)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
