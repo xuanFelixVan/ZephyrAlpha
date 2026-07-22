@@ -1217,6 +1217,40 @@ capabilities:
       - make_capability_lookup_required_gate # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: capability_lookup_bypass_policy
+    aliases:
+      - CAPABILITY-LOOKUP-BYPASS-POLICY
+      - capability-lookup-bypass-policy
+      - bypass_exempt_keywords
+      - bypass_scene_classify_policy
+      - no-lookup-whitelist
+      - ARCH-066
+    description: >-
+      CAPABILITY-LOOKUP bypass 策略共享模块（#ARCH-066 治本）。gate 和 reconciler
+      共用的 bypass 策略真源——白名单关键词/阈值/标记前缀/env var 统一从此模块获取，
+      消除 gate（capability_lookup_required_gate.py）和 reconciler
+      （reconciliation_registry.py）的双真源漂移。从 trae_077 YAML v2.0.0
+      （code_loaded_from_yaml）动态加载策略数据，fail-open 机制确保 YAML 缺失时
+      仍有默认值。16 项白名单关键词 + 阈值（escalation_threshold=5, window=10）+
+      标记前缀（[no-lookup:）+ env var（ZEPHYR_BYPASS_LOOKUP）。
+      is_exempt_reason() 执行 _→- 归一化后子串匹配白名单——非白名单 reason
+      在 gate-time 硬阻断（不再零摩擦放行）。
+      解决发现性：新 AI 搜 "bypass policy/whitelist/no-lookup keywords"
+      可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类策略常量。
+    canonical_file: "src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py"
+    creation_tokens:
+      - ZephyrAlpha
+      - zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy
+    domain: D-GOV-001
+    maturity: production
+    blueprint_id: PS-GOV-001
+    integrity_anchors:
+      - _DEFAULT_EXEMPT_KEYWORDS  # 16 项白名单默认值(篡改即策略失效)
+      - is_exempt_reason          # 白名单判定逻辑(删则 gate 无白名单检查)
+      - load_bypass_policy       # YAML 加载器(删则 fail-open 回退默认值)
+
+  # --------------------------------------------------------------------------
   - capability_id: capability_lookup_health_reconciler
     canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:

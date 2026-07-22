@@ -1335,6 +1335,28 @@ dependencies:
   contract_anchor: MOD-INF-035 §1 [INVARIANTS] 门禁注册制
   direction: upstream
   valid_since: '2026-07-19'
+- dep_id: DEP-104
+  source: MOD-GOV-capability_lookup_required_gate
+  source_name: capability-lookup-required-gate
+  target: MOD-GOV-capability_lookup_bypass_policy
+  target_name: capability-lookup-bypass-policy
+  type: runtime
+  strength: hard
+  description: 'CAPABILITY-LOOKUP-REQUIRED gate 在 commit 时从共享模块加载白名单关键词/阈值/标记前缀；共享模块缺失或损坏则 gate 无法执行白名单检查（fail-open）。#ARCH-066 治本。'
+  contract_anchor: trae_077_capability_lookup_scene_classify.yaml
+  direction: upstream
+  valid_since: '2026-07-22'
+- dep_id: DEP-105
+  source: MOD-GOV-reconciliation_registry
+  source_name: reconciliation-registry
+  target: MOD-GOV-capability_lookup_bypass_policy
+  target_name: capability-lookup-bypass-policy
+  type: runtime
+  strength: hard
+  description: 'CAPABILITY-LOOKUP-HEALTH reconciler 从共享模块加载白名单关键词/阈值/标记前缀；共享模块缺失或损坏则 reconciler 无法正确分类 bypass 场景（fail-open）。#ARCH-066 治本。'
+  contract_anchor: trae_077_capability_lookup_scene_classify.yaml
+  direction: upstream
+  valid_since: '2026-07-22'
 dependency_graph:
   forward:
     SYS-MASTER-001:
