@@ -15482,6 +15482,11 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+    # worktree 路径不存在时跳过检测（无 worktree 可检查；merge 本身会因路径无效而失败）
+    if not wt_path.exists():
+        return None
+
     # 获取主工作区 HEAD（不假设分支名，直接取 HEAD）
 
 
