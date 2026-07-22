@@ -248,7 +248,12 @@ class TDXProvider(DataSourceBase):
         880xxx 板块指数通过 TCP 直连盘中实时获取，不依赖 tdx 客户端盘后下载。
         """
         table = payload.table or _TBL_KLINE_SECTOR
-        columns = ["trade_date", "code", "open", "high", "low", "close", "volume", "amount"]
+        # 分钟K线写入 kline_sector_intraday 表（DateTime + period 列），
+        # 日线写入 kline_sector 表（Date，无 period 列）
+        if period != "1d":
+            columns = ["trade_date", "code", "period", "open", "high", "low", "close", "volume", "amount"]
+        else:
+            columns = ["trade_date", "code", "open", "high", "low", "close", "volume", "amount"]
         symbols = payload.symbols or []
         if not symbols:
             symbols = self._resolve_sector_symbols()
@@ -303,20 +308,22 @@ class TDXProvider(DataSourceBase):
         """从 bars DataFrame 构造板块K线行列表。
 
         日线 datetime 格式 "2026-02-06 15:00"，截取日期部分。
-        分钟线保留完整时间戳 "2026-02-06 15:00:00"。
+        分钟线保留完整时间戳 "2026-02-06 15:00:00"，并在 code 后插入 period 字段。
         """
         rows = []
         for _, bar in bars.iterrows():
             dt = str(bar.get("datetime", ""))
             trade_date = dt if period != "1d" else (dt[:10] if len(dt) >= 10 else dt)
-            rows.append((
-                trade_date,
-                code,
+            ohlcv = (
                 float(bar.get("open", 0) or 0),
                 float(bar.get("high", 0) or 0),
                 float(bar.get("low", 0) or 0),
                 float(bar.get("close", 0) or 0),
                 int(bar.get("vol", 0) or 0),
                 float(bar.get("amount", 0) or 0),
-            ))
+            )
+            if period != "1d":
+                rows.append((trade_date, code, period) + ohlcv)
+            else:
+                rows.append((trade_date, code) + ohlcv)
         return rows

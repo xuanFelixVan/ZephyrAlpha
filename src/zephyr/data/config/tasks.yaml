@@ -1547,9 +1547,9 @@ tasks:
   # mootdx index_bars 通过 TCP 直连通达信行情服务器，盘中可实时获取880xxx分钟K线
   # 不依赖 tdx 客户端盘后下载（tqcenter refresh_kline 盘中无法获取分钟数据，依赖tdx客户端fzline文件）
   # symbols=null 时 tdx_provider._resolve_sector_symbols 自动从 sector_constituent 表获取全部880xxx板块代码
-  # 写入 c1_market.kline_sector 表（与 kline_sector_incremental 日线共用，trade_date 列区分日K/分钟K）
+  # 写入 c1_market.kline_sector_intraday 表（DateTime + period 列，独立于日K线 kline_sector 表）
   - task_id: kline_sector_1min_incremental
-    table: c1_market.kline_sector
+    table: c1_market.kline_sector_intraday
     source: tdx
     schedule: intraday_minute
     incremental: true
@@ -1563,7 +1563,7 @@ tasks:
       count: 240
 
   - task_id: kline_sector_5min_incremental
-    table: c1_market.kline_sector
+    table: c1_market.kline_sector_intraday
     source: tdx
     schedule: intraday_minute
     incremental: true
@@ -1577,7 +1577,7 @@ tasks:
       count: 48
 
   - task_id: kline_sector_15min_incremental
-    table: c1_market.kline_sector
+    table: c1_market.kline_sector_intraday
     source: tdx
     schedule: intraday_minute
     incremental: true
@@ -1591,7 +1591,7 @@ tasks:
       count: 16
 
   - task_id: kline_sector_30min_incremental
-    table: c1_market.kline_sector
+    table: c1_market.kline_sector_intraday
     source: tdx
     schedule: intraday_minute
     incremental: true
@@ -1605,7 +1605,7 @@ tasks:
       count: 8
 
   - task_id: kline_sector_60min_incremental
-    table: c1_market.kline_sector
+    table: c1_market.kline_sector_intraday
     source: tdx
     schedule: intraday_minute
     incremental: true
