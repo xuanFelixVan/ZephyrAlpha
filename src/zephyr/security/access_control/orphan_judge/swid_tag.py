@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.models
 # [CONSUMERS] orphan-judge.db.JudgmentDB; report_generator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 生成SWID标签记录文件来源和判决归属
 # [MODIFY-GUARD] SWID标签格式变更时同步blueprint.md §7.3
 # [STABILITY] evolving

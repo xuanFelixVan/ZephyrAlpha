@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] check_naming_convention.py (GATE-11 N-06); apply_depgraph.py (cmd_rename_domain/cmd_insert_domain/NR-002)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] module_id 必须符合 PS-STD-001 §5 命名规范; 禁止嵌套编号
 # [MODIFY-GUARD] PS-STD-001 §5; PS-REG-012 frontmatter_field_registry.yaml; module_id_registry.yaml
 # [STABILITY] stable

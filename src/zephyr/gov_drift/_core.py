@@ -15,7 +15,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.drift_engine; zephyr.gov_drift.drift_models; zephyr.gov_drift.events; zephyr.gov_drift.state_machine; zephyr.gov_drift.detector_dispatcher
 # [CONSUMERS] zephyr.gov_drift.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
 # [STABILITY] frozen

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.gov_enforcement.rule_enforcement 内部模块
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 包聚合 gate_* 引擎实现 + check_type handler 函数（_handle_* 在 gate_engine.py _CHECK_DISPATCH 注册）
 # [MODIFY-GUARD] blueprint.md; _registry.yaml
 # [STABILITY] stable

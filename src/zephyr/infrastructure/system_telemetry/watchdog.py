@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
 # [CONSUMERS] zephyr.security.access_control
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] triple-redundancy mutual-check; panic mode on 2+ peer misses; dead man's switch threshold 1800s
 # [MODIFY-GUARD] health_aggregator.py; health_probes.py
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.execution.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

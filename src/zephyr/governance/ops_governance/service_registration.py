@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.boot_hooks ; zephyr.__init__ (eager registration)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] register_services() MUST be called before any D-INFRA code uses ServiceRegistry.get(); idempotent
 # [MODIFY-GUARD] Adding registrations requires updating shared_core.registry._VALID_KEYS
 # [STABILITY] stable

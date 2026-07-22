@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.run_gate_chain
 # [DOMAIN] D_GOV_SCRIPTS
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

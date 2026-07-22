@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 红蓝对抗测试——模拟2 session并发commit，验证无幽灵提交；测试隔离用tmp_path临时git仓库
 # [MODIFY-GUARD]
 # [STABILITY] evolving

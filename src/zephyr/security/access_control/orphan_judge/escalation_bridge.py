@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(ESCALATE判决)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现升级逻辑; 仅桥接EscalationEngine.evaluate()+escalate()
 # [MODIFY-GUARD] EscalationEngine API变更时同步此桥接
 # [STABILITY] evolving

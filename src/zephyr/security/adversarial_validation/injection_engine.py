@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py ; game_day_runner.py ; chaos_engine.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] crash/exit_code injection points MUST have safety guard (blast_radius >= SYSTEM check); all injections MUST be recoverable
 # [MODIFY-GUARD] Adding injection types MUST update InjectionType enum in models.py; new injection logic MUST include recover/verify pair
 # [STABILITY] evolving

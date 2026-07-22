@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.data.scheduler, zephyr.data.implementations.{ifind,miniqmt,akshare}_provider
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Provider 只拉数据返回 list[tuple]，不写 ClickHouse；fetch 返回 Iterator[FetchResult]
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

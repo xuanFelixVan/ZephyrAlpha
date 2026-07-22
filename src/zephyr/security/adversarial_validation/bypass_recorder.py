@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py ; convergence_checker.py ; escalation-engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Bypass entries MUST be deduplicated by (scenario_id, gate_id); 3rd bypass on same scenario=gate pair triggers escalation
 # [MODIFY-GUARD] Bypass log format MUST match BypassEntry model; escalation trigger logic per blueprint §6.2
 # [STABILITY] evolving

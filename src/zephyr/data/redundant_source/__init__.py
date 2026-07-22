@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.local_replay; zephyr.shared.observability.metrics
 # [CONSUMERS] zephyr.data.tick_subscriber(可选接入)
 # [STARTUP] lazy
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 主源中断>10s切换备源; CH不可达>30s降级SQLite; CH恢复后自动回灌; 全程metrics暴露
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

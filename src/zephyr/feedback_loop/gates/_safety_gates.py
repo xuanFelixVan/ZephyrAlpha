@@ -6,7 +6,7 @@ from typing import Final
 # [DEPENDENCIES] zephyr.feedback_loop.gates.__init__
 # [CONSUMERS] zephyr.feedback_loop.gates.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] backward_compat: all exports must remain available from feedback-loop.gates
 # [MODIFY-GUARD] zephyr.feedback_loop.gates.__init__
 # [STABILITY] frozen

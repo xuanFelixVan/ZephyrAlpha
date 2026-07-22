@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.agent_spec.rbac_bridge
 # [CONSUMERS] zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 预算超限必须触发 RBAC 降级;降级决策必须审计
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway (GitCommitGateway._commit_auto 复用)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway (_run_post_commit_reconcile 包装); zephyr.gov_enforcement.rule_bridge.session_worktree (_run_reconcilers_after_merge 包装)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 拦截器模式——_commit_auto 入口检查 is_enabled()，命中则 buffer 替代真实 commit；flush() 临时 disable 后调 _commit_auto 聚合提交（squash N→1）；线程不安全（仅 post-commit 单线程上下文使用，reconcile_for 串行遍历 specs）；buffer 清空幂等（flush 后可重复 enable/flush）；所有 reconciler 共享同一 session_id（来自 enable 调用方，reconcile_for 入参）
 # [MODIFY-GUARD] BatchedAutoCommitter 类名；enable/disable/is_enabled/buffer/flush/__enter__/__exit__ 方法签名
 # [STABILITY] evolving

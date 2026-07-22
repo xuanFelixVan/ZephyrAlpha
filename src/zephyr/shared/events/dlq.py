@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.infra.observer
 # [CONSUMERS] zephyr.shared.events.dlq_bridge; zephyr.integration.shared.events; zephyr.integration.shared.events.dlq_bridge
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

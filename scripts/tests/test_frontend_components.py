@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay; zephyr.frontend.dashboard.components.order_book; zephyr.frontend.dashboard.components.position_monitor; zephyr.frontend.dashboard.components.trade_panel
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TTL=task_bound（施工完成后退役）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] requests (HTTP直连东方财富7x24快讯API)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 匿名访问；HTTP直连无需登录；7x24小时财经快讯
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

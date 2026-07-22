@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py; game_day_runner.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 35 metrics across 6 domains: compliance(6)/security(5)/performance(5)/risk(5)/operations(5)/resilience(5); drift threshold 5% per metric
 # [MODIFY-GUARD] Adding metrics MUST update DOMAIN_METRICS and SteadyStateSummary model
 # [STABILITY] evolving

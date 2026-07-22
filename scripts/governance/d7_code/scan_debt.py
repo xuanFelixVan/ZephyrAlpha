@@ -5,7 +5,7 @@
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse)
 # [CONSUMERS] .pre-commit-config.yaml gate-debt-bridge
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现，不依赖 ruff/mypy
 # [MODIFY-GUARD] 修改阈值需同步更新 AGENTS.md §8 GATE-DEBT-BRIDGE 条目
 # [STABILITY] evolving

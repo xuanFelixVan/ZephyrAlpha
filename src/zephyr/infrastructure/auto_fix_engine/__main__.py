@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] CLI用户;CI/CD pipeline
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] CLI MUST可用;子命令MUST返回正确退出码
 # [MODIFY-GUARD] blueprint.md §4.5
 # [STABILITY] evolving

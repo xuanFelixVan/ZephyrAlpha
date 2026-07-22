@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates.create_guard, zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试隔离——使用 tmp_path 临时 git 仓库，不读/不写真实 registry（create_guard 自己读真实 registry，测试用唯一名避免冲突）
 # [MODIFY-GUARD]
 # [STABILITY] evolving

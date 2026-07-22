@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] no imports from zephyr.infrastructure or zephyr.trading; Protocol interfaces only
 # [MODIFY-GUARD] interface changes require consumer audit
 # [STABILITY] stable

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

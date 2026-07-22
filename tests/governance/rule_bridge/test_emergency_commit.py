@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.emergency_commit
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 临时 git 仓库隔离测试，不污染主仓库；每个测试独立 repo
 # [MODIFY-GUARD] 测试函数名与 emergency_commit API 对齐
 # [STABILITY] evolving

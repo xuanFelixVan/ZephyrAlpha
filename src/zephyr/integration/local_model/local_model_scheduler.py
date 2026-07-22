@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.resource_optimization; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

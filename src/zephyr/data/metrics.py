@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Prometheus 文本格式指标采集；不依赖 prometheus_client 库；输出 data/metrics.prom；线程安全
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

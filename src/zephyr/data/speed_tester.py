@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.ch_writer
 # [CONSUMERS] zephyr.data.cli
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读测速不写业务表；结果写入 c0_meta.fetch_perf；小样本测试
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

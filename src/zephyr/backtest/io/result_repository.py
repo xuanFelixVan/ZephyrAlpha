@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] PIT铁律(零前瞻偏差); run_id全局唯一; 检索接口对前端透明
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

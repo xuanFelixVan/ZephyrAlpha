@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] backward-compat shim — canonical location is zephyr.gov_enforcement.rule_enforcement.gate_types
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.event_store; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.gate_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] gate events are appended to task_events atomically with gate persistence
 # [MODIFY-GUARD] event_type enum changes MUST update _GATE_EVENT_TYPE_MAP
 # [STABILITY] evolving

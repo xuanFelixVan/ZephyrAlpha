@@ -252,7 +252,6 @@ def _load_registry_items(registry_path: str) -> list[dict]:
 MATURITY_DISPLAY = {
     "production": "生产态 / production",
     "design": "设计态 / design",
-    "prototype": "原型态 / prototype",
     "unknown": "未知 / unknown",
     "": "未知 / unknown",
 }
@@ -1052,7 +1051,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 统计
     design_count = sum(1 for n in nodes if n["design_maturity"] == "design")
     production_count = sum(1 for n in nodes if n["design_maturity"] == "production")
-    prototype_count = sum(1 for n in nodes if n["design_maturity"] == "prototype")
     capacity_status = "正常" if info["production_nodes"] <= info["max_modules"] else "超容"
     total_outgoing = sum(d["count"] for d in outgoing_agg)
     total_incoming = sum(d["count"] for d in incoming_agg)
@@ -1105,7 +1103,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append(f"| 跨域入边 | {total_incoming} | Cross-domain Incoming | {total_incoming} |")
     lines.append(f"| 跨域出边 | {total_outgoing} | Cross-domain Outgoing | {total_outgoing} |")
     lines.append(f"| 设计态模块 | {design_count} | Design Modules | {design_count} |")
-    lines.append(f"| 原型态模块 | {prototype_count} | Prototype Modules | {prototype_count} |")
     lines.append(f"| 生产态模块 | {production_count} | Production Modules | {production_count} |")
     lines.append(
         f"| 容量 | {info['production_nodes']}/{info['max_modules']} ({capacity_status}) | "
@@ -1127,20 +1124,19 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 域内依赖图（内嵌 Mermaid，三视图：合并+运营态+设计态）
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
-    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。")
+    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append("> - **实线边框 = 运营态模块**（production，已上线运行）")
     lines.append("> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）")
-    lines.append("> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）")
     lines.append("> - **实线箭头 = 运营态依赖**（已生效的依赖关系）")
     lines.append("> - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）")
     lines.append("")
 
-    # --- 视图1：合并全景图（标注 [production]/[design]/[prototype]，分页显示全部节点）---
+    # --- 视图1：合并全景图（标注 [production]/[design]，分页显示全部节点）---
     lines.append("### 合并全景图（全部模块，标签标注成熟度）")
     lines.append("")
-    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count} + 原型态 {prototype_count}），标签标注成熟度。")
+    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count}），标签标注成熟度。")
     lines.append("")
 
     PAGE_SIZE = 30
@@ -1206,28 +1202,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("```")
     else:
         lines.append("> （无设计态模块 / No design modules）")
-    lines.append("")
-
-    # --- 视图4：原型态子图（仅 prototype 节点和边）---
-    proto_nodes_list = [n for n in nodes if n["design_maturity"] == "prototype"]
-    proto_node_ids = {n["node_id"] for n in proto_nodes_list}
-    proto_edges_list = [e for e in edges if e["from_node_id"] in proto_node_ids and e["to_node_id"] in proto_node_ids]
-    proto_outgoing, proto_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in proto_nodes_list])
-
-    lines.append("### 原型态子图（仅 design_maturity=prototype 的模块和依赖）")
-    lines.append("")
-    lines.append(f"> 仅展示代码已写、验证中未稳定上线的原型态模块（共 {len(proto_nodes_list)} 个，{len(proto_edges_list)} 条域内依赖）。")
-    lines.append("")
-
-    if proto_nodes_list:
-        mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh, proto_nodes_list, proto_edges_list, proto_outgoing, proto_incoming
-        )
-        lines.append("```mermaid")
-        lines.append(mermaid_code)
-        lines.append("```")
-    else:
-        lines.append("> （无原型态模块 / No prototype modules）")
     lines.append("")
 
     # 跨域依赖（中英文对照）
@@ -1310,7 +1284,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`")
     lines.append(
         "- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / "
-        "`[prototype]`=原型 / `[unknown]`=未知"
+        "`[unknown]`=未知"
     )
     lines.append("")
 

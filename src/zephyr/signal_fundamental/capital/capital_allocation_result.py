@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.capital_allocation_result
 # [CONSUMERS] signal
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

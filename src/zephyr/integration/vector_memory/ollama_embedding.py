@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
 # [CONSUMERS] vector-memory.__init__;embedding_router
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

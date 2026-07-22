@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers of LLMGateway
 # [STABILITY] stable

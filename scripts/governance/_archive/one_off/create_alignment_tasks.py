@@ -6,7 +6,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS] governance automation; alignment workflow
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MUST NOT modify any file except task database; MUST create all tasks via TaskRepository
 # [MODIFY-GUARD] task database only
 # [STABILITY] evolving

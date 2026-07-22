@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] orphan-judge.judge._run_layer L3
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] AST节点比对; 独特节点≥5 -> has_unique=True; 不修改任何文件
 # [MODIFY-GUARD] 修改阈值必须同步 blueprint.md §3.1
 # [STABILITY] evolving

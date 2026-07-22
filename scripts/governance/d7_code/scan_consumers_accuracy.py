@@ -5,7 +5,7 @@
 # [DEPENDENCIES] stdlib(argparse/ast/sys/pathlib/collections); zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate (parse_consumers_field, check_consumers_accuracy)
 # [CONSUMERS] scripts/governance/run_all.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] baseline-scan 脚本——全项目扫描 [CONSUMERS] 字段准确性（orphan+phantom+stale），生成差异报告；stale 检测用 git grep（commit-time 不检测避免性能损耗，baseline-scan 专用）；纯 stdlib + 复用 consumers_accuracy_gate 函数；fail-open（git 不可达时跳过 stale 检测）
 # [MODIFY-GUARD] 修改检测逻辑需同步更新 consumers_accuracy_gate.py（commit-time 检测）
 # [STABILITY] evolving

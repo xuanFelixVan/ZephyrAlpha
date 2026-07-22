@@ -4,7 +4,7 @@
 # [DEPENDENCIES] logging(标准库); pathlib
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 失败汇总文件写到 failures/ 目录; 告警级别 INFO/WARN/ERROR/CRITICAL; 不抛异常(所有错误log后吞掉)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.provider_base
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 启动时校验 task.capability 与 provider.meta.capability_contracts 一致性; supports_symbols_null=False 只 warn 不阻断（渐进式收紧）; capability 不存在则 ERROR 阻断
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

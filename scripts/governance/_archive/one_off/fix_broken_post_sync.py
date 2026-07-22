@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 一次性修复脚本：批量修正历史 broken post_sync_standard 命令
 # [MODIFY-GUARD]
 # [STABILITY] evolving

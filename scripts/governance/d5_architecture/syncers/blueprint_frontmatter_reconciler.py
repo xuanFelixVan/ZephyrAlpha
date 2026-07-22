@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection)
 # [CONSUMERS] scripts.governance.sync_panorama_module
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 单向写入（depgraph→blueprint.md frontmatter）;只写4个核心字段;文档内容不动;蓝图不存在则标记缺失跳过(不创建文件);blueprint_path为空时用命名约定docs/03_modules/<module_id>.md查找;blueprint_path无扩展名时补.md(DCR-005合规)
 # [MODIFY-GUARD] reconcile_blueprint_frontmatter 为对外入口;frontmatter 解析用 _FRONTMATTER_RE 正则;只更新 module_id/responsibility_domain/design_maturity/build_status;蓝图不存在时仅标记缺失不创建文件;_query_module_BP 优先返回 blueprint_path 非空行
 # [STABILITY] evolving

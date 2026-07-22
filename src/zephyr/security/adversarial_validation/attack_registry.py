@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] 见蓝图 §4 接口契约
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
 # [MODIFY-GUARD] red_blue_validator/blueprint.md; red_blue_validator/__init__.py __all__
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.trading_contracts.market.signal_degradation_warning; zephyr.shared.contracts.synthesized_signal
 # [CONSUMERS] signal_fundamental; risk; pf_core
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

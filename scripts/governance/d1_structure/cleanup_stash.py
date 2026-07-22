@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] stash 数量 ≤ MAX_STASHES（默认5）；超过时 WARNING；超过 CRITICAL_STASHES（10）时建议清理
 # [MODIFY-GUARD]
 # [STABILITY] evolving

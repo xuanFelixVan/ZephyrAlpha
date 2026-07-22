@@ -210,15 +210,13 @@ _MATURITY_ORDER: dict[str, int] = {
 
     "design": 0,
 
-    "prototype": 1,
-
-    "production": 2,
+    "production": 1,
 
 }
 
 
 
-# 头部标记正则：匹配 `# [STABILITY] evolving` 或 `# [MATURITY] prototype`
+# 头部标记正则：匹配 `# [STABILITY] evolving` 或 `# [MATURITY] production`（ARCH-MM-002 两档化）
 
 _HEADER_RE = re.compile(r"^#\s*\[(STABILITY|MATURITY)\]\s*(\w+)", re.MULTILINE)
 

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:触发条件=dashboard.py或派生文件变更 | INV-10:校验失败降级warn不阻断其他reconciler | INV-11:指标数漂移只warn不auto-fix(描述同步需人工决策)
 # [MODIFY-GUARD] gate_id="GATE-METRIC-COUNT-DRIFT"
 # [STABILITY] evolving

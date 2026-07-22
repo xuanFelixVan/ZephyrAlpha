@@ -37,8 +37,9 @@ import pytest
 # 与 scripts/governance/ 存在包名冲突（pytest 将 tests/ 加入 sys.path 后
 # `governance` 解析到 tests/governance/）。importlib 规避此冲突。
 # 副作用：generate_project_depgraph.py 的静态导入扫描无法检测 test→module 边，
-# 故 query_module_panorama.py 的 design_maturity 保持 prototype（与所有 scripts/
-# 模块一致，如 align_panoramas.py）。这是生成器的已知限制，非模块缺陷。
+# 故 query_module_panorama.py 的 design_maturity 保持 production（ARCH-MM-002
+# 两档化：物理存在=production，与所有 scripts/ 模块一致，如 align_panoramas.py）。
+# 这是生成器的已知限制，非模块缺陷。
 _SCRIPT_PATH = (
     Path(__file__).resolve().parents[2]
     / "scripts"
@@ -208,7 +209,7 @@ class TestQueryAllModules:
                 ("blueprint_path",), ("has_entry_point",)]
         rows = [
             ("MOD-A", "D_GOVERNANCE", 3, "production", "stable", "bp/a.md", True),
-            ("MOD-B", "D_MARKET", 1, "prototype", "generated", "bp/b.md", False),
+            ("MOD-B", "D_MARKET", 1, "design", "planned", "bp/b.md", False),
         ]
         conn = _make_mock_conn([(desc, rows, None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)

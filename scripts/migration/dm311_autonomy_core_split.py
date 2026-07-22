@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.migration.dm314_infra_ops_split
 # [CONSUMERS] DM-311任务卡
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 剪切粘贴模式(shutil.move); 从migration_registry.yaml读取映射; 按子目录分批; 移动后更新import+头部字段; 更新迁移登记表status; 全局更新外部引用
 # [MODIFY-GUARD] migration_registry.yaml格式变更需同步
 # [STABILITY] volatile

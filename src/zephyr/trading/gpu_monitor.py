@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.resource_optimization; zephyr.shared.lifecycle.daemon_registry
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] collect_gpu_stats 必须在 nvidia-smi 不可用时优雅降级返回 available=False
 # [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-GPU
 # [STABILITY] evolving

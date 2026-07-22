@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.heartbeat_daemon; zephyr.gov_enforcement.rule_bridge.emergency_commit; zephyr.gov_enforcement.rule_bridge.session_worktree
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 临时目录隔离测试，不污染主仓库；不依赖真实 DB；不启动真实 daemon 进程
 # [MODIFY-GUARD] 测试函数名与 heartbeat_daemon / emergency_commit / session_worktree API 对齐
 # [STABILITY] evolving

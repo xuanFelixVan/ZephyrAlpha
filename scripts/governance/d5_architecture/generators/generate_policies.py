@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 单向派生; runtime_id 作 key; 跳过空 policy
 # [MODIFY-GUARD] 本脚本由autopilot执行
 # [STABILITY] evolving

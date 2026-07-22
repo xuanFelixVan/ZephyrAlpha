@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.finding_model; zephyr.shared.schema.base_config
 # [CONSUMERS] pipeline_runner.py; run_all.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TextToFindingAdapter is the sole bridge between text-output scripts and AuditFinding; it MUST handle all 15 common output patterns
 # [MODIFY-GUARD] Pattern additions require run_all.py compatibility verification
 # [STABILITY] evolving

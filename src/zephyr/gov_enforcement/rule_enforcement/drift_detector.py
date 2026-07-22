@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.protocols; zephyr.gov_drift.drift_hotfix_bypass; zephyr.gov_drift.drift_engine; zephyr.gov_drift.cascade_detector; zephyr.gov_drift.reconciler; zephyr.governance.__init__; zephyr.gov_drift.events
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

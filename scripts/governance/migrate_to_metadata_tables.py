@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.depgraph_schema
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 一次性迁移脚本（裁定#209 Stage 2）；幂等可重复执行
 # [MODIFY-GUARD]
 # [STABILITY] evolving

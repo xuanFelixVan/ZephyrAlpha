@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__; zephyr.security.llm_defense.llm_security.self_protection.__init__; zephyr.security.llm_defense.llm_security.payloads.__init__; zephyr.security.llm_defense.llm_security.patterns.__init__; zephyr.security.llm_defense.llm_security.behavior_audit_logger; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.security.llm_defense.llm_security.protocol
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

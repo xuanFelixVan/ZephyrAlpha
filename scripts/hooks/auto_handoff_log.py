@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.hooks.git_secrets_setup.sh
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

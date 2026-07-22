@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.financial_governance.budget_enforcement; zephyr.infrastructure.budget_enforcement.rbac_bridge
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 包聚合层——re-export 真源 + 注册子模块 rbac_bridge
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

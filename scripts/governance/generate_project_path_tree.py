@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] AI cold-start; depgraph generator; migration tasks
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] --write MUST preserve design-state nodes; output MUST be valid YAML
 # [MODIFY-GUARD] PostgreSQL arch_directory_tree
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d11_compliance.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS] .pre-commit-config.yaml (GATE-COMMIT-GW hook)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] hook 运行=裸 git commit→阻断 exit 1；gateway 用 --no-verify 绕过 hook；合并提交放行；session worktree 内 commit 放行（FP-ISO.4C：worktree 独立 index 无共享冲突，授权绕过 GitCommitGateway）
 # [MODIFY-GUARD] 阻断逻辑：hook 运行本身即说明是裸 commit（gateway 用 --no-verify 不触发 hook）；合并提交检测（.git/MERGE_HEAD）；session worktree 上下文检测（cwd 含 .aidrafts/sess-）
 # [STABILITY] evolving

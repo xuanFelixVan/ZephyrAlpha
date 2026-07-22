@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.rollback.contracts (RollbackHandler)
 # [CONSUMERS] zephyr.gov_audit.bridge
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] G-CT-002 Rollback 契约
 # [MODIFY-GUARD] blueprint.md §4
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-034;MOD-INF-009
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 任务×模型增量学习;推荐引擎;composite_score算法
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] evolving

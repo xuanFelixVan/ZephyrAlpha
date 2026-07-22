@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models
 # [CONSUMERS] issue_aggregator; alignment_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 禁碰规则过滤; 置信度 < threshold -> HOLD; FORBIDDEN 规则 100% 阻断
 # [MODIFY-GUARD] 修改过滤逻辑必须同步 forbidden_patterns.yaml
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_writer
 # [CONSUMERS] zephyr.data.backfill_checker; zephyr.backtest.core.data_handler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 对 ReplacingMergeTree 表自动注入 FINAL 关键字; 不执行写入操作; 纯读取层
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

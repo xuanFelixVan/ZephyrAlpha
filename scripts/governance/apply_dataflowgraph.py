@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.dataflowgraph_schema; psycopg2
 # [CONSUMERS] (manual CLI, invoked by AI/human for dataflowgraph modifications)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] all writes go through pg_advisory_lock(424243); design_maturity gating enforced
 # [MODIFY-GUARD] dataflowgraph_schema.py; 03_create_dataflow_schema.sql
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models
 # [CONSUMERS] cli
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 多源聚合去重；按 severity 排序；输出 UnifiedAuditReport
 # [MODIFY-GUARD] 修改排序/去重逻辑必须同步蓝图 §4.2 SemanticAuditReport
 # [STABILITY] evolving

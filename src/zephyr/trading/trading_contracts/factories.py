@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.order; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.trading.trading_contracts.risk.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics; zephyr.shared.contracts.core.factories
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 工厂方法仅创建trading_contracts内定义的类型实例
 # [MODIFY-GUARD] 新增工厂方法须同步更新__all__
 # [STABILITY] evolving

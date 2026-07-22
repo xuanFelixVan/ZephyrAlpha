@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] governance automation; structural optimization planning
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML
 # [MODIFY-GUARD] PostgreSQL depgraph
 # [STABILITY] evolving

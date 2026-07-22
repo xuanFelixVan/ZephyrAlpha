@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读诊断，不修改 governance.db；扫描所有任务的 post_sync_standard 命令并校验可执行性
 # [MODIFY-GUARD]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.gov_audit.anomaly; zephyr.gov_drift.drift_engine; zephyr.gov_drift.drift_models
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.provider_base
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.ex_core.execution_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] RiskValidationBridge wraps RiskValidatorProtocol; execution_engine MUST NOT import trading-contracts.risk directly
 # [MODIFY-GUARD] blueprint.md §Cross-Layer; adapters/__init__.py __all__
 # [STABILITY] stable

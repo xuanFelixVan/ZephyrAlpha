@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS] pre-commit GATE-SSOT-SINGLESOURCE hook; CI pipeline; AI session 冷启动
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 受保护文件名只能在声明 SSoT 路径下出现；扫描 src/zephyr/ 全量 .py 文件
 # [MODIFY-GUARD] scripts/governance/check_module_singlesource.py;docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [STABILITY] evolving

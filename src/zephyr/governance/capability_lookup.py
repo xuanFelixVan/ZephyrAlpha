@@ -112,8 +112,8 @@ SCAN_ROOTS: Final[list[Path]] = [
 SCAN_ROOT: Final[Path] = SCAN_ROOTS[0]
 HEADER_SCAN_LIMIT: Final[int] = 30  # 头部字段都在前 30 行，只读这么多省时间
 
-# 成熟度排序权重（production > prototype > design）；未知成熟度=0
-_MATURITY_RANK: dict[str, int] = {"production": 3, "prototype": 2, "design": 1}
+# 成熟度排序权重（ARCH-MM-002 两档化：production > design）；未知成熟度=0
+_MATURITY_RANK: dict[str, int] = {"production": 1, "design": 0}
 
 # CJK 公共子串匹配最小窗口长度（治本：阈值真源唯一，改此处全跟随）
 # 取 3：2 字符窗口（如"路径"）过宽会假阳性命中所有含该子串的条目；

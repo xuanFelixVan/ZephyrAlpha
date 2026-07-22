@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
 # [CONSUMERS] src/zephyr/gov_drift/_analysis.py ; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 自动修复必须验证闭环
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

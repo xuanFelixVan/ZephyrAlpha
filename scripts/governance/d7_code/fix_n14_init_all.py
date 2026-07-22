@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062105
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只添加__all__定义，不修改已有内容
 # [MODIFY-GUARD] EXEMPT_NAMES列表变更需Owner批准
 # [STABILITY] volatile

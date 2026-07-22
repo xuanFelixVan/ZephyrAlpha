@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.mcp_servers; zephyr.governance.agent_spec; zephyr.infrastructure.rollback
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers of SkillLoader/SkillRouter
 # [STABILITY] stable

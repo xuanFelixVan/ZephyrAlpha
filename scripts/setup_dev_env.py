@@ -4,7 +4,7 @@
 # [DEPENDENCIES] site (stdlib)
 # [CONSUMERS] AI session 冷启动（.trae/rules/project_rules.md FIRST-READ 步骤 0）
 # [STARTUP] manual
-# [MATURITY] stable
+# [MATURITY] production
 # [INVARIANTS] USER_SITE/usercustomize.py 内容由本脚本唯一生成；重复运行幂等覆盖
 # [MODIFY-GUARD] 修改 USERCUSTOMIZE_TEMPLATE 需同步更新 sitecustomize.py docstring + project_rules.md FIRST-READ 步骤 0
 # [STABILITY] stable

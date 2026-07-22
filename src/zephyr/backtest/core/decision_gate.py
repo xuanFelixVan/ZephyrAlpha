@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

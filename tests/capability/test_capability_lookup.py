@@ -76,7 +76,7 @@ def setup_registry(tmp_path: Path):
     """构造临时 YAML + 临时 scan_root（canonical + 同 basename 重复）。
 
     canonical = src/zephyr/test/canonical.py (production)
-    duplicate = src/zephyr/shadow/canonical.py (prototype, 同蓝图 MOD-TEST → conflicting)
+    duplicate = src/zephyr/shadow/canonical.py (design, 同蓝图 MOD-TEST → conflicting)
     两者 basename 都是 canonical，匹配 alias → auto 派生。
     """
     yaml_path = tmp_path / "registry.yaml"
@@ -92,14 +92,14 @@ def setup_registry(tmp_path: Path):
         domain="D-TEST",
         maturity="production",
     )
-    # 同 basename 重复（prototype，同蓝图 → conflicting）
+    # 同 basename 重复（design，同蓝图 → conflicting）
     _make_py_file(
         scan_root / "shadow" / "canonical.py",
         "zephyr.shadow.canonical",
         "MOD-TEST_duplicate",
         blueprint="MOD-TEST",
         domain="D-TEST",
-        maturity="prototype",
+        maturity="design",
     )
     return yaml_path, scan_root
 
@@ -248,7 +248,7 @@ def test_get_existing(setup_registry):
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     r = reg.get("test_cap")
     assert r is not None
-    # canonical 派生：production > prototype → test/canonical.py 胜出
+    # canonical 派生：production > design → test/canonical.py 胜出
     assert r["canonical_file"] == "src/zephyr/test/canonical.py"
     assert r["module_id"] == "MOD-TEST_canonical"
     assert r["maturity"] == "production"
@@ -282,7 +282,7 @@ capabilities:
         "MOD-SOLO",
         blueprint="MOD-SOLO",
         domain="D-SOLO",
-        maturity="prototype",
+        maturity="design",
     )
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("solo_cap")
@@ -291,20 +291,20 @@ capabilities:
 
 
 def test_canonical_multiple_maturity_sort(setup_registry):
-    """多候选 → 成熟度排序（production > prototype）。"""
+    """多候选 → 成熟度排序（production > design）。"""
     yaml_path, scan_root = setup_registry
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("test_cap")
     assert cap["canonical_file"] == "src/zephyr/test/canonical.py"  # production
     assert cap["maturity"] == "production"
-    # 重复是 prototype 版
+    # 重复是 design 版
     assert len(cap["duplicates"]) == 1
     assert cap["duplicates"][0]["path"] == "src/zephyr/shadow/canonical.py"
-    assert cap["duplicates"][0]["maturity"] == "prototype"
+    assert cap["duplicates"][0]["maturity"] == "design"
 
 
 def test_canonical_override(tmp_path: Path):
-    """canonical_override 覆盖派生（强制选 prototype 版）。"""
+    """canonical_override 覆盖派生（强制选 design 版）。"""
     yaml_path = tmp_path / "registry.yaml"
     yaml_path.write_text("""
 capabilities:
@@ -315,7 +315,7 @@ capabilities:
 """, encoding="utf-8")
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
-    # production 版（默认会被选中，但 override 强制选 prototype 版）
+    # production 版（默认会被选中，但 override 强制选 design 版）
     _make_py_file(
         scan_root / "prod" / "picker.py",
         "zephyr.prod.picker",
@@ -324,19 +324,19 @@ capabilities:
         domain="D-PICKER",
         maturity="production",
     )
-    # prototype 版（override 指定）
+    # design 版（override 指定）
     _make_py_file(
         scan_root / "proto" / "picker.py",
         "zephyr.proto.picker",
         "MOD-PICKER_proto",
         blueprint="MOD-PICKER",
         domain="D-PICKER",
-        maturity="prototype",
+        maturity="design",
     )
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("override_cap")
     assert cap["canonical_file"] == "src/zephyr/proto/picker.py"
-    assert cap["maturity"] == "prototype"
+    assert cap["maturity"] == "design"
     assert "canonical_override" in cap["derivation_note"]
     # production 版降为 duplicate
     assert len(cap["duplicates"]) == 1
@@ -354,14 +354,14 @@ capabilities:
 """, encoding="utf-8")
     scan_root = tmp_path / "src" / "zephyr"
     scan_root.mkdir(parents=True)
-    # 两个 prototype 候选（成熟度相同，无 import → 打平）
+    # 两个 design 候选（成熟度相同，无 import → 打平）
     _make_py_file(
         scan_root / "a" / "tied.py",
         "zephyr.a.tied",
         "MOD-TIED_a",
         blueprint="MOD-TIED",
         domain="D-TIED",
-        maturity="prototype",
+        maturity="design",
     )
     _make_py_file(
         scan_root / "b" / "tied.py",
@@ -369,7 +369,7 @@ capabilities:
         "MOD-TIED_b",
         blueprint="MOD-TIED",
         domain="D-TIED",
-        maturity="prototype",
+        maturity="design",
     )
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("tied_cap")
@@ -411,7 +411,7 @@ capabilities:
         "MOD-B",
         blueprint="MOD-B",
         domain="D-B",
-        maturity="prototype",
+        maturity="design",
     )
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("sib_cap")
@@ -721,7 +721,7 @@ capabilities:
                   blueprint="MOD-TEST", maturity="production")
     # 同 basename 同 module_id 的派生 duplicate（会被 _derive 收录，不算 pending）
     _make_py_file(scan_root / "b" / "canonical.py", "zephyr.canonical", "MOD-TEST_canonical",
-                  blueprint="MOD-TEST", maturity="prototype")
+                  blueprint="MOD-TEST", maturity="design")
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     cap = reg.get("test_cap")
     assert cap["pending_candidates"] == []
@@ -873,7 +873,7 @@ def test_check_capability_duplicates_hard_conflicting(setup_registry):
     """conflicting：新文件是已有 canonical 的同蓝图 duplicate → 阻断。
 
     场景：setup_registry 已有 test/canonical.py (production, MOD-TEST) 作 canonical，
-    shadow/canonical.py (prototype, MOD-TEST) 是 conflicting duplicate。
+    shadow/canonical.py (design, MOD-TEST) 是 conflicting duplicate。
     以 shadow/canonical.py 为"新增文件"调用 → relation=conflicting。
     """
     yaml_path, scan_root = setup_registry
@@ -892,7 +892,7 @@ def test_check_capability_duplicates_hard_conflicting(setup_registry):
 def test_check_capability_duplicates_sibling_block(tmp_path: Path):
     """sibling：同 basename 不同蓝图 → 阻断（B 方案从 advisory 升级为阻断）。
 
-    场景：canonical (MOD-A, production) + duplicate (MOD-B, prototype)，同 basename
+    场景：canonical (MOD-A, production) + duplicate (MOD-B, design)，同 basename
     "canonical" 但异蓝图 → relation=sibling（非 conflicting）→ 阻断。
     """
     yaml_path = tmp_path / "registry.yaml"
@@ -913,7 +913,7 @@ def test_check_capability_duplicates_sibling_block(tmp_path: Path):
         "MOD-B_duplicate",
         blueprint="MOD-B",
         domain="D-TEST",
-        maturity="prototype",
+        maturity="design",
     )
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
     new_file = (
@@ -930,7 +930,7 @@ def test_check_capability_duplicates_canonical_displaced(setup_registry):
     """canonical_displaced：新文件成为 canonical 但已有同蓝图 duplicate → 阻断。
 
     场景：setup_registry 中 test/canonical.py (production, MOD-TEST) 是 canonical，
-    shadow/canonical.py (prototype, MOD-TEST) 是 conflicting duplicate。
+    shadow/canonical.py (design, MOD-TEST) 是 conflicting duplicate。
     以 test/canonical.py 为"新增文件"调用 → 它是 canonical，但 duplicates 含
     conflicting → relation=canonical_displaced_conflicting。
     """
@@ -1155,9 +1155,9 @@ def test_real_registry_canonical_derived():
     rb = reg.get("rollback_executor")
     assert rb["canonical_file"] == "src/zephyr/infrastructure/rollback/rollback_executor.py"
     assert rb["maturity"] == "production"
-    assert rb["module_id"] == "MOD-INF_rollback_executor"
-    # session_handoff_continuity canonical = shared_services/session_continuity.py
-    # （两候选同 basename：shared_services 版 production > shared 版 prototype）
+    assert rb["module_id"] == "MOD-INF-rollback_executor"
+    # session_handoff_continuity canonical = shared/session/session_continuity.py
+    # （单候选：shared_services proxy 版已删除，commit 9ae4970995，P2 闭环）
     sh = reg.get("session_handoff_continuity")
-    assert sh["canonical_file"] == "src/zephyr/shared/shared_services/session_continuity.py"
-    assert sh["maturity"] == "production"
+    assert sh["canonical_file"] == "src/zephyr/shared/session/session_continuity.py"
+    assert sh["maturity"] == "production"  # ARCH-MM-002: prototype→production

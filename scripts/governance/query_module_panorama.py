@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection)
 # [CONSUMERS] (manual CLI)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读查询（不写DB）；depgraph.nodes 文件级 GROUP BY blueprint_id 得到蓝图级模块表
 # [MODIFY-GUARD] (none)
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 红蓝对抗10场景验证GitCommitGateway根治幽灵提交；测试隔离用临时git仓库；产出报告到data/red_blue/reports/
 # [MODIFY-GUARD]
 # [STABILITY] evolving

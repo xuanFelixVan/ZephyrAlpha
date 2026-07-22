@@ -63,8 +63,7 @@ def main() -> None:
                       d.max_modules, d.description,
                       (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id) as actual_nodes,
                       (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'production') as production_count,
-                      (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'design') as design_count,
-                      (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'prototype') as prototype_count
+                      (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'design') as design_count
                FROM domains d ORDER BY d.layer_id, d.domain_id"""
         )
         domains = []
@@ -80,7 +79,6 @@ def main() -> None:
                     "actual_nodes": r["actual_nodes"],
                     "production_count": r["production_count"],
                     "design_count": r["design_count"],
-                    "prototype_count": r["prototype_count"],
                 }
             )
 

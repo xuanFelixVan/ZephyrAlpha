@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d3_metadata.check_vocab_hardcode
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试隔离——monkeypatch REPO_ROOT 指向 tmp_path，不扫描真实仓库；仅测检测7（commit_gates 硬编码 tests/）
 # [MODIFY-GUARD]
 # [STABILITY] evolving

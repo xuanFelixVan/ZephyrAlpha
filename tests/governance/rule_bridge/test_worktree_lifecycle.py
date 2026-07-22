@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] stable
+# [MATURITY] production
 # [INVARIANTS] 临时目录隔离；不依赖真实 Zephyr 项目结构
 # [MODIFY-GUARD] 测试函数名与 #ARCH-WORKTREE-LIFECYCLE-001 API 对齐
 # [STABILITY] stable

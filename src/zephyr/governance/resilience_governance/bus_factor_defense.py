@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.factor.bus_factor_defense
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

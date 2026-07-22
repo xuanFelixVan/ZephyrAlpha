@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.signal_fundamental.pipeline; 信号域-审计.D-SIGLEGACY-01
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

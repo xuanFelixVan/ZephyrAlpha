@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] phase_manager.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 影响分析必须包含传递依赖;增量扫描列表不可遗漏直接依赖
 # [MODIFY-GUARD] 依赖图格式变更需同步generate_project_depgraph.py
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.feedback_loop.__init__; zephyr.infrastructure.__init__
 # [CONSUMERS] zephyr.feedback_loop.metrics_collector ; zephyr.feedback_loop.alert_dispatcher
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] fle_metrics/fle_alerts/fle_dispatch_log三张表幂等写入; 每次批量返回写入行数; 异常只抛日志不抛异常
 # [MODIFY-GUARD] CT-FLE-DB-001 DDL变更必须同步更新sqlite_schema.py
 # [STABILITY] evolving

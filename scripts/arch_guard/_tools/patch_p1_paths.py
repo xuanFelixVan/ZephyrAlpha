@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.arch_guard._tools.inject_idempotency
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

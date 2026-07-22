@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.trust_engine
 # [CONSUMERS] audit-orchestrator.bridge; integrity
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现信任逻辑; 仅桥接TrustEngine
 # [MODIFY-GUARD] TrustEngine API变更时同步此桥接
 # [STABILITY] evolving

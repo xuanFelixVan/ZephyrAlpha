@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] naming_whitelist_cleanup_plan.md Phase 3
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只替换字符串映射中的旧名为新名，不修改文件其他内容
 # [MODIFY-GUARD] REPLACEMENTS 列表变更需 Owner 批准
 # [STABILITY] volatile

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.__init__（4处import: blind_spot_tracker/canary_manager/cli/phase_executor）
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MOD-INF-017蓝图模块的唯一物理位置; 新增文件MUST在capability_canonical_file_registry.yaml登记creation_token
 # [MODIFY-GUARD] 新增文件需登记capability_canonical_file_registry.yaml的creation_tokens字段
 # [STABILITY] evolving

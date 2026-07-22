@@ -4,7 +4,7 @@
 # [DEPENDENCIES] panel; plotly; plotly_resampler; zephyr.frontend.dashboard.components.chart_factory
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

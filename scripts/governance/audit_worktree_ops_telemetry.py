@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (re, ast, json, sys, pathlib); 无 zephyr 内部依赖（审计脚本独立可运行）
 # [CONSUMERS] AI 调用方审计；post-commit reconciler（可选）；session_startup_health_check（可选）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 永不抛异常——所有检查返回 violations 列表；AST + regex 双重检测降低误报
 # [MODIFY-GUARD] ERASURE_PATTERLS / TELEMETRY_FUNCTIONS / EXEMPT_CONTEXTS 结构
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol
 # [CONSUMERS] zephyr.infrastructure.mcp_servers
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Protocol classes MUST NOT import from zephyr.data; only structural subtyping
 # [MODIFY-GUARD] Adding methods to Protocol requires updating all implementors in zephyr.data
 # [STABILITY] stable

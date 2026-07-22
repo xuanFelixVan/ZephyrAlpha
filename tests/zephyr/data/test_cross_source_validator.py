@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] zephyr.data.cross_source_validator
 # [DOMAIN] D_DATA
 # [TTL] task_bound

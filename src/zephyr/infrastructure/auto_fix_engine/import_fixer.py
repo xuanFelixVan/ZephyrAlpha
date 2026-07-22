@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只修复可确定正确路径的import;不确定则跳过
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml import_fixer段
 # [STABILITY] evolving

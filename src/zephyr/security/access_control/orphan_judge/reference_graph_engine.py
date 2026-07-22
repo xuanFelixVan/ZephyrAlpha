@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] orphan-judge.judge._run_layer L1
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] AST解析+import链遍历; 不修改任何文件; import扫描范围限 src/zephyr/ + scripts/
 # [MODIFY-GUARD] 修改引用检测逻辑必须同步 blueprint.md §3.1
 # [STABILITY] evolving

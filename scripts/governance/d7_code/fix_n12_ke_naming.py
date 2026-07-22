@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062103
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只重命名N-12违规文件+更新引用，不修改文件内容
 # [MODIFY-GUARD] 无
 # [STABILITY] volatile

@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] CI pipeline; governance automation; PostgreSQL depgraph
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] --dry-run MUST NOT modify any file; output MUST be valid YAML + Mermaid; scan 结果自动缓存到 .runtime/depgraph_scan_cache.json（裁定#209 Stage 4），content_hash 命中跳过 AST 解析，fingerprint/SCAN_LOGIC_VERSION 变则全失效
 # [MODIFY-GUARD] PostgreSQL depgraph; architecture_model/module_id_registry.yaml
 # [STABILITY] evolving
@@ -884,14 +884,14 @@ def derive_architecture_layer(rel_path: str, blueprint_id: str, domain_derivatio
     return ""
 
 
-def derive_design_maturity(node_type: str, has_test: bool) -> str:
-    """derive_design_maturity implementation."""
-    # 裁定#189：删除 blueprint→design 分支，生成器不得创建设计态节点
-    # 设计态节点只由人工通过 apply_depgraph.py 写入（§12.1 唯一来源规则）
-    if node_type in CODE_TYPES:
-        if has_test:
-            return "production"
-        return "prototype"
+def derive_design_maturity(node_type: str, has_test: bool = False) -> str:
+    """derive_design_maturity: 物理存在性推导（ARCH-MM-002 两档化）。
+
+    ARCH-MM-002 (2026-07-23): design_maturity 从 3 态简化为 2 态（design/production）。
+    - 生成器扫描到的文件 = 物理存在 = production
+    - design 态只由人工通过 apply_depgraph.py 写入（§12.1 唯一来源规则）
+    - has_test 参数保留但不再影响 design_maturity（测试覆盖度由 build_status 管理）
+    """
     return "production"
 
 
@@ -903,21 +903,18 @@ def derive_deployment_lifecycle(node_type: str) -> str:
 
 
 def derive_build_status(design_maturity: str, has_test: bool = False) -> str:
-    """从文件特征推导 build_status（裁定#180）。
+    """从文件特征推导 build_status（裁定#180 + ARCH-MM-002 两档化）。
 
     推导规则（机械可执行，AI 零歧义）：
     - design → planned      （设计态未实现）
     - production + test → stable   （已验证）
     - production 无 test → generated（AI已生成未验证）
-    - prototype → generated  （脚手架/占位符）
 
-    少数需手工标记的状态（deprecated）通过
+    少数需手工标记的状态（testing/deprecated）通过
     apply_depgraph.py --transition-build-status 写入。
     """
     if design_maturity == "design":
         return "planned"
-    if design_maturity == "prototype":
-        return "generated"
     # production
     if has_test:
         return "stable"
@@ -960,18 +957,21 @@ def realization_detection(depgraph: dict) -> int:
 
 
 def upgrade_tested_modules(nodes: dict, edges: list) -> set:
-    """升级有测试覆盖的模块的 design_maturity 和 build_status。
+    """升级有测试覆盖的模块的 build_status。
+
+    ARCH-MM-002 (2026-07-23): design_maturity 只管物理存在性（2 态），
+    不再因测试覆盖度升级。测试覆盖度由 build_status 独占管理。
+    本函数只升级 build_status: production+test → stable。
 
     ARCH-FRONTMATTER-STATE-001 裁定（2026-07-18）：修复 derive_build_status 的
     has_test 死代码——derive_build_status 在 L1751 被调用时 has_test 硬编码 False，
     导致 production+test→stable 分支永不触发，99.1% production 节点卡在
     build_status=generated。本函数在 edge 构建后补偿：对有测试覆盖的 CODE_TYPES
-    节点，将 build_status 升级为 stable（与 design_maturity=production 升级同位）。
+    节点，将 build_status 升级为 stable。
 
-    逻辑（原 L1912-1925 内联，提取为函数以可单测）：
+    逻辑：
     - 扫描 import_depends 边，识别 test→CODE_TYPES 边
     - 将边升级为 test_depends（coupling_strength=optional）
-    - 将目标模块 design_maturity 升级为 production
     - 将目标模块 build_status 升级为 stable（derive_build_status("production", True)）
 
     Returns: 被升级的 node_id 集合
@@ -988,7 +988,6 @@ def upgrade_tested_modules(nodes: dict, edges: list) -> set:
                 edge["coupling_strength"] = "optional"
     for nid in tested_modules:
         if nid in nodes:
-            nodes[nid]["design_maturity"] = "production"
             nodes[nid]["build_status"] = derive_build_status("production", has_test=True)
     return tested_modules
 
@@ -3214,11 +3213,11 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 全量重扫前快照手动提升的 build_status，防止 DELETE+INSERT 重置。
         # build_status 不在文件头中（depgraph-only 生命周期概念），rescan 总是写入 'generated' 默认值，
         # 导致手动提升的状态（testing/stable/deprecated）被静默回滚。
-        # 注意：design_maturity 不在此保护范围内——rescan 用 derive_design_maturity()
-        # + upgrade_tested_modules() 机械推导（不读 [MATURITY] 文件头），每次 rescan
-        # 重新计算，无需保护。ARCH-MM-001: [MATURITY] header 是"声明"，depgraph DB
-        # 是"验证"（机械推导），冲突时 DB 为真源。手动 transition_design_maturity 提升
-        # 时 MUST 同步 header（apply_depgraph.py ARCH-MM-001 gate 强制）。
+        # 注意：design_maturity 不在此保护范围内——ARCH-MM-002 两档化后，
+        # derive_design_maturity() 总是返回 "production"（物理存在=production），
+        # design 态只由 apply_depgraph.py 人工写入。无需保护 design_maturity。
+        # [MATURITY] header 是 SSoT（2 态下声明物理存在性=客观事实）。
+        # 手动 transition_design_maturity 时 MUST 同步 header（apply_depgraph.py ARCH-MM-002 gate 强制）。
         # 对标 edges_metadata UPSERT 保护机制（Stage 2），为 nodes build_status 提供同等保护。
         cursor.execute(
             "SELECT path, build_status FROM nodes "
@@ -3524,10 +3523,9 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # nodes_metadata 恢复（Stage 2）仅在 build_status 为空时生效，
         # 但 INSERT 总是写入 'generated'（非空），所以需要独立的 status 恢复步骤。
         # 仅更新 build_status='generated' 的节点（不覆盖新扫描结果中可能已提升的值）。
-        # design_maturity 由 rescan 用 derive_design_maturity()+upgrade_tested_modules()
-        # 机械推导（不读 [MATURITY] 文件头），每次 rescan 重新计算，不在此恢复——
-        # ARCH-MM-001: DB 是"验证"真源，[MATURITY] header 是"声明"，手动 transition
-        # 时由 apply_depgraph.py gate 强制同步 header。
+        # design_maturity 不在此恢复——ARCH-MM-002 两档化后，derive_design_maturity()
+        # 总是返回 "production"（物理存在=production），design 态只由 apply_depgraph.py
+        # 人工写入。[MATURITY] header 是 SSoT，手动 transition 时由 gate 强制同步。
         _restored_status_count = 0
         for _preserved_path, _preserved_bs in _preserved_node_status.items():
             cursor.execute(
@@ -3729,7 +3727,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             print(f"  [H4] Warning: fake blueprint_id cleanup failed: {e}")
 
         # H7 fix: Sync current_modules (all nodes) + production_nodes (production only) to domains
-        # ARCH-CAP-001: current_modules = 全节点数（含 design+prototype+production）
+        # ARCH-CAP-001: current_modules = 全节点数（含 design+production，ARCH-MM-002 两档化）
         #                production_nodes = production 节点数（容量判定口径）
         try:
             cur = conn.cursor()

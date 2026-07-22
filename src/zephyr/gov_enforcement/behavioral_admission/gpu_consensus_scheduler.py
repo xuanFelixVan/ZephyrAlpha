@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.behavioral_admission.verdict_engine
 # [CONSUMERS] zephyr.gov_enforcement.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 2/2共识必须两个模型都返回一致verdict才PASS；P0_ANCHOR优先级最高不可被抢占
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving

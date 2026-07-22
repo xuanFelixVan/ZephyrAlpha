@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] data ; factor ; pf_core ; ex_core ; l10-compliance
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

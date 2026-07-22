@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS] zephyr.orchestrator.context_bridge
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 四阶段流水线(build/compress/validate/inject); missing文件不阻塞返回partial; ContextAssembler不可用降级
 # [MODIFY-GUARD] CT-ORC-CE-001 必须同步更新orchestrator/context_bridge
 # [STABILITY] evolving

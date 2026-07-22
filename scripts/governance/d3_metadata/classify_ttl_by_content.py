@@ -4,7 +4,7 @@
 # [DEPENDENCIES] _shared.frontmatter; _shared.constants
 # [CONSUMERS] manual ttl audit; pre-rejudge content scan
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 基于内容关键词（标题+正文）判定 ttl，不依赖路径机械判定；输出三类清单供人工审查
 # [STABILITY] evolving
 # [SAFETY] L

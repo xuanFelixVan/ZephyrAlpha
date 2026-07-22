@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.reference_extractor
 # [CONSUMERS] issue_aggregator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 对比蓝图声明 vs 磁盘文件 vs import 引用链三元对齐；输出 alignment_score + staleness_severity
 # [MODIFY-GUARD] 修改对齐规则必须同步蓝图 §4.3 对齐检测规则
 # [STABILITY] evolving

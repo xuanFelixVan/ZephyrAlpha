@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] G_TRAE_059 gate
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读扫描; 不修改任何文件
 # [MODIFY-GUARD] 无
 # [STABILITY] evolving

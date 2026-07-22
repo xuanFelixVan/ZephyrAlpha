@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d9_knowledge.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] read-only audit script; no file modifications
 # [MODIFY-GUARD] header fields; core validation logic
 # [STABILITY] stable

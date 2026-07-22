@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] FixPrioritizer; AuditOrchestrator (MOD-INF-027)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 修复->自测->回滚闭环; 禁止修改 frozen/immutable_core 文件; 原子写入 tmp+replace
 # [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving

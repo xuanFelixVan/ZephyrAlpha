@@ -6,7 +6,7 @@
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/json/collections); scripts.governance.d7_code.check_any_abuse
 # [CONSUMERS] #ARCH-ANY-GOVERNANCE-001 Phase 2 Batch 1-8 治理; manual AI 审核辅助; architecture_debt_registry §5.145 治本工程
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现；非阻断（exit 0 报告模式）；与 check_any_abuse.py 的 _is_bare_any 算法一致（共享 import，非复制）
 # [MODIFY-GUARD] 修改推断规则需同步更新 ruling_any_governance_engineering.md §三 Phase 1 验收标准
 # [STABILITY] evolving

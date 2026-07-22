@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation
 # [CONSUMERS] tests/audit/test_audit_red_blue_e2e.py (import_time measurement)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] re-export shim for zephyr.security.adversarial_validation
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving

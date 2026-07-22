@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.detectors.__init__
 # [CONSUMERS] zephyr.feedback_loop.detectors.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] _SUBMODULES列表不变
 # [MODIFY-GUARD] 新增子模块须同步更新detectors/__init__.py的__all__
 # [STABILITY] frozen

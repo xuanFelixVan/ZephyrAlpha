@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); architecture_model/domain/decision_graph_model.yaml (YAML 真源)
 # [CONSUMERS] AI 同步 YAML→DB 时调用
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] YAML 是唯一真源; DB 为只读缓存; 同步单向 YAML→DB; 不变量校验前置
 # [MODIFY-GUARD] 对标 scripts/governance/generate_project_depgraph.py
 # [STABILITY] evolving

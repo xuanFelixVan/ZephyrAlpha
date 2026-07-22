@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] orphan-judge.judge._run_layer L0
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 检查文件是否出现在项目的注册表(yaml/__init__/manifest)中; 不修改任何文件
 # [MODIFY-GUARD] 修改注册表扫描范围必须同步 blueprint.md §3.1
 # [STABILITY] evolving

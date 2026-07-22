@@ -4,7 +4,7 @@
 # [DEPENDENCIES] tests.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 极端故障注入测试——进程崩溃/锁损坏/4+并发/TTL过期/stash冲突/磁盘满mock/commit失败/超时
 # [MODIFY-GUARD]
 # [STABILITY] evolving

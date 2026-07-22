@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] python -m zephyr.security.access_control.orphan_judge; audit-orchestrator.cli
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] CLI是orphan_judge的唯一入口; judge/scan/report三条子命令
 # [MODIFY-GUARD] 新增子命令必须注册到__init__.py __all__; 修改参数必须同步blueprint.md §4.1
 # [STABILITY] evolving

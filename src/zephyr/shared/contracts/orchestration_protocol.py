@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infrastructure.rollback; zephyr.orchestrator.chaos_hooks; zephyr.orchestrator.batch_orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Protocol MUST NOT import from zephyr.trading; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; all consumers
 # [STABILITY] stable

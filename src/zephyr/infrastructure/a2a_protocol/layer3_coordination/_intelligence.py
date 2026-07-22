@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_collusion_detector; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_blame_attribution; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_causal_trace; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_behavior_fingerprint; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_knowledge_distill; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_latent_comm; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_cross_agent_semantic_flow
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] backward_compat: all exports must remain available from layer3_coordination
 # [MODIFY-GUARD] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STABILITY] frozen

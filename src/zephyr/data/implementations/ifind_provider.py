@@ -4,7 +4,7 @@
 # [DEPENDENCIES] iFinDPy SDK (THS_iFinDLogin/THS_BasicData/THS_Trans2DataFrame); zephyr.data.ch_reader
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] connect() 从 IFIND_LICENSE 环境变量读 license；配额错误码-4318/-4309 透传不重试
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

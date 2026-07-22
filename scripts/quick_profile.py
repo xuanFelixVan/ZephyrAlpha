@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] 模型快速画像;岗位匹配
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Quick模式5-8min;岗位匹配Top-N;幻觉六维正常评分
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [STABILITY] evolving

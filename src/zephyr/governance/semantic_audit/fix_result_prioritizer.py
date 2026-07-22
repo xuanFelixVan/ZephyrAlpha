@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] blast_radius.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 排序键: severity降序->impact降序->urgency降序->dependency_depth降序; 输入输出类型一致; 权重之和=1.0
 # [MODIFY-GUARD] blueprint.md §3.1 Stage 8; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving

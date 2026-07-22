@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.game_day_runner; zephyr.security.adversarial_validation.game_day_scheduler; zephyr.security.adversarial_validation.convergence_checker; zephyr.security.adversarial_validation.cold_start
 # [CONSUMERS] End users; CI/CD; MCP tool wrappers
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] python -m zephyr.security.adversarial_validation is the ONLY entry point; subcommands: run/list/report/status
 # [MODIFY-GUARD] Adding subcommands MUST register in main() dispatch
 # [STABILITY] evolving

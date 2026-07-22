@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] RULE-THREE删除审判; pre_write_gate.py --delete; migration pipeline
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] exit 0=SAFE(允许删除); exit 1=BLOCKED(禁止删除); --dry-run不修改任何文件
 # [MODIFY-GUARD] 只读检查脚本，禁止修改任何目标文件
 # [STABILITY] stable

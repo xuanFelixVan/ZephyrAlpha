@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size
+# [INARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; P2-5 分阶段延迟度量 Histogram: Stage1 on_tick/Stage2 queue_wait/Stage3 convert/Stage4 wal_add/Stage5 wal_flush
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -115,15 +115,17 @@ def _safe_int(val: object) -> int | None:
         return None
 
 
-def tick_to_row(stock_code: str, tick: dict) -> tuple | None:
+def tick_to_row(stock_code: str, tick: dict, data_source: str = _DATA_SOURCE) -> tuple | None:
     """将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。
 
     P0-1 双时间戳：timestamp=上游市场时间(event_time)，recorded_time=本地接收时间。
     recorded_time - timestamp = 端到端延迟，用于回测延迟建模。
+    P1-3：data_source 参数支持备源标识（tdx_backup），区分主源/备源数据。
 
     Args:
         stock_code: QMT 格式代码，如 "000001.SZ"
         tick: xtdata 回调的 tick dict
+        data_source: 数据来源标识（默认 "miniqmt"，备源用 "tdx_backup"）
 
     Returns:
         15字段 tuple，或 None（空 tick）
@@ -168,7 +170,7 @@ def tick_to_row(stock_code: str, tick: dict) -> tuple | None:
         volume,
         amount,
         "中性盘",           # direction（QMT tick 不直接提供）
-        _DATA_SOURCE,       # data_source
+        data_source,        # data_source（P1-3: 支持备源标识）
         bid_price,
         ask_price,
         bid_volume,
@@ -192,6 +194,7 @@ class TickSubscriber:
         batch_rows: int = 3000,
         batch_seconds: float = 5.0,
         heartbeat=None,
+        backup_provider=None,
     ):
         """初始化订阅器。
 
@@ -201,11 +204,16 @@ class TickSubscriber:
             batch_seconds: WalWriter 段落盘时间阈值（P0-3: 10.0→5.0）
             heartbeat: HeartbeatMonitor 实例（P2-8 集成，可选）。
                 传入后在 _on_tick 中自动调用 record_tick()，使主源心跳检测生效。
+            backup_provider: TDXProvider 实例（P1-3 双源冗余，可选）。
+                传入后与 heartbeat 配合，主源中断时自动切换 TDX 备源轮询。
         """
         self._symbols = symbols
         self._batch_rows = batch_rows
         self._batch_seconds = batch_seconds
         self._heartbeat = heartbeat  # P2-8: 主源心跳检测集成
+        self._backup_provider = backup_provider  # P1-3: TDX 备源
+        self._switcher = None  # P1-3: SourceSwitcher（start 中创建）
+        self._backup_poller = None  # P1-3: BackupTickPoller
 
         self._tick_queue: queue.Queue[tuple[str, dict]] = queue.Queue(maxsize=100000)
         self._writer = None  # WalWriter，在 start() 中初始化
@@ -235,6 +243,8 @@ class TickSubscriber:
         """
         if not self._running:
             return
+        # P2-5: Stage 1 延迟度量——on_tick 回调处理耗时
+        t0 = time.perf_counter()
         # P2-8: 主源心跳检测——收到 tick 即标记主源活跃
         if self._heartbeat is not None:
             self._heartbeat.record_tick()
@@ -265,33 +275,67 @@ class TickSubscriber:
                     log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
                     self._errors += 1
                     _get_metrics_registry().inc("zephyr_tick_dropped_total")
+        # P2-5: Stage 1——on_tick 回调端到端处理耗时（含心跳记录 + 入队循环）
+        _get_metrics_registry().observe(
+            "zephyr_tick_stage_on_tick_seconds", time.perf_counter() - t0
+        )
+
+    def _on_backup_tick(self, symbol: str, tick: dict) -> None:
+        """备源 tick 回调——TDX BackupTickPoller 调用（P1-3）。
+
+        将备源 tick 喂入同一队列，通过 tick["_data_source"] 标记来源，
+        _drain_batch 中 tick_to_row 据此设置 data_source="tdx_backup"。
+        """
+        if not self._running:
+            return
+        tick["_data_source"] = "tdx_backup"
+        try:
+            self._tick_queue.put_nowait((symbol, tick))
+            self._received += 1
+            _get_metrics_registry().inc("zephyr_tick_received_total")
+        except queue.Full:
+            log.warning("tick 队列已满，丢弃备源 tick symbol=%s", symbol)
+            self._errors += 1
+            _get_metrics_registry().inc("zephyr_tick_dropped_total")
 
     def _drain_batch(self, max_n: int = _DRAIN_BATCH_SIZE, timeout: float = 1.0) -> int:
         """批量出队——阻塞等待第一条，然后非阻塞批量取剩余。
 
         构造单个 FetchResult（多行）交给 WalWriter，减少 add 调用次数。
 
+        P2-5 分阶段延迟度量：
+          - Stage 2: queue.get 阻塞等待耗时
+          - Stage 3: tick_to_row 批量转换耗时
+          - Stage 4: WalWriter.add 段落盘耗时
+
         Returns:
             本次写入 WalWriter 的行数（0=队列空或写入失败）。
         """
-        # 阻塞等待第一条数据（触发器，避免 busy loop）
+        reg = _get_metrics_registry()
+        # P2-5: Stage 2——queue.get 阻塞等待耗时（含空队 sleep）
+        t_wait = time.perf_counter()
         try:
             symbol, tick = self._tick_queue.get(timeout=timeout)
         except queue.Empty:
             return 0
+        reg.observe("zephyr_tick_stage_queue_wait_seconds", time.perf_counter() - t_wait)
+
         rows: list[tuple] = []
-        row = tick_to_row(symbol, tick)
+        # P2-5: Stage 3——tick_to_row 批量转换耗时（首行 + 非阻塞批量取）
+        t_conv = time.perf_counter()
+        row = tick_to_row(symbol, tick, data_source=tick.pop("_data_source", _DATA_SOURCE))
         if row:
             rows.append(row)
-        # 非阻塞批量取剩余
         for _ in range(max_n - 1):
             try:
                 symbol, tick = self._tick_queue.get_nowait()
             except queue.Empty:
                 break
-            r = tick_to_row(symbol, tick)
+            r = tick_to_row(symbol, tick, data_source=tick.pop("_data_source", _DATA_SOURCE))
             if r:
                 rows.append(r)
+        reg.observe("zephyr_tick_stage_convert_seconds", time.perf_counter() - t_conv)
+
         if not rows:
             return 0
         from zephyr.data.provider_base import FetchResult
@@ -302,13 +346,18 @@ class TickSubscriber:
             last_key="",
             elapsed_sec=0.0,
         )
-        if self._writer.add(result):
+        # P2-5: Stage 4——WalWriter.add 段落盘耗时（含列过滤 + save_fallback）
+        t_wal = time.perf_counter()
+        add_ok = self._writer.add(result)
+        reg.observe("zephyr_tick_stage_wal_add_seconds", time.perf_counter() - t_wal)
+
+        if add_ok:
             self._written += len(rows)
-            _get_metrics_registry().inc("zephyr_tick_written_total", n=len(rows))
+            reg.inc("zephyr_tick_written_total", n=len(rows))
             return len(rows)
         log.error("WalWriter.add 失败，%d 行 tick 数据可能丢失", len(rows))
         self._errors += len(rows)
-        _get_metrics_registry().inc("zephyr_tick_dropped_total", n=len(rows))
+        reg.inc("zephyr_tick_dropped_total", n=len(rows))
         return 0
 
     def _flush_loop(self) -> None:
@@ -448,6 +497,26 @@ class TickSubscriber:
                 elapsed = time.time() - self._start_time
                 log.info("预热完成: 首个 tick 已收到 (耗时 %.1fs)", elapsed)
 
+        # P1-3: 启动双源切换器（主源 QMT + 备源 TDX 自动切换）
+        if self._backup_provider is not None and self._heartbeat is not None:
+            from zephyr.data.redundant_source.backup_tick_poller import (
+                BackupTickPoller, QMTSourceAdapter,
+            )
+            from zephyr.data.redundant_source.source_switcher import SourceSwitcher
+
+            self._backup_poller = BackupTickPoller(
+                self._backup_provider,
+                symbols,
+                self._on_backup_tick,
+            )
+            self._switcher = SourceSwitcher(
+                QMTSourceAdapter(self),
+                self._backup_poller,
+                self._heartbeat,
+            )
+            self._switcher.start()
+            log.info("P1-3: 双源切换器已启动 (primary=qmt, backup=tdx)")
+
         log.info("TickSubscriber 启动完成: 订阅 %d 只标的", len(self._subscribed))
         return True
 
@@ -456,6 +525,9 @@ class TickSubscriber:
         self._running = False
         if self._flush_thread:
             self._flush_thread.join(timeout=30)
+        # P1-3: 停止双源切换器（含备源轮询线程）
+        if self._switcher:
+            self._switcher.stop()
         # P2-8: 停止心跳检测
         if self._heartbeat is not None:
             self._heartbeat.stop()

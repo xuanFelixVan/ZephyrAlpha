@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d8_doc_sync.sync_yaml_to_depgraph
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试隔离——使用 __savepoint_test_* 前缀，结束时清理 sync_failures_log 测试记录
 # [MODIFY-GUARD]
 # [STABILITY] evolving

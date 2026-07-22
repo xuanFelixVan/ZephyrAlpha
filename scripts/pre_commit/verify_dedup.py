@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_code_quality.code_dedup.cli
 # [CONSUMERS] .pre-commit-config.yaml gate-dedup hook
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 委托 cli.py verify，不自实现检测逻辑
 # [MODIFY-GUARD] code_dedup_engine blueprint §
 # [STABILITY] evolving

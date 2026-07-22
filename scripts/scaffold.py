@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d3_metadata.check_naming_convention; zephyr.infrastructure.__init__; zephyr.integration.mcp.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

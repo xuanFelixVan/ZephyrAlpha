@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving
@@ -1110,7 +1110,7 @@ def fix_path_semantics_for_design_nodes(dry_run: bool = False) -> dict:
                     new_path = new_path.rstrip('/')
 
                 # Check if any non-design node exists with new_path (Case 1a: stale duplicate).
-                # 非 design 节点（production/prototype）已是正确真源，design 节点为 stale 重复。
+                # 非 design 节点（production）已是正确真源，design 节点为 stale 重复。
                 prod_row = conn.execute(
                     SQL_FIX_PATH_CASE1A_SELECT_NONDESIGN_BY_PATH,
                     (new_path,)
@@ -1121,7 +1121,7 @@ def fix_path_semantics_for_design_nodes(dry_run: bool = False) -> dict:
                     # 5.179 治本：stale duplicate 节点 path 与 granularity 语义矛盾，
                     # 无法通过 UPDATE 修正 path（unique 约束冲突），且 build_status='deprecated'
                     # 仍保留语义错误行——故彻底删除 stale design 节点 + 关联 design edges。
-                    # production/prototype 节点已是正确真源。
+                    # production 节点已是正确真源。
                     result['case1a_count'] += 1
                     prod_node_id = prod_row['node_id']
                     prod_maturity = prod_row['design_maturity']
@@ -1358,10 +1358,10 @@ def add_edge(
     db_path: str = None,
 ) -> int:
     """
-    新增边（通用，不限 design_maturity，支持 production/prototype 节点）。
+    新增边（通用，不限 design_maturity，支持 production 节点）。
     返回：新分配的 edge_id，-1=失败
     与 add_design_edge 的差异：
-    - 不校验两端 design_maturity（允许 design/prototype/active 任意组合）
+    - 不校验两端 design_maturity（允许 design/production/active 任意组合）
     - dep_maturity 参数化（默认 'active'，可设 'design'）
     - 增加重复边检查（同 from/to/dep_type 已存在则拒绝）
     校验：
@@ -1493,13 +1493,13 @@ _RE_MATURITY_HEADER = re.compile(r"^#\s*\[MATURITY\]\s+(\S+)")
 
 
 def _read_maturity_header(file_path: Path) -> str | None:
-    """读取文件头 [MATURITY] 声明值（前 20 行扫描）。
+    """读取文件头 [MATURITY] 声明值（前 30 行扫描）。
 
-    返回：[MATURITY] 值（如 design/prototype/production），无头部时返回 None。
+    返回：[MATURITY] 值（design/production），无头部时返回 None。
 
-    ARCH-MM-001 裁定：[MATURITY] 文件头是"声明"（AI/人工声明的预期成熟度），
-    depgraph nodes.design_maturity 是"验证"（生成器根据 has_test 推导的实际成熟度）。
-    transition_design_maturity 手动提升时 MUST 同步 header 声明（gate 强制）。
+    ARCH-MM-002 裁定：[MATURITY] 文件头是 design_maturity 的 SSoT
+    （2 态下声明物理存在性=客观事实）。
+    transition_design_maturity 手动提升时 MUST 同步 header（gate 强制）。
     """
     try:
         with open(file_path, encoding="utf-8-sig", errors="ignore") as f:
@@ -1516,28 +1516,25 @@ def _read_maturity_header(file_path: Path) -> str | None:
 
 def transition_design_maturity(node_id: int, to: str, db_path: str = None, force: bool = False) -> bool:
     """
-    转换 design_maturity 状态（3态单调推进：design → prototype → production）。
+    转换 design_maturity 状态（ARCH-MM-002 两档化：design → production）。
     返回：True=成功，False=失败
     转换规则（机械判定）：
-    - design → prototype：允许（设计→原型）
-    - design → production：允许（设计→生产，代码已实现验证通过时跳转）
-    - prototype → production：允许（原型→生产）
-    - 任何倒退（production→prototype/design, prototype→design）：禁止
+    - design → production：允许（设计→生产，代码已实现）
+    - 任何倒退（production→design）：禁止
 
-    ARCH-MM-001 门禁（2026-07-22 治本）：
-    [MATURITY] 文件头是 design_maturity 的"声明"。transition_design_maturity 手动提升
-    DB design_maturity 时 MUST 确保 [MATURITY] header == TO_MATURITY，否则硬阻断。
+    ARCH-MM-002 门禁（2026-07-23 治本）：
+    [MATURITY] 文件头是 design_maturity 的 SSoT（2 态下声明物理存在性=客观事实）。
+    transition_design_maturity 手动提升 DB design_maturity 时 MUST 确保
+    [MATURITY] header == TO_MATURITY，否则硬阻断。
     逃生通道：force=True 跳过 header 校验（记录到 stderr 警告）。
 
-    设计原理：rescan 用 derive_design_maturity()+upgrade_tested_modules() 机械推导
-    design_maturity（不读 [MATURITY] header）。手动 transition 是逃生通道，其声明
-    必须与 DB 一致，否则下次 rescan 可能回退 DB 值而 header 不变→新的 header/DB 不一致。
+    设计原理：ARCH-MM-002 两档化后，derive_design_maturity() 总是返回 "production"
+    （物理存在=production），design 态只由此函数人工写入。手动 transition 时
+    [MATURITY] header MUST 与 DB 一致，否则 header/DB 不一致。
     """
-    # 合法状态转换（3态单调推进，允许 design→production 跳转）
+    # 合法状态转换（2态单调推进）
     valid_transitions = {
-        ("design", "prototype"),
         ("design", "production"),
-        ("prototype", "production"),
     }
 
     with _db_write_lock(db_path=db_path, task="transition_design_maturity"):
@@ -1553,16 +1550,16 @@ def transition_design_maturity(node_id: int, to: str, db_path: str = None, force
                 print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
                 return False
 
-            # ARCH-MM-001 gate: [MATURITY] header 声明 MUST == TO_MATURITY
+            # ARCH-MM-002 gate: [MATURITY] header SSoT MUST == TO_MATURITY
             if node_path and not force:
                 abs_path = REPO_ROOT / node_path
                 if abs_path.exists():
                     header_maturity = _read_maturity_header(abs_path)
                     if header_maturity is not None and header_maturity != to:
                         print(
-                            f"ERROR: [MATURITY] header 声明 '{header_maturity}' != TO_MATURITY '{to}'。"
+                            f"ERROR: [MATURITY] header '{header_maturity}' != TO_MATURITY '{to}'。"
                             f" 请先更新文件头 '# [MATURITY] {to}' 再执行 transition"
-                            f"（ARCH-MM-001: 声明与验证 MUST 一致）。"
+                            f"（ARCH-MM-002: header 是 SSoT, MUST 一致）。"
                             f" 逃生通道：--force",
                             file=sys.stderr,
                         )
@@ -4350,8 +4347,8 @@ def main() -> None:
         type=str,
         nargs=2,
         metavar=("NODE_ID", "TO_MATURITY"),
-        help="转换design_maturity(3态单调推进design→prototype→production): NODE_ID TO_MATURITY。"
-        "ARCH-MM-001 门禁：[MATURITY] 文件头声明 MUST == TO_MATURITY，否则硬阻断（--force 逃生）",
+        help="转换design_maturity(ARCH-MM-002 两档化: design→production): NODE_ID TO_MATURITY。"
+        "ARCH-MM-002 门禁：[MATURITY] header SSoT MUST == TO_MATURITY，否则硬阻断（--force 逃生）",
     )
     parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
     parser.add_argument(
@@ -4375,7 +4372,7 @@ def main() -> None:
         type=int,
         nargs=2,
         metavar=("FROM_NODE_ID", "TO_NODE_ID"),
-        help="新增边（不限maturity，支持production/prototype节点）: FROM_NODE_ID TO_NODE_ID",
+        help="新增边（不限maturity，支持production节点）: FROM_NODE_ID TO_NODE_ID",
     )
     parser.add_argument(
         "--delete-edge",

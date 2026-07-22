@@ -4,7 +4,7 @@
 # [DEPENDENCIES] tushare SDK (ts.set_token/ts.pro_api/pro.news/pro.news_info)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] token认证（环境变量TUSHARE_TOKEN）；历史数据截止2024-08；积分不足触发重试
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

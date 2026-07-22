@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.gate_auto_registrar.auto_register_gates
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 阈值检测——git stash list 计数 > 40 block（阻断 commit），> 20 warn（passed=True + detail）；fail-open（git 失败不阻断）；全局状态检测（不依赖 staged files）；每次 commit 都执行（与 stash 累积风险正相关）
 # [MODIFY-GUARD] gate_id="STASH-ACCUMULATION"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]; _WARN_THRESHOLD=20 / _BLOCK_THRESHOLD=40
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062106
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只修改N-06正则表达式，不修改module_id值
 # [MODIFY-GUARD] SCOPE_PREFIXES列表变更需Owner批准
 # [STABILITY] volatile

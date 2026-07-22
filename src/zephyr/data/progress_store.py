@@ -4,7 +4,7 @@
 # [DEPENDENCIES] sqlite3(标准库); zephyr.shared.io.paths(REPO_ROOT)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] SQLite 单文件存储(data/integrator_progress.db); task_progress 主键 task_id; task_runs 自增 run_id; WAL 模式; check_same_thread=False + threading.Lock 保护所有读写（修复 SQLITE_MISUSE: 并发读未加锁导致 bad parameter）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

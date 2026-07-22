@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py; attack_registry.py; game_day_runner.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MUST load from _scenario-registry.yaml; parsed scenarios MUST validate against AttackScenario model
 # [MODIFY-GUARD] Adding new fields to _scenario-registry.yaml MUST update AttackScenario model and this loader
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] rollback_executor;auto_rollback_trigger
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] stable

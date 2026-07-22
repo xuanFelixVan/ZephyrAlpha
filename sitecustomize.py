@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.runtime_interceptor
 # [CONSUMERS]
 # [STARTUP] automatic
-# [MATURITY] prototype
+# [MATURITY] production
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

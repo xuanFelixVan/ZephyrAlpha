@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] YAML→DB sync完整性校验; 4维检查; exit 0=pass/1=fail
 # [MODIFY-GUARD]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.orchestrator.work_orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 任务COMPLETED时归档; VMS不可用降级不阻塞
 # [MODIFY-GUARD] CT-ORC-VMS-001 必须同步更新VMS
 # [STABILITY] evolving; [SAFETY] L; [AI_AUTONOMY] ai_modifiable

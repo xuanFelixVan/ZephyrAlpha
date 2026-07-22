@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.capability_lookup
 # [CONSUMERS] pre-commit GATE-SSOT hook; GitCommitGateway._check_ssot_canonical（主防线）; tests/governance/rule_bridge/test_ssot_gate.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 真源是文件头部 [MODULE] 字段；fail-open（capability_lookup 不可用时放行）
 # [MODIFY-GUARD]
 # [STABILITY] evolving

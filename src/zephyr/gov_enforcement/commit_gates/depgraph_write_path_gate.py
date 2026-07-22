@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py added 行含 read_only=False/superuser=True/allow_edge_delete=True 且文件不在白名单时阻断commit(passed=False); tests/豁免; docstring/注释/import行豁免; git diff不可达fail-open; 检出违规则fail-closed
 # [MODIFY-GUARD] gate_id="DEPGRAPH-WRITE-PATH"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable

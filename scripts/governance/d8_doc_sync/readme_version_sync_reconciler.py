@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:触发条件=README.md或真源文件(pyproject.toml/infrastructure_registry.yaml)变更 | INV-10:校验失败降级warn不阻断其他reconciler | INV-11:版本号漂移只warn不auto-fix(版本升级需人工决策)
 # [MODIFY-GUARD] gate_id="GATE-README-VERSION-SYNC"
 # [STABILITY] evolving

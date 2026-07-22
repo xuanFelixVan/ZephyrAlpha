@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.intelligence.model_evaluation._memory_backend; zephyr.integration.vector_memory.bridge_layer
 # [CONSUMERS] zephyr.intelligence.model_evaluation.unified_memory_api
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

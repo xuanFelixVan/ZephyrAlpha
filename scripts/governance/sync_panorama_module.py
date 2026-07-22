@@ -134,7 +134,7 @@ def _query_depgraph_module(conn, module_id: str) -> dict | None:
     depgraph.nodes 中同一 blueprint_id 可有多行（跨域模块的正常现象）。
     聚合策略与 align_panoramas._fetch_depgraph_nodes 一致：
     - domain_id: 加权投票（测试文件降权，平局字母序，panorama_common.weighted_domain_vote）
-    - design_maturity: 取最 design 的状态（design < prototype < production，panorama_common.min_maturity）
+    - design_maturity: 取最 design 的状态（design < production，panorama_common.min_maturity）
     - build_status: 取第一个非空
     - path: 取第一个非空（ORDER BY 保证非空优先）
     """

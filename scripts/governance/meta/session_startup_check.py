@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.ops_governance.phase_manager; zephyr.governance.ops_governance.phase_check_registry
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

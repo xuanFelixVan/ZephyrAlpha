@@ -46,7 +46,7 @@
 
 
 
-# [MATURITY] prototype
+# [MATURITY] production
 
 
 
@@ -37344,29 +37344,9 @@ def _evaluate_drift_after_restore(
 
 
             f"WORKSPACE_DRIFT_BLOCKED: 主工作区有残留修改（{detail}）。"
-
-
-
-
-
-
-
-            f"修复：先 commit/stash/restore 这些文件再开始新 session。"
-
-
-
-
-
-
-
+            "TRAE-079 Phase 2：worktree 已降级为可选——无需清理工作区，直接走 GitCommitGateway 文件锁串行提交（Phase 1 临界区已落地）。"
+            "仅需并行 staging 时才清理后重试 worktree。"
             f"（auto-sync 产物已自动 restore {restored_count} 个；"
-
-
-
-
-
-
-
             f"session_id={session_id}）"
 
 

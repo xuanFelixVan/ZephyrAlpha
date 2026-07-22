@@ -4,7 +4,7 @@
 # [DEPENDENCIES] baostock SDK (bs.login/bs.logout/bs.query_history_k_data_plus/bs.query_hs300_stocks/bs.query_trade_date)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] thread_local 登录模型——每线程独立 bs.login()；数据滞后约1周；匿名访问无需token
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

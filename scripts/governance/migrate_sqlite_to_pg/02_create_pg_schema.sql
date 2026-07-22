@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     tags                    TEXT,
     architecture_layer      TEXT,
     design_maturity         TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     deployment_lifecycle    TEXT DEFAULT 'stable',
     trust_zone              TEXT DEFAULT 'trusted_core',
     license                 TEXT DEFAULT 'Internal',

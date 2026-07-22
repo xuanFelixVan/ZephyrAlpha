@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_audit.finding_model; zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
 # [CONSUMERS] validator.py; game_day_runner.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] run_defense() MUST return DefenseResult with passed/gate_id/detail; MUST NOT raise on defense failure — return passed=False instead
 # [MODIFY-GUARD] Adding new defense gates MUST update GATE_MAP; DefenseResult contract per blueprint §4.4
 # [STABILITY] evolving

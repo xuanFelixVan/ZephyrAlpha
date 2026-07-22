@@ -11,7 +11,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.contract_drift_detector; zephyr.gov_drift.drift_result_types; zephyr.gov_drift.drift_training; zephyr.gov_drift.drift_infrastructure; zephyr.gov_drift.drift_hotfix_bypass; zephyr.gov_drift.cascade_detector; zephyr.gov_drift.baseline_poisoning_guard
 # [CONSUMERS] zephyr.gov_drift.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
 # [STABILITY] frozen

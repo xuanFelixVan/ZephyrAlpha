@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.meta.benchmark.test_fixtures.incomplete_module
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

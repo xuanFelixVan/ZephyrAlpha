@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading ; zephyr.governance
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Protocol MUST NOT import from zephyr.data; only structural subtyping
 # [MODIFY-GUARD] shared/contracts/__init__.py; infrastructure/shared_core/ports.py; all 19 consumers
 # [STABILITY] stable

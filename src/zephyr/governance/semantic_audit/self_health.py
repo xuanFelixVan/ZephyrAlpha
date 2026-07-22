@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.__init__
 # [CONSUMERS] cli; audit-orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 7 SLI + 5 容量 SLI; HEALTHY/DEGRADED/CRITICAL 三级状态
 # [MODIFY-GUARD] 修改 SLI 定义必须同步蓝图 §3.1 组件 #11
 # [STABILITY] evolving

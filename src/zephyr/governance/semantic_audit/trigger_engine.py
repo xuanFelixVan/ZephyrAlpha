@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models; zephyr.governance.semantic_audit.reference_extractor
 # [CONSUMERS] alignment_engine; audit-orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 增删改文件时判定是否触发审计；支持 cross_doc_ref_broken 和 dependson_chain_broken 两种触发类型
 # [MODIFY-GUARD] 添加触发类型必须同步 models.TriggerResult.trigger_type 枚举
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] xtquant SDK (xtdata.download_history_data/get_market_data_ex)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] connect() 仅验证 SDK 可导入；单线程使用（xtquant 非线程安全）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

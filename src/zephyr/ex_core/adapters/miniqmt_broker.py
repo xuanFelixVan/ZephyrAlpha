@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.governance.data_governance.miniqmt_provider
 # [CONSUMERS] zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.position_monitor
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] xttrader非线程安全(加锁); T+1锁定(查持仓available_quantity); 涨跌停限制; 幂等(INV-007); 回测=实盘一致性(MatchingLogic共享, submit_order内置预校验)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

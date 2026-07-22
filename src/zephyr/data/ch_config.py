@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.security.secrets; zephyr.shared.io.paths
 # [CONSUMERS] zephyr.data.ch_writer; zephyr.data.scheduler; zephyr.data.cli; zephyr.infrastructure.database_service
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] CH 连接配置唯一真源为 config/.env.clickhouse; 禁止任何入口硬编码 IP 默认值; ensure_ch_env_loaded 幂等; load_ch_config 读不到配置抛 CHConfigError(fail-closed)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

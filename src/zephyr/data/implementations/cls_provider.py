@@ -4,7 +4,7 @@
 # [DEPENDENCIES] requests (HTTP直连财联社电报API)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 匿名访问；通过RSSHub获取（财联社直连API需sign加密）；分钟级财经快讯
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

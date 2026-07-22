@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.session_worktree
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 临时 git 仓库隔离测试；不依赖 worktree 完整生命周期
 # [MODIFY-GUARD] 测试函数名与 P2-2 API 对齐
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.blast_radius; zephyr.security.adversarial_validation.convergence_checker
 # [CONSUMERS] game_day_scheduler.py; cli.py; CI/CD workflow
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 4 frequency levels: PER_COMMIT(FILE) / DAILY(MODULE) / WEEKLY(CROSS_MODULE) / MONTHLY(SYSTEM); each run produces GameDayResult with report
 # [MODIFY-GUARD] Adding frequency MUST add entry to GameDayFrequency enum and run_game_day() dispatch; report format per GameDayResult model
 # [STABILITY] evolving

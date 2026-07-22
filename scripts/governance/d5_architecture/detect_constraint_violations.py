@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] GitCommitGateway post-commit reconciler (GATE-CONSTRAINT-DETECT)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只写 constraint_type IN (cross_domain_violation/capacity_exceeded/hard_limit_exceeded/orphan_node/layer_violation); 不碰 architecture_contract/architecture_rule
 # [MODIFY-GUARD] 修改需通过架构裁定
 # [STABILITY] evolving
@@ -128,7 +128,7 @@ def detect_capacity_violations(cur) -> list[dict]:
     """检测2: 容量超限（production 节点数 > domains.max_modules，ARCH-CAP-001）
 
     模块定义口径：production 节点 = design_maturity='production' 的真实代码文件。
-    design/prototype 节点不计入模块容量（trae_055 ARCH-CAP-001）。
+    design 节点不计入模块容量（trae_055 ARCH-CAP-001）。
     """
     cur.execute("""
         SELECT n.domain_id, d.domain_name, COUNT(*) AS production_count, d.max_modules

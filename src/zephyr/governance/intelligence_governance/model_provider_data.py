@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] src.zephyr.infrastructure.budget_enforcement.model_router;src.zephyr.intelligence.model_profiling.model_discovery
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] DEFAULT_PROVIDERS和TIER_MODEL_MAP是纯数据常量;修改MUST同步更新model_router和model_discovery
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md;src/zephyr/budget-enforcer/model_router.py;src/zephyr/model-profiler/model_discovery.py
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发;人工审查四图对齐报告
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读PG（零写入）;只读blueprint.md文件（零写入）;输出幂等(相同输入→相同输出);输出到generated/panorama_alignment_report.md
 # [MODIFY-GUARD] 修改需通过ARCH-053任务或后续维护任务
 # [STABILITY] evolving
@@ -223,7 +223,7 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
     每行可能有不同的 domain_id/design_maturity（跨域模块的正常现象）。
     每个 blueprint_id 聚合所有行，避免单行取值不稳定导致对齐误报：
     - domain_id: 多数投票（Counter.most_common），取代表性域
-    - design_maturity: 取最 design 的状态（design < prototype < production），
+    - design_maturity: 取最 design 的状态（design < production），
       与 _detect_state_drifts 聚合策略一致
     - build_status: 取第一个非空
     - entity_name: 取第一个非空 path（path 非空优先，ORDER BY 保证）

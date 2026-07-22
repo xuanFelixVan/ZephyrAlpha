@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.circuit_breaker; zephyr.security.adversarial_validation.models
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.trading.boot_hooks
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] detect_formal_files MUST be ms-cost (no YAML/import); write_trigger_record MUST be atomic; consumer MUST fail-closed on gate
 # [MODIFY-GUARD] formal header regex per project_memory 红蓝触发条件; event-driven via red_blue.trigger.queued topic
 # [STABILITY] evolving

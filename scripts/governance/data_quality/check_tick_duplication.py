@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_reader
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 真重复定义=全字段(14字段)相同; 禁止用 count()-uniqExact(排序键) 算"重复"; 只读查询不修改数据
 # [MODIFY-GUARD] 同步更新 trae_063_data_ops_discipline.yaml 中引用本脚本的 invariants
 # [STABILITY] evolving

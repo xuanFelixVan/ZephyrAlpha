@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.cli
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] re-export cli.main; 支持 python -m zephyr.data
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

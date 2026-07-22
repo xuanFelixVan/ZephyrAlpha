@@ -136,7 +136,7 @@ def get_all_domains(conn: PgConnExecuteWrapper) -> list[dict]:
 def get_domain_maturity_counts(conn: PgConnExecuteWrapper) -> dict[str, dict[str, int]]:
     """Query node maturity counts grouped by domain_id and design_maturity.
 
-    Returns: {domain_id: {"production": N, "design": N, "prototype": N, "active": N}}
+    Returns: {domain_id: {"production": N, "design": N, "active": N}}
     """
     cur = conn.execute(
         """SELECT domain_id, design_maturity, COUNT(*) AS cnt
@@ -177,7 +177,7 @@ def compute_maturity_level(counts: dict[str, int]) -> str:
     """Compute maturity level (L0-L3, 4-level simplified) from node maturity counts.
 
     L0: no nodes (Missing)
-    L1: only design or prototype nodes (Designing)
+    L1: only design nodes (Designing)
     L2: has production nodes but build_status NOT IN (active, stable) (Usable, unverified)
     L3: has production nodes with build_status IN (active, stable) (Verified)
 
@@ -185,9 +185,8 @@ def compute_maturity_level(counts: dict[str, int]) -> str:
     """
     production = counts.get("production", 0)
     design = counts.get("design", 0)
-    prototype = counts.get("prototype", 0)
     active = counts.get("active", 0)
-    total = production + design + prototype
+    total = production + design
 
     if total == 0:
         return "L0"
@@ -195,7 +194,7 @@ def compute_maturity_level(counts: dict[str, int]) -> str:
         return "L3"
     if production > 0:
         return "L2"
-    if design > 0 or prototype > 0:
+    if design > 0:
         return "L1"
     return "L0"
 
@@ -251,9 +250,8 @@ def generate_heatmap() -> str:
                 "capability_id": cap_id,
                 "production": counts.get("production", 0),
                 "design": counts.get("design", 0),
-                "prototype": counts.get("prototype", 0),
                 "active": counts.get("active", 0),
-                "total_nodes": counts.get("production", 0) + counts.get("design", 0) + counts.get("prototype", 0),
+                "total_nodes": counts.get("production", 0) + counts.get("design", 0),
             }
         )
 
@@ -369,8 +367,8 @@ def generate_heatmap() -> str:
     # Capability domain maturity summary
     lines.append("## 能力域成熟度汇总 / Capability Domain Maturity Summary")
     lines.append("")
-    lines.append("| 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | prototype | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |")
-    lines.append("|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    lines.append("| 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |")
+    lines.append("|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|")
 
     for cap in CAPABILITY_DOMAINS:
         cap_domains = [d for d in domain_data if d["capability_id"] == cap["id"]]
@@ -378,7 +376,6 @@ def generate_heatmap() -> str:
         total_nodes = sum(d["total_nodes"] for d in cap_domains)
         total_prod = sum(d["production"] for d in cap_domains)
         total_design = sum(d["design"] for d in cap_domains)
-        total_proto = sum(d["prototype"] for d in cap_domains)
 
         if cap_count > 0:
             avg_score = sum(MATURITY_LEVELS[d["maturity_level"]]["score"] for d in cap_domains) / cap_count
@@ -397,7 +394,7 @@ def generate_heatmap() -> str:
 
         lines.append(
             f"| {cap['id']} | {cap['name']} | {cap_count} | {total_nodes} | "
-            f"{total_prod} | {total_design} | {total_proto} | "
+            f"{total_prod} | {total_design} | "
             f"{avg_score:.2f} | {coverage} |"
         )
     lines.append("")
@@ -406,16 +403,16 @@ def generate_heatmap() -> str:
     lines.append("## 域成熟度明细 / Domain Maturity Detail")
     lines.append("")
     lines.append(
-        "| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | prototype | active | 成熟度 / Maturity | 覆盖度 / Coverage |"
+        "| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | active | 成熟度 / Maturity | 覆盖度 / Coverage |"
     )
-    lines.append("|--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    lines.append("|--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|")
     for d in domain_data:
         info = MATURITY_LEVELS[d["maturity_level"]]
         cap_name = d["capability_id"] or "—"
         lines.append(
             f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {cap_name} | "
             f"{d['layer_id']} | {d['total_nodes']} | "
-            f"{d['production']} | {d['design']} | {d['prototype']} | {d['active']} | "
+            f"{d['production']} | {d['design']} | {d['active']} | "
             f"{d['maturity_level']} {info['symbol']} | {info['coverage']} |"
         )
     lines.append("")
@@ -492,7 +489,7 @@ def _maturity_definition(level: str) -> str:
     """Return the definition text for a maturity level (4-level simplified)."""
     definitions = {
         "L0": "能力完全不存在，无设计无代码 / No nodes in domain",
-        "L1": "有设计文档或原型代码，未集成 / design_maturity=design or prototype",
+        "L1": "有设计文档，未集成 / design_maturity=design",
         "L2": "代码可用但未生产验证 / design_maturity=production, build_status NOT IN (active, stable)",
         "L3": "生产环境稳定运行 / design_maturity=production, build_status IN (active, stable)",
     }

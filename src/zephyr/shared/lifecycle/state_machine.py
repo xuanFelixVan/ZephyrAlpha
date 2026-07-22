@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-TASK_SYSTEM(task) ; MOD-INF-023(drift) ; MOD-INF-021(rollback) ; MOD-INF-019(skill) ; MOD-INF-025(a2a) ; MOD-INF-018(rbac) ; MOD-RESOURCE_OPTIMIZATION_ENGINE(resource) ; MOD-INF-015(telemetry)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 状态转换必须合法;转换守卫必须同步;命名冲突必须注册
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__; _state-machine-registry.yaml
 # [STABILITY] evolving

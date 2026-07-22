@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.schema.severity_types
 # [CONSUMERS] task_repo;query;transition
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] _ALLOWED_TRANSITIONS 不可变; 异常类层次稳定; _row_to_taskcard 字段映射完整
 # [MODIFY-GUARD] task_repo.py;query.py;transition.py（三模块共享基础设施）
 # [STABILITY] stable

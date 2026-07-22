@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] audit-orchestrator.integrity; replay_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 证据包不可变性; 签名后禁止修改
 # [MODIFY-GUARD] 证据格式变更必须同步 integrity.py
 # [STABILITY] evolving

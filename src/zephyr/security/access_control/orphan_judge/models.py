@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] db.py; report_generator.py; config_loader.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 数据模型是orphan_judge的类型SSoT; 不修改任何文件
 # [MODIFY-GUARD] 修改字段必须同步blueprint.md §4.2; 已有模型(Judgment/Verdict/LayerResult)的真源在judge.py,此处仅re-export
 # [STABILITY] evolving

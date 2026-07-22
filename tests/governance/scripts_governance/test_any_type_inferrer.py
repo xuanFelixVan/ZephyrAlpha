@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d7_code.any_type_inferrer
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试隔离——使用 tmp_path 构造虚拟文件，不扫描真实仓库
 # [MODIFY-GUARD]
 # [STABILITY] evolving

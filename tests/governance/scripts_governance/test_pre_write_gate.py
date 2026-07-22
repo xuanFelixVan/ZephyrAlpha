@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d5_architecture.pre_write_gate
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试隔离——mock SessionRegistry 源类，不触碰真实 .runtime/session_registry.json
 # [MODIFY-GUARD]
 # [STABILITY] evolving

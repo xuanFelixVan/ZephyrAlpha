@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] run_sync 永不因已有事件循环而抛 RuntimeError
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.finding_model; zephyr.gov_audit.__init__
 # [CONSUMERS] gates; orchestrator; pipeline
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 所有审计模块健康检查通过才允许操作; AdmissionResult为唯一准入判定结果
 # [MODIFY-GUARD] audit-orchestrator/blueprint.md; audit_admission_controller.py
 # [STABILITY] evolving

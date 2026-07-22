@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.archive.__init__
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TTL分级策略严格执行;成本超限->三级降级(CRITICAL/SEVERE/WARNING);SQLite backup使用RULE-ONE原子写入
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md;src/zephyr/system-telemetry/facade.py
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.__init__
 # [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.infrastructure.pipeline.layer_router
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Ports define structural interfaces only; no concrete implementations; no imports from zephyr.infrastructure.a2a_protocol.governance
 # [MODIFY-GUARD] blueprint.md §ports; pipeline/__init__.py __all__
 # [STABILITY] stable

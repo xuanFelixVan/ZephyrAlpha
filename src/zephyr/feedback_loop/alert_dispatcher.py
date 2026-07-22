@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.__init__
 # [CONSUMERS] zephyr.orchestrator.alert_handler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] severity 必须是 CRITICAL/HIGH/MEDIUM/LOW; 同一 event_id 不重复 dispatch
 # [MODIFY-GUARD] CT-FLE-ORC-001 协议变更必须同步更新 orchestrator/alert_handler
 # [STABILITY] evolving

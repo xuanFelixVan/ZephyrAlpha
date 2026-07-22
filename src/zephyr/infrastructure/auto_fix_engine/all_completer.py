@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-026(asset-inventory)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只添加缺失导出;不删除已有导出;不修改__all__顺序
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml all_completer段
 # [STABILITY] evolving

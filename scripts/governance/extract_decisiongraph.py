@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.decision_graph_reader (DecisionGraphReader); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection)
 # [CONSUMERS] 所有需要读取 decisiongraph 的 AI session
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读查询; 禁止 AI 直接 Read 大表; 提取输出必须可被 AI 安全消费
 # [MODIFY-GUARD] 对标 scripts/governance/extract_depgraph.py
 # [STABILITY] evolving

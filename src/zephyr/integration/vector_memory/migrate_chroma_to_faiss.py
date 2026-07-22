@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.integration.vector_memory.faiss_collection_manager; zephyr.integration.vector_memory.sqlite_metadata_store; zephyr.integration.vector_memory.collection_manager
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

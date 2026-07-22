@@ -6,7 +6,7 @@ from typing import Final
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] scripts/ide_health_service.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] script-manifest.yaml 是脚本基线唯一数据源; process_iter 必须同时检查 cmdline + cwd;
 # [MODIFY-GUARD] 修改分类阈值前必须确认与 zombie_scanner 的分类不重叠冲突
 # [STABILITY] evolving

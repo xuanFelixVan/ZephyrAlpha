@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.infra.observer; zephyr.shared.schema.base_config
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

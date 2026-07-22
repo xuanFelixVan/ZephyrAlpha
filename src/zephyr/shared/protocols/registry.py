@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS] zephyr.infrastructure.mcp_servers
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] ServiceRegistry is process-singleton; register() MUST be called before get(); no import from zephyr.data
 # [MODIFY-GUARD] Adding service keys requires updating D-DATA registration and D-INFRA consumers
 # [STABILITY] stable

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.model_discovery; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.intelligence.model_profiling.pipeline_routing.results_writer
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

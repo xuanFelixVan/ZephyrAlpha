@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.experiment.experiment_result
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

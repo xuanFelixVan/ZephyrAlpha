@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.drift_engine; zephyr.gov_drift.self_test_verifier; zephyr.gov_drift.drift_infrastructure; zephyr.gov_drift.self_check
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] CLI入口不可修改
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (subprocess)
 # [CONSUMERS] zephyr.governance.audit.cross_layer_contract_signature_reconciler; zephyr.governance.audit.blueprint_status_transition_reconciler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 纯函数——reconciler 共享 git show 工具模块，提取 cross_layer_contract_signature_reconciler 与 blueprint_status_transition_reconciler 公共 _git_show_file 函数，消除 FUNCTION-DUP gate 阻断（同目录同 name+body hash 重复函数）；不可达路径 fail-open（返回 None）；纯函数无副作用
 # [MODIFY-GUARD] 函数签名：git_show_file(repo_root, rel_path, ref) -> str | None
 # [STABILITY] evolving

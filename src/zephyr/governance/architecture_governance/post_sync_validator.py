@@ -4,7 +4,7 @@
 # [DEPENDENCIES] (none — stdlib only: shlex/subprocess/sys/re/pathlib)
 # [CONSUMERS] zephyr.governance.persistence.task_repo (L1 预防); scripts.governance.audit_post_sync_commands (L3 监控)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] post_sync_standard 命令校验逻辑的唯一真源（SSoT）；L1(task_repo.create/update) 与 L3(audit_post_sync_commands) 共同复用，禁止任何一方再行复制；返回 None=通过，str=失败原因（调用方决定抛异常或聚合报告）；仅校验含 .py 脚本的命令，非 .py（echo/git 等）跳过；--help 超时/失败不阻断（仅 flag 缺失与脚本不存在阻断）
 # [MODIFY-GUARD] validate_post_sync_command / _validate_single_sub_cmd / validate_post_sync_specific / validate_rollback_instructions — 任何分支变更必须同步 task_repo._validate_post_sync_commands + task_repo._validate_post_sync_extensions 与 audit_post_sync_commands._validate_one_command 的调用方语义；行为等价性由 tests/governance/shared/test_post_sync_validation.py 36 场景守门（R01-R24 红队 + R25-R27 mutation 反馈加固 + R28-R36 W3 孪生字段扩展），并经 scripts/governance/meta/mutation_test_post_sync_validator.py 17 变异 100% 杀灭验证
 # [STABILITY] evolving

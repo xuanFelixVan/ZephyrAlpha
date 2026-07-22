@@ -4,7 +4,7 @@
 # [DEPENDENCIES] akshare SDK (ak.macro_china_gdp/cpi/pmi/money_supply); zephyr.data.ch_reader
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 匿名访问；须断开 VPN（爬国内网站）；东财接口跳过（反爬）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

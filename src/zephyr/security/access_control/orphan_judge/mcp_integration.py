@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge; zephyr.governance.__init__
 # [CONSUMERS] MCP Server Tool Registry; FastMCP clients
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现MCP协议; 仅注册工具到MCP_TOOLS字典
 # [MODIFY-GUARD] MCP_TOOLS注册格式变更时同步此文件
 # [STABILITY] evolving

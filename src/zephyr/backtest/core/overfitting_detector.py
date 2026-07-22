@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 过拟合三维度三层; 样本外Sharpe<70%样本内->否决
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

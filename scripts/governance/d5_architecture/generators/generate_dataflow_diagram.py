@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.dataflowgraph_schema; _common (DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发;人工查看generated/dataflows/
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 输出幂等(相同输入→相同输出);只读dataflowgraph;输出到generated/dataflows/
 # [MODIFY-GUARD] 修改需通过ARCH-051任务或后续维护任务
 # [STABILITY] evolving
@@ -119,7 +119,6 @@ _ZH_MAP: dict[str, str] = {
     "backtest_internal": "回测内部",
     # --- build_status / design_maturity ---
     "design": "设计",
-    "prototype": "原型",
     "generated": "已生成",
     # --- pit_policy ---
     "strict": "严格",
@@ -219,7 +218,7 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
 
 
 def _maturity_tag(maturity: str | None) -> str:
-    """design_maturity 标签前缀，如 [design]/[production]/[prototype]。未设置返回空串。"""
+    """design_maturity 标签前缀，如 [design]/[production]。未设置返回空串。"""
     if maturity in _MATURITY_VALUES:
         return f"[{maturity}]"
     return ""
@@ -229,13 +228,10 @@ def _node_class(scope: str, maturity: str | None, is_job: bool) -> str:
     """根据 design_maturity（优先）和 scope 决定节点样式类。
 
     - design → 紫色（bsDesign）—— 标识设计态（蓝图规划，代码未写）
-    - prototype → 橙色（bsProto）—— 标识原型态（验证中）
     - production 或未设置 → 按 scope 着色（运营态）
     """
     if maturity == "design":
         return "jobDesign" if is_job else "dsDesign"
-    if maturity == "prototype":
-        return "jobProto" if is_job else "dsProto"
     # production 或未设置：使用 scope-based 着色
     if is_job:
         return "jobProd" if scope == "production" else "jobBacktest"
@@ -249,7 +245,7 @@ def _gen_mermaid(
     """生成 Mermaid flowchart LR 图表。
 
     :param scope_filter: None=全部, 'production'=仅生产, 'backtest_internal'=仅回测
-    :param maturity_filter: None=全部, 'production'=仅运营态, 'design'=仅设计态, 'prototype'=仅原型态
+    :param maturity_filter: None=全部, 'production'=仅运营态, 'design'=仅设计态
     :return: (mmd_text, ds_count, job_count, edge_count) —— 计数均为过滤后实数
     """
     lines = ["flowchart LR"]
@@ -277,7 +273,7 @@ def _gen_mermaid(
             label += f"<br/>CTR: {d['contract']}"
         if d["domain"]:
             label += f"<br/>[{_en_zh(d['domain'])}]"
-        # 议题1约束：蓝图仅 production/prototype 态显示（design 态代码未写、蓝图未建）
+        # 议题1约束：蓝图仅 production 态显示（design 态代码未写、蓝图未建）
         mid = d.get("module_id")
         if mid and d.get("maturity") != "design":
             label += f"<br/>蓝图: {mid}"
@@ -294,7 +290,7 @@ def _gen_mermaid(
         label = f"{tag}{_en_zh(j['name'], sep='<br/>')}"
         if j["trigger"]:
             label += f"<br/>trigger: {_en_zh(j['trigger'])}"
-        # 议题1约束：蓝图仅 production/prototype 态显示（design 态代码未写、蓝图未建）
+        # 议题1约束：蓝图仅 production 态显示（design 态代码未写、蓝图未建）
         mid = j.get("module_id")
         if mid and j.get("maturity") != "design":
             label += f"<br/>蓝图: {mid}"
@@ -328,9 +324,6 @@ def _gen_mermaid(
     # 设计态=紫色（对标 decision_index.md 的 bsPlanned，但用紫色以区分 dataflow 维度）
     lines.append("    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c")
     lines.append("    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c")
-    # 原型态=黄色（区别于回测橙色）
-    lines.append("    classDef dsProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17")
-    lines.append("    classDef jobProto fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17")
 
     return "\n".join(lines) + "\n", len(ds_list), len(job_list), edge_count
 
@@ -346,13 +339,11 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     prod_job = sum(1 for j in jobs if j["scope"] == "production")
     bt_job = sum(1 for j in jobs if j["scope"] == "backtest_internal")
 
-    # design_maturity 维度统计（运营态/设计态/原型态）
+    # design_maturity 维度统计（运营态/设计态）
     prod_m_ds = sum(1 for d in datasets if d.get("maturity") == "production")
     design_ds = sum(1 for d in datasets if d.get("maturity") == "design")
-    proto_ds = sum(1 for d in datasets if d.get("maturity") == "prototype")
     prod_m_job = sum(1 for j in jobs if j.get("maturity") == "production")
     design_job = sum(1 for j in jobs if j.get("maturity") == "design")
-    proto_job = sum(1 for j in jobs if j.get("maturity") == "prototype")
 
     now = datetime.now().isoformat(timespec="seconds")
 
@@ -394,15 +385,15 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # design_maturity 维度统计（对标 decision_index.md / depgraph 设计态/运营态机制）
     lines.append("### 设计态 / 运营态统计（design_maturity）")
     lines.append("")
-    lines.append(f"| 类型 | 运营态 (production) | 设计态 (design) | 原型态 (prototype) | 合计 |")
-    lines.append(f"|------|---------------------|-----------------|---------------------|------|")
-    lines.append(f"| Dataset | {prod_m_ds} | {design_ds} | {proto_ds} | {len(datasets)} |")
-    lines.append(f"| Job | {prod_m_job} | {design_job} | {proto_job} | {len(jobs)} |")
+    lines.append(f"| 类型 | 运营态 (production) | 设计态 (design) | 合计 |")
+    lines.append(f"|------|---------------------|-----------------|------|")
+    lines.append(f"| Dataset | {prod_m_ds} | {design_ds} | {len(datasets)} |")
+    lines.append(f"| Job | {prod_m_job} | {design_job} | {len(jobs)} |")
     lines.append("")
     lines.append(
         "> **设计态 vs 运营态 / Design vs Production**：`design_maturity` 字段区分——"
-        "`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行，"
-        "`prototype`=原型验证中。对标 depgraph 的设计态/运营态机制（decision_index.md）。"
+        "`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。"
+        "对标 depgraph 的设计态/运营态机制（decision_index.md）。"
     )
     lines.append("")
 
@@ -413,9 +404,8 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append(">")
-    lines.append("> **设计态/原型态优先着色（design_maturity）**：")
+    lines.append("> **设计态优先着色（design_maturity）**：")
     lines.append("> - **紫色** = 设计态节点（design_maturity=design，蓝图规划，代码未写）")
-    lines.append("> - **黄色** = 原型态节点（design_maturity=prototype，原型验证中）")
     lines.append(">")
     lines.append("> **运营态按 scope 着色（design_maturity=production）**：")
     lines.append("> - **蓝色矩形** = 生产 Dataset（dsProd）")
@@ -425,11 +415,11 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append(">")
     lines.append("> - `JOB -->|produces / 产出| DS` = Job 产出 Dataset")
     lines.append("> - `DS -->|consumed by / 被消费于| JOB` = Job 消费 Dataset")
-    lines.append("> - 节点标签前缀 `[design]`/`[production]`/`[prototype]` 标注 design_maturity")
+    lines.append("> - 节点标签前缀 `[design]`/`[production]` 标注 design_maturity")
     lines.append("")
 
-    # 全景图（设计态 + 运营态合并，标签标注 [design]/[production]/[prototype]）
-    lines.append("### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]/[prototype]）")
+    # 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）
+    lines.append("### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）")
     lines.append("")
     mmd_overview, o_ds, o_job, o_edge = _gen_mermaid(datasets, jobs, edges, scope_filter=None)
     lines.append(f"> 节点数: {o_ds} datasets / 数据集, {o_job} jobs / 作业, {o_edge} edges / 边")

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d10_performance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] OPS-2026062104
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只修正 BLUEPRINT 头部路径，不修改文件其他内容
 # [MODIFY-GUARD] SPECIAL_CASES 映射变更需 Owner 批准
 # [STABILITY] volatile

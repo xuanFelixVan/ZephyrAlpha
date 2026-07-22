@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] zephyr.orchestrator.agent_orchestrator; AutoRuntime Core
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] ThreadPoolExecutor并行执行; 每个脚本exit code独立采集; 超时60s/script
 # [MODIFY-GUARD] CT-ORC-SCRIPT-001 脚本执行协议变更必须同步更新CLI+contract
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.backtest.core.data_handler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] PIT三公理;Embargo期;AS OF JOIN;pit_consistency_test
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

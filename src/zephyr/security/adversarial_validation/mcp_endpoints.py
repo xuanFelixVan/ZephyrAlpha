@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.convergence_checker
 # [CONSUMERS] MCP Server; external AI Agents
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 4 MCP Tools: run_adversarial / list_scenarios / get_report / check_convergence; all return JSON-serializable dicts
 # [MODIFY-GUARD] Adding tool MUST register in get_tools() and implement handler; tool schema per MCP Tool protocol
 # [STABILITY] evolving

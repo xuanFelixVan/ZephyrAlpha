@@ -4,7 +4,7 @@
 # [DEPENDENCIES] (none — stdlib only)
 # [CONSUMERS] CI 门禁 / 手动回归
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读不修改真源 post_sync_validator.py（变异写入临时副本）；mutation score < THRESHOLD 返回非 0 阻断 CI；机械注入与 AI 盲区正交——打破"AI 写 Gate + AI 验 Gate"的自指悖论
 # [MODIFY-GUARD] 新增变异必须对应一个真实校验分支；find 字符串必须在真源中唯一
 # [STABILITY] evolving

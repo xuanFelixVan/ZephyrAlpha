@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models
 # [CONSUMERS] self_healer; fix_prioritizer
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] LLM 只做文本润色不判断; 不可用时降级为 detect-only; Token 使用追踪
 # [MODIFY-GUARD] 修改 prompt 必须同步 llm_bridge_prompt.yaml
 # [STABILITY] evolving

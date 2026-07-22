@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving
@@ -205,7 +205,7 @@ def _count_production_nodes_per_domain(dep: dict) -> dict[str, int]:
     """统计每个域的 production 节点数（ARCH-CAP-001 模块定义口径）。
 
     production 节点 = design_maturity='production' 的真实代码文件。
-    design/prototype 节点不计入模块容量（trae_055 ARCH-CAP-001）。
+    design 节点不计入模块容量（trae_055 ARCH-CAP-001）。
     """
     counts: dict[str, int] = {}
     for _node_id, node in dep.get("nodes", {}).items():
@@ -220,7 +220,7 @@ def cmd_summary(dep: dict, output: str | None) -> None:
 
     ARCH-CAP-001 要求按 production 节点口径统计模块数。
     production_nodes = design_maturity='production' 的节点数（真实代码文件）。
-    module_count = 全节点数（含 design+prototype，向后兼容保留）。
+    module_count = 全节点数（含 design，向后兼容保留）。
     """
     modules = _build_modules_view(dep)
     production_counts = _count_production_nodes_per_domain(dep)

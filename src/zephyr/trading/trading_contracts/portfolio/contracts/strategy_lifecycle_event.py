@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.strategy_lifecycle_event
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

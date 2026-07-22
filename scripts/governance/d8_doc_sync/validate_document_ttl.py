@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d8_doc_sync.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

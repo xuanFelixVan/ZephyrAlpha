@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py; injection_engine.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 4-level progressive escalation: FILE(1)->MODULE(2)->CROSS_MODULE(3)->SYSTEM(4); auto-abort when bypass_count reaches threshold for current level
 # [MODIFY-GUARD] Threshold values per blueprint §7.2; adding levels MUST update BlastRadiusLevel enum in models.py
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] self_healer; fix_prioritizer
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] LLM 只做文本润色不判断; 不可用时降级为 detect-only; Token 使用追踪
 # [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving

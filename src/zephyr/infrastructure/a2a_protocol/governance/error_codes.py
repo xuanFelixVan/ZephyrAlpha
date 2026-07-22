@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

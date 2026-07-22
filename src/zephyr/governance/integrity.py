@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.models; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.trust_bridge
 # [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 校验所有审计组件健康状态; 不通过则禁止审计操作
 # [MODIFY-GUARD] 新增审计组件必须在此注册健康检查
 # [STABILITY] evolving

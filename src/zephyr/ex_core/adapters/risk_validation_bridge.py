@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.adapters.risk_validation_bridge
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

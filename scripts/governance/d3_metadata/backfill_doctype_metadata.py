@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants; _shared.encoding
 # [CONSUMERS] manual batch backfill; stage-2 of doc_type root-cause fix
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只回填有 frontmatter 但无 doc_type 的 .md；路径判定仅用无歧义规则；原子写入
 # [MODIFY-GUARD]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.intelligence.model_evaluation.unified_memory_api
 # [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现KB逻辑; 仅桥接UnifiedMemoryAPI.write()+search()
 # [MODIFY-GUARD] UnifiedMemoryAPI API变更时同步此桥接
 # [STABILITY] evolving

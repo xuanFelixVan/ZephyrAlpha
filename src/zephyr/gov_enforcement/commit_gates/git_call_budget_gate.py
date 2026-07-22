@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] warn-only——检测 staged .py 中 subprocess.run(["git",...]) 在 for/while 循环内调用（逐文件 git 调用反模式）；命中返回 passed=True + warning detail（不阻断）；tests/ 豁免；AST 精确检测（parent map 遍历）；git diff 不可达 fail-open
 # [MODIFY-GUARD] gate_id="GIT-CALL-BUDGET"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

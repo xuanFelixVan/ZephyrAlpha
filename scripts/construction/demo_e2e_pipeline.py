@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.market_data.__init__; zephyr.governance.__init__; zephyr.signal_fundamental.__init__; zephyr.integration.contracts.__init__; zephyr.risk.__init__; zephyr.risk.risk_manager; zephyr.risk.stop_loss; zephyr.governance.core.__init__; zephyr.ex_core.__init__; zephyr.simulation.__init__; zephyr.security.llm_defense.llm_security.__init__; zephyr.intelligence.model_evaluation.implementations.default_inference_engine; zephyr.integration.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (subprocess, time, json, sys, os, pathlib)
 # [CONSUMERS] AI session 启动流程；session_worktree_start 可选调用
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 永不抛异常——所有检查返回 dict；失败项标记 status=warn/fail 不阻断
 # [MODIFY-GUARD] smoke test 独立脚本，无被引用方
 # [STABILITY] evolving

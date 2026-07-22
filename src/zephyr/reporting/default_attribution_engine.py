@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.observability_governance.analytics_base; zephyr.shared.contracts.performance_attribution_report
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

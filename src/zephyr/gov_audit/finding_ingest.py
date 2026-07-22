@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.finding_model; zephyr.gov_audit.writer; zephyr.shared.event_bus
 # [CONSUMERS] pipeline_runner.py; run_all.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] FindingIngest is the sole bridge between 144 governance scripts and audit-trail; every finding MUST pass through this class
 # [MODIFY-GUARD] Ingest format changes require Finding Schema JSONL compatibility verification
 # [STABILITY] evolving

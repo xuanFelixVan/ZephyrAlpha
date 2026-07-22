@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.local_replay; zephyr.data.ch_writer; zephyr.data.provider_base; zephyr.shared.observability.metrics
 # [CONSUMERS] zephyr.data.tick_subscriber
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 数据先落本地 WAL 段文件再异步排空到 CH（写入路径延迟稳定）；段落盘复用 local_replay.save_fallback（格式与回灌兼容）；drain 复用 local_replay.replay_batch；列过滤复用 ch_writer._get_table_columns_set；_segment/_cols_clause 加锁保护（add 与 stop/flush 跨线程）；WAL 容量 90% critical 背压阻断写入；P1-5 metrics 埋点覆盖 segments/wal_dir_bytes/backlog_files/drain_replayed/drain_failed
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

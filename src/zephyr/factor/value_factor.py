@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.factor.factor_base
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

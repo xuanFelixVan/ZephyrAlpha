@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;MOD-INF-023(drift-detector)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 配置为SSoT;只修复合并冲突标记和格式问题;不改变配置语义
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml config_fixer段
 # [STABILITY] evolving

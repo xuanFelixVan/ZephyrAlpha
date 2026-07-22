@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (importlib, subprocess, json, sys, os, time, pathlib); 无 zephyr 内部依赖（smoke test 必须独立可运行）
 # [CONSUMERS] AI session 启动流程（AGENTS.md 规则）；session_worktree_start 可选调用
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 永不抛异常——所有检查返回 dict 结构；失败项标记 status=warn/fail；AI 见 fail 必须 escalate 不可静默 workaround
 # [MODIFY-GUARD] smoke test 是独立脚本，无被引用方
 # [STABILITY] evolving

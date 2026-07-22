@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 100 Session冷启动共享单例缓存; 缓存不可变
 # [MODIFY-GUARD] 缓存Key变更必须同步 indexer.py
 # [STABILITY] evolving

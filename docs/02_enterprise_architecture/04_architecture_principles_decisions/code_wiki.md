@@ -4,8 +4,8 @@ title: "ZephyrAlpha Code Wiki / 代码百科"
 doc_type: architecture_view
 rule_form: declarative
 status: active
-version: 2.0.0
-date: 2026-07-13
+version: 2.1.0
+date: 2026-07-22
 owner: ZephyrAlpha-Owner
 ttl: permanent
 language: zh
@@ -17,7 +17,7 @@ tags: [code_wiki, architecture_overview, onboarding, semi_auto]
 
 # ZephyrAlpha Code Wiki
 
-> 版本: 2.0.0 | 生成日期: 2026-07-13 | 最后自动同步: 待生成器实现
+> 版本: 2.1.0 | 生成日期: 2026-07-22 | 最后自动同步: 待生成器实现
 > 本文档为 ZephyrAlpha 项目的结构化代码百科，涵盖整体架构、模块职责、关键类与函数、依赖关系及运行方式。
 >
 > **半自动维护机制**：本文档分"手工区"（叙述/解读，人工维护）与"自动区"（统计数据/清单，由生成器从 depgraph DB 同步）。
@@ -38,6 +38,7 @@ tags: [code_wiki, architecture_overview, onboarding, semi_auto]
   - [4.4 量化交易域](#44-量化交易域)
   - [4.5 共享与基础设施层](#45-共享与基础设施层)
   - [4.6 集成与安全层](#46-集成与安全层)
+  - [4.7 自治与编排层](#47-自治与编排层)
 - [5. 关键类与函数说明](#5-关键类与函数说明)
 - [6. 依赖关系](#6-依赖关系)
 - [7. 项目运行方式](#7-项目运行方式)
@@ -79,7 +80,7 @@ ZephyrAlpha 采用 **五层同心圆** 架构，灵感来自 Microsoft Magentic-
 │         │      │          │       │ Factor/  │
 │ audit/  │      │ scheduler│       │ Risk/    │
 │ drift/  │      │ provider │       │ Exec/    │
-│ kb/     │      │ ch_writer│       │ Portfolio│
+│ enforce │      │ ch_writer│       │ Portfolio│
 │ rule/   │      │          │       │          │
 └────┬────┘      └────┬─────┘       └────┬─────┘
      │                │                  │
@@ -133,9 +134,9 @@ ZephyrAlpha/
 │   ├── governance/              # 核心治理桥接层（8件套契约）/ Governance bridge layer (8-piece contracts)
 │   ├── gov_audit/               # 治理审计（审计追踪/法证审计）/ Governance audit (audit trail/forensic)
 │   ├── gov_drift/               # 漂移检测（概念/配置/回归漂移）/ Drift detection (concept/config/regression)
-│   ├── gov_kb/                  # 知识库治理（5门禁管线）/ KB governance (5-gate pipeline)
-│   ├── gov_enforcement/         # 规则执行（门禁/CBAC/合规）/ Rule enforcement (gate/CBAC/compliance)
+│   ├── gov_enforcement/         # 规则执行（rule_bridge/commit_gates~80/rule_enforcement/behavioral_admission）/ Rule enforcement
 │   ├── gov_code_quality/        # 代码质量（去重/门禁/AST）/ Code quality (dedup/gate/AST)
+│   ├── gov_rule/                # 规则宪法（constitutional_update）/ Rule constitution
 │   ├── data/                    # 数据源集成器（CLI+调度）/ Data source integrator (CLI + scheduler)
 │   ├── backtest/                # 回测引擎（PIT/WFA/决策门控）/ Backtest engine (PIT/WFA/decision gate)
 │   ├── factor/                  # 因子框架（抽象+注册表+示例）/ Factor framework (abstract + registry + examples)
@@ -149,13 +150,29 @@ ZephyrAlpha/
 │   ├── infrastructure/          # 基础设施（cost/event_store/sla）/ Infrastructure (cost/event_store/sla)
 │   ├── integration/             # 集成层（MCP/LLM桥/端口协议）/ Integration (MCP/LLM bridge/ports)
 │   ├── security/                # 安全层（LLM防御 L0-L8）/ Security (LLM defense L0-L8)
-│   ├── autonomy_core/           # 自治核心（技能/触发路由）/ Autonomy core (skills/trigger routing)
+│   ├── autonomy_core/           # 自治核心（技能/触发路由/上下文/阶段规划）/ Autonomy core (skills/trigger routing)
+│   ├── orchestrator/            # Agent 编排（回滚/故障容错/生命周期/质量评估）/ Agent orchestration
+│   ├── feedback_loop/           # 反馈循环（收集器/进化/验证器/安全门）/ Feedback loop
+│   ├── intelligence/            # 智能分析（模型漂移/性能分析）/ Intelligence analysis
+│   ├── ml_train/                # 机器学习训练（训练器/推理基类）/ ML training
+│   ├── simulation/              # 模拟管线 / Simulation pipeline
+│   ├── reporting/               # 报告分析 / Reporting
 │   ├── frontend/dashboard/      # Panel 仪表盘 / Panel dashboard
-│   └── orchestrator/            # Agent 编排 / Agent orchestration
-├── scripts/                     # 治理与工具脚本 / Governance & tooling scripts
-│   ├── governance/              # 12 维度审计扫描器（317 脚本）/ 12-dimension audit scanners (317 scripts)
+│   ├── cross_asset/             # 跨资产（桩）/ Cross-asset (stub)
+│   ├── alt_data/                # 替代数据（桩）/ Alt data (stub)
+│   ├── compliance/              # 合规（桩）/ Compliance (stub)
+│   ├── data_eng/                # 数据工程（桩）/ Data engineering (stub)
+│   ├── ex_sor/                  # 执行 SOR（桩）/ Execution SOR (stub)
+│   ├── ml_serve/                # ML 推理服务（桩）/ ML serving (stub)
+│   └── research/                # 研究域（桩）/ Research (stub)
+├── scripts/                     # 治理与工具脚本（590 脚本）/ Governance & tooling scripts (590 scripts)
+│   ├── governance/              # 12 维度审计扫描器套件 / 12-dimension audit scanners
+│   ├── arch_guard/              # 架构守卫（17 适应度函数）/ Architecture guard (17 fitness functions)
 │   ├── mcp/                     # MCP 服务器集群管理 / MCP server cluster management
-│   └── arch_guard/              # 架构守卫 / Architecture guard
+│   ├── backup/                  # 灾备恢复（restic + MinIO）/ Backup & recovery (restic + MinIO)
+│   ├── hooks/                   # Git 钩子 / Git hooks
+│   ├── pre_commit/              # Pre-commit 门禁 / Pre-commit gates
+│   └── git_commit.py            # 唯一合法 git commit CLI / Sole legal git commit CLI
 ├── config/                      # 配置文件（平铺）/ Config files (flat layout)
 ├── docs/                        # 项目文档 / Project documentation
 ├── tests/                       # 测试代码（按功能域归类）/ Tests (grouped by domain)
@@ -210,7 +227,8 @@ python -m zephyr.trading
 
 - **任务系统钩子**：`auto_unblock_dependents`(p50)、`auto_retry_on_failure`(p60)、`triple_alignment_on_verified`(p70)、`cleanup_task_processes`(p45)、`orc_vms_archive`(p48)、`kb_vms_sync`(p47)、`rbk_gate_freeze`(p55)
 - **事件驱动钩子**：`escalation_check_event`、`timeout_check_event`、`budget_delta_event`、`session_startup_init_budget`、`session_shutdown_budget_close`、`triple_align_event`
-- **守护子系统**：IdeHealthDaemon、RollbackBootIntegration(WAL)、SLAMonitor、Notifier、HealthAggregator、RedBlueTriggerConsumer、MCP 集群（10 服务器 DAG 拓扑启动）
+- **守护子系统**：IdeHealthDaemon、RollbackBootIntegration(WAL)、SLAMonitor、Notifier、HealthAggregator、RedBlueTriggerConsumer、MCP 集群（12 服务器 DAG 拓扑启动）、F5 四组件
+- **EventBus 消费方**：9 个订阅（budget_engine/f5/rollback/pipeline/auto_fix/validator/autopilot/drift_bridge/auto_task_generator）
 
 #### 三层 AI 工作分配
 
@@ -241,9 +259,12 @@ python -m zephyr.trading
 | 模块 | 文件 | 职责 |
 |------|------|------|
 | `CapabilityLookup` | [capability_lookup.py](../../../src/zephyr/governance/capability_lookup.py) | 能力→真源文件反查引擎（消费者 76+） |
-| `DepgraphSchema` | [depgraph_schema.py](../../../src/zephyr/governance/depgraph_schema.py) | depgraph PostgreSQL DDL + 版本迁移（11 表，v6~v16） |
-| `IntegrityGuard` | [integrity.py](../../../src/zephyr/governance/integrity.py) | 审计组件健康检查守卫（Safety H） |
+| `DepgraphSchema` | [depgraph_schema.py](../../../src/zephyr/governance/depgraph_schema.py) | depgraph PostgreSQL DDL + 版本迁移 + 自愈连接池（`_SelfHealingPool`） |
+| `IntegrityGuard` | [integrity.py](../../../src/zephyr/governance/integrity.py) | 审计组件健康检查守卫（Merkle 树完整性） |
 | `MerkleAggregator` | [integrity.py](../../../src/zephyr/governance/integrity.py) | Merkle 小时聚合（消费者 71+） |
+| `TaskRepository` | [persistence/task_repo.py](../../../src/zephyr/governance/persistence/task_repo.py) | 任务系统唯一真源（10 状态机，SQLite） / Task system SSoT (10-state machine) |
+| `StrategyBase` | [strategies/strategy_base.py](../../../src/zephyr/governance/strategies/strategy_base.py) | 策略抽象基类 + `StrategyRegistry`（OCP-002 扩展点） / Strategy abstract base + Registry |
+| `SimulationBroker` | [adapters/simulation_broker.py](../../../src/zephyr/governance/adapters/simulation_broker.py) | 模拟券商（含滑点/佣金，真源；`ex_core/adapters/` 为 re-export） / Simulation broker (source of truth) |
 
 #### 4.2.2 治理审计（gov_audit）
 
@@ -273,19 +294,29 @@ Git 原生运行时漂移检测，39 个强制检测器（全部必须执行）+
 | `Reconciler` | [reconciler.py](../../../src/zephyr/gov_drift/reconciler.py) | 自动调和：快照→修复→验证→回滚闭环 |
 | `DriftStateMachine` | [state_machine.py](../../../src/zephyr/gov_drift/state_machine.py) | 漂移事件状态机 |
 
-#### 4.2.4 知识库治理（gov_kb）
+#### 4.2.4 规则执行（gov_enforcement）
 
-*半自动（类表自动扫描 + 职责描述手工）| 数据源：src/zephyr/gov_kb/*.py*
+*半自动（类表自动扫描 + 职责描述手工）| 数据源：src/zephyr/gov_enforcement/**/*.py*
 
-**位置**：src/zephyr/gov_kb/ | **蓝图**：MOD-KB-001 | **域**：D_GOV_KB
+**位置**：[src/zephyr/gov_enforcement/](../../../src/zephyr/gov_enforcement/) | **域**：D_GOV_ENFORCEMENT
 
-5 门禁（G1~G5）知识管线 + 冷启动 Bootstrap。
+规则执行引擎，包含 4 个子目录：
+
+| 子目录 | 职责 | 代表性类/文件 |
+|--------|------|--------------|
+| `rule_bridge/` | 规则桥接（session_worktree / GitCommitGateway） | `session_worktree.py`、`git_commit_gateway.py` |
+| `commit_gates/` | ~80 个 commit 门禁（AST/diff/路径/命名/依赖等维度的提交前检查） | `blueprint_format_gate.py`、`depgraph_pre_registration_gate.py`、`capability_lookup_required_gate.py` 等 |
+| `rule_enforcement/` | 规则强制执行 | `rule_engine.py` |
+| `behavioral_admission/` | 行为准入控制 | `behavioral_admission.py` |
+
+**关键类**：
 
 | 类 | 文件 | 职责 |
 |----|------|------|
-| `IngestGate` | ingest.py | G1 入库门禁（格式/frontmatter/去重/注入防护） |
-| `KnowledgeEngine` | knowledge_engine.py | 知识条目存储+倒排索引搜索 |
-| `Bootstrap` | bootstrap.py | 冷启动引擎（扫描文档→分段→脱敏→G1~G5 注入） |
+| `GitCommitGateway` | [rule_bridge/git_commit_gateway.py](../../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py) | 全项目唯一合法 git commit 入口（串行锁 `_GlobalCommitLock` + stash 隔离 + GW 标记） / Sole legal git commit entry |
+| `session_worktree_start/commit/merge/abort` | [rule_bridge/session_worktree.py](../../../src/zephyr/gov_enforcement/rule_bridge/session_worktree.py) | worktree 会话隔离（君子协定 FP-ISO.4C） / Worktree session isolation |
+
+> **铁律**：裸 `git commit` 被 pre-commit gate 硬阻断；所有提交必须通过 `GitCommitGateway` 或 `session_worktree_commit`。
 
 #### 4.2.5 治理脚本系统
 
@@ -293,7 +324,7 @@ Git 原生运行时漂移检测，39 个强制检测器（全部必须执行）+
 
 **位置**：[scripts/governance/](../../../scripts/governance/) | **蓝图**：MOD-INF-005
 
-12 维度审计扫描器套件（317 脚本），入口 `run_all.py`，~60 秒全量扫描。
+12 维度审计扫描器套件（`script_manifest.yaml` 记录 590 脚本），入口 `run_all.py`，~60 秒全量扫描。
 
 <!-- AUTO-START:governance_script_counts -->
 | 维度 | 职责 | 脚本数 |
@@ -497,7 +528,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `BlueprintSearchProtocol` 等 | [ports.py](../../../src/zephyr/integration/ports.py) | `@runtime_checkable Protocol` 接口（解耦 pipeline→mcp 依赖链） |
 | `LLMBridge` | [llm_bridge.py](../../../src/zephyr/integration/llm_bridge.py) | LLM 修复文本生成（不可用时降级为模板） |
 
-**MCP 服务器集群**（[config/mcp.json](../../../config/mcp.json)）：10 个服务器（task_manager / knowledge_base / gate_engine / session_handoff / intent_router / sentinel_server / blueprint_search / sandbox / governance / vector_memory / red_blue_validator），网关提供 Auth/ACL + RateLimit + Route + Audit + Degrade。
+**MCP 服务器集群**（[config/mcp.json](../../../config/mcp.json)）：12 个服务器（task_manager / knowledge_base / gate_engine / sentinel_server / blueprint_search / sandbox / governance / vector_memory / rule_discovery / doc_guard / telemetry / gateway），网关提供 Auth/ACL + RateLimit + Route + Audit + Degrade。
 
 #### 4.6.2 安全层（security）
 
@@ -517,6 +548,38 @@ LLM 防御 L0-L8 九层纵深防御栈。
 **防御层**：L0 供应链 / L1 输入 / L2 提示保护 / L2a 进程沙箱 / L3 输出 / L4 Agent / L5 资源保护 / L6 数据流+可观测性 / L8 合规+多 Agent。
 
 > **RULE-LSG-001 铁律**：所有 LLM 调用必须经过 `LSGSecurityGateway`，禁止裸调任何 LLM API。运行时拦截器（[sitecustomize.py](../../../sitecustomize.py)）在解释器启动时自动安装，monkey-patch openai/anthropic/litellm/langchain。
+
+---
+
+### 4.7 自治与编排层
+
+*半自动（类表自动扫描 AST + 职责描述手工）| 数据源：src/zephyr/autonomy_core/*.py + src/zephyr/orchestrator/*.py*
+
+#### 4.7.1 自治核心（autonomy_core）
+
+**位置**：[src/zephyr/autonomy_core/](../../../src/zephyr/autonomy_core/) | **域**：D_AUTONOMY
+
+自治技能注册与触发路由，支持自然语言意图→技能匹配→阶段规划。
+
+| 类 | 文件 | 职责 |
+|----|------|------|
+| `SkillRegistry` | [skill_registry.py](../../../src/zephyr/autonomy_core/skill_registry.py) | 技能注册表（声明式注册 + 模糊匹配） |
+| `TriggerRouter` | [trigger_router.py](../../../src/zephyr/autonomy_core/trigger_router.py) | 触发路由（事件→handler 映射，6 触发器类型） |
+| `ContextManager` | [context_manager.py](../../../src/zephyr/autonomy_core/context_manager.py) | 上下文管理（会话级状态维护） |
+| `PhasedPlanner` | [phased_planner.py](../../../src/zephyr/autonomy_core/phased_planner.py) | 阶段规划（多步骤任务拆分） |
+
+#### 4.7.2 Agent 编排（orchestrator）
+
+**位置**：[src/zephyr/orchestrator/](../../../src/zephyr/orchestrator/) | **域**：D_ORCHESTRATOR
+
+Agent 生命周期编排，含回滚、故障容错、质量评估。
+
+| 类 | 文件 | 职责 |
+|----|------|------|
+| `RollbackManager` | [rollback_manager.py](../../../src/zephyr/orchestrator/rollback_manager.py) | 回滚管理（WAL 驱动，快照→恢复） |
+| `FaultTolerance` | [fault_tolerance.py](../../../src/zephyr/orchestrator/fault_tolerance.py) | 故障容错（重试/降级/熔断） |
+| `LifecycleOrchestrator` | [lifecycle_orchestrator.py](../../../src/zephyr/orchestrator/lifecycle_orchestrator.py) | 生命周期编排（Agent 创建→运行→销毁） |
+| `QualityEvaluator` | [quality_evaluator.py](../../../src/zephyr/orchestrator/quality_evaluator.py) | 质量评估（多维度打分） |
 
 ---
 
@@ -691,8 +754,7 @@ market_data (NormalizedMarketData CTR-001)
 governance/ (桥接层, G-CT-001~008 契约)
     ├─ gov_audit (审计追踪, 漂移/脚本发现的汇聚点)
     ├─ gov_drift (漂移检测 → 发现回流 gov_audit)
-    ├─ gov_kb (知识管线, 依赖 gov_enforcement.gate_engine)
-    ├─ gov_enforcement (规则执行, 共享门禁基础设施)
+    ├─ gov_enforcement (规则执行, ~80 commit_gates + GitCommitGateway + session_worktree)
     ├─ gov_rule / gov_code_quality (迁移子域)
     └─ scripts/governance/ (12 维审计扫描, 消费治理事实)
 ```
@@ -852,7 +914,7 @@ powershell -File scripts\start_scheduler.ps1
 *半自动（服务器数自动同步 + 命令手工）| 数据源：config/mcp.json*
 
 ```bash
-python scripts\mcp\launcher.py           # 启动 10 个 MCP 服务器（DAG 拓扑序）
+python scripts\mcp\launcher.py           # 启动 12 个 MCP 服务器（DAG 拓扑序）
 python scripts\mcp\launcher.py --dry-run # 仅打印启动计划
 python scripts\mcp\status_all.py         # 查看运行状态
 python scripts\mcp\stop_all.py           # 停止所有 MCP 服务器
@@ -933,7 +995,7 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 
 | 文件 | 用途 |
 |------|------|
-| [config/mcp.json](../../../config/mcp.json) | MCP 服务器注册表（10 服务器 + 网关策略） |
+| [config/mcp.json](../../../config/mcp.json) | MCP 服务器注册表（12 服务器 + 网关策略） |
 | [config/trigger_router.yaml](../../../config/trigger_router.yaml) | 事件驱动路由表（6 触发器 + handler + 安全等级） |
 | [config/sla_targets.yaml](../../../config/sla_targets.yaml) | SLA 目标（RTO/RPO） |
 | [config/risk_params.yaml](../../../config/risk_params.yaml) | 风险参数 |
@@ -962,6 +1024,9 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | PIT 铁律 / PIT iron rule | 回测零前瞻偏差 + 三平面一致性 + Embargo 期 / Backtest zero lookahead + 3-plane consistency + embargo |
 | 容量治理 / Capacity governance | 单域 production_nodes ≤150（ARCH-CAP-002）/ ≤150 nodes per domain |
 | Git 提交 / Git commit | 所有 commit 通过 session_worktree 流程或 GitCommitGateway / Via session_worktree or GitCommitGateway |
+| Worktree 隔离 / Worktree isolation | 一个任务=1次 start + 多次 Edit + 1次 commit + 1次 merge / One task = start + edits + commit + merge |
+| 能力反查 / Capability lookup | 写 src/zephyr 业务代码前 MUST 调用能力反查（MCP 或 Python API）/ Must lookup capability before writing code |
+| 数据操作 / Data ops | 破坏性 DB 操作前 MUST 三步验证（必要性+真实性+可逆性）/ 3-step verification before destructive DB ops |
 
 ---
 

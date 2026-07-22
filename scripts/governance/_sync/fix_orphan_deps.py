@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance._sync.check_p0_status
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

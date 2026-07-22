@@ -4,7 +4,7 @@
 # [DEPENDENCIES] none（5.152 #15 Protocol 解耦；原 zephyr.gov_audit.anomaly TYPE_CHECKING 依赖已 Protocol 化）
 # [CONSUMERS] rollback包内所有模块
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] G-CT-002 Rollback 消费端接口契约
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

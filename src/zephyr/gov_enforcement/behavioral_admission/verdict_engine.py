@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.models
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-031(auto-fix-engine);zephyr.gov_enforcement.behavioral_admission.admission_controller
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] VerdictLevel三态判定不可扩展；GraduatedLevel升级矩阵由protection_level+gate+violations联合决定
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving

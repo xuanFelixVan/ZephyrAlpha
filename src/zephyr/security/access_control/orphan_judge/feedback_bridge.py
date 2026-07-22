@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(误判反馈)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现反馈逻辑; 仅桥接FeedbackLoop.analyze_pending()+generate_proposals()
 # [MODIFY-GUARD] FeedbackLoop API变更时同步此桥接
 # [STABILITY] evolving

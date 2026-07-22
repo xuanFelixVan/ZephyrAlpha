@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.integration.__init__; zephyr.shared.models; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

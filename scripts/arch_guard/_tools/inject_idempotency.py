@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.arch_guard._tools.build_ocp_manifest
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

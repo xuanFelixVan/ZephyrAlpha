@@ -68,7 +68,6 @@ def get_maturity_stats(conn: PgConnExecuteWrapper) -> list[dict]:
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id) as total,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'production') as production,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'design') as design,
-                  (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'prototype') as prototype,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'scaffold_placeholder') as scaffold
            FROM domains d
            ORDER BY d.domain_id"""
@@ -80,7 +79,6 @@ def get_maturity_stats(conn: PgConnExecuteWrapper) -> list[dict]:
             "total": r["total"],
             "production": r["production"],
             "design": r["design"],
-            "prototype": r["prototype"],
             "scaffold": r["scaffold"],
         }
         for r in cur.fetchall()
@@ -132,7 +130,6 @@ def generate_design_vs_production() -> str:
     total_nodes = sum(d["total"] for d in domain_stats)
     total_production = sum(d["production"] for d in domain_stats)
     total_design = sum(d["design"] for d in domain_stats)
-    total_prototype = sum(d["prototype"] for d in domain_stats)
     total_scaffold = sum(d["scaffold"] for d in domain_stats)
 
     lines.append("## 全局统计")
@@ -142,7 +139,6 @@ def generate_design_vs_production() -> str:
     if total_nodes > 0:
         lines.append(f"| production（生产态） | {total_production} | {total_production / total_nodes * 100:.1f}% |")
         lines.append(f"| design（设计态） | {total_design} | {total_design / total_nodes * 100:.1f}% |")
-        lines.append(f"| prototype（原型态） | {total_prototype} | {total_prototype / total_nodes * 100:.1f}% |")
         lines.append(
             f"| scaffold_placeholder（脚手架） | {total_scaffold} | {total_scaffold / total_nodes * 100:.1f}% |"
         )
@@ -162,13 +158,13 @@ def generate_design_vs_production() -> str:
     # 各域统计
     lines.append("## 各域设计成熟度统计")
     lines.append("")
-    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 脚手架 / Scaffold | 生产化率 / Production Rate |")
-    lines.append("|------|--------|:---:|:---:|:---:|:---:|:---:|:---:|")
+    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 脚手架 / Scaffold | 生产化率 / Production Rate |")
+    lines.append("|------|--------|:---:|:---:|:---:|:---:|:---:|")
     for d in domain_stats:
         production_rate = f"{d['production']/d['total']*100:.1f}%" if d["total"] > 0 else "N/A"
         lines.append(
             f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['total']} | "
-            f"{d['production']} | {d['design']} | {d['prototype']} | {d['scaffold']} | "
+            f"{d['production']} | {d['design']} | {d['scaffold']} | "
             f"{production_rate} |"
         )
     lines.append("")

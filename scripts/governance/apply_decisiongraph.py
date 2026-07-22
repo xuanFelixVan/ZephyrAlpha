@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); zephyr.governance.persistence.decision_graph_reader (DecisionGraphReader)
 # [CONSUMERS] AI 写入 decisiongraph 节点/边时调用（设计态→运营态迁移）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] pg_advisory_lock 写锁; build_status 单调推进; DEC-INV-001~005 校验; 事务回滚
 # [MODIFY-GUARD] 对标 scripts/governance/apply_depgraph.py
 # [STABILITY] evolving

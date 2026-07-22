@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.behavioral_admission.admission_controller
 # [CONSUMERS] GovernanceServer;run_all.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 响应状态必须与AdmissionDecision一致;REJECTED必须包含原因
 # [MODIFY-GUARD] MCP协议格式变更需同步mcp/gateway_server.py
 # [STABILITY] evolving

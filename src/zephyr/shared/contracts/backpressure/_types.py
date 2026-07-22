@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] zephyr.shared.contracts.backpressure.resume; zephyr.shared.contracts.backpressure.pause; zephyr.shared.contracts.backpressure.throttle
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

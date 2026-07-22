@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.contracts (RBACAuditBridge)
 # [CONSUMERS] tests.governance.test_p0_i2_construction_order
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] G-CT-001 RBAC 契约
 # [MODIFY-GUARD] blueprint.md §4
 # [STABILITY] evolving

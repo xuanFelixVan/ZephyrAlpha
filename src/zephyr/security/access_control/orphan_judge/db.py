@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.security.access_control.orphan_judge.models
 # [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 使用项目级SQLite连接(get_db_connection); 表judgment_records结构不可变
 # [MODIFY-GUARD] 修改表结构必须同步blueprint.md §5.1; 修改DB_PATH必须同步sqlite_schema.py
 # [STABILITY] evolving

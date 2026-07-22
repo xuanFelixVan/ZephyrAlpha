@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__; zephyr.autonomy_core.__init__
 # [CONSUMERS] AutoRuntime Core sync phase
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 增量按created_at > since检测; 全量since=None; VMS不可用降级不阻塞
 # [MODIFY-GUARD] CT-KB-VMS-001 集合映射变更同步更新collection_manager
 # [STABILITY] evolving

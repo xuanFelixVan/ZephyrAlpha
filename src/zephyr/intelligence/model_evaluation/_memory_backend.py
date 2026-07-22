@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS] zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.integration.vector_memory.vms_memory_backend
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MemoryBackend Protocol signature must not change without updating all implementors
 # [MODIFY-GUARD] changes here affect unified_memory_api.py + vms_memory_backend.py + all backend implementors
 # [STABILITY] stable

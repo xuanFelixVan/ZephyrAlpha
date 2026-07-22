@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.signal_fundamental.strategy.implementations.default_capital_allocator
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

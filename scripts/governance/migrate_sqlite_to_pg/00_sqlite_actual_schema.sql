@@ -291,7 +291,7 @@ CREATE TABLE "nodes" (
     file_header_score        INTEGER DEFAULT 0,
     tags                     TEXT,
     architecture_layer       TEXT,
-    design_maturity          TEXT DEFAULT 'production' CHECK(design_maturity IN ('design','production','prototype')),
+    design_maturity          TEXT DEFAULT 'production' CHECK(design_maturity IN ('design','production')),
     deployment_lifecycle     TEXT DEFAULT 'stable',
     trust_zone               TEXT DEFAULT 'trusted_core',
     license                  TEXT DEFAULT 'Internal',

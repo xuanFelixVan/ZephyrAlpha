@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.tiered_storage
 # [CONSUMERS] audit-orchestrator.bridge; retention
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现存储逻辑; 仅桥接TieredStorage
 # [MODIFY-GUARD] TieredStorage API变更时同步此桥接
 # [STABILITY] evolving

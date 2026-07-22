@@ -182,11 +182,14 @@ class TestDetectStateDrifts:
         assert _detect_state_drifts(nodes) == []
 
     def test_no_drift_when_maturity_differs_across_graphs(self):
-        """四图 design_maturity 不一致 → 不再报漂移（各图维度不同是正常的）。"""
+        """四图 design_maturity 不一致 → 不再报漂移（各图维度不同是正常的）。
+
+        ARCH-MM-002: design_maturity 只有 design/production 两态。
+        """
         nodes = [
             _make_node("MOD-X", "depgraph", design_maturity="design"),
             _make_node("MOD-X", "dataflow", design_maturity="production"),
-            _make_node("MOD-X", "decision", design_maturity="prototype"),
+            _make_node("MOD-X", "decision", design_maturity="production"),
             _make_node("MOD-X", "blueprint", design_maturity="design"),
         ]
         assert _detect_state_drifts(nodes) == []
@@ -212,7 +215,7 @@ class TestDetectStateDrifts:
     def test_drift_when_blueprint_missing_design_maturity(self):
         """blueprint 缺 design_maturity 字段 → 报字段缺失。"""
         nodes = [
-            _make_node("MOD-X", "depgraph", design_maturity="prototype"),
+            _make_node("MOD-X", "depgraph", design_maturity="production"),
             _make_node("MOD-X", "blueprint", design_maturity=None),
         ]
         drifts = _detect_state_drifts(nodes)
@@ -223,8 +226,8 @@ class TestDetectStateDrifts:
     def test_no_drift_when_blueprint_has_maturity(self):
         """blueprint 有 design_maturity 字段 → 不报。"""
         nodes = [
-            _make_node("MOD-X", "depgraph", design_maturity="prototype"),
-            _make_node("MOD-X", "blueprint", design_maturity="prototype"),
+            _make_node("MOD-X", "depgraph", design_maturity="production"),
+            _make_node("MOD-X", "blueprint", design_maturity="production"),
         ]
         assert _detect_state_drifts(nodes) == []
 

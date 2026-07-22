@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d8_doc_sync.sync_yaml_to_depgraph; scripts.governance._shared.constants
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试隔离——使用 __guc_fix_test_* 前缀的测试行，结束时强制清理（escape hatch）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
@@ -19,7 +19,7 @@
   1. protect_dataflow_design_maturity() 触发器函数使用 current_setting(..., true) 而非 SHOW
   2. protect_decision_design_maturity() 触发器函数使用 current_setting(..., true) 而非 SHOW
   3. sync_dataflow_registry(cur) 完整执行成功（不再因 GUC 未注册而失败）
-  4. DELETE design/prototype 行被 ARCH-053 阻断
+  4. DELETE design 行被 ARCH-053 阻断（ARCH-MM-002: prototype 已删除，仅保护 design）
   5. UPDATE design 行降级被 ARCH-053 阻断
   6. 逃生通道 SET app.allow_design_maturity_delete=on 正常工作
 

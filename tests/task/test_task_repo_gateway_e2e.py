@@ -4,7 +4,7 @@
 # [DEPENDENCIES] tests.__init__; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 端到端链路测试——任务COMPLETED→网关→提交→清理；异常回退；各状态处理
 # [MODIFY-GUARD]
 # [STABILITY] evolving

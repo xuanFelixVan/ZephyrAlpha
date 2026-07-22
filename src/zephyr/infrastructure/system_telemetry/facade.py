@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] auto_bootstrap.py; zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] fail-closed on write; test_mode=True silences all outbound; shutdown() reverses init order; background scheduler daemon thread
 # [MODIFY-GUARD] __init__.py; health/; alerts/; profiles/; schema/; auto_bootstrap.py
 # [STABILITY] evolving

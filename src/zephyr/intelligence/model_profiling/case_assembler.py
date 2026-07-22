@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.intelligence.model_profiling.exam_test_cases
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 仅读白名单目录；埋针标记不暴露给被测模型（判分侧用 expected_* 字段）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

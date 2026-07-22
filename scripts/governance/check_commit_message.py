@@ -6,7 +6,7 @@
 # [DEPENDENCIES] stdlib (json, os, re, subprocess, sys, pathlib)
 # [CONSUMERS] .github/workflows/commit_message_guard.yml
 # [STARTUP] event_driven  GitHub Actions pull_request 事件自动触发（非 manual）
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 零项目依赖（纯 stdlib，CI 无需安装项目即可运行）；merge commit 豁免；[GW:session_id] 标记 + session_id 合法性校验；CI 模式（registry 不存在）降级为 session_id 格式校验
 # [MODIFY-GUARD] _GW_MARKER_RE / _SESSION_ID_RE / _REGISTRY_PATH / _WHITELIST_TYPES / _MERGE_PREFIX_RE
 # [STABILITY] evolving

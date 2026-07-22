@@ -4,7 +4,7 @@
 # [DEPENDENCIES] _shared.constants
 # [CONSUMERS] validate_mutation_testing.py（false_negative_cases/reconciliation_registry_cases.yaml 的 verifier）
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] --warn-only 始终 exit 0（非阻断）；importlib 加载 SSoT 绕过 zephyr.* import 链
 # [MODIFY-GUARD] CHECKS 列表与 reconciliation_registry_cases.yaml 的 expected_finding_id 一一对应
 # [STABILITY] evolving

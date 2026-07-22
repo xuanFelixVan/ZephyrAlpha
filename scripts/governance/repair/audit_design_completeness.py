@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] scripts.governance.repair.backup_depgraph
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

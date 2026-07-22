@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.models
 # [CONSUMERS] 见蓝图 §4 接口契约
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
 # [MODIFY-GUARD] semantic-auditor/blueprint.md; semantic-auditor/__init__.py __all__
 # [STABILITY] evolving

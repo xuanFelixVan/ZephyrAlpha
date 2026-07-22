@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models
 # [CONSUMERS] self_healer; cli
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] RED > YELLOW > INFO; 高确定性 > 低确定性; 大 blast_radius > 小 blast_radius
 # [MODIFY-GUARD] 修改排序权重必须同步蓝图 §3.2 数据流
 # [STABILITY] evolving

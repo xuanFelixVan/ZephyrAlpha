@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.db; zephyr.security.access_control.orphan_judge.models
 # [CONSUMERS] orphan-judge.__main__._cmd_report
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 三种输出格式(JSON/CSV/Markdown); 不修改任何源文件
 # [MODIFY-GUARD] 修改输出格式必须同步blueprint.md §4.1
 # [STABILITY] evolving

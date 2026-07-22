@@ -4,7 +4,7 @@
 # [DEPENDENCIES] holoviews; plotly; plotly_resampler; panel
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; tick_replay; order_book; position_monitor; trade_panel
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

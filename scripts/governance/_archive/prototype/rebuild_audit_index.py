@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_audit.indexer
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

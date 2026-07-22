@@ -44,12 +44,12 @@ BEGIN
     IF v_allow = 'on' THEN
         RETURN COALESCE(NEW, OLD);
     END IF;
-    -- Ruling:100PCT-AI-GOVERNANCE P0-4: 保护范围 design + prototype
+    -- ARCH-MM-002 (2026-07-23): 两档化后保护范围仅 design（prototype 已删除）
     -- #ARCH-GUC-TRIGGER-FIX-001c: 用 OLD::text 替代 CASE/COALESCE 引用特定列
-    IF TG_OP = 'DELETE' AND OLD.design_maturity IN ('design', 'prototype') THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design/prototype 态 dataflow 行（表=%, row=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, OLD::text;
-    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity IN ('design', 'prototype') AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design/prototype 态 dataflow 行降级（表=%, row=%, %→%）', TG_TABLE_NAME, OLD::text, OLD.design_maturity, NEW.design_maturity;
+    IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 dataflow 行（表=%, row=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, OLD::text;
+    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 dataflow 行降级（表=%, row=%, %→%）', TG_TABLE_NAME, OLD::text, OLD.design_maturity, NEW.design_maturity;
     END IF;
     RETURN COALESCE(NEW, OLD);
 END;

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.risk.risk_manager
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] game_day_runner.py; cold_start.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Generates new attack payloads from bypass history; mutation strategies: payload_variation/scenario_combination/vector_permutation
 # [MODIFY-GUARD] Adding mutation strategies MUST update MUTATION_STRATEGIES; generated scenarios MUST validate against AttackScenario model
 # [STABILITY] evolving

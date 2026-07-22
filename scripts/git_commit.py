@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 全项目唯一合法 git commit CLI 入口；封装 GitCommitGateway；禁止裸 git commit（GATE-COMMIT-GW 门禁）
 # [MODIFY-GUARD]
 # [STABILITY] evolving

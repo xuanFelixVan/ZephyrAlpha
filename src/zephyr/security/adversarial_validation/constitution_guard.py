@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_enforcement.rule_enforcement.gate_engine
 # [CONSUMERS] validator.py; convergence_checker.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 34 articles loaded from _constitution_registry.yaml; ALL must pass per adversarial session; single failure = BLOCKED session
 # [MODIFY-GUARD] Adding articles MUST update _constitution_registry.yaml; article_id format MUST be CONST-NNN
 # [STABILITY] evolving

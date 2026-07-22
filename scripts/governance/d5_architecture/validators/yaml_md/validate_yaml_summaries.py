@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.yaml_md.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

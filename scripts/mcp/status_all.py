@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.mcp.start_all
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

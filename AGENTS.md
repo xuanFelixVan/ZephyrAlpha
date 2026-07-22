@@ -58,7 +58,7 @@
 >
 > **heartbeat 保活机制（#ARCH-HEARTBEAT-001 Phase 1，2026-07-20 治本）**：`session_worktree_start` 用 `pid=0`（逻辑 session）注册，跨多个 `python -c` 进程存活靠 TTL。旧方案仅 TTL=3600s，AI 崩溃后 held_files 阻塞 1 小时。治本：`session_worktree_start` 自动 spawn detached heartbeat daemon（[`heartbeat_daemon.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py)），daemon 每 30s 调 `registry.heartbeat(session_id)` 刷新 `last_heartbeat` + 追加 `heartbeat.jsonl` 审计记录。`_is_session_alive` 用 90s 新鲜度判据（3×30s，容忍 2 次漏跳），daemon 死亡→90s 后 session 判死→held_files 自动释放。`session_worktree_merge`/`abort` 时 `_kill_heartbeat_daemon` 终止 daemon + `cleanup_heartbeat_file` 清理审计文件。阻塞窗口从 1h 缩短到 90s，消除 `HELD_OVERLAP_VIOLATION` 误阻断根因（之前 allow_overlap 62× 超阈）。AI 无需手动管理 heartbeat 生命周期。
 
-## RULE-DEPGRAPH：第三件事（防幻觉/防漂移治本规则，2026-07-02）
+## RULE-DEPGRAPH / 四图对齐：第三件事（防幻觉/防漂移治本规则，2026-07-02；四图对齐提升 2026-07-22）
 
 > **施工前 MUST 登记**：任何模块施工前（写第1行业务代码前），MUST先通过 `apply_depgraph.py` 将该模块的依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（`status=planned`）。禁止"先施工后补登记"或"施工中临时编造依赖"。施工完成并通过验证后，将 `status` 从 `planned → production`。
 >
@@ -73,6 +73,21 @@
 > 4. 施工（代码引用 depgraph 契约名）
 > 5. 验证依赖一致性
 > 6. `apply_depgraph.py --transition-build-status NODE_ID production` 转正
+>
+> **四图对齐（ARCH-053/056，2026-07-22 提升为入职必读）**：四图 = 四个以 `module_id` 为对齐 key 的架构视图——
+>
+> | 图 | 真源 | 设计态机制 | 工具 |
+> |----|------|-----------|------|
+> | depgraph | PostgreSQL | `design_maturity='design'` 节点 | `apply_depgraph.py --add-design-node` |
+> | dataflowgraph | PostgreSQL（3 表） | design 行 + 触发器保护 | `apply_dataflowgraph.py` |
+> | decisiongraph | PostgreSQL（3 表） | design 行 + 触发器保护 | `apply_decisiongraph.py` |
+> | blueprint.md | MD frontmatter | `sync_panorama_module.py` 从 depgraph 单向派生 4 字段 | `sync_panorama_module.py` |
+>
+> **入口只有一个——depgraph 设计态**：写入 depgraph 设计态后，[`sync_panorama_module.py`](file:///d:/ZephyrAlpha/scripts/governance/sync_panorama_module.py) 自动派生其余三图（dataflow_jobs/decision_layers 占位 + blueprint.md frontmatter 4 字段），[`align_panoramas.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/align_panoramas.py) 自动检测四类对齐问题（孤儿/状态漂移/域不一致/设计态孤立）。所以"在四图设计并对齐"实操上 = 上面流程的步骤 2 后跑 sync 派生、施工前跑 align 验证干净。AI 不需要也不允许手编派生三图。
+>
+> **对齐验证（施工前 MUST）**：`python scripts/governance/d5_architecture/generators/align_panoramas.py` —— 四类问题须干净（或已知可接受）。**门禁**：`GATE-PANORAMA-ALIGNMENT`（priority=830）`domain_mismatches>0` **硬阻断**，orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）；修复入口 `python scripts/governance/sync_panorama_module.py --all`。
+>
+> 规则真源：[`trae_080_panorama_alignment.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml)；执行细节见 §11.0.2 ARCH-053/056。
 >
 > **文件重命名 MUST 先重建 depgraph**（AI-14 审计 S1，2026-07-17）：`git mv old.py new.py` 后、commit 前，MUST 运行 `python scripts/governance/generate_project_depgraph.py --force` 重建 depgraph。RENAME-DEPGRAPH-SYNC commit gate（priority=39）会检测 staged .py 重命名的新路径是否已在 depgraph nodes 表登记，未登记则硬阻断。历史债务扫描：`python scripts/governance/d8_doc_sync/audit_rename_completeness.py --check-file-renames`。
 
@@ -987,6 +1002,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > 2. 架构数据（实例态：nodes/edges 实际有什么节点/边）→ 用 `apply_*.py` 直接写 DB → 生成器从 DB 重生 MD 视图。
 > 3. 边界模糊时查上方表格，或查 [`trae_062_ssot_classification.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml)。
 
+> **入职入口**：本机制是 RULE-DEPGRAPH / 四图对齐（第三件事）的执行细节，AI 施工前必读；规则真源 [`trae_080_panorama_alignment.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml)。
+>
 > **ARCH-053 三图设计态保护 + 对齐检测（2026-07-06）**：
 > - **设计态保护触发器**：dataflowgraph（3 表）+ decisiongraph（3 表）共 6 张表新增 BEFORE DELETE OR UPDATE 触发器，阻断 `design_maturity='design'` 行的删除或降级。逃生通道：`SET app.allow_design_maturity_delete = on`（仅 `apply_dataflowgraph.py` / `apply_decisiongraph.py` 设计态写入命令启用，对齐 depgraph `app.allow_delete_apply_depgraph_edges` 模式）。
 > - **三图对齐检测器**：[`align_panoramas.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/align_panoramas.py)（只读，manual 启动）。从三图读取节点，用 `module_id` 作为对齐 key（depgraph 用 `blueprint_id` 派生），检测 4 类问题：孤儿（仅一图）/ 状态漂移（design_maturity 不一致）/ 域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。输出 `docs/02_enterprise_architecture/generated/panorama_alignment_report.md`。退出码：0=成功 / 1=错误 / 2=三图任一为空（检测无意义）。

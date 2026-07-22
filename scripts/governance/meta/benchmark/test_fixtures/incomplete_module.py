@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.meta.benchmark.test_fixtures.bad_imports
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

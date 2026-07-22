@@ -26,7 +26,7 @@
 """
 from __future__ import annotations
 
-MATURITY_RANK: dict[str, int] = {"design": 0, "prototype": 1, "production": 2}
+MATURITY_RANK: dict[str, int] = {"design": 0, "production": 1}
 
 _TEST_PATH_PREFIX = "tests/"
 
@@ -62,9 +62,9 @@ def weighted_domain_vote(rows: list) -> str:
 
 
 def min_maturity(maturities: list[str]) -> str:
-    """取最 design 的状态（design < prototype < production）。
+    """取最 design 的状态（design < production, ARCH-MM-002 两档化）。
 
-    聚合策略：min rank（design=0 < prototype=1 < production=2）。
+    聚合策略：min rank（design=0 < production=1）。
     """
     if not maturities:
         return ""

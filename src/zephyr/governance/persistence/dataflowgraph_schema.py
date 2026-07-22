@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (_PG_ENV_PATH, _load_pg_config, _build_pg_dsn); zephyr.shared.io.paths (REPO_ROOT); psycopg2
 # [CONSUMERS] apply_dataflowgraph.py ; sync_yaml_to_depgraph.py ; generate_dataflow_diagram.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] dataflowgraph is PostgreSQL (同库不同表，共享 config/.env.postgres); init_dataflow_db must be idempotent
 # [MODIFY-GUARD] 03_create_dataflow_schema.sql; dataflowgraph generators
 # [STABILITY] evolving
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS dataflow_datasets (
     produced_by_job  TEXT,
     domain_id        TEXT,
     design_maturity  TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     pit_policy       TEXT DEFAULT 'strict'
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS dataflow_jobs (
         CHECK (pit_relevance IN ('strict', 'loose', 'none')),
     description      TEXT,
     design_maturity  TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id        TEXT,
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS dataflow_edges (
     edge_type         TEXT NOT NULL
         CHECK (edge_type IN ('push', 'pull', 'sync', 'async', 'event_driven')),
     design_maturity   TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     last_updated      TEXT
 )
 """

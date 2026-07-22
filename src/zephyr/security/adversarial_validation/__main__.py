@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.cli
 # [CONSUMERS] End users; CI/CD
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] python -m zephyr.security.adversarial_validation is the ONLY CLI entry
 # [MODIFY-GUARD] Changes MUST delegate to cli.main()
 # [STABILITY] stable

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.defense_runner; zephyr.security.adversarial_validation.bypass_recorder; zephyr.security.adversarial_validation.steady_state; zephyr.security.adversarial_validation.cleanup; zephyr.security.adversarial_validation.blast_radius
 # [CONSUMERS] cli.py; game_day_runner.py; mcp_endpoints.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] run_adversarial_session() MUST follow: load->filter->defend->record->steady_state->cleanup; RedBlueReport.session_id MUST be unique per run
 # [MODIFY-GUARD] Adding new phases to adversarial session MUST update run_adversarial_session() flow; report fields per blueprint §4.4
 # [STABILITY] evolving

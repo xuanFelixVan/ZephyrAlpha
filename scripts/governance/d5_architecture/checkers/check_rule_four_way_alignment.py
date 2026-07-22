@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d5_architecture.checkers.__init__
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 规则YAML↔Catalog↔Disk↔Code 四方对齐; 过滤按tier(非frontmatter layer); L0/空tier跳过
 # [MODIFY-GUARD] gate_id="RULE-FOUR-WAY-ALIGN"; ARCH-020 补建
 # [STABILITY] evolving

@@ -28,9 +28,9 @@ MOD-INF-021 Rollback System — ZephyrAlpha 回滚/撤销基础设施。
     - MOD-MASTER_BLUEPRINT (集成契约 CT-RBK-GATE-001)
 """
 
-# S4-A（2026-07-17）：模块导入零副作用——急切导入不再包含 [MATURITY] deprecated 子模块。
+# S4-A（2026-07-17）：模块导入零副作用——急切导入不再包含标为 deprecated 的子模块。
 # 已从急切导入移除：cross_platform_shell / venv_sync / warm_standby（三者均标注
-# [MATURITY] deprecated，消费者仅各自的测试，且测试直接从子模块路径导入，不依赖
+# deprecated，消费者仅各自的测试，且测试直接从子模块路径导入，不依赖
 # 包级再导出）。需要时仍可 `from zephyr.infrastructure.rollback.<name> import ...`。
 from . import (
     agent_cooldown,

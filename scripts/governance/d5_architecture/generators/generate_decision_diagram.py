@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); architecture_model/domain/decision_graph_model.yaml (invariants 真源); _common (cleanup_stale_files, DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发;人工查看06_decision_architecture/
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 输出幂等(相同输入→相同输出22文件);只读decisiongraph;输出到06_decision_architecture/;序号硬编码稳定
 # [MODIFY-GUARD] 修改需通过TRAE-061任务或后续维护任务
 # [STABILITY] evolving
@@ -230,7 +230,7 @@ def _build_status_color(build: str) -> str:
 
 
 def _maturity_tag(maturity: str | None) -> str:
-    """design_maturity → 标注标签（[production]/[design]/[prototype]/空）。"""
+    """design_maturity → 标注标签（[production]/[design]/空）。"""
     if not maturity:
         return ""
     return f"[{maturity}]"
@@ -948,7 +948,6 @@ def _gen_index_md(
 
     prod_layers = [l for l in layers if l.get("maturity") == "production"]
     design_layers = [l for l in layers if l.get("maturity") == "design"]
-    prototype_layers = [l for l in layers if l.get("maturity") == "prototype"]
     prod_nodes = [n for n in nodes if n.get("maturity") == "production"]
     design_nodes = [n for n in nodes if n.get("maturity") == "design"]
 
@@ -979,11 +978,10 @@ def _gen_index_md(
         f"| Edge（边） | {len(edges)} |",
         f"| 运营态 Layer（design_maturity=production） | {len(prod_layers)} |",
         f"| 设计态 Layer（design_maturity=design） | {len(design_layers)} |",
-        f"| 原型态 Layer（design_maturity=prototype） | {len(prototype_layers)} |",
         f"| 运营态 Node（design_maturity=production） | {len(prod_nodes)} |",
         f"| 设计态 Node（design_maturity=design） | {len(design_nodes)} |",
         "",
-        "> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行，`prototype`=原型验证中。对标 depgraph 的设计态/运营态机制。",
+        "> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。对标 depgraph 的设计态/运营态机制。",
         "",
         "## Track 导航（按优先级）",
         "",

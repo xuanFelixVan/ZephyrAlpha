@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_types
 # [CONSUMERS] zephyr.gov_enforcement.rule_enforcement;zephyr.compliance.behavioral_auditor;zephyr.gov_audit;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Protocols define structural interfaces only; no concrete implementations
 # [MODIFY-GUARD] contracts_blueprint.md §Protocols; __init__.py __all__
 # [STABILITY] frozen

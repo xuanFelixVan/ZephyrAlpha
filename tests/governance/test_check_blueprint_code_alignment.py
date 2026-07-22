@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 测试目录隔离：monkeypatch BLUEPRINTS_DIR/REPO_ROOT 到 tmp_path，避免扫描真实项目文件
 # [MODIFY-GUARD]
 # [STABILITY] evolving

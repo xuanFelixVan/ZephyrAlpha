@@ -4,7 +4,7 @@
 # [DEPENDENCIES] stdlib (subprocess, sys, json, pathlib, typing); scripts.governance.audit_return_contract_usage (subprocess); scripts.governance.audit_worktree_ops_telemetry (subprocess); pytest (subprocess)
 # [CONSUMERS] AI 一键回归验证；pre-commit manual stage（可选）；CI workflow（可选）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 永不抛异常——所有 subprocess 失败转换为 failed 段；返回 TypedDict 含 ok 键
 # [MODIFY-GUARD] STAGES 元组结构；RegressionResult TypedDict
 # [STABILITY] evolving

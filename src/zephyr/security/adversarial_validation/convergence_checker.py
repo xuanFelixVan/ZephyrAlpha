@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py ; escalation-engine
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 3 consecutive rounds without improvement -> EscalationEngine trigger; blocked_rate threshold 95%; bypass_count MUST decrease monotonically
 # [MODIFY-GUARD] Convergence thresholds per blueprint §6.2; escalation logic MUST NOT be bypassed
 # [STABILITY] evolving

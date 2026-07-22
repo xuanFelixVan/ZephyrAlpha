@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] src/zephyr/gov_drift/_infrastructure.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 告警路由不可绕过;去重窗口不可缩短
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

@@ -74,8 +74,7 @@ def get_all_domains(conn: PgConnExecuteWrapper) -> list[dict]:
                   d.max_modules, d.description,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id) as actual_nodes,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'production') as production_count,
-                  (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'design') as design_count,
-                  (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'prototype') as prototype_count
+                  (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'design') as design_count
            FROM domains d
            ORDER BY d.domain_id"""
     )
@@ -90,7 +89,6 @@ def get_all_domains(conn: PgConnExecuteWrapper) -> list[dict]:
             "actual_nodes": r["actual_nodes"],
             "production_count": r["production_count"],
             "design_count": r["design_count"],
-            "prototype_count": r["prototype_count"],
         }
         for r in cur.fetchall()
     ]
@@ -131,7 +129,6 @@ def generate_domain_index() -> str:
     total_nodes = sum(d["actual_nodes"] for d in domains)
     total_production = sum(d["production_count"] for d in domains)
     total_design = sum(d["design_count"] for d in domains)
-    total_prototype = sum(d["prototype_count"] for d in domains)
 
     lines.append("## 统计概览")
     lines.append("")
@@ -141,7 +138,6 @@ def generate_domain_index() -> str:
     lines.append(f"| 模块总数 | {total_nodes} |")
     lines.append(f"| 生产态模块 | {total_production} |")
     lines.append(f"| 设计态模块 | {total_design} |")
-    lines.append(f"| 原型态模块 | {total_prototype} |")
     lines.append("")
 
     # 按架构层分组
@@ -158,8 +154,8 @@ def generate_domain_index() -> str:
         layer_zh, layer_en = get_layer_name_bilingual(layer)
         lines.append(f"### {layer_zh} / {layer_en} ({len(layer_domains)} 个域 / {len(layer_domains)} domains)")
         lines.append("")
-        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |")
-        lines.append("|------|--------|:---:|:---:|:---:|:---:|------|------|")
+        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 容量 / Capacity | 文档 / Doc |")
+        lines.append("|------|--------|:---:|:---:|:---:|------|------|")
         for d in layer_domains:
             capacity = f"{d['actual_nodes']}/{d['max_modules']}"
             capacity_status = "OK" if d["actual_nodes"] <= d["max_modules"] else "超容"
@@ -173,7 +169,7 @@ def generate_domain_index() -> str:
                 doc_link = "— 未编号"
             lines.append(
                 f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} / {get_domain_name_en(d['domain_id'])} | {d['actual_nodes']} | "
-                f"{d['production_count']} | {d['design_count']} | {d['prototype_count']} | "
+                f"{d['production_count']} | {d['design_count']} | "
                 f"{capacity} ({capacity_status}) | {doc_link} |"
             )
         lines.append("")

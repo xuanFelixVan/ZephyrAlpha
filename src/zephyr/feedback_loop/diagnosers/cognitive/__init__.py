@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.feedback_loop.diagnosers.__init__
 # [CONSUMERS] zephyr.feedback_loop.diagnosers.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] _SUBMODULES列表不变
 # [MODIFY-GUARD] 新增子模块须同步更新diagnosers/__init__.py的__all__
 # [STABILITY] frozen

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance._sync.cleanup_p0_auto_bridged
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

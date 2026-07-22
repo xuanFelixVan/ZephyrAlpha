@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-021 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.governance.escalation.triage
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.__init__

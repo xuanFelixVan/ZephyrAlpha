@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.shared.schema.severity_types; zephyr.shared.schema.base_config; zephyr.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] CRITICAL->P0+HIGH->P1任务; MEDIUM->不创建任务仅日志; 同 event_id 不重复创建
 # [MODIFY-GUARD] CT-FLE-ORC-001 协议变更必须同步更新 feedback-loop/alert_dispatcher
 # [STABILITY] evolving

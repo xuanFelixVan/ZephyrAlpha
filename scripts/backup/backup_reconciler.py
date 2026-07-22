@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json
 # [MODIFY-GUARD] gate_id="BACKUP-RECONCILER"
 # [STABILITY] evolving

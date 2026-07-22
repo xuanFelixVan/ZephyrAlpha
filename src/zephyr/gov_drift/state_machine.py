@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
 # [CONSUMERS] src/zephyr/gov_drift/_core.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 状态转换必须合法
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving

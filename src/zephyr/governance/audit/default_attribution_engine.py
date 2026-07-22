@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.reporting.default_attribution_engine
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] re-export shim only; canonical at zephyr.reporting.default_attribution_engine
 # [MODIFY-GUARD] truth source at zephyr.reporting.default_attribution_engine
 # [STABILITY] evolving

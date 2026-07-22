@@ -4,7 +4,7 @@
 # [DEPENDENCIES] tickflow SDK (tf.klines.get)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 免费无key；60次/分钟限流；美股日/周/月K线；用ETF替代真实美股指数
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

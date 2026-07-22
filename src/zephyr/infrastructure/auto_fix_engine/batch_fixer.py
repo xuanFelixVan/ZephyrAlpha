@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MUST使用ThreadPoolExecutor(max_workers=8);MUST通过冲突解决器
 # [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml engine.max_concurrent_fixes
 # [STABILITY] evolving

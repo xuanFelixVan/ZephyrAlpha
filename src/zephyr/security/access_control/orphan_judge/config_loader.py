@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.models
 # [CONSUMERS] orphan-judge.judge.OrphanJudge; 各checker初始化
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] OrphanJudgeConfig是配置SSoT; 不修改任何源文件
 # [MODIFY-GUARD] 修改默认值必须同步blueprint.md §5.1; 修改YAML schema必须同步此处
 # [STABILITY] evolving

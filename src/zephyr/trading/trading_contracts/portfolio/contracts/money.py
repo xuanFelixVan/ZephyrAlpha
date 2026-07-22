@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.portfolio.money
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable

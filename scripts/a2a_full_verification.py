@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.integration.__init__; zephyr.gov_audit.__init__; zephyr.security.access_control.a2a_check
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

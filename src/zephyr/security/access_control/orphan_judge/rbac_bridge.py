@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.guards.permission_guard
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(DELETE动作前)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现权限逻辑; 仅桥接PermissionGuard.check()
 # [MODIFY-GUARD] PermissionGuard API变更时同步此桥接
 # [STABILITY] evolving

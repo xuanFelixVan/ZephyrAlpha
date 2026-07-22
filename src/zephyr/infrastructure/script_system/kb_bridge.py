@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS] zephyr.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] findings->KB entry 1:1映射; KB不可用时仅日志不阻塞; timestamp带时区
 # [MODIFY-GUARD] CT-SCRIPT-KB-001 schema变更必须同步KB indexing规则
 # [STABILITY] evolving

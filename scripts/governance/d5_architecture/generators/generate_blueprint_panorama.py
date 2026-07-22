@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); d5_architecture.panorama_common (weighted_domain_vote, min_maturity)
 # [CONSUMERS] CI自动触发;人工审查蓝图 §0.6;sync_panorama_module 后续可调用
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读PG(零写入);只写蓝图 §0.6 章节(不动 frontmatter/不动其他章节);输出幂等(相同输入→相同输出);depgraph无此模块→跳过;蓝图不存在→跳过;§0.6 不存在则插入,存在则替换
 # [MODIFY-GUARD] generate_for_module/generate_all 为对外入口;SQL 常量集中在模块级 _SQL_*;§0.6 块边界由 _S06_BLOCK_RE 定义(修改需同步模板)
 # [STABILITY] evolving
@@ -220,7 +220,7 @@ def _fetch_depgraph_module(module_id: str) -> DepgraphModuleInfo | None:
 
     聚合策略与 align_panoramas._fetch_depgraph_nodes 一致：
     - domain_id: 加权投票（测试文件降权，平局字母序）
-    - design_maturity: 取最 design 的状态（design < prototype < production）
+    - design_maturity: 取最 design 的状态（design < production）
     - build_status: 取第一个非空
     - file_count: COUNT(*) 所有行
     """
@@ -462,7 +462,7 @@ def _status_mark(a: str, b: str) -> str:
 
 
 def _depgraph_status_str(info: DepgraphModuleInfo) -> str:
-    """depgraph 行的状态列：design_maturity（production/design/prototype）。"""
+    """depgraph 行的状态列：design_maturity（production/design）。"""
     return info.design_maturity or "N/A"
 
 

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconcile_runner; zephyr.governance.audit.reconcile_worker; zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 临时目录隔离；不依赖真实 Zephyr 项目结构（worker 测试用 mock）
 # [MODIFY-GUARD] 测试函数名与 P2-3 API 对齐
 # [STABILITY] evolving

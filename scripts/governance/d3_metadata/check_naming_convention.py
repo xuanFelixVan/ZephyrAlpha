@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] .pre_commit-config.yaml GATE-11 ; .github/workflows/governance.yml
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] N-01~N-16 rules are append-only; whitelist changes require Owner approval
 # [MODIFY-GUARD] FILENAME_UPPERCASE_WHITELIST, _DATA_FILE_EXEMPT_NAMES, TECH_VERSION_TOKENS, _N16_*_FALLBACK changes require Owner approval; N-16豁免清单真源在trae_028.yaml §n16_config(代码仅fail-open回退)
 # [STABILITY] stable

@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] run_all.py;phase_manager.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 冲突检测不可遗漏;冲突必须包含因果链
 # [MODIFY-GUARD] 冲突类型变更需同步conflict_detector.py
 # [STABILITY] evolving

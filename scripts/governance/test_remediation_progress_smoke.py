@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.remediation_progress_reconciler (RemediationProgressRecord, record_remediation_progress, query_all_dimensions, query_stale_dimensions, make_remediation_progress_reconciler)
 # [CONSUMERS] —
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 真实写入 temp governance.db 验证三要素（持久化+可发现+可阻断）；隔离生产 governance.db（TRAE-054 测试隔离铁律）；main() 返回 0=成功 1=失败
 # [MODIFY-GUARD] _test_* 函数签名；_BLOCK_SECONDS 阈值（与 remediation_progress_reconciler.py 一致）
 # [STABILITY] volatile

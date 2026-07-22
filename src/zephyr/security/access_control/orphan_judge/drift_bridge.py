@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(starve/stale判定)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 不实现漂移检测; 仅桥接DriftDetector.trigger_recovery()
 # [MODIFY-GUARD] DriftDetector API变更时同步此桥接
 # [STABILITY] evolving

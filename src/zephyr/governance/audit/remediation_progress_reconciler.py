@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] remediation_progress 表持久化治本维度进度；>90天未更新且非 completed/deferred → block_next；record_remediation_progress 幂等（INSERT OR REPLACE）
 # [MODIFY-GUARD] SQL_CREATE_REMEDIATION_PROGRESS 表结构；_BLOCK_SECONDS 阈值
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants; _shared.encoding; _shared.yaml_utils
 # [CONSUMERS] manual batch migration; stage-2 of doc_type root-cause fix
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只迁移 frontmatter 内的非法 doc_type 值；不改正文；PENDING_REVIEW 跳过不写入；原子写入
 # [MODIFY-GUARD]
 # [STABILITY] evolving

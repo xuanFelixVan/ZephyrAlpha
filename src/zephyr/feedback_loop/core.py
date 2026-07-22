@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.gov_audit.feedback_bridge; zephyr.security.access_control.orphan_judge.feedback_bridge
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

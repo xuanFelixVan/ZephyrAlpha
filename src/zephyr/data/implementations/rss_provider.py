@@ -4,7 +4,7 @@
 # [DEPENDENCIES] feedparser SDK (feedparser.parse) + requests
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 匿名访问；偶发SSL错误需重试；须尊重robots.txt；财经新闻爬虫
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] yaml(标准库); threading
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] DAG无环检测(有环则ValueError); 任务状态PENDING->RUNNING->SUCCESS/FAILED; 前置全SUCCESS才READY; 线程安全(threading.Lock)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

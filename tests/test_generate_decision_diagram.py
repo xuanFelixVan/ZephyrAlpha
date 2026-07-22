@@ -461,7 +461,8 @@ class TestMaturityTag:
     def test_design(self):
         assert _mod._maturity_tag("design") == "[design]"
 
-    def test_prototype(self):
+    def test_unknown_value_passthrough(self):
+        """ARCH-MM-002: prototype 已删除，_maturity_tag 对未知值透传（无特殊处理）。"""
         assert _mod._maturity_tag("prototype") == "[prototype]"
 
     def test_none_returns_empty(self):

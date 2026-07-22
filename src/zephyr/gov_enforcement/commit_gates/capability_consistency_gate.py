@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.capability_validator (check_route_meta_consistency_content); zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged *_provider.py 文件中"fetch 路由能力集"与"meta.capabilities 声明集"不一致时阻断 commit（passed=False）；治本本次 8 条 ERROR 根因：路由支持某 capability 但 meta 遗漏声明（miniqmt 8 个 CapabilityContract 漏声明）；检测 staged 内 *_provider.py 文件（含 akshare/miniqmt/ifind）；AST 解析失败 fail-open（passed=True，其他 gate 处理）；git diff 不可达 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="CAP-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable

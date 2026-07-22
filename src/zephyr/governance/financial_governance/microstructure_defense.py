@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.financial_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

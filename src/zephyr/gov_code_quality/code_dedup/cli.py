@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] CI pipeline
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] exit codes: 0=PASS/1=WARN/2=ERROR/3=TOOL_ERROR/4=DEGRADED
 # [MODIFY-GUARD] exit code mapping change requires blueprint §6 update
 # [STABILITY] evolving

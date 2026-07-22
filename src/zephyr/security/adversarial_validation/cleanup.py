@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] validator.py; injection_engine.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MUST achieve zero residue per RULE-FIVE; cleanup patterns: _attack_* | *.rb_backup | _temp*.py | _check*.py | data/red_blue/_temp_* | data/red_blue/checkpoint_*.yaml
 # [MODIFY-GUARD] Adding cleanup patterns MUST update CLEANUP_PATTERNS; ensure_clean() MUST verify all patterns
 # [STABILITY] evolving

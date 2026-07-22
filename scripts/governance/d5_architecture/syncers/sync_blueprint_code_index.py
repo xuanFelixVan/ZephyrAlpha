@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.d5_architecture.syncers.__init__, scripts.governance._shared.constants (get_depgraph_pg_connection — depgraph.nodes 运营态真源查询)
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

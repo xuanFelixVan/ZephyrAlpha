@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.meta.__init__; zephyr.governance.depgraph_schema (_build_pg_dsn, backup_pg_depgraph 函数)
 # [CONSUMERS] scripts.governance.apply_depgraph (backup_pg_depgraph 事件触发入口); tests/dr/test_restore_from_backup.py
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

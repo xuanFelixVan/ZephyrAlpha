@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.orchestrator.agent_orchestrator; zephyr.orchestrator.work_orchestrator
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] request_context 幂等; 异步模式: 发送后立即返回pending; CE不可用时降级不阻塞任务
 # [MODIFY-GUARD] CT-ORC-CE-001 协议变更必须同步更新context_engine/task_context_builder
 # [STABILITY] evolving

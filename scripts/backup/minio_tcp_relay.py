@@ -5,7 +5,7 @@
 # [DEPENDENCIES] stdlib only (socket, threading); spawn path from config/.env.ch_backup RELAY_SCRIPT
 # [CONSUMERS] scripts/backup/backup.ps1 (CH stage), scripts/backup/restore.ps1 (ch)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MinIO binds localhost only (Windows Firewall auto-blocks minio.exe; python.exe has Public-allow) | dumb byte-pipe, no protocol parsing | listens 0.0.0.0:<argv1> -> 127.0.0.1:<argv2> (ports are argv params; caller bind-tests HNS-safe free ports at runtime) | on-demand, killed after each backup/restore
 # [MODIFY-GUARD] gate_id="MINIO-TCP-RELAY"
 # [STABILITY] evolving

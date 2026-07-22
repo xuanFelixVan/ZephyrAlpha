@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models
 # [CONSUMERS] trigger_engine; alignment_engine; safety_boundary
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 提取 9 个维度的引用；AST 解析覆盖 import/call/inherit/BLUEPRINT 头部
 # [MODIFY-GUARD] 新增维度必须同步 models.ExtractedReferences 字段
 # [STABILITY] evolving

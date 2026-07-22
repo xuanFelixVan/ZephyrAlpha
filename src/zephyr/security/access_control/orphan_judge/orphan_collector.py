@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.cascade_analyzer; zephyr.security.access_control.orphan_judge.decision_table; zephyr.security.access_control.orphan_judge.safety_fence; zephyr.security.access_control.orphan_judge.deprecation_tracker
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

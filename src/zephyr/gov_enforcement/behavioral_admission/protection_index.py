@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.behavioral_admission.verdict_engine
 # [CONSUMERS] zephyr.gov_enforcement.behavioral_admission.verdict_engine;MOD-INF-027(audit-orchestrator)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] anchor路径永远返回anchor级别；Bloom Filter假阳性必须通过Trie精确二次验证
 # [MODIFY-GUARD] docs/docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md;src/zephyr/behavioral-admission/__init__.py
 # [STABILITY] evolving

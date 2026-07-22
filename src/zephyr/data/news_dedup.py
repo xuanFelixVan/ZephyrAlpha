@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.provider_base
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读查询已有数据；基于标题MD5哈希去重；不修改原始FetchResult
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

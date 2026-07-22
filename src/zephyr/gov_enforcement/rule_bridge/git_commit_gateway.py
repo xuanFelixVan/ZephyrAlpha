@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency; zephyr.gov_enforcement.rule_bridge.worktree_manager
 # [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；worktree 物理隔离（阶段3 治本 2026-06-30：commit 检测 session worktree——在 worktree 内直接 commit 无需 stash，不在 worktree 内提示建议使用 session worktree 隔离但仍向后兼容 commit）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本：pre-commit gate 声明式注册，4 个 in-process gate DIRECTORY-CONTRACT/CLAIM-REQUIRED/HELD-OVERLAP/CAPABILITY-OVERLAP 替代 12 个硬编码 _check_*，新增门禁 register(GateSpec) 而非硬编码 _check_*）；held_files 冲突阻断（搭便车治本：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；commit 守卫 _in_commit_flow（红攻1治本：_run_git 检测裸 git commit 且此标志为 False 时拒绝）；rename fallback（_commit_with_file_message 内置 rename 检测，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件）
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
@@ -256,6 +256,26 @@ class _GlobalCommitLock:
                 pass
             self._acquired = False
         return False
+
+
+def _audit_commit_lock_fallback(project_root: Path, session_id: str, error_detail: str) -> None:
+    """TRAE-079 铁律6：文件锁 fail-open 降级落审计。
+
+    当 _GlobalCommitLock 因 OSError（磁盘满/权限/只读文件系统）不可用时，
+    降级为无锁 commit 并记录到此审计文件。滥用监控依赖此真源。
+    """
+    try:
+        audit_dir = project_root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),
+            "session_id": session_id,
+            "error": error_detail,
+        }
+        with (audit_dir / "commit_lock_fallback.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
+        logger.debug("commit_lock_fallback audit write failed (non-blocking)", exc_info=True)
 
 
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
@@ -933,6 +953,11 @@ class GitCommitGateway:
         full_message = f"{message}\n\n{gw_marker}"
         if allow_overlap:
             full_message += f"\n[GW:{session_id}:overlap]"
+            # TRAE-079 铁律5：allow_overlap 降级为 last-resort（仅文件锁不可用时），落审计
+            logger.warning(
+                "TRAE-079: allow_overlap=True last-resort escape hatch used by session %s on %d files",
+                session_id, len(existing),
+            )
 
         # TRAE-079 铁律1：[gate → stage → commit] 整体在 _GlobalCommitLock 临界区内，消除 TOCTOU
         # 病根：gate 检查在锁外时，另一 session 可在 gate 通过后、commit 前修改文件（搭便车/FOREIGN_CHANGE）
@@ -954,6 +979,24 @@ class GitCommitGateway:
                 result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
+        except OSError as e:
+            # TRAE-079 铁律6：文件锁 fail-open 降级 MUST 落审计
+            # 锁文件目录不可写（磁盘满/权限/只读文件系统）→ 降级为无锁 commit + 审计
+            _audit_commit_lock_fallback(self.project_root, session_id, str(e))
+            logger.warning(
+                "TRAE-079: _GlobalCommitLock unavailable (fail-open fallback): %s — "
+                "commit proceeding without serialization lock for session %s",
+                e, session_id,
+            )
+            # 无锁降级：直接执行 gate + commit（不串行化，但 gate 仍在）
+            gate_results = self._gate_registry.check_all(
+                self, existing, session_id=session_id, allow_overlap=allow_overlap,
+                allow_promote=allow_promote, commit_message=message,
+            )
+            blocked = self._check_gate_results(gate_results)
+            if blocked is not None:
+                return blocked
+            result = self._commit_locked(session_id, existing, full_message, gw_marker)
 
         self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
         return result
@@ -1562,6 +1605,54 @@ class GitCommitGateway:
                         pass
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
+        except OSError as e:
+            # TRAE-079 铁律6：文件锁 fail-open 降级 MUST 落审计（_commit_auto 路径同样覆盖）
+            _audit_commit_lock_fallback(self.project_root, session_id, str(e))
+            logger.warning(
+                "TRAE-079: _GlobalCommitLock unavailable in _commit_auto (fail-open fallback): %s — "
+                "auto-commit proceeding without serialization lock for session %s",
+                e, session_id,
+            )
+            # 无锁降级：直接执行 auto-commit（不串行化，但 gate 仍在）
+            pathspec_file = self._write_pathspec_file(existing)
+            try:
+                add_result = self._run_git(
+                    ["git", "add", f"--pathspec-from-file={pathspec_file}"]
+                )
+                if add_result.returncode != 0:
+                    return CommitResult(
+                        status=CommitStatus.COMMIT_FAILED,
+                        message=f"git add failed (auto-commit): {add_result.stderr.strip()}",
+                    )
+                diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+                if diff_result.returncode == 0:
+                    return CommitResult(
+                        status=CommitStatus.NOTHING_TO_COMMIT,
+                        message="no staged changes in auto-commit files",
+                    )
+                commit_hash, commit_err = self._commit_with_file_message(
+                    full_message, pathspec_file, existing
+                )
+                if commit_hash is None:
+                    return CommitResult(
+                        status=CommitStatus.COMMIT_FAILED,
+                        message=f"git commit failed (auto-commit): {commit_err}",
+                    )
+                os.environ[_GATEWAY_ENV] = "1"
+                logger.info(
+                    "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
+                    commit_hash, gw_marker, len(existing),
+                )
+                return CommitResult(
+                    status=CommitStatus.OK,
+                    message=f"auto-committed {len(existing)} files",
+                    commit_hash=commit_hash,
+                )
+            finally:
+                try:
+                    os.remove(pathspec_file)
+                except OSError:
+                    pass
 
     def _write_pathspec_file(self, abs_files: list[str]) -> str:
         """将文件路径写入临时 pathspec 文件（:(icase) 前缀兼容 Windows 大小写不敏感）。"""

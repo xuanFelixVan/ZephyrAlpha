@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件中直接调用 ch_writer.query() 时阻断 commit（应改用 ch_reader.query() 自动注入 FINAL）; ch_reader.py/ch_writer.py 豁免; tests/ 豁免; 新增文件全文件 AST 检测; 修改文件检测 staged diff 新增行文本模式; AST/git 异常 fail-open
 # [MODIFY-GUARD] gate_id="CH-FINAL-GATE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving

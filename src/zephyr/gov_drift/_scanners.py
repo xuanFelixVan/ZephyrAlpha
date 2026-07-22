@@ -14,7 +14,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.incremental_scanner; zephyr.gov_drift.headless_scanner; zephyr.gov_drift.file_attr_checker; zephyr.gov_drift.gitignore_auditor; zephyr.gov_drift.symlink_checker; zephyr.gov_drift.naming_magic_checker; zephyr.gov_drift.test_fixture_checker; zephyr.gov_drift.python_compat; zephyr.gov_drift.orphan_scanner; zephyr.gov_drift.scan_mutex
 # [CONSUMERS] zephyr.gov_drift.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
 # [STABILITY] frozen

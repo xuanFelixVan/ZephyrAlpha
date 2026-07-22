@@ -4,7 +4,7 @@
 # [DEPENDENCIES] (none — stdlib only)
 # [CONSUMERS] CI 门禁 / 手动回归（GATE-MUT 达标前手动，达标后事件驱动）
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 只读不修改真源 reconciliation_registry.py（变异写入临时副本）；mutation score < THRESHOLD 返回非 0 阻断；机械注入与 AI 盲区正交——打破"AI 写 Gate + AI 验 Gate"的自指悖论
 # [MODIFY-GUARD] 新增变异必须对应 verify_reconciliation_registry.py 的一项不变量检查；find 字符串必须在真源中唯一
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.io.yaml_utils
 # [CONSUMERS] scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py; scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
 # [STARTUP] manual
-# [MATURITY] stable
+# [MATURITY] production
 # [INVARIANTS] 真源是 docs/01_policies_and_standards/rules/trae_*.yaml（64条规则）；本生成器只读不写真源；输出 rule_ai_perception_index.yaml 到 catalogs/；--check 模式对比生成版 vs 磁盘版不一致→exit 1（GATE-21 静态清单漂移）；operations/gate_ids 从 triggers list 提取；paired_gate_id 字段预留（Phase 3.5 填充）
 # [MODIFY-GUARD] 输出文件路径；module_id PS-REG-020；perception 字段清单
 # [STABILITY] evolving

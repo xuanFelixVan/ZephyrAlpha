@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_dashboard; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_governance_adapter; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_tracing; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_frame_negotiation; zephyr.infrastructure.a2a_protocol.layer3_coordination.spec_sync; zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_formal_verification
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] backward_compat: all exports must remain available from layer3_coordination
 # [MODIFY-GUARD] zephyr.infrastructure.a2a_protocol.layer3_coordination.__init__
 # [STABILITY] frozen

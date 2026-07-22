@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.schema.base_config
 # [CONSUMERS] finding_ingest.py ; pipeline_runner.py ; audit-trail.writer ; create_task_from_finding.py
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] AuditFinding is the single unified data contract between 144 governance scripts and 7 audit modules; all fields MUST be compatible with Finding Schema JSONL
 # [MODIFY-GUARD] Field additions require blueprint update; field removals require migration plan
 # [STABILITY] evolving

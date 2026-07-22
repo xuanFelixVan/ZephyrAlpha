@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] cold_start sequence; AI sessions; governance pipeline
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] YAML files are content SSoT; mtime-based change detection; sync direction YAML->DB
 # [MODIFY-GUARD] sync_rule_registry.py; verify_rule_yaml_migration.py; rule_engine.py
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS] zephyr.feedback_loop.metrics_collector; zephyr.trading.health_monitor
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] source_system 必须在枚举中; value 必须是 float; tag 值只允许 str/int/float/bool/None
 # [MODIFY-GUARD] CT-TELE-FLE-001 协议变更必须同步更新 FLE metrics_collector.collect_from_telemetry
 # [STABILITY] evolving

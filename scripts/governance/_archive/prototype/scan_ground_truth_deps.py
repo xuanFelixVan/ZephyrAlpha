@@ -6,7 +6,7 @@
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] Task card system; governance automation; architecture refactoring
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] Output MUST be ground-truth file-level dependency graph; every import MUST resolve to actual file; unresolved MUST be flagged
 # [MODIFY-GUARD] depgraph; cross_pkg_imports_scan.json
 # [STABILITY] evolving

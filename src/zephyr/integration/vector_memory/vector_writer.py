@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.autonomy_core.task_context_builder
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] context构建完成后MUST调用vectorize_and_store; VMS不可用时不阻塞主流程; 写入计数精确
 # [MODIFY-GUARD] CT-CE-VMS-001 协议变更必须同步更新vector_memory/context_ingest
 # [STABILITY] evolving

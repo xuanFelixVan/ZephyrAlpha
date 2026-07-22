@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.governance.ast_import_rewriter, stdlib.shutil, stdlib.argparse, stdlib.concurrent.futures
 # [CONSUMERS] ARCH-031 task card (docs/03_modules/_domain_governance/arch_031_governance_root_split_task_card.md)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] orchestrator pattern; delegates import rewrite to ast_import_rewriter (inward convergence); cut-paste via shutil.move (delete source); idempotent; dry-run supported; atomic write (tmp + os.replace)
 # [MODIFY-GUARD] migration_registry.yaml format changes require sync with ast_import_rewriter.MoveEntry fields
 # [STABILITY] volatile

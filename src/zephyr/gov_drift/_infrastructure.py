@@ -12,7 +12,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.absence_manager; zephyr.gov_drift.ai_context_injector; zephyr.gov_drift.alert_router; zephyr.gov_drift.baseline_manager; zephyr.gov_drift.canary_controller; zephyr.gov_drift.cold_start; zephyr.gov_drift.config_consistency; zephyr.gov_drift.dashboard; zephyr.gov_drift.gate_persistence; zephyr.gov_drift.handoff_manager; zephyr.gov_drift.resource_guard
 # [CONSUMERS] zephyr.gov_drift.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
 # [STABILITY] frozen

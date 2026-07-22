@@ -4,7 +4,7 @@
 # [DEPENDENCIES] scripts.construction.check_statuses
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

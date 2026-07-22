@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.integration.vector_memory.in_memory_fake_vms
 # [CONSUMERS] zephyr.autonomy_core.vector_writer
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 批量写入ContextBlock records; VMS不可用时使用in-memory fallback; 写入计数精确
 # [MODIFY-GUARD] CT-CE-VMS-001 协议变更必须同步更新context_engine/vector_writer
 # [STABILITY] evolving

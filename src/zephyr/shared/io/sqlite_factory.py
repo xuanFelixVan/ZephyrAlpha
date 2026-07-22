@@ -5,7 +5,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS] zephyr.governance.persistence.sqlite_schema; zephyr.shared.events.dlq; zephyr.infrastructure.*; zephyr.gov_drift.*
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 所有SQLite连接必须通过get_db_connection工厂创建,确保PRAGMA基线一致
 # [MODIFY-GUARD] governance/persistence/sqlite_schema.py re-export shim
 # [STABILITY] stable

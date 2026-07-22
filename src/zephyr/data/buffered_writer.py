@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_writer
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 攒批写入（每批 ≥ max_rows 或 ≥ max_seconds 触发 flush）；per-task 实例（无需线程安全）；列过滤复用 ch_writer._get_table_columns_set；禁止绕过 BufferedWriter 在 for 循环内直接调用 ch_writer.write_result（裁定 #ARCH-CH-003）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

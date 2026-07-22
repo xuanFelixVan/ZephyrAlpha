@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_code_quality.code_dedup
 # [CONSUMERS] zephyr.governance.__init__（blind_spot_tracker->BlindSpotStatus）
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] tracker族子包; 新增文件MUST在capability_canonical_file_registry.yaml登记creation_token
 # [MODIFY-GUARD] 新增文件需登记creation_tokens字段
 # [STABILITY] evolving

@@ -91,11 +91,13 @@ class TestWeightedDomainVote:
 
 
 class TestMinMaturity:
-    def test_design_wins(self, pc):
-        assert pc.min_maturity(["production", "prototype", "design"]) == "design"
+    """ARCH-MM-002 两档化：design_maturity 只有 design/production。"""
 
-    def test_prototype_wins_over_production(self, pc):
-        assert pc.min_maturity(["production", "prototype"]) == "prototype"
+    def test_design_wins(self, pc):
+        assert pc.min_maturity(["production", "design"]) == "design"
+
+    def test_production_only(self, pc):
+        assert pc.min_maturity(["production", "production"]) == "production"
 
     def test_empty(self, pc):
         assert pc.min_maturity([]) == ""

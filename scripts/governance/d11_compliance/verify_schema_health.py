@@ -5,7 +5,7 @@
 # [DEPENDENCIES] scripts.governance._shared.constants
 # [CONSUMERS] .pre-commit-config.yaml gate-schema-health
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] depgraph_schema.py 是 DDL 真源; DB 物理状态必须与 DDL 声明一致
 # [MODIFY-GUARD] depgraph_schema.py
 # [STABILITY] evolving

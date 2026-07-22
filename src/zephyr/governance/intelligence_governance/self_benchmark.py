@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] _KNOWN_PAIRS 长度=5; BenchmarkResult.status 枚举 passed/failed/degraded
 # [MODIFY-GUARD] 修改 _KNOWN_PAIRS 须同步更新测试
 # [STABILITY] evolving

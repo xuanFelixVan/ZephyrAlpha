@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_writer; zephyr.data.local_replay
 # [CONSUMERS]
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/market_auction_book.py; sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -57,20 +57,21 @@ except ImportError:
     TICK_DATA_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.tick_data
 (
-    trade_date   Date                    COMMENT '交易日期',
-    timestamp    DateTime                COMMENT '时间戳(3秒粒度)',
-    symbol       String                  COMMENT '证券代码',
-    market_type  LowCardinality(String)  COMMENT '市场类型',
-    price        Decimal(18,4)           COMMENT '成交价',
-    volume       UInt64                  COMMENT '成交量(股)',
-    amount       Decimal(18,2)           COMMENT '成交额(元)',
-    direction    LowCardinality(String) DEFAULT '' COMMENT '买卖方向',
-    data_source  LowCardinality(String) DEFAULT 'bdpan' COMMENT '数据来源',
-    bid_price    Nullable(Decimal(18,4)) COMMENT '买一价',
-    ask_price    Nullable(Decimal(18,4)) COMMENT '卖一价',
-    bid_volume   Nullable(UInt64)        COMMENT '买一量',
-    ask_volume   Nullable(UInt64)        COMMENT '卖一量',
-    quality_flag UInt8          DEFAULT 1 COMMENT '质量标记(1=正常 0=异常)'
+    trade_date    Date                    COMMENT '交易日期',
+    timestamp     DateTime                COMMENT '时间戳(3秒粒度)',
+    recorded_time DateTime      DEFAULT now() COMMENT '录制器本地接收时间(用于延迟分析)',
+    symbol        String                  COMMENT '证券代码',
+    market_type   LowCardinality(String)  COMMENT '市场类型',
+    price         Decimal(18,4)           COMMENT '成交价',
+    volume        UInt64                  COMMENT '成交量(股)',
+    amount        Decimal(18,2)           COMMENT '成交额(元)',
+    direction     LowCardinality(String) DEFAULT '' COMMENT '买卖方向',
+    data_source   LowCardinality(String) DEFAULT 'bdpan' COMMENT '数据来源',
+    bid_price     Nullable(Decimal(18,4)) COMMENT '买一价',
+    ask_price     Nullable(Decimal(18,4)) COMMENT '卖一价',
+    bid_volume    Nullable(UInt64)        COMMENT '买一量',
+    ask_volume    Nullable(UInt64)        COMMENT '卖一量',
+    quality_flag  UInt8          DEFAULT 1 COMMENT '质量标记(1=正常 0=异常)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
@@ -198,12 +199,49 @@ PARTITION BY toYYYYMM(trade_date)
 ORDER BY (sector_code, timestamp)
 """
 
+# cross_validation_log DDL — 真源: schemas/categories/cross_validation_log.py (P1-4)
+try:
+    from schemas.categories.cross_validation_log import CROSS_VALIDATION_LOG_DDL
+except ImportError:
+    CROSS_VALIDATION_LOG_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.cross_validation_log
+(
+    check_time     DateTime                COMMENT '校验执行时间',
+    check_date     Date                    COMMENT '校验数据日期',
+    symbol         String                  COMMENT '证券代码',
+    metric         LowCardinality(String)  COMMENT '校验指标',
+    primary_value  String                  COMMENT '主源值',
+    backup_value   String                  COMMENT '备源值',
+    deviation      Decimal(18,6)           COMMENT '偏差',
+    threshold      Decimal(18,6)           COMMENT '偏差阈值',
+    status         LowCardinality(String)  COMMENT '校验结果(pass/warn/fail)',
+    detail         String                  DEFAULT '' COMMENT '详细信息'
+)
+ENGINE = MergeTree
+PARTITION BY toYYYYMM(check_date)
+ORDER BY (check_date, symbol, metric, check_time)
+"""
+
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.tick_data", TICK_DATA_DDL),
     ("c1_market.kline_daily", KLINE_DAILY_DDL),
     ("c1_market.auction_book", AUCTION_BOOK_DDL),
     ("c1_market.sector_snapshot", SECTOR_SNAPSHOT_DDL),
+    ("c1_market.cross_validation_log", CROSS_VALIDATION_LOG_DDL),
+]
+
+# 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
+# 用于已存在的表新增列，CREATE TABLE IF NOT EXISTS 不会修改已存在的表结构
+# 每项: (表名, ALTER SQL)
+_MIGRATIONS: list[tuple[str, str]] = [
+    # P0-1 双时间戳（2026-07-22）: tick_data 新增 recorded_time 列
+    (
+        "c1_market.tick_data",
+        "ALTER TABLE c1_market.tick_data "
+        "ADD COLUMN IF NOT EXISTS recorded_time DateTime DEFAULT now() "
+        "COMMENT '录制器本地接收时间(用于延迟分析)' AFTER timestamp",
+    ),
 ]
 
 # 引擎选型矩阵（用于验证）
@@ -212,13 +250,14 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "kline_daily": "ReplacingMergeTree",
     "auction_book": "ReplacingMergeTree",
     "sector_snapshot": "ReplacingMergeTree",
+    "cross_validation_log": "MergeTree",
 }
 
 _DATABASE = "c1_market"
 
 
 def apply() -> int:
-    """执行所有建表 DDL。"""
+    """执行所有建表 DDL + 增量迁移。"""
     print("=== 创建数据库 ===")
     ch_writer.query(f"CREATE DATABASE IF NOT EXISTS {_DATABASE}")
     print(f"  {_DATABASE} ✓")
@@ -229,7 +268,13 @@ def apply() -> int:
         ch_writer.query(ddl)
         print("✓")
 
-    print("\n=== 建表完成 ===")
+    print("\n=== 执行增量迁移（ALTER TABLE） ===")
+    for table, sql in _MIGRATIONS:
+        print(f"  {table} ...", end=" ")
+        ch_writer.query(sql)
+        print("✓")
+
+    print("\n=== 建表 + 迁移完成 ===")
     return 0
 
 

@@ -15,7 +15,7 @@
 # [DEPENDENCIES] zephyr.gov_drift.correlation_engine; zephyr.gov_drift.credibility_engine; zephyr.gov_drift.cross_module_score; zephyr.gov_drift.forensics_engine; zephyr.gov_drift.git_bisector; zephyr.gov_drift.reconciler; zephyr.gov_drift.roi_engine; zephyr.gov_drift.rollback_bridge; zephyr.gov_drift.runbook_generator; zephyr.gov_drift.self_check; zephyr.gov_drift.suppression_learner; zephyr.gov_drift.tamper_proof_audit; zephyr.gov_drift.trend_analyzer; zephyr.gov_drift.chaos_injector; zephyr.gov_drift.backcompat_checker; zephyr.gov_drift.ai_construction_detectors
 # [CONSUMERS] zephyr.gov_drift.__init__
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增导出须同步更新__init__.py的__all__
 # [STABILITY] frozen

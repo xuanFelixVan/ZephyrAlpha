@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.audit.reconcile_worker; zephyr.governance.audit.reconciliation_registry
 # [CONSUMERS] pytest
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 临时 governance.db 隔离；不依赖真实 Zephyr 项目结构
 # [MODIFY-GUARD] 测试函数名与 #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1 API 对齐
 # [STABILITY] evolving

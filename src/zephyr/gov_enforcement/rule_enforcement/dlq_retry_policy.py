@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.events.dlq; zephyr.shared.infra.observer; zephyr.shared.io.paths
 # [CONSUMERS] zephyr.infrastructure.pipeline.dead_letter_queue; AutoRuntime Core retry phase
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 指数退避1/2/4/8/16min; 5次后PERMANENT_FAIL; ThreadPoolExecutor并行
 # [MODIFY-GUARD] BACKOFF_SCHEDULE变更必须同步文档
 # [STABILITY] evolving; [SAFETY] L; [AI_AUTONOMY] ai_modifiable

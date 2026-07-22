@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving

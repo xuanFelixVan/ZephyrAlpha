@@ -265,7 +265,7 @@ class TestExtremeAggregation:
         assert "responsibility_domain: OLD" not in content
 
     def test_design_maturity_takes_most_design(self, bfr, tmp_path, monkeypatch):
-        """production + design + prototype → design（min rank，最保守）"""
+        """production + design → design（min rank，最保守；ARCH-MM-002 两档化）"""
         bp = tmp_path / "bp.md"
         bp.write_text(
             "---\nmodule_id: MOD-MM\ndesign_maturity: old\n---\n# T\n",
@@ -276,15 +276,13 @@ class TestExtremeAggregation:
              "build_status": "stable", "blueprint_path": str(bp)},
             {"blueprint_id": "MOD-MM", "domain_id": "D_A", "design_maturity": "design",
              "build_status": "", "blueprint_path": ""},
-            {"blueprint_id": "MOD-MM", "domain_id": "D_A", "design_maturity": "prototype",
-             "build_status": "", "blueprint_path": ""},
         ])
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         assert bfr.reconcile_blueprint_frontmatter("MOD-MM") == 0
         assert "design_maturity: design" in bp.read_text(encoding="utf-8")
 
     def test_design_maturity_unknown_value_rank99(self, bfr, tmp_path, monkeypatch):
-        """未知 design_maturity 值 → rank 99，不优先于已知值 prototype(rank 1)"""
+        """未知 design_maturity 值 → rank 99，不优先于已知值 production(rank 1)"""
         bp = tmp_path / "bp.md"
         bp.write_text(
             "---\nmodule_id: MOD-UNK\ndesign_maturity: old\n---\n# T\n",
@@ -293,13 +291,13 @@ class TestExtremeAggregation:
         conn = _mock_depgraph_conn_multi([
             {"blueprint_id": "MOD-UNK", "domain_id": "D_A", "design_maturity": "weird_value",
              "build_status": "stable", "blueprint_path": str(bp)},
-            {"blueprint_id": "MOD-UNK", "domain_id": "D_A", "design_maturity": "prototype",
+            {"blueprint_id": "MOD-UNK", "domain_id": "D_A", "design_maturity": "production",
              "build_status": "", "blueprint_path": ""},
         ])
         monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
         assert bfr.reconcile_blueprint_frontmatter("MOD-UNK") == 0
-        # prototype (rank 1) < weird_value (rank 99)
-        assert "design_maturity: prototype" in bp.read_text(encoding="utf-8")
+        # production (rank 1) < weird_value (rank 99)
+        assert "design_maturity: production" in bp.read_text(encoding="utf-8")
 
     def test_build_status_takes_first_non_empty(self, bfr, tmp_path, monkeypatch):
         """build_status 取第一个非空（空行在前不取，取 stable 不取 planned）"""

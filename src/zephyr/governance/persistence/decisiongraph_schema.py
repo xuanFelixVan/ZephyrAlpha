@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     description         TEXT,
     decision_frequency  TEXT,
     design_maturity     TEXT    DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status        TEXT    DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id           TEXT,
@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
     facets           JSONB,
     evidence_hash    TEXT    NOT NULL,
     design_maturity  TEXT    DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT    DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     source_code_ref  TEXT,
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS decision_edges (
     track            TEXT,
     evidence_bundle  JSONB,
     design_maturity  TEXT    DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status     TEXT    DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     valid_since      TIMESTAMPTZ DEFAULT NOW()
@@ -301,10 +301,10 @@ _DDL_INDEXES = [
 #         禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。
 #         DB CHECK 保证值合法，状态迁移顺序由 apply_decisiongraph.py 应用层校验。
 #
-# DEC-INV-005: design_maturity 3态受控
-#   约束位置: decision_nodes.design_maturity CHECK IN ('design','production','prototype')
+# DEC-INV-005: design_maturity 2态受控（ARCH-MM-002）
+#   约束位置: decision_nodes.design_maturity CHECK IN ('design','production')
 #   约束类型: DB CHECK
-#   说明: design_maturity 只允许 3 种合法值，与 depgraph 节点表语义对齐
+#   说明: design_maturity 只允许 2 种合法值，与 depgraph 节点表语义对齐
 # ---------------------------------------------------------------------------
 
 
