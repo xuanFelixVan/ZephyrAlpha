@@ -14,7 +14,7 @@
 
 
 
-# [CONSUMERS] zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate; zephyr.governance.audit.reconciliation_registry (make_capability_lookup_health_reconciler)
+# [CONSUMERS] zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate (has_bypass_marker, is_emergency_bypass, is_exempt_reason); zephyr.governance.audit.reconciliation_registry (is_exempt_reason)
 
 
 
