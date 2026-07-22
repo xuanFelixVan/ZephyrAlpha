@@ -32,6 +32,13 @@ schedules:
     executor: intraday_minute
     description: "盘中分钟K线层——A股/ETF/LOF分钟K线盘中滚动更新"
 
+  # L2.5 盘中板块K线层：每5分钟在交易时段通过mootdx TCP直连获取880xxx板块分钟K线
+  # 独立执行器，避免被miniqmt全市场分钟K线慢任务（~5000股）阻塞
+  intraday_sector:
+    cron: "*/5 9-15 * * 0-4"
+    executor: intraday_sector
+    description: "盘中板块K线层——880xxx板块分钟K线（mootdx TCP直连，独立于miniqmt慢任务）"
+
   # L3 事件驱动层：每15分钟持续轮询（7×24）
   event_driven:
     cron: "*/15 * * * *"

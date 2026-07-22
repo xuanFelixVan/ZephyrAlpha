@@ -1551,7 +1551,7 @@ tasks:
   - task_id: kline_sector_1min_incremental
     table: c1_market.kline_sector_intraday
     source: tdx
-    schedule: intraday_minute
+    schedule: intraday_sector
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1565,7 +1565,7 @@ tasks:
   - task_id: kline_sector_5min_incremental
     table: c1_market.kline_sector_intraday
     source: tdx
-    schedule: intraday_minute
+    schedule: intraday_sector
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1579,7 +1579,7 @@ tasks:
   - task_id: kline_sector_15min_incremental
     table: c1_market.kline_sector_intraday
     source: tdx
-    schedule: intraday_minute
+    schedule: intraday_sector
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1593,7 +1593,7 @@ tasks:
   - task_id: kline_sector_30min_incremental
     table: c1_market.kline_sector_intraday
     source: tdx
-    schedule: intraday_minute
+    schedule: intraday_sector
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1607,7 +1607,7 @@ tasks:
   - task_id: kline_sector_60min_incremental
     table: c1_market.kline_sector_intraday
     source: tdx
-    schedule: intraday_minute
+    schedule: intraday_sector
     incremental: true
     date_col: trade_date
     dependencies: []

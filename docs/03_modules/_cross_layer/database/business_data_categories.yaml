@@ -933,6 +933,22 @@
   data_source: [tqcenter]
   blueprint: null
 
+- category_id: market_sector_kline_intraday
+  name: "880xxx板块分钟K线（mootdx TCP直连盘中实时获取，1m/5m/15m/30m/60m全周期）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_sector_intraday
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 分钟频
+  data_source: [tdx]
+  blueprint: null
+
 - category_id: market_sector_constituent_880
   name: "880xxx板块成分股映射（tqcenter源，板块-成分股对应关系，约84,450条）"
   engine: clickhouse
