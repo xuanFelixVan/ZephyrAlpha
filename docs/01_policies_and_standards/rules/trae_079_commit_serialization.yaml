@@ -1,0 +1,229 @@
+rule_id: TRAE-079
+title: commit 临界区文件锁串行化铁律（Commit Critical Section Serialization，裁定 #ARCH-COMMIT-SERIALIZATION-001）
+name: commit 临界区文件锁串行化铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-079
+priority: 66
+depends_on:
+- TRAE-001  # 文件操作安全协议（lock_files.py 原子目录锁真源）
+- TRAE-076  # worktree commit 持久性（本规则降维其补偿控制的触发条件）
+- TRAE-078  # force merge 安全分类（本规则收窄其并发场景）
+tags:
+- TRAE
+- commit_serialization
+- L1_foundation
+- session_lifecycle
+- critical_section
+- file_lock
+- escape_hatch_collapse
+- primitive_inversion_fix
+- RULE-COMMIT-SERIALIZATION
+- ARCH-COMMIT-SERIALIZATION-001
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-COMMIT-SERIALIZATION
+- commit 临界区串行化
+- commit critical section serialization
+- 文件锁串行化提交
+- 逃生链塌缩
+- 原语倒置修正
+- ARCH-COMMIT-SERIALIZATION-001
+severity: critical
+scope: commit_critical_section_serialization
+domain: TRAE
+triggers:
+- operation: git_commit_gateway.commit
+- operation: session_worktree_commit
+- gate_id: HELD-OVERLAP
+- gate_id: WORKSPACE-DRIFT
+- condition: WORKSPACE_DRIFT_BLOCKED
+sections:
+  commit_critical_section_serialization:
+    section_type: procedure
+    title: commit 临界区文件锁串行化铁律（RULE-COMMIT-SERIALIZATION）
+    original_rules:
+    - RULE-COMMIT-SERIALIZATION
+    - 裁定 #ARCH-COMMIT-SERIALIZATION-001
+    - 裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (收窄触发条件，非违反)
+    - 裁定 #ARCH-FORCE-MERGE-SAFETY-001 (收窄并发场景，非违反)
+    - 裁定 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (根因治本)
+    conditions:
+    - type: invariant
+      check: commit 正确性不变量——一次 commit C（session S 发起）MUST 恰好包含 S 意图的文件变更
+      pass: 不多（不搭便车其他 session WIP）不少（不丢失 S 自己变更）
+      fail: 搭便车（提交错文件）或丢失变更——违反 commit 原子性
+    - type: critical_section
+      check: 序列 [读 index 状态 → stage S 文件 → 创建 commit object → 更新 ref] 相对其他 session 的 [stage→commit] MUST 原子
+      pass: 临界区被文件锁串行化——acquire锁→[gate检查+stage+commit]→release锁
+      fail: 临界区无互斥——逻辑注册表检查(gate)与 git commit 之间存在 TOCTOU 窗口→搭便车
+    - type: trigger
+      check: GitCommitGateway.commit 执行 [gate 检查 → stage → git commit] 前
+      pass: acquire commit 临界区文件锁（复用 lock_files.py 原子目录锁机制，或专用 .runtime/locks/commit.lock），commit 完成/失败后 release
+      fail: 锁不可用（.runtime/ 不可写）→ fail-open 降级现状 + 显式 warn（不阻断业务，但记录到 .runtime/gate_audit/commit_lock_fallback.jsonl）
+    - type: trigger
+      check: 临界区内 git commit 执行方式
+      pass: MUST 用 pathspec 提交（git commit -- <files> 或 git reset + git add <files> + git commit <files>）——锁串行 + pathspec 限定 = 双保险
+      fail: 非 pathspec 提交（git add + git commit 无 pathspec）→ 共享 index 下搭便车其他 session 已 stage 文件
+    - type: classification
+      check: commit 路径分类——主路径 vs 逃生通道
+      pass: 主路径=文件锁串行化（任何 worktree 状态下均可用）；worktree 降级为可选并行/隔离审查
+      fail: 逃生链套娃——worktree→WORKSPACE_DRIFT_BLOCKED→GitCommitGateway allow_overlap→裸 commit（每层前置条件在同并发环境下同样失败）
+    - type: escape_hatch
+      check: allow_overlap 与"裸 commit + session 注册"逃生通道
+      pass: 降级为 last-resort（仅当文件锁自身不可用），保留显式事后审计（post_commit_guard）
+      fail: 常态化使用——逃生链成为主路径，债务堆积
+    - type: stale_lock_resilience
+      check: 持锁进程崩溃
+      pass: 复用 lock_files.py PID 死亡零窗口清理 + TTL 1800s 兜底——其他 session 立即自愈，不永久阻塞
+      fail: 陈旧锁无自愈→其他 session 永久阻塞 commit
+    actions:
+    - type: mandatory
+      step: '铁律1: GitCommitGateway.commit MUST 在 [gate 检查 → stage → git commit] 外层包文件锁临界区（acquire→临界区→release），整个临界区相对其他 session 串行'
+    - type: mandatory
+      step: '铁律2: 临界区内 MUST 用 pathspec 提交——保证只提交本 session 意图文件，锁串行 + pathspec 限定双保险'
+    - type: mandatory
+      step: '铁律3: commit 锁 MUST 复用 lock_files.py 的 PID 死亡零窗口清理 + TTL 兜底——陈旧锁自愈，不永久阻塞'
+    - type: mandatory
+      step: '铁律4: worktree 从"commit 正确性依赖项"降级为"可选并行/隔离审查"——WORKSPACE_DRIFT_BLOCKED 不再触发逃生链降级，直接走文件锁串行提交'
+    - type: mandatory
+      step: '铁律5: allow_overlap 与"裸 commit + session 注册"降级为 last-resort（仅文件锁不可用时），保留显式事后审计'
+    - type: mandatory
+      step: '铁律6: 文件锁 fail-open 降级 MUST 落审计（.runtime/gate_audit/commit_lock_fallback.jsonl）——滥用监控依赖此真源'
+    - type: forbidden
+      step: '禁止: commit 临界区无文件锁串行化而仅靠 SessionRegistry 逻辑检查——TOCTOU 窗口导致搭便车（原语倒置：弱原语用在高风险区）'
+    - type: forbidden
+      step: '禁止: 临界区内非 pathspec 提交——共享 index 下搭便车其他 session 已 stage 文件'
+    - type: forbidden
+      step: '禁止: 将文件锁 fail-open 降级常态化——降级是逃生，不是主路径（对标 force=True 滥用监控）'
+    - type: forbidden
+      step: '禁止: 新增 commit 路径绕过文件锁串行化——新增 commit 入口 MUST 走 GitCommitGateway 临界区'
+    examples:
+    - scenario: 文件锁串行化消除搭便车（治本目标）
+      正确: session A acquire commit 锁 → gate 检查通过 → git commit -- fileA → release 锁；session B 等待 → acquire → git commit -- fileB → release。无搭便车。
+      错误: session A gate 检查通过（逻辑注册表）→ 与此同时 session B stage fileB 到共享 index → session A git commit（无 pathspec）→ 提交 fileA + fileB（搭便车）
+      reason: 逻辑注册表检查与 git commit 之间是 TOCTOU 窗口——文件锁把整个临界区串行化，消除窗口
+    - scenario: worktree 失败不再触发逃生链套娃
+      正确: session_worktree_start → WORKSPACE_DRIFT_BLOCKED → 直接走文件锁串行提交到主分支（或 session 分支）→ commit 正确
+      错误: session_worktree_start → WORKSPACE_DRIFT_BLOCKED → GitCommitGateway allow_overlap → 并发 staged area 污染 → 返回 OK 但提交错文件 → 降级裸 commit + session 注册（逃生通道的逃生通道）
+      reason: worktree 前置条件（主工作区干净）在并发下永不成立——文件锁无此前置条件，任何 worktree 状态下均可用
+    - scenario: 陈旧锁自愈（持锁进程崩溃）
+      正确: session A acquire commit 锁 → 进程崩溃 → session B 检测 PID 已死 → 零窗口清理 → acquire → 提交
+      错误: session A acquire commit 锁 → 进程崩溃 → 无 PID 检测 → session B 永久阻塞
+      reason: lock_files.py 已实现 PID 死亡零窗口清理（is_pid_alive 真源）+ TTL 1800s 兜底——陈旧锁自愈是治本设计
+    - scenario: 原语倒置修正（强原语接真临界区）
+      正确: lock_files.py（原子目录锁，OS 级真互斥）→ 接入 commit 临界区（高风险）；SessionRegistry（逻辑注册表）→ 降为辅助审计
+      错误: lock_files.py → 仅 edit-time 文件互斥（低风险）；SessionRegistry → commit 临界区检查（高风险，TOCTOU 洞）
+      reason: 强原语用低风险操作、弱原语用高风险操作 = 原语倒置——本规则把强原语接到真临界区
+    common_mistakes:
+    - '❌ commit 临界区仅靠 SessionRegistry 逻辑检查不串行化——TOCTOU 窗口导致搭便车（原语倒置）'
+    - '❌ 临界区内非 pathspec 提交——共享 index 下搭便车其他 session 已 stage 文件'
+    - '❌ worktree 失败后走 allow_overlap→裸 commit 逃生链套娃——每层前置条件在同并发环境下同样失败'
+    - '❌ 文件锁 fail-open 降级常态化——降级是逃生不是主路径'
+    - '❌ 陈旧锁无 PID 检测——持锁进程崩溃后其他 session 永久阻塞'
+    background:
+      source: 2026-07-22 裁定 #ARCH-COMMIT-SERIALIZATION-001（worktree 逃生链套娃 + 薛定谔的回退根因治本）
+      rationale: |
+        病根（第一性原理，trae_076 background 自述的循环依赖）：
+        1. session_worktree_commit 创建 commit 后，commit 只存在于 worktree 分支
+        2. AI 等待 merge 的窗口期，并发 session 的 sweep 可能删除 worktree + 分支
+        3. commit 随分支删除而消失（薛定谔的回退）
+        4. session_worktree_start 前置条件"主工作区干净"在 100% AI 多 session 并发下永不成立
+           （主工作区几乎必然 drifted → WORKSPACE_DRIFT_BLOCKED）
+
+        逃生链套娃的结构性根因（非偶然）：
+        每层解决一个失败模式，但引入的新前置条件在同一个并发环境下同样失败：
+        - L1 worktree（物理 index 隔离）→ 前置"主工作区干净"→ 并发 drift 失败
+        - L2 GitCommitGateway allow_overlap（共享 index 提交）→ 前置"index 未污染"→ 共享 index 失败
+        - L3 裸 commit + session 注册 → 绕过所有门禁，靠事后校验
+        根因（共享可变 index 下的并发 commit）从未被移除，只被逐层降级绕过。
+        每降一级引入一批补偿控制（审计标记 / post-hoc 校验 / force 分类 / stash gate），债务堆积。
+
+        原语倒置（关键发现）：
+        项目已存在两套锁机制，但用反了：
+        - 强原语 lock_files.py（.ailocks/，原子目录创建 os.makedirs(exist_ok=False)=OS 级真互斥，
+          PID 死亡零窗口清理 + TTL 1800s 兜底）——只接在 edit-time 文件互斥（低风险），未接入 commit 路径
+        - 弱原语 SessionRegistry（.runtime/session_registry.json，逻辑注册表，只"检查"不"串行化"）
+          ——commit 路径用这个（held_overlap_gate），TOCTOU 窗口
+        强原语用在低风险操作、弱原语用在高风险操作 = 原语倒置。
+        本规则把强原语（文件锁）接到真临界区（commit），把超集机制（worktree）降为可选。
+
+        第一性原理：commit 不变量与最小互斥机制
+        - 不变量：一次 commit 恰好包含发起 session 意图的文件变更（不多不少）
+        - 临界区：[读 index → stage → create commit → update ref] 须相对其他 session 原子
+        - 最小精确解：文件锁串行化临界区（acquire→[check+stage+commit]→release）
+          worktree 是超集（还提供并行 staging）但前置条件不可达 = 实际不可用
+          SessionRegistry 是子集（只检查不串行）= TOCTOU 洞
+          文件锁 = 精确解
+
+        100% AI 并发根本约束：
+        - 无人类协调，N session 并发无共享状态
+        - warn 无效（AI 把 warn 当通过），必须 fail-closed 或自动处理
+        - 主工作区恒 drift（N≥2 session 编辑即不干净）→ 否定 worktree 前置条件
+        - commit 低频、编辑可并行 → 互斥只罩 commit 不罩编辑
+        文件锁恰好实现"串行 commit 临界区 + 并行编辑"取舍。
+
+        与现有裁定的关系：
+        - 收窄 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001（TRAE-076）：本规则不移除其条款，
+          而是移除触发其补偿控制的条件（commit 不再落会被 sweep 的临时分支是 Phase 2 目标）
+        - 收窄 #ARCH-FORCE-MERGE-SAFETY-001（TRAE-078）：commit 临界区串行后并发场景减少
+        - 互补 #ARCH-CROSS-COMMIT-ATOMICITY-002（TRAE-072）：跨 commit 原子性仍由
+          GATE-IMPORT-INTEGRITY 保障，本规则解决同一 commit 内并发污染
+        - 根因治本 #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001：worktree 前置条件悖论的根因
+        - 文件锁方案从未被任何既有裁定否决，本规则为首次正式确立
+      related_arch: '#ARCH-COMMIT-SERIALIZATION-001, #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (收窄), #ARCH-FORCE-MERGE-SAFETY-001 (收窄), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (根因治本), #ARCH-CROSS-COMMIT-ATOMICITY-002 (互补)'
+references:
+  rule_ids:
+  - TRAE-001
+  - TRAE-076
+  - TRAE-078
+  - TRAE-072
+  scripts:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+  - scripts/lock_files.py
+  - src/zephyr/security/access_control/session_concurrency.py
+  - src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py
+  - scripts/governance/git_hooks/post_commit_guard.sh
+  - tests/governance/rule_bridge/test_git_commit_gateway.py
+  modules:
+  - MOD-GOV-SESSION_WORKTREE
+  - MOD-GOV-GIT_COMMIT_GATEWAY
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §FP-ISO.4C
+  - AGENTS.md §RULE-COMMIT-SERIALIZATION
+  - AGENTS.md §6.4 (worktree 君子协定——escape hatch 场景)
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+enforcement:
+  paired_gate_id: COMMIT-CRITICAL-SECTION-LOCK  # Phase 1 落地：commit 临界区文件锁 gate（warn-only 起步→P2 硬阻断）
+  type: code_embedded_plus_doc
+  executors:
+  - git_commit_gateway_critical_section_guard  # Phase 1: commit 方法外层文件锁临界区
+  - session_worktree_escape_hatch_demotion  # Phase 1: worktree 失败不触发逃生链降级
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: true  # 文件锁不可用时 fail-open 降级（last-resort），但落审计
+  bypass_markers:
+  - commit_lock_unavailable=True  # 仅 .runtime/ 不可写时降级，落审计到 commit_lock_fallback.jsonl
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-COMMIT-SERIALIZATION-001, #ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-FORCE-MERGE-SAFETY-001, #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001, #ARCH-CROSS-COMMIT-ATOMICITY-002'
+provenance:
+  extracted_at: '2026-07-22'
+  extracted_by: sess-75984-20260722054849
+  source: '裁定 #ARCH-COMMIT-SERIALIZATION-001（worktree 逃生链套娃根因治本，sess-75984-20260722054849；session_worktree_start 即刻 WORKSPACE_DRIFT_BLOCKED 亲历故障）'

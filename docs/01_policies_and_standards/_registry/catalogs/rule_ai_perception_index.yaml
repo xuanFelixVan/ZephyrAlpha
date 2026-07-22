@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-07-21T00:00:00Z'
+generated_at: '2026-07-21T21:51:42Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 74
+total_rules: 76
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1764,113 +1764,8 @@ rules:
   - ARCH-PREVENTABILITY-LAYER-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
-- rule_id: TRAE-069
-  title: Commit Gateway 滥用监控 5 维阈值配置（P3-1 治本，阈值真源从代码常量提取到 YAML）
-  module_id: TRAE-069
-  scope: commit_gateway_abuse_thresholds
-  domain: TRAE
-  severity: high
-  stability: evolving
-  ai_autonomy: ai_modifiable
-  safety_level: L
-  operations:
-  - abuse_threshold_adjustment
-  - rule_data_externalization
-  - reconciler_threshold_reload
-  gate_ids: []  # 数据源类规则，无对应 enforcement gate（消费方为 reconciler 而非 gate）
-  tags:
-  - TRAE
-  - commit_gateway
-  - abuse_monitor
-  - thresholds
-  - rule_data
-  - SSoT
-  - trae_062_derived
-  - P3-1
-  - ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001
-  - ARCH-PREVENTABILITY-LAYER-001
-  aliases:
-  - commit_gateway_abuse_thresholds
-  - 滥用阈值
-  - abuse_thresholds
-  - 5维阈值
-  - five_dimension_thresholds
-  - warn_only_threshold
-  - emergency_commit_threshold
-  - allow_overlap_threshold
-  - forged_gw_marker_threshold
-  - non_gw_commit_threshold
-  - health_score_weights
-  - adaptive_thresholds
-  paired_gate_id: null  # 数据源类规则，无对应 enforcement gate
-  rule_file: docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml
-- rule_id: TRAE-070
-  title: 临时文件分类存放铁律（Temporary File Placement，治本 #ARCH-TEMP-FILE-PLACEMENT-001）
-  module_id: TRAE-070
-  scope: temporary_file_placement
-  domain: TRAE
-  severity: high
-  stability: evolving
-  ai_autonomy: ai_modifiable
-  safety_level: L
-  operations:
-  - temporary_file_creation
-  - task_document_placement
-  - runtime_script_placement
-  - worktree_placement
-  - test_output_placement
-  gate_ids:
-  - GATE-DIRECTORY-CONTRACT
-  tags:
-  - TRAE
-  - temporary_file
-  - file_placement
-  - directory_discipline
-  - docs_working
-  - runtime_tmp
-  - aidrafts
-  - RULE-TEMP-PLACE
-  aliases:
-  - RULE-TEMP-PLACE
-  - 临时文件存放
-  - 临时文件分类
-  - temp_file_placement
-  - ARCH-TEMP-FILE-PLACEMENT-001
-  paired_gate_id: GATE-DIRECTORY-CONTRACT
-  rule_file: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml
-- rule_id: TRAE-071
-  title: 临时文件生命周期铁律（Temporary File Lifecycle，治本 #ARCH-TEMP-FILE-LIFECYCLE-001）
-  module_id: TRAE-071
-  scope: temporary_file_lifecycle
-  domain: TRAE
-  severity: high
-  stability: evolving
-  ai_autonomy: ai_modifiable
-  safety_level: L
-  operations:
-  - temporary_file_creation
-  - staging_promotion
-  - session_cleanup
-  - ttl_enforcement
-  gate_ids: []
-  tags:
-  - TRAE
-  - temporary_file
-  - file_lifecycle
-  - staging_cleanup
-  - ttl
-  - promote
-  - RULE-TEMP-LIFE
-  aliases:
-  - RULE-TEMP-LIFE
-  - 临时文件生命周期
-  - 暂存层清理
-  - temp_file_lifecycle
-  - ARCH-TEMP-FILE-LIFECYCLE-001
-  paired_gate_id: null
-  rule_file: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
 - rule_id: TRAE-072
-  title: 跨 commit 原子性铁律（Cross-Commit Atomicity，裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001）
+  title: 跨 commit 原子性铁律（Cross-Commit Atomicity，裁定
   module_id: TRAE-072
   scope: cross_commit_atomicity
   domain: TRAE
@@ -1902,10 +1797,36 @@ rules:
   - 悬空 import 防护
   - dangling import prevention
   - ARCH-CROSS-COMMIT-ATOMICITY-001
-  paired_gate_id: GATE-IMPORT-INTEGRITY
+  paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml
+- rule_id: TRAE-073
+  title: pre-commit hook 离线可运行纪律铁律（Pre-commit Offline Discipline）
+  module_id: TRAE-073
+  scope: precommit_offline_discipline
+  domain: TRAE
+  severity: high
+  stability: ''
+  ai_autonomy: ''
+  safety_level: ''
+  operations:
+  - precommit_config_edit
+  - git_commit_invocation
+  - precommit_install
+  - precommit_run
+  gate_ids: []
+  tags:
+  - TRAE
+  - precommit_offline
+  - L1_foundation
+  - no_external_dependency
+  - local_hooks
+  - network_single_point_failure
+  - offline_first
+  aliases: []
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml
 - rule_id: TRAE-074
-  title: worktree base 新鲜度全生命周期铁律（Worktree Base Freshness Full Lifecycle，裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001）
+  title: worktree base 新鲜度全生命周期铁律（Worktree Base Freshness Full Lifecycle，裁定
   module_id: TRAE-074
   scope: worktree_base_freshness
   domain: TRAE
@@ -1939,7 +1860,7 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
 - rule_id: TRAE-075
-  title: stash 生命周期铁律（Stash Lifecycle，裁定 #ARCH-STASH-ACCUMULATION-001）
+  title: stash 生命周期铁律（Stash Lifecycle，裁定
   module_id: TRAE-075
   scope: stash_lifecycle
   domain: TRAE
@@ -1952,8 +1873,7 @@ rules:
   - session_worktree_merge
   - session_worktree_abort
   - git_stash_drop
-  gate_ids:
-  - STASH-ACCUMULATION
+  gate_ids: []
   tags:
   - TRAE
   - stash_lifecycle
@@ -1970,10 +1890,11 @@ rules:
   - stash accumulation
   - stash TTL cleanup
   - ARCH-STASH-ACCUMULATION-001
-  paired_gate_id: STASH-ACCUMULATION
+  paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml
 - rule_id: TRAE-076
-  title: worktree commit 持久性 + start fail-closed 铁律（Worktree Commit Persistence + Start Fail-Closed，裁定 #ARCH-WORKTREE-COMMIT-PERSISTENCE-001）
+  title: worktree commit 持久性 + start fail-closed 铁律（Worktree Commit Persistence +
+    Start Fail-Closed，裁定
   module_id: TRAE-076
   scope: worktree_commit_persistence
   domain: TRAE
@@ -2010,7 +1931,7 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
 - rule_id: TRAE-077
-  title: capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001）
+  title: capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定
   module_id: TRAE-077
   scope: capability_lookup_bypass_stats
   domain: TRAE
@@ -2020,8 +1941,6 @@ rules:
   safety_level: M
   operations:
   - capability_lookup_health_reconciler
-  - bypass_scene_classify
-  - bypass_audit_logging
   gate_ids:
   - CAPABILITY-LOOKUP-HEALTH
   tags:
@@ -2043,9 +1962,9 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
 - rule_id: TRAE-078
-  title: force=True 逃生通道安全分类铁律（Force Merge Safety Classification，裁定 #ARCH-FORCE-MERGE-SAFETY-001）
+  title: force=True 逃生通道安全分类铁律（Force Merge Safety Classification，裁定
   module_id: TRAE-078
-  scope: force_merge_safety
+  scope: force_merge_safety_classification
   domain: TRAE
   severity: critical
   stability: evolving
@@ -2053,20 +1972,62 @@ rules:
   safety_level: H
   operations:
   - session_worktree_merge
-  gate_ids: []
+  gate_ids:
+  - WORKSPACE-CLEAN-CHECK
+  - PRE-MERGE-TOPO-CHECK
+  - BASE-FRESHNESS-MERGE
+  - SCHRODINGER_ROLLBACK_DETECTED
   tags:
   - TRAE
   - force_merge_safety
   - L1_foundation
+  - session_lifecycle
+  - escape_hatch_classification
   - non_bypassable
-  - bypassable
-  - escape_hatch
+  - RULE-FORCE-MERGE-SAFETY
   - ARCH-FORCE-MERGE-SAFETY-001
   aliases:
   - RULE-FORCE-MERGE-SAFETY
-  - force=True 安全分类
-  - 不可绕过类
-  - 可绕过类
+  - force merge 安全分类
+  - force merge safety classification
+  - 不可绕过类检测
+  - non-bypassable checks
   - ARCH-FORCE-MERGE-SAFETY-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml
+- rule_id: TRAE-079
+  title: commit 临界区文件锁串行化铁律（Commit Critical Section Serialization，裁定
+  module_id: TRAE-079
+  scope: commit_critical_section_serialization
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - git_commit_gateway.commit
+  - session_worktree_commit
+  gate_ids:
+  - HELD-OVERLAP
+  - WORKSPACE-DRIFT
+  tags:
+  - TRAE
+  - commit_serialization
+  - L1_foundation
+  - session_lifecycle
+  - critical_section
+  - file_lock
+  - escape_hatch_collapse
+  - primitive_inversion_fix
+  - RULE-COMMIT-SERIALIZATION
+  - ARCH-COMMIT-SERIALIZATION-001
+  aliases:
+  - RULE-COMMIT-SERIALIZATION
+  - commit 临界区串行化
+  - commit critical section serialization
+  - 文件锁串行化提交
+  - 逃生链塌缩
+  - 原语倒置修正
+  - ARCH-COMMIT-SERIALIZATION-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
