@@ -26,6 +26,7 @@ NODES_WHITELIST = {"module", "script", "test", "config"}  # noqa: gate-vocab  no
 
 
 def clean_depgraph():
+    """clean_depgraph implementation."""
     conn = get_depgraph_pg_connection(autocommit=False)
     # P2迁移后：PostgreSQL 无 PRAGMA foreign_keys；手动管理边删除（先删 edges 再删 nodes）
     cur = conn.cursor()

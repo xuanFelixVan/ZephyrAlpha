@@ -192,6 +192,7 @@ def scan_directory(
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4）"
     )

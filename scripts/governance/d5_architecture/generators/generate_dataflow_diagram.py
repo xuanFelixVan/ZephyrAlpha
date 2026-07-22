@@ -256,6 +256,7 @@ def _gen_mermaid(
 
     # 过滤（scope + maturity 双维度）
     def _match(item: dict) -> bool:
+        """_match implementation."""
         if scope_filter and item["scope"] != scope_filter:
             return False
         if maturity_filter and item.get("maturity") != maturity_filter:
@@ -505,6 +506,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）",
     )

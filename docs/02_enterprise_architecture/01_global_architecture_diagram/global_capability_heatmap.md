@@ -129,7 +129,7 @@ ttl: permanent
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | prototype | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 78 | 14 | 5 | 59 | 1.50 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 76 | 14 | 3 | 59 | 1.50 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 24 | 6 | 0 | 18 | 1.60 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 13 | 9 | 0 | 4 | 2.00 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 17 | 1 | 0 | 16 | 1.50 | 🟡 部分覆盖 / Partial |
@@ -138,14 +138,14 @@ ttl: permanent
 | C7 | 回测仿真 | 4 | 33 | 11 | 0 | 22 | 2.00 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 994 | 798 | 41 | 155 | 2.71 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 172 | 100 | 0 | 72 | 0.80 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 816 | 576 | 4 | 236 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 815 | 576 | 3 | 236 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | prototype | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_DATA | 数据接入层 | C1 |  | 57 | 14 | 5 | 38 | 11 | L3 🟢 | ✅ |
+| D_DATA | 数据接入层 | C1 |  | 55 | 14 | 3 | 38 | 11 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
@@ -203,7 +203,7 @@ ttl: permanent
 | D_OPS | 反馈循环 | CC3 | L1_foundation | 9 | 8 | 0 | 1 | 8 | L3 🟢 | ✅ |
 | D_ORCHESTRATOR | 代理编排器 | CC3 | L1_foundation | 70 | 54 | 0 | 16 | 54 | L3 🟢 | ✅ |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 3 | 1 | 0 | 2 | 1 | L3 🟢 | ✅ |
-| D_SHARED | 共享服务 | CC3 | L1_foundation | 183 | 115 | 2 | 66 | 115 | L3 🟢 | ✅ |
+| D_SHARED | 共享服务 | CC3 | L1_foundation | 182 | 115 | 1 | 66 | 115 | L3 🟢 | ✅ |
 | D_GOV_KB | Governance Knowledge Base | — | L2_domain | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 
 ## 差距分析 / Gap Analysis
@@ -249,7 +249,7 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_DATA | 数据接入层 | C1 | L3 | 57 |
+| D_DATA | 数据接入层 | C1 | L3 | 55 |
 | D_FACTOR | 因子 | C2 | L3 | 5 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L3 | 10 |
 | D_RISK | 风控 | C3 | L3 | 11 |
@@ -283,7 +283,7 @@ ttl: permanent
 | D_OPS | 反馈循环 | CC3 | L3 | 9 |
 | D_ORCHESTRATOR | 代理编排器 | CC3 | L3 | 70 |
 | D_REPORTING | 报告 | CC3 | L3 | 3 |
-| D_SHARED | 共享服务 | CC3 | L3 | 183 |
+| D_SHARED | 共享服务 | CC3 | L3 | 182 |
 
 ## 未映射域 / Unmapped Domains
 

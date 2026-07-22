@@ -66,6 +66,7 @@ class _CustomEncoder(json.JSONEncoder):
     """Handle non-JSON-serializable types found in decisiongraph."""
 
     def default(self, obj):
+        """default implementation."""
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
         if isinstance(obj, decimal.Decimal):
@@ -253,6 +254,7 @@ def cmd_stats(output):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="decisiongraph on-demand extraction tool",
     )

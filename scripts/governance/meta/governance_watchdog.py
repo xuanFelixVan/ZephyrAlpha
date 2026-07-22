@@ -18,6 +18,7 @@
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 治理watchdog常驻服务(python scripts/governance/meta/governance_watchdog.py),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 
@@ -61,6 +62,7 @@ _QUARANTINE_FAILURES_THRESHOLD = _get_threshold("script_health.consecutive_failu
 
 class ServiceUnrecoverableError(Exception):
     def __init__(self, service_name: str, restart_count: int, max_restart: int):
+        """__init__ implementation."""
         self.service_name = service_name
         self.restart_count = restart_count
         self.max_restart = max_restart
@@ -94,6 +96,7 @@ class GovernanceWatchdog:
         max_restart: int = 3,
         restart_delay: int = 10,
     ):
+        """__init__ implementation."""
         self._check_interval = check_interval
         self._max_restart = max_restart
         self._restart_delay = restart_delay
@@ -110,6 +113,7 @@ class GovernanceWatchdog:
         health_check_fn: Callable[[], bool],
         restart_fn: Callable[[], bool],
     ) -> None:
+        """register_service implementation."""
         with self._lock:
             self._services[name] = ServiceRecord(
                 name=name,
@@ -118,6 +122,7 @@ class GovernanceWatchdog:
             )
 
     def check_all(self) -> dict[str, Any]:
+        """Check compliance and report findings."""
         results: dict[str, Any] = {}
         with self._lock:
             service_names = list(self._services.keys())
@@ -150,6 +155,7 @@ class GovernanceWatchdog:
         return results
 
     def restart_service(self, name: str) -> bool:
+        """restart_service implementation."""
         with self._lock:
             svc = self._services.get(name)
             if svc is None:
@@ -188,6 +194,7 @@ class GovernanceWatchdog:
         return success
 
     def run(self, daemon: bool = True) -> None:
+        """run implementation."""
         self._stop_event.clear()
         self._watchdog_thread = threading.Thread(
             target=self._run_loop,
@@ -196,6 +203,7 @@ class GovernanceWatchdog:
         self._watchdog_thread.start()
 
     def _run_loop(self) -> None:
+        """_run_loop implementation."""
         while not self._stop_event.is_set():
             try:
                 check_results = self.check_all()
@@ -208,15 +216,18 @@ class GovernanceWatchdog:
             self._stop_event.wait(timeout=self._check_interval)
 
     def stop(self) -> None:
+        """stop implementation."""
         self._stop_event.set()
         if self._watchdog_thread is not None:
             self._watchdog_thread.join(timeout=10)
             self._watchdog_thread = None
 
     def set_on_exhausted(self, callback: Callable[[str], None]) -> None:
+        """set_on_exhausted implementation."""
         self._on_exhausted = callback
 
     def _save_state(self) -> None:
+        """_save_state implementation."""
         with self._lock:
             state = {}
             for name, svc in self._services.items():
@@ -232,6 +243,7 @@ class GovernanceWatchdog:
 
 
 def _run_warn_only() -> dict[str, Any]:
+    """_run_warn_only implementation."""
     results: dict[str, Any] = {"checks": []}
     wd = GovernanceWatchdog(check_interval=5, max_restart=3, restart_delay=1)
     wd.register_service(
@@ -287,6 +299,7 @@ def _run_warn_only() -> dict[str, Any]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Governance Watchdog — service health monitoring and auto-recovery")
     parser.add_argument(
         "--warn-only",

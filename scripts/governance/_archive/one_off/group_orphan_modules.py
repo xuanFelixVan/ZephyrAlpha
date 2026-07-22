@@ -90,6 +90,7 @@ def group_by_subpackage(orphans: list[dict]) -> dict[str, list[dict]]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="按域分组统计 ORPHAN MODULES")
     parser.add_argument("--output", type=str, help="输出 JSON 文件路径")
     parser.add_argument("--by-subpackage", action="store_true", help="按子包分组（更细粒度）")

@@ -480,6 +480,7 @@ def sync_decision_graph(
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="decisiongraph YAML→DB 同步生成器（对标 generate_project_depgraph.py）",
         epilog="""YAML 真源：architecture_model/domain/decision_graph_model.yaml

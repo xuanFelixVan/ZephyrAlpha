@@ -66,6 +66,7 @@ results = []
 
 
 def test(num, name, passed, detail=""):
+    """test implementation."""
     status = "PASS" if passed else "FAIL"
     print(f"  [{status}] #{num} {name}: {detail}")
     results.append((num, name, passed))
@@ -457,6 +458,7 @@ def run_special_tests():
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     # P2迁移后弃用：depgraph已迁移到PostgreSQL，本脚本基于SQLite语义（sqlite3.connect(
     # depgraph)/IntegrityError/?占位符/row[0]数值索引）不再适用。需PG重写或参考
     # repair/p2_pg_concurrent_test.py 模式。

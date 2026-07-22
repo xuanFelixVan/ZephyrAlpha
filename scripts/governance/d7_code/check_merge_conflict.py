@@ -110,6 +110,7 @@ def _is_text_file(filepath: Path) -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     files = _get_staged_files_for_conflict_check()
     if not files:
         return EXIT_PASS

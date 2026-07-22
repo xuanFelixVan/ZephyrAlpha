@@ -72,6 +72,7 @@ class _CustomEncoder(json.JSONEncoder):
     """Handle non-JSON-serializable types found in depgraph."""
 
     def default(self, obj):
+        """default implementation."""
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
         return super().default(obj)
@@ -368,6 +369,7 @@ def cmd_stats(dep_path: Path, output: str | None) -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="depgraph 按需提取工具（禁止AI直接Read 157MB文件）",
         epilog="""场景速查：

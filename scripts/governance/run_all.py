@@ -801,7 +801,9 @@ def run_all_dimensions(
             bulkhead = BulkheadExecutorV2()
 
             def _make_executor(wo: bool):
+                """_make_executor implementation."""
                 def _exec(sn: str, m: dict) -> dict:
+                    """_exec implementation."""
                     return _execute_one_script(sn, m, wo)
 
                 return _exec
@@ -811,6 +813,7 @@ def run_all_dimensions(
             print(f"\n  并行执行 {len(script_tasks)} 个唯一脚本 (BulkheadExecutorV2 四池隔离) ...", file=sys.stderr)
 
             def _on_complete(result: dict) -> None:
+                """_on_complete implementation."""
                 if result.get("enc_violation"):
                     encoding_violations.append(result["enc_violation"])
                     print(

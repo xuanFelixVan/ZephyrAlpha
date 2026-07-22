@@ -11,7 +11,7 @@
 # 变更此文件后无需改代码，sla_monitor 启动时自动加载
 
 schema_version: "1.0"
-doc_type: config
+doc_type: register
 module_ref: MOD-INF_sla_monitor
 last_updated: "2026-07-06"
 

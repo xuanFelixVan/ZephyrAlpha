@@ -30,7 +30,7 @@ checks:
       - TRAE-014
     description: "对每条有 physical_path 的契约：加载对应的 Python dataclass，对比字段"
     params:
-      contract_spec_path: "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+      contract_spec_path: "architecture_model/contracts/cross_layer_contracts.yaml"
       check_types: true
       check_required: true
       check_ordering: false

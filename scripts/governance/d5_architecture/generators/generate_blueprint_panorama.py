@@ -807,6 +807,7 @@ def generate_all(*, dry_run: bool = False) -> int:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）"
     )

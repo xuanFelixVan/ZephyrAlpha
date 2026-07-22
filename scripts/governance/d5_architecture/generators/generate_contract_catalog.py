@@ -178,6 +178,7 @@ def generate_contract_catalog() -> str:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     content = generate_contract_catalog()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8")

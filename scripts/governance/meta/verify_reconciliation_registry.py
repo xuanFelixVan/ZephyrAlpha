@@ -148,6 +148,7 @@ def _check_002_register_idempotent(mod) -> CheckResult:
     reg = reg_cls()
 
     def _mk(gid: str) -> object:
+        """_mk implementation."""
         return spec_cls(
             gate_id=gid,
             trigger=lambda files: False,
@@ -192,6 +193,7 @@ def _check_004_priority_order(mod) -> CheckResult:
     for prio, gid in [(300, "C"), (100, "B"), (200, "A")]:
 
         def _reconcile(files, sid, _gid=gid):
+            """_reconcile implementation."""
             order.append(_gid)
             return mod.ReconcileResult(action="clean", detail=_gid)
 
@@ -214,9 +216,11 @@ def _check_005_exception_isolation(mod) -> CheckResult:
     ran_after = {"v": False}
 
     def _boom(files, sid):
+        """_boom implementation."""
         raise RuntimeError("injected failure")
 
     def _ok(files, sid):
+        """_ok implementation."""
         ran_after["v"] = True
         return mod.ReconcileResult(action="clean")
 

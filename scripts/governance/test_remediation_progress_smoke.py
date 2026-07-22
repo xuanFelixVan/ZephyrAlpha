@@ -54,6 +54,7 @@ class _FakeGateway:
     """模拟 GitCommitGateway（仅用 project_root 属性）。"""
 
     def __init__(self, root):
+        """__init__ implementation."""
         self.project_root = root
 
 

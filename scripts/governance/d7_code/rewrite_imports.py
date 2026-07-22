@@ -352,6 +352,7 @@ def print_apply_report(results: list[RewriteResult]) -> None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="批量重写 Python import 路径（AST-based）",
         formatter_class=argparse.RawDescriptionHelpFormatter,

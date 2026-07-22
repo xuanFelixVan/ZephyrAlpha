@@ -837,6 +837,7 @@ def _extract_domain_override(filepath: Path) -> str | None:
 
 
 def derive_domain_id(rel_path: str, domain_derivation: list = None, filepath: Path = None) -> str:
+    """derive_domain_id implementation."""
     # 优先检查文件头 [DOMAIN] 覆盖
     if filepath and filepath.exists():
         override = _extract_domain_override(filepath)
@@ -853,6 +854,7 @@ def derive_domain_id(rel_path: str, domain_derivation: list = None, filepath: Pa
 
 
 def derive_subdomain_id(rel_path: str, domain_id: str, domain_derivation: list = None) -> str:
+    """derive_subdomain_id implementation."""
     if not domain_id or not domain_derivation:
         return ""
     rp = rel_path.replace("\\", "/")
@@ -863,6 +865,7 @@ def derive_subdomain_id(rel_path: str, domain_id: str, domain_derivation: list =
 
 
 def derive_architecture_layer(rel_path: str, blueprint_id: str, domain_derivation: list = None) -> str:
+    """derive_architecture_layer implementation."""
     if domain_derivation:
         rp = rel_path.replace("\\", "/")
         for prefix, _, _, arch_layer in domain_derivation:
@@ -882,6 +885,7 @@ def derive_architecture_layer(rel_path: str, blueprint_id: str, domain_derivatio
 
 
 def derive_design_maturity(node_type: str, has_test: bool) -> str:
+    """derive_design_maturity implementation."""
     # 裁定#189：删除 blueprint→design 分支，生成器不得创建设计态节点
     # 设计态节点只由人工通过 apply_depgraph.py 写入（§12.1 唯一来源规则）
     if node_type in CODE_TYPES:
@@ -892,6 +896,7 @@ def derive_design_maturity(node_type: str, has_test: bool) -> str:
 
 
 def derive_deployment_lifecycle(node_type: str) -> str:
+    """derive_deployment_lifecycle implementation."""
     if node_type == "blueprint":
         return "design_only"
     return "stable"
@@ -989,6 +994,7 @@ def upgrade_tested_modules(nodes: dict, edges: list) -> set:
 
 
 def derive_trust_zone(rel_path: str) -> str:
+    """derive_trust_zone implementation."""
     rp = rel_path.replace("\\", "/")
     for prefix, zone in TRUST_ZONE_MAP:
         if rp.startswith(prefix):
@@ -997,12 +1003,14 @@ def derive_trust_zone(rel_path: str) -> str:
 
 
 def derive_drive_direction(has_blueprint: bool, node_type: str) -> str:
+    """derive_drive_direction implementation."""
     if has_blueprint and node_type == "blueprint":
         return "top_down"
     return "bottom_up"
 
 
 def derive_tags(rel_path: str, node_type: str) -> list:
+    """derive_tags implementation."""
     tags = []
     rp = rel_path.replace("\\", "/")
     parts = rp.split("/")
@@ -1015,6 +1023,7 @@ def derive_tags(rel_path: str, node_type: str) -> list:
 
 
 def count_header_completeness(filepath) -> int:
+    """count_header_completeness implementation."""
     found = 0
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -1048,6 +1057,7 @@ ID_PATTERN = re.compile(
 
 
 def parse_blueprint_header(filepath: Path) -> dict:
+    """parse_blueprint_header implementation."""
     info = {
         "blueprint_id": "",
         "blueprint_path": "",
@@ -1103,6 +1113,7 @@ def parse_blueprint_header(filepath: Path) -> dict:
 
 
 def parse_yaml_header(filepath: Path) -> dict:
+    """parse_yaml_header implementation."""
     info = {
         "blueprint_id": "",
         "blueprint_path": "",
@@ -1146,6 +1157,7 @@ def parse_yaml_header(filepath: Path) -> dict:
 
 
 def parse_md_frontmatter(filepath: Path) -> dict:
+    """parse_md_frontmatter implementation."""
     info = {"blueprint_id": "", "module_id": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -1180,6 +1192,7 @@ def parse_md_frontmatter(filepath: Path) -> dict:
 
 
 def extract_py_imports(filepath: Path) -> list:
+    """extract_py_imports implementation."""
     imports = []
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -1262,6 +1275,7 @@ def extract_public_api(filepath: Path) -> str:
 
 
 def extract_md_references(filepath: Path) -> list:
+    """extract_md_references implementation."""
     refs = []
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -1274,6 +1288,7 @@ def extract_md_references(filepath: Path) -> list:
 
 
 def extract_json_references(filepath: Path) -> list:
+    """extract_json_references implementation."""
     refs = []
     try:
         with open(filepath, encoding="utf-8", errors="ignore") as f:
@@ -1286,6 +1301,7 @@ def extract_json_references(filepath: Path) -> list:
 
 
 def classify_file(rel_path: str) -> str:
+    """classify_file implementation."""
     rp = rel_path.replace("\\", "/")
 
     if rp.startswith("src/zephyr/gov_enforcement/rule_enforcement/") and rp.endswith(".yaml"):
@@ -1352,6 +1368,7 @@ def compute_file_hash(filepath: Path) -> str:
 
 
 def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_py_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1378,6 +1395,7 @@ def scan_py_file(rel_path: str, domain_derivation: list = None) -> dict | None:
 
 
 def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_yaml_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1409,6 +1427,7 @@ def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> dict | None
 
 
 def scan_md_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_md_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1441,6 +1460,7 @@ def scan_md_file(rel_path: str, domain_derivation: list = None) -> dict | None:
 
 
 def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_blueprint_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1483,6 +1503,7 @@ def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> dict |
 
 
 def scan_json_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_json_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1502,6 +1523,7 @@ def scan_json_file(rel_path: str, domain_derivation: list = None) -> dict | None
 
 
 def scan_infra_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_infra_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1526,6 +1548,7 @@ def scan_infra_file(rel_path: str, domain_derivation: list = None) -> dict | Non
 
 
 def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> dict | None:
+    """scan_diagram_file implementation."""
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -1552,6 +1575,7 @@ def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> dict | N
 
 
 def collect_all_files() -> list:
+    """collect_all_files implementation."""
     files = []
     for scan_dir_rel in SCAN_DIRS:
         scan_dir = PROJECT_ROOT / scan_dir_rel
@@ -1605,6 +1629,7 @@ class ScanCache:
     """
 
     def __init__(self, cache_path: Path, derivation_fingerprint: str, enabled: bool = True):
+        """__init__ implementation."""
         self.enabled = enabled
         self.cache_path = cache_path
         self.derivation_fingerprint = derivation_fingerprint
@@ -1617,6 +1642,7 @@ class ScanCache:
             self._load()
 
     def _load(self) -> None:
+        """_load implementation."""
         try:
             with open(self.cache_path, encoding="utf-8") as f:
                 data = json.load(f)
@@ -1636,6 +1662,7 @@ class ScanCache:
             print(f"[DEPGRAPH][CACHE] Load failed ({e}) — full scan")
 
     def get(self, rel_path: str, content_hash: str) -> dict | None:
+        """get implementation."""
         if not self.enabled:
             self.misses += 1
             return None
@@ -1647,6 +1674,7 @@ class ScanCache:
         return None
 
     def put(self, rel_path: str, content_hash: str, result: dict) -> None:
+        """put implementation."""
         if not self.enabled:
             return
         with self._lock:
@@ -1654,6 +1682,7 @@ class ScanCache:
             self._dirty = True
 
     def save(self) -> None:
+        """save implementation."""
         if not self.enabled or not self._dirty:
             return
         try:
@@ -1675,6 +1704,7 @@ class ScanCache:
             print(f"[DEPGRAPH][CACHE] WARNING: save failed: {e}")
 
     def stats(self) -> str:
+        """stats implementation."""
         return f"hits={self.hits} misses={self.misses}"
 
 
@@ -1704,6 +1734,7 @@ def build_depgraph(
     existing_design_nodes: dict = None,
     granularity: str = "file",
 ) -> dict:
+    """build_depgraph implementation."""
     if functional_registry is None:
         functional_registry = []
     if domain_derivation is None:
@@ -1753,6 +1784,7 @@ def build_depgraph(
         node_id = norm_path.replace("/", "__").replace(".", "_")
 
         def _clean(val):
+            """_clean implementation."""
             v = val.strip('"').strip("'")
             if "#" in v:
                 v = v[: v.index("#")].strip()
@@ -2304,6 +2336,7 @@ def build_depgraph(
 
 
 def generate_mermaid_by_blueprint(depgraph: dict) -> str:
+    """Generate output from input data."""
     bp_groups = defaultdict(list)
     for nid, node in depgraph["nodes"].items():
         bid = node.get("blueprint_id", "UNMAPPED")
@@ -2348,6 +2381,7 @@ def generate_mermaid_by_blueprint(depgraph: dict) -> str:
 
 
 def generate_mermaid_by_type(depgraph: dict) -> str:
+    """Generate output from input data."""
     type_groups = defaultdict(list)
     for nid, node in depgraph["nodes"].items():
         type_groups[node["type"]].append(node)
@@ -2369,6 +2403,7 @@ def generate_mermaid_by_type(depgraph: dict) -> str:
 
 
 def generate_markdown_section(depgraph: dict) -> str:
+    """Generate output from input data."""
     meta = depgraph["metadata"]
     lines = []
     lines.append("## §19 实体级依赖图（全项目文件级）")
@@ -3713,6 +3748,7 @@ class GenerationReport:
     """生成器执行报告（§14.10 格式）— 8项统计"""
 
     def __init__(self):
+        """__init__ implementation."""
         self.start_time = 0.0
         self.end_time = 0.0
         self.scanned_count = 0
@@ -3724,6 +3760,7 @@ class GenerationReport:
         self.realized_count = 0
 
     def print_report(self):
+        """print_report implementation."""
         duration = self.end_time - self.start_time if self.end_time > self.start_time else 0
         print("=" * 60)
         print("=== 生成器执行报告 ===")
@@ -3738,6 +3775,7 @@ class GenerationReport:
         print("=" * 60)
 
     def to_dict(self):
+        """to_dict implementation."""
         return {
             "scanned_count": self.scanned_count,
             "node_count": self.node_count,
@@ -3778,6 +3816,7 @@ def detect_cycles_tarjan(edges: list, nodes: dict) -> list:
     result = []
 
     def strongconnect(node):
+        """strongconnect implementation."""
         index[node] = index_counter[0]
         lowlink[node] = index_counter[0]
         index_counter[0] += 1
@@ -3983,6 +4022,7 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Generate project entity-level dependency graph (full coverage)")
     parser.add_argument(
         "--output-yaml", type=str, default="", help="[DEPRECATED] Output YAML data file path (DB is now the SSoT)"

@@ -255,6 +255,7 @@ logger = logging.getLogger(__name__)
 
 
 def _should_skip_dir(name: str) -> bool:
+    """_should_skip_dir implementation."""
     if name in SKIP_DIRS:
         return True
     if name.endswith(".egg-info"):
@@ -445,6 +446,7 @@ def derive_domain_for_path(rel_path: str, domain_derivation: dict) -> tuple:
 
 
 def scan_directory(root: Path, prefix: str = "", depth: int = 0, domain_derivation: dict = None) -> dict:
+    """scan_directory implementation."""
     if depth > MAX_DEPTH:
         return {"__truncated__": True}
 
@@ -496,6 +498,7 @@ def scan_directory(root: Path, prefix: str = "", depth: int = 0, domain_derivati
 
 
 def count_tree(tree: dict) -> tuple[int, int]:
+    """count_tree implementation."""
     file_count = tree.get("__file_count__", 0)
     dir_count = 0
     for key, val in tree.items():
@@ -731,6 +734,7 @@ def cmd_check() -> None:
 
     # Compare only operational nodes (strip design-state from old_tree for comparison)
     def strip_design(tree: dict) -> dict:
+        """strip_design implementation."""
         result = {}
         for key, val in tree.items():
             if key.startswith("__"):
@@ -760,6 +764,7 @@ def cmd_check() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Generate panorama tree section (PostgreSQL arch_directory_tree)")
     group = parser.add_mutually_exclusive_group()
     group.add_argument(

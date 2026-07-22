@@ -399,6 +399,7 @@ def run_migration(sqlite_conn, pg_conn, tables=None, migration_id=MIGRATION_ID, 
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description='SQLite → PostgreSQL 运营数据迁移')
     parser.add_argument(
         '--force', action='store_true',

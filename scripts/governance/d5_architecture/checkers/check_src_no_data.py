@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
@@ -105,6 +107,7 @@ def check_src_no_data(files):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（数据真源唯一位置为 data/）"
     )

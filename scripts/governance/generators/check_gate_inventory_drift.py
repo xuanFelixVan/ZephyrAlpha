@@ -82,6 +82,7 @@ def detect_drift() -> tuple[list[str], list[str]]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     try:
         missing, extra = detect_drift()
     except Exception as e:

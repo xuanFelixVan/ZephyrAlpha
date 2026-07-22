@@ -285,6 +285,7 @@ def _check_file(
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     raw_args = sys.argv[1:]
     all_files = "--all-files" in raw_args
     strict_doctype = (

@@ -255,6 +255,7 @@ def delete_stub(stub_rel: str, real_rel: str) -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print("N-13 YAML/JSON/MD 文件名 snake_case 批量修复")
     print("=" * 70)

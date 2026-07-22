@@ -292,6 +292,7 @@ def execute_renames(renames: list[tuple[Path, Path]], dry_run: bool = False) -> 
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     dry_run = "--apply" not in sys.argv
 
     if dry_run:

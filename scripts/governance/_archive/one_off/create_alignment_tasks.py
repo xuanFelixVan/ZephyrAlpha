@@ -857,6 +857,7 @@ TASKS = [
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     print("[TASK-CREATE] Creating alignment task cards...")
     with TaskRepository() as repo:
         created = 0

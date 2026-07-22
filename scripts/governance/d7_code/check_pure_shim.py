@@ -152,6 +152,7 @@ def is_pure_reexport_shim(filepath: Path, content: str) -> tuple[bool, str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = argv if argv is not None else sys.argv[1:]
 
     warn_only = "--warn-only" in args

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_cross_layer_contract_signature_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-b 跨层契约签名漂移检测
+# [BLUEPRINT] MOD-GOV-cross_layer_contract_signature_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-b 跨层契约签名漂移检测
 
 # [MODULE] zephyr.governance.audit.cross_layer_contract_signature_reconciler
 

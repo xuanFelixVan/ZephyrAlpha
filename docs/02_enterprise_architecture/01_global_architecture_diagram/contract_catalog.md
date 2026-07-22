@@ -10,7 +10,7 @@ ttl: permanent
 
 # 契约目录全景图 / Contract Catalog
 
-> **文档作用 / Purpose**: 以表格形式展示39个跨层数据契约,用于AI接入新模块时查询"消费了谁的契约、产出什么契约"。
+> **文档作用 / Purpose**: 以表格形式展示65个跨层数据契约,用于AI接入新模块时查询"消费了谁的契约、产出什么契约"。
 
 > 本文档由 generate_contract_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: architecture_model/contracts/cross_layer_contracts.yaml
@@ -20,48 +20,142 @@ ttl: permanent
 
 | 指标 | 数量 |
 |------|------|
-| 契约总数 | 39 |
-| P0(核心数据/错误/背压契约) | 16 |
-| P1(蓝图签名契约) | 21 |
-| 其他 | 2 |
-| 已冻结(planned) | 32 |
-| 设计中(design) | 7 |
+| 契约总数 | 65 |
+| P0(核心数据/错误/背压契约) | 0 |
+| P1(蓝图签名契约) | 0 |
+| 其他 | 65 |
+| 已冻结(planned) | 10 |
+| 设计中(design) | 1 |
 
 ## 2. 契约流向矩阵(Provider → Consumer)
 
 > 行:提供方域 | 列:消费方域 | 单元格:契约ID
 
-| Provider \ Consumer | * | D_BACKTEST | D_EX_CORE | D_FACTOR | D_FRONTEND | D_GOV_ENFORCEMENT | D_INFRA_OPS | D_INTELLIGENCE | D_MKT_DATA | D_ML_TRAIN | D_OPS | D_PF_CORE | D_RISK | D_SHARED | D_SIGLEGACY | D_SIGQC | D_SIMULATION | D_TRADING |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| ***** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **D_BACKTEST** | — | — | — | — | CTR-P1-016, CTR-P1-017 | — | — | — | — | — | CTR-P1-016 | CTR-P1-016 | CTR-P1-016 | — | — | — | — | — |
-| **D_EX_CORE** | — | — | — | — | — | — | — | — | — | CTR-006 | — | CTR-ERR-005 | CTR-006 | — | — | — | — | CTR-005, CTR-006, CTR-ERR-005, CTR-P1-007 |
-| **D_FACTOR** | — | CTR-002 | — | — | — | — | — | — | CTR-BP-001, CTR-BP-002, CTR-BP-003 | — | — | CTR-002, CTR-P1-002 | CTR-002 | — | CTR-002, CTR-ERR-002, CTR-P1-002 | — | — | CTR-P1-001 |
-| **D_FRONTEND** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **D_GOV_ENFORCEMENT** | — | — | CTR-P1-012 | — | — | CTR-P1-012 | — | — | — | — | — | — | CTR-P1-012 | — | — | — | — | — |
-| **D_INFRA_OPS** | — | — | CTR-P1-010 | CTR-P1-010 | CTR-P1-010 | CTR-P1-010 | — | — | — | CTR-P1-010 | CTR-P1-010 | CTR-P1-010 | CTR-P1-010 | — | CTR-P1-010 | — | CTR-P1-010 | CTR-P1-010 |
-| **D_INTELLIGENCE** | — | — | — | — | — | — | — | — | — | CTR-P1-014 | — | — | — | — | — | — | CTR-P1-014 | — |
-| **D_MKT_DATA** | — | CTR-001 | CTR-TRACE-001 | CTR-001, CTR-ERR-001, CTR-TRACE-001 | — | — | — | — | — | CTR-TRACE-001 | — | CTR-TRACE-001 | CTR-TRACE-001 | — | CTR-001, CTR-TRACE-001 | — | CTR-001 | CTR-TRACE-001 |
-| **D_ML_TRAIN** | — | — | — | — | — | — | — | — | — | — | — | CTR-P1-004, CTR-P1-005 | — | — | CTR-P1-004, CTR-P1-005 | — | — | — |
-| **D_OPS** | — | — | CT-TEL-001, CT-TEL-002, CT-TEL-003, CT-TEL-004, CTR-P1-013 | — | — | CTR-P1-013 | CT-TEL-001, CT-TEL-002, CT-TEL-003, CT-TEL-004, CTR-P1-013 | — | — | — | CTR-P1-013 | — | CTR-P1-013 | — | — | — | — | CTR-P1-013 |
-| **D_PF_CORE** | — | — | CTR-004 | — | — | CTR-P1-006 | — | — | — | — | — | — | — | — | — | — | — | CTR-P1-006 |
-| **D_RISK** | — | — | CTR-ERR-004 | — | CTR-P1-008, CTR-P1-011 | CTR-P1-011 | — | — | — | — | — | CTR-003, CTR-ERR-004, CTR-P1-011 | — | — | — | — | — | CTR-P1-011 |
-| **D_SHARED** | CTR-ERR-006 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **D_SIGLEGACY** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **D_SIGQC** | — | — | — | — | — | — | — | — | — | — | — | CTR-ERR-003 | CTR-ERR-003 | — | — | — | — | — |
-| **D_SIMULATION** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **D_TRADING** | — | — | — | — | CTR-P1-009 | CTR-P1-009 | — | — | — | — | — | — | — | — | — | — | — | — |
+| Provider \ Consumer | D_ASHARE_SIGNAL | D_BACKTEST | D_DATA_SEC | D_EX_CORE | D_FACTOR | D_FRONTEND | D_GOV_ENFORCEMENT | D_GOV_SCRIPTS | D_INFRA_OPS | D_INTELLIGENCE | D_MKT_DATA | D_ML_TRAIN | D_OPS | D_PF_CORE | D_RISK | D_SHARED | D_SIGLEGACY | D_SIGQC | D_SIMULATION | D_TRADING | capability.py（fnmatch.fnmatch —— 不支持 brace expansion） | scripts/governance/meta/validate_emergency_bypass_log.py | scripts/governance/meta/validate_script_system_health.py | scripts/governance/run_all.py --depth | scripts/governance/run_all.py --tags | src/zephyr/context-engine/context_budget_tracker.py (get_thresholds_from_yaml) | src/zephyr/context-engine/doc_compressor.py（运行时读取并校验 Immutable Core 字段） | src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py (WorktreeLifecycle v1.0) | src/zephyr/infra_ops/script_system/finding.py | src/zephyr/kb/embedding_migrate.py (load_model_registry) | src/zephyr/orchestrator/execution/trigger_router.py (4 real handlers with fallback) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **D_ASHARE_SIGNAL** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_BACKTEST** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_DATA_SEC** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | CT-004 | — | — | — | — | CT-001 | CT-006 | CT-003 | — | CT-002 | — |
+| **D_EX_CORE** | — | — | — | — | — | — | — | — | — | — | — | CTR-006 | — | — | CTR-006 | — | — | — | — | CTR-005, CTR-006 | — | — | — | — | — | — | — | — | — | — | — |
+| **D_FACTOR** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_FRONTEND** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_GOV_ENFORCEMENT** | — | — | — | CTR-P1-012 | — | — | CTR-P1-012 | — | — | — | — | — | — | — | CTR-P1-012 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_GOV_SCRIPTS** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | CT-008 | CT-007 | CT-010 | CT-009 | — | — | — | CT-011 | — | — |
+| **D_INFRA_OPS** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_INTELLIGENCE** | — | — | — | — | — | — | — | — | — | — | — | CTR-P1-014 | — | — | — | — | — | — | CTR-P1-014 | — | — | — | — | — | — | — | — | — | — | — | CT-005 |
+| **D_MKT_DATA** | — | CTR-001 | — | CTR-TRACE-001 | CTR-001, CTR-TRACE-001 | — | — | — | — | — | — | CTR-TRACE-001 | — | CTR-TRACE-001 | CTR-TRACE-001 | — | CTR-001, CTR-TRACE-001 | — | CTR-001 | CTR-TRACE-001 | — | — | — | — | — | — | — | — | — | — | — |
+| **D_ML_TRAIN** | — | — | — | — | — | — | — | — | — | — | — | — | — | CTR-P1-004, CTR-P1-005 | — | — | CTR-P1-004, CTR-P1-005 | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_OPS** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_PF_CORE** | — | — | — | CTR-004 | — | — | CTR-P1-006 | — | — | — | — | — | — | — | — | — | — | — | — | CTR-P1-006 | — | — | — | — | — | — | — | — | — | — | — |
+| **D_RISK** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_SHARED** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_SIGLEGACY** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_SIGQC** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_SIMULATION** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **D_TRADING** | — | — | — | — | — | CTR-P1-009 | CTR-P1-009 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **capability.py（fnmatch.fnmatch —— 不支持 brace expansion）** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **scripts/governance/meta/validate_emergency_bypass_log.py** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **scripts/governance/meta/validate_script_system_health.py** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **scripts/governance/run_all.py --depth** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **scripts/governance/run_all.py --tags** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **src/zephyr/context-engine/context_budget_tracker.py (get_thresholds_from_yaml)** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **src/zephyr/context-engine/doc_compressor.py（运行时读取并校验 Immutable Core 字段）** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py (WorktreeLifecycle v1.0)** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **src/zephyr/infra_ops/script_system/finding.py** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **src/zephyr/kb/embedding_migrate.py (load_model_registry)** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **src/zephyr/orchestrator/execution/trigger_router.py (4 real handlers with fallback)** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 
 ## 3. 契约详情
 
+### CT-TEL-001 — TelemetryMetrics / 遥测指标采集
+
+- **类型**: cross_layer
+- **版本**: 1.0
+- **提供方**: D_OPS
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| module_id | str | ✅ | 来源模块ID |
+| metric_name | str | ✅ | FQMN指标名（module_id::metric_name） |
+| metric_type | str | ✅ | counter | gauge | histogram | summary |
+| metric_value | float | ✅ | 指标值 |
+| labels | Dict[str, str] | — | 标签键值对 |
+| timestamp | datetime | ✅ | 采集时间戳（UTC） |
+| collection_latency_ms | int | ✅ | 采集延迟（毫秒），SLA<1000 |
+| schema_version | str | — | 契约版本 |
+
+### CT-TEL-002 — TelemetryLogs / 遥测日志持久化
+
+- **类型**: cross_layer
+- **版本**: 1.0
+- **提供方**: D_OPS
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| module_id | str | ✅ | 来源模块ID |
+| level | str | ✅ | DEBUG | INFO | WARNING | ERROR | FATAL |
+| message | str | ✅ | 日志消息 |
+| trace_id | str | — | 关联Trace ID |
+| span_id | str | — | 关联Span ID |
+| labels | Dict[str, str] | — | 标签键值对 |
+| timestamp | datetime | ✅ | 日志时间戳（UTC） |
+| persistence_latency_ms | int | ✅ | 持久化延迟（毫秒），SLA<5000 |
+| schema_version | str | — | 契约版本 |
+
+### CT-TEL-003 — TelemetryTraces / 遥测链路追踪
+
+- **类型**: cross_layer
+- **版本**: 1.0
+- **提供方**: D_OPS
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| trace_id | str | ✅ | W3C Trace ID |
+| span_id | str | ✅ | W3C Span ID |
+| parent_span_id | str | — | 父Span ID |
+| operation_name | str | ✅ | 操作名称 |
+| attributes | Dict[str, Any] | — | Span属性 |
+| sample_rate | float | ✅ | 采样率 0.0-1.0 |
+| start_time | datetime | ✅ | Span开始时间 |
+| elapsed_seconds | float | ✅ | Span耗时（秒） |
+| schema_version | str | — | 契约版本 |
+
+### CT-TEL-004 — TelemetryHealth / 遥测健康检查
+
+- **类型**: cross_layer
+- **版本**: 1.0
+- **提供方**: D_OPS
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Telemetry System Telemetry → Config Capacity Assurance / Execution Resource Optimization
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| module_id | str | ✅ | 探针所属模块ID |
+| probe_type | str | ✅ | liveness | readiness | healthz |
+| status | str | ✅ | healthy | unhealthy | degraded |
+| heartbeat_interval_s | int | ✅ | 心跳间隔（秒），默认30 |
+| last_heartbeat | datetime | ✅ | 最近心跳时间 |
+| details | Dict[str, Any] | — | 探针详情 |
+| schema_version | str | — | 契约版本 |
+
 ### CTR-001 — NormalizedMarketData / 标准化行情数据
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_MKT_DATA
 - **消费方**: D_FACTOR, D_SIGLEGACY, D_SIMULATION, D_BACKTEST
 - **状态**: planned
-- **描述**: Data Source → Factor 核心数据契约。质量门禁通过后的标准化行情数据。
+- **描述**: Data Source → Alpha Factor
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -92,12 +186,12 @@ ttl: permanent
 
 ### CTR-002 — FactorSignal / 因子信号
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_SIGLEGACY, D_RISK, D_PF_CORE, D_BACKTEST
-- **状态**: planned
-- **描述**: Factor → Signal/Risk/Portfolio 核心数据契约。单个因子在单个时间截面对单个标的的信号值。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Alpha Factor → Signal/Risk/Portfolio
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -123,12 +217,12 @@ ttl: permanent
 
 ### CTR-003 — RiskLimits / 风险限额
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_RISK
-- **消费方**: D_PF_CORE
-- **状态**: planned
-- **描述**: Risk → Portfolio 核心数据契约。风险限额约束集合，由 Portfolio 组合优化器强制执行。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Risk Management → Portfolio Construction
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -148,12 +242,12 @@ ttl: permanent
 
 ### CTR-004 — Order / 委托指令
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_PF_CORE
 - **消费方**: D_EX_CORE
 - **状态**: design
-- **描述**: Portfolio → Execution 核心数据契约。单笔委托指令（可变对象，随生命周期更新状态）。
+- **描述**: Portfolio Construction → Trade Execution
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -178,12 +272,12 @@ ttl: permanent
 
 ### CTR-005 — Fill / 成交回报
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_EX_CORE
 - **消费方**: D_TRADING
 - **状态**: planned
-- **描述**: Execution → Analytics 核心数据契约。单次成交回报（不可变）。
+- **描述**: Trade Execution → Post-Trade Analytics
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -205,12 +299,12 @@ ttl: permanent
 
 ### CTR-006 — PositionSnapshot / 持仓快照
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_EX_CORE
 - **消费方**: D_RISK, D_TRADING, D_ML_TRAIN
 - **状态**: planned
-- **描述**: 持仓快照。不可变，代表某一时刻的完整持仓状态。
+- **描述**: OMS / Analytics → Risk Monitor / Strategic Decision
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -229,12 +323,12 @@ ttl: permanent
 
 ### CTR-BP-001 — BackpressurePause / 背压暂停信号
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_MKT_DATA
-- **状态**: planned
-- **描述**: 下游（Factor/Signal）处理能力不足时，向上游（Data Source）发出暂停信号。Data Source 暂停该标的的数据下发。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Factor/Signal 下游 → Data Source 上游（背压逆向）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -251,12 +345,12 @@ ttl: permanent
 
 ### CTR-BP-002 — BackpressureThrottle / 背压降速信号
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_MKT_DATA
-- **状态**: planned
-- **描述**: 下游处理压力较大但不至于暂停时，向上游发出降速信号。上游将下发速率降至指定值。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Factor/Signal 下游 → Data Source 上游（背压逆向）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -273,12 +367,12 @@ ttl: permanent
 
 ### CTR-BP-003 — BackpressureResume / 背压恢复信号
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_MKT_DATA
-- **状态**: planned
-- **描述**: 下游处理能力恢复后，向上游发出恢复信号。上游恢复正常下发速率。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Factor/Signal 下游 → Data Source 上游（背压逆向）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -294,12 +388,12 @@ ttl: permanent
 
 ### CTR-ERR-001 — DataQualityError / 行情质量门禁不通过错误
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_MKT_DATA
-- **消费方**: D_FACTOR
-- **状态**: planned
-- **描述**: Data Source 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Data Source → Alpha Factor（错误路径）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -318,12 +412,12 @@ ttl: permanent
 
 ### CTR-ERR-002 — FactorComputationError / 因子计算失败错误
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_SIGLEGACY
-- **状态**: planned
-- **描述**: Factor 因子计算过程中遇到无法处理的异常时抛出的错误。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Alpha Factor → Signal Generation（错误路径）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -341,12 +435,12 @@ ttl: permanent
 
 ### CTR-ERR-003 — SignalDegradationWarning / 信号质量下降警告
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_SIGQC
-- **消费方**: D_RISK, D_PF_CORE
-- **状态**: planned
-- **描述**: Signal 检测到信号质量显著下降时发出的警告。非致命，但 Risk/Portfolio 应据此调低仓位或暂停交易。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Signal Quality → Risk/Portfolio（降级通知）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -363,12 +457,12 @@ ttl: permanent
 
 ### CTR-ERR-004 — RiskLimitViolationError / 风险限额突破错误
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_RISK
-- **消费方**: D_PF_CORE, D_EX_CORE
-- **状态**: planned
-- **描述**: Risk 检测到当前或计划操作将突破风险限额时抛出的硬错误。Portfolio/Execution MUST 据此阻止订单生成和执行。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Risk Management → Portfolio/Execution（拒绝交易）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -387,12 +481,12 @@ ttl: permanent
 
 ### CTR-ERR-005 — ExecutionRejectionError / 执行拒绝错误
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_EX_CORE
-- **消费方**: D_PF_CORE, D_TRADING
-- **状态**: planned
-- **描述**: Execution 订单执行过程中被券商或市场拒绝时抛出的错误。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Trade Execution → Portfolio/Analytics（执行失败反馈）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -411,12 +505,12 @@ ttl: permanent
 
 ### CTR-ERR-006 — ContractViolationError / 契约违反错误
 
-- **类型**: P0
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_SHARED
-- **消费方**: *
-- **状态**: planned
-- **描述**: 运行时跨层数据契约校验失败时抛出的通用错误。任何层的数据入站/出站校验均可抛出。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: shared/contracts/ → ALL LAYERS（运行时强制校验失败）
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -433,116 +527,14 @@ ttl: permanent
 
 - **物理路径**: `src/zephyr/shared/contracts/errors/contract_violation_error.py`
 
-### CTR-TRACE-001 — TraceContext / 全链路追踪上下文
-
-- **类型**: P0
-- **版本**: 1.0
-- **提供方**: D_MKT_DATA
-- **消费方**: D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_ML_TRAIN
-- **状态**: planned
-- **描述**: 跨所有数据层的全链路追踪上下文。Data Source 在首次产生数据时生成，后续每层追加 span。支持反向追溯：'这笔订单是因为哪个因子的哪个信号在哪个时刻产生的'。
-
-| 字段 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| trace_id | str | ✅ | 全局唯一追踪 ID（UUID），Data Source 生成，永不改变 |
-| span_id | str | ✅ | 本层 span ID（UUID），每层重新生成 |
-| service_name | str | ✅ | 本层标识：data / factor / signal / ... |
-| created_at | datetime | ✅ | 本 span 创建时间（UTC 纳秒精度） |
-| parent_span_id | Optional[str] | — | 上游 span_id，NULL 表示这是链头 |
-| idempotency_key | str | ✅ | 幂等键（UUID），防止重复处理 |
-| schema_version | str | — | 契约版本 |
-
-- **物理路径**: `src/zephyr/shared/contracts/trace_context.py`
-
-### CT-TEL-001 — TelemetryMetrics / 遥测指标采集
-
-- **类型**: P1
-- **版本**: 1.0
-- **提供方**: D_OPS
-- **消费方**: D_INFRA_OPS, D_EX_CORE
-- **状态**: design
-- **描述**: Telemetry → Config/Execution 遥测指标采集契约。Telemetry facade 提供指标采集接口，消费方通过 gauge/counter/histogram/summary 记录指标。SLA: 指标采集延迟<1s。
-
-| 字段 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| module_id | str | ✅ | 来源模块ID |
-| metric_name | str | ✅ | FQMN指标名（module_id::metric_name） |
-| metric_type | str | ✅ | counter | gauge | histogram | summary |
-| metric_value | float | ✅ | 指标值 |
-| labels | Dict[str, str] | — | 标签键值对 |
-| timestamp | datetime | ✅ | 采集时间戳（UTC） |
-| collection_latency_ms | int | ✅ | 采集延迟（毫秒），SLA<1000 |
-| schema_version | str | — | 契约版本 |
-
-### CT-TEL-002 — TelemetryLogs / 遥测日志持久化
-
-- **类型**: P1
-- **版本**: 1.0
-- **提供方**: D_OPS
-- **消费方**: D_INFRA_OPS, D_EX_CORE
-- **状态**: design
-- **描述**: Telemetry → Config/Execution 遥测日志持久化契约。结构化日志通过 JSONL 持久化，支持 trace_id 关联。SLA: 持久化延迟<5s。
-
-| 字段 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| module_id | str | ✅ | 来源模块ID |
-| level | str | ✅ | DEBUG | INFO | WARNING | ERROR | FATAL |
-| message | str | ✅ | 日志消息 |
-| trace_id | str | — | 关联Trace ID |
-| span_id | str | — | 关联Span ID |
-| labels | Dict[str, str] | — | 标签键值对 |
-| timestamp | datetime | ✅ | 日志时间戳（UTC） |
-| persistence_latency_ms | int | ✅ | 持久化延迟（毫秒），SLA<5000 |
-| schema_version | str | — | 契约版本 |
-
-### CT-TEL-003 — TelemetryTraces / 遥测链路追踪
-
-- **类型**: P1
-- **版本**: 1.0
-- **提供方**: D_OPS
-- **消费方**: D_INFRA_OPS, D_EX_CORE
-- **状态**: design
-- **描述**: Telemetry → Config/Execution 遥测链路追踪契约。W3C TraceContext 传播，采样率可配置。提供 span 创建/属性设置/上下文管理接口。
-
-| 字段 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| trace_id | str | ✅ | W3C Trace ID |
-| span_id | str | ✅ | W3C Span ID |
-| parent_span_id | str | — | 父Span ID |
-| operation_name | str | ✅ | 操作名称 |
-| attributes | Dict[str, Any] | — | Span属性 |
-| sample_rate | float | ✅ | 采样率 0.0-1.0 |
-| start_time | datetime | ✅ | Span开始时间 |
-| elapsed_seconds | float | ✅ | Span耗时（秒） |
-| schema_version | str | — | 契约版本 |
-
-### CT-TEL-004 — TelemetryHealth / 遥测健康检查
-
-- **类型**: P1
-- **版本**: 1.0
-- **提供方**: D_OPS
-- **消费方**: D_INFRA_OPS, D_EX_CORE
-- **状态**: design
-- **描述**: Telemetry → Config/Execution 遥测健康检查契约。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。
-
-| 字段 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| module_id | str | ✅ | 探针所属模块ID |
-| probe_type | str | ✅ | liveness | readiness | healthz |
-| status | str | ✅ | healthy | unhealthy | degraded |
-| heartbeat_interval_s | int | ✅ | 心跳间隔（秒），默认30 |
-| last_heartbeat | datetime | ✅ | 最近心跳时间 |
-| details | Dict[str, Any] | — | 探针详情 |
-| schema_version | str | — | 契约版本 |
-
 ### CTR-P1-001 — FactorMonitorReport / 因子有效性监控报告
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_TRADING
-- **状态**: planned
-- **描述**: Factor → Analytics 因子有效性监控报告。定期评估已注册因子的预测有效性。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Alpha Factor → Post-trade Analytics
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -563,12 +555,12 @@ ttl: permanent
 
 ### CTR-P1-002 — MacroFactorSignal / 宏观因子信号
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_FACTOR
-- **消费方**: D_SIGLEGACY, D_PF_CORE
-- **状态**: planned
-- **描述**: Factor 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Factor（宏观因子计算）→ Signal/Portfolio
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -586,12 +578,12 @@ ttl: permanent
 
 ### CTR-P1-003 — CapitalAllocationResult / 资本配置结果
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
-- **提供方**: —
-- **消费方**: D_PF_CORE
-- **状态**: planned
-- **描述**: Signal → Portfolio 资本配置结果契约。多策略资本分配的中间产物。
+- **提供方**: D_ASHARE_SIGNAL
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Signal Generation → Portfolio Construction
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -607,12 +599,12 @@ ttl: permanent
 
 ### CTR-P1-004 — ModelServingRequest / 模型推理请求
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_ML_TRAIN
 - **消费方**: D_SIGLEGACY, D_PF_CORE
 - **状态**: planned
-- **描述**: 跨层模型推理请求契约。ML Platform 提供推理服务，Signal/Portfolio 消费。
+- **描述**: ML Platform → Signal/Portfolio
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -626,12 +618,12 @@ ttl: permanent
 
 ### CTR-P1-005 — ModelServingResponse / 模型推理响应
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_ML_TRAIN
 - **消费方**: D_SIGLEGACY, D_PF_CORE
 - **状态**: planned
-- **描述**: 跨层模型推理响应契约。ML Platform 返回推理结果给 Signal/Portfolio。
+- **描述**: ML Platform → Signal/Portfolio
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -648,12 +640,12 @@ ttl: permanent
 
 ### CTR-P1-006 — StrategyLifecycleEvent / 策略生命周期事件
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_PF_CORE
 - **消费方**: D_TRADING, D_GOV_ENFORCEMENT
 - **状态**: planned
-- **描述**: Portfolio → Analytics/Compliance 策略生命周期事件契约。
+- **描述**: Portfolio Construction → Analytics/Compliance
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -672,12 +664,12 @@ ttl: permanent
 
 ### CTR-P1-007 — ExecutionReport / 执行分析报告
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_EX_CORE
-- **消费方**: D_TRADING
-- **状态**: planned
-- **描述**: Execution → Analytics 执行分析报告契约（TCA 输入）。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Trade Execution → Post-trade Analytics
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -701,12 +693,12 @@ ttl: permanent
 
 ### CTR-P1-008 — RiskDashboardSnapshot / 风险仪表板快照
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_RISK
-- **消费方**: D_FRONTEND
-- **状态**: planned
-- **描述**: Risk → Frontend 风险仪表板实时快照契约。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Risk Management → Human-AI Interface
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -726,12 +718,12 @@ ttl: permanent
 
 ### CTR-P1-009 — PerformanceAttributionReport / 绩效归因报告
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_TRADING
 - **消费方**: D_FRONTEND, D_GOV_ENFORCEMENT
 - **状态**: planned
-- **描述**: Analytics → Frontend/Compliance 绩效归因报告契约。
+- **描述**: Post-trade Analytics → Frontend/Compliance
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -751,12 +743,12 @@ ttl: permanent
 
 ### CTR-P1-010 — SystemConfiguration / 系统配置
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_INFRA_OPS
-- **消费方**: D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_FRONTEND, D_SIMULATION, D_GOV_ENFORCEMENT, D_ML_TRAIN, D_OPS
-- **状态**: planned
-- **描述**: Config → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Configuration Management → 全系统
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -779,12 +771,12 @@ ttl: permanent
 
 ### CTR-P1-011 — RiskMetricsReport / 风险指标报告
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_RISK
-- **消费方**: D_PF_CORE, D_TRADING, D_FRONTEND, D_GOV_ENFORCEMENT
-- **状态**: planned
-- **描述**: Risk → 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Risk Metrics → Portfolio/Analytics/Frontend/Compliance
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -811,12 +803,12 @@ ttl: permanent
 
 ### CTR-P1-012 — ComplianceRule / 合规规则
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_GOV_ENFORCEMENT
 - **消费方**: D_RISK, D_EX_CORE, D_GOV_ENFORCEMENT
 - **状态**: planned
-- **描述**: Compliance → 合规规则定义契约。包含规则注册、评估接口和规则元数据。
+- **描述**: Compliance Rule Definitions → Risk/Execution/Compliance
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -839,12 +831,12 @@ ttl: permanent
 
 ### CTR-P1-013 — TelemetryEmitter / 遥测发射器
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_OPS
-- **消费方**: D_INFRA_OPS, D_RISK, D_EX_CORE, D_TRADING, D_GOV_ENFORCEMENT, D_OPS
-- **状态**: planned
-- **描述**: Telemetry → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Telemetry Metrics → 全系统
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -869,12 +861,12 @@ ttl: permanent
 
 ### CTR-P1-014 — ExperimentResult / 实验结论
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_INTELLIGENCE
 - **消费方**: D_SIMULATION, D_ML_TRAIN
 - **状态**: planned
-- **描述**: Experimentation → Research/ML Platform 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
+- **描述**: Experimentation → Research / ML Platform
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -904,12 +896,12 @@ ttl: permanent
 
 ### CTR-P1-015 — SynthesizedSignal / 合成交易信号
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
-- **提供方**: —
-- **消费方**: D_RISK, D_PF_CORE
-- **状态**: planned
-- **描述**: Signal → Risk/Portfolio 合成交易信号契约。Signal 信号合成引擎聚合多个 FactorSignal 后产出的综合交易信号。
+- **提供方**: D_ASHARE_SIGNAL
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Signal Generation → Risk Management / Portfolio Construction
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -932,12 +924,12 @@ ttl: permanent
 
 ### CTR-P1-016 — BacktestResult / 回测结果
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0
 - **提供方**: D_BACKTEST
-- **消费方**: D_PF_CORE, D_RISK, D_OPS, D_FRONTEND
-- **状态**: planned
-- **描述**: D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游Portfolio组合构建层用于策略遴选,Risk风控层用于风险预算校准,Telemetry运维层用于回测任务监控。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: L_BACKTEST → Portfolio Portfolio / Risk Risk / Telemetry Ops / Frontend
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -961,12 +953,12 @@ ttl: permanent
 
 ### CTR-P1-017 — BacktestRunArtifact / 回测运行产物
 
-- **类型**: P1
+- **类型**: cross_layer
 - **版本**: 1.0.0
 - **提供方**: D_BACKTEST
-- **消费方**: D_FRONTEND
-- **状态**: planned
-- **描述**: 回测运行产物契约，包含回测结果时序数据（equity curve/trade log/tick replay data），用于前端可视化消费。与 CTR-P1-016 BacktestResult（汇总指标）互补——BacktestResult 是标量汇总，BacktestRunArtifact 是时序明细。
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: L_BACKTEST → Frontend Visualization
 
 | 字段 | 类型 | 必填 | 描述 |
 |------|------|------|------|
@@ -981,24 +973,279 @@ ttl: permanent
 
 - **物理路径**: `src/zephyr/backtest/io/result_repository.py`
 
+### CTR-TRACE-001 — TraceContext / 全链路追踪上下文
+
+- **类型**: cross_layer
+- **版本**: 1.0
+- **提供方**: D_MKT_DATA
+- **消费方**: D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_ML_TRAIN
+- **状态**: planned
+- **描述**: Data Source → Factor → Signal → Portfolio → Execution → Analytics（贯穿全链路）
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| trace_id | str | ✅ | 全局唯一追踪 ID（UUID），Data Source 生成，永不改变 |
+| span_id | str | ✅ | 本层 span ID（UUID），每层重新生成 |
+| service_name | str | ✅ | 本层标识：data / factor / signal / ... |
+| created_at | datetime | ✅ | 本 span 创建时间（UTC 纳秒精度） |
+| parent_span_id | Optional[str] | — | 上游 span_id，NULL 表示这是链头 |
+| idempotency_key | str | ✅ | 幂等键（UUID），防止重复处理 |
+| schema_version | str | — | 契约版本 |
+
+- **物理路径**: `src/zephyr/shared/contracts/trace_context.py`
+
 ### OCP-002 — StrategyBase + StrategyRegistry / 策略扩展点
 
-- **类型**: unknown
+- **类型**: cross_layer
 - **版本**: —
-- **提供方**: —
+- **提供方**: D_SHARED
 - **消费方**: —
-- **状态**: design
-- **描述**: Portfolio 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
+- **状态**: unresolved
+- **描述**: —
 
 - **物理路径**: `src/zephyr/pf_core/strategy_base.py`
 
 ### OCP-003 — BrokerInterface / 券商扩展点
 
-- **类型**: unknown
+- **类型**: cross_layer
 - **版本**: —
-- **提供方**: —
+- **提供方**: D_SHARED
 - **消费方**: —
-- **状态**: design
-- **描述**: Execution 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
+- **状态**: unresolved
+- **描述**: —
 
 - **物理路径**: `src/zephyr/trading/trading_contracts/broker_interface.py`
+
+### CT-001 — config/context-rules.yaml
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_DATA_SEC
+- **消费方**: src/zephyr/context-engine/context_budget_tracker.py (get_thresholds_from_yaml)
+- **状态**: resolved
+- **描述**: 15 条上下文管理规则应作为 AI agent session 的运行约束
+
+### CT-002 — config/embedding_model_registry.yaml
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_DATA_SEC
+- **消费方**: src/zephyr/kb/embedding_migrate.py (load_model_registry)
+- **状态**: resolved
+- **描述**: 从 YAML 加载嵌入模型配置，替代硬编码 KNOWN_MODELS 字典
+
+### CT-003 — config/worktree_state_machine.yaml
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_DATA_SEC
+- **消费方**: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py (WorktreeLifecycle v1.0)
+- **状态**: resolved
+- **描述**: WorktreeLifecycle 将消费此状态机定义来管理 worktree 生命周期
+
+### CT-004 — config/capabilities.yaml
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_DATA_SEC
+- **消费方**: capability.py（fnmatch.fnmatch —— 不支持 brace expansion）
+- **状态**: resolved_as_not_supported
+- **描述**: {a,b} brace expansion glob 语法
+
+### CT-005 — src/zephyr/orchestrator/execution/trigger_router.py + config/trigger_router.yaml
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_INTELLIGENCE
+- **消费方**: src/zephyr/orchestrator/execution/trigger_router.py (4 real handlers with fallback)
+- **状态**: resolved
+- **描述**: 5 个触发器全部接真实 handler（当前 4 stubs + 1 已兑现）
+
+### CT-006 — config/compression_policy.yaml
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_DATA_SEC
+- **消费方**: src/zephyr/context-engine/doc_compressor.py（运行时读取并校验 Immutable Core 字段）
+- **状态**: resolved
+- **描述**: 压缩策略 YAML 作为文档压缩的运行时约束（min_chars/max_chars/preserve_* 由 CompressionInvariantError 强制执行）
+
+### CT-007 — MOD-INF-005 §13.1 (script_system/blueprint.md V3.0.0)
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_GOV_SCRIPTS
+- **消费方**: scripts/governance/meta/validate_script_system_health.py
+- **状态**: resolved
+- **描述**: 脚本系统自我监控——Meta 维度脚本检查系统自身健康状态（6 项自检：run_all.py 可执行性、全脚本可运行性、manifest 一致性、输出格式合规、依赖完整性、磁盘空间）
+
+### CT-008 — MOD-INF-005 §13.2 (script_system/blueprint.md V3.0.0)
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_GOV_SCRIPTS
+- **消费方**: scripts/governance/meta/validate_emergency_bypass_log.py
+- **状态**: resolved
+- **描述**: 应急回退绕过审计——紧急情况下可绕过脚本系统提交代码，但每次绕过需 Session Log 记录 + 事后审计
+
+### CT-009 — MOD-INF-005 §3.6 + §5.2 (script_system/blueprint.md V3.0.0)
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_GOV_SCRIPTS
+- **消费方**: scripts/governance/run_all.py --tags
+- **状态**: resolved
+- **描述**: --tags 标签选择参数——允许按标签（Security/Quick/Disruptive/Critical/AI-Generated/Periodic）选择脚本执行
+
+### CT-010 — MOD-INF-005 §5.2 (script_system/blueprint.md V3.0.0)
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_GOV_SCRIPTS
+- **消费方**: scripts/governance/run_all.py --depth
+- **状态**: resolved
+- **描述**: --depth 验证深度参数——quick（快速扫描<5s）/ full（标准）/ deep（深度含知识分析）三级渐进验证
+
+### CT-011 — MOD-INF-005 §6.5 (script_system/blueprint.md V3.0.0)
+
+- **类型**: declarative
+- **版本**: —
+- **提供方**: D_GOV_SCRIPTS
+- **消费方**: src/zephyr/infra_ops/script_system/finding.py
+- **状态**: resolved
+- **描述**: Finding Schema 新增 recommendation 字段——MEDIUM+ Finding 包含修复建议（recommendation + recommendation_type + recommended_action）
+
+### AS-CT-DATA-001 — 市场数据→因子引擎（OHLCV/orderbook/tick）
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_FACTOR
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### AS-CT-FACTOR-002 — Code-Dedup-Engine→去重后的因子值（唯一source_key）
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_FACTOR
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### AS-CT-SIGNAL-001 — 信号数据帧→风控引擎
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ASHARE_SIGNAL
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### AS-CT-VMS-001 — 因子嵌入向量存储（8 collections: signal-embeddings）
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ASHARE_SIGNAL
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### ME-CT-AB-001 — AB实验全流程：config→traffic_split→gate[eval]→analyst→deploy/rollback
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ML_TRAIN
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### ME-CT-BACKTEST-001 — 回测实验：ckpt→historical→PnL→Attribution→Report
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ML_TRAIN
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### ME-CT-CHECKPOINT-001 — 检查点导入（MODEL_CHECKPOINTS→AB/Backtest Experiment）
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ML_TRAIN
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### ME-CT-FEATURE-001 — 特征向量读取（ChromaDB collections: factor-signals, model-features）
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ML_TRAIN
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### ME-CT-SHADOW-001 — Shadow Mode：旁路预测→threshold→divergence alert→正式切流
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ML_TRAIN
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### ME-CT-TRAIN-001 — 训练Pipeline Gate：数据→训练→验证→Sanity→发布
+
+- **类型**: domain_contract
+- **版本**: —
+- **提供方**: D_ML_TRAIN
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### CTR-009 — ExperimentConfig → D_ML_TRAIN ML Platform
+
+- **类型**: layer_contract
+- **版本**: —
+- **提供方**: D_SIMULATION
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### CTR-010 — ExperimentMetric → D_RESEARCH Research
+
+- **类型**: layer_contract
+- **版本**: —
+- **提供方**: D_SIMULATION
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### CTR-011 — ModelCheckpoint ← D_ML_TRAIN ML Platform
+
+- **类型**: layer_contract
+- **版本**: —
+- **提供方**: D_SIMULATION
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### CTR-012 — ExperimentArtifact → INF-012 Database
+
+- **类型**: layer_contract
+- **版本**: —
+- **提供方**: D_SIMULATION
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —
+
+### EXT-DASHBOARD-FLE-001 — 消费 FLE fitness Facade
+
+- **类型**: layer_contract
+- **版本**: —
+- **提供方**: D_FRONTEND
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: —

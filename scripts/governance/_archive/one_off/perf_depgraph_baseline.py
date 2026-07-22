@@ -264,6 +264,7 @@ def run_baseline(db_path: Path, runs: int) -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="depgraph 查询性能基线测试（只读，万级节点跨域JOIN延迟）")
     parser.add_argument("--runs", type=int, default=5, help="每个场景运行次数（默认5）")
     parser.add_argument("--output", type=str, help="输出到 JSON 文件（默认 stdout）")

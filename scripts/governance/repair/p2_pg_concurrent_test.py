@@ -56,6 +56,7 @@ def _get_pg_user() -> str:
 
 
 def _record(name: str, ok: bool, detail: str) -> None:
+    """_record implementation."""
     mark = "PASS" if ok else "FAIL"
     print(f"  [{mark}] {name}: {detail[:120]}")
     RESULTS.append((name, ok, detail))
@@ -432,6 +433,7 @@ def test_t5_concurrent_rollback() -> None:
 # ============================================================================
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print("P2-T6 PostgreSQL 40并发写入红蓝测试")
     print("=" * 70)

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
+"""apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
 
 功能：
 1. 批量替换DRIFTED路径（12条已知路径迁移）
@@ -12,6 +11,8 @@ apply_verification_results.py — 第32轮验证结果批量应用到架构债�
 用法：python scripts/governance/repair/apply_verification_results.py [--dry-run]
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
@@ -21,7 +22,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
 
 import re
 import sys
@@ -175,6 +175,7 @@ def apply_stale_references(text: str) -> tuple[str, int]:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     dry_run = "--dry-run" in sys.argv
 
     print(f"读取注册表: {REGISTRY}")

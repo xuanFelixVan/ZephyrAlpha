@@ -328,6 +328,7 @@ domains_13 = [
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Audit domain nodes - P0-4升级含4类检测")
     parser.add_argument(
         "--check", action="store_true", help="P0-4: 执行4类架构检测（跨域违规+容量超限+孤儿节点+层级违规）"

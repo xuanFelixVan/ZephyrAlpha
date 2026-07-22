@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] SQLite 单文件存储(data/integrator_progress.db); task_progress 主键 task_id; task_runs 自增 run_id; WAL 模式支持并发读; check_same_thread=False + threading.Lock 保护写
+# [INVARIANTS] SQLite 单文件存储(data/integrator_progress.db); task_progress 主键 task_id; task_runs 自增 run_id; WAL 模式; check_same_thread=False + threading.Lock 保护所有读写（修复 SQLITE_MISUSE: 并发读未加锁导致 bad parameter）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -28,7 +28,8 @@
 
 线程安全：
 - SQLite 连接用 check_same_thread=False（APScheduler 线程池共用）
-- 写操作用 threading.Lock 串行化（SQLite WAL 模式下读不阻塞）
+- 所有读写操作用 threading.Lock 串行化（check_same_thread=False 仅移除线程检查，
+  不保证并发安全；并发读未加锁会导致 SQLITE_MISUSE "bad parameter"）
 - 每次操作创建新 cursor，用完即关（连接复用）
 """
 from __future__ import annotations
@@ -52,7 +53,7 @@ _DEFAULT_DB_PATH = REPO_ROOT / "data" / "integrator_progress.db"
 class ProgressStore:
     """统一进度存储（SQLite）。
 
-    线程安全：check_same_thread=False + threading.Lock 保护写操作。
+    线程安全：check_same_thread=False + threading.Lock 保护所有读写操作。
     幂等：save_progress 是 UPSERT，start_run 每次插入新行。
     """
 
@@ -125,12 +126,13 @@ class ProgressStore:
             last_key 字符串，或 None（任务从未运行过）。
         """
         try:
-            cur = self._conn.execute(
-                "SELECT last_key FROM task_progress WHERE task_id=?", (task_id,)
-            )
-            row = cur.fetchone()
-            cur.close()
-            return row["last_key"] if row else None
+            with self._lock:
+                cur = self._conn.execute(
+                    "SELECT last_key FROM task_progress WHERE task_id=?", (task_id,)
+                )
+                row = cur.fetchone()
+                cur.close()
+                return row["last_key"] if row else None
         except sqlite3.Error as e:
             log.error("get_last_key(%s) 失败: %s", task_id, e)
             return None
@@ -138,12 +140,13 @@ class ProgressStore:
     def get_task_status(self, task_id: str) -> dict[str, Any] | None:
         """查任务最新状态。"""
         try:
-            cur = self._conn.execute(
-                "SELECT * FROM task_progress WHERE task_id=?", (task_id,)
-            )
-            row = cur.fetchone()
-            cur.close()
-            return dict(row) if row else None
+            with self._lock:
+                cur = self._conn.execute(
+                    "SELECT * FROM task_progress WHERE task_id=?", (task_id,)
+                )
+                row = cur.fetchone()
+                cur.close()
+                return dict(row) if row else None
         except sqlite3.Error as e:
             log.error("get_task_status(%s) 失败: %s", task_id, e)
             return None
@@ -243,12 +246,13 @@ class ProgressStore:
     def list_recent_runs(self, limit: int = 50) -> list[dict[str, Any]]:
         """查最近 N 条运行记录。"""
         try:
-            cur = self._conn.execute(
-                "SELECT * FROM task_runs ORDER BY started_at DESC LIMIT ?", (limit,)
-            )
-            rows = [dict(r) for r in cur.fetchall()]
-            cur.close()
-            return rows
+            with self._lock:
+                cur = self._conn.execute(
+                    "SELECT * FROM task_runs ORDER BY started_at DESC LIMIT ?", (limit,)
+                )
+                rows = [dict(r) for r in cur.fetchall()]
+                cur.close()
+                return rows
         except sqlite3.Error as e:
             log.error("list_recent_runs 失败: %s", e)
             return []
@@ -256,12 +260,13 @@ class ProgressStore:
     def list_failed_tasks(self) -> list[dict[str, Any]]:
         """查所有失败任务（last_status=FAILED）。"""
         try:
-            cur = self._conn.execute(
-                "SELECT * FROM task_progress WHERE last_status='FAILED' ORDER BY last_run_at DESC"
-            )
-            rows = [dict(r) for r in cur.fetchall()]
-            cur.close()
-            return rows
+            with self._lock:
+                cur = self._conn.execute(
+                    "SELECT * FROM task_progress WHERE last_status='FAILED' ORDER BY last_run_at DESC"
+                )
+                rows = [dict(r) for r in cur.fetchall()]
+                cur.close()
+                return rows
         except sqlite3.Error as e:
             log.error("list_failed_tasks 失败: %s", e)
             return []
@@ -269,12 +274,13 @@ class ProgressStore:
     def list_tasks_by_source(self, source: str) -> list[dict[str, Any]]:
         """按数据源查所有任务。"""
         try:
-            cur = self._conn.execute(
-                "SELECT * FROM task_progress WHERE source=? ORDER BY task_id", (source,)
-            )
-            rows = [dict(r) for r in cur.fetchall()]
-            cur.close()
-            return rows
+            with self._lock:
+                cur = self._conn.execute(
+                    "SELECT * FROM task_progress WHERE source=? ORDER BY task_id", (source,)
+                )
+                rows = [dict(r) for r in cur.fetchall()]
+                cur.close()
+                return rows
         except sqlite3.Error as e:
             log.error("list_tasks_by_source(%s) 失败: %s", source, e)
             return []
@@ -282,12 +288,13 @@ class ProgressStore:
     def list_all_tasks(self) -> list[dict[str, Any]]:
         """查所有任务状态。"""
         try:
-            cur = self._conn.execute(
-                "SELECT * FROM task_progress ORDER BY source, task_id"
-            )
-            rows = [dict(r) for r in cur.fetchall()]
-            cur.close()
-            return rows
+            with self._lock:
+                cur = self._conn.execute(
+                    "SELECT * FROM task_progress ORDER BY source, task_id"
+                )
+                rows = [dict(r) for r in cur.fetchall()]
+                cur.close()
+                return rows
         except sqlite3.Error as e:
             log.error("list_all_tasks 失败: %s", e)
             return []

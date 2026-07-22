@@ -4,3 +4,5 @@
 # [A_module] module_id=MOD-ORC-quality | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """quality — orchestrator quality subpackage."""
+
+__all__: list[str] = ["agent_quality", "benchmark_runner", "blind_spot_closure", "blueprint_scorer", "ke_quality", "knowledge_freshness", "lean_scanner", "stability_guard"]

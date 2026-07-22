@@ -113,6 +113,7 @@ def _is_exempt(rel: str) -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     files = _get_staged_files_for_key_detection()
     if not files:
         return EXIT_PASS

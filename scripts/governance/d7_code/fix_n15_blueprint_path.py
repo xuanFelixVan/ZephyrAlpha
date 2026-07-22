@@ -200,6 +200,7 @@ def fix_file(file_path: Path) -> int:
     fix_count = 0
 
     def replace_path(match: re.Match) -> str:
+        """replace_path implementation."""
         nonlocal fix_count
         prefix = match.group(1)
         old_path = match.group(2)
@@ -233,6 +234,7 @@ def fix_file(file_path: Path) -> int:
             return EXIT_PASS
     return EXIT_PASS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print("N-15 BLUEPRINT 头部路径不存在批量修复")
     print("=" * 70)

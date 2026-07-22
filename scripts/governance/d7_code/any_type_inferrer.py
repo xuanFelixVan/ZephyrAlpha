@@ -658,6 +658,7 @@ class _FunctionScanner(ast.NodeVisitor):
     """
 
     def __init__(self, filepath: str) -> None:
+        """__init__ implementation."""
         self.filepath = filepath
         self.findings: list[AnyInferenceFinding] = []
         self._stack: list[ast.AST] = []
@@ -665,23 +666,28 @@ class _FunctionScanner(ast.NodeVisitor):
     def _scan_and_descend(
         self, node: ast.FunctionDef | ast.AsyncFunctionDef
     ) -> None:
+        """_scan_and_descend implementation."""
         self.findings.extend(_scan_function(node, self.filepath, self._stack))
         self._stack.append(node)
         self.generic_visit(node)
         self._stack.pop()
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """visit_FunctionDef implementation."""
         self._scan_and_descend(node)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """visit_AsyncFunctionDef implementation."""
         self._scan_and_descend(node)
 
     def visit_If(self, node: ast.If) -> None:
+        """visit_If implementation."""
         self._stack.append(node)
         self.generic_visit(node)
         self._stack.pop()
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """visit_ClassDef implementation."""
         self._stack.append(node)
         self.generic_visit(node)
         self._stack.pop()

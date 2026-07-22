@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-22T02:54:13Z'
+generated_at: '2026-07-22T05:03:48Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -651,9 +651,10 @@ gates:
   status: active
   source: commit-gate
 - gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
-  name: 'NO-DOMAIN-NAME-ZH-DIRECT-ACCESS: DOMAIN_NAME_ZH 字典直接访问硬阻断门禁（CommitGate, priority=72）'
+  name: 'NO-DOMAIN-NAME-ZH-DIRECT-ACCESS: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS（CommitGate,
+    priority=72）'
   entry: in-process (GitCommitGateway)
-  description: DOMAIN_NAME_ZH 字典直接访问硬阻断门禁
+  description: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
   files_trigger: ''
   always_run: false
   category: commit_gate

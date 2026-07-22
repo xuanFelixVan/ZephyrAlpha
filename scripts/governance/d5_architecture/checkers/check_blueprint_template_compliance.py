@@ -53,6 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
+    """Check compliance and report findings."""
     if not _COMPLIANCE_SCRIPT.exists():
         logger.error("合规脚本不存在: %s", _COMPLIANCE_SCRIPT)
         return EXIT_ERROR
@@ -74,6 +75,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(description="蓝图模板合规检查（委托到 check_blueprint_compliance.py）")

@@ -607,6 +607,7 @@ def _scan_all_walk(contract: dict, scan_prefixes: set[str]) -> list[str]:
 # ════════════════════════════════════════════════════════════════════════════
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008）"
     )

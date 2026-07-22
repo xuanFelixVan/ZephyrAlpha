@@ -124,6 +124,7 @@ REQUIRED_FRONTMATTER = [
 
 
 def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
+    """Check compliance and report findings."""
     path = Path(blueprint_path)
     if not path.exists():
         print(f"ERROR: 文件不存在: {blueprint_path}")
@@ -206,6 +207,7 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
         print("  结果: ✅ PASS")
         return EXIT_PASS
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="蓝图模板合规检查门禁")
     parser.add_argument("blueprint", nargs="+", help="蓝图文件路径")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")

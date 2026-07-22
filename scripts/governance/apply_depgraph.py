@@ -495,6 +495,7 @@ def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
 
 
 def _load_depgraph() -> dict:
+    """_load_depgraph implementation."""
     # 治本（2026-06-27）：删除 if not DEPGRAPH_PATH.exists(): sys.exit(EXIT_FINDINGS) 守卫（latent bug）。
     # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常。
     try:
@@ -627,6 +628,7 @@ def _apply_node_op(dep: dict, change: dict, index: int) -> None:
 # 禁止在 docstring/AGENTS.md 手工列 op 清单（同步副本会漂移）
 # ---------------------------------------------------------------------------
 def _handle_insert_domain(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_insert_domain implementation."""
     return cmd_insert_domain(
         domain_id=change.get("domain_id", ""),
         domain_name=change.get("domain_name", ""),
@@ -641,6 +643,7 @@ def _handle_insert_domain(change: dict, dry_run: bool, conn=None) -> bool:
 
 
 def _handle_update_domain_id(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_update_domain_id implementation."""
     count = cmd_update_domain_id(
         module_id=change.get("module_id", ""),
         new_domain_id=change.get("new_domain_id", ""),
@@ -651,6 +654,7 @@ def _handle_update_domain_id(change: dict, dry_run: bool, conn=None) -> bool:
 
 
 def _handle_update_path(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_update_path implementation."""
     count = cmd_update_path(
         module_id=change.get("module_id", ""),
         old_prefix=change.get("old_prefix", ""),
@@ -662,6 +666,7 @@ def _handle_update_path(change: dict, dry_run: bool, conn=None) -> bool:
 
 
 def _handle_migrate_dependencies(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_migrate_dependencies implementation."""
     count = cmd_migrate_dependencies(
         from_domain=change.get("from_domain", ""),
         to_domain=change.get("to_domain", ""),
@@ -674,6 +679,7 @@ def _handle_migrate_dependencies(change: dict, dry_run: bool, conn=None) -> bool
 
 
 def _handle_update_domain_layer(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_update_domain_layer implementation."""
     return cmd_update_domain_layer(
         domain_id=change.get("domain_id", ""),
         layer_id=change.get("layer_id", ""),
@@ -683,6 +689,7 @@ def _handle_update_domain_layer(change: dict, dry_run: bool, conn=None) -> bool:
 
 
 def _handle_migrate_nodes(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_migrate_nodes implementation."""
     count = cmd_migrate_nodes(
         node_ids=change.get("node_ids", []),
         new_domain_id=change.get("new_domain_id", ""),
@@ -693,6 +700,7 @@ def _handle_migrate_nodes(change: dict, dry_run: bool, conn=None) -> bool:
 
 
 def _handle_update_domain_ssot_path(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_update_domain_ssot_path implementation."""
     return cmd_update_domain_ssot_path(
         domain_id=change.get("domain_id", ""),
         ssot_path=change.get("ssot_path", ""),
@@ -702,6 +710,7 @@ def _handle_update_domain_ssot_path(change: dict, dry_run: bool, conn=None) -> b
 
 
 def _handle_rename_domain(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_rename_domain implementation."""
     count = cmd_rename_domain(
         old_id=change.get("old_id", ""),
         new_id=change.get("new_id", ""),
@@ -712,6 +721,7 @@ def _handle_rename_domain(change: dict, dry_run: bool, conn=None) -> bool:
 
 
 def _handle_delete_domain(change: dict, dry_run: bool, conn=None) -> bool:
+    """_handle_delete_domain implementation."""
     count = cmd_delete_domain(
         domain_id=change.get("domain_id", ""),
         dry_run=dry_run,
@@ -2312,6 +2322,7 @@ def cmd_rename_domain(
         return -1
 
     def _run(c) -> int:
+        """_run implementation."""
         # 0. 校验 old 存在、new 不存在（禁止覆盖）
         if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (old_id,)).fetchone():
             print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
@@ -2482,6 +2493,7 @@ def cmd_delete_domain(
     own_conn = conn is None
 
     def _run(c) -> int:
+        """_run implementation."""
         # 0. 校验 domain 存在
         if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (domain_id,)).fetchone():
             print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
@@ -2653,6 +2665,7 @@ def cmd_merge_domain(
         return -1
 
     def _run(c) -> int:
+        """_run implementation."""
         # 0. 校验 old 存在、new 存在（merge：两者必须都在 domains 表中）
         if not c.execute(SQL_CHECK_DOMAIN_EXISTS, (old_id,)).fetchone():
             print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
@@ -2792,6 +2805,7 @@ def cmd_fix_rename_residual(
     sorted_map = sorted(rename_map.items(), key=lambda x: len(x[0]), reverse=True)
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = 0
         for old_id, new_id in sorted_map:
@@ -2862,6 +2876,7 @@ def cmd_replace_text_domain(
         return -1
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         print(f"  {mode} 全表文本替换: '{old_id}' -> '{new_id}'", file=sys.stderr)
         total = _scan_replace_all_text_columns(
@@ -2916,6 +2931,7 @@ def cmd_apply_domain_id_check(
     _CHECK_REGEX = "^D_[A-Z][A-Z0-9_]*$"
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         # 1. 检查约束是否已存在（幂等性）
         row = c.execute(
@@ -2977,6 +2993,7 @@ def cmd_fix_domains_defaults(
     own_conn = conn is None
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         # 1. 检查当前 DEFAULT 值
         row = c.execute(
@@ -3052,6 +3069,7 @@ def cmd_propagate_rename(
     sorted_map = sorted(rename_map.items(), key=lambda x: len(x[0]), reverse=True)
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = 0
         for old_domain, new_domain in sorted_map:
@@ -3321,6 +3339,7 @@ def cmd_rename_blueprint_id(
     own_conn = conn is None
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = _propagate_bp_id_core(
             c, old_bp_id, new_bp_id, dry_run,
@@ -3407,6 +3426,7 @@ def cmd_propagate_node_paths(
     bl_mapping = bl_mapping or {}
 
     def _run(c) -> int:
+        """_run implementation."""
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = 0
 
@@ -3521,6 +3541,7 @@ def cmd_update_domain_name(
     own_conn = conn is None
 
     def _run(c) -> int:
+        """_run implementation."""
         row = c.execute(SQL_SELECT_DOMAIN_NAME_BY_ID, (domain_id,)).fetchone()
         if not row:
             print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
@@ -4217,6 +4238,7 @@ def update_module_metadata(
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="depgraph 变更写入工具（禁止AI直接Write 157MB文件）",
         epilog="See .trae/rules/project_rules.md RULE-SIXTEEN for the full protocol.",

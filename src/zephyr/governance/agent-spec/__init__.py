@@ -5,3 +5,5 @@
 # Phase 1 gate marker (kebab-case dir). Implementation in zephyr.governance.context_governance.agent_spec.
 
 AGENT_SPEC_PHASE1_MARKER = 'agent-spec-v1'
+
+__all__: list[str] = []

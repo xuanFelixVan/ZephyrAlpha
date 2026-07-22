@@ -7,3 +7,5 @@
 
 Migrated from src/zephyr/governance/code_dedup/ in batch 11.
 """
+
+__all__: list[str] = []

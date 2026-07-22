@@ -108,6 +108,7 @@ def _is_scannable(rel: str) -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     files = _get_staged_files_for_path_scan()
     if not files:
         return EXIT_PASS

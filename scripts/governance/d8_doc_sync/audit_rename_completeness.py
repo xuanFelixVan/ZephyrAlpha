@@ -348,6 +348,7 @@ def circular_review_node_paths(
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         prog="audit_rename_completeness.py",
         description="改名完整性审计（裁定#207 R1）——扫描DB所有TEXT列检测旧标识符残留",

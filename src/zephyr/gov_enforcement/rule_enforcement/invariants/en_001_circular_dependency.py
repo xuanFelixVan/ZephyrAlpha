@@ -58,10 +58,16 @@ MODULE_NAMES: Final[Any] = _load_module_names()
 
 ALL_MODULES: Final[Any] = MODULE_NAMES
 
+# 物理目录别名：逻辑模块名 → 实际目录名（消除 l01_ 前缀差异）
+_DIR_ALIASES: Final[dict[str, str]] = {
+    "l01_infrastructure": "infrastructure",
+}
+
 MODULE_TO_DIR: Final[dict[str, Path]] = {}
 for mod in MODULE_NAMES:
     suffix = mod.replace("zephyr.", "").replace(".", "/")
-    MODULE_TO_DIR[mod] = SRC_ROOT / suffix
+    dir_name = _DIR_ALIASES.get(suffix, suffix)
+    MODULE_TO_DIR[mod] = SRC_ROOT / dir_name
 
 
 @dataclass
@@ -76,7 +82,7 @@ class ScanResult:
         if self.passed:
             return f"[PASS] EN-001: No circular dependencies ({len(self.topological_order)} nodes)"
         return f"[FAIL] EN-001: {len(self.cycles)} cycle(s) detected\n" + "\n".join(
-            f"  Cycle: {' -> '.join(c)}" for c in self.cycles
+            f"  Cycle: {' → '.join(c)}" for c in self.cycles
         )
 
 
@@ -91,17 +97,30 @@ def _parse_imports(file_path: Path) -> set[str]:
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                imports.add(alias.name)
+                resolved = _resolve_to_module(alias.name)
+                imports.add(resolved if resolved else alias.name)
         elif isinstance(node, ast.ImportFrom):
             if node.module:
-                imports.add(node.module)
+                resolved = _resolve_to_module(node.module)
+                imports.add(resolved if resolved else node.module)
     return imports
+
+
+# 导入前缀别名：zephyr.infrastructure* → zephyr.l01_infrastructure
+# （物理包名 infrastructure 与逻辑模块名 l01_infrastructure 的映射）
+_IMPORT_PREFIX_ALIASES: Final[dict[str, str]] = {
+    "zephyr.infrastructure": "zephyr.l01_infrastructure",
+}
 
 
 def _resolve_to_module(import_name: str) -> str | None:
     for mod in ALL_MODULES:
         if import_name == mod or import_name.startswith(mod + "."):
             return mod
+    # 检查前缀别名（如 zephyr.infrastructure.submod → zephyr.l01_infrastructure）
+    for prefix, target in _IMPORT_PREFIX_ALIASES.items():
+        if import_name == prefix or import_name.startswith(prefix + ".") or import_name.startswith(prefix + "_"):
+            return target
     return None
 
 

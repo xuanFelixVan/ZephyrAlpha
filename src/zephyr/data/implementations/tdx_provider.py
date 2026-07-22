@@ -309,10 +309,23 @@ class TDXProvider(DataSourceBase):
 
         日线 datetime 格式 "2026-02-06 15:00"，截取日期部分。
         分钟线保留完整时间戳 "2026-02-06 15:00:00"，并在 code 后插入 period 字段。
+
+        脏日期过滤：mootdx 偶发返回 "2004-00-00 00:00" 等无效日期（月/日=00），
+        ClickHouse DateTime 列会拒绝写入，此处提前过滤跳过。
         """
         rows = []
         for _, bar in bars.iterrows():
             dt = str(bar.get("datetime", ""))
+            # 脏日期过滤：mootdx 偶发返回 "2004-00-00 00:00"（月/日=00 非法）
+            try:
+                if len(dt) >= 19:
+                    datetime.datetime.strptime(dt[:19], "%Y-%m-%d %H:%M:%S")
+                elif len(dt) >= 10:
+                    datetime.datetime.strptime(dt[:10], "%Y-%m-%d")
+                else:
+                    continue
+            except ValueError:
+                continue
             trade_date = dt if period != "1d" else (dt[:10] if len(dt) >= 10 else dt)
             ohlcv = (
                 float(bar.get("open", 0) or 0),

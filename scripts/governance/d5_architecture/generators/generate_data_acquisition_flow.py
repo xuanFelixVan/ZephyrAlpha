@@ -504,6 +504,7 @@ def _gen_index_md(tasks: list[dict], today: date, gen_timestamp: str) -> str:
 # 入口
 # ============================================================
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，按数据源分组）",
     )

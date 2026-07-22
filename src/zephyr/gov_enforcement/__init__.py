@@ -11,3 +11,5 @@
   - commit_gates/         — 提交门禁（批次5 已迁移）
   - rule_enforcement/     — 规则执行（批次9 已迁移）
 """
+
+__all__: list[str] = []

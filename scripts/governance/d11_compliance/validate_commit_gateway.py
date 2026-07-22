@@ -110,6 +110,7 @@ def _is_session_worktree_commit() -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(

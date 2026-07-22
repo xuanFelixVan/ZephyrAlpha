@@ -346,6 +346,7 @@ def make_readme_version_sync_reconciler(project_root: Path | None = None):
     except ImportError:
         class _ReconcilerSpecFallback:  # type: ignore
             def __init__(self, gate_id, trigger, reconcile, priority=100):
+                """__init__ implementation."""
                 self.gate_id = gate_id
                 self.trigger = trigger
                 self.reconcile = reconcile

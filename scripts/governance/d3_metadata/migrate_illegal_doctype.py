@@ -243,6 +243,7 @@ def _is_excluded(fpath: Path) -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     # 解析参数
     args = sys.argv[1:]
     dry_run = "--dry-run" in args

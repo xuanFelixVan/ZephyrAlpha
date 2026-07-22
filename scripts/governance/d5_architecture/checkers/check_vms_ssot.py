@@ -188,6 +188,7 @@ def check_dead_method_rebuild(files):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 漂移副本 + snapshot/faiss dead code 方法重建 防复发）"
     )

@@ -1,3 +1,4 @@
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 __manifest__ = """

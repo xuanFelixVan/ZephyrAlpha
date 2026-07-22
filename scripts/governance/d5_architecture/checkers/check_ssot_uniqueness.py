@@ -58,6 +58,7 @@ warn_only: false
 
 
 def extract_frontmatter(content: str) -> dict:
+    """extract_frontmatter implementation."""
     if not content.startswith("---"):
         return {}
     end = content.find("---", 3)
@@ -74,6 +75,7 @@ def extract_frontmatter(content: str) -> dict:
 
 
 def extract_ssot_claims(blueprint_path: Path) -> list[dict]:
+    """extract_ssot_claims implementation."""
     content = blueprint_path.read_text(encoding="utf-8")
     fm = extract_frontmatter(content)
     claims_raw = fm.get("ssot_claims", "")
@@ -111,6 +113,7 @@ def extract_ssot_claims(blueprint_path: Path) -> list[dict]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Check SSoT uniqueness across blueprints")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even if conflicts found")
     args = parser.parse_args()

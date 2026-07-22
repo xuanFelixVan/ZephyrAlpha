@@ -117,6 +117,7 @@ ACTIVE_STATUSES = frozenset({"PENDING", "IN_PROGRESS", "READY", "BLOCKED", "WAIT
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="批量修复历史 broken post_sync_standard 命令（DM-210625 #205-D 裁定）"
     )

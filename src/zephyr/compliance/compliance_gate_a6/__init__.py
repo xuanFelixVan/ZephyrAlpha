@@ -34,3 +34,5 @@ def __dir__() -> list[str]:
     target = importlib.import_module(_TARGET)
     target_all = getattr(target, "__all__", [])
     return sorted(set(globals()) | set(target_all))
+
+__all__: list[str] = []

@@ -773,6 +773,7 @@ def cmd_list_ops() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="decisiongraph 写入入口（对标 apply_depgraph.py）",
         epilog="""操作类型：

@@ -4,3 +4,5 @@
 # [DOMAIN] D_SHARED
 # [TTL] permanent
 """共享数据库工具包：提供 DatabaseService 共用的 CRUD mixin。"""
+
+__all__: list[str] = ["database_crud_mixin"]

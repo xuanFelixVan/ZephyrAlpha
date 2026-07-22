@@ -62,6 +62,7 @@ def _parse_git_version(version_str: str) -> Optional[tuple[int, int, int]]:
 
 
 def _run_git(args, cwd, timeout=60.0):
+    """_run_git implementation."""
     try:
         r = subprocess.run(["git"]+args, cwd=cwd, capture_output=True, text=True,
                            encoding="utf-8", errors="replace", timeout=timeout)
@@ -73,6 +74,7 @@ def _run_git(args, cwd, timeout=60.0):
 
 
 def _check_git_version(repo_root):
+    """_check_git_version implementation."""
     rc, stdout, stderr = _run_git(["--version"], repo_root, timeout=10)
     if rc != 0:
         return {"check": "git_version", "status": "fail", "detail": f"git --version failed: {stderr}"}
@@ -121,6 +123,7 @@ def _check_git_version(repo_root):
 
 
 def _check_fscache_fsmonitor(repo_root):
+    """_check_fscache_fsmonitor implementation."""
     issues = []
     rc_f, val_f, _ = _run_git(["config", "--local", "core.fscache"], repo_root)
     rc_m, val_m, _ = _run_git(["config", "--local", "core.fsmonitor"], repo_root)
@@ -135,6 +138,7 @@ def _check_fscache_fsmonitor(repo_root):
 
 
 def _check_status_timing(repo_root):
+    """_check_status_timing implementation."""
     start = time.monotonic()
     rc, stdout, stderr = _run_git(["status", "--short"], repo_root, timeout=120)
     elapsed = time.monotonic() - start
@@ -154,6 +158,7 @@ def _check_status_timing(repo_root):
 
 
 def _check_git_aliases(repo_root):
+    """_check_git_aliases implementation."""
     expected = {"reset", "checkout", "stash", "revert", "restore"}
     rc, stdout, stderr = _run_git(["config", "--local", "--get-regexp", "^alias\\."], repo_root)
     if rc != 0 and rc != 1:
@@ -169,6 +174,7 @@ def _check_git_aliases(repo_root):
 
 
 def run_git_health_smoke(repo_root=None):
+    """run_git_health_smoke implementation."""
     root = str(repo_root) if repo_root else os.getcwd()
     if not os.path.isdir(os.path.join(root, ".git")) and not os.path.isfile(os.path.join(root, ".git")):
         return {"status": "fail", "checks": [], "timestamp": time.time(), "summary": f"不是 git 仓库: {root}"}
@@ -184,6 +190,7 @@ def run_git_health_smoke(repo_root=None):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     repo_root = sys.argv[1] if len(sys.argv) > 1 else None
     result = run_git_health_smoke(repo_root)
     print(json.dumps(result, indent=2, ensure_ascii=False))

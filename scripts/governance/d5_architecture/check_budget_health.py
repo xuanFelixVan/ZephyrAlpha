@@ -49,6 +49,7 @@ from _shared.constants import REPO_ROOT
 
 
 def check_engine_instantiation() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement import BudgetEngine
 
@@ -59,6 +60,7 @@ def check_engine_instantiation() -> dict:
 
 
 def check_pre_flight() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement.budget_models import GateDecision
 
@@ -74,6 +76,7 @@ def check_pre_flight() -> dict:
 
 
 def check_dimensions() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement.budget_models import BudgetDimension
 
@@ -88,6 +91,7 @@ def check_dimensions() -> dict:
 
 
 def check_policy_file() -> dict:
+    """Check compliance and report findings."""
     policy_path = REPO_ROOT / "config" / "budget_policy.yaml"
     if not policy_path.exists():
         return {"check": "policy_file", "status": "CRITICAL", "detail": f"not found: {policy_path}"}
@@ -102,6 +106,7 @@ def check_policy_file() -> dict:
 
 
 def check_escalation_bridge() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement.alerts import BudgetAlert
         from zephyr.governance.escalation.budget_handler import on_budget_alert
@@ -118,6 +123,7 @@ def check_escalation_bridge() -> dict:
 
 
 def check_degradation_manager() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement.degradation_manager import DegradationManager
 
@@ -134,6 +140,7 @@ def check_degradation_manager() -> dict:
 
 
 def check_tamper_log() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement.tamper_evident_log import TamperEvidentLog
 
@@ -148,6 +155,7 @@ def check_tamper_log() -> dict:
 
 
 def check_burn_rate_monitor() -> dict:
+    """Check compliance and report findings."""
     try:
         from zephyr.governance.financial_governance.budget_enforcement.burn_rate_monitor import BurnRateMonitor
 
@@ -171,6 +179,7 @@ CHECKS = [
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Budget Enforcer health check")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even on WARN")
     parser.add_argument("--json", action="store_true", help="Output JSON")

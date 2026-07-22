@@ -46,16 +46,19 @@ MANIFEST_PATH = PROJECT_ROOT / "data" / "databases" / "governance_metadata" / "e
 
 
 def load_yaml(path: Path) -> dict:
+    """load_yaml implementation."""
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 def load_json(path: Path) -> dict:
+    """load_json implementation."""
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
 def sha256_of_file(path: Path) -> str:
+    """sha256_of_file implementation."""
     h = hashlib.sha256()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(65536), b""):
@@ -64,6 +67,7 @@ def sha256_of_file(path: Path) -> str:
 
 
 def collect_yaml_files(target_dir: Path, exclude_underscore: bool = False) -> list[Path]:
+    """collect_yaml_files implementation."""
     if not target_dir.exists():
         return []
     files = sorted(target_dir.glob("*.yaml"))
@@ -93,6 +97,7 @@ def resolve_source_path(source_ref: str, source_dir: Path) -> Path:
 # Check 1: MD→YAML coverage [DEPRECATED]
 # ---------------------------------------------------------------------------
 def check_coverage(source_dir: Path, target_dir: Path) -> bool:
+    """Check compliance and report findings."""
     print("\n=== CHECK 1: MD→YAML Coverage [DEPRECATED] ===")
     print("  SKIP: MD→YAML migration is complete (D56 ruling).")
     print("        source_files field removed from all rule YAML files.")
@@ -104,6 +109,7 @@ def check_coverage(source_dir: Path, target_dir: Path) -> bool:
 # Check 2: SHA256 hash consistency [DEPRECATED]
 # ---------------------------------------------------------------------------
 def check_hash(target_dir: Path) -> bool:
+    """Check compliance and report findings."""
     print("\n=== CHECK 2: SHA256 Hash Consistency [DEPRECATED] ===")
     print("  SKIP: source_files field (containing hash) has been removed.")
     print("        YAML files are now the sole SSoT (D56 ruling).")
@@ -115,6 +121,7 @@ def check_hash(target_dir: Path) -> bool:
 # Check 3: YAML provenance exists (extracted_at/extracted_by)
 # ---------------------------------------------------------------------------
 def check_traceability(target_dir: Path) -> bool:
+    """Check compliance and report findings."""
     print("\n=== CHECK 3: YAML Provenance Exists ===")
     yaml_files = collect_yaml_files(target_dir, exclude_underscore=True)
 
@@ -161,6 +168,7 @@ def check_traceability(target_dir: Path) -> bool:
 # Check 4: References integrity
 # ---------------------------------------------------------------------------
 def check_references(target_dir: Path) -> bool:
+    """Check compliance and report findings."""
     print("\n=== CHECK 4: References Integrity ===")
     yaml_files = collect_yaml_files(target_dir)
 
@@ -208,6 +216,7 @@ def check_references(target_dir: Path) -> bool:
 # Check 5: No orphan YAML (no rule_id)
 # ---------------------------------------------------------------------------
 def check_no_orphan(target_dir: Path) -> bool:
+    """Check compliance and report findings."""
     print("\n=== CHECK 5: No Orphan YAML (missing rule_id) ===")
     yaml_files = collect_yaml_files(target_dir, exclude_underscore=True)
 
@@ -240,6 +249,7 @@ def check_no_orphan(target_dir: Path) -> bool:
 # Check 6: No duplicate scope+severity
 # ---------------------------------------------------------------------------
 def check_no_duplicate(target_dir: Path) -> bool:
+    """Check compliance and report findings."""
     print("\n=== CHECK 6: No Duplicate scope+severity ===")
     yaml_files = collect_yaml_files(target_dir)
 
@@ -277,6 +287,7 @@ def check_no_duplicate(target_dir: Path) -> bool:
 # Main
 # ---------------------------------------------------------------------------
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="6-dimensional verification of rule YAML migration")
     parser.add_argument(
         "--check-coverage", action="store_true", help="[DEPRECATED] MD→YAML coverage — migration complete"

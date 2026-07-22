@@ -75,6 +75,7 @@ class RewriteResult:
 
     @property
     def modified(self) -> bool:
+        """modified implementation."""
         return len(self.changes) > 0
 
 
@@ -86,6 +87,7 @@ class ImportRewriter:
     """
 
     def __init__(self, moves: list[MoveEntry]) -> None:
+        """__init__ implementation."""
         self.moves = moves
         # exact map: old_module -> new_module
         self._exact: dict[str, str] = {m.old_module: m.new_module for m in moves}
@@ -178,6 +180,7 @@ class ImportRewriter:
         py_files: list[Path] = []
 
         def _on_error(err):
+            """_on_error implementation."""
             pass  # skip inaccessible dirs (e.g. Windows system protected)
 
         for dirpath, dirnames, filenames in os.walk(root, onerror=_on_error):
@@ -306,6 +309,7 @@ def print_report(results: list[RewriteResult], dry_run: bool) -> None:
 # ------------------------------------------------------------------
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="AST-based import rewriter for governance directory migration"
     )
@@ -334,6 +338,7 @@ def main(argv: list[str] | None = None) -> int:
     rewriter = ImportRewriter(moves)
 
     def _progress(done: int, total: int) -> None:
+        """_progress implementation."""
         if not args.quiet and done % 200 == 0:
             print(f"  ... scanned {done}/{total} files", file=sys.stderr)
 

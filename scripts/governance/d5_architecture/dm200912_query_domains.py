@@ -54,6 +54,7 @@ from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     conn = get_depgraph_pg_connection(autocommit=True)
     try:
         # 域清单+模块统计

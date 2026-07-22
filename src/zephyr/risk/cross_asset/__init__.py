@@ -9,3 +9,5 @@
 cross_market_data_adapter/ 子包自包含，无需包级 re-export。
 无人引用包级符号（rg 验证），故清理为空 __init__。
 """
+
+__all__: list[str] = []

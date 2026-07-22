@@ -4,3 +4,5 @@
 # [A_module] module_id=MOD-ORC-fault_tolerance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """fault_tolerance — orchestrator fault_tolerance subpackage."""
+
+__all__: list[str] = ["bulkhead_manager", "canary_manager", "chaos_engine", "chaos_hooks", "degrade_cascade", "disk_guard", "fault_types", "network_partition"]

@@ -107,10 +107,12 @@ CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
 
 
 def find_blueprint_files() -> list[Path]:
+    """find_blueprint_files implementation."""
     return iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md")
 
 
 def extract_automation_table(content: str) -> list[dict]:
+    """extract_automation_table implementation."""
     rows: list[dict] = []
     for match in AUTOMATION_TABLE_RE.finditer(content):
         operation = match.group(1).strip()
@@ -129,6 +131,7 @@ def extract_automation_table(content: str) -> list[dict]:
 
 
 def probe_code_implementation(module_id: str, operation: str) -> bool | None:
+    """probe_code_implementation implementation."""
     config = CODE_IMPLEMENTATION_PROBES.get(module_id)
     if not config:
         return None
@@ -151,6 +154,7 @@ def probe_code_implementation(module_id: str, operation: str) -> bool | None:
 
 
 def check_automation_sync(blueprint_path: Path | None = None) -> list[dict]:
+    """Check compliance and report findings."""
     findings: list[dict] = []
     bp_files = [blueprint_path] if blueprint_path else find_blueprint_files()
 
@@ -210,6 +214,7 @@ def check_automation_sync(blueprint_path: Path | None = None) -> list[dict]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="蓝图§5.5自动化触发机制↔代码实现同步校验")
     parser.add_argument("--warn-only", action="store_true")
     parser.add_argument("--json", action="store_true")

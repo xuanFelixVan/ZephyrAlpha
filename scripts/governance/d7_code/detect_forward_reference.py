@@ -103,6 +103,7 @@ def find_self_references(class_node: ast.ClassDef) -> list[tuple[int, int, str]]
     class_name = class_node.name
 
     def check_node(node):
+        """Check compliance and report findings."""
         if isinstance(node, ast.Name) and node.id == class_name:
             results.append((node.lineno, node.col_offset, class_name))
 
@@ -194,6 +195,7 @@ def iter_py_files(scan_dirs: list[Path]) -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="前向引用检测扫描器——检测 class X 内部引用 X 自身的前向引用 bug"
     )

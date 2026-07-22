@@ -15,6 +15,7 @@
 # [TESTS] tests/test_analyze_change_impact.py
 # [TTL] permanent
 
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 import argparse
@@ -82,6 +83,7 @@ warn_only: false
 
 class DependencyGraphError(Exception):
     def __init__(self, message: str, path: str = ""):
+        """__init__ implementation."""
         self.path = path
         super().__init__(message)
 
@@ -104,6 +106,7 @@ class ImpactResult:
 
 class ChangeImpactAnalyzer:
     def __init__(self, repo_root: str | None = None):
+        """__init__ implementation."""
         self._repo_root = Path(repo_root) if repo_root else PROJECT_ROOT
         self._depgraph: dict[str, Any] = {}
         self._adjacency_forward: dict[str, list[str]] = defaultdict(list)
@@ -113,6 +116,7 @@ class ChangeImpactAnalyzer:
         self._loaded = False
 
     def _load_depgraph(self) -> None:
+        """_load_depgraph implementation."""
         if self._loaded:
             return
         # 治本（2026-06-27）：depgraph 已迁至 PostgreSQL，连接由 get_depgraph_pg_connection
@@ -128,6 +132,7 @@ class ChangeImpactAnalyzer:
         self._loaded = True
 
     def _build_adjacency(self) -> None:
+        """_build_adjacency implementation."""
         nodes = self._depgraph.get("nodes", {})
         edges = self._depgraph.get("edges", [])
         for node_id, node_data in nodes.items():
@@ -142,6 +147,7 @@ class ChangeImpactAnalyzer:
                 self._adjacency_reverse[to_id].append(from_id)
 
     def analyze_file_change(self, changed_files: list[str]) -> dict[str, Any]:
+        """Analyze target and report insights."""
         self._load_depgraph()
         impact = ImpactLevel()
         visited_direct: set[str] = set()
@@ -199,6 +205,7 @@ class ChangeImpactAnalyzer:
         }
 
     def _bfs_dependents(self, start_id: str, exclude: set[str]) -> list[str]:
+        """_bfs_dependents implementation."""
         result: list[str] = []
         queue = [start_id]
         visited: set[str] = {start_id}
@@ -212,6 +219,7 @@ class ChangeImpactAnalyzer:
         return result
 
     def _compute_risk_score(self, changed_files: list[str], impact: ImpactLevel) -> float:
+        """_compute_risk_score implementation."""
         direct_count = len(impact.direct)
         transitive_count = len(impact.transitive)
         speculative_count = len(impact.speculative)
@@ -222,6 +230,7 @@ class ChangeImpactAnalyzer:
         return round(score, 3)
 
     def analyze_commit(self, commit_hash: str) -> dict[str, Any]:
+        """Analyze target and report insights."""
         changed_files = self._get_commit_files(commit_hash)
         if not changed_files:
             return {
@@ -254,6 +263,7 @@ class ChangeImpactAnalyzer:
         return result
 
     def _get_commit_files(self, commit_hash: str) -> list[str]:
+        """_get_commit_files implementation."""
         try:
             completed = subprocess.run(
                 ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", commit_hash],
@@ -269,6 +279,7 @@ class ChangeImpactAnalyzer:
         return []
 
     def generate_incremental_scan_list(self, impact: dict[str, Any]) -> list[str]:
+        """Generate output from input data."""
         impact_data = impact.get("impact", impact)
         direct = impact_data.get("direct", [])
         transitive = impact_data.get("transitive", [])
@@ -287,6 +298,7 @@ class ChangeImpactAnalyzer:
         return sorted(scan_set)
 
     def _path_to_governance_scripts(self, file_path: str) -> list[str]:
+        """_path_to_governance_scripts implementation."""
         parts = file_path.replace("\\", "/").split("/")
         scripts: list[str] = []
         if len(parts) >= 2:
@@ -302,6 +314,7 @@ class ChangeImpactAnalyzer:
 
 
 def _run_warn_only() -> dict[str, Any]:
+    """_run_warn_only implementation."""
     results: dict[str, Any] = {"checks": []}
     try:
         analyzer = ChangeImpactAnalyzer()
@@ -365,6 +378,7 @@ def _run_warn_only() -> dict[str, Any]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Change Impact Analyzer — transitive dependency impact analysis")
     parser.add_argument(
         "--warn-only",

@@ -1,3 +1,4 @@
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 __manifest__ = """
@@ -55,12 +56,14 @@ class AuthorityEntry:
     """权限注册表条目."""
 
     def __init__(self, module="", authority="", rationale="", section=""):
+        """__init__ implementation."""
         self.module = module
         self.authority = authority
         self.rationale = rationale
         self.section = section
 
     def is_valid_authority(self) -> bool:
+        """is_valid_authority implementation."""
         return self.authority in VALID_AUTHORITIES
 
 
@@ -102,6 +105,7 @@ def parse_registry_tables(path) -> list[AuthorityEntry]:
 
 
 def validate_authority_values(entries: list[AuthorityEntry]) -> list[str]:
+    """Validate target against rules and report findings."""
     errors: list[str] = []
     for e in entries:
         if not e.authority:
@@ -112,6 +116,7 @@ def validate_authority_values(entries: list[AuthorityEntry]) -> list[str]:
 
 
 def validate_duplicate_modules(entries: list[AuthorityEntry]) -> list[str]:
+    """Validate target against rules and report findings."""
     errors: list[str] = []
     seen: dict[str, str] = {}
     for e in entries:
@@ -124,6 +129,7 @@ def validate_duplicate_modules(entries: list[AuthorityEntry]) -> list[str]:
 
 
 def validate_section_coverage(entries: list[AuthorityEntry]) -> list[str]:
+    """Validate target against rules and report findings."""
     sections = {e.section for e in entries if e.section}
     missing = sorted(s for s in REQUIRED_SECTIONS if s not in sections)
     if missing:
@@ -132,6 +138,7 @@ def validate_section_coverage(entries: list[AuthorityEntry]) -> list[str]:
 
 
 def validate_required_fields(entries: list[AuthorityEntry]) -> list[str]:
+    """Validate target against rules and report findings."""
     errors: list[str] = []
     for e in entries:
         if not e.module.strip():
@@ -142,6 +149,7 @@ def validate_required_fields(entries: list[AuthorityEntry]) -> list[str]:
 
 
 def validate_immutable_core_coverage(entries: list[AuthorityEntry]) -> list[str]:
+    """Validate target against rules and report findings."""
     immutable_count = sum(1 for e in entries if e.authority == "Immutable Core")
     if immutable_count < IMMUTABLE_CORE_MIN:
         return [

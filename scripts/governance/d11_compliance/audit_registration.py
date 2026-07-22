@@ -255,6 +255,7 @@ def _compare_with_baseline(findings: list[dict]) -> dict | None:
     import json
 
     def _finding_key(f: dict) -> str:
+        """_finding_key implementation."""
         raw = f"{f.get('dimension', '')}|{f.get('target', {}).get('file_path', '')}|{f.get('description', '')}"
         return hashlib.sha256(raw.encode()).hexdigest()[:16]
 

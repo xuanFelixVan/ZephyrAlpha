@@ -4,3 +4,5 @@
 # [A_module] module_id=MOD-ORC-contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """contracts — orchestrator contracts subpackage."""
+
+__all__: list[str] = ["alert_handler", "construction_guide", "contract_registry", "contract_router", "design_decisions", "finding_bridge", "prompt_version"]

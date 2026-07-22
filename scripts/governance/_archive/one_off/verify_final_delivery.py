@@ -42,6 +42,7 @@ from _shared.constants import DB_PATH, get_depgraph_pg_connection  # noqa: E402
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 60)
     print("§11 最终交付验证")
     print("=" * 60)

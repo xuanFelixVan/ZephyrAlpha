@@ -71,6 +71,7 @@ def _iter_load_time_imports(tree: ast.Module):
     runtime lazy import，不会造成 load-time 循环（Python import 系统允许）。
     """
     def _walk(node: ast.AST):
+        """_walk implementation."""
         for child in ast.iter_child_nodes(node):
             if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 continue  # 跳过函数体（lazy import）

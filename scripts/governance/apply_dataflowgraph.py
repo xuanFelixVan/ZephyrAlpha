@@ -338,6 +338,7 @@ def cmd_list_ops() -> int:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="dataflowgraph 变更写入工具（ARCH-051，对齐 apply_depgraph.py 风格）",
         epilog="所有写入操作通过 pg_advisory_lock(424243) 互斥。设计态默认 design_maturity=design, build_status=planned。",

@@ -212,10 +212,12 @@ class RunReport:
 
     @property
     def applicable(self) -> int:
+        """applicable implementation."""
         return len(self.killed) + len(self.survived)
 
     @property
     def score(self) -> float:
+        """score implementation."""
         denom = self.applicable
         return (len(self.killed) / denom) if denom else 0.0
 
@@ -339,6 +341,7 @@ def _finalize(report: RunReport, threshold: float) -> int:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="ReconciliationRegistry 变异测试（独立 oracle，打破自指悖论）"
     )

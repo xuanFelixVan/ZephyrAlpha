@@ -121,6 +121,7 @@ TEMPLATE_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "templates" /
 
 
 def load_yaml_safe(path: Path) -> dict | None:
+    """load_yaml_safe implementation."""
     try:
         import yaml
 
@@ -131,6 +132,7 @@ def load_yaml_safe(path: Path) -> dict | None:
 
 
 def validate_yaml_dependency_graph(data: dict, source_path: str) -> list[dict]:
+    """Validate target against rules and report findings."""
     findings = []
 
     for section in REQUIRED_SECTIONS:
@@ -267,6 +269,7 @@ def validate_yaml_dependency_graph(data: dict, source_path: str) -> list[dict]:
 
 
 def validate_cross_module_registry(path: Path) -> list[dict]:
+    """Validate target against rules and report findings."""
     findings = []
     data = load_yaml_safe(path)
     if data is None:
@@ -310,6 +313,7 @@ def validate_cross_module_registry(path: Path) -> list[dict]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     all_findings = []
 
     dep_graph_json = REPO_ROOT / "data" / "asset_index" / "dependency-graph.json"

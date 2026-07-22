@@ -287,6 +287,7 @@ def update_depgraph(dry_run: bool = False) -> int:
     print(f"\n总计: {total_changes} rows updated")
     return EXIT_PASS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="命名规范白名单清理替换脚本")
     parser.add_argument("--dry-run", action="store_true", help="预览替换结果，不修改文件")
     parser.add_argument("--verify", action="store_true", help="验证残留检查")

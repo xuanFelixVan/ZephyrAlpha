@@ -177,6 +177,7 @@ def check() -> int:
         print(f"  {line}")
     return EXIT_FINDINGS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="规则AI感知索引生成器")
     parser.add_argument("--check", action="store_true", help="漂移检测模式")
     args = parser.parse_args()

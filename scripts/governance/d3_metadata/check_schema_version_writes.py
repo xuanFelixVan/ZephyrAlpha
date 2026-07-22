@@ -162,6 +162,7 @@ def run_db_check() -> int:
     print("  [PASS] DB version matches _MIGRATIONS max version.")
     return EXIT_PASS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = sys.argv[1:]
     if "--db-check" in args:
         return run_db_check()

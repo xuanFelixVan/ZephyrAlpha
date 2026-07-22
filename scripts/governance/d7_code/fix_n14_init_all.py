@@ -181,6 +181,7 @@ def verify_fixes() -> int:
         print(f"  {line}")
     return EXIT_FINDINGS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 60)
     print("N-14 __init__.py 缺少 __all__ 批量修复脚本")
     print("=" * 60)

@@ -98,14 +98,17 @@ class TestReport:
 
     @property
     def total(self) -> int:
+        """total implementation."""
         return len(self.results)
 
     @property
     def passed_count(self) -> int:
+        """passed_count implementation."""
         return sum(1 for r in self.results if r.passed)
 
     @property
     def failed_count(self) -> int:
+        """failed_count implementation."""
         return sum(1 for r in self.results if not r.passed)
 
 
@@ -113,6 +116,7 @@ class TestReport:
 # 辅助函数
 # ---------------------------------------------------------------------------
 def _init_repo(repo_dir: Path) -> None:
+    """_init_repo implementation."""
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["GIT_AUTHOR_NAME"] = "RB-Test"
@@ -128,6 +132,7 @@ def _init_repo(repo_dir: Path) -> None:
 
 
 def _commit_init(repo_dir: Path, rel: str, content: str) -> None:
+    """_commit_init implementation."""
     f = repo_dir / rel
     f.parent.mkdir(parents=True, exist_ok=True)
     f.write_text(content, encoding="utf-8")
@@ -137,6 +142,7 @@ def _commit_init(repo_dir: Path, rel: str, content: str) -> None:
 
 
 def _files_in_commit(repo_dir: Path, commit_hash: str) -> list[str]:
+    """_files_in_commit implementation."""
     r = subprocess.run(
         ["git", "show", "--name-only", "--format=", commit_hash],
         cwd=str(repo_dir), capture_output=True, text=True, encoding="utf-8",
@@ -145,6 +151,7 @@ def _files_in_commit(repo_dir: Path, commit_hash: str) -> list[str]:
 
 
 def _last_commit_message(repo_dir: Path) -> str:
+    """_last_commit_message implementation."""
     r = subprocess.run(
         ["git", "log", "-1", "--format=%B"],
         cwd=str(repo_dir), capture_output=True, text=True, encoding="utf-8",
@@ -153,6 +160,7 @@ def _last_commit_message(repo_dir: Path) -> str:
 
 
 def _run_scenario(scenario_id: int, name: str, fn) -> ScenarioResult:
+    """_run_scenario implementation."""
     start = time.monotonic()
     try:
         with tempfile.TemporaryDirectory() as td:
@@ -183,6 +191,7 @@ def scenario_1(repo_dir: Path) -> str:
     gw = GitCommitGateway(project_root=repo_dir)
 
     def commit(sess: str, rel: str):
+        """commit implementation."""
         r = gw.commit(sess, [str((repo_dir / rel).resolve())], f"feat: {sess}")
         return (sess, r.status, r.commit_hash)
 
@@ -250,6 +259,7 @@ def scenario_4(repo_dir: Path) -> str:
     gw = GitCommitGateway(project_root=repo_dir)
 
     def commit_v(sess: str, val: str):
+        """commit_v implementation."""
         (repo_dir / "shared.py").write_text(f"v = {val}\n", encoding="utf-8")
         r = gw.commit(sess, [str((repo_dir / "shared.py").resolve())], f"feat: {sess}")
         return (sess, r.status)
@@ -277,6 +287,7 @@ def scenario_5(repo_dir: Path) -> str:
     gw = GitCommitGateway(project_root=repo_dir)
 
     def commit(sess: str, rel: str):
+        """commit implementation."""
         r = gw.commit(sess, [str((repo_dir / rel).resolve())], f"feat: {sess}")
         return (sess, r.status)
 
@@ -326,6 +337,7 @@ def scenario_8(repo_dir: Path) -> str:
     timestamps: list[float] = []
 
     def commit(sess: str, rel: str):
+        """commit implementation."""
         (repo_dir / rel).write_text(f"v = 1\n", encoding="utf-8")
         t0 = time.monotonic()
         r = gw.commit(sess, [str((repo_dir / rel).resolve())], f"feat: {sess}")
@@ -449,6 +461,7 @@ def write_report(report: TestReport) -> Path:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print("幽灵提交红蓝对抗测试（OPS-2026062514）")
     print("=" * 70)

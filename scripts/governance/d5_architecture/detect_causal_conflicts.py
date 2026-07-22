@@ -15,6 +15,7 @@
 # [TESTS] tests/test_detect_causal_conflicts.py
 # [TTL] permanent
 
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 import argparse
@@ -78,6 +79,7 @@ warn_only: false
 
 class CausalChainBrokenError(Exception):
     def __init__(self, chain: list[str], break_point: str):
+        """__init__ implementation."""
         self.chain = chain
         self.break_point = break_point
         super().__init__(f"Causal chain broken at '{break_point}' in chain: {' -> '.join(chain)}")
@@ -95,6 +97,7 @@ class ConflictEntry:
 
 class CausalConflictDetector:
     def __init__(self, depgraph_path: str | None = None):
+        """__init__ implementation."""
         # depgraph_path 参数保留向后兼容（PG模式下忽略，治本2026-06-27删除DEFAULT_DEPGRAPH_PATH常量）
         self._depgraph: dict[str, Any] = {}
         self._adj_forward: dict[str, list[str]] = defaultdict(list)
@@ -105,6 +108,7 @@ class CausalConflictDetector:
         self._loaded = False
 
     def _load_depgraph(self) -> None:
+        """_load_depgraph implementation."""
         if self._loaded:
             return
         # 治本（2026-06-27）：删除 if not self._depgraph_path.exists(): self._loaded=True; return 守卫（latent bug）。
@@ -130,6 +134,7 @@ class CausalConflictDetector:
         self._loaded = True
 
     def detect_resource_conflicts(self) -> list[dict[str, Any]]:
+        """Detect issues in target and report findings."""
         self._load_depgraph()
         conflicts: list[dict[str, Any]] = []
         resource_map: dict[str, list[str]] = defaultdict(list)
@@ -165,6 +170,7 @@ class CausalConflictDetector:
         return conflicts
 
     def detect_architecture_conflicts(self) -> list[dict[str, Any]]:
+        """Detect issues in target and report findings."""
         self._load_depgraph()
         conflicts: list[dict[str, Any]] = []
         layer_order = {
@@ -210,6 +216,7 @@ class CausalConflictDetector:
         return conflicts
 
     def detect_dependency_conflicts(self) -> list[dict[str, Any]]:
+        """Detect issues in target and report findings."""
         self._load_depgraph()
         conflicts: list[dict[str, Any]] = []
         visited_pairs: set[tuple[str, str]] = set()
@@ -261,6 +268,7 @@ class CausalConflictDetector:
         return conflicts
 
     def _find_indirect_cycles(self, max_depth: int = 5) -> list[list[str]]:
+        """_find_indirect_cycles implementation."""
         cycles: list[list[str]] = []
         found_cycle_sets: list[set[str]] = []
         for start_id in self._node_to_path:
@@ -281,6 +289,7 @@ class CausalConflictDetector:
         return cycles
 
     def detect_priority_conflicts(self) -> list[dict[str, Any]]:
+        """Detect issues in target and report findings."""
         self._load_depgraph()
         conflicts: list[dict[str, Any]] = []
         priority_map: dict[str, str] = {}
@@ -315,6 +324,7 @@ class CausalConflictDetector:
         return conflicts
 
     def _build_causal_chain(self, node_ids: list[str]) -> list[str]:
+        """_build_causal_chain implementation."""
         chain: list[str] = []
         for nid in node_ids:
             path = self._node_to_path.get(nid, nid)
@@ -323,6 +333,7 @@ class CausalConflictDetector:
         return chain
 
     def run_all_checks(self) -> dict[str, Any]:
+        """run_all_checks implementation."""
         resource = self.detect_resource_conflicts()
         architecture = self.detect_architecture_conflicts()
         dependency = self.detect_dependency_conflicts()
@@ -343,6 +354,7 @@ class CausalConflictDetector:
 
 
 def _run_warn_only() -> dict[str, Any]:
+    """_run_warn_only implementation."""
     results: dict[str, Any] = {"checks": []}
     detector = CausalConflictDetector()
     try:
@@ -453,6 +465,7 @@ def _run_warn_only() -> dict[str, Any]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Causal Conflict Detector — cross-module causal conflict detection")
     parser.add_argument(
         "--warn-only",

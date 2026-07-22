@@ -48,6 +48,7 @@ from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     if not DB_PATH.exists():
         print(f"[ERROR] DB 不存在: {DB_PATH}")
         return EXIT_FINDINGS

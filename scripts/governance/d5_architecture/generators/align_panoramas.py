@@ -774,6 +774,7 @@ def run_alignment(
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="四图对齐检测器（ARCH-053 + ARCH-056）"
     )

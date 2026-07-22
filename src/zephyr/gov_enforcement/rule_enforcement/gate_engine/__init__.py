@@ -20,3 +20,5 @@
 5.176.1 Phase 2/3 治本后，check_type handler 函数（_handle_*）已内联到 gate_engine.py 的 _CHECK_DISPATCH 分发表；
 check_types/ 包（ct_*.py + check_type_registry.py）已删除（5.176.3 死代码清理）。
 """
+
+__all__: list[str] = ["adversarial_validation", "gate_context", "gate_engine", "gate_health", "gate_integrity_guard", "gate_override", "gate_pipeline", "gate_simulator"]

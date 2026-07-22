@@ -49,6 +49,7 @@ OUTPUT_DIR = PROJECT_ROOT / "data" / "asset_index"
 
 
 def _file_to_module(filepath: Path, base: Path) -> str:
+    """_file_to_module implementation."""
     rel = filepath.relative_to(base)
     parts = list(rel.parts)
     if parts[-1] == "__init__.py":
@@ -59,6 +60,7 @@ def _file_to_module(filepath: Path, base: Path) -> str:
 
 
 def _module_to_file_candidates(module_path: str, base: Path) -> list[Path]:
+    """_module_to_file_candidates implementation."""
     parts = module_path.split(".")
     candidates = []
     current = base
@@ -81,6 +83,7 @@ def _module_to_file_candidates(module_path: str, base: Path) -> list[Path]:
 
 
 def _resolve_absolute_import(module_path: str) -> dict | None:
+    """_resolve_absolute_import implementation."""
     if module_path.startswith("zephyr."):
         rest = module_path[len("zephyr.") :]
         candidates = _module_to_file_candidates(rest, ZEPHYR_ROOT)
@@ -107,6 +110,7 @@ def _resolve_absolute_import(module_path: str) -> dict | None:
 
 
 def _resolve_relative_import(filepath: Path, level: int, module: str | None) -> dict | None:
+    """_resolve_relative_import implementation."""
     try:
         rel = filepath.relative_to(ZEPHYR_ROOT)
     except ValueError:
@@ -142,6 +146,7 @@ def _resolve_relative_import(filepath: Path, level: int, module: str | None) -> 
 
 
 def _extract_dynamic_imports(source: str, filepath: Path) -> list[dict]:
+    """_extract_dynamic_imports implementation."""
     results = []
     try:
         tree = ast.parse(source)
@@ -171,6 +176,7 @@ def _extract_dynamic_imports(source: str, filepath: Path) -> list[dict]:
 
 
 def _extract_try_except_imports(source: str) -> list[dict]:
+    """_extract_try_except_imports implementation."""
     results = []
     try:
         tree = ast.parse(source)
@@ -192,6 +198,7 @@ def _extract_try_except_imports(source: str) -> list[dict]:
 
 
 def scan_file(filepath: Path) -> dict:
+    """scan_file implementation."""
     rel_path = str(filepath.relative_to(PROJECT_ROOT)).replace("\\", "/")
     result = {
         "file": rel_path,
@@ -311,6 +318,7 @@ def scan_file(filepath: Path) -> dict:
 
 
 def _determine_package(rel_path: str) -> str:
+    """_determine_package implementation."""
     parts = rel_path.replace("\\", "/").split("/")
     if len(parts) >= 3 and parts[0] == "src" and parts[1] == "zephyr":
         return parts[2]
@@ -320,6 +328,7 @@ def _determine_package(rel_path: str) -> str:
 
 
 def _determine_lpc_layer(package: str) -> str:
+    """_determine_lpc_layer implementation."""
     if package.startswith("l") and len(package) >= 3 and package[1:3].isdigit():
         return f"C-{package[:3]}"
     b_track = {
@@ -356,6 +365,7 @@ def _determine_lpc_layer(package: str) -> str:
 
 
 def collect_py_files(scan_roots: list[Path]) -> list[Path]:
+    """collect_py_files implementation."""
     files = []
     for root in scan_roots:
         for dirpath, dirnames, filenames in os.walk(root):
@@ -367,6 +377,7 @@ def collect_py_files(scan_roots: list[Path]) -> list[Path]:
 
 
 def build_ground_truth_graph(scan_results: list[dict]) -> dict:
+    """build_ground_truth_graph implementation."""
     file_index = {}
     for r in scan_results:
         file_index[r["file"]] = r
@@ -469,18 +480,21 @@ def build_ground_truth_graph(scan_results: list[dict]) -> dict:
 
 
 def _now_iso() -> str:
+    """_now_iso implementation."""
     from datetime import datetime
 
     return datetime.now(UTC).isoformat()
 
 
 def detect_cycles(adjacency: dict) -> list[list[str]]:
+    """Detect issues in target and report findings."""
     WHITE, GRAY, BLACK = 0, 1, 2
     color = defaultdict(int)
     cycles = []
     path = []
 
     def dfs(node):
+        """dfs implementation."""
         color[node] = GRAY
         path.append(node)
         for neighbor in adjacency.get(node, []):
@@ -504,6 +518,7 @@ def detect_cycles(adjacency: dict) -> list[list[str]]:
 
 
 def analyze_violations(graph: dict) -> dict:
+    """Analyze target and report insights."""
     pkg_edges = graph["package_edges"]
     violations = {
         "c_to_c_upward": [],
@@ -550,6 +565,7 @@ def analyze_violations(graph: dict) -> dict:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Ground-truth file-level dependency scanner")
     parser.add_argument("--scan-roots", nargs="+", default=["src/zephyr", "scripts"], help="Root directories to scan")
     parser.add_argument("--output-dir", default=str(OUTPUT_DIR), help="Output directory")

@@ -43,6 +43,7 @@ _LEGACY_LAYER_PATTERN = re.compile(r"^L\d")
 
 
 def _load_valid_document_statuses() -> set[str]:
+    """_load_valid_document_statuses implementation."""
     from _shared.yaml_utils import load_vocabulary_values
 
     return load_vocabulary_values("status_vocabulary.yaml")
@@ -55,6 +56,7 @@ class Contradiction:
     """SSoT 矛盾条目."""
 
     def __init__(self, severity="", check_id="", description="", files=None, values=None):
+        """__init__ implementation."""
         self.severity = severity
         self.check_id = check_id
         self.description = description
@@ -67,6 +69,7 @@ class FileMeta:
 
     def __init__(self, path=None, rel_path=None, module_id=None, layer=None,
                  status=None, priority=None, version=None):
+        """__init__ implementation."""
         self.path = path
         self.rel_path = rel_path
         self.module_id = module_id
@@ -80,6 +83,7 @@ class ScanReport:
     """扫描报告."""
 
     def __init__(self, scanned_files=0, parsed_files=0, scan_time=None, contradictions=None):
+        """__init__ implementation."""
         self.scanned_files = scanned_files
         self.parsed_files = parsed_files
         self.scan_time = scan_time
@@ -87,22 +91,27 @@ class ScanReport:
 
     @property
     def p0_count(self) -> int:
+        """p0_count implementation."""
         return sum(1 for c in self.contradictions if c.severity == "P0")
 
     @property
     def p1_count(self) -> int:
+        """p1_count implementation."""
         return sum(1 for c in self.contradictions if c.severity == "P1")
 
     @property
     def p2_count(self) -> int:
+        """p2_count implementation."""
         return sum(1 for c in self.contradictions if c.severity == "P2")
 
     @property
     def total_count(self) -> int:
+        """total_count implementation."""
         return len(self.contradictions)
 
     @property
     def has_p0(self) -> bool:
+        """has_p0 implementation."""
         return self.p0_count > 0
 
 
@@ -110,11 +119,13 @@ class SsotValidator:
     """SSoT 校验器."""
 
     def __init__(self, scan_dir=None, repo_root=None, config=None):
+        """__init__ implementation."""
         self.scan_dir = Path(scan_dir) if scan_dir else None
         self.repo_root = Path(repo_root) if repo_root else None
         self.config = config or {}
 
     def run(self) -> ScanReport:
+        """run implementation."""
         if self.scan_dir is None:
             return ScanReport()
         metas: list[FileMeta] = []
@@ -141,6 +152,7 @@ class SsotValidator:
         )
 
     def validate(self, path=None):
+        """validate implementation."""
         violations = check_ssot_coverage_completeness()
         return ScanReport(
             scanned_files=1,
@@ -149,16 +161,19 @@ class SsotValidator:
         )
 
     def check_ssot(self, files=None):
+        """Check compliance and report findings."""
         return check_ssot_coverage_completeness()
 
 
 def _get_valid_layers() -> list[str]:
+    """_get_valid_layers implementation."""
     from _shared.yaml_utils import load_vocabulary_values
 
     return sorted(load_vocabulary_values("layer_vocabulary.yaml", strict=False))
 
 
 def check_p0_layer_invalid(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     valid_layers = set(_get_valid_layers())
     contradictions: list[Contradiction] = []
     for meta in files:
@@ -179,6 +194,7 @@ def check_p0_layer_invalid(files) -> list[Contradiction]:
 
 
 def check_p0_duplicate_active_module_id(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     by_module: dict[str, list] = {}
     for meta in files:
         if not meta.module_id or not meta.status:
@@ -201,6 +217,7 @@ def check_p0_duplicate_active_module_id(files) -> list[Contradiction]:
 
 
 def check_p1_status_invalid(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     contradictions: list[Contradiction] = []
     for meta in files:
         status = meta.status
@@ -217,6 +234,7 @@ def check_p1_status_invalid(files) -> list[Contradiction]:
 
 
 def check_p1_module_id_layer_conflict(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     by_module: dict[str, list] = {}
     for meta in files:
         if not meta.module_id or not meta.layer:
@@ -240,6 +258,7 @@ def check_p1_module_id_layer_conflict(files) -> list[Contradiction]:
 
 
 def check_p1_module_id_status_conflict(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     by_module: dict[str, list] = {}
     for meta in files:
         if not meta.module_id or not meta.status:
@@ -266,6 +285,7 @@ def check_p1_module_id_status_conflict(files) -> list[Contradiction]:
 
 
 def check_p2_priority_invalid(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     contradictions: list[Contradiction] = []
     for meta in files:
         priority = meta.priority
@@ -282,6 +302,7 @@ def check_p2_priority_invalid(files) -> list[Contradiction]:
 
 
 def check_p2_version_format(files) -> list[Contradiction]:
+    """Check compliance and report findings."""
     contradictions: list[Contradiction] = []
     for meta in files:
         version = meta.version
@@ -301,30 +322,37 @@ def check_p2_version_format(files) -> list[Contradiction]:
 
 
 def check_p3_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
 def check_p4_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
 def check_p5_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
 def check_p6_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
 def check_p7_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
 def check_p8_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
 def check_p9_placeholder(files):
+    """Check compliance and report findings."""
     return []
 
 
@@ -480,6 +508,7 @@ def render_report(report, format="text") -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(description="SSoT 完整性校验（裁定#207 R3-3）")

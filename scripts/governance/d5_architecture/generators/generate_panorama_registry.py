@@ -963,6 +963,7 @@ def _generate_built_section(built: list[dict]) -> list[str]:
     # 按目录规划顺序排序（00→01→...→06→generated→target_architecture）
     # 用 _directory_sort_key 取代纯字符串排序，确保与目录规划顺序一致
     def _built_sort_key(p: dict) -> tuple[int, str]:
+        """_built_sort_key implementation."""
         op = p["output_path"]
         prefix = op.split("/")[0] if "/" in op else op
         return _directory_sort_key(prefix)

@@ -203,6 +203,7 @@ def scan_existing(root: Path, src_only: bool = False) -> dict:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="module_id 全仓一致性扫描（--scan-existing 模式）"
     )

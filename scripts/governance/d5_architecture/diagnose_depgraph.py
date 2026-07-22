@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py | §7
+"""# [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py | §7
 # [MODULE] scripts.governance.diagnose_depgraph
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
@@ -17,6 +16,8 @@
 # [TTL] permanent
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: []
 description: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py
@@ -27,7 +28,6 @@ priority: P2
 timeout_seconds: 60
 warn_only: false
 """
-
 
 import argparse
 import os
@@ -73,6 +73,7 @@ ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "template", "schema"
 
 
 def load_depgraph():
+    """load_depgraph implementation."""
     conn = get_depgraph_pg_connection(autocommit=True)
     data = {"nodes": {}, "edges": [], "adjacency_lists": {"forward": {}, "reverse": {}}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
@@ -98,6 +99,7 @@ def load_depgraph():
 
 
 def extract_layer(path, blueprint_id):
+    """extract_layer implementation."""
     if path:
         pl = path.lower().replace("\\", "/")
         for key in LAYER_KEYS_SORTED:
@@ -114,6 +116,7 @@ def extract_layer(path, blueprint_id):
 
 
 def build_node_layers(nodes):
+    """build_node_layers implementation."""
     node_layers = {}
     for nid, node in nodes.items():
         path = node.get("path", "")
@@ -124,10 +127,12 @@ def build_node_layers(nodes):
 
 
 def find_cycles(adjacency, max_depth=10):
+    """find_cycles implementation."""
     cycles = []
     seen_cycle_keys = set()
 
     def dfs(start):
+        """dfs implementation."""
         stack = [(start, [start], {start})]
         while stack:
             node, path, path_set = stack.pop()
@@ -149,6 +154,7 @@ def find_cycles(adjacency, max_depth=10):
 
 
 def verify_cycles(cycles, edges, nodes):
+    """verify_cycles implementation."""
     verified = []
     edge_type_map = defaultdict(lambda: defaultdict(set))
     for e in edges:
@@ -211,6 +217,7 @@ def verify_cycles(cycles, edges, nodes):
 
 
 def find_cross_layer_refs(nodes, edges, node_layers):
+    """find_cross_layer_refs implementation."""
     refs = []
     for edge in edges:
         if edge["dep_type"] != "import_depends":
@@ -236,6 +243,7 @@ def find_cross_layer_refs(nodes, edges, node_layers):
 
 
 def find_deep_chains(adjacency, max_depth=20):
+    """find_deep_chains implementation."""
     chains = []
     stack = []
     for start in adjacency:
@@ -258,6 +266,7 @@ def find_deep_chains(adjacency, max_depth=20):
 
 
 def find_god_modules(nodes, edges, threshold=15):
+    """find_god_modules implementation."""
     fan_out = defaultdict(int)
     fan_in = defaultdict(int)
     for e in edges:
@@ -281,6 +290,7 @@ def find_god_modules(nodes, edges, threshold=15):
 
 
 def find_boundary_violations(nodes, edges):
+    """find_boundary_violations implementation."""
     violations = []
     for edge in edges:
         if edge["dep_type"] != "import_depends":
@@ -308,6 +318,7 @@ def find_boundary_violations(nodes, edges):
 
 
 def find_empty_blueprint_nodes(nodes):
+    """find_empty_blueprint_nodes implementation."""
     empty = []
     for nid, node in nodes.items():
         bid = node.get("blueprint_id", "")
@@ -407,6 +418,7 @@ AUTONOMY_ORDER = _load_vocab_order(
 
 
 def find_test_coverage_gaps(nodes, edges):
+    """find_test_coverage_gaps implementation."""
     modules_with_tests = set()
     test_files = set()
     for nid, node in nodes.items():
@@ -428,6 +440,7 @@ def find_test_coverage_gaps(nodes, edges):
 
 
 def find_stability_violations(nodes, edges):
+    """find_stability_violations implementation."""
     violations = []
     for edge in edges:
         if edge["dep_type"] != "import_depends":
@@ -454,6 +467,7 @@ def find_stability_violations(nodes, edges):
 
 
 def find_autonomy_violations(nodes, edges):
+    """find_autonomy_violations implementation."""
     violations = []
     for edge in edges:
         if edge["dep_type"] != "import_depends":
@@ -526,6 +540,7 @@ def find_semantic_field_gaps(nodes, edges):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Diagnose structural issues in project dependency graph")
     parser.add_argument("--output", type=str, default="", help="Output YAML report path")
     args = parser.parse_args()

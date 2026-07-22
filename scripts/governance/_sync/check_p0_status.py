@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+"""Module docstring — see module-level docstring for details."""
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块

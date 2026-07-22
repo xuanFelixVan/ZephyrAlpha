@@ -5,3 +5,5 @@
 # Phase 1 gate marker (kebab-case dir). Implementation in zephyr.governance.financial_governance.budget_enforcement.
 
 BUDGET_ENFORCER_PHASE1_MARKER = 'budget-enforcer-v1'
+
+__all__: list[str] = []

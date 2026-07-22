@@ -38,7 +38,7 @@
 # ============================================================
 
 schema_version: "1.0.0"
-doc_type: contract
+doc_type: gate
 module_id: PS-CTR-003
 version: "1.0.0"
 title: "Data Retention & Backtest Layering Contract"

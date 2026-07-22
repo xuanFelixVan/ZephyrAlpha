@@ -5,3 +5,5 @@
 # Phase 1 gate marker (kebab-case dir). Implementation in zephyr.infrastructure.a2a_protocol.
 
 A2A_PHASE1_MARKER = 'a2a-v1'
+
+__all__: list[str] = []

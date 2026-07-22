@@ -1,3 +1,4 @@
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 # [BLUEPRINT] MOD-GOV-analyze_orphan_consumers
@@ -135,6 +136,7 @@ def classify(result: dict) -> str:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="分析 ORPHAN MODULES 消费者情况（批量优化版）")
     parser.add_argument("--output", type=str, help="输出 JSON 文件路径")
     args = parser.parse_args()

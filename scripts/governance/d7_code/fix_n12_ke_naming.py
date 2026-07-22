@@ -200,6 +200,7 @@ def should_skip_file(path: Path) -> bool:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print("N-12 KE 条目命名格式批量修复")
     print("=" * 70)

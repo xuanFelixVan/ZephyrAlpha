@@ -61,6 +61,7 @@ SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 
 def count_importers(module_path: str) -> int:
+    """count_importers implementation."""
     parts = module_path.rstrip("/").split("/")
     if len(parts) >= 2:
         import_stmt = f"from zephyr.{'.'.join(parts[-2:])}"
@@ -74,6 +75,7 @@ def count_importers(module_path: str) -> int:
     except Exception:
         return EXIT_PASS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Check orphan outputs across blueprints")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even if orphans found")
     args = parser.parse_args()

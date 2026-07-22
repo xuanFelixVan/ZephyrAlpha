@@ -83,11 +83,13 @@ logger = logging.getLogger(__name__)
 
 
 def extract_module_id(text: str) -> str | None:
+    """extract_module_id implementation."""
     m = MODULE_ID_RE.search(text)
     return m.group(1).strip() if m else None
 
 
 def extract_actual_disk_path(text: str) -> str:
+    """extract_actual_disk_path implementation."""
     m = ACTUAL_DISK_PATH_RE.search(text)
     if not m:
         return ""
@@ -99,6 +101,7 @@ def extract_actual_disk_path(text: str) -> str:
 
 
 def extract_section_01_files(text: str) -> list[dict]:
+    """extract_section_01_files implementation."""
     pos = text.find(SECTION_01_MARKER)
     if pos < 0:
         return []
@@ -133,6 +136,7 @@ def extract_section_01_files(text: str) -> list[dict]:
 
 
 def extract_ssot_claims(text: str) -> list[dict]:
+    """extract_ssot_claims implementation."""
     claims: list[dict] = []
     for m in SSOT_CLAIM_ENTRY_RE.finditer(text):
         claims.append({"claim": m.group(1).strip(), "scope": m.group(2).strip()})
@@ -234,6 +238,7 @@ def scan_blueprints() -> tuple[list[dict], list[dict]]:
 
 
 def detect_conflicts(entries: list[dict]) -> list[dict]:
+    """Detect issues in target and report findings."""
     path_map: dict[str, list[dict]] = defaultdict(list)
     for e in entries:
         path_map[e["path"]].append(e)
@@ -261,6 +266,7 @@ def detect_conflicts(entries: list[dict]) -> list[dict]:
 
 
 def generate_yaml() -> str:
+    """Generate output from input data."""
     now = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     entries, ssot_claims = scan_blueprints()
     conflicts = detect_conflicts(entries)
@@ -324,6 +330,7 @@ def generate_yaml() -> str:
 
 
 def cmd_write() -> None:
+    """cmd_write implementation."""
     content = generate_yaml()
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     atomic_write(OUTPUT_FILE, content)
@@ -331,6 +338,7 @@ def cmd_write() -> None:
 
 
 def cmd_check() -> None:
+    """cmd_check implementation."""
     if not OUTPUT_FILE.exists():
         print("[FAIL] path_ownership_map.yaml does not exist. Run with --write first.")
         sys.exit(EXIT_FINDINGS)
@@ -347,6 +355,7 @@ def cmd_check() -> None:
 
 
 def cmd_conflicts() -> None:
+    """cmd_conflicts implementation."""
     entries, _ = scan_blueprints()
     conflicts = detect_conflicts(entries)
     if not conflicts:
@@ -362,6 +371,7 @@ def cmd_conflicts() -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Generate path-ownership-map.yaml")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--write", action="store_true", help="Overwrite registry file")

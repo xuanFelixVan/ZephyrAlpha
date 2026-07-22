@@ -217,6 +217,7 @@ def scan_all_post_sync(db_path: Path) -> list[BrokenCommand]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="post_sync 命令与回滚说明可执行性巡检（防幻觉/CLI漂移；W3 覆盖 standard/specific/rollback 三字段）"
     )

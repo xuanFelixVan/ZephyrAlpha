@@ -214,6 +214,7 @@ def check(with_code_refs: bool = False) -> int:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="规则四方对齐门禁（YAML↔Catalog↔Disk↔Code，ARCH-020 补建）"
     )

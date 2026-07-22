@@ -311,6 +311,7 @@ def check_pg_runtime_health(conn, issues: list) -> None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="depgraph (PostgreSQL) Schema 健康度校验")
     parser.add_argument("--db", default="", help="（已废弃）P2迁移后连接由 get_depgraph_pg_connection 统一管理")
     parser.add_argument("--ci", action="store_true", help="硬阻断模式（默认行为，显式传入便于阅读）")

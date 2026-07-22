@@ -520,6 +520,7 @@ CSV_FIELDS = [
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = sys.argv[1:]
     path_args = [a for a in args if not a.startswith("-")]
 
@@ -601,6 +602,7 @@ def main() -> int:
 
     # 写 CSV
     def write_csv(filename: str, rows: list[dict]) -> Path:
+        """write_csv implementation."""
         path = out_dir / filename
         with open(path, "w", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=CSV_FIELDS)

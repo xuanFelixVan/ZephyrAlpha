@@ -18,3 +18,5 @@
 
 归并 rule_* 系列，从 rule_enforcement/ 根迁入。
 """
+
+__all__: list[str] = ["rule_canary_manager", "rule_debt_auditor", "rule_engine", "rule_shadow_runner", "rule_watcher"]

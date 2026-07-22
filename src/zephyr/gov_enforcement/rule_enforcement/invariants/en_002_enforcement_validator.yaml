@@ -30,7 +30,7 @@ checks:
       - TRAE-014
     description: "确保可路由契约均有 enforce_mode 字段"
     params:
-      contract_spec_path: "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+      contract_spec_path: "architecture_model/contracts/cross_layer_contracts.yaml"
       required_enforcement_fields:
         - "enforcement_mode"
       allow_default:

@@ -76,6 +76,7 @@ from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     # 获取 staged 新增的 .py 文件（diff-filter=A 只看新增）
     result = subprocess.run(
         ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],

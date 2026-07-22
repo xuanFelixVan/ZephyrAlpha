@@ -654,6 +654,7 @@ def test_t10():
 
 # ========== 主函数 ==========
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     # P2迁移后弃用：depgraph已迁移到PostgreSQL，本脚本基于SQLite语义（WAL/文件锁/
     # IntegrityError/sqlite3.connect(depgraph)）不再适用。PG并发写入测试替代品：
     # repair/p2_pg_concurrent_test.py（使用get_db_connection+psycopg2）。

@@ -358,6 +358,7 @@ def scan_all(warn_only: bool = False) -> tuple[int, list[str]]:
 # ============================================================================
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="裸调 LLM API 检测门禁（GATE-20：RULE-LSG-001 + COND-30）"
     )

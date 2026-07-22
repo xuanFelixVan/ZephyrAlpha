@@ -1050,6 +1050,7 @@ def _gen_index_md(
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="从 decisiongraph (PostgreSQL) 生成决策流图（Mermaid + Markdown，22 文件）",
     )

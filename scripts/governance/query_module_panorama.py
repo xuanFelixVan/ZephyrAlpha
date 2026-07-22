@@ -281,6 +281,7 @@ def _print_all_modules() -> int:
     print(f"总计：{len(modules)} 个蓝图级模块")
     return EXIT_PASS
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="模块全景查询入口（四图模块对齐 Step 5）"
     )

@@ -310,6 +310,7 @@ def replace_block(content: str, block_name: str, new_inner: str) -> tuple[str, b
     regex = re.compile(pattern, re.DOTALL)
 
     def _replace(match: re.Match) -> str:
+        """_replace implementation."""
         start_line = match.group(1)  # <!-- AUTO-START:name -->\n
         # new_inner + 确保 END 前有换行
         return f"{start_line}{new_inner}\n{match.group(3)}"

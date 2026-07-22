@@ -281,6 +281,7 @@ def check_duplicates(conn):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     # 扫描MD文件
     md_files = scan_md_files()
     print(f"[INFO] 扫描到 {len(md_files)} 个MD文件")

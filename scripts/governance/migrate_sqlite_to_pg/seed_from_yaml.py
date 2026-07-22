@@ -102,6 +102,7 @@ def seed_from_yaml() -> bool:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     print('=== 种子表灌入（YAML 真源 → depgraph PostgreSQL） ===')
     print(f'种子表（{len(SEED_TABLES)} 张，真源在 YAML，trae_062 规则数据）:')
     for tbl in SEED_TABLES:

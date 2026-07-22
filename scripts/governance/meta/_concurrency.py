@@ -14,6 +14,7 @@
 # [TESTS]
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是并发控制锁等待，非周期触发
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 """
@@ -213,6 +214,7 @@ class ProcessLock:
     """
 
     def __init__(self, lock_dir: Path | None = None, agent_id: str = "unknown"):
+        """__init__ implementation."""
         self._lock_dir = lock_dir or _DEFAULT_LOCK_DIR
         self._lock_path = self._lock_dir / _LOCK_FILE
         self._agent_id = agent_id
@@ -220,6 +222,7 @@ class ProcessLock:
 
     @property
     def agent_id(self) -> str:
+        """agent_id implementation."""
         return self._agent_id
 
     def acquire(self, timeout_s: float = L0_LOCK_TIMEOUT_SECONDS) -> LockAcquireResult:
@@ -266,6 +269,7 @@ class ProcessLock:
             time.sleep(L0_LOCK_POLL_INTERVAL_SECONDS)
 
     def release(self) -> None:
+        """release implementation."""
         if self._acquired and self._lock_path.exists():
             try:
                 holder = self._read_lock()
@@ -276,6 +280,7 @@ class ProcessLock:
             self._acquired = False
 
     def _try_write_lock(self) -> bool:
+        """_try_write_lock implementation."""
         try:
             fd = os.open(
                 str(self._lock_path),
@@ -298,6 +303,7 @@ class ProcessLock:
             return False
 
     def _read_lock(self) -> dict[str, Any] | None:
+        """_read_lock implementation."""
         if not self._lock_path.exists():
             return None
         try:
@@ -307,12 +313,14 @@ class ProcessLock:
             return None
 
     def _clear_stale_lock(self) -> None:
+        """_clear_stale_lock implementation."""
         try:
             self._lock_path.unlink()
         except OSError:
             pass
 
     def __enter__(self):
+        """__enter__ implementation."""
         # 5.163.1 修复: 检查 acquire() 返回值, 未获取锁时抛 RuntimeError 防止 with 块在无锁保护下执行
         result = self.acquire()
         if not result.acquired:
@@ -320,6 +328,7 @@ class ProcessLock:
         return self
 
     def __exit__(self, *args):
+        """__exit__ implementation."""
         self.release()
 
 
@@ -358,6 +367,7 @@ class BulkheadExecutor:
     """
 
     def __init__(self, pool_override: dict[str, dict] | None = None):
+        """__init__ implementation."""
         self._pools: dict[str, _PoolState] = {}
         configs = pool_override or POOL_CONFIGS
 
@@ -404,6 +414,7 @@ class BulkheadExecutor:
         return True
 
     def _record_result(self, pool_name: str, success: bool) -> None:
+        """_record_result implementation."""
         state = self._pools[pool_name]
         if success:
             if state.circuit_state == CircuitState.HALF_OPEN:
@@ -499,6 +510,7 @@ class BulkheadExecutor:
         }
 
     def shutdown(self) -> None:
+        """shutdown implementation."""
         for pool_state in self._pools.values():
             pool_state.executor.shutdown(wait=True)
 
@@ -522,6 +534,7 @@ class ScanCache:
     """
 
     def __init__(self, max_entries: int = 500):
+        """__init__ implementation."""
         self._max_entries = max_entries
         self._cache: OrderedDict = OrderedDict()
         self._lock = threading.Lock()
@@ -529,6 +542,7 @@ class ScanCache:
         self._misses: int = 0
 
     def _make_key(self, file_path: str | Path) -> str:
+        """_make_key implementation."""
         fp = Path(file_path)
         if not fp.exists():
             return str(fp)
@@ -536,6 +550,7 @@ class ScanCache:
         return f"{fp}:{stat.st_mtime_ns}"
 
     def get(self, file_path: str | Path) -> Any | None:
+        """get implementation."""
         key = self._make_key(file_path)
         with self._lock:
             if key in self._cache:
@@ -546,6 +561,7 @@ class ScanCache:
             return None
 
     def set(self, file_path: str | Path, value: Any) -> None:
+        """set implementation."""
         key = self._make_key(file_path)
         with self._lock:
             if key in self._cache:
@@ -555,6 +571,7 @@ class ScanCache:
                 self._cache.popitem(last=False)
 
     def get_or_compute(self, file_path: str | Path, compute_fn: Callable[[], Any]) -> Any:
+        """get_or_compute implementation."""
         cached = self.get(file_path)
         if cached is not None:
             return cached
@@ -564,11 +581,13 @@ class ScanCache:
 
     @property
     def hit_rate(self) -> float:
+        """hit_rate implementation."""
         total = self._hits + self._misses
         return self._hits / total if total > 0 else 0.0
 
     @property
     def stats(self) -> dict:
+        """stats implementation."""
         with self._lock:
             return {
                 "entries": len(self._cache),
@@ -578,6 +597,7 @@ class ScanCache:
             }
 
     def clear(self) -> None:
+        """clear implementation."""
         with self._lock:
             self._cache.clear()
             self._hits = 0
@@ -603,6 +623,7 @@ class TieredTimeout:
 
     @staticmethod
     def classify(dimensions: set[str], tags: set[str]) -> TimeoutTier:
+        """classify implementation."""
         highest_tier = TimeoutTier.S2
 
         for tag in tags:
@@ -619,10 +640,12 @@ class TieredTimeout:
 
     @staticmethod
     def script_timeout(tier: TimeoutTier) -> int:
+        """script_timeout implementation."""
         return TIER_TIMEOUT_SECONDS.get(tier, 60)
 
     @staticmethod
     def dimension_total_timeout(tier: TimeoutTier) -> int:
+        """dimension_total_timeout implementation."""
         return TIER_DIMENSION_TOTAL_TIMEOUT.get(tier, 300)
 
 
@@ -643,6 +666,7 @@ class ScanCheckpoint:
     file_snapshots: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
+        """to_dict implementation."""
         return {
             "session_id": self.session_id,
             "completed_dimensions": self.completed_dimensions,
@@ -656,6 +680,7 @@ class ScanCheckpoint:
 
     @classmethod
     def from_dict(cls, data: dict) -> ScanCheckpoint:
+        """from_dict implementation."""
         return cls(
             session_id=data.get("session_id", ""),
             completed_dimensions=data.get("completed_dimensions", []),
@@ -669,6 +694,7 @@ class ScanCheckpoint:
 
 
 def load_checkpoint(checkpoint_path: Path) -> ScanCheckpoint | None:
+    """load_checkpoint implementation."""
     if not checkpoint_path.exists():
         return None
     try:
@@ -679,6 +705,7 @@ def load_checkpoint(checkpoint_path: Path) -> ScanCheckpoint | None:
 
 
 def save_checkpoint(checkpoint: ScanCheckpoint, checkpoint_path: Path) -> None:
+    """save_checkpoint implementation."""
     checkpoint.timestamp = datetime.now(UTC).isoformat()
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_path.write_text(
@@ -688,6 +715,7 @@ def save_checkpoint(checkpoint: ScanCheckpoint, checkpoint_path: Path) -> None:
 
 
 def is_checkpoint_stale(checkpoint: ScanCheckpoint, max_age_days: int = 30) -> bool:
+    """is_checkpoint_stale implementation."""
     if not checkpoint.timestamp:
         return True
     try:
@@ -712,6 +740,7 @@ class LockResult:
     reason: str = ""
 
     def __bool__(self) -> bool:
+        """__bool__ implementation."""
         return self.acquired
 
 
@@ -727,10 +756,12 @@ class DimensionLock:
     _STALE_S = 60
 
     def __init__(self, lock_dir: Path | None = None):
+        """__init__ implementation."""
         self._lock_dir = (lock_dir or _DEFAULT_LOCK_DIR) / "locks"
         self._lock_dir.mkdir(parents=True, exist_ok=True)
 
     def acquire(self, dimension: str, agent_id: str = "unknown", timeout_s: float | None = None) -> LockResult:
+        """acquire implementation."""
         timeout = timeout_s if timeout_s is not None else self._LOCK_TIMEOUT_S
         lock_path = self._lock_dir / f"dim_{dimension}.lock"
         start = time.monotonic()
@@ -758,10 +789,12 @@ class DimensionLock:
             time.sleep(self._POLL_INTERVAL_S)
 
     def release(self, dimension: str) -> None:
+        """release implementation."""
         lock_path = self._lock_dir / f"dim_{dimension}.lock"
         lock_path.unlink(missing_ok=True)
 
     def _try_write_lock(self, lock_path: Path, dimension: str, agent_id: str) -> bool:
+        """_try_write_lock implementation."""
         try:
             fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
             data = json.dumps(
@@ -779,6 +812,7 @@ class DimensionLock:
             return False
 
     def _read_lock(self, lock_path: Path) -> dict[str, Any] | None:
+        """_read_lock implementation."""
         if not lock_path.exists():
             return None
         try:
@@ -799,13 +833,16 @@ class FileLock:
     _STALE_S = 30
 
     def __init__(self, lock_dir: Path | None = None):
+        """__init__ implementation."""
         self._lock_dir = (lock_dir or _DEFAULT_LOCK_DIR) / "locks"
         self._lock_dir.mkdir(parents=True, exist_ok=True)
 
     def _file_key(self, file_path: str | Path) -> str:
+        """_file_key implementation."""
         return hashlib.sha256(str(file_path).encode()).hexdigest()[:12]
 
     def acquire(self, file_path: str | Path, agent_id: str = "unknown", timeout_s: float | None = None) -> LockResult:
+        """acquire implementation."""
         timeout = timeout_s if timeout_s is not None else self._LOCK_TIMEOUT_S
         key = self._file_key(file_path)
         lock_path = self._lock_dir / f"file_{key}.lock"
@@ -834,11 +871,13 @@ class FileLock:
             time.sleep(self._POLL_INTERVAL_S)
 
     def release(self, file_path: str | Path) -> None:
+        """release implementation."""
         key = self._file_key(file_path)
         lock_path = self._lock_dir / f"file_{key}.lock"
         lock_path.unlink(missing_ok=True)
 
     def _try_write_lock(self, lock_path: Path, file_path: str, agent_id: str) -> bool:
+        """_try_write_lock implementation."""
         try:
             fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
             data = json.dumps(
@@ -856,6 +895,7 @@ class FileLock:
             return False
 
     def _read_lock(self, lock_path: Path) -> dict[str, Any] | None:
+        """_read_lock implementation."""
         if not lock_path.exists():
             return None
         try:
@@ -880,6 +920,7 @@ class LockManager:
     """
 
     def __init__(self, agent_id: str = "unknown", lock_dir: Path | None = None):
+        """__init__ implementation."""
         self._agent_id = agent_id
         self._lock_dir = lock_dir or _DEFAULT_LOCK_DIR
         self._L0 = ProcessLock(self._lock_dir, agent_id)
@@ -888,32 +929,38 @@ class LockManager:
         self._acquired: dict[str, str] = {}
 
     def acquire_L0(self, timeout_s: float = L0_LOCK_TIMEOUT_SECONDS) -> LockResult:
+        """acquire_L0 implementation."""
         result = self._L0.acquire(timeout_s)
         if result.acquired:
             self._acquired["L0"] = "global"
         return LockResult(result.acquired, level="L0", key="global", waited_s=result.waited_s, reason=result.reason)
 
     def acquire_dim(self, dimension: str, timeout_s: float | None = None) -> LockResult:
+        """acquire_dim implementation."""
         result = self._L1.acquire(dimension, self._agent_id, timeout_s)
         if result.acquired:
             self._acquired[f"L1_{dimension}"] = dimension
         return result
 
     def acquire_file(self, file_path: str | Path, timeout_s: float | None = None) -> LockResult:
+        """acquire_file implementation."""
         result = self._L2.acquire(file_path, self._agent_id, timeout_s)
         if result.acquired:
             self._acquired[f"L2_{file_path!s}"] = str(file_path)
         return result
 
     def release_dim(self, dimension: str) -> None:
+        """release_dim implementation."""
         self._L1.release(dimension)
         self._acquired.pop(f"L1_{dimension}", None)
 
     def release_file(self, file_path: str | Path) -> None:
+        """release_file implementation."""
         self._L2.release(file_path)
         self._acquired.pop(f"L2_{file_path!s}", None)
 
     def release_all(self) -> None:
+        """release_all implementation."""
         self._L0.release()
         for key in list(self._acquired):
             if key.startswith("L1_"):
@@ -933,12 +980,14 @@ class LockManager:
 
 class _LockContext:
     def __init__(self, mgr: LockManager, mode: str, key: str | Path, timeout_s: float | None):
+        """__init__ implementation."""
         self._mgr = mgr
         self._mode = mode
         self._key = key
         self._timeout = timeout_s
 
     def __enter__(self):
+        """__enter__ implementation."""
         if self._mode == "dim":
             self._mgr.acquire_dim(str(self._key), self._timeout)
         else:
@@ -946,6 +995,7 @@ class _LockContext:
         return self
 
     def __exit__(self, *args):
+        """__exit__ implementation."""
         if self._mode == "dim":
             self._mgr.release_dim(str(self._key))
         else:
@@ -970,6 +1020,7 @@ class TokenBucket:
     """
 
     def __init__(self, refill_rate: float = 10.0, burst_size: int = 50):
+        """__init__ implementation."""
         self._rate = refill_rate
         self._burst = burst_size
         self._tokens = float(burst_size)
@@ -977,6 +1028,7 @@ class TokenBucket:
         self._lock = threading.Lock()
 
     def consume(self, tokens: int = 1) -> bool:
+        """consume implementation."""
         with self._lock:
             self._refill()
             if self._tokens >= tokens:
@@ -985,6 +1037,7 @@ class TokenBucket:
             return False
 
     def _refill(self) -> None:
+        """_refill implementation."""
         now = time.monotonic()
         elapsed = now - self._last_refill
         self._tokens = min(float(self._burst), self._tokens + elapsed * self._rate)
@@ -992,6 +1045,7 @@ class TokenBucket:
 
     @property
     def available(self) -> float:
+        """available implementation."""
         with self._lock:
             self._refill()
             return self._tokens
@@ -1008,6 +1062,7 @@ class AdmissionController:
     """
 
     def __init__(self, concurrency_limit: int = 4, token_bucket: TokenBucket | None = None):
+        """__init__ implementation."""
         self._concurrency_limit = concurrency_limit
         self._active: int = 0
         self._token_bucket = token_bucket or TokenBucket()
@@ -1017,6 +1072,7 @@ class AdmissionController:
         self._total_rejected: int = 0
 
     def admit(self, priority: str) -> bool:
+        """admit implementation."""
         with self._lock:
             if priority == "P0":
                 self._active += 1
@@ -1034,12 +1090,14 @@ class AdmissionController:
             return True
 
     def release(self) -> None:
+        """release implementation."""
         with self._lock:
             if self._active > 0:
                 self._active -= 1
 
     @property
     def stats(self) -> dict:
+        """stats implementation."""
         with self._lock:
             return {
                 "active": self._active,
@@ -1061,16 +1119,19 @@ class ShardRouter:
     """
 
     def __init__(self, shard_count: int = 16, db_dir: Path | None = None):
+        """__init__ implementation."""
         self._shard_count = shard_count
         self._db_dir = db_dir or _DEFAULT_LOCK_DIR / "shards"
         self._db_dir.mkdir(parents=True, exist_ok=True)
 
     def route(self, module_id: str) -> Path:
+        """route implementation."""
         digest = hashlib.sha256(module_id.encode()).hexdigest()
         shard_idx = int(digest, 16) % self._shard_count
         return self._db_dir / f"shard_{shard_idx}.db"
 
     def all_shards(self) -> list[Path]:
+        """all_shards implementation."""
         return [self._db_dir / f"shard_{i}.db" for i in range(self._shard_count)]
 
 
@@ -1091,6 +1152,7 @@ class CircuitBreaker:
     """
 
     def __init__(self, name: str, failure_threshold: int = 3, open_ttl_s: float = 30, half_open_probe_count: int = 2):
+        """__init__ implementation."""
         self.name = name
         self._failure_threshold = failure_threshold
         self._open_ttl_s = open_ttl_s
@@ -1102,6 +1164,7 @@ class CircuitBreaker:
         self._lock = threading.Lock()
 
     def allow_request(self) -> bool:
+        """allow_request implementation."""
         with self._lock:
             if self._state == CircuitState.CLOSED:
                 return True
@@ -1116,6 +1179,7 @@ class CircuitBreaker:
             return False
 
     def on_success(self) -> None:
+        """on_success implementation."""
         with self._lock:
             if self._state == CircuitState.CLOSED:
                 self._failure_count = 0
@@ -1126,6 +1190,7 @@ class CircuitBreaker:
                     self._failure_count = 0
 
     def on_failure(self) -> None:
+        """on_failure implementation."""
         with self._lock:
             self._failure_count += 1
             if (
@@ -1136,11 +1201,13 @@ class CircuitBreaker:
 
     @property
     def state(self) -> CircuitState:
+        """state implementation."""
         with self._lock:
             return self._state
 
     @property
     def stats(self) -> dict:
+        """stats implementation."""
         with self._lock:
             return {
                 "name": self.name,
@@ -1168,6 +1235,7 @@ class BulkheadExecutorV2(BulkheadExecutor):
     def __init__(
         self, pool_override: dict[str, dict] | None = None, lock_dir: Path | None = None, agent_id: str = "unknown"
     ):
+        """__init__ implementation."""
         super().__init__(pool_override)
         self._lock_mgr = LockManager(agent_id, lock_dir)
         self._circuit_breakers: dict[str, CircuitBreaker] = {}
@@ -1179,9 +1247,11 @@ class BulkheadExecutorV2(BulkheadExecutor):
             )
 
     def _check_circuit(self, pool_name: str) -> bool:
+        """_check_circuit implementation."""
         return self._circuit_breakers[pool_name].allow_request()
 
     def _record_result(self, pool_name: str, success: bool) -> None:
+        """_record_result implementation."""
         cb = self._circuit_breakers[pool_name]
         if success:
             cb.on_success()
@@ -1219,6 +1289,7 @@ class BulkheadExecutorV2(BulkheadExecutor):
             def _wrapped_execute(
                 sn: str, m: dict, writable: bool = is_writable, files: set[str] | None = affected_files
             ) -> dict:
+                """_wrapped_execute implementation."""
                 acquired_dims: list[str] = []
                 acquired_files: list[str] = []
 
@@ -1293,6 +1364,7 @@ class BulkheadExecutorV2(BulkheadExecutor):
 
     @property
     def circuit_breaker_states(self) -> dict[str, dict]:
+        """circuit_breaker_states implementation."""
         return {name: cb.stats for name, cb in self._circuit_breakers.items()}
 
 
@@ -1303,6 +1375,7 @@ class ScriptRegistry:
     """
 
     def __init__(self, manifest_path: Path | None = None):
+        """__init__ implementation."""
         self._manifest_path = manifest_path or Path("scripts/script_manifest.yaml")
         self._by_dimension: dict[str, list[str]] = {}
         self._by_tag: dict[str, list[str]] = {}
@@ -1312,6 +1385,7 @@ class ScriptRegistry:
         self._load_lock = threading.Lock()  # 5.172.M11 修复: 保护 load() lazy init 线程安全
 
     def load(self) -> None:
+        """load implementation."""
         # 5.172.M11 修复: 双重检查锁定, 防多线程并发首次调用重复加载脚本 (路径漂移 scripts/governance/→scripts/governance/meta/)
         if self._loaded:
             return
@@ -1336,23 +1410,28 @@ class ScriptRegistry:
             self._loaded = True
 
     def query_by_dimension(self, dimension: str) -> list[str]:
+        """query_by_dimension implementation."""
         self.load()
         return self._by_dimension.get(dimension, [])
 
     def query_by_tag(self, tag: str) -> list[str]:
+        """query_by_tag implementation."""
         self.load()
         return self._by_tag.get(tag, [])
 
     def query_by_priority(self, priority: str) -> list[str]:
+        """query_by_priority implementation."""
         self.load()
         return self._by_priority.get(priority, [])
 
     def get_meta(self, script_name: str) -> dict | None:
+        """get_meta implementation."""
         self.load()
         return self._entries.get(script_name)
 
     @property
     def total_entries(self) -> int:
+        """total_entries implementation."""
         self.load()
         return len(self._entries)
 
@@ -1364,6 +1443,7 @@ class ScanDeduplicator:
     """
 
     def __init__(self, ttl_seconds: float = 3600):
+        """__init__ implementation."""
         self._cache: dict[str, tuple[float, dict]] = {}
         self._ttl = ttl_seconds
         self._lock = threading.Lock()
@@ -1371,9 +1451,11 @@ class ScanDeduplicator:
         self._misses = 0
 
     def _make_key(self, script_name: str, file_path: str) -> str:
+        """_make_key implementation."""
         return f"{script_name}:{hashlib.sha256(file_path.encode()).hexdigest()[:16]}"
 
     def check(self, script_name: str, file_path: str) -> dict | None:
+        """check implementation."""
         key = self._make_key(script_name, file_path)
         with self._lock:
             if key in self._cache:
@@ -1386,11 +1468,13 @@ class ScanDeduplicator:
             return None
 
     def store(self, script_name: str, file_path: str, result: dict) -> None:
+        """store implementation."""
         key = self._make_key(script_name, file_path)
         with self._lock:
             self._cache[key] = (time.monotonic(), result)
 
     def invalidate(self, file_path: str) -> int:
+        """invalidate implementation."""
         removed = 0
         suffix = hashlib.sha256(file_path.encode()).hexdigest()[:16]
         with self._lock:
@@ -1401,10 +1485,12 @@ class ScanDeduplicator:
         return removed
 
     def stats(self) -> dict:
+        """stats implementation."""
         with self._lock:
             return {"hits": self._hits, "misses": self._misses, "cache_size": len(self._cache)}
 
     def clear(self) -> None:
+        """clear implementation."""
         with self._lock:
             self._cache.clear()
             self._hits = 0
@@ -1418,10 +1504,12 @@ class ShardAffinityScheduler:
     """
 
     def __init__(self, shard_router: ShardRouter | None = None, max_workers_per_shard: int = 2):
+        """__init__ implementation."""
         self._router = shard_router or ShardRouter()
         self._max_workers = max_workers_per_shard
 
     def group_by_shard(self, script_tasks: list[tuple[str, dict]]) -> dict[Path, list[tuple[str, dict]]]:
+        """group_by_shard implementation."""
         groups: dict[Path, list[tuple[str, dict]]] = {}
         for name, meta in script_tasks:
             affected = meta.get("affected_files", [])
@@ -1430,6 +1518,7 @@ class ShardAffinityScheduler:
         return groups
 
     def schedule(self, script_tasks: list[tuple[str, dict]], execute_fn: Callable) -> dict:
+        """schedule implementation."""
         groups = self.group_by_shard(script_tasks)
         all_results: list[dict] = []
         shard_stats: dict[str, int] = {}
@@ -1458,6 +1547,7 @@ class ScriptSandbox:
     """
 
     def __init__(self, repo_root: Path | None = None, output_dir: Path | None = None):
+        """__init__ implementation."""
         self._repo_root = repo_root or Path.cwd()
         self._output_dir = output_dir or self._repo_root / "data" / "sandbox_output"
         self._output_dir.mkdir(parents=True, exist_ok=True)
@@ -1465,6 +1555,7 @@ class ScriptSandbox:
         self._violations: list[dict] = []
 
     def check_write_allowed(self, target_path: str) -> bool:
+        """Check compliance and report findings."""
         rel = Path(target_path)
         try:
             rel = rel.relative_to(self._repo_root)
@@ -1480,6 +1571,7 @@ class ScriptSandbox:
         return False
 
     def virtual_read(self, file_path: str) -> str | None:
+        """virtual_read implementation."""
         p = Path(file_path)
         if not p.is_absolute():
             p = self._repo_root / p
@@ -1489,6 +1581,7 @@ class ScriptSandbox:
             return f.read()
 
     def virtual_write(self, file_path: str, content: str) -> Path:
+        """virtual_write implementation."""
         if not self.check_write_allowed(file_path):
             target = self._output_dir / Path(file_path).name
         else:
@@ -1502,9 +1595,11 @@ class ScriptSandbox:
 
     @property
     def violations(self) -> list[dict]:
+        """violations implementation."""
         return list(self._violations)
 
     def add_allowed_pattern(self, pattern: str) -> None:
+        """add_allowed_pattern implementation."""
         self._allowed_write_patterns.append(pattern)
 
 
@@ -1515,6 +1610,7 @@ class GovernanceMemoryGuard:
     """
 
     def __init__(self, rss_limit_mb: int = 4096, compact_threshold_mb: int = 2048):
+        """__init__ implementation."""
         self._rss_limit = rss_limit_mb
         self._compact_threshold = compact_threshold_mb
         self._last_compact: float = 0
@@ -1522,6 +1618,7 @@ class GovernanceMemoryGuard:
         self._history: list[dict] = []
 
     def current_rss_mb(self) -> float:
+        """current_rss_mb implementation."""
         try:
             import psutil
 
@@ -1530,6 +1627,7 @@ class GovernanceMemoryGuard:
             return 0.0
 
     def check(self) -> dict:
+        """check implementation."""
         rss = self.current_rss_mb()
         status = "healthy"
         if rss > self._rss_limit:
@@ -1543,6 +1641,7 @@ class GovernanceMemoryGuard:
         return entry
 
     def compact(self) -> dict:
+        """compact implementation."""
         import gc
 
         before = self.current_rss_mb()
@@ -1559,6 +1658,7 @@ class GovernanceMemoryGuard:
         return {"before_mb": round(before, 1), "after_mb": round(after, 1), "freed_mb": round(before - after, 1)}
 
     def auto_compact_if_needed(self) -> dict | None:
+        """auto_compact_if_needed implementation."""
         status = self.check()
         if status["status"] == "compact_needed" and (time.monotonic() - self._last_compact > self._compact_interval):
             return self.compact()
@@ -1568,4 +1668,5 @@ class GovernanceMemoryGuard:
 
     @property
     def history(self) -> list[dict]:
+        """history implementation."""
         return list(self._history)

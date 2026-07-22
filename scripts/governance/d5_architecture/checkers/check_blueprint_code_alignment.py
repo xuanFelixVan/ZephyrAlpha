@@ -210,6 +210,7 @@ def check_frontmatter_state_stale(
 
 
 def load_blueprint_registry() -> dict[str, dict]:
+    """load_blueprint_registry implementation."""
     registry: dict[str, dict] = {}
     if not BLUEPRINT_REGISTRY.exists():
         return registry
@@ -233,6 +234,7 @@ def load_blueprint_registry() -> dict[str, dict]:
 
 
 def load_module_registry() -> dict[str, str]:
+    """load_module_registry implementation."""
     pkg_to_modid: dict[str, str] = {}
     if not MODULE_REGISTRY.exists():
         return pkg_to_modid
@@ -277,6 +279,7 @@ def scan_code_blueprint_headers(
         packages = [p for p in packages if p.name == package_filter]
 
     def scan_file(py_file: Path, pkg_name: str) -> dict | None:
+        """scan_file implementation."""
         try:
             content = py_file.read_text(encoding="utf-8")
         except OSError:
@@ -391,6 +394,7 @@ def check_code_not_in_blueprint(
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="蓝图↔代码双向对齐检测")
     parser.add_argument("--warn-only", action="store_true")
     parser.add_argument("--json", action="store_true")

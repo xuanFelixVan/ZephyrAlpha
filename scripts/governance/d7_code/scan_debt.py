@@ -68,6 +68,7 @@ class DebtViolation:
     detail: str
 
     def format(self) -> str:
+        """format implementation."""
         return f"{self.code} {self.file}:{self.line} [{self.symbol}] {self.detail}"
 
 
@@ -117,6 +118,7 @@ def _is_bool_flag_field(name: str, ann: ast.AST | None) -> bool:
 
 
 def _has_dataclass_decorator(decorators: list[ast.AST]) -> bool:
+    """_has_dataclass_decorator implementation."""
     for d in decorators:
         # @dataclass
         if isinstance(d, ast.Name) and d.id == "dataclass":
@@ -136,11 +138,13 @@ def _has_dataclass_decorator(decorators: list[ast.AST]) -> bool:
 # ── 扫描器 ───────────────────────────────────────────────────────────────
 class DebtScanner(ast.NodeVisitor):
     def __init__(self, file_path: str) -> None:
+        """__init__ implementation."""
         self.file = file_path
         self.violations: list[DebtViolation] = []
 
     # --- Class 检测 DEBT-1 + DEBT-3 ---
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """visit_ClassDef implementation."""
         is_dataclass = _has_dataclass_decorator(node.decorator_list)
 
         action_fields: list[tuple[str, int]] = []
@@ -174,6 +178,7 @@ class DebtScanner(ast.NodeVisitor):
 
     # --- 函数检测 DEBT-2 ---
     def _check_function_args(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        """_check_function_args implementation."""
         args = node.args
         # R68 修订：只检测位置参数（posonly + positional），不检测 kwonlyargs
         # 原因：keyword-only 参数已用 `*` 隔离，调用方必须写 `name=value`，不会传错顺序
@@ -200,16 +205,19 @@ class DebtScanner(ast.NodeVisitor):
             ))
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """visit_FunctionDef implementation."""
         self._check_function_args(node)
         self.generic_visit(node)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """visit_AsyncFunctionDef implementation."""
         self._check_function_args(node)
         self.generic_visit(node)
 
 
 # ── 入口 ─────────────────────────────────────────────────────────────────
 def scan_file(path: Path) -> list[DebtViolation]:
+    """scan_file implementation."""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except (SyntaxError, UnicodeDecodeError) as e:
@@ -222,6 +230,7 @@ def scan_file(path: Path) -> list[DebtViolation]:
 
 
 def scan_dir(root: Path) -> Iterable[DebtViolation]:
+    """scan_dir implementation."""
     for py in root.rglob("*.py"):
         # 跳过 __pycache__ / 测试 / 临时文件
         if "__pycache__" in py.parts:
@@ -234,6 +243,7 @@ def scan_dir(root: Path) -> Iterable[DebtViolation]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="架构债务扫描器（5.96 维度防御）")
     parser.add_argument("--src", default="src/zephyr", help="扫描根目录")
     parser.add_argument("--ci", action="store_true", help="CI 模式：违规即 exit 1（hard block）")

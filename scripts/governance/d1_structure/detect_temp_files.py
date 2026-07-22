@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 """
@@ -184,6 +185,7 @@ def clean_temp_files(scan_dir: Path | None = None, dry_run: bool = True) -> tupl
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="临时文件检测与清理（GOV-TASK-005 §4.2）")
     parser.add_argument("--scan-dir", default=None, help="扫描目录")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")

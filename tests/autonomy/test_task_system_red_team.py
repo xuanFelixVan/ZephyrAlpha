@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_task_system_red_team | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-214 | tests/autonomy/test_task_system_red_team.py | §
-# [BLUEPRINT] MOD-GOV_task_system_red_team | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_TASK_SYSTEM_RED_TEAM | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_task_system_red_team
 # [STABILITY] evolving
 # [SAFETY] L

@@ -687,6 +687,7 @@ def build_numbering_map(conn: PgConnExecuteWrapper) -> dict[str, int]:
     domains = [(r["domain_id"], r["layer_id"] or "") for r in cur.fetchall()]
 
     def _sort_key(item: tuple[str, str]) -> tuple[int, str]:
+        """_sort_key implementation."""
         layer = item[1]
         layer_idx = LAYER_ORDER.index(layer) if layer in LAYER_ORDER else len(LAYER_ORDER)
         return (layer_idx, item[0])
@@ -784,6 +785,7 @@ def generate_internal_mermaid(
     external_nodes: dict[str, tuple[str, str]] = {}  # ext_domain -> (mermaid_id, maturity)
 
     def _get_or_create_external(ext_domain: str, maturity: str) -> str:
+        """_get_or_create_external implementation."""
         if ext_domain in external_nodes:
             return external_nodes[ext_domain][0]
         ext_id = sanitize_node_id(ext_domain)
@@ -1348,14 +1350,18 @@ def main() -> None:
     class _PgConnSqliteCompat:
         """psycopg2 -> sqlite3 API compat wrapper."""
         def __init__(self, conn):
+            """__init__ implementation."""
             self._conn = conn
         def execute(self, sql, params=None):
+            """execute implementation."""
             cur = self._conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             cur.execute(sql) if params is None else cur.execute(sql, params)
             return cur
         def __getattr__(self, name):
+            """__getattr__ implementation."""
             return getattr(self._conn, name)
         def close(self):
+            """close implementation."""
             self._conn.close()
 
     conn = _PgConnSqliteCompat(get_depgraph_pg_connection(autocommit=True))

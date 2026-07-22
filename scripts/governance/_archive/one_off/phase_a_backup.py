@@ -632,6 +632,7 @@ def run_verify_only() -> bool:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="阶段A安全网 Tier0/1/2 关键文件备份 + git bundle")
     parser.add_argument("--tier0", action="store_true", help="备份 Tier0 核心资产（5项）")
     parser.add_argument("--tier1", action="store_true", help="备份 Tier1 注册表+契约+能力卡+回滚策略")

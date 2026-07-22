@@ -376,6 +376,7 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="G9-Detect: 架构约束违规检测器（5 类检测 -> arch_constraints 表）"
     )

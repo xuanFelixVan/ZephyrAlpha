@@ -7,3 +7,5 @@
 
 Migrated from src/zephyr/governance/constitutional_update/ in batch 11.
 """
+
+__all__: list[str] = []

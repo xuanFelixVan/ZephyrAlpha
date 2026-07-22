@@ -288,12 +288,14 @@ def _print_table(results: list[dict], title: str) -> None:
     import unicodedata
 
     def _w(s: object) -> int:
+        """_w implementation."""
         return sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in str(s))
 
     cols = list(results[0].keys())
     widths = {c: max(_w(c), *(_w(str(r.get(c, ""))) for r in results)) for c in cols}
 
     def _pad(s: object, w: int) -> str:
+        """_pad implementation."""
         text = str(s)
         return text + " " * (w - _w(text))
 

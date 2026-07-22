@@ -145,6 +145,7 @@ def format_report(violations: list[dict]) -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="SSoT single-source gate: detect protected filenames outside declared SSoT path"
     )

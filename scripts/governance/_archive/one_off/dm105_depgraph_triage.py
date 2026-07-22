@@ -399,6 +399,7 @@ def should_deprecate(node_data, path_str):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="DM-105 depgraph triage")
     parser.add_argument("--dry-run", action="store_true", help="只输出统计，不写入")
     args = parser.parse_args()

@@ -15,6 +15,7 @@
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: while True用于文件分块读取(f.read+break),非daemon常驻服务;一次性CLI工具
 
+"""Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
 
@@ -53,6 +54,7 @@ class CacheCorruptionError(RuntimeError):
 
 class GateCache:
     def __init__(self, cache_dir: Path | None = None) -> None:
+        """__init__ implementation."""
         if cache_dir is None:
             project_root = Path(
                 os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -64,12 +66,14 @@ class GateCache:
         self._stats_lock = threading.Lock()  # 5.172.M12 修复: 保护 _stats += 自增线程安全
 
     def _incr_stat(self, key: str) -> None:
+        """_incr_stat implementation."""
         # 5.172.M12 修复: += 是"读-改-写"三步操作, GIL 不保证原子性, 需加锁
         with self._stats_lock:
             self._stats[key] += 1
 
     @staticmethod
     def _file_hash(path: str) -> str:
+        """_file_hash implementation."""
         file_path = Path(path)
         if not file_path.exists():
             return ""
@@ -83,12 +87,14 @@ class GateCache:
         return h.hexdigest()
 
     def _cache_entry_path(self, gate_id: str, file_hash: str) -> Path:
+        """_cache_entry_path implementation."""
         safe_gate = gate_id.replace("/", "_").replace("\\", "_").replace(":", "_")
         shard_dir = self._cache_dir / safe_gate
         shard_dir.mkdir(parents=True, exist_ok=True)
         return shard_dir / f"{file_hash}.json"
 
     def get(self, gate_id: str, file_path: str) -> dict | None:
+        """get implementation."""
         file_hash = self._file_hash(file_path)
         if not file_hash:
             self._incr_stat("misses")  # 5.172.M12 修复: 加锁自增
@@ -110,6 +116,7 @@ class GateCache:
         return data.get("result")
 
     def put(self, gate_id: str, file_path: str, result: dict) -> None:
+        """put implementation."""
         file_hash = self._file_hash(file_path)
         if not file_hash:
             return
@@ -124,6 +131,7 @@ class GateCache:
         atomic_write_safe(entry_path, content)
 
     def invalidate(self, gate_id: str, file_path: str) -> None:
+        """invalidate implementation."""
         file_hash = self._file_hash(file_path)
         if not file_hash:
             return
@@ -135,6 +143,7 @@ class GateCache:
                 pass
 
     def invalidate_all(self, gate_id: str) -> None:
+        """invalidate_all implementation."""
         safe_gate = gate_id.replace("/", "_").replace("\\", "_").replace(":", "_")
         shard_dir = self._cache_dir / safe_gate
         if not shard_dir.exists():
@@ -146,6 +155,7 @@ class GateCache:
                 pass
 
     def stats(self) -> dict[str, Any]:
+        """stats implementation."""
         total_entries = 0
         total_size = 0
         for shard_dir in self._cache_dir.iterdir():
@@ -167,6 +177,7 @@ class GateCache:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Phase Gate file hash cache")
     parser.add_argument("--warn-only", action="store_true", help="Warn only mode")
     args = parser.parse_args()

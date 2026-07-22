@@ -24,7 +24,7 @@ checks:
       scan_targets:
         - "zephyr.data_pipeline"
         - "zephyr.data_govern"
-        - "zephyr.infrastructure"
+        - "zephyr.l01_infrastructure"
         - "zephyr.factor"
         - "zephyr.signal_gen"
         - "zephyr.signal_quality"

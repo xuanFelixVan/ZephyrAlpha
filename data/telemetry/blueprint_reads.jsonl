@@ -2,3 +2,4 @@
 {"event": "blueprint_read", "blueprint_id": "agent-rbac", "module_id": "MOD-INF-018", "version": "v0.14.0", "timestamp": "2026-05-08T00:47:09.336020", "session_id": "session-20260507-013"}
 {"event": "blueprint_read", "blueprint_id": "agent-spec", "module_id": "MOD-INF-019", "version": "v0.17.0", "timestamp": "2026-05-08T00:47:09.336020", "session_id": "session-20260507-013"}
 {"event": "blueprint_read", "blueprint_id": "audit-trail", "module_id": "MOD-INF-020", "version": "v1.4.0", "timestamp": "2026-05-08T00:47:09.336020", "session_id": "session-20260507-013"}
+{"event": "blueprint_read", "blueprint_id": "MOD-INF-015", "session_id": "test-session", "task_id": "test-task", "agent_model": "", "timestamp": "2026-07-22T05:27:03.238961+00:00"}

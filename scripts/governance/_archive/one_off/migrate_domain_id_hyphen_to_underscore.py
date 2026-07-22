@@ -315,6 +315,7 @@ def backup_database():
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="域ID连字符→下划线迁移")
     parser.add_argument("--dry-run", action="store_true", help="预览不执行")
     parser.add_argument("--execute", action="store_true", help="执行迁移")

@@ -131,7 +131,7 @@ def _strip_module_path(physical_path: str) -> tuple[str, str] | None:
             break
 
     parts = list(rel.parts)
-    module_path = "zephyr." + ".".join(parts).replace(".py", "")
+    module_path = "zephyr." + ".".join(parts).replace(".py", "").replace("-", "_")
 
     stem = path.stem
     class_name = "".join(w.capitalize() for w in stem.split("_"))

@@ -101,6 +101,7 @@ class RationaleDecision:
         decision_summary: str = "",
         affected_files: list[str] | None = None,
     ) -> None:
+        """__init__ implementation."""
         self.decision_id = decision_id
         self.decision_date = decision_date
         self.decision_summary = decision_summary
@@ -126,6 +127,7 @@ class TruthSourceCascadeResult:
         warnings: list[str] | None = None,
         cascade_rows: list[dict] | None = None,
     ) -> None:
+        """__init__ implementation."""
         self.report_date = report_date or datetime.now()
         self.decisions_scanned = decisions_scanned
         self.files_impacted = files_impacted

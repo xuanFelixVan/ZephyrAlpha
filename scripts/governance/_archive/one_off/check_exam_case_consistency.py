@@ -122,6 +122,7 @@ def check_binary_negatives(registered: list[ExamTestCase]) -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="考试题库一致性检查")
     parser.add_argument(
         "--warn-only",

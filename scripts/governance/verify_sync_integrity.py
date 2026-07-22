@@ -156,6 +156,7 @@ def verify_sync_integrity(verbose=False):
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="YAML→DB sync 完整性校验")
     parser.add_argument("--verbose", "-v", action="store_true", help="显示详细信息")
     args = parser.parse_args()

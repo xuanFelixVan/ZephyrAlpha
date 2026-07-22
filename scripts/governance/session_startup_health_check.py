@@ -77,6 +77,11 @@ import sys
 import time
 from pathlib import Path
 
+# Exit codes (convention: 0=pass, 1=findings, 2=error)
+EXIT_PASS = 0
+EXIT_FINDINGS = 1
+EXIT_ERROR = 2
+
 # 检查项状态优先级：fail > warn > pass
 _STATUS_PRIORITY = {"pass": 0, "warn": 1, "fail": 2}
 

@@ -432,6 +432,7 @@ def prune_orphans() -> dict:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="四图模块同步引擎（ARCH-056）")
     parser.add_argument("module_ids", nargs="*", help="要同步的模块 ID 列表（MOD-XXX MOD-YYY ...）")
     parser.add_argument("--all", action="store_true", help="同步所有模块")

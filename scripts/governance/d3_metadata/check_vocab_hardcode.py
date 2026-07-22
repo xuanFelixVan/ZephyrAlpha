@@ -728,6 +728,7 @@ def _collect_noqa_exemptions(source: str) -> list[tuple[int, str]]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     import argparse
 
     parser = argparse.ArgumentParser(

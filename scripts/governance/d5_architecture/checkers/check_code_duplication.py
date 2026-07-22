@@ -61,6 +61,7 @@ SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 
 def similarity(a: str, b: str) -> float:
+    """similarity implementation."""
     return SequenceMatcher(None, a.splitlines(), b.splitlines()).ratio()
 
 
@@ -81,6 +82,7 @@ def similarity_ast(a_path: Path, b_path: Path) -> float:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Check code duplication across packages")
     parser.add_argument("--warn-only", action="store_true", help="Exit 0 even if duplicates found")
     parser.add_argument("--threshold", type=float, default=0.8, help="Similarity threshold (default: 0.8)")

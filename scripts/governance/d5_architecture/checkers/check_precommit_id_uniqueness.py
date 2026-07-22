@@ -130,6 +130,7 @@ def _classify_duplicates(
 
 
 def _format_entries(entries: list[tuple[int, str, str, int]]) -> str:
+    """_format_entries implementation."""
     parts = []
     for line_no, hook_id, repo_url, repo_line in entries:
         parts.append(
@@ -139,6 +140,7 @@ def _format_entries(entries: list[tuple[int, str, str, int]]) -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="GATE-ID-UNIQ: 检测 .pre-commit-config.yaml 内 hook id 唯一性"
     )
