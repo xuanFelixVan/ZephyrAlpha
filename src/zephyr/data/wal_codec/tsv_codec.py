@@ -5,10 +5,12 @@
 
 从 wal_writer._serialize_tsv 提取逻辑，统一编解码入口。
 
-格式规范：
+格式规范（与 ch_writer.tsv_escape 对齐，单一真源）：
 - 每行一个记录，列以 \\t 分隔
-- None → \\N（ClickHouse NULL 标记）
-- 字符串中的 \\t / \\n / \\r 转义为 \\t / \\n / \\r
+- None / NaN → \\N（ClickHouse NULL 标记）
+- 字符串中的 \\t / \\n / \\r 替换为空格（CH TabSeparated 默认行为）
+- \\x00 及控制字符替换为空格
+- 反斜杠转义
 - 无 magic number（纯文本，向后兼容）
 
 Usage::
@@ -26,46 +28,46 @@ log = logging.getLogger(__name__)
 
 
 def _escape_value(v: Any) -> str:
-    """转义单个值为 TSV 格式。
+    """转义单个值为 TSV 格式（委托 ch_writer.tsv_escape，单一真源）。
 
     Args:
-        v: 值（None/数字/字符串/浮点）
+        v: 值（None/数字/字符串/浮点/NaN）
 
     Returns:
         TSV 编码后的字符串
+
+    注意:
+        转义逻辑与 ch_writer.tsv_escape 完全一致——ch_writer 是 TSV 转义的
+        生产真源（裁定 #ARCH-TSV-SOT-001），wal_codec 不得自行实现转义逻辑。
     """
-    if v is None:
-        return "\\N"
-    s = str(v)
-    # 转义特殊字符（与 ClickHouse TabSeparated 格式一致）
-    s = s.replace("\\", "\\\\")
-    s = s.replace("\t", "\\t")
-    s = s.replace("\n", "\\n")
-    s = s.replace("\r", "\\r")
-    return s
+    from zephyr.data import ch_writer
+    return ch_writer.tsv_escape(v)
 
 
 def _unescape_value(s: str) -> str:
-    """反转义 TSV 值。"""
-    return s.replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r").replace("\\\\", "\\")
+    """反转义 TSV 值。
+
+    ch_writer.tsv_escape 是有损转义（\\t/\\n/\\r → 空格），无法原样还原。
+    此函数仅处理反斜杠转义，用于 best-effort 解码（如调试/验证）。
+    """
+    return s.replace("\\\\", "\\")
 
 
 def encode_tsv(rows: list[tuple]) -> bytes:
     """将行列表编码为 TSV 字节。
 
+    与 wal_writer._serialize_tsv 输出完全一致（无尾部 \\n）。
+
     Args:
         rows: 行列表，每行是一个 tuple
 
     Returns:
-        TSV 格式字节数据（UTF-8 编码，以 \\n 结尾）
+        TSV 格式字节数据（UTF-8 编码，无尾部 \\n）
     """
     if not rows:
         return b""
-    lines = []
-    for row in rows:
-        parts = [_escape_value(v) for v in row]
-        lines.append("\t".join(parts))
-    return ("\n".join(lines) + "\n").encode("utf-8")
+    lines = ["\t".join(_escape_value(v) for v in row) for row in rows]
+    return "\n".join(lines).encode("utf-8")
 
 
 def decode_tsv(data: bytes) -> list[tuple]:

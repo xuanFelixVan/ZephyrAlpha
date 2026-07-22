@@ -2,26 +2,27 @@
 module_id: MOD-L00-005
 title: 数据源冗余与热切换蓝图
 doc_type: blueprint
-status: Draft
+status: Active
 layer: L2_domain
 date: "2026-07-22"
-version: "0.1.0"
+version: "0.2.0"
 last_updated: "2026-07-22"
 ttl: permanent
 depends_on:
   - "MOD-L00-004 数据源集成器（CH 写入层复用）"
-construction_progress: not_started
+construction_progress: prototype
 language: zh
 description: 主备数据源热切换——主 QMT 推送中断时自动切换备源（通达信本地接口），CH 不可达时降级写本地 SQLite，保证数据不中断
-build_status: planned
-design_maturity: design
+build_status: generated
+design_maturity: prototype
 responsibility_domain: 
 ---
 
 # 数据源冗余与热切换蓝图（MOD-L00-005）
 
-> **状态**：P2 阶段规划，depgraph 设计态已登记（node_id=6680248, status=planned）。
-> 预计施工时机：P0+P1 完成后评估。
+> **状态**：P2-8 已施工（prototype），depgraph 节点已登记。
+> 施工内容：heartbeat_monitor / source_switcher / sqlite_fallback / recovery 四模块。
+> 集成点：tick_subscriber.__init__ 接受 heartbeat 参数，_on_tick 中调用 record_tick()。
 
 ---
 
@@ -69,20 +70,22 @@ CH 不可达 > 30s → 降级写本地 SQLite → CH 恢复后回灌
 - P0-1 WalWriter 提供数据不丢保证
 - depgraph 边: 6680248 → 6680427 (ch_writer.py)
 
-## §4 代码文件清单（目标态，未施工）
+## §4 代码文件清单（已施工）
 
 ```
 src/zephyr/data/redundant_source/
 ├── __init__.py
-├── heartbeat_monitor.py    # 心跳检测（主源 + CH）
-├── source_switcher.py      # 数据源切换控制器
-├── sqlite_fallback.py      # CH 降级到本地 SQLite
-└── recovery.py             # CH 恢复后 SQLite→CH 回灌
+├── heartbeat_monitor.py    # 心跳检测（主源 + CH）✅
+├── source_switcher.py      # 数据源切换控制器 ✅
+├── sqlite_fallback.py      # CH 降级到本地 SQLite ✅
+└── recovery.py             # CH 恢复后 SQLite→CH 回灌 ✅
+tests/zephyr/data/test_redundant_source.py  # 16 项测试 ✅
 ```
 
-## §5 验收标准（施工时定义）
+## §5 验收标准
 
-- [ ] 主源中断 10 秒内切换到备源，数据不丢
-- [ ] CH 不可达 30 秒内降级到 SQLite，查询层可读
-- [ ] CH 恢复后自动回灌 SQLite 数据到 CH
-- [ ] 切换/降级/恢复全程有 metrics 指标暴露
+- [x] 主源中断 10 秒内切换到备源，数据不丢（test_switch_to_backup_on_primary_dead）
+- [x] CH 不可达 30 秒内降级到 SQLite，查询层可读（test_ch_dead_after_failures）
+- [x] CH 恢复后自动回灌 SQLite 数据到 CH（test_recovery_triggers_when_ch_up_and_data_pending）
+- [x] 切换/降级/恢复全程有 metrics 指标暴露（zephyr_ch_heartbeat / zephyr_primary_heartbeat / zephyr_source_active）
+- [x] tick_subscriber 集成 HeartbeatMonitor（_on_tick 调用 record_tick）

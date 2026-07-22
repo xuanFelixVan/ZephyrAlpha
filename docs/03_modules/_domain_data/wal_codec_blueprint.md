@@ -2,26 +2,27 @@
 module_id: MOD-L00-006
 title: WAL 段编解码蓝图
 doc_type: blueprint
-status: Draft
+status: Active
 layer: L2_domain
 date: "2026-07-22"
-version: "0.1.0"
+version: "0.2.0"
 last_updated: "2026-07-22"
 ttl: permanent
 depends_on:
-  - "MOD-L00-004 数据源集成器（WAL 段文件格式来源）"
-construction_progress: not_started
+  - "MOD-L00-004 数据源集成器（WAL 段文件格式来源，ch_writer.tsv_escape 转义真源）"
+construction_progress: prototype
 language: zh
-description: WAL 段文件编解码层——当前 TSV 格式，可选升级为 Protobuf（更紧凑、schema 演进友好），支持向后兼容
-build_status: planned
-design_maturity: design
+description: WAL 段文件编解码层——当前 TSV 格式（已施工），Protobuf 为 P3 远期备选
+build_status: stable
+design_maturity: prototype
 responsibility_domain: 
 ---
 
 # WAL 段编解码蓝图（MOD-L00-006）
 
-> **状态**：P2 阶段规划，depgraph 设计态已登记（node_id=6680249, status=planned）。
-> 预计施工时机：P0+P1 完成后评估，仅在 TSV 性能不满足时启动。
+> **状态**：P2-9 TSV codec 已施工（prototype），Protobuf 为 P3 远期备选。
+> 转义逻辑委托 ch_writer.tsv_escape（裁定 #ARCH-TSV-SOT-001，单一真源）。
+> wal_writer._serialize_tsv 保持直接使用 ch_writer.tsv_escape（不强制走 wal_codec，避免不必要的间接层）。
 
 ---
 
@@ -89,20 +90,20 @@ message TickRow {
 - P0-1 WalWriter 是主要消费者
 - depgraph 边: 6680249 → 6680426 (local_replay.py)
 
-## §4 代码文件清单（目标态，未施工）
+## §4 代码文件清单（已施工）
 
 ```
 src/zephyr/data/wal_codec/
 ├── __init__.py
-├── tsv_codec.py        # TSV 编解码（当前格式，从 local_replay 提取）
-├── proto_codec.py      # Protobuf 编解码（可选）
-├── schema.py           # Schema 注册表 + 版本管理
-└── codec_registry.py   # magic number → codec 路由
+├── tsv_codec.py        # TSV 编解码（委托 ch_writer.tsv_escape）✅
+└── codec_registry.py   # magic number → codec 路由 + Proto stub ✅
+tests/zephyr/data/test_wal_codec.py  # 22 项测试 ✅
 ```
 
-## §5 验收标准（施工时定义）
+## §5 验收标准
 
-- [ ] TSV 格式段文件可正常编解码（向后兼容）
-- [ ] Protobuf 格式段文件比 TSV 节省 > 30% 空间
-- [ ] 混合格式段文件可自动识别并正确解码
-- [ ] Schema 变更后旧段文件可降级解析（缺失列填默认值）
+- [x] TSV 格式段文件可正常编解码（向后兼容）（test_roundtrip）
+- [x] 编码结果与 wal_writer._serialize_tsv 完全一致（test_roundtrip_with_ch_writer_consistency）
+- [x] 混合格式段文件可自动识别并正确解码（codec_registry.get_codec）
+- [ ] Protobuf 格式段文件比 TSV 节省 > 30% 空间（P3 远期）
+- [ ] Schema 变更后旧段文件可降级解析（P3 远期）

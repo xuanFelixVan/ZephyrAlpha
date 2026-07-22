@@ -184,6 +184,7 @@ class TickSubscriber:
         symbols: list[str] | None = None,
         batch_rows: int = 3000,
         batch_seconds: float = 5.0,
+        heartbeat=None,
     ):
         """初始化订阅器。
 
@@ -191,10 +192,13 @@ class TickSubscriber:
             symbols: 订阅标的列表（None=自动获取全市场沪深A股）
             batch_rows: WalWriter 段落盘行数阈值（P0-3: 5000→3000）
             batch_seconds: WalWriter 段落盘时间阈值（P0-3: 10.0→5.0）
+            heartbeat: HeartbeatMonitor 实例（P2-8 集成，可选）。
+                传入后在 _on_tick 中自动调用 record_tick()，使主源心跳检测生效。
         """
         self._symbols = symbols
         self._batch_rows = batch_rows
         self._batch_seconds = batch_seconds
+        self._heartbeat = heartbeat  # P2-8: 主源心跳检测集成
 
         self._tick_queue: queue.Queue[tuple[str, dict]] = queue.Queue(maxsize=100000)
         self._writer = None  # WalWriter，在 start() 中初始化
@@ -219,6 +223,9 @@ class TickSubscriber:
         """
         if not self._running:
             return
+        # P2-8: 主源心跳检测——收到 tick 即标记主源活跃
+        if self._heartbeat is not None:
+            self._heartbeat.record_tick()
         for symbol, tick_data in datas.items():
             # QMT subscribe_quote 回调: tick_data 是 list[dict]
             if isinstance(tick_data, list):
@@ -390,6 +397,10 @@ class TickSubscriber:
         # P1-5: 启动 Prometheus /metrics 端点
         start_metrics_server()
 
+        # P2-8: 启动心跳检测（CH 连通性监测）
+        if self._heartbeat is not None:
+            self._heartbeat.start()
+
         self._running = True
 
         # 启动 flush 线程
@@ -413,6 +424,9 @@ class TickSubscriber:
         self._running = False
         if self._flush_thread:
             self._flush_thread.join(timeout=30)
+        # P2-8: 停止心跳检测
+        if self._heartbeat is not None:
+            self._heartbeat.stop()
         # WalWriter.stop: flush 残留段 + 停止 drain 线程
         if self._writer:
             self._writer.stop()

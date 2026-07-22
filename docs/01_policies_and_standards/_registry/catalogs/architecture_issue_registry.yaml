@@ -7886,3 +7886,43 @@ entries:
   related_rules: 'trae_079 (commit 串行化), AGENTS.md §FP-ISO.4C (session 管理)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+- issue_id: '#ARCH-TSV-SOT-001'
+  title: TSV 转义逻辑单一真源——wal_codec 委托 ch_writer.tsv_escape（消除双真源数据腐化）
+  category: data_integrity
+  severity: P1高
+  adjudication: |
+    根因（第一性原理分析）：
+    wal_codec/tsv_codec.py 自行实现 _escape_value（backslash 转义：\t→\\t、\n→\\n），
+    而 ch_writer.tsv_escape 是 ClickHouse TabSeparated 写入路径的生产真源
+    （空格替换：\t/\n/\r→空格，有损转义）。两者并存 = 双真源 = 数据腐化温床：
+
+    1. 同一行 tick 数据经 wal_writer._serialize_tsv（用 ch_writer.tsv_escape）落盘 WAL 段，
+       经 wal_codec.encode_tsv（用自实现 backslash 转义）解码——转义/反转义不对称 = 数据损坏
+    2. WAL 段文件格式与 CH TabSeparated 格式不一致——drain 回灌时 CH 可能解析失败或静默错位
+    3. 100% AI 开发下，两套转义逻辑是 AI 最易复制粘贴漂移的点——未来必然出现第三套变体
+
+    治本方案（单一真源）：
+    ch_writer.tsv_escape 是 TSV 转义的唯一真源（生产写入路径，CH TabSeparated 语义对齐）。
+    wal_codec._escape_value 必须委托 ch_writer.tsv_escape，禁止自行实现转义逻辑。
+    encode_tsv 输出与 wal_writer._serialize_tsv 完全一致（含无尾部 \n 约定）。
+    _unescape_value 仅处理 backslash（有损转义不可逆，best-effort 用于调试/验证）。
+
+    不实施项：
+    - 不让 ch_writer 反过来依赖 wal_codec（避免循环依赖；ch_writer 是更底层真源）
+    - 不引入新转义格式（有损空格替换是 CH TabSeparated 默认行为，正确且稳定）
+  impact:
+    - 'src/zephyr/data/wal_codec/tsv_codec.py（_escape_value 委托 ch_writer.tsv_escape，encode_tsv 去 \n）'
+    - 'src/zephyr/data/wal_writer.py（_serialize_tsv 仍是 ch_writer.tsv_escape，现已与 wal_codec 一致）'
+    - 'tests/zephyr/data/test_wal_codec.py（test_roundtrip_with_ch_writer_consistency 验证双真源一致性）'
+  fix_phase: |
+    Phase A（已完成 2026-07-22）：
+      A.1 _escape_value 委托 ch_writer.tsv_escape
+      A.2 encode_tsv 去 \n 对齐 wal_writer._serialize_tsv
+      A.3 _unescape_value 简化为仅 backslash（有损不可逆）
+      A.4 新增 test_roundtrip_with_ch_writer_consistency 锁定一致性
+      A.5 22 tests pass
+  status: resolved
+  related_adjudication: '#ARCH-CH-013 (主动 WAL 架构), #ARCH-CH-024 (表名真源派生)'
+  related_rules: 'AGENTS.md §11.0.2 SSoT 真源分类铁律, trae_062 (SSoT 分类)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'

@@ -2,26 +2,27 @@
 module_id: MOD-INF-044
 title: Grafana 双数据源仪表盘蓝图
 doc_type: blueprint
-status: Draft
+status: Active
 layer: L1_platform
 date: "2026-07-22"
-version: "0.1.0"
+version: "0.2.0"
 last_updated: "2026-07-22"
 ttl: permanent
 depends_on:
   - "MOD-INF-016 共享核心（MetricsRegistry 指标来源）"
-construction_progress: not_started
+construction_progress: prototype
 language: zh
 description: Grafana 双数据源仪表盘——Prometheus（实时 metrics）+ ClickHouse（历史行情/回测），统一可视化 + 告警
-build_status: planned
-design_maturity: design
+build_status: stable
+design_maturity: prototype
 responsibility_domain: 
 ---
 
 # Grafana 双数据源仪表盘蓝图（MOD-INF-044）
 
-> **状态**：P2 阶段规划，depgraph 设计态已登记（node_id=6680250, status=planned）。
-> 预计施工时机：P1-5 Prometheus /metrics 端点完成后启动。
+> **状态**：P2-10 已施工（prototype），depgraph 节点已登记。
+> 施工内容：datasource_config / dashboard_templates / alert_rules 三模块 + 3 个 Dashboard JSON + ClickHouse datasource YAML。
+> docker-compose.yml 已添加 grafana-clickhouse-datasource 插件。
 
 ---
 
@@ -78,27 +79,30 @@ P1-5 完成后，ZephyrAlpha 暴露 `/metrics` 端点（Prometheus 兼容）。�
 - P1-5 metrics_server 提供 /metrics 端点
 - depgraph 边: 6680250 → 6682516 (metrics.py)
 
-## §4 代码文件清单（目标态，未施工）
+## §4 代码文件清单（已施工）
 
 ```
 src/zephyr/shared/observability/dashboard/
 ├── __init__.py
-├── datasource_config.py      # Grafana 数据源配置生成
-├── dashboard_templates.py    # Dashboard JSON 模板
-├── alert_rules.py            # 告警规则定义
-└── provisioning/             # Grafana provisioning 配置
-    ├── datasources/
-    │   ├── prometheus.yml
-    │   └── clickhouse.yml
-    └── dashboards/
-        ├── data_collection_health.json
-        ├── ch_write_health.json
-        └── drain_health.json
+├── datasource_config.py      # Grafana 数据源配置生成 ✅
+├── dashboard_templates.py    # Dashboard JSON 模板 ✅
+├── alert_rules.py            # 告警规则定义 ✅
+config/infra/grafana/
+├── datasources/
+│   ├── prometheus.yml        # 已有 ✅
+│   └── clickhouse.yml        # 新增 ✅
+└── dashboards/
+    ├── provider.yml          # 已有 ✅
+    ├── data_collection_health.json  # 新增 ✅
+    ├── ch_write_health.json         # 新增 ✅
+    └── drain_health.json            # 新增 ✅
+tests/zephyr/shared/observability/test_dashboard.py  # 14 项测试 ✅
 ```
 
-## §5 验收标准（施工时定义）
+## §5 验收标准
 
-- [ ] Grafana 可同时查询 Prometheus 和 ClickHouse 两个数据源
-- [ ] 5 个 Dashboard 可正常展示（数据采集/CH写入/Drain/行情概览/回测结果）
-- [ ] 6 条告警规则可触发并通知
-- [ ] docker-compose up 后 Grafana 自动加载数据源和 Dashboard
+- [x] Grafana 可同时查询 Prometheus 和 ClickHouse 两个数据源（clickhouse.yml + docker-compose 插件）
+- [x] 3 个 Dashboard 可正常展示（数据采集/CH写入/Drain健康）
+- [x] 6 条告警规则可触发并通知（ALERT_RULES）
+- [x] docker-compose up 后 Grafana 自动加载数据源和 Dashboard（provisioning + GF_INSTALL_PLUGINS）
+- [ ] 行情数据概览 / 回测结果 Dashboard（需 ClickHouse 查询层，P3 迭代）
