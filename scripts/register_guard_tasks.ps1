@@ -45,21 +45,26 @@ foreach ($svc in $services) {
     $argString = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $ps1Path + '"'
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argString -WorkingDirectory $RepoRoot
 
-    # Trigger: AtLogOn; repetition added post-registration (New-ScheduledTaskTrigger
-    # doesn't expose Repetition for AtLogOn triggers in PS5.1)
-    $trigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+    # Two triggers (repetition added post-registration; PS5.1 doesn't expose Repetition
+    # on trigger objects from New-ScheduledTaskTrigger):
+    #   1) AtLogOn + repeat 5min: immediate start at logon, heartbeat anchored to logon event
+    #   2) Once(now) + repeat 5min: heartbeat anchored IMMEDIATELY at registration and persists
+    #      across sessions (without this, repetition only activates after the next logon -
+    #      verified: LogonTrigger-only registration shows NextRunTime=null until re-logon)
+    $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+    $onceTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date)
 
     if (Get-ScheduledTask -TaskName $svc.TaskName -ErrorAction SilentlyContinue) {
         Unregister-ScheduledTask -TaskName $svc.TaskName -Confirm:$false
         Write-Host "Replaced existing task: $($svc.TaskName)"
     }
 
-    Register-ScheduledTask -TaskName $svc.TaskName -Action $action -Trigger $trigger `
+    Register-ScheduledTask -TaskName $svc.TaskName -Action $action -Trigger @($logonTrigger, $onceTrigger) `
         -Settings $settings -Principal $principal -Force | Out-Null
 
     # Add watchdog heartbeat: repeat every 5min, no Duration => repeats indefinitely
     $task = Get-ScheduledTask -TaskName $svc.TaskName
-    $task.Triggers[0].Repetition.Interval = "PT5M"
+    foreach ($t in $task.Triggers) { $t.Repetition.Interval = "PT5M" }
     $task | Set-ScheduledTask | Out-Null
 
     Write-Host "Registered watchdog task: $($svc.TaskName) -> $($svc.Script)"
