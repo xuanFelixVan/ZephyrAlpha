@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定：系统性防漂移体系盲区治本（4 盲区 3 Phase 全闭环）
 
 > **裁定编号**: #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001

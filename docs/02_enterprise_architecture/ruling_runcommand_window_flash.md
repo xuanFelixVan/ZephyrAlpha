@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定：RunCommand 窗口闪现治本（TRAE toolhost 外部限制 + AI 纪律补位）
 
 > **裁定编号**: #ARCH-RUNCOMMAND-WINDOW-FLASH-001

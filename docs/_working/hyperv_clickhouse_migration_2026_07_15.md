@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 # Hyper-V Ubuntu ClickHouse 迁移施工方案
 
 > 状态：待 Owner 确认施工授权

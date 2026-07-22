@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定：session_worktree heartbeat 机制治本（替代 PID liveness）
 
 > **裁定编号**: #ARCH-HEARTBEAT-001

@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定 D (P3): 100% AI 治理加固 — 综合分析与治本施工方案
 
 > **文档类型**: 架构裁定(ruling)+ 治本施工方案

@@ -7705,8 +7705,8 @@ entries:
     - "162 个无 frontmatter .md 文件降至 0（11 补 + 1 迁 + 10 补 ttl + 10 BOM 修 + 其余合法豁免）"
     - "23 个生成器输出文件合法豁免（2 路径补注册）"
   fix_phase: 全部落地（2026-07-22）。核心变更 check_frontmatter_metadata.py zone-aware；
-    directory_contract.yaml 补 2 生成器路径；21 个 .md 补 frontmatter；10 个 .md 剥 BOM；
-    2 个 .py 补 [TTL] 头部。smoke test 5885 files 0 failures。
+    directory_contract.yaml 补 2 生成器路径（06_decision_architecture/ + generated/）；20 个 .md 补 frontmatter（10 permanent + 10 temporary）；10 个 .md 剥 BOM；
+    1 个 .py 补 [TTL] 头部（test_critical_warn_ack.py；session_worktree.py 延后）。smoke test 5867 files 0 failures。
   status: resolved
   related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-002 (Phase 7 替代——不可能三角治本), #ARCH-TEMP-FILE-LIFECYCLE-001 (三级分类空间维度), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (fail-open→fail-closed 同向治本)'
   related_rules: 'trae_071 (LAW-2 frontmatter 要求), trae_062 (SSoT 真源分类)'

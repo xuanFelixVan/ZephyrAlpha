@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 排查报告：forged_gw_marker 违规（4 个 commit）
 
 > **关联议题**: #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001, #ARCH-ASYNC-MERGE-RECONCILE-001

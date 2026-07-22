@@ -1,5 +1,4 @@
 # [BLUEPRINT] MOD-TEST-282 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 # [A_test] module_id: SRC-TST-2401 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_critical_warn_ack.py — critical_warn 告警消解语义单测

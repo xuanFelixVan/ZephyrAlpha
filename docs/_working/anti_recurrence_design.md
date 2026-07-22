@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 # 架构债务防复发体系设计文档
 
 <!-- metadata (no frontmatter: EXEMPT-ZONE-FM forbids doc_type in _working/) -->

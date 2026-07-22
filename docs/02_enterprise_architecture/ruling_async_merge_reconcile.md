@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定：session_worktree 异步化治本（emergency_commit / allow_overlap 滥用 L1 根因消除）
 
 > **裁定编号**: #ARCH-ASYNC-MERGE-RECONCILE-001

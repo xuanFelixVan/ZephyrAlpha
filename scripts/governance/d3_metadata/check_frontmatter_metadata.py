@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | §gate-15
 # [MODULE] governance.d3_metadata.check_frontmatter_metadata
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants
+# [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants; _shared.yaml_utils
 # [CONSUMERS] pre-commit GATE-15（裸 git commit 路径拦截）; GitCommitGateway TTL-METADATA gate（gateway 路径拦截，subprocess 复用本脚本，见 commit_gates/ttl_gate.py）; manual validation
 # 说明（2026-06-30 修正→2026-06-30 实施）：原 [CONSUMERS] 引用 `GitCommitGateway._check_frontmatter_ttl`
 # 为死引用——该方法在 AD-GOV-001 阶段3瘦身中删除后未以注册制 gate 替代，gateway 路径 ttl 校验失效。

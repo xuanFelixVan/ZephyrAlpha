@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 # manifests_missing_diagnosis.md — STEP 2 根因诊断
 
 > 调研对象：`docs/03_modules/_manifests/` 下 42 个 `*_manifest.md` 中 27 个"名称匹配不到 blueprint"的根因诊断

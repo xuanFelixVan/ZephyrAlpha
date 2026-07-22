@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 # D_GOVERNANCE + D_TRADING 域拆分方案
 
 > **方案状态**：待审批

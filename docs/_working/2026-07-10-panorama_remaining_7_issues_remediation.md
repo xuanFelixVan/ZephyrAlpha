@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 # 四图对齐剩余 7 问题治本方案（ARCH-056 修正）
 
 > **Status**: spec | **Created**: 2026-07-10 | **Author**: AI 架构师

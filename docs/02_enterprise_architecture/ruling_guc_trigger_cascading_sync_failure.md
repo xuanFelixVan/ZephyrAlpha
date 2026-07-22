@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定：GUC 触发器缺陷 + 级联同步失败治本方案
 
 > **裁定编号**: #ARCH-GUC-TRIGGER-FIX-001

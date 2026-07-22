@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # ZephyrAlpha 项目背景介绍（致 Claude）
 
 > 本文档面向 Claude 分析，目的是让对方在缺乏项目上下文的情况下，快速理解 ZephyrAlpha 是什么、为什么这么做、当前在哪、要去哪。

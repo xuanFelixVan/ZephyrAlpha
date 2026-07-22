@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 # Phase 1 D_GOVERNANCE 域拆分基线
 
 **记录时间**: 2026-07-12

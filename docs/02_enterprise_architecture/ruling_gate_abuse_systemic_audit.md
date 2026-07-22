@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 裁定：Gate-Abuse 5 维滥用系统性审计与治本路线图
 
 > **裁定编号**: #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001

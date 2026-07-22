@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # AGENTS.md 瘦身对比测试设计
 
 > #ARCH-GOV-CONVERGENCE-META Phase 3 后续验证

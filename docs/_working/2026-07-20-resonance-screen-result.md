@@ -1,3 +1,7 @@
+---
+ttl: task_bound
+---
+
 <!--
 注：本文件原含 YAML frontmatter（ttl/doc_type/completes_when），但因
 EXEMPT-ZONE-FM gate（priority=87，禁止 docs/_working/ 文件带 doc_type）
