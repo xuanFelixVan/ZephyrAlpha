@@ -42,9 +42,9 @@ log = logging.getLogger(__name__)
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_TICK_DATA = get_registry().table("market_tick")
 
-# tick_data 表14字段
+# tick_data 表15字段（P0-1: 新增 recorded_time）
 _TICK_COLUMNS = [
-    "trade_date", "timestamp", "symbol", "market_type", "price",
+    "trade_date", "timestamp", "recorded_time", "symbol", "market_type", "price",
     "volume", "amount", "direction", "data_source",
     "bid_price", "ask_price", "bid_volume", "ask_volume", "quality_flag",
 ]
@@ -116,14 +116,17 @@ def _safe_int(val: object) -> int | None:
 
 
 def tick_to_row(stock_code: str, tick: dict) -> tuple | None:
-    """将 xtdata tick dict 转换为 tick_data 表的14字段 tuple。
+    """将 xtdata tick dict 转换为 tick_data 表的15字段 tuple。
+
+    P0-1 双时间戳：timestamp=上游市场时间(event_time)，recorded_time=本地接收时间。
+    recorded_time - timestamp = 端到端延迟，用于回测延迟建模。
 
     Args:
         stock_code: QMT 格式代码，如 "000001.SZ"
         tick: xtdata 回调的 tick dict
 
     Returns:
-        14字段 tuple，或 None（空 tick）
+        15字段 tuple，或 None（空 tick）
     """
     if not tick or not tick.get("time"):
         return None
@@ -133,6 +136,9 @@ def tick_to_row(stock_code: str, tick: dict) -> tuple | None:
     dt = datetime.fromtimestamp(ts_ms / 1000)
     trade_date = dt.date()
     timestamp_str = dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    # P0-1: recorded_time = 录制器本地接收时间（用于延迟分析）
+    recorded_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     symbol = _stock_to_symbol(stock_code)
     market_type = infer_market_type(stock_code)
@@ -155,6 +161,7 @@ def tick_to_row(stock_code: str, tick: dict) -> tuple | None:
     return (
         trade_date,
         timestamp_str,
+        recorded_time_str,  # P0-1: 录制器本地接收时间
         symbol,
         market_type,
         price,
@@ -209,6 +216,11 @@ class TickSubscriber:
         self._written = 0
         self._errors = 0
 
+        # P0-2: 预热逻辑——订阅完成 + 首个 tick 收到 = ready
+        # Event 在 _on_tick 首次成功入队后 set()，start() 中 wait(timeout) 阻塞等待
+        self._first_tick_received = threading.Event()
+        self._start_time: float = 0.0  # 订阅启动时间（用于预热耗时统计）
+
         # xtdata 模块（延迟导入）
         self._xtdata = None
         self._subscribed: set[str] = set()
@@ -241,6 +253,10 @@ class TickSubscriber:
                     self._tick_queue.put_nowait((symbol, tick))
                     self._received += 1  # 无锁计数
                     _get_metrics_registry().inc("zephyr_tick_received_total")
+                    # P0-2: 首个 tick 成功入队 → 解除 start() 预热等待
+                    # is_set() 仅读 bool（GIL 原子），set() 需加锁，check-first 避免热路径锁竞争
+                    if not self._first_tick_received.is_set():
+                        self._first_tick_received.set()
                 except queue.Full:
                     log.warning("tick 队列已满，丢弃 tick symbol=%s", symbol)
                     self._errors += 1
@@ -408,6 +424,7 @@ class TickSubscriber:
         self._flush_thread.start()
 
         # 订阅
+        self._start_time = time.time()  # P0-2: 预热计时起点
         symbols = self._get_all_symbols()
         for symbol in symbols:
             try:
@@ -415,6 +432,21 @@ class TickSubscriber:
                 self._subscribed.add(symbol)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("订阅失败 %s: %s", symbol, e)
+
+        # P0-2: 预热等待——订阅完成 + 首个 tick 收到 = ready
+        # 避免开盘瞬间数据缺口：subscribe_quote 是异步的，订阅完成不代表数据已到达
+        # 等待首个 tick 确认数据通道已建立，超时则降级继续（best-effort，不阻断）
+        if self._subscribed:
+            log.info("预热等待: 已订阅 %d 只标的，等待首个 tick...", len(self._subscribed))
+            warmup_timeout = 30.0
+            if not self._first_tick_received.wait(timeout=warmup_timeout):
+                log.warning(
+                    "预热超时(%.0fs)未收到首个 tick，继续运行（可能存在数据缺口）",
+                    warmup_timeout,
+                )
+            else:
+                elapsed = time.time() - self._start_time
+                log.info("预热完成: 首个 tick 已收到 (耗时 %.1fs)", elapsed)
 
         log.info("TickSubscriber 启动完成: 订阅 %d 只标的", len(self._subscribed))
         return True
