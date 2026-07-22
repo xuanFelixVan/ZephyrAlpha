@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2231 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_converters | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_converters.py — normalize_to_none 单测
 

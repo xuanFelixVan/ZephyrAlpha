@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1437 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_red_blue_validator_tests | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §test
 # [MODULE] zephyr.red_blue_validator
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

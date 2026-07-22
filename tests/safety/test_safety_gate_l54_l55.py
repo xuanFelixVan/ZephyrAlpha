@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1514 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_safety_gate_l54_l55 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L54_L55
 # [INVARIANTS] L54 and L55 must always pass in default state

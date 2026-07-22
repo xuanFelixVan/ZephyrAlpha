@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1553 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_self_check | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_self_check
 # [INVARIANTS] 自检逻辑不可跳过

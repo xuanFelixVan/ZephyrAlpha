@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2128 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_phase_manager_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.game_day_scheduler
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

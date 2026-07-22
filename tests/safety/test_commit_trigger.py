@@ -1,4 +1,4 @@
-# [A_test] module_id=SRC-TST-2140 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id=MOD-GOV_commit_trigger | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §67
 # [MODULE] tests.red_blue.test_commit_trigger
 # [INVARIANTS] tests MUST use tmp_path isolation; never write to real data/red_blue/trigger_queue; mock validator + circuit

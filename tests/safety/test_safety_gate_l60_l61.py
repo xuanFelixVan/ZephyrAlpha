@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1517 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_safety_gate_l60_l61 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L60_L61
 # [INVARIANTS] exchange halted must reject; owner_fatigue>0.8 must reject

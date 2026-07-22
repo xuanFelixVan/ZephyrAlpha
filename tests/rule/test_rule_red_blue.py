@@ -1,4 +1,4 @@
-# [A_test] module_id: DM-100054 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_rule_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] tests.test_rule_red_blue
 # [INVARIANTS] 红蓝对抗测试：故意违反规则→验证检测率; 报告输出到 governance_metadata/red_blue_report.json

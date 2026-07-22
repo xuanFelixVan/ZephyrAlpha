@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0210 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_blast_radius_red_team | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 9
 # [MODULE] tests.semantic_auditor.test_blast_radius_red_team
 # [INVARIANTS] adversarial_tests_must_pass;no_todo_no_pass_no_fixme

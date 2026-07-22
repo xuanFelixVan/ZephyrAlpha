@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1510 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_safety_gate_l46_l47 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L46_L47
 # [INVARIANTS] vicious_spiral>30% must reject; diagnostic_consistency<0.7 must reject

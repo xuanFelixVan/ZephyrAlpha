@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2126 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_constitution_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1
 # [MODULE] zephyr.security.adversarial_validation.constitution_engine
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

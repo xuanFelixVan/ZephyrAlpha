@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1515 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_safety_gate_l56_l57 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L56_L57
 # [INVARIANTS] evolution_debt>0.5 must reject; loop_detected must reject

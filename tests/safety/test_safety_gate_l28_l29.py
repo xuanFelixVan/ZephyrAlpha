@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1504 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_safety_gate_l28_l29 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L28_L29
 # [INVARIANTS] DR drill overdue must block REPAIR/DEPLOY; skill_trust<0.5 must block

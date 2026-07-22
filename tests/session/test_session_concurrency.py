@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1581 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_session_concurrency | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-429 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_session_concurrency
 # [INVARIANTS] none
