@@ -14,7 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_domain_name_zh_direct_access_gate.py
 # [A_module] module_id=MOD-GOV-domain_name_zh_direct_access_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""domain_name_zh_direct_access_gate.py — DOMAIN_NAME_ZH 字典直接访问硬阻断门禁
+r"""domain_name_zh_direct_access_gate.py — DOMAIN_NAME_ZH 字典直接访问硬阻断门禁
 
 检测 staged .py 文件 added 行中是否直接访问 ``DOMAIN_NAME_ZH`` 字典
 （如 ``DOMAIN_NAME_ZH.get(...)`` / ``DOMAIN_NAME_ZH[...]`` / ``DOMAIN_NAME_ZH.pop(...)`` 等）。
