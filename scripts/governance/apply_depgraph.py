@@ -240,7 +240,7 @@ SQL_SELECT_DUP_EDGE = "SELECT edge_id FROM edges WHERE from_node_id=%s AND to_no
 # --- transition_build_status / transition_design_maturity ---
 SQL_SELECT_BUILD_STATUS_BY_NODE = "SELECT build_status FROM nodes WHERE node_id=%s"
 SQL_UPDATE_BUILD_STATUS = "UPDATE nodes SET build_status=%s WHERE node_id=%s"
-SQL_SELECT_DESIGN_MATURITY_BY_NODE = "SELECT design_maturity FROM nodes WHERE node_id=%s"
+SQL_SELECT_DESIGN_MATURITY_BY_NODE = "SELECT design_maturity, path FROM nodes WHERE node_id=%s"
 SQL_UPDATE_DESIGN_MATURITY = "UPDATE nodes SET design_maturity=%s WHERE node_id=%s"
 
 # --- remove_design_node ---
@@ -1489,7 +1489,32 @@ def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
             conn.close()
 
 
-def transition_design_maturity(node_id: int, to: str, db_path: str = None) -> bool:
+_RE_MATURITY_HEADER = re.compile(r"^#\s*\[MATURITY\]\s+(\S+)")
+
+
+def _read_maturity_header(file_path: Path) -> str | None:
+    """读取文件头 [MATURITY] 声明值（前 20 行扫描）。
+
+    返回：[MATURITY] 值（如 design/prototype/production），无头部时返回 None。
+
+    ARCH-MM-001 裁定：[MATURITY] 文件头是"声明"（AI/人工声明的预期成熟度），
+    depgraph nodes.design_maturity 是"验证"（生成器根据 has_test 推导的实际成熟度）。
+    transition_design_maturity 手动提升时 MUST 同步 header 声明（gate 强制）。
+    """
+    try:
+        with open(file_path, encoding="utf-8-sig", errors="ignore") as f:
+            for i, line in enumerate(f):
+                if i >= 30:
+                    break
+                m = _RE_MATURITY_HEADER.match(line.rstrip("\n"))
+                if m:
+                    return m.group(1).strip()
+    except Exception:  # noqa: BLE001 — 单文件读取失败返回 None，gate 降级为不校验
+        pass
+    return None
+
+
+def transition_design_maturity(node_id: int, to: str, db_path: str = None, force: bool = False) -> bool:
     """
     转换 design_maturity 状态（3态单调推进：design → prototype → production）。
     返回：True=成功，False=失败
@@ -1498,6 +1523,15 @@ def transition_design_maturity(node_id: int, to: str, db_path: str = None) -> bo
     - design → production：允许（设计→生产，代码已实现验证通过时跳转）
     - prototype → production：允许（原型→生产）
     - 任何倒退（production→prototype/design, prototype→design）：禁止
+
+    ARCH-MM-001 门禁（2026-07-22 治本）：
+    [MATURITY] 文件头是 design_maturity 的"声明"。transition_design_maturity 手动提升
+    DB design_maturity 时 MUST 确保 [MATURITY] header == TO_MATURITY，否则硬阻断。
+    逃生通道：force=True 跳过 header 校验（记录到 stderr 警告）。
+
+    设计原理：rescan 用 derive_design_maturity()+upgrade_tested_modules() 机械推导
+    design_maturity（不读 [MATURITY] header）。手动 transition 是逃生通道，其声明
+    必须与 DB 一致，否则下次 rescan 可能回退 DB 值而 header 不变→新的 header/DB 不一致。
     """
     # 合法状态转换（3态单调推进，允许 design→production 跳转）
     valid_transitions = {
@@ -1514,9 +1548,37 @@ def transition_design_maturity(node_id: int, to: str, db_path: str = None) -> bo
                 print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
                 return False
             current = row["design_maturity"]
+            node_path = row["path"]
             if (current, to) not in valid_transitions:
                 print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
                 return False
+
+            # ARCH-MM-001 gate: [MATURITY] header 声明 MUST == TO_MATURITY
+            if node_path and not force:
+                abs_path = REPO_ROOT / node_path
+                if abs_path.exists():
+                    header_maturity = _read_maturity_header(abs_path)
+                    if header_maturity is not None and header_maturity != to:
+                        print(
+                            f"ERROR: [MATURITY] header 声明 '{header_maturity}' != TO_MATURITY '{to}'。"
+                            f" 请先更新文件头 '# [MATURITY] {to}' 再执行 transition"
+                            f"（ARCH-MM-001: 声明与验证 MUST 一致）。"
+                            f" 逃生通道：--force",
+                            file=sys.stderr,
+                        )
+                        return False
+                # 文件不存在或无 [MATURITY] header：不阻断（无法校验）
+            elif force and node_path:
+                abs_path = REPO_ROOT / node_path
+                header_maturity = _read_maturity_header(abs_path) if abs_path.exists() else None
+                if header_maturity is not None and header_maturity != to:
+                    print(
+                        f"WARNING: --force 跳过 [MATURITY] header 校验"
+                        f"（header='{header_maturity}' != TO_MATURITY='{to}'）"
+                        f"—— 请尽快同步文件头以防 header/DB 不一致",
+                        file=sys.stderr,
+                    )
+
             conn.execute(SQL_UPDATE_DESIGN_MATURITY, (to, node_id))
             conn.commit()
             print(f"[OK] node_id={node_id}: design_maturity {current} -> {to}", file=sys.stderr)
@@ -4288,7 +4350,8 @@ def main() -> None:
         type=str,
         nargs=2,
         metavar=("NODE_ID", "TO_MATURITY"),
-        help="转换design_maturity(3态单调推进design→prototype→production): NODE_ID TO_MATURITY",
+        help="转换design_maturity(3态单调推进design→prototype→production): NODE_ID TO_MATURITY。"
+        "ARCH-MM-001 门禁：[MATURITY] 文件头声明 MUST == TO_MATURITY，否则硬阻断（--force 逃生）",
     )
     parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
     parser.add_argument(
@@ -4439,8 +4502,8 @@ def main() -> None:
     parser.add_argument(
         "--force",
         action="store_true",
-        help="强制删除（跳过安全门）。与 --delete-domain（级联删除 nodes 引用）"
-        "或 --delete-nodes（跳过入边检查）配合使用。",
+        help="强制执行（跳过安全门）。与 --delete-domain（级联删除 nodes 引用）、"
+        "--delete-nodes（跳过入边检查）或 --transition-design-maturity（跳过 [MATURITY] header 校验）配合使用。",
     )
     # 裁定#ARCH-target_layer_v1.0.0：废弃域归并——将 old_id 引用迁移到已存在的 new_id
     parser.add_argument(
@@ -4623,7 +4686,7 @@ def main() -> None:
     if args.transition_design_maturity:
         node_id_str, to_maturity = args.transition_design_maturity
         node_id = int(node_id_str)
-        ok = transition_design_maturity(node_id, to_maturity)
+        ok = transition_design_maturity(node_id, to_maturity, force=args.force)
         if not ok:
             sys.exit(4)
         _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步四图

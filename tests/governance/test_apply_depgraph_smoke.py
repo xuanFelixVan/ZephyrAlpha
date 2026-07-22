@@ -369,3 +369,119 @@ class TestRealDBReadOnlySmoke:
                 assert count > 0, "domains 表为空，depgraph 未初始化"
         finally:
             conn.close()
+
+
+# ============================================================================
+# Test 6: ARCH-MM-001 gate smoke —— [MATURITY] header 校验门禁
+# ============================================================================
+
+class TestMaturityHeaderGateSmoke:
+    """验证 transition_design_maturity 的 [MATURITY] header 校验门禁。
+
+    ARCH-MM-001 裁定（2026-07-22 治本）：
+    - [MATURITY] 文件头是"声明"，depgraph DB 是"验证"
+    - transition_design_maturity 手动提升时 MUST 确保 header == TO_MATURITY
+    - --force 逃生通道跳过 header 校验（warn 但不阻断）
+
+    mock 策略：替换 get_depgraph_pg_connection 返回 mock conn，
+    避免写入生产 depgraph。真实读取文件头 [MATURITY] 值。
+    """
+
+    def test_read_maturity_header_returns_value(self, adg):
+        """_read_maturity_header 能从真实文件读取 [MATURITY] 值。"""
+        header_val = adg._read_maturity_header(_SCRIPT_PATH)
+        assert header_val is not None, (
+            f"_read_maturity_header 返回 None——{_SCRIPT_PATH} 应有 [MATURITY] header"
+        )
+        assert header_val in ("design", "prototype", "production"), (
+            f"[MATURITY] 值 '{header_val}' 不在合法枚举 design/prototype/production 中"
+        )
+
+    def test_gate_blocks_when_header_mismatches(self, adg, monkeypatch):
+        """gate 硬阻断：header=prototype 但 TO_MATURITY=production → 返回 False。"""
+        mock_conn = _make_mock_conn(
+            fetchone_result={"design_maturity": "prototype", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+        )
+        monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
+        from contextlib import contextmanager
+
+        @contextmanager
+        def _mock_lock(*args, **kwargs):
+            yield mock_conn
+
+        monkeypatch.setattr(adg, "_db_write_lock", _mock_lock)
+
+        result = adg.transition_design_maturity(node_id=999999, to="production")
+        assert result is False, (
+            "gate 应阻断 header=prototype != TO=production 的 transition，"
+            "但返回了 True——ARCH-MM-001 门禁失效"
+        )
+
+    def test_gate_allows_when_header_matches(self, adg, monkeypatch):
+        """gate 放行：header==TO_MATURITY → 返回 True。"""
+        mock_conn = _make_mock_conn(
+            fetchone_result={"design_maturity": "design", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+        )
+        monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
+        from contextlib import contextmanager
+
+        @contextmanager
+        def _mock_lock(*args, **kwargs):
+            yield mock_conn
+
+        monkeypatch.setattr(adg, "_db_write_lock", _mock_lock)
+        # mock _read_maturity_header 返回 "prototype"（模拟 header==TO_MATURITY）
+        monkeypatch.setattr(adg, "_read_maturity_header", lambda fpath: "prototype")
+
+        # design→prototype 是合法转换，header=prototype==TO=prototype → 放行
+        result = adg.transition_design_maturity(node_id=999999, to="prototype")
+        assert result is True, (
+            "gate 应放行 header=prototype == TO=prototype 的 transition，"
+            "但返回了 False——门禁误判"
+        )
+
+    def test_force_bypasses_gate_with_warning(self, adg, monkeypatch, capsys):
+        """--force 逃生通道：header != TO 但 force=True → 放行 + stderr 警告。"""
+        mock_conn = _make_mock_conn(
+            fetchone_result={"design_maturity": "prototype", "path": str(_SCRIPT_PATH.relative_to(_REPO_ROOT)).replace("\\", "/")}
+        )
+        monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
+        from contextlib import contextmanager
+
+        @contextmanager
+        def _mock_lock(*args, **kwargs):
+            yield mock_conn
+
+        monkeypatch.setattr(adg, "_db_write_lock", _mock_lock)
+
+        # apply_depgraph.py [MATURITY]=prototype, TO=production, header != TO
+        # force=True → 应放行 + stderr 含 WARNING
+        result = adg.transition_design_maturity(node_id=999999, to="production", force=True)
+        assert result is True, (
+            "--force 应放行 header mismatch 的 transition，但返回了 False"
+        )
+        captured = capsys.readouterr()
+        assert "WARNING" in captured.err or "--force" in captured.err, (
+            f"--force 放行时应在 stderr 输出 WARNING，实际 stderr: {captured.err[:200]}"
+        )
+
+    def test_gate_no_block_when_file_missing(self, adg, monkeypatch):
+        """gate 不阻断：文件不存在 → 无法校验 → 放行。"""
+        mock_conn = _make_mock_conn(
+            fetchone_result={"design_maturity": "prototype", "path": "nonexistent/file.py"}
+        )
+        monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
+        from contextlib import contextmanager
+
+        @contextmanager
+        def _mock_lock(*args, **kwargs):
+            yield mock_conn
+
+        monkeypatch.setattr(adg, "_db_write_lock", _mock_lock)
+
+        # 文件不存在 → _read_maturity_header 返回 None → gate 不阻断
+        # prototype→production 是合法转换
+        result = adg.transition_design_maturity(node_id=999999, to="production")
+        assert result is True, (
+            "文件不存在时 gate 不应阻断（无法校验），但返回了 False"
+        )

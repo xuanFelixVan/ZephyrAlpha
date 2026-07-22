@@ -3214,9 +3214,11 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 全量重扫前快照手动提升的 build_status，防止 DELETE+INSERT 重置。
         # build_status 不在文件头中（depgraph-only 生命周期概念），rescan 总是写入 'generated' 默认值，
         # 导致手动提升的状态（testing/stable/deprecated）被静默回滚。
-        # 注意：design_maturity 不在此保护范围内——其 SSoT 是 [MATURITY] 文件头，
-        # rescan 从文件头读取并写入 DB。保护 design_maturity 会掩盖 header/DB 不一致
-        # （裁定#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION-REFINEMENT）。
+        # 注意：design_maturity 不在此保护范围内——rescan 用 derive_design_maturity()
+        # + upgrade_tested_modules() 机械推导（不读 [MATURITY] 文件头），每次 rescan
+        # 重新计算，无需保护。ARCH-MM-001: [MATURITY] header 是"声明"，depgraph DB
+        # 是"验证"（机械推导），冲突时 DB 为真源。手动 transition_design_maturity 提升
+        # 时 MUST 同步 header（apply_depgraph.py ARCH-MM-001 gate 强制）。
         # 对标 edges_metadata UPSERT 保护机制（Stage 2），为 nodes build_status 提供同等保护。
         cursor.execute(
             "SELECT path, build_status FROM nodes "
@@ -3232,7 +3234,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         if _preserved_node_status:
             print(
                 f"[STATUS-PRESERVE] 快照 {len(_preserved_node_status)} 个节点的 "
-                f"build_status（防止 rescan 重置手动提升；design_maturity 由 [MATURITY] 头部 SSoT 提供）"
+                f"build_status（防止 rescan 重置手动提升；design_maturity 由机械推导重新计算）"
             )
 
         # Clear existing operational data (preserve design-state)
@@ -3522,8 +3524,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # nodes_metadata 恢复（Stage 2）仅在 build_status 为空时生效，
         # 但 INSERT 总是写入 'generated'（非空），所以需要独立的 status 恢复步骤。
         # 仅更新 build_status='generated' 的节点（不覆盖新扫描结果中可能已提升的值）。
-        # design_maturity 由 rescan 从 [MATURITY] 文件头写入（SSoT），不在此恢复——
-        # 保护 design_maturity 会掩盖 header/DB 不一致（REFINEMENT 裁定）。
+        # design_maturity 由 rescan 用 derive_design_maturity()+upgrade_tested_modules()
+        # 机械推导（不读 [MATURITY] 文件头），每次 rescan 重新计算，不在此恢复——
+        # ARCH-MM-001: DB 是"验证"真源，[MATURITY] header 是"声明"，手动 transition
+        # 时由 apply_depgraph.py gate 强制同步 header。
         _restored_status_count = 0
         for _preserved_path, _preserved_bs in _preserved_node_status.items():
             cursor.execute(
@@ -3535,7 +3539,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         if _restored_status_count:
             print(
                 f"[STATUS-PRESERVE] 恢复 {_restored_status_count} 个节点的 "
-                f"build_status（rescan 后状态保留；design_maturity 由 [MATURITY] 头部提供）"
+                f"build_status（rescan 后状态保留；design_maturity 由机械推导重新计算）"
             )
 
         # Insert edges
