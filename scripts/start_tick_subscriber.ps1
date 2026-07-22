@@ -4,23 +4,40 @@
 # [TTL] permanent
 # start_tick_subscriber.ps1 - TickSubscriber guard process (auto-restart on crash)
 #
-# Boot chain (Option A, no admin):
-#   Startup folder .bat -> this script (while-true) -> python -m zephyr.data.tick_subscriber
+# Boot chain (watchdog architecture, single entry):
+#   Task Scheduler "ZephyrAlpha_TickSubscriber" (AtLogOn + repeat every 5min, interactive user)
+#     -> this script (while-true, single-instance lock = idempotent re-entry)
+#       -> python -m zephyr.data.tick_subscriber
 #
 # Design:
 #   - while($true): auto-restart tick_subscriber on crash, keep real-time tick stream online
-#   - Single-instance lock: file lock + PID check (rule: only 1 tick_subscriber + 1 guard)
+#   - Single-instance lock: file lock + PID check (rule: only 1 tick_subscriber + 1 guard);
+#     watchdog re-fires every 5min -> if guard alive, exits immediately ("Guard already running")
+#   - Orphan cleanup: on stale lock, kill orphaned business python (invariant: no guard => no subscriber)
+#   - finally-kill: guard exit kills child subscriber (prevents duplicates after revival)
 #   - Anti-rapid-restart: runtime <10s treated as startup failure, wait 30s before retry
 #   - Logs: tick_subscriber writes stdout/stderr, this guard writes tmp/tick_subscriber_guard.log
+#   - NOTE: requires interactive user session (miniQMT/QMT terminal lives in user session)
 #
-# DEPLOY: launched by Startup folder start_zephyr_scheduler.bat (alongside start_scheduler.ps1)
-# Manual start: powershell -ExecutionPolicy Bypass -File scripts\start_tick_subscriber.ps1
+# DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
+#
+# IMPORTANT for AI sessions: to (re)start service, use `schtasks /run /tn ZephyrAlpha_TickSubscriber`
+#   (Task Scheduler detaches from IDE terminal job objects). NEVER Start-Process this guard from an
+#   IDE terminal for production duty - it dies with the terminal.
+#
+# Manual start (debug only): powershell -ExecutionPolicy Bypass -File scripts\start_tick_subscriber.ps1
 
 $ErrorActionPreference = "Stop"
 
 # ============== Paths ==============
 $RepoRoot = "D:\ZephyrAlpha"
+$BizModule = "zephyr.data.tick_subscriber"
 $PythonExe = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
+if (-not (Test-Path $PythonExe)) {
+    # Fallback: absolute known path, then python on PATH (robust under non-interactive contexts)
+    $PythonExe = "C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe"
+    if (-not (Test-Path $PythonExe)) { $PythonExe = "python" }
+}
 $TmpDir = Join-Path $RepoRoot "tmp"
 $LockFile = Join-Path $TmpDir "tick_subscriber.lock"
 $GuardLog = Join-Path $TmpDir "tick_subscriber_guard.log"
@@ -45,6 +62,13 @@ if (Test-Path $LockFile) {
     }
     Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
     Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+    # Invariant: no guard => no business process. Kill orphaned business python from the dead guard.
+    Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
+        ForEach-Object {
+            Write-GuardLog "Killing orphaned $BizModule (PID=$($_.ProcessId))"
+            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+        }
 }
 
 "$PID" | Out-File -FilePath $LockFile -Encoding utf8 -NoNewline
@@ -61,7 +85,7 @@ try {
         Write-GuardLog "Starting tick_subscriber (attempt $($restartCount + 1))..."
 
         $proc = Start-Process -FilePath $PythonExe `
-            -ArgumentList "-m", "zephyr.data.tick_subscriber" `
+            -ArgumentList "-m", $BizModule `
             -WorkingDirectory $RepoRoot `
             -WindowStyle Hidden `
             -PassThru
@@ -88,6 +112,14 @@ try {
     }
 }
 finally {
+    Write-GuardLog "=== TickSubscriber guard stopping (guard PID=$PID), killing child subscriber if alive ==="
+    # Invariant: no guard => no business process (prevents duplicates when watchdog revives guard)
+    if ($proc -and -not $proc.HasExited) {
+        Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+    }
+    Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
+        ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     Write-GuardLog "=== TickSubscriber guard stopped (guard PID=$PID) ==="
     Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
 }

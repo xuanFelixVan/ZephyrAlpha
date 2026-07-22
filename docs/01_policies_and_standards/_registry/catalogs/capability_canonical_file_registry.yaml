@@ -5164,6 +5164,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- 数据服务 watchdog 注册脚本（2026-07-23，guard-of-guard 治本：Task Scheduler OS 级看护）---
+  - file: "scripts/register_guard_tasks.ps1"
+    token: "auto-register-guard-tasks-20260723"
+    created_by: "session-sess-41368-20260723000636"
+    capability: "data_service_watchdog"
+
   # --- Phase 1 gate marker 目录（2026-07-21，test_phase1_gate_check 期望 8 个 kebab-case 目录）---
   - file: "src/zephyr/governance/agent-spec/__init__.py"
     token: "auto-phase1-marker-agent-spec-20260721"
