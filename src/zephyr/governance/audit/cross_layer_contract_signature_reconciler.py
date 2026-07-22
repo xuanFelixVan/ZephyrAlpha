@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-cross_layer_contract_signature_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-b 跨层契约签名漂移检测
+# [BLUEPRINT] MOD-GOV_CROSS_LAYER_CONTRACT_SIGNATURE_RECONCILER | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-b 跨层契约签名漂移检测
 
 # [MODULE] zephyr.governance.audit.cross_layer_contract_signature_reconciler
 
@@ -26,7 +26,7 @@
 
 # [TESTS] tests/governance/audit/test_cross_layer_contract_signature_reconciler.py
 
-# [A_module] module_id=MOD-GOV-cross_layer_contract_signature_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_CROSS_LAYER_CONTRACT_SIGNATURE_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 
 # [TTL] permanent
 

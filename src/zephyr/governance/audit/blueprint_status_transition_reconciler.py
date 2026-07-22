@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-blueprint_status_transition_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-d 蓝图状态单调推进检测
+# [BLUEPRINT] MOD-GOV_BLUEPRINT_STATUS_TRANSITION_RECONCILER | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-d 蓝图状态单调推进检测
 
 # [MODULE] zephyr.governance.audit.blueprint_status_transition_reconciler
 
@@ -26,7 +26,7 @@
 
 # [TESTS] tests/governance/audit/test_blueprint_status_transition_reconciler.py
 
-# [A_module] module_id=MOD-GOV-blueprint_status_transition_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_BLUEPRINT_STATUS_TRANSITION_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 
 # [TTL] permanent
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
-# [A_module] module_id=MOD-SEC-self_protection | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC_SELF_PROTECTION | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 __all__ = [
