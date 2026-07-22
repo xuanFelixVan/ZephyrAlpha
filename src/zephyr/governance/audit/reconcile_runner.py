@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_RECONCILE_RUNNER | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-3
 # [MODULE] zephyr.governance.audit.reconcile_runner
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); subprocess; json; pathlib
+# [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); subprocess; json; pathlib; zephyr.security.access_control.session_concurrency (SessionRegistry)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway._run_post_commit_reconcile_async; AI 查询 reconcile 状态
 # [STARTUP] imported
 # [MATURITY] production

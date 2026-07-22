@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.session_concurrency
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.infra.process_pool (is_pid_alive)
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway ; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session, register_dependency, clear_dependency) ; zephyr.gov_enforcement.commit_gates.import_integrity_gate (_check_active_session_held_target, Phase 2.5)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway ; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session, register_dependency, clear_dependency) ; zephyr.gov_enforcement.commit_gates.import_integrity_gate (_check_active_session_held_target, Phase 2.5) ; zephyr.governance.audit.reconcile_worker (_register_worker_session, _unregister_worker_session) ; zephyr.governance.audit.reconcile_runner (_count_active_workers)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
