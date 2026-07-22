@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0515 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_checkpoint_gc | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §6.2
 # [MODULE] tests.test_checkpoint_gc
 # [INVARIANTS] knowngoodstate快照不可清

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1987 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_cdc_broker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-604 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_cdc_broker
 # [STABILITY] evolving

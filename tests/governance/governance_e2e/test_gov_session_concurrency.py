@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1065 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_gov_session_concurrency | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-390 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_session_concurrency
 # [INVARIANTS] ZephyrLock状态机正确;ConcurrencyManager冲突检测完整

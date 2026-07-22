@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1501 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_s3_snapshot_lifecycle | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §6.12
 # [MODULE] tests.test_s3_snapshot_lifecycle
 # [INVARIANTS] S3SnapshotLifecycle must not corrupt manifests; purge must be dry-run safe

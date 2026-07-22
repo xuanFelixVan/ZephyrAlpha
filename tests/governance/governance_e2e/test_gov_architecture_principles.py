@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1061 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_gov_architecture_principles | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-386 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_architecture_principles
 # [INVARIANTS] ArchPrinciple枚举稳定;IRON_LAW_DEFS完整

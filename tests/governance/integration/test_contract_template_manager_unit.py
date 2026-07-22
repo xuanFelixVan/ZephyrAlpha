@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2002 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_contract_template_manager_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-619 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_contract_template_manager
 # [STABILITY] evolving

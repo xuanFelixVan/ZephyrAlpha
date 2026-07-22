@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1738 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_thematic_clusterer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §
 # [MODULE] tests.test_thematic_clusterer
 # [INVARIANTS] none

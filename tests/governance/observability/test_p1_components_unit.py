@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-P1-COMP | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_p1_components_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md | §16.7.1-§16.7.5
 # [MODULE] tests.governance.observability.test_p1_components_unit
 # [STABILITY] evolving

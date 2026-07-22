@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1063 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_gov_data_source_reliability | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-388 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_data_source_reliability
 # [INVARIANTS] DIMENSION_WEIGHTS总和=1.0;ReliabilityScore.rating边界正确

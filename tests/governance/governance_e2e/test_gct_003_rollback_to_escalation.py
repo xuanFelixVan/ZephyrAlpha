@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0126 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_gct_rollback_to_escalation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-283 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_003_rollback_to_escalation
 # [STABILITY] evolving

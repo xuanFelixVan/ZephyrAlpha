@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1352 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_owner_absent | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_owner_absent
 # [INVARIANTS] AbsentStatus.level in {0,1,3};OwnerPing.attempts >= 0

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0410 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_bandwidth_optimizer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_bandwidth_optimizer
 # [INVARIANTS] BandwidthScore composite in [0,1]; recommend returns valid OptimizationRecommendation

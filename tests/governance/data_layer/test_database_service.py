@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-0117 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] DM-100022 | src/zephyr/governance/persistence/database_service.py | §22
+# [A_test] module_id: MOD-GOV_database_service | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_database_service | src/zephyr/governance/persistence/database_service.py | §22
 # [MODULE] tests.governance.test_database_service
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0119 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_all_scripts | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-276 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_all_scripts
 # [STABILITY] evolving

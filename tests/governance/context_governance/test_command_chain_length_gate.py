@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0551 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_command_chain_length_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_command_chain_length_gate
 # [INVARIANTS] 命令体积门控max=20不可修改;超限必须阻断

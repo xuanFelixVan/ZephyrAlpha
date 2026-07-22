@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1064 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_gov_microstructure_defense | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-389 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_microstructure_defense
 # [INVARIANTS] DEFENSE_STRATEGIES覆盖所有DefenseType;FidelityFactor.composite_ff正确

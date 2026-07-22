@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1682 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_startup_shutdown | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-infra_ops/rollback-system/blueprint.md
 # [MODULE] tests.test_startup_shutdown
 # [INVARIANTS] StartupOrchestrator sequential phase run;ShutdownOrchestrator reverse order;DAG dependency check
