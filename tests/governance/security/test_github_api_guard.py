@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1055 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_github_api_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_github_api_guard
 # [INVARIANTS] PR/Issue清洗不可跳过;注入标记必须移除

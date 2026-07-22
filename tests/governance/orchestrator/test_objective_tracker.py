@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1318 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_objective_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_objective_tracker
 # [INVARIANTS] 目标漂移检测不可跳过;余弦相似度阈值不可手动覆盖

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2716 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_session_worktree_workspace_clean | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_ENFORCEMENT | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-WORKSPACE-DRIFT-SYSTEMIC-001
 # [MODULE] tests.governance.rule_bridge.test_session_worktree_workspace_clean
 # [STABILITY] volatile

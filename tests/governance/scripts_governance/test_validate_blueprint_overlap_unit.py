@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2085 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_validate_blueprint_overlap_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-702 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_validate_blueprint_overlap
 # [STABILITY] evolving

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1545 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_security_config_scanner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_security_config_scanner
 # [INVARIANTS] 安全配置扫描不可跳过;数据库/云/API配置必须检查

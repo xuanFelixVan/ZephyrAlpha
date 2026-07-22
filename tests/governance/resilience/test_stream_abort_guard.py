@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1695 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_stream_abort_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_stream_abort_guard
 # [INVARIANTS] check returns AbortResult; is_aborted reflects state

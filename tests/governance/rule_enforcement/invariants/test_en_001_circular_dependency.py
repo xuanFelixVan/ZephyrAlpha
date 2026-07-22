@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0831 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_en_circular_dependency | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_en_001_circular_dependency
 # [INVARIANTS] none

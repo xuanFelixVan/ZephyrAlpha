@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2087 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_validate_truth_source_cascade_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-704 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_validate_truth_source_cascade
 # [STABILITY] evolving

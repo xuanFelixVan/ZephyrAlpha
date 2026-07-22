@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-pre_write_gate | tests/governance/scripts_governance/test_pre_write_gate.py | §claim-fwd-overlap
+# [BLUEPRINT] MOD-GOV_pre_write_gate | tests/governance/scripts_governance/test_pre_write_gate.py | §claim-fwd-overlap
 # [MODULE] tests.governance.scripts_governance.test_pre_write_gate
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.pre_write_gate

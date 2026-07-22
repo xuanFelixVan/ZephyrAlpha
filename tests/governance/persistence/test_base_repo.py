@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0412 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_base_repo | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test
 # [MODULE] tests.test_base_repo
 # [INVARIANTS] _ALLOWED_TRANSITIONS不可变;异常类层次稳定

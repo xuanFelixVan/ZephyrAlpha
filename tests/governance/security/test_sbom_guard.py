@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1524 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_sbom_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_sbom_guard
 # [INVARIANTS] SBOM必须完整;幽灵依赖必须检测

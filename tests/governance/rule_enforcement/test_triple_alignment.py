@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1767 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_triple_alignment | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
 # [MODULE] tests.test_triple_alignment
 # [INVARIANTS] Severity has exactly ERROR/WARN; AlignmentViolation fields immutable after creation; TripleAlignmentResult.passed flips to False on ERROR violation

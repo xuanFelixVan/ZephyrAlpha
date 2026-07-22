@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-test_claim_files_for_edit | tests/governance/rule_bridge/test_claim_files_for_edit.py | §Ruling-100PCT-AI-GOVERNANCE-P2-2
+# [BLUEPRINT] MOD-GOV_test_claim_files_for_edit | tests/governance/rule_bridge/test_claim_files_for_edit.py | §Ruling-100PCT-AI-GOVERNANCE-P2-2
 # [MODULE] tests.governance.rule_bridge.test_claim_files_for_edit
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.session_worktree

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0835 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_end_to_end_walkthrough | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.end_to_end_walkthrough

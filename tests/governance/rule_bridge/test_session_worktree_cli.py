@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2301 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_session_worktree_cli | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/session_worktree_cli.py | §FP-ISO.4C
 # [MODULE] tests.governance.rule_bridge.test_session_worktree_cli
 # [STABILITY] volatile

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2411 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_worktree_pool | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_ENFORCEMENT_worktree_pool | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P3.3
 # [MODULE] tests.governance.rule_bridge.test_worktree_pool
 # [STABILITY] evolving
