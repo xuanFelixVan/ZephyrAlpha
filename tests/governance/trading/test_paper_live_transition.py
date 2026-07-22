@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1354 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_paper_live_transition | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_paper_live_transition
 # [INVARIANTS] TransitionPhase order: PARALLEL→SHADOW→GRAY_RAMP;valid_transition only sequential

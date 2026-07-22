@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1981 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_blueprint_search_mcp | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-598 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_blueprint_search_mcp
 # [STABILITY] evolving

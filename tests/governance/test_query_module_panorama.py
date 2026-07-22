@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2200 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-D5-ARCH-TOOLS | docs/03_modules/d5_architecture/blueprint.md | §query_tools
+# [A_test] module_id: MOD-GOV_query_module_panorama | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | docs/03_modules/d5_architecture/blueprint.md | §query_tools
 # [MODULE] tests.governance.test_query_module_panorama
 # [STABILITY] evolving
 # [SAFETY] L

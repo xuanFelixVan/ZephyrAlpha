@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2295 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_run_silent_failure_regression | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-281 | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P3-2
 # [MODULE] tests.governance.test_run_silent_failure_regression
 # [DOMAIN] D_GOV_CODE_QUALITY

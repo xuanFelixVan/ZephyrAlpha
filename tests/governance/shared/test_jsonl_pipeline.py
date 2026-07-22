@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0135 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_jsonl_pipeline | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-292 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_jsonl_pipeline
 # [STABILITY] evolving

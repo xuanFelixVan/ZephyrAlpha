@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2291 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_apply_decisiongraph_smoke | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-278 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_apply_decisiongraph_smoke
 # [DOMAIN] D_GOV_CODE_QUALITY

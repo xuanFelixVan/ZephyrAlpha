@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-2117 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] DM-201307 | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §extreme-test
+# [A_test] module_id: MOD-GOV_f3_extreme | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_f3_extreme | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §extreme-test
 # [MODULE] tests.adversarial.test_f3_extreme
 # [STABILITY] volatile
 # [SAFETY] L

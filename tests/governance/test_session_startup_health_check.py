@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2292 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_session_startup_health_check | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-278 | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1
 # [MODULE] tests.governance.test_session_startup_health_check
 # [DOMAIN] D_GOV_CODE_QUALITY

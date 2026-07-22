@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1847 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_blindspot_coverage | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-475 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.core.test_blindspot_coverage
 # [STABILITY] evolving

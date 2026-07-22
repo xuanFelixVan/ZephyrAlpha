@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2293 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_audit_return_contract_usage | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-279 | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-5
 # [MODULE] tests.governance.test_audit_return_contract_usage
 # [DOMAIN] D_GOV_CODE_QUALITY

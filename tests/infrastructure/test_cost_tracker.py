@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0633 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_cost_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §cost_tracker
 # [MODULE] tests.test_cost_tracker
 # [INVARIANTS] CostTracker.record_usage必须返回UsageRecord; UsageRecord.tokens_total=tokens_in+tokens_out

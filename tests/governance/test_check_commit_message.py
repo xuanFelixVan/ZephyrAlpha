@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-3006 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_check_commit_message | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_check_commit_message.py — P4-3 check_commit_message.py 单测。
 

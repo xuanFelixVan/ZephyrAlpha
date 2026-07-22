@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2303 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_workspace_telemetry_shared | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-WORKSPACE_TELEMETRY | docs/03_modules/_cross_layer/shared_core/blueprint.md | §workspace-telemetry
 # [MODULE] tests.governance.test_workspace_telemetry_shared
 # [DOMAIN] D_GOV_AUDIT

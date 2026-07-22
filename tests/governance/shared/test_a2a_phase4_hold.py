@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2113 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_a2a_phase4_hold | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-274 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_a2a_phase4_hold
 # [STABILITY] evolving

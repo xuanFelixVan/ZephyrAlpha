@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2291 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_post_commit_guard_no_verify_threshold | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-277 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_post_commit_guard_no_verify_threshold
 # [DOMAIN] D_GOV_CODE_QUALITY

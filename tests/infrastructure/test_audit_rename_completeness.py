@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1899 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_audit_rename_completeness | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """audit_rename_completeness.py 回归测试（红蓝对抗逻辑永久化）。
 

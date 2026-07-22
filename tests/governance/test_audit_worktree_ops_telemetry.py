@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2294 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_audit_worktree_ops_telemetry | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-280 | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-6
 # [MODULE] tests.governance.test_audit_worktree_ops_telemetry
 # [DOMAIN] D_GOV_CODE_QUALITY

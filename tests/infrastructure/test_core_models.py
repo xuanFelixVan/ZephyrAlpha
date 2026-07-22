@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0627 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_core_models | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-371 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_core_models
 # [INVARIANTS] GateLevel enum values match gate engine expectations; TaskAuditFinding validation rules; TaskCard instantiation validates inherited+extended fields; DecompositionResult/GateCheckResult field constraints

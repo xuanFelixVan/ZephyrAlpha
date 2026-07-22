@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0552 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_commit_quality_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §7
 # [MODULE] tests.test_commit_quality_gate
 # [INVARIANTS] revert commit必须通过lint
