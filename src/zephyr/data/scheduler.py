@@ -190,58 +190,57 @@ def _run_schedule_dag(
 ) -> dict[str, bool]:
     """加载任务到 TaskQueue，按 DAG 顺序并行执行，并汇总结果与失败率。
 
-    线程安全：用 _schedule_dag_lock 串行化调度周期（裁定 #ARCH-CH-016）。
-    多个 cron 时段并发触发时（如 event_driven + daily_event 同时 19:00），
-    若不加锁，后到的调度会重建 _task_queue 覆盖前一个，导致 mark_completed
-    抛 KeyError('未知 task_id')。加锁后调度周期串行，避免竞态。
+    线程安全：每个调度周期使用独立的局部 TaskQueue（裁定 #ARCH-CH-016 v2）。
+    原方案用 _schedule_dag_lock 全局锁串行化所有调度周期，但导致 intraday_sector
+    等独立执行器的时段被 intraday_realtime（5+分钟）阻塞，独立执行器形同虚设。
+    新方案：局部 task_queue + 参数传递，各调度周期互不干扰，无需全局锁。
     """
-    with _schedule_dag_lock:
-        # 加载到 TaskQueue
-        scheduler._task_queue = TaskQueue()
-        for t in schedule_tasks:
-            scheduler._task_queue.add_task(t)
+    # 局部 TaskQueue——每个调度周期独立，避免并发调度互相覆盖（裁定 #ARCH-CH-016 v2）
+    task_queue = TaskQueue()
+    for t in schedule_tasks:
+        task_queue.add_task(t)
 
-        # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
-        from concurrent.futures import ThreadPoolExecutor, as_completed
+    # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
-        results: dict[str, bool] = {}
-        while not scheduler._task_queue.is_done():
-            ready = scheduler._task_queue.get_ready_tasks()
-            if not ready:
-                # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
-                blocked = scheduler._task_queue.list_by_status("BLOCKED")
-                if blocked:
-                    log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
-                break
-            if len(ready) == 1:
-                # 单任务直接执行（避免线程池开销）
-                results[ready[0]] = scheduler.run_task(ready[0])
-            else:
-                # 多任务并行执行（利用线程池，最多8并发）
-                max_workers = min(len(ready), 8)
-                with ThreadPoolExecutor(max_workers=max_workers) as pool:
-                    future_map = {
-                        pool.submit(scheduler.run_task, tid): tid
-                        for tid in ready
-                    }
-                    for future in as_completed(future_map):
-                        tid = future_map[future]
-                        try:
-                            results[tid] = future.result()
-                        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                            log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
-                            results[tid] = False
+    results: dict[str, bool] = {}
+    while not task_queue.is_done():
+        ready = task_queue.get_ready_tasks()
+        if not ready:
+            # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
+            blocked = task_queue.list_by_status("BLOCKED")
+            if blocked:
+                log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
+            break
+        if len(ready) == 1:
+            # 单任务直接执行（避免线程池开销）
+            results[ready[0]] = scheduler.run_task(ready[0], task_queue=task_queue)
+        else:
+            # 多任务并行执行（利用线程池，最多8并发）
+            max_workers = min(len(ready), 8)
+            with ThreadPoolExecutor(max_workers=max_workers) as pool:
+                future_map = {
+                    pool.submit(scheduler.run_task, tid, task_queue): tid
+                    for tid in ready
+                }
+                for future in as_completed(future_map):
+                    tid = future_map[future]
+                    try:
+                        results[tid] = future.result()
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                        log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
+                        results[tid] = False
 
-        # 汇总
-        success_count = sum(1 for v in results.values() if v)
-        failed_count = len(results) - success_count
-        log.info("时段 %s 完成: %d 成功, %d 失败", schedule_name, success_count, failed_count)
+    # 汇总
+    success_count = sum(1 for v in results.values() if v)
+    failed_count = len(results) - success_count
+    log.info("时段 %s 完成: %d 成功, %d 失败", schedule_name, success_count, failed_count)
 
-        # 检查失败率
-        if results:
-            scheduler._alerter.check_daily_failure_rate(len(results), failed_count)
+    # 检查失败率
+    if results:
+        scheduler._alerter.check_daily_failure_rate(len(results), failed_count)
 
-        return results
+    return results
 
 
 class IntegratorScheduler:
@@ -783,7 +782,7 @@ class IntegratorScheduler:
 
     # ============== 任务执行 ==============
 
-    def run_task(self, task_id: str) -> bool:
+    def run_task(self, task_id: str, task_queue: TaskQueue | None = None) -> bool:
         """执行单个任务（含数据源 fallback 机制）。
 
         流程（数据韧性三层机制 §2）：
@@ -796,18 +795,22 @@ class IntegratorScheduler:
 
         Args:
             task_id: 任务标识。
+            task_queue: 调度周期传入的局部 TaskQueue（裁定 #ARCH-CH-016 v2）。
+                None 时回退到 self._task_queue（手动调用场景）。
 
         Returns:
             是否成功（任一源成功即返回 True）。
         """
+        # 局部队列优先，回退到实例队列（手动调用场景）
+        tq = task_queue or self._task_queue
         # 查任务定义
-        task = self._task_queue.get_task(task_id)
+        task = tq.get_task(task_id)
         if task is None:
             # 从 _tasks 缓存查
             task = next((t for t in self._tasks if t["task_id"] == task_id), None)
             if task is not None:
                 # 手动调用 run_task 的情况：同步到 task_queue 以便 mark_running 生效
-                self._task_queue.add_task(task)
+                tq.add_task(task)
         if task is None:
             log.error("未知任务: %s", task_id)
             return False
@@ -834,7 +837,7 @@ class IntegratorScheduler:
                     level=LEVEL_ERROR, source=source,
                 )
             success, error = self._try_source(
-                task, task_id, source, capability, is_fallback
+                task, task_id, source, capability, is_fallback, task_queue=tq
             )
             if success:
                 return True
@@ -856,6 +859,7 @@ class IntegratorScheduler:
     def _try_source(
         self, task: dict, task_id: str, source: str,
         capability: str | None, is_fallback: bool = False,
+        task_queue: TaskQueue | None = None,
     ) -> tuple[bool, str | None]:
         """尝试单个数据源执行任务（run_task 的核心逻辑）。
 
@@ -874,10 +878,13 @@ class IntegratorScheduler:
             source: 数据源标识。
             capability: 能力标识（用于 provider 路由，来自 task 或 fallback_sources）。
             is_fallback: 是否为 fallback 副源调用。
+            task_queue: 调度周期传入的局部 TaskQueue（裁定 #ARCH-CH-016 v2）。
+                None 时回退到 self._task_queue（手动调用场景）。
 
         Returns:
             (是否成功, 错误信息)。成功时 error 为 None。
         """
+        tq = task_queue or self._task_queue
         table = task["table"]
         incremental = task.get("incremental", True)
 
@@ -893,7 +900,7 @@ class IntegratorScheduler:
 
         # 记录运行开始
         run_id = self._progress_store.start_run(task_id)
-        self._task_queue.mark_running(task_id)
+        tq.mark_running(task_id)
         task_start_ts = time.time()
 
         log.info("任务 %s 开始: source=%s table=%s start=%s end=%s fallback=%s",
@@ -930,7 +937,7 @@ class IntegratorScheduler:
                         self._progress_store.finish_run(
                             run_id, "DEFERRED_PERSISTENCE", total_rows, writer.total_flushed, detail
                         )
-                    self._task_queue.mark_deferred_persistence(task_id)
+                    tq.mark_deferred_persistence(task_id)
                     self._emit_event("task_completed", task_id=task_id, success=False, deferred=True)
                     return True, None
                 last_error = f"ClickHouse 写入失败(flush): {table}"
@@ -944,7 +951,7 @@ class IntegratorScheduler:
                 )
                 if run_id:
                     self._progress_store.finish_run(run_id, "FAILED", total_rows, writer.total_flushed, last_error)
-                self._task_queue.mark_failed(task_id)
+                tq.mark_failed(task_id)
                 self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
                 self._metrics.record_task(task_id, source, "FAILED", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
@@ -956,7 +963,7 @@ class IntegratorScheduler:
                 )
                 if run_id:
                     self._progress_store.finish_run(run_id, "SUCCESS", total_rows, writer.total_flushed)
-                self._task_queue.mark_completed(task_id)
+                tq.mark_completed(task_id)
                 log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
                 self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
@@ -973,7 +980,7 @@ class IntegratorScheduler:
             )
             if run_id:
                 self._progress_store.finish_run(run_id, "FAILED", total_rows, rows_written, last_error)
-            self._task_queue.mark_failed(task_id)
+            tq.mark_failed(task_id)
             self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
             self._metrics.record_task(task_id, source, "FAILED", task_elapsed, rows_written)
             self._metrics.flush()
@@ -998,7 +1005,7 @@ class IntegratorScheduler:
             self._alerter.notify(
                 task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
             )
-            self._task_queue.mark_failed(task_id)
+            tq.mark_failed(task_id)
             return None, None, f"源 {source} 已熔断"
 
         return provider, policy, None
