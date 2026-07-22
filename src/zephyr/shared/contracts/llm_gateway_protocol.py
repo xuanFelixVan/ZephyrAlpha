@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] LLMGatewayProtocol.call returns LLMResponse; LLMResponse.error is set on failure
 # [TESTS] tests/test_llm_gateway_protocol.py
-# [A_module] module_id=MOD-SHR_llm_gateway_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-llm_gateway_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

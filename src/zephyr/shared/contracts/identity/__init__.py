@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SHR_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.shared.contracts.identity
 # [INVARIANTS] Agent身份模型不可被篡改;权限判定枚举不可扩展

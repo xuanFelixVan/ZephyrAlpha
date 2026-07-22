@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/contracts/test_order_enums.py
-# [A_module] module_id=MOD-SHR_order_enums | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-order_enums | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """shared/contracts/enums — 跨切面交易枚举真源 (5.152 #1 修复)
 
