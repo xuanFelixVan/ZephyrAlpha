@@ -1205,7 +1205,6 @@ tasks:
     table: c1_market.l2_tick
     source: miniqmt
     schedule: intraday_realtime
-    disabled: true  # #ARCH-CH-023: 需付费 L2 行情权限，裁定删除并在源头标注暂不需要
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1218,6 +1217,7 @@ tasks:
     extra:
       description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限，无权限时自动降级到五档快照）"
       requires_permission: L2
+      disabled: true  # #ARCH-CH-023: 需付费 L2 行情权限，裁定删除并在源头标注暂不需要
 
   - task_id: auction_data_snapshot
     table: c1_market.auction_snapshot

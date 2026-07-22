@@ -1438,9 +1438,19 @@ def start_monitor(scheduler: "IntegratorScheduler", port: int = 9100) -> None:
     Args:
         scheduler: 调度器实例
         port: 监听端口，默认 9100（Prometheus 标准端口段）
+
+    容错：端口被占用（如备份 minio_tcp_relay 临时占用 9100）时降级为无 HTTP 监控，
+    调度器核心任务不受影响（治本：避免端口冲突导致调度器崩溃重启循环）。
     """
     _MonitorHandler.scheduler = scheduler
-    server = _ThreadingHTTPServer(("0.0.0.0", port), _MonitorHandler)
+    try:
+        server = _ThreadingHTTPServer(("0.0.0.0", port), _MonitorHandler)
+    except OSError as e:
+        log.warning(
+            "监控 HTTP server 启动失败（端口 %d 被占用: %s），调度器继续运行（无 HTTP 监控）",
+            port, e,
+        )
+        return
     t = threading.Thread(target=server.serve_forever, daemon=True, name="monitor-http")
     t.start()
     log.info("监控 HTTP server 已启动，端口 %d（/metrics /health /status）", port)

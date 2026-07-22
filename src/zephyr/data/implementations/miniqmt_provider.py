@@ -371,6 +371,10 @@ class MiniQMTProvider(DataSourceBase):
 
     source_name: str = "miniqmt"
 
+    # L2 行情权限探测结果缓存（None=未探测，True/False=已探测，裁定 #ARCH-DATA-014）
+    # _probe_l2_permission 首次探测后写入实例属性覆盖此类默认值
+    _has_l2: bool | None = None
+
     meta: DataSourceMeta = DataSourceMeta(
         name="miniqmt",
         display_name="miniQMT 迅投",
