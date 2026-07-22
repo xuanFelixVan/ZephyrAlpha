@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0=全PASS; 非0=有FAIL
 # [TESTS]
-# [A_module] module_id=MOD-GOV-test_git_commit_extreme | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_test_git_commit_extreme | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_git_commit_extreme.py — GitCommitGateway 极端故障注入测试（OPS-2026062515）
 
