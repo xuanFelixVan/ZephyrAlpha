@@ -17,7 +17,7 @@ from zephyr.data.tick_subscriber import tick_to_row, infer_market_type
 
 class TestTickToRow:
     def test_basic_tick_conversion(self):
-        """正常 tick dict 转换为14字段 tuple"""
+        """正常 tick dict 转换为15字段 tuple（P0-1: 新增 recorded_time）"""
         tick = {
             "time": 1720838403000,  # 2024-07-13 10:00:03 CST (ms)
             "lastPrice": 10.5,
@@ -31,27 +31,32 @@ class TestTickToRow:
         stock_code = "000001.SZ"
         row = tick_to_row(stock_code, tick)
         assert row is not None
-        assert len(row) == 14
+        assert len(row) == 15
         # trade_date
         assert row[0] is not None
+        # timestamp
+        assert row[1] == "2024-07-13 10:00:03"
+        # recorded_time (P0-1 新增，格式校验)
+        assert row[2] is not None
+        assert isinstance(row[2], str)
         # symbol
-        assert row[2] == "000001"
+        assert row[3] == "000001"
         # market_type
-        assert row[3] == "stock"
+        assert row[4] == "stock"
         # price
-        assert row[4] == Decimal("10.5")
+        assert row[5] == Decimal("10.5")
         # volume
-        assert row[5] == 1000
+        assert row[6] == 1000
         # direction
-        assert row[7] == "中性盘"
+        assert row[8] == "中性盘"
         # data_source
-        assert row[8] == "miniqmt"
+        assert row[9] == "miniqmt"
         # bid_price (1档)
-        assert row[9] == Decimal("10.49")
+        assert row[10] == Decimal("10.49")
         # ask_price (1档)
-        assert row[10] == Decimal("10.5")
+        assert row[11] == Decimal("10.5")
         # quality_flag
-        assert row[13] == 1
+        assert row[14] == 1
 
     def test_empty_tick_returns_none(self):
         """空 tick 返回 None"""
@@ -67,20 +72,20 @@ class TestTickToRow:
         }
         row = tick_to_row("600000.SH", tick)
         assert row is not None
-        assert row[9] is None   # bid_price
-        assert row[10] is None  # ask_price
-        assert row[11] is None  # bid_volume
-        assert row[12] is None  # ask_volume
+        assert row[10] is None  # bid_price
+        assert row[11] is None  # ask_price
+        assert row[12] is None  # bid_volume
+        assert row[13] is None  # ask_volume
 
     def test_etf_market_type(self):
         tick = {"time": 1720838403000, "lastPrice": 3.5, "volume": 100, "amount": 350}
         row = tick_to_row("159915.SZ", tick)
-        assert row[3] == "etf"
+        assert row[4] == "etf"
 
     def test_index_market_type(self):
         tick = {"time": 1720838403000, "lastPrice": 3000, "volume": 0, "amount": 0}
         row = tick_to_row("000300.SH", tick)
-        assert row[3] == "index"
+        assert row[4] == "index"
 
 
 class TestInferMarketType:
@@ -140,6 +145,7 @@ def _make_sub():
     sub._flush_thread = None
     sub._xtdata = None
     sub._subscribed = set()
+    sub._heartbeat = None  # P2-8: 心跳集成——_make_sub 须与 __init__ 属性集对齐
     return sub
 
 
