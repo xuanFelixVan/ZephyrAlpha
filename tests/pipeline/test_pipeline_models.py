@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1378 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_pipeline_models | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_models
 # [INVARIANTS] PipelineDAG.resolve_execution_order must detect cycles; ModuleInput.validate must return bool

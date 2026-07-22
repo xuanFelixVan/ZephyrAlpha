@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1936 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_conftest | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import sys
 from unittest.mock import MagicMock

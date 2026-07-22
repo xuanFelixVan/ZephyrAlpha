@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1411 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_prompt_version | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_prompt_version
 # [INVARIANTS] get_version returns v0.0.0 for unregistered; diff returns bool

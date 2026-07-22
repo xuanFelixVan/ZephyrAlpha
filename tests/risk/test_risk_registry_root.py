@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1468 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_risk_registry_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_risk_registry
 # [INVARIANTS] RISKS has 34 entries; get returns None for unknown; mitigate/accept return bool

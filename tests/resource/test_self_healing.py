@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1933 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_self_healing | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-552 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_self_healing
 # [STABILITY] evolving

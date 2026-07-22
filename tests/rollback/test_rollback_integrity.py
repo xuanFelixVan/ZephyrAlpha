@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1482 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_rollback_integrity | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_rollback_integrity
 # [INVARIANTS] verify returns True iff pre_state == post_rollback

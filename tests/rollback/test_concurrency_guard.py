@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2109 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_concurrency_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] tests.unit.test_concurrency_guard
 # [STABILITY] volatile

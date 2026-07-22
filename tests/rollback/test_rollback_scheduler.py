@@ -1,4 +1,4 @@
-# [A_test] module_id=TEST-rollback-scheduler | layer=test | stability=evolving | safety=L
+# [A_test] module_id=MOD-GOV_rollback_scheduler | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-021 | tests/rollback/ | §7 Phase 5.3
 # [DOMAIN] D_INFRA_RECOVERY
 # [GOVERNANCE] A_test 6-field: test_id=DM-201911-ADV | type=adversarial | scope=scheduler | gate=G0 | owner=AI-09 | rollback=delete_file

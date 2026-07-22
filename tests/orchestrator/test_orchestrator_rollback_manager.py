@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1339 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_orchestrator_rollback_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_rollback_manager
 # [INVARIANTS] RollbackManager uses real SQLite via db_utils; tests use in-memory DB with schema

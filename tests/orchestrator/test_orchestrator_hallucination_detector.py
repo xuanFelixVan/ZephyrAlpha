@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1337 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_orchestrator_hallucination_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_hallucination_detector
 # [INVARIANTS] HallucinationDetector uses keyword fallback when no callers provided

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1917 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_hallucination_interception_orchestrator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-536 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.orchestrator.test_hallucination_interception
 # [STABILITY] evolving

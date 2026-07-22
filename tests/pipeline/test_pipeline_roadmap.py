@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1380 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_pipeline_roadmap | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_roadmap
 # [INVARIANTS] ConstructionPhaseTracker total = IMPLEMENTED + BACKLOG + PLANNED_VERSIONS; ROICalculator denominator >= 0.01; MutationTestResult mutation_score = killed/total when total > 0
