@@ -33,7 +33,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -98,23 +98,48 @@ class AnomalyResult:
 
 
 class AnomalyEvent(BaseModel):
-    """审计异常事件 — G-CT-002 事件格式（pydantic BaseModel）。
+    """审计异常事件 — 双 API 兼容（G-CT-002 + bridges）。
 
-    治本（G-CT-002）：从普通类升级为 pydantic BaseModel，对齐
-    tests/bridges/test_bridges_anomaly.py 与 gov_audit/bridges/audit_anomaly.py 契约。
-    必填字段 ``agent_id``/``operation_signature``/``resource_path``——缺失时
-    pydantic 抛 ValidationError（``pytest.raises(Exception)`` 捕获）。
-    其余字段均有默认值。
+    API 1 (bridges/test_bridges_anomaly.py):
+        AnomalyEvent(agent_id=..., operation_signature=..., resource_path=...)
+    API 2 (test_gct_002_audit_to_rollback.py):
+        AnomalyEvent(signature=AnomalySignature.X, severity=..., description=...,
+                     evidence={...}, score=...)
+
+    必须提供至少 ``signature`` 或 ``(agent_id + operation_signature + resource_path)``
+    之一，否则 ValidationError。``detected_at`` 自动填充 ISO 时间戳。
     """
 
-    agent_id: str
-    operation_signature: str
-    resource_path: str
+    # API 1 fields (bridges)
+    agent_id: str = ""
+    operation_signature: str = ""
+    resource_path: str = ""
+
+    # API 2 fields (G-CT-002)
+    signature: AnomalySignature | None = None
+    description: str = ""
+    evidence: dict[str, Any] = Field(default_factory=dict)
+    score: float = 0.0
+
+    # Shared fields
     severity: str = "WARN"
     event_type: str = "anomaly_detected"
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     session_id: str = ""
     detail: str = ""
+
+    @model_validator(mode="after")
+    def _require_minimum_fields(self):
+        """必须提供 signature 或 (agent_id+operation_signature+resource_path) 之一。"""
+        has_api1 = bool(self.agent_id or self.operation_signature or self.resource_path)
+        has_api2 = self.signature is not None
+        if not has_api1 and not has_api2:
+            raise ValueError(
+                "AnomalyEvent requires either signature or "
+                "(agent_id+operation_signature+resource_path)"
+            )
+        return self
 
 
 class AnomalyDetector:

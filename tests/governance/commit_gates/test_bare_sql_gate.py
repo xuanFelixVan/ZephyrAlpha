@@ -6,7 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [TTL] permanent
-"""test_bare_sql_gate.py — NO-BARE-SQL 门禁单测
+r"""test_bare_sql_gate.py — NO-BARE-SQL 门禁单测
 
 权威依据：bare_sql_gate.py（make_bare_sql_gate）
 

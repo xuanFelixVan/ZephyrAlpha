@@ -617,10 +617,10 @@ class AtomicTransactionManager:
         self.close()
 
     def validate_write_path(self, rel_path: str) -> Path:
-        """对外暴露的路径守卫快捷方法（与 write_file 内部逻辑一致）。"""
-        try:
-            return cast(Path, self._sanitizer.validate_path(rel_path, mode="write"))
-        except SanitizationError:
-            raise
-        except PathTraversalError:
-            raise
+        """对外暴露的路径守卫快捷方法（与 write_file 内部逻辑一致）。
+
+        治本：原实现 try/except SanitizationError/PathTraversalError 仅 re-raise，
+        但这两个名称通过 __getattr__ 懒加载，在 except 子句中触发 NameError。
+        移除冗余 try/except——sanitizer 抛出的异常直接传播。
+        """
+        return cast(Path, self._sanitizer.validate_path(rel_path, mode="write"))

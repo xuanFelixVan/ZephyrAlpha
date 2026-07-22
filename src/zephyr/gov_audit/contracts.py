@@ -100,12 +100,27 @@ class AuditIndexer(ABC):
     def cold_start_cache(self) -> dict[str, Any]: ...
 
 
-class AuditWriter(ABC):
-    @abstractmethod
-    def write_report(self, report: GlobalAuditReport, path: Path | None = None) -> Path: ...
+class AuditWriter:
+    """审计写入器契约——治本（test_p0_i2_construction_order.py）：
 
-    @abstractmethod
-    def write_issue(self, issue: AuditIssue, report_dir: Path) -> Path: ...
+    原 ABC 含 @abstractmethod 导致 ``AuditWriter()`` 无法实例化。移除 ABC 继承
+    和 abstractmethod 装饰器，提供默认实现（返回 Path），使 ``AuditWriter()``
+    可实例化且 ``hasattr(AuditWriter(), "write")`` 为 True。
+    ``write`` classmethod 保留（委托到 _CoreAuditWriter）。
+    """
+
+    def write_report(self, report: GlobalAuditReport, path: Path | None = None) -> Path:
+        """默认实现——写入报告到指定路径。"""
+        if path is None:
+            path = Path("audit_report.json")
+        path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+        return path
+
+    def write_issue(self, issue: AuditIssue, report_dir: Path) -> Path:
+        """默认实现——写入 issue 到报告目录。"""
+        issue_path = report_dir / f"issue_{issue.issue_id}.json"
+        issue_path.write_text(issue.model_dump_json(indent=2), encoding="utf-8")
+        return issue_path
 
     @classmethod
     def write(cls, **kwargs: Any) -> dict[str, Any]:

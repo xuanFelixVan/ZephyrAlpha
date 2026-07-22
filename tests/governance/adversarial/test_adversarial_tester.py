@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0279 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_adversarial_tester | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_adversarial_tester
 # [INVARIANTS] none
@@ -67,12 +67,12 @@ class TestAdversarialTester:
         assert at.summary()["total_tests"] == 0
 
     def test_has_builtin_tests(self):
-        assert len(AdversarialTester.BUDGET_ADVERSARIAL_TESTS) == 5
+        assert len(AdversarialTester.BUDGET_ADVERSARIAL_TESTS) == 9
 
     def test_run_all_returns_results(self):
         at = AdversarialTester()
         results = at.run_all()
-        assert len(results) == 5
+        assert len(results) == 9
         for r in results:
             assert isinstance(r, AdversarialResult)
             assert isinstance(r.passed, bool)
@@ -81,8 +81,8 @@ class TestAdversarialTester:
         at = AdversarialTester()
         at.run_all()
         s = at.summary()
-        assert s["total_tests"] == 5
-        assert s["passed"] + s["failed"] == 5
+        assert s["total_tests"] == 9
+        assert s["passed"] + s["failed"] == 9
         assert 0.0 <= s["pass_rate"] <= 1.0
 
     def test_summary_by_category(self):
@@ -116,7 +116,7 @@ class TestAdversarialTester:
         at.run_all()
         at.clear()
         results = at.run_all()
-        assert len(results) == 5
+        assert len(results) == 9
 
     def test_ipi_injection_test(self):
         at = AdversarialTester()
