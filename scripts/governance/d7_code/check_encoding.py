@@ -22,7 +22,7 @@
 - 包装 scripts/governance/d7_code/detect_missing_encoding.py 的功能
 
 语义说明（2026-06-25, OPS-2026062501 修复）：
-- BOM/autoGuessEncoding/mojibake = FAIL 级（阻断提交）
+- BOM/autoGuessEncoding/mojibake/double-CR = FAIL 级（阻断提交）
 - CRLF = WARNING 级（不阻断提交，靠 .gitattributes + git add --renormalize 在仓库层解决）
 
 exit codes: 0=pass, 1=findings(FAIL级), 2=error
@@ -60,6 +60,10 @@ ensure_utf8_stdout()
 
 BOM = b"\xef\xbb\xbf"
 CRLF = b"\r\n"
+# #ARCH-LINE-ENDING-CORRUPTION-001（2026-07-22）：双 CR 是 EOL 腐败标志（非正常 CRLF），
+# 通常由 core.autocrlf + 编辑器双重转换产生。双 CR 是 FAIL 级（硬阻断），区别于
+# 正常 CRLF 的 WARNING 级（靠 .gitattributes + renormalize 在仓库层解决）。
+DOUBLE_CR = b"\r\r\n"
 # autoGuessEncoding 真违规：truthy 设置（:true/=true），不匹配裸提及/:false/注释/pattern 定义。
 # 治本（2026-07-17）：原用字面量列表 `if pattern in raw` 匹配任何字面量出现，导致自指误报——
 # check_encoding.py 自身（pattern 定义 + docstring）+ .pre-commit-config.yaml（gate 描述注释）
@@ -237,6 +241,16 @@ def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
     raw = p.read_bytes()
     if raw.startswith(BOM):
         findings.append(f"INJ-007 FAIL: file '{filepath}' has UTF-8 BOM — must be UTF-8 without BOM")
+    # #ARCH-LINE-ENDING-CORRUPTION-001（2026-07-22）：双 CR 检测（FAIL 级，硬阻断）。
+    # 双 CR (\r\r\n) 是 EOL 腐败标志——非正常 CRLF，由 core.autocrlf + 编辑器双重转换产生。
+    # 正常 CRLF 靠 .gitattributes + renormalize 解决（WARNING）；双 CR 必须立即修复（FAIL）。
+    # 必须在 CRLF 检测之前执行（\r\r\n 含 \r\n 子串，先检测双 CR 更精确）。
+    if DOUBLE_CR in raw:
+        dc_count = raw.count(DOUBLE_CR)
+        findings.append(
+            f"INJ-007 FAIL: file '{filepath}' has {dc_count} double-CR (\\r\\r\\n) "
+            f"line endings — EOL corruption, must fix (not normal CRLF)"
+        )
     if CRLF in raw:
         crlf_count = raw.count(CRLF)
         warnings.append(f"INJ-007 WARNING: file '{filepath}' has {crlf_count} CRLF line endings — should use LF")

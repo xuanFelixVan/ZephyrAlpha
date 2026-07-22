@@ -149,7 +149,7 @@ if sys.stdout.encoding != "utf-8":
 
 
 def _normalize_eol(data: bytes) -> bytes:
-    """治本（2026-06-30 CRLF/LF 漂移）：normalize CRLF→LF。
+    """治本（2026-06-30 CRLF/LF 漂移 + #ARCH-LINE-ENDING-CORRUPTION-001 双 CR bug）：normalize 所有行尾→LF。
 
     .gitattributes 全局 eol=lf，git HEAD blob 存 LF；但工作树文件可能是
     .gitattributes 生效前 checkout 的（那时 core.autocrlf=true，LF→CRLF），
@@ -157,8 +157,14 @@ def _normalize_eol(data: bytes) -> bytes:
     register() 用 git show HEAD: 返回 LF，check() 用 Path.read_bytes() 返回 CRLF，
     不 normalize 会导致 git 干净的文件被误报 TAMPERED。
     normalize 后两者一致，line ending 差异不再误报为篡改。
+
+    #ARCH-LINE-ENDING-CORRUPTION-001 修复（2026-07-22）：
+    原实现仅 ``data.replace(b"\\r\\n", b"\\n")``，对 ``\\r\\r\\n``（双 CR 腐败）
+    只替换尾部 ``\\r\\n``→``\\n``，残留首部 ``\\r``，结果为 ``\\r\\n``（未 normalize）。
+    现先替换 ``\\r\\r\\n``→``\\n``（双 CR 折叠为单 LF），再替换 ``\\r\\n``→``\\n``，
+    顺序敏感——必须先处理双 CR 再处理单 CRLF。
     """
-    return data.replace(b"\r\n", b"\n")
+    return data.replace(b"\r\r\n", b"\n").replace(b"\r\n", b"\n")
 
 
 def _hash_file(file_path: Path) -> str:
