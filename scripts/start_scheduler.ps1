@@ -4,33 +4,42 @@
 # [TTL] permanent
 # start_scheduler.ps1 - IntegratorScheduler guard process (auto-restart on crash)
 #
-# Boot chain (two options, see DEPLOY below):
-#   Option A (boot folder, no admin): Startup folder .bat/.lnk -> this script (while-true) -> python -m zephyr.data.scheduler
-#   Option B (Task Scheduler, admin): register_scheduler_task.ps1 -> this script (while-true) -> python -m zephyr.data.scheduler
+# Boot chain (watchdog architecture, single entry):
+#   Task Scheduler "ZephyrAlpha_DataScheduler" (AtLogOn + repeat every 5min, interactive user)
+#     -> this script (while-true, single-instance lock = idempotent re-entry)
+#       -> python -m zephyr.data.scheduler
 #
 # Design:
 #   - while($true): auto-restart scheduler on crash, keep 9:15-9:25 auction window online
-#   - Single-instance lock: file lock + PID check (rule: only 1 scheduler + 1 guard)
+#   - Single-instance lock: file lock + PID check (rule: only 1 scheduler + 1 guard);
+#     watchdog re-fires every 5min -> if guard alive, exits immediately ("Guard already running")
+#   - Orphan cleanup: on stale lock, kill orphaned business python (invariant: no guard => no scheduler)
+#   - finally-kill: guard exit kills child scheduler (prevents duplicate schedulers after revival)
 #   - Anti-rapid-restart: runtime <10s treated as startup failure, wait 30s before retry
 #   - Logs: scheduler writes tmp/scheduler_run.log, this guard writes tmp/scheduler_guard.log
 #
-# DEPLOY (Option A - boot folder, no admin required):
-#   Create a .bat in Startup folder (Win+R -> shell:startup) with this content:
-#     @echo off
-#     cd /d D:\ZephyrAlpha
-#     powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File "D:\ZephyrAlpha\scripts\start_scheduler.ps1"
-#   NOTE: .bat is NOT committed to repo (directory_contract.yaml forbids .bat in scripts/).
+# DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
+#   Registers BOTH watchdog tasks (scheduler + tick_subscriber).
+#   Legacy Startup folder .bat/.lnk entries may also exist - harmless: the single-instance lock
+#   arbitrates (losers exit immediately). Task Scheduler watchdog is the authoritative mechanism.
 #
-# DEPLOY (Option B - Task Scheduler, admin required):
-#   Run as admin: powershell -ExecutionPolicy Bypass -File scripts\register_scheduler_task.ps1
+# IMPORTANT for AI sessions: to (re)start service, use `schtasks /run /tn ZephyrAlpha_DataScheduler`
+#   (Task Scheduler detaches from IDE terminal job objects). NEVER Start-Process this guard from an
+#   IDE terminal for production duty - it dies with the terminal.
 #
-# Manual start: powershell -ExecutionPolicy Bypass -File scripts\start_scheduler.ps1
+# Manual start (debug only): powershell -ExecutionPolicy Bypass -File scripts\start_scheduler.ps1
 
 $ErrorActionPreference = "Stop"
 
 # ============== Paths ==============
 $RepoRoot = "D:\ZephyrAlpha"
+$BizModule = "zephyr.data.scheduler"
 $PythonExe = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
+if (-not (Test-Path $PythonExe)) {
+    # Fallback: absolute known path, then python on PATH (robust under non-interactive contexts)
+    $PythonExe = "C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe"
+    if (-not (Test-Path $PythonExe)) { $PythonExe = "python" }
+}
 $TmpDir = Join-Path $RepoRoot "tmp"
 $LockFile = Join-Path $TmpDir "scheduler.lock"
 $GuardLog = Join-Path $TmpDir "scheduler_guard.log"
@@ -55,6 +64,13 @@ if (Test-Path $LockFile) {
     }
     Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
     Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+    # Invariant: no guard => no business process. Kill orphaned business python from the dead guard.
+    Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
+        ForEach-Object {
+            Write-GuardLog "Killing orphaned $BizModule (PID=$($_.ProcessId))"
+            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+        }
 }
 
 "$PID" | Out-File -FilePath $LockFile -Encoding utf8 -NoNewline
@@ -71,7 +87,7 @@ try {
         Write-GuardLog "Starting scheduler (attempt $($restartCount + 1))..."
 
         $proc = Start-Process -FilePath $PythonExe `
-            -ArgumentList "-m", "zephyr.data.scheduler" `
+            -ArgumentList "-m", $BizModule `
             -WorkingDirectory $RepoRoot `
             -WindowStyle Hidden `
             -PassThru
@@ -98,6 +114,14 @@ try {
     }
 }
 finally {
+    Write-GuardLog "=== Guard stopping (guard PID=$PID), killing child scheduler if alive ==="
+    # Invariant: no guard => no business process (prevents duplicate schedulers when watchdog revives guard)
+    if ($proc -and -not $proc.HasExited) {
+        Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+    }
+    Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
+        ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     Write-GuardLog "=== Guard stopped (guard PID=$PID) ==="
     Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
 }
