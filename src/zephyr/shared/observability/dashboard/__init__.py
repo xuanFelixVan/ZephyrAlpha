@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.observability.metrics; zephyr.data.ch_writer(可选运行时查询)
 # [CONSUMERS] grafana(provisioning); zephyr.shared.observability.dashboard.dashboard_templates
 # [STARTUP] lazy
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] datasource配置生成可幂等输出YAML; Dashboard JSON符合Grafana 11 provisioning格式; 告警规则使用Prometheus表达式
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

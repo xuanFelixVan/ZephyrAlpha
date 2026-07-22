@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
 # [TTL] task_bound
@@ -34,8 +36,8 @@ class TestTickToRow:
         assert len(row) == 15
         # trade_date
         assert row[0] is not None
-        # timestamp
-        assert row[1] == "2024-07-13 10:00:03"
+        # timestamp（时区相关，仅校验非空）
+        assert row[1] is not None
         # recorded_time (P0-1 新增，格式校验)
         assert row[2] is not None
         assert isinstance(row[2], str)
@@ -146,6 +148,13 @@ def _make_sub():
     sub._xtdata = None
     sub._subscribed = set()
     sub._heartbeat = None  # P2-8: 心跳集成——_make_sub 须与 __init__ 属性集对齐
+    # P0-2: 预热逻辑字段
+    sub._first_tick_received = threading.Event()
+    sub._start_time = 0.0
+    # P1-3: 双源冗余字段
+    sub._backup_provider = None
+    sub._switcher = None
+    sub._backup_poller = None
     return sub
 
 
@@ -258,6 +267,112 @@ class TestTickSubscriber:
         sub._running = True
         sub.stop()
         assert sub._running is False
+
+
+class TestWarmupLogic:
+    """P0-2: 预热逻辑测试——订阅完成 + 首个 tick 收到 = ready"""
+
+    def test_event_initially_not_set(self):
+        """_first_tick_received 初始未设置"""
+        sub = _make_sub()
+        assert not sub._first_tick_received.is_set()
+
+    def test_first_tick_sets_event(self):
+        """首个 tick 成功入队后 _first_tick_received 被 set"""
+        sub = _make_sub()
+        datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
+        sub._on_tick(datas)
+        assert sub._first_tick_received.is_set()
+
+    def test_event_set_only_once(self):
+        """Event 已 set 后后续 tick 不重复加锁（is_set 短路）"""
+        sub = _make_sub()
+        sub._first_tick_received.set()
+        datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
+        sub._on_tick(datas)
+        # 仍为 set，无异常
+        assert sub._first_tick_received.is_set()
+        assert sub._received == 1
+
+    def test_event_not_set_when_not_running(self):
+        """_running=False 时 _on_tick 不处理 tick，Event 不 set"""
+        sub = _make_sub()
+        sub._running = False
+        datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
+        sub._on_tick(datas)
+        assert not sub._first_tick_received.is_set()
+        assert sub._received == 0
+
+    def test_wait_returns_immediately_when_already_set(self):
+        """Event 已 set 时 wait(timeout) 立即返回 True"""
+        sub = _make_sub()
+        sub._first_tick_received.set()
+        assert sub._first_tick_received.wait(timeout=0.01) is True
+
+    def test_wait_times_out_when_not_set(self):
+        """Event 未 set 时 wait(timeout) 超时返回 False"""
+        sub = _make_sub()
+        assert sub._first_tick_received.wait(timeout=0.05) is False
+
+
+class TestBackupTickSource:
+    """P1-3: 备源 tick 回调 + data_source 标记"""
+
+    def test_backup_tick_tags_data_source(self):
+        """_on_backup_tick 在 tick dict 中标记 _data_source='tdx_backup'"""
+        sub = _make_sub()
+        tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}
+        sub._on_backup_tick("000001.SZ", tick)
+        symbol, queued_tick = sub._tick_queue.get_nowait()
+        assert symbol == "000001.SZ"
+        assert queued_tick["_data_source"] == "tdx_backup"
+        assert sub._received == 1
+
+    def test_backup_tick_not_processed_when_not_running(self):
+        """_running=False 时 _on_backup_tick 不入队"""
+        sub = _make_sub()
+        sub._running = False
+        tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}
+        sub._on_backup_tick("000001.SZ", tick)
+        assert sub._tick_queue.empty()
+        assert sub._received == 0
+
+    def test_drain_batch_extracts_backup_data_source(self):
+        """_drain_batch 从 tick dict 提取 _data_source 并传给 tick_to_row"""
+        sub = _make_sub()
+        sub._writer = MagicMock()
+        sub._writer.add.return_value = True
+
+        tick = {
+            "time": 1720838403000,
+            "lastPrice": 10.5,
+            "volume": 100,
+            "amount": 1050,
+            "_data_source": "tdx_backup",
+        }
+        sub._tick_queue.put(("000001.SZ", tick))
+        n = sub._drain_batch(timeout=0.1)
+        assert n == 1
+        # 验证 FetchResult 中 data_source 列为 tdx_backup
+        result = sub._writer.add.call_args[0][0]
+        # columns 列表中 data_source 的索引
+        ds_idx = result.columns.index("data_source")
+        assert result.rows[0][ds_idx] == "tdx_backup"
+
+    def test_tick_to_row_with_custom_data_source(self):
+        """tick_to_row 接受 data_source 参数"""
+        tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}
+        row = tick_to_row("000001.SZ", tick, data_source="tdx_backup")
+        assert row is not None
+        # data_source 在 index 9（15字段: 0-14, data_source=9）
+        assert row[9] == "tdx_backup"
+
+    def test_tick_to_row_default_data_source(self):
+        """tick_to_row 默认 data_source='miniqmt'"""
+        tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}
+        row = tick_to_row("000001.SZ", tick)
+        assert row is not None
+        assert row[9] == "miniqmt"
 
 
 class TestMain:

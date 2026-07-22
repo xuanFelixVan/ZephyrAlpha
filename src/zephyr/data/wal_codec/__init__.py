@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.local_replay(WAL段文件格式来源)
 # [CONSUMERS] zephyr.data.wal_writer(可选接入)
 # [STARTUP] lazy
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] TSV格式向后兼容; magic number区分格式; codec_registry路由解码器; 混合格式段文件可共存
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
