@@ -1,4 +1,6 @@
-# [A_module] module_id=MOD-GOV_data_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
+# [A_module] module_id=MOD-GOV-data_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # v2.2.0 新增 MiniQMT 实盘行情 Provider（ORPHAN-MODULE gate：需在 src/**/*.py 有 import 引用）

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2218 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-reconciliation_registry | docs/03_modules/_domain_governance/audit/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_reconciliation_registry | docs/03_modules/_domain_governance/audit/blueprint.md | §
 # [MODULE] tests.governance.audit.test_blueprint_frontmatter_reconciler_post_commit
 # [STABILITY] volatile
 # [SAFETY] L

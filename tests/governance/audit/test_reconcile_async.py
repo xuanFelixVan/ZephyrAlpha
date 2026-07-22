@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-test_reconcile_async | tests/governance/audit/test_reconcile_async.py | §Ruling-100PCT-AI-GOVERNANCE-P2-3
+# [BLUEPRINT] MOD-GOV_test_reconcile_async | tests/governance/audit/test_reconcile_async.py | §Ruling-100PCT-AI-GOVERNANCE-P2-3
 # [MODULE] tests.governance.audit.test_reconcile_async
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconcile_runner; zephyr.governance.audit.reconcile_worker; zephyr.gov_enforcement.rule_bridge.git_commit_gateway

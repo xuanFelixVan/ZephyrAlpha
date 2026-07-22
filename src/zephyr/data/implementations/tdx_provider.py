@@ -35,6 +35,7 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
+    CapabilityContract,
     DataSourceBase,
     DataSourceMeta,
     FetchPayload,
@@ -61,6 +62,13 @@ _RELIABLE_SERVERS = [
     ("221.231.141.60", 7709),
 ]
 
+# 880xxx 板块指数K线周期 → mootdx frequency 映射
+# mootdx index_bars frequency: 0=5min 1=15min 2=30min 3=1hour 7=1min 9=日线
+_PERIOD_TO_FREQ = {
+    "1d": 9, "5m": 0, "1m": 7, "15m": 1, "30m": 2, "60m": 3,
+}
+_MARKET_SH = 1  # 880xxx 板块指数归属沪市
+
 
 class TDXProvider(DataSourceBase):
     """通达信数据源 Provider。
@@ -77,7 +85,10 @@ class TDXProvider(DataSourceBase):
         requires_process=False,
         thread_safety="single_thread",
         rate_limit_default=0,
-        capabilities=["industry_class", "kline_sector"],
+        capabilities=[
+            "industry_class",
+            CapabilityContract("kline_sector", supports_symbols_null=True),
+        ],
         known_issues=["单线程串行", "无板块分笔Tick", "需bestip选最快服务器"],
     )
 
@@ -195,18 +206,55 @@ class TDXProvider(DataSourceBase):
 
     # ---- 板块指数K线 ----
 
+    @staticmethod
+    def _resolve_frequency(extra) -> tuple[int, str]:
+        """从 payload.extra 解析 period → mootdx frequency。
+
+        period 默认 "1d"（日线）。支持 1d/5m/1m/15m/30m/60m。
+        """
+        period = (extra or {}).get("period", "1d")
+        return _PERIOD_TO_FREQ.get(period, 9), period
+
+    @staticmethod
+    def _resolve_sector_symbols() -> list[str]:
+        """symbols=None 时从 sector_constituent 表获取全部板块代码。
+
+        与 sector_snapshot_collector._get_all_sector_codes 同模式。
+        """
+        from clickhouse_driver import Client
+        from ..ch_config import load_ch_config
+
+        cfg = load_ch_config()
+        client = Client(
+            host=cfg["host"], port=int(cfg["port"]),
+            user=cfg["user"], password=cfg["password"],
+        )
+        rows = client.execute(
+            "SELECT DISTINCT sector_code FROM c1_market.sector_constituent "
+            "ORDER BY sector_code"
+        )
+        client.disconnect()
+        return [r[0] for r in rows]
+
     def _fetch_kline_sector(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """获取板块指数K线（client.index_bars）。
 
-        mootdx index_bars(symbol, frequency=9, start, offset) 返回 DataFrame。
-        frequency: 9=日线。
+        mootdx index_bars(symbol, frequency, market, start, offset) 返回 DataFrame。
+        frequency: 9=日线 0=5min 7=1min 1=15min 2=30min 3=1hour。
+        通过 payload.extra["period"] 配置周期，默认 "1d"。
+        symbols=None 时自动从 sector_constituent 表获取全部880xxx板块代码。
+        880xxx 板块指数通过 TCP 直连盘中实时获取，不依赖 tdx 客户端盘后下载。
         """
         table = payload.table or _TBL_KLINE_SECTOR
         columns = ["trade_date", "code", "open", "high", "low", "close", "volume", "amount"]
         symbols = payload.symbols or []
+        if not symbols:
+            symbols = self._resolve_sector_symbols()
+            self._log.info(f"symbols=None，从 sector_constituent 解析 {len(symbols)} 只板块")
         count = int(payload.extra.get("count", 100)) if payload.extra else 100
+        frequency, period = self._resolve_frequency(payload.extra)
 
         for code in symbols:
             t0 = time.time()
@@ -217,22 +265,27 @@ class TDXProvider(DataSourceBase):
                     self._client.index_bars,
                     policy,
                     symbol=raw_code,
-                    frequency=9,     # 日线
+                    frequency=frequency,
+                    market=_MARKET_SH,
                     start=0,
                     offset=count,
                 )
                 rows: list[tuple] = []
                 if bars is not None and not bars.empty:
-                    rows = self._build_sector_kline_rows(bars, code)
-                self._log.info(f"板块K线 {code}: {len(rows)} 行")
+                    rows = self._build_sector_kline_rows(bars, code, period)
+                self._log.info(f"板块K线 {code} ({period}): {len(rows)} 行")
                 if rows:
+                    last_key = (
+                        datetime.date.today().isoformat()
+                        if period == "1d" else rows[-1][0]
+                    )
                     yield FetchResult(
                         table=table, columns=columns, rows=rows,
-                        last_key=datetime.date.today().isoformat(),
+                        last_key=last_key,
                         elapsed_sec=time.time() - t0,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                self._log.warning(f"板块K线 {code} 获取失败: {e}")
+                self._log.warning(f"板块K线 {code} ({period}) 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key="", elapsed_sec=time.time() - t0, error=str(e),
@@ -246,15 +299,16 @@ class TDXProvider(DataSourceBase):
         return code.split(".")[0] if code[0].isdigit() else code.split(".")[-1]
 
     @staticmethod
-    def _build_sector_kline_rows(bars, code: str) -> list:
+    def _build_sector_kline_rows(bars, code: str, period: str = "1d") -> list:
         """从 bars DataFrame 构造板块K线行列表。
 
-        datetime 格式 "2026-02-06 15:00"，截取日期部分。
+        日线 datetime 格式 "2026-02-06 15:00"，截取日期部分。
+        分钟线保留完整时间戳 "2026-02-06 15:00:00"。
         """
         rows = []
         for _, bar in bars.iterrows():
             dt = str(bar.get("datetime", ""))
-            trade_date = dt[:10] if len(dt) >= 10 else dt
+            trade_date = dt if period != "1d" else (dt[:10] if len(dt) >= 10 else dt)
             rows.append((
                 trade_date,
                 code,

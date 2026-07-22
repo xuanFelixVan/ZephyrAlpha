@@ -1,4 +1,6 @@
-# [A_module] module_id=MOD-GOV_context_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
+# [A_module] module_id=MOD-GOV-context_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 __all__ = [
     "BandwidthDimension",

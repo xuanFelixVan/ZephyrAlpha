@@ -1,4 +1,8 @@
-# [BLUEPRINT] MOD-GOV-session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
+# [BLUEPRINT] MOD-GOV_session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
+
+
+
+
 
 
 
@@ -6,7 +10,15 @@
 
 
 
+
+
+
+
 # [DOMAIN] D_GOV_ENFORCEMENT
+
+
+
+
 
 
 
@@ -14,7 +26,15 @@
 
 
 
+
+
+
+
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
+
+
+
+
 
 
 
@@ -22,7 +42,15 @@
 
 
 
+
+
+
+
 # [MATURITY] prototype
+
+
+
+
 
 
 
@@ -30,7 +58,15 @@
 
 
 
+
+
+
+
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
+
+
+
+
 
 
 
@@ -38,7 +74,15 @@
 
 
 
+
+
+
+
 # [SAFETY] M
+
+
+
+
 
 
 
@@ -46,7 +90,15 @@
 
 
 
+
+
+
+
 # [ERROR_CONTRACT] 所有函数返回 dict（不抛异常）；WorktreeManager/SessionRegistry 异常时返回 error 字段；worktree 不存在时返回 not_found=True
+
+
+
+
 
 
 
@@ -54,11 +106,23 @@
 
 
 
+
+
+
+
 # [A_module] module_id=MOD-GOV_session_worktree | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 
 
 
+
+
+
+
 # [TTL] permanent
+
+
+
+
 
 
 
@@ -70,7 +134,19 @@
 
 
 
+
+
+
+
+
+
+
+
 41 个并发丢失案例分析结论：模式 A（git stash/reset/checkout 冲掉工作区）占 51%，
+
+
+
+
 
 
 
@@ -78,7 +154,15 @@
 
 
 
+
+
+
+
 同时治 A+B+D 的方案是 worktree 物理隔离——每 AI 对话独占一个 git worktree，
+
+
+
+
 
 
 
@@ -90,7 +174,19 @@
 
 
 
+
+
+
+
+
+
+
+
 本模块是 AI 侧的一体化生命周期 helper，封装 WorktreeManager + SessionRegistry，
+
+
+
+
 
 
 
@@ -98,7 +194,19 @@
 
 
 
+
+
+
+
 适配 Trae IDE「AI 对话触发并发工作」模式。
+
+
+
+
+
+
+
+
 
 
 
@@ -114,7 +222,19 @@
 
 
 
+
+
+
+
+
+
+
+
     1. 对话启动 -> session_worktree_start(session_id)
+
+
+
+
 
 
 
@@ -122,7 +242,15 @@
 
 
 
+
+
+
+
        -> 返回 worktree_path
+
+
+
+
 
 
 
@@ -130,7 +258,15 @@
 
 
 
+
+
+
+
     3. 提交 -> session_worktree_commit(session_id, files, message)
+
+
+
+
 
 
 
@@ -138,7 +274,15 @@
 
 
 
+
+
+
+
        -> worktree 内直接 git add + commit（独立 index，无需 GitCommitGateway）
+
+
+
+
 
 
 
@@ -146,11 +290,23 @@
 
 
 
+
+
+
+
        -> merge 回主分支 + 清理 worktree + 注销 session
 
 
 
+
+
+
+
     5. 放弃任务 -> session_worktree_abort(session_id)
+
+
+
+
 
 
 
@@ -162,7 +318,19 @@
 
 
 
+
+
+
+
+
+
+
+
 为什么 worktree 内 commit 绕过 GitCommitGateway？
+
+
+
+
 
 
 
@@ -170,7 +338,15 @@
 
 
 
+
+
+
+
     **共享工作目录**——防止多 session 在同一 index 上搭便车/覆盖。
+
+
+
+
 
 
 
@@ -178,7 +354,15 @@
 
 
 
+
+
+
+
   - GitCommitGateway 的 _GlobalCommitLock 串行化的是主仓库 index；worktree commit
+
+
+
+
 
 
 
@@ -186,7 +370,19 @@
 
 
 
+
+
+
+
   - merge 阶段（session_worktree_merge）才需要串行化——由 WorktreeManager._WorktreeLock 保护。
+
+
+
+
+
+
+
+
 
 
 
@@ -202,7 +398,19 @@ Usage（AI 通过 RunCommand 调用）::
 
 
 
+
+
+
+
+
+
+
+
     python -c "
+
+
+
+
 
 
 
@@ -210,7 +418,15 @@ Usage（AI 通过 RunCommand 调用）::
 
 
 
+
+
+
+
         session_worktree_start, session_worktree_commit,
+
+
+
+
 
 
 
@@ -218,7 +434,15 @@ Usage（AI 通过 RunCommand 调用）::
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -226,7 +450,15 @@ Usage（AI 通过 RunCommand 调用）::
 
 
 
+
+
+
+
     r = session_worktree_start(sid)
+
+
+
+
 
 
 
@@ -234,7 +466,15 @@ Usage（AI 通过 RunCommand 调用）::
 
 
 
+
+
+
+
     # AI 后续用 r['worktree_path'] 前缀操作文件
+
+
+
+
 
 
 
@@ -242,7 +482,19 @@ Usage（AI 通过 RunCommand 调用）::
 
 
 
+
+
+
+
 """
+
+
+
+
+
+
+
+
 
 
 
@@ -258,7 +510,19 @@ from __future__ import annotations
 
 
 
+
+
+
+
+
+
+
+
 __all__ = [
+
+
+
+
 
 
 
@@ -266,7 +530,15 @@ __all__ = [
 
 
 
+
+
+
+
     "session_worktree_commit",
+
+
+
+
 
 
 
@@ -274,7 +546,15 @@ __all__ = [
 
 
 
+
+
+
+
     "session_worktree_abort",
+
+
+
+
 
 
 
@@ -282,7 +562,15 @@ __all__ = [
 
 
 
+
+
+
+
     "session_worktree_sweep",
+
+
+
+
 
 
 
@@ -290,7 +578,15 @@ __all__ = [
 
 
 
+
+
+
+
     "claim_files_for_edit",  # Ruling:100PCT-AI-GOVERNANCE P2-2 — 编辑前 claim
+
+
+
+
 
 
 
@@ -302,7 +598,19 @@ __all__ = [
 
 
 
+
+
+
+
+
+
+
+
 import json
+
+
+
+
 
 
 
@@ -310,7 +618,15 @@ import os
 
 
 
+
+
+
+
 import subprocess
+
+
+
+
 
 
 
@@ -318,11 +634,23 @@ import sys
 
 
 
+
+
+
+
 import contextlib
 
 
 
+
+
+
+
 import time
+
+
+
+
 
 
 
@@ -334,7 +662,19 @@ from pathlib import Path
 
 
 
+
+
+
+
+
+
+
+
 from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
+
+
+
+
 
 
 
@@ -342,7 +682,15 @@ from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
 
 
 
+
+
+
+
     WorktreeError,
+
+
+
+
 
 
 
@@ -350,11 +698,23 @@ from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
 
 
 
+
+
+
+
     _force_rmtree,
 
 
 
+
+
+
+
 )
+
+
+
+
 
 
 
@@ -362,7 +722,15 @@ from zephyr.security.access_control.session_concurrency import SessionRegistry
 
 
 
+
+
+
+
 from zephyr.gov_enforcement.rule_bridge.session_claim import generate_session_id
+
+
+
+
 
 
 
@@ -370,7 +738,15 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 
 
+
+
+
+
 from zephyr.shared.infra.process_pool import is_pid_alive
+
+
+
+
 
 
 
@@ -378,7 +754,15 @@ from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbea
 
 
 
+
+
+
+
 from zephyr.gov_enforcement.rule_bridge.emergency_commit import check_start_blocked as _check_emergency_start_blocked
+
+
+
+
 
 
 
@@ -386,11 +770,27 @@ from zephyr.governance.audit.ai_error_pattern_library import (  # #ARCH-PREVENTA
 
 
 
+
+
+
+
     get_default_library as _get_error_pattern_library,
 
 
 
+
+
+
+
 )
+
+
+
+
+
+
+
+
 
 
 
@@ -402,11 +802,27 @@ import functools
 
 
 
+
+
+
+
 import logging
 
 
 
+
+
+
+
 from typing import TypedDict
+
+
+
+
+
+
+
+
 
 
 
@@ -426,7 +842,23 @@ logger = logging.getLogger(__name__)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 class StartResult(TypedDict, total=False):
+
+
+
+
 
 
 
@@ -434,7 +866,15 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
     ok: bool                    # 消费方 MUST 只读此键判定成败（AI 契约机读化）
+
+
+
+
 
 
 
@@ -442,7 +882,15 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
     worktree_path: str
+
+
+
+
 
 
 
@@ -450,7 +898,15 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
     registered: bool
+
+
+
+
 
 
 
@@ -458,7 +914,15 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
     error: str                  # 失败时存在
+
+
+
+
 
 
 
@@ -466,7 +930,15 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
     warning: str                # 任务去重警告时存在
+
+
+
+
 
 
 
@@ -474,7 +946,15 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
     overlap_files: list[str]    # 任务去重重叠文件
+
+
+
+
 
 
 
@@ -490,7 +970,23 @@ class StartResult(TypedDict, total=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 class CommitResult(TypedDict, total=False):
+
+
+
+
 
 
 
@@ -498,7 +994,15 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
     ok: bool                    # 消费方 MUST 只读此键判定成败
+
+
+
+
 
 
 
@@ -506,7 +1010,15 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
     status: str                 # "OK" | "NOTHING_TO_COMMIT" | "FAILED" | "GATE_VIOLATION"
+
+
+
+
 
 
 
@@ -514,7 +1026,15 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
     commit_hash: str
+
+
+
+
 
 
 
@@ -522,7 +1042,15 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
     held_overlap: bool          # HELD-OVERLAP 阻断时 True
+
+
+
+
 
 
 
@@ -530,7 +1058,15 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
     gate_violation: bool        # pre-commit gate 阻断时 True
+
+
+
+
 
 
 
@@ -538,7 +1074,15 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
     base_sync_failed: bool      # worktree base 对齐失败时 True
+
+
+
+
 
 
 
@@ -554,7 +1098,23 @@ class CommitResult(TypedDict, total=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 class MergeResult(TypedDict, total=False):
+
+
+
+
 
 
 
@@ -562,7 +1122,15 @@ class MergeResult(TypedDict, total=False):
 
 
 
+
+
+
+
     ok: bool                    # 消费方 MUST 只读此键判定成败
+
+
+
+
 
 
 
@@ -570,7 +1138,15 @@ class MergeResult(TypedDict, total=False):
 
 
 
+
+
+
+
     merged: bool
+
+
+
+
 
 
 
@@ -578,7 +1154,15 @@ class MergeResult(TypedDict, total=False):
 
 
 
+
+
+
+
     cleaned: bool
+
+
+
+
 
 
 
@@ -586,7 +1170,15 @@ class MergeResult(TypedDict, total=False):
 
 
 
+
+
+
+
     gate_violation: bool
+
+
+
+
 
 
 
@@ -594,7 +1186,15 @@ class MergeResult(TypedDict, total=False):
 
 
 
+
+
+
+
     reconcile_results: list[dict]
+
+
+
+
 
 
 
@@ -602,11 +1202,31 @@ class MergeResult(TypedDict, total=False):
 
 
 
+
+
+
+
     blocked_next: bool          # 本次写入 block_next 时 True
 
 
 
+
+
+
+
     error: str
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -622,7 +1242,15 @@ class AbortResult(TypedDict, total=False):
 
 
 
+
+
+
+
     """session_worktree_abort 返回契约（裁定#A，2026-07-19）。"""
+
+
+
+
 
 
 
@@ -630,7 +1258,15 @@ class AbortResult(TypedDict, total=False):
 
 
 
+
+
+
+
     session_id: str
+
+
+
+
 
 
 
@@ -638,11 +1274,23 @@ class AbortResult(TypedDict, total=False):
 
 
 
+
+
+
+
     message: str
 
 
 
+
+
+
+
     unregistered: bool
+
+
+
+
 
 
 
@@ -658,7 +1306,23 @@ class AbortResult(TypedDict, total=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 class StatusResult(TypedDict, total=False):
+
+
+
+
 
 
 
@@ -666,7 +1330,15 @@ class StatusResult(TypedDict, total=False):
 
 
 
+
+
+
+
     ok: bool                    # 消费方 MUST 只读此键判定成败
+
+
+
+
 
 
 
@@ -674,7 +1346,15 @@ class StatusResult(TypedDict, total=False):
 
 
 
+
+
+
+
     exists: bool
+
+
+
+
 
 
 
@@ -682,11 +1362,23 @@ class StatusResult(TypedDict, total=False):
 
 
 
+
+
+
+
     branch: str
 
 
 
+
+
+
+
     dirty: bool
+
+
+
+
 
 
 
@@ -702,7 +1394,23 @@ class StatusResult(TypedDict, total=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 class SweepResult(TypedDict, total=False):
+
+
+
+
 
 
 
@@ -710,7 +1418,15 @@ class SweepResult(TypedDict, total=False):
 
 
 
+
+
+
+
     ok: bool                    # 消费方 MUST 只读此键判定成败
+
+
+
+
 
 
 
@@ -718,11 +1434,23 @@ class SweepResult(TypedDict, total=False):
 
 
 
+
+
+
+
     skipped: int
 
 
 
+
+
+
+
     warnings: list[str]
+
+
+
+
 
 
 
@@ -738,7 +1466,23 @@ class SweepResult(TypedDict, total=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _compute_ok(result: dict) -> bool:
+
+
+
+
 
 
 
@@ -746,7 +1490,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
     
+
+
+
+
 
 
 
@@ -754,7 +1506,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
     治本：统一注入 ok 键，作为消费方判定成败的唯一入口，消除键名幻觉空间。
+
+
+
+
 
 
 
@@ -762,11 +1522,23 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
     if result.get("error"):
 
 
 
+
+
+
+
         return False
+
+
+
+
 
 
 
@@ -774,7 +1546,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
         return False
+
+
+
+
 
 
 
@@ -782,7 +1562,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
                  "directory_contract_violation", "base_sync_failed", "blocked"):
+
+
+
+
 
 
 
@@ -790,7 +1578,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
             return False
+
+
+
+
 
 
 
@@ -798,7 +1594,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
         return False
+
+
+
+
 
 
 
@@ -806,7 +1610,15 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
         return False
+
+
+
+
 
 
 
@@ -822,7 +1634,23 @@ def _compute_ok(result: dict) -> bool:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _inject_ok(fn):
+
+
+
+
 
 
 
@@ -830,7 +1658,15 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
     
+
+
+
+
 
 
 
@@ -838,7 +1674,15 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
     与 _compute_ok 配合，提供明确的成功判定标准。
+
+
+
+
 
 
 
@@ -846,7 +1690,15 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
     @functools.wraps(fn)
+
+
+
+
 
 
 
@@ -854,7 +1706,15 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
         r = fn(*args, **kwargs)
+
+
+
+
 
 
 
@@ -862,11 +1722,23 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
             r.setdefault("ok", _compute_ok(r))
 
 
 
+
+
+
+
         return r
+
+
+
+
 
 
 
@@ -878,7 +1750,19 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
+
+
+
+
 # worktree 路径下跳过的 gate（session_worktree 有自己的 held_files 机制替代
+
+
+
+
 
 
 
@@ -886,11 +1770,23 @@ def _inject_ok(fn):
 
 
 
+
+
+
+
 # session_worktree_commit 和 _pre_merge_gate_check 共用。
 
 
 
+
+
+
+
 _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
+
+
+
+
 
 
 
@@ -902,7 +1798,19 @@ _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHA
 
 
 
+
+
+
+
+
+
+
+
 # #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+
+
+
+
 
 
 
@@ -910,7 +1818,15 @@ _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHA
 
 
 
+
+
+
+
 # 病根：_pre_merge_gate_check 在主工作区 Python 进程中运行，sys.path 指向主工作区 src；
+
+
+
+
 
 
 
@@ -918,7 +1834,15 @@ _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHA
 
 
 
+
+
+
+
 # 导致 subprocess-based gate（DIRECTORY-CONTRACT / TTL-METADATA / ENCODING-SAFETY /
+
+
+
+
 
 
 
@@ -926,7 +1850,15 @@ _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHA
 
 
 
+
+
+
+
 # 治本：pre-merge 阶段只保留 PRE-MERGE-TOPO-CHECK（独立 subprocess，无 sys.path 问题），
+
+
+
+
 
 
 
@@ -934,7 +1866,15 @@ _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHA
 
 
 
+
+
+
+
 # 覆盖（拓扑不一致检测）；代码质量类 gate 不依赖主分支状态，pre-commit 运行一次即够。
+
+
+
+
 
 
 
@@ -946,7 +1886,19 @@ _PRE_MERGE_SKIP_ALL_COMMIT_GATES = True
 
 
 
+
+
+
+
+
+
+
+
 # Fast-path env 授权（ARCH-GIT-CALL-BUDGET P1.3，2026-07-19）
+
+
+
+
 
 
 
@@ -954,7 +1906,15 @@ _PRE_MERGE_SKIP_ALL_COMMIT_GATES = True
 
 
 
+
+
+
+
 # 调 git checkout/reset/restore/revert 时设置此 env 使 scripts/git_guard.py
+
+
+
+
 
 
 
@@ -962,11 +1922,23 @@ _PRE_MERGE_SKIP_ALL_COMMIT_GATES = True
 
 
 
+
+
+
+
 # 根因：alias 拦截每次危险命令触发 2-3x git 子进程 spawn，在 14 万文件工作区
 
 
 
+
+
+
+
 # + fscache/fsmonitor 路径上是 git.exe 崩溃（0xc0000005 @ 0x13e4d4）的放大源。
+
+
+
+
 
 
 
@@ -982,7 +1954,23 @@ _FAST_PATH_ENV = "ZEPHYR_GIT_GUARD_FAST_PATH"
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _trusted_git_env() -> dict:
+
+
+
+
 
 
 
@@ -994,7 +1982,19 @@ def _trusted_git_env() -> dict:
 
 
 
+
+
+
+
+
+
+
+
     返回 os.environ 的副本 + ZEPHYR_GIT_GUARD_FAST_PATH=1。
+
+
+
+
 
 
 
@@ -1002,7 +2002,15 @@ def _trusted_git_env() -> dict:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1010,7 +2018,15 @@ def _trusted_git_env() -> dict:
 
 
 
+
+
+
+
     env[_FAST_PATH_ENV] = "1"
+
+
+
+
 
 
 
@@ -1026,7 +2042,23 @@ def _trusted_git_env() -> dict:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root: Path) -> None:
+
+
+
+
 
 
 
@@ -1038,7 +2070,19 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
+
+
+
+
     病根：并发场景下 worktree 意外消失无迹可查——merge/abort/sweep 三个删除点
+
+
+
+
 
 
 
@@ -1046,7 +2090,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
     本函数，JSONL 追加落盘主仓库 .runtime/worktree_ops_log.jsonl（锚定主仓库根，
+
+
+
+
 
 
 
@@ -1058,7 +2110,19 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
+
+
+
+
     降级：遥测失败仅 debug 日志，绝不阻断 merge/abort/sweep 主流程。
+
+
+
+
 
 
 
@@ -1066,11 +2130,23 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
     try:
 
 
 
+
+
+
+
         from datetime import datetime, timezone
+
+
+
+
 
 
 
@@ -1082,7 +2158,19 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
+
+
+
+
         main_root = strip_session_worktree(Path(root))
+
+
+
+
 
 
 
@@ -1090,7 +2178,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
         log_dir.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -1098,7 +2194,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
             "ts": datetime.now(timezone.utc).isoformat(),
+
+
+
+
 
 
 
@@ -1106,7 +2210,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -1114,7 +2226,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
             "path": str(path),
+
+
+
+
 
 
 
@@ -1122,7 +2242,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
         with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
+
+
+
+
 
 
 
@@ -1130,7 +2258,15 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: 遥测降级不阻断主流程
+
+
+
+
 
 
 
@@ -1146,7 +2282,23 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _quarantine_root(root: Path) -> Path:
+
+
+
+
 
 
 
@@ -1154,7 +2306,15 @@ def _quarantine_root(root: Path) -> Path:
 
 
 
+
+
+
+
     
+
+
+
+
 
 
 
@@ -1162,11 +2322,23 @@ def _quarantine_root(root: Path) -> Path:
 
 
 
+
+
+
+
     治本：删除改为移送隔离区，保留 72h 后可恢复，sweep 定期清理过期文件。
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1182,7 +2354,23 @@ def _quarantine_root(root: Path) -> Path:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # P3-1.1 治本（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 A，2026-07-19）：
+
+
+
+
 
 
 
@@ -1190,7 +2378,15 @@ def _quarantine_root(root: Path) -> Path:
 
 
 
+
+
+
+
 # 作为公共 API log_workspace_op / compute_content_hash。本模块保留 thin wrapper 向后兼容
+
+
+
+
 
 
 
@@ -1198,7 +2394,15 @@ def _quarantine_root(root: Path) -> Path:
 
 
 
+
+
+
+
 # 应直接用 shared API，不再需要 audit_worktree_ops_telemetry.py 的 "rollback" 豁免。
+
+
+
+
 
 
 
@@ -1206,11 +2410,23 @@ from zephyr.shared.io.workspace_telemetry import (
 
 
 
+
+
+
+
     compute_content_hash as _compute_content_hash_impl,
 
 
 
+
+
+
+
     log_workspace_op as _log_workspace_op_impl,
+
+
+
+
 
 
 
@@ -1226,7 +2442,23 @@ from zephyr.shared.io.workspace_telemetry import (
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _log_workspace_op(
+
+
+
+
 
 
 
@@ -1234,7 +2466,15 @@ def _log_workspace_op(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -1242,7 +2482,15 @@ def _log_workspace_op(
 
 
 
+
+
+
+
     root: Path,
+
+
+
+
 
 
 
@@ -1250,7 +2498,15 @@ def _log_workspace_op(
 
 
 
+
+
+
+
     backup_path: str = "",
+
+
+
+
 
 
 
@@ -1258,7 +2514,15 @@ def _log_workspace_op(
 
 
 
+
+
+
+
 ) -> None:
+
+
+
+
 
 
 
@@ -1270,11 +2534,31 @@ def _log_workspace_op(
 
 
 
+
+
+
+
+
+
+
+
     实现已提取到 zephyr.shared.io.workspace_telemetry.log_workspace_op（裁定 A，2026-07-19）。
 
 
 
+
+
+
+
     本 wrapper 保留以避免 4 处调用（L353/1668/2059/3000）改动；新代码应直接用 shared API。
+
+
+
+
+
+
+
+
 
 
 
@@ -1290,7 +2574,19 @@ def _log_workspace_op(
 
 
 
+
+
+
+
+
+
+
+
     Entry dict format (in shared impl):
+
+
+
+
 
 
 
@@ -1298,7 +2594,15 @@ def _log_workspace_op(
 
 
 
+
+
+
+
          "backup_path": backup_path, "content_hash": content_hash, ...}
+
+
+
+
 
 
 
@@ -1306,7 +2610,15 @@ def _log_workspace_op(
 
 
 
+
+
+
+
     _log_workspace_op_impl(
+
+
+
+
 
 
 
@@ -1314,11 +2626,31 @@ def _log_workspace_op(
 
 
 
+
+
+
+
         file=file, backup_path=backup_path, content_hash=content_hash,
 
 
 
+
+
+
+
     )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1334,7 +2666,19 @@ def _compute_content_hash(path: Path) -> str:
 
 
 
+
+
+
+
     """计算文件内容的 sha256 hex 前 16 字符（thin wrapper，向后兼容）。
+
+
+
+
+
+
+
+
 
 
 
@@ -1346,7 +2690,15 @@ def _compute_content_hash(path: Path) -> str:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1362,7 +2714,23 @@ def _compute_content_hash(path: Path) -> str:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _quarantine_file(
+
+
+
+
 
 
 
@@ -1370,11 +2738,27 @@ def _quarantine_file(
 
 
 
+
+
+
+
 ) -> str | None:
 
 
 
+
+
+
+
     """将主工作区文件移送隔离区（裁定#B，2026-07-19）。
+
+
+
+
+
+
+
+
 
 
 
@@ -1390,7 +2774,19 @@ def _quarantine_file(
 
 
 
+
+
+
+
+
+
+
+
     P2-6（2026-07-19）：移送前计算 content_hash 并记入遥测，支持恢复后内容校验。
+
+
+
+
 
 
 
@@ -1398,7 +2794,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
     src = root / rel_file
+
+
+
+
 
 
 
@@ -1406,7 +2810,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
         return None
+
+
+
+
 
 
 
@@ -1414,7 +2826,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
     # P2-6: 移送前计算 content_hash（移送后 src 消失，无法回算）
+
+
+
+
 
 
 
@@ -1422,7 +2842,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -1430,7 +2858,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
         src.replace(dest)
+
+
+
+
 
 
 
@@ -1438,7 +2874,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
             "file_quarantine", session_id, source, root,
+
+
+
+
 
 
 
@@ -1446,11 +2890,23 @@ def _quarantine_file(
 
 
 
+
+
+
+
             content_hash=content_hash,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -1458,7 +2914,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
             "session_worktree quarantine: %s -> %s (session=%s, source=%s, hash=%s)",
+
+
+
+
 
 
 
@@ -1466,7 +2930,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -1474,7 +2946,15 @@ def _quarantine_file(
 
 
 
+
+
+
+
     except OSError:
+
+
+
+
 
 
 
@@ -1482,7 +2962,23 @@ def _quarantine_file(
 
 
 
+
+
+
+
         return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1498,7 +2994,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     """清扫隔离区过期文件（裁定#B 配套，2026-07-19）。
+
+
+
+
 
 
 
@@ -1506,11 +3010,23 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     保留 72h 后物理删除，释放磁盘空间。在 session_worktree_start 时顺带执行。
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1522,7 +3038,19 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
+
+
+
+
     q_root = _quarantine_root(root)
+
+
+
+
 
 
 
@@ -1530,7 +3058,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
         return {"deleted": 0, "skipped": 0, "warnings": []}
+
+
+
+
 
 
 
@@ -1538,7 +3074,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     max_age_seconds = max_age_hours * 3600
+
+
+
+
 
 
 
@@ -1546,7 +3090,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     skipped = 0
+
+
+
+
 
 
 
@@ -1554,7 +3106,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -1562,7 +3122,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
             if not session_dir.is_dir():
+
+
+
+
 
 
 
@@ -1570,7 +3138,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -1578,7 +3154,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
             except OSError:
+
+
+
+
 
 
 
@@ -1586,7 +3170,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -1594,7 +3186,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                 skipped += 1
+
+
+
+
 
 
 
@@ -1602,7 +3202,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
             # 过期 session 目录——递归删除
+
+
+
+
 
 
 
@@ -1610,7 +3218,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                 import shutil
+
+
+
+
 
 
 
@@ -1618,7 +3234,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                 deleted += 1
+
+
+
+
 
 
 
@@ -1626,7 +3250,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                     "session_worktree quarantine sweep: 删除过期隔离区 %s",
+
+
+
+
 
 
 
@@ -1634,7 +3266,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                 )
+
+
+
+
 
 
 
@@ -1642,7 +3282,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
                 warnings.append(f"{session_dir.name}: 删除异常 {e}")
+
+
+
+
 
 
 
@@ -1650,7 +3298,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     except OSError as e:
+
+
+
+
 
 
 
@@ -1658,7 +3314,23 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
     return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1674,7 +3346,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
 # 病根：_sweep_one_dir 对"未合并+未被取代提交"的 worktree 仅 warning 跳过，永不清理。
+
+
+
+
 
 
 
@@ -1682,7 +3362,15 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
 # 治本：worktree age > force_clean_threshold 且 session 未注册且有未合并提交时，
+
+
+
+
 
 
 
@@ -1690,11 +3378,23 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
 
 
 
+
+
+
+
 _DEFAULT_FORCE_CLEAN_HOURS = 24
 
 
 
+
+
+
+
 _QUARANTINE_REF_RETENTION_HOURS = 72
+
+
+
+
 
 
 
@@ -1710,7 +3410,23 @@ _QUARANTINE_REF_PREFIX = "refs/quarantine/"
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _quarantine_branch_ref(
+
+
+
+
 
 
 
@@ -1718,7 +3434,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
     branch: str,
+
+
+
+
 
 
 
@@ -1726,7 +3450,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
 ) -> str | None:
+
+
+
+
 
 
 
@@ -1738,7 +3470,19 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
+
+
+
+
     在 force-clean 前，将分支 tip 保存为 quarantine ref，提供 72h 恢复窗口。
+
+
+
+
 
 
 
@@ -1750,7 +3494,19 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -1758,7 +3514,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1766,7 +3530,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
     r = manager._run_git(["git", "update-ref", ref_name, branch])
+
+
+
+
 
 
 
@@ -1774,7 +3546,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
         logger.info(
+
+
+
+
 
 
 
@@ -1782,7 +3562,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
             branch, ref_name, session_id,
+
+
+
+
 
 
 
@@ -1790,7 +3578,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
         return ref_name
+
+
+
+
 
 
 
@@ -1798,7 +3594,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
         "session_worktree P3.5: 保存 quarantine ref 失败: %s (stderr=%s)",
+
+
+
+
 
 
 
@@ -1806,7 +3610,15 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -1822,7 +3634,23 @@ def _quarantine_branch_ref(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _sweep_quarantine_refs(
+
+
+
+
 
 
 
@@ -1830,11 +3658,23 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
     max_age_hours: int = _QUARANTINE_REF_RETENTION_HOURS,
 
 
 
+
+
+
+
 ) -> dict:
+
+
+
+
 
 
 
@@ -1846,7 +3686,19 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
+
+
+
+
     扫描 ``refs/quarantine/`` 下所有 ref，删除 age > max_age_hours 的。
+
+
+
+
 
 
 
@@ -1858,7 +3710,19 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -1866,7 +3730,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1878,7 +3750,19 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
+
+
+
+
     r = manager._run_git([
+
+
+
+
 
 
 
@@ -1886,7 +3770,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
         _QUARANTINE_REF_PREFIX,
+
+
+
+
 
 
 
@@ -1894,7 +3786,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
     if r.returncode != 0:
+
+
+
+
 
 
 
@@ -1906,7 +3806,19 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
+
+
+
+
     now = _time.time()
+
+
+
+
 
 
 
@@ -1914,7 +3826,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
     deleted = 0
+
+
+
+
 
 
 
@@ -1922,7 +3842,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
     warnings: list[str] = []
+
+
+
+
 
 
 
@@ -1930,7 +3858,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
         parts = line.strip().split()
+
+
+
+
 
 
 
@@ -1938,7 +3874,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -1946,7 +3890,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -1954,7 +3906,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
         except (ValueError, IndexError):
+
+
+
+
 
 
 
@@ -1962,7 +3922,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -1970,7 +3938,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
             skipped += 1
+
+
+
+
 
 
 
@@ -1978,7 +3954,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
         rd = manager._run_git(["git", "update-ref", "-d", ref_name])
+
+
+
+
 
 
 
@@ -1986,7 +3970,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
             deleted += 1
+
+
+
+
 
 
 
@@ -1994,7 +3986,15 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -2002,7 +4002,19 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
             skipped += 1
+
+
+
+
+
+
+
+
 
 
 
@@ -2022,7 +4034,23 @@ def _sweep_quarantine_refs(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
+
+
+
+
 
 
 
@@ -2030,7 +4058,15 @@ def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
 
 
 
+
+
+
+
     root = Path(project_root) if project_root else REPO_ROOT
+
+
+
+
 
 
 
@@ -2046,7 +4082,23 @@ def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
+
+
+
+
 
 
 
@@ -2054,7 +4106,15 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
 
 
 
+
+
+
+
     root = Path(project_root) if project_root else REPO_ROOT
+
+
+
+
 
 
 
@@ -2070,7 +4130,23 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ── 阶段2治本（未合并提交陷阱，2026-07-18）：sweep 取代判定 ──
+
+
+
+
 
 
 
@@ -2078,7 +4154,15 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
 
 
 
+
+
+
+
 # worktree 永久堆积（100% AI 开发场景下高发：AI 提交后 session 死亡，相同修改
+
+
+
+
 
 
 
@@ -2086,7 +4170,15 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
 
 
 
+
+
+
+
 # 全部被取代时安全清理。两维度检测：① patch-id 等价（git cherry '-'）② message
+
+
+
+
 
 
 
@@ -2098,7 +4190,19 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
 
 
 
+
+
+
+
+
+
+
+
 def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]:
+
+
+
+
 
 
 
@@ -2106,7 +4210,15 @@ def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]
 
 
 
+
+
+
+
     r = manager._run_git(["git", "log", "--format=%s", f"-{count}", "HEAD"])
+
+
+
+
 
 
 
@@ -2114,7 +4226,15 @@ def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]
 
 
 
+
+
+
+
         return set()
+
+
+
+
 
 
 
@@ -2130,7 +4250,23 @@ def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _count_message_superseded(
+
+
+
+
 
 
 
@@ -2138,7 +4274,15 @@ def _count_message_superseded(
 
 
 
+
+
+
+
     head_subjects: set[str],
+
+
+
+
 
 
 
@@ -2146,7 +4290,15 @@ def _count_message_superseded(
 
 
 
+
+
+
+
 ) -> int:
+
+
+
+
 
 
 
@@ -2158,7 +4310,19 @@ def _count_message_superseded(
 
 
 
+
+
+
+
+
+
+
+
     patch-id 未匹配时的补充检测：相同 message 主体暗示相同意图的修改
+
+
+
+
 
 
 
@@ -2166,7 +4330,15 @@ def _count_message_superseded(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -2174,7 +4346,15 @@ def _count_message_superseded(
 
 
 
+
+
+
+
     for h in commit_hashes:
+
+
+
+
 
 
 
@@ -2182,11 +4362,23 @@ def _count_message_superseded(
 
 
 
+
+
+
+
         if r_msg.returncode == 0 and r_msg.stdout.strip() in head_subjects:
 
 
 
+
+
+
+
             count += 1
+
+
+
+
 
 
 
@@ -2202,7 +4394,23 @@ def _count_message_superseded(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _branch_commits_superseded(
+
+
+
+
 
 
 
@@ -2210,11 +4418,23 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     manager: "WorktreeManager",
 
 
 
+
+
+
+
 ) -> tuple[bool, str]:
+
+
+
+
 
 
 
@@ -2226,11 +4446,27 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
+
+
+
+
     两维度检测（patch-id 优先，message 补充）：
 
 
 
+
+
+
+
     1. patch-id 等价：git cherry 标记为 '-'（diff 内容等价于 HEAD 中某提交）
+
+
+
+
 
 
 
@@ -2242,7 +4478,19 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
+
+
+
+
     全部分支提交被取代时返回 True（可安全清理 worktree）。
+
+
+
+
 
 
 
@@ -2250,7 +4498,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     r_cherry = manager._run_git(["git", "cherry", "HEAD", branch])
+
+
+
+
 
 
 
@@ -2258,7 +4514,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
         return False, f"git cherry failed: {r_cherry.stderr.strip()[:80]}"
+
+
+
+
 
 
 
@@ -2266,7 +4530,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     if not lines:
+
+
+
+
 
 
 
@@ -2274,7 +4546,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     not_superseded = [line[2:].strip() for line in lines if line.startswith("+ ")]
+
+
+
+
 
 
 
@@ -2282,7 +4562,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     if not not_superseded:
+
+
+
+
 
 
 
@@ -2290,7 +4578,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     head_subjects = _get_head_subjects(manager)
+
+
+
+
 
 
 
@@ -2298,7 +4594,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
         return False, f"{len(not_superseded)}/{len(lines)} not superseded (no head_subjects)"
+
+
+
+
 
 
 
@@ -2306,7 +4610,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
     total_ok = patch_id_ok + msg_ok
+
+
+
+
 
 
 
@@ -2314,7 +4626,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
         return True, f"all {len(lines)} superseded ({patch_id_ok} patch-id + {msg_ok} message)"
+
+
+
+
 
 
 
@@ -2330,7 +4650,23 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # P1-2 (2026-07-20): 跨进程 lockfile 治本——session_worktree_commit/merge 期间
+
+
+
+
 
 
 
@@ -2338,7 +4674,15 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
 # 导致 panorama_alignment_gate 等 pre-commit gate 的 _run_git(cwd=worktree) 抛 NotADirectoryError。
+
+
+
+
 
 
 
@@ -2346,11 +4690,23 @@ def _branch_commits_superseded(
 
 
 
+
+
+
+
 # commit/merge 关键操作中" 状态——session heartbeat 可能过期但 commit 仍在执行。
 
 
 
+
+
+
+
 # 治本：commit/merge 进入时创建 lockfile,退出时删除；sweep 检查 lockfile 存在则跳过。
+
+
+
+
 
 
 
@@ -2366,11 +4722,31 @@ _ACTIVE_LOCK_TTL_SECONDS = 3600  # 1h,与 session TTL 一致（异常退出后 s
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _session_active_lockfile(repo_root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
     """per-session active lockfile 路径（标识 session 正在执行 commit/merge 关键操作）。"""
+
+
+
+
 
 
 
@@ -2386,11 +4762,31 @@ def _session_active_lockfile(repo_root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @contextlib.contextmanager
 
 
 
+
+
+
+
 def _session_active_guard(repo_root: Path, session_id: str):
+
+
+
+
 
 
 
@@ -2402,7 +4798,19 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
+
+
+
+
     P1-2 (2026-07-20): 创建 per-session lockfile,退出时删除。lockfile 包含
+
+
+
+
 
 
 
@@ -2410,7 +4818,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
     （TTL=_ACTIVE_LOCK_TTL_SECONDS=1h）。lockfile 创建失败不阻断业务（降级为 warn）。
+
+
+
+
 
 
 
@@ -2418,11 +4834,23 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
     lockfile = _session_active_lockfile(repo_root, session_id)
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -2430,7 +4858,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
         lockfile.write_text(
+
+
+
+
 
 
 
@@ -2438,7 +4874,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
                 {"pid": os.getpid(), "acquired_at": time.time(), "session_id": session_id},
+
+
+
+
 
 
 
@@ -2446,7 +4890,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
             ),
+
+
+
+
 
 
 
@@ -2454,7 +4906,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -2462,7 +4922,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
         logger.warning("session_active_guard: create lockfile failed: %s", e)
+
+
+
+
 
 
 
@@ -2470,7 +4938,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
         yield
+
+
+
+
 
 
 
@@ -2478,7 +4954,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -2486,7 +4970,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
         except OSError:
+
+
+
+
 
 
 
@@ -2502,7 +4994,23 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2510,7 +5018,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2518,7 +5034,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
 # 残留 1h 持有 held_files → HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈。
+
+
+
+
 
 
 
@@ -2526,7 +5050,15 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
 #       _is_session_alive 对 pid=0 改用 90s 心跳超时（3× interval，容忍 2 次丢失）；
+
+
+
+
 
 
 
@@ -2534,7 +5066,23 @@ def _session_active_guard(repo_root: Path, session_id: str):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2550,7 +5098,15 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
     """heartbeat daemon PID 文件路径（#ARCH-HEARTBEAT-001）。"""
+
+
+
+
 
 
 
@@ -2566,11 +5122,31 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # 模块级 daemon 进程注册表（治本 #ARCH-HEARTBEAT-001-TEST-FAIL，2026-07-20）
 
 
 
+
+
+
+
 #
+
+
+
+
 
 
 
@@ -2578,7 +5154,15 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
 # 变量，函数返回后被 GC 回收。GC 时 Popen.__del__ 检测到 returncode is None
+
+
+
+
 
 
 
@@ -2586,7 +5170,15 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
 # 发出 ResourceWarning "subprocess N is still running"。pytest filterwarnings
+
+
+
+
 
 
 
@@ -2594,7 +5186,15 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
 # test_session_worktree.py 8 个测试失败。
+
+
+
+
 
 
 
@@ -2602,7 +5202,15 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
 # 治本：
+
+
+
+
 
 
 
@@ -2610,7 +5218,15 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
 # 2. _spawn_heartbeat_daemon 覆盖前先 _reap_daemon_proc：poll 旧 proc 设置
+
+
+
+
 
 
 
@@ -2618,11 +5234,23 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
 # 3. _kill_heartbeat_daemon 在 taskkill 后 _reap_daemon_proc：pop + wait 回收 handle
 
 
 
+
+
+
+
 # 4. kill_all_heartbeat_daemons 供测试 fixture teardown 批量清理
+
+
+
+
 
 
 
@@ -2638,7 +5266,23 @@ _DAEMON_PROCS: dict[str, "subprocess.Popen[bytes]"] = {}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _reap_daemon_proc(session_id: str) -> None:
+
+
+
+
 
 
 
@@ -2650,11 +5294,27 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
+
+
+
+
     - 若 proc 已死（returncode 由 poll 设置），pop 后 __del__ 不再误报 ResourceWarning
 
 
 
+
+
+
+
     - 若 proc 仍在运行，wait(5) 等其退出（通常已被 taskkill /F 杀死）
+
+
+
+
 
 
 
@@ -2666,7 +5326,19 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
+
+
+
+
     注：wait 使用位置参数（proc.wait(5)）而非关键字形式，因 PERM-TRIGGER gate
+
+
+
+
 
 
 
@@ -2674,7 +5346,15 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -2682,7 +5362,15 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
     if proc is None:
+
+
+
+
 
 
 
@@ -2690,7 +5378,15 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -2698,7 +5394,15 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
         if proc.poll() is None:
+
+
+
+
 
 
 
@@ -2706,7 +5410,15 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
             # 使用位置参数避免 PERM-TRIGGER gate 误报（治本 #ARCH-HEARTBEAT-001-TEST-FAIL）
+
+
+
+
 
 
 
@@ -2714,11 +5426,31 @@ def _reap_daemon_proc(session_id: str) -> None:
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — best-effort，proc 可能已死或 wait 超时
 
 
 
+
+
+
+
         pass
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2734,11 +5466,23 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     session_id: str, root: Path, interval: int = 30,
 
 
 
+
+
+
+
 ) -> int | None:
+
+
+
+
 
 
 
@@ -2750,7 +5494,19 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
+
+
+
+
     daemon（heartbeat_daemon.run_daemon）每 ``interval`` 秒刷新 session heartbeat
+
+
+
+
 
 
 
@@ -2758,7 +5514,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     daemon 在 session_worktree_merge/abort 时由 _kill_heartbeat_daemon 终止；
+
+
+
+
 
 
 
@@ -2766,7 +5530,19 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     （list_active 清理）。
+
+
+
+
+
+
+
+
 
 
 
@@ -2782,7 +5558,19 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -2790,7 +5578,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         root: 项目根目录。
+
+
+
+
 
 
 
@@ -2802,7 +5598,19 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
+
+
+
+
     Returns: daemon PID 或 None（spawn 失败，不阻断 start——session 仍有 90s 可用）。
+
+
+
+
 
 
 
@@ -2810,7 +5618,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     pid_file = _heartbeat_pid_file(root, session_id)
+
+
+
+
 
 
 
@@ -2818,7 +5634,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -2826,7 +5650,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         if is_pid_alive(existing_pid):
+
+
+
+
 
 
 
@@ -2834,7 +5666,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
                 "heartbeat daemon already running: sid=%s pid=%d",
+
+
+
+
 
 
 
@@ -2842,7 +5682,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -2850,7 +5698,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     except (OSError, ValueError):
+
+
+
+
 
 
 
@@ -2862,7 +5718,19 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
+
+
+
+
     # 治本 #ARCH-HEARTBEAT-001-TEST-FAIL：spawn 新 daemon 前，先 reap registry 中
+
+
+
+
 
 
 
@@ -2870,11 +5738,23 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
     # 这样覆盖 _DAEMON_PROCS[session_id] 时旧 proc.returncode 已设置，GC __del__
 
 
 
+
+
+
+
     # 不再误报 "subprocess still running" ResourceWarning
+
+
+
+
 
 
 
@@ -2886,7 +5766,19 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -2894,7 +5786,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         cmd = [
+
+
+
+
 
 
 
@@ -2902,7 +5802,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon",
+
+
+
+
 
 
 
@@ -2910,7 +5818,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             str(root),
+
+
+
+
 
 
 
@@ -2918,7 +5834,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         ]
+
+
+
+
 
 
 
@@ -2926,7 +5850,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         # 确保 src/ 在 PYTHONPATH（daemon 进程需导入 zephyr.* 模块）
+
+
+
+
 
 
 
@@ -2934,7 +5866,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         env["PYTHONPATH"] = (
+
+
+
+
 
 
 
@@ -2942,11 +5882,23 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             if env.get("PYTHONPATH") else src_path
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -2954,7 +5906,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         env["ZEPHYR_RUNTIME_GATE"] = "0"
+
+
+
+
 
 
 
@@ -2962,7 +5922,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         start_new_session = False
+
+
+
+
 
 
 
@@ -2970,7 +5938,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             # CREATE_NO_WINDOW: 不创建控制台窗口，无闪窗（TRAE-067 铁律2）
+
+
+
+
 
 
 
@@ -2978,7 +5954,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             # 注：CREATE_NO_WINDOW 与 DETACHED_PROCESS 互斥（MSDN），CREATE_NO_WINDOW
+
+
+
+
 
 
 
@@ -2986,7 +5970,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             creationflags = (
+
+
+
+
 
 
 
@@ -2994,7 +5986,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
                 | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
+
+
+
+
 
 
 
@@ -3002,7 +6002,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -3010,7 +6018,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         proc = subprocess.Popen(
+
+
+
+
 
 
 
@@ -3018,7 +6034,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             creationflags=creationflags,
+
+
+
+
 
 
 
@@ -3026,7 +6050,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             stdin=subprocess.DEVNULL,
+
+
+
+
 
 
 
@@ -3034,7 +6066,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             stderr=subprocess.DEVNULL,
+
+
+
+
 
 
 
@@ -3042,7 +6082,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
             cwd=str(root),
+
+
+
+
 
 
 
@@ -3050,7 +6098,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -3058,7 +6114,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         # 治本 #ARCH-HEARTBEAT-001-TEST-FAIL：保持 proc 引用防止 GC __del__ 触发
+
+
+
+
 
 
 
@@ -3066,7 +6130,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         _DAEMON_PROCS[session_id] = proc
+
+
+
+
 
 
 
@@ -3074,7 +6146,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         return proc.pid
+
+
+
+
 
 
 
@@ -3082,7 +6162,15 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -3090,11 +6178,31 @@ def _spawn_heartbeat_daemon(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3110,7 +6218,19 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
     """终止 heartbeat daemon 进程（#ARCH-HEARTBEAT-001）。
+
+
+
+
+
+
+
+
 
 
 
@@ -3122,7 +6242,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
     PID 文件不存在/进程已死均不报错。daemon 被 kill 后心跳停止，
+
+
+
+
 
 
 
@@ -3130,7 +6258,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -3138,7 +6274,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -3146,7 +6290,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
         pid = int(pid_str)
+
+
+
+
 
 
 
@@ -3154,11 +6306,23 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
         # PID 文件不存在/损坏——仍清理 registry 中的 proc 引用（防 leak）
 
 
 
+
+
+
+
         _reap_daemon_proc(session_id)
+
+
+
+
 
 
 
@@ -3170,7 +6334,19 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -3178,7 +6354,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
             subprocess.run(
+
+
+
+
 
 
 
@@ -3186,7 +6370,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
                 capture_output=True, timeout=5,
+
+
+
+
 
 
 
@@ -3194,7 +6386,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -3202,7 +6402,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
             os.kill(pid, signal.SIGTERM)
+
+
+
+
 
 
 
@@ -3210,7 +6418,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — best-effort
+
+
+
+
 
 
 
@@ -3222,11 +6438,27 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     # 治本 #ARCH-HEARTBEAT-001-TEST-FAIL：pop 并 wait proc 以回收 OS handle，
 
 
 
+
+
+
+
     # 避免 Popen.__del__ 在 GC 时因 returncode is None 误报 ResourceWarning
+
+
+
+
 
 
 
@@ -3238,7 +6470,19 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -3246,7 +6490,15 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
     except OSError:
+
+
+
+
 
 
 
@@ -3262,7 +6514,23 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def kill_all_heartbeat_daemons(root: Path) -> None:
+
+
+
+
 
 
 
@@ -3274,7 +6542,19 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     遍历 _DAEMON_PROCS，taskkill 每个 daemon PID，pop + wait 回收 handle。
+
+
+
+
 
 
 
@@ -3286,11 +6566,27 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     用途：测试 fixture _cleanup_artifacts 在每个测试 teardown 时调用，
 
 
 
+
+
+
+
     防止不调用 merge/abort 的测试残留 daemon 进程导致系统资源耗尽
+
+
+
+
 
 
 
@@ -3302,7 +6598,19 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     注意：只清理 PID 文件在 ``root`` 下的 daemon。其他 repo 的 daemon（如
+
+
+
+
 
 
 
@@ -3310,7 +6618,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
     避免误清理其他仓库的 daemon 导致 proc 引用丢失触发 GC ResourceWarning。
+
+
+
+
 
 
 
@@ -3318,7 +6634,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
     # 复制 keys 避免迭代中修改 dict
+
+
+
+
 
 
 
@@ -3326,11 +6650,23 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
         pid_file = _heartbeat_pid_file(root, session_id)
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -3338,7 +6674,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
             pid = int(pid_str)
+
+
+
+
 
 
 
@@ -3346,7 +6690,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
             # PID 文件不在 root 下——daemon 属于其他 repo（如活跃 session
+
+
+
+
 
 
 
@@ -3354,11 +6706,23 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
             continue
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -3366,7 +6730,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
                 subprocess.run(
+
+
+
+
 
 
 
@@ -3374,7 +6746,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
                     capture_output=True, timeout=5,
+
+
+
+
 
 
 
@@ -3382,7 +6762,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
             else:
+
+
+
+
 
 
 
@@ -3390,7 +6778,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
                 os.kill(pid, signal.SIGTERM)
+
+
+
+
 
 
 
@@ -3398,7 +6794,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
             pass
+
+
+
+
 
 
 
@@ -3406,7 +6810,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -3414,7 +6826,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
         except OSError:
+
+
+
+
 
 
 
@@ -3430,7 +6850,23 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -3438,7 +6874,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -3446,7 +6890,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
 # 在 AI 等待 merge 的窗口期，并发 session 的 sweep 可能删除 worktree + 分支，
+
+
+
+
 
 
 
@@ -3454,7 +6906,15 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
 # 治本：commit 成功后写持久性标记文件，sweep 看到标记就跳过；merge 前验证
+
+
+
+
 
 
 
@@ -3470,11 +6930,31 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _commit_persisted_marker_path(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
     """返回 commit 持久性标记文件路径。"""
+
+
+
+
 
 
 
@@ -3490,7 +6970,23 @@ def _commit_persisted_marker_path(root: Path, session_id: str) -> Path:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _write_commit_persisted_marker(
+
+
+
+
 
 
 
@@ -3498,7 +6994,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
 ) -> None:
+
+
+
+
 
 
 
@@ -3510,7 +7014,19 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
+
+
+
+
     标记文件含 commit_hash + timestamp，供 sweep 判据和 merge 前验证使用。
+
+
+
+
 
 
 
@@ -3518,7 +7034,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -3526,7 +7050,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -3534,7 +7066,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
         marker.parent.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -3542,7 +7082,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -3550,7 +7098,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
             "timestamp": _time.time(),  # noqa: m46-time — 审计事件时间戳（合法场景，非 datetime 生成）
+
+
+
+
 
 
 
@@ -3558,7 +7114,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
         tmp = marker.with_suffix(".json.tmp")
+
+
+
+
 
 
 
@@ -3566,7 +7130,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
         os.replace(tmp, marker)
+
+
+
+
 
 
 
@@ -3574,7 +7146,15 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
         logger.debug(
+
+
+
+
 
 
 
@@ -3582,11 +7162,31 @@ def _write_commit_persisted_marker(
 
 
 
+
+
+
+
             session_id, exc_info=True,
 
 
 
+
+
+
+
         )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3602,7 +7202,15 @@ def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
     """merge/abort 成功后清除持久性标记。fail-open：删除失败不阻断。"""
+
+
+
+
 
 
 
@@ -3610,7 +7218,15 @@ def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
         marker = _commit_persisted_marker_path(root, session_id)
+
+
+
+
 
 
 
@@ -3618,7 +7234,15 @@ def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -3626,7 +7250,15 @@ def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
             "commit_persisted marker clear failed (non-blocking): %s",
+
+
+
+
 
 
 
@@ -3634,7 +7266,23 @@ def _clear_commit_persisted_marker(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
         )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3650,7 +7298,19 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
     """abort 后清理 session staging 目录（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）。
+
+
+
+
+
+
+
+
 
 
 
@@ -3662,11 +7322,23 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
     的中间产物。session abort 后该 session 不再使用，staging 立即沦为孤儿——
 
 
 
+
+
+
+
     等待 staging TTL reconciler（priority=802，24h TTL）兜底会留下长尾残留。
+
+
+
+
 
 
 
@@ -3678,7 +7350,19 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
+
+
+
+
     fail-open：删除失败不阻断 abort。注意只删 staging/ 子目录，不删 session 目录
+
+
+
+
 
 
 
@@ -3686,7 +7370,15 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -3694,7 +7386,15 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
         import shutil as _shutil_staging
+
+
+
+
 
 
 
@@ -3702,7 +7402,15 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
         if staging.exists():
+
+
+
+
 
 
 
@@ -3710,7 +7418,15 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -3718,7 +7434,15 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
             "session staging cleanup failed (non-blocking): %s",
+
+
+
+
 
 
 
@@ -3726,7 +7450,23 @@ def _cleanup_session_staging(root: Path, session_id: str) -> None:
 
 
 
+
+
+
+
         )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3742,7 +7482,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
     root: Path, session_id: str,
+
+
+
+
 
 
 
@@ -3750,7 +7498,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
     """读取持久性标记。返回 None 表示标记不存在（未 commit 或已 merge）。"""
+
+
+
+
 
 
 
@@ -3758,7 +7514,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
         marker = _commit_persisted_marker_path(root, session_id)
+
+
+
+
 
 
 
@@ -3766,7 +7530,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
             return None
+
+
+
+
 
 
 
@@ -3774,7 +7546,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
         if isinstance(data, dict) and "commit_hash" in data:
+
+
+
+
 
 
 
@@ -3782,7 +7562,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
         return None
+
+
+
+
 
 
 
@@ -3790,7 +7578,15 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
         logger.debug(
+
+
+
+
 
 
 
@@ -3798,11 +7594,31 @@ def _read_commit_persisted_marker(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3818,7 +7634,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     manager: WorktreeManager,
+
+
+
+
 
 
 
@@ -3826,7 +7650,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     d: Path,
+
+
+
+
 
 
 
@@ -3834,7 +7666,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     age_threshold: int,
+
+
+
+
 
 
 
@@ -3842,11 +7682,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     force_clean_threshold: int = 0,
 
 
 
+
+
+
+
 ) -> tuple[int, int, list[str]]:
+
+
+
+
 
 
 
@@ -3858,7 +7710,19 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
+
+
+
+
     三重保护判据（任一不满足则跳过）：
+
+
+
+
 
 
 
@@ -3866,7 +7730,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     2. session 不在 active 注册表（活跃 session 不动）
+
+
+
+
 
 
 
@@ -3874,11 +7746,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
        （阶段2治本：全部被取代则继续清理，否则 warning 提示人工处理）
 
 
 
+
+
+
+
     4. per-session active lockfile 不存在或已过期（P1-2, 2026-07-20——
+
+
+
+
 
 
 
@@ -3890,7 +7774,19 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
+
+
+
+
     P3.5 age-based force-clean（2026-07-20）：当判据 3 命中"未合并+未被取代"时，
+
+
+
+
 
 
 
@@ -3898,7 +7794,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     先将分支 tip 保存到 refs/quarantine/<sid>（72h 可恢复），再继续清理。
+
+
+
+
 
 
 
@@ -3906,7 +7810,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -3914,7 +7826,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
+
+
+
+
 
 
 
@@ -3922,7 +7842,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         mtime = d.stat().st_mtime
+
+
+
+
 
 
 
@@ -3930,7 +7858,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         return 0, 1, []
+
+
+
+
 
 
 
@@ -3938,11 +7874,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         return 0, 1, []
 
 
 
+
+
+
+
     # 判据 2：活跃 session
+
+
+
+
 
 
 
@@ -3983,7 +7931,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     # 有标记 = session_worktree_commit 已创建 commit 但尚未 merge——sweep 必须跳过，
+
+
+
+
 
 
 
@@ -3991,7 +7947,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     warnings: list[str] = []
+
+
+
+
 
 
 
@@ -3999,7 +7963,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     if marker is not None:
+
+
+
+
 
 
 
@@ -4007,7 +7979,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         marker_age = _time.time() - float(marker.get("timestamp", 0))
+
+
+
+
 
 
 
@@ -4015,7 +7995,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
             return 0, 1, [f"{sid}: commit_persisted marker found (age={int(marker_age)}s < 86400s, commit={marker.get('commit_hash', '')[:8]}), sweep 免疫"]
+
+
+
+
 
 
 
@@ -4023,7 +8011,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         warnings.append(
+
+
+
+
 
 
 
@@ -4031,7 +8027,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -4039,7 +8043,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     branch = manager._branch_name(sid)
+
+
+
+
 
 
 
@@ -4047,7 +8059,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     has_branch = r_v.returncode == 0
+
+
+
+
 
 
 
@@ -4055,7 +8075,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         r_mb = manager._run_git(
+
+
+
+
 
 
 
@@ -4063,7 +8091,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -4071,7 +8107,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
             # 阶段2治本（未合并提交陷阱）：检测分支提交是否已被取代
+
+
+
+
 
 
 
@@ -4079,7 +8123,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
             if all_superseded:
+
+
+
+
 
 
 
@@ -4087,7 +8139,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                     f"{sid}: 分支提交已全部被取代（{reason}），继续清理"
+
+
+
+
 
 
 
@@ -4095,7 +8155,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                 # fall through 到清理逻辑（分支可安全删除，修改已通过其他路径合并）
+
+
+
+
 
 
 
@@ -4103,7 +8171,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                 # P3.5 age-based force-clean：超龄且有未合并提交时，保存 quarantine ref 后强制清理
+
+
+
+
 
 
 
@@ -4111,7 +8187,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                 if force_clean_threshold > 0 and age_seconds > force_clean_threshold:
+
+
+
+
 
 
 
@@ -4119,11 +8203,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                     if q_ref:
 
 
 
+
+
+
+
                         warnings.append(
+
+
+
+
 
 
 
@@ -4131,11 +8227,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                             f"> {force_clean_threshold}s，未合并提交已存 {q_ref}，72h 可恢复）"
 
 
 
+
+
+
+
                         )
+
+
+
+
 
 
 
@@ -4143,7 +8251,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                     else:
+
+
+
+
 
 
 
@@ -4151,7 +8267,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                             f"{sid}: force-clean 失败——quarantine ref 保存失败，保留 worktree 待人工评估"
+
+
+
+
 
 
 
@@ -4159,7 +8283,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                         return 0, 1, warnings
+
+
+
+
 
 
 
@@ -4167,7 +8299,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                     warnings.append(
+
+
+
+
 
 
 
@@ -4175,7 +8315,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                     )
+
+
+
+
 
 
 
@@ -4183,7 +8331,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     # 通过三重保护——清理
+
+
+
+
 
 
 
@@ -4191,7 +8347,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -4199,7 +8363,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         if is_registered:
+
+
+
+
 
 
 
@@ -4207,7 +8379,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                 ["git", "worktree", "remove", "--force", str(d)]
+
+
+
+
 
 
 
@@ -4215,11 +8395,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
             if rm.returncode != 0:
 
 
 
+
+
+
+
                 manager._run_git(["git", "worktree", "prune"])
+
+
+
+
 
 
 
@@ -4227,7 +8419,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                     _force_rmtree(d)
+
+
+
+
 
 
 
@@ -4235,11 +8435,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         else:
 
 
 
+
+
+
+
             manager._run_git(["git", "worktree", "prune"])
+
+
+
+
 
 
 
@@ -4247,7 +8459,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
                 _force_rmtree(d)
+
+
+
+
 
 
 
@@ -4255,7 +8475,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         if has_branch:
+
+
+
+
 
 
 
@@ -4263,7 +8491,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -4271,7 +8507,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -4279,7 +8523,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         swept = 1
+
+
+
+
 
 
 
@@ -4287,7 +8539,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         logger.info(
+
+
+
+
 
 
 
@@ -4295,7 +8555,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
             sid, is_registered,
+
+
+
+
 
 
 
@@ -4303,7 +8571,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -4311,7 +8587,15 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
         return 0, 1, warnings
+
+
+
+
 
 
 
@@ -4327,7 +8611,23 @@ def _sweep_one_dir(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _sweep_stale_worktrees(
+
+
+
+
 
 
 
@@ -4335,7 +8635,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     registry: SessionRegistry,
+
+
+
+
 
 
 
@@ -4343,11 +8651,23 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     force_clean_hours: int = 0,
 
 
 
+
+
+
+
 ) -> dict:
+
+
+
+
 
 
 
@@ -4359,11 +8679,27 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     在 session_worktree_start 创建自己 worktree 前调用，自动清理两类残留：
 
 
 
+
+
+
+
     - 孤儿物理目录（git worktree 未注册）—— git 已不认，物理删除
+
+
+
+
 
 
 
@@ -4375,7 +8711,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     安全判据（三重保护，任一不满足则跳过）：
+
+
+
+
 
 
 
@@ -4383,11 +8731,23 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     2. session 不在 active 注册表（活跃 session 不动；用 list_active 判定，不依赖 pid）
 
 
 
+
+
+
+
     3. 分支 tip 在 HEAD 祖先或无分支；有未合并提交时检测是否已被取代
+
+
+
+
 
 
 
@@ -4399,11 +8759,27 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     P3.5 force-clean（2026-07-20）：force_clean_hours > 0 时，对超龄（age > force_clean_hours）
 
 
 
+
+
+
+
     且有未合并+未被取代提交的 worktree，先保存分支 tip 到 refs/quarantine/<sid>（72h 可恢复），
+
+
+
+
 
 
 
@@ -4415,7 +8791,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     异常不抛出（sweep 失败不阻断 start）。在独立 _WorktreeLock 周期内执行，
+
+
+
+
 
 
 
@@ -4427,7 +8815,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -4435,11 +8835,23 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
         registry: SessionRegistry 实例。
 
 
 
+
+
+
+
         max_age_minutes: 目录年龄阈值（分钟），默认 30。
+
+
+
+
 
 
 
@@ -4451,7 +8863,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -4459,7 +8883,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -4467,7 +8899,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     # 病根：AI 曾误调 _sweep_stale_worktrees(REPO_ROOT, reg) 传入 Path 对象，
+
+
+
+
 
 
 
@@ -4475,7 +8915,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     # fail-closed 返回 error dict 而非抛异常（对标本模块所有函数返回 dict 不抛异常的契约）。
+
+
+
+
 
 
 
@@ -4483,7 +8931,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -4491,7 +8947,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
             "skipped": 0,
+
+
+
+
 
 
 
@@ -4499,7 +8963,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                 f"参数类型错误: manager 必须是 WorktreeManager 实例, 实际是 "
+
+
+
+
 
 
 
@@ -4507,7 +8979,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                 f"而非私有 _sweep_stale_worktrees()。"
+
+
+
+
 
 
 
@@ -4515,7 +8995,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -4527,11 +9015,27 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     drafts = manager._drafts_dir
 
 
 
+
+
+
+
     if not drafts.exists():
+
+
+
+
 
 
 
@@ -4543,7 +9047,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     now = _time.time()
+
+
+
+
 
 
 
@@ -4551,7 +9067,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     # P3.5: force_clean_threshold（秒），0=禁用
+
+
+
+
 
 
 
@@ -4563,7 +9087,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     # 活跃 session（list_active 已 reap 过期条目，返回的即活跃；不依赖 pid）
+
+
+
+
 
 
 
@@ -4571,7 +9107,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -4579,11 +9123,23 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
         active_sids = {getattr(info, "session_id", "") for info in active_list}
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -4595,7 +9151,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
     swept = 0
+
+
+
+
 
 
 
@@ -4603,7 +9171,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
     warnings: list[str] = []
+
+
+
+
 
 
 
@@ -4611,7 +9187,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
         with _WorktreeLock(manager.repo_root):
+
+
+
+
 
 
 
@@ -4619,7 +9203,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                 if not d.is_dir() or not d.name.startswith("sess-"):
+
+
+
+
 
 
 
@@ -4627,7 +9219,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                 d_swept, d_skipped, d_warnings = _sweep_one_dir(
+
+
+
+
 
 
 
@@ -4635,7 +9235,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                     force_clean_threshold=force_clean_threshold,
+
+
+
+
 
 
 
@@ -4643,7 +9251,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                 swept += d_swept
+
+
+
+
 
 
 
@@ -4651,7 +9267,15 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
                 warnings.extend(d_warnings)
+
+
+
+
 
 
 
@@ -4659,7 +9283,19 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
         warnings.append(f"sweep 整体异常（已中止）: {e}")
+
+
+
+
+
+
+
+
 
 
 
@@ -4679,7 +9315,23 @@ def _sweep_stale_worktrees(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @_inject_ok
+
+
+
+
 
 
 
@@ -4687,7 +9339,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     project_root: str | Path | None = None,
+
+
+
+
 
 
 
@@ -4695,11 +9355,23 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     force_clean_hours: int = 0,
 
 
 
+
+
+
+
 ) -> SweepResult:
+
+
+
+
 
 
 
@@ -4711,7 +9383,19 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
+
+
+
+
     包装私有 ``_sweep_stale_worktrees``，提供 AI/CLI 可调用的清理 API。
+
+
+
+
 
 
 
@@ -4719,11 +9403,23 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     内部调用。当 AI 累积 stale worktree（来自崩溃/放弃的 session）且无新 session
 
 
 
+
+
+
+
     启动时，无公开入口可清理，AI 被迫误调私有函数传入 Path 对象导致
+
+
+
+
 
 
 
@@ -4735,7 +9431,19 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
+
+
+
+
     三重保护判据（由 ``_sweep_stale_worktrees`` 实现，本函数不改变）：
+
+
+
+
 
 
 
@@ -4743,7 +9451,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
       2. session 不在 active 注册表（活跃 session 不动）
+
+
+
+
 
 
 
@@ -4755,11 +9471,27 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
+
+
+
+
     P3.5 force-clean（2026-07-20）：force_clean_hours > 0 时，对超龄且有未合并提交的
 
 
 
+
+
+
+
     worktree，先保存分支 tip 到 refs/quarantine/<sid>（72h 可恢复），再强制清理。
+
+
+
+
 
 
 
@@ -4771,7 +9503,19 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -4779,7 +9523,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
         max_age_minutes: 目录年龄阈值（分钟），默认 30。
+
+
+
+
 
 
 
@@ -4791,7 +9543,19 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -4799,7 +9563,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -4807,7 +9579,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     manager = _get_manager(root)
+
+
+
+
 
 
 
@@ -4815,7 +9595,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     return _sweep_stale_worktrees(
+
+
+
+
 
 
 
@@ -4823,7 +9611,15 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
         max_age_minutes=max_age_minutes,
+
+
+
+
 
 
 
@@ -4831,7 +9627,23 @@ def session_worktree_sweep(
 
 
 
+
+
+
+
     )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4847,7 +9659,19 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
     """清理 .aidrafts/ 根目录下的孤儿临时脚本（P3 流程治本，2026-07-17）。
+
+
+
+
+
+
+
+
 
 
 
@@ -4859,11 +9683,23 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
     （如 _commit_adp4_adp5.py / _merge_adp45.py），用完未删则永久残留。P0 曾手工
 
 
 
+
+
+
+
     清理 3 个此类孤儿。本 helper 在每次 session_worktree_start 时自动清理 age > 1h
+
+
+
+
 
 
 
@@ -4875,7 +9711,19 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
+
+
+
+
     安全判据：
+
+
+
+
 
 
 
@@ -4883,11 +9731,23 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
        （非 sess-* worktree 目录——worktree 由 _sweep_stale_worktrees 处理）
 
 
 
+
+
+
+
     2. age > max_age_seconds（太新的不动，防误清 AI 正在使用的）
+
+
+
+
 
 
 
@@ -4899,7 +9759,19 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -4907,7 +9779,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -4919,7 +9799,19 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
+
+
+
+
     drafts = root / ".aidrafts"
+
+
+
+
 
 
 
@@ -4927,7 +9819,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
         return {"deleted": 0, "skipped": 0, "warnings": []}
+
+
+
+
 
 
 
@@ -4935,7 +9835,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
     deleted = 0
+
+
+
+
 
 
 
@@ -4943,7 +9851,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
     warnings: list[str] = []
+
+
+
+
 
 
 
@@ -4951,7 +9867,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
         for entry in drafts.iterdir():
+
+
+
+
 
 
 
@@ -4959,11 +9883,23 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
             if entry.is_dir():
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -4971,11 +9907,23 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
                 continue
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -4983,7 +9931,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
             except OSError:
+
+
+
+
 
 
 
@@ -4991,7 +9947,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -4999,7 +9963,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
                 skipped += 1
+
+
+
+
 
 
 
@@ -5007,7 +9979,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -5015,7 +9995,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
                 deleted += 1
+
+
+
+
 
 
 
@@ -5023,7 +10011,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
                     "session_worktree orphan cleanup: 删除过期辅助脚本 %s", entry.name,
+
+
+
+
 
 
 
@@ -5031,7 +10027,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
             except OSError as e:
+
+
+
+
 
 
 
@@ -5039,7 +10043,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
                 skipped += 1
+
+
+
+
 
 
 
@@ -5047,7 +10059,15 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
         warnings.append(f".aidrafts 扫描异常: {e}")
+
+
+
+
 
 
 
@@ -5063,7 +10083,23 @@ def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> di
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
+
+
+
+
 
 
 
@@ -5075,7 +10111,19 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
+
+
+
+
     返回阻断 dict（调用方直接 return）或 None（放行）。异常 fail-open 降级放行。
+
+
+
+
 
 
 
@@ -5083,7 +10131,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
     if allow_concurrent:
+
+
+
+
 
 
 
@@ -5091,7 +10147,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
     registry_pre = _get_registry(root)
+
+
+
+
 
 
 
@@ -5099,7 +10163,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
         if breaking_change:
+
+
+
+
 
 
 
@@ -5107,7 +10179,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
             others = [s for s in registry_pre.list_active() if s.session_id != sid]
+
+
+
+
 
 
 
@@ -5115,7 +10195,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                 other_ids = [s.session_id for s in others]
+
+
+
+
 
 
 
@@ -5123,7 +10211,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "session_id": sid,
+
+
+
+
 
 
 
@@ -5131,7 +10227,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "branch": f"session/{sid}",
+
+
+
+
 
 
 
@@ -5139,11 +10243,23 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "created": False,
 
 
 
+
+
+
+
                     "error": (
+
+
+
+
 
 
 
@@ -5151,7 +10267,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                         f"（§9.7 治本变更并发阻断）。当前活跃 session: {other_ids}。"
+
+
+
+
 
 
 
@@ -5159,7 +10283,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     ),
+
+
+
+
 
 
 
@@ -5167,7 +10299,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                 }
+
+
+
+
 
 
 
@@ -5175,7 +10315,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
             # breaking_change=False：检查是否有其他活跃 session 声明了 breaking_change
+
+
+
+
 
 
 
@@ -5183,7 +10331,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
             if blocker is not None:
+
+
+
+
 
 
 
@@ -5191,7 +10347,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "session_id": sid,
+
+
+
+
 
 
 
@@ -5199,7 +10363,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "branch": f"session/{sid}",
+
+
+
+
 
 
 
@@ -5207,7 +10379,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "created": False,
+
+
+
+
 
 
 
@@ -5215,7 +10395,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                         f"BREAKING_CHANGE_AVOIDANCE_BLOCKED: 活跃 session '{blocker.session_id}'"
+
+
+
+
 
 
 
@@ -5223,7 +10411,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                         f"逃生通道：allow_concurrent=True。"
+
+
+
+
 
 
 
@@ -5231,7 +10427,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
                     "blocked_by": [blocker.session_id],
+
+
+
+
 
 
 
@@ -5239,7 +10443,15 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -5247,11 +10459,31 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
 
 
 
+
+
+
+
         logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e, exc_info=True)
 
 
 
+
+
+
+
     return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5267,11 +10499,23 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     registry: SessionRegistry, sid: str, task_files: list[str],
 
 
 
+
+
+
+
 ) -> dict | None:
+
+
+
+
 
 
 
@@ -5283,7 +10527,19 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
+
+
+
+
     病根：并发 AI session 常被派发相同/高度重叠的任务（用户重复提问、多对话并行
+
+
+
+
 
 
 
@@ -5291,7 +10547,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     文件，一方 auto-clean 擦除另一方未提交修改）。task_files 是任务的文件指纹，
+
+
+
+
 
 
 
@@ -5303,7 +10567,19 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
+
+
+
+
     判据：Jaccard 相似度 |A∩B| / |A∪B| ≥ 0.5（路径归一化为 posix + 小写）。
+
+
+
+
 
 
 
@@ -5311,7 +10587,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     降级：检测异常仅 debug 日志，不阻断 start（fail-open）。
+
+
+
+
 
 
 
@@ -5319,7 +10603,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     if not task_files:
+
+
+
+
 
 
 
@@ -5327,7 +10619,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -5335,7 +10635,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
         for active in registry.list_active():
+
+
+
+
 
 
 
@@ -5343,7 +10651,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -5351,7 +10667,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
             if not other_set:
+
+
+
+
 
 
 
@@ -5359,7 +10683,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
             intersection = new_set & other_set
+
+
+
+
 
 
 
@@ -5367,7 +10699,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
             if union and len(intersection) / len(union) >= 0.5:
+
+
+
+
 
 
 
@@ -5375,7 +10715,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                 return {
+
+
+
+
 
 
 
@@ -5383,7 +10731,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                     "worktree_path": "",
+
+
+
+
 
 
 
@@ -5391,7 +10747,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                     "registered": False,
+
+
+
+
 
 
 
@@ -5399,7 +10763,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                     "error": (
+
+
+
+
 
 
 
@@ -5407,7 +10779,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                         f"'{active.session_id}' 重叠 {pct}%（裁定#D 任务去重——"
+
+
+
+
 
 
 
@@ -5415,7 +10795,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                         f"用 allow_duplicate=True 重试。重叠文件: {sorted(intersection)[:10]}"
+
+
+
+
 
 
 
@@ -5423,7 +10811,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                     "warning": "DUPLICATE_TASK_WARNING",
+
+
+
+
 
 
 
@@ -5431,7 +10827,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
                     "overlap_files": sorted(intersection),
+
+
+
+
 
 
 
@@ -5439,7 +10843,15 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 检测降级不阻断 start
+
+
+
+
 
 
 
@@ -5447,7 +10859,23 @@ def _check_duplicate_task(
 
 
 
+
+
+
+
     return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5463,7 +10891,19 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
     """AI session 启动健康度 smoke test（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S7 Phase 3.3）。
+
+
+
+
+
+
+
+
 
 
 
@@ -5475,7 +10915,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
     失败时返回 status="failed" + details，调用方 SHOULD 上报（[ESCALATION]）而非
+
+
+
+
 
 
 
@@ -5487,7 +10935,19 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
+
+
+
+
     检查项（3 项）：
+
+
+
+
 
 
 
@@ -5495,7 +10955,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
       2. .runtime/lookup_audit/ 目录存在且可写（audit log 落盘通路）
+
+
+
+
 
 
 
@@ -5507,7 +10975,19 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -5515,11 +10995,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
     """
 
 
 
+
+
+
+
     checks: list[dict] = []
+
+
+
+
 
 
 
@@ -5531,7 +11023,19 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
+
+
+
+
     # 1. capability_lookup_required_gate 可 import
+
+
+
+
 
 
 
@@ -5539,7 +11043,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         from zephyr.gov_enforcement.commit_gates import capability_lookup_required_gate
+
+
+
+
 
 
 
@@ -5547,11 +11059,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         checks.append({
 
 
 
+
+
+
+
             "name": "capability_lookup_required_gate import",
+
+
+
+
 
 
 
@@ -5559,11 +11083,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "detail": f"gate_id={gate_spec.gate_id}, priority={gate_spec.priority}",
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -5571,7 +11107,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         all_passed = False
+
+
+
+
 
 
 
@@ -5579,7 +11123,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "name": "capability_lookup_required_gate import",
+
+
+
+
 
 
 
@@ -5587,11 +11139,27 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "detail": f"import failed: {type(e).__name__}: {e}",
 
 
 
+
+
+
+
         })
+
+
+
+
+
+
+
+
 
 
 
@@ -5603,7 +11171,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -5611,7 +11187,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         audit_dir.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -5619,7 +11203,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         test_file = audit_dir / "._health_check_test"
+
+
+
+
 
 
 
@@ -5627,7 +11219,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         test_file.unlink()
+
+
+
+
 
 
 
@@ -5635,7 +11235,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "name": "lookup_audit dir writable",
+
+
+
+
 
 
 
@@ -5643,11 +11251,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "detail": str(audit_dir),
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -5655,7 +11275,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         all_passed = False
+
+
+
+
 
 
 
@@ -5663,7 +11291,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "name": "lookup_audit dir writable",
+
+
+
+
 
 
 
@@ -5671,11 +11307,27 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "detail": f"write test failed: {type(e).__name__}: {e}",
 
 
 
+
+
+
+
         })
+
+
+
+
+
+
+
+
 
 
 
@@ -5687,7 +11339,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -5695,7 +11355,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         # 调用空 session_id 验证函数签名（空 session_id 不会写入）
+
+
+
+
 
 
 
@@ -5703,7 +11371,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             session_id="",
+
+
+
+
 
 
 
@@ -5711,7 +11387,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -5719,7 +11403,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "name": "capability_lookup.write_lookup_audit_log callable",
+
+
+
+
 
 
 
@@ -5727,11 +11419,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "detail": "function signature verified",
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -5739,7 +11443,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         all_passed = False
+
+
+
+
 
 
 
@@ -5747,7 +11459,15 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "name": "capability_lookup.write_lookup_audit_log callable",
+
+
+
+
 
 
 
@@ -5755,11 +11475,27 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
             "detail": f"call failed: {type(e).__name__}: {e}",
 
 
 
+
+
+
+
         })
+
+
+
+
+
+
+
+
 
 
 
@@ -5771,11 +11507,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
         "status": "ok" if all_passed else "failed",
 
 
 
+
+
+
+
         "checks": checks,
+
+
+
+
 
 
 
@@ -5791,7 +11539,23 @@ def _run_startup_health_check(root: Path) -> dict:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @_inject_ok
+
+
+
+
 
 
 
@@ -5799,7 +11563,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     session_id: str | None = None,
+
+
+
+
 
 
 
@@ -5807,7 +11579,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     breaking_change: bool = False,
+
+
+
+
 
 
 
@@ -5815,7 +11595,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     task_files: list[str] | None = None,
+
+
+
+
 
 
 
@@ -5823,7 +11611,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     depends_on_sessions: list[str] | None = None,
+
+
+
+
 
 
 
@@ -5831,7 +11627,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
 ) -> StartResult:
+
+
+
+
 
 
 
@@ -5843,7 +11647,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     原子操作：先注册 session（SessionRegistry），再创建 worktree（WorktreeManager）。
+
+
+
+
 
 
 
@@ -5855,7 +11671,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     治本变更并发阻断（§9.7 治本，2026-07-04）——双向阻断逻辑：
+
+
+
+
 
 
 
@@ -5863,7 +11691,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     - ``breaking_change=False``：检查是否有其他活跃 session 声明了 ``breaking_change=True`` -> 有则阻断（避让治本变更）
+
+
+
+
 
 
 
@@ -5875,7 +11711,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -5883,7 +11731,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         project_root: 项目根目录（默认 REPO_ROOT）。
+
+
+
+
 
 
 
@@ -5891,7 +11747,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         allow_concurrent: 逃生通道，True 时跳过并发阻断（对标 allow_overlap）。
+
+
+
+
 
 
 
@@ -5899,7 +11763,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             作为任务文件指纹注册到 SessionRegistry，与活跃 session 的 task_files
+
+
+
+
 
 
 
@@ -5907,7 +11779,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         allow_duplicate: 逃生通道，True 时跳过任务去重阻断（确认非重复施工后用）。
+
+
+
+
 
 
 
@@ -5915,7 +11795,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             （#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
+
+
+
+
 
 
 
@@ -5923,7 +11811,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED），避免悬空 import 污染 main 分支。
+
+
+
+
 
 
 
@@ -5931,7 +11827,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             True 时跳过工作区残留 fail-closed 检查。用于确认残留是安全的（如其他 session
+
+
+
+
 
 
 
@@ -5943,7 +11847,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -5951,7 +11867,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "ok": bool,                # 裁定#A：成功判定唯一入口（消费方 MUST 只读此键）
+
+
+
+
 
 
 
@@ -5959,7 +11883,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "worktree_path": str,      # worktree 绝对路径，AI 后续文件操作 MUST 用此路径前缀
+
+
+
+
 
 
 
@@ -5967,7 +11899,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "registered": bool,        # session 是否注册成功
+
+
+
+
 
 
 
@@ -5975,7 +11915,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -5983,7 +11931,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         任务去重阻断时附加 "warning"="DUPLICATE_TASK_WARNING" + "conflict_with" +
+
+
+
+
 
 
 
@@ -5991,11 +11947,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
     """
 
 
 
+
+
+
+
     sid = session_id or generate_session_id()
+
+
+
+
 
 
 
@@ -6007,7 +11975,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     # -1. 启动健康度 smoke test（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S7 Phase 3.3）
+
+
+
+
 
 
 
@@ -6015,7 +11995,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     #     病根 G7：原无启动 smoke test，gate 故障时 AI 静默 workaround（最大风险）。
+
+
+
+
 
 
 
@@ -6023,7 +12011,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     #     失败时强制 [ESCALATION] 标记暴露给 AI/人类，禁止静默 workaround。
+
+
+
+
 
 
 
@@ -6031,7 +12027,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     if health_check.get("status") != "ok":
+
+
+
+
 
 
 
@@ -6039,7 +12043,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             c["name"] for c in health_check.get("checks", []) if not c.get("passed")
+
+
+
+
 
 
 
@@ -6047,7 +12059,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         logger.error(
+
+
+
+
 
 
 
@@ -6055,7 +12075,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "AI MUST 上报人类而非静默 workaround——对标 #ARCH-TOOL-HEALTH-V1. "
+
+
+
+
 
 
 
@@ -6063,11 +12091,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
             sid, health_check.get("status"), failed_names,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -6075,7 +12115,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         logger.debug(
+
+
+
+
 
 
 
@@ -6083,7 +12131,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
         )
+
+
+
+
+
+
+
+
 
 
 
@@ -6095,7 +12155,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     # start 时工作区 clean 检查（fail-closed）。
+
+
+
+
 
 
 
@@ -6103,7 +12171,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     # 导致 merge 时被 WORKSPACE-CLEAN-CHECK 阻断（浪费工作）或 stash 残留（导致 stash 堆积）。
+
+
+
+
 
 
 
@@ -6111,7 +12187,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     if not allow_workspace_drift:
+
+
+
+
 
 
 
@@ -6119,7 +12203,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             _ws_passed, _ws_detail = _workspace_clean_check_start(root, sid)
+
+
+
+
 
 
 
@@ -6127,7 +12219,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 return {
+
+
+
+
 
 
 
@@ -6135,7 +12235,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                     "session_id": sid,
+
+
+
+
 
 
 
@@ -6143,7 +12251,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                     "branch": "",
+
+
+
+
 
 
 
@@ -6151,7 +12267,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                     "created": False,
+
+
+
+
 
 
 
@@ -6159,7 +12283,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                     "detail": _ws_detail,
+
+
+
+
 
 
 
@@ -6167,7 +12299,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         except Exception as _ws_err:  # noqa: BLE001 — fail-open（检测本身失败不阻断）
+
+
+
+
 
 
 
@@ -6179,11 +12319,27 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     # P4-4: session 启动推送近期高频错误提醒（#ARCH-PREVENTABILITY-LAYER-001 Phase 4）
 
 
 
+
+
+
+
     # fail-open——加载/打印失败不阻断 session 创建
+
+
+
+
 
 
 
@@ -6195,7 +12351,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     # 0. 治本变更并发阻断（§9.7 治本，2026-07-04）
+
+
+
+
 
 
 
@@ -6203,7 +12371,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     #    逃生通道：allow_concurrent=True 跳过阻断（对标 allow_overlap）
+
+
+
+
 
 
 
@@ -6211,7 +12387,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     if block_r is not None:
+
+
+
+
 
 
 
@@ -6219,7 +12403,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         block_r["health_check"] = health_check
+
+
+
+
 
 
 
@@ -6231,7 +12423,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     # 0.5 任务去重检测（裁定#D，2026-07-19）：任务文件指纹与活跃 session 重叠
+
+
+
+
 
 
 
@@ -6239,7 +12443,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     if task_files and not allow_duplicate:
+
+
+
+
 
 
 
@@ -6247,7 +12459,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if dup_r is not None:
+
+
+
+
 
 
 
@@ -6259,7 +12479,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     # 1. 注册 session（held_files 留空——worktree 模式下文件隔离由 worktree 物理保证，
+
+
+
+
 
 
 
@@ -6267,7 +12499,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     registry = _get_registry(root)
+
+
+
+
 
 
 
@@ -6279,7 +12519,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     # #ARCH-HEARTBEAT-001 P1-5: 检查 emergency_commit 成本递增阻断
+
+
+
+
 
 
 
@@ -6287,7 +12539,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     # 强制先调查根因（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset）。
+
+
+
+
 
 
 
@@ -6295,7 +12555,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6303,7 +12571,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if start_blocked:
+
+
+
+
 
 
 
@@ -6311,7 +12587,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 "session_id": sid,
+
+
+
+
 
 
 
@@ -6319,7 +12603,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 "branch": "",
+
+
+
+
 
 
 
@@ -6327,7 +12619,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 "created": False,
+
+
+
+
 
 
 
@@ -6335,7 +12635,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 "health_check": health_check,
+
+
+
+
 
 
 
@@ -6343,7 +12651,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: best-effort 防御
+
+
+
+
 
 
 
@@ -6355,7 +12671,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6363,7 +12691,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         # pid=0 = 逻辑 session（非进程绑定）。session_worktree 工作流跨多个 python -c
+
+
+
+
 
 
 
@@ -6371,7 +12707,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         # PID 死亡 → _is_session_alive 判死 → SESSION-REQUIRED gate 阻断 merge +
+
+
+
+
 
 
 
@@ -6379,7 +12723,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         # （仅靠 TTL=3600s + commit/merge 时的 heartbeat 刷新），session 跨进程存活。
+
+
+
+
 
 
 
@@ -6387,7 +12739,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         registry.register(
+
+
+
+
 
 
 
@@ -6395,7 +12755,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             is_breaking_change=breaking_change,
+
+
+
+
 
 
 
@@ -6403,7 +12771,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             depends_on_sessions=depends_on_sessions or [],  # TRAE-072：cross-commit 依赖登记
+
+
+
+
 
 
 
@@ -6411,7 +12787,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         registered = True
+
+
+
+
 
 
 
@@ -6419,7 +12803,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -6427,7 +12819,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "worktree_path": "",
+
+
+
+
 
 
 
@@ -6435,7 +12835,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "registered": False,
+
+
+
+
 
 
 
@@ -6443,7 +12851,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "error": f"register session failed: {e}",
+
+
+
+
 
 
 
@@ -6451,7 +12867,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -6463,7 +12891,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     manager = _get_manager(root)
+
+
+
+
 
 
 
@@ -6471,7 +12907,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6479,11 +12923,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if sweep_r.get("swept", 0) or sweep_r.get("warnings"):
 
 
 
+
+
+
+
             logger.info(
+
+
+
+
 
 
 
@@ -6491,7 +12947,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 sweep_r.get("swept"), sweep_r.get("skipped"), sweep_r.get("warnings"),
+
+
+
+
 
 
 
@@ -6499,7 +12963,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -6507,7 +12979,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     # 3. 清理 .aidrafts/ 根目录孤儿辅助脚本（P3 流程治本，2026-07-17）
+
+
+
+
 
 
 
@@ -6515,7 +12995,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6523,7 +13011,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if orphan_r.get("deleted") or orphan_r.get("warnings"):
+
+
+
+
 
 
 
@@ -6531,7 +13027,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 "session_worktree orphan cleanup: deleted=%s skipped=%s warnings=%s",
+
+
+
+
 
 
 
@@ -6539,7 +13043,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -6547,7 +13059,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         logger.warning("session_worktree orphan cleanup 异常（不阻断 start）: %s", e, exc_info=True)
+
+
+
+
 
 
 
@@ -6555,7 +13075,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6563,7 +13091,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if q_r.get("deleted"):
+
+
+
+
 
 
 
@@ -6571,7 +13107,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -6579,11 +13123,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
     # P3.5 清扫过期 quarantine refs（ARCH-GIT-CALL-BUDGET P3.5 配套：72h 保留期，非阻断）
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6591,7 +13147,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if qr_r.get("deleted"):
+
+
+
+
 
 
 
@@ -6599,7 +13163,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -6607,7 +13179,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -6615,7 +13195,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         wt_path = manager._wt_path(sid)
+
+
+
+
 
 
 
@@ -6623,7 +13211,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         if not already_exists:
+
+
+
+
 
 
 
@@ -6631,7 +13227,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             # pool 预创建 worktree（.aidrafts_pool/），lease 瞬时返回已创建的
+
+
+
+
 
 
 
@@ -6639,7 +13243,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             # 消除每次 session 启动的 git worktree add 开销（~2-5s on Windows）。
+
+
+
+
 
 
 
@@ -6647,7 +13259,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             # 健壮性优先：pool 永远不阻断 session 启动。
+
+
+
+
 
 
 
@@ -6655,7 +13275,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -6663,7 +13291,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 pool = get_pool(root)
+
+
+
+
 
 
 
@@ -6671,7 +13307,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             except Exception as e:  # noqa: BLE001 — pool 失败不阻断 start
+
+
+
+
 
 
 
@@ -6679,11 +13323,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
                     "session_worktree_start: pool.lease 异常（fall back 到直接创建）: %s",
 
 
 
+
+
+
+
                     e, exc_info=True,
+
+
+
+
 
 
 
@@ -6695,7 +13351,19 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
             if leased_path is not None:
+
+
+
+
 
 
 
@@ -6703,7 +13371,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 created = True
+
+
+
+
 
 
 
@@ -6711,7 +13387,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 try:
+
+
+
+
 
 
 
@@ -6719,7 +13403,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 except Exception:  # noqa: BLE001 — prefetch 失败不阻断 start
+
+
+
+
 
 
 
@@ -6727,7 +13419,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                         "session_worktree_start: prefetch_async 失败（不阻断）",
+
+
+
+
 
 
 
@@ -6735,7 +13435,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                     )
+
+
+
+
 
 
 
@@ -6743,7 +13451,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 # Fall back：直接创建 worktree（pool 空或 lease 失败）
+
+
+
+
 
 
 
@@ -6751,7 +13467,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 wt_path = manager._wt_path(sid)
+
+
+
+
 
 
 
@@ -6759,7 +13483,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -6767,7 +13499,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         # #ARCH-WORKTREE-BASE-FRESHNESS-001 Phase 1.1: start base freshness check (fail-open)
+
+
+
+
 
 
 
@@ -6775,7 +13515,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             _start_base_err = _ensure_worktree_base_fresh(root, wt_path, sid, stage="start")
+
+
+
+
 
 
 
@@ -6783,7 +13531,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
                 logger.warning("[start] base freshness check (session=%s): %s. commit 时会重新检测（fail-closed），此处仅告警。", sid, _start_base_err.get("message", "unknown"))
+
+
+
+
 
 
 
@@ -6791,7 +13547,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             logger.warning("[start] base freshness check 异常（不阻断）: %s", _start_bf_err)
+
+
+
+
 
 
 
@@ -6799,7 +13563,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         # daemon 每 30s 刷新 last_heartbeat，使 _is_session_alive 的 90s 超时生效
+
+
+
+
 
 
 
@@ -6807,7 +13579,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         daemon_pid = _spawn_heartbeat_daemon(sid, root)
+
+
+
+
 
 
 
@@ -6815,7 +13595,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "session_id": sid,
+
+
+
+
 
 
 
@@ -6823,11 +13611,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "branch": f"session/{sid}",
 
 
 
+
+
+
+
             "registered": registered,
+
+
+
+
 
 
 
@@ -6835,7 +13635,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "health_check": health_check,
+
+
+
+
 
 
 
@@ -6843,7 +13651,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -6851,7 +13667,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -6859,7 +13683,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "worktree_path": "",
+
+
+
+
 
 
 
@@ -6867,11 +13699,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "registered": registered,
 
 
 
+
+
+
+
             "created": False,
+
+
+
+
 
 
 
@@ -6879,11 +13723,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "health_check": health_check,
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -6891,7 +13747,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -6899,7 +13763,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "worktree_path": "",
+
+
+
+
 
 
 
@@ -6907,7 +13779,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "registered": registered,
+
+
+
+
 
 
 
@@ -6915,7 +13795,15 @@ def session_worktree_start(
 
 
 
+
+
+
+
             "error": f"unexpected: {e}",
+
+
+
+
 
 
 
@@ -6923,7 +13811,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6939,11 +13843,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
 # 原 session_worktree_commit 388行 McCabe=47（7段顺序编排 + 共享状态）。
 
 
 
+
+
+
+
 # 治本：提取为 6 个模块级 helper（均 McCabe≤15），主函数简化为编排（McCabe≈10）。
+
+
+
+
 
 
 
@@ -6959,7 +13875,23 @@ def session_worktree_start(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list[str]:
+
+
+
+
 
 
 
@@ -6967,7 +13899,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
     rel_files: list[str] = []
+
+
+
+
 
 
 
@@ -6975,7 +13915,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
         p = Path(f)
+
+
+
+
 
 
 
@@ -6983,7 +13931,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -6991,7 +13947,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
                 rel_files.append(str(rel).replace("\\", "/"))
+
+
+
+
 
 
 
@@ -6999,7 +13963,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
                 try:
+
+
+
+
 
 
 
@@ -7007,7 +13979,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
                     rel_files.append(str(rel_to_root).replace("\\", "/"))
+
+
+
+
 
 
 
@@ -7015,7 +13995,15 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
                     rel_files.append(str(p).replace("\\", "/"))
+
+
+
+
 
 
 
@@ -7023,11 +14011,31 @@ def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list
 
 
 
+
+
+
+
             rel_files.append(str(p).replace("\\", "/"))
 
 
 
+
+
+
+
     return rel_files
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7043,7 +14051,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
     """HELD-OVERLAP 硬阻断 + auto-claim。返回阻断 dict 或 None（通过）。"""
+
+
+
+
 
 
 
@@ -7051,7 +14067,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
     overlap_files: list[str] = []
+
+
+
+
 
 
 
@@ -7059,7 +14083,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -7067,7 +14099,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
                 claimed_files.append(rf)
+
+
+
+
 
 
 
@@ -7075,11 +14115,23 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
                 overlap_files.append(rf)
 
 
 
+
+
+
+
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -7087,7 +14139,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
     if not overlap_files:
+
+
+
+
 
 
 
@@ -7095,7 +14155,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
     for cf in claimed_files:
+
+
+
+
 
 
 
@@ -7103,7 +14171,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
             registry.release_file(session_id, cf)
+
+
+
+
 
 
 
@@ -7111,7 +14187,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
             logger.warning("suppressed error in session_worktree", exc_info=True)
+
+
+
+
 
 
 
@@ -7119,7 +14203,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
         "session_id": session_id,
+
+
+
+
 
 
 
@@ -7127,7 +14219,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
         "message": (
+
+
+
+
 
 
 
@@ -7135,7 +14235,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
             f"（等待对方 merge/abort 释放后重试，或用 allow_overlap=True 逃生）: "
+
+
+
+
 
 
 
@@ -7143,7 +14251,15 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
         ),
+
+
+
+
 
 
 
@@ -7151,11 +14267,31 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 
 
+
+
+
+
         "held_overlap": True,
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7171,7 +14307,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     """DCR 检测（对标 GitCommitGateway DIRECTORY-CONTRACT gate）。返回阻断 dict 或 None。"""
+
+
+
+
 
 
 
@@ -7179,7 +14323,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     # （对标 directory_contract_gate.py L92-93 deletion commit 豁免设计）
+
+
+
+
 
 
 
@@ -7187,7 +14339,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     if not existing_files:
+
+
+
+
 
 
 
@@ -7195,7 +14355,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     check_script = root / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
+
+
+
+
 
 
 
@@ -7203,7 +14371,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -7211,7 +14387,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "status": "FAILED",
+
+
+
+
 
 
 
@@ -7219,7 +14403,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "commit_hash": "",
+
+
+
+
 
 
 
@@ -7227,7 +14419,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -7235,7 +14435,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     if len(existing_files) > _MAX_INLINE_FILES:
+
+
+
+
 
 
 
@@ -7243,7 +14451,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     else:
+
+
+
+
 
 
 
@@ -7251,7 +14467,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     # 治本(2026-07-19): 显式注入 PYTHONPATH——check_directory_contract.py 间接 import
+
+
+
+
 
 
 
@@ -7259,7 +14483,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     # subprocess 默认继承父 env，但 session_worktree_commit 调用链可能丢失 PYTHONPATH，
+
+
+
+
 
 
 
@@ -7267,7 +14499,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     dcr_env = os.environ.copy()
+
+
+
+
 
 
 
@@ -7275,7 +14515,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     _existing_pp = dcr_env.get("PYTHONPATH", "")
+
+
+
+
 
 
 
@@ -7283,11 +14531,23 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         dcr_env["PYTHONPATH"] = f"{_src_dir}{os.pathsep}{_existing_pp}" if _existing_pp else _src_dir
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -7299,7 +14559,19 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
+
+
+
+
         dcr_result = run_subprocess_hidden(
+
+
+
+
 
 
 
@@ -7307,7 +14579,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -7315,7 +14595,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -7323,7 +14611,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "status": "FAILED",
+
+
+
+
 
 
 
@@ -7331,7 +14627,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "commit_hash": "",
+
+
+
+
 
 
 
@@ -7339,7 +14643,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -7347,7 +14659,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         _stderr = dcr_result.stderr
+
+
+
+
 
 
 
@@ -7355,7 +14675,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         if isinstance(_stderr, bytes):
+
+
+
+
 
 
 
@@ -7363,7 +14691,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         if isinstance(_stdout, bytes):
+
+
+
+
 
 
 
@@ -7371,7 +14707,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
         detail = _stderr.strip()
+
+
+
+
 
 
 
@@ -7379,7 +14723,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             detail = _stdout.strip()
+
+
+
+
 
 
 
@@ -7387,7 +14739,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -7395,7 +14755,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "message": f"DIRECTORY_CONTRACT_VIOLATION: {detail or 'unknown violation'}",
+
+
+
+
 
 
 
@@ -7403,7 +14771,15 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
             "directory_contract_violation": True,
+
+
+
+
 
 
 
@@ -7411,7 +14787,23 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
 
 
 
+
+
+
+
     return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7427,7 +14819,15 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
 
 
+
+
+
+
     """删除 worktree 内文件（带只读兜底 + git rm --cached 兜底）。"""
+
+
+
+
 
 
 
@@ -7435,7 +14835,15 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
 
 
+
+
+
+
         dst.unlink()
+
+
+
+
 
 
 
@@ -7443,7 +14851,15 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -7451,7 +14867,15 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
 
 
+
+
+
+
             dst.unlink()
+
+
+
+
 
 
 
@@ -7459,7 +14883,15 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
 
 
+
+
+
+
             subprocess.run(
+
+
+
+
 
 
 
@@ -7467,11 +14899,31 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
 
 
+
+
+
+
                 cwd=str(wt_path), capture_output=True, timeout=30,
 
 
 
+
+
+
+
             )
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7487,7 +14939,15 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
     root: Path, session_id: str, stage: str, event: str, **extra,
+
+
+
+
 
 
 
@@ -7495,7 +14955,15 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
     """记录 base 新鲜度事件到 worktree_ops_log.jsonl（#ARCH-WORKTREE-BASE-FRESHNESS-001）。"""
+
+
+
+
 
 
 
@@ -7503,7 +14971,15 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
         import time as _time
+
+
+
+
 
 
 
@@ -7511,7 +14987,15 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
         log_path.parent.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -7519,7 +15003,15 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
         with open(log_path, "a", encoding="utf-8") as f:
+
+
+
+
 
 
 
@@ -7527,7 +15019,15 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
     except OSError as e:
+
+
+
+
 
 
 
@@ -7543,7 +15043,23 @@ def _log_base_freshness_event(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _run_git_with_retry(
+
+
+
+
 
 
 
@@ -7551,7 +15067,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
 ) -> subprocess.CompletedProcess | None:
+
+
+
+
 
 
 
@@ -7563,7 +15087,19 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
+
+
+
+
     退避用 monotonic 忙等而非 time.sleep——重试退避不是时间触发轮询，
+
+
+
+
 
 
 
@@ -7571,7 +15107,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
     被误判为永久系统时间触发）。忙等仅在 git 失败时触发（非热路径）。
+
+
+
+
 
 
 
@@ -7579,7 +15123,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
     import time as _time
+
+
+
+
 
 
 
@@ -7587,7 +15139,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
     for attempt in range(retries):
+
+
+
+
 
 
 
@@ -7595,7 +15155,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
             r = subprocess.run(
+
+
+
+
 
 
 
@@ -7603,7 +15171,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
                 encoding="utf-8", errors="replace", timeout=timeout,
+
+
+
+
 
 
 
@@ -7611,7 +15187,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
             if r.returncode == 0:
+
+
+
+
 
 
 
@@ -7619,7 +15203,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
             last_r = r
+
+
+
+
 
 
 
@@ -7627,7 +15219,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
             logger.debug("git cmd retry %d/%d failed: %s", attempt + 1, retries, e)
+
+
+
+
 
 
 
@@ -7635,7 +15235,15 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
         if attempt < retries - 1:
+
+
+
+
 
 
 
@@ -7643,11 +15251,23 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
             while _time.monotonic() < _end_ts:
 
 
 
+
+
+
+
                 pass  # busy-wait backoff (avoid time.sleep PERM-TRIGGER false positive)
+
+
+
+
 
 
 
@@ -7663,7 +15283,23 @@ def _run_git_with_retry(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _ensure_worktree_base_fresh(
+
+
+
+
 
 
 
@@ -7671,7 +15307,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
 ) -> dict | None:
+
+
+
+
 
 
 
@@ -7683,7 +15327,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     病根（裁定#19-B，2026-07-18）：
+
+
+
+
 
 
 
@@ -7691,7 +15347,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
       - 并发 session merge 到 dev，dev HEAD 前进到 T1（引入新 #ARCH-XXX 引用等）
+
+
+
+
 
 
 
@@ -7699,7 +15363,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
       - session_worktree_commit 调 _sync_files_to_worktree copy2 主工作区文件到 worktree
+
+
+
+
 
 
 
@@ -7707,7 +15379,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
       - 后果：① 搭便车提交（dev 的多个 commit 被塞进 session commit，污染 git 历史）；
+
+
+
+
 
 
 
@@ -7719,11 +15399,27 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     治本：在 _sync_files_to_worktree 之前检测 worktree HEAD 是否落后于主工作区 HEAD，若落后则：
 
 
 
+
+
+
+
       - 无 session commit（start 后第一次 commit）→ git reset --hard <main HEAD>（安全，worktree 无未提交改动）
+
+
+
+
 
 
 
@@ -7735,7 +15431,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -7743,7 +15451,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -7751,7 +15467,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
     main_head_r = _run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=root)
+
+
+
+
 
 
 
@@ -7759,11 +15483,23 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         _log_base_freshness_event(root, session_id, stage, "fail_closed", error="rev-parse HEAD (main) failed")
 
 
 
+
+
+
+
         return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法获取主工作区 HEAD. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+
+
+
+
 
 
 
@@ -7775,7 +15511,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     # 获取 worktree HEAD
+
+
+
+
 
 
 
@@ -7783,7 +15531,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
     if wt_head_r is None or wt_head_r.returncode != 0:
+
+
+
+
 
 
 
@@ -7791,7 +15547,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法获取 worktree HEAD. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+
+
+
+
 
 
 
@@ -7803,7 +15567,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     # base 已最新
+
+
+
+
 
 
 
@@ -7811,7 +15587,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         _log_base_freshness_event(root, session_id, stage, "pass", main_head=main_head[:8], wt_head=wt_head[:8])
+
+
+
+
 
 
 
@@ -7823,7 +15607,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     # 检测 worktree 是否有 session 自己的 commit（merge-base..worktree_HEAD 的 commit 数）
+
+
+
+
 
 
 
@@ -7831,7 +15627,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
     if mb_r is None or mb_r.returncode != 0:
+
+
+
+
 
 
 
@@ -7839,7 +15643,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法计算 merge-base. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+
+
+
+
 
 
 
@@ -7851,7 +15663,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     session_commits_r = _run_git_with_retry(["git", "rev-list", "--count", f"{merge_base}..{wt_head}"], cwd=root)
+
+
+
+
 
 
 
@@ -7859,11 +15683,23 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], error="rev-list --count failed")
 
 
 
+
+
+
+
         return {"session_id": session_id, "status": "FAILED", "message": f"base freshness check ({stage}): 无法统计 session commit 数. fail-closed 阻断。", "commit_hash": "", "base_sync_failed": True, "stage": stage}
+
+
+
+
 
 
 
@@ -7875,7 +15711,19 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
+
+
+
+
     if session_commit_count == 0:
+
+
+
+
 
 
 
@@ -7883,7 +15731,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         # P1.3 fast-path：session_worktree 是可信调用方，跳过 git_guard alias 扫描
+
+
+
+
 
 
 
@@ -7891,7 +15747,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             ["git", "reset", "--hard", main_head],
+
+
+
+
 
 
 
@@ -7899,11 +15763,23 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             env=_trusted_git_env(),
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -7911,7 +15787,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], event_detail="reset --hard failed")
+
+
+
+
 
 
 
@@ -7919,7 +15803,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
                 "session_id": session_id, "status": "FAILED",
+
+
+
+
 
 
 
@@ -7927,11 +15819,23 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
                 "commit_hash": "", "base_sync_failed": True, "stage": stage,
 
 
 
+
+
+
+
             }
+
+
+
+
 
 
 
@@ -7939,7 +15843,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         logger.info("session_worktree base 对齐: reset --hard %s (无 session commit，安全)", main_head[:8])
+
+
+
+
 
 
 
@@ -7947,7 +15859,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         # 有 session commit，rebase 到主工作区 HEAD（可能有冲突）
+
+
+
+
 
 
 
@@ -7955,7 +15875,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             ["git", "rebase", main_head],
+
+
+
+
 
 
 
@@ -7963,7 +15891,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -7971,7 +15907,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             subprocess.run(["git", "rebase", "--abort"], cwd=str(wt_path), capture_output=True, timeout=30)
+
+
+
+
 
 
 
@@ -7979,7 +15923,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             return {
+
+
+
+
 
 
 
@@ -7987,7 +15939,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
                 "message": f"worktree base 过期且 rebase 冲突（{session_commit_count} commits）. 手动处理: git rebase {main_head[:8]} in {wt_path}, or session_worktree_abort + restart.",
+
+
+
+
 
 
 
@@ -7995,7 +15955,15 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
             }
+
+
+
+
 
 
 
@@ -8003,11 +15971,31 @@ def _ensure_worktree_base_fresh(
 
 
 
+
+
+
+
         logger.info("session_worktree base 对齐: rebase %s (%d commits)", main_head[:8], session_commit_count)
 
 
 
+
+
+
+
     return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8023,7 +16011,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
     """同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根）。"""
+
+
+
+
 
 
 
@@ -8035,7 +16031,19 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
+
+
+
+
     tracked_r = subprocess.run(
+
+
+
+
 
 
 
@@ -8043,7 +16051,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
         cwd=str(wt_path), capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -8051,7 +16067,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -8059,7 +16083,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
     if tracked_r.returncode == 0 and tracked_r.stdout.strip():
+
+
+
+
 
 
 
@@ -8071,7 +16103,19 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
+
+
+
+
     for rel_file in rel_files:
+
+
+
+
 
 
 
@@ -8079,7 +16123,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
         dst = wt_path / rel_file
+
+
+
+
 
 
 
@@ -8087,7 +16139,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
             if dst.exists() and dst.is_file():
+
+
+
+
 
 
 
@@ -8095,7 +16155,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
                     if src.read_bytes() == dst.read_bytes():
+
+
+
+
 
 
 
@@ -8103,7 +16171,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
                 except OSError:
+
+
+
+
 
 
 
@@ -8111,7 +16187,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
             dst.parent.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -8119,7 +16203,15 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
         elif not src.exists() and dst.exists() and rel_file in tracked_files:
+
+
+
+
 
 
 
@@ -8135,7 +16227,23 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _run_pre_commit_gates_once(
+
+
+
+
 
 
 
@@ -8143,7 +16251,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
     session_id: str, allow_promote: bool, allow_migration: bool,
+
+
+
+
 
 
 
@@ -8151,7 +16267,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
 ) -> dict | None:
+
+
+
+
 
 
 
@@ -8163,7 +16287,19 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
+
+
+
+
     返回值 status 语义：
+
+
+
+
 
 
 
@@ -8171,7 +16307,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
       - "GATE_VIOLATION": deterministic 违规，不重试
+
+
+
+
 
 
 
@@ -8183,7 +16327,19 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
+
+
+
+
     ``message`` 透传到 ``check_all(commit_message=...)`` 以支持 gate 读 commit msg——
+
+
+
+
 
 
 
@@ -8191,7 +16347,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -8199,7 +16363,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+
+
+
+
 
 
 
@@ -8207,11 +16379,23 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         _gw = GitCommitGateway(project_root=root)
+
+
+
+
 
 
 
@@ -8223,7 +16407,19 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
+
+
+
+
         def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+
+
+
+
 
 
 
@@ -8231,7 +16427,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             _env[_env_var] = "1"
+
+
+
+
 
 
 
@@ -8239,7 +16443,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                     and not getattr(_gw, "_in_commit_flow", False)):
+
+
+
+
 
 
 
@@ -8247,7 +16459,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                     cmd, 1, "", "git commit blocked in worktree gate check"
+
+
+
+
 
 
 
@@ -8255,7 +16475,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             _effective_cwd = cwd if cwd is not None else _wt
+
+
+
+
 
 
 
@@ -8263,7 +16491,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                 cmd, cwd=_effective_cwd, capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -8271,7 +16507,19 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             )
+
+
+
+
+
+
+
+
 
 
 
@@ -8283,7 +16531,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -8291,7 +16547,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             _gate_results = _gw._gate_registry.check_all(
+
+
+
+
 
 
 
@@ -8299,7 +16563,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                 allow_promote=allow_promote,
+
+
+
+
 
 
 
@@ -8307,7 +16579,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -8315,7 +16595,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             _gw._run_git = _orig_run_git
+
+
+
+
 
 
 
@@ -8323,7 +16611,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         if allow_migration:
+
+
+
+
 
 
 
@@ -8331,7 +16627,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         _blocking = [
+
+
+
+
 
 
 
@@ -8339,7 +16643,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             if not gr.passed and gr.gate_id not in _skip_gates
+
+
+
+
 
 
 
@@ -8347,7 +16659,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         if _blocking:
+
+
+
+
 
 
 
@@ -8355,7 +16675,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             return {
+
+
+
+
 
 
 
@@ -8363,7 +16691,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                 "status": "GATE_VIOLATION",
+
+
+
+
 
 
 
@@ -8371,7 +16707,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                     f"pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）: {_details}"
+
+
+
+
 
 
 
@@ -8379,7 +16723,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                 "commit_hash": "",
+
+
+
+
 
 
 
@@ -8387,7 +16739,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                 "gate_results": [
+
+
+
+
 
 
 
@@ -8395,7 +16755,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
                 ],
+
+
+
+
 
 
 
@@ -8403,7 +16771,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
     except subprocess.TimeoutExpired as _te:
+
+
+
+
 
 
 
@@ -8411,7 +16787,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         # （根因：60+ gate 串行执行累积超时，非代码缺陷）。
+
+
+
+
 
 
 
@@ -8419,7 +16803,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -8427,7 +16819,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             _te, exc_info=True,
+
+
+
+
 
 
 
@@ -8435,7 +16835,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -8443,7 +16851,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             "status": "GATE_TRANSIENT",
+
+
+
+
 
 
 
@@ -8451,7 +16867,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
             "commit_hash": "",
+
+
+
+
 
 
 
@@ -8459,7 +16883,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -8467,11 +16899,31 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
         logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
 
 
 
+
+
+
+
     return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8487,7 +16939,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
 # pre-commit gate 重试机制：原 _run_pre_commit_gates 单次执行，subprocess 超时
+
+
+
+
 
 
 
@@ -8495,7 +16955,15 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
 # transient 错误重试 3 次（指数退避 2/4/8s），重试间清理 worktree 残留 lock。
+
+
+
+
 
 
 
@@ -8503,11 +16971,23 @@ def _run_pre_commit_gates_once(
 
 
 
+
+
+
+
 # 由 reconciler 兜底告警）。
 
 
 
+
+
+
+
 _GATE_RETRY_DELAYS = (2, 4, 8)
+
+
+
+
 
 
 
@@ -8523,7 +17003,23 @@ _GATE_RETRY_MAX_ATTEMPTS = 3
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _cleanup_worktree_locks(wt_path: Path) -> None:
+
+
+
+
 
 
 
@@ -8535,7 +17031,19 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     重试间调用，移除 ``.git/index.lock`` 和 ``.git/refs/heads/*.lock`` 残留
+
+
+
+
 
 
 
@@ -8547,7 +17055,19 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -8555,7 +17075,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -8563,7 +17091,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
         git_dir = wt_path / ".git"
+
+
+
+
 
 
 
@@ -8571,7 +17107,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
             return
+
+
+
+
 
 
 
@@ -8579,7 +17123,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
         if index_lock.exists():
+
+
+
+
 
 
 
@@ -8587,7 +17139,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
                 index_lock.unlink()
+
+
+
+
 
 
 
@@ -8595,7 +17155,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
             except OSError:
+
+
+
+
 
 
 
@@ -8603,7 +17171,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
         refs_heads = git_dir / "refs" / "heads"
+
+
+
+
 
 
 
@@ -8611,7 +17187,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
             for lock_file in refs_heads.glob("*.lock"):
+
+
+
+
 
 
 
@@ -8619,7 +17203,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
                     lock_file.unlink()
+
+
+
+
 
 
 
@@ -8627,7 +17219,15 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
                     pass
+
+
+
+
 
 
 
@@ -8635,7 +17235,23 @@ def _cleanup_worktree_locks(wt_path: Path) -> None:
 
 
 
+
+
+
+
         pass
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8651,7 +17267,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
     root: Path, wt_path: Path, rel_files: list[str],
+
+
+
+
 
 
 
@@ -8659,11 +17283,23 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
     message: str = "",
 
 
 
+
+
+
+
 ) -> dict | None:
+
+
+
+
 
 
 
@@ -8675,11 +17311,27 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
+
+
+
+
     对 ``_run_pre_commit_gates_once`` 的 transient 错误（subprocess 超时）
 
 
 
+
+
+
+
     重试 ``_GATE_RETRY_MAX_ATTEMPTS`` 次，每次重试前等待指数退避
+
+
+
+
 
 
 
@@ -8691,7 +17343,19 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
+
+
+
+
     重试耗尽仍 transient → fail-open（返回 None）。transient 超时不代表
+
+
+
+
 
 
 
@@ -8703,7 +17367,19 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -8711,7 +17387,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -8719,7 +17403,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
     last_err: dict | None = None
+
+
+
+
 
 
 
@@ -8727,7 +17419,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
         err = _run_pre_commit_gates_once(
+
+
+
+
 
 
 
@@ -8735,7 +17435,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
             allow_promote, allow_migration, message,
+
+
+
+
 
 
 
@@ -8743,7 +17451,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
         if err is None:
+
+
+
+
 
 
 
@@ -8751,7 +17467,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
         status = err.get("status", "")
+
+
+
+
 
 
 
@@ -8759,7 +17483,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
             # GATE_VIOLATION 或其他 deterministic 状态，不重试
+
+
+
+
 
 
 
@@ -8767,7 +17499,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
         last_err = err
+
+
+
+
 
 
 
@@ -8775,7 +17515,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
             logger.warning(
+
+
+
+
 
 
 
@@ -8783,7 +17531,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
                 _GATE_RETRY_MAX_ATTEMPTS, err.get("message", ""),
+
+
+
+
 
 
 
@@ -8791,7 +17547,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
             return None  # fail-open
+
+
+
+
 
 
 
@@ -8799,7 +17563,15 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
         _threading.Event().wait(_GATE_RETRY_DELAYS[attempt - 1])
+
+
+
+
 
 
 
@@ -8815,11 +17587,31 @@ def _run_pre_commit_gates(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dict:
 
 
 
+
+
+
+
     """在 worktree 内执行 git commit 并返回结果 dict。"""
+
+
+
+
 
 
 
@@ -8831,7 +17623,19 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
+
+
+
+
     # P1-1 (2026-07-20): 注入 ZEPHYR_COMMIT_GATEWAY=1 env，防 forged_gw_marker 误判
+
+
+
+
 
 
 
@@ -8839,7 +17643,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
     #       缺 env 时判为 forged_gw_marker (4/24h 误报, GATE-COMMIT-GW-ABUSE-MONITOR 告警).
+
+
+
+
 
 
 
@@ -8847,7 +17659,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
     commit_env = os.environ.copy()
+
+
+
+
 
 
 
@@ -8859,7 +17679,19 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
+
+
+
+
     with tempfile.NamedTemporaryFile(
+
+
+
+
 
 
 
@@ -8867,7 +17699,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
     ) as msg_file:
+
+
+
+
 
 
 
@@ -8875,7 +17715,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         msg_file_path = msg_file.name
+
+
+
+
 
 
 
@@ -8883,7 +17731,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         commit_cmd = ["git", "commit", "--no-verify", "-F", msg_file_path]
+
+
+
+
 
 
 
@@ -8891,7 +17747,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
             commit_cmd, cwd=str(wt_path), capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -8899,7 +17763,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -8907,7 +17779,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -8915,7 +17795,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         except OSError:
+
+
+
+
 
 
 
@@ -8927,7 +17815,19 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
+
+
+
+
     if commit_r.returncode != 0:
+
+
+
+
 
 
 
@@ -8935,7 +17835,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -8943,11 +17851,23 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
             "message": f"git commit failed: {commit_r.stderr.strip()}",
 
 
 
+
+
+
+
             "commit_hash": "",
+
+
+
+
 
 
 
@@ -8959,7 +17879,19 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
+
+
+
+
     sha_r = subprocess.run(
+
+
+
+
 
 
 
@@ -8967,7 +17899,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         cwd=str(wt_path), capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -8975,7 +17915,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -8987,7 +17935,19 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
+
+
+
+
     return {
+
+
+
+
 
 
 
@@ -8995,7 +17955,15 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         "status": "OK",
+
+
+
+
 
 
 
@@ -9003,11 +17971,31 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
 
 
+
+
+
+
         "commit_hash": commit_hash,
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9023,7 +18011,19 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
     """获取目标文件中主工作区无改动的（可能被 stash 移走）。
+
+
+
+
+
+
+
+
 
 
 
@@ -9035,7 +18035,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
     目标文件不在该列表中 = 主工作区无改动 = 可能被 stash 移走。
+
+
+
+
 
 
 
@@ -9043,7 +18051,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -9051,7 +18067,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
             ["git", "diff", "--name-only", "HEAD"],
+
+
+
+
 
 
 
@@ -9059,7 +18083,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
             encoding="utf-8", errors="replace", timeout=15,
+
+
+
+
 
 
 
@@ -9067,7 +18099,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
         if diff_r.returncode != 0:
+
+
+
+
 
 
 
@@ -9075,7 +18115,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
         changed_files = {f.strip() for f in diff_r.stdout.splitlines() if f.strip()}
+
+
+
+
 
 
 
@@ -9083,7 +18131,15 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
         return clean_files if clean_files else None
+
+
+
+
 
 
 
@@ -9091,11 +18147,31 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
 
 
+
+
+
+
         logger.warning("_get_clean_target_files failed: %s", e, exc_info=True)
 
 
 
+
+
+
+
         return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9111,7 +18187,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
     root: Path, stash_line: str, clean_files: list[str],
+
+
+
+
 
 
 
@@ -9119,7 +18203,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
     """检查单个 stash 是否包含 clean_files 中的文件，命中返回 (stash_ref, msg, hits)。"""
+
+
+
+
 
 
 
@@ -9127,11 +18219,23 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
     if len(parts) < 2:
 
 
 
+
+
+
+
         return None
+
+
+
+
 
 
 
@@ -9139,7 +18243,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -9147,7 +18259,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
             ["git", "stash", "show", "--name-only", stash_ref],
+
+
+
+
 
 
 
@@ -9155,7 +18275,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
             encoding="utf-8", errors="replace", timeout=15,
+
+
+
+
 
 
 
@@ -9163,7 +18291,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
         if show_r.returncode != 0:
+
+
+
+
 
 
 
@@ -9171,7 +18307,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
         stash_files = {f.strip() for f in show_r.stdout.splitlines() if f.strip()}
+
+
+
+
 
 
 
@@ -9179,7 +18323,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
         if hits:
+
+
+
+
 
 
 
@@ -9187,7 +18339,15 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
     except (subprocess.TimeoutExpired, OSError):
+
+
+
+
 
 
 
@@ -9195,7 +18355,23 @@ def _check_stash_for_files(
 
 
 
+
+
+
+
     return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9211,11 +18387,23 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
     root: Path, clean_files: list[str],
 
 
 
+
+
+
+
 ) -> tuple[str, str, list[str]] | None:
+
+
+
+
 
 
 
@@ -9227,7 +18415,19 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
+
+
+
+
     只扫描 stash@{0}（最新 stash）——避免从旧 stash 恢复错误版本。
+
+
+
+
 
 
 
@@ -9235,7 +18435,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
     目标文件的旧版本，auto-recover 选错导致主工作区被旧版本覆盖。）
+
+
+
+
 
 
 
@@ -9243,7 +18451,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -9251,7 +18467,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
             ["git", "stash", "list", "--format=%gd|%s"],
+
+
+
+
 
 
 
@@ -9259,7 +18483,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
             encoding="utf-8", errors="replace", timeout=10,
+
+
+
+
 
 
 
@@ -9267,7 +18499,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
         if stash_list_r.returncode != 0 or not stash_list_r.stdout.strip():
+
+
+
+
 
 
 
@@ -9275,7 +18515,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
         stashes = [line.strip() for line in stash_list_r.stdout.splitlines() if line.strip()]
+
+
+
+
 
 
 
@@ -9283,7 +18531,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
         for stash_line in stashes[:1]:
+
+
+
+
 
 
 
@@ -9291,7 +18547,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
             if result:
+
+
+
+
 
 
 
@@ -9299,7 +18563,15 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
         return None
+
+
+
+
 
 
 
@@ -9307,11 +18579,31 @@ def _scan_stash_for_files(
 
 
 
+
+
+
+
         logger.warning("_scan_stash_for_files failed: %s", e, exc_info=True)
 
 
 
+
+
+
+
         return None
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9327,11 +18619,23 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     root: Path, session_id: str,
 
 
 
+
+
+
+
 ) -> dict[str, list[str] | int]:
+
+
+
+
 
 
 
@@ -9343,7 +18647,19 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     ``_execute_cleanups`` 在 pre-merge 阶段用 ``git stash push -m
+
+
+
+
 
 
 
@@ -9351,7 +18667,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     merge 能干净进行。merge 成功后这些 stash 已无意义（改动已通过 worktree
+
+
+
+
 
 
 
@@ -9363,11 +18687,27 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     匹配规则：stash message 包含 ``session_worktree_pre_merge: {session_id}``
 
 
 
+
+
+
+
     子串（``git stash push -m`` 的 reflog subject 通常带 ``WIP on <branch>:`` 前缀，
+
+
+
+
 
 
 
@@ -9379,7 +18719,19 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     从后往前 drop（索引倒序）避免索引漂移——``git stash drop stash@{i}`` 后
+
+
+
+
 
 
 
@@ -9391,11 +18743,27 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     fail-open 策略：git 故障（非 git 仓库 / git 不可用 / stash list 失败）时
 
 
 
+
+
+
+
     返回 ``dropped=0`` 且不抛异常（merge 已成功，stash 清理失败不应回滚 merge）。
+
+
+
+
 
 
 
@@ -9407,11 +18775,27 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     Args:
 
 
 
+
+
+
+
         root: 仓库根目录。
+
+
+
+
 
 
 
@@ -9423,7 +18807,19 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -9431,7 +18827,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         errors=git 故障时的错误消息列表（成功时为空列表）。
+
+
+
+
 
 
 
@@ -9439,7 +18843,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     prefix = f"session_worktree_pre_merge: {session_id}"
+
+
+
+
 
 
 
@@ -9447,7 +18859,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -9455,7 +18875,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             ["git", "stash", "list", "--format=%gd|%s"],
+
+
+
+
 
 
 
@@ -9463,7 +18891,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             encoding="utf-8", errors="replace", timeout=15,
+
+
+
+
 
 
 
@@ -9471,7 +18907,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     except (subprocess.TimeoutExpired, OSError) as e:
+
+
+
+
 
 
 
@@ -9479,7 +18923,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         return {"dropped": 0, "errors": errors}
+
+
+
+
 
 
 
@@ -9487,7 +18939,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         # 非 git 仓库或 git 故障——fail-open（dropped=0，不抛异常）
+
+
+
+
 
 
 
@@ -9495,7 +18955,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             errors.append(list_r.stderr.strip())
+
+
+
+
 
 
 
@@ -9503,11 +18971,27 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     if not list_r.stdout.strip():
 
 
 
+
+
+
+
         return {"dropped": 0, "errors": []}
+
+
+
+
+
+
+
+
 
 
 
@@ -9519,7 +19003,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     matching_indices: list[int] = []
+
+
+
+
 
 
 
@@ -9527,7 +19019,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         line = line.strip()
+
+
+
+
 
 
 
@@ -9535,7 +19035,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -9543,7 +19051,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         if len(parts) < 2:
+
+
+
+
 
 
 
@@ -9551,7 +19067,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         stash_ref, stash_msg = parts[0], parts[1]
+
+
+
+
 
 
 
@@ -9559,7 +19083,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             # 解析 stash@{N} 中的 N
+
+
+
+
 
 
 
@@ -9567,7 +19099,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
                 idx_str = stash_ref.split("{", 1)[1].rstrip("}")
+
+
+
+
 
 
 
@@ -9575,7 +19115,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             except (IndexError, ValueError):
+
+
+
+
 
 
 
@@ -9587,7 +19135,19 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     if not matching_indices:
+
+
+
+
 
 
 
@@ -9599,7 +19159,19 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
     # 从后往前 drop（索引倒序）避免索引漂移
+
+
+
+
 
 
 
@@ -9607,7 +19179,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
     for idx in sorted(matching_indices, reverse=True):
+
+
+
+
 
 
 
@@ -9615,7 +19195,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         drop_r = subprocess.run(
+
+
+
+
 
 
 
@@ -9623,7 +19211,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -9631,7 +19227,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -9639,7 +19243,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             dropped += 1
+
+
+
+
 
 
 
@@ -9647,7 +19259,15 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
             errors.append(f"drop {ref} failed: {drop_r.stderr.strip()}")
+
+
+
+
 
 
 
@@ -9663,7 +19283,23 @@ def _drop_session_pre_merge_stash(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _detect_changes_in_stash(
+
+
+
+
 
 
 
@@ -9671,7 +19307,15 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
 ) -> tuple[str, str, list[str]] | None:
+
+
+
+
 
 
 
@@ -9683,7 +19327,19 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
+
+
+
+
     病根（2026-07-19 bug）：session_worktree_commit 假设 AI 的 Edit/Write 改动留在
+
+
+
+
 
 
 
@@ -9691,11 +19347,23 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
     / safety-net stash / 并发 session merge auto-clean / recovery 脚本）。此时
 
 
 
+
+
+
+
     _sync_files_to_worktree 复制的是 HEAD 内容（无改动），git diff --cached 返回 0
+
+
+
+
 
 
 
@@ -9707,7 +19375,19 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
+
+
+
+
     检测策略（逐文件，支持混合场景——部分文件有改动、部分被 stash 移走）：
+
+
+
+
 
 
 
@@ -9715,7 +19395,15 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
     2. 找出目标文件中无改动的（可能被 stash 移走）
+
+
+
+
 
 
 
@@ -9723,7 +19411,15 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
     4. 命中返回 (stash_ref, stash_msg, hits)；未命中返回 None
+
+
+
+
 
 
 
@@ -9731,7 +19427,15 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
     clean_files = _get_clean_target_files(root, rel_files)
+
+
+
+
 
 
 
@@ -9739,7 +19443,15 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
         return None
+
+
+
+
 
 
 
@@ -9755,7 +19467,23 @@ def _detect_changes_in_stash(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _recover_changes_from_stash(
+
+
+
+
 
 
 
@@ -9763,7 +19491,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
 ) -> bool:
+
+
+
+
 
 
 
@@ -9775,11 +19511,27 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
+
+
+
+
     场景：AI 用 Edit/Write 写主工作区，但外部机制（safety-net stash / recovery
 
 
 
+
+
+
+
     脚本 / 并发 session merge auto-clean）通过 ``git stash push`` 清空了工作区。
+
+
+
+
 
 
 
@@ -9791,7 +19543,19 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
+
+
+
+
     修复（2026-07-19 治本）：检测到目标文件在 stash 中时，自动
+
+
+
+
 
 
 
@@ -9799,7 +19563,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     （不带入无关改动），覆盖式恢复（不会因 stash 基于旧 HEAD 而冲突）。恢复后
+
+
+
+
 
 
 
@@ -9811,7 +19583,19 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
+
+
+
+
     为什么用 checkout 而非 pop：stash 可能基于旧 HEAD（pop 会冲突），或包含非
+
+
+
+
 
 
 
@@ -9823,7 +19607,19 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -9831,7 +19627,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -9839,7 +19643,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     if not detected:
+
+
+
+
 
 
 
@@ -9847,7 +19659,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     stash_ref, stash_msg, hits = detected
+
+
+
+
 
 
 
@@ -9855,7 +19675,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     print(
+
+
+
+
 
 
 
@@ -9863,7 +19691,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         "recovering to main workspace",
+
+
+
+
 
 
 
@@ -9871,7 +19707,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -9879,11 +19723,23 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     print(f"  stash: {stash_ref} ({stash_msg})", file=sys.stderr)
 
 
 
+
+
+
+
     print(
+
+
+
+
 
 
 
@@ -9891,11 +19747,23 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         file=sys.stderr,
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -9903,7 +19771,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     # 用 git restore --source 替代 git checkout（Trae Shell Interception 对 git checkout
+
+
+
+
 
 
 
@@ -9911,7 +19787,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     # 子命令拦截保护，安全性不降级）
+
+
+
+
 
 
 
@@ -9919,7 +19803,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         ["git", "restore", "--source", stash_ref, "--"] + hits,
+
+
+
+
 
 
 
@@ -9927,7 +19819,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         encoding="utf-8", errors="replace", timeout=60,
+
+
+
+
 
 
 
@@ -9935,7 +19835,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -9943,7 +19851,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         print(
+
+
+
+
 
 
 
@@ -9951,7 +19867,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
             "continuing with normal commit flow",
+
+
+
+
 
 
 
@@ -9959,7 +19883,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -9967,7 +19899,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         # P2-6（2026-07-19）：file_restore 遥测——记录从 stash 恢复到主工作区的文件
+
+
+
+
 
 
 
@@ -9975,7 +19915,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         for rel_file in hits:
+
+
+
+
 
 
 
@@ -9983,7 +19931,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
             _log_workspace_op(
+
+
+
+
 
 
 
@@ -9991,7 +19947,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
                 file=rel_file, backup_path=f"stash:{stash_ref}",
+
+
+
+
 
 
 
@@ -9999,7 +19963,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -10007,7 +19979,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     print(
+
+
+
+
 
 
 
@@ -10015,7 +19995,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
         file=sys.stderr,
+
+
+
+
 
 
 
@@ -10023,7 +20011,15 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     print("  falling back to manual recovery:", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10031,11 +20027,23 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
     print(f"    git restore --source {stash_ref} -- <file>", file=sys.stderr)
 
 
 
+
+
+
+
     print("=" * 80 + "\n", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10051,7 +20059,23 @@ def _recover_changes_from_stash(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) -> None:
+
+
+
+
 
 
 
@@ -10063,11 +20087,27 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
+
+
+
+
     当 _recover_changes_from_stash 未触发或失败（如 sync 之前主工作区有改动但
 
 
 
+
+
+
+
     sync 后 diff 仍为 0 的边缘情况），此函数作为兜底，在 NOTHING_TO_COMMIT
+
+
+
+
 
 
 
@@ -10079,7 +20119,19 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
+
+
+
+
     病根（2026-07-19 bug 修复）：
+
+
+
+
 
 
 
@@ -10087,7 +20139,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     主工作区改动可能被外部机制移走（手动 ``git stash push`` / safety-net stash /
+
+
+
+
 
 
 
@@ -10095,7 +20155,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     复制的是 HEAD 内容（无改动），git diff --cached 返回 0 → NOTHING_TO_COMMIT。
+
+
+
+
 
 
 
@@ -10103,7 +20171,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -10111,7 +20187,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     if not detected:
+
+
+
+
 
 
 
@@ -10119,7 +20203,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     stash_ref, stash_msg, hits = detected
+
+
+
+
 
 
 
@@ -10127,7 +20219,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print(
+
+
+
+
 
 
 
@@ -10135,7 +20235,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
         "target files found in stash!",
+
+
+
+
 
 
 
@@ -10143,7 +20251,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -10151,11 +20267,23 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print(f"  stash: {stash_ref} ({stash_msg})", file=sys.stderr)
 
 
 
+
+
+
+
     print(
+
+
+
+
 
 
 
@@ -10163,7 +20291,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
         f"{hits[:5]}{'...' if len(hits) > 5 else ''}",
+
+
+
+
 
 
 
@@ -10171,11 +20307,23 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     )
 
 
 
+
+
+
+
     print("", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10183,7 +20331,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print("  but your Edit/Write changes were stashed by an external", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10191,7 +20347,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print("", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10199,7 +20363,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print(f"    1. git stash pop {stash_ref}", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10207,7 +20379,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print(
+
+
+
+
 
 
 
@@ -10215,7 +20395,15 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
         file=sys.stderr,
+
+
+
+
 
 
 
@@ -10223,11 +20411,23 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
     print("       (restore specific file from stash, safer)", file=sys.stderr)
 
 
 
+
+
+
+
     print("  Then re-call session_worktree_commit.", file=sys.stderr)
+
+
+
+
 
 
 
@@ -10243,7 +20443,23 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _check_cross_commit_deps(
+
+
+
+
 
 
 
@@ -10251,7 +20467,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
 ) -> dict | None:
+
+
+
+
 
 
 
@@ -10263,7 +20487,19 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
+
+
+
+
     在 session_worktree_commit 的 _run_pre_commit_gates 前调用。
+
+
+
+
 
 
 
@@ -10271,7 +20507,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
     （CROSS_COMMIT_DEP_BLOCKED）。所有依赖 session 都不活跃（已 commit/merge/unregister）
+
+
+
+
 
 
 
@@ -10283,7 +20527,19 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
+
+
+
+
     病根（ba40fa5b75 同型违规治本）：
+
+
+
+
 
 
 
@@ -10291,11 +20547,23 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
     - 若 session-A 先 commit → main 分支悬空 import → reconcile_async 测试批量失败
 
 
 
+
+
+
+
     - 治本：session-A 显式登记 depends_on_sessions=[session-B]，commit 前检查
+
+
+
+
 
 
 
@@ -10307,11 +20575,27 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
+
+
+
+
     Args:
 
 
 
+
+
+
+
         root: 项目根目录。
+
+
+
+
 
 
 
@@ -10323,7 +20607,19 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -10331,7 +20627,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -10339,7 +20643,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
         registry = _get_registry(root)
+
+
+
+
 
 
 
@@ -10347,7 +20659,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
         if info is None:
+
+
+
+
 
 
 
@@ -10355,7 +20675,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
             return None
+
+
+
+
 
 
 
@@ -10363,7 +20691,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
         if not deps:
+
+
+
+
 
 
 
@@ -10371,7 +20707,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
         active_deps: list[str] = []
+
+
+
+
 
 
 
@@ -10379,7 +20723,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
             dep_info = registry.get_session(dep_sid)
+
+
+
+
 
 
 
@@ -10387,7 +20739,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                 # 依赖 session 仍活跃 → 阻断
+
+
+
+
 
 
 
@@ -10395,7 +20755,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
         if active_deps:
+
+
+
+
 
 
 
@@ -10403,7 +20771,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                 "session_id": session_id,
+
+
+
+
 
 
 
@@ -10411,7 +20787,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                 "message": (
+
+
+
+
 
 
 
@@ -10419,7 +20803,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                     f"still-active sessions={active_deps}. Wait for their commit+merge "
+
+
+
+
 
 
 
@@ -10427,7 +20819,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                     f"#ARCH-CROSS-COMMIT-ATOMICITY-001)."
+
+
+
+
 
 
 
@@ -10435,7 +20835,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                 "commit_hash": "",
+
+
+
+
 
 
 
@@ -10443,7 +20851,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
                 "active_deps": active_deps,
+
+
+
+
 
 
 
@@ -10451,7 +20867,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -10459,7 +20883,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
             "session_worktree_commit: _check_cross_commit_deps 异常降级（不阻断）: %s",
+
+
+
+
 
 
 
@@ -10467,7 +20899,15 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -10483,7 +20923,23 @@ def _check_cross_commit_deps(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @_inject_ok
+
+
+
+
 
 
 
@@ -10491,7 +20947,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -10499,7 +20963,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     message: str,
+
+
+
+
 
 
 
@@ -10507,7 +20979,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     allow_overlap: bool = False,
+
+
+
+
 
 
 
@@ -10515,7 +20995,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     allow_migration: bool = False,
+
+
+
+
 
 
 
@@ -10523,7 +21011,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
 ) -> CommitResult:
+
+
+
+
 
 
 
@@ -10535,7 +21031,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，
+
+
+
+
 
 
 
@@ -10547,11 +21055,27 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     **文件同步（君子协定模式）**：AI 的 Edit/Write 写到项目根（IDE 限制，无法改），
 
 
 
+
+
+
+
     worktree 内文件是创建时的旧版本。本函数在 git add 前自动将 files 从项目根
+
+
+
+
 
 
 
@@ -10563,7 +21087,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     **HELD-OVERLAP 硬阻断（2026-07-02 加硬）**：commit 前对每个文件调
+
+
+
+
 
 
 
@@ -10571,7 +21107,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     活跃 session 持有 -> ``HELD_OVERLAP_VIOLATION`` 硬阻断（回滚已 claim 的文件）。
+
+
+
+
 
 
 
@@ -10579,11 +21123,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     释放。这使 worktree 模式下的文件锁与 GitCommitGateway 的 HELD-OVERLAP gate
 
 
 
+
+
+
+
     一样硬——消除"两 session 编辑同一文件导致 merge conflict"的根因。
+
+
+
+
 
 
 
@@ -10595,7 +21151,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     **DCR 检测（ARCH-041 治本，2026-07-03 加）**：HELD-OVERLAP gate 后、文件同步前，
+
+
+
+
 
 
 
@@ -10603,11 +21171,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     的 DIRECTORY-CONTRACT gate。治本 session_worktree_commit 绕过 GitCommitGateway 导致
 
 
 
+
+
+
+
     directory_contract 检测（含 _backups 禁止、DCR-001~007）不触发的问题。fail-closed——
+
+
+
+
 
 
 
@@ -10619,7 +21199,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     **CROSS-COMMIT-DEP 检测（TRAE-072 / #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2，2026-07-20 加）**：
+
+
+
+
 
 
 
@@ -10627,11 +21219,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     有则阻断（CROSS_COMMIT_DEP_BLOCKED）——避免悬空 import 污染 main 分支
 
 
 
+
+
+
+
     （ba40fa5b75 同型违规治本）。``depends_on_sessions`` 参数支持工作中途发现依赖时
+
+
+
+
 
 
 
@@ -10643,7 +21247,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -10651,7 +21267,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         files: 要提交的文件列表。路径可以是绝对路径（项目根或 worktree 内）或相对的。
+
+
+
+
 
 
 
@@ -10659,7 +21283,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         project_root: 项目根目录（默认 REPO_ROOT）。
+
+
+
+
 
 
 
@@ -10667,7 +21299,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             的 ``--allow-overlap``）。默认 False（硬阻断）。
+
+
+
+
 
 
 
@@ -10675,7 +21315,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             ``allow_promote``）。用于 YAML 真源/规则/词表等合法永久文件准入。
+
+
+
+
 
 
 
@@ -10683,7 +21331,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         allow_migration: True 时跳过 FILE-COPY 和 ORPHAN-MODULE 门禁。用于物理路径
+
+
+
+
 
 
 
@@ -10691,7 +21347,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
            （FILE-COPY 误报），且迁移过程中 import 引用可能尚未完全更新（ORPHAN-MODULE
+
+
+
+
 
 
 
@@ -10699,7 +21363,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         depends_on_sessions: 本 session 依赖的其他 session_id 列表（TRAE-072）。
+
+
+
+
 
 
 
@@ -10707,7 +21379,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             检查依赖 session 是否仍活跃——仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED）。
+
+
+
+
 
 
 
@@ -10719,7 +21399,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -10727,7 +21419,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "session_id": str,
+
+
+
+
 
 
 
@@ -10735,7 +21435,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "message": str,
+
+
+
+
 
 
 
@@ -10743,7 +21451,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -10751,7 +21467,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         HELD-OVERLAP 阻断时附加 "held_overlap": True。
+
+
+
+
 
 
 
@@ -10759,7 +21483,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         CROSS-COMMIT-DEP 阻断时附加 "cross_commit_dep_blocked": True + "active_deps"。
+
+
+
+
 
 
 
@@ -10767,7 +21499,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     root = Path(project_root) if project_root else REPO_ROOT
+
+
+
+
 
 
 
@@ -10779,7 +21519,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     if not manager._worktree_exists(session_id):
+
+
+
+
 
 
 
@@ -10787,7 +21539,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -10795,7 +21555,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "message": f"worktree 不存在 (session={session_id})，先调 session_worktree_start",
+
+
+
+
 
 
 
@@ -10803,11 +21571,27 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "not_found": True,
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -10823,7 +21607,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -10831,7 +21627,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -10843,7 +21647,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     if not files:
+
+
+
+
 
 
 
@@ -10851,7 +21667,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -10859,7 +21683,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "message": "empty files list",
+
+
+
+
 
 
 
@@ -10867,7 +21699,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -10883,7 +21727,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1.5: commit 前 workspace drift 遥测（fail-open）
+
+
+
+
 
 
 
@@ -10891,7 +21747,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     # 不阻断 commit（fail-open）——遥测目的是收集数据 + 后续 reconciler 兜底，而非阻断业务流程。
+
+
+
+
 
 
 
@@ -10899,11 +21763,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         _log_workspace_drift_warn(root, session_id, rel_files)
 
 
 
+
+
+
+
     except Exception as _drift_err:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -10915,7 +21791,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     if not allow_overlap:
+
+
+
+
 
 
 
@@ -10923,7 +21811,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         if err:
+
+
+
+
 
 
 
@@ -10935,11 +21831,27 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     err = _run_dcr_check(root, rel_files, session_id)
 
 
 
+
+
+
+
     if err:
+
+
+
+
 
 
 
@@ -10951,7 +21863,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     # 裁定#19-B（2026-07-18）：worktree base 新鲜度检查
+
+
+
+
 
 
 
@@ -10959,7 +21883,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     #   到 dev 后 dev HEAD 前进到 T1，AI Edit 主工作区文件（含 dev T1 内容 + AI 改动），
+
+
+
+
 
 
 
@@ -10967,7 +21899,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     #   (dev T1 + AI 改动) − (worktree base T0) = dev T0→T1 改动（搭便车）+ AI 改动。
+
+
+
+
 
 
 
@@ -10975,7 +21915,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     #   误判（dev 新 #ARCH-XXX 引用被算作本次 commit 新增，要求 registry 同 commit → 硬阻断）。
+
+
+
+
 
 
 
@@ -10983,7 +21931,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     #   ① 无 session commit → git reset --hard <main HEAD>（安全，worktree 无未提交工作可丢）
+
+
+
+
 
 
 
@@ -10991,11 +21947,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     base_err = _ensure_worktree_base_fresh(root, wt_path, session_id, stage="commit")
 
 
 
+
+
+
+
     if base_err:
+
+
+
+
 
 
 
@@ -11007,7 +21975,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     # auto-recover（2026-07-19 bug 治本修复）：检测主工作区改动是否被外部 stash
+
+
+
+
 
 
 
@@ -11015,7 +21995,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     # 命中则自动 git checkout <stash> -- <files> 恢复目标文件到主工作区。治本
+
+
+
+
 
 
 
@@ -11023,7 +22011,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     # sync 复制 HEAD 内容 → diff 为 0 → NOTHING_TO_COMMIT，AI 误判"数据丢失"。
+
+
+
+
 
 
 
@@ -11031,7 +22027,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     _recover_changes_from_stash(root, rel_files, session_id)
+
+
+
+
+
+
+
+
 
 
 
@@ -11047,7 +22055,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     add_cmd = ["git", "add", "-A", "--"] + rel_files
+
+
+
+
 
 
 
@@ -11055,7 +22075,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         add_cmd, cwd=str(wt_path), capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -11063,7 +22091,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -11071,7 +22107,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -11079,7 +22123,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "status": "FAILED",
+
+
+
+
 
 
 
@@ -11087,11 +22139,27 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "commit_hash": "",
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -11103,7 +22171,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         ["git", "diff", "--cached", "--quiet"],
+
+
+
+
 
 
 
@@ -11111,7 +22187,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -11119,7 +22203,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         # 诊断盲区修复（2026-07-19 bug）：返回 NOTHING_TO_COMMIT 前，检测主工作区
+
+
+
+
 
 
 
@@ -11127,7 +22219,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         # 恢复命令。病根：session_worktree_commit 假设 AI 改动在主工作区，但并发
+
+
+
+
 
 
 
@@ -11135,7 +22235,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         # 实际改动在 stash 中可恢复。warn-only 不阻断业务流程。
+
+
+
+
 
 
 
@@ -11143,7 +22251,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -11151,7 +22267,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "status": "NOTHING_TO_COMMIT",
+
+
+
+
 
 
 
@@ -11159,7 +22283,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             "commit_hash": "",
+
+
+
+
 
 
 
@@ -11171,7 +22303,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
     # P1-2 (2026-07-20): per-session active guard 防止 sweep 并发删除 worktree
+
+
+
+
 
 
 
@@ -11179,7 +22323,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     #   若此时 sweep 删除 worktree 则抛 NotADirectoryError。guard 创建 lockfile,
+
+
+
+
 
 
 
@@ -11187,7 +22339,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
     with _session_active_guard(root, session_id):
+
+
+
+
 
 
 
@@ -11195,7 +22355,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         # cross-commit 依赖检测——pre-commit gate 前检查 depends_on_sessions 中
+
+
+
+
 
 
 
@@ -11203,7 +22371,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         # （lazy register_dependency），再检查。阻断 = CROSS_COMMIT_DEP_BLOCKED。
+
+
+
+
 
 
 
@@ -11211,7 +22387,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             registry = _get_registry(root)
+
+
+
+
 
 
 
@@ -11219,7 +22403,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
                 try:
+
+
+
+
 
 
 
@@ -11227,7 +22419,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -11235,11 +22435,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
         dep_err = _check_cross_commit_deps(root, session_id)
 
 
 
+
+
+
+
         if dep_err:
+
+
+
+
 
 
 
@@ -11251,11 +22463,27 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
         err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration, message)
 
 
 
+
+
+
+
         if err:
+
+
+
+
 
 
 
@@ -11267,7 +22495,19 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
         commit_result = _git_commit_in_worktree(wt_path, message, session_id)
+
+
+
+
 
 
 
@@ -11275,7 +22515,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT P4.3: 修复触发断链
+
+
+
+
 
 
 
@@ -11283,7 +22531,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             # 见 docstring line 42-48），导致 GitCommitGateway._run_post_commit_reconcile
+
+
+
+
 
 
 
@@ -11291,7 +22547,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             # 走 GitCommitGateway（会破坏 worktree 隔离），而是在 commit 后显式触发 reconciler。
+
+
+
+
 
 
 
@@ -11299,7 +22563,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             # 不搭便车提交工作区遗留；merge 时由 _ensure_worktree_base_fresh 自动对齐（裁定#19-B）。
+
+
+
+
 
 
 
@@ -11307,11 +22579,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
                 root, rel_files, session_id,
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -11319,7 +22603,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             # commit 成功后写持久性标记——sweep 看到标记跳过，merge 前验证 commit 仍存在。
+
+
+
+
 
 
 
@@ -11327,7 +22619,15 @@ def session_worktree_commit(
 
 
 
+
+
+
+
             # worktree + 分支导致 commit 消失。标记让 sweep 免疫有未合并 commit 的 worktree。
+
+
+
+
 
 
 
@@ -11335,11 +22635,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
                 root, session_id, commit_result.get("commit_hash", ""),
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -11355,7 +22667,23 @@ def session_worktree_commit(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
+
+
+
+
 
 
 
@@ -11363,7 +22691,15 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
     merge_base_r = subprocess.run(
+
+
+
+
 
 
 
@@ -11371,11 +22707,23 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
         cwd=str(root), capture_output=True, text=True, encoding="utf-8",
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -11383,7 +22731,15 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
         return []
+
+
+
+
 
 
 
@@ -11391,7 +22747,15 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
     changed_r = subprocess.run(
+
+
+
+
 
 
 
@@ -11399,7 +22763,15 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
         cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+
+
+
+
 
 
 
@@ -11407,11 +22779,23 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
     if changed_r.returncode != 0:
 
 
 
+
+
+
+
         return []
+
+
+
+
 
 
 
@@ -11427,7 +22811,23 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _get_dirty_files(root: Path) -> set[str] | None:
+
+
+
+
 
 
 
@@ -11435,7 +22835,15 @@ def _get_dirty_files(root: Path) -> set[str] | None:
 
 
 
+
+
+
+
     dirty_r = subprocess.run(
+
+
+
+
 
 
 
@@ -11443,7 +22851,15 @@ def _get_dirty_files(root: Path) -> set[str] | None:
 
 
 
+
+
+
+
         cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+
+
+
+
 
 
 
@@ -11451,11 +22867,23 @@ def _get_dirty_files(root: Path) -> set[str] | None:
 
 
 
+
+
+
+
     if dirty_r.returncode != 0:
 
 
 
+
+
+
+
         return None
+
+
+
+
 
 
 
@@ -11471,7 +22899,23 @@ def _get_dirty_files(root: Path) -> set[str] | None:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _collect_tracked_cleanups(
+
+
+
+
 
 
 
@@ -11479,11 +22923,23 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
     skip_files: set[str] | None = None,
 
 
 
+
+
+
+
 ) -> tuple[int, list[str], list[str]]:
+
+
+
+
 
 
 
@@ -11495,7 +22951,19 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
+
+
+
+
     Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+
+
+
+
 
 
 
@@ -11503,7 +22971,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
     session 的 _pre_merge_auto_clean 毫秒级还原正在编辑的文件（P1-5 实测 bug）。
+
+
+
+
 
 
 
@@ -11511,7 +22987,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
     cleaned = 0
+
+
+
+
 
 
 
@@ -11519,7 +23003,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
     to_checkout: list[str] = []
+
+
+
+
 
 
 
@@ -11527,7 +23019,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
     for rel_file in changed_files:
+
+
+
+
 
 
 
@@ -11535,7 +23035,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -11543,7 +23051,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
         if rel_file in skip_set:
+
+
+
+
 
 
 
@@ -11551,7 +23067,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -11559,7 +23083,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
         if not main_file.exists():
+
+
+
+
 
 
 
@@ -11567,7 +23099,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -11575,7 +23115,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
         wt_content_r = subprocess.run(
+
+
+
+
 
 
 
@@ -11583,7 +23131,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True,
+
+
+
+
 
 
 
@@ -11591,11 +23147,23 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
         if wt_content_r.returncode != 0:
 
 
 
+
+
+
+
             skipped.append(rel_file)
+
+
+
+
 
 
 
@@ -11603,7 +23171,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
         if main_content == wt_content_r.stdout:
+
+
+
+
 
 
 
@@ -11611,7 +23187,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
             cleaned += 1
+
+
+
+
 
 
 
@@ -11619,7 +23203,15 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
             skipped.append(rel_file)
+
+
+
+
 
 
 
@@ -11635,7 +23227,23 @@ def _collect_tracked_cleanups(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _collect_untracked_cleanups(
+
+
+
+
 
 
 
@@ -11643,11 +23251,23 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
     skip_files: set[str] | None = None,
 
 
 
+
+
+
+
 ) -> tuple[int, list[str], list[str]]:
+
+
+
+
 
 
 
@@ -11659,7 +23279,19 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
+
+
+
+
     Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+
+
+
+
 
 
 
@@ -11667,7 +23299,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -11675,7 +23315,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         ["git", "ls-files", "--others", "--exclude-standard"],
+
+
+
+
 
 
 
@@ -11683,7 +23331,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -11691,7 +23347,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         return 0, [], []
+
+
+
+
 
 
 
@@ -11699,7 +23363,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
     cleaned = 0
+
+
+
+
 
 
 
@@ -11707,7 +23379,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
     to_unlink: list[str] = []
+
+
+
+
 
 
 
@@ -11715,7 +23395,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
     for rel_file in changed_files:
+
+
+
+
 
 
 
@@ -11723,7 +23411,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -11731,7 +23427,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         if rel_file in skip_set:
+
+
+
+
 
 
 
@@ -11739,7 +23443,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -11747,11 +23459,23 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         if not main_file.exists():
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -11759,7 +23483,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         wt_content_r = subprocess.run(
+
+
+
+
 
 
 
@@ -11767,7 +23499,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True,
+
+
+
+
 
 
 
@@ -11775,11 +23515,23 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         if wt_content_r.returncode != 0:
 
 
 
+
+
+
+
             skipped.append(rel_file)
+
+
+
+
 
 
 
@@ -11787,7 +23539,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
         if main_content == wt_content_r.stdout:
+
+
+
+
 
 
 
@@ -11795,7 +23555,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
             cleaned += 1
+
+
+
+
 
 
 
@@ -11803,7 +23571,15 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
             skipped.append(rel_file)
+
+
+
+
 
 
 
@@ -11819,7 +23595,23 @@ def _collect_untracked_cleanups(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _execute_cleanups(
+
+
+
+
 
 
 
@@ -11827,11 +23619,23 @@ def _execute_cleanups(
 
 
 
+
+
+
+
     session_id: str = "",
 
 
 
+
+
+
+
 ) -> None:
+
+
+
+
 
 
 
@@ -11843,7 +23647,19 @@ def _execute_cleanups(
 
 
 
+
+
+
+
+
+
+
+
     治本（#ARCH-WORKTREE-002 缺陷2，2026-07-19）：tracked 文件原用 ``git checkout --``
+
+
+
+
 
 
 
@@ -11851,7 +23667,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
     还原到 HEAD 全部丢失）。改为 ``git stash push`` 保存修改（可恢复 via
+
+
+
+
 
 
 
@@ -11863,7 +23687,19 @@ def _execute_cleanups(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -11871,7 +23707,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         to_checkout: 需要 stash 的 tracked 文件列表（原 to_checkout 语义）。
+
+
+
+
 
 
 
@@ -11879,7 +23723,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         session_id: session 标识，用于 stash message 溯源。
+
+
+
+
 
 
 
@@ -11887,7 +23739,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
     if to_checkout:
+
+
+
+
 
 
 
@@ -11895,7 +23755,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         # stash 保留修改（可恢复 via git stash pop），checkout -- 永久丢弃
+
+
+
+
 
 
 
@@ -11903,7 +23771,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
             f"session_worktree_pre_merge: {session_id}"
+
+
+
+
 
 
 
@@ -11911,7 +23787,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -11919,11 +23803,23 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         pre_stash_hashes: dict[str, str] = {}
 
 
 
+
+
+
+
         for rel_file in to_checkout:
+
+
+
+
 
 
 
@@ -11931,7 +23827,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         subprocess.run(
+
+
+
+
 
 
 
@@ -11939,7 +23843,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True,
+
+
+
+
 
 
 
@@ -11947,7 +23859,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -11955,7 +23875,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
             "session_worktree_pre_merge: stashed %d tracked file(s) for session=%s "
+
+
+
+
 
 
 
@@ -11963,7 +23891,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -11971,7 +23907,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         for rel_file in to_checkout:
+
+
+
+
 
 
 
@@ -11979,7 +23923,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
                 "file_stash", session_id, "pre_merge_auto_clean", root,
+
+
+
+
 
 
 
@@ -11987,7 +23939,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
                 content_hash=pre_stash_hashes.get(rel_file, ""),
+
+
+
+
 
 
 
@@ -11995,7 +23955,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
     for rel_file in to_unlink:
+
+
+
+
 
 
 
@@ -12003,7 +23971,15 @@ def _execute_cleanups(
 
 
 
+
+
+
+
         # 病根：merge 失败后 abort 导致 untracked 文件永久丢失（实测 Phase 1+3 新文件全丢）
+
+
+
+
 
 
 
@@ -12019,7 +23995,23 @@ def _execute_cleanups(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
+
+
+
+
 
 
 
@@ -12031,7 +24023,19 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
+
+
+
+
     场景1（tracked dirty）：AI 的 Edit 改动留在主工作区（uncommitted），
+
+
+
+
 
 
 
@@ -12039,7 +24043,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     commit 内容一致，merge 时触发 "Your local changes would be overwritten by merge"。
+
+
+
+
 
 
 
@@ -12047,11 +24059,23 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     到 HEAD（merge 会重新带入）。治本（#ARCH-WORKTREE-002 缺陷2，2026-07-19）：
 
 
 
+
+
+
+
     原用 git checkout -- 永久丢弃，merge 失败后 abort 导致修改丢失；改为 stash
+
+
+
+
 
 
 
@@ -12063,7 +24087,19 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
+
+
+
+
     场景2（untracked new file）：AI 用 Write 创建新文件留在主工作区（untracked），
+
+
+
+
 
 
 
@@ -12071,11 +24107,27 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     文件（"untracked working tree files would be overwritten by merge"）。
 
 
 
+
+
+
+
     修复：内容一致时物理删除 untracked 文件（merge 会重新创建）。
+
+
+
+
+
+
+
+
 
 
 
@@ -12091,7 +24143,19 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
+
+
+
+
     Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+
+
+
+
 
 
 
@@ -12099,7 +24163,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     加入 skip_files 不清理。病根：并发 session 的 _pre_merge_auto_clean 在毫秒级
+
+
+
+
 
 
 
@@ -12107,7 +24179,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     窗口被命中）。治本：claim_files_for_edit API 让 AI 在编辑前 claim 文件，
+
+
+
+
 
 
 
@@ -12119,11 +24199,27 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
+
+
+
+
     Args:
 
 
 
+
+
+
+
         root: 主仓库根目录。
+
+
+
+
 
 
 
@@ -12135,7 +24231,19 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -12143,7 +24251,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
         - cleaned_count: 自动清理的文件数
+
+
+
+
 
 
 
@@ -12151,7 +24267,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -12159,7 +24283,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     changed_files = _get_branch_changed_files(root, branch)
+
+
+
+
 
 
 
@@ -12167,7 +24299,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
         return 0, []
+
+
+
+
 
 
 
@@ -12175,11 +24315,27 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     if dirty_files is None:
 
 
 
+
+
+
+
         return 0, []
+
+
+
+
+
+
+
+
 
 
 
@@ -12191,7 +24347,19 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     skip_files = _get_other_session_claimed_files(root, session_id)
+
+
+
+
+
+
+
+
 
 
 
@@ -12203,11 +24371,23 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
         root, branch, changed_files, dirty_files, skip_files=skip_files,
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -12215,7 +24395,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
         root, branch, changed_files, skip_files=skip_files,
+
+
+
+
 
 
 
@@ -12223,7 +24411,15 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     _execute_cleanups(root, to_checkout, to_unlink, session_id)
+
+
+
+
 
 
 
@@ -12239,7 +24435,23 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
+
+
+
+
 
 
 
@@ -12251,7 +24463,19 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
+
+
+
+
     Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19)：
+
+
+
+
 
 
 
@@ -12259,7 +24483,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
     失败时返回空集（fail-open，不阻断 merge——claim 查询失败不应阻塞业务流程）。
+
+
+
+
 
 
 
@@ -12267,7 +24499,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -12275,7 +24515,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
         held_abs = registry.other_held_files(session_id)
+
+
+
+
 
 
 
@@ -12283,7 +24531,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
             return set()
+
+
+
+
 
 
 
@@ -12291,7 +24547,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
         root_str = str(root)
+
+
+
+
 
 
 
@@ -12299,7 +24563,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
         for abs_path in held_abs:
+
+
+
+
 
 
 
@@ -12307,7 +24579,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
             if p.startswith(root_str):
+
+
+
+
 
 
 
@@ -12315,7 +24595,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
                 if rel:
+
+
+
+
 
 
 
@@ -12323,7 +24611,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
             else:
+
+
+
+
 
 
 
@@ -12331,7 +24627,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -12339,7 +24643,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — claim 查询失败不阻断 merge
+
+
+
+
 
 
 
@@ -12347,7 +24659,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
             "_get_other_session_claimed_files: query failed, fail-open (no skip)",
+
+
+
+
 
 
 
@@ -12355,7 +24675,15 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -12371,7 +24699,23 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def claim_files_for_edit(
+
+
+
+
 
 
 
@@ -12379,7 +24723,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     files: list[str],
+
+
+
+
 
 
 
@@ -12387,7 +24739,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
 ) -> dict:
+
+
+
+
 
 
 
@@ -12399,7 +24759,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+
+
+
+
 
 
 
@@ -12407,7 +24779,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     避免 P1-5 的毫秒级还原 bug。claim 是 session 级（不 per-commit 释放），
+
+
+
+
 
 
 
@@ -12419,7 +24799,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     与 session_worktree_commit 内部 _check_held_overlap 的区别：
+
+
+
+
 
 
 
@@ -12427,7 +24819,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     - claim_files_for_edit: 编辑前 claim（预防性，消除 race window）
+
+
+
+
+
+
+
+
 
 
 
@@ -12443,7 +24847,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
         from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+
+
+
+
 
 
 
@@ -12451,7 +24867,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -12459,7 +24883,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         session_worktree_start(sid)
+
+
+
+
 
 
 
@@ -12467,7 +24899,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             "src/zephyr/some_module/file1.py",
+
+
+
+
 
 
 
@@ -12475,7 +24915,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         ])
+
+
+
+
 
 
 
@@ -12487,7 +24935,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -12495,7 +24955,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         files: 要 claim 的文件列表（绝对路径或相对项目根的路径）。
+
+
+
+
 
 
 
@@ -12507,7 +24975,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -12515,7 +24995,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             "ok": bool,           # 全部 claim 成功为 True
+
+
+
+
 
 
 
@@ -12523,7 +25011,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             "claimed": list[str], # 成功 claim 的相对路径
+
+
+
+
 
 
 
@@ -12531,7 +25027,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             "error": str,         # 失败原因（ok=False 时）
+
+
+
+
 
 
 
@@ -12539,7 +25043,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -12547,7 +25059,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     root = root.resolve()
+
+
+
+
 
 
 
@@ -12559,7 +25079,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     if not files:
+
+
+
+
 
 
 
@@ -12567,11 +25099,23 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             "ok": True, "session_id": session_id,
 
 
 
+
+
+
+
             "claimed": [], "blocked": [], "error": "",
+
+
+
+
 
 
 
@@ -12583,7 +25127,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     claimed: list[str] = []
+
+
+
+
 
 
 
@@ -12591,7 +25147,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     for f in files:
+
+
+
+
 
 
 
@@ -12599,7 +25163,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         if not p.is_absolute():
+
+
+
+
 
 
 
@@ -12607,7 +25179,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         rel = p.relative_to(root).as_posix()
+
+
+
+
 
 
 
@@ -12615,7 +25195,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             if registry.claim_file(session_id, rel):
+
+
+
+
 
 
 
@@ -12623,7 +25211,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             else:
+
+
+
+
 
 
 
@@ -12631,7 +25227,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         except Exception:  # noqa: BLE001 — 单文件 claim 失败不阻断其他文件
+
+
+
+
 
 
 
@@ -12643,7 +25247,19 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
+
+
+
+
     return {
+
+
+
+
 
 
 
@@ -12651,7 +25267,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         "session_id": session_id,
+
+
+
+
 
 
 
@@ -12659,7 +25283,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
         "blocked": blocked,
+
+
+
+
 
 
 
@@ -12667,7 +25299,15 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
             f"以下文件被其他活跃 session 持有: {blocked}" if blocked else ""
+
+
+
+
 
 
 
@@ -12675,7 +25315,23 @@ def claim_files_for_edit(
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -12691,7 +25347,15 @@ def _get_merge_files(root: Path) -> list[str]:
 
 
 
+
+
+
+
     """获取最近一次 merge 引入的文件列表（git diff HEAD~1 HEAD --name-only）。"""
+
+
+
+
 
 
 
@@ -12699,7 +25363,15 @@ def _get_merge_files(root: Path) -> list[str]:
 
 
 
+
+
+
+
         result = subprocess.run(
+
+
+
+
 
 
 
@@ -12707,7 +25379,15 @@ def _get_merge_files(root: Path) -> list[str]:
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True, text=True, timeout=10,
+
+
+
+
 
 
 
@@ -12715,7 +25395,15 @@ def _get_merge_files(root: Path) -> list[str]:
 
 
 
+
+
+
+
         if result.returncode == 0 and result.stdout.strip():
+
+
+
+
 
 
 
@@ -12723,11 +25411,23 @@ def _get_merge_files(root: Path) -> list[str]:
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
 
 
 
+
+
+
+
         logger.warning("suppressed error in session_worktree", exc_info=True)
+
+
+
+
 
 
 
@@ -12743,7 +25443,23 @@ def _get_merge_files(root: Path) -> list[str]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _run_reconcilers_after_merge(
+
+
+
+
 
 
 
@@ -12751,7 +25467,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
 ) -> list[dict]:
+
+
+
+
 
 
 
@@ -12763,7 +25487,19 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
     病根（第一性原理）：
+
+
+
+
 
 
 
@@ -12771,7 +25507,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
     1. session_worktree_merge 卡 2-5min（GATE-BLUEPRINT-ID-LEGACY 全扫 5038 文件 +
+
+
+
+
 
 
 
@@ -12779,7 +25523,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
     2. AI 因性能压力绕过 session_worktree，直接用 GitCommitGateway（生成 warn_only
+
+
+
+
 
 
 
@@ -12787,7 +25539,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
     3. 产生大量 warn_only + allow_overlap 事件
+
+
+
+
 
 
 
@@ -12799,7 +25559,19 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
     治本：
+
+
+
+
 
 
 
@@ -12807,7 +25579,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
     异步化），spawn detached worker subprocess 后台执行所有 reconciler，merge
+
+
+
+
 
 
 
@@ -12819,7 +25599,19 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
     降级策略（fail-open）：
+
+
+
+
 
 
 
@@ -12827,7 +25619,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
     - 获取 merge SHA 失败 → 用 session_id 派生 key（保持异步不阻塞）
+
+
+
+
 
 
 
@@ -12839,7 +25639,19 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
     reconciler 数量以 GitCommitGateway._reconciliation_registry 实际注册为准，
+
+
+
+
 
 
 
@@ -12847,7 +25659,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -12855,7 +25675,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
         # 获取 merge commit SHA（post-merge HEAD = merge commit），作为 status file key
+
+
+
+
 
 
 
@@ -12863,7 +25691,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             ["git", "rev-parse", "HEAD"],
+
+
+
+
 
 
 
@@ -12871,11 +25707,23 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             encoding="utf-8", errors="replace", timeout=10,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -12887,11 +25735,27 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
         if not commit_sha:
 
 
 
+
+
+
+
             # SHA 获取失败——用 session_id 派生 key（保持异步不阻塞 merge）
+
+
+
+
 
 
 
@@ -12903,7 +25767,19 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
         from zephyr.governance.audit.reconcile_runner import launch_reconcile_async
+
+
+
+
 
 
 
@@ -12911,7 +25787,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             project_root=root,
+
+
+
+
 
 
 
@@ -12919,7 +25803,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             session_id=session_id,
+
+
+
+
 
 
 
@@ -12927,11 +25819,27 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             commit_message=f"[post-merge] session={session_id}",
 
 
 
+
+
+
+
         )
+
+
+
+
+
+
+
+
 
 
 
@@ -12943,7 +25851,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             worker_pid = launch_result.get("worker_pid", 0)
+
+
+
+
 
 
 
@@ -12951,7 +25867,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
                 "[RECONCILER] post-merge async launched "
+
+
+
+
 
 
 
@@ -12959,7 +25883,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
                 session_id, commit_sha[:12], worker_pid,
+
+
+
+
 
 
 
@@ -12967,7 +25899,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             return [{
+
+
+
+
 
 
 
@@ -12975,7 +25915,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
                 "detail": (
+
+
+
+
 
 
 
@@ -12983,11 +25931,23 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
                     f"(sha={commit_sha[:12]}, pid={worker_pid})"
 
 
 
+
+
+
+
                 ),
+
+
+
+
 
 
 
@@ -12999,11 +25959,27 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
+
+
+
+
         # launch 失败 → 回退 sync（reconciler 仍需执行，只是退化为同步阻塞）
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13011,7 +25987,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             launch_result.get("error", ""),
+
+
+
+
 
 
 
@@ -13019,7 +26003,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
         return _run_reconcilers_after_merge_sync(committed_files, session_id, root)
+
+
+
+
 
 
 
@@ -13027,7 +26019,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13035,7 +26035,15 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
             e, exc_info=True,
+
+
+
+
 
 
 
@@ -13043,7 +26051,23 @@ def _run_reconcilers_after_merge(
 
 
 
+
+
+
+
         return _run_reconcilers_after_merge_sync(committed_files, session_id, root)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -13059,11 +26083,23 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
     committed_files: list[str], session_id: str, root: Path
 
 
 
+
+
+
+
 ) -> list[dict]:
+
+
+
+
 
 
 
@@ -13075,7 +26111,19 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
+
+
+
+
     保留原 _run_reconcilers_after_merge 的同步逻辑，作为 async 路径的 fail-open
+
+
+
+
 
 
 
@@ -13087,7 +26135,19 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
+
+
+
+
     #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果到
+
+
+
+
 
 
 
@@ -13095,7 +26155,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
     Phase 3.4 断点7: commit_message="" (post_merge 无单一 commit message)。
+
+
+
+
 
 
 
@@ -13103,7 +26171,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -13111,7 +26187,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
         from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
+
+
+
+
 
 
 
@@ -13119,7 +26203,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
         # P2.3: batch intercept -- flush on exit produces single squash commit.
+
+
+
+
 
 
 
@@ -13127,7 +26219,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
             batcher.enable(session_id)
+
+
+
+
 
 
 
@@ -13135,7 +26235,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
                 committed_files, session_id, commit_message="",
+
+
+
+
 
 
 
@@ -13143,7 +26251,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
         _log_reconcile_results(
+
+
+
+
 
 
 
@@ -13151,7 +26267,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
             trigger_source="post_merge_sync_fallback", committed_files=committed_files,
+
+
+
+
 
 
 
@@ -13159,7 +26283,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -13167,7 +26299,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
         for r in results:
+
+
+
+
 
 
 
@@ -13175,7 +26315,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -13183,7 +26331,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
             logger.info("[RECONCILER] %s%s", r.action, f" - {r.detail}" if r.detail else "")
+
+
+
+
 
 
 
@@ -13191,7 +26347,15 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -13199,7 +26363,23 @@ def _run_reconcilers_after_merge_sync(
 
 
 
+
+
+
+
         return [{"action": "warn", "detail": str(e)}]
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -13215,7 +26395,19 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
     """获取 session 分支相对 merge-base 的变更文件列表（PRE-MERGE-TOPO-CHECK 过滤用）。
+
+
+
+
+
+
+
+
 
 
 
@@ -13227,7 +26419,15 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
     用于 _run_pre_merge_topo_check 的 rel_files 过滤（仅阻断 session 自身引入的 HIGH drift）。
+
+
+
+
 
 
 
@@ -13235,7 +26435,15 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -13243,7 +26451,15 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
     mb_r = subprocess.run(
+
+
+
+
 
 
 
@@ -13251,11 +26467,23 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
         cwd=str(root), capture_output=True, text=True, timeout=10,
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -13263,7 +26491,15 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
         return []
+
+
+
+
 
 
 
@@ -13271,7 +26507,15 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
     diff_r = subprocess.run(
+
+
+
+
 
 
 
@@ -13279,7 +26523,15 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
         cwd=str(root), capture_output=True, text=True, timeout=10,
+
+
+
+
 
 
 
@@ -13287,11 +26539,23 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
     if diff_r.returncode != 0:
 
 
 
+
+
+
+
         return []
+
+
+
+
 
 
 
@@ -13307,7 +26571,23 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _run_pre_merge_topo_check(
+
+
+
+
 
 
 
@@ -13315,7 +26595,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
 ) -> tuple[bool, list[dict]]:
+
+
+
+
 
 
 
@@ -13327,7 +26615,19 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
     subprocess 调 MAIN 副本 ``check_blueprint_code_alignment.py --json --scan-root <worktree>``，
+
+
+
+
 
 
 
@@ -13335,7 +26635,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     阻断 merge。LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍，不阻断（与 L1 铁律当前语义一致——
+
+
+
+
 
 
 
@@ -13347,7 +26655,19 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
     为什么运行 MAIN 副本 checker 而非 worktree 副本：``config/.env.postgres`` 被 gitignore，
+
+
+
+
 
 
 
@@ -13355,11 +26675,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     → 大量误报 ORPHAN_MODULE_ID。MAIN 副本有 DB 配置，``--scan-root <worktree>`` 仅重定向
 
 
 
+
+
+
+
     代码扫描，DB 配置和蓝图注册表仍用 main REPO_ROOT——pre-merge 检查的语义是
+
+
+
+
 
 
 
@@ -13371,7 +26703,19 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
     过滤到 session 变更文件（rel_files）：仅阻断 session 自身引入的 HIGH drift，不阻断
+
+
+
+
 
 
 
@@ -13383,7 +26727,19 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
     降级策略（fail-closed for missing, fail-open for transient）：
+
+
+
+
 
 
 
@@ -13391,7 +26747,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     - DB 不可用（depgraph_module_ids==0）→ fail-open 放行 + LOUD warning（DB 不可用时
+
+
+
+
 
 
 
@@ -13399,7 +26763,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     - subprocess 超时/OSError → fail-open 放行（环境异常降级，不卡死业务流程）
+
+
+
+
 
 
 
@@ -13411,7 +26783,19 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -13419,7 +26803,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -13427,7 +26819,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         root / "scripts" / "governance" / "d5_architecture" / "checkers"
+
+
+
+
 
 
 
@@ -13435,7 +26835,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -13443,7 +26851,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         return False, [{
+
+
+
+
 
 
 
@@ -13451,7 +26867,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             "detail": (
+
+
+
+
 
 
 
@@ -13459,7 +26883,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
                 "#ARCH-DEP-001 第二期要求 pre-merge 拓扑检查，checker 不可缺"
+
+
+
+
 
 
 
@@ -13467,7 +26899,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         }]
+
+
+
+
 
 
 
@@ -13475,7 +26915,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -13487,7 +26935,19 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
         result = run_subprocess_hidden(
+
+
+
+
 
 
 
@@ -13495,11 +26955,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             encoding="utf-8", errors="replace", timeout=120,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -13507,7 +26979,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13515,11 +26995,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         return True, []
+
+
+
+
 
 
 
@@ -13527,7 +27019,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     # （exit 0 = 无 HIGH，exit 1 = 有 HIGH，exit 2 = ERROR）
+
+
+
+
 
 
 
@@ -13535,7 +27035,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13543,7 +27051,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             (result.stderr or "")[:500],
+
+
+
+
 
 
 
@@ -13551,7 +27067,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         return True, []
+
+
+
+
 
 
 
@@ -13559,7 +27083,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         payload = json.loads(result.stdout)
+
+
+
+
 
 
 
@@ -13567,7 +27099,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13575,7 +27115,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             "returncode=%s, stdout[:200]=%r, error=%s",
+
+
+
+
 
 
 
@@ -13583,11 +27131,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         return True, []
+
+
+
+
 
 
 
@@ -13595,11 +27155,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     if payload.get("depgraph_module_ids", 0) == 0:
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13607,7 +27179,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             "无法可靠执行拓扑检查，降级放行。stderr: %s",
+
+
+
+
 
 
 
@@ -13615,11 +27195,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         return True, []
+
+
+
+
 
 
 
@@ -13627,7 +27219,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     high_findings = [f for f in findings if f.get("severity") == "HIGH"]
+
+
+
+
 
 
 
@@ -13635,7 +27235,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         return True, []
+
+
+
+
 
 
 
@@ -13643,7 +27251,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     rel_set = {rf.replace("\\", "/") for rf in rel_files}
+
+
+
+
 
 
 
@@ -13651,7 +27267,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         f for f in high_findings
+
+
+
+
 
 
 
@@ -13659,7 +27283,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     ]
+
+
+
+
 
 
 
@@ -13667,7 +27299,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -13675,7 +27315,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             "（预存漂移），放行。",
+
+
+
+
 
 
 
@@ -13683,7 +27331,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -13691,7 +27347,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     _details = "; ".join(
+
+
+
+
 
 
 
@@ -13699,7 +27363,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         for f in session_high[:5]
+
+
+
+
 
 
 
@@ -13707,7 +27379,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
     return False, [{
+
+
+
+
 
 
 
@@ -13715,7 +27395,15 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
         "detail": (
+
+
+
+
 
 
 
@@ -13723,11 +27411,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
             f"#ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断）: {_details}"
 
 
 
+
+
+
+
         ),
+
+
+
+
 
 
 
@@ -13743,7 +27443,23 @@ def _run_pre_merge_topo_check(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _pre_merge_gate_check(
+
+
+
+
 
 
 
@@ -13751,11 +27467,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     allow_migration: bool = False,
 
 
 
+
+
+
+
 ) -> tuple[bool, list[dict]]:
+
+
+
+
 
 
 
@@ -13767,11 +27495,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
     在 worktree 中用 git reset --soft merge-base 模拟 staged 状态，运行 7 个
 
 
 
+
+
+
+
     worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED），检查 session
+
+
+
+
 
 
 
@@ -13783,11 +27527,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
     价值：session_worktree_commit 的 gate 检查在 commit 时执行，但 merge 前主分支
 
 
 
+
+
+
+
     可能有新 commit（并发 session）更新了 gate 规则（如新 capability 登记）。pre-merge
+
+
+
+
 
 
 
@@ -13799,7 +27559,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
     降级策略：gate 基础设施异常降级为 warn（不阻断）——session_worktree 不应因 gate
+
+
+
+
 
 
 
@@ -13811,7 +27583,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
     gate 代码自身修改降级（治本 2026-07-17）：当 session 分支修改了 commit_gates/
+
+
+
+
 
 
 
@@ -13819,7 +27603,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     sys.path 主工作区 src/）检测 worktree branch 的新调用，形成「鸡生蛋」阻断
+
+
+
+
 
 
 
@@ -13827,11 +27619,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     此时所有 blocking gate 降级为 warn-only（log warning + 不阻断 merge），AI 可在
 
 
 
+
+
+
+
     merge 后用新 gate 代码验证。理由：gate 代码修改是本次任务目标，用旧 gate
+
+
+
+
 
 
 
@@ -13843,7 +27647,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
     PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期，2026-07-17）：commit gate 检查后
+
+
+
+
 
 
 
@@ -13851,7 +27667,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     --scan-root <worktree>，HIGH drift（ORPHAN_MODULE_ID/MODULE_ID_DRIFT）阻断 merge。
+
+
+
+
 
 
 
@@ -13859,7 +27683,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     commit_gates/，不存在「鸡生蛋」。即使 commit gate 降级为 warn-only，topo 检查仍
+
+
+
+
 
 
 
@@ -13871,7 +27703,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -13879,7 +27723,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -13887,7 +27739,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+
+
+
+
 
 
 
@@ -13895,7 +27755,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         )
+
+
+
+
+
+
+
+
 
 
 
@@ -13907,7 +27779,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         branch = f"session/{session_id}"
+
+
+
+
 
 
 
@@ -13915,7 +27795,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             ["git", "merge-base", "HEAD", branch],
+
+
+
+
 
 
 
@@ -13923,7 +27811,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -13931,7 +27827,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             return True, []  # 无法获取 merge-base，降级放行
+
+
+
+
 
 
 
@@ -13943,7 +27847,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
         diff_r = subprocess.run(
+
+
+
+
 
 
 
@@ -13951,7 +27867,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True, text=True, timeout=10,
+
+
+
+
 
 
 
@@ -13959,11 +27883,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         if diff_r.returncode != 0 or not diff_r.stdout.strip():
 
 
 
+
+
+
+
             return True, []  # 无变更，放行
+
+
+
+
+
+
+
+
 
 
 
@@ -13979,7 +27919,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
         # 保存当前 HEAD（用于恢复）
+
+
+
+
 
 
 
@@ -13987,7 +27939,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             ["git", "rev-parse", "HEAD"],
+
+
+
+
 
 
 
@@ -13995,7 +27955,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -14003,7 +27971,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             return True, []  # 无法获取 HEAD，降级放行
+
+
+
+
 
 
 
@@ -14015,7 +27991,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
         # git reset --soft merge-base：模拟 staged 状态（HEAD 移到 merge-base，index 保留 session commit 内容）
+
+
+
+
 
 
 
@@ -14023,7 +28011,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         reset_r = subprocess.run(
+
+
+
+
 
 
 
@@ -14031,7 +28027,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+
+
+
+
 
 
 
@@ -14039,11 +28043,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         if reset_r.returncode != 0:
+
+
+
+
 
 
 
@@ -14055,7 +28071,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -14063,7 +28091,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 原实现用 root（主工作区路径），gate 用 project_root 计算 rel 时
+
+
+
+
 
 
 
@@ -14071,7 +28107,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             #
+
+
+
+
 
 
 
@@ -14079,7 +28123,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 原实现用 wt_path 初始化 SessionRegistry，但 session 在 session_worktree_start
+
+
+
+
 
 
 
@@ -14087,7 +28139,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 导致 SESSION-REQUIRED gate 误判"session 未注册"阻断 merge。
+
+
+
+
 
 
 
@@ -14095,7 +28155,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # monkeypatch _run_git 重定向 cwd 到 worktree（使 git diff --cached 查 worktree index）
+
+
+
+
 
 
 
@@ -14107,7 +28175,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
             def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+
+
+
+
 
 
 
@@ -14115,7 +28195,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 _env[_env_var] = "1"
+
+
+
+
 
 
 
@@ -14123,7 +28211,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
+
+
+
+
 
 
 
@@ -14131,7 +28227,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     return subprocess.CompletedProcess(
+
+
+
+
 
 
 
@@ -14139,7 +28243,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     )
+
+
+
+
 
 
 
@@ -14147,7 +28259,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 return subprocess.run(
+
+
+
+
 
 
 
@@ -14155,11 +28275,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     encoding="utf-8", errors="replace", timeout=60, env=_env,
 
 
 
+
+
+
+
                 )
+
+
+
+
+
+
+
+
 
 
 
@@ -14175,7 +28311,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
             # monkeypatch TEST-SOURCE-CONSISTENCY gate 的 _SRC_ROOT 指向 worktree src
+
+
+
+
 
 
 
@@ -14183,7 +28331,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # pre-merge 场景下主仓库源码滞后于 worktree（worktree 有新符号如 _run_pre_merge_topo_check，
+
+
+
+
 
 
 
@@ -14191,7 +28347,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 治本：pre-merge 时临时重定向 _SRC_ROOT 到 worktree src，使 gate 从 worktree 读源码符号
+
+
+
+
 
 
 
@@ -14199,11 +28363,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             import zephyr.gov_enforcement.commit_gates.test_source_consistency_gate as _tsc_gate
 
 
 
+
+
+
+
             _orig_src_root = _tsc_gate._SRC_ROOT
+
+
+
+
 
 
 
@@ -14215,7 +28391,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -14223,7 +28411,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 # 修复 (2026-07-05 审计 AI-02)：原实现用 root 路径检查主工作区文件，
+
+
+
+
 
 
 
@@ -14231,7 +28427,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 # 误判 session 分支变更违规。pre-merge gate 的目的是检查 session 分支的
+
+
+
+
 
 
 
@@ -14239,7 +28443,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 _changed_abs = [str((wt_path / rf).resolve()) for rf in rel_files]
+
+
+
+
 
 
 
@@ -14247,7 +28459,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     _gw, _changed_abs, session_id=session_id
+
+
+
+
 
 
 
@@ -14255,11 +28475,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             finally:
 
 
 
+
+
+
+
                 _tsc_gate._SRC_ROOT = _orig_src_root
+
+
+
+
 
 
 
@@ -14271,11 +28503,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
             _skip_gates = _WORKTREE_SKIP_GATES
 
 
 
+
+
+
+
             if allow_migration:
+
+
+
+
 
 
 
@@ -14287,7 +28535,19 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
             # 治本（2026-07-17）：检测 session 分支是否修改了 gate 代码本身
+
+
+
+
 
 
 
@@ -14295,7 +28555,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 当 session 分支修改了 commit_gates/ 下的 gate 代码（如扩展白名单、调整检测逻辑），
+
+
+
+
 
 
 
@@ -14303,7 +28571,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 降级策略：gate 代码自身修改时，所有 blocking gate 降级为 warn-only
+
+
+
+
 
 
 
@@ -14311,7 +28587,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # gate 代码检测新 gate 代码不合理；降级保留诊断信息，不丢安全（commit 时
+
+
+
+
 
 
 
@@ -14319,7 +28603,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             _gate_code_modified = any(
+
+
+
+
 
 
 
@@ -14327,11 +28619,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 for rf in rel_files
 
 
 
+
+
+
+
             )
+
+
+
+
+
+
+
+
 
 
 
@@ -14343,7 +28651,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 gr for gr in _gate_results
+
+
+
+
 
 
 
@@ -14351,7 +28667,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             ]
+
+
+
+
 
 
 
@@ -14359,7 +28683,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             if _blocking and _gate_code_modified:
+
+
+
+
 
 
 
@@ -14367,7 +28699,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 # PRE-MERGE-TOPO-CHECK 仍需执行，topo 检查独立于 commit gate 代码）。
+
+
+
+
 
 
 
@@ -14375,11 +28715,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     {"gate_id": gr.gate_id, "detail": gr.detail[:300]} for gr in _blocking
 
 
 
+
+
+
+
                 ]
+
+
+
+
 
 
 
@@ -14387,7 +28739,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     "pre-merge gate: session 分支修改了 commit_gates/ 下的 gate 代码，"
+
+
+
+
 
 
 
@@ -14395,7 +28755,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     "建议 merge 后用新 gate 代码验证。violations: %s",
+
+
+
+
 
 
 
@@ -14403,7 +28771,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 )
+
+
+
+
 
 
 
@@ -14411,7 +28787,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             elif _blocking:
+
+
+
+
 
 
 
@@ -14419,11 +28803,27 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                     {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
 
 
 
+
+
+
+
                 ]
+
+
+
+
+
+
+
+
 
 
 
@@ -14435,7 +28835,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 之前执行（时序修复，2026-07-17）：原实现 topo check 在 auto_clean 之后执行，
+
+
+
+
 
 
 
@@ -14443,7 +28851,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 修改了 check_blueprint_code_alignment.py），导致 MAIN 副本 checker 不认识
+
+
+
+
 
 
 
@@ -14451,7 +28867,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # 是主工作区最新版本。topo check 独立于 commit gate——不受 gate 代码修改降级影响。
+
+
+
+
 
 
 
@@ -14459,7 +28883,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 return False, _gate_violations
+
+
+
+
 
 
 
@@ -14467,7 +28899,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         finally:
+
+
+
+
 
 
 
@@ -14475,7 +28915,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
             # P1.3 fast-path：pre-merge gate HEAD 恢复是可信调用方，跳过 git_guard alias 扫描
+
+
+
+
 
 
 
@@ -14483,7 +28931,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 ["git", "reset", "--soft", orig_head],
+
+
+
+
 
 
 
@@ -14491,7 +28947,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
                 env=_trusted_git_env(),
+
+
+
+
 
 
 
@@ -14499,7 +28963,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
     except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -14507,7 +28979,15 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
         logger.warning("pre-merge gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
+
+
+
+
 
 
 
@@ -14523,7 +29003,23 @@ def _pre_merge_gate_check(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _classify_merge_failure(error_text: str) -> str:
+
+
+
+
 
 
 
@@ -14535,7 +29031,19 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
+
+
+
+
     复用裁定 C 错误分类思路（_classify_sync_failure）：
+
+
+
+
 
 
 
@@ -14543,7 +29051,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
         → 不重试（重试也是同样的结果）
+
+
+
+
 
 
 
@@ -14551,11 +29067,23 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
         → 重试（lock 释放后可能成功）
 
 
 
+
+
+
+
       - unknown: 其他
+
+
+
+
 
 
 
@@ -14567,7 +29095,19 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -14579,7 +29119,19 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -14587,7 +29139,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -14595,7 +29155,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
     if not text:
+
+
+
+
 
 
 
@@ -14603,7 +29171,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
     # deterministic 模式（content conflict / 参数错误 / worktree 不存在）
+
+
+
+
 
 
 
@@ -14611,7 +29187,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
         "conflict", "merge conflict", "automatic merge failed",
+
+
+
+
 
 
 
@@ -14619,11 +29203,23 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
         "worktree 不存在", "session_id 不能为空",
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -14631,7 +29227,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
     _TRANS_PATTERNS = (
+
+
+
+
 
 
 
@@ -14639,7 +29243,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
         "could not lock", "unable to create", "unable to write",
+
+
+
+
 
 
 
@@ -14647,7 +29259,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -14655,7 +29275,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
         if pat in text:
+
+
+
+
 
 
 
@@ -14663,7 +29291,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
     for pat in _TRANS_PATTERNS:
+
+
+
+
 
 
 
@@ -14671,7 +29307,15 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
             return "transient"
+
+
+
+
 
 
 
@@ -14687,7 +29331,23 @@ def _classify_merge_failure(error_text: str) -> str:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _merge_with_retry(
+
+
+
+
 
 
 
@@ -14695,7 +29355,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -14703,7 +29371,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
 ) -> tuple[bool, str]:
+
+
+
+
 
 
 
@@ -14715,11 +29391,31 @@ def _merge_with_retry(
 
 
 
+
+
+
+
+
+
+
+
     仅 transient 错误重试（index.lock / git process running / timeout），
 
 
 
+
+
+
+
     deterministic 错误立即返回（content conflict / worktree 不存在）。
+
+
+
+
+
+
+
+
 
 
 
@@ -14735,7 +29431,19 @@ def _merge_with_retry(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -14743,7 +29451,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
         session_id: session 标识。
+
+
+
+
 
 
 
@@ -14755,7 +29471,19 @@ def _merge_with_retry(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -14763,7 +29491,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -14771,7 +29507,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
     delays = [1, 2, 4]  # 指数退避
+
+
+
+
 
 
 
@@ -14779,7 +29523,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
     for attempt in range(1, max_attempts + 1):
+
+
+
+
 
 
 
@@ -14787,7 +29539,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             merged = manager.merge_session_worktree(session_id, delete_after=True)
+
+
+
+
 
 
 
@@ -14795,7 +29555,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                 return True, ""
+
+
+
+
 
 
 
@@ -14803,7 +29571,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             last_error = "merge returned False (likely conflict)"
+
+
+
+
 
 
 
@@ -14811,7 +29587,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -14819,7 +29603,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                 import subprocess as _sp
+
+
+
+
 
 
 
@@ -14827,7 +29619,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                     ["git", "status", "--porcelain"],
+
+
+
+
 
 
 
@@ -14835,7 +29635,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                     encoding="utf-8", errors="replace", timeout=10,
+
+
+
+
 
 
 
@@ -14843,7 +29651,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                 if r.returncode == 0 and r.stdout.strip():
+
+
+
+
 
 
 
@@ -14851,7 +29667,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             except Exception:  # noqa: BLE001 — best-effort 错误信息提取
+
+
+
+
 
 
 
@@ -14859,7 +29683,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             classification = _classify_merge_failure(last_error)
+
+
+
+
 
 
 
@@ -14867,11 +29699,23 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                 return False, last_error
 
 
 
+
+
+
+
             _threading.Event().wait(delays[attempt - 1])
+
+
+
+
 
 
 
@@ -14879,7 +29723,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             # WorktreeError 通常是 deterministic（worktree 不存在 / 参数错误）
+
+
+
+
 
 
 
@@ -14887,7 +29739,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
         except subprocess.TimeoutExpired as e:
+
+
+
+
 
 
 
@@ -14895,7 +29755,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             classification = _classify_merge_failure(last_error)
+
+
+
+
 
 
 
@@ -14903,11 +29771,23 @@ def _merge_with_retry(
 
 
 
+
+
+
+
                 return False, last_error
 
 
 
+
+
+
+
             _threading.Event().wait(delays[attempt - 1])
+
+
+
+
 
 
 
@@ -14915,7 +29795,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             last_error = f"{type(e).__name__}: {e}"
+
+
+
+
 
 
 
@@ -14923,7 +29811,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             if classification != "transient" or attempt == max_attempts:
+
+
+
+
 
 
 
@@ -14931,7 +29827,15 @@ def _merge_with_retry(
 
 
 
+
+
+
+
             _threading.Event().wait(delays[attempt - 1])
+
+
+
+
 
 
 
@@ -14947,7 +29851,23 @@ def _merge_with_retry(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _execute_merge_and_build_msg(
+
+
+
+
 
 
 
@@ -14955,7 +29875,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -14963,11 +29891,23 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
     skipped_files: list,
 
 
 
+
+
+
+
 ) -> tuple[bool, bool, str]:
+
+
+
+
 
 
 
@@ -14979,11 +29919,27 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
+
+
+
+
     merge 成功后验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
 
 
 
+
+
+
+
     merge 成功但清理失败时 cleaned=False（worktree 残留——session 保留供重试，
+
+
+
+
 
 
 
@@ -14995,7 +29951,19 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
+
+
+
+
     #ARCH-HEARTBEAT-001 P1-4：merge 用 _merge_with_retry 包装，transient 错误
+
+
+
+
 
 
 
@@ -15003,7 +29971,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -15011,7 +29987,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
     cleaned = False
+
+
+
+
 
 
 
@@ -15019,7 +30003,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
     merged, merge_error = _merge_with_retry(manager, session_id)
+
+
+
+
 
 
 
@@ -15027,7 +30019,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
         parts = ["merge 成功"]
+
+
+
+
 
 
 
@@ -15035,7 +30035,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
+
+
+
+
 
 
 
@@ -15043,7 +30051,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
+
+
+
+
 
 
 
@@ -15051,7 +30067,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
         # merge 成功但清理失败时 worktree 残留——此时不注销 session，
+
+
+
+
 
 
 
@@ -15059,7 +30083,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
         wt_path = manager._wt_path(session_id)
+
+
+
+
 
 
 
@@ -15067,11 +30099,23 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
 
 
 
+
+
+
+
             msg = "".join(parts)
+
+
+
+
 
 
 
@@ -15079,7 +30123,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -15087,7 +30139,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             msg = "".join(parts)
+
+
+
+
 
 
 
@@ -15095,7 +30155,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             _log_worktree_delete(  # Phase 4 遥测：merge 删除点
+
+
+
+
 
 
 
@@ -15103,7 +30171,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -15111,7 +30187,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
         if merge_error:
+
+
+
+
 
 
 
@@ -15119,7 +30203,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
         elif skipped_files:
+
+
+
+
 
 
 
@@ -15127,7 +30219,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
                 f"merge 失败：以下文件主工作区有额外改动（与 worktree commit 不一致），"
+
+
+
+
 
 
 
@@ -15135,7 +30235,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -15143,7 +30251,15 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
+
+
+
+
 
 
 
@@ -15159,7 +30275,23 @@ def _execute_merge_and_build_msg(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
+
+
+
+
 
 
 
@@ -15171,7 +30303,19 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
+
+
+
+
     无变更文件时跳过；触发异常时降级为 warn 项（不阻断）。
+
+
+
+
 
 
 
@@ -15179,7 +30323,15 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
     reconcile_results: list[dict] = []
+
+
+
+
 
 
 
@@ -15187,7 +30339,15 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
         committed_files = _get_merge_files(root)
+
+
+
+
 
 
 
@@ -15195,7 +30355,15 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
             logger.info("[RECONCILER] merge 后触发 reconciler 验证（%d 个文件）...", len(committed_files))
+
+
+
+
 
 
 
@@ -15203,7 +30371,15 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -15211,7 +30387,15 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -15219,7 +30403,15 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
         reconcile_results = [{"action": "warn", "detail": str(e)}]
+
+
+
+
 
 
 
@@ -15235,7 +30427,23 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _run_post_commit_reconcile(
+
+
+
+
 
 
 
@@ -15243,7 +30451,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
 ) -> list[dict]:
+
+
+
+
 
 
 
@@ -15255,7 +30471,19 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
+
+
+
+
     治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3(4)/Phase 4(3)：
+
+
+
+
 
 
 
@@ -15263,7 +30491,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     设计决策，见 session_worktree.py:42-48 docstring），导致
+
+
+
+
 
 
 
@@ -15271,7 +30507,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     从未遍历，make_depgraph_ops_reconciler 等从不触发。本函数在
+
+
+
+
 
 
 
@@ -15283,7 +30527,19 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
+
+
+
+
     与 _run_reconcilers_after_merge 的区别：
+
+
+
+
 
 
 
@@ -15291,7 +30547,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     - 看到的是主仓库状态（不含 worktree commit），同步的是主仓库既有漂移
+
+
+
+
 
 
 
@@ -15303,7 +30567,19 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
+
+
+
+
     安全性：reconciler 的 auto-commit 通过 _commit_auto 只提交 reconciler 生成
+
+
+
+
 
 
 
@@ -15311,7 +30587,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     提交工作区遗留。auto-commit 在主仓库创建的新 commit 不影响 worktree 分支——
+
+
+
+
 
 
 
@@ -15319,7 +30603,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     自动对齐（无 session commit → git reset --hard；有 session commit → git rebase）。
+
+
+
+
 
 
 
@@ -15327,7 +30619,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -15335,7 +30635,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
         from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
+
+
+
+
 
 
 
@@ -15343,7 +30651,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
         # P2.3: batch intercept -- flush on exit produces single squash commit.
+
+
+
+
 
 
 
@@ -15351,7 +30667,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
             batcher.enable(session_id)
+
+
+
+
 
 
 
@@ -15359,7 +30683,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
                 committed_files, session_id, commit_message="",
+
+
+
+
 
 
 
@@ -15367,7 +30699,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
         # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化到 governance.db
+
+
+
+
 
 
 
@@ -15375,7 +30715,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
         _log_reconcile_results(
+
+
+
+
 
 
 
@@ -15383,7 +30731,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
             trigger_source="post_commit_worktree", committed_files=committed_files,
+
+
+
+
 
 
 
@@ -15391,7 +30747,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -15399,7 +30763,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
         for r in results:
+
+
+
+
 
 
 
@@ -15407,7 +30779,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
                 continue
+
+
+
+
 
 
 
@@ -15415,7 +30795,15 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
             logger.info("[RECONCILER post-commit] %s%s", r.action, f" - {r.detail}" if r.detail else "")
+
+
+
+
 
 
 
@@ -15423,11 +30811,23 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
 
 
 
+
+
+
+
         logger.warning("[RECONCILER post-commit] 触发失败: %s", e)
+
+
+
+
 
 
 
@@ -15443,7 +30843,23 @@ def _run_post_commit_reconcile(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -> None:
+
+
+
+
 
 
 
@@ -15455,7 +30871,19 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
+
+
+
+
     对标 _audit_allow_overlap_usage（commit_gate_registry.py:72）。
+
+
+
+
 
 
 
@@ -15463,7 +30891,15 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
     fail-open：审计写入失败不阻断 merge。
+
+
+
+
 
 
 
@@ -15471,7 +30907,15 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
     if not force:
+
+
+
+
 
 
 
@@ -15479,7 +30923,15 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -15487,7 +30939,15 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
         audit_dir.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -15495,7 +30955,15 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
             "timestamp": int(time.time()),  # noqa: m46-time — 审计事件时间戳（force_merge 逃生通道使用记录），合法场景
+
+
+
+
 
 
 
@@ -15503,7 +30971,15 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -15511,11 +30987,23 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 审计写入失败不阻断 merge
+
+
+
+
 
 
 
@@ -15531,7 +31019,23 @@ def _audit_force_merge_usage(project_root: Path, session_id: str, force: bool) -
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @_inject_ok
+
+
+
+
 
 
 
@@ -15539,7 +31043,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -15547,7 +31059,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     reconcile_verify: bool = True,
+
+
+
+
 
 
 
@@ -15555,11 +31075,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     force: bool = False,
 
 
 
+
+
+
+
 ) -> MergeResult:
+
+
+
+
 
 
 
@@ -15571,11 +31103,27 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     在主工作目录执行 git merge session/{session_id} --no-ff（保留 session 提交拓扑）。
 
 
 
+
+
+
+
     merge 前自动清理主工作区与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）。
+
+
+
+
 
 
 
@@ -15587,7 +31135,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -15595,7 +31155,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         force: #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本逃生通道——True 时跳过
+
+
+
+
 
 
 
@@ -15603,7 +31171,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             用于 pre-merge gate 误报或基础设施故障时逃生（对标 allow_overlap=True）。
+
+
+
+
 
 
 
@@ -15611,11 +31187,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             不可绕过类检测（commit 持久性验证 + base 新鲜度检测）——理由：无 post-merge
 
 
 
+
+
+
+
             替代 + 跳过后不可挽回。滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001
+
+
+
+
 
 
 
@@ -15627,7 +31215,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -15635,7 +31235,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "session_id": str,
+
+
+
+
 
 
 
@@ -15643,7 +31251,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "message": str,
+
+
+
+
 
 
 
@@ -15651,7 +31267,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "unregistered": bool, # session 是否已注销
+
+
+
+
 
 
 
@@ -15659,7 +31283,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -15667,7 +31299,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 维度6: force_merge 审计落盘（对标 allow_overlap）
+
+
+
+
 
 
 
@@ -15675,7 +31315,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     manager = _get_manager(root)
+
+
+
+
 
 
 
@@ -15687,7 +31335,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     # Phase 6 治本（2026-07-19）：merge 时刷新 session heartbeat，防 TTL 过期。
+
+
+
+
 
 
 
@@ -15695,7 +31355,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # merge 前 heartbeat 刷新确保长 session（start→commit→merge 跨多次 python -c）
+
+
+
+
 
 
 
@@ -15703,7 +31371,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -15711,7 +31387,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -15723,7 +31407,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 3: merge 前验证 commit 持久性
+
+
+
+
 
 
 
@@ -15731,7 +31427,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # （被 sweep 删除或被并发 session 回退），fail-closed 报告薛定谔的回退。
+
+
+
+
 
 
 
@@ -15739,7 +31443,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # #ARCH-FORCE-MERGE-SAFETY-001（2026-07-22 治本）：commit 持久性验证为
+
+
+
+
 
 
 
@@ -15747,7 +31459,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 不可挽回（merge 报成功但不落盘）。force=True 只能绕过"可绕过类"检测
+
+
+
+
 
 
 
@@ -15755,7 +31475,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     _marker = _read_commit_persisted_marker(root, session_id)
+
+
+
+
 
 
 
@@ -15763,7 +31491,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _expected_hash = _marker.get("commit_hash", "")
+
+
+
+
 
 
 
@@ -15771,7 +31507,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _r_tip = manager._run_git(
+
+
+
+
 
 
 
@@ -15779,7 +31523,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -15787,7 +31539,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         if _expected_hash and _actual_hash != _expected_hash:
+
+
+
+
 
 
 
@@ -15795,7 +31555,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             return {
+
+
+
+
 
 
 
@@ -15803,7 +31571,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "merged": False,
+
+
+
+
 
 
 
@@ -15811,7 +31587,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     f"SCHRODINGER_ROLLBACK_DETECTED: commit {_expected_hash} "
+
+
+
+
 
 
 
@@ -15819,7 +31603,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     f"on branch {_branch} (tip={_actual_hash or 'MISSING'}). "
+
+
+
+
 
 
 
@@ -15827,7 +31619,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     f"修复：用 git reflog 恢复 commit，或重新 commit。"
+
+
+
+
 
 
 
@@ -15835,7 +31635,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     f"#ARCH-FORCE-MERGE-SAFETY-001 不可绕过类）"
+
+
+
+
 
 
 
@@ -15843,7 +31651,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "cleaned": False,
+
+
+
+
 
 
 
@@ -15851,7 +31667,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "schrodinger_rollback": True,
+
+
+
+
 
 
 
@@ -15859,11 +31683,27 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "actual_tip": _actual_hash,
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
+
+
 
 
 
@@ -15875,7 +31715,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
+
+
+
+
 
 
 
@@ -15883,7 +31731,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -15891,11 +31747,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _print_critical_warn_banner(root, context="pre_merge")
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -15907,7 +31775,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2: pre-merge 硬阻断
+
+
+
+
 
 
 
@@ -15915,7 +31795,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 与 critical_warn 的区别：critical_warn 只告警不阻断，block_next 硬阻断。
+
+
+
+
 
 
 
@@ -15923,7 +31811,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # fail-open 策略：查询失败（governance.db 不可用）不阻断 merge，仅记录日志
+
+
+
+
 
 
 
@@ -15931,7 +31827,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -15939,7 +31843,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _block_err = _print_block_banner(root, context="pre_merge")
+
+
+
+
 
 
 
@@ -15947,7 +31859,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             return {
+
+
+
+
 
 
 
@@ -15955,7 +31875,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "merged": False,
+
+
+
+
 
 
 
@@ -15963,7 +31891,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "blocked": True,
+
+
+
+
 
 
 
@@ -15971,7 +31907,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -15983,7 +31927,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
     # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1: merge 前工作区 clean 检查（fail-closed）
+
+
+
+
 
 
 
@@ -15991,7 +31947,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # auto-sync 产物自动 restore；真实代码修改 fail-closed 阻断 merge。
+
+
+
+
 
 
 
@@ -15999,7 +31963,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 是 modified 状态，但不是搭便车（已在 worktree commit 中）。
+
+
+
+
 
 
 
@@ -16007,7 +31979,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     if force:
+
+
+
+
 
 
 
@@ -16015,7 +31995,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "session_worktree_merge(force=True): 跳过 WORKSPACE-CLEAN-CHECK "
+
+
+
+
 
 
 
@@ -16023,7 +32011,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -16031,7 +32027,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _ws_session_files = _get_session_branch_diff_files(root, session_id)
+
+
+
+
 
 
 
@@ -16039,7 +32043,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             root, session_id, session_files=_ws_session_files,
+
+
+
+
 
 
 
@@ -16047,7 +32059,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         if not _ws_passed:
+
+
+
+
 
 
 
@@ -16055,7 +32075,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "session_id": session_id,
+
+
+
+
 
 
 
@@ -16063,7 +32091,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "message": _ws_detail,
+
+
+
+
 
 
 
@@ -16071,7 +32107,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "unregistered": False,
+
+
+
+
 
 
 
@@ -16079,7 +32123,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "gate_results": [{"gate_id": _WS_CLEAN_GATE_ID, "detail": _ws_detail}],
+
+
+
+
 
 
 
@@ -16087,7 +32139,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
+
+
 
 
 
@@ -16099,7 +32163,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 时序关键（2026-07-17 修复）：必须在 _pre_merge_auto_clean 之前执行——
+
+
+
+
 
 
 
@@ -16107,7 +32179,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 修改了 check_blueprint_code_alignment.py），导致 MAIN 副本 checker 不认识
+
+
+
+
 
 
 
@@ -16115,7 +32195,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # checker 还是主工作区最新版本（含 --scan-root）。topo check 独立于 commit gate——
+
+
+
+
 
 
 
@@ -16123,7 +32211,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     #
+
+
+
+
 
 
 
@@ -16131,7 +32227,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # force=True 时跳过 PRE-MERGE-TOPO-CHECK（逃生通道，对标 allow_overlap=True）。
+
+
+
+
 
 
 
@@ -16139,7 +32243,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     if force:
+
+
+
+
 
 
 
@@ -16147,7 +32259,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "session_worktree_merge(force=True): 跳过 PRE-MERGE-TOPO-CHECK "
+
+
+
+
 
 
 
@@ -16155,11 +32275,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "滥用风险：拓扑不一致可能引入漂移，仅用于 pre-merge gate 误报或基础设施故障。"
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -16167,7 +32299,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     else:
+
+
+
+
 
 
 
@@ -16175,7 +32315,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _topo_passed, _topo_violations = _run_pre_merge_topo_check(
+
+
+
+
 
 
 
@@ -16183,7 +32331,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -16191,7 +32347,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in _topo_violations)
+
+
+
+
 
 
 
@@ -16199,7 +32363,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # 下次 commit/merge 硬阻断——AI 必须修复 HIGH drift 后调 resolve_blocks()
+
+
+
+
 
 
 
@@ -16207,7 +32379,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # 语义（block_next: 最严重——下次 commit/merge 硬阻断）。
+
+
+
+
 
 
 
@@ -16215,7 +32395,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # critical_warn 只告警不阻断，AI 可继续 commit 引入更多漂移；block_next 硬阻断
+
+
+
+
 
 
 
@@ -16223,7 +32411,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # 但日志可见——DB 故障不应卡死业务流程，拓扑问题本身已通过 return 阻断本次 merge）。
+
+
+
+
 
 
 
@@ -16231,7 +32427,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             from zephyr.governance.audit.reconciliation_registry import (
+
+
+
+
 
 
 
@@ -16239,11 +32443,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 _log_reconcile_results,
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -16251,7 +32467,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 action="block_next",
+
+
+
+
 
 
 
@@ -16259,11 +32483,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 gate_id="PRE-MERGE-TOPO-CHECK",
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -16271,11 +32507,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 root, [_block_result], session_id, "pre_merge_topo_check",
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -16283,7 +32531,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             logger.warning(
+
+
+
+
 
 
 
@@ -16291,7 +32547,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -16299,7 +32563,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "session_id": session_id,
+
+
+
+
 
 
 
@@ -16307,7 +32579,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "message": (
+
+
+
+
 
 
 
@@ -16315,7 +32595,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 f"已写入 block_next 记录——下次 commit/merge 将硬阻断。"
+
+
+
+
 
 
 
@@ -16323,7 +32611,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             ),
+
+
+
+
 
 
 
@@ -16331,7 +32627,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "unregistered": False,
+
+
+
+
 
 
 
@@ -16339,7 +32643,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "gate_results": _topo_violations,
+
+
+
+
 
 
 
@@ -16347,11 +32659,27 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "blocked_next": True,  # P4.1: 标记已写入 block_next
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -16363,7 +32691,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     #
+
+
+
+
 
 
 
@@ -16371,7 +32707,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # 不可绕过类——force=True 也不跳过。理由：无 post-merge 替代 + 跳过后
+
+
+
+
 
 
 
@@ -16379,7 +32723,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # force=True 只能绕过"可绕过类"检测（有 post-merge reconciler 兜底的）。
+
+
+
+
 
 
 
@@ -16387,7 +32739,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -16395,7 +32755,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "（#ARCH-FORCE-MERGE-SAFETY-001 不可绕过类，2026-07-22 治本）。"
+
+
+
+
 
 
 
@@ -16403,7 +32771,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -16411,7 +32787,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     if _merge_base_err:
+
+
+
+
 
 
 
@@ -16419,7 +32803,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "session_id": session_id, "merged": False,
+
+
+
+
 
 
 
@@ -16427,7 +32819,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 f"base freshness check (merge) 阻断: {_merge_base_err.get('message', 'unknown')}。"
+
+
+
+
 
 
 
@@ -16435,7 +32835,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 f"（#ARCH-FORCE-MERGE-SAFETY-001 不可绕过类）。"
+
+
+
+
 
 
 
@@ -16443,7 +32851,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "cleaned": False, "unregistered": False, "gate_violation": True,
+
+
+
+
 
 
 
@@ -16451,11 +32867,27 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "reconcile_results": [], "base_sync_failed": True,
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -16467,7 +32899,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     # ——_pre_merge_auto_clean / _pre_merge_gate_check（monkey-patch _run_git cwd=worktree）
+
+
+
+
 
 
 
@@ -16475,7 +32915,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     #   _sweep_one_dir 判据 4 检查 lockfile 存在则跳过该 session。
+
+
+
+
 
 
 
@@ -16483,7 +32931,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
     #   主要覆盖 auto_clean + gate_check 的无锁窗口。
+
+
+
+
 
 
 
@@ -16491,11 +32947,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
 
 
 
+
+
+
+
         # 只清理内容一致的文件（safe）；内容不一致的跳过（AI 有额外编辑，需手动处理）
+
+
+
+
 
 
 
@@ -16507,7 +32975,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
         # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
+
+
+
+
 
 
 
@@ -16515,7 +32995,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         #
+
+
+
+
 
 
 
@@ -16523,7 +33011,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # _PRE_MERGE_SKIP_ALL_COMMIT_GATES=True 时跳过所有 commit gate——
+
+
+
+
 
 
 
@@ -16531,7 +33027,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # 主工作区 src 会导致 ImportError（worktree commit 修改了 src/ 跨文件 import
+
+
+
+
 
 
 
@@ -16539,7 +33043,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # （独立 subprocess，无 sys.path 问题），已覆盖主分支状态变化检测。
+
+
+
+
 
 
 
@@ -16547,7 +33059,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         if force or _PRE_MERGE_SKIP_ALL_COMMIT_GATES:
+
+
+
+
 
 
 
@@ -16555,7 +33075,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 logger.info(
+
+
+
+
 
 
 
@@ -16563,7 +33091,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     "#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本，"
+
+
+
+
 
 
 
@@ -16571,7 +33107,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 )
+
+
+
+
 
 
 
@@ -16579,7 +33123,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 logger.warning(
+
+
+
+
 
 
 
@@ -16587,7 +33139,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     "（#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 逃生通道）"
+
+
+
+
 
 
 
@@ -16595,7 +33155,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             gate_passed, gate_violations = True, []
+
+
+
+
 
 
 
@@ -16603,7 +33171,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
+
+
+
+
 
 
 
@@ -16611,7 +33187,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
+
+
+
+
 
 
 
@@ -16619,7 +33203,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "session_id": session_id,
+
+
+
+
 
 
 
@@ -16627,7 +33219,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "message": f"pre-merge gate 阻断: {_details}",
+
+
+
+
 
 
 
@@ -16635,7 +33235,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "unregistered": False,
+
+
+
+
 
 
 
@@ -16643,11 +33251,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 "gate_results": gate_violations,
 
 
 
+
+
+
+
                 "reconcile_results": [],
+
+
+
+
 
 
 
@@ -16659,11 +33279,27 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
         merged, cleaned, msg = _execute_merge_and_build_msg(
 
 
 
+
+
+
+
             manager, session_id, auto_cleaned, skipped_files
+
+
+
+
 
 
 
@@ -16675,7 +33311,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
         # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
+
+
+
+
 
 
 
@@ -16683,7 +33331,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # unregister 执行——reconciler auto-commit 携带本 session_id，若先 unregister，
+
+
+
+
 
 
 
@@ -16691,7 +33347,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         # （B2 审计：warn_only/allow_overlap 误报的主根因，日均数百条噪音）。
+
+
+
+
 
 
 
@@ -16699,7 +33363,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         if reconcile_verify and merged and cleaned:
+
+
+
+
 
 
 
@@ -16711,7 +33383,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
         # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
+
+
+
+
 
 
 
@@ -16719,7 +33403,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
         if merged and cleaned:
+
+
+
+
 
 
 
@@ -16727,7 +33419,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             # 先 kill daemon 停止心跳，再 unregister——即使 unregister 失败，
+
+
+
+
 
 
 
@@ -16735,7 +33435,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             _kill_heartbeat_daemon(session_id, root)
+
+
+
+
 
 
 
@@ -16743,7 +33451,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -16751,7 +33467,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             except Exception:  # noqa: BLE001 — best-effort
+
+
+
+
 
 
 
@@ -16759,7 +33483,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: merge 成功后清除持久性标记
+
+
+
+
 
 
 
@@ -16767,7 +33499,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             # trae_075 STASH-LIFE-LAW-3: merge 成功后删除本次 session 的 pre-merge stash。
+
+
+
+
 
 
 
@@ -16775,7 +33515,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             # 干净进行，merge 成功后这些 stash 已无意义（改动已通过 worktree commit 进入
+
+
+
+
 
 
 
@@ -16783,7 +33531,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -16791,7 +33547,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                 if _drop_result["dropped"] > 0:
+
+
+
+
 
 
 
@@ -16799,7 +33563,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                         "session_worktree_merge: dropped %d pre-merge stash(es) "
+
+
+
+
 
 
 
@@ -16807,11 +33579,23 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                         _drop_result["dropped"], session_id,
 
 
 
+
+
+
+
                     )
+
+
+
+
 
 
 
@@ -16819,7 +33603,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                     logger.warning(
+
+
+
+
 
 
 
@@ -16827,7 +33619,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
                         _drop_result["errors"],
+
+
+
+
 
 
 
@@ -16835,7 +33635,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             except Exception:  # noqa: BLE001 — best-effort, 不阻断 merge
+
+
+
+
 
 
 
@@ -16843,7 +33651,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             try:
+
+
+
+
 
 
 
@@ -16851,7 +33667,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -16863,7 +33687,19 @@ def session_worktree_merge(
 
 
 
+
+
+
+
+
+
+
+
         return {
+
+
+
+
 
 
 
@@ -16871,7 +33707,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "merged": merged,
+
+
+
+
 
 
 
@@ -16879,7 +33723,15 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "cleaned": cleaned,
+
+
+
+
 
 
 
@@ -16887,11 +33739,31 @@ def session_worktree_merge(
 
 
 
+
+
+
+
             "reconcile_results": reconcile_results,
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -16907,7 +33779,15 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
     """将 files 规范化为相对 root 的相对路径列表（/ 分隔）。"""
+
+
+
+
 
 
 
@@ -16915,7 +33795,15 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
     for f in files:
+
+
+
+
 
 
 
@@ -16923,7 +33811,15 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
         if p.is_absolute():
+
+
+
+
 
 
 
@@ -16931,7 +33827,15 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
                 rel = p.relative_to(root)
+
+
+
+
 
 
 
@@ -16939,7 +33843,15 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
             except ValueError:
+
+
+
+
 
 
 
@@ -16947,11 +33859,23 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
         else:
 
 
 
+
+
+
+
             rel_files.append(str(p).replace("\\", "/"))
+
+
+
+
 
 
 
@@ -16967,7 +33891,23 @@ def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
+
+
+
+
 
 
 
@@ -16975,7 +33915,15 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
 
 
+
+
+
+
     tracked_r = subprocess.run(
+
+
+
+
 
 
 
@@ -16983,7 +33931,15 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
 
 
+
+
+
+
         cwd=str(root), capture_output=True, text=True,
+
+
+
+
 
 
 
@@ -16991,7 +33947,15 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -16999,7 +33963,15 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
 
 
+
+
+
+
         return {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
+
+
+
+
 
 
 
@@ -17015,7 +33987,23 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _dispose_main_workdir_files(
+
+
+
+
 
 
 
@@ -17023,11 +34011,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
     session_id: str | None = None,
 
 
 
+
+
+
+
 ) -> int:
+
+
+
+
 
 
 
@@ -17039,7 +34039,19 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
     S3-B 治本（2026-07-17）：tracked 文件原用 ``git checkout --`` 静默丢弃修改，
+
+
+
+
 
 
 
@@ -17047,11 +34059,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
     （41 例并发丢失案例中模式 A "git stash/reset/checkout 冲掉工作区"占 51%）。
 
 
 
+
+
+
+
     改为 ``git stash push -- <files>`` 将修改压入 stash 栈，文件还原到 HEAD，
+
+
+
+
 
 
 
@@ -17063,11 +34087,27 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
     untracked 文件行为不变（物理删除）——abort 场景的 untracked 通常是 AI
 
 
 
+
+
+
+
     新建的临时文件，物理删除符合预期；如需保留可事后从 worktree 分支恢复
+
+
+
+
 
 
 
@@ -17079,7 +34119,19 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
     边界：tracked 文件无修改时 ``git stash push`` 返回非零（"No local changes"），
+
+
+
+
 
 
 
@@ -17091,7 +34143,19 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -17099,11 +34163,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         rel_files: 待处置的相对路径文件列表。
 
 
 
+
+
+
+
         tracked_files: git tracked 文件集合（用于分类）。
+
+
+
+
 
 
 
@@ -17115,7 +34191,19 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -17123,7 +34211,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -17131,7 +34227,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
     cleaned = 0
+
+
+
+
 
 
 
@@ -17139,7 +34243,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         main_file = root / rel_file
+
+
+
+
 
 
 
@@ -17147,7 +34259,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             # tracked 文件——用 git stash push 保存修改（可恢复），文件还原到 HEAD
+
+
+
+
 
 
 
@@ -17155,7 +34275,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             cleaned += 1
+
+
+
+
 
 
 
@@ -17163,7 +34291,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             # 裁定#B（2026-07-19）：untracked 文件物理删除 → 隔离区移送（72h 可恢复）
+
+
+
+
 
 
 
@@ -17171,7 +34307,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             if _quarantine_file(root, rel_file, session_id or "unknown", "abort"):
+
+
+
+
 
 
 
@@ -17183,7 +34327,19 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
     if to_stash:
+
+
+
+
 
 
 
@@ -17191,7 +34347,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         # stash 保留修改（可恢复 via git stash pop），checkout -- 永久丢弃（不可恢复）
+
+
+
+
 
 
 
@@ -17199,7 +34363,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             f"session_worktree_abort: {session_id}"
+
+
+
+
 
 
 
@@ -17207,7 +34379,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -17215,11 +34395,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         pre_stash_hashes: dict[str, str] = {}
 
 
 
+
+
+
+
         for rel_file in to_stash:
+
+
+
+
 
 
 
@@ -17227,7 +34419,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         subprocess.run(
+
+
+
+
 
 
 
@@ -17235,11 +34435,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             cwd=str(root), capture_output=True,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -17247,7 +34459,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
             "session_worktree_abort: stashed %d tracked file(s) for session=%s "
+
+
+
+
 
 
 
@@ -17255,7 +34475,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -17263,7 +34491,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
         for rel_file in to_stash:
+
+
+
+
 
 
 
@@ -17271,7 +34507,15 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
                 "file_stash", session_id or "unknown", "abort", root,
+
+
+
+
 
 
 
@@ -17279,11 +34523,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
                 content_hash=pre_stash_hashes.get(rel_file, ""),
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -17299,7 +34555,23 @@ def _dispose_main_workdir_files(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _clean_main_workdir_on_abort(
+
+
+
+
 
 
 
@@ -17307,7 +34579,15 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
 ) -> int:
+
+
+
+
 
 
 
@@ -17319,7 +34599,19 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
+
+
+
+
     S3-B 治本（2026-07-17）：tracked 文件改用 git stash push 保存（可恢复），
+
+
+
+
 
 
 
@@ -17331,7 +34623,19 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -17339,7 +34643,15 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
         root: 主仓库根目录。
+
+
+
+
 
 
 
@@ -17351,7 +34663,19 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -17359,7 +34683,15 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -17367,7 +34699,15 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
     tracked_files = _query_tracked_files(root, rel_files)
+
+
+
+
 
 
 
@@ -17383,7 +34723,23 @@ def _clean_main_workdir_on_abort(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @_inject_ok
+
+
+
+
 
 
 
@@ -17391,7 +34747,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -17399,7 +34763,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     project_root: str | Path | None = None,
+
+
+
+
 
 
 
@@ -17407,7 +34779,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     """放弃 worktree 工作：丢弃修改 + 清理 worktree + 注销 session。
+
+
+
+
+
+
+
+
 
 
 
@@ -17423,7 +34807,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     君子协定模式下，AI 的 Edit/Write 改动留在主工作区（项目根）。abort 只清理
+
+
+
+
 
 
 
@@ -17431,11 +34827,23 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     - tracked 文件：git stash push 保存到 stash 栈（可恢复 via git stash pop）
 
 
 
+
+
+
+
       + 文件还原到 HEAD（S3-B 治本，2026-07-17，原 git checkout -- 永久丢弃）
+
+
+
+
 
 
 
@@ -17447,7 +34855,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -17455,11 +34875,23 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         files: AI 修改/创建的文件列表（相对路径或绝对路径）。传入时同时清理主工作区。
 
 
 
+
+
+
+
             为 None 时仅清理 worktree（向后兼容）。
+
+
+
+
 
 
 
@@ -17471,7 +34903,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -17479,7 +34923,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
             "session_id": str,
+
+
+
+
 
 
 
@@ -17487,7 +34939,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
             "message": str,
+
+
+
+
 
 
 
@@ -17495,7 +34955,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
             "main_cleaned": int,    # 主工作区清理的文件数（files 非 None 时）
+
+
+
+
 
 
 
@@ -17503,7 +34971,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -17511,7 +34987,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     manager = _get_manager(root)
+
+
+
+
 
 
 
@@ -17523,7 +35007,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1: abort 前工作区 clean 检查（fail-open）
+
+
+
+
 
 
 
@@ -17531,7 +35027,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -17539,11 +35043,23 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         logger.info("[abort] workspace clean check: %s", _ws_detail)
 
 
 
+
+
+
+
     except Exception as _ws_err:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -17555,11 +35071,27 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     aborted = False
 
 
 
+
+
+
+
     msg = ""
+
+
+
+
 
 
 
@@ -17571,11 +35103,27 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     # 清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）
 
 
 
+
+
+
+
     if files:
+
+
+
+
 
 
 
@@ -17587,7 +35135,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -17595,7 +35155,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         if aborted:
+
+
+
+
 
 
 
@@ -17603,7 +35171,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
                 session_id, "abort", manager._wt_path(session_id), root
+
+
+
+
 
 
 
@@ -17611,7 +35187,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
             parts = ["worktree 已丢弃并清理"]
+
+
+
+
 
 
 
@@ -17619,7 +35203,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
                 parts.append(f"（主工作区清理 {main_cleaned} 个文件）")
+
+
+
+
 
 
 
@@ -17627,7 +35219,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -17635,7 +35235,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     except WorktreeError as e:
+
+
+
+
 
 
 
@@ -17643,7 +35251,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -17655,7 +35271,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     unregistered = False
+
+
+
+
 
 
 
@@ -17663,7 +35291,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     _kill_heartbeat_daemon(session_id, root)
+
+
+
+
 
 
 
@@ -17671,7 +35307,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -17679,7 +35323,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — best-effort
+
+
+
+
 
 
 
@@ -17687,7 +35339,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: abort 后清除持久性标记
+
+
+
+
 
 
 
@@ -17695,7 +35355,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: abort 后清理 session staging 目录
+
+
+
+
 
 
 
@@ -17703,7 +35371,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     _cleanup_session_staging(root, session_id)
+
+
+
+
 
 
 
@@ -17711,11 +35387,23 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         unregistered = registry.unregister(session_id)
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -17727,7 +35415,19 @@ def session_worktree_abort(
 
 
 
+
+
+
+
+
+
+
+
     return {
+
+
+
+
 
 
 
@@ -17735,7 +35435,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         "aborted": aborted,
+
+
+
+
 
 
 
@@ -17743,7 +35451,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
         "unregistered": unregistered,
+
+
+
+
 
 
 
@@ -17751,7 +35467,23 @@ def session_worktree_abort(
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -17767,7 +35499,15 @@ def session_worktree_abort(
 
 
 
+
+
+
+
 def session_worktree_status(
+
+
+
+
 
 
 
@@ -17775,11 +35515,23 @@ def session_worktree_status(
 
 
 
+
+
+
+
     project_root: str | Path | None = None,
 
 
 
+
+
+
+
 ) -> StatusResult:
+
+
+
+
 
 
 
@@ -17791,7 +35543,19 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -17803,7 +35567,19 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -17811,7 +35587,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
             "session_id": str,
+
+
+
+
 
 
 
@@ -17819,7 +35603,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
             "path": str,          # worktree 路径（不存在时为空）
+
+
+
+
 
 
 
@@ -17827,7 +35619,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
             "dirty": bool,        # 是否有未提交修改
+
+
+
+
 
 
 
@@ -17835,7 +35635,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -17843,11 +35651,23 @@ def session_worktree_status(
 
 
 
+
+
+
+
     root = Path(project_root) if project_root else REPO_ROOT
 
 
 
+
+
+
+
     manager = _get_manager(root)
+
+
+
+
 
 
 
@@ -17859,11 +35679,27 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
     exists = manager._worktree_exists(session_id)
 
 
 
+
+
+
+
     wt_path = manager._wt_path(session_id)
+
+
+
+
 
 
 
@@ -17875,11 +35711,27 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
     dirty = False
 
 
 
+
+
+
+
     if exists:
+
+
+
+
 
 
 
@@ -17891,7 +35743,19 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
     registered = False
+
+
+
+
 
 
 
@@ -17899,7 +35763,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
         info = registry.get_session(session_id)
+
+
+
+
 
 
 
@@ -17907,7 +35779,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+
+
+
+
 
 
 
@@ -17919,7 +35799,19 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
     return {
+
+
+
+
 
 
 
@@ -17927,7 +35819,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
         "exists": exists,
+
+
+
+
 
 
 
@@ -17935,7 +35835,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
         "branch": branch,
+
+
+
+
 
 
 
@@ -17943,7 +35851,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
         "registered": registered,
+
+
+
+
 
 
 
@@ -17959,7 +35875,23 @@ def session_worktree_status(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ============================================================================
+
+
+
+
 
 
 
@@ -17967,11 +35899,23 @@ def session_worktree_status(
 
 
 
+
+
+
+
 # 工作区漂移系统性防漂移体系（2026-07-20）
 
 
 
+
+
+
+
 #
+
+
+
+
 
 
 
@@ -17979,7 +35923,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   1. 工作区漂移检测全部 post-commit 触发（未 commit = 盲区）
+
+
+
+
 
 
 
@@ -17987,7 +35939,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   2. session_worktree_commit 只提交显式列出的 files
+
+
+
+
 
 
 
@@ -17995,7 +35955,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   3. 无 session_end 工作区 clean 检查
+
+
+
+
 
 
 
@@ -18003,7 +35971,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   4. 文档"已完成"声明无硬验证
+
+
+
+
 
 
 
@@ -18011,7 +35987,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #
+
+
+
+
 
 
 
@@ -18019,7 +36003,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   - 100% AI 场景下 warn 无效（AI 把 warn 当"通过"，无人类视觉通道）
+
+
+
+
 
 
 
@@ -18027,7 +36019,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   - 向内收（trae_060）：不新建模块，复用 workspace_hygiene_reconciler 的
+
+
+
+
 
 
 
@@ -18035,7 +36035,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #
+
+
+
+
 
 
 
@@ -18043,7 +36051,15 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   - merge = fail-closed（阻断，搭便车提交风险）
+
+
+
+
 
 
 
@@ -18051,11 +36067,27 @@ def session_worktree_status(
 
 
 
+
+
+
+
 #   - commit Phase 1.5 = fail-open（遥测落盘，不阻断 commit）
 
 
 
+
+
+
+
 # ============================================================================
+
+
+
+
+
+
+
+
 
 
 
@@ -18075,7 +36107,23 @@ _WS_CLEAN_GATE_ID = "WORKSPACE-CLEAN-CHECK"
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _classify_workspace_files(
+
+
+
+
 
 
 
@@ -18083,7 +36131,15 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
     session_files_set: set[str],
+
+
+
+
 
 
 
@@ -18091,7 +36147,19 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
     """分类 modified 文件为 (auto_sync_files, real_changes)，排除 session_files。
+
+
+
+
+
+
+
+
 
 
 
@@ -18107,11 +36175,27 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
+
+
+
+
     Args:
 
 
 
+
+
+
+
         modified: git status --porcelain 解析后的 modified 文件列表。
+
+
+
+
 
 
 
@@ -18123,7 +36207,19 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -18131,7 +36227,15 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -18143,11 +36247,27 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
+
+
+
+
     auto_sync_files = [
 
 
 
+
+
+
+
         f for f in modified
+
+
+
+
 
 
 
@@ -18155,7 +36275,15 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
     ]
+
+
+
+
 
 
 
@@ -18163,7 +36291,15 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
         f for f in modified
+
+
+
+
 
 
 
@@ -18171,7 +36307,15 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
     ]
+
+
+
+
 
 
 
@@ -18187,7 +36331,23 @@ def _classify_workspace_files(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _restore_auto_sync_batch(
+
+
+
+
 
 
 
@@ -18195,7 +36355,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
     auto_sync_files: list[str],
+
+
+
+
 
 
 
@@ -18203,11 +36371,27 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
 ) -> tuple[int, list[str]]:
 
 
 
+
+
+
+
     """批量 restore auto-sync 产物（GIT-BUDGET-INV-002 合规，复用 GitCommandBatcher）。
+
+
+
+
+
+
+
+
 
 
 
@@ -18223,11 +36407,27 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
+
+
+
+
     处理 staged（``M `` / ``MM``）+ worktree（`` M``）三种状态：
 
 
 
+
+
+
+
     1. ``git_restore_batch(staged=True)`` 先 unstage（对纯 worktree modified 是 no-op）
+
+
+
+
 
 
 
@@ -18239,11 +36439,27 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
+
+
+
+
     病根：旧版只调用 ``git_restore_batch(staged=False)``，对 ``M `` (staged only)
 
 
 
+
+
+
+
     完全无效，对 ``MM`` (staged + worktree) 只还原 worktree 部分，staged 版本保留
+
+
+
+
 
 
 
@@ -18255,7 +36471,19 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -18263,7 +36491,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         auto_sync_files: 待 restore 的 auto-sync 文件列表。
+
+
+
+
 
 
 
@@ -18275,7 +36511,19 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -18283,7 +36531,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         成功 = 既 unstage 成功又 restore 成功（unstage 完全失败时退化到只看 restore 结果）。
+
+
+
+
 
 
 
@@ -18291,11 +36547,27 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
     if not auto_sync_files:
 
 
 
+
+
+
+
         return 0, []
+
+
+
+
+
+
+
+
 
 
 
@@ -18311,7 +36583,19 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -18319,7 +36603,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         # Phase 2: 先 unstage（对纯 worktree modified 是 no-op，无副作用）
+
+
+
+
 
 
 
@@ -18327,7 +36619,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         # 再 restore worktree 到 HEAD
+
+
+
+
 
 
 
@@ -18335,7 +36635,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         # 合并：既 unstage 成功又 restore 成功的文件才算完全还原
+
+
+
+
 
 
 
@@ -18343,7 +36651,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         if unstaged_set:
+
+
+
+
 
 
 
@@ -18351,7 +36667,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -18359,7 +36683,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         restored_count = len(fully_restored_set)
+
+
+
+
 
 
 
@@ -18367,7 +36699,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         return restored_count, restore_failed
+
+
+
+
 
 
 
@@ -18375,7 +36715,15 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -18383,11 +36731,23 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
             context, e,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -18403,7 +36763,23 @@ def _restore_auto_sync_batch(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _evaluate_drift_after_restore(
+
+
+
+
 
 
 
@@ -18411,7 +36787,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     real_changes: list[str],
+
+
+
+
 
 
 
@@ -18419,7 +36803,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     restored_count: int,
+
+
+
+
 
 
 
@@ -18427,7 +36819,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     context: str,
+
+
+
+
 
 
 
@@ -18435,7 +36835,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     """restore 后评估漂移状态，返回 (passed, detail) 或 None（表示无漂移）。
+
+
+
+
+
+
+
+
 
 
 
@@ -18451,7 +36863,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -18459,7 +36883,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         real_changes: 原始检测到的真实代码修改列表。
+
+
+
+
 
 
 
@@ -18467,11 +36899,23 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         restored_count: auto-sync 成功 restore 的文件数量。
 
 
 
+
+
+
+
         session_id: session 标识（仅用于 detail 文本）。
+
+
+
+
 
 
 
@@ -18483,7 +36927,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -18491,7 +36947,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         否则 (passed, detail) — passed=False 仅 merge context，其他 context 全 True。
+
+
+
+
 
 
 
@@ -18499,7 +36963,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     if not real_changes and not restore_failed:
+
+
+
+
 
 
 
@@ -18511,7 +36983,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     from zephyr.governance.audit.workspace_hygiene_reconciler import (
+
+
+
+
 
 
 
@@ -18519,11 +37003,27 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         _is_auto_sync_product,
 
 
 
+
+
+
+
     )
+
+
+
+
+
+
+
+
 
 
 
@@ -18535,7 +37035,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -18543,7 +37051,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     except Exception:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -18555,7 +37071,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     remaining_real = [f for f in remaining if not _is_auto_sync_product(f)]
+
+
+
+
 
 
 
@@ -18567,11 +37095,27 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     if not remaining_real and not remaining_failed:
 
 
 
+
+
+
+
         # restore 后已 clean（原 real_changes 可能被 auto-sync restore 顺带处理）
+
+
+
+
 
 
 
@@ -18583,7 +37127,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     sample = (remaining_real or remaining_failed)[:5]
+
+
+
+
 
 
 
@@ -18591,7 +37147,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     detail = (
+
+
+
+
 
 
 
@@ -18599,11 +37163,23 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         f"{len(remaining_failed)} auto-sync restore failed: {sample}"
 
 
 
+
+
+
+
         f"{'...' if total > 5 else ''}"
+
+
+
+
 
 
 
@@ -18615,7 +37191,19 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
     if context == "merge":
+
+
+
+
 
 
 
@@ -18623,11 +37211,23 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         # 100% AI 场景铁律：warn 无效，必须 fail-closed
 
 
 
+
+
+
+
         return False, (
+
+
+
+
 
 
 
@@ -18635,7 +37235,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
             f"修复：先 commit 或 stash 这些真实代码修改，再 merge。"
+
+
+
+
 
 
 
@@ -18643,11 +37251,23 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
             f"session_id={session_id}）"
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -18655,7 +37275,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         # fail-closed（#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4, 2026-07-22）：
+
+
+
+
 
 
 
@@ -18663,7 +37291,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         # 被阻断（浪费工作）或 stash 残留（导致 stash 堆积）。100% AI 场景下 warn 无效
+
+
+
+
 
 
 
@@ -18671,7 +37307,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
         return False, (
+
+
+
+
 
 
 
@@ -18679,7 +37323,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
             f"修复：先 commit/stash/restore 这些文件再开始新 session。"
+
+
+
+
 
 
 
@@ -18687,7 +37339,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
             f"session_id={session_id}）"
+
+
+
+
 
 
 
@@ -18695,7 +37355,15 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
     # abort: fail-open 告警（abort 是"放弃"语义，不应被阻断）
+
+
+
+
 
 
 
@@ -18711,7 +37379,23 @@ def _evaluate_drift_after_restore(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _check_workspace_clean(
+
+
+
+
 
 
 
@@ -18719,7 +37403,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -18727,7 +37419,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     context: str,
+
+
+
+
 
 
 
@@ -18735,7 +37435,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
 ) -> tuple[bool, str]:
+
+
+
+
 
 
 
@@ -18747,7 +37455,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     策略（按 context）：
+
+
+
+
 
 
 
@@ -18755,7 +37475,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
                （100% AI 场景下 warn 无效，AI 把 warn 当"通过"，merge 前真实代码修改=搭便车风险必须阻断）
+
+
+
+
 
 
 
@@ -18763,7 +37491,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
                是 modified 状态，但不是搭便车（已在 worktree commit 中）。session_files 是
+
+
+
+
 
 
 
@@ -18771,7 +37507,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     - "abort": auto-sync 产物自动 restore；真实代码修改 → fail-open（abort 不应被阻断，
+
+
+
+
 
 
 
@@ -18779,7 +37523,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     - "start": auto-sync 产物自动 restore；真实代码修改 → fail-closed 阻断 start
+
+
+
+
 
 
 
@@ -18787,11 +37539,27 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
                原 fail-open warning 无效，AI 忽略 warning 直接启动，导致 merge 时
 
 
 
+
+
+
+
                被阻断或 stash 堆积。100% AI 场景下必须 fail-closed）
+
+
+
+
+
+
+
+
 
 
 
@@ -18807,7 +37575,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -18815,11 +37595,23 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         session_id: session 标识（仅用于日志）。
 
 
 
+
+
+
+
         context: "merge" | "abort" | "start"，决定处置策略。
+
+
+
+
 
 
 
@@ -18831,7 +37623,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     Returns:
+
+
+
+
 
 
 
@@ -18839,7 +37643,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         True 表示工作区已 clean 或已自动清理完毕（或 fail-open 降级，业务可继续）；
+
+
+
+
 
 
 
@@ -18847,7 +37659,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -18855,7 +37675,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         # 无效 context fail-open（不阻断业务流程），仅记录日志
+
+
+
+
 
 
 
@@ -18863,7 +37691,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -18871,11 +37707,23 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
             context,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -18887,7 +37735,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -18895,7 +37755,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     except ImportError as e:
+
+
+
+
 
 
 
@@ -18903,7 +37771,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -18911,7 +37787,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -18923,7 +37807,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     # 仓库存在性预检查（区分"真的 clean"和"检测失败 fail-open"）
+
+
+
+
 
 
 
@@ -18931,7 +37827,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     # 不可区分；这里加一层存在性检查，让 detail 准确说明 fail-open 原因。
+
+
+
+
 
 
 
@@ -18939,7 +37843,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -18947,11 +37859,23 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
             context, root,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -18963,7 +37887,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -18971,7 +37907,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -18979,7 +37923,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
             "_check_workspace_clean[%s]: _git_status_porcelain failed: %s",
+
+
+
+
 
 
 
@@ -18987,7 +37939,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -18999,7 +37959,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     if not modified:
+
+
+
+
 
 
 
@@ -19011,7 +37983,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     # 分类 + restore + 评估（拆分到 helper 降低主函数复杂度）
+
+
+
+
 
 
 
@@ -19019,7 +38003,15 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     auto_sync_files, real_changes = _classify_workspace_files(modified, session_files_set)
+
+
+
+
 
 
 
@@ -19031,7 +38023,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     drift_result = _evaluate_drift_after_restore(
+
+
+
+
 
 
 
@@ -19039,11 +38043,23 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
     )
 
 
 
+
+
+
+
     if drift_result is not None:
+
+
+
+
 
 
 
@@ -19055,7 +38071,19 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
     # auto-sync 全部 restore 成功，无真实代码修改
+
+
+
+
 
 
 
@@ -19071,7 +38099,23 @@ def _check_workspace_clean(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _workspace_clean_check_merge(
+
+
+
+
 
 
 
@@ -19079,7 +38123,15 @@ def _workspace_clean_check_merge(
 
 
 
+
+
+
+
 ) -> tuple[bool, str]:
+
+
+
+
 
 
 
@@ -19091,7 +38143,19 @@ def _workspace_clean_check_merge(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -19099,7 +38163,15 @@ def _workspace_clean_check_merge(
 
 
 
+
+
+
+
         session_id: session 标识。
+
+
+
+
 
 
 
@@ -19107,7 +38179,15 @@ def _workspace_clean_check_merge(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -19123,7 +38203,23 @@ def _workspace_clean_check_merge(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _workspace_clean_check_abort(
+
+
+
+
 
 
 
@@ -19131,11 +38227,23 @@ def _workspace_clean_check_abort(
 
 
 
+
+
+
+
 ) -> tuple[bool, str]:
 
 
 
+
+
+
+
     """abort 前工作区 clean 检查（fail-open，不阻断 abort）。"""
+
+
+
+
 
 
 
@@ -19151,7 +38259,23 @@ def _workspace_clean_check_abort(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _workspace_clean_check_start(
+
+
+
+
 
 
 
@@ -19159,7 +38283,15 @@ def _workspace_clean_check_start(
 
 
 
+
+
+
+
 ) -> tuple[bool, str]:
+
+
+
+
 
 
 
@@ -19171,7 +38303,19 @@ def _workspace_clean_check_start(
 
 
 
+
+
+
+
+
+
+
+
     #ARCH-WORKTREE-COMMIT-PERSISTENCE-001 Phase 4 (2026-07-22):
+
+
+
+
 
 
 
@@ -19179,7 +38323,15 @@ def _workspace_clean_check_start(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -19195,7 +38347,23 @@ def _workspace_clean_check_start(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _print_startup_error_patterns(root: Path) -> None:
+
+
+
+
 
 
 
@@ -19207,11 +38375,27 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     从 .runtime/ai_error_patterns/aggregated_patterns.json 加载聚合的错误模式，
 
 
 
+
+
+
+
     若非空则打印 Top 3 模式 + 修复建议到 stderr，帮助 AI 在 session 开始时
+
+
+
+
 
 
 
@@ -19223,11 +38407,27 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     病根：原 session 启动无错误模式提醒，AI 重复踩坑（如 allow_overlap 1890/7d）
 
 
 
+
+
+
+
     却不知情。P4-1b consumer 已聚合模式，P4-1 library 已提供查询接口，本函数
+
+
+
+
 
 
 
@@ -19239,7 +38439,19 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
     治本（#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-4，2026-07-20）
+
+
+
+
 
 
 
@@ -19247,7 +38459,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -19255,11 +38475,23 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
         if lib.is_empty:
 
 
 
+
+
+
+
             return
+
+
+
+
 
 
 
@@ -19267,7 +38499,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
         if not top:
+
+
+
+
 
 
 
@@ -19275,7 +38515,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
         print("\n" + "=" * 80, file=sys.stderr)
+
+
+
+
 
 
 
@@ -19283,7 +38531,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
         for i, pat in enumerate(top, 1):
+
+
+
+
 
 
 
@@ -19291,7 +38547,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
             print(
+
+
+
+
 
 
 
@@ -19299,7 +38563,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
                 f" (count={pat.count}, sev={pat.dominant_severity})", file=sys.stderr,
+
+
+
+
 
 
 
@@ -19307,7 +38579,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
             print(f"     → {action}", file=sys.stderr)
+
+
+
+
 
 
 
@@ -19315,7 +38595,15 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
     except Exception as e:  # noqa: BLE001 — fail-open
+
+
+
+
 
 
 
@@ -19331,7 +38619,23 @@ def _print_startup_error_patterns(root: Path) -> None:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _log_workspace_drift_warn(
+
+
+
+
 
 
 
@@ -19339,7 +38643,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     session_id: str,
+
+
+
+
 
 
 
@@ -19347,7 +38659,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
 ) -> None:
+
+
+
+
 
 
 
@@ -19359,7 +38679,19 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
+
+
+
+
     检测主工作区 modified 文件中"未在 rel_files 列出的真实代码修改"，
+
+
+
+
 
 
 
@@ -19371,7 +38703,19 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
+
+
+
+
     Args:
+
+
+
+
 
 
 
@@ -19379,7 +38723,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         session_id: session 标识。
+
+
+
+
 
 
 
@@ -19387,7 +38739,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -19395,7 +38755,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         from zephyr.governance.audit.workspace_hygiene_reconciler import (
+
+
+
+
 
 
 
@@ -19403,11 +38771,23 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
             _is_auto_sync_product,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -19415,7 +38795,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -19423,11 +38811,27 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         )
 
 
 
+
+
+
+
         return
+
+
+
+
+
+
+
+
 
 
 
@@ -19439,11 +38843,27 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     if not root.exists() or not (root / ".git").exists():
 
 
 
+
+
+
+
         return
+
+
+
+
+
+
+
+
 
 
 
@@ -19455,7 +38875,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         modified = _git_status_porcelain(str(root))
+
+
+
+
 
 
 
@@ -19463,7 +38891,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -19471,7 +38907,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
             session_id, e,
+
+
+
+
 
 
 
@@ -19479,7 +38923,19 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         return
+
+
+
+
+
+
+
+
 
 
 
@@ -19491,7 +38947,19 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         return  # 工作区 clean，无 drift
+
+
+
+
+
+
+
+
 
 
 
@@ -19503,7 +38971,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     # 漏列的真实代码修改 = modified 中非 auto-sync 且不在 listed_set 的文件
+
+
+
+
 
 
 
@@ -19511,7 +38987,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         f for f in modified
+
+
+
+
 
 
 
@@ -19519,11 +39003,23 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     ]
 
 
 
+
+
+
+
     if not missed_real:
+
+
+
+
 
 
 
@@ -19535,7 +39031,19 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
+
+
+
+
     # 落盘遥测（fail-open：IO 失败不阻断 commit）
+
+
+
+
 
 
 
@@ -19543,7 +39051,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     import time
+
+
+
+
 
 
 
@@ -19551,7 +39067,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+
+
+
+
 
 
 
@@ -19559,7 +39083,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         "listed_files": list(rel_files),
+
+
+
+
 
 
 
@@ -19567,7 +39099,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         "missed_count": len(missed_real),
+
+
+
+
 
 
 
@@ -19575,7 +39115,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
     warn_path = root / ".runtime" / "workspace_drift_warn.jsonl"
+
+
+
+
 
 
 
@@ -19583,7 +39131,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         warn_path.parent.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -19591,7 +39147,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+
+
 
 
 
@@ -19599,7 +39163,15 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
         logger.warning(
+
+
+
+
 
 
 
@@ -19607,11 +39179,23 @@ def _log_workspace_drift_warn(
 
 
 
+
+
+
+
             session_id, warn_path, e,
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
