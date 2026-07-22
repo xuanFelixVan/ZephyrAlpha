@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1646 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_skill_registry_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_registry
 # [INVARIANTS] SkillDefinition requires skill_id+name+prompt_template; version must be semver; stability must be valid enum

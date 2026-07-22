@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1631 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_skill_kill_switch | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_kill_switch
 # [INVARIANTS] must clear class-level _killed dict between tests; is_killed depends on cooldown timing

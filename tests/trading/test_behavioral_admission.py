@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0420 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_behavioral_admission | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §test
 # [MODULE] zephyr.gov_enforcement.behavioral_admission
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

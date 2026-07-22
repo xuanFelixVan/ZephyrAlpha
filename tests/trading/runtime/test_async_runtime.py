@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-TRADING-RUNTIME-001 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] R1-1 | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | §4.1
+# [A_test] module_id: MOD-GOV_async_runtime | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_async_runtime | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | §4.1
 # [MODULE] tests.trading.runtime.test_async_runtime
 # [STABILITY] evolving
 # [SAFETY] L

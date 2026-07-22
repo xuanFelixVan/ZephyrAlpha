@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1725 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_task_types | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_task_types
 # [INVARIANTS] Tests MUST cover TaskStatus enum values; Task instantiation; model_validator; normalize_execution_model; boundary validation errors

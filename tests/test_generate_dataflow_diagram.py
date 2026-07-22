@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-202409 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §test
+# [A_test] module_id: MOD-GOV_generate_dataflow_diagram | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_generate_dataflow_diagram | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §test
 # [MODULE] tests.test_generate_dataflow_diagram
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.generators.generate_dataflow_diagram

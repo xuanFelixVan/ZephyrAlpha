@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-9006 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §decisiongraph
+# [A_test] module_id: MOD-GOV_generate_decision_diagram | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §decisiongraph
 # [MODULE] tests.test_generate_decision_diagram
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.generators.generate_decision_diagram

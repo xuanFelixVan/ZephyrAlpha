@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0407 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_backpressure_types | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_backpressure_types
 # [INVARIANTS] All three types are frozen dataclasses; action and schema_version have correct defaults; trace_context defaults to None

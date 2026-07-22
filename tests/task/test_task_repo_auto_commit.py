@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2121 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_task_repo_auto_commit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] tests.test_task_repo_auto_commit
 # [INVARIANTS] none

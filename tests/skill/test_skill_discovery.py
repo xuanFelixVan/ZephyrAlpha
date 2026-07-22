@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1616 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_skill_discovery | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_discovery
 # [INVARIANTS] SkillDiscovery must correctly identify gaps between blueprints and registered skills

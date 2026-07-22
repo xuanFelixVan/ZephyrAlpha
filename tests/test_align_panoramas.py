@@ -1,5 +1,5 @@
-# [A_test] module_id: SRC-TST-202410 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §test
+# [A_test] module_id: MOD-GOV_align_panoramas | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_align_panoramas | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §test
 # [MODULE] tests.test_align_panoramas
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.generators.align_panoramas

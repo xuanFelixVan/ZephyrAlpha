@@ -1,4 +1,4 @@
-# [A_test] module_id=TEST-F14-RED-BLUE | layer=test | stability=evolving | safety=L
+# [A_test] module_id=MOD-GOV_f14_pipeline_extreme | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] tests.red_blue.test_f14_pipeline_extreme

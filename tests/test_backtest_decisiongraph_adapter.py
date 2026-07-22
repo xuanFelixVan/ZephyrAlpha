@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-9001 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_backtest_decisiongraph_adapter | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md | §decisiongraph-adapter
 # [MODULE] zephyr.backtest.io.decisiongraph_adapter
 # [INVARIANTS] none

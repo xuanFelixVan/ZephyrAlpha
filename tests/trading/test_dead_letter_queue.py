@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0708 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_dead_letter_queue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_dead_letter_queue
 # [INVARIANTS] enqueue only writes when all modules failed AND status is FAILURE/CLAUDE_RESCUE

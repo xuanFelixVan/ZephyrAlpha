@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1208 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_l06_trade_execution | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md | §test
 # [MODULE] zephyr.l06_trade_execution
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

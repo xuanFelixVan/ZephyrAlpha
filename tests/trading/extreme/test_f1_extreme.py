@@ -1,4 +1,4 @@
-# [A_test] module_id=TEST-F1-RED-BLUE | layer=test | stability=evolving | safety=L
+# [A_test] module_id=MOD-GOV_f1_extreme | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §9
 # [MODULE] tests.red_blue.test_f1_extreme
 # [INVARIANTS] 红蓝对抗测试隔离外部依赖(LLM/ollama/VMS); 每个测试类覆盖一个极端场景; 聚焦F1核心组件(AutoRuntimeCore/WorkOrchestrator/DreamCycle/Conductor)

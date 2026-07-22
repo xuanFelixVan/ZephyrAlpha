@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-9002 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_decision_graph_reader | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SH-DB-002 | docs/03_modules/_cross_layer/database/blueprint.md | §decisiongraph
 # [MODULE] zephyr.governance.persistence.decision_graph_reader
 # [INVARIANTS] none

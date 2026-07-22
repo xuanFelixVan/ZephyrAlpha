@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1722 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_task_model_learner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_task_model_learner
 # [INVARIANTS] ModelTaskEntry数据模型;ModelTaskMatrix推荐算法;THROUGHPUT_MAX;MIN_SAMPLES_FOR_LEARNED

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0=全PASS; 非0=有FAIL
 # [TESTS]
-# [A_module] module_id=MOD-GOV-test_task_repo_gateway_e2e | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_test_task_repo_gateway_e2e | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_task_repo_gateway_e2e.py — 端到端链路测试（OPS-2026062516）
 
