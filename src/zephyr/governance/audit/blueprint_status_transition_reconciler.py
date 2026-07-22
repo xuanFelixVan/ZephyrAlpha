@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-blueprint_status_transition_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-d 蓝图状态单调推进检测
+# [BLUEPRINT] MOD-GOV_blueprint_status_transition_reconciler | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §P1-d 蓝图状态单调推进检测
 
 # [MODULE] zephyr.governance.audit.blueprint_status_transition_reconciler
 
