@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); subprocess; json; pathlib
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway._run_post_commit_reconcile_async; AI 查询 reconcile 状态
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] status file 原子写入（tmp + os.replace）；subprocess 完全 detached（DETACHED_PROCESS on Windows / start_new_session on POSIX）；payload file 路径含 commit_sha 保证唯一；launch_reconcile_async 立即返回不阻塞；query_reconcile_status 失败 fail-open 返回 status=unknown
 # [MODIFY-GUARD] launch_reconcile_async 函数签名；status file JSON schema（commit_sha/session_id/status/started_at/finished_at/errors/trigger_source）
 # [STABILITY] evolving
@@ -94,6 +94,12 @@ STATUS_UNKNOWN: str = "unknown"      # status file 不存在（commit 早于 P2-
 
 # 僵尸判定阈值（秒）——running 状态超此时长视为 stale
 _STALE_THRESHOLD_SECONDS: int = 1800  # 30 分钟
+
+# #ARCH-RECONCILER-WORKER-SESSION-001 Phase C（2026-07-22）：
+# 并发 worker 上限——防止每次 commit spawn 一个 worker 导致资源耗尽。
+# worker 注册为逻辑 session（worker-{sha8}-{pid}），launch_reconcile_async
+# 通过 SessionRegistry.list_active() 计数活跃 worker，超限则跳过 spawn（fail-open）。
+MAX_CONCURRENT_WORKERS: int = 2
 
 # Status / payload 文件目录
 _REPORTS_SUBDIR: str = ".runtime/reconcile_reports"
@@ -259,6 +265,23 @@ def _log_stale_to_db(
         pass
 
 
+def _count_active_workers(project_root: str) -> int:
+    """Count active reconcile workers via SessionRegistry.
+
+    #ARCH-RECONCILER-WORKER-SESSION-001 Phase C (2026-07-22):
+    Workers register as logical sessions (worker-{sha8}-{pid}).
+    This function counts them for concurrency control in launch_reconcile_async.
+
+    Returns: count of active worker sessions (0 if SessionRegistry unavailable).
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(project_root)
+        return sum(1 for s in registry.list_active() if s.session_id.startswith("worker-"))
+    except Exception:  # noqa: BLE001 — fail-open
+        return 0
+
+
 def launch_reconcile_async(
     project_root: Path | str,
     commit_sha: str,
@@ -282,6 +305,7 @@ def launch_reconcile_async(
               "ok": True/False,
               "commit_sha": "...",
               "status": "pending",   # spawn 后立即返回 pending
+              "status": "skipped",   # 并发上限达限，跳过 spawn（#ARCH-RECONCILER-WORKER-SESSION-001）
               "worker_pid": 12345,
               "payload_file": "...",
               "status_file": "...",
@@ -291,6 +315,21 @@ def launch_reconcile_async(
     root = Path(project_root) if not isinstance(project_root, Path) else project_root
     root = root.resolve()
     started_at = int(time.time())
+
+    # 0. 并发控制（#ARCH-RECONCILER-WORKER-SESSION-001 Phase C, 2026-07-22）
+    #    超过 MAX_CONCURRENT_WORKERS 时跳过 spawn——fail-open 不阻断 commit，
+    #    reconciler 结果缺失本次 commit（可接受：post-commit 审计是 best-effort）。
+    active_workers = _count_active_workers(str(root))
+    if active_workers >= MAX_CONCURRENT_WORKERS:
+        return {
+            "ok": True,
+            "commit_sha": commit_sha,
+            "status": "skipped",
+            "worker_pid": 0,
+            "payload_file": "",
+            "status_file": "",
+            "error": f"max concurrent workers ({MAX_CONCURRENT_WORKERS}) reached, {active_workers} active",
+        }
 
     # 1. 写 payload file（worker 读取后自删）
     payload_path = _payload_file_path(root, commit_sha)

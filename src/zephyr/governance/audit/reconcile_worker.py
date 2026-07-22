@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway (GitCommitGateway); zephyr.governance.audit.reconciliation_registry (_log_reconcile_results); zephyr.governance.audit.reconcile_runner (write_status_file, STATUS_*)
 # [CONSUMERS] zephyr.governance.audit.reconcile_runner.launch_reconcile_async (subprocess spawn)
 # [STARTUP] manual
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] detached subprocess（父进程退出不影响 worker）；payload file 读取后立即删除；status file 流转 pending→running→done/failed；reconciler 异常降级为 warn 结果不阻断后续；worker 异常→status=failed+errors 持久化
 # [MODIFY-GUARD] main 函数签名；payload file JSON schema；status file 写入时机（running 前后/done/failed）
 # [STABILITY] evolving
@@ -165,6 +165,43 @@ def _write_boot_success_clean(
     except Exception:  # noqa: BLE001 — 自愈写入失败不阻断 worker 主流程
         pass
 
+def _register_worker_session(project_root: str, commit_sha: str) -> str:
+    """Register worker as a logical session in SessionRegistry.
+
+    #ARCH-RECONCILER-WORKER-SESSION-001 Phase C (2026-07-22):
+    Workers were not registered as sessions, causing:
+    1. No concurrency control (unlimited parallel workers → resource exhaustion)
+    2. Worker auto-commits flagged as "session not registered" (warn-only path)
+
+    Returns:
+        worker_session_id (worker-{sha8}-{pid}) for later unregister.
+        Registration failure is non-fatal (worker still runs, just untracked).
+    """
+    worker_sid = f"worker-{commit_sha[:8]}-{os.getpid()}"
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(project_root)
+        registry.register(worker_sid, pid=os.getpid())
+    except Exception:  # noqa: BLE001 — registration failure doesn't block worker
+        pass
+    return worker_sid
+
+
+def _unregister_worker_session(project_root: str, worker_sid: str) -> None:
+    """Unregister worker session from SessionRegistry (best-effort cleanup).
+
+    #ARCH-RECONCILER-WORKER-SESSION-001 Phase C (2026-07-22):
+    Ensures worker sessions don't leak (TTL=3600s is long; explicit unregister
+    on completion keeps list_active() accurate for concurrency control).
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(project_root)
+        registry.unregister(worker_sid)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def _run_worker(payload: dict) -> int:
     """worker 主流程，返回 exit code（0=成功，1=失败）。"""
     from zephyr.governance.audit.reconcile_runner import (
@@ -199,64 +236,72 @@ def _run_worker(payload: dict) -> int:
         worker_pid=os.getpid(),
     )
 
-    # 2. 构造 GitCommitGateway（注册全部 reconciler）
+    # 1.5 注册为逻辑 session（#ARCH-RECONCILER-WORKER-SESSION-001 Phase C）
+    #     使 launch_reconcile_async 能通过 list_active() 计数活跃 worker 实现并发控制。
+    worker_sid = _register_worker_session(project_root, commit_sha)
+
     try:
-        # 延迟 import 避免 reconcile_runner import 时拉起 gateway
-        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
-            GitCommitGateway,
-        )
-        gateway = GitCommitGateway(Path(project_root))
-    except Exception as e:  # noqa: BLE001
-        _write_failed_status(
-            project_root, commit_sha, session_id, started_at,
-            [f"GitCommitGateway init failed: {e}", traceback.format_exc()],
-        )
-        return 1
+        # 2. 构造 GitCommitGateway（注册全部 reconciler）
+        try:
+            # 延迟 import 避免 reconcile_runner import 时拉起 gateway
+            from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+                GitCommitGateway,
+            )
+            gateway = GitCommitGateway(Path(project_root))
+        except Exception as e:  # noqa: BLE001
+            _write_failed_status(
+                project_root, commit_sha, session_id, started_at,
+                [f"GitCommitGateway init failed: {e}", traceback.format_exc()],
+            )
+            return 1
 
-    # 3. 执行 reconciler 链路（直接调内部同步方法，不递归 spawn）
-    #    _run_post_commit_reconcile_sync_worker 是 P2-3 新增的 worker-only 入口，
-    #    跳过 async dispatch（避免 worker 自己又 spawn 一个 worker）。
-    try:
-        reconcile_results = gateway._run_post_commit_reconcile_sync_worker(
-            committed_files, session_id, commit_message,
+        # 3. 执行 reconciler 链路（直接调内部同步方法，不递归 spawn）
+        #    _run_post_commit_reconcile_sync_worker 是 P2-3 新增的 worker-only 入口，
+        #    跳过 async dispatch（避免 worker 自己又 spawn 一个 worker）。
+        try:
+            reconcile_results = gateway._run_post_commit_reconcile_sync_worker(
+                committed_files, session_id, commit_message,
+            )
+        except Exception as e:  # noqa: BLE001 — 兜底
+            _write_failed_status(
+                project_root, commit_sha, session_id, started_at,
+                [f"reconcile_for failed: {e}", traceback.format_exc()],
+            )
+            return 1
+
+        # 4. 统计结果
+        total = len(reconcile_results)
+        warn_count = sum(1 for r in reconcile_results if getattr(r, "action", "") == "warn")
+        auto_count = sum(
+            1 for r in reconcile_results if getattr(r, "action", "") == "auto_committed"
         )
-    except Exception as e:  # noqa: BLE001 — 兜底
-        _write_failed_status(
-            project_root, commit_sha, session_id, started_at,
-            [f"reconcile_for failed: {e}", traceback.format_exc()],
+        errors: list[str] = [
+            getattr(r, "detail", "")
+            for r in reconcile_results
+            if getattr(r, "action", "") == "warn" and getattr(r, "detail", "")
+        ]
+
+        # 5. 写 status=done
+        write_status_file(
+            project_root, commit_sha, STATUS_DONE,
+            session_id=session_id,
+            started_at=started_at,
+            finished_at=int(time.time()),
+            reconcilers_total=total,
+            reconcilers_warn=warn_count,
+            reconcilers_auto_committed=auto_count,
+            errors=errors,
+            trigger_source="post_commit_async",
+            worker_pid=os.getpid(),
         )
-        return 1
 
-    # 4. 统计结果
-    total = len(reconcile_results)
-    warn_count = sum(1 for r in reconcile_results if getattr(r, "action", "") == "warn")
-    auto_count = sum(
-        1 for r in reconcile_results if getattr(r, "action", "") == "auto_committed"
-    )
-    errors: list[str] = [
-        getattr(r, "detail", "")
-        for r in reconcile_results
-        if getattr(r, "action", "") == "warn" and getattr(r, "detail", "")
-    ]
-
-    # 5. 写 status=done
-    write_status_file(
-        project_root, commit_sha, STATUS_DONE,
-        session_id=session_id,
-        started_at=started_at,
-        finished_at=int(time.time()),
-        reconcilers_total=total,
-        reconcilers_warn=warn_count,
-        reconcilers_auto_committed=auto_count,
-        errors=errors,
-        trigger_source="post_commit_async",
-        worker_pid=os.getpid(),
-    )
-
-    # 6. 自愈写入：worker boot 成功 → 对 RECONCILE-WORKER-BOOT 写 clean 记录
-    #    #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1：补全告警生命周期对称性
-    _write_boot_success_clean(project_root, commit_sha, session_id)
-    return 0
+        # 6. 自愈写入：worker boot 成功 → 对 RECONCILE-WORKER-BOOT 写 clean 记录
+        #    #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1：补全告警生命周期对称性
+        _write_boot_success_clean(project_root, commit_sha, session_id)
+        return 0
+    finally:
+        # #ARCH-RECONCILER-WORKER-SESSION-001 Phase C：确保 session 注销（防泄漏）
+        _unregister_worker_session(project_root, worker_sid)
 
 
 def main() -> int:
