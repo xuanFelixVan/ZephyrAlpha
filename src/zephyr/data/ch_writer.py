@@ -4,15 +4,15 @@
 # [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config; zephyr.shared.observability.metrics
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断
 # [MODIFY-GUARD] none
-# [STABILITY] evolving
+# [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串; delete_where失败->返回False
 # [TESTS] tests/zephyr/data/test_ch_writer.py
-# [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
 

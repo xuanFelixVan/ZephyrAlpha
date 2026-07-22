@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; sector_snapshot DDL 内联(无 schema 文件); apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
+# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/market_auction_book.py; sector_snapshot DDL 内联(从 sector_snapshot_collector.py 派生); apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,12 +18,14 @@
 DDL-as-Code 模式：
     - tick_data DDL 真源为 schemas/categories/market_tick.py（本脚本导入引用）
     - kline_daily DDL 真源为 schemas/categories/market_kline_daily.py（本脚本导入引用）
+    - auction_book DDL 真源为 schemas/categories/market_auction_book.py（本脚本导入引用）
     - sector_snapshot DDL 内联（从 sector_snapshot_collector.py 派生，无独立 schema 文件）
 
-引擎选型矩阵（设计文档 §5 Phase F）：
+引擎选型矩阵（设计文档 §5 Phase F，裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F 治本）：
     tick_data        → ReplacingMergeTree（tick 天然唯一）
     kline_daily      → ReplacingMergeTree（日线按交易日去重）
-    sector_snapshot  → MergeTree（板块快照允许重复）
+    auction_book     → ReplacingMergeTree（集合竞价高频推送，按 (symbol,trade_date,timestamp) 去重）
+    sector_snapshot  → ReplacingMergeTree（板块快照高频推送，按 (sector_code,timestamp) 去重）
 
 用法::
 
@@ -107,7 +109,59 @@ ORDER BY (symbol, trade_date)
 SETTINGS index_granularity = 8192
 """
 
+# auction_book DDL — 真源: schemas/categories/market_auction_book.py
+try:
+    from schemas.categories.market_auction_book import AUCTION_BOOK_DDL
+except ImportError:
+    # fallback: 内联定义（与 schema 文件保持一致）
+    AUCTION_BOOK_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.auction_book
+(
+    trade_date   Date           COMMENT '交易日期',
+    timestamp    DateTime       COMMENT '快照时间戳(精确到秒)',
+    symbol       String         COMMENT '证券代码',
+    last_price   Decimal(18,4)  COMMENT '最新成交价',
+    volume       UInt64         COMMENT '累计成交量(手)',
+    amount       Decimal(18,2)  COMMENT '累计成交额(元)',
+    open         Decimal(18,4)  COMMENT '当日开盘价',
+    high         Decimal(18,4)  COMMENT '当日最高价',
+    low          Decimal(18,4)  COMMENT '当日最低价',
+    pre_close    Decimal(18,4)  COMMENT '昨收价',
+    upper_limit  Decimal(18,4)  COMMENT '涨停价',
+    lower_limit  Decimal(18,4)  COMMENT '跌停价',
+    bid_price1   Decimal(18,4)  COMMENT '买一价',
+    bid_price2   Decimal(18,4)  COMMENT '买二价',
+    bid_price3   Decimal(18,4)  COMMENT '买三价',
+    bid_price4   Decimal(18,4)  COMMENT '买四价',
+    bid_price5   Decimal(18,4)  COMMENT '买五价',
+    bid_volume1  UInt64         COMMENT '买一量(手)',
+    bid_volume2  UInt64         COMMENT '买二量(手)',
+    bid_volume3  UInt64         COMMENT '买三量(手)',
+    bid_volume4  UInt64         COMMENT '买四量(手)',
+    bid_volume5  UInt64         COMMENT '买五量(手)',
+    ask_price1   Decimal(18,4)  COMMENT '卖一价',
+    ask_price2   Decimal(18,4)  COMMENT '卖二价',
+    ask_price3   Decimal(18,4)  COMMENT '卖三价',
+    ask_price4   Decimal(18,4)  COMMENT '卖四价',
+    ask_price5   Decimal(18,4)  COMMENT '卖五价',
+    ask_volume1  UInt64         COMMENT '卖一量(手)',
+    ask_volume2  UInt64         COMMENT '卖二量(手)',
+    ask_volume3  UInt64         COMMENT '卖三量(手)',
+    ask_volume4  UInt64         COMMENT '卖四量(手)',
+    ask_volume5  UInt64         COMMENT '卖五量(手)',
+    data_source  LowCardinality(String) COMMENT '数据来源(miniQMT)'
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY toYYYYMM(trade_date)
+ORDER BY (symbol, trade_date, timestamp)
+SETTINGS index_granularity = 8192
+"""
+
 # sector_snapshot DDL — 真源: src/zephyr/data/sector_snapshot_collector.py
+# 引擎治本迁移（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F）：
+# 原 MergeTree（板块快照允许重复）→ ReplacingMergeTree（高频推送按 (sector_code,timestamp) 去重）
+# 原因：sector_snapshot 是高频表（30秒轮询+99只推送），MergeTree 写前 DELETE 留 mutations 累积；
+# ReplacingMergeTree 直接 INSERT + 后台合并去重，符合 ch_writer.py §7.3 幂等性策略首选。
 SECTOR_SNAPSHOT_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
 (
@@ -133,7 +187,7 @@ CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
     data_source      LowCardinality(String) COMMENT 'tqcenter_snapshot/tqcenter_push',
     fetched_at       DateTime    COMMENT '采集时间(UTC)'
 )
-ENGINE = MergeTree
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (sector_code, timestamp)
 """
@@ -142,6 +196,7 @@ ORDER BY (sector_code, timestamp)
 _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.tick_data", TICK_DATA_DDL),
     ("c1_market.kline_daily", KLINE_DAILY_DDL),
+    ("c1_market.auction_book", AUCTION_BOOK_DDL),
     ("c1_market.sector_snapshot", SECTOR_SNAPSHOT_DDL),
 ]
 
@@ -149,7 +204,8 @@ _ALL_DDL: list[tuple[str, str]] = [
 _EXPECTED_ENGINES: dict[str, str] = {
     "tick_data": "ReplacingMergeTree",
     "kline_daily": "ReplacingMergeTree",
-    "sector_snapshot": "MergeTree",
+    "auction_book": "ReplacingMergeTree",
+    "sector_snapshot": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"
