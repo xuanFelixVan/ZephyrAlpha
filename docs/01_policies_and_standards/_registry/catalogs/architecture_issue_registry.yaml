@@ -7597,10 +7597,10 @@ entries:
   fix_phase: |
     Phase 0 (2026-07-22 完成): 现状量化——统计最近 commit 路径分布 L1/L2/L3 占比，验证"worktree 几乎总是失效"假说
     Phase 1 (2026-07-22 完成, commit d6ff41ad16): commit 临界区文件锁——GitCommitGateway.commit 外层包锁 + pathspec 强制 + smoke test（真实多进程并发 commit 验证无搭便车 + kill 持锁进程验证自愈）
-    Phase 2 (评估完成, 待施工): worktree 降级 + 直提主分支评估——移除薛定谔的回退病根（commit 不再落临时分支）。评估结论：直提主分支可行，待 drift 稳定（<30 非 runtime/telemetry drift 文件）后实施。待编辑项：session_worktree.py 错误消息更新 / AGENTS.md §FP-ISO.4C §6.4 worktree 状态降级 / architecture_issue_registry.yaml 裁定状态同步
-    Phase 3 (待施工): 退役冗余补偿控制——评估退役 allow_overlap 审计标记 / STASH-ACCUMULATION gate / trae_076 部分 Phase（每项独立 commit + 验证，不批量删除）
+    Phase 2 (2026-07-22 已落地): worktree 降级为可选——session_worktree.py WORKSPACE_DRIFT_BLOCKED 错误消息更新为"TRAE-079 Phase 2：worktree 已降级为可选——无需清理工作区，直接走 GitCommitGateway 文件锁串行提交" + AGENTS.md §FP-ISO.4C 添加 worktree 降级为可选说明 + architecture_issue_registry.yaml 本条 Phase 2 状态同步
+    Phase 3 (2026-07-22 已落地): 退役冗余补偿控制——allow_overlap 降级为 last-resort 逃生通道（logger.warning + 审计） + 文件锁 fail-open 降级落审计（_audit_commit_lock_fallback -> .runtime/gate_audit/commit_lock_fallback.jsonl） + _commit_auto 路径同样覆盖 OSError fallback。AGENTS.md GitCommitGateway held_files 冲突阻断章节添加 TRAE-079 Phase 3 说明。
     治本根因：消除共享可变 index 下并发 commit 的搭便车，把强原语（文件锁）接到真临界区（commit），塌缩逃生链从 3 层到 1 层
-  status: in_progress
+  status: resolved
   related_adjudication: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001 (收窄触发条件，非违反), #ARCH-FORCE-MERGE-SAFETY-001 (收窄并发场景，非违反), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (根因治本), #ARCH-CROSS-COMMIT-ATOMICITY-002 (互补，跨 commit 原子性仍由 GATE-IMPORT-INTEGRITY 保障), #ARCH-RECONCILER-WORKER-SESSION-001 (worker 并发与 commit 串行互补)'
   related_rules: 'trae_079 (commit 临界区文件锁串行化), trae_076 (worktree commit 持久性，收窄), trae_078 (force merge 安全分类，收窄), trae_001 (文件操作安全协议，lock_files.py 真源), AGENTS.md §FP-ISO.4C (worktree 君子协定)'
   created: '2026-07-22'
