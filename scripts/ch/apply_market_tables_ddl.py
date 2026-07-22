@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily/sector_snapshot DDL 内联; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
+# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; sector_snapshot DDL 内联(无 schema 文件); apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,8 +17,8 @@
 
 DDL-as-Code 模式：
     - tick_data DDL 真源为 schemas/categories/market_tick.py（本脚本导入引用）
-    - kline_daily DDL 内联（schema 文件待创建，当前从 blueprint §4.2 派生）
-    - sector_snapshot DDL 内联（从 sector_snapshot_collector.py 派生）
+    - kline_daily DDL 真源为 schemas/categories/market_kline_daily.py（本脚本导入引用）
+    - sector_snapshot DDL 内联（从 sector_snapshot_collector.py 派生，无独立 schema 文件）
 
 引擎选型矩阵（设计文档 §5 Phase F）：
     tick_data        → ReplacingMergeTree（tick 天然唯一）
@@ -76,8 +76,12 @@ ORDER BY (market_type, symbol, trade_date, timestamp, price)
 SETTINGS index_granularity = 8192
 """
 
-# kline_daily DDL — 真源: blueprint §4.2（schema 文件待创建）
-KLINE_DAILY_DDL = """
+# kline_daily DDL — 真源: schemas/categories/market_kline_daily.py
+try:
+    from schemas.categories.market_kline_daily import KLINE_DAILY_DDL
+except ImportError:
+    # fallback: 内联定义（与 schema 文件保持一致）
+    KLINE_DAILY_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.kline_daily
 (
     trade_date   Date           COMMENT '交易日期',

@@ -64,15 +64,15 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 | # | 表名 | 品类 | 性质 | calc_mode | category_id |
 |---|------|------|------|:---------:|-------------|
 | 1 | tick_data | A股3秒Tick | 原料 | replay | market_tick |
-| 2 | daily_kline | 日线OHLCV | 成品(聚合) | preload | market_daily_kline |
+| 2 | kline_daily | 日线OHLCV | 成品(聚合) | preload | market_kline_daily |
 | 3 | auction_snapshot | 集合竞价快照 | 原料 | preload | market_auction |
-| 4 | index_quote | 指数行情 | 原料 | replay | market_index |
+| 4 | index_quote | 指数行情 | 原料 | replay | market_index_quote |
 | 5 | option_iv_surface | 期权IV曲面 | 原料(衍生) | preload | market_option_iv |
 | 6 | futures_position | 期货持仓 | 原料(衍生) | preload | market_futures_position |
 | 7 | futures_term_structure | 期货期限结构 | 原料(衍生) | preload | market_futures_term |
 | 8 | convertible_bond_iv | 可转债隐含波动率 | 成品(算) | preload | market_cb_iv |
 
-> **本蓝图是设计书**：描述目标态。ClickHouse 已于 2026-07-01 部署（INFRA-DB-006），c1_market 数据库及 daily_kline 表已建。`construction_progress: partially_implemented`（部分表已建，其余待 DDL-as-Code 施工）。
+> **本蓝图是设计书**：描述目标态。ClickHouse 已于 2026-07-01 部署（INFRA-DB-006），c1_market 数据库及 kline_daily 表已建。`construction_progress: partially_implemented`（部分表已建，其余待 DDL-as-Code 施工）。
 
 ---
 
@@ -93,13 +93,13 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
 | 1 | schemas/categories/market_tick.py | §4.1 | tick_data 表 DDL-as-Code | 已建 |
-| 2 | schemas/categories/market_daily_kline.py | §4.2 | daily_kline 表 DDL-as-Code | 待建 |
-| 3 | schemas/categories/market_auction.py | §4.3 | auction_snapshot 表 DDL-as-Code | 待建 |
-| 4 | schemas/categories/market_index.py | §4.4 | index_quote 表 DDL-as-Code | 待建 |
-| 5 | schemas/categories/market_option_iv.py | §4.5 | option_iv_surface 表 DDL-as-Code | 待建 |
-| 6 | schemas/categories/market_futures_position.py | §4.6 | futures_position 表 DDL-as-Code | 待建 |
-| 7 | schemas/categories/market_futures_term.py | §4.7 | futures_term_structure 表 DDL-as-Code | 待建 |
-| 8 | schemas/categories/market_cb_iv.py | §4.8 | convertible_bond_iv 表 DDL-as-Code | 待建 |
+| 2 | schemas/categories/market_kline_daily.py | §4.2 | kline_daily 表 DDL-as-Code | 已建 |
+| 3 | schemas/categories/market_auction.py | §4.3 | auction_snapshot 表 DDL-as-Code | 已建 |
+| 4 | schemas/categories/market_index.py | §4.4 | index_quote 表 DDL-as-Code | 已建 |
+| 5 | schemas/categories/market_option_iv.py | §4.5 | option_iv_surface 表 DDL-as-Code | 已建 |
+| 6 | schemas/categories/market_futures_position.py | §4.6 | futures_position 表 DDL-as-Code | 已建 |
+| 7 | schemas/categories/market_futures_term.py | §4.7 | futures_term_structure 表 DDL-as-Code | 已建 |
+| 8 | schemas/categories/market_cb_iv.py | §4.8 | convertible_bond_iv 表 DDL-as-Code | 已建 |
 | 9 | c1_market_writer.py | §4.9 | C1 行情仓库写入接口 | 待建 |
 | 10 | c1_market_reader.py | §4.10 | C1 行情仓库查询接口 | 待建 |
 | 11 | c1_backtest_loader.py | §4.11 | C1 回测数据加载器 | 待建 |
@@ -109,7 +109,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = partially_implemented → §0.1 部分已建(daily_kline)/部分待建 | 逐文件核对 | ☐ |
+| construction_progress = partially_implemented → §0.1 部分已建(kline_daily)/部分待建 | 逐文件核对 | ☐ |
 | 蓝图描述的表名/字段 = DDL-as-Code 文件中的表名/字段 | `grep "CREATE TABLE" schemas/categories/market_*.py` | ☐ |
 | 8 张表 calc_mode 全部标注 | `grep "calc_mode" business_data_categories.yaml` | ☐ |
 | 8 张表 category_id 全部注册 | `grep "category_id" business_data_categories.yaml` | ☐ |
@@ -119,7 +119,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v1.0.0 (本版) | 无代码（设计态） | 全部 12 文件 | partially_implemented（ClickHouse 已部署，daily_kline 表已建，其余 7 张表待 DDL-as-Code 施工） |
+| v1.0.0 (本版) | 无代码（设计态） | 全部 12 文件 | partially_implemented（ClickHouse 已部署，kline_daily 表已建，其余 7 张表待 DDL-as-Code 施工） |
 
 ---
 
@@ -156,7 +156,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 ### §1.1 背景
 
-ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 market_clickhouse 行情仓库**的 8 张表（tick_data / daily_kline / auction_snapshot / index_quote / option_iv_surface / futures_position / futures_term_structure / convertible_bond_iv），覆盖 A 股 3 秒 Tick、日线 OHLCV、集合竞价、指数、期权 IV、期货持仓、期货期限结构、可转债 IV 共 8 个行情品类。
+ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 market_clickhouse 行情仓库**的 8 张表（tick_data / kline_daily / auction_snapshot / index_quote / option_iv_surface / futures_position / futures_term_structure / convertible_bond_iv），覆盖 A 股 3 秒 Tick、日线 OHLCV、集合竞价、指数、期权 IV、期货持仓、期货期限结构、可转债 IV 共 8 个行情品类。
 
 母蓝图 §6 要求**品类插拔式管理**（4 层机制：品类注册表 → DDL-as-Code → CTR 契约 → CategoryManager 发现）；母蓝图 §7 要求回测采用**模式③混合调度**（批量预加载内存 + 时间步重演），并要求每个品类标注 **calc_mode**（replay/preload/hybrid）；母蓝图 §7.1 要求**分层加载**（热层 tick 常驻内存 / 温层日线按时间窗）；母蓝图 §8 要求硬边界品类（港股/美股/期货多市场数据）以 `enabled=false` 预留接口，`market_type` 字段预留但不摄取。
 
@@ -198,7 +198,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | 约束 | 影响 |
 |------|------|
 | ClickHouse 已部署（INFRA-DB-006，2026-07-01 上线，2026-07-16 迁移至 Hyper-V Ubuntu VM 172.24.30.100） | C1 施工前置阻塞已解除，DDL 可直接执行 |
-| 当前数据源(D_DATA)只支持 OHLCV（daily_kline 表） | 其他 7 张表需 D_DATA 步骤3 多品类扩展 |
+| 当前数据源(D_DATA)只支持 OHLCV（kline_daily 表） | 其他 7 张表需 D_DATA 步骤3 多品类扩展 |
 | 回测内存预算 64G（母蓝图 §7.1） | tick_data 必须分层加载，不能全量载入 |
 | 8 张表 calc_mode 必须标注（母蓝图 §7.5） | 回测引擎按 calc_mode 决定处理方式 |
 | 硬边界品类(港股/美股/期货多市场) market_type 预留但不摄取 | 字段设计预留，enabled=false |
@@ -221,7 +221,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 |------|--------|--------|------|:------:|
 | ClickHouse 部署 | 已部署（INFRA-DB-006，2026-07-01 上线） | INFRA-DB-006 ClickHouse 部署 | 部分表已建 | P0 |
 | 8 张表 DDL | 无 | 8 个 schemas/categories/market_*.py | 待编写 DDL-as-Code | P0 |
-| 数据源覆盖 | OHLCV（daily_kline 1张） | 8张表全覆盖 | 需 D_DATA 步骤3 多品类扩展 | P0 |
+| 数据源覆盖 | OHLCV（kline_daily 1张） | 8张表全覆盖 | 需 D_DATA 步骤3 多品类扩展 | P0 |
 | 写入接口 | 无 | C1MarketWriter | 待实现 | P1 |
 | 回测加载接口 | 无 | C1BacktestLoader（热层/温层） | 待实现 | P1 |
 | 品类注册表 | 无 | 8 条品类注册记录 | 待注册（母蓝图 §6 第1层） | P1 |
@@ -230,10 +230,10 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 场景 | 触发 | 处理流程 | 输出 |
 |------|------|---------|------|
-| 日线行情回测 | 回测引擎启动 | C1BacktestLoader.load_warm_layer → daily_kline 预加载到内存 | DataFrame dict |
+| 日线行情回测 | 回测引擎启动 | C1BacktestLoader.load_warm_layer → kline_daily 预加载到内存 | DataFrame dict |
 | Tick 回测 | 回测引擎启动 | C1BacktestLoader.load_hot_layer → tick_data 常驻内存逐笔回放 | DataFrame dict |
 | 实盘行情查询 | 实盘引擎请求 | C1MarketReader.query_latest → ClickHouse 实时查询 | DataFrame |
-| 日线写入 | D_DATA 摄取完成 | C1MarketWriter.upsert_daily_kline → ClickHouse 批量写入 | 写入行数 |
+| 日线写入 | D_DATA 摄取完成 | C1MarketWriter.upsert_kline_daily → ClickHouse 批量写入 | 写入行数 |
 | 范围查询 | 分析模块请求 | C1MarketReader.query_range → 分区裁剪查询 | DataFrame |
 | 硬边界品类预留 | 港股/美股注册 | market_type 字段预留，enabled=false | 预留接口（不摄取） |
 
@@ -307,7 +307,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 层次 | 对接内容 | C1 实现 |
 |------|---------|---------|
-| 第1层 品类注册表 | business_data_categories.yaml 注册 8 条品类 | category_id: market_tick / market_daily_kline / market_auction / market_index / market_option_iv / market_futures_position / market_futures_term / market_cb_iv |
+| 第1层 品类注册表 | business_data_categories.yaml 注册 8 条品类 | category_id: market_tick / market_kline_daily / market_auction / market_index / market_option_iv / market_futures_position / market_futures_term / market_cb_iv |
 | 第2层 DDL-as-Code | 8 张表 Schema Python 类 | schemas/categories/market_*.py（本蓝图 §4 定义） |
 | 第3层 数据契约 | CTR-001~008 每张表一个契约 | 对接 D_DATA CTR 契约体系 |
 | 第4层 品类发现 | CategoryManager 按 category_id 路由到 C1 | DatabaseService 按 engine=clickhouse 路由 |
@@ -316,7 +316,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 母蓝图章节 | 对接内容 | C1 实现 |
 |-----------|---------|---------|
-| §7.1 分层加载 | 热层常驻内存 / 温层按时间窗 | C1BacktestLoader.load_hot_layer（tick_data）/ load_warm_layer（daily_kline 等） |
+| §7.1 分层加载 | 热层常驻内存 / 温层按时间窗 | C1BacktestLoader.load_hot_layer（tick_data）/ load_warm_layer（kline_daily 等） |
 | §7.2 并行加载 | 按品类分组并行加载 | C1BacktestLoader 内部 asyncio/threading 并行 |
 | §7.3 时间对齐 | 统一时间网格（3秒步长） | C1 仅提供原始数据，对齐在内存工作台完成 |
 | §7.5 calc_mode | replay/preload 标注 | 8 张表 calc_mode 见 §4 各表定义 |
@@ -342,13 +342,13 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 > **架构裁定 #ARCH-CH-009（2026-07-15）**：version 列语义修复——`quality_flag` 是质量标记位（1=正常 0=异常），
 > 100% 行值为 1，作 version 列等同无参数 ReplacingMergeTree，后台 merge 无法按写入时序去重。
 > 所有 `ReplacingMergeTree` 表新增 `ingest_ts DateTime DEFAULT now()` 作为 version 列，
-> 引擎改为 `ReplacingMergeTree(ingest_ts)`。详见 architecture_issue_registry.yaml #ARCH-CH-009。
+> 引擎改为 `ReplacingMergeTree`。详见 architecture_issue_registry.yaml #ARCH-CH-009。
 > **注意**：以下 §4.1-§4.8 DDL 示例中的 `quality_flag` 列是质量标记位，**不是 version 列**；
 > version 列是 `ingest_ts`（DDL 示例省略，实际建表时必须包含）。
 
 | 策略项 | 设计 | 理由 |
 |--------|------|------|
-| 引擎 | **全部 ReplacingMergeTree(ingest_ts)**（裁定 #ARCH-CH-002 + #ARCH-CH-009） | 直接 INSERT，CH 后台按 ingest_ts 去重保留最新版本，零 mutation 开销；增量回填幂等 |
+| 引擎 | **全部 ReplacingMergeTree**（裁定 #ARCH-CH-002 + #ARCH-CH-009） | 直接 INSERT，CH 后台按 ingest_ts 去重保留最新版本，零 mutation 开销；增量回填幂等 |
 | version 列 | **ingest_ts DateTime DEFAULT now()**（裁定 #ARCH-CH-009） | quality_flag 语义误用修复，ingest_ts 按写入时序去重 |
 | 分区策略 | PARTITION BY toYYYYMMDD(trade_date)（高频表）/ toYYYYMM(trade_date)（日频表） | 按天/月分区，方便分区裁剪 |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp)（高频）/ ORDER BY (symbol, trade_date)（日频） | 回测主要查单只股票历史数据，symbol 前缀 |
@@ -364,7 +364,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 > 下方属性表由真源派生，仅作速查，冲突时以 `market_tick.py` 为准。
 
 **设计裁定**：`tick_data` 遵循 **#ARCH-CH-002**（ReplacingMergeTree 无版本列），
-是 §4.0 策略表"全部 ReplacingMergeTree(ingest_ts)"（#ARCH-CH-009）的**已登记例外**——
+是 §4.0 策略表"全部 ReplacingMergeTree"（#ARCH-CH-009）的**已登记例外**——
 5 字段 ORDER BY 已能精确去重，无需 ingest_ts 版本列。详见 `market_tick.py` 表头设计决策。
 
 | 属性 | 值（派生自 `market_tick.py` 真源） |
@@ -383,15 +383,20 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | category_id | **market_tick** |
 | schema_file | `schemas/categories/market_tick.py` |
 
-### §4.2 daily_kline（日线OHLCV — preload模式）
+### §4.2 kline_daily（日线OHLCV — preload模式）
+
+<!-- 命名裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001：表名/类别 ID 以 business_data_categories.yaml
+     为 SSoT 准（kline_daily / market_kline_daily），非原蓝图的 kline_daily / market_kline_daily。
+     引擎以可执行为准——ReplacingMergeTree（无版本列），非蓝图 §4.0 声明的 ReplacingMergeTree
+     （§4.2 DDL 未定义 ingest_ts 列，蓝图内部矛盾）。 -->
 
 ```python
-# schemas/categories/market_daily_kline.py
-# category_id: market_daily_kline
+# schemas/categories/market_kline_daily.py
+# category_id: market_kline_daily
 # calc_mode: preload（回测时预加载到内存）
 
-DAILY_KLINE_DDL = """
-CREATE TABLE IF NOT EXISTS c1_market.daily_kline
+KLINE_DAILY_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.kline_daily
 (
     trade_date   Date           COMMENT '交易日期',
     symbol       String         COMMENT '证券代码',
@@ -410,7 +415,7 @@ CREATE TABLE IF NOT EXISTS c1_market.daily_kline
     data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT/iFind)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '日线OHLCV(成品聚合,preload)'
@@ -419,17 +424,17 @@ COMMENT '日线OHLCV(成品聚合,preload)'
 
 | 属性 | 值 |
 |------|-----|
-| 表名 | daily_kline |
+| 表名 | kline_daily |
 | 品类 | 日线OHLCV |
 | 性质 | 成品(聚合) |
 | 频率 | 日频 |
 | 数据源 | miniQMT/iFind |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date)（日线按月分区） |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | TTL | 无（日线永久保留） |
 | calc_mode | **preload**（回测时预加载到内存） |
-| category_id | **market_daily_kline** |
+| category_id | **market_kline_daily** |
 | 说明 | 对接 D_DATA DataSourceBase.fetch_historical 输出 CTR-001 |
 
 ### §4.3 auction_snapshot（集合竞价快照 — preload模式）
@@ -452,7 +457,7 @@ CREATE TABLE IF NOT EXISTS c1_market.auction_snapshot
     data_source     LowCardinality(String)  COMMENT '数据来源(miniQMT)',
     quality_flag    UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '集合竞价快照(原料,preload)'
@@ -466,7 +471,7 @@ COMMENT '集合竞价快照(原料,preload)'
 | 性质 | 原料 |
 | 频率 | 9:15-9:25 |
 | 数据源 | miniQMT |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -476,7 +481,7 @@ COMMENT '集合竞价快照(原料,preload)'
 
 ```python
 # schemas/categories/market_index.py
-# category_id: market_index
+# category_id: market_index_quote
 # calc_mode: replay
 
 INDEX_QUOTE_DDL = """
@@ -491,7 +496,7 @@ CREATE TABLE IF NOT EXISTS c1_market.index_quote
     data_source  LowCardinality(String)  COMMENT '数据来源(miniQMT)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMMDD(trade_date)
 ORDER BY (symbol, trade_date, timestamp)
 COMMENT '指数行情(原料,replay)'
@@ -505,12 +510,12 @@ COMMENT '指数行情(原料,replay)'
 | 性质 | 原料 |
 | 频率 | 3秒 |
 | 数据源 | miniQMT |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMMDD(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp) |
 | TTL | **无TTL**（永久保留，INV-RET-003 铁律） |
 | calc_mode | **replay** |
-| category_id | **market_index** |
+| category_id | **market_index_quote** |
 
 ### §4.5 option_iv_surface（期权IV曲面 — preload模式）
 
@@ -536,7 +541,7 @@ CREATE TABLE IF NOT EXISTS c1_market.option_iv_surface
     data_source  LowCardinality(String)  COMMENT '数据来源(iFind/AkShare)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (underlying, trade_date, strike, expiry)
 COMMENT '期权IV曲面(原料衍生,preload)'
@@ -550,7 +555,7 @@ COMMENT '期权IV曲面(原料衍生,preload)'
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
 | 数据源 | iFind/AkShare |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (underlying, trade_date, strike, expiry) |
 | calc_mode | **preload** |
@@ -576,7 +581,7 @@ CREATE TABLE IF NOT EXISTS c1_market.futures_position
     data_source    LowCardinality(String)  COMMENT '数据来源(CZCE/DCE)',
     quality_flag   UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '期货持仓(原料衍生,preload)'
@@ -590,7 +595,7 @@ COMMENT '期货持仓(原料衍生,preload)'
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
 | 数据源 | CZCE/DCE |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -616,7 +621,7 @@ CREATE TABLE IF NOT EXISTS c1_market.futures_term_structure
     data_source    LowCardinality(String)  COMMENT '数据来源(交易所)',
     quality_flag   UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '期货期限结构(原料衍生,preload)'
@@ -630,7 +635,7 @@ COMMENT '期货期限结构(原料衍生,preload)'
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
 | 数据源 | 交易所 |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -658,7 +663,7 @@ CREATE TABLE IF NOT EXISTS c1_market.convertible_bond_iv
     data_source         LowCardinality(String)  COMMENT '数据来源(iFind)',
     quality_flag        UInt8          DEFAULT 1  COMMENT '质量标记'
 )
-ENGINE = ReplacingMergeTree(ingest_ts)
+ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 COMMENT '可转债隐含波动率(成品算,preload)'
@@ -672,7 +677,7 @@ COMMENT '可转债隐含波动率(成品算,preload)'
 | 性质 | 成品(算) |
 | 频率 | 日频 |
 | 数据源 | iFind |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
+| 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
 | calc_mode | **preload** |
@@ -700,7 +705,7 @@ class C1MarketWriter:
         批量写入行情数据
 
         Args:
-            table_name: C1 表名（tick_data/daily_kline/...共8张）
+            table_name: C1 表名（tick_data/kline_daily/...共8张）
             records: 行情记录列表（dict 格式，字段对齐 DDL）
 
         Returns:
@@ -711,7 +716,7 @@ class C1MarketWriter:
         """
         ...
 
-    def upsert_daily_kline(self, df: pd.DataFrame) -> int:
+    def upsert_kline_daily(self, df: pd.DataFrame) -> int:
         """
         日线 OHLCV 写入（对接 D_DATA DataSourceBase.fetch_historical 输出 CTR-001）
 
@@ -722,7 +727,7 @@ class C1MarketWriter:
             写入行数
 
         Note:
-            ReplacingMergeTree(ingest_ts) 直接 INSERT，CH 后台按 ingest_ts 去重保留最新版本（裁定 #ARCH-CH-002 + #ARCH-CH-009）
+            ReplacingMergeTree 直接 INSERT，CH 后台按 ingest_ts 去重保留最新版本（裁定 #ARCH-CH-002 + #ARCH-CH-009）
         """
         ...
 ```
@@ -790,7 +795,7 @@ class C1BacktestLoader:
             end: 回测结束时间
             calc_mode: 计算模式
                 - replay: tick_data/index_quote 逐笔加载（母蓝图 §7.5 mode=replay）
-                - preload: daily_kline 等全量加载（母蓝图 §7.5 mode=preload）
+                - preload: kline_daily 等全量加载（母蓝图 §7.5 mode=preload）
 
         Returns:
             {symbol: DataFrame} 字典
@@ -817,7 +822,7 @@ class C1BacktestLoader:
         """
         温层加载（母蓝图 §7.1：日线/指标按时间窗）
 
-        加载内容: daily_kline + auction_snapshot + 其他 preload 表
+        加载内容: kline_daily + auction_snapshot + 其他 preload 表
         内存占用: ~2MB/标的/年（日线，母蓝图 §7.1 内存评估）
 
         Args:
@@ -835,7 +840,7 @@ class C1BacktestLoader:
 
 | 契约ID | 对应表 | Producer | Consumer | 版本 | 状态 |
 |--------|--------|----------|----------|------|:----:|
-| CTR-001 | daily_kline | D_DATA DataSourceBase | C1MarketWriter | 1.0.0 | 待实现 |
+| CTR-001 | kline_daily | D_DATA DataSourceBase | C1MarketWriter | 1.0.0 | 待实现 |
 | CTR-002 | tick_data | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-003 | auction_snapshot | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-004 | index_quote | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
@@ -852,14 +857,14 @@ class C1BacktestLoader:
 
 | # | 约束 | 值 |
 |---|------|-----|
-| 1 | 全部表使用 ReplacingMergeTree(ingest_ts) 引擎 | 裁定 #ARCH-CH-002 + #ARCH-CH-009，ingest_ts 作 version 列按写入时序去重 |
+| 1 | 全部表使用 ReplacingMergeTree 引擎 | 裁定 #ARCH-CH-002 + #ARCH-CH-009，ingest_ts 作 version 列按写入时序去重 |
 | 2 | 高频表按天分区 / 日频表按月分区 | PARTITION BY toYYYYMMDD / toYYYYMM |
 | 3 | 排序键 symbol 前缀 | 回测主要查单只股票历史数据 |
 | 4 | 8 张表 calc_mode 必须标注 | replay/preload（母蓝图 §7.5） |
 | 5 | 8 张表 category_id 必须注册 | 母蓝图 §6 第1层 |
 | 6 | market_type 字段预留硬边界品类 | 港股/美股/期货 DEFAULT 'A_share'，enabled=false（母蓝图 §8.2） |
 | 7 | tick_data/index_quote **无TTL** | INV-RET-003 铁律：永久保留，不归档 |
-| 8 | daily_kline 永久保留 | 日线数据不 TTL |
+| 8 | kline_daily 永久保留 | 日线数据不 TTL |
 | 9 | DDL-as-Code 格式 | Python 类定义表结构（母蓝图 §6 第2层） |
 | 10 | ClickHouse 已部署（2026-07-01），前置阻塞已解除 | INFRA-DB-006 已上线 |
 
@@ -870,7 +875,7 @@ class C1BacktestLoader:
 | 维度 | 单标的1年 | 100标的1年 | 分层后占用 | 分层归属 |
 |------|:--------:|:---------:|:---------:|:--------:|
 | tick_data（3秒tick） | ~480MB | ~48GB | 热层常驻 | 热层 |
-| daily_kline（日线） | ~2MB | ~200MB | 温层按时间窗 | 温层 |
+| kline_daily（日线） | ~2MB | ~200MB | 温层按时间窗 | 温层 |
 | index_quote（指数3秒） | ~480MB | ~48GB | 热层常驻 | 热层 |
 | auction_snapshot（日频） | ~2KB | ~200KB | 温层 | 温层 |
 | option_iv_surface（日频） | ~50KB | ~5MB | 温层 | 温层 |
@@ -882,7 +887,7 @@ class C1BacktestLoader:
 
 | # | 迁移项 | 来源 | 目标 | 状态 |
 |---|--------|------|------|:----:|
-| 1 | market.duckdb → ClickHouse | INFRA-DB-005 (已废弃,2026-07-05删除) | C1 market_clickhouse | daily_kline 已迁移至 ClickHouse；market.duckdb 残留文件已于 2026-07-05 删除（524KB，无有价值数据） |
+| 1 | market.duckdb → ClickHouse | INFRA-DB-005 (已废弃,2026-07-05删除) | C1 market_clickhouse | kline_daily 已迁移至 ClickHouse；market.duckdb 残留文件已于 2026-07-05 删除（524KB，无有价值数据） |
 | 2 | DDL 迁移 | c1_market_schema.py（待建，DDL-as-Code 模式） | schemas/categories/c1_market_*.py | 待编写 |
 
 ---
@@ -941,7 +946,7 @@ class C1BacktestLoader:
 | 层次 | 测试类型 | 覆盖范围 | 工具 | 状态 |
 |------|---------|---------|------|:----:|
 | 单元测试 | DDL 正确性 | 8 张表 DDL 语法校验 | pytest + clickhouse-test | 待实现 |
-| 单元测试 | 写入接口 | C1MarketWriter.batch_insert / upsert_daily_kline | pytest | 待实现 |
+| 单元测试 | 写入接口 | C1MarketWriter.batch_insert / upsert_kline_daily | pytest | 待实现 |
 | 单元测试 | 查询接口 | C1MarketReader.query_range / query_latest | pytest | 待实现 |
 | 集成测试 | 回测加载 | C1BacktestLoader 热层/温层加载 | pytest + testcontainers | 待实现 |
 | 集成测试 | D_DATA 对接 | CTR-001~008 写入 C1 全链路 | pytest | 待实现 |
@@ -952,10 +957,10 @@ class C1BacktestLoader:
 
 | # | 用例 | 输入 | 期望输出 | 验证点 |
 |---|------|------|---------|--------|
-| 1 | daily_kline 写入 | OHLCV DataFrame(100行) | 写入100行 | 数据完整 |
-| 2 | daily_kline 范围查询 | symbol=000001, 2026-01-01~2026-06-30 | DataFrame | 分区裁剪生效 |
+| 1 | kline_daily 写入 | OHLCV DataFrame(100行) | 写入100行 | 数据完整 |
+| 2 | kline_daily 范围查询 | symbol=000001, 2026-01-01~2026-06-30 | DataFrame | 分区裁剪生效 |
 | 3 | tick_data 热层加载 | symbols=[000001], 全量 | DataFrame dict | 内存占用<500MB |
-| 4 | daily_kline 温层加载 | symbols=[000001], 1年 | DataFrame dict | 加载时间<10s |
+| 4 | kline_daily 温层加载 | symbols=[000001], 1年 | DataFrame dict | 加载时间<10s |
 | 5 | DDL 建表 | apply_schema.py | 8张表创建成功 | 表结构正确 |
 | 6 | ~~TTL 归档~~（已废弃） | — | — | INV-RET-003 铁律：无TTL，不归档 |
 
@@ -1029,7 +1034,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 |------------|---------|--------|---------|
 | 回测引擎 | C1BacktestLoader 接口 | load_to_memory / load_hot_layer / load_warm_layer | 回测引擎可加载行情数据 |
 | 实盘引擎 | C1MarketReader 接口 | query_latest | 实盘引擎可查询最新行情 |
-| D_DATA 数据源接入层 | C1MarketWriter 接口 | batch_insert / upsert_daily_kline | D_DATA CTR-001~008 可写入 C1 |
+| D_DATA 数据源接入层 | C1MarketWriter 接口 | batch_insert / upsert_kline_daily | D_DATA CTR-001~008 可写入 C1 |
 | 母蓝图 §6 品类注册表 | business_data_categories.yaml | 8条品类注册记录 | CategoryManager 可发现 C1 品类 |
 | 母蓝图 §6 CategoryManager | engine=clickhouse 路由 | DatabaseService 路由 | 按 category_id 路由到 C1 |
 | MOD-INF-012A 基础设施 | ClickHouse 部署 | INFRA-DB-006 | ClickHouse 可连接 |
@@ -1054,14 +1059,14 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 表名 | 性质 | 频率 | 数据源 | 引擎 | 分区 | 排序键 | TTL | calc_mode | category_id |
 |---|------|------|:----:|--------|------|------|--------|:---:|:---------:|-------------|
-| 1 | tick_data | 原料 | 3秒 | miniQMT | ReplacingMergeTree(ingest_ts) | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_tick |
-| 2 | daily_kline | 成品(聚合) | 日频 | miniQMT/iFind | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_daily_kline |
-| 3 | auction_snapshot | 原料 | 9:15-9:25 | miniQMT | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_auction |
-| 4 | index_quote | 原料 | 3秒 | miniQMT | ReplacingMergeTree(ingest_ts) | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_index |
-| 5 | option_iv_surface | 原料(衍生) | 日频 | iFind/AkShare | ReplacingMergeTree(ingest_ts) | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
-| 6 | futures_position | 原料(衍生) | 日频 | CZCE/DCE | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_position |
-| 7 | futures_term_structure | 原料(衍生) | 日频 | 交易所 | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_term |
-| 8 | convertible_bond_iv | 成品(算) | 日频 | iFind | ReplacingMergeTree(ingest_ts) | toYYYYMM | symbol,trade_date | 无 | preload | market_cb_iv |
+| 1 | tick_data | 原料 | 3秒 | miniQMT | ReplacingMergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_tick |
+| 2 | kline_daily | 成品(聚合) | 日频 | miniQMT/iFind | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_kline_daily |
+| 3 | auction_snapshot | 原料 | 9:15-9:25 | miniQMT | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_auction |
+| 4 | index_quote | 原料 | 3秒 | miniQMT | ReplacingMergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_index |
+| 5 | option_iv_surface | 原料(衍生) | 日频 | iFind/AkShare | ReplacingMergeTree | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
+| 6 | futures_position | 原料(衍生) | 日频 | CZCE/DCE | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_position |
+| 7 | futures_term_structure | 原料(衍生) | 日频 | 交易所 | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_term |
+| 8 | convertible_bond_iv | 成品(算) | 日频 | iFind | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_cb_iv |
 
 ### §13.2 品类注册表条目模板
 
@@ -1083,12 +1088,12 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
   calc_mode: replay
   contract: CTR-002
 
-- category_id: market_daily_kline
+- category_id: market_kline_daily
   name: "日线OHLCV"
   engine: clickhouse
   database: c1_market
-  table: daily_kline
-  schema_file: schemas/categories/market_daily_kline.py
+  table: kline_daily
+  schema_file: schemas/categories/market_kline_daily.py
   data_type: 成品
   lifecycle: permanent  # 永久保留
   sla_level: P0
@@ -1135,7 +1140,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 2 | D_DATA 仅支持 OHLCV，7张表无数据源 | 高 | 7张表空置 | 待 D_DATA 步骤3 多品类扩展 | 风险 |
 | 3 | tick_data 内存占用过大（100标的48GB） | 中 | 回测内存溢出 | 热层分层加载 + 限制标的数量 | 风险 |
 | 4 | ClickHouse 无 AS OF JOIN | 中 | 多频率时间对齐困难 | 内存工作台完成对齐（母蓝图 §7.3） | 风险 |
-| 5 | ~~MergeTree 不支持 UPSERT~~（已修复，裁定 #ARCH-CH-002） | — | 中 | ReplacingMergeTree(ingest_ts) 直接 INSERT 去重 | 负面后果 |
+| 5 | ~~MergeTree 不支持 UPSERT~~（已修复，裁定 #ARCH-CH-002） | — | 中 | ReplacingMergeTree 直接 INSERT 去重 | 负面后果 |
 | 6 | ~~TTL 归档 Parquet 需额外存储~~（已废弃） | — | — | INV-RET-003 铁律：无TTL，不归档 | 负面后果 |
 | 7 | ClickHouse 部署需新建 INFRA-DB-006 | — | 中 | Docker 部署，对接 MOD-INF-012A | 负面后果 |
 
@@ -1148,7 +1153,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 1 | 8张表 DDL 设计完成 | 字段级 Schema + 引擎/分区/排序键/TTL | 逐表核对 §4.1~§4.8 | ☐ |
 | 2 | 8张表 calc_mode 全部标注 | replay/preload | 核对 §13.1 汇总表 | ☐ |
 | 3 | 8张表 category_id 全部定义 | market_tick ~ market_cb_iv | 核对 §13.1 汇总表 | ☐ |
-| 4 | market_type 硬边界预留 | 港股/美股/期货字段预留 | 核对 tick_data/daily_kline DDL | ☐ |
+| 4 | market_type 硬边界预留 | 港股/美股/期货字段预留 | 核对 tick_data/kline_daily DDL | ☐ |
 | 5 | 写入接口设计完成 | C1MarketWriter 3个方法 | 核对 §4.9 | ☐ |
 | 6 | 查询接口设计完成 | C1MarketReader 2个方法 | 核对 §4.10 | ☐ |
 | 7 | 回测加载接口设计完成 | C1BacktestLoader 3个方法 | 核对 §4.11 | ☐ |
@@ -1235,13 +1240,13 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 |------|------|
 | 对应蓝图契约 | §4.9 写入接口 |
 | 产出位置 | `data/databases/c1_market_clickhouse/c1_market_writer.py` |
-| 验收标准 | batch_insert / upsert_daily_kline 可用 |
+| 验收标准 | batch_insert / upsert_kline_daily 可用 |
 | 验证命令 | `python -c "from data.databases.c1_market_clickhouse.c1_market_writer import C1MarketWriter"` |
 | 状态 | ❌ 待步骤2完成 |
 | G7 检查项 | 上游 D_DATA CTR-001 可对接，下游 ClickHouse 可写入 |
 
 ```
-→ 先实现 daily_kline 表的写入（对接 D_DATA OHLCV 输出 CTR-001）
+→ 先实现 kline_daily 表的写入（对接 D_DATA OHLCV 输出 CTR-001）
 → 其他 7 张表写入接口待 D_DATA 步骤3 多品类扩展
 ```
 
@@ -1257,7 +1262,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | G7 检查项 | 对接母蓝图 §7.1 分层加载 / §7.5 calc_mode |
 
 ```
-→ 先实现 preload 模式（daily_kline 预加载到温层）
+→ 先实现 preload 模式（kline_daily 预加载到温层）
 → replay 模式（tick_data 逐笔回放）待 D_DATA 多品类扩展
 ```
 
@@ -1281,7 +1286,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 冲突场景 | 检测方式 | 解决策略 | 合并规则 |
 |---------|---------|---------|---------|
-| 同 symbol 并发写入 | 无检测 | ReplacingMergeTree(ingest_ts) 直接 INSERT | 后台 merge 按 ingest_ts 保留最新 |
+| 同 symbol 并发写入 | 无检测 | ReplacingMergeTree 直接 INSERT | 后台 merge 按 ingest_ts 保留最新 |
 | 回测加载与实盘查询并发 | 无冲突 | ClickHouse MVCC | 读不阻塞写 |
 | 多 AI Session 同时修改 DDL | 锁检测 | RULE-ZERO 文件锁 | FIFO |
 
@@ -1312,7 +1317,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 版本 | generation | 升级类型 | 核心变更 | 代码覆盖 |
 |------|:---:|---------|---------|:---:|
 | v1.0.0 | 1 | 初始设计 | 8张表 DDL + 3类接口设计 | ❌（设计态） |
-| v1.1.0 | 1 | 基础设施就绪 | ClickHouse部署 + DDL执行 + daily_kline写入 | ⚠️ |
+| v1.1.0 | 1 | 基础设施就绪 | ClickHouse部署 + DDL执行 + kline_daily写入 | ⚠️ |
 | v1.2.0 | 1 | 多品类扩展 | 7张表写入 + replay模式 | ⚠️ |
 
 ### §17.4 升级组件清单
@@ -1332,28 +1337,28 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
-| 1 | D-C1-01 | ~~全部表使用 MergeTree 引擎~~（已废弃→裁定#ARCH-CH-002+#ARCH-CH-009） | MergeTree/ReplacingMergeTree | ReplacingMergeTree(ingest_ts) | ~~数据源唯一不需要去重~~→增量回填需去重 | 2026-07-01 |
+| 1 | D-C1-01 | ~~全部表使用 MergeTree 引擎~~（已废弃→裁定#ARCH-CH-002+#ARCH-CH-009） | MergeTree/ReplacingMergeTree | ReplacingMergeTree | ~~数据源唯一不需要去重~~→增量回填需去重 | 2026-07-01 |
 | 2 | D-C1-02 | 高频表按天分区/日频表按月分区 | 统一按天/混合 | 混合 | 高频表分区裁剪+日频表减少分区数 | 2026-07-01 |
 | 3 | D-C1-03 | 排序键 symbol 前缀 | symbol前缀/时间前缀 | symbol前缀 | 回测主要查单只股票历史数据 | 2026-07-01 |
 | 4 | D-C1-04 | ~~tick_data/index_quote TTL 90天~~（已废弃） | 永久保留/TTL归档 | **永久保留** | INV-RET-003 铁律：无TTL，永久保留 | 2026-07-14 |
-| 5 | D-C1-05 | daily_kline 永久保留 | TTL/永久 | 永久 | 日线数据体积小且高频查询 | 2026-07-01 |
+| 5 | D-C1-05 | kline_daily 永久保留 | TTL/永久 | 永久 | 日线数据体积小且高频查询 | 2026-07-01 |
 | 6 | D-C1-06 | calc_mode 二值(replay/preload) | 三值含hybrid/二值 | 二值 | C1行情数据无hybrid需求 | 2026-07-01 |
 | 7 | D-C1-07 | market_type 字段预留硬边界品类 | 不预留/预留字段 | 预留字段 | 对接母蓝图 §8.2 硬边界 | 2026-07-01 |
-| 8 | D-C1-08 | ~~daily_kline 先删后插(非UPSERT)~~（已废弃→裁定#ARCH-CH-002） | ReplacingMergeTree/先删后插 | ReplacingMergeTree(ingest_ts) 直接INSERT | ~~MergeTree不支持UPSERT~~→ReplacingMergeTree去重 | 2026-07-01 |
+| 8 | D-C1-08 | ~~kline_daily 先删后插(非UPSERT)~~（已废弃→裁定#ARCH-CH-002） | ReplacingMergeTree/先删后插 | ReplacingMergeTree 直接INSERT | ~~MergeTree不支持UPSERT~~→ReplacingMergeTree去重 | 2026-07-01 |
 | 9 | D-C1-09 | 回测分层加载(热层/温层) | 全量加载/分层 | 分层 | 对接母蓝图 §7.1 内存预算64G | 2026-07-01 |
 | 10 | D-C1-10 | ClickHouse 新建 INFRA-DB-006 | 复用duckdb/新建ClickHouse | 新建ClickHouse | 母蓝图 §8.1 直接上目标引擎 | 2026-07-01 |
 
 ### 变更记录
 
 ### v1.0.3 (2026-07-15) version 列语义修复（裁定 #ARCH-CH-009）
-- **引擎策略修复**：§4.1-§4.8 DDL 示例 ENGINE 从 `MergeTree` → `ReplacingMergeTree(ingest_ts)`
+- **引擎策略修复**：§4.1-§4.8 DDL 示例 ENGINE 从 `MergeTree` → `ReplacingMergeTree`
 - **version 列修复**：新增 `ingest_ts DateTime DEFAULT now()` 作 version 列（quality_flag 语义误用修复）
 - **§4.0 引擎策略**：新增 #ARCH-CH-009 裁定说明 + version 列策略行
-- **§5.1 约束 #1**：从"全部 MergeTree 不需要去重"更新为"ReplacingMergeTree(ingest_ts)"
+- **§5.1 约束 #1**：从"全部 MergeTree 不需要去重"更新为"ReplacingMergeTree"
 - **§5.2 风险矩阵 #5**：MergeTree 不支持 UPSERT 标记为弃用
-- **§16.4 并发模型**：MergeTree 追加写 → ReplacingMergeTree(ingest_ts) 去重
+- **§16.4 并发模型**：MergeTree 追加写 → ReplacingMergeTree 去重
 - **§18 决策记录**：D-C1-01/D-C1-08 标记为弃用，选中项更新
-- **术语表**：ReplacingMergeTree(ingest_ts) 定义修正
+- **术语表**：ReplacingMergeTree 定义修正
 - **实际 DDL 已变更**：16 张表 ALTER TABLE + DETACH/ATTACH 元数据修复完成
 
 ### v1.0.2 (2026-07-14) TTL 铁律合规修复
@@ -1382,7 +1387,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 术语 | 精确定义 | 易混淆术语 | 区别 |
 |------|---------|-----------|------|
 | C1 market_clickhouse | 行情仓库，存 L1 标准化行情数据 | — | 业务数据库仓库层之一 |
-| ReplacingMergeTree(ingest_ts) | ClickHouse 引擎，后台按 ingest_ts 去重保留最新版本（裁定 #ARCH-CH-009） | MergeTree | MergeTree 追加写不去重，ReplacingMergeTree(ingest_ts) 按写入时序去重 |
+| ReplacingMergeTree | ClickHouse 引擎，后台按 ingest_ts 去重保留最新版本（裁定 #ARCH-CH-009） | MergeTree | MergeTree 追加写不去重，ReplacingMergeTree 按写入时序去重 |
 | replay | 回测时逐笔实时重算（母蓝图 §7.5） | preload | replay 用于 tick/index 高频原料 |
 | preload | 回测时预加载到内存（母蓝图 §7.5） | replay | preload 用于日线/指标等成品 |
 | 热层/温层 | 回测分层加载（母蓝图 §7.1） | 冷层 | C1 无冷层（冷层属 C3） |
