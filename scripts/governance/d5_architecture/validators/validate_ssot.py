@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH
+# [BLUEPRINT] MOD-GOV_SCRIPTS_ARCH
 # [MODULE] scripts.governance.d5_architecture.validators.validate_ssot
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] scripts.governance._shared.frontmatter

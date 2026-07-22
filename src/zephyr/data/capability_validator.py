@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] validate 返回 Violation 列表; 空列表=通过; 非空=有问题（severity 区分 ERROR/WARN）
 # [TESTS] tests/zephyr/data/test_capability_validator.py
-# [A_module] module_id=MOD-L00-004-capability_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-capability_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。
 

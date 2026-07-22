@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-REPAIR
+# [BLUEPRINT] MOD-GOV_REPAIR
 # [MODULE] scripts.governance.repair.red_blue_test
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] scripts.governance.repair.backup_depgraph

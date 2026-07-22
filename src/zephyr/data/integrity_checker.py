@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH查询失败->该表标记unhealthy; 无scheduler->只log不记录
 # [TESTS] tests/zephyr/data/test_integrity_checker.py
-# [A_module] module_id=MOD-L00-004-integrity_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-integrity_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """数据完整性巡检器——每天盘后检测全表当日数据是否达标。
 

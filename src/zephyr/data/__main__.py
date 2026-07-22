@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 透传 cli.main 返回的退出码
 # [TESTS] tests/zephyr/data/test_cli.py
-# [A_module] module_id=MOD-L00-004-__main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-main | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """python -m zephyr.data — 数据源集成器 CLI 入口。
 

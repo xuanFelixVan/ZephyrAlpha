@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/d7_code/check_pure_shim.py | §
+# [BLUEPRINT] MOD-GOV_SCRIPTS | scripts/governance/d7_code/check_pure_shim.py | §
 # [MODULE] scripts.governance.d7_code.check_pure_shim
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__

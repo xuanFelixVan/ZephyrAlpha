@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_policy 未知源返回默认策略，不抛异常
 # [TESTS] tests/zephyr/data/test_policy_registry.py
-# [A_module] module_id=MOD-L00-004-policy_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-policy_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """per-source 调用策略注册表（MOD-L00-004 §5）。
 

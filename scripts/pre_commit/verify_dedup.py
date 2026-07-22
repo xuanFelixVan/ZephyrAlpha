@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess returncode
 # [TESTS]
-# [A_module] module_id=MOD-INF-017_verify_dedup | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-verify_dedup | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """pre_commit 验证脚本 — 委托给 code-dedup-engine CLI verify 子命令.
 

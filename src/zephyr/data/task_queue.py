@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] load_yaml解析失败->ValueError; get_ready_tasks无就绪任务返回空列表; mark_completed未知task_id->KeyError
 # [TESTS] tests/zephyr/data/test_task_queue.py
-# [A_module] module_id=MOD-L00-004-task_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-task_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务依赖图 + §6.4 并发控制）。
 

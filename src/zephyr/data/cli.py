@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 命令异常->打印错误+返回非零退出码; 不抛异常
 # [TESTS] tests/zephyr/data/test_cli.py
-# [A_module] module_id=MOD-L00-004-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: CLI启动的常驻scheduler入口(python -m zephyr.data.cli start),由CLI触发启动,启动后自动运行;非reconciler无需事件触发
 """数据源集成器 CLI（MOD-L00-004 §8.4）。

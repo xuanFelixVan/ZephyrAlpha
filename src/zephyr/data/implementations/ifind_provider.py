@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；配额耗尽->yield error 并 return
 # [TESTS] tests/zephyr/data/test_providers.py::TestIFindHelpers
-# [A_module] module_id=MOD-L00-004-ifind_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-ifind_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """IFindProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
 

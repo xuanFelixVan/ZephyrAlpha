@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] is_trading_day永不抛异常，exchange_calendars不可用时回退到weekday>=5判断
 # [TESTS] tests/zephyr/data/test_trading_calendar.py
-# [A_module] module_id=MOD-L00-004-trading-calendar | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-trading_calendar | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """A 股交易日历守卫（MOD-L00-004）。
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-GOV | scripts/migration/ | governance root split orchestrator (ARCH-031)
+# [BLUEPRINT] MOD-INF_GOV | scripts/migration/ | governance root split orchestrator (ARCH-031)
 # [MODULE] scripts.migration.governance_root_split
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.ast_import_rewriter, stdlib.shutil, stdlib.argparse, stdlib.concurrent.futures

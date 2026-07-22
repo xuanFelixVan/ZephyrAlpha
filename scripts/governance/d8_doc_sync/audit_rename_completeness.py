@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH | scripts/governance/audit_rename_completeness.py | §rename-completeness-audit
+# [BLUEPRINT] MOD-GOV_SCRIPTS_ARCH | scripts/governance/audit_rename_completeness.py | §rename-completeness-audit
 # [MODULE] scripts.governance.audit_rename_completeness
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants

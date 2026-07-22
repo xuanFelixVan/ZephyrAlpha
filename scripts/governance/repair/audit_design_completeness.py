@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-REPAIR
+# [BLUEPRINT] MOD-GOV_REPAIR
 # [MODULE] scripts.governance.repair.audit_design_completeness
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]

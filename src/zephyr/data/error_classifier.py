@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 输入None/空串->unknown; 匹配失败->unknown
 # [TESTS] tests/zephyr/data/test_error_classifier.py
-# [A_module] module_id=MOD-L00-004-error_classifier | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-error_classifier | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """数据源错误分类器——根据错误字符串判断可恢复性。
 

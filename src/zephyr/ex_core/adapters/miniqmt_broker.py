@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MiniQmtBrokerError
 # [TESTS]
-# [A_module] module_id=MOD-L06-001-miniqmt_broker | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-miniqmt_broker | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易）
 

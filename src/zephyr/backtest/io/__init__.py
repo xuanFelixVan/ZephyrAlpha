@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] BacktestResultSinkError; ArtifactNotFoundError
 # [TESTS]
-# [A_module] module_id=MOD-BT-001-io | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新增，#ARCH-047）
 

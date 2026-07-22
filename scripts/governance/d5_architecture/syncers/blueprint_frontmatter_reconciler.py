@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-GOV-SYNC-PANORAMA | docs/_working/2026-07-09-panorama_module_sync_engine.md | §Phase3
+# [BLUEPRINT] MOD-GOV_SYNC_PANORAMA | docs/_working/2026-07-09-panorama_module_sync_engine.md | §Phase3
 # [MODULE] scripts.governance.d5_architecture.syncers.blueprint_frontmatter_reconciler
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection)

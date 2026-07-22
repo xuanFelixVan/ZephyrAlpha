@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] RiskValidationBridgeError on adapter failure
 # [TESTS] tests/ex_core/test_execution_engine_unit.py
-# [A_module] module_id=MOD-EXE_risk_validation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-EXE-risk_validation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---

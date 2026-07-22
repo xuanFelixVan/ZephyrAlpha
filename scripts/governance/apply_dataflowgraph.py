@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-GOV-003 | docs/03_modules/_domain-governance/blueprint.md | §dataflowgraph
+# [BLUEPRINT] SH-GOV-003 | docs/03_modules/_domain_governance/blueprint.md | §dataflowgraph
 # [MODULE] scripts.governance.apply_dataflowgraph
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.dataflowgraph_schema; psycopg2

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ensure_ch_env_loaded 文件不存在->log warning+不抛; load_ch_config 配置缺失->抛 CHConfigError
 # [TESTS] tests/zephyr/data/test_ch_config.py
-# [A_module] module_id=MOD-L00-004-ch_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-ch_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARCH-CH-019）。
 

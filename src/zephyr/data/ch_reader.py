@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] query失败->返回空字符串(同ch_writer); count失败->返回0; inject_final纯函数不抛异常
 # [TESTS]
-# [A_module] module_id=MOD-L00-004-ch_reader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-ch_reader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ClickHouse 统一读取层（裁定 #ARCH-CH-007）。
 

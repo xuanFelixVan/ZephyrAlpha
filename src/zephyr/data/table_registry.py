@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] yaml 文件不存在->log warning+返回空注册表(开发环境友好); table() 查不到 category_id->raise KeyError(fail-closed,禁止凭记忆编表名)
 # [TESTS] tests/zephyr/data/test_table_registry.py
-# [A_module] module_id=MOD-L00-004-table_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-table_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。
 

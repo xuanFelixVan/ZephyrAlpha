@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-D5-ARCH-TOOLS | docs/03_modules/d5_architecture/blueprint.md | §query_tools
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | docs/03_modules/d5_architecture/blueprint.md | §query_tools
 # [MODULE] scripts.governance.query_module_panorama
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection)

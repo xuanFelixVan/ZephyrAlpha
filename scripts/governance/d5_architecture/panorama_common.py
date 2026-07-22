@@ -1,5 +1,5 @@
 # scripts/governance/d5_architecture/panorama_common.py
-# [BLUEPRINT] MOD-GOV-SYNC-PANORAMA | docs/_working/2026-07-10-panorama_remediation_plan.md | §Task1
+# [BLUEPRINT] MOD-GOV_SYNC_PANORAMA | docs/_working/2026-07-10-panorama_remediation_plan.md | §Task1
 # [MODULE] scripts.governance.d5_architecture.panorama_common
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] 无（纯函数，无外部依赖）

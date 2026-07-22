@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] N/A | scripts/governance/d7_code/scan_debt.py | §
+# [BLUEPRINT] MOD-GOV-scan_debt | scripts/governance/d7_code/scan_debt.py | §
 # [MODULE] scripts.governance.d7_code.scan_debt
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse)

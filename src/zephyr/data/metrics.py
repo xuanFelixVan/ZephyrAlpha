@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 所有方法不抛异常（写文件失败->log warning）
 # [TESTS] tests/zephyr/data/test_metrics.py
-# [A_module] module_id=MOD-L00-004-metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """可观测性指标采集（MOD-L00-004 §11）。
 

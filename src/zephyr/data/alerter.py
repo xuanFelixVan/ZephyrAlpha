@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] notify失败->log+不抛异常; check_*返回bool不抛异常
 # [TESTS] tests/zephyr/data/test_alerter.py
-# [A_module] module_id=MOD-L00-004-alerter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-alerter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性）。
 

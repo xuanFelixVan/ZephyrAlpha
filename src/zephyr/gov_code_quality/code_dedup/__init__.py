@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/code_quality/test_code_dedup_engine.py, tests/governance/code_quality/test_ast_comparator.py, tests/governance/code_quality/test_simplicity_auditor.py
-# [A_module] module_id=MOD-INF-017_code_dedup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """code-dedup-engine 子包 — 重复代码检测与治理引擎.
 
