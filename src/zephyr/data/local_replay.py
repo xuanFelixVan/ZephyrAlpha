@@ -191,19 +191,25 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
         return "skipped"
     try:
         tsv_bytes = file_path.read_bytes()
-        # 回灌时始终传 None 作为 cols_clause，强制 ch_writer 重新查询表列
-        # 原因：落盘时 CH 可能不可用，cols_clause 可能为空/"*"/过期列清单，
-        # 直接使用会导致 INSERT 语法错误或列不匹配（裁定 #ARCH-CH-013 Phase 1 根因修复）
+        # 回灌时使用 manifest 中保存的 cols_clause（落盘时确定，与 TSV 字段数匹配）。
+        # 仅在 cols_clause 为 None/"*"/缺失时才让 ch_writer 重新查询表列。
+        # 原因：_get_insert_columns 会排除 DEFAULT 列（如 data_source/quality_flag），
+        # 但 TSV 数据包含这些列的值，导致 INSERT 列数(12) < TSV 字段数(14) → Code: 27 parse error。
+        # 使用保存的 cols_clause 确保 INSERT 列数与 TSV 字段数一致。
+        # create_fallback=False：回灌失败时不创建新 fallback 文件，避免无限复制 duplicates。
         # 表名前缀修正：历史积压可能有不带 db. 前缀的裸表名，补全为默认库前缀
         # （裁定 #ARCH-CH-013 Phase 2：从 CLICKHOUSE_DATABASE 读取，不再硬编码 c1_market.）
         replay_table = entry["table"]
         if "." not in replay_table:
             replay_table = f"{_DEFAULT_DB}.{replay_table}"
+        saved_cols = entry.get("cols_clause")
+        replay_cols = saved_cols if saved_cols and saved_cols != "*" else None
         ok = ch_writer_mod.write_tsv(
             replay_table,
-            None,
+            replay_cols,
             tsv_bytes,
             timeout=120,
+            create_fallback=False,
         )
         if ok:
             file_path.unlink(missing_ok=True)

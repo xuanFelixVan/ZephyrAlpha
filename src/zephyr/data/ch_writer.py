@@ -466,6 +466,7 @@ def write_tsv_outcome(
     columns: str | None,
     tsv_bytes: bytes,
     timeout: int = _DEFAULT_TIMEOUT,
+    create_fallback: bool = True,
 ) -> WriteOutcome:
     """TSV 批量写入表。
 
@@ -492,6 +493,9 @@ def write_tsv_outcome(
     # 策略1: HTTP API（主路径）
     if _http_insert(sql, tsv_bytes, timeout=timeout):
         return WriteOutcome(WriteDisposition.CH_COMMITTED, "http")
+    if not create_fallback:
+        log.warning("write_tsv(%s): HTTP API 失败，跳过本地落盘（replay 模式）", table)
+        return WriteOutcome(WriteDisposition.NOT_DURABLE, "http_failed_no_fallback")
     log.warning("write_tsv(%s): HTTP API 失败，降级到本地落盘", table)
 
     # 策略2: 本地落盘兜底（裁定 #ARCH-CH-013，CH 不可达时数据不丢失）
@@ -511,12 +515,13 @@ def write_tsv(
     columns: str | None,
     tsv_bytes: bytes,
     timeout: int = _DEFAULT_TIMEOUT,
+    create_fallback: bool = True,
 ) -> bool:
     """兼容旧调用方：仅 ClickHouse 已提交才返回 ``True``。
 
     新调用方必须使用 :func:`write_tsv_outcome`，以区别本地持久化和入库成功。
     """
-    return write_tsv_outcome(table, columns, tsv_bytes, timeout).is_ch_committed
+    return write_tsv_outcome(table, columns, tsv_bytes, timeout, create_fallback).is_ch_committed
 
 
 def write_result(
