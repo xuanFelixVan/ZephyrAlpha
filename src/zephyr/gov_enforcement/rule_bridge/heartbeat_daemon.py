@@ -4,9 +4,9 @@
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.shared.io.paths (REPO_ROOT)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon)
 # [STARTUP] manual
-# [MATURITY] prototype
-# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；不抛异常（所有错误写 log 后 continue）
-# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid）；_append_heartbeat_log 字段集
+# [MATURITY] design
+# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-INVERSION 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
+# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / idle 超 _MAX_IDLE_SECONDS）；_append_heartbeat_log 字段集
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -97,6 +97,20 @@ _REGISTRY_ERROR_BACKOFF = 5
 # daemon 启动后第一次 heartbeat 的延迟（秒），给 start 调用方时间完成 registry.register
 _INITIAL_DELAY = 1
 
+# daemon 的 idle 退出上限（#ARCH-HEARTBEAT-INVERSION 治本，2026-07-23）：
+# daemon 自身是 last_heartbeat 唯一刷新源——若仅以"session 在 registry 中"判活，
+# chat 异常关闭（未走 merge/abort）时 daemon 会永久保活死 session（活性反转，
+# held_files 永久阻塞；实测 sess-39820/sess-53456 僵尸 daemon）。治本：以
+# last_activity（真实治理操作时间戳，heartbeat 不刷新）为独立活性锚点，
+# idle 超此上限自动退出 → 90s 后 registry 条目过期 → claim 自动释放。
+# 值与 session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS 同源（top-level try-import）。
+try:
+    from zephyr.security.access_control.session_concurrency import (
+        _ACTIVITY_IDLE_TIMEOUT_SECONDS as _MAX_IDLE_SECONDS,
+    )
+except Exception:  # noqa: BLE001 — 导入失败兜底（daemon 不得因导入失败崩溃）
+    _MAX_IDLE_SECONDS = 1800
+
 
 def heartbeat_file_path(project_root: str | Path, session_id: str) -> Path:
     """返回 heartbeat.jsonl 文件路径。
@@ -178,6 +192,37 @@ def _session_in_registry(session_id: str, project_root: str | Path) -> bool:
         return True
 
 
+def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | None:
+    """返回 session 的 idle 秒数（now - last_activity），用于活性反转治本退出判定。
+
+    last_activity 只由真实治理操作刷新（register/claim_file/register_dependency；
+    heartbeat 不刷新），是独立于 daemon 的活性锚点。缺失时（修复前旧条目）回退
+    start_time——绝不回退 last_heartbeat（那是 daemon 自己的输出，回退它等于
+    重新引入活性反转）。
+
+    Returns: idle 秒数；session 不在 registry / 无锚点 / 查询失败返回 None
+        （调用方按现有流程继续，不误退出）。
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(project_root)
+        info = registry.get(session_id)
+        if info is None:
+            return None
+        if isinstance(info, dict):  # 兼容 mock/旧式 dict 返回
+            anchor = info.get("last_activity") or info.get("start_time") or 0.0
+        else:
+            anchor = (getattr(info, "last_activity", 0.0) or 0.0) or (
+                getattr(info, "start_time", 0.0) or 0.0
+            )
+        if not anchor:
+            return None
+        return time.time() - float(anchor)
+    except Exception as e:  # noqa: BLE001 — 查询失败保守返回 None（不退出，对标 _session_in_registry）
+        logger.debug("session idle query failed (assume active): %s", e)
+        return None
+
+
 def _handle_signal(signum: int, frame) -> None:  # noqa: ANN001
     """signal handler：写 interrupted 记录后 sys.exit(0)。
 
@@ -204,6 +249,9 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
       3. ``_INITIAL_DELAY`` 秒后开始心跳循环
       4. 每 ``interval`` 秒：``registry.heartbeat(sid)`` + 追加 ``alive`` 记录
       5. session 不在 registry 中 → 写 ``exited`` 记录，返回 0
+      5b. session idle 超 ``_MAX_IDLE_SECONDS``（last_activity 活性锚点，
+          heartbeat 不刷新）→ 写 ``exited``(reason=idle timeout) 记录，返回 0
+          （#ARCH-HEARTBEAT-INVERSION 活性反转治本：消除僵尸 daemon 永久保活死 session）
       6. 异常 → 写 ``error`` 记录，continue（不退出）
       7. 致命错误 → 写 ``fatal`` 记录，返回 1
 
@@ -241,6 +289,24 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
             # 检查 session 是否仍在 registry 中
             if not _session_in_registry(session_id, root):
                 _append_heartbeat_log(hb_path, "exited", {"reason": "session not in registry"})
+                return 0
+
+            # 活性反转治本（2026-07-23）：idle 超 _MAX_IDLE_SECONDS 自动退出。
+            # daemon 是 last_heartbeat 唯一刷新源——仅以 registry 存在性判活会让
+            # chat 异常关闭（未 merge/abort）的 session 被自己的 daemon 永久保活
+            # （held_files 永久阻塞）。以 last_activity（真实治理操作时间戳，
+            # heartbeat 不刷新）为独立锚点：空闲超时 → 停止心跳并退出 →
+            # 90s 后 registry 条目过期 → held_files 自动释放。
+            idle = _session_idle_seconds(session_id, root)
+            if idle is not None and idle > _MAX_IDLE_SECONDS:
+                _append_heartbeat_log(
+                    hb_path, "exited",
+                    {
+                        "reason": "idle timeout",
+                        "idle_seconds": round(idle, 1),
+                        "timeout_seconds": _MAX_IDLE_SECONDS,
+                    },
+                )
                 return 0
 
             # 刷新 registry heartbeat

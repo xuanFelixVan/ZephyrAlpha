@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway ; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session, register_dependency, clear_dependency) ; zephyr.gov_enforcement.commit_gates.import_integrity_gate (_check_active_session_held_target, Phase 2.5) ; zephyr.governance.audit.reconcile_worker (_register_worker_session, _unregister_worker_session) ; zephyr.governance.audit.reconcile_runner (_count_active_workers)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
+# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-INVERSION 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -145,6 +145,14 @@ _SESSION_TTL_SECONDS: int = 3600  # pid>0 session 超时自动注销（1 小时�
 # 原 pid=0 仅靠 TTL=3600s，stale session 残留 1h 持有 held_files →
 # HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈。
 _HEARTBEAT_TIMEOUT_SECONDS: int = 90
+# pid=0 逻辑 session 的 idle 上限（#ARCH-HEARTBEAT-INVERSION 治本，2026-07-23）：
+# heartbeat_daemon 原退出判据仅"session 不在 registry"，但 daemon 自己就是
+# last_heartbeat 唯一刷新源 → chat 异常关闭（未走 merge/abort）时 daemon 永久
+# 保活死 session（活性反转，held_files 永久阻塞；实测 sess-39820/sess-53456
+# 僵尸 daemon 在 chat 结束后仍每 30s 刷新心跳）。治本：last_activity 只由真实
+# 治理操作（register/claim_file/register_dependency）刷新，heartbeat 不刷新；
+# daemon 检测 idle 超此上限自动退出 → 90s 后 registry 条目过期 → claim 自动释放。
+_ACTIVITY_IDLE_TIMEOUT_SECONDS: int = 1800
 _REGISTRY_PATH: str = ".runtime/session_registry.json"
 _HANDOFF_DIR: str = ".runtime/handoffs"
 
@@ -170,6 +178,9 @@ class SessionInfo:
     start_time: float
     held_files: list[str] = field(default_factory=list)
     last_heartbeat: float = 0.0
+    # 真实治理操作时间戳（register/claim_file/register_dependency 刷新；heartbeat
+    # 不刷新）——heartbeat_daemon idle-timeout 退出判据的独立活性锚点（活性反转治本）
+    last_activity: float = 0.0
     is_breaking_change: bool = False
     task_files: list[str] = field(default_factory=list)  # 裁定#D：任务文件集（重复施工检测）
     # #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2（TRAE-072）：
@@ -185,6 +196,7 @@ class SessionInfo:
             "start_time": self.start_time,
             "held_files": self.held_files,
             "last_heartbeat": self.last_heartbeat,
+            "last_activity": self.last_activity,
             "is_breaking_change": self.is_breaking_change,
             "task_files": self.task_files,
             "depends_on_sessions": self.depends_on_sessions,
@@ -199,6 +211,7 @@ class SessionInfo:
             # 5.147.9 修复: JSON 中 held_files 为 null 时 d.get 返回 None 而非默认 [], 后续 .append() 会 AttributeError
             held_files=d.get("held_files") or [],
             last_heartbeat=d.get("last_heartbeat", 0.0),
+            last_activity=d.get("last_activity", 0.0),
             is_breaking_change=d.get("is_breaking_change", False),
             task_files=d.get("task_files") or [],
             depends_on_sessions=d.get("depends_on_sessions") or [],
@@ -277,6 +290,7 @@ class SessionRegistry:
                 start_time=time.time(),
                 held_files=held_files or [],
                 last_heartbeat=time.time(),
+                last_activity=time.time(),
                 is_breaking_change=is_breaking_change,
                 task_files=task_files or [],
                 depends_on_sessions=depends_on_sessions or [],
@@ -315,12 +329,13 @@ class SessionRegistry:
                 )
                 data[session_id] = SessionInfo(
                     session_id=session_id, pid=os.getpid(), start_time=now,
-                    held_files=[], last_heartbeat=now,
+                    held_files=[], last_heartbeat=now, last_activity=now,
                 ).to_dict()
                 self._save(data)
 
             info = SessionInfo.from_dict(data[session_id])
             info.last_heartbeat = now  # noqa: m46-time — 顺带心跳刷新（对标 claim_file L436）
+            info.last_activity = now  # 真实治理操作刷新活性锚点（活性反转治本）
             if depends_on_session_id not in info.depends_on_sessions:
                 info.depends_on_sessions.append(depends_on_session_id)
             data[session_id] = info.to_dict()
@@ -493,7 +508,7 @@ class SessionRegistry:
                 )
                 data[session_id] = SessionInfo(
                     session_id=session_id, pid=os.getpid(), start_time=now,
-                    held_files=[], last_heartbeat=now,
+                    held_files=[], last_heartbeat=now, last_activity=now,
                 ).to_dict()
                 self._save(data)  # 立即持久化懒注册（即使后续 claim 冲突，session 仍可查询）
 
@@ -515,6 +530,7 @@ class SessionRegistry:
             # 幂等 / 新增
             own = SessionInfo.from_dict(data[session_id])
             own.last_heartbeat = now  # claim 顺带心跳
+            own.last_activity = now  # claim 是真实治理操作，刷新活性锚点（活性反转治本）
             own_norm = [_normalize_file_path(f, self._project_root) for f in own.held_files]
             if norm not in own_norm:
                 own.held_files.append(norm)

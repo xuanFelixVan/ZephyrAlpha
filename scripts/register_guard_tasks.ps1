@@ -13,7 +13,10 @@
 # correct $env:LOCALAPPDATA, same session as QMT/miniQMT terminal). Re-firing while guard is alive is a
 # no-op ("Guard already running, exit"); if guard was killed, the next fire revives it (<=5min worst case).
 #
-# Idempotent: safe to re-run; unregisters existing tasks first.
+# Idempotent + non-destructive: existing tasks are updated IN PLACE via Set-ScheduledTask.
+# NEVER Unregister+Register an existing task - Unregister TERMINATES the running guard instance
+# (root cause of silent guard deaths 2026-07-22 23:30-00:48: re-registration killed guards
+# 42196/55188 mid-duty; watchdog revived them, but service needlessly bounced).
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
 # Verify: schtasks /query /tn ZephyrAlpha_DataScheduler & schtasks /query /tn ZephyrAlpha_TickSubscriber
 
@@ -45,24 +48,31 @@ foreach ($svc in $services) {
     $argString = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $ps1Path + '"'
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argString -WorkingDirectory $RepoRoot
 
-    # Trigger: AtLogOn; repetition added post-registration (New-ScheduledTaskTrigger
-    # doesn't expose Repetition for AtLogOn triggers in PS5.1)
-    $trigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+    # Two triggers (repetition added post-registration; PS5.1 doesn't expose Repetition
+    # on trigger objects from New-ScheduledTaskTrigger):
+    #   1) AtLogOn + repeat 5min: immediate start at logon, heartbeat anchored to logon event
+    #   2) Once(now) + repeat 5min: heartbeat anchored IMMEDIATELY at registration and persists
+    #      across sessions (without this, repetition only activates after the next logon -
+    #      verified: LogonTrigger-only registration shows NextRunTime=null until re-logon)
+    $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+    $onceTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date)
 
     if (Get-ScheduledTask -TaskName $svc.TaskName -ErrorAction SilentlyContinue) {
-        Unregister-ScheduledTask -TaskName $svc.TaskName -Confirm:$false
-        Write-Host "Replaced existing task: $($svc.TaskName)"
+        # Non-destructive update: Set-ScheduledTask replaces the definition in place and
+        # does NOT terminate the running guard instance (Unregister would kill it).
+        Set-ScheduledTask -TaskName $svc.TaskName -Action $action -Trigger @($logonTrigger, $onceTrigger) `
+            -Settings $settings -Principal $principal | Out-Null
+        Write-Host "Updated existing task in place (running guard preserved): $($svc.TaskName)"
+    } else {
+        Register-ScheduledTask -TaskName $svc.TaskName -Action $action -Trigger @($logonTrigger, $onceTrigger) `
+            -Settings $settings -Principal $principal -Force | Out-Null
+        Write-Host "Registered watchdog task: $($svc.TaskName) -> $($svc.Script)"
     }
-
-    Register-ScheduledTask -TaskName $svc.TaskName -Action $action -Trigger $trigger `
-        -Settings $settings -Principal $principal -Force | Out-Null
 
     # Add watchdog heartbeat: repeat every 5min, no Duration => repeats indefinitely
     $task = Get-ScheduledTask -TaskName $svc.TaskName
-    $task.Triggers[0].Repetition.Interval = "PT5M"
+    foreach ($t in $task.Triggers) { $t.Repetition.Interval = "PT5M" }
     $task | Set-ScheduledTask | Out-Null
-
-    Write-Host "Registered watchdog task: $($svc.TaskName) -> $($svc.Script)"
 }
 
 Write-Host ""

@@ -223,6 +223,117 @@ def test_run_daemon_lifecycle_smoke(tmp_path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# #ARCH-HEARTBEAT-INVERSION: idle-timeout 退出（活性反转治本，2026-07-23）
+# ---------------------------------------------------------------------------
+
+
+def test_run_daemon_exits_on_idle_timeout(tmp_path: Path) -> None:
+    """last_activity 超 idle 上限时 daemon 自动退出（消除僵尸 daemon 永久保活死 session）。
+
+    场景：chat 异常关闭（未 merge/abort），session 无真实治理操作，last_activity
+    停留在 4000s 前。daemon 首次循环即检测 idle > _MAX_IDLE_SECONDS(1800s)，
+    停止心跳并退出——registry 条目 90s 后过期，held_files 自动释放。
+    """
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+        def get(self, sid):
+            return {
+                "session_id": sid,
+                "last_activity": time.time() - 4000,  # idle 4000s > 1800s
+                "start_time": time.time() - 5000,
+            }
+        def heartbeat(self, sid):
+            pass
+
+    with patch(
+        "zephyr.security.access_control.session_concurrency.SessionRegistry",
+        _FakeRegistry,
+    ), patch(
+        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    ), patch(
+        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._MAX_IDLE_SECONDS", 1800
+    ):
+        rc = run_daemon("sess-idle-001", tmp_path, interval=0.05)
+
+    assert rc == 0, "daemon 应正常退出（rc=0）"
+    hb = heartbeat_file_path(tmp_path, "sess-idle-001")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    exited = [r for r in recs if r["status"] == "exited"]
+    assert exited, "应有 exited 记录"
+    assert exited[0]["reason"] == "idle timeout"
+    assert "alive" not in [r["status"] for r in recs], "idle 退出发生在首次心跳前，不得有 alive 记录"
+
+
+def test_run_daemon_keeps_alive_when_recent_activity(tmp_path: Path) -> None:
+    """last_activity 新鲜时 daemon 正常心跳（不误杀活跃 session）。
+
+    last_activity=now 的活跃 session：daemon 照常 heartbeat + alive 记录，
+    直到 session 从 registry 注销后才以 "session not in registry" 退出。
+    """
+    calls = {"get": 0}
+
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+        def get(self, sid):
+            calls["get"] += 1
+            # 前 2 次查询返回活跃 session（idle≈0），第 3 次返回 None 让 daemon 退出
+            if calls["get"] >= 3:
+                return None
+            return {"session_id": sid, "last_activity": time.time()}
+        def heartbeat(self, sid):
+            pass
+
+    with patch(
+        "zephyr.security.access_control.session_concurrency.SessionRegistry",
+        _FakeRegistry,
+    ), patch(
+        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    ):
+        rc = run_daemon("sess-active-001", tmp_path, interval=0.05)
+
+    assert rc == 0
+    hb = heartbeat_file_path(tmp_path, "sess-active-001")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    statuses = [r["status"] for r in recs]
+    assert "alive" in statuses, "活跃 session 应有 alive 心跳记录"
+    exited = [r for r in recs if r["status"] == "exited"]
+    assert exited and exited[0]["reason"] == "session not in registry"
+
+
+def test_session_idle_seconds_fallback_and_none(tmp_path: Path) -> None:
+    """_session_idle_seconds：session 不存在返回 None；缺 last_activity 回退 start_time。"""
+    from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import _session_idle_seconds
+
+    class _NoneRegistry:
+        def __init__(self, root):
+            pass
+        def get(self, sid):
+            return None
+
+    with patch(
+        "zephyr.security.access_control.session_concurrency.SessionRegistry",
+        _NoneRegistry,
+    ):
+        assert _session_idle_seconds("sess-none-001", tmp_path) is None
+
+    class _LegacyRegistry:
+        def __init__(self, root):
+            pass
+        def get(self, sid):
+            # 修复前旧条目：无 last_activity，仅 start_time（绝不回退 last_heartbeat）
+            return {"session_id": sid, "start_time": time.time() - 100}
+
+    with patch(
+        "zephyr.security.access_control.session_concurrency.SessionRegistry",
+        _LegacyRegistry,
+    ):
+        idle = _session_idle_seconds("sess-legacy-001", tmp_path)
+        assert idle is not None and idle >= 99, f"旧条目应回退 start_time 计算 idle，got {idle}"
+
+
+# ---------------------------------------------------------------------------
 # P1-4: _classify_merge_failure 错误分类
 # ---------------------------------------------------------------------------
 
