@@ -13,8 +13,8 @@
 # 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "2.1.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。"
+version: "2.2.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。"
 
 data_sources:
   - id: DS-IFIND
@@ -245,6 +245,63 @@ data_sources:
       initial_wait_sec: 5.0
       retry_on: ["SSLError", "ConnectionError", "HTTPError"]
       respect_robots_txt: true
+
+  - id: DS-CLS
+    runtime_id: cls
+    name: "财联社电报"
+    name_en: "CLS Telegraph"
+    type: open_source
+    account_type: free
+    category: news
+    vendor: "财联社"
+    interface_types: ["RSSHub路由"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无(匿名访问RSSHub)"
+    rate_limit: "无明确限制,高频请求可能被反爬"
+    status: active
+    coverage: "财联社电报(分钟级财经快讯)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+    policy:
+      rpm: 30
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+      initial_wait_sec: 2.0
+      retry_on: ["HTTPError", "ConnectionError", "TimeoutError"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: false
+      extra:
+        requires_rsshub: true
+        rsshub_route: "/cls/telegraph"
+
+  - id: DS-EASTMONEY_NEWS
+    runtime_id: eastmoney_news
+    name: "东方财富新闻"
+    name_en: "EastMoney News"
+    type: open_source
+    account_type: free
+    category: news
+    vendor: "东方财富"
+    interface_types: ["HTTP REST"]
+    api_count: 0
+    auth_required: false
+    auth_method: "无(匿名HTTP直连)"
+    rate_limit: "无明确限制,高频请求可能被反爬"
+    status: active
+    coverage: "东方财富7x24快讯(实时财经新闻)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §7.4"
+    policy:
+      rpm: 30
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+      initial_wait_sec: 2.0
+      retry_on: ["HTTPError", "ConnectionError", "TimeoutError"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: false
 
   - id: DS-BAIDUYUN
     runtime_id: baiduyun
