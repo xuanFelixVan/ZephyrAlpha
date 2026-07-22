@@ -3211,25 +3211,28 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             print(f"[DEPGRAPH-DB] WARNING: edges_metadata UPSERT 失败（表可能未创建）: {e}")
 
         # 裁定#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION:
-        # 全量重扫前快照手动提升的 build_status/design_maturity，防止 DELETE+INSERT 重置。
+        # 全量重扫前快照手动提升的 build_status，防止 DELETE+INSERT 重置。
         # build_status 不在文件头中（depgraph-only 生命周期概念），rescan 总是写入 'generated' 默认值，
-        # 导致手动提升的状态（testing/stable/deprecated + production design_maturity）被静默回滚。
-        # 对标 edges_metadata UPSERT 保护机制（Stage 2），为 nodes 提供同等保护。
+        # 导致手动提升的状态（testing/stable/deprecated）被静默回滚。
+        # 注意：design_maturity 不在此保护范围内——其 SSoT 是 [MATURITY] 文件头，
+        # rescan 从文件头读取并写入 DB。保护 design_maturity 会掩盖 header/DB 不一致
+        # （裁定#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION-REFINEMENT）。
+        # 对标 edges_metadata UPSERT 保护机制（Stage 2），为 nodes build_status 提供同等保护。
         cursor.execute(
-            "SELECT path, build_status, design_maturity FROM nodes "
+            "SELECT path, build_status FROM nodes "
             "WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
             "AND node_type NOT IN ('database', 'gate_rule_set', 'script_collection', "
             "'test_suite', 'rule_registry_collection') "
             "AND build_status IN ('testing', 'stable', 'deprecated')"
         )
-        _preserved_node_status: dict[str, tuple[str, str]] = {
-            row["path"]: (row["build_status"], row["design_maturity"])
+        _preserved_node_status: dict[str, str] = {
+            row["path"]: row["build_status"]
             for row in cursor.fetchall()
         }
         if _preserved_node_status:
             print(
                 f"[STATUS-PRESERVE] 快照 {len(_preserved_node_status)} 个节点的 "
-                f"build_status/design_maturity（防止 rescan 重置手动提升）"
+                f"build_status（防止 rescan 重置手动提升；design_maturity 由 [MATURITY] 头部 SSoT 提供）"
             )
 
         # Clear existing operational data (preserve design-state)
@@ -3515,22 +3518,24 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             print(f"[DEPGRAPH-DB] WARNING: nodes_metadata 恢复失败: {e}")
 
         # 裁定#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION:
-        # 恢复 DELETE 前快照的手动提升 build_status/design_maturity。
+        # 恢复 DELETE 前快照的手动提升 build_status（仅 build_status，不含 design_maturity）。
         # nodes_metadata 恢复（Stage 2）仅在 build_status 为空时生效，
         # 但 INSERT 总是写入 'generated'（非空），所以需要独立的 status 恢复步骤。
         # 仅更新 build_status='generated' 的节点（不覆盖新扫描结果中可能已提升的值）。
+        # design_maturity 由 rescan 从 [MATURITY] 文件头写入（SSoT），不在此恢复——
+        # 保护 design_maturity 会掩盖 header/DB 不一致（REFINEMENT 裁定）。
         _restored_status_count = 0
-        for _preserved_path, (_preserved_bs, _preserved_dm) in _preserved_node_status.items():
+        for _preserved_path, _preserved_bs in _preserved_node_status.items():
             cursor.execute(
-                "UPDATE nodes SET build_status=%s, design_maturity=%s "
+                "UPDATE nodes SET build_status=%s "
                 "WHERE path=%s AND build_status='generated'",
-                (_preserved_bs, _preserved_dm, _preserved_path),
+                (_preserved_bs, _preserved_path),
             )
             _restored_status_count += cursor.rowcount
         if _restored_status_count:
             print(
                 f"[STATUS-PRESERVE] 恢复 {_restored_status_count} 个节点的 "
-                f"build_status/design_maturity（rescan 后状态保留）"
+                f"build_status（rescan 后状态保留；design_maturity 由 [MATURITY] 头部提供）"
             )
 
         # Insert edges
