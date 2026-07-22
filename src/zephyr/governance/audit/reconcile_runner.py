@@ -354,8 +354,8 @@ def launch_reconcile_async(
             creationflags=creationflags,
             start_new_session=(os.name != "nt"),  # POSIX: 新 session
         )
-    # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
-    _WORKER_PROCS[commit_sha] = proc
+        # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
+        _WORKER_PROCS[commit_sha] = proc
     except Exception as e:  # noqa: BLE001 — launch 失败 fail-open（sync 兜底）
         # spawn 失败：改 status 为 failed，调用方应回退 sync
         write_status_file(
