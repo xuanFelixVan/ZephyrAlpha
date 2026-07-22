@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config
+# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config; zephyr.shared.observability.metrics
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -45,6 +45,7 @@ import http.client
 import logging
 import os
 import threading
+import time
 import urllib.parse
 from dataclasses import dataclass
 from enum import Enum
@@ -60,6 +61,9 @@ log = logging.getLogger(__name__)
 # 配置缺失时 _CH_HOST 为空字符串，连接时 fail-closed（Client(host="") 会失败）。
 from zephyr.data.ch_config import ensure_ch_env_loaded as _ensure_ch_env_loaded
 _ensure_ch_env_loaded()
+
+# P1-5 metrics 埋点（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase E 补齐）
+from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
 _CH_HOST = os.environ.get("CLICKHOUSE_HOST", "")
 _CH_TCP_PORT = int(os.environ.get("CLICKHOUSE_PORT", "9000"))
 _CH_HTTP_PORT = int(os.environ.get("CLICKHOUSE_HTTP_PORT", "8123"))
@@ -108,6 +112,21 @@ class WriteOutcome:
         return self.disposition is WriteDisposition.CH_COMMITTED
 
 
+# P1-5 metrics 埋点映射（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase E 补齐）
+_OUTCOME_LABELS: dict[WriteDisposition, str] = {
+    WriteDisposition.CH_COMMITTED: "committed",
+    WriteDisposition.LOCAL_DURABLE: "local",
+    WriteDisposition.NOT_DURABLE: "not_durable",
+}
+
+
+def _record_write_outcome(disposition: WriteDisposition, elapsed: float) -> None:
+    """记录 CH 写入 metrics：Counter(outcome label) + Histogram(latency)。"""
+    reg = _get_metrics_registry()
+    reg.inc("zephyr_ch_write_total", {"outcome": _OUTCOME_LABELS.get(disposition, "unknown")})
+    reg.observe("zephyr_ch_write_latency_seconds", elapsed)
+
+
 def _get_client():
     """获取 clickhouse-driver TCP 客户端单例（懒初始化）。
 
@@ -144,11 +163,13 @@ def _get_client():
                        tcp_keepalive=True, sync_request_timeout=10)
             c.execute("SELECT 1")
             _ch_client = c
+            _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 0)
             log.info("clickhouse-driver TCP 已连接 (%s:%s)", _CH_HOST, _CH_TCP_PORT)
             return _ch_client
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("clickhouse-driver TCP 连接失败 (%s:%s): %s", _CH_HOST, _CH_TCP_PORT, e)
         _tcp_fail_ts = _time.time()
+        _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 1)
         return None
 
 
@@ -192,6 +213,7 @@ def _get_http_host() -> str:
             if resp.status == 200:
                 _ch_http_host = _CH_HOST
                 conn.close()
+                _get_metrics_registry().set_gauge("zephyr_ch_http_cooldown_active", 0)
                 log.info("ClickHouse HTTP 已连接 (%s:%s)", _CH_HOST, _CH_HTTP_PORT)
                 return _ch_http_host
             conn.close()
@@ -199,6 +221,7 @@ def _get_http_host() -> str:
             log.warning("ClickHouse HTTP 连接失败 (%s:%s): %s", _CH_HOST, _CH_HTTP_PORT, e)
         # 兜底：HTTP 不可用，设置冷却时间戳
         _http_fail_ts = _time.time()
+        _get_metrics_registry().set_gauge("zephyr_ch_http_cooldown_active", 1)
         log.warning("ClickHouse HTTP 不可用，%ds 内跳过", _HTTP_COOLDOWN_SEC)
         return ""
 
@@ -219,6 +242,7 @@ def _invalidate_tcp_client(reason: str = "") -> None:
                 pass
             _ch_client = None
             _tcp_fail_ts = _time.time()
+            _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 1)
             log.info("TCP 连接已失效（%s），%ds 冷却后重试", reason, _TCP_COOLDOWN_SEC)
 
 
@@ -230,6 +254,7 @@ def _invalidate_http_host(reason: str = "") -> None:
         if _ch_http_host is not None:
             _ch_http_host = None
             _http_fail_ts = _time.time()
+            _get_metrics_registry().set_gauge("zephyr_ch_http_cooldown_active", 1)
             log.info("HTTP 连接已失效（%s），%ds 冷却后重试", reason, _HTTP_COOLDOWN_SEC)
 
 
@@ -484,17 +509,21 @@ def write_tsv_outcome(
         真实投递结果。LOCAL_DURABLE 表示数据已安全落盘、待回灌，
         但尚未提交到 ClickHouse。
     """
+    _t0 = time.time()
     if not tsv_bytes:
         log.warning("write_tsv(%s): 空数据，跳过", table)
+        _record_write_outcome(WriteDisposition.NOT_DURABLE, time.time() - _t0)
         return WriteOutcome(WriteDisposition.NOT_DURABLE, "empty payload")
     cols_clause = columns if columns else _get_insert_columns(table)
     sql = SQL_INSERT_TSV.format(table=table, cols_clause=cols_clause)
 
     # 策略1: HTTP API（主路径）
     if _http_insert(sql, tsv_bytes, timeout=timeout):
+        _record_write_outcome(WriteDisposition.CH_COMMITTED, time.time() - _t0)
         return WriteOutcome(WriteDisposition.CH_COMMITTED, "http")
     if not create_fallback:
         log.warning("write_tsv(%s): HTTP API 失败，跳过本地落盘（replay 模式）", table)
+        _record_write_outcome(WriteDisposition.NOT_DURABLE, time.time() - _t0)
         return WriteOutcome(WriteDisposition.NOT_DURABLE, "http_failed_no_fallback")
     log.warning("write_tsv(%s): HTTP API 失败，降级到本地落盘", table)
 
@@ -506,7 +535,9 @@ def write_tsv_outcome(
     # （裁定 #ARCH-CH-013 Phase 1 根因修复）
     fallback_cols = None if cols_clause == "*" else cols_clause
     if save_fallback(table, fallback_cols, tsv_bytes):
+        _record_write_outcome(WriteDisposition.LOCAL_DURABLE, time.time() - _t0)
         return WriteOutcome(WriteDisposition.LOCAL_DURABLE, "local_fallback")
+    _record_write_outcome(WriteDisposition.NOT_DURABLE, time.time() - _t0)
     return WriteOutcome(WriteDisposition.NOT_DURABLE, "local_fallback_failed")
 
 
