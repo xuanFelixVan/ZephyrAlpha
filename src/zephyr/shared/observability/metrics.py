@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.observability.metrics
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.data.wal_writer; zephyr.data.tick_subscriber
+# [CONSUMERS] zephyr.data.wal_writer; zephyr.data.tick_subscriber; zephyr.data.ch_writer
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
