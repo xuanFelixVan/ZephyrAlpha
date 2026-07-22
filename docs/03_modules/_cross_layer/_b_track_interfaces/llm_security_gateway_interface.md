@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOD-006
 title: LLM Security Gateway Interface / LLM 安全网关接口规范
 doc_type: architecture_view

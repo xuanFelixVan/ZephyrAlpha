@@ -84,6 +84,26 @@ values:
 #   8. 同一文档，任何 AI 按此树判定，结果必须一致（可复现）
 #   9. criteria 为机器可读结构（signal/value/operator），供脚本/gateway 直接消费
 #  10. v2.1.0 变更：从路径判定改为内容判定，解决 changes/ 等过程文件误标 permanent
+#
+# ── zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001，2026-07-22）──
+# 病根：check_frontmatter_metadata.py 原 flat fail-open（if not metadata: return issues）
+#   导致 162 个无 frontmatter 的 .md 文件（29.6%）绕过 TTL 检查。
+#   改为 fail-closed 影响面过大（162 文件需补 frontmatter），且与不可能三角冲突。
+#
+# 不可能三角（三条规则空交集）：
+#   (A) trae_071 LAW-2: docs/_working/ 文件需 frontmatter
+#   (B) EXEMPT-ZONE-FM gate: 临时区不要求 doc_type（阻断设置 doc_type）
+#   (C) TTL-METADATA gate: .md 文件需 doc_type（--strict-doctype 时 hard block）
+#   A∩B∩C = ∅：临时区 .md 需 frontmatter(A) + 不能有 doc_type(B) + 必须有 doc_type(C)
+#
+# 治本解法：zone-aware 解耦 doc_type 与 ttl 校验
+#   - permanent zone .md 无 frontmatter → HARD BLOCK（ttl=permanent + doc_type required）
+#   - temporary zone .md 无 frontmatter → HARD BLOCK（ttl=task_bound required）
+#   - temporary zone .md 有 frontmatter → 跳过 doc_type 校验，保留 ttl 校验
+#   - neutral/exempt/root_whitelist zone 无 frontmatter → PASS（向后兼容）
+#   - 路径不在 repo 内 → 按 neutral 处理（向后兼容）
+# 真源：directory_contract.yaml directory_zones → _classify_file_zone() 分类
+# 实现：check_frontmatter_metadata.py _check_file() zone-aware fail-open
 decision_tree:
   root: Q1
   nodes:

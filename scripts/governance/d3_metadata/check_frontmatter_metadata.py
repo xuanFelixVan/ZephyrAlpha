@@ -10,7 +10,7 @@
 # pre-commit GATE-15 和 gateway TTL-METADATA gate 均通过 subprocess 复用本脚本（无第二检测实现）。
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
+# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001）：permanent/temporary zone .md 无 frontmatter → HARD BLOCK；temporary zone .md 有 frontmatter → 跳过 doc_type 校验（不可能三角解耦）；neutral/exempt/root_whitelist zone 无 frontmatter → PASS；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -81,7 +81,7 @@ from _shared.frontmatter import (  # noqa: E402
     parse_json_meta,
     parse_py_header,
 )
-from _shared.yaml_utils import load_vocabulary_values, load_vocabulary_deprecated_map  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）  # noqa: E402
+from _shared.yaml_utils import load_yaml, load_vocabulary_values, load_vocabulary_deprecated_map  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）  # noqa: E402
 
 # 字段校验配置——GATE-15 校验哪些字段的唯一声明
 # 吸收归档脚本 validate_frontmatter_values.py 的 VOCAB_FIELD_MAP 模式
@@ -99,6 +99,93 @@ _FIELD_RULES: dict[str, dict] = {
         "deprecated_key": "deprecated_values",  # 词表有废弃值节
     },
 }
+
+
+# ── 区域分类（zone-aware fail-open 治本 #ARCH-TTL-FAILOPEN-001）──
+# 不可能三角解法：解耦 doc_type 与 ttl 校验
+#   (A) trae_071 LAW-2: docs/_working/ 文件需 frontmatter
+#   (B) EXEMPT-ZONE-FM: 临时区不要求 doc_type
+#   (C) TTL-METADATA: .md 文件需 doc_type（--strict-doctype 时 hard block）
+# 解法：temporary zone 跳过 doc_type 校验，但保留 ttl 校验；
+#   permanent/temporary zone 无 frontmatter → HARD BLOCK（治本 flat fail-open 漏洞）
+_CONTRACT_CACHE: dict | None = None
+
+# 不在 directory_contract.yaml directory_zones 中显式声明但应豁免 frontmatter 校验的区域
+_EXEMPT_ZONE_PREFIXES = (
+    "docs/_archive/",
+    ".runtime/",
+    ".trae/",
+    "docs/01_policies_and_standards/templates/",
+)
+
+
+def _load_directory_contract() -> dict:
+    """加载 directory_contract.yaml 的 directory_zones（带缓存）。
+
+    治本 #ARCH-TTL-FAILOPEN-001：zone-aware fail-open 需要目录区域信息。
+    真源：docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
+
+    Returns:
+        包含 permanent_paths/temporary_paths/root_whitelist/generator_exempt 的 dict。
+        加载失败返回空 dict（fail-open——不阻断，退化为 neutral PASS）。
+    """
+    global _CONTRACT_CACHE
+    if _CONTRACT_CACHE is not None:
+        return _CONTRACT_CACHE
+    contract_path = (
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
+        / "contracts" / "directory_contract.yaml"
+    )
+    try:
+        data = load_yaml(str(contract_path))
+    except (FileNotFoundError, OSError):
+        _CONTRACT_CACHE = {}
+        return _CONTRACT_CACHE
+    if not isinstance(data, dict):
+        _CONTRACT_CACHE = {}
+        return _CONTRACT_CACHE
+    zones = data.get("directory_zones", {})
+    _CONTRACT_CACHE = {
+        "permanent_paths": zones.get("permanent", {}).get("paths", []),
+        "temporary_paths": zones.get("temporary", {}).get("paths", []),
+        "root_whitelist": data.get("root_directory_whitelist", {}).get("files", []),
+        "generator_exempt": data.get("generator_exempt_paths", []),
+    }
+    return _CONTRACT_CACHE
+
+
+def _classify_file_zone(rel_path: str) -> str:
+    """分类文件所在的目录区域。
+
+    依据 directory_contract.yaml 的 directory_zones 定义。
+    rel_path 必须是 / 分隔的相对路径（如 "docs/_working/foo.md"）。
+
+    Returns:
+        "permanent" | "temporary" | "exempt_zone" | "root_whitelist" |
+        "generator_exempt" | "neutral"
+    """
+    contract = _load_directory_contract()
+    # 根目录文件（无 / 分隔符）
+    if "/" not in rel_path and "\\" not in rel_path:
+        if rel_path in contract.get("root_whitelist", []):
+            return "root_whitelist"
+    # 生成器豁免
+    for gen_path in contract.get("generator_exempt", []):
+        if rel_path.startswith(gen_path):
+            return "generator_exempt"
+    # 临时区
+    for tmp_path in contract.get("temporary_paths", []):
+        if rel_path.startswith(tmp_path):
+            return "temporary"
+    # 豁免区（不在 directory_zones 但应豁免 frontmatter 校验）
+    for zone_prefix in _EXEMPT_ZONE_PREFIXES:
+        if rel_path.startswith(zone_prefix):
+            return "exempt_zone"
+    # 永久区
+    for perm_path in contract.get("permanent_paths", []):
+        if rel_path.startswith(perm_path):
+            return "permanent"
+    return "neutral"
 
 
 def _check_file(
@@ -137,13 +224,38 @@ def _check_file(
     else:
         return issues  # 不校验的扩展名
 
-    # 无头部的文件跳过（不强制要求头部，仅校验有头部文件的字段）
+    # zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001）
+    # 替换原 flat fail-open（if not metadata: return issues）
+    # 不可能三角解法：permanent/temporary zone 无 frontmatter → HARD BLOCK；
+    #   其他 zone 无 frontmatter → PASS（保持向后兼容）
+    try:
+        rel_path = str(fpath.relative_to(REPO_ROOT)).replace("\\", "/")
+        zone = _classify_file_zone(rel_path)
+    except ValueError:
+        zone = "neutral"  # 路径不在 repo 内（如测试 tmp_path），按 neutral 处理
+
     if not metadata:
-        return issues
+        # 无 frontmatter 的文件——按 zone 分类处理
+        if zone == "permanent" and suffix == ".md":
+            return [
+                "missing frontmatter in permanent zone "
+                "(ttl=permanent + doc_type required)"
+            ]
+        if zone == "temporary" and suffix == ".md":
+            return [
+                "missing ttl frontmatter in temporary zone "
+                "(ttl=task_bound required, doc_type exempt)"
+            ]
+        return issues  # root_whitelist / generator_exempt / exempt_zone / neutral: PASS
 
     for field, rule in field_rules.items():
         # doc_type 只对 .md 校验（其他格式无 doc_type 字段）
         if field == "doc_type" and suffix != ".md":
+            continue
+        # temporary zone 跳过 doc_type 校验（不可能三角治本 #ARCH-TTL-FAILOPEN-001）
+        # 理由：EXEMPT-ZONE-FM gate 阻止临时区设置 doc_type，TTL-METADATA gate
+        #   不应同时要求 doc_type——解耦后临时区只校验 ttl
+        if field == "doc_type" and zone == "temporary":
             continue
         val = metadata.get(field)
         is_strict = rule["always_strict"] or (field == "doc_type" and strict_doctype)

@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: index
 status: active
 title: "system_telemetry — 目录索引"

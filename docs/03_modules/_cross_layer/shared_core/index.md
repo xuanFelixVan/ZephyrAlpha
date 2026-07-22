@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: index
 status: active
 title: "shared_core — 目录索引"

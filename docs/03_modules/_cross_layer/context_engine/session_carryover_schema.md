@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STD-SESSION-CARRYOVER-001
 title: Session Carryover Schema / 会话接续 Schema
 doc_type: blueprint

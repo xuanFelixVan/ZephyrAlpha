@@ -1,4 +1,5 @@
 # [A_test] module_id: SRC-TST-2401 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
 """test_critical_warn_ack.py — critical_warn 告警消解语义单测
 
 权威依据：reconciliation_registry.py（GATE-DEPGRAPH-OPS 治本 Phase 2/3）

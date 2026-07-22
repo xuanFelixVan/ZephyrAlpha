@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: index
 status: active
 title: "vector_memory — 目录索引"

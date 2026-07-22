@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: index
 status: active
 title: "mcp_servers — 目录索引"

@@ -1,4 +1,4 @@
-﻿---
+---
 doc_type: index
 status: active
 title: "_domain_knowledge — 目录索引"

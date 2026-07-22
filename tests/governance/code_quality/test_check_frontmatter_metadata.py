@@ -31,6 +31,7 @@ import pytest
 # 治本：_load_deprecated_values/load_vocabulary_values 已重构为共享 util（D-D-05：禁止复制 _load_xxx）。
 # 新函数 load_vocabulary_values/load_vocabulary_deprecated_map 在 _shared.yaml_utils，
 # 由 check_frontmatter_metadata 模块级 re-export，故从同一模块导入。
+import scripts.governance.d3_metadata.check_frontmatter_metadata as _cfm
 from scripts.governance.d3_metadata.check_frontmatter_metadata import (
     _FIELD_RULES,
     _check_file,
@@ -163,3 +164,58 @@ def test_generic_loader_doctype():
     assert "policy" in values
     assert "vocabulary" in values
     assert isinstance(values, set)
+
+
+# ── zone-aware fail-open 测试（治本 #ARCH-TTL-FAILOPEN-001）──
+# 不可能三角解法验证：temporary zone 跳过 doc_type 但保留 ttl；
+#   permanent/temporary zone 无 frontmatter → HARD BLOCK
+
+def test_no_fm_permanent_zone_blocks(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """permanent zone .md 无 frontmatter → HARD BLOCK。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "permanent")
+    fpath = tmp_path / "test.md"
+    fpath.write_text("# just a title\n\nno frontmatter here\n", encoding="utf-8")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert len(issues) == 1
+    assert "missing frontmatter in permanent zone" in issues[0]
+
+
+def test_no_fm_temporary_zone_blocks(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """temporary zone .md 无 frontmatter → HARD BLOCK（ttl required）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "temporary")
+    fpath = tmp_path / "test.md"
+    fpath.write_text("# just a title\n\nno frontmatter here\n", encoding="utf-8")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert len(issues) == 1
+    assert "missing ttl frontmatter in temporary zone" in issues[0]
+
+
+def test_no_fm_neutral_zone_passes(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """neutral zone .md 无 frontmatter → PASS（向后兼容）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "neutral")
+    fpath = tmp_path / "test.md"
+    fpath.write_text("# just a title\n\nno frontmatter here\n", encoding="utf-8")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert issues == []
+
+
+def test_temporary_zone_skips_doctype(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """temporary zone .md 有 ttl 无 doc_type, strict=True → PASS（doc_type 跳过）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "temporary")
+    fpath = _make_md(tmp_path, "ttl: task_bound")  # 有 ttl, 无 doc_type
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert issues == []
+
+
+def test_temporary_zone_ttl_still_required(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """temporary zone .md 有 doc_type 无 ttl → BLOCK on ttl（ttl 仍必填）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "temporary")
+    fpath = _make_md(tmp_path, "doc_type: policy")  # 有 doc_type, 无 ttl
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert len(issues) == 1
+    assert "missing required field 'ttl'" in issues[0]
