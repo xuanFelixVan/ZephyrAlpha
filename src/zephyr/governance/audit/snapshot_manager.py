@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SnapshotError on write failure
 # [TESTS] tests/test_event_store_stress.py
-# [A_module] module_id=MOD-DAT_snapshot_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-snapshot_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

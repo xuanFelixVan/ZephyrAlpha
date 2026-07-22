@@ -107,7 +107,6 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
     "LICENSE",
-    "README.md",
 ]
 
 TECH_VERSION_TOKENS: list[str] = [
@@ -901,7 +900,7 @@ _N16_YAML_PATH = (
 # fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)
 _N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
 _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset({
-    "blueprint.md", "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml", "index.md",
+    "blueprint.md", "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
 })
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
     "_DO_NOT_USE_old_tree", "_archive", "_backups", "session_logs",

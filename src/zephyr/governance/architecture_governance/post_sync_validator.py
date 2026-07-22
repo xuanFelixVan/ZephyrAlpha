@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无异常抛出——纯函数返回 str | None；调用方负责将 reason 包装为 PostSyncValidationError（L1）或聚合到报告（L3）
 # [TESTS] tests/governance/shared/test_post_sync_validation.py (36 场景 R01-R36，覆盖 7 类攻击面 + W3 孪生字段)；scripts/governance/meta/mutation_test_post_sync_validator.py (17 变异, score 100%)
-# [A_module] module_id=MOD-DAT_post_sync_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-post_sync_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
