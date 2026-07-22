@@ -928,25 +928,29 @@ class GitCommitGateway:
                 message=_block_err,
             )
 
-        # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
-        # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
-        # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
-        # （#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复：与 session_worktree._run_pre_commit_gates L1174 对称）
-        gate_results = self._gate_registry.check_all(
-            self, existing, session_id=session_id, allow_overlap=allow_overlap,
-            allow_promote=allow_promote, commit_message=message,
-        )
-        blocked = self._check_gate_results(gate_results)
-        if blocked is not None:
-            return blocked
-
+        # commit message 构造（不依赖 staged 状态，锁外构造）
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
         if allow_overlap:
             full_message += f"\n[GW:{session_id}:overlap]"
 
+        # TRAE-079 铁律1：[gate → stage → commit] 整体在 _GlobalCommitLock 临界区内，消除 TOCTOU
+        # 病根：gate 检查在锁外时，另一 session 可在 gate 通过后、commit 前修改文件（搭便车/FOREIGN_CHANGE）
+        # 治本：gate 检查移入文件锁临界区，串行化整个 [gate → stage → commit] 不可分割
         try:
             with _GlobalCommitLock(self.project_root):
+                # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
+                # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
+                # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
+                # （#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复：与 session_worktree._run_pre_commit_gates L1174 对称）
+                gate_results = self._gate_registry.check_all(
+                    self, existing, session_id=session_id, allow_overlap=allow_overlap,
+                    allow_promote=allow_promote, commit_message=message,
+                )
+                blocked = self._check_gate_results(gate_results)
+                if blocked is not None:
+                    return blocked
+
                 result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
