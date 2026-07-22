@@ -665,9 +665,10 @@ tasks:
     date_col: trade_date
     dependencies: ["industry_class_refresh"]
     capability: kline_sector
-    symbols: null  # 由 industry_class_refresh 提供板块代码列表
+    symbols: null  # null=tdx_provider._resolve_sector_symbols 从 sector_constituent 表获取880xxx板块代码
     extra:
-      description: "板块指数K线增量（mootdx index_bars）"
+      description: "板块指数日K线增量（mootdx index_bars，period=1d）"
+      period: 1d
       count: 100
 
   - task_id: option_iv_surface_incremental
@@ -1541,3 +1542,78 @@ tasks:
       description: "880xxx板块K线合成（ClickHouse DB内 toStartOfInterval 聚合，1m/5m→15m/30m/60m，幂等DELETE+INSERT）"
       trigger: manual_script
       resample_method: db_internal_aggregation
+
+  # ============== 880xxx板块分钟K线（tdx mootdx TCP直连，盘中实时获取，2026-07-22）==============
+  # mootdx index_bars 通过 TCP 直连通达信行情服务器，盘中可实时获取880xxx分钟K线
+  # 不依赖 tdx 客户端盘后下载（tqcenter refresh_kline 盘中无法获取分钟数据，依赖tdx客户端fzline文件）
+  # symbols=null 时 tdx_provider._resolve_sector_symbols 自动从 sector_constituent 表获取全部880xxx板块代码
+  # 写入 c1_market.kline_sector 表（与 kline_sector_incremental 日线共用，trade_date 列区分日K/分钟K）
+  - task_id: kline_sector_1min_incremental
+    table: c1_market.kline_sector
+    source: tdx
+    schedule: intraday_minute
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: kline_sector
+    symbols: null
+    extra:
+      description: "880xxx板块1分钟K线增量（mootdx TCP直连盘中实时获取，不依赖tdx客户端盘后下载）"
+      period: 1m
+      count: 240
+
+  - task_id: kline_sector_5min_incremental
+    table: c1_market.kline_sector
+    source: tdx
+    schedule: intraday_minute
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: kline_sector
+    symbols: null
+    extra:
+      description: "880xxx板块5分钟K线增量（mootdx TCP直连盘中实时获取）"
+      period: 5m
+      count: 48
+
+  - task_id: kline_sector_15min_incremental
+    table: c1_market.kline_sector
+    source: tdx
+    schedule: intraday_minute
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: kline_sector
+    symbols: null
+    extra:
+      description: "880xxx板块15分钟K线增量（mootdx TCP直连盘中实时获取）"
+      period: 15m
+      count: 16
+
+  - task_id: kline_sector_30min_incremental
+    table: c1_market.kline_sector
+    source: tdx
+    schedule: intraday_minute
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: kline_sector
+    symbols: null
+    extra:
+      description: "880xxx板块30分钟K线增量（mootdx TCP直连盘中实时获取）"
+      period: 30m
+      count: 8
+
+  - task_id: kline_sector_60min_incremental
+    table: c1_market.kline_sector
+    source: tdx
+    schedule: intraday_minute
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: kline_sector
+    symbols: null
+    extra:
+      description: "880xxx板块60分钟K线增量（mootdx TCP直连盘中实时获取）"
+      period: 60m
+      count: 4

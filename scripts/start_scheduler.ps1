@@ -30,7 +30,7 @@ $ErrorActionPreference = "Stop"
 
 # ============== Paths ==============
 $RepoRoot = "D:\ZephyrAlpha"
-$PythonExe = "C:\Users\fanzi\AppData\Local\Programs\Python\Python311\python.exe"
+$PythonExe = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
 $TmpDir = Join-Path $RepoRoot "tmp"
 $LockFile = Join-Path $TmpDir "scheduler.lock"
 $GuardLog = Join-Path $TmpDir "scheduler_guard.log"
