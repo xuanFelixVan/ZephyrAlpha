@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共259项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共260项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -19,15 +19,15 @@ ttl: permanent
 
 | 资产类型 | 数量 | 真源 |
 |----------|------|------|
-| 外部数据源 | 12 | data_sources_registry.yaml |
+| 外部数据源 | 13 | data_sources_registry.yaml |
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 34 | config/*.yaml |
-| 数据流作业 | 13 | dataflow_graph_registry.yaml |
+| 数据流作业 | 953 | dataflow_graph_registry.yaml |
 | 数据集 | 14 | dataflow_graph_registry.yaml |
-| **合计** | **259** | |
+| **合计** | **260** | |
 
 ## 2. 外部数据源资产
 
@@ -36,12 +36,13 @@ ttl: permanent
 | DS-BAIDUYUN | 百度云 | commercial | market_data | 百度 | active | 0 | 通达信板块分笔历史Tick数据(一次性包,无API可持续更新) |
 | DS-IFIND | 同花顺iFind | commercial | market_data | 同花顺 | active | 70 | A股K线/Tick/板块/财务/宏观/研报 |
 | DS-MINIQMT | miniQMT | commercial | market_data | 迅投 | active | 87 | A股实时行情/历史K线/交易接口 |
+| DS-TQCENTER | tqcenter | commercial | market_data | 通达信 | active | 10 | 880xxx板块指数K线/板块成分股/板块实时快照(subscribe_hq推送独有) |
 | DS-TUSHARE | Tushare | commercial | market_data | Tushare | active | 0 | A股K线/财务/板块/基金/期货 |
 | DS-NEWSAPI | NewsAPI | commercial | news | NewsAPI.org | planned | 0 | 全球财经新闻 |
 | DS-AKSHARE | AKShare | open_source | market_data | 开源社区 | active | 0 | A股/港股/美股/期货/宏观/新闻(部分接口被反爬) |
 | DS-BAOSTOCK | Baostock | open_source | market_data | 开源社区 | active | 0 | A股K线/财务/宏观(数据有延迟) |
 | DS-STOOQ | Stooq | open_source | market_data | Stooq.com | deprecated | 0 | 全球历史K线(已废弃) |
-| DS-TDX | 通达信 | open_source | market_data | 通达信 | active | 0 | A股K线/指数K线/实时报价/分时/个股分笔(仅最近交易日)/本地文件/财务数据/港股/期货 |
+| DS-TDX | 通达信 | open_source | market_data | 通达信 | active | 0 | A股K线/指数K线/实时报价/分时/个股分笔(仅最近交易日)/本地文件/财务数据/港股/期货/881xxx标准行业板块K线(index_bars)/标准板块成分股(block API) |
 | DS-TICKFLOW | TickFlow | open_source | market_data | 开源社区 | active | 0 | A股Tick数据 |
 | DS-YFINANCE | yfinance | open_source | market_data | 开源社区 | deprecated | 0 | 美股/港股(已废弃,分类体系不兼容) |
 | DS-RSS | RSS | open_source | news | 开源 | active | 0 | 财经新闻RSS源 |
@@ -127,7 +128,7 @@ ttl: permanent
 | OCP-003 | BrokerInterface / 券商扩展点 | cross_layer | D_SHARED | unresolved |
 | CT-001 | config/context-rules.yaml | declarative | D_DATA_SEC | resolved |
 | CT-002 | config/embedding_model_registry.yaml | declarative | D_DATA_SEC | resolved |
-| CT-003 | config/session_state_machine.yaml | declarative | D_DATA_SEC | resolved |
+| CT-003 | config/worktree_state_machine.yaml | declarative | D_DATA_SEC | resolved |
 | CT-004 | config/capabilities.yaml | declarative | D_DATA_SEC | resolved_as_not_supported |
 | CT-005 | src/zephyr/orchestrator/execution/trigger_router.py + config/trigger_router.yaml | declarative | D_INTELLIGENCE | resolved |
 | CT-006 | config/compression_policy.yaml | declarative | D_DATA_SEC | resolved |
@@ -160,10 +161,10 @@ ttl: permanent
 |----------|---------|----------|
 | `config/ai_capability_matrix.yaml` | 6.5 | 2026-07-17 |
 | `config/ai_context_policy.yaml` | 1.0 | 2026-07-04 |
-| `config/alert_rules.yaml` | 2.0 | 2026-07-02 |
+| `config/alert_rules.yaml` | 2.4 | 2026-07-20 |
 | `config/asset_inventory.yaml` | 2.3 | 2026-07-04 |
 | `config/auto_fix_cron.yaml` | 1.0 | 2026-07-05 |
-| `config/blueprint_routing.yaml` | 23.9 | 2026-07-14 |
+| `config/blueprint_routing.yaml` | 22.6 | 2026-07-21 |
 | `config/budget_policy.yaml` | 3.1 | 2026-06-12 |
 | `config/capabilities.yaml` | 0.9 | 2026-06-12 |
 | `config/capacity_params.yaml` | 7.2 | 2026-06-24 |
@@ -171,12 +172,12 @@ ttl: permanent
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
 | `config/context_rules.yaml` | 5.6 | 2026-07-17 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |
+| `config/dr_policy.yaml` | 2.9 | 2026-07-20 |
 | `config/embedding_model_registry.yaml` | 3.5 | 2026-06-23 |
 | `config/error_budget_config.yaml` | 1.6 | 2026-07-02 |
 | `config/external_watchdog.yaml` | 0.9 | 2026-07-02 |
 | `config/flags.yaml` | 2.0 | 2026-06-12 |
 | `config/immutable_core.yaml` | 2.8 | 2026-07-17 |
-| `config/kb_parameters.yaml` | 3.2 | 2026-06-13 |
 | `config/metrics_schema.yaml` | 2.6 | 2026-07-02 |
 | `config/model_pricing.yaml` | 1.3 | 2026-06-12 |
 | `config/nav_table_mapping.yaml` | 20.1 | 2026-07-01 |
@@ -186,12 +187,12 @@ ttl: permanent
 | `config/risk_params.yaml` | 1.3 | 2026-06-12 |
 | `config/risk_register.yaml` | 9.1 | 2026-07-02 |
 | `config/sandbox_policy.yaml` | 1.5 | 2026-07-05 |
-| `config/session_state_machine.yaml` | 5.1 | 2026-07-01 |
-| `config/sla_targets.yaml` | 0.9 | 2026-07-08 |
+| `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
 | `config/sli_registry.yaml` | 2.8 | 2026-07-02 |
 | `config/survivorship_policy.yaml` | 0.7 | 2026-07-04 |
-| `config/tech_stack_manifest.yaml` | 4.6 | 2026-07-06 |
+| `config/tech_stack_manifest.yaml` | 5.4 | 2026-07-19 |
 | `config/trigger_router.yaml` | 5.0 | 2026-07-14 |
+| `config/worktree_state_machine.yaml` | 7.3 | 2026-07-21 |
 
 ## 7. 数据源 API 清单
 
