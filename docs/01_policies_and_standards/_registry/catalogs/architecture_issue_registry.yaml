@@ -3901,11 +3901,22 @@ entries:
     - docs/01_policies_and_standards/_policies/trae_063_capability_lookup_required.yaml（规则真源，Phase 3.2 待执行）
     - tests/governance/commit_gates/test_capability_lookup_required_gate.py（既有 21 项单测，Phase 1 全部通过）
     - tests/git/test_git_commit_gateway.py（新增 test_commit_passes_message_to_gates，Phase 1 已完成）
-  status: in_progress
+  status: resolved
   related_adjudication: 'ARCH-GOV-CONVERGENCE-META Phase 3.4a, ARCH-TOOL-HEALTH-V1, FP-ISO.4C worktree 君子协定'
-  related_rules: 'trae_063_capability_lookup_required (Phase 3.2 待建)'
+  related_rules: 'trae_065_capability_lookup_required, trae_068_preventability_layer, trae_077_capability_lookup_scene_classify'
   created: '2026-07-19'
-  last_updated: '2026-07-19'
+  last_updated: '2026-07-22'
+  resolution_note: >-
+    2026-07-22 验证 G1-G7 全部闭合：G1 commit_message 透传（commit dda0fbc127）；
+    G2 mcp.json 注册 rule_discovery server（config/mcp.json L147-157, status=implemented）；
+    G3 capability_lookup.py audit log 写入（smoke test 第 3 项验证 write_lookup_audit_log 可调用）；
+    G4 AGENTS.md RULE-CAPABILITY-LOOKUP 章节（已存在）；G5 trae_065 规则真源（已存在）；
+    G6 .runtime/lookup_audit/ 监控（reconciler _has_session_audit_logs 已实现）；
+    G7 session_worktree_start 启动 smoke test（session_worktree.py L65401 _run_startup_health_check,
+    调用点 L72210, fail-escalate L72444）。
+    子裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001（bypass 场景分类治本）已 resolved，
+    reconciler 只统计违规 bypass（合法豁免不计入分母），最近 10 次 bypass 中 0 次违规，
+    critical_warn 已消除。
 
 # --- #ARCH-DOC-DRIFT-001: docstring/注释硬编码 gate/reconciler 数量漂移治本（裁定 D，2026-07-19） ---
 # 病根：session_worktree.py / batched_auto_committer.py / reconciliation_registry.py 等
@@ -4984,8 +4995,11 @@ entries:
     Phase 7 (长期，本会话不做):
     - LIFE-LAW-1/LAW-2 前移为 pre-commit GATE-TEMP-FILE-LIFECYCLE gate (priority=803)
     - 需另起会话
+    - 2026-07-22 更新：Phase 7 被 #ARCH-TTL-FAILOPEN-001 替代——不可能三角已通过
+      zone-aware fail-open 治本（解耦 doc_type 与 ttl 校验），无需新建第三个 gate。
+      详见 #ARCH-TTL-FAILOPEN-001 裁定。
 
-    已知冲突——不可能三角（#ARCH-TEMP-FILE-LIFECYCLE-002 核心发现）：
+    已知冲突——不可能三角（#ARCH-TEMP-FILE-LIFECYCLE-002 核心发现，2026-07-22 已治本）：
     - (A) trae_071 LAW-2 要求 docs/_working/ 成果文件带 frontmatter
           （ttl/doc_type/completes_when 三字段）作为"成果已交付"的元数据声明
     - (B) EXEMPT-ZONE-FM gate (priority=87) 阻断 docs/_working/ 等豁免区
@@ -4993,14 +5007,16 @@ entries:
     - (C) TTL-METADATA gate (--strict-doctype，GitCommitGateway 路径强制启用)
           要求 .md 文件 doc_type 必填——缺失即 hard block
     - 三者交集为空集，不可能同时满足（三方规则在不同时期独立设计，未做交集校验）
-    - 当前临时方案：移除 docs/_working/ 下 .md 文件的整个 frontmatter 块
+    - 原临时方案：移除 docs/_working/ 下 .md 文件的整个 frontmatter 块
       （两 gate 都跳过无 frontmatter 文件：EXEMPT-ZONE-FM 只检测带 frontmatter
       且 doc_type 非空的文件；TTL-METADATA `if not metadata: return issues`）
-    - 长期方案 (Phase 7)：新建 GATE-TEMP-FILE-LIFECYCLE gate (priority=803)
-      取代 EXEMPT-ZONE-FM + TTL-METADATA 在 docs/_working/ 区的冲突检测
+    - 治本方案（2026-07-22 #ARCH-TTL-FAILOPEN-001 落地）：解耦 doc_type 与 ttl 校验——
+      check_frontmatter_metadata.py 改为 zone-aware，temporary zone 跳过 doc_type
+      校验但保留 ttl 必填，permanent zone 两者都必填，不可能三角消解。
+      不再需要新建 GATE-TEMP-FILE-LIFECYCLE gate（Phase 7 取消）。
   fix_phase: Phase 1-6 裁定声明落地（2026-07-21）。真源核实修正（2026-07-22, #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）——git HEAD 客观核实发现 Phase 1（trae_071 registration_point）与 Phase 2（staging reconciler 实现）在 2026-07-21 时真源未真正落地（trae_071 registration_point 仍为 boot_hooks.py、reconciler 函数不存在、session_worktree_abort 无 staging 清理），由 ROOT-TEMP-FILE-ENFORCEMENT-001 Phase 3 于 2026-07-22 实际完成并修正 trae_071 registration_point 真源。status 维持 resolved（工作现已真正完成）。
   status: resolved
-  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001, #ARCH-RECONCILER-ALERT-SELFHEAL-001, #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 (真源核实修正 + Phase 3 实际完成)'
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001, #ARCH-RECONCILER-ALERT-SELFHEAL-001, #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 (真源核实修正 + Phase 3 实际完成), #ARCH-TTL-FAILOPEN-001 (Phase 7 不可能三角治本替代)'
   related_rules: 'trae_071, trae_070, trae_060, trae_062'
   created: '2026-07-21'
   last_updated: '2026-07-22'
@@ -6956,12 +6972,13 @@ entries:
       - check_schema_version_writes.py SCAN_DIRS 移除 tests（消除误报）
       - smoke test：C00 通过（0 违规）；C01 通过（DB v19 == MIGRATIONS v19）
     Phase 5（本次落地，2026-07-22，增量推进完成）：
-      - 163 处硬编码表名替换为 TableRegistry.table() 常量引用（16 文件，6 批 commit）
+      - 166 处硬编码表名替换为 TableRegistry.table() 常量引用（17 文件，7 批 commit）
         * 首批: 0e28aa26（table_registry.py + sector_kline_downloader.py）
         * 第2批: cab6df2d（scheduler.py + ch_writer.py + ch_config.py 等）
         * 第3批: 64a39726（qmt_provider.py 等）
         * 第4批: 5e95f064（speed_tester.py 51处 + YAML 3品类补登 99→104）
         * 第5-6批: 7b4cec6c（akshare_provider.py 42处 + miniqmt_provider.py 39处 + 2 BUG修复）
+        * 第7批: d7835368（speed_tester.py 2处遗漏 + rss_provider.py 1处遗漏修复，block gate 上线前扫描发现）
       - gate 升级 warn-only→block（commit a50d176a，return False 阻断 + logger.error）
       - 32 项单测全通过（4 断言 is True→is False，2 方法重命名 _warn→_block）
       - in_process_gate_registry.yaml + gate_registry.yaml 注释同步更新
@@ -6976,7 +6993,7 @@ entries:
     - 'src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml（删除死配置 db_path 硬编码 localhost:5432）'
     - 'scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（print 去硬编码 localhost:5432）'
     - 'src/zephyr/infrastructure/rollback/rollback_integration.py（补 SSoT 说明，保留裸连接健康检查设计）'
-    - 'src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py（新增——TABLE-NAME-REGISTRY warn-only gate，裁定 #ARCH-CH-024 Phase 4）'
+    - 'src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py（新增——TABLE-NAME-REGISTRY block gate，裁定 #ARCH-CH-024 Phase 4/5）'
     - 'tests/governance/commit_gates/test_table_name_registry_gate.py（新增——32 项单测）'
     - 'docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（注册 TABLE-NAME-REGISTRY gate 条目）'
     - 'src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml（C00/C01 路径修正 + scan_targets 移除 tests/）'
@@ -7567,5 +7584,77 @@ entries:
   status: open
   related_adjudication: '#ARCH-WORKTREE-RETIREMENT-001 (被引用方), #ARCH-CROSS-COMMIT-ATOMICITY-002 (互补)'
   related_rules: 'trae_079 (commit 临界区文件锁串行化)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+# --- #ARCH-TTL-FAILOPEN-001: TTL-METADATA fail-open 治本——zone-aware 解耦不可能三角（2026-07-22）---
+- issue_id: '#ARCH-TTL-FAILOPEN-001'
+  title: TTL-METADATA fail-open 治本——zone-aware 解耦 doc_type 与 ttl 校验，替代 #ARCH-TEMP-FILE-LIFECYCLE-002 Phase 7
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    背景：
+    #ARCH-TEMP-FILE-LIFECYCLE-002 发现"不可能三角"——三条规则交集为空：
+      (A) trae_071 LAW-2 要求 docs/_working/ 文件带 frontmatter（ttl/doc_type）
+      (B) EXEMPT-ZONE-FM gate (priority=87) 阻断 docs/_working/ 出现 doc_type
+      (C) TTL-METADATA gate (--strict-doctype) 要求 .md 文件 doc_type 必填
+    原临时方案是移除 docs/_working/ 下 .md 的整个 frontmatter 块，使两 gate 都跳过
+    （EXEMPT-ZONE-FM 只检测带 frontmatter 且 doc_type 非空的文件；
+     TTL-METADATA `if not metadata: return issues`）。但这导致 162 个无 frontmatter
+    的 .md 文件（29.6%）绕过 TTL 检查——TTL-METADATA fail-open 漏洞。
+
+    第一性原理分析（100% AI 开发场景）：
+    - fail-open 在 100% AI 场景下等同"无门禁"——AI 不会看到 warn 横幅主动修复
+    - 不可能三角的本质是 doc_type 与 ttl 校验逻辑耦合在同一个 gate，而两字段的
+      适用 zone 不同（doc_type 不适用于临时区，ttl 适用于所有区）
+    - 解法不是新建第三个 gate（原 Phase 7 方案 GATE-TEMP-FILE-LIFECYCLE），而是
+      解耦——让 check_frontmatter_metadata.py 变成 zone-aware：
+        * permanent zone .md 无 frontmatter → HARD BLOCK（ttl=permanent + doc_type required）
+        * temporary zone .md 无 frontmatter → HARD BLOCK（ttl=task_bound required，doc_type exempt）
+        * 其他 zone → PASS（root_whitelist / generator_exempt / exempt_zone / neutral）
+        * temporary zone .md 有 frontmatter → SKIP doc_type 校验（兼容 EXEMPT-ZONE-FM）
+
+    裁定条款（治本）：
+    1. check_frontmatter_metadata.py 改为 zone-aware（核心变更）：
+       - 新增 _load_directory_contract() / _classify_file_zone() 基础设施
+       - 替换 `if not metadata: return issues` 为 zone 分类逻辑
+       - temporary zone 在字段校验循环中 skip doc_type
+       - 真源：directory_contract.yaml directory_zones + generator_exempt_paths
+    2. directory_contract.yaml 补注册 2 个生成器路径：
+       - docs/02_enterprise_architecture/06_decision_architecture/
+       - docs/02_enterprise_architecture/generated/
+       （23 个生成器输出文件此前无 frontmatter 被 fail-open 放行，现合法豁免）
+    3. 永久区 11 个无 frontmatter 的 .md 文件补 frontmatter（doc_type=audit_report,
+       ttl=permanent）；1 个过程文件迁移到 docs/_working/（ttl=task_bound）
+    4. 临时区 10 个 docs/_working/ .md 文件补 ttl=task_bound frontmatter（无 doc_type）
+    5. 10 个 docs/03_modules/ .md 文件剥离 UTF-8 BOM（BOM 阻止 parse_frontmatter
+       检测 --- 首行，旧 fail-open 掩盖了此问题）
+    6. session_worktree.py / test_critical_warn_ack.py 补 [TTL] permanent 头部字段
+       （pre-existing 缺失，zone-aware 扫描暴露）
+
+    不实施项：
+    - 不新建 GATE-TEMP-FILE-LIFECYCLE gate（原 Phase 7 方案取消——解耦已消解冲突）
+    - 不强制所有 zone 的 .md 都带 frontmatter（generator_exempt / exempt_zone /
+      neutral 保持 PASS，避免破坏生成器输出和无治理意图的文件）
+
+    与 100% AI 开发的关系：
+    - fail-open → fail-closed 是 100% AI 场景的治本方向（裁定 D-2 同向）
+    - zone-aware 比 flat fail-closed 更精准——只对"应有 frontmatter 却没有"的
+      zone 阻断，不对生成器输出/无治理意图文件误伤
+    - 解耦而非新建 gate 符合奥卡姆剃刀——用已有 gate 的逻辑分支解决问题
+
+    替代关系：
+    - 替代 #ARCH-TEMP-FILE-LIFECYCLE-002 Phase 7（GATE-TEMP-FILE-LIFECYCLE）
+    - 不可能三角正式消解，#ARCH-TEMP-FILE-LIFECYCLE-002 的"已知冲突"段落标记为已治本
+  impact:
+    - "check_frontmatter_metadata.py fail-open 漏洞关闭（permanent/temporary zone 无 frontmatter 不再放行）"
+    - "不可能三角消解（doc_type 与 ttl 校验解耦，temporary zone 跳过 doc_type）"
+    - "162 个无 frontmatter .md 文件降至 0（11 补 + 1 迁 + 10 补 ttl + 10 BOM 修 + 其余合法豁免）"
+    - "23 个生成器输出文件合法豁免（2 路径补注册）"
+  fix_phase: 全部落地（2026-07-22）。核心变更 check_frontmatter_metadata.py zone-aware；
+    directory_contract.yaml 补 2 生成器路径；21 个 .md 补 frontmatter；10 个 .md 剥 BOM；
+    2 个 .py 补 [TTL] 头部。smoke test 5885 files 0 failures。
+  status: resolved
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-002 (Phase 7 替代——不可能三角治本), #ARCH-TEMP-FILE-LIFECYCLE-001 (三级分类空间维度), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (fail-open→fail-closed 同向治本)'
+  related_rules: 'trae_071 (LAW-2 frontmatter 要求), trae_062 (SSoT 真源分类)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
