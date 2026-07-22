@@ -970,7 +970,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_snapshot
-  schema_file: null
+  schema_file: schemas/categories/market_sector_snapshot.py
   data_type: 原料
   lifecycle: hot_90d
   sla_level: L1
@@ -1333,7 +1333,7 @@
   engine: clickhouse
   database: c1_market
   table: auction_book
-  schema_file: null
+  schema_file: schemas/categories/market_auction_book.py
   data_type: 预留
   lifecycle: permanent
   sla_level: L3

@@ -7777,6 +7777,10 @@ entries:
     附带治本修复（2026-07-22，循环检查发现）：
       - apply_depgraph.py backup import 容错（line 5115 顶层导入失败 → fallback 到 _GOV_DIR 相对导入）
         根因：sys.path 仅含 _GOV_DIR 不含 REPO_ROOT，参照 line 121-128 模式加 try/except ImportError fallback
+      - business_data_categories.yaml schema_file 修复（sector_snapshot + auction_book 从 null → 实际路径）
+        根因：schema 文件已存在但 YAML 声明层 schema_file=null，违反 SSoT 三层一致性（声明层→存在层断裂）
+        修复：schema_file: null → schemas/categories/market_sector_snapshot.py + schemas/categories/market_auction_book.py
+        验证：10/10 schema_file 引用全部有效，0 broken refs，0 TABLE_NAME mismatches
   status: resolved
   related_adjudication: '#ARCH-SSOT-REFERENCE-INTEGRITY-001 (本裁定), #ARCH-TEMP-FILE-LIFECYCLE-001 (directory_contract 登记), trae_062 (SSoT 真源分类铁律), #ARCH-DEP-PREMERGE-ENFORCE (Phase 3 拆分独立裁定)'
   related_rules: 'trae_062 (SSoT 真源分类——规则数据 YAML 为真源), trae_054 (备份先行——depgraph 变更前 git commit), L1 依赖关系先行铁律'

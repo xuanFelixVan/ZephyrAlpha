@@ -5108,8 +5108,13 @@ if __name__ == "__main__":
         if has_write_cmd and not is_dry_run:
             # 治本(2026-07-20): 改用项目内模块路径导入，避免 sys.path.insert 后的悬空 import
             # （IMPORT-INTEGRITY gate 不识别 sys.path.insert 注入的导入）
+            # 治本(2026-07-22): 顶层导入需要 REPO_ROOT 在 sys.path，但本脚本运行时仅注入 _GOV_DIR，
+            # 导致 ImportError。参照 line 121-128 模式加 fallback。
             try:
-                from scripts.governance.meta.backup_runtime_state import backup_pg_depgraph
+                try:
+                    from scripts.governance.meta.backup_runtime_state import backup_pg_depgraph
+                except ImportError:
+                    from meta.backup_runtime_state import backup_pg_depgraph
                 backup_pg_depgraph()
             except Exception as _e:
                 # 备份失败不阻断主流程（main 已成功），仅记录到 stderr

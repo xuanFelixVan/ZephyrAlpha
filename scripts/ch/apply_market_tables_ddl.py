@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/market_auction_book.py; sector_snapshot DDL 内联(从 sector_snapshot_collector.py 派生); apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
+# [INVARIANTS] DDL-as-Code: tick_data DDL 真源为 schemas/categories/market_tick.py; kline_daily DDL 真源为 schemas/categories/market_kline_daily.py; auction_book DDL 真源为 schemas/categories/market_auction_book.py; sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py; apply() 通过 ch_writer.query 执行; verify() 查询 system.tables 验证引擎
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,7 +19,7 @@ DDL-as-Code 模式：
     - tick_data DDL 真源为 schemas/categories/market_tick.py（本脚本导入引用）
     - kline_daily DDL 真源为 schemas/categories/market_kline_daily.py（本脚本导入引用）
     - auction_book DDL 真源为 schemas/categories/market_auction_book.py（本脚本导入引用）
-    - sector_snapshot DDL 内联（从 sector_snapshot_collector.py 派生，无独立 schema 文件）
+    - sector_snapshot DDL 真源为 schemas/categories/market_sector_snapshot.py（本脚本导入引用）
 
 引擎选型矩阵（设计文档 §5 Phase F，裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F 治本）：
     tick_data        → ReplacingMergeTree（tick 天然唯一）
@@ -157,12 +157,18 @@ ORDER BY (symbol, trade_date, timestamp)
 SETTINGS index_granularity = 8192
 """
 
-# sector_snapshot DDL — 真源: src/zephyr/data/sector_snapshot_collector.py
+# sector_snapshot DDL — 真源: schemas/categories/market_sector_snapshot.py
 # 引擎治本迁移（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase F）：
 # 原 MergeTree（板块快照允许重复）→ ReplacingMergeTree（高频推送按 (sector_code,timestamp) 去重）
 # 原因：sector_snapshot 是高频表（30秒轮询+99只推送），MergeTree 写前 DELETE 留 mutations 累积；
 # ReplacingMergeTree 直接 INSERT + 后台合并去重，符合 ch_writer.py §7.3 幂等性策略首选。
-SECTOR_SNAPSHOT_DDL = """
+# Phase 2 治本（2026-07-22）：DDL 从 sector_snapshot_collector.py 内联迁移到独立 schema 文件，
+# 消除双真源（本脚本与 collector 共用同一 schema 文件作为 SSoT）。
+try:
+    from schemas.categories.market_sector_snapshot import SECTOR_SNAPSHOT_DDL
+except ImportError:
+    # fallback: 内联定义（与 schema 文件保持一致）
+    SECTOR_SNAPSHOT_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
 (
     trade_date       Date        COMMENT '交易日',
