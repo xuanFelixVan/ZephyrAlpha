@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_commit_gate_registry | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
+# [BLUEPRINT] MOD-GOV_COMMIT_GATE_REGISTRY | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
 # [MODULE] zephyr.gov_enforcement.rule_bridge.commit_gate_registry
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] (none — pure stdlib)

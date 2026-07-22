@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_commit_gates | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_COMMIT_GATES | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.gov_enforcement.commit_gates
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES]

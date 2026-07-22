@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_rule_execution_pairing_gate | docs/03_modules/_domain_governance/blueprint.md | §rule-execution-pairing-gate
+# [BLUEPRINT] MOD-GOV_RULE_EXECUTION_PAIRING_GATE | docs/03_modules/_domain_governance/blueprint.md | §rule-execution-pairing-gate
 # [MODULE] zephyr.gov_enforcement.commit_gates.rule_execution_pairing_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)

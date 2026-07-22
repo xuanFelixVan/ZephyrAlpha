@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2703 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_commit_gateway_abuse_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
+# [BLUEPRINT] MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
 # [MODULE] tests.governance.audit.test_commit_gateway_abuse_monitor_reconciler
 # [STABILITY] volatile
 # [SAFETY] L

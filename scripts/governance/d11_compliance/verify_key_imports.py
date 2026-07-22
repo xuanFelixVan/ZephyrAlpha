@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_verify_key_imports
+# [BLUEPRINT] MOD-GOV_VERIFY_KEY_IMPORTS
 # [MODULE]# [MODULE] scripts.governance.verify_key_imports
 # [DOMAIN]
 # [DEPENDENCIES]

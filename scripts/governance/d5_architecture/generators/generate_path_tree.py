@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_generate_path_tree
+# [BLUEPRINT] MOD-GOV_GENERATE_PATH_TREE
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_path_tree
 # [DOMAIN]
 # [DEPENDENCIES]

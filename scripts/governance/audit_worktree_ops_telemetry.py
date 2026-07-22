@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_audit_worktree_ops_telemetry | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-6
+# [BLUEPRINT] MOD-GOV_AUDIT_WORKTREE_OPS_TELEMETRY | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-6
 # [MODULE] scripts.governance.audit_worktree_ops_telemetry
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib (re, ast, json, sys, pathlib); 无 zephyr 内部依赖（审计脚本独立可运行）

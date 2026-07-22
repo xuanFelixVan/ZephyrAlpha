@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_diff_helpers | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_diff_helpers | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [BLUEPRINT] MOD-GOV_DIFF_HELPERS | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_diff_helpers
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_audit_return_contract_usage | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-5
+# [BLUEPRINT] MOD-GOV_AUDIT_RETURN_CONTRACT_USAGE | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-5
 # [MODULE] scripts.governance.audit_return_contract_usage
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib (re, pathlib, json, sys); 无 zephyr 内部依赖（审计脚本独立可运行）

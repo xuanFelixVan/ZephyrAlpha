@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_sync_savepoint_test | tests/governance/d8_doc_sync/test_sync_savepoint_isolation.py | §ARCH-GUC-TRIGGER-FIX-001
+# [BLUEPRINT] MOD-GOV_SYNC_SAVEPOINT_TEST | tests/governance/d8_doc_sync/test_sync_savepoint_isolation.py | §ARCH-GUC-TRIGGER-FIX-001
 # [MODULE] tests.governance.d8_doc_sync.test_sync_savepoint_isolation
 # [DOMAIN] D_GOV_DOCS
 # [DEPENDENCIES] scripts.governance.d8_doc_sync.sync_yaml_to_depgraph

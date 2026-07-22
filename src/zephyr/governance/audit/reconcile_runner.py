@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_reconcile_runner | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-3
+# [BLUEPRINT] MOD-GOV_RECONCILE_RUNNER | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-3
 # [MODULE] zephyr.governance.audit.reconcile_runner
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); subprocess; json; pathlib

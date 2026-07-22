@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_rule_patterns | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+# [BLUEPRINT] MOD-GOV_RULE_PATTERNS | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 
 
 

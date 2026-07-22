@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_ch_version_col_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_ch_version_col_gate | §0.1
+# [BLUEPRINT] MOD-GOV_CH_VERSION_COL_GATE | §0.1
 # [MODULE] tests.governance.commit_gates.test_ch_version_col_gate
 # [STABILITY] evolving
 # [SAFETY] L

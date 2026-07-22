@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
+# [BLUEPRINT] MOD-GOV_SESSION_WORKTREE | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 
 
 

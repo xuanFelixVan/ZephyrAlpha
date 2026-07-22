@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_deepseek_api
+# [BLUEPRINT] MOD-GOV_DEEPSEEK_API
 # [MODULE]# [MODULE] scripts.construction.test_deepseek_api
 # [DOMAIN]
 # [DEPENDENCIES]

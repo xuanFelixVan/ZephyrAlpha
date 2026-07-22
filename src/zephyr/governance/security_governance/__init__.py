@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_security_governance | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_SECURITY_GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.security_governance
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]

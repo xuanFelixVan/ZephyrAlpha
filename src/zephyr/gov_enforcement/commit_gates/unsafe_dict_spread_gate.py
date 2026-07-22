@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_commit_gates | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
+# [BLUEPRINT] MOD-GOV_COMMIT_GATES | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
 # [MODULE] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)

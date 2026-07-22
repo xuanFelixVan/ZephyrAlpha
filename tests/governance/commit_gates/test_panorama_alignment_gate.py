@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_panorama_alignment_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_panorama_alignment_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §panorama-alignment-gate
+# [BLUEPRINT] MOD-GOV_PANORAMA_ALIGNMENT_GATE | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §panorama-alignment-gate
 # [MODULE] tests.governance.commit_gates.test_panorama_alignment_gate
 # [STABILITY] evolving
 # [SAFETY] L

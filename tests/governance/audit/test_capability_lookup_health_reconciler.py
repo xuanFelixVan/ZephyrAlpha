@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_capability_lookup_health_reconciler_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_reconciliation_registry | docs/03_modules/_domain_governance/blueprint.md | §P4
+# [BLUEPRINT] MOD-GOV_RECONCILIATION_REGISTRY | docs/03_modules/_domain_governance/blueprint.md | §P4
 # [MODULE] tests.governance.audit.test_capability_lookup_health_reconciler
 # [STABILITY] evolving
 # [SAFETY] L

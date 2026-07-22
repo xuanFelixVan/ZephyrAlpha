@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_commit_gateway_abuse_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
+# [BLUEPRINT] MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
 # [MODULE] zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); zephyr.gov_enforcement.rule_enforcement.adaptive_threshold (AdaptiveThreshold, ThresholdMode — P3-1 接入); zephyr.governance.audit.health_score_calculator (calculate_health_score — P3-3 接入); stdlib (json, logging, subprocess, time, pathlib)

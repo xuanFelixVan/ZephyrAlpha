@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_error_pattern_library | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1
+# [BLUEPRINT] MOD-GOV_ERROR_PATTERN_LIBRARY | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1
 # [MODULE] zephyr.governance.audit.ai_error_pattern_library
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.error_pattern_consumer_reconciler (compute_error_pattern_id); stdlib (json, logging, pathlib)

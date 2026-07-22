@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHR_io_yaml | src/zephyr/shared/io/yaml_utils.py | §
+# [BLUEPRINT] MOD-SHR_IO_YAML | src/zephyr/shared/io/yaml_utils.py | §
 # [MODULE] zephyr.shared.io.yaml_utils
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.io.paths

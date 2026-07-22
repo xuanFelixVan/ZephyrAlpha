@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_generate_integration_topology
+# [BLUEPRINT] MOD-GOV_GENERATE_INTEGRATION_TOPOLOGY
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_integration_topology
 # [DOMAIN]
 # [DEPENDENCIES]

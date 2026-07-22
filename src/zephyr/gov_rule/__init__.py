@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV-rule_domain | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_rule_domain | docs/03_modules/_domain_governance/rule/blueprint.md
+# [BLUEPRINT] MOD-GOV_RULE_DOMAIN | docs/03_modules/_domain_governance/rule/blueprint.md
 # [MODULE] zephyr.gov_rule
 # [DOMAIN] D_GOV_RULE
 # [TTL] permanent

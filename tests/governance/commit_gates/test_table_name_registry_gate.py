@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_commit_gates | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-GOV_COMMIT_GATES | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # -*- coding: utf-8 -*-
 """test_table_name_registry_gate.py — TABLE-NAME-REGISTRY gate 测试

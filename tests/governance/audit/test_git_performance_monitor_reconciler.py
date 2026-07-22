@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2702 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_git_performance_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-GIT-CALL-BUDGET P3.5
+# [BLUEPRINT] MOD-GOV_GIT_PERFORMANCE_MONITOR | docs/03_modules/_domain_governance/blueprint.md | §ARCH-GIT-CALL-BUDGET P3.5
 # [MODULE] tests.governance.audit.test_git_performance_monitor_reconciler
 # [STABILITY] volatile
 # [SAFETY] L

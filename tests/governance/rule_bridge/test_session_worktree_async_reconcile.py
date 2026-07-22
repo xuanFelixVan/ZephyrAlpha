@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_test_session_worktree_async_reconcile | docs/03_modules/_domain_governance/blueprint.md | §ARCH-ASYNC-MERGE-RECONCILE-001
+# [BLUEPRINT] MOD-GOV_TEST_SESSION_WORKTREE_ASYNC_RECONCILE | docs/03_modules/_domain_governance/blueprint.md | §ARCH-ASYNC-MERGE-RECONCILE-001
 # [MODULE] tests.governance.rule_bridge.test_session_worktree_async_reconcile
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.session_worktree (_run_reconcilers_after_merge, _run_reconcilers_after_merge_sync); pytest; unittest.mock

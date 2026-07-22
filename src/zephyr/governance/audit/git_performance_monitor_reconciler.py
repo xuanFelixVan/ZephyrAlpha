@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_git_performance_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-GIT-CALL-BUDGET P3.5
+# [BLUEPRINT] MOD-GOV_GIT_PERFORMANCE_MONITOR | docs/03_modules/_domain_governance/blueprint.md | §ARCH-GIT-CALL-BUDGET P3.5
 # [MODULE] zephyr.governance.audit.git_performance_monitor_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); stdlib (subprocess, time, json, logging, pathlib, datetime, collections)

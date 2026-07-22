@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_import_direction_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_import_direction_gate | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [BLUEPRINT] MOD-GOV_IMPORT_DIRECTION_GATE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_import_direction_gate
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-GOV_scan_consumers_accuracy | scripts/governance/d7_code/scan_consumers_accuracy.py | §ARCH-CONSUMERS-ACCURACY-002
+# [BLUEPRINT] MOD-GOV_SCAN_CONSUMERS_ACCURACY | scripts/governance/d7_code/scan_consumers_accuracy.py | §ARCH-CONSUMERS-ACCURACY-002
 # [MODULE] scripts.governance.d7_code.scan_consumers_accuracy
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(argparse/ast/sys/pathlib/collections); zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate (parse_consumers_field, check_consumers_accuracy)

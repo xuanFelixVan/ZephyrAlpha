@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_f3_auto_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_f3_auto_integration | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §auto-integration
+# [BLUEPRINT] MOD-GOV_F3_AUTO_INTEGRATION | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md | §auto-integration
 # [MODULE] tests.integration.test_f3_auto_integration
 # [STABILITY] volatile
 # [SAFETY] L

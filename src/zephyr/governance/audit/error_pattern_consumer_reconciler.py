@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_error_pattern_consumer | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b
+# [BLUEPRINT] MOD-GOV_ERROR_PATTERN_CONSUMER | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b
 # [MODULE] zephyr.governance.audit.error_pattern_consumer_reconciler
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); stdlib (json, hashlib, logging, time, pathlib)

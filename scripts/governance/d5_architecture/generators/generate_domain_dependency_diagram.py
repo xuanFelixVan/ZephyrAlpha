@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_generate_domain_dependency_diagram
+# [BLUEPRINT] MOD-GOV_GENERATE_DOMAIN_DEPENDENCY_DIAGRAM
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_domain_dependency_diagram
 # [DOMAIN]
 # [DEPENDENCIES]

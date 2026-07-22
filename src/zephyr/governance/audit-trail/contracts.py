@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_audit_trail | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_AUDIT_TRAIL | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] zephyr.governance.audit_trail.contracts
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.gov_audit.contracts (AuditWriter)

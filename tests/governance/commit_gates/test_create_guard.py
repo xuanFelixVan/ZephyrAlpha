@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_create_guard | tests/test_create_guard.py | §create-guard-tests
+# [BLUEPRINT] MOD-GOV_CREATE_GUARD | tests/test_create_guard.py | §create-guard-tests
 # [MODULE] tests.test_create_guard
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates.create_guard, zephyr.gov_enforcement.rule_bridge.git_commit_gateway

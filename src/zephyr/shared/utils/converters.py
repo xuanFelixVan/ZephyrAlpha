@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHR_converters | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
+# [BLUEPRINT] MOD-SHR_CONVERTERS | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.utils.converters
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]

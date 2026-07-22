@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_generate_design_vs_production
+# [BLUEPRINT] MOD-GOV_GENERATE_DESIGN_VS_PRODUCTION
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_design_vs_production
 # [DOMAIN]
 # [DEPENDENCIES]

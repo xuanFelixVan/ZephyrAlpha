@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_behavioral_admission | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOV_BEHAVIORAL_ADMISSION | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.gov_enforcement.behavioral_admission
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [A_module] module_id=MOD-GOV-behavioral_admission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable

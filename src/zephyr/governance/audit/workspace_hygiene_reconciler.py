@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_workspace_hygiene_reconciler | docs/01_policies_and_standards/policies/workspace_governance_policy.md | §ARCH-TOOL-HEALTH-V1 Phase 6 联动 + DEBT-WORKSPACE-001/002 消除
+# [BLUEPRINT] MOD-GOV_WORKSPACE_HYGIENE_RECONCILER | docs/01_policies_and_standards/policies/workspace_governance_policy.md | §ARCH-TOOL-HEALTH-V1 Phase 6 联动 + DEBT-WORKSPACE-001/002 消除
 
 # [MODULE] zephyr.governance.audit.workspace_hygiene_reconciler
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
+# [BLUEPRINT] MOD-GOV_RECONCILIATION_REGISTRY | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
 
 
 

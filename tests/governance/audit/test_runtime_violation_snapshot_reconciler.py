@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2701 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_runtime_violation_snapshot_reconciler | docs/03_modules/_domain_governance/blueprint.md | §runtime-violation-snapshot-reconciler
+# [BLUEPRINT] MOD-GOV_RUNTIME_VIOLATION_SNAPSHOT_RECONCILER | docs/03_modules/_domain_governance/blueprint.md | §runtime-violation-snapshot-reconciler
 # [MODULE] tests.governance.audit.test_runtime_violation_snapshot_reconciler
 # [STABILITY] volatile
 # [SAFETY] L

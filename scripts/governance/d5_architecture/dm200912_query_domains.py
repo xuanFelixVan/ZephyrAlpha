@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_dm200912_query_domains
+# [BLUEPRINT] MOD-GOV_DM200912_QUERY_DOMAINS
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.dm200912_query_domains
 # [DOMAIN]
 # [DEPENDENCIES]

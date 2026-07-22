@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_commit_gates | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-GOV_COMMIT_GATES | (auto-injected by S4 reconciler) | §
 # [TTL] task_bound
 """test_data_task_completeness_gate.py — 数据任务完整性门禁单元测试。
 

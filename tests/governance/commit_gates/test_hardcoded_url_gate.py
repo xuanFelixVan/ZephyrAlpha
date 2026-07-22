@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_hardcoded_url_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_hardcoded_url_gate | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [BLUEPRINT] MOD-GOV_HARDCODED_URL_GATE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_hardcoded_url_gate
 # [STABILITY] evolving
 # [SAFETY] L

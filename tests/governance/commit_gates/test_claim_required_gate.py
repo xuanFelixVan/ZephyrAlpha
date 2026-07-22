@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_claim_required_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_claim_required_gate | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §claim-required-gate
+# [BLUEPRINT] MOD-GOV_CLAIM_REQUIRED_GATE | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §claim-required-gate
 # [MODULE] tests.test_claim_required_gate
 # [STABILITY] evolving
 # [SAFETY] L

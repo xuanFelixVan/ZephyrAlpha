@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_reconcile_worker | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-3
+# [BLUEPRINT] MOD-GOV_RECONCILE_WORKER | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-3
 # [MODULE] zephyr.governance.audit.reconcile_worker
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.git_commit_gateway (GitCommitGateway); zephyr.governance.audit.reconciliation_registry (_log_reconcile_results); zephyr.governance.audit.reconcile_runner (write_status_file, STATUS_*)

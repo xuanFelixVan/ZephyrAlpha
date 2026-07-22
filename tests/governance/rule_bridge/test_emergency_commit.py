@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_test_emergency_commit | tests/governance/rule_bridge/test_emergency_commit.py | §Ruling-100PCT-AI-GOVERNANCE-P2-1
+# [BLUEPRINT] MOD-GOV_TEST_EMERGENCY_COMMIT | tests/governance/rule_bridge/test_emergency_commit.py | §Ruling-100PCT-AI-GOVERNANCE-P2-1
 # [MODULE] tests.governance.rule_bridge.test_emergency_commit
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.emergency_commit

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-GOV_check_any_abuse | scripts/governance/d7_code/check_any_abuse.py | §
+# [BLUEPRINT] MOD-GOV_CHECK_ANY_ABUSE | scripts/governance/d7_code/check_any_abuse.py | §
 # [MODULE] scripts.governance.d7_code.check_any_abuse
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/re)
