@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1812 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_zombie_cleaner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_zombie_cleaner
 # [INVARIANTS] 只测试公共接口;不修改真实项目文件

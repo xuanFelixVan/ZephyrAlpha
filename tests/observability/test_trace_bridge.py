@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1755 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_trace_bridge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_trace_bridge
 # [INVARIANTS] getter returns None if unset; writer returns False if unset

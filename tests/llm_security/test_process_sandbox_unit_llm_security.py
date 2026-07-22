@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1911 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_process_sandbox_unit_llm_security | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-530 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.llm_security.test_process_sandbox
 # [STABILITY] evolving

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1963 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_l12_telemetry | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-580 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.telemetry.test_l12_telemetry
 # [STABILITY] evolving

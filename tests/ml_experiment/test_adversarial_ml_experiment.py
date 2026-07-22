@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0205 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_adversarial_ml_experiment | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-339 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.ml_experiment.test_adversarial
 # [STABILITY] evolving

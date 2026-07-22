@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1276 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_microstructure_defense | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-407 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_microstructure_defense
 # [INVARIANTS] DEFENSE_STRATEGIES covers all DefenseType; FidelityFactor composite_ff is weighted sum

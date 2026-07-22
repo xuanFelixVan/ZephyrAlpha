@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1801 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_watchdog | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_watchdog
 # [INVARIANTS] triple-redundancy mutual-check; panic mode on 2+ peer misses; dead man's switch threshold 1800s

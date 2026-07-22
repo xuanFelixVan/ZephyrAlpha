@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2083 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_unified_memory_api_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-700 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_unified_memory_api
 # [STABILITY] evolving

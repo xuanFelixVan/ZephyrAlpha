@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0426 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_benchmark_suite | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_benchmark_suite
 # [INVARIANTS] BenchmarkCase数据模型;7维度测试用例完整性;CATEGORY_MAP键覆盖

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0202 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_secrets | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] tests.llm_security.test_secrets
 # [STABILITY] evolving

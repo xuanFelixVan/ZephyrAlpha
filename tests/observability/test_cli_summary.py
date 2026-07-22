@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0526 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_cli_summary | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-358 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_cli_summary
 # [INVARIANTS] CLISummary.generate返回非空str; save_summary写入JSON文件

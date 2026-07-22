@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1290 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_calibrate_model_diff | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §test
 # [MODULE] tests.test_calibrate_model_diff
 # [INVARIANTS] 零成本合成数据;不调真实模型;覆盖退出码0/1/2/3

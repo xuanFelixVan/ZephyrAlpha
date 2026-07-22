@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1214 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_l13_experimentation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/blueprint.md | §test
 # [MODULE] zephyr.ex_core.src.zephyr
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

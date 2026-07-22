@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0876 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_exam_test_cases | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_exam_test_cases
 # [INVARIANTS] test_exam_test_cases完整性

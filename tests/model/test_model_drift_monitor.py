@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1285 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_model_drift_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md
 # [MODULE] tests.test_model_drift_monitor
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算

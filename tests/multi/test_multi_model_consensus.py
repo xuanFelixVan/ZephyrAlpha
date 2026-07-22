@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1301 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_multi_model_consensus | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-409 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_multi_model_consensus
 # [INVARIANTS] ConsensusProtocol has 3 values; DebateRound has 3 rounds; escalate_to_owner returns ESCALATED prefix

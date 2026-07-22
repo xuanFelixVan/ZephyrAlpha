@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1093 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_health_aggregator_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_health_aggregator
 # [INVARIANTS] 12-system probe contract; snapshot capped at MAX_SNAPSHOTS
