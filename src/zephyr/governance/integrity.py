@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 校验失败返回pass=False
 # [TESTS] tests/audit-orchestrator/test_integrity.py
-# [A_module] module_id=MOD-GOV_integrity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-integrity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from typing import Any

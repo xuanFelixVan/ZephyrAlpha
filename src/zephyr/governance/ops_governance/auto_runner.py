@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AutoRunnerError on failure; RuntimeError on resource leak
 # [TESTS] tests/test_auto_runner.py
-# [A_module] module_id=MOD-GOV_auto_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-auto_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.
