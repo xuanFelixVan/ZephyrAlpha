@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1965 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_agent_health_monitor_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-582 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_agent_health_monitor
 # [STABILITY] evolving

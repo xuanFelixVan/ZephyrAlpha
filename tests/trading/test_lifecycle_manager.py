@@ -1,7 +1,7 @@
-# [A_test] module_id: SRC-TST-1226 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
+# [A_test] module_id: MOD-GOV_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
 from __future__ import annotations
 
-# [A_test] module_id=T-GEN_test_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id=MOD-GOV_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_lifecycle_manager
 # [INVARIANTS] none

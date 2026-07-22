@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1966 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_agent_orchestrator_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-583 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_agent_orchestrator
 # [STABILITY] evolving

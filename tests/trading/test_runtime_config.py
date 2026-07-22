@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1500 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_runtime_config | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_runtime_config
 # [INVARIANTS] RuntimeConfig真源在zephyr.shared.contracts.runtime_types;本测试验证re-export+模型字段

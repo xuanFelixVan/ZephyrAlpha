@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1952 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_multi_agent_shared | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-569 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_multi_agent
 # [STABILITY] evolving
