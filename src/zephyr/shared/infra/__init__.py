@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SHR_infra | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-infra | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway
 
 from . import cache
