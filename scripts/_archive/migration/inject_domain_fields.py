@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-037 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [DEPRECATED] 本脚本连字符命名（D-DATA/D-SIGNAL/D-RESEARCH/D-INFRA-RUNTIME 等）是历史 bug。
 # 正确命名约定见 docs/01_policies_and_standards/_registry/vocabularies/target_layer_vocabulary.yaml v1.0.0
 # （统一为下划线 D_XXX 格式）。本脚本保留在 _archive/migration/ 仅供历史参考，禁止用于生产。
