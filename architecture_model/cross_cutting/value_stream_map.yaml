@@ -1,0 +1,289 @@
+# [A_config] module_id=CFG-value-stream-map | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/business_principles.md
+# module_id: CFG-VALUE-STREAM-MAP
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 业务架构运营结构化数据真源,从 target_architecture/business_architecture.md §4/§5.2/§5.3 迁移(2026-07-23, B3-doc6)
+#         VSM 阶段级指标表(LT/PT/%C&A 当前估算) + Handoff 契约(含交接物) + 瓶颈/浪费点 B1-B6
+#         + SLO 目标值矩阵(SLO-1~SLO-7,被 dr_bcp_matrix.yaml 指标目录引用) + SLA 现实
+#         永恒方法论(能力地图框架/VSM 概念/Handoff 治理/精益七浪费/NFR 定位/SLO 术语铁律)见 business_principles.md
+#         Stakeholder Roster + RACI 矩阵按 business_principles.md §7.2 边界声明,保留在 git 历史(v1.2.0,激活时恢复),不迁入本文件
+
+module_id: CFG-VALUE-STREAM-MAP
+version: "1.0.0"
+description: "业务架构运营结构化数据真源——VSM 阶段级指标表(LT/PT/%C&A 当前估算) + Handoff 契约(含交接物) + 瓶颈/浪费点 B1-B6 + SLO 目标值矩阵(SLO-1~SLO-7) + SLA 现实。从 business_architecture.md §4/§5.2/§5.3 迁移。永恒方法论见 business_principles.md。"
+
+# ============================================================================
+# §4.2 VSM Stage-level Metrics / 阶段级指标表(当前估算基线)
+# 永恒 VSM 概念(LT/PT/%C&A 定义 + 11 标准阶段)见 business_principles.md §3.1/§3.2
+# 本节为 principles §3.2 注明"derived,运营态采集"的当前阶段估算基线
+# ============================================================================
+
+vsm_stage_metrics:
+  description: "VSM 阶段级指标表(当前阶段估算基线)"
+  eternal_framework_ref: "business_principles.md §3.1/§3.2(LT/PT/%C&A 概念 + 11 标准阶段)"
+  rewrite_trigger: "接入 L1 行情/portfolio ≥ $10M → 整体向秒级压缩重写"
+  stages:
+    - stage: "Factor Research"
+      core_artifact: "因子假设 + 特征工程"
+      owner: "S2"
+      lead_time: "5-20 天"
+      process_time: "2-8 小时"
+      c_and_a: "70%"
+      main_delay_source: "想法→验证的探索回合、PIT 数据整备"
+    - stage: "Factor Library"
+      core_artifact: "因子入库 + 质量断言"
+      owner: "S2 + S6"
+      lead_time: "15-60 min"
+      process_time: "10-30 min"
+      c_and_a: "98%"
+      main_delay_source: "PIT 三字段校验、五类质量断言"
+    - stage: "Model Train/Deploy"
+      core_artifact: "模型 + 部署 manifest"
+      owner: "S7(未来)"
+      lead_time: "2-24 小时"
+      process_time: "30 min-4 h"
+      c_and_a: "95%"
+      main_delay_source: "GPU 排队、超参搜索"
+    - stage: "Signal Generation"
+      core_artifact: "信号 payload"
+      owner: "S2"
+      lead_time: "15-60 min"
+      process_time: "5-15 min"
+      c_and_a: "98%"
+      main_delay_source: "因子刷新依赖、下游订阅对齐"
+    - stage: "Portfolio Construction"
+      core_artifact: "目标仓位"
+      owner: "S2 → S9(未来)"
+      lead_time: "5-15 min"
+      process_time: "1-5 min"
+      c_and_a: "99%"
+      main_delay_source: "约束求解器收敛"
+    - stage: "Pre-trade Risk"
+      core_artifact: "风控审批结果"
+      owner: "S4"
+      lead_time: "<1 min"
+      process_time: "5-30 s"
+      c_and_a: "99.9%"
+      main_delay_source: "限额查询、手工复核(ad-hoc)"
+    - stage: "Order Submission"
+      core_artifact: "broker ACK"
+      owner: "S3"
+      lead_time: "1-5 min"
+      process_time: "10-60 s"
+      c_and_a: "99.5%"
+      main_delay_source: "券商 API 网络、Idempotency 校验(H10 红线)"
+    - stage: "Fill & Reconcile"
+      core_artifact: "成交单 + 对账记录"
+      owner: "S3 + S6"
+      lead_time: "intraday"
+      process_time: "1-5 min"
+      c_and_a: "99%"
+      main_delay_source: "成交回报到齐、T+0/T+1 对账窗口"
+    - stage: "Attribution"
+      core_artifact: "PnL + 归因报告"
+      owner: "S2"
+      lead_time: "T+1"
+      process_time: "10-30 min"
+      c_and_a: "99%"
+      main_delay_source: "日终结算数据到齐"
+    - stage: "Feedback loop"
+      core_artifact: "研究结论 / KB 决策记录 候选"
+      owner: "S1 + S2"
+      lead_time: "T+1 ~ T+5"
+      process_time: "1-4 h"
+      c_and_a: "85%"
+      main_delay_source: "人工复盘、AI 辅助分析往返"
+
+# ============================================================================
+# §4.3 Handoff Contracts / 关键交接点契约(含交接物)
+# 永恒 Handoff 治理原则见 business_principles.md §3.3(HO-1~HO-5)
+# 本节为 principles §3.3 的详细展开:增加"交接物(handoff_artifact)"列
+# ============================================================================
+
+handoff_contracts:
+  description: "关键交接点契约(含交接物)"
+  eternal_principles_ref: "business_principles.md §3.3(HO-1~HO-5 永恒列表)"
+  handoffs:
+    - id: "HO-1"
+      name: "Vendor → Data Lake(市场数据入仓)"
+      upstream_to_downstream: "S10 → S6"
+      handoff_artifact: "原始 tick / bar / reference data"
+      risk: "字段漂移、survivorship、迟到数据覆盖历史"
+      governance: "ACL(03-AA H8)+ PIT 三字段(05-DA §4)+ immutable append"
+    - id: "HO-2"
+      name: "Research → Factor Library(研究→生产)"
+      upstream_to_downstream: "S2 → (S2+S6)"
+      handoff_artifact: "因子代码 + metadata + 断言"
+      risk: "研究环境灰带代码进生产、look-ahead bias"
+      governance: "H8 ACL 隔离 + F21-F25 fitness functions + OQ-075 三断言"
+    - id: "HO-3"
+      name: "Signal → Pre-trade Risk(信号→风控)"
+      upstream_to_downstream: "S2 → S4"
+      handoff_artifact: "signal payload + metadata"
+      risk: "信号绕过风控、限额不同步"
+      governance: "强制性 Pre-trade gate(A09)+ Idempotency Key(03-AA H10)"
+    - id: "HO-4"
+      name: "Portfolio → Broker(组合→券商)"
+      upstream_to_downstream: "S3 → S10"
+      handoff_artifact: "委托单 + client_order_id"
+      risk: "订单重发重复(量化红线)"
+      governance: "H10 幂等设计 + broker ACK 回执持久化"
+    - id: "HO-5"
+      name: "Fill → Attribution / Feedback(成交→归因→研究)"
+      upstream_to_downstream: "(S3+S6) → S2 → S1"
+      handoff_artifact: "成交记录 + PnL 分解 + 结论"
+      risk: "反馈断链(归因洞察没回到因子库)"
+      governance: "Decision log 七维度(OQ-063)+ 08_knowledge/ 沉淀"
+
+# ============================================================================
+# §4.4 Bottlenecks & Waste / 瓶颈与浪费点(B1-B6)
+# 永恒精益七浪费框架见 business_principles.md §3.4
+# 本节为 principles §3.4 未覆盖的具体瓶颈实例(当前阶段识别)
+# ============================================================================
+
+bottlenecks:
+  description: "瓶颈与浪费点(B1-B6,当前阶段识别)"
+  eternal_framework_ref: "business_principles.md §3.4(精益七浪费框架)"
+  items:
+    - id: "B1"
+      waste_type: "等待(Wait)"
+      bottleneck: "市场数据上游窗口(iFinD EOD 推送延迟,下游结算数据 T+1 到齐)"
+      impact_stages: "① ② ⑥"
+      current_status: "单 Vendor 单链路;无备份源"
+      improvement_direction: "接入 AKShare / Tushare 作 fallback(OSS Catalog X3)"
+    - id: "B2"
+      waste_type: "等待(Wait)"
+      bottleneck: "回测任务排队(单机资源、无任务调度器)"
+      impact_stages: "②"
+      current_status: "backtest TAT p95 ≤ 30min(SLO-4)可能因串行回测超时"
+      improvement_direction: "H14 Observability 后加 job queue;或引入 Airflow / Prefect"
+    - id: "B3"
+      waste_type: "等待 / 返工(Wait/Rework)"
+      bottleneck: "合规审批等待(当前合规 S5 deferred 由 you 手工兜底)"
+      impact_stages: "④ ⑤ ⑦"
+      current_status: "手工,无规则引擎"
+      improvement_direction: "S5 激活后引入 policy-as-code(16_compliance_and_legal/)"
+    - id: "B4"
+      waste_type: "返工(Rework)"
+      bottleneck: "因子重算(PIT 一致性失败触发全量回补)"
+      impact_stages: "②"
+      current_status: "F21-F25 fitness function 会拦截;但拦截后回补本身是返工"
+      improvement_direction: "增量回补(只回补被 corporate action 污染的 partition)"
+    - id: "B5"
+      waste_type: "传输 / 动作(Motion)"
+      bottleneck: "人-AI 协作往返(prompt → 草稿 → 审核 → 修订)在 ⑦ 反馈回路中占 LT 60%+"
+      impact_stages: "⑦"
+      current_status: "每次 AI 协作 round-trip 15-60 min"
+      improvement_direction: "VIB-1 Session 治理 + prompt 资产库(VIB-4)沉淀复用"
+    - id: "B6"
+      waste_type: "缺陷(Defect)"
+      bottleneck: "信号失效未及时发现(factor decay / concept drift)"
+      impact_stages: "② ③ ⑥"
+      current_status: "归因只 T+1 看结果,drift 监控缺失"
+      improvement_direction: "L13 experiment_pipeline 激活后 champion-challenger 在线对照"
+
+# ============================================================================
+# §5.2 SLO Target Matrix / SLO 目标值矩阵(SLO-1~SLO-7)
+# 永恒 SLO/SLA/SLI 术语铁律 + SLO-Audit(不可降)见 business_principles.md §4.3/§4.5
+# 本节为 principles §7.2 注明"运营态维护"的 SLO 目标值(被 dr_bcp_matrix.yaml 指标目录引用)
+# SLO-Audit 永恒不可降,已在 principles §4.5,此处不重复
+# ============================================================================
+
+slo_matrix:
+  description: "SLO 目标值矩阵(SLO-1~SLO-7,被 dr_bcp_matrix.yaml 指标目录引用)"
+  eternal_framework_ref: "business_principles.md §4.3/§4.5(SLO 术语铁律 + SLO-Audit 不可降)"
+  measurement_location_ref: "technology_principles.md §7 + dr_bcp_matrix.yaml(指标目录)"
+  rewrite_triggers:
+    - "接入 L1 行情 / portfolio ≥ $10M → 整体时延 SLO 从秒级压缩到毫秒级"
+    - "S11 合伙人或 S12 监管激活 → SLA 列从 internal 转对外承诺"
+    - "引入实时流架构(Kafka/Pulsar 事件总线)→ 从 batch 语义改为 streaming 语义"
+    - "任一 SLO 连续 3 个月未达标 → 触发 root-cause KB 决策 + 目标值重评"
+  slos:
+    - id: "SLO-1"
+      name: "Data Freshness / 数据新鲜度"
+      definition: "市场时段行情从 vendor 发布到数据湖可查询的端到端延迟"
+      target: "分钟级 bar:p50 ≤ 15 s / p95 ≤ 60 s / p99 ≤ 180 s;日度结算:T+1 11:00 UTC+8 前 100% 到齐(p99);Reference 数据:T 日 18:00 UTC+8 前到齐"
+      sli_method: "ts_ingest − vendor_release_ts 差值(见 data_principles.md §4 PIT 三字段);histogram export to Prometheus"
+      violation_consequence: "触发 B1 降级 + 阻塞因子刷新(SLO-5)"
+    - id: "SLO-2"
+      name: "Signal Generation Latency / 信号生成端到端延迟"
+      definition: "市场数据进入 → 信号 payload 发布的端到端 p99(intraday batch 场景)"
+      target: "p50 ≤ 30 s / p95 ≤ 60 s / p99 ≤ 90 s;EOD 策略:p95 ≤ 10 min"
+      sli_method: "OTel 分布式 trace:span=signal_generation,端点 = data ingress timestamp → signal publish timestamp"
+      violation_consequence: "超限则信号标记 stale=true,下游 portfolio 降级处理"
+    - id: "SLO-3"
+      name: "Order Submission Latency / 下单提交延迟"
+      definition: "从信号发布(含通过 pre-trade risk gate)到券商 broker ACK 的 p99"
+      target: "p50 ≤ 5 s / p95 ≤ 15 s / p99 ≤ 30 s(含 A09 pre-trade risk p99 ≤ 1 s + 券商网络)"
+      sli_method: "OTel span:span=order_submit,起点 signal.published_at,终点 broker_ack_at;Idempotency Key 命中率一并记录"
+      violation_consequence: "超限则 kill-switch 触发(A13),已下订单走 H10 幂等回执"
+    - id: "SLO-4"
+      name: "Backtest Turnaround / 回测周转 TAT"
+      definition: "常规回测(单策略 × 5 年日频全市场)提交到结果可用的 end-to-end"
+      target: "常规:p50 ≤ 10 min / p95 ≤ 30 min / p99 ≤ 60 min;重度(因子扫描/参数网格):p95 ≤ 4 h"
+      sli_method: "Job 执行时长 metric:backtest_duration_seconds{type};队列等待单独记 backtest_queue_wait_seconds"
+      violation_consequence: "触发 B2 降级,考虑并行调度器(Airflow/Prefect)"
+    - id: "SLO-5"
+      name: "Factor Refresh Window / 因子刷新窗口"
+      definition: "日度因子与分钟因子的刷新时效"
+      target: "日度因子:EOD T 日 18:00 + 90 min 内 100% 刷新完成(p99);分钟因子(滚动):每 5 min 刷新一次,p99 完成时间 ≤ 5 min"
+      sli_method: "factor_refresh_duration_seconds{cadence,factor_id} + 完成率 factor_refresh_success_ratio"
+      violation_consequence: "下游信号标记 factor_stale=true;连续 2 个窗口失败告警"
+    - id: "SLO-6"
+      name: "System Availability / 系统可用性"
+      definition: "核心链路(data ingest + signal gen + order submit)在市场时段的月可用性"
+      target: "市场时段:99.9% / month(单月允许停机 ≤ 43.2 min);非市场时段:best-effort(无承诺)"
+      sli_method: "Blackbox probe 每 30 s ping 核心端点;SLI = 1 − downtime_min / market_hours_min"
+      violation_consequence: "超限触发事后 incident review + KB 决策记录(可审计链)"
+    - id: "SLO-7"
+      name: "Data Quality / 数据质量"
+      definition: "PIT / survivorship / lineage 三断言 + 完整度 / 一致性 / 及时性三维度"
+      target: "完整度(Completeness):≥ 99.5%(缺失率 ≤ 0.5%);一致性(Consistency,PIT 铁律不被破坏):≥ 99.9%;及时性(Timeliness,同 SLO-1):见 SLO-1;F21-F25 fitness functions(OQ-027 + OQ-075 三自研断言):100% pass(任何失败阻塞上线)"
+      sli_method: "Great Expectations / Soda 断言结果;pytest fitness function pass ratio;自研 test_no_lookahead_bias.py / test_no_survivorship_bias.py / test_lineage_completeness.py"
+      violation_consequence: "任何断言失败阻塞因子上线(HO-2 handoff gate)"
+
+# ============================================================================
+# §5.3 SLA Reality / 当前阶段的 SLA 现实
+# 永恒 SLA 术语铁律见 business_principles.md §4.3
+# ============================================================================
+
+sla_reality:
+  description: "当前阶段的 SLA 现实(单人,无外部合同)"
+  eternal_framework_ref: "business_principles.md §4.3(SLA/SLO/SLI 术语铁律)"
+  counterparties:
+    - counterparty: "S10 iFinD(Vendor)"
+      has_real_sla: true
+      note: "由供应商承诺可用性 / 限流 / 字段稳定,登记在 integration-catalog.md Vendor Registry"
+    - counterparty: "S11 Future partners"
+      has_real_sla: false
+      note: "未激活;S11 激活后,本表 SLO-6 / SLO-7 需转为对合伙人的 SLA"
+    - counterparty: "S12 Regulators"
+      has_real_sla: false
+      note: "无商业 SLA(但有合规时限);监管激活后,合规报告时限(如成交回报 T+1)转为硬性 SLA"
+    - counterparty: "内部"
+      has_real_sla: false
+      note: "单人;当前所有 SLO 都是对自己的承诺,性质接近 OKR;仍必须量化、否则无法治理"
+
+# ============================================================================
+# 不迁入本文件的内容(按 business_principles.md §7.2 边界声明)
+# - Stakeholder Roster(S1-S12)+ RACI 矩阵(A01-A18)→ git 历史(v1.2.0,激活时恢复)
+# - 全域→能力域映射 + 能力成熟度评分 → architecture_model/cross_cutting/capability_heatmap.yaml
+# - 业务约束完整列表 → architecture_principles.md(R1-R4)
+# - Architecture Runway(RW-BA-01~05)→ business_principles.md §6(永恒)
+# ============================================================================
+not_migrated_note:
+  description: "不迁入本文件的内容(按 business_principles.md §7.2 边界声明)"
+  items:
+    - content: "Stakeholder Roster(S1-S12)+ RACI 矩阵(A01-A18)"
+      home: "git 历史(v1.2.0,激活时恢复)"
+    - content: "全域→能力域映射 + 能力成熟度评分"
+      home: "architecture_model/cross_cutting/capability_heatmap.yaml"
+    - content: "业务约束完整列表"
+      home: "architecture_principles.md(R1-R4)"
+    - content: "Architecture Runway(RW-BA-01~05)"
+      home: "business_principles.md §6(永恒)"

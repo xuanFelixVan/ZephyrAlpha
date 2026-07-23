@@ -236,7 +236,7 @@ ttl: permanent
 
 | 其他视图 | 本视图与其关系 |
 |---|---|
-| `business_architecture.md` | 01-BA定义"业务做什么"；本视图给每项能力打成熟度分 |
+| `business_principles.md` + `value_stream_map.yaml` | 01-BA定义"业务做什么"（永恒方法论在 principles，运营结构化数据在 YAML）；本视图给每项能力打成熟度分 |
 | `architecture_model/cross_cutting/capability_heatmap.yaml` | YAML是机器可读能力清单（canonical schema）；本视图是人类可读热力图视觉化 |
 | `generated/design_vs_production.md` | 派生视图提供原始统计数据；本视图做能力域聚合分析 |
 

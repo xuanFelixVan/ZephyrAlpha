@@ -182,7 +182,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 | 视图 | Runway 章节 | 条目数 | 主要覆盖域 |
 |------|------------|--------|----------|
-| [01-BA 业务架构](./business_architecture.md) | §8 Architecture Runway | 5 条 | 战略层 |
+| [01-BA 业务架构](../04_architecture_principles_decisions/business_principles.md) | Architecture Runway（原 §8，已迁移至 principles）| 5 条 | 战略层 |
 | [02-IA 信息架构](../04_architecture_principles_decisions/information_principles.md) | §5 Architecture Runway | 3 条 | 信息/数据层 |
 | [03-AA 应用架构](../04_architecture_principles_decisions/application_principles.md) | Architecture Runway（原 §11，已迁移至 principles）| 22 条 | 应用组件层 |
 | [04-TA 技术架构](../04_architecture_principles_decisions/technology_principles.md) | Architecture Runway（原 §14，已迁移至 principles）| 7 条 | 基础设施层 |

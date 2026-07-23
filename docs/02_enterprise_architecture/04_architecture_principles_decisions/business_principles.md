@@ -44,7 +44,7 @@ ttl: permanent
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
 - 全域→能力域映射 → `architecture_model/cross_cutting/capability_heatmap.yaml`（真源）
 - 能力成熟度评分 → `architecture_model/cross_cutting/capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）
-- VSM 阶段指标具体数字（LT/PT/%C&A）→ 由运营态 metrics 自动采集
+- VSM 阶段指标 + Handoff 契约（含交接物）+ 瓶颈 B1-B6 + SLO 目标值矩阵 + SLA 现实 → `architecture_model/cross_cutting/value_stream_map.yaml`
 - Stakeholder RACI 矩阵 → 未来激活时从 git 历史恢复（v1.2.0, commit 69fa51dc12~1）
 
 **与其他原则文档关系**：
@@ -133,11 +133,15 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 | **HO-4** | Portfolio → Broker（组合→券商）| C4→C5 | **订单重发重复**（量化红线）| 幂等设计 + broker ACK回执持久化 |
 | **HO-5** | Fill → Attribution / Feedback（成交→归因→研究）| C5→C2 | 反馈断链（归因洞察没回到因子库）| Decision log + 知识库沉淀 |
 
+> **注**：Handoff 详细契约（含"交接物"列、上游→下游 Stakeholder 映射）见 `architecture_model/cross_cutting/value_stream_map.yaml`（从 business_architecture.md §4.3 迁移）。
+
 ### 3.4 精益七浪费识别原则（永恒框架）
 
 按精益七大浪费（等待/返工/过度加工/传输/库存/动作/缺陷）识别 VSM 中的瓶颈与浪费点。
 
 **永恒约束**：每个阶段必须能被映射到至少一种浪费类型，便于持续改进。
+
+> **注**：当前阶段识别的具体瓶颈/浪费实例（B1-B6，含影响阶段、当前状况、改进方向）见 `architecture_model/cross_cutting/value_stream_map.yaml`（从 business_architecture.md §4.4 迁移）。
 
 ### 3.5 横向治理贯穿全链（永恒）
 
@@ -249,8 +253,8 @@ KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git com
 |------|------|
 | 全域→能力域映射 | `architecture_model/cross_cutting/capability_heatmap.yaml` |
 | 能力成熟度评分（L0-L5） | `architecture_model/cross_cutting/capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）|
-| VSM 阶段指标具体数字（LT/PT/%C&A）| 运营态 metrics 自动采集 |
-| SLO 目标值矩阵 | SLO 矩阵文档（运营态维护）|
+| VSM 阶段指标 + Handoff 契约 + 瓶颈 B1-B6 | `architecture_model/cross_cutting/value_stream_map.yaml` |
+| SLO 目标值矩阵（SLO-1~SLO-7）+ SLA 现实 | `architecture_model/cross_cutting/value_stream_map.yaml` |
 | Stakeholder RACI 矩阵 | git 历史（v1.2.0，激活时恢复）|
 | 业务约束完整列表 | `architecture_principles.md`（R1-R4）|
 

@@ -59,7 +59,7 @@ ttl: permanent
 
 | 维度 | 名称 | 关注点 | 权重 | 对应架构文档 |
 |:----:|------|-------|:----:|-------------|
-| **D1** | 业务架构 | 业务能力完整性、需求覆盖 | 0.08 | `business_architecture.md` |
+| **D1** | 业务架构 | 业务能力完整性、需求覆盖 | 0.08 | `../04_architecture_principles_decisions/business_principles.md` + `architecture_model/cross_cutting/value_stream_map.yaml` |
 | **D2** | 信息架构 | 数据模型、元数据治理、schema 演化 | 0.08 | `information_principles.md` + `directory_registry.yaml` |
 | **D3** | 应用架构 | 模块边界、服务拆分、职责清晰度 | 0.10 | `../04_architecture_principles_decisions/application_principles.md` |
 | **D4** | 技术架构 | 技术栈成熟度、升级路径、零依赖原则 | 0.08 | `../04_architecture_principles_decisions/technology_principles.md` + `technology_landscape.yaml` + `architecture_model/technology/dr_bcp_matrix.yaml` |

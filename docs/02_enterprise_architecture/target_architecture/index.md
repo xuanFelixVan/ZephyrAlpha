@@ -130,7 +130,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | 文件 | 说明 |
 |------|------|
 | overview.md | 架构总览（v2.0.0：53域+全景图派生）|
-| business_architecture.md | BA 业务架构视图 |
+| business_principles.md → ../04_architecture_principles_decisions/ + value_stream_map.yaml | BA 业务架构原则（原 business_architecture.md 已迁移） |
 | information_principles.md → ../04_architecture_principles_decisions/ | IA 信息架构原则（原 information_architecture.md 已迁移） |
 | technology_principles.md → ../04_architecture_principles_decisions/ + dr_bcp_matrix.yaml | TA 技术架构原则（原 technology_architecture.md 已迁移） |
 | capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
@@ -167,7 +167,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 |------------|-----------|------------------------|--------------------------|--------------|
 | `index.md`（本文） | — | 本文档组是什么？怎么读？ | 所有人 | active |
 | `overview.md` | Cross-layer | 整体架构哲学？53域如何组织？ | 架构师、新加入者 | active |
-| `business_architecture.md` | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
+| [`business_principles.md`](../04_architecture_principles_decisions/business_principles.md) + [`value_stream_map.yaml`](../../../architecture_model/cross_cutting/value_stream_map.yaml) | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
 | [`technology_principles.md`](../04_architecture_principles_decisions/technology_principles.md) + [`dr_bcp_matrix.yaml`](../../../architecture_model/technology/dr_bcp_matrix.yaml) | TA | 用什么技术栈？ | SRE、实施者 | active |
 | `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
