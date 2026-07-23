@@ -218,6 +218,10 @@ __all__ = [
 
     "make_blueprint_status_transition_reconciler",  # 12维度审计自动化 P1-d BLUEPRINT 状态转跃检测
 
+    "make_session_staging_lifecycle_reconciler",  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802）
+
+    "make_root_temp_sweep_reconciler",  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803）
+
 ]
 
 # 5.59.5 修复：统一 subprocess 解码策略
