@@ -7822,11 +7822,19 @@ entries:
         根因：schema 文件已存在但 YAML 声明层 schema_file=null，违反 SSoT 三层一致性（声明层→存在层断裂）
         修复：schema_file: null → schemas/categories/market_sector_snapshot.py + schemas/categories/market_auction_book.py
         验证：10/10 schema_file 引用全部有效，0 broken refs，0 TABLE_NAME mismatches
+      - sync_yaml_to_depgraph.py 同步范围核查（2026-07-23 循环检查发现）：
+        根因：项目记忆规则错误声称"business_data_categories.yaml 改后需运行 sync_yaml_to_depgraph.py 同步到 DB"
+        核查结论：sync_yaml_to_depgraph.py 的 RULES_DIR=docs/01_policies_and_standards，
+        30 个 sync 函数无一读取 business_data_categories.yaml（位于 docs/03_modules/_cross_layer/database/）
+        business_data_categories.yaml 是运行时配置（table_registry.py 内存加载），非规则数据，无需 DB 同步
+        修复：project_memory.md line 24 已修正（分离 data_sources_registry.yaml [需同步] vs business_data_categories.yaml [无需同步]）
+        验证：86/86 tests passed（56 governance + 30 sector_snapshot）；10/10 schema_file refs valid；
+        11 depgraph schema nodes all generated/production；ch_writer stable/production
   status: resolved
   related_adjudication: '#ARCH-SSOT-REFERENCE-INTEGRITY-001 (本裁定), #ARCH-TEMP-FILE-LIFECYCLE-001 (directory_contract 登记), trae_062 (SSoT 真源分类铁律), #ARCH-DEP-PREMERGE-ENFORCE (Phase 3 拆分独立裁定)'
   related_rules: 'trae_062 (SSoT 真源分类——规则数据 YAML 为真源), trae_054 (备份先行——depgraph 变更前 git commit), L1 依赖关系先行铁律'
   created: '2026-07-22'
-  last_updated: '2026-07-22'
+  last_updated: '2026-07-23'
 
 # --- #ARCH-LINE-ENDING-CORRUPTION-001: 行尾腐败 + 空行膨胀（双 CR 未检测）---
 - issue_id: '#ARCH-LINE-ENDING-CORRUPTION-001'
