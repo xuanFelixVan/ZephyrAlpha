@@ -6,14 +6,30 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# INV-014 — Survivorship Bias 声明级门禁（数据集具备完整退市/停牌历史前保持为 policy gate）
+# INV-014 — Survivorship Bias 数据层门禁（#ARCH-CH-021 P0-1，2026-07-23 升级）
 module_id: mod_inf_016
-schema_version: "1.0"
-last_updated: "2026-05-05"
+schema_version: "1.1"
+last_updated: "2026-07-23"
 
 require_delisted_symbols_in_backtest: true
 require_suspend_flags_in_universe: true
 
+# 数据层兑现证据（#ARCH-CH-021 P0-1 落地）
+data_layer_enforced: true
+evidence:
+  table: c1_market.stock_list
+  delisted_count: 359
+  total_count: 5884
+  scd2_columns: [valid_from, valid_to, updated_at]
+  list_status_values: [上市, 退市]
+  data_source: akshare
+  refresh_task: stock_list_delisted_refresh
+  last_backfill: "2026-07-23"
+
 notes: >
-  当 D_DATA 数据管道可证明回测 universe 含退市/停牌样本时，在 CI 或数据 manifest 中登记证据路径；
-  此前 arch_guard 仅校验本策略开关为 true。
+  2026-07-23 升级：stock_list 表已含 359 只退市股（AkShare SH+SZ 退市清单），
+  补齐 SCD-2 列（valid_from/valid_to/updated_at）。
+  退市股 list_status='退市'，valid_to=delist_date；
+  在市股 list_status='上市'，valid_to=NULL。
+  回测 universe 构建时通过 valid_from/valid_to 时点过滤消除幸存者偏差。
+  退市清单通过 stock_list_delisted_refresh 任务每月刷新（AkShare 源）。

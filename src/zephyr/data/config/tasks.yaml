@@ -792,8 +792,22 @@ tasks:
     capability: stock_list
     symbols: null
     extra:
-      description: "股票列表全量刷新（QMT 5207只）"
+      description: "股票列表全量刷新（QMT 在市股 5207只）"
       trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
+      note: "仅刷新在市股；退市股由 stock_list_delisted_refresh 补充（#ARCH-CH-021 P0-1）"
+
+  - task_id: stock_list_delisted_refresh
+    table: c1_market.stock_list
+    source: akshare
+    schedule: monthly_static
+    incremental: false
+    dependencies: []
+    capability: stock_list_delisted
+    symbols: null
+    extra:
+      description: "退市股票列表刷新（AkShare SH+SZ 退市清单 ~367只，#ARCH-CH-021 P0-1）"
+      trading_day_only: false  # akshare 源，非交易日也可调用
+      update_mode: upsert  # 仅更新 list_status='退市' 的记录，不覆盖在市股
 
   - task_id: index_constituent_refresh
     table: c1_market.index_constituent
