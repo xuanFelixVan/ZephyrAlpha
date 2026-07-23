@@ -71,13 +71,13 @@ schema_version: "1.0.0"
 doc_type: register
 
 title: "项目目录登记?"
-version: "1.0.1"
+version: "1.0.2"
 
 status: active
 
 created: "2026-05-02"
 
-last_updated: "2026-06-26"
+last_updated: "2026-07-23"
 
 ai_autonomy: human_gated
 
@@ -1854,7 +1854,97 @@ directories:
 
 # ============================================================================
 
-# 汇总统计
+# ============================================================================
+# 目录成熟度状态（从 information_architecture.md §9 迁移 2026-07-23）
+# 概念抽屉成熟度——记录 IA 视图中 20 个概念抽屉的当前成熟度状态。
+# 概念抽屉名称（00-99 编号）为 IA 视图历史设计编号，
+# 部分已对应实际目录（path_mapping），部分为 planned/deferred（尚未创建）。
+# 成熟度语义：active / partial / planned / deferred / retired
+# ============================================================================
+drawer_maturity:
+  - drawer: "00_governance"
+    maturity: planned
+    path_mapping: null
+    note: "当前最简政策已散落各处，待正式整理时激活"
+  - drawer: "01_policies_and_standards"
+    maturity: partial
+    path_mapping: "docs/01_policies_and_standards/"
+    note: "仅 document-standards 有 v2.0.0（workspace 版）"
+  - drawer: "02_enterprise_architecture"
+    maturity: partial
+    path_mapping: "docs/02_enterprise_architecture/"
+    note: "adr/ 已激活（KBG-0001/0002/0003）；target_architecture/ 已激活"
+  - drawer: "03_domain_architecture"
+    maturity: planned
+    path_mapping: null
+    note: "核心业务代码开始实施后激活"
+  - drawer: "03_modules"
+    maturity: planned
+    path_mapping: "docs/03_modules/"
+    note: "按业务域激活（优先级对应业务价值链顺序），模块生命周期文档（蓝图含施工指引+交付）"
+  - drawer: "06_security_and_identity"
+    maturity: deferred
+    path_mapping: null
+    note: "单人独立操作期不激活；接入真实资金或多用户后激活"
+  - drawer: "07_sre_and_platform_ops"
+    maturity: planned
+    path_mapping: null
+    note: "K1 (2026-04-19)：已从 deferred 升为 planned。激活条件（任一）：① 接入真实券商 API（EXT-001 生产）；② 月可用性需求 >99.9%（SLO-6 触发）；③ 多 Agent 并发 >3。激活后优先建立 runbooks/ + observability/"
+  - drawer: "03_modules/_b_track_interfaces/"
+    maturity: partial
+    path_mapping: "docs/03_modules/_cross_layer/_b_track_interfaces/"
+    note: "handoff-log 骨架已有；memory-and-context/ 等 planned（原 07_ai_engineering）"
+  - drawer: "09_data_platform"
+    maturity: planned
+    path_mapping: null
+    note: "首次接入真实数据源时激活"
+  - drawer: "10_research_and_factor_lab"
+    maturity: planned
+    path_mapping: null
+    note: "开始因子研究时激活"
+  - drawer: "11_model_and_ml_platform"
+    maturity: planned
+    path_mapping: null
+    note: "引入 ML 模型时激活"
+  - drawer: "12_strategy_and_portfolio"
+    maturity: planned
+    path_mapping: null
+    note: "首个完整策略成型时激活"
+  - drawer: "13_execution_and_order_lifecycle"
+    maturity: planned
+    path_mapping: null
+    note: "接入券商 API 后激活"
+  - drawer: "14_reporting_and_distribution"
+    maturity: planned
+    path_mapping: null
+    note: "产生首个可分发报告时激活"
+  - drawer: "08_knowledge"
+    maturity: planned
+    path_mapping: "docs/08_knowledge/"
+    note: "有跨项目可复用知识时激活"
+  - drawer: "16_compliance_and_legal"
+    maturity: deferred
+    path_mapping: null
+    note: "仅个人使用期不激活；对外发行产品时激活"
+  - drawer: "17_risk_and_controls"
+    maturity: planned
+    path_mapping: null
+    note: "第一个真实交易前必须激活"
+  - drawer: "18_audit_and_evidence"
+    maturity: partial
+    path_mapping: "docs/_working/audit/"
+    note: "已有 scripts/governance/ 产物流入；正式登记表待建"
+  - drawer: "19_development_workspace"
+    maturity: retired
+    path_mapping: "docs/_working/"
+    note: "2026-06-26 退役；过程区迁移至 docs/_working/"
+  - drawer: "99_archive"
+    maturity: planned
+    path_mapping: "docs/_archive/"
+    note: "出现首个退役文档时激活"
+
+# ============================================================================
+# 汇总统计# 汇总统计
 
 # ============================================================================
 
@@ -1899,6 +1989,16 @@ summary:
 # ============================================================================
 
 changelog:
+
+  - version: "1.0.2"
+
+    date: "2026-07-23"
+
+    author: "AI-GLM-5.2"
+
+    changes:
+
+      - "Add drawer_maturity section — migrated from information_architecture.md §9 (20 conceptual drawer maturity states with path_mapping)"
 
   - version: "1.0.1"
 

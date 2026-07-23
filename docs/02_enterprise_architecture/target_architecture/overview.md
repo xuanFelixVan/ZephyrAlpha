@@ -147,7 +147,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 | Tree / 树 | Primary view / 核心视图归属 | Key diagrams / 主要图 | Owner document / 归属文档 |
 |----------|--------------------------|---------------------|--------------------------|
-| `docs/` | Information Architecture | `docs/` 抽屉拓扑图 + 文档生命周期图 | `information_architecture.md` |
+| `docs/` | Information Architecture | `docs/` 抽屉拓扑图 + 文档生命周期图 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) + `directory_registry.yaml` |
 | `src/` | Application Architecture | C4-L1 系统上下文 + C4-L2 容器图 + 域依赖图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
 | `scripts/` | Application Architecture (sub-view) | 治理代码拓扑图 + pre-commit/CI 钩子流程图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
 
@@ -183,7 +183,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | 视图 | Runway 章节 | 条目数 | 主要覆盖域 |
 |------|------------|--------|----------|
 | [01-BA 业务架构](./business_architecture.md) | §8 Architecture Runway | 5 条 | 战略层 |
-| [02-IA 信息架构](./information_architecture.md) | §11 Architecture Runway | 3 条 | 信息/数据层 |
+| [02-IA 信息架构](../04_architecture_principles_decisions/information_principles.md) | §5 Architecture Runway | 3 条 | 信息/数据层 |
 | [03-AA 应用架构](../04_architecture_principles_decisions/application_principles.md) | Architecture Runway（原 §11，已迁移至 principles）| 22 条 | 应用组件层 |
 | [04-TA 技术架构](./technology_architecture.md) | §14 Architecture Runway | 7 条 | 基础设施层 |
 | **合计** | — | **37 条** | 全层覆盖 |

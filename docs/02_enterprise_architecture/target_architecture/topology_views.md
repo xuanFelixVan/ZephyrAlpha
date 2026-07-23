@@ -47,7 +47,7 @@ graph TB
 
 ```mermaid
 %%{init: {'theme': 'default'}}%%
-%% v2.0.0: 同步对齐 information_architecture.md §4 的6顶级目录结构（原20+抽屉已简化）
+%% v2.0.0: 同步对齐 information_principles.md §2 + directory_registry.yaml 的6顶级目录结构（原20+抽屉已简化）
 graph TB
     subgraph GOV["治理层 / Governance"]
         G01["01_policies_and_standards<br/>规则 / 标准 / 模板 / 注册表"]
