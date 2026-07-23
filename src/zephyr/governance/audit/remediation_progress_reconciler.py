@@ -284,7 +284,10 @@ def query_stale_dimensions(project_root, max_age_seconds: int = _BLOCK_SECONDS) 
         db_path = _get_db_path(project_root)
         if not os.path.isfile(db_path):
             return []
-        cutoff = (datetime.now(timezone.utc) - timedelta(seconds=max_age_seconds)).isoformat()
+        # 治本: 用 str() 而非 isoformat()——last_updated 经 now_utc()->SQLite str() 存储为空格分隔
+        # ('2026-07-22 18:26:51+00:00')，isoformat() 用 'T' 分隔，字符串比较时
+        # 'T'(ord=84) > ' '(ord=32) 导致 last_updated < cutoff 同日误判（false-positive stale）
+        cutoff = str(datetime.now(timezone.utc) - timedelta(seconds=max_age_seconds))
         conn = sqlite3.connect(db_path, timeout=10.0)
         try:
             try:
