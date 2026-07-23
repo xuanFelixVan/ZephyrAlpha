@@ -2635,6 +2635,57 @@ entries:
   created: '2026-07-21'
   last_updated: '2026-07-21'
 
+# --- #ARCH-CH-026: 财务三表金额字段 Float64→Decimal 精度迁移（audit 1.2 治本）---
+- issue_id: '#ARCH-CH-026'
+  title: c3_fundamental 财务三表金额字段 Float64→Decimal 定点精度迁移——消除二进制浮点金额精度隐患 + 补齐 c3_fundamental DDL-as-Code 真源缺口
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    audit_03 审查 1.2（金额/价格字段数值精度）：c3_fundamental 财务三表（income_statement/balance_sheet/
+    cashflow_statement）共 53 个金额字段使用 Nullable(Float64) 存储。Float64 为 IEEE 754 双精度浮点，
+    金额 > 2^53（约 9 千万亿）后分位失真；虽 A 股营收量级（max 3.3T）未触及该阈值，但机构级财务建模
+    要求定点精度，且与行情表 amount Decimal(18,2) 口径不一致。审查评 ⚠️。
+    附带发现：c3_fundamental 三表无 DDL-as-Code 真源文件（schemas/categories/ 仅有 market_*），
+    DDL 真源散落于 provider 代码 / 仅存于 CH 实例，违反 DDL 单一真源原则（audit 1.1 对 market 层 ✅，
+    c3_fundamental 层存在缺口）。
+
+    治本方案（2026-07-23，audit_03 remediation 第二轮）：
+    1. 精度裁定：金额字段 → Nullable(Decimal(18,2))（与行情表 amount 一致；max 3.3T < 10^16 安全）；
+       EPS 字段 → Nullable(Decimal(18,4))（每股收益需 4 位小数精度）；
+       total_shares 保留 Float64（股本数量非金额字段，不在 audit 1.2 范围）。
+    2. DB 迁移：ALTER TABLE MODIFY COLUMN（mutations_sync=2 同步），53 字段全部迁移；
+       预检 NaN/Inf/越界（0 异常）+ CREATE TABLE _bak_aud12_20260723 备份原数据（可逆性）。
+    3. DDL-as-Code 真源补齐：新建 schemas/categories/fundamental_{income_statement,balance_sheet,
+       cashflow_statement}.py 三个真源文件 + scripts/ch/apply_fundamental_tables_ddl.py（--verify
+       校验引擎 + 金额字段 Decimal 精度，防回退）。
+    4. 引擎确认：三表 ReplacingMergeTree(ingest_ts) PARTITION BY toYYYYMM(report_period)
+       ORDER BY (symbol, report_period, announce_date)，ingest_ts 兼任版本列（财报修正取最新版本，
+       配合 PIT 查询防前视偏差）。
+
+    验证结果（2026-07-23）：
+    - income_statement: 20 Decimal 字段（18 金额 @18,2 + 2 EPS @18,4），0 残留 Float64
+    - balance_sheet: 20 Decimal 字段 + total_shares Float64（保留），0 金额字段残留 Float64
+    - cashflow_statement: 13 Decimal 字段，0 残留 Float64
+    - 行数对账：340959/334521/610460 迁移前后一致（无丢行）
+    - 抽样：total_revenue=3318168000000.00（定点）、eps_basic=0.5480（4 位精度）
+    - PIT 查询仍可用（announce_date/report_period 列未变）
+    - apply_fundamental_tables_ddl.py --verify：[OK] 引擎 + 53 金额字段 Decimal 精度全部一致
+  impact:
+  - schemas/categories/fundamental_income_statement.py（新建——DDL 真源）
+  - schemas/categories/fundamental_balance_sheet.py（新建——DDL 真源）
+  - schemas/categories/fundamental_cashflow_statement.py（新建——DDL 真源）
+  - scripts/ch/apply_fundamental_tables_ddl.py（新建——apply + verify，audit 1.2 防回退）
+  - ClickHouse c3_fundamental.{income_statement,balance_sheet,cashflow_statement}（53 字段 Float64→Decimal）
+  fix_phase: 'Phase 1 完成（DB 迁移 + DDL 真源 + verify 防回退）'
+  status: resolved
+  related_rules:
+  - audit_03 1.2
+  - '#ARCH-CH-022'
+  - RULE-SSOT-CLASSIFICATION
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
 # --- #ARCH-OLAP-001: olap_engine.py 孤儿模块退役（DuckDB OLAP 层被 ClickHouse 替代） ---
 - issue_id: '#ARCH-OLAP-001'
   title: olap_engine.py 孤儿模块退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代后业务侧零调用
@@ -2949,8 +3000,7 @@ entries:
   adjudication: |
     裁定（2026-07-18）：
     (1) 真泄露 5 处立即治本——通用错误消息跨边界外发 + 异常细节 logger(exc_info)
-        入服务端日志：_base_server.py（Invalid params 不再回显 TypeError 详情）、
-        knowledge_base_server.py（vms_error 改静态降级提示）、scheduler.py
+        入服务端日志：_base_server.py（Invalid params 不再回显 TypeError 详情）、scheduler.py
         （/health 的 ch_status 改 "error" 通用值 + _handle_health/_handle_status
         的 _send_json(str(e)) 改 "internal error"）。
     (2) M13 检测语义校准——扫描范围由新建的 trust_boundary_surface_registry.yaml
@@ -2966,7 +3016,6 @@ entries:
         校准实现使其符合 5.168 原定义（原定义本就写明"直返客户端"）。
   impact:
     - src/zephyr/integration/mcp/_base_server.py  # 治本：TypeError 详情不回显
-    - src/zephyr/integration/mcp/knowledge_base_server.py  # 治本：vms_error 静态降级
     - src/zephyr/data/scheduler.py  # 治本：3 处 HTTP 外发通用化 + exc_info 入日志
     - docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml  # 新建，SSoT
     - scripts/governance/architecture_health_dashboard.py  # M13 扫描面校准 + _HTTP_EMIT_SINKS 盲区补齐
