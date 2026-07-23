@@ -136,3 +136,38 @@ def load_ch_config() -> dict[str, str]:
 def get_ch_env_path() -> Path:
     """返回 CH 配置文件路径（供测试/诊断使用）。"""
     return _CH_ENV_PATH
+
+
+def load_ch_reader_config() -> dict[str, str]:
+    """返回 CH 只读账号配置（audit 9.4 RBAC 治本 #ARCH-CH-027）。
+
+    优先使用 CLICKHOUSE_READER_USER/PASSWORD，未配置时回退到 CLICKHOUSE_USER/PASSWORD。
+    用于 database_service.get_clickhouse_conn() 等只读查询场景，
+    确保应用层只读连接使用 DB 级 SELECT-only 账号。
+
+    Returns:
+        包含 host/port/http_port/user/password/database 的字典。
+    """
+    base = load_ch_config()
+    reader_user = os.environ.get("CLICKHOUSE_READER_USER") or get_secret_from_file_or_default(
+        "CLICKHOUSE_READER_USER", _CH_ENV_PATH, base["user"])
+    reader_password = os.environ.get("CLICKHOUSE_READER_PASSWORD") or get_secret_from_file_or_default(
+        "CLICKHOUSE_READER_PASSWORD", _CH_ENV_PATH, base["password"])
+    return {**base, "user": reader_user, "password": reader_password}
+
+
+def load_ch_writer_config() -> dict[str, str]:
+    """返回 CH 写入账号配置（audit 9.4 RBAC 治本 #ARCH-CH-027）。
+
+    优先使用 CLICKHOUSE_WRITER_USER/PASSWORD，未配置时回退到 CLICKHOUSE_USER/PASSWORD。
+    用于 ch_writer 的 TCP/HTTP 写入路径，确保写入操作使用 DB 级 INSERT/ALTER 账号。
+
+    Returns:
+        包含 host/port/http_port/user/password/database 的字典。
+    """
+    base = load_ch_config()
+    writer_user = os.environ.get("CLICKHOUSE_WRITER_USER") or get_secret_from_file_or_default(
+        "CLICKHOUSE_WRITER_USER", _CH_ENV_PATH, base["user"])
+    writer_password = os.environ.get("CLICKHOUSE_WRITER_PASSWORD") or get_secret_from_file_or_default(
+        "CLICKHOUSE_WRITER_PASSWORD", _CH_ENV_PATH, base["password"])
+    return {**base, "user": writer_user, "password": writer_password}

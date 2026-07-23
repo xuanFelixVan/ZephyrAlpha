@@ -37,6 +37,12 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
    - recorded_time - timestamp = 端到端延迟，用于回测延迟建模
    - DEFAULT now() 由 ClickHouse 自动填充，INSERT 显式传入本地时间
    - 不影响 ORDER BY（元数据级新增，O(1) 操作）
+7. 数据跳过索引（audit 1.3/5.3 治本，#ARCH-CH-028，2026-07-23）
+   - INDEX idx_ts timestamp TYPE minmax GRANULARITY 1: 时间戳范围裁剪
+   - INDEX idx_symbol symbol TYPE set(10000) GRANULARITY 4: 单标的精确裁剪
+   - 背景: ORDER BY 以 market_type 为前缀（#ARCH-CH-020 防跨市场去重事故），
+     导致单标的查询无法使用主键前缀裁剪。set(10000) 索引在每个 granule 块
+     （4×8192=32768 行）存储至多 10000 个 distinct symbol，支持精确点查裁剪。
 """
 from __future__ import annotations
 
@@ -61,7 +67,9 @@ CREATE TABLE IF NOT EXISTS c1_market.tick_data
     bid_volume    Nullable(UInt64)        COMMENT '买一量',
     ask_volume    Nullable(UInt64)        COMMENT '卖一量',
     quality_flag  UInt8          DEFAULT 1 COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts     DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
+    ingest_ts     DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
+    INDEX idx_ts timestamp TYPE minmax GRANULARITY 1,
+    INDEX idx_symbol symbol TYPE set(10000) GRANULARITY 4
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

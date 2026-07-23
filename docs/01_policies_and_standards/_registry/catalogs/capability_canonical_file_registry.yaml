@@ -5898,6 +5898,11 @@ creation_tokens:
     token: "auto-script-apply-fundamental-ddl-20260723"
     created_by: "session-sess-44880-20260723192247"
     capability: "data_source_provider_abstraction"
+  # --- 已知数据缺口注册表（audit 2.7/3.8 #ARCH-CH-029, 2026-07-23）---
+  - file: "src/zephyr/data/config/known_data_gaps.yaml"
+    token: "auto-data-config-known-gaps-20260723"
+    created_by: "session-sess-41692-20260723201623"
+    capability: "data_source_provider_abstraction"
   - file: "src/zephyr/data/config/policies.yaml"
     token: "auto-data-config-policies-20260706"
     created_by: "session-sess-37904-20260706052842"

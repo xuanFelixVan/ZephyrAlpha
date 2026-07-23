@@ -55,18 +55,18 @@ logger = logging.getLogger(__name__)
 # ClickHouse 连接配置：委托给 zephyr.data.ch_config（裁定 #ARCH-CH-017 / #ARCH-CH-019）
 # 消除本模块的默认值 "localhost" 与 ch_writer 默认值 "172.24.30.100" 分裂，
 # 统一由 ch_config.load_ch_config() 提供，真源为 config/.env.clickhouse。
-from zephyr.data.ch_config import load_ch_config as _load_ch_config_from_ch_config
+from zephyr.data.ch_config import load_ch_reader_config as _load_ch_reader_config_from_ch_config
 
 
 def _load_clickhouse_config() -> dict[str, str]:
-    """从 config/.env.clickhouse 加载 ClickHouse 连接参数（裁定 #ARCH-CH-017/#ARCH-CH-019）。
+    """从 config/.env.clickhouse 加载 ClickHouse 只读连接参数（audit 9.4 RBAC #ARCH-CH-027）。
 
-    委托给 zephyr.data.ch_config.load_ch_config()，消除本模块与 ch_writer 的默认值分裂。
+    委托给 zephyr.data.ch_config.load_ch_reader_config()，使用 zephyr_reader 账号
+    （DB 级 SELECT-only），而非 application-level readonly=1。
     优先级：os.environ > config/.env.clickhouse > 抛 CHConfigError（fail-closed）。
-    CLICKHOUSE_HOST 缺失时抛 CHConfigError，禁止静默用 localhost 默认值。
+    未配置 CLICKHOUSE_READER_USER 时回退到 CLICKHOUSE_USER（向后兼容）。
     """
-    cfg = _load_ch_config_from_ch_config()
-    # ch_config 返回 http_port，database_service 不需要它，但保留其余字段
+    cfg = _load_ch_reader_config_from_ch_config()
     return {
         "host": cfg["host"],
         "port": cfg["port"],

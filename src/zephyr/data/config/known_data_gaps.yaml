@@ -1,0 +1,56 @@
+# --- 治理锚定 ---
+# blueprint: MOD-GOV-backfill_checker | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# module_id: MOD-GOV-backfill_checker
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+
+# 已知数据缺口注册表（audit 2.7/3.8 治本，#ARCH-CH-029，2026-07-23）
+#
+# 背景：
+#   backfill_checker 默认回看 7 天（_DEFAULT_BACKFILL_DAYS=7），无法检测
+#   超过 7 天的历史缺口。本注册表登记已知缺口，backfill_checker 读取后
+#   对已登记缺口使用全范围回看（不受 7 天窗口限制）。
+#
+# 治本原理：
+#   - 7 天窗口适用于"日常增量缺口检测"（最近一周的数据完整性）
+#   - 已知历史缺口需要显式登记 + 全范围检测（不受窗口限制）
+#   - 已登记缺口 backfill 完成后标记 status=completed，不再重复检测
+#
+# 缺口类型：
+#   date_range  — 特定日期范围内行数低于阈值（如 tick_data 2026-06 缺口）
+#   empty_table — 整表为空（如 edb_data iFind 配额耗尽）
+
+gaps:
+  # === audit 3.8: tick_data 2026-06 缺口 ===
+  - id: "tick_data_2026_06_gap"
+    table: "c1_market.tick_data"
+    gap_type: "date_range"
+    start_date: "2026-06-01"
+    end_date: "2026-06-30"
+    date_column: "trade_date"
+    detection_threshold: 5000000  # 日均 < 500万行 = 缺口（5月日均 2385万）
+    expected_daily_avg: 23850000  # 5月基准日均
+    actual_daily_avg: 2480000     # 6月实际日均（89.6% 缺失）
+    status: "registered"          # registered -> in_progress -> completed
+    root_cause: "2026-06 录制器中断，tick 数据未采集"
+    resolution_plan: "通过 backfill_checker run_known_gap_backfill() 触发 QMT 历史数据下载"
+    created: "2026-07-23"
+    last_updated: "2026-07-23"
+
+  # === audit 2.7: edb_data 空表（iFind EDB 配额耗尽）===
+  - id: "edb_data_ifind_quota_exhausted"
+    table: "c3_fundamental.edb_data"
+    gap_type: "empty_table"
+    start_date: "2026-01-01"
+    end_date: null  # 持续中，待 iFind 配额恢复
+    date_column: "report_date"
+    detection_threshold: 1  # 表行数 < 1 = 空
+    status: "accepted"  # 已接受——macro_data (akshare 291K rows) 作为主宏观数据源
+    root_cause: "iFind EDB 月度配额耗尽(-4318)，edb_data 表至今 0 行"
+    resolution_plan: "升级 iFind 付费版 EDB 配额；或以 macro_data (akshare) 作为主宏观源"
+    primary_alternative: "c3_fundamental.macro_data（akshare，291K 行，主宏观数据源）"
+    created: "2026-07-23"
+    last_updated: "2026-07-23"
