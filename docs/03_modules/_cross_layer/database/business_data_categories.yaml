@@ -972,7 +972,7 @@
   table: sector_snapshot
   schema_file: schemas/categories/market_sector_snapshot.py
   data_type: 原料
-  lifecycle: hot_90d
+  lifecycle: permanent  # #ARCH-CH-022 P1-6：回测需要历史板块快照（板块轮动策略），hot_90d→permanent
   sla_level: L1
   enabled: true
   hard_constraint: null
@@ -1367,7 +1367,7 @@
   table: l2_tick
   schema_file: null
   data_type: 预留
-  lifecycle: hot_90d
+  lifecycle: permanent  # #ARCH-CH-022 P1-6：预留表统一permanent（声明-实现对齐，无TTL即永久保留）
   sla_level: L3
   enabled: false
   hard_constraint: null

@@ -51,3 +51,28 @@ dr_policy:
       verify_method: "tests/dr/test_restore_from_backup.py 恢复演练（manifest 清单校验+文件数比对）+ 人工抽查 handoff JSON 可解析"
       owner: ZephyrAlpha-Owner
       rationale: ".runtime/ 被 .gitignore 整目录忽略（git 非真源），丢失影响限于 session 交接中断，可接受 24h 窗口"
+
+    # --- #ARCH-DR-BACKUP-001 P1-5：行情仓库灾备目标登记（2026-07-23）---
+    # 审查 7.5 缺口修复：302 GiB 行情仓库此前无 RTO/RPO 登记，政策覆盖与备份覆盖不一致
+    - component: c1_market_clickhouse
+      name: "c1_market (ClickHouse 行情仓库)"
+      description: "A 股/港股/美股/期货/期权/ETF/LOF/指数行情库（76 表，302.20 GiB，含 tick_data 181 GiB）"
+      rpo: 24h
+      rto: 8h
+      backup_source:
+        - ch_s3_bridge      # scripts/backup/backup.ps1 CH 备份经 MinIO S3 bridge，24h 节奏（L222-249）
+        - ch_freeze         # ALTER TABLE ... FREEZE PARTITION 快照（增量可选）
+      verify_method: "scripts/backup/restore.ps1 ch <snapshot> 恢复到 D:/restore_test/ 后比对 system.tables 行数 + 抽样表 count() 对账"
+      owner: ZephyrAlpha-Owner
+      rationale: "CH 备份 24h 节奏决定 RPO=24h；302 GiB 经 S3 bridge 恢复受限于磁盘 IO 与网络，worst-case RTO 估 8h（待 restore.ps1 ch 实测校准）"
+
+    - component: c3_fundamental_clickhouse
+      name: "c3_fundamental (ClickHouse 基本面库)"
+      description: "财务三表/股东/分红/质押/研报/分析师预期库（23 表，15.98 GiB）"
+      rpo: 24h
+      rto: 2h
+      backup_source:
+        - ch_s3_bridge      # scripts/backup/backup.ps1 CH 备份经 MinIO S3 bridge（与 c1_market 同管线）
+      verify_method: "scripts/backup/restore.ps1 ch <snapshot> 恢复后比对 23 表行数 + 财报 PIT 查询抽样验证"
+      owner: ZephyrAlpha-Owner
+      rationale: "16 GiB 体量小，恢复快，RTO=2h；RPO 与 c1_market 共用 24h CH 备份节奏"
