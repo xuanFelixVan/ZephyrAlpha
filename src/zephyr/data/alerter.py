@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.alerter
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] logging(标准库); pathlib
+# [DEPENDENCIES] logging(标准库); pathlib; urllib.request(标准库,飞书webhook); smtplib(标准库,邮件); email.mime(标准库,邮件); zephyr.shared.security.secrets
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 失败汇总文件写到 failures/ 目录; 告警级别 INFO/WARN/ERROR/CRITICAL; 不抛异常(所有错误log后吞掉)
+# [INVARIANTS] 失败汇总文件写到 failures/ 目录; 告警级别 INFO/WARN/ERROR/CRITICAL; 不抛异常(所有错误log后吞掉); ERROR/CRITICAL触达飞书webhook+SMTP邮件(未配置则静默跳过)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] notify失败->log+不抛异常; check_*返回bool不抛异常
+# [ERROR_CONTRACT] notify失败->log+不抛异常; check_*返回bool不抛异常; 通道发送失败->log后吞掉不影响主流程
 # [TESTS] tests/zephyr/data/test_alerter.py
 # [A_module] module_id=MOD-GOV-alerter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -25,12 +25,16 @@
 告警方式：
 - 日志（logging，输出到 logs/integrator.log）
 - 失败汇总文件（failures/{date}_{task_id}.json）
-- 钉钉/邮件（阶段3+ 扩展点，当前 NotImplementedError）
+- 飞书 webhook（ZEPHYR_FEISHU_WEBHOOK，未配置则静默跳过）—— audit 8.3 #ARCH-CH-023
+- SMTP 邮件（ZEPHYR_SMTP_*，未配置则静默跳过）—— audit 8.3 #ARCH-CH-023
 
 设计要点：
 - 所有方法不抛异常（告警失败不应影响主流程）
 - 失败汇总文件用 JSON 格式，便于 CLI 读取和重跑
 - 线程安全（threading.Lock 保护文件写入）
+- ERROR/CRITICAL 告警在 failure file 实际写入后触达 IM/邮件通道（与 300s
+  冷却对齐，防 crash-restart 循环刷屏）
+- 通道密钥走 .env（禁止入库），见 .env.example ZEPHYR_FEISHU_WEBHOOK / ZEPHYR_SMTP_*
 """
 from __future__ import annotations
 
@@ -38,11 +42,16 @@ from typing import Final
 import datetime
 import json
 import logging
+import smtplib
 import threading
+import urllib.error
+import urllib.request
+from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.security.secrets import get_secret_or_default
 from zephyr.shared.utils.time_utils import now_utc
 
 log = logging.getLogger(__name__)
@@ -57,6 +66,21 @@ LEVEL_INFO: Final[str] = "INFO"
 LEVEL_WARN: Final[str] = "WARN"
 LEVEL_ERROR: Final[str] = "ERROR"
 LEVEL_CRITICAL: Final[str] = "CRITICAL"
+
+# --- 告警通道配置（audit 8.3，#ARCH-CH-023，2026-07-23）---
+# 密钥走 .env（禁止入库）；未配置的通道静默跳过。
+_FEISHU_WEBHOOK_ENV: Final[str] = "ZEPHYR_FEISHU_WEBHOOK"
+_SMTP_HOST_ENV: Final[str] = "ZEPHYR_SMTP_HOST"
+_SMTP_PORT_ENV: Final[str] = "ZEPHYR_SMTP_PORT"
+_SMTP_USER_ENV: Final[str] = "ZEPHYR_SMTP_USER"
+_SMTP_PASSWORD_ENV: Final[str] = "ZEPHYR_SMTP_PASSWORD"
+_ALERT_RECIPIENT_ENV: Final[str] = "ZEPHYR_ALERT_RECIPIENT"  # 告警收件人邮箱
+_ALERT_SENDER_ENV: Final[str] = "ZEPHYR_ALERT_SENDER"        # 发件人邮箱（默认同 SMTP_USER）
+_ALERT_TIMEOUT_ENV: Final[str] = "ZEPHYR_ALERT_TIMEOUT"      # 网络/SMTP 超时秒数
+
+_DEFAULT_ALERT_TIMEOUT: Final[int] = 5  # webhook/SMTP 超时秒数（防阻塞调度线程）
+# 触达通道的最低告警级别（含）——仅 ERROR/CRITICAL 触达人，WARN/INFO 仅写日志
+_CHANNEL_THRESHOLD_LEVELS: Final[tuple[str, ...]] = (LEVEL_ERROR, LEVEL_CRITICAL)
 
 
 class Alerter:
@@ -89,7 +113,7 @@ class Alerter:
         source: str | None = None,
         extra: dict | None = None,
     ) -> bool:
-        """发送告警：写日志 + 写失败汇总文件。
+        """发送告警：写日志 + 写失败汇总文件 + 触达 IM/邮件通道。
 
         Args:
             task_id: 任务标识
@@ -99,7 +123,7 @@ class Alerter:
             extra: 附加信息（可选）
 
         Returns:
-            是否成功写入失败汇总文件。
+            是否成功写入失败汇总文件（通道发送不影响返回值，失败仅 log）。
         """
         # 1. 写日志
         msg = f"[{level}] task={task_id} source={source or 'N/A'} error={error}"
@@ -114,7 +138,13 @@ class Alerter:
 
         # 2. 写失败汇总文件（ERROR 及以上），同一 task_id 冷却期内只写一次
         if level in (LEVEL_ERROR, LEVEL_CRITICAL):
-            return self._write_failure_file(task_id, error, level, source, extra)
+            written = self._write_failure_file(task_id, error, level, source, extra)
+            # 3. 触达通道（飞书 webhook / SMTP 邮件）——仅在 failure file 实际
+            #    写入后发送，与 300s 冷却对齐，防 crash-restart 循环刷屏。
+            #    通道未配置或发送失败均不影响返回值（告警失败不应影响主流程）。
+            if written:
+                self._notify_channels(task_id, error, level, source, extra)
+            return written
         return True
 
     def _write_failure_file(
@@ -165,6 +195,125 @@ class Alerter:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("写失败汇总文件异常: %s", e)
             return False
+
+    # ============== 告警触达通道（audit 8.3，#ARCH-CH-023）==============
+    # 密钥走 .env（禁止入库）；未配置的通道静默跳过；发送失败 log 后吞掉。
+
+    def _notify_channels(
+        self,
+        task_id: str,
+        error: str,
+        level: str,
+        source: str | None,
+        extra: dict | None,
+    ) -> None:
+        """将告警分发到已配置的触达通道（飞书 webhook / SMTP 邮件）。
+
+        通道未配置时静默跳过；网络异常 log 后吞掉（不抛异常）。
+        仅在 failure file 实际写入后由 notify() 调用（与 300s 冷却对齐）。
+        """
+        if level not in _CHANNEL_THRESHOLD_LEVELS:
+            return  # WARN/INFO 不触达人
+        text = self._format_alert_text(task_id, error, level, source, extra)
+        self._send_feishu_webhook(text)
+        self._send_email_smtp(task_id, level, text)
+
+    @staticmethod
+    def _format_alert_text(
+        task_id: str,
+        error: str,
+        level: str,
+        source: str | None,
+        extra: dict | None,
+    ) -> str:
+        """格式化告警正文（飞书/邮件通用）。"""
+        now = now_utc().strftime("%Y-%m-%d %H:%M:%S UTC")
+        lines = [
+            "[ZephyrAlpha 告警]",
+            f"级别: {level}",
+            f"任务: {task_id}",
+            f"数据源: {source or 'N/A'}",
+            f"错误: {error}",
+            f"时间: {now}",
+        ]
+        if extra:
+            lines.append(f"附加: {json.dumps(extra, ensure_ascii=False)}")
+        return "\n".join(lines)
+
+    def _send_feishu_webhook(self, text: str) -> bool:
+        """发送飞书机器人 webhook（未配置则跳过，发送失败 log 后吞掉）。
+
+        飞书自定义机器人 API: POST {webhook_url}
+        Body: {"msg_type": "text", "content": {"text": "<message>"}}
+        """
+        webhook = get_secret_or_default(_FEISHU_WEBHOOK_ENV, "")
+        if not webhook:
+            return False  # 未配置，静默跳过
+        timeout = self._alert_timeout()
+        payload = json.dumps(
+            {"msg_type": "text", "content": {"text": text}},
+            ensure_ascii=False,
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            webhook,
+            data=payload,
+            headers={"Content-Type": "application/json; charset=utf-8"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                if resp.status != 200:
+                    log.warning("飞书 webhook 响应非 200: %s", resp.status)
+                    return False
+            log.info("飞书 webhook 告警已发送")
+            return True
+        except Exception as e:  # noqa: BLE001 — 告警通道失败不应影响主流程
+            log.error("飞书 webhook 发送异常: %s", e)
+            return False
+
+    def _send_email_smtp(self, task_id: str, level: str, body: str) -> bool:
+        """发送 SMTP 告警邮件（未配置则跳过，发送失败 log 后吞掉）。
+
+        配置项（均走 .env）：
+          ZEPHYR_SMTP_HOST / PORT / USER / PASSWORD
+          ZEPHYR_ALERT_RECIPIENT（收件人）/ ZEPHYR_ALERT_SENDER（发件人，默认=USER）
+        """
+        host = get_secret_or_default(_SMTP_HOST_ENV, "")
+        if not host:
+            return False  # 未配置，静默跳过
+        user = get_secret_or_default(_SMTP_USER_ENV, "")
+        password = get_secret_or_default(_SMTP_PASSWORD_ENV, "")
+        recipient = get_secret_or_default(_ALERT_RECIPIENT_ENV, "")
+        if not user or not recipient:
+            log.warning("SMTP 已配置 host 但缺 user/recipient，跳过邮件告警")
+            return False
+        sender = get_secret_or_default(_ALERT_SENDER_ENV, user)
+        port = int(get_secret_or_default(_SMTP_PORT_ENV, "587"))
+        timeout = self._alert_timeout()
+        subject = f"[ZephyrAlpha 告警] {level} - {task_id}"
+        msg = MIMEText(body, "plain", "utf-8")
+        msg["Subject"] = subject
+        msg["From"] = sender
+        msg["To"] = recipient
+        try:
+            with smtplib.SMTP(host, port, timeout=timeout) as smtp:
+                smtp.starttls()
+                if password:
+                    smtp.login(user, password)
+                smtp.sendmail(sender, [recipient], msg.as_string())
+            log.info("SMTP 告警邮件已发送 -> %s", recipient)
+            return True
+        except Exception as e:  # noqa: BLE001 — 告警通道失败不应影响主流程
+            log.error("SMTP 邮件发送异常: %s", e)
+            return False
+
+    @staticmethod
+    def _alert_timeout() -> int:
+        """读取告警网络超时配置（env 可覆盖，默认 5s）。"""
+        try:
+            return int(get_secret_or_default(_ALERT_TIMEOUT_ENV, str(_DEFAULT_ALERT_TIMEOUT)))
+        except ValueError:
+            return _DEFAULT_ALERT_TIMEOUT
 
     # ============== 告警条件检查 ==============
 
