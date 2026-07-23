@@ -31,7 +31,7 @@ created_by: agent
 | ⚠️ 项 | 16 | 9 | **2** | -14 |
 | ❌ 项 | 3 | 1 | **0** | -3 |
 
-> 二期修复（Wave 2，2026-07-23）：将一期遗留的 9 项未修复项全部治本处理——7 项 ⚠️→✅（Decimal 迁移/跳数索引/已知缺口注册表/物理预聚合裁定/RBAC 账号分级），2 项 ⚠️ 经正式裁定接受（单节点高可用/异地副本，gated on 实盘立项/云凭证）。一期遗留 ❌ 项（1.2 Decimal）已在 Wave 1 修复。
+> 二期修复（Wave 2，2026-07-23）：将一期遗留的 9 项未修复项全部治本处理——7 项 ⚠️→✅（Decimal 迁移/跳数索引/已知缺口注册表/物理预聚合裁定/RBAC 账号分级），2 项 ⚠️ 经正式裁定接受（单节点高可用 gated on 实盘立项 / 异地副本经用户裁定推翻——本地外接盘足够）。一期遗留 ❌ 项（1.2 Decimal）已在 Wave 1 修复。
 
 ---
 
@@ -122,7 +122,7 @@ created_by: agent
 
 | # | 检查项 | 一期 | 二期 | Δ | 修复措施 |
 |---|--------|:----:|:----:|:--:|----------|
-| 7.7 | 异地/离线副本 | ⚠️ | ⚠️(裁定) | 0 | 裁定 #ARCH-CH-032：`backup_config.yaml` 新增 `offsite_repository` 配置段（env 驱动，RESTIC_OFFSITE_REPOSITORY 激活时 backup.ps1 自动 restic copy 增量复制）；当前 gated on 云存储凭证——scaffolding 就绪，激活条件明确 |
+| 7.7 | 异地/离线副本 | ⚠️ | ⚠️(裁定) | 0 | 裁定 #ARCH-CH-032（用户裁定 2026-07-24 推翻）：单用户回测期仅本地外接盘备份（F:\restic-zephyr，主库+外接盘=2 份），不引入异地/云备份——单用户单人系统唯一现实风险是硬件损坏，外接盘足以应对；实盘/异地等未来需求由用户自行规划。原 AI 提议的 offsite_repository scaffolding 已移除（dead config，backup.ps1 从未实现 offsite 逻辑） |
 
 #### ⑨ 安全与访问控制（5.5 → 6.0）
 
@@ -147,7 +147,7 @@ created_by: agent
 | ⑨ 安全与访问控制 | 5.5/6 (92%) | 5.5/6 (92%) | **6.0/6 (100%)** | +0.5 |
 | **总分** | **52.0/64 (81.3% B+)** | **58.5/64 (91.4% A-)** | **62.0/64 (96.9% A+)** | **+10.0** |
 
-> 二期后仅余 2 项 ⚠️（5.8 单节点高可用 / 7.7 异地副本），均经正式裁定接受（#ARCH-CH-031/#ARCH-CH-032），触发条件明确（实盘立项/云凭证），不再是"未处理"项。
+> 二期后仅余 2 项 ⚠️（5.8 单节点高可用 / 7.7 异地副本），均经正式裁定接受（#ARCH-CH-031/#ARCH-CH-032）。#ARCH-CH-031 触发条件明确（实盘立项），#ARCH-CH-032 经用户裁定推翻异地备份方案（本地外接盘足够），均不再是"未处理"项。
 
 ---
 
@@ -164,7 +164,7 @@ created_by: agent
 | 5.3 | 主键前缀裁剪 | ⚠️ | ✅ | #ARCH-CH-028 | 同 1.3，set(10000) 跳数索引解决单标的裁剪（Wave 2） |
 | 5.4 | 预聚合/物化视图 | ⚠️ | ✅ | #ARCH-CH-030 | 裁定物理预聚合 > MV（ReplacingMergeTree 去重时序），kline_resampler 是正确方案（Wave 2） |
 | 5.8 | 高可用/副本 | ⚠️ | ⚠️(裁定) | #ARCH-CH-031 | 正式裁定单节点接受于回测期，ReplicatedMergeTree gated on 实盘立项（Wave 2） |
-| 7.7 | 异地/离线副本 | ⚠️ | ⚠️(裁定) | #ARCH-CH-032 | offsite_repository scaffolding 就绪，gated on 云存储凭证（Wave 2） |
+| 7.7 | 异地/离线副本 | ⚠️ | ⚠️(裁定) | #ARCH-CH-032 | 用户裁定推翻（2026-07-24）：单用户回测期本地外接盘备份足够，不引入异地/云备份（Wave 2→推翻） |
 | 9.4 | 数据库账号分级 | ⚠️ | ✅ | #ARCH-CH-027 | CH RBAC：zephyr_reader(SELECT) + zephyr_writer(INSERT/ALTER)，apply_rbac.py RBAC-as-Code 部署脚本 7/7 验证通过（Wave 2） |
 
 > **结论**：9/9 项全部已解决（7 项完全修复 + 2 项正式裁定接受），0 项遗留。剩余 2 项 ⚠️(裁定) 不再是"未处理"——它们有明确的裁定编号、触发条件和升级路径，是经过第一性原理分析后的主动架构决策。
@@ -190,7 +190,7 @@ created_by: agent
 | Hash | 文件 | 内容 |
 |------|------|------|
 | cf3dbe30 → f5ce5ffb (merge) | fundamental_{income,balance,cashflow}_statement.py + apply_fundamental_tables_ddl.py + architecture_issue_registry.yaml + capability_canonical_file_registry.yaml | **Wave 1**：audit 1.2 财务三表 Float64→Decimal 精度迁移（#ARCH-CH-026），53 字段迁移，verify 20/20/13 通过 |
-| (Wave 2 commit) | market_tick.py + ch_config.py + ch_writer.py + database_service.py + backfill_checker.py + known_data_gaps.yaml + backup_config.yaml + architecture_issue_registry.yaml + capability_canonical_file_registry.yaml | **Wave 2**：audit 1.3/5.3 跳数索引（#ARCH-CH-028）、2.7/3.8 已知缺口注册表（#ARCH-CH-029）、5.4 物理预聚合裁定（#ARCH-CH-030）、5.8 单节点裁定（#ARCH-CH-031）、7.7 异地副本 scaffolding（#ARCH-CH-032）、9.4 CH RBAC（#ARCH-CH-027） |
+| (Wave 2 commit) | market_tick.py + ch_config.py + ch_writer.py + database_service.py + backfill_checker.py + known_data_gaps.yaml + backup_config.yaml + architecture_issue_registry.yaml + capability_canonical_file_registry.yaml | **Wave 2**：audit 1.3/5.3 跳数索引（#ARCH-CH-028）、2.7/3.8 已知缺口注册表（#ARCH-CH-029）、5.4 物理预聚合裁定（#ARCH-CH-030）、5.8 单节点裁定（#ARCH-CH-031）、7.7 异地副本 scaffolding（#ARCH-CH-032，后于 2026-07-24 用户裁定推翻）、9.4 CH RBAC（#ARCH-CH-027） |
 | (Wave 2 RBAC-as-Code) | scripts/ch/apply_rbac.py + capability_canonical_file_registry.yaml + audit_03_remediation_summary.md | **Wave 2 补丁**：RBAC-as-Code 部署脚本（幂等 CREATE USER + GRANT + verify 7/7），解决 grant 丢失可一键恢复 |
 
 ---
@@ -215,7 +215,7 @@ created_by: agent
 - **audit 2.7/3.8 已知缺口（Wave 2）**：`run_known_gap_backfill()` 实测检出 tick_data 2026-06 缺口 22/22 天正确，自动触发 QMT 历史数据补下载 ✅；edb_data 空表登记 status=accepted + primary_alternative=macro_data(291K rows) ✅
 - **audit 5.4 物理预聚合（Wave 2）**：裁定 #ARCH-CH-030 确认 kline_resampler 物理预聚合是 ReplacingMergeTree 源表的正确方案（MV 在 INSERT 时触发不反映异步合并去重）✅
 - **audit 9.4 CH RBAC（Wave 2）**：7/7 验证测试通过（`apply_rbac.py --verify`）——zephyr_reader 存在 ✅、zephyr_writer 存在 ✅、zephyr_reader SELECT ✅、zephyr_reader DROP 被拒 ✅、zephyr_writer CREATE/INSERT/DROP ✅、zephyr_writer system.data_skipping_indices ✅、zephyr_writer system.users ✅；RBAC-as-Code 部署脚本 `scripts/ch/apply_rbac.py` 幂等可重复执行，grant 丢失时可一键恢复
-- **audit 5.8/7.7 裁定接受（Wave 2）**：裁定 #ARCH-CH-031（单节点 gated on 实盘立项）+ #ARCH-CH-032（offsite scaffolding gated on 云凭证）正式登记 ✅
+- **audit 5.8/7.7 裁定接受（Wave 2）**：裁定 #ARCH-CH-031（单节点 gated on 实盘立项）正式登记 ✅；#ARCH-CH-032 经用户裁定推翻（2026-07-24）——异地备份不引入，本地外接盘备份足够，offsite_repository 配置段已从 backup_config.yaml 移除（dead config，backup.ps1 从未实现 offsite 逻辑）✅
 
 ---
 
@@ -232,6 +232,6 @@ created_by: agent
 6. **查询性能治本（Wave 2）**：tick_data 跳数索引解决单标的查询裁剪瓶颈
 7. **数据完整性治本（Wave 2）**：known_data_gaps 注册表 + 自动补下载，历史缺口检测不受 7 天窗口限制
 8. **安全治本（Wave 2）**：CH RBAC 账号分级（reader/writer 分离），最小权限落地
-9. **架构裁定闭环（Wave 2）**：6 项正式裁定（#ARCH-CH-027~032）替代隐式假设，触发条件与升级路径明确
+9. **架构裁定闭环（Wave 2）**：6 项正式裁定（#ARCH-CH-027~032）替代隐式假设，触发条件与升级路径明确；#ARCH-CH-032 后经用户裁定推翻（2026-07-24），异地备份不引入
 
-二期后 9 项遗留全部解决（7 项完全修复 + 2 项正式裁定接受），0 项遗留。剩余 2 项 ⚠️(裁定) 是经过第一性原理分析的主动架构决策（单节点/异地副本），有明确裁定编号和触发条件，不再是"未处理"项。
+二期后 9 项遗留全部解决（7 项完全修复 + 2 项正式裁定接受），0 项遗留。剩余 2 项 ⚠️(裁定) 是经过第一性原理分析的主动架构决策——#ARCH-CH-031 单节点高可用（gated on 实盘立项）、#ARCH-CH-032 异地副本（用户裁定推翻，本地外接盘备份足够），有明确裁定编号，不再是"未处理"项。
