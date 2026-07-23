@@ -9,9 +9,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.9
+version: 1.4.0
 created: '2026-06-26'
-last_updated: '2026-07-23'
+last_updated: '2026-07-24'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -20,11 +20,16 @@ last_updated: '2026-07-23'
 # 1. 连续分配：#ARCH-NNN 按议题立项时间顺序连续分配，禁止跳号
 # 2. 不回收：已分配编号永不回收，即使议题被废弃/superseded，编号仍保留
 # 3. superseded_by 链：议题被新议题取代时，旧议题 status=superseded + 填 superseded_by=新议题ID；新议题 entries 中 reference 旧议题
-# 4. status 四值：open(待施工) / decided(已裁定待施工) / deprecated(已废弃不施工) / superseded(已被新议题取代)
+# 4. status 五值：open(待施工) / decided(已裁定待施工) / proposed(AI 提议待用户确认，见铁律#9) / deprecated(已废弃不施工) / superseded(已被新议题取代)。注：resolved/in_progress 为历史遗留状态值，新条目按施工进度归入 decided（已裁定）；已存在 resolved 条目保留不强制迁移。
 # 5. 编号预留：#ARCH-001/003 永久保留为预留段（未立项任何议题，登记为 deprecated 条目以占位）；#ARCH-002/004/005/006/007 已回溯补录（2026-07-05，源自 dependency_path_panorama.md 裁定#203 早期议题）
 # 6. 登记强制：任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
 # 7. 域前缀编号：跨子系统的专题裁定使用 #ARCH-{DOMAIN}-NNN 格式（如 #ARCH-CH-007 ClickHouse、#ARCH-MM-001 Maturity、#ARCH-REN-001 域重命名、#ARCH-CAP-001 容量、#ARCH-BACKFILL-001 补下载）。DOMAIN 为大写字母子系统工程缩写，各 DOMAIN 内 NNN 独立连续分配。纯数字 #ARCH-NNN 保留给全局架构议题
 # 8. 物理排列规则：entries 列表按**登记时间顺序**追加（新条目追加在末尾），不按编号顺序排列。编号连续性由铁律#1保证（按立项时间连续分配），物理排列顺序不影响 YAML list 语义。禁止为"排序"重排历史条目（高风险且无语义价值）。检索时按 issue_id 字段查找，不依赖物理位置。
+# 9. 用户裁定优先铁律（铁律#9，2026-07-24 建立，治本"AI 越权自标 resolved"幻觉温床）：
+#    AI 提议的裁定/风险接受/推翻/不引入/wontfix 类议题（adjudication 含决策语义），MUST 标记 status=proposed，直到用户显式确认后才可改为 decided。禁止 AI 自行将自身提议的裁定标记为 resolved/decided。
+#    判定标准：议题涉及"接受风险 / 推翻既有约束 / 永久关闭功能 / 改变架构边界"等需人类价值判断的决策 → 必须 proposed 等待用户。纯技术修复（bug fix / 重构 / 性能优化，无价值判断）→ AI 可直接 decided/resolved。
+#    触发案例：#ARCH-CH-031（单节点 HA 风险接受）/ #ARCH-CH-032（异地备份推翻）曾由 AI 自标 resolved，2026-07-24 经用户裁定推翻/确认后才转正。
+#    历史回溯：铁律#9 建立前由 AI 自标 resolved 的决策类议题（如 #ARCH-048 边界推翻 / #ARCH-063 wontfix / #ARCH-ANY-GOVERNANCE-001 RATIFY），经 2026-07-24 git 提交痕迹核查确认有真实代码落地（非幻觉），合法性成立；2026-07-24 用户回溯确认（全认），裁定生效（confirmed_by_user='2026-07-24'）。
 
 unique_key:
 - issue_id
@@ -35,7 +40,7 @@ entry_schema:
   severity: str              # P0致命 | P1高 | P2中 | P3低
   adjudication: str          # 裁定/修复方案描述
   fix_phase: str             # 施工阶段
-  status: str                # open | decided | deprecated | superseded
+  status: str                # open | decided | proposed(AI提议待用户确认,铁律#9) | deprecated | superseded（历史遗留 resolved/in_progress 保留）
   superseded_by: str         # (可选) 取代本议题的新议题ID
   related_adjudication: str  # (可选) 关联裁定编号(如#208)
   created: str               # 立项日期
@@ -193,7 +198,7 @@ entries:
   title: 文档与索引未同步
   severity: P2中
   adjudication: 更新 6 个文档/索引
-  fix_phase: 已完成（6个文档/索引同步：capability_canonical_file_registry.yaml 新增 schema_health_verification 能力条目 + gate_registry.yaml 重定向条目 + architecture_debt_registry.md §5.4.2 + AGENTS.md L552 + index.md 断链修复 + database/blueprint.md Schema变更门禁；OPS-2026070403）
+  fix_phase: 已完成（6个文档/索引同步：capability_canonical_file_registry.yaml 新增 schema_health_verification 能力条目 + gate_registry.yaml 重定向条目 + architecture_debt_registry_v2.md §5.4.2 + AGENTS.md L552 + index.md 断链修复 + database/blueprint.md Schema变更门禁；OPS-2026070403）
   status: resolved
   created: '2026-06-25'
   last_updated: '2026-07-04'
@@ -561,9 +566,10 @@ entries:
   related_rules:
   - TRAE-060
   created: '2026-06-30'
+  last_updated: '2026-07-01'
 - issue_id: '#ARCH-061'
   title: depgraph 手动 add-file-node 登记生成器扫描范围内的文件——门禁缺失导致 AI 误操作
-  severity: P1中
+  severity: P1高
   adjudication: |
     2026-07-04 sess-17516 施工事件触发。AI 发现 event_driven_engine.py 在 depgraph 中
     无节点，用 apply_depgraph.py --add-file-node 手动添加节点 311224 + 2 条边。后果：
@@ -1231,8 +1237,9 @@ entries:
     (e) 品类模板 database 字段统一
     (f) SLA 命名统一为 P0/P1/P2 并分级
   status: decided
+  confirmed_by_user: '2026-07-24'
   created: '2026-07-05'
-  last_updated: '2026-07-05'
+  last_updated: '2026-07-24'
 
 # --- #ARCH-049: 临时文件乱放根目录治本（FILE-PLACEMENT-TTL gate 落地永久区准入机制） ---
 - issue_id: '#ARCH-049'
@@ -1544,7 +1551,8 @@ entries:
   last_updated: '2026-07-06'
 - issue_id: '#ARCH-054'
   title: FOREIGN-CHANGE-DETECTION gate——claim 时基线快照检测搭便车提交治本
-  severity: P1中
+  severity: P1高
+  status: resolved
   adjudication: |
     2026-07-09 裁定：ARCH-031 搭便车提交根因治本——GitCommitGateway 新增
     FOREIGN-CHANGE-DETECTION gate（priority=45）。病根：session A 修改文件 X 后未 commit，
@@ -1567,6 +1575,7 @@ entries:
 - issue_id: '#ARCH-055'
   title: GATE-MODULE-INVENTORY-SYNC——commit_gates 模块清单漂移正向检测治本
   severity: P2中
+  status: resolved
   adjudication: |
     2026-07-09 裁定：ARCH-054 审查发现 gate_engine blueprint.md §0.1 模块清单漂移
     （29 个实际 .py 文件中 6 个未登记，漂移率 20.7%）。根因：派生数据（blueprint.md
@@ -1755,7 +1764,7 @@ entries:
   last_updated: '2026-07-16'
 - issue_id: '#ARCH-MM-001'
   title: '[MATURITY]标记与depgraph design_maturity关系裁定——声明vs验证'
-  severity: P1中
+  severity: P1高
   adjudication: |
     2026-07-06 调查发现 depgraph 数据过时：代码中11个backtest模块标记
     [MATURITY] production，但depgraph中8个仍是prototype。根因分析： [历史记录]
@@ -2510,9 +2519,9 @@ entries:
     支持 symbols=None，但该行为仅为"注释契约"（docstring + 代码注释），无机器可执行校验。
     当 AI 修改 tasks.yaml 时，无法从契约层面感知"该 capability 支持 symbols=null"，凭记忆推断导致漂移。
 
-    核心矛盾（architecture_debt_registry line 365）：
+    核心矛盾（architecture_debt_registry_v2.md line 365）：
     "规则:执行 ≈ 10:1。100% AI 开发场景下，建议性规则是反模式——AI 没有自觉，只有被阻断。"
-    病根3（architecture_debt_registry）："CapabilityLookup 是建议性反查而非强制性消费"——与本次 #ARCH-CH-018
+    病根3（ai_first_governance_principles.md §二）："CapabilityLookup 是建议性反查而非强制性消费"——与本次 #ARCH-CH-018
     漂移案例同源。注释契约在 100% AI 开发模式下遵守率约 10%，AI 凭记忆推断契约=幻觉/漂移温床。
 
     契约三形态演进：
@@ -2533,7 +2542,8 @@ entries:
     4. scheduler.start() 插入 _validate_capability_contracts()：有 ERROR 级违规则 raise RuntimeError 阻断启动
     5. 渐进式收紧：初期 WARN-only 收集数据，逐步收紧为 ERROR（100% AI 模式下只有阻断才能 ~100% 遵守）
 
-    遵循 architecture_debt_registry 裁定1："暂停新增规则文档6个月，新违规一律转化为AST门禁或reconciler"。
+    遵循裁定#221（原 ai_first_governance_principles.md §裁定1，已修正）："新增规则必须同时新增门禁
+    （规则-执行配对铁律），新违规一律转化为AST门禁或reconciler"。
     本次不新增 .md 规则文档，转化为启动时校验（reconciler 式 fail-closed）。
 
     本次施工修复的 8 条 ERROR 级 CAP-NOT-FOUND 违规（校验器首次运行即发现的历史漂移）：
@@ -2560,7 +2570,7 @@ entries:
   status: decided
   related_rules:
   - '#ARCH-CH-018'
-  - architecture_debt_registry_裁定1
+  - 裁定#221
   - RULE-SSOT-CLASSIFICATION
   created: '2026-07-16'
   last_updated: '2026-07-16'
@@ -2882,58 +2892,56 @@ entries:
     - 升级路径：ReplicatedMergeTree + ZooKeeper + 2+ CH 节点
     - 在此之前，audit 5.8/10.3 标记为"裁定接受"（不扣分）
 
-    风险缓解：
-    - restic 备份 RPO=24h, RTO=8h（dr_policy.yaml 已注册）
-    - 异地副本 scaffolding 已就绪（#ARCH-CH-032, 待云存储凭证激活）
+    风险缓解（用户确认接受，2026-07-24）：
+    - 本地 restic 备份到 F:\restic-zephyr（代码/SQLite/Postgres 已验证正常，最新快照 2026-07-24）
+    - 用户裁定：单用户场景只需本地外接盘备份可恢复即可，不引入异地副本
+    - ⚠️ 前置缺口：ClickHouse 行情库本地备份当前 FAILING（last_ch_backup_status=failed，
+      MinIO bridge 本地进程未起来，非云网络问题），必须修复后风险缓解才成立（见任务失败#5）
+    - 异地副本：用户裁定不引入（见 #ARCH-CH-032 overruled_by_user）
   impact:
     - 无代码变更（裁定性记录）
     - audit 5.8/10.3 标记为"裁定接受"
   fix_phase: production
   status: resolved
+  confirmed_by_user: '2026-07-24'
   related_rules:
   - audit_03 5.8
   - audit_03 10.3
   - '#ARCH-CH-032'
   created: '2026-07-23'
-  last_updated: '2026-07-23'
+  last_updated: '2026-07-24'
 
-# --- #ARCH-CH-032: 异地/离线备份 scaffolding（audit 7.7 治本）---
+# --- #ARCH-CH-032: 异地备份——用户裁定推翻（本地外接盘备份足够，2026-07-24）---
 - issue_id: '#ARCH-CH-032'
-  title: offsite restic repo 配置 scaffolding——环境变量驱动，gated on 云存储凭证
+  title: 异地/离线备份推翻——单用户回测期仅本地外接盘备份（用户裁定 2026-07-24）
   severity: P2中
   category: disaster_recovery
   adjudication: |
-    背景：audit 7.7 发现所有 restic 备份到 F:\restic-zephyr（本地外接盘），
-    与主库同物理站点——火灾/盗窃/物理损坏会同时丢失主库和备份。
+    历史背景（2026-07-23 AI 提议）：audit 7.7 发现所有 restic 备份到 F:\restic-zephyr
+    （本地外接盘），与主库同物理站点，不满足 3-2-1 备份原则。AI 曾提议 offsite restic
+    repo scaffolding（环境变量驱动，gated on 云存储凭证），状态标 resolved。
 
-    第一性原理分析：
-    1. 3-2-1 备份原则：至少 3 份副本，2 种介质，1 份异地
-    2. 当前：1 份主库 + 1 份本地 restic = 2 份同站点（不满足 3-2-1）
-    3. 单用户回测期：数据价值有限，异地副本 ROI 较低
-    4. 实盘/商业化后：数据不可重建（历史 tick 无替代源），异地副本必须
-    5. restic copy 是增量操作（仅复制本地有但异地没有的 snapshots），开销低
+    用户裁定（2026-07-24）：推翻，理由：
+    1. 单用户单人系统，唯一现实风险是电脑硬件损坏导致文件丢失
+    2. 备份一份到外接硬盘 F:\ 即足以应对该风险（主库 + 外接盘 = 2 份）
+    3. 不需要异地备份、不需要云存储凭证/账号密码、不采用 3-2-1 备份铁律
+    4. 不需要密码复杂化方案，本地备份能恢复即可
+    5. 实盘/异地等未来需求由用户自行规划，当前不预埋
 
-    治本方案（2026-07-23）：
-    1. backup_config.yaml 新增 offsite_repository 配置段
-       - path: ${RESTIC_OFFSITE_REPOSITORY}（环境变量驱动）
-       - password_file: ${RESTIC_OFFSITE_PASSWORD_FILE}
-       - copy_strategy: restic_copy
-    2. 激活条件：设置 RESTIC_OFFSITE_REPOSITORY 环境变量
-    3. 当前状态：enabled=false（未配置云存储凭证）
-
-    裁定：异地副本 scaffolding 已就绪，激活 gated on：
-    a) 云存储凭证（S3/B2/rest server）
-    b) 实盘立项（#ARCH-CH-031 触发条件）
-    在此之前，audit 7.7 标记为"scaffolding 就绪，待激活"。
+    执行（2026-07-24）：
+    - backup_config.yaml 删除 offsite_repository 配置段（确认无脚本消费，dead config）
+    - backup.ps1 从未实现 offsite/restic copy 逻辑（grep 零引用），无需改动
+    - audit 7.7 标记为"用户裁定：本地外接盘备份足够，异地不引入"
   impact:
-    - scripts/backup/backup_config.yaml 新增 offsite_repository 配置段
+    - scripts/backup/backup_config.yaml 移除 offsite_repository 配置段
+    - backup.ps1 无需改动（从未实现 offsite 逻辑）
   fix_phase: production
-  status: resolved
+  status: overruled_by_user
   related_rules:
   - audit_03 7.7
   - '#ARCH-CH-031'
   created: '2026-07-23'
-  last_updated: '2026-07-23'
+  last_updated: '2026-07-24'
 
 # --- #ARCH-OLAP-001: olap_engine.py 孤儿模块退役（DuckDB OLAP 层被 ClickHouse 替代） ---
 - issue_id: '#ARCH-OLAP-001'
@@ -3006,7 +3014,7 @@ entries:
 # --- #ARCH-DATA-SSOT-001: 5个核心数据契约多真源治本（SSoT归一） ---
 - issue_id: '#ARCH-DATA-SSOT-001'
   title: 5个核心数据契约（market_data/factor_signal/factor_monitor_report/macro_factor_signal/synthesized_signal）多真源消除——归一至shared/contracts/根目录
-  severity: P0高
+  severity: P0致命
   category: data_architecture
   adjudication: |
     问题背景：
@@ -3268,7 +3276,7 @@ entries:
     - src/zephyr/data/scheduler.py  # 治本：3 处 HTTP 外发通用化 + exc_info 入日志
     - docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml  # 新建，SSoT
     - scripts/governance/architecture_health_dashboard.py  # M13 扫描面校准 + _HTTP_EMIT_SINKS 盲区补齐
-    - docs/02_enterprise_architecture/architecture_debt_registry.md  # M13 口径变更留痕
+    - docs/_archive/architecture_debt_registry_v2.md  # M13 口径变更留痕
   fix_phase: |
     单阶段（已完成 2026-07-18）：5 处真泄露治本 + registry SSoT + M13 校准。
   related_adjudication: 'TRAE-062 SSoT 分类铁律, #ARCH-NOQA-GOV-001 豁免机制'
@@ -3850,7 +3858,7 @@ entries:
 - issue_id: '#ARCH-DI-SEAM-001'
   title: DI seam 静态门禁——跨切面依赖注入接缝扫描（WARNING 级，待存量清理后升级 ERROR）
   category: architecture_governance
-  severity: P1中
+  severity: P1高
   adjudication: >-
     P1-2 治本裁定（2026-07-18）：跨切面依赖应通过 DI seam（Protocol/ABC/Interface 类型注解
     或 `| None = None` 默认值）注入，而非硬编码外部依赖。_validate_di_seam() AST 扫描
@@ -3876,7 +3884,7 @@ entries:
 - issue_id: '#ARCH-TOOL-HEALTH-V1'
   title: 核心治理工具健康度铁律——apply_depgraph.py NameError 静默失效治本（5 层防线全失效）
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-19 治本裁定。病根：commit deb695006f（2026-07-18 15:50:57）批量重构
     sys.exit→EXIT_* 时，将 apply_depgraph.py line 105 的
@@ -3999,7 +4007,7 @@ entries:
   title: session_worktree 四重缺陷治本——REPO_ROOT 解析不一致 / _pre_merge_auto_clean
     无回滚 / reconciler 不识别 merge / stash 堆积无自动清理
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: |
     2026-07-19 治本裁定。session_worktree 君子协定（FP-ISO.4C，2026-07-02 正式版）
     是 AI 对话启动后的核心提交流程（start → commit → merge）。但实测发现 4 个独立
@@ -4162,7 +4170,7 @@ entries:
 - issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD'
   title: CAPABILITY-LOOKUP-REQUIRED gate 逃生通道失效 + 5 层断裂治本（G1-G7 全闭合）
   category: architecture_governance
-  severity: P0
+  severity: P0致命
   adjudication: >-
     2026-07-19 治本裁定。病根：CAPABILITY-LOOKUP-REQUIRED gate（priority=110，
     #ARCH-GOV-CONVERGENCE-META Phase 3.4a 建立）旨在强制 AI 写 src/zephyr/**/*.py
@@ -4266,7 +4274,7 @@ entries:
 - issue_id: '#ARCH-DOC-DRIFT-001'
   title: docstring/注释硬编码 gate/reconciler 数量漂移治本——引用注册表常量替代硬编码
   category: architecture_governance
-  severity: P2
+  severity: P2中
   adjudication: >-
     2026-07-19 治本裁定（裁定 D）。病根：session_worktree.py [INVARIANTS] 头部、
     batched_auto_committer.py docstring、reconciliation_registry.py docstring 中
@@ -4318,7 +4326,7 @@ entries:
 - issue_id: '#ARCH-GUC-TRIGGER-FIX-001'
   title: GUC 触发器缺陷 + sync 级联失败治本——SHOW→current_setting + COALESCE→OLD::text
   category: architecture_governance
-  severity: P0
+  severity: P0致命
   adjudication: >-
     2026-07-19 治本裁定（裁定 A，P0）。病根：protect_dataflow_design_maturity() 和
     protect_decision_design_maturity() 触发器函数用 SHOW app.allow_design_maturity_delete
@@ -4383,7 +4391,7 @@ entries:
     - scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql（触发器函数修复，Phase 1 已完成）
     - scripts/governance/migrate_sqlite_to_pg/05_fix_guc_trigger_bug.sql（幂等迁移脚本，Phase 1 已完成）
     - tests/governance/d8_doc_sync/test_guc_trigger_fix.py（7 个 smoke test，Phase 1 已完成）
-    - docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md（裁定文档）
+    - docs/_archive/ruling_guc_trigger_cascading_sync_failure.md（裁定文档）
     - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_all 级联隔离 + 3 helpers + _classify_error，Phase 2/3 已完成）
     - tests/governance/d8_doc_sync/test_sync_savepoint_isolation.py（7 个 SAVEPOINT 隔离测试，Phase 2 已完成）
     - src/zephyr/governance/audit/reconciliation_registry.py（_classify_sync_failure + _reconcile 错误分类，Phase 3 已完成）
@@ -4398,7 +4406,7 @@ entries:
 - issue_id: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001'
   title: Gate-Abuse 6 维滥用系统性审计与治本路线图（emergency_commit / allow_overlap / warn_only / forged_gw_marker / non-GW commit / force_merge）
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-19 系统性审计裁定。commit_gateway_abuse_monitor_reconciler 的 post-commit
     5 维滥用检测全部触发（warn_only 203/24h、emergency_commit 15/24h、allow_overlap
@@ -4433,7 +4441,7 @@ entries:
     critical_warn 可见性。过渡期对应 P1 heartbeat 落地周期（裁定 R4）。
   fix_phase: |
     Layer 2 文档产出（已完成 2026-07-19）：
-      - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（5 维根因分析 + 治本路线图 + emergency_commit heartbeat 设计 + R1 裁定）
+      - docs/_archive/ruling_gate_abuse_systemic_audit.md（5 维根因分析 + 治本路线图 + emergency_commit heartbeat 设计 + R1 裁定）
       - architecture_issue_registry.yaml 登记本条目
 
     裁定 R1 阈值回滚（本 session 实施，2026-07-19）：
@@ -4462,7 +4470,7 @@ entries:
       - trae_069 YAML v1.3.0: 新增 force_merge_abuse_7d 阈值段（value=5, window=7d）
       - 关联 #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 的 force=True 逃生通道滥用监控
   impact:
-    - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（审计文档，Layer 2 已完成）
+    - docs/_archive/ruling_gate_abuse_systemic_audit.md（审计文档，Layer 2 已完成）
     - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（6 维检测器，治本后阈值可能调整）
     - src/zephyr/governance/audit/health_score_calculator.py（6 维加权健康度评分）
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（force_merge 审计落盘 + heartbeat 机制改造点）
@@ -4478,7 +4486,7 @@ entries:
 - issue_id: '#ARCH-ASYNC-MERGE-RECONCILE-001'
   title: session_worktree 异步化治本——emergency_commit / allow_overlap 滥用的 L1 根因消除
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定。Ruling:100PCT-AI-GOVERNANCE P3 收尾时复核 commit_gateway_abuse_monitor
     5 维滥用检测数据，确认 emergency_commit / allow_overlap 滥用的 L1 最深层根因是
@@ -4524,7 +4532,7 @@ entries:
   impact:
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（异步化改造点，P1 待实施）
     - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（R2 阈值过渡 + 治本后收紧）
-    - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（L1 根因分析引用本条目）
+    - docs/_archive/ruling_gate_abuse_systemic_audit.md（L1 根因分析引用本条目）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: open
   related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (P1 emergency_commit 治本路线图), #ARCH-P3-FOLLOWUP-TODOS-001 (P3 收尾复核), Ruling:100PCT-AI-GOVERNANCE (R2 阈值调整)'
@@ -4536,7 +4544,7 @@ entries:
 - issue_id: '#ARCH-HEARTBEAT-001'
   title: session_worktree heartbeat daemon——PID liveness 跨进程失效治本
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定（#ARCH-ASYNC-MERGE-RECONCILE-001 P1 fix_phase 落地）。
     PID liveness 检测在 Windows PID 复用 / Linux PID wraparound 场景下不可靠，
@@ -4576,7 +4584,7 @@ entries:
     - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（P1-5 成本递增 _check_emergency_escalation / _increment_emergency_count / check_start_blocked）
     - src/zephyr/security/access_control/session_concurrency.py（P1-2 _is_session_alive heartbeat 判据，已存在）
     - tests/governance/rule_bridge/test_heartbeat_daemon.py（P1-6 smoke test 34 用例）
-    - docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md（P1-7 独立裁定文档，R4 交付物）
+    - docs/_archive/ruling_session_worktree_heartbeat.md（P1-7 独立裁定文档，R4 交付物）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: in_progress
   related_adjudication: '#ARCH-ASYNC-MERGE-RECONCILE-001 (P1 fix_phase 落地), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (allow_overlap 滥用治本), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D-1 / R4 交付物)'
@@ -4594,7 +4602,7 @@ entries:
 - issue_id: '#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001'
   title: pre-merge gate sys.path 不一致治本——worktree 内独立子进程运行 + 代码质量类 gate 退出 pre-merge
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定（DM-90974 治本任务暴露的系统性缺陷）。
 
@@ -4643,7 +4651,7 @@ entries:
 - issue_id: '#ARCH-PREVENTABILITY-LAYER-001'
   title: 第 6 层可预防性正式化——6 层闭环模型落地（AGENTS.md + trae_068 + registry 同步）
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定（Ruling:100PCT-AI-GOVERNANCE 裁定 D-4 / R6 正式落地）。
     100% AI 开发场景下，5 层闭环模型只能"事后报告"(post-commit warn)，无法"事前预防"
@@ -4687,7 +4695,7 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（preventability_layer_rule capability）
     - docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml（L52-54 6 层同步）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记 + related_rules 真源对齐）
-    - docs/02_enterprise_architecture/ruling_100pct_ai_governance_hardening.md（§4 R6 标注）
+    - docs/_archive/ruling_100pct_ai_governance_hardening.md（§4 R6 标注）
   status: in_progress
   related_adjudication: 'Ruling:100PCT-AI-GOVERNANCE (裁定 D-4 / R6 正式落地), #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD (G4/G5 延伸), #ARCH-HEARTBEAT-001 (第 6 层首批落地实例), #ARCH-ASYNC-MERGE-RECONCILE-001 (第 6 层第二个落地实例), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (5 维滥用=第 6 层缺失实例化)'
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型定义源), trae_068 (第 6 层可预防性铁律), trae_065 (能力反查强制), trae_062 (SSoT 真源分类)'
@@ -4743,21 +4751,22 @@ entries:
 
     注：本裁定仅关闭 DEFERRED 子项，5.178 维度主体（名称漂移检测）保持 FIXED。
   impact:
-  - docs/02_enterprise_architecture/architecture_debt_registry.md §5附注 5.178 行更新为 CLOSED-wontfix
+  - docs/_archive/architecture_debt_registry_v2.md §5附注 5.178 行更新为 CLOSED-wontfix
   - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-063 登记）
   fix_phase: 已完成（裁定关闭，无施工）
   status: resolved
+  confirmed_by_user: '2026-07-24'
   related_adjudication: 'R102 PERMANENT 裁定（5.178 维度主体）'
   related_rules: 'trae_047 工程文件头部（gate 头部规范）'
   created: '2026-07-20'
-  last_updated: '2026-07-20'
+  last_updated: '2026-07-24'
 
 # --- #ARCH-RUNCOMMAND-WINDOW-FLASH-001: RunCommand 窗口闪现治本（2026-07-20）---
 # 关联 #ARCH-HEARTBEAT-001（同源并发场景诊断延续）；规则 trae_067（RULE-EIGHTEEN 外部化）
 - issue_id: '#ARCH-RUNCOMMAND-WINDOW-FLASH-001'
   title: RunCommand 窗口闪现治本——TRAE toolhost 外部限制 + AI 纪律补位 + 项目层批量化替换
   category: architecture_governance
-  severity: P2
+  severity: P2中
   adjudication: >-
     2026-07-20 立项裁定。100% AI 开发场景下用户报告"后台隔一会儿就会弹出非常多的 Python
     窗口，闪烁式自动弹出/关闭"。60s 实时进程监控捕获 13 个新 python.exe 进程（平均每 4-5
@@ -4793,7 +4802,7 @@ entries:
       - kimi-desktop gildata_tool.py 业务数据下载闪窗治本（外部工具）
   impact:
     - docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml（Phase 1 新增规则）
-    - docs/02_enterprise_architecture/ruling_runcommand_window_flash.md（裁定文档）
+    - docs/_archive/ruling_runcommand_window_flash.md（裁定文档）
     - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（TRAE-067 登记条目）
     - src/zephyr/shared/infra/process_pool.py（Phase 1.5 SSoT helper 新增）
     - src/zephyr/governance/audit/reconciliation_registry.py（Phase 1.5 批量替换，36 处受益）
@@ -4828,7 +4837,7 @@ entries:
 - issue_id: '#ARCH-EXTERNAL-TOOL-WINDOW-001'
   title: 外部工具宿主（TRAE/kimi-desktop/OS）窗口闪现——L0/L1 项目层 100% 落地后的 L2/L3 责任边界裁定
   category: architecture_governance
-  severity: P3
+  severity: P3低
   adjudication: >-
     2026-07-20 立项裁定（ruling_runcommand_window_flash.md §治理底线）。第一性原理：100% AI
     开发场景下 AI 通过 RunCommand 执行任何命令都依赖外部工具宿主（TRAE/kimi-desktop/VS Code
@@ -4853,7 +4862,7 @@ entries:
       - Windows 控制台子系统设计不可改，python.exe/powershell.exe 必创建控制台窗口
       - 仅作裁定记录，无技术治本路径
   impact:
-    - docs/02_enterprise_architecture/ruling_runcommand_window_flash.md（裁定文档 §治理底线）
+    - docs/_archive/ruling_runcommand_window_flash.md（裁定文档 §治理底线）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: adjudicated
   related_adjudication: '#ARCH-RUNCOMMAND-WINDOW-FLASH-001 (L0/L1 项目层治本主体), #ARCH-HEARTBEAT-001 (同源并发场景诊断延续)'
@@ -4863,7 +4872,7 @@ entries:
 - issue_id: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001'
   title: RECONCILER-HEALTH 41 条 critical_warn 根因——5 维滥用检测 3 个设计缺陷 + emergency_commit 分桶失效
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定。前序裁定 R1/R2（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 +
     #ARCH-ASYNC-MERGE-RECONCILE-001）在"5 维告警真实反映滥用"的假设下制定阈值调整方案，
@@ -4973,7 +4982,7 @@ entries:
   impact:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
     - docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml（P3-1 阈值 YAML 真源）
-    - docs/02_enterprise_architecture/ruling_reconciler_health_warn_root_cause.md（裁定文档待产出）
+    - docs/_archive/ruling_reconciler_health_warn_root_cause.md（裁定文档待产出）
     - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（P1-1/P1-3/P1-4 + P3-1 YAML 加载）
     - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（P1-2/P1-3 分桶+scenario）
     - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（P2-2b timeout 分级）
@@ -4992,7 +5001,7 @@ entries:
 - issue_id: '#ARCH-CROSS-COMMIT-ATOMICITY-001'
   title: 跨 commit 原子性违规——import 语句先行于目标文件创建 + GATE-IMPORT-INTEGRITY 治本
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定。ba40fa5b75（#ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.5 治本闪窗）
     在 git_commit_gateway.py L154 + L345 添加了对 forged_gw_marker_gate.py 的 import 与
@@ -5364,7 +5373,7 @@ entries:
 - issue_id: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
   title: 系统性防漂移体系盲区——4 盲区 3 Phase 治本（post-commit→pre-commit/clean-check/verified-gate）
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-20 立项裁定。前序会话"遗留风险"报告指出 4 个系统性盲区：
 
@@ -5481,7 +5490,7 @@ entries:
         capability_canonical_file_registry.yaml（capability_id + creation_token）
         noqa_exempt_registry.yaml（no-verify-ruling marker, scope=commit-message）
         architecture_issue_registry.yaml（本案登记）
-      - ruling 文档落盘：docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md
+      - ruling 文档落盘：docs/_archive/ruling_workspace_drift_systemic.md
         （单独 commit 3c6c73b1ec，merge 82e9704ffd7b）
   impact:
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 1+1.5+2：4 钩子 + 5 helper + _restore_auto_sync_batch staged 修复）
@@ -5492,7 +5501,7 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
     - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（capability + creation_token 登记）
     - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml（no-verify-ruling marker 登记）
-    - docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md（Phase 3 ruling 文档落盘）
+    - docs/_archive/ruling_workspace_drift_systemic.md（Phase 3 ruling 文档落盘）
   status: resolved
   related_adjudication: '#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (pre-merge sys.path 治本，session lifecycle 同维度), #ARCH-WORKTREE-002 (worktree 物理隔离基础，本议题在其上加工作区 clean 检查), Ruling:100PCT-AI-GOVERNANCE (100% AI 场景第一性原理，warn=通过治本须 fail-closed), #ARCH-TOOL-HEALTH-V1 (workspace_hygiene_reconciler 复用基础), #ARCH-CROSS-COMMIT-ATOMICITY-001 (跨 commit 原子性，本议题 Phase 3 gate priority=77 紧接其后)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_054 (备份先行), trae_060 (向内收三原则), trae_062 (SSoT 真源分类)'
@@ -5515,10 +5524,11 @@ entries:
     Phase 2: 分批治理 8 batch（5-8 session）
     Phase 3: gate 升级 commit 阻断（1 session）
   status: resolved
+  confirmed_by_user: '2026-07-24'
   related_adjudication: 'R102 (5.145.13-26 原 RATIFY 重新审查), 裁定3 (DEFERRED-PERMANENT 分类法), #ARCH-WORKTREE-002 (worktree 治本模式参考)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_060 (向内收三原则), 裁定#208 R7 (GATE-ANY-ABUSE 防复发), trae_062 (SSoT 真源分类)'
   created: '2026-07-21'
-  last_updated: '2026-07-22'
+  last_updated: '2026-07-24'
   resolution: 'Phase 1-3 全部治本完成（2026-07-22）。Phase 1 any_type_inferrer.py 构建完成；Phase 2 src/zephyr/ 全量 71 处裸 Any 清零（commit e494c72623）；Phase 3 GATE-ANY-ABUSE 升级为 commit 阻断 + noqa:any-abuse 行级豁免（merge b7a6e21765）。5.145 维度 PERMANENT-14 → FIXED。'
 
 # --- #ARCH-CROSS-COMMIT-ATOMICITY-002: Phase 2 君子协定治本收口 + GATE-IMPORT-INTEGRITY 友好提示增强 ---
@@ -5798,7 +5808,7 @@ entries:
 - issue_id: '#ARCH-CROSSDRIVE-RELPATH-001'
   title: "reconciliation_registry.py 跨盘 D:/C: 导致 os.path.relpath 全量失败治本"
   category: architecture_governance
-  severity: P2
+  severity: P2中
   adjudication: >-
     2026-07-21 立项裁定。reconciliation_registry.py 有 34 处 os.path.relpath(f, str(project_root))
     裸调用，Windows 跨盘场景（项目在 D 盘，Python/临时文件在 C 盘）下抛 ValueError:
@@ -5825,7 +5835,7 @@ entries:
 - issue_id: '#ARCH-GATE-PRIORITY-UNIQUENESS-001'
   title: commit gate priority 撞号治本——BLUEPRINT-FORMAT 与 RULING-COMMIT-VERIFIED 同 priority=77，升级 register() warn->block
   category: architecture_governance
-  severity: P2
+  severity: P2中
   adjudication: >-
     2026-07-21 立项裁定。#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 3 落地后
     发现 RULING-COMMIT-VERIFIED gate (priority=77) 与已存在的 BLUEPRINT-FORMAT
@@ -5921,7 +5931,7 @@ entries:
 - issue_id: '#ARCH-PRECOMMIT-OFFLINE-001'
   title: pre-commit hook 引用外部 GitHub repo 致离线环境 commit 卡死——离线可运行原则治本
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-21 立项裁定。.pre-commit-config.yaml 引用外部 GitHub repo
     `pre-commit/pre-commit-hooks`（rev v4.6.0），pre-commit 工具在缓存失效/首次安装时
@@ -5961,7 +5971,7 @@ entries:
 - issue_id: '#ARCH-WORKTREE-LIFECYCLE-001'
   title: '死代码状态机清理——SessionManager (MOD-INF-039, 5态) + SessionLifecycle (MOD-INF-033, 6态) 双轨退役，新建 WorktreeLifecycle (5态) 替代'
   category: architecture_governance
-  severity: P2
+  severity: P2中
   adjudication: |-
     2026-07-21 立项裁定。全面调研发现项目存在两个死代码状态机：
 
@@ -6030,7 +6040,7 @@ entries:
 - issue_id: '#ARCH-WORKTREE-BASE-FRESHNESS-001'
   title: 'worktree base 新鲜度检测从 commit-only 扩展到全生命周期（start/commit/merge）——治本薛定谔的回退'
   category: architecture_governance
-  severity: P0
+  severity: P0致命
   adjudication: |-
     2026-07-21 立项裁定。裁定#19-B 的 _ensure_worktree_base_fresh 仅在 commit 阶段检测，
     start/merge 阶段无防护。实际观察到薛定谔的回退（git reflog: reset: moving to HEAD）：
@@ -6088,7 +6098,7 @@ entries:
 - issue_id: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001'
   title: 'worktree commit 持久性标记 + sweep 免疫 + merge 前验证 + start fail-closed——治本薛定谔的回退循环依赖'
   category: architecture_governance
-  severity: P0
+  severity: P0致命
   adjudication: |-
     2026-07-22 立项裁定。#ARCH-WORKTREE-BASE-FRESHNESS-001 治本目标是防薛定谔的回退，
     但治本过程本身被薛定谔的回退阻击 3 次（commit 323df2fa11 / 105917c872 消失、
@@ -6169,7 +6179,7 @@ entries:
 - issue_id: '#ARCH-STASH-ACCUMULATION-001'
   title: stash 累积系统性治理——自动 drop + 阈值阻断 + 4h TTL + user-manual- 保护（100% AI 开发场景治本）
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-21 立项裁定。100% AI 开发场景下，多 session 并发 + WORKSPACE-CLEAN-CHECK
     merge 阻断 + 8 个活跃 session 各自通过 Edit/Write 写项目根（IDE 限制）+
@@ -6344,7 +6354,7 @@ entries:
 - issue_id: '#ARCH-STASH-LIFECYCLE-FIX-001'
   title: 'stash_lifecycle_reconciler 反向匹配治本——修复 _is_ai_generated 形同虚设 bug（reconciler 永不清理任何 stash）'
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: |
     问题背景：
     #ARCH-STASH-ACCUMULATION-001 Phase 1 落地 make_stash_lifecycle_reconciler 扩展
@@ -6508,7 +6518,7 @@ entries:
 - issue_id: '#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001'
   title: 'blueprint.md auto-sync 误分类治本——从 auto-sync 清单移除混合文件（frontmatter 派生 + 正文手写）'
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: |-
     2026-07-21 立项裁定。#ARCH-WORKTREE-LIFECYCLE-001 Phase 3.1 施工时发现：
     AI 编辑 docs/03_modules/**/blueprint.md 正文（迁移公告）后，调用
@@ -6648,7 +6658,7 @@ entries:
 - issue_id: '#ARCH-GATE-REGISTRY-AUTO-001'
   title: 'git_commit_gateway.py 硬编码 75 个 gate 的 import + register——YAML 驱动自动注册治本'
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-21 立项裁定。git_commit_gateway.py 是 75 个 in-process gate 的硬编码注册中心，
     每个 gate 需要 1 行 import + 1 行 register（共 150 行硬编码）。这导致三个问题：
@@ -6919,7 +6929,7 @@ entries:
 - issue_id: '#ARCH-MODULE-ID-DUAL-SPELLING-001'
   title: '[BLUEPRINT] vs [A_module] header same-module dual-spelling cross-check gap'
   category: architecture_governance
-  severity: P2
+  severity: P2中
   adjudication: |
     11 .py files had [BLUEPRINT]=UNDERSCORE vs [A_module]=DASH for same module.
     No gate cross-checked the two headers. New BLUEPRINT-AMODULE-CROSS-CHECK gate (priority=119)
@@ -6974,7 +6984,7 @@ entries:
 - issue_id: '#ARCH-FORCE-MERGE-SAFETY-001'
   title: 'force=True 逃生通道安全分类——不可绕过类检测（commit 持久性 + base 新鲜度）禁止跳过'
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: |
     2026-07-22 立项裁定。红蓝极限对抗测试发现 session_worktree_merge(force=True)
     逃生通道跳过5处检测，其中2处（commit 持久性验证 + base 新鲜度检测）无 post-merge
@@ -7122,7 +7132,7 @@ entries:
 - issue_id: '#ARCH-REGISTRY-MERGE-LOSS-001'
   title: '并发 session merge 导致 append-only YAML 注册表条目静默丢失——无 post-merge 检测机制'
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: |
     2026-07-22 立项裁定。100% AI 开发场景下多 session 并发无协调，append-only YAML
     注册表（architecture_issue_registry.yaml / rule_ai_perception_index.yaml 等）在
@@ -7194,7 +7204,7 @@ entries:
 # --- #ARCH-CH-024: 数据链路真源消费闭环治本（sector_kline_downloader 三重绕过 + 表名 registry 形同虚设 + 配置硬编码清零） ---
 - issue_id: '#ARCH-CH-024'
   title: 数据链路真源消费闭环治本——sector_kline_downloader 三重绕过 + business_data_categories.yaml 零消费双真源 + 3 处 localhost:5432 硬编码
-  severity: P0高
+  severity: P0致命
   category: data_architecture
   adjudication: |
     问题背景：
@@ -8298,7 +8308,7 @@ entries:
 - issue_id: '#ARCH-HEARTBEAT-002'
   title: heartbeat daemon 活性反转（liveness-inversion）——idle-timeout 自动退出治本
   category: architecture_governance
-  severity: P1
+  severity: P1高
   adjudication: >-
     2026-07-23 立项裁定（#ARCH-HEARTBEAT-001 延续议题）。
 
@@ -8663,3 +8673,151 @@ entries:
   related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 裁定 #ARCH-CAP-NULL-SYMBOLS-001, #ARCH-ETFNAV-SINGLE-FAIL-001'
   created: '2026-07-23'
   last_updated: '2026-07-23'
+
+# --- #ARCH-DEBT-001~006: R102/R103 wontfix 债务批量登记（裁定#222，2026-07-24）---
+# 6 个维度共 40 项 wontfix，每维度一个 #ARCH-DEBT-NNN 条目，status=deprecated（已废弃不施工）。
+# 裁定真源：裁定#222（ruling_registry.yaml）。维度清单：audit_dimensions_checklist.md。
+# 翻案条件：MUST 经架构师新裁定（裁定#NNN）并更新本条目 related_adjudication + last_updated。
+
+- issue_id: '#ARCH-DEBT-001'
+  title: 5.33 容灾与备份 wontfix（2 项：5.33.6 SPOF + 5.33.10 密码明文）
+  severity: P2中
+  adjudication: >-
+    R102/R103 裁定 wontfix（2 项）。5.33.6（HIGH）：PostgreSQL 单机 localhost 无故障切换机制
+    （SPOF），无流复制副本/自动故障切换——wontfix 理由：单机项目 Restic 备份已覆盖，主从到
+    localhost 无意义属过度工程。5.33.10（MEDIUM）：PG 密码明文单副本，无异地/加密备份，无
+    secrets manager 集成——wontfix 理由：.env.postgres 已随 Restic 加密备份，Vault 属过度工程。
+    防复发：BACKUP-RECONCILER + Restic 加密备份 + config/dr_policy.yaml。注：单节点高可用与
+    异地备份的风险接受裁定见 #ARCH-CH-031/#ARCH-CH-032（回测期接受单节点 + scaffolding 就绪
+    未激活，升级触发条件：实盘立项/数据量超容量/多用户并发）。
+  fix_phase: 已裁定 wontfix（R102 RATIFY，裁定#222 确认），不施工
+  status: deprecated
+  related_adjudication: '#222'
+  created: '2026-07-19'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-DEBT-002'
+  title: 5.93 __init__.py 污染 wontfix（1 项：5.93.1 import 时重型副作用）
+  severity: P2中
+  adjudication: >-
+    R102 裁定 wontfix（1 项）。5.93.1（HIGH）：src/zephyr/__init__.py:63,125-127,142-144
+    import 时执行重型副作用——_load_dotenv() 改 os.environ + 2 个 daemon Timer 线程（遥测
+    bootstrap monkey-patch + 服务注册）。wontfix 理由：2 个 daemon Timer 是 MOD-INF-015
+    auto_bootstrap 刻意设计（全面 monkey-patch 遥测，"零手动代码"），atexit 清理已在；
+    移除风险（遥测静默缺失）> 收益（import 纯净）。防复发：NO-IMPORT-SIDE-EFFECT gate
+    （priority=103）已防新增。
+  fix_phase: 已裁定 wontfix（R102 RATIFY，裁定#222 确认），不施工
+  status: deprecated
+  related_adjudication: '#222'
+  created: '2026-07-19'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-DEBT-003'
+  title: 5.101 变量遮蔽与命名冲突 wontfix（12 项：字段遮蔽内置名 + 模块名冲突标准库）
+  severity: P3低
+  adjudication: >-
+    R80 升级 PERMANENT + R102 RATIFY 裁定 wontfix（12 项）。5.101.5-5.101.13（9 项，LOW）：
+    42 处数据类/Pydantic 字段名与 Python 内置名相同（id 15 + file 11 + type 3 + format 4 +
+    hash 5 + open 3 + input 1 + round 1 + Enum 成员 file 1）。wontfix 理由：LEGB 分析实例属性
+    self.id 不参与作用域链，方法体内 id(obj) 仍调用内置 id()，实际遮蔽风险=0；改名冲击 JSON
+    序列化键名 + DB 列映射 + API 契约，成本 > 收益。5.101.15/16/17（3 项，LOW）：模块名与
+    标准库 types/secrets 模块同名。wontfix 理由：Python 3 包内 import 不搜索同包目录，实测
+    无遮蔽风险；改名涉及全仓 import 路径变更，净收益为负。防复发：M24 字段遮蔽计数监控
+    （warn-only，R80 裁定不新增 gate，directory_contract 维护模块名）。
+  fix_phase: 已裁定 wontfix（R80+R102 RATIFY，裁定#222 确认），不施工
+  status: deprecated
+  related_adjudication: '#222'
+  created: '2026-07-19'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-DEBT-004'
+  title: 5.143 API 契约一致性 wontfix（14 项：ComplianceManagerBase 骨架 + 13 盲盒）
+  severity: P2中
+  adjudication: >-
+    R82 + R102 RATIFY 裁定 wontfix（14 项）。5.143.20（LOW）：ComplianceManagerBase 定义 4 个
+    abstractmethod 但全项目无子类实现——wontfix 理由：Phase B 骨架 OCP 扩展点（蓝图
+    MOD-L10-001 明确支持，文件头标注 status: phase_b_skeleton），abc.ABC TypeError 机制 +
+    runtime_checkable 双层防护，零运行时风险；待 compliance 域进入 Phase C 时由人类架构师
+    发起专项实现。5.143.7-5.143.19（13 项盲盒，MEDIUM）：注册表从未记录具体条目，历 22 轮
+    代码变化后无法验证是否原始 13 个——wontfix 理由：重新扫描结果不可验证；HIGH 已全部修复；
+    MEDIUM 级在 Python 动态类型下运行时无 TypeError 影响。防复发：ssot_redefinition_gate +
+    cross_layer_contracts.yaml SSoT + abc.ABC + runtime_checkable 已提供覆盖。
+  fix_phase: 已裁定 wontfix（R82+R102 RATIFY，裁定#222 确认），不施工
+  status: deprecated
+  related_adjudication: '#222'
+  created: '2026-07-19'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-DEBT-005'
+  title: 5.150 设计模式误用 wontfix（2 项：Data Class + Primitive Obsession）
+  severity: P3低
+  adjudication: >-
+    R102 RATIFY 裁定 wontfix（2 项）。5.150.6（MEDIUM）：RiskMetricsReport 为
+    @dataclass(frozen=True)，17 个字段 0 个方法（Data Class）——wontfix 理由：报告 DTO
+    17 字段 0 方法是合法模式（不可变数据载体），为加方法而加方法=过度工程。5.150.16（LOW）：
+    AgentCommunicationItem.__init__ 7 个 str 基本类型参数（Primitive Obsession）——wontfix
+    理由：影响序列化/契约，值对象重构冲击面大于收益。防复发：无（R102 裁定 EXECUTE 测试先行；
+    设计模式 AST gate 列为可选未来专项）。
+  fix_phase: 已裁定 wontfix（R102 RATIFY，裁定#222 确认），不施工
+  status: deprecated
+  related_adjudication: '#222'
+  created: '2026-07-19'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-DEBT-006'
+  title: 5.153 命名一致性 wontfix（9 项：动词不一致 + conn 命名 + 布尔缺 is_ 前缀）
+  severity: P3低
+  adjudication: >-
+    R102 RATIFY 裁定 wontfix（9 项）。5.153.7（MEDIUM）：db_bridge record_* vs db_writer
+    write_* 动词不一致 + 硬编码 db 路径。5.153.8（MEDIUM）：获取数据库连接 4 种命名模式 +
+    conn/connection 混用。5.153.9（MEDIUM）：create_session 参数名跨模块不一致
+    （session_id/task_id/agent_id）。5.153.16-5.153.21（6 项，LOW）：布尔属性/字段缺 is_ 前缀
+    （30+ 字段）。wontfix 理由（统一）：差异各有历史语义（不同 DB 不同函数名是特性非 bug），
+    改名冲击 JSON 序列化键名/DB 列映射/API 契约/A2A 协议契约，净收益为负。防复发：无
+    （canonical 命名规范 SSoT 先行后才设 gate）。
+  fix_phase: 已裁定 wontfix（R102 RATIFY，裁定#222 确认），不施工
+  status: deprecated
+  related_adjudication: '#222'
+  created: '2026-07-19'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-PYCOMPAT-001'
+  title: Python 3.10 兼容补丁（datetime.UTC / typing.Self 集中式 shim）
+  severity: P2中
+  adjudication: >-
+    项目目标运行时为 Python 3.10，但部分标准库特性（datetime.UTC 别名、typing.Self）为 3.11+
+    新增。裁定采用集中式兼容补丁方案：在 src/zephyr/__init__.py 顶部做最小 shim
+    （hasattr 守卫 + typing_extensions 优先 + TypeVar 兜底），一处修复全项目生效。
+    理由：分散式 try/except 补丁会导致 30+ 文件重复代码且易遗漏；集中式 shim 是 CPython
+    polyfill 社区惯例（如 six 库、future 库）。防复发：BLUEPRINT-FORMAT gate 保证新模块
+    import zephyr 时自动获得 shim；无额外 gate 需求（shim 是 import 时副作用，隐式生效）。
+  fix_phase: 已执行（src/zephyr/__init__.py 集中式 shim）
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-WORKTREE-EXEC-DRIFT-001'
+  title: worktree 君子协定执行偏差——多 session 工作堆积主工作区（109 变更）
+  category: architecture_governance
+  severity: P2中
+  adjudication: |-
+    2026-07-24 发现并清理。FP-ISO.4C worktree 君子协定（2026-07-02 正式版）要求 AI 对话
+    启动后第一件事执行 session_worktree_start，实现独立 git index 物理隔离。但实测多个
+    session 未遵守：109 个未提交变更堆积在主工作区（debt-migration 裁定#221/#222 的文档
+    重组 + 引用更新 + 2 个搭便车 BLUEPRINT 头注入 + 临时文件），干扰 --reconciler-verify
+    commit（git_commit.py:204-222 要求主工作区 clean）。
+
+    根因（第一性原理）：君子协定"无门禁强制，依赖 AI 自觉"（project_memory FP-ISO.4C 原文）。
+    100% AI 开发场景下，AI 自觉不可靠——session 中断/并发/上下文丢失都会导致跳过 worktree。
+    真正治本需 commit 时门禁强制（检查待提交文件是否属于当前 session worktree）。
+
+    本次清理处置（2026-07-24）：
+    1. 清理 2 个活性反转死 session（daemon 保活但 chat 已结束）——kill daemon + unregister
+       + git worktree remove，释放 held_files 阻塞（sess-44880 持有 architecture_issue_registry
+       + capability_canonical_file_registry 的 claim）
+    2. 分离 2 个搭便车 BLUEPRINT 头注入（_gate_test_helpers.py MOD-GOV_LONG_PARAM_LIST_GATE
+       + test_governance_db.py MOD-TEST-508），单独提交，不混入 debt-migration commit
+    3. 补修 8 处遗漏的旧路径引用（architecture_debt_registry.md / ruling_*.md → _archive 归档路径）
+    4. 清理临时文件（_tmp_commit_debt_migration.py + registry_*.txt scratch 输出）
+    5. 重命名中文命名文件（临时文件.md → db_institutional_upgrade_task_spec.md）
+    6. 按任务归属分组提交（debt-migration / BLUEPRINT 头注入 / _working 参考文档）
+  fix_phase: |-
+    本次清理已完成；防复发门禁强制 deferred 至 #ARCH-DEP-PREMERGE-ENFORCE Phase 3
+    （pre-merge 拓扑硬阻断，含 worktree 隔离检查）
+  status: resolved
+  related_adjudication: 'FP-ISO.4C worktree 君子协定, #ARCH-WORKTREE-002, #ARCH-DEP-PREMERGE-ENFORCE'
+  created: '2026-07-24'
+  last_updated: '2026-07-24'
