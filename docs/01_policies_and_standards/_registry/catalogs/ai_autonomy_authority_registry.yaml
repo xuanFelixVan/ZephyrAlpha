@@ -601,7 +601,7 @@ version_history:
     note: 新增 §七 dev/prod 双模式权限表，区分开发环境与生产环境的 AI 自治权限差异。
   - version: v1.2.1
     date: '2026-05-01 Phase 5'
-    note: date/valid_from→2026-05-01；depends_on 补 KBG-0010（三层权限语义来源）。
+    note: date/valid_from→2026-05-01；depends_on 补 架构决策（三层权限语义来源）。
   - version: v1.2.2
     date: '2026-05-02'
     note: >-

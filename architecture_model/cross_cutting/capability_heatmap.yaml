@@ -20,7 +20,6 @@ partition:
     结构化数据从depgraph派生（PostgreSQL INFRA-DB-003）。
   source_view: capability_heatmap.md
   related_kb_ref:
-  - KBG-0012
   baseline_date: '2026-06-23'
   review_cadence: quarterly
   overall_maturity_score: 1.12

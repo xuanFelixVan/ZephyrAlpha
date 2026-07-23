@@ -173,7 +173,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0030"
 
     track: B
 
@@ -193,13 +192,12 @@ directories:
 
     module_id: DOC-ROOT
 
-    kb_ref: "KBG-0001"
 
     track: C
 
     status: active
 
-    note: "KBG-0001 确立本目录为唯一真源"
+    note: "架构决策 确立本目录为唯一真源"
 
 
 
@@ -208,7 +206,6 @@ directories:
     parent: "/"
     has_index: false
     module_id: null
-    kb_ref: "KBG-0002"
     track: B
     status: deprecated
     note: "2026-06-10 deprecated——内容已合并至 docs/01_policies_and_standards/_registry/schemas/"
@@ -243,13 +240,12 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
     status: active
 
-    note: "KBG-0009: 14 业务?+ shared = 15 物理子目?"
+    note: "架构决策: 14 业务?+ shared = 15 物理子目?"
 
 
   # ========================================
@@ -278,7 +274,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0013"
 
     track: C
 
@@ -344,7 +339,6 @@ directories:
     status: active
 
     note: "v2.0.0 ?07_ai_engineering/ 迁移——蓝?接口统一?03_modules/ ?"
-    kb_ref: "KBG-0015~0020"
 
     last_updated: "2026-05-03"
 
@@ -360,7 +354,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0005"
 
     track: B
 
@@ -605,7 +598,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0002"
 
     track: B
 
@@ -1142,7 +1134,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0030"
 
     track: B
 
@@ -1379,7 +1370,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1438,7 +1428,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0015"
 
     track: B
 
@@ -1458,7 +1447,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0038"
 
     track: B
 
@@ -1478,7 +1466,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0007"
 
     track: B
 
@@ -1498,7 +1485,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0030"
 
     track: B
 
@@ -1517,7 +1503,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0019"
 
     track: B
 
@@ -1554,7 +1539,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0021"
 
     track: B
 
@@ -1574,7 +1558,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0005"
 
     track: B
 
@@ -1594,7 +1577,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1613,7 +1595,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1632,7 +1613,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1651,7 +1631,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1670,7 +1649,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1689,7 +1667,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1708,7 +1685,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1727,7 +1703,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1746,7 +1721,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1765,7 +1739,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1784,7 +1757,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1803,7 +1775,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1822,7 +1793,6 @@ directories:
 
     module_id: null
 
-    kb_ref: "KBG-0009"
 
     track: C
 
@@ -1873,7 +1843,7 @@ drawer_maturity:
   - drawer: "02_enterprise_architecture"
     maturity: partial
     path_mapping: "docs/02_enterprise_architecture/"
-    note: "adr/ 已激活（KBG-0001/0002/0003）；target_architecture/ 已激活"
+    note: "adr/ 已激活（架构决策/0002/0003）；target_architecture/ 已激活"
   - drawer: "03_domain_architecture"
     maturity: planned
     path_mapping: null

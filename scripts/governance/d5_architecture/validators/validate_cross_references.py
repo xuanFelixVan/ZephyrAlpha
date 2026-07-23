@@ -284,12 +284,20 @@ def _collect_all_adr_refs() -> list[tuple[str, str, str]]:
 
 
 def check_dim3_adr_refs() -> None:
-    """DIM-3: 所有 kb_ref/adr_ref → 存在 KB 决策记录条目"""
+    """DIM-3: 所有 kb_ref/adr_ref → 存在 KB 决策记录条目.
+
+    注意：KBG-NNNN 是 KB 系统退役前的决策记录ID，决策内容已内联在 blueprint.md 中。
+    KB 系统于 2026-07 退役后，KBG-NNNN 不再通过 KB decisions 表检索，跳过验证。
+    仅验证 ADR-NNNN 等其他引用。
+    """
     adr_ids = _build_adr_registry()
     if not adr_ids:
         return
 
     for fname, mid, adr in _collect_all_adr_refs():
+        # KBG-NNNN: KB系统退役后为只读内联决策，跳过验证
+        if adr.startswith("KBG-"):
+            continue
         if adr not in adr_ids:
             _err(f"DIM-3 [{fname}] 模块 {mid} 引用的 kb_ref/adr_ref='{adr}' 在 KB decisions 中无对应条目")
 

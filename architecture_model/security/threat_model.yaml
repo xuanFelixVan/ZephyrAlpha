@@ -108,7 +108,7 @@ threat_model:
         threat: Supply Chain
         system_exposure: "第三方 MCP Tool 不可信"
         experimental_defense: "Agent Sandbox 白名单（§5）"
-        reference: KBG-0018
+        reference: Agent Sandbox 决策（原架构决策）
       - owasp_id: LLM06
         threat: Sensitive Info Disclosure
         system_exposure: "AI 输出包含 API Key"
@@ -123,7 +123,7 @@ threat_model:
         threat: Excessive Agency
         system_exposure: "Agent 拥有过多权限"
         experimental_defense: "白名单命令集 + 资源配额"
-        reference: KBG-0018
+        reference: Agent Sandbox 决策（原架构决策）
       - owasp_id: LLM09
         threat: Overreliance
         system_exposure: "AI 幻觉未检测"

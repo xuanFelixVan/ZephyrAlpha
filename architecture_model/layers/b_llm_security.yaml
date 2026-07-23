@@ -15,7 +15,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: LLM 九层纵深防御 + 自我防护 + 运维保障体系 �?L0供应�?模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御)/L1输入(直接+间接+越狱+Spotlighting+RAG投毒防御+ToolResultTransform)/L2 Prompt隔离防泄�?Drift检�?Promptware KillChain对标/L3输出(Schema+沙箱+脱敏+幻觉+AI代码信任边界+EmbeddingInversion防御)/L4 Agent安全+HITL+MCPSampling+DeepSeek越狱补偿/L5资源保护+性能预算SLA+超预算自动降�?L6可观测�?自监�?KillChain追踪+延迟追踪/L7持续验证+Red Team+LSG自我回归/L8多Agent(通信认证+跨Agent权限+级联熔断+Rogue检�?TrustAntiAbuse+Shadow/NHI)+凭据生命周期+数据层安�?RLS/Default-Secure)。原则：fail-closed + 性能SLO(L6/L7例外降级)
+    description: LLM 九层纵深防御 + 自我防护 + 运维保障体系：L0供应链模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御)/L1输入(直接+间接+越狱+Spotlighting+RAG投毒防御+ToolResultTransform)/L2 Prompt隔离防泄露Drift检测Promptware KillChain对标/L3输出(Schema+沙箱+脱敏+幻觉+AI代码信任边界+EmbeddingInversion防御)/L4 Agent安全+HITL+MCPSampling+DeepSeek越狱补偿/L5资源保护+性能预算SLA+超预算自动降级；L6可观测性、自监控KillChain追踪+延迟追踪/L7持续验证+Red Team+LSG自我回归/L8多Agent(通信认证+跨Agent权限+级联熔断+Rogue检测TrustAntiAbuse+Shadow/NHI)+凭据生命周期+数据层安全；RLS/Default-Secure)。原则：fail-closed + 性能SLO(L6/L7例外降级)
     files:
       - __init__.py
       - behavior_audit_logger.py
@@ -46,13 +46,11 @@ modules:
     interfaces:
       - contract_id: CT-CE-LSG-001
         role: producer
-        description: CE 注入前安全校验的提供�?
+        description: CE 注入前安全校验的提供者
       - contract_id: EXT-LSG-FAIL-CLOSED-001
         role: producer
         description: fail-closed 运行策略（扩展登记）
     kb_ref:
-      - KBG-0020
-      - KBG-0022
 
 summary:
   total: 1

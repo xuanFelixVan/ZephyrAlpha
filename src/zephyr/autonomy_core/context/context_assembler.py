@@ -46,7 +46,6 @@ from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegist
 if TYPE_CHECKING:
     from zephyr.shared.protocols.ports import RerankerProtocol
     from zephyr.orchestrator.contracts.task_card import TaskCard
-    from zephyr.intelligence.model_evaluation.unified_memory_api import UnifiedMemoryAPI
 
 __all__ = [
     "AssembledContext",
@@ -591,49 +590,6 @@ def _get_embedded_defaults(task_type: str, layer: str) -> list[str]:
         defaults.append(f"Layer: {layer} — consult blueprint §{layer} for architecture context")
     _logger.debug("VMS unavailable — using embedded defaults (%d rules)", len(defaults))
     return defaults
-
-
-def _build_context_from_kb(task_type: str, layer: str, reranker: RerankerProtocol | None = None) -> RawContext:
-    ctx = RawContext(embedded_defaults=_get_embedded_defaults(task_type, layer))
-
-    try:
-        kb = _get_or_init_kb()
-        if kb is None:
-            ctx.degraded = True
-            return ctx
-
-        rk = reranker
-        if rk is None:
-            from zephyr.intelligence.model_evaluation.reranker import Reranker
-
-            rk = Reranker(top_k=5)
-
-        if task_type:
-            hits = kb.search(query=task_type, k=5)
-            if hits:
-                docs = [h.content for h in hits]
-                metas = [h.metadata for h in hits]
-                ranked = rk.rerank(task_type, docs, metadatas=metas)
-                ctx.ke_entries = [h.text for h in ranked[:5]]
-
-        if layer:
-            blueprint_hits = kb.search(query=f"blueprint {layer} architecture", k=3, topic=None)
-            if blueprint_hits:
-                ctx.blueprints = [h.content for h in blueprint_hits[:2]]
-    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _logger.debug("KB search failed, using embedded defaults only", exc_info=True)
-
-    ctx.degraded = not ctx.ke_entries and not ctx.blueprints
-    return ctx
-
-
-_KBS_CACHE: UnifiedMemoryAPI | None = None
-
-
-def _get_or_init_kb() -> UnifiedMemoryAPI | None:
-    # KBG removal Stage 2: Bootstrap removed (gov_kb deleted in Stage 3)
-    # Returns None — context assembler falls back to embedded defaults only
-    return None
 
 
 AUTHORITY_MIN_SCORE: Final[float] = 0.7

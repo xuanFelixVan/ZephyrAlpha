@@ -159,7 +159,7 @@ infrastructure:
     sla: "< 200ms retrieval p95, index rebuild < 10 min"
     status: provisioned
     provisioned_at: "2026-05-05"
-    note: "KBG-0031：ChromaDB 选型。实际部署 2026-05-05；PersistentClient 本地持久化 data/vector_db/（ARCH-LOCK-002 锁定）。8 Collection（5×1024d BGE-M3 + 3×512d bge-small-zh-v1.5）。ARCH-LOCK-003 锁定目标后端为 FAISS HNSW + SQLite WAL，当前处于 ChromaDB→FAISS 迁移过渡期，chroma.sqlite3（旧）与 vms_metadata.db+.index（新）共存；migrate_chroma_to_faiss.py 为迁移脚本。P3-T1 pgvector 处于 Suspended（消费方为零）"
+    note: "架构决策：ChromaDB 选型。实际部署 2026-05-05；PersistentClient 本地持久化 data/vector_db/（ARCH-LOCK-002 锁定）。8 Collection（5×1024d BGE-M3 + 3×512d bge-small-zh-v1.5）。ARCH-LOCK-003 锁定目标后端为 FAISS HNSW + SQLite WAL，当前处于 ChromaDB→FAISS 迁移过渡期，chroma.sqlite3（旧）与 vms_metadata.db+.index（新）共存；migrate_chroma_to_faiss.py 为迁移脚本。P3-T1 pgvector 处于 Suspended（消费方为零）"
 
   # --- 缓存（Redis）---
   - infra_id: "INFRA-CACHE-001"

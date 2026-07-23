@@ -29,16 +29,16 @@ modules:
     interfaces:
       - contract_id: CT-ORC-SCRIPT-001
         role: both
-        description: 任务阻塞�?Finding↔任务卡（MOD-MASTER-001 §2.2�?
+        description: 任务阻塞：Finding↔任务卡（MOD-MASTER-001 §2.2）
       - contract_id: CT-ORC-CE-001
         role: consumer
-        description: 上下文构建请�?
+        description: 上下文构建请求
       - contract_id: CT-ORC-VMS-001
         role: consumer
-        description: 任务输出写入向量�?
+        description: 任务输出写入向量库
       - contract_id: CT-ORC-GATE-001
         role: consumer
-        description: 任务执行�?后门禁判�?
+        description: 任务执行前后门禁判定
       - contract_id: EXT-ORC-SANDBOX-001
         role: producer
         description: 沙箱执行边界（Windows ACL 等）；未单列入总表，扩展登记
@@ -49,13 +49,6 @@ modules:
         role: both
         description: Rollback 与 Gate 的交互契约（回滚前门禁校验/回滚后状态同步）
     kb_ref:
-      - KBG-0017
-      - KBG-0018
-      - KBG-0022
-      - KBG-0032
-      - KBG-0036
-      - KBG-0038
-      - KBG-0039
 
 summary:
   total: 1

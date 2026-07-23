@@ -152,7 +152,7 @@ jobs:
       - name: Architecture Gates (GATE-01~08+A+SC)
         run: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
 
-      - name: SSoT Validator (KBG-0001/0021 enforced)
+      - name: SSoT Validator (GOV-DOC-001 enforced)
         run: python scripts/governance/d5_architecture/validators/validate_ssot.py --ci
         continue-on-error: false
 

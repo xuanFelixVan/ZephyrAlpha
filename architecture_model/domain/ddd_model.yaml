@@ -29,7 +29,6 @@ partition:
     - application_principles.md
     - 05-data_architecture.md
   related_kb_refs:
-    - KBG-0009
 
 # =============================================================================
 # Aggregate 边界划分铁律

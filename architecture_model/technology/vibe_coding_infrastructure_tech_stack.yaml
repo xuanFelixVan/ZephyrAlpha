@@ -73,7 +73,6 @@ context_engine:
       - "跨进程共享图结构"
       - "复杂图算法（社区发现 / PageRank）成为热路径"
     upgrade_to: "Neo4j Community Edition（beta+）"
-    related_kb_ref: "KBG-0015"
 
   # ---------------------------------------------------------------------- #2
   - id: TECH-02
@@ -97,7 +96,6 @@ context_engine:
       - "压缩延迟 P99 > 5s 持续 7 天"
       - "压缩质量评分（召回率）< 0.75"
     upgrade_to: "Qwen2.5-7B（需 GPU）或外部 LLM API"
-    related_kb_ref: "KBG-0015"
 
   # ---------------------------------------------------------------------- #3
   - id: TECH-03
@@ -112,7 +110,6 @@ context_engine:
     not_recommended:
       - {name: "直接报错阻塞主流程", reason: "违反 CE DEGRADE-002 契约"}
     upgrade_trigger: "永不升级（这是降级兜底，不是主路径）"
-    related_kb_ref: "KBG-0015"
 
 vector_memory:
   # ---------------------------------------------------------------------- #4
@@ -138,7 +135,6 @@ vector_memory:
       - "并发写入冲突频发（filelock 争用 > 10% 请求）"
       - "需要分布式部署"
     upgrade_to: "Qdrant 独立服务（beta+）"
-    related_kb_ref: "KBG-0016"
 
   # ---------------------------------------------------------------------- #5
   - id: TECH-05
@@ -161,7 +157,6 @@ vector_memory:
       - "检索召回率 < 0.70 持续 7 天"
       - "新发布的模型（如 bge-m4 / GTE-Qwen2）在 MTEB 显著胜出"
     upgrade_to: "视当时 MTEB 榜单最优 ONNX 可导出模型"
-    related_kb_ref: "KBG-0016"
 
   # ---------------------------------------------------------------------- #6
   - id: TECH-06
@@ -182,7 +177,6 @@ vector_memory:
       - "召回率 < 0.70 且与嵌入模型无关"
       - "代码类文档检索质量差"
     upgrade_to: "Code-aware Chunking（AST-based）+ Semantic Chunking 混合"
-    related_kb_ref: "KBG-0016"
 
 agent_orchestrator:
   # ---------------------------------------------------------------------- #7
@@ -206,7 +200,6 @@ agent_orchestrator:
       - "需要跨主机任务分发"
       - "任务优先级策略复杂化"
     upgrade_to: "NATS JetStream（beta+）"
-    related_kb_ref: "KBG-0017"
 
   # ---------------------------------------------------------------------- #8
   - id: TECH-08
@@ -224,7 +217,6 @@ agent_orchestrator:
     not_recommended:
       - {name: "无显式状态机，靠 if/else", reason: "不可审计，易漏转移"}
     upgrade_trigger: "永不升级（标准库方案已足够）"
-    related_kb_ref: "KBG-0017"
 
   # ---------------------------------------------------------------------- #9
   - id: TECH-09
@@ -243,7 +235,6 @@ agent_orchestrator:
       - "幻觉漏检率 > 10%（需人工标注评估集）"
       - "误报率 > 5%"
     upgrade_to: "规则集 + LLM-as-Judge 二阶"
-    related_kb_ref: "KBG-0017"
 
   # ---------------------------------------------------------------------- #10
   - id: TECH-10
@@ -260,7 +251,6 @@ agent_orchestrator:
       - {name: "无锁乐观并发", reason: "状态机转移必须原子"}
     upgrade_trigger: "跨进程场景（beta+）"
     upgrade_to: "filelock + Redis SETNX"
-    related_kb_ref: "KBG-0017"
 
   # ---------------------------------------------------------------------- #11
   - id: TECH-11
@@ -280,7 +270,6 @@ agent_orchestrator:
       - {name: "自己实现文件存在性检查", reason: "有 race condition"}
     upgrade_trigger: "beta+ 服务化后不再需要"
     upgrade_to: "Redis SETNX"
-    related_kb_ref: "KBG-0016 / KBG-0017"
 
 agent_sandbox:
   # ---------------------------------------------------------------------- #12
@@ -305,7 +294,6 @@ agent_sandbox:
       - "需要资源配额（CPU/内存/磁盘）"
       - "多租户场景"
     upgrade_to: "Docker Desktop / Podman（beta+）"
-    related_kb_ref: "KBG-0018"
 
 feedback_loop:
   # ---------------------------------------------------------------------- #13
@@ -327,7 +315,6 @@ feedback_loop:
       - "数据量 > 1M 条/天"
       - "需要多维度聚合查询"
     upgrade_to: "InfluxDB 2.x（stable+）"
-    related_kb_ref: "KBG-0019"
 
   # ---------------------------------------------------------------------- #14
   - id: TECH-14
@@ -348,7 +335,6 @@ feedback_loop:
       - "误报率 > 10%"
       - "新增非线性指标"
     upgrade_to: "Prophet（时间序列预测）+ 异常检测组合"
-    related_kb_ref: "KBG-0019"
 
 llm_security_gateway:
   # ---------------------------------------------------------------------- #15
@@ -370,7 +356,6 @@ llm_security_gateway:
       - {name: "无 schema 校验直接传参", reason: "L3 层核心防护，不可裸奔"}
       - {name: "允许 extra='allow'", reason: "绕过核心防护，严禁"}
     upgrade_trigger: "永不升级（Pydantic v2 已是业界标准）"
-    related_kb_ref: "KBG-0020"
 
   # ---------------------------------------------------------------------- #16
   - id: TECH-16
@@ -391,7 +376,6 @@ llm_security_gateway:
       - "红队评估绕过率 > 5%（≥ 150 条语料库）"
       - "新型攻击模式（如 encoding smuggle）"
     upgrade_to: "Pattern + LLM-as-Judge + 专用分类模型 三级"
-    related_kb_ref: "KBG-0020"
 
   # ---------------------------------------------------------------------- #17
   - id: TECH-17
@@ -408,7 +392,6 @@ llm_security_gateway:
       - {name: "自己维护 regex", reason: "容易漏，维护成本高"}
     upgrade_trigger: "误报率 > 5% 或漏检案例出现"
     upgrade_to: "自建规则集 + 商用 DLP"
-    related_kb_ref: "KBG-0020"
 
 # ============================================================================
 # 统计与横向对比

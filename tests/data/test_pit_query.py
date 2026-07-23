@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-TEST-pit-query | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain-data/data_source_integrator_blueprint.md | §pit
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §pit
 # [MODULE] tests.data.test_pit_query
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.pit_query

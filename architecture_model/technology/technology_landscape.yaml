@@ -23,7 +23,6 @@ partition:
   source_views:
     - 04-technology_architecture.md
   related_kb_refs:
-    - KBG-0009
   refresh_cadence: quarterly
 
 quadrants:
@@ -57,7 +56,7 @@ technologies:
     layers: [all]
     rationale: "支持 Agent 模式 + Sonnet/Opus 双模型切换，架构设计与代码协作一体化"
     refresh_cycle: "半年"
-    related_ref: "architecture-rationale-log（R71+）— KBG-0003 已由双管线/V-12 门禁取代"
+    related_ref: "architecture-rationale-log（R71+）— 架构决策 已由双管线/V-12 门禁取代"
 
   - id: T-A02
     name: "Trae (Kimi) / AI IDE 辅助"
@@ -68,7 +67,7 @@ technologies:
     layers: [all]
     rationale: "长文档处理、发散研究，与 Cursor 互补"
     refresh_cycle: "半年"
-    related_ref: "architecture-rationale-log（R71+）— KBG-0003 已由双管线/V-12 门禁取代"
+    related_ref: "architecture-rationale-log（R71+）— 架构决策 已由双管线/V-12 门禁取代"
 
   - id: T-A03
     name: "Python / 主语言"
@@ -87,9 +86,8 @@ technologies:
     version: null
     owner: Architect
     layers: [all]
-    rationale: "纯文本版本控制，KBG-0001/0002 强制要求"
+    rationale: "纯文本版本控制，架构决策/0002 强制要求"
     refresh_cycle: "不变"
-    related_ref: "KBG-0001, KBG-0002"
 
   - id: T-A05
     name: "Mermaid / 图表格式"
@@ -108,9 +106,9 @@ technologies:
     version: "2.x"
     owner: Architect
     layers: [all]
-    rationale: "唯一版本控制系统，KBG-0001 要求"
+    rationale: "唯一版本控制系统，架构决策 要求"
     refresh_cycle: "不变"
-    related_ref: KBG-0001
+    related_ref: 架构决策
 
   - id: T-A07
     name: "文档治理守卫 / doc_guard_pre_commit.py"
@@ -251,7 +249,6 @@ technologies:
     layers: [l00, l02, l07]
     rationale: "嵌入式 OLAP，Parquet 原生，回测查询友好"
     refresh_cycle: "季度"
-    related_ref: "KBG-0005 (planned)"
 
   - id: T-T03
     name: "Parquet (via PyArrow / pandas) / 列式存储"
@@ -272,7 +269,7 @@ technologies:
     layers: [l08, l10]
     rationale: "运行时 AI 推理（KMS 分拣/报告生成），已通过 Cursor 验证"
     refresh_cycle: "季度"
-    related_ref: "OQ-011, KBG-0008 (deferred)"
+    related_ref: "OQ-011, 架构决策 (deferred)"
 
   - id: T-T05
     name: "Grafana Loki / 日志聚合"
@@ -339,7 +336,6 @@ technologies:
     layers: [l01]
     rationale: "Python 原生，DAG 与动态流程兼顾"
     decision_trigger: "接入异步 Pipeline 时"
-    related_ref: "KBG-006 (planned)"
 
   - id: T-AS02
     name: "Apache Airflow / 成熟调度器"
@@ -350,7 +346,6 @@ technologies:
     layers: [l01]
     rationale: "成熟稳定，生态丰富；资源消耗较重，评估 vs Prefect"
     decision_trigger: "接入异步 Pipeline 时"
-    related_ref: "KBG-006 (planned)"
 
   - id: T-AS03
     name: "PyTorch / 深度学习框架"
@@ -361,7 +356,6 @@ technologies:
     layers: [l11]
     rationale: "主流 DL 框架，灵活，适合自定义模型"
     decision_trigger: "开始 ML 模型工作时"
-    related_ref: "KBG-007 (planned)"
 
   - id: T-AS04
     name: "scikit-learn / 经典 ML 框架"
@@ -372,7 +366,6 @@ technologies:
     layers: [l02, l11]
     rationale: "经典 ML，因子分析/回归首选，轻量"
     decision_trigger: "开始 ML 模型工作时"
-    related_ref: "KBG-007 (planned)"
 
   - id: T-AS05
     name: "PostgreSQL / 关系型数据库"
@@ -383,7 +376,6 @@ technologies:
     layers: [l00, l01, l07]
     rationale: "关系型 + TimescaleDB 扩展适合时序；Post-Activation 候选"
     decision_trigger: "接入真实数据源时"
-    related_ref: "KBG-0005 (planned)"
 
   - id: T-AS06
     name: "ClickHouse / 列式 OLAP"
@@ -394,7 +386,6 @@ technologies:
     layers: [l00, l02]
     rationale: "列式 OLAP，大规模因子扫描；资源需求较高"
     decision_trigger: "Post-Activation"
-    related_ref: "KBG-0005 (planned)"
 
   - id: T-AS07
     name: "LiteLLM / 多 Provider 统一接口"
@@ -488,7 +479,7 @@ technologies:
     category: governance
     physical_path: scripts/hooks/doc_guard_pre_commit.py
     build_reason: "文件治理规则高度定制化，无通用工具覆盖"
-    design_doc: "KBG-0001/0002"
+    design_doc: "架构决策/0002"
     status: implemented
 
   - id: T-B02

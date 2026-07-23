@@ -38,8 +38,6 @@ modules:
         role: producer
         description: 运维管理契约——DatabaseManager(health_check/backup/maintenance/stats)
     kb_ref:
-      - KBG-0030
-      - KBG-0041
     test_coverage:
       tested:
         - atomic_transaction_manager.py (tests/test_atomic_transaction_manager.py)
@@ -76,7 +74,6 @@ modules:
         role: producer
         description: PG兼容层契约——PgConnExecuteWrapper(execute/executemany/commit/rollback)
     kb_ref:
-      - KBG-0041
     test_coverage:
       tested:
         - depgraph_schema.py (tests/io/test_depgraph_schema.py)

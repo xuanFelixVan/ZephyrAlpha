@@ -15,7 +15,7 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: 上下文四阶段流水�?�?build→compress→validate→inject。本�?LLM (Qwen2.5-3B) + 规则基摘�?+ 截断三级回退
+    description: 上下文四阶段流水线：build→compress→validate→inject。本机 LLM (Qwen2.5-3B) + 规则基摘要+ 截断三级回退
     files:
       - context_assembler.py
       - context_budget_tracker.py
@@ -29,14 +29,11 @@ modules:
     interfaces:
       - contract_id: CT-CE-VMS-001
         role: consumer
-        description: 知识向量检�?
+        description: 知识向量检索
       - contract_id: CT-CE-LSG-001
         role: consumer
         description: 上下文注入前安全校验
     kb_ref:
-      - KBG-0015
-      - KBG-0022
-      - KBG-0035
 
 summary:
   total: 1

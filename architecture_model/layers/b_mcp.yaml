@@ -6,7 +6,7 @@ partition:
   bounded_context: false
   status: implemented
   note: >
-    MOD-MASTER-001 §0.2：MCP 无独立CT-*；能力由各宿主系统契约暴露。传输与工具规范见KBG-0033。
+    MOD-MASTER-001 §0.2：MCP 无独立CT-*；能力由各宿主系统契约暴露。传输与工具规范见 MCP blueprint 决策表。
 
 modules:
   - id: mcp_servers
@@ -28,8 +28,6 @@ modules:
       - tool_contracts.yaml
     interfaces: []
     kb_ref:
-      - KBG-0033
-      - KBG-0040
 
 summary:
   total: 1

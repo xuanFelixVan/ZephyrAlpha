@@ -464,7 +464,7 @@ repos:
         always_run: false
         files: "^docs/03_modules/.*blueprint\\.md$"
         stages: [manual]
-        description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），KBG-0001 + KBG-0021 §4.2 强制执行层"
+        description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），GOV-DOC-001 §4.2 强制执行层"
 
       # ── GATE-SCRIPT-Q: 脚本质量合并门禁（原 GATE-SQ + GATE-DD07 二合一）──
       # 合并说明：2 个 scripts/governance 质量门禁合并为单 hook，run_gate_chain 顺序执行：

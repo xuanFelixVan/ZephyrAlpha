@@ -28,7 +28,6 @@ partition:
   source_views:
     - application_principles.md
   related_kb_refs:
-    - KBG-0009
 
 # =============================================================================
 # 命名规范与频率分档

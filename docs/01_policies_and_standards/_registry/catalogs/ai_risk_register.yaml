@@ -93,7 +93,6 @@ risks:
       - "ai-hallucination-self-check-policy"
     mitigation_status: partially_addressed
     related_gate: null
-    related_kb_ref: "KBG-0020"
     last_reviewed: "2026-05-02"
 
   - risk_id: "AI-RSK-003"
@@ -129,7 +128,6 @@ risks:
       - "Provenance 三件套"
     mitigation_status: addressed_with_auto
     related_gate: ["GATE-12", "GATE-15", "GATE-16"]
-    related_kb_ref: "KBG-0003"
     last_reviewed: "2026-05-02"
 
   - risk_id: "AI-RSK-005"

@@ -36,8 +36,6 @@ partition:
     - application_principles.md
     - 04-technology_architecture.md
   related_kb_refs:
-    - KBG-0004
-    - KBG-0009
 
 versioning_strategy:
   approach: semantic-versioning-on-contracts
@@ -925,7 +923,6 @@ contracts:
     autodiscover: null
     physical_path: src/zephyr/pf_core/strategy_base.py
     registry_path: src/zephyr/pf_core/strategy_registry.py
-    related_kb_ref: KBG-0004
     description: "Portfolio 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: StrategyMeta, description: "返回策略元数据"}
@@ -949,7 +946,6 @@ contracts:
     registry: null
     autodiscover: null
     physical_path: src/zephyr/trading/trading_contracts/broker_interface.py
-    related_kb_ref: KBG-0004
     description: "Execution 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: broker_id, type: property, returns: str, description: "券商唯一标识（如 ib, futu, longport, simulation）"}
@@ -1299,7 +1295,6 @@ ocp_extension_points:
     physical_path: src/zephyr/factor/base.py
     registry_path: src/zephyr/factor/registry.py
     loader_path: src/zephyr/factor/loader.py
-    related_kb_ref: KBG-0004
     description: "Factor 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: FactorMeta, description: "返回因子元数据"}

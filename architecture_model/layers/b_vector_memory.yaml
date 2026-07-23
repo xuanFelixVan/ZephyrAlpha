@@ -48,9 +48,6 @@ modules:
         role: producer
         description: CE 提供向量检索能力
     kb_ref:
-      - KBG-0016
-      - KBG-0022
-      - KBG-0031
 
 summary:
   total: 1

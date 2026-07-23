@@ -285,7 +285,7 @@ fields:
   stage: null
   enum_values: []
   applicable_docs: []
-  description: 关联的 KB 决策记录编号（如 [KBG-0011, KBG-0030]）
+  description: 关联的架构决策记录编号（如 [架构决策]，KB系统退役后决策内联于blueprint.md）
   source: PS-STD-001 §10.9
   note: ''
 - field_name: ai_autonomy

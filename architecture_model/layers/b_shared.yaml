@@ -186,7 +186,6 @@ modules:
         status: planned
         source: blueprint-baseline-sync-2026-05-12
     kb_ref:
-      - KBG-0040
 
   - id: shared-infra
     module_id: MOD-INF-016
@@ -205,8 +204,6 @@ modules:
       - ssot_guard.py
     interfaces: []
     kb_ref:
-      - KBG-0021
-      - KBG-0037
 
 summary:
   total: 2

@@ -804,7 +804,7 @@ sections:
     summary: 门禁策略相关的知识库决策记录、代码模块和YAML文件
     impact_on_rules: 参考文件是门禁策略的上下游依赖
     key_decisions:
-    - KB决策记录——KBG-0030(门禁策略定义)/KBG-0038(严重级别映射)/KBG-0040(YAML Schema规范)/KBG-0041(豁免机制)/KBG-0013(知识管道)
+    - 架构决策记录——门禁策略定义/严重级别映射/YAML Schema规范/豁免机制/知识管道（KB系统退役前KBG-0030/0038/0040/0041/0013，决策内容内联于blueprint.md）
     - 代码模块——src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py(GateEngine)/src/zephyr/governance/task_repo.py(task_repo)
     - YAML文件——src/zephyr/gov_enforcement/rule_enforcement/下门禁YAML(g1_ingest.yaml~g5_extract.yaml)+phase_manager配置+schema定义
   gov_arch_006_change_history:

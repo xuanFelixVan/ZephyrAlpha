@@ -100,7 +100,7 @@ sections:
     conditions:
     - type: constraint
       check: LPC双轨架构依赖方向
-      pass: C轨内部逐层向下依赖;C→B允许;B→C禁止;B轨内部受KBG-0019约束
+      pass: C轨内部逐层向下依赖;C→B允许;B→C禁止;B轨内部受架构决策约束
       fail: C轨反向依赖或B→C反向依赖
     - type: constraint
       check: governance/operational边界判据
@@ -402,8 +402,8 @@ sections:
       details: 示例DS01
     - description: LLM{NN} LLM供应商
       details: 示例LLM01
-    - description: KBG-{NNNN} KB内部架构决策引用ID(不对应物理文件)
-      details: 示例KBG-0007;通过KB.search()检索
+    - description: KBG-{NNNN} 架构决策记录ID（内联于blueprint.md决策表，KB系统退役后不再通过KB.search()检索）
+      details: 示例KBG-0007;决策内容内联在blueprint.md的决策表中;KB系统已于2026-07退役
   gov_doc_001_capacity_expansion:
     title: ID容量扩展规则 (GOV-DOC-001 §5.9 容量扩展)
     section_type: rule
@@ -449,8 +449,8 @@ sections:
       details: 现有LLM-NN(2位,上限99);扩展为LLM-NNN(3位,上限999);触发阈值80个
     - description: 跨层契约ID扩展
       details: 现有CTR-NNN(3位,上限999);扩展为CTR-NNNN(4位,上限9999);触发阈值800个;当前数量通过registry查询，接近阈值时需监控
-    - description: KBG决策ID扩展
-      details: 现有KBG-NNNN(4位,上限9999);扩展方案A:KBG-NNNNN(5位,上限99999);扩展方案B:启用KBG-5xxxx段(50000-99999);触发阈值8000个;当前数量通过registry查询，接近阈值时需规划
+    - description: KBG决策ID扩展（KB系统退役后ID只读保留，不再新增）
+      details: 现有KBG-NNNN(4位,上限9999);KB系统已于2026-07退役，现有KBG-NNNN决策内联在blueprint.md中，不再通过registry查询或新增
     - description: 脚本前缀内序号管理
       details: 合法前缀数量通过script-manifest.yaml查询;扩展规则:前缀内使用4位序号{prefix}_NNNN_{name}.py;目标10000脚本容量;现有脚本数通过script-manifest.yaml查询，逐步迁移
     - description: 模块ID容量评估

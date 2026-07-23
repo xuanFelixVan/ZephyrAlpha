@@ -159,7 +159,7 @@ sections:
     - dimension: 初始状态名
       yaml_value: idle
       md_value: INIT
-      reason: 语义相同，命名对齐KBG-0035
+      reason: 语义相同，命名对齐架构决策（原KBG-0035，KB退役后内联）
     - dimension: 归档状态
       yaml_value: archived独立状态
       md_value: 归入COMPLETED出口动作

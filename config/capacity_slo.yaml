@@ -73,7 +73,7 @@ slo_registry:
     instrumentation: { hook_point: "scripts/governance/d5_architecture", sampling_sample_rate: "per PR" }
 
   - id: CAP-009-kill-switch-trigger-latency
-    description: "Kill Switch 触发延迟（INV-001 / KBG-0009）"
+    description: "Kill Switch 触发延迟（INV-001 不变量）"
     target_ms: 1
     measurement: "D_RISK stop-loss → 熔断信号（T1 实测；当前为声明 + arch_guard）"
     golden_signal: latency

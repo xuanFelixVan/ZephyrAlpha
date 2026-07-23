@@ -29,7 +29,7 @@ ttl: permanent
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 3865 | 138.1% |
+| generated | 3862 | 138.0% |
 | stable | 1613 | 57.6% |
 | planned | 74 | 2.6% |
 | deprecated | 4 | 0.1% |

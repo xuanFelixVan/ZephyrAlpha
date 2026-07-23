@@ -213,6 +213,11 @@ logs/
 _journals/
 _prompts/
 
+# AI ad-hoc analysis output (regenerable market screening data, not project artifacts)
+# 治本 2026-07-24 (#ARCH-WORKTREE-EXEC-DRIFT-001): ad-hoc 筛选脚本写入此目录污染 git status，
+# 源头是 session 未走 worktree 隔离。忽略整个 analysis 子目录防止复发。
+docs/_working/analysis/
+
 # ============================================
 # Root directory whitelist mode (#ARCH-ROOT-TEMP-WHITELIST-001, 2026-07-22)
 # 治本：原枚举模式（_fix_*/_debug_*/_tmp_*/autofix_*/scan_*/fix_*/commit_*/verify_*/stage_*）

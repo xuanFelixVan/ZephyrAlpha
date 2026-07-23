@@ -1047,7 +1047,7 @@ CONTRACT_PREFIXES = _type_prefixes_cfg.get("contract", _FALLBACK_TYPE_PREFIXES["
 SCHEMA_PREFIXES = _type_prefixes_cfg.get("schema", _FALLBACK_TYPE_PREFIXES["schema"])
 
 ID_PATTERN = re.compile(
-    r"(MOD-INF-\d+|MOD-KB-\d+|MOD-L\d+-\d+|DOM-GOV-\d+|SYS-MASTER-\d+"
+    r"(MOD-INF-\d+|MOD-L\d+-\d+|DOM-GOV-\d+|SYS-MASTER-\d+"
     r"|GOV-[A-Z]+-\d+|PS-[A-Z]+-\d+|PS-REG-\d+|PS-STD-\d+"
     r"|DEP-\d+|EN-\d+|GCT-\d+|REG-[A-Z]+-\d+|CT-\d+"
     r"|GOV-DOC-\d+|GOV-ENG-\d+|ADR-\d+|TPL-[A-Z]+-\d+"
