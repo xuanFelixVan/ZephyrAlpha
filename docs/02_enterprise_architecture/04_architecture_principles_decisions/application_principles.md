@@ -54,7 +54,7 @@ ttl: permanent
 **保留内容**：方法论、设计原则、不变约束——模块归属原则、五大核心服务定位、容错与幂等设计、C4 视图分层、运行时三平面正交视图。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 全域清单与统计 → `generated/domains/index.md`（depgraph 派生，待生成）
+- 全域清单与统计 → `generated/domains/index.md`（depgraph 派生）
 - 域层级分布 → depgraph `domains` 表
 - 节点/边统计数字 → depgraph `nodes`/`edges` 表（时点快照）
 - 5 大核心服务域归属 → depgraph
@@ -124,9 +124,9 @@ ttl: permanent
 
 ### 3.3 容量管理（永恒二元规则）
 
-**容量治理二元规则**：单域 production_nodes ≤150 通过，>150 必须拆分，无例外（ARCH-CAP-002 v1.0.8）。
+**容量治理二元规则**：单域 production_nodes ≤150 通过，>150 必须拆分，无例外。上限值与判定口径真源为 TRAE-055 / ARCH-CAP-002。
 
-- 单域节点上限：150（默认）/ 200（高度耦合可放宽）
+- 单域节点上限：150（硬上限，无例外；高度耦合是拆分信号而非放宽理由）
 - 容量报告见 `../03_governance_reports/capacity_report.md`（自动派生）
 - 超容域必须拆分（需 Owner 批准）
 
@@ -146,7 +146,7 @@ ttl: permanent
 
 ### 4.2 与域架构的关系（永恒定位）
 
-5 大核心服务属于 `layer_id=L1_platform` 的跨层支撑域，为业务域提供 AI 基础设施能力。
+5 大核心服务属于 b_track 横切基础设施模块（施工视图，独立于域分类），为业务域提供 AI 基础设施能力。
 
 > **注**：5 大服务的具体域归属见 depgraph `domains` 表，不在本文档硬编码。
 
@@ -176,7 +176,7 @@ ttl: permanent
 ### 5.3 回滚设计（永恒双轨 Checkpoint）
 
 - **git commit** — 代码与文档回滚
-- **DB dump** — 数据回滚（SQLite JSONL / pg_dump）
+- **DB dump** — 数据回滚（dump 格式见 technology_landscape.yaml）
 
 ---
 
@@ -196,28 +196,21 @@ ttl: permanent
 
 ---
 
-## §7 Architecture Runway / 架构预留通道
+## §7 视图边界 / Boundaries
 
-> 详见各视图 Runway 章节。合计 37 条 P3 能力挂载点。
-
----
-
-## §8 视图边界 / Boundaries
-
-### 8.1 本文档覆盖
+### 7.1 本文档覆盖
 
 - C4 视图分层框架（§2）
 - 模块归属原则（域归属判定/跨域依赖规则/容量管理）（§3）
 - Vibe Coding 2.0 五大核心服务定位（§4）
 - 容错与幂等设计铁律（§5）
 - 运行时三平面正交视图（§6）
-- Architecture Runway（§7）
 
-### 8.2 本文档不覆盖（由其他系统维护）
+### 7.2 本文档不覆盖（由其他系统维护）
 
 | 内容 | 真源 |
 |------|------|
-| 全域清单与统计 | `generated/domains/index.md`（depgraph 派生，待生成）|
+| 全域清单与统计 | `generated/domains/index.md`（depgraph 派生）|
 | 域层级分布 | depgraph `domains` 表 |
 | 节点/边统计数字 | depgraph `nodes`/`edges` 表（时点快照）|
 | 5 大核心服务域归属 | depgraph |
@@ -225,11 +218,10 @@ ttl: permanent
 | C4 图表 | `scripts/governance/d5_architecture/generators/`（自动生成）|
 | 治理代码拓扑 | `scripts/script-manifest.yaml`（SSoT）|
 | ACL 落盘位置 | `security_principles.md` |
-| 供应商注册表 | `architecture_model/technology/vendor_registry.yaml`（待创建） |
 | 运行时平面详细映射 | `runtime_planes_principles.md`|
 | LSG 详细设计原则 | `security_principles.md` §4 |
 
-### 8.3 与其他原则文档关系
+### 7.3 与其他原则文档关系
 
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
 - [data_principles.md](data_principles.md)：数据架构原则

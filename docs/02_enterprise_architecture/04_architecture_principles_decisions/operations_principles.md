@@ -47,7 +47,7 @@ ttl: permanent
 
 **不保留内容**（派生/动态数据，由 ops 域激活后维护）：
 - 各域"当前状态"描述 → 实际部署演进后由 ops 域文档维护
-- Runbook Catalog 占位清单 → `docs/_working/runbooks/`（待创建）建立后维护
+- Runbook Catalog → 运维文档（激活后维护）
 - 容量规划数字 / DR 演练计划 → 实际激活后维护
 
 **与其他原则文档关系**：
@@ -93,7 +93,7 @@ ttl: permanent
 - **Feedback Loop Engine (FLE)** 是 5 大核心服务的"自动化运维大脑"，所有服务指标→FLE→异常检测→动作分派
 - 两者关系：OpenTelemetry 面向"人工看板 + 外部工具"；FLE 面向"系统内部自调节"
 
-### 3.2 experimental SLI/SLO 基线（永恒阈值表，P0 必采）
+### 3.2 experimental SLI/SLO 基线（SLI/SLO 基线参考表（决策快照，阈值随校准调整），P0 必采）
 
 | 服务 | SLI 指标 | SLO 阈值 | 告警动作 |
 |------|---------|:--------:|---------|
@@ -101,13 +101,13 @@ ttl: permanent
 | Vector Memory | `search()` 延迟 P99 | < 200ms（稳态）| FLE → 检查 ChromaDB 健康 |
 | Vector Memory | `bulk_bootstrap` 冷启动 | < 60s/200 文档 | FLE → 容量检查 |
 | Agent Orchestrator | 任务 P99 排队时延 | < 5s | FLE → 并发阈值告警 |
-| Agent Orchestrator | 幻觉检测漏检率 | < 10% | TECH-09 升级触发 |
+| Agent Orchestrator | 幻觉检测漏检率 | < 10% | 升级触发 |
 | Feedback Loop | 异常检测延迟 | < 30s | 自监控自告警 |
 | LSG | 误拦率 | < 2% | 红队评估触发 |
-| LSG | 漏拦率 | < 5% | TECH-16 升级触发 |
+| LSG | 漏拦率 | < 5% | 升级触发 |
 | LSG | fail-closed 触发频率 | < 0.1%/天 | 人工介入 |
 
-**SLO 来源**（永恒约束）：每项 SLO 都有 `technology_landscape.yaml upgrade_watchboard` 中对应的升级阈值。
+**SLO 来源**（永恒约束）：每项 SLO 应有对应的升级阈值（真源以技术演进登记表为准）。
 
 ### 3.3 指标采集拓扑（永恒数据流）
 
@@ -117,7 +117,7 @@ ttl: permanent
         ▼
 ┌────────────────────────┐
 │   FLE collect_metric() │ ──→ SQLite .runtime/sqlite/feedback.db
-└───────┬────────────────┘     （数据量 > 100 万/天 触发 TECH-13 升级 InfluxDB）
+└───────┬────────────────┘     （数据量增长到需升级存储后端时，决策快照）
         │
         ▼
 ┌────────────────────────┐
@@ -141,11 +141,13 @@ ttl: permanent
 ## §4 5 Core Services — Runtime Operations / 5 大核心服务运维治理
 
 > 本节专项描述 5 大核心服务（LSG/CE/Orc/VMS/FLE）的 experimental 运维流程，是 §2 的 8 大运维域在"AI 基础设施"上的具化。
+>
+> ⚠️ 本文档中 experimental/beta 阶段标签为当前状态快照，随成熟度演进调整
 
 ### 4.1 服务生命周期（永恒启动/停止 DAG 序）
 
 ```
-系统启动 (python -m zephyr.orchestrator.bootstrap)  # 未来实现点，LPC 双轨下由 Orchestrator 启动 DAG
+系统启动
    │
    ▼
 1. 加载 vibe_config.yaml
@@ -191,27 +193,25 @@ class ServiceHealthProtocol(Protocol):
 | 服务 | 降级条件 | 降级行为 | 恢复条件 |
 |------|---------|---------|---------|
 | LSG | **不降级**（fail-closed）| N/A（异常即拒绝调用）| N/A |
-| CE | LLM 压缩失败 | 规则基截断 + degraded=True | Qwen2.5-3B 服务恢复 |
+| CE | LLM 压缩失败 | 规则基截断 + degraded=True | LLM 服务恢复 |
 | CE | VMS 检索失败 | 降级到 grep/rg 文件检索 | VMS 恢复 |
-| VMS | ChromaDB 损坏/首次启动 | `search()` 返回空 + degraded=True | bulk_bootstrap 完成 |
-| Orc | SQLite 锁争用 | 任务延迟执行 + 告警 | 锁释放 |
+| VMS | 向量库损坏/首次启动 | `search()` 返回空 + degraded=True | bulk_bootstrap 完成 |
+| Orc | 任务库锁争用 | 任务延迟执行 + 告警 | 锁释放 |
 | Orc | Agent 沙箱逃逸 | 立即 kill + IR-SEC-002 | 人工审查 |
-| FLE | SQLite 容量满 | 归档旧数据 + 暂停异常检测 | 容量恢复 |
+| FLE | 任务库容量满 | 归档旧数据 + 暂停异常检测 | 容量恢复 |
 
 ### 4.4 配置热更新原则（永恒约束）
 
 **experimental 约束**：配置文件修改需要重启服务（无热更新）。
 
-**beta 目标**：LSG 策略表 + Orc 白名单 + FLE 阈值支持热更新，减少 AI 协作中断。
-
-### 4.5 日常巡检清单（experimental P0，永恒建议清单）
+### 4.5 日常巡检清单（experimental P0，日常巡检参考清单（决策快照，阈值随校准调整））
 
 建议每日一次：
 
 - [ ] FLE anomaly 累计 < 5 条（否则启动调查）
 - [ ] LSG fail-closed 触发 < 10 次（否则检查策略表）
 - [ ] Orc SQLite audit.db 大小 < 100MB（超阈值归档）
-- [ ] VMS ChromaDB 持久化大小 < 500MB（TECH-04 upgrade_watchboard）
+- [ ] VMS ChromaDB 持久化大小 < 500MB
 - [ ] `.runtime/logs/session/` 30 天内无新 incident 文件
 
 ---
@@ -246,7 +246,7 @@ class ServiceHealthProtocol(Protocol):
 | 内容 | 真源 |
 |------|------|
 | 各域"当前状态"描述 | ops 域实际部署演进后由 ops 域文档维护 |
-| Runbook Catalog 占位清单 | `docs/_working/runbooks/`（待创建）建立后维护 |
+| Runbook Catalog | 运维文档（激活后维护） |
 | 容量规划数字 / DR 演练计划 | 实际激活后维护 |
 | 物理节点 How（部署图）| `technology_principles.md` 部署相关章节 |
 | 变更管理审批流程细节 | `governance_principles.md`（治理 Runtime 层）|

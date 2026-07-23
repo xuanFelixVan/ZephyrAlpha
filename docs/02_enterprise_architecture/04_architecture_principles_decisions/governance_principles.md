@@ -70,13 +70,13 @@ ttl: permanent
 
 ### 2.1 三层定义（永恒框架）
 
-治理三层**横切整个系统的所有域**——业务层（src/ 全域）、文档层（docs/ 6 顶级目录）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
+治理三层**横切整个系统的所有域**——业务层（src/ 全域）、文档层（docs/ 各顶级目录）、前端层（frontend/）、治理层自己（scripts/ + AI 协作规则目录）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
 
 | 层 | 大白话定位 | 职责 | 典型产物 |
 |---|---|---|---|
-| **Policy 层** | 规章制度部门 | 定规则/存规则/版本化/append-only review | Markdown 规则、KB 决策记录、folder-charters、Rego |
-| **Factory 层** | 纪委工具组 | 把规则编译成可执行检查器 + 工具链管理 | ruff/mypy 配置、fitness function、arch_guard |
-| **Runtime 层** | 巡查队+审计处+档案室 | 拦截+审计+反馈回写 Policy | pre-commit、CI、OPA sidecar、audit-log |
+| **Policy 层** | 规章制度部门 | 定规则/存规则/版本化/append-only review | Markdown 规则、KB 决策记录、folder-charters、规则 DSL |
+| **Factory 层** | 纪委工具组 | 把规则编译成可执行检查器 + 工具链管理 | linter/type-checker 配置、fitness function、arch_guard |
+| **Runtime 层** | 巡查队+审计处+档案室 | 拦截+审计+反馈回写 Policy | pre-commit、CI、Policy-as-Code sidecar、audit-log |
 
 ### 2.2 三层物理位置框架（永恒分类）
 
@@ -84,9 +84,9 @@ ttl: permanent
 
 | 层 | 关键物理位置（框架） | 代表产物 |
 |---|---|---|
-| **Policy** | `docs/01_policies_and_standards/` · KB:decisions namespace · `.cursor/rules/` · `.trae/rules/` · `AGENTS.md` | 规则文档、KBG 决策记录、AI 协作规则 |
-| **Factory** | `scripts/arch_guard/` · `scripts/governance/` · `scripts/quality/` · `pyproject.toml` | F 函数、import_linter、ruff/mypy/bandit 配置 |
-| **Runtime** | `.pre-commit-config.yaml` · `.github/workflows/` · `src/zephyr/compliance/` · `scripts/governance/audit_log/` · `scripts/governance/opa/` | pre-commit hooks、CI Gate、kill_switch、OPA policies |
+| **Policy** | `docs/01_policies_and_standards/` · KB:decisions namespace · AI 协作规则目录 · `AGENTS.md` | 规则文档、KBG 决策记录、AI 协作规则 |
+| **Factory** | `scripts/arch_guard/` · `scripts/governance/` · `pyproject.toml` | F 函数、import_linter、linter/type-checker 配置 |
+| **Runtime** | `.pre-commit-config.yaml` · `.github/workflows/` · `src/zephyr/compliance/` | pre-commit hooks、CI Gate、kill_switch、Policy-as-Code policies |
 
 ### 2.3 三层架构关键理解（永恒）
 
@@ -110,11 +110,11 @@ ttl: permanent
 | 接口 | 触发时机 | 协议 |
 |---|---|---|
 | **① Policy→Factory** | Policy 规则新增/变更（git commit） | policy_compiler：Markdown/YAML → 检查器配置 |
-| **② Factory→Runtime** | git commit / CI push / 交易执行 / AI 决策 | pre-commit hook / GitHub Actions / 函数调用 |
-| **③ Runtime→Audit** | 每次检查器执行后 | append-only 写入 `policy_decision_ledger.jsonl` |
-| **④ Audit→Policy** | 定期（周/月）+ 事件驱动 | `feedback_to_policy.py`（待创建）聚合 → PR 提案 |
+| **② Factory→Runtime** | git commit / CI push / 交易执行 / AI 决策 | pre-commit hook / CI workflow / 函数调用 |
+| **③ Runtime→Audit** | 每次检查器执行后 | append-only 写入审计 ledger（具体文件由 Factory 层定义） |
+| **④ Audit→Policy** | 定期（周/月）+ 事件驱动 | 聚合审计反馈 → PR 提案（具体实现由 Factory 层维护） |
 
-### 3.3 四档执行约定（永恒，对标 OPA Gatekeeper 2026）
+### 3.3 四档执行约定（永恒框架）
 
 | 档位 | 行为 | 使用场景 |
 |---|---|---|
@@ -140,9 +140,11 @@ ttl: permanent
 
 | 层 | 口子类型 |
 |---|---|
-| **Policy** | AI 员工花名册 / AI 行为规则 / AI 决策记录模板 / AISG 红线过滤 / AISG 策略文档 / Scout 抓取白名单 |
-| **Factory** | AI Operator 命名空间 / AI Operator 接口协议 / AISG 脱敏编译器 / Scout scraper 编译器 |
-| **Runtime** | AI 决策日志 schema + ledger / AI 行为审计 / AISG 六大模块 / Scout Agent 运行态 / 四大引擎 K2 占位 |
+| **Policy** | AI 员工花名册 / AI 行为规则 / AI 决策记录模板 / 红线过滤策略 / 抓取白名单 |
+| **Factory** | AI Operator 命名空间 / AI Operator 接口协议 / 脱敏规则编译器 / scraper 编译器 |
+| **Runtime** | AI 决策日志 schema + ledger / AI 行为审计 / 防泄密运行态 / 情报员运行态 / 引擎占位 |
+
+> 具体组件命名与位置见 `architecture_model/governance_systems_registry.yaml` 的 `ai_employee_openings`。
 
 ### 4.3 预留原则（永恒铁律）
 
@@ -163,10 +165,12 @@ ttl: permanent
 
 | 用户逻辑 | 方案 B 对应 | 激活内容 |
 |---|---|---|
-| 先激活发布守卫 | **Sprint 9** | L3 三件套 + L4 架构守卫 |
-| 然后施工 | **Sprint 10** | AI Safety 三件套 + L5 OCP 契约冻结 |
-| 最后业务 | **Sprint 11** | L6 OPA Policy-as-Code |
+| 先激活发布守卫 | 第一轮 | L3 三件套 + L4 架构守卫 |
+| 然后施工 | 第二轮 | AI Safety 三件套 + L5 OCP 契约冻结 |
+| 最后业务 | 第三轮 | L6 Policy-as-Code |
 | T4 触发补齐 | **T4** | L7 SBOM（真实资金/外部审计）|
+
+> 具体 Sprint 编号见 `architecture_model/governance_systems_registry.yaml`。
 
 ### 5.2 T0-T7 激活触发条件（永恒框架）
 
@@ -177,9 +181,9 @@ ttl: permanent
 | **T2 多人协作** | VIB-01 升级 + B-01 GRB 激活 |
 | **T3 AI 自治升格** | D3-B 口子从"预留"→"实施" + VIB-14 激活 |
 | **T4 外部审计合规** | L7 SBOM + SEC/OPS 实质化 |
-| **T5 F 函数 ≥25 条** | 25 条 F 函数进 CI Gate |
+| **T5 F 函数达阈值** | F 函数进 CI Gate（具体阈值见 `governance_systems_registry.yaml`）|
 | **T6 用户主动激活** | 按需激活对应子系统 |
-| **T7 5 大核心服务 ≥ 5.5/10**（experimental 出口）| LSG + Sandbox + Scanner 红队评估通过 → 允许接入外部协作 |
+| **T7 5 大核心服务达成熟度阈值**（experimental 出口）| LSG + Sandbox + Scanner 红队评估通过 → 允许接入外部协作（阈值见 `capability_maturity_principles.md`）|
 
 ### 5.3 T0 SSoT Validator 检查清单（永恒 scaffold 出口）
 
@@ -188,7 +192,7 @@ scaffold → experimental 的**强制门禁**，必须 100% 通过：
 - 所有 frontmatter schema 符合 KBG-0002
 - 所有跨文档引用链接 Valid（无死链）
 - 所有 `module_id` 在全库唯一（无重复）
-- 所有文件在 `directory-keep-whitelist.yaml`（待创建）或有明确 owner
+- 所有文件有明确 owner 或在目录白名单（白名单由 Factory 层维护）
 - 域分层无越界引用（D_FACTOR 不得 import D_PF_CORE，域边界由 depgraph 定义）
 - 5 大核心服务接口规范已全部在 `docs/03_modules/_cross_layer/_b_track_interfaces/` 就位
 
@@ -206,7 +210,7 @@ scaffold → experimental 的**强制门禁**，必须 100% 通过：
 |---|---|---|
 | **切片维度** | 治理维度（谁管规则）| 执行维度（代码何时以什么延迟跑）|
 | **切片方式** | 按"规则生命周期"切（定规则 Policy / 造工具 Factory / 执行拦截 Runtime）| 按"延迟预算 + 技术栈"切（Hot / Warm / Cold）|
-| **所有 Plane 都有治理 Runtime？** | — | **是**（Hot=C++ OPA / Warm=Python 拦截 / Cold=Airflow hook）|
+| **所有 Plane 都有治理 Runtime？** | — | **是**（各 Plane 均有对应的治理拦截点；具体技术栈为决策快照，见 `runtime_planes_principles.md`）|
 | **Policy 层的 Plane？** | — | **无**（规则文本不执行）|
 | **Factory 层的 Plane？** | — | **Cold**（linter/编译器在构建期批量执行）|
 
@@ -221,7 +225,7 @@ scaffold → experimental 的**强制门禁**，必须 100% 通过：
 示例：
 - `d_risk.limits.hard_cut.py` → `[GOV:Runtime] × [Plane:Hot]`
 - `d_factor.pipeline.batch.py` → `[GOV:Runtime] × [Plane:Cold]`
-- `docs/01_policies_and_standards/ai-security-gateway-policy.md` → `[GOV:Policy] × [Plane:—]`
+- `docs/01_policies_and_standards/policies/workspace_governance_policy.md` → `[GOV:Policy] × [Plane:—]`
 
 ### 6.4 命名约束（永恒铁律）
 

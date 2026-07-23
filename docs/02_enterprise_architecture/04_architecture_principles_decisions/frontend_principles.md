@@ -55,7 +55,7 @@ ttl: permanent
 - 具体前端模块三平面归属表 → frontend/ 建立后由 frontend_principles 扩展
 - 构建管线图 / 部署拓扑具体路径 → frontend/ 建立后由实现文档维护
 - App / package / 工具链清单 registry（模块 ID/状态/优先级/runtime_plane/激活条件）+ 技术栈选型 → `architecture_model/frontend/frontend_model.yaml`（当前 G0 stub，frontend/ 建立后填充）
-- G0.5 Python 过渡层具体技术栈版本号 → `architecture_model/technology/technology_landscape.yaml`
+- G0.5 Python 过渡层具体技术栈版本号 → 真源 `src/zephyr/frontend/dashboard/components/chart_factory.py`（决策快照；`architecture_model/technology/technology_landscape.yaml` 暂未收录，待迁移）
 
 **与其他原则文档关系**：
 - [application_principles.md](application_principles.md)：全域 Python 后端架构（与本视图物理隔离）
@@ -73,13 +73,13 @@ ttl: permanent
 
 | # | 原则 | 含义 | 违反后果 |
 |---|------|------|---------|
-| **FE-P1** | **技术栈异构隔离**（Heterogeneous Stack Isolation）| TypeScript / React / Vite / pnpm 技术栈与后端 Python / uv / pytest 完全隔离，不得互相侵入（无 transpile、无 embed、无 shared build tool）| CI 管线交叉污染；发布不可独立；打破 KBG-0007 |
+| **FE-P1** | **技术栈异构隔离**（Heterogeneous Stack Isolation）| 前端技术栈与后端 Python 技术栈完全隔离，不得互相侵入（无 transpile、无 embed、无 shared build tool）。具体技术名（决策快照：前端 TS/React/Vite/pnpm，后端 Python/uv/pytest，G0 未最终选型，SSoT 见 frontend_model.yaml）| CI 管线交叉污染；发布不可独立；打破 KBG-0007 |
 | **FE-P2** | **API Gateway 唯一对接**（Single Integration Point）| 前端仅通过 D_INTEGRATION_GATEWAY `api_gateway/` 子模块对接后端，禁止直接调用其他业务域任何模块；禁止嵌入 Python 代码；禁止共享数据库连接 | 破坏分层架构；安全面扩大；OpenAPI 契约失效 |
-| **FE-P3** | **契约先行**（Contract-First）| 所有前后端交互必须先在后端 OpenAPI 3.1 Spec 里定义、前端 `tools/codegen/` 自动生成 TypeScript 类型，不手写 DTO；WebSocket Topic 与 Message Schema 同样入契约 | 类型漂移；前后端联调崩溃；Schema 演进不可追溯 |
+| **FE-P3** | **契约先行**（Contract-First）| 所有前后端交互必须先在后端 OpenAPI 3.1 Spec 里定义、前端 `tools/codegen/` 自动生成强类型（决策快照：TypeScript），不手写 DTO；WebSocket Topic 与 Message Schema 同样入契约 | 类型漂移；前后端联调崩溃；Schema 演进不可追溯 |
 | **FE-P4** | **微前端边界（Module Federation 基准）**| apps/ 之间不得相互 `import`；可复用能力下沉到 packages/；apps 之间仅通过平台层（platform/）的事件总线 + URL 路由 + 共享 store 通信 | 业务耦合漂移；独立发布失效；增量编译崩溃 |
-| **FE-P5** | **设计系统单一真源**（Design System SSoT）| UI 视觉规范、组件库（Design Tokens / Ant Design 扩展）源于 packages/ui-kit 与 `docs/` 内的设计系统说明；apps/ 不得私自定义颜色 / 字体 / 间距的硬编码值 | 视觉碎片化；无法主题切换；暗色模式实现受阻 |
-| **FE-P6** | **可观测性内建**（Built-in Observability）| 所有 apps/ 必须自动向 D_INFRA_TELEMETRY `system_telemetry` 发送三类信号：Web Vitals（LCP/CLS/FID）/ Error（Boundary + window.onerror）/ 业务埋点（TanStack Query 钩子 + 用户动作）；采样率由 platform/ 统一控制 | 线上问题盲飞；无法做用户体验分析；违反 technology_principles 可观测性原则 |
-| **FE-P7** | **渐进激活**（Progressive Activation）| frontend/ 不是 Day-1 资产；当前以 CLI + IDE + Feishu Bot 作为 UI；当且仅当 §8 Activation Triggers 触发时才启动具体档位，避免过早抽象 | 提前投入高固定成本；AI 自治闭环未跑通时被 UI 绑架 |
+| **FE-P5** | **设计系统单一真源**（Design System SSoT）| UI 视觉规范、组件库（Design Tokens + 基础组件库扩展，决策快照：Ant Design）源于 packages/ui-kit 与 `docs/` 内的设计系统说明；apps/ 不得私自定义颜色 / 字体 / 间距的硬编码值 | 视觉碎片化；无法主题切换；暗色模式实现受阻 |
+| **FE-P6** | **可观测性内建**（Built-in Observability）| 所有 apps/ 必须自动向 D_INFRA_TELEMETRY `system_telemetry` 发送三类信号：Web Vitals（LCP/CLS/FID）/ Error（Boundary + window.onerror）/ 业务埋点（数据请求库钩子 + 用户动作，决策快照：TanStack Query）；采样率由 platform/ 统一控制 | 线上问题盲飞；无法做用户体验分析；违反 technology_principles 可观测性原则 |
+| **FE-P7** | **渐进激活**（Progressive Activation）| frontend/ 不是 Day-1 资产；G0 态以 CLI + IDE + Feishu Bot 承担 UI（见 §8）；当且仅当 §8 Activation Triggers 触发时才启动具体档位，避免过早抽象 | 提前投入高固定成本；AI 自治闭环未跑通时被 UI 绑架 |
 
 ### 2.1 与业界对标原则的对应关系（永恒对标）
 
@@ -154,7 +154,7 @@ frontend/packages/*    ──┘
 
 ### 4.1 MFE 技术选型决策规则（永恒）
 
-**当前方案**（FE-P7 渐进激活）：**Activation 时再最终选型**，候选已缩到 3 个：
+**候选方案**（决策快照，FE-P7 渐进激活——Activation 时再最终选型）。SSoT 见 frontend_model.yaml，下表为候选对比：
 
 | 方案 | 机制 | 优势 | 劣势 | 推荐触发阈值 |
 |------|------|------|------|------------|
@@ -162,15 +162,15 @@ frontend/packages/*    ──┘
 | **B：Vite + @originjs/vite-plugin-federation** | Vite-native MF | 启动快、HMR 体验好、与 FE-P1 选用 Vite 一致 | Runtime 集成没 Webpack MF 成熟 | App ≤ 3 或初期（**推荐初启方案**）|
 | **C：Single-SPA** | 路由级拼接 | 跨技术栈融合能力最强（React + Vue + Angular）| 运行时性能较差、开发体验不如 MF | 多团队多栈时 |
 
-**决策规则**（永恒）：初期激活用方案 B（Vite 原生），App 数量和团队规模满足方案 A 条件时升级到方案 A；方案 C 作为跨栈兜底（本项目单栈 React 不触发）。
+**决策规则**（永恒）：初期激活用方案 B（决策快照：Vite 原生），App 数量和团队规模满足方案 A 条件时升级到方案 A；方案 C 作为跨栈兜底（本项目单栈，决策快照：React，不触发）。
 
 ### 4.2 Remote 间通信三条通道（永恒）
 
 | # | 通道 | 用途 | 实现 | 数据流向 |
 |---|------|------|------|---------|
-| 1 | **URL 路由** | App 间跳转携带参数 | React Router `navigate('/app/:id', { state })` | 单向、低频 |
+| 1 | **URL 路由** | App 间跳转携带参数 | 路由库 `navigate('/app/:id', { state })`（决策快照：React Router） | 单向、低频 |
 | 2 | **事件总线** | 跨 App 异步广播（如全局登出、主题切换、某交易通知）| `platform/eventBus` 提供 `emit` / `on` / `off`，类型由 `shared-types` 约束 | 多对多、中频 |
-| 3 | **共享 Store** | 跨 App 必要的全局状态（user / auth / theme / i18n / feature-flags）| `platform/globalStore`（Zustand）| 多对多、高频但只读 |
+| 3 | **共享 Store** | 跨 App 必要的全局状态（user / auth / theme / i18n / feature-flags）| `platform/globalStore`（决策快照：Zustand）| 多对多、高频但只读 |
 
 **铁律**（对应 FE-P4，永恒）：
 
@@ -183,6 +183,8 @@ frontend/packages/*    ──┘
 ## §5 State 管理（Global State + Cross-Module Communication）
 
 ### 5.1 State 4 域分域（永恒框架）
+
+> **注**：下图 4 域框架为永恒；图中具体状态库名（决策快照：Zustand / TanStack Query）属可变选型，SSoT 见 frontend_model.yaml。
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
@@ -212,7 +214,7 @@ frontend/packages/*    ──┘
 └───────────────────────────────────────────────────────────────┘
 ```
 
-### 5.2 State 库决策理由（永恒）
+### 5.2 State 库决策理由（决策快照，Activation 时最终定）
 
 | 决策 | 选择 | 不选的替代 | 理由 |
 |------|------|----------|------|
@@ -241,7 +243,7 @@ frontend/packages/*    ──┘
 | 件 | 物理位置 | 内容 |
 |---|---------|------|
 | **Design Tokens** | `packages/ui-kit/src/tokens/` | 颜色 / 字体 / 间距 / 阴影 / 圆角 / 动效时长（CSS Variables + JSON）|
-| **Primitive Components** | `packages/ui-kit/src/primitives/` | Button / Input / Select / Modal / Table / Form 等原子组件（基于 Ant Design v5 封装）|
+| **Primitive Components** | `packages/ui-kit/src/primitives/` | Button / Input / Select / Modal / Table / Form 等原子组件（决策快照：基于 Ant Design v5 封装）|
 | **Pattern Library** | `packages/ui-kit/src/patterns/` + 设计文档 | 业务组合模式（OrderForm / RiskCard / PnLChart / CandlestickChart 等）|
 
 ### 6.2 主题策略（永恒）
@@ -250,21 +252,21 @@ frontend/packages/*    ──┘
 - ☀️ **明色可切换**：`platform/theme` 提供切换 API，主题切换通过 CSS Variables 生效（无需重新渲染）
 - 🎨 **品牌主题预留**：未来多租户时通过 Tokens 覆盖生成品牌主题
 
-### 6.3 组件库与 Ant Design 的关系（永恒铁律）
+### 6.3 组件库与底座的关系（永恒铁律）
 
-- Ant Design v5 是**底座**（提供 Button / Form / Table 等原子）
+- 底座组件库（决策快照：Ant Design v5）提供 Button / Form / Table 等原子
 - `ui-kit/primitives/` 是**封装层**（固定默认样式 / 国际化 / 错误处理 / 无障碍 ARIA）
-- apps/ **不得直接 import Ant Design**，必须经 ui-kit
+- apps/ **不得直接 import 底座组件库**，必须经 ui-kit
 
-这一层封装将来支撑"切换底座到 Material UI 或 Radix"的可能性（方案 R，FE-P7 渐进升级的降级路线）。
+这一层封装支撑"切换底座"的可能性（如 Material UI / Radix，方案 R，FE-P7 渐进升级的降级路线）——底座可替换，封装层隔离不变。
 
 ### 6.4 图表引擎策略（永恒）
 
 | 用途 | 选型 | 理由 |
 |------|------|------|
-| **金融 K 线 / 深度 / 分时** | TradingView lightweight-charts v4 | 开源、性能强、金融图表业界标配 |
-| **PnL / Risk 仪表** | Recharts + D3 | React 生态、声明式、可控性强 |
-| **Grafana 风格监控**（D_INFRA_TELEMETRY）| iframe 嵌入 Grafana（短期）/ react-grafana-panel（长期）| 不重造轮子 |
+| **金融 K 线 / 深度 / 分时** | TradingView lightweight-charts（决策快照；真源版本见 chart_factory.py，G0.5 已实施 v5.2）| 开源、性能强、金融图表业界标配 |
+| **PnL / Risk 仪表** | Recharts + D3（决策快照）| React 生态、声明式、可控性强 |
+| **Grafana 风格监控**（D_INFRA_TELEMETRY）| iframe 嵌入 Grafana（短期）/ react-grafana-panel（长期，决策快照）| 不重造轮子 |
 
 ---
 
@@ -272,16 +274,16 @@ frontend/packages/*    ──┘
 
 ### 7.1 关键澄清（永恒铁律）
 
-**前端没有真正的 Hot Path**（runtime_planes_principles.md §3 定义 Hot Path = < 10ms 端到端 + kernel-bypass + C++/Rust + 不可中断），**浏览器 + React 技术栈天然不满足 Hot Path 硬门槛**。
+**前端没有真正的 Hot Path**（runtime_planes_principles.md §3 定义 Hot Path = < 10ms P99 + kernel-bypass + C++/Rust + 不可中断），**浏览器技术栈（决策快照：React）天然不满足 Hot Path 硬门槛**。
 
-但前端存在 **Hot-adjacent（Hot 邻接）** 子模块——它们本身运行在 Warm Path（10-100ms），但 **对接后端 Hot Path 的下游数据**，需要特殊优化。
+但前端存在 **Hot-adjacent（Hot 邻接）** 子模块——它们本身运行在 Warm Path（10ms–1s，见 runtime_planes_principles.md §3），但 **对接后端 Hot Path 的下游数据**，需要特殊优化。
 
 ### 7.2 Hot-adjacent 模块硬约束（永恒）
 
 | Hot-adjacent 模块 | 何处"邻接 Hot" | 前端侧硬约束 |
 |------------------|--------------|------------|
-| `trading-terminal` 行情组件 | 订阅 D_INTEGRATION_GATEWAY `/ws/v1/ticker` Hot Path 推送 | ❌ 禁用 `setState` per-tick（必须批量 rAF 合并 / Web Worker 预聚合）; ❌ 禁用 React re-render per-tick（用 Zustand subscribeWithSelector + 手动 DOM 更新）; ✅ Canvas/WebGL 渲染（非 React DOM）; ✅ 接收端 WebSocket 缓冲区 < 10ms 批处理 |
-| `trading-terminal` 下单面板 | 发送 D_INTEGRATION_GATEWAY `/api/v1/orders` Hot Path 下单 | ❌ 禁用任何 > 50ms 客户端校验（快速路径）; ✅ Optimistic UI（乐观更新，回滚在 TanStack Mutation onError）; ❌ 禁用下单流程中的 `import()` 懒加载 |
+| `trading-terminal` 行情组件 | 订阅 D_INTEGRATION_GATEWAY `/ws/v1/ticker` Hot Path 推送 | ❌ 禁用 `setState` per-tick（必须批量 rAF 合并 / Web Worker 预聚合）; ❌ 禁用 React re-render per-tick（用状态库 subscribeWithSelector + 手动 DOM 更新，决策快照：Zustand）; ✅ Canvas/WebGL 渲染（非 React DOM）; ✅ 接收端 WebSocket 缓冲区 < 10ms 批处理 |
+| `trading-terminal` 下单面板 | 发送 D_INTEGRATION_GATEWAY `/api/v1/orders` Hot Path 下单 | ❌ 禁用任何 > 50ms 客户端校验（快速路径，阈值决策快照）; ✅ Optimistic UI（乐观更新，回滚在数据请求库 Mutation onError，决策快照：TanStack Query）; ❌ 禁用下单流程中的 `import()` 懒加载 |
 | `data-client WebSocket` | 所有 `/ws/v1/*` 订阅 | ✅ 单连接多路复用（不为每个 Topic 开连接）; ✅ 反压机制（client-side back-pressure，服务端推送超阈值时降级为轮询）; ✅ 断线自动重连 + 消息 gap 追补 |
 
 ### 7.3 前端 Cold Path 场景（永恒）
@@ -300,14 +302,14 @@ frontend/packages/*    ──┘
 
 ## §8 Activation Triggers（G0-G6 7 档激活）
 
-**本视图遵循 FE-P7 渐进激活原则**。当前前端 `frontend/` 目录**尚未物理建立**；CLI + IDE + Feishu Bot 承担 Day-1 UI 职责。本章节定义 7 档激活升级条件。
+**本视图遵循 FE-P7 渐进激活原则**。G0 态下 `frontend/` 目录未物理建立，CLI + IDE + Feishu Bot 承担 Day-1 UI 职责（见下方 G0 行）。本章节定义 7 档激活升级条件。
 
 ### 8.1 激活档位表（永恒框架）
 
 | 档位 | 名称 | 触发条件（任一即可）| 激活动作 | 预计工作量 |
 |------|------|-------------------|---------|-----------|
-| **G0** | 当前态（未激活）| — | 无前端代码；CLI + Cursor + Feishu bot 满足所有交互 | 0 |
-| **G0.5** | Python 过渡层（Panel+HoloViz）| 回测可视化需求爆发（ARCH-047 裁定，2026-07-04 DONE）| `src/zephyr/frontend/dashboard/` 部署 Panel 应用 + ChartFactory 统一工厂 + 6 组件 | 已实施（v3.0.0）|
+| **G0** | 基线态（未激活）| — | 无前端代码；CLI + IDE + Feishu bot 满足所有交互 | 0 |
+| **G0.5** | Python 过渡层（Panel+HoloViz，决策快照）| 回测可视化需求爆发（ARCH-047 裁定，2026-07-04 DONE）| `src/zephyr/frontend/dashboard/` 部署 Panel 应用 + ChartFactory 统一工厂 + 组件集（完整清单见该目录）| 已实施（v3.0.0）|
 | **G1** | 最小 dashboard | 外部干系人（非本人 Owner）看报表/监控的需求 ≥ 2 周/次 | 搭 `frontend/` 骨架 + 1 个 App（risk-dashboard 或 monitoring-center）+ 最小 packages（ui-kit / data-client）+ tools | 5-8 天 |
 | **G2** | 2-3 App 平台 | (a) G1 已运行且稳定 ≥ 1 个月 & (b) 第 2 个 App 的业务需求成熟 | 启动 Module Federation（方案 B：Vite-native MF）+ platform/ 骨架 + 第 2/3 App | 8-12 天 |
 | **G3** | 团队级平台 | (a) App ≥ 3 & (b) 出现第 2 个前端开发者（人或 AI Operator）| 切换到 Webpack MF（方案 A）+ 私有 NPM + CI gate + Design System v2 | 10-15 天 |
@@ -339,13 +341,13 @@ frontend/packages/*    ──┘
 
 ### 9.1 裁定结论（永恒）
 
-> **2026-07-04 ARCH-047 裁定**：在 G0（无前端）和 G1（React+Vite+TS）之间插入 G0.5 Python 原生可视化层。
-> 技术栈：Panel + HoloViz（HoloViews + Datashader + hvPlot）+ Plotly + plotly_resampler + TradingView Lightweight Charts v5.2。
-> 当前状态：**已实施**（MOD-L08-001 frontend 蓝图 v3.0.0，2026-07-04 DONE）。
+> **2026-07-04 ARCH-047 裁定**：在 G0（无前端）和 G1（前端技术栈，决策快照：React+Vite+TS）之间插入 G0.5 Python 原生可视化层。
+> 技术栈（决策快照，真源：`src/zephyr/frontend/dashboard/components/chart_factory.py`）：Panel + HoloViz（HoloViews + Datashader + hvPlot）+ Plotly + plotly_resampler + TradingView Lightweight Charts v5.2。
+> 实施记录：MOD-L08-001 frontend 蓝图 v3.0.0 已实施（2026-07-04 DONE）。
 
 ### 9.2 设计 rationale（永恒方法论）
 
-G0.5 是面向 100% AI 开发模式的过渡层——Python 原生可视化栈让 AI 能用同一语言（Python）完成后端逻辑与前端渲染，避免 G1 React/TypeScript 栈带来的语言切换成本与供应链风险。Panel 组件可嵌入 React，G1 升级时渲染层可零重写复用。
+G0.5 是面向 100% AI 开发模式的过渡层——Python 原生可视化栈让 AI 能用同一语言（Python）完成后端逻辑与前端渲染，避免 G1 前端栈（决策快照：React/TypeScript）带来的语言切换成本与供应链风险。Panel 组件可嵌入前端框架（决策快照：React），G1 升级时渲染层可零重写复用。
 
 四方案对比结论（ARCH-047，永恒决策记录）：
 - 方案 A（Streamlit）：rerun 模型 / 无 WebSocket / 无 crossfiltering——三硬伤不可治本
@@ -355,13 +357,7 @@ G0.5 是面向 100% AI 开发模式的过渡层——Python 原生可视化栈�
 
 ### 9.3 ChartFactory 统一工厂（永恒框架）
 
-`src/zephyr/frontend/dashboard/components/chart_factory.py` 提供 5 类图表工厂方法：
-
-- `make_equity` — 净值曲线
-- `make_drawdown` — 回撤曲线
-- `make_heatmap` — 热力图
-- `make_tick` — Tick 数据
-- `make_kline` — K 线图（TradingView Lightweight Charts）
+`src/zephyr/frontend/dashboard/components/chart_factory.py` 提供统一图表工厂方法（完整清单见该文件 `__all__`，决策快照），涵盖净值曲线 / 回撤 / 热力图 / Tick / K 线（TradingView Lightweight Charts）等核心图表类型，并随业务扩展追加盘口 / 持仓 / 订单流等工厂方法。
 
 Panel callback 仅编排（fetch → ChartFactory.make_xxx() → callback），业务逻辑独立为纯函数。G1 升级时 fetch 可直接包装为 FastAPI 路由，零重写。
 
@@ -399,9 +395,7 @@ G0.5 与 G1 可共存——Panel 组件可嵌入 React（`pn.pane.HTML` + React 
 | 具体前端模块三平面归属表 | frontend/ 建立后由 frontend_principles 扩展 |
 | 构建管线图 / 部署拓扑具体路径 | frontend/ 建立后由实现文档维护 |
 | App / package / 工具链清单 registry + 技术栈选型 | `architecture_model/frontend/frontend_model.yaml`（G0 stub，建立后填充）|
-| G0.5 Python 过渡层具体技术栈版本号 | `architecture_model/technology/technology_landscape.yaml` |
-| 微前端拓扑图 | ~~`diagrams/frontend_mfe_topology.mmd`~~（已删除：与实际 Panel 架构脱节） |
-| 前端构建管线图 | ~~`diagrams/frontend_build_pipeline.mmd`~~（已删除：实际无构建管线） |
+| G0.5 Python 过渡层具体技术栈版本号 | 真源 `src/zephyr/frontend/dashboard/components/chart_factory.py`（暂未迁入 `architecture_model/technology/technology_landscape.yaml`） |
 | 后端 全域 Python 后端架构 | `application_principles.md` |
 | API Gateway 集成（前后端唯一对接点）| `integration_principles.md` |
 | 运行平面 Hot Path 硬门槛定义 | `runtime_planes_principles.md` |

@@ -22,7 +22,7 @@ tags:
 - acl
 - interface-contract
 - anti-corruption-layer
-summary: 集成架构永恒原则文档。timeless 方法论——六种集成风格定义与采用策略、内部层间数据流（CTR 契约）、接口契约治理（Semantic Versioning + Breaking Change + Deprecation）、Anti-Corruption Layer 策略、Event Backbone 触发条件。派生数据（EI 系列 status、图表引用）不在本文档。
+summary: 集成架构永恒原则文档。timeless 方法论——六种集成风格定义与采用策略、内部层间数据流（CTR 契约）、接口契约治理（Semantic Versioning + Breaking Change + Deprecation）、Anti-Corruption Layer 策略、Event Backbone 触发条件。派生数据（EXT 系列 status、图表引用）不在本文档。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -39,8 +39,8 @@ ttl: permanent
 **保留内容**：方法论、设计原则、不变约束——集成风格、契约治理、ACL 策略、Event Backbone 触发条件。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- EI 系列 status（planned/in use/partial）→ 由集成点注册表维护
-- 外部集成拓扑图 → `diagrams/integration_topology.mmd`（自动生成）
+- EXT 系列 status（planned/in use/partial）→ 由集成点注册表维护
+- 外部集成拓扑图 → `docs/02_enterprise_architecture/target_architecture/diagrams/integration_topology.mmd`（自动生成）
 - 接口契约规格 → `architecture_model/contracts/cross_layer_contracts.yaml`（真源）
 - 当前阶段所有内部契约版本号 → 由契约文件自身维护
 
@@ -70,9 +70,9 @@ ttl: permanent
 **当前阶段策略**：以 **Batch + File-based** 为主体（适合单人开发、量化研究阶段），Request-Reply 用于外部服务，Event-Driven 以**轻量内部协议**（Python dataclass + 函数调用）代替消息队列（MQ）——MQ 引入时机见 §6。
 
 **永恒约束**：
-- Shared-DB 风格⚠️ 极限约束使用：仅限本地 SQLite（D_TRADING/D_REPORTING 结算分析）；**禁止跨层直接写**
-- Event-Driven 内部约定：层间通过 Python 函数调用 + `shared/contracts/` 传递事件对象（轻量事件驱动），不引入 MQ
-- 外部服务调用统一走 Request-Reply（REST）
+- Shared-DB 风格⚠️ 极限约束使用：仅限本地 SQLite（D_TRADING/D_REPORTING 结算分析，决策快照）；**禁止跨层直接写**
+- Event-Driven 内部约定：层间通过 Python 函数调用 + `shared/contracts/` 传递事件对象（轻量事件驱动，不引入 MQ，决策快照）
+- 外部服务调用统一走 Request-Reply（REST，决策快照）
 
 ---
 
@@ -104,17 +104,17 @@ MarketDataTick (raw)
 - 完整契约规格见 `architecture_model/contracts/cross_layer_contracts.yaml`（真源）
 - CTR-001~CTR-006 是 P0 跨层契约，任何 breaking change 必须走 §4.2 流程
 
-### 3.2 外部集成点定义（EI 系列，永恒 ID）
+### 3.2 外部集成点定义（EXT 系列，永恒 ID）
 
 | ID | Integration / 集成点 | Type / 类型 | Direction / 方向 | Protocol / 协议 | ACL 落盘位置 |
 |----|---------------------|------------|-----------------|----------------|-------------|
-| EI-001 | Broker API / 券商 API | Trade execution / 交易执行 | Bidirectional / 双向 | REST / FIX | `ex_core/adapters/` |
-| EI-002 | Market data provider / 行情数据源 | Historical + realtime market data / 历史+实时行情 | Inbound / 入站 | REST / WebSocket | `data/connectors/` |
-| EI-003 | LLM providers / LLM 服务商 | AI inference / AI 推理 | Outbound / 出站 | REST (OpenAI-compatible) | `frontend/` |
-| EI-004 | Feishu / 飞书 | Notification & report distribution / 通知与报告分发 | Outbound / 出站 | REST (Feishu API) | `frontend/notifications/` |
-| EI-005 | Alternative data providers / 另类数据源 | Sentiment, news, events / 舆情、新闻、事件 | Inbound / 入站 | REST / file | `data/connectors/` |
+| EXT-001 | Broker API / 券商 API | Trade execution / 交易执行 | Bidirectional / 双向 | MiniQMT / xttrader | `ex_core/adapters/` |
+| EXT-002 | Market data provider / 行情数据源 | Historical + realtime market data / 历史+实时行情 | Inbound / 入站 | REST / WebSocket | `data/implementations/` |
+| EXT-003 | LLM providers / LLM 服务商 | AI inference / AI 推理 | Outbound / 出站 | REST (OpenAI-compatible) | `integration/llm_bridge.py` |
+| EXT-004 | Feishu / 飞书 | Notification & report distribution / 通知与报告分发 | Outbound / 出站 | REST Webhook | `infrastructure/observability/notifier.py` |
+| EXT-005 | Alternative data providers / 另类数据源 | Sentiment, news, events / 舆情、新闻、事件 | Inbound / 入站 | REST / file | `data/implementations/` |
 
-> **注**：各 EI 的 status（planned/in use/partial）是动态的，由集成点注册表维护，不在本文档硬编码。
+> **注**：各 EXT 的 status（planned/in use/partial）是动态的，由集成点注册表维护，不在本文档硬编码。Protocol 与 ACL 落盘位置均为**决策快照**——Protocol 随真源 `architecture_model/contracts/cross_layer_contracts.yaml` external_contracts 演进；ACL 落盘位置反映当前代码实现（`ex_core/adapters/`、`data/implementations/`、`integration/llm_bridge.py`、`infrastructure/observability/notifier.py`）。
 
 ---
 
@@ -137,22 +137,22 @@ MarketDataTick (raw)
     ↓
 在 `architecture_model/contracts/cross_layer_contracts.yaml` 中标记 old_version → deprecated
     ↓
-新建 new_version 接口，与旧版本共存一个 MINOR 周期（≥1 sprint）
+新建 new_version 接口，与旧版本共存一个 MINOR 周期（≥1 sprint，决策快照）
     ↓
 所有消费方完成迁移确认（checklist 见契约文件）
     ↓
 废弃旧版本，更新 MAJOR 版本号
     ↓
-在 architecture-rationale-log.md 登记理由
+建立 KB 决策记录（KBG 系列）并更新 `architecture_model/contracts/cross_layer_contracts.yaml` 的 schema_version
 ```
 
-**单人开发阶段的简化原则**：当消费方仅为本项目内部模块时，Breaking Change 可以在同一 commit 中同步修改所有消费方，无需双版本共存；但必须在 commit message 中注明 `BREAKING: [契约名] v[old] → v[new]`。
+**单人开发阶段的简化原则**（决策快照：随团队规模演进）：当消费方仅为本项目内部模块时，Breaking Change 可以在同一 commit 中同步修改所有消费方，无需双版本共存；但必须在 commit message 中注明 `BREAKING: [契约名] v[old] → v[new]`。
 
 ### 4.3 废弃政策（Deprecation Policy，永恒）
 
-1. 任何外部接口（EI 系列）废弃前，在集成点注册表中标记 `status: deprecated`，注明废弃时间和替代方案
+1. 任何外部接口（EXT 系列）废弃前，在集成点注册表中标记 `status: deprecated`，注明废弃时间和替代方案
 2. 内部接口废弃须在 `architecture_model/contracts/cross_layer_contracts.yaml` 中标记 `stability: deprecated`
-3. 废弃的接口保留至少 1 个完整的回测周期（当前为 30 天）后移除
+3. 废弃的接口保留至少 1 个完整的回测周期（当前为 30 天，决策快照；真源见 `architecture_model/contracts/cross_layer_contracts.yaml` deprecation_flow）后移除
 
 ---
 
@@ -162,9 +162,9 @@ MarketDataTick (raw)
 
 | ACL 位置 | 隔离的外部系统 | 规范输出 |
 |---------|--------------|---------|
-| `data/connectors/` | 行情 Vendor（AKShare / Tushare / Wind / Bloomberg）| `NormalizedMarketData` canonical schema |
-| `ex_core/adapters/` | 券商 API（Broker REST / FIX）| 内部 `Order` / `Fill` 协议 |
-| `frontend/` | LLM Provider（OpenAI-compatible REST）| 内部 LLM 调用抽象 |
+| `data/implementations/` | 行情 Vendor（AKShare / Baostock / Tushare / TDX / iFinD / MiniQMT）| `NormalizedMarketData` canonical schema |
+| `ex_core/adapters/` | 券商 API（MiniQMT / xttrader）| 内部 `Order` / `Fill` 协议 |
+| `integration/llm_bridge.py` | LLM Provider（OpenAI-compatible REST）| 内部 LLM 调用抽象 |
 
 ### 5.2 ACL 选型理由（永恒——为何不用 Adapter/Facade）
 
@@ -172,23 +172,18 @@ MarketDataTick (raw)
 - **Facade Pattern**：简化调用复杂度，但不防止外部 Vendor 的领域模型污染内部
 - **ACL（Anti-Corruption Layer）**：在边界处将外部语义完整翻译为内部 canonical schema，内部任何层绝对不接触 Vendor 原始格式 → **防止领域污染**
 
-### 5.3 ACL 三项职责（永恒）
+### 5.3 ACL 核心职责（永恒）
 
 1. **格式隔离**：外部 Vendor 原始格式不进入内部
 2. **Connector 协议统一**：多 Vendor 统一为内部 canonical schema
 3. **格式转换在边界处**：转换发生在 ACL 层，不在内部模块
-
-### 5.4 未来 ACL 扩展方向（永恒规划）
-
-- Vendor Registry 统一管理（支持 Stock / ETF / Future / Option / Bond 命名空间）
-- 多 Vendor 合并与去重（当同一品种有多个 Vendor 来源时）
-- 数据质量断言前置（在 ACL 层完成格式检查，不让脏数据进入存储）
+4. **数据质量断言前置**：入站数据在 ACL 层完成质量门禁（不让脏数据进入存储）
 
 ---
 
 ## §6 Event Backbone 触发条件（永恒——何时引入 MQ）
 
-**当前阶段不实施 Event Backbone**，使用 Python asyncio queue / 直接函数调用（无 MQ 基础设施）。
+**当前阶段不实施 Event Backbone**（决策快照），使用 Python asyncio queue / 直接函数调用（无 MQ 基础设施）。
 
 ### 触发条件（满足任一即应评估引入）
 
@@ -196,7 +191,7 @@ MarketDataTick (raw)
 2. 多个消费方需要**同时订阅同一事件**，点对点调用变为扇形（fan-out）
 3. 引入多个**独立部署的微服务**（超出单进程/单节点范围）
 
-### 候选技术方案（待评估）
+### 候选技术方案（决策快照，待 MQ 引入时评估）
 
 | 方案 | 特点 | 适用场景 |
 |------|------|---------|
@@ -204,8 +199,6 @@ MarketDataTick (raw)
 | Apache Kafka | 高吞吐、持久化、分布式 | 多消费方、高频行情、生产级 |
 | ZeroMQ | 极低延迟、无 Broker | 高频交易信号路由 |
 | Python asyncio queue | 进程内、无基础设施依赖 | 当前轻量 Event-Driven 实现 |
-
-**决策原则**：本节内容将在引入 MQ 时升格为 KB 决策记录。
 
 ---
 
@@ -215,7 +208,7 @@ MarketDataTick (raw)
 
 - 六种集成风格定义与采用策略（§2）
 - 内部层间数据流与 CTR 契约（§3.1）
-- 外部集成点 EI 系列定义（§3.2，不含 status）
+- 外部集成点 EXT 系列定义（§3.2，不含 status）
 - 接口契约治理（Semantic Versioning + Breaking Change + Deprecation）（§4）
 - Anti-Corruption Layer 策略（§5）
 - Event Backbone 触发条件（§6）
@@ -225,8 +218,8 @@ MarketDataTick (raw)
 | 内容 | 真源 |
 |------|------|
 | 接口契约规格（数据结构、版本、稳定性） | `architecture_model/contracts/cross_layer_contracts.yaml` |
-| EI 系列 status（planned/in use） | 集成点注册表（自动维护） |
-| 外部集成拓扑图 | `diagrams/integration_topology.mmd`（自动生成） |
+| EXT 系列 status（planned/in use） | 集成点注册表（自动维护） |
+| 外部集成拓扑图 | `docs/02_enterprise_architecture/target_architecture/diagrams/integration_topology.mmd`（自动生成） |
 | 集成协议与技术选型 | `technology_principles.md` |
 | 安全认证机制 | `security_principles.md` |
 | 运维告警 | `operations_principles.md` |
@@ -237,5 +230,3 @@ MarketDataTick (raw)
 - **本视图下游**：SEC（安全域需知道所有外部接入点）/ OPS（运维需监控所有集成健康状态）
 
 ---
-
-> **文档

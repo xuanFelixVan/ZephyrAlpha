@@ -63,7 +63,7 @@ ttl: permanent
 
 | 场景 | 例子 | 防御 |
 |------|------|------|
-| **Look-ahead bias / 前视偏差** | 用今天收盘价做今天开盘的决策 | factor 必须显式声明 `asof_offset`（如"昨日收盘后可知"） + fitness function `test_no_lookahead_bias.py`（待创建）在 CI 强制扫描 |
+| **Look-ahead bias / 前视偏差** | 用今天收盘价做今天开盘的决策 | factor 必须显式声明 `asof_offset`（如"昨日收盘后可知"）+ CI fitness function 强制扫描 |
 | **Restated data / 财报修订** | Q1 财报 4/30 公布，6/15 修订；回测 5/15 用了 6/15 修订版 | 财务实体存 bitemporal，查询走 `vendor_release_ts ≤ T` |
 | **Index rebalance / 指数成分调整** | 沪深 300 半年调整，回测 2024 年 Q1 不能用 Q3 后调进的成分股 | `IndexConstituent` 必须 bitemporal；查询用 PIT API |
 
@@ -72,7 +72,7 @@ ttl: permanent
 1. **bitemporal 表** —— OLTP 主数据用 valid_time + transaction_time 双时间戳建模
 2. **append-only event log** —— 事件实体（Tick/Fill/Signal）天然 PIT，永不修改
 3. **PIT-safe view layer** —— 因子计算前必须经过统一的 `pit_view(entity, asof=T)` 函数封装（具体实现归 D_DATA_ENG 域）
-4. **CI fitness function** —— `test_no_lookahead_bias.py`（待创建）在 PR 阶段扫描所有因子代码，禁止任何 `df.loc[df.date <= today]` 之外的时间过滤模式
+4. **CI fitness function** —— PR 阶段扫描所有因子代码，禁止任何 `df.loc[df.date <= today]` 之外的时间过滤模式
 
 > **原则边界**：本文档只定义"原则与契约"；具体 SQL/代码归 D_DATA_ENG / D_FACTOR 域、`scripts/fitness_functions/`。
 
@@ -101,7 +101,7 @@ universe = build_universe(
 )
 ```
 
-**禁止**直接 `SELECT * FROM security WHERE status = 'active'`——这是幸存者偏差的最常见入口。`scripts/fitness_functions/test_no_survivorship_bias.py`（待创建）应扫描此类反模式。
+**禁止**直接 `SELECT * FROM security WHERE status = 'active'`——这是幸存者偏差的最常见入口。CI fitness function 应扫描此类反模式。
 
 ### 3.3 退市股票的数据保留
 
@@ -127,19 +127,15 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 | **Pipeline lineage** | 任务级 DAG：`compute_factor_X` 依赖 `load_bar_eod`、`load_corporate_action` | 调度器元数据（Airflow / Dagster）→ OpenLineage |
 | **Instance lineage** | 实例级：`FactorValue(factor=mom_20, symbol=600519, asof=2025-01-15)` 追溯到 `Bar(...)` 实例集合 | 每个派生实体的 `lineage_root` 字段 |
 
-### 4.2 血缘标准与工具对位
+### 4.2 血缘标准
 
-| 业界标准 / 工具 | 在本项目中的位置 |
-|----------------|----------------|
-| **OpenLineage** | 血缘事件交换格式（推荐采纳的接口标准） |
-| **Marquez / DataHub** | 血缘存储与可视化（具体选型归 04-TA） |
-| **MLflow** | 模型训练血缘（归 D_ML_TRAIN 域）|
+血缘事件交换格式应遵循业界开放标准。具体存储/可视化/训练血缘工具选型归 04-TA / 各域。
 
-> **原则边界**：本文档定义"必须有 lineage_root"、"必须实现 OpenLineage 接口"；**不**做工具选型。
+> **原则边界**：本文档定义"必须有 lineage_root"、"必须实现血缘事件交换接口"；**不**做工具选型。
 
 ### 4.3 血缘的 fitness function 契约
 
-`scripts/fitness_functions/test_lineage_completeness.py`（待创建）应保证：
+血缘完整性 fitness function 应保证：
 - 任何派生实体（FactorValue / Signal / PnL / RiskMetric）创建时必填 `lineage_root`
 - 任何 lineage_root 必须能解析出至少一条上游边
 - 任何代码层 commit 不允许引入"无血缘的派生实体"
@@ -166,7 +162,7 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 
 ## 6. Data Quality Gates 五类断言
 
-> **设计原则**：数据质量不是"运行时偶尔扫描一下"，而是"任何数据写入 / 任何代码合入都必须先过断言"。对齐 Great Expectations / Soda Core 业界规范。
+> **设计原则**：数据质量不是"运行时偶尔扫描一下"，而是"任何数据写入 / 任何代码合入都必须先过断言"。对齐业界数据质量断言规范。
 
 ### 6.1 五类标准断言
 
@@ -186,19 +182,18 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 | 🟠 Critical（range 越界 / freshness 严重超时） | 数据隔离到 quarantine，下游消费方收到 stale 标记 | Steward 24h 内裁决 |
 | 🟡 Warning（drift / 缺失率小幅升高） | 告警 + dashboard | 进入 backlog 排查 |
 
-### 6.3 业界工具映射原则
+### 6.3 工具策略原则
 
-| 业界工具 | 本项目用途 |
-|---------|----------|
-| **Great Expectations** | 适合 batch 断言（EOD bar / 因子值） |
-| **Soda Core** | 适合 SQL-first 团队，与 dbt 集成好 |
-| **自研 fitness functions** | PIT / Survivorship / Lineage 这三类**业界工具不覆盖**的量化专属断言，必须自研 |
+- 通用 batch/SQL 断言可采纳业界工具（具体选型归 04-TA）
+- PIT / Survivorship / Lineage 这三类**业界工具不覆盖**的量化专属断言，必须自研 fitness function
 
 > **原则边界**：本文档给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitness_functions/`、`src/zephyr/data/quality_gate/`。
 
 ## 7. Data Retention & Archival 原则
 
 ### 7.1 保留策略原则矩阵
+
+> ⚠️ 以下具体天数为运营决策快照，随合规要求/业务需要调整。原则框架（分层保留 + 不删合规数据）是永恒的。
 
 | 数据类别 | 热层保留 | 温层保留 | 冷层保留 | 删除？ |
 |------|---------|---------|---------|--------|
@@ -271,7 +266,7 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 | 因子计算的具体算法 | D_FACTOR / D_RESEARCH 域 |
 | 监管条款映射 | D_COMPLIANCE 域 |
 | 加密 / 脱敏算法 | D_SECURITY 域 |
-| AI 自治的数据血缘自动发现 | D_AUTONOMY_CORE 域（未来） |
+| AI 自治的数据血缘自动发现 | D_AUTONOMY_CORE 域 |
 
 ## 10. 与其他原则文档的关系
 

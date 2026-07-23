@@ -44,8 +44,8 @@ ttl: permanent
 **保留内容**：方法论、设计原则、不变约束——这些不随 Phase 演进或资产清单变化而改变。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 密钥资产清单 → 由 `scripts/governance/scan_secret_leak.py` 自动扫描生成
-- Phase Roadmap 进度 → 由 `phase-transition-protocol.md`（待创建）+ 自动化 phase gate 维护
+- 密钥资产清单 → 由 `scripts/governance/d6_security/scan_secret_leak.py` 自动扫描生成
+- Phase Roadmap 进度 → 由自动化 phase gate 流程维护
 - Open Questions → 由决策注册表（`docs/02_enterprise_architecture/04_architecture_principles_decisions/`）维护
 - LSG 接口实现细节 → `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md`
 - Agent Sandbox 技术选型 → KBG-0018
@@ -93,7 +93,7 @@ D-SECRET 密钥管理域（最高信任）
 
 ### 2.3 零信任原则（beta 起启用）
 
-**experimental 简化**：D-INT / D-STORE 之间不强制边界校验（单进程、单机、单人）。
+**experimental 简化**（决策快照）：D-INT / D-STORE 之间不强制边界校验（单进程、单机、单人）。
 
 **beta 及以后**：接入真实券商后，必须升级为零信任：
 
@@ -112,8 +112,8 @@ D-SECRET 密钥管理域（最高信任）
 | 威胁类别 | 代表威胁 | 影响域 | 缓解措施 |
 |---------|---------|-------|---------|
 | **Spoofing** | LLM Provider 中间人攻击 / Broker 伪装响应 | D-EXT | HTTPS + API Key Fingerprint 校验 |
-| **Tampering** | 数据源注入错误行情污染因子 | D_MKT_DATA → D_DATA_ENG | D_DATA ACL 质量门禁 + 数据签名验证 |
-| **Repudiation** | AI 决策"不是我说的" / 无法追溯改动 | D_GOVERNANCE | Session Log + Handoff Log |
+| **Tampering** | 数据源注入错误行情污染因子 | D-EXT → D-INT | D-INT ACL 质量门禁 + 数据签名验证 |
+| **Repudiation** | AI 决策"不是我说的" / 无法追溯改动 | D-MGMT | Session Log + Handoff Log |
 | **Info Disclosure** | `.env` 泄漏 / API Key 误写 git | D-SECRET | git-secrets + trufflehog + LSG Output Filter |
 | **DoS** | LLM API 限流 / 连接池耗尽 | D-AI | 限流 + 熔断 + 降级（规则基）|
 | **Elevation** | Agent 越权写系统文件 / 逃逸沙箱 | D-AGT | Windows ACL 只读挂载 + 白名单 |
@@ -137,7 +137,7 @@ AI 协作域带着 10 条 LLM 特有威胁，本系统覆盖原则：
 
 **关键洞察**：本系统 AI 攻击面集中在 **LLM01 / LLM02 / LLM06 / LLM08 / LLM09**（P0），其他 5 条不适用。
 
-> **注**：STRIDE 各威胁的 severity（P0/P1）+ 所在域、OWASP 各条的本系统暴露面 + 参考链接见 `architecture_model/security/threat_model.yaml`（从 security_architecture.md §3.1/§3.2 迁移）。本文 §3.1/§3.2 为永恒框架版。
+> **注**：STRIDE 各威胁的 severity（P0/P1）+ 所在域、OWASP 各条的本系统暴露面 + 参考链接见 `architecture_model/security/threat_model.yaml`。本文 §3.1/§3.2 为永恒框架版。
 
 ### 3.3 防御深度原则（永恒）
 
@@ -170,7 +170,7 @@ AI 协作域带着 10 条 LLM 特有威胁，本系统覆盖原则：
 1. **fail-closed**：任何校验器故障 → 拒绝调用（而非放行）。**与其余 5 大核心服务的 degraded=True 降级不同**，LSG 是唯一必须 fail-closed 的服务
 2. **四层防御**：L1 输入分类 → L2 System Prompt 隔离 → L3 输出 Schema → L4 Pattern 巡检
 3. **Pydantic v2 + `extra='forbid'`**：所有输入输出都有严格 Schema，未知字段一律拒绝
-4. **零信任 LLM 响应**：即便是本地 Qwen2.5-3B 的输出也必须过 L3/L4 校验
+4. **零信任 LLM 响应**：即便是本地 LLM 的输出也必须过 L3/L4 校验（具体模型选型见 `architecture_model/technology/technology_landscape.yaml`）
 5. **审计完整性**：每次调用生成 `request_id` + `input_hash` + `output_hash` 写入 Session Log
 
 ### 4.2 四层防御流（永恒编排）
@@ -205,6 +205,8 @@ Agent Orchestrator / Context Engine 消费
 | LSG 延迟 P99 | < 200ms | < 100ms |
 | fail-closed 触发率 | < 0.1%/天 | < 0.01%/天 |
 
+> **决策快照**：上表具体数值为 phase-gated SLO 目标（由 SLO 配置维护）；永恒约束是“每层防御都有 SLO + 红队评估门禁”。
+
 **红队评估原则**：experimental 末必须跑一次红队评估（模拟 OWASP LLM01/02/06/08/09 攻击），记录漏拦率。阈值 > 5% 触发升级。
 
 ---
@@ -227,9 +229,9 @@ Agent Orchestrator / Context Engine 消费
 
 1. Agent 尝试访问白名单外路径 → 立即 kill + 记录 Session Log
 2. Agent 尝试执行白名单外命令 → 拒绝 + 触发 FLE 异常事件
-3. Agent 进程内存 / CPU 超配额（默认 2GB / 2 cores）→ 强制回收
+3. Agent 进程内存 / CPU 超配额（默认配额为决策快照，如 2GB / 2 cores）→ 强制回收
 
-**永恒约束**：beta 接入真实资金后**必须**升级到 Docker 沙箱（Windows ACL 不如 Linux namespace 隔离严格）。
+**永恒约束**：beta 接入真实资金后**必须**升级到容器化沙箱（Windows ACL 不如 Linux namespace 隔离严格，技术选型见 `architecture_model/technology/technology_landscape.yaml`）。
 
 ---
 
@@ -265,7 +267,7 @@ L1: .env + .gitignore   →   L2: git-secrets    →         L3: LSG Output Scan
 ### 6.4 beta 升级触发（永恒门禁）
 
 接入真实资金前必须：
-- 迁移到 **1Password CLI** 或 **HashiCorp Vault**（.env 仅作开发便利，生产禁用）
+- 迁移到企业级密钥管理服务（如 1Password CLI / HashiCorp Vault，决策快照；.env 仅作开发便利，生产禁用）
 - 所有密钥**带 TTL**（24h）自动轮换
 - 访问日志入 D-MGMT 审计域
 
@@ -392,12 +394,13 @@ AI Agent 的每次调用都带 `agent_id`，Session Log 按 agent_id 分流，�
 | LSG 接口实现 | `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md` |
 | Agent Sandbox 技术选型 | KBG-0018 |
 | 威胁映射详细表（STRIDE severity/domain + OWASP exposure/reference）+ 数据保留 + 日志消费者 | `architecture_model/security/threat_model.yaml` |
-| 密钥资产清单（动态） | `scripts/governance/scan_secret_leak.py` 自动扫描 |
-| Phase Roadmap 进度 | `phase-transition-protocol.md`（待创建）+ 自动化 phase gate |
+| 密钥资产清单（动态） | `scripts/governance/d6_security/scan_secret_leak.py` 自动扫描 |
+| Phase Roadmap 进度 | 自动化 phase gate 流程 |
 | Open Questions | 决策注册表（`04_architecture_principles_decisions/`）|
-| 代码级安全规范 | `.cursor/rules/code-conventions.mdc` 与 `encoding-tool-guard.mdc` |
+| 代码级安全规范 | `docs/01_policies_and_standards/rules/`（trae 规则集） |
 | SRE Runbook 正文 | D_OPS 域产出 |
 | 加密算法选型细节 | 仅声明策略（AES-256-GCM / TLS 1.3），不铺算法原理 |
+| 具体安全工具/库选型（git-secrets / trufflehog / Pydantic / SQLite 等） | 决策快照，详见 `architecture_model/technology/technology_landscape.yaml`；本文承载 tool-agnostic 防御流方法论 |
 
 ### 11.3 与其他原则文档关系
 
@@ -407,4 +410,4 @@ AI Agent 的每次调用都带 `agent_id`，Session Log 按 agent_id 分流，�
 
 ---
 
-> **文档维护原则**：本文档只包含永恒指导原则。任何随 Phase 演进、资产变化、技术选型更新的内容，均不应
+> **文档维护原则**：本文档只包含永恒指导原则。任何随 Phase 演进、资产变化、技术选型更新的内容，均不应写入本文档。

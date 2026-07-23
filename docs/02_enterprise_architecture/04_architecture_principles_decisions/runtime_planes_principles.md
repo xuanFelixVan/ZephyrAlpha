@@ -31,7 +31,7 @@ tags:
 - citadel
 - jane-street
 - two-sigma
-summary: 运行平面正交视图永恒原则文档。timeless 方法论——正交视图方法论（业务 What vs 运行 How/When 两把尺子）、Hot/Warm/Cold 三平面定义与 SLO、三平面归属判定流程、跨平面通信协议（6 方向 + 4 禁止规则）、shared/contracts/runtime_plane_tag.py 契约预留、Hot/Warm/Cold 差异化技术选型矩阵、Ultra-Hot 预留原则、T0-T4 激活触发器与只做/不做清单、与 09-GOV Runtime 层边界澄清（双标签语法）、Sim-to-Real Gap 保障三机制。派生数据（全域 × 三平面完整映射矩阵、按平面反查表、Tech Radar 当前状态）不在本文档，由 runtime_planes.yaml + technology_landscape.yaml 维护。
+summary: 运行平面正交视图永恒原则文档。timeless 方法论——正交视图方法论（业务 What vs 运行 How/When 两把尺子）、Hot/Warm/Cold 三平面定义与 SLO、三平面归属判定流程、跨平面通信协议（6 方向 + 4 禁止规则）、src/zephyr/shared/contracts/core/runtime_plane_tag.py 契约预留、Hot/Warm/Cold 差异化技术选型矩阵、Ultra-Hot 预留原则、T0-T4 激活触发器与只做/不做清单、与 09-GOV Runtime 层边界澄清（双标签语法）、Sim-to-Real Gap 保障三机制。派生数据（全域 × 三平面完整映射矩阵、按平面反查表、Tech Radar 当前状态）不在本文档，由 runtime_planes.yaml + technology_landscape.yaml 维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -70,9 +70,9 @@ ttl: permanent
 
 | 混为一层的后果（反例）| 正交切分的收益（本视图采纳）|
 |---|---|
-| 例如把 `hot_path/` 建成独立业务域 → D_EX_CORE `trade_execution/` 订单管理和 Hot Path 下单**同一业务概念被两域承担** → ACL 失效 / OCP 契约断裂 / 因子注册表跨域 | D_EX_CORE 仍完整承担"交易执行"业务本体，其中 `oms/` 子模块打 `@RuntimePlane.WARM_PATH` 标签、`sor/` 打 `@RuntimePlane.HOT_PATH` 标签 → 业务语义保持 + 运行特征独立标注 |
+| 例如把 `hot_path/` 建成独立业务域 → D_EX_CORE 订单管理和 Hot Path 下单**同一业务概念被两域承担** → ACL 失效 / OCP 契约断裂 / 因子注册表跨域 | D_EX_CORE 仍完整承担"交易执行"业务本体，其中订单管理模块打 `@RuntimePlane.WARM` 标签、D_EX_SOR 路由模块打 `@RuntimePlane.HOT` 标签 → 业务语义保持 + 运行特征独立标注 |
 | 未来新增"Cold Path Backfill 专用域"时必须再加一域 → 域数无上限膨胀 | 新增平面仅在本视图技术选型 + 映射矩阵打补丁，全域业务不动 |
-| AI 协作者找代码时必须同时记住"业务归属 + 延迟归属"两个维度在同一路径里 → 目录歧义 | AI 协作者按业务找代码（`src/zephyr/ex_core/sor/`）+ 按装饰器 / frontmatter 查运行平面，两把尺子各自清晰 |
+| AI 协作者找代码时必须同时记住"业务归属 + 延迟归属"两个维度在同一路径里 → 目录歧义 | AI 协作者按业务找代码（如 `src/zephyr/ex_sor/`）+ 按装饰器 / frontmatter 查运行平面，两把尺子各自清晰 |
 
 ### 2.2 业界证据（永恒对标）
 
@@ -92,10 +92,10 @@ ttl: permanent
 
 ### 3.1 三平面速查表（永恒框架）
 
-| 平面 | 延迟上限 | 可中断性 | 调度模式 | 典型技术栈 | 典型业务 |
+| 平面 | 延迟上限 | 可中断性 | 调度模式 | 典型技术栈（决策快照，详见 technology_landscape.yaml） | 典型业务 |
 |---|---|---|---|---|---|
 | **Hot Path** 🔥 | **< 10 ms**（目标 P99）| 🔴 **不可中断**（kernel-bypass + 预分配内存）| 事件驱动 / 固定轮询 | C++20 / Rust / DPDK / RDMA / FPGA / ZeroMQ / Aeron / LMAX Disruptor | 市场数据撮合 / 盘中 SOR 路由 / 高频做市 / 风控硬拦截 |
-| **Warm Path** 🌡️ | **10 ms - 1 s**（目标 P95）| 🟡 **可抢占**（asyncio / 协程）| Async event loop / Task queue | Python >=3.11 / asyncio / FastAPI / Redis Streams / Kafka / NumPy / pandas | 因子计算 / 信号生成 / 组合再平衡 / OMS 状态机 / AI 推理 / API 响应 |
+| **Warm Path** 🌡️ | **10 ms - 1 s**（目标 P95）| 🟡 **可抢占**（asyncio / 协程）| Async event loop / Task queue | Python >=3.12 / asyncio / FastAPI / Redis Streams / Kafka / NumPy / pandas | 因子计算 / 信号生成 / 组合再平衡 / OMS 状态机 / AI 推理 / API 响应 |
 | **Cold Path** ❄️ | **> 1 s**（秒级到小时级）| 🟢 **完全可中断**（checkpointing）| 批调度 / 定时任务 / DAG | Spark / Dask / Ray / Airflow / Prefect / Parquet / DuckDB / Polars | 日终因子回测 / 月度归因 / 模型训练 / SBOM 扫描 / Scout Agent 夜间抓取 / 审计报表 |
 
 ### 3.2 三平面量化 SLO（永恒指标）
@@ -108,7 +108,7 @@ ttl: permanent
 
 ### 3.3 跨平面规则（永恒铁律）
 
-1. **Hot ⇄ Warm**：必须过 `shared/contracts/runtime_plane_tag.py` 定义的 IPC 协议（默认 Aeron / LMAX Disruptor），**禁止直接函数调用**
+1. **Hot ⇄ Warm**：必须过 `src/zephyr/shared/contracts/core/runtime_plane_tag.py` 定义的 IPC 协议（默认 Aeron / LMAX Disruptor），**禁止直接函数调用**
 2. **Warm → Cold**：Parquet / Redis Streams 异步推送，**永远非阻塞**
 3. **Cold → Warm**：模型 / 参数更新必须过**影子验证**（Champion-Challenger，D_SIMULATION 子模块负责）
 4. **禁止 Cold → Hot 直接通信**：所有 Cold 输出必须先落 Warm 再经 Warm 验证后进 Hot
@@ -173,43 +173,46 @@ ttl: permanent
 
 ---
 
-## §6 契约预留：`shared/contracts/runtime_plane_tag.py`（永恒）
+## §6 契约预留：`src/zephyr/shared/contracts/core/runtime_plane_tag.py`（永恒）
 
 **职责**：定义运行平面枚举 + docstring 标注规范 + 跨平面契约基类的运行平面声明字段。
 
+> ⚠️ 以下为示意，实际实现见 `src/zephyr/shared/contracts/core/runtime_plane_tag.py`
+
 ```python
-# shared/contracts/runtime_plane_tag.py
+# src/zephyr/shared/contracts/core/runtime_plane_tag.py
 from enum import Enum
 
-class RuntimePlane(Enum):
+class RuntimePlane(str, Enum):
     """
     运行平面标签 — 正交于 全域业务分层的执行维度标签。
+    继承 str 以便 JSON 序列化 / YAML dump / OpenAPI schema 直接输出字符串值。
 
-    用法 1（模块级装饰器）：
-        @runtime_plane(RuntimePlane.HOT_PATH)
-        class SmartOrderRouter: ...
+    用法 1（模块级标注）：
+        __runtime_plane__ = RuntimePlane.WARM
 
     用法 2（contract 基类字段）：
         class FactorBase:
-            runtime_plane: ClassVar[RuntimePlane] = RuntimePlane.WARM_PATH
+            runtime_plane: ClassVar[RuntimePlane] = RuntimePlane.WARM
 
     用法 3（frontmatter 声明，对于纯文档 / YAML / Rego）：
         ---
-        runtime_plane: warm_path
+        runtime_plane: WARM
         ---
     """
-    HOT_PATH = "hot_path"   # < 10ms P99, C++/Rust/kernel-bypass
-    WARM_PATH = "warm_path" # 10ms-1s P95, Python asyncio
-    COLD_PATH = "cold_path" # > 1s batch, Spark/Dask/Airflow
+    HOT = "HOT"   # < 10ms P99
+    WARM = "WARM" # 10ms-1s P95
+    COLD = "COLD" # > 1s batch
 
-    # 预留未来子档
-    ULTRA_HOT = "ultra_hot"  # < 100µs, FPGA (T-ULTRA 激活后启用)
+    # ULTRA_HOT 预留位（当前未实现）
 ```
+
+（实现真源：`src/zephyr/shared/contracts/core/runtime_plane_tag.py`）
 
 **预留原则（永恒）**：
 - enum 定义落盘但**不强制任何现有模块立即标注**（避免波动）
-- Sprint 0+ 施工时强制**新增子模块必须标注**（OQ-083 关闭时已登记为"未来标注义务"）
-- application_principles.md §4.1 `runtime_plane` 列作为**主真源**；装饰器 / frontmatter 作为**代码级辅助标注**
+- **新增子模块必须标注 runtime_plane**
+- application_principles.md §6 运行时平面摘要作为**参考**；装饰器 / frontmatter 作为**代码级辅助标注**
 
 ---
 
@@ -217,9 +220,11 @@ class RuntimePlane(Enum):
 
 ### 7.1 选型矩阵（永恒框架）
 
+> ⚠️ 以下技术选型为决策快照，真源在 `technology_landscape.yaml`，本文档只保留"三平面应差异化选型"的原则
+
 | 维度 | Hot Path 🔥 | Warm Path 🌡️ | Cold Path ❄️ |
 |---|---|---|---|
-| **语言** | C++20 / Rust (stable) / C (kernel modules) | Python >=3.11 / Rust CPython extensions (热点函数) | Python / Scala (Spark) / SQL |
+| **语言** | C++20 / Rust (stable) / C (kernel modules) | Python >=3.12 / Rust CPython extensions (热点函数) | Python / Scala (Spark) / SQL |
 | **运行时** | 裸金属 / 物理机 / DPDK userspace | Linux VM / 容器（K8s Pod）| Spark cluster / Dask cluster / Airflow workers |
 | **通信中间件** | Aeron / LMAX Disruptor / ZeroMQ (IPC) / RDMA | Redis Streams / Kafka / FastAPI HTTP / WebSocket | Parquet + S3 / MinIO / Airflow XCom |
 | **存储** | Shared Memory Ring Buffer / mmap files | Redis / PostgreSQL / Parquet (hot/warm border) | Parquet (columnar) / DuckDB / S3 object storage |
@@ -233,14 +238,14 @@ class RuntimePlane(Enum):
 
 ### 7.2 与 technology_principles.md 的关系（永恒）
 
-technology_principles.md 定义**全局技术基线**（Python >=3.11，见 `pyproject.toml` / Redis / PostgreSQL / Parquet 等），本视图 §7 **在平面维度做下钻**——同一业务逻辑在不同平面可能选用不同技术栈（例：D_RISK 风控 Warm Path 用 Python async，Hot Path 用 Rust 重写并通过 Aeron 对接）。**本视图不替代 technology_principles，是补充正交切面**。
+technology_principles.md 定义**全局技术基线**（Python >=3.12，见 `pyproject.toml` / Redis / PostgreSQL / Parquet 等），本视图 §7 **在平面维度做下钻**——同一业务逻辑在不同平面可能选用不同技术栈（例：D_RISK 风控 Warm Path 用 Python async，Hot Path 用 Rust 重写并通过 Aeron 对接）。**本视图不替代 technology_principles，是补充正交切面**。
 
 ### 7.3 预留：Ultra-Hot 子档（未激活，永恒预留原则）
 
 对于未来可能的超低延迟场景（< 100 µs，FPGA / 纯硬件做市），预留 `RuntimePlane.ULTRA_HOT` 枚举值但**当前不启用**。激活条件：
 
-- **T-ULTRA**（未定义，估计 Sprint 20+）：团队规模 ≥ 5 人 + 自营资金 ≥ $10M + 明确低延迟套利策略 + FPGA 预算 ≥ $100k
-- 未命中则 Ultra-Hot 永久不激活（99% 概率）
+- **T-ULTRA**：预留档位，激活条件待定
+- 未命中则 Ultra-Hot 永久不激活
 
 ---
 
@@ -248,10 +253,7 @@ technology_principles.md 定义**全局技术基线**（Python >=3.11，见 `pyp
 
 ### 8.1 当前基线状态
 
-**ZephyrAlpha 当前阶段**：
-- 🟢 **Warm Path 100% 激活**（所有 全域业务代码默认跑在 Warm）
-- 🔴 **Hot Path 未激活**（无真实行情 / 无真实委托）
-- 🔴 **Cold Path 部分激活**（D_FACTOR 因子批量回算 / D_TRADING 归因 / D_ML_TRAIN 训练，当前小规模）
+激活状态见 `architecture_model/cross_cutting/runtime_planes.yaml`。
 
 ### 8.2 激活触发器全表（永恒框架）
 
@@ -305,8 +307,6 @@ technology_principles.md 定义**全局技术基线**（Python >=3.11，见 `pyp
 ```
 d_risk.limits.hard_cut.py  →  [GOV:Runtime] × [Plane:Hot]
 d_factor.pipeline.batch.py   →  [GOV:Runtime] × [Plane:Cold]
-scripts/governance/aisg/compile_desensitize_rules.py  →  [GOV:Factory] × [Plane:Cold]
-docs/01_policies_and_standards/ai-security-gateway-policy.md  →  [GOV:Policy] × [Plane:—]
 ```
 
 **格式**：`[GOV:<Policy|Factory|Runtime>] × [Plane:<Hot|Warm|Cold|—>]`
@@ -365,7 +365,7 @@ D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Tr
 - Hot/Warm/Cold 三平面定义与 SLO（§3）
 - 三平面归属判定流程（§4）
 - 跨平面通信协议（6 方向 + 4 禁止规则）（§5）
-- shared/contracts/runtime_plane_tag.py 契约预留（§6）
+- src/zephyr/shared/contracts/core/runtime_plane_tag.py 契约预留（§6）
 - Hot/Warm/Cold 差异化技术选型矩阵 + Ultra-Hot 预留（§7）
 - T0-T4 激活触发器与只做/不做清单（§8）
 - 与 09-GOV Runtime 层边界澄清（双标签语法）（§9）
@@ -378,7 +378,6 @@ D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Tr
 | 全域 × 三平面完整映射矩阵 | `architecture_model/cross_cutting/runtime_planes.yaml` |
 | 按平面维度反查表 | 同 YAML 的 `planes.{hot,warm,cold}.modules[]` |
 | Tech Radar 当前状态 | `architecture_model/technology/technology_landscape.yaml` |
-| 三平面部署拓扑图 | ~~`diagrams/runtime_planes_topology.mmd`~~（已删除：目标终态，与当前单进程 Python 现状脱节） |
 | 全局技术基线（Python/Redis/PostgreSQL）| `technology_principles.md` |
 | 全域业务分层（What）| `application_principles.md` |
 | 治理三层（Policy/Factory/Runtime）| `governance_principles.md` |

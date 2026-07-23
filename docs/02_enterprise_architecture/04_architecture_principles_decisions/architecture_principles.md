@@ -114,14 +114,16 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 | **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | 风控层 hard check before 执行层 |
 | **R4** | **PRD 永远不改** | 生产数据库（PRD）永远不做 DDL 变更/手动 UPDATE/DELETE；所有变更走迁移脚本 + 审计日志 | DB 权限只读连接 + 迁移脚本强制记录 |
 
-### §2bis 门禁追溯（CI / 本地工件）
+### §2bis 门禁追溯（CI / 本地工件）— 状态快照（T0 阶段）
+
+> **注**：门禁追溯原则本身永恒保留；下表的 ✅/⚠️ 状态标记与脚本路径为 T0 阶段状态快照，会随门禁演进过时，最新状态以 `.pre-commit-config.yaml` / `.github/workflows/governance.yml` 为准。
 
 | # | gate_ref | 落地状态 | 说明 |
 |---|----------|:---:|------|
-| **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交 |
-| **R2** | 源码静态扫描 + 运行时日志扫描 | ⚠️ **部分落地** | **源码扫描已接入 CI**：`detect_secrets.py`（pre-commit 增量）+ `scan_secret_leak.py`（CI 全库深度扫描，对标 06-SEC §6.3 L3-Audit）。**运行时 .log 文件扫描待 T1 实盘后落地**——项目当前未到实盘阶段，无运行时日志可扫。辅助脚本 `scan_runtime_log_secrets.py` 已开发但功能与 `scan_secret_leak.py` 重叠，未接入 CI |
+| **R1** | `.pre-commit-config.yaml`（私钥检测 hook）；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交 |
+| **R2** | 源码静态扫描 + 运行时日志扫描 | ⚠️ **部分落地** | 源码扫描脚本已开发未接入门禁；运行时日志扫描待 T1 实盘后落地 |
 | **R3** | **目标态**：风控参数 hard check before 执行层 | ⚠️ **T1 待落地** | CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用）。T1 实盘后须满足 hard-check 与适应度函数阈值 |
-| **R4** | 数据治理策略（权限只读连接 + 迁移审计流程） | ✅ 已落地 | `database_service.py` 双连接机制：`get_governance_conn(read_only=True)` / `get_depgraph_conn(read_only=True)` 返回独立只读连接（PRAGMA query_only=1 / SET default_transaction_read_only=on） |
+| **R4** | 数据治理策略（权限只读连接 + 迁移审计流程） | ✅ 已落地 | `database_service.py` 双连接机制：治理/依赖图连接独立只读，禁止写操作（实现细节见模块蓝图） |
 
 **红线优先级**：高于所有其他架构原则。在其他原则（如 §3 "开源优先"）与红线冲突时，**红线无条件优先**。
 
@@ -151,7 +153,9 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 #### 3.1.3 独立开发者更应该开源优先
 
-| 维度 | 机构（10 人团队） | ZephyrAlpha（1 人 + AI） |
+> **注**：下表维度框架永恒；ZephyrAlpha 列的具体值（1 人 + AI / 无 QA 等）为当前阶段快照，随团队规模演进。
+
+| 维度 | 机构（10 人团队） | ZephyrAlpha（1 人 + AI，当前阶段快照） |
 |-----|---------------|:---:|
 | 人力成本 | 高 | **无限制** |
 | 测试资源 | 专职 QA | **无 QA** |
@@ -164,15 +168,15 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 ## 4. 核心架构决策
 
-**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI 原生重构，采用功能域唯一物理分类体系（按功能把代码分成独立的块，每块一个域，不按技术层分），Python 全栈，Vibe Coding 驱动（用 AI IDE 写代码，Cursor + Trae 双工具）。
+**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI 原生重构，采用功能域唯一物理分类体系（按功能把代码分成独立的块，每块一个域，不按技术层分），Python 全栈，Vibe Coding 驱动（用 AI IDE 写代码；具体 IDE 选型为决策快照，当前 Cursor + Trae 双工具）。
 
 **核心架构决策**（定死的原则，不可推翻）：
 - **功能域唯一分类**：按功能分域，不按技术层分。逻辑层只作为域的一个属性（layer_id），不当并行分类（两套分类法并存=AI 不知道用哪套=幻觉温床）。
 - **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）从 depgraph 数据库自动生成，禁止手编（手编必过时）。
-- **运行时平面**：Hot Path / Warm Path / Cold Path 三平面（详见 [runtime_planes_principles.md](runtime_planes_principles.md)）。当前仅 Warm Path 激活，Hot/Cold Path 为未激活终局拓扑
-- **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ 三层从上到下，每层有准入和退出门禁
+- **运行时平面**：Hot Path / Warm Path / Cold Path 三平面（详见 [runtime_planes_principles.md](runtime_planes_principles.md)）。激活状态见 `architecture_model/cross_cutting/runtime_planes.yaml`，不在本文档硬编码
+- **治理三层**（Policy / Factory / Runtime，详见 [governance_principles.md](governance_principles.md)）→ 治理三层与业务层平级正交横切（非上下层），每层有准入和退出门禁
 - **安全红线**：4 条不可撤销（详见 §2）
-- **技术栈**：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议
+- **技术栈**（决策快照，具体组件可变）：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议
 
 ---
 

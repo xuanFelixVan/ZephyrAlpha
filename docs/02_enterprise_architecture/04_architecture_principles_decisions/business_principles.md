@@ -45,7 +45,6 @@ ttl: permanent
 - 全域→能力域映射 → `architecture_model/cross_cutting/capability_heatmap.yaml`（真源）
 - 能力成熟度评分 → `architecture_model/cross_cutting/capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）
 - VSM 阶段指标 + Handoff 契约（含交接物）+ 瓶颈 B1-B6 + SLO 目标值矩阵 + SLA 现实 → `architecture_model/cross_cutting/value_stream_map.yaml`
-- Stakeholder RACI 矩阵 → 未来激活时从 git 历史恢复（v1.2.0, commit 69fa51dc12~1）
 
 **与其他原则文档关系**：
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
@@ -60,7 +59,7 @@ ttl: permanent
 
 ### 2.1 能力域划分原则（永恒框架）
 
-ZephyrAlpha 2.0 是**量化投资全生命周期管理系统**，覆盖：数据 → 研究 → 模型 → 策略 → 执行 → 报告。
+ZephyrAlpha 是**量化投资全生命周期管理系统**，覆盖：数据 → 研究 → 模型 → 策略 → 执行 → 报告。
 
 **永恒框架**：**C1-C7（7个业务能力域）+ CC1-CC3（3个横切能力域）= 10个能力域**，映射到各物理域。
 
@@ -68,21 +67,21 @@ ZephyrAlpha 2.0 是**量化投资全生命周期管理系统**，覆盖：数据
 
 | ID | 能力域 | 说明 |
 |---|---|---|
-| **C1** | 数据能力 | 市场数据接入、质量门禁、PIT、survivorship、血缘追踪 |
-| **C2** | 因子&信号能力 | Alpha因子、情绪、信号提取、因子注册表、IC-IR |
-| **C3** | 风控能力 | 事前/事中/事后风控、VaR-CVaR、限额、止损 |
-| **C4** | 组合构建能力 | 优化、再平衡、回测、战略配置、meta-router |
-| **C5** | 执行&交易后能力 | OMS、SOR、执行、归因、TCA、review |
-| **C6** | ML/AI平台能力 | 模型生命周期、训练、serving、scout、实验 |
-| **C7** | 治理&合规能力 | 合规运行时、治理三层、AISG、审计链 |
+| **C1** | 数据接入 | 市场数据接入、质量门禁、PIT、survivorship、血缘追踪 |
+| **C2** | 因子研究 | Alpha因子、情绪、信号提取、因子注册表、IC-IR |
+| **C3** | 风险控制 | 事前/事中/事后风控、VaR-CVaR、限额、止损 |
+| **C4** | 策略决策 | 优化、再平衡、回测、战略配置 |
+| **C5** | 执行交易 | OMS、SOR、执行、归因、TCA、review |
+| **C6** | ML平台 | 模型生命周期、训练、serving、实验 |
+| **C7** | 回测仿真 | 回测引擎、仿真、数字孪生、执行仿真 |
 
 ### 2.3 横切能力域（CC1-CC3，永恒分类）
 
 | ID | 能力域 | 说明 |
 |---|---|---|
-| **CC1** | 人机交互&研究 | Human-AI接口、研究notebook、CLI |
-| **CC2** | 可观测性 | Metrics、logs、traces、ai_behavior |
-| **CC3** | AI自治 | D家族系统、ai_operator预留口、决策引擎 |
+| **CC1** | 治理合规 | 治理三层、规则执行、审计、漂移、反馈环、代码质量 |
+| **CC2** | 安全防护 | 安全、LLM防御、行为审计、数据安全、自治权限 |
+| **CC3** | 基础设施 | 基础设施、集成、共享、前端、报告、知识、智能、自治核心、运维、编排 |
 
 ### 2.4 能力域→物理域映射（派生数据）
 
@@ -115,7 +114,7 @@ ZephyrAlpha 2.0 是**量化投资全生命周期管理系统**，覆盖：数据
 8. **Order Submission**（C5）→ 券商 ACK
 9. **Fill & Reconcile**（C5）→ 成交与对账
 10. **Attribution**（C5）→ PnL + 归因报告
-11. **Feedback loop**（C2+C7）→ 研究结论 / KB决策候选
+11. **Feedback loop**（C2+CC1）→ 研究结论 / KB决策候选
 
 > **注**：各阶段的具体 LT/PT/%C&A 数字是 derived data，由运营态 metrics 自动采集，不在本文档硬编码。
 
@@ -145,10 +144,10 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 
 ### 3.5 横向治理贯穿全链（永恒）
 
-- C7 治理&合规域 — Policy control + KB决策链 + AI Operator registry（预留）
+- CC1 治理&合规域 — Policy control + KB决策链 + AI Operator registry（预留）
 - C3 风控域 — 每阶段的风险控制策略（pre/in/post-trade）
-- CC1 人机交互域 — 协作知识沉淀（AI会话上下文、prompt资产）
-- C2 知识管理（D_KNOWLEDGE域）— 因子库/策略库/经验教训
+- CC3 基础设施域（含人机交互 D_FRONTEND、知识管理 D_KNOWLEDGE）— 协作知识沉淀（AI会话上下文、prompt资产、经验教训）
+- C2 因子&信号域 — 因子库质量门禁、信号注册表贯穿研究→生产
 
 ---
 
@@ -158,16 +157,16 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 
 **先立边界再定数字**：
 
-1. **Non-HFT 定位**：不追求微秒/毫秒级；延迟单位为**秒/分钟/小时**。若未来接入L1行情或组合≥$10M，NFR整体需重写。
-2. **市场时段 vs 非市场时段分层**：可用性/延迟SLO只在**市场时段（含盘前盘后30min缓冲）**严格执行；非市场时段为best-effort。
+1. **Non-HFT 定位**：不追求微秒/毫秒级；延迟单位为**秒/分钟/小时**。若未来接入L1行情或组合规模超阈值（决策快照：当前阈值=$10M），NFR整体需重写。
+2. **市场时段 vs 非市场时段分层**：可用性/延迟SLO只在**市场时段（含盘前盘后缓冲；决策快照：当前=30min）**严格执行；非市场时段为best-effort。
 3. **可审计 ≫ 可用性**：当前阶段（单人无外部用户）若可用性与可审计冲突，必须选可审计。
 
 ### 4.2 NFR 类别框架（永恒分类）
 
 | 类别 | 要求 | 当前阶段定位 |
 |------|------|------|
-| **Latency / 延迟** | Non-HFT；秒级—分钟级batch；端到端signal→order ≤ 90s（p99）| 不追求微秒级 |
-| **Availability / 可用性** | 市场时段99.9% / 非市场时段best-effort | 单人操作，非24/7 |
+| **Latency / 延迟** | Non-HFT；秒级—分钟级batch；端到端signal→order 具体SLO见 value_stream_map.yaml | 不追求微秒级 |
+| **Availability / 可用性** | 市场时段严格 / 非市场时段best-effort；具体SLO见 value_stream_map.yaml | 单人操作，非24/7 |
 | **Auditability / 可审计性** | Full decision trail, immutable KB决策, 七维度decision logs | **高优先级**（不可降）|
 | **Compliance / 合规性** | Personal-scale；future multi-investor triggers stricter | 当前最简，留扩展口 |
 | **Maintainability / 可维护性** | Single operator + AI collab；docs-as-code | 高优先级 |
@@ -184,15 +183,15 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 - **SLO**=内部目标（可量化）
 - **SLI**=实际测量指标（可落到metric）
 
-**测量/上报位置**：所有SLI接入可观测性架构（由CC2可观测性域填充，用OpenTelemetry Metrics/Logs/Traces三支柱）。
+**测量/上报位置**：所有SLI接入可观测性架构（由CC3 基础设施域含可观测性 D_INFRA_TELEMETRY 填充，用 Metrics/Logs/Traces 三支柱）。
 
 ### 4.4 SLO 升级触发条件（永恒——何时整体重写）
 
 以下任一条件触发 SLO 表**整体重写**（非局部调整）：
 
-1. 接入L1行情 / portfolio ≥ $10M → 整体时延SLO从秒级压缩到毫秒级
+1. 接入L1行情 / portfolio 规模超阈值（决策快照：当前阈值=$10M）→ 整体时延SLO从秒级压缩到毫秒级
 2. 合伙人或监管激活 → SLA列从internal转对外承诺
-3. 引入实时流架构（Kafka/Pulsar事件总线）→ 从batch语义改为streaming语义
+3. 引入实时流架构（事件总线）→ 从batch语义改为streaming语义
 4. 任一SLO**连续3个月**未达标 → 触发root-cause KB决策 + 目标值重评
 
 ### 4.5 SLO Auditability 铁律（永恒不可降）
@@ -201,7 +200,7 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 |-----|------|---------|
 | **SLO-Audit** | KB决策链完整、AI协作决策日志七维度覆盖 | **0容忍**：任何违约阻塞merge |
 
-KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git commit→KB决策双向索引：100%。
+KB决策 append-only 铁律：100%（永恒不可降）。AI决策日志七维度覆盖率与 Git commit→KB决策双向索引覆盖率为 SLO 目标值，具体数值见 value_stream_map.yaml。
 
 ---
 
@@ -221,22 +220,6 @@ KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git com
 
 ---
 
-## §6 Architecture Runway / 架构预留通道
-
-> 以下预留通道为未来P3能力激活后的挂载点。本节不实现任何具体逻辑，仅记录"将来何处扩展、何条件触发"。
-
-| ID | 能力描述 | 挂载点 | 激活触发条件 |
-|---|---|---|---|
-| RW-BA-01 | 投委会支持工具 — 多人协作议事流程、审议记录、AI辅助决策仪表盘 | Stakeholder | 系统从个人扩展到多人协作团队（≥2位基金经理共同管理）|
-| RW-BA-02 | 多基金经理协调机制 — 权限分层、策略分配、绩效归因隔离 | Stakeholder | 团队规模扩展到多人管理，R/A出现跨人分裂 |
-| RW-BA-03 | 系统化全球宏观策略 — 扩展Value Stream覆盖跨境资产 | Value Stream | 全球多市场接入完成（A股+港股+美股）+ 宏观数据库完整 |
-| RW-BA-04 | 战略联盟框架 — 多方数据/策略共享治理协议 | Constraints | 系统扩展到多方数据/策略共享，出现对外合作场景 |
-| RW-BA-05 | 机构级报告体系 — 投资者报告、监管申报、业绩归因标准化 | SLA | 系统管理资金规模 > 1000万 or 接受外部投资人 |
-
-> **激活时**：RW-BA-01/02 激活时需从 git 历史恢复完整 RACI 矩阵（v1.2.0, commit 69fa51dc12~1）。
-
----
-
 ## §7 视图边界 / Boundaries
 
 ### 7.1 本文档覆盖
@@ -245,7 +228,6 @@ KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git com
 - Value Stream Map 方法论（VSM 概念、Handoff 治理、精益七浪费）（§3）
 - NFR 定位原则与 SLO/SLA/SLI 术语铁律（§4）
 - 业务约束与政策红线（§5）
-- Architecture Runway（§6）
 
 ### 7.2 本文档不覆盖（由其他系统维护）
 
@@ -255,7 +237,6 @@ KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git com
 | 能力成熟度评分（L0-L5） | `architecture_model/cross_cutting/capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）|
 | VSM 阶段指标 + Handoff 契约 + 瓶颈 B1-B6 | `architecture_model/cross_cutting/value_stream_map.yaml` |
 | SLO 目标值矩阵（SLO-1~SLO-7）+ SLA 现实 | `architecture_model/cross_cutting/value_stream_map.yaml` |
-| Stakeholder RACI 矩阵 | git 历史（v1.2.0，激活时恢复）|
 | 业务约束完整列表 | `architecture_principles.md`（R1-R4）|
 
 ### 7.3 与其他原则文档关系
