@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] task_bound
 """test_integrity_checker.py — 数据完整性巡检器单元测试。
 

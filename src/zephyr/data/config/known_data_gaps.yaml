@@ -42,7 +42,7 @@ gaps:
 
   # === audit 2.7: edb_data 空表（iFind EDB 配额耗尽）===
   - id: "edb_data_ifind_quota_exhausted"
-    table: "c3_fundamental.edb_data"
+    table: "c1_market.edb_data"
     gap_type: "empty_table"
     start_date: "2026-01-01"
     end_date: null  # 持续中，待 iFind 配额恢复
@@ -51,6 +51,6 @@ gaps:
     status: "accepted"  # 已接受——macro_data (akshare 291K rows) 作为主宏观数据源
     root_cause: "iFind EDB 月度配额耗尽(-4318)，edb_data 表至今 0 行"
     resolution_plan: "升级 iFind 付费版 EDB 配额；或以 macro_data (akshare) 作为主宏观源"
-    primary_alternative: "c3_fundamental.macro_data（akshare，291K 行，主宏观数据源）"
+    primary_alternative: "c1_market.macro_data（akshare，285K 行，主宏观数据源）"
     created: "2026-07-23"
     last_updated: "2026-07-23"
