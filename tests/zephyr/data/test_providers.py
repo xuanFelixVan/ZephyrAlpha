@@ -786,6 +786,8 @@ class TestMiniQMTBatch2Capabilities:
     def test_all_15_capabilities_registered(self):
         """验证 15 个新能力均已注册到 meta.capabilities。"""
         caps = MiniQMTProvider.meta.capabilities
+        # 兼容 str 与 CapabilityContract（治本修复#ARCH-CAP-NULL-SYMBOLS-001）
+        cap_ids = {c.capability_id if hasattr(c, "capability_id") else c for c in caps}
         new_caps = [
             "kline_cb", "option_kline", "option_greeks", "index_weight",
             "sector_list", "l2_tick", "auction_data", "futures_kline_qmt",
@@ -793,7 +795,7 @@ class TestMiniQMTBatch2Capabilities:
             "margin_trading_qmt", "dragon_tiger_qmt", "block_trade_qmt",
         ]
         for cap in new_caps:
-            assert cap in caps, f"能力 {cap} 未注册到 meta.capabilities"
+            assert cap in cap_ids, f"能力 {cap} 未注册到 meta.capabilities"
 
     def test_calc_bs_greeks_call(self):
         """BS 模型 call Greeks 计算（S=100,K=100,T=0.25,r=0.05,sigma=0.2）。"""

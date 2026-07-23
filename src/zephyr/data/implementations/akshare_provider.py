@@ -178,7 +178,10 @@ class AKShareProvider(DataSourceBase):
         thread_safety="shared",
         rate_limit_default=60,
         capabilities=[
-            "macro_data",
+            # 治本修复#ARCH-CAP-NULL-SYMBOLS-001（2026-07-23）：
+            # 所有声明 symbols=null 的 task 对应 capability 显式声明 supports_symbols_null=True，
+            # 消除 83 条 CAP-NULL-SYMBOLS WARN。
+            CapabilityContract("macro_data", supports_symbols_null=True),
             # 10 个支持 symbols=null 的能力（裁定 #ARCH-CH-018/#ARCH-CH-022）
             # Provider 内部调用 _get_all_a_symbols 做 fallback（akshare→CH stock_list）
             CapabilityContract("dividend", supports_symbols_null=True),
@@ -191,29 +194,42 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("stock_indicator", supports_symbols_null=True),
             CapabilityContract("top10_shareholders", supports_symbols_null=True),
             CapabilityContract("top10_circulating_shareholders", supports_symbols_null=True),
-            # 以下能力需 task 显式传入 symbols 或不支持 symbols=null
-            "equity_pledge", "margin_trading", "block_trade",
-            "dragon_tiger", "share_unlock",
-            "audit_opinion", "equity_pledge_summary",
+            # 以下能力支持 symbols=null（Provider 内部有全市场扫描或调用批量接口）
+            CapabilityContract("equity_pledge", supports_symbols_null=True),
+            "margin_trading",
+            "block_trade",
+            "dragon_tiger",
+            "share_unlock",
+            "audit_opinion",
+            CapabilityContract("equity_pledge_summary", supports_symbols_null=True),
             # 新闻数据
-            "news_cctv", "news_economic_baidu",
-            "news_baidu", "news_stock",
+            CapabilityContract("news_cctv", supports_symbols_null=True),
+            CapabilityContract("news_economic_baidu", supports_symbols_null=True),
+            CapabilityContract("news_baidu", supports_symbols_null=True),
+            CapabilityContract("news_stock", supports_symbols_null=True),
             # 分析师预期 & 配股
             "analyst_forecast", "rights_issue",
             # 研报 & 北向资金 & 期货主力合约
-            "hk_connect_flow", "kline_futures",
+            CapabilityContract("hk_connect_flow", supports_symbols_null=True),
+            CapabilityContract("kline_futures", supports_symbols_null=True),
             # 涨跌停 & 股本变动 & ST股票 & 概念板块 & 指标 & 大宗交易明细
-            "limit_up_down", "st_stock_list",
-            "concept_board", "block_trade_detail",
+            CapabilityContract("limit_up_down", supports_symbols_null=True),
+            CapabilityContract("st_stock_list", supports_symbols_null=True),
+            CapabilityContract("concept_board", supports_symbols_null=True),
+            CapabilityContract("block_trade_detail", supports_symbols_null=True),
             # 披露计划（淘宝历史数据持续更新）
-            "disclosure_plan",
+            CapabilityContract("disclosure_plan", supports_symbols_null=True),
             # 回购数据
-            "repurchase",
+            CapabilityContract("repurchase", supports_symbols_null=True),
             # 静态列表月初刷新
-            "convertible_bond_list", "etf_list", "lof_list",
-            "hk_stock_list", "hk_trade_calendar", "index_list",
-            "etf_benchmark",
-            "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
+            CapabilityContract("convertible_bond_list", supports_symbols_null=True),
+            CapabilityContract("etf_list", supports_symbols_null=True),
+            CapabilityContract("lof_list", supports_symbols_null=True),
+            CapabilityContract("hk_stock_list", supports_symbols_null=True),
+            CapabilityContract("hk_trade_calendar", supports_symbols_null=True),
+            CapabilityContract("index_list", supports_symbols_null=True),
+            CapabilityContract("etf_benchmark", supports_symbols_null=True),
+            CapabilityContract("etf_nav", supports_symbols_null=True),  # #ARCH-CH-023
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )

@@ -38,7 +38,7 @@ import logging
 import datetime
 from typing import Any, Iterator
 
-from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
+from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta, CapabilityContract
 from ..policy_registry import SourcePolicy
 from ..table_registry import get_registry
 
@@ -106,10 +106,19 @@ class IFindProvider(DataSourceBase):
         requires_process=False,
         thread_safety="thread_local",
         rate_limit_default=0,
-        capabilities=["kline_daily", "daily_valuation", "money_flow", "kline_index",
-                      "edb_data", "industry_class_suppl",
-                      "concept_sector", "realtime_snapshot",
-                      "sector_meta"],
+        capabilities=[
+            "kline_daily",
+            "daily_valuation",
+            # 治本修复#ARCH-CAP-NULL-SYMBOLS-001（2026-07-23）：
+            # 声明 symbols=null 的 task 对应 capability 显式声明 supports_symbols_null=True
+            CapabilityContract("money_flow", supports_symbols_null=True),
+            "kline_index",
+            "edb_data",
+            CapabilityContract("industry_class_suppl", supports_symbols_null=True),
+            CapabilityContract("concept_sector", supports_symbols_null=True),
+            CapabilityContract("realtime_snapshot", supports_symbols_null=True),
+            CapabilityContract("sector_meta", supports_symbols_null=True),
+        ],
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
 

@@ -8263,3 +8263,50 @@ entries:
   related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 5.135治标'
   created: '2026-07-23'
   last_updated: '2026-07-23'
+
+# --- #ARCH-CAP-NULL-SYMBOLS-001: 83 条 CAP-NULL-SYMBOLS WARN 治本 ---
+- issue_id: '#ARCH-CAP-NULL-SYMBOLS-001'
+  title: scheduler 启动时校验出 83 条 CAP-NULL-SYMBOLS WARN（task 声明 symbols=null 但 capability 未声明 supports_symbols_null=True）
+  category: data_source
+  severity: P2中
+  adjudication: >-
+    2026-07-23 立项裁定。根因：tasks.yaml 中 45 个独立 capability 配置 symbols=null（任务级"全市场扫描"语义），
+    但 Provider meta.capabilities 中对应 capability 以纯字符串声明（默认 supports_symbols_null=False），
+    导致 capability 契约校验失败产生 83 条 WARN（多时段调度累积重复触发）。WARN 不阻断启动但违反
+    CapabilityContract 设计意图（声明 symbols=null 的 capability 必须显式 supports_symbols_null=True 才被允许）。
+    治本：给 akshare_provider.py（23 个）/ miniqmt_provider.py（17 个）/ ifind_provider.py（5 个）
+    中所有违规 capability 改为 CapabilityContract(name, supports_symbols_null=True) 显式声明。
+    校验：3 个 provider 共 63 个 capability 已全部声明，缺失清单为 NONE。test_providers.py 同步更新
+    支持 CapabilityContract 对象的 capability_id 提取。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（23 个 CapabilityContract 声明）'
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（17 个 CapabilityContract 声明）'
+    - 'src/zephyr/data/implementations/ifind_provider.py（导入 CapabilityContract + 5 个 CapabilityContract 声明）'
+    - 'tests/zephyr/data/test_providers.py（test_all_15_capabilities_registered 兼容 CapabilityContract）'
+  fix_phase: 已完成施工（2026-07-23）。
+  status: decided
+  related_rules: 'AGENTS.md RULE-SSOT, 裁定 #ARCH-CH-018/#ARCH-CH-022'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-OPTION-GREEKS-001: option_greeks 数据停滞 07-10 根因（自动加载 symbols 缺失） ---
+- issue_id: '#ARCH-OPTION-GREEKS-001'
+  title: option_greeks_incremental 任务 symbols=null 时返回 rows=0，导致数据停滞 07-10（13 天未更新）
+  category: data_source
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定。根因：_fetch_option_greeks 第2908行使用 `symbols = payload.symbols or []`，
+    而 _fetch_option_iv_surface（第1956行）有 `payload.symbols or self._load_option_symbols_from_kline()`
+    自动加载逻辑。option_greeks 缺失自动加载逻辑，导致 symbols=null 时 for 循环空转返回 rows=0，
+    数据停留在最后一次手动传入 symbols 的 07-10。
+    治本：与 _fetch_option_iv_surface 一致，改为 `symbols = payload.symbols or self._load_option_symbols_from_kline()`，
+    当 option_kline 表有近30天数据时自动加载期权合约列表（约142个）。同时无 symbols 时 yield error
+    说明原因（option_kline 表无近30天数据），便于运维定位。
+    校验：option_kline 表已有 07-23 数据（100 行），_load_option_symbols_from_kline 可正常加载。
+  impact:
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（_fetch_option_greeks 自动加载 + 错误兜底）'
+  fix_phase: 已完成施工（2026-07-23）。
+  status: decided
+  related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 5.135治标'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'

@@ -383,7 +383,10 @@ class MiniQMTProvider(DataSourceBase):
         thread_safety="single_thread",
         rate_limit_default=0,
         capabilities=[
-            "kline_daily",
+            # 治本修复#ARCH-CAP-NULL-SYMBOLS-001（2026-07-23）：
+            # 所有声明 symbols=null 的 task 对应 capability 显式声明 supports_symbols_null=True，
+            # 消除 83 条 CAP-NULL-SYMBOLS WARN。
+            CapabilityContract("kline_daily", supports_symbols_null=True),
             "kline_1min",
             "kline_5min",
             # 分钟K线全市场批量（symbols=null fallback 到沪深A股板块，裁定 #ARCH-CH-022）
@@ -412,25 +415,26 @@ class MiniQMTProvider(DataSourceBase):
             "earnings_forecast",
             "express_report",
             "dividend",
-            "option_iv_surface",
-            "convertible_bond_iv",
-            "futures_term_structure",
-            "tick_data",
+            # symbols=null 时各自有自动加载逻辑（_load_*_from_kline 或全市场扫描）
+            CapabilityContract("option_iv_surface", supports_symbols_null=True),
+            CapabilityContract("convertible_bond_iv", supports_symbols_null=True),
+            CapabilityContract("futures_term_structure", supports_symbols_null=True),
+            CapabilityContract("tick_data", supports_symbols_null=True),
             "auction_snapshot",
-            "index_quote",
-            "stock_list",
+            CapabilityContract("index_quote", supports_symbols_null=True),
+            CapabilityContract("stock_list", supports_symbols_null=True),
             # 以下为第二批新增能力（15 个数据下载能力）
-            "kline_cb",
-            "option_kline",
-            "option_greeks",
-            "index_weight",
-            "sector_list",
+            CapabilityContract("kline_cb", supports_symbols_null=True),
+            CapabilityContract("option_kline", supports_symbols_null=True),
+            CapabilityContract("option_greeks", supports_symbols_null=True),
+            CapabilityContract("index_weight", supports_symbols_null=True),
+            CapabilityContract("sector_list", supports_symbols_null=True),
             "l2_tick",
-            "auction_data",
-            "auction_book",
-            "futures_kline_qmt",
-            "hk_kline",
-            "kline_us_daily",
+            CapabilityContract("auction_data", supports_symbols_null=True),
+            CapabilityContract("auction_book", supports_symbols_null=True),
+            CapabilityContract("futures_kline_qmt", supports_symbols_null=True),
+            CapabilityContract("hk_kline", supports_symbols_null=True),
+            CapabilityContract("kline_us_daily", supports_symbols_null=True),
             "etf_nav",
             "repurchase",
             "margin_trading_qmt",
@@ -2905,7 +2909,16 @@ class MiniQMTProvider(DataSourceBase):
             "trade_date", "symbol", "underlying", "strike", "expiry",
             "opt_type", "delta", "gamma", "theta", "vega", "data_source",
         ]
-        symbols = payload.symbols or []
+        # 治本修复#ARCH-OPTION-GREEKS-001（2026-07-23）：symbols=null 时自动加载
+        # 与 _fetch_option_iv_surface 一致，避免 for 循环空转返回 rows=0 导致数据停滞
+        symbols = payload.symbols or self._load_option_symbols_from_kline()
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="option_greeks 无 symbols 且 option_kline 表无近30天数据",
+            )
+            return
         last_key = self._date_to_str(payload.end)
 
         try:
