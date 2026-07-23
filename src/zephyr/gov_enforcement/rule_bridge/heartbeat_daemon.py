@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.shared.io.paths (REPO_ROOT)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon)
 # [STARTUP] manual
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
 # [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / idle 超 _MAX_IDLE_SECONDS）；_append_heartbeat_log 字段集
 # [STABILITY] evolving

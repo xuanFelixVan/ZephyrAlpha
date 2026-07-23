@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增/修改文件所在目录平铺文件数（排除 __init__.py/隐藏文件/子目录）> _HARD_LIMIT(120) 时阻断 commit；tests/ 豁免；git diff 不可达 fail-open（logger.warning）；文件系统扫描失败 fail-open；检出违规则 fail-closed（passed=False）
 # [MODIFY-GUARD] gate_id="FOLDER-CAPACITY-HARD-LIMIT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable

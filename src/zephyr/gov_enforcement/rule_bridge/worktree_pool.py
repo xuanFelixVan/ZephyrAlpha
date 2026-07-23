@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); zephyr.gov_enforcement.rule_bridge.worktree_manager (_force_rmtree 复用)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (session_worktree_start 调 pool.lease + pool.prefetch_async)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 预创建 worktree 池——session_worktree_start 时 pool.lease() 瞬时返回已预创建的 worktree（git worktree move 重定位 + git branch -m 重命名），消除每次 session 启动的 git worktree add 开销（Windows 14万文件工作区 ~2-5s）；pool 目录 .aidrafts_pool/（独立于 .aidrafts/，避免被 _sweep_stale_worktrees 误清——sweep 只扫 .aidrafts/ 直接子目录）；lease 失败（pool 空/move 失败/branch -m 失败）返回 None，调用方 fall back 到 manager.create_session_worktree（pool 是性能优化非功能必需，永远不阻断 session 启动）；prefetch_async 在 daemon 线程执行，不阻塞 session_worktree_start 返回；pool_id 格式 pool-{YYYYMMDDHHMMSS}-{4hex}（时间戳+随机，避免跨进程碰撞）；lease 后 prefetch_async(1) 补充池，维持 target_size；release 当前 no-op（worktree 由 merge/abort 删除，pool 通过 prefetch 补充而非 release 回收——简化设计，避免 dirty worktree 回收的复杂性）；线程安全——threading.Lock 保护 lease/prefetch/cleanup_stale；跨进程安全靠 git worktree 操作原子性（move/add 原子，失败时 pool_id 丢失但不损坏状态，cleanup_stale 兜底清理）；所有 git 调用设置 ZEPHYR_GIT_GUARD_FAST_PATH=1 跳过 git_guard alias 拦截（GIT-BUDGET-INV-003）
 # [MODIFY-GUARD] pool 目录前缀 .aidrafts_pool/；pool_id 命名前缀 pool-（branch 自动派生为 session/pool-{ts}-{rand}，复用 session/ 前缀避免双 pool- 前缀）
 # [STABILITY] evolving

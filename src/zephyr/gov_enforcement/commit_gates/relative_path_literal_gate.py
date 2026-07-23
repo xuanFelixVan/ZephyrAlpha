@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.gov_enforcement.commit_gates._diff_helpers (_extract_docstring_lines, _is_exempt_line, _parse_diff_with_line_numbers, _read_staged_file)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py 文件 added 行含字符串字面量 "./" / "../" / "~/" 开头的相对路径时阻断 commit（豁免 Path(__file__) 上下文/import/注释/docstring）；tests/ 豁免；git diff 不可达 fail-open；检出违规则 fail-closed（passed=False）
 # [MODIFY-GUARD] gate_id="RELATIVE-PATH-LITERAL"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable

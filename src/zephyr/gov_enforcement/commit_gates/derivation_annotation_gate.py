@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.gov_enforcement.commit_gates._diff_helpers (_parse_diff_with_line_numbers, _read_staged_file)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py/.yaml 文件含 # [DERIVES_FROM] <path> 声明但 <path> 源文件不存在时阻断 commit；tests/ 豁免；git diff 不可达 fail-open；文件读取失败 fail-open；检出违规则 fail-closed（passed=False）
 # [MODIFY-GUARD] gate_id="DERIVATION-ANNOTATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable

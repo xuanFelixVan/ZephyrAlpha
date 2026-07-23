@@ -10,7 +10,7 @@
 
 # [STARTUP] imported
 
-# [MATURITY] design
+# [MATURITY] production
 
 # [INVARIANTS] post-commit 事件触发（仅当 staged .py 文件命中 cross_layer_contracts.yaml 中任一 physical_path，或 YAML 自身被修改时触发）；reconciler 永不抛异常（异常降级为 warn）；只读 git show HEAD~1:path 获取旧版本（不修改工作区）；签名漂移持久化到 governance.db drift_audit_findings 表（severity=HIGH）；AST 解析失败降级为 warn（不阻断）
 

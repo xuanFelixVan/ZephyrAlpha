@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged trae_*.yaml 无 enforcement.paired_gate_id 时阻断；null 允许（文档型）；字符串须在 gate_registry 注册；[no-pairing:reason] 逃生通道；gate_registry 不可达 fail-open；YAML 解析失败 fail-closed
 # [MODIFY-GUARD] gate_id="RULE-EXECUTION-PAIRING"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
