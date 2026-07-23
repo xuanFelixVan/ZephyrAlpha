@@ -351,7 +351,7 @@ class GitCommitGateway:
         self._register_default_reconcilers()
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
-        # Phase 4 迁移（#ARCH-GATE-REGISTRY-AUTO-001）：76 个显式 register 替换为 auto_register_gates 调用
+        # Phase 4 迁移（#ARCH-GATE-REGISTRY-AUTO-001）：82 个显式 register 替换为 auto_register_gates 调用
         auto_register_gates(self._gate_registry, self.project_root)
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）

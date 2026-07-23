@@ -17,7 +17,7 @@ from typing import Final
 # [A_module] module_id=MOD-UNK-slo_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""SLO/SLI 管理器（CT-SLO-001）——14条CT-* p95/p99目标 + Error Budget。
+"""SLO/SLI 管理器（CT-SLO-001）——12条CT-* p95/p99目标 + Error Budget。
 
 5.39.6 治本：原 SLOManager 定义后从未实例化（死代码）。现提供
 ``get_slo_manager()`` 单例 + ``subscribe_eventbus()`` 事件驱动接入——

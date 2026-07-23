@@ -37,9 +37,9 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 81
+total_gates: 82
 gates:
-# --- 76 个 in-process gate（从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21）---
+# --- 82 个 in-process gate（从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21）---
 - gate_id: HELD-OVERLAP
   module_path: zephyr.gov_enforcement.commit_gates.held_overlap_gate
   factory_function: make_held_overlap_gate

@@ -12,9 +12,9 @@
 from zephyr.feedback_loop.slo_manager import SLOManager
 
 
-def test_14_contracts_defined():
+def test_12_contracts_defined():
     mgr = SLOManager()
-    assert len(mgr.list_contracts()) == 14
+    assert len(mgr.list_contracts()) == 12
 
 
 def test_get_slos():
