@@ -133,8 +133,8 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.31 | 构建打包 | Docker CMD 指向幻影模块 + 无 .dockerignore + 版本号三重真源 + 非多阶段构建 | 根因 5 | CI build-package / docker-build job（R102 新增） | FIXED |
 | 5.32 | 数据迁移策略 | 硬编码 Win 路径 + TRUNCATE 后失败全损 + 零测试 + 迁移孤儿 | 根因 4 | 迁移测试套件（tests/governance/test_migrate_sqlite_to_pg.py） | FIXED |
 | 5.33 | 容灾与备份 | PG 无 pg_dump + 备份工具过时 + 无 RTO/RPO + 单机 SPOF | 根因 1 | BACKUP-RECONCILER + Restic 加密备份 + config/dr_policy.yaml | PERMANENT-2 |
-| 5.34 | 环境隔离 | ZEPHYR_ENV 与枚举不匹配 + 测试 SQLite 生产 PG + is_prod() 零调用 | 根因 4 | PG 测试双轨（ZEPHYR_TEST_PG）+ is_prod() 生产写守卫 + M30 ZEPHYR_ENV 直接访问监控（warn-only） | FIXED |
-| 5.35 | API 版本管理 | MCP 工具无 version + api_version_contract 死代码 + 无 deprecation | 根因 5 | mcp.json version 字段 + ERR_API_SUNSET 入 MCP 管道 + M31 MCP version 字段覆盖监控（warn-only） | FIXED |
+| 5.34 | 环境隔离 | ZEPHYR_ENV 与枚举不匹配 + 测试 SQLite 生产 PG + is_prod() 零调用 | 根因 4 | PG 测试双轨（ZEPHYR_TEST_PG）+ is_prod() 生产写守卫 + M30 ZEPHYR_ENV 直接访问监控（warn-only）+ ZEPHYR-ENV-DIRECT-ACCESS gate（P0 硬阻断 src/zephyr/ 新增直访，noqa: e34-env 豁免） | FIXED |
+| 5.35 | API 版本管理 | MCP 工具无 version + api_version_contract 死代码 + 无 deprecation | 根因 5 | mcp.json version 字段 + ERR_API_SUNSET 入 MCP 管道 + M31 MCP version 字段覆盖监控（warn-only）+ MCP-VERSION-FIELD gate（P0 硬阻断 mcp.json 缺 version 字段） | FIXED |
 | 5.36 | 限流与配额 | 5 套限流器碎片化 + 无 per-user 配额 + TokenBucket 竞态 + 配置不加载 | 根因 5 | shared/infra/limiter.py canonical + ERR_RATE_LIMITED + alert_rules.yaml | FIXED |
 | 5.37 | 审计日志完整性 | write_to_core no-op + verify() 永返 True + Merkle stub + 裸 git commit | 根因 5 | events.jsonl hash chain + GitCommitGateway._commit_auto | FIXED |
 | 5.38 | 特性开关 | 4 套系统碎片化 + global_flag_registry 零调用 + 默认 ON 违反安全默认 | 根因 5 | shared/foundation/flags.py canonical + _feature_flag_enabled 守护点 | FIXED |
@@ -157,14 +157,14 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.96 | 布尔参数蔓延 | TriggerDecision 3 布尔冗余 + _calculate_trust 3 布尔 + 行为切换布尔 | 根因 5 | GATE-DEBT-BRIDGE（DEBT-1/2/3，commit + CI 双硬阻断） | FIXED |
 | 5.97 | 深层嵌套与圈复杂度 | evolve 148 行 5 层 + register_boot_hooks 130 行 7 闭包 + dispatch 104 行 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85） | FIXED |
 | 5.99 | 错误消息一致性 | SQL 泄露 + 中英混用 + 异常类型不一致 + MCP 错误码不统一 | 根因 5 | MSG-EXPOSURE（83）+ MSG-STYLE + error_code_registry.yaml SSoT | FIXED |
-| 5.100 | 异步资源生命周期 | limiter 锁反模式 + pipeline 死锁 + 阻塞 IO + get_event_loop 弃用 + asyncio.run 高频 | 根因 5 | M23 asyncio 调用监控（warn-only，AGENTS.md 异步 IO 最佳实践规则约束）+ R103 治本（commit `9d2b7d498f`） | FIXED |
+| 5.100 | 异步资源生命周期 | limiter 锁反模式 + pipeline 死锁 + 阻塞 IO + get_event_loop 弃用 + asyncio.run 高频 | 根因 5 | M23 asyncio 调用监控（warn-only，AGENTS.md 异步 IO 最佳实践规则约束）+ R103 治本（commit `9d2b7d498f`）+ ASYNCIO-RUN-IN-CONTEXT gate（P0 硬阻断 src/zephyr/ 新增 asyncio.run/get_event_loop/new_event_loop，noqa: a100-asyncio 豁免） | FIXED |
 | 5.101 | 变量遮蔽与命名冲突 | 参数遮蔽 id + 42 处数据类字段遮蔽内置名 + 6 处模块名冲突标准库 | 根因 5 | M24 字段遮蔽计数监控（warn-only，R80 裁定不新增 gate，directory_contract 维护模块名） | PERMANENT-12 |
-| 5.114 | Final/@final 强制 | 可变 dict 常量无 Final + 375 处模块级常量未标 Final + @final 零使用 | 根因 5 | M25 模块级常量未标 Final 监控（warn-only，已全量标注完成，安全敏感类已加 @final） | FIXED |
+| 5.114 | Final/@final 强制 | 可变 dict 常量无 Final + 375 处模块级常量未标 Final + @final 零使用 | 根因 5 | M25 模块级常量未标 Final 监控（warn-only，已全量标注完成，安全敏感类已加 @final）+ MUTABLE-CONST-WITHOUT-FINAL gate（P0 硬阻断 src/zephyr/ 新增模块级可变常量缺 Final，noqa: n114-final 豁免） | FIXED |
 | 5.138 | 循环引用风险 | 根 __init__ Timer 延迟规避循环 + 包内循环 + try/except ImportError 容错 | 根因 5 | —（实证无真实循环链，已改模块级直接 import） | FIXED |
 | 5.139 | TODO/FIXME 技术债务标记 | 仅 1 处真实 TODO（已关联工单），代码库技术债务标记极清洁 | —（零检出维度） | M26 TODO/FIXME 计数监控（warn-only） | FIXED |
 | 5.140 | 函数复杂度过高 | dispatch 461 行/7 层/30+ 分支 + integration 模块 8 个超标函数 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85）+ R103 治本（commit `9d2b7d498f`） | FIXED |
 | 5.143 | API 契约一致性 | LSP 违规 + Protocol 误用为基类 + 13 组重复 ABC 各自独立 _registry | 根因 1/5 | ssot_redefinition_gate + cross_layer_contracts.yaml SSoT | PERMANENT-14 |
-| 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | M27 open() 未在 with 监控（warn-only，异常隔离 + finally 模式已批量落地） | FIXED |
+| 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | M27 open() 未在 with 监控（warn-only，异常隔离 + finally 模式已批量落地）+ OPEN-WITHOUT-WITH gate（P0 硬阻断 src/zephyr/ 新增 open() 未在 with 内，noqa: r144-open 豁免） | FIXED |
 | 5.145 | 类型注解完整性 | 34 个文件 Any 滥用 >5 处 + audit_trail 三件套完全无类型 + 隐藏 NameError | 根因 5 | GATE-ANY-ABUSE（Phase 3 commit 阻断）+ mypy 加严（disallow_any_generics） | FIXED |
 | 5.147 | 序列化/反序列化安全 | joblib.load 无校验 + MCP Content-Length 无上限 + json.dumps(default=str) 类型丢失 | 根因 5 | UNSAFE-DICT-SPREAD gate（66）+ serialization.py SSoT（dumps/filter_dataclass_fields） | FIXED |
 | 5.150 | 设计模式误用 | God Class 3 处 + Shotgun Surgery 4 处 + Long Parameter List 3 处 + Data Class | 根因 5 | —（R102 裁定 EXECUTE 测试先行；设计模式 AST gate 列为可选未来专项） | PERMANENT-2 |
