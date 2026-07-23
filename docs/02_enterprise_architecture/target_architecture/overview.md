@@ -44,7 +44,7 @@ ttl: permanent
 - **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）由`depgraph (PostgreSQL)`派生，禁止在MD中硬编码。
 - **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 正交划分开发态和运行态关注点
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ Phase 退出准入双门协议门禁
-- **安全红线**：4 条不可撤销（详见 [architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md) §1）
+- **安全红线**：4 条不可撤销（详见 [architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md) §2）
 - **技术栈**：Python >=3.11 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
 - **当前阶段**：experimental 启动，53域已定义，模块边界待定
 
@@ -148,8 +148,8 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | Tree / 树 | Primary view / 核心视图归属 | Key diagrams / 主要图 | Owner document / 归属文档 |
 |----------|--------------------------|---------------------|--------------------------|
 | `docs/` | Information Architecture | `docs/` 抽屉拓扑图 + 文档生命周期图 | `information_architecture.md` |
-| `src/` | Application Architecture | C4-L1 系统上下文 + C4-L2 容器图 + 域依赖图 | `application_architecture.md` |
-| `scripts/` | Application Architecture (sub-view) | 治理代码拓扑图 + pre-commit/CI 钩子流程图 | `application_architecture.md §4` |
+| `src/` | Application Architecture | C4-L1 系统上下文 + C4-L2 容器图 + 域依赖图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
+| `scripts/` | Application Architecture (sub-view) | 治理代码拓扑图 + pre-commit/CI 钩子流程图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
 
 > **v2.0.0变更**：原"14层代码分层图"改为"域依赖图"，由`generate_domain_dependency_diagram.py`从depgraph派生。
 
@@ -170,7 +170,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | KBG-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed | 6 大核心服务之一 |
 | KBG-0021 | SSoT Validator：scaffold 唯一任务，阻塞下游 | scaffold 门禁 |
 
-> **注（v2.1.0）**：6 大核心服务的详细架构图 / 服务间依赖 DAG / 降级协调矩阵真源在 [`application_architecture.md §4A`](./application_architecture.md) 及各服务接口规范文档。
+> **注（v2.1.0）**：6 大核心服务的详细架构图 / 服务间依赖 DAG / 降级协调矩阵真源在 [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) 及各服务接口规范文档。
 
 ---
 
@@ -184,7 +184,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 |------|------------|--------|----------|
 | [01-BA 业务架构](./business_architecture.md) | §8 Architecture Runway | 5 条 | 战略层 |
 | [02-IA 信息架构](./information_architecture.md) | §11 Architecture Runway | 3 条 | 信息/数据层 |
-| [03-AA 应用架构](./application_architecture.md) | §11 Architecture Runway | 22 条 | 应用组件层 |
+| [03-AA 应用架构](../04_architecture_principles_decisions/application_principles.md) | Architecture Runway（原 §11，已迁移至 principles）| 22 条 | 应用组件层 |
 | [04-TA 技术架构](./technology_architecture.md) | §14 Architecture Runway | 7 条 | 基础设施层 |
 | **合计** | — | **37 条** | 全层覆盖 |
 

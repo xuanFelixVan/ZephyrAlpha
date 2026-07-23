@@ -12,8 +12,8 @@ schema_version: "3.0"
 partition:
   id: cross-cutting-runtime-planes
   name: Runtime Planes
-  description: Hot/Warm/Cold 运行平面标注（来源：runtime_planes.md v1.0.0，KBG-0011 accepted）
-  source_view: runtime_planes.md
+  description: Hot/Warm/Cold 运行平面标注（来源：runtime_planes_principles.md，KBG-0011 accepted）
+  source_view: runtime_planes_principles.md
   related_kb_ref: [KBG-0011]
   activation_note: >
     当前（2026-04-21）处于 Warm-only 阶段（T0）。

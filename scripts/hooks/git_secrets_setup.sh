@@ -2,7 +2,7 @@
 # git_secrets_setup.sh — 部署 git-secrets pre_commit hook
 #
 # 对标 06-security_architecture.md §6.3 Secret 三道防线 L2-Pre-commit
-#      architecture_principles.md §1bis R1 门禁
+#      architecture_principles.md §2bis R1 门禁
 #
 # 功能：
 #   1. 检查 git-secrets 是否已安装

@@ -21,7 +21,7 @@ ZephyrAlpha — shared/contracts/runtime_plane_tag.py
 
 Runtime Plane 契约预留（Orthogonal View Runtime Plane Tag Contract）。
 
-🔒 **契约预留（Reserved Contract）**：本文件定义 `runtime_planes.md` 正交视图所用的
+🔒 **契约预留（Reserved Contract）**：本文件定义 `runtime_planes_principles.md` 正交视图所用的
 运行平面枚举 + 模块标注协议。**当前阶段 ZephyrAlpha 处于 Warm Path only，本契约仅定义类型
 与 docstring 规范，不作为运行时强制校验**——只在模块 metadata / 文档 / 架构静态分析脚本里使用。
 
@@ -29,13 +29,13 @@ Runtime Plane 契约预留（Orthogonal View Runtime Plane Tag Contract）。
 【用途】
 ═══════════════════════════════════════════════════════════════════════
 1. 为每个 D_DATA~实验 + shared + frontend + scripts 模块声明所属 **Runtime Plane**
-   （Hot / Warm / Cold），作为 `runtime_planes.md` 正交视图的机器可读元数据。
+   （Hot / Warm / Cold），作为 `runtime_planes_principles.md` 正交视图的机器可读元数据。
 2. 未来 Hot Path 激活时（T1 真实资金或 T-ENDGAME 顶级对标触发），本契约升级为
    **运行时强制校验**（PR lint + CI gate + 架构一致性扫描脚本消费）。
 3. 当前（Warm Path only）本契约仅作为**文档级标注**，等价于一个"加强版的 module docstring"。
 
 ═══════════════════════════════════════════════════════════════════════
-【三档 Runtime Plane 定义】（与 runtime_planes.md §2 对齐）
+【三档 Runtime Plane 定义】（与 runtime_planes_principles.md §2 对齐）
 ═══════════════════════════════════════════════════════════════════════
 - **HOT**（Hot Path）:
     * 延迟预算：< 10ms 端到端（tick-to-trade 硬实时）
@@ -90,9 +90,9 @@ D_FRONTEND api_gateway 的订单提交端点）。Hot-adjacent 模块在 Warm Pa
 应通过 `__runtime_plane_adjacency__ = ("HOT",)` 附加声明。
 
 ═══════════════════════════════════════════════════════════════════════
-【与 runtime_planes.md 的关系】
+【与 runtime_planes_principles.md 的关系】
 ═══════════════════════════════════════════════════════════════════════
-- runtime_planes.md 是架构视图，定义平面划分方法论、业务归属矩阵、通信协议、激活触发器
+- runtime_planes_principles.md 是架构视图，定义平面划分方法论、业务归属矩阵、通信协议、激活触发器
 - 本文件（runtime_plane_tag.py）是**契约载体**，定义枚举 + 标注协议 + 常量
 - 改动本文件枚举值 / 标注协议 -> 必须先改 runtime-planes 视图 + ADR-0011 升级 -> 再改本文件
 - 当前本文件版本 v1.0.0 对齐 runtime-planes v1.0.0 + ADR-0011 v1.0.0

@@ -26,7 +26,7 @@ partition:
     与 05-DA §2 Entity 清单严格映射，无虚构实体。
     来源：ddd-aggregates.md v1.0.0 迁移。
   source_views:
-    - 03-application_architecture.md
+    - application_principles.md
     - 05-data_architecture.md
   related_kb_refs:
     - KBG-0009

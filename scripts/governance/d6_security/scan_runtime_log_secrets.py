@@ -14,7 +14,7 @@
 # [TESTS]
 # [TTL] permanent
 """
-对标 architecture_principles.md §1bis R2 安全红线：
+对标 architecture_principles.md §2bis R2 安全红线：
   "日志输出禁止包含密钥/Token/Secret 值"
 
 检测方式：
@@ -32,7 +32,7 @@ from __future__ import annotations
 __manifest__ = """
 args:
 - --warn-only
-description: R2 日志不写 secret 运行时扫描（architecture-principles §1bis R2 — P0安全红线）
+description: R2 日志不写 secret 运行时扫描（architecture-principles §2bis R2 — P0安全红线）
 dimensions:
 - D6
 priority: P0

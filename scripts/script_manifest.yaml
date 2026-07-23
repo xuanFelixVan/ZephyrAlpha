@@ -336,7 +336,7 @@ scripts:
   dimensions: []
 - name: arch_guard/fitness_functions/check_log_secret_leak.py
   path: arch_guard/fitness_functions/check_log_secret_leak.py
-  description: 对标 architecture_principles.md §1 R2（日志不写 secret）。
+  description: 对标 architecture_principles.md §2 R2（日志不写 secret）。
   domain: arch_guard
   execution_plane: warm-path
   status: registered
@@ -2456,7 +2456,7 @@ scripts:
   dimensions: []
 - name: governance/d6_security/scan_runtime_log_secrets.py
   path: governance/d6_security/scan_runtime_log_secrets.py
-  description: 对标 architecture_principles.md §1bis R2 安全红线：
+  description: 对标 architecture_principles.md §2bis R2 安全红线：
   domain: governance
   execution_plane: warm-path
   status: registered

@@ -132,9 +132,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | overview.md | 架构总览（v2.0.0：53域+全景图派生）|
 | business_architecture.md | BA 业务架构视图 |
 | information_architecture.md | IA 信息架构视图 |
-| application_architecture.md | AA 应用架构视图（v2.0.0：域派生模块清单）|
 | technology_architecture.md | TA 技术架构视图 |
-| runtime_planes.md | 运行时平面正交视图 |
 | capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
 | data_architecture.md | DA 数据架构视图 |
 | security_architecture.md | SEC 安全架构视图 |
@@ -142,7 +140,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | operations_architecture.md | OPS 运维架构视图 |
 | governance_architecture.md | GOV 治理架构视图 |
 | frontend_architecture.md | FE 前端架构视图 |
-| architecture_principles.md | 架构原则 SSoT（R1-R4 安全红线 + BvB + 准入铁律）|
 | architecture_endgame_locked.md | 架构终局锁定声明（Draft 占位，beta 完成后激活）|
 | dimension_audit_matrix.md | 12维架构质量评分矩阵（score_architecture.py 真源）|
 | session_carryover_schema.md | AI会话接续Schema（contract 类型，暂放 target_architecture）|
@@ -174,9 +171,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `overview.md` | Cross-layer | 整体架构哲学？53域如何组织？ | 架构师、新加入者 | active |
 | `business_architecture.md` | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | `information_architecture.md` | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
-| `application_architecture.md` | AA | 系统有哪些应用/模块？域如何划分？ | 开发者、架构师 | active |
 | `technology_architecture.md` | TA | 用什么技术栈？ | SRE、实施者 | active |
-| `runtime_planes.md` 🔷 **正交视图 1** | Orthogonal | 运行平面怎么切分？ | 架构师、SRE | active |
 | `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
 | `data_architecture.md` | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
@@ -196,7 +191,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 **Architect / 架构师**：`overview.md` → `generated/domain_index.md` → 按域读`generated/domains/*.md`
 
-**Developer / 开发者**：`application_architecture.md` → `generated/domains/<相关域>.md` → `integration_architecture.md`
+**Developer / 开发者**：`../04_architecture_principles_decisions/application_principles.md` → `generated/domains/<相关域>.md` → `integration_architecture.md`
 
 **AI collaborator / AI 协作者**：`generated/domain_index.md`（全局索引）→ 按需读取`generated/domains/*.md` → `overview.md`（设计哲学）
 
@@ -206,7 +201,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 > **📊 视图依赖关系总览**：见 [`diagrams/readme_view_dependency_graph.mmd`](diagrams/readme_view_dependency_graph.mmd)
 
-**正交视图说明**：`04bis` 和 `04ter` 是 TOGAF 10 视图之外的正交视图，提供运行平面/能力成熟度的额外切片标注。
+**正交视图说明**：`04ter`（capability_heatmap）是 TOGAF 10 视图之外的正交视图，提供能力成熟度的额外切片标注。原 `04bis` runtime_planes 正交视图已迁移至 [`runtime_planes_principles.md`](../04_architecture_principles_decisions/runtime_planes_principles.md) + [`runtime_planes.yaml`](../../../architecture_model/cross_cutting/runtime_planes.yaml)。
 
 **反向约束**：TA 成本限制 → AA 范围 → IA 范围 → BA 野心。
 

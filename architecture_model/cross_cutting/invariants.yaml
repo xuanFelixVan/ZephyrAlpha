@@ -12,19 +12,19 @@ schema_version: "2.0"
 partition:
   id: cross-cutting-invariants
   name: Architecture Invariants
-  description: "不变量集合（资金安全 / PIT 铁律 / ACL 边界 / 幂等 / 跨平面通信）�? 来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §3.5 + 03-application_architecture.md + 09-governance_architecture.md + KBG-0008 / KBG-0009 / KBG-0010�?"
+  description: "不变量集合（资金安全 / PIT 铁律 / ACL 边界 / 幂等 / 跨平面通信）。 来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §3.5 + application_principles.md + 09-governance_architecture.md + KBG-0008 / KBG-0009 / KBG-0010。"
   source_views:
     - ARCHITECTURE-AS-CODE-PLAN-v2.0.md §3.5
-    - 03-application_architecture.md
+    - application_principles.md
     - 09-governance_architecture.md
-    - 04bis-runtime_planes.md §4.2
+    - runtime_planes_principles.md §4.2
   related_kb_refs: [KBG-0005, KBG-0007, KBG-0008, KBG-0009, KBG-0010, KBG-0011]
 
 invariants:
 
   - id: INV-001
     category: capital_safety
-    statement: "Kill Switch 延迟 < 1ms：风控硬拦截必须�?1ms 内触发熔�?"
+    statement: "Kill Switch 延迟 < 1ms：风控硬拦截必须在1ms 内触发熔断"
 
     owner: D_RISK
     sub_owner: D_RISK / D_RISK
@@ -34,11 +34,11 @@ invariants:
     violation_action: halt_trading
     priority: P0
     runtime_plane: hot
-    activation_trigger: T1 真实资金接入后激活硬检�?
+    activation_trigger: T1 真实资金接入后激活硬检查
 
   - id: INV-002
     category: capital_safety
-    statement: "单一持仓限制 �?5% NAV：任何单个仓位不得超过净资产价值的 5%"
+    statement: "单一持仓限制 ≤5% NAV：任何单个仓位不得超过净资产价值的 5%"
     owner: D_RISK
     sub_owner: D_RISK
     enforcement: fitness_function
@@ -47,7 +47,7 @@ invariants:
     violation_action: reject_order
     priority: P0
     runtime_plane: hot
-    note: 参数配置�?config/risk_params.yaml（三平面共享同一参数文件�?
+    note: 参数配置在config/risk_params.yaml（三平面共享同一参数文件）
 
   - id: INV-003
     category: capital_safety
@@ -73,10 +73,10 @@ invariants:
     violation_action: fail_backtest
     priority: P0
     runtime_plane: cold
-    note: "所有因子计算必须严格以截止日期 T 时刻的已知数据为输入�? F 函数在每次回�?pipeline 触发时自动检�?forward-fill 泄露�?"
+    note: "所有因子计算必须严格以截止日期 T 时刻的已知数据为输入。 F 函数在每次回测pipeline 触发时自动检查forward-fill 泄露。"
   - id: INV-005
     category: boundary_integrity
-    statement: "Broker ACL 边界：仅 `src/zephyr/ex_core/adapters/`（Python 包路�?`ex_core`�? EA 分层条目�?`域归属 D_EX_CORE`）可调用 Broker API；其他层禁止直连�?"
+    statement: "Broker ACL 边界：仅 `src/zephyr/ex_core/adapters/`（Python 包路径`ex_core`、 EA 分层条目，`域归属 D_EX_CORE`）可调用 Broker API；其他层禁止直连。"
     owner: D_EX_CORE
     sub_owner: D_EX_CORE
     enforcement: arch_guard
@@ -85,10 +85,10 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: hot
-    note: "�?import-linter / arch_guard �?CI 中强制检查�? 任何跨过 ACL 边界�?import 路径都会导致 pipeline 失败�?"
+    note: "由import-linter / arch_guard 在CI 中强制检查。 任何跨过 ACL 边界的import 路径都会导致 pipeline 失败。"
   - id: INV-006
     category: boundary_integrity
-    statement: "前后端唯一接触点：前端只能通过 L08 api_gateway 访问后端，禁止前端直接调用任何内部服�?"
+    statement: "前后端唯一接触点：前端只能通过 L08 api_gateway 访问后端，禁止前端直接调用任何内部服务"
 
     owner: D_FRONTEND
     sub_owner: D_FRONTEND
@@ -98,11 +98,11 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: warm
-    note: KBG-0007 Frontend Platform 的核心边界约�?
+    note: KBG-0007 Frontend Platform 的核心边界约束
 
   - id: INV-007
     category: idempotency
-    statement: "所有跨层事件必须携带幂�?Key（Idempotency Key）：防止重复处理"
+    statement: "所有跨层事件必须携带幂等Key（Idempotency Key）：防止重复处理"
     owner: shared-contracts
     sub_owner: shared / contracts / base_event.py
     enforcement: fitness_function
@@ -115,7 +115,7 @@ invariants:
 
   - id: INV-008
     category: boundary_integrity
-    statement: "跨层依赖方向：低层不�?import 高层（L00 不得 import L04+），依赖只能向上"
+    statement: "跨层依赖方向：低层不能import 高层（L00 不得 import L04+），依赖只能向上"
     owner: D_INFRA_OPS
     sub_owner: shared-contracts
     enforcement: arch_guard
@@ -124,10 +124,10 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: all
-    note: "域架构的核心依赖方向约束�? import-linter �?CI 中检测所�?Python import 路径�?"
+    note: "域架构的核心依赖方向约束。 import-linter 在CI 中检测所有Python import 路径。"
   - id: INV-009
     category: capital_safety
-    statement: "OCP 契约冻结：shared/contracts/ 中的接口一�?release，不得修改签名（只能扩展�?"
+    statement: "OCP 契约冻结：shared/contracts/ 中的接口一旦release，不得修改签名（只能扩展）"
 
     owner: shared-contracts
     sub_owner: shared / contracts / _frozen_signatures / 
@@ -137,10 +137,10 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: all
-    note: "F24 OCP 契约冻结机制�? frozen_signatures/ 快照�?Sprint 10 激活后对所有发布契约作 hash 校验�?"
+    note: "F24 OCP 契约冻结机制。 frozen_signatures/ 快照在Sprint 10 激活后对所有发布契约作 hash 校验。"
   - id: INV-010
     category: data_integrity
-    statement: "PIT 契约统一：Cold / Warm / Hot 三平面必须共�?shared/contracts/ canonical schema，不允许任何平面独立发明 schema"
+    statement: "PIT 契约统一：Cold / Warm / Hot 三平面必须共享shared/contracts/ canonical schema，不允许任何平面独立发明 schema"
     owner: shared-contracts
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/check_schema_consistency.py
@@ -148,10 +148,10 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: all
-    note: "Sim-to-Real Gap 保障机制核心约束�? 特别针对 MarketImpactModel / WeightPortfolio / OrderBook / FillEvent / Timestamp 五类契约�?"
+    note: "Sim-to-Real Gap 保障机制核心约束。 特别针对 MarketImpactModel / WeightPortfolio / OrderBook / FillEvent / Timestamp 五类契约。"
   - id: INV-011
     category: boundary_integrity
-    statement: "Cold �?Hot 禁止直接通信：Cold Path 输出必须先落 Warm Path 并经影子验证后方可进�?Hot Path"
+    statement: "Cold 与Hot 禁止直接通信：Cold Path 输出必须先落 Warm Path 并经影子验证后方可进入Hot Path"
     owner: D_INTELLIGENCE
     sub_owner: D_INTELLIGENCE / D_INTELLIGENCE
     enforcement: arch_guard
@@ -160,7 +160,7 @@ invariants:
     violation_action: reject_deployment
     priority: P0
     runtime_plane: cross
-    note: 任何绕过 Champion-Challenger shadow validation �?Cold→Hot 直通部署均违反此不变量
+    note: 任何绕过 Champion-Challenger shadow validation 的Cold→Hot 直通部署均违反此不变量
 
   - id: INV-012
     category: boundary_integrity
@@ -173,7 +173,7 @@ invariants:
     violation_action: reject_commit
     priority: P0
     runtime_plane: hot
-    note: Python GIL + asyncio 延迟不可预测，Hot �?Warm 等同�?Hot 降级�?Warm
+    note: Python GIL + asyncio 延迟不可预测，Hot 与Warm 等同于Hot 降级为Warm
 
   - id: INV-013
     category: capital_safety
@@ -185,11 +185,11 @@ invariants:
     violation_action: fail_deployment
     priority: P0
     runtime_plane: all
-    note: 防止三平面参数漂移导�?Sim-to-Real Gap
+    note: 防止三平面参数漂移导致Sim-to-Real Gap
 
   - id: INV-014
     category: data_integrity
-    statement: "Survivorship Bias 零容忍：回测数据集必须包含退�?停牌标的，不得使用存活者偏差数�?"
+    statement: "Survivorship Bias 零容忍：回测数据集必须包含退市停牌标的，不得使用存活者偏差数据"
 
     owner: D_MKT_DATA
     sub_owner: D_MKT_DATA / D_MKT_DATA
@@ -199,11 +199,11 @@ invariants:
     violation_action: fail_backtest
     priority: P0
     runtime_plane: cold
-    note: �?PIT 铁律（INV-004）协同，共同保证回测数据完整�?
+    note: 与PIT 铁律（INV-004）协同，共同保证回测数据完整性
 
   - id: INV-015
     category: boundary_integrity
-    statement: "AISG 拦截门禁：所�?AI 生成的代�?/ 指令必须�?L10 AISG security_gateway 拦截验证后才能执�?"
+    statement: "AISG 拦截门禁：所有AI 生成的代码/ 指令必须经L10 AISG security_gateway 拦截验证后才能执行"
 
     owner: D_GOV_ENFORCEMENT
     sub_owner: D_GOV_ENFORCEMENT
@@ -213,10 +213,10 @@ invariants:
     violation_action: reject_ai_action
     priority: P0
     runtime_plane: warm
-    note: "AISG = AI Security Gateway（D-01 D 家族），六模块中 security_gateway �?Hot-adjacent�? 50ms）�? 任何跳过 AISG �?AI 指令执行均违反此不变量�?"
+    note: "AISG = AI Security Gateway（D-01 D 家族），六模块中 security_gateway 是Hot-adjacent（ 50ms）。 任何跳过 AISG 的AI 指令执行均违反此不变量。"
   - id: INV-016
     category: boundary_integrity
-    statement: "审计日志不可篡改：policy_decision_ledger.jsonl 仅允�?append-only 写入，禁止删�?修改历史记录"
+    statement: "审计日志不可篡改：policy_decision_ledger.jsonl 仅允许append-only 写入，禁止删除修改历史记录"
     owner: D_GOV_ENFORCEMENT
     sub_owner: scripts / audit_log / decision_provenance.py
     enforcement: fitness_function
@@ -225,7 +225,7 @@ invariants:
     violation_action: reject_commit
     priority: P1
     runtime_plane: cold
-    note: F25 Decision Provenance 机制的核心约�?
+    note: F25 Decision Provenance 机制的核心约束
 
   - id: INV-017
     category: ssot_capital
@@ -252,7 +252,7 @@ invariants:
 
   - id: INV-019
     category: boundary_integrity
-    statement: "Warm→Cold 必须通过 Parquet/Redis Streams 异步通信，禁止同步阻�?"
+    statement: "Warm→Cold 必须通过 Parquet/Redis Streams 异步通信，禁止同步阻塞"
 
     owner: ZephyrAlpha-Owner
     sub_owner: "l05-optimization / D_ML_SERVE / shared-runtime-plane-tag"
@@ -264,7 +264,7 @@ invariants:
 
   - id: INV-020
     category: boundary_integrity
-    statement: "跨运行时平面禁止共享可变全局状�?"
+    statement: "跨运行时平面禁止共享可变全局状态"
 
     owner: ZephyrAlpha-Owner
     sub_owner: "shared-contracts / shared-utils"
@@ -291,5 +291,5 @@ summary:
     cold: 3
     all: 10
     cross: 1
-  gate_03_status: "GATE-03 前置条件：所有不变量均有 owner �?enforcement 字段 �?"
+  gate_03_status: "GATE-03 前置条件：所有不变量均有 owner 和enforcement 字段。"
   last_updated: "2026-05-06"

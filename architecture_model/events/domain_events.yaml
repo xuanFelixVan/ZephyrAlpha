@@ -26,7 +26,7 @@ partition:
     当前运行时：单进程架构，事件通过进程内回调分发（非消息总线）。
     来源：domain-event-catalog.md v1.0.0 迁移。
   source_views:
-    - 03-application_architecture.md
+    - application_principles.md
   related_kb_refs:
     - KBG-0009
 
