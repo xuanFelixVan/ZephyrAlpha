@@ -1,7 +1,7 @@
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
 
-# [BLUEPRINT] MOD-GOV-analyze_orphan_consumers
+# [BLUEPRINT] MOD-GOV_ANALYZE_ORPHAN_CONSUMERS
 # [MODULE]# [MODULE] scripts.governance.analyze_orphan_consumers
 # [DOMAIN]
 # [DEPENDENCIES]

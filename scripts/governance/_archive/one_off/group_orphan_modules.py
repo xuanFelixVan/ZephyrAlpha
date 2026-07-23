@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-group_orphan_modules
+# [BLUEPRINT] MOD-GOV_GROUP_ORPHAN_MODULES
 # [MODULE]# [MODULE] scripts.governance.group_orphan_modules
 # [DOMAIN]
 # [DEPENDENCIES]

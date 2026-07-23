@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-check_rule_coverage
+# [BLUEPRINT] MOD-GOV_CHECK_RULE_COVERAGE
 # [MODULE]# [MODULE] scripts.governance.check_rule_coverage
 # [DOMAIN]
 # [DEPENDENCIES]

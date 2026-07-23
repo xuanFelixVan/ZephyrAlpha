@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML 解析异常 fail-closed；gate_registry 不可达 fail-open
 # [TESTS] tests/governance/commit_gates/test_rule_execution_pairing_gate.py
-# [A_module] module_id=MOD-GOV-rule_execution_pairing_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_RULE_EXECUTION_PAIRING_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 # [TTL] permanent
 """rule_execution_pairing_gate.py — 规则-执行配对门禁（RULE-EXECUTION-PAIRING，Phase 3.5）
 

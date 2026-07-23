@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——快照生成失败降级为 ReconcileResult(action="warn")
 # [TESTS] tests/governance/audit/test_runtime_violation_snapshot_reconciler.py
-# [A_module] module_id=MOD-GOV-runtime_violation_snapshot_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_RUNTIME_VIOLATION_SNAPSHOT_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """runtime_violation_snapshot_reconciler.py — trae_060 §5 evidence 运行时快照 post-commit reconciler。
