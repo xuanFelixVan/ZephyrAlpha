@@ -248,6 +248,34 @@ def restore_readonly_triggers(cur):
     print(f"  [PG] 已恢复 {len(READONLY_TABLES)} 张只读表的用户触发器")
 
 
+def _resolve_module_to_single_node(cur, module_id, fallback_name):
+    """把模块级依赖端解析为单一节点。返回 (node_id, status)。
+
+    status: 'single' 唯一节点；'multi' 多节点（应跳过物化）；'none' 无法解析。
+
+    治本(2026-07-23, depgraph 尺度错配)：cross_module_dependency_registry 的 source/target
+    是模块级 module_id（如 MOD-L02-001），被多个节点共享。模块级关系无法唯一投影为节点级边——
+    COUNT>1 时返回 'multi' 让调用方跳过，避免 LIMIT 1 取任意节点（实测返回 min node_id）导致
+    边端点语义错误。模块级关系应留在 domain_dependencies/contracts 表，节点级真实依赖由
+    production import 边覆盖。
+    """
+    if module_id:
+        cur.execute("SELECT COUNT(*) AS n FROM nodes WHERE blueprint_id = %s", (module_id,))
+        cnt = cur.fetchone()["n"]
+        if cnt > 1:
+            return (None, "multi")
+        if cnt == 1:
+            cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = %s", (module_id,))
+            return (cur.fetchone()["node_id"], "single")
+    # COUNT==0 或无 module_id：回退到 path LIKE fallback_name（保持现行单节点兼容行为）
+    if fallback_name:
+        cur.execute("SELECT node_id FROM nodes WHERE path LIKE %s LIMIT 1", (f"%{fallback_name}%",))
+        row = cur.fetchone()
+        if row:
+            return (row["node_id"], "single")
+    return (None, "none")
+
+
 # ========== P0 优先级同步 ==========
 
 
@@ -266,27 +294,29 @@ def sync_cross_module_dependencies(cur):
 
     deps = data.get("dependencies", [])
     synced = 0
+    skipped_multi = 0
     for dep in deps:
-        # YAML source/target 是 module_id（如 MOD-INF-002），用 blueprint_id 匹配
+        # YAML source/target 是模块级 module_id（如 MOD-INF-002），用 blueprint_id 匹配
         source = dep.get("source", "")
         source_name = dep.get("source_name", "")
         target = dep.get("target", "")
         target_name = dep.get("target_name", "")
+        dep_id = dep.get("dep_id", "")
 
-        # 优先用 blueprint_id 匹配，其次用 path LIKE source_name
-        cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = %s LIMIT 1", (source,))
-        from_row = cur.fetchone()
-        if not from_row and source_name:
-            cur.execute("SELECT node_id FROM nodes WHERE path LIKE %s LIMIT 1", (f"%{source_name}%",))
-            from_row = cur.fetchone()
+        from_nid, from_status = _resolve_module_to_single_node(cur, source, source_name)
+        to_nid, to_status = _resolve_module_to_single_node(cur, target, target_name)
 
-        cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = %s LIMIT 1", (target,))
-        to_row = cur.fetchone()
-        if not to_row and target_name:
-            cur.execute("SELECT node_id FROM nodes WHERE path LIKE %s LIMIT 1", (f"%{target_name}%",))
-            to_row = cur.fetchone()
+        # 治本(2026-07-23, depgraph 尺度错配)：模块级依赖映射到多节点时无法唯一投影为节点级边，跳过
+        # 模块级关系留在 domain_dependencies/contracts 表，节点级真实依赖由 production import 边覆盖
+        if from_status == "multi" or to_status == "multi":
+            skipped_multi += 1
+            print(
+                f"  跳过 {dep_id}: source={source}({from_status}) target={target}({to_status}) "
+                f"映射到多节点模块，无法唯一投影为节点级边"
+            )
+            continue
 
-        if from_row and to_row:
+        if from_nid is not None and to_nid is not None:
             is_legal = 1 if dep.get("is_legal_cycle", False) else 0
             cur.execute(
                 """
@@ -297,8 +327,8 @@ def sync_cross_module_dependencies(cur):
             VALUES (%s, %s, %s, %s, %s, %s, %s, 'design', %s, %s)
             """,
                 (
-                    from_row["node_id"],
-                    to_row["node_id"],
+                    from_nid,
+                    to_nid,
                     dep.get("type", "import"),
                     dep.get("strength", "medium"),
                     dep.get("direction", "downstream"),
@@ -310,7 +340,7 @@ def sync_cross_module_dependencies(cur):
             )
             synced += 1
 
-    print(f"  同步 {synced}/{len(deps)} 条依赖（dep_maturity='design'）")
+    print(f"  同步 {synced}/{len(deps)} 条依赖（dep_maturity='design'，跳过 {skipped_multi} 条多节点模块）")
 
 
 def sync_architecture_contract(cur):

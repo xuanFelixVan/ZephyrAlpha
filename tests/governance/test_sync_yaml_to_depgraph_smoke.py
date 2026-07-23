@@ -235,3 +235,90 @@ class TestFunctionCallableSmoke:
         由 @pytest.mark.e2e 的 TestDBConnectionSmoke 间接覆盖。
         """
         assert callable(syd.sync_all), "sync_all 不可调用"
+
+
+# ============================================================================
+# Test 5: 跨模块依赖多节点跳过 —— 问题A治本逻辑 e2e 验证
+# ============================================================================
+
+@pytest.mark.e2e
+class TestCrossModuleDepMultiNodeSkip:
+    """验证 _resolve_module_to_single_node 的多节点跳过逻辑（问题A治本）。
+
+    问题A根因：sync_cross_module_dependencies 用 LIMIT 1 把模块级依赖(MOD-xxx)物化为
+    节点级边，多节点模块端点语义错误。治本方案：_resolve_module_to_single_node 在 COUNT>1
+    时返回 'multi' 让调用方跳过物化。
+
+    本测试只调用只读 helper（纯 SELECT，不写 DB）——不调用 sync_cross_module_dependencies
+    （它会 DELETE+INSERT 真实边）。覆盖三个分支：multi / single / none。
+    """
+
+    def _get_conn(self, syd):
+        # 用与 sync_yaml_to_depgraph.py 运行时相同的连接入口（syd 从 _shared.constants 导入的
+        # RealDictCursor 包装器）。禁止用 zephyr.governance.depgraph_schema 裸连接——它返回
+        # tuple cursor，helper 的 cur.fetchone()["n"] 字典访问会 TypeError。
+        try:
+            return syd.get_depgraph_pg_connection(read_only=True)
+        except Exception as e:
+            pytest.skip(f"PostgreSQL depgraph 不可达（CI 环境？）: {e}")
+
+    def test_resolve_module_to_single_node_multi(self, syd):
+        """多节点模块（MOD-L02-001 实测 52 节点）→ (None, 'multi')。
+
+        这是问题A治本逻辑的核心验证：多节点模块不再用 LIMIT 1 物化。
+        """
+        if not hasattr(syd, "_resolve_module_to_single_node"):
+            pytest.skip("_resolve_module_to_single_node 不存在（治本改动未生效？）")
+        conn = self._get_conn(syd)
+        try:
+            with conn.cursor() as cur:
+                # 先确认 MOD-L02-001 确实是多节点（防御性：若 DB 无此模块则 skip）
+                cur.execute("SELECT COUNT(*) AS n FROM nodes WHERE blueprint_id = %s", ("MOD-L02-001",))
+                cnt = cur.fetchone()["n"]
+                if cnt <= 1:
+                    pytest.skip(f"MOD-L02-001 在 DB 中非多节点（count={cnt}），无法验证 multi 分支")
+                node_id, status = syd._resolve_module_to_single_node(cur, "MOD-L02-001", "")
+                assert status == "multi", f"多节点模块应返回 'multi'，实际 {status}"
+                assert node_id is None, f"multi 分支应返回 None node_id，实际 {node_id}"
+        finally:
+            conn.close()
+
+    def test_resolve_module_to_single_node_none(self, syd):
+        """不存在的 module_id + 空 fallback → (None, 'none')（COUNT==0 分支）。"""
+        if not hasattr(syd, "_resolve_module_to_single_node"):
+            pytest.skip("_resolve_module_to_single_node 不存在（治本改动未生效？）")
+        conn = self._get_conn(syd)
+        try:
+            with conn.cursor() as cur:
+                node_id, status = syd._resolve_module_to_single_node(
+                    cur, "MOD-SMOKE-DOES-NOT-EXIST-999", ""
+                )
+                assert status == "none", f"不存在模块应返回 'none'，实际 {status}"
+                assert node_id is None, f"none 分支应返回 None node_id，实际 {node_id}"
+        finally:
+            conn.close()
+
+    def test_resolve_module_to_single_node_single(self, syd):
+        """单节点模块 → (node_id, 'single')（回归保护：单节点路径不受多节点跳过影响）。
+
+        动态查找 DB 中恰好 1 节点的 blueprint_id；若无则 skip。
+        """
+        if not hasattr(syd, "_resolve_module_to_single_node"):
+            pytest.skip("_resolve_module_to_single_node 不存在（治本改动未生效？）")
+        conn = self._get_conn(syd)
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT blueprint_id FROM nodes "
+                    "WHERE blueprint_id LIKE 'MOD-%' AND blueprint_id IS NOT NULL "
+                    "GROUP BY blueprint_id HAVING COUNT(*) = 1 LIMIT 1"
+                )
+                row = cur.fetchone()
+                if not row:
+                    pytest.skip("DB 中无单节点 MOD-xxx 模块，无法验证 single 分支")
+                single_module = row["blueprint_id"]
+                node_id, status = syd._resolve_module_to_single_node(cur, single_module, "")
+                assert status == "single", f"单节点模块应返回 'single'，实际 {status}"
+                assert node_id is not None, "single 分支应返回非空 node_id"
+        finally:
+            conn.close()

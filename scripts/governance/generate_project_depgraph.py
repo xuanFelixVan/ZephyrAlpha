@@ -3077,6 +3077,91 @@ def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch
     )
 
 
+def _snapshot_apply_depgraph_design_edges(cur):
+    """快照 apply_depgraph 登记的 design 边（dep_maturity='design' AND valid_since IS NULL），
+    捕获全部元数据列 + from_path + to_path。
+
+    治本(2026-07-23, design↔production 边 rebuild 丢失)：rebuild 重新生成 production 节点
+    （node_id 漂移），edges FK ON DELETE CASCADE 级联删除引用 production 节点的 design 边。
+    design↔design 边因两端 design 节点不被删而存活，design↔production 边被级联删除。
+    本快照在 production 节点删除前捕获 design 边及其端点 path，供 rebuild 后按 path 重映射重插。
+    仅快照 valid_since IS NULL 的 apply_depgraph 边；valid_since IS NOT NULL 的 sync 边由
+    sync_yaml_to_depgraph 自行 DELETE+重建，不在此处理（避免与 sync L265 冲突）。
+    """
+    cur.execute(
+        """
+        SELECT e.*, n1.path AS from_path, n2.path AS to_path
+        FROM edges e
+        JOIN nodes n1 ON e.from_node_id = n1.node_id
+        JOIN nodes n2 ON e.to_node_id = n2.node_id
+        WHERE e.dep_maturity = 'design' AND e.valid_since IS NULL
+        """
+    )
+    rows = cur.fetchall()
+    print(f"[DESIGN-EDGE-PRESERVE] 快照 {len(rows)} 条 apply_depgraph design 边（含端点 path）")
+    return rows
+
+
+def _restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_id):
+    """按 path 重映射重插被 rebuild 级联删除的 apply_depgraph design 边。
+
+    对每条快照边：按 from_path/to_path 查当前 node_id；两端均命中且该 (from,to) design 边
+    当前不存在（幂等，避免与存活的 design↔design 边重复）则按原元数据重插（valid_since 保留
+    IS NULL）；任一端 path 已不存在则跳过（真删除）。触发器 trg_edges_protect_apply_depgraph
+    仅 BEFORE DELETE，不阻止 INSERT，故重插可行。
+    """
+    if not snapshot:
+        return
+    restored = 0
+    skipped_missing = 0
+    skipped_exists = 0
+    for row in snapshot:
+        from_path = row.get("from_path", "")
+        to_path = row.get("to_path", "")
+        new_from = path_to_db_node_id.get(from_path)
+        new_to = path_to_db_node_id.get(to_path)
+        if new_from is None or new_to is None:
+            skipped_missing += 1
+            continue
+        # 幂等：若该 (from,to) design 边已存在（design↔design 边存活），跳过
+        cur.execute(
+            "SELECT 1 FROM edges WHERE from_node_id=%s AND to_node_id=%s "
+            "AND dep_maturity='design' AND valid_since IS NULL",
+            (new_from, new_to),
+        )
+        if cur.fetchone():
+            skipped_exists += 1
+            continue
+        cur.execute(
+            """
+            INSERT INTO edges (
+                from_node_id, to_node_id, dep_type, architecture_direction, coupling_strength,
+                used_symbol, invocation_method, api_contract_refs, event_ref,
+                ddd_integration_pattern, failure_mode, fallback, activation_condition,
+                data_transfer_description, resource_impact, relationship_type,
+                cross_domain, verified, dep_maturity, valid_since, is_legal_cycle
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                'design', NULL, %s
+            )
+            """,
+            (
+                new_from, new_to,
+                row.get("dep_type"), row.get("architecture_direction"), row.get("coupling_strength"),
+                row.get("used_symbol"), row.get("invocation_method"), row.get("api_contract_refs"),
+                row.get("event_ref"), row.get("ddd_integration_pattern"), row.get("failure_mode"),
+                row.get("fallback"), row.get("activation_condition"), row.get("data_transfer_description"),
+                row.get("resource_impact"), row.get("relationship_type"),
+                row.get("cross_domain"), row.get("verified"), row.get("is_legal_cycle"),
+            ),
+        )
+        restored += 1
+    print(
+        f"[DESIGN-EDGE-PRESERVE] 重插 {restored} 条 design 边"
+        f"（跳过 {skipped_missing} 端点缺失 / {skipped_exists} 已存活）"
+    )
+
+
 def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移
 
@@ -3235,6 +3320,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 f"[STATUS-PRESERVE] 快照 {len(_preserved_node_status)} 个节点的 "
                 f"build_status（防止 rescan 重置手动提升；design_maturity 由机械推导重新计算）"
             )
+
+        # 治本(2026-07-23, 问题B)：在 production 节点删除前快照 apply_depgraph design 边，
+        # 捕获端点 path，供 rebuild 后按 path 重映射重插（FK CASCADE 会删除 design↔production 边）
+        _design_edge_snapshot = _snapshot_apply_depgraph_design_edges(cursor)
 
         # Clear existing operational data (preserve design-state)
         # Note: NULL != 'design' is NULL (not TRUE) in SQL, so must handle NULL explicitly
@@ -3562,6 +3651,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             if db_id is not None:
                 gen_to_db_node_id[gen_id] = db_id
         gen_id_set = set(gen_to_db_node_id.keys())
+
+        # 治本(2026-07-23, 问题B)：rebuild 重建 production 节点后，按 path 重映射重插
+        # 被 FK CASCADE 删除的 apply_depgraph design↔production 边（design↔design 边本就存活，幂等跳过）
+        _restore_apply_depgraph_design_edges_by_path(cursor, _design_edge_snapshot, path_to_db_node_id)
 
         for edge in edges:
             from_node = edge.get("from", "")
