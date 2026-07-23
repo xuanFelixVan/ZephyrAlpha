@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-23T18:49:43Z'
+generated_at: '2026-07-23T19:22:55Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -219,8 +219,8 @@ gates:
 - gate_id: GATE-BP-PLACE
   name: 'GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 强制执行）'
   entry: python scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py
-  description: 全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），GOV-DOC-001
-    §4.2 强制执行层
+  description: 全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），GOV-DOC-001 §4.2
+    强制执行层
   files_trigger: ^docs/03_modules/.*blueprint\.md$
   always_run: false
   category: blueprint_placement
