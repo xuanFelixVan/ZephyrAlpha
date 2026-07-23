@@ -1,3 +1,17 @@
+---
+module_id: AUDIT-EXT-DEPGRAPH-DOCS
+title: "外部设计文档落地比对 · 依赖图"
+doc_type: audit_report
+rule_form: data
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 外部依赖图文档 — 数据库/数据架构设计审查报告
 
 > **审查范围**: `tmp/external_review_docs/depgraph_docs/`（原路径 `D:\临时工作区\依赖图`）

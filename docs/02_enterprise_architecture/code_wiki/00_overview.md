@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-00-OVERVIEW
+title: "00 · 项目整体架构与运行方式"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 00 · 项目总览：整体架构与运行方式
 
 > 本文档为 ZephyrAlpha 代码百科（code_wiki）总览篇，面向首次接触本项目的读者，回答三个问题：这个项目是什么、由哪些系统组成、如何跑起来。

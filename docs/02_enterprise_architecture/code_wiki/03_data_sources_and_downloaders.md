@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-03-DATA-SOURCES
+title: "03 · 数据源集成与下载机制"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 03 · 数据源集成与下载机制（zephyr.data）
 
 > 文档生成：2026-07-22 ｜ 范围：`src/zephyr/data/` 全目录静态审查 + ClickHouse 只读实测

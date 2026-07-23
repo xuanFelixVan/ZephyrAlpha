@@ -1,3 +1,17 @@
+---
+module_id: AUDIT-DB-PIPELINE-REVIEW
+title: "数据下载与集成管线深度审查"
+doc_type: audit_report
+rule_form: data
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 数据下载与集成管线深度审查（Audit-02 · Pipeline Review）
 
 > 审查对象：`src/zephyr/data/`（数据源集成器 MOD-L00-004 + 冗余源 MOD-L00-005）

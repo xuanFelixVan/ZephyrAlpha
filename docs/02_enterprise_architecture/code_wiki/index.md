@@ -1,3 +1,17 @@
+---
+module_id: INDEX-CODE-WIKI
+title: "ZephyrAlpha Code Wiki 与数据库架构审查 · 索引"
+doc_type: index
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # ZephyrAlpha Code Wiki 与数据库架构审查
 
 > 生成日期：2026-07-22（2026-07-23 重建，原目录曾被并发会话工作区清理误删后由原子代理完整重写）

@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-02-DATA-LAYER
+title: "02 · 数据库架构全景"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 02 · 数据层架构全景（Database Layer）
 
 > **文档性质**：只读架构审查（code wiki），非施工蓝图。

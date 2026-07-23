@@ -1,3 +1,17 @@
+---
+module_id: AUDIT-DB-SCHEMA-REVIEW
+title: "业务数据库 Schema 逐表深度审查"
+doc_type: audit_report
+rule_form: data
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 业务数据库 Schema 逐表深度审查（audit_01_schema_review）
 
 > **审查员**：库表设计审查（只读审查，未修改任何文件）

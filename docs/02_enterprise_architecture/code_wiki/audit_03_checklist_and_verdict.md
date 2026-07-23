@@ -1,3 +1,17 @@
+---
+module_id: AUDIT-DB-CHECKLIST-VERDICT
+title: "数据库机构级审查清单与总评"
+doc_type: audit_report
+rule_form: data
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # ZephyrAlpha 量化数据库架构审查 —— 完整审查清单与总评报告
 
 > 审查编号：audit_03 | 审查日期：2026-07-22 | 审查员角色：独立机构级量化系统架构审查

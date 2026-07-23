@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-04-TRADING-DOMAINS
+title: "04 · 交易与策略域"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 04 · 交易与策略域文档（Trading & Strategy Domains）
 
 > 生成方式：静态代码审查（只读），覆盖 `src/zephyr/` 下 24 个交易/策略相关域。

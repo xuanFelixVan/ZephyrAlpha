@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-06-DEPENDENCIES
+title: "06 · 依赖关系图谱"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 06 · 依赖关系图谱（Dependencies）
 
 > 适用范围：ZephyrAlpha 2.0（个人单用户量化系统，当前数据库仅用于回测）。

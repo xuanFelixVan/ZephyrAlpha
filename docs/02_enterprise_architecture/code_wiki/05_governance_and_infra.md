@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-05-GOVERNANCE-INFRA
+title: "05 · 治理与基础设施域"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 05 · 治理与基础设施域（Governance & Infrastructure）
 
 > 范围：`src/zephyr/` 下 `governance`、`gov_audit`、`gov_code_quality`、`gov_drift`、`gov_enforcement`、`gov_rule`、`security`、`data_security`、`data_governance`、`compliance`、`infrastructure`、`integration`、`shared`、`autonomy_core`、`frontend`，以及 `src/zephyr/service_layer_owners.yaml`。

@@ -1,3 +1,17 @@
+---
+module_id: VIEW-CODE-WIKI-01-REPO-LAYOUT
+title: "01 · 仓库布局与全模块清单"
+doc_type: architecture_view
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # 01 · 仓库布局与全模块清单
 
 > 生成者：架构师_模块清单（只读静态审查） | 日期：2026-07-22

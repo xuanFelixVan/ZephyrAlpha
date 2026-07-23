@@ -1,3 +1,17 @@
+---
+module_id: AUDIT-EXT-ARCH-DOCS
+title: "外部设计文档落地比对 · 架构图"
+doc_type: audit_report
+rule_form: data
+status: active
+version: 1.0.0
+date: 2026-07-23
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
 # ext_02 · 外部架构文档数据库设计审查报告（架构图系列 · 数据架构.md 深读）
 
 > **审查对象**：`tmp/external_review_docs/arch_docs/`（原路径 `D:\临时工作区\架构图`），主审 `数据架构.md`（v6.0，4371 行，2026-05-25/26 最后更新），辅审其余 9 份架构文档的数据库相关段落。`test_diagram/` 与 `test_output/` 为测试产物，按任务要求跳过。
