@@ -101,7 +101,7 @@ design_maturity: design
 | 10 | `scripts/governance/meta/finding_state_machine.py` | §20 Finding 状态机 | 全生命周期管理 | 已实现 | — |
 | 11 | `scripts/governance/meta/validate_rules_file_backdoor.py` | §23 供应链安全 | Unicode 后门扫描 | 已实现 | — |
 | 12 | `scripts/governance/meta/validate_rules_integrity.py` | §23 供应链安全 | SHA256 完整性校验 | 已实现 | — |
-| 13 | `scripts/governance/architecture_health_dashboard.py` | §六 架构健康度 | 10项指标自动化检测基线（第0期，对标 architecture_debt_registry.md §六） | 已实现 | — |
+| 13 | `scripts/governance/architecture_health_dashboard.py` | §六 架构健康度 | 10项指标自动化检测基线（第0期，对标 ai_first_governance_principles.md §四） | 已实现 | — |
 
 ### §0.6 四图对齐视图
 

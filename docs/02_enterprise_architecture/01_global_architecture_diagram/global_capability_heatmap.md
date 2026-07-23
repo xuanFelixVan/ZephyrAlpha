@@ -10,7 +10,7 @@ ttl: permanent
 
 # 能力热力图 / Capability Heatmap
 
-> **文档作用 / Purpose**: 以矩阵形式展示61个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
+> **文档作用 / Purpose**: 以矩阵形式展示60个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
 
 > 本文档由 generate_capability_heatmap.py 从 depgraph (PostgreSQL) 自动生成
 > 最后更新以 git log 为准
@@ -20,15 +20,15 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 / Total Domains | 61 |
+| 域总数 / Total Domains | 60 |
 | 能力域数 / Capability Domains | 10 |
-| L0 缺失 / Missing | 8 |
+| L0 缺失 / Missing | 7 |
 | L1 设计中 / Designing | 2 |
 | L2 可用未验证 / Usable | 16 |
 | L3 生产已验证 / Verified | 35 |
 | ✅ 完全覆盖 / Full Coverage (L3) | 35 |
 | 🟡 部分覆盖 / Partial Coverage (L1-L2) | 18 |
-| ❌ 无覆盖 / No Coverage (L0) | 8 |
+| ❌ 无覆盖 / No Coverage (L0) | 7 |
 
 ## 成熟度图例 / Maturity Legend
 
@@ -56,8 +56,8 @@ ttl: permanent
 
 ## 能力热力图矩阵 / Capability Heatmap Matrix
 
-> 行：架构域（61域） | 列：能力域（10能力域）
-> Rows: Architecture Domains (61) | Columns: Capability Domains (10)
+> 行：架构域（60域） | 列：能力域（10能力域）
+> Rows: Architecture Domains (60) | Columns: Capability Domains (10)
 > 单元格：成熟度符号（属于该能力域时显示，否则显示 —）
 > Cell: Maturity symbol (shown when domain belongs to capability, otherwise —)
 
@@ -128,23 +128,23 @@ ttl: permanent
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 84 | 81 | 3 | 2.25 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 91 | 88 | 3 | 2.25 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 69 | 24 | 45 | 2.00 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 13 | 13 | 0 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 17 | 17 | 0 | 2.25 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 52 | 52 | 0 | 2.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 11 | 10 | 1 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 33 | 33 | 0 | 2.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 14 | 998 | 969 | 29 | 2.79 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 14 | 1000 | 971 | 29 | 2.79 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 809 | 807 | 2 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 813 | 811 | 2 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
-| D_DATA | 数据接入层 | C1 |  | 63 | 60 | 3 | 17 | L3 🟢 | ✅ |
+| D_DATA | 数据接入层 | C1 |  | 70 | 67 | 3 | 17 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
@@ -175,7 +175,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L1_foundation | 125 | 125 | 0 | 111 | L3 🟢 | ✅ |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L2_domain | 133 | 133 | 0 | 96 | L3 🟢 | ✅ |
 | D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 113 | 110 | 3 | 75 | L3 🟢 | ✅ |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 155 | 154 | 1 | 134 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 157 | 156 | 1 | 139 | L3 🟢 | ✅ |
 | D_GOV_DOCS | 架构文档治理 | CC1 | L2_domain | 24 | 0 | 24 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L2_domain | 71 | 70 | 1 | 65 | L3 🟢 | ✅ |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L2_domain | 32 | 32 | 0 | 18 | L3 🟢 | ✅ |
@@ -193,7 +193,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | CC3 | L0_infrastructure | 72 | 72 | 0 | 28 | L3 🟢 | ✅ |
 | D_INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L0_infrastructure | 54 | 54 | 0 | 48 | L3 🟢 | ✅ |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 157 | 156 | 1 | 115 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 161 | 160 | 1 | 119 | L3 🟢 | ✅ |
 | D_INFRA_TELEMETRY | 可观测性 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INTEGRATION | 管线路由 | CC3 | L1_foundation | 71 | 71 | 0 | 39 | L3 🟢 | ✅ |
 | D_INTEGRATION_GATEWAY | 集成网关 | CC3 | L1_foundation | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -245,7 +245,7 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_DATA | 数据接入层 | C1 | L3 | 63 |
+| D_DATA | 数据接入层 | C1 | L3 | 70 |
 | D_FACTOR | 因子 | C2 | L3 | 50 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L3 | 10 |
 | D_RISK | 风控 | C3 | L3 | 11 |
@@ -261,7 +261,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L3 | 125 |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L3 | 133 |
 | D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 113 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 155 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 157 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L3 | 71 |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L3 | 32 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | CC1 | L3 | 91 |
@@ -273,18 +273,10 @@ ttl: permanent
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 24 |
 | D_INFRA_A2A | A2A通信 | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L3 | 54 |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 157 |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 161 |
 | D_INTEGRATION | 管线路由 | CC3 | L3 | 71 |
 | D_INTELLIGENCE | 上下文管理 | CC3 | L3 | 28 |
 | D_OPS | 反馈循环 | CC3 | L3 | 9 |
 | D_ORCHESTRATOR | 代理编排器 | CC3 | L3 | 70 |
 | D_REPORTING | 报告 | CC3 | L3 | 3 |
 | D_SHARED | 共享服务 | CC3 | L3 | 183 |
-
-## 未映射域 / Unmapped Domains
-
-> 以下域未归属任何能力域，可能需要更新能力域定义
-> The following domains are not mapped to any capability domain; capability definitions may need updating
-
-| 架构域 / Architecture Domain | 域名称 / Domain Name | 架构层 / Layer | 节点数 / Nodes | 成熟度 / Maturity |
-|--------|--------|--------|:---:|:---:|

@@ -20,18 +20,18 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 | 63 |
+| 域总数 | 62 |
 | 超容域 | 6 |
 | 接近超容域（>80%） | 3 |
-| 空域（0模块） | 8 |
+| 空域（0模块） | 7 |
 
 ## 超容域清单（需拆分）
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
 | D_GOVERNANCE | 生命周期管理 | 218 | 150 | +68 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 165 | 150 | +15 |
-| D_GOV_SCRIPTS | 脚本治理 | 376 | 150 | +226 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 168 | 150 | +18 |
+| D_GOV_SCRIPTS | 脚本治理 | 377 | 150 | +227 |
 | D_INFRA_RUNTIME | 运行时集成 | 156 | 150 | +6 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
@@ -69,7 +69,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 |  | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | 合规 |  | 2 | 150 | 1.3% | 正常 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 7 | 150 | 4.7% | 正常 |
-| D_DATA | 数据接入层 |  | 68 | 150 | 45.3% | 正常 |
+| D_DATA | 数据接入层 |  | 77 | 150 | 51.3% | 正常 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_SEC | 数据安全与契约 | L1_foundation | 7 | 150 | 4.7% | 正常 |
@@ -86,14 +86,14 @@ ttl: permanent
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 10 | 150 | 6.7% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 218 | 150 | 145.3% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 121 | 150 | 80.7% | 接近超容 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 165 | 150 | 110.0% | 超容 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 168 | 150 | 112.0% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 74 | 150 | 49.3% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 40 | 150 | 26.7% | 正常 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 91 | 150 | 60.7% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_GOV_RULE | 规则治理 | L2_domain | 35 | 150 | 23.3% | 正常 |
-| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 376 | 150 | 250.7% | 超容 |
+| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 377 | 150 | 251.3% | 超容 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 |  | 26 | 150 | 17.3% | 正常 |
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
