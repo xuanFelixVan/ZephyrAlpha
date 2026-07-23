@@ -336,9 +336,6 @@ routes:
     blueprint_id: "MOD-INF-011"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/data/knowledge_management/vector_memory/**"
-      - "src/zephyr/data/knowledge_management/kb/chromadb_init.py"
-      - "src/zephyr/data/knowledge_management/kb/embedding_migrate.py"
       - "src/zephyr/integration/vector_memory/**"
       - "config/embedding_model_registry.yaml"
     task_keywords:

@@ -415,7 +415,7 @@ class LSGControlActionProtocol(Protocol):
 ### 5.2 Wiring 示例（experimental，单进程）
 
 ```python
-# src/zephyr/data/knowledge_management/kb/bootstrap.py
+# wiring example — FLE 服务装配入口
 
 async def build_services():
     vm = get_vm()

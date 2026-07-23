@@ -40,7 +40,6 @@ references:
   - {id: "MOD-INF-021", at: "§2", why: "Rollback——大脑操作失败触发回滚"}
   - {id: "MOD-INF-024", at: "§2", why: "Budget Enforcer——大脑 Token/Cost 预算管控"}
   - {id: "MOD-INF-018", at: "§2", why: "Agent RBAC——大脑操作权限校验"}
-  - {id: "MOD-KB-001", at: "§4", why: "Knowledge Base——大脑 Dream Cycle 知识固化目标"}
   - {id: "MOD-INF-011", at: "§2", why: "Vector Memory——大脑检索向量知识"}
   - {id: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——大脑消费上下文注入"}
   - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——大脑 LLM 调用的安全闸门"}
@@ -234,8 +233,7 @@ ZephyrAlpha 需要一个系统大脑统一编排所有模块的运行时行为�
 | 3 | 门禁规则执行 | MOD-GATE_ENGINE Gate Engine |
 | 4 | 审计日志持久化优化 | SYS-MASTER §〇 #10 KBG-0038 |
 | 5 | 拥塞控制算法 | SYS-MASTER §〇 #6 |
-| 6 | 知识库存储 | MOD-KB-001 |
-| 7 | 向量检索引擎 | MOD-INF-011 Vector Memory |
+| 6 | 向量检索引擎 | MOD-INF-011 Vector Memory |
 
 ---
 
@@ -509,7 +507,6 @@ class WorkDAG(BaseModel):
 | MOD-INF-020 (AuditTrail) | 必须 | 操作审计日志写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\audit-trail\blueprint.md` |
 | MOD-FEEDBACK_LOOP (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\feedback_loop-engine\blueprint.md` |
 | MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-spec\blueprint.md` |
-| MOD-KB-001 (KB) | 可选 | DreamCycle 知识固化目标 | — | `D:\ZephyrAlpha\docs\03_modules\l03_intelligence\knowledge_base\blueprint.md` |
 | MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\vector_memory\blueprint.md` |
 | SYS-MASTER-001 | 必须 | 系统总蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
 
@@ -837,7 +834,6 @@ class WorkDAG(BaseModel):
 | 拥塞控制 / 扫描请求合并 | SYS-MASTER-001 | §〇 #6 | ✅ 已设计 |
 | 共享基础组件并发安全 | MOD-INF-016 | §〇-B 18 项压力测试 | ✅ 已设计 |
 | 硬件感知调度 | SYS-MASTER-001 | §〇 #5 | ✅ 已设计 |
-| 知识库存储 | MOD-KB-001 | 知识库蓝图 | ⬜ 待确认 |
 | 跨进程 ZephyrLock | SYS-MASTER-001 | §〇 #11 KBG-0037 | ✅ 已设计 |
 
 ---
@@ -1143,7 +1139,7 @@ STEP 3: 拆分后验证
 | 4 | OrphanDetector：规模适应性 | 🟢 | 否 | — |
 | 5 | CapabilityRegistry：并发读缓存 | 🟡 | 是 | MOD-INF-016 §〇 #1 |
 | 6 | CircadianScheduler：夜间窗口容量规划 | 🟡 | 是 | 否 |
-| 7 | DreamCycle：分层固化优先级 | 🟡 | 是 | MOD-KB-001 |
+| 7 | DreamCycle：分层固化优先级 | 🟡 | 是 | —（KB 系统已于 2026-07 退役） |
 | 8 | HealthMonitor：分层检查频率 | 🟡 | 是 | 否 |
 | 9 | AiAuditLogger：并发写入 | 🟢 已覆盖 | 否 | SYS-MASTER §〇 #10 |
 | 10 | StatusDashboard：信息聚合视图 | 🟡 | 是 | 否 |

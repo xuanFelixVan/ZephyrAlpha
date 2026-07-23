@@ -24,18 +24,18 @@ numeric_facts:
         reason: "project_rules.md 错误声明 3.12+，实际 SSoT 是 >=3.11"
 
   - id: mcp_server_count
-    fact: "10 个"
-    description: "MCP server 数量（config/mcp.json servers section 实际计数：task_manager/knowledge_base/gate_engine/session_handoff/intent_router/blueprint_search/sandbox/governance/vector_memory/red_blue_validator）"
+    fact: "11 个"
+    description: "MCP server 数量（config/mcp.json servers section 实际计数：task_manager/gate_engine/session_handoff/intent_router/blueprint_search/sandbox/governance/telemetry/vector_memory/red_blue_validator/rule_discovery）"
     ssot_source: "config/mcp.json servers section"
     must_appear_in:
       - "AGENTS.md"
     must_not_appear_as:
       - file: "AGENTS.md"
-        pattern: "9 个"
-        reason: "AGENTS.md 错误声明 9 个 MCP，实际 10 个"
+        pattern: "10 个"
+        reason: "AGENTS.md 过时数字（KB 退役前为 10 个 MCP，退役后 knowledge_base 已移除，实际 11 个）"
       - file: ".trae/rules/onboarding_detail.md"
         pattern: "7 MCP"
-        reason: "onboarding_detail.md RULE-EIGHT 后果量化段过时数字，实际 10 个"
+        reason: "onboarding_detail.md RULE-EIGHT 后果量化段过时数字，实际 11 个"
 
   - id: module_count
     fact: "4,639"

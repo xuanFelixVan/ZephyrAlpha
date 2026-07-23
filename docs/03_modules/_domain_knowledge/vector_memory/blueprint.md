@@ -38,7 +38,6 @@ ssot_claims:
   - {claim: "WriteTrace provenance校验", scope: "module"}
 depends_on:
   - {target: "MOD-MASTER_BLUEPRINT", at: "§2.6", why: "CT-CE-VMS-001 集成契约——CE→VMS向量检索"}
-  - {target: "MOD-KB-001", at: "§1.5", why: "知识库——beta VMS整合目标"}
   - {target: "MOD-CONTEXT_ENGINE", at: "§2.1", why: "CE——VMS的主要消费方"}
   - {target: "MOD-INF-039", at: "§2.1", why: "本地模型推理——嵌入路由/缓存/Ollama/调度已拆分至MOD-INF-039"}
   - {target: "architecture_model/layers/b_vector_memory.yaml", at: "全篇", why: "VMS YAML 派生格式——本蓝图为真源，YAML 为机器可读派生"}
@@ -126,7 +125,7 @@ END_REQUIRED_SECTIONS
 
 VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）产出的需要语义检索的内容最终都写入 VMS。核心架构：ChromaDB 0.6 + 双嵌入维度（BGE-M3 1024d 主路径 + bge-small-zh-v1.5 512d 轻量路径）+ 8 大 Collection + 混合检索（Vector+BM25+RRF）。设计哲学：可审计（WriteTrace provenance 强制）、可自愈（IndexHealthMonitor 自动修复）、可持续（TTL+compaction+检索质量闭环）。Phase 0-3 已完成，Phase 4 运维自动化待施工。上游依赖 CE（主要消费方）和 KB（整合目标），下游被 Orc、FLE、Governance 消费。
 
-**线2（AI认知线）流水线位置**：上下文需求 → MOD-CONTEXT_ENGINE(CE) → MOD-KB-001(KB) → **MOD-INF-011(VMS)** → MOD-LLM_SECURITY(LLM安全网关) → MOD-INF-034(模型检测器) → MOD-INF-036(AI入职考试) → LLM响应+路由决策。VMS 向线3审计追踪链输出嵌入结果。C轨域：VMS → D_FACTOR(Alpha因子层) 因子语义检索 + VMS → D_ML_TRAIN(ML平台层) 模型语义检索。
+**线2（AI认知线）流水线位置**：上下文需求 → MOD-CONTEXT_ENGINE(CE) → **MOD-INF-011(VMS)** → MOD-LLM_SECURITY(LLM安全网关) → MOD-INF-034(模型检测器) → MOD-INF-036(AI入职考试) → LLM响应+路由决策。VMS 向线3审计追踪链输出嵌入结果。C轨域：VMS → D_FACTOR(Alpha因子层) 因子语义检索 + VMS → D_ML_TRAIN(ML平台层) 模型语义检索。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
@@ -240,9 +239,8 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 | 5 | WriteTrace provenance 校验 | ✅ | ❌ | — |
 | 6 | 索引健康自检与自愈 | ✅ | ❌ | — |
 | 7 | 嵌入模型训练/微调 | ❌ | ✅ | ML团队 |
-| 8 | 知识条目生命周期(G1-G5) | ❌ | ✅ | MOD-KB-001 §2 |
-| 9 | 上下文装配与注入 | ❌ | ✅ | MOD-CONTEXT_ENGINE §4 |
-| 10 | VMS YAML 规范 | ❌ | ✅ | b_vector_memory.yaml |
+| 8 | 上下文装配与注入 | ❌ | ✅ | MOD-CONTEXT_ENGINE §4 |
+| 9 | VMS YAML 规范 | ❌ | ✅ | b_vector_memory.yaml |
 
 ### §0.5 代码目录唯一性声明
 
@@ -316,7 +314,6 @@ ZephyrAlpha 的 AI 治理框架需要一个统一的向量记忆体来支撑语�
 |------|--------|---------|------|
 | Owner | 架构决策、Collection Schema 审批 | 设计+施工 | human-gated Collection 需审批 |
 | CE (MOD-CONTEXT_ENGINE) | 检索延迟、结果质量 | 集成 | search() p95 < 200ms |
-| KB (MOD-KB-001) | 数据迁移、同步写入 | 迁移 | BridgeLayer 双读过渡 |
 | FLE (MOD-FEEDBACK_LOOP) | 检索反馈闭环 | 集成 | RetrievalFeedback 接口 |
 | Orchestrator | 决策写入 | 集成 | decisions Collection 写入 |
 
@@ -363,10 +360,8 @@ ZephyrAlpha 的 AI 治理框架需要一个统一的向量记忆体来支撑语�
 
 | 声明项 | 无重叠模块 | 验证方式 |
 |--------|-----------|---------|
-| 统一向量存储与检索 | [MOD-KB-001(过渡期)] | KB 蓝图 §2.1 声明"向量语义检索为过渡期保留职责" |
 | 8 Collection Schema | 无 | 全局唯一 |
 | 双嵌入维度路由 | 无 | 全局唯一 |
-| 混合检索算法 | [MOD-KB-001(过渡期)] | KB reranker.py 为兼容层 |
 
 ### 八大 Collection Schema
 
@@ -750,7 +745,7 @@ class FeedbackEntry(BaseModel):
 | 检索质量 | 召回率 | >90% | benchmark 测试集 | recall@5 | ≥0.9 | — | recall@5<0.8→P1 |
 | 可维护性 | MTTR | <30min | 故障记录 | — | — | — | — |
 
-**知识检索三角**：KB查询(MOD-KB-001) → 向量化检索(MOD-INF-011 BGE-M3+ChromaDB) → 上下文装配(MOD-CONTEXT_ENGINE 五级预算) → 注入Agent。SSoT：向量索引 = MOD-INF-011。
+**知识检索三角**：向量化检索(MOD-INF-011 BGE-M3+ChromaDB) → 上下文装配(MOD-CONTEXT_ENGINE 五级预算) → 注入Agent。SSoT：向量索引 = MOD-INF-011。
 
 ### §5.5 自动化触发机制
 
@@ -878,7 +873,6 @@ class FeedbackEntry(BaseModel):
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-MASTER_BLUEPRINT | 必须 | CT-CE-VMS-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_system_master\blueprint.md` |
-| MOD-KB-001 | 可选 | 知识库——beta VMS整合目标 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge_base\blueprint.md` |
 | MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` |
 | MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\feedback_loop\blueprint.md` |
@@ -933,10 +927,8 @@ class FeedbackEntry(BaseModel):
 
 | # | 重叠概念 | 重叠维度 | 对方模块 | 委托关系 | 处置状态 |
 |---|---------|---------|---------|---------|---------|
-| 1 | 向量存储与检索 | 存储层+嵌入+检索 | MOD-KB-001 | KB 委托本模块——KB 过渡期保留 4 旧 Collection，迁移完成后向量能力全部归 VMS | 迁移中(3/7完成) |
-| 2 | 混合检索(BM25+RRF) | 检索逻辑 | MOD-KB-001 | KB 委托本模块——KB reranker.py 为过渡期兼容层 | 待废弃 |
-| 3 | 语义缓存 | ChromaDB 复用 | MOD-RESOURCE_OPTIMIZATION_ENGINE | 本模块提供基础设施，容量保证模块复用 | 已协调 |
-| 4 | 嵌入版本追踪 | 版本锁定 | MOD-CONTEXT_ENGINE | CE 追踪注入上下文的嵌入版本，VMS 拥有嵌入执行 | 已协调 |
+| 1 | 语义缓存 | ChromaDB 复用 | MOD-RESOURCE_OPTIMIZATION_ENGINE | 本模块提供基础设施，容量保证模块复用 | 已协调 |
+| 2 | 嵌入版本追踪 | 版本锁定 | MOD-CONTEXT_ENGINE | CE 追踪注入上下文的嵌入版本，VMS 拥有嵌入执行 | 已协调 |
 
 ### 10.6 依赖链风险评级
 
@@ -969,7 +961,6 @@ class FeedbackEntry(BaseModel):
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
 | Context Engine (MOD-CONTEXT_ENGINE) | CE→VMS 向量检索 | `context_assembler.py` → `InProcessVectorMemory.search()` | CE build 阶段成功检索 KE 条目 |
-| Knowledge Base (MOD-KB-001) | KB→VMS 写入 | KE 入库时同步写入 `knowledge` Collection | KE 入库后 VMS 可检索 |
 | Feedback Loop (MOD-FEEDBACK_LOOP) | FLE→VMS 双向 | 失败模式写入 `lessons`；检索质量反馈读出 | FLE detect 后 VMS 可检索失败模式 |
 | Orchestrator (MOD-TASK_SYSTEM) | Orc→VMS 写入 | 任务决策写入 `decisions` | Orc 完成 task 后 VMS 可检索决策 |
 | SessionManager | Session→VMS 写入 | session 结束时压缩摘要写入 `session_snapshots` | 新 session 冷启动检索到上一 session |
@@ -1443,12 +1434,11 @@ class FeedbackEntry(BaseModel):
 | 2 | KBG-0016 嵌入契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` | 嵌入规格 |
 | 3 | KBG-0031 ChromaDB选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 选型依据 |
 | 4 | CE 蓝图 | MOD-CONTEXT_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context_engine\blueprint.md` | 集成目标 |
-| 5 | KB 蓝图 | MOD-KB-001 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge_base\blueprint.md` | 整合目标 |
-| 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 注册 |
-| 7 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
-| 8 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
-| 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
-| 10 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
+| 5 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 注册 |
+| 6 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
+| 7 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
+| 8 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
+| 9 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 
 ---
 
@@ -1549,7 +1539,6 @@ class FeedbackEntry(BaseModel):
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | CE 蓝图 (MOD-CONTEXT_ENGINE) | §4 接口契约、§10 依赖关系 |
-| Tier 1 | KB 蓝图 (MOD-KB-001) | §12 集成点、§5.3 迁移方案 |
 | Tier 2 | FLE (MOD-FEEDBACK_LOOP) | §4 RetrievalFeedback 接口 |
 | Tier 2 | Orchestrator (MOD-TASK_SYSTEM) | §4 VectorBridge.write_decision() |
 | Tier 3 | tests/ | §4 数据模型、§11 产出物路径 |

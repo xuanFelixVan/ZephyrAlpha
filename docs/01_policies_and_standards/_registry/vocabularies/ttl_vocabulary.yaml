@@ -192,7 +192,7 @@ deprecated_values:
 #   permanent = 永久保留（永久区文件）
 #   task_bound = 任务绑定（过程性文件，完成即删）
 #
-# KE status（kb_repo.py 状态机）：知识级生命周期——知识条目处于哪个阶段。
+# KE status（知识状态机）：知识级生命周期——知识条目处于哪个阶段。
 #   DRAFT→SUBMITTED→REVIEWED→ACCEPTED→INDEXED→VERIFIED→DEPRECATED→SUPERSEDED→ARCHIVED
 #
 # 两者正交：

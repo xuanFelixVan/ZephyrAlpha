@@ -266,11 +266,11 @@ CRUD 方法（get_task/create_task/get_node 等 9 个）已抽取到 `zephyr.sha
 | 审计/漂移/修复 | audit_entries, audit_summary, drift_audit_findings, drift_events, drift_scan_results, integrity_records, judgment_records, rule_enforcement_log, reconcile_execution_log, scan_results | 由治理/审计/自动修复各子系统运行时创建（非 sqlite_schema.py `_MIGRATIONS` 内，属运行时建表，覆盖率说明见下） |
 | 成本/用量 | costs, usage_records, fix_budget_consumption | CostTracker / 预算执行 |
 | 自动修复 | fix_compliance, fix_idempotency, fix_patterns, fix_records | AutoFixEngine 持久化 |
-| 其他 | domains, f5_state, knowledge, ke_tombstones, slow_queries, _schema_version, sqlite_sequence | `domains` 为历史残留（v30 已删 tasks.domain_id FK）；`knowledge`/`ke_tombstones` 为 v34/v35 测试兼容表（KBG 已移除）；slow_queries 慢查询（v7） |
+| 其他 | domains, f5_state, slow_queries, _schema_version, sqlite_sequence | `domains` 为历史残留（v30 已删 tasks.domain_id FK）；slow_queries 慢查询（v7） |
 
 视图（DDL 定义，`sqlite_schema.py:367-422`）：`event_log`（tasks×events JOIN 审计视图）、`v_active_tasks`（活跃任务快照）、`v_recent_sessions`（最近 10 session 统计）。
 
-**覆盖率说明**：38 张实测表中，`sqlite_schema.py` `_MIGRATIONS` 直接覆盖约 18 张（tasks/events/gate_runs/gates/task_files/task_events/task_snapshots/task_reviews/circuit_breaker_state/tx_idempotency/slow_queries/fle_×3/knowledge/ke_tombstones/gate_decisions/_schema_version）；其余约 20 张（audit_*/drift_*/fix_*/costs/usage_records/integrity_records/judgment_records/rule_enforcement_log/reconcile_execution_log/scan_results/domains/f5_state）由各治理子系统模块自建，未纳入统一迁移链——治理上属"分散建表"，是潜在 SSoT 薄弱点（§6）。
+**覆盖率说明**：38 张实测表中，`sqlite_schema.py` `_MIGRATIONS` 直接覆盖约 18 张（tasks/events/gate_runs/gates/task_files/task_events/task_snapshots/task_reviews/circuit_breaker_state/tx_idempotency/slow_queries/fle_×3/gate_decisions/_schema_version）；其余约 20 张（audit_*/drift_*/fix_*/costs/usage_records/integrity_records/judgment_records/rule_enforcement_log/reconcile_execution_log/scan_results/domains/f5_state）由各治理子系统模块自建，未纳入统一迁移链——治理上属"分散建表"，是潜在 SSoT 薄弱点（§6）。
 
 ### 3.4 其他 SQLite / 本地存储文件
 

@@ -182,7 +182,6 @@
 | MOD-INFRA_OPS | MOD-INFRA_OPS | MOD-INFRA_OPS | placeholder | MOD-INFRA_OPS | 基础设施运维域 | - | - | - | design | planned |
 | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | placeholder | MOD-INFRA_RUNTIME | - | - | - | - | production | generated |
 | MOD-INTEGRATION | MOD-INTEGRATION | MOD-INTEGRATION | placeholder | MOD-INTEGRATION | - | - | - | - | production | generated |
-| MOD-KB-001 | MOD-KB-001 | MOD-KB-001 | placeholder | MOD-KB-001 | - | - | - | - | production | stable |
 | MOD-L00-001 | MOD-L00-001 | MOD-L00-001 | placeholder | MOD-L00-001 | - | - | - | - | design | generated |
 | MOD-L00-002 | MOD-L00-002 | MOD-L00-002 | placeholder | MOD-L00-002 | - | - | - | - | design | stable |
 | MOD-L00-003 | MOD-L00-003 | MOD-L00-003 | placeholder | MOD-L00-003 | - | - | - | - | design | stable |

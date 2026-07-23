@@ -269,13 +269,12 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 2 | ✅ 包含 | 通知分发 | NotificationManagerBase | 本模块 |
 | 3 | ✅ 包含 | 人工审批 | ApprovalGatewayBase | 本模块 |
 | 4 | ✅ 包含 | 任务进度看板 | TaskProgressData + fetch_task_progress | 本模块 |
-| 5 | ✅ 包含 | 知识库概览 | KnowledgeOverviewData + fetch_knowledge_overview | 本模块 |
-| 6 | ✅ 包含 | 门禁统计 | GateStatisticsData + fetch_gate_statistics | 本模块 |
-| 7 | ✅ 包含 | Fitness Functions 仪表盘 | FitnessDashboardData + fetch_fitness_data | 本模块 |
-| 8 | ✅ 包含 | OLAP 趋势 | OLAPTrendData + fetch_olap_trends | 本模块 |
-| 9 | ❌ 排除 | 风险计算 | D_RISK | D_RISK |
-| 10 | ❌ 排除 | 绩效归因 | D_REPORTING | D_REPORTING |
-| 11 | ❌ 排除 | Fitness Functions 计算 | feedback_loop/fitness_functions.py | MOD-FEEDBACK_LOOP |
+| 5 | ✅ 包含 | 门禁统计 | GateStatisticsData + fetch_gate_statistics | 本模块 |
+| 6 | ✅ 包含 | Fitness Functions 仪表盘 | FitnessDashboardData + fetch_fitness_data | 本模块 |
+| 7 | ✅ 包含 | OLAP 趋势 | OLAPTrendData + fetch_olap_trends | 本模块 |
+| 8 | ❌ 排除 | 风险计算 | D_RISK | D_RISK |
+| 9 | ❌ 排除 | 绩效归因 | D_REPORTING | D_REPORTING |
+| 10 | ❌ 排除 | Fitness Functions 计算 | feedback_loop/fitness_functions.py | MOD-FEEDBACK_LOOP |
 
 ---
 
@@ -306,15 +305,14 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 |---|--------|---------|---------|---------|
 | 1 | FLE Fitness Functions | fetch → render | 用户 | FitnessDashboardData |
 | 2 | TaskRepository | fetch → render | 用户 | TaskProgressData |
-| 3 | KbRepo | fetch → render | 用户 | KnowledgeOverviewData |
-| 4 | OLAPEngine | fetch → render | 用户 | GateStatisticsData / OLAPTrendData |
-| 5 | D_RISK | CTR-P1-008 消费 | Dashboard | RiskDashboardSnapshot |
-| 6 | D_REPORTING | CTR-P1-009 消费 | Dashboard | PerformanceAttributionReport |
-| 7 | **D_BACKTEST BacktestResult** (v2.2.0) | fetch → render | 用户 | BacktestResultVisualization(净值/回撤/Sharpe/IC/IR/3阶段门控) |
-| 8 | **D_BACKTEST tick_replay** (v2.2.0) | fetch → render | 用户 | TickReplayVisualization(逐Tick+5档盘口快照+做T标记) |
-| 9 | **D_DATA MiniQmtProvider** (v2.2.0) | fetch → render | 用户 | OrderBookVisualization(askPrice/bidPrice/askVol/bidVol 5档) |
-| 10 | **D_EX_CORE MiniQmtBroker** (v2.2.0) | fetch → render | 用户 | PositionSnapshot(持仓/盈亏/T+1提示) |
-| 11 | **D_EX_CORE ExecutionEngine** (v2.2.0) | submit → render | 用户 | Order+Fill(下单+订单状态实时更新) |
+| 3 | OLAPEngine | fetch → render | 用户 | GateStatisticsData / OLAPTrendData |
+| 4 | D_RISK | CTR-P1-008 消费 | Dashboard | RiskDashboardSnapshot |
+| 5 | D_REPORTING | CTR-P1-009 消费 | Dashboard | PerformanceAttributionReport |
+| 6 | **D_BACKTEST BacktestResult** (v2.2.0) | fetch → render | 用户 | BacktestResultVisualization(净值/回撤/Sharpe/IC/IR/3阶段门控) |
+| 7 | **D_BACKTEST tick_replay** (v2.2.0) | fetch → render | 用户 | TickReplayVisualization(逐Tick+5档盘口快照+做T标记) |
+| 8 | **D_DATA MiniQmtProvider** (v2.2.0) | fetch → render | 用户 | OrderBookVisualization(askPrice/bidPrice/askVol/bidVol 5档) |
+| 9 | **D_EX_CORE MiniQmtBroker** (v2.2.0) | fetch → render | 用户 | PositionSnapshot(持仓/盈亏/T+1提示) |
+| 10 | **D_EX_CORE ExecutionEngine** (v2.2.0) | submit → render | 用户 | Order+Fill(下单+订单状态实时更新) |
 
 ### 3.3 状态生命周期
 
@@ -466,9 +464,8 @@ class FitnessDashboardData(BaseModel):
 |---|---------|---------|---------|---------|
 | 1 | Streamlit 未安装 | ImportError | 降级为 CLI 输出 | Dashboard 不可用 |
 | 2 | OLAPEngine 不可用 | 连接异常 | 组件返回空 dataclass | 门禁统计/OLAP 趋势为空 |
-| 3 | KbRepo 不可用 | 连接异常 | 组件返回空 dataclass | 知识库概览为空 |
-| 4 | FLE Facade 不可用 | 连接异常 | Fitness 组件显示错误状态 | Fitness 仪表盘不可用 |
-| 5 | 未知页面名 | render_page default | 返回 {"error": "Unknown page: ..."} | 单页面不可用 |
+| 3 | FLE Facade 不可用 | 连接异常 | Fitness 组件显示错误状态 | Fitness 仪表盘不可用 |
+| 4 | 未知页面名 | render_page default | 返回 {"error": "Unknown page: ..."} | 单页面不可用 |
 
 ### 6.1 可观测性规格
 
@@ -483,7 +480,6 @@ class FitnessDashboardData(BaseModel):
 |------|-------------|-----------|---------|---------|
 | Streamlit | CLI 输出 | Dashboard 渲染 | 降级为 CLI | Streamlit 安装 |
 | OLAPEngine | 其他4页面 | 门禁统计/OLAP趋势 | 返回空 dataclass | OLAPEngine 恢复 |
-| KbRepo | 其他4页面 | 知识库概览 | 返回空 dataclass | KbRepo 恢复 |
 
 ---
 
@@ -515,7 +511,6 @@ class FitnessDashboardData(BaseModel):
 |---------|---------|---------|---------|---------|
 | feedback_loop/fitness_functions | 必须 | FitnessFunctionFramework + FitnessInputs | — | `D:\ZephyrAlpha\src\zephyr\feedback_loop\fitness_functions.py` |
 | db/task_repo | 必须 | TaskRepository | — | `D:\ZephyrAlpha\src\zephyr\db\task_repo.py` |
-| db/kb_repo | 可选 | KbRepo | — | `D:\ZephyrAlpha\src\zephyr\db\kb_repo.py` |
 | db/olap_engine | 可选 | OLAPEngine | — | `D:\ZephyrAlpha\src\zephyr\db\olap_engine.py` |
 | MOD-L04-001 Risk Management | 可选 | CTR-P1-008 RiskDashboardSnapshot | — | `D:\ZephyrAlpha\docs\03_modules\_domain_risk\risk-core\blueprint.md` |
 | MOD-L07-001 Post-Trade Analytics | 可选 | CTR-P1-009 PerformanceAttributionReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain_reporting\blueprint.md` |
@@ -572,7 +567,6 @@ class FitnessDashboardData(BaseModel):
 |------------|---------|--------|---------|
 | FLE Fitness Functions | EXT-DASHBOARD-FLE-001 消费 | Dashboard 可展示 Fitness 度量 | Dashboard 可渲染 |
 | TaskRepository | 直接查询 | 任务进度看板可渲染 | 看板可渲染 |
-| KbRepo | 直接查询 | 知识库概览可渲染 | 概览可渲染 |
 | OLAPEngine | 直接查询 | 门禁统计+OLAP 趋势可渲染 | 统计可渲染 |
 | D_RISK | CTR-P1-008 消费 | 风险仪表盘可展示 | 风险面板可渲染 |
 | MOD-INF-035 系统大脑 | 运维可视化 | Dashboard 嵌入系统大脑 | Dashboard 可渲染 |
@@ -604,10 +598,9 @@ class FitnessDashboardData(BaseModel):
 | 1 | Streamlit 未安装 | 中 | Dashboard 无法渲染 | import 降级为 CLI 输出 | 风险 |
 | 2 | YAML module id 不一致 | 低 | 发现困难 | ARB-21 统一为 hmi_core | 风险 |
 | 3 | OLAPEngine 不可用 | 中 | 门禁统计/OLAP 趋势为空 | 组件返回空 dataclass | 风险 |
-| 4 | KbRepo 不可用 | 中 | 知识库概览为空 | 组件返回空 dataclass | 风险 |
-| 5 | C轨已开放[ARCH-045 P0]，蓝图与代码可同步 | 低 | 历史遗留蓝图标注与代码不同步 | 蓝图明确标注已实现代码范围 | 风险 |
-| 6 | 新渠道需实现对应 Base 类 | — | 中 | OCP 扩展点文档 + 示例 | 负面后果 |
-| 7 | 依赖 Streamlit 运行时 | — | 中 | 可选依赖 + CLI 降级 | 负面后果 |
+| 4 | C轨已开放[ARCH-045 P0]，蓝图与代码可同步 | 低 | 历史遗留蓝图标注与代码不同步 | 蓝图明确标注已实现代码范围 | 风险 |
+| 5 | 新渠道需实现对应 Base 类 | — | 中 | OCP 扩展点文档 + 示例 | 负面后果 |
+| 6 | 依赖 Streamlit 运行时 | — | 中 | 可选依赖 + CLI 降级 | 负面后果 |
 
 ---
 

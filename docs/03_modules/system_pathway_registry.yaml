@@ -248,15 +248,6 @@ pathways:
     config: ""
     status: "implemented"
 
-  - module_id: "MOD-KB-001"
-    name: "knowledge_base"
-    layer: "B-Track"
-    blueprint: "docs/03_modules/_domain_infrastructure_operations/knowledge_base/blueprint.md"
-    source_dir: "src/zephyr/kb/"
-    test_dir: "tests/"
-    config: "config/embedding_model_registry.yaml"
-    status: "implemented"
-
   - module_id: "MOD-LSG-001"
     name: "llm_security"
     layer: "B-Track"

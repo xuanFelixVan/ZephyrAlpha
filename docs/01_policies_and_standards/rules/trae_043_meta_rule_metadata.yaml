@@ -632,7 +632,7 @@ sections:
     enums:
     - name: category
       values: 10值(知识条目内容类型)
-      code_source: knowledge_base_server.py
+      code_source: 无
     - name: domain
       values: 10值(D0-D9业务领域)
       code_source: kms-entry-schema.md

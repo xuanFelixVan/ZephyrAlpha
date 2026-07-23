@@ -49,7 +49,7 @@ body: |
 
     - 解析 33 个 ADR 文件（frontmatter + 5 段正文）
 
-    - 通过 KbRepo.create() + transition() 走完 DRAFT→SUBMITTED→REVIEWED→ACCEPTED→INDEXED→VERIFIED
+    - 通过 KB API（已退役）的 create() + transition() 走完 DRAFT→SUBMITTED→REVIEWED→ACCEPTED→INDEXED→VERIFIED
 
     - INDEXED 阶段触发 ChromaDB upsert（降级处理——当前环境无向量化）
 
@@ -249,15 +249,11 @@ body: |
 
     - session_logs/index.yaml（16 sessions）
 
-    - data/databases/governance.db（knowledge 表——33 ADR entries）
-
-    - src/zephyr/kb/kb_repo.py（KbRepo API）
-
     - docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml（v1.4）
 
   - **注**:
 
-    1. ADR 物理文件已全删——要读 ADR 内容，需通过 KbRepo.get("ADR-NNNN") 或 KB.search()
+    1. ADR 物理文件已全删（KB 系统已于 2026-07 退役，相关检索 API 不再可用）
 
     2. 蓝图对 ADR 的引用（74+ 处）全部通过 ID（"ADR-NNNN"），迁移后零影响
 

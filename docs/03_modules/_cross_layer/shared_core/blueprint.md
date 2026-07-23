@@ -571,7 +571,6 @@ build_status: planned
 | MOD-INF-009 | Pipeline | `schemas.py`, `paths.py`, `time_utils.py` | 2 文件 | 管线调度器依赖 Task 状态模型 + 路由模型 |
 | MOD-GATE_ENGINE | Gate Engine | `schemas.py`, `paths.py`, `time_utils.py`, `frontmatter_utils.py` | 3 文件 | 门禁判决依赖 TaskStatus/CheckResult；熔断器依赖配置路径 |
 | MOD-FEEDBACK_LOOP | Feedback Loop | `schemas.py`, `paths.py`, `time_utils.py`, `observer.py` | 3 文件 | 自进化引擎依赖事件总线 + 指标采集模型 |
-| MOD-KB-001 | Knowledge Base | `schemas.py` (KnowledgeEntry/KeCategory), `paths.py`, `content_fingerprint.py`, `frontmatter_utils.py` | 10 文件 | KE 生命周期全链路——ingest/extract/activate/analyze 全部依赖 shared 模型 |
 | MOD-INF-013 | MCP Servers | `schemas.py`, `paths.py`, `time_utils.py` | 3 文件 | task_manager/doc_guard/gate_engine 三个 MCP Server 均对接 shared 模型 |
 | MOD-LLM_SECURITY | LLM Security | `schemas.py`, `paths.py`, `time_utils.py` | 1 文件 | 安全审计日志依赖 AuditEvent 模型 |
 | MOD-INF-002 | Runtime Integration | `schemas.py`, `paths.py`, `observer.py`, `capability.py`, `dos_launcher.py` | 5 文件 | 跨层集成——事件总线、能力管控、指令加载、任务调度全链路 |

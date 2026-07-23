@@ -106,26 +106,25 @@ design_maturity: design
 
 | 蓝图文件 | module_id | 版本 | 内容 |
 |---------|-----------|------|------|
-| [blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md) | MOD-MASTER-002 | v0.9.2 | §零~§十四+§十六~§三十七（12系统拓扑+63条CT-*契约+共享Schema+全局状态传播+容量预算+施工Phase+Anti-Patterns+设计决策+集成测试+风险+治理） |
+| [blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md) | MOD-MASTER-002 | v0.9.2 | §零~§十四+§十六~§三十七（11系统拓扑+61条CT-*契约+共享Schema+全局状态传播+容量预算+施工Phase+Anti-Patterns+设计决策+集成测试+风险+治理） |
 | [blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_capacity.md) | MOD-MASTER-003 | v1.1.0 | §-1/§-2（容量升级：二次审计12缺口+10个升级章） |
 | [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_agent_spec.md) | MOD-MASTER-001 | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
 
-## 12 个集成系统
+## 11 个集成系统
 
 # | 系统 | 模块蓝图 | 关键 CT-* |
 |---|------|:---:|------|
 1 | Agent Orchestrator | MOD-TASK_SYSTEM | CT-ORC-SCRIPT, CT-ORC-CE, CT-ORC-VMS, CT-ORC-GATE, CT-ORC-DB |
-2 | Script System | MOD-INF-005 | CT-ORC-SCRIPT, CT-SCRIPT-KB, CT-SCRIPT-GATE |
-3 | Knowledge Base | MOD-KB-001 | CT-SCRIPT-KB, CT-KB-VMS |
-4 | Gate Engine | MOD-GATE_ENGINE | CT-ORC-GATE, CT-SCRIPT-GATE |
-5 | Context Engine | MOD-CONTEXT_ENGINE | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG |
-6 | Task Pipeline | MOD-INF-009 | CT-PIPE-ORC |
-7 | Feedback Loop Engine | MOD-FEEDBACK_LOOP | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE |
-8 | Vector Memory Service | MOD-INF-011 | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS |
-9 | Database | MOD-DATABASE | CT-FLE-DB, CT-ORC-DB |
-10 | MCP Servers | MOD-INF-013 | — |
-11 | LLM Security Gateway | MOD-LLM_SECURITY | CT-CE-LSG |
-12 | System Telemetry | MOD-INF-015 | CT-TELE-FLE |
+2 | Script System | MOD-INF-005 | CT-ORC-SCRIPT, CT-SCRIPT-GATE |
+3 | Gate Engine | MOD-GATE_ENGINE | CT-ORC-GATE, CT-SCRIPT-GATE |
+4 | Context Engine | MOD-CONTEXT_ENGINE | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG |
+5 | Task Pipeline | MOD-INF-009 | CT-PIPE-ORC |
+6 | Feedback Loop Engine | MOD-FEEDBACK_LOOP | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE |
+7 | Vector Memory Service | MOD-INF-011 | CT-ORC-VMS, CT-CE-VMS |
+8 | Database | MOD-DATABASE | CT-FLE-DB, CT-ORC-DB |
+9 | MCP Servers | MOD-INF-013 | — |
+10 | LLM Security Gateway | MOD-LLM_SECURITY | CT-CE-LSG |
+11 | System Telemetry | MOD-INF-015 | CT-TELE-FLE |
 
 ## 阅读顺序
 

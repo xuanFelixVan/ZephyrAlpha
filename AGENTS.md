@@ -198,7 +198,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | GitCommitGateway | `zephyr.gov_enforcement.rule_bridge.git_commit_gateway` | 全项目唯一合法 git commit 入口（串行锁+stash隔离+GW标记） |
 | A2A Protocol | `zephyr.infrastructure.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
 | LLM 安全网关（LSG） | `zephyr.security.llm_defense.llm_security.gateway` | L1-L8 十层纵深防御，所有 LLM 调用必经安检（RULE-LSG-001） |
-| MCP Servers（10 个） | [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json) | MCP 服务器注册表（含工具列表/安全等级/ACL/限流） |
+| MCP Servers（11 个） | [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json) | MCP 服务器注册表（含工具列表/安全等级/ACL/限流） |
 | Trigger Router（6 触发器） | [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml) | 事件驱动路由表（含 handler/优先级/重试策略） |
 | Dashboard (Panel) | `src/zephyr/frontend/dashboard/app_panel.py` | Panel+HoloViz 仪表盘主入口（v3.1.0, #ARCH-047），10 Tab 治理+交易/回测；`panel serve app_panel.py --show --port 5006` |
 | Data Source Integrator | `integrator` / `python -m zephyr.data` | 数据源集成器 CLI（MOD-L00-004 §8.4），7 子命令：`status`/`list`/`run`/`rerun-failed`/`pause <source>`/`resume <source>`/`start`；统一管理 8 源 61 任务的自动下载+断点续传+熔断 |
@@ -1214,7 +1214,7 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
 
 - **状态**：已治本（5 阶段全部完成，8 commits）
 - **问题本质**：[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` doc_id 路径是 VMS 全局设计缺陷，影响所有 HOT collection（decisions/lessons/knowledge/rules/code_context）。同一内容 commit N 次堆 N 份重复 doc，TTL 到期才清理
-- **正确范式**：[kb_repo._upsert_vector](file:///d:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/kb_repo.py#L399) 的 `col.upsert + 确定性业务 id`（同 id 覆盖，零垃圾）
+- **正确范式**：原 KB 仓储层 `_upsert_vector`（`src/zephyr/intelligence/model_evaluation/`，已随 KB 系统于 2026-07 退役删除）的 `col.upsert + 确定性业务 id`（同 id 覆盖，零垃圾）
 - **治本动作**（8 commits）：
   1. S1 `6797764c`：write_with_provenance 加 doc_id 入参 + col.add→col.upsert
   2. S2A `6eb1019c`：vector_bridge 5 处补确定性 doc_id

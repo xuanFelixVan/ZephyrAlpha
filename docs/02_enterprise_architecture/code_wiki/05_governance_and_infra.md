@@ -407,9 +407,9 @@ created_by: agent
 10. `_subscribe_eventbus_consumers()` — 统一调用 9 个消费方模块的模块级 `subscribe_eventbus()`（DM-2507-J，混合注册模式，各自幂等）。
 11. `_subscribe_skill_freshness_events()` — `skill.freshness_critical`（L323）。
 12. `RedBlueTriggerConsumer().start()` — 红蓝对抗提交触发消费线程，轮询 `data/red_blue/trigger_queue/`（MOD-INF-030 事件驱动；`ZEPHYR_RED_BLUE_AUTO_ENABLED!=1` 时只 log 不实跑）。
-13. **MCP 集群自启**：daemon 线程跑 `scripts/mcp/launcher.py` 的 `launch_all()`，10 个 Server 按 DAG 拓扑排序启动（L668-691）。
+13. **MCP 集群自启**：daemon 线程跑 `scripts/mcp/launcher.py` 的 `launch_all()`，9 个 Server 按 DAG 拓扑排序启动（L668-691）。
 
-MCP 服务器清单（`config/mcp.json` + `src/zephyr/integration/mcp/`）：task_manager、knowledge_base、gate_engine、session_handoff(doc_guard)、intent_router(sentinel)、blueprint_search、sandbox、governance、telemetry、rule_discovery（rule_discovery_server.py 提供 `discover_applicable_rules`，是能力反查 MCP 接口）。基类见 §9 BaseMCPServer。
+MCP 服务器清单（`config/mcp.json` + `src/zephyr/integration/mcp/`）：task_manager、gate_engine、session_handoff(doc_guard)、intent_router(sentinel)、blueprint_search、sandbox、governance、telemetry、rule_discovery（rule_discovery_server.py 提供 `discover_applicable_rules`，是能力反查 MCP 接口）。基类见 §9 BaseMCPServer。
 
 ---
 

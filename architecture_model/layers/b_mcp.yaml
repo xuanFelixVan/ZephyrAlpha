@@ -16,13 +16,12 @@ modules:
     status: implemented
     priority: P1
     runtime_plane: warm
-    description: MCP 协议服务端集合——task_manager (已实现decompose_blueprint) + knowledge_base / gate_engine / doc_guard / sentinel (skeleton) + blueprint_search (已实现find_relevant_blueprint) + sandbox (规划中)
+    description: MCP 协议服务端集合——task_manager (已实现decompose_blueprint) + gate_engine / doc_guard / sentinel (skeleton) + blueprint_search (已实现find_relevant_blueprint) + sandbox (规划中)
     files:
       - _base_server.py
       - blueprint_search_server.py
       - doc_guard_server.py
       - gate_engine_server.py
-      - knowledge_base_server.py
       - sandbox_server.py
       - sentinel_server.py
       - task_manager_server.py

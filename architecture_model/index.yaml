@@ -1,8 +1,10 @@
+# [TTL] permanent
 # v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
 # c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
 # 本文件由 dm200916_write_direct.py 从 depgraph (PostgreSQL) 派生，禁止手工编辑 domains 列表
 module_id: MOD-GOVERNANCE
+ttl: permanent
 schema_version: '3.0.2'
 system:
   name: ZephyrAlpha

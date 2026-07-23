@@ -55,7 +55,6 @@ references:
   - {id: "MOD-INF-015", at: "§2", why: "遥测发射通道——仅存 references"}
   - {id: "MOD-FEEDBACK_LOOP", at: "§2", why: "FLE 消费审计事件／Policy 闭环——仅存 references"}
   - {target: "KBG-0010", at: "§4.4", why: "三层治理边界——Policy/Factory/Runtime 三角闭环接口协议"}
-  - {target: "MOD-KB-001", at: "§2", why: "Knowledge Base——审计数据输入 KB 的投毒防护 + KB provenance 评分"}
   - {target: "MOD-INF-022", at: "§2", why: "Escalation Engine——异常检测升级路径 + 委托链终端判断"}
   - {id: "MOD-INF-005", at: "§5.7", why: "Script System——BulkheadExecutor 脚本执行结果输入审计"}
   - {id: "MOD-INF-009", at: "§4", why: "Pipeline——PipelineDAG 模块执行顺序影响审计时间线重建"}
@@ -349,7 +348,6 @@ build_status: planned
 | 外部调用链 | `ExternalToolCallAudit` | — | ✅ 已实现 |
 | 间接操作检测 | `IndirectOperationDetector` | — | ✅ 已实现 |
 | 反馈自审计 | `FeedbackSelfAudit` | — | ✅ 已实现 |
-| KB 门禁 | `KBAuditGate` | MOD-KB-001 | ✅ 已实现 |
 | 确定性重放 | `DeterministicReplayEngine` | — | ✅ 已实现 |
 | CLI 面板 | `AuditCLI` | — | ✅ 已实现 |
 | 分片写入器 | `ShardWriter` | — | ❌ v2.0 待施工 |

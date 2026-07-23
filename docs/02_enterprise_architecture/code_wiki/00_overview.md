@@ -176,10 +176,10 @@ flowchart TB
 - **Gateway**：`mcp_gateway` v1.0.0，"集中式治理节点（Auth/ACL + RateLimit + Route + Audit + Degrade）"
 - **限流**：`default_qps: 10`，`default_burst: 30`，per-tool 独立桶
 - **熔断**：`failure_threshold: 3`，`recovery_timeout_seconds: 30`，half-open 探测 1 次
-- **servers 共 12 个条目**（含 gateway 配置块则结构略有差异）：`task_manager`、`knowledge_base`、`gate_engine`、`session_handoff`、`intent_router`、`blueprint_search`、`sandbox`、`governance`、`telemetry`、`vector_memory`、`red_blue_validator`、`rule_discovery`。各 server 声明了安全等级集合（如 sandbox 仅 H 级，blueprint_search 仅 L 级）；`red_blue_validator` 显式列出 4 个工具（run_adversarial / list_scenarios / get_report / check_convergence）。
-- **DAG 分层启动**（`scripts/mcp/launcher.py` docstring L23-L27）：layer_1 基础服务（knowledge_base、gate_engine、blueprint_search、governance、vector_memory、telemetry）→ layer_2 task_manager → layer_3 session_handoff、intent_router → layer_4 gateway 最后启动。
+- **servers 共 11 个条目**（含 gateway 配置块则结构略有差异）：`task_manager`、`gate_engine`、`session_handoff`、`intent_router`、`blueprint_search`、`sandbox`、`governance`、`telemetry`、`vector_memory`、`red_blue_validator`、`rule_discovery`。各 server 声明了安全等级集合（如 sandbox 仅 H 级，blueprint_search 仅 L 级）；`red_blue_validator` 显式列出 4 个工具（run_adversarial / list_scenarios / get_report / check_convergence）。
+- **DAG 分层启动**（`scripts/mcp/launcher.py` docstring L23-L27）：layer_1 基础服务（gate_engine、blueprint_search、governance、vector_memory、telemetry）→ layer_2 task_manager → layer_3 session_handoff、intent_router → layer_4 gateway 最后启动。
 
-> 注：`AGENTS.md` 称 "MCP Servers（10 个）"，launcher docstring 亦称 "10 个 MCP Server 按 4 层 DAG 启动"；`mcp.json` 的 `servers` 键实测含 12 个条目（含较新的 `red_blue_validator`、`rule_discovery`）。数字口径以 `mcp.json` 实际内容为准，文档与配置存在轻微漂移。
+> 注：`AGENTS.md` 与 `mcp.json` 均登记 11 个 MCP Server（`knowledge_base` 已于 2026-07 KB 退役后移除）；launcher docstring 称 "9 个 MCP Server 按 4 层 DAG 启动"——两处口径不同：mcp.json 为注册服务器总数（11），launcher 为 DAG 拓扑启动子集（9，不含 `sandbox`/`red_blue_validator`/`rule_discovery`，另含 `gateway`）。
 
 ### 5.2 `config/trigger_router.yaml` — 事件触发路由表
 

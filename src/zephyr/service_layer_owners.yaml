@@ -28,12 +28,6 @@ modules:
     - orchestrator:       src/zephyr/integration/pipeline_orchestrator.py
     - ct_pipe_routing:    src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
 
-  knowledge_gates:
-    - G1_ingest:          src/zephyr/gov_kb/ingest.py
-    - G3_analyze:         src/zephyr/gov_kb/pipeline/analyze.py
-    - G4_activate:        src/zephyr/gov_kb/pipeline/activate.py
-    - G5_extract:         src/zephyr/gov_kb/pipeline/extract.py
-
   feedback_loop:
     - evolution:          src/zephyr/feedback_loop/evolution_engine.py
     - backpressure:       src/zephyr/feedback_loop/backpressure_bridge.py

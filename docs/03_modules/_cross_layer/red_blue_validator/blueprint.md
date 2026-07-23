@@ -742,7 +742,6 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | MOD-INF-013 | 可选 | MCP Servers 端点注册 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\mcp_servers\blueprint.md` |
 | MOD-INF-027 | 必须 | Audit Orchestrator Phase 4 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 | MOD-INF-031 | 可选 | AutoFix Engine 修复执行 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
-| MOD-INF-024 | 可选 | Knowledge Base 绕过模式存储 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
 | MOD-INF-026 | 可选 | Asset Inventory 攻击目标发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\asset-inventory\blueprint.md` |
 
 ### 10.2 依赖图对齐声明

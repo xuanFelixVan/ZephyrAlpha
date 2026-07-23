@@ -2487,9 +2487,6 @@ context_budget_watermark:
  max_context_tokens_per_session: 32000
  enforcement: "compress_beyond_threshold"
  compression_strategy:
- - source: "knowledge_base"
- action: "semantic_summary"
- config: "top 5 most relevant KEs by cosine similarity"
  - source: "KB 决策记录_references"
  action: "link_only"
  config: "AI fetches full content on-demand via ContractBus"

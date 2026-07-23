@@ -39,114 +39,66 @@ except Exception as exc:
 pytestmark = pytest.mark.skipif(not _IMPORT_OK, reason=f"import failed: {_IMPORT_ERR}")
 
 
-class FakeRecord:
-    def __init__(
-        self,
-        summary="",
-        content="",
-        source_file="",
-        ke_id="KE-001",
-        category="",
-        tags=None,
-        blueprint_id="",
-        section="",
-    ):
-        self.summary = summary
-        self.content = content
-        self.source_file = source_file
-        self.ke_id = ke_id
-        self.category = category
-        self.tags = tags or []
-        self.blueprint_id = blueprint_id
-        self.section = section
-
-
-class FakeKbRepo:
-    def __init__(self, records=None, search_hits=None):
-        self._records = records or []
-        self._search_hits = search_hits or []
-
-    def list_by_status(self):
-        return self._records
-
-    def search(self, query_text="", collection="", n_results=10, score_threshold=0.3):
-        return self._search_hits[:n_results]
-
-
 class TestContextInjector:
+    """ContextInjector API tests.
+
+    KB system retired 2026-07; inject_by_* return empty InjectedContext
+    (production retrieval handled out-of-band by the context pipeline).
+    """
+
     def test_inject_by_task_id(self):
-        records = [
-            FakeRecord(summary="task T-001 content", tags=["T-001"]),
-            FakeRecord(summary="other task", tags=["T-002"]),
-        ]
-        repo = FakeKbRepo(records=records)
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject_by_task_id("T-001")
         assert isinstance(result, InjectedContext)
         assert result.retrieval_mode == "task_id"
-        assert "T-001" in result.context
+        assert result.context == ""
+        assert result.token_count == 0
 
     def test_inject_by_module_id(self):
-        records = [
-            FakeRecord(category="MOD-CONTEXT_ENGINE", summary="module info"),
-        ]
-        repo = FakeKbRepo(records=records)
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject_by_module_id("MOD-CONTEXT_ENGINE")
         assert result.retrieval_mode == "module_id"
-        assert "module info" in result.context
+        assert result.context == ""
+        assert result.token_count == 0
 
     def test_inject_by_keyword(self):
-        hits = [FakeRecord(content="keyword match result", ke_id="KE-100")]
-        repo = FakeKbRepo(search_hits=hits)
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject_by_keyword("test query")
         assert result.retrieval_mode == "keyword"
+        assert result.context == ""
 
     def test_inject_dispatch_task_id(self):
-        records = [FakeRecord(summary="dispatched", tags=["T-010"])]
-        repo = FakeKbRepo(records=records)
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject("T-010", mode=RetrievalMode.TASK_ID)
         assert result.retrieval_mode == "task_id"
 
     def test_inject_dispatch_module_id(self):
-        records = [FakeRecord(category="MOD-X", summary="dispatched module")]
-        repo = FakeKbRepo(records=records)
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject("MOD-X", mode=RetrievalMode.MODULE_ID)
         assert result.retrieval_mode == "module_id"
 
     def test_inject_dispatch_keyword(self):
-        repo = FakeKbRepo(search_hits=[])
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject("query", mode=RetrievalMode.KEYWORD)
         assert result.retrieval_mode == "keyword"
 
     def test_token_budget_property(self):
-        repo = FakeKbRepo()
-        injector = ContextInjector(repo, token_budget=5000)
+        injector = ContextInjector(token_budget=5000)
         assert injector.token_budget == 5000
 
     def test_max_sources_property(self):
-        repo = FakeKbRepo()
-        injector = ContextInjector(repo, max_sources=5)
+        injector = ContextInjector(max_sources=5)
         assert injector.max_sources == 5
 
-    def test_budget_enforcement(self):
-        long_content = "x" * 10000
-        records = [
-            FakeRecord(summary=long_content, tags=["T-001"]),
-            FakeRecord(summary=long_content, tags=["T-001"]),
-        ]
-        repo = FakeKbRepo(records=records)
-        injector = ContextInjector(repo, token_budget=100)
+    def test_empty_context_respects_budget(self):
+        # With no data source, token_count is always 0 regardless of budget.
+        injector = ContextInjector(token_budget=100)
         result = injector.inject_by_task_id("T-001")
-        assert result.token_count <= 100 + 50
+        assert result.token_count == 0
+        assert result.token_count <= 100
 
     def test_no_matching_records(self):
-        repo = FakeKbRepo(records=[])
-        injector = ContextInjector(repo)
+        injector = ContextInjector()
         result = injector.inject_by_task_id("NONEXISTENT")
         assert result.context == ""
         assert result.token_count == 0

@@ -19,7 +19,6 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [knowledge_base/](knowledge_base/index.md) | 目录 | knowledge_base |
 | [vector_memory/](vector_memory/index.md) | 目录 | vector_memory — 目录索引 |
 
 ## 导航

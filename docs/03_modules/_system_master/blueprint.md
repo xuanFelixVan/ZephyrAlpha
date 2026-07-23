@@ -492,8 +492,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
   │     └── governance_server.py (MCP统一入口——8工具)
   ├── MOD-MASTER_BLUEPRINT (12基础设施集成, Level 1)
   │     ├── MOD-INF-001~028 基础设施系统 (29个,详见§1.3)
-  │     ├── MOD-INF-013 (MCP Servers, 8 Server + Gateway, stdio协议)
-  │     └── MOD-KB-001 知识库 (95%完整)
+  │     └── MOD-INF-013 (MCP Servers, 8 Server + Gateway, stdio协议)
   └── 业务域层 (53域, 4值layer_id, 蓝图已创建, C轨占位已解除[ARCH-045 P0]，可施工)
 ```
 
@@ -526,7 +525,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 性能基线 | 本蓝图 §二十七 | MOD-INF-011 + §27.1 | ~400 |
 | 供应链安全 | 本蓝图 §二十八 | pip-lock + audit | ~300 |
 | 数据质量治理 | 本蓝图 §二十九 | MOD-DATABASE + §13 | ~400 |
-| 知识管理 | 本蓝图 §三十 | MOD-KB-001 + AUTO-KB(§67) | ~400 |
+| 知识管理 | 本蓝图 §三十 | AUTO-KB(§67)（KB 系统已于 2026-07 退役） | ~400 |
 | 迁移策略 | 本蓝图 §三十一 | MOD-INF-021 + §21 | ~300 |
 | 术语/反模式 | 本蓝图 §三十二 + §三十三 | §15.2 + AGENTS.md | ~300 |
 | Owner离线自治 | 本蓝图 §三十四 | §七十 分级决策 | ~400 |
@@ -679,7 +678,6 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Budget Enforcer | MOD-INF-024 | 35% | Token/Cost/Time三维预算执行 | `src/zephyr/budget-enforcer/` | 部分实现 |
 | A2A Protocol | MOD-INF-025 | 35% | Agent间通信+冲突解决 | `src/zephyr/infra_ops/a2a_protocol/` | 部分实现 |
 | Asset Inventory | MOD-INF-026 | 5% | 全量资产发现+统一登记 | `src/zephyr/asset-inventory/` | 部分实现 |
-| Knowledge Base | MOD-KB-001 | 95% | 知识生命周期管理 | `src/zephyr/kb/` | 已实现 |
 | Audit Orchestrator | MOD-INF-027 | 100% | 全域审计调度编排 | src/zephyr/audit-orchestrator/ | 26/26 文件已实现 |
 | Semantic Auditor | MOD-INF-028 | 100% | 语义级审计校验 | src/zephyr/semantic-auditor/ | 22/26 文件已实现 |
 | Orphan Judge | MOD-INF-029 | 100% | 资产生死判定引擎 | src/zephyr/orphan-judge/ | 25/25 文件已实现 |

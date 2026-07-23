@@ -2104,7 +2104,6 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | | | → | D_GOV_AUDIT (扩充) | 66 | 审计编排（AUDIT_TRAIL 子域） |
 | | | → | D_GOV_DRIFT (扩充) | 71 | 漂移检测（DRIFT_DETECTION 子域） |
 | | | → | D_GOV_ENFORCEMENT (扩充) | 100 | 规则执行（RULE_ENFORCEMENT 子域） |
-| | | → | **D_GOV_KB** (新建) | 16 | 知识库治理（KB 子域） |
 | | | → | D_GOV_SCRIPTS (扩充) | 3 | 脚本治理（SCRIPT_GOVERNANCE 子域） |
 
 **D_TRADING 拆分结果**（原 280 prod → 拆分后 D_TRADING 保留 19 prod）:
@@ -2115,7 +2114,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | | | → | **D_FEEDBACK_LOOP** (新建) | 109 | 反馈循环引擎（原 trading/feedback_loop/） |
 | | | → | **D_ORCHESTRATOR** (新建) | 59 | 代理编排器（原 trading/orchestrator/） |
 
-**新建域**: 3 个（D_GOV_KB, D_FEEDBACK_LOOP, D_ORCHESTRATOR）
+**新建域**: 2 个（D_FEEDBACK_LOOP, D_ORCHESTRATOR）
 **扩充域**: 4 个（D_GOV_AUDIT, D_GOV_DRIFT, D_GOV_ENFORCEMENT, D_GOV_SCRIPTS）
 **物理路径迁移**: feedback_loop/ 和 orchestrator/ 已从 trading/ 移出到 src/zephyr/ 顶层（二期项提前完成）
 

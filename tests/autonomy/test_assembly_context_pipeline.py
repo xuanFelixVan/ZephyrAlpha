@@ -53,7 +53,7 @@ class TestRunContextFourStage:
         result = run_context_four_stage([], require_absolute_manifest_paths=False, inject_mode="none")
         assert result.injected is None
 
-    def test_inject_mode_returns_empty_context_without_kb_repo(self):
+    def test_inject_mode_returns_empty_context(self):
         result = run_context_four_stage(
             [], require_absolute_manifest_paths=False, inject_mode="keyword", inject_query="test"
         )

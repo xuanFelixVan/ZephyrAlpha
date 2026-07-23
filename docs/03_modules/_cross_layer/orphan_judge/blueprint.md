@@ -39,7 +39,6 @@ depends_on:
   - {target: "MOD-INF-023", at: "§6.28", why: "Drift Detector——漂移事件与孤儿判定的双向桥接+漂移预算约束"}
   - {target: "MOD-INF-022", at: "§3", why: "Escalation Protocol——低置信度判定升级+安全围栏触发升级"}
   - {target: "MOD-INF-018", at: "§4", why: "Agent RBAC——删除操作的权限校验+AUTO_GUARD后验"}
-  - {target: "MOD-KB-001", at: "§4.5", why: "Knowledge Base——判定决策记录的查询与写入"}
   - {target: "MOD-INF-027", at: "section 4", why: "Audit Orchestrator (编排)"}
 references:
   - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator——OrphanJudge作为Phase 3修复阶段的核心子系统"}
@@ -170,10 +169,9 @@ OrphanJudge 是孤儿文件的资产生死判决引擎——解决"文件不在�
 | 19 | `drift_bridge.py` | §12 | Drift Detector桥接 | 未实现 | — |
 | 20 | `escalation_bridge.py` | §12 | Escalation桥接 | 未实现 | — |
 | 21 | `rbac_bridge.py` | §12 | RBAC桥接 | 未实现 | — |
-| 22 | `kb_bridge.py` | §12 | KB桥接 | 未实现 | — |
-| 23 | `feedback_bridge.py` | §12 | Feedback Loop桥接 | 未实现 | — |
-| 24 | `mcp_integration.py` | §4.5 | MCP Server Tool注册 | 未实现 | — |
-| 25 | `swid_tag.py` | 蓝图特有§B6 | SWID Tag读写 | 未实现 | — |
+| 22 | `feedback_bridge.py` | §12 | Feedback Loop桥接 | 未实现 | — |
+| 23 | `mcp_integration.py` | §4.5 | MCP Server Tool注册 | 未实现 | — |
+| 24 | `swid_tag.py` | 蓝图特有§B6 | SWID Tag读写 | 未实现 | — |
 
 ### §0.2 对齐验证矩阵
 
@@ -603,7 +601,6 @@ class StandaloneResult(BaseModel):
 | MOD-INF-023 | 可选 | 漂移事件双向桥接 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\drift-detector\blueprint.md` |
 | MOD-INF-022 | 可选 | 低置信度升级 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\escalation\blueprint.md` |
 | MOD-INF-018 | 必须 | 删除权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\agent-rbac\blueprint.md` |
-| MOD-KB-001 | 可选 | 判定记录查询与写入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge_base\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -646,7 +643,6 @@ class StandaloneResult(BaseModel):
 | judge.py | drift_bridge.py | 判定结果 | 函数调用 |
 | judge.py | escalation_bridge.py | 低置信度判定 | 函数调用 |
 | judge.py | rbac_bridge.py | 删除操作 | 函数调用 |
-| judge.py | kb_bridge.py | 判定记录 | 函数调用 |
 | judge.py | feedback_bridge.py | 误判反馈 | 函数调用 |
 
 ### 10.4 自动化规格
@@ -703,7 +699,6 @@ class StandaloneResult(BaseModel):
 | MOD-INF-023 DriftDetector | 双向桥接 | DriftOrphanBridge+OrphanDriftBridge | 漂移事件→孤儿判定→预算消耗 |
 | MOD-INF-022 EscalationEngine | 调用方 | OrphanEscalationBridge | 低置信度→升级事件 |
 | MOD-INF-018 Agent RBAC | 调用方 | OrphanRbacBridge | 删除操作→RBAC校验 |
-| MOD-KB-001 KnowledgeBase | 双向桥接 | OrphanKbBridge | 判定→KB写入→查询闭环 |
 | MOD-INF-013 GovernanceServer | MCP Tool注册 | 4个MCP Tools | `governance.orphan_judge`可调用 |
 | MOD-GATE_ENGINE PhaseManager | Gate注册 | gate_orphan_judge | Phase 0门禁检查 |
 | MOD-INF-019 AgentSpec | Skill注册 | SKILL-DOM-ORP-001 | `python -m zephyr.agent_spec list`可见 |
@@ -866,7 +861,6 @@ class StandaloneResult(BaseModel):
 | MOD-INF-029 | drift_bridge.py | code | `D:\ZephyrAlpha\src\zephyr\orphan-judge\drift_bridge.py` |
 | MOD-INF-029 | escalation_bridge.py | code | `D:\ZephyrAlpha\src\zephyr\orphan-judge\escalation_bridge.py` |
 | MOD-INF-029 | rbac_bridge.py | code | `D:\ZephyrAlpha\src\zephyr\orphan-judge\rbac_bridge.py` |
-| MOD-INF-029 | kb_bridge.py | code | `D:\ZephyrAlpha\src\zephyr\orphan-judge\kb_bridge.py` |
 | MOD-INF-029 | feedback_bridge.py | code | `D:\ZephyrAlpha\src\zephyr\orphan-judge\feedback_bridge.py` |
 | MOD-INF-029 | mcp_integration.py | code | `D:\ZephyrAlpha\src\zephyr\orphan-judge\mcp_integration.py` |
 
@@ -1438,7 +1432,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/security/access_control/orphan_judge/duplicate_detector.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/escalation_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/feedback_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/security/access_control/orphan_judge/kb_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/mcp_integration.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/models.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/orphan_collector.py` | ✅ 已实现 | |

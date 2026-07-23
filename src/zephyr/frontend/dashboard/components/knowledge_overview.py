@@ -18,7 +18,7 @@
 """knowledge_overview · 知识库概览组件（v3.1.0 Panel 迁移, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §3.1
-数据源: KbRepo（当前 fetch 返回空 dataclass, 待上游施工后填充）
+数据源: KB 系统已于 2026-07 退役，fetch 返回空 dataclass（组件保留为占位）
 渲染依赖: Panel(布局) — 指标卡片+分布表，无专业图表需求故不调用 ChartFactory
 
 v3.1.0 变更 (#ARCH-047):
@@ -116,7 +116,7 @@ def render_knowledge_overview(data: KnowledgeOverviewData) -> dict[str, Any]:
         layout_items.append(pn.pane.Markdown("### 分类分布\n\n" + "\n".join(rows)))
 
     if not data.status_distribution and not data.category_distribution:
-        layout_items.append(pn.pane.Alert("无知识库数据（KbRepo 未配置）", alert_type="info"))
+        layout_items.append(pn.pane.Alert("无知识库数据（KB 系统已于 2026-07 退役）", alert_type="info"))
 
     layout = pn.Column(*layout_items, sizing_mode="stretch_width")
     payload["_layout"] = layout

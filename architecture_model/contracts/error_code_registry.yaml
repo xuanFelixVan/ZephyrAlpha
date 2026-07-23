@@ -276,8 +276,8 @@ error_codes:
   file: src/zephyr/governance/resilience_governance/blast_radius.py
 - code: ZA-GV-0038
   class: MemoryBackendError
-  module: zephyr.gov_kb.storage._backend_protocol
-  file: src/zephyr/gov_kb/storage/_backend_protocol.py
+  module: zephyr.intelligence.model_evaluation._memory_backend
+  file: src/zephyr/intelligence/model_evaluation/_memory_backend.py
 - code: ZA-GV-0039
   class: GitUnavailableError
   module: zephyr.gov_enforcement.rule_enforcement.invariants.post_doc_review_check

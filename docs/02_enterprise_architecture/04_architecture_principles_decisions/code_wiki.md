@@ -527,7 +527,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `BlueprintSearchProtocol` 等 | [ports.py](../../../src/zephyr/integration/ports.py) | `@runtime_checkable Protocol` 接口（解耦 pipeline→mcp 依赖链） |
 | `LLMBridge` | [llm_bridge.py](../../../src/zephyr/integration/llm_bridge.py) | LLM 修复文本生成（不可用时降级为模板） |
 
-**MCP 服务器集群**（[config/mcp.json](../../../config/mcp.json)）：12 个服务器（task_manager / knowledge_base / gate_engine / sentinel_server / blueprint_search / sandbox / governance / vector_memory / rule_discovery / doc_guard / telemetry / gateway），网关提供 Auth/ACL + RateLimit + Route + Audit + Degrade。
+**MCP 服务器集群**（[config/mcp.json](../../../config/mcp.json)）：11 个服务器（task_manager / gate_engine / sentinel_server / blueprint_search / sandbox / governance / vector_memory / rule_discovery / doc_guard / telemetry / gateway），网关提供 Auth/ACL + RateLimit + Route + Audit + Degrade。
 
 #### 4.6.2 安全层（security）
 

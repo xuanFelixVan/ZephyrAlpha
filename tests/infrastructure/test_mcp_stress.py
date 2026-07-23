@@ -81,7 +81,7 @@ class TestMCPStress:
     def test_rate_limit_activated(self):
         """RateLimit 在批量调用时生效。"""
         gw = create_gateway()
-        gw._server_instances["kb"] = DummyServer("knowledge_base", delay_ms=10)
+        gw._server_instances["dummy"] = DummyServer("dummy_server", delay_ms=10)
 
         rate_limited = 0
         for i in range(15):
@@ -90,7 +90,7 @@ class TestMCPStress:
                     "jsonrpc": "2.0",
                     "id": i,
                     "method": "tools/call",
-                    "params": {"name": "knowledge_base.echo", "arguments": {}},
+                    "params": {"name": "dummy_server.echo", "arguments": {}},
                     "_session_id": "rate_test",
                 }
             )

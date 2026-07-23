@@ -72,7 +72,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | MOD-INF-011 VMS | 必须 | 知识检索 | `docs/03_modules/_domain_knowledge/vector_memory/blueprint.md` |
 | MOD-TASK_SYSTEM Task System | 必须 | 任务状态 | `docs/03_modules/_cross_layer/task_system/blueprint.md` |
 | MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/large_language_model_security/blueprint.md` |
-| MOD-KB-001 | 必须 | 知识库检索源 | `docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md` |
 | MOD-INF-035 AutoRuntime Core | 可选 | 运行时调度 | `docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md` |
 
 ## 消费者注册表
@@ -91,7 +90,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | MOD-TASK_SYSTEM (Orchestrator) | Agent session 管理 | Orc 管理 Agent 生命周期；CE 管理上下文内容 |
 | MOD-INF-011 (VMS) | 向量存储与检索 | VMS 是存储层；CE 是消费层 |
 | MOD-LLM_SECURITY (LSG) | 安全审查 | LSG 是安全门；CE 是上下文管道 |
-| MOD-KB-001 (知识库) | KE CRUD | KB 是数据源；CE 是数据消费者 |
 
 ## 集成目标
 
@@ -119,7 +117,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | VMS 蓝图 | MOD-INF-011 |
 | LSG 蓝图 | MOD-LLM_SECURITY |
 | Orchestrator 蓝图 | MOD-TASK_SYSTEM |
-| 知识库蓝图 | MOD-KB-001 |
 | 蓝图注册表 | [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) |
 
 ---

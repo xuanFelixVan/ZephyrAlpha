@@ -35,7 +35,6 @@ depends_on:
   - {target: "MOD-MASTER_BLUEPRINT", at: "§4", why: "全局状态传播链——Gate FAIL→Orc BLOCKED 传播"}
   - {target: "MOD-INF-005", at: "§6", why: "脚本系统——Gate判定输入源（脚本exit code）"}
   - {target: "MOD-TASK_SYSTEM", at: "§4", why: "任务系统——Gate判定输出目标（status→BLOCKED）"}
-  - {target: "MOD-KB-001", at: "§3.2", why: "知识库——G1-G5 KMS门禁判定对象"}
   - {target: "architecture_model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——本蓝图真源"}
   - {target: "MOD-INF-030", at: "§2", why: "Red-Blue Validator——通过 DefenseRunner GATE_MAP 17门禁映射消费 Gate Engine 判定"}
   - {target: "MOD-INF-001", at: "§13", why: "容量 SLO 注册表——门禁容量指标对齐 CAP-001~013"}
@@ -224,6 +223,12 @@ build_status: planned
 | `commit_gates/blueprint_amodule_cross_check_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/table_name_registry_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/capability_lookup_bypass_policy.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/asyncio_run_in_context_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/mcp_version_field_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/mutable_const_without_final_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/open_without_with_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/schema_file_exists_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/zephyr_env_direct_access_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
@@ -314,10 +319,9 @@ build_status: planned
 | 5 | 自指硬化——GateEngineIntegrityGuard+信任根 | ✅ | AI修改gate_engine.py时被检测并阻断 |
 | 6 | 威胁模型覆盖——STRIDE 8类威胁全缓解 | ✅ | 每类威胁有对应缓解措施 |
 | 7 | 门禁判定的具体检测逻辑 | ❌ | 脚本系统 MOD-INF-005 |
-| 8 | 知识入库的具体规则 | ❌ | 知识库 MOD-KB-001 |
-| 9 | pre-commit钩子框架 | ❌ | `.pre-commit-config.yaml` |
-| 10 | 熔断后的修复执行 | ❌ | Orchestrator MOD-TASK_SYSTEM |
-| 11 | 容量SLO全局注册 | ❌ | MOD-INF-001 §13 |
+| 8 | pre-commit钩子框架 | ❌ | `.pre-commit-config.yaml` |
+| 9 | 熔断后的修复执行 | ❌ | Orchestrator MOD-TASK_SYSTEM |
+| 10 | 容量SLO全局注册 | ❌ | MOD-INF-001 §13 |
 
 ### §1.4 运行场景约束
 
@@ -393,7 +397,6 @@ build_status: planned
 | 不管什么 | 去哪 |
 |----------|------|
 | 门禁判定的具体检测逻辑 | 脚本系统 MOD-INF-005 |
-| 知识入库的具体规则 | 知识库 MOD-KB-001 |
 | pre-commit钩子框架 | `.pre-commit-config.yaml` |
 | 熔断后的修复执行 | Orchestrator MOD-TASK_SYSTEM |
 | 全局容量SLO注册 | MOD-INF-001 §13 |
@@ -783,7 +786,6 @@ class ManualApprovalGate:
 |------|------|------|------|------|
 | MOD-TASK_SYSTEM (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task_system/blueprint.md |
 | MOD-INF-005 (Script System) | runtime_call | 脚本exit code→GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) | v1.0+ | docs/03_modules/_domain_governance/governance_automation/blueprint.md |
-| MOD-KB-001 (Knowledge Base) | data_flow | KE→G1-G5 KMS门禁管道 | v1.0+ | docs/03_modules/_cross_layer/knowledge_base/blueprint.md |
 | MOD-CONTEXT_ENGINE (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context_engine/blueprint.md |
 | MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md |
 | MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
@@ -1611,7 +1613,6 @@ STEP 3: 拆分后验证
 |--------|---------|---------|
 | MOD-TASK_SYSTEM (Task System) | GateResult→TaskCard.status迁移 | 门禁判定结果格式变更→Task System需适配 |
 | MOD-INF-005 (Script System) | CT-SCRIPT-GATE-001 exit code映射 | exit code语义变更→映射表需更新 |
-| MOD-KB-001 (Knowledge Base) | G1-G5 KMS门禁管道 | 门禁条件变更→知识入库流程受影响 |
 | MOD-INF-015 (Telemetry) | GATE-16 SLI指标 | 指标定义变更→监控告警需更新 |
 | MOD-MASTER_BLUEPRINT (总蓝图) | §2.8 CT-SCRIPT-GATE-001 | 集成契约变更→总蓝图需同步 |
 | `.pre-commit-config.yaml` | GATE-18 pre-commit钩子 | 钩子配置变更→pre-commit需更新 |

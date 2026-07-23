@@ -273,7 +273,7 @@ blueprint_registry_v2:
         - priority: "TEXT"         # P0 | P1 | P2
         - last_updated: "TEXT"
         - blueprint_hash: "TEXT"   # SHA-256 of the blueprint.md content
-        - depends_on: "JSON"       # ["MOD-INF-005", "MOD-KB-001", ...]
+        - depends_on: "JSON"       # ["MOD-INF-005", ...]
         - tags: "JSON"
         - construction_progress: "TEXT"
         - completeness_score: "REAL"  # 蓝图完备度评分 (0.0-1.0)
@@ -324,75 +324,6 @@ blueprint_registry_v2:
     daily_reconciliation: "每日 02:00 自动对账——发现不一致 → P2 Finding"
     stale_detection: "blueprint_index.last_updated < 30d ago AND status='Active' → 蓝图可能僵尸化 → P1 告警"
     orphan_detection: "blueprint_index 中有条目但对应 blueprint.md 文件不存在 → P0 告警（注册表被篡改或文件误删）"
-```
-
----
-
-### GAP-M03：知识库大规模查询性能保障 🔴 P0
-
-**问题场景**：
-```
-1,500 模块 × 每个模块 200 条 KE = 300,000 条 KE
-每条 KE embedding = 1024d BGE-M3 → 10M vectors in ChromaDB
-当前 ChromaDB 单 collection 1M 上限在 v1.0.0 设计里已经提到→需要 10M
-但查询性能呢？
-- 全量相似度搜索 10M vectors：~500ms（当前 1M = ~50ms）
-- 10 个 AI 同时查询→SQLite 锁竞争 + ChromaDB HNSW 索引竞争
-- 每次 CE build 需要查 50 条相关 KE→10M 中找 Top-K
-```
-
-**当前状态**：v1.0.0 升级章一提到 ChromaDB 10M vectors，但没有任何关于查询性能保障的设计。CT-KB-VMS-001 目前是 CAUTION_STUB。
-
-**设计**：
-
-```yaml
-contract: CT-KB-SCALE-001
-title: "知识库大规模查询性能保障——10M vectors 下的延迟 SLO"
-status: NEW
-priority: P0
-
-kb_scaling:
-  indexing_strategy:
-    hnsw_parameters:
-      M: 64               # HNSW 每个节点的最大连接数（默认 16→10M 需 64）
-      ef_construction: 200 # 构建时搜索深度
-      ef_search: 100       # 查询时搜索深度
-    index_type: "HNSW（内存） + SQLite metadata（磁盘）"
-    build_time: "10M vectors × 1024d → ~30min 初始构建（一次性）"
-    memory_estimate: "10M × 1024d × 4 bytes(float32) = ~40GB + HNSW 索引 ~8GB = ~48GB（超出 64GB 单机内存预算）"
-
-  partitioning:
-    trigger: "单 collection > 2M vectors → 按 layer 分区"
-    partitions:
-      - "kb_partition_l00_l03: 数据源 + 信号层 KE（预估 2M vectors）"
-      - "kb_partition_l04_l08: 风控 + 执行 + 组合层 KE（预估 3M vectors）"
-      - "kb_partition_l09_l15: 展示 + 安全 + 运维层 KE（预估 2M vectors）"
-      - "kb_partition_infra: 12 系统运维 KE + 蓝图 KE（预估 3M vectors）"
-    partition_router: |
-      CE build 时根据 task.target_layer → 路由到对应 partition
-      跨层任务 → 最多查询 2 个 partition（延迟 ×2 可接受）
-    memory_per_partition: "~12GB——可接受（64GB 总内存的 19%）"
-
-  query_optimization:
-    metadata_prefilter: |
-      查询前先用 SQLite metadata 缩小候选集：
-        1. layer ∈ {target_layer, adjacent_layers}
-        2. ke_type ∈ {BLUEPRINT, FINDING, DECISION, KNOWLEDGE}
-        3. freshness_score > 0.3（排除过期 KE）
-      候选集从 10M 缩小到 ~500K → 再 embedding search
-    hybrid_search:
-      keyword_filter: "SQLite FTS5 全文索引预筛选 → 缩小到 10K → embedding search"
-      embedding_search: "在 10K 候选集上做精确相似度 → 返回 Top-K"
-    cache:
-      l1: "LRU 内存缓存——最近 1,000 次查询结果（key=query_hash + target_layer）"
-      l2: "SQLite query_cache 表——TTL=600s"
-      hit_ratio_target: "> 50%（同一 target_layer 的查询高度重复）"
-
-  slo:
-    single_query_p50: "< 100ms"
-    single_query_p99: "< 500ms"
-    concurrent_10_queries_p99: "< 1000ms"
-    index_refresh_interval: "每 100 条新 KE → 触发增量索引更新（非全量重建）"
 ```
 
 ---
@@ -599,9 +530,8 @@ startup_dag:
       - {system: System_Telemetry, timeout_s: 5, depends_on: [Database], description: "metrics 端点注册"}
 
     tier_2_engines:  # 依赖 tier_1
-      - {system: Knowledge_Base, timeout_s: 20, depends_on: [Vector_Memory, Database]}
       - {system: Script_System, timeout_s: 30, depends_on: [Database], description: "script_manifest 加载 + 脚本索引预热"}
-      - {system: Context_Engine, timeout_s: 15, depends_on: [Knowledge_Base, Vector_Memory]}
+      - {system: Context_Engine, timeout_s: 15, depends_on: [Vector_Memory]}
 
     tier_3_business:  # 依赖 tier_2
       - {system: Gate_Engine, timeout_s: 10, depends_on: [Script_System, Database],
@@ -610,12 +540,12 @@ startup_dag:
       - {system: Feedback_Loop, timeout_s: 15, depends_on: [System_Telemetry, Database]}
 
     tier_4_front:  # 依赖 tier_3
-      - {system: Orchestrator, timeout_s: 20, depends_on: [Gate_Engine, Task_Pipeline, Context_Engine, Script_System, Knowledge_Base]}
+      - {system: Orchestrator, timeout_s: 20, depends_on: [Gate_Engine, Task_Pipeline, Context_Engine, Script_System]}
 
   total_startup_budget:
     tier_0: "max(5,10) = 15s（DB + MCP 并行）"
     tier_1: "max(15,5,5) = 15s（VMS + LSG + Telemetry 并行）"
-    tier_2: "max(20,30,15) = 30s（KB + Script + CE 并行）"
+    tier_2: "max(30,15) = 30s（Script + CE 并行）"
     tier_3: "max(10,10,15) = 15s（Gate + Pipeline + FLE 并行）"
     tier_4: "20s（Orc 串行——依赖 tier_3 全部）"
     total: "~95s"  # < 2 分钟总冷启动时间
@@ -1150,7 +1080,6 @@ master_capacity_slos_v1_1:
 |:---:|---------|------|------|
 | GAP-M01 | Module DAG：AST import 分析 + SQLite 表 + BFS 查询接口 | `src/zephyr/shared/module_deps.py` | 修改 module_A 的 __init__.py → 查询返回受影响的 module_B/C/D |
 | GAP-M02 | 蓝图注册表 v2.0：BlueprintAutoIndexer + SQLite 迁移 + 每日对账 | `scripts/governance/registry/blueprint_auto_indexer.py` | 新增 1 个蓝图 → SQLite 自动索引 → YAML 导出不变 |
-| GAP-M03 | KB 分区：按 layer 拆 ChromaDB collection + metadata 预过滤 + 混合搜索 | `src/zephyr/data/knowledge_management/kb/partition_router.py` | 8M vectors 查询 P99 < 1s |
 | GAP-M04 | CE tiering：blueprint relevance scoring + 四级注入 + 预算分配器 | `src/zephyr/orchestration/context_management/blueprint_ranker.py` | 1,500 蓝图场景 → token 预算内注入 → AI 引用率 > 60% |
 
 ### Phase B：运维稳定加固 — 目标 v1.1.0-beta
@@ -1383,7 +1312,7 @@ full_scan:
   parallelism: "4分片 (hash(script_id) % 4)"
   expected_duration: "10,000 脚本 / 4分片 / 25并发/分片 = ~100s/分片 × 串行因子 = < 2h"
   fallback: "分片失败 → 自动降级为 2分片 → 仍失败 → 通知 Owner"
-  result: "生成 Weekly Health Report → 存档到 knowledge_base (KE type=WEEKLY_HEALTH)"
+  result: "生成 Weekly Health Report → 存档到数据库 (report_type=WEEKLY_HEALTH)"
 ```
 
 ---
@@ -1779,7 +1708,7 @@ construction_sequence:
 > **module_id**: MOD-MASTER_BLUEPRINT | **version**: 1.0.0 | **status**: active | **layer**: cross_layer
 
 > **真源声明**：本蓝图是 ZephyrAlpha 全部基础设施系统之间集成关系的 canonical SSoT。
-> 各模块蓝图（MOD-INF-005/006、MOD-KB-001、以及即将创建的 Gates/CE/Pipeline/FLE/VMS/db/MCP/LSG/Telemetry 蓝图）引用本蓝图中的集成契约编号——
+> 各模块蓝图（MOD-INF-005/006、以及即将创建的 Gates/CE/Pipeline/FLE/VMS/db/MCP/LSG/Telemetry 蓝图）引用本蓝图中的集成契约编号——
 > 模块蓝图定义"内部怎么干"，本蓝图定义"之间怎么连"。
 
 ---

@@ -677,7 +677,7 @@ entries:
     执行裁定#199 标识的 4 个超限域拆分（ARCH-CAP-002 v1.0.8 合规）。2026-06-25
     首次拆分新建 5 域（D_INFRA_A2A/RECOVERY/TELEMETRY、D_GOV_AUDIT_TESTS、
     D_GOV_DOCS）扩充 3 域，53 域达标。修正-A（2026-07-12）补拆
-    D_GOVERNANCE(506→129)+D_TRADING(280→19)，新建 D_GOV_KB/D_FEEDBACK_LOOP/
+    D_GOVERNANCE(506→129)+D_TRADING(280→19)，新建 D_FEEDBACK_LOOP/
     D_ORCHESTRATOR。修正-B（2026-07-13）D_FEEDBACK_LOOP 二分新建
     D_FBL_DIAGNOSERS/DETECTORS。最终 63 域全部 production_nodes≤150。
     feedback_loop/orchestrator 物理路径从 trading/ 迁至 src/zephyr/ 顶层。

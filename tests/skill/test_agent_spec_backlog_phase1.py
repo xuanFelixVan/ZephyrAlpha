@@ -10,7 +10,7 @@
 Unit tests for agent-spec backlog Phase 1 modules.
 
 Covers:
-  - skill_executor: KBIntegration, SkillExecutor, BudgetEnforcer, PermissionLevel, EscalationHandler, SkillFeedbackLoop
+  - skill_executor: SkillExecutor, BudgetEnforcer, PermissionLevel, EscalationHandler, SkillFeedbackLoop
   - skill_postmortem: SkillPostmortem
   - skill_compliance: SkillCompliance
   - skill_sandbox: SkillSandbox
@@ -27,50 +27,12 @@ from zephyr.autonomy_core.skills.skill_executor import (
     BudgetEnforcer,
     EscalationHandler,
     GateResult,
-    KBIntegration,
     PermissionLevel,
     SkillExecutor,
 )
 from zephyr.autonomy_core.skills.skill_postmortem import SkillPostmortem
 from zephyr.autonomy_core.skills.skill_sandbox import SkillSandbox
 from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetector
-
-
-class TestKBIntegration:
-    def test_skill_to_kb_low_citations(self):
-        result = KBIntegration.kb_to_skill("SKILL-001", citations=2)
-        assert result["action"] == "keep_as_reference"
-        assert result["skill_id"] == "SKILL-001"
-        assert result["citations"] == 2
-
-    def test_skill_to_kb_high_citations(self):
-        result = KBIntegration.kb_to_skill("SKILL-002", citations=7)
-        assert result["action"] == "upgrade_to_instruction"
-        assert result["skill_id"] == "SKILL-002"
-        assert result["citations"] == 7
-
-    def test_kb_to_skill_upgrade_threshold(self):
-        result_below = KBIntegration.kb_to_skill("SKILL-003", citations=4)
-        assert result_below["action"] == "keep_as_reference"
-
-        result_at = KBIntegration.kb_to_skill("SKILL-003", citations=5)
-        assert result_at["action"] == "upgrade_to_instruction"
-
-        result_above = KBIntegration.kb_to_skill("SKILL-003", citations=10)
-        assert result_above["action"] == "upgrade_to_instruction"
-
-    def test_sync_freshness_returns_float(self):
-        with patch("zephyr.autonomy_core.skills.skill_freshness.FreshnessDecayModel") as MockModel:
-            instance = MockModel.return_value
-            instance.current_state.return_value = {
-                "skill_id": "SKILL-004",
-                "freshness_score": 60.0,
-                "registered": True,
-            }
-            result = KBIntegration.sync_freshness("SKILL-004", 30.0)
-            assert isinstance(result, float)
-            assert result >= 0.0
-            assert result <= 100.0
 
 
 class TestSkillExecutor:

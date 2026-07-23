@@ -21,7 +21,6 @@ from zephyr.autonomy_core.skills.skill_executor import (
     BudgetEnforcer,
     EscalationHandler,
     GateResult,
-    KBIntegration,
     PermissionLevel,
     RollbackManager,
     ScriptCollector,
@@ -232,31 +231,6 @@ class TestScriptCollector:
     def test_collect_unknown_exit_code(self):
         result = ScriptCollector.collect("skill-1", 99, "???")
         assert result["status"] == "unknown"
-
-
-class TestKBIntegration:
-    def test_skill_to_kb(self):
-        result = KBIntegration.skill_to_kb("skill-1", "body content")
-        assert result["action"] == "generate_ke_draft"
-        assert result["skill_id"] == "skill-1"
-        assert "content_hash" in result
-
-    def test_kb_to_skill_high_citations(self):
-        result = KBIntegration.kb_to_skill("skill-1", 10)
-        assert result["action"] == "upgrade_to_instruction"
-        assert result["citations"] == 10
-
-    def test_kb_to_skill_low_citations(self):
-        result = KBIntegration.kb_to_skill("skill-1", 2)
-        assert result["action"] == "keep_as_reference"
-
-    def test_kb_to_skill_boundary(self):
-        result = KBIntegration.kb_to_skill("skill-1", 5)
-        assert result["action"] == "upgrade_to_instruction"
-
-    def test_sync_freshness(self):
-        result = KBIntegration.sync_freshness("skill-1", 50.0)
-        assert isinstance(result, float)
 
 
 class TestSkillExecutorInit:

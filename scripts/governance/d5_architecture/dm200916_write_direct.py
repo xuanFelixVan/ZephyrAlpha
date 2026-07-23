@@ -189,7 +189,7 @@ partitions:
     name: MCP Servers
     path: layers/b_mcp.yaml
     status: implemented
-    description: MCP 协议服务端：task_manager/gate_engine/knowledge_base 等
+    description: MCP 协议服务端：task_manager/gate_engine 等
   - id: orchestrator
     name: Agent Orchestrator (Orc)
     path: layers/b_orchestrator.yaml

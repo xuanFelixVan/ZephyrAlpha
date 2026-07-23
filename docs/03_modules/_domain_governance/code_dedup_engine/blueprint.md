@@ -1087,7 +1087,6 @@ KNOWN_DUPLICATES = {
 | MOD-CONTEXT_ENGINE | 必须   | Context Engine 影子清单注入            | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\context_engine\blueprint.md` |
 | MOD-FEEDBACK_LOOP | 可选   | FLE 进化闭环                         | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\feedback_loop\blueprint.md`  |
 | MOD-INF-016 | 必须   | SSoT Guard + shared 目录           | ≥ 0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\shared_core\blueprint.md`    |
-| MOD-DATABASE | 可选   | KB 持久化 API                       | ≥ 0.1.0  | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
 | MOD-INF-027 | 必须   | 审计总线（decision_auditor写入）        | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 
 ### 10.2 依赖图对齐声明

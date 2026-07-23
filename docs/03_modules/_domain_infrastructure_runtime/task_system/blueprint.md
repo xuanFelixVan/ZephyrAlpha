@@ -772,7 +772,6 @@ class TaskLifecycleManager:
 | 任务卡（SQLite 真源）| `data/databases/governance.db` — tasks 表 | 5 | SQLite |
 | Task 模型基座 | `src/zephyr/shared/schemas.py` | 5 | 31 字段基座 |
 | N:N 文件映射 | `src/zephyr/orchestration/runtime_core/orchestrator/file_task_mapper.py` | 1 | 文件-任务映射 |
-| 知识审阅池 | `src/zephyr/data/knowledge_management/kb/triage.py` | 1 | Triage |
 | 蓝图-代码同步 | `scripts/governance/d5_architecture/validate_blueprint_code_sync.py` | 1 | 校验脚本 |
 | 测试 | `tests/` | 0 | 测试用例 |
 

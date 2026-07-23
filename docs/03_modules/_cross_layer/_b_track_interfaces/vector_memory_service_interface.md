@@ -22,7 +22,6 @@ related_kb:
 integration_points:
   - "Context Engine (downstream, 主消费者)"
   - "Agent Orchestrator (upstream writer)"
-  - "MCP Server knowledge_base_server.py (MCP 适配层)"
   - "git post-commit hook (upstream writer)"
 tags:
   - vector_memory
@@ -34,7 +33,6 @@ mod_master_blueprint: "MOD-MASTER_BLUEPRINT"
 mod_master_contracts:
   - "CT-ORC-VMS-001"
   - "CT-CE-VMS-001"
-  - "CT-KB-VMS-001"
 responsibility_domain: 
 build_status: planned
 design_maturity: design
@@ -178,7 +176,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 update / delete 动作的级联策略，每种对应不同的业务触发：
 
 ```python
-# src/zephyr/data/knowledge_management/vector_memory/cascade.py (experimental 产出)
+# src/zephyr/data/vector_memory/cascade.py (experimental 产出；KB 系统于 2026-07 退役后路径已重组)
 
 from enum import Enum
 
@@ -306,7 +304,7 @@ class SyncResult(BaseModel):
 ### 4.1 Python 库 API（experimental 主用，`InProcessVectorMemory` 实现）
 
 ```python
-# src/zephyr/data/knowledge_management/vector_memory/in_process.py (experimental 产出)
+# src/zephyr/data/vector_memory/in_process.py (experimental 产出；KB 系统于 2026-07 退役后路径已重组)
 
 class InProcessVectorMemory:  # implements VectorMemoryProtocol
     """experimental 默认实现。所有方法均为 async，依赖 ChromaDB SDK。"""
@@ -479,7 +477,6 @@ vector_memory = [
 ### 5.3 运行时依赖（可选的消费者）
 
 - Context Engine（主消费者，见 `context_engine-interface.md`）
-- MCP `knowledge_base_server.py`（已存在，experimental 重构接入 `get_vm()`）
 
 ---
 
@@ -570,7 +567,6 @@ vector_memory = [
 | 读取方 | 用途 | 调用方式 |
 |--------|------|---------|
 | **Context Engine**（主消费者） | 组装 Agent 上下文 | `await vm.multi_search(query, collections, merge_strategy="rrf")` |
-| MCP `knowledge_base_server.py` | Cursor/Claude 的 MCP 工具 | `await vm.search(...)` / `multi_search(...)` |
 | Dashboard `knowledge_overview.py` | 可视化统计 | `await vm.stats()` |
 | 4 验收脚本 | 合规检查（是否全量入库） | `await vm.stats()` vs 源文件数 |
 
@@ -578,7 +574,7 @@ vector_memory = [
 
 | 源路径模式 | 目标 Collection |
 |-----------|----------------|
-| **KB:decisions**（SQLite ingest / MCP KB） | `decisions` |
+| **KB:decisions**（SQLite ingest） | `decisions` |
 | `docs/03_modules/_cross_layer/_b_track_interfaces/*interface*.md` | `decisions` |
 | `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
 | `docs/03_modules/_domain_infrastructure_runtime/task_system/changes/**` | `task_history` |
@@ -593,7 +589,7 @@ vector_memory = [
 |:-:|------|---------|
 | **scaffold**（当前） | 接口规范定稿（本文档） | KBG-0016 Active + 接口规范 Active |
 | **experimental** | `InProcessVectorMemory` 实现 + `bulk_bootstrap` 200+ 文档首次导入 | ① §11 P0 用例全通过<br>② 导入 `docs/**/*.md` 全量成功<br>③ Context Engine `multi_search` p50 < 200ms |
-| **beta** | git post-commit hook 接 `sync_document` + MCP Server 重构 | ① commit 后 5s 内增量入库<br>② MCP `knowledge_base_server.py` 调用转发到 `get_vm()` |
+| **beta** | git post-commit hook 接 `sync_document` | ① commit 后 5s 内增量入库 |
 | **beta** | `RemoteVectorMemory` 独立服务（按需触发才启动） | 触发条件满足时启动；业务层切 factory 即可，零重写 |
 | **stable** | gRPC 升级（按需） | RPS > 500 时 |
 

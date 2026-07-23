@@ -137,17 +137,7 @@ matrix:
     - scope: "src/zephyr/simulation/**/*.py"
       level: FULL
       description: "实验层 — CBAC allow"
-    - scope: "src/zephyr/data/knowledge_management/kb/activate.py"
-      level: FULL
-    - scope: "src/zephyr/data/knowledge_management/kb/analyze.py"
-      level: FULL
     - scope: "src/zephyr/data/storage/batch_ingest.py"
-      level: FULL
-    - scope: "src/zephyr/data/knowledge_management/kb/embedding_migrate.py"
-      level: FULL
-    - scope: "src/zephyr/data/knowledge_management/kb/extract.py"
-      level: FULL
-    - scope: "src/zephyr/data/knowledge_management/kb/graph_validator.py"
       level: FULL
     - scope: "src/zephyr/data/storage/ingest.py"
       level: FULL

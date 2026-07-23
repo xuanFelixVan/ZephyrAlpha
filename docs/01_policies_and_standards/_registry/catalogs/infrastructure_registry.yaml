@@ -410,10 +410,10 @@ changelog:
     date: "2026-06-29"
     author: "AI-GLM-5.2"
     changes:
-      - "回填 INFRA-DB-002 ChromaDB 状态：host null→data/vector_db/，health_check http→query，status planned→provisioned，provisioned_at null→2026-05-05，dependency_of 补充 MOD-INF-011/MOD-CONTEXT_ENGINE/MOD-KB-001，note 补充双后端过渡期说明（ChromaDB→FAISS，ARCH-LOCK-003 锁定目标）"
+      - "回填 INFRA-DB-002 ChromaDB 状态：host null→data/vector_db/，health_check http→query，status planned→provisioned，provisioned_at null→2026-05-05，dependency_of 补充 MOD-INF-011/MOD-CONTEXT_ENGINE，note 补充双后端过渡期说明（ChromaDB→FAISS，ARCH-LOCK-003 锁定目标）"
       - "登记 INFRA-DB-005：zephyr-market-duckdb（relational_db）——DuckDB 业务时序库，8 表（tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades），依赖 MOD-TRADING/MOD-BACKTEST，由 DatabaseService 统一连接管理"
       - "更新 summary：total 13→14，relational_db 2→3，hot 5→6，planned 11→10，新增 provisioned: 2"
-      - "更新 dependency_map：新增 MOD-INF-011/MOD-CONTEXT_ENGINE/MOD-KB-001→INFRA-DB-002，MOD-TRADING/MOD-BACKTEST→INFRA-DB-005"
+      - "更新 dependency_map：新增 MOD-INF-011/MOD-CONTEXT_ENGINE→INFRA-DB-002，MOD-TRADING/MOD-BACKTEST→INFRA-DB-005"
       - "证据链：data/vector_db/chroma.sqlite3 存在 + 2026-05-26 健康检查 healthy + collection_manager.py:52 VMS_PERSIST_DIR + database_service.py:63 market_db 路径 + test_market_duckdb.py DM-100018 8 表覆盖"
   - version: "1.0.4"
     date: "2026-06-28"

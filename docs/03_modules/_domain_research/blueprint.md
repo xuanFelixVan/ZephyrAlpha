@@ -163,7 +163,6 @@ D_RESEARCH 研究创新层是量化策略研究的核心工作台。当前痛点
 | 5 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor |
 | 6 | ❌ 排除 | 信号生成 | D_SIGNAL Signal Generation |
 | 7 | ❌ 排除 | 实验管理 | 实验 Experiment Pipeline |
-| 8 | ❌ 排除 | 知识沉淀 | MOD-KB-001 Knowledge Base |
 
 ### 1.4 运行场景约束
 
@@ -215,7 +214,6 @@ D_RESEARCH 研究创新层是量化策略研究的核心工作台。当前痛点
 | 5 | ❌ 排除 | 因子计算 | D_FACTOR Alpha Factor | D_FACTOR |
 | 6 | ❌ 排除 | 信号合成 | D_SIGNAL Signal Generation | D_SIGNAL |
 | 7 | ❌ 排除 | 实验注册与追踪 | 实验 Experiment Pipeline | 实验 |
-| 8 | ❌ 排除 | 知识沉淀 | MOD-KB-001 Knowledge Base | KB |
 
 ---
 

@@ -146,7 +146,7 @@ class TestRunContextFourStage:
         )
         assert result.injected is None
 
-    def test_inject_without_kb_repo_returns_empty(self, tmp_dir):
+    def test_inject_returns_empty(self, tmp_dir):
         test_file = os.path.join(tmp_dir, "docs", "test_doc.md")
         result = run_context_four_stage(
             [{"path": test_file, "role": "reference"}],

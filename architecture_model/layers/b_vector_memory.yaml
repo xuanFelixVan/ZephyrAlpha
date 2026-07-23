@@ -6,7 +6,7 @@ partition:
   bounded_context: true
   umbrella_layer: l12
   status: phase_2_complete
-  note: "蓝图 v0.7.0 �?18 .py 文件 + 11 子模�?+ 23 单元测试 + 7 对抗测试全部通过"
+  note: "蓝图 v0.7.0：18 .py 文件 + 11 子模块 + 23 单元测试 + 7 对抗测试全部通过"
 
 modules:
   - id: vms-core
@@ -17,9 +17,9 @@ modules:
     priority: P0
     runtime_plane: warm
     description: >
-      向量化存储与检�?�?ChromaDB PersistentClient + BGE-M3 ONNX (本地推理 1024d) + bge-small-en-v1.5 (ONNX 384d)�?
-      8 Collection: decisions / code_context / lessons / knowledge / rules / blueprints / session_snapshots / execution_traces�?
-      InProcessVectorMemory 统一入口，VectorBridge 外部集成适配器，HybridRetriever (Vector+BM25+RRF)�?
+      向量化存储与检索：ChromaDB PersistentClient + BGE-M3 ONNX (本地推理 1024d) + bge-small-en-v1.5 (ONNX 384d)。
+      8 Collection: decisions / code_context / lessons / knowledge / rules / blueprints / session_snapshots / execution_traces。
+      InProcessVectorMemory 统一入口，VectorBridge 外部集成适配器，HybridRetriever (Vector+BM25+RRF)。
     files:
       - __init__.py
       - in_process_vector_memory.py
@@ -46,10 +46,7 @@ modules:
         description: 承接 Orc 写入任务输出向量
       - contract_id: CT-CE-VMS-001
         role: producer
-        description: �?CE 提供向量检索能�?
-      - contract_id: CT-KB-VMS-001
-        role: consumer
-        description: 承接 KB 知识向量化持久化
+        description: CE 提供向量检索能力
     kb_ref:
       - KBG-0016
       - KBG-0022
@@ -59,4 +56,4 @@ summary:
   total: 1
   by_status:
     phase_2_complete: 1
-  note: "蓝图 v0.7.0 施工完成 �?11 子模块全部落�? 23 单元测试 + 7 红队对抗测试全部通过"
+  note: "蓝图 v0.7.0 施工完成，11 子模块全部落地，23 单元测试 + 7 红队对抗测试全部通过"

@@ -1433,7 +1433,6 @@ TradingMode 是整个系统的"全局运行模式"，决定 D_RISK/D_PORTFOLIO_C
 | MOD-LLM_SECURITY LLM Security | 可选 | LLM 安全网关 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\llm_security\blueprint.md` |
 | MOD-INF-018 Agent RBAC | 可选 | Agent RBAC | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\agent-rbac\blueprint.md` |
 | MOD-INF-025 A2A Protocol | 可选 | Agent-to-Agent 协议 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\a2a-protocol\blueprint.md` |
-| MOD-KB-001 Knowledge Base | 可选 | AutoDiagnostics→修复成功→自动补充知识库 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge_base\blueprint.md` |
 | MOD-INF-022 Escalation Protocol | 可选 | 自治权限升降级 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` |
 | MOD-INF-024 Budget Enforcer | 可选 | 预算强制执行 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\budget-enforcer\blueprint.md` |
 
@@ -1539,7 +1538,6 @@ TradingMode 是整个系统的"全局运行模式"，决定 D_RISK/D_PORTFOLIO_C
 | MOD-INF-020 Audit Trail | 事件生产 | RI-13 EventStore→审计追踪链消费 | 事件级溯源→审计报告导出 |
 | MOD-INF-021 Rollback System | 事件生产 | RI-13 事件重放→配合回滚 | 事件重放→状态恢复 |
 | MOD-LLM_SECURITY LLM Security | Fail-Closed对齐 | RI-07/RI-08安全组件→LLM安全网关 | 安全组件不可用时拒绝操作 |
-| MOD-KB-001 Knowledge Base | 知识写入 | AutoDiagnostics→修复成功→KB自动补充 | 修复后KB条目新增 |
 
 ---
 
@@ -2079,7 +2077,7 @@ STEP 3: 拆分后验证
 | 2026-05-15 | 6.1.0 | 压缩工作流：终选技术栈"理由"列删除（补充到§18 D-INF002-12~20）；CI/CD表"理由"列删除；§3.1 RI-12~15状态❌→✅对齐§0.1；frontmatter日期更新2026-05-15 |
 | 2026-05-14 | 6.1.0 | v3.5/v3.6升级：§0前移至概述后；§7备选方案删除（信息由§18决策记录覆盖）；§15后果删除（正面与§1重复，负面合并到§14风险）；§14增加"类型"列；§0.1增加"存在性"+"阻塞原因"列；§5.1去掉"原因"列；§5.3标注临时时态属性+执行状态列；§10拆为§10.1-§10.4；铁律新增#13~#15；新增蓝图拆分判定标准；§16.3施工步骤时态属性；尾部施工声明标注时态属性；frontmatter version=6.1.0/generation=7/last_updated=2026-05-14 |
 | 2026-05-14 | 6.0.0 | v3.3重构：章节重排+新增§3.2/§6/§9/§12/§14/§15/§16/§18 |
-| 2026-05-01 | 5.0.1 | 基线：15 RI模块 + 29代码骨架 + 48 RL约束 | �
+| 2026-05-01 | 5.0.1 | 基线：15 RI模块 + 29代码骨架 + 48 RL约束 |
 
 ## Consumers
 - zephyr.runtime_integration (internal)

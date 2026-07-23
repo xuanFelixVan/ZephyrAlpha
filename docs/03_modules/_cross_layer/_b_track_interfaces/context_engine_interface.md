@@ -494,7 +494,6 @@ context_engine = [
 ### 6.3 运行时依赖
 
 - **Vector Memory Service**（必须，通过 Protocol）
-- **MCP Server 实现**（下游消费，beta 重构 `knowledge_base_server.py`）
 - **Feedback Loop Engine**（可选，通过 Protocol 单向推送 `FeedbackSignal`）
 
 ---
@@ -575,7 +574,6 @@ context_engine = [
 | 下游 | 关系 | 调用姿态 |
 |------|------|---------|
 | **Agent Orchestrator**（主消费者） | 必须 | 执行任务前 `bundle = await ce.build(req); await ce.inject(bundle, ide)` |
-| MCP Server `knowledge_base_server.py` | beta 重构 | MCP 工具暴露 `/context/build` 给 IDE 主动查询 |
 | Dashboard `context_overview.py` | 可选 | `await ce.stats()` 可视化 |
 
 ### 8.3 Feedback Loop 单向依赖（Protocol 引用，不硬编码）

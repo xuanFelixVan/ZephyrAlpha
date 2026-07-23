@@ -35,7 +35,7 @@ context_pipeline — Context Engine **四段流水线组合根**
 - **validate**：``ContextAssembler.validate``（G3）。
 - **inject**（可选）：``ContextInjector`` —— KB 检索，与 manifest 拼装结果用分隔符合并。
 
-inject 省略时仍可完成前三段闭环；KB refactor Step 2.1 移除 kb_repo 后 inject 返回空上下文。
+inject 省略时仍可完成前三段闭环；inject 返回空上下文（检索由 UnifiedMemoryAPI 独立处理）。
 """
 
 from __future__ import annotations

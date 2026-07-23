@@ -21,7 +21,6 @@ dependencies:
   - MOD-INF-003
   - MOD-INF-004
   - MOD-TASK_SYSTEM
-  - MOD-KB-001
 priority: P0
 runtime_plane: hot
 tags:
@@ -262,7 +261,6 @@ design_maturity: design
 | MOD-TASK_SYSTEM | §4 | G0-G7门禁体系 |
 | MOD-TASK_SYSTEM | §5 | 管线M1-M11 |
 | MOD-TASK_SYSTEM | §3.2.1 + §4.2 + §3.1.2 | TaskCard + 10状态机 + task_id |
-| MOD-KB-001 | §3.2 + §6 | KE Schema + KB入库 |
 | PS-STD-001 | §7 | metadata注册表 |
 | SCRIPT-QUALITY-001 | §2 | 退出码约定（0/1/2/3） |
 
@@ -1455,7 +1453,6 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 |---------|:---:|------|
 | `src/zephyr/infrastructure/script_system/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/script_system/gate_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/script_system/kb_bridge.py` | ✅ 已实现 | |
 
 ### 14.2 测试文件
 

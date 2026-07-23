@@ -31,7 +31,6 @@ priority: P1
 runtime_plane: hot
 depends_on:
   - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task_manager MCP——decompose_blueprint接口"}
-  - {target: "MOD-KB-001", at: "§4", why: "knowledge_base MCP——KE查询接口"}
   - {target: "MOD-GATE_ENGINE", at: "§3.2", why: "gate_engine MCP——Gate判定接口"}
   - {target: "architecture_model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——本蓝图真源"}
 references: []
@@ -99,7 +98,7 @@ END_REQUIRED_SECTIONS
 
 ## 概述
 
-本蓝图描述 MCP Servers——它解决了 AI 治理框架中 MCP (Model Context Protocol) 服务器统一管理与调度的核心问题。核心职责包括：MCP 服务端生命周期管理、Tool 注册与发现、JSON-RPC 2.0 协议实现、Gateway 网关路由。当前规模 5 个 MCP Server / 20+ Tools，目标容量 50+ Tools / 100 AI 并发调用。上游依赖 LLM 推理层（Tool 调用），下游被 Agent 编排、知识库检索消费。
+本蓝图描述 MCP Servers——它解决了 AI 治理框架中 MCP (Model Context Protocol) 服务器统一管理与调度的核心问题。核心职责包括：MCP 服务端生命周期管理、Tool 注册与发现、JSON-RPC 2.0 协议实现、Gateway 网关路由。当前规模 5 个 MCP Server / 20+ Tools，目标容量 50+ Tools / 100 AI 并发调用。上游依赖 LLM 推理层（Tool 调用），下游被 Agent 编排消费。
 
 | `_base_server.py` |
 | `audit_logger.py` |
@@ -110,7 +109,6 @@ END_REQUIRED_SECTIONS
 | `gateway_server.py` |
 | `governance_server.py` |
 | `handoff_auto_loader.py` |
-| `knowledge_base_server.py` |
 | `prompt_provider.py` |
 | `rate_limiter.py` |
 | `resource_provider.py` |
@@ -132,7 +130,7 @@ END_REQUIRED_SECTIONS
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 > 真源声明：本蓝图的 canonical SSoT 为 `architecture_model/layers/b_mcp.yaml`。
-> 代码落位：`src/zephyr/integration/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector_memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
+> 代码落位：`src/zephyr/integration/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector_memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
 ---
 
 ## §0 代码对齐验证
@@ -147,24 +145,23 @@ END_REQUIRED_SECTIONS
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
 | 1 | `task_manager_server.py` | §2 | 蓝图→任务卡拆解、任务 CRUD | 已实现 | 业务逻辑归属 MOD-TASK_SYSTEM（任务系统），MOD-INF-013 仅负责 MCP 协议层（传输/序列化/注册） |
-| 2 | `knowledge_base_server.py` | §2 | KE 查询/创建 | 未实现 | |
-| 3 | `gate_engine_server.py` | §2 | Gate 判定/熔断 | 未实现 | |
-| 4 | `doc_guard_server.py` | §2 | 文档安全校验（server_id=session_handoff） | 未实现 | |
-| 5 | `sentinel_server.py` | §2 | 系统哨兵监控（server_id=intent_router） | 未实现 | |
-| 6 | `blueprint_search_server.py` | §2 | 蓝图检索 | 已实现 | |
-| 7 | `sandbox_server.py` | §2 | 安全代码执行沙箱 | 未实现 | |
-| 8 | `telemetry_server.py` | §2 | 系统遥测可观测性 | 已实现 | |
-| 9 | `governance_server.py` | §2 | 治理域统一 MCP 入口 | 已实现 | |
-| 10 | `vector_memory_server.py` | §2 | VMS 向量记忆 | 已实现 | |
-| 11 | `gateway_server.py` | §2 | 集中式治理网关 | 已实现 | |
-| 12 | `_base_server.py` | §3 | MCP Server 基类 | 已实现 | |
-| 13 | `audit_logger.py` | §3 | 审计日志 | 已实现 | |
-| 14 | `rate_limiter.py` | §3 | 速率限制 | 已实现 | |
-| 15 | `error_codes.py` | §3 | 错误码定义 | 已实现 | |
-| 16 | `prompt_provider.py` | §3 | Prompt 原语提供 | 已实现 | |
-| 17 | `resource_provider.py` | §3 | Resource 原语提供 | 已实现 | |
-| 18 | `handoff_auto_loader.py` | §3 | Session 接班自动加载 | 已实现 | |
-| 19 | `__init__.py` | §3 | 包初始化 | 已实现 | |
+| 2 | `gate_engine_server.py` | §2 | Gate 判定/熔断 | 未实现 | |
+| 3 | `doc_guard_server.py` | §2 | 文档安全校验（server_id=session_handoff） | 未实现 | |
+| 4 | `sentinel_server.py` | §2 | 系统哨兵监控（server_id=intent_router） | 未实现 | |
+| 5 | `blueprint_search_server.py` | §2 | 蓝图检索 | 已实现 | |
+| 6 | `sandbox_server.py` | §2 | 安全代码执行沙箱 | 未实现 | |
+| 7 | `telemetry_server.py` | §2 | 系统遥测可观测性 | 已实现 | |
+| 8 | `governance_server.py` | §2 | 治理域统一 MCP 入口 | 已实现 | |
+| 9 | `vector_memory_server.py` | §2 | VMS 向量记忆 | 已实现 | |
+| 10 | `gateway_server.py` | §2 | 集中式治理网关 | 已实现 | |
+| 11 | `_base_server.py` | §3 | MCP Server 基类 | 已实现 | |
+| 12 | `audit_logger.py` | §3 | 审计日志 | 已实现 | |
+| 13 | `rate_limiter.py` | §3 | 速率限制 | 已实现 | |
+| 14 | `error_codes.py` | §3 | 错误码定义 | 已实现 | |
+| 15 | `prompt_provider.py` | §3 | Prompt 原语提供 | 已实现 | |
+| 16 | `resource_provider.py` | §3 | Resource 原语提供 | 已实现 | |
+| 17 | `handoff_auto_loader.py` | §3 | Session 接班自动加载 | 已实现 | |
+| 18 | `__init__.py` | §3 | 包初始化 | 已实现 | |
 
 ### 对齐验证矩阵
 
@@ -222,7 +219,7 @@ END_REQUIRED_SECTIONS
 
 ### 核心职能
 
-MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁决策等能力。
+MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能力。
 
 ### 1.4 运行场景约束
 
@@ -235,7 +232,6 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | 服务端 | 文件名 | server_id | 实现状态 | 暴露能力 |
 |------|------|------|:---:|------|
 | **task_manager** | `task_manager_server.py` | `task_manager` | ✅ 已实现 | 蓝图→任务卡拆解、任务 CRUD（业务逻辑归属 MOD-TASK_SYSTEM，MOD-INF-013 仅负责 MCP 协议层） |
-| **knowledge_base** | `knowledge_base_server.py` | `knowledge_base` | 🔶 skeleton | KE 查询/创建、健康检查 |
 | **gate_engine** | `gate_engine_server.py` | `gate_engine` | 🔶 skeleton | Gate 判定/熔断状态 |
 | **session_handoff** | `doc_guard_server.py` | `session_handoff` | 🔶 skeleton | 文档安全校验（文件名与 server_id 不同！） |
 | **intent_router** | `sentinel_server.py` | `intent_router` | 🔶 skeleton | 系统哨兵监控/指标（文件名与 server_id 不同！） |
@@ -314,7 +310,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | Phase | 任务 | 状态 |
 |:---:|------|:---:|
 | Phase 1 | task_manager decompose_blueprint + _base_server | ✅ 完成 |
-| Phase 2 | knowledge_base / gate_engine MCP 实现 → stable | 📋 backlog |
+| Phase 2 | gate_engine MCP 实现 → stable | 📋 backlog |
 | Phase 3 | session_handoff / intent_router MCP 实现 → stable | 📋 backlog |
 | Phase 4 | blueprint_search → stable（含缓存/索引增量更新） | 📋 backlog |
 | Phase 5 | MCP Gateway 落位（集中式安全 + 治理 + 观测） | 📋 backlog |
@@ -372,9 +368,8 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | 步骤 | 工具调用 | 返回 |
 |:---:|---------|------|
 | 1 | `task_manager.decompose_blueprint("MOD-INF-013")` | 子任务列表 [T1, T2, T3] |
-| 2 | `knowledge_base.search("MCP authentication patterns")` | 相关 KE 列表 |
-| 3 | `gate_engine.run_g4_contract({...})` | PASS/FAIL + 裁决理由 |
-| 4 | `session_handoff.validate_doc_version({...})` | 版本校验结果 |
+| 2 | `gate_engine.run_g4_contract({...})` | PASS/FAIL + 裁决理由 |
+| 3 | `session_handoff.validate_doc_version({...})` | 版本校验结果 |
 
 ---
 
@@ -470,7 +465,6 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-TASK_SYSTEM | 必须 | task_manager MCP——decompose_blueprint接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\task-repo\blueprint.md` |
-| MOD-KB-001 | 必须 | knowledge_base MCP——KE查询接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
 | MOD-GATE_ENGINE | 必须 | gate_engine MCP——Gate判定接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\gate_engine\blueprint.md` |
 | b_mcp.yaml | 必须 | MCP YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_mcp.yaml` |
 | mcp | 必须 | MCP SDK | ≥1.0.0 | — |
@@ -497,7 +491,6 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |--------|--------|---------|---------|
-| `task_manager_server.py` | `knowledge_base_server.py` | 任务上下文 | AI Agent 中转 |
 | `blueprint_search_server.py` | `task_manager_server.py` | 蓝图检索结果 | AI Agent 中转 |
 | `gateway_server.py` | 所有 `*_server.py` | 路由/限流/审计 | Gateway 代理 |
 
@@ -505,14 +498,13 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | Server | 依赖 | 被依赖 |
 |--------|------|--------|
-| knowledge_base | ChromaDB, SQLite | task_manager |
 | gate_engine | ChromaDB, SQLite | task_manager |
 | blueprint_search | ChromaDB | session_handoff |
-| task_manager | knowledge_base, gate_engine | session_handoff |
+| task_manager | gate_engine | session_handoff |
 | session_handoff | task_manager, blueprint_search | intent_router |
 | intent_router | session_handoff | — |
 
-> 启动顺序：ChromaDB/SQLite → knowledge_base / gate_engine / blueprint_search（并行）→ task_manager → session_handoff → intent_router
+> 启动顺序：ChromaDB/SQLite → gate_engine / blueprint_search（并行）→ task_manager → session_handoff → intent_router
 
 ### 10.4 自动化规格
 
@@ -521,7 +513,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | # | 自动化项 | 是否需要 | 理由 |
 |---|---------|:-------:|------|
 | 1 | 依赖图自动生成 | 是 | 19 个 .py 文件 + 7 个 Server 间依赖 |
-| 2 | 依赖对齐自动验证 | 是 | 有外部依赖（MOD-TASK_SYSTEM/007, MOD-KB-001） |
+| 2 | 依赖对齐自动验证 | 是 | 有外部依赖（MOD-TASK_SYSTEM/007） |
 | 3 | 临时时态内容自动清理 | 是 | §0 蓝图升级计划为临时时态 |
 | 4 | 施工步骤完成度自动检测 | 是 | construction_progress = completed |
 
@@ -626,14 +618,13 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | Server | 依赖 | 被依赖 |
 |--------|------|--------|
-| knowledge_base | ChromaDB, SQLite | task_manager |
 | gate_engine | ChromaDB, SQLite | task_manager |
 | blueprint_search | ChromaDB | session_handoff |
-| task_manager | knowledge_base, gate_engine | session_handoff |
+| task_manager | gate_engine | session_handoff |
 | session_handoff | task_manager, blueprint_search | intent_router |
 | intent_router | session_handoff | — |
 
-> 启动顺序：ChromaDB/SQLite → knowledge_base / gate_engine / blueprint_search（并行）→ task_manager → session_handoff → intent_router
+> 启动顺序：ChromaDB/SQLite → gate_engine / blueprint_search（并行）→ task_manager → session_handoff → intent_router
 
 ---
 
@@ -675,7 +666,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 场景 | 响应 |
 |------|------|
-| ChromaDB 不可达 | knowledge_base / blueprint_search → `unavailable` 状态 → 返回错误 |
+| ChromaDB 不可达 | blueprint_search → `unavailable` 状态 → 返回错误 |
 | SQLite 不可达 | 全局 → `unhealthy` → 503 |
 | MCP Gateway 不可达 | 降级为直连模式（7 Server 直接对外） |
 | 单 Server OOM | 该 Server 的 stdio 管道断开 → IDE 感知到可用工具减少 |
@@ -798,7 +789,6 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 |---------|:---:|------|
 | `src/zephyr/integration/mcp/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/handoff_auto_loader.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/knowledge_base_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/prompt_provider.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/resource_provider.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/sandbox_server.py` | ✅ 已实现 | |

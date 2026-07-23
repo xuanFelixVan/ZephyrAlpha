@@ -174,7 +174,6 @@ flowchart LR
     LMOD_INFRA_OPS["[design] MOD-INFRA_OPS MOD-INFRA_OPS<br/>MOD-INFRA_OPS<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_INFRA_RUNTIME["[production] MOD-INFRA_RUNTIME MOD-INFRA_RUNTIME<br/>MOD-INFRA_RUNTIME<br/>蓝图: MOD-INFRA_RUNTIME<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_INTEGRATION["[production] MOD-INTEGRATION MOD-INTEGRATION<br/>MOD-INTEGRATION<br/>蓝图: MOD-INTEGRATION<br/>成熟度: production<br/>build: generated"]:::bsGenerated
-    LMOD_KB_001["[production] MOD-KB-001 MOD-KB-001<br/>MOD-KB-001<br/>蓝图: MOD-KB-001<br/>成熟度: production<br/>build: stable"]:::bsStable
     LMOD_L00_001["[design] MOD-L00-001 MOD-L00-001<br/>MOD-L00-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_L00_002["[design] MOD-L00-002 MOD-L00-002<br/>MOD-L00-002<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_L00_003["[design] MOD-L00-003 MOD-L00-003<br/>MOD-L00-003<br/>成熟度: design<br/>build: stable"]:::bsStable
@@ -831,8 +830,7 @@ flowchart LR
     LMOD_INF_GOV -->|triggering| LMOD_INFRA_OPS
     LMOD_INFRA_OPS -->|triggering| LMOD_INFRA_RUNTIME
     LMOD_INFRA_RUNTIME -->|triggering| LMOD_INTEGRATION
-    LMOD_INTEGRATION -->|triggering| LMOD_KB_001
-    LMOD_KB_001 -->|triggering| LMOD_L00_001
+    LMOD_INTEGRATION -->|triggering| LMOD_L00_001
     LMOD_L00_001 -->|triggering| LMOD_L00_002
     LMOD_L00_002 -->|triggering| LMOD_L00_003
     LMOD_L00_003 -->|triggering| LMOD_L00_004

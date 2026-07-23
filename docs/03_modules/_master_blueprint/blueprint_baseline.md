@@ -1,6 +1,6 @@
 ---
 module_id: MOD-MASTER-002
-title: "Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）"
+title: "Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 11系统拓扑+61条CT-*契约）"
 doc_type: blueprint
 status: Active
 version: "0.9.2"
@@ -18,7 +18,7 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 1
 functional_domain: infrastructure
-summary: "MOD-MASTER_BLUEPRINT 基线蓝图 v0.9.2。12 系统拓扑 + 63 条 CT-* 集成契约 + 共享 Schema + 全局状态传播 + 容量预算 + 施工 Phase + Anti-Patterns + 设计决策 + 集成测试 + 风险 + 治理信息 + 端到端场景 + HealthCheck + CDC/DLQ + SLO/SLI + Bulkhead + 配置管理 + 数据生命周期 + 外部依赖 + 时间腐烂 + 生产成熟度 + 边界防护 + 性能基准 + 滚动升级 + Schema演化 + 降级级联 + 自治运行 + Agent质量 + Prompt版本 + Session冲突 + 死代码清理 + 蓝图健康 + 系统移交 + KE质量 + 深度审计盲点。"
+summary: "MOD-MASTER_BLUEPRINT 基线蓝图 v0.9.2。11 系统拓扑 + 61 条 CT-* 集成契约 + 共享 Schema + 全局状态传播 + 容量预算 + 施工 Phase + Anti-Patterns + 设计决策 + 集成测试 + 风险 + 治理信息 + 端到端场景 + HealthCheck + CDC/DLQ + SLO/SLI + Bulkhead + 配置管理 + 数据生命周期 + 外部依赖 + 时间腐烂 + 生产成熟度 + 边界防护 + 性能基准 + 滚动升级 + Schema演化 + 降级级联 + 自治运行 + Agent质量 + Prompt版本 + Session冲突 + 死代码清理 + 蓝图健康 + 系统移交 + KE质量 + 深度审计盲点。"
 tags: [master-blueprint, integration-contracts, closed-loop, ssoT, cross-system, health-check, cbac, cdc, contract-testing, can-i-deploy, dlq, benchmark, deploy, schema-migrate, degrade-cascade, autonomy, agent-quality, prompt-version, session-conflict, lean, blueprint-health, transfer, ke-quality]
 priority: P0
 belongs_to: "MOD-MASTER_BLUEPRINT"
@@ -28,9 +28,8 @@ scope: global
 stability: stable
 verifiability: automated
 depends_on:
-  - {target: "MOD-INF-005", at: "全篇", why: "脚本系统蓝图——本总蓝图定义脚本系统与任务系统/知识库的集成契约"}
+  - {target: "MOD-INF-005", at: "全篇", why: "脚本系统蓝图——本总蓝图定义脚本系统与任务系统的集成契约"}
   - {target: "MOD-TASK_SYSTEM", at: "全篇", why: "任务系统蓝图——本总蓝图定义任务系统与脚本系统/CE/FLE的集成契约"}
-  - {target: "MOD-KB-001", at: "全篇", why: "知识库蓝图——本总蓝图定义知识库与CE/VMS/脚本系统的集成契约"}
   - {target: "architecture_model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——契约CT-GATE-*的真源"}
   - {target: "architecture_model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——契约CT-CE-*的真源"}
   - {target: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——契约CT-PIPE-*的真源"}
@@ -57,14 +56,14 @@ design_maturity: design
 build_status: stable
 ---
 
-# Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）
+# Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 11系统拓扑+61条CT-*契约）
 
 > module_id: MOD-MASTER-002 | version: 0.9.2 | status: active | layer: cross_layer
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master_blueprint\blueprint_baseline.md | generation: 1 | construction_progress: completed
 
 ## 概述
 
-本蓝图是 MOD-MASTER_BLUEPRINT 的基线设计文件——ZephyrAlpha 12 个基础设施系统的最完整集成蓝图。核心职责：12 系统拓扑全景、63 条 CT-* 跨系统集成契约（CT-GATE-*/CT-CE-*/CT-PIPE-*/CT-FLE-*/CT-VMS-*/CT-DB-*/CT-MCP-*/CT-LSG-*/CT-TELE-*）、共享 Schema 定义、全局状态传播协议、容量预算、施工 Phase、Anti-Patterns 与设计决策。覆盖端到端场景/HealthCheck/CDC+DLQ/SLO+SLI/Bulkhead/配置管理/数据生命周期/外部依赖/时间腐烂/生产成熟度/边界防护/性能基准/滚动升级/Schema演化/降级级联/自治运行/Agent质量/Prompt版本/Session冲突/死代码/蓝图健康/系统移交/KE质量/深度审计盲点等 24 个跨切面。上游被 SYS-MASTER-001 治理，下游被 Capactiy/Agent-Spec/Circuit Breaker 等蓝图消费。
+本蓝图是 MOD-MASTER_BLUEPRINT 的基线设计文件——ZephyrAlpha 11 个基础设施系统的最完整集成蓝图。核心职责：11 系统拓扑全景、61 条 CT-* 跨系统集成契约（CT-GATE-*/CT-CE-*/CT-PIPE-*/CT-FLE-*/CT-VMS-*/CT-DB-*/CT-MCP-*/CT-LSG-*/CT-TELE-*）、共享 Schema 定义、全局状态传播协议、容量预算、施工 Phase、Anti-Patterns 与设计决策。覆盖端到端场景/HealthCheck/CDC+DLQ/SLO+SLI/Bulkhead/配置管理/数据生命周期/外部依赖/时间腐烂/生产成熟度/边界防护/性能基准/滚动升级/Schema演化/降级级联/自治运行/Agent质量/Prompt版本/Session冲突/死代码/蓝图健康/系统移交/KE质量/深度审计盲点等 24 个跨切面。上游被 SYS-MASTER-001 治理，下游被 Capactiy/Agent-Spec/Circuit Breaker 等蓝图消费。
 
 ---
 
@@ -151,13 +150,12 @@ build_status: stable
 | 如果你负责开发... | 你该读的 CT-* 合同 | 关联 Schema | 预计 tokens | actual_disk_path | 施工程度 |
 |------------------|-------------------|------------|:---:|------|------|
 | **Orchestrator** (任务系统) | CT-ORC-SCRIPT, CT-ORC-CE, CT-ORC-VMS, CT-ORC-GATE, CT-ORC-DB | TaskCard, Finding | ~1800 | `src/zephyr/orchestrator/` | 部分实现 |
-| **Script System** (脚本系统) | CT-ORC-SCRIPT, CT-SCRIPT-KB, CT-SCRIPT-GATE, CT-FEATUREFLAG | Finding, KE | ~1400 | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | 部分实现 |
-| **Knowledge Base** (知识库) | CT-SCRIPT-KB, CT-KB-VMS, CT-DATA-LIFECYCLE | KE | ~1000 | `src/zephyr/kb/` | 部分实现 |
+| **Script System** (脚本系统) | CT-ORC-SCRIPT, CT-SCRIPT-GATE, CT-FEATUREFLAG | Finding | ~1400 | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | 部分实现 |
 | **Context Engine** (CE) | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG, CT-BULKHEAD | TaskCard | ~1400 | `src/zephyr/context_engine/` | 部分实现 |
 | **Gate Engine** (门控引擎) | CT-ORC-GATE, CT-SCRIPT-GATE, CT-FEATUREFLAG | TaskCard | ~900 | `src/zephyr/gov_enforcement/rule_enforcement/` | 部分实现 |
 | **Feedback Loop** (FLE) | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE, CT-WATCHDOG | — | ~1200 | `src/zephyr/feedback_loop/` | 部分实现 |
 | **Pipeline** | CT-PIPE-ORC | TaskCard | ~400 | `src/zephyr/pipeline/` | 部分实现 |
-| **Vector Memory** (VMS) | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS, CT-BULKHEAD | — | ~900 | `src/zephyr/vector_memory/` | 部分实现 |
+| **Vector Memory** (VMS) | CT-ORC-VMS, CT-CE-VMS, CT-BULKHEAD | — | ~900 | `src/zephyr/vector_memory/` | 部分实现 |
 | **Database** (db) | CT-FLE-DB, CT-ORC-DB, CT-DLQ, CT-BACKUP | — | ~700 | `src/zephyr/db/` | 部分实现 |
 | **LLM Security** (LSG) | CT-CE-LSG, CT-SECRETS | — | ~500 | `src/zephyr/llm_security/` | 部分实现 |
 | **System Telemetry** | CT-TELE-FLE, CT-WATCHDOG | — | ~400 | `src/zephyr/system_telemetry/` | 部分实现 |
@@ -181,7 +179,7 @@ build_status: stable
 ---
 ---
 
-## 一、系统全景：12 个系统的拓扑与职责边界
+## 一、系统全景：11 个系统的拓扑与职责边界
 
 ### 1.1 系统清单
 
@@ -189,8 +187,7 @@ build_status: stable
 |------|------|:---:|------|
 | **Agent Orchestrator (Orc)** | `src/zephyr/orchestrator/` | MOD-TASK_SYSTEM 任务系统蓝图 | 任务生命周期管理 + Agent 调度 + 沙箱执行 |
 | **Script System** | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | MOD-INF-005 脚本系统蓝图 | 12维度治理审计 + pre-commit门禁 + Finding管理 |
-| **Knowledge Base (KB)** | `src/zephyr/kb/` | MOD-KB-001 知识库蓝图 | 知识全生命周期（G1→G5）+ KE管理 + ChromaDB |
-| **Gate Engine (Gates)** | `src/zephyr/gov_enforcement/rule_enforcement/` | MOD-GATE_ENGINE gate_engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
+| **Gate Engine (Gates)** | `src/zephyr/gov_enforcement/rule_enforcement/` | MOD-GATE_ENGINE gate_engine蓝图 | G0-G7任务门禁 + 准入判定 |
 | **Context Engine (CE)** | `src/zephyr/context_engine/` | MOD-CONTEXT_ENGINE context_engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
 | **Task Pipeline** | `src/zephyr/pipeline/` | MOD-INF-009 pipeline蓝图 | M1-M11双管线路由——决定任务用什么模型执行 |
 | **Feedback Loop Engine (FLE)** | `src/zephyr/feedback_loop/` | MOD-FEEDBACK_LOOP feedback_loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
@@ -226,14 +223,9 @@ build_status: stable
   ┌───────────────────────────────────────────────────────────────┐
   │              Script System (脚本系统)                          │
   │   D1-D12 12维度 × C1-C5 五阶段                                  │
-  └──────────────────────────┬────────────────────────────────────┘
-                             │ MEDIUM Finding → KE
-                    ┌────────▼────────┐
-                    │  Knowledge Base │
-                    │   (知识库)       │
-                    └────────┬────────┘
-                             │ vector search
-                    ┌────────▼────────┐
+  └───────────────────────────────────────────────────────────────┘
+
+                    ┌────────────────┐
                     │  Vector Memory  │
                     │     (VMS)       │
                     └────────┬────────┘
@@ -245,7 +237,7 @@ build_status: stable
 
        ┌────────────────────────────────────────────┐
        │              MCP Servers                   │ ← 外部接口
-       │  task_manager / knowledge_base / gate_engine│
+       │  task_manager / gate_engine                │
        └────────────────────────────────────────────┘
 
        ┌────────────────────────────────────────────┐
@@ -276,11 +268,9 @@ build_status: stable
 | CT-ORC-VMS-001 | Orc → VMS | 骨架 | DO_NOT_CALL |
 | CT-ORC-GATE-001 | Orc → Gates | G0/G1/G7全生命周期已集成(create/transition/complete三级门禁) | SAFE |
 | CT-ORC-DB | Orc → db | 18处import确认已实现 | SAFE |
-| CT-SCRIPT-KB-001 | Script System → KB | 蓝图已定义 | IMPL_REQUIRED |
 | CT-SCRIPT-GATE-001 | Script System → Gates | 部分实现 | CAUTION_STUB |
 | CT-CE-VMS-001 | CE → VMS | 部分实现:VectorBridge已建桥接 | CAUTION_STUB |
 | CT-CE-LSG-001 | CE → LSG | 规划 | DO_NOT_CALL |
-| CT-KB-VMS-001 | KB → VMS | beta | CAUTION_STUB |
 | CT-FLE-ORC-001 | FLE → Orc | decision_engine已创建(Orc→FLE已通,FLE→Orc待接通) | CAUTION_STUB |
 | CT-FLE-DB-001 | FLE → db | metrics_collector已sqlite3持久化 | CAUTION_STUB |
 | CT-TELE-FLE-001 | Telemetry → FLE | 规划 | DO_NOT_CALL |
@@ -393,7 +383,7 @@ ai_prompt: >
   (1) exit 2 → 仅阻断关联任务，不要阻断全局；
   (2) exit 3 → 这是门禁自身故障，必须阻断全部活跃任务+通知Owner——这是唯一触发全局阻断的场景；
   (3) CRITICAL/HIGH severity Finding → 自动创建OPS-{SEQ}任务卡，task_type=OPS，关联parent_finding_id；
-  (4) MEDIUM Finding → 不创建任务卡，走CT-SCRIPT-KB-001入库流程；
+  (4) MEDIUM Finding → 不创建任务卡；
   (5) 不要绕过CT-*直接import脚本系统内部模块（违反AP1）；
   (6) 任务BLOCKED后必须等待脚本重跑exit 0才能恢复→status: TODO，不要手动改状态。
 
@@ -482,61 +472,6 @@ telemetry:
     - {name: "ce_degradation_rate", type: rate}
   traces:
     required_spans: ["ce_build", "ce_vector_search", "ce_compress", "ce_lsg_validate", "ce_inject"]
-```
-
-### 2.4 CT-SCRIPT-KB-001：脚本系统 ↔ 知识库
-
-```yaml
-contract: CT-SCRIPT-KB-001
-title: "脚本 Finding → 知识条目入库"
-systems:
-  - role: producer
-    name: script_system
-    path: "scripts/governance/"
-    blueprint: "MOD-INF-005"
-  - role: consumer
-    name: knowledge_base
-    path: "src/zephyr/kb/"
-    blueprint: "MOD-KB-001"
-
-data_flow:
-  direction: "script → KB"
-  mapping:
-    - finding_severity: "MEDIUM"
-      action: "自动创建 KE 草稿 → G1 Ingest → G2 Triage"
-      ke_template: |
-        title: "{finding.dimension}: {finding.message[:80]}"
-        domain: "governance"
-        tags: ["auto-generated", "{finding.dimension}", "finding-to-ke"]
-        source_finding_id: "{finding.id}"
-    - finding_severity: "CRITICAL|HIGH"
-      action: "不自动创建KE——CRITICAL/HIGH 走任务卡流程（CT-ORC-SCRIPT-001）"
-    - finding_severity: "LOW|INFO"
-      action: "不入KB——仅记录到审计日志"
-    - phase_C5_knowledge: |
-        脚本系统 C5 知识沉淀阶段:
-        CRITICAL/HIGH Finding 修复完成 → 提取经验教训 → G3 Analyze →
-        人工确认后 → G4 Activate → KE 进入活跃知识库
-
-quality_gate:
-  - auto_generated_KE 必须经过 G2 Triage 人工确认 → 不得自动 G4 Activate
-  - KE 来源字段标注 `source: "script_system_C4"`
-
-ai_prompt: >
-  你是CT-SCRIPT-KB-001的AI agent。当脚本系统产出MEDIUM severity Finding时：
-  (1) 自动创建KE草稿，status=DRAFT，不要直接G4 Activate——必须经过G2 Triage人工确认；
-  (2) KE的source字段必须标注"script_system_C4"——用于审计追溯；
-  (3) CRITICAL/HIGH Finding不在此处理——走CT-ORC-SCRIPT-001创建OPS任务卡；
-  (4) LOW/INFO Finding不入KB——仅记录审计日志，不要浪费KB存储；
-  (5) C5阶段的知识沉淀（修复完成的CRITICAL/HIGH）需要人工确认后走G3→G4路径，不要全自动激活。
-
-telemetry:
-  metrics:
-    - {name: "finding_to_ke_auto_create", type: counter, labels: [severity, dimension]}
-    - {name: "ke_auto_create_latency_s", type: histogram, buckets: [1,5,10,30]}
-    - {name: "c5_knowledge_extract_count", type: counter}
-  traces:
-    required_spans: ["finding_emit", "ke_draft_create", "ke_g1_ingest"]
 ```
 
 ### 2.5 CT-FLE-ORC-001：FLE ↔ Orchestrator
@@ -947,62 +882,6 @@ telemetry:
     required_spans: ["lsg_sanitizer", "lsg_sandbox", "lsg_audit"]
 ```
 
-### 2.12 CT-KB-VMS-001：知识库 → 向量记忆 — 知识条目向量化存储
-
-```yaml
-contract: CT-KB-VMS-001
-title: "结构化知识→非结构化向量记忆的双向映射"
-systems:
-  - role: producer
-    name: knowledge_base
-    path: "src/zephyr/knowledge_base/"
-    blueprint: "MOD-KB-001"
-  - role: consumer
-    name: vector_memory_system
-    path: "src/zephyr/vector_memory/"
-    blueprint: "MOD-INF-011"
-
-data_flow:
-  direction: bidirectional
-
-  kb_to_vms:
-    trigger: "KE.status → ACTIVE 且 ke_type ∈ {ARCHITECTURE_RULE, CODE_CONVENTION, DECISION_RECORD}"
-    payload:
-      ke_id: "string"
-      ke_title: "string"
-      ke_content_plaintext: "string — 去Markdown格式化的纯文本"
-      ke_type: "string"
-      priority: "P0..P3"
-      embedding_model: "text-embedding-3-large"
-    action: "VMS生成embedding → 存储为 vector_entry → 返回 vector_id"
-
-  vms_to_kb:
-    trigger: "CE查询向量记忆 → 检索到KE相关向量"
-    query: "{ vector_id, similarity_score, source_ke_id }"
-    action: "KB根据 ke_id 返回KE完整内容 → CE注入上下文"
-
-consistency_rule: >
-  KE更新时 → KB通知VMS重新生成embedding（而非覆写旧向量）。
-  旧向量标记为 superseded_by={new_vector_id}，保留用于审计追溯。
-
-ai_prompt: >
-  你是CT-KB-VMS-001的AI agent。当KB需要将KE向量化存储到VMS时：
-  (1) 仅当KE.status=ACTIVE且ke_type∈{ARCHITECTURE_RULE,CODE_CONVENTION,DECISION_RECORD}时触发向量化；
-  (2) embedding使用text-embedding-3-large——不要用BGE-M3（那是VMS查询用的）；
-  (3) KE更新时生成新embedding + 旧向量标记superseded_by——不要覆写旧向量（DD6）；
-  (4) KE被DEPRECATED/ARCHIVED时，VMS中对应向量标记deprecated=true但保留——用于审计追溯；
-  (5) VMS→KB方向：CE查询到向量后，KB根据ke_id返回完整KE内容——不要只返回vector_id。
-
-telemetry:
-  metrics:
-    - {name: "kb_vms_embed_count", type: counter, labels: [ke_type]}
-    - {name: "kb_vms_embed_latency_ms", type: histogram, buckets: [50,100,500,1000,5000]}
-    - {name: "kb_vms_superseded_count", type: counter}
-    - {name: "kb_vms_consistency_check_pass", type: gauge}
-  traces:
-    required_spans: ["kb_ke_activate", "vms_generate_embedding", "vms_store_vector"]
-```
-
 ### 2.13 CT-FLE-DB-001：反馈环路 → 数据库 — 评估指标时序持久化
 
 ```yaml
@@ -1154,11 +1033,11 @@ fields:
     values: [auto_fixable, manual_only, needs_review]
 ```
 
-### 3.3 KE（KB、CE、VMS、Script System 共用）
+### 3.3 KE（CE、VMS、Script System 共用）
 
 ```yaml
 schema: SCHEMA-KE-001
-canonical_source: "MOD-KB-001 §3.2"
+canonical_source: "MOD-MASTER-002 §3.3"
 schema_version: "1.0.0"
 version_negotiation:
   ref: "CTR-VER-001（cross_layer_contracts.yaml §versioning_strategy）"
@@ -1335,11 +1214,8 @@ Phase A: 无依赖先行（可并行）
 ├── A2: CT-ORC-GATE-001   ← 只依赖TaskCard + Gates层YAML
 │   └── src/zephyr/gov_enforcement/rule_enforcement/task_gates.py
 │
-├── A3: CT-CE-LSG-001     ← 只依赖CE层YAML + LSG层YAML
-│   └── src/zephyr/security/llm_defense/llm_security/ce_lsg_bridge.py
-│
-└── A4: CT-KB-VMS-001     ← 只依赖KB + VMS层YAML
-    └── src/zephyr/data/knowledge_management/vector_memory/kb_vms_bridge.py
+└── A3: CT-CE-LSG-001     ← 只依赖CE层YAML + LSG层YAML
+    └── src/zephyr/security/llm_defense/llm_security/ce_lsg_bridge.py
 
 Phase B: 单向依赖（A完成后→B启动）
 ├── B1: CT-ORC-CE-001     ← 依赖 TaskCard + CE层YAML
@@ -1372,7 +1248,6 @@ Phase D: 全链路集成
 | CT-ORC-GATE-001 | 返回 `{"response": "PASS", "detail": {"gate_id": "G0", "violations": []}}` |
 | CT-CE-VMS-001 | FAISS内存索引 `faiss.IndexFlatL2(768)` 模拟 |
 | CT-CE-LSG-001 | 返回 `{"allowed": true, "audit_id": "mock-audit-001"}` |
-| CT-KB-VMS-001 | `numpy.random.rand(3072)` 模拟embedding |
 | CT-FLE-ORC-001 | 返回 `{"action": "NONE", "reason": "no anomaly detected"}` |
 | CT-FLE-DB-001 | SQLite `:memory:` 模拟时序存储 |
 | CT-PIPE-ORC-001 | 返回 `{"node": "M1", "status": "ready"}` |
@@ -1448,11 +1323,9 @@ class TestIntegrationContract:
 | CT-ORC-CE-001 | CE返回context包含source_files字段 | source_files非空 |
 | CT-ORC-VMS-001 | 写入vector后TaskCard.vector_refs非空 | refs写入成功 |
 | CT-ORC-GATE-001 | G0: priority=invalid→FAIL ; G7: all_findings_resolved=false→REQUIRED_REVIEW | 门判定正确 |
-| CT-SCRIPT-KB-001 | Finding.severity=MEDIUM → KE入库成功 | KE新增 |
 | CT-SCRIPT-GATE-001 | exit 0→PASS ; exit 3→CRITICAL_FAIL→全任务BLOCKED | exit code映射正确 |
 | CT-CE-VMS-001 | 查询"代码约定"→返回相似度>0.7的向量 | 检索准确 |
 | CT-CE-LSG-001 | prompt包含`__import__('os').system('rm')`→BLOCK | 注入拦截 |
-| CT-KB-VMS-001 | KE→embedding→写入→ke_id→返回vector_id | 双向映射正确 |
 | CT-FLE-ORC-001 | anomaly_type=PERFORMANCE_DEGRADATION→ORC THROTTLE | 调度调整生效 |
 | CT-FLE-DB-001 | 写入fle_metrics→读取→一致 | 持久化正确 |
 | CT-TELE-FLE-001 | Telemetry推送后FLE能读取最新metrics | 推送链路通畅 |
@@ -1564,7 +1437,7 @@ validate_integration_consistency.py（待创建）
 
 ## 十三、端到端场景走查
 
-> 以下是一个完整场景——演示 13 个 CT-* 合同在真实任务中如何协同工作。
+> 以下是一个完整场景——演示 11 个 CT-* 合同在真实任务中如何协同工作。
 
 ### 场景：Owner 发现治理脚本漏检 — AI 修复全流程
 
@@ -1619,24 +1492,14 @@ validate_integration_consistency.py（待创建）
 
   → 涉及: CT-SCRIPT-GATE-001
 
-第 6 步：知识入库（如果本次修复产生了新知识）
-  Script System 产生 Finding(severity=MEDIUM, type=BUG_FIX)
-    → CT-SCRIPT-KB-001: MEDIUM Finding → KE 入库
-  KB 处理:
-    KE 进入 KMS 管道 → G1 Ingest → G2 Triage → G3 Evaluate
-    KE.status = ACTIVE
-    → CT-KB-VMS-001: KB → VMS 生成 embedding
-
-  → 涉及: CT-SCRIPT-KB-001, CT-KB-VMS-001
-
-第 7 步：交付前门禁
+第 6 步：交付前门禁
   任务进入 REVIEW 状态 → Orc 触发 G7 Delivery Gate
     G7-C00: run_all.py exit 0 → PASS
     TaskCard.status: REVIEW → COMPLETED
 
   → 涉及: CT-ORC-GATE-001 (G7)
 
-第 8 步：反馈闭环
+第 7 步：反馈闭环
   FLE 采集本轮数据:
     → CT-TELE-FLE-001: 读取 Telemetry 的 task_throughput, gate_pass_rate
     → FLE.detect_anomaly(): 无异常（所有指标正常）
@@ -1645,7 +1508,7 @@ validate_integration_consistency.py（待创建）
 
   → 涉及: CT-TELE-FLE-001, CT-FLE-DB-001, CT-FLE-ORC-001
 
-全流程涉及的 CT-* 合同: 11/14
+全流程涉及的 CT-* 合同: 9/12
   未涉及: CT-ORC-VMS-001（本次无COMPLETED任务产出需要向量化）
           CT-ORC-SCRIPT-001（本次无CRITICAL/HIGH Finding触发自动创建OPS任务卡）
           CT-ORC-DB（任务状态持久化由Orc内部处理——无需显式展示）
@@ -1874,9 +1737,9 @@ owner: MOD-MASTER_BLUEPRINT
 
 boot_order:
   layer_0: {systems: [database, mcp_adapter], startup_timeout_s: 10}
-  layer_1: {systems: [vector_memory, knowledge_base], depends_on: [database], startup_timeout_s: 20}
+  layer_1: {systems: [vector_memory], depends_on: [database], startup_timeout_s: 20}
   layer_2: {systems: [gates, llm_security_gate], startup_timeout_s: 15}
-  layer_3: {systems: [context_engine, pipeline], depends_on: [vector_memory, gates, knowledge_base, llm_security_gate], startup_timeout_s: 30}
+  layer_3: {systems: [context_engine, pipeline], depends_on: [vector_memory, gates, llm_security_gate], startup_timeout_s: 30}
   layer_4: {systems: [orchestrator, script_system, feedback_loop_engine, telemetry], depends_on: [context_engine, pipeline, database, vector_memory, gates], startup_timeout_s: 30}
 
 startup_health_check:
@@ -1900,7 +1763,6 @@ cleanup_actions:
   - {system: gates, action: "归档本次任务的门禁裁决记录"}
   - {system: pipeline, action: "中断 M1-M11 管道 → 标记中间产物为 abandoned"}
   - {system: vector_memory, action: "已写入的向量保持不变（审计追溯）→ 不删除"}
-  - {system: knowledge_base, action: "DRAFT 状态的 KE 标记为 abandoned"}
   - {system: feedback_loop_engine, action: "标记本任务关联的 anomaly record 为 resolved_by_cancellation"}
 
 cleanup_timeout_s: 10
@@ -1926,12 +1788,10 @@ slo_matrix:
   - {ct_id: CT-ORC-CE-001, metric: "context_token_count", slo: "always ≤ 8000", alert: "> 7200 (90% budget)"}
   - {ct_id: CT-ORC-VMS-001, metric: "orc_vms_write_latency", slo: "p99 < 1s", alert: "p99 > 3s"}
   - {ct_id: CT-ORC-GATE-001, metric: "task_gate_latency all gates", slo: "p99 < 50ms", alert: "> 200ms"}
-  - {ct_id: CT-SCRIPT-KB-001, metric: "finding_to_ke_auto_create latency", slo: "p95 < 5s", alert: "> 10s"}
   - {ct_id: CT-SCRIPT-GATE-001, metric: "pre_commit gate duration", slo: "p95 < 30s", alert: "> 60s"}
   - {ct_id: CT-CE-VMS-001, metric: "vms_search_latency", slo: "p99 < 500ms", alert: "> 2s"}
   - {ct_id: CT-CE-LSG-001, metric: "lsg_latency total", slo: "p99 < 100ms", alert: "> 500ms"}
   - {ct_id: CT-CE-LSG-001, metric: "lsg_false_positive_rate", slo: "< 5%", alert: "> 10%"}
-  - {ct_id: CT-KB-VMS-001, metric: "kb_vms_embed_latency", slo: "p99 < 5s", alert: "> 10s"}
   - {ct_id: CT-FLE-ORC-001, metric: "fle_detect_dispatch_latency", slo: "p95 < 30s", alert: "> 60s"}
   - {ct_id: CT-FLE-ORC-001, metric: "fle_false_positive_rate", slo: "< 10%", alert: "> 20%"}
 
@@ -1949,14 +1809,13 @@ slo_error_budget:
 
 ```yaml
 contract: CT-BULKHEAD-001
-title: "12系统资源池隔舱化——故障域隔离"
+title: "11系统资源池隔舱化——故障域隔离"
 principle: "每个系统独立资源池——一个系统的慢调用不会饿死其他系统"
 
 per_system_resources:
   orchestrator: {thread_pool: 4, sqlite_connections: 2, memory_limit_mb: 256}
   script_system: {thread_pool: 2, subprocess_limit: 5, memory_limit_mb: 128}
   context_engine: {thread_pool: 3, chromadb_connections: 2, memory_limit_mb: 512}
-  knowledge_base: {thread_pool: 2, sqlite_connections: 2, memory_limit_mb: 128}
   vector_memory: {thread_pool: 3, chromadb_connections: 3, memory_limit_mb: 256}
   gates: {thread_pool: 2, memory_limit_mb: 64}
   pipeline: {thread_pool: 1, memory_limit_mb: 64}
@@ -2373,7 +2232,6 @@ stability_matrix:
     - {ct_id: CT-ORC-CE-001, since: "2026-05-01"}
     - {ct_id: CT-ORC-VMS-001, since: "2026-05-01"}
     - {ct_id: CT-CE-VMS-001, since: "2026-05-01"}
-    - {ct_id: CT-KB-VMS-001, since: "2026-05-01"}
     - {ct_id: CT-CDC-001, since: "2026-05-05"}
     - {ct_id: CT-DLQ-001, since: "2026-05-05"}
     - {ct_id: CT-SLO-001, since: "2026-05-05"}
@@ -2767,7 +2625,7 @@ principle: "系统A degraded→传播给B→B的degradation signal累积权重�
 cascade_model:
   signal_propagation:
     - from: vector_memory
-      to: [context_engine, knowledge_base]
+      to: [context_engine]
       metric: "vms_search_latency > SLO"
     - from: context_engine
       to: [orchestrator, pipeline]
@@ -2833,7 +2691,6 @@ autonomy_levels:
     description: "系统完全自主——无需Owner确认"
     actions:
       - "每日定时任务: GC(CT-DATA-LIFECYCLE)+Backup(CT-BACKUP)+Housekeeping(CT-HOUSEKEEPING)"
-      - "MEDIUM Finding→KE自动入库(CT-SCRIPT-KB-001)"
       - "HealthCheck自动修复(CT-RECONCILE-001)"
       - "FLE异常检测+记录→不执行ESCLATE(保留到Owner回来)"
       - "性能基准baseline自动更新(CT-BENCH-001)"

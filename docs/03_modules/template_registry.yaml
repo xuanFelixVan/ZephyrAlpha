@@ -1,4 +1,4 @@
-﻿# [A_config] module_id=CFG-template-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-template-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE
@@ -38,7 +38,7 @@ registry:
   version: "1.0.0"
   created: "2026-05-04"
   last_updated: "2026-05-13"
-  total_templates: 13  # P8-FIX-S1: 从 14 修正为 13(实际 template 条目数)。由 reconciler 自动派生,勿手工修改。
+  total_templates: 11  # KB 退役后从 13 修正为 11(实际 template 条目数)。由 reconciler 自动派生,勿手工修改。
   note: "全部路径已改为项目根相对路径（docs/...）。新 AI 从 project_rules.md 入口读此文件，可直连每个模板。"
 
 templates:
@@ -50,24 +50,6 @@ templates:
     template_for: "blueprint"
     status: "active"
     last_updated: "2026-05-15"
-
-  - template_id: "TPL-KE-001"
-    name: "知识条目 KE 模板"
-    path: "docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md §3.2.2"
-    version: "1.0.0"
-    for: "知识库 KE 条目的创建——含 YAML frontmatter 18 字段 + body 5 段模板"
-    template_for: "ke"
-    status: "active"
-    last_updated: "2026-05-03"
-
-  - template_id: "TPL-KO-001"
-    name: "知识观察 KO 模板"
-    path: "docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md §3.10"
-    version: "1.0.0"
-    for: "知识库 KO 条目的创建——含 4 状态机 + 轻量模板"
-    template_for: "ko"
-    status: "active"
-    last_updated: "2026-05-03"
 
   - template_id: "TPL-DEPGRAPH-001"
     name: "依赖图模板"

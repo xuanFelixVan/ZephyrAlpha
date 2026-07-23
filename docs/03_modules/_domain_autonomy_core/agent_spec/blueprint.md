@@ -17,7 +17,7 @@ ttl: permanent
 actual_disk_path: src/zephyr/autonomy_core/
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "可执行 Agent Spec——将蓝图转化为 AI Agent 可执行操作手册，按领域+角色双维度组织，通过 AGENTS.md 路由 + Progressive Disclosure 按需加载。"
-tags: [agent-spec, skill, executable-blueprint, codified-context, progressive-disclosure, skill-security, canary-deployment, skill-lifecycle, kill-switch, skill-economics, compliance, kya, sandbox, cross-model, skill-ontology, prompt-engineering, attention-economics, idempotency, circuit-breaker, shadow-deploy, skill-contract, self-learning, feature-flags, model-evolution, silent-failure, xai-explainability, confidence-calibration, context-isolation, multi-skill-consensus, cognitive-preservation, workflow-orchestration, prompt-caching, skill-knowledge_base, dependency-injection, output-guardrails, team-composition, skill-discovery]
+tags: [agent-spec, skill, executable-blueprint, codified-context, progressive-disclosure, skill-security, canary-deployment, skill-lifecycle, kill-switch, skill-economics, compliance, kya, sandbox, cross-model, skill-ontology, prompt-engineering, attention-economics, idempotency, circuit-breaker, shadow-deploy, skill-contract, self-learning, feature-flags, model-evolution, silent-failure, xai-explainability, confidence-calibration, context-isolation, multi-skill-consensus, cognitive-preservation, workflow-orchestration, prompt-caching, dependency-injection, output-guardrails, team-composition, skill-discovery]
 priority: P0
 runtime_plane: hot
 depends_on:
@@ -32,7 +32,6 @@ depends_on:
   - {target: "MOD-INF-024", at: "§2", why: "Budget Enforcer——token 预算管控"}
   - {target: "MOD-INF-023", at: "全篇", why: "Drift Detector——漂移检测"}
   - {target: "MOD-INF-005", at: "§2", why: "Script System——审计管线整合"}
-  - {target: "MOD-KB-001", at: "§4", why: "Knowledge Base——新模式沉淀为 KE"}
   - {target: "MOD-LLM_SECURITY", at: "§8", why: "LLM Security Gateway——注入攻击检测"}
   - {target: "MOD-INF-025", at: "§3", why: "A2A Protocol——Agent间协调后加载规格"}
   - {target: "MOD-DATABASE", at: "§10", why: "Database——间接依赖(019→018→007→005→012)"}
@@ -740,7 +739,6 @@ class ConstructionStage(str, Enum):
 | MOD-INF-021 | 可选 | Rollback System——Skill 执行失败回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\rollback-system\blueprint.md` |
 | MOD-INF-022 | 可选 | Escalation Protocol——升级/委托路线 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\escalation-protocol\blueprint.md` |
 | MOD-INF-024 | 可选 | Budget Enforcer——token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\budget-enforcer\blueprint.md` |
-| MOD-KB-001 | 可选 | Knowledge Base——KE 沉淀 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\knowledge_base\blueprint.md` |
 | MOD-INF-011 | 可选 | Vector Memory——VMS存储服务（嵌入路由已迁至MOD-INF-039） | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector_memory\blueprint.md` |
 | MOD-INF-039 | 必须 | Local Model——BGE-M3 语义路由嵌入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_infrastructure_operations\local-model\blueprint.md` |
 
@@ -826,7 +824,6 @@ class ConstructionStage(str, Enum):
 | Feedback Loop (MOD-FEEDBACK_LOOP) | 五阶段闭环 | `SkillFeedbackLoop.predict→detect→diagnose→act→verify` | 闭环测试 |
 | Budget Enforcer (MOD-INF-024) | 预算检查 | `BudgetEnforcer.check()` | 预算溢出测试 |
 | Escalation (MOD-INF-022) | 升级委托 | `EscalationHandler.escalate()` | 升级路径测试 |
-| Knowledge Base (MOD-KB-001) | 双向同步 | `KBIntegration.skill_to_kb()` / `kb_to_skill()` | 同步测试 |
 | Pipeline (MOD-INF-009) | 桥接 | `PipelineSkillBridge` | 桥接测试 |
 | 资产盘点 (MOD-INF-026) | Skill 注册 | Spec → INV | 注册验证 |
 
@@ -1520,7 +1517,6 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 | MOD-INF-024 Budget | token 消耗计入会话预算 | BudgetEnforcer |
 | MOD-INF-005 Script System | Skill 脚本 exit code→Finding | exit 0=pass,1=fail,2=warn,3=error |
 | MOD-INF-022 Escalation | light/moderate/critical 三级升级 | EscalationHandler |
-| MOD-KB-001 Knowledge Base | Skill↔KE 双向同步 | KBIntegration |
 
 ---
 

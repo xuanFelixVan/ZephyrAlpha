@@ -218,14 +218,6 @@ permission_table:
       component: vector-memory / decisions store
       permission: Human-Gated
       reason: 检索影响 Agent 决策质量
-    - module: M2 kb 基础设施
-      component: kb/kb_repo.py / kb/chromadb_init.py
-      permission: Human-Gated
-      reason: 存储层与 Schema 影响记忆完整性
-    - module: M2 kb 加工链
-      component: kb/（ingest / extract / analyze / triage / activate / batch_ingest / graph_validator / embedding_migrate）
-      permission: AI-Modifiable
-      reason: 数据加工流水线可 AI 优化
     - module: M2 Provenance Chain
       component: provenance_logger.py
       permission: Immutable Core
