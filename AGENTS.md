@@ -233,6 +233,8 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | 一次性运维/诊断/迁移脚本 | A 类·非永久 | trae_060 §6 not_applies_to |
 | 测试夹具/常量 | A 类·非规则数据 | trae_060 §6 not_applies_to |
 
+> **reconcile_execution_log 自愈机制（#AUTO-ACK-HEALED-WARN + #RECONCILE-LOG-RETENTION，2026-07-23 治本）**：[`reconciliation_registry.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) 的 `_log_reconcile_results` 在插入 `clean` 记录时，自动回填同 gate 前置已愈合 `critical_warn` 的 `acknowledged_at`（EXISTS 子查询，与查询时 NOT EXISTS 自愈语义对称），消除"已愈合但永不 ack"的审计假阳性；超 50K 记录自动清理 180 天前旧记录（fail-open）。**datetime→sqlite3 适配器（#SQLITE-DATETIME-ADAPTER，2026-07-24 治本）**：[`time_utils.py`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/time_utils.py) 模块级注册 `sqlite3.register_adapter(datetime, str)`（Python 3.12 default adapter deprecated 治本），`now_utc()` 传给 sqlite3 自动适配为空格分隔 str（与默认 `isoformat(" ")` 零行为变更）。显式 str 时间戳用 `now_utc_str()`。
+
 > **审查跳过条款真源引用铁律（2026-07-17 治本）**：审查报告 0.5 节跳过条款时，跳过理由 MUST 引用真源文件路径+行号+原文摘录证明分类正确，禁止"仅 X 类，本次非 X 类"循环论证。合规格式示例：跳过 1.4-1.6（仅 C 类）——依据 [`trae_060` §3 L122](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml)"永久性系统/功能脚本"+ AGENTS.md 代码归类表，commit gate 属 B 类事件触发无状态函数，非 C 类。
 
 > MCP 服务器完整定义（工具清单/角色权限/熔断配置）见 [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json)。触发器路由表（6 触发器+处理器+安全等级）见 [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml)。

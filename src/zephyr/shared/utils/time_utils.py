@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] sqlite3 datetime/date adapter 已注册为 str()（register_sqlite_datetime_str_adapter，#SQLITE-DATETIME-ADAPTER），now_utc() 传给 sqlite3 自动适配为空格分隔 str 格式（与默认 adapter isoformat(" ") 一致，Python 3.12 deprecation 治本）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -46,7 +46,8 @@ from typing import Final
 
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
+import sqlite3
 import threading
 
 __all__ = [
@@ -55,13 +56,40 @@ __all__ = [
     "freeze_time",
     "now_iso",
     "now_utc",
+    "now_utc_str",
     "parse_iso",
+    "register_sqlite_datetime_str_adapter",
     "seconds_since",
     "seconds_until",
 ]
 
 MOCKED_TIME: Final[datetime | None] = None
 _mocked_time_lock = threading.Lock()
+
+
+def register_sqlite_datetime_str_adapter() -> None:
+    """注册 datetime/date→sqlite3 str 适配器（Python 3.12 default adapter deprecated 治本）。
+
+    Python 3.12 废弃 sqlite3 默认 datetime/date adapter（未来版本将移除，届时
+    ``conn.execute(sql, (now_utc(),))`` 会 TypeError）。本函数注册 ``str`` 作为
+    适配器——产出空格分隔格式（如 '2026-07-23 17:42:13.539162+00:00'），与默认
+    adapter 的 ``isoformat(" ")`` 行为**完全一致**，零行为变更。
+
+    覆盖全代码库 21 处 datetime→sqlite3 调用点 + 未来新增，无需逐调用点 str() 包装。
+
+    幂等：重复调用安全（register_adapter 覆盖式注册）。
+    非 I/O 副作用：纯函数注册，不触发连接/文件/网络操作
+    （NO-IMPORT-SIDE-EFFECT gate 仅检测 sqlite3.connect，不检测 register_adapter）。
+    """
+    sqlite3.register_adapter(datetime, str)
+    sqlite3.register_adapter(date, str)
+
+
+# 治本 #SQLITE-DATETIME-ADAPTER (2026-07-24): Python 3.12 废弃默认 datetime adapter，
+# 显式注册 str() 适配器（空格分隔，与 now_utc()→str() 约定一致）。零行为变更
+# （str(dt) == isoformat(" ") == 默认 adapter 输出）。time_utils 是时间 SSoT，被
+# governance/audit 等 sqlite3 使用方广泛导入，注册于此确保进程级早期生效。
+register_sqlite_datetime_str_adapter()
 
 
 def now_utc() -> datetime:
@@ -75,6 +103,20 @@ def now_utc() -> datetime:
     if MOCKED_TIME is not None:
         return MOCKED_TIME
     return datetime.now(UTC)
+
+
+def now_utc_str() -> str:
+    """返回当前 UTC 时间的 str 格式（空格分隔，与 sqlite3 存储格式一致）。
+
+    用于 SQL cutoff 查询等需要显式 str 时间戳的场景。``now_utc()`` 传给 sqlite3 时
+    由 ``register_sqlite_datetime_str_adapter`` 自动适配为 str，本函数供需要直接
+    str 的场景（如 ``WHERE logged_at < ?`` 参数）使用。
+
+    Usage::
+
+        cutoff = now_utc_str()  # '2026-07-23 17:42:13.539162+00:00'
+    """
+    return str(now_utc())
 
 
 default_now = now_utc  # 向后兼容别名——evolution_engine/hallucination_detector 等消费者
