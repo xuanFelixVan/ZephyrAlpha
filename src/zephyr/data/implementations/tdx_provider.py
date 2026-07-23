@@ -63,11 +63,87 @@ _RELIABLE_SERVERS = [
 ]
 
 # 880xxx 板块指数K线周期 → mootdx frequency 映射
-# mootdx index_bars frequency: 0=5min 1=15min 2=30min 3=1hour 7=1min 9=日线
+# mootdx index_bars frequency: 0=5min 1=15min 2=30m 3=1hour 7=1min 9=日线
 _PERIOD_TO_FREQ = {
     "1d": 9, "5m": 0, "1m": 7, "15m": 1, "30m": 2, "60m": 3,
 }
 _MARKET_SH = 1  # 880xxx 板块指数归属沪市
+
+
+def _patch_mootdx_to_data_coerce() -> None:
+    """一次性 patch mootdx.utils.to_data，让 pd.to_datetime 用 errors='coerce'。
+
+    根因：mootdx.utils.to_data() 无条件调用 ``pd.to_datetime(result.datetime)``，
+    当 mootdx 偶发返回 ``"2004-00-00 00:00"`` 等无效日期（月/日=00）时，
+    默认 ``errors='raise'`` 抛 ``ValueError: month must be in 1..12``，
+    导致整个板块 K 线数据丢失（拿不到任何行，连有效行也丢）。
+
+    修复：替换 to_data 为安全版本，``pd.to_datetime`` 加 ``errors='coerce'``，
+    无效日期变 NaT（仅影响 index，不修改 datetime 列原值），
+    由 ``_build_sector_kline_rows`` 的 strptime 校验过滤掉脏日期行。
+
+    影响范围：仅 ``mootdx.utils`` 模块内的 ``to_data`` 函数；
+    不影响项目其他模块的 ``pd.to_datetime`` 调用。
+    mootdx 未安装时静默跳过（不影响模块加载）。
+    """
+    try:
+        import mootdx.utils as mu
+        import pandas as pd
+        from pandas import DataFrame
+    except ImportError:
+        return  # mootdx 未安装，静默跳过
+
+    def _safe_to_data(v, **kwargs):
+        """to_data 安全版：to_datetime 用 errors='coerce'。
+
+        逻辑与原版 mootdx.utils.to_data 一致，仅 to_datetime 调用加 coerce。
+        若 mootdx 升级 to_data 新增列处理，需同步更新此处。
+        """
+        symbol = kwargs.get('symbol')
+        adjust = kwargs.get('adjust', '').lower()
+
+        if adjust in ('01', 'qfq', 'before'):
+            adjust = 'qfq'
+        elif adjust in ('02', 'hfq', 'after'):
+            adjust = 'hfq'
+        else:
+            adjust = None
+
+        if not isinstance(v, DataFrame) and not v:
+            return pd.DataFrame(data=None)
+
+        if isinstance(v, DataFrame):
+            result = v
+        elif isinstance(v, list):
+            result = pd.DataFrame(data=v) if len(v) else None
+        elif isinstance(v, dict):
+            result = pd.DataFrame(data=[v])
+        else:
+            result = pd.DataFrame(data=[])
+
+        if result is None or result.empty:
+            return result if result is not None else pd.DataFrame()
+
+        # 关键修复：errors='coerce' 代替默认 'raise'
+        if 'datetime' in result.columns:
+            result.index = pd.to_datetime(result.datetime, errors='coerce')
+        if 'date' in result.columns:
+            result.index = pd.to_datetime(result.date, errors='coerce')
+
+        if 'vol' in result.columns:
+            result['volume'] = result.vol
+
+        if adjust and adjust in ('qfq', 'hfq') and symbol:
+            from mootdx.utils.adjust import to_adjust
+            result = to_adjust(result, symbol=symbol, adjust=adjust)
+
+        return result
+
+    mu.to_data = _safe_to_data
+    log.info("mootdx.utils.to_data 已 patch 为 safe 版本（to_datetime errors='coerce'）")
+
+
+_patch_mootdx_to_data_coerce()
 
 
 class TDXProvider(DataSourceBase):
