@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-23T12:09:08Z'
+generated_at: '2026-07-23T18:49:43Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 125
+total_gates: 126
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -324,6 +324,17 @@ gates:
   files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(d8_doc_sync/sync_yaml_to_depgraph|d11_compliance/verify_schema_health)\.py)$
   always_run: false
   category: contract_drift
+  status: active
+  source: pre-commit
+- gate_id: GATE-CANONICAL-YAML-DRIFT
+  name: 'GATE-CANONICAL-YAML-DRIFT: canonical YAML SSoT 防漂移（Phase B 5 项断言）'
+  entry: python scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py
+    --ci
+  description: canonical YAML SSoT 防漂移——5 项断言防止 Phase A 修过的 markdown 同步到 YAML 后再被改回陈旧值（human_gated
+    YAML 无 reconciler 自动重生，靠本门禁兜底）
+  files_trigger: ^(architecture_model/technology/technology_landscape\.yaml|architecture_model/contracts/cross_layer_contracts\.yaml|architecture_model/cross_cutting/runtime_planes\.yaml|architecture_model/governance_systems_registry\.yaml|pyproject\.toml|src/zephyr/frontend/dashboard/components/chart_factory\.py)$
+  always_run: false
+  category: unknown
   status: active
   source: pre-commit
 - gate_id: GATE-ENCODING

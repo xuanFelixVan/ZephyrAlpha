@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
-version: "2.1.2"
+version: "2.1.3"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -112,7 +112,7 @@ END_REQUIRED_SECTIONS
 
 # Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
 
-> module_id: MOD-INF-029 | version: 2.1.2 | status: Active | layer: cross_layer
+> module_id: MOD-INF-029 | version: 2.1.3 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orphan-judge/ | generation: 3 | construction_progress: scaffold
 
 ## 概述
@@ -1432,6 +1432,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/security/access_control/orphan_judge/duplicate_detector.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/escalation_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/feedback_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/kb_bridge.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/mcp_integration.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/models.py` | ✅ 已实现 | |
 | `src/zephyr/security/access_control/orphan_judge/orphan_collector.py` | ✅ 已实现 | |
