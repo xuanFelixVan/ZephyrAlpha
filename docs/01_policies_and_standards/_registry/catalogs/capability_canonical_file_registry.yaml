@@ -5528,7 +5528,7 @@ creation_tokens:
     token: "auto-arch031-gov-split-20260702"
     created_by: "session-arch031-p0-build"
     capability: "governance_root_split"
-  - file: "docs/02_enterprise_architecture/migration_registry.yaml"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml"
     token: "auto-arch031-mig-registry-20260702"
     created_by: "session-arch031-p0-build"
     capability: "governance_root_split"
@@ -6241,7 +6241,7 @@ creation_tokens:
     created_by: "sess-29488-20260719023314"
     capability: "migrate_sqlite_to_pg"
   # 治本（2026-07-19，MOD-GOV-debt-rulings）：第102轮 DEFERRED-PERMANENT 架构裁定记录（promote 到永久区）
-  - file: "docs/02_enterprise_architecture/debt_permanent_rulings_r102.md"
+  - file: "docs/_archive/debt_permanent_rulings_r102.md"
     token: "auto-debt-rulings-r102-20260719"
     created_by: "sess-3352-20260719032034"
     capability: "debt_permanent_rulings"
@@ -6450,7 +6450,7 @@ creation_tokens:
     created_by: "sess-20644-20260719164900"
     capability: "rule_execution_pairing"
   # --- #ARCH-GOV-CONVERGENCE-META Phase 3.3 治理层收敛映射表 ---
-  - file: "docs/02_enterprise_architecture/governance_convergence_map.yaml"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml"
     token: "auto-governance-convergence-map-20260719"
     created_by: "sess-5224-20260719175353"
     capability: "governance_convergence"
@@ -6472,7 +6472,7 @@ creation_tokens:
     token: "auto-test-m21-phase3-6-gates-20260719"
     created_by: "sess-30532-20260719211319"
     capability: "snapshot_drift_detector"
-  - file: "docs/02_enterprise_architecture/agents_md_slimming_test_design.md"
+  - file: "docs/_archive/agents_md_slimming_test_design.md"
     token: "auto-agents-md-slimming-design-20260719"
     created_by: "sess-30532-20260719211319"
     capability: "agents_md_slimming_decision_doc"
@@ -6494,7 +6494,7 @@ creation_tokens:
   # 裁定 A+ (P0): 修复 COALESCE 跨表列引用 → OLD::text
   # 裁定 B (P1): sync_all() 级联隔离（待实施）
   # 裁定 C (P2): reconciler 错误分类（待实施）
-  - file: "docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md"
+  - file: "docs/_archive/ruling_guc_trigger_cascading_sync_failure.md"
     token: "auto-guc-trigger-ruling-20260719"
     created_by: "sess-34696-20260719234628"
     capability: "guc_trigger_fix_ruling"
@@ -6517,14 +6517,14 @@ creation_tokens:
     capability: "workspace_telemetry"
 
   # --- 裁定 D 综合分析报告（2026-07-20，#ARCH-GUC-TRIGGER-FIX-001 裁定 D 展开）---
-  - file: "docs/02_enterprise_architecture/ruling_100pct_ai_governance_hardening.md"
+  - file: "docs/_archive/ruling_100pct_ai_governance_hardening.md"
     token: "auto-ruling-100pct-ai-gov-hardening-20260720"
     created_by: "sess-7308-20260720013540"
     capability: "ruling_100pct_ai_governance_hardening"
 
   # --- P3-1.2 ruling_gate_abuse_systemic_audit 文档登记（2026-07-20，#ARCH-P3-FOLLOWUP-TODOS-001 裁定 C）---
   # 关联 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 Layer 2 文档产出（5 维根因分析 + 治本路线图）
-  - file: "docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md"
+  - file: "docs/_archive/ruling_gate_abuse_systemic_audit.md"
     token: "auto-gate-abuse-systemic-audit-20260720"
     created_by: "sess-50496-20260720014849"
     capability: "gate_abuse_systemic_audit_ruling"
@@ -6553,21 +6553,21 @@ creation_tokens:
 
   # --- heartbeat 治本独立裁定文档（2026-07-20，#ARCH-HEARTBEAT-001 P1-7，R4 交付物）---
   # 第一性原理分析 + Phase 1 实施细节 + 验证结果 + Phase 2/3 后续路线图
-  - file: "docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md"
+  - file: "docs/_archive/ruling_session_worktree_heartbeat.md"
     token: "auto-ruling-session-worktree-heartbeat-20260720"
     created_by: "sess-heartbeat-p1-20260720"
     capability: "ruling_session_worktree_heartbeat"
 
   # --- session_worktree 异步化治本裁定文档（2026-07-20，#ARCH-ASYNC-MERGE-RECONCILE-001）---
   # L1 根因分析 + 治本路线图（Layer 2 + P1 heartbeat + P1 异步化 + P2 阈值收紧）+ R2 阈值过渡
-  - file: "docs/02_enterprise_architecture/ruling_async_merge_reconcile.md"
+  - file: "docs/_archive/ruling_async_merge_reconcile.md"
     token: "auto-ruling-async-merge-reconcile-20260720"
     created_by: "sess-54936-20260720051550"
     capability: "ruling_async_merge_reconcile"
 
   # --- forged_gw_marker 违规排查报告（2026-07-20，#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 子交付物）---
   # 4 个 commit hash + 根因 A/B 分析 + 5 条修复建议
-  - file: "docs/02_enterprise_architecture/investigation_forged_gw_marker.md"
+  - file: "docs/_archive/investigation_forged_gw_marker.md"
     token: "auto-investigation-forged-gw-marker-20260720"
     created_by: "sess-54936-20260720051550"
     capability: "forged_gw_marker_investigation"
@@ -6705,7 +6705,7 @@ creation_tokens:
   # 裁定文档 + 规则文件 + SSoT helper 三件套登记 creation_token
   # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("window_flash") 可定位真源
   # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
-  - file: "docs/02_enterprise_architecture/ruling_runcommand_window_flash.md"
+  - file: "docs/_archive/ruling_runcommand_window_flash.md"
     token: "auto-ruling-runcommand-window-flash-20260720"
     created_by: "sess-52476-20260720095800"
     capability: "window_flash_discipline"
@@ -6738,7 +6738,7 @@ creation_tokens:
 
   # --- ruling_workspace_drift_systemic.md 裁定文档（2026-07-20，#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001）---
   # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
-  - file: "docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md"
+  - file: "docs/_archive/ruling_workspace_drift_systemic.md"
     token: "auto-ruling-workspace-drift-systemic-20260720"
     created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
     capability: "workspace_drift_systemic_ruling"
@@ -6778,7 +6778,7 @@ creation_tokens:
     capability: "budget_enforcement_rbac_bridge_shim"
   # --- #ARCH-ANY-GOVERNANCE-001 裁定文档（2026-07-21，5.145 系统性 Any 治理专项工程）---
   # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
-  - file: "docs/02_enterprise_architecture/ruling_any_governance_engineering.md"
+  - file: "docs/_archive/ruling_any_governance_engineering.md"
     token: "auto-ruling-any-governance-engineering-20260721"
     created_by: "ARCH-ANY-GOVERNANCE-001"
     capability: "any_governance_engineering_ruling"
@@ -6914,6 +6914,17 @@ creation_tokens:
     token: "auto-scan-consumers-accuracy-20260721"
     created_by: "session-sess-55768-20260721214631"
     capability: "consumers_accuracy_baseline_scan"
+
+  # --- P0-5 财报 PIT 查询能力（#ARCH-CH-021，2026-07-23）---
+  # ClickHouse point-in-time 查询 helper，对齐 backtest.core.pit_manager 三公理
+  # （as_of_join/embargo/survivorship）。利用财务表 ORDER BY(...,announce_date)
+  # 保留全部版本，LIMIT 1 BY symbol,report_period 取查询时点可见的最新版本。
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("pit query") / find("announce_date as_of") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 pit_query 副本
+  - file: "src/zephyr/data/pit_query.py"
+    token: "auto-pit-query-20260723"
+    created_by: "session-arch-ch-021-pit5"
+    capability: "financial_pit_query"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
