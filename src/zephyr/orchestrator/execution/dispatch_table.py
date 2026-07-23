@@ -115,7 +115,6 @@ DISPATCH_TABLE: Final[dict[str, SystemDispatch]] = {
         ct_contracts=(
             "CT-ORC-VMS",
             "CT-CE-VMS",
-            "CT-KB-VMS",
             "CT-BULKHEAD",
         ),
         schemas=(),
