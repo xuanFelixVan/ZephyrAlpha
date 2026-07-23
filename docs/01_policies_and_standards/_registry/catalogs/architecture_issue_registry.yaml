@@ -882,7 +882,7 @@ entries:
       - task_system（应归 _domain_infrastructure_runtime/）
       - task-card-kms（已废弃合并入 task_system）
       - vibe-coding-pipelines（已废弃合并入 task_system）
-      - knowledge_base（应归 _domain_knowledge/）
+      - knowledge_base（KB 系统已于 2026-07 退役，模块已删除）
       - scaffold（MOD-INF-005 误名，应为 governance_automation）
       - code-dedup-engine（应归 _domain_governance/，且应为 snake_case）
       - asset-inventory（同域 hyphen，应为 snake_case asset_inventory）
@@ -2683,6 +2683,255 @@ entries:
   - audit_03 1.2
   - '#ARCH-CH-022'
   - RULE-SSOT-CLASSIFICATION
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-CH-027: ClickHouse RBAC 账号分级（audit 9.4 治本）---
+- issue_id: '#ARCH-CH-027'
+  title: ClickHouse RBAC 账号分级——zephyr_reader(SELECT-only) + zephyr_writer(INSERT/ALTER)
+  severity: P1高
+  category: data_security
+  adjudication: |
+    背景：audit 9.4 发现 ClickHouse 仅使用 default 用户（无密码），无账号分级。
+    应用层 database_service.get_clickhouse_conn() 用 settings={'readonly': 1}
+    做应用级只读，但 DB 级无权限隔离——default 用户拥有全部权限。
+
+    治本方案（2026-07-23）：
+    1. CREATE USER zephyr_reader IDENTIFIED BY 'zephyr_reader_2026'
+       GRANT SELECT ON c1_market.*, c3_fundamental.* TO zephyr_reader
+    2. CREATE USER zephyr_writer IDENTIFIED BY 'zephyr_writer_2026'
+       GRANT SELECT, INSERT, ALTER TABLE, CREATE TABLE, DROP TABLE, OPTIMIZE
+       ON c1_market.*, c3_fundamental.* TO zephyr_writer
+    3. ch_config.py 新增 load_ch_reader_config()/load_ch_writer_config()
+       优先读 CLICKHOUSE_READER_USER/PASSWORD、CLICKHOUSE_WRITER_USER/PASSWORD
+       未配置时回退到 CLICKHOUSE_USER/PASSWORD（向后兼容）
+    4. database_service.get_clickhouse_conn() 改用 load_ch_reader_config()
+       + 保留 settings={'readonly': 1} 双重防护（DB 级 + 应用级）
+    5. ch_writer.py TCP/HTTP 路径改用 zephyr_writer 凭据
+       TCP: Client(user=_CH_USER, password=_CH_PASSWORD)
+       HTTP: X-ClickHouse-User/X-ClickHouse-Key 认证头
+
+    验证结果：
+    - zephyr_reader SELECT ✅ / INSERT ❌（Code 497: Not enough privileges）
+    - zephyr_writer SELECT ✅ / CREATE+DROP TABLE ✅
+    - ch_writer.query() 使用 writer 凭据 ✅
+    - database_service CH 连接使用 reader 凭据 ✅
+  impact:
+    - config/.env.clickhouse 新增 READER/WRITER 凭据
+    - src/zephyr/data/ch_config.py 新增 load_ch_reader_config/load_ch_writer_config
+    - src/zephyr/infrastructure/database_service.py 改用 reader config
+    - src/zephyr/data/ch_writer.py TCP+HTTP 路径使用 writer 凭据
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - audit_03 9.4
+  - '#ARCH-CH-017'
+  - '#ARCH-CH-019'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-CH-028: tick_data 数据跳过索引（audit 1.3/5.3 治本）---
+- issue_id: '#ARCH-CH-028'
+  title: tick_data 添加 idx_symbol set(10000) 数据跳过索引——单标的查询裁剪
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    背景：audit 1.3/5.3 发现 tick_data ORDER BY 以 market_type 为前缀
+    （#ARCH-CH-020 防跨市场去重事故治本修复），导致单标的查询无法使用
+    主键前缀裁剪——查询 symbol='000001' 需扫描所有 market_type 分区。
+
+    第一性原理分析：
+    - ORDER BY (market_type, symbol, ...) 是 #ARCH-CH-020 的安全治本，
+      不可移除（移除会导致跨市场 5 字段重复行被错误合并）
+    - 单标的查询是回测最高频模式（按 symbol 回放 tick）
+    - 数据跳过索引（data skipping index）在不改变 ORDER BY 的前提下
+      为非前缀列提供 granule 级裁剪能力
+    - set(10000) 类型在每个 granule 块（GRANULARITY 4 = 4×8192 = 32768 行）
+      存储至多 10000 个 distinct symbol 值，支持精确点查裁剪
+    - A 股约 5000 symbols，每个 granule 块远低于 10000 上限
+
+    治本方案（2026-07-23）：
+    1. ALTER TABLE c1_market.tick_data ADD INDEX idx_symbol symbol TYPE set(10000) GRANULARITY 4
+    2. DDL-as-Code 真源 market_tick.py 同步更新（含 idx_ts + idx_symbol 两个索引）
+    3. 新数据自动构建索引；旧数据需 MATERIALIZE INDEX（93 亿行，离线执行）
+
+    裁定：market_type 前缀（#ARCH-CH-020 安全）> symbol 前缀裁剪，
+    通过 set(10000) 数据跳过索引缓解单标的查询性能。
+  impact:
+    - schemas/categories/market_tick.py DDL 新增 INDEX idx_symbol
+    - ClickHouse c1_market.tick_data 已 ADD INDEX（新数据自动生效）
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - audit_03 1.3
+  - audit_03 5.3
+  - '#ARCH-CH-020'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-CH-029: 已知数据缺口注册表（audit 2.7/3.8 治本）---
+- issue_id: '#ARCH-CH-029'
+  title: known_data_gaps.yaml 注册表 + backfill_checker 历史缺口检测扩展
+  severity: P1高
+  category: data_quality
+  adjudication: |
+    背景：
+    - audit 3.8: tick_data 2026-06 缺口 89.6%（日均 248 万 vs 5 月 2385 万），
+      但 backfill_checker _DEFAULT_BACKFILL_DAYS=7 只回看 7 天，无法检测
+      超过 7 天的历史缺口 → 永远不会触发补下载
+    - audit 2.7: edb_data 表空（iFind EDB 配额耗尽 -4318），
+      macro_data（akshare 291K 行）为主宏观数据源但未文档化
+
+    第一性原理分析：
+    - 7 天窗口适用于"日常增量缺口检测"（最近一周的数据完整性）
+    - 已知历史缺口需要显式登记 + 全范围检测（不受窗口限制）
+    - 100% AI 开发模式下，AI 不会主动记住历史缺口——需要持久化注册表
+    - 注册表是运行时配置（table_registry.py 内存加载），改后重启即生效
+
+    治本方案（2026-07-23）：
+    1. 新建 src/zephyr/data/config/known_data_gaps.yaml 注册表
+       - gap_type: date_range（指定日期范围行数低于阈值）
+       - gap_type: empty_table（整表为空）
+       - status: registered → in_progress → completed / accepted
+    2. backfill_checker.py 新增 run_known_gap_backfill() 函数
+       - 加载 known_data_gaps.yaml
+       - date_range 缺口: 检测仍缺失日期 → 触发 backfill_tick_data()
+       - empty_table 缺口: 检测表行数 → log 告警
+    3. run_weekend_backfill() 末尾自动调用 run_known_gap_backfill()
+    4. 登记两条缺口：
+       - tick_data_2026_06_gap: 2026-06-01~06-30, threshold=500万, status=registered
+       - edb_data_ifind_quota_exhausted: empty_table, status=accepted
+         (macro_data akshare 291K 行为主宏观源)
+
+    验证结果：
+    - known_data_gaps.yaml 加载成功: 2 条缺口
+    - tick_data 2026-06 缺口检测: 22/22 天缺失 → 触发 backfill（QMT 下载）
+    - edb_data 空表检测: row_count=0, status=accepted
+  impact:
+    - src/zephyr/data/config/known_data_gaps.yaml 新建
+    - src/zephyr/data/backfill_checker.py 新增 known gap 检测函数
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - audit_03 2.7
+  - audit_03 3.8
+  - '#ARCH-BACKFILL-001'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-CH-030: 物理预聚合 > 物化视图（audit 5.4 裁定）---
+- issue_id: '#ARCH-CH-030'
+  title: kline_resampler 物理预聚合（DELETE+INSERT 幂等）优于 MV——ReplacingMergeTree 去重时序裁定
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    背景：audit 5.4 发现项目有 kline_resampler 物理预聚合等价物（880xxx 板块 K 线
+    15m/30m/60m 合成），但 MV（Materialized View）自动一致性未补。
+
+    第一性原理分析（ReplacingMergeTree + MV 交互）：
+    1. ReplacingMergeTree 的去重是异步的（后台 merge 时才去重）
+    2. MV 触发时机是 INSERT（不是 merge/FINALize）
+    3. 因此 MV 在源表 INSERT 时触发，会看到未去重的重复行
+    4. MV 聚合（如 GROUP BY symbol, bar_time）会对重复行双重计算
+    5. 后台 merge 去重后 MV 不会重新计算——数据不一致不可恢复
+
+    物理预聚合（kline_resampler 方案）优势：
+    1. DELETE ... SETTINGS mutations_sync=2 + INSERT ... GROUP BY（同步、幂等）
+    2. 查询时 ch_reader 自动注入 FINAL → 聚合前数据已去重
+    3. argMin(open, timestamp)/argMax(close, timestamp) 保证 OHLC 正确性
+    4. 可重跑：同一时段重复执行结果不变（DELETE 先清理）
+    5. 无 MV 一致性隐患
+
+    裁定：物理预聚合（DELETE+INSERT, mutations_sync=2）是 ReplacingMergeTree
+    源表的正确预聚合方案。MV 因去重时序不一致被排除。
+    audit 5.4 "MV 自动一致性未补" → 不需要补 MV，物理预聚合已覆盖且更正确。
+  impact:
+    - 无代码变更（裁定性记录）
+    - kline_resampler.py 已实现物理预聚合（2026-07-22 上线）
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - audit_03 5.4
+  - '#ARCH-CH-002'
+  - '#ARCH-CH-007'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-CH-031: 单节点高可用接受裁定（audit 5.8/10.3）---
+- issue_id: '#ARCH-CH-031'
+  title: ClickHouse 单节点回测期接受——ReplicatedMergeTree gated on 实盘立项
+  severity: P2中
+  category: data_availability
+  adjudication: |
+    背景：audit 5.8/10.3 发现 ClickHouse 单节点无副本，单用户假设下不扣总分。
+    audit 10.3（高可用副本）标记为 ❌（不计分）。
+
+    第一性原理分析：
+    1. 项目当前阶段：单用户回测数据库（93 亿行 tick, ~302 GiB）
+    2. 回测场景的可用性需求：可以容忍停机（非实时交易）
+    3. ReplicatedMergeTree 需要 ZooKeeper + 多节点集群，运维复杂度高
+    4. 100% AI 开发模式下，多节点集群的配置/维护/故障恢复对 AI 是重大挑战
+    5. 单节点 + restic 备份（RPO=24h, RTO=8h）对回测场景足够
+
+    裁定：
+    - 当前阶段（单用户回测）：单节点 + restic 备份 = 接受
+    - 触发升级条件（任一满足）：
+      a) 实盘立项（live trading go-live）
+      b) 数据量超过单节点容量（当前 302 GiB / 预估 1 TB+）
+      c) 多用户并发查询需求
+    - 升级路径：ReplicatedMergeTree + ZooKeeper + 2+ CH 节点
+    - 在此之前，audit 5.8/10.3 标记为"裁定接受"（不扣分）
+
+    风险缓解：
+    - restic 备份 RPO=24h, RTO=8h（dr_policy.yaml 已注册）
+    - 异地副本 scaffolding 已就绪（#ARCH-CH-032, 待云存储凭证激活）
+  impact:
+    - 无代码变更（裁定性记录）
+    - audit 5.8/10.3 标记为"裁定接受"
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - audit_03 5.8
+  - audit_03 10.3
+  - '#ARCH-CH-032'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-CH-032: 异地/离线备份 scaffolding（audit 7.7 治本）---
+- issue_id: '#ARCH-CH-032'
+  title: offsite restic repo 配置 scaffolding——环境变量驱动，gated on 云存储凭证
+  severity: P2中
+  category: disaster_recovery
+  adjudication: |
+    背景：audit 7.7 发现所有 restic 备份到 F:\restic-zephyr（本地外接盘），
+    与主库同物理站点——火灾/盗窃/物理损坏会同时丢失主库和备份。
+
+    第一性原理分析：
+    1. 3-2-1 备份原则：至少 3 份副本，2 种介质，1 份异地
+    2. 当前：1 份主库 + 1 份本地 restic = 2 份同站点（不满足 3-2-1）
+    3. 单用户回测期：数据价值有限，异地副本 ROI 较低
+    4. 实盘/商业化后：数据不可重建（历史 tick 无替代源），异地副本必须
+    5. restic copy 是增量操作（仅复制本地有但异地没有的 snapshots），开销低
+
+    治本方案（2026-07-23）：
+    1. backup_config.yaml 新增 offsite_repository 配置段
+       - path: ${RESTIC_OFFSITE_REPOSITORY}（环境变量驱动）
+       - password_file: ${RESTIC_OFFSITE_PASSWORD_FILE}
+       - copy_strategy: restic_copy
+    2. 激活条件：设置 RESTIC_OFFSITE_REPOSITORY 环境变量
+    3. 当前状态：enabled=false（未配置云存储凭证）
+
+    裁定：异地副本 scaffolding 已就绪，激活 gated on：
+    a) 云存储凭证（S3/B2/rest server）
+    b) 实盘立项（#ARCH-CH-031 触发条件）
+    在此之前，audit 7.7 标记为"scaffolding 就绪，待激活"。
+  impact:
+    - scripts/backup/backup_config.yaml 新增 offsite_repository 配置段
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - audit_03 7.7
+  - '#ARCH-CH-031'
   created: '2026-07-23'
   last_updated: '2026-07-23'
 
