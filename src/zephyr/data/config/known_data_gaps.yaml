@@ -54,3 +54,19 @@ gaps:
     primary_alternative: "c1_market.macro_data（akshare，285K 行，主宏观数据源）"
     created: "2026-07-23"
     last_updated: "2026-07-23"
+
+  # === 2026-07-24: share_change 数据源停止更新（akshare stock_share_change_cninfo）===
+  - id: "share_change_cninfo_stale"
+    table: "c3_fundamental.share_change"
+    gap_type: "source_stale"  # 数据源停止更新（非空表，有 167985 行历史数据）
+    start_date: "2025-04-29"  # 表内最新公告日期
+    end_date: null  # 持续中，待数据源恢复或更换
+    date_column: "announce_date"
+    detection_threshold: 1  # 日新增 < 1 行 = 数据源停滞
+    status: "accepted"  # 已接受——akshare 接口自 2024Q4 起不再返回新数据
+    root_cause: "akshare stock_share_change_cninfo 数据源（巨潮资讯 cninfo）自 2024Q4 停止更新。
+      实测 8 只样本股（600519/000001/601398/300750/688981/002594/601012/600036）接口返回最新
+      公告日期均在 2024-08~2024-10，无 2025/2026 数据。非任务/调度/fetcher bug。"
+    resolution_plan: "切换数据源至 tushare 股本变动接口或交易所公告直采；当前接受现状"
+    created: "2026-07-24"
+    last_updated: "2026-07-24"
