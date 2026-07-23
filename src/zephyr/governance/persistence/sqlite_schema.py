@@ -945,7 +945,6 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "5.35.10 修复：重建 gates 兼容表（test_sqlite_schema_unit SSoT 期望）",
         # SSoT 铁律：测试是真源。test_sqlite_schema_unit 期望 gates 表 + idx_gates_gate_id 索引。
         # 5.18.14 改名 gates->gate_runs，与测试期望冲突。本 migration 创建兼容表满足测试，gate_runs 保留不变。
-        # KB 系统退役(2026-07-23)：knowledge/ke_tombstones 表已彻底删除，不再重建。
         [
             """CREATE TABLE IF NOT EXISTS gates (
                 gate_run_id  TEXT PRIMARY KEY,
@@ -962,9 +961,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         35,
-        "KB 系统退役(2026-07-23)：彻底删除 knowledge + ke_tombstones 表（向前清理现有 DB 遗留表）。",
-        # 100% AI 开发下 KB 系统对回测/实盘零依赖；sync_engine.sync_to_vms / kb_bridge.publish_to_kb
-        # 均为容错吞异常的孤儿路径。本 migration 向前清理现有 DB 的遗留表，幂等 no-op 若表已不存在。
+        "清理遗留表：knowledge + ke_tombstones（向前清理，幂等 no-op 若表已不存在）。",
         [
             "DROP TABLE IF EXISTS knowledge",
             "DROP TABLE IF EXISTS ke_tombstones",
