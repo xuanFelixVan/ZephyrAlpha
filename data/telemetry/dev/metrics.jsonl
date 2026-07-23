@@ -11520,3 +11520,9 @@
 {"ts": "2026-07-22T05:27:03.238961+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
 {"ts": "2026-07-22T05:27:03.238961+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
 {"ts": "2026-07-22T05:27:03.238961+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-07-23T19:25:36.775365+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-07-23T19:25:36.775874+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-BLOCK.tokens_consumed", "value": 99.0, "tags": {}}
+{"ts": "2026-07-23T19:25:36.775874+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-BLOCK.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-07-23T19:25:36.775365+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-07-23T19:25:36.775874+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-BLOCK.tokens_consumed", "value": 99.0, "tags": {}}
+{"ts": "2026-07-23T19:25:36.775874+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-BLOCK.cost_usd", "value": 0.0, "tags": {}}

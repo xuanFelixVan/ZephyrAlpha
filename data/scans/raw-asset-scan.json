@@ -2,7 +2,7 @@
   "scan_id": "SCAN-20260722-544",
   "scanned_at": "2026-07-22T03:39:05.511086Z",
   "completed_at": "2026-07-22T03:39:14.177749Z",
-  "total_files": 10127,
+  "total_files": 10125,
   "total_size_bytes": 388892083,
   "scan_mode": "full",
   "entries": [
@@ -33887,16 +33887,6 @@
       "is_binary": false
     },
     {
-      "relative_path": "docs/02_enterprise_architecture/02_domain_architecture_docs/43_d_gov_kb.md",
-      "absolute_path": "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\02_domain_architecture_docs\\43_d_gov_kb.md",
-      "file_name": "43_d_gov_kb.md",
-      "extension": ".md",
-      "size_bytes": 4646,
-      "mtime_utc": "2026-07-22T03:30:12.085168Z",
-      "sha256": "7564eed1185abf9929968640901686da5089bb9496dfd268e18014e9c228185e",
-      "is_binary": false
-    },
-    {
       "relative_path": "docs/02_enterprise_architecture/02_domain_architecture_docs/57_d_simulation.md",
       "absolute_path": "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\02_domain_architecture_docs\\57_d_simulation.md",
       "file_name": "57_d_simulation.md",
@@ -34674,16 +34664,6 @@
       "size_bytes": 28441,
       "mtime_utc": "2026-07-22T03:33:56.455527Z",
       "sha256": "019ef4d8a1d1e7fd769cc2dcdbaac862fbb864fa51fff8869c0c8010d22f5588",
-      "is_binary": false
-    },
-    {
-      "relative_path": "docs/02_enterprise_architecture/generated/domains/d_gov_kb_dependency.mmd",
-      "absolute_path": "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\generated\\domains\\d_gov_kb_dependency.mmd",
-      "file_name": "d_gov_kb_dependency.mmd",
-      "extension": ".mmd",
-      "size_bytes": 536,
-      "mtime_utc": "2026-07-22T03:31:12.873344Z",
-      "sha256": "c91b954b344f51d14c44bf1ca96142a1db773f910d7eaf28c609daf132b700e0",
       "is_binary": false
     },
     {

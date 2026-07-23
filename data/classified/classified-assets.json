@@ -2,7 +2,7 @@
   "classification_id": "CLS-20260722-852",
   "classified_at": "2026-07-22T03:39:15.177434",
   "source_scan_id": "SCAN-20260722-544",
-  "total_classified": 10127,
+  "total_classified": 10125,
   "unknown_count": 4266,
   "unknown_pct": 42.1,
   "by_type": {
@@ -50845,21 +50845,6 @@
       "tags_last_updated": null
     },
     {
-      "relative_path": "docs/02_enterprise_architecture/02_domain_architecture_docs/43_d_gov_kb.md",
-      "asset_type": "doc",
-      "layer": "L02",
-      "status": "active",
-      "priority": "P3",
-      "size_bytes": 4646,
-      "mtime_utc": "2026-07-22T03:30:12.085168Z",
-      "sha256": "7564eed1185abf9929968640901686da5089bb9496dfd268e18014e9c228185e",
-      "registered_in": [],
-      "classification_confidence": 0.85,
-      "tags": [],
-      "custom_metadata": {},
-      "tags_last_updated": null
-    },
-    {
       "relative_path": "docs/02_enterprise_architecture/02_domain_architecture_docs/57_d_simulation.md",
       "asset_type": "doc",
       "layer": "L02",
@@ -52023,21 +52008,6 @@
       "size_bytes": 28441,
       "mtime_utc": "2026-07-22T03:33:56.455527Z",
       "sha256": "019ef4d8a1d1e7fd769cc2dcdbaac862fbb864fa51fff8869c0c8010d22f5588",
-      "registered_in": [],
-      "classification_confidence": 0.3,
-      "tags": [],
-      "custom_metadata": {},
-      "tags_last_updated": null
-    },
-    {
-      "relative_path": "docs/02_enterprise_architecture/generated/domains/d_gov_kb_dependency.mmd",
-      "asset_type": "unknown",
-      "layer": "L02",
-      "status": "active",
-      "priority": "P3",
-      "size_bytes": 536,
-      "mtime_utc": "2026-07-22T03:31:12.873344Z",
-      "sha256": "c91b954b344f51d14c44bf1ca96142a1db773f910d7eaf28c609daf132b700e0",
       "registered_in": [],
       "classification_confidence": 0.3,
       "tags": [],
