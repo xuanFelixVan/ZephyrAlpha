@@ -66,7 +66,7 @@ ttl: permanent
 | 前端 ↔ 后端 REST/WebSocket/OpenAPI 字段级契约清单 | `architecture_model/contracts/cross_layer_contracts.yaml` |
 | 前端运行时依赖的 Redis / PostgreSQL / LLM 技术栈选型 | `technology_architecture.md`（TA）|
 | 前端安全策略（CSP / CORS / CSRF / XSS / OAuth）| `security_architecture.md`（SEC，当前 skeleton，后续深化时必须包含前端安全一节）|
-| 前端与外部集成拓扑（API Gateway / CDN / 第三方登录）| `integration_architecture.md`（INTEG）|
+| 前端与外部集成拓扑（API Gateway / CDN / 第三方登录）| `architecture_model/contracts/cross_layer_contracts.yaml`（EXT 外部集成点）|
 | 前端运维（监控/日志/告警/发布流水线）| `operations_architecture.md`（OPS）|
 
 ### 1.3 与 `03-AA` 的边界铁律

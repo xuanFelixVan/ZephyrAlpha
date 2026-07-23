@@ -136,11 +136,9 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
 | data_architecture.md | DA 数据架构视图 |
 | security_architecture.md | SEC 安全架构视图 |
-| integration_architecture.md | INTEG 集成架构视图 |
 | operations_architecture.md | OPS 运维架构视图 |
 | governance_architecture.md | GOV 治理架构视图 |
 | frontend_architecture.md | FE 前端架构视图 |
-| architecture_endgame_locked.md | 架构终局锁定声明（Draft 占位，beta 完成后激活）|
 | dimension_audit_matrix.md | 12维架构质量评分矩阵（score_architecture.py 真源）|
 | session_carryover_schema.md | AI会话接续Schema（contract 类型，暂放 target_architecture）|
 | revision_history.md | 完整修订历史归档（index.md §10 完整版）|
@@ -175,7 +173,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
 | `data_architecture.md` | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
-| `integration_architecture.md` | INTEG | 集成风格？接口契约？ | 开发者、架构师、SRE | active |
 | `operations_architecture.md` | OPS | 运维域全景？ | SRE、运维工程师 | draft |
 | `governance_architecture.md` | GOV | 治理体系三层边界？ | 架构师、合规 | active |
 | `frontend_architecture.md` | FE | 前端层分层？ | 前端开发者、架构师 | active |
@@ -191,7 +188,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 **Architect / 架构师**：`overview.md` → `generated/domain_index.md` → 按域读`generated/domains/*.md`
 
-**Developer / 开发者**：`../04_architecture_principles_decisions/application_principles.md` → `generated/domains/<相关域>.md` → `integration_architecture.md`
+**Developer / 开发者**：`../04_architecture_principles_decisions/application_principles.md` → `generated/domains/<相关域>.md` → `architecture_model/contracts/cross_layer_contracts.yaml`（集成点+接口契约）
 
 **AI collaborator / AI 协作者**：`generated/domain_index.md`（全局索引）→ 按需读取`generated/domains/*.md` → `overview.md`（设计哲学）
 

@@ -30,7 +30,7 @@ partition:
     跨层数据契约 SSoT。P0 六大数据契约（CTR-001~006）+ P0 全链路追踪契约
     （CTR-TRACE-001）+ P0 六大跨层错误契约（CTR-ERR-001~006）+ P0 三大背压
     契约（CTR-BP-001~003）+ P1 蓝图签名 15 条 + 三个 OCP 扩展点基类 +
-    外部系统契约 4 条 + AI 治理三接口（已 superseded）。
+    外部系统契约 5 条 + AI 治理三接口（已 superseded）。
     来源：interface-contracts.md v1.1.0 迁移 + 2026-05-04 架构盲点补全。
   source_views:
     - application_principles.md
@@ -1231,9 +1231,11 @@ contracts:
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================
-# 外部系统接口契约（4 条）
+# 外部系统接口契约（5 条）
 # =============================================================================
 external_contracts:
+  # acl_landing + status 字段迁移自 integration_architecture.md §3.2 EI 系列集成点清单
+  # （2026-07-23 B2 批次，原文档已删除）。EI-001~004 ↔ EXT-001~004，新增 EI-005 ↔ EXT-005。
   - id: EXT-001
     name: "Broker API / 券商交易接口"
     interface_type: "交易委托 / 成交回报"
@@ -1241,6 +1243,9 @@ external_contracts:
     protocol: "REST / FIX 4.2+"
     description: "发单前必须通过 pre_trade/ 风控；成交回报必须触发 Fill 契约并回调策略 (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_001.py
+    acl_landing: src/zephyr/ex_core/adapters/
+    status: planned
+    note: "接入真实资金时激活"
   - id: EXT-002
     name: "Market Data Provider / 行情数据接口"
     interface_type: "历史行情 / 实时行情"
@@ -1248,6 +1253,9 @@ external_contracts:
     protocol: "REST / WebSocket"
     description: "入站数据必须经过 data/quality/ 质量门禁方可下发；缺数据时触发 DataQualityError (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_002.py
+    acl_landing: src/zephyr/data/connectors/
+    status: planned
+    note: "首次数据接入时激活"
   - id: EXT-003
     name: "LLM Providers / 大模型推理接口"
     interface_type: "AI 推理"
@@ -1255,6 +1263,9 @@ external_contracts:
     protocol: "REST (OpenAI-compatible)"
     description: "支持降级（LLM 不可用时跳过 AI 增强，主流程不中断）；调用必须经过 AI Agent Ops 层，Factor-Analytics 禁止直接调用 (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_003.py
+    acl_landing: frontend/
+    status: in_use_dev
+    note: "Cursor/Trae 已接入；生产接入待 OQ-011"
   - id: EXT-004
     name: "Feishu / 飞书通知接口"
     interface_type: "通知分发"
@@ -1262,6 +1273,19 @@ external_contracts:
     protocol: "REST Webhook"
     description: "非关键路径；发送失败不影响主流程；重试 3 次后记录日志 (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_004.py
+    acl_landing: frontend/notifications/
+    status: partial
+    note: "手动推送已有；自动分发 planned"
+  - id: EXT-005
+    name: "Alternative Data Providers / 另类数据源接口"
+    interface_type: "舆情 / 新闻 / 事件"
+    direction: inbound
+    protocol: "REST / file"
+    description: "另类数据（情感、新闻、事件）入站接口。数据必须经 ACL 规范化后方可进入因子研究流程 (INV-007: events crossing this boundary must carry idempotency_key)"
+    physical_path: src/zephyr/shared/contracts/external/ext_005.py
+    acl_landing: src/zephyr/data/connectors/
+    status: planned
+    note: "因子研究阶段激活"
 # =============================================================================
 # AI 治理三接口签名摘要
 # =============================================================================

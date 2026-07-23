@@ -168,3 +168,113 @@ industry_practices: |
   - RULE-TEN = AI 行为层面的准入控制器
   - project_rules.md = AI 行为的宪法级约束
   - 与现有 RULE-ZERO（文件锁）互补：RULE-ZERO 防并发，RULE-TEN 防越权
+
+# =============================================================================
+# 架构终局定义与 Emergency Change Board 协议
+# 迁移自 architecture_endgame_locked.md（2026-07-23 B2 批次，原文档已删除）
+# =============================================================================
+
+endgame_definition:
+  description: |
+    架构终局定义——当以下所有条件同时满足时，架构终局全貌完成。
+    来源：architecture_endgame_locked.md §一（已迁移）
+
+  acceptance_criteria:
+    - condition: "所有 P0/P1 模块已注册"
+      standard: "module_id_registry.yaml 中 P0/P1 模块全部 status ≠ planned"
+      current_status: "待完成"
+    - condition: "所有 P0 模块接口契约已定义"
+      standard: "cross_layer_contracts.yaml 中 P0 模块契约全部 frozen"
+      current_status: "待完成"
+    - condition: "依赖图完整且无环"
+      standard: "detect_depends_on_cycles.py 默认模式 exit 0；depends_on 有向图无环"
+      current_status: "已满足（2026-05-06）：601 节点扫描无环；松耦合集成边已收敛到 references"
+    - condition: "SSoT 矛盾清零"
+      standard: "validate_ssot.py 报告 P0+P1+P2 = 0"
+      current_status: "已满足（frontmatter 扫描，2026-05-06），报告见 docs/_working/audit/reports/ssot-validation-LATEST.md"
+    - condition: "五大目标全部 PASS"
+      standard: "D1~D5 验收标准全部满足"
+      current_status: "待完成"
+    - condition: "基线指纹已生成"
+      standard: "architecture-baseline-fingerprint.yaml 存在"
+      current_status: "待完成"
+
+post_lock_change_rules:
+  description: |
+    架构终局锁定后（status: Active），以下规则生效。
+    来源：architecture_endgame_locked.md §二（已迁移）
+    注：与 modification_protocol（AI 行为层通用流程）互补——本节是终局锁定后的操作类型矩阵。
+
+  rules:
+    - operation: "通过 OCP 扩展点新增模块"
+      allowed: true
+      approval: "通过 module_injection_check.py 验证即可"
+    - operation: "修改已锁定模块的接口契约"
+      allowed: false
+      approval: "必须经 Emergency Change Board"
+    - operation: "修改已锁定模块的依赖关系"
+      allowed: false
+      approval: "必须经 Emergency Change Board"
+    - operation: "修改架构不变量（invariants.yaml）"
+      allowed: false
+      approval: "必须经 Emergency Change Board + Owner 签字"
+    - operation: "新增架构层（L14+）"
+      allowed: false
+      approval: "必须经 Emergency Change Board + Owner 签字 + KB 决策记录"
+
+emergency_change_board:
+  description: |
+    Emergency Change Board 协议——当需要修改已锁定架构时遵循。
+    来源：architecture_endgame_locked.md §三（已迁移）
+    注：与 modification_protocol（AI 行为层）+ emergency_override（紧急修复）互补——
+    ECB 是终局锁定后修改已锁定架构的 Owner 审批层流程。
+
+  steps:
+    - 1: "提交变更请求（在 Session Log 中描述变更内容和原因）"
+    - 2: "Owner 审查变更请求"
+    - 3: "Owner 批准后，创建 KB 决策记录记录变更决策"
+    - 4: "执行变更，更新基线指纹"
+    - 5: "更新 architecture_lock.yaml 的 change_history"
+
+baseline_fingerprint:
+  description: |
+    基线指纹模板——终局锁定时填入（当前为占位符，待终局条件全部满足后激活）。
+    来源：architecture_endgame_locked.md §四（已迁移）
+
+  # 锁定时填入（当前为占位符）
+  locked_at: "YYYY-MM-DD"
+  total_modules: 0  # 锁定时需替换为 _index.yaml global_stats 实际值
+  p0_modules: 0
+  p1_modules: 0
+  total_contracts: 0
+  total_dependency_edges: 0
+  sha256_index_yaml: ""
+  sha256_contracts_yaml: ""
+  sha256_runtime_planes_yaml: ""
+
+change_history:
+  description: |
+    架构锁变更记录。
+    来源：architecture_endgame_locked.md §五（已迁移）
+
+  records:
+    - date: "2026-04-22"
+      change_type: "文件创建"
+      content: "初始草稿，等待 beta 完成后激活"
+      kb_record: ""
+      owner_confirmed: ""
+    - date: "2026-05-06"
+      change_type: "批次修复"
+      content: "depends_on DAG 断环：Pipeline/Escalation/审计-漂移-回滚链及 Agent RBAC↔Rollback/Escalation 等边；DOC-009 迁入 references；detect_depends_on_cycles.py exit 0"
+      kb_record: ""
+      owner_confirmed: ""
+    - date: "2026-05-06"
+      change_type: "批次修复"
+      content: "对齐终局验收：detect_depends_on_cycles.py 命名、validate_ssot 零矛盾口径"
+      kb_record: ""
+      owner_confirmed: ""
+    - date: "2026-07-23"
+      change_type: "文档迁移"
+      content: "architecture_endgame_locked.md 内容迁移至本文件（endgame_definition/post_lock_change_rules/emergency_change_board/baseline_fingerprint/change_history），原文档删除"
+      kb_record: ""
+      owner_confirmed: ""
