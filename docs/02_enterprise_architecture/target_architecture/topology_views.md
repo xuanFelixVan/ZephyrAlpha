@@ -223,7 +223,7 @@ graph LR
 > 数据源: depgraph
 > 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 > 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
-> Source: technology_architecture.md §3.2
+> Source: technology_principles.md §3.2
 > v2.0.0: 14层节点→53域节点，保留P0跨层契约标注
 
 ```mermaid

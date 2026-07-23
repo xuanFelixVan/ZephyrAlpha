@@ -1,0 +1,208 @@
+# [A_config] module_id=CFG-dr-bcp-matrix | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/technology_principles.md
+# module_id: CFG-DR-BCP-MATRIX
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 技术架构运营结构化数据真源,从 target_architecture/technology_architecture.md §8/§9.2/§10.1 迁移(2026-07-23, B3-doc5)
+#         DR/BCP 7 行域名级 RTO/RPO 矩阵(含市场/非市场时段) + 三级灾备预案(含当前阶段成本) + 量化特殊场景
+#         + 4 环境×6 维度矩阵 + 可观测性指标目录(具体 metric name)
+#         永恒方法论(技术栈决策/运行时拓扑/部署框架/DR-BCP 框架/环境矩阵/可观测性三支柱)见 technology_principles.md
+#         容量模型(§11)与成本架构(§12)按 technology_principles.md §8.2 边界声明,由 depgraph(域资源预算时点快照)
+#         与运营态(LLM Token/成本预算/伸缩触发)维护,不迁入本文件;git 历史可查 technology_architecture.md §11-§12
+
+module_id: CFG-DR-BCP-MATRIX
+version: "1.0.0"
+description: "技术架构运营结构化数据真源——DR/BCP 7 行域名级 RTO/RPO 矩阵(含市场/非市场时段) + 三级灾备预案(含当前阶段成本) + 量化特殊场景 + 4 环境×6 维度矩阵 + 可观测性指标目录(具体 metric name)。从 technology_architecture.md §8/§9.2/§10.1 迁移。永恒方法论见 technology_principles.md。"
+
+# ============================================================================
+# §8 DR/BCP — Disaster Recovery & Business Continuity / 灾备与业务连续性
+# 永恒框架(RTO/RPO 分层原则、三级灾备、量化特殊场景铁律)见 technology_principles.md §5
+# 本节为 principles §5.1(5 行泛化版)的详细展开:7 行域名级,含非市场时段 RTO
+# ============================================================================
+
+dr_bcp_matrix:
+  description: "RTO/RPO 核心链路分层矩阵(域名级,含市场/非市场时段)"
+  eternal_principles_ref: "technology_principles.md §5.1(5 行泛化版)"
+  rows:
+    - link: "D_EX_CORE 订单 + 成交回报"
+      asset_level: "🔴 金融资金"
+      rto_market: "≤ 5 min"
+      rto_non_market: "≤ 24 h"
+      rpo: "0(零丢失)"
+      activation_tier: 热备
+    - link: "D_GOV_AUDIT Audit Log"
+      asset_level: "🔴 合规审计"
+      rto_market: "≤ 15 min"
+      rto_non_market: "≤ 24 h"
+      rpo: "0(append-only)"
+      activation_tier: 热备
+    - link: "D_MKT_DATA 数据源 + D_PF_CORE 信号"
+      asset_level: "🟡 业务核心"
+      rto_market: "≤ 15 min"
+      rto_non_market: "≤ 4 h"
+      rpo: "≤ 5 min"
+      activation_tier: 温备
+    - link: "D_FACTOR 因子 + D_RISK 风控"
+      asset_level: "🟡 业务核心"
+      rto_market: "≤ 30 min"
+      rto_non_market: "≤ 4 h"
+      rpo: "≤ 15 min(可重算)"
+      activation_tier: 温备
+    - link: "D_TRADING 归因 + D_INTELLIGENCE 实验"
+      asset_level: "🟢 离线分析"
+      rto_market: "≤ 4 h"
+      rto_non_market: "≤ 48 h"
+      rpo: "≤ 1 h"
+      activation_tier: 冷备
+    - link: "D_OPS Telemetry"
+      asset_level: "🟢 辅助"
+      rto_market: "≤ 4 h"
+      rto_non_market: "≤ 24 h"
+      rpo: "≤ 30 min"
+      activation_tier: 冷备
+    - link: "中间缓存"
+      asset_level: "🟢 可丢弃"
+      rto_market: "—"
+      rto_non_market: "—"
+      rpo: "∞"
+      activation_tier: "无备份"
+
+tiered_recovery_plans:
+  description: "三级灾备预案(含当前阶段成本)"
+  eternal_principles_ref: "technology_principles.md §5.2"
+  tiers:
+    - tier: "Tier 1 热备"
+      applies_to: "D_EX_CORE 订单 + D_GOV_AUDIT Audit"
+      mechanism: "双实例 active-standby,数据实时同步"
+      current_stage_cost: "Post-Activation 启用"
+    - tier: "Tier 2 温备"
+      applies_to: "D_MKT_DATA~D_PF_CORE 业务核心"
+      mechanism: "数据层持续同步,计算层冷启动"
+      current_stage_cost: "文件级同步成本极低"
+    - tier: "Tier 3 冷备"
+      applies_to: "D_TRADING/D_OPS/D_INTELLIGENCE 离线"
+      mechanism: "pg_dump / Parquet 归档 + Git"
+      current_stage_cost: "每日快照"
+
+quant_special_scenarios:
+  description: "量化特殊场景(资金安全红线)"
+  eternal_principles_ref: "technology_principles.md §5.3"
+  pending_order_recovery_flow:
+    - "故障触发"
+    - "① 查询 broker 订单状态"
+    - "② 对照 audit journal"
+    - "③ 分类(已成交/部分成交/仅提交/未提交)"
+    - "④ 处置决策写入 audit journal"
+    - "⑤ T+1 对账"
+  idempotency_key_ref: "application_principles.md §9(去重唯一依据)"
+  data_loss_tolerance:
+    order_audit_log: "0 容忍"
+    factor_parquet: "可重算"
+    cache_redis: "可完全丢失"
+
+# ============================================================================
+# §9.2 Environment × Dimension Matrix / 4 环境×6 维度矩阵
+# 永恒框架(4 环境定义 + 晋级门禁)见 technology_principles.md §6
+# 本节为 principles §6 未覆盖的"当前状态"维度矩阵(数据源/LLM/资金/监控/审批/回退)
+# ============================================================================
+
+environment_dimension_matrix:
+  description: "4 环境×6 维度矩阵(当前状态)"
+  eternal_framework_ref: "technology_principles.md §6(环境定义 + 晋级门禁)"
+  dimensions: ["数据源", "LLM", "资金", "监控", "审批", "回退"]
+  environments:
+    Dev:
+      数据源: "模拟/AKShare 历史"
+      LLM: "Cursor IDE 内置"
+      资金: "无(SimulationAdapter)"
+      监控: "本地日志"
+      审批: "无"
+      回退: "git checkout"
+    UAT:
+      数据源: "模拟+部分真实"
+      LLM: "IDE + 少量 Runtime API"
+      资金: "无(纸盘交易)"
+      监控: "结构化日志 + 基础告警"
+      审批: "Architect Review"
+      回退: "重载上一版本"
+    Staging:
+      数据源: "真实行情(延迟 15min)"
+      LLM: "Runtime API 完整配置"
+      资金: "极小仓位 / Shadow"
+      监控: "完整 OTel + Grafana"
+      审批: "KB 决策记录 + 回测验证"
+      回退: "快照恢复"
+    Prod:
+      数据源: "真实实时行情"
+      LLM: "Runtime API + 降级策略"
+      资金: "真实资金(个人)"
+      监控: "全量 OTel + 实时告警"
+      审批: "双重确认 + 回滚计划"
+      回退: "Emergency Stop → 清仓 → 版本回滚"
+
+# ============================================================================
+# §10.1 Observability Metrics Catalog / 可观测性指标目录
+# 永恒框架(Metrics/Logs/Traces 三支柱 + OTel 集成)见 technology_principles.md §7
+# 本节为 principles §7 未覆盖的具体 metric name 与 SLO/告警映射(运营态派生数据)
+# ============================================================================
+
+observability_metrics_catalog:
+  description: "可观测性指标目录(具体 metric name 与 SLO/告警映射)"
+  eternal_framework_ref: "technology_principles.md §7(三支柱框架)"
+  business_metrics:
+    - name: "zephyr_orders_total"
+      description: "订单提交总数"
+      slo_link: "SLO-3"
+    - name: "zephyr_order_fill_rate"
+      description: "成交率"
+      slo_link: "SLO-3"
+    - name: "zephyr_pnl_daily"
+      description: "日 PnL"
+      slo_link: "—"
+    - name: "zephyr_backtest_duration_seconds"
+      description: "回测耗时"
+      slo_link: "SLO-4"
+    - name: "zephyr_factor_refresh_lag_seconds"
+      description: "因子刷新滞后"
+      slo_link: "SLO-5"
+  technical_metrics:
+    - name: "zephyr_request_duration_seconds"
+      description: "API 调用延迟"
+      alert_threshold: "p99 > 5s"
+    - name: "zephyr_error_rate"
+      description: "错误率(分 layer)"
+      alert_threshold: "> 1%"
+    - name: "zephyr_llm_tokens_total"
+      description: "LLM Token 消耗"
+      alert_threshold: "月超阈值"
+    - name: "zephyr_data_freshness_lag_seconds"
+      description: "数据新鲜度"
+      alert_threshold: "SLO-1 p99 ≤180s"
+  infrastructure_metrics:
+    - name: "process_cpu_seconds_total"
+      description: "CPU 使用"
+      alert_threshold: ">80% 5min 告警"
+    - name: "process_resident_memory_bytes"
+      description: "常驻内存"
+      alert_threshold: ">8GB"
+    - name: "disk_io_time_seconds_total"
+      description: "磁盘 IO"
+      alert_threshold: "写延迟 >100ms"
+
+# ============================================================================
+# 容量模型(§11)与成本架构(§12)——不迁入本文件
+# 按 technology_principles.md §8.2 边界声明:
+#   - 域资源预算数字 → depgraph(时点快照)
+#   - LLM Token 预算 → 运营态 metrics
+#   - 成本预算与预警阈值 → 运营态维护
+#   - 伸缩触发点 → 运营态维护
+# 原始数据见 git 历史: technology_architecture.md §11-§12
+# ============================================================================
+capacity_and_cost_note:
+  description: "容量模型(§11)与成本架构(§12)不迁入本文件"
+  reason: "按 technology_principles.md §8.2 边界声明,由 depgraph(域资源预算时点快照)与运营态(LLM Token/成本预算/伸缩触发)维护"
+  source_at_deletion: "docs/02_enterprise_architecture/target_architecture/technology_architecture.md §11-§12(git 历史可查)"

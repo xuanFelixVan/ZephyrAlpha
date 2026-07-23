@@ -49,6 +49,7 @@ ttl: permanent
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
 - 技术栈完整清单 → `architecture_model/technology/technology_landscape.yaml`（43 项 Radar）
 - 17 项 AI 基础设施选型 → `architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml`
+- DR/BCP 域名级 RTO/RPO 矩阵 + 4 环境×6 维度矩阵 + 可观测性指标目录 → `architecture_model/technology/dr_bcp_matrix.yaml`
 - 域资源预算数字 → depgraph（时点快照）
 - LLM Token 预算 → 运营态 metrics
 - 成本预算与预警阈值 → 运营态维护
@@ -183,6 +184,8 @@ ttl: permanent
 | 离线分析（归因/实验）| 🟢 离线分析 | ≤ 4 h | ≤ 1 h | 冷备 |
 | 中间缓存 | 🟢 可丢弃 | — | ∞ | 无备份 |
 
+> **注**：域名级 7 行详细 RTO/RPO 矩阵（含市场/非市场时段 RTO、当前阶段成本）见 `architecture_model/technology/dr_bcp_matrix.yaml`（从 technology_architecture.md §8 迁移）。
+
 ### 5.2 三级灾备预案（永恒）
 
 | 级别 | 机制 |
@@ -285,6 +288,7 @@ ttl: permanent
 |------|------|
 | 技术栈完整清单（43 项）| `architecture_model/technology/technology_landscape.yaml` |
 | 17 项 AI 基础设施选型 | `architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml` |
+| DR/BCP 域名级矩阵 + 环境维度矩阵 + 指标目录 | `architecture_model/technology/dr_bcp_matrix.yaml` |
 | 域资源预算数字 | depgraph（时点快照）|
 | LLM Token 预算 | 运营态 metrics |
 | 成本预算与预警阈值 | 运营态维护 |

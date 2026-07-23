@@ -64,7 +64,7 @@ ttl: permanent
 | 后端 `src/zephyr/` 14 层分层与模块职责 | `application_architecture.md`（AA） |
 | 前端依赖的业务数据对象（Order / Signal / Position 等）| `architecture_model/data/data_entity_catalog.yaml`（DA 实体目录） |
 | 前端 ↔ 后端 REST/WebSocket/OpenAPI 字段级契约清单 | `architecture_model/contracts/cross_layer_contracts.yaml` |
-| 前端运行时依赖的 Redis / PostgreSQL / LLM 技术栈选型 | `technology_architecture.md`（TA）|
+| 前端运行时依赖的 Redis / PostgreSQL / LLM 技术栈选型 | `technology_principles.md`（TA 原则）+ `technology_landscape.yaml`（技术栈清单）|
 | 前端安全策略（CSP / CORS / CSRF / XSS / OAuth）| `security_architecture.md`（SEC，当前 skeleton，后续深化时必须包含前端安全一节）|
 | 前端与外部集成拓扑（API Gateway / CDN / 第三方登录）| `architecture_model/contracts/cross_layer_contracts.yaml`（EXT 外部集成点）|
 | 前端运维（监控/日志/告警/发布流水线）| `operations_architecture.md`（OPS）|
