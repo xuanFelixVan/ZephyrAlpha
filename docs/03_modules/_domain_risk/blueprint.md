@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.2"
+version: "2.2.3"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.2 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.3 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -920,13 +920,16 @@ class ViolationDetail(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `schemas/categories/cross_validation_log.py` | ✅ 已实现 | |
 | `schemas/categories/market_auction.py` | ✅ 已实现 | |
+| `schemas/categories/market_auction_book.py` | ✅ 已实现 | |
 | `schemas/categories/market_cb_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_position.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_term.py` | ✅ 已实现 | |
 | `schemas/categories/market_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
+| `schemas/categories/market_sector_snapshot.py` | ✅ 已实现 | |
 | `schemas/categories/market_tick.py` | ✅ 已实现 | |
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |

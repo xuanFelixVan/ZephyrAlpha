@@ -26,7 +26,7 @@ generation: 3
 rule_form: structural
 scope: module
 stability: evolving
-design_maturity: production
+design_maturity: design
 verifiability: hybrid
 business_layer_status: active
 business_layer_blocked_reason: "C轨业务层已开放[ARCH-045 P0]。可施工。"
