@@ -6,14 +6,16 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# INV-014 — Survivorship Bias 声明级门禁（数据集具备完整退市/停牌历史前保持为 policy gate）
+# DEPRECATED: 本文件已迁移至 config/data/survivorship_policy.yaml（v1.1, 含数据层兑现证据）
+# 真源位置：config/data/survivorship_policy.yaml
+# arch_guard 已更新指向新路径（scripts/arch_guard/_arch_ssot.py L44）
+# 本文件保留仅为向后兼容，不再维护内容
 module_id: mod_inf_016
-schema_version: "1.0"
-last_updated: "2026-05-05"
+schema_version: "1.1"
+last_updated: "2026-07-23"
+_deprecated: true
+_redirect_to: "config/data/survivorship_policy.yaml"
 
 require_delisted_symbols_in_backtest: true
 require_suspend_flags_in_universe: true
-
-notes: >
-  当 D_DATA 数据管道可证明回测 universe 含退市/停牌样本时，在 CI 或数据 manifest 中登记证据路径；
-  此前 arch_guard 仅校验本策略开关为 true。
+data_layer_enforced: true

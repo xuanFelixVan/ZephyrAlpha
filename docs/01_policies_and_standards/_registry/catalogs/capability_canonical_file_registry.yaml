@@ -5869,6 +5869,11 @@ creation_tokens:
     token: "auto-test-alert-channel-20260723"
     created_by: "session-sess-27772-20260723192606"
     capability: "alert_channel_dispatch"
+  # --- stock_list DDL-as-Code 真源（#ARCH-CH-021 P0-1, 2026-07-23）---
+  - file: "schemas/categories/market_stock_list.py"
+    token: "auto-schema-stock-list-20260723"
+    created_by: "session-sess-27772-20260723192606"
+    capability: "data_source_provider_abstraction"
   - file: "src/zephyr/data/config/policies.yaml"
     token: "auto-data-config-policies-20260706"
     created_by: "session-sess-37904-20260706052842"

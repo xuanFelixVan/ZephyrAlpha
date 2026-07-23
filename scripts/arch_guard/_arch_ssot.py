@@ -41,7 +41,7 @@ CONTRACTS_PATH = _REPO_ROOT / (
     "architecture_model/contracts/cross_layer_contracts.yaml"
 )
 RISK_PARAMS_PATH = _REPO_ROOT / "config" / "risk_params.yaml"
-SURVIVORSHIP_POLICY_PATH = _REPO_ROOT / "config" / "survivorship_policy.yaml"
+SURVIVORSHIP_POLICY_PATH = _REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
 OCP_MANIFEST_PATH = _REPO_ROOT / ("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
 
 

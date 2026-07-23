@@ -1279,20 +1279,20 @@
 # --- 元数据表 ---
 
 - category_id: market_stock_list
-  name: "A股股票列表（5534只，delist_date=1970-01-01表示未退市）"
+  name: "A股股票列表（5884只=5523在市+361退市，SCD-2时点版本化，#ARCH-CH-021 P0-1）"
   engine: clickhouse
   database: c1_market
   table: stock_list
-  schema_file: null
+  schema_file: schemas/categories/market_stock_list.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L1
   enabled: true
   hard_constraint: null
-  calc_mode: none
-  frequency: 日频
+  calc_mode: preload
+  frequency: 月频
   data_source: [akshare, ifind]
-  blueprint: null
+  blueprint: docs/03_modules/_cross_layer/database/blueprint.md
 
 - category_id: market_trade_calendar
   name: "A股交易日历（SSE，1990-2026，含全部日历日，is_open区分交易日）"

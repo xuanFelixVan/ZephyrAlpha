@@ -1924,7 +1924,8 @@ class AKShareProvider(DataSourceBase):
             list_date_val = list_date if list_date else None
             delist_date_val = delist_date if delist_date else None
             ts_code = f"{code}{ts_suffix}"
-            # 与 miniqmt_provider._fetch_stock_list 行格式对齐（17 列）
+            # P0-1 治本修复：含 valid_to 列（退市股 valid_to=delist_date，防月度刷新覆盖已回填的 SCD-2 数据）
+            # valid_from/updated_at/ingest_ts 由 DEFAULT 自动填充
             rows.append((
                 ts_code,         # ts_code
                 code,            # symbol
@@ -1943,6 +1944,7 @@ class AKShareProvider(DataSourceBase):
                 "",              # hs_hold
                 "",              # actual_controller
                 "",              # controller_type
+                delist_date_val, # valid_to（退市股=退市日期，#ARCH-CH-021 P0-1 治本）
             ))
         return rows
 
@@ -1968,7 +1970,7 @@ class AKShareProvider(DataSourceBase):
             "ts_code", "symbol", "name", "area", "industry", "fullname",
             "enname", "cn_spell", "market", "exchange", "currency",
             "list_status", "list_date", "delist_date", "hs_hold",
-            "actual_controller", "controller_type",
+            "actual_controller", "controller_type", "valid_to",
         ]
         iso_date = datetime.date.today().isoformat()
         t0 = time.time()

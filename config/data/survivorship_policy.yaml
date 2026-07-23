@@ -18,7 +18,7 @@ require_suspend_flags_in_universe: true
 data_layer_enforced: true
 evidence:
   table: c1_market.stock_list
-  delisted_count: 359
+  delisted_count: 361
   total_count: 5884
   scd2_columns: [valid_from, valid_to, updated_at]
   list_status_values: [上市, 退市]
@@ -27,7 +27,7 @@ evidence:
   last_backfill: "2026-07-23"
 
 notes: >
-  2026-07-23 升级：stock_list 表已含 359 只退市股（AkShare SH+SZ 退市清单），
+  2026-07-23 升级：stock_list 表已含 361 只退市股（AkShare SH+SZ 退市清单），
   补齐 SCD-2 列（valid_from/valid_to/updated_at）。
   退市股 list_status='退市'，valid_to=delist_date；
   在市股 list_status='上市'，valid_to=NULL。
