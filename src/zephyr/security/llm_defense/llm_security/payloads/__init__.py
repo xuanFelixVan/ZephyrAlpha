@@ -1,7 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # [A_module] module_id=MOD-SEC-payloads | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] permanent
 class Payload:
     def __init__(self, payload_type="", content="", metadata=None):
         self.payload_type = payload_type

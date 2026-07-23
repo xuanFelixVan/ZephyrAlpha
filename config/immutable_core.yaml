@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-SEC-immutable_core | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §immutable_core
-# module_id: MOD-SEC-immutable_core
+# blueprint: MOD-SEC_IMMUTABLE_CORE | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §immutable_core
+# module_id: MOD-SEC_IMMUTABLE_CORE
 # stability: stable
 # safety_level: H
 # ai_autonomy: human_gated
@@ -13,7 +13,7 @@
 # 修改约束：safety_level=H + ai_autonomy=human_gated，修改需 owner 审批 + blueprint 同步更新。
 # 环境变量 ZEPHYR_IMMUTABLE_CORE_PATH 可覆盖路径。
 
-module_id: MOD-SEC-immutable_core
+module_id: MOD-SEC_IMMUTABLE_CORE
 config_version: "1.0.0"
 
 # 永远禁止的操作（无论调用者权限等级，均不允许）
