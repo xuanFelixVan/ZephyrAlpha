@@ -102,7 +102,7 @@ created_by: agent
 
 | # | 检查项 | 一期 | 二期 | Δ | 修复措施 |
 |---|--------|:----:|:----:|:--:|----------|
-| 2.7 | 宏观/EDB 数据覆盖 | ⚠️ | ✅ | +0.5 | edb_data 空表（iFind 配额耗尽 -4318）登记至 `known_data_gaps.yaml`（status=accepted，primary_alternative=c3_fundamental.macro_data akshare 291K 行）；macro_data 作为主宏观数据源持续更新，EDB 通道缺口正式确认有副源兜底（裁定 #ARCH-CH-029） |
+| 2.7 | 宏观/EDB 数据覆盖 | ⚠️ | ✅ | +0.5 | edb_data 空表（iFind 配额耗尽 -4318）登记至 `known_data_gaps.yaml`（status=accepted，primary_alternative=c1_market.macro_data akshare 285K 行）；macro_data 作为主宏观数据源持续更新，EDB 通道缺口正式确认有副源兜底（裁定 #ARCH-CH-029） |
 
 #### ③ 数据质量保障（7.5 → 8.0）
 
@@ -128,7 +128,7 @@ created_by: agent
 
 | # | 检查项 | 一期 | 二期 | Δ | 修复措施 |
 |---|--------|:----:|:----:|:--:|----------|
-| 9.4 | 数据库账号分级 | ⚠️ | ✅ | +0.5 | CH RBAC 治本：CREATE USER `zephyr_reader`（SELECT-only）+ `zephyr_writer`（INSERT/ALTER/CREATE/DROP/OPTIMIZE）；`ch_config.py` 新增 `load_ch_reader_config()`/`load_ch_writer_config()`；`database_service.py` 用 zephyr_reader、`ch_writer.py` 用 zephyr_writer；HTTP API 用 X-ClickHouse-User/Key 头认证；6/6 验证测试通过（裁定 #ARCH-CH-027） |
+| 9.4 | 数据库账号分级 | ⚠️ | ✅ | +0.5 | CH RBAC 治本：CREATE USER `zephyr_reader`（SELECT-only）+ `zephyr_writer`（INSERT/ALTER/CREATE/DROP/OPTIMIZE）；`ch_config.py` 新增 `load_ch_reader_config()`/`load_ch_writer_config()`；`database_service.py` 用 zephyr_reader、`ch_writer.py` 用 zephyr_writer；HTTP API 用 X-ClickHouse-User/Key 头认证；新建 `scripts/ch/apply_rbac.py` RBAC-as-Code 部署脚本（幂等，CREATE USER IF NOT EXISTS + GRANT 可重复执行，含 `--verify` 模式 7/7 验证通过）；zephyr_writer 授 SELECT ON system.\* 支持 is_replacing_engine() 引擎查询（裁定 #ARCH-CH-027） |
 
 ---
 
@@ -165,7 +165,7 @@ created_by: agent
 | 5.4 | 预聚合/物化视图 | ⚠️ | ✅ | #ARCH-CH-030 | 裁定物理预聚合 > MV（ReplacingMergeTree 去重时序），kline_resampler 是正确方案（Wave 2） |
 | 5.8 | 高可用/副本 | ⚠️ | ⚠️(裁定) | #ARCH-CH-031 | 正式裁定单节点接受于回测期，ReplicatedMergeTree gated on 实盘立项（Wave 2） |
 | 7.7 | 异地/离线副本 | ⚠️ | ⚠️(裁定) | #ARCH-CH-032 | offsite_repository scaffolding 就绪，gated on 云存储凭证（Wave 2） |
-| 9.4 | 数据库账号分级 | ⚠️ | ✅ | #ARCH-CH-027 | CH RBAC：zephyr_reader(SELECT) + zephyr_writer(INSERT/ALTER)，6/6 验证通过（Wave 2） |
+| 9.4 | 数据库账号分级 | ⚠️ | ✅ | #ARCH-CH-027 | CH RBAC：zephyr_reader(SELECT) + zephyr_writer(INSERT/ALTER)，apply_rbac.py RBAC-as-Code 部署脚本 7/7 验证通过（Wave 2） |
 
 > **结论**：9/9 项全部已解决（7 项完全修复 + 2 项正式裁定接受），0 项遗留。剩余 2 项 ⚠️(裁定) 不再是"未处理"——它们有明确的裁定编号、触发条件和升级路径，是经过第一性原理分析后的主动架构决策。
 
@@ -191,6 +191,7 @@ created_by: agent
 |------|------|------|
 | cf3dbe30 → f5ce5ffb (merge) | fundamental_{income,balance,cashflow}_statement.py + apply_fundamental_tables_ddl.py + architecture_issue_registry.yaml + capability_canonical_file_registry.yaml | **Wave 1**：audit 1.2 财务三表 Float64→Decimal 精度迁移（#ARCH-CH-026），53 字段迁移，verify 20/20/13 通过 |
 | (Wave 2 commit) | market_tick.py + ch_config.py + ch_writer.py + database_service.py + backfill_checker.py + known_data_gaps.yaml + backup_config.yaml + architecture_issue_registry.yaml + capability_canonical_file_registry.yaml | **Wave 2**：audit 1.3/5.3 跳数索引（#ARCH-CH-028）、2.7/3.8 已知缺口注册表（#ARCH-CH-029）、5.4 物理预聚合裁定（#ARCH-CH-030）、5.8 单节点裁定（#ARCH-CH-031）、7.7 异地副本 scaffolding（#ARCH-CH-032）、9.4 CH RBAC（#ARCH-CH-027） |
+| (Wave 2 RBAC-as-Code) | scripts/ch/apply_rbac.py + capability_canonical_file_registry.yaml + audit_03_remediation_summary.md | **Wave 2 补丁**：RBAC-as-Code 部署脚本（幂等 CREATE USER + GRANT + verify 7/7），解决 grant 丢失可一键恢复 |
 
 ---
 
@@ -213,7 +214,7 @@ created_by: agent
 - **audit 1.3/5.3 跳数索引（Wave 2）**：`system.data_skipping_indices` 查询确认 tick_data 有 idx_ts(minmax) + idx_symbol(set(10000)) 两个索引 ✅
 - **audit 2.7/3.8 已知缺口（Wave 2）**：`run_known_gap_backfill()` 实测检出 tick_data 2026-06 缺口 22/22 天正确，自动触发 QMT 历史数据补下载 ✅；edb_data 空表登记 status=accepted + primary_alternative=macro_data(291K rows) ✅
 - **audit 5.4 物理预聚合（Wave 2）**：裁定 #ARCH-CH-030 确认 kline_resampler 物理预聚合是 ReplacingMergeTree 源表的正确方案（MV 在 INSERT 时触发不反映异步合并去重）✅
-- **audit 9.4 CH RBAC（Wave 2）**：6/6 验证测试通过——zephyr_reader SELECT-only ✅、zephyr_writer INSERT/ALTER ✅、zephyr_reader DROP 被拒 ✅、zephyr_reader 无 system.* 权限 ✅、database_service 用 zephyr_reader ✅、ch_writer 用 zephyr_writer ✅
+- **audit 9.4 CH RBAC（Wave 2）**：7/7 验证测试通过（`apply_rbac.py --verify`）——zephyr_reader 存在 ✅、zephyr_writer 存在 ✅、zephyr_reader SELECT ✅、zephyr_reader DROP 被拒 ✅、zephyr_writer CREATE/INSERT/DROP ✅、zephyr_writer system.data_skipping_indices ✅、zephyr_writer system.users ✅；RBAC-as-Code 部署脚本 `scripts/ch/apply_rbac.py` 幂等可重复执行，grant 丢失时可一键恢复
 - **audit 5.8/7.7 裁定接受（Wave 2）**：裁定 #ARCH-CH-031（单节点 gated on 实盘立项）+ #ARCH-CH-032（offsite scaffolding gated on 云凭证）正式登记 ✅
 
 ---

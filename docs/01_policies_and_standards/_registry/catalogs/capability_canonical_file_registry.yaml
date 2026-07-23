@@ -6991,6 +6991,10 @@ creation_tokens:
     token: "auto-mcp-version-field-gate-20260723"
     created_by: "session-warn-to-hard-gate-batch"
     capability: "mcp_version_field_gate"
+  - file: "scripts/ch/apply_rbac.py"
+    token: "auto-ch-apply-rbac-20260723"
+    created_by: "session-sess-46256-20260723223757"
+    capability: "clickhouse_rbac_management"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
