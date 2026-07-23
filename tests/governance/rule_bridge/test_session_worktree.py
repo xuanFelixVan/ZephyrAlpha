@@ -913,6 +913,183 @@ def test_session_worktree_sweep_accepts_force_clean_hours():
 
 
 # ---------------------------------------------------------------------------
+# P1-2 测试：active lockfile 互斥机制（#ARCH-SWEEP-ACTIVE-LOCKFILE-001, 2026-07-22）
+# 验证 _sweep_one_dir 判据 4：commit/merge 期间 lockfile 存在且未过期 → sweep 跳过，
+# 防止 pre-commit gate 的 _run_git(cwd=worktree) 因 worktree 被 sweep 而抛 NotADirectoryError。
+# 三层场景：fresh lockfile 阻止 / stale lockfile 放行 / corrupted lockfile 放行
+# + _session_active_guard 上下文管理器生命周期验证
+# ---------------------------------------------------------------------------
+
+
+def test_sweep_skips_when_active_lockfile_fresh():
+    """判据 4：active lockfile 存在且未过期（age < 1h TTL）→ sweep 跳过（P1-2 根治）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+        _sweep_one_dir,
+        _session_active_lockfile,
+    )
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    sid = "sess-lockfile-fresh"
+    old_dir = Path(REPO_ROOT) / ".aidrafts" / sid
+    old_dir.mkdir(parents=True, exist_ok=True)
+    (old_dir / "marker").write_text("stale", encoding="utf-8")
+    old = time.time() - 7200  # 2h ago, passes 判据 1 (age > 30min)
+    os.utime(old_dir, (old, old))
+
+    # 创建 fresh active lockfile（age ≈ 0s, < 3600s TTL）
+    lockfile = _session_active_lockfile(Path(REPO_ROOT), sid)
+    lockfile.parent.mkdir(parents=True, exist_ok=True)
+    lockfile.write_text(
+        json.dumps({"pid": 99999, "acquired_at": time.time(), "session_id": sid}),
+        encoding="utf-8",
+    )
+
+    try:
+        manager = WorktreeManager(REPO_ROOT)
+        registry = SessionRegistry(REPO_ROOT)
+        # active_sids=set() 模拟 session 不在 active registry（passes 判据 2）
+        swept, skipped, warnings = _sweep_one_dir(
+            manager, registry, old_dir, time.time(), 1800, set(),
+        )
+        assert swept == 0, f"fresh lockfile 应阻止 sweep: {warnings}"
+        assert skipped == 1
+        assert any("active lockfile" in w for w in warnings), f"warning 应提及 lockfile: {warnings}"
+        assert old_dir.exists(), "worktree 不应被删除（lockfile 保护中）"
+        assert lockfile.exists(), "fresh lockfile 不应被删除"
+    finally:
+        if old_dir.exists():
+            _force_rmtree(old_dir)
+        lockfile.unlink(missing_ok=True)
+
+
+def test_sweep_proceeds_when_lockfile_stale():
+    """判据 4：active lockfile 存在但已过期（age > 1h TTL）→ 清理 stale lockfile 后 sweep 继续。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+        _sweep_one_dir,
+        _session_active_lockfile,
+    )
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    sid = "sess-lockfile-stale"
+    old_dir = Path(REPO_ROOT) / ".aidrafts" / sid
+    old_dir.mkdir(parents=True, exist_ok=True)
+    (old_dir / "marker").write_text("stale", encoding="utf-8")
+    old = time.time() - 7200  # 2h ago
+    os.utime(old_dir, (old, old))
+
+    # 创建 stale active lockfile（age = 2h, > 1h TTL → sweep 视为 stale 并清理）
+    lockfile = _session_active_lockfile(Path(REPO_ROOT), sid)
+    lockfile.parent.mkdir(parents=True, exist_ok=True)
+    stale_ts = time.time() - 7200  # 2h ago, > 3600s TTL
+    lockfile.write_text(
+        json.dumps({"pid": 99999, "acquired_at": stale_ts, "session_id": sid}),
+        encoding="utf-8",
+    )
+
+    try:
+        manager = WorktreeManager(REPO_ROOT)
+        registry = SessionRegistry(REPO_ROOT)
+        swept, skipped, warnings = _sweep_one_dir(
+            manager, registry, old_dir, time.time(), 1800, set(),
+        )
+        assert swept >= 1, f"stale lockfile 应允许 sweep 继续: {warnings}"
+        assert not old_dir.exists(), "orphan worktree 应被清理"
+        assert not lockfile.exists(), "stale lockfile 应被清理"
+    finally:
+        if old_dir.exists():
+            _force_rmtree(old_dir)
+        lockfile.unlink(missing_ok=True)
+
+
+def test_sweep_proceeds_when_lockfile_corrupted():
+    """判据 4：active lockfile 损坏（JSON 解析失败）→ 清理 corrupt lockfile 后 sweep 继续。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+        _sweep_one_dir,
+        _session_active_lockfile,
+    )
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    sid = "sess-lockfile-corrupt"
+    old_dir = Path(REPO_ROOT) / ".aidrafts" / sid
+    old_dir.mkdir(parents=True, exist_ok=True)
+    (old_dir / "marker").write_text("stale", encoding="utf-8")
+    old = time.time() - 7200
+    os.utime(old_dir, (old, old))
+
+    # 创建损坏的 lockfile（非法 JSON）
+    lockfile = _session_active_lockfile(Path(REPO_ROOT), sid)
+    lockfile.parent.mkdir(parents=True, exist_ok=True)
+    lockfile.write_text("NOT VALID JSON {{{", encoding="utf-8")
+
+    try:
+        manager = WorktreeManager(REPO_ROOT)
+        registry = SessionRegistry(REPO_ROOT)
+        swept, skipped, warnings = _sweep_one_dir(
+            manager, registry, old_dir, time.time(), 1800, set(),
+        )
+        assert swept >= 1, f"corrupted lockfile 应允许 sweep 继续: {warnings}"
+        assert not old_dir.exists(), "orphan worktree 应被清理"
+        assert not lockfile.exists(), "corrupted lockfile 应被清理"
+    finally:
+        if old_dir.exists():
+            _force_rmtree(old_dir)
+        lockfile.unlink(missing_ok=True)
+
+
+def test_session_active_guard_creates_and_removes_lockfile():
+    """_session_active_guard: enter 创建 lockfile（含 pid+acquired_at），exit 删除 lockfile。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+        _session_active_guard,
+        _session_active_lockfile,
+    )
+
+    sid = "sess-guard-test"
+    root = Path(REPO_ROOT)
+    lockfile = _session_active_lockfile(root, sid)
+    lockfile.unlink(missing_ok=True)  # ensure clean state
+
+    try:
+        assert not lockfile.exists(), "precondition: lockfile should not exist"
+
+        with _session_active_guard(root, sid):
+            assert lockfile.exists(), "lockfile 应在 enter 时创建"
+            data = json.loads(lockfile.read_text(encoding="utf-8"))
+            assert data["pid"] == os.getpid()
+            assert data["session_id"] == sid
+            assert "acquired_at" in data
+
+        assert not lockfile.exists(), "lockfile 应在 exit 时删除"
+    finally:
+        lockfile.unlink(missing_ok=True)
+
+
+def test_session_active_guard_removes_lockfile_on_exception():
+    """_session_active_guard: 异常退出时 lockfile 也被删除（finally 清理）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+        _session_active_guard,
+        _session_active_lockfile,
+    )
+
+    sid = "sess-guard-exc"
+    root = Path(REPO_ROOT)
+    lockfile = _session_active_lockfile(root, sid)
+    lockfile.unlink(missing_ok=True)
+
+    try:
+        with pytest.raises(RuntimeError, match="test error"):
+            with _session_active_guard(root, sid):
+                assert lockfile.exists(), "lockfile 应在 enter 时创建"
+                raise RuntimeError("test error")
+
+        assert not lockfile.exists(), "lockfile 应在异常 exit 时删除"
+    finally:
+        lockfile.unlink(missing_ok=True)
+
+
+# ---------------------------------------------------------------------------
 # 阶段2治本测试：sweep 取代判定（未合并提交陷阱，2026-07-18）
 # 验证 _branch_commits_superseded 的两维度检测（patch-id + message）：
 #   全 patch-id 等价 / 混合 / 全未取代 / git cherry 失败 / 空分支
