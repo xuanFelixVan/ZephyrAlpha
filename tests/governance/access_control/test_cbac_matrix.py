@@ -8,7 +8,10 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-"""CBAC 矩阵单元测试——18条capability + checksum防篡改。"""
+"""CBAC 矩阵单元测试——15条capability + checksum防篡改。
+
+注：原 18 条，KB 退役后移除 CAP-007/009/010（commit 35639cbc37）。
+"""
 
 
 import pytest
@@ -27,8 +30,8 @@ def checker(matrix):
     return CapabilityChecker(matrix)
 
 
-def test_18_capabilities(matrix):
-    assert len(matrix.list_capabilities()) == 18
+def test_15_capabilities(matrix):
+    assert len(matrix.list_capabilities()) == 15
 
 
 def test_checksum_not_empty(matrix):

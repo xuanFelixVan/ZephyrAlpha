@@ -19,7 +19,8 @@
 CBAC 能力矩阵（Capability-Based Access Control Matrix — CT-CBAC-001）
 
 依据：MOD-MASTER_BLUEPRINT 蓝图 §十五
-12×12 系统授权矩阵——18条精确 capability 声明。
+12×12 系统授权矩阵——15条精确 capability 声明（原 18 条，KB 退役后移除
+CAP-007/009/010 knowledge_base 相关 3 条，见 commit 35639cbc37）。
 """
 
 import hashlib
