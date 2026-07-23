@@ -287,6 +287,63 @@ markers:
     created: "2026-07-22"
     created_by: "ARCH-ANY-GOVERNANCE-001"
 
+  # ── warn-only→hard gate 批量升级（ARCH-WARN-TO-HARD-GATE-BATCH，2026-07-23）──
+  - marker: "a100-asyncio"
+    metric_id: "M23"  # 5.100 异步资源生命周期维度
+    description: "ASYNCIO-RUN-IN-CONTEXT gate 行级豁免——asyncio.run/get_event_loop/new_event_loop 调用的合法特殊情况"
+    applicable_conditions:
+      - "async_utils canonical 实现自身（run_coroutine_sync 内部需调用 asyncio 原语）"
+      - "测试文件中模拟 asyncio 调用的测试用例"
+      - "文档字符串/注释中引用 asyncio.run 字面量（非可执行代码）"
+    reason_required: true
+    reason_format: "a100-asyncio豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-23"
+    created_by: "ARCH-WARN-TO-HARD-GATE-BATCH"
+
+  - marker: "n114-final"
+    metric_id: "M25"  # 5.114 Final/@final 强制维度
+    description: "MUTABLE-CONST-WITHOUT-FINAL gate 行级豁免——模块级可变常量缺 Final 标注的合法特殊情况"
+    applicable_conditions:
+      - "动态生成常量（运行时拼接 key 的 dict，Final 无法静态标注）"
+      - "测试文件中模拟可变常量的测试用例"
+      - "迁移历史文件暂保留旧式常量（planned 治理，一次性豁免）"
+    reason_required: true
+    reason_format: "n114-final豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-23"
+    created_by: "ARCH-WARN-TO-HARD-GATE-BATCH"
+
+  - marker: "r144-open"
+    metric_id: "M27"  # 5.144 资源清理顺序维度
+    description: "OPEN-WITHOUT-WITH gate 行级豁免——open() 未在 with 内的合法特殊情况"
+    applicable_conditions:
+      - "open() 返回值立即传入上下文管理器包装（如 contextlib.closing(open(...))）"
+      - "open() 在 try/finally 中显式 close（已有异常隔离模式）"
+      - "测试文件中模拟 open 调用的测试用例"
+    reason_required: true
+    reason_format: "r144-open豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-23"
+    created_by: "ARCH-WARN-TO-HARD-GATE-BATCH"
+
+  - marker: "e34-env"
+    metric_id: "M30"  # 5.34 环境隔离维度
+    description: "ZEPHYR-ENV-DIRECT-ACCESS gate 行级豁免——os.environ[\"ZEPHYR_ENV\"] 直访的合法特殊情况"
+    applicable_conditions:
+      - "config 层 canonical 读取自身（src/zephyr/shared/foundation/config 目录已目录级豁免）"
+      - "测试文件中模拟环境变量直访的测试用例"
+      - "迁移历史文件暂保留旧式直访（planned 治理，一次性豁免）"
+    reason_required: true
+    reason_format: "e34-env豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-23"
+    created_by: "ARCH-WARN-TO-HARD-GATE-BATCH"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

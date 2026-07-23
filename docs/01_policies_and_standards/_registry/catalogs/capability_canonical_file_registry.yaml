@@ -5218,12 +5218,6 @@ creation_tokens:
     created_by: "session-sess-21384-20260720232801"
     capability: "ssot_create_gate"
 
-  # --- knowledge_base_server.py 提交登记（2026-07-20，文件已存在于工作区但未入库，gateway_server.py 导入需此文件）---
-  - file: "src/zephyr/integration/mcp/knowledge_base_server.py"
-    token: "auto-knowledge-base-server-commit-20260720"
-    created_by: "session-sess-47756-20260721011138"
-    capability: "mcp_knowledge_base_server"
-
   # --- EventBus 真源恢复（2026-07-06 AI-14 审计修复，从 git 历史恢复被误删的 event_bus.py）---
   - file: "src/zephyr/shared/event_bus.py"
     token: "auto-event-bus-restore-20260706"

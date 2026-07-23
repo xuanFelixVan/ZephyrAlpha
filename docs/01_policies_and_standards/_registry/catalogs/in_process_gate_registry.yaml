@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 76
+total_gates: 81
 gates:
 # --- 76 个 in-process gate（从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21）---
 - gate_id: HELD-OVERLAP
@@ -501,4 +501,35 @@ gates:
   factory_function: make_schema_file_exists_gate
   source: in_process
   register_line: 485
+  enabled: true
+# --- warn-only→hard gate 批量升级（ARCH-WARN-TO-HARD-GATE-BATCH，2026-07-23）---
+- gate_id: ASYNCIO-RUN-IN-CONTEXT
+  module_path: zephyr.gov_enforcement.commit_gates.asyncio_run_in_context_gate
+  factory_function: make_asyncio_run_in_context_gate
+  source: in_process
+  register_line: 0
+  enabled: true
+- gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  module_path: zephyr.gov_enforcement.commit_gates.mutable_const_without_final_gate
+  factory_function: make_mutable_const_without_final_gate
+  source: in_process
+  register_line: 0
+  enabled: true
+- gate_id: OPEN-WITHOUT-WITH
+  module_path: zephyr.gov_enforcement.commit_gates.open_without_with_gate
+  factory_function: make_open_without_with_gate
+  source: in_process
+  register_line: 0
+  enabled: true
+- gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+  module_path: zephyr.gov_enforcement.commit_gates.zephyr_env_direct_access_gate
+  factory_function: make_zephyr_env_direct_access_gate
+  source: in_process
+  register_line: 0
+  enabled: true
+- gate_id: MCP-VERSION-FIELD
+  module_path: zephyr.gov_enforcement.commit_gates.mcp_version_field_gate
+  factory_function: make_mcp_version_field_gate
+  source: in_process
+  register_line: 0
   enabled: true
