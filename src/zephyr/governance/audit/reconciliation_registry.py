@@ -3178,7 +3178,10 @@ def _check_recent_critical_warns(
 
 
 
-        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        # 治本: 用 str() 而非 isoformat()——SQLite 存 datetime 经 str() 生成空格分隔
+        # ('2026-07-22 18:26:51+00:00')，isoformat() 用 'T' 分隔，字符串比较时
+        # 'T'(ord=84) > ' '(ord=32) 导致 logged_at >= cutoff 永远 False（fail-silent）
+        cutoff = str(datetime.now(timezone.utc) - timedelta(hours=hours))
 
 
 
@@ -3450,7 +3453,10 @@ def _check_recent_blocks(
 
 
 
-        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        # 治本: 用 str() 而非 isoformat()——SQLite 存 datetime 经 str() 生成空格分隔
+        # ('2026-07-22 18:26:51+00:00')，isoformat() 用 'T' 分隔，字符串比较时
+        # 'T'(ord=84) > ' '(ord=32) 导致 logged_at >= cutoff 永远 False（fail-silent）
+        cutoff = str(datetime.now(timezone.utc) - timedelta(hours=hours))
 
 
 
@@ -3786,7 +3792,10 @@ def resolve_blocks(
 
 
 
-        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        # 治本: 用 str() 而非 isoformat()——SQLite 存 datetime 经 str() 生成空格分隔
+        # ('2026-07-22 18:26:51+00:00')，isoformat() 用 'T' 分隔，字符串比较时
+        # 'T'(ord=84) > ' '(ord=32) 导致 logged_at >= cutoff 永远 False（fail-silent）
+        cutoff = str(datetime.now(timezone.utc) - timedelta(hours=hours))
 
 
 
@@ -3950,7 +3959,10 @@ def acknowledge_critical_warns(
 
 
 
-        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        # 治本: 用 str() 而非 isoformat()——SQLite 存 datetime 经 str() 生成空格分隔
+        # ('2026-07-22 18:26:51+00:00')，isoformat() 用 'T' 分隔，字符串比较时
+        # 'T'(ord=84) > ' '(ord=32) 导致 logged_at >= cutoff 永远 False（fail-silent）
+        cutoff = str(datetime.now(timezone.utc) - timedelta(hours=hours))
 
 
 
