@@ -203,6 +203,9 @@ def _validate_reconciler_verify(
         print("ERROR: --reconciler-verify 与 --claim-only/--release-only 互斥", file=sys.stderr)
         return 1, message
     # 条件1：主工作区必须 clean（无搭便车窗口——共享 index 下 dirty 工作区有污染风险）
+    # 治本 2026-07-24 (#ARCH-RECONCILER-VERIFY-AUTOSYNC-001)：豁免 auto-sync 产物——
+    # 后台进程（scanner/classifier/telemetry）持续更新这些文件，非搭便车风险。
+    # auto-sync 产物由 workspace_hygiene_reconciler 管理，batched auto-committer 定期提交。
     import subprocess as _rv_sp
     status_r = _rv_sp.run(
         ["git", "status", "--short"],
@@ -213,14 +216,46 @@ def _validate_reconciler_verify(
         print(f"ERROR: --reconciler-verify: git status 检查失败: {status_r.stderr.strip()}",
               file=sys.stderr)
         return 1, message
-    if status_r.stdout.strip():
+    # 过滤 auto-sync 产物（后台进程持续更新的派生文件，非搭便车风险）
+    # 治本 2026-07-24 (#ARCH-RECONCILER-VERIFY-AUTOSYNC-001): 复用 workspace_hygiene_reconciler
+    # 的 _is_auto_sync_product 分类器——单一真源，避免两处分类逻辑漂移
+    # （原实现仅 import _AUTO_SYNC_PREFIXES 做前缀匹配，漏掉 registry catalogs 后缀分类）
+    # 注意：禁止对 stdout 整体 .strip()——porcelain 格式 "XY path" 中 X 可能是空格
+    # （unstaged 修改 = " M path"），整体 strip 会吃掉首行前导空格导致 line[3:] 路径错位。
+    # 仅 splitlines() + 逐行 l.strip() 判空（判空不替换原行，保留前导空格）。
+    _rv_raw_lines = [l for l in status_r.stdout.splitlines() if l.strip()]
+    _rv_filtered_lines: list[str] = []
+    _rv_auto_sync_excluded: list[str] = []
+    try:
+        from zephyr.governance.audit.workspace_hygiene_reconciler import _is_auto_sync_product
+        for _rv_line in _rv_raw_lines:
+            # git status --short format: "XY path" (2-char status + space + path)
+            _rv_path = _rv_line[3:].strip().strip('"') if len(_rv_line) > 3 else ""
+            # 归一化为 POSIX 风格（Windows 上 git status 可能用反斜杠）
+            _rv_path = _rv_path.replace("\\", "/")
+            if _is_auto_sync_product(_rv_path):
+                _rv_auto_sync_excluded.append(_rv_line)
+            else:
+                _rv_filtered_lines.append(_rv_line)
+    except ImportError:
+        # 降级：无法导入分类器，不豁免任何文件（保守策略）
+        _rv_filtered_lines = _rv_raw_lines
+    if _rv_filtered_lines:
         print(
             "ERROR: --reconciler-verify: 主工作区不 clean（有未提交改动），存在搭便车风险。\n"
             "请先 commit/stash 其他改动或等待其他 session 完成。\n"
-            f"git status --short 输出:\n{status_r.stdout.strip()}",
+            f"git status --short 输出（已过滤 auto-sync 产物）:\n"
+            f"{chr(10).join(_rv_filtered_lines)}",
             file=sys.stderr,
         )
         return 1, message
+    if _rv_auto_sync_excluded:
+        print(
+            f"WARN: --reconciler-verify: 豁免 {len(_rv_auto_sync_excluded)} 个 auto-sync 产物"
+            f"（后台进程持续更新，非搭便车风险）: "
+            f"{[l[3:].strip() for l in _rv_auto_sync_excluded]}",
+            file=sys.stderr,
+        )
     # 条件2：无其他活跃 session（除非 --allow-concurrent 逃生通道）
     if not args.allow_concurrent:
         try:

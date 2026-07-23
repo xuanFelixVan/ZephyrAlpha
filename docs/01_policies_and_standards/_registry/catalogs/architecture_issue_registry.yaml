@@ -8821,3 +8821,45 @@ entries:
   related_adjudication: 'FP-ISO.4C worktree 君子协定, #ARCH-WORKTREE-002, #ARCH-DEP-PREMERGE-ENFORCE'
   created: '2026-07-24'
   last_updated: '2026-07-24'
+- issue_id: '#ARCH-RECONCILER-VERIFY-AUTOSYNC-001'
+  title: '--reconciler-verify 误阻断 auto-sync 产物——clean 检查未豁免派生文件'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |-
+    2026-07-24 发现并治本。scripts/git_commit.py 的 --reconciler-verify 模式（L204-250）
+    要求主工作区 clean 以防搭便车提交。但后台进程（scanner/classifier/telemetry/
+    workspace_hygiene_reconciler）持续更新 auto-sync 产物（data/asset_index/、
+    data/reports/、docs/02_enterprise_architecture/generated/ 等），导致 --reconciler-verify
+    永远无法通过 clean 检查——reconciler 验证提交被永久阻断。
+
+    根因（第一性原理）：clean 检查把"所有未提交变更"视为搭便车风险，但 auto-sync 产物是
+    后台进程的派生输出（非 AI 本次 session 的代码修改），不构成搭便车风险。workspace_
+    hygiene_reconciler 已有 _is_auto_sync_product 分类器区分派生文件 vs 真实代码修改，
+    但 --reconciler-verify 未复用该分类器。
+
+    治本方案（已执行）：
+    1. 复用 workspace_hygiene_reconciler._is_auto_sync_product 分类器（单一真源），
+       替代原实现仅 import _AUTO_SYNC_PREFIXES 做前缀匹配——后者漏掉 registry catalogs
+       后缀分类（rule_catalog_registry.yaml / registry_master_index.yaml 在
+       docs/01_policies_and_standards/_registry/catalogs/ 下需后缀匹配才识别为派生）。
+    2. 修复 porcelain 解析 bug：原 status_r.stdout.strip().splitlines() 的整体 .strip()
+       吃掉首行前导空格（porcelain 格式 " M path" 中 X=空格表示 unstaged 修改），导致
+       line[3:] 路径错位（"ata/..." 缺首字母 'd'），分类器永远 mismatch。改为
+       splitlines() + 逐行 l.strip() 判空（判空不替换原行，保留前导空格）。
+    3. 降级策略：ImportError 时不豁免任何文件（保守策略，fail-closed）。
+
+    边界裁定（第一性原理 + 长期战略）：
+    - 豁免 auto-sync 产物不削弱搭便车防护——auto-sync 产物由 workspace_hygiene_reconciler
+      管理（post-commit 自动 git restore），且由 batched auto-committer 定期提交，
+      非 AI session 手动搭车。真实代码修改仍受 clean 检查阻断。
+    - 单一真源原则：--reconciler-verify 与 workspace_hygiene_reconciler 共用同一分类器，
+      避免两处分类逻辑漂移（原实现已证明漂移——prefix-only 漏 catalog 后缀分类）。
+  fix_phase: |-
+    已执行（scripts/git_commit.py _validate_reconciler_verify 重构 + 6 测试用例）。
+    测试覆盖：auto-sync 放行 / 真实代码阻断 / 混合阻断 / clean 放行 /
+    registry catalog 放行（验证分类器复用）/ 非派生 yaml 阻断（验证后缀分类精度）。
+    全量 git 测试套件 57 passed 无回归。
+  status: resolved
+  related_adjudication: '#ARCH-WORKTREE-EXEC-DRIFT-001, FP-ISO.4C worktree 君子协定'
+  created: '2026-07-24'
+  last_updated: '2026-07-24'
