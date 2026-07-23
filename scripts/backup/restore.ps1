@@ -28,9 +28,15 @@ $ProjectRoot = "D:\ZephyrAlpha"
 # -- Dynamic port selection (mirror of backup.ps1; HNS reserves random tcp ranges,
 #    bind-test is the only reliable check, .env ports are preferences only) --
 function Test-PortFree([int]$Port) {
+    # Check 1: Get-NetTCPConnection catches existing listeners on ANY IP
+    # (0.0.0.0:port) -- loopback-only bind test misses these on Windows when
+    # the existing socket used SO_REUSEADDR (http.server sets allow_reuse_address).
+    # 2026-07-24: zephyr.data.scheduler on 0.0.0.0:9100 shadowed the relay.
+    $existing = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
+    if ($existing) { return $false }
     $listener = $null
     try {
-        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $Port)
+        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, $Port)
         $listener.Start()
         return $true
     } catch {
@@ -48,6 +54,29 @@ function Get-FreePort([int]$Preferred, [int[]]$Exclude = @()) {
         if (Test-PortFree $p) { return $p }
     }
     throw "no free tcp port in [$Preferred, $($Preferred + 2000)] (HNS excluded ranges shifting?)"
+}
+
+# -- Dynamic vEthernet IP discovery (mirror of backup.ps1) --
+# Hyper-V vEthernet IPs change across reboots; discover the live IP via
+# Hyper-V cmdlets instead of trusting the hardcoded CH_S3_ENDPOINT host.
+function Resolve-ChHostIP([hashtable]$Config) {
+    $fallbackHost = ($Config.CH_S3_ENDPOINT -replace '^https?://', '') -replace ':\d+\s*$', ''
+    $vmName = $Config.CH_VM_NAME
+    if (-not $vmName) { return $fallbackHost }
+    try {
+        $switch = (Get-VMNetworkAdapter -VMName $vmName -ErrorAction Stop | Select-Object -First 1).SwitchName
+        if (-not $switch) { return $fallbackHost }
+        $alias = "vEthernet ($switch)"
+        $ip = (Get-NetIPAddress -InterfaceAlias $alias -AddressFamily IPv4 -ErrorAction Stop |
+            Select-Object -First 1).IPAddress
+        if ($ip) {
+            Write-Host "[OK] Resolved CH host IP: $ip (vEthernet '$switch', VM '$vmName')" -ForegroundColor Green
+            return $ip
+        }
+    } catch {
+        Write-Host "[WARN] Hyper-V IP discovery failed, fallback: $fallbackHost" -ForegroundColor Yellow
+    }
+    return $fallbackHost
 }
 
 switch ($Action) {
@@ -129,7 +158,7 @@ switch ($Action) {
         $relayPort = Get-FreePort $relayPref @($minioPort, $consolePort)
         $minioAddress = "127.0.0.1:$minioPort"
         $consoleAddress = "127.0.0.1:$consolePort"
-        $s3EndpointHost = ($chBk.CH_S3_ENDPOINT -replace '^https?://', '') -replace ':\d+\s*$', ''
+        $s3EndpointHost = Resolve-ChHostIP $chBk
         $s3Endpoint = "http://${s3EndpointHost}:$relayPort"
 
         # 3. Start MinIO (localhost) + python relay (VM-facing, ports via argv)
@@ -147,6 +176,14 @@ switch ($Action) {
                 $minioReady = ($LASTEXITCODE -eq 0)
             }
             if (-not $minioReady) { throw "MinIO failed to start on $minioAddress" }
+
+            # 3b. Pre-flight: verify CH (in VM) can reach the relay (mirror of backup.ps1).
+            $probeQ = "SELECT count() FROM url('http://${s3EndpointHost}:${relayPort}/minio/health/live', 'LineAsString')"
+            $probeResp = curl.exe -s --max-time 15 $chBaseUrl --data-binary $probeQ 2>&1
+            if ($probeResp -match 'No route to host|Connection refused|Connection timed out|NETWORK_CONNECTION|UNFINISHED') {
+                throw "CH cannot reach S3 relay at ${s3EndpointHost}:${relayPort} (probe: $probeResp)."
+            }
+            Write-Host "[OK] CH -> S3 relay connectivity verified (${s3EndpointHost}:${relayPort})" -ForegroundColor Green
 
             # 4. RESTORE FROM S3 (async + poll)
             $s3Url = "$s3Endpoint/$($chBk.MINIO_BUCKET)/market.zip"

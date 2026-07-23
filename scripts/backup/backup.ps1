@@ -29,9 +29,20 @@ function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 # stage silently skipped). .env ports are preferences only; bind-test is the only
 # reliable check.
 function Test-PortFree([int]$Port) {
+    # Check 1: Get-NetTCPConnection catches existing listeners on ANY IP
+    # (0.0.0.0:port), which a loopback-only bind test misses on Windows when
+    # the existing socket used SO_REUSEADDR (http.server.HTTPServer sets
+    # allow_reuse_address=1). 2026-07-24: zephyr.data.scheduler monitor on
+    # 0.0.0.0:9100 silently shadowed the relay -- Test-PortFree(9100) returned
+    # true (loopback bind succeeded via SO_REUSEADDR) but the relay couldn't
+    # receive connections, causing "No route to host" from the CH VM.
+    $existing = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
+    if ($existing) { return $false }
+    # Check 2: bind-test on IPAddress.Any (0.0.0.0 -- same as relay LISTEN_HOST)
+    # for race-condition safety.
     $listener = $null
     try {
-        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $Port)
+        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, $Port)
         $listener.Start()
         return $true
     } catch {
@@ -50,6 +61,37 @@ function Get-FreePort([int]$Preferred, [int[]]$Exclude = @()) {
         if (Test-PortFree $p) { return $p }
     }
     throw "no free tcp port in [$Preferred, $($Preferred + 2000)] (HNS excluded ranges shifting?)"
+}
+
+# -- Dynamic vEthernet IP discovery --
+# Hyper-V vEthernet IPs change across reboots (Default Switch / custom switch
+# reassign 172.24.x.1). The hardcoded CH_S3_ENDPOINT host goes stale, causing
+# "No route to host" (errno 113) from the CH VM. Discover the live vEthernet IP
+# via Hyper-V cmdlets at backup time; fall back to CH_S3_ENDPOINT host if
+# Hyper-V is unavailable (non-Hyper-V host, missing module, etc.).
+# 2026-07-24: .env had 172.24.16.1 but vEthernet (ZephyrCH-Net) was 172.24.30.1.
+function Resolve-ChHostIP([hashtable]$Config) {
+    $fallbackHost = ($Config.CH_S3_ENDPOINT -replace '^https?://', '') -replace ':\d+\s*$', ''
+    $vmName = $Config.CH_VM_NAME
+    if (-not $vmName) {
+        Write-Warn "CH_VM_NAME not set in .env.ch_backup, using fallback host: $fallbackHost"
+        return $fallbackHost
+    }
+    try {
+        $adapter = Get-VMNetworkAdapter -VMName $vmName -ErrorAction Stop | Select-Object -First 1
+        $switch = $adapter.SwitchName
+        if (-not $switch) { return $fallbackHost }
+        $alias = "vEthernet ($switch)"
+        $ip = (Get-NetIPAddress -InterfaceAlias $alias -AddressFamily IPv4 -ErrorAction Stop |
+            Select-Object -First 1).IPAddress
+        if ($ip) {
+            Write-OK "Resolved CH host IP: $ip (vEthernet '$switch', VM '$vmName')"
+            return $ip
+        }
+    } catch {
+        Write-Warn "Hyper-V IP discovery failed ($($_.Exception.Message)), fallback: $fallbackHost"
+    }
+    return $fallbackHost
 }
 
 # -- Load config --
@@ -281,7 +323,7 @@ if (-not $chAlive) {
         $relayPort = Get-FreePort $relayPref @($minioPort, $consolePort)
         $minioAddress = "127.0.0.1:$minioPort"
         $consoleAddress = "127.0.0.1:$consolePort"
-        $s3EndpointHost = ($chBk.CH_S3_ENDPOINT -replace '^https?://', '') -replace ':\d+\s*$', ''
+        $s3EndpointHost = Resolve-ChHostIP $chBk
         $s3Endpoint = "http://${s3EndpointHost}:$relayPort"
 
         # 3. Start MinIO + relay, wait for health
@@ -299,6 +341,20 @@ if (-not $chAlive) {
         }
         if (-not $minioReady) { throw "MinIO failed to start on $minioAddress" }
         Write-OK "MinIO + relay started (endpoint $s3Endpoint)"
+
+        # 3b. Pre-flight: verify CH (in VM) can reach the relay via the discovered
+        #     IP. Catches stale vEthernet IPs, firewall blocks, and port shadowing
+        #     in seconds -- not after a 3-hour async BACKUP fails with "No route to
+        #     host" (2026-07-24 root cause: stale IP 172.24.16.1 + port 9100
+        #     shadowed by zephyr.data.scheduler).
+        #     Uses url() to hit MinIO health through the relay: 200+empty=0 rows
+        #     (connectivity OK); network error = abort immediately.
+        $probeQ = "SELECT count() FROM url('http://${s3EndpointHost}:${relayPort}/minio/health/live', 'LineAsString')"
+        $probeResp = curl.exe -s --max-time 15 $chBaseUrl --data-binary $probeQ 2>&1
+        if ($probeResp -match 'No route to host|Connection refused|Connection timed out|NETWORK_CONNECTION|UNFINISHED') {
+            throw "CH cannot reach S3 relay at ${s3EndpointHost}:${relayPort} (probe: $probeResp). Check vEthernet IP / firewall / port shadowing."
+        }
+        Write-OK "CH -> S3 relay connectivity verified (${s3EndpointHost}:${relayPort})"
 
         # 4. Fire async BACKUP to S3 (path style: endpoint is a bare IP, virtual-hosted
         #    style would require bucket-as-subdomain DNS which does not exist here).
