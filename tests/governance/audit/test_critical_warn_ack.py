@@ -25,8 +25,12 @@ import pytest
 from zephyr.governance.audit.reconciliation_registry import (
     SQL_INSERT_RECONCILE_LOG,
     _check_recent_critical_warns,
+    _log_reconcile_results,
     acknowledge_critical_warns,
+    backfill_auto_ack_healed,
+    cleanup_reconcile_log,
 )
+from zephyr.governance.audit.reconciliation_registry import ReconcileResult
 
 # 老 schema（2026-07-19 前）：无 acknowledged_at 列
 _SQL_CREATE_OLD = (
@@ -39,6 +43,17 @@ _SQL_CREATE_OLD = (
 
 def _iso(delta: timedelta) -> str:
     return (datetime.now(timezone.utc) + delta).isoformat()
+
+
+def _str_ts(delta: timedelta) -> str:
+    """str() 格式时间戳（空格分隔），与 _log_reconcile_results 存储格式对齐。
+
+    _log_reconcile_results 经 now_utc()（datetime 对象）写入 SQLite，存储为
+    空格分隔（'2026-07-23 09:52:09.276624+00:00'）。直接 SQL 插入的 warn 若用
+    _iso()（'T' 分隔），与 clean 的空格格式做 logged_at > 比较时同日会误判
+    （'T'(84) > ' '(32)），故 warn 也须用 str() 格式。
+    """
+    return str(datetime.now(timezone.utc) + delta)
 
 
 def _db_path(root: Path) -> Path:
@@ -179,6 +194,185 @@ class TestGovernanceDbPathAnchor:
         anchored = _governance_db_path(fake_wt)
         assert ".aidrafts" not in anchored
         assert anchored.endswith(str(Path("data") / "databases" / "governance.db"))
+
+
+class TestAutoAckHealedInline:
+    """#AUTO-ACK-HEALED-WARN 治本：_log_reconcile_results 插入 clean 时自动 ack 前置已愈合 warn。"""
+
+    def test_clean_auto_acks_preceding_healed_warn(self, tmp_path: Path) -> None:
+        """同 gate 的前置 critical_warn（有后续 clean）被自动 ack。"""
+        import sqlite3
+
+        _init_db(tmp_path)
+        # 直接 SQL 插入一条历史 critical_warn（str 格式，早于即将插入的 clean）
+        _insert(tmp_path, "GATE-AUTO-1", "critical_warn", _str_ts(timedelta(hours=-2)), "rc-auto-w1")
+        # 插入 clean（经 _log_reconcile_results，触发内联 auto-ack）
+        _log_reconcile_results(
+            tmp_path,
+            [ReconcileResult(action="clean", detail="healed", gate_id="GATE-AUTO-1")],
+            "sess-auto-1",
+            trigger_source="post_commit",
+        )
+        conn = sqlite3.connect(str(_db_path(tmp_path)))
+        try:
+            ack = conn.execute(
+                "SELECT acknowledged_at FROM reconcile_execution_log WHERE log_id='rc-auto-w1'"
+            ).fetchone()
+            assert ack is not None and ack[0] is not None, "前置 critical_warn 应被自动 ack"
+        finally:
+            conn.close()
+
+    def test_truly_active_warn_not_acked(self, tmp_path: Path) -> None:
+        """无后续 clean 的真正活跃 critical_warn 保持 unack（不被误伤）。"""
+        import sqlite3
+
+        _init_db(tmp_path)
+        # GATE-AUTO-2 只有 critical_warn，无 clean（真正活跃）
+        _insert(tmp_path, "GATE-AUTO-2", "critical_warn", _str_ts(timedelta(hours=-1)), "rc-auto-w2")
+        # 为另一个 gate 插入 clean（不应影响 GATE-AUTO-2）
+        _log_reconcile_results(
+            tmp_path,
+            [ReconcileResult(action="clean", detail="ok", gate_id="GATE-AUTO-OTHER")],
+            "sess-auto-2",
+            trigger_source="post_commit",
+        )
+        conn = sqlite3.connect(str(_db_path(tmp_path)))
+        try:
+            ack = conn.execute(
+                "SELECT acknowledged_at FROM reconcile_execution_log WHERE log_id='rc-auto-w2'"
+            ).fetchone()
+            assert ack is not None and ack[0] is None, "真正活跃 critical_warn 不应被 ack"
+        finally:
+            conn.close()
+
+    def test_auto_ack_idempotent(self, tmp_path: Path) -> None:
+        """重复 clean 不重复 ack（acknowledged_at IS NULL 过滤幂等）。"""
+        import sqlite3
+
+        _init_db(tmp_path)
+        _insert(tmp_path, "GATE-AUTO-3", "critical_warn", _str_ts(timedelta(hours=-2)), "rc-auto-w3")
+        _log_reconcile_results(
+            tmp_path,
+            [ReconcileResult(action="clean", gate_id="GATE-AUTO-3")],
+            "sess-auto-3a",
+            trigger_source="post_commit",
+        )
+        # 第二次 clean（warn 已 ack，EXISTS 仍匹配但 acknowledged_at IS NULL 过滤掉）
+        _log_reconcile_results(
+            tmp_path,
+            [ReconcileResult(action="clean", gate_id="GATE-AUTO-3")],
+            "sess-auto-3b",
+            trigger_source="post_commit",
+        )
+        conn = sqlite3.connect(str(_db_path(tmp_path)))
+        try:
+            # 只有一条 critical_warn，acknowledged_at 已设置一次即可
+            row = conn.execute(
+                "SELECT acknowledged_at FROM reconcile_execution_log WHERE log_id='rc-auto-w3'"
+            ).fetchone()
+            assert row[0] is not None
+            # clean 记录应有 2 条
+            n_clean = conn.execute(
+                "SELECT COUNT(*) FROM reconcile_execution_log WHERE gate_id='GATE-AUTO-3' AND action='clean'"
+            ).fetchone()[0]
+            assert n_clean == 2
+        finally:
+            conn.close()
+
+
+class TestBackfillAutoAckHealed:
+    """#AUTO-ACK-HEALED-WARN 治本：backfill_auto_ack_healed 一次性回填历史自愈 warn。"""
+
+    def test_backfill_acks_healed_leaves_active(self, tmp_path: Path) -> None:
+        """回填：已愈合 warn 全部 ack，真正活跃 warn 保持 unack。"""
+        import sqlite3
+
+        _init_db(tmp_path)
+        # G1: warn + clean（已愈合）
+        _insert(tmp_path, "GB1", "critical_warn", _str_ts(timedelta(hours=-3)), "rc-bf-w1")
+        _insert(tmp_path, "GB1", "clean", _str_ts(timedelta(hours=-2)), "rc-bf-c1")
+        # G2: warn + clean（已愈合）
+        _insert(tmp_path, "GB2", "critical_warn", _str_ts(timedelta(hours=-3)), "rc-bf-w2")
+        _insert(tmp_path, "GB2", "clean", _str_ts(timedelta(hours=-2)), "rc-bf-c2")
+        # G3: warn only（真正活跃）
+        _insert(tmp_path, "GB3", "critical_warn", _str_ts(timedelta(hours=-1)), "rc-bf-w3")
+
+        result = backfill_auto_ack_healed(tmp_path)
+        assert result["error"] is None
+        assert result["acknowledged"] == 2, f"应 ack 2 条已愈合 warn，实际 {result['acknowledged']}"
+
+        conn = sqlite3.connect(str(_db_path(tmp_path)))
+        try:
+            for wid in ("rc-bf-w1", "rc-bf-w2"):
+                ack = conn.execute(
+                    "SELECT acknowledged_at FROM reconcile_execution_log WHERE log_id=?", (wid,)
+                ).fetchone()[0]
+                assert ack is not None, f"{wid} 应已 ack"
+            ack3 = conn.execute(
+                "SELECT acknowledged_at FROM reconcile_execution_log WHERE log_id='rc-bf-w3'"
+            ).fetchone()[0]
+            assert ack3 is None, "真正活跃 warn 不应被 ack"
+        finally:
+            conn.close()
+
+    def test_backfill_idempotent(self, tmp_path: Path) -> None:
+        """重复回填幂等（第二次 ack 0）。"""
+        _init_db(tmp_path)
+        _insert(tmp_path, "GBI", "critical_warn", _str_ts(timedelta(hours=-2)), "rc-bi-w")
+        _insert(tmp_path, "GBI", "clean", _str_ts(timedelta(hours=-1)), "rc-bi-c")
+        first = backfill_auto_ack_healed(tmp_path)
+        second = backfill_auto_ack_healed(tmp_path)
+        assert first["acknowledged"] == 1
+        assert second["acknowledged"] == 0, "幂等：重复回填不应再 ack"
+
+    def test_backfill_empty_db(self, tmp_path: Path) -> None:
+        """空库回填不报错。"""
+        result = backfill_auto_ack_healed(tmp_path)
+        assert result["acknowledged"] == 0
+        assert result["error"] is None
+
+
+class TestCleanupReconcileLog:
+    """#RECONCILE-LOG-RETENTION 治本：cleanup_reconcile_log 删除过期记录。"""
+
+    def test_cleanup_deletes_old_records(self, tmp_path: Path) -> None:
+        """删除 retention_days 天前的记录，保留新记录。"""
+        import sqlite3
+
+        _init_db(tmp_path)
+        # 200 天前的记录（应删）
+        _insert(tmp_path, "GC1", "clean", _str_ts(timedelta(days=-200)), "rc-old-1")
+        _insert(tmp_path, "GC1", "warn", _str_ts(timedelta(days=-200)), "rc-old-2")
+        # 10 天前的记录（应保留，<180 天）
+        _insert(tmp_path, "GC2", "clean", _str_ts(timedelta(days=-10)), "rc-new-1")
+
+        result = cleanup_reconcile_log(tmp_path, retention_days=180)
+        assert result["error"] is None
+        assert result["deleted"] == 2, f"应删 2 条 >180d 记录，实际 {result['deleted']}"
+
+        conn = sqlite3.connect(str(_db_path(tmp_path)))
+        try:
+            remaining = conn.execute("SELECT COUNT(*) FROM reconcile_execution_log").fetchone()[0]
+            assert remaining == 1, f"应剩 1 条新记录，实际 {remaining}"
+            log_id = conn.execute("SELECT log_id FROM reconcile_execution_log").fetchone()[0]
+            assert log_id == "rc-new-1"
+        finally:
+            conn.close()
+
+    def test_cleanup_custom_retention(self, tmp_path: Path) -> None:
+        """自定义保留天数生效。"""
+        _init_db(tmp_path)
+        _insert(tmp_path, "GC3", "clean", _str_ts(timedelta(days=-5)), "rc-c-1")
+        # 保留 3 天 → 5 天前的记录应删
+        result = cleanup_reconcile_log(tmp_path, retention_days=3)
+        assert result["deleted"] == 1
+        assert result["retention_days"] == 3
+
+    def test_cleanup_empty_db(self, tmp_path: Path) -> None:
+        """库不存在时不报错。"""
+        result = cleanup_reconcile_log(tmp_path)
+        assert result["deleted"] == 0
+        assert result["error"] is None
 
 
 if __name__ == "__main__":
