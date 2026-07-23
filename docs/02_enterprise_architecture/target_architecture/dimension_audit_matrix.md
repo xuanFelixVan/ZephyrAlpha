@@ -70,7 +70,7 @@ ttl: permanent
 | **D9** | 数据架构 | 存储一致性、备份/恢复、容灾 | 0.06 | `../04_architecture_principles_decisions/data_principles.md` + `architecture_model/data/data_entity_catalog.yaml` |
 | **D10** | 运维架构 | SLI/SLO、可观测性三支柱、告警 | 0.08 | `operations_architecture.md` |
 | **D11** | 安全运营 | Secret 防护、供应链安全、审计合规 | 0.06 | `security_architecture.md §6` |
-| **D12** | 治理架构 | SSoT 一致性、KB 决策记录 覆盖、流程门禁 | 0.06 | `governance_architecture.md` |
+| **D12** | 治理架构 | SSoT 一致性、KB 决策记录 覆盖、流程门禁 | 0.06 | `../04_architecture_principles_decisions/governance_principles.md` + `architecture_model/governance_systems_registry.yaml` |
 | **合计** | — | — | **1.00** | — |
 
 ### 1.2 权重分配理由

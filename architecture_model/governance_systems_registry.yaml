@@ -1,0 +1,453 @@
+# [A_config] module_id=CFG-governance-systems-registry | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/governance_principles.md
+# module_id: CFG-GOVERNANCE-SYSTEMS-REGISTRY
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 治理系统注册表真源,从 target_architecture/governance_architecture.md §4/§5.2/§6.5 迁移(2026-07-23, B3-doc4)
+#         46 治理系统分层归属(A21+B1+C17+VB1+D6) + 6 大核心服务治理归属 + AI 员工三层预留口子
+#         永恒原则(三层边界/D2-B 闭环/D3-B 预留/D4 激活/T0-T7 触发/Runtime Plane 铁律)见 governance_principles.md
+#         三层物理位置详细路径由 depgraph 维护(domain_id IN D_GOVERNANCE/D_GOV_AUDIT/D_GOV_RULE)
+
+module_id: CFG-GOVERNANCE-SYSTEMS-REGISTRY
+version: "1.0.0"
+description: "治理系统注册表——46 治理系统分层归属(A21+B1+C17+VB1+D6) + 6 大核心服务治理归属 + AI 员工三层预留口子。从 governance_architecture.md §4/§5.2/§6.5 迁移。永恒原则见 governance_principles.md。"
+
+# 主层(main_layer)取值: Policy / Factory / Runtime / 全三层
+# 次层(secondary_layer)为辅助归属,可为 null
+# 激活(activation)取值: 已就位 / Sprint N / T3触发 / T4触发 / K2批次 / OQ-081硬闸门 等
+
+systems:
+  # ========== A 家族:机构标配(21 个) ==========
+
+  - id: A-01
+    name: "KB 决策记录 架构决策治理"
+    family: A
+    main_layer: Policy
+    secondary_layer: null
+    activation: "已就位"
+
+  - id: A-02
+    name: "folder-charters 目录契约"
+    family: A
+    main_layer: Policy
+    secondary_layer: null
+    activation: "已就位"
+
+  - id: A-03
+    name: "index.md 索引治理"
+    family: A
+    main_layer: Policy
+    secondary_layer: "Runtime 孤儿检查"
+    activation: "Sprint 9（F21）"
+
+  - id: A-04
+    name: "Frontmatter schema"
+    family: A
+    main_layer: Policy
+    secondary_layer: "Factory 编译"
+    activation: "已就位"
+
+  - id: A-05
+    name: "编码规范（ruff/mypy/bandit）"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime pre-commit/CI"
+    activation: "Sprint 9（L3）"
+
+  - id: A-06
+    name: "架构守卫（import-linter）"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime CI"
+    activation: "Sprint 9（L4）"
+
+  - id: A-07
+    name: "Fitness Functions 25 条"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime CI"
+    activation: "Sprint 9（L4，OQ-027）"
+
+  - id: A-08
+    name: "Pre-commit hooks"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 9"
+
+  - id: A-09
+    name: "CI workflows"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 9"
+
+  - id: A-10
+    name: "Audit log（append-only）"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10（L10）"
+
+  - id: A-11
+    name: "Decision provenance"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10（F25）"
+
+  - id: A-12
+    name: "Policy-as-Code（OPA）"
+    family: A
+    main_layer: Runtime
+    secondary_layer: "Factory Rego 编译"
+    activation: "Sprint 11（L6）"
+
+  - id: A-13
+    name: "SBOM（供应链）"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime 扫描"
+    activation: "T4 触发（L7）"
+
+  - id: A-14
+    name: "Kill switch"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 9（compliance）"
+
+  - id: A-15
+    name: "OCP 契约冻结"
+    family: A
+    main_layer: Policy
+    secondary_layer: "Factory 签名, Runtime 守卫"
+    activation: "Sprint 10（L5，F24）"
+
+  - id: A-16
+    name: "跨层依赖治理"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime CI"
+    activation: "Sprint 9"
+
+  - id: A-17
+    name: "目录预算"
+    family: A
+    main_layer: Policy
+    secondary_layer: "Factory"
+    activation: "Sprint 9"
+
+  - id: A-18
+    name: "文件名治理"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime"
+    activation: "Sprint 9（F22）"
+
+  - id: A-19
+    name: "KB 决策记录 14 天实现 Gate"
+    family: A
+    main_layer: Factory
+    secondary_layer: "Runtime"
+    activation: "Sprint 10（F23）"
+
+  - id: A-20
+    name: "状态快照治理"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10"
+
+  - id: A-21
+    name: "报告归档"
+    family: A
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 9"
+
+  # ========== B 家族:元治理(1 个) ==========
+
+  - id: B-01
+    name: "Meta-Governance 元治理"
+    family: B
+    main_layer: 全三层
+    secondary_layer: null
+    activation: "Sprint 10"
+    note: "治理治理系统的系统(对标 Goldman GRB):Policy 元规则 + Factory 治理脚本检查 + Runtime 元治理审计"
+
+  # ========== C 家族:氛围编程独有(17 个 VIB) ==========
+
+  - id: VIB-01
+    name: "Session 协作治理"
+    family: C
+    main_layer: Policy
+    secondary_layer: "Runtime SessionRegistry/handoff-log"
+    activation: "已落地（SessionRegistry/Handoff/ConflictDetector，P2-SES；commit 路径接入待 P4-T1）"
+
+  - id: VIB-02
+    name: "多 AI 工具规则单源"
+    family: C
+    main_layer: Policy
+    secondary_layer: null
+    activation: "已就位"
+
+  - id: VIB-03
+    name: "模型调用治理（6 子系统）"
+    family: C
+    main_layer: Policy
+    secondary_layer: "Factory token 预算, Runtime 监控"
+    activation: "Sprint 10"
+
+  - id: VIB-04
+    name: "Prompt 资产治理"
+    family: C
+    main_layer: Policy
+    secondary_layer: null
+    activation: "Sprint 11"
+
+  - id: VIB-05
+    name: "AI 输出验收治理"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10"
+
+  - id: VIB-06
+    name: "知识连续性（Transcript 索引）"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 11"
+
+  - id: VIB-07
+    name: "人机信任校准"
+    family: C
+    main_layer: Policy
+    secondary_layer: null
+    activation: "已就位"
+
+  - id: VIB-08
+    name: "AI 并发执行治理"
+    family: C
+    main_layer: Runtime
+    secondary_layer: "Factory 限流器"
+    activation: "Sprint 10"
+
+  - id: VIB-09
+    name: "反向氛围编程（AI 防放水）"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10"
+
+  - id: VIB-10
+    name: "氛围工作节奏"
+    family: C
+    main_layer: Policy
+    secondary_layer: null
+    activation: "已就位"
+
+  - id: VIB-11
+    name: "AI 成本治理"
+    family: C
+    main_layer: Factory
+    secondary_layer: "Runtime 监控"
+    activation: "Sprint 10"
+
+  - id: VIB-12
+    name: "决策溯源（provenance）"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10（与 A-11 合并）"
+
+  - id: VIB-13
+    name: "AI 知识边界治理"
+    family: C
+    main_layer: Policy
+    secondary_layer: null
+    activation: "Sprint 11"
+
+  - id: VIB-14
+    name: "AI 行为审计"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "T3 触发"
+
+  - id: VIB-15
+    name: "漂移检测"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 11"
+
+  - id: VIB-16
+    name: "信息时效自刷新"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 11"
+
+  - id: VIB-17
+    name: "反讨好（红队模式）"
+    family: C
+    main_layer: Runtime
+    secondary_layer: null
+    activation: "Sprint 10"
+
+  # ========== VIBE-BASE 家族:共享底座(1 个) ==========
+
+  - id: VB-01
+    name: "氛围编程共享规则"
+    family: VIBE-BASE
+    main_layer: Policy
+    secondary_layer: null
+    activation: "已就位"
+
+  # ========== D 家族:AI 治理基础设施(6 个) ==========
+  # D = Defense / Data-Intelligence / Decision
+  # 超越 A/B/C/VB 分类的 AI 治理新系统
+  # Runtime Plane 列:09-GOV 治理维度(主层/次层)与 04bis 执行维度(Plane)正交独立
+
+  - id: D-01
+    name: "AISG 防泄密（AI Security Gateway）"
+    family: D
+    main_layer: 全三层
+    secondary_layer: null
+    runtime_plane: "Warm 主 + security_gateway Hot-adj + Factory Cold"
+    activation: "OQ-081 硬闸门（Sprint 0 前 P0）"
+    source_oq: OQ-076
+    code_location: "compliance/ai_security/"
+    note: "全三层展开: Policy(ai_security_gateway_policy.md + .cursorignore + .cursorrules) → Factory(compile_desensitize_rules.py) → Runtime(compliance/ai_security/ 六大模块 + aisg/audit_log.jsonl). 与 B-01 正交(B-01=治理治理 vs D-01=防泄密); D-01 是 VIB-03 上游(先脱敏再调度); D-01 audit ≠ VIB-14(数据流审计 vs 业务决策审计)"
+
+  - id: D-02
+    name: "Scout Agent（AI 情报员）"
+    family: D
+    main_layer: Runtime
+    secondary_layer: "Policy 白名单 / Factory scraper"
+    runtime_plane: "Cold（每日 cron）"
+    activation: "Sprint 9 简易→11+ 完整"
+    source_oq: OQ-079
+    code_location: "ml_train/scout/"
+    note: "全三层展开: Policy(scout_agent_whitelist.md) → Factory(compile_scraper.py) → Runtime(ml_train/scout/ + kms/daily_digest/ + 强制走 AISG)"
+
+  - id: D-03
+    name: "Decision Engine（占位）"
+    family: D
+    main_layer: Runtime
+    secondary_layer: null
+    runtime_plane: Warm
+    activation: "K2 批次"
+    source_oq: OQ-080
+    code_location: "frontend/"
+
+  - id: D-04
+    name: "Capital Allocation Engine（占位，G2 最高）"
+    family: D
+    main_layer: Runtime
+    secondary_layer: null
+    runtime_plane: "Warm 主 + Cold 回测"
+    activation: "K2 批次"
+    source_oq: OQ-080
+    code_location: "pf_core/"
+
+  - id: D-05
+    name: "Failure Learning Engine（占位，G3 最后）"
+    family: D
+    main_layer: Runtime
+    secondary_layer: null
+    runtime_plane: "Cold 主"
+    activation: "K2 批次"
+    source_oq: OQ-080
+    code_location: "compliance/ + KMS L5"
+
+  - id: D-06
+    name: "Market Regime Engine（占位，G4 第二）"
+    family: D
+    main_layer: Runtime
+    secondary_layer: null
+    runtime_plane: "Warm 主 + Cold 训练"
+    activation: "K2 批次"
+    source_oq: OQ-080
+    code_location: "research/"
+
+# ========== 分层汇总 ==========
+# Policy 层: 16 主归属 (36%)
+# Factory 层: 7 主归属 (16%)
+# Runtime 层: 20 主归属 (44%)
+# 全三层: 2 主归属 (B-01 + D-01) (4%)
+# 总计: 46 系统 (注: 原文 §4.6 汇总表为 45,因 VIB-17 后补未同步;实际 A21+B1+C17+VB1+D6=46)
+
+# ========== 6 大核心服务治理归属(源自 §6.5) ==========
+
+core_services_governance:
+  - service: LSG
+    policy: "ai_security_gateway_policy.md + 四层防御规则集"
+    factory: "scripts/governance/aisg/ 策略编译器"
+    runtime: "Session Log security_events 表 + 红队评估季度报告"
+
+  - service: CE
+    policy: "Context 策略白名单 + 压缩质量 SLO"
+    factory: "ContextEngineProtocol 抽象基类"
+    runtime: "FLE llm_calls 表 + 压缩质量周报"
+
+  - service: VMS
+    policy: "Collection 元数据契约 + 级联语义表"
+    factory: "VectorMemoryProtocol 抽象基类"
+    runtime: "Session Log vms_operations 表 + 去重检测月报"
+
+  - service: Orc
+    policy: "任务状态机 + Agent 白名单"
+    factory: "OrchestratorProtocol + Sandbox ACL 模板"
+    runtime: "agent_actions + sandbox_violations 表 + 幻觉检测月报"
+
+  - service: FLE
+    policy: "异常阈值策略 + 动作分派规则"
+    factory: "FeedbackLoopProtocol + EMA 参数"
+    runtime: "FLE 自监控 anomaly_ledger + 阈值触发审计"
+
+# ========== AI 员工三层预留口子(源自 §5.2，D3-B 拍板) ==========
+# 原则: 只预留不实施——只定义命名规则 + 路径规则 + 接口名。激活时机由 T3 触发。
+
+ai_employee_openings:
+  policy:
+    - opening: "AI 员工花名册"
+      location: "docs/01_policies_and_standards/ai-operators-registry.md（Stage K 待建）"
+    - opening: "AI 行为规则"
+      location: "docs/01_policies_and_standards/ai-operator-guidelines.md（Stage K 待建）"
+    - opening: "AI 决策记录模板"
+      location: "KB:decisions namespace（Session Log decisions 结构化字段）"
+    - opening: "AISG 红线过滤"
+      location: ".cursorignore + .cursorrules（OQ-081 硬闸门）"
+    - opening: "AISG 策略文档"
+      location: "docs/01_policies_and_standards/ai-security-gateway-policy.md（Stage K 待建）"
+    - opening: "Scout 抓取白名单"
+      location: "docs/01_policies_and_standards/scout-agent-whitelist.md（Stage K 待建）"
+
+  factory:
+    - opening: "AI Operator 命名空间"
+      location: "src/zephyr/{domain}/_ai_operator/ · vib/_ai_operator/ · b01/_ai_operator/"
+    - opening: "AI Operator 接口协议"
+      location: "shared/contracts/ai_operator_contract.py"
+    - opening: "AISG 脱敏编译器"
+      location: "scripts/governance/aisg/compile_desensitize_rules.py"
+    - opening: "Scout scraper 编译器"
+      location: "scripts/governance/scout/compile_scraper.py"
+
+  runtime:
+    - opening: "AI 决策日志 schema + ledger"
+      location: "scripts/audit_log/ai_decision_schema.py + ai_decision_ledger.jsonl（OQ-063 28 字段）"
+    - opening: "AI 行为审计（VIB-14）"
+      location: "scripts/audit_log/vib14_ai_behavior_audit.py"
+    - opening: "AISG 六大模块"
+      location: "src/zephyr/compliance/ai_security/（D-01 P0 红线）"
+    - opening: "Scout Agent 运行态"
+      location: "src/zephyr/ml_train/scout/ + kms/daily_digest/"
+    - opening: "四大引擎 K2 占位"
+      location: "D_FRONTEND/decision_engine/ · D_PF_CORE/capital_allocation/ · D_GOV_AUDIT/failure_learning/ · D_SIMULATION/market_regime/"

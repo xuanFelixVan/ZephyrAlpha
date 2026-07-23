@@ -137,7 +137,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | data_principles.md → ../04_architecture_principles_decisions/ + data_entity_catalog.yaml | DA 数据架构原则（原 data_architecture.md 已迁移） |
 | security_architecture.md | SEC 安全架构视图 |
 | operations_architecture.md | OPS 运维架构视图 |
-| governance_architecture.md | GOV 治理架构视图 |
+| governance_principles.md → ../04_architecture_principles_decisions/ + governance_systems_registry.yaml | GOV 治理架构原则（原 governance_architecture.md 已迁移） |
 | frontend_architecture.md | FE 前端架构视图 |
 | dimension_audit_matrix.md | 12维架构质量评分矩阵（score_architecture.py 真源）|
 | session_carryover_schema.md | AI会话接续Schema（contract 类型，暂放 target_architecture）|
@@ -174,7 +174,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | [`data_principles.md`](../04_architecture_principles_decisions/data_principles.md) + [`data_entity_catalog.yaml`](../../../architecture_model/data/data_entity_catalog.yaml) | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
 | `operations_architecture.md` | OPS | 运维域全景？ | SRE、运维工程师 | draft |
-| `governance_architecture.md` | GOV | 治理体系三层边界？ | 架构师、合规 | active |
+| [`governance_principles.md`](../04_architecture_principles_decisions/governance_principles.md) + [`governance_systems_registry.yaml`](../../../architecture_model/governance_systems_registry.yaml) | GOV | 治理体系三层边界？ | 架构师、合规 | active |
 | `frontend_architecture.md` | FE | 前端层分层？ | 前端开发者、架构师 | active |
 | `dimension_audit_matrix.md` | Cross-layer | 12维架构质量评分 | 架构师、审计 | active |
 | `session_carryover_schema.md` | Cross-layer | AI会话接续Schema | AI 协作者、架构师 | active |

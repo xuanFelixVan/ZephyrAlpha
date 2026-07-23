@@ -31,7 +31,7 @@ tags:
 - runtime-planes-boundary
 - ssot-validator
 - 5-core-services-governance
-summary: 治理架构永恒原则文档。timeless 方法论——三层治理边界（Policy/Factory/Runtime）、D2-B 三角闭环（Policy→Factory→Runtime→Audit→Policy）、四档执行约定（deny/dryrun/warn/disabled）、D3-B AI 自治三层预留口子、D4 方案 B 稳健分三轮激活、T0-T7 激活触发条件、Runtime Plane 边界铁律（治理 Runtime 层 vs 执行 Runtime Plane 正交独立）。派生数据（46 治理系统分层归属表、激活 Sprint、5 大核心服务治理归属）不在本文档，由 depgraph + 治理系统注册表维护。
+summary: 治理架构永恒原则文档。timeless 方法论——三层治理边界（Policy/Factory/Runtime）、D2-B 三角闭环（Policy→Factory→Runtime→Audit→Policy）、四档执行约定（deny/dryrun/warn/disabled）、D3-B AI 自治三层预留口子、D4 方案 B 稳健分三轮激活、T0-T7 激活触发条件、Runtime Plane 边界铁律（治理 Runtime 层 vs 执行 Runtime Plane 正交独立）。派生数据（46 治理系统分层归属表、激活 Sprint、6 大核心服务治理归属）在 architecture_model/governance_systems_registry.yaml；三层物理位置详细路径由 depgraph 维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -48,9 +48,9 @@ ttl: permanent
 **保留内容**：方法论、设计原则、不变约束——三层治理边界、D2-B 三角闭环、四档执行约定、D3-B AI 自治预留、D4 激活路径、T0-T7 触发条件、Runtime Plane 边界铁律。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 46 治理系统分层归属表 → depgraph + 治理系统注册表
-- 激活 Sprint 时间表 → 治理系统注册表
-- 5 大核心服务治理归属 → depgraph
+- 46 治理系统分层归属表 → `architecture_model/governance_systems_registry.yaml`
+- 激活 Sprint 时间表 → `architecture_model/governance_systems_registry.yaml`
+- 6 大核心服务治理归属 → `architecture_model/governance_systems_registry.yaml`
 - D 家族 6 系统详细展开 → 各域蓝图
 
 **与其他原则文档关系**：
@@ -246,9 +246,9 @@ scaffold → experimental 的**强制门禁**，必须 100% 通过：
 
 | 内容 | 真源 |
 |------|------|
-| 46 治理系统分层归属表 | depgraph + 治理系统注册表 |
-| 激活 Sprint 时间表 | 治理系统注册表 |
-| 5 大核心服务治理归属 | depgraph |
+| 46 治理系统分层归属表 | `architecture_model/governance_systems_registry.yaml` |
+| 激活 Sprint 时间表 | `architecture_model/governance_systems_registry.yaml` |
+| 6 大核心服务治理归属 | `architecture_model/governance_systems_registry.yaml` |
 | D 家族 6 系统详细展开 | 各域蓝图 |
 | 三层物理位置详细路径 | depgraph |
 | docs/ 文档抽屉治理规则 | `information_principles.md` |
