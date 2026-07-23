@@ -22,6 +22,10 @@ SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
 """
 from __future__ import annotations
 
-from zephyr.gov_enforcement.rule_enforcement.quality_gate import QualityReport
+from zephyr.gov_enforcement.rule_enforcement.quality_gate import (
+    MarketDataValidator,
+    QualityReport,
+    apply_quality_gate,
+)
 
-__all__ = ["QualityReport"]
+__all__ = ["QualityReport", "MarketDataValidator", "apply_quality_gate"]

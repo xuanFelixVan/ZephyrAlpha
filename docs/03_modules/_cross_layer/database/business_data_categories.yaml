@@ -598,7 +598,7 @@
   table: index_quote
   schema_file: schemas/categories/market_index.py
   data_type: 原料
-  lifecycle: hot_90d
+  lifecycle: permanent
   sla_level: L1
   enabled: true
   hard_constraint: null

@@ -1924,8 +1924,10 @@ class MiniQMTProvider(DataSourceBase):
         使用 xtdata.get_option_detail_data 获取期权合约详情（行权价/到期日/
         标的/期权类型），用 xtdata.get_market_data_ex 获取期权与标的收盘价，
         结合 Black-Scholes 模型 + Newton-Raphson 迭代反解隐含波动率。
-        表 schema: (trade_date, symbol, underlying, strike, expiry, opt_type,
+        表 schema: (trade_date, symbol, underlying, strike, expiry, option_type,
                     iv, data_source)
+        #ARCH-CH-021 P0-3: 列名 opt_type→option_type（与 DDL 列名对齐，否则
+        BufferedWriter 列过滤丢弃该列致 option_type 全库为空字符串）。
 
         Args:
             payload: 下载请求（symbols为期权合约代码列表）
@@ -1937,7 +1939,7 @@ class MiniQMTProvider(DataSourceBase):
         table = payload.table or _TBL_OPTION_IV_SURFACE
         columns = [
             "trade_date", "symbol", "underlying", "strike", "expiry",
-            "opt_type", "iv", "data_source",
+            "option_type", "iv", "data_source",
         ]
         last_key = self._date_to_str(payload.end)
 

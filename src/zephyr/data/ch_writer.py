@@ -376,6 +376,20 @@ def tsv_escape(v) -> str:
     return s
 
 
+def _parse_cols_clause(columns: str) -> list[str] | None:
+    """解析 "(col1, col2, ...)" 形式的列子句为列名列表。
+
+    供质量门禁按列名定位 OHLC 索引。解析失败或输入为 "*" 返回 None。
+    """
+    if not columns or columns.strip() == "*":
+        return None
+    inner = columns.strip()
+    if inner.startswith("(") and inner.endswith(")"):
+        inner = inner[1:-1]
+    parts = [p.strip().strip("`").strip('"') for p in inner.split(",")]
+    return [p for p in parts if p] or None
+
+
 def _get_insert_columns(table: str) -> str:
     """查询表的非 DEFAULT 列清单（用于 INSERT 时显式指定列）。
 
@@ -578,10 +592,16 @@ def write_result(
         return True
 
     # 确定列子句和行数据
+    eff_cols = None  # 与 rows 列序对齐的列名列表（无则 None）
     if columns:
         # 显式指定的列，直接用
         cols_clause = columns
         rows = result.rows
+        # 列名优先取 result.columns（与 rows 同序），否则解析 columns 串
+        if result.columns and result.rows and len(result.columns) == len(result.rows[0]):
+            eff_cols = list(result.columns)
+        else:
+            eff_cols = _parse_cols_clause(columns)
     elif result.columns:
         # 自动列过滤：只插入表中存在的列
         table_cols = _get_table_columns_set(result.table)
@@ -602,15 +622,31 @@ def write_result(
             else:
                 rows = result.rows
             cols_clause = "(" + ", ".join(common_cols) + ")"
+            eff_cols = common_cols
         else:
             # CH 不可用：无法校验列，落盘 None 让回灌时（CH 已恢复）重新查询表列
             # 原样用 result.columns 会固化不可信列名（如 Provider 占位符 col1），
             # 回灌时 INSERT 失败永久卡死（裁定 #ARCH-CH-013 Phase 1 根因修复）
             cols_clause = None
             rows = result.rows
+            eff_cols = list(result.columns)
     else:
         cols_clause = None  # write_tsv 内部自动查询
         rows = result.rows
+
+    # #ARCH-CH-021 P0-4: 写入前质量门禁（四门禁，异常行置 quality_flag=0）
+    if eff_cols and rows:
+        try:
+            from zephyr.data.quality_gate import apply_quality_gate
+            rows, qstats = apply_quality_gate(result.table, eff_cols, rows)
+            if qstats["flagged"]:
+                log.warning(
+                    "write_result(%s): quality_gate flagged %d/%d rows (ohlc=%d change=%d swing=%d adj=%d)",
+                    result.table, qstats["flagged"], qstats["checked"],
+                    qstats["by_gate"]["ohlc"], qstats["by_gate"]["change"],
+                    qstats["by_gate"]["swing"], qstats["by_gate"]["adj"])
+        except Exception as e:  # noqa: BLE001 — 质量门禁失败不得阻断写入
+            log.warning("write_result(%s): quality_gate 跳过（%s）", result.table, e)
 
     # 构造 TSV 字节
     tsv_lines = []

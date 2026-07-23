@@ -20,6 +20,12 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     蓝图 §4.0 声明"全部 ReplacingMergeTree(ingest_ts)"，但 §4.5 DDL 未定义 ingest_ts
     列（蓝图内部矛盾）。本文件以可执行为准——使用 ReplacingMergeTree（无版本列）。
     蓝图 §4.0 的 ingest_ts 版本列设计待 #ARCH-CH-009 后续裁定统一修正。
+
+#ARCH-CH-021 P0-3 修复（2026-07-23）：
+    ORDER BY 补 option_type。原排序键 (underlying, trade_date, strike, expiry) 缺
+    option_type，导致同标的/日期/行权价/到期日的 call 与 put 在 ReplacingMergeTree
+    后台合并时互相覆盖（静默丢一半数据）。补 option_type 后 call/put 不再合并。
+    同时修复 miniqmt_provider 列名 opt_type→option_type（列名不匹配致值被丢弃）。
 """
 from __future__ import annotations
 
@@ -45,7 +51,7 @@ CREATE TABLE IF NOT EXISTS c1_market.option_iv_surface
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
-ORDER BY (underlying, trade_date, strike, expiry)
+ORDER BY (underlying, trade_date, strike, expiry, option_type)
 SETTINGS index_granularity = 8192
 """
 
@@ -56,7 +62,7 @@ CATEGORY_ID = "market_option_iv"
 CALC_MODE = "preload"
 ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(trade_date)"
-ORDER_BY = "(underlying, trade_date, strike, expiry)"
+ORDER_BY = "(underlying, trade_date, strike, expiry, option_type)"
 
 # 列清单（用于 INSERT 时显式指定）
 INSERT_COLUMNS = (

@@ -7823,9 +7823,15 @@ entries:
         market_option_iv/market_auction/market_auction_book），gate 实际运行不会阻断
 
     Phase 3（depgraph 边 commit-time 硬阻断）：
-      仍未实现，归独立裁定 #ARCH-DEP-PREMERGE-ENFORCE（第三期落地，pre-merge 拓扑硬阻断）
-      - 节点存在性检测 depgraph_pre_registration_gate.py 已存在并注册（priority=113，前次会话已修复 [MATURITY]
-        和创建测试文件 22/22 passing）——此为"节点存在性"非"边变更登记"，Phase 3 范围更广
+      裁定不实现（2026-07-23 循环检查裁定）——当前多层防护已足够，边变更 commit-time 硬阻断为过度设计：
+      (a) NEW-FILE-DEPGRAPH-ENFORCEMENT (priority=58)：新建 .py 文件 MUST 在 depgraph 登记节点
+      (b) DEPGRAPH-PRE-REGISTRATION (priority=113)：planned 状态但已施工 >50 行 → 硬阻断
+      (c) PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期）：merge 时检测 ORPHAN_MODULE_ID / MODULE_ID_DRIFT（HIGH drift 阻断）
+      (d) #ARCH-DEP-PREMERGE-ENFORCE Phase 4.1（已实现 commit 9693dd609c）：拓扑检查失败写入 block_next → 下次 commit/merge 硬阻断
+      (e) post-merge reconciler（depgraph_ops_reconciler）：自动扫描 import 关系并补登记边——兜底机制
+      过度设计风险：import 关系变更频繁（每次改 import 都要登记边），commit-time 硬阻断会严重拖慢 AI 迭代效率；
+      post-merge reconciler 保证最终一致性，PRE-MERGE-TOPO-CHECK 覆盖最严重的模块级漂移场景。
+      节点存在性检测 depgraph_pre_registration_gate.py 已存在并注册（priority=113，22/22 tests passing）。
 
     附带治本修复（2026-07-22，循环检查发现）：
       - apply_depgraph.py backup import 容错（line 5115 顶层导入失败 → fallback 到 _GOV_DIR 相对导入）

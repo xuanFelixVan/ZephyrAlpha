@@ -130,4 +130,177 @@ __all__ = [
     "QualityFailureReason",
     "QualityReport",
     "RecoveryHint",
+    "MarketDataValidator",
+    "apply_quality_gate",
 ]
+
+
+# ---------------------------------------------------------------------------
+# #ARCH-CH-021 P0-4: 写入路径异常值校验器（轻量，4 条门禁）
+#
+# quality_flag 语义（裁定 #ARCH-CH-021 P0-4，2026-07-23）：
+#   1 = 已校验通过（validated passed）
+#   0 = 检出异常（anomaly detected，保真标记，行保留供审计）
+# 列默认 DEFAULT 1 原意为"未触碰"，本裁定将其语义反转为"已校验通过"——
+# 凡经过 apply_quality_gate 的行：通过=1，异常=0。未经校验的行仍带默认 1，
+# 但语义为"未校验"（全链路对齐后下游可据 ingest_ts/quality_flag 联合判定）。
+# 四条门禁（单行级，无 DB 查询，写入路径轻量）：
+#   1. OHLC 逻辑：high >= max(open,close) >= min(open,close) >= low > 0
+#   2. 涨跌幅：|close - ref|/ref <= change_limit（ref=prev_close 优先，否则 open）
+#   3. 缺口/振幅：intraday 振幅 (high-low)/open <= swing_limit（防数据错位）
+#   4. 复权：若 adj_factor 列存在，0 < adj_factor <= adj_max
+# ---------------------------------------------------------------------------
+
+# OHLC 列名别名（小写匹配），覆盖 open_price/openPrice 等
+_OHLC_ALIASES = {
+    "open": ("open", "open_price", "openprice", "open_px"),
+    "high": ("high", "high_price", "highprice", "high_px"),
+    "low": ("low", "low_price", "lowprice", "low_px"),
+    "close": ("close", "close_price", "closeprice", "close_px", "last", "last_price"),
+}
+_VOLUME_ALIASES = ("volume", "vol", "volume_long", "turnover_vol")
+_ADJ_ALIASES = ("adj_factor", "adjust_factor", "adjustfactor", "adjfactor")
+_PREVCLOSE_ALIASES = ("prev_close", "pre_close", "preclose", "yesterday_close")
+_QFLAG_ALIASES = ("quality_flag", "qflag", "quality", "qf")
+
+
+def _to_decimal(v):
+    """安全转 Decimal；None/NaN/非数值返回 None。"""
+    if v is None:
+        return None
+    try:
+        from math import isnan
+        if isinstance(v, float) and isnan(v):
+            return None
+        d = Decimal(str(v))
+        return d
+    except Exception:
+        return None
+
+
+def _detect_column_index(columns, aliases):
+    """在 columns 列表里按别名（小写）找首个匹配列的索引，找不到返回 None。"""
+    lower_cols = {c.lower(): i for i, c in enumerate(columns)}
+    for alias in aliases:
+        if alias in lower_cols:
+            return lower_cols[alias]
+    return None
+
+
+def _gate_ohlc_logic(o, h, l, c):
+    """门禁1：OHLC 结构一致性。"""
+    if None in (o, h, l, c):
+        return False
+    return (o > 0 and h > 0 and l > 0 and c > 0
+            and h >= o and h >= c and l <= o and l <= c
+            and h >= l)
+
+
+def _gate_price_change(o, c, prev_c, change_limit):
+    """门禁2：涨跌幅。prev_c 优先作基准，否则用 open。"""
+    ref = prev_c if prev_c and prev_c > 0 else (o if o and o > 0 else None)
+    if ref is None or c is None:
+        return True  # 无基准不校验（保守放行）
+    return abs(c - ref) / ref <= change_limit
+
+
+def _gate_swing(o, h, l, swing_limit):
+    """门禁3：日内振幅 (high-low)/open，防数据错位导致的异常宽幅。"""
+    if None in (o, h, l) or o <= 0:
+        return True  # 无基准不校验
+    return (h - l) / o <= swing_limit
+
+
+def _gate_adjustment(adj, adj_max):
+    """门禁4：复权因子合理性 0 < adj_factor <= adj_max。"""
+    if adj is None:
+        return True  # 无复权列不校验
+    return 0 < adj <= adj_max
+
+
+class MarketDataValidator:
+    """写入路径轻量异常值校验器（#ARCH-CH-021 P0-4）。
+
+    四条门禁逐行校验 OHLC 行情数据，异常行置 quality_flag=0（保留行供审计）。
+    设计为无副作用、无 DB 查询、O(n) 复杂度，可在 ch_writer.write_result 批量写入前调用。
+    """
+
+    def __init__(self, change_limit=Decimal("0.20"), swing_limit=Decimal("0.30"),
+                 adj_max=Decimal("1000")):
+        self.change_limit = change_limit
+        self.swing_limit = swing_limit
+        self.adj_max = adj_max
+
+
+def _build_col_map(columns):
+    """构造列名→索引映射（OHLC/volume/adj/prev_close/quality_flag）。无 dict 返回 None。"""
+    idx = {}
+    for field, aliases in _OHLC_ALIASES.items():
+        i = _detect_column_index(columns, aliases)
+        if i is not None:
+            idx[field] = i
+    has_ohlc = all(k in idx for k in ("open", "high", "low", "close"))
+    if not has_ohlc:
+        return None
+    for key, aliases in (("volume", _VOLUME_ALIASES), ("adj_factor", _ADJ_ALIASES),
+                        ("prev_close", _PREVCLOSE_ALIASES), ("quality_flag", _QFLAG_ALIASES)):
+        i = _detect_column_index(columns, aliases)
+        if i is not None:
+            idx[key] = i
+    return idx
+
+
+def apply_quality_gate(table, columns, rows, validator=None):
+    """对批量行执行四门禁校验，异常行置 quality_flag=0。
+
+    Args:
+        table: 表名（仅用于日志/统计）
+        columns: 列名列表（与 rows 列序对齐）
+        rows: 行列表（list of tuple/list）
+        validator: MarketDataValidator 实例，None 用默认
+
+    Returns:
+        (rows, stats): rows 为处理后的行列表（异常行 quality_flag=0），
+        stats = {"table", "total", "checked", "flagged", "by_gate"}
+    """
+    v = validator or MarketDataValidator()
+    col_map = _build_col_map(list(columns))
+    stats = {"table": table, "total": len(rows), "checked": 0,
+             "flagged": 0, "by_gate": {"ohlc": 0, "change": 0, "swing": 0, "adj": 0}}
+    if col_map is None:
+        return rows, stats  # 非 OHLC 表，跳过
+    qf_idx = col_map.get("quality_flag")
+    pc_idx = col_map.get("prev_close")
+    adj_idx = col_map.get("adj_factor")
+    out_rows = []
+    for row in rows:
+        r = list(row)
+        o = _to_decimal(r[col_map["open"]])
+        h = _to_decimal(r[col_map["high"]])
+        l = _to_decimal(r[col_map["low"]])
+        c = _to_decimal(r[col_map["close"]])
+        pc = _to_decimal(r[pc_idx]) if pc_idx is not None else None
+        adj = _to_decimal(r[adj_idx]) if adj_idx is not None else None
+        stats["checked"] += 1
+        ok = True
+        if not _gate_ohlc_logic(o, h, l, c):
+            ok = False; stats["by_gate"]["ohlc"] += 1
+        if not _gate_price_change(o, c, pc, v.change_limit):
+            ok = False; stats["by_gate"]["change"] += 1
+        if not _gate_swing(o, h, l, v.swing_limit):
+            ok = False; stats["by_gate"]["swing"] += 1
+        if not _gate_adjustment(adj, v.adj_max):
+            ok = False; stats["by_gate"]["adj"] += 1
+        if not ok:
+            stats["flagged"] += 1
+            if qf_idx is not None:
+                r[qf_idx] = 0
+        out_rows.append(tuple(r) if isinstance(row, tuple) else r)
+    if stats["flagged"]:
+        import logging
+        logging.getLogger("zephyr.data.quality_gate").info(
+            "apply_quality_gate(%s): %d/%d rows flagged (ohlc=%d change=%d swing=%d adj=%d)",
+            table, stats["flagged"], stats["checked"], stats["by_gate"]["ohlc"],
+            stats["by_gate"]["change"], stats["by_gate"]["swing"], stats["by_gate"]["adj"])
+    return out_rows, stats
+
