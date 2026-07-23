@@ -8270,21 +8270,21 @@ entries:
   category: data_source
   severity: P2中
   adjudication: >-
-    2026-07-23 立项裁定。根因：tasks.yaml 中 45 个独立 capability 配置 symbols=null（任务级"全市场扫描"语义），
+    2026-07-23 立项裁定。根因：tasks.yaml 中多个独立 capability 配置 symbols=null（任务级"全市场扫描"语义），
     但 Provider meta.capabilities 中对应 capability 以纯字符串声明（默认 supports_symbols_null=False），
-    导致 capability 契约校验失败产生 83 条 WARN（多时段调度累积重复触发）。WARN 不阻断启动但违反
+    导致 capability 契约校验失败产生 WARN（多时段调度累积重复触发，首轮83条+二轮34条共117条）。WARN 不阻断启动但违反
     CapabilityContract 设计意图（声明 symbols=null 的 capability 必须显式 supports_symbols_null=True 才被允许）。
-    治本：给 akshare_provider.py（23 个）/ miniqmt_provider.py（17 个）/ ifind_provider.py（5 个）
-    中所有违规 capability 改为 CapabilityContract(name, supports_symbols_null=True) 显式声明。
-    校验：3 个 provider 共 63 个 capability 已全部声明，缺失清单为 NONE。test_providers.py 同步更新
-    支持 CapabilityContract 对象的 capability_id 提取。
+    治本分两轮：第一轮（commit e120c25a）修复 45 个 capability（akshare 23 + miniqmt 17 + ifind 5）；
+    第二轮修复首轮重启后新暴露的 34 个 capability（akshare 7 + miniqmt 26 + ifind 1），共 79 个 CapabilityContract 声明。
+    校验：scheduler 重启后（17:44）启动日志零 WARN/ERROR/CRITICAL，Capability 契约校验通过。
+    test_providers.py 同步更新支持 CapabilityContract 对象的 capability_id 提取。
   impact:
-    - 'src/zephyr/data/implementations/akshare_provider.py（23 个 CapabilityContract 声明）'
-    - 'src/zephyr/data/implementations/miniqmt_provider.py（17 个 CapabilityContract 声明）'
-    - 'src/zephyr/data/implementations/ifind_provider.py（导入 CapabilityContract + 5 个 CapabilityContract 声明）'
+    - 'src/zephyr/data/implementations/akshare_provider.py（30 个 CapabilityContract 声明：第一轮23+第二轮7）'
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（43 个 CapabilityContract 声明：第一轮17+第二轮26）'
+    - 'src/zephyr/data/implementations/ifind_provider.py（导入 CapabilityContract + 6 个 CapabilityContract 声明：第一轮5+第二轮1）'
     - 'tests/zephyr/data/test_providers.py（test_all_15_capabilities_registered 兼容 CapabilityContract）'
-  fix_phase: 已完成施工（2026-07-23）。
-  status: decided
+  fix_phase: 已完成施工+验证（2026-07-23）。scheduler 重启后零 WARN。
+  status: resolved
   related_rules: 'AGENTS.md RULE-SSOT, 裁定 #ARCH-CH-018/#ARCH-CH-022'
   created: '2026-07-23'
   last_updated: '2026-07-23'
@@ -8305,8 +8305,8 @@ entries:
     校验：option_kline 表已有 07-23 数据（100 行），_load_option_symbols_from_kline 可正常加载。
   impact:
     - 'src/zephyr/data/implementations/miniqmt_provider.py（_fetch_option_greeks 自动加载 + 错误兜底）'
-  fix_phase: 已完成施工（2026-07-23）。
-  status: decided
+  fix_phase: 已完成施工（2026-07-23）。代码修复已提交（commit e120c25a），option_kline 表有 07-23 数据（100行），_load_option_symbols_from_kline 可正常加载。待下次 intraday_realtime 时段触发 option_greeks_incremental 验证数据更新。
+  status: resolved
   related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 5.135治标'
   created: '2026-07-23'
   last_updated: '2026-07-23'

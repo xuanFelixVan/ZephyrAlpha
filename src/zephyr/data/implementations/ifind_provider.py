@@ -108,7 +108,7 @@ class IFindProvider(DataSourceBase):
         rate_limit_default=0,
         capabilities=[
             "kline_daily",
-            "daily_valuation",
+            CapabilityContract("daily_valuation", supports_symbols_null=True),
             # 治本修复#ARCH-CAP-NULL-SYMBOLS-001（2026-07-23）：
             # 声明 symbols=null 的 task 对应 capability 显式声明 supports_symbols_null=True
             CapabilityContract("money_flow", supports_symbols_null=True),

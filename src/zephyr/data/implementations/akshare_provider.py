@@ -196,11 +196,11 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("top10_circulating_shareholders", supports_symbols_null=True),
             # 以下能力支持 symbols=null（Provider 内部有全市场扫描或调用批量接口）
             CapabilityContract("equity_pledge", supports_symbols_null=True),
-            "margin_trading",
-            "block_trade",
-            "dragon_tiger",
-            "share_unlock",
-            "audit_opinion",
+            CapabilityContract("margin_trading", supports_symbols_null=True),
+            CapabilityContract("block_trade", supports_symbols_null=True),
+            CapabilityContract("dragon_tiger", supports_symbols_null=True),
+            CapabilityContract("share_unlock", supports_symbols_null=True),
+            CapabilityContract("audit_opinion", supports_symbols_null=True),
             CapabilityContract("equity_pledge_summary", supports_symbols_null=True),
             # 新闻数据
             CapabilityContract("news_cctv", supports_symbols_null=True),
@@ -208,7 +208,8 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("news_baidu", supports_symbols_null=True),
             CapabilityContract("news_stock", supports_symbols_null=True),
             # 分析师预期 & 配股
-            "analyst_forecast", "rights_issue",
+            CapabilityContract("analyst_forecast", supports_symbols_null=True),
+            CapabilityContract("rights_issue", supports_symbols_null=True),
             # 研报 & 北向资金 & 期货主力合约
             CapabilityContract("hk_connect_flow", supports_symbols_null=True),
             CapabilityContract("kline_futures", supports_symbols_null=True),

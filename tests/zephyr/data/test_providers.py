@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """Provider 实现的单测（MOD-L00-004 阶段1）。
 
 测试 3 个 Provider 的辅助方法（纯函数，不依赖真实 SDK）和 fetch 路由。
