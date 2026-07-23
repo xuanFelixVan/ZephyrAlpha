@@ -435,33 +435,16 @@ FILE_DESC_ZH = {
     "6_手工架构图_样板.mmd": "手工架构图样板",
     "integration_topology_sample.md": "集成拓扑样板",
     "path_tree_sample.md": "路径树样板",
-    # 以下文件随 target_architecture/ 删除（2026-07-01），描述保留供历史参考
-    "application_architecture.md": "应用架构",
-    "architecture_endgame_locked.md": "架构终态锁定",
+    # 原位于 target_architecture/ 的文件——部分已迁移至其他目录（04_architecture_principles_decisions/ / 03_modules/ / _archive/），描述保留供跨目录复用
     "architecture_principles.md": "架构原则",
-    "business_architecture.md": "业务架构",
-    "data_architecture.md": "数据架构",
-    "frontend_architecture.md": "前端架构",
-    "governance_architecture.md": "治理架构",
-    "information_architecture.md": "信息架构",
-    "integration_architecture.md": "集成架构",
-    "operations_architecture.md": "运营架构",
     "overview.md": "概览",
     "revision_history.md": "修订历史",
-    "runtime_planes.md": "运行时平面",
-    "security_architecture.md": "安全架构",
-    "technology_architecture.md": "技术架构",
     "session_carryover_schema.md": "会话延续Schema",
-    "ai_team_mode_full_config.md": "AI团队模式配置",
     "architecture_diagram_construction_plan.md": "架构图施工计划",
-    "architecture_upgrade_discussion.md": "架构升级讨论",
     "contract_dedup_analysis.md": "契约去重分析",
     "contract_dedup_integration_analysis.md": "契约去重集成分析",
-    "core_function_dependency_design.md": "核心功能依赖设计",
     "dependency_path_panorama.md": "依赖路径全景图",
     "migration_registry.yaml": "迁移注册表",
-    "phase_d_ai_prompts.md": "Phase D AI提示词",
-    "phase_d_full_test_construction_plan.md": "Phase D全量测试施工计划",
     "ssot_authority_map.md": "SSoT权威映射",
     "t18_implementation_plan.md": "T18实施计划",
     # architecture_model
@@ -497,21 +480,10 @@ FILE_DESC_EN = {
     "design_vs_production.md": "Design vs production",
     "orphan_cleanup_audit.md": "Orphan cleanup audit",
     "_update_audit_doc.py": "Audit doc update script",
-    "application_architecture.md": "Application architecture",
-    "architecture_endgame_locked.md": "Architecture endgame locked",
+    # 原位于 target_architecture/ 的文件——部分已迁移至其他目录（04_architecture_principles_decisions/ / 03_modules/ / _archive/），描述保留供跨目录复用
     "architecture_principles.md": "Architecture principles",
-    "business_architecture.md": "Business architecture",
-    "data_architecture.md": "Data architecture",
-    "frontend_architecture.md": "Frontend architecture",
-    "governance_architecture.md": "Governance architecture",
-    "information_architecture.md": "Information architecture",
-    "integration_architecture.md": "Integration architecture",
-    "operations_architecture.md": "Operations architecture",
     "overview.md": "Overview",
     "revision_history.md": "Revision history",
-    "runtime_planes.md": "Runtime planes",
-    "security_architecture.md": "Security architecture",
-    "technology_architecture.md": "Technology architecture",
     "session_carryover_schema.md": "Session carryover schema",
     "module_id_registry.yaml": "Module ID registry",
     "ddd_model.yaml": "DDD domain model",
@@ -547,8 +519,10 @@ def _extract_file_brief(file_path: Path) -> str:
             m = re.search(r"'''(.+?)'''", content, re.DOTALL)
         if m:
             first_line = m.group(1).strip().split("\n")[0].strip()
-            # 去掉模块ID引用（如 "（MOD-INF-013 §5.3）"）
-            first_line = re.sub(r"（[^）]*MOD-[^）]*）", "", first_line).strip()
+            # 去掉治理元数据引用：模块ID（如 "（MOD-INF-013 §5.3）"）+ 裁定编号（括号内含 ARCH 前缀的裁定号）
+            # 治本(2026-07-23 B5): 防止 docstring 中的裁定编号被 tree 生成器带入 .md 触发引用门禁
+            first_line = re.sub(r"（[^）]*(?:MOD|ARCH)-[^）]*）", "", first_line).strip()
+            first_line = re.sub(r"#ARCH-[A-Z0-9\-]+", "", first_line).strip()
             if first_line:
                 return first_line[:100]
 

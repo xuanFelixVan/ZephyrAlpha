@@ -1,7 +1,7 @@
 ---
 doc_type: audit_report
 title: "target_architecture/ 完整修订历史"
-version: "2.2.0"
+version: "3.1.0"
 status: Active
 layer: cross_layer
 module_id: ARCH-005
@@ -9,7 +9,7 @@ owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: agent
-valid_from: 2026-04-17
+valid_from: 2026-07-23
 summary: index.md §10 修订记录的完整归档。活跃修订见 index.md §10。
 ttl: permanent
 ---
@@ -35,3 +35,5 @@ ttl: permanent
 | 2026-05-01 | **v2.0.0（架构审查 P0 修复批次）**：(a) **删除 `dependency-graph-framework.md`**（旧 12 层命名依赖图，11/14 层与实际矛盾），其唯一独有价值——依赖置信度分级（L1/L2/L3）已提取迁入 `architecture_model/layers/schema.yaml` v2.1。未来依赖图从 YAML SSoT 自动生成（对标 K8s/Terraform 声明式）。 (b) **by-domain 双轨结构调整**：`by-domain/` 目录为提前预留的架构骨架（4 个子域目录 + 占位 index.md），待后续按域填充详细架构文档。§1bis 整节切除 + §2 文档清单 5 行 by-domain 删除 + frontmatter tags/summary 同步清理（双轨说明从 README 移除，骨架保留）。v1.1.0/v1.5.0 修订记录保留为历史档案。 (c) **同步 06/08 视图状态**：`security_architecture.md` skeleton → active v1.0.0（2026-04-24 已升格，README 滞后）；`operations_architecture.md` skeleton → draft v0.2.0。§2 表格 / §3 阅读路径 / §4bis 段 / T1 触发条件联动修正。 |
 | 2026-05-02 | **v2.1.0（审计修复批次）**：修复 4 项 SSoT 对齐问题：(a) `architecture_model/infra/` 创建 `core_services.yaml`、`shared_infra.yaml` 骨架，`architecture_model/index.yaml` 不再引用缺失文件；(b) `architecture_principles.md` v1.1.0 §0 新增安全红线 R1–R4，`overview.md` 改为引用链接，消除安全红线双源；(c) `ssot-authority-map.md` v2.3.0 移除 `layer_01` 历史误标、矛盾追踪拆分活跃/已解决；(d) 修订历史归档至本文，`index.md` §8 仅保留最近 3 条。 |
 | 2026-05-06 | **v2.2.0（AUDIT-04 / 治理收口批次）**：双树读法与 `architecture_model/scope.yaml`、AGENTS §6.9 / `ssot-authority-map` 对齐；Python 基线统一到 ≥3.11（施工树 `technology_landscape.yaml` 与 EA 视图一致，勿混写 TECH-11）；新增 `docs/_working/audit/findings/` 与审计导航；`cross_layer_contracts.yaml` `partition` 增补 `ownership_model`；`validate_ssot.py` 修复模块 docstring、`check_audit_navigation_wiring()` 与 `--ci` 行为；`document-metadata-index` / `directory-registry` / `registry-master-index` 同步；`batch_create_index_md.py` 移除过时 `by-domain` 责任映射并补全 `09_audit/findings`；`invariants.yaml` INV-005 明确源码路径 vs EA 分层文件名；`scripts/arch_guard/manifest.yaml` 日期跟进。 |
+| 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为53域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。（本条从 `index.md` §10 回填归档，原 `revision_history.md` v2.2.0 之后未及时同步） |
+| 2026-07-23 | **v3.1.0（target_architecture/ 视图清理批次 B0-B5）**：12 个 TOGAF 视图文档迁移至 YAML SSoT + 永久区 principles 后删除，`target_architecture/` 收敛为派生视图 + principles 索引。**B0**（commit `4468c1364a`）：修复 `directory_registry.yaml` 全文 UTF-8 乱码（166 处 `?` 还原为正确中文）。**B1**（commit `1e543f83e8`）：删除 3 个已废弃文档——`application_architecture.md` / `runtime_planes.md` / `architecture_principles.md`（target v1.2.0 副本，含已废弃 BvB 方法论），独特内容已迁至 `04_architecture_principles_decisions/`，同步全项目引用 + 修复 `invariants.yaml` 64 处 mojibake。**B2**（commit `991e0cfcd4` + `268a9ad9fe`）：迁移 3 个文档至现有 YAML 后删除——`architecture_endgame_locked.md` → `architecture_lock.yaml`（新建）、`integration_architecture.md` → `cross_layer_contracts.yaml`（扩展 EXT-001~005）、`information_architecture.md` → `directory_registry.yaml`（扩展）。**B3**（commit `6237664ada` / `0f80204235` / `3ebf9d8b82` / `e5a36c487a` / `85bd83bd`）：迁移 5 个文档至新建 YAML 后删除——`data_architecture.md` → `data_entity_catalog.yaml`、`governance_architecture.md` → `governance_systems_registry.yaml`、`technology_architecture.md` → `dr_bcp_matrix.yaml`、`business_architecture.md` → `value_stream_map.yaml`、`security_architecture.md` → `threat_model.yaml`（修复 571 行严重编码乱码 U+FFFD）。**B4**（commit `07cf9290`）：迁移 `frontend_architecture.md` → `frontend_model.yaml`（G0 stub，frontend/ 未物理建立）。永恒原则已在对应 `*_principles.md`（supersedes VIEW-XX-XXX-ARCH，valid_from 2026-07-19）。**B5**（本批次）：`revision_history.md` 补 v3.0.0 / v3.1.0 条目；`generate_path_tree.py` 清理 17 条 stale 文件名映射 + 修正 L438 日期注释；重新生成 `full_project_tree_en/zh.md`。遗留：`PROJECT_BACKGROUND_FOR_CLAUDE.md` 从 `02_enterprise_architecture/` 迁移至 `08_knowledge/`（永久区，需 `--allow-promote`，AI 不可自用）。 |
