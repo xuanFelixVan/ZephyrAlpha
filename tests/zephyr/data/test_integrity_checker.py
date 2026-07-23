@@ -48,18 +48,22 @@ class TestCheckTableToday:
         assert result["count"] == 50
 
     def test_skip_no_date_column(self):
-        """无日期列 -> 跳过返回 None。"""
+        """无日期列 -> 标记 skipped=True（Phase 3-B 治本修复：不再静默返回 None）。"""
         info = {"table": "some_table", "date_column": "", "threshold": 100}
         today = datetime.date(2026, 7, 15)
         result = _check_table_today(info, today)
-        assert result is None
+        assert result is not None
+        assert result["skipped"] is True
+        assert result["healthy"] is True
 
     def test_skip_zero_threshold(self):
-        """阈值为0 -> 跳过返回 None。"""
+        """阈值为0 -> 标记 skipped=True（Phase 3-B 治本修复：不再静默返回 None）。"""
         info = {"table": "some_table", "date_column": "trade_date", "threshold": 0}
         today = datetime.date(2026, 7, 15)
         result = _check_table_today(info, today)
-        assert result is None
+        assert result is not None
+        assert result["skipped"] is True
+        assert result["healthy"] is True
 
     def test_ch_query_failure_returns_zero(self):
         """CH查询失败 -> count=0, healthy=False。"""

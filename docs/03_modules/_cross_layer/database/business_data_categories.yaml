@@ -580,7 +580,7 @@
   engine: clickhouse
   database: c1_market
   table: index_weight
-  schema_file: null
+  schema_file: schemas/categories/market_index_weight.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -874,7 +874,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_meta
-  schema_file: null
+  schema_file: schemas/categories/market_sector_meta.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
@@ -890,7 +890,7 @@
   engine: clickhouse
   database: c1_market
   table: sector_list
-  schema_file: null
+  schema_file: schemas/categories/market_sector_list.py
   data_type: 元数据
   lifecycle: permanent
   sla_level: L2
