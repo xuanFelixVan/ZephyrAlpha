@@ -7967,3 +7967,61 @@ entries:
   related_rules: 'AGENTS.md §11.0.2 SSoT 真源分类铁律, trae_062 (SSoT 分类)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+
+# --- #ARCH-HEARTBEAT-002: heartbeat daemon 活性反转治本（2026-07-23） ---
+# 关联 #ARCH-HEARTBEAT-001 的延续议题：daemon 本体治本后，发现 daemon 自身是
+# last_heartbeat 唯一刷新源，chat 异常关闭（未 merge/abort）时 daemon 永久保活死 session。
+- issue_id: '#ARCH-HEARTBEAT-002'
+  title: heartbeat daemon 活性反转（liveness-inversion）——idle-timeout 自动退出治本
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-23 立项裁定（#ARCH-HEARTBEAT-001 延续议题）。
+
+    病根（活性反转）：#ARCH-HEARTBEAT-001 的 daemon 退出判据仅"session 不在 registry"，
+    但 daemon 自己就是 last_heartbeat 唯一刷新源——chat 异常关闭（未走 merge/abort）时，
+    daemon 持续每 30s 刷新心跳，session 永远"存活"，held_files 永久阻塞。
+    实测 sess-39820/sess-53456 僵尸 daemon 在 chat 结束后仍每 30s 刷新心跳。
+    本质：活性锚点（last_heartbeat）= daemon 自己的输出，形成自证存活闭环。
+
+    治本方案（独立活性锚点）：
+    引入 last_activity 字段（SessionInfo），只由真实治理操作刷新
+    （register/claim_file/register_dependency），heartbeat 不刷新。
+    daemon 主循环新增 idle 检查：_session_idle_seconds 返回 now - last_activity，
+    idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s（30min）时 daemon 自动退出
+    （写 exited reason=idle timeout 记录，返回 0）→ 90s 后 registry 条目过期
+    → held_files 自动释放。
+
+    安全设计：
+      - last_activity 缺失时（修复前旧条目）回退 start_time，绝不回退 last_heartbeat
+        （回退它等于重新引入活性反转）
+      - _session_idle_seconds 查询失败返回 None（保守不退出，对标 _session_in_registry）
+      - _MAX_IDLE_SECONDS 从 session_concurrency 单向 try-import，失败兜底 1800
+
+    实施点：
+      - session_concurrency.py：SessionInfo 新增 last_activity 字段；
+        register/claim_file/register_dependency 刷新 last_activity；
+        _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800 常量
+      - heartbeat_daemon.py：_session_idle_seconds() 函数；run_daemon 主循环 idle 检查；
+        _MAX_IDLE_SECONDS try-import
+      - test_heartbeat_daemon.py：test_run_daemon_exits_on_idle_timeout +
+        test_run_daemon_keeps_alive_when_recent_activity +
+        test_session_idle_seconds_fallback_and_none
+  impact:
+    - 'src/zephyr/security/access_control/session_concurrency.py（SessionInfo 新增 last_activity 字段；register/claim_file/register_dependency 刷新；_ACTIVITY_IDLE_TIMEOUT_SECONDS 常量）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py（_session_idle_seconds 函数；run_daemon 主循环 idle 检查；_MAX_IDLE_SECONDS try-import）'
+    - 'tests/governance/rule_bridge/test_heartbeat_daemon.py（idle-timeout 退出 + 活跃保活 + 回退 None 三个测试用例）'
+  fix_phase: |
+    Phase 1 治本（已完成 2026-07-23，commit 10af52ed78）：
+      - P1: SessionInfo 新增 last_activity 字段（to_dict/from_dict 双向闭环）
+      - P2: register/claim_file/register_dependency 刷新 last_activity（heartbeat 不刷新）
+      - P3: heartbeat_daemon _session_idle_seconds + run_daemon idle 检查（超 1800s 退出）
+      - P4: 3 个测试用例覆盖（idle 退出 / 活跃保活 / 回退 None）
+      - P5: 37/37 tests passed
+      - P6: architecture_issue_registry.yaml 登记本条目 + 代码引用改为 #ARCH-HEARTBEAT-002
+      - P7: AGENTS.md RULE-WORKTREE 章节同步 idle-timeout 说明
+  status: resolved
+  related_adjudication: '#ARCH-HEARTBEAT-001 (heartbeat daemon 本体治本，本议题为其延续)'
+  related_rules: 'AGENTS.md RULE-WORKTREE heartbeat 保活机制, FP-ISO.4C worktree 君子协定'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'

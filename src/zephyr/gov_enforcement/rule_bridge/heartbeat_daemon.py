@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon)
 # [STARTUP] manual
 # [MATURITY] design
-# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-INVERSION 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
+# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
 # [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / idle 超 _MAX_IDLE_SECONDS）；_append_heartbeat_log 字段集
 # [STABILITY] evolving
 # [SAFETY] M
@@ -97,7 +97,7 @@ _REGISTRY_ERROR_BACKOFF = 5
 # daemon 启动后第一次 heartbeat 的延迟（秒），给 start 调用方时间完成 registry.register
 _INITIAL_DELAY = 1
 
-# daemon 的 idle 退出上限（#ARCH-HEARTBEAT-INVERSION 治本，2026-07-23）：
+# daemon 的 idle 退出上限（#ARCH-HEARTBEAT-002 治本，2026-07-23）：
 # daemon 自身是 last_heartbeat 唯一刷新源——若仅以"session 在 registry 中"判活，
 # chat 异常关闭（未走 merge/abort）时 daemon 会永久保活死 session（活性反转，
 # held_files 永久阻塞；实测 sess-39820/sess-53456 僵尸 daemon）。治本：以
@@ -251,7 +251,7 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
       5. session 不在 registry 中 → 写 ``exited`` 记录，返回 0
       5b. session idle 超 ``_MAX_IDLE_SECONDS``（last_activity 活性锚点，
           heartbeat 不刷新）→ 写 ``exited``(reason=idle timeout) 记录，返回 0
-          （#ARCH-HEARTBEAT-INVERSION 活性反转治本：消除僵尸 daemon 永久保活死 session）
+          （#ARCH-HEARTBEAT-002 活性反转治本：消除僵尸 daemon 永久保活死 session）
       6. 异常 → 写 ``error`` 记录，continue（不退出）
       7. 致命错误 → 写 ``fatal`` 记录，返回 1
 
