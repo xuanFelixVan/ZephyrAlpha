@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL
+# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL; run_known_gap_backfill()读取known_data_gaps.yaml检测已登记历史缺口(不受7天窗口限制, audit 2.7/3.8治本)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import os
 import time
 from pathlib import Path
 from time import sleep
@@ -605,6 +606,207 @@ def _record_backfill_progress(
         pass
 
 
+# ========== 已知缺口检测（audit 2.7/3.8 治本，#ARCH-CH-029） ==========
+
+# 已知数据缺口注册表路径
+_KNOWN_GAPS_PATH = os.path.join(
+    os.path.dirname(__file__), "config", "known_data_gaps.yaml"
+)
+
+# SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，audit 2.7/3.8）
+_SQL_GAP_DATE_RANGE_COUNTS = (
+    "SELECT {date_col} as d, count() as cnt "
+    "FROM {table} "
+    "WHERE {date_col} >= toDate('{start}') "
+    "AND {date_col} <= toDate('{end}') "
+    "GROUP BY {date_col} ORDER BY {date_col}"
+)
+_SQL_GAP_TABLE_ROW_COUNT = "SELECT count() FROM {table}"
+
+
+def _load_known_gaps() -> list[dict]:
+    """加载已知数据缺口注册表（audit 2.7/3.8 治本）。
+
+    Returns:
+        已登记的缺口列表，每项含 id/table/gap_type/start_date/end_date/status 等。
+        文件不存在或解析失败时返回空列表（降级为仅 7 天窗口检测）。
+    """
+    try:
+        with open(_KNOWN_GAPS_PATH, encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        gaps = data.get("gaps", []) if data else []
+        log.info("已知缺口注册表加载: %d 条（%s）", len(gaps), _KNOWN_GAPS_PATH)
+        return gaps
+    except FileNotFoundError:
+        log.debug("已知缺口注册表不存在: %s（仅使用 7 天窗口检测）", _KNOWN_GAPS_PATH)
+        return []
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        log.warning("已知缺口注册表加载失败: %s", e)
+        return []
+
+
+def _check_date_range_gap(gap: dict) -> dict:
+    """检测 date_range 类型缺口（指定日期范围内行数低于阈值）。
+
+    Args:
+        gap: 缺口字典，含 table/start_date/end_date/detection_threshold/date_column
+
+    Returns:
+        检测结果 dict: {id, table, missing_dates, total_expected, total_actual, still_missing}
+    """
+    table = gap["table"]
+    start = gap["start_date"]
+    end = gap["end_date"]
+    date_col = gap.get("date_column", "trade_date")
+    threshold = gap.get("detection_threshold", _TICK_THRESHOLD)
+
+    # 查询缺口范围内每个日期的行数
+    sql = _SQL_GAP_DATE_RANGE_COUNTS.format(
+        date_col=date_col, table=table, start=start, end=end,
+    )
+    raw = ch_reader.query(sql)
+    date_counts: dict[str, int] = {}
+    for line in raw.strip().split("\n"):
+        if not line:
+            continue
+        parts = line.split("\t")
+        if len(parts) == 2:
+            date_counts[parts[0]] = int(parts[1])
+
+    # 生成缺口范围内的交易日列表
+    from datetime import date as _date, timedelta as _td
+    start_d = _date.fromisoformat(start)
+    end_d = _date.fromisoformat(end) if end else _date.today()
+    all_dates: list[str] = []
+    cur = start_d
+    while cur <= end_d:
+        if cur.weekday() < 5:  # 周一到周五
+            all_dates.append(cur.isoformat())
+        cur += _td(days=1)
+
+    missing_dates = [
+        d for d in all_dates
+        if date_counts.get(d, 0) < threshold
+    ]
+
+    return {
+        "id": gap["id"],
+        "table": table,
+        "missing_dates": missing_dates,
+        "total_dates": len(all_dates),
+        "still_missing": len(missing_dates),
+    }
+
+
+def _check_empty_table_gap(gap: dict) -> dict:
+    """检测 empty_table 类型缺口（整表行数低于阈值）。
+
+    Args:
+        gap: 缺口字典，含 table/detection_threshold
+
+    Returns:
+        检测结果 dict: {id, table, row_count, still_empty}
+    """
+    table = gap["table"]
+    threshold = gap.get("detection_threshold", 1)
+    sql = _SQL_GAP_TABLE_ROW_COUNT.format(table=table)
+    raw = ch_reader.query(sql)
+    row_count = 0
+    try:
+        row_count = int(raw.strip())
+    except (ValueError, TypeError):
+        pass
+    return {
+        "id": gap["id"],
+        "table": table,
+        "row_count": row_count,
+        "still_empty": row_count < threshold,
+    }
+
+
+def run_known_gap_backfill(scheduler=None) -> dict:
+    """检测并补下载已知数据缺口（audit 2.7/3.8 治本，#ARCH-CH-029）。
+
+    与 run_weekend_backfill（7天窗口）互补：
+    - run_weekend_backfill: 检测最近 7 天的增量缺口
+    - run_known_gap_backfill: 检测已登记的历史缺口（不受 7 天窗口限制）
+
+    流程：
+    1. 加载 known_data_gaps.yaml
+    2. 过滤出 status != "completed" 的缺口
+    3. 对 date_range 缺口: 检测仍缺失的日期 → 触发 backfill_tick_data()
+    4. 对 empty_table 缺口: 检测表行数 → log 告警（不自动 backfill，需人工介入）
+    5. backfill 成功的缺口标记 status=completed（需人工确认后更新 YAML）
+
+    Returns:
+        {"checked": int, "still_missing": int, "backfilled_rows": int, "details": [...]}
+    """
+    gaps = _load_known_gaps()
+    active_gaps = [g for g in gaps if g.get("status") != "completed"]
+    if not active_gaps:
+        log.info("已知缺口注册表: 无活跃缺口（全部 completed 或为空）")
+        return {"checked": 0, "still_missing": 0, "backfilled_rows": 0, "details": []}
+
+    log.info("=" * 60)
+    log.info("已知缺口检测开始 (%d 条活跃缺口)", len(active_gaps))
+    log.info("=" * 60)
+
+    details: list[dict] = []
+    total_backfilled = 0
+    still_missing_count = 0
+
+    for gap in active_gaps:
+        gap_type = gap.get("gap_type", "")
+        gap_id = gap.get("id", "unknown")
+
+        if gap_type == "date_range":
+            result = _check_date_range_gap(gap)
+            details.append(result)
+            if result["still_missing"] > 0:
+                still_missing_count += result["still_missing"]
+                log.warning(
+                    "缺口 %s: %s 仍有 %d/%d 天缺失",
+                    gap_id, result["table"],
+                    result["still_missing"], result["total_dates"],
+                )
+                # 对 tick_data 缺口触发 backfill
+                if "tick_data" in result["table"]:
+                    from datetime import date as _date
+                    missing_d = [
+                        _date.fromisoformat(d) for d in result["missing_dates"]
+                    ]
+                    if missing_d:
+                        log.info("触发 tick_data 补下载: %d 天", len(missing_d))
+                        rows = backfill_tick_data(missing_d)
+                        total_backfilled += rows
+            else:
+                log.info("缺口 %s: %s 已补全", gap_id, result["table"])
+
+        elif gap_type == "empty_table":
+            result = _check_empty_table_gap(gap)
+            details.append(result)
+            if result["still_empty"]:
+                still_missing_count += 1
+                log.warning(
+                    "缺口 %s: %s 仍为空 (行数=%d)——%s",
+                    gap_id, result["table"], result["row_count"],
+                    gap.get("resolution_plan", "需人工介入"),
+                )
+            else:
+                log.info("缺口 %s: %s 已有数据 (行数=%d)", gap_id, result["table"], result["row_count"])
+
+    log.info("=" * 60)
+    log.info("已知缺口检测完成: 仍缺失=%d 补下载行数=%d", still_missing_count, total_backfilled)
+    log.info("=" * 60)
+
+    return {
+        "checked": len(active_gaps),
+        "still_missing": still_missing_count,
+        "backfilled_rows": total_backfilled,
+        "details": details,
+    }
+
+
 def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> dict:
     """L10 周末补下载主入口（全表覆盖）。
 
@@ -657,10 +859,16 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
     log.info("L10 周末补下载完成: 缺失表=%d 总行数=%d", len(all_missing_tables), total_rows)
     log.info("=" * 60)
 
+    # 5. 检测已知历史缺口（audit 2.7/3.8 治本，#ARCH-CH-029）
+    #    与 7 天窗口互补：7 天窗口检测增量缺口，known_gap 检测已登记历史缺口
+    known_result = run_known_gap_backfill(scheduler)
+    total_rows += known_result.get("backfilled_rows", 0)
+
     return {
         "missing_tables": all_missing_tables,
         "total_rows": total_rows,
         "success": True,
+        "known_gaps": known_result,
     }
 
 

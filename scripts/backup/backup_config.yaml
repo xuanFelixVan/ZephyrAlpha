@@ -20,6 +20,23 @@ repository:
   path: "F:\\restic-zephyr"
   target_drive: "F:"
 
+# 异地/离线副本配置（audit 7.7 治本，#ARCH-CH-032，2026-07-23）
+# 背景：当前所有备份到 F:\restic-zephyr（本地外接盘），与主库同物理站点。
+# 治本方案：添加异地 restic repo 配置，由环境变量驱动。
+# 激活条件：设置 RESTIC_OFFSITE_REPOSITORY 环境变量后，backup.ps1 在本地备份完成后
+#           自动 restic copy 到异地 repo（restic copy 是增量且安全的）。
+# 当前状态：未配置（单用户回测期，异地副本 gated on 云存储凭证/实盘立项）。
+offsite_repository:
+  # 异地 repo 路径（环境变量驱动，未设置则跳过异地复制）
+  # 示例: "s3:zephyr-backup/restic" 或 "rest:https://backup.example.com/zephyr"
+  path: "${RESTIC_OFFSITE_REPOSITORY}"  # 环境变量占位，未设置时为空=跳过
+  # 异地 repo 密码文件路径（环境变量驱动）
+  password_file: "${RESTIC_OFFSITE_PASSWORD_FILE}"
+  # 复制策略：restic copy（增量，仅复制本地有但异地没有的 snapshots）
+  copy_strategy: "restic_copy"
+  # 激活状态（只读标记，由 backup.ps1 检测 path 是否非空决定）
+  enabled: false  # true 当 RESTIC_OFFSITE_REPOSITORY 环境变量设置时
+
 dump_dir: "D:\\tmp_db_dumps"
 
 # --- DOCUMENTATION ONLY（非真源，不被任何脚本消费）---

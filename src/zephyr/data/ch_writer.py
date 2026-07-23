@@ -68,6 +68,12 @@ _CH_HOST = os.environ.get("CLICKHOUSE_HOST", "")
 _CH_TCP_PORT = int(os.environ.get("CLICKHOUSE_PORT", "9000"))
 _CH_HTTP_PORT = int(os.environ.get("CLICKHOUSE_HTTP_PORT", "8123"))
 
+# audit 9.4 RBAC（#ARCH-CH-027，2026-07-23 治本）：
+# 写入路径使用 zephyr_writer 账号（DB 级 INSERT/ALTER/CREATE/DROP/OPTIMIZE 权限）
+# 未配置 CLICKHOUSE_WRITER_USER 时回退到 CLICKHOUSE_USER（向后兼容）
+_CH_USER = os.environ.get("CLICKHOUSE_WRITER_USER") or os.environ.get("CLICKHOUSE_USER", "default")
+_CH_PASSWORD = os.environ.get("CLICKHOUSE_WRITER_PASSWORD") or os.environ.get("CLICKHOUSE_PASSWORD", "")
+
 # 默认超时（秒）
 _DEFAULT_TIMEOUT = 600
 
@@ -159,7 +165,8 @@ def _get_client():
             return None
         from clickhouse_driver import Client
         try:
-            c = Client(host=_CH_HOST, port=_CH_TCP_PORT, connect_timeout=3,
+            c = Client(host=_CH_HOST, port=_CH_TCP_PORT, user=_CH_USER,
+                       password=_CH_PASSWORD, connect_timeout=3,
                        tcp_keepalive=True, sync_request_timeout=10)
             c.execute("SELECT 1")
             _ch_client = c
@@ -258,6 +265,18 @@ def _invalidate_http_host(reason: str = "") -> None:
             log.info("HTTP 连接已失效（%s），%ds 冷却后重试", reason, _HTTP_COOLDOWN_SEC)
 
 
+def _ch_http_headers() -> dict[str, str]:
+    """返回 CH HTTP API 认证头（audit 9.4 RBAC #ARCH-CH-027）。
+
+    使用 X-ClickHouse-User/X-ClickHouse-Key 头传递 zephyr_writer 凭据，
+    避免 URL query string 暴露密码到日志。
+    """
+    return {
+        "X-ClickHouse-User": _CH_USER,
+        "X-ClickHouse-Key": _CH_PASSWORD,
+    }
+
+
 def _http_insert(
     sql: str,
     tsv_bytes: bytes,
@@ -284,7 +303,7 @@ def _http_insert(
     path = f"/?query={urllib.parse.quote(sql)}"
     try:
         conn = http.client.HTTPConnection(http_host, _CH_HTTP_PORT, timeout=timeout)
-        conn.request("POST", path, body=tsv_bytes)
+        conn.request("POST", path, body=tsv_bytes, headers=_ch_http_headers())
         resp = conn.getresponse()
         body = resp.read()
         conn.close()
@@ -337,7 +356,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
         path = f"/?query={urllib.parse.quote(sql)}"
         try:
             conn = http.client.HTTPConnection(http_host, _CH_HTTP_PORT, timeout=timeout)
-            conn.request("GET", path)
+            conn.request("GET", path, headers=_ch_http_headers())
             resp = conn.getresponse()
             if resp.status == 200:
                 data = resp.read().decode("utf-8", errors="replace")
