@@ -19,6 +19,7 @@ partition:
     43 条技术条目，Adopt/Trial/Assess/Hold/Build 五象限。
     活文档，每 3 个月刷新一次。
     来源：technology-landscape.md v1.0.0 迁移。
+    2026-07-24 Phase B：新增 G0.5 Python 过渡层 5 条（T-A13~T-A17，ARCH-047 裁定），总数 43→48。
   source_views:
     - 04-technology_architecture.md
   related_kb_refs:
@@ -43,10 +44,10 @@ quadrants:
     description: "无合适开源替代，自研模块"
 
 # =============================================================================
-# 技术条目（43 条）
+# 技术条目（48 条）
 # =============================================================================
 technologies:
-  # ─── Adopt（12 条）───
+  # ─── Adopt（17 条）───
   - id: T-A01
     name: "Cursor (Opus / Sonnet) / AI IDE 主力"
     quadrant: adopt
@@ -73,10 +74,10 @@ technologies:
     name: "Python / 主语言"
     quadrant: adopt
     category: language
-    version: ">=3.11"
+    version: ">=3.12"
     owner: Architect
     layers: [all]
-    rationale: "量化/AI 生态最成熟，pandas/numpy/sklearn 原生支持；语言最低版本以 pyproject.toml requires-python 为真源（当前 >=3.11）"
+    rationale: "量化/AI 生态最成熟，pandas/numpy/sklearn 原生支持；语言最低版本以 pyproject.toml requires-python 为真源（当前 >=3.12）"
     refresh_cycle: "年度"
 
   - id: T-A04
@@ -175,6 +176,60 @@ technologies:
     rationale: "自动 instrumentation HTTP 调用，零侵入"
     refresh_cycle: "半年"
     related_ref: R48
+
+  # ─── G0.5 Python 过渡层（ARCH-047 裁定，真源 chart_factory.py）───
+  - id: T-A13
+    name: "Panel / G0.5 Python 过渡层应用框架"
+    quadrant: adopt
+    category: g0.5-visualization
+    version: latest
+    owner: Architect
+    layers: [g0.5]
+    rationale: "ARCH-047 裁定：G0(无前端)与 G1 之间插入 Python 原生可视化层，100% AI 开发同语言。真源 src/zephyr/frontend/dashboard/components/chart_factory.py"
+    refresh_cycle: "半年"
+    related_ref: "ARCH-047; frontend_principles.md §9"
+
+  - id: T-A14
+    name: "HoloViz (HoloViews + Datashader + hvPlot) / 大数据可视化"
+    quadrant: adopt
+    category: g0.5-visualization
+    version: latest
+    owner: Architect
+    layers: [g0.5]
+    rationale: "Datashader 原生/WebSocket 原生/crossfiltering 原生，三硬伤全治本（ARCH-047 方案 D）"
+    refresh_cycle: "半年"
+    related_ref: "ARCH-047"
+
+  - id: T-A15
+    name: "Plotly / 交互式图表"
+    quadrant: adopt
+    category: g0.5-visualization
+    version: latest
+    owner: Architect
+    layers: [g0.5]
+    rationale: "G0.5 过渡层交互图表组件，chart_factory.py 统一工厂封装"
+    refresh_cycle: "年度"
+
+  - id: T-A16
+    name: "plotly_resampler / 大数据下采样"
+    quadrant: adopt
+    category: g0.5-visualization
+    version: latest
+    owner: Architect
+    layers: [g0.5]
+    rationale: "Plotly 大数据下采样，回测净值曲线百万点流畅渲染"
+    refresh_cycle: "年度"
+
+  - id: T-A17
+    name: "TradingView Lightweight Charts v5.2 / 金融 K 线"
+    quadrant: adopt
+    category: g0.5-visualization
+    version: "v5.2"
+    owner: Architect
+    layers: [g0.5]
+    rationale: "开源、性能强、金融图表业界标配；G0.5 已实施 v5.2（ARCH-047）"
+    refresh_cycle: "年度"
+    related_ref: "ARCH-047"
 
   # ─── Trial（9 条）───
   - id: T-T01
@@ -449,7 +504,7 @@ technologies:
     name: "Vendor Registry + ACL / 数据源注册表"
     quadrant: build
     category: core-engine
-    physical_path: src/zephyr/data/connectors/
+    physical_path: src/zephyr/data/implementations/
     build_reason: "多 Vendor failover 策略 + 按 asset_class/jurisdiction 命名空间高度定制化"
     design_doc: "ocp-extension-points.md"
     status: planned

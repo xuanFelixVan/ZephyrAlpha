@@ -1253,7 +1253,7 @@ external_contracts:
     protocol: "REST / WebSocket"
     description: "入站数据必须经过 data/quality/ 质量门禁方可下发；缺数据时触发 DataQualityError (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_002.py
-    acl_landing: src/zephyr/data/connectors/
+    acl_landing: src/zephyr/data/implementations/
     status: planned
     note: "首次数据接入时激活"
   - id: EXT-003
@@ -1283,7 +1283,7 @@ external_contracts:
     protocol: "REST / file"
     description: "另类数据（情感、新闻、事件）入站接口。数据必须经 ACL 规范化后方可进入因子研究流程 (INV-007: events crossing this boundary must carry idempotency_key)"
     physical_path: src/zephyr/shared/contracts/external/ext_005.py
-    acl_landing: src/zephyr/data/connectors/
+    acl_landing: src/zephyr/data/implementations/
     status: planned
     note: "因子研究阶段激活"
 # =============================================================================

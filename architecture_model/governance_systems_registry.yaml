@@ -324,7 +324,7 @@ systems:
     activation: "OQ-081 硬闸门（Sprint 0 前 P0）"
     source_oq: OQ-076
     code_location: "compliance/ai_security/"
-    note: "全三层展开: Policy(ai_security_gateway_policy.md + .cursorignore + .cursorrules) → Factory(compile_desensitize_rules.py) → Runtime(compliance/ai_security/ 六大模块 + aisg/audit_log.jsonl). 与 B-01 正交(B-01=治理治理 vs D-01=防泄密); D-01 是 VIB-03 上游(先脱敏再调度); D-01 audit ≠ VIB-14(数据流审计 vs 业务决策审计)"
+    note: "全三层展开: Policy(ai_security_gateway_policy.md + .trae/rules/) → Factory(compile_desensitize_rules.py) → Runtime(compliance/ai_security/ 六大模块 + aisg/audit_log.jsonl). 与 B-01 正交(B-01=治理治理 vs D-01=防泄密); D-01 是 VIB-03 上游(先脱敏再调度); D-01 audit ≠ VIB-14(数据流审计 vs 业务决策审计)"
 
   - id: D-02
     name: "Scout Agent（AI 情报员）"
@@ -424,7 +424,7 @@ ai_employee_openings:
     - opening: "AI 决策记录模板"
       location: "KB:decisions namespace（Session Log decisions 结构化字段）"
     - opening: "AISG 红线过滤"
-      location: ".cursorignore + .cursorrules（OQ-081 硬闸门）"
+      location: ".trae/rules/（OQ-081 硬闸门）"
     - opening: "AISG 策略文档"
       location: "docs/01_policies_and_standards/ai-security-gateway-policy.md（Stage K 待建）"
     - opening: "Scout 抓取白名单"

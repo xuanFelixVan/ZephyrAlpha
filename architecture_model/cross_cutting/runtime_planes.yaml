@@ -57,7 +57,7 @@ planes:
         note: AISG security_gateway，< 50ms 目标（Hot-adjacent）
       - id: shared-runtime-plane-tag
         domain: D_SHARED
-        submodule: contracts/runtime_plane_tag.py
+        submodule: src/zephyr/shared/contracts/core/runtime_plane_tag.py
         note: 枚举定义，所有平面共用契约
     t3_additional_modules:
       - l00-connectors-hot
@@ -85,7 +85,7 @@ planes:
     description: >
       策略计算 + 因子引擎 + AI 决策 + OMS 状态机。
       可抢占（asyncio / 协程）。Async event loop / Task queue。
-      语言：Python >=3.11 / asyncio。
+      语言：Python >=3.12 / asyncio。
       部署：Linux VM / 容器（K8s Pod）。
     activation_trigger: T0（当前已激活，全量）
     current_status: active
@@ -253,7 +253,7 @@ planes:
       - id: shared-contracts
         domain: D_SHARED
         submodule: contracts/*.py（余下契约）
-        note: 跨层公共契约（除 runtime_plane_tag.py 外）
+        note: 跨层公共契约（除 src/zephyr/shared/contracts/core/runtime_plane_tag.py 外）
     sla:
       latency_p50_ms: 50
       latency_p99_ms: 1000
@@ -261,7 +261,7 @@ planes:
       availability_percent: 99.9
       failure_impact: 决策质量下降（信号延迟 / AI 响应慢）
     tech_stack:
-      languages: ["Python >=3.11", "Rust CPython extensions（热点函数，Assess）"]
+      languages: ["Python >=3.12", "Rust CPython extensions（热点函数，Assess）"]
       runtime: Linux VM / 容器（K8s Pod）
       ipc: [Redis Streams, Kafka, FastAPI HTTP, WebSocket]
       storage: Redis / PostgreSQL / Parquet（hot/warm border）
@@ -400,7 +400,7 @@ planes:
 
 cross_plane_rules:
   - rule: HOT_WARM_IPC_ONLY
-    statement: Hot ⇄ Warm 必须过 shared/contracts/runtime_plane_tag.py 定义的 IPC 协议（默认 Aeron / LMAX Disruptor），禁止直接函数调用
+    statement: Hot ⇄ Warm 必须过 src/zephyr/shared/contracts/core/runtime_plane_tag.py 定义的 IPC 协议（默认 Aeron / LMAX Disruptor），禁止直接函数调用
   - rule: WARM_COLD_ASYNC_ONLY
     statement: Warm → Cold 通过 Parquet / Redis Streams 异步推送，永远非阻塞
   - rule: COLD_TO_WARM_SHADOW_REQUIRED
