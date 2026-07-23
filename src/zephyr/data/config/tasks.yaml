@@ -1554,7 +1554,7 @@ tasks:
   fallback_sources:
   - source: akshare
     capability: hk_kline
-- task_id: kline_us_daily_incremental
+- task_id: kline_us_daily_qmt_incremental
   table: c1_market.kline_us_daily
   source: miniqmt
   schedule: daily_capital
@@ -1564,7 +1564,7 @@ tasks:
   capability: kline_us_daily
   symbols:         # 需指定美股代码如AAPL.US
   extra:
-    description: "美股日K线增量（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
+    description: "美股日K线增量-QMT源（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
 
   fallback_sources:
   - source: akshare

@@ -75,6 +75,9 @@ dev = [
 ]
 demo = [
     "akshare>=1.12.0",
+    # Phase 4: 数据源依赖（按需安装，非核心包）
+    "baostock>=0.8.8,<0.9.0",          # 交易日历/沪深300成分股（baostock_provider）
+    "clickhouse-driver>=0.2.6,<1.0.0",   # ClickHouse native protocol（ch_writer/ch_reader 备选）
 ]
 
 [tool.pytest.ini_options]

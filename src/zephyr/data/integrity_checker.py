@@ -51,15 +51,25 @@ def _check_table_today(info: dict, today: datetime.date) -> dict | None:
         today: 检查日期
 
     Returns:
-        检查结果 dict（含 table/date_col/count/threshold/healthy），跳过时返回 None。
+        检查结果 dict（含 table/date_col/count/threshold/healthy/skipped）。
+        元数据表（无日期列或阈值为0）标记 skipped=True 并显式上报，不再静默跳过（Phase 3-B 治本修复）。
     """
     table = info.get("table", "")
     date_col = info.get("date_column", "")
     threshold = info.get("threshold", 0)
 
+    # Phase 3-B 治本修复：元数据表（如 stock_list/etf_list 等无日频数据的表）显式标记为 skipped，
+    # 不再静默跳过——静默跳过导致巡检覆盖率不透明，AI无法判断"未检查"vs"检查了但健康"。
     if not date_col or threshold <= 0:
-        log.debug("表 %s 跳过巡检（无日期列或阈值为0）", table)
-        return None
+        log.info("表 %s 跳过巡检（元数据表：无日期列或阈值为0，属正常白名单）", table)
+        return {
+            "table": table,
+            "date_col": date_col,
+            "count": 0,
+            "threshold": threshold,
+            "healthy": True,
+            "skipped": True,
+        }
 
     d_str = today.isoformat()
     cnt = ch_reader.query(_SQL_COUNT_TODAY.format(table=table, date_col=date_col, d_str=d_str))
@@ -80,6 +90,7 @@ def _check_table_today(info: dict, today: datetime.date) -> dict | None:
         "count": count,
         "threshold": threshold,
         "healthy": healthy,
+        "skipped": False,
     }
 
 
@@ -139,9 +150,11 @@ def run_daily_check(scheduler=None) -> dict:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
+    skipped_count = sum(1 for r in results if r.get("skipped"))
     summary = {
         "total": total,
         "healthy_count": healthy_count,
+        "skipped_count": skipped_count,
         "unhealthy_tables": [
             {"table": r["table"], "count": r["count"], "threshold": r["threshold"]}
             for r in unhealthy
@@ -150,8 +163,8 @@ def run_daily_check(scheduler=None) -> dict:
     }
 
     log.info(
-        "巡检完成: %d 张表, %d 达标, %d 不达标",
-        total, healthy_count, len(unhealthy),
+        "巡检完成: %d 张表, %d 达标, %d 跳过(元数据), %d 不达标",
+        total, healthy_count, skipped_count, len(unhealthy),
     )
     if unhealthy:
         log.warning("不达标表: %s", [r["table"] for r in unhealthy])

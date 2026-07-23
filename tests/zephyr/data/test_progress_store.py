@@ -187,3 +187,79 @@ class TestThreadSafety:
 
         assert len(run_ids) == 10
         assert len(set(run_ids)) == 10  # 全部唯一
+
+
+class TestReapStaleRuns:
+    """卡死任务清理测试（Phase 3-B 治本修复）。"""
+
+    def test_reap_stale_running(self, store):
+        """超过24h的RUNNING任务应被清理为STALE。"""
+        from zephyr.shared.utils.time_utils import now_utc
+        # 手动插入一个25小时前的 RUNNING 记录（模拟进程崩溃后遗留）
+        old_time = (now_utc() - datetime.timedelta(hours=25)).isoformat(timespec="seconds")
+        store._conn.execute(
+            "INSERT INTO task_runs (task_id, started_at, status) VALUES (?, ?, 'RUNNING')",
+            ("crashed_task", old_time),
+        )
+        # 同时在 task_progress 中标记为 RUNNING
+        store.save_progress("crashed_task", "ifind", "2026-07-01", "RUNNING", 500)
+
+        reaped = store.reap_stale_runs(max_age_hours=24)
+        assert reaped == 1
+
+        # task_runs 应更新为 STALE
+        cur = store._conn.execute(
+            "SELECT status, finished_at, error_msg FROM task_runs WHERE task_id='crashed_task'"
+        )
+        row = cur.fetchone()
+        assert row["status"] == "STALE"
+        assert row["finished_at"] is not None
+        assert "Reaped" in row["error_msg"]
+
+        # task_progress 也应更新为 STALE
+        status = store.get_task_status("crashed_task")
+        assert status["last_status"] == "STALE"
+
+    def test_reap_does_not_touch_recent_running(self, store):
+        """未超过阈值的RUNNING任务不应被清理。"""
+        # 刚启动的任务（1小时前）
+        run_id = store.start_run("fresh_task")
+        assert run_id is not None
+
+        reaped = store.reap_stale_runs(max_age_hours=24)
+        assert reaped == 0
+
+        # 任务仍为 RUNNING
+        cur = store._conn.execute(
+            "SELECT status FROM task_runs WHERE run_id=?", (run_id,)
+        )
+        assert cur.fetchone()["status"] == "RUNNING"
+
+    def test_reap_does_not_touch_finished(self, store):
+        """已完成的任务（SUCCESS/FAILED）不应被清理。"""
+        run_id = store.start_run("done_task")
+        store.finish_run(run_id, "SUCCESS", rows_fetched=100)
+
+        reaped = store.reap_stale_runs(max_age_hours=24)
+        assert reaped == 0
+
+    def test_reap_multiple_stale(self, store):
+        """多个卡死任务应全部被清理。"""
+        from zephyr.shared.utils.time_utils import now_utc
+        old_time = (now_utc() - datetime.timedelta(hours=48)).isoformat(timespec="seconds")
+        for i in range(3):
+            store._conn.execute(
+                "INSERT INTO task_runs (task_id, started_at, status) VALUES (?, ?, 'RUNNING')",
+                (f"stale_{i}", old_time),
+            )
+
+        reaped = store.reap_stale_runs(max_age_hours=24)
+        assert reaped == 3
+
+    def test_reap_no_stale_returns_zero(self, store):
+        """无卡死任务时返回0。"""
+        store.start_run("running_task")
+        store.finish_run(store.start_run("finished_task"), "SUCCESS")
+
+        reaped = store.reap_stale_runs(max_age_hours=24)
+        assert reaped == 0

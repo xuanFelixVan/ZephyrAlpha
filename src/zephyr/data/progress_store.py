@@ -299,6 +299,74 @@ class ProgressStore:
             log.error("list_all_tasks 失败: %s", e)
             return []
 
+    # ============== 卡死任务清理（Phase 3-B 治本修复） ==============
+
+    def reap_stale_runs(self, max_age_hours: int = 24) -> int:
+        """清理卡死的 RUNNING 任务（start_run 被调用但 finish_run 从未调用，如进程崩溃）。
+
+        策略：
+        1. 查找 task_runs 中 status='RUNNING' 且 started_at 早于 max_age_hours 小时前的记录
+        2. 将这些记录标记为 status='STALE'，填入 finished_at 和 error_msg
+        3. 同步更新 task_progress 中 last_status='RUNNING' 的对应记录为 'STALE'
+
+        Args:
+            max_age_hours: RUNNING 状态超过多少小时视为卡死（默认24小时）
+
+        Returns:
+            被清理的卡死任务数量。
+        """
+        cutoff_dt = now_utc() - datetime.timedelta(hours=max_age_hours)
+        cutoff_str = cutoff_dt.isoformat(timespec="seconds")
+        now_str = now_utc().isoformat(timespec="seconds")
+        reaped = 0
+
+        with self._lock:
+            try:
+                # Step 1: 查找卡死的 RUNNING 记录
+                cur = self._conn.execute(
+                    "SELECT run_id, task_id FROM task_runs "
+                    "WHERE status='RUNNING' AND started_at < ?",
+                    (cutoff_str,),
+                )
+                stale_rows = cur.fetchall()
+                cur.close()
+
+                if not stale_rows:
+                    return 0
+
+                # Step 2: 逐条标记为 STALE
+                reap_msg = f"Reaped: stale RUNNING > {max_age_hours}h (auto-reap)"
+                for row in stale_rows:
+                    run_id = row["run_id"]
+                    task_id = row["task_id"]
+                    self._conn.execute(
+                        "UPDATE task_runs SET "
+                        "  finished_at=?, status='STALE', "
+                        "  error_msg=?"
+                        " WHERE run_id=?",
+                        (now_str, reap_msg, run_id),
+                    )
+                    # Step 3: 同步 task_progress（仅当 last_status 仍为 RUNNING 时）
+                    self._conn.execute(
+                        "UPDATE task_progress SET "
+                        "  last_status='STALE', "
+                        "  error_msg=?"
+                        " WHERE task_id=? AND last_status='RUNNING'",
+                        (reap_msg, task_id),
+                    )
+                    reaped += 1
+                    log.warning(
+                        "reap_stale_runs: 清理卡死任务 task_id=%s run_id=%s (RUNNING > %dh)",
+                        task_id, run_id, max_age_hours,
+                    )
+
+                if reaped > 0:
+                    log.info("reap_stale_runs: 共清理 %d 个卡死任务", reaped)
+                return reaped
+            except sqlite3.Error as e:
+                log.error("reap_stale_runs 失败: %s", e)
+                return 0
+
     def close(self) -> None:
         """关闭连接。"""
         with self._lock:

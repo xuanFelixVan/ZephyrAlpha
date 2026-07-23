@@ -38,7 +38,7 @@ import re
 
 __all__ = ["classify_error", "is_unrecoverable", "is_recoverable"]
 
-# 不可恢复错误关键词——配额/废弃/认证类，重试无意义
+# 不可恢复错误关键词——配额/废弃/认证/API漂移类，重试无意义
 _UNRECOVERABLE_PATTERNS = [
     r"-4318",           # iFind 配额耗尽
     r"-4309",           # iFind 接口废弃
@@ -55,9 +55,17 @@ _UNRECOVERABLE_PATTERNS = [
     r"unauthorized",
     r"license",
     r"许可",
+    # Phase 3-B: akshare API 漂移（库版本升级导致接口签名变化，重试无意义）
+    r"has no attribute",    # AttributeError: module 'akshare' has no attribute 'xxx'
+    r"AttributeError",
+    r"unexpected keyword",  # akshare 函数签名变更
+    r"takes \d+ positional",  # akshare 参数数量变更
+    # Phase 3-B: xtquant SDK 导入失败（环境问题，重试无意义）
+    r"xtquant SDK 导入失败",
+    r"No module named.*xtquant",
 ]
 
-# 可恢复错误关键词——超时/网络类，重试可能成功
+# 可恢复错误关键词——超时/网络/连接类，重试可能成功
 _RECOVERABLE_PATTERNS = [
     r"Timeout",
     r"ConnectionError",
@@ -73,6 +81,13 @@ _RECOVERABLE_PATTERNS = [
     r"\b502\b",
     r"temporarily",
     r"retry",
+    # Phase 3-B: xtquant/miniQMT 连接类错误（重试可能恢复）
+    r"miniQMT health_check 失败",
+    r"miniQMT 已断开",
+    r"无法连接行情服务",
+    r"连接断开",
+    r"未连接",
+    r"行情服务不可用",
 ]
 
 # 预编译正则

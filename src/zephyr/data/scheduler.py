@@ -301,6 +301,17 @@ class IntegratorScheduler:
         # 组件
         self._policy_registry: PolicyRegistry = get_registry()
         self._progress_store: ProgressStore = get_store(progress_db)
+        # Phase 3-B 治本修复：调度器初始化时清理上次崩溃留下的卡死 RUNNING 任务（>24h）
+        # 防止僵尸任务状态阻塞断点续传判断（get_last_key 返回 RUNNING 但实际进程已死）
+        try:
+            reaped = self._progress_store.reap_stale_runs(max_age_hours=24)
+            if reaped > 0:
+                import logging
+                logging.getLogger(__name__).warning(
+                    "调度器启动时清理了 %d 个卡死任务（RUNNING > 24h，可能是上次进程崩溃）", reaped
+                )
+        except Exception:  # noqa: BLE001 — 5.135治标: 不阻塞调度器启动
+            pass
         self._alerter = Alerter()
         self._task_queue = TaskQueue()
         self._metrics: IntegratorMetrics = get_metrics()
