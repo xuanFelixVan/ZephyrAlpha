@@ -496,3 +496,9 @@ gates:
   source: in_process
   register_line: 484
   enabled: true
+- gate_id: SCHEMA-FILE-EXISTS
+  module_path: zephyr.gov_enforcement.commit_gates.schema_file_exists_gate
+  factory_function: make_schema_file_exists_gate
+  source: in_process
+  register_line: 485
+  enabled: true

@@ -444,7 +444,7 @@ def _extract_noqa_files(gateway, py_files: list[str]) -> set[str]:
 
 
 def make_consumers_accuracy_gate() -> GateSpec:
-    """构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=113）。
+    """构造 CONSUMERS-ACCURACY pre-commit warn-only 门禁（priority=116）。
 
     检测 staged scripts/governance/** + src/**.py 的 [CONSUMERS] 字段准确性，
     warn-only（passed=True + detail 不阻断）。

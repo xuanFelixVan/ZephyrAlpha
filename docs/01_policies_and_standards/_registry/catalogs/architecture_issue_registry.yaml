@@ -7810,10 +7810,22 @@ entries:
          - apply_market_tables_ddl.py 4 张表全部从 schema 文件导入 DDL
          - ch_writer 节点 6860205 → build_status=stable, design_maturity=production
 
-    Phase 1（SCHEMA-FILE-EXISTS gate）+ Phase 3（depgraph 边 commit-time 硬阻断）：
-      未实现，作为 follow-up 跟踪——
-      - Phase 1: 新建 SCHEMA-FILE-EXISTS commit gate，校验 YAML schema_file 引用的文件必须存在
-      - Phase 3: 已拆分为独立裁定 #ARCH-DEP-PREMERGE-ENFORCE（第三期落地，pre-merge 拓扑硬阻断）
+    Phase 1（SCHEMA-FILE-EXISTS gate，2026-07-23 已完成）：
+      - 新建 src/zephyr/gov_enforcement/commit_gates/schema_file_exists_gate.py（priority=121 block gate）
+        当 business_data_categories.yaml 被 staged 时，校验所有非 null schema_file 引用文件存在
+      - in_process_gate_registry.yaml line 499-504 注册 SCHEMA-FILE-EXISTS gate（register_line=485）
+      - tests/governance/commit_gates/test_schema_file_exists_gate.py 22/22 tests passing
+        覆盖：gate spec fields / _check_schema_files_exist / _check 闭包 / 真实 YAML 集成测试
+      - depgraph 节点 6910544 登记（file_path=src/zephyr/gov_enforcement/commit_gates/schema_file_exists_gate.py,
+        build_status=generated → stable 升级待 commit 后 post-merge reconciler 自动同步）
+      - 前置验证：10/10 schema_file 引用全部存在（market_kline_daily/market_tick/market_cb_iv/
+        market_index/market_futures_position/market_futures_term/market_sector_snapshot/
+        market_option_iv/market_auction/market_auction_book），gate 实际运行不会阻断
+
+    Phase 3（depgraph 边 commit-time 硬阻断）：
+      仍未实现，归独立裁定 #ARCH-DEP-PREMERGE-ENFORCE（第三期落地，pre-merge 拓扑硬阻断）
+      - 节点存在性检测 depgraph_pre_registration_gate.py 已存在并注册（priority=113，前次会话已修复 [MATURITY]
+        和创建测试文件 22/22 passing）——此为"节点存在性"非"边变更登记"，Phase 3 范围更广
 
     附带治本修复（2026-07-22，循环检查发现）：
       - apply_depgraph.py backup import 容错（line 5115 顶层导入失败 → fallback 到 _GOV_DIR 相对导入）

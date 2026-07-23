@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.depgraph_schema (get_depgraph_pg_connection)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 硬阻断——staged src/zephyr/**/*.py 文件含 [TTL]=permanent 且 depgraph build_status=planned 且文件实质行数 > _IMPL_THRESHOLD(50) 时阻断 commit（planned 表示"计划但未做"，但代码已 >50 行，应转 production）；tests/ 豁免；DB 不可达 fail-open；git diff 不可达 fail-open；检出违规则 fail-closed（passed=False）
 # [MODIFY-GUARD] gate_id="DEPGRAPH-PRE-REGISTRATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
