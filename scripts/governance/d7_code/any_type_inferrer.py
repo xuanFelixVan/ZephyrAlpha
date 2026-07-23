@@ -4,7 +4,7 @@
 # [MODULE] scripts.governance.d7_code.any_type_inferrer
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/json/collections); scripts.governance.d7_code.check_any_abuse
-# [CONSUMERS] #ARCH-ANY-GOVERNANCE-001 Phase 2 Batch 1-8 治理; manual AI 审核辅助; audit_dimensions_checklist.md 维度 5.145 治本工程
+# [CONSUMERS] #ARCH-ANY-GOVERNANCE-001 Phase 2 Batch 1-8 治理; manual AI 审核辅助; trae_081_audit_dimensions_framework.yaml 维度 5.145 治本工程
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现；非阻断（exit 0 报告模式）；与 check_any_abuse.py 的 _is_bare_any 算法一致（共享 import，非复制）

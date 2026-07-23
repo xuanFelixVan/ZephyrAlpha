@@ -5843,7 +5843,7 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
 
     max_backups 个 ghost_autoclean_* 目录，超出部分自动清理（对标 backup_pg_depgraph 的保留 10 个）。
 
-    消除"备份目录只增不减"的技术债务。详见 audit_dimensions_checklist.md 维度 5.1.3。
+    消除"备份目录只增不减"的技术债务。详见 trae_081_audit_dimensions_framework.yaml 维度 5.1.3。
 
     Args:
 

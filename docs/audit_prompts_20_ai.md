@@ -3081,13 +3081,13 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
 ```
 你是项目审计 AI-17，负责审计以下区域（政策架构文档）：
 
-d:\ZephyrAlpha\docs\01_policies_and_standards\   （_registry/catalogs/ + contracts/ + schemas/ + vocabularies/ + policies/ + rules/trae_001-060 + templates/）
-d:\ZephyrAlpha\docs\02_enterprise_architecture\  （00_overview_entry/ + 01_global_architecture_diagram/ + 02_domain_architecture_docs/ + 03_governance_reports/ + 04_architecture_principles_decisions/ + generated/ + sample/ + target_architecture/ + ai_first_governance_principles.md + audit_dimensions_checklist.md + 建议.md + migration-registry.yaml）
+d:\ZephyrAlpha\docs\01_policies_and_standards\   （_registry/catalogs/ + contracts/ + schemas/ + vocabularies/ + policies/ + rules/trae_001-081 + templates/）
+d:\ZephyrAlpha\docs\02_enterprise_architecture\  （00_overview_entry/ + 01_global_architecture_diagram/ + 02_domain_architecture_docs/ + 03_governance_reports/ + 04_architecture_principles_decisions/ + generated/ + sample/ + target_architecture/ + ai_first_governance_principles.md + 建议.md + migration-registry.yaml）
 d:\ZephyrAlpha\docs\registry_of_registries.yaml
 d:\ZephyrAlpha\docs\08_knowledge\                （01_raw_intake/ + 02_triaged/ + data/）
 d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_debt_registry_v2.md + architecture_decisions_pending.md + 各类历史文档）
 
-审计重点：YAML 规则真源唯一性（trae_001-060）、architecture_issue_registry 与 #ARCH-NNN 引用一致性、capability_canonical_file_registry 登记、词表 vocabulary 动态加载、ai_first_governance_principles.md 裁定执行情况 + audit_dimensions_checklist.md 维度防复发机制。
+审计重点：YAML 规则真源唯一性（trae_001-060）、architecture_issue_registry 与 #ARCH-NNN 引用一致性、capability_canonical_file_registry 登记、词表 vocabulary 动态加载、ai_first_governance_principles.md 裁定执行情况 + trae_081_audit_dimensions_framework.yaml 维度防复发机制。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 

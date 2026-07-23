@@ -23,7 +23,7 @@ tags:
 - rule-execution-pairing
 - root-cause
 - strategic-rulings
-summary: 100% AI 开发场景下的治理永恒原则——5 个病根分析 + 5 条战略裁定。源自 architecture_debt_registry v2.0.0 §二§三（已归档至 docs/_archive/），裁定1 经裁定#221 修正为"新增规则必须同时新增门禁"。wontfix 债务 40 项经裁定#222 确认并登记为 #ARCH-DEBT-001~006。本文件是 AI 治理战略原则真源，活跃议题真源在 architecture_issue_registry.yaml，裁定真源在 ruling_registry.yaml，审计维度清单在 audit_dimensions_checklist.md。
+summary: 100% AI 开发场景下的治理永恒原则——5 个病根分析 + 5 条战略裁定。源自 architecture_debt_registry v2.0.0 §二§三（已归档至 docs/_archive/），裁定1 经裁定#221 修正为"新增规则必须同时新增门禁"。wontfix 债务 40 项经裁定#222 确认并登记为 #ARCH-DEBT-001~006。本文件是 AI 治理战略原则真源，活跃议题真源在 architecture_issue_registry.yaml，裁定真源在 ruling_registry.yaml，审计维度清单在 trae_081_audit_dimensions_framework.yaml。
 date: '2026-07-24'
 ttl: permanent
 ---
@@ -33,7 +33,7 @@ ttl: permanent
 > **文档性质**：100% AI 开发场景下的治理战略原则——5 个病根 + 5 条裁定。
 > **来源**：源自 `architecture_debt_registry.md` v2.0.0 §二（病根分析）§三（战略裁定），该文档已归档至 [`docs/_archive/architecture_debt_registry_v2.md`](file:///d:/ZephyrAlpha/docs/_archive/architecture_debt_registry_v2.md)。
 > **修正记录**（2026-07-24，裁定#221）：原裁定1"暂停新增规则文档 6 个月"表述错误，已修正为"新增规则必须同时新增门禁"。
-> **关联真源**：议题真源 [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) | 裁定真源 [`ruling_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml) | 审计维度清单 [`audit_dimensions_checklist.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/audit_dimensions_checklist.md)
+> **关联真源**：议题真源 [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) | 裁定真源 [`ruling_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml) | 审计维度清单 [`trae_081_audit_dimensions_framework.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml)
 
 ---
 
@@ -135,4 +135,4 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 - **新增裁定**：MUST 在 [`ruling_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml) 登记 裁定#NNN 条目（裁定#20-A），由 RULING-REFERENCE gate 强制。
 - **wontfix 翻案**：MUST 经架构师新裁定（裁定#NNN）并更新 #ARCH-DEBT-NNN 条目的 related_adjudication + last_updated。
 - **违规数据**：禁止手工编辑——由架构健康度仪表盘（M01-M31）自动生成。
-- **审计维度**：见 [`audit_dimensions_checklist.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/audit_dimensions_checklist.md)（54 维度清单基座）。
+- **审计维度**：见 [`trae_081_audit_dimensions_framework.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml)（54 维度清单基座）。

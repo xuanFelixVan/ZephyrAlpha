@@ -4941,7 +4941,7 @@ capabilities:
       纯 stdlib 实现（ast + dataclasses + argparse），非阻断报告模式（exit 0）。
       canonical = scripts/governance/d7_code/any_type_inferrer.py（MOD-GOV-008）。
       消费方：#ARCH-ANY-GOVERNANCE-001 Phase 2 Batch 1-8 治理、manual AI 审核辅助、
-      audit_dimensions_checklist.md 维度 5.145 治本工程。治本（2d 可发现性）：新 AI 通过
+      trae_081_audit_dimensions_framework.yaml 维度 5.145 治本工程。治本（2d 可发现性）：新 AI 通过
       capability_lookup.find("any_type_inferrer") / find("infer_any_type") 可定位真源。
 
   # --------------------------------------------------------------------------
@@ -6573,7 +6573,7 @@ creation_tokens:
     capability: "gate_abuse_systemic_audit_ruling"
 
   # --- 架构债务防复发体系设计文档（2026-07-20，54 维度全覆盖设计）---
-  # 关联 audit_dimensions_checklist.md 54 维度 → 全自动化防犯体系设计（P0/P1/P2 分期）
+  # 关联 trae_081_audit_dimensions_framework.yaml 54 维度 → 全自动化防犯体系设计（P0/P1/P2 分期）
   - file: "docs/_working/anti_recurrence_design.md"
     token: "auto-anti-recurrence-design-20260720"
     created_by: "sess-35112-20260720042959"

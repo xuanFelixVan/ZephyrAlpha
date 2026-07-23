@@ -8676,7 +8676,7 @@ entries:
 
 # --- #ARCH-DEBT-001~006: R102/R103 wontfix 债务批量登记（裁定#222，2026-07-24）---
 # 6 个维度共 40 项 wontfix，每维度一个 #ARCH-DEBT-NNN 条目，status=deprecated（已废弃不施工）。
-# 裁定真源：裁定#222（ruling_registry.yaml）。维度清单：audit_dimensions_checklist.md。
+# 裁定真源：裁定#222（ruling_registry.yaml）。维度清单：trae_081_audit_dimensions_framework.yaml。
 # 翻案条件：MUST 经架构师新裁定（裁定#NNN）并更新本条目 related_adjudication + last_updated。
 
 - issue_id: '#ARCH-DEBT-001'

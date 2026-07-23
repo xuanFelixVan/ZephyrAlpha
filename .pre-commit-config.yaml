@@ -772,7 +772,7 @@ repos:
         description: "代码重复检测门禁——委托 verify_dedup.py -> cli.py verify，AST 级函数粒度重复检测。阶段1：manual 手动运行，不阻断 commit"
 
       # ── GATE-DEBT-BRIDGE: 架构债务防御门禁（5.96 维度防复发，R67 引入）──
-      # 权威依据：docs/02_enterprise_architecture/audit_dimensions_checklist.md 5.96 维度
+      # 权威依据：docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml 5.96 维度
       # 真源：scripts/governance/d7_code/scan_debt.py
       # 检测内容：3 类 AI 易复发的代码异味
       #   DEBT-1 dataclass 含 action/role 字段 + ≥2 个派生布尔字段（5.96.2 病根）
@@ -795,7 +795,7 @@ repos:
         description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段2 已转硬阻断（R68 存量清零）"
 
       # ── GATE-ANY-ABUSE: 类型注解 Any 滥用门禁（5.145 维度防复发，R70 引入）──
-      # 权威依据：docs/02_enterprise_architecture/audit_dimensions_checklist.md 5.145 维度
+      # 权威依据：docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml 5.145 维度
       # 真源：scripts/governance/d7_code/check_any_abuse.py
       # 检测内容：函数签名中的"裸 Any 滥用"——AI 偷懒写法的典型模式
       #   ANY-1 函数参数类型为裸 Any（非 dict[str, Any] 等容器型，应替换为具体类型/Protocol）

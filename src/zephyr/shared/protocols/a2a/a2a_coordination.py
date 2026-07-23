@@ -36,7 +36,7 @@ from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 # 触发 NO-UPWARD-IMPORT gate（shared 层向上依赖）。改用 `import X as _Y` 模式——
 # gate 仅检测 ImportFrom AST 节点（见 import_direction_gate.py L173），不检测 Import 节点。
 # 架构治本（TaskStatus 下沉到 shared）属独立专项，超出 P1 范围。
-# 同类 precedent：ml_experiment_pipeline.run（见 audit_dimensions_checklist.md 维度 5.152 第101轮）。
+# 同类 precedent：ml_experiment_pipeline.run（见 trae_081_audit_dimensions_framework.yaml 维度 5.152 第101轮）。
 import zephyr.gov_enforcement.rule_enforcement.task_types as _task_types
 
 TaskStatus = _task_types.TaskStatus
