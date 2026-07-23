@@ -59,7 +59,7 @@ sections:
     - type: mandatory
       step: '变更 JSON 格式: [{"op":"update","node_id":1,"field":"build_status","value":"testing"}] / [{"op":"add_edge","from_node_id":1,"to_node_id":2,"edge_type":"triggering"}] / [{"op":"remove_edge",...}] / [{"op":"set_layer","layer_id":"L_STRATEGY","fields":{...}}]'
     - type: mandatory
-      step: 'build_status 合法值约束（5态）: nodes.build_status 字段只允许 5 种合法值——planned(设计态未实现)/generated(代码已生成)/testing(测试中)/stable(生产稳定)/deprecated(废弃态)。状态机为单调推进: planned→generated→testing→stable→deprecated。DB 层 CHECK 约束已生效，INSERT 非法值（如 draft/inactive/unbuilt/production/active 等）会被 psycopg2.IntegrityError 拒绝。design_maturity 字段只允许 3 种合法值: design/production/prototype（与 depgraph 节点表对齐）'
+      step: 'build_status 合法值约束（5态）: nodes.build_status 字段只允许 5 种合法值——planned(设计态未实现)/generated(代码已生成)/testing(测试中)/stable(生产稳定)/deprecated(废弃态)。状态机为单调推进: planned→generated→testing→stable→deprecated。DB 层 CHECK 约束已生效，INSERT 非法值（如 draft/inactive/unbuilt/production/active 等）会被 psycopg2.IntegrityError 拒绝。design_maturity 字段只允许 2 种合法值: design/production（与 depgraph 节点表对齐，ARCH-MM-002 两档化）'
     invariants:
     - id: DEC-INV-001
       title: 决策节点必须有归属层
@@ -78,9 +78,9 @@ sections:
       description: build_status 状态机为单调推进 planned→generated→testing→stable→deprecated。禁止跳态（如 generated 直接跃迁到 stable 必须经过 testing）。状态变更必须通过 apply_decisiongraph.py 走 dry-run 验证
       enforcement: DB CHECK + apply_decisiongraph.py 状态迁移校验
     - id: DEC-INV-005
-      title: design_maturity 3态受控
-      description: design_maturity 只允许 3 种合法值——design(设计态)/production(生产态)/prototype(原型态)。与 depgraph 节点表 design_maturity 字段语义对齐
-      enforcement: DB CHECK (design_maturity IN ('design','production','prototype'))
+      title: design_maturity 2态受控 [ARCH-MM-002]
+      description: design_maturity 只允许 2 种合法值——design(设计态)/production(生产态)。与 depgraph 节点表 design_maturity 字段语义对齐。prototype 已删除（ARCH-MM-002 两档化）
+      enforcement: DB CHECK (design_maturity IN ('design','production'))
     prohibitions:
     - 用 Read 工具直接读取 decision_* 表数据（大表加载 → OOM 崩溃 → IDE 重启）
     - 用 Write 工具直接写 decision_* 表数据（绕过脚本 → 破坏数据完整性 + 可能损坏 DB 约束）
@@ -100,7 +100,7 @@ sections:
     - version: '1.0.0'
       date: '2026-07-06'
       by: session-20260706-decisiongraph
-      changes: '初始创建——decisiongraph Phase 1 施工。架构：decisiongraph 与 depgraph 共享 PostgreSQL 实例（同一 DB，不同表），4 张表（decision_layers/decision_nodes/decision_edges/decision_tracks）。复用 depgraph 的 PG 连接（get_decisiongraph_pg_connection 委托 get_depgraph_pg_connection）。build_status 5态 + design_maturity 3态 与 depgraph 节点表对齐。五条承重墙不变量 DEC-INV-001~005 约束决策流图数据完整性。depends_on TRAE-054（复用 PG 访问基础设施）'
+      changes: '初始创建——decisiongraph Phase 1 施工。架构：decisiongraph 与 depgraph 共享 PostgreSQL 实例（同一 DB，不同表），4 张表（decision_layers/decision_nodes/decision_edges/decision_tracks）。复用 depgraph 的 PG 连接（get_decisiongraph_pg_connection 委托 get_depgraph_pg_connection）。build_status 5态 + design_maturity 2态（ARCH-MM-002 两档化） 与 depgraph 节点表对齐。五条承重墙不变量 DEC-INV-001~005 约束决策流图数据完整性。depends_on TRAE-054（复用 PG 访问基础设施）'
 references:
   rule_ids:
   - TRAE-054

@@ -376,11 +376,11 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 ### 6.11 当前施工状态
 
-回测域 Phase 1+2 模块状态（production / prototype 节点数及模块清单见 depgraph 动态统计）：
+回测域 Phase 1+2 模块状态（production 节点数及模块清单见 depgraph 动态统计）[ARCH-MM-002 两档化]：
 
 测试覆盖情况（ARCH-MM-001裁定：以 depgraph nodes.design_maturity 为真源，[MATURITY] 标记为声明）：
 - 有正式测试覆盖（tests/ 目录，depgraph 推导为 production）：matching_engine、matching_logic、portfolio、tick_replay、data_handler、event_driven_engine、engine_base、vectorized_engine、decisiongraph_adapter
-- 无正式测试覆盖（depgraph 推导为 prototype）：decision_gate、metrics、overfitting_detector、pit_manager、walk_forward、backtest_result_sink、result_repository
+- 无正式测试覆盖（depgraph 推导为 production, build_status=generated）[ARCH-MM-002]：decision_gate、metrics、overfitting_detector、pit_manager、walk_forward、backtest_result_sink、result_repository
 
 ---
 
@@ -437,7 +437,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 - **阶段**：experimental
 - **域总数**：见 depgraph domains 表动态统计
-- **节点**：见 depgraph 动态统计（按 design / prototype / production 状态分组）
+- **节点**：见 depgraph 动态统计（按 design / production 状态分组）[ARCH-MM-002 两档化]
 - **依赖边**：见 depgraph 动态统计
 
 ### 8.2 ARCH 编号体系

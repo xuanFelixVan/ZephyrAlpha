@@ -106,15 +106,14 @@ ZephyrAlpha 采用 **五层同心圆** 架构，灵感来自 Microsoft Magentic-
 | `L2_domain` | 领域层 / Domain | D_BACKTEST / D_FACTOR / D_RISK / D_DATA |
 | `L3_application` | 应用层 / Application | D_TRADING / D_ORCHESTRATOR |
 
-### 三态状态机（depgraph 节点生命周期）
+### 两态状态机（depgraph 节点生命周期）[ARCH-MM-002 两档化]
 
 | 值 | 含义 | 代码状态 | 写入方式 |
 |------|------|---------|---------|
 | `design` | 设计态 / Design | 蓝图阶段，代码未写 / Blueprint stage, no code | `apply_depgraph.py --add-design-node` |
-| `prototype` | 原型态 / Prototype | 代码已写，验证中 / Code written, under validation | 生成器自动产出 / Generator auto-output |
-| `production` | 运营态 / Production | 已上线稳定运行 / Live & stable | 生成器自动产出 / Generator auto-output |
+| `production` | 运营态 / Production | 有代码文件 / Code file exists | 生成器自动产出 / Generator auto-output |
 
-状态升级单调推进：`design → prototype → production`（禁止倒退）。
+状态升级单调推进：`design → production`（禁止倒退）[ARCH-MM-002 两档化]。
 
 ---
 

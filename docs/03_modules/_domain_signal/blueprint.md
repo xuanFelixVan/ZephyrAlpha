@@ -157,7 +157,7 @@ strategy_pool:
   rollout_phases: [0.05, 0.20, 1.0]  # 灰度发布：5%→20%→100%
 responsibility_domain: 
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 ---
 
 > ✅ **业务层已开放——可施工**

@@ -41,7 +41,7 @@
 # 派生规则（CapabilityLookup._derive_* 实现）:
 #   - canonical 候选：磁盘文件 basename(无 .py) ∈ {capability_id} ∪ aliases（标准化）
 #   - canonical 选择优先级：canonical_override > 单候选 > 成熟度排序
-#     (production > prototype > design) > import 数 > 歧义(需 override)
+#     (production > design) > import 数 > 歧义(需 override)
 #   - duplicates (auto)：磁盘上同 basename 的其他候选（relation 由 blueprint 比对派生：
 #     同蓝图=conflicting，异蓝图=sibling）
 #   - duplicates_manual：语义 sibling（auto 无法发现，人工声明 relation + note）
@@ -136,7 +136,7 @@ capabilities:
     description: >-
       回滚执行器核心封装。canonical = src/zephyr/infrastructure/rollback/
       rollback_executor.py（auto 派生：basename rollback_executor 匹配 capability_id）。
-      ARCH-034 P4 已删除 governance/rollback_executor.py 孤儿副本（prototype，
+      ARCH-034 P4 已删除 governance/rollback_executor.py 孤儿副本（production，
       无消费者，SSoT 冲突已消除）。
 
   # --------------------------------------------------------------------------
@@ -149,7 +149,7 @@ capabilities:
       rollback/drift_fix.py（auto 派生：basename drift_fix 匹配 capability_id）。
       ARCH-034 P3 / SRC-038 合并后唯一 canonical 真源（MATURITY=production）。
       原有3份冗余副本已合并：governance/drift_fix.py（路径漂移，已删）、
-      rollback/governance/drift_fix.py（prototype，已删）。
+      rollback/governance/drift_fix.py（production，已删）。
       DriftFixHandler.on_drift_fix() 消费 ManagedDriftEvent 执行回滚兜底。
       解决发现性：新 AI 搜 "drift_fix/DriftFixHandler" 可定位真源。
       解决防重建：check_file_canonical() 反查，新AI准备造同类功能前可发现。
@@ -2139,7 +2139,7 @@ capabilities:
       - alert_router
     description: >-
       Alert Router — alert_router.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behaviora
-      l_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 消费者: dri
+      l_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: production。 消费者: dri
       ft_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "alert_router" 可定位本模块。 解
       决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_architecture_contracts
@@ -2249,7 +2249,7 @@ capabilities:
       - cold_start
     description: >-
       Cold Start Bootstrapper — 冷启动引导 §6.31。 module_id: MOD-INF-023 模块级注册（ARCH-034，原 b
-      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 
+      ehavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: production。 
       消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cold_start" 可定位
       本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_config_consistency
@@ -2423,7 +2423,7 @@ capabilities:
       - events
     description: >-
       模块级注册（ARCH-034，原 behavioral_audit 迁移至 governance/drift_detection）。 域: D_SECURITY
-      。 成熟度: prototype。 消费者: behavioral_auditor包内所有模块。 解决发现性：新AI 搜 "events" 可定位本模块。 解决
+      。 成熟度: production。 消费者: behavioral_auditor包内所有模块。 解决发现性：新AI 搜 "events" 可定位本模块。 解决
       防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_file_attr_checker
     canonical_override: src/zephyr/gov_drift/file_attr_checker.py
@@ -2569,7 +2569,7 @@ capabilities:
       - reconciler
     description: >-
       Auto Reconciler — reconciler.py module_id: MOD-INF-023 模块级注册（ARCH-034，原 behavior
-      al_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 消费者: dr
+      al_audit 迁移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: production。 消费者: dr
       ift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "reconciler" 可定位本模块。 解决
       防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_regime_detector
@@ -2651,7 +2651,7 @@ capabilities:
     description: >-
       [BLUEPRINT] MOD-INF-033 | 03_modules/_cross_layer/behavioral-auditor/blueprint.m
       d | § Drift State Machine — state_machine.py 模块级注册（ARCH-034，原 behavioral_audit 迁
-      移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: prototype。 消费者: drift_engine
+      移至 governance/drift_detection）。 域: D_SECURITY。 成熟度: production。 消费者: drift_engine
       ;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "state_machine" 可定位本模块。 解决防重建：che
       ck_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_suppression_learner
@@ -2854,7 +2854,7 @@ capabilities:
     description: >-
       管线模型路由器。canonical = src/zephyr/infrastructure/pipeline/model_router.py
       （auto 派生：basename 匹配，MATURITY=production，D_INFRA_RUNTIME）。
-      原 src/zephyr/integration/model_router.py 镜像副本（prototype, D_INTEGRATION）已删除，SSoT 冲突消除。
+      原 src/zephyr/integration/model_router.py 镜像副本（production, D_INTEGRATION）已删除，SSoT 冲突消除。
   - capability_id: cost_tracker
     aliases:
       - CostTracker
@@ -3150,7 +3150,7 @@ capabilities:
     description: >-
       历史 design 节点 path/granularity 语义不一致批量修复（apply_depgraph.py
       fix_path_semantics_for_design_nodes，5.179 治本）。3 种 Case：1a stale duplicate
-      → hard-delete 节点+关联 edges（production/prototype 已是真源）；1b orphan design
+      → hard-delete 节点+关联 edges（production 已是真源）；1b orphan design
       → UPDATE path 去尾 / + granularity=file；3 path 尾 / + granularity!=directory
       → UPDATE granularity=directory。配 --dry-run 预览。解决发现性：新 AI 搜
       "path 语义修复/granularity 不一致/5.179 治本" 可定位真源。解决防重建：阻止新 AI
@@ -3725,7 +3725,7 @@ capabilities:
       写入互斥锁 key=424243（pg_advisory_lock，depgraph 用 424242，避免互锁）。
       6张表：dataflow_datasets / dataflow_jobs / dataflow_runs / dataflow_edges /
       dataflow_datasets_metadata / dataflow_jobs_metadata。
-      双态模式：design_maturity(design/production/prototype) + build_status(planned/generated/testing/stable/deprecated)。
+      双态模式：design_maturity(design/production) [ARCH-MM-002] + build_status(planned/generated/testing/stable/deprecated)。
       解决发现性：新 AI 搜 "dataflowgraph/数据流图连接/dataflow schema" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止在别处新建 dataflowgraph 连接函数。
     integrity_anchors:
@@ -3815,7 +3815,7 @@ capabilities:
       连接入口：get_decisiongraph_pg_connection()（委托 depgraph 连接，无独立配置）。
       4张表：decision_tracks / decision_layers / decision_nodes / decision_edges。
       5索引 + 1触发器（DEC-INV-002 信号仓位分离强制）。
-      双态模式：design_maturity(design/production/prototype) + build_status(planned/generated/testing/stable/deprecated)。
+      双态模式：design_maturity(design/production) [ARCH-MM-002] + build_status(planned/generated/testing/stable/deprecated)。
       五条承重墙不变量：DEC-INV-001~005（风险否决/信号订单分离/DAG无环/时间单调/证据哈希）。
       解决发现性：新 AI 搜 "decisiongraph/决策流图连接/decision schema" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止在别处新建 decisiongraph 连接函数。

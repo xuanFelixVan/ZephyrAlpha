@@ -43,7 +43,7 @@ Safety  : M（DDL 定义，init_dataflow_db 幂等执行）
 
 双态模式（对齐 depgraph）
 -------------------------
-  - design_maturity: design(设计态) / production(运营态) / prototype(原型)
+  - design_maturity: design(设计态) / production(运营态)  [ARCH-MM-002 两档化]
   - build_status: planned / generated / testing / stable / deprecated
     （注意：本词表与 module_lifecycle_status 8值词表不同，仅 5 值，与 depgraph nodes.build_status 一致）
 

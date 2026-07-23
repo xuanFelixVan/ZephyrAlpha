@@ -84,7 +84,7 @@ sections:
     - type: mandatory
       step: 审查MUST覆盖7大类——A.数据准确性(计划中的数字是否真实)/B.方案合理性(是否符合第一性原理)/C.风险(执行过程中可能的风险)/D.回滚(回滚方案是否完整)/E.验证命令(每步验证命令是否有效)/F.规则合规(是否符合项目规则)/G.遗漏检查(对抗性反思)
     - type: mandatory
-      step: 审查中发现的FAIL MUST就地修复——若是计划文档错误(如数字错误)直接修复计划文档，若是方案缺陷(如遗漏prototype处理)直接补充计划，重新验证该项PASS后继续下一项
+      step: 审查中发现的FAIL MUST就地修复——若是计划文档错误(如数字错误)直接修复计划文档，若是方案缺陷(如遗漏design态处理)直接补充计划，重新验证该项PASS后继续下一项 [ARCH-MM-002 两档化]
     - type: mandatory
       step: 事实性QUESTION(如字段是否存在/蓝图是否存在)MUST由执行者直接查询验证后判定PASS/FAIL，不留给Owner
     - type: mandatory

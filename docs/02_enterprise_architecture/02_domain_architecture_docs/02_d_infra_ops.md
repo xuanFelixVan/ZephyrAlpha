@@ -52,7 +52,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -94,7 +93,7 @@ graph TD
     class docs_03_modules_cross_layer_database_business_data_architecture_md design
 ```
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 0 个，0 条域内依赖）。
 
@@ -122,4 +121,4 @@ graph TD
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

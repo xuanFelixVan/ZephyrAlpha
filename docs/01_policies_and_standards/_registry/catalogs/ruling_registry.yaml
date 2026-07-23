@@ -176,7 +176,7 @@ entries:
   status: active
   summary: >-
     治本 extract_depgraph.py 列名误读导致的容量误判。病根：--summary 输出的列名
-    current_modules（全节点数，含 design+prototype+production）被误读为 production
+    current_modules（全节点数，含 design+production）[ARCH-MM-002] 被误读为 production
     节点数，导致容量判定（单域 ≤150）误用口径。治本：(1) 新增 production_nodes
     字段（裁定#195 v9 migration）明确区分两口径；(2) extract_depgraph.py --summary
     输出 total_production_nodes/production_nodes/current_modules 三个字段，注释
@@ -287,13 +287,13 @@ entries:
   superseded_by: null
 
 - ruling_id: '裁定#179'
-  title: design_maturity 保留 3 值（design/production/prototype）
+  title: design_maturity 保留 3 值（design/production/prototype）[已被 ARCH-MM-002 supersede]
   date: '2026-06-25'
   category: 架构
   status: active
   summary: >-
     V4.3 build_status 统一批次之一。design_maturity 保留 3 值：
-    design/production/prototype；scaffold_placeholder（216 个）归一化为 prototype
+    design/production/prototype；scaffold_placeholder（216 个）归一化为 prototype [已被 ARCH-MM-002 supersede: prototype 已删除]
     （空 __init__.py 是 prototype 的一种）。design_maturity 作为独立字段保留（不从
     文件派生），因设计态节点是规划记录需持久化。scaffold_placeholder 是 phase4b
     清理脚本临时引入的非标准值，不在 §12.6 定义中。归一化消除枚举漂移。
@@ -315,7 +315,7 @@ entries:
   summary: >-
     V4.3 build_status 统一批次之一。build_status 由生成器从文件特征推导，不新增
     [BUILD_STATUS]/[LIFECYCLE_STATE] 头部字段。推导规则机械可执行：design→planned；
-    production+test→stable；production 无 test→generated；prototype→generated。
+    production+test→stable；production 无 test→generated；design→planned [ARCH-MM-002]。
     少数需手工标记的状态（deprecated）通过 apply_depgraph.py --transition-build-status
     写入。治本逻辑：从文件特征推导=数据从代码派生=代码变则状态变=永远准确；文件头部
     手工字段=维护负担+生成器覆盖风险（R2 病根）。
@@ -407,7 +407,7 @@ entries:
     V4.3 设计态节点角色裁定（#189-193 批次）核心项。设计态节点只由人工通过
     apply_depgraph.py 写入，生成器不得创建。重申 §12.1"唯一来源"规则；删除
     derive_design_maturity 的 `if node_type == "blueprint": return "design"` 分支；
-    生成器扫描到的所有文件节点都是 production/prototype，不是 design。病根：§12.1
+    生成器扫描到的所有文件节点都是 production，不是 design [ARCH-MM-002]。病根：§12.1
     已规定"不自动生成"但代码违反此规则，7682 个幽灵设计节点是生成器违规为 .md 文件
     创建的噪音。设计态节点代表"人工规划 intent"，自动生成的节点没有 intent。
   affected_files:
@@ -552,7 +552,7 @@ entries:
   status: active
   summary: >-
     V4.4 容量治理批次之一。修复统计口径，新增 production_nodes 字段（v9 migration）。
-    current_modules = 全节点数（含 design + prototype + production + scaffold_placeholder）；
+    current_modules = 全节点数（含 design + production）[ARCH-MM-002]；
     production_nodes = production 节点数（design_maturity='production' 的真实代码文件）——
     容量判定口径。v9 migration: ALTER TABLE domains ADD COLUMN production_nodes INTEGER
     DEFAULT 0。H7 口径修复：生成器分离 current_modules（全节点）和 production_nodes

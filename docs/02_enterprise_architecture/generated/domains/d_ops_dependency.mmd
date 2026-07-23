@@ -7,7 +7,7 @@ graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_OPS[反馈循环]
-        scripts_governance_observability_gate_cache_py["...overnance/observability/gate_cache.py [prototype]"]
+        scripts_governance_observability_gate_cache_py["...overnance/observability/gate_cache.py [design]"]
         src_zephyr_governance_observab____observability_dashboard_py["...governance/observability_dashboard.py [production]"]
         src_zephyr_governance_ops_governance_budget_engine_py["...nance/ops_governance/budget_engine.py [production]"]
         src_zephyr_governance_ops_governance_budget_handler_py["...ance/ops_governance/budget_handler.py [production]"]
@@ -16,7 +16,7 @@ graph TD
         src_zephyr_governance_ops_governance_budget_tracker_py["...ance/ops_governance/budget_tracker.py [production]"]
         src_zephyr_governance_ops_governance_cost_budget_py["...ernance/ops_governance/cost_budget.py [production]"]
         src_zephyr_governance_ops_governance_meta_observability_py[".../ops_governance/meta_observability.py [production]"]
-        src_zephyr_governance_ops_governance_token_budget_py["...rnance/ops_governance/token_budget.py [prototype]"]
+        src_zephyr_governance_ops_governance_token_budget_py["...rnance/ops_governance/token_budget.py [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）

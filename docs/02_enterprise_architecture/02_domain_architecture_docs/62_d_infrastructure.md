@@ -43,32 +43,32 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | scripts/backup/backup_reconciler.py | backup_reconciler.py — 灾备备份系统事件触发器... | 原型态 / prototype |  |
-| 2 | scripts/backup/minio_tcp_relay.py | TCP relay: expose localhost-only MinIO to the C... | 原型态 / prototype |  |
+| 1 | scripts/backup/backup_reconciler.py | backup_reconciler.py — 灾备备份系统事件触发器... | 设计态 / design |  |
+| 2 | scripts/backup/minio_tcp_relay.py | TCP relay: expose localhost-only MinIO to the C... | 设计态 / design |  |
 | 3 | src/zephyr/infrastructure/config/__init__.py | ZephyrAlpha — 基础设施 Infrastructure Layer —... | 生产态 / production |  |
-| 4 | src/zephyr/infrastructure/config/app_config.py | app_config.py — 应用配置数据类与加载/热重载逻辑 | 原型态 / prototype |  |
-| 5 | src/zephyr/shared/contracts/capital_allocation_result.py | capital_allocation_result.py | 原型态 / prototype |  |
-| 6 | src/zephyr/shared/contracts/compliance_rule.py | compliance_rule.py | 原型态 / prototype |  |
-| 7 | src/zephyr/shared/contracts/execution_report.py | execution_report.py | 原型态 / prototype |  |
+| 4 | src/zephyr/infrastructure/config/app_config.py | app_config.py — 应用配置数据类与加载/热重载逻辑 | 设计态 / design |  |
+| 5 | src/zephyr/shared/contracts/capital_allocation_result.py | capital_allocation_result.py | 设计态 / design |  |
+| 6 | src/zephyr/shared/contracts/compliance_rule.py | compliance_rule.py | 设计态 / design |  |
+| 7 | src/zephyr/shared/contracts/execution_report.py | execution_report.py | 设计态 / design |  |
 | 8 | src/zephyr/shared/contracts/experiment_result.py | experiment_result.py | 生产态 / production |  |
 | 9 | src/zephyr/shared/contracts/factor_monitor_report.py | factor_monitor_report.py | 生产态 / production |  |
 | 10 | src/zephyr/shared/contracts/factor_signal.py | factor_signal.py | 生产态 / production |  |
-| 11 | src/zephyr/shared/contracts/fill.py | fill.py | 原型态 / prototype |  |
+| 11 | src/zephyr/shared/contracts/fill.py | fill.py | 设计态 / design |  |
 | 12 | src/zephyr/shared/contracts/macro_factor_signal.py | macro_factor_signal.py | 生产态 / production |  |
 | 13 | src/zephyr/shared/contracts/market_data.py | market_data.py | 生产态 / production |  |
-| 14 | src/zephyr/shared/contracts/model_serving_request.py | model_serving_request.py | 原型态 / prototype |  |
+| 14 | src/zephyr/shared/contracts/model_serving_request.py | model_serving_request.py | 设计态 / design |  |
 | 15 | src/zephyr/shared/contracts/model_serving_response.py | model_serving_response.py | 生产态 / production |  |
-| 16 | src/zephyr/shared/contracts/order.py | order.py | 原型态 / prototype |  |
+| 16 | src/zephyr/shared/contracts/order.py | order.py | 设计态 / design |  |
 | 17 | src/zephyr/shared/contracts/performance_attribution_repor... | performance_attribution_report.py | 生产态 / production |  |
-| 18 | src/zephyr/shared/contracts/position.py | position.py | 原型态 / prototype |  |
-| 19 | src/zephyr/shared/contracts/risk_dashboard_snapshot.py | risk_dashboard_snapshot.py | 原型态 / prototype |  |
+| 18 | src/zephyr/shared/contracts/position.py | position.py | 设计态 / design |  |
+| 19 | src/zephyr/shared/contracts/risk_dashboard_snapshot.py | risk_dashboard_snapshot.py | 设计态 / design |  |
 | 20 | src/zephyr/shared/contracts/risk_limits.py | risk_limits.py | 生产态 / production |  |
-| 21 | src/zephyr/shared/contracts/risk_metrics.py | risk_metrics.py | 原型态 / prototype |  |
+| 21 | src/zephyr/shared/contracts/risk_metrics.py | risk_metrics.py | 设计态 / design |  |
 | 22 | src/zephyr/shared/contracts/strategy_lifecycle_event.py | strategy_lifecycle_event.py | 生产态 / production |  |
 | 23 | src/zephyr/shared/contracts/synthesized_signal.py | synthesized_signal.py | 生产态 / production |  |
-| 24 | src/zephyr/shared/contracts/system_configuration.py | system_configuration.py | 原型态 / prototype |  |
+| 24 | src/zephyr/shared/contracts/system_configuration.py | system_configuration.py | 设计态 / design |  |
 | 25 | src/zephyr/shared/contracts/telemetry_emitter.py | telemetry_emitter.py | 生产态 / production |  |
-| 26 | src/zephyr/shared/contracts/trace_context.py | trace_context.py | 原型态 / prototype |  |
+| 26 | src/zephyr/shared/contracts/trace_context.py | trace_context.py | 设计态 / design |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -77,7 +77,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -88,32 +87,32 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE 跨层契约基础设施"]
-        scripts_backup_backup_reconciler_py["(原型态 / prototype) backup_reconciler.py — 灾备备份系统事件触发器...<br/>文件: backup_reconciler.py"]
-        scripts_backup_minio_tcp_relay_py["(原型态 / prototype) TCP relay: expose localhost-only MinIO to the C...<br/>文件: minio_tcp_relay.py"]
+        scripts_backup_backup_reconciler_py["(设计态 / design) backup_reconciler.py — 灾备备份系统事件触发器...<br/>文件: backup_reconciler.py"]
+        scripts_backup_minio_tcp_relay_py["(设计态 / design) TCP relay: expose localhost-only MinIO to the C...<br/>文件: minio_tcp_relay.py"]
         src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer —...<br/>文件: __init__.py"]
-        src_zephyr_infrastructure_config_app_config_py["(原型态 / prototype) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
-        src_zephyr_shared_contracts_capital_allocation_result_py["(原型态 / prototype) capital_allocation_result.py"]
-        src_zephyr_shared_contracts_compliance_rule_py["(原型态 / prototype) compliance_rule.py"]
-        src_zephyr_shared_contracts_execution_report_py["(原型态 / prototype) execution_report.py"]
+        src_zephyr_infrastructure_config_app_config_py["(设计态 / design) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
+        src_zephyr_shared_contracts_capital_allocation_result_py["(设计态 / design) capital_allocation_result.py"]
+        src_zephyr_shared_contracts_compliance_rule_py["(设计态 / design) compliance_rule.py"]
+        src_zephyr_shared_contracts_execution_report_py["(设计态 / design) execution_report.py"]
         src_zephyr_shared_contracts_experiment_result_py["(生产态 / production) experiment_result.py"]
         src_zephyr_shared_contracts_factor_monitor_report_py["(生产态 / production) factor_monitor_report.py"]
         src_zephyr_shared_contracts_factor_signal_py["(生产态 / production) factor_signal.py"]
-        src_zephyr_shared_contracts_fill_py["(原型态 / prototype) fill.py"]
+        src_zephyr_shared_contracts_fill_py["(设计态 / design) fill.py"]
         src_zephyr_shared_contracts_macro_factor_signal_py["(生产态 / production) macro_factor_signal.py"]
         src_zephyr_shared_contracts_market_data_py["(生产态 / production) market_data.py"]
-        src_zephyr_shared_contracts_model_serving_request_py["(原型态 / prototype) model_serving_request.py"]
+        src_zephyr_shared_contracts_model_serving_request_py["(设计态 / design) model_serving_request.py"]
         src_zephyr_shared_contracts_model_serving_response_py["(生产态 / production) model_serving_response.py"]
-        src_zephyr_shared_contracts_order_py["(原型态 / prototype) order.py"]
+        src_zephyr_shared_contracts_order_py["(设计态 / design) order.py"]
         src_zephyr_shared_contracts_performance_attribution_report_py["(生产态 / production) performance_attribution_report.py"]
-        src_zephyr_shared_contracts_position_py["(原型态 / prototype) position.py"]
-        src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(原型态 / prototype) risk_dashboard_snapshot.py"]
+        src_zephyr_shared_contracts_position_py["(设计态 / design) position.py"]
+        src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(设计态 / design) risk_dashboard_snapshot.py"]
         src_zephyr_shared_contracts_risk_limits_py["(生产态 / production) risk_limits.py"]
-        src_zephyr_shared_contracts_risk_metrics_py["(原型态 / prototype) risk_metrics.py"]
+        src_zephyr_shared_contracts_risk_metrics_py["(设计态 / design) risk_metrics.py"]
         src_zephyr_shared_contracts_strategy_lifecycle_event_py["(生产态 / production) strategy_lifecycle_event.py"]
         src_zephyr_shared_contracts_synthesized_signal_py["(生产态 / production) synthesized_signal.py"]
-        src_zephyr_shared_contracts_system_configuration_py["(原型态 / prototype) system_configuration.py"]
+        src_zephyr_shared_contracts_system_configuration_py["(设计态 / design) system_configuration.py"]
         src_zephyr_shared_contracts_telemetry_emitter_py["(生产态 / production) telemetry_emitter.py"]
-        src_zephyr_shared_contracts_trace_context_py["(原型态 / prototype) trace_context.py"]
+        src_zephyr_shared_contracts_trace_context_py["(设计态 / design) trace_context.py"]
     end
     src_zephyr_infrastructure_config_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     scripts_backup_minio_tcp_relay_py -.->|config_depends / config_depends| scripts_backup_backup_reconciler_py
@@ -135,21 +134,21 @@ graph TD
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
+    D_TRADING["(设计态 / design) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
+    D_PF_ALLOC["(设计态 / design) D_PF_ALLOC"]
     D_PF_ALLOC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
-    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(设计态 / design) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC["(设计态 / design) D_SIGQC"]
     D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -189,18 +188,18 @@ graph TD
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
+    D_TRADING["(设计态 / design) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
-    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
+    D_PF_ALLOC["(设计态 / design) D_PF_ALLOC"]
     D_PF_ALLOC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
-    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(设计态 / design) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC["(设计态 / design) D_SIGQC"]
     D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
@@ -224,27 +223,27 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 14 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE 跨层契约基础设施"]
-        scripts_backup_backup_reconciler_py["(原型态 / prototype) backup_reconciler.py — 灾备备份系统事件触发器...<br/>文件: backup_reconciler.py"]
-        scripts_backup_minio_tcp_relay_py["(原型态 / prototype) TCP relay: expose localhost-only MinIO to the C...<br/>文件: minio_tcp_relay.py"]
-        src_zephyr_infrastructure_config_app_config_py["(原型态 / prototype) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
-        src_zephyr_shared_contracts_capital_allocation_result_py["(原型态 / prototype) capital_allocation_result.py"]
-        src_zephyr_shared_contracts_compliance_rule_py["(原型态 / prototype) compliance_rule.py"]
-        src_zephyr_shared_contracts_execution_report_py["(原型态 / prototype) execution_report.py"]
-        src_zephyr_shared_contracts_fill_py["(原型态 / prototype) fill.py"]
-        src_zephyr_shared_contracts_model_serving_request_py["(原型态 / prototype) model_serving_request.py"]
-        src_zephyr_shared_contracts_order_py["(原型态 / prototype) order.py"]
-        src_zephyr_shared_contracts_position_py["(原型态 / prototype) position.py"]
-        src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(原型态 / prototype) risk_dashboard_snapshot.py"]
-        src_zephyr_shared_contracts_risk_metrics_py["(原型态 / prototype) risk_metrics.py"]
-        src_zephyr_shared_contracts_system_configuration_py["(原型态 / prototype) system_configuration.py"]
-        src_zephyr_shared_contracts_trace_context_py["(原型态 / prototype) trace_context.py"]
+        scripts_backup_backup_reconciler_py["(设计态 / design) backup_reconciler.py — 灾备备份系统事件触发器...<br/>文件: backup_reconciler.py"]
+        scripts_backup_minio_tcp_relay_py["(设计态 / design) TCP relay: expose localhost-only MinIO to the C...<br/>文件: minio_tcp_relay.py"]
+        src_zephyr_infrastructure_config_app_config_py["(设计态 / design) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
+        src_zephyr_shared_contracts_capital_allocation_result_py["(设计态 / design) capital_allocation_result.py"]
+        src_zephyr_shared_contracts_compliance_rule_py["(设计态 / design) compliance_rule.py"]
+        src_zephyr_shared_contracts_execution_report_py["(设计态 / design) execution_report.py"]
+        src_zephyr_shared_contracts_fill_py["(设计态 / design) fill.py"]
+        src_zephyr_shared_contracts_model_serving_request_py["(设计态 / design) model_serving_request.py"]
+        src_zephyr_shared_contracts_order_py["(设计态 / design) order.py"]
+        src_zephyr_shared_contracts_position_py["(设计态 / design) position.py"]
+        src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(设计态 / design) risk_dashboard_snapshot.py"]
+        src_zephyr_shared_contracts_risk_metrics_py["(设计态 / design) risk_metrics.py"]
+        src_zephyr_shared_contracts_system_configuration_py["(设计态 / design) system_configuration.py"]
+        src_zephyr_shared_contracts_trace_context_py["(设计态 / design) trace_context.py"]
     end
     scripts_backup_minio_tcp_relay_py -.->|config_depends / config_depends| scripts_backup_backup_reconciler_py
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -260,7 +259,7 @@ graph TD
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
@@ -405,4 +404,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

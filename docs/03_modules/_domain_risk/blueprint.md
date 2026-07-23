@@ -26,7 +26,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
-design_maturity: prototype
+design_maturity: production
 verifiability: manual
 depends_on:
   - target: "MOD-L02-001"

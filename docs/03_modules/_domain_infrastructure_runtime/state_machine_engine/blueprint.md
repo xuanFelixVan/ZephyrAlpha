@@ -50,7 +50,7 @@ ssot_claims:
     scope: global
 responsibility_domain: 
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 ---
 
 ## 概述

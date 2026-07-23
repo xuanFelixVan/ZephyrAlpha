@@ -44,36 +44,36 @@ ttl: permanent
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
 | 1 | scripts/calibrate_model_diff.py | 模型能力差异校准脚本（P1-3 治本）。 | 生产态 / production |  |
-| 2 | scripts/quick_profile.py | 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。 | 原型态 / prototype |  |
+| 2 | scripts/quick_profile.py | 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。 | 设计态 / design |  |
 | 3 | src/zephyr/intelligence/model_drift_detector.py | ModelDriftDetector — LLM 模型行为漂移检测。 | 生产态 / production |  |
-| 4 | src/zephyr/intelligence/model_evaluation/_memory_backend.py | Backend protocol & shared data classes for the ... | 原型态 / prototype |  |
-| 5 | src/zephyr/intelligence/model_evaluation/activate.py | G4 Activate 门禁 — 人工激活（T-2-13-D） | 原型态 / prototype |  |
+| 4 | src/zephyr/intelligence/model_evaluation/_memory_backend.py | Backend protocol & shared data classes for the ... | 设计态 / design |  |
+| 5 | src/zephyr/intelligence/model_evaluation/activate.py | G4 Activate 门禁 — 人工激活（T-2-13-D） | 设计态 / design |  |
 | 6 | src/zephyr/intelligence/model_evaluation/implementations/... | D_ML_TRAIN — Default Inference Engine | 生产态 / production |  |
 | 7 | src/zephyr/intelligence/model_evaluation/inference_base.py | inference_base.py | 生产态 / production |  |
-| 8 | src/zephyr/intelligence/model_evaluation/reranker.py | Cross-Encoder 重排序层 — BGE-reranker-v2-m3 | 原型态 / prototype |  |
-| 9 | src/zephyr/intelligence/model_evaluation/sync_engine.py | KB->VMS 同步引擎 — sync_to_vms() 生产者 | 原型态 / prototype |  |
+| 8 | src/zephyr/intelligence/model_evaluation/reranker.py | Cross-Encoder 重排序层 — BGE-reranker-v2-m3 | 设计态 / design |  |
+| 9 | src/zephyr/intelligence/model_evaluation/sync_engine.py | KB->VMS 同步引擎 — sync_to_vms() 生产者 | 设计态 / design |  |
 | 10 | src/zephyr/intelligence/model_evaluation/unified_memory_a... | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | 生产态 / production |  |
-| 11 | src/zephyr/intelligence/model_profiling/benchmark_suite.py | BenchmarkSuite — 多维度模型性能测试用例集 | 原型态 / prototype |  |
+| 11 | src/zephyr/intelligence/model_profiling/benchmark_suite.py | BenchmarkSuite — 多维度模型性能测试用例集 | 设计态 / design |  |
 | 12 | src/zephyr/intelligence/model_profiling/capability_passpo... | CapabilityPassport --- AI 模型能力护照 | 生产态 / production |  |
-| 13 | src/zephyr/intelligence/model_profiling/case_assembler.py | 真实多文件注入装配器（Phase 3 极限深度）。 | 原型态 / prototype |  |
+| 13 | src/zephyr/intelligence/model_profiling/case_assembler.py | 真实多文件注入装配器（Phase 3 极限深度）。 | 设计态 / design |  |
 | 14 | src/zephyr/intelligence/model_profiling/cli.py | model-profiler.cli — 模型性能检测命令行入口 | 生产态 / production |  |
 | 15 | src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 | 生产态 / production |  |
-| 16 | src/zephyr/intelligence/model_profiling/exam_executor.py | ExamExecutor --- 执行式代码评测（HumanEval pass... | 原型态 / prototype |  |
+| 16 | src/zephyr/intelligence/model_profiling/exam_executor.py | ExamExecutor --- 执行式代码评测（HumanEval pass... | 设计态 / design |  |
 | 17 | src/zephyr/intelligence/model_profiling/exam_judge.py | ExamJudge --- LLM-as-judge 评分器 | 生产态 / production |  |
 | 18 | src/zephyr/intelligence/model_profiling/exam_orchestrator.py | ExamOrchestrator --- 五轴入职考试主控 | 生产态 / production |  |
-| 19 | src/zephyr/intelligence/model_profiling/exam_rubric.py | ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5... | 原型态 / prototype |  |
+| 19 | src/zephyr/intelligence/model_profiling/exam_rubric.py | ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5... | 设计态 / design |  |
 | 20 | src/zephyr/intelligence/model_profiling/exam_test_cases.py | ExamTestCases --- v3.0.5 扩展考试题库（96 题 / ... | 生产态 / production |  |
 | 21 | src/zephyr/intelligence/model_profiling/job_matcher.py | JobMatcher --- 模型岗位匹配器 | 生产态 / production |  |
 | 22 | src/zephyr/intelligence/model_profiling/model_discovery.py | ModelDiscovery — 枚举所有本地 Ollama 模型 + 远... | 生产态 / production |  |
 | 23 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | BenchmarkSuite — 多维度模型性能测试用例集 | 生产态 / production |  |
-| 24 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | model-profiler.cli — 模型性能检测命令行入口 | 原型态 / prototype |  |
+| 24 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | model-profiler.cli — 模型性能检测命令行入口 | 设计态 / design |  |
 | 25 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | ModelProfiler — 核心性能分析引擎 | 生产态 / production |  |
 | 26 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | Results Writer — 持久化 benchmark 结果，支持历... | 生产态 / production |  |
 | 27 | src/zephyr/intelligence/model_profiling/pipeline_routing/... | ModelTaskMatrix — 任务×模型性能学习引擎 | 生产态 / production |  |
-| 28 | src/zephyr/intelligence/model_profiling/profiler.py | ModelProfiler — 核心性能分析引擎 | 原型态 / prototype |  |
+| 28 | src/zephyr/intelligence/model_profiling/profiler.py | ModelProfiler — 核心性能分析引擎 | 设计态 / design |  |
 | 29 | src/zephyr/intelligence/model_profiling/provider_data.py | provider_data.py | 生产态 / production |  |
 | 30 | src/zephyr/intelligence/model_profiling/results_writer.py | Results Writer — 持久化 benchmark 结果，支持历... | 生产态 / production |  |
-| 31 | src/zephyr/intelligence/model_profiling/task_model_learne... | ModelTaskMatrix — 任务×模型性能学习引擎 | 原型态 / prototype |  |
+| 31 | src/zephyr/intelligence/model_profiling/task_model_learne... | ModelTaskMatrix — 任务×模型性能学习引擎 | 设计态 / design |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -82,7 +82,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -96,33 +95,33 @@ ttl: permanent
 graph TD
     subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
         scripts_calibrate_model_diff_py["(生产态 / production) 模型能力差异校准脚本（P1-3 治本）。<br/>文件: calibrate_model_diff.py"]
-        scripts_quick_profile_py["(原型态 / prototype) 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。<br/>文件: quick_profile.py"]
+        scripts_quick_profile_py["(设计态 / design) 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。<br/>文件: quick_profile.py"]
         src_zephyr_intelligence_model_drift_detector_py["(生产态 / production) ModelDriftDetector — LLM 模型行为漂移检测。<br/>文件: model_drift_detector.py"]
-        src_zephyr_intelligence_model_evaluation_memory_backend_py["(原型态 / prototype) Backend protocol & shared data classes for the ...<br/>文件: _memory_backend.py"]
-        src_zephyr_intelligence_model_evaluation_activate_py["(原型态 / prototype) G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: activate.py"]
+        src_zephyr_intelligence_model_evaluation_memory_backend_py["(设计态 / design) Backend protocol & shared data classes for the ...<br/>文件: _memory_backend.py"]
+        src_zephyr_intelligence_model_evaluation_activate_py["(设计态 / design) G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: activate.py"]
         src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
         src_zephyr_intelligence_model_evaluation_inference_base_py["(生产态 / production) inference_base.py"]
-        src_zephyr_intelligence_model_evaluation_reranker_py["(原型态 / prototype) Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: reranker.py"]
-        src_zephyr_intelligence_model_evaluation_sync_engine_py["(原型态 / prototype) KB->VMS 同步引擎 — sync_to_vms() 生产者<br/>文件: sync_engine.py"]
+        src_zephyr_intelligence_model_evaluation_reranker_py["(设计态 / design) Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: reranker.py"]
+        src_zephyr_intelligence_model_evaluation_sync_engine_py["(设计态 / design) KB->VMS 同步引擎 — sync_to_vms() 生产者<br/>文件: sync_engine.py"]
         src_zephyr_intelligence_model_evaluation_unified_memory_api_py["(生产态 / production) UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模...<br/>文件: unified_memory_api.py"]
-        src_zephyr_intelligence_model_profiling_benchmark_suite_py["(原型态 / prototype) BenchmarkSuite — 多维度模型性能测试用例集<br/>文件: benchmark_suite.py"]
+        src_zephyr_intelligence_model_profiling_benchmark_suite_py["(设计态 / design) BenchmarkSuite — 多维度模型性能测试用例集<br/>文件: benchmark_suite.py"]
         src_zephyr_intelligence_model_profiling_capability_passport_py["(生产态 / production) CapabilityPassport --- AI 模型能力护照<br/>文件: capability_passport.py"]
-        src_zephyr_intelligence_model_profiling_case_assembler_py["(原型态 / prototype) 真实多文件注入装配器（Phase 3 极限深度）。<br/>文件: case_assembler.py"]
+        src_zephyr_intelligence_model_profiling_case_assembler_py["(设计态 / design) 真实多文件注入装配器（Phase 3 极限深度）。<br/>文件: case_assembler.py"]
         src_zephyr_intelligence_model_profiling_cli_py["(生产态 / production) model-profiler.cli — 模型性能检测命令行入口<br/>文件: cli.py"]
         src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["(生产态 / production) DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端<br/>文件: deepseek_v4_chat.py"]
-        src_zephyr_intelligence_model_profiling_exam_executor_py["(原型态 / prototype) ExamExecutor --- 执行式代码评测（HumanEval pass...<br/>文件: exam_executor.py"]
+        src_zephyr_intelligence_model_profiling_exam_executor_py["(设计态 / design) ExamExecutor --- 执行式代码评测（HumanEval pass...<br/>文件: exam_executor.py"]
         src_zephyr_intelligence_model_profiling_exam_judge_py["(生产态 / production) ExamJudge --- LLM-as-judge 评分器<br/>文件: exam_judge.py"]
         src_zephyr_intelligence_model_profiling_exam_orchestrator_py["(生产态 / production) ExamOrchestrator --- 五轴入职考试主控<br/>文件: exam_orchestrator.py"]
-        src_zephyr_intelligence_model_profiling_exam_rubric_py["(原型态 / prototype) ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5...<br/>文件: exam_rubric.py"]
+        src_zephyr_intelligence_model_profiling_exam_rubric_py["(设计态 / design) ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5...<br/>文件: exam_rubric.py"]
         src_zephyr_intelligence_model_profiling_exam_test_cases_py["(生产态 / production) ExamTestCases --- v3.0.5 扩展考试题库（96 题 / ...<br/>文件: exam_test_cases.py"]
         src_zephyr_intelligence_model_profiling_job_matcher_py["(生产态 / production) JobMatcher --- 模型岗位匹配器<br/>文件: job_matcher.py"]
         src_zephyr_intelligence_model_profiling_model_discovery_py["(生产态 / production) ModelDiscovery — 枚举所有本地 Ollama 模型 + 远...<br/>文件: model_discovery.py"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py["(生产态 / production) BenchmarkSuite — 多维度模型性能测试用例集<br/>文件: benchmark_suite.py"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["(原型态 / prototype) model-profiler.cli — 模型性能检测命令行入口<br/>文件: cli.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["(设计态 / design) model-profiler.cli — 模型性能检测命令行入口<br/>文件: cli.py"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py["(生产态 / production) ModelProfiler — 核心性能分析引擎<br/>文件: profiler.py"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py["(生产态 / production) Results Writer — 持久化 benchmark 结果，支持历...<br/>文件: results_writer.py"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["(生产态 / production) ModelTaskMatrix — 任务×模型性能学习引擎<br/>文件: task_model_learner.py"]
-        src_zephyr_intelligence_model_profiling_profiler_py["(原型态 / prototype) ModelProfiler — 核心性能分析引擎<br/>文件: profiler.py"]
+        src_zephyr_intelligence_model_profiling_profiler_py["(设计态 / design) ModelProfiler — 核心性能分析引擎<br/>文件: profiler.py"]
         src_zephyr_intelligence_model_profiling_provider_data_py["(生产态 / production) provider_data.py"]
         src_zephyr_intelligence_model_profiling_results_writer_py["(生产态 / production) Results Writer — 持久化 benchmark 结果，支持历...<br/>文件: results_writer.py"]
     end
@@ -168,13 +167,13 @@ graph TD
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_evaluation_activate_py -.->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| D_SHARED
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    D_SECURITY["(设计态 / design) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
@@ -183,13 +182,13 @@ graph TD
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOV_OPS_RESILIENCE["(原型态 / prototype) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE["(设计态 / design) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -206,7 +205,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
-        src_zephyr_intelligence_model_profiling_task_model_learner_py["(原型态 / prototype) ModelTaskMatrix — 任务×模型性能学习引擎<br/>文件: task_model_learner.py"]
+        src_zephyr_intelligence_model_profiling_task_model_learner_py["(设计态 / design) ModelTaskMatrix — 任务×模型性能学习引擎<br/>文件: task_model_learner.py"]
     end
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
@@ -259,11 +258,11 @@ graph TD
     scripts_calibrate_model_diff_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_intelligence_model_drift_detector_py -->|导入依赖 / import_depends| D_SHARED
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_SHARED
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION["(设计态 / design) D_INTEGRATION"]
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_ML_TRAIN
@@ -277,10 +276,10 @@ graph TD
     src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    D_SECURITY["(设计态 / design) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
@@ -291,7 +290,7 @@ graph TD
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
@@ -311,25 +310,25 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 12 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
-        scripts_quick_profile_py["(原型态 / prototype) 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。<br/>文件: quick_profile.py"]
-        src_zephyr_intelligence_model_evaluation_memory_backend_py["(原型态 / prototype) Backend protocol & shared data classes for the ...<br/>文件: _memory_backend.py"]
-        src_zephyr_intelligence_model_evaluation_activate_py["(原型态 / prototype) G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: activate.py"]
-        src_zephyr_intelligence_model_evaluation_reranker_py["(原型态 / prototype) Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: reranker.py"]
-        src_zephyr_intelligence_model_evaluation_sync_engine_py["(原型态 / prototype) KB->VMS 同步引擎 — sync_to_vms() 生产者<br/>文件: sync_engine.py"]
-        src_zephyr_intelligence_model_profiling_benchmark_suite_py["(原型态 / prototype) BenchmarkSuite — 多维度模型性能测试用例集<br/>文件: benchmark_suite.py"]
-        src_zephyr_intelligence_model_profiling_case_assembler_py["(原型态 / prototype) 真实多文件注入装配器（Phase 3 极限深度）。<br/>文件: case_assembler.py"]
-        src_zephyr_intelligence_model_profiling_exam_executor_py["(原型态 / prototype) ExamExecutor --- 执行式代码评测（HumanEval pass...<br/>文件: exam_executor.py"]
-        src_zephyr_intelligence_model_profiling_exam_rubric_py["(原型态 / prototype) ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5...<br/>文件: exam_rubric.py"]
-        src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["(原型态 / prototype) model-profiler.cli — 模型性能检测命令行入口<br/>文件: cli.py"]
-        src_zephyr_intelligence_model_profiling_profiler_py["(原型态 / prototype) ModelProfiler — 核心性能分析引擎<br/>文件: profiler.py"]
-        src_zephyr_intelligence_model_profiling_task_model_learner_py["(原型态 / prototype) ModelTaskMatrix — 任务×模型性能学习引擎<br/>文件: task_model_learner.py"]
+        scripts_quick_profile_py["(设计态 / design) 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。<br/>文件: quick_profile.py"]
+        src_zephyr_intelligence_model_evaluation_memory_backend_py["(设计态 / design) Backend protocol & shared data classes for the ...<br/>文件: _memory_backend.py"]
+        src_zephyr_intelligence_model_evaluation_activate_py["(设计态 / design) G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: activate.py"]
+        src_zephyr_intelligence_model_evaluation_reranker_py["(设计态 / design) Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: reranker.py"]
+        src_zephyr_intelligence_model_evaluation_sync_engine_py["(设计态 / design) KB->VMS 同步引擎 — sync_to_vms() 生产者<br/>文件: sync_engine.py"]
+        src_zephyr_intelligence_model_profiling_benchmark_suite_py["(设计态 / design) BenchmarkSuite — 多维度模型性能测试用例集<br/>文件: benchmark_suite.py"]
+        src_zephyr_intelligence_model_profiling_case_assembler_py["(设计态 / design) 真实多文件注入装配器（Phase 3 极限深度）。<br/>文件: case_assembler.py"]
+        src_zephyr_intelligence_model_profiling_exam_executor_py["(设计态 / design) ExamExecutor --- 执行式代码评测（HumanEval pass...<br/>文件: exam_executor.py"]
+        src_zephyr_intelligence_model_profiling_exam_rubric_py["(设计态 / design) ExamRubric --- 奥赛题结构化多维清单评分（v3.0.5...<br/>文件: exam_rubric.py"]
+        src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["(设计态 / design) model-profiler.cli — 模型性能检测命令行入口<br/>文件: cli.py"]
+        src_zephyr_intelligence_model_profiling_profiler_py["(设计态 / design) ModelProfiler — 核心性能分析引擎<br/>文件: profiler.py"]
+        src_zephyr_intelligence_model_profiling_task_model_learner_py["(设计态 / design) ModelTaskMatrix — 任务×模型性能学习引擎<br/>文件: task_model_learner.py"]
     end
     src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
@@ -351,7 +350,7 @@ graph TD
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_memory_backend_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_GOV_OPS_RESILIENCE["(原型态 / prototype) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE["(设计态 / design) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -470,4 +469,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

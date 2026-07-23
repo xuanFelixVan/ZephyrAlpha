@@ -40,7 +40,7 @@ Safety  : M（DDL 定义，init_decision_db 幂等验证）
 build_status / design_maturity 受控词表（与 depgraph 节点表对齐）
 -------------------------------------------------------------
 - build_status 5态：planned / generated / testing / stable / deprecated（单调推进）
-- design_maturity 3态：design / production / prototype
+- design_maturity 2态：design / production [ARCH-MM-002 两档化]
 
 五条承重墙不变量（DEC-INV-001~005）
 ---------------------------------
@@ -48,7 +48,7 @@ build_status / design_maturity 受控词表（与 depgraph 节点表对齐）
 - DEC-INV-002: 决策边两端节点必须存在（FK decision_nodes.node_id）
 - DEC-INV-003: 决策边类型受控（CHECK edge_type IN 4种合法值）
 - DEC-INV-004: build_status 单调推进（CHECK + 应用层状态迁移校验）
-- DEC-INV-005: design_maturity 3态受控（CHECK 3种合法值）
+- DEC-INV-005: design_maturity 2态受控（CHECK 2种合法值 design/production）[ARCH-MM-002 两档化]
 
 P2 迁移后 schema 真源（重要）
 -----------------------------------

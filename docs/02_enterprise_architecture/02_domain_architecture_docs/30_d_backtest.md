@@ -45,28 +45,28 @@ ttl: permanent
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/backtest/core/data_handler.py | 回测数据处理器模块（v1.1.0 扩展：多源化 + Click... | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 2 | src/zephyr/backtest/core/data_handler.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 3 | src/zephyr/backtest/core/decision_gate.py | 3阶段决策门控模块(IS->WFA->OOS) | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 3 | src/zephyr/backtest/core/decision_gate.py | 3阶段决策门控模块(IS->WFA->OOS) | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 4 | src/zephyr/backtest/core/engine_base.py | L_BACKTEST — Backtest Engine Layer | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 5 | src/zephyr/backtest/core/matching_engine.py | 回测撮合引擎模块（v1.1.0 重构：委托 MatchingLog... | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 6 | src/zephyr/backtest/core/matching_engine.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 7 | src/zephyr/backtest/core/matching_logic.py | 共享撮合逻辑模块（回测=实盘一致性核心） | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 8 | src/zephyr/backtest/core/matching_logic.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 9 | src/zephyr/backtest/core/metrics.py | 回测绩效指标计算模块 | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 9 | src/zephyr/backtest/core/metrics.py | 回测绩效指标计算模块 | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 10 | src/zephyr/backtest/core/metrics.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 11 | src/zephyr/backtest/core/overfitting_detector.py | 过拟合检测模块(三维度 + 三层) | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 12 | src/zephyr/backtest/core/pit_manager.py | PIT(Point-In-Time)铁律管理器模块 | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 11 | src/zephyr/backtest/core/overfitting_detector.py | 过拟合检测模块(三维度 + 三层) | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 12 | src/zephyr/backtest/core/pit_manager.py | PIT(Point-In-Time)铁律管理器模块 | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 13 | src/zephyr/backtest/core/portfolio.py | 回测持仓管理模块 | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 14 | src/zephyr/backtest/core/portfolio.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 15 | src/zephyr/backtest/core/tick_replay.py | Tick 回放引擎模块（v1.1.0 新增，秒级做T专用） | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 16 | src/zephyr/backtest/core/tick_replay.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 17 | src/zephyr/backtest/core/walk_forward.py | Walk-Forward分析与多重比较偏差校正模块 | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 17 | src/zephyr/backtest/core/walk_forward.py | Walk-Forward分析与多重比较偏差校正模块 | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 18 | src/zephyr/backtest/implementations/event_driven_engine.py | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 19 | src/zephyr/backtest/implementations/vectorized_engine.py | L_BACKTEST — Vectorized Backtest Engine | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 20 | src/zephyr/backtest/io/__init__.py | io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 21 | src/zephyr/backtest/io/backtest_result_sink.py | backtest_result_sink · 回测结果数据落地模块（v... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 20 | src/zephyr/backtest/io/__init__.py | io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新... | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 21 | src/zephyr/backtest/io/backtest_result_sink.py | backtest_result_sink · 回测结果数据落地模块（v... | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 22 | src/zephyr/backtest/io/backtest_result_sink.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 23 | src/zephyr/backtest/io/decisiongraph_adapter.py | BacktestResult -> decisiongraph 适配器（TRAE-06... | 生产态 / production | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 24 | src/zephyr/backtest/io/result_repository.py | result_repository · 回测产物持久化/检索模块（v... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
+| 24 | src/zephyr/backtest/io/result_repository.py | result_repository · 回测产物持久化/检索模块（v... | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 | 25 | src/zephyr/backtest/io/result_repository.py/ |  | 设计态 / design | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -76,7 +76,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -89,28 +88,28 @@ graph TD
     subgraph D_BACKTEST["D_BACKTEST 回测"]
         src_zephyr_backtest_core_data_handler_py["(生产态 / production) 回测数据处理器模块（v1.1.0 扩展：多源化 + Click...<br/>文件: data_handler.py"]
         src_zephyr_backtest_core_data_handler_py_1["(设计态 / design) "]
-        src_zephyr_backtest_core_decision_gate_py["(原型态 / prototype) 3阶段决策门控模块(IS->WFA->OOS)<br/>文件: decision_gate.py"]
+        src_zephyr_backtest_core_decision_gate_py["(设计态 / design) 3阶段决策门控模块(IS->WFA->OOS)<br/>文件: decision_gate.py"]
         src_zephyr_backtest_core_engine_base_py["(生产态 / production) L_BACKTEST — Backtest Engine Layer<br/>文件: engine_base.py"]
         src_zephyr_backtest_core_matching_engine_py["(生产态 / production) 回测撮合引擎模块（v1.1.0 重构：委托 MatchingLog...<br/>文件: matching_engine.py"]
         src_zephyr_backtest_core_matching_engine_py_1["(设计态 / design) "]
         src_zephyr_backtest_core_matching_logic_py["(生产态 / production) 共享撮合逻辑模块（回测=实盘一致性核心）<br/>文件: matching_logic.py"]
         src_zephyr_backtest_core_matching_logic_py_1["(设计态 / design) "]
-        src_zephyr_backtest_core_metrics_py["(原型态 / prototype) 回测绩效指标计算模块<br/>文件: metrics.py"]
+        src_zephyr_backtest_core_metrics_py["(设计态 / design) 回测绩效指标计算模块<br/>文件: metrics.py"]
         src_zephyr_backtest_core_metrics_py_1["(设计态 / design) "]
-        src_zephyr_backtest_core_overfitting_detector_py["(原型态 / prototype) 过拟合检测模块(三维度 + 三层)<br/>文件: overfitting_detector.py"]
-        src_zephyr_backtest_core_pit_manager_py["(原型态 / prototype) PIT(Point-In-Time)铁律管理器模块<br/>文件: pit_manager.py"]
+        src_zephyr_backtest_core_overfitting_detector_py["(设计态 / design) 过拟合检测模块(三维度 + 三层)<br/>文件: overfitting_detector.py"]
+        src_zephyr_backtest_core_pit_manager_py["(设计态 / design) PIT(Point-In-Time)铁律管理器模块<br/>文件: pit_manager.py"]
         src_zephyr_backtest_core_portfolio_py["(生产态 / production) 回测持仓管理模块<br/>文件: portfolio.py"]
         src_zephyr_backtest_core_portfolio_py_1["(设计态 / design) "]
         src_zephyr_backtest_core_tick_replay_py["(生产态 / production) Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）<br/>文件: tick_replay.py"]
         src_zephyr_backtest_core_tick_replay_py_1["(设计态 / design) "]
-        src_zephyr_backtest_core_walk_forward_py["(原型态 / prototype) Walk-Forward分析与多重比较偏差校正模块<br/>文件: walk_forward.py"]
+        src_zephyr_backtest_core_walk_forward_py["(设计态 / design) Walk-Forward分析与多重比较偏差校正模块<br/>文件: walk_forward.py"]
         src_zephyr_backtest_implementations_event_driven_engine_py["(生产态 / production) 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>文件: event_driven_engine.py"]
         src_zephyr_backtest_implementations_vectorized_engine_py["(生产态 / production) L_BACKTEST — Vectorized Backtest Engine<br/>文件: vectorized_engine.py"]
-        src_zephyr_backtest_io_init_py["(原型态 / prototype) io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新...<br/>文件: __init__.py"]
-        src_zephyr_backtest_io_backtest_result_sink_py["(原型态 / prototype) backtest_result_sink · 回测结果数据落地模块（v...<br/>文件: backtest_result_sink.py"]
+        src_zephyr_backtest_io_init_py["(设计态 / design) io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新...<br/>文件: __init__.py"]
+        src_zephyr_backtest_io_backtest_result_sink_py["(设计态 / design) backtest_result_sink · 回测结果数据落地模块（v...<br/>文件: backtest_result_sink.py"]
         src_zephyr_backtest_io_backtest_result_sink_py_1["(设计态 / design) "]
         src_zephyr_backtest_io_decisiongraph_adapter_py["(生产态 / production) BacktestResult -> decisiongraph 适配器（TRAE-06...<br/>文件: decisiongraph_adapter.py"]
-        src_zephyr_backtest_io_result_repository_py["(原型态 / prototype) result_repository · 回测产物持久化/检索模块（v...<br/>文件: result_repository.py"]
+        src_zephyr_backtest_io_result_repository_py["(设计态 / design) result_repository · 回测产物持久化/检索模块（v...<br/>文件: result_repository.py"]
         src_zephyr_backtest_io_result_repository_py_1["(设计态 / design) "]
     end
     src_zephyr_backtest_core_portfolio_py_1 -.->|导入依赖 / import_depends| src_zephyr_backtest_core_data_handler_py_1
@@ -151,7 +150,7 @@ graph TD
     src_zephyr_backtest_core_data_handler_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_backtest_io_result_repository_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_DATA["(生产态 / production) D_DATA"]
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
@@ -204,16 +203,16 @@ graph TD
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    D_DATA["(原型态 / prototype) D_DATA"]
+    D_DATA["(设计态 / design) D_DATA"]
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_DATA
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
+    D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -262,21 +261,21 @@ graph TD
     class D_ML_TRAIN,D_GOVERNANCE,D_FRONTEND,D_EX_CORE external_design
 ```
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 8 个，4 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_BACKTEST["D_BACKTEST 回测"]
-        src_zephyr_backtest_core_decision_gate_py["(原型态 / prototype) 3阶段决策门控模块(IS->WFA->OOS)<br/>文件: decision_gate.py"]
-        src_zephyr_backtest_core_metrics_py["(原型态 / prototype) 回测绩效指标计算模块<br/>文件: metrics.py"]
-        src_zephyr_backtest_core_overfitting_detector_py["(原型态 / prototype) 过拟合检测模块(三维度 + 三层)<br/>文件: overfitting_detector.py"]
-        src_zephyr_backtest_core_pit_manager_py["(原型态 / prototype) PIT(Point-In-Time)铁律管理器模块<br/>文件: pit_manager.py"]
-        src_zephyr_backtest_core_walk_forward_py["(原型态 / prototype) Walk-Forward分析与多重比较偏差校正模块<br/>文件: walk_forward.py"]
-        src_zephyr_backtest_io_init_py["(原型态 / prototype) io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新...<br/>文件: __init__.py"]
-        src_zephyr_backtest_io_backtest_result_sink_py["(原型态 / prototype) backtest_result_sink · 回测结果数据落地模块（v...<br/>文件: backtest_result_sink.py"]
-        src_zephyr_backtest_io_result_repository_py["(原型态 / prototype) result_repository · 回测产物持久化/检索模块（v...<br/>文件: result_repository.py"]
+        src_zephyr_backtest_core_decision_gate_py["(设计态 / design) 3阶段决策门控模块(IS->WFA->OOS)<br/>文件: decision_gate.py"]
+        src_zephyr_backtest_core_metrics_py["(设计态 / design) 回测绩效指标计算模块<br/>文件: metrics.py"]
+        src_zephyr_backtest_core_overfitting_detector_py["(设计态 / design) 过拟合检测模块(三维度 + 三层)<br/>文件: overfitting_detector.py"]
+        src_zephyr_backtest_core_pit_manager_py["(设计态 / design) PIT(Point-In-Time)铁律管理器模块<br/>文件: pit_manager.py"]
+        src_zephyr_backtest_core_walk_forward_py["(设计态 / design) Walk-Forward分析与多重比较偏差校正模块<br/>文件: walk_forward.py"]
+        src_zephyr_backtest_io_init_py["(设计态 / design) io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新...<br/>文件: __init__.py"]
+        src_zephyr_backtest_io_backtest_result_sink_py["(设计态 / design) backtest_result_sink · 回测结果数据落地模块（v...<br/>文件: backtest_result_sink.py"]
+        src_zephyr_backtest_io_result_repository_py["(设计态 / design) result_repository · 回测产物持久化/检索模块（v...<br/>文件: result_repository.py"]
     end
     src_zephyr_backtest_core_decision_gate_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_io_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
@@ -348,4 +347,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

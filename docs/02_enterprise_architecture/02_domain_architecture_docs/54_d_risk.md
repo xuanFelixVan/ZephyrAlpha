@@ -43,11 +43,11 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/risk/implementations/default_position_limit_ch... | D_RISK — Default Position Limit Checker | 原型态 / prototype |  |
+| 1 | src/zephyr/risk/implementations/default_position_limit_ch... | D_RISK — Default Position Limit Checker | 设计态 / design |  |
 | 2 | src/zephyr/risk/implementations/default_risk_limits_calcu... | D_RISK — Default Risk Limits Calculator | 生产态 / production |  |
 | 3 | src/zephyr/risk/implementations/default_risk_manager_orch... | D_RISK — Default Risk Manager Orchestrator | 生产态 / production |  |
 | 4 | src/zephyr/risk/implementations/default_risk_validator.py | D_RISK — Default Risk Validator | 生产态 / production |  |
-| 5 | src/zephyr/risk/implementations/default_stop_loss_engine.py | D_RISK — Default Stop-Loss Engine | 原型态 / prototype |  |
+| 5 | src/zephyr/risk/implementations/default_stop_loss_engine.py | D_RISK — Default Stop-Loss Engine | 设计态 / design |  |
 | 6 | src/zephyr/risk/risk_limits.py | D_RISK — Risk Limits Calculator | 生产态 / production |  |
 | 7 | src/zephyr/risk/risk_manager.py | ZephyrAlpha — D_RISK Risk Management Layer — ... | 生产态 / production |  |
 | 8 | src/zephyr/risk/risk_manager_base.py | D_RISK — Risk Management Layer Skeleton | 生产态 / production |  |
@@ -67,7 +67,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -79,11 +78,11 @@ ttl: permanent
 graph TD
     subgraph D_RISK["D_RISK 风控"]
         src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py["(生产态 / production) ml_experiment_pipeline.py"]
-        src_zephyr_risk_implementations_default_position_limit_checker_py["(原型态 / prototype) D_RISK — Default Position Limit Checker<br/>文件: default_position_limit_checker.py"]
+        src_zephyr_risk_implementations_default_position_limit_checker_py["(设计态 / design) D_RISK — Default Position Limit Checker<br/>文件: default_position_limit_checker.py"]
         src_zephyr_risk_implementations_default_risk_limits_calculator_py["(生产态 / production) D_RISK — Default Risk Limits Calculator<br/>文件: default_risk_limits_calculator.py"]
         src_zephyr_risk_implementations_default_risk_manager_orchestrator_py["(生产态 / production) D_RISK — Default Risk Manager Orchestrator<br/>文件: default_risk_manager_orchestrator.py"]
         src_zephyr_risk_implementations_default_risk_validator_py["(生产态 / production) D_RISK — Default Risk Validator<br/>文件: default_risk_validator.py"]
-        src_zephyr_risk_implementations_default_stop_loss_engine_py["(原型态 / prototype) D_RISK — Default Stop-Loss Engine<br/>文件: default_stop_loss_engine.py"]
+        src_zephyr_risk_implementations_default_stop_loss_engine_py["(设计态 / design) D_RISK — Default Stop-Loss Engine<br/>文件: default_stop_loss_engine.py"]
         src_zephyr_risk_risk_limits_py["(生产态 / production) D_RISK — Risk Limits Calculator<br/>文件: risk_limits.py"]
         src_zephyr_risk_risk_manager_py["(生产态 / production) ZephyrAlpha — D_RISK Risk Management Layer — ...<br/>文件: risk_manager.py"]
         src_zephyr_risk_risk_manager_base_py["(生产态 / production) D_RISK — Risk Management Layer Skeleton<br/>文件: risk_manager_base.py"]
@@ -113,7 +112,7 @@ graph TD
     src_zephyr_risk_risk_limits_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -160,7 +159,7 @@ graph TD
     src_zephyr_risk_risk_limits_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -178,15 +177,15 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 2 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_RISK["D_RISK 风控"]
-        src_zephyr_risk_implementations_default_position_limit_checker_py["(原型态 / prototype) D_RISK — Default Position Limit Checker<br/>文件: default_position_limit_checker.py"]
-        src_zephyr_risk_implementations_default_stop_loss_engine_py["(原型态 / prototype) D_RISK — Default Stop-Loss Engine<br/>文件: default_stop_loss_engine.py"]
+        src_zephyr_risk_implementations_default_position_limit_checker_py["(设计态 / design) D_RISK — Default Position Limit Checker<br/>文件: default_position_limit_checker.py"]
+        src_zephyr_risk_implementations_default_stop_loss_engine_py["(设计态 / design) D_RISK — Default Stop-Loss Engine<br/>文件: default_stop_loss_engine.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -238,4 +237,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

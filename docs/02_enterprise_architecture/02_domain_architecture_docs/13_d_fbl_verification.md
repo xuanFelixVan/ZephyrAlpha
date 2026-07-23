@@ -43,10 +43,10 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/feedback_loop/gates/_governance_gates.py | _governance_gates.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 2 | src/zephyr/feedback_loop/gates/_operational_gates.py | _operational_gates.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 3 | src/zephyr/feedback_loop/gates/_safety_gates.py | _safety_gates.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 4 | src/zephyr/feedback_loop/gates/_security_gates.py | _security_gates.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 1 | src/zephyr/feedback_loop/gates/_governance_gates.py | _governance_gates.py | 设计态 / design | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 2 | src/zephyr/feedback_loop/gates/_operational_gates.py | _operational_gates.py | 设计态 / design | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 3 | src/zephyr/feedback_loop/gates/_safety_gates.py | _safety_gates.py | 设计态 / design | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 4 | src/zephyr/feedback_loop/gates/_security_gates.py | _security_gates.py | 设计态 / design | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
 | 5 | src/zephyr/feedback_loop/gates/action_reversibility.py | Action Reversibility — v0.15.0 R208 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
 | 6 | src/zephyr/feedback_loop/gates/adversarial_validation.py | Adversarial Validation Gate — FLE-ADVERSARIAL-... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
 | 7 | src/zephyr/feedback_loop/gates/autonomy_credit.py | Autonomy Credit System — v0.7.0 R87 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
@@ -122,7 +122,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -135,10 +134,10 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_FBL_VERIFICATION["D_FBL_VERIFICATION 反馈验证"]
-        src_zephyr_feedback_loop_gates_governance_gates_py["(原型态 / prototype) _governance_gates.py"]
-        src_zephyr_feedback_loop_gates_operational_gates_py["(原型态 / prototype) _operational_gates.py"]
-        src_zephyr_feedback_loop_gates_safety_gates_py["(原型态 / prototype) _safety_gates.py"]
-        src_zephyr_feedback_loop_gates_security_gates_py["(原型态 / prototype) _security_gates.py"]
+        src_zephyr_feedback_loop_gates_governance_gates_py["(设计态 / design) _governance_gates.py"]
+        src_zephyr_feedback_loop_gates_operational_gates_py["(设计态 / design) _operational_gates.py"]
+        src_zephyr_feedback_loop_gates_safety_gates_py["(设计态 / design) _safety_gates.py"]
+        src_zephyr_feedback_loop_gates_security_gates_py["(设计态 / design) _security_gates.py"]
         src_zephyr_feedback_loop_gates_action_reversibility_py["(生产态 / production) Action Reversibility — v0.15.0 R208<br/>文件: action_reversibility.py"]
         src_zephyr_feedback_loop_gates_adversarial_validation_py["(生产态 / production) Adversarial Validation Gate — FLE-ADVERSARIAL-...<br/>文件: adversarial_validation.py"]
         src_zephyr_feedback_loop_gates_autonomy_credit_py["(生产态 / production) Autonomy Credit System — v0.7.0 R87<br/>文件: autonomy_credit.py"]
@@ -166,7 +165,7 @@ graph TD
         src_zephyr_feedback_loop_gates_parameterized_safety_gate_py["(生产态 / production) GateVerdict — GateVerdict<br/>文件: parameterized_safety_gate.py"]
         src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["(生产态 / production) Safety Gates L1-L27 — Unified Pipeline (MOD-FE...<br/>文件: safety_gate_l1_l27.py"]
     end
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(设计态 / design) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_security_gates_py
@@ -408,19 +407,19 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 4 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_FBL_VERIFICATION["D_FBL_VERIFICATION 反馈验证"]
-        src_zephyr_feedback_loop_gates_governance_gates_py["(原型态 / prototype) _governance_gates.py"]
-        src_zephyr_feedback_loop_gates_operational_gates_py["(原型态 / prototype) _operational_gates.py"]
-        src_zephyr_feedback_loop_gates_safety_gates_py["(原型态 / prototype) _safety_gates.py"]
-        src_zephyr_feedback_loop_gates_security_gates_py["(原型态 / prototype) _security_gates.py"]
+        src_zephyr_feedback_loop_gates_governance_gates_py["(设计态 / design) _governance_gates.py"]
+        src_zephyr_feedback_loop_gates_operational_gates_py["(设计态 / design) _operational_gates.py"]
+        src_zephyr_feedback_loop_gates_safety_gates_py["(设计态 / design) _safety_gates.py"]
+        src_zephyr_feedback_loop_gates_security_gates_py["(设计态 / design) _security_gates.py"]
     end
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(设计态 / design) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_security_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_governance_gates_py
@@ -500,4 +499,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

@@ -44,9 +44,9 @@ ttl: permanent
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
 | 1 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | docs__03_modules___cross_layer__model_profiler__blueprint_md | 设计态 / design |  |
-| 2 | src/zephyr/ml_train/implementations/default_inference_eng... | D_ML_TRAIN — Default Inference Engine | 原型态 / prototype |  |
-| 3 | src/zephyr/ml_train/inference_base.py | D_ML_TRAIN — ML Inference Base | 原型态 / prototype |  |
-| 4 | src/zephyr/ml_train/trainer_base.py | D_ML_TRAIN — ML Training Base | 原型态 / prototype |  |
+| 2 | src/zephyr/ml_train/implementations/default_inference_eng... | D_ML_TRAIN — Default Inference Engine | 设计态 / design |  |
+| 3 | src/zephyr/ml_train/inference_base.py | D_ML_TRAIN — ML Inference Base | 设计态 / design |  |
+| 4 | src/zephyr/ml_train/trainer_base.py | D_ML_TRAIN — ML Training Base | 设计态 / design |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -55,7 +55,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -67,16 +66,16 @@ ttl: permanent
 graph TD
     subgraph D_ML_TRAIN["D_ML_TRAIN 训练"]
         docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_profiler__blueprint_md"]
-        src_zephyr_ml_train_implementations_default_inference_engine_py["(原型态 / prototype) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
-        src_zephyr_ml_train_inference_base_py["(原型态 / prototype) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
-        src_zephyr_ml_train_trainer_base_py["(原型态 / prototype) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
+        src_zephyr_ml_train_implementations_default_inference_engine_py["(设计态 / design) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
+        src_zephyr_ml_train_inference_base_py["(设计态 / design) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
+        src_zephyr_ml_train_trainer_base_py["(设计态 / design) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
-    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED["(设计态 / design) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
@@ -125,23 +124,23 @@ graph TD
     class D_GOV_DOCS external_design
 ```
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 3 个，3 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_ML_TRAIN["D_ML_TRAIN 训练"]
-        src_zephyr_ml_train_implementations_default_inference_engine_py["(原型态 / prototype) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
-        src_zephyr_ml_train_inference_base_py["(原型态 / prototype) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
-        src_zephyr_ml_train_trainer_base_py["(原型态 / prototype) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
+        src_zephyr_ml_train_implementations_default_inference_engine_py["(设计态 / design) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
+        src_zephyr_ml_train_inference_base_py["(设计态 / design) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
+        src_zephyr_ml_train_trainer_base_py["(设计态 / design) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
-    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED["(设计态 / design) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
@@ -209,4 +208,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

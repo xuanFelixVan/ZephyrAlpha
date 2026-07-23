@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+> [ARCH-MM-002 NOTE]: This document references 3-state design_maturity (design/prototype/production). As of 2026-07-23, prototype has been deleted. References to prototype should be read as 'design' or 'production'.
+
 # 四图对齐剩余 7 问题治本方案（ARCH-056 修正）
 
 > **Status**: spec | **Created**: 2026-07-10 | **Author**: AI 架构师

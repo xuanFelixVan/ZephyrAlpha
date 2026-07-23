@@ -12,7 +12,7 @@
 
 # [MATURITY] design
 
-# [INVARIANTS] post-commit 事件触发（仅当 staged .py 文件含 [STABILITY] 或 [MATURITY] 头部标记时触发）；reconciler 永不抛异常（异常降级为 warn）；只读 git show HEAD~1:path 获取旧版本（不修改工作区）；后向状态转换（如 stable→evolving, production→prototype）持久化到 governance.db drift_audit_findings 表（severity=HIGH）；正则提取头部标记（不解析整文件）；非 Zephyr 项目 skip
+# [INVARIANTS] post-commit 事件触发（仅当 staged .py 文件含 [STABILITY] 或 [MATURITY] 头部标记时触发）；reconciler 永不抛异常（异常降级为 warn）；只读 git show HEAD~1:path 获取旧版本（不修改工作区）；后向状态转换（如 stable→evolving, production→design）持久化到 governance.db drift_audit_findings 表（severity=HIGH）；正则提取头部标记（不解析整文件）；非 Zephyr 项目 skip [ARCH-MM-002 两档化]
 
 # [MODIFY-GUARD] _GATE_ID / _PRIORITY / _STABILITY_ORDER / _MATURITY_ORDER
 
@@ -40,7 +40,7 @@ post-commit 事件触发，当 staged ``.py`` 文件含 ``[STABILITY]`` 或 ``[M
 
 标记时，提取新版本（HEAD）与旧版本（HEAD~1）的 stability/maturity 值，检测后向
 
-状态转换（即"降级"——如 ``stable→evolving`` / ``production→prototype``），命中则
+状态转换（即"降级"——如 ``stable→evolving`` / ``production→design``），命中则
 
 warn 并持久化到 ``governance.db`` 的 ``drift_audit_findings`` 表（severity=HIGH）。
 
@@ -58,7 +58,7 @@ STABILITY 词表（``stability_vocabulary.yaml``）定义单调推进序列：
 
 或元数据失真（如 architecture_issue_registry.yaml 中记录的"5 个模块
 
-[MATURITY] production→prototype"事件）。
+[MATURITY] production→design"事件）。
 
 
 
@@ -76,7 +76,7 @@ post-commit reconciler 检测此类后向转换，warn + 持久化，AI 可查
 
 1. **post-commit warn-only（非 block）**：后向转换可能是合法治本回退（如发现模块
 
-   不达标，从 ``production`` 退回 ``prototype`` 重新打磨）。reconciler 无法区分
+   不达标，从 ``production`` 退回 ``design`` 重新打磨）。reconciler 无法区分
 
    "合法回退"vs"非法降级"。warn+持久化让 AI 后续可查，不阻断合法回退。
 
@@ -106,11 +106,11 @@ post-commit reconciler 检测此类后向转换，warn + 持久化，AI 可查
 
 - STABILITY: ``volatile`` → ``evolving`` → ``stable`` → ``frozen``
 
-- MATURITY: ``design`` → ``prototype`` → ``production``
+- MATURITY: ``design`` → ``production`` [ARCH-MM-002 两档化]
 
 
 
-后向转换（如 ``stable→evolving``, ``production→prototype``, ``frozen→stable``）
+后向转换（如 ``stable→evolving``, ``production→design``, ``frozen→stable``)
 
 触发 warn + 持久化。
 

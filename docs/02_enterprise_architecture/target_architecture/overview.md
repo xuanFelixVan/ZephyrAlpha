@@ -98,7 +98,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 | **6 大核心服务（VMS/CE/Orc/FLE/LSG/KB）** | — | 接口规范真源：[`_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/) |
 | **17 项技术选型** | ✅ **已定稿** | 见 [`technology_landscape.yaml`](../../../architecture_model/technology/technology_landscape.yaml)（SSoT）|
 | **模块内部边界** | ⏳ **讨论中** | experimental 落地时细化 |
-| **设计态→运营态迁移** | 🔧 **进行中** | design_maturity: design(89) / prototype(5008) / production(1404) |
+| **设计态→运营态迁移** | 🔧 **进行中** | design_maturity: design(89) / production(6412) |
 
 ---
 

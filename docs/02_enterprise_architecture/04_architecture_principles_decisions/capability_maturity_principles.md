@@ -48,7 +48,7 @@ ttl: permanent
 |:---:|------|------|----------------|
 | **L0** | 缺失 | 能力完全不存在，无设计无代码 | 域无节点 |
 | **L1** | 设计 | 仅有设计文档/蓝图，无代码 | `design_maturity='design'` |
-| **L2** | 草稿 | 有原型代码，未集成 | `design_maturity='prototype'` |
+| **L2** | 草稿 | 有原型代码，未集成 | `design_maturity='design'` |
 | **L3** | 可用 | 代码可用但未生产验证 | `design_maturity='production'` + `build_status!='active'` |
 | **L4** | 生产级 | 生产环境稳定运行 | `design_maturity='production'` + `build_status='active'` |
 | **L5** | 顶级机构对标 | 达到 Goldman/BlackRock 水平 | 待评估 |

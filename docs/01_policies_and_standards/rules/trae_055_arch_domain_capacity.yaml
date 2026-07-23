@@ -86,23 +86,22 @@ sections:
     - type: constraint
       check: 模块定义口径
       pass: 模块 = production 节点（真实代码文件，design_maturity=production）
-      fail: 将 design 节点（逻辑路径）或 prototype 节点（自动派生）计入模块数
+      fail: 将 design 节点（逻辑路径，尚未落地为代码）计入模块数 [ARCH-MM-002 两档化]
     - type: constraint
       check: 当前模块总数
       pass: 通过 extract_depgraph.py --summary 查询 total_production_nodes 字段获取当前值（每域 production_nodes 字段）
       fail: 使用 60 个蓝图级模块或全节点数作为模块数
     actions:
     - type: mandatory
-      step: 统计模块数时 MUST 使用 extract_depgraph.py --summary 输出的 total_production_nodes 字段（顶层总数）或 production_nodes 字段（每域），禁止使用 current_modules（含 design+prototype）或全节点数
+      step: 统计模块数时 MUST 使用 extract_depgraph.py --summary 输出的 total_production_nodes 字段（顶层总数）或 production_nodes 字段（每域），禁止使用 current_modules（含 design 节点）或全节点数 [ARCH-MM-002 两档化]
     - type: mandatory
       step: 容量判定（ARCH-CAP-002）的分子是 production_nodes（每域），不是 current_modules
     prohibitions:
     - 将 design 节点（逻辑路径，尚未落地）计入模块容量
-    - 将 prototype 节点（自动派生）计入模块容量
-    - 使用 current_modules 字段做容量判定（该字段含三态节点）
+    - 使用 current_modules 字段做容量判定（该字段含 design 节点，ARCH-MM-002 两档化后 prototype 已删除）
     - 使用 60 个蓝图级模块作为模块数
     rationale:
-      why_production_only: design 节点是逻辑路径，尚未落地为代码；prototype 节点是自动派生，非独立功能单元。只有 production 节点（真实代码文件）才是 AI 需要维护的功能单元。按全节点数判定容量 = AI 上下文装不下 = 幻觉温床。
+      why_production_only: design 节点是逻辑路径，尚未落地为代码。只有 production 节点（真实代码文件）才是 AI 需要维护的功能单元。按全节点数判定容量 = AI 上下文装不下 = 幻觉温床。[ARCH-MM-002 两档化：prototype 已删除]
   arch_cap_002_domain_capacity_limit:
     section_type: rule
     title: 域容量上限裁定 (ARCH-CAP-002)

@@ -48,7 +48,7 @@ codification_level: L1
 codification_at: "2026-05-15"
 responsibility_domain: 
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 ---
 
 > ✅ **业务层已开放——可施工**

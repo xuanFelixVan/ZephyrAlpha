@@ -39,7 +39,7 @@ codification_level: L2
 codification_at: "2026-05-13"
 responsibility_domain: 
 build_status: stable
-design_maturity: prototype
+design_maturity: production
 ---
 > module_id: MOD-INF-026 | version: 3.1.2 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed

@@ -23,12 +23,11 @@
 | Node（节点） | 214 |
 | Edge（边） | 213 |
 | 运营态 Layer（design_maturity=production） | 23 |
-| 设计态 Layer（design_maturity=design） | 63 |
-| 原型态 Layer（design_maturity=prototype） | 572 |
+| 设计态 Layer（design_maturity=design） | 635 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 214 |
 
-> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行，`prototype`=原型验证中。对标 depgraph 的设计态/运营态机制。
+> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。对标 depgraph 的设计态/运营态机制。
 
 ## Track 导航（按优先级）
 

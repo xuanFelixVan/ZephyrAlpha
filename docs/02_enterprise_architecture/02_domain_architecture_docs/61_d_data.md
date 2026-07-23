@@ -43,59 +43,59 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | schemas/categories/market_auction.py | auction_snapshot 表 DDL-as-Code（category_id: m... | 原型态 / prototype |  |
-| 2 | schemas/categories/market_cb_iv.py | convertible_bond_iv 表 DDL-as-Code（category_id... | 原型态 / prototype |  |
-| 3 | schemas/categories/market_futures_position.py | futures_position 表 DDL-as-Code（category_id: m... | 原型态 / prototype |  |
-| 4 | schemas/categories/market_futures_term.py | futures_term_structure 表 DDL-as-Code（category... | 原型态 / prototype |  |
-| 5 | schemas/categories/market_index.py | index_quote 表 DDL-as-Code（category_id: market... | 原型态 / prototype |  |
-| 6 | schemas/categories/market_kline_daily.py | kline_daily 表 DDL-as-Code（category_id: market... | 原型态 / prototype |  |
-| 7 | schemas/categories/market_option_iv.py | option_iv_surface 表 DDL-as-Code（category_id: ... | 原型态 / prototype |  |
-| 8 | schemas/categories/market_tick.py | tick_data 表 DDL-as-Code（category_id: market_t... | 原型态 / prototype |  |
-| 9 | scripts/ch/apply_market_tables_ddl.py | ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚... | 原型态 / prototype |  |
-| 10 | scripts/register_scheduler_task.ps1 | register_scheduler_task.ps1 | 原型态 / prototype |  |
-| 11 | scripts/start_scheduler.ps1 | start_scheduler.ps1 | 原型态 / prototype |  |
-| 12 | scripts/start_tick_subscriber.ps1 | start_tick_subscriber.ps1 | 原型态 / prototype |  |
+| 1 | schemas/categories/market_auction.py | auction_snapshot 表 DDL-as-Code（category_id: m... | 设计态 / design |  |
+| 2 | schemas/categories/market_cb_iv.py | convertible_bond_iv 表 DDL-as-Code（category_id... | 设计态 / design |  |
+| 3 | schemas/categories/market_futures_position.py | futures_position 表 DDL-as-Code（category_id: m... | 设计态 / design |  |
+| 4 | schemas/categories/market_futures_term.py | futures_term_structure 表 DDL-as-Code（category... | 设计态 / design |  |
+| 5 | schemas/categories/market_index.py | index_quote 表 DDL-as-Code（category_id: market... | 设计态 / design |  |
+| 6 | schemas/categories/market_kline_daily.py | kline_daily 表 DDL-as-Code（category_id: market... | 设计态 / design |  |
+| 7 | schemas/categories/market_option_iv.py | option_iv_surface 表 DDL-as-Code（category_id: ... | 设计态 / design |  |
+| 8 | schemas/categories/market_tick.py | tick_data 表 DDL-as-Code（category_id: market_t... | 设计态 / design |  |
+| 9 | scripts/ch/apply_market_tables_ddl.py | ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚... | 设计态 / design |  |
+| 10 | scripts/register_scheduler_task.ps1 | register_scheduler_task.ps1 | 设计态 / design |  |
+| 11 | scripts/start_scheduler.ps1 | start_scheduler.ps1 | 设计态 / design |  |
+| 12 | scripts/start_tick_subscriber.ps1 | start_tick_subscriber.ps1 | 设计态 / design |  |
 | 13 | src/zephyr/data/__init__.py | zephyr.data — 数据源集成器（MOD-L00-004）。 | 生产态 / production |  |
-| 14 | src/zephyr/data/__main__.py | python -m zephyr.data — 数据源集成器 CLI 入口。 | 原型态 / prototype |  |
-| 15 | src/zephyr/data/alerter.py | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | 原型态 / prototype |  |
-| 16 | src/zephyr/data/backfill_checker.py | L10 周末补下载检测器——检测过去N天缺失数据并精... | 原型态 / prototype |  |
-| 17 | src/zephyr/data/buffered_writer.py | 批量聚合写入器（MOD-L00-004 §18.3 裁定... | 原型态 / prototype |  |
-| 18 | src/zephyr/data/capability_validator.py | Provider Capability 行为契约校验器（裁定... | 原型态 / prototype |  |
-| 19 | src/zephyr/data/ch_config.py | ClickHouse 连接配置单真源加载器（裁定... | 原型态 / prototype |  |
-| 20 | src/zephyr/data/ch_reader.py | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 | 原型态 / prototype |  |
-| 21 | src/zephyr/data/ch_writer.py | ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6... | 原型态 / prototype |  |
+| 14 | src/zephyr/data/__main__.py | python -m zephyr.data — 数据源集成器 CLI 入口。 | 设计态 / design |  |
+| 15 | src/zephyr/data/alerter.py | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | 设计态 / design |  |
+| 16 | src/zephyr/data/backfill_checker.py | L10 周末补下载检测器——检测过去N天缺失数据并精... | 设计态 / design |  |
+| 17 | src/zephyr/data/buffered_writer.py | 批量聚合写入器（MOD-L00-004 §18.3 裁定... | 设计态 / design |  |
+| 18 | src/zephyr/data/capability_validator.py | Provider Capability 行为契约校验器（裁定... | 设计态 / design |  |
+| 19 | src/zephyr/data/ch_config.py | ClickHouse 连接配置单真源加载器（裁定... | 设计态 / design |  |
+| 20 | src/zephyr/data/ch_reader.py | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 | 设计态 / design |  |
+| 21 | src/zephyr/data/ch_writer.py | ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6... | 设计态 / design |  |
 | 22 | src/zephyr/data/cli.py | 数据源集成器 CLI（MOD-L00-004 §8.4）。 | 生产态 / production |  |
 | 23 | src/zephyr/data/error_classifier.py | 数据源错误分类器——根据错误字符串判断可恢复性。 | 生产态 / production |  |
-| 24 | src/zephyr/data/implementations/__init__.py | 数据源 Provider 实现集合（MOD-L00-004 §4.3）。 | 原型态 / prototype |  |
-| 25 | src/zephyr/data/implementations/akshare_provider.py | AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。 | 原型态 / prototype |  |
-| 26 | src/zephyr/data/implementations/baostock_provider.py | Baostock 数据源 Provider 实现（MOD-L00-004 §4.... | 原型态 / prototype |  |
-| 27 | src/zephyr/data/implementations/cls_provider.py | 财联社电报数据源 Provider 实现（MOD-L00-004 §4... | 原型态 / prototype |  |
-| 28 | src/zephyr/data/implementations/eastmoney_news_provider.py | 东方财富新闻数据源 Provider 实现（MOD-L00-004 ... | 原型态 / prototype |  |
-| 29 | src/zephyr/data/implementations/ifind_provider.py | IFindProvider 实现（MOD-L00-004 §4.3 数据源集... | 原型态 / prototype |  |
-| 30 | src/zephyr/data/implementations/miniqmt_provider.py | MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。 | 原型态 / prototype |  |
-| 31 | src/zephyr/data/implementations/rss_provider.py | RSS 财经新闻数据源 Provider 实现（MOD-L00-004 ... | 原型态 / prototype |  |
-| 32 | src/zephyr/data/implementations/tdx_provider.py | 通达信数据源 Provider 实现（MOD-L00-004 §4.3）。 | 原型态 / prototype |  |
-| 33 | src/zephyr/data/implementations/tickflow_provider.py | TickFlow 数据源 Provider 实现（MOD-L00-004 §4.... | 原型态 / prototype |  |
-| 34 | src/zephyr/data/implementations/tushare_provider.py | Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。 | 原型态 / prototype |  |
+| 24 | src/zephyr/data/implementations/__init__.py | 数据源 Provider 实现集合（MOD-L00-004 §4.3）。 | 设计态 / design |  |
+| 25 | src/zephyr/data/implementations/akshare_provider.py | AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。 | 设计态 / design |  |
+| 26 | src/zephyr/data/implementations/baostock_provider.py | Baostock 数据源 Provider 实现（MOD-L00-004 §4.... | 设计态 / design |  |
+| 27 | src/zephyr/data/implementations/cls_provider.py | 财联社电报数据源 Provider 实现（MOD-L00-004 §4... | 设计态 / design |  |
+| 28 | src/zephyr/data/implementations/eastmoney_news_provider.py | 东方财富新闻数据源 Provider 实现（MOD-L00-004 ... | 设计态 / design |  |
+| 29 | src/zephyr/data/implementations/ifind_provider.py | IFindProvider 实现（MOD-L00-004 §4.3 数据源集... | 设计态 / design |  |
+| 30 | src/zephyr/data/implementations/miniqmt_provider.py | MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。 | 设计态 / design |  |
+| 31 | src/zephyr/data/implementations/rss_provider.py | RSS 财经新闻数据源 Provider 实现（MOD-L00-004 ... | 设计态 / design |  |
+| 32 | src/zephyr/data/implementations/tdx_provider.py | 通达信数据源 Provider 实现（MOD-L00-004 §4.3）。 | 设计态 / design |  |
+| 33 | src/zephyr/data/implementations/tickflow_provider.py | TickFlow 数据源 Provider 实现（MOD-L00-004 §4.... | 设计态 / design |  |
+| 34 | src/zephyr/data/implementations/tushare_provider.py | Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。 | 设计态 / design |  |
 | 35 | src/zephyr/data/integrity_checker.py | 数据完整性巡检器——每天盘后检测全表当日数据是... | 生产态 / production |  |
 | 36 | src/zephyr/data/kline_resampler.py | 880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/6... | 生产态 / production |  |
-| 37 | src/zephyr/data/local_replay.py | 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas... | 原型态 / prototype |  |
-| 38 | src/zephyr/data/metrics.py | 可观测性指标采集（MOD-L00-004 §11）。 | 原型态 / prototype |  |
-| 39 | src/zephyr/data/news_dedup.py | 新闻数据去重模块（MOD-L00-004 §4.3）。 | 原型态 / prototype |  |
+| 37 | src/zephyr/data/local_replay.py | 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas... | 设计态 / design |  |
+| 38 | src/zephyr/data/metrics.py | 可观测性指标采集（MOD-L00-004 §11）。 | 设计态 / design |  |
+| 39 | src/zephyr/data/news_dedup.py | 新闻数据去重模块（MOD-L00-004 §4.3）。 | 设计态 / design |  |
 | 40 | src/zephyr/data/policy_registry.py | per-source 调用策略注册表（MOD-L00-004 §5）。 | 生产态 / production |  |
-| 41 | src/zephyr/data/progress_store.py | 统一进度存储（MOD-L00-004 §7）。 | 原型态 / prototype |  |
-| 42 | src/zephyr/data/provider_base.py | 数据源 Provider 抽象基类（MOD-L00-004 §4）。 | 原型态 / prototype |  |
+| 41 | src/zephyr/data/progress_store.py | 统一进度存储（MOD-L00-004 §7）。 | 设计态 / design |  |
+| 42 | src/zephyr/data/provider_base.py | 数据源 Provider 抽象基类（MOD-L00-004 §4）。 | 设计态 / design |  |
 | 43 | src/zephyr/data/quality_gate.py | Re-export wrapper: QualityReport 真源在 zephyr.... | 生产态 / production |  |
-| 44 | src/zephyr/data/satellite_geospatial_engine/__init__.py | D_DATA Data Source | 原型态 / prototype |  |
-| 45 | src/zephyr/data/scheduler.py | 数据源调度编排层（MOD-L00-004 §6）。 | 原型态 / prototype |  |
+| 44 | src/zephyr/data/satellite_geospatial_engine/__init__.py | D_DATA Data Source | 设计态 / design |  |
+| 45 | src/zephyr/data/scheduler.py | 数据源调度编排层（MOD-L00-004 §6）。 | 设计态 / design |  |
 | 46 | src/zephyr/data/sector_ranking_engine.py | 880xxx 板块动态排名引擎——5因子复合排名调整99... | 生产态 / production |  |
 | 47 | src/zephyr/data/sector_snapshot_collector.py | 880xxx 板块实时快照采集器（tqcenter → ClickHou... | 生产态 / production |  |
-| 48 | src/zephyr/data/speed_tester.py | 数据源测速器（MOD-L00-004 §8.5）。 | 原型态 / prototype |  |
+| 48 | src/zephyr/data/speed_tester.py | 数据源测速器（MOD-L00-004 §8.5）。 | 设计态 / design |  |
 | 49 | src/zephyr/data/table_registry.py | 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase ... | 生产态 / production |  |
-| 50 | src/zephyr/data/task_queue.py | 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务... | 原型态 / prototype |  |
+| 50 | src/zephyr/data/task_queue.py | 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务... | 设计态 / design |  |
 | 51 | src/zephyr/data/tick_subscriber.py | QMT 实时 Tick 订阅服务——subscribe_quote 实时... | 生产态 / production |  |
-| 52 | src/zephyr/data/trading_calendar.py | A 股交易日历守卫（MOD-L00-004）。 | 原型态 / prototype |  |
-| 53 | src/zephyr/data/wal_writer.py | 主动 WAL 写入器（P0-1 Phase A）。 | 原型态 / prototype |  |
+| 52 | src/zephyr/data/trading_calendar.py | A 股交易日历守卫（MOD-L00-004）。 | 设计态 / design |  |
+| 53 | src/zephyr/data/wal_writer.py | 主动 WAL 写入器（P0-1 Phase A）。 | 设计态 / design |  |
 
 ### L1 基础层 / Foundation Layer (3 modules)
 
@@ -109,7 +109,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | tests/zephyr/data/test_tick_subscriber.py | tick_subscriber 单元测试（含 Phase C: WalWriter... | 原型态 / prototype |  |
+| 1 | tests/zephyr/data/test_tick_subscriber.py | tick_subscriber 单元测试（含 Phase C: WalWriter... | 设计态 / design |  |
 
 ### L3 应用层 / Application Layer (1 modules)
 
@@ -124,7 +124,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -137,36 +136,36 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_DATA["D_DATA 数据接入层"]
-        schemas_categories_market_auction_py["(原型态 / prototype) auction_snapshot 表 DDL-as-Code（category_id: m...<br/>文件: market_auction.py"]
-        schemas_categories_market_cb_iv_py["(原型态 / prototype) convertible_bond_iv 表 DDL-as-Code（category_id...<br/>文件: market_cb_iv.py"]
-        schemas_categories_market_futures_position_py["(原型态 / prototype) futures_position 表 DDL-as-Code（category_id: m...<br/>文件: market_futures_position.py"]
-        schemas_categories_market_futures_term_py["(原型态 / prototype) futures_term_structure 表 DDL-as-Code（category...<br/>文件: market_futures_term.py"]
-        schemas_categories_market_index_py["(原型态 / prototype) index_quote 表 DDL-as-Code（category_id: market...<br/>文件: market_index.py"]
-        schemas_categories_market_kline_daily_py["(原型态 / prototype) kline_daily 表 DDL-as-Code（category_id: market...<br/>文件: market_kline_daily.py"]
-        schemas_categories_market_option_iv_py["(原型态 / prototype) option_iv_surface 表 DDL-as-Code（category_id: ...<br/>文件: market_option_iv.py"]
-        schemas_categories_market_tick_py["(原型态 / prototype) tick_data 表 DDL-as-Code（category_id: market_t...<br/>文件: market_tick.py"]
-        scripts_ch_apply_market_tables_ddl_py["(原型态 / prototype) ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚...<br/>文件: apply_market_tables_ddl.py"]
-        scripts_register_scheduler_task_ps1["(原型态 / prototype) register_scheduler_task.ps1"]
-        scripts_start_scheduler_ps1["(原型态 / prototype) start_scheduler.ps1"]
-        scripts_start_tick_subscriber_ps1["(原型态 / prototype) start_tick_subscriber.ps1"]
+        schemas_categories_market_auction_py["(设计态 / design) auction_snapshot 表 DDL-as-Code（category_id: m...<br/>文件: market_auction.py"]
+        schemas_categories_market_cb_iv_py["(设计态 / design) convertible_bond_iv 表 DDL-as-Code（category_id...<br/>文件: market_cb_iv.py"]
+        schemas_categories_market_futures_position_py["(设计态 / design) futures_position 表 DDL-as-Code（category_id: m...<br/>文件: market_futures_position.py"]
+        schemas_categories_market_futures_term_py["(设计态 / design) futures_term_structure 表 DDL-as-Code（category...<br/>文件: market_futures_term.py"]
+        schemas_categories_market_index_py["(设计态 / design) index_quote 表 DDL-as-Code（category_id: market...<br/>文件: market_index.py"]
+        schemas_categories_market_kline_daily_py["(设计态 / design) kline_daily 表 DDL-as-Code（category_id: market...<br/>文件: market_kline_daily.py"]
+        schemas_categories_market_option_iv_py["(设计态 / design) option_iv_surface 表 DDL-as-Code（category_id: ...<br/>文件: market_option_iv.py"]
+        schemas_categories_market_tick_py["(设计态 / design) tick_data 表 DDL-as-Code（category_id: market_t...<br/>文件: market_tick.py"]
+        scripts_ch_apply_market_tables_ddl_py["(设计态 / design) ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚...<br/>文件: apply_market_tables_ddl.py"]
+        scripts_register_scheduler_task_ps1["(设计态 / design) register_scheduler_task.ps1"]
+        scripts_start_scheduler_ps1["(设计态 / design) start_scheduler.ps1"]
+        scripts_start_tick_subscriber_ps1["(设计态 / design) start_tick_subscriber.ps1"]
         src_zephyr_data_init_py["(生产态 / production) zephyr.data — 数据源集成器（MOD-L00-004）。<br/>文件: __init__.py"]
-        src_zephyr_data_main_py["(原型态 / prototype) python -m zephyr.data — 数据源集成器 CLI 入口。<br/>文件: __main__.py"]
-        src_zephyr_data_alerter_py["(原型态 / prototype) 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §...<br/>文件: alerter.py"]
-        src_zephyr_data_backfill_checker_py["(原型态 / prototype) L10 周末补下载检测器——检测过去N天缺失数据并精...<br/>文件: backfill_checker.py"]
-        src_zephyr_data_buffered_writer_py["(原型态 / prototype) 批量聚合写入器（MOD-L00-004 §18.3 裁定...<br/>文件: buffered_writer.py"]
-        src_zephyr_data_capability_validator_py["(原型态 / prototype) Provider Capability 行为契约校验器（裁定...<br/>文件: capability_validator.py"]
-        src_zephyr_data_ch_config_py["(原型态 / prototype) ClickHouse 连接配置单真源加载器（裁定...<br/>文件: ch_config.py"]
-        src_zephyr_data_ch_reader_py["(原型态 / prototype) ClickHouse 统一读取层（裁定 #ARCH-CH-007）。<br/>文件: ch_reader.py"]
-        src_zephyr_data_ch_writer_py["(原型态 / prototype) ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6...<br/>文件: ch_writer.py"]
+        src_zephyr_data_main_py["(设计态 / design) python -m zephyr.data — 数据源集成器 CLI 入口。<br/>文件: __main__.py"]
+        src_zephyr_data_alerter_py["(设计态 / design) 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §...<br/>文件: alerter.py"]
+        src_zephyr_data_backfill_checker_py["(设计态 / design) L10 周末补下载检测器——检测过去N天缺失数据并精...<br/>文件: backfill_checker.py"]
+        src_zephyr_data_buffered_writer_py["(设计态 / design) 批量聚合写入器（MOD-L00-004 §18.3 裁定...<br/>文件: buffered_writer.py"]
+        src_zephyr_data_capability_validator_py["(设计态 / design) Provider Capability 行为契约校验器（裁定...<br/>文件: capability_validator.py"]
+        src_zephyr_data_ch_config_py["(设计态 / design) ClickHouse 连接配置单真源加载器（裁定...<br/>文件: ch_config.py"]
+        src_zephyr_data_ch_reader_py["(设计态 / design) ClickHouse 统一读取层（裁定 #ARCH-CH-007）。<br/>文件: ch_reader.py"]
+        src_zephyr_data_ch_writer_py["(设计态 / design) ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6...<br/>文件: ch_writer.py"]
         src_zephyr_data_cli_py["(生产态 / production) 数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>文件: cli.py"]
         src_zephyr_data_config_policies_yaml["(生产态 / production) policies.yaml"]
         src_zephyr_data_config_schedule_yaml["(生产态 / production) schedule.yaml"]
         src_zephyr_data_config_tasks_yaml["(生产态 / production) tasks.yaml"]
         src_zephyr_data_error_classifier_py["(生产态 / production) 数据源错误分类器——根据错误字符串判断可恢复性。<br/>文件: error_classifier.py"]
-        src_zephyr_data_implementations_init_py["(原型态 / prototype) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: __init__.py"]
-        src_zephyr_data_implementations_akshare_provider_py["(原型态 / prototype) AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: akshare_provider.py"]
-        src_zephyr_data_implementations_baostock_provider_py["(原型态 / prototype) Baostock 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: baostock_provider.py"]
-        src_zephyr_data_implementations_cls_provider_py["(原型态 / prototype) 财联社电报数据源 Provider 实现（MOD-L00-004 §4...<br/>文件: cls_provider.py"]
+        src_zephyr_data_implementations_init_py["(设计态 / design) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: __init__.py"]
+        src_zephyr_data_implementations_akshare_provider_py["(设计态 / design) AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: akshare_provider.py"]
+        src_zephyr_data_implementations_baostock_provider_py["(设计态 / design) Baostock 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: baostock_provider.py"]
+        src_zephyr_data_implementations_cls_provider_py["(设计态 / design) 财联社电报数据源 Provider 实现（MOD-L00-004 §4...<br/>文件: cls_provider.py"]
     end
     src_zephyr_data_backfill_checker_py -.->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_backfill_checker_py -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
@@ -199,17 +198,17 @@ graph TD
     src_zephyr_data_implementations_cls_provider_py -.->|导入依赖 / import_depends| D_SHARED
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
     D_BACKTEST -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY["(设计态 / design) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -.->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -226,34 +225,34 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_DATA["D_DATA 数据接入层"]
-        src_zephyr_data_implementations_eastmoney_news_provider_py["(原型态 / prototype) 东方财富新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: eastmoney_news_provider.py"]
-        src_zephyr_data_implementations_ifind_provider_py["(原型态 / prototype) IFindProvider 实现（MOD-L00-004 §4.3 数据源集...<br/>文件: ifind_provider.py"]
-        src_zephyr_data_implementations_miniqmt_provider_py["(原型态 / prototype) MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。<br/>文件: miniqmt_provider.py"]
-        src_zephyr_data_implementations_rss_provider_py["(原型态 / prototype) RSS 财经新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: rss_provider.py"]
-        src_zephyr_data_implementations_tdx_provider_py["(原型态 / prototype) 通达信数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tdx_provider.py"]
-        src_zephyr_data_implementations_tickflow_provider_py["(原型态 / prototype) TickFlow 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: tickflow_provider.py"]
-        src_zephyr_data_implementations_tushare_provider_py["(原型态 / prototype) Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tushare_provider.py"]
+        src_zephyr_data_implementations_eastmoney_news_provider_py["(设计态 / design) 东方财富新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: eastmoney_news_provider.py"]
+        src_zephyr_data_implementations_ifind_provider_py["(设计态 / design) IFindProvider 实现（MOD-L00-004 §4.3 数据源集...<br/>文件: ifind_provider.py"]
+        src_zephyr_data_implementations_miniqmt_provider_py["(设计态 / design) MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。<br/>文件: miniqmt_provider.py"]
+        src_zephyr_data_implementations_rss_provider_py["(设计态 / design) RSS 财经新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: rss_provider.py"]
+        src_zephyr_data_implementations_tdx_provider_py["(设计态 / design) 通达信数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tdx_provider.py"]
+        src_zephyr_data_implementations_tickflow_provider_py["(设计态 / design) TickFlow 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: tickflow_provider.py"]
+        src_zephyr_data_implementations_tushare_provider_py["(设计态 / design) Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tushare_provider.py"]
         src_zephyr_data_integrity_checker_py["(生产态 / production) 数据完整性巡检器——每天盘后检测全表当日数据是...<br/>文件: integrity_checker.py"]
         src_zephyr_data_kline_resampler_py["(生产态 / production) 880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/6...<br/>文件: kline_resampler.py"]
-        src_zephyr_data_local_replay_py["(原型态 / prototype) 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas...<br/>文件: local_replay.py"]
-        src_zephyr_data_metrics_py["(原型态 / prototype) 可观测性指标采集（MOD-L00-004 §11）。<br/>文件: metrics.py"]
-        src_zephyr_data_news_dedup_py["(原型态 / prototype) 新闻数据去重模块（MOD-L00-004 §4.3）。<br/>文件: news_dedup.py"]
+        src_zephyr_data_local_replay_py["(设计态 / design) 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas...<br/>文件: local_replay.py"]
+        src_zephyr_data_metrics_py["(设计态 / design) 可观测性指标采集（MOD-L00-004 §11）。<br/>文件: metrics.py"]
+        src_zephyr_data_news_dedup_py["(设计态 / design) 新闻数据去重模块（MOD-L00-004 §4.3）。<br/>文件: news_dedup.py"]
         src_zephyr_data_policy_registry_py["(生产态 / production) per-source 调用策略注册表（MOD-L00-004 §5）。<br/>文件: policy_registry.py"]
-        src_zephyr_data_progress_store_py["(原型态 / prototype) 统一进度存储（MOD-L00-004 §7）。<br/>文件: progress_store.py"]
-        src_zephyr_data_provider_base_py["(原型态 / prototype) 数据源 Provider 抽象基类（MOD-L00-004 §4）。<br/>文件: provider_base.py"]
+        src_zephyr_data_progress_store_py["(设计态 / design) 统一进度存储（MOD-L00-004 §7）。<br/>文件: progress_store.py"]
+        src_zephyr_data_provider_base_py["(设计态 / design) 数据源 Provider 抽象基类（MOD-L00-004 §4）。<br/>文件: provider_base.py"]
         src_zephyr_data_quality_gate_py["(生产态 / production) Re-export wrapper: QualityReport 真源在 zephyr....<br/>文件: quality_gate.py"]
-        src_zephyr_data_satellite_geospatial_engine_init_py["(原型态 / prototype) D_DATA Data Source<br/>文件: __init__.py"]
-        src_zephyr_data_scheduler_py["(原型态 / prototype) 数据源调度编排层（MOD-L00-004 §6）。<br/>文件: scheduler.py"]
+        src_zephyr_data_satellite_geospatial_engine_init_py["(设计态 / design) D_DATA Data Source<br/>文件: __init__.py"]
+        src_zephyr_data_scheduler_py["(设计态 / design) 数据源调度编排层（MOD-L00-004 §6）。<br/>文件: scheduler.py"]
         src_zephyr_data_sector_kline_downloader_py["(设计态 / design) 880xxx 板块指数K线下载器——盘后从 tqcenter 下...<br/>文件: sector_kline_downloader.py"]
         src_zephyr_data_sector_ranking_engine_py["(生产态 / production) 880xxx 板块动态排名引擎——5因子复合排名调整99...<br/>文件: sector_ranking_engine.py"]
         src_zephyr_data_sector_snapshot_collector_py["(生产态 / production) 880xxx 板块实时快照采集器（tqcenter → ClickHou...<br/>文件: sector_snapshot_collector.py"]
-        src_zephyr_data_speed_tester_py["(原型态 / prototype) 数据源测速器（MOD-L00-004 §8.5）。<br/>文件: speed_tester.py"]
+        src_zephyr_data_speed_tester_py["(设计态 / design) 数据源测速器（MOD-L00-004 §8.5）。<br/>文件: speed_tester.py"]
         src_zephyr_data_table_registry_py["(生产态 / production) 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase ...<br/>文件: table_registry.py"]
-        src_zephyr_data_task_queue_py["(原型态 / prototype) 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务...<br/>文件: task_queue.py"]
+        src_zephyr_data_task_queue_py["(设计态 / design) 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务...<br/>文件: task_queue.py"]
         src_zephyr_data_tick_subscriber_py["(生产态 / production) QMT 实时 Tick 订阅服务——subscribe_quote 实时...<br/>文件: tick_subscriber.py"]
-        src_zephyr_data_trading_calendar_py["(原型态 / prototype) A 股交易日历守卫（MOD-L00-004）。<br/>文件: trading_calendar.py"]
-        src_zephyr_data_wal_writer_py["(原型态 / prototype) 主动 WAL 写入器（P0-1 Phase A）。<br/>文件: wal_writer.py"]
-        tests_zephyr_data_test_tick_subscriber_py["(原型态 / prototype) tick_subscriber 单元测试（含 Phase C: WalWriter...<br/>文件: test_tick_subscriber.py"]
+        src_zephyr_data_trading_calendar_py["(设计态 / design) A 股交易日历守卫（MOD-L00-004）。<br/>文件: trading_calendar.py"]
+        src_zephyr_data_wal_writer_py["(设计态 / design) 主动 WAL 写入器（P0-1 Phase A）。<br/>文件: wal_writer.py"]
+        tests_zephyr_data_test_tick_subscriber_py["(设计态 / design) tick_subscriber 单元测试（含 Phase C: WalWriter...<br/>文件: test_tick_subscriber.py"]
     end
     src_zephyr_data_news_dedup_py -.->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_news_dedup_py -.->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
@@ -322,7 +321,7 @@ graph TD
     src_zephyr_data_wal_writer_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT["(设计态 / design) D_GOV_ENFORCEMENT"]
     src_zephyr_data_quality_gate_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_data_table_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_implementations_rss_provider_py -.->|导入依赖 / import_depends| D_SHARED
@@ -379,12 +378,12 @@ graph TD
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT["(设计态 / design) D_GOV_ENFORCEMENT"]
     src_zephyr_data_quality_gate_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_data_table_registry_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
@@ -417,56 +416,56 @@ graph TD
     class src_zephyr_data_sector_kline_downloader_py design
 ```
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 43 个，82 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_DATA["D_DATA 数据接入层"]
-        schemas_categories_market_auction_py["(原型态 / prototype) auction_snapshot 表 DDL-as-Code（category_id: m...<br/>文件: market_auction.py"]
-        schemas_categories_market_cb_iv_py["(原型态 / prototype) convertible_bond_iv 表 DDL-as-Code（category_id...<br/>文件: market_cb_iv.py"]
-        schemas_categories_market_futures_position_py["(原型态 / prototype) futures_position 表 DDL-as-Code（category_id: m...<br/>文件: market_futures_position.py"]
-        schemas_categories_market_futures_term_py["(原型态 / prototype) futures_term_structure 表 DDL-as-Code（category...<br/>文件: market_futures_term.py"]
-        schemas_categories_market_index_py["(原型态 / prototype) index_quote 表 DDL-as-Code（category_id: market...<br/>文件: market_index.py"]
-        schemas_categories_market_kline_daily_py["(原型态 / prototype) kline_daily 表 DDL-as-Code（category_id: market...<br/>文件: market_kline_daily.py"]
-        schemas_categories_market_option_iv_py["(原型态 / prototype) option_iv_surface 表 DDL-as-Code（category_id: ...<br/>文件: market_option_iv.py"]
-        schemas_categories_market_tick_py["(原型态 / prototype) tick_data 表 DDL-as-Code（category_id: market_t...<br/>文件: market_tick.py"]
-        scripts_ch_apply_market_tables_ddl_py["(原型态 / prototype) ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚...<br/>文件: apply_market_tables_ddl.py"]
-        scripts_register_scheduler_task_ps1["(原型态 / prototype) register_scheduler_task.ps1"]
-        scripts_start_scheduler_ps1["(原型态 / prototype) start_scheduler.ps1"]
-        scripts_start_tick_subscriber_ps1["(原型态 / prototype) start_tick_subscriber.ps1"]
-        src_zephyr_data_main_py["(原型态 / prototype) python -m zephyr.data — 数据源集成器 CLI 入口。<br/>文件: __main__.py"]
-        src_zephyr_data_alerter_py["(原型态 / prototype) 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §...<br/>文件: alerter.py"]
-        src_zephyr_data_backfill_checker_py["(原型态 / prototype) L10 周末补下载检测器——检测过去N天缺失数据并精...<br/>文件: backfill_checker.py"]
-        src_zephyr_data_buffered_writer_py["(原型态 / prototype) 批量聚合写入器（MOD-L00-004 §18.3 裁定...<br/>文件: buffered_writer.py"]
-        src_zephyr_data_capability_validator_py["(原型态 / prototype) Provider Capability 行为契约校验器（裁定...<br/>文件: capability_validator.py"]
-        src_zephyr_data_ch_config_py["(原型态 / prototype) ClickHouse 连接配置单真源加载器（裁定...<br/>文件: ch_config.py"]
-        src_zephyr_data_ch_reader_py["(原型态 / prototype) ClickHouse 统一读取层（裁定 #ARCH-CH-007）。<br/>文件: ch_reader.py"]
-        src_zephyr_data_ch_writer_py["(原型态 / prototype) ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6...<br/>文件: ch_writer.py"]
-        src_zephyr_data_implementations_init_py["(原型态 / prototype) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: __init__.py"]
-        src_zephyr_data_implementations_akshare_provider_py["(原型态 / prototype) AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: akshare_provider.py"]
-        src_zephyr_data_implementations_baostock_provider_py["(原型态 / prototype) Baostock 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: baostock_provider.py"]
-        src_zephyr_data_implementations_cls_provider_py["(原型态 / prototype) 财联社电报数据源 Provider 实现（MOD-L00-004 §4...<br/>文件: cls_provider.py"]
-        src_zephyr_data_implementations_eastmoney_news_provider_py["(原型态 / prototype) 东方财富新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: eastmoney_news_provider.py"]
-        src_zephyr_data_implementations_ifind_provider_py["(原型态 / prototype) IFindProvider 实现（MOD-L00-004 §4.3 数据源集...<br/>文件: ifind_provider.py"]
-        src_zephyr_data_implementations_miniqmt_provider_py["(原型态 / prototype) MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。<br/>文件: miniqmt_provider.py"]
-        src_zephyr_data_implementations_rss_provider_py["(原型态 / prototype) RSS 财经新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: rss_provider.py"]
-        src_zephyr_data_implementations_tdx_provider_py["(原型态 / prototype) 通达信数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tdx_provider.py"]
-        src_zephyr_data_implementations_tickflow_provider_py["(原型态 / prototype) TickFlow 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: tickflow_provider.py"]
-        src_zephyr_data_implementations_tushare_provider_py["(原型态 / prototype) Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tushare_provider.py"]
-        src_zephyr_data_local_replay_py["(原型态 / prototype) 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas...<br/>文件: local_replay.py"]
-        src_zephyr_data_metrics_py["(原型态 / prototype) 可观测性指标采集（MOD-L00-004 §11）。<br/>文件: metrics.py"]
-        src_zephyr_data_news_dedup_py["(原型态 / prototype) 新闻数据去重模块（MOD-L00-004 §4.3）。<br/>文件: news_dedup.py"]
-        src_zephyr_data_progress_store_py["(原型态 / prototype) 统一进度存储（MOD-L00-004 §7）。<br/>文件: progress_store.py"]
-        src_zephyr_data_provider_base_py["(原型态 / prototype) 数据源 Provider 抽象基类（MOD-L00-004 §4）。<br/>文件: provider_base.py"]
-        src_zephyr_data_satellite_geospatial_engine_init_py["(原型态 / prototype) D_DATA Data Source<br/>文件: __init__.py"]
-        src_zephyr_data_scheduler_py["(原型态 / prototype) 数据源调度编排层（MOD-L00-004 §6）。<br/>文件: scheduler.py"]
-        src_zephyr_data_speed_tester_py["(原型态 / prototype) 数据源测速器（MOD-L00-004 §8.5）。<br/>文件: speed_tester.py"]
-        src_zephyr_data_task_queue_py["(原型态 / prototype) 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务...<br/>文件: task_queue.py"]
-        src_zephyr_data_trading_calendar_py["(原型态 / prototype) A 股交易日历守卫（MOD-L00-004）。<br/>文件: trading_calendar.py"]
-        src_zephyr_data_wal_writer_py["(原型态 / prototype) 主动 WAL 写入器（P0-1 Phase A）。<br/>文件: wal_writer.py"]
-        tests_zephyr_data_test_tick_subscriber_py["(原型态 / prototype) tick_subscriber 单元测试（含 Phase C: WalWriter...<br/>文件: test_tick_subscriber.py"]
+        schemas_categories_market_auction_py["(设计态 / design) auction_snapshot 表 DDL-as-Code（category_id: m...<br/>文件: market_auction.py"]
+        schemas_categories_market_cb_iv_py["(设计态 / design) convertible_bond_iv 表 DDL-as-Code（category_id...<br/>文件: market_cb_iv.py"]
+        schemas_categories_market_futures_position_py["(设计态 / design) futures_position 表 DDL-as-Code（category_id: m...<br/>文件: market_futures_position.py"]
+        schemas_categories_market_futures_term_py["(设计态 / design) futures_term_structure 表 DDL-as-Code（category...<br/>文件: market_futures_term.py"]
+        schemas_categories_market_index_py["(设计态 / design) index_quote 表 DDL-as-Code（category_id: market...<br/>文件: market_index.py"]
+        schemas_categories_market_kline_daily_py["(设计态 / design) kline_daily 表 DDL-as-Code（category_id: market...<br/>文件: market_kline_daily.py"]
+        schemas_categories_market_option_iv_py["(设计态 / design) option_iv_surface 表 DDL-as-Code（category_id: ...<br/>文件: market_option_iv.py"]
+        schemas_categories_market_tick_py["(设计态 / design) tick_data 表 DDL-as-Code（category_id: market_t...<br/>文件: market_tick.py"]
+        scripts_ch_apply_market_tables_ddl_py["(设计态 / design) ClickHouse c1_market 建表 DDL 部署 + 引擎验证脚...<br/>文件: apply_market_tables_ddl.py"]
+        scripts_register_scheduler_task_ps1["(设计态 / design) register_scheduler_task.ps1"]
+        scripts_start_scheduler_ps1["(设计态 / design) start_scheduler.ps1"]
+        scripts_start_tick_subscriber_ps1["(设计态 / design) start_tick_subscriber.ps1"]
+        src_zephyr_data_main_py["(设计态 / design) python -m zephyr.data — 数据源集成器 CLI 入口。<br/>文件: __main__.py"]
+        src_zephyr_data_alerter_py["(设计态 / design) 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §...<br/>文件: alerter.py"]
+        src_zephyr_data_backfill_checker_py["(设计态 / design) L10 周末补下载检测器——检测过去N天缺失数据并精...<br/>文件: backfill_checker.py"]
+        src_zephyr_data_buffered_writer_py["(设计态 / design) 批量聚合写入器（MOD-L00-004 §18.3 裁定...<br/>文件: buffered_writer.py"]
+        src_zephyr_data_capability_validator_py["(设计态 / design) Provider Capability 行为契约校验器（裁定...<br/>文件: capability_validator.py"]
+        src_zephyr_data_ch_config_py["(设计态 / design) ClickHouse 连接配置单真源加载器（裁定...<br/>文件: ch_config.py"]
+        src_zephyr_data_ch_reader_py["(设计态 / design) ClickHouse 统一读取层（裁定 #ARCH-CH-007）。<br/>文件: ch_reader.py"]
+        src_zephyr_data_ch_writer_py["(设计态 / design) ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6...<br/>文件: ch_writer.py"]
+        src_zephyr_data_implementations_init_py["(设计态 / design) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: __init__.py"]
+        src_zephyr_data_implementations_akshare_provider_py["(设计态 / design) AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: akshare_provider.py"]
+        src_zephyr_data_implementations_baostock_provider_py["(设计态 / design) Baostock 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: baostock_provider.py"]
+        src_zephyr_data_implementations_cls_provider_py["(设计态 / design) 财联社电报数据源 Provider 实现（MOD-L00-004 §4...<br/>文件: cls_provider.py"]
+        src_zephyr_data_implementations_eastmoney_news_provider_py["(设计态 / design) 东方财富新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: eastmoney_news_provider.py"]
+        src_zephyr_data_implementations_ifind_provider_py["(设计态 / design) IFindProvider 实现（MOD-L00-004 §4.3 数据源集...<br/>文件: ifind_provider.py"]
+        src_zephyr_data_implementations_miniqmt_provider_py["(设计态 / design) MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。<br/>文件: miniqmt_provider.py"]
+        src_zephyr_data_implementations_rss_provider_py["(设计态 / design) RSS 财经新闻数据源 Provider 实现（MOD-L00-004 ...<br/>文件: rss_provider.py"]
+        src_zephyr_data_implementations_tdx_provider_py["(设计态 / design) 通达信数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tdx_provider.py"]
+        src_zephyr_data_implementations_tickflow_provider_py["(设计态 / design) TickFlow 数据源 Provider 实现（MOD-L00-004 §4....<br/>文件: tickflow_provider.py"]
+        src_zephyr_data_implementations_tushare_provider_py["(设计态 / design) Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: tushare_provider.py"]
+        src_zephyr_data_local_replay_py["(设计态 / design) 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas...<br/>文件: local_replay.py"]
+        src_zephyr_data_metrics_py["(设计态 / design) 可观测性指标采集（MOD-L00-004 §11）。<br/>文件: metrics.py"]
+        src_zephyr_data_news_dedup_py["(设计态 / design) 新闻数据去重模块（MOD-L00-004 §4.3）。<br/>文件: news_dedup.py"]
+        src_zephyr_data_progress_store_py["(设计态 / design) 统一进度存储（MOD-L00-004 §7）。<br/>文件: progress_store.py"]
+        src_zephyr_data_provider_base_py["(设计态 / design) 数据源 Provider 抽象基类（MOD-L00-004 §4）。<br/>文件: provider_base.py"]
+        src_zephyr_data_satellite_geospatial_engine_init_py["(设计态 / design) D_DATA Data Source<br/>文件: __init__.py"]
+        src_zephyr_data_scheduler_py["(设计态 / design) 数据源调度编排层（MOD-L00-004 §6）。<br/>文件: scheduler.py"]
+        src_zephyr_data_speed_tester_py["(设计态 / design) 数据源测速器（MOD-L00-004 §8.5）。<br/>文件: speed_tester.py"]
+        src_zephyr_data_task_queue_py["(设计态 / design) 任务依赖图 + 优先级队列（MOD-L00-004 §6.3 任务...<br/>文件: task_queue.py"]
+        src_zephyr_data_trading_calendar_py["(设计态 / design) A 股交易日历守卫（MOD-L00-004）。<br/>文件: trading_calendar.py"]
+        src_zephyr_data_wal_writer_py["(设计态 / design) 主动 WAL 写入器（P0-1 Phase A）。<br/>文件: wal_writer.py"]
+        tests_zephyr_data_test_tick_subscriber_py["(设计态 / design) tick_subscriber 单元测试（含 Phase C: WalWriter...<br/>文件: test_tick_subscriber.py"]
     end
     src_zephyr_data_backfill_checker_py -.->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_backfill_checker_py -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
@@ -556,7 +555,7 @@ graph TD
     src_zephyr_data_ch_writer_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_wal_writer_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_implementations_rss_provider_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT["(设计态 / design) D_GOV_ENFORCEMENT"]
     src_zephyr_data_satellite_geospatial_engine_init_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_data_implementations_cls_provider_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_local_replay_py -.->|导入依赖 / import_depends| D_SHARED
@@ -569,14 +568,14 @@ graph TD
     src_zephyr_data_ch_config_py -.->|导入依赖 / import_depends| D_SHARED
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
     D_BACKTEST -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY["(设计态 / design) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -.->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -660,4 +659,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

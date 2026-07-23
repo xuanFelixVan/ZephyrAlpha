@@ -50,7 +50,7 @@ depends_on:
     at: "§10"
     why: "权限联动"
 responsibility_domain: 
-design_maturity: prototype
+design_maturity: production
 build_status: generated
 ---
 

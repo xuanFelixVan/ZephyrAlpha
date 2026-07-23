@@ -94,7 +94,7 @@ doc_type: architecture_view
 | `nodes` | 所有代码制品（8 种 node_type：module/package/script/test/config/schema/doc_template/data_template） | 订单中心、风控引擎、行情网关 |
 | `edges` | 制品之间的依赖关系 | 订单中心 → 依赖 → 风控引擎 |
 
-**目前规模**：运营态 6,003 个节点（production 1,251 + prototype 4,752）+ 设计态 89 个 = 6,092 个节点，53 个功能域，运营态 6,084 条 + 设计态 113 条依赖边。（2026-06-30 查询 depgraph (PostgreSQL)）
+**目前规模**：运营态 6,003 个节点（production 6,003）+ 设计态 89 个 = 6,092 个节点 [ARCH-MM-002: prototype 已归入 production]，53 个功能域，运营态 6,084 条 + 设计态 113 条依赖边。（2026-06-30 查询 depgraph (PostgreSQL)）
 
 ### 4.2 架构全景（arch_ 表组 3 张表，v6 合并 arch_domain_layers/arch_domain_capacity 入 domains 表，v14 删除 arch_layers/arch_bottlenecks 后）
 
@@ -268,15 +268,15 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | 维度 | 依赖全景图（nodes） | 路径全景图（arch_directory_tree） |
 |------|-------------------|-------------------------------|
 | 设计态 | 功能级节点，目录 path | 目录节点，design_maturity='design' |
-| 运营态 | 文件级节点，文件 path | 文件/目录节点，design_maturity='production'/'prototype' |
-| design_maturity | design / production / prototype | design / production / prototype |
+| 运营态 | 文件级节点，文件 path | 文件/目录节点，design_maturity='production' |
+| design_maturity | design / production | design / production |
 | build_status | planned / generated / testing / stable / deprecated | planned / generated / testing / stable / deprecated |
 
 **V3.3 E16 修正：删除 state 字段，统一用 design_maturity**
 
-**问题**：当前 arch_directory_tree 同时有 `state`（design/operational）和 `design_maturity`（design/production/prototype）两个字段，语义重叠：
+**问题**：当前 arch_directory_tree 同时有 `state`（design/operational）和 `design_maturity`（design/production）两个字段，语义重叠：
 - `state='design'` 等价于 `design_maturity='design'`
-- `state='operational'` 等价于 `design_maturity in ('production','prototype')`
+- `state='operational'` 等价于 `design_maturity = 'production'`
 
 **裁定**：删除 `state` 字段，统一用 `design_maturity` 作为单一判定信号（与 §12.4 一致）。
 
@@ -290,14 +290,14 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 | domain_id | TEXT FK | 用户指定 | 路径推导 | 归属域（A-Blind-3 修复后非空） |
 | ~~state~~ | ~~TEXT~~ | ~~`design`/`operational`~~ | ~~—~~ | ~~V3.4 删除（与 design_maturity 冗余）~~ |
 | ~~node_id~~ | ~~INTEGER FK~~ | ~~NULL~~ | ~~nodes.node_id~~ | ~~V3.4 #147 新增，替换 state；v15 重建表时删除（不再关联 nodes 表）~~ |
-| design_maturity | TEXT | `design` | `production`/`prototype` | 拓扑状态（单一判定信号，删除 state） |
+| design_maturity | TEXT | `design` | `production` | 拓扑状态（单一判定信号，删除 state） |
 | build_status | TEXT | `planned`/`generated`/`testing`/`stable`/`deprecated` | `stable` | 生命周期状态（与 nodes 对齐，裁定#178 5态） |
 | blueprint_id | TEXT | 用户指定 | 代码头部解析 | 关联蓝图 |
 | change_policy | TEXT | — | 人工 | 变更策略 |
 | modification_permission | TEXT | — | 人工 | 修改权限 |
 | last_scanned | TEXT | — | 时间戳 | 最后扫描时间 |
 
-**A-Blind-4 修复**：删除 state 后，build_status 和 design_maturity 正交化。design_maturity 是拓扑状态（design/production/prototype），build_status 是生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。禁止 `build_status='planned'` 且 `design_maturity='production'` 的矛盾组合。
+**A-Blind-4 修复**：删除 state 后，build_status 和 design_maturity 正交化。design_maturity 是拓扑状态（design/production），build_status 是生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。禁止 `build_status='planned'` 且 `design_maturity='production'` 的矛盾组合。
 
 ---
 
@@ -396,7 +396,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 **例子**：我先把交易域的所有模块在依赖全景图里设计好——因子研究中心、信号管线、组合优化器……一共 100 多个模块，它们的依赖关系全部提前画好。这些模块现在大部分没代码，但它们的位置和关系已经定了。
 
-### 12.2 运营态（design_maturity = 'production' / 'prototype'）
+### 12.2 运营态（design_maturity = 'production'）
 
 > **"当前真实的样子"** — 代码里实际存在的。
 
@@ -487,7 +487,6 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 |:---:|------|---------|------|
 | `design` | 设计态（规划中） | 目录路径（末尾带 `/`） | 用户输入写入 |
 | `production` | 运营态（已实现） | 文件路径 | 生成器扫描代码 |
-| `prototype` | 运营态（草稿） | 文件路径 | 生成器扫描代码（无 blueprint_id） |
 
 **AI 执行规则**：读取 `design_maturity` 字段判定态。禁止用 `os.path.exists()` 或 path 末尾 `/` 作为判定依据——目录存在时 `os.path.exists()` 也返回 True，会产生歧义。
 
@@ -501,7 +500,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 | AI 能看到"设计态模块未来会依赖运营态模块" | AI 看不到全局 |
 | 从设计态→运营态的过渡是自然的状态流转 | 需要手动同步 |
 
-**裁定**：放在一起，用字段区分。`design_maturity` 字段标记拓扑状态（design/production/prototype），`build_status` 字段标记生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。两个正交维度，分离定义（见 §12.6）。edges 表用 `dep_maturity` 字段标记 'design'（规划依赖）或 'active'（实际依赖）。
+**裁定**：放在一起，用字段区分。`design_maturity` 字段标记拓扑状态（design/production），`build_status` 字段标记生命周期状态（planned/generated/testing/stable/deprecated，裁定#178 5态）。两个正交维度，分离定义（见 §12.6）。edges 表用 `dep_maturity` 字段标记 'design'（规划依赖）或 'active'（实际依赖）。
 
 ### 12.6 设计态实现检测（双正交状态机）
 
@@ -515,7 +514,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 **design_maturity 状态机**（拓扑状态，3 值，裁定#179）：
 - `design`：规划中，功能级节点，目录 path（人工通过 apply_depgraph.py 写入，生成器不得创建）
 - `production`：已实现，文件级节点，文件 path（由生成器产生）
-- `prototype`：原型占位（如空 __init__.py），文件级节点
+- [ARCH-MM-002: prototype 已删除，原 prototype 节点现归入 production]
 - **单向不可逆**：设计态节点是规划记录，保留 `design_maturity='design'`；运营态节点由生成器产生 `design_maturity='production'`。两者通过 blueprint_id 关联，不互相转换。
 
 **build_status 状态机**（生命周期，5 态单调推进，裁定#178）：
@@ -545,7 +544,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 - design → `planned`
 - production + 有 test → `stable`
 - production 无 test → `generated`
-- prototype → `generated`
+- [ARCH-MM-002: prototype 已删除]
 - `deprecated` 通过 apply_depgraph.py --transition-build-status 手工写入
 
 **业界依据**：Netflix Service Topology 明确分离"部署状态"（canary/stable/deprecated）和"拓扑状态"（是否存在依赖）。ZephyrAlpha 的 `design_maturity` 是拓扑状态，`build_status` 是生命周期状态，两者正交。V4.3 将原 4 态 build_status（unbuilt/testing/stable/deprecated）扩展为 5 态（planned/generated/testing/stable/deprecated），新增 `generated` 态标记 AI 生成但未验证的代码——这是 100% AI 开发场景必需（对齐 K8s Pod Phase 5 值实践）。合并原 module_lifecycle_state 字段到 build_status，消除双字段语义重叠（裁定#178/#183）。
@@ -726,7 +725,7 @@ SELECT node_id, path, design_maturity, build_status
 FROM nodes WHERE node_id = 1001;
 -- design_maturity='design' → 设计态（可改蓝图）
 -- design_maturity='production' → 运营态（只能改代码）
--- design_maturity='prototype' → 运营态草稿（无 blueprint_id）
+-- design_maturity='design' → 运营态草稿（无 blueprint_id）
 ```
 
 **第四步：评估影响面**
@@ -1038,9 +1037,9 @@ AI查询模式：
 
 | 字段 | 类型 | 生成器写入值 | apply_depgraph.py 写入值 | 说明 |
 |------|------|------------|------------------------|------|
-| design_maturity | TEXT | production / prototype | design | 生成器只写运营态值，apply_depgraph.py 只写设计态值。生成器 DELETE 运营态时用 `WHERE design_maturity != 'design' OR design_maturity IS NULL`，保留设计态行 |
+| design_maturity | TEXT | production | design | 生成器只写运营态值，apply_depgraph.py 只写设计态值。生成器 DELETE 运营态时用 `WHERE design_maturity != 'design' OR design_maturity IS NULL`，保留设计态行 |
 | blueprint_id | TEXT | 从代码头部 [BLUEPRINT] 字段解析 | 用户指定 | 设计态节点由用户写入 blueprint_id；运营态节点由生成器从代码头部解析。两者通过相同 blueprint_id 关联（一对多） |
-| build_status | TEXT | 从文件特征推导（见下） | planned/stable/deprecated（3 态子集） | 生成器从文件特征推导（裁定#180）：design→planned, production+test→stable, production无test→generated, prototype→generated；设计态节点由 apply_depgraph.py --transition-build-status 更新（3 态子集 planned/stable/deprecated，裁定#190） |
+| build_status | TEXT | 从文件特征推导（见下） | planned/stable/deprecated（3 态子集） | 生成器从文件特征推导（裁定#180）：design→planned, production+test→stable, production无test→generated [ARCH-MM-002: prototype 已删除]；设计态节点由 apply_depgraph.py --transition-build-status 更新（3 态子集 planned/stable/deprecated，裁定#190） |
 
 **V3.4 新增共享字段（1 列）**：
 
@@ -1049,9 +1048,9 @@ AI查询模式：
 | blueprint_path | TEXT | 从代码头部解析或 NULL | 机械推导（§12.1 规则） | **V3.4 新增字段**。设计态节点由 apply_depgraph.py 推导写入，运营态节点由生成器从代码头部解析（如有）。详见 §12.3 迁移期统一说明 |
 
 **字段归属说明**：
-- `design_maturity`：生成器只写运营态值（production/prototype），设计态值（design）由 apply_depgraph.py 写入。生成器 DELETE 运营态时用 `WHERE design_maturity != 'design' OR design_maturity IS NULL`，保留设计态行。
+- `design_maturity`：生成器只写运营态值（production），设计态值（design）由 apply_depgraph.py 写入。生成器 DELETE 运营态时用 `WHERE design_maturity != 'design' OR design_maturity IS NULL`，保留设计态行。
 - `blueprint_id`：设计态节点由用户指定，运营态节点由生成器从代码头部解析。两者通过相同 blueprint_id 关联（一对多）。
-- `build_status`：生成器从文件特征推导（裁定#180，不用默认值 draft/stable）——推导规则：design→planned, production+test→stable, production无test→generated, prototype→generated；`deprecated` 通过 apply_depgraph.py --transition-build-status 手工写入。设计态节点使用 3 态子集（planned/stable/deprecated，裁定#190），realization detection 自动更新（裁定#191）。
+- `build_status`：生成器从文件特征推导（裁定#180，不用默认值 draft/stable）——推导规则：design→planned, production+test→stable, production无test→generated [ARCH-MM-002: prototype 已删除]；`deprecated` 通过 apply_depgraph.py --transition-build-status 手工写入。设计态节点使用 3 态子集（planned/stable/deprecated，裁定#190），realization detection 自动更新（裁定#191）。
 - `blueprint_path`：设计态节点由 apply_depgraph.py 按 §12.1 机械推导规则写入，运营态节点由生成器从代码头部解析（如有 [BLUEPRINT] 字段则填充，否则 NULL）。
 
 **人工/脚本管理的字段（13 列）**——生成器不碰：
@@ -1401,7 +1400,7 @@ SSoT = Single Source of Truth = 唯一真源。
 | 节点数 | 6,092 | 9,363（比 nodes 多 3,271 个文档/数据/模板/目录节点） |
 | 边数 | 6,197 | — |
 
-**当前实际覆盖**：53 个功能域，依赖全景图 6,092 节点（1,251 production + 4,752 prototype + 89 design）+ 6,197 边（6,084 active + 113 design），路径全景图 9,363 行目录树。（2026-06-30 查询 depgraph (PostgreSQL)）
+**当前实际覆盖**：53 个功能域，依赖全景图 6,092 节点（6,003 production + 89 design）[ARCH-MM-002: prototype 已归入 production] + 6,197 边（6,084 active + 113 design），路径全景图 9,363 行目录树。（2026-06-30 查询 depgraph (PostgreSQL)）
 
 ---
 
@@ -1483,7 +1482,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 指标 | 修复前 (2026-06-15) | 修复后 (2026-06-16) | V5.8 状态 | V6.0 状态 (2026-06-30) |
 |------|:---:|:---:|:---:|:---:|
-| 总节点 | 8,174 | **7,590** | 7,700 | **6,092**（1,251 production + 4,752 prototype + 89 design） |
+| 总节点 | 8,174 | **7,590** | 7,700 | **6,092**（6,003 production + 89 design）[ARCH-MM-002] |
 | arch_directory_tree 行数 | — | 9,204 | 9,204 | **9,363** |
 | 重复路径 | 21个严重 | **0** | 0 | **0** |
 | 空路径 | 42个 | **0** | 0 | **0** |
@@ -1774,7 +1773,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | # | 裁定 | 理由 |
 |---|------|------|
 | 178 | **合并双字段为单一 build_status（5 态枚举）**：删除 module_lifecycle_state，合并到 build_status，统一为 `planned`→`generated`→`testing`→`stable`→`deprecated` 单调推进状态机。planned=设计态未实现；generated=AI 已生成未验证；testing=测试中；stable=已验证；deprecated=已废弃 | Backstage 3 值太简（无法区分 AI 生成态），K8s 5 值正合适。`generated` 态是 100% AI 开发场景必需——标记 AI 生成但未验证的代码，防止下游 AI 基于未验证代码做决策。合并双字段消除语义重叠 |
-| 179 | **design_maturity 保留 3 值**：`design`/`production`/`prototype`；`scaffold_placeholder`（216 个）归一化为 `prototype`（空 __init__.py 是 prototype 的一种）；design_maturity 作为独立字段保留（不从文件派生），因设计态节点是规划记录需持久化 | scaffold_placeholder 是 phase4b 清理脚本临时引入的非标准值，不在 §12.6 定义中。空 __init__.py 本质是"有文件但无实现"= prototype |
+| 179 | **design_maturity 保留 3 值**：`design`/`production`；`scaffold_placeholder`（216 个）归一化为 `design`（空 __init__.py 是 prototype 的一种）；design_maturity 作为独立字段保留（不从文件派生），因设计态节点是规划记录需持久化 | scaffold_placeholder 是 phase4b 清理脚本临时引入的非标准值，不在 §12.6 定义中。空 __init__.py 本质是"有文件但无实现"= prototype |
 | 180 | **build_status 由生成器从文件特征推导，不新增文件头部字段**：不新增 [BUILD_STATUS]/[LIFECYCLE_STATE] 头部字段；推导规则：design→planned；production+test→stable；production 无 test→generated；prototype→generated。少数需手工标记的状态（deprecated）通过 apply_depgraph.py --transition-build-status 写入 | 从文件特征推导=数据从代码派生=代码变则状态变=永远准确。文件头部手工字段=维护负担+生成器覆盖风险（R2 病根）。推导规则机械可执行，AI 零歧义 |
 | 181 | **orphan 为计算属性，不作为 build_status 字段值**：orphan 是零边节点的计算属性（由 audit 脚本实时计算），不持久化到 build_status；697 个 build_status='orphan' 节点执行 RULE-THREE 审判，有价值=planned，无价值=deprecated | orphan 是依赖关系属性（零边），不是生命周期属性。把 orphan 塞进 build_status 是概念混淆——一个节点可以同时是 orphan 和 stable。正交分离：build_status 管生命周期，orphan 由 edges 表计算 |
 | 182 | **添加 DB CHECK 约束**：nodes 表 build_status CHECK(5 值) + design_maturity CHECK(3 值)，堵住多入口写入漏洞 | R5 病根（无 CHECK 约束）是多入口写入脏值的根本原因。CHECK 约束是 DB 层最后防线——无论哪个入口写入非法值，DB 直接拒绝。对齐 K8s admission controller 实践 |
@@ -1853,7 +1852,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | # | 裁定 | 理由 |
 |---|------|------|
-| 189 | **设计态节点只由人工通过 apply_depgraph.py 写入，生成器不得创建**：重申§12.1"唯一来源"规则；删除 derive_design_maturity 的 `if node_type == "blueprint": return "design"` 分支；生成器扫描到的所有文件节点都是 production/prototype，不是 design | §12.1 已规定"不自动生成"，但代码违反此规则。7682 个幽灵设计节点是生成器违规产生的噪音。设计态节点代表"人工规划 intent"，自动生成的节点没有 intent |
+| 189 | **设计态节点只由人工通过 apply_depgraph.py 写入，生成器不得创建**：重申§12.1"唯一来源"规则；删除 derive_design_maturity 的 `if node_type == "blueprint": return "design"` 分支；生成器扫描到的所有文件节点都是 production，不是 design | §12.1 已规定"不自动生成"，但代码违反此规则。7682 个幽灵设计节点是生成器违规产生的噪音。设计态节点代表"人工规划 intent"，自动生成的节点没有 intent |
 | 190 | **设计态节点 build_status 使用 3 态子集**：planned（规划中，未实现）/stable（已实现，规划已落地）/deprecated（已废弃）。不使用 generated/testing——这两个状态只适用于有代码文件的生产节点 | 设计态节点是规划占位符，不是代码文件。build_status 只表示"规划是否落地"。对齐 K8s reconciliation：desired state 的 status 是"已满足/未满足" |
 | 191 | **realization detection 由生成器自动执行**：生成器每次运行时，查询所有 design_maturity='design' 且有 blueprint_id 的节点，检测是否有同 blueprint_id 的 production 节点，有则设 build_status='stable'，无则设 build_status='planned' | 对齐 K8s reconciliation controller——自动对比 desired/actual。AI 无需写复杂 JOIN 查询——build_status 直接反映实现状态 |
 | 192 | **清理 7682 个幽灵设计节点**：删除无 blueprint_id 的 design_maturity='design' 节点；保留 281 个未实现设计节点（build_status='planned'）+ 175 个已实现设计节点（build_status='stable'） | 幽灵节点无人工 intent，不是规划——保留只会误导 AI。删除后设计态节点从 8064 降至 456，精确反映实际规划。裁定#184 白名单准入实施后，.md 文件不再进 nodes 表，幽灵节点不会再产生 |
@@ -1887,7 +1886,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 1. **生成器是唯一数据入口** — 生成器的 bug 会系统性污染整个依赖图
 2. **设计态数据需要独立保护** — DELETE+INSERT 架构中，设计态节点需用 `WHERE design_maturity='design'` 保护
 3. **备份是最后防线** — 施工前必须 `pg_dump` 导出 depgraph (PostgreSQL)备份（SQLite 时期为 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`）
-4. **AI vibe coding 的膨胀效应** — 需系统性清理机制（如 5,738 个 prototype 节点）
+4. **AI vibe coding 的膨胀效应** — 需系统性清理机制（如 5,738 个 prototype 节点）[历史数据, ARCH-MM-002 已删除 prototype]
 
 ---
 
@@ -1988,7 +1987,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 #### 裁定#195：修复统计口径，新增 production_nodes 字段（v9 migration）
 
-- **current_modules** = 全节点数（含 design + prototype + production + scaffold_placeholder）
+- **current_modules** = 全节点数（含 design + production）[ARCH-MM-002: prototype 已删除]
 - **production_nodes** = production 节点数（design_maturity='production' 的真实代码文件）——**容量判定口径**
 - **v9 migration**：`ALTER TABLE domains ADD COLUMN production_nodes INTEGER DEFAULT 0`
 - **H7 口径修复**：生成器分离 current_modules（全节点）和 production_nodes（production only）的统计逻辑

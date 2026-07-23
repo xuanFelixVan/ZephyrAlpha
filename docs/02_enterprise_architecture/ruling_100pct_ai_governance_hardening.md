@@ -623,7 +623,7 @@ R6(第 6 层正式化)可与 Phase 1 并行,是概念性工作,不依赖代码�
 
 #### 11.2.1 现状
 
-- `commit_gateway_abuse_monitor_reconciler.py`(420 行,MATURITY=prototype)当前 5 维阈值**全部静态硬编码**:
+- `commit_gateway_abuse_monitor_reconciler.py`(420 行,MATURITY=production [ARCH-MM-002])当前 5 维阈值**全部静态硬编码**:
   - `_WARN_ONLY_24H_THRESHOLD = 50`
   - `_EMERGENCY_24H_THRESHOLD = 10`(R1 由 30 回滚到 10;R4 计划 2026-08-02 heartbeat 落地后强制回滚到 5)
   - `_ALLOW_OVERLAP_7D_THRESHOLD = 30`

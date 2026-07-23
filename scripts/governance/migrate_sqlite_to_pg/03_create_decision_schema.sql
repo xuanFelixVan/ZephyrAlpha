@@ -27,7 +27,8 @@
 -- 变更历史：
 --   v1.0.0 (2026-07-05): 初版——4张表 + 5索引 + 2触发器
 --   v1.1.0 (2026-07-06): decision_layers 加 module_id + source_code_ref；decision_nodes 加 source_code_ref
---   v1.2.0 (2026-07-09): decision_layers/decision_nodes 加 domain_id（ARCH-056 四图模块同步引擎核心字段对齐）
+-- v1.2.0 (2026-07-09): decision_layers/decision_nodes 加 domain_id（ARCH-056 四图模块同步引擎核心字段对齐）
+-- v1.3.0 (2026-07-23): ARCH-MM-002 design_maturity 从 3 态简化为 2 态（design/production），删除 prototype
 -- =====================================================================
 
 -- ========== 1. decision_tracks（四轨定义，无外键依赖，先创建） ==========
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS decision_layers (
     description            TEXT,
     decision_frequency     TEXT,
     design_maturity        TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status           TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id              TEXT,
@@ -80,7 +81,7 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
     facets                 JSONB,
     evidence_hash          TEXT NOT NULL,
     design_maturity        TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status           TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     source_code_ref        TEXT,
@@ -101,7 +102,7 @@ CREATE TABLE IF NOT EXISTS decision_edges (
     track                  TEXT,
     evidence_bundle        JSONB,
     design_maturity        TEXT DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production', 'prototype')),
+        CHECK (design_maturity IN ('design', 'production')),
     build_status           TEXT DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     valid_since            TIMESTAMPTZ DEFAULT NOW()
@@ -123,7 +124,7 @@ ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS source_code_ref TEXT;
 ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS source_code_ref TEXT;
 -- decision_edges 加 design_maturity + build_status（v1.2.0：对齐 nodes 表三态机制）
 ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS design_maturity TEXT DEFAULT 'production'
-    CHECK (design_maturity IN ('design', 'production', 'prototype'));
+    CHECK (design_maturity IN ('design', 'production'));
 ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS build_status TEXT DEFAULT 'generated'
     CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated'));
 -- v1.2.0 (ARCH-056): decision_layers/decision_nodes 加 domain_id（四图模块同步引擎核心字段对齐）

@@ -63,7 +63,7 @@ summary: "Agent间通信协议与冲突解决——九层十二协议架构，�
 tags: [a2a, agent-coordination, multi-agent, conflict-resolution, infrastructure, agent-card, task-state-machine, message-security, owasp-asi07, deadlock-prevention, saga-transaction, structured-negotiation, anp, formal-verification, tla-plus, vector-reputation, trustflow, context-rot, user-consent, constitutional-governance, agent-immune-system, agent-forgetting, multi-protocol-gateway, causal-trace, blame-attribution, capacity-upgrade, script-execution]
 responsibility_domain: 
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 ---
 
 > ⛔ **自动化准入门禁 (AUTOMATION-GATE)**

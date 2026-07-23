@@ -135,8 +135,8 @@ reconciler 对所有失败统一重试 3 次。但错误分两类：
 **理由**：
 1. `current_setting(..., true)` 是 PostgreSQL 官方推荐的安全读取自定义 GUC 的方式（`missing_ok` 参数）
 2. `02_create_pg_schema.sql` 已使用此模式且稳定运行，证明可行性
-3. 修复后触发器行为：GUC 未 `SET` 时返回 NULL → 跳过逃生通道 → 正常执行保护逻辑（阻断 design/prototype 删除）
-4. 修复后 `sync_dataflow_registry` 可正常 DELETE production 行（触发器检查 `OLD.design_maturity IN ('design', 'prototype')`，production 行不匹配保护条件，直接放行）
+3. 修复后触发器行为：GUC 未 `SET` 时返回 NULL → 跳过逃生通道 → 正常执行保护逻辑（阻断 design 删除）[ARCH-MM-002 两档化]
+4. 修复后 `sync_dataflow_registry` 可正常 DELETE production 行（触发器检查 `OLD.design_maturity = 'design'`，production 行不匹配保护条件，直接放行）[ARCH-MM-002]
 
 **影响范围**：6 个触发器函数（2 个函数定义 × 3 个表挂载）
 
@@ -273,10 +273,10 @@ BEGIN
     IF v_allow = 'on' THEN
         RETURN COALESCE(NEW, OLD);
     END IF;
-    IF TG_OP = 'DELETE' AND OLD.design_maturity IN ('design', 'prototype') THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design/prototype 态 dataflow 行（表=%, entity=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name);
-    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity IN ('design', 'prototype') AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design/prototype 态 dataflow 行降级（表=%, entity=%, %→%）', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name), OLD.design_maturity, NEW.design_maturity;
+    IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 dataflow 行（表=%, entity=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name);
+    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 dataflow 行降级（表=%, entity=%, %→%）', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name), OLD.design_maturity, NEW.design_maturity;
     END IF;
     RETURN COALESCE(NEW, OLD);
 END;
@@ -449,7 +449,7 @@ def _reconcile_with_classification(func, max_retries=3):
 
 | 风险 | 概率 | 影响 | 缓解 |
 |------|------|------|------|
-| 修复触发器后 design/prototype 行被误删 | 低 | 中（数据丢失） | DELETE 谓词已保护（只删 production）；触发器是第二层防御 |
+| 修复触发器后 design 行被误删 [ARCH-MM-002] | 低 | 中（数据丢失） | DELETE 谓词已保护（只删 production）；触发器是第二层防御 |
 | savepoint 隔离引入性能开销 | 低 | 低（savepoint 很轻量） | 29 个 savepoint 的开销可忽略 |
 | 确定性错误分类遗漏 | 中 | 低（误重试 3 次） | unknown 类型默认重试 1 次，保守策略 |
 | Task 4 长期方案延期 | 高 | 中（abuse 持续） | Task 1-3 先解决直接问题，Task 4 分阶段 |

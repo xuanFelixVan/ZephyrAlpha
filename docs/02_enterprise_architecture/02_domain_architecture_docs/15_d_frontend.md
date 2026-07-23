@@ -43,12 +43,12 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | scripts/tests/test_frontend_components.py | 5个前端组件综合验证脚本（TTL=task_bound，施工完... | 原型态 / prototype | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
+| 1 | scripts/tests/test_frontend_components.py | 5个前端组件综合验证脚本（TTL=task_bound，施工完... | 设计态 / design | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 | 2 | src/zephyr/frontend/dashboard/app.py | ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 | 3 | src/zephyr/frontend/dashboard/app_panel.py | app_panel · Panel 仪表盘主应用入口（v3.1.0, #A... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 4 | src/zephyr/frontend/dashboard/components/backtest_perform... | backtest_performance · 掘金量化风格绩效分析可... | 原型态 / prototype | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
+| 4 | src/zephyr/frontend/dashboard/components/backtest_perform... | backtest_performance · 掘金量化风格绩效分析可... | 设计态 / design | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 | 5 | src/zephyr/frontend/dashboard/components/backtest_results.py | backtest_results · 回测结果可视化组件（v3.0.0 ... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 6 | src/zephyr/frontend/dashboard/components/chart_factory.py | chart_factory · 图表统一工厂（v3.0.0新增, #ARC... | 原型态 / prototype | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
+| 6 | src/zephyr/frontend/dashboard/components/chart_factory.py | chart_factory · 图表统一工厂（v3.0.0新增, #ARC... | 设计态 / design | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 | 7 | src/zephyr/frontend/dashboard/components/fitness_function... | fitness_functions · Fitness Functions 仪表盘组... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 | 8 | src/zephyr/frontend/dashboard/components/order_book.py | order_book · 5档盘口实时展示组件（v3.0.0 Panel... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 | 9 | src/zephyr/frontend/dashboard/components/position_monitor.py | position_monitor · 实盘持仓监控组件（v3.0.0 Pa... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
@@ -74,7 +74,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -85,13 +84,13 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_FRONTEND["D_FRONTEND 前端"]
-        scripts_tests_test_frontend_components_py["(原型态 / prototype) 5个前端组件综合验证脚本（TTL=task_bound，施工完...<br/>文件: test_frontend_components.py"]
+        scripts_tests_test_frontend_components_py["(设计态 / design) 5个前端组件综合验证脚本（TTL=task_bound，施工完...<br/>文件: test_frontend_components.py"]
         src_zephyr_frontend_dashboard_app_py["(生产态 / production) ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃...<br/>文件: app.py"]
         src_zephyr_frontend_dashboard_app_panel_py["(生产态 / production) app_panel · Panel 仪表盘主应用入口（v3.1.0, #A...<br/>文件: app_panel.py"]
-        src_zephyr_frontend_dashboard_components_backtest_performance_py["(原型态 / prototype) backtest_performance · 掘金量化风格绩效分析可...<br/>文件: backtest_performance.py"]
+        src_zephyr_frontend_dashboard_components_backtest_performance_py["(设计态 / design) backtest_performance · 掘金量化风格绩效分析可...<br/>文件: backtest_performance.py"]
         src_zephyr_frontend_dashboard_components_backtest_results_py["(生产态 / production) backtest_results · 回测结果可视化组件（v3.0.0 ...<br/>文件: backtest_results.py"]
         src_zephyr_frontend_dashboard_components_backtest_results_py_1["(设计态 / design) "]
-        src_zephyr_frontend_dashboard_components_chart_factory_py["(原型态 / prototype) chart_factory · 图表统一工厂（v3.0.0新增, #ARC...<br/>文件: chart_factory.py"]
+        src_zephyr_frontend_dashboard_components_chart_factory_py["(设计态 / design) chart_factory · 图表统一工厂（v3.0.0新增, #ARC...<br/>文件: chart_factory.py"]
         src_zephyr_frontend_dashboard_components_chart_factory_py_1["(设计态 / design) "]
         src_zephyr_frontend_dashboard_components_fitness_functions_py["(生产态 / production) fitness_functions · Fitness Functions 仪表盘组...<br/>文件: fitness_functions.py"]
         src_zephyr_frontend_dashboard_components_order_book_py["(生产态 / production) order_book · 5档盘口实时展示组件（v3.0.0 Panel...<br/>文件: order_book.py"]
@@ -238,16 +237,16 @@ graph TD
     class D_GOV_DOCS,D_BACKTEST,D_GOVERNANCE,D_EX_CORE external_design
 ```
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 3 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_FRONTEND["D_FRONTEND 前端"]
-        scripts_tests_test_frontend_components_py["(原型态 / prototype) 5个前端组件综合验证脚本（TTL=task_bound，施工完...<br/>文件: test_frontend_components.py"]
-        src_zephyr_frontend_dashboard_components_backtest_performance_py["(原型态 / prototype) backtest_performance · 掘金量化风格绩效分析可...<br/>文件: backtest_performance.py"]
-        src_zephyr_frontend_dashboard_components_chart_factory_py["(原型态 / prototype) chart_factory · 图表统一工厂（v3.0.0新增, #ARC...<br/>文件: chart_factory.py"]
+        scripts_tests_test_frontend_components_py["(设计态 / design) 5个前端组件综合验证脚本（TTL=task_bound，施工完...<br/>文件: test_frontend_components.py"]
+        src_zephyr_frontend_dashboard_components_backtest_performance_py["(设计态 / design) backtest_performance · 掘金量化风格绩效分析可...<br/>文件: backtest_performance.py"]
+        src_zephyr_frontend_dashboard_components_chart_factory_py["(设计态 / design) chart_factory · 图表统一工厂（v3.0.0新增, #ARC...<br/>文件: chart_factory.py"]
     end
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_frontend_dashboard_components_chart_factory_py -.->|导入依赖 / import_depends| D_SHARED
@@ -312,4 +311,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

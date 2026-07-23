@@ -1,0 +1,151 @@
+rule_id: TRAE-080
+title: 四图对齐铁律（设计态先行 + 派生 + 对齐验证）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-080
+depends_on:
+- TRAE-054
+- TRAE-062
+tags:
+- TRAE
+- panorama_alignment
+- L1_foundation
+- 四图对齐
+- design_maturity
+- depgraph
+- single_entry
+- 君子协定
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-PANORAMA
+- 四图对齐
+- panorama_alignment
+- four_panoramas_alignment
+- ARCH-053
+- ARCH-056
+severity: critical
+scope: panorama_alignment
+domain: TRAE
+triggers:
+- operation: design_node_create
+- operation: panorama_sync
+- operation: panorama_align
+- operation: pre_construction
+- operation: depgraph_node_write
+- operation: dataflow_node_write
+- operation: decision_node_write
+sections:
+  panorama_alignment:
+    section_type: procedure
+    title: 四图对齐铁律（设计态先行 + 派生 + 对齐验证）
+    original_rules:
+    - RULE-DEPGRAPH
+    - ARCH-053
+    - ARCH-056
+    conditions:
+    - type: trigger
+      check: 任何模块施工前（写第1行业务代码前）的开发操作
+      pass: 先在四图完成设计并对齐（depgraph 登记→sync 派生→align 验证干净）后再施工
+      fail: 未在四图对齐即施工 → 设计态孤立/状态漂移/域不一致 → 架构幻觉与漂移
+    - type: constraint
+      check: 四图（depgraph/dataflowgraph/decisiongraph/blueprint.md）以 module_id 为对齐 key；设计态唯一入口是 depgraph，其余三图由 sync_panorama_module.py 单向派生 + align_panoramas.py 自动检测对齐
+      pass: 设计态只写 depgraph，派生与对齐交给自动引擎，AI 在零幻觉空间施工
+      fail: 手编派生三图 / 跳过对齐验证 → 四图分裂 → 漂移根源
+    actions:
+    - type: mandatory
+      step: '四图定义（以 module_id 为对齐 key）: 【depgraph】真源 PostgreSQL，设计态机制 design_maturity=design 节点，工具 apply_depgraph.py --add-design-node。【dataflowgraph】真源 PostgreSQL（3 表），设计态 design 行+触发器保护，工具 apply_dataflowgraph.py。【decisiongraph】真源 PostgreSQL（3 表），设计态 design 行+触发器保护，工具 apply_decisiongraph.py。【blueprint.md】真源 MD frontmatter，sync_panorama_module.py 从 depgraph 单向派生 4 字段（module_id/responsibility_domain/design_maturity/build_status）'
+    - type: mandatory
+      step: '单一入口铁律: 设计态唯一入口 = depgraph。写入 depgraph 设计态后，sync_panorama_module.py 自动派生其余三图，align_panoramas.py 自动检测四类对齐问题。AI 不需要也不允许手动维护其余三图的设计态——它们是派生产物'
+    - type: mandatory
+      step: '3 步 workflow（施工前必走）: ① apply_depgraph.py --add-design-node PATH BLUEPRINT_ID DOMAIN_ID planned + apply_depgraph.py --add-edge 登记 depgraph 设计态（= L1 依赖关系先行铁律，详见 RULE-DEPGRAPH 第三件事 / TRAE-054）→ ② sync_panorama_module.py --all 派生其余三图（apply_depgraph.py 执行后默认自动触发；也可手动 python scripts/governance/sync_panorama_module.py --all）→ ③ python scripts/governance/d5_architecture/generators/align_panoramas.py 验证四类对齐问题干净后再施工'
+    - type: mandatory
+      step: '四类对齐问题（align_panoramas.py 检测，施工前须为 0 或已知可接受）: (1) 孤儿——仅一图存在的 module_id；(2) 状态漂移——同一 module_id 在不同图 design_maturity 不一致；(3) 域不一致——同一 module_id 在不同图 domain_id 不一致；(4) 设计态孤立——design 状态仅出现在一图'
+    - type: mandatory
+      step: '转正: 施工完成并通过验证后，apply_depgraph.py --transition-build-status NODE_ID production 将 status 从 planned→production；sync_panorama_module.py 自动把 production 状态同步到其余三图，align_panoramas.py 复检对齐'
+    - type: mandatory
+      step: '强制力（君子协定 + 现有门禁）: AI 施工前自觉跑 sync+align 验证；硬阻断复用 GATE-PANORAMA-ALIGNMENT（priority=830）——domain_mismatches>0 直接阻断（passed=False），orphans/state_drifts 保持 warn-only（君子协定，由 post-merge reconciler 兜底）。修复入口 python scripts/governance/sync_panorama_module.py --all'
+    - type: forbidden
+      step: '禁止: 手动编辑 dataflowgraph/decisiongraph 的派生设计态行——它们由 sync_panorama_module.py 从 depgraph 单向派生，手编会被下次 sync 覆盖且制造四图分裂'
+    - type: forbidden
+      step: '禁止: 跳过 align_panoramas.py 对齐验证即施工——四图未对齐=在分裂的架构视图上推断=幻觉温床'
+    - type: forbidden
+      step: '禁止: 把模块设计态直接写入 dataflow/decision 而非 depgraph——违反单一入口铁律；正确做法是只写 depgraph，其余三图自动派生'
+    - type: forbidden
+      step: '禁止: 误以为需要手动维护四图——实际只需写 depgraph 一个入口，sync+align 自动处理其余三图的派生与对齐检测'
+    invariants:
+    - id: PANORAMA-INV-001
+      title: 单一入口
+      description: 设计态唯一入口是 depgraph（apply_depgraph.py --add-design-node）。dataflowgraph/decisiongraph/blueprint.md 的设计态由 sync_panorama_module.py 从 depgraph 单向派生，禁止手编派生图的设计态
+      enforcement: sync_panorama_module.py 单向派生 + 人工审查 + AI 操作前必读 AGENTS.md RULE-DEPGRAPH
+      violation_action: reject_write
+    - id: PANORAMA-INV-002
+      title: 单向派生
+      description: sync_panorama_module.py 从 depgraph.nodes 读取模块核心字段（module_id/domain_id/design_maturity/build_status），单向派生到 dataflow_jobs（占位 entity_type=module_placeholder）+ decision_layers（占位 track=placeholder）+ blueprint.md frontmatter。禁止反向（派生图→depgraph）
+      enforcement: sync 脚本只读 depgraph + 生成器从 DB 读取
+      violation_action: reject_change
+    - id: PANORAMA-INV-003
+      title: 设计态保护触发器
+      description: dataflowgraph（3 表）+ decisiongraph（3 表）共 6 张表有 BEFORE DELETE OR UPDATE 触发器，阻断 design_maturity=design 行的删除或降级。逃生通道 SET app.allow_design_maturity_delete=on（仅 apply_dataflowgraph.py/apply_decisiongraph.py 设计态写入命令启用）
+      enforcement: PostgreSQL 触发器（fail-closed）
+      violation_action: reject_write
+    - id: PANORAMA-INV-004
+      title: 对齐验证先行
+      description: 任何模块施工前 MUST 跑 align_panoramas.py 验证四类对齐问题（孤儿/状态漂移/域不一致/设计态孤立）。domain_mismatches>0 由 GATE-PANORAMA-ALIGNMENT 硬阻断；orphans/state_drifts warn-only（君子协定）
+      enforcement: GATE-PANORAMA-ALIGNMENT（domain_mismatches 硬阻断）+ AI 自觉 align 验证
+      violation_action: reject_construction
+    examples:
+    - step: '1'
+      action: 登记 depgraph 设计态
+      command: apply_depgraph.py --add-design-node src/zephyr/foo/bar.py MOD-FOO-BAR D_FOO planned
+    - step: '2'
+      action: 派生其余三图
+      command: python scripts/governance/sync_panorama_module.py --all（apply_depgraph.py 后通常自动触发）
+    - step: '3'
+      action: 对齐验证
+      command: python scripts/governance/d5_architecture/generators/align_panoramas.py（4 类问题须干净）
+    - step: '4'
+      action: 施工并转正
+      command: apply_depgraph.py --transition-build-status NODE_ID production
+    common_mistakes:
+    - '❌ 手编 dataflowgraph/decisiongraph 派生设计态行——单向派生会被覆盖且制造四图分裂'
+    - '❌ 跳过 align_panoramas.py 对齐验证即施工——在分裂视图上推断=幻觉温床'
+    - '❌ 把模块设计态直接写 dataflow/decision 而非 depgraph——违反单一入口铁律'
+    - '❌ 误以为需要手动维护四图——实际只需写 depgraph 一个入口，sync+align 自动处理'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-062
+  scripts:
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/apply_dataflowgraph.py
+  - scripts/governance/apply_decisiongraph.py
+  - scripts/governance/sync_panorama_module.py
+  - scripts/governance/d5_architecture/generators/align_panoramas.py
+  - scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py
+  modules:
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_domain_governance/blueprint.md
+  arch_refs:
+  - '#ARCH-053'
+  - '#ARCH-056'
+enforcement:
+  paired_gate_id: GATE-PANORAMA-ALIGNMENT
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-053 #ARCH-056'
+provenance:
+  extracted_at: '2026-07-22T00:00:00'
+  extracted_by: ai-governance-scaffold
+  reason: 把已落地的 ARCH-053/056 四图对齐机制提升为入职必读 + 必须遵守的 L1 规则。机制已存在（align_panoramas.py 检测器 + sync_panorama_module.py 同步引擎 + GATE-PANORAMA-ALIGNMENT 门禁），本规则补齐认知可见性——让所有新 AI 在 RULE-DEPGRAPH 第三件事就建立四图对齐心智模型并知道 3 步 workflow。强制力走君子协定 + 复用现有门禁，不加新硬门禁。

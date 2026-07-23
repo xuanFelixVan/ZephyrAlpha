@@ -25,7 +25,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
-design_maturity: prototype
+design_maturity: production
 verifiability: manual
 summary: "D_PORTFOLIO_CORE 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。"
 priority: P0

@@ -43,8 +43,8 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/feedback_loop/diagnosers/__init__.py | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 2 | src/zephyr/feedback_loop/diagnosers/cognitive/__init__.py | __init__.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 1 | src/zephyr/feedback_loop/diagnosers/__init__.py | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 2 | src/zephyr/feedback_loop/diagnosers/cognitive/__init__.py | __init__.py | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 3 | src/zephyr/feedback_loop/diagnosers/cognitive/adaptive_pa... | Adaptive Parameter Tuning — v0.37.0 R452 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 4 | src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_l... | Cognitive Load Estimator — v0.6.0 R68 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 5 | src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_l... | Cognitive Load Budget — v0.16.0 R223 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
@@ -55,7 +55,7 @@ ttl: permanent
 | 10 | src/zephyr/feedback_loop/diagnosers/cognitive/socratic_qu... | Socratic Questions — v0.7.0 R81 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 11 | src/zephyr/feedback_loop/diagnosers/cognitive/tone_adapte... | Tone Adapter — v0.9.0 R127 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 12 | src/zephyr/feedback_loop/diagnosers/cognitive/tone_adapte... | Tone Adapter v2 — v0.10.0 R141 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 13 | src/zephyr/feedback_loop/diagnosers/diagnosis/__init__.py | __init__.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 13 | src/zephyr/feedback_loop/diagnosers/diagnosis/__init__.py | __init__.py | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 14 | src/zephyr/feedback_loop/diagnosers/diagnosis/auto_diagno... | Auto Diagnosis — v0.3.0 R16 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 15 | src/zephyr/feedback_loop/diagnosers/diagnosis/causal_infe... | Causal Inference Engine — v0.3.0 R5-R7 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 16 | src/zephyr/feedback_loop/diagnosers/diagnosis/counterfact... | Counterfactual Engine — v0.6.0 R60 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
@@ -70,7 +70,7 @@ ttl: permanent
 | 25 | src/zephyr/feedback_loop/diagnosers/diagnosis/nonstationa... | Nonstationary Effectiveness — v0.37.0 R455 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 26 | src/zephyr/feedback_loop/diagnosers/diagnosis/statistical... | Statistical Hygiene Auditor — v0.38.0 R476 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 27 | src/zephyr/feedback_loop/diagnosers/diagnosis/vertical_se... | Vertical Self Assessment — v0.10.0 R137 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 28 | src/zephyr/feedback_loop/diagnosers/health/__init__.py | __init__.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 28 | src/zephyr/feedback_loop/diagnosers/health/__init__.py | __init__.py | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 29 | src/zephyr/feedback_loop/diagnosers/health/action_composi... | R511: ActionCompositionHealthMonitor | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 30 | src/zephyr/feedback_loop/diagnosers/health/dr_resilience_... | DR Resilience Metrics — v0.17.0+ R231-R236 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 31 | src/zephyr/feedback_loop/diagnosers/health/e2e_integratio... | E2E Integration Health Monitor — v0.39.0 R489 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
@@ -83,7 +83,7 @@ ttl: permanent
 | 38 | src/zephyr/feedback_loop/diagnosers/health/self_bottlenec... | Self-Bottleneck Detector — v0.38.0 R479 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 39 | src/zephyr/feedback_loop/diagnosers/health/self_health_mo... | Self Health Monitor — v0.4.0 R29 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 40 | src/zephyr/feedback_loop/diagnosers/health/self_llm_obser... | Self LLM Observability — v0.12.0 R160 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 41 | src/zephyr/feedback_loop/diagnosers/reliability/__init__.py | __init__.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 41 | src/zephyr/feedback_loop/diagnosers/reliability/__init__.py | __init__.py | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 42 | src/zephyr/feedback_loop/diagnosers/reliability/amplifica... | Amplification Guard — v0.10.0 R134 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 43 | src/zephyr/feedback_loop/diagnosers/reliability/api_depen... | API Dependency Metrics — v0.17.0+ R237-R242 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 | 44 | src/zephyr/feedback_loop/diagnosers/reliability/burn_rate... | Burn Rate Alerter — v0.14.0 R200 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
@@ -127,7 +127,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -140,8 +139,8 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
-        src_zephyr_feedback_loop_diagnosers_init_py["(原型态 / prototype) feedback-loop.diagnosers — GOV-DOC-018: 71个叶...<br/>文件: __init__.py"]
-        src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_init_py["(设计态 / design) feedback-loop.diagnosers — GOV-DOC-018: 71个叶...<br/>文件: __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(设计态 / design) __init__.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: adaptive_param_tuning.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive_load.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive_load_budget.py"]
@@ -152,7 +151,7 @@ graph TD
         src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py["(生产态 / production) Socratic Questions — v0.7.0 R81<br/>文件: socratic_questions.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py["(生产态 / production) Tone Adapter — v0.9.0 R127<br/>文件: tone_adapter.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py["(生产态 / production) Tone Adapter v2 — v0.10.0 R141<br/>文件: tone_adapter_v2.py"]
-        src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(设计态 / design) __init__.py"]
         src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py["(生产态 / production) Auto Diagnosis — v0.3.0 R16<br/>文件: auto_diagnosis.py"]
         src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py["(生产态 / production) Causal Inference Engine — v0.3.0 R5-R7<br/>文件: causal_inference_engine.py"]
         src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py["(生产态 / production) Counterfactual Engine — v0.6.0 R60<br/>文件: counterfactual.py"]
@@ -167,7 +166,7 @@ graph TD
         src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py["(生产态 / production) Nonstationary Effectiveness — v0.37.0 R455<br/>文件: nonstationary_effectiveness.py"]
         src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py["(生产态 / production) Statistical Hygiene Auditor — v0.38.0 R476<br/>文件: statistical_hygiene_auditor.py"]
         src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py["(生产态 / production) Vertical Self Assessment — v0.10.0 R137<br/>文件: vertical_self_assessment.py"]
-        src_zephyr_feedback_loop_diagnosers_health_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_health_init_py["(设计态 / design) __init__.py"]
         src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py["(生产态 / production) R511: ActionCompositionHealthMonitor<br/>文件: action_composition_health_monitor.py"]
         src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py["(生产态 / production) DR Resilience Metrics — v0.17.0+ R231-R236<br/>文件: dr_resilience_metrics.py"]
     end
@@ -206,7 +205,7 @@ graph TD
         src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py["(生产态 / production) Self-Bottleneck Detector — v0.38.0 R479<br/>文件: self_bottleneck_detector.py"]
         src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py["(生产态 / production) Self Health Monitor — v0.4.0 R29<br/>文件: self_health_monitor.py"]
         src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py["(生产态 / production) Self LLM Observability — v0.12.0 R160<br/>文件: self_llm_observability.py"]
-        src_zephyr_feedback_loop_diagnosers_reliability_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_reliability_init_py["(设计态 / design) __init__.py"]
         src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py["(生产态 / production) Amplification Guard — v0.10.0 R134<br/>文件: amplification_guard.py"]
         src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py["(生产态 / production) API Dependency Metrics — v0.17.0+ R237-R242<br/>文件: api_dependency_metrics.py"]
         src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py["(生产态 / production) Burn Rate Alerter — v0.14.0 R200<br/>文件: burn_rate_alerter.py"]
@@ -364,18 +363,18 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 5 个，4 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
-        src_zephyr_feedback_loop_diagnosers_init_py["(原型态 / prototype) feedback-loop.diagnosers — GOV-DOC-018: 71个叶...<br/>文件: __init__.py"]
-        src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_feedback_loop_diagnosers_health_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_feedback_loop_diagnosers_reliability_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_init_py["(设计态 / design) feedback-loop.diagnosers — GOV-DOC-018: 71个叶...<br/>文件: __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_health_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_feedback_loop_diagnosers_reliability_init_py["(设计态 / design) __init__.py"]
     end
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_cognitive_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
@@ -435,4 +434,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

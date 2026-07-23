@@ -38,7 +38,7 @@ entry_conditions:
   rule_ids:
   - TRAE-055
   anti_pattern:
-    description: 将 design 节点（逻辑路径）或 prototype 节点（自动派生）计入模块数
+    description: 将 design 节点（逻辑路径，尚未落地为代码）计入模块数 [ARCH-MM-002 两档化]
     example: AI ignores TRAE-055 arch_cap_001_module_definition requirement
   params: &id001
     required_fields:

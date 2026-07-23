@@ -14,7 +14,7 @@ construction_progress: prototype
 language: zh
 description: 主备数据源热切换——主 QMT 推送中断时自动切换备源（通达信本地接口），CH 不可达时降级写本地 SQLite，保证数据不中断
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 responsibility_domain: 
 ---
 

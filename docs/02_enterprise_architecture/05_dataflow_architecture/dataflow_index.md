@@ -32,12 +32,12 @@ ttl: permanent
 
 ### 设计态 / 运营态统计（design_maturity）
 
-| 类型 | 运营态 (production) | 设计态 (design) | 原型态 (prototype) | 合计 |
-|------|---------------------|-----------------|---------------------|------|
-| Dataset | 14 | 0 | 0 | 14 |
-| Job | 13 | 0 | 0 | 13 |
+| 类型 | 运营态 (production) | 设计态 (design) | 合计 |
+|------|---------------------|-----------------|------|
+| Dataset | 14 | 0 | 14 |
+| Job | 13 | 0 | 13 |
 
-> **设计态 vs 运营态 / Design vs Production**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行，`prototype`=原型验证中。对标 depgraph 的设计态/运营态机制（decision_index.md）。
+> **设计态 vs 运营态 / Design vs Production**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。对标 depgraph 的设计态/运营态机制（decision_index.md）。
 
 ## Mermaid 图表（自动生成 · 生成器: generate_dataflow_diagram.py）
 
@@ -45,9 +45,8 @@ ttl: permanent
 >
 > **图例说明 / Legend**：
 >
-> **设计态/原型态优先着色（design_maturity）**：
+> **设计态优先着色（design_maturity）**：
 > - **紫色** = 设计态节点（design_maturity=design，蓝图规划，代码未写）
-> - **黄色** = 原型态节点（design_maturity=prototype，原型验证中）
 >
 > **运营态按 scope 着色（design_maturity=production）**：
 > - **蓝色矩形** = 生产 Dataset（dsProd）
@@ -57,9 +56,9 @@ ttl: permanent
 >
 > - `JOB -->|produces / 产出| DS` = Job 产出 Dataset
 > - `DS -->|consumed by / 被消费于| JOB` = Job 消费 Dataset
-> - 节点标签前缀 `[design]`/`[production]`/`[prototype]` 标注 design_maturity
+> - 节点标签前缀 `[design]`/`[production]` 标注 design_maturity
 
-### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]/[prototype]）
+### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）
 
 > 节点数: 14 datasets / 数据集, 13 jobs / 作业, 28 edges / 边
 

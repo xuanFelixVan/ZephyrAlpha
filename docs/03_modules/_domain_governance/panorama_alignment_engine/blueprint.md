@@ -30,7 +30,7 @@ summary: >
   四图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 四图模块对齐。
   4 核心字段（module_id/domain_id/design_maturity/build_status）跨四图同步。
   单模块同步+全量同步+transition 触发+blueprint 缺失标记+多数投票聚合。
-design_maturity: prototype
+design_maturity: production
 build_status: generated
 
 ---
@@ -98,7 +98,7 @@ build_status: generated
 |---|------|------------|------------|------------|--------------------------|------|
 | 1 | module_id | `blueprint_id` | `job_name` | `layer_id` | `module_id` | 模块唯一标识，四图对齐的主键 |
 | 2 | domain_id | `domain_id` | `domain_id` | `domain_id` | `responsibility_domain` | 责任域（如 D_TRADING / D_GOVERNANCE） |
-| 3 | design_maturity | `design_maturity` | `design_maturity` | `design_maturity` | `design_maturity` | 设计成熟度：design < prototype < production |
+| 3 | design_maturity | `design_maturity` | `design_maturity` | `design_maturity` | `design_maturity` | 设计成熟度：design < production |
 | 4 | build_status | `build_status` | `build_status` | `build_status` | `build_status` | 构建状态：planned / generated / ... |
 
 > **字段名差异**：blueprint frontmatter 用 `responsibility_domain`（语义命名），其他三图用 `domain_id`（技术命名）。引擎自动映射。
@@ -163,7 +163,7 @@ depgraph.nodes 中同一个 `blueprint_id` 可有多行——这是**跨域模�
 | 字段 | 聚合策略 | 理由 |
 |------|---------|------|
 | domain_id | **多数投票**（`Counter.most_common`） | 取代表性域，避免单行取值不稳定 |
-| design_maturity | **取最 design 状态**（min rank：design=0 < prototype=1 < production=2） | 与 `_detect_state_drifts` 聚合策略一致，保守取最不成熟状态 |
+| design_maturity | **取最 design 状态**（min rank：design=0 < production=1） | 与 `_detect_state_drifts` 聚合策略一致，保守取最不成熟状态 |
 | build_status | **取第一个非空**（ORDER BY 保证非空优先） | build_status 通常单值 |
 | blueprint_path/path | **取第一个非空**（`ORDER BY (path IS NULL), path`） | 有路径的行更可能是模块主节点 |
 

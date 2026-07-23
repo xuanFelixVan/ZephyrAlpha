@@ -39,7 +39,7 @@ codification_level: L2
 codification_at: "2026-07-09"
 responsibility_domain: 
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 ---
 > module_id: MOD-INF-043 | version: 1.4.1 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: completed

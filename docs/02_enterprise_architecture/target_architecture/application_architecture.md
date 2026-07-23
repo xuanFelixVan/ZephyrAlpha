@@ -106,7 +106,7 @@ The Application Architecture answers:
 | 依赖边总数 | 7191 | depgraph `edges` 表 |
 | production 节点 | 1404 | depgraph `nodes.design_maturity` |
 | design 节点 | 89 | depgraph `nodes.design_maturity` |
-| prototype 节点 | 5008 | depgraph `nodes.design_maturity` |
+| ~~prototype 节点~~ | ~~5008~~ | ARCH-MM-002 已删除 |
 
 ### 4.2 域层级分布
 

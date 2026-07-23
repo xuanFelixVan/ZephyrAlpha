@@ -53,7 +53,7 @@ stability: evolving
 verifiability: hybrid
 responsibility_domain: 
 build_status: stable
-design_maturity: prototype
+design_maturity: production
 ---
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性

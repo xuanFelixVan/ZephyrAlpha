@@ -44,43 +44,43 @@ ttl: permanent
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/trading/trading_contracts/broker_interface.py | D_EXECUTION_CORE — BrokerInterface | 生产态 / production |  |
-| 2 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | 过渡兼容层（DEPRECATED）—— Money 契约 canonic... | 原型态 / prototype |  |
-| 3 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | Re-export shim — 真源已收敛至 zephyr.shared.co... | 原型态 / prototype |  |
-| 4 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | strategy_lifecycle_event.py | 原型态 / prototype |  |
+| 2 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | 过渡兼容层（DEPRECATED）—— Money 契约 canonic... | 设计态 / design |  |
+| 3 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | Re-export shim — 真源已收敛至 zephyr.shared.co... | 设计态 / design |  |
+| 4 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | strategy_lifecycle_event.py | 设计态 / design |  |
 
 ### L2 领域层 / Domain Layer (33 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/trading/action_dispatcher/__init__.py | __init__.py | 原型态 / prototype |  |
-| 2 | src/zephyr/trading/action_dispatcher/_annotation_writer.py | 注释注解写入器（从 ActionDispatcher._annotate_p... | 原型态 / prototype |  |
-| 3 | src/zephyr/trading/action_dispatcher/_audit_log_writer.py | 审计日志写入器（从 ActionDispatcher._write_tria... | 原型态 / prototype |  |
-| 4 | src/zephyr/trading/action_dispatcher/_file_lifecycle_mana... | 文件生命周期管理器（从 ActionDispatcher._create... | 原型态 / prototype |  |
-| 5 | src/zephyr/trading/action_dispatcher/_search_replace_engi... | 搜索替换引擎（从 ActionDispatcher._search_repla... | 原型态 / prototype |  |
+| 1 | src/zephyr/trading/action_dispatcher/__init__.py | __init__.py | 设计态 / design |  |
+| 2 | src/zephyr/trading/action_dispatcher/_annotation_writer.py | 注释注解写入器（从 ActionDispatcher._annotate_p... | 设计态 / design |  |
+| 3 | src/zephyr/trading/action_dispatcher/_audit_log_writer.py | 审计日志写入器（从 ActionDispatcher._write_tria... | 设计态 / design |  |
+| 4 | src/zephyr/trading/action_dispatcher/_file_lifecycle_mana... | 文件生命周期管理器（从 ActionDispatcher._create... | 设计态 / design |  |
+| 5 | src/zephyr/trading/action_dispatcher/_search_replace_engi... | 搜索替换引擎（从 ActionDispatcher._search_repla... | 设计态 / design |  |
 | 6 | src/zephyr/trading/admission_controller.py | admission_controller.py | 生产态 / production |  |
-| 7 | src/zephyr/trading/auto_dispatcher.py | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | 原型态 / prototype |  |
+| 7 | src/zephyr/trading/auto_dispatcher.py | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | 设计态 / design |  |
 | 8 | src/zephyr/trading/autopilot.py | AutoPilot — AI session 自动找活干、认领任务。 | 生产态 / production |  |
 | 9 | src/zephyr/trading/conductor.py | Conductor — AI session 全自动指挥官。 | 生产态 / production |  |
 | 10 | src/zephyr/trading/gpu_consensus_scheduler.py | gpu_consensus_scheduler.py | 生产态 / production |  |
-| 11 | src/zephyr/trading/gpu_monitor.py | gpu_monitor.py — NVIDIA GPU 状态采集器 | 原型态 / prototype |  |
+| 11 | src/zephyr/trading/gpu_monitor.py | gpu_monitor.py — NVIDIA GPU 状态采集器 | 设计态 / design |  |
 | 12 | src/zephyr/trading/ide_health_daemon.py | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 | 生产态 / production |  |
 | 13 | src/zephyr/trading/protection_index.py | protection_index.py | 生产态 / production |  |
 | 14 | src/zephyr/trading/runtime/async_runtime.py | async_runtime.py | 生产态 / production |  |
-| 15 | src/zephyr/trading/speed_baseline_checker.py | speed_baseline_checker.py | 原型态 / prototype |  |
+| 15 | src/zephyr/trading/speed_baseline_checker.py | speed_baseline_checker.py | 设计态 / design |  |
 | 16 | src/zephyr/trading/trading_contracts/execution/capital_al... | capital_allocation_result.py | 生产态 / production |  |
-| 17 | src/zephyr/trading/trading_contracts/execution/execution_... | execution_rejection_error.py | 原型态 / prototype |  |
+| 17 | src/zephyr/trading/trading_contracts/execution/execution_... | execution_rejection_error.py | 设计态 / design |  |
 | 18 | src/zephyr/trading/trading_contracts/execution/execution_... | Re-export wrapper: ExecutionReport 真源在 zephy... | 生产态 / production |  |
 | 19 | src/zephyr/trading/trading_contracts/execution/fill.py | Re-export wrapper: Fill 真源在 zephyr.shared.co... | 生产态 / production |  |
 | 20 | src/zephyr/trading/trading_contracts/execution/model_serv... | model_serving_request.py | 生产态 / production |  |
 | 21 | src/zephyr/trading/trading_contracts/execution/order.py | Re-export wrapper: Order 真源在 zephyr.shared.c... | 生产态 / production |  |
 | 22 | src/zephyr/trading/trading_contracts/execution/position.py | Re-export wrapper: PositionSnapshot 真源在 zeph... | 生产态 / production |  |
-| 23 | src/zephyr/trading/trading_contracts/factories.py | trading-contracts/factories.py — 交易域数据契... | 原型态 / prototype |  |
-| 24 | src/zephyr/trading/trading_contracts/market/instrument.py | instrument.py | 原型态 / prototype |  |
-| 25 | src/zephyr/trading/trading_contracts/market/signal_degrad... | signal_degradation_warning.py | 原型态 / prototype |  |
-| 26 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | compliance_rule.py | 原型态 / prototype |  |
+| 23 | src/zephyr/trading/trading_contracts/factories.py | trading-contracts/factories.py — 交易域数据契... | 设计态 / design |  |
+| 24 | src/zephyr/trading/trading_contracts/market/instrument.py | instrument.py | 设计态 / design |  |
+| 25 | src/zephyr/trading/trading_contracts/market/signal_degrad... | signal_degradation_warning.py | 设计态 / design |  |
+| 26 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | compliance_rule.py | 设计态 / design |  |
 | 27 | src/zephyr/trading/trading_contracts/risk/risk_dashboard_... | risk_dashboard_snapshot.py | 生产态 / production |  |
 | 28 | src/zephyr/trading/trading_contracts/risk/risk_limit_viol... | risk_limit_violation_error.py | 生产态 / production |  |
-| 29 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | risk_limits.py | 原型态 / prototype |  |
+| 29 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | risk_limits.py | 设计态 / design |  |
 | 30 | src/zephyr/trading/trading_contracts/risk/risk_metrics.py | risk_metrics.py | 生产态 / production |  |
 | 31 | src/zephyr/trading/trading_contracts/risk/risk_validator_... | risk_validator_protocol.py | 生产态 / production |  |
 | 32 | src/zephyr/trading/trading_contracts/risk/trading_kill_sw... | trading_kill_switch.py | 生产态 / production |  |
@@ -93,7 +93,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -106,36 +105,36 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_TRADING["D_TRADING 交易运营"]
-        src_zephyr_trading_action_dispatcher_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_trading_action_dispatcher_annotation_writer_py["(原型态 / prototype) 注释注解写入器（从 ActionDispatcher._annotate_p...<br/>文件: _annotation_writer.py"]
-        src_zephyr_trading_action_dispatcher_audit_log_writer_py["(原型态 / prototype) 审计日志写入器（从 ActionDispatcher._write_tria...<br/>文件: _audit_log_writer.py"]
-        src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["(原型态 / prototype) 文件生命周期管理器（从 ActionDispatcher._create...<br/>文件: _file_lifecycle_manager.py"]
-        src_zephyr_trading_action_dispatcher_search_replace_engine_py["(原型态 / prototype) 搜索替换引擎（从 ActionDispatcher._search_repla...<br/>文件: _search_replace_engine.py"]
+        src_zephyr_trading_action_dispatcher_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_trading_action_dispatcher_annotation_writer_py["(设计态 / design) 注释注解写入器（从 ActionDispatcher._annotate_p...<br/>文件: _annotation_writer.py"]
+        src_zephyr_trading_action_dispatcher_audit_log_writer_py["(设计态 / design) 审计日志写入器（从 ActionDispatcher._write_tria...<br/>文件: _audit_log_writer.py"]
+        src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["(设计态 / design) 文件生命周期管理器（从 ActionDispatcher._create...<br/>文件: _file_lifecycle_manager.py"]
+        src_zephyr_trading_action_dispatcher_search_replace_engine_py["(设计态 / design) 搜索替换引擎（从 ActionDispatcher._search_repla...<br/>文件: _search_replace_engine.py"]
         src_zephyr_trading_admission_controller_py["(生产态 / production) admission_controller.py"]
-        src_zephyr_trading_auto_dispatcher_py["(原型态 / prototype) AutoDispatcher — 守护进程内的轻量 PipelineDisp...<br/>文件: auto_dispatcher.py"]
+        src_zephyr_trading_auto_dispatcher_py["(设计态 / design) AutoDispatcher — 守护进程内的轻量 PipelineDisp...<br/>文件: auto_dispatcher.py"]
         src_zephyr_trading_autopilot_py["(生产态 / production) AutoPilot — AI session 自动找活干、认领任务。<br/>文件: autopilot.py"]
         src_zephyr_trading_conductor_py["(生产态 / production) Conductor — AI session 全自动指挥官。<br/>文件: conductor.py"]
         src_zephyr_trading_gpu_consensus_scheduler_py["(生产态 / production) gpu_consensus_scheduler.py"]
-        src_zephyr_trading_gpu_monitor_py["(原型态 / prototype) gpu_monitor.py — NVIDIA GPU 状态采集器<br/>文件: gpu_monitor.py"]
+        src_zephyr_trading_gpu_monitor_py["(设计态 / design) gpu_monitor.py — NVIDIA GPU 状态采集器<br/>文件: gpu_monitor.py"]
         src_zephyr_trading_ide_health_daemon_py["(生产态 / production) ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程<br/>文件: ide_health_daemon.py"]
         src_zephyr_trading_protection_index_py["(生产态 / production) protection_index.py"]
         src_zephyr_trading_runtime_async_runtime_py["(生产态 / production) async_runtime.py"]
-        src_zephyr_trading_speed_baseline_checker_py["(原型态 / prototype) speed_baseline_checker.py"]
+        src_zephyr_trading_speed_baseline_checker_py["(设计态 / design) speed_baseline_checker.py"]
         src_zephyr_trading_trading_contracts_broker_interface_py["(生产态 / production) D_EXECUTION_CORE — BrokerInterface<br/>文件: broker_interface.py"]
         src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["(生产态 / production) capital_allocation_result.py"]
-        src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(原型态 / prototype) execution_rejection_error.py"]
+        src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(设计态 / design) execution_rejection_error.py"]
         src_zephyr_trading_trading_contracts_execution_execution_report_py["(生产态 / production) Re-export wrapper: ExecutionReport 真源在 zephy...<br/>文件: execution_report.py"]
         src_zephyr_trading_trading_contracts_execution_fill_py["(生产态 / production) Re-export wrapper: Fill 真源在 zephyr.shared.co...<br/>文件: fill.py"]
         src_zephyr_trading_trading_contracts_execution_model_serving_request_py["(生产态 / production) model_serving_request.py"]
         src_zephyr_trading_trading_contracts_execution_order_py["(生产态 / production) Re-export wrapper: Order 真源在 zephyr.shared.c...<br/>文件: order.py"]
         src_zephyr_trading_trading_contracts_execution_position_py["(生产态 / production) Re-export wrapper: PositionSnapshot 真源在 zeph...<br/>文件: position.py"]
-        src_zephyr_trading_trading_contracts_factories_py["(原型态 / prototype) trading-contracts/factories.py — 交易域数据契...<br/>文件: factories.py"]
-        src_zephyr_trading_trading_contracts_market_instrument_py["(原型态 / prototype) instrument.py"]
-        src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(原型态 / prototype) signal_degradation_warning.py"]
-        src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(原型态 / prototype) 过渡兼容层（DEPRECATED）—— Money 契约 canonic...<br/>文件: money.py"]
-        src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(原型态 / prototype) Re-export shim — 真源已收敛至 zephyr.shared.co...<br/>文件: performance_attribution_report.py"]
-        src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["(原型态 / prototype) strategy_lifecycle_event.py"]
-        src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(原型态 / prototype) compliance_rule.py"]
+        src_zephyr_trading_trading_contracts_factories_py["(设计态 / design) trading-contracts/factories.py — 交易域数据契...<br/>文件: factories.py"]
+        src_zephyr_trading_trading_contracts_market_instrument_py["(设计态 / design) instrument.py"]
+        src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(设计态 / design) signal_degradation_warning.py"]
+        src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(设计态 / design) 过渡兼容层（DEPRECATED）—— Money 契约 canonic...<br/>文件: money.py"]
+        src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(设计态 / design) Re-export shim — 真源已收敛至 zephyr.shared.co...<br/>文件: performance_attribution_report.py"]
+        src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["(设计态 / design) strategy_lifecycle_event.py"]
+        src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(设计态 / design) compliance_rule.py"]
     end
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_action_dispatcher_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
@@ -164,11 +163,11 @@ graph TD
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
     D_ML_TRAIN -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(设计态 / design) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC["(设计态 / design) D_SIGQC"]
     D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
@@ -199,16 +198,16 @@ graph TD
     subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["(生产态 / production) risk_dashboard_snapshot.py"]
         src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py["(生产态 / production) risk_limit_violation_error.py"]
-        src_zephyr_trading_trading_contracts_risk_risk_limits_py["(原型态 / prototype) risk_limits.py"]
+        src_zephyr_trading_trading_contracts_risk_risk_limits_py["(设计态 / design) risk_limits.py"]
         src_zephyr_trading_trading_contracts_risk_risk_metrics_py["(生产态 / production) risk_metrics.py"]
         src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["(生产态 / production) risk_validator_protocol.py"]
         src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["(生产态 / production) trading_kill_switch.py"]
         src_zephyr_trading_verdict_engine_py["(生产态 / production) verdict_engine.py"]
     end
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["(设计态 / design) D_INFRASTRUCTURE"]
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_risk_risk_limits_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION["(设计态 / design) D_INTEGRATION"]
     src_zephyr_trading_verdict_engine_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
@@ -261,7 +260,7 @@ graph TD
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["(设计态 / design) D_INFRASTRUCTURE"]
     src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -281,9 +280,9 @@ graph TD
     D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
     D_ML_TRAIN -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(设计态 / design) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
@@ -313,30 +312,30 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 17 个，5 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_TRADING["D_TRADING 交易运营"]
-        src_zephyr_trading_action_dispatcher_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_trading_action_dispatcher_annotation_writer_py["(原型态 / prototype) 注释注解写入器（从 ActionDispatcher._annotate_p...<br/>文件: _annotation_writer.py"]
-        src_zephyr_trading_action_dispatcher_audit_log_writer_py["(原型态 / prototype) 审计日志写入器（从 ActionDispatcher._write_tria...<br/>文件: _audit_log_writer.py"]
-        src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["(原型态 / prototype) 文件生命周期管理器（从 ActionDispatcher._create...<br/>文件: _file_lifecycle_manager.py"]
-        src_zephyr_trading_action_dispatcher_search_replace_engine_py["(原型态 / prototype) 搜索替换引擎（从 ActionDispatcher._search_repla...<br/>文件: _search_replace_engine.py"]
-        src_zephyr_trading_auto_dispatcher_py["(原型态 / prototype) AutoDispatcher — 守护进程内的轻量 PipelineDisp...<br/>文件: auto_dispatcher.py"]
-        src_zephyr_trading_gpu_monitor_py["(原型态 / prototype) gpu_monitor.py — NVIDIA GPU 状态采集器<br/>文件: gpu_monitor.py"]
-        src_zephyr_trading_speed_baseline_checker_py["(原型态 / prototype) speed_baseline_checker.py"]
-        src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(原型态 / prototype) execution_rejection_error.py"]
-        src_zephyr_trading_trading_contracts_factories_py["(原型态 / prototype) trading-contracts/factories.py — 交易域数据契...<br/>文件: factories.py"]
-        src_zephyr_trading_trading_contracts_market_instrument_py["(原型态 / prototype) instrument.py"]
-        src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(原型态 / prototype) signal_degradation_warning.py"]
-        src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(原型态 / prototype) 过渡兼容层（DEPRECATED）—— Money 契约 canonic...<br/>文件: money.py"]
-        src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(原型态 / prototype) Re-export shim — 真源已收敛至 zephyr.shared.co...<br/>文件: performance_attribution_report.py"]
-        src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["(原型态 / prototype) strategy_lifecycle_event.py"]
-        src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(原型态 / prototype) compliance_rule.py"]
-        src_zephyr_trading_trading_contracts_risk_risk_limits_py["(原型态 / prototype) risk_limits.py"]
+        src_zephyr_trading_action_dispatcher_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_trading_action_dispatcher_annotation_writer_py["(设计态 / design) 注释注解写入器（从 ActionDispatcher._annotate_p...<br/>文件: _annotation_writer.py"]
+        src_zephyr_trading_action_dispatcher_audit_log_writer_py["(设计态 / design) 审计日志写入器（从 ActionDispatcher._write_tria...<br/>文件: _audit_log_writer.py"]
+        src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["(设计态 / design) 文件生命周期管理器（从 ActionDispatcher._create...<br/>文件: _file_lifecycle_manager.py"]
+        src_zephyr_trading_action_dispatcher_search_replace_engine_py["(设计态 / design) 搜索替换引擎（从 ActionDispatcher._search_repla...<br/>文件: _search_replace_engine.py"]
+        src_zephyr_trading_auto_dispatcher_py["(设计态 / design) AutoDispatcher — 守护进程内的轻量 PipelineDisp...<br/>文件: auto_dispatcher.py"]
+        src_zephyr_trading_gpu_monitor_py["(设计态 / design) gpu_monitor.py — NVIDIA GPU 状态采集器<br/>文件: gpu_monitor.py"]
+        src_zephyr_trading_speed_baseline_checker_py["(设计态 / design) speed_baseline_checker.py"]
+        src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(设计态 / design) execution_rejection_error.py"]
+        src_zephyr_trading_trading_contracts_factories_py["(设计态 / design) trading-contracts/factories.py — 交易域数据契...<br/>文件: factories.py"]
+        src_zephyr_trading_trading_contracts_market_instrument_py["(设计态 / design) instrument.py"]
+        src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(设计态 / design) signal_degradation_warning.py"]
+        src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(设计态 / design) 过渡兼容层（DEPRECATED）—— Money 契约 canonic...<br/>文件: money.py"]
+        src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(设计态 / design) Re-export shim — 真源已收敛至 zephyr.shared.co...<br/>文件: performance_attribution_report.py"]
+        src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["(设计态 / design) strategy_lifecycle_event.py"]
+        src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(设计态 / design) compliance_rule.py"]
+        src_zephyr_trading_trading_contracts_risk_risk_limits_py["(设计态 / design) risk_limits.py"]
     end
     src_zephyr_trading_action_dispatcher_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
@@ -346,11 +345,11 @@ graph TD
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR["(设计态 / design) D_ORCHESTRATOR"]
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
-    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED["(设计态 / design) D_SHARED"]
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
@@ -364,9 +363,9 @@ graph TD
     src_zephyr_trading_action_dispatcher_search_replace_engine_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_trading_gpu_monitor_py
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC["(设计态 / design) D_SIGQC"]
     D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
-    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(设计态 / design) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -513,4 +512,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

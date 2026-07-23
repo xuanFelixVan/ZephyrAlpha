@@ -14,7 +14,7 @@ construction_progress: prototype
 language: zh
 description: Grafana 双数据源仪表盘——Prometheus（实时 metrics）+ ClickHouse（历史行情/回测），统一可视化 + 告警
 build_status: stable
-design_maturity: prototype
+design_maturity: production
 responsibility_domain: 
 ---
 

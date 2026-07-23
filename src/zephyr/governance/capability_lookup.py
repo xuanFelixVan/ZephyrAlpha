@@ -39,7 +39,7 @@ CapabilityLookup — 能力->真源文件反查注册表的查询 API + 扫描/�
   - canonical 选择优先级：
       1. canonical_override（人工裁定，最高优先级）
       2. 单候选 -> auto canonical
-      3. 多候选 -> 成熟度排序(production > prototype > design) -> import 数 -> 歧义(需 override)
+      3. 多候选 -> 成熟度排序(production > design) -> import 数 -> 歧义(需 override)  # [ARCH-MM-002 两档化]
   - duplicates (auto)：磁盘上同 basename 的其他候选
       relation 由 blueprint 比对派生：同蓝图=conflicting；异蓝图=sibling
   - duplicates_manual：语义 sibling（auto 按 basename 匹配会漏掉，人工声明 relation + note）
@@ -152,7 +152,7 @@ class HeaderInfo:
     module_id: str = ""          # [A_module] module_id=MOD-XXX_yyy
     blueprint_id: str = ""       # [BLUEPRINT] MOD-XXX
     domain: str = ""             # [DOMAIN] D-XXX
-    maturity: str = ""           # [MATURITY] prototype/production/design
+    maturity: str = ""           # [MATURITY] production/design [ARCH-MM-002 两档化]
     docstring: str = ""          # 第一行 docstring（用于辅助识别）
 
 

@@ -39,7 +39,7 @@ ttl: permanent
 doc_type: blueprint
 responsibility_domain: 
 build_status: generated
-design_maturity: prototype
+design_maturity: production
 ---
 ## §0 代码对齐验证 {temporal_type=permanent}
 

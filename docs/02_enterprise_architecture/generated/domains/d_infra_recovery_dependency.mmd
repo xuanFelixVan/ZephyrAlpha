@@ -7,16 +7,16 @@ graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_INFRA_RECOVERY[回滚恢复]
-        src_zephyr_infrastructure_rollback__manifest_py[".../infrastructure/rollback/_manifest.py [prototype]"]
+        src_zephyr_infrastructure_rollback__manifest_py[".../infrastructure/rollback/_manifest.py [design]"]
         src_zephyr_infrastructure_rollback_agent_cooldown_py["...astructure/rollback/agent_cooldown.py [production]"]
         src_zephyr_infrastructure_rollback_auditor_py["...yr/infrastructure/rollback/auditor.py [production]"]
         src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["...ure/rollback/auto_rollback_trigger.py [production]"]
-        src_zephyr_infrastructure_rollback_budget_tracker_py["...astructure/rollback/budget_tracker.py [prototype]"]
+        src_zephyr_infrastructure_rollback_budget_tracker_py["...astructure/rollback/budget_tracker.py [design]"]
         src_zephyr_infrastructure_rollback_checkpoint_gc_py["...rastructure/rollback/checkpoint_gc.py [production]"]
         src_zephyr_infrastructure_rollback_commit_quality_gate_py["...cture/rollback/commit_quality_gate.py [production]"]
-        src_zephyr_infrastructure_rollback_complexity_budget_py["...ructure/rollback/complexity_budget.py [prototype]"]
+        src_zephyr_infrastructure_rollback_complexity_budget_py["...ructure/rollback/complexity_budget.py [design]"]
         src_zephyr_infrastructure_rollback_contract_py["...r/infrastructure/rollback/contract.py [production]"]
-        src_zephyr_infrastructure_rollback_contracts_py[".../infrastructure/rollback/contracts.py [prototype]"]
+        src_zephyr_infrastructure_rollback_contracts_py[".../infrastructure/rollback/contracts.py [design]"]
         src_zephyr_infrastructure_roll___dential_rotation_trigger_py["...llback/credential_rotation_trigger.py [production]"]
         src_zephyr_infrastructure_rollback_cross_platform_shell_py["...ture/rollback/cross_platform_shell.py [production]"]
         src_zephyr_infrastructure_rollback_drift_fix_py[".../infrastructure/rollback/drift_fix.py [production]"]
@@ -32,7 +32,7 @@ graph TD
         src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["...ure/rollback/right_to_be_forgotten.py [production]"]
         src_zephyr_infrastructure_roll____rollback_abuse_detector_py["...e/rollback/rollback_abuse_detector.py [production]"]
         src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["...ture/rollback/rollback_audit_nexus.py [production]"]
-        src_zephyr_infrastructure_roll___ollback_boot_integration_py["...rollback/rollback_boot_integration.py [prototype]"]
+        src_zephyr_infrastructure_roll___ollback_boot_integration_py["...rollback/rollback_boot_integration.py [design]"]
         src_zephyr_infrastructure_rollback_rollback_bootstrap_py["...ucture/rollback/rollback_bootstrap.py [production]"]
         src_zephyr_infrastructure_rollback_rollback_budget_py["...structure/rollback/rollback_budget.py [production]"]
         src_zephyr_infrastructure_roll___ollback_context_restorer_py["...rollback/rollback_context_restorer.py [production]"]
@@ -60,7 +60,7 @@ graph TD
         src_zephyr_infrastructure_rollback_venv_sync_py[".../infrastructure/rollback/venv_sync.py [production]"]
         src_zephyr_infrastructure_roll____vulnerability_rescanner_py["...e/rollback/vulnerability_rescanner.py [production]"]
         src_zephyr_infrastructure_rollback_warm_standby_py["...frastructure/rollback/warm_standby.py [production]"]
-        tests_rollback_test_rollback_scheduler_py["...s/rollback/test_rollback_scheduler.py [prototype]"]
+        tests_rollback_test_rollback_scheduler_py["...s/rollback/test_rollback_scheduler.py [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）

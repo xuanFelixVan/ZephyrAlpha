@@ -43,13 +43,13 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py | D_COMPLIANCE Compliance | 原型态 / prototype |  |
+| 1 | src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py | D_COMPLIANCE Compliance | 设计态 / design |  |
 
 ### L2 领域层 / Domain Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/compliance/behavioral_auditor/__init__.py | __init__.py | 原型态 / prototype |  |
+| 1 | src/zephyr/compliance/behavioral_auditor/__init__.py | __init__.py | 设计态 / design |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -58,7 +58,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -69,8 +68,8 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_COMPLIANCE["D_COMPLIANCE 合规"]
-        src_zephyr_compliance_behavioral_auditor_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
+        src_zephyr_compliance_behavioral_auditor_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(设计态 / design) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -108,15 +107,15 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 2 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_COMPLIANCE["D_COMPLIANCE 合规"]
-        src_zephyr_compliance_behavioral_auditor_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
+        src_zephyr_compliance_behavioral_auditor_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(设计态 / design) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -223,4 +222,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

@@ -1407,7 +1407,7 @@ entries:
         → Phase 2 补 sync_contracts_to_depgraph()
 
     裁定7：设计态+运营态双态（对齐 depgraph 单表双态模式）
-      - design_maturity 字段：design(设计态) / production(运营态) / prototype(原型)
+      - design_maturity 字段：design(设计态) / production(运营态) [ARCH-MM-002 两档化]
       - build_status 字段：planned / generated / testing / stable / deprecated
       - 设计态=人工 curated 声明，运营态=扫描器/runtime 产出的真实快照
       - dataflow_datasets_metadata / dataflow_jobs_metadata 表保护人工 curated 字段
@@ -1504,8 +1504,8 @@ entries:
   severity: P1高
   status: decided
   description: |
-    三大全景图（depgraph/dataflow/decision）均引入 design_maturity 三态机制
-    （design/prototype/production），但只有 depgraph 有 DELETE/UPDATE 触发器保护
+    三大全景图（depgraph/dataflow/decision）均引入 design_maturity 两态机制 [ARCH-MM-002]
+    （design/production），但只有 depgraph 有 DELETE/UPDATE 触发器保护
     design 态节点。dataflowgraph 和 decisiongraph 的设计态节点可被 sync 工具覆盖
     或删除（如 sync_dataflow_registry 批量同步会覆盖设计态节点）。
     此外，三图设计态分布不一致（如某模块在 depgraph 是 design 但 dataflow 中
@@ -1758,7 +1758,7 @@ entries:
   severity: P1中
   adjudication: |
     2026-07-06 调查发现 depgraph 数据过时：代码中11个backtest模块标记
-    [MATURITY] production，但depgraph中8个仍是prototype。根因分析：
+    [MATURITY] production，但depgraph中8个仍是prototype。根因分析： [历史记录]
     (1) [MATURITY]文件头标记是AI/人工声明的"预期成熟度"（声明）
     (2) depgraph nodes.design_maturity是生成器根据has_test推导的"实际成熟度"（验证）
     (3) 生成器derive_design_maturity()函数只看has_test，不解析[MATURITY]标记
@@ -1768,15 +1768,15 @@ entries:
     - 裁定1: depgraph design_maturity是真源（生成器是运营态唯一真源）
     - 裁定2: [MATURITY]标记是声明，不参与depgraph生成
     - 裁定3: 生成器has_test推导逻辑符合maturity_vocabulary定义（production=有测试）
-    - 裁定4: 10个backtest模块中5个有测试→production（正确），5个无测试→prototype（正确）
+    - 裁定4: 10个backtest模块中5个有测试→production（正确），5个无测试→prototype（正确） [历史记录]
     - 裁定5: [MATURITY]标记设计意图修订——声明预期值，depgraph验证实际值，冲突时以depgraph为准
     治本方案：
     P1: 4个临时验证脚本从scripts/tests/迁移到tests/（使生成器识别为test类型）
-    P0: 5个无测试模块的[MATURITY]标记从production修正为prototype（使声明与验证一致）
+    P0: 5个无测试模块的[MATURITY]标记从production修正为prototype（使声明与验证一致） [历史记录]
     P2: 文档修订（trae_047 v1.2.1/maturity_vocabulary v1.1.0/PROJECT_BACKGROUND）
   fix_phase: |
     P0 已完成（2026-07-06）：
-    (1) 5个模块[MATURITY] production→prototype（decision_gate/metrics/overfitting_detector/pit_manager/walk_forward）
+    (1) 5个模块[MATURITY] production→prototype（decision_gate/metrics/overfitting_detector/pit_manager/walk_forward） [历史记录, ARCH-MM-002 已删除 prototype]
     P1 已完成（2026-07-06）：
     (1) 4个测试文件从scripts/tests/迁移到tests/（matching_engine/tick_replay_data_handler/event_driven_engine/miniqmt_broker）
     (2) reconciler自动同步depgraph，5个有测试模块升级为production
@@ -3667,7 +3667,7 @@ entries:
       --add-design-node 登记设计态（status=planned）。当前 L1 为君子协定无
       commit-time 强制。两个模块已由 generate_project_depgraph.py reconciler
       自动扫描物理文件同步为 production 运营态（depgraph.nodes 中 node_id=
-      5257982/5262634，design_maturity=production/prototype，build_status=
+      5257982/5262634，design_maturity=production [ARCH-MM-002]，build_status=
       stable/generated）。第三期 pre-merge 拓扑硬阻断上线后须严格遵循 L1。
   impact:
     - scripts/governance/apply_depgraph.py（恢复 get_depgraph_pg_connection import，Phase 1）
@@ -7771,7 +7771,7 @@ entries:
     ingest_ts 列（蓝图内部矛盾）。裁定：以可执行为准——使用 ReplacingMergeTree（无版本列）。
     【depgraph 边变更无 commit-time 强制】L1 依赖关系先行铁律为君子协定，planned 占比仅
     1.05%，NEW-FILE-DEPGRAPH-ENFORCEMENT gate 仅检查新文件节点存在性，不检查边变更登记。
-    tick_subscriber→wal_writer 边从未登记（buffered_writer.py 残留 prototype 节点）。
+    tick_subscriber→wal_writer 边从未登记（buffered_writer.py 残留 prototype 节点 [历史记录, ARCH-MM-002 已删除 prototype]）。
     【第一性原理根因】SSoT 三层模型（声明层/存在层/消费层）缺少存在性强制——声明层
     （YAML）可引用任意路径，存在层（磁盘）无对应文件时不报错，消费层（代码）按声明层
     import 时才运行时崩溃。100% AI 开发场景下，AI 写 YAML 引用 schema_file 时不验证文件

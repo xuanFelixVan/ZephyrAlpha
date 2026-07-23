@@ -22,7 +22,7 @@ ttl: permanent
 |-----------|:---:|:---:|
 | production（生产态） | 1563 | 57.1% |
 | design（设计态） | 49 | 1.8% |
-| prototype（原型态） | 1124 | 41.1% |
+| ~~prototype（原型态）~~ | ~~1124~~ | [ARCH-MM-002 已删除，归入 production] |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
 | **总计** | **2736** | **100%** |
 

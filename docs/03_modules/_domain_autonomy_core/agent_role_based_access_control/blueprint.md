@@ -41,7 +41,7 @@ references:
   - {id: "MOD-INF-021", at: "§2", why: "Rollback 联动——仅存 references（打破 018↔021 DAG 环）"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation / Kill Switch——仅存 references（打破 018↔022 DAG 环）"}
 responsibility_domain: 
-design_maturity: prototype
+design_maturity: production
 build_status: generated
 ---
 

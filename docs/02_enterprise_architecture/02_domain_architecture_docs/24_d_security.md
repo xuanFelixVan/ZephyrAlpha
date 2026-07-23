@@ -43,19 +43,19 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/gov_drift/__main__.py | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 2 | src/zephyr/gov_drift/_analysis.py | _analysis.py | 原型态 / prototype | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 3 | src/zephyr/gov_drift/_core.py | _core.py | 原型态 / prototype | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 4 | src/zephyr/gov_drift/_drift.py | _drift.py | 原型态 / prototype | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 5 | src/zephyr/gov_drift/_infrastructure.py | _infrastructure.py | 原型态 / prototype | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 6 | src/zephyr/gov_drift/_scanners.py | _scanners.py | 原型态 / prototype | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 7 | src/zephyr/gov_drift/alert_router.py | Alert Router — alert_router.py | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 8 | src/zephyr/gov_drift/cold_start.py | Cold Start Bootstrapper — 冷启动引导 §6.31。 | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+| 1 | src/zephyr/gov_drift/__main__.py | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+| 2 | src/zephyr/gov_drift/_analysis.py | _analysis.py | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
+| 3 | src/zephyr/gov_drift/_core.py | _core.py | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
+| 4 | src/zephyr/gov_drift/_drift.py | _drift.py | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
+| 5 | src/zephyr/gov_drift/_infrastructure.py | _infrastructure.py | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
+| 6 | src/zephyr/gov_drift/_scanners.py | _scanners.py | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
+| 7 | src/zephyr/gov_drift/alert_router.py | Alert Router — alert_router.py | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+| 8 | src/zephyr/gov_drift/cold_start.py | Cold Start Bootstrapper — 冷启动引导 §6.31。 | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
 | 9 | src/zephyr/gov_drift/events.py | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 10 | src/zephyr/gov_drift/reconciler.py | Auto Reconciler — reconciler.py | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 11 | src/zephyr/gov_drift/runbook_generator.py | Drift Runbook Generator — 漂移演练手册自动生成。 | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 12 | src/zephyr/gov_drift/state_machine.py | Drift State Machine — state_machine.py | 原型态 / prototype | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 13 | src/zephyr/red_blue_validator/__init__.py | red_blue_validator — re-export shim for zephyr... | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 10 | src/zephyr/gov_drift/reconciler.py | Auto Reconciler — reconciler.py | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+| 11 | src/zephyr/gov_drift/runbook_generator.py | Drift Runbook Generator — 漂移演练手册自动生成。 | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+| 12 | src/zephyr/gov_drift/state_machine.py | Drift State Machine — state_machine.py | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
+| 13 | src/zephyr/red_blue_validator/__init__.py | red_blue_validator — re-export shim for zephyr... | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 14 | src/zephyr/security/access_control/a2a_check.py | A2A 通信对验证——校验两个 agent 之间是否允许通信。 | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 15 | src/zephyr/security/access_control/adversarial_resilience.py | AdversarialResilience - adversarial resilience ... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 16 | src/zephyr/security/access_control/agent_creation_policy.py | AgentCreationPolicy — Agent 创建策略. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
@@ -64,18 +64,18 @@ ttl: permanent
 | 19 | src/zephyr/security/access_control/auto_maintenance.py | AutoMaintenance — 自动维护与规则健康仪表盘. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 20 | src/zephyr/security/access_control/blueprint_fidelity.py | BlueprintFidelity — 蓝图保真度检查. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 21 | src/zephyr/security/access_control/bootstrap_superadmin.py | BootstrapSuperadmin — Superadmin 账户启动器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 22 | src/zephyr/security/access_control/build_sanitizer.py | Stub module: zephyr.security.access_control.bui... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 22 | src/zephyr/security/access_control/build_sanitizer.py | Stub module: zephyr.security.access_control.bui... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 23 | src/zephyr/security/access_control/cache_invalidation.py | CacheInvalidation — 缓存失效事件管理. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 24 | src/zephyr/security/access_control/canary_rollout_manager.py | CanaryRolloutManager — 灰度发布管理器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 25 | src/zephyr/security/access_control/capability_check.py | Agent capability scope verification — 拒绝受限... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 26 | src/zephyr/security/access_control/cascading_failure_isol... | Stub module: zephyr.security.access_control.cas... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 26 | src/zephyr/security/access_control/cascading_failure_isol... | Stub module: zephyr.security.access_control.cas... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 27 | src/zephyr/security/access_control/cold_start_lock.py | ColdStartLock — 冷启动锁. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 28 | src/zephyr/security/access_control/compliance_matrix.py | Stub module: zephyr.security.access_control.com... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 28 | src/zephyr/security/access_control/compliance_matrix.py | Stub module: zephyr.security.access_control.com... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 29 | src/zephyr/security/access_control/contracts.py | G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 30 | src/zephyr/security/access_control/cross_cutting.py | CrossCutting — 横切面权限组件. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 31 | src/zephyr/security/access_control/decision_explainer.py | DecisionExplainer — 拒绝决策的结构化解释器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 32 | src/zephyr/security/access_control/decision_registry.py | DecisionRegistry - decision log with query and ... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 33 | src/zephyr/security/access_control/defense_depth.py | Stub module: zephyr.security.access_control.def... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 33 | src/zephyr/security/access_control/defense_depth.py | Stub module: zephyr.security.access_control.def... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 34 | src/zephyr/security/access_control/dependency_auditor.py | Stub module: zephyr.security.access_control.dep... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 35 | src/zephyr/security/access_control/derive_rbac_roles.py | RBACRoleDeriver — RBAC 角色派生器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 36 | src/zephyr/security/access_control/detectors/anomaly_dete... | AnomalyDetector - rolling z-score anomaly detec... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
@@ -87,13 +87,13 @@ ttl: permanent
 | 42 | src/zephyr/security/access_control/dry_run.py | DryRun — 权限模拟与影响分析. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 43 | src/zephyr/security/access_control/emergency_override.py | EmergencyOverride — 紧急覆盖令牌管理. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 44 | src/zephyr/security/access_control/engine_degradation.py | EngineDegradation — 引擎降级管理. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 45 | src/zephyr/security/access_control/environment_manager.py | Stub module: zephyr.security.access_control.env... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 45 | src/zephyr/security/access_control/environment_manager.py | Stub module: zephyr.security.access_control.env... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 46 | src/zephyr/security/access_control/escalation_handler.py | Stub module: zephyr.security.access_control.esc... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 47 | src/zephyr/security/access_control/exceptions.py | AgentRbac 异常类型. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 48 | src/zephyr/security/access_control/genesis_bootstrap.py | GenesisBootstrap — RBAC系统启动引导器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 49 | src/zephyr/security/access_control/guard_layers.py | GuardLayers — 权限守卫层组件. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 50 | src/zephyr/security/access_control/guards/abac_guard.py | ABACGuard — 基于属性的权限守卫. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 51 | src/zephyr/security/access_control/guards/anti_pattern_gu... | Stub module: zephyr.security.access_control.gua... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 51 | src/zephyr/security/access_control/guards/anti_pattern_gu... | Stub module: zephyr.security.access_control.gua... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 52 | src/zephyr/security/access_control/guards/audit_log_guard.py | audit_log_guard.py — 审计日志注入防护守卫 | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 53 | src/zephyr/security/access_control/guards/cybersec_2026_g... | Cybersec2026Guard — 2026 网络安全威胁检测. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 54 | src/zephyr/security/access_control/guards/input_guard.py | InputGuard — 输入参数守卫. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
@@ -115,76 +115,76 @@ ttl: permanent
 | 70 | src/zephyr/security/access_control/integration.py | IntegrationManager - system integration registr... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 71 | src/zephyr/security/access_control/integrity_self_check.py | IntegritySelfCheck — 完整性自检. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 72 | src/zephyr/security/access_control/intent_binder.py | IntentBinder — 意图绑定与漂移检测. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 73 | src/zephyr/security/access_control/key_hierarchy.py | Stub module: zephyr.security.access_control.key... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 73 | src/zephyr/security/access_control/key_hierarchy.py | Stub module: zephyr.security.access_control.key... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 74 | src/zephyr/security/access_control/kill_switch.py | KillSwitch — 熔断器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 75 | src/zephyr/security/access_control/legal_audit_chain.py | LegalAuditChain - append-only hash-chained lega... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 76 | src/zephyr/security/access_control/microstructure_defense.py | Stub module: zephyr.security.access_control.mic... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 77 | src/zephyr/security/access_control/monotonic_clock.py | MonotonicClock — 单调时钟. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 78 | src/zephyr/security/access_control/non_repudiation.py | NonRepudiation — 不可抵赖性审计签名. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 79 | src/zephyr/security/access_control/observability.py | ObservabilityReporter — 指标上报与异常检测. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 80 | src/zephyr/security/access_control/orphan_judge/__main__.py | __main__.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 80 | src/zephyr/security/access_control/orphan_judge/__main__.py | __main__.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 81 | src/zephyr/security/access_control/orphan_judge/cascade_a... | cascade_analyzer.py | 生产态 / production | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 82 | src/zephyr/security/access_control/orphan_judge/config_lo... | config_loader.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 83 | src/zephyr/security/access_control/orphan_judge/db.py | db.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 82 | src/zephyr/security/access_control/orphan_judge/config_lo... | config_loader.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 83 | src/zephyr/security/access_control/orphan_judge/db.py | db.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 84 | src/zephyr/security/access_control/orphan_judge/decision_... | decision_table.py | 生产态 / production | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 85 | src/zephyr/security/access_control/orphan_judge/deprecati... | deprecation_tracker.py | 生产态 / production | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 86 | src/zephyr/security/access_control/orphan_judge/drift_bri... | drift_bridge.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 87 | src/zephyr/security/access_control/orphan_judge/duplicate... | duplicate_detector.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 88 | src/zephyr/security/access_control/orphan_judge/escalatio... | escalation_bridge.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 89 | src/zephyr/security/access_control/orphan_judge/feedback_... | feedback_bridge.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 86 | src/zephyr/security/access_control/orphan_judge/drift_bri... | drift_bridge.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 87 | src/zephyr/security/access_control/orphan_judge/duplicate... | duplicate_detector.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 88 | src/zephyr/security/access_control/orphan_judge/escalatio... | escalation_bridge.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 89 | src/zephyr/security/access_control/orphan_judge/feedback_... | feedback_bridge.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 90 | src/zephyr/security/access_control/orphan_judge/judge.py | judge.py | 生产态 / production | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 91 | src/zephyr/security/access_control/orphan_judge/kb_bridge.py | kb_bridge.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 92 | src/zephyr/security/access_control/orphan_judge/mcp_integ... | mcp_integration.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 93 | src/zephyr/security/access_control/orphan_judge/models.py | models.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 94 | src/zephyr/security/access_control/orphan_judge/orphan_co... | orphan_collector.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 91 | src/zephyr/security/access_control/orphan_judge/kb_bridge.py | kb_bridge.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 92 | src/zephyr/security/access_control/orphan_judge/mcp_integ... | mcp_integration.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 93 | src/zephyr/security/access_control/orphan_judge/models.py | models.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 94 | src/zephyr/security/access_control/orphan_judge/orphan_co... | orphan_collector.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 95 | src/zephyr/security/access_control/orphan_judge/orphan_de... | [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐 | 生产态 / production | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 96 | src/zephyr/security/access_control/orphan_judge/rbac_brid... | rbac_bridge.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 97 | src/zephyr/security/access_control/orphan_judge/reference... | AST解析+import链遍历，判断文件是否被其他文件引用。 | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 98 | src/zephyr/security/access_control/orphan_judge/registrat... | 扫描项目注册表，判断文件是否已登记在册。 | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 99 | src/zephyr/security/access_control/orphan_judge/report_ge... | report_generator.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 96 | src/zephyr/security/access_control/orphan_judge/rbac_brid... | rbac_bridge.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 97 | src/zephyr/security/access_control/orphan_judge/reference... | AST解析+import链遍历，判断文件是否被其他文件引用。 | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 98 | src/zephyr/security/access_control/orphan_judge/registrat... | 扫描项目注册表，判断文件是否已登记在册。 | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 99 | src/zephyr/security/access_control/orphan_judge/report_ge... | report_generator.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 100 | src/zephyr/security/access_control/orphan_judge/safety_fe... | safety_fence.py | 生产态 / production | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 101 | src/zephyr/security/access_control/orphan_judge/standalon... | 六指标加权评分: 文件大小(15%) + 代码行数(20%) +... | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 102 | src/zephyr/security/access_control/orphan_judge/swid_tag.py | swid_tag.py | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 103 | src/zephyr/security/access_control/orphan_judge/unique_an... | AST节点比对，检测文件中的独特代码元素(类/函数/... | 原型态 / prototype | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 101 | src/zephyr/security/access_control/orphan_judge/standalon... | 六指标加权评分: 文件大小(15%) + 代码行数(20%) +... | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 102 | src/zephyr/security/access_control/orphan_judge/swid_tag.py | swid_tag.py | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 103 | src/zephyr/security/access_control/orphan_judge/unique_an... | AST节点比对，检测文件中的独特代码元素(类/函数/... | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
 | 104 | src/zephyr/security/access_control/permission_hooks.py | PermissionHooks — 权限钩子注册表. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 105 | src/zephyr/security/access_control/permission_mode_manage... | Stub module: zephyr.security.access_control.per... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 106 | src/zephyr/security/access_control/phase_executor.py | phase_executor.py | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 105 | src/zephyr/security/access_control/permission_mode_manage... | Stub module: zephyr.security.access_control.per... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 106 | src/zephyr/security/access_control/phase_executor.py | phase_executor.py | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 107 | src/zephyr/security/access_control/risk_mitigation.py | RiskMitigation — 风险评估与缓解策略. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 108 | src/zephyr/security/access_control/rollback_sandbox.py | RollbackSandbox - isolate/execute/rollback patt... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 109 | src/zephyr/security/access_control/secrets_lifecycle.py | Stub module: zephyr.security.access_control.sec... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 109 | src/zephyr/security/access_control/secrets_lifecycle.py | Stub module: zephyr.security.access_control.sec... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 110 | src/zephyr/security/access_control/session_concurrency.py | Session 级并发协调模块（P2-SES 落地）。 | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 111 | src/zephyr/security/access_control/session_lifecycle.py | Stub module: zephyr.security.access_control.ses... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 112 | src/zephyr/security/access_control/verifiers/bootstrap_ve... | Stub module: zephyr.security.access_control.ver... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 113 | src/zephyr/security/access_control/verifiers/continuous_v... | Stub module: zephyr.security.access_control.ver... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 112 | src/zephyr/security/access_control/verifiers/bootstrap_ve... | Stub module: zephyr.security.access_control.ver... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 113 | src/zephyr/security/access_control/verifiers/continuous_v... | Stub module: zephyr.security.access_control.ver... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 114 | src/zephyr/security/access_control/verifiers/contract_ver... | ContractVerifier — 契约验证器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 115 | src/zephyr/security/access_control/verifiers/micro_verifi... | Stub module: zephyr.security.access_control.ver... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 116 | src/zephyr/security/access_control/verifiers/post_action_... | Stub module: zephyr.security.access_control.ver... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 117 | src/zephyr/security/adversarial_validation/__main__.py | __main__.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 118 | src/zephyr/security/adversarial_validation/ai_attack_gene... | ai_attack_generator.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 115 | src/zephyr/security/access_control/verifiers/micro_verifi... | Stub module: zephyr.security.access_control.ver... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 116 | src/zephyr/security/access_control/verifiers/post_action_... | Stub module: zephyr.security.access_control.ver... | 设计态 / design | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 117 | src/zephyr/security/adversarial_validation/__main__.py | __main__.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 118 | src/zephyr/security/adversarial_validation/ai_attack_gene... | ai_attack_generator.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 119 | src/zephyr/security/adversarial_validation/async_monitor.py | async_monitor.py | 生产态 / production | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 120 | src/zephyr/security/adversarial_validation/attack_registr... | attack_registry.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 121 | src/zephyr/security/adversarial_validation/blast_radius.py | blast_radius.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 122 | src/zephyr/security/adversarial_validation/bypass_recorde... | bypass_recorder.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 120 | src/zephyr/security/adversarial_validation/attack_registr... | attack_registry.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 121 | src/zephyr/security/adversarial_validation/blast_radius.py | blast_radius.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 122 | src/zephyr/security/adversarial_validation/bypass_recorde... | bypass_recorder.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 123 | src/zephyr/security/adversarial_validation/circuit_breake... | circuit_breaker.py | 生产态 / production | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 124 | src/zephyr/security/adversarial_validation/cleanup.py | cleanup.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 125 | src/zephyr/security/adversarial_validation/cli.py | cli.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 126 | src/zephyr/security/adversarial_validation/cold_start.py | cold_start.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 127 | src/zephyr/security/adversarial_validation/commit_trigger.py | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 124 | src/zephyr/security/adversarial_validation/cleanup.py | cleanup.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 125 | src/zephyr/security/adversarial_validation/cli.py | cli.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 126 | src/zephyr/security/adversarial_validation/cold_start.py | cold_start.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 127 | src/zephyr/security/adversarial_validation/commit_trigger.py | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 128 | src/zephyr/security/adversarial_validation/constitution_e... | constitution_engine.py | 生产态 / production | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 129 | src/zephyr/security/adversarial_validation/constitution_g... | constitution_guard.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 130 | src/zephyr/security/adversarial_validation/convergence_ch... | convergence_checker.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 131 | src/zephyr/security/adversarial_validation/defense_runner.py | defense_runner.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 132 | src/zephyr/security/adversarial_validation/game_day_runne... | game_day_runner.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 129 | src/zephyr/security/adversarial_validation/constitution_g... | constitution_guard.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 130 | src/zephyr/security/adversarial_validation/convergence_ch... | convergence_checker.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 131 | src/zephyr/security/adversarial_validation/defense_runner.py | defense_runner.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 132 | src/zephyr/security/adversarial_validation/game_day_runne... | game_day_runner.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 133 | src/zephyr/security/adversarial_validation/game_day_sched... | game_day_scheduler.py | 生产态 / production | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 134 | src/zephyr/security/adversarial_validation/injection_engi... | injection_engine.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 135 | src/zephyr/security/adversarial_validation/mcp_endpoints.py | mcp_endpoints.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 134 | src/zephyr/security/adversarial_validation/injection_engi... | injection_engine.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 135 | src/zephyr/security/adversarial_validation/mcp_endpoints.py | mcp_endpoints.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 136 | src/zephyr/security/adversarial_validation/models.py | models.py | 生产态 / production | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 137 | src/zephyr/security/adversarial_validation/scenario_loade... | scenario_loader.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 138 | src/zephyr/security/adversarial_validation/steady_state.py | steady_state.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 139 | src/zephyr/security/adversarial_validation/validator.py | validator.py | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 140 | src/zephyr/security/adversarial_validation/validator_even... | ValidatorEventBridge — 红蓝验证器事件桥接 (MOD... | 原型态 / prototype |  |
+| 137 | src/zephyr/security/adversarial_validation/scenario_loade... | scenario_loader.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 138 | src/zephyr/security/adversarial_validation/steady_state.py | steady_state.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 139 | src/zephyr/security/adversarial_validation/validator.py | validator.py | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 140 | src/zephyr/security/adversarial_validation/validator_even... | ValidatorEventBridge — 红蓝验证器事件桥接 (MOD... | 设计态 / design |  |
 | 141 | src/zephyr/security/llm_defense/llm_security/behavior_aud... | behavior_audit_logger.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
-| 142 | src/zephyr/security/llm_defense/llm_security/dashboard/ap... | LLM Security Gateway - Streamlit Dashboard. | 原型态 / prototype | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 142 | src/zephyr/security/llm_defense/llm_security/dashboard/ap... | LLM Security Gateway - Streamlit Dashboard. | 设计态 / design | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 143 | src/zephyr/security/llm_defense/llm_security/gateway.py | gateway.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 144 | src/zephyr/security/llm_defense/llm_security/input_saniti... | InputSanitizer: path whitelist + command whitel... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 145 | src/zephyr/security/llm_defense/llm_security/layers/l0_su... | l0_supply_chain.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
@@ -194,9 +194,9 @@ ttl: permanent
 | 149 | src/zephyr/security/llm_defense/llm_security/layers/l3_ou... | l3_output.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 150 | src/zephyr/security/llm_defense/llm_security/layers/l4_ag... | l4_agent.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 151 | src/zephyr/security/llm_defense/llm_security/layers/l5_re... | l5_resource_protection.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
-| 152 | src/zephyr/security/llm_defense/llm_security/layers/l6_da... | l6_data_flow.py | 原型态 / prototype | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 152 | src/zephyr/security/llm_defense/llm_security/layers/l6_da... | l6_data_flow.py | 设计态 / design | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 153 | src/zephyr/security/llm_defense/llm_security/layers/l6_ob... | L6 Observability Layer — security event loggin... | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
-| 154 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | l8_compliance.py | 原型态 / prototype | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| 154 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | l8_compliance.py | 设计态 / design | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 155 | src/zephyr/security/llm_defense/llm_security/layers/l8_mu... | l8_multi_agent.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 156 | src/zephyr/security/llm_defense/llm_security/patterns/inj... | injection_patterns.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | 157 | src/zephyr/security/llm_defense/llm_security/patterns/sec... | secrets.py | 生产态 / production | [MOD-LLM_SECURITY](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
@@ -216,7 +216,6 @@ ttl: permanent
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
 > - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
-> - **虚线边框 = 原型态模块**（prototype，代码已写，验证中未稳定上线）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -229,19 +228,19 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_SECURITY["D_SECURITY 对抗验证"]
-        src_zephyr_gov_drift_main_py["(原型态 / prototype) Drift Detector MOD-INF-023 CLI — 漂移扫描入口。<br/>文件: __main__.py"]
-        src_zephyr_gov_drift_analysis_py["(原型态 / prototype) _analysis.py"]
-        src_zephyr_gov_drift_core_py["(原型态 / prototype) _core.py"]
-        src_zephyr_gov_drift_drift_py["(原型态 / prototype) _drift.py"]
-        src_zephyr_gov_drift_infrastructure_py["(原型态 / prototype) _infrastructure.py"]
-        src_zephyr_gov_drift_scanners_py["(原型态 / prototype) _scanners.py"]
-        src_zephyr_gov_drift_alert_router_py["(原型态 / prototype) Alert Router — alert_router.py<br/>文件: alert_router.py"]
-        src_zephyr_gov_drift_cold_start_py["(原型态 / prototype) Cold Start Bootstrapper — 冷启动引导 §6.31。<br/>文件: cold_start.py"]
+        src_zephyr_gov_drift_main_py["(设计态 / design) Drift Detector MOD-INF-023 CLI — 漂移扫描入口。<br/>文件: __main__.py"]
+        src_zephyr_gov_drift_analysis_py["(设计态 / design) _analysis.py"]
+        src_zephyr_gov_drift_core_py["(设计态 / design) _core.py"]
+        src_zephyr_gov_drift_drift_py["(设计态 / design) _drift.py"]
+        src_zephyr_gov_drift_infrastructure_py["(设计态 / design) _infrastructure.py"]
+        src_zephyr_gov_drift_scanners_py["(设计态 / design) _scanners.py"]
+        src_zephyr_gov_drift_alert_router_py["(设计态 / design) Alert Router — alert_router.py<br/>文件: alert_router.py"]
+        src_zephyr_gov_drift_cold_start_py["(设计态 / design) Cold Start Bootstrapper — 冷启动引导 §6.31。<br/>文件: cold_start.py"]
         src_zephyr_gov_drift_events_py["(生产态 / production) G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM...<br/>文件: events.py"]
-        src_zephyr_gov_drift_reconciler_py["(原型态 / prototype) Auto Reconciler — reconciler.py<br/>文件: reconciler.py"]
-        src_zephyr_gov_drift_runbook_generator_py["(原型态 / prototype) Drift Runbook Generator — 漂移演练手册自动生成。<br/>文件: runbook_generator.py"]
-        src_zephyr_gov_drift_state_machine_py["(原型态 / prototype) Drift State Machine — state_machine.py<br/>文件: state_machine.py"]
-        src_zephyr_red_blue_validator_init_py["(原型态 / prototype) red_blue_validator — re-export shim for zephyr...<br/>文件: __init__.py"]
+        src_zephyr_gov_drift_reconciler_py["(设计态 / design) Auto Reconciler — reconciler.py<br/>文件: reconciler.py"]
+        src_zephyr_gov_drift_runbook_generator_py["(设计态 / design) Drift Runbook Generator — 漂移演练手册自动生成。<br/>文件: runbook_generator.py"]
+        src_zephyr_gov_drift_state_machine_py["(设计态 / design) Drift State Machine — state_machine.py<br/>文件: state_machine.py"]
+        src_zephyr_red_blue_validator_init_py["(设计态 / design) red_blue_validator — re-export shim for zephyr...<br/>文件: __init__.py"]
         src_zephyr_security_access_control_a2a_check_py["(生产态 / production) A2A 通信对验证——校验两个 agent 之间是否允许通信。<br/>文件: a2a_check.py"]
         src_zephyr_security_access_control_adversarial_resilience_py["(生产态 / production) AdversarialResilience - adversarial resilience ...<br/>文件: adversarial_resilience.py"]
         src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) AgentCreationPolicy — Agent 创建策略.<br/>文件: agent_creation_policy.py"]
@@ -250,13 +249,13 @@ graph TD
         src_zephyr_security_access_control_auto_maintenance_py["(生产态 / production) AutoMaintenance — 自动维护与规则健康仪表盘.<br/>文件: auto_maintenance.py"]
         src_zephyr_security_access_control_blueprint_fidelity_py["(生产态 / production) BlueprintFidelity — 蓝图保真度检查.<br/>文件: blueprint_fidelity.py"]
         src_zephyr_security_access_control_bootstrap_superadmin_py["(生产态 / production) BootstrapSuperadmin — Superadmin 账户启动器.<br/>文件: bootstrap_superadmin.py"]
-        src_zephyr_security_access_control_build_sanitizer_py["(原型态 / prototype) Stub module: zephyr.security.access_control.bui...<br/>文件: build_sanitizer.py"]
+        src_zephyr_security_access_control_build_sanitizer_py["(设计态 / design) Stub module: zephyr.security.access_control.bui...<br/>文件: build_sanitizer.py"]
         src_zephyr_security_access_control_cache_invalidation_py["(生产态 / production) CacheInvalidation — 缓存失效事件管理.<br/>文件: cache_invalidation.py"]
         src_zephyr_security_access_control_canary_rollout_manager_py["(生产态 / production) CanaryRolloutManager — 灰度发布管理器.<br/>文件: canary_rollout_manager.py"]
         src_zephyr_security_access_control_capability_check_py["(生产态 / production) Agent capability scope verification — 拒绝受限...<br/>文件: capability_check.py"]
-        src_zephyr_security_access_control_cascading_failure_isolator_py["(原型态 / prototype) Stub module: zephyr.security.access_control.cas...<br/>文件: cascading_failure_isolator.py"]
+        src_zephyr_security_access_control_cascading_failure_isolator_py["(设计态 / design) Stub module: zephyr.security.access_control.cas...<br/>文件: cascading_failure_isolator.py"]
         src_zephyr_security_access_control_cold_start_lock_py["(生产态 / production) ColdStartLock — 冷启动锁.<br/>文件: cold_start_lock.py"]
-        src_zephyr_security_access_control_compliance_matrix_py["(原型态 / prototype) Stub module: zephyr.security.access_control.com...<br/>文件: compliance_matrix.py"]
+        src_zephyr_security_access_control_compliance_matrix_py["(设计态 / design) Stub module: zephyr.security.access_control.com...<br/>文件: compliance_matrix.py"]
         src_zephyr_security_access_control_contracts_py["(生产态 / production) G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge.<br/>文件: contracts.py"]
         src_zephyr_security_access_control_cross_cutting_py["(生产态 / production) CrossCutting — 横切面权限组件.<br/>文件: cross_cutting.py"]
     end
@@ -284,7 +283,7 @@ graph TD
     src_zephyr_gov_drift_analysis_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_scanners_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE["(设计态 / design) D_COMPLIANCE"]
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_runbook_generator_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_alert_router_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
@@ -313,7 +312,7 @@ graph TD
     subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_access_control_decision_explainer_py["(生产态 / production) DecisionExplainer — 拒绝决策的结构化解释器.<br/>文件: decision_explainer.py"]
         src_zephyr_security_access_control_decision_registry_py["(生产态 / production) DecisionRegistry - decision log with query and ...<br/>文件: decision_registry.py"]
-        src_zephyr_security_access_control_defense_depth_py["(原型态 / prototype) Stub module: zephyr.security.access_control.def...<br/>文件: defense_depth.py"]
+        src_zephyr_security_access_control_defense_depth_py["(设计态 / design) Stub module: zephyr.security.access_control.def...<br/>文件: defense_depth.py"]
         src_zephyr_security_access_control_dependency_auditor_py["(生产态 / production) Stub module: zephyr.security.access_control.dep...<br/>文件: dependency_auditor.py"]
         src_zephyr_security_access_control_derive_rbac_roles_py["(生产态 / production) RBACRoleDeriver — RBAC 角色派生器.<br/>文件: derive_rbac_roles.py"]
         src_zephyr_security_access_control_detectors_anomaly_detector_py["(生产态 / production) AnomalyDetector - rolling z-score anomaly detec...<br/>文件: anomaly_detector.py"]
@@ -325,13 +324,13 @@ graph TD
         src_zephyr_security_access_control_dry_run_py["(生产态 / production) DryRun — 权限模拟与影响分析.<br/>文件: dry_run.py"]
         src_zephyr_security_access_control_emergency_override_py["(生产态 / production) EmergencyOverride — 紧急覆盖令牌管理.<br/>文件: emergency_override.py"]
         src_zephyr_security_access_control_engine_degradation_py["(生产态 / production) EngineDegradation — 引擎降级管理.<br/>文件: engine_degradation.py"]
-        src_zephyr_security_access_control_environment_manager_py["(原型态 / prototype) Stub module: zephyr.security.access_control.env...<br/>文件: environment_manager.py"]
+        src_zephyr_security_access_control_environment_manager_py["(设计态 / design) Stub module: zephyr.security.access_control.env...<br/>文件: environment_manager.py"]
         src_zephyr_security_access_control_escalation_handler_py["(生产态 / production) Stub module: zephyr.security.access_control.esc...<br/>文件: escalation_handler.py"]
         src_zephyr_security_access_control_exceptions_py["(生产态 / production) AgentRbac 异常类型.<br/>文件: exceptions.py"]
         src_zephyr_security_access_control_genesis_bootstrap_py["(生产态 / production) GenesisBootstrap — RBAC系统启动引导器.<br/>文件: genesis_bootstrap.py"]
         src_zephyr_security_access_control_guard_layers_py["(生产态 / production) GuardLayers — 权限守卫层组件.<br/>文件: guard_layers.py"]
         src_zephyr_security_access_control_guards_abac_guard_py["(生产态 / production) ABACGuard — 基于属性的权限守卫.<br/>文件: abac_guard.py"]
-        src_zephyr_security_access_control_guards_anti_pattern_guard_py["(原型态 / prototype) Stub module: zephyr.security.access_control.gua...<br/>文件: anti_pattern_guard.py"]
+        src_zephyr_security_access_control_guards_anti_pattern_guard_py["(设计态 / design) Stub module: zephyr.security.access_control.gua...<br/>文件: anti_pattern_guard.py"]
         src_zephyr_security_access_control_guards_audit_log_guard_py["(生产态 / production) audit_log_guard.py — 审计日志注入防护守卫<br/>文件: audit_log_guard.py"]
         src_zephyr_security_access_control_guards_cybersec_2026_guard_py["(生产态 / production) Cybersec2026Guard — 2026 网络安全威胁检测.<br/>文件: cybersec_2026_guard.py"]
         src_zephyr_security_access_control_guards_input_guard_py["(生产态 / production) InputGuard — 输入参数守卫.<br/>文件: input_guard.py"]
@@ -374,23 +373,23 @@ graph TD
         src_zephyr_security_access_control_integration_py["(生产态 / production) IntegrationManager - system integration registr...<br/>文件: integration.py"]
         src_zephyr_security_access_control_integrity_self_check_py["(生产态 / production) IntegritySelfCheck — 完整性自检.<br/>文件: integrity_self_check.py"]
         src_zephyr_security_access_control_intent_binder_py["(生产态 / production) IntentBinder — 意图绑定与漂移检测.<br/>文件: intent_binder.py"]
-        src_zephyr_security_access_control_key_hierarchy_py["(原型态 / prototype) Stub module: zephyr.security.access_control.key...<br/>文件: key_hierarchy.py"]
+        src_zephyr_security_access_control_key_hierarchy_py["(设计态 / design) Stub module: zephyr.security.access_control.key...<br/>文件: key_hierarchy.py"]
         src_zephyr_security_access_control_kill_switch_py["(生产态 / production) KillSwitch — 熔断器.<br/>文件: kill_switch.py"]
         src_zephyr_security_access_control_legal_audit_chain_py["(生产态 / production) LegalAuditChain - append-only hash-chained lega...<br/>文件: legal_audit_chain.py"]
         src_zephyr_security_access_control_microstructure_defense_py["(生产态 / production) Stub module: zephyr.security.access_control.mic...<br/>文件: microstructure_defense.py"]
         src_zephyr_security_access_control_monotonic_clock_py["(生产态 / production) MonotonicClock — 单调时钟.<br/>文件: monotonic_clock.py"]
         src_zephyr_security_access_control_non_repudiation_py["(生产态 / production) NonRepudiation — 不可抵赖性审计签名.<br/>文件: non_repudiation.py"]
         src_zephyr_security_access_control_observability_py["(生产态 / production) ObservabilityReporter — 指标上报与异常检测.<br/>文件: observability.py"]
-        src_zephyr_security_access_control_orphan_judge_main_py["(原型态 / prototype) __main__.py"]
+        src_zephyr_security_access_control_orphan_judge_main_py["(设计态 / design) __main__.py"]
         src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py["(生产态 / production) cascade_analyzer.py"]
-        src_zephyr_security_access_control_orphan_judge_config_loader_py["(原型态 / prototype) config_loader.py"]
-        src_zephyr_security_access_control_orphan_judge_db_py["(原型态 / prototype) db.py"]
+        src_zephyr_security_access_control_orphan_judge_config_loader_py["(设计态 / design) config_loader.py"]
+        src_zephyr_security_access_control_orphan_judge_db_py["(设计态 / design) db.py"]
         src_zephyr_security_access_control_orphan_judge_decision_table_py["(生产态 / production) decision_table.py"]
         src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py["(生产态 / production) deprecation_tracker.py"]
-        src_zephyr_security_access_control_orphan_judge_drift_bridge_py["(原型态 / prototype) drift_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(原型态 / prototype) duplicate_detector.py"]
-        src_zephyr_security_access_control_orphan_judge_escalation_bridge_py["(原型态 / prototype) escalation_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_feedback_bridge_py["(原型态 / prototype) feedback_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_drift_bridge_py["(设计态 / design) drift_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(设计态 / design) duplicate_detector.py"]
+        src_zephyr_security_access_control_orphan_judge_escalation_bridge_py["(设计态 / design) escalation_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_feedback_bridge_py["(设计态 / design) feedback_bridge.py"]
         src_zephyr_security_access_control_orphan_judge_judge_py["(生产态 / production) judge.py"]
     end
     src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_immutable_core_py
@@ -408,12 +407,12 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_escalation_bridge_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_security_access_control_orphan_judge_main_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_access_control_identity_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
     src_zephyr_security_access_control_orphan_judge_judge_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_security_access_control_orphan_judge_db_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_security_access_control_orphan_judge_config_loader_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_DRIFT["(原型态 / prototype) D_GOV_DRIFT"]
+    D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     src_zephyr_security_access_control_orphan_judge_drift_bridge_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
@@ -439,36 +438,36 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_SECURITY["D_SECURITY 对抗验证"]
-        src_zephyr_security_access_control_orphan_judge_kb_bridge_py["(原型态 / prototype) kb_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_mcp_integration_py["(原型态 / prototype) mcp_integration.py"]
-        src_zephyr_security_access_control_orphan_judge_models_py["(原型态 / prototype) models.py"]
-        src_zephyr_security_access_control_orphan_judge_orphan_collector_py["(原型态 / prototype) orphan_collector.py"]
+        src_zephyr_security_access_control_orphan_judge_kb_bridge_py["(设计态 / design) kb_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_mcp_integration_py["(设计态 / design) mcp_integration.py"]
+        src_zephyr_security_access_control_orphan_judge_models_py["(设计态 / design) models.py"]
+        src_zephyr_security_access_control_orphan_judge_orphan_collector_py["(设计态 / design) orphan_collector.py"]
         src_zephyr_security_access_control_orphan_judge_orphan_detector_py["(生产态 / production) (INVARIANTS) 蓝图 §4 文件清单与代码双向对齐<br/>文件: orphan_detector.py"]
-        src_zephyr_security_access_control_orphan_judge_rbac_bridge_py["(原型态 / prototype) rbac_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py["(原型态 / prototype) AST解析+import链遍历，判断文件是否被其他文件引用。<br/>文件: reference_graph_engine.py"]
-        src_zephyr_security_access_control_orphan_judge_registration_checker_py["(原型态 / prototype) 扫描项目注册表，判断文件是否已登记在册。<br/>文件: registration_checker.py"]
-        src_zephyr_security_access_control_orphan_judge_report_generator_py["(原型态 / prototype) report_generator.py"]
+        src_zephyr_security_access_control_orphan_judge_rbac_bridge_py["(设计态 / design) rbac_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py["(设计态 / design) AST解析+import链遍历，判断文件是否被其他文件引用。<br/>文件: reference_graph_engine.py"]
+        src_zephyr_security_access_control_orphan_judge_registration_checker_py["(设计态 / design) 扫描项目注册表，判断文件是否已登记在册。<br/>文件: registration_checker.py"]
+        src_zephyr_security_access_control_orphan_judge_report_generator_py["(设计态 / design) report_generator.py"]
         src_zephyr_security_access_control_orphan_judge_safety_fence_py["(生产态 / production) safety_fence.py"]
-        src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py["(原型态 / prototype) 六指标加权评分: 文件大小(15%) + 代码行数(20%) +...<br/>文件: standalone_evaluator.py"]
-        src_zephyr_security_access_control_orphan_judge_swid_tag_py["(原型态 / prototype) swid_tag.py"]
-        src_zephyr_security_access_control_orphan_judge_unique_analyzer_py["(原型态 / prototype) AST节点比对，检测文件中的独特代码元素(类/函数/...<br/>文件: unique_analyzer.py"]
+        src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py["(设计态 / design) 六指标加权评分: 文件大小(15%) + 代码行数(20%) +...<br/>文件: standalone_evaluator.py"]
+        src_zephyr_security_access_control_orphan_judge_swid_tag_py["(设计态 / design) swid_tag.py"]
+        src_zephyr_security_access_control_orphan_judge_unique_analyzer_py["(设计态 / design) AST节点比对，检测文件中的独特代码元素(类/函数/...<br/>文件: unique_analyzer.py"]
         src_zephyr_security_access_control_permission_hooks_py["(生产态 / production) PermissionHooks — 权限钩子注册表.<br/>文件: permission_hooks.py"]
-        src_zephyr_security_access_control_permission_mode_manager_py["(原型态 / prototype) Stub module: zephyr.security.access_control.per...<br/>文件: permission_mode_manager.py"]
-        src_zephyr_security_access_control_phase_executor_py["(原型态 / prototype) phase_executor.py"]
+        src_zephyr_security_access_control_permission_mode_manager_py["(设计态 / design) Stub module: zephyr.security.access_control.per...<br/>文件: permission_mode_manager.py"]
+        src_zephyr_security_access_control_phase_executor_py["(设计态 / design) phase_executor.py"]
         src_zephyr_security_access_control_risk_mitigation_py["(生产态 / production) RiskMitigation — 风险评估与缓解策略.<br/>文件: risk_mitigation.py"]
         src_zephyr_security_access_control_rollback_sandbox_py["(生产态 / production) RollbackSandbox - isolate/execute/rollback patt...<br/>文件: rollback_sandbox.py"]
-        src_zephyr_security_access_control_secrets_lifecycle_py["(原型态 / prototype) Stub module: zephyr.security.access_control.sec...<br/>文件: secrets_lifecycle.py"]
+        src_zephyr_security_access_control_secrets_lifecycle_py["(设计态 / design) Stub module: zephyr.security.access_control.sec...<br/>文件: secrets_lifecycle.py"]
         src_zephyr_security_access_control_session_concurrency_py["(生产态 / production) Session 级并发协调模块（P2-SES 落地）。<br/>文件: session_concurrency.py"]
         src_zephyr_security_access_control_session_lifecycle_py["(生产态 / production) Stub module: zephyr.security.access_control.ses...<br/>文件: session_lifecycle.py"]
-        src_zephyr_security_access_control_verifiers_bootstrap_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: bootstrap_verifier.py"]
-        src_zephyr_security_access_control_verifiers_continuous_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: continuous_verifier.py"]
+        src_zephyr_security_access_control_verifiers_bootstrap_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: bootstrap_verifier.py"]
+        src_zephyr_security_access_control_verifiers_continuous_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: continuous_verifier.py"]
         src_zephyr_security_access_control_verifiers_contract_verifier_py["(生产态 / production) ContractVerifier — 契约验证器.<br/>文件: contract_verifier.py"]
-        src_zephyr_security_access_control_verifiers_micro_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: micro_verifier.py"]
-        src_zephyr_security_access_control_verifiers_post_action_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: post_action_verifier.py"]
-        src_zephyr_security_adversarial_validation_main_py["(原型态 / prototype) __main__.py"]
-        src_zephyr_security_adversarial_validation_ai_attack_generator_py["(原型态 / prototype) ai_attack_generator.py"]
+        src_zephyr_security_access_control_verifiers_micro_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: micro_verifier.py"]
+        src_zephyr_security_access_control_verifiers_post_action_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: post_action_verifier.py"]
+        src_zephyr_security_adversarial_validation_main_py["(设计态 / design) __main__.py"]
+        src_zephyr_security_adversarial_validation_ai_attack_generator_py["(设计态 / design) ai_attack_generator.py"]
         src_zephyr_security_adversarial_validation_async_monitor_py["(生产态 / production) async_monitor.py"]
-        src_zephyr_security_adversarial_validation_attack_registry_py["(原型态 / prototype) attack_registry.py"]
+        src_zephyr_security_adversarial_validation_attack_registry_py["(设计态 / design) attack_registry.py"]
     end
     src_zephyr_security_access_control_orphan_judge_orphan_collector_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_safety_fence_py
     src_zephyr_security_access_control_orphan_judge_swid_tag_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_models_py
@@ -476,7 +475,7 @@ graph TD
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_security_access_control_orphan_judge_report_generator_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_access_control_session_concurrency_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     src_zephyr_security_access_control_orphan_judge_mcp_integration_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
@@ -484,11 +483,11 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_kb_bridge_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT["(设计态 / design) D_GOV_ENFORCEMENT"]
     D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
@@ -510,28 +509,28 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_SECURITY["D_SECURITY 对抗验证"]
-        src_zephyr_security_adversarial_validation_blast_radius_py["(原型态 / prototype) blast_radius.py"]
-        src_zephyr_security_adversarial_validation_bypass_recorder_py["(原型态 / prototype) bypass_recorder.py"]
+        src_zephyr_security_adversarial_validation_blast_radius_py["(设计态 / design) blast_radius.py"]
+        src_zephyr_security_adversarial_validation_bypass_recorder_py["(设计态 / design) bypass_recorder.py"]
         src_zephyr_security_adversarial_validation_circuit_breaker_py["(生产态 / production) circuit_breaker.py"]
-        src_zephyr_security_adversarial_validation_cleanup_py["(原型态 / prototype) cleanup.py"]
-        src_zephyr_security_adversarial_validation_cli_py["(原型态 / prototype) cli.py"]
-        src_zephyr_security_adversarial_validation_cold_start_py["(原型态 / prototype) cold_start.py"]
-        src_zephyr_security_adversarial_validation_commit_trigger_py["(原型态 / prototype) CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN...<br/>文件: commit_trigger.py"]
+        src_zephyr_security_adversarial_validation_cleanup_py["(设计态 / design) cleanup.py"]
+        src_zephyr_security_adversarial_validation_cli_py["(设计态 / design) cli.py"]
+        src_zephyr_security_adversarial_validation_cold_start_py["(设计态 / design) cold_start.py"]
+        src_zephyr_security_adversarial_validation_commit_trigger_py["(设计态 / design) CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN...<br/>文件: commit_trigger.py"]
         src_zephyr_security_adversarial_validation_constitution_engine_py["(生产态 / production) constitution_engine.py"]
-        src_zephyr_security_adversarial_validation_constitution_guard_py["(原型态 / prototype) constitution_guard.py"]
-        src_zephyr_security_adversarial_validation_convergence_checker_py["(原型态 / prototype) convergence_checker.py"]
-        src_zephyr_security_adversarial_validation_defense_runner_py["(原型态 / prototype) defense_runner.py"]
-        src_zephyr_security_adversarial_validation_game_day_runner_py["(原型态 / prototype) game_day_runner.py"]
+        src_zephyr_security_adversarial_validation_constitution_guard_py["(设计态 / design) constitution_guard.py"]
+        src_zephyr_security_adversarial_validation_convergence_checker_py["(设计态 / design) convergence_checker.py"]
+        src_zephyr_security_adversarial_validation_defense_runner_py["(设计态 / design) defense_runner.py"]
+        src_zephyr_security_adversarial_validation_game_day_runner_py["(设计态 / design) game_day_runner.py"]
         src_zephyr_security_adversarial_validation_game_day_scheduler_py["(生产态 / production) game_day_scheduler.py"]
-        src_zephyr_security_adversarial_validation_injection_engine_py["(原型态 / prototype) injection_engine.py"]
-        src_zephyr_security_adversarial_validation_mcp_endpoints_py["(原型态 / prototype) mcp_endpoints.py"]
+        src_zephyr_security_adversarial_validation_injection_engine_py["(设计态 / design) injection_engine.py"]
+        src_zephyr_security_adversarial_validation_mcp_endpoints_py["(设计态 / design) mcp_endpoints.py"]
         src_zephyr_security_adversarial_validation_models_py["(生产态 / production) models.py"]
-        src_zephyr_security_adversarial_validation_scenario_loader_py["(原型态 / prototype) scenario_loader.py"]
-        src_zephyr_security_adversarial_validation_steady_state_py["(原型态 / prototype) steady_state.py"]
-        src_zephyr_security_adversarial_validation_validator_py["(原型态 / prototype) validator.py"]
-        src_zephyr_security_adversarial_validation_validator_event_bridge_py["(原型态 / prototype) ValidatorEventBridge — 红蓝验证器事件桥接 (MOD...<br/>文件: validator_event_bridge.py"]
+        src_zephyr_security_adversarial_validation_scenario_loader_py["(设计态 / design) scenario_loader.py"]
+        src_zephyr_security_adversarial_validation_steady_state_py["(设计态 / design) steady_state.py"]
+        src_zephyr_security_adversarial_validation_validator_py["(设计态 / design) validator.py"]
+        src_zephyr_security_adversarial_validation_validator_event_bridge_py["(设计态 / design) ValidatorEventBridge — 红蓝验证器事件桥接 (MOD...<br/>文件: validator_event_bridge.py"]
         src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py["(生产态 / production) behavior_audit_logger.py"]
-        src_zephyr_security_llm_defense_llm_security_dashboard_app_py["(原型态 / prototype) LLM Security Gateway - Streamlit Dashboard.<br/>文件: app.py"]
+        src_zephyr_security_llm_defense_llm_security_dashboard_app_py["(设计态 / design) LLM Security Gateway - Streamlit Dashboard.<br/>文件: app.py"]
         src_zephyr_security_llm_defense_llm_security_gateway_py["(生产态 / production) gateway.py"]
         src_zephyr_security_llm_defense_llm_security_input_sanitizer_py["(生产态 / production) InputSanitizer: path whitelist + command whitel...<br/>文件: input_sanitizer.py"]
         src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py["(生产态 / production) l0_supply_chain.py"]
@@ -642,9 +641,9 @@ graph TD
 graph TD
     subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py["(生产态 / production) l5_resource_protection.py"]
-        src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py["(原型态 / prototype) l6_data_flow.py"]
+        src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py["(设计态 / design) l6_data_flow.py"]
         src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py["(生产态 / production) L6 Observability Layer — security event loggin...<br/>文件: l6_observability.py"]
-        src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py["(原型态 / prototype) l8_compliance.py"]
+        src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py["(设计态 / design) l8_compliance.py"]
         src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py["(生产态 / production) l8_multi_agent.py"]
         src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py["(生产态 / production) injection_patterns.py"]
         src_zephyr_security_llm_defense_llm_security_patterns_secrets_py["(生产态 / production) secrets.py"]
@@ -856,13 +855,13 @@ graph TD
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(设计态 / design) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_security_access_control_genesis_bootstrap_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_security_access_control_genesis_bootstrap_py
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT["(设计态 / design) D_GOV_ENFORCEMENT"]
     D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_session_concurrency_py
@@ -887,79 +886,79 @@ graph TD
 
 > （无设计态模块 / No design modules）
 
-### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
+### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
 
 > 仅展示代码已写、验证中未稳定上线的原型态模块（共 66 个，30 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_SECURITY["D_SECURITY 对抗验证"]
-        src_zephyr_gov_drift_main_py["(原型态 / prototype) Drift Detector MOD-INF-023 CLI — 漂移扫描入口。<br/>文件: __main__.py"]
-        src_zephyr_gov_drift_analysis_py["(原型态 / prototype) _analysis.py"]
-        src_zephyr_gov_drift_core_py["(原型态 / prototype) _core.py"]
-        src_zephyr_gov_drift_drift_py["(原型态 / prototype) _drift.py"]
-        src_zephyr_gov_drift_infrastructure_py["(原型态 / prototype) _infrastructure.py"]
-        src_zephyr_gov_drift_scanners_py["(原型态 / prototype) _scanners.py"]
-        src_zephyr_gov_drift_alert_router_py["(原型态 / prototype) Alert Router — alert_router.py<br/>文件: alert_router.py"]
-        src_zephyr_gov_drift_cold_start_py["(原型态 / prototype) Cold Start Bootstrapper — 冷启动引导 §6.31。<br/>文件: cold_start.py"]
-        src_zephyr_gov_drift_reconciler_py["(原型态 / prototype) Auto Reconciler — reconciler.py<br/>文件: reconciler.py"]
-        src_zephyr_gov_drift_runbook_generator_py["(原型态 / prototype) Drift Runbook Generator — 漂移演练手册自动生成。<br/>文件: runbook_generator.py"]
-        src_zephyr_gov_drift_state_machine_py["(原型态 / prototype) Drift State Machine — state_machine.py<br/>文件: state_machine.py"]
-        src_zephyr_red_blue_validator_init_py["(原型态 / prototype) red_blue_validator — re-export shim for zephyr...<br/>文件: __init__.py"]
-        src_zephyr_security_access_control_build_sanitizer_py["(原型态 / prototype) Stub module: zephyr.security.access_control.bui...<br/>文件: build_sanitizer.py"]
-        src_zephyr_security_access_control_cascading_failure_isolator_py["(原型态 / prototype) Stub module: zephyr.security.access_control.cas...<br/>文件: cascading_failure_isolator.py"]
-        src_zephyr_security_access_control_compliance_matrix_py["(原型态 / prototype) Stub module: zephyr.security.access_control.com...<br/>文件: compliance_matrix.py"]
-        src_zephyr_security_access_control_defense_depth_py["(原型态 / prototype) Stub module: zephyr.security.access_control.def...<br/>文件: defense_depth.py"]
-        src_zephyr_security_access_control_environment_manager_py["(原型态 / prototype) Stub module: zephyr.security.access_control.env...<br/>文件: environment_manager.py"]
-        src_zephyr_security_access_control_guards_anti_pattern_guard_py["(原型态 / prototype) Stub module: zephyr.security.access_control.gua...<br/>文件: anti_pattern_guard.py"]
-        src_zephyr_security_access_control_key_hierarchy_py["(原型态 / prototype) Stub module: zephyr.security.access_control.key...<br/>文件: key_hierarchy.py"]
-        src_zephyr_security_access_control_orphan_judge_main_py["(原型态 / prototype) __main__.py"]
-        src_zephyr_security_access_control_orphan_judge_config_loader_py["(原型态 / prototype) config_loader.py"]
-        src_zephyr_security_access_control_orphan_judge_db_py["(原型态 / prototype) db.py"]
-        src_zephyr_security_access_control_orphan_judge_drift_bridge_py["(原型态 / prototype) drift_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(原型态 / prototype) duplicate_detector.py"]
-        src_zephyr_security_access_control_orphan_judge_escalation_bridge_py["(原型态 / prototype) escalation_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_feedback_bridge_py["(原型态 / prototype) feedback_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_kb_bridge_py["(原型态 / prototype) kb_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_mcp_integration_py["(原型态 / prototype) mcp_integration.py"]
-        src_zephyr_security_access_control_orphan_judge_models_py["(原型态 / prototype) models.py"]
-        src_zephyr_security_access_control_orphan_judge_orphan_collector_py["(原型态 / prototype) orphan_collector.py"]
-        src_zephyr_security_access_control_orphan_judge_rbac_bridge_py["(原型态 / prototype) rbac_bridge.py"]
-        src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py["(原型态 / prototype) AST解析+import链遍历，判断文件是否被其他文件引用。<br/>文件: reference_graph_engine.py"]
-        src_zephyr_security_access_control_orphan_judge_registration_checker_py["(原型态 / prototype) 扫描项目注册表，判断文件是否已登记在册。<br/>文件: registration_checker.py"]
-        src_zephyr_security_access_control_orphan_judge_report_generator_py["(原型态 / prototype) report_generator.py"]
-        src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py["(原型态 / prototype) 六指标加权评分: 文件大小(15%) + 代码行数(20%) +...<br/>文件: standalone_evaluator.py"]
-        src_zephyr_security_access_control_orphan_judge_swid_tag_py["(原型态 / prototype) swid_tag.py"]
-        src_zephyr_security_access_control_orphan_judge_unique_analyzer_py["(原型态 / prototype) AST节点比对，检测文件中的独特代码元素(类/函数/...<br/>文件: unique_analyzer.py"]
-        src_zephyr_security_access_control_permission_mode_manager_py["(原型态 / prototype) Stub module: zephyr.security.access_control.per...<br/>文件: permission_mode_manager.py"]
-        src_zephyr_security_access_control_phase_executor_py["(原型态 / prototype) phase_executor.py"]
-        src_zephyr_security_access_control_secrets_lifecycle_py["(原型态 / prototype) Stub module: zephyr.security.access_control.sec...<br/>文件: secrets_lifecycle.py"]
-        src_zephyr_security_access_control_verifiers_bootstrap_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: bootstrap_verifier.py"]
-        src_zephyr_security_access_control_verifiers_continuous_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: continuous_verifier.py"]
-        src_zephyr_security_access_control_verifiers_micro_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: micro_verifier.py"]
-        src_zephyr_security_access_control_verifiers_post_action_verifier_py["(原型态 / prototype) Stub module: zephyr.security.access_control.ver...<br/>文件: post_action_verifier.py"]
-        src_zephyr_security_adversarial_validation_main_py["(原型态 / prototype) __main__.py"]
-        src_zephyr_security_adversarial_validation_ai_attack_generator_py["(原型态 / prototype) ai_attack_generator.py"]
-        src_zephyr_security_adversarial_validation_attack_registry_py["(原型态 / prototype) attack_registry.py"]
-        src_zephyr_security_adversarial_validation_blast_radius_py["(原型态 / prototype) blast_radius.py"]
-        src_zephyr_security_adversarial_validation_bypass_recorder_py["(原型态 / prototype) bypass_recorder.py"]
-        src_zephyr_security_adversarial_validation_cleanup_py["(原型态 / prototype) cleanup.py"]
-        src_zephyr_security_adversarial_validation_cli_py["(原型态 / prototype) cli.py"]
-        src_zephyr_security_adversarial_validation_cold_start_py["(原型态 / prototype) cold_start.py"]
-        src_zephyr_security_adversarial_validation_commit_trigger_py["(原型态 / prototype) CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN...<br/>文件: commit_trigger.py"]
-        src_zephyr_security_adversarial_validation_constitution_guard_py["(原型态 / prototype) constitution_guard.py"]
-        src_zephyr_security_adversarial_validation_convergence_checker_py["(原型态 / prototype) convergence_checker.py"]
-        src_zephyr_security_adversarial_validation_defense_runner_py["(原型态 / prototype) defense_runner.py"]
-        src_zephyr_security_adversarial_validation_game_day_runner_py["(原型态 / prototype) game_day_runner.py"]
-        src_zephyr_security_adversarial_validation_injection_engine_py["(原型态 / prototype) injection_engine.py"]
-        src_zephyr_security_adversarial_validation_mcp_endpoints_py["(原型态 / prototype) mcp_endpoints.py"]
-        src_zephyr_security_adversarial_validation_scenario_loader_py["(原型态 / prototype) scenario_loader.py"]
-        src_zephyr_security_adversarial_validation_steady_state_py["(原型态 / prototype) steady_state.py"]
-        src_zephyr_security_adversarial_validation_validator_py["(原型态 / prototype) validator.py"]
-        src_zephyr_security_adversarial_validation_validator_event_bridge_py["(原型态 / prototype) ValidatorEventBridge — 红蓝验证器事件桥接 (MOD...<br/>文件: validator_event_bridge.py"]
-        src_zephyr_security_llm_defense_llm_security_dashboard_app_py["(原型态 / prototype) LLM Security Gateway - Streamlit Dashboard.<br/>文件: app.py"]
-        src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py["(原型态 / prototype) l6_data_flow.py"]
-        src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py["(原型态 / prototype) l8_compliance.py"]
+        src_zephyr_gov_drift_main_py["(设计态 / design) Drift Detector MOD-INF-023 CLI — 漂移扫描入口。<br/>文件: __main__.py"]
+        src_zephyr_gov_drift_analysis_py["(设计态 / design) _analysis.py"]
+        src_zephyr_gov_drift_core_py["(设计态 / design) _core.py"]
+        src_zephyr_gov_drift_drift_py["(设计态 / design) _drift.py"]
+        src_zephyr_gov_drift_infrastructure_py["(设计态 / design) _infrastructure.py"]
+        src_zephyr_gov_drift_scanners_py["(设计态 / design) _scanners.py"]
+        src_zephyr_gov_drift_alert_router_py["(设计态 / design) Alert Router — alert_router.py<br/>文件: alert_router.py"]
+        src_zephyr_gov_drift_cold_start_py["(设计态 / design) Cold Start Bootstrapper — 冷启动引导 §6.31。<br/>文件: cold_start.py"]
+        src_zephyr_gov_drift_reconciler_py["(设计态 / design) Auto Reconciler — reconciler.py<br/>文件: reconciler.py"]
+        src_zephyr_gov_drift_runbook_generator_py["(设计态 / design) Drift Runbook Generator — 漂移演练手册自动生成。<br/>文件: runbook_generator.py"]
+        src_zephyr_gov_drift_state_machine_py["(设计态 / design) Drift State Machine — state_machine.py<br/>文件: state_machine.py"]
+        src_zephyr_red_blue_validator_init_py["(设计态 / design) red_blue_validator — re-export shim for zephyr...<br/>文件: __init__.py"]
+        src_zephyr_security_access_control_build_sanitizer_py["(设计态 / design) Stub module: zephyr.security.access_control.bui...<br/>文件: build_sanitizer.py"]
+        src_zephyr_security_access_control_cascading_failure_isolator_py["(设计态 / design) Stub module: zephyr.security.access_control.cas...<br/>文件: cascading_failure_isolator.py"]
+        src_zephyr_security_access_control_compliance_matrix_py["(设计态 / design) Stub module: zephyr.security.access_control.com...<br/>文件: compliance_matrix.py"]
+        src_zephyr_security_access_control_defense_depth_py["(设计态 / design) Stub module: zephyr.security.access_control.def...<br/>文件: defense_depth.py"]
+        src_zephyr_security_access_control_environment_manager_py["(设计态 / design) Stub module: zephyr.security.access_control.env...<br/>文件: environment_manager.py"]
+        src_zephyr_security_access_control_guards_anti_pattern_guard_py["(设计态 / design) Stub module: zephyr.security.access_control.gua...<br/>文件: anti_pattern_guard.py"]
+        src_zephyr_security_access_control_key_hierarchy_py["(设计态 / design) Stub module: zephyr.security.access_control.key...<br/>文件: key_hierarchy.py"]
+        src_zephyr_security_access_control_orphan_judge_main_py["(设计态 / design) __main__.py"]
+        src_zephyr_security_access_control_orphan_judge_config_loader_py["(设计态 / design) config_loader.py"]
+        src_zephyr_security_access_control_orphan_judge_db_py["(设计态 / design) db.py"]
+        src_zephyr_security_access_control_orphan_judge_drift_bridge_py["(设计态 / design) drift_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(设计态 / design) duplicate_detector.py"]
+        src_zephyr_security_access_control_orphan_judge_escalation_bridge_py["(设计态 / design) escalation_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_feedback_bridge_py["(设计态 / design) feedback_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_kb_bridge_py["(设计态 / design) kb_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_mcp_integration_py["(设计态 / design) mcp_integration.py"]
+        src_zephyr_security_access_control_orphan_judge_models_py["(设计态 / design) models.py"]
+        src_zephyr_security_access_control_orphan_judge_orphan_collector_py["(设计态 / design) orphan_collector.py"]
+        src_zephyr_security_access_control_orphan_judge_rbac_bridge_py["(设计态 / design) rbac_bridge.py"]
+        src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py["(设计态 / design) AST解析+import链遍历，判断文件是否被其他文件引用。<br/>文件: reference_graph_engine.py"]
+        src_zephyr_security_access_control_orphan_judge_registration_checker_py["(设计态 / design) 扫描项目注册表，判断文件是否已登记在册。<br/>文件: registration_checker.py"]
+        src_zephyr_security_access_control_orphan_judge_report_generator_py["(设计态 / design) report_generator.py"]
+        src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py["(设计态 / design) 六指标加权评分: 文件大小(15%) + 代码行数(20%) +...<br/>文件: standalone_evaluator.py"]
+        src_zephyr_security_access_control_orphan_judge_swid_tag_py["(设计态 / design) swid_tag.py"]
+        src_zephyr_security_access_control_orphan_judge_unique_analyzer_py["(设计态 / design) AST节点比对，检测文件中的独特代码元素(类/函数/...<br/>文件: unique_analyzer.py"]
+        src_zephyr_security_access_control_permission_mode_manager_py["(设计态 / design) Stub module: zephyr.security.access_control.per...<br/>文件: permission_mode_manager.py"]
+        src_zephyr_security_access_control_phase_executor_py["(设计态 / design) phase_executor.py"]
+        src_zephyr_security_access_control_secrets_lifecycle_py["(设计态 / design) Stub module: zephyr.security.access_control.sec...<br/>文件: secrets_lifecycle.py"]
+        src_zephyr_security_access_control_verifiers_bootstrap_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: bootstrap_verifier.py"]
+        src_zephyr_security_access_control_verifiers_continuous_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: continuous_verifier.py"]
+        src_zephyr_security_access_control_verifiers_micro_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: micro_verifier.py"]
+        src_zephyr_security_access_control_verifiers_post_action_verifier_py["(设计态 / design) Stub module: zephyr.security.access_control.ver...<br/>文件: post_action_verifier.py"]
+        src_zephyr_security_adversarial_validation_main_py["(设计态 / design) __main__.py"]
+        src_zephyr_security_adversarial_validation_ai_attack_generator_py["(设计态 / design) ai_attack_generator.py"]
+        src_zephyr_security_adversarial_validation_attack_registry_py["(设计态 / design) attack_registry.py"]
+        src_zephyr_security_adversarial_validation_blast_radius_py["(设计态 / design) blast_radius.py"]
+        src_zephyr_security_adversarial_validation_bypass_recorder_py["(设计态 / design) bypass_recorder.py"]
+        src_zephyr_security_adversarial_validation_cleanup_py["(设计态 / design) cleanup.py"]
+        src_zephyr_security_adversarial_validation_cli_py["(设计态 / design) cli.py"]
+        src_zephyr_security_adversarial_validation_cold_start_py["(设计态 / design) cold_start.py"]
+        src_zephyr_security_adversarial_validation_commit_trigger_py["(设计态 / design) CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN...<br/>文件: commit_trigger.py"]
+        src_zephyr_security_adversarial_validation_constitution_guard_py["(设计态 / design) constitution_guard.py"]
+        src_zephyr_security_adversarial_validation_convergence_checker_py["(设计态 / design) convergence_checker.py"]
+        src_zephyr_security_adversarial_validation_defense_runner_py["(设计态 / design) defense_runner.py"]
+        src_zephyr_security_adversarial_validation_game_day_runner_py["(设计态 / design) game_day_runner.py"]
+        src_zephyr_security_adversarial_validation_injection_engine_py["(设计态 / design) injection_engine.py"]
+        src_zephyr_security_adversarial_validation_mcp_endpoints_py["(设计态 / design) mcp_endpoints.py"]
+        src_zephyr_security_adversarial_validation_scenario_loader_py["(设计态 / design) scenario_loader.py"]
+        src_zephyr_security_adversarial_validation_steady_state_py["(设计态 / design) steady_state.py"]
+        src_zephyr_security_adversarial_validation_validator_py["(设计态 / design) validator.py"]
+        src_zephyr_security_adversarial_validation_validator_event_bridge_py["(设计态 / design) ValidatorEventBridge — 红蓝验证器事件桥接 (MOD...<br/>文件: validator_event_bridge.py"]
+        src_zephyr_security_llm_defense_llm_security_dashboard_app_py["(设计态 / design) LLM Security Gateway - Streamlit Dashboard.<br/>文件: app.py"]
+        src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py["(设计态 / design) l6_data_flow.py"]
+        src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py["(设计态 / design) l8_compliance.py"]
     end
     src_zephyr_gov_drift_infrastructure_py -.->|导入依赖 / import_depends| src_zephyr_gov_drift_alert_router_py
     src_zephyr_gov_drift_infrastructure_py -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
@@ -1011,7 +1010,7 @@ graph TD
     src_zephyr_gov_drift_scanners_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE["(设计态 / design) D_COMPLIANCE"]
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_runbook_generator_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_alert_router_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
@@ -1233,4 +1232,4 @@ graph LR
 - **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
-- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[unknown]`=未知

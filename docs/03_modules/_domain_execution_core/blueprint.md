@@ -56,7 +56,7 @@ references:
     section: "§16.7"
     why: "matching_engine Tick级5档撮合规格, MiniQMT Broker 实盘撮合逻辑需保持一致"
 responsibility_domain: 
-design_maturity: prototype
+design_maturity: production
 build_status: stable
 ---
 

@@ -45,7 +45,7 @@ references:
   - {id: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——大脑消费上下文注入"}
   - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——大脑 LLM 调用的安全闸门"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——大脑异常升级路径"}
-design_maturity: prototype
+design_maturity: production
 build_status: generated
 responsibility_domain: 
 ---

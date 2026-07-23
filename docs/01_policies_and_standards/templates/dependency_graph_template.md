@@ -691,7 +691,7 @@ granularity_hierarchy:
 | design_maturity | 态 | 说明 | 生成器推导方式 |
 |----------------|:---:|------|-------------|
 | `design` | 设计态 | 仅有蓝图/设计，尚无代码实现 | 有 blueprint 无 .py 文件 |
-| `prototype` | 运营态 | 快速原型，设计不牢固 | 有 .py 无 test 文件 |
+| ~~`prototype`~~ | ~~运营态~~ | ~~快速原型~~ | [ARCH-MM-002 已删除，归入 production] |
 | `production` | 运营态 | 生产级 | 有 .py + test 文件 |
 
 ### 3.11 部署生命周期 (node.deployment_lifecycle) — 设计态/运营态维度2
@@ -765,7 +765,7 @@ granularity_hierarchy:
 | `top_down` | 由上至下设计驱动——先有蓝图/设计，尚无代码 | 有 blueprint 无 .py 文件 |
 | `bottom_up` | 由下至上实现回写——先有代码，回写到蓝图 | 有 .py 文件 |
 
-> **drive_direction 与 design_maturity 的关系**：drive_direction 回答"这个节点是怎么来的"，design_maturity 回答"设计有多成熟"。top_down 节点的 design_maturity 通常是 design，bottom_up 节点通常是 prototype/production。但不是 1:1 映射——一个 bottom_up 节点也可能 design_maturity=design（代码写了但设计还不成熟）。
+> **drive_direction 与 design_maturity 的关系**：drive_direction 回答"这个节点是怎么来的"，design_maturity 回答"设计有多成熟"。top_down 节点的 design_maturity 通常是 design，bottom_up 节点通常是 production。但不是 1:1 映射——一个 bottom_up 节点也可能 design_maturity=design（代码写了但设计还不成熟）。[ARCH-MM-002 两档化]
 
 ### 3.18 实现状态 (node.build_status)
 
