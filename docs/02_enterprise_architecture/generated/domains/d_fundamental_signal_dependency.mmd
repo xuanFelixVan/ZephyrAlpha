@@ -1,5 +1,5 @@
 %% D_FUNDAMENTAL_SIGNAL 域全景依赖图
-%% 生成时间: 2026-07-19 07:51:15
+%% 生成时间: 2026-07-24 04:18:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 46
 
@@ -7,14 +7,14 @@ graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_FUNDAMENTAL_SIGNAL[基本面信号]
-        src_zephyr_signal_fundamental___init___py["...zephyr/signal_fundamental/__init__.py [design]"]
-        src_zephyr_signal_fundamental____apital_allocation_result_py[".../capital/capital_allocation_result.py [design]"]
-        src_zephyr_signal_fundamental_capital_capital_allocator_py["...damental/capital/capital_allocator.py [design]"]
-        src_zephyr_signal_fundamental____efault_capital_allocator_py[".../capital/default_capital_allocator.py [design]"]
-        src_zephyr_signal_fundamental_gen_aggregator_base_py["...al_fundamental/gen/aggregator_base.py [design]"]
+        src_zephyr_signal_fundamental___init___py["...zephyr/signal_fundamental/__init__.py [production]"]
+        src_zephyr_signal_fundamental____apital_allocation_result_py[".../capital/capital_allocation_result.py [production]"]
+        src_zephyr_signal_fundamental_capital_capital_allocator_py["...damental/capital/capital_allocator.py [production]"]
+        src_zephyr_signal_fundamental____efault_capital_allocator_py[".../capital/default_capital_allocator.py [production]"]
+        src_zephyr_signal_fundamental_gen_aggregator_base_py["...al_fundamental/gen/aggregator_base.py [production]"]
         src_zephyr_signal_fundamental____efault_signal_aggregator_py["...ntations/default_signal_aggregator.py [production]"]
         src_zephyr_signal_fundamental_pipeline_py["...zephyr/signal_fundamental/pipeline.py [production]"]
-        src_zephyr_signal_fundamental_strategy_capital_allocator_py["...amental/strategy/capital_allocator.py [design]"]
+        src_zephyr_signal_fundamental_strategy_capital_allocator_py["...amental/strategy/capital_allocator.py [production]"]
         src_zephyr_signal_fundamental____efault_capital_allocator_py["...ntations/default_capital_allocator.py [production]"]
         src_zephyr_signal_fundamental_synth_signal_synthesizer_py["...ndamental/synth/signal_synthesizer.py [production]"]
     end
@@ -24,23 +24,23 @@ graph TD
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
     src_zephyr_signal_fundamental____efault_signal_aggregator_py -->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_FUNDAMENTAL_SIGNAL (21 条)
     [] -->|import_depends| src_zephyr_signal_fundamental____apital_allocation_result_py
     [] -->|import_depends| src_zephyr_signal_fundamental_capital_capital_allocator_py
     [] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
-    [] -->|import_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
-    [] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
     [] -->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     [] -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     [] -->|import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     [] -->|import_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
-    [] -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
-    [] -->|import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     [] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
+    [] -->|import_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
+    [] -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    [] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
+    [] -->|import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     [] -->|test_depends| src_zephyr_signal_fundamental_pipeline_py
     [] -->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     [] -->|test_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
@@ -61,10 +61,10 @@ graph TD
     %% D_FUNDAMENTAL_SIGNAL -> D_INFRASTRUCTURE (9 条)
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_signal_fundamental____efault_signal_aggregator_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_signal_fundamental____efault_signal_aggregator_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
@@ -75,8 +75,8 @@ graph TD
     src_zephyr_signal_fundamental____apital_allocation_result_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 6 条

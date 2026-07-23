@@ -1,5 +1,5 @@
 %% D_ML_SERVE 域全景依赖图
-%% 生成时间: 2026-07-19 07:51:15
+%% 生成时间: 2026-07-24 04:18:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 7, 依赖边数: 0
 
@@ -7,13 +7,13 @@ graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_ML_SERVE[推理]
-        src_zephyr_ml_serve___init___py["src/zephyr/ml_serve/__init__.py [design]"]
-        src_zephyr_ml_serve__extensions___init___py["...phyr/ml_serve/_extensions/__init__.py [design]"]
-        src_zephyr_ml_serve_api___init___py["src/zephyr/ml_serve/api/__init__.py [design]"]
-        src_zephyr_ml_serve_core___init___py["src/zephyr/ml_serve/core/__init__.py [design]"]
-        src_zephyr_ml_serve_infrastructure___init___py["...r/ml_serve/infrastructure/__init__.py [design]"]
-        src_zephyr_ml_serve_models___init___py["src/zephyr/ml_serve/models/__init__.py [design]"]
-        src_zephyr_ml_serve_services___init___py["src/zephyr/ml_serve/services/__init__.py [design]"]
+        src_zephyr_ml_serve___init___py["src/zephyr/ml_serve/__init__.py [production]"]
+        src_zephyr_ml_serve__extensions___init___py["...phyr/ml_serve/_extensions/__init__.py [production]"]
+        src_zephyr_ml_serve_api___init___py["src/zephyr/ml_serve/api/__init__.py [production]"]
+        src_zephyr_ml_serve_core___init___py["src/zephyr/ml_serve/core/__init__.py [production]"]
+        src_zephyr_ml_serve_infrastructure___init___py["...r/ml_serve/infrastructure/__init__.py [production]"]
+        src_zephyr_ml_serve_models___init___py["src/zephyr/ml_serve/models/__init__.py [production]"]
+        src_zephyr_ml_serve_services___init___py["src/zephyr/ml_serve/services/__init__.py [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）

@@ -1,23 +1,19 @@
 %% D_COMPLIANCE 域全景依赖图
-%% 生成时间: 2026-07-19 07:51:15
+%% 生成时间: 2026-07-24 04:18:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 4, 依赖边数: 52
+%% 模块数: 2, 依赖边数: 49
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_COMPLIANCE[合规]
-        src_zephyr_compliance_behavioral_auditor___init___py["...liance/behavioral_auditor/__init__.py [design]"]
-        src_zephyr_compliance_default_security_gateway_py["...ompliance/default_security_gateway.py [design]"]
-        src_zephyr_compliance_security_gateway_base_py["...r/compliance/security_gateway_base.py [design]"]
-        src_zephyr_compliance_zero_knowledge_audit_stub___init___py["...zero_knowledge_audit_stub/__init__.py [design]"]
+        src_zephyr_compliance_behavioral_auditor___init___py["...liance/behavioral_auditor/__init__.py [production]"]
+        src_zephyr_compliance_zero_knowledge_audit_stub___init___py["...zero_knowledge_audit_stub/__init__.py [production]"]
     end
 
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_COMPLIANCE (1 条)
-    [] -->|config_depends| src_zephyr_compliance_default_security_gateway_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_COMPLIANCE -> D_GOV_DRIFT (43 条)
@@ -51,9 +47,6 @@ graph TD
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_COMPLIANCE -> D_GOV_OPS_RESILIENCE (2 条)
-    src_zephyr_compliance_default_security_gateway_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_compliance_security_gateway_base_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_COMPLIANCE -> D_INFRA_RUNTIME (1 条)
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_COMPLIANCE -> D_SECURITY (5 条)
@@ -65,5 +58,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 0 条
-    %% 跨域入边: 1 条
-    %% 跨域出边: 51 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 49 条

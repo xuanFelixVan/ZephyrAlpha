@@ -1,5 +1,5 @@
 %% D_FBL_DETECTORS 域全景依赖图
-%% 生成时间: 2026-07-19 07:51:15
+%% 生成时间: 2026-07-24 04:18:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 65, 依赖边数: 79
 
@@ -7,8 +7,8 @@ graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_FBL_DETECTORS[反馈检测器]
-        src_zephyr_feedback_loop_detectors___init___py["...r/feedback_loop/detectors/__init__.py [design]"]
-        src_zephyr_feedback_loop_detectors_anomaly___init___py["...ck_loop/detectors/anomaly/__init__.py [design]"]
+        src_zephyr_feedback_loop_detectors___init___py["...r/feedback_loop/detectors/__init__.py [production]"]
+        src_zephyr_feedback_loop_detectors_anomaly___init___py["...ck_loop/detectors/anomaly/__init__.py [production]"]
         src_zephyr_feedback_loop_detec___omaly_anomaly_clustering_py["...tectors/anomaly/anomaly_clustering.py [production]"]
         src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py["...detectors/anomaly/anomaly_detector.py [production]"]
         src_zephyr_feedback_loop_detec___ergent_behavior_detector_py["...anomaly/emergent_behavior_detector.py [production]"]
@@ -20,7 +20,7 @@ graph TD
         src_zephyr_feedback_loop_detec___lent_corruption_detector_py["...anomaly/silent_corruption_detector.py [production]"]
         src_zephyr_feedback_loop_detec___thetic_anomaly_generator_py["...nomaly/synthetic_anomaly_generator.py [production]"]
         src_zephyr_feedback_loop_detec___anomaly_temporal_pattern_py["...detectors/anomaly/temporal_pattern.py [production]"]
-        src_zephyr_feedback_loop_detectors_correlation___init___py["...oop/detectors/correlation/__init__.py [design]"]
+        src_zephyr_feedback_loop_detectors_correlation___init___py["...oop/detectors/correlation/__init__.py [production]"]
         src_zephyr_feedback_loop_detec____efficacy_decay_detector_py["...ion/action_efficacy_decay_detector.py [production]"]
         src_zephyr_feedback_loop_detec___ion_interaction_detector_py["...lation/action_interaction_detector.py [production]"]
         src_zephyr_feedback_loop_detec___fect_cumulative_detector_py["...on_side_effect_cumulative_detector.py [production]"]
@@ -37,7 +37,7 @@ graph TD
         src_zephyr_feedback_loop_detec___ation_rumor_noise_filter_py["...ors/correlation/rumor_noise_filter.py [production]"]
         src_zephyr_feedback_loop_detec___tion_trace_causal_bridge_py["...rs/correlation/trace_causal_bridge.py [production]"]
         src_zephyr_feedback_loop_detec___traffic_replay_validator_py["...rrelation/traffic_replay_validator.py [production]"]
-        src_zephyr_feedback_loop_detectors_drift___init___py["...back_loop/detectors/drift/__init__.py [design]"]
+        src_zephyr_feedback_loop_detectors_drift___init___py["...back_loop/detectors/drift/__init__.py [production]"]
         src_zephyr_feedback_loop_detectors_drift_concept_drift_py["...loop/detectors/drift/concept_drift.py [production]"]
         src_zephyr_feedback_loop_detectors_drift_config_drift_py["..._loop/detectors/drift/config_drift.py [production]"]
         src_zephyr_feedback_loop_detec___w_contamination_detector_py["...text_window_contamination_detector.py [production]"]
@@ -45,7 +45,7 @@ graph TD
         src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py["...oop/detectors/drift/ensemble_drift.py [production]"]
         src_zephyr_feedback_loop_detec___adual_poisoning_detector_py["...s/drift/gradual_poisoning_detector.py [production]"]
         src_zephyr_feedback_loop_detec___ft_trend_cycle_separator_py["...ectors/drift/trend_cycle_separator.py [production]"]
-        src_zephyr_feedback_loop_detectors_guard___init___py["...back_loop/detectors/guard/__init__.py [design]"]
+        src_zephyr_feedback_loop_detectors_guard___init___py["...back_loop/detectors/guard/__init__.py [production]"]
         src_zephyr_feedback_loop_detec___rt_desensitization_curve_py[".../guard/alert_desensitization_curve.py [production]"]
         src_zephyr_feedback_loop_detec___d_guard_cascade_detector_py["...ctors/guard/guard_cascade_detector.py [production]"]
         src_zephyr_feedback_loop_detec___ard_oscillation_detector_py["...s/guard/guard_oscillation_detector.py [production]"]
@@ -56,7 +56,7 @@ graph TD
         src_zephyr_feedback_loop_detec___nosis_data_leak_detector_py[".../self_diagnosis_data_leak_detector.py [production]"]
         src_zephyr_feedback_loop_detectors_guard_self_ha_py["...dback_loop/detectors/guard/self_ha.py [production]"]
         src_zephyr_feedback_loop_detec____coherence_of_self_model_py["...d/temporal_coherence_of_self_model.py [production]"]
-        src_zephyr_feedback_loop_detectors_reliability___init___py["...oop/detectors/reliability/__init__.py [design]"]
+        src_zephyr_feedback_loop_detectors_reliability___init___py["...oop/detectors/reliability/__init__.py [production]"]
         src_zephyr_feedback_loop_detec___ty_autoscale_remediation_py[".../reliability/autoscale_remediation.py [production]"]
         src_zephyr_feedback_loop_detec___reliability_blast_radius_py["...detectors/reliability/blast_radius.py [production]"]
         src_zephyr_feedback_loop_detec___lity_blast_radius_budget_py["...rs/reliability/blast_radius_budget.py [production]"]
@@ -83,8 +83,8 @@ graph TD
 
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_FBL_DETECTORS (65 条)
-    [] -->|test_depends| src_zephyr_feedback_loop_detec____efficacy_decay_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___ion_interaction_detector_py
+    [] -->|test_depends| src_zephyr_feedback_loop_detec____efficacy_decay_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___fect_cumulative_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___jectory_anomaly_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___ergent_behavior_detector_py
@@ -94,25 +94,25 @@ graph TD
     [] -->|test_depends| src_zephyr_feedback_loop_detec___bility_chaos_engineering_py
     [] -->|test_depends| src_zephyr_feedback_loop_detectors_drift_config_drift_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___w_contamination_detector_py
-    [] -->|test_depends| src_zephyr_feedback_loop_detec___n_cross_signal_validator_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec____cross_system_correlator_py
-    [] -->|test_depends| src_zephyr_feedback_loop_detec___ndency_freshness_monitor_py
+    [] -->|test_depends| src_zephyr_feedback_loop_detec___n_cross_signal_validator_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___tion_decision_provenance_py
+    [] -->|test_depends| src_zephyr_feedback_loop_detec___ndency_freshness_monitor_py
     [] -->|test_depends| src_zephyr_feedback_loop_detectors_drift_concept_drift_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___ability_version_migrator_py
-    [] -->|test_depends| src_zephyr_feedback_loop_detec___al_validation_checkpoint_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___relation_external_health_py
+    [] -->|test_depends| src_zephyr_feedback_loop_detec___al_validation_checkpoint_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
-    [] -->|test_depends| src_zephyr_feedback_loop_detec___rt_desensitization_curve_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
+    [] -->|test_depends| src_zephyr_feedback_loop_detec___rt_desensitization_curve_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___omaly_anomaly_clustering_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___ty_autoscale_remediation_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___lity_blast_radius_budget_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___nishing_returns_detector_py
+    [] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_ebpf_monitor_py
     [] -->|test_depends| src_zephyr_feedback_loop_detec___lation_ensemble_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py
-    [] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_ebpf_monitor_py
     %% D_FEEDBACK_LOOP -> D_FBL_DETECTORS (6 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py

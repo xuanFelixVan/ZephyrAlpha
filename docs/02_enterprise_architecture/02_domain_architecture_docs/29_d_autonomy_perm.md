@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_AUTONOMY_PERM 自治保护架构文档
 version: "1.0"
 status: active
-date: 2026-07-19
+date: 2026-07-24
 owner: auto-generator
 ttl: permanent
 ---
@@ -30,9 +30,8 @@ ttl: permanent
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 2 | Prototype Modules | 2 |
-| 生产态模块 | 0 | Production Modules | 0 |
-| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
+| 生产态模块 | 2 | Production Modules | 2 |
+| 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | Token/Cost/Time三维预算 | Description | Token/Cost/Time三维预算 |
 
 ## 模块分层清单 / Module Layered List
@@ -43,12 +42,12 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | scripts/arch_guard/fitness_functions/check_kill_switch_la... | check_kill_switch_latency.py — Kill Switch 延... | 设计态 / design | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 2 | scripts/governance/meta/manage_kill_switch.py | manage_kill_switch.py — Kill Switch 管理工具 | 设计态 / design | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
+| 1 | scripts/arch_guard/fitness_functions/check_kill_switch_la... | check_kill_switch_latency.py — Kill Switch 延... | 生产态 / production |  |
+| 2 | scripts/governance/meta/manage_kill_switch.py | manage_kill_switch.py — Kill Switch 管理工具 | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -58,49 +57,43 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 2 个模块（生产态 0 + 设计态 0 + 原型态 2），标签标注成熟度。
+> 展示全部 2 个模块（生产态 2 + 设计态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
     subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM 自治保护"]
-        scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(设计态 / design) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
-        scripts_governance_meta_manage_kill_switch_py["(设计态 / design) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
+        scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
+        scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py design
+    class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 0 个，0 条域内依赖）。
+> 仅展示已上线运行的模块（共 2 个，0 条域内依赖）。
 
-> （无运营态模块 / No production modules）
+```mermaid
+graph TD
+    subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM 自治保护"]
+        scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
+        scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
+    end
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
+```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
 > 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
 
 > （无设计态模块 / No design modules）
-
-### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
-
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 2 个，0 条域内依赖）。
-
-```mermaid
-graph TD
-    subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM 自治保护"]
-        scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(设计态 / design) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
-        scripts_governance_meta_manage_kill_switch_py["(设计态 / design) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py design
-```
 
 ## 跨域依赖 / Cross-domain Dependencies
 

@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_AUDITTEST 审计测试套件架构文档
 version: "1.0"
 status: active
-date: 2026-07-19
+date: 2026-07-24
 owner: auto-generator
 ttl: permanent
 ---
@@ -30,7 +30,6 @@ ttl: permanent
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 审计单元测试(unit) | Description | 审计单元测试(unit) |
@@ -43,7 +42,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/01_policies_and_standards/_registry/catalogs/test_su... | [聚合节点 / Aggregated] 测试集 / Test Suite (1681 items) | 生产态 / production |  |
+| 1 | docs/01_policies_and_standards/_registry/catalogs/test_su... | [聚合节点 / Aggregated] 测试集 / Test Suite (1579 items) | 生产态 / production |  |
 | ↳1 |   ↳ tests/a2a/test_a2a_anomaly_detector.py |  | - | - |
 | ↳2 |   ↳ tests/a2a/test_a2a_behavior_fingerprint.py |  | - | - |
 | ↳3 |   ↳ tests/a2a/test_a2a_blame_attribution.py |  | - | - |
@@ -144,11 +143,11 @@ ttl: permanent
 | ↳98 |   ↳ tests/agent_rbac/test_output_guard_agent_rbac.py |  | - | - |
 | ↳99 |   ↳ tests/agent_rbac/test_permission_guard.py |  | - | - |
 | ↳100 |   ↳ tests/agent_rbac/test_permissions.py |  | - | - |
-| | | > (仅显示前 100 个 items，共 1681 个) | | |
+| | | > (仅显示前 100 个 items，共 1579 个) | | |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -158,7 +157,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 1 个模块（生产态 1 + 设计态 0 + 原型态 0），标签标注成熟度。
+> 展示全部 1 个模块（生产态 1 + 设计态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -193,12 +192,6 @@ graph TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
 
 > （无设计态模块 / No design modules）
-
-### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
-
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 0 个，0 条域内依赖）。
-
-> （无原型态模块 / No prototype modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 

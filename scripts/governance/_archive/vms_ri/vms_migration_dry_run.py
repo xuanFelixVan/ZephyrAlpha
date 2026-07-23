@@ -34,7 +34,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from zephyr.governance.knowledge_management.vector_memory.bridge_layer import MIGRATION_MAP, BridgeLayer
+from zephyr.integration.vector_memory.bridge_layer import MIGRATION_MAP, BridgeLayer
 
 TOPIC_STATS: dict[str, int] = {}
 

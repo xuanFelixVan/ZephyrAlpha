@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_MKT_DATA 行情数据架构文档
 version: "1.0"
 status: active
-date: 2026-07-19
+date: 2026-07-24
 owner: auto-generator
 ttl: permanent
 ---
@@ -25,37 +25,34 @@ ttl: permanent
 | 域ID | D_MKT_DATA | Domain ID | D_MKT_DATA |
 | 域名称 | 行情数据 | Domain Name | Market Data |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
-| 模块数 | 9 | Module Count | 9 |
+| 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
-| 设计态模块 | 2 | Design Modules | 2 |
-| 原型态模块 | 7 | Prototype Modules | 7 |
-| 生产态模块 | 0 | Production Modules | 0 |
-| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
+| 设计态模块 | 0 | Design Modules | 0 |
+| 生产态模块 | 7 | Production Modules | 7 |
+| 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 行情数据，负责市场行情数据的采集、分发和订阅管理 | Description | 行情数据，负责市场行情数据的采集、分发和订阅管理 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
+> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
 
-### L1 基础层 / Foundation Layer (9 modules)
+### L1 基础层 / Foundation Layer (7 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/database/sub_blueprints/c1_m... |  | 设计态 / design |  |
-| 2 | docs/03_modules/_domain_data/data_source_operation_manual... |  | 设计态 / design |  |
-| 3 | src/zephyr/market_data/__init__.py | __init__.py | 设计态 / design |  |
-| 4 | src/zephyr/market_data/_extensions/__init__.py | __init__.py | 设计态 / design |  |
-| 5 | src/zephyr/market_data/api/__init__.py | __init__.py | 设计态 / design |  |
-| 6 | src/zephyr/market_data/core/__init__.py | __init__.py | 设计态 / design |  |
-| 7 | src/zephyr/market_data/infrastructure/__init__.py | __init__.py | 设计态 / design |  |
-| 8 | src/zephyr/market_data/models/__init__.py | __init__.py | 设计态 / design |  |
-| 9 | src/zephyr/market_data/services/__init__.py | __init__.py | 设计态 / design |  |
+| 1 | src/zephyr/market_data/__init__.py | __init__.py | 生产态 / production |  |
+| 2 | src/zephyr/market_data/_extensions/__init__.py | __init__.py | 生产态 / production |  |
+| 3 | src/zephyr/market_data/api/__init__.py | __init__.py | 生产态 / production |  |
+| 4 | src/zephyr/market_data/core/__init__.py | __init__.py | 生产态 / production |  |
+| 5 | src/zephyr/market_data/infrastructure/__init__.py | __init__.py | 生产态 / production |  |
+| 6 | src/zephyr/market_data/models/__init__.py | __init__.py | 生产态 / production |  |
+| 7 | src/zephyr/market_data/services/__init__.py | __init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -65,78 +62,59 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 9 个模块（生产态 0 + 设计态 2 + 原型态 7），标签标注成熟度。
+> 展示全部 7 个模块（生产态 7 + 设计态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
     subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
-        docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md["(设计态 / design) "]
-        docs_03_modules_domain_data_data_source_operation_manual_md["(设计态 / design) "]
-        src_zephyr_market_data_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_extensions_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_api_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_core_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_infrastructure_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_models_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_services_init_py["(设计态 / design) __init__.py"]
+        src_zephyr_market_data_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_extensions_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_api_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_core_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_infrastructure_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_models_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_services_init_py["(生产态 / production) __init__.py"]
     end
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_market_data_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md,docs_03_modules_domain_data_data_source_operation_manual_md,src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
+    class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py production
     class D_INFRASTRUCTURE external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 0 个，0 条域内依赖）。
+> 仅展示已上线运行的模块（共 7 个，0 条域内依赖）。
 
-> （无运营态模块 / No production modules）
+```mermaid
+graph TD
+    subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
+        src_zephyr_market_data_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_extensions_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_api_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_core_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_infrastructure_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_models_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_market_data_services_init_py["(生产态 / production) __init__.py"]
+    end
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py production
+    class D_INFRASTRUCTURE external_prod
+```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 2 个，0 条域内依赖）。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
 
-```mermaid
-graph TD
-    subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
-        docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md["(设计态 / design) "]
-        docs_03_modules_domain_data_data_source_operation_manual_md["(设计态 / design) "]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md,docs_03_modules_domain_data_data_source_operation_manual_md design
-```
-
-### 原型态子图（ARCH-MM-002: prototype 已删除，本节为空）
-
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 7 个，0 条域内依赖）。
-
-```mermaid
-graph TD
-    subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
-        src_zephyr_market_data_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_extensions_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_api_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_core_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_infrastructure_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_models_init_py["(设计态 / design) __init__.py"]
-        src_zephyr_market_data_services_init_py["(设计态 / design) __init__.py"]
-    end
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_market_data_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
-    class D_INFRASTRUCTURE external_prod
-```
+> （无设计态模块 / No design modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 

@@ -22,7 +22,6 @@
       "MOD-INF-012": 1,
       "MOD-INF-015": 1,
       "MOD-INF-017": 1,
-      "MOD-KB-001": 1,
       "MOD-INF-016": 1
     },
     "started_at": "2026-05-29T16:35:58.400411+00:00",
@@ -321,8 +320,7 @@
         "session_id": "sim-028",
         "task": "知识库 KE-050 的 depends_on 引用展平——需要更新 Vector Memory 的 Collection namespace",
         "expected": [
-          "MOD-INF-011",
-          "MOD-KB-001"
+          "MOD-INF-011"
         ],
         "actually_read": [],
         "level": "full",

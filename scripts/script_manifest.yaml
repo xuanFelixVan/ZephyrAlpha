@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-19'
-total_scripts: 577
+generated_at: '2026-07-24'
+total_scripts: 590
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -178,6 +178,14 @@ scripts:
   path: scaffold.py
   description: 所有新文件 MUST 通过本脚本创建，禁止直接用 IDE Write/SearchReplace 写入新文件。
   domain: scaffold.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: setup_dev_env.py
+  path: setup_dev_env.py
+  description: 病根：Python 3.11 的 site 模块在 `python -c` 模式下不搜索 cwd 中的
+  domain: setup_dev_env.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -446,6 +454,38 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/apply_fundamental_tables_ddl.py
+  path: ch/apply_fundamental_tables_ddl.py
+  description: DDL-as-Code 模式：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_market_tables_ddl.py
+  path: ch/apply_market_tables_ddl.py
+  description: DDL-as-Code 模式：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_rbac.py
+  path: ch/apply_rbac.py
+  description: RBAC-as-Code 模式：
+  domain: rbac
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_timezone_migration.py
+  path: ch/apply_timezone_migration.py
+  description: 背景（audit_01_schema_review.md）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: construction/_e2e_check.py
   path: construction/_e2e_check.py
   description: import importlib
@@ -608,7 +648,7 @@ scripts:
   dimensions: []
 - name: governance/architecture_health_dashboard.py
   path: governance/architecture_health_dashboard.py
-  description: 对标 architecture_debt_registry.md §六 第0期（L5660-5667）：
+  description: 对标 ai_first_governance_principles.md §四 第0期：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -619,6 +659,38 @@ scripts:
   description: Rewrites ``from zephyr.governance.foo import bar`` → ``from zephyr.governance.subdir.foo import bar``
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/audit_return_contract_usage.py
+  path: governance/audit_return_contract_usage.py
+  description: '----'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/audit_worktree_ops_telemetry.py
+  path: governance/audit_worktree_ops_telemetry.py
+  description: '----'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/check_commit_message.py
+  path: governance/check_commit_message.py
+  description: =========================================================
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/check_ssot_gate.py
+  path: governance/check_ssot_gate.py
+  description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -702,6 +774,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/run_silent_failure_regression.py
+  path: governance/run_silent_failure_regression.py
+  description: '----'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/session_startup_health_check.py
   path: governance/session_startup_health_check.py
   description: 'AI session 启动时运行的核心工具健康度检查。对应裁定 #ARCH-TOOL-HEALTH-V1 Phase 6'
@@ -782,14 +862,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/check_ssot_gate.py
-  path: governance/check_ssot_gate.py
-  description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/d11_compliance/check_test_structure.py
   path: governance/d11_compliance/check_test_structure.py
   description: '检查项:'
@@ -832,7 +904,7 @@ scripts:
   dimensions: []
 - name: governance/d11_compliance/validate_blueprint_overlap.py
   path: governance/d11_compliance/validate_blueprint_overlap.py
-  description: __manifest__ = """
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -912,7 +984,7 @@ scripts:
   dimensions: []
 - name: governance/d11_compliance/validate_truth_source_cascade.py
   path: governance/d11_compliance/validate_truth_source_cascade.py
-  description: __manifest__ = """
+  description: validate_truth_source_cascade.py — 真源级联一致性校验
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1000,7 +1072,7 @@ scripts:
   dimensions: []
 - name: governance/d1_structure/archive_drafts_zone.py
   path: governance/d1_structure/archive_drafts_zone.py
-  description: __manifest__ = """
+  description: '判定规则:'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1520,7 +1592,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/diagnose_depgraph.py
   path: governance/d5_architecture/diagnose_depgraph.py
-  description: __manifest__ = """
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1633,6 +1705,14 @@ scripts:
 - name: governance/d5_architecture/checkers/check_blueprint_template_compliance.py
   path: governance/d5_architecture/checkers/check_blueprint_template_compliance.py
   description: '[BLUEPRINT] GOV-DOC-011 | d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/checkers/check_canonical_yaml_drift.py
+  path: governance/d5_architecture/checkers/check_canonical_yaml_drift.py
+  description: 防止 canonical YAML SSoT 漂移回陈旧状态（Phase B 治本，2026-07-24）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1838,6 +1918,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/generate_code_wiki_stats.py
+  path: governance/d5_architecture/generators/generate_code_wiki_stats.py
+  description: '[BLUEPRINT] VIEW-CODE-WIKI | docs/02_enterprise_architecture/04_architecture_principles_decisions/code_wiki.md'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/generate_constraint_violations.py
   path: governance/d5_architecture/generators/generate_constraint_violations.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
@@ -1896,7 +1984,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/generate_decision_diagram.py
   path: governance/d5_architecture/generators/generate_decision_diagram.py
-  description: 依据：TRAE-061 任务（2026-07-06）
+  description: 依据：TRAE-061 任务（2026-07-06）；拆分重构（2026-07-19）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2056,7 +2144,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_authority_registry.py
   path: governance/d5_architecture/validators/validate_authority_registry.py
-  description: __manifest__ = """
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2200,7 +2288,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_ssot.py
   path: governance/d5_architecture/validators/validate_ssot.py
-  description: __manifest__ = """
+  description: 校验 markdown 文件 frontmatter 中的 module_id / layer / status / priority / version
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2486,6 +2574,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d7_code/any_type_inferrer.py
+  path: governance/d7_code/any_type_inferrer.py
+  description: '裸 Any 类型推断辅助工具 — #ARCH-ANY-GOVERNANCE-001 Phase 1.'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d7_code/check_ai_capability_boundary.py
   path: governance/d7_code/check_ai_capability_boundary.py
   description: 行为说明
@@ -2496,7 +2592,7 @@ scripts:
   dimensions: []
 - name: governance/d7_code/check_any_abuse.py
   path: governance/d7_code/check_any_abuse.py
-  description: 类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入）。
+  description: 类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入，#ARCH-ANY-GOVERNANCE-001 Phase 3 升级为 commit 阻断）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2518,9 +2614,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d7_code/check_merge_conflict.py
+  path: governance/d7_code/check_merge_conflict.py
+  description: '裁定 #ARCH-PRECOMMIT-OFFLINE-001 Phase 1 治本：'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d7_code/check_module_id_consistency.py
   path: governance/d7_code/check_module_id_consistency.py
   description: python scripts/governance/d7_code/check_module_id_consistency.py --scan-existing
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d7_code/check_no_tests_unit.py
+  path: governance/d7_code/check_no_tests_unit.py
+  description: '裁定 #ARCH-PRECOMMIT-OFFLINE-001 Phase 3 治本：'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2569,6 +2681,14 @@ scripts:
 - name: governance/d7_code/detect_missing_encoding.py
   path: governance/d7_code/detect_missing_encoding.py
   description: detect_missing_encoding.py — open() 缺 encoding 检测
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d7_code/detect_private_key.py
+  path: governance/d7_code/detect_private_key.py
+  description: '裁定 #ARCH-PRECOMMIT-OFFLINE-001 Phase 1 治本：'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2657,6 +2777,14 @@ scripts:
 - name: governance/d7_code/scan_complexity.py
   path: governance/d7_code/scan_complexity.py
   description: 全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4 引入）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d7_code/scan_consumers_accuracy.py
+  path: governance/d7_code/scan_consumers_accuracy.py
+  description: '- 全项目扫描 src/**.py + scripts/governance/**.py 的 [CONSUMERS] 字段'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2806,6 +2934,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d8_doc_sync/metric_count_drift_reconciler.py
+  path: governance/d8_doc_sync/metric_count_drift_reconciler.py
+  description: 职责：注册为 ReconciliationRegistry 的 reconciler，post-commit 自动触发。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d8_doc_sync/readme_version_sync_reconciler.py
   path: governance/d8_doc_sync/readme_version_sync_reconciler.py
   description: 职责：注册为 ReconciliationRegistry 的 reconciler，post-commit 自动触发。
@@ -2918,14 +3054,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/generators/generate_rule_ai_perception_index.py
-  path: governance/generators/generate_rule_ai_perception_index.py
-  description: 'generate_rule_ai_perception_index.py — 规则AI感知索引生成器（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）'
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/generators/generate_path_ownership_map.py
   path: governance/generators/generate_path_ownership_map.py
   description: '对标: CODEOWNERS + Bazel visibility。'
@@ -2937,6 +3065,14 @@ scripts:
 - name: governance/generators/generate_registry_master_index.py
   path: governance/generators/generate_registry_master_index.py
   description: generate_registry_master_index.py — 登记表总索引自动生成器
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/generators/generate_rule_ai_perception_index.py
+  path: governance/generators/generate_rule_ai_perception_index.py
+  description: 病根2治本：规则可发现性。64条 trae 规则分散在各 YAML 文件中，AI 无法在施工前
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3392,7 +3528,7 @@ scripts:
   dimensions: []
 - name: governance/migrate_sqlite_to_pg/migrate_data.py
   path: governance/migrate_sqlite_to_pg/migrate_data.py
-  description: SQLite → PostgreSQL 数据迁移脚本
+  description: SQLite → PostgreSQL 运营数据迁移脚本
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3424,7 +3560,7 @@ scripts:
   dimensions: []
 - name: governance/repair/apply_verification_results.py
   path: governance/repair/apply_verification_results.py
-  description: apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
+  description: 1. 批量替换DRIFTED路径（12条已知路径迁移）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4046,14 +4182,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: kb/self_test.py
-  path: kb/self_test.py
-  description: 实际实现位于 zephyr.gov_kb.self_test.SelfTest
-  domain: test
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: mcp/generate_ide_config.py
   path: mcp/generate_ide_config.py
   description: from __future__ import annotations
@@ -4182,14 +4310,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _archive/governance/dm101_blueprint_domain_mapping.py
-  path: _archive/governance/dm101_blueprint_domain_mapping.py
-  description: 'DM-101: 构建 blueprint_id → domain 映射表 + CSV 模块匹配文件'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: _archive/governance/dm106_p2b_verification.py
   path: _archive/governance/dm106_p2b_verification.py
   description: 'DM-106: P2-B 迁移全量验证脚本'
@@ -4209,14 +4329,6 @@ scripts:
 - name: _archive/governance/merge_domain_nodes.py
   path: _archive/governance/merge_domain_nodes.py
   description: import json
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _archive/governance/migrate_arch_f_functions.py
-  path: _archive/governance/migrate_arch_f_functions.py
-  description: 阶段1迁移脚本：创建37个F功能设计态节点 + 56条依赖边 + 5个域迁移 + 12个事件注册。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4305,14 +4417,6 @@ scripts:
 - name: _archive/governance/d3_metadata/fix_n12_ke_naming.py
   path: _archive/governance/d3_metadata/fix_n12_ke_naming.py
   description: '旧格式示例:'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _archive/governance/d3_metadata/fix_n15_blueprint_path.py
-  path: _archive/governance/d3_metadata/fix_n15_blueprint_path.py
-  description: 两类问题：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4465,14 +4569,6 @@ scripts:
 - name: _archive/migration/create_target_dirs.py
   path: _archive/migration/create_target_dirs.py
   description: python scripts/migration/create_target_dirs.py --batch 1
-  domain: _archive
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _archive/migration/cross_domain_import_fix.py
-  path: _archive/migration/cross_domain_import_fix.py
-  description: 1. 使用显式映射表（每条映射已通过磁盘验证）
   domain: _archive
   execution_plane: warm-path
   status: registered

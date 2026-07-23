@@ -526,7 +526,7 @@ TASKS = [
         "acceptance_criteria": [
             "AC1: kb不再import storage包",
             "AC2: agent_spec不再import pipeline",
-            "AC3: python -c 'from zephyr.governance.knowledge_management.kb import unified_memory_api' 成功",
+            "AC3: [OBSOLETE] KB模块已退役(2026-07)，zephyr.governance.knowledge_management已删除，此验证项不再适用",
             "AC4: diagnose_depgraph.py验证2个循环消失",
         ],
         "rollback_instructions": "git checkout恢复3个文件",
