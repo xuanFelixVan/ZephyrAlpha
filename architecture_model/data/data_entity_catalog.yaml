@@ -1,0 +1,306 @@
+# [A_config] module_id=CFG-data-entity-catalog | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/data_principles.md
+# module_id: CFG-DATA-ENTITY-CATALOG
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 概念数据实体清单真源,从 target_architecture/data_architecture.md §2 迁移(2026-07-23, B3-doc3)
+#         19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类。
+#         永恒原则(PIT/Survivorship/Lineage/MDM/Quality/Retention/Classification)见 data_principles.md
+#         物理表清单(97 张 ClickHouse 表)见 05_dataflow_architecture/data_inventory.md(自动生成)
+#         本文件是"逻辑/概念数据模型",data_inventory.md 是"物理表存储",两者层次不同
+
+module_id: CFG-DATA-ENTITY-CATALOG
+version: "1.0.0"
+description: "概念数据实体清单——19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类(温度×节奏×来源)。从 data_architecture.md §2 迁移。永恒原则见 data_principles.md;物理表清单见 data_inventory.md。"
+
+# PIT 敏感度图例:
+#   high   = 任何错误都会让回测/归因撒谎(原 🔴 高)
+#   medium = 错误可被对账发现(原 🟡 中)
+#   low    = 事件流自然带时间(原 🟢 低)
+#   none   = 主数据/注册表,无 PIT 约束(原 —)
+#
+# 三维分类:
+#   temperature: hot(热,实时读写) / warm(温,当日/近期) / cold(冷,历史按需重载)
+#   rhythm:      stream(流,持续到达) / batch(批,周期性快照)
+#   source:      external(外,vendor) / internal(内,系统自产) / derived(派生,由其他实体计算)
+
+entities:
+  # ========== Market Data 域(行情数据) ==========
+
+  - id: E01
+    name: Tick
+    name_cn: 逐笔成交/盘口快照
+    domain: market_data
+    description: "单笔成交/盘口快照(symbol, ts_exchange, ts_ingest, price, volume, side, bid/ask 五档)"
+    lifecycle: "append-only,永不修改"
+    pit_sensitivity: high
+    storage_hint: "列存 / 时序库"
+    classification:
+      temperature: hot
+      rhythm: stream
+      source: external
+
+  - id: E02
+    name: Bar
+    name_cn: OHLCV 聚合
+    domain: market_data
+    description: "OHLCV 聚合(symbol, frequency=1m/5m/1d, ts_open, ts_close, open, high, low, close, volume, vwap)"
+    lifecycle: "append-only;当日 bar 在收盘前可滚动更新"
+    pit_sensitivity: high
+    storage_hint: "时序库"
+    classification:
+      intraday: {temperature: hot, rhythm: stream, source: derived}
+      eod: {temperature: warm, rhythm: batch, source: derived}
+
+  - id: E03
+    name: OrderBookSnapshot
+    name_cn: L2 深度快照
+    domain: market_data
+    description: "L2 深度快照(symbol, ts, levels[10])"
+    lifecycle: "append-only"
+    pit_sensitivity: high
+    storage_hint: "时序库 / 对象存储"
+    classification:
+      temperature: hot
+      rhythm: stream
+      source: external
+
+  - id: E04
+    name: CorporateAction
+    name_cn: 公司行动(分红/拆股/配股/合并)
+    domain: market_data
+    description: "分红 / 拆股 / 配股 / 合并事件(symbol, ex_date, action_type, ratio, cash_amount)"
+    lifecycle: "主数据,可修订(修订必须留痕)"
+    pit_sensitivity: high
+    storage_hint: "OLTP + 历史快照"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: external
+
+  # ========== Reference & Master Data 域(参考与主数据) ==========
+
+  - id: E05
+    name: Security
+    name_cn: 证券主数据(Security/Instrument)
+    domain: reference_master
+    description: "证券主数据(symbol, isin, exchange, sector, industry, listing_date, delisting_date, status, currency)"
+    lifecycle: "主数据,必须保留历史版本(退市后保留)"
+    pit_sensitivity: high
+    storage_hint: "OLTP + bitemporal 表"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: external
+
+  - id: E06
+    name: TradingCalendar
+    name_cn: 交易日历
+    domain: reference_master
+    description: "交易日历(exchange, date, is_trading, half_day, session_open, session_close)"
+    lifecycle: "主数据,按月维护"
+    pit_sensitivity: medium
+    storage_hint: "OLTP"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: external
+
+  - id: E07
+    name: IndexConstituent
+    name_cn: 指数成分
+    domain: reference_master
+    description: "指数成分(index_code, symbol, weight, effective_date, end_date)"
+    lifecycle: "主数据,bitemporal(必须 PIT 查询)"
+    pit_sensitivity: high
+    storage_hint: "OLTP + bitemporal 表"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: external
+      note: "bitemporal"
+
+  # ========== Research & Factor 域(研究与因子) ==========
+
+  - id: E08
+    name: Factor
+    name_cn: 因子定义
+    domain: research_factor
+    description: "因子定义(factor_id, name, formula_ref, frequency, asof_offset, lineage_root)"
+    lifecycle: "注册即不可变(变更=新版本)"
+    pit_sensitivity: none
+    storage_hint: "OLTP(registry)"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: internal
+
+  - id: E09
+    name: FactorValue
+    name_cn: 因子取值
+    domain: research_factor
+    description: "因子取值(factor_id, symbol, asof_date, ts_calc, value, status)"
+    lifecycle: "append-only;必须含 asof_date 与 ts_calc"
+    pit_sensitivity: high
+    storage_hint: "列存 / 特征仓"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: derived
+      note: "夜间批 + 日内流"
+
+  - id: E10
+    name: FeatureSet
+    name_cn: 特征集
+    domain: research_factor
+    description: "特征集(feature_set_id, factor_ids[], asof_date, lineage_root)"
+    lifecycle: "append-only;快照式"
+    pit_sensitivity: high
+    storage_hint: "特征仓 / 对象存储"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: derived
+
+  # ========== Signal & Strategy 域(信号与策略) ==========
+
+  - id: E11
+    name: Signal
+    name_cn: 策略输出信号
+    domain: signal_strategy
+    description: "策略输出信号(strategy_id, symbol, ts, signal_type, magnitude, lineage_root)"
+    lifecycle: "append-only"
+    pit_sensitivity: high
+    storage_hint: "时序库"
+    classification:
+      temperature: hot
+      rhythm: stream
+      source: derived
+
+  - id: E12
+    name: TargetPosition
+    name_cn: 目标持仓
+    domain: signal_strategy
+    description: "目标持仓(portfolio_id, symbol, target_weight, ts_decision, lineage_root)"
+    lifecycle: "append-only"
+    pit_sensitivity: medium
+    storage_hint: "OLTP"
+    classification:
+      temperature: hot
+      rhythm: stream
+      source: derived
+
+  # ========== Execution & Position 域(执行与持仓) ==========
+
+  - id: E13
+    name: Order
+    name_cn: 委托
+    domain: execution_position
+    description: "委托(client_order_id, symbol, side, qty, type, ts_create, parent_order_id?)"
+    lifecycle: "状态机: new → routed → partial → filled / cancelled / rejected"
+    pit_sensitivity: low
+    storage_hint: "OLTP + 事件流"
+    classification:
+      temperature: hot
+      rhythm: stream
+      source: internal
+    contract_ref: "CTR-004 (Order, mutable) — architecture_model/contracts/cross_layer_contracts.yaml"
+
+  - id: E14
+    name: Fill
+    name_cn: 成交回报(Fill/Execution)
+    domain: execution_position
+    description: "成交回报(exec_id, order_id, ts_exec, qty, price, venue, fee)"
+    lifecycle: "append-only"
+    pit_sensitivity: low
+    storage_hint: "OLTP + 事件流"
+    classification:
+      temperature: hot
+      rhythm: stream
+      source: internal
+    contract_ref: "CTR-005 (Fill, frozen) — architecture_model/contracts/cross_layer_contracts.yaml"
+
+  - id: E15
+    name: Position
+    name_cn: 持仓快照
+    domain: execution_position
+    description: "持仓快照(account_id, symbol, qty, avg_cost, ts_snapshot)"
+    lifecycle: "bitemporal(valid_time + transaction_time)"
+    pit_sensitivity: medium
+    storage_hint: "OLTP"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: derived
+      note: "批(快照) + 流(实时增量)"
+    contract_ref: "CTR-006 (PositionSnapshot, frozen) — architecture_model/contracts/cross_layer_contracts.yaml"
+
+  - id: E16
+    name: Portfolio
+    name_cn: 组合定义
+    domain: execution_position
+    description: "组合定义(portfolio_id, name, base_currency, capital, mandate)"
+    lifecycle: "主数据"
+    pit_sensitivity: none
+    storage_hint: "OLTP"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: internal
+
+  # ========== Risk & PnL 域(风险与盈亏) ==========
+
+  - id: E17
+    name: RiskMetric
+    name_cn: 风险指标
+    domain: risk_pnl
+    description: "风险指标(portfolio_id, metric_name=VaR/Beta/Exposure/..., ts, value, scenario_id?)"
+    lifecycle: "append-only"
+    pit_sensitivity: medium
+    storage_hint: "时序库"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: derived
+
+  - id: E18
+    name: PnL
+    name_cn: 盈亏
+    domain: risk_pnl
+    description: "盈亏(portfolio_id, ts, realized, unrealized, fees, by_book, lineage_root)"
+    lifecycle: "append-only;T+1 修订需保留旧版本"
+    pit_sensitivity: medium
+    storage_hint: "OLTP"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: derived
+
+  - id: E19
+    name: Benchmark
+    name_cn: 基准
+    domain: risk_pnl
+    description: "基准(benchmark_id, type, components[], ts)"
+    lifecycle: "主数据"
+    pit_sensitivity: none
+    storage_hint: "OLTP"
+    classification:
+      temperature: warm
+      rhythm: batch
+      source: external
+
+# ========== 实体上下游关系(一句话叙事,源自 data_architecture.md §2.7) ==========
+# 每条 → 对应 data_principles.md §4 的一条血缘边(lineage edge),有 lineage_root 字段在实体里显式登记
+
+relationships:
+  - flow: "Tick / OrderBookSnapshot → (聚合) → Bar"
+  - flow: "Bar + Security + CorporateAction → (PIT 复权) → AdjustedBar(虚拟视图)"
+  - flow: "AdjustedBar + IndexConstituent → (因子计算 asof) → FactorValue"
+  - flow: "FactorValue → FeatureSet → (策略) → Signal"
+  - flow: "Signal → TargetPosition"
+  - flow: "TargetPosition → Order(CTR-004) → Fill(CTR-005) → Position(CTR-006)"
+  - flow: "Fill/Position → PnL / RiskMetric"

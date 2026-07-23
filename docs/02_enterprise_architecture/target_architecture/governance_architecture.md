@@ -77,7 +77,7 @@ ttl: permanent
 | docs/ 文档抽屉治理规则 | `information_architecture.md` | §4 A-01/A-03 引用 |
 | src/ 代码域分层规则 | `application_architecture.md` | §4 A-16 引用 |
 | scripts/ 治理代码拓扑 | `application_architecture.md §5` | §2 Factory 层引用 |
-| 数据层治理（PIT / Survivorship / Lineage）| `data_architecture.md §8` | §4 A-07 F 函数引用 |
+| 数据层治理（PIT / Survivorship / Lineage）| `../04_architecture_principles_decisions/data_principles.md §6` | §4 A-07 F 函数引用 |
 | 集成契约治理 | `integration_architecture.md §6` | §4 A-15 OCP 引用 |
 | 安全威胁治理（IAM / KMS / Audit）| `security_architecture.md`（skeleton）| §4 A-10 引用 |
 | 运维治理（监控 / Runbook / DR）| `operations_architecture.md`（skeleton）| §6 T1-T6 联动 |

@@ -134,7 +134,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | information_principles.md → ../04_architecture_principles_decisions/ | IA 信息架构原则（原 information_architecture.md 已迁移） |
 | technology_architecture.md | TA 技术架构视图 |
 | capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
-| data_architecture.md | DA 数据架构视图 |
+| data_principles.md → ../04_architecture_principles_decisions/ + data_entity_catalog.yaml | DA 数据架构原则（原 data_architecture.md 已迁移） |
 | security_architecture.md | SEC 安全架构视图 |
 | operations_architecture.md | OPS 运维架构视图 |
 | governance_architecture.md | GOV 治理架构视图 |
@@ -171,7 +171,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
 | `technology_architecture.md` | TA | 用什么技术栈？ | SRE、实施者 | active |
 | `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
-| `data_architecture.md` | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
+| [`data_principles.md`](../04_architecture_principles_decisions/data_principles.md) + [`data_entity_catalog.yaml`](../../../architecture_model/data/data_entity_catalog.yaml) | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
 | `operations_architecture.md` | OPS | 运维域全景？ | SRE、运维工程师 | draft |
 | `governance_architecture.md` | GOV | 治理体系三层边界？ | 架构师、合规 | active |

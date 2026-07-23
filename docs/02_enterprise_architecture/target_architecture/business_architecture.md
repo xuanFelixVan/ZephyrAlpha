@@ -112,7 +112,7 @@ This view **drives** the Information Architecture (what to document), which driv
 
 ### 2.4 与 other views 的边界 / 与其他视图的边界
 
-- 本 §2 是**业务层** Stakeholder & RACI；**应用层**的系统 Actor 与模块 Owner 映射见 `application_architecture.md`；**数据层**的数据 Owner/Steward 见 `data_architecture.md §7 MDM`；**治理层** AI Operator 架构见 `META_GOVERNANCE/ai_operators_registry.md`（预留）。
+- 本 §2 是**业务层** Stakeholder & RACI；**应用层**的系统 Actor 与模块 Owner 映射见 `application_architecture.md`；**数据层**的数据 Owner/Steward 见 `../04_architecture_principles_decisions/data_principles.md §5 MDM`；**治理层** AI Operator 架构见 `META_GOVERNANCE/ai_operators_registry.md`（预留）。
 - S9 AI Operators 的物理落地位置（`_ai_operator/` 命名空间）由 `OQ-063 AC-1/2/3 + C-1/2/3 + D-1/2/3 + F-1/2/3` 管理；本视图只登记**业务角色占位**，不展开技术实现。
 
 ---
@@ -270,7 +270,7 @@ Handoff 是 VSM 中最易产生**信息损失 + 责任真空 + 数据污染**的
 ### 5.5 与其他视图的边界 / 边界
 
 - 本节只定义**业务 SLO 的目标值与定义**；**SLI 如何实现**（Metrics/Logs/Traces 具体 pipeline）见 `technology_architecture.md §10 Observability`（H14 任务交付，当前占位）。
-- **Data Quality SLO-7** 的技术细节（PIT / Survivorship / Lineage 实现与断言）见 `data_architecture.md §4/§5/§6/§8`。
+- **Data Quality SLO-7** 的技术细节（PIT / Survivorship / Lineage 实现与断言）见 `../04_architecture_principles_decisions/data_principles.md §2/§3/§4/§6`。
 - **Availability SLO-6** 的 DR/BCP 细化（RTO/RPO）见 `technology_architecture.md §11`（H15 任务交付，当前占位）。
 - **Order Idempotency（SLO-3 的幂等前置）** 见 `application_architecture.md §9`（H10 任务交付，当前占位）。
 

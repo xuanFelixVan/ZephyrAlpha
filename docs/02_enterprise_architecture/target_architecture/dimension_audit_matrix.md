@@ -67,7 +67,7 @@ ttl: permanent
 | **D6** | 安全架构 | 防御深度、OWASP LLM Top 10 覆盖、沙箱隔离 | 0.12 | `security_architecture.md` + `llm-security-gateway-interface.md` |
 | **D7** | Agent 编排 | 任务生命周期、幻觉检测、状态机完整性 | 0.10 | `agent-orchestrator-interface.md` |
 | **D8** | 反馈闭环 | 指标-异常-动作链路、可观测性 | 0.10 | `feedback-loop-engine-interface.md` |
-| **D9** | 数据架构 | 存储一致性、备份/恢复、容灾 | 0.06 | `data_architecture.md` |
+| **D9** | 数据架构 | 存储一致性、备份/恢复、容灾 | 0.06 | `../04_architecture_principles_decisions/data_principles.md` + `architecture_model/data/data_entity_catalog.yaml` |
 | **D10** | 运维架构 | SLI/SLO、可观测性三支柱、告警 | 0.08 | `operations_architecture.md` |
 | **D11** | 安全运营 | Secret 防护、供应链安全、审计合规 | 0.06 | `security_architecture.md §6` |
 | **D12** | 治理架构 | SSoT 一致性、KB 决策记录 覆盖、流程门禁 | 0.06 | `governance_architecture.md` |

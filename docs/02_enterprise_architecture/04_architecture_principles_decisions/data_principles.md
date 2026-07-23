@@ -23,7 +23,7 @@ tags:
 - data-quality
 - feature-store
 - retention
-summary: 数据架构永恒原则——PIT 红线、Survivorship Bias 防御、血缘三层、MDM 三件套、质量门禁五类断言、保留与归档、三维分类。派生数据（19 实体清单、字段级 schema）由 05_dataflow_architecture/data_inventory.md 自动生成。
+summary: 数据架构永恒原则——PIT 红线、Survivorship Bias 防御、血缘三层、MDM 三件套、质量门禁五类断言、保留与归档、三维分类。概念实体清单(19 条核心业务数据实体)在 architecture_model/data/data_entity_catalog.yaml；物理表清单(97 张 ClickHouse 表)由 05_dataflow_architecture/data_inventory.md 自动生成；字段级 schema 真源在 03_modules/_domain_data/(D_DATA_ENG 域)。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -31,9 +31,10 @@ ttl: permanent
 # Data Architecture Principles / 数据架构原则
 
 > 本文档定义永恒指导原则。
-> 派生数据（实体清单、字段级 schema、血缘图）由以下机制自动生成：
-> - `scripts/governance/d5_architecture/generators/generate_data_inventory.py` → `../05_dataflow_architecture/data_inventory.md`
-> - `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py` → 跨域数据流图
+> 结构化数据与派生数据由以下机制维护：
+> - 概念实体清单（19 条核心业务数据实体 E01-E19）真源：`architecture_model/data/data_entity_catalog.yaml`
+> - 物理表清单（97 张 ClickHouse 表，自动生成）：`generate_data_inventory.py` → `../05_dataflow_architecture/data_inventory.md`
+> - 跨域数据流图（自动生成）：`generate_dataflow_diagram.py`
 > - 字段级 schema 真源在 `03_modules/_domain_data/`（D_DATA_ENG 域）
 
 ## 1. 本原则的定位
@@ -278,5 +279,6 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 |---|---|
 | `architecture_principles.md` | 本文是总纲 §4 核心架构决策的数据架构子原则 |
 | `capability_maturity_principles.md` | 数据域（D_MKT_DATA/D_FACTOR/D_DATA_ENG 等）的成熟度评估遵循该文定义 |
-| `../05_dataflow_architecture/data_inventory.md` | 自动生成的实体清单（派生数据），实体定义遵循本文 PIT/lineage/MDM 原则 |
+| `../05_dataflow_architecture/data_inventory.md` | 自动生成的物理表清单（97 张 ClickHouse 表，派生数据），表定义遵循本文 PIT/lineage/MDM 原则 |
+| `architecture_model/data/data_entity_catalog.yaml` | 概念实体清单（19 条核心业务数据实体 E01-E19），实体定义遵循本文 PIT/lineage/MDM 原则 |
 | `03_modules/_domain_data/` | 字段级 schema 真源（D_DATA_ENG 域物化点），遵循本文 PIT/质量门禁原则 |
