@@ -6854,6 +6854,13 @@ creation_tokens:
     token: "auto-relative-path-literal-gate-20260721"
     created_by: "sess-46560-20260721162044"
     capability: "twelve_dimension_audit_automation"
+  # schema_file_exists_gate——SCHEMA-FILE-EXISTS block 门禁（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase 1）
+  # 治本（防重建）：CREATE-GUARD 阻断无 token 的 schema_file_exists_gate 副本
+  # session: ARCH-SSOT-REFERENCE-INTEGRITY-001
+  - file: "src/zephyr/gov_enforcement/commit_gates/schema_file_exists_gate.py"
+    token: "auto-schema-file-exists-gate-20260723"
+    created_by: "ARCH-SSOT-REFERENCE-INTEGRITY-001"
+    capability: "twelve_dimension_audit_automation"
   - file: "src/zephyr/governance/audit/cross_layer_contract_signature_reconciler.py"
     token: "auto-cross-layer-contract-signature-reconciler-20260721"
     created_by: "sess-46560-20260721162044"
