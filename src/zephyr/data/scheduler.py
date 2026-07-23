@@ -194,42 +194,66 @@ def _run_schedule_dag(
     原方案用 _schedule_dag_lock 全局锁串行化所有调度周期，但导致 intraday_sector
     等独立执行器的时段被 intraday_realtime（5+分钟）阻塞，独立执行器形同虚设。
     新方案：局部 task_queue + 参数传递，各调度周期互不干扰，无需全局锁。
+
+    动态调度（治本修复 #ARCH-DAG-DYNAMIC-SCHEDULING，2026-07-23）：
+    原方案为批次同步——提交所有就绪任务到线程池，等待全部完成后再查下一批。
+    导致长任务（如 stock_indicator 60+分钟）阻塞短任务（adj_factor 4分钟）的
+    依赖者（kline_daily_hfq）无法及时启动。新方案用 FIRST_COMPLETED 动态调度：
+    任务完成后立即检查并提交新就绪的依赖任务，无需等待同批次其他任务完成。
     """
     # 局部 TaskQueue——每个调度周期独立，避免并发调度互相覆盖（裁定 #ARCH-CH-016 v2）
     task_queue = TaskQueue()
     for t in schedule_tasks:
         task_queue.add_task(t)
 
-    # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
-    from concurrent.futures import ThreadPoolExecutor, as_completed
+    # 动态调度——FIRST_COMPLETED 模式：任务完成后立即提交新就绪的依赖任务
+    from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
 
     results: dict[str, bool] = {}
-    while not task_queue.is_done():
-        ready = task_queue.get_ready_tasks()
-        if not ready:
-            # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
-            blocked = task_queue.list_by_status("BLOCKED")
-            if blocked:
-                log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
-            break
-        if len(ready) == 1:
-            # 单任务直接执行（避免线程池开销）
-            results[ready[0]] = scheduler.run_task(ready[0], task_queue=task_queue)
-        else:
-            # 多任务并行执行（利用线程池，最多8并发）
-            max_workers = min(len(ready), 8)
-            with ThreadPoolExecutor(max_workers=max_workers) as pool:
-                future_map = {
-                    pool.submit(scheduler.run_task, tid, task_queue): tid
-                    for tid in ready
-                }
-                for future in as_completed(future_map):
-                    tid = future_map[future]
-                    try:
-                        results[tid] = future.result()
-                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                        log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
-                        results[tid] = False
+    max_workers = 8
+
+    # 初始就绪任务
+    ready = task_queue.get_ready_tasks()
+    if not ready:
+        blocked = task_queue.list_by_status("BLOCKED")
+        if blocked:
+            log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
+        log.info("时段 %s 完成: 0 成功, 0 失败", schedule_name)
+        return results
+
+    submitted: set[str] = set()
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        future_map: dict = {}
+        for tid in ready:
+            future_map[pool.submit(scheduler.run_task, tid, task_queue=task_queue)] = tid
+            submitted.add(tid)
+
+        # 动态循环：任务完成即检查并提交新就绪的依赖任务
+        while future_map:
+            done, _ = wait(future_map.keys(), return_when=FIRST_COMPLETED)
+            for future in done:
+                tid = future_map.pop(future)
+                try:
+                    results[tid] = future.result()
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
+                    results[tid] = False
+
+            # 刚完成的任务可能解锁了依赖者——立即检查并提交
+            if not task_queue.is_done():
+                new_ready = task_queue.get_ready_tasks()
+                for tid in new_ready:
+                    if tid not in submitted:
+                        future_map[pool.submit(
+                            scheduler.run_task, tid, task_queue=task_queue
+                        )] = tid
+                        submitted.add(tid)
+
+    # 检查 BLOCKED 任务（前置失败的下游任务）
+    blocked = task_queue.list_by_status("BLOCKED")
+    if blocked:
+        log.warning("时段 %s 有 %d 个 BLOCKED 任务: %s",
+                     schedule_name, len(blocked), blocked)
 
     # 汇总
     success_count = sum(1 for v in results.values() if v)
@@ -854,6 +878,9 @@ class IntegratorScheduler:
                         "任务 %s 源 %s 失败，尝试下一个源",
                         task_id, source,
                     )
+        # 所有源都失败——确保任务标记为 FAILED（治本修复 #ARCH-DAG-DYNAMIC-SCHEDULING）
+        # _try_source 在验证阶段失败时不会 mark_failed，需在此兜底
+        tq.mark_failed(task_id)
         return False
 
     def _try_source(
@@ -1005,7 +1032,6 @@ class IntegratorScheduler:
             self._alerter.notify(
                 task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
             )
-            tq.mark_failed(task_id)
             return None, None, f"源 {source} 已熔断"
 
         return provider, policy, None

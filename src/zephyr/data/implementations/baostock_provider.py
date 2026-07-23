@@ -40,6 +40,7 @@ from ..provider_base import (
     DataSourceMeta,
     FetchPayload,
     FetchResult,
+    CapabilityContract,
 )
 from ..policy_registry import SourcePolicy
 from ..table_registry import get_registry
@@ -67,7 +68,15 @@ class BaostockProvider(DataSourceBase):
         requires_process=False,
         thread_safety="thread_local",
         rate_limit_default=60,
-        capabilities=["index_constituent", "trade_calendar", "kline_daily"],
+        capabilities=[
+            # 治本修复#ARCH-CAP-NULL-SYMBOLS-001（2026-07-23）：
+            # baostock 的 index_constituent/trade_calendar 均为全量查询接口
+            # （bs.query_hs300_stocks / bs.query_trade_dates 不接受 symbols 参数），
+            # 显式声明 supports_symbols_null=True 消除 WARN。
+            CapabilityContract("index_constituent", supports_symbols_null=True),
+            CapabilityContract("trade_calendar", supports_symbols_null=True),
+            CapabilityContract("kline_daily", supports_symbols_null=False),
+        ],
         known_issues=["数据滞后约1周", "需thread_local登录"],
     )
 
