@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-508 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """
 DM-100016: governance.db端到端功能测试
 覆盖7大子系统(任务/门禁/知识/审计/漂移/FLE/基础设施)的CRUD操作

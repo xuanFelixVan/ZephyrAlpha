@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_LONG_PARAM_LIST_GATE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """_gate_test_helpers.py — commit gate 测试共享 mock gateway 构造器。
 
 提取自 test_datetime_now_forbidden_gate.py 的 _make_mock_gateway，
