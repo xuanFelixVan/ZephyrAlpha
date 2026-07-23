@@ -8310,3 +8310,27 @@ entries:
   related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 5.135治标'
   created: '2026-07-23'
   last_updated: '2026-07-23'
+
+# --- #ARCH-OPTION-CODE-SUFFIX-001: 期权/可转债代码后缀缺失导致 IV/Greeks 计算 rows=0 ---
+- issue_id: '#ARCH-OPTION-CODE-SUFFIX-001'
+  title: '_load_option_symbols_from_kline/_load_cb_details_map 返回无后缀代码，xtdata 调用失败导致 option_iv_surface/option_greeks/convertible_bond_iv 数据停滞 07-10'
+  category: data_source
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定。根因：_load_option_symbols_from_kline 从 option_kline 表查询 symbol 列，
+    该列存储去后缀代码（如 "10010972"，由 _stock_to_symbol 在写入时去后缀），但 xtdata
+    get_instrument_detail/get_market_data_ex 需要带交易所后缀代码（如 "10010972.SHO"）。
+    同理 _load_cb_details_map 的 key 是 akshare 返回的无后缀 bond_code（如 "127115"），
+    但 _process_single_cb 用它直接调用 xtdata，导致 detail=None 返回 rows=0。
+    治本：_load_option_symbols_from_kline 根据代码前缀重建后缀（100xxxxx→.SHO，900xxxxx→.SZO）；
+    _load_cb_details_map 的 key 改为带后缀（11xxxx→.SH，12xxxx→.SZ）；
+    _process_single_cb 中 cb_info 查找从 code_6 改为直接用 cb_code（两者都是带后缀）。
+    验证：手动测试 option_iv_surface rows=1（成功计算 IV），option_greeks rows=1（delta=0.726），
+    _load_option_symbols_from_kline 返回 165 个带后缀代码，_load_cb_details_map 返回 1037 个带后缀 key。
+  impact:
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（_load_option_symbols_from_kline 重建后缀 + _load_cb_details_map key 带后缀 + _process_single_cb 查找逻辑）'
+  fix_phase: 已完成施工+验证（2026-07-23）。手动测试 IV/Greeks 计算成功。
+  status: resolved
+  related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 裁定 #ARCH-OPTION-GREEKS-001'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'

@@ -1895,11 +1895,15 @@ class MiniQMTProvider(DataSourceBase):
     def _load_option_symbols_from_kline(self) -> list[str]:
         """从 c1_market.option_kline 表加载最近30天有数据的期权合约代码。
 
-        option_iv_surface 任务配置 symbols=null，需从已有 option_kline 数据
-        反查活跃合约列表（约142个），避免 for 循环空转返回 rows=0。
+        option_iv_surface/option_greeks 任务配置 symbols=null，需从已有 option_kline 数据
+        反查活跃合约列表（约165个），避免 for 循环空转返回 rows=0。
+
+        option_kline 表 symbol 列存储去后缀代码（如 "10010972"），但 xtdata
+        get_instrument_detail/get_market_data_ex 需要带交易所后缀代码（如 "10010972.SHO"）。
+        本方法根据代码前缀重建后缀：100xxxxx→.SHO（上证期权），900xxxxx→.SZO（深证期权）。
 
         Returns:
-            期权合约代码列表（如 ["10000001", ...]），查询失败返回空列表
+            带后缀的期权合约代码列表（如 ["10010972.SHO", ...]），查询失败返回空列表
         """
         try:
             sql = (
@@ -1911,7 +1915,18 @@ class MiniQMTProvider(DataSourceBase):
             if not tsv or not tsv.strip():
                 self._log.warning("_load_option_symbols_from_kline: option_kline 表无近30天数据")
                 return []
-            symbols = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+            raw_codes = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+            # 重建带后缀代码：100xxxxx→.SHO，900xxxxx→.SZO
+            symbols = []
+            for code in raw_codes:
+                if code.startswith("100"):
+                    symbols.append(f"{code}.SHO")
+                elif code.startswith("900"):
+                    symbols.append(f"{code}.SZO")
+                else:
+                    # 未知前缀，保留原代码（xtdata 会报错跳过）
+                    self._log.debug(f"_load_option_symbols_from_kline: 未知期权代码前缀 {code}")
+                    symbols.append(code)
             self._log.info(f"_load_option_symbols_from_kline: 加载 {len(symbols)} 个期权合约")
             return symbols
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -2091,7 +2106,12 @@ class MiniQMTProvider(DataSourceBase):
             yield from self._process_single_cb(cb_code, cb_details_map, ctx)
 
     def _load_cb_details_map(self, policy: SourcePolicy) -> dict:
-        """从 akshare 获取可转债详情（转股价/正股代码），miniQMT 不提供这些字段。"""
+        """从 akshare 获取可转债详情（转股价/正股代码），miniQMT 不提供这些字段。
+
+        akshare bond_zh_cov 返回的 bond_code 无交易所后缀（如 "127115"），
+        但 xtdata get_instrument_detail/get_market_data_ex 需要带后缀代码。
+        本方法根据代码前缀重建后缀：11xxxx→.SH（沪市转债），12xxxx→.SZ（深市转债）。
+        """
         cb_details_map = {}
         try:
             import akshare as ak
@@ -2102,6 +2122,14 @@ class MiniQMTProvider(DataSourceBase):
                 conv_price = self.safe_float(row.get("转股价"))
                 if not bond_code or not stock_code:
                     continue
+                # 重建带后缀的可转债代码：11xxxx→.SH，12xxxx→.SZ
+                if bond_code.startswith("11"):
+                    cb_key = f"{bond_code}.SH"
+                elif bond_code.startswith("12"):
+                    cb_key = f"{bond_code}.SZ"
+                else:
+                    # 未知前缀，保留原代码（xtdata 会报错跳过）
+                    cb_key = bond_code
                 # 转换正股代码为 miniQMT 格式
                 if stock_code.startswith(("60", "68")):
                     ul = stock_code + ".SH"
@@ -2111,7 +2139,7 @@ class MiniQMTProvider(DataSourceBase):
                     ul = stock_code + ".BJ"
                 else:
                     ul = stock_code
-                cb_details_map[bond_code] = {"underlying": ul, "convert_price": conv_price}
+                cb_details_map[cb_key] = {"underlying": ul, "convert_price": conv_price}
             self._log.info(f"获取 {len(cb_details_map)} 只可转债详情（akshare bond_zh_cov）")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"akshare bond_zh_cov 失败: {e}")
@@ -2185,8 +2213,9 @@ class MiniQMTProvider(DataSourceBase):
                 # miniQMT 字段名是 ExpireDate（非 EndDate）
                 end_date = detail.get("ExpireDate", "")
                 # 从 akshare 映射获取转股价和正股代码
-                code_6 = cb_code.split(".")[0]
-                cb_info = cb_details_map.get(code_6, {})
+                # _load_cb_details_map 的 key 已是带后缀代码（如 "127115.SZ"），
+                # 与 cb_code 一致，直接查找
+                cb_info = cb_details_map.get(cb_code, {})
                 convert_price = cb_info.get("convert_price")
                 underlying = cb_info.get("underlying", "")
                 # 解析到期日（T 在遍历时逐日计算）
