@@ -664,6 +664,22 @@ repos:
 
       # ── GATE-CONTRACT-PHYSICAL-PATH 已合并到 GATE-C2（见上 gate-c2）──
 
+      # ── GATE-CANONICAL-YAML-DRIFT: canonical YAML SSoT 防漂移门禁（Phase B 治本，2026-07-24）──
+      # 权威依据：Phase B（commit d747ae3251 遗留 5 项 YAML 陈旧问题）
+      # 真源：scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py
+      # 检测内容：5 项断言——A1 Python 版本对齐 pyproject.toml / A2 G0.5 条目存在 /
+      #           A3 src/ 路径目录存在 / A4 runtime_plane_tag 全限定路径 / A5 治理配置 .trae/rules/ 无 .cursor 残留
+      # 触发范围：4 个 canonical YAML + pyproject.toml + chart_factory.py（G0.5 真源）
+      - id: gate-canonical-yaml-drift
+        name: "GATE-CANONICAL-YAML-DRIFT: canonical YAML SSoT 防漂移（Phase B 5 项断言）"
+        entry: python scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py --ci
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(architecture_model/technology/technology_landscape\\.yaml|architecture_model/contracts/cross_layer_contracts\\.yaml|architecture_model/cross_cutting/runtime_planes\\.yaml|architecture_model/governance_systems_registry\\.yaml|pyproject\\.toml|src/zephyr/frontend/dashboard/components/chart_factory\\.py)$"
+        stages: [commit]
+        description: "canonical YAML SSoT 防漂移——5 项断言防止 Phase A 修过的 markdown 同步到 YAML 后再被改回陈旧值（human_gated YAML 无 reconciler 自动重生，靠本门禁兜底）"
+
       # ── GATE-ENCODING: 编码安全+mojibake+BOM检测（合并 GATE-BOM，DM-379 强制执行层）──
       # 权威依据：encoding_safety_standard.md (GOV-DOC-005) + DM-379 根因修复
       # 检测范围：全项目（--dir . 递归扫描，覆盖原 GATE-BOM 的 yaml/md/py 范围）
@@ -756,7 +772,7 @@ repos:
         description: "代码重复检测门禁——委托 verify_dedup.py -> cli.py verify，AST 级函数粒度重复检测。阶段1：manual 手动运行，不阻断 commit"
 
       # ── GATE-DEBT-BRIDGE: 架构债务防御门禁（5.96 维度防复发，R67 引入）──
-      # 权威依据：docs/02_enterprise_architecture/architecture_debt_registry.md 5.96 维度
+      # 权威依据：docs/02_enterprise_architecture/audit_dimensions_checklist.md 5.96 维度
       # 真源：scripts/governance/d7_code/scan_debt.py
       # 检测内容：3 类 AI 易复发的代码异味
       #   DEBT-1 dataclass 含 action/role 字段 + ≥2 个派生布尔字段（5.96.2 病根）
@@ -779,7 +795,7 @@ repos:
         description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段2 已转硬阻断（R68 存量清零）"
 
       # ── GATE-ANY-ABUSE: 类型注解 Any 滥用门禁（5.145 维度防复发，R70 引入）──
-      # 权威依据：docs/02_enterprise_architecture/architecture_debt_registry.md 5.145 维度
+      # 权威依据：docs/02_enterprise_architecture/audit_dimensions_checklist.md 5.145 维度
       # 真源：scripts/governance/d7_code/check_any_abuse.py
       # 检测内容：函数签名中的"裸 Any 滥用"——AI 偷懒写法的典型模式
       #   ANY-1 函数参数类型为裸 Any（非 dict[str, Any] 等容器型，应替换为具体类型/Protocol）

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_CONCURRENT_WRITE_TEST | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python3
 """apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表
 
