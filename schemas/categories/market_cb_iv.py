@@ -21,7 +21,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     列（蓝图内部矛盾）。本文件以可执行为准——使用 ReplacingMergeTree（无版本列）。
     蓝图 §4.0 的 ingest_ts 版本列设计待 #ARCH-CH-009 后续裁定统一修正。
 
-    ingest_ts 审计列（2026-07-23 新增，audit 1.7 #ARCH-CH-022）：
+    ingest_ts 审计列（2026-07-23 新增，audit 1.7 #ARCH-CH-025）：
     新增 ingest_ts DateTime DEFAULT now() 作为入库时间戳审计列（非版本列）。
     不入 INSERT_COLUMNS（DEFAULT 自动填充）。
 """
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS c1_market.convertible_bond_iv
     conversion_premium  Decimal(18,6)  COMMENT '转股溢价率',
     data_source         LowCardinality(String)  COMMENT '数据来源(iFind)',
     quality_flag        UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts           DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7)'
+    ingest_ts           DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

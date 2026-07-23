@@ -25,8 +25,8 @@
 告警方式：
 - 日志（logging，输出到 logs/integrator.log）
 - 失败汇总文件（failures/{date}_{task_id}.json）
-- 飞书 webhook（ZEPHYR_FEISHU_WEBHOOK，未配置则静默跳过）—— audit 8.3 #ARCH-CH-023
-- SMTP 邮件（ZEPHYR_SMTP_*，未配置则静默跳过）—— audit 8.3 #ARCH-CH-023
+- 飞书 webhook（ZEPHYR_FEISHU_WEBHOOK，未配置则静默跳过）—— audit 8.3 #ARCH-DATA-PIPELINE-001
+- SMTP 邮件（ZEPHYR_SMTP_*，未配置则静默跳过）—— audit 8.3 #ARCH-DATA-PIPELINE-001
 
 设计要点：
 - 所有方法不抛异常（告警失败不应影响主流程）
@@ -67,7 +67,7 @@ LEVEL_WARN: Final[str] = "WARN"
 LEVEL_ERROR: Final[str] = "ERROR"
 LEVEL_CRITICAL: Final[str] = "CRITICAL"
 
-# --- 告警通道配置（audit 8.3，#ARCH-CH-023，2026-07-23）---
+# --- 告警通道配置（audit 8.3，#ARCH-DATA-PIPELINE-001，2026-07-23）---
 # 密钥走 .env（禁止入库）；未配置的通道静默跳过。
 _FEISHU_WEBHOOK_ENV: Final[str] = "ZEPHYR_FEISHU_WEBHOOK"
 _SMTP_HOST_ENV: Final[str] = "ZEPHYR_SMTP_HOST"
@@ -196,7 +196,7 @@ class Alerter:
             log.error("写失败汇总文件异常: %s", e)
             return False
 
-    # ============== 告警触达通道（audit 8.3，#ARCH-CH-023）==============
+    # ============== 告警触达通道（audit 8.3，#ARCH-DATA-PIPELINE-001）==============
     # 密钥走 .env（禁止入库）；未配置的通道静默跳过；发送失败 log 后吞掉。
 
     def _notify_channels(

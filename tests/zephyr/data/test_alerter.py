@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler, module_id corrected 2026-07-23)
+# [TTL] permanent
 """alerter 单测（MOD-L00-004 阶段2 + 阶段3 告警通道 audit 8.3）。
 
 测试内容：

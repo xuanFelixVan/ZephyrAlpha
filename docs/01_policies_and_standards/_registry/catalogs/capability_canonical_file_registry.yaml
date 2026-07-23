@@ -5859,6 +5859,16 @@ creation_tokens:
     token: "auto-data-alerter-20260706"
     created_by: "session-sess-37904-20260706052842"
     capability: "data_source_provider_abstraction"
+  # --- 告警通道实装（audit 8.3, #ARCH-DATA-PIPELINE-001, 2026-07-23）---
+  # 飞书 webhook + SMTP 邮件触达能力，ERROR/CRITICAL 级告警自动触达
+  - file: "src/zephyr/data/alerter.py"
+    token: "auto-data-alert-channel-20260723"
+    created_by: "session-sess-27772-20260723192606"
+    capability: "alert_channel_dispatch"
+  - file: "tests/zephyr/data/test_alerter.py"
+    token: "auto-test-alert-channel-20260723"
+    created_by: "session-sess-27772-20260723192606"
+    capability: "alert_channel_dispatch"
   - file: "src/zephyr/data/config/policies.yaml"
     token: "auto-data-config-policies-20260706"
     created_by: "session-sess-37904-20260706052842"
@@ -6925,6 +6935,28 @@ creation_tokens:
     token: "auto-pit-query-20260723"
     created_by: "session-arch-ch-021-pit5"
     capability: "financial_pit_query"
+
+  # ── warn-only→hard gate 批量升级（ARCH-WARN-TO-HARD-GATE-BATCH，2026-07-23）──
+  - file: "src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py"
+    token: "auto-asyncio-run-in-context-gate-20260723"
+    created_by: "session-warn-to-hard-gate-batch"
+    capability: "asyncio_run_in_context_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/mutable_const_without_final_gate.py"
+    token: "auto-mutable-const-without-final-gate-20260723"
+    created_by: "session-warn-to-hard-gate-batch"
+    capability: "mutable_const_without_final_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/open_without_with_gate.py"
+    token: "auto-open-without-with-gate-20260723"
+    created_by: "session-warn-to-hard-gate-batch"
+    capability: "open_without_with_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/zephyr_env_direct_access_gate.py"
+    token: "auto-zephyr-env-direct-access-gate-20260723"
+    created_by: "session-warn-to-hard-gate-batch"
+    capability: "zephyr_env_direct_access_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py"
+    token: "auto-mcp-version-field-gate-20260723"
+    created_by: "session-warn-to-hard-gate-batch"
+    capability: "mcp_version_field_gate"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
