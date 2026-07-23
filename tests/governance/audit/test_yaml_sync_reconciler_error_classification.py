@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2704 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_YAML_SYNC_ERROR_CLASS | docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md | §裁定 C / P2
+# [BLUEPRINT] MOD-GOV_YAML_SYNC_ERROR_CLASS | docs/_archive/ruling_guc_trigger_cascading_sync_failure.md | §裁定 C / P2
 # [MODULE] tests.governance.audit.test_yaml_sync_reconciler_error_classification
 # [STABILITY] volatile
 # [SAFETY] L

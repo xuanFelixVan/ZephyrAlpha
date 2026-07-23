@@ -1,10 +1,11 @@
+# [A_config] module_id=CFG-governance-convergence-map | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # governance_convergence_map.yaml — 治理层 151→6 收敛映射表
 # #ARCH-GOV-CONVERGENCE-META Phase 3.3
 #
 # 真源：本文件是治理组件→核心功能收敛映射的 SSoT。
 # 消费方：architecture_health_dashboard.py M19 指标
 #
-# 背景（architecture_debt_registry.md §一 line 643）：
+# 背景（ai_first_governance_principles.md §二）：
 #   治理体系自身 52 GATE + 17 reconciler + 34 词表 + 48 注册表 = 151 个治理组件
 #   治理组件数 > 被治理组件数时，治理体系自身就是最大漂移源
 #   战略建议：L5 治理层应从 14 功能收敛为 5-6 功能
@@ -17,6 +18,7 @@
 #   5. registry          — 注册表（所有注册表的统一管理）
 #   6. asset             — 资产（词表/契约/配置等数据资产）
 
+ttl: permanent
 meta:
   id: governance_convergence_map
   version: "1.0.0"
@@ -104,7 +106,7 @@ convergence_summary:
   # 目标：M19 ≤ 6（仅 6 个核心功能入口点）
 
 # ── 5 病根 × 3 要素覆盖矩阵（#ARCH-GOV-CONVERGENCE-META Phase 3.6）─────────
-# 病源：architecture_debt_registry.md §一 L358-363（5 个病根导致 3193 个问题）
+# 病源：ai_first_governance_principles.md §二（5 个病根导致 3193 个问题）
 # 3 要素（对标 capability_canonical_file_registry 的治本闭环模式）：
 #   - persistence（持久化）：治本方案持久化到 YAML/DB（非内存/脚本临时态）
 #   - discoverability（可发现）：新 AI 可通过 capability registry / MCP / metric 发现治本方案
@@ -114,7 +116,7 @@ root_cause_coverage:
   root_causes:
     - id: rc1_static_snapshot
       name: "静态快照未动态更新"
-      source: "architecture_debt_registry.md L359"
+      source: "architecture_debt_registry_v2.md L359"
       problem_classes: "~15类（159文件复制对 / 时间触发残留 / 重复簇）"
       elements:
         persistence:
@@ -132,7 +134,7 @@ root_cause_coverage:
 
     - id: rc2_vocab_chain_blindspot
       name: "词表→代码消费链机械盲区"
-      source: "architecture_debt_registry.md L360"
+      source: "architecture_debt_registry_v2.md L360"
       problem_classes: "~12类（41词表硬编码 / stability值域错位）"
       elements:
         persistence:
@@ -150,7 +152,7 @@ root_cause_coverage:
 
     - id: rc3_capability_lookup_suggestion
       name: "CapabilityLookup 建议性反查"
-      source: "architecture_debt_registry.md L361"
+      source: "architecture_debt_registry_v2.md L361"
       problem_classes: "~10类（40 GATE 无反查 / 重复造轮子）"
       elements:
         persistence:
@@ -168,7 +170,7 @@ root_cause_coverage:
 
     - id: rc4_manual_exception_permissive
       name: "manual 例外开口过大"
-      source: "architecture_debt_registry.md L362"
+      source: "architecture_debt_registry_v2.md L362"
       problem_classes: "~10类（96 manual 脚本 / rule_watcher 违规）"
       elements:
         persistence:
@@ -186,7 +188,7 @@ root_cause_coverage:
 
     - id: rc5_rule_inflation_execution_gap
       name: "规则膨胀执行断层"
-      source: "architecture_debt_registry.md L363"
+      source: "architecture_debt_registry_v2.md L363"
       problem_classes: "~5类（元原因，298问题反复出现）"
       elements:
         persistence:

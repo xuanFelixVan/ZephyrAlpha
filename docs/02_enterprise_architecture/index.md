@@ -55,12 +55,13 @@ ttl: permanent
 
 | 文件 | 说明 | 轨道 |
 |------|------|:---:|
-| architecture_debt_registry.md | 架构债务注册表（全项目架构债务单一真源，337个违规点+6个根因） | 人类视图 |
+| 04_architecture_principles_decisions/ai_first_governance_principles.md | AI-first 治理原则（5 病根 + 5 裁定，裁定1 已修正为"新增规则必须同时新增门禁"） | 人类视图 |
+| audit_dimensions_checklist.md | 审计审查维度清单（54 维度基座，48 FIXED + 6 PERMANENT wontfix） | 人类视图 |
+| _archive/architecture_debt_registry_v2.md | 已归档：架构债务注册表 v2.0.0（2026-07-24 归档，裁定#221/#222，活跃治理改由三件套承接） | 人类视图 |
 | 04_architecture_principles_decisions/dependency_path_panorama.md | 依赖与路径全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
 | _archive/architecture_decisions_pending.md | 已归档：决策清单（T6/T7/T17已裁定,T18暂缓） | 人类视图 |
 | _archive/ssot_authority_map.md | 已归档：SSoT权威映射（权威角色已被专门YAML取代，validate_ssot.py不消费） | 人类视图 |
 | _archive/t18_implementation_plan.md | 已归档：T18实施计划（暂缓，重启条件未满足） | 人类视图 |
-| _archive/phase_d_ai_prompts.md | 已归档：阶段D一次性施工提示词（引用文档不存在） | 人类视图 |
 
 ## 排除规则（严禁放入本目录的内容）
 

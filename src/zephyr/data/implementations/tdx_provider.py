@@ -82,7 +82,11 @@ def _patch_mootdx_to_data_coerce() -> None:
     无效日期变 NaT（仅影响 index，不修改 datetime 列原值），
     由 ``_build_sector_kline_rows`` 的 strptime 校验过滤掉脏日期行。
 
-    影响范围：仅 ``mootdx.utils`` 模块内的 ``to_data`` 函数；
+    注意：不仅 patch ``mootdx.utils.to_data``，还要 patch 所有已加载模块中
+    通过 ``from mootdx.utils import to_data`` 导入的本地引用（如 mootdx.quotes），
+    否则那些模块仍会调用旧版本的 to_data。
+
+    影响范围：所有 mootdx 内部的 to_data 调用；
     不影响项目其他模块的 ``pd.to_datetime`` 调用。
     mootdx 未安装时静默跳过（不影响模块加载）。
     """
@@ -139,8 +143,22 @@ def _patch_mootdx_to_data_coerce() -> None:
 
         return result
 
+    # Patch 1: 替换 mootdx.utils.to_data
     mu.to_data = _safe_to_data
-    log.info("mootdx.utils.to_data 已 patch 为 safe 版本（to_datetime errors='coerce'）")
+
+    # Patch 2: 替换所有已加载模块中对 to_data 的本地引用
+    # （mootdx.quotes 等模块用 `from mootdx.utils import to_data` 导入，
+    #  会在模块命名空间创建本地变量，必须同步替换）
+    import sys
+    for _mod_name, _mod in sys.modules.items():
+        if _mod_name.startswith('mootdx.') and _mod is not None:
+            try:
+                if hasattr(_mod, 'to_data') and _mod.to_data is not _safe_to_data:
+                    _mod.to_data = _safe_to_data
+            except Exception:
+                pass
+
+    log.info("mootdx.utils.to_data 已 patch 为 safe 版本（to_datetime errors='coerce'，含全模块引用替换）")
 
 
 _patch_mootdx_to_data_coerce()

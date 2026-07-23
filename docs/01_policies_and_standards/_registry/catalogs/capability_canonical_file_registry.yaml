@@ -3063,7 +3063,7 @@ capabilities:
       - metric_11
       - architecture_health_dashboard
     description: >-
-      架构健康度仪表盘（30 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）。
+      架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md §四 第0期）。
       30 项指标覆盖 5 个病根：SSoT 真源唯一性/永久系统触发/新 AI 可发现性/DB 全景图深度/
       文档引用断裂。每项指标独立函数，复用现有检测脚本（subprocess 调用）。warn-only 起步
       （第0期仅记录基线 exit 0，第1期转 hard block exit 1 阻断）。解决发现性：新 AI 搜
@@ -3077,8 +3077,7 @@ capabilities:
       - GATE-ARCH-HEALTH
       - post_commit_architecture_health
     description: >-
-      架构健康度 post-commit 基线记录 reconciler（第0期 warn-only，architecture_debt_registry.md
-      §六）。GitCommitGateway commit 完成后自动触发（GATE-ARCH-HEALTH, priority=300），任何 .py
+      架构健康度 post-commit 基线记录 reconciler（第0期 warn-only，ai_first_governance_principles.md §四）。GitCommitGateway commit 完成后自动触发（GATE-ARCH-HEALTH, priority=300），任何 .py
       文件变更后调用 architecture_health_dashboard.py --snapshot 保存基线快照到
       data/architecture_health/。非阻断（ReconcileResult action=clean/warn）。第1期升级路径：
       转为 pre-commit commit gate（exit 1 阻断）。全自动：事件触发（commit）+ 自动运行
@@ -4942,7 +4941,7 @@ capabilities:
       纯 stdlib 实现（ast + dataclasses + argparse），非阻断报告模式（exit 0）。
       canonical = scripts/governance/d7_code/any_type_inferrer.py（MOD-GOV-008）。
       消费方：#ARCH-ANY-GOVERNANCE-001 Phase 2 Batch 1-8 治理、manual AI 审核辅助、
-      architecture_debt_registry §5.145 治本工程。治本（2d 可发现性）：新 AI 通过
+      audit_dimensions_checklist.md 维度 5.145 治本工程。治本（2d 可发现性）：新 AI 通过
       capability_lookup.find("any_type_inferrer") / find("infer_any_type") 可定位真源。
 
   # --------------------------------------------------------------------------
@@ -6574,7 +6573,7 @@ creation_tokens:
     capability: "gate_abuse_systemic_audit_ruling"
 
   # --- 架构债务防复发体系设计文档（2026-07-20，54 维度全覆盖设计）---
-  # 关联 architecture_debt_registry.md §四 54 维度 → 全自动化防犯体系设计（P0/P1/P2 分期）
+  # 关联 audit_dimensions_checklist.md 54 维度 → 全自动化防犯体系设计（P0/P1/P2 分期）
   - file: "docs/_working/anti_recurrence_design.md"
     token: "auto-anti-recurrence-design-20260720"
     created_by: "sess-35112-20260720042959"

@@ -98,7 +98,7 @@ created_by: agent
 
 辅助：`generate_session_id()` 在 `src/zephyr/gov_enforcement/rule_bridge/session_claim.py:87`。
 
-**heartbeat 保活**（#ARCH-HEARTBEAT-001）：`heartbeat_daemon.py`（`rule_bridge/`）是独立 detached 进程，每 30s 刷新 `last_heartbeat` 并追加 `heartbeat.jsonl` 审计；`_is_session_alive` 用 90s 新鲜度判据（3×30s），daemon 死亡 → 90s 后 session 判死 → held_files 自动释放。阻塞窗口从 TTL=3600s 缩短到 90s。设计文档见 `docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md`（heartbeat_daemon.py L1）。
+**heartbeat 保活**（#ARCH-HEARTBEAT-001）：`heartbeat_daemon.py`（`rule_bridge/`）是独立 detached 进程，每 30s 刷新 `last_heartbeat` 并追加 `heartbeat.jsonl` 审计；`_is_session_alive` 用 90s 新鲜度判据（3×30s），daemon 死亡 → 90s 后 session 判死 → held_files 自动释放。阻塞窗口从 TTL=3600s 缩短到 90s。设计文档见 `docs/_archive/ruling_session_worktree_heartbeat.md`（heartbeat_daemon.py L1）。
 
 **为什么需要 worktree**（git_commit_gateway.py L18-23 docstring）：多 AI session 共享工作目录导致 stash 堆积；每 session 独立 worktree 编辑/commit，互不干扰，无需 stash。
 

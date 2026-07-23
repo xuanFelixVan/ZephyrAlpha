@@ -70,7 +70,7 @@ _SCOPE_EXCLUDE_DIRS = [
 
 # Scope：EXCLUDE 精确文件
 _SCOPE_EXCLUDE_FILES = [
-    "docs/02_enterprise_architecture/architecture_debt_registry.md",
+    "docs/_archive/architecture_debt_registry_v2.md",
 ]
 
 # Scope：EXCLUDE basename（任意层级匹配）

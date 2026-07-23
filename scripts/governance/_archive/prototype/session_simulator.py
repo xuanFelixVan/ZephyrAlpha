@@ -185,11 +185,6 @@ SCENARIOS: list[dict] = [
         "level": "full",
     },
     {
-        "task": "知识库 KE-050 的 depends_on 引用展平——需要更新 Vector Memory 的 Collection namespace",
-        "expected": ["MOD-KB-001", "MOD-INF-011"],
-        "level": "full",
-    },
-    {
         "task": "代码去重引擎发现 src/zephyr/core/ 下有 3 个重复的 `_now_iso` 实现",
         "expected": ["MOD-INF-017", "MOD-INF-016"],
         "level": "partial",

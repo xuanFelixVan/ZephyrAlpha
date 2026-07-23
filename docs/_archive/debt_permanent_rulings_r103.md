@@ -6,7 +6,6 @@ layer: L2_domain
 depends_on: [architecture_debt_registry, architecture_issue_registry]
 tags: [ruling, architecture-debt, permanent, worktree, session-isolation]
 ttl: permanent
-doc_type: audit_report
 completes_when: '#ARCH-WORKTREE-002 五阶段治本全部完成并验证（status=resolved）'
 ---
 

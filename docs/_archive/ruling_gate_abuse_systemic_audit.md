@@ -1,5 +1,4 @@
 ---
-doc_type: audit_report
 ttl: permanent
 ---
 
@@ -492,7 +491,7 @@ heartbeat 机制涉及:
 
 - [AGENTS.md 5 层闭环模型](../../AGENTS.md) — 可知性/可达性/可观察性/可逃生性/可追溯性
 - [ruling_guc_trigger_cascading_sync_failure.md](ruling_guc_trigger_cascading_sync_failure.md) — 100% AI 治理可靠性危机裁定（本案 Task 4 Phase 1 的深化）
-- [architecture_debt_registry.md §一 L643](architecture_debt_registry.md) — 治理体系自身复杂度危机元反思（151 治理组件）
+- [architecture_debt_registry_v2.md §一 L643](architecture_debt_registry_v2.md) — 治理体系自身复杂度危机元反思（151 治理组件，已归档）
 - [commit_gateway_abuse_monitor_reconciler.py](../../src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py) — 5 维滥用检测器
 - [session_worktree.py](../../src/zephyr/gov_enforcement/rule_bridge/session_worktree.py) — PID liveness 检查所在
 - P3_followup_todos_root_cause_plan.md（前序裁定计划文件，.trae/documents/ 内 gitignored）— 裁定 C 的 Layer 2 落地

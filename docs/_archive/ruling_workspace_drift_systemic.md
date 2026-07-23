@@ -1,5 +1,4 @@
 ---
-doc_type: audit_report
 ttl: permanent
 ---
 
@@ -123,8 +122,8 @@ AI session B 启动
 
 ```
 AI 在 architecture_issue_registry.yaml 写:
-  "Phase X（已完成 2026-07-20，commit abc1234）"
-→ commit abc1234 可能不存在（AI 幻觉/记忆错误）
+  "Phase X（已完成 2026-07-20，commit <fake-hash>）"
+→ commit <fake-hash> 可能不存在（AI 幻觉/记忆错误）
 → 文档 SSoT 失效（"已完成"声明可能是幻觉产物）
 → 后续 AI 读取文档=在幻觉数据上推断=幻觉温床
 ```
@@ -258,7 +257,7 @@ AI 在 architecture_issue_registry.yaml 写:
 | docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml | 3 | 本案登记 |
 | docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | 3 | capability + creation_token |
 | docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml | 3 | no-verify-ruling marker |
-| docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md | 3 | 本 ruling 文档 |
+| docs/_archive/ruling_workspace_drift_systemic.md | 3 | 本 ruling 文档 |
 
 ### 5.2 治理体系升级
 

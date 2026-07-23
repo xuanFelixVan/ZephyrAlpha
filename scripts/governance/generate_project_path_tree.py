@@ -662,7 +662,7 @@ def cmd_write() -> None:
 
     new_tree = generate_tree(domain_derivation)
 
-    migration_registry_path = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration_registry.yaml"
+    migration_registry_path = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "migration_registry.yaml"
     pending_entries = []
     if migration_registry_path.exists():
         try:

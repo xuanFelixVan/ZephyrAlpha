@@ -24,6 +24,7 @@ C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
 """
 
 import atexit
+import datetime as _datetime
 import importlib
 import logging
 import sys
@@ -31,6 +32,22 @@ import threading
 import types
 from pathlib import Path
 from typing import Any
+
+# #ARCH-PYCOMPAT-001: Python 3.10 兼容补丁（集中式，一处修复全项目生效）
+# 原则：只对标准库做最小补丁，确保 3.10 环境下能正常 import 和运行
+# 1. datetime.UTC — Python 3.11+ 别名，本质就是 timezone.utc
+if not hasattr(_datetime, "UTC"):
+    _datetime.UTC = _datetime.timezone.utc
+
+# 2. typing.Self — Python 3.11+ 新增，运行时用 TypeVar 等价替代
+import typing as _typing
+if not hasattr(_typing, "Self"):
+    try:
+        from typing_extensions import Self as _Self
+        _typing.Self = _Self
+    except ImportError:
+        _Self = _typing.TypeVar("Self")
+        _typing.Self = _Self
 
 _log = logging.getLogger(__name__)
 

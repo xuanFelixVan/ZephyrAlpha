@@ -1,7 +1,6 @@
 ---
 module_id: GOV-037
 title: ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)
-doc_type: register
 version: 2.7.0
 status: Active
 date: "2026-06-23"

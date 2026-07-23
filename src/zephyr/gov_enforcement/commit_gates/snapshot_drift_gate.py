@@ -17,7 +17,7 @@
 # noqa: m20-snapshot-drift  M20豁免: 本文件是SNAPSHOT-DRIFT检测器自身,源码引用snapshot路径用于校验,非实际drift
 """snapshot_drift_gate.py — 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc1 enforceability）
 
-病根（architecture_debt_registry.md §一 L359）
+病根（ai_first_governance_principles.md §二）
 ------------------------------------------------
 rc1_static_snapshot: 静态快照未动态更新
 M20 metric warn-only 检测 drift，无 commit gate 硬阻断静态快照漂移。

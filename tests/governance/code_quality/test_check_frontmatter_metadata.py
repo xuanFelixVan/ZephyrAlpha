@@ -219,3 +219,36 @@ def test_temporary_zone_ttl_still_required(tmp_path, vocab_cache, deprecated_cac
     issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
     assert len(issues) == 1
     assert "missing required field 'ttl'" in issues[0]
+
+
+# ── archive_zone 解耦测试（治本 #ARCH-TTL-EXEMPT-DECOUPLE）──
+# 归档区（docs/_archive/）有 frontmatter 时跳过 doc_type（与 EXEMPT-ZONE-FM 解耦），
+# 但 ttl 仍必填；归档区无 frontmatter → PASS
+
+def test_archive_zone_skips_doctype(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """archive_zone .md 有 ttl 无 doc_type, strict=True → PASS（doc_type 跳过）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "archive_zone")
+    fpath = _make_md(tmp_path, "ttl: permanent")  # 有 ttl, 无 doc_type（归档文件不应有 doc_type）
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert issues == []
+
+
+def test_archive_zone_ttl_still_required(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """archive_zone .md 无 ttl → BLOCK on ttl（ttl 仍必填，仅 doc_type 跳过）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "archive_zone")
+    fpath = _make_md(tmp_path, "module_id: MOD-TEST")  # 有 frontmatter, 无 ttl, 无 doc_type
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert len(issues) == 1
+    assert "missing required field 'ttl'" in issues[0]
+
+
+def test_archive_zone_no_fm_passes(tmp_path, vocab_cache, deprecated_cache, monkeypatch):
+    """archive_zone .md 无 frontmatter → PASS（归档文件可不带 frontmatter）。"""
+    monkeypatch.setattr(_cfm, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(_cfm, "_classify_file_zone", lambda rel: "archive_zone")
+    fpath = tmp_path / "test.md"
+    fpath.write_text("# archived doc\n\nno frontmatter\n", encoding="utf-8")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert issues == []

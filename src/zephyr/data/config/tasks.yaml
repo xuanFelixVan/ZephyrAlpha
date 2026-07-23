@@ -625,6 +625,8 @@ tasks:
   symbols:
   extra:
     description: "审计意见增量（AKShare 财报附属字段 OPINION_TYPE）"
+    disabled: true
+    disabled_reason: "AKShare 暂无专用批量审计意见接口，仅能从财报摘要逐股获取，效率过低。待 iFind 等数据源补齐后启用。"
 
   fallback_sources:
   - source: miniqmt
@@ -657,6 +659,8 @@ tasks:
   symbols:
   extra:
     description: "分红配股增量（AKShare stock_history_dividend_detail）"
+    disabled: true
+    disabled_reason: "akshare 1.18+ 已移除 stock_rights_issue_detail_sina 批量接口，仅剩 stock_allotment_cninfo 逐股接口，全市场5000+股拉取效率过低。配股为低频事件，待数据源补齐后启用。"
 
   fallback_sources:
   - source: exchange
@@ -1565,6 +1569,8 @@ tasks:
   symbols:         # 需指定美股代码如AAPL.US
   extra:
     description: "美股日K线增量-QMT源（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
+    disabled: true
+    disabled_reason: "QMT 无美股板块，且需单独开通美股行情权限。已由 tickflow + akshare 双源覆盖。"
 
   fallback_sources:
   - source: akshare

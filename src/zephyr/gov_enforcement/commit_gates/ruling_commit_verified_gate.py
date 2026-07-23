@@ -41,7 +41,8 @@ commit hash，用 ``git cat-file -e <hash>`` 验证存在性。只检测新增�
 1. **只检测新增声明**：通过 ``git show HEAD:<path>`` 获取 HEAD 版本，比较
    新增的"已完成...commit XXX"声明。新文件（HEAD 不存在）的全部声明视为新增。
 2. **fail-closed**：commit hash 不存在 / git 异常时阻断——100% AI 场景下 warn 无效。
-3. **触发文件范围**：``docs/02_enterprise_architecture/ruling_*.md`` +
+3. **触发文件范围**：``docs/_archive/ruling_*.md``（迁移后主路径）+
+   ``docs/02_enterprise_architecture/ruling_*.md``（向后兼容）+
    ``architecture_issue_registry.yaml``——治本聚焦，不扫全项目。
 4. **priority=109**：原 77 与 BLUEPRINT-FORMAT 撞号（#ARCH-GATE-PRIORITY-UNIQUENESS-001
    Phase 1 治本），后到者让位迁移至 109——紧邻 CAPABILITY-LOOKUP-REQUIRED(110)，
@@ -92,9 +93,11 @@ _RULING_COMMIT_RE = re.compile(
 )
 
 # 触发文件路径模式（相对路径，正斜杠）
-# 1. docs/02_enterprise_architecture/ruling_*.md
-# 2. docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+# 1. docs/_archive/ruling_*.md（迁移后主路径，2026-07-23 从 02_enterprise_architecture/ 迁入）
+# 2. docs/02_enterprise_architecture/ruling_*.md（向后兼容，防止遗漏）
+# 3. docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
 _TRIGGER_PATTERNS = (
+    "docs/_archive/ruling_",
     "docs/02_enterprise_architecture/ruling_",
     "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
 )

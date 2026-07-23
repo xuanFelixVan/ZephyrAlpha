@@ -6,7 +6,6 @@ layer: L2_domain
 depends_on: [architecture_debt_registry, debt_permanent_rulings_r102]
 tags: [ruling, architecture-debt, permanent, any-typing, governance]
 ttl: permanent
-doc_type: audit_report
 completes_when: 5.145 维度全部治本完成（PERMANENT-14 → FIXED）+ GATE-ANY-ABUSE 升级 commit 阻断 [DONE 2026-07-22]
 ---
 

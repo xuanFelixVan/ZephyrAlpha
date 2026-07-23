@@ -36,7 +36,7 @@ Usage::
     # Fix external refs across whole project (consumers of moved modules)
     python scripts/migration/governance_root_split.py --fix-external-refs
 
-Registry format (``docs/02_enterprise_architecture/migration_registry.yaml``)::
+Registry format (``docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml``)::
 
     entries:
       - old_module: zephyr.governance.escalation_api
@@ -67,7 +67,7 @@ from typing import Optional
 # ---------------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-REGISTRY_FILE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "migration_registry.yaml"
+REGISTRY_FILE = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "migration_registry.yaml"
 
 OLD_PATH_PREFIX = "src/zephyr/governance/"
 

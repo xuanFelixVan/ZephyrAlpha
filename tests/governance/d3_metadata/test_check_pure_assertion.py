@@ -33,7 +33,7 @@ def test_is_in_scope_exclude_dirs():
 
 
 def test_is_in_scope_exclude_files():
-    assert not _mod._is_in_scope("docs/02_enterprise_architecture/architecture_debt_registry.md")
+    assert not _mod._is_in_scope("docs/_archive/architecture_debt_registry_v2.md")
 
 
 def test_is_in_scope_exclude_basenames():

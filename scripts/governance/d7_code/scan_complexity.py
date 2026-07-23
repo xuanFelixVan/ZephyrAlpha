@@ -3,11 +3,11 @@
 # [MODULE] scripts.governance.d7_code.scan_complexity
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/statistics)
-# [CONSUMERS] CI/CD reporting; manual audit; architecture_debt_registry §5.158 暗债监控
+# [CONSUMERS] CI/CD reporting; manual audit; audit_dimensions_checklist.md 维度 5.158 暗债监控
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现；非阻断（exit 0 除非 --ci）；McCabe 算法与 high_complexity_gate.py 一致
-# [MODIFY-GUARD] 修改阈值需同步更新 architecture_debt_registry §5.158 + high_complexity_gate.py _MAX_COMPLEXITY
+# [MODIFY-GUARD] 修改阈值需同步更新 audit_dimensions_checklist.md 维度 5.158 + high_complexity_gate.py _MAX_COMPLEXITY
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

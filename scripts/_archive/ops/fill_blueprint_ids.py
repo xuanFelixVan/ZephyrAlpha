@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
+# [TTL] task_bound
 import os
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -46,7 +47,6 @@ MANUAL_OVERRIDES = {
     "governance": "DOM-GOV-001",
     "hooks": "MOD-INF-002",
     "infrastructure": "MOD-INF-002",
-    "kb": "MOD-KB-001",
     "data": "MOD-L00-001",
     "infrastructure.runtime_integration": "MOD-INF-002",
     "factor": "MOD-L02-001",

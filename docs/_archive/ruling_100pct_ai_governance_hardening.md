@@ -1,5 +1,4 @@
 ---
-doc_type: audit_report
 ttl: permanent
 ---
 
@@ -313,7 +312,7 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 | P1-4 | `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py` | merge 重试 3 次指数退避(1s/2s/4s) | 1h |
 | P1-5 | `src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py` | 成本递增(N>=3 需 reason,N>=5 阻断 start) | 1h |
 | P1-6 | 新增 `tests/governance/security/test_session_heartbeat.py` | smoke test(heartbeat 创建/刷新/stale 检测) | 2h |
-| P1-7 | `docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md` | 独立裁定文档(R4 交付物) | 1h |
+| P1-7 | `docs/_archive/ruling_session_worktree_heartbeat.md` | 独立裁定文档(R4 交付物) | 1h |
 
 **验证标准**:
 - [ ] heartbeat 文件在 session_worktree_start 后创建,30s 追加一次
@@ -482,8 +481,8 @@ R6 (本周,并行):
 ## 9. 关联文档
 
 ### 9.1 裁定与战略文档
-- ruling_guc_trigger_cascading_sync_failure.md (docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md) — 裁定 A/B/C/D 母文档
-- ruling_gate_abuse_systemic_audit.md (docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md) — 5 维滥用审计
+- ruling_guc_trigger_cascading_sync_failure.md (docs/_archive/ruling_guc_trigger_cascading_sync_failure.md) — 裁定 A/B/C/D 母文档
+- ruling_gate_abuse_systemic_audit.md (docs/_archive/ruling_gate_abuse_systemic_audit.md) — 5 维滥用审计
 - P3_followup_todos_root_cause_plan.md (.trae/documents/P3_followup_todos_root_cause_plan.md) — #ARCH-P3-FOLLOWUP-TODOS-001 主文档
 - P3_leftover_todos_strategic_ruling_and_treatment_plan.md (.trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md) — R1-R6 战略裁定
 

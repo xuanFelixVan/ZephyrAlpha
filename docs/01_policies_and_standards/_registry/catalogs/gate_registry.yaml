@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-22T18:06:54Z'
+generated_at: '2026-07-23T12:09:08Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 119
+total_gates: 125
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -399,6 +399,16 @@ gates:
     priority=75）'
   entry: in-process (GitCommitGateway)
   description: '#ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）'
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: ASYNCIO-RUN-IN-CONTEXT
+  name: 'ASYNCIO-RUN-IN-CONTEXT: 异步上下文误用硬阻断门禁（ASYNCIO-RUN-IN-CONTEXT）（CommitGate,
+    priority=122）'
+  entry: in-process (GitCommitGateway)
+  description: 异步上下文误用硬阻断门禁（ASYNCIO-RUN-IN-CONTEXT）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -857,6 +867,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: MCP-VERSION-FIELD
+  name: 'MCP-VERSION-FIELD: MCP version 字段缺失硬阻断门禁（MCP-VERSION-FIELD）（CommitGate, priority=126）'
+  entry: in-process (GitCommitGateway)
+  description: MCP version 字段缺失硬阻断门禁（MCP-VERSION-FIELD）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: MODULE-ID-CONSISTENCY
   name: 'MODULE-ID-CONSISTENCY: module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate
     收敛）（CommitGate, priority=88）'
@@ -880,6 +899,16 @@ gates:
   name: 'MSG-STYLE: 错误消息标点/箭头风格阻断门禁（MSG-STYLE）（CommitGate, priority=96）'
   entry: in-process (GitCommitGateway)
   description: 错误消息标点/箭头风格阻断门禁（MSG-STYLE）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  name: 'MUTABLE-CONST-WITHOUT-FINAL: 可变常量缺 Final 标注硬阻断门禁（MUTABLE-CONST-WITHOUT-FINAL）（CommitGate,
+    priority=123）'
+  entry: in-process (GitCommitGateway)
+  description: 可变常量缺 Final 标注硬阻断门禁（MUTABLE-CONST-WITHOUT-FINAL）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -910,6 +939,15 @@ gates:
     priority=71）'
   entry: in-process (GitCommitGateway)
   description: 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: OPEN-WITHOUT-WITH
+  name: 'OPEN-WITHOUT-WITH: open() 未在 with 内硬阻断门禁（OPEN-WITHOUT-WITH）（CommitGate, priority=124）'
+  entry: in-process (GitCommitGateway)
+  description: open() 未在 with 内硬阻断门禁（OPEN-WITHOUT-WITH）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1048,6 +1086,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: SCHEMA-FILE-EXISTS
+  name: 'SCHEMA-FILE-EXISTS: SCHEMA-FILE-EXISTS block 门禁（CommitGate, priority=121）'
+  entry: in-process (GitCommitGateway)
+  description: SCHEMA-FILE-EXISTS block 门禁
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
   name: 'SCRIPTS-IMPORT-INTEGRITY: _shared.constants 符号导入完整性门禁（CommitGate, priority=104）'
   entry: in-process (GitCommitGateway)
@@ -1169,6 +1216,16 @@ gates:
     priority=80）'
   entry: in-process (GitCommitGateway)
   description: 新增 .py 文件词表硬编码阻断门禁（VOCAB-HARDCODE，2026-07-03 Phase 1）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+  name: 'ZEPHYR-ENV-DIRECT-ACCESS: ZEPHYR_ENV 直访硬阻断门禁（ZEPHYR-ENV-DIRECT-ACCESS）（CommitGate,
+    priority=125）'
+  entry: in-process (GitCommitGateway)
+  description: ZEPHYR_ENV 直访硬阻断门禁（ZEPHYR-ENV-DIRECT-ACCESS）
   files_trigger: ''
   always_run: false
   category: commit_gate

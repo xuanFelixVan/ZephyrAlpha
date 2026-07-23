@@ -1,16 +1,24 @@
 ---
 module_id: MOD-GOV-arch-debt-registry
-title: 架构债务注册表（未完成任务 + 审计维度清单）
-version: 2.0.0
+title: 架构债务注册表（已归档）
+version: 2.0.0-archived
 layer: L2_domain
 ttl: permanent
-doc_type: index
-completes_when: 全部 PERMANENT 项完成或经专项工程关闭
+status: superseded
+completes_when: 已归档（2026-07-24，裁定#221/#222）
+superseded_by: ai_first_governance_principles.md + audit_dimensions_checklist.md + architecture_issue_registry.yaml
 ---
 
-# 架构债务注册表（Architecture Debt Registry）v2.0.0
+# 架构债务注册表（Architecture Debt Registry）v2.0.0 [已归档]
 
-> **文档性质**：活跃架构债务单一真源（SSoT）+ 未来审计审查系统的**维度清单基座**。
+> **⚠ 归档声明（2026-07-24，裁定#221/#222）**：本文档已归档，不再是活跃真源。内容已按关注点分离拆分至三件套承接：
+> - **架构原则（5 病根 + 5 裁定）** → [`ai_first_governance_principles.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/ai_first_governance_principles.md)（裁定1 已修正为"新增规则必须同时新增门禁"，裁定#221）
+> - **审计维度清单（54 维度）** → [`audit_dimensions_checklist.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/audit_dimensions_checklist.md)
+> - **wontfix 议题（40 项，6 维度）** → [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) #ARCH-DEBT-001~006（裁定#222 确认）
+>
+> **修正记录**：原 §三裁定1"暂停新增规则文档 6 个月"表述错误，已由裁定#221 修正为"新增规则必须同时新增门禁（规则-执行配对铁律）"。本归档文件保留历史原文不作修改，修正后的裁定以 ai_first_governance_principles.md 为准。
+>
+> **文档性质（历史）**：活跃架构债务单一真源（SSoT）+ 未来审计审查系统的**维度清单基座**。
 > **瘦身说明（v2.0.0，2026-07-19）**：本文档自 4492 行瘦身重构。已完成任务的逐项修复日志（第 1-101 轮多轮状态行、执行摘要 3193 计数大表、已 FIXED 条目详情）全部移出正文——**已完成历史唯一追溯渠道是 git log**（第 102 轮 36 批提交，merge `44ebb73b26`，及此前全部修复 commit）。
 > **数据维护规则**：未来违规数据由架构健康度仪表盘（`scripts/governance/architecture_health_dashboard.py`，指标 M01-M31，post-commit 事件驱动自动生成快照到 `data/architecture_health/`）承接。**本清单不手工维护违规数据**；§四维度表是审计审查的清单基座（每维度一行抽象概念），§五是当前全部未完成任务的完整清单。
 > **审核方法**（历史）：4 个并行子 agent 读真实文件 + Grep 真实结果 + AST 共享行百分比判定（详见 §七）。
@@ -206,8 +214,8 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 ## 五、未完成任务（DEFERRED-PERMANENT / wontfix 项详情）
 
 > **本节是全部未完成任务的完整清单（40 项 wontfix）**，按维度组织。每项保留：条目号、严重度、文件、问题一句话、**裁定结果与理由**。已治本完成的 EXECUTE 项已移出本节——历史唯一追溯渠道是 git log。
-> 裁定口径：**wontfix（RATIFY）** = 确认前裁定关闭，防复发门禁已在册，不再施工。R102/R103 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r102.md) / [`debt_permanent_rulings_r103.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r103.md)。
-> R102 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r102.md)（裁定原则：P1 防复发 > 存量修复；P2 无回归测试不做高风险重构；P3 实际风险=0 的"违规"非债务；P4 净收益必须为正；P5 可机械验证/执行的优先；P6 SSoT 唯一真源最高原则）。
+> 裁定口径：**wontfix（RATIFY）** = 确认前裁定关闭，防复发门禁已在册，不再施工。R102/R103 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/_archive/debt_permanent_rulings_r102.md) / [`debt_permanent_rulings_r103.md`](file:///d:/ZephyrAlpha/docs/_archive/debt_permanent_rulings_r103.md)（均已归档；wontfix 决策已由裁定#222 统一确认并登记为 #ARCH-DEBT-001~006）。
+> R102 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/_archive/debt_permanent_rulings_r102.md)（裁定原则：P1 防复发 > 存量修复；P2 无回归测试不做高风险重构；P3 实际风险=0 的"违规"非债务；P4 净收益必须为正；P5 可机械验证/执行的优先；P6 SSoT 唯一真源最高原则）。
 
 ### 5.0 未完成总览（40 项 = EXECUTE 0 + wontfix 40）
 
@@ -295,7 +303,7 @@ commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"�
 
 ### 6.4 Phase 3：治理层收敛（治本存量）——✅ R102 EXECUTE 27 项 + R103 EXECUTE 3 项全部治本完成（2026-07-22）
 
-目标：DEFERRED-PERMANENT 项清理。**当前状态**：第 102 轮（2026-07-19）已对全部 DEFERRED-PERMANENT 项完成逐项裁定（EXECUTE / RATIFY，裁定真源 `debt_permanent_rulings_r102.md`），原剩余 87 项见 §五——其中 **EXECUTE 27 项已于 2026-07-21 全部治本完成**（God Class 拆分 / 参数对象 / 跨层依赖逐边分析 / CT_ 类与 TraceContext 重命名 / run_checker_script 提取 / 2 项 Owner 授权结构修复），wontfix 40 项已关闭（防复发门禁在册）。元问题反思（原文 §四反思 1-3，保留结论）：L5 治理层 14 功能应收敛为 5-6 功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产）；治理组件数 > 被治理组件数时治理体系自身就是最大漂移源（实测：trae_060 §5 快照失效、GATE-VOCAB 60 处盲区、40 GATE 无反查——治理体系自身漂移已被实证）；100% AI 开发场景下"建议性规则"是反模式，应用强制消费链替代。战略建议（裁定 1）：暂停新增规则文档 6 个月。
+目标：DEFERRED-PERMANENT 项清理。**当前状态**：第 102 轮（2026-07-19）已对全部 DEFERRED-PERMANENT 项完成逐项裁定（EXECUTE / RATIFY，裁定真源 `debt_permanent_rulings_r102.md`，已归档至 docs/_archive/；wontfix 决策已由裁定#222 统一确认），原剩余 87 项见 §五——其中 **EXECUTE 27 项已于 2026-07-21 全部治本完成**（God Class 拆分 / 参数对象 / 跨层依赖逐边分析 / CT_ 类与 TraceContext 重命名 / run_checker_script 提取 / 2 项 Owner 授权结构修复），wontfix 40 项已关闭（防复发门禁在册）。元问题反思（原文 §四反思 1-3，保留结论）：L5 治理层 14 功能应收敛为 5-6 功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产）；治理组件数 > 被治理组件数时治理体系自身就是最大漂移源（实测：trae_060 §5 快照失效、GATE-VOCAB 60 处盲区、40 GATE 无反查——治理体系自身漂移已被实证）；100% AI 开发场景下"建议性规则"是反模式，应用强制消费链替代。战略建议（裁定 1）：暂停新增规则文档 6 个月。
 
 ---
 

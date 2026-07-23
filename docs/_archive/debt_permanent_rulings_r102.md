@@ -6,7 +6,6 @@ layer: L2_domain
 depends_on: [architecture_debt_registry]
 tags: [ruling, architecture-debt, permanent]
 ttl: permanent
-doc_type: audit_report
 completes_when: 89 项 DEFERRED-PERMANENT 全部完成裁定并在 architecture_debt_registry.md 状态行回写
 ---
 

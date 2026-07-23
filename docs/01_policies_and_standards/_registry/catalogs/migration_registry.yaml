@@ -1,5 +1,5 @@
-# [BLUEPRINT] MOD-INF-MIGRATION-REG | docs/02_enterprise_architecture/migration_registry.yaml | §0
-# [MODULE] docs.02_enterprise_architecture.migration_registry
+# [BLUEPRINT] MOD-INF-MIGRATION-REG | docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml | §0
+# [MODULE] docs.01_policies_and_standards._registry.catalogs.migration_registry
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] none（数据文件）
 # [CONSUMERS] scripts/migration/governance_root_split.py, scripts/migration/dm311_autonomy_core_split.py, scripts/migration/dm314_infra_ops_split.py
@@ -13,6 +13,7 @@
 # [TTL] permanent（ARCH-031 迁移登记表，maintenance=frozen；待全量 pending 条目完成后手动退役删除）
 # 本文件原命名 migration-registry.yaml（连字符）违反 snake_case 铁律，2026-07-16 重命名为 migration_registry.yaml。
 # registry_of_registries.yaml REG-MIGRATION-001 原 status=deleted 与文件实际存在矛盾，已修正为 deprecated。
+ttl: permanent
 entries:
 - old_module: zephyr.governance.default_attribution_engine
   new_module: zephyr.governance.audit.default_attribution_engine

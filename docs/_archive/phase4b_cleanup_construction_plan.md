@@ -1,6 +1,5 @@
 ---
 module_id: GOV-036-PHASE4B-CLEANUP
-doc_type: blueprint
 status: deprecated
 version: 3.0.0
 created: '2026-06-22'

@@ -5839,7 +5839,7 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
 
     max_backups 个 ghost_autoclean_* 目录，超出部分自动清理（对标 backup_pg_depgraph 的保留 10 个）。
 
-    消除"备份目录只增不减"的技术债务。详见 architecture_debt_registry.md §5.1.3。
+    消除"备份目录只增不减"的技术债务。详见 audit_dimensions_checklist.md 维度 5.1.3。
 
     Args:
 
@@ -8659,7 +8659,7 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
     )
 
-# trae_060-reviewed: 架构健康度仪表盘 post-commit 基线记录（第0期 warn-only，architecture_debt_registry.md §六）。
+# trae_060-reviewed: 架构健康度仪表盘 post-commit 基线记录（第0期 warn-only，ai_first_governance_principles.md §四）。
 
 # 触发条件：任何 .py 文件变更（30 项指标覆盖代码/脚本/门禁/depgraph 维度）
 
@@ -8667,13 +8667,13 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 非阻断：ReconcileResult(action="clean"/"warn")，第0期仅记录基线不阻断 commit
 
-# 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 architecture_debt_registry.md §六 第1期
+# 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 ai_first_governance_principles.md §四 第1期
 
 def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 
     """构造架构健康度仪表盘 post-commit 基线记录 reconciler（第0期 warn-only）。
 
-    architecture_debt_registry.md §六 第0期：每次 commit 自动生成架构健康度指标快照，
+    ai_first_governance_principles.md §四 第0期：每次 commit 自动生成架构健康度指标快照，
 
     替代手动调研。仪表盘 30 项指标（M01-M31），warn-only 模式（exit 0 不阻断 commit）。
 
@@ -8689,7 +8689,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 
     第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见
 
-    architecture_debt_registry.md §六 第1期。
+    ai_first_governance_principles.md §四 第1期。
 
     Args:
 

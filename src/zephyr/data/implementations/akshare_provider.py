@@ -2483,8 +2483,9 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取预约披露计划，写入 c3_fundamental.disclosure_plan。
 
-        调用 ak.stock_disclosure_report_cninfo(market, category, symbol, start_date, end_date)。
-        按日期范围分批拉取。
+        调用 ak.stock_report_disclosure(market, period) 按报告期拉取。
+        akshare 1.18+ 接口已从 stock_disclosure_report_cninfo 变更为
+        stock_report_disclosure（按报告期维度，不再支持按日期范围批量查询）。
         """
         import akshare as ak
 
@@ -2493,51 +2494,82 @@ class AKShareProvider(DataSourceBase):
             "symbol", "report_period", "announce_date",
             "scheduled_date", "actual_date", "data_source", "quality_flag",
         ]
-        start = payload.start or datetime.date.today() - datetime.timedelta(days=90)
         end = payload.end or datetime.date.today()
-        start_str = start.strftime("%Y%m%d")
-        end_str = end.strftime("%Y%m%d")
         last_key = end.isoformat()
         t0 = time.time()
 
+        report_periods = self._generate_report_periods(payload.start, end)
+        all_rows: list[tuple] = []
+
         try:
-            df = self._call_with_policy(
-                ak.stock_disclosure_report_cninfo, policy,
-                market="沪深京", category="全部",
-                symbol="全部",
-                start_date=start_str, end_date=end_str,
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            for period_str in report_periods:
+                try:
+                    df = self._call_with_policy(
+                        ak.stock_report_disclosure, policy,
+                        market="沪深京", period=period_str,
+                    )
+                except Exception as e:  # noqa: BLE001
+                    self._log.warning(
+                        "stock_report_disclosure(%s) 失败: %s", period_str, e
+                    )
+                    continue
+
+                if df is None or len(df) == 0:
+                    continue
+
+                for _, row in df.iterrows():
+                    sym = str(row.get("股票代码", "") or "").zfill(6)
+                    if not sym:
+                        continue
+                    scheduled_date = self._norm_date_str(row.get("首次预约"))
+                    actual_date = self._norm_date_str(row.get("实际披露"))
+                    all_rows.append((
+                        sym,
+                        period_str,
+                        actual_date or "",
+                        scheduled_date or None,
+                        actual_date or None,
+                        "akshare",
+                        1,
+                    ))
+        except Exception as e:  # noqa: BLE001
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0, error=str(e),
             )
             return
 
-        rows: list[tuple] = []
-        if df is not None and len(df) > 0:
-            for _, row in df.iterrows():
-                sym = str(row.get("股票代码", "") or "").zfill(6)
-                if not sym:
-                    continue
-                report_period = self._norm_date_str(row.get("会计年度"))
-                announce_date = self._norm_date_str(row.get("公告日期"))
-                scheduled_date = self._norm_date_str(row.get("预计披露日期"))
-                actual_date = self._norm_date_str(row.get("实际披露日期"))
-                rows.append((
-                    sym,
-                    report_period or "",
-                    announce_date or "",
-                    scheduled_date or None,
-                    actual_date or None,
-                    "akshare",
-                    1,
-                ))
-
         yield FetchResult(
-            table=table, columns=columns, rows=rows,
+            table=table, columns=columns, rows=all_rows,
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
+
+    @staticmethod
+    def _generate_report_periods(
+        start: datetime.date | None, end: datetime.date
+    ) -> list[str]:
+        """生成 start~end 之间的报告期列表（如 ['2025年报', '2026一季报']）。"""
+        periods = []
+        if end is None:
+            end = datetime.date.today()
+        if start is None:
+            start = end - datetime.timedelta(days=365)
+
+        _period_map = {
+            "一季报": (3, 31),
+            "中报": (6, 30),
+            "三季报": (9, 30),
+            "年报": (12, 31),
+        }
+
+        year = start.year
+        while year <= end.year:
+            for period_name, (month, day) in _period_map.items():
+                period_date = datetime.date(year, month, day)
+                if start <= period_date <= end + datetime.timedelta(days=180):
+                    periods.append(f"{year}{period_name}")
+            year += 1
+        return periods
 
     @staticmethod
     def _generate_quarter_ends(

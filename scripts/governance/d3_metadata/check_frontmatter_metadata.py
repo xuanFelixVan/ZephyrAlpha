@@ -10,7 +10,7 @@
 # pre-commit GATE-15 和 gateway TTL-METADATA gate 均通过 subprocess 复用本脚本（无第二检测实现）。
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001）：permanent/temporary zone .md 无 frontmatter → HARD BLOCK；temporary zone .md 有 frontmatter → 跳过 doc_type 校验（不可能三角解耦）；neutral/exempt/root_whitelist zone 无 frontmatter → PASS；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
+# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block（全格式：.md/.py/.sh/.ps1/.mmd/.yaml/.json，有头部则校验）；doc_type 仅对 .md 校验（其他格式无 doc_type 字段），默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001）：permanent/temporary zone .md 无 frontmatter → HARD BLOCK；temporary/archive_zone .md 有 frontmatter → 跳过 doc_type 校验（不可能三角解耦 + #ARCH-TTL-EXEMPT-DECOUPLE 归档区解耦）；neutral/exempt/archive_zone 无 frontmatter → PASS；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -177,6 +177,13 @@ def _classify_file_zone(rel_path: str) -> str:
     for tmp_path in contract.get("temporary_paths", []):
         if rel_path.startswith(tmp_path):
             return "temporary"
+    # 归档区（docs/_archive/）——单独分类，有 frontmatter 时跳过 doc_type
+    # 治本 #ARCH-TTL-EXEMPT-DECOUPLE：EXEMPT-ZONE-FM 阻止归档区设 doc_type，
+    # TTL-METADATA 不应同时要求 doc_type——解耦避免 gate 矛盾。
+    # 注：仅 docs/_archive/ 解耦，.runtime/.trae 等仍为 exempt_zone（pytest tmp 在
+    # .runtime/ 下，需保留 doc_type 校验以测试通过）
+    if rel_path.startswith("docs/_archive/"):
+        return "archive_zone"
     # 豁免区（不在 directory_zones 但应豁免 frontmatter 校验）
     for zone_prefix in _EXEMPT_ZONE_PREFIXES:
         if rel_path.startswith(zone_prefix):
@@ -246,16 +253,19 @@ def _check_file(
                 "missing ttl frontmatter in temporary zone "
                 "(ttl=task_bound required, doc_type exempt)"
             ]
-        return issues  # root_whitelist / generator_exempt / exempt_zone / neutral: PASS
+        return issues  # root_whitelist / generator_exempt / exempt_zone / archive_zone / neutral: PASS
 
     for field, rule in field_rules.items():
         # doc_type 只对 .md 校验（其他格式无 doc_type 字段）
         if field == "doc_type" and suffix != ".md":
             continue
-        # temporary zone 跳过 doc_type 校验（不可能三角治本 #ARCH-TTL-FAILOPEN-001）
-        # 理由：EXEMPT-ZONE-FM gate 阻止临时区设置 doc_type，TTL-METADATA gate
-        #   不应同时要求 doc_type——解耦后临时区只校验 ttl
-        if field == "doc_type" and zone == "temporary":
+        # temporary/archive_zone 跳过 doc_type 校验（不可能三角治本 #ARCH-TTL-FAILOPEN-001）
+        # 理由：EXEMPT-ZONE-FM gate 阻止临时区/归档区设置 doc_type，TTL-METADATA gate
+        #   不应同时要求 doc_type——解耦后临时区只校验 ttl；归档区（docs/_archive/）
+        #   同理解耦：归档文件保留 frontmatter 但不应有活跃 doc_type（治本 gate 矛盾
+        #   #ARCH-TTL-EXEMPT-DECOUPLE，2026-07-24）。注：.runtime/.trae 等其他豁免区
+        #   不解耦——pytest tmp 在 .runtime/ 下，需保留 doc_type 校验使测试生效。
+        if field == "doc_type" and zone in ("temporary", "archive_zone"):
             continue
         val = metadata.get(field)
         is_strict = rule["always_strict"] or (field == "doc_type" and strict_doctype)

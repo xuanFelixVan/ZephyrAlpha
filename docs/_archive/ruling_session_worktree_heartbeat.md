@@ -1,5 +1,4 @@
 ---
-doc_type: audit_report
 ttl: permanent
 ---
 

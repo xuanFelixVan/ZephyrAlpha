@@ -1,7 +1,6 @@
 ---
 module_id: ARCH-ENT-002
 title: "合约模型去重分析报告"
-doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

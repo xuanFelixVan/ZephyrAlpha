@@ -20,7 +20,7 @@
 ``git commit --no-verify`` 绕过所有 pre-commit hooks，GATE-VOCAB 沦为君子协定。
 本 gate 在 GitCommitGateway pre-commit 阶段（in-process）注册，``--no-verify`` 绕不过。
 
-病根（architecture_debt_registry.md §六 第1期）
+病根（ai_first_governance_principles.md §四 第1期）
 -------------------------------------------------
 M01 检出 13 个词表硬编码违规（基线）。check_vocab_hardcode.py 能检出但：
   1. 是 pre-commit hook（--no-verify 绕过）

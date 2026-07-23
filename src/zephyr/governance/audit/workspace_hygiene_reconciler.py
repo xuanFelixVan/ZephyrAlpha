@@ -130,7 +130,7 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 
 - ``architecture_model/index.yaml`` —— GATE-ARCH-MODEL reconciler 产物
 
-- ``docs/02_enterprise_architecture/architecture_debt_registry.md`` —— 架构债务注册表
+- ``docs/_archive/architecture_debt_registry_v2.md`` —— 架构债务注册表（已归档，2026-07-24 裁定#221/#222）
 
 - ``data/budget/shutdown_snapshot.json`` —— 预算关闭快照
 
@@ -242,7 +242,7 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
 
     "docs/02_enterprise_architecture/00_overview_entry/",
 
-    "docs/02_enterprise_architecture/architecture_debt_registry.md",
+    "docs/_archive/architecture_debt_registry_v2.md",
 
     "data/asset_index/unified-asset-index.yaml",
 

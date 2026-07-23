@@ -343,15 +343,15 @@ BUILT_PANORAMAS: list[dict] = [
     # --- 02_enterprise_architecture/ 根目录（排在最后） ---
     {
         "panorama_id": "PAN-BUILT-16",
-        "name": "架构债务注册表（337项）",
+        "name": "架构债务注册表（已归档）",
         "category": "治理健康度",
         "category_id": "governance",
         "data_source": "手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
-        "output_path": "02_enterprise_architecture/",
-        "artifact_path": "architecture_debt_registry.md",
-        "description": "全项目架构债务单一真源，337 个违规点 + 6 个根因",
+        "output_path": "_archive/",
+        "artifact_path": "architecture_debt_registry_v2.md",
+        "description": "已归档（2026-07-24 裁定#221/#222）。活跃治理改由 ai_first_governance_principles.md + audit_dimensions_checklist.md + architecture_issue_registry.yaml 三件套承接",
     },
 ]
 

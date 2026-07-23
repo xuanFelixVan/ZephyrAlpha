@@ -335,6 +335,10 @@ class IntegratorScheduler:
         self._ch_health_cache: dict[str, Any] = {"status": "unknown", "last_check": 0.0, "latency_ms": 0}
         self._ch_health_lock = threading.Lock()
         self._ch_health_interval = 30  # 秒：每 30 秒探活一次
+        # 卡死任务定期清理（Phase 3-B 治本修复 v2）
+        # 启动时清理 >24h 的历史僵尸任务，运行中每小时清理 >6h 的卡死任务
+        self._stale_reap_interval = 3600  # 秒：每小时 reap 一次
+        self._stale_reap_max_age_hours = 6  # 运行中 reap 阈值：6 小时
         # 注册内部默认事件处理器（config_changed -> 策略热更新）
         self.subscribe("config_changed", self._on_config_changed)
 
@@ -414,6 +418,46 @@ class IntegratorScheduler:
         t = threading.Thread(target=_probe_loop, daemon=True, name="ch-health-probe")
         t.start()
         log.info("ClickHouse 健康探活线程已启动（间隔 %ds，timeout=3s）", self._ch_health_interval)
+
+    # ============== 卡死任务定期清理（Phase 3-B 治本修复 v2） ==============
+
+    def _start_stale_reaper(self) -> None:
+        """启动卡死任务定期清理后台守护线程。
+
+        问题背景：
+        - 原 reap_stale_runs 仅在调度器启动时执行一次
+        - 阈值 24h 太长，任务卡死可能长时间无人发现
+        - 若调度器运行中任务因异常卡住（如网络超时、死循环），
+          RUNNING 状态会永久残留，影响断点续传判断
+
+        治本方案：
+        - 后台守护线程每 _stale_reap_interval 秒 reap 一次
+        - 阈值 _stale_reap_max_age_hours 小时（默认 6h）
+        - 启动时已用 24h 阈值清理过历史遗留，运行中用更严格的 6h
+        - 6h 阈值依据：全市场最长任务（财务/研报）通常 2-4h，
+          超过 6h 基本可判定为卡死
+        """
+        def _reap_loop() -> None:
+            while self._started:
+                time.sleep(self._stale_reap_interval)
+                try:
+                    reaped = self._progress_store.reap_stale_runs(
+                        max_age_hours=self._stale_reap_max_age_hours
+                    )
+                    if reaped > 0:
+                        log.warning(
+                            "定期清理：发现并清理了 %d 个卡死任务（RUNNING > %dh）",
+                            reaped, self._stale_reap_max_age_hours,
+                        )
+                except Exception as e:  # noqa: BLE001 — 不影响主循环
+                    log.error("定期清理卡死任务异常: %s", e)
+
+        t = threading.Thread(target=_reap_loop, daemon=True, name="stale-reaper")
+        t.start()
+        log.info(
+            "卡死任务定期清理线程已启动（间隔 %ds，阈值 %dh）",
+            self._stale_reap_interval, self._stale_reap_max_age_hours,
+        )
 
     # ============== 本地落盘回灌（裁定 #ARCH-CH-013 Phase 1） ==============
 
@@ -1246,6 +1290,8 @@ class IntegratorScheduler:
             self._started = True
             # 启动 ClickHouse 健康探活后台线程（裁定 #ARCH-CH-011）
             self._start_ch_health_probe()
+            # 启动卡死任务定期清理线程（Phase 3-B 治本修复 v2）
+            self._start_stale_reaper()
             # 启动本地落盘回灌线程（裁定 #ARCH-CH-013 Phase 1）
             self._start_local_replay()
             # 启动破损 part 自动检测+隔离（裁定 #ARCH-CH-015）

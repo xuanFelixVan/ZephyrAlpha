@@ -27,7 +27,7 @@ import re
 import sys
 from pathlib import Path
 
-REGISTRY = Path(r"D:\ZephyrAlpha\docs\02_enterprise_architecture\architecture_debt_registry.md")
+REGISTRY = Path(r"D:\ZephyrAlpha\docs\_archive\architecture_debt_registry_v2.md")
 
 # ═══════════════════════════════════════════════════════════
 # 1. 路径替换映射（DRIFTED → 新路径）

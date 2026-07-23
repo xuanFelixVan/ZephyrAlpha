@@ -28,7 +28,7 @@
 3. task.incremental=true 时，对应 capability 应声明 supports_incremental=True
    - supports_incremental=False → WARN
 
-设计原则（遵循 architecture_debt_registry 裁定1）：
+设计原则（遵循 ai_first_governance_principles.md §裁定1（裁定#221））：
 - 不新增 .md 规则文档，转化为启动时校验（reconciler 式）
 - 初期 WARN-only 收集数据，逐步收紧为 ERROR（渐进式治理）
 - 100% AI 开发模式下，只有机器可执行契约才能达到 ~100% 遵守率

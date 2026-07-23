@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_HEARTBEAT_DAEMON | docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md | §P1-1
+# [BLUEPRINT] MOD-GOV_HEARTBEAT_DAEMON | docs/_archive/ruling_session_worktree_heartbeat.md | §P1-1
 # [MODULE] zephyr.gov_enforcement.rule_bridge.heartbeat_daemon
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.shared.io.paths (REPO_ROOT)

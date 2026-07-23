@@ -370,7 +370,7 @@ tiers:
         name: 迁移登记表（已冻结）
         description: ARCH-031 迁移任务登记表。旧路径→新路径映射。功能与 depgraph edges 表重叠，已冻结不再新增条目。原文件 2026-06-30 曾删除（commit 20b7264ea4），后因 ARCH-031 task_bound 脚本仍引用而恢复，2026-07-16 从连字符命名 migration-registry.yaml 重命名为 snake_case migration_registry.yaml。待 ARCH-031 全量 pending 条目完成后退役删除。
         owner: MOD-INF-037
-        physical_path: docs/02_enterprise_architecture/migration_registry.yaml
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml
         format: yaml
         tier: tier_1_governance
         maintenance: frozen

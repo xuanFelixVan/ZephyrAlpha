@@ -536,7 +536,7 @@ TASKS = [
         "tags_ly": "L01",
         "tags_md": "deepseek",
         "tags_st": "evolving",
-        "tags_mo": ["MOD-KB-001", "MOD-INF-019"],
+        "tags_mo": ["MOD-INF-019"],
     },
     {
         "task_id": "TASK-ALN-0010",

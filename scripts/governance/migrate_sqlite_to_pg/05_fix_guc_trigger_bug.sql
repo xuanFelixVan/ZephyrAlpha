@@ -1,7 +1,7 @@
 -- =====================================================================
 -- 幂等迁移脚本：修复 GUC 触发器缺陷（#ARCH-GUC-TRIGGER-FIX-001）
 -- =====================================================================
--- 裁定文档: docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md
+-- 裁定文档: docs/_archive/ruling_guc_trigger_cascading_sync_failure.md
 -- 严重级别: P0（生产阻断——reconciler 持续失败 23+ 次）
 -- 实施日期: 2026-07-19
 --

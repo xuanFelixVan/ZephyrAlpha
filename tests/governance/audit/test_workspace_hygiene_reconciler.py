@@ -236,7 +236,7 @@ class TestIsAutoSyncProduct:
 
     def test_prefix_match_debt_registry(self):
         assert _is_auto_sync_product(
-            "docs/02_enterprise_architecture/architecture_debt_registry.md"
+            "docs/_archive/architecture_debt_registry_v2.md"
         ) is True
 
     def test_blueprint_md_in_modules_dir(self):

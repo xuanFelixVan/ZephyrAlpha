@@ -130,7 +130,13 @@ def _get_basename_cache() -> set[str]:
     _BASENAME_CACHE = set()
     _skip_dirs = frozenset({".git", "__pycache__", ".runtime", ".venv", "node_modules", ".pytest_cache"})
     for p in REPO_ROOT.rglob("*"):
-        if p.is_file() and not any(part in _skip_dirs for part in p.parts):
+        # 治本 #ARCH-AUDIT-REPARSE-RESILIENCE: 容忍损坏的 reparse point
+        # （如 metadata\system 无目标 junction），is_file() 会 raise OSError
+        try:
+            is_file = p.is_file()
+        except OSError:
+            continue
+        if is_file and not any(part in _skip_dirs for part in p.parts):
             _BASENAME_CACHE.add(p.name)
     return _BASENAME_CACHE
 

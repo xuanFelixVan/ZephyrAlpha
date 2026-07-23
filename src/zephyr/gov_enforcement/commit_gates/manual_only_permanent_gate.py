@@ -17,7 +17,7 @@
 # noqa: m02-manual-trigger  M02豁免: 本文件是MANUAL-ONLY-PERMANENT检测器自身,源码含检测模式字符串(argparse/input/sys.argv)用于AST匹配,非实际manual触发
 """manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc4 enforceability）
 
-病根（architecture_debt_registry.md §一 L362）
+病根（ai_first_governance_principles.md §二）
 ------------------------------------------------
 rc4_manual_exception_permissive: manual 例外开口过大
 M02 metric warn-only 追踪 manual-only 永久脚本，无 commit gate 硬阻断含常驻服务特征的
