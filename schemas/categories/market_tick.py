@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS c1_market.tick_data
     ask_price     Nullable(Decimal(18,4)) COMMENT '卖一价',
     bid_volume    Nullable(UInt64)        COMMENT '买一量',
     ask_volume    Nullable(UInt64)        COMMENT '卖一量',
-    quality_flag  UInt8          DEFAULT 1 COMMENT '质量标记(1=正常 0=异常)'
+    quality_flag  UInt8          DEFAULT 1 COMMENT '质量标记(1=正常 0=异常)',
+    ingest_ts     DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

@@ -26,6 +26,11 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     列（蓝图内部矛盾）。本文件以可执行为准——使用 ReplacingMergeTree（无版本列），
     与 apply_market_tables_ddl.py 已部署的表结构一致。
     蓝图 §4.0 的 ingest_ts 版本列设计待 #ARCH-CH-009 后续裁定统一修正。
+
+    ingest_ts 审计列（2026-07-23 新增，audit 1.7 #ARCH-CH-022）：
+    新增 ingest_ts DateTime DEFAULT now() 作为入库时间戳审计列（非版本列）。
+    新行由 CH 自动填充入库时间；旧行按 DEFAULT 惰性求值（近似值）。
+    不入 INSERT_COLUMNS（DEFAULT 自动填充）。
 """
 from __future__ import annotations
 
@@ -50,7 +55,8 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_daily
     adj_factor   Decimal(18,8)  DEFAULT 1 COMMENT '复权因子',
     market_type  LowCardinality(String) DEFAULT 'A_share' COMMENT '市场类型(预留港股/美股/期货)',
     data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT/iFind)',
-    quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)'
+    quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
+    ingest_ts    DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
