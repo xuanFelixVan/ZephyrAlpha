@@ -49,6 +49,7 @@ ttl: permanent
 - Open Questions → 由决策注册表（`docs/02_enterprise_architecture/04_architecture_principles_decisions/`）维护
 - LSG 接口实现细节 → `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md`
 - Agent Sandbox 技术选型 → KBG-0018
+- STRIDE/OWASP 详细威胁映射（含 severity/domain/exposure/reference 列）+ 数据保留表 + 日志消费者表 → `architecture_model/security/threat_model.yaml`
 
 **与其他原则文档关系**：
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论（跨域）
@@ -135,6 +136,8 @@ AI 协作域带着 10 条 LLM 特有威胁，本系统覆盖原则：
 | LLM10 | Model Theft | 本地模型是开源公开 → N/A |
 
 **关键洞察**：本系统 AI 攻击面集中在 **LLM01 / LLM02 / LLM06 / LLM08 / LLM09**（P0），其他 5 条不适用。
+
+> **注**：STRIDE 各威胁的 severity（P0/P1）+ 所在域、OWASP 各条的本系统暴露面 + 参考链接见 `architecture_model/security/threat_model.yaml`（从 security_architecture.md §3.1/§3.2 迁移）。本文 §3.1/§3.2 为永恒框架版。
 
 ### 3.3 防御深度原则（永恒）
 
@@ -388,6 +391,7 @@ AI Agent 的每次调用都带 `agent_id`，Session Log 按 agent_id 分流，�
 |------|------|
 | LSG 接口实现 | `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md` |
 | Agent Sandbox 技术选型 | KBG-0018 |
+| 威胁映射详细表（STRIDE severity/domain + OWASP exposure/reference）+ 数据保留 + 日志消费者 | `architecture_model/security/threat_model.yaml` |
 | 密钥资产清单（动态） | `scripts/governance/scan_secret_leak.py` 自动扫描 |
 | Phase Roadmap 进度 | `phase-transition-protocol.md`（待创建）+ 自动化 phase gate |
 | Open Questions | 决策注册表（`04_architecture_principles_decisions/`）|

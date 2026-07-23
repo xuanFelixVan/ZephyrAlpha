@@ -1,0 +1,216 @@
+# [A_config] module_id=CFG-SECURITY-THREAT-MODEL | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/security_principles.md
+# module_id: CFG-SECURITY-THREAT-MODEL
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v1.0.0: 安全架构运营结构化数据真源,从 target_architecture/security_architecture.md §3.1/§3.2/§8.3/§9.4 迁移(2026-07-23, B3-doc8)
+#         STRIDE-Lite 详细版(6 行,含 severity P0/P1 + 所在域列) + OWASP LLM Top 10 详细版(10 行,含本系统暴露面 + 参考列)
+#         + 数据保留与销毁表(4 行) + 审计日志消费者表(4 行)
+#         永恒方法论(安全域划分/STRIDE 框架/OWASP 覆盖矩阵/LSG 四层防御/Sandbox 规则/Secret 三道防线/IAM/数据分级/审计/事件响应)
+#         见 security_principles.md §2-§10
+#         密钥资产清单(§6.1)/Phase Roadmap(§10)/Open Questions SEC-OQ-01~05(§13)/安全域状态(§2.1)/P0 攻击树(§3.3)
+#         按 security_principles.md §11.2 边界声明不迁入,由各自既定真源维护;git 历史(security_architecture.md)可查
+#         注:源文档 security_architecture.md 存在严重编码乱码(U+FFFD),本文件迁移时已恢复为干净 UTF-8
+
+module_id: CFG-SECURITY-THREAT-MODEL
+version: "1.0.0"
+description: "安全架构运营结构化数据真源——STRIDE-Lite 详细威胁映射(6 行,含 severity + 所在域列) + OWASP LLM Top 10 详细覆盖矩阵(10 行,含本系统暴露面 + 参考列) + 数据保留与销毁表(4 行) + 审计日志消费者表(4 行)。从 security_architecture.md §3.1/§3.2/§8.3/§9.4 迁移。永恒方法论见 security_principles.md §2-§10。"
+
+# ============================================================================
+# §3.1 STRIDE-Lite 威胁分析（详细版）
+# 永恒框架（威胁类别/代表威胁/影响域/缓解措施）见 security_principles.md §3.1
+# 本节为 principles §3.1 的详细展开：新增 severity（P0/P1）+ 所在域 列
+# ============================================================================
+
+threat_model:
+  description: "STRIDE-Lite + OWASP LLM Top 10 详细威胁映射（运营态，含 severity/exposure 等详细列）"
+  eternal_framework_ref: "security_principles.md §3（永恒框架：STRIDE 6 类 + OWASP 10 条 + 防御深度原则）"
+
+  stride_lite_detailed:
+    description: "STRIDE-Lite 威胁分析详细版——6 行，含 severity（P0/P1）+ 所在域列"
+    eternal_framework_ref: "security_principles.md §3.1（永恒框架版，4 列：威胁类别/代表威胁/影响域/缓解措施）"
+    columns: [threat_id, category, representative_threat, impact_domain, severity, mitigation, located_domain]
+    rows:
+      - threat_id: T1
+        category: Spoofing
+        representative_threat: "LLM Provider 中间人攻击 / Broker 伪装响应"
+        impact_domain: D-EXT
+        severity: P0
+        mitigation: "HTTPS + API Key Fingerprint 校验"
+        located_domain: D-EXT
+      - threat_id: T2
+        category: Tampering
+        representative_threat: "数据源注入错误行情污染因子"
+        impact_domain: "L00→L02"
+        severity: P0
+        mitigation: "L00 ACL 质量门禁 + 数据签名验证"
+        located_domain: "D-EXT→D-INT"
+      - threat_id: T3
+        category: Repudiation
+        representative_threat: "AI 决策「不是我说的」/ 无法追溯改动"
+        impact_domain: "L08, L10"
+        severity: P1
+        mitigation: "Session Log + Handoff Log（§9）"
+        located_domain: D-MGMT
+      - threat_id: T4
+        category: Info Disclosure
+        representative_threat: ".env 泄漏 / API Key 误写 git"
+        impact_domain: D-SECRET
+        severity: P0
+        mitigation: "git-secrets + trufflehog + LSG Output Filter"
+        located_domain: D-SECRET
+      - threat_id: T5
+        category: DoS
+        representative_threat: "LLM API 限流 / 连接池耗尽"
+        impact_domain: D-AI
+        severity: P1
+        mitigation: "限流 + 熔断 + 降级（规则基）"
+        located_domain: D-AI
+      - threat_id: T6
+        category: Elevation
+        representative_threat: "Agent 越权写系统文件 / 逃逸沙箱"
+        impact_domain: D-AGT
+        severity: P0
+        mitigation: "Windows ACL 只读挂载 + 白名单"
+        located_domain: D-AGT
+    key_insight: "P0 集中在 T1/T2/T4/T6（Spoofing/Tampering/Info Disclosure/Elevation），T3/T5 为 P1"
+
+  owasp_llm_top10_detailed:
+    description: "OWASP LLM Top 10（2023/2024）详细覆盖矩阵——10 行，含本系统暴露面 + 参考列"
+    eternal_framework_ref: "security_principles.md §3.2（永恒框架版，3 列：OWASP ID/威胁/防御原则）"
+    columns: [owasp_id, threat, system_exposure, experimental_defense, reference]
+    rows:
+      - owasp_id: LLM01
+        threat: Prompt Injection
+        system_exposure: "Cursor / Trae 对话 + 注入外部文档"
+        experimental_defense: "LSG L1 输入分类器 + L2 System Prompt 隔离"
+        reference: "LSG §4"
+      - owasp_id: LLM02
+        threat: Insecure Output Handling
+        system_exposure: "AI 输出直接写文件"
+        experimental_defense: "LSG L3 输出 Schema + Pydantic extra='forbid'"
+        reference: "LSG §4"
+      - owasp_id: LLM03
+        threat: Training Data Poisoning
+        system_exposure: "不训练模型（只用推理）"
+        experimental_defense: N/A
+        reference: "–"
+      - owasp_id: LLM04
+        threat: Model DoS
+        system_exposure: "LLM API 被重复调用"
+        experimental_defense: "Orchestrator 任务限流 + 配额"
+        reference: "Orc §6"
+      - owasp_id: LLM05
+        threat: Supply Chain
+        system_exposure: "第三方 MCP Tool 不可信"
+        experimental_defense: "Agent Sandbox 白名单（§5）"
+        reference: KBG-0018
+      - owasp_id: LLM06
+        threat: Sensitive Info Disclosure
+        system_exposure: "AI 输出包含 API Key"
+        experimental_defense: "LSG L3 输出 Secret Pattern 扫描"
+        reference: "LSG §4"
+      - owasp_id: LLM07
+        threat: Insecure Plugin Design
+        system_exposure: "MCP tools 接口越权"
+        experimental_defense: "LSG L4 Pattern 巡检 + Sandbox"
+        reference: "LSG §4"
+      - owasp_id: LLM08
+        threat: Excessive Agency
+        system_exposure: "Agent 拥有过多权限"
+        experimental_defense: "白名单命令集 + 资源配额"
+        reference: KBG-0018
+      - owasp_id: LLM09
+        threat: Overreliance
+        system_exposure: "AI 幻觉未检测"
+        experimental_defense: "Orchestrator 幻觉检测 + Context Engine validate"
+        reference: "Orc §5"
+      - owasp_id: LLM10
+        threat: Model Theft
+        system_exposure: "本地 BGE-M3 / Qwen2.5-3B 是开源公开模型"
+        experimental_defense: N/A
+        reference: "–"
+    key_insight: "本系统 AI 攻击面集中在 LLM01 / LLM02 / LLM06 / LLM08 / LLM09（P0），其他 5 条不适用（P2 级）"
+
+# ============================================================================
+# §8.3 数据保留与销毁
+# 永恒数据分级（L1-L4）与关键约束见 security_principles.md §8
+# 本节为运营态保留策略（具体保留期 + 销毁动作），principles §8 不含此表
+# ============================================================================
+
+data_protection:
+  description: "数据保护运营态数据——保留与销毁策略"
+  eternal_framework_ref: "security_principles.md §8（永恒：数据分级 L1-L4 + 关键约束）"
+
+  retention_and_destruction:
+    description: "数据保留与销毁表——4 行"
+    columns: [data_type, retention_period, destruction_policy]
+    rows:
+      - data_type: "Session Log"
+        retention_period: "180 天"
+        destruction_policy: "90 天后归档 .gz；180 天后删除"
+      - data_type: "向量库（VMS）"
+        retention_period: 永久
+        destruction_policy: "手动 TTL（个人系统无合规销毁要求）"
+      - data_type: "Broker 交易日志（未来）"
+        retention_period: "7 年"
+        destruction_policy: "合规要求（beta 定）"
+      - data_type: "Audit Finding"
+        retention_period: "2 年"
+        destruction_policy: "压缩归档"
+
+# ============================================================================
+# §9.4 审计日志消费者
+# 永恒审计架构（双轨存储 + 关键字段 + 防篡改）见 security_principles.md §9
+# 本节为运营态消费者清单，principles §9 不含此表
+# ============================================================================
+
+audit_logging:
+  description: "审计日志运营态数据——消费者清单"
+  eternal_framework_ref: "security_principles.md §9（永恒：双轨存储 + 关键字段 + 防篡改机制）"
+
+  log_consumers:
+    description: "日志消费者表——4 行"
+    columns: [consumer, purpose, access_mode]
+    rows:
+      - consumer: "Feedback Loop Engine"
+        purpose: "异常检测 + 自调节"
+        access_mode: "流式读"
+      - consumer: "Session Carryover"
+        purpose: "下次 IDE 会话恢复上下文"
+        access_mode: "批读"
+      - consumer: "人工审计 / 合规"
+        purpose: "事件回溯"
+        access_mode: "SQL 查询"
+      - consumer: "ML 模型训练（beta+）"
+        purpose: "异常模式学习"
+        access_mode: "历史回放"
+
+# ============================================================================
+# 不迁入内容声明（按 security_principles.md §11.2 边界）
+# 以下内容由各自既定真源维护，本文件不承载；git 历史（security_architecture.md）可查
+# ============================================================================
+
+not_migrated_note:
+  description: "按 security_principles.md §11.2 边界声明，以下内容不迁入本文件，由各自既定真源维护；git 历史（security_architecture.md）可查"
+  principles_boundary_ref: "security_principles.md §11.2"
+  items:
+    - content: "密钥资产清单（§6.1：LLM API Key / Broker API Key / Feishu Token / 1Password Token + 轮换频率）"
+      owner: "scripts/governance/scan_secret_leak.py 自动扫描"
+      git_history_ref: "security_architecture.md §6.1"
+    - content: "Phase Roadmap（§10.1 D6 目标分 2.2→9.0+ + §10.2 Phase 门禁 checklist）"
+      owner: "phase-transition-protocol.md（待创建）+ 自动化 phase gate"
+      git_history_ref: "security_architecture.md §10"
+    - content: "Open Questions SEC-OQ-01~05（红队评估工具选型 / Session Log 归档加密 / Sandbox 升级路径 / IAM 身份提供者 / 合规审计冻结期限）"
+      owner: "决策注册表（04_architecture_principles_decisions/）"
+      git_history_ref: "security_architecture.md §13"
+    - content: "安全域状态表（§2.1 experimental 状态列：🔴 P0 待建 / 🟡 部分 / ✅ 已有）"
+      owner: "capability_heatmap（depgraph design_maturity 派生）+ security_principles.md §2 永恒域划分"
+      git_history_ref: "security_architecture.md §2.1"
+    - content: "P0 攻击树（§3.3 路径 A/B/C 密钥泄露场景）"
+      owner: "security_principles.md §3.3（永恒）"
+      git_history_ref: "security_architecture.md §3.3"

@@ -294,7 +294,7 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-SEC-01 | 威胁模型图 STRIDE | ⏳待建 | 待裁定（YAML 威胁建模 vs 独立表） | STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注） | 规划目录：`10_security_panorama/`<br>生成器：`generate_stride_threat_model.py (待建)`<br>真源待裁定：待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。有 security_architecture.md 但缺攻击面/信任边界/数据流威胁标注<br>相关蓝图：[`security_architecture.md`](../target_architecture/security_architecture.md) / [`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| PAN-SEC-01 | 威胁模型图 STRIDE | ⏳待建 | 待裁定（YAML 威胁建模 vs 独立表） | STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注） | 规划目录：`10_security_panorama/`<br>生成器：`generate_stride_threat_model.py (待建)`<br>真源待裁定：待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。STRIDE/OWASP 威胁映射已迁入 threat_model.yaml，但缺攻击面/信任边界/数据流威胁标注<br>相关蓝图：[`security_principles.md`](../04_architecture_principles_decisions/security_principles.md) + [`threat_model.yaml`](../../../architecture_model/security/threat_model.yaml) / [`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | PAN-SEC-02 | 合规矩阵 | ⏳待建 | 待裁定（depgraph compliance 扩展 vs 独立表） | 规则×系统×状态 合规全景看板 | 规划目录：`10_security_panorama/`<br>生成器：`generate_compliance_matrix.py (待建)`<br>真源待裁定：待裁定：扩展现有 compliance 域 916 模块元信息 vs 独立 compliance_matrix 表。compliance 域有 916 模块但没规则×系统×状态看板<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_compliance/blueprint.md) |
 
 ### 11 风险全景（待建）

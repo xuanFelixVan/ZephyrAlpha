@@ -135,7 +135,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | technology_principles.md → ../04_architecture_principles_decisions/ + dr_bcp_matrix.yaml | TA 技术架构原则（原 technology_architecture.md 已迁移） |
 | capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
 | data_principles.md → ../04_architecture_principles_decisions/ + data_entity_catalog.yaml | DA 数据架构原则（原 data_architecture.md 已迁移） |
-| security_architecture.md | SEC 安全架构视图 |
+| security_principles.md → ../04_architecture_principles_decisions/ + threat_model.yaml | SEC 安全架构原则（原 security_architecture.md 已迁移） |
 | operations_architecture.md | OPS 运维架构视图 |
 | governance_principles.md → ../04_architecture_principles_decisions/ + governance_systems_registry.yaml | GOV 治理架构原则（原 governance_architecture.md 已迁移） |
 | frontend_architecture.md | FE 前端架构视图 |
@@ -172,7 +172,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | [`technology_principles.md`](../04_architecture_principles_decisions/technology_principles.md) + [`dr_bcp_matrix.yaml`](../../../architecture_model/technology/dr_bcp_matrix.yaml) | TA | 用什么技术栈？ | SRE、实施者 | active |
 | `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
 | [`data_principles.md`](../04_architecture_principles_decisions/data_principles.md) + [`data_entity_catalog.yaml`](../../../architecture_model/data/data_entity_catalog.yaml) | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
-| `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
+| [`security_principles.md`](../04_architecture_principles_decisions/security_principles.md) + [`threat_model.yaml`](../../../architecture_model/security/threat_model.yaml) | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
 | `operations_architecture.md` | OPS | 运维域全景？ | SRE、运维工程师 | draft |
 | [`governance_principles.md`](../04_architecture_principles_decisions/governance_principles.md) + [`governance_systems_registry.yaml`](../../../architecture_model/governance_systems_registry.yaml) | GOV | 治理体系三层边界？ | 架构师、合规 | active |
 | `frontend_architecture.md` | FE | 前端层分层？ | 前端开发者、架构师 | active |
