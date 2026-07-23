@@ -5,8 +5,8 @@
 # [CONSUMERS] zephyr.trading.boot_hooks (MCP 自动启动); zephyr.trading.boot_cron_jobs (_mcp_health_check); scripts.governance.* (健康检查)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DAG_LAYERS 必须包含 10 个 Server 的 4 层结构（layer_0 空+layer_1~4）；SERVER_SCRIPTS 路径必须为 src/zephyr/integration/mcp/；所有进程必须通过 ProcessLifecycleGateway 管理；idle_timeout_s=600（10分钟空闲自动回收）；launch_all 必须注册 SIGINT/SIGTERM 信号处理；atexit 必须注册 _graceful_shutdown 兜底
-# [MODIFY-GUARD] 修改本文件 MUST 通过任务卡通道并获取文件锁；修改前 MUST 运行 test_mcp_launcher.py 验证无回归；修改后 MUST 运行 test_mcp_launcher.py 确认通过；禁止删除 check_server_health/restart_server/dry_run 函数；禁止修改 DAG_LAYERS 层级结构（10 Server / 4 非空层）除非通过蓝图变更审批
+# [INVARIANTS] DAG_LAYERS 必须包含 9 个 Server 的 4 层结构（layer_0 空+layer_1~4）；SERVER_SCRIPTS 路径必须为 src/zephyr/integration/mcp/；所有进程必须通过 ProcessLifecycleGateway 管理；idle_timeout_s=600（10分钟空闲自动回收）；launch_all 必须注册 SIGINT/SIGTERM 信号处理；atexit 必须注册 _graceful_shutdown 兜底
+# [MODIFY-GUARD] 修改本文件 MUST 通过任务卡通道并获取文件锁；修改前 MUST 运行 test_mcp_launcher.py 验证无回归；修改后 MUST 运行 test_mcp_launcher.py 确认通过；禁止删除 check_server_health/restart_server/dry_run 函数；禁止修改 DAG_LAYERS 层级结构（9 Server / 4 非空层）除非通过蓝图变更审批
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
@@ -20,9 +20,9 @@
 读取 b_mcp.yaml 构建依赖 DAG → 拓扑排序 → 按层并行启动 → 等待 healthz 就绪。
 所有进程通过 ProcessLifecycleGateway 管理，idle_timeout 空闲自动回收。
 
-10 个 MCP Server 按 4 层 DAG 启动：
-  layer_1: knowledge_base, gate_engine, blueprint_search, governance, vector_memory, telemetry (无依赖基础服务)
-  layer_2: task_manager (依赖 knowledge_base, gate_engine)
+9 个 MCP Server 按 4 层 DAG 启动：
+  layer_1: gate_engine, blueprint_search, governance, vector_memory, telemetry (无依赖基础服务)
+  layer_2: task_manager (依赖 gate_engine)
   layer_3: session_handoff, intent_router (依赖 task_manager)
   layer_4: gateway (依赖所有 Server，最后启动)
 """
@@ -51,7 +51,7 @@ B_MCP = REPO_ROOT / "architecture_model" / "layers" / "b_mcp.yaml"
 
 _log = logging.getLogger(__name__)
 
-# DAG 层级定义：10 个 Server / 4 非空层
+# DAG 层级定义：9 个 Server / 4 非空层
 # layer_0 保留为空（拓扑排序时跳过）
 DAG_LAYERS: dict[str, list[str]] = {
     "layer_0": [],
@@ -228,7 +228,7 @@ def _graceful_shutdown() -> None:
 
 
 def launch_all() -> dict[str, bool]:
-    """启动全部 10 个 MCP Server（按 DAG 拓扑排序）。
+    """启动全部 9 个 MCP Server（按 DAG 拓扑排序）。
 
     Returns:
         dict[server_id, bool] 每个 Server 的启动结果

@@ -272,7 +272,7 @@ class TestAgentOrchestrator:
         self.router = AgentRouter()
         self.mapping = {
             "325": [("task_manager.get_task", {"task_id": "T-3-10"})],
-            "344": [("knowledge_base.search", {"q": "CoVe"})],
+            "344": [("governance.list_skills", {"q": "CoVe"})],
             "999": [("sentinel.run_scan", {})],
         }
 
@@ -290,7 +290,7 @@ class TestAgentOrchestrator:
         assert all(c.success for c in res.tool_calls)
         assert [c.tool_name for c in res.tool_calls] == [
             "task_manager.get_task",
-            "knowledge_base.search",
+            "governance.list_skills",
         ]
         assert len(calls) == 2
 

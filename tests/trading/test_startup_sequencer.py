@@ -65,7 +65,6 @@ class TestStartupComponents:
         components = STARTUP_COMPONENTS[StartupLayer.L4_CORE_SERVICES]
         assert "orchestrator" in components
         assert "script_system" in components
-        assert "knowledge_base" in components
 
     def test_l1_has_database(self):
         assert STARTUP_COMPONENTS[StartupLayer.L1_DATABASE] == ["database"]

@@ -346,7 +346,7 @@ class TestContractRegistryOperations:
         assert result.hint == AIReadOnlyHint.DO_NOT_CALL
 
     def test_check_ai_read_only_impl_required(self, registry):
-        result = registry.check_ai_read_only("CT-SCRIPT-KB-001")
+        result = registry.check_ai_read_only("CT-RB-001")
         assert result.allowed is False
         assert result.hint == AIReadOnlyHint.IMPL_REQUIRED
 

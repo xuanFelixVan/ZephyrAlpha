@@ -23,7 +23,6 @@ from typing import Final
 BULKHEAD_QUOTAS: Final[dict[str, dict]] = {
     "orchestrator": {"threads": 8, "sqlite_connections": 3, "memory_mb": 256},
     "script_system": {"threads": 4, "sqlite_connections": 2, "memory_mb": 128},
-    "knowledge_base": {"threads": 4, "sqlite_connections": 2, "memory_mb": 128},
     "context-engine": {"threads": 4, "sqlite_connections": 2, "memory_mb": 256},
     "gate_engine": {"threads": 4, "sqlite_connections": 1, "memory_mb": 64},
     "pipeline": {"threads": 2, "sqlite_connections": 1, "memory_mb": 64},

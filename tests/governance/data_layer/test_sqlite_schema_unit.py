@@ -28,7 +28,6 @@
   迁移幂等性：
     - _migrate_namespace_and_seq × 1
     - _migrate_v2_fields × 1
-    - _migrate_knowledge_status × 1
     - _migrate_circuit_breaker_state × 1
 
 Task: T-1-02 | Safety: M | experimental
@@ -68,7 +67,7 @@ class TestInitDb:
 
     def test_all_tables_created(self, db):
         tables = table_names(db)
-        expected = {"tasks", "task_files", "events", "knowledge", "gates", "circuit_breaker_state"}
+        expected = {"tasks", "task_files", "events", "gates", "circuit_breaker_state"}
         assert expected.issubset(set(tables))
 
     def test_all_views_created(self, db):
@@ -251,14 +250,6 @@ class TestMigrationIdempotency:
         conn.close()
         assert "title" in columns
         assert "priority" in columns
-
-    def test_migrate_knowledge_status_idempotent(self, db):
-        init_db(db)
-        init_db(db)
-        conn = sqlite3.connect(str(db))
-        columns = {row[1] for row in conn.execute("PRAGMA table_info(knowledge)").fetchall()}
-        conn.close()
-        assert "status" in columns
 
     def test_migrate_circuit_breaker_state_idempotent(self, db):
         init_db(db)

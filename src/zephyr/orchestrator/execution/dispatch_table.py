@@ -61,24 +61,12 @@ DISPATCH_TABLE: Final[dict[str, SystemDispatch]] = {
         system_name="Script System（脚本系统）",
         ct_contracts=(
             "CT-ORC-SCRIPT",
-            "CT-SCRIPT-KB",
             "CT-SCRIPT-GATE",
             "CT-FEATUREFLAG",
         ),
         schemas=("Finding", "KE"),
         token_budget=1400,
         blueprint_section="§零 AI Agent 分派与阅读指南 — Script System 行",
-    ),
-    "knowledge-base": SystemDispatch(
-        system_name="Knowledge Base（知识库）",
-        ct_contracts=(
-            "CT-SCRIPT-KB",
-            "CT-KB-VMS",
-            "CT-DATA-LIFECYCLE",
-        ),
-        schemas=("KE",),
-        token_budget=1000,
-        blueprint_section="§零 AI Agent 分派与阅读指南 — Knowledge Base 行",
     ),
     "context-engine": SystemDispatch(
         system_name="Context Engine（CE）",

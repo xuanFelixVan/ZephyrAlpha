@@ -757,13 +757,6 @@ consumers:
 - module: mcp._base_server
   depends_on:
   - agent_rbac.permission_guard
-- module: mcp.knowledge_base_server
-  depends_on:
-  - logging.get_logger
-  - errors.ZephyrBaseError
-  - paths.REPO_ROOT
-  - schemas.SafetyLevel
-  note: skeleton——KE语义检索MCP服务
 - module: mcp.gate_engine_server
   depends_on:
   - logging.get_logger

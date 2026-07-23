@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "MCP Gateway + 11 Server 集中式配置（mod_inf_013 §12 SSoT）",
+  "description": "MCP Gateway + 10 Server 集中式配置（mod_inf_013 §12 SSoT）",
 
   "gateway": {
     "server_id": "mcp_gateway",
@@ -17,16 +17,6 @@
       "tool_prefix": "task_manager.",
       "tool_count": 6,
       "safety_level": ["L", "M", "H"],
-      "rate_limit": { "default_qps": 10, "burst": 30 }
-    },
-    "knowledge_base": {
-      "module": "knowledge_base_server",
-      "server_id": "knowledge_base",
-      "version": "1.1.0",
-      "transport": "BaseMCPServer",
-      "tool_prefix": "knowledge_base.",
-      "tool_count": 6,
-      "safety_level": ["L", "H"],
       "rate_limit": { "default_qps": 10, "burst": 30 }
     },
     "gate_engine": {
@@ -186,11 +176,6 @@
         "reader": ["task_manager.list", "task_manager.get", "task_manager.health_check"],
         "operator": ["task_manager.list", "task_manager.get", "task_manager.create", "task_manager.update", "task_manager.health_check"],
         "admin": ["task_manager.list", "task_manager.get", "task_manager.create", "task_manager.update", "task_manager.delete", "task_manager.health_check"]
-      },
-      "knowledge_base": {
-        "reader": ["knowledge_base.query", "knowledge_base.recall", "knowledge_base.health_check"],
-        "operator": ["knowledge_base.query", "knowledge_base.recall", "knowledge_base.write", "knowledge_base.health_check"],
-        "admin": ["knowledge_base.query", "knowledge_base.recall", "knowledge_base.write", "knowledge_base.delete", "knowledge_base.reindex", "knowledge_base.health_check"]
       },
       "gate_engine": {
         "reader": ["gate_engine.list_gates", "gate_engine.get_result", "gate_engine.health_check"],

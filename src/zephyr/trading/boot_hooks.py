@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -432,19 +432,6 @@ def _hook_orc_vms_archive(event: object, task_repo: TaskRepositoryProtocol | Non
         logger.error("hook orc_vms_archive FAILED: %s", exc, exc_info=True)
 
 
-def _hook_kb_vms_sync(event: object) -> None:
-    try:
-        task_id = getattr(event, "task_id", "")
-        to_status = getattr(event, "to_status", "")
-        if to_status.upper() != TaskStatus.COMPLETED:
-            return
-        from zephyr.intelligence.model_evaluation.sync_engine import sync_to_vms
-
-        sync_to_vms()
-    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.error("hook kb_vms_sync FAILED: %s", exc, exc_info=True)
-
-
 def _hook_rbk_gate_freeze(event: object) -> None:
     try:
         to_status = getattr(event, "to_status", "")
@@ -556,10 +543,9 @@ def register_boot_hooks(
         hook_registry.register(lambda e: _hook_triple_alignment_on_verified(e, task_repo), priority=70, name="triple_alignment_on_verified")
         hook_registry.register(_hook_cleanup_task_processes, priority=45, name="cleanup_task_processes")
         hook_registry.register(lambda e: _hook_orc_vms_archive(e, task_repo), priority=48, name="orc_vms_archive")
-        hook_registry.register(_hook_kb_vms_sync, priority=47, name="kb_vms_sync")
         hook_registry.register(_hook_rbk_gate_freeze, priority=55, name="rbk_gate_freeze")
         logger.info(
-            "Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / cleanup_task_processes / orc_vms_archive / kb_vms_sync / rbk_gate_freeze"
+            "Task system hooks registered: auto_unblock_dependents / auto_retry_on_failure / triple_alignment_on_verified / cleanup_task_processes / orc_vms_archive / rbk_gate_freeze"
         )
 
         # Event-driven hooks

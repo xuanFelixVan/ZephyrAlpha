@@ -42,9 +42,9 @@ class TestMCPLauncher:
 
         # layer_1应包含基础Server
         layer_1 = order[0]
-        assert "knowledge_base" in layer_1
         assert "gate_engine" in layer_1
         assert "blueprint_search" in layer_1
+        assert "governance" in layer_1
 
         # layer_2应包含task_manager
         layer_2 = order[1]
@@ -60,21 +60,21 @@ class TestMCPLauncher:
         assert layer_4 == ["gateway"], f"Expected ['gateway'], got {layer_4}"
 
     def test_server_paths_exist(self, launcher_module):
-        """验证全部10个Server脚本路径存在。"""
+        """验证全部9个Server脚本路径存在。"""
         scripts = launcher_module.SERVER_SCRIPTS
-        assert len(scripts) == 10, f"Expected 10 servers, got {len(scripts)}"
+        assert len(scripts) == 9, f"Expected 9 servers, got {len(scripts)}"
 
         for server_id, script_rel in scripts.items():
             script_path = REPO_ROOT / script_rel
             assert script_path.exists(), f"Server {server_id} script not found: {script_path}"
 
     def test_dry_run_output(self, launcher_module, capsys):
-        """验证--dry-run模式输出包含全部10个Server。"""
+        """验证--dry-run模式输出包含全部9个Server。"""
         exit_code = launcher_module.dry_run()
         captured = capsys.readouterr()
 
         assert exit_code == 0, f"dry_run returned exit_code={exit_code}"
-        assert "10" in captured.out, "Output should mention 10 servers"
+        assert "9" in captured.out, "Output should mention 9 servers"
 
         # 验证所有Server ID出现在输出中
         for server_id in launcher_module.SERVER_SCRIPTS:

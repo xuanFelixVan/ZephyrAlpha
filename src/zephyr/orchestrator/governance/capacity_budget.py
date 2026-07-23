@@ -43,7 +43,6 @@ logger = logging.getLogger(__name__)
 class SystemPool(str, Enum):
     ORCHESTRATOR = "orchestrator"
     SCRIPT_SYSTEM = "script_system"
-    KB = "knowledge_base"
     GATES = "gate_engine"
     CE = "context-engine"
     PIPELINE = "pipeline"
@@ -58,7 +57,6 @@ class SystemPool(str, Enum):
 DEFAULT_POOL_QUOTAS: Final[dict[SystemPool, int]] = {
     SystemPool.ORCHESTRATOR: 16,
     SystemPool.SCRIPT_SYSTEM: 4,
-    SystemPool.KB: 4,
     SystemPool.GATES: 4,
     SystemPool.CE: 4,
     SystemPool.PIPELINE: 4,

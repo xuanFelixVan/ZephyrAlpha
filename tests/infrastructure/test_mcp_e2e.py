@@ -16,19 +16,18 @@ MCP 端到端测试 — T-3-05 (B16)
   - 5 个 Server 完整生命周期测试（initialize → tools/list → tools/call）
   - JSON-RPC 2.0 协议合规性验证（id 匹配、错误码、content-type）
   - stdio 传输层模拟测试
-  - 跨 Server 调用链测试（task_manager → gate_engine → knowledge_base）
+  - 跨 Server 调用链测试（task_manager → gate_engine → doc_guard）
   - ≥ 20 条单元测试
 
 测试矩阵
 --------
 ProtocolCompliance  : id 匹配 / jsonrpc 版本 / 错误码常量 / null-id 错误 / 批量 id 唯一性
 LifecycleTaskManager   : initialize→tools_list→create→get→update_status
-LifecycleKnowledgeBase : initialize→tools_list→upsert_ke→search→rebuild
 LifecycleGateEngine    : initialize→tools_list→g1_write→g2_commit→g4_contract
 LifecycleDocGuard      : initialize→tools_list→create_package→validate
 LifecycleSentinel      : initialize→tools_list→map_intent→evaluate_golden_set
 StdioTransport         : multi-request / malformed JSON / empty-line skip
-CrossServerChain       : task_manager→gate_engine→knowledge_base 完整调用链
+CrossServerChain       : task_manager→gate_engine→doc_guard 完整调用链
 """
 
 from __future__ import annotations
@@ -472,7 +471,7 @@ class TestStdioTransport:
 
 
 # ===========================================================================
-# 8. 跨 Server 调用链测试（task_manager → gate_engine → knowledge_base）
+# 8. 跨 Server 调用链测试（task_manager → gate_engine → doc_guard）
 # ===========================================================================
 
 
@@ -481,7 +480,7 @@ class TestCrossServerChain:
     跨服务调用链（JSON-RPC BaseMCPServer）：
       ① 合成 Task 形状 payload（与 Task Manager 工具解耦）
       ② gate_engine G4 契约校验
-      ③ knowledge_base 存储审计知识条目
+      ③ doc_guard 存储审计事件
     """
 
     def setup_method(self) -> None:

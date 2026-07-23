@@ -53,14 +53,13 @@ class TestBulkheadManagerListSystems:
     def test_list_systems_count(self):
         mgr = BulkheadManager()
         systems = mgr.list_systems()
-        assert len(systems) == 12
+        assert len(systems) == 11
 
     def test_list_systems_contains_expected(self):
         mgr = BulkheadManager()
         systems = mgr.list_systems()
         assert "orchestrator" in systems
         assert "script_system" in systems
-        assert "knowledge_base" in systems
         assert "context-engine" in systems
         assert "gate_engine" in systems
         assert "pipeline" in systems

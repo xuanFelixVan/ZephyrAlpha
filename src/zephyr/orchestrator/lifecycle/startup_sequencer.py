@@ -53,7 +53,6 @@ STARTUP_COMPONENTS: Final[dict[StartupLayer, list[str]]] = {
     StartupLayer.L4_CORE_SERVICES: [
         "orchestrator",
         "script_system",
-        "knowledge_base",
         "context-engine",
         "gate_engine",
         "pipeline",

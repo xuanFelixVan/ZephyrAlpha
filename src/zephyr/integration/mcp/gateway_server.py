@@ -324,12 +324,6 @@ class MCPGateway(BaseMCPServer):
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("vector_memory server init failed: %s", exc, exc_info=True)
         try:
-            from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
-
-            self._server_instances["knowledge_base"] = KnowledgeBaseServer()
-        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            _log.warning("knowledge_base server init failed: %s", exc, exc_info=True)
-        try:
             from zephyr.integration.mcp.sandbox_server import SandboxServer
 
             self._server_instances["sandbox"] = SandboxServer()

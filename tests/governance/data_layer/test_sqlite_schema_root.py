@@ -92,7 +92,6 @@ class TestTableNames:
         result = table_names(initialized_db)
         assert "tasks" in result
         assert "events" in result
-        assert "knowledge" in result
         assert "gates" in result
 
     def test_contains_circuit_breaker_table(self, initialized_db):

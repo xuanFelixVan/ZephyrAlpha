@@ -15,4 +15,5 @@ from pathlib import Path
 _script_system_root = Path(__file__).parent
 
 # 5.136.1 修复: __all__ 移除已删除的 GateBridge/KBBridge 幽灵符号
-__all__ = ["finding", "gate_bridge", "kb_bridge"]
+# KB 系统退役(2026-07-23): 移除 kb_bridge
+__all__ = ["finding", "gate_bridge"]

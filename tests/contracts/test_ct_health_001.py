@@ -46,8 +46,8 @@ def test_probe_status_enum():
     assert len(ProbeStatus) == 3
 
 
-def test_systems_are_12():
-    assert len(SYSTEMS) == 12
+def test_systems_are_11():
+    assert len(SYSTEMS) == 11
     assert "orchestrator" in SYSTEMS
     assert "mcp_servers" in SYSTEMS
 
@@ -109,4 +109,4 @@ def test_health_manager_healthz_unknown_system():
 def test_health_manager_list_systems():
     mgr = HealthProbeManager()
     systems = mgr.list_systems()
-    assert len(systems) == 12
+    assert len(systems) == 11

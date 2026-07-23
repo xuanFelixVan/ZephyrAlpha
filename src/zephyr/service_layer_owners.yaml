@@ -19,7 +19,6 @@ primary_owner: ZephyrAlpha
 modules:
   mcp:
     - task_manager:       src/zephyr/integration/mcp/task_manager_server.py
-    - knowledge_base:     src/zephyr/integration/mcp/knowledge_base_server.py
     - gate_engine:        src/zephyr/integration/mcp/gate_engine_server.py
     - session_handoff:    src/zephyr/integration/mcp/doc_guard_server.py
     - intent_router:      src/zephyr/integration/mcp/sentinel_server.py

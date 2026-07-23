@@ -28,7 +28,6 @@ class TestSystemPool:
     def test_all_pools_exist(self):
         assert SystemPool.ORCHESTRATOR.value == "orchestrator"
         assert SystemPool.SCRIPT_SYSTEM.value == "script_system"
-        assert SystemPool.KB.value == "knowledge_base"
         assert SystemPool.GATES.value == "gate_engine"
         assert SystemPool.CE.value == "context-engine"
         assert SystemPool.PIPELINE.value == "pipeline"
@@ -40,7 +39,7 @@ class TestSystemPool:
         assert SystemPool.MCP.value == "mcp_servers"
 
     def test_pool_count(self):
-        assert len(SystemPool) == 12
+        assert len(SystemPool) == 11
 
 
 class TestDefaultPoolQuotas:
@@ -57,7 +56,7 @@ class TestCapacityBudget:
     def test_default_construction(self):
         cb = CapacityBudget()
         assert cb.max_concurrent_tasks == 64
-        assert len(cb.wip_limit_per_system) == 12
+        assert len(cb.wip_limit_per_system) == 11
 
     def test_custom_max_concurrent(self):
         cb = CapacityBudget(max_concurrent_tasks=32)
@@ -74,7 +73,7 @@ class TestCapacityState:
         assert cs.active_tasks == 0
         assert cs.queued_tasks == 0
         assert cs.max_concurrent == 64
-        assert len(cs.system_active) == 12
+        assert len(cs.system_active) == 11
 
     def test_all_systems_initially_zero(self):
         cs = CapacityState()

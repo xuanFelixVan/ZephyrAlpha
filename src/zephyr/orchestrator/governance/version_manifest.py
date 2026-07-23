@@ -22,7 +22,6 @@ from typing import Final
 VERSION_MANIFEST: Final[dict[str, dict]] = {
     "orchestrator": {"version": "v0.1.0", "path": "src/zephyr/orchestrator/"},
     "script_system": {"version": "v0.1.0", "path": "src/zephyr/script_system/"},
-    "knowledge_base": {"version": "v0.1.0", "path": "src/zephyr/knowledge_base/"},
     "context-engine": {"version": "v0.1.0", "path": "src/zephyr/context-engine/"},
     "gate_engine": {"version": "v0.1.0", "path": "src/zephyr/gov_enforcement/rule_enforcement/"},
     "pipeline": {"version": "v0.1.0", "path": "src/zephyr/pipeline/"},

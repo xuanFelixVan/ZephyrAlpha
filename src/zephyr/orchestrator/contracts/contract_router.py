@@ -26,11 +26,9 @@
   CT-ORC-CE-001 -> Context Engine
   CT-ORC-VMS-001 -> Vector Memory
   CT-ORC-GATE-001 -> Gate Engine
-  CT-SCRIPT-KB-001 -> Knowledge Base
   CT-SCRIPT-GATE-001 -> Gate Engine
   CT-CE-VMS-001 -> Vector Memory
   CT-CE-LSG-001 -> LLM Security
-  CT-KB-VMS-001 -> Vector Memory
   CT-FLE-ORC-001 -> Orchestrator
   CT-FLE-DB-001 -> Database
   CT-TELE-FLE-001 -> Feedback Loop
@@ -54,11 +52,9 @@ ROUTE_MAP: Final[dict[str, str]] = {
     "CT-ORC-CE-001": "context-engine",
     "CT-ORC-VMS-001": "vector-memory",
     "CT-ORC-GATE-001": "gate_engine",
-    "CT-SCRIPT-KB-001": "knowledge_base",
     "CT-SCRIPT-GATE-001": "gate_engine",
     "CT-CE-VMS-001": "vector-memory",
     "CT-CE-LSG-001": "llm-security",
-    "CT-KB-VMS-001": "vector-memory",
     "CT-FLE-ORC-001": "orchestrator",
     "CT-FLE-DB-001": "database",
     "CT-TELE-FLE-001": "feedback-loop",
@@ -81,7 +77,6 @@ ROUTE_MAP: Final[dict[str, str]] = {
     "CT-CHAOS-001": "orchestrator",
     "CT-MODEL-REGISTRY-001": "orchestrator",
     "CT-DEPS-001": "gate_engine",
-    "CT-KNOWLEDGE-FRESHNESS-001": "knowledge_base",
     "CT-HOUSEKEEPING-001": "database",
     "CT-STABILITY-001": "gate_engine",
     "CT-CANARY-001": "orchestrator",
@@ -101,7 +96,6 @@ ROUTE_MAP: Final[dict[str, str]] = {
     "CT-LEAN-001": "orchestrator",
     "CT-BLUEPRINT-HEALTH-001": "gate_engine",
     "CT-TRANSFER-001": "orchestrator",
-    "CT-KE-QUALITY-001": "knowledge_base",
 }
 
 SYSTEM_NAME_MAP: Final[dict[str, str]] = {
@@ -109,7 +103,6 @@ SYSTEM_NAME_MAP: Final[dict[str, str]] = {
     "context-engine": "Context Engine",
     "vector-memory": "Vector Memory Service",
     "gate_engine": "Gate Engine",
-    "knowledge_base": "Knowledge Base",
     "llm-security": "LLM Security Gateway",
     "orchestrator": "Agent Orchestrator",
     "database": "Database",

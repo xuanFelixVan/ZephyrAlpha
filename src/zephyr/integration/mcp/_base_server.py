@@ -54,7 +54,7 @@ MCP 扩展码：-32001(ERR_TOOL_NOT_FOUND) / -32002(ERR_TOOL_EXECUTION) /
 
 双栈 MCP 说明
 -------------
-- BaseMCPServer（本类）：自研 JSON-RPC 2.0，供 knowledge_base / gate_engine /
+- BaseMCPServer（本类）：自研 JSON-RPC 2.0，供 gate_engine /
   doc_guard(session_handoff) / sentinel(intent_router) / blueprint_search 使用。
 - FastMCP（task_manager_server.py）：官方 mcp SDK，task_manager MCP 使用。
 - 两条路径均 speak MCP over stdio——属有意的渐进迁移，而非实现漏做。

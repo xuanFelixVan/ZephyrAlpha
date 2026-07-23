@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """policy_registry 单测（MOD-L00-004 阶段1）。
 
 测试内容：

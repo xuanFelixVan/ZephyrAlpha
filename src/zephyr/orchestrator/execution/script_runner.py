@@ -118,7 +118,6 @@ class ScriptRunner:
         )
 
         self._submit_to_gate(result, task_id)
-        self._publish_to_kb(result, task_id)
 
         return result
 
@@ -198,26 +197,6 @@ class ScriptRunner:
                 submit_to_gate(findings, task_id=task_id)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[SCRIPT-GATE] submit skipped", exc_info=True)
-
-    def _publish_to_kb(self, result: RunResult, task_id: str) -> None:
-        try:
-            from zephyr.infrastructure.script_system.kb_bridge import publish_to_kb
-
-            findings: list[dict[str, Any]] = [
-                {
-                    "dimension": "audit",
-                    "script": r.script,
-                    "exit_code": r.exit_code,
-                    "duration_ms": r.duration_ms,
-                    "message": r.error or r.output[:200],
-                }
-                for r in result.results
-            ]
-            if findings:
-                publish_to_kb(findings, task_id=task_id)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("[SCRIPT-KB] publish skipped", exc_info=True)
-
 
 def run_audit(
     task_id: str,

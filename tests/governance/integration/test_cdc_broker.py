@@ -28,7 +28,7 @@ def test_register_expectation(broker):
 
 def test_get_expectations_for_producer(broker):
     broker.register_expectation("script_system", "orchestrator", "CT-ORC-SCRIPT-001", "v1.0.0")
-    broker.register_expectation("knowledge_base", "orchestrator", "CT-ORC-CE-001", "v1.0.0")
+    broker.register_expectation("gate_engine", "orchestrator", "CT-ORC-GATE-001", "v1.0.0")
     exps = broker.get_expectations("orchestrator")
     assert len(exps) == 2
 

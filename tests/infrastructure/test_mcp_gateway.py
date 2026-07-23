@@ -95,13 +95,13 @@ class TestMCPGateway:
         )
         assert resp.get("jsonrpc") == "2.0"
 
-    def test_route_knowledge_base_tool(self, gw: MCPGateway) -> None:
+    def test_route_governance_tool(self, gw: MCPGateway) -> None:
         resp = gw.handle_request(
             {
                 "jsonrpc": "2.0",
                 "id": 1,
                 "method": "tools/call",
-                "params": {"name": "knowledge_base.health_check", "arguments": {}},
+                "params": {"name": "governance.list_skills", "arguments": {}},
                 "_session_id": "test01",
             }
         )
@@ -173,19 +173,19 @@ class TestCircuitBreaker:
             assert cb.state == "CLOSED"
 
     def test_failure_opens_breaker(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["knowledge_base"]
+        cb = gw._circuit_breakers["gate_engine"]
         for _ in range(4):
             cb.failure()
         assert cb.state == "OPEN"
 
     def test_allow_returns_false_when_open(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["knowledge_base"]
+        cb = gw._circuit_breakers["gate_engine"]
         for _ in range(5):
             cb.failure()
         assert cb.allow() is False
 
     def test_recovery_after_timeout(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["knowledge_base"]
+        cb = gw._circuit_breakers["gate_engine"]
         cb._recovery = 0.01  # 10ms for test
         for _ in range(5):
             cb.failure()
@@ -194,7 +194,7 @@ class TestCircuitBreaker:
         assert cb.state == "HALF_OPEN"
 
     def test_success_closes_half_open(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["knowledge_base"]
+        cb = gw._circuit_breakers["gate_engine"]
         cb._recovery = 0.01
         for _ in range(5):
             cb.failure()

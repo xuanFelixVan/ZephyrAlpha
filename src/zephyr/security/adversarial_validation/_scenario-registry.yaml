@@ -137,16 +137,6 @@ scenarios:
     steady_state_verification: "session_chain_verify"
     status: active
 
-  - scenario_id: RB-SCEN-013
-    name: "Knowledge Base Poisoning"
-    tier: L3
-    severity: medium
-    injection_vector: "kb_write_injection"
-    target_module: "knowledge_base"
-    defense: "kb.verify_integrity"
-    steady_state_verification: "kb_consistency_check"
-    status: active
-
   - scenario_id: RB-SCEN-014
     name: "MCP Tool Spoofing"
     tier: L1

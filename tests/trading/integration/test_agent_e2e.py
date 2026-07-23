@@ -57,7 +57,7 @@ def _cove_fail(claim: str, context: Any = None) -> dict[str, Any]:
 
 MAPPING = {
     "325": [("task_manager.get_task", {"task_id": "T-3-10"})],
-    "344": [("knowledge_base.search", {"q": "CoVe"})],
+    "344": [("governance.list_skills", {"q": "CoVe"})],
     "999": [("sentinel.run_scan", {})],
 }
 
@@ -137,7 +137,7 @@ class TestOrchestratorE2E:
         assert len(res.tool_calls) == 3
         assert [c.tool_name for c in res.tool_calls] == [
             "task_manager.get_task",
-            "knowledge_base.search",
+            "governance.list_skills",
             "sentinel.run_scan",
         ]
 

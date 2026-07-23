@@ -942,12 +942,10 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         34,
-        "5.35.10 修复：重建 gates + knowledge 兼容表（test_sqlite_schema_unit SSoT 期望）",
-        # SSoT 铁律：测试是真源。test_sqlite_schema_unit 期望 gates 表 + idx_gates_gate_id 索引
-        # + knowledge 表（带 status 列）。5.18.14 改名 gates->gate_runs 和 KBG removal 删除
-        # knowledge 与测试期望冲突。本 migration 创建兼容表满足测试，gate_runs 保留不变。
-        # knowledge 列集为 test_sqlite_schema_unit（status）+ test_governance_db（topic/ke_type/domain）的并集，
-        # title 改为可空以兼容 test_governance_db 的 INSERT（不提供 title）。
+        "5.35.10 修复：重建 gates 兼容表（test_sqlite_schema_unit SSoT 期望）",
+        # SSoT 铁律：测试是真源。test_sqlite_schema_unit 期望 gates 表 + idx_gates_gate_id 索引。
+        # 5.18.14 改名 gates->gate_runs，与测试期望冲突。本 migration 创建兼容表满足测试，gate_runs 保留不变。
+        # KB 系统退役(2026-07-23)：knowledge/ke_tombstones 表已彻底删除，不再重建。
         [
             """CREATE TABLE IF NOT EXISTS gates (
                 gate_run_id  TEXT PRIMARY KEY,
@@ -960,51 +958,16 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
                 created_at   TEXT NOT NULL
             )""",
             "CREATE INDEX IF NOT EXISTS idx_gates_gate_id ON gates(gate_id)",
-            """CREATE TABLE IF NOT EXISTS knowledge (
-                ke_id        TEXT PRIMARY KEY,
-                title        TEXT,
-                topic        TEXT,
-                content      TEXT NOT NULL,
-                ke_type      TEXT,
-                domain       TEXT,
-                collection   TEXT NOT NULL DEFAULT 'ke_entries',
-                status       TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','archived','deleted')),
-                created_at   TEXT NOT NULL,
-                updated_at   TEXT NOT NULL
-            )""",
-            """CREATE TABLE IF NOT EXISTS ke_tombstones (
-                ke_id          TEXT PRIMARY KEY,
-                original_topic TEXT,
-                death_reason   TEXT,
-                died_at        TEXT
-            )""",
         ],
     ),
     (
         35,
-        "5.150.11 修复：production DB 的 v34 被旧内容（task_events UNIQUE 移除）占用，"
-        "新 v34（gates+knowledge+ke_tombstones）从未运行。本 migration 为已应用旧 v34 的 DB 补建兼容表。"
-        "DROP+CREATE knowledge 确保列集为超集（兼容 test_governance_db + test_sqlite_schema_unit）。",
+        "KB 系统退役(2026-07-23)：彻底删除 knowledge + ke_tombstones 表（向前清理现有 DB 遗留表）。",
+        # 100% AI 开发下 KB 系统对回测/实盘零依赖；sync_engine.sync_to_vms / kb_bridge.publish_to_kb
+        # 均为容错吞异常的孤儿路径。本 migration 向前清理现有 DB 的遗留表，幂等 no-op 若表已不存在。
         [
             "DROP TABLE IF EXISTS knowledge",
-            """CREATE TABLE knowledge (
-                ke_id        TEXT PRIMARY KEY,
-                title        TEXT,
-                topic        TEXT,
-                content      TEXT NOT NULL,
-                ke_type      TEXT,
-                domain       TEXT,
-                collection   TEXT NOT NULL DEFAULT 'ke_entries',
-                status       TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','archived','deleted')),
-                created_at   TEXT NOT NULL,
-                updated_at   TEXT NOT NULL
-            )""",
-            """CREATE TABLE IF NOT EXISTS ke_tombstones (
-                ke_id          TEXT PRIMARY KEY,
-                original_topic TEXT,
-                death_reason   TEXT,
-                died_at        TEXT
-            )""",
+            "DROP TABLE IF EXISTS ke_tombstones",
         ],
     ),
 ]

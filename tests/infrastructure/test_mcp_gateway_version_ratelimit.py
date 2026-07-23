@@ -71,7 +71,7 @@ class TestRoutesFromMcpJson:
 
     def test_routes_carry_version(self, gw: MCPGateway) -> None:
         # 5.35.3：mcp.json servers 带 version 字段并透入路由表
-        assert gw._routes["knowledge_base"]["version"] == "1.1.0"
+        assert gw._routes["governance"]["version"] == "1.1.0"
         assert gw._routes["sandbox"]["version"] == "0.1.0"
 
 
@@ -182,7 +182,7 @@ class TestPermissionStage:
         assert resp.get("error", {}).get("code") != ERR_RBAC_DENIED
 
     def test_operator_inherits_reader(self, gw: MCPGateway) -> None:
-        resp = _call(gw, "knowledge_base.health_check", role="operator")
+        resp = _call(gw, "governance.list_skills", role="operator")
         assert resp.get("result") is not None
 
     def test_gateway_own_tools_no_acl_allowed(self, gw: MCPGateway) -> None:
@@ -191,7 +191,7 @@ class TestPermissionStage:
 
     def test_default_role_is_operator(self, gw: MCPGateway) -> None:
         # 未声明 _role 时按 role_assignment.ai_agent_default=operator 解析
-        resp = _call(gw, "knowledge_base.health_check")
+        resp = _call(gw, "governance.list_skills")
         assert resp.get("result") is not None
 
 

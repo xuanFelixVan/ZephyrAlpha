@@ -35,8 +35,6 @@ def test_all():
         ("task_snapshots", "task_id", "TEST-001"),
         ("task_files", "task_id", "TEST-001"),
         ("gates", "gate_id", "GATE-TEST-001"),
-        ("knowledge", "ke_id", "KE-TEST-001"),
-        ("ke_tombstones", "ke_id", "KE-DEAD-001"),
         ("circuit_breaker_state", "caller_module", "test_caller"),
         ("tx_idempotency", "idempotency_key", "key-001"),
     ]:
@@ -96,28 +94,6 @@ def test_all():
     )
     conn.commit()
     check("gates INSERT+SELECT", c.execute("SELECT * FROM gates WHERE gate_id='GATE-TEST-001'").fetchone() is not None)
-
-    # === 3. 知识系统 ===
-    print("\n=== 3. 知识系统 ===")
-    c.execute(
-        """INSERT INTO knowledge (ke_id, topic, content, ke_type, domain, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)""",
-        ("KE-TEST-001", "Test Topic", "Test content", "decision", "governance", now, now),
-    )
-    conn.commit()
-    check(
-        "knowledge INSERT+SELECT", c.execute("SELECT * FROM knowledge WHERE ke_id='KE-TEST-001'").fetchone() is not None
-    )
-
-    c.execute(
-        "INSERT INTO ke_tombstones (ke_id, original_topic, death_reason, died_at) VALUES (?, ?, ?, ?)",
-        ("KE-DEAD-001", "Old Topic", "superseded", now),
-    )
-    conn.commit()
-    check(
-        "ke_tombstones INSERT",
-        c.execute("SELECT * FROM ke_tombstones WHERE ke_id='KE-DEAD-001'").fetchone() is not None,
-    )
 
     # === 4. 审计系统 ===
     print("\n=== 4. 审计系统 ===")
@@ -267,8 +243,6 @@ def test_all():
     c.execute("DELETE FROM task_snapshots WHERE task_id='TEST-001'")
     c.execute("DELETE FROM task_files WHERE task_id='TEST-001'")
     c.execute("DELETE FROM gates WHERE gate_id='GATE-TEST-001'")
-    c.execute("DELETE FROM knowledge WHERE ke_id='KE-TEST-001'")
-    c.execute("DELETE FROM ke_tombstones WHERE ke_id='KE-DEAD-001'")
     c.execute("DELETE FROM circuit_breaker_state WHERE caller_module='test_caller'")
     c.execute("DELETE FROM tx_idempotency WHERE idempotency_key='key-001'")
     c.execute("DELETE FROM drift_events WHERE target='tasks_test'")

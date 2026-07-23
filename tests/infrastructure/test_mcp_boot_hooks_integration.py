@@ -183,16 +183,16 @@ class TestLauncherCheckServerHealth:
 
         gateway = ProcessLifecycleGateway(idle_timeout_s=600.0)
         try:
-            # 启动一个进程，命名为 mcp-knowledge_base（匹配 launcher 的命名规则）
+            # 启动一个进程，命名为 mcp-gate_engine（匹配 launcher 的命名规则）
             gateway.launch(
-                "mcp-knowledge_base",
+                "mcp-gate_engine",
                 [sys.executable, "-c", "import time; time.sleep(60)"],
                 idle_timeout_s=600.0,
             )
             time.sleep(0.5)
 
             # 调用 launcher.check_server_health
-            result = launcher_module.check_server_health("knowledge_base", gateway)
+            result = launcher_module.check_server_health("gate_engine", gateway)
             assert result is True, "check_server_health should return True for alive process"
         finally:
             gateway.terminate_all()
@@ -232,21 +232,21 @@ class TestLauncherCheckServerHealth:
 
 
 class TestLauncherDAGTopology:
-    """测试4: launcher DAG 拓扑排序结构（4层10Server）。"""
+    """测试4: launcher DAG 拓扑排序结构（4层9Server）。"""
 
     def test_dag_has_4_non_empty_layers(self, launcher_module):
         """验证 DAG 有4个非空层。"""
         order = launcher_module.topological_order()
         assert len(order) == 4, f"Expected 4 non-empty layers, got {len(order)}"
 
-    def test_dag_layer_1_has_6_base_servers(self, launcher_module):
-        """验证 layer_1 包含6个基础 Server。"""
+    def test_dag_layer_1_has_5_base_servers(self, launcher_module):
+        """验证 layer_1 包含5个基础 Server。"""
         order = launcher_module.topological_order()
         layer_1 = order[0]
-        expected = {"knowledge_base", "gate_engine", "blueprint_search",
+        expected = {"gate_engine", "blueprint_search",
                     "governance", "vector_memory", "telemetry"}
         assert set(layer_1) == expected, f"Layer 1 mismatch: {layer_1}"
-        assert len(layer_1) == 6
+        assert len(layer_1) == 5
 
     def test_dag_layer_2_has_task_manager(self, launcher_module):
         """验证 layer_2 包含 task_manager。"""
@@ -263,13 +263,13 @@ class TestLauncherDAGTopology:
         order = launcher_module.topological_order()
         assert order[3] == ["gateway"]
 
-    def test_total_servers_is_10(self, launcher_module):
-        """验证总 Server 数量为10。"""
+    def test_total_servers_is_9(self, launcher_module):
+        """验证总 Server 数量为9。"""
         total = sum(len(layer) for layer in launcher_module.topological_order())
-        assert total == 10, f"Expected 10 servers, got {total}"
+        assert total == 9, f"Expected 9 servers, got {total}"
 
     def test_all_server_scripts_exist(self, launcher_module):
-        """验证全部10个 Server 脚本路径存在。"""
+        """验证全部9个 Server 脚本路径存在。"""
         for server_id, script_rel in launcher_module.SERVER_SCRIPTS.items():
             script_path = REPO_ROOT / script_rel
             assert script_path.exists(), f"Server {server_id} script not found: {script_path}"

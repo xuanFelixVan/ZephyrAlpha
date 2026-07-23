@@ -21,15 +21,14 @@ from zephyr.orchestrator.lifecycle.state_propagation import (
 
 
 class TestPropagationTargetEnum:
-    def test_has_six_targets(self):
-        assert len(PropagationTarget) == 6
+    def test_has_five_targets(self):
+        assert len(PropagationTarget) == 5
 
     def test_target_values(self):
         assert PropagationTarget.GATES.value == "gates"
         assert PropagationTarget.VMS.value == "vector-memory"
         assert PropagationTarget.FLE.value == "feedback-loop"
         assert PropagationTarget.DB.value == "database"
-        assert PropagationTarget.KB.value == "knowledge_base"
         assert PropagationTarget.ORCHESTRATOR.value == "orchestrator"
 
 

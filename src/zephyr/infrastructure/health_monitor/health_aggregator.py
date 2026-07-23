@@ -49,7 +49,6 @@ SYSTEMS_CHECK = [
     "pipeline",
     "script_system",
     "context-engine",
-    "knowledge_base",
     "vector-memory",
     "mcp",
     "llm-security",

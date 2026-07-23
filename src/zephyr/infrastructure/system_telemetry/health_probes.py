@@ -63,7 +63,6 @@ class HealthzProbe(BaseModel):
 SYSTEMS: tuple[str, ...] = (
     "orchestrator",
     "script_system",
-    "knowledge_base",
     "context-engine",
     "gate_engine",
     "pipeline",

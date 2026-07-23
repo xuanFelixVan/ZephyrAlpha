@@ -43,7 +43,6 @@ class PropagationTarget(str, Enum):
     VMS = "vector-memory"
     FLE = "feedback-loop"
     DB = "database"
-    KB = "knowledge_base"
     ORCHESTRATOR = "orchestrator"
 
 

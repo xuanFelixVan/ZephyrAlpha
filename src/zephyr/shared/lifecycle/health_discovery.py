@@ -39,7 +39,6 @@ _logger = logging.getLogger(__name__)
 ALL_SYSTEM_NAMES: Final[tuple[str, ...]] = (
     "orchestrator",
     "script_system",
-    "knowledge_base",
     "gate_engine",
     "context-engine",
     "pipeline",

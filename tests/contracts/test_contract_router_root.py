@@ -75,7 +75,7 @@ class TestContractRouter:
         assert result.hint == AIReadOnlyHint.DO_NOT_CALL
 
     def test_route_impl_required_contract(self, router):
-        result = router.route("CT-SCRIPT-KB-001")
+        result = router.route("CT-RB-001")
         assert result.allowed is False
         assert result.hint == AIReadOnlyHint.IMPL_REQUIRED
 
@@ -102,7 +102,7 @@ class TestContractRouter:
         assert router.can_route("CT-ORC-CE-001") is False
 
     def test_can_route_blocked_impl_required(self, router):
-        assert router.can_route("CT-SCRIPT-KB-001") is False
+        assert router.can_route("CT-RB-001") is False
 
     def test_can_route_unknown(self, router):
         assert router.can_route("CT-FAKE-999") is False

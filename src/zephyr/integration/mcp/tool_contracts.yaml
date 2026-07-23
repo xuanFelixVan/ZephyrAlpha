@@ -8,7 +8,7 @@
 # --- 治理锚定结束 ---
 # ZephyrAlpha MCP Tool Contracts
 #
-# 6 MCP Server（task_manager / knowledge_base / gate_engine / session_handoff / intent_router / blueprint_search）
+# 6 MCP Server（task_manager / gate_engine / session_handoff / intent_router / blueprint_search）
 # + Task Manager 采用 FastMCP，工具注册名与下列 ``name:`` 字段一致（task_manager.* 前缀）。
 #
 # 工具契约为 T-3-04（MCP Server 实现）与 T-2-29（contract_template_manager）提供前置 schema。
@@ -258,154 +258,6 @@ task_manager:
       output_schema:
         type: object
         description: "TaskCard 序列化字典"
-
-# ──────────────────────────────────────────────────────────────────────
-# Server 2 · knowledge_base
-# ──────────────────────────────────────────────────────────────────────
-
-knowledge_base:
-  server_id: knowledge_base
-  version: "1.0.0"
-  description: "知识库语义检索（KE / 规则 / 蓝图 / 失败模式 4 个 collection）；包装 knowledge_indexer.py"
-  status: beta
-  backend:
-    - "src/zephyr/kb/chromadb_init.py (ADR-0031 ChromaDB, experimental VMS 过渡实现)"
-    - "SQLite knowledge 表（事实层）"
-  error_namespace: "ZA-KB"
-  error_codes:
-    - code: "ZA-KB-0001"
-      message: "collection not found"
-      http_status: 404
-    - code: "ZA-KB-0002"
-      message: "embedding model unavailable"
-      http_status: 503
-    - code: "ZA-KB-0003"
-      message: "query latency exceeded (>500ms)"
-      http_status: 504
-    - code: "ZA-KB-0004"
-      message: "index rebuild required"
-      http_status: 409
-    - code: "ZA-KB-0005"
-      message: "ke_id not found"
-      http_status: 404
-
-  resources:
-    - id: "zephyr://knowledge_base/collections"
-      description: "4 个 collection 元信息"
-      mime_type: application/json
-      cacheable: true
-      cache_ttl_seconds: 300
-    - id: "zephyr://knowledge_base/ke/{ke_id}"
-      description: "KE 条目原文"
-      mime_type: text/markdown
-      cacheable: true
-      cache_ttl_seconds: 60
-    - id: "zephyr://knowledge_base/health"
-      description: "向量索引健康度（4/4 可查询）"
-      mime_type: application/json
-      cacheable: true
-      cache_ttl_seconds: 30
-
-  tools:
-
-    - name: knowledge_base.search
-      description: "跨 collection 语义检索"
-      safety_level: L
-      stability: beta
-      rate_limit_qps: 20
-      input_schema:
-        type: object
-        required: [query_text]
-        additionalProperties: false
-        properties:
-          query_text: { type: string, minLength: 1, maxLength: 1000 }
-          collection:
-            type: string
-            enum: [ke_entries, vibe_rules, blueprints, failure_patterns]
-            default: ke_entries
-          where:
-            type: object
-            description: "ChromaDB metadata filter; e.g. {category: best_practice, layer: L2_domain}"
-          n_results: { type: integer, minimum: 1, maximum: 20, default: 5 }
-          score_threshold: { type: number, minimum: 0.0, maximum: 1.0, default: 0.6 }
-      output_schema:
-        type: object
-        properties:
-          hits:
-            type: array
-            items: { $ref: "#/definitions/RetrievalHit" }
-          total_scanned: { type: integer }
-          latency_ms: { type: integer }
-      errors: ["ZA-KB-0001", "ZA-KB-0002", "ZA-KB-0003"]
-
-    - name: knowledge_base.upsert_ke
-      description: "新增 / 更新知识条目并入库向量"
-      safety_level: H
-      stability: beta
-      rate_limit_qps: 5
-      input_schema:
-        type: object
-        required: [ke_id, title, category, content, source_file]
-        additionalProperties: false
-        properties:
-          ke_id: { type: string, pattern: "^KE-[0-9]{3}(-.+)?$" }
-          title: { type: string }
-          category:
-            type: string
-            enum: [blueprint_decision, strategy, factor, best_practice, lesson_learned, architecture, risk_control, data_governance, operations, compliance]
-          content: { type: string, description: "markdown 正文，由 chunker 切片" }
-          source_file: { type: string }
-          source_git_deleted: { type: boolean, default: false }
-          layer: { type: string }
-      output_schema:
-        type: object
-        properties:
-          ke_id: { type: string }
-          chunks_indexed: { type: integer }
-          fingerprint_sha256: { type: string }
-
-    - name: knowledge_base.rebuild_index
-      description: "重建 collection 向量索引（幂等）"
-      safety_level: H
-      stability: beta
-      rate_limit_qps: 1
-      input_schema:
-        type: object
-        required: [collection]
-        additionalProperties: false
-        properties:
-          collection:
-            type: string
-            enum: [ke_entries, vibe_rules, blueprints, failure_patterns, ALL]
-          force: { type: boolean, default: false }
-      output_schema:
-        type: object
-        properties:
-          chunks_indexed: { type: integer }
-          duration_seconds: { type: number }
-      errors: ["ZA-KB-0004"]
-
-    - name: knowledge_base.get_ke
-      description: "按 ke_id 获取条目"
-      safety_level: L
-      stability: stable
-      rate_limit_qps: 50
-      input_schema:
-        type: object
-        required: [ke_id]
-        additionalProperties: false
-        properties:
-          ke_id: { type: string }
-      output_schema:
-        type: object
-        properties:
-          ke_id: { type: string }
-          title: { type: string }
-          category: { type: string }
-          content: { type: string }
-          source_file: { type: string }
-          fingerprint_sha256: { type: string }
-      errors: ["ZA-KB-0005"]
 
 # ──────────────────────────────────────────────────────────────────────
 # Server 3 · gate_engine
@@ -1174,7 +1026,7 @@ changelog:
     date: "2026-04-24"
     author: "Claude Opus 4.7"
     changes:
-      - "初版：定义 5 个 MCP Server（task_manager / knowledge_base / gate_engine / session_handoff / intent_router）"
+      - "初版：定义 5 个 MCP Server（task_manager / gate_engine / session_handoff / intent_router）"
       - "合计 20 tools + 13 resources + 25 error codes"
       - "全部工具标注 stability / safety_level / rate_limit"
       - "共享 5 类 Schema（Task / RetrievalHit / GateRunReport / HandoffPackage / IntentResult）与 ADR-0040 Pydantic 模型对齐"

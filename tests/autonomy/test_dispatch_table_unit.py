@@ -8,7 +8,7 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-"""分派表单元测试——验证 13 系统分派映射的正确性。"""
+"""分派表单元测试——验证 12 系统分派映射的正确性。"""
 
 
 from zephyr.orchestrator.execution.dispatch_table import (
@@ -25,8 +25,8 @@ from zephyr.orchestrator.execution.dispatch_table import (
 
 
 class TestDispatchTableStructure:
-    def test_has_13_systems(self):
-        assert len(DISPATCH_TABLE) == 13
+    def test_has_12_systems(self):
+        assert len(DISPATCH_TABLE) == 12
 
     def test_all_keys_lowercase(self):
         for key in DISPATCH_TABLE:
@@ -94,12 +94,6 @@ class TestGetTokenBudget:
 
 
 class TestColdStartReading:
-    def test_knowledge_base_cold_start(self):
-        result = cold_start_reading("knowledge-base")
-        assert result["estimated_tokens"] == 1000
-        assert "CT-SCRIPT-KB" in result["ct_contracts"]
-        assert "KE" in result["schemas"]
-
     def test_invalid_system(self):
         result = cold_start_reading("invalid")
         assert "error" in result
@@ -107,9 +101,9 @@ class TestColdStartReading:
 
 
 class TestListAllSystems:
-    def test_returns_13_systems(self):
+    def test_returns_12_systems(self):
         systems = list_all_systems()
-        assert len(systems) == 13
+        assert len(systems) == 12
 
     def test_contains_orchestrator(self):
         systems = list_all_systems()

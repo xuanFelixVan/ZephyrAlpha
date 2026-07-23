@@ -65,7 +65,7 @@ class TestCheckAIReadOnly:
         assert "not" in result.message.lower() or "not yet" in result.message.lower()
 
     def test_impl_required_rejected(self, registry):
-        result = registry.check_ai_read_only("CT-SCRIPT-KB-001")
+        result = registry.check_ai_read_only("CT-RB-001")
         assert result.allowed is False
         assert result.hint == AIReadOnlyHint.IMPL_REQUIRED
 

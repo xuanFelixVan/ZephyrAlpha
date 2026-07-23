@@ -50,7 +50,6 @@ class SourceSystem(str, Enum):
     PIPELINE = "pipeline"
     SCRIPT_SYSTEM = "script_system"
     CONTEXT_ENGINE = "context-engine"
-    KNOWLEDGE_BASE = "knowledge_base"
     VECTOR_MEMORY = "vector-memory"
     MCP = "mcp"
     LLM_SECURITY = "llm-security"

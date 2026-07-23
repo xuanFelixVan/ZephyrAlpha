@@ -27,17 +27,14 @@ def router():
 
 
 class TestRouteMap:
-    def test_52_routes_defined(self):
-        assert len(ROUTE_MAP) == 52
+    def test_48_routes_defined(self):
+        assert len(ROUTE_MAP) == 48
 
     def test_route_ct_orc_script(self):
         assert ROUTE_MAP["CT-ORC-SCRIPT-001"] == "script_system"
 
     def test_route_ct_orc_ce(self):
         assert ROUTE_MAP["CT-ORC-CE-001"] == "context-engine"
-
-    def test_route_ct_script_kb(self):
-        assert ROUTE_MAP["CT-SCRIPT-KB-001"] == "knowledge_base"
 
 
 class TestRoute:
@@ -53,7 +50,7 @@ class TestRoute:
         assert "不可调用" in result.message
 
     def test_route_impl_required_rejected(self, router):
-        result = router.route("CT-SCRIPT-KB-001")
+        result = router.route("CT-RB-001")
         assert result.allowed is False
         assert "需先完成实现" in result.message
 
@@ -93,7 +90,7 @@ class TestSystemNameMap:
         assert SYSTEM_NAME_MAP["pipeline"] == "Task Pipeline"
 
     def test_route_result_has_system_name(self, router):
-        result = router.route("CT-KB-VMS-001")
+        result = router.route("CT-ORC-VMS-001")
         assert result.target_system_name == "Vector Memory Service"
 
 
