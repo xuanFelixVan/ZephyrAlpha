@@ -103,6 +103,7 @@ _AKSHARE_CAPABILITIES = frozenset({
     "repurchase", "convertible_bond_list", "etf_list", "lof_list",
     "hk_stock_list", "hk_trade_calendar", "index_list", "etf_benchmark",
     "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
+    "stock_list_delisted",  # #ARCH-CH-021 P0-1: 退市股票列表（SH+SZ delist）
 })
 
 
@@ -231,6 +232,7 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("index_list", supports_symbols_null=True),
             CapabilityContract("etf_benchmark", supports_symbols_null=True),
             CapabilityContract("etf_nav", supports_symbols_null=True),  # #ARCH-CH-023
+            CapabilityContract("stock_list_delisted", supports_symbols_null=True),  # #ARCH-CH-021 P0-1
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -1853,6 +1855,143 @@ class AKShareProvider(DataSourceBase):
             "A股代码", "A股简称",
         ))
 
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=iso_date, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 25.5 退市股票列表（stock_list_delisted） ----
+
+    @staticmethod
+    def _norm_akshare_date(val) -> str:
+        """规范化 akshare 退市接口返回的日期为 'YYYY-MM-DD' 或空字符串。
+
+        akshare 返回的日期可能是 datetime.date/datetime 或字符串（如 '1998-01-22'）。
+        """
+        if val is None or val == "":
+            return ""
+        if hasattr(val, "strftime"):
+            return val.strftime("%Y-%m-%d")
+        s = str(val).strip()
+        # 兼容 'YYYYMMDD' 格式
+        if len(s) == 8 and s.isdigit():
+            return f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+        return s
+
+    def _collect_delisted_rows(
+        self,
+        ak,
+        policy,
+        fn,
+        fn_arg,
+        code_col: str,
+        name_col: str,
+        list_date_col: str,
+        delist_date_col: str,
+        exchange: str,
+        ts_suffix: str,
+    ) -> list[tuple]:
+        """通用辅助：从 SH/SZ 退市清单收集行。
+
+        Args:
+            fn: akshare 函数（ak.stock_info_sh_delist 或 ak.stock_info_sz_delist）
+            fn_arg: 函数参数（SH 接口无参数传 None；SZ 接口传 '终止上市公司'）
+            code_col/name_col/list_date_col/delist_date_col: DataFrame 列名
+            exchange: 交易所代码（'SSE' / 'SZSE'）
+            ts_suffix: ts_code 后缀（'.SH' / '.SZ'）
+        """
+        rows: list[tuple] = []
+        try:
+            if fn_arg is None:
+                df = self._call_with_policy(fn, policy)
+            else:
+                df = self._call_with_policy(fn, policy, symbol=fn_arg)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"{fn.__name__} 失败: {e}")
+            return rows
+        if df is None or len(df) == 0:
+            return rows
+        for _, row in df.iterrows():
+            code = str(row.get(code_col) or "").strip()
+            if not code or code == "nan":
+                continue
+            # 补零至 6 位（部分 SH 历史代码可能不足 6 位）
+            code = code.zfill(6)
+            name = str(row.get(name_col) or "").strip()
+            list_date = self._norm_akshare_date(row.get(list_date_col))
+            delist_date = self._norm_akshare_date(row.get(delist_date_col))
+            # list_date/delist_date 转 'YYYY-MM-DD' 或 None（空串→None 保持 schema 一致）
+            list_date_val = list_date if list_date else None
+            delist_date_val = delist_date if delist_date else None
+            ts_code = f"{code}{ts_suffix}"
+            # 与 miniqmt_provider._fetch_stock_list 行格式对齐（17 列）
+            rows.append((
+                ts_code,         # ts_code
+                code,            # symbol
+                name,            # name
+                "",              # area
+                "",              # industry
+                "",              # fullname
+                "",              # enname
+                "",              # cn_spell
+                "A股",           # market
+                exchange,        # exchange
+                "CNY",           # currency
+                "退市",           # list_status
+                list_date_val,   # list_date
+                delist_date_val, # delist_date
+                "",              # hs_hold
+                "",              # actual_controller
+                "",              # controller_type
+            ))
+        return rows
+
+    def _fetch_stock_list_delisted(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """退市股票列表刷新，写入 c1_market.stock_list（仅 list_status='退市' 记录）。
+
+        数据源：
+        - ak.stock_info_sh_delist() → 沪市退市清单（公司代码/公司简称/上市日期/暂停上市日期）
+        - ak.stock_info_sz_delist(symbol='终止上市公司') → 深市退市清单
+          （证券代码/证券简称/上市日期/终止上市日期）
+
+        写入策略：update_mode=upsert，仅更新 list_status='退市' 的记录，不覆盖在市股。
+        与 miniqmt_provider._fetch_stock_list 行格式对齐（17 列）。
+
+        裁定 #ARCH-CH-021 P0-1：miniQMT 仅刷新在市股（5207只），退市股由 akshare 补充。
+        """
+        import akshare as ak
+
+        table = _TBL_STOCK_LIST
+        columns = [
+            "ts_code", "symbol", "name", "area", "industry", "fullname",
+            "enname", "cn_spell", "market", "exchange", "currency",
+            "list_status", "list_date", "delist_date", "hs_hold",
+            "actual_controller", "controller_type",
+        ]
+        iso_date = datetime.date.today().isoformat()
+        t0 = time.time()
+        batch_rows: list[tuple] = []
+
+        # 沪市退市清单
+        batch_rows.extend(self._collect_delisted_rows(
+            ak, policy,
+            ak.stock_info_sh_delist, None,
+            code_col="公司代码", name_col="公司简称",
+            list_date_col="上市日期", delist_date_col="暂停上市日期",
+            exchange="SSE", ts_suffix=".SH",
+        ))
+        # 深市退市清单
+        batch_rows.extend(self._collect_delisted_rows(
+            ak, policy,
+            ak.stock_info_sz_delist, "终止上市公司",
+            code_col="证券代码", name_col="证券简称",
+            list_date_col="上市日期", delist_date_col="终止上市日期",
+            exchange="SZSE", ts_suffix=".SZ",
+        ))
+
+        self._log.info(f"stock_list_delisted 共 {len(batch_rows)} 只退市股（SH+SZ）")
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows,
             last_key=iso_date, elapsed_sec=time.time() - t0,
