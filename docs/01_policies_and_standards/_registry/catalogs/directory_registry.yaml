@@ -16,7 +16,7 @@
 
 # ============================================================================
 
-# ZephyrAlpha 项目目录登记表（Directory Registry）?唯一真源
+# ZephyrAlpha 项目目录登记表（Directory Registry）的唯一真源
 
 # ============================================================================
 
@@ -30,37 +30,37 @@
 
 #
 
-# 对标: ITIL SACM CMDB CI ?Physical CIs（物理配置项——目?文件夹属于基础设施拓扑?
+# 对标: ITIL SACM CMDB CI / Physical CIs（物理配置项——目录文件夹属于基础设施拓扑）
 
-#       + Linux FHS（Filesystem Hierarchy Standard——每个目录有明确职责声明?
+#       + Linux FHS（Filesystem Hierarchy Standard——每个目录有明确职责声明）
 
-#       + TOGAF §IV-D Architecture Repository（架构资产的有序存放结构?
+#       + TOGAF §IV-D Architecture Repository（架构资产的有序存放结构）
 
-#       + Kubernetes Namespace（每?namespace 有唯一职责边界?
-
-#
-
-# 用? 登记 ZephyrAlpha 项目所有目录—?
-
-#       路径 / 职责声明 / 父目?/ 是否?index.md / 关联?module_id?
-
-#       本登记表是目录结构的 SSoT（唯一真源），用于自动校验目录是否"有职无位"?有位无责"?
+#       + Kubernetes Namespace（每个 namespace 有唯一职责边界）
 
 #
 
-# 自动驾驶? experimental 补齐—?
+# 用途 登记 ZephyrAlpha 项目所有目录——
 
-#   - validate_directory_registry.py: 扫描实际目录 ?比对登记??报告漂移
+#       路径 / 职责声明 / 父目录 / 是否有 index.md / 关联的 module_id 等
+
+#       本登记表是目录结构的 SSoT（唯一真源），用于自动校验目录是否"有职无位"、"有位无责"）
+
+#
+
+# 自动驾驶： experimental 补齐——
+
+#   - validate_directory_registry.py: 扫描实际目录 → 比对登记表 → 报告漂移
 
 #   - 新增目录时，AI 必须先查登记表确认是否有冲突
 
 #
 
-# ?trae_028_doc_structure_naming.yaml doc_002 的关?
+# 与 trae_028_doc_structure_naming.yaml doc_002 的关系
 
 #   - trae_028_doc_structure_naming.yaml doc_002 定义目录创建和命名的规则
 
-#   - 本登记表登记每个目录的当前实际状?
+#   - 本登记表登记每个目录的当前实际状态
 
 # ============================================================================
 
@@ -70,7 +70,7 @@ schema_version: "1.0.0"
 
 doc_type: register
 
-title: "项目目录登记?"
+title: "项目目录登记表"
 version: "1.0.1"
 
 status: active
@@ -103,7 +103,7 @@ depends_on:
 
     at: "$"
 
-    why: "双轨目录治理——Spine-and-Wings 范式，C轨业务分?+ B轨平台能?"
+    why: "双轨目录治理——Spine-and-Wings 范式，C轨业务分层 + B轨平台能力"
 
 
 # ============================================================================
@@ -112,23 +112,23 @@ depends_on:
 
 #
 
-# 每个目录一条记?
+# 每个目录一条记录
 
-#   path                相对? 的路?
+#   path                相对根 的路径
 
 #   responsibility      职责声明（一句话说明本目录放什么）
 
-#   parent              父目录路?
+#   parent              父目录路径
 
-#   has_index           是否?index.md
+#   has_index           是否有 index.md
 
-#   module_id           关联的治理模?ID（如有）
+#   module_id           关联的治理模块 ID（如有）
 
-#   kb_ref              关联?KB 决策记录（如有）
+#   kb_ref              关联的 KB 决策记录（如有）
 
-#   track               C 轨（业务分层）或 B 轨（平台能力），?KBG-0022
+#   track               C 轨（业务分层）或 B 轨（平台能力），见 KBG-0022
 
-#   status              目录状? active / draft（空目录? deprecated
+#   status              目录状态 active / draft（空目录） deprecated
 
 #   note                补充说明
 
@@ -146,7 +146,7 @@ directories:
 
   - path: "config/"
 
-    responsibility: "运行时配置文件——压缩策?/ 能力声明 / 触发路由"
+    responsibility: "运行时配置文件——压缩策略 / 能力声明 / 触发路由"
 
     parent: "/"
 
@@ -166,7 +166,7 @@ directories:
 
   - path: "data/"
 
-    responsibility: "项目运行时数据——SQLite 数据库等持久化存?"
+    responsibility: "项目运行时数据——SQLite 数据库等持久化存储"
     parent: "/"
 
     has_index: false
@@ -179,13 +179,13 @@ directories:
 
     status: active
 
-    note: "v2.0 新增——DB ?docs/_working/audit/state/ 迁移至此"
+    note: "v2.0 新增——DB 从 docs/_working/audit/state/ 迁移至此"
 
 
 
   - path: "docs/"
 
-    responsibility: "项目文档唯一真源——治理标?/ 企业架构 / 模块蓝图 / 审计报告"
+    responsibility: "项目文档唯一真源——治理标准 / 企业架构 / 模块蓝图 / 审计报告"
 
     parent: "/"
 
@@ -216,7 +216,7 @@ directories:
 
   - path: "scripts/"
 
-    responsibility: "项目脚本系统——脚本系?/ 治理脚本 / git hooks"
+    responsibility: "项目脚本系统——脚本系统 / 治理脚本 / git hooks"
 
     parent: "/"
 
@@ -230,12 +230,12 @@ directories:
 
     status: active
 
-    note: "顶层 __init__.py ?scripts/ 成为 Python ?"
+    note: "顶层 __init__.py 让 scripts/ 成为 Python 包"
 
 
   - path: "src/"
 
-    responsibility: "项目源代码—?4 业务?+ shared 横切?+ 基础设施"
+    responsibility: "项目源代码——4 业务域 + shared 横切层 + 基础设施"
 
     parent: "/"
 
@@ -249,7 +249,7 @@ directories:
 
     status: active
 
-    note: "KBG-0009: 14 业务?+ shared = 15 物理子目?"
+    note: "KBG-0009: 14 业务域 + shared = 15 物理子目录"
 
 
   # ========================================
@@ -270,7 +270,7 @@ directories:
 
   - path: "docs/01_policies_and_standards/"
 
-    responsibility: "治理策略与标准——规则体?/ 注册?/ 生命周期"
+    responsibility: "治理策略与标准——规则体系 / 注册表 / 生命周期"
 
     parent: "docs/"
 
@@ -304,13 +304,13 @@ directories:
 
     status: active
 
-    note: "?target_architecture/"
+    note: "→target_architecture/"
 
 
 
   - path: "docs/03_modules/"
 
-    responsibility: "模块蓝图与注册表——模块定?/ 蓝图 / 施工计划"
+    responsibility: "模块蓝图与注册表——模块定义 / 蓝图 / 施工计划"
 
     parent: "docs/"
 
@@ -324,13 +324,13 @@ directories:
 
     status: active
 
-    note: "?blueprint_registry.yaml module-registry.yaml"
+    note: "→blueprint_registry.yaml module-registry.yaml"
 
 
 
   - path: "docs/03_modules/_cross_layer/_b_track_interfaces/"
 
-    responsibility: "AI 工程接口文档—? 大核心服?+ 接口契约（原 07_ai_engineering/?026-05-03 迁移?"
+    responsibility: "AI 工程接口文档—— 大核心服务 + 接口契约（原 07_ai_engineering/2026-05-03 迁移）"
     parent: "docs/03_modules/"
 
     has_index: true
@@ -343,7 +343,7 @@ directories:
 
     status: active
 
-    note: "v2.0.0 ?07_ai_engineering/ 迁移——蓝?接口统一?03_modules/ ?"
+    note: "v2.0.0 从 07_ai_engineering/ 迁移——蓝图接口统一，03_modules/）"
     kb_ref: "KBG-0015~0020"
 
     last_updated: "2026-05-03"
@@ -372,7 +372,7 @@ directories:
 
   - path: "docs/_working/audit/"
 
-    responsibility: "审计报告与状态快?"
+    responsibility: "审计报告与状态快照"
     parent: "docs/"
 
     has_index: true
@@ -431,7 +431,7 @@ directories:
 
   # ========================================
 
-  # docs/01_policies_and_standards/ 子目录（二级?
+  # docs/01_policies_and_standards/ 子目录（二级）
 
   # ========================================
 
@@ -451,7 +451,7 @@ directories:
 
     status: active
 
-    note: "登记表集中存储目?"
+    note: "登记表集中存储目录"
 
 
   - path: "docs/01_policies_and_standards/domains/"
@@ -470,7 +470,7 @@ directories:
 
     status: active
 
-    note: "业务域治理策?+ 操作手册"
+    note: "业务域治理策略 + 操作手册"
 
 
 
@@ -490,12 +490,12 @@ directories:
 
     status: active
 
-    note: "7 个子?"
+    note: "7 个子目录"
 
 
   - path: "docs/01_policies_and_standards/rules/"
 
-    responsibility: "元层标准——规则生命周?/ 分类仲裁 / 术语映射 / 行为边界"
+    responsibility: "元层标准——规则生命周期 / 分类仲裁 / 术语映射 / 行为边界"
 
     parent: "docs/01_policies_and_standards/"
 
@@ -529,13 +529,13 @@ directories:
 
     status: active
 
-    note: "?Vibe Coding 门禁清单和状态机"
+    note: "→Vibe Coding 门禁清单和状态机"
 
 
 
   - path: "docs/01_policies_and_standards/templates/"
 
-    responsibility: "文档模板——蓝?/ 策略 / 标准 / runbook ?12 ?"
+    responsibility: "文档模板——蓝图 / 策略 / 标准 / runbook 等 12 个"
     parent: "docs/01_policies_and_standards/"
 
     has_index: true
@@ -548,18 +548,18 @@ directories:
 
     status: active
 
-    note: "12 个模板文?"
+    note: "12 个模板文件"
 
 
   # ========================================
 
-  # _registry/ 子目?
+  # _registry/ 子目录
 
   # ========================================
 
   - path: "docs/01_policies_and_standards/_registry/catalogs/"
 
-    responsibility: "登记?YAML 集中存储—?4 ?register 类型 YAML 文件"
+    responsibility: "登记表 YAML 集中存储——4 个 register 类型 YAML 文件"
 
     parent: "docs/01_policies_and_standards/_registry/"
 
@@ -573,12 +573,12 @@ directories:
 
     status: active
 
-    note: "本登记表在此目录?"
+    note: "本登记表在此目录中"
 
 
   - path: "docs/01_policies_and_standards/_registry/contracts/"
 
-    responsibility: "架构契约——跨层接?/ 模块间协?"
+    responsibility: "架构契约——跨层接口 / 模块间协议"
     parent: "docs/01_policies_and_standards/_registry/"
 
     has_index: true
@@ -617,7 +617,7 @@ directories:
 
   - path: "docs/01_policies_and_standards/_registry/vocabularies/"
 
-    responsibility: "受控词表——doc_type / status / rule_form 的合法枚举?"
+    responsibility: "受控词表——doc_type / status / rule_form 的合法枚举值"
     parent: "docs/01_policies_and_standards/_registry/"
 
     has_index: true
@@ -636,13 +636,13 @@ directories:
 
   # ========================================
 
-  # domains/ 子目?
+  # domains/ 子目录
 
   # ========================================
 
   - path: "docs/01_policies_and_standards/domains/L00_data_source/"
 
-    responsibility: "data 数据源域——治理策?+ 操作手册"
+    responsibility: "data 数据源域——治理策略 + 操作手册"
 
     parent: "docs/01_policies_and_standards/domains/"
 
@@ -662,7 +662,7 @@ directories:
 
   - path: "docs/01_policies_and_standards/domains/L02_alpha_factor/"
 
-    responsibility: "factor Alpha 因子域——治理策?+ 操作手册"
+    responsibility: "factor Alpha 因子域——治理策略 + 操作手册"
 
     parent: "docs/01_policies_and_standards/domains/"
 
@@ -682,7 +682,7 @@ directories:
 
   - path: "docs/01_policies_and_standards/domains/L04_risk_management/"
 
-    responsibility: "risk 风险管理域——治理策?+ 操作手册"
+    responsibility: "risk 风险管理域——治理策略 + 操作手册"
 
     parent: "docs/01_policies_and_standards/domains/"
 
@@ -702,7 +702,7 @@ directories:
 
   - path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/"
 
-    responsibility: "analytics 盘后分析域——治理策?+ 操作手册"
+    responsibility: "analytics 盘后分析域——治理策略 + 操作手册"
 
     parent: "docs/01_policies_and_standards/domains/"
 
@@ -722,13 +722,13 @@ directories:
 
   # ========================================
 
-  # governance/ 子目?
+  # governance/ 子目录
 
   # ========================================
 
   - path: "docs/01_policies_and_standards/governance/ai/"
 
-    responsibility: "AI 治理——自治权?/ 幻觉检?/ 预算 / 编辑器协?/ 交接协议"
+    responsibility: "AI 治理——自治权限 / 幻觉检测 / 预算 / 编辑器协作 / 交接协议"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -742,12 +742,12 @@ directories:
 
     status: active
 
-    note: "9 个文?"
+    note: "9 个文件"
 
 
   - path: "docs/01_policies_and_standards/governance/architecture/"
 
-    responsibility: "架构治理——评审门?/ 门禁策略 / 版本?/ Phase 转换 / KB 决策记录协议"
+    responsibility: "架构治理——评审门禁 / 门禁策略 / 版本号 / Phase 转换 / KB 决策记录协议"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -761,12 +761,12 @@ directories:
 
     status: active
 
-    note: "6 个文?"
+    note: "6 个文件"
 
 
   - path: "docs/01_policies_and_standards/governance/compliance/"
 
-    responsibility: "合规治理——审计追?/ 监管分类"
+    responsibility: "合规治理——审计追溯 / 监管分类"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -780,12 +780,12 @@ directories:
 
     status: active
 
-    note: "3 个文?"
+    note: "3 个文件"
 
 
   - path: "docs/01_policies_and_standards/governance/data/"
 
-    responsibility: "数据治理——血?/ 质量 / 保留"
+    responsibility: "数据治理——血缘 / 质量 / 保留"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -799,12 +799,12 @@ directories:
 
     status: active
 
-    note: "4 个文?"
+    note: "4 个文件"
 
 
   - path: "docs/01_policies_and_standards/rules/"
 
-    responsibility: "文档治理——生命周?/ 编码安全 / 命名 / 路径 / 目录结构"
+    responsibility: "文档治理——生命周期 / 编码安全 / 命名 / 路径 / 目录结构"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -818,12 +818,12 @@ directories:
 
     status: active
 
-    note: "10 个文?"
+    note: "10 个文件"
 
 
   - path: "docs/01_policies_and_standards/governance/module/"
 
-    responsibility: "模块治理——生命周?/ 准入 / 注入规则 / 接口契约"
+    responsibility: "模块治理——生命周期 / 准入 / 注入规则 / 接口契约"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -837,12 +837,12 @@ directories:
 
     status: active
 
-    note: "8 个文?"
+    note: "8 个文件"
 
 
   - path: "docs/01_policies_and_standards/governance/security/"
 
-    responsibility: "安全治理——访问控?/ 密钥管理 / 安全事件响应"
+    responsibility: "安全治理——访问控制 / 密钥管理 / 安全事件响应"
 
     parent: "docs/01_policies_and_standards/governance/"
 
@@ -856,7 +856,7 @@ directories:
 
     status: active
 
-    note: "4 个文?"
+    note: "4 个文件"
 
 
   - path: "docs/01_policies_and_standards/governance/task/"
@@ -875,18 +875,18 @@ directories:
 
     status: active
 
-    note: "4 个文?"
+    note: "4 个文件"
 
 
   # ========================================
 
-  # operational/ 子目?
+  # operational/ 子目录
 
   # ========================================
 
   - path: "docs/01_policies_and_standards/operational/devops/"
 
-    responsibility: "DevOps 操作——架构变更剧?"
+    responsibility: "DevOps 操作——架构变更剧本"
     parent: "docs/01_policies_and_standards/operational/"
 
     has_index: true
@@ -925,7 +925,7 @@ directories:
 
   - path: "docs/01_policies_and_standards/operational/vibe_coding/"
 
-    responsibility: "Vibe Coding 操作——门禁清?/ 状态机 / 事故应?"
+    responsibility: "Vibe Coding 操作——门禁清单 / 状态机 / 事故应急"
     parent: "docs/01_policies_and_standards/operational/"
 
     has_index: true
@@ -938,12 +938,12 @@ directories:
 
     status: active
 
-    note: "4 个文?"
+    note: "4 个文件"
 
 
   # ========================================
 
-  # 02_enterprise_architecture/ 子目?
+  # 02_enterprise_architecture/ 子目录
 
   # ========================================
 
@@ -981,13 +981,13 @@ directories:
 
   # ========================================
 
-  # 03_modules/ 子目?
+  # 03_modules/ 子目录
 
   # ========================================
 
   - path: "docs/03_modules/_domain-infra_ops/"
 
-    responsibility: "基础设施蓝图——脚本系?/ 容量保障 / 运行时集?/ 任务?KMS / Vibe Coding 管线"
+    responsibility: "基础设施蓝图——脚本系统 / 容量保障 / 运行时集成 / 任务、KMS / Vibe Coding 管线"
 
     parent: "docs/03_modules/"
 
@@ -1007,7 +1007,7 @@ directories:
 
   - path: "docs/03_modules/_domain-infra_ops/governance-automation/"
 
-    responsibility: "脚本系统蓝图——审计维?/ 状态机 / 出厂流程"
+    responsibility: "脚本系统蓝图——审计维度 / 状态机 / 出厂流程"
 
     parent: "docs/03_modules/_domain-infra_ops/"
 
@@ -1027,7 +1027,7 @@ directories:
 
   - path: "docs/03_modules/_domain-infra_ops/capacity-assurance/"
 
-    responsibility: "容量保障蓝图——脚本健康上?/ 预算追踪"
+    responsibility: "容量保障蓝图——脚本健康上报 / 预算追踪"
 
     parent: "docs/03_modules/_domain-infra_ops/"
 
@@ -1095,7 +1095,7 @@ directories:
 
   - path: "docs/_working/audit/reports/"
 
-    responsibility: "审计报告——架构对?/ SSoT 验证 / 月度报告"
+    responsibility: "审计报告——架构对比 / SSoT 验证 / 月度报告"
 
     parent: "docs/_working/audit/"
 
@@ -1115,7 +1115,7 @@ directories:
 
   - path: "docs/_working/audit/findings/"
 
-    responsibility: "安全与合?Finding、事件初?Markdown 落盘（对?target_architecture/06-security_architecture.md?"
+    responsibility: "安全与合规 Finding、事件初步 Markdown 落盘（对照 target_architecture/06-security_architecture.md）"
     parent: "docs/_working/audit/"
 
     has_index: true
@@ -1128,7 +1128,7 @@ directories:
 
     status: active
 
-    note: "命名约定?findings/index.md；与 reports/ 区分"
+    note: "命名约定：findings/index.md；与 reports/ 区分"
 
 
 
@@ -1148,13 +1148,13 @@ directories:
 
     status: deprecated
 
-    note: "v2.0——SQLite DB 迁移?data/databases/governance.db，此目录不再使用"
+    note: "v2.0——SQLite DB 迁移至 data/databases/governance.db，此目录不再使用"
 
 
 
   # ========================================
 
-  # scripts/ 子目?
+  # scripts/ 子目录
 
   # ========================================
 
@@ -1174,12 +1174,12 @@ directories:
 
     status: active
 
-    note: "40+ 脚本，按 d1~d7+d11 子目录分?"
+    note: "40+ 脚本，按 d1~d7+d11 子目录分发"
 
 
   - path: "scripts/governance/_shared/"
 
-    responsibility: "治理脚本共享模块——废弃路径黑名单?"
+    responsibility: "治理脚本共享模块——废弃路径黑名单等"
     parent: "scripts/governance/"
 
     has_index: false
@@ -1212,12 +1212,12 @@ directories:
 
     status: active
 
-    note: "3 个脚?"
+    note: "3 个脚本"
 
 
   - path: "scripts/governance/d2_links/"
 
-    responsibility: "维度2 链接检查——断链审?"
+    responsibility: "维度2 链接检查——断链审计"
     parent: "scripts/governance/"
 
     has_index: false
@@ -1230,12 +1230,12 @@ directories:
 
     status: active
 
-    note: "1 个脚?"
+    note: "1 个脚本"
 
 
   - path: "scripts/governance/d3_metadata/"
 
-    responsibility: "维度3 元数据检查——frontmatter / 命名 / 蓝图 / 登记?"
+    responsibility: "维度3 元数据检查——frontmatter / 命名 / 蓝图 / 登记表"
     parent: "scripts/governance/"
 
     has_index: false
@@ -1248,12 +1248,12 @@ directories:
 
     status: active
 
-    note: "7 个脚?"
+    note: "7 个脚本"
 
 
   - path: "scripts/governance/d4_paths/"
 
-    responsibility: "维度4 路径检查——废墟引用检?"
+    responsibility: "维度4 路径检查——废墟引用检查"
     parent: "scripts/governance/"
 
     has_index: false
@@ -1266,12 +1266,12 @@ directories:
 
     status: active
 
-    note: "1 个脚?"
+    note: "1 个脚本"
 
 
   - path: "scripts/governance/d5_architecture/"
 
-    responsibility: "维度5 架构检查——自治权?/ 分层依赖 / SSoT / Session Log"
+    responsibility: "维度5 架构检查——自治权限 / 分层依赖 / SSoT / Session Log"
 
     parent: "scripts/governance/"
 
@@ -1285,12 +1285,12 @@ directories:
 
     status: active
 
-    note: "6 个脚?"
+    note: "6 个脚本"
 
 
   - path: "scripts/governance/d6_security/"
 
-    responsibility: "维度6 安全检查——密钥检?/ Shell 安全 / 模糊?"
+    responsibility: "维度6 安全检查——密钥检查 / Shell 安全 / 模糊性"
     parent: "scripts/governance/"
 
     has_index: false
@@ -1303,7 +1303,7 @@ directories:
 
     status: active
 
-    note: "7 个脚?"
+    note: "7 个脚本"
 
 
   - path: "scripts/governance/d7_code/"
@@ -1322,12 +1322,12 @@ directories:
 
     status: active
 
-    note: "1 个脚?"
+    note: "1 个脚本"
 
 
   - path: "scripts/governance/d11_compliance/"
 
-    responsibility: "维度11 合规检查——蓝图重?/ 真源级联"
+    responsibility: "维度11 合规检查——蓝图重复 / 真源级联"
 
     parent: "scripts/governance/"
 
@@ -1341,12 +1341,12 @@ directories:
 
     status: active
 
-    note: "2 个脚?"
+    note: "2 个脚本"
 
 
   - path: "scripts/hooks/"
 
-    responsibility: "Git hooks——自动交接日志生?"
+    responsibility: "Git hooks——自动交接日志生成"
     parent: "scripts/"
 
     has_index: false
@@ -1365,13 +1365,13 @@ directories:
 
   # ========================================
 
-  # src/ 子目?
+  # src/ 子目录
 
   # ========================================
 
   - path: "src/zephyr/"
 
-    responsibility: "ZephyrAlpha 核心代码—?4 业务?+ shared ?+ 基础设施"
+    responsibility: "ZephyrAlpha 核心代码——4 业务域 + shared 层 + 基础设施"
 
     parent: "src/"
 
@@ -1411,7 +1411,7 @@ directories:
 
   - path: "src/zephyr/config/"
 
-    responsibility: "运行时配置——embedding 模型注册?"
+    responsibility: "运行时配置——embedding 模型注册表"
     parent: "src/zephyr/"
 
     has_index: false
@@ -1430,7 +1430,7 @@ directories:
 
   - path: "src/zephyr/context-engine/"
 
-    responsibility: "上下文引擎——意图解?/ 压缩 / 注入 / prompt 注册"
+    responsibility: "上下文引擎——意图解析 / 压缩 / 注入 / prompt 注册"
 
     parent: "src/zephyr/"
 
@@ -1444,13 +1444,13 @@ directories:
 
     status: active
 
-    note: "8 ?.py 文件"
+    note: "8 个 .py 文件"
 
 
 
   - path: "src/zephyr/core/"
 
-    responsibility: "核心层——文件任务映?/ 回滚 / 状态同?/ Wave 生成"
+    responsibility: "核心层——文件任务映射 / 回滚 / 状态同步 / Wave 生成"
 
     parent: "src/zephyr/"
 
@@ -1510,7 +1510,7 @@ directories:
 
   - path: "src/zephyr/feedback_loop/"
 
-    responsibility: "反馈闭环——自动进?/ 评估 / 指标收集 / 适应?"
+    responsibility: "反馈闭环——自动进度 / 评估 / 指标收集 / 适应性"
     parent: "src/zephyr/"
 
     has_index: false
@@ -1529,7 +1529,7 @@ directories:
 
   - path: "src/zephyr/gov_enforcement/rule_enforcement/"
 
-    responsibility: "门禁引擎——G1~G5 策略 YAML + GateEngine + 断路?"
+    responsibility: "门禁引擎——G1~G5 策略 YAML + GateEngine + 断路器"
     parent: "src/zephyr/"
 
     has_index: false
@@ -1542,12 +1542,12 @@ directories:
 
     status: active
 
-    note: "10 个文?"
+    note: "10 个文件"
 
 
   - path: "src/zephyr/hooks/"
 
-    responsibility: "运行时钩子——SSoT Guard（pre-commit 校验?"
+    responsibility: "运行时钩子——SSoT Guard（pre-commit 校验）"
     parent: "src/zephyr/"
 
     has_index: false
@@ -1566,7 +1566,7 @@ directories:
 
   - path: "src/zephyr/kb/"
 
-    responsibility: "知识库——激?分析/提取/Triage/向量初始化等 KMS 操作"
+    responsibility: "知识库——激活分析/提取/Triage/向量初始化等 KMS 操作"
 
     parent: "src/zephyr/"
 
@@ -1580,7 +1580,7 @@ directories:
 
     status: active
 
-    note: "11 ?.py 文件"
+    note: "11 个 .py 文件"
 
 
 
@@ -1920,9 +1920,9 @@ changelog:
 
     changes:
 
-      - "初始创建——登?82 个目?"
+      - "初始创建——登记 82 个目录"
       - "按顶层分类：config(1) + docs(45) + scripts(12) + src(24)"
 
-      - "每个目录标注 track（C?B?D轨）——对?KBG-0022 双轨治理"
+      - "每个目录标注 track（C/B/D轨）——对照 KBG-0022 双轨治理"
 
-      - "?KB 决策记录引用、index.md 存在性、目录状?"
+      - "见 KB 决策记录引用、index.md 存在性、目录状态"
