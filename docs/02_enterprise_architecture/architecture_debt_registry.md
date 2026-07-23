@@ -33,7 +33,7 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 
 - **历史规模**：去重后唯一违规点 **3193 个**（初轮 298 + 第 5-31 轮新增，执行摘要口径 177 个维度），归因于 5 个病根（§二）。其中 54 个维度展开逐条跟踪（原文 `### 5.x` 小节），其余维度仅有执行摘要计数。
 - **第 102 轮修复（2026-07-19）**：全部 DEFERRED 维度已清零——36 批提交，merge `44ebb73b26`。54 个已跟踪维度中 **39 个 FIXED（清零）**、**15 个残留 PERMANENT 项**（§四状态列）。
-- **R102 EXECUTE 治本施工（2026-07-21）+ #ARCH-ANY-GOVERNANCE-001 三阶段治本（2026-07-22）**：原 27 项 EXECUTE 已全部治本施工完成（详见 §5.0 工作清单 8 行 + §5.42/5.93/5.97/5.150/5.152/5.153/5.180 各节）；5.145 维度经 #ARCH-ANY-GOVERNANCE-001 三阶段治本（Phase 1 推断工具 + Phase 2 存量清零 commit `e494c72623` + Phase 3 GATE-ANY-ABUSE commit 阻断）从 PERMANENT-14 迁移至 FIXED；维度状态迁移后 **48 个 FIXED**、**6 个残留 PERMANENT 项**（5.33/5.93/5.101/5.143/5.150/5.153，全部 wontfix），剩余 40 项 = 0 EXECUTE + 40 wontfix。
+- **R102 EXECUTE 治本施工（2026-07-21）+ #ARCH-ANY-GOVERNANCE-001 三阶段治本（2026-07-22）**：原 27 项 EXECUTE 已全部治本施工完成（详见 git log）；5.145 维度经 #ARCH-ANY-GOVERNANCE-001 三阶段治本（Phase 1 推断工具 + Phase 2 存量清零 commit `e494c72623` + Phase 3 GATE-ANY-ABUSE commit 阻断）从 PERMANENT-14 迁移至 FIXED；维度状态迁移后 **48 个 FIXED**、**6 个残留 PERMANENT 项**（5.33/5.93/5.101/5.143/5.150/5.153，全部 wontfix），剩余 40 项 = 0 EXECUTE + 40 wontfix。
 - **R103 第一性原理重裁定（2026-07-22）**：对 5.100/5.140/5.160 三维度共 6 项 wontfix 重裁定——基于 (V1) 证据时效性 / (V2) 模式一致性 / (V3) 防复发机制成熟度三项新验证维度，裁定 5.100.15/16（asyncio API 弃用）、5.140.2（函数复杂度）、5.160.2（裸 SQL）从 RATIFY→EXECUTE 并已治本完成（commit `9d2b7d498f` 5.100+5.140 + commit `984d3bb772` 5.160）；6 项确认 wontfix 维持原裁定。
 - **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M31 实时基线自动发现，不再依赖人工调研快照。
 - **剩余未完成任务 = 40 项**（§五完整清单）：
@@ -184,46 +184,37 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.178 | 测试-源码一致性门禁缺失 | 5 种测试漂移（名称/Schema/Mock/阈值/字符串匹配） | 根因 1 | TEST-SOURCE-CONSISTENCY gate（priority=96） | FIXED |
 | 5.179 | add_design_node granularity 硬编码 bug | granularity 硬编码 'directory' 致单文件模块设计态登记铁律死锁 | 根因 2 | granularity_vocabulary.yaml 词表 SSoT（PS-VOC-035） | FIXED |
 
+### 4.1 硬门禁覆盖率审计（2026-07-23）
+
+> 54 维度中 **26 个有 P0 硬 commit gate**（提交时强制阻断），**28 个无硬 gate**（仅 warn-only 监控 / CI / 测试 / canonical 重构 / 词表 SSoT / 无防复发）。
+>
+> **无硬 gate 的 28 个维度**按防复发机制分类：
+>
+> | 防复发类型 | 维度 | 说明 |
+> |---|---|---|
+> | 仅 warn-only 监控（M-xx） | 5.42 / 5.101 / 5.139 / 5.165 / 5.169 | 仪表盘发警告但不阻断提交；5.101 为 PERMANENT wontfix |
+> | CI / 测试 | 5.31 / 5.32 | CI pipeline 或测试套件兜底，非 commit 时阻断 |
+> | reconciler | 5.33 | post-commit 事件驱动兜底，非 commit 时阻断（PERMANENT wontfix） |
+> | canonical 重构 / 模式落地 | 5.36 / 5.37 / 5.38 / 5.39 / 5.40 / 5.41 / 5.52 / 5.57 / 5.58 / 5.61 / 5.62 / 5.64 / 5.71 / 5.80 / 5.155 / 5.180 | 存量已修复 + canonical pattern 指引，但无 commit gate 防新增 |
+> | 词表 SSoT | 5.179 | granularity_vocabulary.yaml 被 GATE-VOCAB 间接覆盖 |
+> | 无防复发 | 5.138 / 5.150 / 5.153 | 5.138 实证无真实循环链（不需 gate）；5.150/5.153 为 PERMANENT wontfix |
+>
+> **建议**：canonical 重构类 16 个维度（存量已清零）如需进一步防新增，可逐步补 P0 硬 gate；warn-only 类 4 个非 PERMANENT 维度（5.42/5.139/5.165/5.169）可考虑升级为硬 gate。PERMANENT wontfix 维度（5.33/5.101/5.150/5.153）因裁定不修复，补 gate 优先级最低。
+
 ---
 
 ## 五、未完成任务（DEFERRED-PERMANENT / wontfix 项详情）
 
-> **本节是全部未完成任务的完整清单（40 项 wontfix + 已治本项保留为历史记录）**，按维度组织。每项保留：条目号、严重度、文件、问题一句话、**裁定结果与理由**。
-> R103 重裁定真源：本节 §5.0.1（2026-07-22 第一性原理重裁定工作清单）。
-> 裁定口径：**EXECUTE** = R102（第 102 轮，2026-07-19，架构师受 Owner 委托）裁定立即治本施工，待执行/执行中；**wontfix（RATIFY）** = 确认前裁定关闭，防复发门禁已在册，不再施工；**SKIP** = SAFETY=H + human_gated，待人工/Owner 授权。
+> **本节是全部未完成任务的完整清单（40 项 wontfix）**，按维度组织。每项保留：条目号、严重度、文件、问题一句话、**裁定结果与理由**。已治本完成的 EXECUTE 项已移出本节——历史唯一追溯渠道是 git log。
+> 裁定口径：**wontfix（RATIFY）** = 确认前裁定关闭，防复发门禁已在册，不再施工。R102/R103 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r102.md) / [`debt_permanent_rulings_r103.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r103.md)。
 > R102 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r102.md)（裁定原则：P1 防复发 > 存量修复；P2 无回归测试不做高风险重构；P3 实际风险=0 的"违规"非债务；P4 净收益必须为正；P5 可机械验证/执行的优先；P6 SSoT 唯一真源最高原则）。
 
 ### 5.0 未完成总览（40 项 = EXECUTE 0 + wontfix 40）
 
-**EXECUTE 工作清单（0 项，原 27 项已于 2026-07-21 全部治本施工完成）**：
-
-| # | 分组 | 条目 | 动作 | 落地状态 |
-|---|---|---|---|---|
-| 1 | God Class 拆分（顺序 3/4） | 5.150.3 FeedbackLoopScheduler（26 方法） | 同上 | ✅ FIXED（commit `8280758400`，Extract Class 提取 6 协作者类 + facade 薄封装） |
-| 2 | God Class 拆分（顺序 4/4） | 5.150.2 AutoRuntimeCore（42 方法） | 同上 | ✅ FIXED（Extract Class 提取 4 同文件协作者类 + facade 薄封装，详见 §5.150） |
-| 3 | 参数对象 | 5.150.5 / 5.150.10 / 5.150.11（factories.py 16/9/9 参数） | 引入参数对象（与 5.150.6 联动） | ✅ FIXED（commit `8700464c3f`，3 个 *Params dataclass + shared/contracts/core/factories.py 转薄委托） |
-| 4 | 跨层依赖逐边分析（10 边） | 5.152 #8-#25 | 类型下沉 shared / 标记 sanctioned；cross_layer_contracts.yaml codegen 重构 + 序列化/DB 键回归测试先行 | ✅ FIXED（commit `0f1ff7ff5a`，Protocol 抽象 2 + sanctioned 7 + 文件迁移 2 + 文件移除 4 + 类型下沉 1 + re-export shim 2） |
-| 5 | 命名重命名（评估后） | 5.153.11（CT_ 类 44 个）/ 5.153.13（TraceContext 函数） | 先验证序列化键影响；改 trace_context() + 兼容别名过渡 | ✅ FIXED（5.153.11 commit `d127c89625` 44 类 PascalCase；5.153.13 commit `293a382547` trace_context() + 兼容别名） |
-| 6 | 共享 helper 提取 | 5.180.4 残留 7 处 gate subprocess | 提取 `run_checker_script()`（统一 cwd/timeout/exit 解析） | ✅ FIXED（commit `0acd7d885f`，helper 位于 commit_gate_registry.py:139，6 文件全部替换） |
-| 7 | 惰性导出修复 | 5.93.3（shared/__init__.py __all__ 170 名零 import） | PEP 562 `__getattr__` 惰性导出或裁剪 `__all__` | ✅ FIXED（commit `4f3a9f9895` merge of `6c2856a4da`，PEP 562 __getattr__ + 88 符号→子模块映射） |
-| 8 | Owner 授权结构修复（2 项） | 5.42.4（baseline_manager.py 方法嵌套 bug）/ 5.97.6（audit_trail_cli.py 108 行 5 elif） | 按结构 bug 处理（Owner 已授权全权修复） | ✅ FIXED（commit `0acd7d885f`，5.42.4 方法正确嵌套至模块级；5.97.6 _AUDIT_DISPATCH 分发表 + _run_single_audit） |
+**EXECUTE 工作清单（0 项）**：原 R102 EXECUTE 27 项 + R103 EXECUTE 3 项已于 2026-07-21/22 全部治本施工完成（详见 git log：commit `8280758400`/`8700464c3f`/`0f1ff7ff5a`/`d127c89625`/`293a382547`/`0acd7d885f`/`4f3a9f9895`/`9d2b7d498f`/`984d3bb772`/`e494c72623`）。已治本维度（5.42/5.97/5.100/5.140/5.145/5.152/5.160/5.180）的逐项详情已移出本节——历史唯一追溯渠道是 git log。
 
 **wontfix 分布（40 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.101（12）/ 5.143（14）/ 5.150（2：5.150.6 Data Class + 5.150.16 Primitive Obsession）/ 5.153（9）= 40。
-**SKIP（0 项）**：原 5.46.3（tiered_storage.py:44 naive datetime 混用）已由 Owner 授权治本修复（now_utc() + tz=UTC）。
-
-### 5.0.1 R103 第一性原理重裁定工作清单（2026-07-22）
-
-**裁定原则**：R103 对原 R102 RATIFY 项进行第一性原理重新审查，新增 3 项验证维度——(V1) 证据时效性（裁定时的证据是否仍成立）、(V2) 模式一致性（同类问题是否已有治本先例）、(V3) 防复发机制成熟度（防复发 gate 是否已从 warn-only 升级为硬阻断）。若原 RATIFY 理由在新验证维度下失效，则重裁定为 EXECUTE 并立即治本。
-
-**EXECUTE 治本项（3 项，均已治本完成）**：
-
-| # | 条目 | 原裁定 | 重裁定理由 | 治本 commit |
-|---|---|---|---|---|
-| 1 | 5.100.15/16（asyncio API 弃用） | R102 RATIFY | (V2) 5.52 已有 `async_utils.run_coroutine_sync` canonical 模式可复用；(V3) M23 warn-only 不足以防新增 | `9d2b7d498f` |
-| 2 | 5.140.2（函数复杂度） | R102 RATIFY | (V2) 5.97/5.158 已有 dispatch 表重构先例；(V3) NO-HIGH-COMPLEXITY gate 已硬阻断新增 | `9d2b7d498f` |
-| 3 | 5.160.2（裸 SQL） | R102 RATIFY | (V2) R89/R90 已提取 13 个 SQL_* 常量清 37 处先例；(V3) NO-BARE-SQL gate 已硬阻断新增 | `984d3bb772` |
-
-**确认 wontfix 项（6 项，维持原裁定）**：5.33.6/10（SPOF/密钥备份，过度工程）、5.93.1（daemon Timer 刻意设计）、5.101.5-17（LEGB 实际遮蔽=0）、5.143.20/7-19（Phase B 骨架/不可验证盲盒）、5.150.6/16（合法 DTO/契约冲击）、5.153.7/8/9/16-21（历史语义/契约冲击）。
+**SKIP（0 项）**：原 5.46.3 已由 Owner 授权治本修复。
 
 ---
 
@@ -234,31 +225,11 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.33.6 | HIGH | `config/.env.postgres` | PostgreSQL 单机 localhost，无故障切换机制（SPOF），无流复制副本/自动故障切换 | **wontfix（R102）**：单机项目 Restic 备份已覆盖，主从到 localhost 无意义属过度工程 |
 | 5.33.10 | MEDIUM | `config/.env.postgres` | PG 密码明文单副本，无异地/加密备份，无 secrets manager 集成 | **wontfix（R102）**：.env.postgres 已随 Restic 加密备份，Vault 属过度工程 |
 
-### 5.42 代码注释与 API 文档（FIXED，原 EXECUTE 1 项已治本）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.42.4 | HIGH | `src/zephyr/gov_drift/baseline_manager.py:132-140` | 方法（snapshot_interface/snapshot_import_graph/snapshot_config/capture）错误嵌套在模块级函数 `_read_config_file` 内——结构性 bug，类实际不含这些方法，调用即 AttributeError | ✅ **FIXED（commit `0acd7d885f`，2026-07-21）**：原 R69 SKIP（SAFETY=H + human_gated）；R102 裁定 EXECUTE（Owner 已授权全权修复，按结构 bug 处理）。治本：方法已正确嵌套至模块级（移出 `_read_config_file`），`_read_config_file`/`_read_source_file` 移至文件末尾（见 baseline_manager.py:120-124 注释）。维度 5.42 状态：PERMANENT-1 → FIXED |
-
-### 5.93 __init__.py 污染（PERMANENT-1：wontfix 1，原 EXECUTE 1 项已治本）
+### 5.93 __init__.py 污染（PERMANENT-1：wontfix 1）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
 | 5.93.1 | HIGH | `src/zephyr/__init__.py:63,125-127,142-144` | import 时执行重型副作用：`_load_dotenv()` 改 os.environ + 2 个 daemon Timer 线程（遥测 bootstrap monkey-patch + 服务注册） | **wontfix（R102 RATIFY）**：2 个 daemon Timer 是 MOD-INF-015 auto_bootstrap 刻意设计（全面 monkey-patch 遥测，"零手动代码"），atexit 清理已在；NO-IMPORT-SIDE-EFFECT gate（priority=103）已防新增；移除风险（遥测静默缺失）> 收益（import 纯净） |
-| 5.93.3 | HIGH | `src/zephyr/shared/__init__.py:4-173` | `__all__` 列 170+ 名称（EventBus/StateMachine/ZephyrLogger 等）但零 import 语句、无 `__getattr__`——`from zephyr.shared import X` 必失败，虚假广告 = AI 幻觉陷阱 | ✅ **FIXED（commit `4f3a9f9895` merge of `6c2856a4da`，2026-07-21）**：R102 裁定 EXECUTE——PEP 562 `__getattr__` 惰性导出已落地，88 符号→子模块映射 `_SYMBOL_TO_SUBMODULE`；移除 `token_utils`（跨包孤立引用）；模块级 `logger` + 显式 `from zephyr.shared.__version__ import __version__` 保持字符串语义。维度 5.93 状态：PERMANENT-2 → PERMANENT-1（仅 5.93.1 wontfix 残留）。注：5.93.4（trading/__init__.py 41 名）经 R102 实测 39 名全部是真实子模块可导入（非 bug），已 RATIFY 关闭；5.93.8 空项已关闭 |
-
-### 5.97 深层嵌套与圈复杂度（FIXED，原 EXECUTE 1 项已治本）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.97.6 | MEDIUM | `src/zephyr/gov_audit/cli.py:90-197`（原 `src/zephyr/governance/audit_trail/cli.py`） | `_run_single_audit` 函数体 108 行、5 个 elif 分支各含 try-except，圈复杂度 ~15（修复建议：改 dispatch 表 `_AUDITORS: dict[str, Callable]`） | ✅ **FIXED（commit `0acd7d885f`，2026-07-21）**：原 R72 SKIP（SAFETY=H + human_gated）；R102 裁定 EXECUTE（Owner 已授权）。治本：`_AUDIT_DISPATCH: dict[str, Callable[[str, str], tuple[str, Any]]]` 分发表（cli.py:191-197）+ `_run_single_audit`（cli.py:200-207）统一签名 `(scope, level) -> tuple[str, Any]`，5 个 audit 类型经 lambda 适配入表。维度 5.97 状态：PERMANENT-1 → FIXED |
-
-### 5.100 异步资源生命周期（FIXED，原 PERMANENT-2 经 R103 重裁定为 EXECUTE 已治本）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.100.15 | MEDIUM | 12+ 文件（`autonomy_core/llm_gateway.py`、`integration/llm_gateway.py`、`infrastructure/pipeline/llm_gateway.py`、`infrastructure/gateway_server.py`、`integration/mcp/gateway_server.py`、`infrastructure/a2a_protocol/` 3 个 adapter、`governance/default_security_gateway.py`、`trading/orchestrator/agent_orchestrator.py` 等） | 多处 fallback 路径使用 `asyncio.get_event_loop()`——Python 3.10+ 无运行 loop 时该 API 已弃用，3.12+ 发 DeprecationWarning | **wontfix（R81 升级 PERMANENT + R102 RATIFY）**：仅 4 文件且都在 fallback 场景无运行 loop 时使用，不构成风险；前裁定成立 |
-| 5.100.16 | MEDIUM | 12+ 文件（`ops/evolution_engine.py`、`ops/scheduler.py`、`autonomy_core/context_injector.py`、`autonomy_core/llm_gateway.py`、`infrastructure/governance_server.py`、`infrastructure/gateway_server.py`、`infrastructure/_base_server.py`、`infrastructure/a2a_protocol/legacy_governance_adapter.py`） | 多处同步函数中调用 `asyncio.run(...)` 桥接 async 代码，每次创建并销毁新 loop，无法复用 loop-bound 资源 | **wontfix（R81 升级 PERMANENT + R102 RATIFY）**：仅 5 文件且都在 CLI/启动路径，一次性调用无需 loop 复用；前裁定成立 |
 
 ### 5.101 变量遮蔽与命名冲突（PERMANENT-12，均 wontfix）
 
@@ -267,12 +238,6 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.101.5-5.101.13（9 项） | LOW | 42 处数据类/Pydantic 字段（id 15 + file 11 + type 3 + format 4 + hash 5 + open 3 + input 1 + round 1 + Enum 成员 file 1；代表文件：`governance/blind_spot_tracker.py`、`integration/vector_memory/hybrid_retriever.py`、`infrastructure/pipeline/models.py`、`trading/night_shift_queue.py`、`shared/infra/outbox.py` 等） | 数据类/Pydantic 字段名与 Python 内置名相同（风格性遮蔽） | **wontfix（R80 升级 PERMANENT + R102 RATIFY）**：LEGB 分析实例属性 `self.id` 不参与作用域链，方法体内 `id(obj)` 仍调用内置 `id()`，实际遮蔽风险=0；改名冲击 JSON 序列化键名 + DB 列映射 + API 契约，成本 > 收益（P3/P4） |
 | 5.101.15/16/17（3 项） | LOW | `shared/foundation/types.py`、`shared/security/secrets.py`、`security/llm_defense/llm_security/patterns/secrets.py` | 模块名与标准库 `types`/`secrets` 模块同名 | **wontfix（R80 + R102 RATIFY）**：Python 3 包内 import 不搜索同包目录，实测无遮蔽风险；改名涉及全仓 import 路径变更，净收益为负（P4）。注：5.101.14 `shared/secrets.py` 已删除（DRIFTED） |
 
-### 5.140 函数复杂度过高（FIXED，原 PERMANENT-3 经 R103 重裁定为 EXECUTE 已治本）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.140.2（残留 3 函数） | MEDIUM | `integration/pipeline_orchestrator.py:1361`（`_call_model` 153 行/3 层/~10 分支）、`integration/pipeline_orchestrator.py:1169`（`_execute_module` 99 行/4 层/~8 分支）、`integration/pipeline_orchestrator.py:2300`（`_check_g6_blueprint_compliance` 81 行/5 层/~7 分支） | 100-200 行单一职责函数，认知复杂度中低 | **wontfix（R81 升级 PERMANENT，R101 清 2 项后维持 3 项，R102 RATIFY）**：单一职责、认知复杂度在 AI 处理范围内，拆分边际收益递减；NO-HIGH-COMPLEXITY gate（priority=85）已防新增 |
-
 ### 5.143 API 契约一致性（PERMANENT-14，均 wontfix）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
@@ -280,52 +245,21 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.143.20 | LOW | `src/zephyr/compliance/compliance_manager.py:46` | `ComplianceManagerBase` 定义 4 个 abstractmethod 但全项目无子类实现 | **wontfix（R82 + R102 RATIFY）**：Phase B 骨架 OCP 扩展点（蓝图 MOD-L10-001 明确支持，文件头标注 status: phase_b_skeleton），abc.ABC TypeError 机制 + runtime_checkable 双层防护，零运行时风险；待 compliance 域进入 Phase C 时由人类架构师发起专项实现 |
 | 5.143.7-5.143.19（13 项盲盒） | MEDIUM | 注册表从未记录具体条目 | 第 25 轮登记为 "MEDIUM 13 个未列具体条目需逐条审查"，历 22 轮代码变化后无法验证是否原始 13 个 | **wontfix（R82 + R102 RATIFY）**：重新扫描结果不可验证；HIGH 已全部修复；MEDIUM 级在 Python 动态类型下运行时无 TypeError 影响；ssot_redefinition_gate + cross_layer_contracts.yaml SSoT + abc.ABC + runtime_checkable 已提供覆盖 |
 
-### 5.145 类型注解完整性（FIXED，原 PERMANENT-14 经 #ARCH-ANY-GOVERNANCE-001 三阶段治本）
+### 5.150 设计模式误用（PERMANENT-2：wontfix 2）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
-| 5.145.13-5.145.26（14 项） | MEDIUM | 跨 100 文件 627 处裸 Any（ANY-1=455 + ANY-2=172；代表文件：l3_output/l1_input/l7_validation/l8_multi_agent/injection_patterns/scheduler_act/verdict_engine/resource_optimization/exam_judge 等） | 系统性 Any 滥用——配置型 dict[str,Any] 约 35% 合理、Python 协议要求 Any 约 5% 合理、真正需修裸 Any 约 60% 需逐处推断具体类型 | ✅ **FIXED（#ARCH-ANY-GOVERNANCE-001 三阶段治本，2026-07-22）**：**Phase 1**——构建 `any_type_inferrer.py` 类型推断工具（AST 遍历 + 变量类型收集 + 返回值推断），为批量替换提供机械保证，消除"错误类型标注比无标注更危险"的顾虑；**Phase 2**——分批替换 src/zephyr/ 全量 71 处裸 Any（commit `e494c72623`），每处替换均经推断工具验证类型正确性，0 处仅删 Any 不替换；**Phase 3**——GATE-ANY-ABUSE 从 `stages:[manual]` 升级为常规 commit 阻断（hard block），新增 `# noqa: any-abuse` 行级豁免机制（合理 Any 逃生通道，需附理由≥10字符，登记于 noqa_exempt_registry.yaml），5.145 维度防复发从"建议性 manual"升级为"强制性 commit 阻断"。原 R102"增量机会性清理"理由失效（无机械执行保证），"627 处不可验证"理由经分批治理 + 推断工具证伪。 |
-
-### 5.150 设计模式误用（PERMANENT-2：原 EXECUTE 5 项已治本 + wontfix 2）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.150.3 | HIGH | `src/zephyr/feedback_loop/scheduler.py:96` | **God Class**：`FeedbackLoopScheduler` 26 个方法、520+ 行，注入 19+ 依赖，承担 collect→detect→diagnose→act→verify 全链路 + drift scan + safety gates + alerting + metrics 6+ 职责 | ✅ **FIXED（commit `8280758400`，2026-07-21）**：R102 裁定 EXECUTE（执行顺序 3/4）。治本：Extract Class 提取 6 协作者类——2 同文件（`PeriodicGovernanceInspector` scheduler.py:105 + `ExternalPersistenceWriter` scheduler.py:177）+ 4 外文件（`scheduler_act.py:132 ActPhaseHandler` / `scheduler_collect_detect.py:45 CollectDetectHandler` / `scheduler_health.py:43 HealthReporter` / `scheduler_safety.py:101 SafetyGateManager`）。主类保留 10 个 facade 薄封装方法（实例级 `patch.object` 测试面不变），主类行数从 520+ → 764（因 facade + 编排逻辑保留） |
-| 5.150.2 | HIGH | `src/zephyr/trading/auto_runtime_core.py:65` | **God Class**：`AutoRuntimeCore` 约 42 个方法、672 行，承担 boot/shutdown/RBAC/Ollama 管理/任务队列/blueprint watcher/FLE scheduler/model router/A2A/任务学习 9+ 职责 | ✅ **FIXED（2026-07-21）**：R102 裁定 EXECUTE（执行顺序 4/4）。治本：Extract Class 提取 4 同文件协作者类（位于主类之后 NO-GOD-CLASS gate avoidance）——`_OllamaProcessManager` auto_runtime_core.py:514（4 @staticmethod）/ `_LocalModelBootstrap` :585（4）/ `_BootSubsystemRegistrar` :683（7）/ `_TaskModelLearning` :795（7）。主类保留 21 个 facade 薄封装方法（模块级 `patch("...AutoRuntimeCore.X")` + 实例级 `patch.object(core, "_X")` 测试面不变），全部协作者 `@staticmethod` 经 `core` 参数读写不反向持有引用 |
-| 5.150.5 | HIGH | `src/zephyr/trading/trading_contracts/factories.py:109` | **Long Parameter List**：`make_risk_metrics_report` 16 个参数，远超 7 阈值，直接源于 Data Class 反模式 | ✅ **FIXED（commit `8700464c3f` + sess-8288 薄委托，2026-07-21）**：R102 裁定 EXECUTE。治本：引入 `RiskMetricsReportParams` frozen dataclass（factories.py:115，17 字段，字段顺序与旧签名 1:1）；工厂签名改为 `make_risk_metrics_report(params: RiskMetricsReportParams \| None = None, **kwargs)`；`shared/contracts/core/factories.py` 旧实现转为薄委托（构造 *Params + 调用新工厂），消除业务逻辑重复 |
-| 5.150.10 | MEDIUM | `src/zephyr/trading/trading_contracts/factories.py:57` | **Long Parameter List**：`make_risk_limits` 9 个参数 | ✅ **FIXED（commit `8700464c3f` + sess-8288 薄委托，2026-07-21）**：R102 裁定 EXECUTE。治本：引入 `RiskLimitsParams` frozen dataclass（factories.py:78，9 字段），同上模式 |
-| 5.150.11 | MEDIUM | `src/zephyr/trading/trading_contracts/factories.py:84` | **Long Parameter List**：`make_risk_dashboard_snapshot` 9 个参数 | ✅ **FIXED（commit `8700464c3f` + sess-8288 薄委托，2026-07-21）**：R102 裁定 EXECUTE。治本：引入 `RiskDashboardSnapshotParams` frozen dataclass（factories.py:97，9 字段），同上模式 |
 | 5.150.6 | MEDIUM | `src/zephyr/trading/trading_contracts/risk/risk_metrics.py:25` | **Data Class**：`RiskMetricsReport` 为 `@dataclass(frozen=True)`，17 个字段 0 个方法 | **wontfix（R102 RATIFY）**：报告 DTO 17 字段 0 方法是合法模式（不可变数据载体），为加方法而加方法 = 过度工程（P4） |
 | 5.150.16 | LOW | `src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py:107` | **Primitive Obsession**：`AgentCommunicationItem.__init__` 7 个 str 基本类型参数，source_id/sender_id、target_id/receiver_id 互为别名冗余，未用 AgentId 值对象 | **wontfix（R102 RATIFY）**：影响序列化/契约，值对象重构冲击面大于收益（P4）。注：5.150.4（default_equity_strategy LSP）经 R102 实测已修复（签名与基类一致），状态改 FIXED |
 
-### 5.152 依赖方向违规（FIXED，原 EXECUTE 10 边已治本）
+### 5.153 命名一致性（PERMANENT-9，均 wontfix）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
-| 5.152 #8-#25（10 项跨层依赖边，registry 计数） | MEDIUM | 4 组：①`governance/strategy_engine/__init__.py:21` governance→pf_core（导入 default_equity_strategy）；②governance→trading 5 处（`governance/adapters/simulation_broker.py:54-56`、`governance/observability_governance/analytics_base.py:49-51`、`trading/trading_contracts/broker_interface.py:40-42`、`governance/default_tca_engine.py:43-45`、`governance/strategies/default_equity_strategy.py:50`）；③infrastructure→governance 5 处（`infrastructure/rollback/auditor.py:26`、`infrastructure/rollback/contracts.py:26`、`infrastructure/rollback/governance/auditor.py:22`、`infrastructure/rollback/governance/contracts.py:22`、`infrastructure/a2a_protocol/legacy_auditor.py:26`）；④integration→governance/autonomy_core/trading 7 处（`integration/llm_bridge.py:29`、`integration/shared/schema/schemas.py:26,265`、`integration/vector_memory/delegated_vector_memory.py:37`、`integration/vector_memory/__init__.py:53`、`integration/mcp/sentinel_server.py:51`、`integration/mcp/task_manager_server.py:36`、`integration/behavioral_admission/admission_response.py:23`） | 跨层依赖——类型真源未下沉到 shared，低层依赖高层/跨域直接依赖具体实现 | ✅ **FIXED（commit `0f1ff7ff5a`，2026-07-21）**：R102 裁定 EXECUTE（逐边分析）。NO-UPWARD-IMPORT gate（priority=97）已防新增；存量 10 边治本分布——**Protocol 抽象 2 边**（rollback/auditor.py + rollback/contracts.py 用本地 `Protocol` 类替代静态依赖）；**sanctioned 标记 7 边**（integration 组合层合法跨域：simulation_broker 同层 L2→L2 契约、llm_bridge/delegated_vector_memory/vector_memory __init__/sentinel_server/task_manager_server/admission_response 各带 `# 5.152 #N sanctioned` 注释登记授权）；**文件迁移 2 边**（governance/strategy_engine 迁至 pf_core；governance/strategies/default_equity_strategy 迁至 pf_core）；**文件移除 4 边**（rollback/governance/auditor.py + contracts.py + legacy_auditor.py + integration/shared/schema/schemas.py 全部删除/去重）；**类型下沉 1 边**（broker_interface.py 的 Fill/Order/PositionSnapshot 已下沉 zephyr.shared.contracts）；**re-export shim 2 边**（analytics_base.py + default_tca_engine.py canonical 迁至 reporting 层）。注：#1（shared/contracts/order.py 从 trading 导入枚举）经 R102 实测已修复（OrderSide/OrderStatus/OrderType 已下沉 `zephyr.shared.contracts.enums.order_enums`），状态改 FIXED |
-
-### 5.153 命名一致性（PERMANENT-9：原 EXECUTE 2 项已治本 + wontfix 9）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.153.11 | MEDIUM | `src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py`（15 个）+ `batch2_governance.py` + `batch3_integration.py` | CT_XX_XXX 类 44 个使用 SCREAMING_SNAKE_CASE 而非 Python 惯例 PascalCase | ✅ **FIXED（commit `d127c89625`，2026-07-21）**：R102 裁定 EXECUTE（评估序列化后）。治本：先验证类名是否进序列化键——实测序列化键使用独立 hyphenated 字符串 ID（如 `"CT-SLO-001"`，与 Python 类名完全解耦）；44 类已全部从 SCREAMING_SNAKE_CASE（如 `CT_SLO_001`）重命名为 PascalCase（`CtSlo001`），符合 Python 命名惯例。`grep 'CT_[A-Z_]+' in capacity_assurance` = 0 匹配，原命名已完全消除 |
-| 5.153.13 | MEDIUM | `src/zephyr/shared/utils/logging.py:290` | `TraceContext` 函数（@contextmanager）PascalCase 命名，与 `contracts.trace_context.TraceContext` 类撞名（真实混淆源），65 消费文件 | ✅ **FIXED（commit `293a382547`，2026-07-21）**：R102 裁定 EXECUTE（带兼容别名）。治本：函数已重命名为 `trace_context()` snake_case（logging.py:290-327）；保留 `TraceContext = trace_context` 别名（logging.py:331）带 `# [DEPRECATED] 兼容别名` 标记；`__all__` 同时导出两者。消费方迁移实测：`from zephyr.shared.utils.logging import TraceContext` = 0 匹配（38 处现存 `import TraceContext` 全部指向 `contracts.trace_context.TraceContext` 类，合法的类导入，不再构成撞名混淆源）。注：别名 `[DEPRECATED]` 标记已加但未显式 TTL 截止日期（消费方零残留，TTL 缺失为次要流程瑕疵） |
 | 5.153.7 | MEDIUM | `src/zephyr/feedback_loop/db_bridge.py:79,111`（record_*）vs `db_writer.py:48,181`（write_*） | 同一目录两模块都向 fle_metrics 表写入但动词不一致；且 db_bridge 硬编码 db 路径 | **wontfix（R102 RATIFY）**：差异各有历史语义（不同 DB 不同函数名是特性非 bug），改名冲击契约，净收益为负（P4） |
 | 5.153.8 | MEDIUM | `database_service.py`（get_governance_conn/get_depgraph_conn/get_market_conn）vs `database_manager.py`+`ports.py`（get_connection）vs `sqlite_schema.py`（get_db_connection）vs `depgraph_schema.py`（get_depgraph_pg_connection） | 获取数据库连接 4 种命名模式 + conn/connection 混用 | **wontfix（R102 RATIFY）**：同上（历史语义，改名冲击契约） |
 | 5.153.9 | MEDIUM | `audit_orchestration/session_manager.py:106` vs `state/session_manager.py:113` vs `trading/orchestrator/session_manager.py` vs `infrastructure/a2a_protocol/governance/session_manager.py:21` | `create_session` 参数名跨模块不一致（session_id / task_id / agent_id），返回类型不同 | **wontfix（R102 RATIFY）**：同上（影响 A2A 协议契约） |
 | 5.153.16-5.153.21（6 项） | LOW | `governance/ops_governance/auto_runner.py:60`（success）、`governance/api_lifecycle.py:48`（expired）、`integration/vector_memory/in_process_vector_memory.py:105`（started）、`trading/verdict_engine.py:51,101,142`（gate_passed）、9 个 `ops/gates/safety_gate_l*.py`（slo_compliant/pnl_reconciled 等 30+ 字段）、`ops/gates/safety_gate_l1_l27.py:69`+`parameterized_safety_gate.py:95`（in_circuit_breaker 非标准 in_ 前缀） | 布尔属性/字段缺 is_ 前缀（30+ 字段），同文件内 has_/is_ 与裸名并存不一致 | **wontfix（R102 RATIFY）**：改名冲击序列化/契约，净收益为负（P4） |
-
-### 5.160 魔法数字/字符串（FIXED，原 PERMANENT-1 经 R103 重裁定为 EXECUTE 已治本）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.160.2 | HIGH | `scripts/governance/apply_depgraph.py` | 118 处裸 SQL 散落（原 174 处；R89/R90 已提取 13 个 SQL_* 常量清 37 处，剩余静态非重复 + f-string 动态构造 + 多行 SQL） | **wontfix（R88 升级 PERMANENT + R102 RATIFY）**：SAFETY=H + 文件头 `[TESTS] 无`，提取常量不可验证行为等价（157MB depgraph 原子写入工具，一个 typo 破坏 depgraph 同步）；NO-BARE-SQL gate（priority=87）已防新增；触碰时顺带提取为常态实践 |
-
-### 5.180 AI-11 审计遗留专项工程（FIXED，原 EXECUTE 7 处已治本）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.180.4（原残留 7 处） | LOW | `src/zephyr/gov_enforcement/commit_gates/` 下 6 文件 7 处：`directory_contract_gate.py`、`ttl_gate.py`、`file_copy_gate.py`、`vocab_hardcode_gate.py`、`rule_four_way_alignment_gate.py`、`id_uniqueness_gate.py` | 7 处 `[sys.executable, script]` subprocess 调用 Python checker 脚本（非 git 命令，不适合 `_run_git` 替换），每处重复实现 cwd/timeout/exit 解析约 15 行样板 | ✅ **FIXED（commit `0acd7d885f`，2026-07-21）**：提取共享 helper `run_checker_script()`（位于 `src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py:139`），统一 cwd/timeout/exit 解析；6 个 gate 文件全部替换为 helper 调用，消除 7×15 行样板。注：5.180.4 的 git 命令部分（7 处）已于 R95/R96 全部 FIXED（替换为 `gateway._run_git`，含 cwd 参数扩展）；5.180.1/2/3 已于 R97-R99 全部 FIXED |
 
 ### 附：跨维度 LOW 残留与其他遗留（非 PERMANENT 裁定项）
 
