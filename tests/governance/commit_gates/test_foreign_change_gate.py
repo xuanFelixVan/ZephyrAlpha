@@ -20,6 +20,7 @@
 - TestSnapshotExceptionSafe: _claim_snapshots 读取异常安全降级（不阻断）
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestSnapshotDiskPersistence: S3-C 治本——claim 快照磁盘持久化 + 崩溃恢复
+- TestAdoptPriorWork: 治本(2026-07-23)——claim_files(adopt_prior_work=True) 认领跨 session 前序工作（空基线+审计）
 """
 from __future__ import annotations
 
@@ -291,3 +292,98 @@ class TestSnapshotDiskPersistence:
         assert snapshots["/abs/dirty.py"] == dirty_baseline
         # 非空基线 → gate 会 BLOCK（搭便车检测生效）
         assert snapshots["/abs/dirty.py"] != ""
+
+
+class TestAdoptPriorWork:
+    """治本(2026-07-23): claim_files(adopt_prior_work=True) 认领跨 session 前序工作。
+
+    adopt 对有实际 diff 的文件记录审计日志但存储空基线，使 FOREIGN-CHANGE gate 放行。
+    与 allow_overlap 逃生通道互补——adopt 在 claim 时认领附审计，allow_overlap 在
+    commit 时绕 gate。
+    """
+
+    def _make_claimable_gateway(
+        self, project_root: Path, baseline_map: dict[str, str]
+    ) -> GitCommitGateway:
+        """构造可 claim 的 gateway：_registry.claim_file 返回 True，
+        _capture_baseline_diff 按 baseline_map 返回基线（绕过真实 git diff）。"""
+        gw = GitCommitGateway.__new__(GitCommitGateway)
+        gw.project_root = project_root
+        gw._claim_snapshots = {}
+        gw._claim_snapshots_dir = project_root / ".runtime" / "claim_snapshots"
+        gw._registry = MagicMock()
+        gw._registry.claim_file.return_value = True
+        gw._capture_baseline_diff = lambda abs_f: baseline_map.get(abs_f, "")
+        return gw
+
+    def test_adopt_resets_dirty_baseline_to_empty(self, tmp_path):
+        """adopt_prior_work=True 对 dirty 文件 → 快照存空基线 → gate PASS。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = self._make_claimable_gateway(tmp_path, {abs_target: "-old\n+new dirty"})
+        gw.claim_files("s1", [str(target)], adopt_prior_work=True)
+        # 快照应为空基线（adopt 认领后）
+        assert gw._claim_snapshots["s1"][abs_target] == ""
+        # gate 检查：空基线 → PASS
+        gate = make_foreign_change_gate()
+        gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: ""})
+        passed, detail = gate.check(
+            gw_mock, [str(target)], session_id="s1", allow_overlap=False,
+        )
+        assert passed is True
+        assert detail == ""
+
+    def test_adopt_writes_audit_log(self, tmp_path):
+        """adopt 后审计日志 {sid}_adopted.jsonl 含 diff_size/diff_sha256。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = self._make_claimable_gateway(tmp_path, {abs_target: "-old\n+new dirty work"})
+        gw.claim_files("s1", [str(target)], adopt_prior_work=True)
+        audit_file = gw._claim_snapshots_dir / "s1_adopted.jsonl"
+        assert audit_file.exists(), "adopt 审计日志未创建"
+        records = [
+            json.loads(line)
+            for line in audit_file.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        assert len(records) == 1
+        assert records[0]["file"] == abs_target
+        assert records[0]["diff_size"] > 0
+        assert "diff_sha256" in records[0]
+        assert len(records[0]["diff_sha256"]) == 16
+
+    def test_adopt_clean_file_no_audit(self, tmp_path):
+        """clean 文件（actual_baseline 空）adopt → 不写审计（无前序工作可认领）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = self._make_claimable_gateway(tmp_path, {abs_target: ""})  # clean
+        gw.claim_files("s1", [str(target)], adopt_prior_work=True)
+        audit_file = gw._claim_snapshots_dir / "s1_adopted.jsonl"
+        assert not audit_file.exists(), "clean 文件不应写 adopt 审计"
+        # 快照仍为空基线（clean 文件本就是空）
+        assert gw._claim_snapshots["s1"][abs_target] == ""
+
+    def test_adopt_default_false_unchanged(self, tmp_path):
+        """adopt_prior_work=False（默认）→ dirty 基线保留 → gate BLOCK（行为不变）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        dirty = "-old\n+new dirty"
+        gw = self._make_claimable_gateway(tmp_path, {abs_target: dirty})
+        gw.claim_files("s1", [str(target)])  # 默认 adopt_prior_work=False
+        # 快照保留 dirty 基线（未认领）
+        assert gw._claim_snapshots["s1"][abs_target] == dirty
+        # gate 检查：dirty 基线 → BLOCK
+        gate = make_foreign_change_gate()
+        gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: dirty})
+        passed, detail = gate.check(
+            gw_mock, [str(target)], session_id="s1", allow_overlap=False,
+        )
+        assert passed is False
+        assert "FOREIGN_CHANGE_VIOLATION" in detail
+        # 无 adopt 审计日志
+        audit_file = gw._claim_snapshots_dir / "s1_adopted.jsonl"
+        assert not audit_file.exists()

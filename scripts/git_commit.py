@@ -267,7 +267,7 @@ def _handle_pure_claim(gw, args, files: list[str]) -> int | None:
         print(f"RELEASED: {len(files)} files (session={args.session})")
         return 0
     if args.claim_only:
-        claimed = gw.claim_files(args.session, files)
+        claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
         conflicts = [f for f in files if f not in claimed]
         if conflicts:
             print(f"CONFLICT: {len(conflicts)} files held by other session: {conflicts}", file=sys.stderr)
@@ -360,6 +360,17 @@ def main() -> int:
              "供审计追踪。AI 不得自行使用——须用户终端手动指定。",
     )
     parser.add_argument(
+        "--adopt-prior-work",
+        action="store_true",
+        default=False,
+        help="FOREIGN_CHANGE_VIOLATION 治本通道（2026-07-23）——跨 session 续作场景"
+             "认领前序未提交变更。claim_files 对有实际 diff 的文件记录审计日志"
+             "（.runtime/claim_snapshots/{sid}_adopted.jsonl）但存储空基线，使 "
+             "FOREIGN-CHANGE-DETECTION gate 放行。与 --allow-overlap 区别："
+             "allow_overlap 在 commit 时绕 gate，adopt-prior-work 在 claim 时认领附审计。"
+             "适用于本 session 续作前序 session 已落工作区但未 commit 的合法变更。",
+    )
+    parser.add_argument(
         "--claim-only",
         action="store_true",
         default=False,
@@ -430,7 +441,7 @@ def main() -> int:
         return pc_exit
 
     # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
-    claimed = gw.claim_files(args.session, files)
+    claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
     # reconciler-verify 模式：claim_files 必须全部成功（无搭便车逃生通道）
     if args.reconciler_verify and len(claimed) != len(files):
         conflicts = [f for f in files if f not in claimed]

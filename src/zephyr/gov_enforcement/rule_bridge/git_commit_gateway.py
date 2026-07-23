@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；worktree 物理隔离（阶段3 治本 2026-06-30：commit 检测 session worktree——在 worktree 内直接 commit 无需 stash，不在 worktree 内提示建议使用 session worktree 隔离但仍向后兼容 commit）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本：pre-commit gate 声明式注册，4 个 in-process gate DIRECTORY-CONTRACT/CLAIM-REQUIRED/HELD-OVERLAP/CAPABILITY-OVERLAP 替代 12 个硬编码 _check_*，新增门禁 register(GateSpec) 而非硬编码 _check_*）；held_files 冲突阻断（搭便车治本：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；commit 守卫 _in_commit_flow（红攻1治本：_run_git 检测裸 git commit 且此标志为 False 时拒绝）；rename fallback（_commit_with_file_message 内置 rename 检测，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件）
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；worktree 物理隔离（阶段3 治本 2026-06-30：commit 检测 session worktree——在 worktree 内直接 commit 无需 stash，不在 worktree 内提示建议使用 session worktree 隔离但仍向后兼容 commit）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本：pre-commit gate 声明式注册，4 个 in-process gate DIRECTORY-CONTRACT/CLAIM-REQUIRED/HELD-OVERLAP/CAPABILITY-OVERLAP 替代 12 个硬编码 _check_*，新增门禁 register(GateSpec) 而非硬编码 _check_*）；held_files 冲突阻断（搭便车治本：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；commit 守卫 _in_commit_flow（红攻1治本：_run_git 检测裸 git commit 且此标志为 False 时拒绝）；rename fallback（_commit_with_file_message 内置 rename 检测，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件）；adopt_prior_work 治本（2026-07-23，ARCH-054 跨 session 续作）：claim_files(adopt_prior_work=True) 认领前序未提交变更——审计记录实际基线 diff_size+sha256 到 .runtime/claim_snapshots/{sid}_adopted.jsonl 但存储空基线让 FOREIGN-CHANGE gate 放行，替代 stash 舞蹈与 --allow-overlap 逃生通道（allow_overlap commit 时绕 gate，adopt claim 时认领附审计）
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -412,11 +412,19 @@ class GitCommitGateway:
                 session_id,
             )
 
-    def claim_files(self, session_id: str, files: list[str]) -> list[str]:
+    def claim_files(
+        self, session_id: str, files: list[str], adopt_prior_work: bool = False
+    ) -> list[str]:
         """为 session 声明持有本次 commit 的文件。claim 失败的文件从返回列表排除。
 
         ARCH-054: claim 成功后捕获文件基线快照（git diff HEAD -- <file>），
         供 FOREIGN-CHANGE-DETECTION gate 在 commit 时检测搭便车变更。
+
+        adopt_prior_work: 治本(2026-07-23)——跨 session 续作场景认领前序未提交变更。
+            True 时对有实际 diff 的文件记录审计日志（实际基线 diff_size+sha256 落
+            .runtime/claim_snapshots/{sid}_adopted.jsonl）但存储空基线，使 FOREIGN-CHANGE
+            gate 放行。与 allow_overlap 的区别：allow_overlap 在 commit 时绕过 gate，
+            adopt_prior_work 在 claim 时认领（gate 仍执行、附审计）。默认 False 行为不变。
         """
         claimed: list[str] = []
         for f in files:
@@ -425,7 +433,14 @@ class GitCommitGateway:
                 #ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
                 try:
                     abs_f = os.path.abspath(f)
-                    baseline = self._capture_baseline_diff(abs_f)
+                    actual_baseline = self._capture_baseline_diff(abs_f)
+                    if adopt_prior_work and actual_baseline:
+                        # 治本(2026-07-23): 认领跨 session 前序工作——审计记录实际基线，
+                        # 存储空基线让 FOREIGN-CHANGE gate 放行（替代 stash 舞蹈/逃生通道）
+                        self._log_adopted_work(session_id, abs_f, actual_baseline)
+                        baseline = ""
+                    else:
+                        baseline = actual_baseline
                     self._claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
                     # S3-C: 持久化到磁盘（进程崩溃后可恢复）
                     self._save_session_snapshot(session_id)
@@ -477,6 +492,37 @@ class GitCommitGateway:
         if result.returncode != 0:
             return ""
         return result.stdout or ""
+
+    def _log_adopted_work(
+        self, session_id: str, abs_file: str, actual_baseline: str
+    ) -> None:
+        """治本(2026-07-23)：认领跨 session 前序工作的审计日志。
+
+        adopt_prior_work=True 且文件有实际 diff 时调用。记录被认领文件的 diff
+        大小+sha256(前16位)到 .runtime/claim_snapshots/{sid}_adopted.jsonl，供
+        commit_gateway_abuse_monitor_reconciler 检测滥用。审计失败不阻断主流程。
+        """
+        try:
+            self._claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
+            import hashlib
+            import time as _t
+            record = {
+                "timestamp": _t.time(),
+                "session_id": session_id,
+                "file": abs_file,
+                "diff_size": len(actual_baseline),
+                "diff_sha256": hashlib.sha256(
+                    actual_baseline.encode("utf-8", errors="replace")
+                ).hexdigest()[:16],
+            }
+            with (self._claim_snapshots_dir / f"{session_id}_adopted.jsonl").open(
+                "a", encoding="utf-8"
+            ) as fh:
+                fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except Exception:  # noqa: BLE001 — 审计失败不阻断 claim
+            logger.debug(
+                "_log_adopted_work audit write failed (non-blocking)", exc_info=True
+            )
 
     # ------------------------------------------------------------------
     # S3-C 治本（2026-07-17）：claim 快照磁盘持久化
