@@ -19,1615 +19,1939 @@
 
 tasks:
   # ============== 盘后日K时段（16:30 周一-五）==============
-  - task_id: adj_factor_incremental
-    table: c1_market.adj_factor
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+- task_id: adj_factor_incremental
+  table: c1_market.adj_factor
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: adj_factor
+  symbols:         # null=全市场
+  extra:
+    description: "复权因子增量（miniQMT get_divid_factors）"
+
+  fallback_sources:
+  - source: ifind
     capability: adj_factor
-    symbols: null  # null=全市场
-    extra:
-      description: "复权因子增量（miniQMT get_divid_factors）"
+  - source: akshare
+    capability: adj_factor
+- task_id: kline_daily_hfq_incremental
+  table: c1_market.kline_daily_hfq
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["adj_factor_incremental"]    # DAG: adj_factor -> kline_daily_hfq
+  capability: kline_daily_hfq
+  symbols:
+  extra:
+    description: "后复权日K线增量（miniQMT dividend_type=back）"
 
-  - task_id: kline_daily_hfq_incremental
-    table: c1_market.kline_daily_hfq
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_daily_hfq
+  fallback_sources:
+  - source: ifind
     capability: kline_daily_hfq
-    symbols: null
-    extra:
-      description: "后复权日K线增量（miniQMT dividend_type=back）"
-
-  - task_id: kline_daily_incremental
-    table: c1_market.kline_daily
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []  # kline_daily 独立，不依赖 hfq
+  - source: akshare
+    capability: kline_daily_hfq
+- task_id: kline_daily_incremental
+  table: c1_market.kline_daily
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []    # kline_daily 独立，不依赖 hfq
+  capability: kline_daily
+  symbols:
+  fallback_sources:
+  - source: baostock
     capability: kline_daily
-    symbols: null
-    fallback_sources:
-      - source: baostock
-        capability: kline_daily
-    extra:
-      description: "不复权日K线增量（miniQMT，保留 iFind 配额给专属数据；baostock 作为 fallback）"
+  extra:
+    description: "不复权日K线增量（miniQMT，保留 iFind 配额给专属数据；baostock 作为 fallback）"
 
-  - task_id: daily_valuation_incremental
-    table: c1_market.daily_valuation
-    source: ifind
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: ["kline_daily_incremental"]  # DAG: kline_daily -> daily_valuation
+- task_id: daily_valuation_incremental
+  table: c1_market.daily_valuation
+  source: ifind
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_daily_incremental"]    # DAG: kline_daily -> daily_valuation
+  capability: daily_valuation
+  symbols:
+  fallback_sources:
+  - source: akshare
     capability: daily_valuation
-    symbols: null
-    fallback_sources:
-      - source: akshare
-        capability: daily_valuation
-    extra:
-      description: "每日估值（PE/PB/PS/PCF）增量（iFind 主源；akshare 作为 fallback）"
+  extra:
+    description: "每日估值（PE/PB/PS/PCF）增量（iFind 主源；akshare 作为 fallback）"
 
-  - task_id: kline_index_incremental
-    table: c1_market.kline_index
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_index
-    symbols: null
-    extra:
-      description: "指数日K线增量（miniQMT 沪深指数 609 只，iFind 补齐其余）"
+- task_id: kline_index_incremental
+  table: c1_market.kline_index
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_index
+  symbols:
+  extra:
+    description: "指数日K线增量（miniQMT 沪深指数 609 只，iFind 补齐其余）"
 
   # ============== 盘后资金时段（17:00 周一-五）==============
-  - task_id: margin_trading_incremental
-    table: c1_market.margin_trading
-    source: akshare
-    schedule: nightly_financial
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
+    capability: kline_index
+  - source: akshare
+    capability: kline_index
+- task_id: margin_trading_incremental
+  table: c1_market.margin_trading
+  source: akshare
+  schedule: nightly_financial
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: margin_trading
+  symbols:
+  extra:
+    description: "融资融券增量（AKShare stock_margin_detail_sse/szse）"
+
+  fallback_sources:
+  - source: exchange
     capability: margin_trading
-    symbols: null
-    extra:
-      description: "融资融券增量（AKShare stock_margin_detail_sse/szse）"
+- task_id: block_trade_incremental
+  table: c1_market.block_trade
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: block_trade
+  symbols:
+  extra:
+    description: "大宗交易增量（AKShare stock_dzjy_mrmx）"
 
-  - task_id: block_trade_incremental
-    table: c1_market.block_trade
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: block_trade
-    symbols: null
-    extra:
-      description: "大宗交易增量（AKShare stock_dzjy_mrmx）"
+- task_id: dragon_tiger_incremental
+  table: c1_market.dragon_tiger
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: dragon_tiger
+  symbols:
+  extra:
+    description: "龙虎榜增量（AKShare stock_lhb_detail_em）"
 
-  - task_id: dragon_tiger_incremental
-    table: c1_market.dragon_tiger
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: dragon_tiger
-    symbols: null
-    extra:
-      description: "龙虎榜增量（AKShare stock_lhb_detail_em）"
+- task_id: kline_hk_daily_incremental
+  table: c1_market.kline_hk_daily
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_hk_daily
+  symbols:
+  extra:
+    description: "港股日K线增量"
 
-  - task_id: kline_hk_daily_incremental
-    table: c1_market.kline_hk_daily
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: kline_hk_daily
-    symbols: null
-    extra:
-      description: "港股日K线增量"
+  - source: qmt
+    capability: kline_hk_daily
+- task_id: macro_data_incremental
+  table: c1_market.macro_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: report_date
+  dependencies: []
+  capability: macro_data
+  symbols:
+  extra:
+    description: "宏观数据增量"
 
-  - task_id: macro_data_incremental
-    table: c1_market.macro_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: report_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: macro_data
-    symbols: null
-    extra:
-      description: "宏观数据增量"
-
-  - task_id: money_flow_incremental
-    table: c1_market.money_flow
-    source: ifind
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+- task_id: money_flow_incremental
+  table: c1_market.money_flow
+  source: ifind
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: money_flow
+  symbols:
+  fallback_sources:
+  - source: akshare
     capability: money_flow
-    symbols: null
-    fallback_sources:
-      - source: akshare
-        capability: money_flow
-    extra:
-      description: "资金流向增量（iFind 主源；akshare stock_individual_fund_flow 作为 fallback）"
+  extra:
+    description: "资金流向增量（iFind 主源；akshare stock_individual_fund_flow 作为 fallback）"
 
-  - task_id: hk_connect_flow_incremental
-    table: c1_market.hk_connect_flow
-    source: akshare
-    schedule: daily_capital
-    incremental: false  # AKShare stock_hsgt_hist_em 返回完整历史，全量刷新
-    dependencies: []
+- task_id: hk_connect_flow_incremental
+  table: c1_market.hk_connect_flow
+  source: akshare
+  schedule: daily_capital
+  incremental: false    # AKShare stock_hsgt_hist_em 返回完整历史，全量刷新
+  dependencies: []
+  capability: hk_connect_flow
+  symbols:
+  extra:
+    description: "沪深港通资金历史（AKShare stock_hsgt_hist_em，有效范围 2014-11-17~2024-08-16 港交所停止公布前）"
+
+  fallback_sources:
+  - source: exchange
     capability: hk_connect_flow
-    symbols: null
-    extra:
-      description: "沪深港通资金历史（AKShare stock_hsgt_hist_em，有效范围 2014-11-17~2024-08-16 港交所停止公布前）"
+- task_id: kline_futures_incremental
+  table: c1_market.kline_futures
+  source: miniqmt
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_futures
+  symbols:
+  extra:
+    description: "期货行情K线增量"
 
-  - task_id: kline_futures_incremental
-    table: c1_market.kline_futures
-    source: miniqmt
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: qmt
     capability: kline_futures
-    symbols: null
-    extra:
-      description: "期货行情K线增量"
+  - source: akshare
+    capability: kline_futures
+- task_id: futures_position_incremental
+  table: c1_market.futures_position
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_futures_incremental"]
+  capability: futures_position
+  symbols:
+  extra:
+    description: "期货持仓增量"
 
-  - task_id: futures_position_incremental
-    table: c1_market.futures_position
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: ["kline_futures_incremental"]
+  fallback_sources:
+  - source: exchange
     capability: futures_position
-    symbols: null
-    extra:
-      description: "期货持仓增量"
+- task_id: kline_us_daily_incremental
+  table: c1_market.kline_us_daily
+  source: tickflow
+  schedule: weekend_calibration
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_us_daily
+  symbols:         # 默认在 Provider 内置 10 美股标的
+  extra:
+    description: "美股日K线增量"
 
-  - task_id: kline_us_daily_incremental
-    table: c1_market.kline_us_daily
-    source: tickflow
-    schedule: weekend_calibration
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: kline_us_daily
-    symbols: null  # 默认在 Provider 内置 10 美股标的
-    extra:
-      description: "美股日K线增量"
-
-  - task_id: us_index_incremental
-    table: c1_market.us_index
-    source: tickflow
-    schedule: weekend_calibration
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: us_index
-    symbols: null
-    extra:
-      description: "美股指数增量（ETF替代）"
+- task_id: us_index_incremental
+  table: c1_market.us_index
+  source: tickflow
+  schedule: weekend_calibration
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: us_index
+  symbols:
+  extra:
+    description: "美股指数增量（ETF替代）"
 
   # ============== 盘后日K时段追加（周月K线 + 分钟K线）==============
-  - task_id: kline_weekly_incremental
-    table: c1_market.kline_weekly
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: akshare
+    capability: us_index
+- task_id: kline_weekly_incremental
+  table: c1_market.kline_weekly
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_weekly
+  symbols:
+  extra:
+    description: "周K线增量（miniQMT 日K聚合 resample W）"
+
+  fallback_sources:
+  - source: ifind
     capability: kline_weekly
-    symbols: null
-    extra:
-      description: "周K线增量（miniQMT 日K聚合 resample W）"
+  - source: akshare
+    capability: kline_weekly
+- task_id: kline_monthly_incremental
+  table: c1_market.kline_monthly
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_monthly
+  symbols:
+  extra:
+    description: "月K线增量（miniQMT 日K聚合 resample M）"
 
-  - task_id: kline_monthly_incremental
-    table: c1_market.kline_monthly
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: kline_monthly
-    symbols: null
-    extra:
-      description: "月K线增量（miniQMT 日K聚合 resample M）"
+  - source: akshare
+    capability: kline_monthly
+- task_id: kline_1min_incremental
+  table: c1_market.kline_1min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_1min
+  symbols:
+  extra:
+    description: "1分钟K线增量（百度云已下载2000年起完整历史，miniQMT持续增量）"
 
-  - task_id: kline_1min_incremental
-    table: c1_market.kline_1min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_1min
-    symbols: null
-    extra:
-      description: "1分钟K线增量（百度云已下载2000年起完整历史，miniQMT持续增量）"
+- task_id: kline_5min_incremental
+  table: c1_market.kline_5min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_time
+  dependencies: []
+  capability: kline_5min
+  symbols:
+  extra:
+    description: "5分钟K线增量（百度云已下载2000年起完整历史，miniQMT持续增量）"
 
-  - task_id: kline_5min_incremental
-    table: c1_market.kline_5min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_time
-    dependencies: []
-    capability: kline_5min
-    symbols: null
-    extra:
-      description: "5分钟K线增量（百度云已下载2000年起完整历史，miniQMT持续增量）"
+- task_id: kline_15min_incremental
+  table: c1_market.kline_15min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_15min
+  symbols:
+  extra:
+    description: "15分钟K线增量"
 
-  - task_id: kline_15min_incremental
-    table: c1_market.kline_15min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_15min
-    symbols: null
-    extra:
-      description: "15分钟K线增量"
+- task_id: kline_30min_incremental
+  table: c1_market.kline_30min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_30min
+  symbols:
+  extra:
+    description: "30分钟K线增量"
 
-  - task_id: kline_30min_incremental
-    table: c1_market.kline_30min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_30min
-    symbols: null
-    extra:
-      description: "30分钟K线增量"
-
-  - task_id: kline_60min_incremental
-    table: c1_market.kline_60min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_60min
-    symbols: null
-    extra:
-      description: "60分钟K线增量"
+- task_id: kline_60min_incremental
+  table: c1_market.kline_60min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_60min
+  symbols:
+  extra:
+    description: "60分钟K线增量"
 
   # ============== ETF/LOF 分钟K线增量（2026-07-11 新增）==============
-  - task_id: kline_etf_1min_incremental
-    table: c1_market.kline_etf_1min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_etf_1min
-    symbols: null  # null=自动取ETF板块
-    extra:
-      description: "ETF 1分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+- task_id: kline_etf_1min_incremental
+  table: c1_market.kline_etf_1min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_etf_1min
+  symbols:         # null=自动取ETF板块
+  extra:
+    description: "ETF 1分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
 
-  - task_id: kline_etf_5min_incremental
-    table: c1_market.kline_etf_5min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_etf_5min
-    symbols: null
-    extra:
-      description: "ETF 5分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+- task_id: kline_etf_5min_incremental
+  table: c1_market.kline_etf_5min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_etf_5min
+  symbols:
+  extra:
+    description: "ETF 5分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
 
-  - task_id: kline_etf_15min_incremental
-    table: c1_market.kline_etf_15min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_etf_15min
-    symbols: null
-    extra:
-      description: "ETF 15分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+- task_id: kline_etf_15min_incremental
+  table: c1_market.kline_etf_15min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_etf_15min
+  symbols:
+  extra:
+    description: "ETF 15分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
 
-  - task_id: kline_etf_30min_incremental
-    table: c1_market.kline_etf_30min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_etf_30min
-    symbols: null
-    extra:
-      description: "ETF 30分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+- task_id: kline_etf_30min_incremental
+  table: c1_market.kline_etf_30min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_etf_30min
+  symbols:
+  extra:
+    description: "ETF 30分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
 
-  - task_id: kline_etf_60min_incremental
-    table: c1_market.kline_etf_60min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_etf_60min
-    symbols: null
-    extra:
-      description: "ETF 60分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
+- task_id: kline_etf_60min_incremental
+  table: c1_market.kline_etf_60min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_etf_60min
+  symbols:
+  extra:
+    description: "ETF 60分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
 
-  - task_id: kline_lof_1min_incremental
-    table: c1_market.kline_lof_1min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_lof_1min
-    symbols: null  # null=自动取LOF板块
-    extra:
-      description: "LOF 1分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+- task_id: kline_lof_1min_incremental
+  table: c1_market.kline_lof_1min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_lof_1min
+  symbols:         # null=自动取LOF板块
+  extra:
+    description: "LOF 1分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
 
-  - task_id: kline_lof_5min_incremental
-    table: c1_market.kline_lof_5min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_lof_5min
-    symbols: null
-    extra:
-      description: "LOF 5分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+- task_id: kline_lof_5min_incremental
+  table: c1_market.kline_lof_5min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_lof_5min
+  symbols:
+  extra:
+    description: "LOF 5分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
 
-  - task_id: kline_lof_15min_incremental
-    table: c1_market.kline_lof_15min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_lof_15min
-    symbols: null
-    extra:
-      description: "LOF 15分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+- task_id: kline_lof_15min_incremental
+  table: c1_market.kline_lof_15min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_lof_15min
+  symbols:
+  extra:
+    description: "LOF 15分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
 
-  - task_id: kline_lof_30min_incremental
-    table: c1_market.kline_lof_30min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_lof_30min
-    symbols: null
-    extra:
-      description: "LOF 30分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+- task_id: kline_lof_30min_incremental
+  table: c1_market.kline_lof_30min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_lof_30min
+  symbols:
+  extra:
+    description: "LOF 30分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
 
-  - task_id: kline_lof_60min_incremental
-    table: c1_market.kline_lof_60min
-    source: miniqmt
-    schedule: intraday_minute
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_lof_60min
-    symbols: null
-    extra:
-      description: "LOF 60分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+- task_id: kline_lof_60min_incremental
+  table: c1_market.kline_lof_60min
+  source: miniqmt
+  schedule: intraday_minute
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_lof_60min
+  symbols:
+  extra:
+    description: "LOF 60分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
 
   # ============== 后复权周月K线增量（2026-07-11 新增）==============
-  - task_id: kline_weekly_hfq_incremental
-    table: c1_market.kline_weekly_hfq
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_weekly_hfq
-    capability: kline_weekly_hfq
-    symbols: null
-    extra:
-      description: "后复权周K线增量（miniQMT 后复权日K聚合 resample W）"
+- task_id: kline_weekly_hfq_incremental
+  table: c1_market.kline_weekly_hfq
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["adj_factor_incremental"]    # DAG: adj_factor -> kline_weekly_hfq
+  capability: kline_weekly_hfq
+  symbols:
+  extra:
+    description: "后复权周K线增量（miniQMT 后复权日K聚合 resample W）"
 
-  - task_id: kline_monthly_hfq_incremental
-    table: c1_market.kline_monthly_hfq
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: ["adj_factor_incremental"]  # DAG: adj_factor -> kline_monthly_hfq
-    capability: kline_monthly_hfq
-    symbols: null
-    extra:
-      description: "后复权月K线增量（miniQMT 后复权日K聚合 resample ME）"
+  fallback_sources:
+  - source: ifind
+    capability: kline_weekly_hfq
+  - source: akshare
+    capability: kline_weekly_hfq
+- task_id: kline_monthly_hfq_incremental
+  table: c1_market.kline_monthly_hfq
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: ["adj_factor_incremental"]    # DAG: adj_factor -> kline_monthly_hfq
+  capability: kline_monthly_hfq
+  symbols:
+  extra:
+    description: "后复权月K线增量（miniQMT 后复权日K聚合 resample ME）"
 
   # ============== 盘后事件时段（18:00 周一-五）==============
-  - task_id: news_data_incremental
-    table: c3_fundamental.news_data
-    source: rss
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: ifind
+    capability: kline_monthly_hfq
+  - source: akshare
+    capability: kline_monthly_hfq
+- task_id: news_data_incremental
+  table: c3_fundamental.news_data
+  source: rss
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_data
+  symbols:         # 默认 12 个财经 RSS 源（2直连+10 RSSHub）
+  extra:
+    description: "财经新闻增量（RSS 爬虫）"
+
+  fallback_sources:
+  - source: akshare
     capability: news_data
-    symbols: null  # 默认 12 个财经 RSS 源（2直连+10 RSSHub）
-    extra:
-      description: "财经新闻增量（RSS 爬虫）"
+  - source: ifind
+    capability: news_data
+- task_id: share_unlock_incremental
+  table: c3_fundamental.share_unlock
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: unlock_date
+  dependencies: []
+  capability: share_unlock
+  symbols:
+  extra:
+    description: "限售解禁增量（AKShare stock_restricted_release_detail_em）"
 
-  - task_id: share_unlock_incremental
-    table: c3_fundamental.share_unlock
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: unlock_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: share_unlock
-    symbols: null
-    extra:
-      description: "限售解禁增量（AKShare stock_restricted_release_detail_em）"
+- task_id: shareholder_incremental
+  table: c3_fundamental.shareholder_count
+  source: miniqmt
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: shareholder
+  symbols:
+  extra:
+    description: "股东数据增量（十大股东/股东人数）"
 
-  - task_id: shareholder_incremental
-    table: c3_fundamental.shareholder_count
-    source: miniqmt
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: shareholder
-    symbols: null
-    extra:
-      description: "股东数据增量（十大股东/股东人数）"
+- task_id: analyst_forecast_incremental
+  table: c3_fundamental.analyst_forecast
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: report_date
+  dependencies: []
+  capability: analyst_forecast
+  symbols:
+  extra:
+    description: "分析师一致预期增量（同花顺一致预期EPS）"
 
-  - task_id: analyst_forecast_incremental
-    table: c3_fundamental.analyst_forecast
-    source: akshare
-    schedule: daily_event
-    incremental: true
-    date_col: report_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: analyst_forecast
-    symbols: null
-    extra:
-      description: "分析师一致预期增量（同花顺一致预期EPS）"
+- task_id: earnings_forecast_incremental
+  table: c3_fundamental.earnings_forecast
+  source: miniqmt
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: earnings_forecast
+  symbols:
+  extra:
+    description: "盈利预测增量（QMT ProfitForecast表）"
 
-  - task_id: earnings_forecast_incremental
-    table: c3_fundamental.earnings_forecast
-    source: miniqmt
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: earnings_forecast
-    symbols: null
-    extra:
-      description: "盈利预测增量（QMT ProfitForecast表）"
+- task_id: express_report_incremental
+  table: c3_fundamental.express_report
+  source: miniqmt
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: express_report
+  symbols:
+  extra:
+    description: "业绩快报增量（QMT Performance表）"
 
-  - task_id: express_report_incremental
-    table: c3_fundamental.express_report
-    source: miniqmt
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: express_report
-    symbols: null
-    extra:
-      description: "业绩快报增量（QMT Performance表）"
+- task_id: audit_opinion_incremental
+  table: c3_fundamental.audit_opinion
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: audit_opinion
+  symbols:
+  extra:
+    description: "审计意见增量（AKShare 财报附属字段 OPINION_TYPE）"
 
-  - task_id: audit_opinion_incremental
-    table: c3_fundamental.audit_opinion
-    source: akshare
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: miniqmt
     capability: audit_opinion
-    symbols: null
-    extra:
-      description: "审计意见增量（AKShare 财报附属字段 OPINION_TYPE）"
+  - source: ifind
+    capability: audit_opinion
+- task_id: dividend_incremental
+  table: c3_fundamental.dividend
+  source: miniqmt
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: dividend
+  symbols:
+  extra:
+    description: "分红送股增量（QMT get_divid_factors）"
 
-  - task_id: dividend_incremental
-    table: c3_fundamental.dividend
-    source: miniqmt
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: dividend
-    symbols: null
-    extra:
-      description: "分红送股增量（QMT get_divid_factors）"
+- task_id: rights_issue_incremental
+  table: c3_fundamental.rights_issue
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: rights_issue
+  symbols:
+  extra:
+    description: "分红配股增量（AKShare stock_history_dividend_detail）"
 
-  - task_id: rights_issue_incremental
-    table: c3_fundamental.rights_issue
-    source: akshare
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: rights_issue
-    symbols: null
-    extra:
-      description: "分红配股增量（AKShare stock_history_dividend_detail）"
+- task_id: equity_pledge_incremental
+  table: c3_fundamental.equity_pledge_detail
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: equity_pledge
+  symbols:
+  extra:
+    description: "股权质押增量（AKShare stock_gpzy_pledge_ratio_em）"
 
-  - task_id: equity_pledge_incremental
-    table: c3_fundamental.equity_pledge_detail
-    source: akshare
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: equity_pledge
-    symbols: null
-    extra:
-      description: "股权质押增量（AKShare stock_gpzy_pledge_ratio_em）"
-
-  - task_id: equity_pledge_summary_incremental
-    table: c3_fundamental.equity_pledge_summary
-    source: akshare
-    schedule: daily_event
-    incremental: true
-    date_col: end_date
-    dependencies: []
-    capability: equity_pledge_summary
-    symbols: null
-    extra:
-      description: "股权质押摘要增量（AKShare stock_gpzy_profile_em）"
+- task_id: equity_pledge_summary_incremental
+  table: c3_fundamental.equity_pledge_summary
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: end_date
+  dependencies: []
+  capability: equity_pledge_summary
+  symbols:
+  extra:
+    description: "股权质押摘要增量（AKShare stock_gpzy_profile_em）"
 
   # ============== 周末财务时段（周六 10:00）==============
-  - task_id: balance_sheet_incremental
-    table: c3_fundamental.balance_sheet
-    source: miniqmt
-    schedule: nightly_financial
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
+    capability: equity_pledge_summary
+- task_id: balance_sheet_incremental
+  table: c3_fundamental.balance_sheet
+  source: miniqmt
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: balance_sheet
+  symbols:
+  extra:
+    description: "资产负债表增量"
+
+  fallback_sources:
+  - source: ifind
     capability: balance_sheet
-    symbols: null
-    extra:
-      description: "资产负债表增量"
+  - source: akshare
+    capability: balance_sheet
+- task_id: income_statement_incremental
+  table: c3_fundamental.income_statement
+  source: miniqmt
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: income_statement
+  symbols:
+  extra:
+    description: "利润表增量"
 
-  - task_id: income_statement_incremental
-    table: c3_fundamental.income_statement
-    source: miniqmt
-    schedule: nightly_financial
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: income_statement
-    symbols: null
-    extra:
-      description: "利润表增量"
+  - source: akshare
+    capability: income_statement
+- task_id: cashflow_statement_incremental
+  table: c3_fundamental.cashflow_statement
+  source: miniqmt
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: cashflow_statement
+  symbols:
+  extra:
+    description: "现金流量表增量"
 
-  - task_id: cashflow_statement_incremental
-    table: c3_fundamental.cashflow_statement
-    source: miniqmt
-    schedule: nightly_financial
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: cashflow_statement
-    symbols: null
-    extra:
-      description: "现金流量表增量"
+  - source: akshare
+    capability: cashflow_statement
+- task_id: financial_indicator_incremental
+  table: c3_fundamental.financial_indicator
+  source: miniqmt
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: financial_indicator
+  symbols:
+  extra:
+    description: "财务指标增量（QMT Capital表）"
 
-  - task_id: financial_indicator_incremental
-    table: c3_fundamental.financial_indicator
-    source: miniqmt
-    schedule: nightly_financial
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: financial_indicator
-    symbols: null
-    extra:
-      description: "财务指标增量（QMT Capital表）"
+  - source: akshare
+    capability: financial_indicator
+- task_id: main_business_incremental
+  table: c3_fundamental.main_business
+  source: miniqmt
+  schedule: nightly_financial
+  incremental: true
+  date_col: report_period
+  dependencies: []
+  capability: main_business
+  symbols:
+  extra:
+    description: "主营业务增量"
 
-  - task_id: main_business_incremental
-    table: c3_fundamental.main_business
-    source: miniqmt
-    schedule: nightly_financial
-    incremental: true
-    date_col: report_period
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: main_business
-    symbols: null
-    extra:
-      description: "主营业务增量"
+- task_id: industry_class_refresh
+  table: c1_market.industry_class
+  source: tdx
+  schedule: weekend_calibration
+  incremental: false    # 全量重建
+  dependencies: []
+  capability: industry_class
+  symbols:
+  extra:
+    description: "板块分类全量刷新（mootdx get_stock_list_in_sector）"
 
-  - task_id: industry_class_refresh
-    table: c1_market.industry_class
-    source: tdx
-    schedule: weekend_calibration
-    incremental: false  # 全量重建
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: industry_class
-    symbols: null
-    extra:
-      description: "板块分类全量刷新（mootdx get_stock_list_in_sector）"
+  - source: ifind
+    capability: industry_class
+- task_id: kline_sector_incremental
+  table: c1_market.kline_sector
+  source: tdx
+  schedule: weekend_calibration
+  incremental: true
+  date_col: trade_date
+  dependencies: ["industry_class_refresh"]
+  capability: kline_sector
+  symbols:         # null=tdx_provider._resolve_sector_symbols 从 sector_constituent 表获取880xxx板块代码
+  extra:
+    description: "板块指数日K线增量（mootdx index_bars，period=1d）"
+    period: 1d
+    count: 100
 
-  - task_id: kline_sector_incremental
-    table: c1_market.kline_sector
-    source: tdx
-    schedule: weekend_calibration
-    incremental: true
-    date_col: trade_date
-    dependencies: ["industry_class_refresh"]
+  fallback_sources:
+  - source: ifind
     capability: kline_sector
-    symbols: null  # null=tdx_provider._resolve_sector_symbols 从 sector_constituent 表获取880xxx板块代码
-    extra:
-      description: "板块指数日K线增量（mootdx index_bars，period=1d）"
-      period: 1d
-      count: 100
+- task_id: option_iv_surface_incremental
+  table: c1_market.option_iv_surface
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: option_iv_surface
+  symbols:
+  extra:
+    description: "期权IV曲面增量（QMT 662期权+Greeks，IV需自己计算）"
 
-  - task_id: option_iv_surface_incremental
-    table: c1_market.option_iv_surface
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: option_iv_surface
-    symbols: null
-    extra:
-      description: "期权IV曲面增量（QMT 662期权+Greeks，IV需自己计算）"
+  - source: akshare
+    capability: option_iv_surface
+- task_id: convertible_bond_iv_incremental
+  table: c1_market.convertible_bond_iv
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: convertible_bond_iv
+  symbols:
+  extra:
+    description: "可转债IV增量（QMT 152可转债，IV需自己计算）"
 
-  - task_id: convertible_bond_iv_incremental
-    table: c1_market.convertible_bond_iv
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: convertible_bond_iv
-    symbols: null
-    extra:
-      description: "可转债IV增量（QMT 152可转债，IV需自己计算）"
+- task_id: futures_term_structure_incremental
+  table: c1_market.futures_term_structure
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_futures_incremental"]
+  capability: futures_term_structure
+  symbols:
+  extra:
+    description: "期货期限结构增量（基差需自己计算）"
 
-  - task_id: futures_term_structure_incremental
-    table: c1_market.futures_term_structure
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: ["kline_futures_incremental"]
+  fallback_sources:
+  - source: exchange
     capability: futures_term_structure
-    symbols: null
-    extra:
-      description: "期货期限结构增量（基差需自己计算）"
-
-  - task_id: tick_data_snapshot
-    table: c1_market.tick_data
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: tick_data
-    symbols: null
-    extra:
-      description: "QMT 3秒Tick增量（写入 tick_data，补充 bid/ask 买卖一档；百度云历史 bid/ask 为 NULL）"
+- task_id: tick_data_snapshot
+  table: c1_market.tick_data
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: tick_data
+  symbols:
+  extra:
+    description: "QMT 3秒Tick增量（写入 tick_data，补充 bid/ask 买卖一档；百度云历史 bid/ask 为 NULL）"
 
   # [REMOVED] auction_snapshot — 旧任务，已被 auction_data_snapshot（intraday_realtime）替代，
   # 两者写同一张表 c1_market.auction_snapshot，保留新实现 auction_data（get_full_tick 实时快照）
 
-  - task_id: index_quote_snapshot
-    table: c1_market.index_quote
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: index_quote
-    symbols: null
-    extra:
-      description: "指数3秒实时行情快照"
+  fallback_sources:
+  - source: bdpan
+    capability: tick_data
+- task_id: index_quote_snapshot
+  table: c1_market.index_quote
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: index_quote
+  symbols:
+  extra:
+    description: "指数3秒实时行情快照"
 
-  - task_id: edb_data_incremental
-    table: c1_market.edb_data
-    source: ifind
-    schedule: event_driven
-    incremental: true
-    date_col: report_date
-    dependencies: []
-    capability: edb_data
-    symbols: null  # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
-    extra:
-      description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
-      disabled: true  # iFind EDB 月度配额耗尽(-4318)：试用账号5万条/月不足以拉104个宏观指标全历史。iFinDPy SDK 已于2026-07-23修复（pip install iFinDAPI 0.0.8 + 补 iFinDPy.py 到 site-packages），Python312 登录返回0、EDB通信正常，但配额限制持续存在。edb_data 表至今 0 行。修复路径：升级iFind付费版EDB配额；等下月配额重置后可临时移除本行测试。
+- task_id: edb_data_incremental
+  table: c1_market.edb_data
+  source: ifind
+  schedule: event_driven
+  incremental: true
+  date_col: report_date
+  dependencies: []
+  capability: edb_data
+  symbols:         # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
+  extra:
+    description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
+    disabled: true    # iFind EDB 月度配额耗尽(-4318)：试用账号5万条/月不足以拉104个宏观指标全历史。iFinDPy SDK 已于2026-07-23修复（pip install iFinDAPI 0.0.8 + 补 iFinDPy.py 到 site-packages），Python312 登录返回0、EDB通信正常，但配额限制持续存在。edb_data 表至今 0 行。修复路径：升级iFind付费版EDB配额；等下月配额重置后可临时移除本行测试。
 
   # ============== iFind 新增能力（concept_sector / realtime_snapshot，2026-07-11）==============
-  - task_id: concept_sector_refresh
-    table: c1_market.concept_sector
-    source: ifind
-    schedule: monthly_static  # 概念板块列表低频变化，月初刷新
-    incremental: false  # 全量重建
-    dependencies: []
-    capability: concept_sector
-    symbols: null  # 全市场查询（THS_iwencai）
-    extra:
-      description: "概念板块列表全量刷新（iFind THS_iwencai 查询'概念板块'，解析'所属概念'字段提取唯一板块名）"
+- task_id: concept_sector_refresh
+  table: c1_market.concept_sector
+  source: ifind
+  schedule: monthly_static    # 概念板块列表低频变化，月初刷新
+  incremental: false    # 全量重建
+  dependencies: []
+  capability: concept_sector
+  symbols:         # 全市场查询（THS_iwencai）
+  extra:
+    description: "概念板块列表全量刷新（iFind THS_iwencai 查询'概念板块'，解析'所属概念'字段提取唯一板块名）"
 
-  - task_id: realtime_snapshot_incremental
-    table: c1_market.realtime_snapshot
-    source: ifind
-    schedule: daily_kline  # 盘后时段写入当日收盘快照
-    incremental: true
-    date_col: snapshot_time
-    dependencies: []
-    capability: realtime_snapshot
-    symbols: null  # null=全A股（THS_DataPool），也可指定标的列表
-    extra:
-      description: "实时行情快照增量（iFind THS_RealtimeQuotes，OHLCV+成交额，分批50个标的；非交易时段返回-4001属正常）"
+- task_id: realtime_snapshot_incremental
+  table: c1_market.realtime_snapshot
+  source: ifind
+  schedule: daily_kline    # 盘后时段写入当日收盘快照
+  incremental: true
+  date_col: snapshot_time
+  dependencies: []
+  capability: realtime_snapshot
+  symbols:         # null=全A股（THS_DataPool），也可指定标的列表
+  extra:
+    description: "实时行情快照增量（iFind THS_RealtimeQuotes，OHLCV+成交额，分批50个标的；非交易时段返回-4001属正常）"
 
   # ============== 静态数据月初刷新（每月1日 09:00）==============
-  - task_id: trade_calendar_refresh
-    table: c1_market.trade_calendar
-    source: baostock
-    schedule: monthly_static
-    incremental: false  # 全量重建
-    dependencies: []
+- task_id: trade_calendar_refresh
+  table: c1_market.trade_calendar
+  source: baostock
+  schedule: monthly_static
+  incremental: false    # 全量重建
+  dependencies: []
+  capability: trade_calendar
+  symbols:
+  extra:
+    description: "交易日历全量刷新（baostock query_trade_date）"
+
+  fallback_sources:
+  - source: exchange
     capability: trade_calendar
-    symbols: null
-    extra:
-      description: "交易日历全量刷新（baostock query_trade_date）"
+- task_id: stock_list_refresh
+  table: c1_market.stock_list
+  source: miniqmt
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: stock_list
+  symbols:
+  extra:
+    description: "股票列表全量刷新（QMT 在市股 5207只）"
+    trading_day_only: true    # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
+    note: "仅刷新在市股；退市股由 stock_list_delisted_refresh 补充（#ARCH-CH-021 P0-1）"
 
-  - task_id: stock_list_refresh
-    table: c1_market.stock_list
-    source: miniqmt
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: stock_list
-    symbols: null
-    extra:
-      description: "股票列表全量刷新（QMT 在市股 5207只）"
-      trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
-      note: "仅刷新在市股；退市股由 stock_list_delisted_refresh 补充（#ARCH-CH-021 P0-1）"
+  - source: ifind
+    capability: stock_list
+- task_id: stock_list_delisted_refresh
+  table: c1_market.stock_list
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: stock_list_delisted
+  symbols:
+  extra:
+    description: "退市股票列表刷新（AkShare SH+SZ 退市清单 ~367只，#ARCH-CH-021 P0-1）"
+    trading_day_only: false    # akshare 源，非交易日也可调用
+    update_mode: upsert    # 仅更新 list_status='退市' 的记录，不覆盖在市股
 
-  - task_id: stock_list_delisted_refresh
-    table: c1_market.stock_list
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: stock_list_delisted
-    symbols: null
-    extra:
-      description: "退市股票列表刷新（AkShare SH+SZ 退市清单 ~367只，#ARCH-CH-021 P0-1）"
-      trading_day_only: false  # akshare 源，非交易日也可调用
-      update_mode: upsert  # 仅更新 list_status='退市' 的记录，不覆盖在市股
+- task_id: index_constituent_refresh
+  table: c1_market.index_constituent
+  source: baostock
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: index_constituent
+  symbols:
+  extra:
+    description: "沪深300成分股全量刷新（baostock query_hs300_stocks）"
 
-  - task_id: index_constituent_refresh
-    table: c1_market.index_constituent
-    source: baostock
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: index_constituent
-    symbols: null
-    extra:
-      description: "沪深300成分股全量刷新（baostock query_hs300_stocks）"
+  - source: ifind
+    capability: index_constituent
+- task_id: industry_class_suppl_refresh
+  table: c3_fundamental.industry_class_suppl
+  source: ifind
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: industry_class_suppl
+  symbols:
+  extra:
+    description: "申万/中证行业分类全量刷新（iFind THS_DataPool）"
 
-  - task_id: industry_class_suppl_refresh
-    table: c3_fundamental.industry_class_suppl
-    source: ifind
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
-    capability: industry_class_suppl
-    symbols: null
-    extra:
-      description: "申万/中证行业分类全量刷新（iFind THS_DataPool）"
+- task_id: kline_daily_full_refresh
+  table: c1_market.kline_daily
+  source: miniqmt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: kline_daily
+  symbols:
+  extra:
+    description: "日K线全量刷新（miniQMT，原降级源 baostock 已替换）"
 
-  - task_id: kline_daily_full_refresh
-    table: c1_market.kline_daily
-    source: miniqmt
-    schedule: weekend_calibration
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: kline_daily
-    symbols: null
-    extra:
-      description: "日K线全量刷新（miniQMT，原降级源 baostock 已替换）"
+  - source: akshare
+    capability: kline_daily
+- task_id: macro_data_full_refresh
+  table: c1_market.macro_data
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: macro_data
+  symbols:
+  extra:
+    description: "宏观数据全量刷新（GDP/CPI/PMI/货币供应量）"
 
-  - task_id: macro_data_full_refresh
-    table: c1_market.macro_data
-    source: akshare
-    schedule: weekend_calibration
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: macro_data
-    symbols: null
-    extra:
-      description: "宏观数据全量刷新（GDP/CPI/PMI/货币供应量）"
+- task_id: kline_us_daily_full_refresh
+  table: c1_market.kline_us_daily
+  source: tickflow
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: kline_us_daily
+  symbols:
+  extra:
+    description: "美股日K线全量刷新"
 
-  - task_id: kline_us_daily_full_refresh
-    table: c1_market.kline_us_daily
-    source: tickflow
-    schedule: weekend_calibration
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: kline_us_daily
-    symbols: null
-    extra:
-      description: "美股日K线全量刷新"
+- task_id: us_index_full_refresh
+  table: c1_market.us_index
+  source: tickflow
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: us_index
+  symbols:
+  extra:
+    description: "美股指数全量刷新（ETF替代）"
 
-  - task_id: us_index_full_refresh
-    table: c1_market.us_index
-    source: tickflow
-    schedule: weekend_calibration
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: us_index
-    symbols: null
-    extra:
-      description: "美股指数全量刷新（ETF替代）"
+- task_id: money_flow_full_refresh
+  table: c1_market.money_flow
+  source: ifind
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: money_flow
+  symbols:
+  extra:
+    description: "资金流向全量刷新（AKShare stock_individual_fund_flow）"
 
-  - task_id: money_flow_full_refresh
-    table: c1_market.money_flow
-    source: ifind
-    schedule: weekend_calibration
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: miniqmt
     capability: money_flow
-    symbols: null
-    extra:
-      description: "资金流向全量刷新（AKShare stock_individual_fund_flow）"
+- task_id: daily_valuation_full_refresh
+  table: c1_market.daily_valuation
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: daily_valuation
+  symbols:
+  extra:
+    description: "估值数据全量刷新（AKShare stock_zh_valuation_baidu）"
 
-  - task_id: daily_valuation_full_refresh
-    table: c1_market.daily_valuation
-    source: akshare
-    schedule: weekend_calibration
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: miniqmt
     capability: daily_valuation
-    symbols: null
-    extra:
-      description: "估值数据全量刷新（AKShare stock_zh_valuation_baidu）"
-
-  - task_id: kline_5min_history_backfill
-    table: c1_market.kline_5min
-    source: miniqmt
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
-    capability: kline_5min
-    symbols: null
-    extra:
-      description: "5分钟K线历史回补（百度云已下载2000-2024，此任务已退役）"
-      disabled: true
-      requires_manual: true
+  - source: ifind
+    capability: daily_valuation
+  - source: local_valuation
+    capability: daily_valuation
+- task_id: kline_5min_history_backfill
+  table: c1_market.kline_5min
+  source: miniqmt
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: kline_5min
+  symbols:
+  extra:
+    description: "5分钟K线历史回补（百度云已下载2000-2024，此任务已退役）"
+    disabled: true
+    requires_manual: true
 
   # ============== 盘后新闻时段（daily_event 新闻源自动下载）==============
   # 所有新闻源写入同一表 c3_fundamental.news_data
   # scheduler 在写入前自动调用 news_dedup.dedup_news_result 去重（基于标题MD5哈希）
-  - task_id: news_cls_incremental
-    table: c3_fundamental.news_data
-    source: cls
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
-    capability: news_data
-    symbols: null
-    extra:
-      description: "财联社电报增量（HTTP直连 cls.cn/nodeapi/updateTelegraphList）"
+- task_id: news_cls_incremental
+  table: c3_fundamental.news_data
+  source: cls
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_data
+  symbols:
+  extra:
+    description: "财联社电报增量（HTTP直连 cls.cn/nodeapi/updateTelegraphList）"
 
-  - task_id: news_eastmoney_incremental
-    table: c3_fundamental.news_data
-    source: eastmoney_news
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: news_data
-    symbols: null
-    extra:
-      description: "东方财富7x24快讯增量（HTTP直连 np-listapi.eastmoney.com）"
-
-  - task_id: news_rss_incremental
-    table: c3_fundamental.news_data
-    source: rss
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  - source: ifind
     capability: news_data
-    symbols: null
-    extra:
-      description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/东方财富5类研报/第一财经/财新网/36氪快讯/金十数据）"
+- task_id: news_eastmoney_incremental
+  table: c3_fundamental.news_data
+  source: eastmoney_news
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_data
+  symbols:
+  extra:
+    description: "东方财富7x24快讯增量（HTTP直连 np-listapi.eastmoney.com）"
 
-  - task_id: news_stock_em_incremental
-    table: c3_fundamental.news_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: akshare
+    capability: news_data
+  - source: ifind
+    capability: news_data
+- task_id: news_rss_incremental
+  table: c3_fundamental.news_data
+  source: rss
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_data
+  symbols:
+  extra:
+    description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/东方财富5类研报/第一财经/财新网/36氪快讯/金十数据）"
+
+  fallback_sources:
+  - source: akshare
+    capability: news_data
+  - source: ifind
+    capability: news_data
+- task_id: news_stock_em_incremental
+  table: c3_fundamental.news_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: stock_news_em
+  symbols:
+  extra:
+    description: "AKShare个股新闻增量（ak.stock_news_em）"
+
+  fallback_sources:
+  - source: ifind
     capability: stock_news_em
-    symbols: null
-    extra:
-      description: "AKShare个股新闻增量（ak.stock_news_em）"
+- task_id: news_cctv_incremental
+  table: c3_fundamental.news_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_cctv
+  symbols:
+  extra:
+    description: "AKShare央视新闻联播增量（ak.news_cctv）"
 
-  - task_id: news_cctv_incremental
-    table: c3_fundamental.news_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: news_cctv
-    symbols: null
-    extra:
-      description: "AKShare央视新闻联播增量（ak.news_cctv）"
+- task_id: news_economic_baidu_incremental
+  table: c3_fundamental.news_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_economic_baidu
+  symbols:
+  extra:
+    description: "AKShare百度经济日历增量（ak.news_economic_baidu）"
 
-  - task_id: news_economic_baidu_incremental
-    table: c3_fundamental.news_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: news_economic_baidu
-    symbols: null
-    extra:
-      description: "AKShare百度经济日历增量（ak.news_economic_baidu）"
+- task_id: news_baidu_incremental
+  table: c3_fundamental.news_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_baidu
+  symbols:
+  extra:
+    description: "AKShare百度热搜新闻增量（ak.news_baidu）"
 
-  - task_id: news_baidu_incremental
-    table: c3_fundamental.news_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: news_baidu
-    symbols: null
-    extra:
-      description: "AKShare百度热搜新闻增量（ak.news_baidu）"
-
-  - task_id: news_stock_incremental
-    table: c3_fundamental.news_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
-    capability: news_stock
-    symbols: null
-    extra:
-      description: "AKShare股票新闻增量（ak.stock_news_global_em）"
+- task_id: news_stock_incremental
+  table: c3_fundamental.news_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_stock
+  symbols:
+  extra:
+    description: "AKShare股票新闻增量（ak.stock_news_global_em）"
 
   # --- Tushare 新闻增量（写入 news_data 统一表，2026-07-11 新增）---
-  - task_id: news_tushare_incremental
-    table: c3_fundamental.news_data
-    source: tushare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
-    capability: news_data
-    symbols: null
-    extra:
-      description: "Tushare新闻增量（pro.news_info 快讯 + pro.news 证券新闻，统一写入 news_data，历史数据截止2024-08）"
-      disabled: true  # API已废弃（数据截止2024-08，pro.news/pro.news_info 返回"请指定正确的接口名"），由 RSS/cls/eastmoney 覆盖实时新闻
+  fallback_sources:
+  - source: ifind
+    capability: news_stock
+- task_id: news_tushare_incremental
+  table: c3_fundamental.news_data
+  source: tushare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: news_data
+  symbols:
+  extra:
+    description: "Tushare新闻增量（pro.news_info 快讯 + pro.news 证券新闻，统一写入 news_data，历史数据截止2024-08）"
+    disabled: true    # API已废弃（数据截止2024-08，pro.news/pro.news_info 返回"请指定正确的接口名"），由 RSS/cls/eastmoney 覆盖实时新闻
 
   # --- 限售股明细增量（2026-07-11 新增）---
-  - task_id: restricted_shares_incremental
-    table: c3_fundamental.restricted_shares
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: unlock_date
-    dependencies: []
-    capability: restricted_shares
-    symbols: null
-    extra:
-      description: "AKShare限售股明细增量（ak.stock_restricted_release_detail_em，含解禁日期/解禁数量/解禁市值）"
+  fallback_sources:
+  - source: akshare
+    capability: news_data
+  - source: ifind
+    capability: news_data
+- task_id: restricted_shares_incremental
+  table: c3_fundamental.restricted_shares
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: unlock_date
+  dependencies: []
+  capability: restricted_shares
+  symbols:
+  extra:
+    description: "AKShare限售股明细增量（ak.stock_restricted_release_detail_em，含解禁日期/解禁数量/解禁市值）"
 
   # --- 研报 & 北向资金 & 期货主力合约（2026-07-11 新增）---
-  - task_id: research_report_incremental
-    table: c3_fundamental.news_data
-    source: akshare
-    schedule: event_driven
-    incremental: true
-    date_col: publish_time
-    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-    dependencies: []
+  fallback_sources:
+  - source: ifind
+    capability: restricted_shares
+- task_id: research_report_incremental
+  table: c3_fundamental.news_data
+  source: akshare
+  schedule: event_driven
+  incremental: true
+  date_col: publish_time
+  buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
+  dependencies: []
+  capability: research_report
+  symbols:
+  extra:
+    description: "AKShare东方财富个股研报增量（ak.stock_research_report_em，含机构评级+盈利预测+PDF链接）"
+
+  fallback_sources:
+  - source: ifind
     capability: research_report
-    symbols: null
-    extra:
-      description: "AKShare东方财富个股研报增量（ak.stock_research_report_em，含机构评级+盈利预测+PDF链接）"
+- task_id: hk_connect_flow_full
+  table: c1_market.hk_connect_flow
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: hk_connect_flow
+  symbols:
+  extra:
+    description: "AKShare沪深港通北向资金（ak.stock_hsgt_hist_em，沪股通+深股通历史净买额/余额/持股市值）"
 
-  - task_id: hk_connect_flow_full
-    table: c1_market.hk_connect_flow
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: hk_connect_flow
-    symbols: null
-    extra:
-      description: "AKShare沪深港通北向资金（ak.stock_hsgt_hist_em，沪股通+深股通历史净买额/余额/持股市值）"
-
-  - task_id: kline_futures_full
-    table: c1_market.kline_futures
-    source: akshare
-    schedule: weekend_calibration
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_futures
-    symbols: null
-    extra:
-      description: "AKShare期货主力合约K线（ak.futures_main_sina，82个主力合约历史K线，含持仓量）"
+- task_id: kline_futures_full
+  table: c1_market.kline_futures
+  source: akshare
+  schedule: weekend_calibration
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_futures
+  symbols:
+  extra:
+    description: "AKShare期货主力合约K线（ak.futures_main_sina，82个主力合约历史K线，含持仓量）"
 
   # ============== AKShare 新增 6 个能力（2026-07-11）==============
-  - task_id: limit_up_down_incremental
-    table: c1_market.limit_up_down
-    source: akshare
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: qmt
+    capability: kline_futures
+- task_id: limit_up_down_incremental
+  table: c1_market.limit_up_down
+  source: akshare
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: limit_up_down
+  symbols:
+  extra:
+    description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停）"
+
+  fallback_sources:
+  - source: exchange
     capability: limit_up_down
-    symbols: null
-    extra:
-      description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停）"
+- task_id: share_change_incremental
+  table: c3_fundamental.share_change
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: share_change
+  symbols:
+  extra:
+    description: "AKShare股本变动增量（ak.stock_share_change_cninfo，含变动原因/总股本）"
 
-  - task_id: share_change_incremental
-    table: c3_fundamental.share_change
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: share_change
-    symbols: null
-    extra:
-      description: "AKShare股本变动增量（ak.stock_share_change_cninfo，含变动原因/总股本）"
+- task_id: st_stock_list_refresh
+  table: c1_market.st_stock_list
+  source: akshare
+  schedule: daily_capital
+  incremental: false    # 全量刷新（ST状态每日变化）
+  dependencies: []
+  capability: st_stock_list
+  symbols:
+  extra:
+    description: "AKShare ST股票列表刷新（ak.stock_info_sh/sz_name_code 过滤ST/*ST/退市）"
 
-  - task_id: st_stock_list_refresh
-    table: c1_market.st_stock_list
-    source: akshare
-    schedule: daily_capital
-    incremental: false  # 全量刷新（ST状态每日变化）
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: st_stock_list
-    symbols: null
-    extra:
-      description: "AKShare ST股票列表刷新（ak.stock_info_sh/sz_name_code 过滤ST/*ST/退市）"
+- task_id: concept_board_refresh
+  table: c1_market.concept_board
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false    # 全量刷新（概念板块列表低频变化）
+  dependencies: []
+  capability: concept_board
+  symbols:
+  extra:
+    description: "AKShare概念板块及成分股刷新（ak.stock_board_concept_name_ths + stock_board_concept_cons_em）"
 
-  - task_id: concept_board_refresh
-    table: c1_market.concept_board
-    source: akshare
-    schedule: weekend_calibration
-    incremental: false  # 全量刷新（概念板块列表低频变化）
-    dependencies: []
-    capability: concept_board
-    symbols: null
-    extra:
-      description: "AKShare概念板块及成分股刷新（ak.stock_board_concept_name_ths + stock_board_concept_cons_em）"
+- task_id: stock_indicator_incremental
+  table: c1_market.stock_indicator
+  source: akshare
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: stock_indicator
+  symbols:
+  extra:
+    description: "AKShare指标数据增量（ak.stock_value_em，PE/PB/PS/PCF历史指标）"
 
-  - task_id: stock_indicator_incremental
-    table: c1_market.stock_indicator
-    source: akshare
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: internal
     capability: stock_indicator
-    symbols: null
-    extra:
-      description: "AKShare指标数据增量（ak.stock_value_em，PE/PB/PS/PCF历史指标）"
-
-  - task_id: block_trade_detail_incremental
-    table: c1_market.block_trade_detail
-    source: akshare
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: block_trade_detail
-    symbols: null
-    extra:
-      description: "AKShare大宗交易每日统计增量（ak.stock_dzjy_mrtj，按日期范围查每日统计）"
+- task_id: block_trade_detail_incremental
+  table: c1_market.block_trade_detail
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: block_trade_detail
+  symbols:
+  extra:
+    description: "AKShare大宗交易每日统计增量（ak.stock_dzjy_mrtj，按日期范围查每日统计）"
 
   # ============== miniQMT 第二批新增能力（15 个数据下载，2026-07-11）==============
-  - task_id: kline_cb_incremental
-    table: c1_market.kline_cb
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_cb
-    symbols: null  # null=自动取可转债板块
-    extra:
-      description: "可转债日K线增量（miniQMT get_market_data_ex，symbols如113001.SH）"
+  fallback_sources:
+  - source: exchange
+    capability: block_trade_detail
+- task_id: kline_cb_incremental
+  table: c1_market.kline_cb
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_cb
+  symbols:         # null=自动取可转债板块
+  extra:
+    description: "可转债日K线增量（miniQMT get_market_data_ex，symbols如113001.SH）"
 
-  - task_id: option_kline_incremental
-    table: c1_market.option_kline
-    source: miniqmt
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+- task_id: option_kline_incremental
+  table: c1_market.option_kline
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: option_kline
+  symbols:         # null=自动取50ETF期权列表
+  extra:
+    description: "期权日K线增量（miniQMT get_market_data_ex，symbols如10000001.SH）"
+
+  fallback_sources:
+  - source: exchange
     capability: option_kline
-    symbols: null  # null=自动取50ETF期权列表
-    extra:
-      description: "期权日K线增量（miniQMT get_market_data_ex，symbols如10000001.SH）"
+- task_id: option_greeks_incremental
+  table: c1_market.option_greeks
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: ["option_kline_incremental"]
+  capability: option_greeks
+  symbols:
+  extra:
+    description: "期权Greeks增量（miniQMT get_option_detail_data + Black-Scholes计算delta/gamma/theta/vega）"
 
-  - task_id: option_greeks_incremental
-    table: c1_market.option_greeks
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: ["option_kline_incremental"]
+  fallback_sources:
+  - source: ifind
     capability: option_greeks
-    symbols: null
-    extra:
-      description: "期权Greeks增量（miniQMT get_option_detail_data + Black-Scholes计算delta/gamma/theta/vega）"
+- task_id: index_weight_refresh
+  table: c1_market.index_weight
+  source: miniqmt
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: index_weight
+  symbols:         # null=默认核心指数（上证50/沪深300/中证500/中证1000）
+  extra:
+    description: "指数成分股权重全量刷新（miniQMT get_index_weight，需先download_index_weight）"
+    trading_day_only: true    # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
-  - task_id: index_weight_refresh
-    table: c1_market.index_weight
-    source: miniqmt
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: index_weight
-    symbols: null  # null=默认核心指数（上证50/沪深300/中证500/中证1000）
-    extra:
-      description: "指数成分股权重全量刷新（miniQMT get_index_weight，需先download_index_weight）"
-      trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
+  - source: ifind
+    capability: index_weight
+- task_id: sector_list_refresh
+  table: c1_market.sector_list
+  source: miniqmt
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: sector_list
+  symbols:
+  extra:
+    description: "板块成分股列表全量刷新（miniQMT get_stock_list_in_sector，默认沪深A股）"
+    trading_day_only: true    # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
-  - task_id: sector_list_refresh
-    table: c1_market.sector_list
-    source: miniqmt
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: sector_list
-    symbols: null
-    extra:
-      description: "板块成分股列表全量刷新（miniQMT get_stock_list_in_sector，默认沪深A股）"
-      trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
+- task_id: l2_tick_snapshot
+  table: c1_market.l2_tick
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: l2_tick
+  symbols:         # 需指定标的（L2数据量大）
+  fallback_sources:
+  - source: miniqmt
+    capability: tick_snapshot
+    description: "L2权限缺失时降级到get_full_tick五档快照（写入tick_data表）"
+  extra:
+    description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限，无权限时自动降级到五档快照）"
+    requires_permission: L2
+    disabled: true    # #ARCH-CH-023: 需付费 L2 行情权限，裁定删除并在源头标注暂不需要
 
-  - task_id: l2_tick_snapshot
-    table: c1_market.l2_tick
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: l2_tick
-    symbols: null  # 需指定标的（L2数据量大）
-    fallback_sources:
-      - source: miniqmt
-        capability: tick_snapshot
-        description: "L2权限缺失时降级到get_full_tick五档快照（写入tick_data表）"
-    extra:
-      description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限，无权限时自动降级到五档快照）"
-      requires_permission: L2
-      disabled: true  # #ARCH-CH-023: 需付费 L2 行情权限，裁定删除并在源头标注暂不需要
+- task_id: auction_data_snapshot
+  table: c1_market.auction_snapshot
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: auction_data
+  symbols:
+  extra:
+    description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累，基础字段）"
 
-  - task_id: auction_data_snapshot
-    table: c1_market.auction_snapshot
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: auction_data
-    symbols: null
-    extra:
-      description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累，基础字段）"
+- task_id: auction_book_snapshot
+  table: c1_market.auction_book
+  source: miniqmt
+  schedule: auction_highfreq    # 3秒高频层（9:15-9:25 interval trigger）
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: auction_book
+  symbols:
+  extra:
+    description: "集合竞价盘口快照（miniQMT get_full_tick 五档，9:15-9:25实时积累，用于主力挂撤单行为分析）"
 
-  - task_id: auction_book_snapshot
-    table: c1_market.auction_book
-    source: miniqmt
-    schedule: auction_highfreq  # 3秒高频层（9:15-9:25 interval trigger）
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: auction_book
-    symbols: null
-    extra:
-      description: "集合竞价盘口快照（miniQMT get_full_tick 五档，9:15-9:25实时积累，用于主力挂撤单行为分析）"
+- task_id: futures_kline_qmt_incremental
+  table: c1_market.futures_kline_qmt
+  source: miniqmt
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: futures_kline_qmt
+  symbols:         # 需指定合约代码如IF2407.CFFEX
+  extra:
+    description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，symbols如IF2407.CFFEX）"
 
-  - task_id: futures_kline_qmt_incremental
-    table: c1_market.futures_kline_qmt
-    source: miniqmt
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: qmt
     capability: futures_kline_qmt
-    symbols: null  # 需指定合约代码如IF2407.CFFEX
-    extra:
-      description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，symbols如IF2407.CFFEX）"
+- task_id: hk_kline_incremental
+  table: c1_market.hk_kline
+  source: miniqmt
+  schedule: intraday_realtime
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: hk_kline
+  symbols:         # 需指定港股代码如00700.HK
+  extra:
+    description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK）"
 
-  - task_id: hk_kline_incremental
-    table: c1_market.hk_kline
-    source: miniqmt
-    schedule: intraday_realtime
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: hk_kline
-    symbols: null  # 需指定港股代码如00700.HK
-    extra:
-      description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK）"
+- task_id: kline_us_daily_incremental
+  table: c1_market.kline_us_daily
+  source: miniqmt
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_us_daily
+  symbols:         # 需指定美股代码如AAPL.US
+  extra:
+    description: "美股日K线增量（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
 
-  - task_id: kline_us_daily_incremental
-    table: c1_market.kline_us_daily
-    source: miniqmt
-    schedule: daily_capital
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: akshare
     capability: kline_us_daily
-    symbols: null  # 需指定美股代码如AAPL.US
-    extra:
-      description: "美股日K线增量（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
+- task_id: etf_nav_refresh
+  table: c1_market.etf_nav
+  source: akshare    # #ARCH-CH-023: miniQMT get_etf_info 不支持，改用 akshare fund_etf_fund_info_em
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: etf_nav
+  symbols:         # 需指定ETF代码如510050.SH
+  extra:
+    description: "ETF基金净值增量（miniQMT get_etf_info，含净值/现金余额）"
 
-  - task_id: etf_nav_refresh
-    table: c1_market.etf_nav
-    source: akshare  # #ARCH-CH-023: miniQMT get_etf_info 不支持，改用 akshare fund_etf_fund_info_em
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: etf_nav
-    symbols: null  # 需指定ETF代码如510050.SH
-    extra:
-      description: "ETF基金净值增量（miniQMT get_etf_info，含净值/现金余额）"
+- task_id: repurchase_refresh
+  table: c3_fundamental.repurchase
+  source: akshare
+  schedule: daily_event
+  incremental: false    # 全量刷新（stock_repurchase_em 返回当前所有活跃回购）
+  dependencies: []
+  capability: repurchase
+  symbols:
+  extra:
+    description: "AKShare回购数据全量刷新（ak.stock_repurchase_em，含计划/已回购数量金额）"
 
-  - task_id: repurchase_refresh
-    table: c3_fundamental.repurchase
-    source: akshare
-    schedule: daily_event
-    incremental: false  # 全量刷新（stock_repurchase_em 返回当前所有活跃回购）
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: repurchase
-    symbols: null
-    extra:
-      description: "AKShare回购数据全量刷新（ak.stock_repurchase_em，含计划/已回购数量金额）"
+- task_id: margin_trading_qmt_placeholder
+  table: c1_market.margin_trading_qmt
+  source: miniqmt
+  schedule: daily_capital
+  incremental: true
+  dependencies: []
+  capability: margin_trading_qmt
+  symbols:
+  extra:
+    description: "融资融券-QMT占位（QMT无接口，已由AKShare margin_trading_incremental覆盖）"
+    disabled: true
 
-  - task_id: margin_trading_qmt_placeholder
-    table: c1_market.margin_trading_qmt
-    source: miniqmt
-    schedule: daily_capital
-    incremental: true
-    dependencies: []
+  fallback_sources:
+  - source: qmt
     capability: margin_trading_qmt
-    symbols: null
-    extra:
-      description: "融资融券-QMT占位（QMT无接口，已由AKShare margin_trading_incremental覆盖）"
-      disabled: true
+- task_id: dragon_tiger_qmt_placeholder
+  table: c1_market.dragon_tiger_qmt
+  source: miniqmt
+  schedule: daily_capital
+  incremental: true
+  dependencies: []
+  capability: dragon_tiger_qmt
+  symbols:
+  extra:
+    description: "龙虎榜-QMT占位（QMT无接口，已由AKShare dragon_tiger_incremental覆盖）"
+    disabled: true
 
-  - task_id: dragon_tiger_qmt_placeholder
-    table: c1_market.dragon_tiger_qmt
-    source: miniqmt
-    schedule: daily_capital
-    incremental: true
-    dependencies: []
+  fallback_sources:
+  - source: qmt
     capability: dragon_tiger_qmt
-    symbols: null
-    extra:
-      description: "龙虎榜-QMT占位（QMT无接口，已由AKShare dragon_tiger_incremental覆盖）"
-      disabled: true
-
-  - task_id: block_trade_qmt_placeholder
-    table: c1_market.block_trade_qmt
-    source: miniqmt
-    schedule: daily_capital
-    incremental: true
-    dependencies: []
-    capability: block_trade_qmt
-    symbols: null
-    extra:
-      description: "大宗交易-QMT占位（QMT无接口，已由AKShare block_trade_incremental覆盖）"
-      disabled: true
+- task_id: block_trade_qmt_placeholder
+  table: c1_market.block_trade_qmt
+  source: miniqmt
+  schedule: daily_capital
+  incremental: true
+  dependencies: []
+  capability: block_trade_qmt
+  symbols:
+  extra:
+    description: "大宗交易-QMT占位（QMT无接口，已由AKShare block_trade_incremental覆盖）"
+    disabled: true
 
   # ============== P1: 百度云历史数据持续更新（十大股东/披露计划，2026-07-11）==============
-  - task_id: top10_shareholders_incremental
-    table: c3_fundamental.top10_shareholders
-    source: akshare
-    schedule: nightly_financial
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: qmt
+    capability: block_trade_qmt
+- task_id: top10_shareholders_incremental
+  table: c3_fundamental.top10_shareholders
+  source: akshare
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: top10_shareholders
+  symbols:         # null=全市场（Provider 通过 _get_all_a_symbols 自动获取：akshare→CH stock_list fallback，裁定 #ARCH-CH-018）
+  extra:
+    description: "十大股东增量（AKShare stock_gdfx_top_10_em，逐股票逐季度拉取，季报披露后更新）"
+
+  fallback_sources:
+  - source: exchange
     capability: top10_shareholders
-    symbols: null  # null=全市场（Provider 通过 _get_all_a_symbols 自动获取：akshare→CH stock_list fallback，裁定 #ARCH-CH-018）
-    extra:
-      description: "十大股东增量（AKShare stock_gdfx_top_10_em，逐股票逐季度拉取，季报披露后更新）"
+- task_id: top10_circulating_shareholders_incremental
+  table: c3_fundamental.top10_circulating_shareholders
+  source: akshare
+  schedule: nightly_financial
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: top10_circulating_shareholders
+  symbols:         # null=全市场（Provider 通过 _get_all_a_symbols 自动获取，裁定 #ARCH-CH-018）
+  extra:
+    description: "十大流通股东增量（AKShare stock_gdfx_free_top_10_em，逐股票逐季度拉取）"
 
-  - task_id: top10_circulating_shareholders_incremental
-    table: c3_fundamental.top10_circulating_shareholders
-    source: akshare
-    schedule: nightly_financial
-    incremental: true
-    date_col: announce_date
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: top10_circulating_shareholders
-    symbols: null  # null=全市场（Provider 通过 _get_all_a_symbols 自动获取，裁定 #ARCH-CH-018）
-    extra:
-      description: "十大流通股东增量（AKShare stock_gdfx_free_top_10_em，逐股票逐季度拉取）"
-
-  - task_id: disclosure_plan_incremental
-    table: c3_fundamental.disclosure_plan
-    source: akshare
-    schedule: daily_event
-    incremental: true
-    date_col: announce_date
-    dependencies: []
-    capability: disclosure_plan
-    symbols: null
-    extra:
-      description: "预约披露计划增量（AKShare stock_disclosure_report_cninfo，按日期范围查全部沪深京股票）"
+- task_id: disclosure_plan_incremental
+  table: c3_fundamental.disclosure_plan
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: disclosure_plan
+  symbols:
+  extra:
+    description: "预约披露计划增量（AKShare stock_disclosure_report_cninfo，按日期范围查全部沪深京股票）"
 
   # ============== P2: 静态列表月初刷新（2026-07-11）==============
-  - task_id: convertible_bond_list_refresh
-    table: c1_market.convertible_bond_list
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: exchange
+    capability: disclosure_plan
+- task_id: convertible_bond_list_refresh
+  table: c1_market.convertible_bond_list
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: convertible_bond_list
+  symbols:
+  extra:
+    description: "可转债列表全量刷新（AKShare stock_zh_cb_em）"
+
+  fallback_sources:
+  - source: ifind
     capability: convertible_bond_list
-    symbols: null
-    extra:
-      description: "可转债列表全量刷新（AKShare stock_zh_cb_em）"
+- task_id: etf_list_refresh
+  table: c1_market.etf_list
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: etf_list
+  symbols:
+  extra:
+    description: "ETF基金列表全量刷新（AKShare fund_etf_category_sina）"
 
-  - task_id: etf_list_refresh
-    table: c1_market.etf_list
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: etf_list
-    symbols: null
-    extra:
-      description: "ETF基金列表全量刷新（AKShare fund_etf_category_sina）"
+- task_id: lof_list_refresh
+  table: c1_market.lof_list
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: lof_list
+  symbols:
+  extra:
+    description: "LOF基金列表全量刷新（AKShare fund_lof_spot_em）"
 
-  - task_id: lof_list_refresh
-    table: c1_market.lof_list
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: lof_list
-    symbols: null
-    extra:
-      description: "LOF基金列表全量刷新（AKShare fund_lof_spot_em）"
+- task_id: hk_stock_list_refresh
+  table: c1_market.hk_stock_list
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: hk_stock_list
+  symbols:
+  extra:
+    description: "港股列表全量刷新（AKShare stock_hk_spot_em）"
 
-  - task_id: hk_stock_list_refresh
-    table: c1_market.hk_stock_list
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
-    capability: hk_stock_list
-    symbols: null
-    extra:
-      description: "港股列表全量刷新（AKShare stock_hk_spot_em）"
+- task_id: hk_trade_calendar_refresh
+  table: c1_market.hk_trade_calendar
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: hk_trade_calendar
+  symbols:
+  extra:
+    description: "港股交易日历全量刷新（AKShare tool_trade_date_hist_sina）"
 
-  - task_id: hk_trade_calendar_refresh
-    table: c1_market.hk_trade_calendar
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: exchange
     capability: hk_trade_calendar
-    symbols: null
-    extra:
-      description: "港股交易日历全量刷新（AKShare tool_trade_date_hist_sina）"
+- task_id: index_list_refresh
+  table: c1_market.index_list
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: []
+  capability: index_list
+  symbols:
+  extra:
+    description: "指数列表全量刷新（AKShare stock_info_index_name_code）"
 
-  - task_id: index_list_refresh
-    table: c1_market.index_list
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: []
+  fallback_sources:
+  - source: ifind
     capability: index_list
-    symbols: null
-    extra:
-      description: "指数列表全量刷新（AKShare stock_info_index_name_code）"
-
-  - task_id: etf_benchmark_refresh
-    table: c1_market.etf_benchmark
-    source: akshare
-    schedule: monthly_static
-    incremental: false
-    dependencies: ["etf_list_refresh"]
-    capability: etf_benchmark
-    symbols: null
-    extra:
-      description: "ETF基准列表全量刷新（AKShare fund_etf_fund_info_em，依赖etf_list）"
+- task_id: etf_benchmark_refresh
+  table: c1_market.etf_benchmark
+  source: akshare
+  schedule: monthly_static
+  incremental: false
+  dependencies: ["etf_list_refresh"]
+  capability: etf_benchmark
+  symbols:
+  extra:
+    description: "ETF基准列表全量刷新（AKShare fund_etf_fund_info_em，依赖etf_list）"
 
   # ============== 通达信静态表持续更新（2026-07-11）==============
-  - task_id: sector_meta_refresh
-    table: c1_market.sector_meta
-    source: ifind
-    schedule: daily_kline
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: sector_meta
-    symbols: null
-    extra:
-      description: "通达信板块信息持续更新（iFind THS_WC问财接口获取881二级行业板块总市值/流通市值/成分股数量/总股本）"
+  fallback_sources:
+  - source: ifind
+    capability: etf_benchmark
+- task_id: sector_meta_refresh
+  table: c1_market.sector_meta
+  source: ifind
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: sector_meta
+  symbols:
+  extra:
+    description: "通达信板块信息持续更新（iFind THS_WC问财接口获取881二级行业板块总市值/流通市值/成分股数量/总股本）"
 
   # ============== L10 周末补下载层（周日 02:00）==============
   # 不依赖 last_key，直接查 ClickHouse 实际行数检测缺失，精准补下载
   # source=backfill 为特殊路由，scheduler.run_schedule 检测到 weekend_backfill 时段时
   # 调用 backfill_checker.run_weekend_backfill() 而非常规 run_task
-  - task_id: tick_backfill_weekly
-    table: c1_market.tick_data
-    source: backfill
-    schedule: weekend_backfill
-    incremental: false
-    dependencies: []
-    capability: tick_backfill
-    symbols: null
-    extra:
-      description: "Tick数据周补下载——检测过去7天缺失日期并补下载"
-      backfill_days: 7
-      backfill_mode: detect_and_fill
-      threshold: 5000000
+- task_id: tick_backfill_weekly
+  table: c1_market.tick_data
+  source: backfill
+  schedule: weekend_backfill
+  incremental: false
+  dependencies: []
+  capability: tick_backfill
+  symbols:
+  extra:
+    description: "Tick数据周补下载——检测过去7天缺失日期并补下载"
+    backfill_days: 7
+    backfill_mode: detect_and_fill
+    threshold: 5000000
 
   # ============== tqcenter 880xxx板块数据（独立脚本触发，裁定 #ARCH-CH-024）==============
   # manual_script 设计：schedule 填一个未在 schedule.yaml 注册的字面值（manual_script），
   # 调度器 _filter_schedule_tasks 只匹配已注册时段，manual_script 不在其中→结构化排除自动调度。
   # 比 trigger:manual_script 更安全（trigger 字段调度器不读仅作文档；schedule 才是调度依据）。
   # tqcenter SDK 需 E:\tdx\PYPlugins 专用路径，由独立脚本触发，非 scheduler 自动调度。
-  - task_id: kline_sector_880_incremental
-    table: c1_market.kline_sector_880
-    source: tqcenter
-    schedule: manual_script
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_sector_880
-    symbols: null  # null=全部880xxx板块（实测2026-07-22: 460只，tqcenter get_sector_list动态获取）+9只市场指数
-    extra:
-      description: "880xxx板块指数K线增量（tqcenter get_market_data，日K/1m/5m）"
-      trigger: manual_script  # 非 scheduler 自动调度，由独立脚本触发（tqcenter SDK 需 E:\tdx\PYPlugins 路径）
+  fallback_sources:
+  - source: miniqmt
+    capability: tick_backfill
+  - source: bdpan
+    capability: tick_backfill
+- task_id: kline_sector_880_incremental
+  table: c1_market.kline_sector_880
+  source: tqcenter
+  schedule: manual_script
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_sector_880
+  symbols:         # null=全部880xxx板块（实测2026-07-22: 460只，tqcenter get_sector_list动态获取）+9只市场指数
+  extra:
+    description: "880xxx板块指数K线增量（tqcenter get_market_data，日K/1m/5m）"
+    trigger: manual_script    # 非 scheduler 自动调度，由独立脚本触发（tqcenter SDK 需 E:\tdx\PYPlugins 路径）
 
-  - task_id: sector_constituent_refresh
-    table: c1_market.sector_constituent
-    source: tqcenter
-    schedule: manual_script
-    incremental: false  # 全量重建（约84,450条板块-成分股映射）
-    dependencies: []
-    capability: sector_constituent
-    symbols: null
-    extra:
-      description: "880xxx板块成分股映射全量刷新（tqcenter get_sector_list + get_stock_list_in_sector）"
-      trigger: manual_script
-      refresh_cycle: monthly
+- task_id: sector_constituent_refresh
+  table: c1_market.sector_constituent
+  source: tqcenter
+  schedule: manual_script
+  incremental: false    # 全量重建（约84,450条板块-成分股映射）
+  dependencies: []
+  capability: sector_constituent
+  symbols:
+  extra:
+    description: "880xxx板块成分股映射全量刷新（tqcenter get_sector_list + get_stock_list_in_sector）"
+    trigger: manual_script
+    refresh_cycle: monthly
 
-  - task_id: sector_snapshot_incremental
-    table: c1_market.sector_snapshot
-    source: tqcenter
-    schedule: manual_script
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: sector_snapshot_collection
-    symbols: null
-    extra:
-      description: "880xxx板块实时快照增量（tqcenter subscribe_hq推送99只 + get_market_snapshot全量轮询，轮询池从sector_constituent表动态获取，实测2026-07-22: 582只）"
-      trigger: manual_script
-      ranking_engine: sector_ranking_engine.get_push_pool
+- task_id: sector_snapshot_incremental
+  table: c1_market.sector_snapshot
+  source: tqcenter
+  schedule: manual_script
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: sector_snapshot_collection
+  symbols:
+  extra:
+    description: "880xxx板块实时快照增量（tqcenter subscribe_hq推送99只 + get_market_snapshot全量轮询，轮询池从sector_constituent表动态获取，实测2026-07-22:
+      582只）"
+    trigger: manual_script
+    ranking_engine: sector_ranking_engine.get_push_pool
 
-  - task_id: kline_sector_880_resample
-    table: c1_market.kline_sector_880
-    source: tqcenter
-    schedule: manual_script
-    incremental: true
-    date_col: trade_date
-    dependencies: ["kline_sector_880_incremental"]
-    capability: kline_resampling
-    symbols: null
-    extra:
-      description: "880xxx板块K线合成（ClickHouse DB内 toStartOfInterval 聚合，1m/5m→15m/30m/60m，幂等DELETE+INSERT）"
-      trigger: manual_script
-      resample_method: db_internal_aggregation
+- task_id: kline_sector_880_resample
+  table: c1_market.kline_sector_880
+  source: tqcenter
+  schedule: manual_script
+  incremental: true
+  date_col: trade_date
+  dependencies: ["kline_sector_880_incremental"]
+  capability: kline_resampling
+  symbols:
+  extra:
+    description: "880xxx板块K线合成（ClickHouse DB内 toStartOfInterval 聚合，1m/5m→15m/30m/60m，幂等DELETE+INSERT）"
+    trigger: manual_script
+    resample_method: db_internal_aggregation
 
   # ============== 880xxx板块分钟K线（tdx mootdx TCP直连，盘中实时获取，2026-07-22）==============
   # mootdx index_bars 通过 TCP 直连通达信行情服务器，盘中可实时获取880xxx分钟K线
   # 不依赖 tdx 客户端盘后下载（tqcenter refresh_kline 盘中无法获取分钟数据，依赖tdx客户端fzline文件）
   # symbols=null 时 tdx_provider._resolve_sector_symbols 自动从 sector_constituent 表获取全部880xxx板块代码
   # 写入 c1_market.kline_sector_intraday 表（DateTime + period 列，独立于日K线 kline_sector 表）
-  - task_id: kline_sector_1min_incremental
-    table: c1_market.kline_sector_intraday
-    source: tdx
-    schedule: intraday_sector
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_sector
-    symbols: null
-    extra:
-      description: "880xxx板块1分钟K线增量（mootdx TCP直连盘中实时获取，不依赖tdx客户端盘后下载）"
-      period: 1m
-      count: 240
+- task_id: kline_sector_1min_incremental
+  table: c1_market.kline_sector_intraday
+  source: tdx
+  schedule: intraday_sector
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_sector
+  symbols:
+  extra:
+    description: "880xxx板块1分钟K线增量（mootdx TCP直连盘中实时获取，不依赖tdx客户端盘后下载）"
+    period: 1m
+    count: 240
 
-  - task_id: kline_sector_5min_incremental
-    table: c1_market.kline_sector_intraday
-    source: tdx
-    schedule: intraday_sector
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_sector
-    symbols: null
-    extra:
-      description: "880xxx板块5分钟K线增量（mootdx TCP直连盘中实时获取）"
-      period: 5m
-      count: 48
+- task_id: kline_sector_5min_incremental
+  table: c1_market.kline_sector_intraday
+  source: tdx
+  schedule: intraday_sector
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_sector
+  symbols:
+  extra:
+    description: "880xxx板块5分钟K线增量（mootdx TCP直连盘中实时获取）"
+    period: 5m
+    count: 48
 
-  - task_id: kline_sector_15min_incremental
-    table: c1_market.kline_sector_intraday
-    source: tdx
-    schedule: intraday_sector
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_sector
-    symbols: null
-    extra:
-      description: "880xxx板块15分钟K线增量（mootdx TCP直连盘中实时获取）"
-      period: 15m
-      count: 16
+- task_id: kline_sector_15min_incremental
+  table: c1_market.kline_sector_intraday
+  source: tdx
+  schedule: intraday_sector
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_sector
+  symbols:
+  extra:
+    description: "880xxx板块15分钟K线增量（mootdx TCP直连盘中实时获取）"
+    period: 15m
+    count: 16
 
-  - task_id: kline_sector_30min_incremental
-    table: c1_market.kline_sector_intraday
-    source: tdx
-    schedule: intraday_sector
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_sector
-    symbols: null
-    extra:
-      description: "880xxx板块30分钟K线增量（mootdx TCP直连盘中实时获取）"
-      period: 30m
-      count: 8
+- task_id: kline_sector_30min_incremental
+  table: c1_market.kline_sector_intraday
+  source: tdx
+  schedule: intraday_sector
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_sector
+  symbols:
+  extra:
+    description: "880xxx板块30分钟K线增量（mootdx TCP直连盘中实时获取）"
+    period: 30m
+    count: 8
 
-  - task_id: kline_sector_60min_incremental
-    table: c1_market.kline_sector_intraday
-    source: tdx
-    schedule: intraday_sector
-    incremental: true
-    date_col: trade_date
-    dependencies: []
-    capability: kline_sector
-    symbols: null
-    extra:
-      description: "880xxx板块60分钟K线增量（mootdx TCP直连盘中实时获取）"
-      period: 60m
-      count: 4
+- task_id: kline_sector_60min_incremental
+  table: c1_market.kline_sector_intraday
+  source: tdx
+  schedule: intraday_sector
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_sector
+  symbols:
+  extra:
+    description: "880xxx板块60分钟K线增量（mootdx TCP直连盘中实时获取）"
+    period: 60m
+    count: 4
