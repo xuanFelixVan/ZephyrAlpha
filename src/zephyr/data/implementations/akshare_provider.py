@@ -151,10 +151,14 @@ def _build_top10_shareholder_row(row, sym, qe, ratio_col, type_col):
 
 
 # CH fallback: 从 stock_list 获取 A 股 6 位代码（SQL_ 前缀豁免 NO-BARE-SQL gate）
+# 治本(裁定#ARCH-AKSHARE-ANTICRAWLER-001)：增加 delist_date 过滤，
+# 排除月初快照时已知退市日期的股票（快照后新退市的需提升 stock_list_refresh 频率解决）
 SQL_STOCK_CODE_FROM_LIST = (
     "SELECT splitByChar('.', ts_code)[1] AS code "
     f"FROM {_TBL_STOCK_LIST} "
-    "WHERE list_status = '上市' ORDER BY ts_code FORMAT TabSeparated"
+    "WHERE list_status = '上市' "
+    "AND (delist_date IS NULL OR delist_date = toDate('1900-01-01') OR delist_date > today()) "
+    "ORDER BY ts_code FORMAT TabSeparated"
 )
 
 
@@ -423,14 +427,31 @@ class AKShareProvider(DataSourceBase):
     def _get_all_a_symbols(self, ak, policy: SourcePolicy) -> list[str]:
         """获取全 A 股 6 位代码列表。
 
-        优先用 ak.stock_zh_a_spot_em，失败时回退到 ClickHouse stock_list。
+        治本(裁定#ARCH-AKSHARE-ANTICRAWLER-001)：主路径切换到交易所官方接口
+        (stock_info_sh_name_code + stock_info_sz_name_code)，走交易所官网不走东财，
+        无反爬风险。原 stock_zh_a_spot_em 是东财实时行情快照接口，高频调用触发
+        IP级TCP RST封锁，5次jittered重试全失败(~75秒纯等待)。CH stock_list 作为 fallback 兜底。
         """
+        # 主路径：交易所官方接口（无反爬，已在 _fetch_st_stock_list 验证可用）
+        # 覆盖4大板块：沪主板A股 + 科创板 + 深交所A股 + 北交所
         try:
-            df = self._call_with_policy(ak.stock_zh_a_spot_em, policy)
-            if df is not None and len(df) > 0:
-                return [str(c).zfill(6) for c in df["代码"].tolist()]
+            codes: list[str] = []
+            sh = self._call_with_policy(ak.stock_info_sh_name_code, policy, symbol="主板A股")
+            if sh is not None and len(sh) > 0:
+                codes.extend([str(c).zfill(6) for c in sh["证券代码"].tolist()])
+            kc = self._call_with_policy(ak.stock_info_sh_name_code, policy, symbol="科创板")
+            if kc is not None and len(kc) > 0:
+                codes.extend([str(c).zfill(6) for c in kc["证券代码"].tolist()])
+            sz = self._call_with_policy(ak.stock_info_sz_name_code, policy, symbol="A股列表")
+            if sz is not None and len(sz) > 0:
+                codes.extend([str(c).zfill(6) for c in sz["A股代码"].tolist()])
+            bj = self._call_with_policy(ak.stock_info_bj_name_code, policy)
+            if bj is not None and len(bj) > 0:
+                codes.extend([str(c).zfill(6) for c in bj["证券代码"].tolist()])
+            if codes:
+                return sorted(set(codes))
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._log.warning(f"stock_zh_a_spot_em 失败（东财反爬），回退到 CH stock_list: {e}")
+            self._log.warning(f"交易所官方接口失败，回退到 CH stock_list: {e}")
 
         # CH fallback
         from zephyr.data import ch_reader as _chr
@@ -1183,7 +1204,7 @@ class AKShareProvider(DataSourceBase):
         batch_rows: list[tuple] = []
         t0 = time.time()
 
-        for sym in symbols:
+        for idx, sym in enumerate(symbols, 1):
             code = str(sym).split(".")[0].zfill(6)
             try:
                 df = self._call_with_policy(
@@ -1193,6 +1214,16 @@ class AKShareProvider(DataSourceBase):
                 self._log.debug(f"stock_news_em({code}) 失败: {e}")
                 continue
             batch_rows.extend(self._news_rows_from_df(df, "akshare_stock_news"))
+            # 进度日志（每50只打印一次，便于监控长时间运行的任务）
+            if idx % 50 == 0:
+                self._log.info(f"stock_news_em 进度: {idx}/{len(symbols)}，已累积 {len(batch_rows)} 行")
+            # 批量 yield（每500行 flush 一次，避免内存堆积）
+            if len(batch_rows) >= 500:
+                yield FetchResult(
+                    table=table, columns=columns, rows=batch_rows[:],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+                batch_rows.clear()
 
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows,
@@ -2741,12 +2772,22 @@ class AKShareProvider(DataSourceBase):
         import akshare as ak
         table = payload.table or _TBL_ETF_NAV
         columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
-        symbols = payload.symbols or []
+        symbols = payload.symbols
+        if not symbols:
+            # 从 etf_list 表自动加载全市场 ETF 代码（约1764只）
+            try:
+                from zephyr.data import ch_reader as _chr
+                tsv = _chr.query_table(_TBL_ETF_LIST, columns="etf_code")
+                if tsv and tsv.strip():
+                    symbols = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+                    self._log.info(f"etf_nav 从 etf_list 表加载 {len(symbols)} 只 ETF")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"etf_nav 从 etf_list 表加载失败: {e}")
         if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[],
                 last_key="", elapsed_sec=0.0,
-                error="etf_nav 需要 symbols 参数指定 ETF 代码（如 510050）",
+                error="etf_nav 无 symbols 且 etf_list 表无数据，请先运行 etf_list_refresh 任务",
             )
             return
 
@@ -2778,10 +2819,9 @@ class AKShareProvider(DataSourceBase):
                     last_key=end_date, elapsed_sec=time.monotonic() - t0,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                self._log.warning(f"ETF {fund_code} 净值获取失败: {e}")
-                yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key="", elapsed_sec=time.monotonic() - t0,
-                    error=str(e),
-                )
+                # 治本(裁定#ARCH-ETFNAV-SINGLE-FAIL-001)：单只ETF失败不中断整体任务，
+                # 与 _fetch_stock_news_em/_fetch_research_report 的错误处理策略统一为"单只失败continue"。
+                # 原 yield error 会触发 scheduler._fetch_and_write 的 break，导致整个任务中止+已拉取数据丢失。
+                self._log.warning(f"ETF {fund_code} 净值获取失败，跳过: {e}")
+                continue
 

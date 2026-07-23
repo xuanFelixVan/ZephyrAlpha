@@ -143,6 +143,11 @@ class TaskQueue:
     def get_ready_tasks(self) -> list[str]:
         """获取所有 READY 任务（前置全 SUCCESS，自身 PENDING）。
 
+        跨时段依赖处理：依赖任务不在当前 queue（d not in self._tasks）时
+        视为已满足——因为跨时段依赖意味着依赖任务在另一个调度时段执行，
+        当前时段不应等待它。这避免了 option_greeks（intraday_realtime）
+        依赖 option_kline（daily_kline 盘后）导致的永久 PENDING 死锁。
+
         Returns:
             就绪任务 task_id 列表（按 task_id 排序，保证确定性）
         """
@@ -154,7 +159,10 @@ class TaskQueue:
                 deps = self._dependencies.get(tid, [])
                 if not deps:
                     ready.append(tid)
-                elif all(self._status.get(d) == SUCCESS for d in deps):
+                elif all(
+                    d not in self._tasks or self._status.get(d) == SUCCESS
+                    for d in deps
+                ):
                     ready.append(tid)
                 elif any(self._status.get(d) == FAILED for d in deps):
                     # 前置有失败 -> 标记 BLOCKED

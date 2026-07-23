@@ -106,7 +106,6 @@ DEFAULT_POLICIES: Final[dict[str, dict]] = {
         "rpm": 60, "concurrency": 4, "max_retries": 5, "backoff": "jittered",
         "initial_wait_sec": 2.0, "retry_on": ["HTTPError", "JSONDecodeError", "ConnectionError"],
         "disconnect_vpn": True,
-        "extra": {"dongfang_caizhang_skip_after": 3},
     },
     "baostock": {
         "rpm": 60, "concurrency": 8, "max_retries": 3, "backoff": "fixed",

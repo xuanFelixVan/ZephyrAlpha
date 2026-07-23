@@ -39,6 +39,8 @@
 from __future__ import annotations
 
 import logging
+import os
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -67,7 +69,7 @@ class IntegratorMetrics:
             output_file: 输出 .prom 文件路径，默认 data/metrics.prom
         """
         self._output_file = Path(output_file) if output_file else _DEFAULT_METRICS_FILE
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()  # 可重入锁：flush持锁后调render(内部也acquire)不死锁(裁定#ARCH-METRICS-FILELOCK-001)
         # 计数器 / 直方图 内部存储
         self._task_total: dict[tuple[str, str, str], int] = {}
         self._task_duration_count: dict[tuple[str, str], int] = {}
@@ -211,19 +213,31 @@ class IntegratorMetrics:
     def flush(self) -> bool:
         """写入 .prom 文件。失败时 log warning 不抛出。
 
+        治本(裁定#ARCH-METRICS-FILELOCK-001)：全程持 _lock 串行化文件 I/O，
+        消除 ThreadPoolExecutor 多线程并发写同一文件的 WinError 5/32 竞争。
+        使用 tempfile.mkstemp 生成唯一 tmp 文件名，避免固定名碰撞。
+        _lock 为 RLock，持锁后调 render()(内部也 acquire)可重入不死锁。
+
         Returns:
             是否写入成功。
         """
-        try:
-            self._output_file.parent.mkdir(parents=True, exist_ok=True)
-            content = self.render()
-            tmp = self._output_file.with_suffix(".prom.tmp")
-            tmp.write_text(content, encoding="utf-8")
-            tmp.replace(self._output_file)
-            return True
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            log.warning(f"metrics.flush 失败: {e}")
-            return False
+        with self._lock:  # 全程持锁，串行化文件 I/O（RLock 可重入，render 内部 acquire 不死锁）
+            try:
+                self._output_file.parent.mkdir(parents=True, exist_ok=True)
+                content = self.render()
+                # 唯一 tmp 文件名，避免多线程同名碰撞
+                fd, tmp_path = tempfile.mkstemp(
+                    dir=str(self._output_file.parent),
+                    prefix=".metrics_prom_",
+                    suffix=".tmp",
+                )
+                with os.fdopen(fd, "w", encoding="utf-8") as f:
+                    f.write(content)
+                os.replace(tmp_path, str(self._output_file))
+                return True
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning(f"metrics.flush 失败: {e}")
+                return False
 
 
 # ============== 模块级单例 ==============

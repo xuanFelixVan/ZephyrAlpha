@@ -745,7 +745,7 @@ tasks:
     symbols: null  # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
     extra:
       description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
-      disabled: true  # iFind EDB 不可用：1) iFinDPy 模块在 Python312 环境缺失（.pth 指向目录无 iFinDPy.py，2026-07-23 复测确认）；2) 即使装回 iFinDPy，配额耗尽(-4318)亦持续存在。edb_data 表至今 0 行，从未成功写入。修复路径：重装 THSDataInterface 完整 Python 接口 + 评估付费版 EDB 配额（试用版5万条/周不足以拉 104 指标全历史）。
+      disabled: true  # iFind EDB 月度配额耗尽(-4318)：试用账号5万条/月不足以拉104个宏观指标全历史。iFinDPy SDK 已于2026-07-23修复（pip install iFinDAPI 0.0.8 + 补 iFinDPy.py 到 site-packages），Python312 登录返回0、EDB通信正常，但配额限制持续存在。edb_data 表至今 0 行。修复路径：升级iFind付费版EDB配额；等下月配额重置后可临时移除本行测试。
 
   # ============== iFind 新增能力（concept_sector / realtime_snapshot，2026-07-11）==============
   - task_id: concept_sector_refresh

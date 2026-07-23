@@ -9,9 +9,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.8
+version: 1.3.9
 created: '2026-06-26'
-last_updated: '2026-07-22'
+last_updated: '2026-07-23'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -8043,5 +8043,217 @@ entries:
   status: resolved
   related_adjudication: '#ARCH-HEARTBEAT-001 (heartbeat daemon 本体治本，本议题为其延续)'
   related_rules: 'AGENTS.md RULE-WORKTREE heartbeat 保活机制, FP-ISO.4C worktree 君子协定'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-CH-021: 回测数据有效性 P0 包（2026-07-23 立项，依据 audit_01/audit_03 全阶段机构级升级） ---
+# 编号裁定说明：本议题编号 #ARCH-CH-021 填补 020→022 之间的空号（021 此前未登记）。
+# 注意：原任务文档（docs/临时文件.md）指定 "#ARCH-CH-022：Schema 真源体系收口"，
+# 但 #ARCH-CH-022 已于早前登记为 CapabilityContract 机器可执行契约（line 2500），
+# 按 registry 铁律 #1（连续分配）#6（引用必须登记、禁止重复）不可复用，
+# 故 Schema 真源体系收口改用下一空号 #ARCH-CH-025（见下条目）。
+- issue_id: '#ARCH-CH-021'
+  title: 回测数据有效性 P0 包——幸存者偏差/tick 缺口/排序键覆盖/质量门/PIT/SCD-2/lifecycle/裸 MergeTree 八项治本
+  category: data_architecture
+  severity: P0致命
+  adjudication: >-
+    2026-07-23 立项裁定（依据 audit_01_schema_review.md + audit_03_checklist_and_verdict.md，
+    总评 81.3% B+，数据质量执行③75% 与存储精细度⑤75% 为短板）。
+
+    本议题为回测可信度之根的 P0 集合包，含八项（P0-1~P0-8）：
+
+    P0-1 幸存者偏差（头号缺陷）：stock_list 5,534 只全为在市股，无退市/暂停标的历史。
+    接入 Tushare/iFind 退市主数据回填 A 股历史退市股全量清单；stock_list 改造为含
+    list_status + delist_date + valid_from/valid_to 的 SCD-2 时点版本表；对接
+    config/data/survivorship_policy.yaml 使声明级 gate 在数据层兑现。
+
+    P0-2 tick 数据缺口：2026-06 日均 248 万行 vs 5 月日均 2,385 万行（-90%，21 交易日）。
+    先诊断根因（miniqmt/QMT 链路、7-16 Hyper-V 迁移窗口），再通过 backfill_checker
+    既有机制回补并做回补后行数闭合验证。
+
+    P0-3 option_iv_surface 排序键缺 option_type：call/put 互相覆盖静默丢数据。
+    备份后重建表（排序键加 option_type），迁移历史数据并做迁移前后行数对账，
+    更新 schemas/categories/ DDL-as-Code 真源与 business_data_categories.yaml。
+
+    P0-4 质量门有壳无芯：data/quality_gate.py 仅 27 行 re-export、写入路径零消费方、
+    quality_flag 全库恒为 1。实现轻量异常值校验器（OHLC 逻辑/涨跌幅/缺口/复权四条门禁），
+    接入 ch_writer 写入路径，quality_flag=0 为保真标记，配套测试。
+
+    P0-5 财报 PIT 化：c3 财务报表 ReplacingMergeTree 覆盖式更新存在前视偏差。
+    按 announce_date 建立 point-in-time 查询能力，与 backtest 域 pit_manager.py 三公理对齐。
+
+    P0-6 18 张缓变维表时点版本化：stock_list 等补 valid_from/updated_at（SCD-2），
+    消除"回测用含未来新股的当前股票池"的前视通道。清单以 audit_01 为准。
+
+    P0-7 index_quote 生命周期真源冲突：注册表 hot_90d vs 蓝图 INV-RET-003 永久保留。
+    对齐真源为永久保留，全库排查同类 lifecycle 冲突。
+
+    P0-8 c3 八张裸 MergeTree 表迁移 ReplacingMergeTree（落实 #ARCH-CH-002 裁定），
+    消除写前 DELETE 路径。
+
+    红线：任何破坏性 DB 操作（DELETE/REPLACE PARTITION/重建表/迁移数据）前必须执行
+    trae_063 三步验证——①必要性②真实性（全字段 GROUP BY HAVING count()>1 验证重复，
+    禁用 count()-uniqExact 排序键）③可逆性（先备份，无备份=禁止执行）。
+  impact:
+    - 'c1_market.stock_list（SCD-2 改造：list_status/delist_date/valid_from/valid_to）'
+    - 'c1_market.tick_data（6 月缺口诊断+回补闭合验证）'
+    - 'c1_market.option_iv_surface（排序键补 option_type + 备份重建迁移）'
+    - 'src/zephyr/data/quality_gate.py（异常值校验器实现）+ ch_writer 写入路径接入'
+    - 'c3_fundamental.* 财务表（PIT 查询能力）'
+    - '18 张缓变维表（valid_from/updated_at SCD-2）'
+    - 'business_data_categories.yaml（index_quote lifecycle hot_90d→permanent + 全库排查）'
+    - 'analyst_forecast/disclosure_plan/equity_pledge_detail/industry_class_suppl/restricted_shares/rights_issue/share_change/share_unlock（8 张裸 MergeTree→ReplacingMergeTree）'
+  fix_phase: |
+    本任务阶段二（P0 全量施工）。按 P0-7→P0-4→P0-3→P0-8→P0-2→P0-1→P0-5→P0-6 顺序推进。
+    每项破坏性操作走 trae_063 三步验证并留对账记录。
+  status: open
+  related_adjudication: '#ARCH-CH-002 (全部 ReplacingMergeTree), #ARCH-CH-020 (RULE-DATA-OPS 事故根源), audit_03 P0 清单'
+  related_rules: 'AGENTS.md RULE-DATA-OPS (trae_063 三步验证), RULE-SSOT, survivorship_policy.yaml'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-CH-025: Schema 真源体系收口（原任务拟用 #ARCH-CH-022，因该号已被 CapabilityContract 占用而改用 025） ---
+- issue_id: '#ARCH-CH-025'
+  title: Schema 真源体系收口——ingest_ts 全覆盖/DDL-as-Code 扩面/kline 漂移对齐/分钟族归一/Decimal 化/时区/复权/currency
+  category: data_architecture
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定（audit_03 P1/P2 清单，audit_01 §3.2/§5）。
+
+    编号说明：原任务文档（docs/临时文件.md）指定 #ARCH-CH-022 用于本议题，但 #ARCH-CH-022
+    已登记为 CapabilityContract 机器可执行契约（line 2500）。按 registry 铁律 #1/#6
+    不可复用，本议题改用下一空号 #ARCH-CH-025。后续所有引用"Schema 真源体系收口"
+    均以 #ARCH-CH-025 为准。
+
+    本议题为 Schema 治理 P1 集合（A 组）：
+    - ingest_ts 版本列从 17/101 补齐到全覆盖（#ARCH-CH-009 断链闭环：裁定-蓝图-真源-实例四层对齐）
+    - DDL-as-Code 真源从 10/101 扩面（优先行情主表与 c3 全表），建 apply_schema.py 部署链路
+    - kline_daily 三处真源漂移对齐（amount 类型/market_type 默认值/data_source 默认值，以实测为准回写真源）
+    - 分钟 K 线族 15 张表族内对齐（OHLC 精度统一 18,6、volume UInt64、分区基准列统一、tasks.yaml 幂等键与分区键错配修复）
+    - 财务表 20+ 金额字段 Float64 → Decimal(18,2/4) 化（含数据迁移对账）
+    - 时区防线：全库 DateTime 统一 DateTime64(3,'Asia/Shanghai') 或显式时区列
+    - 复权体系补原始价层（raw OHLC）+ adj_factor 与 kline_daily 内嵌因子类型统一（Decimal(18,8)）
+    - 行情表补 currency 列（港美股已摄取）
+  impact:
+    - 'schemas/categories/*.py（DDL-as-Code 真源扩面 + ingest_ts 补齐）'
+    - 'scripts/ch/apply_market_tables_ddl.py / apply_schema.py（部署链路建设）'
+    - 'c1_market.kline_daily（三处漂移对齐）'
+    - 'c1_market.kline_*min（15 张分钟 K 线族归一化）'
+    - 'c3_fundamental.*（金额字段 Decimal 化）'
+    - 'business_data_categories.yaml（计数自动生成 + 品类对齐）'
+  fix_phase: 本任务阶段三 A 组（可与 B/C 组并行）。
+  status: open
+  related_adjudication: '#ARCH-CH-009 (ingest_ts 版本列), #ARCH-CH-002 (ReplacingMergeTree), audit_01 §3.2/§5'
+  related_rules: 'AGENTS.md RULE-SSOT (trae_062), RULE-DEPGRAPH (trae_080)'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-DATA-PIPELINE-001: 管线韧性包（阶段三 B 组） ---
+- issue_id: '#ARCH-DATA-PIPELINE-001'
+  title: 管线韧性包——fallback 副源扩面/卡死治理/error_classifier 扩充/task_id 去重/告警实装/空表漏检/逆向漂移登记
+  category: data_pipeline
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定（audit_02_pipeline_review.md + audit_03 P1 清单）。
+
+    本议题为管线韧性 P1 集合（B 组）：
+    - fallback_sources 覆盖从 8/128 扩到 ≥50%（优先 miniqmt 单源任务配 akshare/tdx 副源）
+    - 卡死 RUNNING >24h 任务治理机制（自动检测+重置+告警）
+    - error_classifier 规则扩充：akshare 接口漂移（has no attribute）、xtquant 断连归类为明确错误类并配正确动作（切源/暂停而非反复重试）
+    - 消除 task_id 重复（kline_us_daily_incremental ×2 共享断点主键）
+    - 修复 l2_tick 表不存在但任务引用（建表或摘除任务）
+    - 打通告警通道：钉钉/邮件 NotImplementedError → 实装（密钥走 .env，禁止入库）
+    - 空表漏检修复：阈值为 0 的表不再被巡检跳过（显式"应空"白名单机制），恢复 edb_data/realtime_snapshot/sector_snapshot 采集或摘除
+    - cls/eastmoney_news 补登记进 data_sources_registry.yaml（消除逆向漂移）
+  impact:
+    - 'src/zephyr/data/config/tasks.yaml（fallback_sources 扩面 + task_id 去重 + l2_tick 处理）'
+    - 'src/zephyr/data/error_classifier.py（规则扩充）'
+    - 'src/zephyr/data/alerter.py（钉钉/邮件通道实装）'
+    - 'src/zephyr/data/integrity_check.py（空表漏检修复 + 应空白名单）'
+    - 'architecture_model/data/data_sources_registry.yaml（cls/eastmoney_news 登记）'
+  fix_phase: 本任务阶段三 B 组（可与 A/C 组并行）。
+  status: open
+  related_adjudication: 'audit_02 §告警/容错/调度'
+  related_rules: 'AGENTS.md RULE-DATA-OPS, RULE-SSOT'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-DR-BACKUP-001: 灾备与治理登记包（阶段三 C 组） ---
+- issue_id: '#ARCH-DR-BACKUP-001'
+  title: 灾备与治理登记包——dr_policy 行情仓库 RTO/RPO/lifecycle TTL 落地/备份恢复演练/备份盘容量评估
+  category: disaster_recovery
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定（audit_03 §3.2 差距 #4/#5，P1-5/P1-6）。
+
+    本议题为治理与灾备 P1 集合（C 组）：
+    - dr_policy.yaml 登记 302 GiB 行情仓库（c1_market/c3_fundamental）的 RTO/RPO
+    - lifecycle hot_90d 声明落地为 CH TTL（或修声明，二选一闭环）
+    - 执行一次真实备份恢复演练并留验证记录
+    - 评估备份盘容量（315 GiB vs 数据 318 GiB 月增 5-6 GiB）给出扩容/保留策略方案
+  impact:
+    - 'config/dr_policy.yaml（增补 c1_market/c3_fundamental 组件 RTO/RPO）'
+    - 'business_data_categories.yaml（lifecycle hot_90d → CH TTL 或声明修正）'
+    - 'scripts/backup/backup.ps1 + restore.ps1（备份恢复演练记录）'
+  fix_phase: 本任务阶段三 C 组（可与 A/B 组并行）。
+  status: open
+  related_adjudication: 'audit_03 P1-5/P1-6, INV-RET-003 蓝图铁律'
+  related_rules: 'AGENTS.md RULE-DATA-OPS, RULE-SSOT'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-AKSHARE-ANTICRAWLER-001: akshare反爬治本（接口错配根因） ---
+- issue_id: '#ARCH-AKSHARE-ANTICRAWLER-001'
+  title: akshare _get_all_a_symbols 使用 stock_zh_a_spot_em（东财实时行情快照）获取股票代码列表触发IP级反爬
+  category: data_source
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定。根因：_get_all_a_symbols 使用东财实时行情快照接口 stock_zh_a_spot_em
+    获取全A股代码列表，高频调用高成本接口取低成本数据，触发东财IP级TCP RST封锁。
+    5次jittered重试全失败（~75秒纯等待），fallback到CH stock_list（monthly_static，22天陈旧）。
+    治本：主路径切换到交易所官方接口（stock_info_sh_name_code + stock_info_sz_name_code +
+    科创板 + 北交所），走交易所官网不走东财，无反爬风险。CH stock_list 保留为 fallback 兜底，
+    SQL增加 delist_date 退市过滤。删除 DEAD CODE dongfang_caizhang_skip_after（从未被代码读取）。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_get_all_a_symbols 切换接口 + SQL退市过滤）'
+    - 'architecture_model/data/data_sources_registry.yaml（删除 dongfang_caizhang_skip_after dead code 真源）'
+    - 'src/zephyr/data/config/policies.yaml + policy_registry.py（删除 dongfang_caizhang_skip_after dead code 派生）'
+    - 'tests/zephyr/data/test_policy_registry.py（删除 test_akshare_dongfang_skip 失效测试）'
+  fix_phase: 已完成施工（2026-07-23）。
+  status: decided
+  related_rules: 'AGENTS.md RULE-SSOT, 5.135治标'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-METRICS-FILELOCK-001: metrics文件锁并发竞争治本 ---
+- issue_id: '#ARCH-METRICS-FILELOCK-001'
+  title: IntegratorMetrics.flush() 在 ThreadPoolExecutor 多线程并发下 WinError 5/32 文件锁竞争
+  category: observability
+  severity: P2中
+  adjudication: >-
+    2026-07-23 立项裁定。根因：flush() 的文件 I/O（写固定名 metrics.prom.tmp + os.replace）
+    不在 _lock 保护范围内，8个任务并行完成时同时写同一tmp文件+同时replace同一target，
+    Windows 触发 WinError 32（文件被占用）和 WinError 5（拒绝访问）。
+    治本：Lock→RLock（可重入锁，flush持锁后调render内部acquire不死锁），
+    flush() 全程持_lock 串行化文件 I/O，tempfile.mkstemp 生成唯一tmp文件名避免同名碰撞。
+    排除后台定时flush线程方案（违反"禁止时间触发"硬约束）。
+  impact:
+    - 'src/zephyr/data/metrics.py（RLock + flush全程持锁 + 唯一tmp文件名）'
+  fix_phase: 已完成施工（2026-07-23）。
+  status: decided
+  related_rules: 'AGENTS.md RULE-INVARIANTS（永久系统禁止时间触发）, 5.135治标'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+# --- #ARCH-ETFNAV-SINGLE-FAIL-001: etf_nav 单只失败中断整体任务修复 ---
+- issue_id: '#ARCH-ETFNAV-SINGLE-FAIL-001'
+  title: _fetch_etf_nav except 分支 yield error 触发 scheduler break 导致单只ETF失败中断整个任务+丢失已拉取数据
+  category: data_source
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定。根因：_fetch_etf_nav 的 for symbol in symbols 循环内 except 分支
+    yield 了带 error=str(e) 的 FetchResult，触发 scheduler._fetch_and_write 的 break，
+    导致单只ETF（如158000）失败时整个任务中止+已拉取的ETF净值数据全部丢失。
+    治本：except 分支改为 continue（与 _fetch_stock_news_em/_fetch_research_report 统一
+    "单只失败continue"原则）。审查确认其他19处 yield error 全部不在循环内（方法级失败），
+    无需修复。同时为 news_stock_em 增加进度日志（每50只）+ 批量yield（每500行）。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_fetch_etf_nav except改continue + news_stock_em进度日志）'
+  fix_phase: 已完成施工（2026-07-23）。
+  status: decided
+  related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 5.135治标'
   created: '2026-07-23'
   last_updated: '2026-07-23'

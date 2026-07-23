@@ -55,8 +55,6 @@ akshare:
   - JSONDecodeError
   - ConnectionError
   disconnect_vpn: true
-  extra:
-    dongfang_caizhang_skip_after: 3
 baostock:
   rpm: 60
   concurrency: 8

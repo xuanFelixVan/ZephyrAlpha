@@ -105,8 +105,6 @@ data_sources:
       initial_wait_sec: 2.0
       retry_on: ["HTTPError", "JSONDecodeError", "ConnectionError"]
       disconnect_vpn: true
-      extra:
-        dongfang_caizhang_skip_after: 3
 
   - id: DS-BAOSTOCK
     runtime_id: baostock

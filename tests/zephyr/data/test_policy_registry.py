@@ -116,7 +116,3 @@ class TestDefaultPoliciesCompleteness:
         p = SourcePolicy.from_dict(DEFAULT_POLICIES["ifind"])
         assert "-4318" in p.extra["quota_error_codes"]
         assert "-4309" in p.extra["quota_error_codes"]
-
-    def test_akshare_dongfang_skip(self):
-        p = SourcePolicy.from_dict(DEFAULT_POLICIES["akshare"])
-        assert "dongfang_caizhang_skip_after" in p.extra

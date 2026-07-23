@@ -1888,6 +1888,32 @@ class MiniQMTProvider(DataSourceBase):
             "OptType": opt_type,
         }
 
+    def _load_option_symbols_from_kline(self) -> list[str]:
+        """从 c1_market.option_kline 表加载最近30天有数据的期权合约代码。
+
+        option_iv_surface 任务配置 symbols=null，需从已有 option_kline 数据
+        反查活跃合约列表（约142个），避免 for 循环空转返回 rows=0。
+
+        Returns:
+            期权合约代码列表（如 ["10000001", ...]），查询失败返回空列表
+        """
+        try:
+            sql = (
+                f"SELECT DISTINCT symbol FROM {_TBL_OPTION_KLINE} "
+                f"WHERE trade_date >= today() - INTERVAL 30 DAY "
+                f"ORDER BY symbol"
+            )
+            tsv = ch_reader.query(sql)
+            if not tsv or not tsv.strip():
+                self._log.warning("_load_option_symbols_from_kline: option_kline 表无近30天数据")
+                return []
+            symbols = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+            self._log.info(f"_load_option_symbols_from_kline: 加载 {len(symbols)} 个期权合约")
+            return symbols
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"_load_option_symbols_from_kline 查询失败: {e}")
+            return []
+
     def _fetch_option_iv_surface(
         self,
         payload: FetchPayload,
@@ -1913,7 +1939,6 @@ class MiniQMTProvider(DataSourceBase):
             "trade_date", "symbol", "underlying", "strike", "expiry",
             "opt_type", "iv", "data_source",
         ]
-        symbols = payload.symbols or []
         last_key = self._date_to_str(payload.end)
 
         try:
@@ -1923,6 +1948,15 @@ class MiniQMTProvider(DataSourceBase):
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
+            )
+            return
+
+        symbols = payload.symbols or self._load_option_symbols_from_kline()
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="option_iv_surface 无 symbols 且 option_kline 表无近30天数据",
             )
             return
 
@@ -2028,7 +2062,6 @@ class MiniQMTProvider(DataSourceBase):
             "data_source",
         ]
         trade_date = payload.end.isoformat()
-        symbols = payload.symbols or []
         last_key = self._date_to_str(payload.end)
 
         try:
@@ -2042,6 +2075,7 @@ class MiniQMTProvider(DataSourceBase):
             return
 
         cb_details_map = self._load_cb_details_map(policy)
+        symbols = payload.symbols or list(cb_details_map.keys())
         ctx = _CbIvFetchCtx(
             table=table, columns=columns,
             start_str=start_str, end_str=end_str,
