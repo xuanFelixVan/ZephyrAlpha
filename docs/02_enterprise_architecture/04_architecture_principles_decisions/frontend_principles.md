@@ -54,7 +54,7 @@ ttl: permanent
 **不保留内容**（派生/动态数据，由 frontend/ 目录建立后维护）：
 - 具体前端模块三平面归属表 → frontend/ 建立后由 frontend_principles 扩展
 - 构建管线图 / 部署拓扑具体路径 → frontend/ 建立后由实现文档维护
-- App / package / 工具链清单 → frontend/ 建立后维护
+- App / package / 工具链清单 registry（模块 ID/状态/优先级/runtime_plane/激活条件）+ 技术栈选型 → `architecture_model/frontend/frontend_model.yaml`（当前 G0 stub，frontend/ 建立后填充）
 - G0.5 Python 过渡层具体技术栈版本号 → `architecture_model/technology/technology_landscape.yaml`
 
 **与其他原则文档关系**：
@@ -96,6 +96,8 @@ ttl: permanent
 ## §3 前端 4 层模型（Frontend Layering）
 
 **与 03-AA 全域 Python 后端分层平行但物理隔离**。前端采用 4 层模型，数字越小越接近业务价值，数字越大越接近基础设施。
+
+> **注**：前端模块清单（模块 ID/状态/优先级/runtime_plane/激活条件）+ 技术栈选型的 SSoT 是 `architecture_model/frontend/frontend_model.yaml`（当前 G0 stub，frontend/ 建立后按 §8 Activation Triggers 填充）。本节为永恒 4 层模型框架。
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -396,7 +398,7 @@ G0.5 与 G1 可共存——Panel 组件可嵌入 React（`pn.pane.HTML` + React 
 |------|------|
 | 具体前端模块三平面归属表 | frontend/ 建立后由 frontend_principles 扩展 |
 | 构建管线图 / 部署拓扑具体路径 | frontend/ 建立后由实现文档维护 |
-| App / package / 工具链清单 | frontend/ 建立后维护 |
+| App / package / 工具链清单 registry + 技术栈选型 | `architecture_model/frontend/frontend_model.yaml`（G0 stub，建立后填充）|
 | G0.5 Python 过渡层具体技术栈版本号 | `architecture_model/technology/technology_landscape.yaml` |
 | 微前端拓扑图 | ~~`diagrams/frontend_mfe_topology.mmd`~~（已删除：与实际 Panel 架构脱节） |
 | 前端构建管线图 | ~~`diagrams/frontend_build_pipeline.mmd`~~（已删除：实际无构建管线） |

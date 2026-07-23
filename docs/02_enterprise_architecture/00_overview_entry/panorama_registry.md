@@ -77,7 +77,7 @@
 > **可视化前端架构归属说明**：
 > - 代码进 `src/zephyr/frontend/`（已存在）
 > - 文档进 `13_visualization_architecture/`（待建）
-> - `target_architecture/frontend_architecture.md` 是 TOGAF 视图集的一部分，保持不动
+> - `target_architecture/frontend_architecture.md` 已迁移至 `04_architecture_principles_decisions/frontend_principles.md` + `architecture_model/frontend/frontend_model.yaml`
 
 ---
 
@@ -316,7 +316,7 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已有 TOGAF 视图，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_architecture.md`](../target_architecture/frontend_architecture.md) |
+| PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已迁移至 frontend_principles.md，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_principles.md`](../04_architecture_principles_decisions/frontend_principles.md) |
 
 ### 根目录（架构债务注册表）
 

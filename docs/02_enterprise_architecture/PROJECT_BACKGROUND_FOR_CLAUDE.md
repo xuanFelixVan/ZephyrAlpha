@@ -398,7 +398,7 @@ AutoRuntime Core 是系统大脑，孤儿率 = 未接入模块数 / 总模块数
 
 ### 7.2 长期前端终局
 
-[frontend_architecture.md](../../docs/02_enterprise_architecture/target_architecture/frontend_architecture.md)（v1.2.0，含 G0.5 过渡层章节）定义了 7 条前端铁律：
+[frontend_principles.md](../../docs/02_enterprise_architecture/04_architecture_principles_decisions/frontend_principles.md)（含 G0.5 过渡层章节）定义了 7 条前端铁律：
 
 - **FE-P1**：技术栈异构隔离（React/TS 与 Python 物理隔离）
 - **FE-P2**：API Gateway 唯一对接（FastAPI `api_gateway/`）
@@ -567,8 +567,8 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 - [dependency_path_panorama.md](../../docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
 - [target_architecture/index.md](../../docs/02_enterprise_architecture/target_architecture/index.md)
 - [target_architecture/overview.md](../../docs/02_enterprise_architecture/target_architecture/overview.md)
-- [application_architecture.md](../../docs/02_enterprise_architecture/target_architecture/application_architecture.md)
-- [frontend_architecture.md](../../docs/02_enterprise_architecture/target_architecture/frontend_architecture.md)
+- [application_principles.md](../../docs/02_enterprise_architecture/04_architecture_principles_decisions/application_principles.md)
+- [frontend_principles.md](../../docs/02_enterprise_architecture/04_architecture_principles_decisions/frontend_principles.md)
 - [architecture_debt_registry.md](../../docs/02_enterprise_architecture/architecture_debt_registry.md)
 
 ### 治理代码
@@ -583,7 +583,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 - [capability_canonical_file_registry.yaml](../../docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
 - [architecture_issue_registry.yaml](../../docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)
 - [infrastructure_registry.yaml](../../docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)
-- [blueprint_registry.yaml](../../docs/03_modules/blueprint_registry.yaml)
+- blueprint_registry.yaml
 
 ### 回测子系统
 - [_domain_backtest/blueprint.md](../../docs/03_modules/_domain_backtest/blueprint.md)
