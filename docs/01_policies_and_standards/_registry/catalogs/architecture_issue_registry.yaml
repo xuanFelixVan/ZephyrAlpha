@@ -8276,6 +8276,8 @@ entries:
     CapabilityContract 设计意图（声明 symbols=null 的 capability 必须显式 supports_symbols_null=True 才被允许）。
     治本分两轮：第一轮（commit e120c25a）修复 45 个 capability（akshare 23 + miniqmt 17 + ifind 5）；
     第二轮修复首轮重启后新暴露的 34 个 capability（akshare 7 + miniqmt 26 + ifind 1），共 79 个 CapabilityContract 声明。
+    第三轮（commit c21c76ff）修复 baostock 剩余 2 条 WARN（trade_calendar + index_constituent 声明 supports_symbols_null=True），
+    至此 CAP-NULL-SYMBOLS WARN 全部清零（ERROR=0 WARN=0）。
     校验：scheduler 重启后（17:44）启动日志零 WARN/ERROR/CRITICAL，Capability 契约校验通过。
     test_providers.py 同步更新支持 CapabilityContract 对象的 capability_id 提取。
   impact:
@@ -8332,5 +8334,34 @@ entries:
   fix_phase: 已完成施工+验证（2026-07-23）。手动测试 IV/Greeks 计算成功。
   status: resolved
   related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 裁定 #ARCH-OPTION-GREEKS-001'
+  created: '2026-07-23'
+  last_updated: '2026-07-23'
+
+# --- #ARCH-DAG-DYNAMIC-SCHEDULING: DAG 批次同步→动态调度治本修复 ---
+- issue_id: '#ARCH-DAG-DYNAMIC-SCHEDULING'
+  title: '_run_schedule_dag 批次同步模式导致长任务阻塞短任务依赖者（kline_daily_hfq 连续2天未执行）'
+  category: data_pipeline
+  severity: P1高
+  adjudication: >-
+    2026-07-23 立项裁定。根因：_run_schedule_dag 使用批次同步模式——提交所有就绪任务到
+    ThreadPoolExecutor，用 as_completed 等待全部完成后才查下一批就绪任务。导致同批次中
+    长任务（stock_indicator 60+分钟遍历5530只股）阻塞短任务（adj_factor 4分钟）的依赖者
+    （kline_daily_hfq 依赖 adj_factor）无法及时启动——必须等 stock_indicator 完成后才能
+    进入下一批次，但此时 scheduler 已被 guard 重启或人工中止。
+    日志证据：16:30 daily_kline 时段启动 15 个任务，adj_factor 16:34 完成，但
+    kline_daily_hfq 从未出现在"任务...开始"日志中，因为 stock_indicator 直到 17:29+
+    仍在执行（进度 1000/5530），scheduler 18:16 被重启。
+    治本：改用 FIRST_COMPLETED 动态调度——初始提交所有就绪任务，任一完成后立即检查
+    并提交新就绪的依赖任务，无需等待同批次其他任务完成。同时修复 _validate_provider_and_policy
+    中未定义变量 tq 的 NameError（重构遗留），改由 run_task 在所有源失败时统一 mark_failed 兜底。
+    修复影响：kline_daily_hfq/weekly_hfq/monthly_hfq 将在 adj_factor 完成后立即启动，
+    不再被 stock_indicator 阻塞。同时 etf_nav 单只 ETF 失败不再中断整任务
+    （#ARCH-ETFNAV-SINGLE-FAIL-001 已修复 yield error→continue，本次重启生效）。
+  impact:
+    - 'src/zephyr/data/scheduler.py（_run_schedule_dag FIRST_COMPLETED 动态调度 + _validate_provider_and_policy NameError 修复 + run_task mark_failed 兜底）'
+    - 'src/zephyr/data/implementations/baostock_provider.py（CapabilityContract 声明 trade_calendar + index_constituent supports_symbols_null=True）'
+  fix_phase: 已完成施工+验证（2026-07-23，commit c21c76ff）。28 项 scheduler 测试 + 199 项综合测试全部通过。scheduler 重启后 ERROR=0 WARN=0。
+  status: resolved
+  related_rules: 'AGENTS.md RULE-ERROR-CONTRACT, 裁定 #ARCH-CAP-NULL-SYMBOLS-001, #ARCH-ETFNAV-SINGLE-FAIL-001'
   created: '2026-07-23'
   last_updated: '2026-07-23'
