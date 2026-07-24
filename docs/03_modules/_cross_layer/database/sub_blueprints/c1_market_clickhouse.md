@@ -4,7 +4,7 @@ submodule_path: data/databases/c1_market_clickhouse
 title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint
 status: Active
-version: "1.0.4"
+version: "1.0.5"
 layer: L2_domain
 layer_name: market_warehouse
 functional_domain: data
@@ -20,7 +20,7 @@ actual_disk_path: "data/databases/c1_market_clickhouse/"
 belongs_to: "ARCH-BIZDB-001"
 parent_module: "ARCH-BIZDB-001"
 codification_level: L1
-last_updated: "2026-07-19"
+last_updated: "2026-07-24"
 generation: 1
 rule_form: structural
 scope: module
@@ -1349,6 +1349,15 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | 10 | D-C1-10 | ClickHouse 新建 INFRA-DB-006 | 复用duckdb/新建ClickHouse | 新建ClickHouse | 母蓝图 §8.1 直接上目标引擎 | 2026-07-01 |
 
 ### 变更记录
+
+### v1.0.5 (2026-07-24) 时区防线迁移完成（#ARCH-CH-022）
+- **时区类型标准化**：全库 DateTime 列迁移到 DateTime64(3) + 显式时区——系统列(ingest_ts/updated_at/fetched_at/crawl_time)→DateTime64(3,'UTC')，业务列(trade_time/timestamp/auction_time/snapshot_time/publish_time)→DateTime64(3,'Asia/Shanghai')+数据偏移-8h
+- **迁移工具**：`scripts/ch/apply_timezone_migration.py` 五阶段执行（system/version-col/business/recreate/tickdata），幂等+自验证+dry-run
+- **tick_data 迁移**：181GiB 表分区批量重建（56 月分区逐月 INSERT+DROP，当月 fixup 容忍并发写入），14.38B 行迁移无丢失
+- **验证**：`--verify` 全部一致，裸 DateTime 残留=0，全库 101 表覆盖
+- **DDL 真源同步**：`schemas/categories/market_*.py` 全部更新 DateTime64 类型声明
+- **AGENTS.md 同步**：新增 RULE-SCHEMA-TZ（第九件事）时区防线铁律
+- **验证报告**：`docs/_working/data_consolidation_report.md`
 
 ### v1.0.3 (2026-07-15) version 列语义修复（裁定 #ARCH-CH-009）
 - **引擎策略修复**：§4.1-§4.8 DDL 示例 ENGINE 从 `MergeTree` → `ReplacingMergeTree`

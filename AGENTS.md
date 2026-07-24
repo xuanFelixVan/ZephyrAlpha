@@ -177,6 +177,18 @@
 >
 > **逃生场景分类（#ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001，TRAE-077）**：gate-time 和 post-commit reconciler 均按白名单关键词区分合法/违规——合法 bypass（`scene=exempt`）豁免统计且 gate 放行，违规 bypass（`scene=violation`）gate **硬阻断** + reconciler 计入统计。critical_warn 只在违规 bypass 超 5 次时触发（合法 bypass 不触发）。规则真源：[`trae_077_capability_lookup_scene_classify.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml)（v2.0.0，`code_loaded_from_yaml`）。**策略共享模块**：[`capability_lookup_bypass_policy.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py)（#ARCH-066 治本）——gate 和 reconciler 共用此模块加载白名单/阈值/标记前缀，消除双真源漂移。白名单关键词（reason 含任一即豁免，`is_exempt_reason()` 执行 `_`→`-` 归一化后子串匹配）：`gate-fix` / `test-fix` / `merge-prep` / `continuation`（已批准裁定续作）/ `investigated`（bug 修复已调研）/ `auto-fix` / `batch-treatment` / `batch-governance` / `architectural-refactor` / `sync` / `mechanical` / `completing` / `research` / `bugfix` / `root-cause` / `调研`。新增合法场景时 MUST 仅更新 [`trae_077`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml) YAML 的 `bypass_exempt_keywords` 列表——共享模块的 `load_bypass_policy()` 自动加载，无需改代码。病根：gate-time 零摩擦放行 vs post-commit reconciler 无牙警告的结构性不对称——治本后 gate 直接检查白名单，非白名单 reason 硬阻断。
 
+## RULE-SCHEMA-TZ：第九件事（时区防线，schema 类型标准化铁律，#ARCH-CH-022，2026-07-24 治本）
+
+> **全库 DateTime 列 MUST 使用 DateTime64(3) + 显式时区**——系统列用 `DateTime64(3, 'UTC')`，业务列用 `DateTime64(3, 'Asia/Shanghai')`。禁止裸 `DateTime`（无时区声明，歧义温床）。
+>
+> **病根（第一性原理）**：全库 DateTime 列存在 UTC/北京时间混存——业务时间戳（trade_time/timestamp 等）按北京墙钟写入但以 UTC epoch 存储（晚 8 小时），系统时间戳（ingest_ts/updated_at 用 `now()` 为真 UTC）。导致 `now()-trade_time` 等算术差 8 小时，schema 未声明时区（歧义）。迁移后：业务列 `toUnixTimestamp(trade_time)` 等于真实 UTC 瞬时；`toTimezone(trade_time,'Asia/Shanghai')` 显示北京墙钟；插入 naive 北京字符串（ch_writer `str()` 路径）自动按列时区解析为正确 epoch——无需改写入端代码。
+>
+> **迁移工具（已落地 production）**：[`apply_timezone_migration.py`](file:///d:/ZephyrAlpha/scripts/ch/apply_timezone_migration.py) ——五阶段执行：①system（125 列类型标注）②version-col（17 表 ReplacingMergeTree 版本列重建）③business（4 列 ALTER UPDATE -8h + MODIFY）④recreate（20 表键列重建）⑤tickdata（1 表 181GiB 分区批量重建）。`--dry-run`（全库扫描+策略输出+0写入）/ `--verify`（类型+epoch+行数对账）/ `--phase <name>`（分阶段执行）。
+>
+> **迁移完成状态（2026-07-24）**：全库 101 表迁移完成——125 系统列 + 28 业务列 + 17 版本列 + 20 键列表 + 1 tick_data(181GiB) 全部迁移，裸 DateTime 残留=0，tick_data 14.38B 行迁移无丢失。验证报告：[`data_consolidation_report.md`](file:///d:/ZephyrAlpha/docs/_working/data_consolidation_report.md)。
+>
+> **AI 合规**：新建表 DDL（`schemas/categories/*.py`）MUST 按上述时区类型声明 `DateTime64(3, '<tz>')`；已有表 schema 变更 MUST 同步更新 DDL 真源文件 + 运行 `apply_timezone_migration.py --verify` 确认无残留。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
