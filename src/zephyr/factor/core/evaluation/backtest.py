@@ -1,0 +1,210 @@
+# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-03
+# [MODULE] zephyr.factor.core.evaluation.backtest
+# [DOMAIN] D_FACTOR
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.factor.factor_base; zephyr.factor.core.evaluation.metrics
+# [CONSUMERS]
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] INV-004: PIT铁律——ch_reader注入FINAL保证去重；前向收益shift(-horizon)仅用于回测评估不用于实盘信号；仅用trade_date做截面对齐禁止用ingested_at
+# [MODIFY-GUARD] none
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] CH查询失败->返回空DataFrame(同ch_reader); 因子未注册->KeyError向上抛; 数据不足->EvaluationResult字段为0
+# [TESTS] tests/factor/test_evaluation_backtest.py
+# [TTL] permanent
+"""D-FACTOR-03 因子评估回测运行器——端到端因子评估。
+
+封装 ch_reader 数据访问 + metrics 纯函数计算，实现：
+加载数据 → 逐标的计算因子值 → 组装面板 → 计算 IC/IR/OOS → 返回 EvaluationResult。
+
+职责边界：
+- 数据加载（ch_reader.query，自动注入 FINAL 保证 PIT 去重）
+- 面板组装（长表 → 宽表面板）
+- 因子计算调度（逐标的调用 FactorBase.compute）
+- 评估指标汇总（调用 metrics.* 纯函数）
+
+INV-004 PIT 铁律落实：
+- ch_reader 对 ReplacingMergeTree 自动注入 FINAL，去重后查询
+- 前向收益 shift(-horizon) 仅用于回测评估，不参与实盘信号生成
+- 不使用 ingested_at（可能引入未来函数），仅用 trade_date 做截面对齐
+"""
+from __future__ import annotations
+
+import logging
+from dataclasses import dataclass
+from io import StringIO
+from typing import Sequence
+
+import pandas as pd
+
+from zephyr.data import ch_reader
+from zephyr.data.table_registry import get_registry
+from zephyr.factor.factor_base import FactorRegistry
+from zephyr.factor.core.evaluation.metrics import (
+    check_overfitting,
+    compute_ic_series,
+    compute_ir,
+    compute_oos_positive_rate,
+)
+
+log = logging.getLogger(__name__)
+
+# 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024）
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+
+# SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+# ch_reader.query() 自动注入 FINAL（ReplacingMergeTree 去重），故 final 占位留空
+_SQL_LOAD_HISTORY = (
+    "SELECT trade_date, symbol, open, high, low, close, volume, amount, adj_factor "
+    "FROM {tbl}{final} "
+    "WHERE symbol IN ({symbols}) "
+    "AND trade_date >= toDate('{start}') AND trade_date <= toDate('{end}') "
+    "ORDER BY symbol, trade_date"
+)
+
+# TSV 列顺序（ClickHouse SELECT 返回无表头，按 SELECT 顺序映射）
+_HISTORY_COLUMNS = [
+    "trade_date", "symbol", "open", "high", "low",
+    "close", "volume", "amount", "adj_factor",
+]
+
+
+@dataclass(frozen=True)
+class EvaluationResult:
+    """因子评估结果容器。
+
+    Attributes:
+        factor_id: 因子ID
+        ic_mean: IC 均值（样本内）
+        ic_std: IC 标准差
+        ir: 信息比率 = ic_mean / ic_std
+        oos_positive_rate: 样本外 IC 正率
+        is_overfitted: 是否判定过拟合（OOS_IC/IS_IC < 阈值）
+        sample_size: 评估截面数（IC 序列长度）
+    """
+
+    factor_id: str
+    ic_mean: float
+    ic_std: float
+    ir: float
+    oos_positive_rate: float
+    is_overfitted: bool
+    sample_size: int
+
+
+def _escape_symbol(symbol: str) -> str:
+    """转义标的代码中的单引号，防 SQL 注入。"""
+    return str(symbol).replace("'", "\\'")
+
+
+def _format_symbols(symbols: Sequence[str]) -> str:
+    """格式化标的列表为 SQL IN 子句内容（'a','b','c'）。"""
+    escaped = [_escape_symbol(s) for s in symbols if s]
+    return ",".join(f"'{s}'" for s in escaped)
+
+
+def _tsv_to_dataframe(tsv: str) -> pd.DataFrame:
+    """解析 ch_reader 返回的 TSV 为 DataFrame（TSV 无表头，按列顺序映射）。"""
+    if not tsv or not tsv.strip():
+        return pd.DataFrame()
+    df = pd.read_csv(StringIO(tsv), sep="\t", header=None, names=_HISTORY_COLUMNS)
+    df["trade_date"] = pd.to_datetime(df["trade_date"])
+    return df
+
+
+def load_history(symbols: Sequence[str], start: str, end: str) -> pd.DataFrame:
+    """从 ClickHouse 加载历史日 K 行情。
+
+    Args:
+        symbols: 标的代码列表（如 ['600519.SH', '000001.SZ']）
+        start: 起始日期 'YYYY-MM-DD'
+        end: 结束日期 'YYYY-MM-DD'
+
+    Returns:
+        DataFrame，index=(symbol, trade_date) MultiIndex，
+        columns=open/high/low/close/volume/amount/adj_factor。空结果返回空 DataFrame。
+    """
+    if not symbols:
+        return pd.DataFrame()
+    sql = _SQL_LOAD_HISTORY.format(
+        tbl=_TBL_KLINE_DAILY, final="",
+        symbols=_format_symbols(symbols), start=start, end=end,
+    )
+    df = _tsv_to_dataframe(ch_reader.query(sql))
+    if df.empty:
+        return df
+    df = df.set_index(["symbol", "trade_date"])
+    return df.sort_index()
+
+
+def _compute_factor_panel(factor_cls: type, history: pd.DataFrame) -> pd.DataFrame:
+    """逐标的计算因子值，组装面板 (index=date, columns=symbol)。"""
+    factor = factor_cls()
+    values: dict[str, pd.Series] = {}
+    for symbol, group in history.groupby(level="symbol"):
+        values[str(symbol)] = factor.compute(group.droplevel("symbol"))
+    if not values:
+        return pd.DataFrame()
+    return pd.DataFrame(values)
+
+
+def _compute_forward_returns(close_panel: pd.DataFrame, horizon: int) -> pd.DataFrame:
+    """前向收益 = close.shift(-horizon) / close - 1。"""
+    return close_panel.shift(-horizon) / close_panel - 1
+
+
+def _build_result(
+    factor_id: str, ic_series: pd.Series, oos_ratio: float
+) -> EvaluationResult:
+    """从 IC 序列构建评估结果。"""
+    if ic_series.empty:
+        return EvaluationResult(factor_id, 0.0, 0.0, 0.0, 0.0, True, 0)
+    ic_mean = float(ic_series.mean())
+    ic_std = float(ic_series.std(ddof=0))
+    ir = compute_ir(ic_series)
+    oos_rate = compute_oos_positive_rate(ic_series, oos_ratio)
+    oos_count = max(1, int(len(ic_series) * oos_ratio))
+    oos_ic_mean = float(ic_series.iloc[-oos_count:].mean())
+    overfit = check_overfitting(ic_mean, oos_ic_mean)
+    return EvaluationResult(
+        factor_id, ic_mean, ic_std, ir, oos_rate, overfit, len(ic_series)
+    )
+
+
+def evaluate_factor(
+    factor_id: str,
+    symbols: Sequence[str],
+    start: str,
+    end: str,
+    horizon: int = 5,
+    oos_ratio: float = 0.3,
+) -> EvaluationResult:
+    """端到端因子评估：加载数据 → 计算因子值 → 计算 IC/IR/OOS → 返回结果。
+
+    Args:
+        factor_id: 已注册的因子ID（FactorRegistry.get 查询）
+        symbols: 评估标的池
+        start: 回测起始日期 'YYYY-MM-DD'
+        end: 回测结束日期 'YYYY-MM-DD'
+        horizon: 前向收益周期（交易日），默认 5
+        oos_ratio: 样本外比例，默认 0.3
+
+    Returns:
+        EvaluationResult。数据不足时各指标为 0，is_overfitted=True。
+
+    Raises:
+        KeyError: factor_id 未在 FactorRegistry 注册
+    """
+    factor_cls = FactorRegistry.get(factor_id)
+    history = load_history(symbols, start, end)
+    if history.empty:
+        log.warning("evaluate_factor: 历史数据为空 factor=%s", factor_id)
+        return _build_result(factor_id, pd.Series(), oos_ratio)
+    factor_panel = _compute_factor_panel(factor_cls, history)
+    close_panel = history["close"].unstack(level="symbol")
+    return_panel = _compute_forward_returns(close_panel, horizon)
+    # 丢弃前向收益全 NaN 的尾部截面（无未来数据，避免注入 0 IC 噪声）
+    return_panel = return_panel.dropna(how="all")
+    ic_series = compute_ic_series(factor_panel, return_panel, horizon)
+    return _build_result(factor_id, ic_series, oos_ratio)
