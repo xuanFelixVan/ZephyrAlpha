@@ -1,0 +1,23 @@
+# 因子域 governance 模块参数配置
+# 治理流程参数集中于此，代码读配置不硬编码
+# 改后重启进程即生效（运行时配置，无需 DB 同步）
+
+abs001_gate:
+  min_ic: 0.03             # IC 均值最低门槛
+  min_ir: 0.5              # IR 最低门槛
+  min_oos_rate: 0.5        # OOS 正率最低门槛（50%）
+
+grayscale_rollout:
+  stages: [0.1, 0.3, 1.0]  # 灰度阶梯：10% → 30% → 100%
+
+lifecycle_state_machine:
+  states:
+    - research             # 研究
+    - development          # 开发
+    - backtest             # 回测验证
+    - paper                # 纸面交易
+    - grayscale            # 灰度放量
+    - production           # 实盘上线
+    - deprecated           # 废弃
+    - retired              # 退役
+  initial: research
