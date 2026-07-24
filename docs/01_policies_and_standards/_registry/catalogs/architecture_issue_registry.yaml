@@ -8911,13 +8911,15 @@ entries:
     5. #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1/2/3——workspace clean 检查 + drift 检测
     分层体系比单 worktree 门禁更健壮：任一层失效其余仍兜底，且无不可达前置条件。
 
-    status=proposed 因 Part 2 supersession 属边界裁定（铁律#9），待用户确认后转 resolved。
+    用户已确认 supersession（2026-07-24）：Part 2 被 TRAE-079 取代是逻辑必然，
+    防搭便车由文件锁串行化+分层门禁体系（4 层）承担，无需 worktree 硬门禁。
+    本议题转 resolved——铁律#9 边界裁定经用户确认闭环。
   fix_phase: |-
     Part 1 已落地：depgraph_pre_registration_gate.py（commit f7f79ae684 前序，priority=113，
     DEPGRAPH-PRE-REGISTRATION，58 测试通过，GitCommitGateway ACTIVE 验证）。
-    Part 2 proposed-superseded：无需施工——TRAE-079 文件锁串行化已替代 worktree 物理隔离
+    Part 2 superseded（用户已确认）：无需施工——TRAE-079 文件锁串行化已替代 worktree 物理隔离
     的防搭便车功能，且无不可达前置条件。用户确认 supersession 后本议题转 resolved。
-  status: proposed
+  status: resolved
   related_adjudication: '#ARCH-WORKTREE-EXEC-DRIFT-001, TRAE-079 (#ARCH-COMMIT-SERIALIZATION-001), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001, #ARCH-RECONCILER-VERIFY-AUTOSYNC-001, L1 依赖关系先行铁律'
   created: '2026-07-24'
   last_updated: '2026-07-24'
