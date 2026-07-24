@@ -1,0 +1,72 @@
+%% D_DATA_SCRIPTS 域全景依赖图
+%% 生成时间: 2026-07-25 01:21:14
+%% 数据源: depgraph (PostgreSQL) nodes表 + edges表
+%% 模块数: 21, 依赖边数: 23
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_DATA_SCRIPTS[数据治理脚本]
+        scripts_governance_d3_metadata_auto_generate_index_py["...ce/d3_metadata/auto_generate_index.py [production]"]
+        scripts_governance_d3_metadata_backfill_doctype_metadata_py["...metadata/backfill_doctype_metadata.py [production]"]
+        scripts_governance_d3_metadata_backfill_ttl_metadata_py[".../d3_metadata/backfill_ttl_metadata.py [production]"]
+        scripts_governance_d3_metadata_check_blueprint_compliance_py["...etadata/check_blueprint_compliance.py [production]"]
+        scripts_governance_d3_metadata_check_frontmatter_metadata_py["...etadata/check_frontmatter_metadata.py [production]"]
+        scripts_governance_d3_metadata_check_module_singlesource_py["...metadata/check_module_singlesource.py [production]"]
+        scripts_governance_d3_metadata_check_naming_convention_py["...3_metadata/check_naming_convention.py [production]"]
+        scripts_governance_d3_metadata_check_registry_consistency_py["...etadata/check_registry_consistency.py [production]"]
+        scripts_governance_d3_metadata___ck_schema_version_writes_py["...tadata/check_schema_version_writes.py [production]"]
+        scripts_governance_d3_metadata_check_vocab_hardcode_py["...e/d3_metadata/check_vocab_hardcode.py [production]"]
+        scripts_governance_d3_metadata_classify_ttl_by_content_py["...3_metadata/classify_ttl_by_content.py [production]"]
+        scripts_governance_d3_metadata_deep_content_scanner_py["...e/d3_metadata/deep_content_scanner.py [production]"]
+        scripts_governance_d3_metadata_generate_derived_files_py["...d3_metadata/generate_derived_files.py [production]"]
+        scripts_governance_d3_metadata_generate_rule_catalog_py[".../d3_metadata/generate_rule_catalog.py [production]"]
+        scripts_governance_d3_metadata_migrate_illegal_doctype_py["...3_metadata/migrate_illegal_doctype.py [production]"]
+        scripts_governance_d3_metadata_validate_architecture_py[".../d3_metadata/validate_architecture.py [production]"]
+        scripts_governance_d3_metadata___ate_blueprint_provenance_py["...data/validate_blueprint_provenance.py [production]"]
+        scripts_governance_d3_metadata_validate_module_id_py["...nce/d3_metadata/validate_module_id.py [production]"]
+        scripts_governance_d3_metadata_validate_module_id_naming_py["...metadata/validate_module_id_naming.py [production]"]
+        scripts_governance_d3_metadata___te_registry_master_index_py["...ata/validate_registry_master_index.py [production]"]
+        scripts_governance_d3_metadata___ol_contracts_consistency_py["...alidate_tool_contracts_consistency.py [production]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    scripts_governance_d3_metadata_check_naming_convention_py -->|import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %%  -> D_DATA_SCRIPTS (1 条)
+    [] -->|test_depends| scripts_governance_d3_metadata_check_frontmatter_metadata_py
+    %% D_GOV_AUDIT -> D_DATA_SCRIPTS (1 条)
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
+    %% D_GOV_SCRIPTS -> D_DATA_SCRIPTS (2 条)
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| scripts_governance_d3_metadata_check_naming_convention_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D_DATA_SCRIPTS ->  (15 条)
+    scripts_governance_d3_metadata_auto_generate_index_py -->|config_depends| []
+    scripts_governance_d3_metadata_backfill_ttl_metadata_py -->|config_depends| []
+    scripts_governance_d3_metadata_backfill_doctype_metadata_py -->|config_depends| []
+    scripts_governance_d3_metadata_check_blueprint_compliance_py -->|config_depends| []
+    scripts_governance_d3_metadata_check_vocab_hardcode_py -->|config_depends| []
+    scripts_governance_d3_metadata_validate_architecture_py -->|config_depends| []
+    scripts_governance_d3_metadata_classify_ttl_by_content_py -->|config_depends| []
+    scripts_governance_d3_metadata_deep_content_scanner_py -->|config_depends| []
+    scripts_governance_d3_metadata_generate_rule_catalog_py -->|config_depends| []
+    scripts_governance_d3_metadata___ate_blueprint_provenance_py -->|config_depends| []
+    scripts_governance_d3_metadata_validate_module_id_py -->|config_depends| []
+    scripts_governance_d3_metadata_migrate_illegal_doctype_py -->|config_depends| []
+    scripts_governance_d3_metadata_generate_derived_files_py -->|config_depends| []
+    scripts_governance_d3_metadata___te_registry_master_index_py -->|config_depends| []
+    scripts_governance_d3_metadata___ol_contracts_consistency_py -->|config_depends| []
+    %% D_DATA_SCRIPTS -> D_GOVERNANCE (1 条)
+    scripts_governance_d3_metadata___ck_schema_version_writes_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_DATA_SCRIPTS -> D_INFRA_RUNTIME (1 条)
+    scripts_governance_d3_metadata_check_registry_consistency_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_DATA_SCRIPTS -> D_SHARED (1 条)
+    scripts_governance_d3_metadata_check_module_singlesource_py -->|import_depends| D_SHARED[D_SHARED]
+
+    %% 统计
+    %% 域内依赖: 1 条
+    %% 跨域入边: 4 条
+    %% 跨域出边: 18 条

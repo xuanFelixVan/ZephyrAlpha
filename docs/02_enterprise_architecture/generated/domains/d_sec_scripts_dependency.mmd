@@ -1,0 +1,50 @@
+%% D_SEC_SCRIPTS 域全景依赖图
+%% 生成时间: 2026-07-25 01:21:14
+%% 数据源: depgraph (PostgreSQL) nodes表 + edges表
+%% 模块数: 14, 依赖边数: 14
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_SEC_SCRIPTS[安全治理脚本]
+        scripts_governance_d6_security_check_protected_paths_py[".../d6_security/check_protected_paths.py [production]"]
+        scripts_governance_d6_security___ect_anchor_file_deletion_py["...curity/detect_anchor_file_deletion.py [production]"]
+        scripts_governance_d6_security_detect_git_dangerous_py["...e/d6_security/detect_git_dangerous.py [production]"]
+        scripts_governance_d6_security_detect_keywords_in_logs_py["...6_security/detect_keywords_in_logs.py [production]"]
+        scripts_governance_d6_security____permanent_file_deletion_py["...ity/detect_permanent_file_deletion.py [production]"]
+        scripts_governance_d6_security_detect_secrets_py["...ernance/d6_security/detect_secrets.py [production]"]
+        scripts_governance_d6_security_detect_shell_dangerous_py["...d6_security/detect_shell_dangerous.py [production]"]
+        scripts_governance_d6_security_detect_shell_true_py["...ance/d6_security/detect_shell_true.py [production]"]
+        scripts_governance_d6_security_detect_threading_lock_py[".../d6_security/detect_threading_lock.py [production]"]
+        scripts_governance_d6_security_detect_vague_terms_py["...nce/d6_security/detect_vague_terms.py [production]"]
+        scripts_governance_d6_security_run_adversarial_checks_py["...d6_security/run_adversarial_checks.py [production]"]
+        scripts_governance_d6_security_scan_runtime_log_secrets_py["..._security/scan_runtime_log_secrets.py [production]"]
+        scripts_governance_d6_security_scan_secret_leak_py["...nance/d6_security/scan_secret_leak.py [production]"]
+        scripts_governance_d6_security_validate_gate_discipline_py["..._security/validate_gate_discipline.py [production]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+
+    %% 跨域依赖（入）- 最多显示 30 条
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D_SEC_SCRIPTS ->  (14 条)
+    scripts_governance_d6_security_check_protected_paths_py -->|config_depends| []
+    scripts_governance_d6_security____permanent_file_deletion_py -->|config_depends| []
+    scripts_governance_d6_security___ect_anchor_file_deletion_py -->|config_depends| []
+    scripts_governance_d6_security_detect_shell_dangerous_py -->|config_depends| []
+    scripts_governance_d6_security_detect_git_dangerous_py -->|config_depends| []
+    scripts_governance_d6_security_detect_keywords_in_logs_py -->|config_depends| []
+    scripts_governance_d6_security_detect_threading_lock_py -->|config_depends| []
+    scripts_governance_d6_security_scan_runtime_log_secrets_py -->|config_depends| []
+    scripts_governance_d6_security_detect_secrets_py -->|config_depends| []
+    scripts_governance_d6_security_detect_vague_terms_py -->|config_depends| []
+    scripts_governance_d6_security_detect_shell_true_py -->|config_depends| []
+    scripts_governance_d6_security_scan_secret_leak_py -->|config_depends| []
+    scripts_governance_d6_security_validate_gate_discipline_py -->|config_depends| []
+    scripts_governance_d6_security_run_adversarial_checks_py -->|config_depends| []
+
+    %% 统计
+    %% 域内依赖: 0 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 14 条

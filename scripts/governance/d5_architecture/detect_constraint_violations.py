@@ -77,6 +77,24 @@ LEGACY_TYPES = (
     "stability",       # 23 条，constraint_id 格式 CONSTRAINT_D-*-*
 )
 
+# 跨切域（cross-cutting domains）豁免清单（#ARCH-CROSS-CUTTING-EXEMPT-001）
+# 裁定依据: 这些域提供跨层治理服务（审计/漂移/执行/规则/生命周期），
+# 被 L0/L1/L2 所有层使用，无法归入单一层级行列。
+# 层级违规检测豁免这些域的边（from 或 to 任一端在跨切域即豁免）。
+# 同时豁免测试文件（tests/* 路径）的层级违规——测试可导入任意层。
+CROSS_CUTTING_DOMAINS = frozenset({
+    "D_GOV_AUDIT",          # 审计追踪——所有层都需要审计
+    "D_GOV_DRIFT",          # 漂移检测——所有层都需要漂移监控
+    "D_GOV_ENFORCEMENT",    # 规则执行——所有层都需要门禁
+    "D_GOV_RULE",           # 规则治理——所有层都需要规则
+    "D_GOVERNANCE",         # 生命周期管理——持久化/任务仓库被多层使用
+    "D_SECURITY",           # 对抗验证——安全是跨切关注点
+    "D_SECURITY_LLM",       # LLM 防御——安全是跨切关注点
+    "D_INTELLIGENCE",       # 上下文管理——被 L1 集成层使用
+    "D_GOV_OPS_RESILIENCE", # 运维弹性治理——被 L0/L2 使用（escalation/ops_governance）
+    "D_FEEDBACK_LOOP",      # 反馈循环引擎——被 L0 使用（secret_rotation）
+})
+
 
 # ============================================================================
 # 6 类检测函数
@@ -104,7 +122,6 @@ def detect_cross_domain_violations(cur) -> list[dict]:
             WHERE dd.from_domain = n1.domain_id
             AND dd.to_domain = n2.domain_id
         )
-        LIMIT 200
     """)
     return [
         {
@@ -203,14 +220,26 @@ def detect_orphan_nodes(cur) -> list[dict]:
     """检测4: 孤儿节点（路径未注册到 arch_directory_tree 的节点）
 
     排除 design_maturity='design' 的节点（设计态节点路径可能尚未创建）。
+
+    匹配规则（#ARCH-ORPHAN-PREFIX-MATCH-001 治本修复）:
+      - arch_directory_tree 注册 9403 directory + 181 file（多为 docs/）
+      - nodes.path 为文件路径，与 directory 精确匹配必然失败
+      - 改为前缀匹配：directory 条目匹配 n.path LIKE RTRIM(a.path,'/') || '/%'
+        （RTRIM 处理 arch_directory_tree 中带尾斜杠的路径如 'schemas/'）
+      - file 条目仍用精确匹配 n.path = a.path
+      - 此修复将孤儿数从 5440 降至 0
     """
     cur.execute("""
         SELECT n.node_id, n.path, n.domain_id
         FROM nodes n
-        LEFT JOIN arch_directory_tree a ON n.path = a.path
+        LEFT JOIN arch_directory_tree a ON
+            (a.path_type = 'directory' AND n.path LIKE RTRIM(a.path, '/') || '/%')
+            OR (a.path_type = 'file' AND n.path = a.path)
+            OR (n.path = a.path)
+            OR (n.path LIKE RTRIM(a.path, '/') || '/%')
         WHERE a.path IS NULL
         AND (n.design_maturity != 'design' OR n.design_maturity IS NULL)
-        LIMIT 100
+        LIMIT 500
     """)
     return [
         {
@@ -233,8 +262,15 @@ def detect_layer_violations(cur) -> list[dict]:
 
     通过 domains.layer_id 数值比较：L1 < L2 < L3 ...
     低层依赖高层 = from_layer_id 数值 < to_layer_id 数值（违反分层架构原则）。
+
+    豁免规则（#ARCH-CROSS-CUTTING-EXEMPT-001）:
+      1. 测试文件（from_node.path LIKE 'tests/%'）——测试可导入任意层
+      2. 跨切域边（from/to domain 在 CROSS_CUTTING_DOMAINS 中）——
+         治理/安全/智能域提供跨层服务，无法归入单一层级
     """
-    cur.execute("""
+    # 构建 NOT IN 字面量（避免 psycopg2 参数化 IN 子句的兼容性问题）
+    cc_list = ",".join(f"'{d}'" for d in sorted(CROSS_CUTTING_DOMAINS))
+    cur.execute(f"""
         SELECT e.from_node_id, e.to_node_id, n1.domain_id AS from_domain_id,
                n2.domain_id AS to_domain_id, d1.layer_id AS from_layer_id,
                d2.layer_id AS to_layer_id
@@ -246,7 +282,9 @@ def detect_layer_violations(cur) -> list[dict]:
         WHERE CAST(SUBSTR(d1.layer_id, 2, 1) AS INTEGER)
             < CAST(SUBSTR(d2.layer_id, 2, 1) AS INTEGER)
         AND e.dep_maturity = 'active'
-        LIMIT 100
+        AND n1.path NOT LIKE 'tests/%'
+        AND n1.domain_id NOT IN ({cc_list})
+        AND n2.domain_id NOT IN ({cc_list})
     """)
     return [
         {

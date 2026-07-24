@@ -1,0 +1,209 @@
+%% D_CONTRACTS 域全景依赖图
+%% 生成时间: 2026-07-25 01:21:14
+%% 数据源: depgraph (PostgreSQL) nodes表 + edges表
+%% 模块数: 50, 依赖边数: 158
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_CONTRACTS[共享契约]
+        src_zephyr_shared_contracts_backpressure__types_py["...ared/contracts/backpressure/_types.py [production]"]
+        src_zephyr_shared_contracts_backpressure_pause_py["...hared/contracts/backpressure/pause.py [production]"]
+        src_zephyr_shared_contracts_backpressure_resume_py["...ared/contracts/backpressure/resume.py [production]"]
+        src_zephyr_shared_contracts_backpressure_throttle_py["...ed/contracts/backpressure/throttle.py [production]"]
+        src_zephyr_shared_contracts_contract_bus_py["...phyr/shared/contracts/contract_bus.py [production]"]
+        src_zephyr_shared_contracts_core_base_event_py["...r/shared/contracts/core/base_event.py [production]"]
+        src_zephyr_shared_contracts_core_enforcer_py["...hyr/shared/contracts/core/enforcer.py [production]"]
+        src_zephyr_shared_contracts_core_factories_py["...yr/shared/contracts/core/factories.py [production]"]
+        src_zephyr_shared_contracts_core_gate_types_py["...r/shared/contracts/core/gate_types.py [production]"]
+        src_zephyr_shared_contracts_core_registry_py["...hyr/shared/contracts/core/registry.py [production]"]
+        src_zephyr_shared_contracts_core_runtime_plane_tag_py["...d/contracts/core/runtime_plane_tag.py [production]"]
+        src_zephyr_shared_contracts_core_system_configuration_py["...ontracts/core/system_configuration.py [production]"]
+        src_zephyr_shared_contracts_core_timestamp_py["...yr/shared/contracts/core/timestamp.py [production]"]
+        src_zephyr_shared_contracts_core_trace_context_py["...hared/contracts/core/trace_context.py [production]"]
+        src_zephyr_shared_contracts_enums___init___py["...yr/shared/contracts/enums/__init__.py [production]"]
+        src_zephyr_shared_contracts_enums_order_enums_py["...shared/contracts/enums/order_enums.py [production]"]
+        src_zephyr_shared_contracts_er___contract_violation_error_py["...ts/errors/contract_violation_error.py [production]"]
+        src_zephyr_shared_contracts_errors_data_quality_error_py["...ontracts/errors/data_quality_error.py [production]"]
+        src_zephyr_shared_contracts_er___xecution_rejection_error_py["...s/errors/execution_rejection_error.py [production]"]
+        src_zephyr_shared_contracts_er___factor_computation_error_py["...ts/errors/factor_computation_error.py [production]"]
+        src_zephyr_shared_contracts_er___sk_limit_violation_error_py[".../errors/risk_limit_violation_error.py [production]"]
+        src_zephyr_shared_contracts_er___gnal_degradation_warning_py[".../errors/signal_degradation_warning.py [production]"]
+        src_zephyr_shared_contracts_escalation_budget_alert_py[".../contracts/escalation/budget_alert.py [production]"]
+        src_zephyr_shared_contracts_ex___apital_allocation_result_py["...xecution/capital_allocation_result.py [production]"]
+        src_zephyr_shared_contracts_execution_execution_report_py["...ntracts/execution/execution_report.py [production]"]
+        src_zephyr_shared_contracts_execution_fill_py["...yr/shared/contracts/execution/fill.py [production]"]
+        src_zephyr_shared_contracts_ex___on_model_serving_request_py["...ts/execution/model_serving_request.py [production]"]
+        src_zephyr_shared_contracts_execution_order_py["...r/shared/contracts/execution/order.py [production]"]
+        src_zephyr_shared_contracts_experiment_experiment_result_py["...racts/experiment/experiment_result.py [production]"]
+        src_zephyr_shared_contracts_ex___t_model_serving_response_py[".../experiment/model_serving_response.py [production]"]
+        src_zephyr_shared_contracts_external_ext_001_py[".../shared/contracts/external/ext_001.py [production]"]
+        src_zephyr_shared_contracts_external_ext_002_py[".../shared/contracts/external/ext_002.py [production]"]
+        src_zephyr_shared_contracts_external_ext_003_py[".../shared/contracts/external/ext_003.py [production]"]
+        src_zephyr_shared_contracts_external_ext_004_py[".../shared/contracts/external/ext_004.py [production]"]
+        src_zephyr_shared_contracts_identity_agent_identity_py[".../contracts/identity/agent_identity.py [production]"]
+        src_zephyr_shared_contracts_identity_permission_py["...ared/contracts/identity/permission.py [production]"]
+        src_zephyr_shared_contracts_llm_gateway_protocol_py["...red/contracts/llm_gateway_protocol.py [production]"]
+        src_zephyr_shared_contracts_market_instrument_py["...shared/contracts/market/instrument.py [production]"]
+        src_zephyr_shared_contracts_orchestration_protocol_py["...d/contracts/orchestration_protocol.py [production]"]
+        src_zephyr_shared_contracts_portfolio_money_py["...r/shared/contracts/portfolio/money.py [production]"]
+        src_zephyr_shared_contracts_po___mance_attribution_report_py["...lio/performance_attribution_report.py [production]"]
+        src_zephyr_shared_contracts_portfolio_position_py["...hared/contracts/portfolio/position.py [production]"]
+        src_zephyr_shared_contracts_risk_compliance_rule_py["...red/contracts/risk/compliance_rule.py [production]"]
+        src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["...racts/risk/risk_dashboard_snapshot.py [production]"]
+        src_zephyr_shared_contracts_risk_risk_limits_py[".../shared/contracts/risk/risk_limits.py [production]"]
+        src_zephyr_shared_contracts_risk_risk_metrics_py["...shared/contracts/risk/risk_metrics.py [production]"]
+        src_zephyr_shared_contracts_risk_risk_validator_protocol_py["...racts/risk/risk_validator_protocol.py [production]"]
+        src_zephyr_shared_contracts_security_security_decision_py["...ntracts/security/security_decision.py [production]"]
+        src_zephyr_shared_contracts_skill_protocol_py["...yr/shared/contracts/skill_protocol.py [production]"]
+        src_zephyr_shared_contracts_task_repository_protocol_py["...contracts/task_repository_protocol.py [production]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_shared_contracts_backpressure_pause_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_throttle_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure__types_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_resume_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_enums___init___py -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    src_zephyr_shared_contracts_er___gnal_degradation_warning_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_er___xecution_rejection_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_er___factor_computation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_er___contract_violation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_er___sk_limit_violation_error_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_experiment_experiment_result_py -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %%  -> D_CONTRACTS (70 条)
+    [] -->|import_depends| src_zephyr_shared_contracts_core_enforcer_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_factories_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_registry_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_system_configuration_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    [] -->|import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
+    [] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
+    [] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    [] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
+    [] -->|import_depends| src_zephyr_shared_contracts_portfolio_money_py
+    [] -->|import_depends| src_zephyr_shared_contracts_po___mance_attribution_report_py
+    [] -->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
+    [] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    [] -->|import_depends| src_zephyr_shared_contracts_backpressure_pause_py
+    [] -->|import_depends| src_zephyr_shared_contracts_backpressure_resume_py
+    [] -->|import_depends| src_zephyr_shared_contracts_backpressure_throttle_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_base_event_py
+    [] -->|import_depends| src_zephyr_shared_contracts_core_gate_types_py
+    [] -->|import_depends| src_zephyr_shared_contracts_er___contract_violation_error_py
+    [] -->|import_depends| src_zephyr_shared_contracts_errors_data_quality_error_py
+    [] -->|import_depends| src_zephyr_shared_contracts_er___xecution_rejection_error_py
+    [] -->|import_depends| src_zephyr_shared_contracts_er___factor_computation_error_py
+    [] -->|import_depends| src_zephyr_shared_contracts_er___sk_limit_violation_error_py
+    [] -->|import_depends| src_zephyr_shared_contracts_er___gnal_degradation_warning_py
+    [] -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    [] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    [] -->|import_depends| src_zephyr_shared_contracts_identity_permission_py
+    [] -->|import_depends| src_zephyr_shared_contracts_market_instrument_py
+    %% D_BACKTEST -> D_CONTRACTS (1 条)
+    D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    %% D_EX_CORE -> D_CONTRACTS (1 条)
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    %% D_GOVERNANCE -> D_CONTRACTS (4 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_experiment_experiment_result_py
+    %% D_GOV_OPS_RESILIENCE -> D_CONTRACTS (2 条)
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    %% D_INFRASTRUCTURE -> D_CONTRACTS (9 条)
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    %% D_INFRA_RUNTIME -> D_CONTRACTS (4 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    %% D_INTEGRATION -> D_CONTRACTS (8 条)
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    %% D_INTELLIGENCE -> D_CONTRACTS (1 条)
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
+    %% D_ML_TRAIN -> D_CONTRACTS (2 条)
+    D_ML_TRAIN[D_ML_TRAIN] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
+    D_ML_TRAIN[D_ML_TRAIN] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
+    %% D_OPS -> D_CONTRACTS (1 条)
+    D_OPS[D_OPS] -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    %% D_ORCHESTRATOR -> D_CONTRACTS (4 条)
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
+    %% D_PF_ALLOC -> D_CONTRACTS (1 条)
+    D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    %% D_SECURITY -> D_CONTRACTS (1 条)
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    %% D_SECURITY_LLM -> D_CONTRACTS (11 条)
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_SECURITY_LLM[D_SECURITY_LLM] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
+    %% D_SHARED -> D_CONTRACTS (2 条)
+    D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    D_SHARED[D_SHARED] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    %% D_TRADING -> D_CONTRACTS (10 条)
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_core_system_configuration_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_portfolio_money_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D_CONTRACTS ->  (9 条)
+    src_zephyr_shared_contracts_contract_bus_py -->|config_depends| []
+    src_zephyr_shared_contracts_ex___apital_allocation_result_py -->|config_depends| []
+    src_zephyr_shared_contracts_execution_fill_py -->|config_depends| []
+    src_zephyr_shared_contracts_ex___on_model_serving_request_py -->|config_depends| []
+    src_zephyr_shared_contracts_execution_order_py -->|config_depends| []
+    src_zephyr_shared_contracts_execution_execution_report_py -->|config_depends| []
+    src_zephyr_shared_contracts_external_ext_001_py -->|config_depends| []
+    src_zephyr_shared_contracts_external_ext_003_py -->|config_depends| []
+    src_zephyr_shared_contracts_external_ext_004_py -->|config_depends| []
+    %% D_CONTRACTS -> D_INFRASTRUCTURE (1 条)
+    src_zephyr_shared_contracts_po___mance_attribution_report_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    %% D_CONTRACTS -> D_SHARED (4 条)
+    src_zephyr_shared_contracts_core_registry_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_core_registry_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_core_registry_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_core_timestamp_py -->|import_depends| D_SHARED[D_SHARED]
+
+    %% 统计
+    %% 域内依赖: 12 条
+    %% 跨域入边: 132 条
+    %% 跨域出边: 14 条

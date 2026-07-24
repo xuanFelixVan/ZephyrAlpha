@@ -1,0 +1,71 @@
+%% D_ARCH_GUARD 域全景依赖图
+%% 生成时间: 2026-07-25 01:21:14
+%% 数据源: depgraph (PostgreSQL) nodes表 + edges表
+%% 模块数: 25, 依赖边数: 24
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_ARCH_GUARD[架构守护脚本]
+        scripts_arch_guard__arch_ssot_py["scripts/arch_guard/_arch_ssot.py [production]"]
+        scripts_arch_guard__tools_build_ocp_manifest_py["...ch_guard/_tools/build_ocp_manifest.py [production]"]
+        scripts_arch_guard__tools_inject_idempotency_py["...ch_guard/_tools/inject_idempotency.py [production]"]
+        scripts_arch_guard__tools_patch_p1_paths_py["...s/arch_guard/_tools/patch_p1_paths.py [production]"]
+        scripts_arch_guard_check_acl_boundary_py["scripts/arch_guard/check_acl_boundary.py [production]"]
+        scripts_arch_guard_check_cross_plane_communication_py["...rd/check_cross_plane_communication.py [production]"]
+        scripts_arch_guard_check_fe_acl_boundary_py["...s/arch_guard/check_fe_acl_boundary.py [production]"]
+        scripts_arch_guard_check_hot_path_purity_py["...s/arch_guard/check_hot_path_purity.py [production]"]
+        scripts_arch_guard_check_scaffold_exit_gates_py["...ch_guard/check_scaffold_exit_gates.py [production]"]
+        scripts_arch_guard_check_schema_consistency_py["...rch_guard/check_schema_consistency.py [production]"]
+        scripts_arch_guard_fitness_functions_check_aisg_gateway_py["...tness_functions/check_aisg_gateway.py [production]"]
+        scripts_arch_guard_fitness_fun___k_audit_log_immutability_py["...tions/check_audit_log_immutability.py [production]"]
+        scripts_arch_guard_fitness_fun____check_capacity_slo_ssot_py["..._functions/check_capacity_slo_ssot.py [production]"]
+        scripts_arch_guard_fitness_fun___s_check_daily_loss_limit_py["...s_functions/check_daily_loss_limit.py [production]"]
+        scripts_arch_guard_fitness_functions_check_hot_warm_ipc_py["...tness_functions/check_hot_warm_ipc.py [production]"]
+        scripts_arch_guard_fitness_fun___ns_check_idempotency_key_py["...ss_functions/check_idempotency_key.py [production]"]
+        scripts_arch_guard_fitness_fun___ns_check_log_secret_leak_py["...ss_functions/check_log_secret_leak.py [production]"]
+        scripts_arch_guard_fitness_fun___ross_plane_mutable_state_py["...check_no_cross_plane_mutable_state.py [production]"]
+        scripts_arch_guard_fitness_functions_check_ocp_signatures_py["...ess_functions/check_ocp_signatures.py [production]"]
+        scripts_arch_guard_fitness_functions_check_pit_compliance_py["...ess_functions/check_pit_compliance.py [production]"]
+        scripts_arch_guard_fitness_functions_check_position_limit_py["...ess_functions/check_position_limit.py [production]"]
+        scripts_arch_guard_fitness_fun____risk_params_consistency_py["...ions/check_risk_params_consistency.py [production]"]
+        scripts_arch_guard_fitness_fun____check_survivorship_bias_py["..._functions/check_survivorship_bias.py [production]"]
+        scripts_arch_guard_fitness_fun___ns_check_warm_cold_async_py["...ss_functions/check_warm_cold_async.py [production]"]
+        scripts_arch_guard_run_all_py["scripts/arch_guard/run_all.py [production]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    scripts_arch_guard__tools_build_ocp_manifest_py -->|config_depends| scripts_arch_guard__tools_patch_p1_paths_py
+    scripts_arch_guard__tools_inject_idempotency_py -->|config_depends| scripts_arch_guard__tools_build_ocp_manifest_py
+
+    %% 跨域依赖（入）- 最多显示 30 条
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D_ARCH_GUARD ->  (22 条)
+    scripts_arch_guard_check_cross_plane_communication_py -->|config_depends| []
+    scripts_arch_guard_check_acl_boundary_py -->|config_depends| []
+    scripts_arch_guard_check_hot_path_purity_py -->|config_depends| []
+    scripts_arch_guard_check_scaffold_exit_gates_py -->|config_depends| []
+    scripts_arch_guard_check_fe_acl_boundary_py -->|config_depends| []
+    scripts_arch_guard__arch_ssot_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun___k_audit_log_immutability_py -->|config_depends| []
+    scripts_arch_guard_check_schema_consistency_py -->|config_depends| []
+    scripts_arch_guard_run_all_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun____check_capacity_slo_ssot_py -->|config_depends| []
+    scripts_arch_guard_fitness_functions_check_aisg_gateway_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun___s_check_daily_loss_limit_py -->|config_depends| []
+    scripts_arch_guard_fitness_functions_check_hot_warm_ipc_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun___ns_check_idempotency_key_py -->|config_depends| []
+    scripts_arch_guard_fitness_functions_check_ocp_signatures_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun___ns_check_log_secret_leak_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun___ross_plane_mutable_state_py -->|config_depends| []
+    scripts_arch_guard_fitness_functions_check_pit_compliance_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun___ns_check_warm_cold_async_py -->|config_depends| []
+    scripts_arch_guard_fitness_functions_check_position_limit_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun____risk_params_consistency_py -->|config_depends| []
+    scripts_arch_guard_fitness_fun____check_survivorship_bias_py -->|config_depends| []
+
+    %% 统计
+    %% 域内依赖: 2 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 22 条
