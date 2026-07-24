@@ -137,7 +137,7 @@ ttl: permanent
 | C7 | 回测仿真 | 4 | 33 | 33 | 0 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1000 | 971 | 29 | 2.79 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 813 | 811 | 2 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 809 | 807 | 2 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -193,7 +193,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | CC3 | L0_infrastructure | 72 | 72 | 0 | 28 | L3 🟢 | ✅ |
 | D_INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L0_infrastructure | 54 | 54 | 0 | 48 | L3 🟢 | ✅ |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 161 | 160 | 1 | 119 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 157 | 156 | 1 | 115 | L3 🟢 | ✅ |
 | D_INFRA_TELEMETRY | 可观测性 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INTEGRATION | 管线路由 | CC3 | L1_foundation | 71 | 71 | 0 | 39 | L3 🟢 | ✅ |
 | D_INTEGRATION_GATEWAY | 集成网关 | CC3 | L1_foundation | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -273,7 +273,7 @@ ttl: permanent
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 24 |
 | D_INFRA_A2A | A2A通信 | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L3 | 54 |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 161 |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 157 |
 | D_INTEGRATION | 管线路由 | CC3 | L3 | 71 |
 | D_INTELLIGENCE | 上下文管理 | CC3 | L3 | 28 |
 | D_OPS | 反馈循环 | CC3 | L3 | 9 |

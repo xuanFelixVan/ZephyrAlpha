@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2720 | 97.1% |
+| production（生产态） | 2718 | 97.1% |
 | design（设计态） | 80 | 2.9% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2800** | **100%** |
+| **总计** | **2798** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 3892 | 139.0% |
-| stable | 1614 | 57.6% |
+| generated | 3866 | 138.2% |
+| stable | 1610 | 57.5% |
 | planned | 74 | 2.6% |
 | deprecated | 4 | 0.1% |
 
@@ -47,7 +47,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 | 0 | 0 | 0 | 0 | N/A |
 | D_COMPLIANCE | 合规 | 2 | 2 | 0 | 0 | 100.0% |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 81 | 78 | 3 | 0 | 96.3% |
+| D_DATA | 数据接入层 | 83 | 80 | 3 | 0 | 96.4% |
 | D_DATA_ENG | 数据工程 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DATA_GOV | 数据治理 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DATA_SEC | 数据安全与契约 | 7 | 7 | 0 | 0 | 100.0% |
@@ -76,7 +76,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 161 | 160 | 1 | 0 | 99.4% |
+| D_INFRA_RUNTIME | 运行时集成 | 157 | 156 | 1 | 0 | 99.4% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
 | D_INTEGRATION | 管线路由 | 71 | 71 | 0 | 0 | 100.0% |
 | D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | N/A |
@@ -109,9 +109,9 @@ ttl: permanent
 | D_GOV_DOCS | 架构文档治理 | 26 | 2 | 7.7% |
 | D_FACTOR | 因子 | 50 | 5 | 10.0% |
 | D_ML_TRAIN | 训练 | 4 | 3 | 75.0% |
-| D_DATA | 数据接入层 | 81 | 78 | 96.3% |
+| D_DATA | 数据接入层 | 83 | 80 | 96.4% |
 | D_GOV_AUDIT | 审计追踪 | 124 | 121 | 97.6% |
 | D_GOV_DRIFT | 漂移检测 | 75 | 74 | 98.7% |
-| D_INFRA_RUNTIME | 运行时集成 | 161 | 160 | 99.4% |
+| D_INFRA_RUNTIME | 运行时集成 | 157 | 156 | 99.4% |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 168 | 99.4% |
 | D_ALT_DATA | 另类数据 | 7 | 7 | 100.0% |

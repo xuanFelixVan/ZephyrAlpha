@@ -32,7 +32,7 @@ ttl: permanent
 | D_GOVERNANCE | 生命周期管理 | 219 | 150 | +69 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 168 | 150 | +18 |
 | D_GOV_SCRIPTS | 脚本治理 | 377 | 150 | +227 |
-| D_INFRA_RUNTIME | 运行时集成 | 160 | 150 | +10 |
+| D_INFRA_RUNTIME | 运行时集成 | 156 | 150 | +6 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
 
@@ -69,7 +69,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 |  | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | 合规 |  | 2 | 150 | 1.3% | 正常 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 7 | 150 | 4.7% | 正常 |
-| D_DATA | 数据接入层 |  | 78 | 150 | 52.0% | 正常 |
+| D_DATA | 数据接入层 |  | 80 | 150 | 53.3% | 正常 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_SEC | 数据安全与契约 | L1_foundation | 7 | 150 | 4.7% | 正常 |
@@ -98,7 +98,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 55 | 150 | 36.7% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 160 | 150 | 106.7% | 超容 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 156 | 150 | 104.0% | 超容 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |

@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-07-24 14:31:13
+> 自动生成时间: 2026-07-24 15:43:10
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 240
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-07-24 14:31:13
+%% 生成时间: 2026-07-24 15:43:10
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 240
 
@@ -20,7 +20,7 @@ graph LR
         D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信<br/>(72模块)"]
         D_INFRA_OPS["D_INFRA_OPS<br/>基础设施运维<br/>(0模块)"]
         D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复<br/>(55模块)"]
-        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(161模块)"]
+        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(157模块)"]
         D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性<br/>(0模块)"]
     end
     subgraph L1_foundation[L1_foundation]
@@ -82,7 +82,7 @@ graph LR
     subgraph unknown[unknown]
         D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT<br/>行为审计<br/>(0模块)"]
         D_COMPLIANCE["D_COMPLIANCE<br/>合规<br/>(2模块)"]
-        D_DATA["D_DATA<br/>数据接入层<br/>(81模块)"]
+        D_DATA["D_DATA<br/>数据接入层<br/>(83模块)"]
         D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施<br/>(26模块)"]
         D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态<br/>(0模块)"]
     end
@@ -177,23 +177,23 @@ graph LR
     D_TRADING -->|4条 import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME -->|3条 import_depends| D_GOV_DRIFT
     D_INFRA_RUNTIME -->|3条 import_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME -->|3条 import_depends| D_FEEDBACK_LOOP
     D_GOV_REPAIR -->|3条 import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_REPAIR -->|3条 import_depends| D_OPS
-    D_BACKTEST -->|3条 import_depends| D_SHARED
+    D_RISK -->|3条 import_depends| D_TRADING
     D_GOV_DRIFT -->|3条 import_depends| D_SECURITY
     D_GOV_RULE -->|3条 config_depends| D_GOV_DRIFT
+    D_INFRA_RUNTIME -->|3条 import_depends| D_FEEDBACK_LOOP
     D_FEEDBACK_LOOP -->|3条 import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE -->|3条 import_depends| D_GOV_DRIFT
     D_GOV_ENFORCEMENT -->|3条 import_depends| D_GOVERNANCE
     D_GOVERNANCE -->|3条 import_depends| D_GOV_CODE_QUALITY
-    D_ORCHESTRATOR -->|3条 import_depends| D_GOVERNANCE
+    D_BACKTEST -->|3条 import_depends| D_SHARED
     %% ... 还有 140 条跨域依赖未显示
 
     %% 统计
     %% 域总数: 62
     %% 跨域依赖对数: 240
-    %% 跨域依赖边总数: 1606
+    %% 跨域依赖边总数: 1607
 
     %% Top 10 依赖对
     %% 1. D_INFRA_RUNTIME -> D_SHARED: 155 条
