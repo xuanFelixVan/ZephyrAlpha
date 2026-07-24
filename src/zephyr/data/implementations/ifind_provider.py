@@ -1189,9 +1189,11 @@ class IFindProvider(DataSourceBase):
             return (None, None)
 
         # 检查错误码
-        is_error, code, msg = self._check_ifind_error(raw)
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
         if is_error:
-            if code in (-4318, -4309):
+            if self._handle_auth_error(code):
+                return (None, code)
+            elif code in (-4318, -4309):
                 return (None, code)
             self._log.warning(f"EDB iFind错误: {code} {msg}")
             return (None, None)
@@ -1279,9 +1281,16 @@ class IFindProvider(DataSourceBase):
             return
 
         # 检查错误码
-        is_error, code, msg = self._check_ifind_error(raw)
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
         if is_error:
-            if code in (-4318, -4309):
+            if self._handle_auth_error(code):
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=f"iFind登录过期({code})，已标记重连",
+                )
+                return
+            elif code in (-4318, -4309):
                 yield FetchResult(
                     table=table, columns=columns, rows=[], last_key=last_key,
                     elapsed_sec=time.time() - start_ts,
@@ -1374,9 +1383,12 @@ class IFindProvider(DataSourceBase):
                 fatal_error = str(e)
                 break
 
-            is_error, code, msg = self._check_ifind_error(raw)
+            is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
             if is_error:
-                if code in (-4318, -4309):
+                if self._handle_auth_error(code):
+                    fatal_error = f"iFind登录过期({code})，已标记重连"
+                    break
+                elif code in (-4318, -4309):
                     fatal_error = f"iFind配额耗尽: {code}"
                     break
                 # -209 表示不支持该指标，跳过
@@ -1449,9 +1461,16 @@ class IFindProvider(DataSourceBase):
             return
 
         # 检查错误码
-        is_error, code, msg = self._check_ifind_error(raw)
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
         if is_error:
-            if code in (-4318, -4309):
+            if self._handle_auth_error(code):
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=today_str,
+                    elapsed_sec=time.time() - start_ts,
+                    error=f"iFind登录过期({code})，已标记重连",
+                )
+                return
+            elif code in (-4318, -4309):
                 yield FetchResult(
                     table=table, columns=columns, rows=[], last_key=today_str,
                     elapsed_sec=time.time() - start_ts,
@@ -1657,9 +1676,11 @@ class IFindProvider(DataSourceBase):
             return ([], f"THS_RealtimeQuotes 调用异常: {e}")
 
         # 检查错误码
-        is_error, code, msg = self._check_ifind_error(raw)
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
         if is_error:
-            if code in (-4318, -4309):
+            if self._handle_auth_error(code):
+                return ([], f"iFind登录过期({code})，已标记重连")
+            elif code in (-4318, -4309):
                 return ([], f"iFind配额耗尽: {code}")
             # -4001 表示无数据（非交易时段），不视为致命错误
             if code == -4001:
@@ -2058,8 +2079,15 @@ class IFindProvider(DataSourceBase):
             )
             return
 
-        is_error, code, msg = self._check_ifind_error(raw)
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
         if is_error:
+            if self._handle_auth_error(code):
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=today_str,
+                    elapsed_sec=time.time() - t0,
+                    error=f"iFind登录过期({code})，已标记重连",
+                )
+                return
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=today_str,
                 elapsed_sec=time.time() - t0,

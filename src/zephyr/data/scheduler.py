@@ -1085,11 +1085,30 @@ class IntegratorScheduler:
     def _validate_provider_and_policy(
         self, task_id: str, source: str,
     ) -> tuple[object, object | None, str | None]:
-        """验证 Provider 可用性和熔断状态。返回 (provider, policy, error)。"""
+        """验证 Provider 可用性和熔断状态。返回 (provider, policy, error)。
+
+        治本修复 #ARCH-IFIND-AUTO-RECONNECT（2026-07-24）：
+        当 Provider 标记 _connected=False（如 iFind -1010 登录过期后自动标记），
+        自动尝试重连，避免后续任务全部失败直到人工干预。
+        """
         provider = self._get_provider(source)
         if provider is None:
             self._alerter.notify(task_id, f"Provider {source} 不可用", level=LEVEL_ERROR, source=source)
             return None, None, f"Provider {source} 不可用"
+
+        # 自动重连：如果 Provider 已断开连接（如 iFind 会话过期 -1010），尝试重连
+        if hasattr(provider, '_connected') and not provider._connected:
+            log.warning("Provider %s 连接已断开，尝试自动重连...", source)
+            try:
+                provider.connect()
+                log.info("Provider %s 自动重连成功", source)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.error("Provider %s 自动重连失败: %s", source, e)
+                self._alerter.notify(
+                    task_id, f"Provider {source} 自动重连失败: {e}",
+                    level=LEVEL_ERROR, source=source,
+                )
+                return None, None, f"Provider {source} 自动重连失败: {e}"
 
         policy = self._policy_registry.get_policy(source)
         # 熔断检查（CLI `integrator pause <source>` 生效点）
