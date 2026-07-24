@@ -5134,6 +5134,35 @@ capabilities:
     integrity_anchors:
       - make_in_process_gate_registry_drift_reconciler  # reconciler 工厂(删则漂移检测失效)
 
+  # --------------------------------------------------------------------------
+  # --- 因子工厂四图设计态补全（2026-07-24，四图对齐铁律 TRAE-080）---
+  - capability_id: factor_design_state_complete
+    aliases:
+      - factor_state_complete
+      - factor_four_graph_design
+      - factor_design_state
+    description: >-
+      因子工厂四图设计态补全一次性脚本。canonical =
+      scripts/governance/oneoff/factor_design_state_complete.py（auto 派生：
+      basename factor_design_state_complete 匹配 capability_id）。
+      功能：补全 50 个 D_FACTOR 节点的 subdomain_id（扁平分组 FAC-CORE/ASHARE/
+      ANALYSIS/GOV/BARRA/MINE）+ 删除 2 条 barra 反向设计态边 + 新增 43 条域内
+      设计态依赖边 + 24 个 GATE 添加 gate_reason 注解。depgraph 修改通过
+      apply_depgraph.py 受控函数（_load_depgraph/_atomic_write/add_edge/delete_edge）。
+      域：D_FACTOR。一次性脚本（MATURITY=oneoff），已执行完毕。
+      解决发现性：新 AI 通过 capability_lookup.find("factor_design_state") 可定位真源。
+
+  # --------------------------------------------------------------------------
+  - capability_id: data_domain_design_state_complete
+    aliases:
+      - data_domain_state_complete
+      - data_domain_four_graph_design
+    description: >-
+      数据域四图设计态补全一次性脚本。canonical =
+      scripts/governance/oneoff/data_domain_design_state_complete.py。
+      功能：补全数据域 subdomain_id + 登记 design 节点 + 修复契约 fulfillment_status。
+      域：D_DATA。一次性脚本（MATURITY=oneoff），已执行完毕。
+
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
@@ -5162,6 +5191,44 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+
+  # --- DDL-as-Code 真源回写 Wave 1（2026-07-25，#ARCH-CH-025 Schema 真源体系收口；P0-8 八表 DB 已 ReplacingMergeTree 但无真源，补齐 + 治本校验脚本）---
+  - file: "scripts/ch/verify_schema_truth.py"
+    token: "auto-schema-truth-verifier-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "schema_truth_verifier"
+  - file: "schemas/categories/fundamental_analyst_forecast.py"
+    token: "auto-ddl-truth-c3-analyst-forecast-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_disclosure_plan.py"
+    token: "auto-ddl-truth-c3-disclosure-plan-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_equity_pledge_detail.py"
+    token: "auto-ddl-truth-c3-equity-pledge-detail-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_industry_class_suppl.py"
+    token: "auto-ddl-truth-c3-industry-class-suppl-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_restricted_shares.py"
+    token: "auto-ddl-truth-c3-restricted-shares-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_rights_issue.py"
+    token: "auto-ddl-truth-c3-rights-issue-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_share_change.py"
+    token: "auto-ddl-truth-c3-share-change-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/fundamental_share_unlock.py"
+    token: "auto-ddl-truth-c3-share-unlock-20260725"
+    created_by: "session-sess-78404-20260725001033"
+    capability: "ddl_truth_source_c3"
 
   # --- 数据服务 watchdog 注册脚本（2026-07-23，guard-of-guard 治本：Task Scheduler OS 级看护）---
   - file: "scripts/register_guard_tasks.ps1"
@@ -7016,6 +7083,13 @@ creation_tokens:
     token: "auto-data-domain-audit-report-db-20260724"
     created_by: "session-sess-51376-20260724162054"
     capability: "data_domain_audit_report_db"
+
+  # --- 因子工厂四图设计态补全（2026-07-24，四图对齐铁律 TRAE-080）---
+  # 一次性脚本：补全50个D_FACTOR节点subdomain_id + 删2条barra反向边 + 新增43条域内依赖边 + 24个GATE注解
+  - file: "scripts/governance/oneoff/factor_design_state_complete.py"
+    token: "auto-factor-design-state-complete-20260724"
+    created_by: "session-sess-76608-20260725001258"
+    capability: "factor_design_state_complete"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

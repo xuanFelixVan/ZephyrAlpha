@@ -3162,6 +3162,73 @@ def _restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_
     )
 
 
+def _warn_uncommitted_governance_scripts() -> None:
+    """治本(#ARCH-DEPGRAPH-BACKUP-FIRST-CHECK, 2026-07-24)：备份先行 pre-write WARNING。
+
+    扫描 scripts/governance/*.py 是否有未提交的 git 变更（modified/untracked），
+    若有则打印显著 WARNING 提示"建议先 git commit 再执行 DB 修改"。
+
+    设计决策——WARNING 而非 BLOCK：
+    - 项目原则"永久系统禁止需手工干预"——硬阻断破坏自动化流程（reconciler 自动修复等）
+    - 100% AI 开发场景下 AI 看到 WARNING 会自觉调整（君子协定+技术提示双重防御）
+    - 硬阻断误报风险高（scripts/governance/ 下常有无关未提交变更）
+    - 与项目其他 fail-open + 审计可见的 gate/reconciler 设计一致
+
+    对标 trae_054 STEP0："修改 depgraph 前置备份"——backup_pg_depgraph() 覆盖数据备份
+    （pg_dump），本函数覆盖脚本备份（git commit），形成"数据备份+脚本备份"双层防线。
+    """
+    import subprocess as _sp
+    import os as _os
+
+    _repo_root = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+    _gov_dir = _os.path.join(_repo_root, "scripts", "governance")
+
+    try:
+        # 检查 scripts/governance/ 下 tracked 文件的未提交修改
+        result = _sp.run(
+            ["git", "status", "--short", "--", "scripts/governance/"],
+            capture_output=True, text=True, cwd=_repo_root,
+            encoding="utf-8", errors="replace", timeout=10,
+        )
+        if result.returncode != 0 or not result.stdout.strip():
+            return  # 无变更或 git 不可用，静默通过
+
+        _lines = [l for l in result.stdout.splitlines() if l.strip()]
+        if not _lines:
+            return
+
+        # 过滤 auto-sync 产物（后台进程持续更新的派生文件，非脚本备份范畴）
+        _real_changes = []
+        for _line in _lines:
+            _status = _line[:2]
+            _path = _line[3:].strip().strip('"').replace("\\", "/")
+            # 跳过 .runtime/ 等非脚本变更
+            if _path.startswith(".runtime/"):
+                continue
+            _real_changes.append((_status, _path))
+
+        if _real_changes:
+            print(
+                "=" * 70,
+                "[BACKUP-FIRST-WARN] #ARCH-DEPGRAPH-BACKUP-FIRST-CHECK",
+                f"检测到 {len(_real_changes)} 个 scripts/governance/ 下未提交变更：",
+                sep="\n",
+            )
+            for _status, _path in _real_changes[:10]:
+                print(f"  {_status} {_path}")
+            if len(_real_changes) > 10:
+                print(f"  ... 及其他 {len(_real_changes) - 10} 个文件")
+            print(
+                "  ⚠ 建议：先 git commit 脚本再执行 DB 修改（trae_054 STEP0 备份先行铁律）。\n"
+                "  若脚本有 bug，未提交则无法 git checkout 回滚到上一可用版本。\n"
+                "  （本检查为 WARNING 不阻断——自动化流程可继续，但请尽快提交）",
+                "=" * 70,
+                sep="\n",
+            )
+    except Exception:  # noqa: BLE001 — fail-open，不阻断写入
+        pass
+
+
 def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移
 
@@ -3174,6 +3241,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     SQLite 路径写入，违反 depgraph 必须为 PostgreSQL 的硬约束）。
     """
     from datetime import datetime
+
+    # 治本(#ARCH-DEPGRAPH-BACKUP-FIRST-CHECK)：备份先行 pre-write WARNING
+    # 检查 scripts/governance/ 下是否有未提交变更，WARNING 提示先 commit 再改 DB
+    _warn_uncommitted_governance_scripts()
 
     print(f"[DEPGRAPH-DB] Writing to depgraph (PostgreSQL)...")
     conn = None  # DM-3004: 预初始化None，防御性编程
@@ -3324,6 +3395,18 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 治本(2026-07-23, 问题B)：在 production 节点删除前快照 apply_depgraph design 边，
         # 捕获端点 path，供 rebuild 后按 path 重映射重插（FK CASCADE 会删除 design↔production 边）
         _design_edge_snapshot = _snapshot_apply_depgraph_design_edges(cursor)
+
+        # 治本(2026-07-24, #ARCH-DEPGRAPH-PRESERVE-ATTRS)：在 production 节点删除前快照
+        # 手动设置的 subdomain_id/gate_reason，防止 DELETE+INSERT 重建时丢失
+        # （文件系统扫描不产生这些字段，REPLACE 后变 NULL）
+        _manual_attrs_snapshot = {}
+        cursor.execute(
+            "SELECT path, subdomain_id, gate_reason FROM nodes "
+            "WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
+            "AND (subdomain_id IS NOT NULL OR (gate_reason IS NOT NULL AND gate_reason <> ''))"
+        )
+        for _row in cursor.fetchall():
+            _manual_attrs_snapshot[_row[0]] = {"subdomain_id": _row[1], "gate_reason": _row[2]}
 
         # Clear existing operational data (preserve design-state)
         # Note: NULL != 'design' is NULL (not TRUE) in SQL, so must handle NULL explicitly
@@ -3655,6 +3738,25 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 治本(2026-07-23, 问题B)：rebuild 重建 production 节点后，按 path 重映射重插
         # 被 FK CASCADE 删除的 apply_depgraph design↔production 边（design↔design 边本就存活，幂等跳过）
         _restore_apply_depgraph_design_edges_by_path(cursor, _design_edge_snapshot, path_to_db_node_id)
+
+        # 治本(2026-07-24, #ARCH-DEPGRAPH-PRESERVE-ATTRS)：rebuild 重建 production 节点后，
+        # 恢复手动设置的 subdomain_id/gate_reason（文件系统扫描不产生这些字段）
+        _restored_attrs = 0
+        for _path, _attrs in _manual_attrs_snapshot.items():
+            if _attrs["subdomain_id"]:
+                cursor.execute(
+                    "UPDATE nodes SET subdomain_id=%s WHERE path=%s AND subdomain_id IS NULL",
+                    (_attrs["subdomain_id"], _path),
+                )
+                _restored_attrs += cursor.rowcount
+            if _attrs["gate_reason"]:
+                cursor.execute(
+                    "UPDATE nodes SET gate_reason=%s WHERE path=%s AND (gate_reason IS NULL OR gate_reason='')",
+                    (_attrs["gate_reason"], _path),
+                )
+                _restored_attrs += cursor.rowcount
+        if _restored_attrs > 0:
+            print(f"[PRESERVE-ATTRS] 恢复 {_restored_attrs} 个节点的 subdomain_id/gate_reason")
 
         for edge in edges:
             from_node = edge.get("from", "")
