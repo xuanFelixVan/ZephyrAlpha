@@ -6995,6 +6995,28 @@ creation_tokens:
     created_by: "session-sess-46256-20260723223757"
     capability: "clickhouse_rbac_management"
 
+  # --- 数据域设计态排查与补全（2026-07-24，四图对齐铁律 TRAE-080）---
+  # 一次性脚本：查询数据域 DB 现状（只读），供场外文档 vs 场内现状对比审查
+  - file: "scripts/governance/oneoff/data_domain_audit_query.py"
+    token: "auto-data-domain-audit-query-20260724"
+    created_by: "session-sess-51376-20260724162054"
+    capability: "data_domain_audit_query"
+  # 一次性脚本：补全数据域 subdomain_id + 登记 design 节点 + 修复契约 fulfillment_status
+  - file: "scripts/governance/oneoff/data_domain_design_state_complete.py"
+    token: "auto-data-domain-design-state-complete-20260724"
+    created_by: "session-sess-51376-20260724162054"
+    capability: "data_domain_design_state_complete"
+  # 数据域审计报告（场外文档 vs 场内 DB 逐条对比审查结论）
+  - file: "scripts/governance/oneoff/data_domain_audit_report.md"
+    token: "auto-data-domain-audit-report-20260724"
+    created_by: "session-sess-51376-20260724162054"
+    capability: "data_domain_audit_report"
+  # 数据域 DB 现状完整明细（由 data_domain_audit_query.py 生成）
+  - file: "scripts/governance/oneoff/data_domain_audit_report_db.md"
+    token: "auto-data-domain-audit-report-db-20260724"
+    created_by: "session-sess-51376-20260724162054"
+    capability: "data_domain_audit_report_db"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
