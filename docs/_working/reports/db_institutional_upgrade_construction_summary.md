@@ -18,7 +18,7 @@ ttl: task_bound
 | audit_03 总分 | 81.3% B+ | **96.9% A+**（62/64） |
 | 已完成项数 | — | 67 项 |
 | 遗留 ⚠️ 项 | — | 2 项（5.8 单节点 HA / 7.7 异地副本，均用户裁定接受） |
-| schemas/categories DDL 真源 | 10/101 | **26/101**（含 Wave 1 新增 8 张 c3 表） |
+| schemas/categories DDL 真源 | 10/101 | **40/101**（Wave 1 +8 c3, Wave 2 收口, P0-6 +14 SCD） |
 | Schema 漂移校验工具 | 无 | `scripts/ch/verify_schema_truth.py`（治本） |
 | Schema 漂移 CI 门禁 | 无 | **GATE-SCHEMA-TRUTH**（Wave 2 接入，漂移硬阻断） |
 | Schema 漂移条目 | 10 处（Wave 1 暴露） | **0 处**（Wave 2 收口完成） |
@@ -45,11 +45,11 @@ ttl: task_bound
 | **P0-3** option_iv_surface 排序键 | ✅ 已修 | commit `6ed0e20940`：排序键加 option_type，备份后重建+迁移对账完成 |
 | **P0-4** 质量门有壳无芯 | ⚠️ 部分 | `quality_gate.py` 仍为 30 行 re-export 包装器（真源在 `zephyr.gov_enforcement.rule_enforcement.quality_gate`）。OHLC 逻辑/涨跌幅/缺口/复权四条门禁的实装与 ch_writer 写入路径接入**未完成**。**遗留**：登记改期，触发条件=backtest 域质量回归或 P0-5 PIT 推进时一并实装 |
 | **P0-5** 财报 PIT 化 | ✅ 已修 | commit `6a8ecf1522`/`ae07879e03`/`66a9db9d0e`：按 announce_date 建立 point-in-time 查询能力，与 pit_manager.py 三公理对齐 |
-| **P0-6** 18 张 SCD 表时点版本化 | ⚠️ 部分 | commit `56f066e620`：4 张确认（stock_list/index_weight/sector_list/sector_meta）。**其余 14 张无 DDL 真源未确认**——需 Wave 2 真源回写后逐表核验。**遗留**：并入 Wave 2 |
+| **P0-6** 18 张 SCD 表时点版本化 | ✅ 已修 | commit `56f066e620`：4 张早期确认（stock_list/index_weight/sector_list/sector_meta）。**P0-6 真源回写完成（2026-07-25）**：剩余 14 张 SCD-2 表全部从 DB 转录为 DDL-as-Code 真源，`verify_schema_truth.py` 校验 40 表零漂移 |
 | **P0-7** index_quote 生命周期真源冲突 | ✅ 已修 | commit `6ed0e20940`/`1d5a7e4aae`：对齐为永久保留，全库 lifecycle 冲突排查完成 |
 | **P0-8** c3 八表 ReplacingMergeTree 迁移 | ✅ DB 已迁移 + **Wave 1 真源回写完成** | DB 迁移在 audit 早期完成；**本会话 commit `d6ae260754` 完成 8 张表 DDL-as-Code 真源回写**（analyst_forecast / disclosure_plan / equity_pledge_detail / industry_class_suppl / restricted_shares / rights_issue / share_change / share_unlock），`verify_schema_truth.py` 校验零漂移 |
 
-**P0 小结**：8 项中 5 项已修、3 项部分（P0-2 预防/P0-4 门禁实装/P0-6 14 表真源），均登记改期触发条件。
+**P0 小结**：8 项中 7 项已修、1 项部分（P0-2 预防/P0-4 门禁实装待触发条件）。P0-6 14 表 SCD 真源已在本会话回写完成。
 
 ---
 
@@ -234,7 +234,7 @@ audit_01 实测 101 张表中 87 张"无代码侧真源（仅存在于 CH 实例
 |----|----------|
 | P0-2 预防机制 | 实盘立项 / 下次 tick 缺口事件 |
 | P0-4 质量门实装 | backtest 域质量回归 / P0-5 PIT 推进 |
-| P0-6 14 表 SCD 真源 | 并入 Wave 2 真源回写 |
+| P0-6 14 表 SCD 真源 | ✅ 已完成（2026-07-25，14 表 DDL 真源回写） |
 | A1 ingest_ts 真源补齐 | 并入 Wave 2 |
 | A4 分钟 K 线族 | 分钟策略实盘立项 |
 | A7 raw OHLC 价层 | 复权回测质量回归 |
@@ -265,8 +265,8 @@ audit_01 实测 101 张表中 87 张"无代码侧真源（仅存在于 CH 实例
 
 **Wave 2**（Schema 真源继续收口）：
 1. ✅ 处理 10 处漂移（见 §6.5，零漂移收口）
-2. ⏳ 推进剩余 75 张表 DDL 真源回写（按业务优先级分批）
-3. ⏳ P0-6 14 表 SCD-2 真源确认
+2. ⏳ 推进剩余 61 张表 DDL 真源回写（40/101 已完成，按业务优先级分批）
+3. ✅ P0-6 14 表 SCD-2 真源确认（2026-07-25 完成，40 表零漂移）
 4. ✅ 将 `verify_schema_truth.py` 接入 CI 门禁（GATE-SCHEMA-TRUTH，见 §6.5.3）
 
 **Wave 3+**（按触发条件推进，见 §8）：
