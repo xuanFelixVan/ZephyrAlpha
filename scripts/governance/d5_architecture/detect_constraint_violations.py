@@ -6,7 +6,7 @@
 # [CONSUMERS] GitCommitGateway post-commit reconciler (GATE-CONSTRAINT-DETECT)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只写 constraint_type IN (cross_domain_violation/capacity_exceeded/hard_limit_exceeded/orphan_node/layer_violation); 不碰 architecture_contract/architecture_rule
+# [INVARIANTS] 只写 constraint_type IN (cross_domain_violation/capacity_exceeded/hard_limit_exceeded/orphan_node/layer_violation/cross_domain_mismatch); 不碰 architecture_contract/architecture_rule
 # [MODIFY-GUARD] 修改需通过架构裁定
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,23 +15,25 @@
 # [TESTS] 无
 # [TTL] permanent
 # [ARCH-REF] #ARCH-CAP-001 #ARCH-CAP-002
-"""G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 5 类违规）
+"""G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 6 类违规）
 
 病根：generate_constraint_violations.py 只读 arch_constraints 表生成 MD 报告，
 但没有任何检测器实际检测违规并写入 violation_status/details/detected_at。
 导致报告中 56 条约束全部默认 'open'，无法区分真违规和正常约束。
 
 治本（补齐断链的检测层）：
-  1. DELETE 旧检测结果（只删检测器写入的 5 类，保留 sync 写入的规则定义）
-  2. 执行 5 类检测
+  1. DELETE 旧检测结果（只删检测器写入的 6 类，保留 sync 写入的规则定义）
+  2. 执行 6 类检测
   3. INSERT 新检测结果（完整字段 + violation_status='open' + detected_at）
 
-5 类检测：
+6 类检测：
   1. cross_domain_violation — 跨域违规（import 跨域但未在 domain_dependencies 声明）
   2. capacity_exceeded — 容量超限（production 节点 > max_modules，ARCH-CAP-001）
   3. hard_limit_exceeded — 硬上限违规（production 节点 > 150，ARCH-CAP-002 v1.0.8 二元规则）
   4. orphan_node — 孤儿节点（路径未注册到 arch_directory_tree）
   5. layer_violation — 层级违规（低层依赖高层）
+  6. cross_domain_mismatch — cross_domain 列与实际不符（#ARCH-CROSS-DOMAIN-TRIGGER-001 兜底：
+     触发器应保证列恒正确，此检测捕获 replica 模式写/直连绕过/触发器 bug 导致的漂移）
 
 约束分类（区分规则定义和检测结果）：
   - architecture_contract / architecture_rule = 规则定义（sync_yaml_to_depgraph.py 写入）
@@ -66,6 +68,7 @@ DETECTOR_TYPES = (
     "hard_limit_exceeded",
     "orphan_node",
     "layer_violation",
+    "cross_domain_mismatch",
 )
 
 # 历史遗留脏数据类型（写入脚本已删除，需 --clean-legacy 一次性清理）
@@ -76,7 +79,7 @@ LEGACY_TYPES = (
 
 
 # ============================================================================
-# 5 类检测函数
+# 6 类检测函数
 # ============================================================================
 
 
@@ -267,13 +270,66 @@ def detect_layer_violations(cur) -> list[dict]:
     ]
 
 
+def detect_cross_domain_mismatch(cur) -> list[dict]:
+    """检测6: cross_domain 列与实际不符（#ARCH-CROSS-DOMAIN-TRIGGER-001 兜底）。
+
+    触发器 trg_edges_cross_domain_bi/bu + trg_nodes_domain_id_au 应保证
+    edges.cross_domain 恒等于 (from_node.domain_id != to_node.domain_id)。
+    此检测捕获触发器未覆盖的漂移来源：
+      - replica 模式写（session_replication_role='replica' 禁用触发器）
+      - 直连 DB 绕过 app 的写
+      - 触发器 bug
+
+    只检测两端 domain_id 均非空的边（NULL 域端点的边 cross_domain=0 是正确哨兵）。
+    severity=error：数据完整性缺陷，虽不影响报告（消费方重算）但破坏列契约。
+    """
+    cur.execute("""
+        SELECT e.edge_id, e.from_node_id, e.to_node_id,
+               n1.domain_id AS from_domain, n2.domain_id AS to_domain,
+               e.cross_domain AS stored, e.dep_maturity,
+               n1.path AS from_path, n2.path AS to_path
+        FROM edges e
+        JOIN nodes n1 ON e.from_node_id = n1.node_id
+        JOIN nodes n2 ON e.to_node_id = n2.node_id
+        WHERE n1.domain_id IS NOT NULL AND n1.domain_id <> ''
+          AND n2.domain_id IS NOT NULL AND n2.domain_id <> ''
+          AND COALESCE(e.cross_domain, 0) <> (CASE WHEN n1.domain_id <> n2.domain_id THEN 1 ELSE 0 END)
+        LIMIT 500
+    """)
+    return [
+        {
+            "constraint_id": f"V-CDM-{r['edge_id']}",
+            "name": f"cross_domain 漂移: edge {r['edge_id']}",
+            "constraint_type": "cross_domain_mismatch",
+            "from_domain": r["from_domain"],
+            "to_domain": r["to_domain"],
+            "rule_definition": (
+                f"edge {r['edge_id']} ({r['from_path']} -> {r['to_path']}) "
+                f"stored cross_domain={r['stored']} 但实际 "
+                f"({r['from_domain']} != {r['to_domain']})="
+                f"{1 if r['from_domain'] != r['to_domain'] else 0} "
+                f"[dep_maturity={r['dep_maturity']}]"
+            ),
+            "severity": "error",
+            "enforcement": "audit",
+            "description": (
+                f"cross_domain 列与 from/to domain_id 计算值不符——"
+                f"触发器未覆盖的写路径（replica/直连/bug）。"
+                f"修复：UPDATE edges SET cross_domain=edge_cross_domain_value(...) "
+                f"或重新 INSERT 触发 BI 触发器"
+            ),
+        }
+        for r in cur.fetchall()
+    ]
+
+
 # ============================================================================
 # 主检测流程
 # ============================================================================
 
 
 def run_detection(conn, clean_legacy: bool = False) -> dict:
-    """执行 5 类检测，写入 arch_constraints 表。
+    """执行 6 类检测，写入 arch_constraints 表。
 
     Args:
         conn: PG 连接（autocommit=False，本函数内部 commit）
@@ -285,7 +341,7 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
     now_iso = datetime.now().isoformat(timespec="seconds")
 
     with conn.cursor() as cur:
-        # 1. DELETE 旧检测结果（只删检测器写入的 5 类，保留 sync 写入的规则定义）
+        # 1. DELETE 旧检测结果（只删检测器写入的 6 类，保留 sync 写入的规则定义）
         cur.execute(
             "DELETE FROM arch_constraints WHERE constraint_type = ANY(%s)",
             (list(DETECTOR_TYPES),),
@@ -305,7 +361,7 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
                 f"{legacy_deleted} 条"
             )
 
-        # 2. 执行 5 类检测
+        # 2. 执行 6 类检测
         all_violations: list[dict] = []
 
         cross = detect_cross_domain_violations(cur)
@@ -327,6 +383,10 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
         layer = detect_layer_violations(cur)
         print(f"  层级违规: {len(layer)} 条")
         all_violations.extend(layer)
+
+        cd_mismatch = detect_cross_domain_mismatch(cur)
+        print(f"  cross_domain 漂移 (#ARCH-CROSS-DOMAIN-TRIGGER-001): {len(cd_mismatch)} 条")
+        all_violations.extend(cd_mismatch)
 
         # 3. INSERT 新检测结果（ON CONFLICT 更新）
         for v in all_violations:
@@ -372,13 +432,14 @@ def run_detection(conn, clean_legacy: bool = False) -> dict:
             "hard_limit": len(hard_limit),
             "orphan": len(orphan),
             "layer": len(layer),
+            "cross_domain_mismatch": len(cd_mismatch),
         }
 
 
 def main():
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
-        description="G9-Detect: 架构约束违规检测器（5 类检测 -> arch_constraints 表）"
+        description="G9-Detect: 架构约束违规检测器（6 类检测 -> arch_constraints 表）"
     )
     parser.add_argument(
         "--clean-legacy",
@@ -401,6 +462,7 @@ def main():
         print(f"  硬上限违规 (ARCH-CAP-002): {result['hard_limit']}")
         print(f"  孤儿节点: {result['orphan']}")
         print(f"  层级违规: {result['layer']}")
+        print(f"  cross_domain 漂移: {result['cross_domain_mismatch']}")
         print("=" * 60)
     finally:
         conn.close()

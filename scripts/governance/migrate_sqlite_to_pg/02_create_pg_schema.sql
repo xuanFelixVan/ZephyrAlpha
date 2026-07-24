@@ -351,7 +351,7 @@ CREATE TABLE IF NOT EXISTS edges (
     data_transfer_description  TEXT,
     resource_impact            TEXT,
     relationship_type          TEXT,
-    cross_domain               INTEGER,
+    cross_domain               INTEGER DEFAULT 0,
     verified                   INTEGER,
     dep_maturity               TEXT DEFAULT 'active',
     valid_since                TEXT,
@@ -674,6 +674,69 @@ CREATE TRIGGER trg_edges_protect_apply_depgraph
     BEFORE DELETE ON edges
     FOR EACH ROW EXECUTE FUNCTION protect_apply_depgraph_edges();
 
+-- 6.4 edges.cross_domain 自动维护触发器（#ARCH-CROSS-DOMAIN-TRIGGER-001, 2026-07-25）
+-- cross_domain 是派生字段 = (from_node.domain_id != to_node.domain_id)。
+-- 治本：DB 触发器单点强制，覆盖所有 INSERT 路径 + 域迁移，消除"说谎缓存"。
+-- 详见迁移脚本 06_fix_cross_domain_trigger.sql 的裁定说明。
+-- 无限循环防护：edges BU 仅在 UPDATE OF from_node_id,to_node_id 触发；
+-- nodes AU 的 UPDATE edges SET cross_domain 不触发 edges BU（列不匹配）。
+CREATE OR REPLACE FUNCTION edge_cross_domain_value(p_from_domain TEXT, p_to_domain TEXT)
+RETURNS INTEGER AS $$
+BEGIN
+    IF p_from_domain IS NOT NULL AND p_from_domain <> ''
+       AND p_to_domain IS NOT NULL AND p_to_domain <> ''
+       AND p_from_domain <> p_to_domain THEN
+        RETURN 1;
+    END IF;
+    RETURN 0;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION trg_fn_edges_cross_domain()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_from_domain TEXT;
+    v_to_domain TEXT;
+BEGIN
+    SELECT domain_id INTO v_from_domain FROM nodes WHERE node_id = NEW.from_node_id;
+    SELECT domain_id INTO v_to_domain FROM nodes WHERE node_id = NEW.to_node_id;
+    NEW.cross_domain := edge_cross_domain_value(v_from_domain, v_to_domain);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION trg_fn_nodes_domain_id_recompute_edges()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.domain_id IS DISTINCT FROM OLD.domain_id THEN
+        UPDATE edges SET cross_domain = edge_cross_domain_value(
+            (SELECT domain_id FROM nodes WHERE node_id = edges.from_node_id),
+            (SELECT domain_id FROM nodes WHERE node_id = edges.to_node_id)
+        )
+        WHERE from_node_id = NEW.node_id OR to_node_id = NEW.node_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_edges_cross_domain_bi
+    BEFORE INSERT ON edges
+    FOR EACH ROW EXECUTE FUNCTION trg_fn_edges_cross_domain();
+
+CREATE TRIGGER trg_edges_cross_domain_bu
+    BEFORE UPDATE OF from_node_id, to_node_id ON edges
+    FOR EACH ROW EXECUTE FUNCTION trg_fn_edges_cross_domain();
+
+CREATE TRIGGER trg_nodes_domain_id_au
+    AFTER UPDATE OF domain_id ON nodes
+    FOR EACH ROW EXECUTE FUNCTION trg_fn_nodes_domain_id_recompute_edges();
+
+GRANT EXECUTE ON FUNCTION edge_cross_domain_value(TEXT, TEXT) TO depgraph_reader, depgraph_writer;
+GRANT EXECUTE ON FUNCTION trg_fn_edges_cross_domain() TO depgraph_reader, depgraph_writer;
+GRANT EXECUTE ON FUNCTION trg_fn_nodes_domain_id_recompute_edges() TO depgraph_reader, depgraph_writer;
+
+COMMENT ON COLUMN edges.cross_domain IS '派生字段：from_node.domain_id != to_node.domain_id。由触发器 trg_edges_cross_domain_bi/bu + trg_nodes_domain_id_au 自动维护，禁止 app 显式写入（#ARCH-CROSS-DOMAIN-TRIGGER-001）';
+
 -- =====================================================================
 -- DDL 翻译完成。统计对照:
 --   SQLite 表: 25 → PG 表: 25 ✓
@@ -683,7 +746,9 @@ CREATE TRIGGER trg_edges_protect_apply_depgraph
 --     - 只读触发器: 27 (9表×3) → 27 个 CREATE TRIGGER (复用1个函数) ✓
 --     - CHECK 触发器: 8 (domains 6 + nodes 2) → 转为列级 CHECK 约束 (语义等价, 更高效)
 --     - 清理触发器: 1 → 1 个 CREATE TRIGGER + 1 个函数 ✓
---     - 总计: 28 个 PG 触发器 + CHECK 约束 (覆盖原 36 个 SQLite 触发器的全部语义)
+--     - cross_domain 自动维护触发器: 3 (edges BI/BU + nodes AU) → 3 个 CREATE TRIGGER + 3 个函数
+--       (#ARCH-CROSS-DOMAIN-TRIGGER-001, 2026-07-25 新增，非 SQLite 翻译，PG 原生治本)
+--     - 总计: 31 个 PG 触发器 + CHECK 约束 (28 翻译自 SQLite + 3 个 cross_domain 治本新增)
 -- =====================================================================
 
 -- =====================================================================

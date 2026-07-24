@@ -216,13 +216,17 @@ SQL_INSERT_FILE_NODE = (
 )
 
 # --- add_edge (design + production) ---
+# 治本(#ARCH-CROSS-DOMAIN-TRIGGER-001, 2026-07-25): cross_domain 列由 DB 触发器
+# trg_edges_cross_domain_bi 自动维护（按 from/to 节点 domain_id 计算），INSERT 不再
+# 显式写入。原硬编码 cross_domain=0 导致跨域边被误标（Step 0 的 6 条边即受影响）。
+# verified=0 保留为字面量（未经核验）；dep_maturity 设计态='design'/生产态=参数。
 SQL_INSERT_DESIGN_EDGE = (
     "INSERT INTO edges (from_node_id, to_node_id, dep_type, architecture_direction, "
     "coupling_strength, used_symbol, invocation_method, api_contract_refs, "
     "event_ref, ddd_integration_pattern, failure_mode, fallback, "
     "activation_condition, data_transfer_description, resource_impact, "
-    "relationship_type, cross_domain, verified, dep_maturity) "
-    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 0, 'design') "
+    "relationship_type, verified, dep_maturity) "
+    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 'design') "
     "RETURNING edge_id"
 )
 SQL_INSERT_PRODUCTION_EDGE = (
@@ -230,8 +234,8 @@ SQL_INSERT_PRODUCTION_EDGE = (
     "coupling_strength, used_symbol, invocation_method, api_contract_refs, "
     "event_ref, ddd_integration_pattern, failure_mode, fallback, "
     "activation_condition, data_transfer_description, resource_impact, "
-    "relationship_type, cross_domain, verified, dep_maturity) "
-    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 0, %s) "
+    "relationship_type, verified, dep_maturity) "
+    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, %s) "
     "RETURNING edge_id"
 )
 SQL_SELECT_TO_NODES_BY_FROM = "SELECT to_node_id FROM edges WHERE from_node_id=%s"
@@ -2359,7 +2363,9 @@ def cmd_rename_domain(
 ) -> int:
     """重命名域ID——18步UPDATE覆盖11表（裁定#204，方案§4.2）。
 
-    edges.cross_domain 为 boolean 不需改（第12张含domain相关列表，11张需UPDATE）。
+    edges.cross_domain 不需显式 UPDATE——由 DB 触发器 trg_nodes_domain_id_au
+    在 nodes.domain_id 变化时自动重算受影响边（#ARCH-CROSS-DOMAIN-TRIGGER-001, 2026-07-25）。
+    第12张含domain相关列表，11张需UPDATE。
     step 8/17 用 REPLACE+LIKE：domain_events.target_domains 是 JSON/TEXT，
       domain_mapping.subdomain_id 含 -FACTOR 后缀（如 D-SIGNAL_FUNDAMENTAL-FACTOR）
       精确匹配会漏行，必须用 REPLACE+LIKE。

@@ -9017,3 +9017,66 @@ entries:
   related_adjudication: 'trae_054 STEP0 (depgraph 访问协议), AGENTS.md 备份先行铁律'
   created: '2026-07-24'
   last_updated: '2026-07-24'
+# --- #ARCH-CROSS-DOMAIN-TRIGGER-001: cross_domain 列硬编码=0 系统性说谎治本（2026-07-25）---
+# 关联铁律：TRAE-062 SSoT 分类（depgraph 是架构数据真源在 DB），AGENTS.md §11.0 全景图是真源
+- issue_id: '#ARCH-CROSS-DOMAIN-TRIGGER-001'
+  title: 'edges.cross_domain 列硬编码=0 导致跨域边系统性误标（FALSE NEGATIVE）——DB 触发器单点治本'
+  category: bug_fix
+  severity: P1高
+  adjudication: |-
+    2026-07-25 factual bug fix（数据完整性缺陷——派生列系统性说谎）。
+
+    病根（第一性原理分析）：
+    edges.cross_domain 是派生字段，语义 = (from_node.domain_id != to_node.domain_id)。
+    但 5 个 INSERT 路径中 apply_depgraph.py 的 SQL_INSERT_DESIGN_EDGE / SQL_INSERT_PRODUCTION_EDGE
+    （原 L225/L234）硬编码 cross_domain=0，sync_yaml_to_depgraph.py 不设该列（PG 无 DEFAULT），
+    generate_project_depgraph.py 2 路径信任源数据——导致所有跨域边被标记 cross_domain=0（FALSE NEGATIVE）。
+    实测审计发现 6 条跨域边误标（Defect A）。域迁移路径（cmd_rename_domain L2362）明确跳过该列维护。
+    5 个消费方（cross_domain_matrix / constraint_violations / integration_topology /
+    decision_diagram / domain_doc）全部 JOIN 重算，不读该列——列成为"说谎缓存"，违反派生列契约。
+
+    方案对比（100% AI 开发场景，长远战略）：
+    1. 删列：过度纠正，丢失查询便利性与索引，破坏 AI 惯用 WHERE cross_domain=1。
+    2. App 层修复（5 路径逐一改）：AI 新增 INSERT 路径会再次硬编码 0；域迁移无法覆盖——治标不治本。
+    3. DB 触发器（治本）：单点强制，覆盖全部 5 路径 + 未来新增；自动跟随域迁移；
+       与项目现有触发器保护模式（chk_nodes_blueprint_id / trg_edges_protect_apply_depgraph）一致。
+    裁定采用方案 3。
+
+    治本实施（DB 层单点强制）：
+    - edge_cross_domain_value(from_domain, to_domain) IMMUTABLE 函数（可索引/CHECK）
+    - trg_edges_cross_domain_bi：BEFORE INSERT ON edges，按 from/to 节点 domain_id 计算
+    - trg_edges_cross_domain_bu：BEFORE UPDATE OF from_node_id,to_node_id ON edges
+    - trg_nodes_domain_id_au：AFTER UPDATE OF domain_id ON nodes，重算受影响边（覆盖域迁移）
+    - ALTER COLUMN cross_domain SET DEFAULT 0（对齐 SQLite DDL；replica 模式写兜底哨兵）
+    - 一次性回填：修正所有 cross_domain 与实际不符的行（幂等，第二次执行影响 0 行）
+
+    无限循环防护：edges BU 触发器仅在 UPDATE OF from_node_id,to_node_id 时触发；
+    nodes AU 的 UPDATE edges SET cross_domain 只动 cross_domain 列→不触发 edges BU，无循环。
+
+    replica 模式（session_replication_role='replica'）会禁用所有触发器：当前无脚本使用 replica=True
+    写 depgraph（已核查）；DEFAULT 0 提供安全哨兵；审计 reconciler（detect_constraint_violations.py
+    cross_domain_mismatch 检测）兜底捕获 replica 写/直连绕过/触发器 bug 导致的漂移。
+
+    非 risk acceptance/wontfix/边界裁定——纯 factual 数据完整性修复，直接标 resolved。
+  impact:
+    - 'scripts/governance/apply_depgraph.py（SQL_INSERT_DESIGN_EDGE/PRODUCTION_EDGE 移除硬编码 cross_domain=0，由触发器维护）'
+    - 'scripts/governance/migrate_sqlite_to_pg/06_fix_cross_domain_trigger.sql（新增幂等迁移：函数+3触发器+DEFAULT+回填+验证）'
+    - 'scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql（canonical schema 同步：DEFAULT 0 + 触发器定义 + 列注释）'
+    - 'scripts/governance/d5_architecture/detect_constraint_violations.py（新增 detect_cross_domain_mismatch 第6类检测，enforcement=audit 兜底）'
+    - 'tests/governance/depgraph/test_cross_domain_trigger.py（5 用例：触发器在位/INSERT跨域/INSERT同域/域迁移重算/回填后无FALSE_NEG）'
+    - 'docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md（regenerate，跨域依赖对数 240→244）'
+    - 'docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology.md（regenerate）'
+  fix_phase: |-
+    已完成施工+验证（2026-07-25）：
+      - 迁移脚本应用：3 触发器 + 3 函数 + DEFAULT 0 + 6 行回填全部就位
+      - 审计验证：Defect A (FALSE_NEGATIVE)=0，Defect B (FALSE_POSITIVE)=0，7616 边分布 cd=0:6004 cd=1:1612
+      - 触发器行为测试（事务回滚零持久化）：5/5 PASS（INSERT跨域→1 / INSERT同域→0 / 域迁移双向重算 / 全库无FALSE_NEG）
+      - detect_constraint_violations.py：cross_domain_mismatch=0
+      - apply_depgraph smoke test：20/20 PASS 无回归
+      - panorama alignment 报告：域不一致=0（硬阻断通过）
+      - cross_domain_matrix.md / integration_topology.md regenerate 成功
+  status: resolved
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, AGENTS.md §11.0 全景图是真源, 四图对齐铁律 TRAE-080'
+  related_rules: 'AGENTS.md RULE-DEPGRAPH (apply_depgraph 唯一写入口), RULE-SSOT'
+  created: '2026-07-25'
+  last_updated: '2026-07-25'
