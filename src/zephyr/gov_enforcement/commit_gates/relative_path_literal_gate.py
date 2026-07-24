@@ -14,7 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_relative_path_literal_gate.py
 # [A_module] module_id=MOD-GOV-relative_path_literal_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""relative_path_literal_gate.py — 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
+r"""relative_path_literal_gate.py — 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
 
 补强 DIRECTORY-CONTRACT-GATE（目录区约束）和 HARDCODED-URL（URL 硬编码）的盲区——
 代码内字符串字面量中的相对路径（"./" / "../" / "~/"）违反"所有路径必须使用绝对路径"

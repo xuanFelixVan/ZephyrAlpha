@@ -72,7 +72,7 @@ class ClsProvider(DataSourceBase):
         thread_safety="shared",
         rate_limit_default=30,
         capabilities=["news_data"],
-        known_issues=["无认证", "高频请求可能被限制", "依赖本地RSSHub实例(D:\RSSHub)"],
+        known_issues=["无认证", "高频请求可能被限制", r"依赖本地RSSHub实例(D:\RSSHub)"],
     )
 
     # ---- 生命周期 ----

@@ -3268,16 +3268,32 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             "WHERE table_schema = 'public' AND table_name LIKE '%backup%'"
         )
         backup_tables = cursor.fetchall()
+        # 治本 2026-07-25 (#ARCH-DEPGRAPH-OPS-TXN-ABORTED): 逐表 SAVEPOINT 隔离
+        # 病根：DROP TABLE 失败（权限/属主不足）时仅捕获异常未回滚事务，PG 进入
+        # aborted 状态导致后续所有 SQL 失败（InFailedSqlTransaction），reconciler
+        # 据此生成 critical_warn（GATE-DEPGRAPH-OPS）。复用同文件 sp_node_* 模式。
+        _bt_sp_counter = 0
         for bt_row in backup_tables:
             bt_name = bt_row["name"]
             # Validate table name format before using in DDL
             if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", bt_name):
                 continue
+            _bt_sp_counter += 1
+            _bt_sp_name = f"sp_backup_cleanup_{_bt_sp_counter}"
             try:
+                cursor.execute(f"SAVEPOINT {_bt_sp_name}")
                 cursor.execute(f'DROP TABLE IF EXISTS "{bt_name}"')
+                cursor.execute(f"RELEASE SAVEPOINT {_bt_sp_name}")
                 print(f"[DEPGRAPH-DB] Cleaned up backup table: {bt_name}")
             except psycopg2.Error as e:
                 # depgraph_writer 角色无权 DROP owner(zephyr) 创建的表，跳过清理
+                # ROLLBACK TO SAVEPOINT 恢复事务到 DROP 之前状态，可继续后续操作
+                try:
+                    cursor.execute(f"ROLLBACK TO SAVEPOINT {_bt_sp_name}")
+                except Exception:
+                    # SAVEPOINT 本身失败（极端情况），rollback 整个事务并重建
+                    conn.rollback()
+                    cursor = conn.cursor()
                 print(f"[DEPGRAPH-DB] SKIP backup table cleanup ({bt_name}): {e}".strip()[:120])
 
         # 裁定#209 Stage 2: UPSERT 保护字段到 metadata 表（DELETE 前保存）

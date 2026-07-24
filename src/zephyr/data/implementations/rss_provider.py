@@ -89,7 +89,7 @@ class RSSProvider(DataSourceBase):
         thread_safety="shared",
         rate_limit_default=0,
         capabilities=["news_data"],
-        known_issues=["偶发SSL错误", "须尊重robots.txt", "依赖本地RSSHub实例(D:\RSSHub)"],
+        known_issues=["偶发SSL错误", "须尊重robots.txt", r"依赖本地RSSHub实例(D:\RSSHub)"],
     )
 
     # robots.txt 缓存（per-domain）
