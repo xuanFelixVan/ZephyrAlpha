@@ -60,7 +60,6 @@ ttl: permanent
 |------|------|
 | governance_d2b_loop.mmd | 治理 Design-to-Build 闭环（Policy→Factory→Runtime→Audit）|
 | governance_three_layers.mmd | 治理三层边界拓扑（被治理者 + Policy/Factory/Runtime）|
-| capability_heatmap_visual.mmd | 能力成熟度热力图可视化（53域 × 10能力域 L0-L5）|
 
 ## 排除规则
 

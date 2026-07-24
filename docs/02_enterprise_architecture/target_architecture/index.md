@@ -133,7 +133,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | business_principles.md → ../04_architecture_principles_decisions/ + value_stream_map.yaml | BA 业务架构原则（原 business_architecture.md 已迁移） |
 | information_principles.md → ../04_architecture_principles_decisions/ | IA 信息架构原则（原 information_architecture.md 已迁移） |
 | technology_principles.md → ../04_architecture_principles_decisions/ + dr_bcp_matrix.yaml | TA 技术架构原则（原 technology_architecture.md 已迁移） |
-| capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
 | data_principles.md → ../04_architecture_principles_decisions/ + data_entity_catalog.yaml | DA 数据架构原则（原 data_architecture.md 已迁移） |
 | security_principles.md → ../04_architecture_principles_decisions/ + threat_model.yaml | SEC 安全架构原则（原 security_architecture.md 已迁移） |
 | operations_architecture.md | OPS 运维架构视图 |
@@ -170,7 +169,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | [`business_principles.md`](../04_architecture_principles_decisions/business_principles.md) + [`value_stream_map.yaml`](../../../architecture_model/cross_cutting/value_stream_map.yaml) | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
 | [`technology_principles.md`](../04_architecture_principles_decisions/technology_principles.md) + [`dr_bcp_matrix.yaml`](../../../architecture_model/technology/dr_bcp_matrix.yaml) | TA | 用什么技术栈？ | SRE、实施者 | active |
-| `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
 | [`data_principles.md`](../04_architecture_principles_decisions/data_principles.md) + [`data_entity_catalog.yaml`](../../../architecture_model/data/data_entity_catalog.yaml) | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | [`security_principles.md`](../04_architecture_principles_decisions/security_principles.md) + [`threat_model.yaml`](../../../architecture_model/security/threat_model.yaml) | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
 | `operations_architecture.md` | OPS | 运维域全景？ | SRE、运维工程师 | draft |
@@ -198,7 +196,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 > **📊 视图依赖关系总览**：见 [`diagrams/readme_view_dependency_graph.mmd`](diagrams/readme_view_dependency_graph.mmd)
 
-**正交视图说明**：`04ter`（capability_heatmap）是 TOGAF 10 视图之外的正交视图，提供能力成熟度的额外切片标注。原 `04bis` runtime_planes 正交视图已迁移至 [`runtime_planes_principles.md`](../04_architecture_principles_decisions/runtime_planes_principles.md) + [`runtime_planes.yaml`](../../../architecture_model/cross_cutting/runtime_planes.yaml)。
+**正交视图说明**：原 `04bis` runtime_planes 正交视图已迁移至 [`runtime_planes_principles.md`](../04_architecture_principles_decisions/runtime_planes_principles.md) + [`runtime_planes.yaml`](../../../architecture_model/cross_cutting/runtime_planes.yaml)。能力成熟度方法论见 [`capability_maturity_principles.md`](../04_architecture_principles_decisions/capability_maturity_principles.md)，热力图数据见 [`global_capability_heatmap.md`](../01_global_architecture_diagram/global_capability_heatmap.md)（depgraph 自动生成）。
 
 **反向约束**：TA 成本限制 → AA 范围 → IA 范围 → BA 野心。
 

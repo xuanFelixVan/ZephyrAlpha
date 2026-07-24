@@ -415,7 +415,7 @@ FILE_DESC_ZH = {
     "navigation_index.md": "导航索引",
     ".gitkeep": "占位文件",
     # 01_global_architecture_diagram
-    "capability_heatmap.md": "能力热图",
+    "global_capability_heatmap.md": "能力热力图",
     "cross_domain_matrix.md": "跨域矩阵",
     "integration_topology.md": "集成拓扑",
     "full_project_tree_en.md": "路径树(英文)",
@@ -469,7 +469,7 @@ FILE_DESC_EN = {
     "readme.md": "README",
     "navigation_index.md": "Navigation index",
     ".gitkeep": "Placeholder",
-    "capability_heatmap.md": "Capability heatmap",
+    "global_capability_heatmap.md": "Capability heatmap",
     "cross_domain_matrix.md": "Cross-domain matrix",
     "integration_topology.md": "Integration topology",
     "full_project_tree_en.md": "Path tree (English)",
