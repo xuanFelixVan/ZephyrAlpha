@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_PF_ALLOC 组合分配架构文档
 version: "1.0"
 status: active
-date: 2026-07-24
+date: 2026-07-25
 owner: auto-generator
 ttl: permanent
 ---

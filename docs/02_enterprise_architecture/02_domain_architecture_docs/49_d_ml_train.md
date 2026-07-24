@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_ML_TRAIN 训练架构文档
 version: "1.0"
 status: active
-date: 2026-07-24
+date: 2026-07-25
 owner: auto-generator
 ttl: permanent
 ---
@@ -69,14 +69,14 @@ graph TD
         src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
         src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     end
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
@@ -105,14 +105,14 @@ graph TD
         src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
         src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     end
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]

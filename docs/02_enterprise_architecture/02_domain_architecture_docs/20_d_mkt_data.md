@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_MKT_DATA 行情数据架构文档
 version: "1.0"
 status: active
-date: 2026-07-24
+date: 2026-07-25
 owner: auto-generator
 ttl: permanent
 ---
@@ -28,7 +28,7 @@ ttl: permanent
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
@@ -130,13 +130,15 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 2 个外部域直接连接（出边 3 条 + 入边 0 条 = 3 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
-    D_MKT_DATA -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_DATA["D_DATA<br/>数据接入层"]
+    D_MKT_DATA -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_MKT_DATA -->|1条 导入依赖 / import_depends| D_DATA
 ```
 
 ## 说明 / Notes
