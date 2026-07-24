@@ -265,6 +265,15 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
             if status == "replayed":
                 result["replayed"] += 1
                 replayed_files.add(entry.get("file"))
+            elif status == "skipped":
+                # 治本修复 #ARCH-LOCAL-REPLAY-SKIPPED-ORPHAN（2026-07-24）：
+                # 文件不存在的 skipped 条目必须从 manifest 移除，否则既不在
+                # remaining_entries 也不在 replayed_files，会在后续 manifest 合并
+                # 步骤被重新加回，导致积压永不归零（孤儿 manifest 条目永久存在）。
+                # skipped 与 replayed 一样从 manifest 移除，但不计入成功计数。
+                result.setdefault("skipped", 0)
+                result["skipped"] += 1
+                replayed_files.add(entry.get("file"))
             elif status == "failed":
                 result["failed"] += 1
                 remaining_entries.append(entry)
