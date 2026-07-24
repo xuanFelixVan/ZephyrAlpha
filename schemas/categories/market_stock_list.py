@@ -68,8 +68,8 @@ CREATE TABLE IF NOT EXISTS c1_market.stock_list
     controller_type      String                    COMMENT '控制人类型',
     valid_from           Date          DEFAULT toDate(list_date) COMMENT 'SCD-2生效起始日(#ARCH-CH-021 P0-1)',
     valid_to             Nullable(Date)             COMMENT 'SCD-2生效终止日(NULL=当前有效,退市股=delist_date)',
-    updated_at           DateTime      DEFAULT now() COMMENT '记录更新时间',
-    ingest_ts            DateTime      DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
+    updated_at           DateTime64(3, 'UTC')  DEFAULT now() COMMENT '记录更新时间',
+    ingest_ts            DateTime64(3, 'UTC')  DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY tuple()

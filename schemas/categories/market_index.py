@@ -30,7 +30,7 @@ INDEX_QUOTE_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.index_quote
 (
     trade_date   Date           COMMENT '交易日期',
-    timestamp    DateTime       COMMENT '时间戳(3秒粒度)',
+    timestamp    DateTime64(3, 'Asia/Shanghai') COMMENT '时间戳(3秒粒度)',
     symbol       String         COMMENT '指数代码(如000001.SH)',
     price        Decimal(18,4)  COMMENT '指数点位',
     volume       UInt64         COMMENT '成交量',

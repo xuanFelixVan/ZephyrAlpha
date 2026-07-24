@@ -58,8 +58,8 @@ except ImportError:
 CREATE TABLE IF NOT EXISTS c1_market.tick_data
 (
     trade_date    Date                    COMMENT '交易日期',
-    timestamp     DateTime                COMMENT '时间戳(3秒粒度)',
-    recorded_time DateTime      DEFAULT now() COMMENT '录制器本地接收时间(用于延迟分析)',
+    timestamp     DateTime64(3, 'Asia/Shanghai') COMMENT '时间戳(3秒粒度)',
+    recorded_time DateTime64(3, 'UTC')  DEFAULT now() COMMENT '录制器本地接收时间(用于延迟分析)',
     symbol        String                  COMMENT '证券代码',
     market_type   LowCardinality(String)  COMMENT '市场类型',
     price         Decimal(18,4)           COMMENT '成交价',
@@ -119,7 +119,7 @@ except ImportError:
 CREATE TABLE IF NOT EXISTS c1_market.auction_book
 (
     trade_date   Date           COMMENT '交易日期',
-    timestamp    DateTime       COMMENT '快照时间戳(精确到秒)',
+    timestamp    DateTime64(3, 'Asia/Shanghai') COMMENT '快照时间戳(精确到秒)',
     symbol       String         COMMENT '证券代码',
     last_price   Decimal(18,4)  COMMENT '最新成交价',
     volume       UInt64         COMMENT '累计成交量(手)',
@@ -173,7 +173,7 @@ except ImportError:
 CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
 (
     trade_date       Date        COMMENT '交易日',
-    timestamp        DateTime    COMMENT '快照时间戳',
+    timestamp        DateTime64(3, 'Asia/Shanghai') COMMENT '快照时间戳',
     sector_code      String      COMMENT '板块代码 880001.SH',
     market_type      LowCardinality(String) COMMENT 'sector/mkt_index',
     now_price        Decimal(18,4) COMMENT '最新价',
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
     outside          UInt32      COMMENT '外盘',
     zangsu           Decimal(10,3) COMMENT '涨速',
     data_source      LowCardinality(String) COMMENT 'tqcenter_snapshot/tqcenter_push',
-    fetched_at       DateTime    COMMENT '采集时间(UTC)'
+    fetched_at       DateTime64(3, 'UTC') COMMENT '采集时间(UTC)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
@@ -206,7 +206,7 @@ except ImportError:
     CROSS_VALIDATION_LOG_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.cross_validation_log
 (
-    check_time     DateTime                COMMENT '校验执行时间',
+    check_time     DateTime64(3, 'UTC')        COMMENT '校验执行时间',
     check_date     Date                    COMMENT '校验数据日期',
     symbol         String                  COMMENT '证券代码',
     metric         LowCardinality(String)  COMMENT '校验指标',
@@ -239,7 +239,7 @@ _MIGRATIONS: list[tuple[str, str]] = [
     (
         "c1_market.tick_data",
         "ALTER TABLE c1_market.tick_data "
-        "ADD COLUMN IF NOT EXISTS recorded_time DateTime DEFAULT now() "
+        "ADD COLUMN IF NOT EXISTS recorded_time DateTime64(3, 'UTC') DEFAULT now() "
         "COMMENT '录制器本地接收时间(用于延迟分析)' AFTER timestamp",
     ),
 ]

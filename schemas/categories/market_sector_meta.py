@@ -44,10 +44,10 @@ CREATE TABLE IF NOT EXISTS c1_market.sector_meta
     float_share      Decimal(18,4)    COMMENT '流通股本',
     total_mv         Decimal(18,2)    COMMENT '总市值(元)',
     float_mv         Decimal(18,2)    COMMENT '流通市值(元)',
-    ingest_ts        DateTime  DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
+    ingest_ts        DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
     valid_from       Date      DEFAULT toDate(trade_date) COMMENT 'SCD-2生效起始日(#ARCH-CH-021 P0-6)',
     valid_to         Nullable(Date)   COMMENT 'SCD-2生效终止日(NULL=当前有效)',
-    updated_at       DateTime  DEFAULT now() COMMENT '记录更新时间(#ARCH-CH-021 P0-6)'
+    updated_at       DateTime64(3, 'UTC') DEFAULT now() COMMENT '记录更新时间(#ARCH-CH-021 P0-6)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY tuple()

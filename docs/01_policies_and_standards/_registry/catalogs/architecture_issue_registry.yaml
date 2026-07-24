@@ -8923,3 +8923,23 @@ entries:
   related_adjudication: '#ARCH-WORKTREE-EXEC-DRIFT-001, TRAE-079 (#ARCH-COMMIT-SERIALIZATION-001), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001, #ARCH-RECONCILER-VERIFY-AUTOSYNC-001, L1 依赖关系先行铁律'
   created: '2026-07-24'
   last_updated: '2026-07-24'
+- issue_id: '#ARCH-CH-FALLBACK-001'
+  title: ch_writer TCP→HTTP 降级失效——clickhouse_driver import 在 try 块外导致 ImportError 而非降级
+  category: bug_fix
+  severity: P1高
+  adjudication: |-
+    2026-07-24 factual bug fix。ch_writer._get_client() 的 `from clickhouse_driver import Client`
+    语句位于 try 块外，导致 clickhouse_driver 缺失时抛 ImportError 而非降级到 HTTP 写入路径。
+    根因：import 语句位置错误——应在 try 块内，使 ImportError 被 except 捕获后走 HTTP fallback。
+    修复：将 `from clickhouse_driver import Client` 移入 try 块内（ch_writer.py L166）。
+    影响：clickhouse_driver 未安装环境下 ch_writer 直接崩溃，无法降级到 HTTP。
+    严重度 P1：影响写入可用性，但不丢数据（HTTP 路径仍可用，只是原 bug 阻止了降级）。
+    非 risk acceptance/wontfix/边界裁定——纯 factual 代码修复，直接标 resolved。
+  fix_phase: |-
+    已修复：ch_writer.py `from clickhouse_driver import Client` 从 try 块外移入 try 块内。
+    修复后 clickhouse_driver 缺失时 ImportError 被 except 捕获→降级到 HTTP 写入路径（原有 fallback 设计恢复生效）。
+    提交：本 session tz-migration-commit 同提交交。
+  status: resolved
+  related_adjudication: '#ARCH-CH-022 时区防线迁移（ch_writer DateTime64 兼容性修复同时发现此 bug）'
+  created: '2026-07-24'
+  last_updated: '2026-07-24'

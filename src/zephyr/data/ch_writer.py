@@ -163,8 +163,10 @@ def _get_client():
         # 锁内二次检查冷却期
         if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
             return None
-        from clickhouse_driver import Client
+        # 治本修复#ARCH-CH-FALLBACK-001（2026-07-24）：import 移入 try 块，
+        # 缺 clickhouse_driver 时降级到 HTTP 而非抛 ImportError（原 bug：import 在 try 外）
         try:
+            from clickhouse_driver import Client
             c = Client(host=_CH_HOST, port=_CH_TCP_PORT, user=_CH_USER,
                        password=_CH_PASSWORD, connect_timeout=3,
                        tcp_keepalive=True, sync_request_timeout=10)

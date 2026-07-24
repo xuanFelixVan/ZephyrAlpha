@@ -43,6 +43,10 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
    - 背景: ORDER BY 以 market_type 为前缀（#ARCH-CH-020 防跨市场去重事故），
      导致单标的查询无法使用主键前缀裁剪。set(10000) 索引在每个 granule 块
      （4×8192=32768 行）存储至多 10000 个 distinct symbol，支持精确点查裁剪。
+8. 时区防线（audit A组 时区治理，#ARCH-CH-022，2026-07-24）
+   - timestamp(业务墙钟) -> DateTime64(3, 'Asia/Shanghai')，迁移时数据偏移 -8h
+   - recorded_time/ingest_ts(now() 真 UTC) -> DateTime64(3, 'UTC')，无偏移
+   - 消除 UTC/北京时间混存导致的 8 小时算术偏差；迁移由 apply_timezone_migration.py 执行
 """
 from __future__ import annotations
 
@@ -53,8 +57,8 @@ TICK_DATA_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.tick_data
 (
     trade_date    Date                    COMMENT '交易日期',
-    timestamp     DateTime                COMMENT '时间戳(3秒粒度)',
-    recorded_time DateTime      DEFAULT now() COMMENT '录制器本地接收时间(用于延迟分析)',
+    timestamp     DateTime64(3, 'Asia/Shanghai') COMMENT '时间戳(3秒粒度)',
+    recorded_time DateTime64(3, 'UTC')  DEFAULT now() COMMENT '录制器本地接收时间(用于延迟分析)',
     symbol        String                  COMMENT '证券代码',
     market_type   LowCardinality(String)  COMMENT '市场类型(A_share/futures/index)',
     price         Decimal(18,4)           COMMENT '成交价',
@@ -67,7 +71,7 @@ CREATE TABLE IF NOT EXISTS c1_market.tick_data
     bid_volume    Nullable(UInt64)        COMMENT '买一量',
     ask_volume    Nullable(UInt64)        COMMENT '卖一量',
     quality_flag  UInt8          DEFAULT 1 COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts     DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
+    ingest_ts     DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
     INDEX idx_ts timestamp TYPE minmax GRANULARITY 1,
     INDEX idx_symbol symbol TYPE set(10000) GRANULARITY 4
 )

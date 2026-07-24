@@ -36,7 +36,7 @@ AUCTION_BOOK_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.auction_book
 (
     trade_date   Date           COMMENT '交易日期',
-    timestamp    DateTime       COMMENT '快照时间戳(精确到秒)',
+    timestamp    DateTime64(3, 'Asia/Shanghai') COMMENT '快照时间戳(精确到秒)',
     symbol       String         COMMENT '证券代码',
     last_price   Decimal(18,4)  COMMENT '最新成交价',
     volume       UInt64         COMMENT '累计成交量(手)',

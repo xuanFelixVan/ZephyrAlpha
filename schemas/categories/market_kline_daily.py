@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_daily
     market_type  LowCardinality(String) DEFAULT 'A_share' COMMENT '市场类型(预留港股/美股/期货)',
     data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT/iFind)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts    DateTime       DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
+    ingest_ts    DateTime64(3, 'UTC')  DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

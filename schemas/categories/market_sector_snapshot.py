@@ -34,7 +34,7 @@ SECTOR_SNAPSHOT_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
 (
     trade_date       Date        COMMENT '交易日',
-    timestamp        DateTime    COMMENT '快照时间戳',
+    timestamp        DateTime64(3, 'Asia/Shanghai') COMMENT '快照时间戳',
     sector_code      String      COMMENT '板块代码 880001.SH',
     market_type      LowCardinality(String) COMMENT 'sector/mkt_index',
     now_price        Decimal(18,4) COMMENT '最新价',
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
     outside          UInt32      COMMENT '外盘',
     zangsu           Decimal(10,3) COMMENT '涨速',
     data_source      LowCardinality(String) COMMENT 'tqcenter_snapshot/tqcenter_push',
-    fetched_at       DateTime    COMMENT '采集时间(UTC)'
+    fetched_at       DateTime64(3, 'UTC') COMMENT '采集时间(UTC)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS c3_fundamental.income_statement
     comprehensive_income     Nullable(Decimal(18,2))   COMMENT '综合收益总额',
     data_source              String                    COMMENT '数据来源',
     quality_flag             UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts                DateTime       DEFAULT now() COMMENT '入库时间戳(兼任版本列)'
+    ingest_ts                DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(兼任版本列)'
 )
 ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(report_period)

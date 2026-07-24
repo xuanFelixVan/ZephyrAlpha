@@ -30,7 +30,7 @@ AUCTION_SNAPSHOT_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.auction_snapshot
 (
     trade_date      Date           COMMENT '交易日期',
-    auction_time    DateTime       COMMENT '集合竞价时间(9:15-9:25)',
+    auction_time    DateTime64(3, 'Asia/Shanghai') COMMENT '集合竞价时间(9:15-9:25)',
     symbol          String         COMMENT '证券代码',
     auction_price   Decimal(18,4)  COMMENT '集合竞价价格',
     auction_volume  UInt64         COMMENT '集合竞价成交量',
