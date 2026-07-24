@@ -179,11 +179,17 @@ class TestQueryFailures:
         assert len(files) == 2
 
     def test_list_by_date(self, alerter, tmp_path):
-        """按日期过滤。"""
-        import datetime
+        """按日期过滤。
+
+        alerter 文件名用 UTC 日期（now_utc().strftime("%Y%m%d")），
+        与文件内 timestamp（UTC）保持一致；查询也须用 UTC 日期，
+        否则在 UTC<local 的时区窗口（如 CST 00:00-08:00 = UTC 前一天）
+        会因日期错位而漏匹配。B2 告警通道验证发现并修复（#ARCH-CH-023）。
+        """
+        from zephyr.shared.utils.time_utils import now_utc
         alerter.notify("task_a", "err1", level=LEVEL_ERROR)
-        today = datetime.datetime.now().strftime("%Y%m%d")
-        files = alerter.list_failure_files(date=today)
+        today_utc = now_utc().strftime("%Y%m%d")
+        files = alerter.list_failure_files(date=today_utc)
         assert len(files) == 1
         files_other = alerter.list_failure_files(date="20250101")
         assert len(files_other) == 0
@@ -374,7 +380,10 @@ class TestSendEmailSmtp:
         with patch("src.zephyr.data.alerter.smtplib.SMTP", return_value=mock_smtp) as mock_ctor:
             result = alerter._send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
         assert result is True
-        mock_ctor.assert_called_once_with("smtp.example.com", 587, timeout=5)
+        # local_hostname 必须显式传 ASCII 值（B2 验证发现，#ARCH-CH-023）
+        mock_ctor.assert_called_once_with(
+            "smtp.example.com", 587, local_hostname="zephyr.alert.local", timeout=5
+        )
         mock_smtp.starttls.assert_called_once()
         mock_smtp.login.assert_called_once_with("alert@example.com", "secret")
         mock_smtp.sendmail.assert_called_once()
@@ -382,6 +391,35 @@ class TestSendEmailSmtp:
         args = mock_smtp.sendmail.call_args[0]
         assert args[0] == "alert@example.com"  # sender 默认=USER
         assert args[1] == ["ops@example.com"]  # recipient
+
+    def test_subject_encoded_for_non_ascii(self, alerter, monkeypatch):
+        """Subject 含中文时必须 RFC 2047 编码，msg.as_string() 可 ASCII 编码。
+
+        回归 B2 验证发现：原实现 msg["Subject"] = subject（含中文）会导致
+        msg.as_string() 产生非 ASCII 头，smtp.data() 的 ASCII 编码失败（#ARCH-CH-023）。
+        """
+        monkeypatch.setenv("ZEPHYR_SMTP_HOST", "smtp.example.com")
+        monkeypatch.setenv("ZEPHYR_SMTP_USER", "alert@example.com")
+        monkeypatch.setenv("ZEPHYR_SMTP_PASSWORD", "secret")
+        monkeypatch.setenv("ZEPHYR_ALERT_RECIPIENT", "ops@example.com")
+        captured_msg: list[str] = []
+
+        def _capture_sendmail(sender, recipients, msg_str):
+            captured_msg.append(msg_str)
+            return {}
+
+        mock_smtp = MagicMock()
+        mock_smtp.__enter__ = MagicMock(return_value=mock_smtp)
+        mock_smtp.__exit__ = MagicMock(return_value=False)
+        mock_smtp.sendmail.side_effect = _capture_sendmail
+        with patch("src.zephyr.data.alerter.smtplib.SMTP", return_value=mock_smtp):
+            alerter._send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
+        # msg.as_string() 整体必须可 ASCII 编码（SMTP 协议要求）
+        assert len(captured_msg) == 1
+        msg_str = captured_msg[0]
+        msg_str.encode("ascii")  # 不抛 UnicodeEncodeError 即通过
+        # Subject 头应出现 RFC 2047 编码（=?utf-8?b?...?=）
+        assert "=?utf-8?b?" in msg_str.lower()
 
     def test_sender_override(self, alerter, monkeypatch):
         """ZEPHYR_ALERT_SENDER 覆盖默认发件人。"""

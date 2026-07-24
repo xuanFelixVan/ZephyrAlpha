@@ -46,6 +46,7 @@ import smtplib
 import threading
 import urllib.error
 import urllib.request
+from email.header import Header
 from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
@@ -81,6 +82,10 @@ _ALERT_TIMEOUT_ENV: Final[str] = "ZEPHYR_ALERT_TIMEOUT"      # 网络/SMTP 超�
 _DEFAULT_ALERT_TIMEOUT: Final[int] = 5  # webhook/SMTP 超时秒数（防阻塞调度线程）
 # 触达通道的最低告警级别（含）——仅 ERROR/CRITICAL 触达人，WARN/INFO 仅写日志
 _CHANNEL_THRESHOLD_LEVELS: Final[tuple[str, ...]] = (LEVEL_ERROR, LEVEL_CRITICAL)
+# SMTP EHLO 本地主机名（必须 ASCII）——smtplib 默认用 socket.gethostname()，
+# Windows 中文主机名（如"范清风"）含非 ASCII 字符会导致 EHLO 命令 UnicodeEncodeError，
+# 邮件静默发送失败（B2 告警通道验证发现，#ARCH-CH-023，2026-07-25）。
+_SMTP_LOCAL_HOSTNAME: Final[str] = "zephyr.alert.local"
 
 
 class Alerter:
@@ -292,11 +297,17 @@ class Alerter:
         timeout = self._alert_timeout()
         subject = f"[ZephyrAlpha 告警] {level} - {task_id}"
         msg = MIMEText(body, "plain", "utf-8")
-        msg["Subject"] = subject
+        # Subject 含中文，须 RFC 2047 编码（=?utf-8?b?...?=），否则 msg.as_string()
+        # 产生非 ASCII 头，smtp.data() 的 ASCII 编码会失败（B2 验证发现，#ARCH-CH-023）。
+        msg["Subject"] = Header(subject, "utf-8")
         msg["From"] = sender
         msg["To"] = recipient
         try:
-            with smtplib.SMTP(host, port, timeout=timeout) as smtp:
+            # local_hostname 必须显式传 ASCII 值：smtplib 默认用 socket.gethostname()，
+            # Windows 中文主机名会导致 EHLO 命令 UnicodeEncodeError（B2 验证发现，#ARCH-CH-023）。
+            with smtplib.SMTP(
+                host, port, local_hostname=_SMTP_LOCAL_HOSTNAME, timeout=timeout
+            ) as smtp:
                 smtp.starttls()
                 if password:
                     smtp.login(user, password)
