@@ -8815,10 +8815,21 @@ entries:
     5. 重命名中文命名文件（临时文件.md → db_institutional_upgrade_task_spec.md）
     6. 按任务归属分组提交（debt-migration / BLUEPRINT 头注入 / _working 参考文档）
   fix_phase: |-
-    本次清理已完成；防复发门禁强制 deferred 至 #ARCH-DEP-PREMERGE-ENFORCE Phase 3
-    （pre-merge 拓扑硬阻断，含 worktree 隔离检查）
+    本次清理已完成。防复发体系经 2026-07-24 全面核查确认已落地（非 deferred）：
+    1. depgraph_pre_registration_gate.py（priority=113, DEPGRAPH-PRE-REGISTRATION）——
+       pre-merge 拓扑硬阻断：src/zephyr/**/*.py [TTL]=permanent 且 >50 行但 depgraph
+       build_status=planned 时硬阻断 commit。落地 #ARCH-DEP-PREMERGE-ENFORCE Part 1。
+    2. ruling_commit_verified_gate.py（priority=109, RULING-COMMIT-VERIFIED）——
+       文档"已完成 commit XXX"声明真实性硬验证，防 AI 捏造 commit hash。
+    3. TRAE-079 文件锁串行化（裁定 #ARCH-COMMIT-SERIALIZATION-001, 2026-07-22）——
+       commit 临界区文件锁互斥，消除搭便车 TOCTOU 窗口。
+    4. #ARCH-RECONCILER-VERIFY-AUTOSYNC-001——--reconciler-verify 豁免 auto-sync 产物，
+       防后台进程派生文件误阻断验证提交。
+    架构裁定（第一性原理）：原"worktree 隔离检查"硬门禁被 TRAE-079 Phase 2 superseded
+    ——TRAE-079 明确 worktree 降级为可选（"主工作区恒 drift 否定 worktree 前置条件"），
+    防复发策略从"强制 worktree"转为"文件锁串行化 + 分层门禁强制"。
   status: resolved
-  related_adjudication: 'FP-ISO.4C worktree 君子协定, #ARCH-WORKTREE-002, #ARCH-DEP-PREMERGE-ENFORCE'
+  related_adjudication: 'FP-ISO.4C worktree 君子协定, #ARCH-WORKTREE-002, #ARCH-DEP-PREMERGE-ENFORCE, TRAE-079 (#ARCH-COMMIT-SERIALIZATION-001), #ARCH-RECONCILER-VERIFY-AUTOSYNC-001, #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
   created: '2026-07-24'
   last_updated: '2026-07-24'
 - issue_id: '#ARCH-RECONCILER-VERIFY-AUTOSYNC-001'
@@ -8861,5 +8872,52 @@ entries:
     全量 git 测试套件 57 passed 无回归。
   status: resolved
   related_adjudication: '#ARCH-WORKTREE-EXEC-DRIFT-001, FP-ISO.4C worktree 君子协定'
+  created: '2026-07-24'
+  last_updated: '2026-07-24'
+- issue_id: '#ARCH-DEP-PREMERGE-ENFORCE'
+  title: pre-merge depgraph 拓扑硬阻断门禁（Part 1 已落地）+ worktree 隔离检查（Part 2 被 TRAE-079 superseded）
+  category: architecture_governance
+  severity: P1高
+  adjudication: |-
+    2026-07-24 全面试核查并登记。本议题原为 #ARCH-WORKTREE-EXEC-DRIFT-001 防复发门禁的
+    deferred 目标，含两部分：
+
+    Part 1——pre-merge 拓扑硬阻断（已落地，factual）：
+    depgraph_pre_registration_gate.py（priority=113, DEPGRAPH-PRE-REGISTRATION）已实现并激活。
+    硬阻断逻辑：staged src/zephyr/**/*.py 文件含 [TTL]=permanent 且 depgraph build_status=planned
+    且文件实质行数 > _IMPL_THRESHOLD(50) 时阻断 commit。落地 L1 铁律"施工前 MUST 登记 depgraph
+    设计态（planned），施工完成转 production"——补强 NEW-FILE-DEPGRAPH-ENFORCEMENT(priority=58)
+    只检测"新建文件完全无记录"的盲区，本 gate 检测"已登记 planned 但代码已实质实现"。
+    58 测试通过（tests/governance/commit_gates/test_depgraph_pre_registration_gate.py）。
+    经 GitCommitGateway 实例化验证：gate ACTIVE，priority=113。
+
+    Part 2——worktree 隔离检查（proposed-superseded，边界裁定需用户确认）：
+    原计划在 commit 时强制检查"待提交文件是否属于当前 session worktree"。但 TRAE-079
+    （裁定 #ARCH-COMMIT-SERIALIZATION-001, 2026-07-22，用户已确认）明确：
+    - 铁律4: worktree 从"commit 正确性依赖项"降级为"可选并行/隔离审查"
+    - "主工作区恒 drift（N≥2 session 编辑即不干净）→ 否定 worktree 前置条件"
+    - WORKSPACE_DRIFT_BLOCKED 不再触发逃生链降级，直接走文件锁串行提交
+    因此"worktree 隔离检查"硬门禁与 TRAE-079 Phase 2 直接冲突——强制 worktree 的前置条件
+    （主工作区 clean）在 100% AI 并发下永不成立。TRAE-079 把防搭便车从"worktree 物理隔离"
+    转为"文件锁串行化临界区"（acquire→[gate检查+stage+commit]→release），更精确且无不可达前置条件。
+
+    架构裁定（第一性原理 + 长期战略，100% AI 开发）：
+    Part 2 被 TRAE-079 superseded 是逻辑必然，非新决策——TRAE-079 已用户确认，supersession
+    是其直接推论。防复发目标通过分层体系达成（非单门禁）：
+    1. TRAE-079 文件锁串行化——commit 临界区互斥（防搭便车，替代 worktree 物理隔离）
+    2. depgraph_pre_registration_gate.py——拓扑流转强制（防 planned 滞留，Part 1）
+    3. ruling_commit_verified_gate.py——文档真实性硬验证（防 fake commit 声明）
+    4. #ARCH-RECONCILER-VERIFY-AUTOSYNC-001——auto-sync 产物豁免（防 --reconciler-verify 误阻断）
+    5. #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1/2/3——workspace clean 检查 + drift 检测
+    分层体系比单 worktree 门禁更健壮：任一层失效其余仍兜底，且无不可达前置条件。
+
+    status=proposed 因 Part 2 supersession 属边界裁定（铁律#9），待用户确认后转 resolved。
+  fix_phase: |-
+    Part 1 已落地：depgraph_pre_registration_gate.py（commit f7f79ae684 前序，priority=113，
+    DEPGRAPH-PRE-REGISTRATION，58 测试通过，GitCommitGateway ACTIVE 验证）。
+    Part 2 proposed-superseded：无需施工——TRAE-079 文件锁串行化已替代 worktree 物理隔离
+    的防搭便车功能，且无不可达前置条件。用户确认 supersession 后本议题转 resolved。
+  status: proposed
+  related_adjudication: '#ARCH-WORKTREE-EXEC-DRIFT-001, TRAE-079 (#ARCH-COMMIT-SERIALIZATION-001), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001, #ARCH-RECONCILER-VERIFY-AUTOSYNC-001, L1 依赖关系先行铁律'
   created: '2026-07-24'
   last_updated: '2026-07-24'
