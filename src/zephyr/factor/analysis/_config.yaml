@@ -1,0 +1,22 @@
+# 因子域 analysis 模块策略参数配置
+# 所有策略类模块的默认参数集中于此，代码读配置不硬编码
+# 改后重启进程即生效（运行时配置，无需 DB 同步——裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001）
+
+layered_backtest:
+  n_layers: 5              # 分层回测分组数（业界标准 5 分位）
+
+three_level_judgment:
+  excellent_ic: 0.1        # IC > 0.1 判定优秀
+  pass_ic: 0.05            # IC > 0.05 判定合格，否则淘汰
+
+decay_monitor:
+  min_half_life: 10        # IC 半衰期低于 10 个截面告警
+
+factor_attribution:
+  time_freq: "ME"          # 按月归因（pandas 2.x 用 ME 替代已弃用的 M）
+
+multifactor_synthesis:
+  default_method: "ic_weighted"   # 默认合成方法：等权/IC加权/回归优化
+
+factor_optimization:
+  default_objective: "max_ir"     # 默认优化目标：最大化 IR
