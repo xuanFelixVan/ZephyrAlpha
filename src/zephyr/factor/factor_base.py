@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] INV-004: PIT铁律——因子回测必须使用AS OF JOIN，禁止未来函数(lookahead bias)
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] M

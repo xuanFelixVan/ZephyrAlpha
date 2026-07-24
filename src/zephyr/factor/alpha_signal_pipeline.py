@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
+# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.alpha_signal_pipeline
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.signal_fundamental.pipeline; 信号域-审计.D-SIGLEGACY-01
