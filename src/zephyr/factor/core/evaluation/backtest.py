@@ -98,9 +98,25 @@ def _escape_symbol(symbol: str) -> str:
     return str(symbol).replace("'", "\\'")
 
 
+def _strip_symbol_suffix(symbol: str) -> str:
+    """去除 symbol 的交易所后缀，返回纯数字代码（600519.SH → 600519）。
+
+    kline_daily.symbol 存储纯数字代码，调用方传入契约格式（600519.SH）时
+    需先去后缀再查 DB。幂等：纯数字 symbol 原样返回。
+    裁定#ARCH-SYMBOL-NORMALIZE-001（2026-07-25）：与 producer 对齐。
+    """
+    if not symbol:
+        return symbol
+    s = str(symbol).strip()
+    return s.split(".")[0]
+
+
 def _format_symbols(symbols: Sequence[str]) -> str:
-    """格式化标的列表为 SQL IN 子句内容（'a','b','c'）。"""
-    escaped = [_escape_symbol(s) for s in symbols if s]
+    """格式化标的列表为 SQL IN 子句内容（'a','b','c'）。
+
+    自动去除交易所后缀（600519.SH → 600519），匹配 kline_daily 纯数字存储。
+    """
+    escaped = [_escape_symbol(_strip_symbol_suffix(s)) for s in symbols if s]
     return ",".join(f"'{s}'" for s in escaped)
 
 
@@ -108,12 +124,14 @@ def _tsv_to_dataframe(tsv: str) -> pd.DataFrame:
     """解析 ch_reader 返回的 TSV 为 DataFrame（TSV 无表头，按列顺序映射）。
 
     symbol 列强制为 str（避免 "000001" 被解析为整数 1，丢失前导零）。
+    ClickHouse Nullable 列的 NULL 在 TSV 中为 \\N，通过 na_values 转为 NaN。
     """
     if not tsv or not tsv.strip():
         return pd.DataFrame()
     df = pd.read_csv(
         StringIO(tsv), sep="\t", header=None, names=_HISTORY_COLUMNS,
         dtype={"symbol": str},
+        na_values=["\\N"],
     )
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     return df

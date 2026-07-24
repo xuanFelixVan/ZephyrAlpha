@@ -2943,6 +2943,91 @@ entries:
   created: '2026-07-23'
   last_updated: '2026-07-24'
 
+# --- #ARCH-SYMBOL-NORMALIZE-001: symbol 格式标准化（producer 层双向转换）---
+- issue_id: '#ARCH-SYMBOL-NORMALIZE-001'
+  title: symbol 格式标准化——kline_daily 纯数字存储 + producer 层双向转换（600519↔600519.SH）
+  severity: P1高
+  category: data_governance
+  adjudication: |
+    问题：kline_daily.symbol 存储纯数字代码（如 600519），但 CTR-001 NormalizedMarketData
+    契约要求 600519.SH 格式（证券代码.交易所）。18.8M 行 100% 纯数字，跨所有 data_source。
+    契约 docstring 明确："该类型的 symbol 字段已由 D_DATA 标准化为 '600519.SH' 格式"。
+
+    第一性原理分析：
+    1. 契约要求 D_DATA 输出 600519.SH 格式——D_DATA 负责标准化
+    2. kline_daily 是 D_DATA 内部存储，保持数据源自然形式（纯数字）更合理
+    3. 改 kline_daily.symbol 为带后缀格式需 backfill 18.8M 行 + 破坏现有查询 + 每个 provider 都要改
+    4. 100% AI 开发：转换逻辑必须集中、可测试、无歧义
+
+    裁定（2026-07-25）：在 NormalizedMarketData 生产者（D_DATA→D_FACTOR 边界）执行双向转换
+    - 入参 symbols 接受契约格式（600519.SH）或纯数字（600519），内部统一去后缀查 DB
+    - DB 返回纯数字 symbol → 加后缀产出 NormalizedMarketData.symbol（600519.SH）
+    - 前缀推断：6/9→.SH（沪市），0/3→.SZ（深市），8/4→.BJ（北交所）
+    - 前缀推断是 A 股标准编码规则，与 Tushare/akshare 的 ts_code 后缀一致
+    - 不改 kline_daily schema（避免 backfill 18.8M 行）
+    - 同步修复 backtest.py 的 _format_symbols（同样的后缀去除逻辑）
+
+    理由：生产者是 D_DATA→D_FACTOR 边界，是标准化的最后出口。集中转换比分散在每个
+    provider 更可靠，符合 100% AI 开发的可靠性要求。
+  impact:
+    - src/zephyr/market_data/normalized_market_data_producer/producer.py 新增 _normalize_symbol + _strip_symbol_suffix
+    - src/zephyr/factor/core/evaluation/backtest.py 同步新增 _strip_symbol_suffix
+    - tests/market_data/test_normalized_market_data_producer.py 新增 41 个测试用例
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - CTR-001 NormalizedMarketData 契约
+  - INV-004 PIT铁律
+  created: '2026-07-25'
+  last_updated: '2026-07-25'
+
+# --- #ARCH-ADJFACTOR-NULL-001: adj_factor=0 治本——schema Nullable + backfill 0→NULL + producer 0→None ---
+- issue_id: '#ARCH-ADJFACTOR-NULL-001'
+  title: adj_factor=0 治本修复——Nullable schema + 704K 行 backfill + producer 0→None
+  severity: P1高
+  category: data_quality
+  adjudication: |
+    问题：kline_daily 表 704,135 行（3.74%）adj_factor=0，全部来自 bdpan_qfq data_source。
+    adj_factor=0 数学上无效（复权因子=0 意味价格归零），是 bdpan_qfq ad-hoc writer 用 0
+    作 placeholder 表示"缺失"。schema 为 Decimal(18,8) DEFAULT 1（NOT Nullable），
+    导致 writer 无法写 NULL，只能用 0 代替。
+
+    第一性原理分析：
+    1. adj_factor 语义：复权因子，DEFAULT 1（无复权），值域 0~1（归一化前复权）
+    2. adj_factor=0 数学上无效，0≠缺失≠无复权，三者在语义上完全不同
+    3. bdpan_qfq writer 不在生产代码中（ad-hoc 脚本），无法直接修复 writer
+    4. schema NOT Nullable 是根因——阻止了正确的 NULL 语义
+    5. quality_gate 已有 0 < adj_factor 检查，但 ad-hoc writer 绕过了 gate
+
+    裁定（2026-07-25）：多管齐下治本
+    1. Schema 层：adj_factor Decimal(18,8) → Nullable(Decimal(18,8)) DEFAULT 1
+       语义：NULL=未知/缺失，1=无复权，0=无效已弃用
+    2. Backfill：ALTER TABLE UPDATE adj_factor=NULL WHERE adj_factor=0
+       704,135 行 0→NULL（修正 bdpan_qfq 历史 placeholder）
+    3. Producer 层：adj_factor=0 视为 None（防御性，处理边界情况）
+    4. _to_decimal 增加 \N 显式处理（ClickHouse TSV NULL 表示）
+
+    执行结果：
+    - ALTER TABLE MODIFY COLUMN 完成（列类型变更为 Nullable(Decimal(18,8))）
+    - ALTER TABLE UPDATE 完成（704,135 行 0→NULL，mutation 14s 完成）
+    - 验证：adj_factor=0 行数=0，adj_factor IS NULL 行数=704,135
+    - 75 个 producer 测试 + 17 个 backtest 测试全部通过
+    - 端到端实弹验证：load_kline + load_history 均正常工作
+  impact:
+    - schemas/categories/market_kline_daily.py adj_factor 改为 Nullable(Decimal(18,8))
+    - src/zephyr/market_data/normalized_market_data_producer/producer.py adj_factor=0→None + \N 处理
+    - src/zephyr/factor/core/evaluation/backtest.py _tsv_to_dataframe 增加 na_values=["\\N"]
+    - ClickHouse c1_market.kline_daily 表 schema 已变更 + 704K 行已 backfill
+    - tests/market_data/test_normalized_market_data_producer.py 新增 adj_factor=0 测试
+  fix_phase: production
+  status: resolved
+  related_rules:
+  - CTR-001 NormalizedMarketData 契约（adj_factor: Optional[Decimal]）
+  - '#ARCH-CH-021 P0-4 quality_flag 语义'
+  - quality_gate._gate_adjustment（0 < adj_factor <= adj_max）
+  created: '2026-07-25'
+  last_updated: '2026-07-25'
+
 # --- #ARCH-OLAP-001: olap_engine.py 孤儿模块退役（DuckDB OLAP 层被 ClickHouse 替代） ---
 - issue_id: '#ARCH-OLAP-001'
   title: olap_engine.py 孤儿模块退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代后业务侧零调用

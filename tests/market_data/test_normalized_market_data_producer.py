@@ -35,6 +35,8 @@ _row_to_record = producer._row_to_record
 _format_symbols = producer._format_symbols
 _to_decimal = producer._to_decimal
 _to_int = producer._to_int
+_normalize_symbol = producer._normalize_symbol
+_strip_symbol_suffix = producer._strip_symbol_suffix
 
 
 def _make_tsv(n_days: int = 5, symbols: list[str] | None = None) -> str:
@@ -87,6 +89,10 @@ class TestToDecimal:
 
     def test_none_string(self):
         assert _to_decimal("None") is None
+
+    def test_clickhouse_null_literal(self):
+        # ClickHouse TSV 中 NULL 表示为 \N（adj_factor Nullable 列）
+        assert _to_decimal("\\N") is None
 
 
 class TestToInt:
@@ -245,3 +251,267 @@ class TestProduceAlias:
         r2 = produce(["A.SH"], "2026-01-01", "2026-01-03")
         assert len(r1) == len(r2)
         assert [r.idempotency_key for r in r1] == [r.idempotency_key for r in r2]
+
+
+# === 裁定#ARCH-SYMBOL-NORMALIZE-001 测试（2026-07-25）===
+
+
+class TestNormalizeSymbol:
+    """symbol 标准化：纯数字 → 契约格式（600519.SH）。"""
+
+    def test_sh_main_board(self):
+        assert _normalize_symbol("600519") == "600519.SH"
+
+    def test_sh_star_market(self):
+        assert _normalize_symbol("688981") == "688981.SH"
+
+    def test_sh_b_share(self):
+        assert _normalize_symbol("900901") == "900901.SH"
+
+    def test_sz_main_board(self):
+        assert _normalize_symbol("000001") == "000001.SZ"
+
+    def test_sz_gem(self):
+        assert _normalize_symbol("300750") == "300750.SZ"
+
+    def test_bj_exchange(self):
+        assert _normalize_symbol("830879") == "830879.BJ"
+
+    def test_bj_exchange_4_prefix(self):
+        assert _normalize_symbol("430047") == "430047.BJ"
+
+    def test_already_has_suffix_idempotent(self):
+        assert _normalize_symbol("600519.SH") == "600519.SH"
+
+    def test_already_has_sz_suffix_idempotent(self):
+        assert _normalize_symbol("000001.SZ") == "000001.SZ"
+
+    def test_empty_string(self):
+        assert _normalize_symbol("") == ""
+
+    def test_none(self):
+        assert _normalize_symbol(None) is None
+
+    def test_unknown_prefix_no_suffix(self):
+        # 未知前缀（如 5xxxxx）原样返回，不擅自添加后缀
+        assert _normalize_symbol("599999") == "599999"
+
+    def test_strips_whitespace(self):
+        assert _normalize_symbol("  600519  ") == "600519.SH"
+
+
+class TestStripSymbolSuffix:
+    """symbol 后缀去除：契约格式 → 纯数字（查 DB 用）。"""
+
+    def test_sh_suffix(self):
+        assert _strip_symbol_suffix("600519.SH") == "600519"
+
+    def test_sz_suffix(self):
+        assert _strip_symbol_suffix("000001.SZ") == "000001"
+
+    def test_bj_suffix(self):
+        assert _strip_symbol_suffix("830879.BJ") == "830879"
+
+    def test_no_suffix_idempotent(self):
+        assert _strip_symbol_suffix("600519") == "600519"
+
+    def test_empty(self):
+        assert _strip_symbol_suffix("") == ""
+
+    def test_none(self):
+        assert _strip_symbol_suffix(None) is None
+
+    def test_strips_whitespace(self):
+        assert _strip_symbol_suffix("  600519.SH  ") == "600519"
+
+
+class TestFormatSymbolsStripsSuffix:
+    """_format_symbols 自动去除交易所后缀，匹配 kline_daily 纯数字存储。"""
+
+    def test_strips_sh_suffix(self):
+        # 600519.SH → '600519'
+        result = _format_symbols(["600519.SH"])
+        assert result == "'600519'"
+
+    def test_strips_sz_suffix(self):
+        result = _format_symbols(["000001.SZ"])
+        assert result == "'000001'"
+
+    def test_mixed_formats(self):
+        # 混合契约格式和纯数字
+        result = _format_symbols(["600519.SH", "000001"])
+        assert result == "'600519','000001'"
+
+    def test_pure_numeric_unchanged(self):
+        result = _format_symbols(["600519", "000001"])
+        assert result == "'600519','000001'"
+
+    def test_escape_after_strip(self):
+        # 去后缀后仍要转义单引号
+        result = _format_symbols(["600'519.SH"])
+        assert "\\'" in result
+        assert ".SH" not in result  # 后缀已去除
+
+
+class TestRowToRecordSymbolNormalization:
+    """_row_to_record 对纯数字 symbol 自动标准化为契约格式。"""
+
+    def _make_row(self, symbol: str, **overrides) -> pd.Series:
+        defaults = {
+            "trade_date": pd.Timestamp("2026-01-01"),
+            "symbol": symbol,
+            "open": "100.0",
+            "high": "101.0",
+            "low": "99.0",
+            "close": "100.5",
+            "volume": "1000",
+            "amount": "100000",
+            "adj_factor": "1.0",
+            "data_source": "miniqmt",
+            "quality_flag": "1",
+        }
+        defaults.update(overrides)
+        return pd.Series(defaults)
+
+    def test_pure_numeric_sh_symbol_normalized(self):
+        rec = _row_to_record(self._make_row(symbol="600519"))
+        assert rec is not None
+        assert rec.symbol == "600519.SH"
+
+    def test_pure_numeric_sz_symbol_normalized(self):
+        rec = _row_to_record(self._make_row(symbol="000001"))
+        assert rec is not None
+        assert rec.symbol == "000001.SZ"
+
+    def test_pure_numeric_bj_symbol_normalized(self):
+        rec = _row_to_record(self._make_row(symbol="830879"))
+        assert rec is not None
+        assert rec.symbol == "830879.BJ"
+
+    def test_already_suffixed_symbol_idempotent(self):
+        rec = _row_to_record(self._make_row(symbol="600519.SH"))
+        assert rec is not None
+        assert rec.symbol == "600519.SH"
+
+    def test_idempotency_key_uses_normalized_symbol(self):
+        rec = _row_to_record(self._make_row(symbol="600519"))
+        assert rec is not None
+        assert rec.idempotency_key == "600519.SH:20260101"
+
+
+class TestRowToRecordAdjFactorZero:
+    """_row_to_record 对 adj_factor=0 视为 None（无效值）。
+
+    裁定#ARCH-ADJFACTOR-NULL-001：adj_factor=0 是 bdpan_qfq ad-hoc writer 的
+    placeholder，数学上无效（复权因子=0 意味价格归零），视为缺失（None）。
+    """
+
+    def _make_row(self, **overrides) -> pd.Series:
+        defaults = {
+            "trade_date": pd.Timestamp("2026-01-01"),
+            "symbol": "600519",
+            "open": "100.0",
+            "high": "101.0",
+            "low": "99.0",
+            "close": "100.5",
+            "volume": "1000",
+            "amount": "100000",
+            "adj_factor": "0",
+            "data_source": "bdpan_qfq",
+            "quality_flag": "1",
+        }
+        defaults.update(overrides)
+        return pd.Series(defaults)
+
+    def test_adj_factor_zero_becomes_none(self):
+        rec = _row_to_record(self._make_row(adj_factor="0"))
+        assert rec is not None
+        assert rec.adj_factor is None
+
+    def test_adj_factor_zero_decimal_becomes_none(self):
+        rec = _row_to_record(self._make_row(adj_factor="0.0"))
+        assert rec is not None
+        assert rec.adj_factor is None
+
+    def test_adj_factor_zero_string_becomes_none(self):
+        rec = _row_to_record(self._make_row(adj_factor="0.00000000"))
+        assert rec is not None
+        assert rec.adj_factor is None
+
+    def test_adj_factor_nonzero_preserved(self):
+        rec = _row_to_record(self._make_row(adj_factor="0.95"))
+        assert rec is not None
+        assert rec.adj_factor == Decimal("0.95")
+
+    def test_adj_factor_one_preserved(self):
+        rec = _row_to_record(self._make_row(adj_factor="1.0"))
+        assert rec is not None
+        assert rec.adj_factor == Decimal("1.0")
+
+    def test_adj_factor_empty_becomes_none(self):
+        rec = _row_to_record(self._make_row(adj_factor=""))
+        assert rec is not None
+        assert rec.adj_factor is None
+
+    def test_adj_factor_none_becomes_none(self):
+        rec = _row_to_record(self._make_row(adj_factor=None))
+        assert rec is not None
+        assert rec.adj_factor is None
+
+    def test_bdpan_qfq_data_with_zero_adj_factor(self):
+        """模拟 bdpan_qfq 场景：data_source='bdpan_qfq', adj_factor=0 → None。"""
+        rec = _row_to_record(self._make_row(
+            adj_factor="0", data_source="bdpan_qfq"
+        ))
+        assert rec is not None
+        assert rec.adj_factor is None
+        assert rec.data_source == "bdpan_qfq"
+        assert rec.symbol == "600519.SH"  # 纯数字已标准化
+
+
+class TestLoadKlineSymbolConversion:
+    """load_kline 双向 symbol 转换：入参带后缀 → 查DB纯数字 → 产出带后缀。"""
+
+    def test_input_with_suffix_queries_stripped(self, monkeypatch):
+        """入参 600519.SH → SQL 用 '600519' 查 DB。"""
+        captured_sql = []
+
+        def fake_query(sql, timeout=30):
+            captured_sql.append(sql)
+            # 返回纯数字 symbol 的 TSV（模拟 DB 存储）
+            return "\t".join([
+                "2026-01-01", "600519", "100.0", "101.0", "99.0", "100.5",
+                "1000", "100000", "1.0", "miniqmt", "1",
+            ]) + "\n"
+
+        monkeypatch.setattr(producer.ch_reader, "query", fake_query)
+        records = load_kline(["600519.SH"], "2026-01-01", "2026-01-01")
+        assert len(records) == 1
+        # SQL 中应该是纯数字 '600519'，不是 '600519.SH'
+        assert "'600519'" in captured_sql[0]
+        assert "'600519.SH'" not in captured_sql[0]
+
+    def test_output_symbol_has_suffix(self, monkeypatch):
+        """DB 返回纯数字 symbol → 产出 NormalizedMarketData.symbol 带后缀。"""
+        tsv = "\t".join([
+            "2026-01-01", "600519", "100.0", "101.0", "99.0", "100.5",
+            "1000", "100000", "1.0", "miniqmt", "1",
+        ]) + "\n"
+        monkeypatch.setattr(producer.ch_reader, "query", lambda sql, timeout=30: tsv)
+        records = load_kline(["600519"], "2026-01-01", "2026-01-01")
+        assert len(records) == 1
+        assert records[0].symbol == "600519.SH"
+
+    def test_mixed_input_formats(self, monkeypatch):
+        """入参混合格式（600519.SH 和 000001）都能正确查询。"""
+        captured_sql = []
+
+        def fake_query(sql, timeout=30):
+            captured_sql.append(sql)
+            return ""  # 空结果即可，只验证 SQL 构造
+
+        monkeypatch.setattr(producer.ch_reader, "query", fake_query)
+        load_kline(["600519.SH", "000001"], "2026-01-01", "2026-01-01")
+        assert "'600519'" in captured_sql[0]
+        assert "'000001'" in captured_sql[0]
+        assert ".SH" not in captured_sql[0]  # 后缀已去除

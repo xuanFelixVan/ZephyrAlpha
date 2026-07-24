@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.factor.core.ctr001_consumer.converter
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] INV-004: PIT铁律——ch_reader注入FINAL保证去重；仅用trade_date做截面对齐禁止用ingested_ts；CP-03门禁：产出NormalizedMarketData实例供D_FACTOR消费
+# [INVARIANTS] INV-004: PIT铁律——ch_reader注入FINAL保证去重；仅用trade_date做截面对齐禁止用ingested_ts；CP-03门禁：产出NormalizedMarketData实例供D_FACTOR消费；CTR-001 symbol标准化(600519.SH格式)；adj_factor=0视为None(无效值)
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
@@ -21,14 +21,22 @@
 职责边界：
 - ch_reader 数据访问（自动注入 FINAL，PIT 去重）
 - TSV→NormalizedMarketData 转换（Decimal 字段集中转换）
+- symbol 标准化（kline_daily 纯数字 → CTR-001 契约要求的 600519.SH 格式）
+- adj_factor=0 视为 None（无效值，裁定#ARCH-ADJFACTOR-NULL-001）
 - 质量标记映射（quality_flag→quality_score；volume=0→is_suspended）
-- 幂等键生成（symbol:trade_date）
+- 幂等键生成（normalized_symbol:trade_date）
 - 不做任何因子计算——纯数据供给
+
+symbol 双向转换（裁定#ARCH-SYMBOL-NORMALIZE-001, 2026-07-25）：
+  入参（契约格式 600519.SH）→ 去后缀查 DB（纯数字 600519）
+  DB 返回（纯数字 600519）     → 加后缀产出（契约格式 600519.SH）
+  前缀推断：6/9→.SH，0/3→.SZ，8/4→.BJ（A 股标准编码规则）
 
 字段映射（kline_daily → NormalizedMarketData）：
   trade_date   → timestamp（datetime）
-  symbol       → symbol
-  open/high/low/close/volume/amount/adj_factor → Decimal
+  symbol       → symbol（标准化为 600519.SH 格式）
+  open/high/low/close/volume/amount → Decimal
+  adj_factor   → Decimal（0 视为 None）
   quality_flag → quality_score（1→1.0 通过；0→0.5 异常）
   volume=0     → is_suspended=True（停牌日无成交）
   data_source  → data_source
@@ -75,6 +83,49 @@ _KLINE_COLUMNS = [
 _QFLAG_TO_SCORE = {1: 1.0, 0: 0.5}
 _DEFAULT_QUALITY_SCORE = 1.0
 
+# A股 symbol 前缀 → 交易所后缀映射（CTR-001 契约要求 600519.SH 格式）
+# kline_daily 存储纯数字 symbol（如 600519），producer 在 D_DATA→D_FACTOR 边界
+# 标准化为带交易所后缀格式。裁定#ARCH-SYMBOL-NORMALIZE-001（2026-07-25）：
+#   - 6/9 → .SH（沪市主板 600/601/603/605 + 科创板 688 + 沪市B股 9xxxxx）
+#   - 0/3 → .SZ（深市主板 000/001/002/003 + 创业板 300/301）
+#   - 8/4 → .BJ（北交所 8xxxxx / 4xxxxx）
+# 前缀推断是 A 股标准编码规则，与 Tushare/akshare 的 ts_code 后缀一致。
+_SYMBOL_PREFIX_TO_SUFFIX = {
+    "6": ".SH", "9": ".SH",  # 沪市
+    "0": ".SZ", "3": ".SZ",  # 深市
+    "8": ".BJ", "4": ".BJ",  # 北交所
+}
+
+
+def _normalize_symbol(symbol: str) -> str:
+    """将纯数字 symbol 标准化为 CTR-001 契约要求的 600519.SH 格式。
+
+    kline_daily 存储纯数字 symbol（如 600519），契约要求带交易所后缀（600519.SH）。
+    按首位数字推断交易所：6/9→SH，0/3→SZ，8/4→BJ。
+    已带后缀（含"."）的 symbol 原样返回（幂等）。
+    未知前缀原样返回（不擅自添加后缀）。
+    """
+    if not symbol:
+        return symbol
+    s = str(symbol).strip()
+    if "." in s:  # 已带后缀，幂等返回
+        return s
+    if len(s) >= 1 and s[0] in _SYMBOL_PREFIX_TO_SUFFIX:
+        return s + _SYMBOL_PREFIX_TO_SUFFIX[s[0]]
+    return s  # 未知前缀，原样返回
+
+
+def _strip_symbol_suffix(symbol: str) -> str:
+    """去除 symbol 的交易所后缀，返回纯数字代码（600519.SH → 600519）。
+
+    kline_daily.symbol 存储纯数字代码，调用方传入契约格式（600519.SH）时
+    需先去后缀再查 DB。幂等：纯数字 symbol 原样返回。
+    """
+    if not symbol:
+        return symbol
+    s = str(symbol).strip()
+    return s.split(".")[0]
+
 
 def _escape_symbol(symbol: str) -> str:
     """转义标的代码中的单引号，防 SQL 注入。"""
@@ -82,17 +133,23 @@ def _escape_symbol(symbol: str) -> str:
 
 
 def _format_symbols(symbols: Sequence[str]) -> str:
-    """格式化标的列表为 SQL IN 子句内容（'a','b','c'）。"""
-    escaped = [_escape_symbol(s) for s in symbols if s]
+    """格式化标的列表为 SQL IN 子句内容（'a','b','c'）。
+
+    自动去除交易所后缀（600519.SH → 600519），匹配 kline_daily 纯数字存储。
+    """
+    escaped = [_escape_symbol(_strip_symbol_suffix(s)) for s in symbols if s]
     return ",".join(f"'{s}'" for s in escaped)
 
 
 def _to_decimal(value: str | None) -> Decimal | None:
-    """安全转 Decimal；None/空串/nan/None/非数值返回 None。"""
+    """安全转 Decimal；None/空串/nan/None/\\N/非数值返回 None。
+
+    \\N 是 ClickHouse TSV 格式中 NULL 的表示（adj_factor Nullable 列可能返回）。
+    """
     if value is None:
         return None
     s = str(value).strip()
-    if s == "" or s.lower() in ("none", "nan", "null"):
+    if s == "" or s.lower() in ("none", "nan", "null") or s == "\\N":
         return None
     try:
         return Decimal(s)
@@ -138,7 +195,14 @@ def _row_to_record(row: pd.Series) -> NormalizedMarketData | None:
         volume = _to_decimal(row["volume"]) or Decimal("0")
         amount = _to_decimal(row["amount"])
         adj_factor = _to_decimal(row["adj_factor"])
-        symbol = str(row["symbol"])
+        # adj_factor=0 是无效值（数学上不可能，复权因子=0 意味价格归零）。
+        # 历史原因：bdpan_qfq ad-hoc writer 用 0 作 placeholder 表示"缺失"。
+        # 裁定#ARCH-ADJFACTOR-NULL-001（2026-07-25）：视为 None（缺失），
+        # 与 schema Nullable 改造后 NULL 语义一致。
+        if adj_factor is not None and adj_factor == Decimal("0"):
+            adj_factor = None
+        # symbol 标准化：kline_daily 纯数字 → CTR-001 契约要求的 600519.SH 格式
+        symbol = _normalize_symbol(str(row["symbol"]))
         ts = row["trade_date"]
         if isinstance(ts, pd.Timestamp):
             ts = ts.to_pydatetime().replace(tzinfo=timezone.utc)
@@ -181,13 +245,19 @@ def load_kline(
 ) -> list[NormalizedMarketData]:
     """从 ClickHouse 加载日K行情，转为 NormalizedMarketData 列表。
 
+    symbol 格式双向转换（裁定#ARCH-SYMBOL-NORMALIZE-001）：
+      入参 symbols 接受契约格式（600519.SH）或纯数字（600519），内部统一
+      去后缀查 DB（kline_daily 存储纯数字），产出 NormalizedMarketData.symbol
+      标准化为契约格式（600519.SH）。
+
     Args:
-        symbols: 标的代码列表（如 ['600519.SH', '000001.SZ']）
+        symbols: 标的代码列表（接受 '600519.SH' 或 '600519' 格式）
         start: 起始日期 'YYYY-MM-DD'
         end: 结束日期 'YYYY-MM-DD'
 
     Returns:
-        NormalizedMarketData 列表。空标的或查询失败返回空列表。
+        NormalizedMarketData 列表（symbol 为 600519.SH 格式）。
+        空标的或查询失败返回空列表。
     """
     if not symbols:
         return []
