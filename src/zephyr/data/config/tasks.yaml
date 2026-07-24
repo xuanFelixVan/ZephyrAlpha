@@ -917,7 +917,7 @@ tasks:
 - task_id: realtime_snapshot_incremental
   table: c1_market.realtime_snapshot
   source: ifind
-  schedule: daily_kline    # 盘后时段写入当日收盘快照
+  schedule: intraday_realtime    # 盘中每5分钟抓取实时快照（9:00-15:59），盘后/非交易日返回-4001自动跳过
   incremental: true
   date_col: snapshot_time
   dependencies: []
@@ -1502,7 +1502,7 @@ tasks:
   extra:
     description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限，无权限时自动降级到五档快照）"
     requires_permission: L2
-    disabled: true    # #ARCH-CH-023: 需付费 L2 行情权限，裁定删除并在源头标注暂不需要
+    disabled: true    # #ARCH-DATA-014: 需付费 L2 行情权限，裁定保留+fallback_sources 降级到 tick_data（用户开通 L2 后可启用）
 
 - task_id: auction_data_snapshot
   table: c1_market.auction_snapshot

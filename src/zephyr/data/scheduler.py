@@ -1046,7 +1046,18 @@ class IntegratorScheduler:
                 if run_id:
                     self._progress_store.finish_run(run_id, "SUCCESS", total_rows, writer.total_flushed)
                 tq.mark_completed(task_id)
-                log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
+                # 治本修复 #ARCH-SILENT-SUCCESS（2026-07-24）：
+                # 0行写入被标记为SUCCESS且无告警=静默成功陷阱。root cause of 多个表数据过期未被发现。
+                # 0行可能是合法的（如今天无新分红），也可能是provider静默失败（如symbols为空/QMT API返回空）。
+                # 治本策略：WARN级别记录（不FAIL），使0行完成可见可诊断，配合provider侧error guard消除静默失败。
+                if total_rows == 0:
+                    log.warning(
+                        "任务 %s SUCCESS 但 0 行写入: source=%s table=%s start=%s end=%s "
+                        "last_key=%s (可能provider静默失败或当日无新数据)",
+                        task_id, source, table, start, today, latest_key,
+                    )
+                else:
+                    log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
                 self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=True)
@@ -1172,7 +1183,14 @@ class IntegratorScheduler:
                 break
 
             total_rows += result.rows_fetched
-            if result.last_key:
+            # 治本修复 #ARCH-CURSOR-DRIFT（2026-07-24）：
+            # 仅当本批有实际数据时才推进 last_key 游标。
+            # 原因：Provider（miniqmt/akshare/ifind）在 FetchResult 中设置 last_key=end_str（今天），
+            # 即使返回 0 行。若 0 行也推进游标，则下次查询 start=今天，永久跳过
+            # 上次实际数据日期与今天之间未采集的数据（如财报公告延迟、QMT 临时断连后恢复）。
+            # 修复：rows_fetched=0 时不推进游标，下次自动回查。对日频数据（kline_daily）
+            # 影响极小（非交易日由交易日历守卫跳过），对事件驱动数据（财报/公告）治本。
+            if result.last_key and result.rows_fetched > 0:
                 latest = result.last_key
 
             # 更新进度（每批）

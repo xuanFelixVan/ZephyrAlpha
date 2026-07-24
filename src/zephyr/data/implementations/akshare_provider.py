@@ -1755,8 +1755,13 @@ class AKShareProvider(DataSourceBase):
     ) -> Iterator[FetchResult]:
         """获取股本变动，写入 c3_fundamental.share_change。
 
-        调用 ak.stock_share_change_cninfo(symbol) 逐只获取。
+        调用 ak.stock_share_change_cninfo(symbol, start_date, end_date) 逐只获取。
         列映射: 证券代码/公告日期/变动原因/总股本。
+
+        治本修复（2026-07-24）：akshare stock_share_change_cninfo 默认 end_date='20241021'，
+        不传 start_date/end_date 会导致只获取到 2024-10-21 的数据。现在显式传入 payload 的
+        日期范围，确保获取最新数据。原 known_data_gaps.yaml 登记的"数据源自 2024Q4 停止更新"
+        实为 akshare 默认参数过期，非数据源真实停滞。
         """
         import akshare as ak
 
@@ -1768,7 +1773,11 @@ class AKShareProvider(DataSourceBase):
         symbols = payload.symbols
         if not symbols:
             symbols = self._get_all_a_symbols(ak, policy)
-        last_key = payload.end.isoformat()
+        end = payload.end or datetime.date.today()
+        start = payload.start or (end - datetime.timedelta(days=365))
+        start_str = start.strftime("%Y%m%d")
+        end_str = end.strftime("%Y%m%d")
+        last_key = end.isoformat()
         batch_rows: list[tuple] = []
         t0 = time.time()
 
@@ -1778,7 +1787,8 @@ class AKShareProvider(DataSourceBase):
                 self._log.info(f"share_change 进度: {idx+1}/{len(symbols)}")
             try:
                 df = self._call_with_policy(
-                    ak.stock_share_change_cninfo, policy, symbol=code,
+                    ak.stock_share_change_cninfo, policy,
+                    symbol=code, start_date=start_str, end_date=end_str,
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"stock_share_change_cninfo({code}) 失败: {e}")
@@ -2517,6 +2527,7 @@ class AKShareProvider(DataSourceBase):
                 if df is None or len(df) == 0:
                     continue
 
+                period_date = self._period_str_to_date(period_str)
                 for _, row in df.iterrows():
                     sym = str(row.get("股票代码", "") or "").zfill(6)
                     if not sym:
@@ -2525,8 +2536,8 @@ class AKShareProvider(DataSourceBase):
                     actual_date = self._norm_date_str(row.get("实际披露"))
                     all_rows.append((
                         sym,
-                        period_str,
-                        actual_date or "",
+                        period_date,
+                        actual_date or None,
                         scheduled_date or None,
                         actual_date or None,
                         "akshare",
@@ -2548,7 +2559,16 @@ class AKShareProvider(DataSourceBase):
     def _generate_report_periods(
         start: datetime.date | None, end: datetime.date
     ) -> list[str]:
-        """生成 start~end 之间的报告期列表（如 ['2025年报', '2026一季报']）。"""
+        """生成 start~end 之间的报告期列表（如 ['2025年报', '2026一季报']）。
+
+        治本修复 #ARCH-DISCLOSURE-PERIODS（2026-07-24）：
+        原条件 `start <= period_date` 排除了仍有数据的历史报告期。
+        报告期(period_date)是财报截止日，但披露窗口(announce_date)通常在报告期后1-4个月。
+        例如 2025年报 period_date=2025-12-31，但披露窗口是 2026-01~2026-04。
+        当增量 start=2026-06-30 时，2025年报被 `start <= period_date` 排除，
+        但其披露窗口可能仍有新数据（如补充披露/修正公告）。
+        修复：放宽 start 回看 180 天，确保覆盖上一披露季的报告期。
+        """
         periods = []
         if end is None:
             end = datetime.date.today()
@@ -2556,20 +2576,49 @@ class AKShareProvider(DataSourceBase):
             start = end - datetime.timedelta(days=365)
 
         _period_map = {
-            "一季报": (3, 31),
-            "中报": (6, 30),
-            "三季报": (9, 30),
+            "一季": (3, 31),
+            "半年报": (6, 30),
+            "三季": (9, 30),
             "年报": (12, 31),
         }
 
-        year = start.year
+        # 回看窗口：报告期截止日可能在 start 之前，但披露窗口延伸到 start 之后
+        lookback_start = start - datetime.timedelta(days=180)
+
+        year = lookback_start.year
         while year <= end.year:
             for period_name, (month, day) in _period_map.items():
                 period_date = datetime.date(year, month, day)
-                if start <= period_date <= end + datetime.timedelta(days=180):
+                if lookback_start <= period_date <= end + datetime.timedelta(days=180):
                     periods.append(f"{year}{period_name}")
             year += 1
         return periods
+
+    @staticmethod
+    def _period_str_to_date(period_str: str) -> str:
+        """将报告期字符串转换为日期字符串（YYYY-MM-DD）。
+
+        akshare stock_report_disclosure 的 period 参数格式为 '{year}{name}'，
+        如 '2026一季'、'2026半年报'、'2026三季'、'2026年报'。
+        本方法将其转换为对应的报告期截止日期字符串，供 ClickHouse Date 列写入。
+
+        Args:
+            period_str: 报告期字符串，如 '2026一季'。
+
+        Returns:
+            日期字符串，如 '2026-03-31'。
+        """
+        _period_suffix_map = {
+            "一季": (3, 31),
+            "半年报": (6, 30),
+            "三季": (9, 30),
+            "年报": (12, 31),
+        }
+        year = int(period_str[:4])
+        for suffix, (month, day) in _period_suffix_map.items():
+            if period_str.endswith(suffix):
+                return f"{year:04d}-{month:02d}-{day:02d}"
+        return period_str
 
     @staticmethod
     def _generate_quarter_ends(

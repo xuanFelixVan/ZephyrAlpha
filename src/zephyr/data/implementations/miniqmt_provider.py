@@ -849,6 +849,12 @@ class MiniQMTProvider(DataSourceBase):
         使用 xtdata.download_financial_data2 下载 + get_financial_data 读取。
         table_list 参数对应 xtquant 的报表名（Balance/Income/CashFlow/Capital）。
 
+        治本修复 #ARCH-FINANCIAL-REPORT-TIME-FILTER（2026-07-24）：
+        原代码用 start/end 作为 get_financial_data 的第3/4参数，但 xtdata 按
+        m_timetag（报告期）过滤，而 scheduler 传入的 start/end 是公告日期窗口，
+        导致 m_timetag < start 的数据（如 Q1 报告期 3-31 < start 6-01）被过滤掉。
+        新方案：全量读取（start/end 传空），在 provider 层按 m_anntime（公告日期）过滤。
+
         Args:
             payload: 下载请求
             policy: 调用策略
@@ -883,40 +889,47 @@ class MiniQMTProvider(DataSourceBase):
         for stock_code in symbols:
             t0 = time.time()
             try:
-                # 下载财务数据
+                # 下载财务数据（用 start/end 控制下载范围）
                 self._call_with_policy(
                     xtdata.download_financial_data2,
                     policy,
                     [stock_code], '', start_str, end_str,
                 )
-                # 读取财务数据
+                # 读取财务数据（全量读取，不传 start/end 避免 report_time 过滤）
                 fd = self._call_with_policy(
                     xtdata.get_financial_data,
                     policy,
-                    [stock_code], [table_list], start_str, end_str, 'report_time',
+                    [stock_code], [table_list], '', '', 'report_time',
                 )
 
-                # 3. 转换为 rows
+                # 3. 转换为 rows，按 m_anntime（公告日期）过滤
                 rows = []
                 columns = ["symbol"]  # 默认列（无数据时）
                 stock_data = fd.get(stock_code) if fd else None
                 if stock_data and table_list in stock_data:
                     df = stock_data[table_list]
                     if df is not None and len(df) > 0:
-                        symbol = self._stock_to_symbol(stock_code)
-                        # 列名从 DataFrame 动态提取
-                        col_names = list(df.columns)
-                        for _, row in df.iterrows():
-                            row_values = []
-                            for col in col_names:
-                                v = row.get(col)
-                                if col in ('date', 'announce_date', 'report_date', 'enddate'):
-                                    row_values.append(str(v) if v is not None else None)
-                                else:
-                                    row_values.append(self.safe_float(v))
-                            rows.append(tuple([symbol] + row_values))
+                        # 治本修复：按 m_anntime（公告日期）过滤，而非 xtdata 默认的 m_timetag
+                        if 'm_anntime' in df.columns:
+                            df = df[
+                                (df['m_anntime'].astype(str) >= start_str) &
+                                (df['m_anntime'].astype(str) <= end_str)
+                            ]
+                        if df is not None and len(df) > 0:
+                            symbol = self._stock_to_symbol(stock_code)
+                            # 列名从 DataFrame 动态提取
+                            col_names = list(df.columns)
+                            for _, row in df.iterrows():
+                                row_values = []
+                                for col in col_names:
+                                    v = row.get(col)
+                                    if col in ('date', 'announce_date', 'report_date', 'enddate'):
+                                        row_values.append(str(v) if v is not None else None)
+                                    else:
+                                        row_values.append(self.safe_float(v))
+                                rows.append(tuple([symbol] + row_values))
 
-                        columns = ["symbol"] + col_names
+                            columns = ["symbol"] + col_names
 
                 yield FetchResult(
                     table=table,
@@ -1394,6 +1407,29 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 期货持仓 ==============
 
+    def _load_futures_symbols_from_sectors(
+        self, policy: SourcePolicy,
+    ) -> list[str]:
+        """从 QMT 商品期货+股指期货板块加载期货合约列表。
+
+        治本修复 #ARCH-FUTURES-SYMBOLS（2026-07-24）：
+        futures_position/futures_term_structure 原用 `symbols = payload.symbols or []`，
+        tasks.yaml 中 symbols 为 null → 空 list → 循环0次 → 静默SUCCESS 0行。
+        修复：复用 _fetch_kline_futures_qmt 已验证的板块加载模式。
+        """
+        from xtquant import xtdata
+        futures: list[str] = []
+        try:
+            for sector_name in ("商品期货", "股指期货期货板块"):
+                lst = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, sector_name,
+                )
+                if lst:
+                    futures.extend(lst)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"_load_futures_symbols_from_sectors 失败: {e}")
+        return futures
+
     def _fetch_futures_position(
         self,
         payload: FetchPayload,
@@ -1431,7 +1467,15 @@ class MiniQMTProvider(DataSourceBase):
             )
             return
 
-        symbols = payload.symbols or []
+        # 治本修复 #ARCH-FUTURES-SYMBOLS：symbols 为空时从 QMT 板块加载
+        symbols = payload.symbols or self._load_futures_symbols_from_sectors(policy)
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="futures_position 无 symbols 且 QMT 期货板块加载失败",
+            )
+            return
         last_key = end_str
 
         for stock_code in symbols:
@@ -1546,6 +1590,9 @@ class MiniQMTProvider(DataSourceBase):
         表 schema: (symbol, end_date, holder_count, data_source)
         quality_flag 有 DEFAULT 1，不返回。
 
+        治本修复 #ARCH-FINANCIAL-REPORT-TIME-FILTER（2026-07-24）：
+        同 _fetch_financial_statement，全量读取 + provider 层按 m_anntime 过滤。
+
         Args:
             payload: 下载请求
             policy: 调用策略
@@ -1581,10 +1628,11 @@ class MiniQMTProvider(DataSourceBase):
                     xtdata.download_financial_data2, policy,
                     [stock_code], '', start_str, end_str,
                 )
+                # 全量读取，避免 xtdata 按 m_timetag 过滤（治本修复）
                 fd = self._call_with_policy(
                     xtdata.get_financial_data, policy,
                     [stock_code], ['十大股东', '股东人数'],
-                    start_str, end_str, 'report_time',
+                    '', '', 'report_time',
                 )
                 rows = []
                 stock_data = fd.get(stock_code) if fd else None
@@ -1593,22 +1641,29 @@ class MiniQMTProvider(DataSourceBase):
                     # 优先取"股东人数"表
                     holder_df = stock_data.get('股东人数')
                     if holder_df is not None and len(holder_df) > 0:
-                        for _, row in holder_df.iterrows():
-                            # 截止日期：尝试多种列名
-                            end_date = None
-                            for key in ('date', 'enddate', 'end_date', '报告期'):
-                                v = row.get(key)
-                                if v is not None:
-                                    end_date = str(v)[:10]
-                                    break
-                            # 股东户数：尝试多种列名
-                            holder_count = None
-                            for key in ('holder_number', '股东户数', 'holder_num', '股东人数'):
-                                v = row.get(key)
-                                if v is not None:
-                                    holder_count = self.safe_float(v)
-                                    break
-                            rows.append((symbol, end_date, holder_count, "miniqmt"))
+                        # 按 m_anntime（公告日期）过滤
+                        if 'm_anntime' in holder_df.columns:
+                            holder_df = holder_df[
+                                (holder_df['m_anntime'].astype(str) >= start_str) &
+                                (holder_df['m_anntime'].astype(str) <= end_str)
+                            ]
+                        if holder_df is not None and len(holder_df) > 0:
+                            for _, row in holder_df.iterrows():
+                                # 截止日期：尝试多种列名
+                                end_date = None
+                                for key in ('date', 'enddate', 'end_date', '报告期'):
+                                    v = row.get(key)
+                                    if v is not None:
+                                        end_date = str(v)[:10]
+                                        break
+                                # 股东户数：尝试多种列名
+                                holder_count = None
+                                for key in ('holder_number', '股东户数', 'holder_num', '股东人数'):
+                                    v = row.get(key)
+                                    if v is not None:
+                                        holder_count = self.safe_float(v)
+                                        break
+                                rows.append((symbol, end_date, holder_count, "miniqmt"))
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1673,6 +1728,9 @@ class MiniQMTProvider(DataSourceBase):
         与 _fetch_financial_statement 同模式，但 table_list 由调用方指定，
         目标表名取 payload.table 或 c3_fundamental.<table_list 小写>。
 
+        治本修复 #ARCH-FINANCIAL-REPORT-TIME-FILTER（2026-07-24）：
+        同 _fetch_financial_statement，全量读取 + provider 层按 m_anntime 过滤。
+
         Args:
             payload: 下载请求
             policy: 调用策略
@@ -1708,9 +1766,10 @@ class MiniQMTProvider(DataSourceBase):
                     xtdata.download_financial_data2, policy,
                     [stock_code], '', start_str, end_str,
                 )
+                # 全量读取，避免 xtdata 按 m_timetag 过滤（治本修复）
                 fd = self._call_with_policy(
                     xtdata.get_financial_data, policy,
-                    [stock_code], [table_list], start_str, end_str, 'report_time',
+                    [stock_code], [table_list], '', '', 'report_time',
                 )
                 rows = []
                 columns = ["symbol"]
@@ -1718,18 +1777,25 @@ class MiniQMTProvider(DataSourceBase):
                 if stock_data and table_list in stock_data:
                     df = stock_data[table_list]
                     if df is not None and len(df) > 0:
-                        symbol = self._stock_to_symbol(stock_code)
-                        col_names = list(df.columns)
-                        for _, row in df.iterrows():
-                            row_values = []
-                            for col in col_names:
-                                v = row.get(col)
-                                if col in ('date', 'announce_date', 'report_date', 'enddate'):
-                                    row_values.append(str(v) if v is not None else None)
-                                else:
-                                    row_values.append(self.safe_float(v))
-                            rows.append(tuple([symbol] + row_values))
-                        columns = ["symbol"] + col_names
+                        # 按 m_anntime（公告日期）过滤
+                        if 'm_anntime' in df.columns:
+                            df = df[
+                                (df['m_anntime'].astype(str) >= start_str) &
+                                (df['m_anntime'].astype(str) <= end_str)
+                            ]
+                        if df is not None and len(df) > 0:
+                            symbol = self._stock_to_symbol(stock_code)
+                            col_names = list(df.columns)
+                            for _, row in df.iterrows():
+                                row_values = []
+                                for col in col_names:
+                                    v = row.get(col)
+                                    if col in ('date', 'announce_date', 'report_date', 'enddate'):
+                                        row_values.append(str(v) if v is not None else None)
+                                    else:
+                                        row_values.append(self.safe_float(v))
+                                rows.append(tuple([symbol] + row_values))
+                            columns = ["symbol"] + col_names
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1892,7 +1958,9 @@ class MiniQMTProvider(DataSourceBase):
             "OptType": opt_type,
         }
 
-    def _load_option_symbols_from_kline(self) -> list[str]:
+    def _load_option_symbols_from_kline(
+        self, policy: SourcePolicy | None = None,
+    ) -> list[str]:
         """从 c1_market.option_kline 表加载最近30天有数据的期权合约代码。
 
         option_iv_surface/option_greeks 任务配置 symbols=null，需从已有 option_kline 数据
@@ -1902,9 +1970,14 @@ class MiniQMTProvider(DataSourceBase):
         get_instrument_detail/get_market_data_ex 需要带交易所后缀代码（如 "10010972.SHO"）。
         本方法根据代码前缀重建后缀：100xxxxx→.SHO（上证期权），900xxxxx→.SZO（深证期权）。
 
+        治本修复 #ARCH-OPTION-SYMBOLS（2026-07-24）：
+        当 option_kline 表数据过期（>30天）时，CH 查询返回空 → symbols=[] → 静默SUCCESS 0行。
+        修复：CH 查询为空时，fallback 到 QMT 板块接口 get_stock_list_in_sector 加载活跃期权合约。
+
         Returns:
             带后缀的期权合约代码列表（如 ["10010972.SHO", ...]），查询失败返回空列表
         """
+        # 1. 尝试从 ClickHouse option_kline 表加载
         try:
             sql = (
                 f"SELECT DISTINCT symbol FROM {_TBL_OPTION_KLINE} "
@@ -1912,25 +1985,45 @@ class MiniQMTProvider(DataSourceBase):
                 f"ORDER BY symbol"
             )
             tsv = ch_reader.query(sql)
-            if not tsv or not tsv.strip():
-                self._log.warning("_load_option_symbols_from_kline: option_kline 表无近30天数据")
-                return []
-            raw_codes = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
-            # 重建带后缀代码：100xxxxx→.SHO，900xxxxx→.SZO
-            symbols = []
-            for code in raw_codes:
-                if code.startswith("100"):
-                    symbols.append(f"{code}.SHO")
-                elif code.startswith("900"):
-                    symbols.append(f"{code}.SZO")
-                else:
-                    # 未知前缀，保留原代码（xtdata 会报错跳过）
-                    self._log.debug(f"_load_option_symbols_from_kline: 未知期权代码前缀 {code}")
-                    symbols.append(code)
-            self._log.info(f"_load_option_symbols_from_kline: 加载 {len(symbols)} 个期权合约")
-            return symbols
+            if tsv and tsv.strip():
+                raw_codes = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+                # 重建带后缀代码：100xxxxx→.SHO，900xxxxx→.SZO
+                symbols = []
+                for code in raw_codes:
+                    if code.startswith("100"):
+                        symbols.append(f"{code}.SHO")
+                    elif code.startswith("900"):
+                        symbols.append(f"{code}.SZO")
+                    else:
+                        # 未知前缀，保留原代码（xtdata 会报错跳过）
+                        self._log.debug(f"_load_option_symbols_from_kline: 未知期权代码前缀 {code}")
+                        symbols.append(code)
+                self._log.info(f"_load_option_symbols_from_kline: CH 加载 {len(symbols)} 个期权合约")
+                return symbols
+            self._log.warning("_load_option_symbols_from_kline: option_kline 表无近30天数据，尝试 QMT 板块 fallback")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._log.warning(f"_load_option_symbols_from_kline 查询失败: {e}")
+            self._log.warning(f"_load_option_symbols_from_kline CH 查询失败: {e}，尝试 QMT 板块 fallback")
+
+        # 2. Fallback: 从 QMT 板块接口加载活跃期权合约
+        if policy is None:
+            self._log.warning("_load_option_symbols_from_kline: 无 policy，无法 fallback 到 QMT 板块")
+            return []
+        try:
+            from xtquant import xtdata
+            opts: list[str] = []
+            for sector_name in ("上证期权", "深证期权"):
+                lst = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, sector_name,
+                )
+                if lst:
+                    opts.extend(lst)
+            if opts:
+                # cap to 200 like _fetch_option_kline does, avoid excessive API calls
+                opts = opts[:200]
+                self._log.info(f"_load_option_symbols_from_kline: QMT 板块 fallback 加载 {len(opts)} 个期权合约")
+            return opts
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"_load_option_symbols_from_kline QMT 板块 fallback 失败: {e}")
             return []
 
     def _fetch_option_iv_surface(
@@ -1972,7 +2065,7 @@ class MiniQMTProvider(DataSourceBase):
             )
             return
 
-        symbols = payload.symbols or self._load_option_symbols_from_kline()
+        symbols = payload.symbols or self._load_option_symbols_from_kline(policy)
         if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
@@ -2097,6 +2190,15 @@ class MiniQMTProvider(DataSourceBase):
 
         cb_details_map = self._load_cb_details_map(policy)
         symbols = payload.symbols or list(cb_details_map.keys())
+        # 治本修复 #ARCH-CB-IV-SYMBOLS（2026-07-24）：
+        # 原 code 无 error guard，symbols 为空时 for 循环0次 → 静默SUCCESS 0行
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="convertible_bond_iv 无 symbols 且 akshare bond_zh_cov + QMT 可转债板块均失败",
+            )
+            return
         ctx = _CbIvFetchCtx(
             table=table, columns=columns,
             start_str=start_str, end_str=end_str,
@@ -2111,8 +2213,14 @@ class MiniQMTProvider(DataSourceBase):
         akshare bond_zh_cov 返回的 bond_code 无交易所后缀（如 "127115"），
         但 xtdata get_instrument_detail/get_market_data_ex 需要带后缀代码。
         本方法根据代码前缀重建后缀：11xxxx→.SH（沪市转债），12xxxx→.SZ（深市转债）。
+
+        治本修复 #ARCH-CB-IV-SYMBOLS（2026-07-24）：
+        原 code 仅依赖 akshare bond_zh_cov，失败时静默返回 {} → symbols=[] → 静默SUCCESS 0行。
+        修复：akshare 失败时 fallback 到 QMT get_stock_list_in_sector("可转债") 加载合约列表，
+        再用 get_instrument_detail 逐个获取转股价/正股代码。
         """
         cb_details_map = {}
+        # 1. 尝试 akshare bond_zh_cov
         try:
             import akshare as ak
             cov_df = self._call_with_policy(ak.bond_zh_cov, policy)
@@ -2142,7 +2250,54 @@ class MiniQMTProvider(DataSourceBase):
                 cb_details_map[cb_key] = {"underlying": ul, "convert_price": conv_price}
             self._log.info(f"获取 {len(cb_details_map)} 只可转债详情（akshare bond_zh_cov）")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._log.warning(f"akshare bond_zh_cov 失败: {e}")
+            self._log.warning(f"akshare bond_zh_cov 失败: {e}，尝试 QMT 板块 fallback")
+
+        if cb_details_map:
+            return cb_details_map
+
+        # 2. Fallback: 从 QMT 可转债板块加载 + get_instrument_detail 获取详情
+        try:
+            from xtquant import xtdata
+            cb_list = self._call_with_policy(
+                xtdata.get_stock_list_in_sector, policy, "可转债",
+            )
+            if not cb_list:
+                self._log.warning("_load_cb_details_map: QMT 可转债板块返回空")
+                return cb_details_map
+            # cap to 500 to avoid excessive API calls
+            cb_list = cb_list[:500]
+            for cb_code in cb_list:
+                try:
+                    detail = self._call_with_policy(
+                        xtdata.get_instrument_detail, policy, cb_code,
+                    )
+                    if not detail:
+                        continue
+                    # QMT get_instrument_detail 对可转债返回 ConvertPrice(转股价) 和 Underlying(正股)
+                    conv_price = self.safe_float(detail.get("ConvertPrice"))
+                    underlying = detail.get("Underlying", "")
+                    if underlying and not underlying.startswith(("6", "0", "3", "8", "4")):
+                        # 尝试从 ProductID 解析
+                        product_id = detail.get("ProductID", "")
+                        import re
+                        m = re.search(r"\((\d{6})\)", product_id)
+                        if m:
+                            code = m.group(1)
+                            if code.startswith(("60", "68")):
+                                underlying = f"{code}.SH"
+                            elif code.startswith(("00", "30")):
+                                underlying = f"{code}.SZ"
+                            elif code.startswith(("8", "4")):
+                                underlying = f"{code}.BJ"
+                    cb_details_map[cb_code] = {
+                        "underlying": underlying,
+                        "convert_price": conv_price,
+                    }
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    continue
+            self._log.info(f"QMT fallback: 获取 {len(cb_details_map)} 只可转债详情")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"_load_cb_details_map QMT fallback 失败: {e}")
         return cb_details_map
 
     def _fetch_cb_price_df(self, symbol: str, start_str: str, end_str: str, policy: SourcePolicy):
@@ -2312,7 +2467,15 @@ class MiniQMTProvider(DataSourceBase):
             )
             return
 
-        symbols = payload.symbols or []
+        # 治本修复 #ARCH-FUTURES-SYMBOLS：symbols 为空时从 QMT 板块加载
+        symbols = payload.symbols or self._load_futures_symbols_from_sectors(policy)
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="futures_term_structure 无 symbols 且 QMT 期货板块加载失败",
+            )
+            return
         last_key = end_str
         trade_date = payload.end.isoformat()
 
@@ -2940,7 +3103,7 @@ class MiniQMTProvider(DataSourceBase):
         ]
         # 治本修复#ARCH-OPTION-GREEKS-001（2026-07-23）：symbols=null 时自动加载
         # 与 _fetch_option_iv_surface 一致，避免 for 循环空转返回 rows=0 导致数据停滞
-        symbols = payload.symbols or self._load_option_symbols_from_kline()
+        symbols = payload.symbols or self._load_option_symbols_from_kline(policy)
         if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",

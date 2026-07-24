@@ -56,17 +56,95 @@ gaps:
     last_updated: "2026-07-23"
 
   # === 2026-07-24: share_change 数据源停止更新（akshare stock_share_change_cninfo）===
+  # 治本修复（2026-07-24）：根因实为 akshare stock_share_change_cninfo 默认 end_date='20241021'，
+  # provider 未传 start_date/end_date 导致只获取到 2024-10-21 数据。数据源（巨潮资讯 cninfo）
+  # 从未真实停滞。已修复 provider 传入显式日期范围，gap 标记为 resolved。
   - id: "share_change_cninfo_stale"
     table: "c3_fundamental.share_change"
-    gap_type: "source_stale"  # 数据源停止更新（非空表，有 167985 行历史数据）
-    start_date: "2025-04-29"  # 表内最新公告日期
-    end_date: null  # 持续中，待数据源恢复或更换
+    gap_type: "source_stale"
+    start_date: "2025-04-29"
+    end_date: "2026-07-24"
     date_column: "announce_date"
-    detection_threshold: 1  # 日新增 < 1 行 = 数据源停滞
-    status: "accepted"  # 已接受——akshare 接口自 2024Q4 起不再返回新数据
-    root_cause: "akshare stock_share_change_cninfo 数据源（巨潮资讯 cninfo）自 2024Q4 停止更新。
-      实测 8 只样本股（600519/000001/601398/300750/688981/002594/601012/600036）接口返回最新
-      公告日期均在 2024-08~2024-10，无 2025/2026 数据。非任务/调度/fetcher bug。"
-    resolution_plan: "切换数据源至 tushare 股本变动接口或交易所公告直采；当前接受现状"
+    detection_threshold: 1
+    status: "resolved"
+    root_cause: "akshare stock_share_change_cninfo 函数默认 end_date='20241021'（硬编码），
+      provider 未传 start_date/end_date 参数，导致只获取 2024-10-21 前数据。
+      实测显式传入 start_date='20250101' end_date='20260724' 后，8 只样本股均返回 2025/2026 数据。
+      非数据源真实停滞，非任务/调度/fetcher bug。"
+    resolution_plan: "已修复 provider 传入 payload.start/end 转换为 YYYYMMDD 格式。
+      需运行一次宽日期范围 backfill 补齐 2025-04-29~2026-07-24 的历史缺口。"
+    created: "2026-07-24"
+    last_updated: "2026-07-24"
+
+  # === 2026-07-24: hk_connect_flow 数据源覆盖范围受限 ===
+  # AKShare stock_hsgt_hist_em 返回完整历史，但港交所于 2024-08-16 停止公布
+  # 沪深港通每日资金流向明细数据。任务为 incremental=false 全量刷新，
+  # 每次运行获取 4052 行（2014-11-17~2024-08-16 完整历史），
+  # 数据本身是最新可用，但 max(trade_date) 永远停在 2024-08-16。
+  - id: "hk_connect_flow_source_discontinued"
+    table: "c1_market.hk_connect_flow"
+    gap_type: "source_discontinued"
+    start_date: "2024-08-17"
+    end_date: null  # 持续中，港交所不再公布此数据
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——数据源永久停止，无法补齐
+    root_cause: "港交所于 2024-08-16 停止公布沪深港通每日资金流向明细数据，
+      AKShare stock_hsgt_hist_em 仅返回 2014-11-17~2024-08-16 范围数据。
+      非任务/调度/provider bug，数据源本身不再提供。"
+    resolution_plan: "无可用替代数据源。如需沪深港通资金数据，
+      可考虑港交所官方付费 API 或东方财富/同花顺终端手动导出。"
+    created: "2026-07-24"
+    last_updated: "2026-07-24"
+
+  # === 2026-07-24: audit_opinion 任务禁用（无可用数据源接口）===
+  - id: "audit_opinion_no_interface"
+    table: "c3_fundamental.audit_opinion"
+    gap_type: "no_data_source"
+    start_date: "2026-01-01"
+    end_date: null  # 持续中，待数据源补齐
+    date_column: "announce_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——无可用批量接口
+    root_cause: "AKShare 暂无专用批量审计意见接口，仅能从财报摘要逐股获取，
+      全市场 5000+ 股拉取效率过低。miniQMT/iFind 亦未提供专用接口。
+      任务已 disabled，待数据源补齐后启用。"
+    resolution_plan: "待 iFind 或 miniQMT 提供批量审计意见接口后启用任务。
+      审计意见为低频数据（年报一次），对实时性要求低。"
+    created: "2026-07-24"
+    last_updated: "2026-07-24"
+
+  # === 2026-07-24: rights_issue 任务禁用（AKShare 移除批量接口）===
+  - id: "rights_issue_interface_removed"
+    table: "c3_fundamental.rights_issue"
+    gap_type: "no_data_source"
+    start_date: "2026-01-01"
+    end_date: null  # 持续中，待数据源补齐
+    date_column: "announce_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——无可用批量接口
+    root_cause: "akshare 1.18+ 已移除 stock_rights_issue_detail_sina 批量接口，
+      仅剩 stock_allotment_cninfo 逐股接口，全市场 5000+ 股拉取效率过低。
+      配股为低频事件，任务已 disabled。"
+    resolution_plan: "待 AKShare 恢复批量接口或 iFind/miniQMT 提供配股接口后启用。
+      配股为低频事件（年均 <50 起），对实时性要求低。"
+    created: "2026-07-24"
+    last_updated: "2026-07-24"
+
+  # === 2026-07-24: l2_tick_snapshot 任务禁用（需付费 L2 权限）===
+  - id: "l2_tick_permission_required"
+    table: "c1_market.l2_tick"
+    gap_type: "permission_required"
+    start_date: "2026-01-01"
+    end_date: null  # 持续中，待用户开通 L2 权限
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——#ARCH-DATA-014 裁定保留+fallback降级
+    root_cause: "Level-2 逐笔行情需付费 L2 行情权限（miniQMT get_l2_quote），
+      用户尚未开通。任务已 disabled，fallback_sources 降级到 get_full_tick
+      五档快照写入 tick_data 表。"
+    resolution_plan: "用户开通 L2 行情权限后移除 disabled 标记启用任务。
+      当前 tick_data 表已有五档快照数据作为替代。"
+    primary_alternative: "c1_market.tick_data（miniQMT get_full_tick 五档快照，已正常运行）"
     created: "2026-07-24"
     last_updated: "2026-07-24"

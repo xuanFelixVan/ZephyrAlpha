@@ -188,7 +188,23 @@ class IFindProvider(DataSourceBase):
         # THS_iFinDLogin 的返回值，供诊断/重登判断
         self._login_result: int | None = None
 
-    # ============== 连接 / 登出 ==============
+    # 认证错误码列表（需重连）
+    _AUTH_ERROR_CODES = (-1010,)
+
+    def _handle_auth_error(self, code: int) -> bool:
+        """处理认证错误：如果是认证错误码，标记连接断开并返回 True。
+
+        Args:
+            code: 错误码
+
+        Returns:
+            True 表示是认证错误，已标记连接断开；False 表示不是认证错误
+        """
+        if code in self._AUTH_ERROR_CODES:
+            self._connected = False
+            self._log.warning(f"iFind 认证错误({code})，已标记连接断开，等待重连")
+            return True
+        return False
 
     def connect(self) -> None:
         """登录 iFind：从环境变量读取 username/password，调用 THS_iFinDLogin。
@@ -327,9 +343,13 @@ class IFindProvider(DataSourceBase):
                 fatal_error = str(e)
                 break
 
-            is_error, code, msg = self._check_ifind_error(raw)
+            is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
             if is_error:
-                if code in (-4318, -4309):
+                if self._handle_auth_error(code):
+                    fatal_error = f"iFind登录过期({code})，已标记重连"
+                    self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
+                    break
+                elif code in (-4318, -4309):
                     fatal_error = f"iFind配额耗尽: {code}"
                     self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
                     break
@@ -400,9 +420,13 @@ class IFindProvider(DataSourceBase):
                 fatal_error = str(e)
                 break
 
-            is_error, code, msg = self._check_ifind_error(raw)
+            is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
             if is_error:
-                if code in (-4318, -4309):
+                if self._handle_auth_error(code):
+                    fatal_error = f"iFind登录过期({code})，已标记重连"
+                    self._log.error("批量估值 %s/%s %s", date, ind_name, fatal_error)
+                    break
+                elif code in (-4318, -4309):
                     fatal_error = f"iFind配额耗尽: {code}"
                     self._log.error("批量估值 %s/%s %s", date, ind_name, fatal_error)
                     break
@@ -547,9 +571,11 @@ class IFindProvider(DataSourceBase):
             self._log.warning(f"THS_HistoryQuotes 调用失败 {ts_code}: {e}")
             return None, None
 
-        is_error, code, msg = self._check_ifind_error(raw)
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
         if is_error:
-            if code in (-4318, -4309):
+            if self._handle_auth_error(code):
+                return None, f"iFind登录过期({code})，已标记重连"
+            elif code in (-4318, -4309):
                 return None, f"iFind配额耗尽: {code}"
             self._log.warning(f"{ts_code} iFind错误: {code} {msg}")
             return None, None
@@ -699,9 +725,18 @@ class IFindProvider(DataSourceBase):
                 self._log.warning(f"THS_HistoryQuotes(index) 调用失败 {ts_code}: {e}")
                 continue
 
-            is_error, code, msg = self._check_ifind_error(raw)
+            is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
             if is_error:
-                if code in (-4318, -4309):
+                if self._handle_auth_error(code):
+                    yield FetchResult(
+                        table=self._INDEX_KLINE_TABLE,
+                        columns=self._INDEX_KLINE_COLUMNS,
+                        rows=[], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                        error=f"iFind登录过期({code})，已标记重连",
+                    )
+                    return
+                elif code in (-4318, -4309):
                     yield FetchResult(
                         table=self._INDEX_KLINE_TABLE,
                         columns=self._INDEX_KLINE_COLUMNS,
@@ -820,9 +855,18 @@ class IFindProvider(DataSourceBase):
                 continue
 
             # 检查错误码
-            is_error, code, msg = self._check_ifind_error(raw)
+            is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
             if is_error:
-                if code in (-4318, -4309):
+                if self._handle_auth_error(code):
+                    yield FetchResult(
+                        table=self._MONEY_FLOW_TABLE,
+                        columns=self._MONEY_FLOW_COLUMNS,
+                        rows=[], last_key=date_iso,
+                        elapsed_sec=time.time() - start_ts,
+                        error=f"iFind登录过期({code})，已标记重连",
+                    )
+                    return
+                elif code in (-4318, -4309):
                     yield FetchResult(
                         table=self._MONEY_FLOW_TABLE,
                         columns=self._MONEY_FLOW_COLUMNS,
@@ -1492,7 +1536,10 @@ class IFindProvider(DataSourceBase):
     ]
     _REALTIME_SNAPSHOT_TABLE = _TBL_REALTIME_SNAPSHOT
     # THS_RealtimeQuotes 指标（分号分隔，支持多指标）
-    _REALTIME_INDICATORS = "ths_open;ths_high;ths_low;ths_close;ths_volume;ths_amount"
+    # 治本修复 #ARCH-REALTIME-INDICATOR-FIX（2026-07-24）：
+    # THS_RealtimeQuotes（实时行情）用不带 ths_ 前缀的指标名（open/high/...），
+    # ths_ 前缀是 THS_BasicData（历史数据）的格式，用于实时接口会返回 -4001 no data。
+    _REALTIME_INDICATORS = "open;high;low;close;volume;amount"
 
     def _fetch_realtime_snapshot(
         self, payload: FetchPayload, policy: SourcePolicy
@@ -1603,8 +1650,11 @@ class IFindProvider(DataSourceBase):
                 codes_str, self._REALTIME_INDICATORS,
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 治本修复 #ARCH-REALTIME-SILENT-FAIL（2026-07-24）：
+            # 原 return ([], None) 吞掉异常=静默失败，scheduler标记SUCCESS但0行。
+            # 修复：异常视为致命错误，让scheduler标记FAILED触发告警和重试。
             self._log.warning(f"THS_RealtimeQuotes 调用失败: {e}")
-            return ([], None)
+            return ([], f"THS_RealtimeQuotes 调用异常: {e}")
 
         # 检查错误码
         is_error, code, msg = self._check_ifind_error(raw)
@@ -1615,8 +1665,9 @@ class IFindProvider(DataSourceBase):
             if code == -4001:
                 self._log.info("THS_RealtimeQuotes 返回 -4001（非交易时段无数据）")
                 return ([], None)
+            # 治本修复 #ARCH-REALTIME-SILENT-FAIL：非-4001错误码视为致命错误
             self._log.warning(f"realtime_snapshot iFind错误: {code} {msg}")
-            return ([], None)
+            return ([], f"realtime_snapshot iFind错误: {code} {msg}")
 
         # 解析返回结果
         rows = self._parse_realtime_quotes(raw, now_str, codes_str)
@@ -1747,22 +1798,23 @@ class IFindProvider(DataSourceBase):
             return None
         return f
 
-    def _check_ifind_error(self, raw) -> tuple[bool, int | None, str]:
+    def _check_ifind_error(self, raw) -> tuple[bool, int | None, str, bool]:
         """检查 iFind 返回值是否含错误码。
 
         iFind 错误返回通常为 dict，含 errorcode/errcode 等键。
         常见错误码：
             -4318 / -4309: 月度配额耗尽
             -201: 通用失败
+            -1010: 登录过期（需重连）
 
         Args:
             raw: THS_BasicData 的返回值。
 
         Returns:
-            (is_error, code, msg): 是否错误 / 错误码 / 错误消息。
+            (is_error, code, msg, is_auth_error): 是否错误 / 错误码 / 错误消息 / 是否认证错误
         """
         if not isinstance(raw, dict):
-            return (False, None, "")
+            return (False, None, "", False)
 
         # 兼容多种错误码键名
         code = None
@@ -1775,7 +1827,7 @@ class IFindProvider(DataSourceBase):
                 break
 
         if code is None:
-            return (False, None, "")
+            return (False, None, "", False)
 
         # 错误消息
         msg = ""
@@ -1784,17 +1836,23 @@ class IFindProvider(DataSourceBase):
                 msg = str(raw[key])
                 break
 
+        # 认证错误码列表（需重连）
+        auth_error_codes = (-1010,)
+
         # 负数错误码视为错误
         if isinstance(code, int) and code < 0:
-            return (True, code, msg)
+            is_auth = code in auth_error_codes
+            return (True, code, msg, is_auth)
         # 字符串形态的负数错误码
         if isinstance(code, str) and code.strip().startswith("-"):
             try:
-                return (True, int(code), msg)
+                code_int = int(code)
+                is_auth = code_int in auth_error_codes
+                return (True, code_int, msg, is_auth)
             except ValueError:
                 pass
 
-        return (False, code, msg)
+        return (False, code, msg, False)
 
     # ---- 新能力辅助方法 ----
 
@@ -2018,7 +2076,18 @@ class IFindProvider(DataSourceBase):
                                   list(raw.keys()) if isinstance(raw, dict) else type(raw).__name__)
             else:
                 tbl = tables[0].get("table", {})
-                sector_codes = tbl.get("thscode", [])
+                # 治本修复 #ARCH-SECTOR-META-KEYS（2026-07-24）：
+                # 原用 tbl.get("thscode", []) 精确匹配，THS_WC 可能返回 "板块代码"/"code"/带日期后缀的键
+                # 导致 sector_codes=[] → rows=[] → 静默SUCCESS 0行（数据过期21天未发现）。
+                # 修复：使用 _extract_wencai_column 模糊匹配，与其他列保持一致。
+                sector_codes = self._extract_wencai_column(
+                    tbl, ["thscode", "板块代码", "THSCODE", "code", "股票代码", "板块编号"]
+                )
+                if not sector_codes:
+                    self._log.warning(
+                        "sector_meta: thscode 列为空，tbl 实际键名=%s",
+                        list(tbl.keys()) if isinstance(tbl, dict) else type(tbl).__name__,
+                    )
                 sector_names = self._extract_wencai_column(tbl, ["板块名称", "名称", "sector_name"])
                 total_mv = self._extract_wencai_column(tbl, ["总市值", "ths_total_mv_index"])
                 float_mv = self._extract_wencai_column(tbl, ["流通市值", "ths_float_mv_index"])
