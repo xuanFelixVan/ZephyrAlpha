@@ -1,34 +1,35 @@
-# 自动生成于 2026-07-20T02:30:35Z
+# 自动生成于 2026-07-24T16:48:40Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-20T02:30:35Z'
+generated_at: '2026-07-24T16:48:40Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 352
-with_manifest: 309
-missing_manifest: 43
+total_scripts: 364
+with_manifest: 314
+missing_manifest: 50
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 24
+  governance: 26
   governance:d10_performance: 1
-  governance:d11_compliance: 22
+  governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
   governance:d3_metadata: 23
   governance:d4_paths: 4
-  governance:d5_architecture: 102
+  governance:d5_architecture: 104
   governance:d6_security: 14
-  governance:d7_code: 35
-  governance:d8_doc_sync: 10
+  governance:d7_code: 40
+  governance:d8_doc_sync: 11
   governance:d9_knowledge: 2
   governance:data_quality: 1
   governance:generators: 10
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
   governance:observability: 1
+  governance:oneoff: 3
   governance:repair: 7
   governance:vms: 9
 scripts:
@@ -147,7 +148,7 @@ scripts:
   - --snapshot
   - --metric
   warn_only: true
-  description: 架构健康度仪表盘（30 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+  description: 架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md §四 第0期）
   tags:
   - Critical
 - name: ast_import_rewriter.py
@@ -180,6 +181,27 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: check_commit_message.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: check_ssot_gate.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
+  tags:
+  - Quick
 - name: d10_performance/collect_system_threads.py
   owner: governance:d10_performance
   dimensions:
@@ -213,17 +235,6 @@ scripts:
   description: audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2）
   tags:
   - Periodic
-  - Quick
-- name: check_ssot_gate.py
-  owner: governance
-  dimensions:
-  - D1
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
-  tags:
   - Quick
 - name: d11_compliance/check_test_structure.py
   owner: governance:d11_compliance
@@ -293,7 +304,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: ⚠ 请补充 description
+  description: 蓝图组件重叠检测器——检测多个蓝图草案中组件重叠。
   tags:
   - Security
 - name: d11_compliance/validate_commit_gateway.py
@@ -425,8 +436,8 @@ scripts:
   priority: P2
   timeout_seconds: 60
   args: []
-  warn_only: false
-  description: ⚠ 请补充 description
+  warn_only: true
+  description: 真源级联一致性校验（决策日期 vs 文件 last_updated，CASCADE-WARN 告警）。
   tags:
   - Security
 - name: d11_compliance/validate_vocabulary_coverage.py
@@ -553,7 +564,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: ⚠ 请补充 description
+  description: 草稿区生命周期归档器——扫描/判定/执行
   tags:
   - Quick
 - name: d1_structure/audit_config_format.py
@@ -1385,6 +1396,20 @@ scripts:
   description: '[BLUEPRINT] GOV-DOC-011 | d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml'
   tags:
   - Critical
+- name: d5_architecture/checkers/check_canonical_yaml_drift.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - --ci
+  - --warn-only
+  warn_only: false
+  description: GATE-CANONICAL-YAML-DRIFT - 防止 canonical YAML SSoT 漂移回陈旧状态（Phase B
+    5 项断言）
+  tags:
+  - Critical
 - name: d5_architecture/checkers/check_code_duplication.py
   owner: governance:d5_architecture
   dimensions:
@@ -1725,6 +1750,18 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d5_architecture/generators/generate_code_wiki_stats.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 'G-WIKI: 自动同步 code_wiki.md 中 4 个 AUTO 标记块的统计数据'
+  tags:
+  - Critical
+  - Disruptive
 - name: d5_architecture/generators/generate_constraint_violations.py
   owner: governance:d5_architecture
   dimensions: []
@@ -2165,7 +2202,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: ⚠ 请补充 description
+  description: AI 自治权限注册表校验器——校验 authority 注册表的完整性和一致性。
   tags:
   - Critical
 - name: d5_architecture/validators/validate_autonomy_gate.py
@@ -2393,7 +2430,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
+  description: SSoT 文件头一致性校验器。
   tags:
   - Critical
 - name: d5_architecture/validators/validate_static_manifest_drift.py
@@ -2649,6 +2686,16 @@ scripts:
   tags:
   - Critical
   - Security
+- name: d7_code/any_type_inferrer.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d7_code/check_ai_capability_boundary.py
   owner: governance:d7_code
   dimensions:
@@ -2712,6 +2759,20 @@ scripts:
     '
   tags:
   - Critical
+- name: d7_code/check_merge_conflict.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 10
+  args: []
+  warn_only: false
+  description: '检测 staged 文件中未解决的合并冲突标记（<<<<<<< / ======= / >>>>>>>）。 纯 stdlib 替代
+    external pre-commit-hooks check-merge-conflict（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+
+    '
+  tags:
+  - Critical
 - name: d7_code/check_module_id_consistency.py
   owner: governance:d7_code
   dimensions: []
@@ -2722,6 +2783,20 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d7_code/check_no_tests_unit.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 10
+  args: []
+  warn_only: false
+  description: '检测 staged .py/.md/.yaml/.yml 文件中 tests/unit/ 旧路径引用。 纯 stdlib 替代 language:
+    pygrep（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+
+    '
+  tags:
+  - Critical
 - name: d7_code/check_pit_compliance.py
   owner: governance:d7_code
   dimensions:
@@ -2800,6 +2875,20 @@ scripts:
   args: []
   warn_only: false
   description: open() 缺 encoding 检测（ABS-24 — Python写文件必须指定encoding='utf-8'）
+  tags:
+  - Critical
+- name: d7_code/detect_private_key.py
+  owner: governance:d7_code
+  dimensions:
+  - D7
+  priority: P1
+  timeout_seconds: 10
+  args: []
+  warn_only: false
+  description: '检测 staged 文件中意外提交的私钥标记（BEGIN PRIVATE KEY / BEGIN OPENSSH PRIVATE KEY
+    等）。 纯 stdlib 替代 external pre-commit-hooks detect-private-key（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+
+    '
   tags:
   - Critical
 - name: d7_code/detect_pydantic_any_fields.py
@@ -2928,6 +3017,16 @@ scripts:
   - Critical
   - Quick
 - name: d7_code/scan_complexity.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d7_code/scan_consumers_accuracy.py
   owner: governance:d7_code
   dimensions: []
   priority: P2
@@ -3127,6 +3226,16 @@ scripts:
   description: 带日期快照文件检测（GOV-DOC-006 §三 — 应使用LATEST命名）
   tags:
   - Quick
+- name: d8_doc_sync/metric_count_drift_reconciler.py
+  owner: governance:d8_doc_sync
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d8_doc_sync/readme_version_sync_reconciler.py
   owner: governance:d8_doc_sync
   dimensions: []
@@ -3336,7 +3445,7 @@ scripts:
     type: str
     description: 输出路径
   warn_only: false
-  description: '从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。 对标 §6.2 静态清单自动生成铁律。
+  description: '从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。 对标 §6.3 静态清单自动生成铁律。
 
     '
   tags:
@@ -3371,7 +3480,7 @@ scripts:
     description: 输出路径
   warn_only: false
   description: '扫描 _registry/catalogs/*.yaml 的 frontmatter/comment_meta，自动生成 registry-master-index.yaml。
-    对标 §6.2 静态清单自动生成铁律。
+    对标 §6.3 静态清单自动生成铁律。
 
     '
   tags:
@@ -3404,7 +3513,7 @@ scripts:
     description: 输出路径
   warn_only: false
   description: '扫描 scripts/governance/**/*.py 的 __manifest__ 块，自动生成 script_manifest.yaml。
-    对标 §6.2 静态清单自动生成铁律。
+    对标 §6.3 静态清单自动生成铁律。
 
     '
   tags:
@@ -3424,7 +3533,7 @@ scripts:
     description: 仅预览，不修改文件
   warn_only: false
   description: '从现有 script_manifest.yaml 批量提取元数据，注入到各 .py 文件中作为 __manifest__ 块。 对标
-    §6.2 静态清单自动生成铁律。一次性迁移工具。
+    §6.3 静态清单自动生成铁律。一次性迁移工具。
 
     '
   tags:
@@ -4124,6 +4233,36 @@ scripts:
   description: ⚠ 请补充 description
   tags:
   - Quick
+- name: oneoff/data_domain_audit_query.py
+  owner: governance:oneoff
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: oneoff/data_domain_design_state_complete.py
+  owner: governance:oneoff
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: oneoff/factor_design_state_complete.py
+  owner: governance:oneoff
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: query_module_panorama.py
   owner: governance
   dimensions: []
