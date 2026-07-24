@@ -67,7 +67,8 @@ CREATE TABLE IF NOT EXISTS c1_market.auction_book
     ask_volume3  UInt64         COMMENT '卖三量(手)',
     ask_volume4  UInt64         COMMENT '卖四量(手)',
     ask_volume5  UInt64         COMMENT '卖五量(手)',
-    data_source  LowCardinality(String) COMMENT '数据来源(miniQMT)'
+    data_source  LowCardinality(String) COMMENT '数据来源(miniQMT)',
+    ingest_ts    DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

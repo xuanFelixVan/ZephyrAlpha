@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS c1_market.auction_snapshot
     auction_amount  Decimal(18,2)  COMMENT '集合竞价成交额',
     market_type     LowCardinality(String) DEFAULT 'A_share' COMMENT '市场类型(预留)',
     data_source     LowCardinality(String)  COMMENT '数据来源(miniQMT)',
-    quality_flag    UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)'
+    quality_flag    UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
+    ingest_ts       DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

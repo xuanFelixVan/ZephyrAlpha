@@ -53,7 +53,8 @@ CREATE TABLE IF NOT EXISTS c1_market.sector_snapshot
     outside          UInt32      COMMENT '外盘',
     zangsu           Decimal(10,3) COMMENT '涨速',
     data_source      LowCardinality(String) COMMENT 'tqcenter_snapshot/tqcenter_push',
-    fetched_at       DateTime64(3, 'UTC') COMMENT '采集时间(UTC)'
+    fetched_at       DateTime64(3, 'UTC') COMMENT '采集时间(UTC)',
+    ingest_ts        DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

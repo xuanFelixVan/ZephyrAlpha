@@ -383,6 +383,25 @@ repos:
         files: "^src/zephyr/(governance|integration)/vector_memory/"
         description: "双检测：①src/zephyr/governance/vector_memory/ 路径硬阻断（VMS 真源唯一 integration/，governance 副本 2026-06-28 删除治本 commit 306dbb2f76+0137750451）；②src/zephyr/integration/vector_memory/ 下 .py AST 扫描，重建 snapshot_backup/cleanup_snapshots/_cleanup_old_snapshots 方法名即阻断（commit dddd1813 删除治本——30GB 递归灾难+零消费方+R4 被 ACID+WAL 覆盖）"
 
+      # ── GATE-SCHEMA-TRUTH: DDL-as-Code 真源 vs ClickHouse 实际表结构漂移阻断（#ARCH-CH-025 Wave 2）──
+      # 权威依据：#ARCH-CH-025 Schema 真源体系收口（audit_01 实测 101 表中 87 表"无代码侧真源"）
+      # 真源声明：schemas/categories/*.py 的 *_DDL 常量是 ClickHouse 表结构唯一真源；
+      #           apply_market_tables_ddl.py / apply_fundamental_tables_ddl.py 从真源部署到 DB
+      # 检测范围：schemas/categories/*.py（真源）或 scripts/ch/verify_schema_truth.py（校验器自身）变更时触发
+      # 检测内容：对比 *_DDL 真源与 system.tables/system.columns —— 列集合/列类型/引擎/排序键漂移
+      # 模式：--ci 硬阻断（漂移 exit 1 拒绝提交）；CH 不可达 exit 0 + WARN（不阻断无关提交，防基建故障卡死工作流）
+      # 与 GATE-C2 区别：GATE-C2 校验 depgraph schema（PostgreSQL 元数据）；本 gate 校验 ClickHouse 表 DDL 真源
+      - id: gate-schema-truth
+        name: "GATE-SCHEMA-TRUTH: DDL-as-Code 真源 vs ClickHouse 漂移阻断（#ARCH-CH-025）"
+        entry: python scripts/ch/verify_schema_truth.py
+        args: ["--ci", "--quiet"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(schemas/categories/.*\\.py|scripts/ch/verify_schema_truth\\.py)$"
+        stages: [commit]
+        description: "校验 schemas/categories/*.py 的 DDL 真源与 ClickHouse 实际表结构一致性——列/类型/引擎/排序键漂移即阻断提交。CH 不可达不阻断（exit 0 + WARN），仅漂移阻断（exit 1）"
+
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
       # 权威依据：IRN-011（ai_behavior_iron_policy.md）9 条零残留规则（ZR-001~009）
       # 真源声明：Session 20260505 零残留原则落地

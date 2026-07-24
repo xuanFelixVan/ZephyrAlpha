@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS c1_market.option_iv_surface
     theta        Decimal(18,6)  DEFAULT 0 COMMENT 'Theta',
     vega         Decimal(18,6)  DEFAULT 0 COMMENT 'Vega',
     data_source  LowCardinality(String)  COMMENT '数据来源(iFind/AkShare)',
-    quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)'
+    quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
+    ingest_ts    DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
