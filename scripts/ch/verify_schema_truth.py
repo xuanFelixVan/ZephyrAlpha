@@ -30,6 +30,13 @@
     python scripts/ch/verify_schema_truth.py --table NAME   # 只校验指定表
     python scripts/ch/verify_schema_truth.py --quiet        # 只输出摘要
     python scripts/ch/verify_schema_truth.py --output PATH  # 额外把报告写到 markdown 文件
+    python scripts/ch/verify_schema_truth.py --ci           # CI 门禁模式（CH 不可达不阻断，有漂移才阻断）
+
+CI 模式语义（接入 pre-commit 门禁用）：
+    - 零漂移      → exit 0（通过）
+    - 有漂移      → exit 1（阻断提交）
+    - CH 不可达    → exit 0 + 显式 WARN（不阻断无关提交；防止本地基建故障卡死所有工作）
+    非 --ci 模式下 CH 不可达仍返回 exit 2（便于人工诊断时区分"基建故障"与"通过"）。
 """
 from __future__ import annotations
 
@@ -127,9 +134,15 @@ def _norm_key(expr: str | None) -> str:
 
 
 def _parse_column_def(seg: str) -> tuple[str, str] | None:
-    """解析单列定义 -> (name, type)；跳过 INDEX/CONSTRAINT 行。"""
+    """解析单列定义 -> (name, type)；跳过 INDEX/CONSTRAINT 行。
+
+    注意：关键字后必须跟空白或括号，避免把 ``index_code`` 等以 INDEX/CONSTRAINT/CHECK
+    开头的列名误判为约束行（Wave 2 #ARCH-CH-025 修复）。
+    """
     seg = seg.strip()
-    if not seg or seg.upper().startswith(("INDEX", "CONSTRAINT", "CHECK")):
+    if not seg:
+        return None
+    if re.match(r"^(INDEX|CONSTRAINT|CHECK)(\s|\()", seg, re.IGNORECASE):
         return None
     # name = 第一个 token（去反引号）
     m = re.match(r"^`?(\w+)`?\s+(.+)$", seg, re.DOTALL)
@@ -304,6 +317,11 @@ def main() -> int:
     ap.add_argument("--table", help="只校验指定表名")
     ap.add_argument("--quiet", action="store_true", help="只输出摘要")
     ap.add_argument("--output", help="把 markdown 报告写到指定路径")
+    ap.add_argument(
+        "--ci",
+        action="store_true",
+        help="CI 门禁模式：CH 不可达不阻断（exit 0 + WARN），有漂移才阻断（exit 1）",
+    )
     args = ap.parse_args()
 
     truths = _load_truth_schemas()
@@ -316,6 +334,11 @@ def main() -> int:
     try:
         client = _make_client()
     except Exception as e:  # noqa: BLE001
+        if args.ci:
+            # CI 模式：基建故障不阻断无关提交（漂移检测本身无法运行，但不卡工作流）
+            print(f"[WARN] GATE-SCHEMA-TRUTH 跳过：ClickHouse 连接失败（{e}）")
+            print("[WARN] 请在 CH 恢复后手动运行 verify_schema_truth.py 确认零漂移")
+            return 0
         print(f"[ERROR] ClickHouse 连接失败: {e}")
         return 2
 

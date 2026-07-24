@@ -20,11 +20,19 @@ ttl: task_bound
 | 遗留 ⚠️ 项 | — | 2 项（5.8 单节点 HA / 7.7 异地副本，均用户裁定接受） |
 | schemas/categories DDL 真源 | 10/101 | **26/101**（含 Wave 1 新增 8 张 c3 表） |
 | Schema 漂移校验工具 | 无 | `scripts/ch/verify_schema_truth.py`（治本） |
+| Schema 漂移 CI 门禁 | 无 | **GATE-SCHEMA-TRUTH**（Wave 2 接入，漂移硬阻断） |
+| Schema 漂移条目 | 10 处（Wave 1 暴露） | **0 处**（Wave 2 收口完成） |
 
-**Wave 1 专项（本会话产物，commit `d6ae260754`）**：
+**Wave 1 专项（commit `d6ae260754`）**：
 - 8 张 c3 表 DDL-as-Code 真源回写 → `verify_schema_truth.py` 校验 **零漂移**
 - 治本校验器 `verify_schema_truth.py`（支持 `--table` / `--quiet` / `--output`，退出码可接入 CI 门禁）
 - 全量漂移证据留证：`wave1_schema_drift_report_20260725.md`（26 表 / 10 漂移，作为 Wave 2 输入）
+
+**Wave 2 专项（本会话产物）**：
+- 10 处漂移逐表收口 → `verify_schema_truth.py --ci` 校验 **零漂移**（26 表全 OK）
+- `verify_schema_truth.py` 增加 `--ci` 模式（CH 不可达不阻断，漂移硬阻断）
+- 接入 pre-commit 门禁 **GATE-SCHEMA-TRUTH**（schemas/categories/*.py 变更时触发）
+- 漂移报告留证：`wave2_schema_drift_report_20260725.md`
 
 ---
 
@@ -161,6 +169,51 @@ audit_01 实测 101 张表中 87 张"无代码侧真源（仅存在于 CH 实例
 
 ---
 
+## 6.5 Wave 2 收口结果（10 处漂移逐表处置 + CI 门禁接入）
+
+### 6.5.1 逐表处置明细
+
+| # | 表 | 漂移类型 | 处置 | 真源文件 |
+|---|----|----------|------|----------|
+| 1 | auction_snapshot | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts DateTime64(3,'UTC') DEFAULT now()` | market_auction.py |
+| 2 | auction_book | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts` | market_auction_book.py |
+| 3 | futures_position | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts` | market_futures_position.py |
+| 4 | futures_term_structure | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts` | market_futures_term.py |
+| 5 | index_quote | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts` | market_index.py |
+| 6 | option_iv_surface | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts` | market_option_iv.py |
+| 7 | sector_snapshot | 列 `ingest_ts` DB 有真源无 | 真源 DDL 补 `ingest_ts` | market_sector_snapshot.py |
+| 8 | index_weight | 列 `index_code` DB 有真源无 | 真源 DDL 已对齐（解析器 bug 修复后复测 OK） | market_index_weight.py |
+| 9 | tick_data | 列 `recorded_time` 真源有 DB 无 | DB 执行 `ALTER TABLE ADD COLUMN recorded_time` 对齐真源 | market_tick.py |
+| 10 | cross_validation_log | 真源有定义但 DB 未建表 | DB 执行 `CREATE TABLE`（P1-4 多源交叉校验需要） | cross_validation_log.py |
+
+### 6.5.2 校验器修复（`verify_schema_truth.py`）
+
+- **解析 bug 修复**：`_parse_column_def` 原把 `index_code` 等以 `INDEX` 开头的列名误判为约束行跳过 → 改用正则 `^(INDEX|CONSTRAINT|CHECK)(\s|\()` 要求关键字后跟空白或括号才跳过（#ARCH-CH-025 Wave 2 修复）
+- **`--ci` 模式新增**：CH 不可达 → exit 0 + WARN（不阻断无关提交，防基建故障卡死工作流）；有漂移 → exit 1（阻断）；零漂移 → exit 0（通过）。非 `--ci` 模式保留 exit 2 用于人工诊断区分"基建故障"与"通过"
+- **`--output` 参数**：支持把 markdown 报告（带 `ttl: task_bound` frontmatter）写到指定路径，供 CI/审计留证
+
+### 6.5.3 CI 门禁接入（GATE-SCHEMA-TRUTH）
+
+- **hook 注册**：`.pre-commit-config.yaml` 新增 `gate-schema-truth`，`args: ["--ci", "--quiet"]`，`files: ^(schemas/categories/.*\.py|scripts/ch/verify_schema_truth\.py)$`，`stages: [commit]`
+- **gate_registry.yaml 同步**：运行 `generate_gate_registry.py` 重新生成，门禁总数 126 → 127（GATE-SCHEMA-TRUTH 已登记）
+- **与 GATE-C2 区别**：GATE-C2 校验 depgraph schema（PostgreSQL 元数据健康度）；GATE-SCHEMA-TRUTH 校验 ClickHouse 表 DDL 真源（列/类型/引擎/排序键），两者无重叠
+
+### 6.5.4 收口验证
+
+```
+校验 26 张表真源，发现 0 处漂移。
+零漂移：所有 DDL-as-Code 真源与 ClickHouse 实际表结构一致。
+```
+
+证据：`docs/_working/reports/wave2_schema_drift_report_20260725.md`（26 表全 OK）
+
+### 6.5.5 权限问题处置（执行环境修复，非真源变更）
+
+- `zephyr_writer` 用户缺 CREATE/ALTER 权限导致 `apply_market_tables_ddl.py` 静默失败 → 运行 `apply_rbac.py` 重新配置权限
+- 权限恢复后 `apply_market_tables_ddl.py` 仍因 ch_writer 路径问题未执行 ALTER/CREATE → 临时脚本 `_direct_alter.py` 直接通过 clickhouse-driver 执行 SQL（已用完即删，未入库）
+
+---
+
 ## 7. 验收对照（audit_03 64 项清单）
 
 | 维度 | 基线 | 收尾 |
@@ -211,12 +264,12 @@ audit_01 实测 101 张表中 87 张"无代码侧真源（仅存在于 CH 实例
 ## 10. 后续工作
 
 **Wave 2**（Schema 真源继续收口）：
-1. 处理 10 处漂移（见 §6.4）
-2. 推进剩余 75 张表 DDL 真源回写（按业务优先级分批）
-3. P0-6 14 表 SCD-2 真源确认
-4. 将 `verify_schema_truth.py` 接入 CI 门禁（pre-merge 漂移阻断）
+1. ✅ 处理 10 处漂移（见 §6.5，零漂移收口）
+2. ⏳ 推进剩余 75 张表 DDL 真源回写（按业务优先级分批）
+3. ⏳ P0-6 14 表 SCD-2 真源确认
+4. ✅ 将 `verify_schema_truth.py` 接入 CI 门禁（GATE-SCHEMA-TRUTH，见 §6.5.3）
 
-**Wave 3+**（按触发条件推进）：
+**Wave 3+**（按触发条件推进，见 §8）：
 - 实盘立项时：P0-2 预防 / A4 分钟线 / A8 currency / P2-4 主链路接线 / 5.8 单节点 HA 升级
 - backtest 质量回归时：P0-4 质量门实装 / A7 raw OHLC
 - 性能瓶颈时：P2-1 物化视图 / P2-2 tick 排序键

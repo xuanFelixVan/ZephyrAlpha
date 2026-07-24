@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-23T20:09:29Z'
+generated_at: '2026-07-24T16:40:16Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 126
+total_gates: 127
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -168,6 +168,16 @@ gates:
     下 .py AST 扫描，重建 snapshot_backup/cleanup_snapshots/_cleanup_old_snapshots 方法名即阻断（commit
     dddd1813 删除治本——30GB 递归灾难+零消费方+R4 被 ACID+WAL 覆盖）
   files_trigger: ^src/zephyr/(governance|integration)/vector_memory/
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-SCHEMA-TRUTH
+  name: 'GATE-SCHEMA-TRUTH: DDL-as-Code 真源 vs ClickHouse 漂移阻断（#ARCH-CH-025）'
+  entry: python scripts/ch/verify_schema_truth.py
+  description: 校验 schemas/categories/*.py 的 DDL 真源与 ClickHouse 实际表结构一致性——列/类型/引擎/排序键漂移即阻断提交。CH
+    不可达不阻断（exit 0 + WARN），仅漂移阻断（exit 1）
+  files_trigger: ^(schemas/categories/.*\.py|scripts/ch/verify_schema_truth\.py)$
   always_run: false
   category: unknown
   status: active
