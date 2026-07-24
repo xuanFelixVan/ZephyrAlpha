@@ -8943,3 +8943,77 @@ entries:
   related_adjudication: '#ARCH-CH-022 时区防线迁移（ch_writer DateTime64 兼容性修复同时发现此 bug）'
   created: '2026-07-24'
   last_updated: '2026-07-24'
+# --- #ARCH-DEPGRAPH-PRESERVE-ATTRS: auto-regenerate 保留手动属性治本（2026-07-24）---
+# 关联裁定：TRAE-062 SSoT 分类铁律（depgraph 是架构数据真源在 DB），AGENTS.md §11.0 全景图是真源
+- issue_id: '#ARCH-DEPGRAPH-PRESERVE-ATTRS'
+  title: auto-regenerate DELETE+INSERT 重建 production 节点时丢失手动设置的 subdomain_id/gate_reason
+  category: bug_fix
+  severity: P1高
+  adjudication: |-
+    2026-07-24 factual bug fix。generate_project_depgraph.py 的 write_depgraph_to_db() 使用
+    DELETE+INSERT 方式重建 production 节点（文件系统扫描产物）。文件系统扫描不产生 subdomain_id
+    和 gate_reason 字段（这两个是人工/oneoff脚本通过 apply_depgraph.py 设置的），导致每次
+    auto-regenerate 后这些字段被重置为 NULL。D_FACTOR 域 5 个 production 文件节点
+    （factor_base/alpha_signal_pipeline/bus_factor_defense/momentum_factor/value_factor）
+    反复丢失 subdomain_id 即此根因。
+    根因：DELETE+INSERT 重建未保留非扫描派生的手动属性。与已有的 design edge 快照恢复
+    （_snapshot_apply_depgraph_design_edges / _restore_apply_depgraph_design_edges_by_path，
+    治本 2026-07-23 问题B）和 build_status 快照恢复（_preserved_node_status）同构——
+    均为"DELETE 前快照→rebuild 后恢复"模式。subdomain_id/gate_reason 漏加同一模式。
+    修复：在 DELETE production 节点前，快照所有非 design 节点的 subdomain_id/gate_reason
+    （WHERE subdomain_id IS NOT NULL OR gate_reason != ''）；rebuild 重建后，按 path 恢复
+    （UPDATE ... WHERE subdomain_id IS NULL，仅填充 NULL 不覆盖新值，幂等安全）。
+    严重度 P1：系统性问题——每次 commit 后 auto-regenerate 都会丢失，导致四图对齐报告
+    域分类失效、AI 无法通过 subdomain_id 反查模块归属。非 risk acceptance/wontfix/边界裁定
+    ——纯 factual 代码修复，直接标 resolved。
+  fix_phase: |-
+    已修复：generate_project_depgraph.py write_depgraph_to_db() 新增 _manual_attrs_snapshot
+    快照（DELETE 前）+ 恢复逻辑（rebuild 后，按 path UPDATE NULL 填充）。
+    DB 验证：D_FACTOR 域 5 个 production 节点 subdomain_id 全部非 NULL（0/5 NULL）。
+    bus_factor_defense.py subdomain_id=FAC-GOV（正确——治理功能，非核心引擎）。
+    提交：commit cb71d3be（scripts/governance/generate_project_depgraph.py）。
+  status: resolved
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, AGENTS.md §11.0 全景图是真源, 四图对齐铁律 TRAE-080'
+  created: '2026-07-24'
+  last_updated: '2026-07-24'
+# --- #ARCH-DEPGRAPH-BACKUP-FIRST-CHECK: 备份先行门禁治本（2026-07-24）---
+# 关联裁定：trae_054 STEP0（改 depgraph 前必须 git commit 备份）
+- issue_id: '#ARCH-DEPGRAPH-BACKUP-FIRST-CHECK'
+  title: 备份先行规则无技术强制——执行 DB 修改前未先 git commit 脚本
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |-
+    问题背景：
+    trae_054 STEP0 规定"修改 depgraph 前置备份(STEP0): 使用 pg_dump 或 apply_depgraph.py
+    内置物理备份"。项目记忆进一步要求"备份先行：改 depgraph (PostgreSQL) 前必须 git commit
+    备份"。但实际工作流中发现：AI 创建 oneoff 脚本后直接执行（修改 DB），未先 git commit
+    脚本。若脚本有 bug，无法 git checkout 回滚到上一可用版本。
+    根因分析（第一性原理）：
+    1. trae_054 STEP0 的"备份"有两层含义：数据备份（pg_dump，已由 backup_pg_depgraph() 自动
+       覆盖）+ 脚本备份（git commit，无技术强制）。
+    2. 现有 backup_pg_depgraph() 在 apply_depgraph.py write 路径自动调用，覆盖数据备份。
+    3. 脚本备份（git commit the script before running）无任何技术检查——纯君子协定。
+    4. CREATE-GUARD 门禁在 commit 时检查 creation_token，但这是"创建后 commit 时"检查，
+       不是"运行前"检查。时间窗口：创建脚本→运行脚本（DB已改）→commit 时才被 CREATE-GUARD
+       拦截——此时 DB 已被未提交脚本修改，无法回滚。
+    裁定（治本方案）：
+    在 generate_project_depgraph.py 的 write_depgraph_to_db() 写入入口添加 pre-write
+    WARNING 检查：扫描 scripts/governance/*.py 是否有未提交的 git 变更（git status --short），
+    若有则打印显著 WARNING 提示"检测到未提交的治理脚本，建议先 git commit 再执行 DB 修改"。
+    选择 WARNING 而非 BLOCK 的理由（长远战略）：
+    - 项目原则"永久系统必须全自动，禁止需手工干预的设计"——硬阻断会破坏自动化流程
+      （如 reconciler 自动修复场景需修改脚本后立即运行）。
+    - 100% AI 开发场景下，AI 看到 WARNING 会自觉调整流程（君子协定+技术提示双重防御）。
+    - 硬阻断的误报风险高（scripts/governance/ 下常有无关的未提交变更），会阻断合法操作。
+    - WARNING 是"fail-open + 审计可见"模式，与项目其他 reconciler/gate 设计一致。
+    非 risk acceptance/wontfix——主动添加技术强制（WARNING 级），从君子协定升级为
+    "君子协定+技术提示"双重防御。
+  fix_phase: |-
+    已实施：generate_project_depgraph.py write_depgraph_to_db() 入口添加
+    _warn_uncommitted_governance_scripts() 检查。扫描 scripts/governance/ 的 git
+    未提交变更，WARNING 提示但不阻断。与 backup_pg_depgraph() 数据备份互补，形成
+    "数据备份+脚本备份"双层防线。提交：commit cb71d3be。
+  status: resolved
+  related_adjudication: 'trae_054 STEP0 (depgraph 访问协议), AGENTS.md 备份先行铁律'
+  created: '2026-07-24'
+  last_updated: '2026-07-24'
