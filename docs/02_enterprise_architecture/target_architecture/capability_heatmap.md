@@ -164,7 +164,7 @@ ttl: permanent
 | `D_GOV_RULE` | rule_governance | `L2_domain` | 11 | 11 | 0 | 0 | L3+ |
 | `D_GOV_SCRIPTS` | code_dedup | `L2_domain` | 416 | 26 | 0 | 390 | L3+ |
 | `D_INTELLIGENCE` | context_management | `L2_domain` | 56 | 18 | 0 | 38 | L3+ |
-| `D_KNOWLEDGE` | knowledge_management | `L2_domain` | 41 | 1 | 2 | 38 | L3+ |
+| `D_KNOWLEDGE` | vector_memory | `L2_domain` | 41 | 1 | 2 | 38 | L3+ |
 | `D_ML_SERVE` | 推理 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
 | `D_ML_TRAIN` | model_profiling | `L2_domain` | 12 | 0 | 1 | 11 | L2 |
 | `D_PF_ALLOC` | 组合分配 | `L2_domain` | 11 | 0 | 1 | 10 | L2 |

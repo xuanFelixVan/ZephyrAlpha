@@ -402,7 +402,7 @@ def _extract_path_section_domains(section_data: dict, section_name: str, derivat
         "blueprint_paths": "registry_management",
         "test_paths": "code_dedup",
         "script_paths": "script_governance",
-        "knowledge_paths": "knowledge_management",
+        "knowledge_paths": "vector_memory",
         "data_paths": "persistence",
         "gate_paths": "gate_orchestration",
         "frontend_paths": "runtime_integration",

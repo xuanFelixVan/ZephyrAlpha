@@ -104,7 +104,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `D_GOV_RULE` | rule_governance | 11 | 规则配置管理 |
 | `D_GOV_SCRIPTS` | code_dedup | 416 | 代码去重检测 |
 | `D_INTELLIGENCE` | context_management | 56 | 上下文预算管理(context_budget/token_budget) |
-| `D_KNOWLEDGE` | knowledge_management | 41 | 知识管线(ingest/triage/extract/activate/analyze) |
+| `D_KNOWLEDGE` | vector_memory | 41 | 知识管线(ingest/triage/extract/activate/analyze) |
 | `D_ML_SERVE` | 推理 | 7 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |
 | `D_ML_TRAIN` | model_profiling | 12 | 模型性能画像 |
 | `D_PF_ALLOC` | 组合分配 | 11 | 资产组合分配优化 |
