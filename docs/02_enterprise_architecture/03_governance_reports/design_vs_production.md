@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2718 | 97.1% |
+| production（生产态） | 2720 | 97.1% |
 | design（设计态） | 80 | 2.9% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2798** | **100%** |
+| **总计** | **2800** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 3862 | 138.0% |
-| stable | 1613 | 57.6% |
+| generated | 3892 | 139.0% |
+| stable | 1614 | 57.6% |
 | planned | 74 | 2.6% |
 | deprecated | 4 | 0.1% |
 
@@ -47,7 +47,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 | 0 | 0 | 0 | 0 | N/A |
 | D_COMPLIANCE | 合规 | 2 | 2 | 0 | 0 | 100.0% |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 80 | 77 | 3 | 0 | 96.2% |
+| D_DATA | 数据接入层 | 81 | 78 | 3 | 0 | 96.3% |
 | D_DATA_ENG | 数据工程 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DATA_GOV | 数据治理 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DATA_SEC | 数据安全与契约 | 7 | 7 | 0 | 0 | 100.0% |
@@ -62,7 +62,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
 | D_FRONTEND | 前端 | 12 | 12 | 0 | 0 | 100.0% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 10 | 10 | 0 | 0 | 100.0% |
-| D_GOVERNANCE | 生命周期管理 | 218 | 218 | 0 | 0 | 100.0% |
+| D_GOVERNANCE | 生命周期管理 | 219 | 219 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 124 | 121 | 3 | 0 | 97.6% |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 168 | 1 | 0 | 99.4% |
 | D_GOV_DOCS | 架构文档治理 | 26 | 2 | 24 | 0 | 7.7% |
@@ -109,7 +109,7 @@ ttl: permanent
 | D_GOV_DOCS | 架构文档治理 | 26 | 2 | 7.7% |
 | D_FACTOR | 因子 | 50 | 5 | 10.0% |
 | D_ML_TRAIN | 训练 | 4 | 3 | 75.0% |
-| D_DATA | 数据接入层 | 80 | 77 | 96.2% |
+| D_DATA | 数据接入层 | 81 | 78 | 96.3% |
 | D_GOV_AUDIT | 审计追踪 | 124 | 121 | 97.6% |
 | D_GOV_DRIFT | 漂移检测 | 75 | 74 | 98.7% |
 | D_INFRA_RUNTIME | 运行时集成 | 161 | 160 | 99.4% |

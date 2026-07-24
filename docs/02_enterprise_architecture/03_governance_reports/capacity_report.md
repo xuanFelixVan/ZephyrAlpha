@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | 生命周期管理 | 218 | 150 | +68 |
+| D_GOVERNANCE | 生命周期管理 | 219 | 150 | +69 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 168 | 150 | +18 |
 | D_GOV_SCRIPTS | 脚本治理 | 377 | 150 | +227 |
 | D_INFRA_RUNTIME | 运行时集成 | 160 | 150 | +10 |
@@ -69,7 +69,7 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | 行为审计 |  | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | 合规 |  | 2 | 150 | 1.3% | 正常 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 7 | 150 | 4.7% | 正常 |
-| D_DATA | 数据接入层 |  | 77 | 150 | 51.3% | 正常 |
+| D_DATA | 数据接入层 |  | 78 | 150 | 52.0% | 正常 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_SEC | 数据安全与契约 | L1_foundation | 7 | 150 | 4.7% | 正常 |
@@ -84,7 +84,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 125 | 150 | 83.3% | 接近超容 |
 | D_FRONTEND | 前端 | L1_foundation | 12 | 150 | 8.0% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 10 | 150 | 6.7% | 正常 |
-| D_GOVERNANCE | 生命周期管理 | L2_domain | 218 | 150 | 145.3% | 超容 |
+| D_GOVERNANCE | 生命周期管理 | L2_domain | 219 | 150 | 146.0% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 121 | 150 | 80.7% | 接近超容 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 168 | 150 | 112.0% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
