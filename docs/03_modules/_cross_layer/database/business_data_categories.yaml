@@ -1761,3 +1761,20 @@
   frequency: 低频
   data_source: [ifind]
   blueprint: null
+
+# --- P2-3 补登（#ARCH-CH-024）：cross_validation_log 建表于 Wave 2 但漏登品类注册表 ---
+- category_id: market_cross_validation_log
+  name: "多源交叉校验日志"
+  engine: clickhouse
+  database: c1_market
+  table: cross_validation_log
+  schema_file: schemas/categories/cross_validation_log.py
+  data_type: 衍生
+  lifecycle: hot_90d
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 实时(校验时)
+  data_source: [miniqmt, tdx_backup]
+  blueprint: docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §6.5

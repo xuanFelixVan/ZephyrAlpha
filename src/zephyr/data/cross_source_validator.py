@@ -38,8 +38,13 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 
 from zephyr.data import ch_reader
+from zephyr.data.table_registry import get_registry
 
 log = logging.getLogger(__name__)
+
+# Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024，P2-3）
+_TBL_TICK = get_registry().table("market_tick")
+_TBL_CROSS_VALIDATION_LOG = get_registry().table("market_cross_validation_log")
 
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 # 查询最近 N 分钟内每个 symbol+data_source 的最新 price/volume
@@ -47,15 +52,15 @@ _SQL_LATEST_PER_SOURCE = """
 SELECT symbol, data_source,
        argMax(price, timestamp) as last_price,
        argMax(volume, timestamp) as last_volume
-FROM c1_market.tick_data
+FROM {tick_table}
 WHERE timestamp >= now() - INTERVAL {minutes} MINUTE
   AND data_source IN ('miniqmt', 'tdx_backup')
 GROUP BY symbol, data_source
 """
 
 # 写入校验日志
-_SQL_INSERT_LOG = """
-INSERT INTO c1_market.cross_validation_log
+_SQL_INSERT_LOG = f"""
+INSERT INTO {_TBL_CROSS_VALIDATION_LOG}
 (check_time, check_date, symbol, metric, primary_value, backup_value,
  deviation, threshold, status, detail)
 VALUES
@@ -123,7 +128,9 @@ class CrossSourceValidator:
 
         # 查询 ClickHouse
         raw = ch_reader.query(
-            _SQL_LATEST_PER_SOURCE.format(minutes=time_window_minutes)
+            _SQL_LATEST_PER_SOURCE.format(
+                tick_table=_TBL_TICK, minutes=time_window_minutes
+            )
         )
         if not raw or not raw.strip():
             log.info("交叉校验: 最近 %d 分钟无 tick 数据", time_window_minutes)

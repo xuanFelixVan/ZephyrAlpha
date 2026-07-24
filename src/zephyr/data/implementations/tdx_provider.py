@@ -49,6 +49,7 @@ log = logging.getLogger(__name__)
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 _TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
+_TBL_SECTOR_CONSTITUENT = get_registry().table("market_sector_constituent_880")
 
 # bestip 可能选到不支持历史K线的服务器（实测 218.6.170.47:7709 的
 # bars/index_bars 返回0行，TCP通但不响应历史K线请求）。
@@ -324,7 +325,7 @@ class TDXProvider(DataSourceBase):
             user=cfg["user"], password=cfg["password"],
         )
         rows = client.execute(
-            "SELECT DISTINCT sector_code FROM c1_market.sector_constituent "
+            f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} "
             "ORDER BY sector_code"
         )
         client.disconnect()

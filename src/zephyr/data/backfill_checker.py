@@ -521,20 +521,20 @@ def _backfill_tick_table(
 
     缺失日期对应的记录会被追加到 all_missing_tables。
     """
-    missing = detect_missing_dates("tick_data", trade_dates, _TICK_THRESHOLD)
+    missing = detect_missing_dates(_TBL_TICK_DATA, trade_dates, _TICK_THRESHOLD)
     if not missing:
         return 0
     log.info("tick_data 缺失日期: %s", [d.isoformat() for d in missing])
     rows = backfill_tick_data(missing)
     all_missing_tables.append({
-        "table": "tick_data",
+        "table": _TBL_TICK_DATA,
         "missing_dates": [d.isoformat() for d in missing],
         "rows_backfilled": rows,
     })
     # 验证
     for d in missing:
         d_str = d.isoformat()
-        cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table="tick_data", d_str=d_str))
+        cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table=_TBL_TICK_DATA, d_str=d_str))
         log.info("  tick_data %s: %s行", d_str, cnt or "0")
     return rows
 
@@ -770,7 +770,7 @@ def run_known_gap_backfill(scheduler=None) -> dict:
                     result["still_missing"], result["total_dates"],
                 )
                 # 对 tick_data 缺口触发 backfill
-                if "tick_data" in result["table"]:
+                if result["table"] == _TBL_TICK_DATA:
                     from datetime import date as _date
                     missing_d = [
                         _date.fromisoformat(d) for d in result["missing_dates"]
@@ -847,7 +847,7 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
     for info in tables_info:
         table = info["table"]
         # tick_data 用专门的补下载逻辑（分时段+批量写入）
-        if table == "tick_data" or table.endswith(".tick_data"):
+        if table == _TBL_TICK_DATA:
             total_rows += _backfill_tick_table(trade_dates, all_missing_tables)
             continue
         _backfill_generic_table(info, trade_dates, scheduler, all_missing_tables)
