@@ -105,10 +105,16 @@ def _format_symbols(symbols: Sequence[str]) -> str:
 
 
 def _tsv_to_dataframe(tsv: str) -> pd.DataFrame:
-    """解析 ch_reader 返回的 TSV 为 DataFrame（TSV 无表头，按列顺序映射）。"""
+    """解析 ch_reader 返回的 TSV 为 DataFrame（TSV 无表头，按列顺序映射）。
+
+    symbol 列强制为 str（避免 "000001" 被解析为整数 1，丢失前导零）。
+    """
     if not tsv or not tsv.strip():
         return pd.DataFrame()
-    df = pd.read_csv(StringIO(tsv), sep="\t", header=None, names=_HISTORY_COLUMNS)
+    df = pd.read_csv(
+        StringIO(tsv), sep="\t", header=None, names=_HISTORY_COLUMNS,
+        dtype={"symbol": str},
+    )
     df["trade_date"] = pd.to_datetime(df["trade_date"])
     return df
 
@@ -134,6 +140,11 @@ def load_history(symbols: Sequence[str], start: str, end: str) -> pd.DataFrame:
     df = _tsv_to_dataframe(ch_reader.query(sql))
     if df.empty:
         return df
+    # 防御性去重：ReplacingMergeTree 即使注入 FINAL，极端情况下仍可能返回
+    # 同一 (symbol, trade_date) 多行（版本未合并/并发写入）。此处兜底去重，
+    # 避免下游 _compute_factor_panel 的 reindex 触发
+    # "cannot reindex on an axis with duplicate labels"。
+    df = df.drop_duplicates(subset=["symbol", "trade_date"], keep="last")
     df = df.set_index(["symbol", "trade_date"])
     return df.sort_index()
 
