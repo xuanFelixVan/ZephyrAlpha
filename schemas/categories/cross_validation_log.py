@@ -27,7 +27,7 @@ from __future__ import annotations
 CROSS_VALIDATION_LOG_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.cross_validation_log
 (
-    check_time     DateTime                COMMENT '校验执行时间',
+    check_time     DateTime64(3, 'UTC')     COMMENT '校验执行时间(系统列,UTC)',
     check_date     Date                    COMMENT '校验数据日期',
     symbol         String                  COMMENT '证券代码',
     metric         LowCardinality(String)  COMMENT '校验指标(price/volume/amount/missing)',
