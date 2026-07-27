@@ -18,6 +18,7 @@ import pytest
 cp_mod = pytest.importorskip("zephyr.intelligence.model_profiling.capability_passport")
 tc_mod = pytest.importorskip("zephyr.intelligence.model_profiling.exam_test_cases")
 eo_mod = pytest.importorskip("zephyr.intelligence.model_profiling.exam_orchestrator")
+ec_mod = pytest.importorskip("zephyr.intelligence.model_profiling.exam_checks")
 
 CapabilityPassport = cp_mod.CapabilityPassport
 BreadthResult = cp_mod.BreadthResult
@@ -36,6 +37,11 @@ ALL_EXAM_CASES = tc_mod.ALL_EXAM_CASES
 CASES_BY_CAPABILITY = tc_mod.CASES_BY_CAPABILITY
 
 ExamOrchestrator = eo_mod.ExamOrchestrator
+
+# Stage 4 公共化：从 exam_checks 直接调用纯函数（替代 ExamOrchestrator._xxx）
+check_structure = ec_mod.check_structure
+check_refusal = ec_mod.check_refusal
+outputs_similar = ec_mod.outputs_similar
 
 
 class TestCapabilityPassport:
@@ -201,7 +207,7 @@ class TestExamOrchestrator:
                 }
 
         orch = ExamOrchestrator(FakeChat(), model_id="test-model")
-        assert orch._model_id == "test-model"
+        assert orch.model_id == "test-model"
 
     def test_run_full_exam(self):
         class FakeChat:
@@ -229,36 +235,36 @@ class TestExamOrchestrator:
 
     def test_check_structure_valid(self):
         result = {"category": "web", "tags": ["api"]}
-        assert ExamOrchestrator._check_structure(result, ["category"]) is True
+        assert check_structure(result, ["category"]) is True
 
     def test_check_structure_missing_key(self):
         result = {"category": "web"}
-        assert ExamOrchestrator._check_structure(result, ["tags"]) is False
+        assert check_structure(result, ["tags"]) is False
 
     def test_check_structure_empty_list(self):
         result = {"tags": []}
-        assert ExamOrchestrator._check_structure(result, ["tags"]) is False
+        assert check_structure(result, ["tags"]) is False
 
     def test_check_structure_empty_string(self):
         result = {"name": "  "}
-        assert ExamOrchestrator._check_structure(result, ["name"]) is False
+        assert check_structure(result, ["name"]) is False
 
     def test_check_structure_none_dict(self):
-        assert ExamOrchestrator._check_structure(None, ["key"]) is False
-        assert ExamOrchestrator._check_structure({}, ["key"]) is False
+        assert check_structure(None, ["key"]) is False
+        assert check_structure({}, ["key"]) is False
 
     def test_check_refusal(self):
-        assert ExamOrchestrator._check_refusal({"error": "I cannot do that"}) is True
-        assert ExamOrchestrator._check_refusal({"error": "ok"}) is False
-        assert ExamOrchestrator._check_refusal({}) is True
-        assert ExamOrchestrator._check_refusal(None) is True
+        assert check_refusal({"error": "I cannot do that"}) is True
+        assert check_refusal({"error": "ok"}) is False
+        assert check_refusal({}) is True
+        assert check_refusal(None) is True
 
     def test_outputs_similar_identical(self):
         a = {"key": "value"}
         b = {"key": "value"}
-        assert ExamOrchestrator._outputs_similar(a, b) is True
+        assert outputs_similar(a, b) is True
 
     def test_outputs_similar_different(self):
         a = {"key": "completely different content xyz"}
         b = {"key": "totally unrelated output abc"}
-        assert ExamOrchestrator._outputs_similar(a, b) is False
+        assert outputs_similar(a, b) is False

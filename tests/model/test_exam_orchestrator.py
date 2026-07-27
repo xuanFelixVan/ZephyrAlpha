@@ -27,91 +27,105 @@ from zephyr.intelligence.model_profiling.capability_passport import (
 from zephyr.intelligence.model_profiling.exam_orchestrator import (
     CAPABILITIES,
     ExamOrchestrator,
-    _normalized_edit_distance,
-    _percentile,
+)
+from zephyr.intelligence.model_profiling.exam_checks import (
+    check_static_assertions,
+    check_structure,
+    check_fabrication,
+    outputs_similar,
+    check_refusal,
+    check_overclaim,
+    check_source_confusion,
+    check_instruction_drift,
+    check_format_hallucination,
+    check_quantity_hallucination,
+    normalized_edit_distance,
+    percentile,
+    compute_olympiad_pass_rate,
+    compute_overall_score,
 )
 from zephyr.intelligence.model_profiling.exam_test_cases import Difficulty, ExamTestCase
 
 
 class TestNormalizedEditDistance:
     def test_identical_strings(self):
-        assert _normalized_edit_distance("hello", "hello") == 0.0
+        assert normalized_edit_distance("hello", "hello") == 0.0
 
     def test_empty_strings(self):
-        assert _normalized_edit_distance("", "") == 0.0
+        assert normalized_edit_distance("", "") == 0.0
 
     def test_one_empty(self):
-        assert _normalized_edit_distance("abc", "") == 1.0
-        assert _normalized_edit_distance("", "abc") == 1.0
+        assert normalized_edit_distance("abc", "") == 1.0
+        assert normalized_edit_distance("", "abc") == 1.0
 
     def test_completely_different(self):
-        result = _normalized_edit_distance("abc", "xyz")
+        result = normalized_edit_distance("abc", "xyz")
         assert result == 1.0
 
     def test_partial_overlap(self):
-        result = _normalized_edit_distance("kitten", "sitting")
+        result = normalized_edit_distance("kitten", "sitting")
         assert 0.0 < result < 1.0
 
     def test_single_char_difference(self):
-        result = _normalized_edit_distance("abc", "abd")
+        result = normalized_edit_distance("abc", "abd")
         assert 0.0 < result <= 1.0 / 3.0 + 1e-9
 
 
 class TestPercentile:
     def test_empty_list(self):
-        assert _percentile([], 50) == 0.0
+        assert percentile([], 50) == 0.0
 
     def test_single_element(self):
-        assert _percentile([10.0], 50) == 10.0
-        assert _percentile([10.0], 0) == 10.0
-        assert _percentile([10.0], 100) == 10.0
+        assert percentile([10.0], 50) == 10.0
+        assert percentile([10.0], 0) == 10.0
+        assert percentile([10.0], 100) == 10.0
 
     def test_multiple_elements_p50(self):
         data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        result = _percentile(data, 50)
+        result = percentile(data, 50)
         assert result == 3.0
 
     def test_multiple_elements_p95(self):
         data = list(range(1, 101))
-        result = _percentile(data, 95)
+        result = percentile(data, 95)
         assert 94.0 <= result <= 96.0
 
     def test_multiple_elements_p99(self):
         data = list(range(1, 101))
-        result = _percentile(data, 99)
+        result = percentile(data, 99)
         assert 98.0 <= result <= 100.0
 
 
 class TestCheckStructure:
     def test_valid_dict(self):
         result = {"category": "web", "tags": ["api"]}
-        assert ExamOrchestrator._check_structure(result, ["category", "tags"]) is True
+        assert check_structure(result, ["category", "tags"]) is True
 
     def test_empty_dict(self):
-        assert ExamOrchestrator._check_structure({}, ["category"]) is False
+        assert check_structure({}, ["category"]) is False
 
     def test_none(self):
-        assert ExamOrchestrator._check_structure(None, ["category"]) is False
+        assert check_structure(None, ["category"]) is False
 
     def test_missing_keys(self):
         result = {"category": "web"}
-        assert ExamOrchestrator._check_structure(result, ["category", "missing_key"]) is False
+        assert check_structure(result, ["category", "missing_key"]) is False
 
     def test_empty_list_value(self):
         result = {"category": "web", "tags": []}
-        assert ExamOrchestrator._check_structure(result, ["tags"]) is False
+        assert check_structure(result, ["tags"]) is False
 
     def test_empty_string_value(self):
         result = {"category": "   "}
-        assert ExamOrchestrator._check_structure(result, ["category"]) is False
+        assert check_structure(result, ["category"]) is False
 
     def test_nested_result_key(self):
         result = {"result": {"category": "web"}}
-        assert ExamOrchestrator._check_structure(result, ["category"]) is True
+        assert check_structure(result, ["category"]) is True
 
     def test_nested_codegen_key(self):
         result = {"codegen": {"content": "def foo(): pass"}}
-        assert ExamOrchestrator._check_structure(result, ["content"]) is True
+        assert check_structure(result, ["content"]) is True
 
 
 class TestCheckFabrication:
@@ -126,76 +140,76 @@ class TestCheckFabrication:
     def test_code_fix_old_str_in_prompt(self):
         case = self._make_case("code_fix", "fix this: old_code_here and more")
         result = {"fixes": [{"old_str": "old_code_here", "new_str": "fixed"}]}
-        assert ExamOrchestrator._check_fabrication(case, result) is False
+        assert check_fabrication(case, result) is False
 
     def test_code_fix_old_str_not_in_prompt(self):
         case = self._make_case("code_fix", "fix this: some_other_code")
         result = {"fixes": [{"old_str": "fabricated_code", "new_str": "fixed"}]}
-        assert ExamOrchestrator._check_fabrication(case, result) is True
+        assert check_fabrication(case, result) is True
 
     def test_non_code_capability(self):
         case = self._make_case("task_classification", "classify this")
         result = {"category": "web"}
-        assert ExamOrchestrator._check_fabrication(case, result) is False
+        assert check_fabrication(case, result) is False
 
     def test_refactor_old_str_in_prompt(self):
         case = self._make_case("refactor", "refactor: original_snippet here")
         result = {"changes": [{"old_str": "original_snippet", "new_str": "refactored"}]}
-        assert ExamOrchestrator._check_fabrication(case, result) is False
+        assert check_fabrication(case, result) is False
 
     def test_dead_code_removal_old_str_not_in_prompt(self):
         case = self._make_case("dead_code_removal", "remove dead code from: live_code")
         result = {"dead_sections": [{"old_str": "ghost_code", "new_str": ""}]}
-        assert ExamOrchestrator._check_fabrication(case, result) is True
+        assert check_fabrication(case, result) is True
 
 
 class TestOutputsSimilar:
     def test_identical_dicts(self):
         a = {"key": "value", "num": 42}
         b = {"key": "value", "num": 42}
-        assert ExamOrchestrator._outputs_similar(a, b) is True
+        assert outputs_similar(a, b) is True
 
     def test_completely_different_dicts(self):
         a = {"alpha": "one two three"}
         b = {"beta": "four five six"}
-        assert ExamOrchestrator._outputs_similar(a, b) is False
+        assert outputs_similar(a, b) is False
 
     def test_partially_similar_dicts(self):
         a = {"key": "hello world foo"}
         b = {"key": "hello world bar"}
-        assert ExamOrchestrator._outputs_similar(a, b) is True
+        assert outputs_similar(a, b) is True
 
 
 class TestCheckRefusal:
     def test_empty_dict(self):
-        assert ExamOrchestrator._check_refusal({}) is True
+        assert check_refusal({}) is True
 
     def test_error_with_refusal_keywords(self):
-        assert ExamOrchestrator._check_refusal({"error": "I cannot do that"}) is True
-        assert ExamOrchestrator._check_refusal({"error": "I'm sorry but I refuse"}) is True
-        assert ExamOrchestrator._check_refusal({"error": "unable to comply"}) is True
-        assert ExamOrchestrator._check_refusal({"error": "I can't process this"}) is True
-        assert ExamOrchestrator._check_refusal({"error": "not able to help"}) is True
+        assert check_refusal({"error": "I cannot do that"}) is True
+        assert check_refusal({"error": "I'm sorry but I refuse"}) is True
+        assert check_refusal({"error": "unable to comply"}) is True
+        assert check_refusal({"error": "I can't process this"}) is True
+        assert check_refusal({"error": "not able to help"}) is True
 
     def test_normal_result(self):
-        assert ExamOrchestrator._check_refusal({"category": "web"}) is False
+        assert check_refusal({"category": "web"}) is False
 
     def test_error_without_refusal_keyword(self):
-        assert ExamOrchestrator._check_refusal({"error": "timeout"}) is False
+        assert check_refusal({"error": "timeout"}) is False
 
 
 class TestExamOrchestratorInit:
     def test_instantiation_with_mock(self):
         chat = MagicMock()
         orch = ExamOrchestrator(chat, model_id="test-model")
-        assert orch._model_id == "test-model"
-        assert orch._chat is chat
+        assert orch.model_id == "test-model"
+        assert orch.chat is chat
 
     def test_instantiation_model_id_from_chat(self):
         chat = MagicMock()
         chat._model = "inferred-model"
         orch = ExamOrchestrator(chat)
-        assert orch._model_id == "inferred-model"
+        assert orch.model_id == "inferred-model"
 
 
 class TestDepthMultiSampling:
@@ -204,18 +218,18 @@ class TestDepthMultiSampling:
     def test_default_samples_per_case_is_1(self):
         """默认 n=1, 保持向后兼容。"""
         orch = ExamOrchestrator(MagicMock(), model_id="t")
-        assert orch._depth_samples_per_case == 1
+        assert orch.depth_samples_per_case == 1
 
     def test_explicit_samples_per_case(self):
         """显式参数优先于环境变量。"""
         orch = ExamOrchestrator(MagicMock(), model_id="t", depth_samples_per_case=5)
-        assert orch._depth_samples_per_case == 5
+        assert orch.depth_samples_per_case == 5
 
     def test_env_var_samples_per_case(self, monkeypatch):
         """环境变量 ZEPHYR_DEPTH_SAMPLES 在未显式传参时生效。"""
         monkeypatch.setenv("ZEPHYR_DEPTH_SAMPLES", "3")
         orch = ExamOrchestrator(MagicMock(), model_id="t")
-        assert orch._depth_samples_per_case == 3
+        assert orch.depth_samples_per_case == 3
 
     def test_invalid_env_var_falls_back_to_1(self, monkeypatch):
         """非法环境变量值会抛 ValueError — 用户应提供合法值。"""
@@ -227,7 +241,7 @@ class TestDepthMultiSampling:
     def test_negative_samples_clamped_to_1(self):
         """负数被 max(1, ...) 钳制为 1。"""
         orch = ExamOrchestrator(MagicMock(), model_id="t", depth_samples_per_case=-5)
-        assert orch._depth_samples_per_case == 1
+        assert orch.depth_samples_per_case == 1
 
     def test_score_capability_calls_infer_n_times(self):
         """n=3 时, 每个 case 的 _infer 应被调用 3 次。"""
@@ -243,7 +257,7 @@ class TestDepthMultiSampling:
             expected_structure_keys=["category"],
             expected_category="test",
         )
-        result = orch._score_capability("task_classification", [case])
+        result = orch.score_capability("task_classification", [case])
         # _infer 调用次数 = n_samples × n_cases = 3 × 1 = 3
         assert chat.inference.call_count == 3
         assert result.samples_per_case == 3
@@ -262,7 +276,7 @@ class TestDepthMultiSampling:
             expected_structure_keys=["category"],
             expected_category="test",
         )
-        result = orch._score_capability("task_classification", [case])
+        result = orch.score_capability("task_classification", [case])
         assert chat.inference.call_count == 1
         assert result.samples_per_case == 1
 
@@ -284,7 +298,7 @@ class TestDepthMultiSampling:
             expected_structure_keys=["category"],
             expected_category="test",
         )
-        result = orch._score_capability("task_classification", [case])
+        result = orch.score_capability("task_classification", [case])
         # 多数投票: 2/3 exact → em=1 → exact_match_rate=1.0
         assert result.exact_match_rate == 1.0
 
@@ -301,9 +315,9 @@ class TestDepthMultiSampling:
             prompt="write a function",
             expected_test_cases=["assert True"],
         )
-        orch._score_capability("code_generate", [case])
+        orch.score_capability("code_generate", [case])
         # 仅 append 1 次 (而不是 3 次)
-        assert len(orch._olympiad_case_results) == 1
+        assert len(orch.olympiad_case_results) == 1
 
 
 class TestDeterministicJudge:
@@ -405,8 +419,8 @@ class TestOlympiadThreeTrackEnforcement:
         # 提供足够长的候选文本避免 length=0
         chat.inference.return_value = {"content": "x" * 200, "token_count": 10}
         orch = ExamOrchestrator(chat, model_id="t")  # 无 judge_chat
-        assert orch._judge is None
-        assert orch._det_judge is not None
+        assert orch.judge is None
+        assert orch.det_judge is not None
 
         case = ExamTestCase(
             case_id="EX-OLY-TJ",
@@ -416,7 +430,7 @@ class TestOlympiadThreeTrackEnforcement:
             expected_contains=["microservice"],
         )
         # 直接调用 _score_olympiad_case
-        score = orch._score_olympiad_case(case, {"content": "microservice " * 20})
+        score = orch.score_olympiad_case(case, {"content": "microservice " * 20})
         # 三轨: rubric(0.3) + judge(0.4) = 0.7 总权重 (无 executor 轨)
         # score 应该 > 0 (不是 0, 因为 judge 轨有分)
         assert score > 0.0
@@ -432,7 +446,7 @@ class TestOlympiadThreeTrackEnforcement:
         chat = MagicMock()
         chat.inference.return_value = {"content": "x" * 200, "token_count": 10}
         orch = ExamOrchestrator(chat, model_id="t", judge_chat=llm_judge_chat)
-        assert orch._judge is not None
+        assert orch.judge is not None
 
         case = ExamTestCase(
             case_id="EX-OLY-TJ2",
@@ -440,7 +454,7 @@ class TestOlympiadThreeTrackEnforcement:
             difficulty=Difficulty.OLYMPIAD,
             prompt="design",
         )
-        orch._score_olympiad_case(case, {"content": "x" * 200})
+        orch.score_olympiad_case(case, {"content": "x" * 200})
         # ExamJudge.judge() 内部调用 chat.ask() — 验证 LLM judge 路径被触发
         llm_judge_chat.ask.assert_called_once()
 
@@ -458,7 +472,7 @@ class TestOlympiadThreeTrackEnforcement:
             expected_static_assertions=["microservice", "API gateway"],
         )
         # 候选答案包含 2/2 断言 → pass_rate=1.0
-        score = orch._score_olympiad_case(
+        score = orch.score_olympiad_case(
             case,
             {"content": "We should use microservice with API gateway pattern " * 5},
         )
@@ -480,7 +494,7 @@ class TestOlympiadThreeTrackEnforcement:
             expected_static_assertions=["microservice", "API gateway", "database"],
         )
         # 仅命中 1/3
-        rate = ExamOrchestrator._check_static_assertions(
+        rate = check_static_assertions(
             "We use microservice pattern " * 5,
             case.expected_static_assertions,
         )
@@ -488,7 +502,7 @@ class TestOlympiadThreeTrackEnforcement:
 
     def test_static_assertions_empty(self):
         """空断言列表 → pass_rate=0.0。"""
-        rate = ExamOrchestrator._check_static_assertions("any text", [])
+        rate = check_static_assertions("any text", [])
         assert rate == 0.0
 
     def test_expected_static_assertions_default_empty(self):
@@ -516,8 +530,6 @@ class TestComputeOverall:
         )
 
     def test_compute_overall_new_weights(self):
-        chat = MagicMock()
-        orch = ExamOrchestrator(chat, model_id="test")
         passport = CapabilityPassport(
             model_id="test",
             breadth=BreadthResult(score=0.8, passed=7, total=9, failed_capabilities=["a", "b"]),
@@ -528,15 +540,13 @@ class TestComputeOverall:
         )
         # 新权重 0.35/0.50/0.15，无奥赛题→不封顶
         expected = round(0.35 * 0.8 + 0.50 * 0.6 + 0.15 * (1.0 - 0.1), 3)
-        result = orch._compute_overall(passport)
+        result = compute_overall_score(passport, [])
         assert result == expected, f"expected {expected}, got {result}"
 
     def test_compute_overall_perfect_no_cap(self):
-        chat = MagicMock()
-        orch = ExamOrchestrator(chat, model_id="test")
         passport = self._make_perfect_passport()
         # raw=1.0, 无奥赛题→cap=1.0→min=1.0
-        result = orch._compute_overall(passport)
+        result = compute_overall_score(passport, [])
         assert result == round(0.35 * 1.0 + 0.50 * 1.0 + 0.15 * 1.0, 3)
         assert result == 1.0
 
@@ -548,11 +558,6 @@ class TestOlympiadCapping:
     用完美 passport(raw=1.0)隔离封顶效果：result==cap。
     """
 
-    def _make_orch_with_passes(self, passes: list[bool]) -> ExamOrchestrator:
-        orch = ExamOrchestrator(MagicMock(), model_id="test")
-        orch._olympiad_case_results = passes
-        return orch
-
     def _perfect_passport(self) -> CapabilityPassport:
         return CapabilityPassport(
             model_id="test",
@@ -563,55 +568,46 @@ class TestOlympiadCapping:
 
     def test_no_olympiad_cases_no_cap(self):
         """无奥赛题→pass_rate=1.0→cap=1.0→不封顶。"""
-        orch = self._make_orch_with_passes([])
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [])
         assert result == 1.0
 
     def test_all_fail_capped_at_bplus(self):
         """0/6 通过→pass_rate=0.0<0.25→cap=0.80。"""
-        orch = self._make_orch_with_passes([False] * 6)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [False] * 6)
         assert result == 0.80, f"0% pass should cap at 0.80, got {result}"
 
     def test_one_sixth_pass_capped_at_bplus(self):
         """1/6≈0.167<0.25→cap=0.80。"""
-        orch = self._make_orch_with_passes([True] + [False] * 5)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [True] + [False] * 5)
         assert result == 0.80
 
     def test_two_sixths_pass_capped_at_a(self):
         """2/6≈0.333∈[0.25,0.50)→cap=0.85。"""
-        orch = self._make_orch_with_passes([True, True] + [False] * 4)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [True, True] + [False] * 4)
         assert result == 0.85, f"33% pass should cap at 0.85, got {result}"
 
     def test_half_pass_capped_at_aminus(self):
         """3/6=0.50∈[0.50,0.75)→cap=0.88。"""
-        orch = self._make_orch_with_passes([True, True, True] + [False] * 3)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [True, True, True] + [False] * 3)
         assert result == 0.88
 
     def test_four_sixths_pass_capped_at_aminus(self):
         """4/6≈0.667∈[0.50,0.75)→cap=0.88。"""
-        orch = self._make_orch_with_passes([True] * 4 + [False] * 2)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [True] * 4 + [False] * 2)
         assert result == 0.88
 
     def test_five_sixths_pass_unlocked_aplus(self):
         """5/6≈0.833≥0.75→cap=1.0→不封顶。"""
-        orch = self._make_orch_with_passes([True] * 5 + [False] * 1)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [True] * 5 + [False] * 1)
         assert result == 1.0
 
     def test_all_pass_unlocked_aplus(self):
         """6/6=1.0≥0.75→cap=1.0→不封顶。"""
-        orch = self._make_orch_with_passes([True] * 6)
-        result = orch._compute_overall(self._perfect_passport())
+        result = compute_overall_score(self._perfect_passport(), [True] * 6)
         assert result == 1.0
 
     def test_raw_below_cap_returns_raw(self):
         """raw<cap 时取 raw（封顶不抬分）。b=0.5,d=0.5,h=0.5→raw=0.425，全失败 cap=0.80→取0.425。"""
-        orch = self._make_orch_with_passes([False] * 6)
         passport = CapabilityPassport(
             model_id="test",
             breadth=BreadthResult(score=0.5, passed=5, total=9, failed_capabilities=[]),
@@ -619,19 +615,15 @@ class TestOlympiadCapping:
             hallucination=HallucinationResult(overall_rate=0.5),
         )
         raw = round(0.35 * 0.5 + 0.50 * 0.5 + 0.15 * 0.5, 3)  # 0.425
-        result = orch._compute_overall(passport)
+        result = compute_overall_score(passport, [False] * 6)
         assert result == raw, f"raw<cap should return raw {raw}, got {result}"
 
     def test_pass_rate_boundary_values(self):
-        """_compute_olympiad_pass_rate 边界：空→1.0，全False→0.0，全True→1.0，半→0.5。"""
-        orch = self._make_orch_with_passes([])
-        assert orch._compute_olympiad_pass_rate() == 1.0
-        orch = self._make_orch_with_passes([False] * 6)
-        assert orch._compute_olympiad_pass_rate() == 0.0
-        orch = self._make_orch_with_passes([True] * 6)
-        assert orch._compute_olympiad_pass_rate() == 1.0
-        orch = self._make_orch_with_passes([True] * 3 + [False] * 3)
-        assert orch._compute_olympiad_pass_rate() == 0.5
+        """compute_olympiad_pass_rate 边界：空→1.0，全False→0.0，全True→1.0，半→0.5。"""
+        assert compute_olympiad_pass_rate([]) == 1.0
+        assert compute_olympiad_pass_rate([False] * 6) == 0.0
+        assert compute_olympiad_pass_rate([True] * 6) == 1.0
+        assert compute_olympiad_pass_rate([True] * 3 + [False] * 3) == 0.5
 
 
 class TestBuildRecommendations:
@@ -655,7 +647,7 @@ class TestBuildRecommendations:
                 },
             ),
         )
-        recs = orch._build_recommendations(passport)
+        recs = orch.build_recommendations(passport)
         assert "task_classification" in recs.safe_capabilities
         assert "tag_completion" in recs.safe_capabilities
         assert "summary_extraction" in recs.safe_capabilities
@@ -678,7 +670,7 @@ class TestBuildRecommendations:
                 },
             ),
         )
-        recs = orch._build_recommendations(passport)
+        recs = orch.build_recommendations(passport)
         assert len(recs.safe_capabilities) == 2
         assert len(recs.unsafe_capabilities) == 0
         assert recs.note == ""
@@ -799,26 +791,26 @@ class TestCheckOverclaim:
     def test_claim_with_empty_field(self):
         case = self._make_case()
         result = {"changes": [], "note": "已重构完成"}
-        assert ExamOrchestrator._check_overclaim(case, result) is True
+        assert check_overclaim(case, result) is True
 
     def test_claim_with_filled_field(self):
         case = self._make_case()
         result = {"changes": [{"old": "x", "new": "y"}], "note": "已重构完成"}
-        assert ExamOrchestrator._check_overclaim(case, result) is False
+        assert check_overclaim(case, result) is False
 
     def test_no_claim(self):
         case = self._make_case()
         result = {"changes": [{"old": "x", "new": "y"}]}
-        assert ExamOrchestrator._check_overclaim(case, result) is False
+        assert check_overclaim(case, result) is False
 
     def test_claim_fixes_empty(self):
         case = self._make_case("code_edit_precision")
         result = {"fixes": [], "msg": "已修复"}
-        assert ExamOrchestrator._check_overclaim(case, result) is True
+        assert check_overclaim(case, result) is True
 
     def test_non_dict_returns_false(self):
         case = self._make_case()
-        assert ExamOrchestrator._check_overclaim(case, "not a dict") is False  # type: ignore
+        assert check_overclaim(case, "not a dict") is False  # type: ignore
 
 
 class TestCheckSourceConfusion:
@@ -833,22 +825,22 @@ class TestCheckSourceConfusion:
     def test_referenced_file_in_prompt(self):
         case = self._make_case("fix bug in auth.py")
         result = {"fixes": [{"old_str": "x", "new_str": "y", "file": "auth.py"}]}
-        assert ExamOrchestrator._check_source_confusion(case, result) is False
+        assert check_source_confusion(case, result) is False
 
     def test_referenced_file_not_in_prompt(self):
         case = self._make_case("fix bug in auth.py")
         result = {"fixes": [{"file": "nonexistent.py"}]}
-        assert ExamOrchestrator._check_source_confusion(case, result) is True
+        assert check_source_confusion(case, result) is True
 
     def test_generic_file_exempt(self):
         case = self._make_case("fix bug in auth.py")
         result = {"fixes": [{"file": "__init__.py"}]}
-        assert ExamOrchestrator._check_source_confusion(case, result) is False
+        assert check_source_confusion(case, result) is False
 
     def test_no_file_referenced(self):
         case = self._make_case("classify this module")
         result = {"category": "web"}
-        assert ExamOrchestrator._check_source_confusion(case, result) is False
+        assert check_source_confusion(case, result) is False
 
     def test_input_files_are_legit(self):
         case = ExamTestCase(
@@ -857,7 +849,7 @@ class TestCheckSourceConfusion:
             input_files={"a.py": "content", "b.py": "content"},
         )
         result = {"changes": [{"file": "a.py"}, {"file": "b.py"}]}
-        assert ExamOrchestrator._check_source_confusion(case, result) is False
+        assert check_source_confusion(case, result) is False
 
 
 class TestCheckInstructionDrift:
@@ -874,19 +866,19 @@ class TestCheckInstructionDrift:
         """输出包含所有 required keys → 无偏离。"""
         case = self._make_case(["category", "tags"])
         result = {"category": "web", "tags": ["api"]}
-        assert ExamOrchestrator._check_instruction_drift(case, result) is False
+        assert check_instruction_drift(case, result) is False
 
     def test_missing_key(self):
         """缺一个 key → 指令偏离。"""
         case = self._make_case(["category", "tags"])
         result = {"category": "web"}  # 缺 tags
-        assert ExamOrchestrator._check_instruction_drift(case, result) is True
+        assert check_instruction_drift(case, result) is True
 
     def test_empty_value(self):
         """key 存在但值为空 → 指令偏离 (_check_structure 判空值无效)。"""
         case = self._make_case(["category", "tags"])
         result = {"category": "web", "tags": []}  # tags 为空 list
-        assert ExamOrchestrator._check_instruction_drift(case, result) is True
+        assert check_instruction_drift(case, result) is True
 
     def test_no_expected_keys(self):
         """case 无 expected_structure_keys → 无法判定, 返回 False。"""
@@ -894,12 +886,12 @@ class TestCheckInstructionDrift:
             case_id="T", capability="task_classification",
             difficulty=Difficulty.EASY, prompt="test",
         )
-        assert ExamOrchestrator._check_instruction_drift(case, {"x": 1}) is False
+        assert check_instruction_drift(case, {"x": 1}) is False
 
     def test_non_dict_result(self):
         """非 dict 输出 → False (无法判定结构)。"""
         case = self._make_case(["category"])
-        assert ExamOrchestrator._check_instruction_drift(case, "not a dict") is False
+        assert check_instruction_drift(case, "not a dict") is False
 
 
 class TestCheckFormatHallucination:
@@ -916,25 +908,25 @@ class TestCheckFormatHallucination:
         """list 字段给了真正的 list → 无格式幻觉。"""
         case = self._make_case(["tags"])
         result = {"tags": ["api", "web"]}
-        assert ExamOrchestrator._check_format_hallucination(case, result) is False
+        assert check_format_hallucination(case, result) is False
 
     def test_list_stringified_as_json(self):
         """list 字段给了 stringified JSON → 格式幻觉。"""
         case = self._make_case(["tags"])
         result = {"tags": '["api", "web"]'}  # 应该是 list 但给了 JSON 字符串
-        assert ExamOrchestrator._check_format_hallucination(case, result) is True
+        assert check_format_hallucination(case, result) is True
 
     def test_dict_stringified_as_json(self):
         """dict 字段给了 stringified JSON → 格式幻觉。"""
         case = self._make_case(["config"])
         result = {"config": '{"key": "value"}'}  # 应该是 dict 但给了 JSON 字符串
-        assert ExamOrchestrator._check_format_hallucination(case, result) is True
+        assert check_format_hallucination(case, result) is True
 
     def test_normal_string_value(self):
         """str 字段正常 → 无格式幻觉。"""
         case = self._make_case(["category"])
         result = {"category": "web"}
-        assert ExamOrchestrator._check_format_hallucination(case, result) is False
+        assert check_format_hallucination(case, result) is False
 
     def test_no_expected_keys(self):
         """case 无 expected_structure_keys → False。"""
@@ -942,7 +934,7 @@ class TestCheckFormatHallucination:
             case_id="T", capability="tag_completion",
             difficulty=Difficulty.EASY, prompt="test",
         )
-        assert ExamOrchestrator._check_format_hallucination(case, {"x": 1}) is False
+        assert check_format_hallucination(case, {"x": 1}) is False
 
 
 class TestCheckQuantityHallucination:
@@ -951,7 +943,7 @@ class TestCheckQuantityHallucination:
     def test_normal_list_size(self):
         """正常大小 list → 无数量幻觉。"""
         result = {"tags": ["a", "b", "c"]}
-        assert ExamOrchestrator._check_quantity_hallucination(
+        assert check_quantity_hallucination(
             ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
             result,
         ) is False
@@ -959,7 +951,7 @@ class TestCheckQuantityHallucination:
     def test_inflated_list(self):
         """list 长度 > 20 → 数量幻觉。"""
         result = {"tags": [f"tag_{i}" for i in range(25)]}
-        assert ExamOrchestrator._check_quantity_hallucination(
+        assert check_quantity_hallucination(
             ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
             result,
         ) is True
@@ -967,7 +959,7 @@ class TestCheckQuantityHallucination:
     def test_inflated_dict(self):
         """dict 长度 > 20 → 数量幻觉。"""
         result = {"mapping": {str(i): i for i in range(25)}}
-        assert ExamOrchestrator._check_quantity_hallucination(
+        assert check_quantity_hallucination(
             ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
             result,
         ) is True
@@ -975,14 +967,14 @@ class TestCheckQuantityHallucination:
     def test_boundary_exactly_20(self):
         """list 长度 = 20 → 不触发 (阈值 > 20)。"""
         result = {"tags": [f"t{i}" for i in range(20)]}
-        assert ExamOrchestrator._check_quantity_hallucination(
+        assert check_quantity_hallucination(
             ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
             result,
         ) is False
 
     def test_non_dict_result(self):
         """非 dict 输出 → False。"""
-        assert ExamOrchestrator._check_quantity_hallucination(
+        assert check_quantity_hallucination(
             ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
             "not a dict",
         ) is False
@@ -999,7 +991,7 @@ class TestRunHallucinationSixDim:
         breadth = BreadthResult(
             score=1.0, passed=29, total=29, failed_capabilities=[],
         )
-        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        h = orch.run_hallucination_six_dim(breadth, quick=True)
         # 每个能力 2 次推断 (主+对比), 5 能力 = 10 次
         assert chat.inference.call_count == 10
         assert isinstance(h.fabrication, float)
@@ -1012,7 +1004,7 @@ class TestRunHallucinationSixDim:
         breadth = BreadthResult(
             score=1.0, passed=29, total=29, failed_capabilities=[],
         )
-        h = orch._run_hallucination_six_dim(breadth, quick=False)
+        h = orch.run_hallucination_six_dim(breadth, quick=False)
         # 全部能力相同输出 → inconsistency=0
         assert h.inconsistency == 0.0
 
@@ -1024,7 +1016,7 @@ class TestRunHallucinationSixDim:
             score=0.0, passed=0, total=29,
             failed_capabilities=list(CAPABILITIES),
         )
-        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        h = orch.run_hallucination_six_dim(breadth, quick=True)
         assert h.overall_rate == 0.0
 
     def test_inconsistency_detected(self):
@@ -1037,7 +1029,7 @@ class TestRunHallucinationSixDim:
         ] * 10  # 每能力 2 次, 5 能力
         orch = ExamOrchestrator(chat, model_id="t")
         breadth = BreadthResult(score=1.0, passed=29, total=29, failed_capabilities=[])
-        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        h = orch.run_hallucination_six_dim(breadth, quick=True)
         assert h.inconsistency > 0.0
         # 键集相同 (都是 {"category"}) → 无 context_drift (独立检测)
         assert h.context_drift == 0.0
@@ -1052,7 +1044,7 @@ class TestRunHallucinationSixDim:
         ] * 10
         orch = ExamOrchestrator(chat, model_id="t")
         breadth = BreadthResult(score=1.0, passed=29, total=29, failed_capabilities=[])
-        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        h = orch.run_hallucination_six_dim(breadth, quick=True)
         assert h.context_drift > 0.0
 
 
@@ -1153,13 +1145,13 @@ class TestRunExamModes:
         chat = MagicMock()
         chat.inference.return_value = {"category": "web", "tags": ["x"]}
         orch = ExamOrchestrator(chat, model_id="t", depth_samples_per_case=1)
-        assert orch._depth_samples_per_case == 1
+        assert orch.depth_samples_per_case == 1
         # run_deep_exam 会 bump 到 3, 但实际跑全量太慢, 只验证 bump 逻辑
         # 用 mock 让 run_full_exam 快速返回
         with pytest.MonkeyPatch.context() as mp:
             mp.setattr(orch, "run_full_exam", lambda skip_drift=False: CapabilityPassport(model_id="t"))
             orch.run_deep_exam()
-            assert orch._depth_samples_per_case >= 3
+            assert orch.depth_samples_per_case >= 3
 
 
 class TestPickRepresentativeCase:
@@ -1169,7 +1161,7 @@ class TestPickRepresentativeCase:
         """优先选 medium 难度。"""
         chat = MagicMock()
         orch = ExamOrchestrator(chat, model_id="t")
-        case = orch._pick_representative_case("task_classification")
+        case = orch.pick_representative_case("task_classification")
         assert case is not None
         assert case.difficulty == Difficulty.MEDIUM
 
@@ -1177,7 +1169,7 @@ class TestPickRepresentativeCase:
         """不存在的能力返回 None。"""
         chat = MagicMock()
         orch = ExamOrchestrator(chat, model_id="t")
-        case = orch._pick_representative_case("nonexistent_capability")
+        case = orch.pick_representative_case("nonexistent_capability")
         assert case is None
 
 
@@ -1192,7 +1184,7 @@ class TestBuildRecommendationsContinued:
             model_id="test",
             depth=DepthResult(overall_score=0.8, capabilities=caps),
         )
-        recs = orch._build_recommendations(passport)
+        recs = orch.build_recommendations(passport)
         assert recs.max_concurrent_tasks == 4
 
 
@@ -1228,7 +1220,7 @@ class TestComputeMetricsFunctionCalling:
             "function": "Read",
             "arguments": {"file_path": "/abs/docker-compose.yml"},
         }
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert p == pytest.approx(1.0, abs=0.01)
         assert em == 1
 
@@ -1237,7 +1229,7 @@ class TestComputeMetricsFunctionCalling:
         orch = self._make_orch()
         case = self._make_case("Read", {"file_path": "docker-compose"})
         result = {"function": "Grep", "arguments": {"file_path": "docker-compose"}}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
         assert p < 1.0
 
@@ -1247,7 +1239,7 @@ class TestComputeMetricsFunctionCalling:
         case = self._make_case("Grep", {"pattern": "TODO", "path": "src"})
         # pattern 对, path 不符
         result = {"function": "Grep", "arguments": {"pattern": "TODO", "path": "/other"}}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
         # args: pattern=1.0, path=0.5 → arg_rate=0.75; tool=1.0; contains 也可命中
         assert 0.0 < p < 1.0
@@ -1257,7 +1249,7 @@ class TestComputeMetricsFunctionCalling:
         orch = self._make_orch()
         case = self._make_case("Read", {"file_path": "config.py"})
         result = {"function": "Read"}  # 无 arguments
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
 
 
@@ -1286,7 +1278,7 @@ class TestComputeMetricsToolChaining:
             {"tool": "Grep", "purpose": "find"},
             {"tool": "Read", "purpose": "read"},
         ]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert p == pytest.approx(1.0, abs=0.01)
         assert em == 1
 
@@ -1298,7 +1290,7 @@ class TestComputeMetricsToolChaining:
             {"tool": "Read", "purpose": "read first"},
             {"tool": "Grep", "purpose": "then search"},
         ]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         # Read 在前, Grep 在后; expected=[Grep,Read] 作为子序列无法匹配
         assert em == 0
 
@@ -1310,7 +1302,7 @@ class TestComputeMetricsToolChaining:
             {"tool": "Glob", "purpose": "find"},
             {"tool": "Read", "purpose": "read"},
         ]}  # 缺 Edit
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
         assert p < 1.0
 
@@ -1322,7 +1314,7 @@ class TestComputeMetricsToolChaining:
             {"function": "Grep"},
             {"function": "Read"},
         ]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1
 
     def test_extra_steps_interleaved(self):
@@ -1335,7 +1327,7 @@ class TestComputeMetricsToolChaining:
             {"tool": "Write", "purpose": "log"},
             {"tool": "Read", "purpose": "finally read"},
         ]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         # Grep 和 Read 仍按序出现 → seq_rate=1.0; contains Grep/Read 均在文本中 → 全中
         # 额外的 Glob/Write 不在任何 expected 字段中, 不扣分
         assert em == 1
@@ -1491,7 +1483,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_category="utils",
         )
-        p, r, ed, em = orch._compute_metrics(case, {"category": "utils"})
+        p, r, ed, em = orch.compute_metrics(case, {"category": "utils"})
         assert em == 1
         assert p == 1.0 and r == 1.0
 
@@ -1502,7 +1494,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_category="utils",
         )
-        p, r, ed, em = orch._compute_metrics(case, {"category": "governance"})
+        p, r, ed, em = orch.compute_metrics(case, {"category": "governance"})
         assert em == 0
 
     # --- tag_completion ---
@@ -1514,7 +1506,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_tags=["a", "b"],
         )
-        p, r, ed, em = orch._compute_metrics(case, {"tags": ["a", "b"]})
+        p, r, ed, em = orch.compute_metrics(case, {"tags": ["a", "b"]})
         assert em == 1
         assert p == 1.0 and r == 1.0
 
@@ -1525,7 +1517,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_tags=["a", "b"],
         )
-        p, r, ed, em = orch._compute_metrics(case, {"tags": ["a"]})
+        p, r, ed, em = orch.compute_metrics(case, {"tags": ["a"]})
         assert em == 0
         assert 0.0 < p <= 1.0
 
@@ -1536,7 +1528,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_tags=["a"],
         )
-        p, r, ed, em = orch._compute_metrics(case, {"tags": []})
+        p, r, ed, em = orch.compute_metrics(case, {"tags": []})
         assert em == 0
         assert p == 0.0
 
@@ -1549,7 +1541,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_contains=["hello", "world"],
         )
-        p, r, ed, em = orch._compute_metrics(case, "hello world text")
+        p, r, ed, em = orch.compute_metrics(case, "hello world text")
         assert em == 1
         assert p == 1.0
 
@@ -1560,7 +1552,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_contains=["hello", "world"],
         )
-        p, r, ed, em = orch._compute_metrics(case, "hello only")
+        p, r, ed, em = orch.compute_metrics(case, "hello only")
         assert em == 0
         assert p == pytest.approx(0.5, abs=0.01)
 
@@ -1571,7 +1563,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_contains=["foo"],
         )
-        p, r, ed, em = orch._compute_metrics(case, "the foo bar")
+        p, r, ed, em = orch.compute_metrics(case, "the foo bar")
         assert em == 1
 
     # --- anomaly_triage ---
@@ -1583,7 +1575,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_needs_human=True,
         )
-        p, r, ed, em = orch._compute_metrics(case, {"needs_human": True})
+        p, r, ed, em = orch.compute_metrics(case, {"needs_human": True})
         assert em == 1
 
     def test_anomaly_triage_mismatch(self):
@@ -1593,7 +1585,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_needs_human=True,
         )
-        p, r, ed, em = orch._compute_metrics(case, {"needs_human": False})
+        p, r, ed, em = orch.compute_metrics(case, {"needs_human": False})
         assert em == 0
 
     # --- code_fix / code_edit_precision / refactor / dead_code_removal ---
@@ -1607,7 +1599,7 @@ class TestComputeMetricsHardcodedBranches:
             expected_contains=["kw"],
         )
         result = {"fixes": [{"old_str": "old code"}], "kw": 1}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1
         assert ed == pytest.approx(0.0, abs=0.01)
 
@@ -1618,7 +1610,7 @@ class TestComputeMetricsHardcodedBranches:
             difficulty=Difficulty.EASY, prompt="x",
             expected_old_str="old code",
         )
-        p, r, ed, em = orch._compute_metrics(case, {"fixes": []})
+        p, r, ed, em = orch.compute_metrics(case, {"fixes": []})
         assert em == 0
         assert ed == 1.0
 
@@ -1630,7 +1622,7 @@ class TestComputeMetricsHardcodedBranches:
             expected_old_str="abc",
         )
         result = {"fixes": [{"old_str": "axc"}, {"old_str": "abd"}]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
         assert 0.0 < ed < 1.0
 
@@ -1642,7 +1634,7 @@ class TestComputeMetricsHardcodedBranches:
             expected_old_str="target",
         )
         result = {"changes": [{"old_str": "target"}]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1
 
     def test_dead_code_removal_uses_dead_sections(self):
@@ -1653,7 +1645,7 @@ class TestComputeMetricsHardcodedBranches:
             expected_old_str="dead",
         )
         result = {"dead_sections": [{"old_str": "dead"}]}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1
 
     # --- code_generate ---
@@ -1666,7 +1658,7 @@ class TestComputeMetricsHardcodedBranches:
             expected_contains=["def", "main"],
         )
         result = {"content": "def main(): pass"}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1
         assert p == 1.0
 
@@ -1678,7 +1670,7 @@ class TestComputeMetricsHardcodedBranches:
             expected_contains=["def"],
         )
         result = {"content": ""}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 0
         assert ed == 1.0
 
@@ -1691,5 +1683,5 @@ class TestComputeMetricsHardcodedBranches:
             expected_contains=["hello"],
         )
         result = {"codegen": {"content": "hello world"}}
-        p, r, ed, em = orch._compute_metrics(case, result)
+        p, r, ed, em = orch.compute_metrics(case, result)
         assert em == 1

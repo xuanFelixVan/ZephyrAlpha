@@ -66,6 +66,23 @@ from zephyr.intelligence.model_profiling.exam_test_cases import (
 from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric
 from zephyr.intelligence.model_profiling.exam_executor import ExamExecutor
 from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge, ExamJudge
+from zephyr.intelligence.model_profiling.exam_checks import (
+    check_static_assertions,
+    check_structure,
+    check_fabrication,
+    outputs_similar,
+    check_refusal,
+    check_overclaim,
+    check_source_confusion,
+    check_instruction_drift,
+    check_format_hallucination,
+    check_quantity_hallucination,
+    normalized_edit_distance,
+    percentile,
+    compute_olympiad_pass_rate,
+    compute_overall_score,
+    validate_result,
+)
 
 _log = logging.getLogger(__name__)
 
@@ -160,6 +177,100 @@ class ExamOrchestrator:
             except (TypeError, ValueError):
                 depth_samples_per_case = 1
         self._depth_samples_per_case = max(1, depth_samples_per_case)
+
+    # ── Stage 4 公共化：只读 property + 公共方法别名 ────────────────────
+    # 治本（2026-07-27 Stage 4 私有成员断言消除）：
+    # 测试需读取/断言内部状态（_model_id/_chat/_depth_samples_per_case/
+    # _olympiad_case_results/_judge/_det_judge）和调用内部方法
+    # （_score_capability/_compute_metrics/_compute_overall/...）。直接访问
+    # 私有成员 = 测试与实现强耦合 = 重构地狱。本块暴露公共只读 property +
+    # 公共方法别名（thin wrapper 委托到私有实现），测试用公共 API 即可，
+    # 私有实现可自由重构（重命名/合并/拆分）而不破坏测试。
+    # ----------------------------------------------------------------
+
+    @property
+    def model_id(self) -> str:
+        """只读：被测模型 ID（Stage 4 公共化）。"""
+        return self._model_id
+
+    @property
+    def chat(self) -> object:
+        """只读：被测 chat 对象（Stage 4 公共化，供测试验证装配）。"""
+        return self._chat
+
+    @property
+    def depth_samples_per_case(self) -> int:
+        """只读：depth 每题采样次数（Stage 4 公共化）。"""
+        return self._depth_samples_per_case
+
+    @property
+    def olympiad_case_results(self) -> list[bool]:
+        """只读：奥赛题逐题通过记录（Stage 4 公共化）。
+
+        返回内部 list 的浅拷贝，防止外部修改污染内部状态。
+        """
+        return list(self._olympiad_case_results)
+
+    @property
+    def judge(self) -> ExamJudge | None:
+        """只读：LLM 裁判器（Stage 4 公共化，judge_chat=None 时为 None）。"""
+        return self._judge
+
+    @property
+    def det_judge(self) -> DeterministicJudge:
+        """只读：确定性裁判 fallback（Stage 4 公共化）。"""
+        return self._det_judge
+
+    def score_capability(
+        self,
+        cap_name: str,
+        cases: list[ExamTestCase],
+    ) -> DepthCapabilityResult:
+        """公共 API：对给定能力跑 depth 评分（Stage 4 公共化）。"""
+        return self._score_capability(cap_name, cases)
+
+    def score_olympiad_case(self, case: ExamTestCase, result: dict) -> float:
+        """公共 API：OLYMPIAD 题三轨评分（Stage 4 公共化）。"""
+        return self._score_olympiad_case(case, result)
+
+    def compute_metrics(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> tuple[float, float, float, int]:
+        """公共 API：按能力分派计算 (precision, recall, edit_distance, exact_match)（Stage 4 公共化）。"""
+        return self._compute_metrics(case, result)
+
+    def compute_overall(self, passport: CapabilityPassport) -> float:
+        """公共 API：综合分（含奥赛封顶）（Stage 4 公共化）。
+
+        Stage 4 公共化：委托到 exam_checks.compute_overall_score 纯函数，
+        显式传入 self._olympiad_case_results 作为封顶判定输入。
+        """
+        return compute_overall_score(passport, self._olympiad_case_results)
+
+    def compute_olympiad_pass_rate(self) -> float:
+        """公共 API：奥赛题通过率（Stage 4 公共化，委托到 exam_checks 纯函数）。"""
+        return compute_olympiad_pass_rate(self._olympiad_case_results)
+
+    def build_recommendations(self, passport: CapabilityPassport) -> Recommendations:
+        """公共 API：基于 depth 结果生成安全/不安全能力建议（Stage 4 公共化）。"""
+        return self._build_recommendations(passport)
+
+    def run_hallucination_six_dim(
+        self,
+        breadth: BreadthResult,
+        *,
+        quick: bool = False,
+    ) -> HallucinationBreakdown:
+        """公共 API：九维幻觉检测（Stage 4 公共化）。"""
+        return self._run_hallucination_six_dim(breadth, quick=quick)
+
+    def pick_representative_case(self, cap_name: str) -> ExamTestCase | None:
+        """公共 API：选代表题（优先 medium，fallback easy）（Stage 4 公共化）。"""
+        return self._pick_representative_case(cap_name)
+
+    # ── Stage 4 公共化结束 ──────────────────────────────────────────
 
     def run_full_exam(self, *, skip_drift: bool = False) -> CapabilityPassport:
         self._start_ts = time.time()
@@ -432,19 +543,8 @@ class ExamOrchestrator:
 
     @staticmethod
     def _check_static_assertions(candidate: str, assertions: list[str]) -> float:
-        """P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本。
-
-        Args:
-            candidate: 被测模型的输出文本
-            assertions: 期望包含的文本片段列表 (大小写不敏感)
-        Returns:
-            pass_rate: 0.0~1.0 (命中断言数 / 总断言数)
-        """
-        if not assertions:
-            return 0.0
-        text_lower = candidate.lower()
-        hits = sum(1 for a in assertions if a.lower() in text_lower)
-        return hits / len(assertions)
+        """Thin wrapper → exam_checks.check_static_assertions（Stage 4 公共化提取）。"""
+        return check_static_assertions(candidate, assertions)
 
     @staticmethod
     def _extract_candidate_text(result: dict) -> str:
@@ -1076,33 +1176,19 @@ class ExamOrchestrator:
         """v3.0.5: 奥赛题通过率——用于奥赛封顶机制。
 
         无奥赛题时返回 1.0（不封顶），保持向后兼容。
+        Stage 4 公共化：委托到 exam_checks.compute_olympiad_pass_rate 纯函数。
         """
-        if not self._olympiad_case_results:
-            return 1.0
-        return sum(self._olympiad_case_results) / len(self._olympiad_case_results)
+        return compute_olympiad_pass_rate(self._olympiad_case_results)
 
     def _compute_overall(self, passport: CapabilityPassport) -> float:
         """v3.0.5: 综合分 = 加权原始分，经奥赛封顶。
 
         权重：breadth 0.35 + depth 0.50 + (1-halluc) 0.15
         奥赛封顶：通过率 <25%->B+(0.80)；<50%->A(0.85)；<75%->A-(0.88)；≥75%->A+(1.0)
+
+        Stage 4 公共化：委托到 exam_checks.compute_overall_score 纯函数。
         """
-        b = passport.breadth.score
-        d = passport.depth.overall_score
-        h = 1.0 - passport.hallucination.overall_rate
-        raw = 0.35 * b + 0.50 * d + 0.15 * h
-
-        pass_rate = self._compute_olympiad_pass_rate()
-        if pass_rate < 0.25:
-            cap = 0.80  # B+
-        elif pass_rate < 0.50:
-            cap = 0.85  # A
-        elif pass_rate < 0.75:
-            cap = 0.88  # A-
-        else:
-            cap = 1.0   # A+ 解锁
-
-        return round(min(raw, cap), 3)
+        return compute_overall_score(passport, self._olympiad_case_results)
 
     def _build_recommendations(self, passport: CapabilityPassport) -> Recommendations:
         safe: list[str] = []
@@ -1144,91 +1230,28 @@ class ExamOrchestrator:
 
     @staticmethod
     def _check_structure(result: dict, expected_keys: list[str]) -> bool:
-        if not result or not isinstance(result, dict):
-            return False
-        for k in expected_keys:
-            v = result.get(k)
-            if v is None:
-                v = (result.get("result") or {}).get(k) if isinstance(result.get("result"), dict) else None
-            if v is None:
-                v = (result.get("codegen") or {}).get(k) if isinstance(result.get("codegen"), dict) else None
-            if v is None:
-                return False
-            if isinstance(v, list) and len(v) == 0:
-                return False
-            if isinstance(v, str) and not v.strip():
-                return False
-        return True
+        """Thin wrapper → exam_checks.check_structure（Stage 4 公共化提取）。"""
+        return check_structure(result, expected_keys)
 
     @staticmethod
     def _check_fabrication(case: ExamTestCase, result: dict) -> bool:
-        if case.capability in ("code_fix", "code_edit_precision", "refactor", "dead_code_removal"):
-            field = (
-                "fixes"
-                if case.capability in ("code_fix", "code_edit_precision")
-                else "changes"
-                if case.capability == "refactor"
-                else "dead_sections"
-            )
-            entries = result.get(field, [])
-            for entry in entries:
-                old_str = entry.get("old_str", "")
-                if old_str and old_str not in case.prompt:
-                    return True
-        return False
+        """Thin wrapper → exam_checks.check_fabrication（Stage 4 公共化提取）。"""
+        return check_fabrication(case, result)
 
     @staticmethod
     def _outputs_similar(a: dict, b: dict) -> bool:
-        # 过滤 _ 前缀的内部注入字段 (如 _elapsed_ms), 避免元数据干扰相似度判断
-        a_clean = {k: v for k, v in a.items() if not k.startswith("_")} if isinstance(a, dict) else a
-        b_clean = {k: v for k, v in b.items() if not k.startswith("_")} if isinstance(b, dict) else b
-        a_str = json.dumps(a_clean, sort_keys=True, ensure_ascii=False)
-        b_str = json.dumps(b_clean, sort_keys=True, ensure_ascii=False)
-        if a_str == b_str:
-            return True
-        shared = set(a_str.split()) & set(b_str.split())
-        total = max(len(set(a_str.split()) | set(b_str.split())), 1)
-        return len(shared) / total >= 0.6
+        """Thin wrapper → exam_checks.outputs_similar（Stage 4 公共化提取）。"""
+        return outputs_similar(a, b)
 
     @staticmethod
     def _check_refusal(result: dict) -> bool:
-        if not result:
-            return True
-        error = str(result.get("error", "")).lower()
-        refusal_keywords = ["cannot", "unable", "refuse", "i'm sorry", "i can't", "not able"]
-        return any(kw in error for kw in refusal_keywords)
+        """Thin wrapper → exam_checks.check_refusal（Stage 4 公共化提取）。"""
+        return check_refusal(result)
 
     @staticmethod
     def _validate_result(result: dict, case: ExamTestCase) -> bool:
-        """验证模型返回结果是否有效（防作弊检测）。
-
-        检测项:
-        1. 泄露答案字段: result 中包含 expected_* 字段 -> 无效
-        2. 数值越界: precision/recall 超出 [0,1] 范围 -> 无效
-        """
-        if not isinstance(result, dict):
-            return False
-
-        # 检测泄露答案字段
-        suspicious_keys = {"expected_category", "expected_tags", "expected_old_str",
-                          "expected_contains", "expected_needs_human",
-                          "expected_structure_keys"}
-        leaked = suspicious_keys & set(result.keys())
-        if leaked:
-            return False
-
-        # 检测数值越界
-        for field in ("precision", "recall", "f1"):
-            val = result.get(field)
-            if val is not None:
-                try:
-                    v = float(val)
-                    if v < 0.0 or v > 1.0:
-                        return False
-                except (TypeError, ValueError):
-                    return False
-
-        return True
+        """Thin wrapper → exam_checks.validate_result（Stage 4 公共化提取）。"""
+        return validate_result(result, case)
 
     def _detect_optimization(self, case: ExamTestCase, result: dict) -> bool:
         """检测模型是否针对 benchmark 优化（反作弊）。
@@ -1272,119 +1295,28 @@ class ExamOrchestrator:
 
     @staticmethod
     def _check_overclaim(case: ExamTestCase, result: dict) -> bool:
-        """P2: 检查过度声称 — 声称做了但实际未做。
-
-        启发式: 输出含"已完成/已修复/已创建"等动词, 但对应字段为空。
-        """
-        if not isinstance(result, dict):
-            return False
-        claim_keywords = [
-            "已完成", "已修复", "已创建", "已删除", "已重构", "已实现",
-            "completed", "fixed", "created", "removed", "refactored", "implemented",
-        ]
-        text = json.dumps(result, ensure_ascii=False).lower()
-        has_claim = any(kw in text for kw in claim_keywords)
-        if not has_claim:
-            return False
-        # 检查对应字段是否为空
-        field_kws = {
-            "fixes": ["已修复", "fixed"],
-            "changes": ["已重构", "refactored"],
-            "dead_sections": ["已删除", "removed"],
-            "tags": ["已完成", "completed"],
-            "generated_code": ["已实现", "implemented"],
-        }
-        for field, kws in field_kws.items():
-            if any(kw in text for kw in kws):
-                val = result.get(field, None)
-                if val is None:
-                    return True
-                if isinstance(val, (list, str)) and len(val) == 0:
-                    return True
-        return False
+        """Thin wrapper → exam_checks.check_overclaim（Stage 4 公共化提取）。"""
+        return check_overclaim(case, result)
 
     @staticmethod
     def _check_source_confusion(case: ExamTestCase, result: dict) -> bool:
-        """P2: 检查来源混淆 — 引用了 prompt/input_files 中不存在的文件名。
-
-        启发式: result 中引用的 xxx.py 不在 case.prompt 或 input_files 中。
-        """
-        if not isinstance(result, dict):
-            return False
-        import re as _re
-        result_text = json.dumps(result, ensure_ascii=False)
-        referenced = set(_re.findall(r'[\w/\\]+\.py', result_text))
-        if not referenced:
-            return False
-        prompt_files = set(_re.findall(r'[\w/\\]+\.py', case.prompt))
-        input_files = set(case.input_files.keys())
-        legit = prompt_files | input_files
-        # 通用文件名豁免 (常见但不视为混淆)
-        generic = {"__init__.py", "setup.py", "conftest.py", "main.py", "test.py"}
-        confused = referenced - legit - generic
-        return len(confused) > 0
+        """Thin wrapper → exam_checks.check_source_confusion（Stage 4 公共化提取）。"""
+        return check_source_confusion(case, result)
 
     @staticmethod
     def _check_instruction_drift(case: ExamTestCase, result: dict) -> bool:
-        """P2: 检查指令偏离 — 输出结构不符合 expected_structure_keys。
-
-        启发式: 复用 _check_structure 判断输出是否包含指令要求的字段。
-        若 case 无 expected_structure_keys 则跳过 (无法判定)。
-        """
-        if not isinstance(result, dict) or not case.expected_structure_keys:
-            return False
-        return not ExamOrchestrator._check_structure(
-            result, case.expected_structure_keys
-        )
+        """Thin wrapper → exam_checks.check_instruction_drift（Stage 4 公共化提取）。"""
+        return check_instruction_drift(case, result)
 
     @staticmethod
     def _check_format_hallucination(case: ExamTestCase, result: dict) -> bool:
-        """P2: 检查格式幻觉 — 字段值类型异常。
-
-        启发式检测:
-          1. list 字段被序列化为字符串 (如 "[\"a\",\"b\"]" 而非 ["a","b"])
-          2. 字段值类型与常见预期严重不符 (如要求 str 但给了 dict)
-        """
-        if not isinstance(result, dict) or not case.expected_structure_keys:
-            return False
-        for key in case.expected_structure_keys:
-            val = result.get(key)
-            if val is None:
-                continue  # instruction_drift 已处理缺失字段
-            # 检测: list 字段被序列化为 JSON 字符串
-            if isinstance(val, str) and val.strip().startswith("[") and val.strip().endswith("]"):
-                try:
-                    parsed = json.loads(val)
-                    if isinstance(parsed, list):
-                        return True  # 应该是 list 但给了 stringified JSON
-                except (json.JSONDecodeError, ValueError):
-                    pass
-            # 检测: dict 字段被序列化为 JSON 字符串
-            if isinstance(val, str) and val.strip().startswith("{") and val.strip().endswith("}"):
-                try:
-                    parsed = json.loads(val)
-                    if isinstance(parsed, dict):
-                        return True
-                except (json.JSONDecodeError, ValueError):
-                    pass
-        return False
+        """Thin wrapper → exam_checks.check_format_hallucination（Stage 4 公共化提取）。"""
+        return check_format_hallucination(case, result)
 
     @staticmethod
     def _check_quantity_hallucination(case: ExamTestCase, result: dict) -> bool:
-        """P2: 检查数量幻觉 — 输出集合异常膨胀。
-
-        启发式: list/dict 字段长度超过阈值 (默认 20) 视为异常膨胀。
-        常见于模型"刷量"行为 (如编造大量虚假标签/文件)。
-        """
-        if not isinstance(result, dict):
-            return False
-        _QTY_THRESHOLD = 20
-        for val in result.values():
-            if isinstance(val, list) and len(val) > _QTY_THRESHOLD:
-                return True
-            if isinstance(val, dict) and len(val) > _QTY_THRESHOLD:
-                return True
-        return False
+        """Thin wrapper → exam_checks.check_quantity_hallucination（Stage 4 公共化提取）。"""
+        return check_quantity_hallucination(case, result)
 
     def _run_hallucination_six_dim(
         self,
@@ -1660,26 +1592,10 @@ class ExamOrchestrator:
 
 
 def _normalized_edit_distance(a: str, b: str) -> float:
-    if not a and not b:
-        return 0.0
-    if not a or not b:
-        return 1.0
-    m, n = len(a), len(b)
-    dp = list(range(n + 1))
-    for i in range(1, m + 1):
-        prev = dp[0]
-        dp[0] = i
-        for j in range(1, n + 1):
-            temp = dp[j]
-            dp[j] = prev if a[i - 1] == b[j - 1] else 1 + min(dp[j], dp[j - 1], prev)
-            prev = temp
-    return dp[n] / max(m, n)
+    """Thin wrapper → exam_checks.normalized_edit_distance（Stage 4 公共化提取）。"""
+    return normalized_edit_distance(a, b)
 
 
 def _percentile(sorted_data: list[float], p: float) -> float:
-    if not sorted_data:
-        return 0.0
-    k = (len(sorted_data) - 1) * p / 100.0
-    f = int(k)
-    c = min(f + 1, len(sorted_data) - 1)
-    return sorted_data[f] + (sorted_data[c] - sorted_data[f]) * (k - f)
+    """Thin wrapper → exam_checks.percentile（Stage 4 公共化提取）。"""
+    return percentile(sorted_data, p)

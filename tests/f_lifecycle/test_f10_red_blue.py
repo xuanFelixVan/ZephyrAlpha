@@ -40,6 +40,7 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     _get_signing_key,
 )
 from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
+from zephyr.intelligence.model_profiling.exam_checks import validate_result
 from zephyr.intelligence.model_profiling.exam_test_cases import (
     CASES_BY_CAPABILITY,
     ExamTestCase,
@@ -73,7 +74,7 @@ def _find_case(capability: str) -> ExamTestCase:
 class TestExamCheatingAttack:
     """红队: 模型试图通过作弊通过考试。
 
-    防护机制: ExamOrchestrator._validate_result() + _detect_optimization()
+    防护机制: validate_result() + _detect_optimization()
     """
 
     def test_attack_leak_expected_category(self) -> None:
@@ -89,7 +90,7 @@ class TestExamCheatingAttack:
         }
 
         # 防护机制应检测到泄露
-        is_valid = ExamOrchestrator._validate_result(malicious_result, case)
+        is_valid = validate_result(malicious_result, case)
         assert is_valid is False, "防护失败: 泄露 expected_category 未被检测"
 
     def test_attack_leak_expected_tags(self) -> None:
@@ -100,7 +101,7 @@ class TestExamCheatingAttack:
             "expected_tags": case.expected_tags,  # 泄露答案
         }
 
-        is_valid = ExamOrchestrator._validate_result(malicious_result, case)
+        is_valid = validate_result(malicious_result, case)
         assert is_valid is False, "防护失败: 泄露 expected_tags 未被检测"
 
     def test_attack_leak_expected_old_str(self) -> None:
@@ -111,7 +112,7 @@ class TestExamCheatingAttack:
             "expected_old_str": case.expected_old_str,  # 泄露答案
         }
 
-        is_valid = ExamOrchestrator._validate_result(malicious_result, case)
+        is_valid = validate_result(malicious_result, case)
         assert is_valid is False, "防护失败: 泄露 expected_old_str 未被检测"
 
     def test_attack_out_of_range_precision(self) -> None:
@@ -125,7 +126,7 @@ class TestExamCheatingAttack:
             "precision": 1.5,  # 超出范围
         }
 
-        is_valid = ExamOrchestrator._validate_result(malicious_result, case)
+        is_valid = validate_result(malicious_result, case)
         assert is_valid is False, "防护失败: precision=1.5 越界未被检测"
 
     def test_attack_out_of_range_negative_recall(self) -> None:
@@ -136,7 +137,7 @@ class TestExamCheatingAttack:
             "recall": -0.3,  # 负值
         }
 
-        is_valid = ExamOrchestrator._validate_result(malicious_result, case)
+        is_valid = validate_result(malicious_result, case)
         assert is_valid is False, "防护失败: recall=-0.3 越界未被检测"
 
     def test_attack_optimization_exact_old_str_match(self) -> None:
@@ -181,7 +182,7 @@ class TestExamCheatingAttack:
             "reason": "The task involves fixing a code error",
         }
 
-        is_valid = ExamOrchestrator._validate_result(normal_result, case)
+        is_valid = validate_result(normal_result, case)
         assert is_valid is True, "误报: 正常结果被标记为无效"
 
     def test_attack_randomization_prevents_memorization(self) -> None:
@@ -479,7 +480,7 @@ class TestCombinedAttack:
             "category": case.expected_category,
             "expected_category": case.expected_category,  # 泄露答案
         }
-        assert ExamOrchestrator._validate_result(malicious_result, case) is False
+        assert validate_result(malicious_result, case) is False
 
         # 步骤2: 伪造护照攻击
         forged = CapabilityPassport(model_id="combined-attacker")
@@ -513,7 +514,7 @@ class TestCombinedAttack:
         # 层次2: 完整性校验
         case = _find_case("tag_completion")
         leaky_result = {"tags": [], "expected_tags": case.expected_tags}
-        assert ExamOrchestrator._validate_result(leaky_result, case) is False
+        assert validate_result(leaky_result, case) is False
 
         # 层次3: 反优化检测
         code_case = _find_case("code_edit_precision")
