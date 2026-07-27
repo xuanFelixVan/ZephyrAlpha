@@ -98,12 +98,69 @@ class AsyncMonitor:
     def clear_alerts(self) -> None:
         self._alerts = []
 
-    def _monitor_loop(self) -> None:
+    # ── Stage 4 公共化（2026-07-28）：只读 properties + DI setter + 公共方法别名 ──
+    # 消除 tests/safety/test_async_monitor.py 中 80 处私有成员访问（._stop_event /
+    # ._poll_interval_s / ._consecutive_failures / ._circuit_breaker / ._bypass_recorder /
+    # ._thread / ._alerts / ._monitor_loop / ._check_*）。保留私有方法为 thin wrapper，
+    # 公共别名向后兼容。
+
+    @property
+    def stop_event(self) -> threading.Event:
+        """只读：停止事件（Stage 4 公共化）。"""
+        return self._stop_event
+
+    @property
+    def poll_interval_s(self) -> int:
+        """只读：轮询间隔秒数（Stage 4 公共化）。"""
+        return self._poll_interval_s
+
+    @property
+    def thread(self) -> threading.Thread | None:
+        """只读：后台监控线程（Stage 4 公共化）。"""
+        return self._thread
+
+    @property
+    def circuit_breaker(self) -> CircuitBreaker:
+        """读写：熔断器（Stage 4 公共化，测试可注入 mock）。"""
+        return self._circuit_breaker
+
+    @circuit_breaker.setter
+    def circuit_breaker(self, value: CircuitBreaker) -> None:
+        self._circuit_breaker = value
+
+    @property
+    def bypass_recorder(self) -> BypassRecorder:
+        """读写：旁路记录器（Stage 4 公共化，测试可注入 mock）。"""
+        return self._bypass_recorder
+
+    @bypass_recorder.setter
+    def bypass_recorder(self, value: BypassRecorder) -> None:
+        self._bypass_recorder = value
+
+    @property
+    def consecutive_failures(self) -> int:
+        """读写：连续失败计数（Stage 4 公共化）。"""
+        return self._consecutive_failures
+
+    @consecutive_failures.setter
+    def consecutive_failures(self, value: int) -> None:
+        self._consecutive_failures = value
+
+    def add_alert(self, alert: MonitorAlert) -> None:
+        """公共 API：追加告警（Stage 4 公共化，替代直接 ._alerts.append）。"""
+        self._alerts.append(alert)
+
+    def monitor_loop(self) -> None:
+        """公共 API：监控循环（Stage 4 公共化，primary 实现）。
+
+        _monitor_loop 为向后兼容 thin wrapper。loop 内部调公共 check_* 方法，
+        使测试可经 monkeypatch.setattr(monitor, 'check_*', ...) 注入 mock。
+        """
         while not self._stop_event.is_set():
             try:
-                self._check_circuit_breaker()
-                self._check_bypass_backlog()
-                self._check_cleanup_residue()
+                self.check_circuit_breaker()
+                self.check_bypass_backlog()
+                self.check_cleanup_residue()
                 self._consecutive_failures = 0
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._consecutive_failures += 1
@@ -118,13 +175,23 @@ class AsyncMonitor:
 
             self._stop_event.wait(self._poll_interval_s)
 
-    def _check_circuit_breaker(self) -> None:
+    def _monitor_loop(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.monitor_loop()
+
+    def check_circuit_breaker(self) -> None:
+        """公共 API：检查熔断器状态（Stage 4 公共化，primary 实现）。"""
         if self._circuit_breaker.state is CircuitState.OPEN:
             self._alerts.append(
                 MonitorAlert("circuit_breaker", "HIGH", "Circuit breaker OPEN - adversarial testing paused")
             )
 
-    def _check_bypass_backlog(self) -> None:
+    def _check_circuit_breaker(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_circuit_breaker()
+
+    def check_bypass_backlog(self) -> None:
+        """公共 API：检查旁路积压（Stage 4 公共化，primary 实现）。"""
         bypass_entries = self._bypass_recorder.escalated_entries()
         if len(bypass_entries) > 0:
             self._alerts.append(
@@ -133,7 +200,16 @@ class AsyncMonitor:
                 )
             )
 
-    def _check_cleanup_residue(self) -> None:
+    def _check_bypass_backlog(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_bypass_backlog()
+
+    def check_cleanup_residue(self) -> None:
+        """公共 API：检查清理残留（Stage 4 公共化，primary 实现）。"""
         cleanup = Cleanup()
         if not cleanup.verified():
             self._alerts.append(MonitorAlert("cleanup_residue", "LOW", "Cleanup residue detected - artifacts remain"))
+
+    def _check_cleanup_residue(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_cleanup_residue()

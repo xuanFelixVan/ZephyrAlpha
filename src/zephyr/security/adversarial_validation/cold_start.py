@@ -124,12 +124,55 @@ class ColdStart:
                 ids.append(sid)
         return ids
 
-    def _classify(self, path: str) -> str:
+    # ── Stage 4 公共化（2026-07-28）：只读 property + 公共方法（primary）+ 私有 thin wrapper ──
+    # 公共方法为 primary 实现，私有方法为向后兼容 thin wrapper。onboard_module 等
+    # 内部调用方经私有 wrapper → 公共 primary，使测试可经 monkeypatch.setattr(cs,
+    # 'verify_registration', ...) 注入 mock（与 async_monitor check_* 同模式）。
+
+    @property
+    def registry_path(self) -> Path:
+        """只读：场景注册表路径（Stage 4 公共化）。"""
+        return self._registry_path
+
+    def classify(self, path: str) -> str:
+        """公共 API：分类模块路径（Stage 4 公共化，primary 实现）。"""
         if "mcp_server" in path or path.startswith("mcp."):
             return "mcp_server"
         if path.endswith(".py") and "scripts/" in path:
             return "script"
         return "python_module"
+
+    def is_registered(self, field: str, value: str) -> bool:
+        """公共 API：检查字段是否已注册（Stage 4 公共化，primary 实现）。"""
+        if not self._registry_path.exists():
+            return False
+        with open(self._registry_path, encoding="utf-8") as f:
+            raw = yaml.safe_load(f)
+        for scenario in raw.get("scenarios", []):
+            if scenario.get(field) == value:
+                return True
+        return False
+
+    def verify_registration(self, scenario_id: str) -> bool:
+        """公共 API：验证场景是否已注册（Stage 4 公共化，primary 实现）。"""
+        if not self._registry_path.exists():
+            return False
+        with open(self._registry_path, encoding="utf-8") as f:
+            raw = yaml.safe_load(f)
+        for scenario in raw.get("scenarios", []):
+            if scenario.get("scenario_id") == scenario_id:
+                return True
+        return False
+
+    def init_registry(self) -> None:
+        """公共 API：初始化空注册表（Stage 4 公共化，primary 实现）。"""
+        initial: dict[str, Any] = {"scenarios": [], "total_count": 0}
+        with open(self._registry_path, "w", encoding="utf-8") as f:
+            yaml.safe_dump(initial, f, allow_unicode=True)
+
+    def _classify(self, path: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.classify(path)
 
     def _create_scenario(self, template: dict, identifier: str) -> str:
         scenario_id = f"RB-CS-{uuid.uuid4().hex[:8]}"
@@ -180,26 +223,13 @@ class ColdStart:
         return scenario_id
 
     def _init_registry(self) -> None:
-        initial: dict[str, Any] = {"scenarios": [], "total_count": 0}
-        with open(self._registry_path, "w", encoding="utf-8") as f:
-            yaml.safe_dump(initial, f, allow_unicode=True)
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.init_registry()
 
     def _is_registered(self, field: str, value: str) -> bool:
-        if not self._registry_path.exists():
-            return False
-        with open(self._registry_path, encoding="utf-8") as f:
-            raw = yaml.safe_load(f)
-        for scenario in raw.get("scenarios", []):
-            if scenario.get(field) == value:
-                return True
-        return False
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.is_registered(field, value)
 
     def _verify_registration(self, scenario_id: str) -> bool:
-        if not self._registry_path.exists():
-            return False
-        with open(self._registry_path, encoding="utf-8") as f:
-            raw = yaml.safe_load(f)
-        for scenario in raw.get("scenarios", []):
-            if scenario.get("scenario_id") == scenario_id:
-                return True
-        return False
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.verify_registration(scenario_id)

@@ -112,3 +112,23 @@ class CircuitBreaker:
         self._reset()
         self._trip_count = 0
         self._opened_at = 0.0
+
+    # ── Stage 4 公共化（2026-07-28）：force_state + opened_at property ──
+    # 消除 tests/safety/test_async_monitor.py 中对 _state / _opened_at 的直接写。
+    # force_state 绕过 _maybe_transition() 侧效，专供测试注入确定状态。
+
+    def force_state(self, state: CircuitState, opened_at: float | None = None) -> None:
+        """公共 API：强制设置熔断器状态（Stage 4 公共化，测试注入用）。
+
+        与 state property getter 区别：getter 会触发 _maybe_transition()（OPEN→HALF_OPEN
+        自动冷却转换），本方法直接赋值不触发，供测试精确控制状态。
+        opened_at 仅在 state=OPEN 时有意义（控制冷却计时起点）。
+        """
+        self._state = state
+        if opened_at is not None:
+            self._opened_at = opened_at
+
+    @property
+    def opened_at(self) -> float:
+        """只读：熔断打开时间戳（毫秒，Stage 4 公共化）。"""
+        return self._opened_at

@@ -48,9 +48,9 @@ REGISTRATION_TEMPLATES = cold_start_mod.REGISTRATION_TEMPLATES
 def safe_monitor(monkeypatch):
     """创建一个 check 方法被 mock 为 no-op 的 AsyncMonitor，避免文件系统副作用。"""
     monitor = AsyncMonitor(poll_interval_s=5)
-    monkeypatch.setattr(monitor, "_check_circuit_breaker", lambda: None)
-    monkeypatch.setattr(monitor, "_check_bypass_backlog", lambda: None)
-    monkeypatch.setattr(monitor, "_check_cleanup_residue", lambda: None)
+    monkeypatch.setattr(monitor, "check_circuit_breaker", lambda: None)
+    monkeypatch.setattr(monitor, "check_bypass_backlog", lambda: None)
+    monkeypatch.setattr(monitor, "check_cleanup_residue", lambda: None)
     return monitor
 
 
@@ -103,23 +103,23 @@ class TestAsyncMonitorImport:
 class TestAsyncMonitorInit:
     def test_default_poll_interval_is_30(self):
         monitor = AsyncMonitor()
-        assert monitor._poll_interval_s == 30
+        assert monitor.poll_interval_s == 30
 
     def test_custom_poll_interval(self):
         monitor = AsyncMonitor(poll_interval_s=10)
-        assert monitor._poll_interval_s == 10
+        assert monitor.poll_interval_s == 10
 
     def test_poll_interval_below_minimum_clamped_to_5(self):
         monitor = AsyncMonitor(poll_interval_s=3)
-        assert monitor._poll_interval_s == 5
+        assert monitor.poll_interval_s == 5
 
     def test_poll_interval_exactly_5(self):
         monitor = AsyncMonitor(poll_interval_s=5)
-        assert monitor._poll_interval_s == 5
+        assert monitor.poll_interval_s == 5
 
     def test_poll_interval_zero_clamped_to_5(self):
         monitor = AsyncMonitor(poll_interval_s=0)
-        assert monitor._poll_interval_s == 5
+        assert monitor.poll_interval_s == 5
 
     def test_initial_state_is_idle(self):
         monitor = AsyncMonitor()
@@ -132,24 +132,24 @@ class TestAsyncMonitorInit:
 
     def test_initial_consecutive_failures_zero(self):
         monitor = AsyncMonitor()
-        assert monitor._consecutive_failures == 0
+        assert monitor.consecutive_failures == 0
 
     def test_has_circuit_breaker(self):
         monitor = AsyncMonitor()
-        assert monitor._circuit_breaker is not None
+        assert monitor.circuit_breaker is not None
 
     def test_has_bypass_recorder(self):
         monitor = AsyncMonitor()
-        assert monitor._bypass_recorder is not None
+        assert monitor.bypass_recorder is not None
 
     def test_has_stop_event(self):
         monitor = AsyncMonitor()
-        assert monitor._stop_event is not None
-        assert monitor._stop_event.is_set() is False
+        assert monitor.stop_event is not None
+        assert monitor.stop_event.is_set() is False
 
     def test_thread_initially_none(self):
         monitor = AsyncMonitor()
-        assert monitor._thread is None
+        assert monitor.thread is None
 
 
 # ============================================================================
@@ -171,10 +171,10 @@ class TestAsyncMonitorLifecycle:
 
     def test_start_when_already_running_is_noop(self, safe_monitor):
         safe_monitor.start()
-        first_thread = safe_monitor._thread
+        first_thread = safe_monitor.thread
         assert first_thread is not None
         safe_monitor.start()
-        assert safe_monitor._thread is first_thread
+        assert safe_monitor.thread is first_thread
         safe_monitor.stop()
 
     def test_stop_without_start(self):
@@ -184,20 +184,20 @@ class TestAsyncMonitorLifecycle:
 
     def test_start_creates_daemon_thread(self, safe_monitor):
         safe_monitor.start()
-        assert safe_monitor._thread is not None
-        assert safe_monitor._thread.daemon is True
+        assert safe_monitor.thread is not None
+        assert safe_monitor.thread.daemon is True
         safe_monitor.stop()
 
     def test_stop_joins_thread(self, safe_monitor):
         safe_monitor.start()
-        thread = safe_monitor._thread
+        thread = safe_monitor.thread
         safe_monitor.stop()
         assert thread is not None
 
     def test_stop_sets_stop_event(self, safe_monitor):
         safe_monitor.start()
         safe_monitor.stop()
-        assert safe_monitor._stop_event.is_set() is True
+        assert safe_monitor.stop_event.is_set() is True
 
     def test_can_restart_after_stop(self, safe_monitor):
         safe_monitor.start()
@@ -222,13 +222,13 @@ class TestAsyncMonitorAlerts:
 
     def test_alert_count(self):
         monitor = AsyncMonitor()
-        monitor._alerts.append(MonitorAlert("m1", "LOW", "msg1"))
-        monitor._alerts.append(MonitorAlert("m2", "HIGH", "msg2"))
+        monitor.add_alert(MonitorAlert("m1", "LOW", "msg1"))
+        monitor.add_alert(MonitorAlert("m2", "HIGH", "msg2"))
         assert monitor.alert_count() == 2
 
     def test_clear_alerts(self):
         monitor = AsyncMonitor()
-        monitor._alerts.append(MonitorAlert("m1", "LOW", "msg1"))
+        monitor.add_alert(MonitorAlert("m1", "LOW", "msg1"))
         monitor.clear_alerts()
         assert monitor.alert_count() == 0
         assert monitor.alerts() == []
@@ -242,10 +242,10 @@ class TestAsyncMonitorAlerts:
 class TestAsyncMonitorPollInterval:
     def test_default_interval_is_30_seconds(self):
         monitor = AsyncMonitor()
-        assert monitor._poll_interval_s == 30
+        assert monitor.poll_interval_s == 30
 
     def test_default_interval_constant_matches(self):
-        assert AsyncMonitor()._poll_interval_s == DEFAULT_POLL_INTERVAL_S
+        assert AsyncMonitor().poll_interval_s == DEFAULT_POLL_INTERVAL_S
 
     def test_interval_used_in_wait(self, monkeypatch):
         captured_intervals = []
@@ -253,20 +253,20 @@ class TestAsyncMonitorPollInterval:
 
         def mock_wait(timeout=None):
             captured_intervals.append(timeout)
-            monitor._stop_event.set()
+            monitor.stop_event.set()
             return True
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", lambda: None)
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", lambda: None)
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", lambda: None)
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monkeypatch.setattr(monitor, "check_circuit_breaker", lambda: None)
+        monkeypatch.setattr(monitor, "check_bypass_backlog", lambda: None)
+        monkeypatch.setattr(monitor, "check_cleanup_residue", lambda: None)
 
-        monitor._monitor_loop()
+        monitor.monitor_loop()
         assert 7 in captured_intervals
 
 
 # ============================================================================
-# AsyncMonitor _monitor_loop 轮询方法测试
+# AsyncMonitor monitor_loop 轮询方法测试
 # ============================================================================
 
 
@@ -275,16 +275,16 @@ class TestAsyncMonitorMonitorLoop:
         monitor = AsyncMonitor(poll_interval_s=5)
         calls = {"cb": 0, "bb": 0, "cr": 0}
 
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", lambda: calls.__setitem__("cb", calls["cb"] + 1))
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", lambda: calls.__setitem__("bb", calls["bb"] + 1))
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", lambda: calls.__setitem__("cr", calls["cr"] + 1))
+        monkeypatch.setattr(monitor, "check_circuit_breaker", lambda: calls.__setitem__("cb", calls["cb"] + 1))
+        monkeypatch.setattr(monitor, "check_bypass_backlog", lambda: calls.__setitem__("bb", calls["bb"] + 1))
+        monkeypatch.setattr(monitor, "check_cleanup_residue", lambda: calls.__setitem__("cr", calls["cr"] + 1))
 
         def mock_wait(timeout=None):
-            monitor._stop_event.set()
+            monitor.stop_event.set()
             return True
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monitor._monitor_loop()
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monitor.monitor_loop()
 
         assert calls["cb"] == 1
         assert calls["bb"] == 1
@@ -292,25 +292,25 @@ class TestAsyncMonitorMonitorLoop:
 
     def test_loop_resets_failures_on_success(self, monkeypatch):
         monitor = AsyncMonitor(poll_interval_s=5)
-        monitor._consecutive_failures = 3
+        monitor.consecutive_failures = 3
 
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", lambda: None)
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", lambda: None)
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", lambda: None)
+        monkeypatch.setattr(monitor, "check_circuit_breaker", lambda: None)
+        monkeypatch.setattr(monitor, "check_bypass_backlog", lambda: None)
+        monkeypatch.setattr(monitor, "check_cleanup_residue", lambda: None)
 
         def mock_wait(timeout=None):
-            monitor._stop_event.set()
+            monitor.stop_event.set()
             return True
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monitor._monitor_loop()
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monitor.monitor_loop()
 
-        assert monitor._consecutive_failures == 0
+        assert monitor.consecutive_failures == 0
 
     def test_loop_exits_when_stop_event_set(self):
         monitor = AsyncMonitor(poll_interval_s=5)
-        monitor._stop_event.set()
-        monitor._monitor_loop()
+        monitor.stop_event.set()
+        monitor.monitor_loop()
         assert monitor.state == MonitorState.IDLE
 
 
@@ -326,23 +326,23 @@ class TestAsyncMonitorStallDetection:
         def raising_check():
             raise RuntimeError("simulated monitor failure")
 
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", raising_check)
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", raising_check)
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", raising_check)
+        monkeypatch.setattr(monitor, "check_circuit_breaker", raising_check)
+        monkeypatch.setattr(monitor, "check_bypass_backlog", raising_check)
+        monkeypatch.setattr(monitor, "check_cleanup_residue", raising_check)
 
         wait_call_count = {"n": 0}
 
         def mock_wait(timeout=None):
             wait_call_count["n"] += 1
             if wait_call_count["n"] >= 5:
-                monitor._stop_event.set()
+                monitor.stop_event.set()
             return False
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monitor._monitor_loop()
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monitor.monitor_loop()
 
         assert monitor.state == MonitorState.STALLED
-        assert monitor._consecutive_failures >= 5
+        assert monitor.consecutive_failures >= 5
 
     def test_stall_produces_critical_alert(self, monkeypatch):
         monitor = AsyncMonitor(poll_interval_s=5)
@@ -350,20 +350,20 @@ class TestAsyncMonitorStallDetection:
         def raising_check():
             raise RuntimeError("simulated monitor failure")
 
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", raising_check)
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", raising_check)
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", raising_check)
+        monkeypatch.setattr(monitor, "check_circuit_breaker", raising_check)
+        monkeypatch.setattr(monitor, "check_bypass_backlog", raising_check)
+        monkeypatch.setattr(monitor, "check_cleanup_residue", raising_check)
 
         wait_call_count = {"n": 0}
 
         def mock_wait(timeout=None):
             wait_call_count["n"] += 1
             if wait_call_count["n"] >= 5:
-                monitor._stop_event.set()
+                monitor.stop_event.set()
             return False
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monitor._monitor_loop()
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monitor.monitor_loop()
 
         stall_alerts = [a for a in monitor.alerts() if a.monitor == "stall_detector"]
         assert len(stall_alerts) >= 1
@@ -376,23 +376,23 @@ class TestAsyncMonitorStallDetection:
         def raising_check():
             raise RuntimeError("simulated monitor failure")
 
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", raising_check)
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", raising_check)
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", raising_check)
+        monkeypatch.setattr(monitor, "check_circuit_breaker", raising_check)
+        monkeypatch.setattr(monitor, "check_bypass_backlog", raising_check)
+        monkeypatch.setattr(monitor, "check_cleanup_residue", raising_check)
 
         wait_call_count = {"n": 0}
 
         def mock_wait(timeout=None):
             wait_call_count["n"] += 1
             if wait_call_count["n"] >= 4:
-                monitor._stop_event.set()
+                monitor.stop_event.set()
             return False
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monitor._monitor_loop()
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monitor.monitor_loop()
 
         assert monitor.state != MonitorState.STALLED
-        assert monitor._consecutive_failures == 4
+        assert monitor.consecutive_failures == 4
 
     def test_failures_reset_on_success(self, monkeypatch):
         monitor = AsyncMonitor(poll_interval_s=5)
@@ -404,23 +404,23 @@ class TestAsyncMonitorStallDetection:
                 raise RuntimeError("fail")
             # 后续成功
 
-        monkeypatch.setattr(monitor, "_check_circuit_breaker", mixed_check)
-        monkeypatch.setattr(monitor, "_check_bypass_backlog", lambda: None)
-        monkeypatch.setattr(monitor, "_check_cleanup_residue", lambda: None)
+        monkeypatch.setattr(monitor, "check_circuit_breaker", mixed_check)
+        monkeypatch.setattr(monitor, "check_bypass_backlog", lambda: None)
+        monkeypatch.setattr(monitor, "check_cleanup_residue", lambda: None)
 
         wait_call_count = {"n": 0}
 
         def mock_wait(timeout=None):
             wait_call_count["n"] += 1
             if wait_call_count["n"] >= 4:
-                monitor._stop_event.set()
+                monitor.stop_event.set()
             return False
 
-        monkeypatch.setattr(monitor._stop_event, "wait", mock_wait)
-        monitor._monitor_loop()
+        monkeypatch.setattr(monitor.stop_event, "wait", mock_wait)
+        monitor.monitor_loop()
 
         assert monitor.state != MonitorState.STALLED
-        assert monitor._consecutive_failures == 0
+        assert monitor.consecutive_failures == 0
 
 
 # ============================================================================
@@ -431,9 +431,8 @@ class TestAsyncMonitorStallDetection:
 class TestAsyncMonitorCheckCircuitBreaker:
     def test_open_circuit_adds_high_alert(self):
         monitor = AsyncMonitor()
-        monitor._circuit_breaker._state = CircuitState.OPEN
-        monitor._circuit_breaker._opened_at = time.time() * 1000
-        monitor._check_circuit_breaker()
+        monitor.circuit_breaker.force_state(CircuitState.OPEN, opened_at=time.time() * 1000)
+        monitor.check_circuit_breaker()
         assert monitor.alert_count() == 1
         alert = monitor.alerts()[0]
         assert alert.monitor == "circuit_breaker"
@@ -442,14 +441,14 @@ class TestAsyncMonitorCheckCircuitBreaker:
 
     def test_closed_circuit_no_alert(self):
         monitor = AsyncMonitor()
-        monitor._circuit_breaker._state = CircuitState.CLOSED
-        monitor._check_circuit_breaker()
+        monitor.circuit_breaker.force_state(CircuitState.CLOSED)
+        monitor.check_circuit_breaker()
         assert monitor.alert_count() == 0
 
     def test_half_open_no_alert(self):
         monitor = AsyncMonitor()
-        monitor._circuit_breaker._state = CircuitState.HALF_OPEN
-        monitor._check_circuit_breaker()
+        monitor.circuit_breaker.force_state(CircuitState.HALF_OPEN)
+        monitor.check_circuit_breaker()
         assert monitor.alert_count() == 0
 
 
@@ -463,8 +462,8 @@ class TestAsyncMonitorCheckBypassBacklog:
         monitor = AsyncMonitor()
         mock_recorder = MagicMock()
         mock_recorder.escalated_entries.return_value = [MagicMock(), MagicMock()]
-        monitor._bypass_recorder = mock_recorder
-        monitor._check_bypass_backlog()
+        monitor.bypass_recorder = mock_recorder
+        monitor.check_bypass_backlog()
         assert monitor.alert_count() == 1
         alert = monitor.alerts()[0]
         assert alert.monitor == "bypass_backlog"
@@ -475,16 +474,16 @@ class TestAsyncMonitorCheckBypassBacklog:
         monitor = AsyncMonitor()
         mock_recorder = MagicMock()
         mock_recorder.escalated_entries.return_value = []
-        monitor._bypass_recorder = mock_recorder
-        monitor._check_bypass_backlog()
+        monitor.bypass_recorder = mock_recorder
+        monitor.check_bypass_backlog()
         assert monitor.alert_count() == 0
 
     def test_single_escalated_entry_adds_alert(self):
         monitor = AsyncMonitor()
         mock_recorder = MagicMock()
         mock_recorder.escalated_entries.return_value = [MagicMock()]
-        monitor._bypass_recorder = mock_recorder
-        monitor._check_bypass_backlog()
+        monitor.bypass_recorder = mock_recorder
+        monitor.check_bypass_backlog()
         assert monitor.alert_count() == 1
         assert "1" in monitor.alerts()[0].message
 
@@ -502,7 +501,7 @@ class TestAsyncMonitorCheckCleanupResidue:
         mock_cleanup = MagicMock()
         mock_cleanup.verified.return_value = False
         monkeypatch.setattr(am_module, "Cleanup", lambda: mock_cleanup)
-        monitor._check_cleanup_residue()
+        monitor.check_cleanup_residue()
         assert monitor.alert_count() == 1
         alert = monitor.alerts()[0]
         assert alert.monitor == "cleanup_residue"
@@ -516,7 +515,7 @@ class TestAsyncMonitorCheckCleanupResidue:
         mock_cleanup = MagicMock()
         mock_cleanup.verified.return_value = True
         monkeypatch.setattr(am_module, "Cleanup", lambda: mock_cleanup)
-        monitor._check_cleanup_residue()
+        monitor.check_cleanup_residue()
         assert monitor.alert_count() == 0
 
 
@@ -564,40 +563,40 @@ class TestColdStartImport:
 class TestColdStartInit:
     def test_default_registry_path(self):
         cs = ColdStart()
-        assert cs._registry_path is not None
-        assert cs._registry_path.name == "_scenario-registry.yaml"
+        assert cs.registry_path is not None
+        assert cs.registry_path.name == "_scenario-registry.yaml"
 
     def test_custom_registry_path(self, temp_registry):
         cs = ColdStart(registry_path=temp_registry)
-        assert cs._registry_path == temp_registry
+        assert cs.registry_path == temp_registry
 
     def test_initial_phase_is_scan(self, cold_start):
         assert cold_start.phase == BootstrapPhase.SCAN
 
 
 # ============================================================================
-# ColdStart _classify 分类测试
+# ColdStart classify 分类测试
 # ============================================================================
 
 
 class TestColdStartClassify:
     def test_classify_python_module(self, cold_start):
-        assert cold_start._classify("zephyr.trading.signal") == "python_module"
+        assert cold_start.classify("zephyr.trading.signal") == "python_module"
 
     def test_classify_mcp_server_by_name(self, cold_start):
-        assert cold_start._classify("zephyr.infrastructure.mcp_server.foo") == "mcp_server"
+        assert cold_start.classify("zephyr.infrastructure.mcp_server.foo") == "mcp_server"
 
     def test_classify_mcp_server_by_prefix(self, cold_start):
-        assert cold_start._classify("mcp.myserver") == "mcp_server"
+        assert cold_start.classify("mcp.myserver") == "mcp_server"
 
     def test_classify_script(self, cold_start):
-        assert cold_start._classify("scripts/run_test.py") == "script"
+        assert cold_start.classify("scripts/run_test.py") == "script"
 
     def test_classify_non_py_in_scripts_is_python_module(self, cold_start):
-        assert cold_start._classify("scripts/readme.txt") == "python_module"
+        assert cold_start.classify("scripts/readme.txt") == "python_module"
 
     def test_classify_plain_module(self, cold_start):
-        assert cold_start._classify("zephyr.utils.helper") == "python_module"
+        assert cold_start.classify("zephyr.utils.helper") == "python_module"
 
 
 # ============================================================================
@@ -669,12 +668,12 @@ class TestColdStartOnboardModule:
         assert scenario["target_module"] == "scripts/deploy.py"
 
     def test_onboard_verification_failure_raises_error(self, monkeypatch, cold_start):
-        monkeypatch.setattr(cold_start, "_verify_registration", lambda sid: False)
+        monkeypatch.setattr(cold_start, "verify_registration", lambda sid: False)
         with pytest.raises(BootstrapVerificationError):
             cold_start.onboard_module("zephyr.trading.failing_module")
 
     def test_onboard_verification_failure_leaves_verify_phase(self, monkeypatch, cold_start):
-        monkeypatch.setattr(cold_start, "_verify_registration", lambda sid: False)
+        monkeypatch.setattr(cold_start, "verify_registration", lambda sid: False)
         with pytest.raises(BootstrapVerificationError):
             cold_start.onboard_module("zephyr.trading.failing_module")
         assert cold_start.phase == BootstrapPhase.VERIFY
@@ -736,7 +735,7 @@ class TestColdStartOnboardBatch:
 class TestColdStartRegistry:
     def test_init_registry_creates_file(self, cold_start, temp_registry):
         assert not temp_registry.exists()
-        cold_start._init_registry()
+        cold_start.init_registry()
         assert temp_registry.exists()
         import yaml
 
@@ -748,24 +747,24 @@ class TestColdStartRegistry:
 
     def test_is_registered_returns_false_for_missing_file(self, cold_start, temp_registry):
         assert not temp_registry.exists()
-        assert cold_start._is_registered("target_module", "anything") is False
+        assert cold_start.is_registered("target_module", "anything") is False
 
     def test_is_registered_returns_true_after_onboard(self, cold_start):
         cold_start.onboard_module("zephyr.trading.registered")
-        assert cold_start._is_registered("target_module", "zephyr.trading.registered") is True
+        assert cold_start.is_registered("target_module", "zephyr.trading.registered") is True
 
     def test_is_registered_returns_false_for_unregistered(self, cold_start):
         cold_start.onboard_module("zephyr.trading.registered")
-        assert cold_start._is_registered("target_module", "zephyr.trading.unregistered") is False
+        assert cold_start.is_registered("target_module", "zephyr.trading.unregistered") is False
 
     def test_verify_registration_returns_true_after_onboard(self, cold_start):
         scenario_id = cold_start.onboard_module("zephyr.trading.verifiable")
-        assert cold_start._verify_registration(scenario_id) is True
+        assert cold_start.verify_registration(scenario_id) is True
 
     def test_verify_registration_returns_false_for_unknown_id(self, cold_start):
         cold_start.onboard_module("zephyr.trading.verifiable")
-        assert cold_start._verify_registration("RB-CS-nonexist") is False
+        assert cold_start.verify_registration("RB-CS-nonexist") is False
 
     def test_verify_registration_returns_false_for_missing_file(self, cold_start, temp_registry):
         assert not temp_registry.exists()
-        assert cold_start._verify_registration("RB-CS-anything") is False
+        assert cold_start.verify_registration("RB-CS-anything") is False
