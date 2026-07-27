@@ -11,7 +11,7 @@ tier: tier_1_governance
 status: active
 version: 1.5.0
 created: '2026-06-26'
-last_updated: '2026-07-25'
+last_updated: '2026-07-27'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -9342,3 +9342,78 @@ entries:
   related_rules: 'AGENTS.md RULE-DEPGRAPH (分层架构原则), 软件工程跨切关注点共识'
   created: '2026-07-25'
   last_updated: '2026-07-25'
+# --- #ARCH-IFIND-AUTO-RECONNECT: iFind/Provider 自动重连治本（2026-07-24 引入，2026-07-27 复原） ---
+- issue_id: '#ARCH-IFIND-AUTO-RECONNECT'
+  title: Provider _connected=False 时 scheduler 自动重连治本（iFind -1010 会话过期雪崩防护）
+  severity: P1高
+  adjudication: |-
+    病根（第一性原理）：
+    iFind provider 在 -1010 登录过期错误时自动标记 _connected=False（ifind_provider.py L203），
+    其他 provider（tushare/tdx/miniqmt）也类似。原 scheduler._validate_provider_and_policy
+    未检查 _connected，导致一旦会话过期，后续所有该 source 的任务都会持续失败，
+    直到用户手动重启进程——100% AI 开发场景下无人工干预窗口，单次会话过期会引发
+    整日任务雪崩失败。
+
+    治本方案（2026-07-24 引入，2026-07-27 复原）：
+    在 _validate_provider_and_policy 中检查 hasattr(provider, '_connected') and not provider._connected，
+    命中则自动调用 provider.connect() 重连。重连失败才返回错误并通知 alerter。
+    适用于所有暴露 _connected 属性的 provider，非 iFind 专属。
+
+    2026-07-27 复原背景：
+    2026-07-27 一次未提交的 scheduler.py 编辑误删了此治本逻辑（未登记 ARCH 编号），
+    本次治本审查发现并复原。复原时泛化注释（原注释仅提 iFind，实际适用所有 provider），
+    并补登 #ARCH-IFIND-AUTO-RECONNECT 满足铁律#6（任何 #ARCH-XXX 引用必须登记）。
+
+    纯技术修复（bug fix 回归），无价值判断，按铁律#9 AI 可直接标 decided。
+  impact:
+    - 'src/zephyr/data/scheduler.py（_validate_provider_and_policy 增加 _connected 检查 + provider.connect() 自动重连）'
+  fix_phase: |-
+    已完成施工+验证（2026-07-27 复原）：
+      - 恢复 _validate_provider_and_policy 中的自动重连逻辑
+      - 泛化注释（适用所有 _connected provider，非 iFind 专属）
+      - 补登 #ARCH-IFIND-AUTO-RECONNECT 满足铁律#6
+  status: decided
+  related_rules: 'AGENTS.md (100% AI 开发原则——无人工干预窗口需自动恢复)'
+  created: '2026-07-24'
+  last_updated: '2026-07-27'
+# --- #ARCH-DI-SEAM-001: PG 连接 DIP 注入缝治本（2026-07-27 立项） ---
+- issue_id: '#ARCH-DI-SEAM-001'
+  title: RuleLoader/GovernanceAutoRunner PG 连接 DIP 注入缝治本（消除模块级 import psycopg2 硬耦合）
+  severity: P2中
+  adjudication: |-
+    病根（第一性原理）：
+    rule_engine.py（L38）和 auto_runner.py（L36）模块级 `import psycopg2` + 直接调用
+    get_depgraph_pg_connection()，违反依赖倒置原则（DIP）——高层模块直接依赖低层
+    DB 驱动具体实现。100% AI 开发场景下，AI 写测试时无法 mock PG 连接，只能跳过
+    DB 失败路径测试，导致降级回退逻辑（如 RuleLoader 回退到 YAML 扫描）无测试覆盖，
+    是幻觉温床。
+
+    治本方案（Phase 1：构造函数注入 + 默认工厂）：
+    1. 在 depgraph_schema.py 定义 `PgConnectionProvider` Protocol（__call__(autocommit) -> connection）
+    2. RuleLoader.__init__ / GovernanceAutoRunner.__init__ 增加可选 pg_conn_provider 参数，
+       默认 = get_depgraph_pg_connection（保持向后兼容）
+    3. 内部所有 get_depgraph_pg_connection() 调用替换为 self._pg_conn_provider(autocommit=...)
+    4. 保留模块级 import psycopg2 仅用于异常类型（psycopg2.Error）——这是捕获异常的
+       具体类型，非依赖倒置目标（异常类型是稳定契约）
+
+    设计权衡：
+    - Phase 1（构造函数注入 + 默认工厂）而非 Phase 2（DI 容器）：项目当前规模无需
+      DI 容器复杂度；Phase 1 已足够支持测试 mock，零运行时开销
+    - 不移除 import psycopg2：psycopg2.Error 是异常捕获类型（稳定接口），不是 DIP 目标
+    - Protocol 而非 ABC：零运行时开销，structural subtyping 符合 Python 习惯
+
+    纯技术修复（重构），无价值判断，按铁律#9 AI 可直接标 decided。
+  impact:
+    - 'src/zephyr/governance/depgraph_schema.py（新增 PgConnectionProvider Protocol）'
+    - 'src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py（RuleLoader.__init__ 增 pg_conn_provider 参数）'
+    - 'src/zephyr/governance/ops_governance/auto_runner.py（GovernanceAutoRunner.__init__ 增 pg_conn_provider 参数 + 3 处调用替换）'
+  fix_phase: |-
+    Phase 1 已完成施工（2026-07-27）：
+      - depgraph_schema.py 新增 PgConnectionProvider Protocol
+      - RuleLoader 注入 pg_conn_provider（默认=get_depgraph_pg_connection）
+      - GovernanceAutoRunner 注入 pg_conn_provider + 3 处调用替换
+      - 向后兼容：未传 pg_conn_provider 时行为与旧版完全一致
+  status: decided
+  related_rules: 'AGENTS.md (DIP 原则), 软件工程 SOLID 原则'
+  created: '2026-07-27'
+  last_updated: '2026-07-27'

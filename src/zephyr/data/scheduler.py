@@ -1087,9 +1087,12 @@ class IntegratorScheduler:
     ) -> tuple[object, object | None, str | None]:
         """验证 Provider 可用性和熔断状态。返回 (provider, policy, error)。
 
-        治本修复 #ARCH-IFIND-AUTO-RECONNECT（2026-07-24）：
+        治本修复 #ARCH-IFIND-AUTO-RECONNECT（2026-07-24 引入，2026-07-27 复原）：
         当 Provider 标记 _connected=False（如 iFind -1010 登录过期后自动标记），
         自动尝试重连，避免后续任务全部失败直到人工干预。
+        适用于所有暴露 _connected 属性的 provider（ifind/tushare/tdx/miniqmt 等）。
+        100% AI 场景下无人工干预窗口，自动重连是治本必需——否则一次会话过期会
+        导致整日任务雪崩失败，需用户手动重启进程。
         """
         provider = self._get_provider(source)
         if provider is None:

@@ -5,45 +5,51 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] warn-only——检测 staged .py added 行中裸 subprocess.run/Popen/check_output/check_call 调用（违反 trae_067 铁律2 CREATE_NO_WINDOW 强制）；命中返回 passed=True + warning detail（不阻断）；tests/ 豁免；6 个文件级例外（process_pool/diff_helpers/git_call_budget_gate/git_commit_gateway/bare_subprocess_gate 自身）；noqa: bare-subprocess 行级逃生；AST 精确检测；git diff 不可达 fail-open
+# [INVARIANTS] 硬阻断——检测 staged .py added 行中裸 subprocess.run/Popen/check_output/check_call 调用（违反 trae_067 铁律2 CREATE_NO_WINDOW 强制）；命中返回 passed=False + detail（阻断 commit）；tests/ 豁免；6 个文件级例外（process_pool/diff_helpers/git_call_budget_gate/git_commit_gateway/bare_subprocess_gate 自身）；noqa: bare-subprocess 行级逃生；AST 精确检测；git diff 不可达 fail-open。2026-07-27 P2 升级落地（#ARCH-PREVENTABILITY-LAYER-001 第6层补齐——100% AI 场景下 warn=pass，必须 fail-closed）
 # [MODIFY-GUARD] gate_id="BARE-SUBPROCESS"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 warn-only（passed=True + detail）
+# [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 fail-closed 阻断（passed=False + detail）
 # [TESTS] tests/governance/commit_gates/test_bare_subprocess_gate.py
 # [A_module] module_id=MOD-GOV-bare_subprocess_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: bare-subprocess  自身豁免: 本文件是BARE-SUBPROCESS检测器,源码含检测模式字符串(subprocess.run/Popen)用于AST匹配,非实际调用
-"""bare_subprocess_gate.py — 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS）
+"""bare_subprocess_gate.py — 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）
 
 对应铁律 trae_067 RULE-EIGHTEEN-INV-001（CREATE_NO_WINDOW 强制）。
 裁定 #ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.6 补漏后立项（P8）。
+2026-07-27 P2 升级落地：warn-only → fail-closed（#ARCH-PREVENTABILITY-LAYER-001 第6层补齐）。
 
 病根（第一性原理）
 -----------------
 trae_067 铁律2 + INV-001 要求"AI 内部代码 spawn python 子进程 MUST 设
 CREATE_NO_WINDOW，复用 process_pool.py"，但 enforcement.paired_gate_id=null
 （君子协定）。100% AI 开发场景下 AI 上下文有限，会遗漏——本案 Phase 1.6
-治本存在 55+ 处遗漏（已修复），证明君子协定不可靠。
+治本存在 55+ 处遗漏（已修复），证明君子协定不可靠。warn-only 同样不可靠：
+100% AI 场景下 warn=pass（#ARCH-PREVENTABILITY-LAYER-001），AI 会忽略 warning
+继续提交裸 subprocess，故 P2 升级为 fail-closed 硬阻断。
 
-治本方案（本 gate，warn-only Phase 1）
+治本方案（本 gate，fail-closed P2）
 ---------------------------------------
 1. AST 精确检测：ast.walk + ast.Attribute(attr in run/Popen/check_output/check_call)
    + func.value.id == 'subprocess'（或 import alias）
-2. 只检测 added 行：存量违规由人工排查，gate 只防新增
-3. warn-only：对标 GIT-CALL-BUDGET 渐进策略——P1 warn-only 建立检测能力 +
-   数据收集，P2（未来）升级 block
+2. 只检测 added 行：存量违规由人工排查，gate 只防新增（added-lines 机制 = 事实基线，
+   翻转 fail-closed 不会阻断 171 处存量）
+3. fail-closed：检出违规返回 (False, detail) 阻断 commit——对标其余 5 个
+   fail-closed 门禁（zephyr_env/asyncio/open/mutable-Final/mcp-version），
+   补齐 #ARCH-PREVENTABILITY-LAYER-001 第6层最后一块
 4. 6 个文件级例外 + noqa 行级逃生：合法保留场景（检测器自身 / process_pool
    定义点 / git_call_budget_gate AST 检测器 / git_commit_gateway 注释引用）
 
 设计权衡
 --------
-1. **warn-only（P1）**：当前 warn-only 不阻断 commit，先建立检测能力 + 数据收集。
-   P2 升级为 block（INV-001 violation_action=reject_change）。
+1. **fail-closed（P2，2026-07-27 落地）**：检出违规阻断 commit。P1 warn-only 阶段
+   已建立检测能力 + 数据收集；现升级为 block（INV-001 violation_action=reject_change）。
+   只扫 added 行确保不阻断存量 171 处的 CI。
 2. **AST 精确检测**：比正则更准确，天然不检测字符串/注释内的 subprocess.run 引用
 3. **只检测 added 行**：存量违规由人工排查，gate 只防新增
-4. **priority=108**：在 IMPORT-INTEGRITY=107 之后，CAPABILITY-LOOKUP-REQUIRED=110 之前，作为第二个 warn-only gate
+4. **priority=108**：在 IMPORT-INTEGRITY=107 之后，CAPABILITY-LOOKUP-REQUIRED=110 之前
 5. **import alias 识别**：`import subprocess as sp; sp.run(...)` 也检测
 
 Usage::
@@ -156,11 +162,12 @@ def _extract_noqa_lines(file_content: str) -> set[int]:
 
 
 def make_bare_subprocess_gate() -> GateSpec:
-    """构造裸 subprocess 调用 warn-only GateSpec。
+    """构造裸 subprocess 调用 fail-closed GateSpec。
 
     Returns:
         GateSpec(gate_id="BARE-SUBPROCESS", priority=108)。
-        warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
+        fail-closed：检出违规返回 (False, detail)，阻断 commit。
+        2026-07-27 P2 升级（warn-only → fail-closed）。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -207,7 +214,7 @@ def make_bare_subprocess_gate() -> GateSpec:
 
         if warnings:
             detail = (
-                "BARE-SUBPROCESS (warn-only)：检测到裸 subprocess.run/Popen/check_output/check_call 调用，\n"
+                "BARE-SUBPROCESS：检测到裸 subprocess.run/Popen/check_output/check_call 调用，\n"
                 "  违反铁律 trae_067 RULE-EIGHTEEN-INV-001 CREATE_NO_WINDOW 强制——\n"
                 "  裸 subprocess 在 Windows 上会创建控制台窗口闪现。\n"
                 + "\n".join(warnings)
@@ -216,8 +223,8 @@ def make_bare_subprocess_gate() -> GateSpec:
                 "run_subprocess_hidden(cmd, **kwargs)"
                 + "\n-> 逃生通道：行尾加 `# noqa: bare-subprocess  <reason>` 注释（reason >= 10 字符）"
             )
-            logger.warning("BARE-SUBPROCESS gate warn:\n%s", detail)
-            return True, detail  # warn-only：passed=True 不阻断
+            logger.error("BARE-SUBPROCESS gate block:\n%s", detail)
+            return False, detail  # fail-closed：passed=False 阻断 commit
         return True, ""
 
     return GateSpec(gate_id="BARE-SUBPROCESS", check=_check, priority=108)

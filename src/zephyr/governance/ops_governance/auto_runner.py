@@ -35,7 +35,7 @@ from typing import Any
 
 import psycopg2
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.governance.depgraph_schema import PgConnectionProvider, get_depgraph_pg_connection
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,11 @@ class GovernanceAutoRunner:
             print("ok")
     """
 
-    def __init__(self) -> None:
+    def __init__(self, pg_conn_provider: PgConnectionProvider | None = None) -> None:
+        # #ARCH-DI-SEAM-001 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
+        self._pg_conn_provider: PgConnectionProvider = (
+            pg_conn_provider if pg_conn_provider is not None else get_depgraph_pg_connection
+        )
         self._result = AutoRunnerResult()
         self._resources: list[Any] = []
         self._temp_files: list[Path] = []
@@ -200,7 +204,7 @@ class GovernanceAutoRunner:
         P2迁移后：从 SQLite 切换到 PostgreSQL，使用 psycopg2 cursor 模式。
         """
         try:
-            conn = get_depgraph_pg_connection(autocommit=False)
+            conn = self._pg_conn_provider(autocommit=False)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
             # 5.170.1 修复: 审计日志 PG 连接失败属于系统级故障, 应为 error 而非 warning
             logger.error("_write_audit_log: PG 连接失败: %s", e)
@@ -240,7 +244,10 @@ class GovernanceAutoRunner:
         self._temp_files.append(path)
 
     @staticmethod
-    def get_gates_by_event(event_type: str) -> list[str]:
+    def get_gates_by_event(
+        event_type: str,
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝
+    ) -> list[str]:
         """从 depgraph (PostgreSQL) 查询指定 event_driven 触发器的 gate 列表.
 
         全景图是项目真源——event_driven 配置存储在 gates 表 event_driven 列。
@@ -249,12 +256,14 @@ class GovernanceAutoRunner:
         Args:
             event_type: 事件类型（always/on_commit/on_file_change/on_session_start/
                         on_session_end/on_rule_change）
+            pg_conn_provider: PG 连接提供者（DIP），默认 None 时使用 get_depgraph_pg_connection
 
         Returns:
             list[str]: 匹配的 gate_id 列表；DB不可用时返回空列表
         """
+        provider: PgConnectionProvider = pg_conn_provider or get_depgraph_pg_connection
         try:
-            conn = get_depgraph_pg_connection(autocommit=True)
+            conn = provider(autocommit=True)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
             logger.warning("get_gates_by_event(%s) PG 连接失败: %s", event_type, e)
             return []
@@ -276,10 +285,13 @@ class GovernanceAutoRunner:
             conn.close()
 
     @staticmethod
-    def get_all_event_types() -> list[str]:
+    def get_all_event_types(
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝
+    ) -> list[str]:
         """从 depgraph (PostgreSQL) 查询所有非空的 event_driven 类型。"""
+        provider: PgConnectionProvider = pg_conn_provider or get_depgraph_pg_connection
         try:
-            conn = get_depgraph_pg_connection(autocommit=True)
+            conn = provider(autocommit=True)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
             logger.warning("get_all_event_types PG 连接失败: %s", e)
             return []

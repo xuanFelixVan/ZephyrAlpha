@@ -17,7 +17,7 @@
   - import subprocess as sp 别名识别
   - 非 subprocess 模块调用豁免
 - TestGatewayIntegration: mock gateway 流程
-  - 新增 .py 含裸 subprocess.run → warn-only（passed=True + detail）
+  - 新增 .py 含裸 subprocess.run → 阻断（passed=False + detail）  [fail-closed, 2026-07-27 P2 升级]
   - 新增 .py 安全（无 subprocess 调用）→ 放行（passed=True + 空 detail）
   - tests/ 豁免
   - 文件级豁免（process_pool.py / _diff_helpers.py 等）
@@ -233,8 +233,8 @@ class TestExtractNoqaLines:
 # TestGatewayIntegration — mock gateway 流程
 # ---------------------------------------------------------------------------
 class TestGatewayIntegration:
-    def test_detects_bare_subprocess_run_warn_only(self):
-        """新增 .py 含裸 subprocess.run → warn-only（passed=True + detail）"""
+    def test_detects_bare_subprocess_run_blocks(self):
+        """新增 .py 含裸 subprocess.run → 阻断（passed=False + detail）  [fail-closed P2]"""
         content = 'import subprocess\nsubprocess.run(["ls"])\n'
         gw = _make_gateway(
             staged_files=["src/foo.py"],
@@ -242,7 +242,7 @@ class TestGatewayIntegration:
         )
         gate = make_bare_subprocess_gate()
         passed, detail = gate.check(gw, ["src/foo.py"])
-        assert passed is True  # warn-only 不阻断
+        assert passed is False  # fail-closed 阻断 commit
         assert "BARE-SUBPROCESS" in detail
         assert "trae_067" in detail
         assert "src/foo.py:2" in detail
@@ -377,7 +377,7 @@ class TestGatewayIntegration:
         )
         gate = make_bare_subprocess_gate()
         passed, detail = gate.check(gw, ["src/foo.py"])
-        assert passed is True
+        assert passed is False  # fail-closed 阻断
         assert "src/foo.py:2" in detail
         assert "src/foo.py:3" in detail
         assert "src/foo.py:4" in detail
@@ -391,5 +391,5 @@ class TestGatewayIntegration:
         )
         gate = make_bare_subprocess_gate()
         passed, detail = gate.check(gw, ["src/foo.py"])
-        assert passed is True
+        assert passed is False  # fail-closed 阻断
         assert "src/foo.py:2" in detail

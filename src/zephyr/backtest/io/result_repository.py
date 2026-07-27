@@ -47,7 +47,7 @@ from zephyr.backtest.io.backtest_result_sink import (
     BenchmarkPoint,
 )
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.utils.time_utils import now_utc
+from zephyr.shared.utils.time_utils import now_utc, now_utc_str
 
 
 class ArtifactNotFoundError(Exception):
@@ -139,9 +139,9 @@ def save_artifact(
     storage = storage_path or _default_storage_path()
     storage.mkdir(parents=True, exist_ok=True)
 
-    # 填充 created_at（如果未设置）
+    # 填充 created_at（如果未设置）——用 now_utc_str()（空格分隔，SSoT 存储契约，AGENTS.md §11.1.1 / time_utils.now_utc_str）
     if not artifact.created_at:
-        artifact = replace(artifact, created_at=now_utc().isoformat())
+        artifact = replace(artifact, created_at=now_utc_str())
 
     file_path = storage / f"{artifact.run_id}.json"
     with open(file_path, "w", encoding="utf-8") as f:

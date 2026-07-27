@@ -88,7 +88,7 @@ import atexit
 import os
 import threading
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 from urllib.parse import unquote, urlparse
 
 import psycopg2
@@ -1607,6 +1607,43 @@ def get_depgraph_pg_connection(
 
 # 原 get_db_connection 废弃别名已删除（5.61.7+5.1.5#2 治本：全仓零活跃调用点）。
 # 禁止恢复——与 SQLite 同名函数冲突（AGENTS.md §11.4 的历史描述以本代码为准）。
+
+
+# ---------------------------------------------------------------------------
+# PgConnectionProvider Protocol（#ARCH-DI-SEAM-001 DIP 注入缝，2026-07-27 立项）
+# ---------------------------------------------------------------------------
+# 治本：抽象 get_depgraph_pg_connection 的调用契约，使 RuleLoader /
+# GovernanceAutoRunner 等高层模块可在测试中注入 mock 连接提供者，不依赖真实 PG。
+# 100% AI 开发场景下，AI 写测试时无法 mock 模块级硬编码的 get_depgraph_pg_connection，
+# 导致 DB 失败路径（如 RuleLoader 回退到 YAML 扫描）无测试覆盖，是幻觉温床。
+#
+# 设计：Protocol（structural subtyping）而非 ABC——零运行时开销，无需继承声明，
+# get_depgraph_pg_connection 本身就满足此 Protocol 契约（duck typing 自动适配）。
+# 仅抽象调用方实际使用的参数子集（autocommit / read_only），完整签名仍由
+# get_depgraph_pg_connection 保留。
+@runtime_checkable
+class PgConnectionProvider(Protocol):
+    """PG 连接提供者契约（DIP 注入缝）。
+
+    任何可调用对象（函数 / lambda / 实现了 __call__ 的类）只要接受
+    autocommit / read_only 关键字参数并返回 psycopg2.extensions.connection，
+    即满足此契约。
+
+    默认实现：get_depgraph_pg_connection（生产环境）
+    测试替身：lambda **kw: MockConnection(...)（单元测试）
+    """
+
+    def __call__(
+        self,
+        *,
+        autocommit: bool | None = None,
+        read_only: bool = True,
+    ) -> "psycopg2.extensions.connection":
+        ...
+
+
+# 默认提供者 = get_depgraph_pg_connection（保持向后兼容）
+_DEFAULT_PG_CONN_PROVIDER: PgConnectionProvider = get_depgraph_pg_connection
 
 
 def table_names(db_path: Path | str | None = None) -> list[str]:

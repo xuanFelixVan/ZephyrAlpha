@@ -39,7 +39,7 @@ import psycopg2
 import yaml
 from psycopg2.extras import RealDictCursor
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.governance.depgraph_schema import PgConnectionProvider, get_depgraph_pg_connection
 
 
 def _find_project_root() -> Path:
@@ -89,10 +89,15 @@ class RuleLoader:
         self,
         db_path: str | Path | None = None,  # 保留向后兼容（PG模式下忽略，治本2026-06-27删除_DB_PATH常量）
         rules_dir: str | Path | None = None,
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
     ) -> None:
         self._rules_dir = Path(rules_dir) if rules_dir else _RULES_DIR
         self._cache: dict[str, dict[str, Any]] = {}
         self._db_available: bool | None = None
+        # DIP：默认使用 get_depgraph_pg_connection（生产），测试可注入 mock provider
+        self._pg_conn_provider: PgConnectionProvider = (
+            pg_conn_provider if pg_conn_provider is not None else get_depgraph_pg_connection
+        )
 
     def _get_conn(self) -> _PgConnExecuteWrapper | None:
         """获取 PG 连接，验证 rule_bindings 表存在且有数据。
@@ -103,7 +108,7 @@ class RuleLoader:
         if self._db_available is False:
             return None
         try:
-            conn = _PgConnExecuteWrapper(get_depgraph_pg_connection(autocommit=True))
+            conn = _PgConnExecuteWrapper(self._pg_conn_provider(autocommit=True))
             # 检查 rule_bindings 表存在
             cursor = conn.execute("""
                 SELECT table_name
