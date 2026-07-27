@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-FACTOR-ANA-09 因子归因测试——纯函数模块（无 IO 依赖）。
 
 覆盖：

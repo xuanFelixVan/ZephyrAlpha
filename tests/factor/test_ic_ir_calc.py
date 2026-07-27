@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ic_ir_calc 模块测试——批量 IC/IR 计算器。"""
 from __future__ import annotations
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_lifecycle_state_machine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_lifecycle_state_machine
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

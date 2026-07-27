@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """D-FACTOR-ANA-06 分层回测测试——纯函数模块（无 IO 依赖）。
 
 覆盖：

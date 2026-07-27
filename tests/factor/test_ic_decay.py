@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ic_decay 模块测试——IC 衰减分析与半衰期计算。"""
 from __future__ import annotations
 

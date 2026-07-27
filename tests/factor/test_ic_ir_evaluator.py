@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ic_ir_evaluator 模块测试——多因子评估报告器。"""
 from __future__ import annotations
 
