@@ -20,8 +20,9 @@
 #
 # DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
 #   Registers BOTH watchdog tasks (scheduler + tick_subscriber).
-#   Legacy Startup folder .bat/.lnk entries may also exist - harmless: the single-instance lock
-#   arbitrates (losers exit immediately). Task Scheduler watchdog is the authoritative mechanism.
+#   Task Scheduler watchdog is the SOLE entry (legacy Startup .lnk/.bat removed 2026-07-27:
+#   redundant with this watchdog + flashed console windows). Single-instance lock = defense-in-depth.
+#   See docs/03_modules/_domain_data/boot_autostart_architecture.md.
 #
 # IMPORTANT for AI sessions: to (re)start service, use `schtasks /run /tn ZephyrAlpha_DataScheduler`
 #   (Task Scheduler detaches from IDE terminal job objects). NEVER Start-Process this guard from an
