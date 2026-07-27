@@ -183,9 +183,9 @@ class TestConcurrentMvDifferentDirs:
             env = os.environ.copy()
             env["ZEPHYR_SESSION_ID"] = session_id
             env.pop(MV_STRATEGY_ENV, None)  # 默认 block
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._get_session_id", return_value=session_id):
-                    with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.get_session_id", return_value=session_id):
+                    with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                         with patch.dict(os.environ, env, clear=False):
                             code = check_and_execute(["mv", source, dest])
             with results_lock:
@@ -213,8 +213,8 @@ class TestConcurrentMvDifferentDirs:
         results: list[int] = []
 
         def ai_session(source: str, dest: str):
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._passthrough", return_value=0):
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.passthrough", return_value=0):
                     code = check_and_execute(["mv", source, dest])
             results.append(code)
 
@@ -245,9 +245,9 @@ class TestConcurrentMvSameDir:
 
         def ai_session(session_id: str, dest: str):
             barrier.wait()  # 确保真正并发
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._get_session_id", return_value=session_id):
-                    with patch("scripts.git_guard._passthrough", return_value=0):
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.get_session_id", return_value=session_id):
+                    with patch("scripts.git_guard.passthrough", return_value=0):
                         code = check_and_execute(["mv", "dir_a", dest])
             with results_lock:
                 results.append(code)
@@ -280,9 +280,9 @@ class TestMvWithConcurrentWrite:
         mv_result: list[int] = []
 
         def ai_b_mv():
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._get_session_id", return_value="session-b"):
-                    with patch("scripts.git_guard._passthrough", return_value=0):
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.get_session_id", return_value="session-b"):
+                    with patch("scripts.git_guard.passthrough", return_value=0):
                         code = check_and_execute(["mv", "dir_a", "new_dir_a"])
             mv_result.append(code)
             mv_done.set()
@@ -320,12 +320,12 @@ class TestMvWithLockConflict:
         repo = repo_with_dirs
         _add_lock(repo, "dir_a/a.py", "session-a")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-b"):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-b"):
                 # mv 检测到未跟踪文件会先阻断；若无未跟踪文件，_extract_files_mv 返回 []
                 # 所以锁冲突不会通过 mv 路径检测（extractor 返回空）
                 # 这里验证 mv 路径的行为：无未跟踪文件 → 透传
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                     code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
         # 无未跟踪文件 → 透传（锁冲突由 reset/checkout 路径检测，mv 路径不检测锁）
@@ -339,9 +339,9 @@ class TestMvWithLockConflict:
         _add_lock(repo, "dir_a/a.py", "session-a")
         _add_untracked(repo, "dir_a/untracked.py")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-b"):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-b"):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                     code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
         assert code == 1, "有未跟踪文件应被阻断"
@@ -361,8 +361,8 @@ class TestMvNestedUntracked:
         repo = repo_with_dirs
         _add_untracked(repo, "dir_a/sub/deep/nested.py", "deep content")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
         assert code == 1, "嵌套未跟踪文件应被检测到"
@@ -377,7 +377,7 @@ class TestMvNestedUntracked:
         _add_untracked(repo, "dir_a/sub/l2.py")
         _add_untracked(repo, "dir_a/sub/deep/l3.py")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
             untracked = _scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 3, f"应检测到 3 个未跟踪文件，实际: {untracked}"
@@ -399,7 +399,7 @@ class TestMvSpecialChars:
         repo = repo_with_dirs
         _add_untracked(repo, "dir_a/中文报告.md", "中文内容")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
             untracked = _scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 1
@@ -410,7 +410,7 @@ class TestMvSpecialChars:
         repo = repo_with_dirs
         _add_untracked(repo, "dir_a/file with space.py", "space content")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
             untracked = _scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 1
@@ -421,7 +421,7 @@ class TestMvSpecialChars:
         repo = repo_with_dirs
         _add_untracked(repo, "dir_a/报告 (最终版).md", "mixed")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
             untracked = _scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 1
@@ -446,7 +446,7 @@ class TestMvGitignoreFiles:
         # 创建被 ignore 的文件
         _add_untracked(repo, "dir_a/debug.log", "log content")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
             untracked = _scan_untracked_in_dir("dir_a", repo)
 
         # git status --porcelain --untracked-files=all 会显示 ignored 文件吗？
@@ -475,9 +475,9 @@ class TestMvStrategyMoveE2E:
         _add_untracked(repo, "dir_a/sub/untracked2.py", "content2")
 
         env = {MV_STRATEGY_ENV: "move", "ZEPHYR_SESSION_ID": "session-b"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-b"):
-                with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-b"):
+                with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                     with patch.dict(os.environ, env, clear=False):
                         code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
@@ -495,8 +495,8 @@ class TestMvStrategyMoveE2E:
         _add_untracked(repo, "dir_a/data.txt", original_content)
 
         env = {MV_STRATEGY_ENV: "move"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                 with patch.dict(os.environ, env, clear=False):
                     code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
@@ -520,9 +520,9 @@ class TestMvStrategyStageE2E:
         _add_untracked(repo, "dir_a/file2.py", "content2")
 
         env = {MV_STRATEGY_ENV: "stage", "ZEPHYR_SESSION_ID": "session-b"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-b"):
-                with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-b"):
+                with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                     with patch.dict(os.environ, env, clear=False):
                         code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
@@ -545,9 +545,9 @@ class TestMvStrategyStageE2E:
         _add_untracked(repo, "dir_a/temp.py", "temp")
 
         env = {MV_STRATEGY_ENV: "stage", "ZEPHYR_SESSION_ID": "session-c"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-c"):
-                with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-c"):
+                with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                     with patch.dict(os.environ, env, clear=False):
                         check_and_execute(["mv", "dir_a", "new_dir_a"])
 
@@ -569,8 +569,8 @@ class TestMvStrategyForce:
         _add_untracked(repo, "dir_a/untracked.py", "content")
 
         env = {MV_STRATEGY_ENV: "force"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 with patch.dict(os.environ, env, clear=False):
                     code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
@@ -584,8 +584,8 @@ class TestMvStrategyForce:
 
         for variant in ["FORCE", "Force", "FORCE"]:
             env = {MV_STRATEGY_ENV: variant}
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                     with patch.dict(os.environ, env, clear=False):
                         code = check_and_execute(["mv", "dir_a", "new_dir_a"])
             assert code == 0, f"{variant} 应等效于 force"
@@ -612,7 +612,7 @@ class TestMultipleAiCreateUntracked:
             for f in futures:
                 f.result(timeout=10)
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
             untracked = _scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 3, f"应检测到 3 个文件，实际: {untracked}"
@@ -632,8 +632,8 @@ class TestMultipleAiCreateUntracked:
             scan_done.wait(timeout=5)
             _add_untracked(repo, "dir_a/after_scan.py", "late")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 # 启动 late writer
                 t = threading.Thread(target=late_writer)
                 t.start()
@@ -663,8 +663,8 @@ class TestMvOldDirResidue:
         repo = repo_with_dirs
         _add_untracked(repo, "dir_a/keep.py", "keep")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "dir_a", "new_dir_a"])
 
         assert code == 1
@@ -682,8 +682,8 @@ class TestMvOldDirResidue:
         _add_untracked(repo, "dir_a/move_me.py", "move")
 
         env = {MV_STRATEGY_ENV: "move"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                 with patch.dict(os.environ, env, clear=False):
                     check_and_execute(["mv", "dir_a", "new_dir_a"])
 
@@ -710,8 +710,8 @@ class TestConcurrentNoDeadlock:
         results_lock = threading.Lock()
 
         def ai_session(ai_id: int):
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._passthrough", return_value=0):
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.passthrough", return_value=0):
                     code = check_and_execute(["mv", f"dir_{ai_id}", f"new_dir_{ai_id}"])
             with results_lock:
                 results.append(code)
@@ -736,9 +736,9 @@ class TestConcurrentNoDeadlock:
 
         def ai_session(ai_id: int, strategy: str):
             env = {MV_STRATEGY_ENV: strategy, "ZEPHYR_SESSION_ID": f"session-{ai_id}"}
-            with patch("scripts.git_guard._get_project_root", return_value=repo):
-                with patch("scripts.git_guard._get_session_id", return_value=f"session-{ai_id}"):
-                    with patch("scripts.git_guard._passthrough", return_value=0):
+            with patch("scripts.git_guard.get_project_root", return_value=repo):
+                with patch("scripts.git_guard.get_session_id", return_value=f"session-{ai_id}"):
+                    with patch("scripts.git_guard.passthrough", return_value=0):
                         with patch.dict(os.environ, env, clear=False):
                             code = check_and_execute(["mv", f"dir_{ai_id}", f"new_dir_{ai_id}"])
             with results_lock:
@@ -765,8 +765,8 @@ class TestMvEdgeCases:
     def test_mv_file_not_dir(self, repo_with_dirs):
         """git mv 文件（非目录）→ 透传（不扫描未跟踪文件）。"""
         repo = repo_with_dirs
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "dir_a/a.py", "new_a.py"])
 
         assert code == 0, "文件 mv 应透传"
@@ -775,7 +775,7 @@ class TestMvEdgeCases:
     def test_mv_not_enough_args(self, repo_with_dirs):
         """git mv 无足够参数 → 透传。"""
         repo = repo_with_dirs
-        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
             code = check_and_execute(["mv"])
 
         assert code == 0
@@ -784,8 +784,8 @@ class TestMvEdgeCases:
     def test_mv_one_arg(self, repo_with_dirs):
         """git mv 只有一个参数 → 透传。"""
         repo = repo_with_dirs
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "dir_a"])
 
         assert code == 0
@@ -794,8 +794,8 @@ class TestMvEdgeCases:
     def test_mv_nonexistent_source(self, repo_with_dirs):
         """git mv 不存在的源 → 透传（让 git 报错）。"""
         repo = repo_with_dirs
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=1) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=1) as mock_pt:
                 code = check_and_execute(["mv", "nonexistent_dir", "new_dir"])
 
         assert code == 1  # git 报错返回 1
@@ -807,8 +807,8 @@ class TestMvEdgeCases:
         # 但如果目录有已跟踪文件但无未跟踪文件 → 透传
         _add_tracked_dir(repo, "clean_dir", {"f.py": "c"})
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "clean_dir", "new_clean_dir"])
 
         assert code == 0, "干净目录应透传"
@@ -819,8 +819,8 @@ class TestMvEdgeCases:
         repo = repo_with_dirs
         _add_untracked(repo, "dir_a/untracked.py")
 
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "-f", "dir_a", "new_dir_a"])
 
         assert code == 1, "带 flag 也应检测未跟踪文件"
@@ -847,8 +847,8 @@ class TestRealIncidentScenario:
         )
 
         # AI-B 执行目录重命名
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pt:
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
                 code = check_and_execute(["mv", "3_治理报告", "03_governance_reports"])
 
         # block 策略 → 阻断，文件保留
@@ -869,8 +869,8 @@ class TestRealIncidentScenario:
         )
 
         env = {MV_STRATEGY_ENV: "move"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                 with patch.dict(os.environ, env, clear=False):
                     code = check_and_execute(["mv", "3_治理报告", "03_governance_reports"])
 
@@ -885,9 +885,9 @@ class TestRealIncidentScenario:
         _add_untracked(repo, "3_治理报告/orphan_cleanup_audit.md", "# 审计\n")
 
         env = {MV_STRATEGY_ENV: "stage", "ZEPHYR_SESSION_ID": "session-b"}
-        with patch("scripts.git_guard._get_project_root", return_value=repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-b"):
-                with patch("scripts.git_guard._passthrough", side_effect=_make_e2e_passthrough(repo)):
+        with patch("scripts.git_guard.get_project_root", return_value=repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-b"):
+                with patch("scripts.git_guard.passthrough", side_effect=_make_e2e_passthrough(repo)):
                     with patch.dict(os.environ, env, clear=False):
                         code = check_and_execute(["mv", "3_治理报告", "03_governance_reports"])
 

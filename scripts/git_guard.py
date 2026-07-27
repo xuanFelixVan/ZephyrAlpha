@@ -135,13 +135,18 @@ MV_STRATEGY_ENV = "ZEPHYR_MV_STRATEGY"
 SESSION_ID_ENV = "ZEPHYR_SESSION_ID"
 
 
-def _get_session_id() -> str:
-    """获取当前 session_id，用于区分自己 vs 其他 session 的锁。"""
+def get_session_id() -> str:
+    """获取当前 session_id，用于区分自己 vs 其他 session 的锁（Stage 4 公共化，primary）。"""
     return os.environ.get(SESSION_ID_ENV, "git-guard-unknown")
 
 
-def _get_project_root() -> Path:
-    """获取 git 仓库根目录。"""
+def _get_session_id() -> str:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return get_session_id()
+
+
+def get_project_root() -> Path:
+    """获取 git 仓库根目录（Stage 4 公共化，primary）。"""
     try:
         result = subprocess.run(
             ["git", "rev-parse", "--show-toplevel"],
@@ -154,8 +159,13 @@ def _get_project_root() -> Path:
         return Path.cwd()
 
 
-def _run_git_silent(args: list[str]) -> str:
-    """静默执行 git 命令，返回输出。"""
+def _get_project_root() -> Path:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return get_project_root()
+
+
+def run_git_silent(args: list[str]) -> str:
+    """静默执行 git 命令，返回输出（Stage 4 公共化，primary）。"""
     try:
         result = subprocess.run(
             ["git"] + args,
@@ -168,12 +178,17 @@ def _run_git_silent(args: list[str]) -> str:
         return ""
 
 
+def _run_git_silent(args: list[str]) -> str:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return run_git_silent(args)
+
+
 def _extract_files_reset(args: list[str]) -> list[str]:
     """git reset --hard → 所有 tracked 文件。"""
     # 只有 --hard 才危险（--soft/--mixed 只动 index）
     if "--hard" not in args:
         return []
-    return [f for f in _run_git_silent(["ls-files"]).split("\n") if f]
+    return [f for f in run_git_silent(["ls-files"]).split("\n") if f]
 
 
 def _extract_files_checkout(args: list[str]) -> list[str]:
@@ -190,15 +205,15 @@ def _extract_files_checkout(args: list[str]) -> list[str]:
     positional = [a for a in args if not a.startswith("-")]
     if len(positional) <= 1:
         # 可能是分支切换，检查所有 tracked 文件
-        return [f for f in _run_git_silent(["ls-files"]).split("\n") if f]
+        return [f for f in run_git_silent(["ls-files"]).split("\n") if f]
     # 多个位置参数，可能是文件列表
     return positional[1:]
 
 
 def _extract_files_stash(args: list[str]) -> list[str]:
     """git stash → 所有未提交文件（unstaged + staged）。"""
-    unstaged = [f for f in _run_git_silent(["diff", "--name-only", "HEAD"]).split("\n") if f]
-    staged = [f for f in _run_git_silent(["diff", "--cached", "--name-only"]).split("\n") if f]
+    unstaged = [f for f in run_git_silent(["diff", "--name-only", "HEAD"]).split("\n") if f]
+    staged = [f for f in run_git_silent(["diff", "--cached", "--name-only"]).split("\n") if f]
     return list(set(unstaged + staged))
 
 
@@ -208,7 +223,7 @@ def _extract_files_revert(args: list[str]) -> list[str]:
     if not positional:
         return []
     commit = positional[0]
-    return [f for f in _run_git_silent(["diff", "--name-only", f"{commit}..HEAD"]).split("\n") if f]
+    return [f for f in run_git_silent(["diff", "--name-only", f"{commit}..HEAD"]).split("\n") if f]
 
 
 def _extract_files_restore(args: list[str]) -> list[str]:
@@ -238,14 +253,14 @@ _EXTRACTORS = {
 def _check_conflict_or_passthrough(git_args: list[str], files_in_scope: list[str]) -> int:
     """检查锁冲突，无冲突则透传执行。"""
     if not files_in_scope:
-        return _passthrough(git_args)
-    project_root = _get_project_root()
-    session_id = _get_session_id()
+        return passthrough(git_args)
+    project_root = get_project_root()
+    session_id = get_session_id()
     try:
         conflict = check_rollback_conflict(files_in_scope, session_id, project_root)
     except Exception as e:
         print(f"[GIT-GUARD] 冲突检查内部错误: {e}", file=sys.stderr)
-        return _passthrough(git_args)
+        return passthrough(git_args)
     if conflict.has_conflict:
         print("", file=sys.stderr)
         print("=" * 70, file=sys.stderr)
@@ -262,27 +277,27 @@ def _check_conflict_or_passthrough(git_args: list[str], files_in_scope: list[str
         print("    3. 确认安全后强制执行: ZEPHYR_SESSION_ID=<owner> python scripts/git_guard.py ...", file=sys.stderr)
         print("=" * 70, file=sys.stderr)
         return 1
-    return _passthrough(git_args)
+    return passthrough(git_args)
 
 
 def _handle_stash(git_args: list[str]) -> int:
     """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区。"""
     args = git_args[1:]  # 去掉 'stash'
     if args and args[0] in STASH_READONLY:
-        return _passthrough(git_args)
+        return passthrough(git_args)
     if args and args[0] in STASH_OVERWRITE:
         files_in_scope = _extract_files_stash(args)
         return _check_conflict_or_passthrough(git_args, files_in_scope)
     if args and args[0] == "clear":
         print("[GIT-GUARD] 警告：git stash clear 会删除所有 stash（含未恢复的修改）", file=sys.stderr)
-        return _passthrough(git_args)
+        return passthrough(git_args)
     # push（含无参数 git stash）：会移走未提交修改
     files_in_scope = _extract_files_stash(args)
     if not files_in_scope:
-        return _passthrough(git_args)
+        return passthrough(git_args)
     if _is_gateway_authorized():
         print(f"[GIT-GUARD] stash 授权（{FORCE_STASH_ENV}|{GATEWAY_ENV}），强制 stash {len(files_in_scope)} 个未提交文件", file=sys.stderr)
-        return _passthrough(git_args)
+        return passthrough(git_args)
     print("", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
     print("[GIT-GUARD] git stash 被阻断——会移走未提交的修改", file=sys.stderr)
@@ -305,8 +320,8 @@ def _handle_stash(git_args: list[str]) -> int:
 # ============================================================================
 
 
-def _scan_untracked_in_dir(dir_rel: str, project_root: Path) -> list[str]:
-    """扫描目录中的未跟踪文件（git status --porcelain 筛选 ?? 前缀）。
+def scan_untracked_in_dir(dir_rel: str, project_root: Path) -> list[str]:
+    """扫描目录中的未跟踪文件（git status --porcelain 筛选 ?? 前缀）（Stage 4 公共化，primary）。
 
     Args:
         dir_rel: 相对于 project_root 的目录路径
@@ -338,6 +353,11 @@ def _scan_untracked_in_dir(dir_rel: str, project_root: Path) -> list[str]:
         if norm.startswith(dir_prefix):
             untracked.append(norm)
     return untracked
+
+
+def _scan_untracked_in_dir(dir_rel: str, project_root: Path) -> list[str]:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return scan_untracked_in_dir(dir_rel, project_root)
 
 
 def _mv_strategy_block(
@@ -377,7 +397,7 @@ def _mv_strategy_move(
     执行顺序: 先执行 git mv（移动已跟踪文件）→ 再移动残留的未跟踪文件。
     若 git mv 已重命名整个目录（含未跟踪文件），则源文件不存在，跳过。
     """
-    exit_code = _passthrough(git_args)
+    exit_code = passthrough(git_args)
     if exit_code != 0:
         return exit_code
 
@@ -417,7 +437,7 @@ def _mv_strategy_stage(
 
     执行顺序: 先暂存未跟踪文件（从源目录移除）→ 再执行 git mv（源目录仅剩已跟踪文件）。
     """
-    session_id = _get_session_id()
+    session_id = get_session_id()
     drafts_base = project_root / ".aidrafts" / session_id / "mv_rescue"
     drafts_base.mkdir(parents=True, exist_ok=True)
 
@@ -460,7 +480,7 @@ def _mv_strategy_stage(
         for path, err in failed:
             print(f"    {path}: {err}", file=sys.stderr)
 
-    return _passthrough(git_args)
+    return passthrough(git_args)
 
 
 def _handle_mv(git_args: list[str]) -> int:
@@ -478,26 +498,26 @@ def _handle_mv(git_args: list[str]) -> int:
     args = git_args[1:]
     positional = [a for a in args if not a.startswith("-")]
     if len(positional) < 2:
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     source = positional[0]
     dest = positional[1]
 
-    project_root = _get_project_root()
+    project_root = get_project_root()
     source_path = project_root / source
 
     if not source_path.is_dir():
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
-    untracked = _scan_untracked_in_dir(source, project_root)
+    untracked = scan_untracked_in_dir(source, project_root)
     if not untracked:
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     strategy = os.environ.get(MV_STRATEGY_ENV, "block").lower()
 
     if strategy == "force":
         print(f"[GIT-GUARD] {MV_STRATEGY_ENV}=force，跳过未跟踪文件检查（{len(untracked)} 个）", file=sys.stderr)
-        return _passthrough(git_args)
+        return passthrough(git_args)
     if strategy == "move":
         return _mv_strategy_move(untracked, source, dest, project_root, git_args)
     if strategy == "stage":
@@ -518,19 +538,19 @@ def check_and_execute(git_args: list[str]) -> int:
     """
     if not git_args:
         # 无参数，直接透传
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     subcommand = git_args[0]
 
     # 非危险命令，直接透传
     if subcommand not in DANGEROUS_SUBCOMMANDS:
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     # Fast-path（ARCH-GIT-CALL-BUDGET P1.3）：可信内部调用方已自检，跳过 ls-files
     # 全扫 + 冲突检测，直接透传。仅对 checkout/reset/restore/revert 等危险命令生效；
     # stash/mv 仍走原路径（stash 涉及工作区覆盖语义复杂，mv 涉及未跟踪文件策略）。
     if _is_fast_path_authorized() and subcommand in {"checkout", "reset", "restore", "revert"}:
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     # stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读
     if subcommand == "stash":
@@ -543,22 +563,27 @@ def check_and_execute(git_args: list[str]) -> int:
     # 危险命令，提取文件范围
     extractor = _EXTRACTORS.get(subcommand)
     if extractor is None:
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     try:
         files_in_scope = extractor(git_args[1:])
     except Exception as e:
         print(f"[GIT-GUARD] 内部错误（文件提取失败）: {e}", file=sys.stderr)
-        return _passthrough(git_args)
+        return passthrough(git_args)
 
     # 检查 .ailocks/ 冲突，无冲突则透传
     return _check_conflict_or_passthrough(git_args, files_in_scope)
 
 
-def _passthrough(git_args: list[str]) -> int:
-    """透传给真实 git 执行。"""
+def passthrough(git_args: list[str]) -> int:
+    """透传给真实 git 执行（Stage 4 公共化，primary）。"""
     result = subprocess.call(["git"] + git_args)
     return result
+
+
+def _passthrough(git_args: list[str]) -> int:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return passthrough(git_args)
 
 
 def main() -> int:

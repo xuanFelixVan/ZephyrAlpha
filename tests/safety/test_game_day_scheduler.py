@@ -24,7 +24,7 @@ scheduler_mod = pytest.importorskip(
 )
 GameDayScheduler = scheduler_mod.GameDayScheduler
 ScheduleConflictError = scheduler_mod.ScheduleConflictError
-_TRIGGER_MAP = scheduler_mod._TRIGGER_MAP
+_TRIGGER_MAP = scheduler_mod.TRIGGER_MAP
 
 gameday_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.game_day_runner",
@@ -103,13 +103,13 @@ class TestGameDaySchedulerImport:
         assert hasattr(GameDayScheduler, "next_scheduled")
 
     def test_scheduler_has_should_run_method(self):
-        assert hasattr(GameDayScheduler, "_should_run")
+        assert hasattr(GameDayScheduler, "should_run")
 
     def test_scheduler_has_is_running_method(self):
-        assert hasattr(GameDayScheduler, "_is_running")
+        assert hasattr(GameDayScheduler, "is_running")
 
     def test_scheduler_has_record_run_method(self):
-        assert hasattr(GameDayScheduler, "_record_run")
+        assert hasattr(GameDayScheduler, "record_run")
 
 
 class TestTriggerMap:
@@ -168,8 +168,8 @@ class TestTriggerPerCommit:
 
     def test_trigger_git_push_records_history(self, scheduler):
         scheduler.trigger("git_push")
-        assert len(scheduler._state["history"]) == 1
-        entry = scheduler._state["history"][0]
+        assert len(scheduler.state["history"]) == 1
+        entry = scheduler.state["history"][0]
         assert entry["frequency"] == "per_commit"
 
 
@@ -244,7 +244,7 @@ class TestTriggerFullCycle:
 
     def test_trigger_full_cycle_history_has_four_entries(self, scheduler):
         scheduler.trigger("full_cycle")
-        assert len(scheduler._state["history"]) == 4
+        assert len(scheduler.state["history"]) == 4
 
 
 class TestTriggerUnknown:
@@ -268,55 +268,55 @@ class TestTriggerUnknown:
 
 class TestTriggerOverlapProtection:
     def test_trigger_raises_conflict_when_running(self, scheduler):
-        scheduler._set_running(True)
+        scheduler.set_running(True)
         with pytest.raises(ScheduleConflictError):
             scheduler.trigger("cron_daily")
 
     def test_trigger_raises_conflict_for_git_push_when_running(self, scheduler):
-        scheduler._set_running(True)
+        scheduler.set_running(True)
         with pytest.raises(ScheduleConflictError):
             scheduler.trigger("git_push")
 
     def test_trigger_raises_conflict_for_full_cycle_when_running(self, scheduler):
-        scheduler._set_running(True)
+        scheduler.set_running(True)
         with pytest.raises(ScheduleConflictError):
             scheduler.trigger("full_cycle")
 
     def test_trigger_resets_running_flag_after_success(self, scheduler):
         scheduler.trigger("cron_daily")
-        assert scheduler._is_running() is False
+        assert scheduler.is_running() is False
 
     def test_trigger_resets_running_flag_on_exception(self, scheduler, mock_runner):
         mock_runner.run_game_day.side_effect = RuntimeError("boom")
         with pytest.raises(RuntimeError):
             scheduler.trigger("cron_daily")
-        assert scheduler._is_running() is False
+        assert scheduler.is_running() is False
 
 
 class TestIsRunning:
     def test_is_running_default_false(self, scheduler):
-        assert scheduler._is_running() is False
+        assert scheduler.is_running() is False
 
     def test_set_running_true(self, scheduler):
-        scheduler._set_running(True)
-        assert scheduler._is_running() is True
+        scheduler.set_running(True)
+        assert scheduler.is_running() is True
 
     def test_set_running_false_after_true(self, scheduler):
-        scheduler._set_running(True)
-        scheduler._set_running(False)
-        assert scheduler._is_running() is False
+        scheduler.set_running(True)
+        scheduler.set_running(False)
+        assert scheduler.is_running() is False
 
     def test_set_running_persists_to_state_file(self, scheduler, tmp_path):
-        scheduler._set_running(True)
+        scheduler.set_running(True)
         state_path = tmp_path / "scheduler-state.yaml"
         with open(state_path, encoding="utf-8") as f:
             state = yaml.safe_load(f)
         assert state["running"] is True
 
     def test_set_running_updates_updated_at(self, scheduler):
-        old_updated = scheduler._state.get("updated_at", "")
-        scheduler._set_running(True)
-        assert scheduler._state["updated_at"] != old_updated
+        old_updated = scheduler.state.get("updated_at", "")
+        scheduler.set_running(True)
+        assert scheduler.state["updated_at"] != old_updated
 
 
 # ============================================================
@@ -326,73 +326,73 @@ class TestIsRunning:
 
 class TestShouldRun:
     def test_should_run_true_when_no_last_run(self, scheduler):
-        assert scheduler._should_run(GameDayFrequency.DAILY) is True
+        assert scheduler.should_run(GameDayFrequency.DAILY) is True
 
     def test_should_run_true_when_no_last_run_per_commit(self, scheduler):
-        assert scheduler._should_run(GameDayFrequency.PER_COMMIT) is True
+        assert scheduler.should_run(GameDayFrequency.PER_COMMIT) is True
 
     def test_should_run_true_when_no_last_run_weekly(self, scheduler):
-        assert scheduler._should_run(GameDayFrequency.WEEKLY) is True
+        assert scheduler.should_run(GameDayFrequency.WEEKLY) is True
 
     def test_should_run_true_when_no_last_run_monthly(self, scheduler):
-        assert scheduler._should_run(GameDayFrequency.MONTHLY) is True
+        assert scheduler.should_run(GameDayFrequency.MONTHLY) is True
 
     def test_should_run_false_when_within_daily_interval(self, scheduler):
-        scheduler._state["last_runs"]["daily"] = datetime.now(UTC).isoformat()
-        assert scheduler._should_run(GameDayFrequency.DAILY) is False
+        scheduler.state["last_runs"]["daily"] = datetime.now(UTC).isoformat()
+        assert scheduler.should_run(GameDayFrequency.DAILY) is False
 
     def test_should_run_true_when_past_daily_interval(self, scheduler):
-        scheduler._state["last_runs"]["daily"] = (
+        scheduler.state["last_runs"]["daily"] = (
             datetime.now(UTC) - timedelta(days=2)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.DAILY) is True
+        assert scheduler.should_run(GameDayFrequency.DAILY) is True
 
     def test_should_run_false_when_within_per_commit_interval(self, scheduler):
-        scheduler._state["last_runs"]["per_commit"] = (
+        scheduler.state["last_runs"]["per_commit"] = (
             datetime.now(UTC) - timedelta(minutes=1)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.PER_COMMIT) is False
+        assert scheduler.should_run(GameDayFrequency.PER_COMMIT) is False
 
     def test_should_run_true_when_past_per_commit_interval(self, scheduler):
-        scheduler._state["last_runs"]["per_commit"] = (
+        scheduler.state["last_runs"]["per_commit"] = (
             datetime.now(UTC) - timedelta(minutes=6)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.PER_COMMIT) is True
+        assert scheduler.should_run(GameDayFrequency.PER_COMMIT) is True
 
     def test_should_run_false_when_within_weekly_interval(self, scheduler):
-        scheduler._state["last_runs"]["weekly"] = (
+        scheduler.state["last_runs"]["weekly"] = (
             datetime.now(UTC) - timedelta(days=1)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.WEEKLY) is False
+        assert scheduler.should_run(GameDayFrequency.WEEKLY) is False
 
     def test_should_run_true_when_past_weekly_interval(self, scheduler):
-        scheduler._state["last_runs"]["weekly"] = (
+        scheduler.state["last_runs"]["weekly"] = (
             datetime.now(UTC) - timedelta(days=8)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.WEEKLY) is True
+        assert scheduler.should_run(GameDayFrequency.WEEKLY) is True
 
     def test_should_run_false_when_within_monthly_interval(self, scheduler):
-        scheduler._state["last_runs"]["monthly"] = (
+        scheduler.state["last_runs"]["monthly"] = (
             datetime.now(UTC) - timedelta(days=10)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.MONTHLY) is False
+        assert scheduler.should_run(GameDayFrequency.MONTHLY) is False
 
     def test_should_run_true_when_past_monthly_interval(self, scheduler):
-        scheduler._state["last_runs"]["monthly"] = (
+        scheduler.state["last_runs"]["monthly"] = (
             datetime.now(UTC) - timedelta(days=31)
         ).isoformat()
-        assert scheduler._should_run(GameDayFrequency.MONTHLY) is True
+        assert scheduler.should_run(GameDayFrequency.MONTHLY) is True
 
 
 class TestTriggerShouldRunSkip:
     def test_trigger_skips_when_within_interval(self, scheduler, mock_runner):
-        scheduler._state["last_runs"]["daily"] = datetime.now(UTC).isoformat()
+        scheduler.state["last_runs"]["daily"] = datetime.now(UTC).isoformat()
         results = scheduler.trigger("cron_daily")
         assert results == []
         mock_runner.run_game_day.assert_not_called()
 
     def test_trigger_partial_skip_in_full_cycle(self, scheduler, mock_runner):
-        scheduler._state["last_runs"]["daily"] = datetime.now(UTC).isoformat()
+        scheduler.state["last_runs"]["daily"] = datetime.now(UTC).isoformat()
         results = scheduler.trigger("full_cycle")
         freqs = [r["frequency"] for r in results]
         assert "daily" not in freqs
@@ -454,18 +454,18 @@ class TestHandleWebhook:
 class TestRecordRun:
     def test_record_run_sets_last_run(self, scheduler):
         result = _make_result()
-        scheduler._record_run(GameDayFrequency.DAILY, result)
-        assert "daily" in scheduler._state["last_runs"]
+        scheduler.record_run(GameDayFrequency.DAILY, result)
+        assert "daily" in scheduler.state["last_runs"]
 
     def test_record_run_appends_history(self, scheduler):
         result = _make_result()
-        scheduler._record_run(GameDayFrequency.DAILY, result)
-        assert len(scheduler._state["history"]) == 1
+        scheduler.record_run(GameDayFrequency.DAILY, result)
+        assert len(scheduler.state["history"]) == 1
 
     def test_record_run_history_has_correct_fields(self, scheduler):
         result = _make_result(total=10, blocked=8, bypassed=2)
-        scheduler._record_run(GameDayFrequency.WEEKLY, result)
-        entry = scheduler._state["history"][0]
+        scheduler.record_run(GameDayFrequency.WEEKLY, result)
+        entry = scheduler.state["history"][0]
         assert entry["frequency"] == "weekly"
         assert entry["total"] == 10
         assert entry["blocked"] == 8
@@ -474,14 +474,14 @@ class TestRecordRun:
 
     def test_record_run_history_capped_at_50(self, scheduler):
         result = _make_result()
-        with patch.object(scheduler, "_save_state"):
+        with patch.object(scheduler, "save_state"):
             for _ in range(60):
-                scheduler._record_run(GameDayFrequency.DAILY, result)
-        assert len(scheduler._state["history"]) == 50
+                scheduler.record_run(GameDayFrequency.DAILY, result)
+        assert len(scheduler.state["history"]) == 50
 
     def test_record_run_persists_to_state_file(self, scheduler, tmp_path):
         result = _make_result()
-        scheduler._record_run(GameDayFrequency.DAILY, result)
+        scheduler.record_run(GameDayFrequency.DAILY, result)
         state_path = tmp_path / "scheduler-state.yaml"
         with open(state_path, encoding="utf-8") as f:
             state = yaml.safe_load(f)
@@ -491,13 +491,13 @@ class TestRecordRun:
     def test_record_run_overwrites_last_run_for_same_frequency(self, scheduler):
         result1 = _make_result(total=3, blocked=2, bypassed=1)
         result2 = _make_result(total=7, blocked=6, bypassed=1)
-        scheduler._record_run(GameDayFrequency.DAILY, result1)
-        scheduler._record_run(GameDayFrequency.DAILY, result2)
-        assert len(scheduler._state["history"]) == 2
-        assert scheduler._state["history"][0]["total"] == 3
-        assert scheduler._state["history"][1]["total"] == 7
-        assert "daily" in scheduler._state["last_runs"]
-        daily_keys = [k for k in scheduler._state["last_runs"] if k == "daily"]
+        scheduler.record_run(GameDayFrequency.DAILY, result1)
+        scheduler.record_run(GameDayFrequency.DAILY, result2)
+        assert len(scheduler.state["history"]) == 2
+        assert scheduler.state["history"][0]["total"] == 3
+        assert scheduler.state["history"][1]["total"] == 7
+        assert "daily" in scheduler.state["last_runs"]
+        daily_keys = [k for k in scheduler.state["last_runs"] if k == "daily"]
         assert len(daily_keys) == 1
 
 
@@ -515,28 +515,28 @@ class TestNextScheduled:
 
     def test_next_scheduled_daily_one_day_after_last(self, scheduler):
         last = datetime.now(UTC) - timedelta(hours=1)
-        scheduler._state["last_runs"]["daily"] = last.isoformat()
+        scheduler.state["last_runs"]["daily"] = last.isoformat()
         next_run = scheduler.next_scheduled(GameDayFrequency.DAILY)
         expected = last + timedelta(days=1)
         assert abs((next_run - expected).total_seconds()) < 10
 
     def test_next_scheduled_weekly_seven_days_after_last(self, scheduler):
         last = datetime.now(UTC) - timedelta(hours=1)
-        scheduler._state["last_runs"]["weekly"] = last.isoformat()
+        scheduler.state["last_runs"]["weekly"] = last.isoformat()
         next_run = scheduler.next_scheduled(GameDayFrequency.WEEKLY)
         expected = last + timedelta(days=7)
         assert abs((next_run - expected).total_seconds()) < 10
 
     def test_next_scheduled_monthly_thirty_days_after_last(self, scheduler):
         last = datetime.now(UTC) - timedelta(hours=1)
-        scheduler._state["last_runs"]["monthly"] = last.isoformat()
+        scheduler.state["last_runs"]["monthly"] = last.isoformat()
         next_run = scheduler.next_scheduled(GameDayFrequency.MONTHLY)
         expected = last + timedelta(days=30)
         assert abs((next_run - expected).total_seconds()) < 10
 
     def test_next_scheduled_per_commit_five_minutes_after_last(self, scheduler):
         last = datetime.now(UTC) - timedelta(minutes=1)
-        scheduler._state["last_runs"]["per_commit"] = last.isoformat()
+        scheduler.state["last_runs"]["per_commit"] = last.isoformat()
         next_run = scheduler.next_scheduled(GameDayFrequency.PER_COMMIT)
         expected = last + timedelta(minutes=5)
         assert abs((next_run - expected).total_seconds()) < 10
@@ -577,9 +577,9 @@ class TestStateLoadSave:
             "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"
         ):
             sched = GameDayScheduler(state_path=state_path)
-        assert sched._state["running"] is False
-        assert sched._state["last_runs"] == {}
-        assert sched._state["history"] == []
+        assert sched.state["running"] is False
+        assert sched.state["last_runs"] == {}
+        assert sched.state["history"] == []
         assert state_path.exists()
 
     def test_load_state_reads_existing(self, tmp_path):
@@ -597,12 +597,12 @@ class TestStateLoadSave:
             "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"
         ):
             sched = GameDayScheduler(state_path=state_path)
-        assert sched._state["running"] is True
-        assert "daily" in sched._state["last_runs"]
+        assert sched.state["running"] is True
+        assert "daily" in sched.state["last_runs"]
 
     def test_save_state_writes_to_file(self, scheduler, tmp_path):
-        scheduler._state["running"] = True
-        scheduler._save_state()
+        scheduler.state["running"] = True
+        scheduler.save_state()
         state_path = tmp_path / "scheduler-state.yaml"
         with open(state_path, encoding="utf-8") as f:
             state = yaml.safe_load(f)
@@ -614,7 +614,7 @@ class TestStateLoadSave:
             "zephyr.security.adversarial_validation.game_day_scheduler.GameDayRunner"
         ):
             sched = GameDayScheduler(state_path=state_path)
-        assert sched._state_path == state_path
+        assert sched.state_path == state_path
 
 
 # ============================================================

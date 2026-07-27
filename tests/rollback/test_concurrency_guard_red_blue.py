@@ -62,11 +62,17 @@ from zephyr.infrastructure.runtime.concurrency_guard import (
 )
 
 # mv 防护相关导入
-from scripts.git_guard import MV_STRATEGY_ENV, _scan_untracked_in_dir
+from scripts.git_guard import MV_STRATEGY_ENV, scan_untracked_in_dir
 
 # ============================================================================
 # Fixtures
 # ============================================================================
+
+
+@pytest.fixture(autouse=True)
+def _isolate_mv_strategy_env(monkeypatch):
+    """每个测试前确保 MV_STRATEGY_ENV 不泄漏（与 test_concurrent_mv_guard.py 同源治本）。"""
+    monkeypatch.delenv(MV_STRATEGY_ENV, raising=False)
 
 
 @pytest.fixture
@@ -168,12 +174,12 @@ class TestRedTeamBlockedByOtherSession:
         """场景1: 其他 session 锁定 → git reset --hard → exit 1"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     # ls-files 返回包含锁定文件的列表
                     mock_git_silent.return_value = "src/important.py\nREADME.md"
-                    with patch("scripts.git_guard._passthrough") as mock_pass:
+                    with patch("scripts.git_guard.passthrough") as mock_pass:
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
         assert exit_code == 1, "git reset --hard 应被阻断"
         mock_pass.assert_not_called()
@@ -182,12 +188,12 @@ class TestRedTeamBlockedByOtherSession:
         """场景2: 其他 session 锁定 → git checkout -- <file> → exit 1"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     # ls-files 返回包含锁定文件的列表
                     mock_git_silent.return_value = "src/important.py\nREADME.md"
-                    with patch("scripts.git_guard._passthrough") as mock_pass:
+                    with patch("scripts.git_guard.passthrough") as mock_pass:
                         exit_code = check_and_execute(["checkout", "--", "src/important.py"])
         assert exit_code == 1, "git checkout -- <file> 应被阻断"
         mock_pass.assert_not_called()
@@ -196,12 +202,12 @@ class TestRedTeamBlockedByOtherSession:
         """场景3: 其他 session 锁定 → git stash → exit 1"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     # diff --name-only HEAD 返回包含锁定文件
                     mock_git_silent.return_value = "src/important.py"
-                    with patch("scripts.git_guard._passthrough") as mock_pass:
+                    with patch("scripts.git_guard.passthrough") as mock_pass:
                         exit_code = check_and_execute(["stash"])
         assert exit_code == 1, "git stash 应被阻断"
         mock_pass.assert_not_called()
@@ -210,12 +216,12 @@ class TestRedTeamBlockedByOtherSession:
         """场景4: 其他 session 锁定 → git revert <commit> → exit 1"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     # diff --name-only <commit>..HEAD 返回锁定文件
                     mock_git_silent.return_value = "src/important.py"
-                    with patch("scripts.git_guard._passthrough") as mock_pass:
+                    with patch("scripts.git_guard.passthrough") as mock_pass:
                         exit_code = check_and_execute(["revert", "abc123"])
         assert exit_code == 1, "git revert 应被阻断"
         mock_pass.assert_not_called()
@@ -224,9 +230,9 @@ class TestRedTeamBlockedByOtherSession:
         """场景5: 其他 session 锁定 → git restore <file> → exit 1"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._passthrough") as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.passthrough") as mock_pass:
                     exit_code = check_and_execute(["restore", "src/important.py"])
         assert exit_code == 1, "git restore 应被阻断"
         mock_pass.assert_not_called()
@@ -244,11 +250,11 @@ class TestBlueTeamAllowedPassthrough:
         """场景6: 本 session 锁定 → git reset --hard → 允许"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/important.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
         assert exit_code == 0, "本 session 锁应允许透传"
         mock_pass.assert_called_once()
@@ -257,11 +263,11 @@ class TestBlueTeamAllowedPassthrough:
         """场景7: 无锁 → git reset --hard → 允许"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/any.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
         assert exit_code == 0, "无锁应允许透传"
         mock_pass.assert_called_once()
@@ -270,9 +276,9 @@ class TestBlueTeamAllowedPassthrough:
         """场景8: 非危险命令 → git status → 允许"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                     exit_code = check_and_execute(["status"])
         assert exit_code == 0, "非危险命令应透传"
         mock_pass.assert_called_once()
@@ -281,9 +287,9 @@ class TestBlueTeamAllowedPassthrough:
         """场景9: git reset --soft → 允许（不危险）"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                     exit_code = check_and_execute(["reset", "--soft", "HEAD~1"])
         assert exit_code == 0, "git reset --soft 应透传"
         mock_pass.assert_called_once()
@@ -292,7 +298,7 @@ class TestBlueTeamAllowedPassthrough:
         """无参数 → 允许透传"""
         from scripts.git_guard import check_and_execute  # noqa: F401 (top-level import)
 
-        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
             exit_code = check_and_execute([])
         assert exit_code == 0
         mock_pass.assert_called_once()
@@ -314,11 +320,11 @@ class TestEdgeCases:
         locks = scan_active_locks(temp_git_repo)
         assert len(locks) == 0, "过期锁应被忽略"
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/important.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
         assert exit_code == 0, "过期锁应允许透传"
         mock_pass.assert_called_once()
@@ -331,11 +337,11 @@ class TestEdgeCases:
         locks = scan_active_locks(temp_git_repo)
         assert len(locks) == 0, "损坏 registry 应返回空列表"
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/any.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
         assert exit_code == 0, "损坏 registry 应安全透传"
         mock_pass.assert_called_once()
@@ -349,11 +355,11 @@ class TestEdgeCases:
 
         shutil.rmtree(temp_git_repo / ".ailocks", ignore_errors=True)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/any.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
         assert exit_code == 0
         mock_pass.assert_called_once()
@@ -376,11 +382,11 @@ class TestConcurrentGuard:
 
         def call_guard():
             try:
-                with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-                    with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                        with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+                with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+                    with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                        with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                             mock_git_silent.return_value = "src/important.py"
-                            with patch("scripts.git_guard._passthrough", return_value=0):
+                            with patch("scripts.git_guard.passthrough", return_value=0):
                                 return check_and_execute(["reset", "--hard", "HEAD~1"])
             except Exception as e:
                 return e
@@ -422,19 +428,19 @@ class TestConcurrentGuard:
         lock = threading.Lock()
 
         def call_reset_locked():
-            with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-                with patch("scripts.git_guard._get_session_id", return_value="session-me"):
-                    with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+            with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+                with patch("scripts.git_guard.get_session_id", return_value="session-me"):
+                    with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                         mock_git_silent.return_value = "src/locked.py"
-                        with patch("scripts.git_guard._passthrough", return_value=0):
+                        with patch("scripts.git_guard.passthrough", return_value=0):
                             return check_and_execute(["reset", "--hard", "HEAD~1"])
 
         def call_reset_free():
-            with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-                with patch("scripts.git_guard._get_session_id", return_value="session-me"):
-                    with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+            with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+                with patch("scripts.git_guard.get_session_id", return_value="session-me"):
+                    with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                         mock_git_silent.return_value = "src/free.py"
-                        with patch("scripts.git_guard._passthrough", return_value=0):
+                        with patch("scripts.git_guard.passthrough", return_value=0):
                             return check_and_execute(["reset", "--hard", "HEAD~1"])
 
         with ThreadPoolExecutor(max_workers=4) as pool:
@@ -479,9 +485,9 @@ class TestEndToEndRealGit:
             ["git", "rev-parse", "HEAD"], cwd=temp_git_repo, capture_output=True, text=True
         ).stdout.strip()
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me-456"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/important.py"
                     exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
 
@@ -519,11 +525,11 @@ class TestEndToEndRealGit:
         def _passthrough_in_temp(git_args):
             return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git_silent:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
                     mock_git_silent.return_value = "src/free.py"
-                    with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+                    with patch("scripts.git_guard.passthrough", side_effect=_passthrough_in_temp):
                         exit_code = check_and_execute(["reset", "--hard", "HEAD~1"])
 
         # 验证透传执行
@@ -587,10 +593,10 @@ class TestStashGuard:
         """stash push 有未提交修改 → 阻断（防止移走修改）"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._run_git_silent") as mock_git:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.run_git_silent") as mock_git:
                 mock_git.return_value = "src/uncommitted.py"
-                with patch("scripts.git_guard._passthrough", return_value=0):
+                with patch("scripts.git_guard.passthrough", return_value=0):
                     exit_code = check_and_execute(["stash"])
         assert exit_code == 1, "有未提交修改时 stash 应被阻断"
 
@@ -598,9 +604,9 @@ class TestStashGuard:
         """stash push 无未提交修改 → 透传（stash 无操作）"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._run_git_silent", return_value=""):
-                with patch("scripts.git_guard._passthrough", return_value=0):
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.run_git_silent", return_value=""):
+                with patch("scripts.git_guard.passthrough", return_value=0):
                     exit_code = check_and_execute(["stash"])
         assert exit_code == 0, "无未提交修改时 stash 应透传"
 
@@ -609,10 +615,10 @@ class TestStashGuard:
         from scripts.git_guard import check_and_execute
 
         monkeypatch.setenv("ZEPHYR_FORCE_STASH", "1")
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._run_git_silent") as mock_git:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.run_git_silent") as mock_git:
                 mock_git.return_value = "src/uncommitted.py"
-                with patch("scripts.git_guard._passthrough", return_value=0):
+                with patch("scripts.git_guard.passthrough", return_value=0):
                     exit_code = check_and_execute(["stash"])
         assert exit_code == 0, "ZEPHYR_FORCE_STASH=1 应强制透传"
 
@@ -620,7 +626,7 @@ class TestStashGuard:
         """stash list → 透传（只读操作）"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
             exit_code = check_and_execute(["stash", "list"])
         assert exit_code == 0, "stash list 应透传"
         assert mock_pass.called, "stash list 应调用 _passthrough"
@@ -629,7 +635,7 @@ class TestStashGuard:
         """stash show → 透传（只读操作）"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
             exit_code = check_and_execute(["stash", "show"])
         assert exit_code == 0
         assert mock_pass.called
@@ -638,11 +644,11 @@ class TestStashGuard:
         """stash pop 有锁冲突 → 阻断（会覆盖工作区文件）"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git:
                     mock_git.return_value = "src/important.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0):
+                    with patch("scripts.git_guard.passthrough", return_value=0):
                         exit_code = check_and_execute(["stash", "pop"])
         assert exit_code == 1, "stash pop 有锁冲突应阻断"
 
@@ -650,11 +656,11 @@ class TestStashGuard:
         """stash pop 无锁冲突 → 透传"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git:
                     mock_git.return_value = "src/free.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0):
+                    with patch("scripts.git_guard.passthrough", return_value=0):
                         exit_code = check_and_execute(["stash", "pop"])
         assert exit_code == 0, "stash pop 无锁冲突应透传"
 
@@ -662,11 +668,11 @@ class TestStashGuard:
         """stash apply 有锁冲突 → 阻断"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-me"):
-                with patch("scripts.git_guard._run_git_silent") as mock_git:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-me"):
+                with patch("scripts.git_guard.run_git_silent") as mock_git:
                     mock_git.return_value = "src/important.py"
-                    with patch("scripts.git_guard._passthrough", return_value=0):
+                    with patch("scripts.git_guard.passthrough", return_value=0):
                         exit_code = check_and_execute(["stash", "apply"])
         assert exit_code == 1, "stash apply 有锁冲突应阻断"
 
@@ -686,9 +692,9 @@ class TestMvGuardMock:
         # 创建源目录（模拟目录存在）
         (temp_git_repo / "old_dir").mkdir(exist_ok=True)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=["old_dir/untracked.md"]):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.scan_untracked_in_dir", return_value=["old_dir/untracked.md"]):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                     exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
         assert exit_code == 1, "源目录有未跟踪文件时 git mv 应被阻断"
         mock_pass.assert_not_called()
@@ -699,9 +705,9 @@ class TestMvGuardMock:
 
         (temp_git_repo / "old_dir").mkdir(exist_ok=True)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=[]):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.scan_untracked_in_dir", return_value=[]):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                     exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
         assert exit_code == 0, "无未跟踪文件应透传"
         mock_pass.assert_called_once()
@@ -713,9 +719,9 @@ class TestMvGuardMock:
         # 创建文件（非目录）
         (temp_git_repo / "tracked_file.py").write_text("# test\n", encoding="utf-8")
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._scan_untracked_in_dir") as mock_scan:
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.scan_untracked_in_dir") as mock_scan:
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                     exit_code = check_and_execute(["mv", "tracked_file.py", "renamed.py"])
         assert exit_code == 0, "源是文件应透传"
         mock_pass.assert_called_once()
@@ -725,7 +731,7 @@ class TestMvGuardMock:
         """场景: git mv 参数不足（<2）→ 透传"""
         from scripts.git_guard import check_and_execute
 
-        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
             exit_code = check_and_execute(["mv", "only_one_arg"])
         assert exit_code == 0, "参数不足应透传"
         mock_pass.assert_called_once()
@@ -737,9 +743,9 @@ class TestMvGuardMock:
         monkeypatch.setenv(MV_STRATEGY_ENV, "force")
         (temp_git_repo / "old_dir").mkdir(exist_ok=True)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=["old_dir/untracked.md"]):
-                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.scan_untracked_in_dir", return_value=["old_dir/untracked.md"]):
+                with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                     exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
         assert exit_code == 0, "force 策略应透传"
         mock_pass.assert_called_once()
@@ -750,9 +756,9 @@ class TestMvGuardMock:
 
         (temp_git_repo / "old_dir").mkdir(exist_ok=True)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=["old_dir/a.md", "old_dir/b.md"]):
-                with patch("scripts.git_guard._passthrough", return_value=0):
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.scan_untracked_in_dir", return_value=["old_dir/a.md", "old_dir/b.md"]):
+                with patch("scripts.git_guard.passthrough", return_value=0):
                     exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
 
         assert exit_code == 1
@@ -789,8 +795,8 @@ class TestMvGuardEndToEnd:
         def _passthrough_in_temp(git_args):
             return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.passthrough", side_effect=_passthrough_in_temp):
                 exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
 
         assert exit_code == 0, "move 策略应成功执行"
@@ -811,9 +817,9 @@ class TestMvGuardEndToEnd:
         def _passthrough_in_temp(git_args):
             return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._get_session_id", return_value="session-test-mv"):
-                with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.get_session_id", return_value="session-test-mv"):
+                with patch("scripts.git_guard.passthrough", side_effect=_passthrough_in_temp):
                     exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
 
         assert exit_code == 0, "stage 策略应成功执行"
@@ -835,8 +841,8 @@ class TestMvGuardEndToEnd:
 
         self._setup_dir_with_tracked_and_untracked(temp_git_repo, "old_dir")
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.passthrough", return_value=0) as mock_pass:
                 exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
 
         assert exit_code == 1, "block 策略应阻断"
@@ -859,8 +865,8 @@ class TestMvGuardEndToEnd:
         def _passthrough_in_temp(git_args):
             return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
 
-        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
-            with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+        with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard.passthrough", side_effect=_passthrough_in_temp):
                 exit_code = check_and_execute(["mv", "clean_dir", "renamed_dir"])
 
         assert exit_code == 0, "无未跟踪文件应正常执行"
@@ -868,7 +874,7 @@ class TestMvGuardEndToEnd:
 
 
 class TestMvScanUntracked:
-    """_scan_untracked_in_dir 单元测试。"""
+    """scan_untracked_in_dir 单元测试。"""
 
     def test_scan_finds_untracked_files(self, temp_git_repo):
         """扫描应发现目录中的未跟踪文件"""
@@ -878,7 +884,7 @@ class TestMvScanUntracked:
         (dir_path / "sub").mkdir(exist_ok=True)
         (dir_path / "sub" / "nested.md").write_text("# nested\n", encoding="utf-8")
 
-        result = _scan_untracked_in_dir("test_dir", temp_git_repo)
+        result = scan_untracked_in_dir("test_dir", temp_git_repo)
         assert "test_dir/untracked.md" in result
         assert "test_dir/sub/nested.md" in result
 
@@ -890,11 +896,11 @@ class TestMvScanUntracked:
         subprocess.run(["git", "add", "test_dir/tracked.py"], cwd=temp_git_repo, capture_output=True, check=True)
         subprocess.run(["git", "commit", "-m", "add"], cwd=temp_git_repo, capture_output=True, check=True)
 
-        result = _scan_untracked_in_dir("test_dir", temp_git_repo)
+        result = scan_untracked_in_dir("test_dir", temp_git_repo)
         assert len(result) == 0, "已跟踪文件不应出现在未跟踪列表"
 
     def test_scan_empty_dir(self, temp_git_repo):
         """空目录 → 空列表"""
         (temp_git_repo / "empty_dir").mkdir(exist_ok=True)
-        result = _scan_untracked_in_dir("empty_dir", temp_git_repo)
+        result = scan_untracked_in_dir("empty_dir", temp_git_repo)
         assert result == []
