@@ -60,6 +60,15 @@ class RedBlueValidator:
         self._cleanup = Cleanup()
         self._blast = BlastRadius(BlastRadiusLevel.FILE)
 
+    @property
+    def defense(self) -> DefenseRunner:
+        """Public accessor for the defense runner (R5: reverse hierarchy)."""
+        return self._defense
+
+    @defense.setter
+    def defense(self, value: DefenseRunner) -> None:
+        self._defense = value
+
     def run_adversarial_session(
         self,
         session_name: str,
@@ -83,7 +92,7 @@ class RedBlueValidator:
         bypassed = 0
 
         for scenario in scenarios:
-            result = self._process_scenario(scenario)
+            result = self.process_scenario(scenario)
             scene_results.append(result)
             if result.result is ResultClass.BLOCKED:
                 blocked += 1
@@ -93,7 +102,7 @@ class RedBlueValidator:
                     self._blast.record_bypass(scenario)
                 except AbortThresholdError as e:
                     logger.critical("blast_radius_aborted error=%s", str(e))
-                    report = self._build_report(session_id, scene_results, blocked, bypassed, start)
+                    report = self.build_report(session_id, scene_results, blocked, bypassed, start)
                     report.circuit_breaker_open = True
                     return report
 
@@ -110,7 +119,7 @@ class RedBlueValidator:
         except CleanupVerificationError:
             logger.error("cleanup_failed")
 
-        report = self._build_report(session_id, scene_results, blocked, bypassed, start)
+        report = self.build_report(session_id, scene_results, blocked, bypassed, start)
         report.steady_state_summary = steady_summary
         report.cleanup_verified = cleanup_ok
 
@@ -141,8 +150,8 @@ class RedBlueValidator:
             active = [s for s in active if s.tier == tier]
         return self._blast.filter_scenarios(active)
 
-    def _process_scenario(self, scenario: AttackScenario) -> ScenarioResult:
-        defense_result = self._defense.run_defense(scenario)
+    def process_scenario(self, scenario: AttackScenario) -> ScenarioResult:
+        defense_result = self.defense.run_defense(scenario)
         now = datetime.now(UTC)
 
         if defense_result.passed:
@@ -173,7 +182,11 @@ class RedBlueValidator:
                 bypass_entry=bypass.entry_id,
             )
 
-    def _build_report(
+    def _process_scenario(self, scenario: AttackScenario) -> ScenarioResult:
+        """Backward-compatible wrapper. Use process_scenario instead (R5: reverse hierarchy)."""
+        return self.process_scenario(scenario)
+
+    def build_report(
         self,
         session_id: str,
         results: list[ScenarioResult],
@@ -195,3 +208,14 @@ class RedBlueValidator:
         )
         report.compute_blocked_rate()
         return report
+
+    def _build_report(
+        self,
+        session_id: str,
+        results: list[ScenarioResult],
+        blocked: int,
+        bypassed: int,
+        start: datetime,
+    ) -> RedBlueReport:
+        """Backward-compatible wrapper. Use build_report instead (R5: reverse hierarchy)."""
+        return self.build_report(session_id, results, blocked, bypassed, start)

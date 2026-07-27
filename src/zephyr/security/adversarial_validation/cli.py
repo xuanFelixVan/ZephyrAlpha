@@ -30,7 +30,7 @@ from zephyr.security.adversarial_validation.validator import RedBlueValidator
 __all__: list[str] = ["main"]
 
 
-def _run(args: argparse.Namespace) -> None:
+def run(args: argparse.Namespace) -> None:
     validator = RedBlueValidator()
     tier = None
     if args.tier:
@@ -57,7 +57,7 @@ def _run(args: argparse.Namespace) -> None:
     )
 
 
-def _list(args: argparse.Namespace) -> None:
+def list_scenarios(args: argparse.Namespace) -> None:
     loader = ScenarioLoader()
     loader.load()
     scenarios = loader.list_all()
@@ -68,7 +68,7 @@ def _list(args: argparse.Namespace) -> None:
         print(f"  {s.scenario_id:20s} [{s.tier.value:8s}] {s.severity.value:8s} {s.name}")
 
 
-def _report_fn(args: argparse.Namespace) -> None:
+def report_fn(args: argparse.Namespace) -> None:
     validator = RedBlueValidator()
     report = validator.run_adversarial_session(
         session_name=args.name or "report",
@@ -81,7 +81,7 @@ def _report_fn(args: argparse.Namespace) -> None:
     print(f"Cleanup: {'OK' if report.cleanup_verified else 'FAILED'}")
 
 
-def _status(args: argparse.Namespace) -> None:
+def status(args: argparse.Namespace) -> None:
     loader = ScenarioLoader()
     loader.load()
     counts = loader.tier_counts()
@@ -90,20 +90,29 @@ def _status(args: argparse.Namespace) -> None:
         print(f"  {tier.value}: {count}")
 
 
-def _gameday(args: argparse.Namespace) -> None:
+def gameday(args: argparse.Namespace) -> None:
     runner = GameDayRunner()
     freq = GameDayFrequency(args.frequency)
     result = runner.run_game_day(freq)
     print(f"GameDay[{freq.value}]: {result.total_attacks} attacks, blocked={result.passed} bypassed={result.bypasses}")
 
 
-def _onboard(args: argparse.Namespace) -> None:
+def onboard(args: argparse.Namespace) -> None:
     cs = ColdStart()
     sid = cs.onboard_module(args.module_path)
     if sid:
         print(f"Onboarded: {sid}")
     else:
         print("Already registered")
+
+
+# Backward-compatible aliases (R5: reverse hierarchy)
+_run = run
+_list = list_scenarios
+_report_fn = report_fn
+_status = status
+_gameday = gameday
+_onboard = onboard
 
 
 def main() -> None:
@@ -139,12 +148,12 @@ def main() -> None:
         sys.exit(1)
 
     dispatch = {
-        "run": _run,
-        "list": _list,
-        "report": _report_fn,
-        "status": _status,
-        "gameday": _gameday,
-        "onboard": _onboard,
+        "run": run,
+        "list": list_scenarios,
+        "report": report_fn,
+        "status": status,
+        "gameday": gameday,
+        "onboard": onboard,
     }
     dispatch[args.command](args)
 

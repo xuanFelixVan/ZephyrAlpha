@@ -97,6 +97,11 @@ class DefenseRunner:
         self._results: list[DefenseResult] = []
         self.jsonl_output = jsonl_output
 
+    @property
+    def gate_engine(self) -> GateEngine | None:
+        """Public accessor for the gate engine (R5: reverse hierarchy)."""
+        return self._gate_engine
+
     def _output_findings_as_jsonl(self, items: list[tuple[AttackScenario, DefenseResult]]) -> None:
         if not _FINDING_AVAILABLE:
             return
@@ -132,7 +137,7 @@ class DefenseRunner:
         defense_name = scenario.expected_defense.gate_id
         gate_id = GATE_MAP.get(defense_name, defense_name)
 
-        blocked, source = self._evaluate_gate(scenario, gate_id)
+        blocked, source = self.evaluate_gate(scenario, gate_id)
 
         detail = (
             f"BLOCKED by {gate_id} [{source}]: {defense_name}"
@@ -153,17 +158,17 @@ class DefenseRunner:
             self._output_findings_as_jsonl([(scenario, result)])
         return result
 
-    def _evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str]:
+    def evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str]:
         if not gate_id or not scenario.injection.vector:
             return False, "no_vector"
 
-        real_result = self._try_real_gate(scenario, gate_id)
+        real_result = self.try_real_gate(scenario, gate_id)
         if real_result is not None:
             return real_result, "gate_engine"
 
-        # W3-T2 fail-closed：真实 Gate 不可用/异常时 BLOCKED，不再走 _simulate_gate
+        # W3-T2 fail-closed：真实 Gate 不可用/异常时 BLOCKED，不再走 simulate_gate
         # 的 md5 哈希模拟（"哈希彩票"伪防御——攻击是否阻断由 scenario_id 的 md5
-        # 决定，与实际防御无关，违反零信任原则）。保留 _simulate_gate 仅供显式调用
+        # 决定，与实际防御无关，违反零信任原则）。保留 simulate_gate 仅供显式调用
         # （单测/warn-only dry-run），禁止生产路径回退到该方法。
         logger.warning(
             "fail_closed gate_id=%s scenario_id=%s — real gate unavailable, BLOCKED",
@@ -172,8 +177,12 @@ class DefenseRunner:
         )
         return True, "fail_closed"
 
-    def _try_real_gate(self, scenario: AttackScenario, gate_id: str) -> bool | None:
-        if self._gate_engine is None:
+    def _evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str]:
+        """Backward-compatible wrapper. Use evaluate_gate instead (R5: reverse hierarchy)."""
+        return self.evaluate_gate(scenario, gate_id)
+
+    def try_real_gate(self, scenario: AttackScenario, gate_id: str) -> bool | None:
+        if self.gate_engine is None:
             return None
         try:
             from datetime import UTC, datetime
@@ -198,17 +207,21 @@ class DefenseRunner:
                 created_at=datetime.now(UTC),
                 updated_at=datetime.now(UTC),
             )
-            result = self._gate_engine.evaluate(task, gate_id)
+            result = self.gate_engine.evaluate(task, gate_id)
             logger.debug("real_gate gate_id=%s passed=%s violations=%d", gate_id, result.passed, len(result.violations))
             return result.passed
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("real_gate_failed gate_id=%s error=%s — real gate unavailable, fail_closed will BLOCK", gate_id, exc, exc_info=True)
             return None
 
-    def _simulate_gate(self, scenario: AttackScenario, gate_id: str) -> bool:
+    def _try_real_gate(self, scenario: AttackScenario, gate_id: str) -> bool | None:
+        """Backward-compatible wrapper. Use try_real_gate instead (R5: reverse hierarchy)."""
+        return self.try_real_gate(scenario, gate_id)
+
+    def simulate_gate(self, scenario: AttackScenario, gate_id: str) -> bool:
         """显式模拟器——tier 分层语义模拟（md5 哈希决定 tier3-6 是否阻断）。
 
-        ⛔ 禁止生产路径（``_evaluate_gate``）接线为此方法回退（W3-T2 fail-closed
+        ⛔ 禁止生产路径（``evaluate_gate``）接线为此方法回退（W3-T2 fail-closed
         改造）。原 fallback 行为构成 fail-open 伪防御：攻击是否阻断由
         ``scenario_id`` 的 md5 决定（"哈希彩票"），与实际防御无关。
 
@@ -242,12 +255,16 @@ class DefenseRunner:
 
         return False
 
+    def _simulate_gate(self, scenario: AttackScenario, gate_id: str) -> bool:
+        """Backward-compatible wrapper. Use simulate_gate instead (R5: reverse hierarchy)."""
+        return self.simulate_gate(scenario, gate_id)
+
     def results(self) -> list[DefenseResult]:
         return list(self._results)
 
     def close(self) -> None:
-        if self._gate_engine is not None:
-            self._gate_engine.close()
+        if self.gate_engine is not None:
+            self.gate_engine.close()
             self._gate_engine = None
 
     def __enter__(self) -> DefenseRunner:

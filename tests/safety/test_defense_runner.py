@@ -141,17 +141,17 @@ class TestDefenseRunnerImport:
         runner = DefenseRunner()
         assert hasattr(runner, "run_defense")
 
-    def test_has_evaluate_gate(self):
+    def test_hasevaluate_gate(self):
         runner = DefenseRunner()
-        assert hasattr(runner, "_evaluate_gate")
+        assert hasattr(runner, "evaluate_gate")
 
-    def test_has_try_real_gate(self):
+    def test_hastry_real_gate(self):
         runner = DefenseRunner()
-        assert hasattr(runner, "_try_real_gate")
+        assert hasattr(runner, "try_real_gate")
 
-    def test_has_simulate_gate(self):
+    def test_hassimulate_gate(self):
         runner = DefenseRunner()
-        assert hasattr(runner, "_simulate_gate")
+        assert hasattr(runner, "simulate_gate")
 
     def test_has_results(self):
         runner = DefenseRunner()
@@ -178,116 +178,116 @@ class TestDefenseRunnerImport:
 
 
 # ===========================================================================
-# DefenseRunner — _simulate_gate
+# DefenseRunner — simulate_gate
 # ===========================================================================
 class TestSimulateGate:
     def test_tier_1_always_blocked(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_1)
-        assert runner._simulate_gate(scenario, "G1") is True
+        assert runner.simulate_gate(scenario, "G1") is True
 
     def test_tier_2_always_blocked(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_2)
-        assert runner._simulate_gate(scenario, "G1") is True
+        assert runner.simulate_gate(scenario, "G1") is True
 
     def test_tier_3_critical_blocked(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_3, severity=Severity.CRITICAL)
-        assert runner._simulate_gate(scenario, "G1") is True
+        assert runner.simulate_gate(scenario, "G1") is True
 
     def test_tier_3_non_critical_hash_based(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_3, severity=Severity.MEDIUM)
-        result = runner._simulate_gate(scenario, "G1")
+        result = runner.simulate_gate(scenario, "G1")
         assert isinstance(result, bool)
 
     def test_tier_4_hash_based(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_4)
-        result = runner._simulate_gate(scenario, "G1")
+        result = runner.simulate_gate(scenario, "G1")
         assert isinstance(result, bool)
 
     def test_tier_5_hash_based(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_5)
-        result = runner._simulate_gate(scenario, "G1")
+        result = runner.simulate_gate(scenario, "G1")
         assert isinstance(result, bool)
 
     def test_tier_6_hash_based(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_6)
-        result = runner._simulate_gate(scenario, "G1")
+        result = runner.simulate_gate(scenario, "G1")
         assert isinstance(result, bool)
 
     def test_tier_7_never_blocked(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_7)
-        assert runner._simulate_gate(scenario, "G1") is False
+        assert runner.simulate_gate(scenario, "G1") is False
 
     def test_tier_1_deterministic(self):
         runner = DefenseRunner(gate_engine=None)
         s1 = make_scenario(scenario_id="A", tier=AttackTier.TIER_1)
         s2 = make_scenario(scenario_id="B", tier=AttackTier.TIER_1)
-        assert runner._simulate_gate(s1, "G1") is True
-        assert runner._simulate_gate(s2, "G1") is True
+        assert runner.simulate_gate(s1, "G1") is True
+        assert runner.simulate_gate(s2, "G1") is True
 
     def test_tier_3_same_scenario_deterministic(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(scenario_id="DET-001", tier=AttackTier.TIER_3, severity=Severity.LOW)
-        r1 = runner._simulate_gate(scenario, "G1")
-        r2 = runner._simulate_gate(scenario, "G1")
+        r1 = runner.simulate_gate(scenario, "G1")
+        r2 = runner.simulate_gate(scenario, "G1")
         assert r1 == r2
 
 
 # ===========================================================================
-# DefenseRunner — _evaluate_gate
+# DefenseRunner — evaluate_gate
 # ===========================================================================
 class TestEvaluateGate:
     def test_no_vector_returns_false(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(vector="")
-        blocked, source = runner._evaluate_gate(scenario, "G1")
+        blocked, source = runner.evaluate_gate(scenario, "G1")
         assert blocked is False
         assert source == "no_vector"
 
     def test_fail_closed_source_when_no_gate_engine(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
-        blocked, source = runner._evaluate_gate(scenario, "G1")
+        blocked, source = runner.evaluate_gate(scenario, "G1")
         assert blocked is True
         assert source == "fail_closed"
 
     def test_tier_1_blocked_via_fail_closed(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
-        blocked, source = runner._evaluate_gate(scenario, "G1")
+        blocked, source = runner.evaluate_gate(scenario, "G1")
         assert blocked is True
         assert source == "fail_closed"
 
     def test_tier_7_blocked_via_fail_closed(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_7, vector="test")
-        blocked, source = runner._evaluate_gate(scenario, "G1")
+        blocked, source = runner.evaluate_gate(scenario, "G1")
         assert blocked is True
         assert source == "fail_closed"
 
     def test_empty_gate_id_returns_false(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(vector="test")
-        blocked, source = runner._evaluate_gate(scenario, "")
+        blocked, source = runner.evaluate_gate(scenario, "")
         assert blocked is False
         assert source == "no_vector"
 
 
 # ===========================================================================
-# DefenseRunner — _try_real_gate
+# DefenseRunner — try_real_gate
 # ===========================================================================
 class TestTryRealGate:
     def test_returns_none_when_no_gate_engine(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario()
-        result = runner._try_real_gate(scenario, "G1")
+        result = runner.try_real_gate(scenario, "G1")
         assert result is None
 
     def test_returns_bool_when_gate_engine_present(self):
@@ -300,7 +300,7 @@ class TestTryRealGate:
         scenario = make_scenario()
         with patch("zephyr.gov_enforcement.rule_enforcement.task_types.Task") as mock_task_cls:
             mock_task_cls.return_value = MagicMock()
-            result = runner._try_real_gate(scenario, "G1")
+            result = runner.try_real_gate(scenario, "G1")
         assert isinstance(result, bool)
         assert result is True
 
@@ -309,7 +309,7 @@ class TestTryRealGate:
         mock_engine.evaluate.side_effect = RuntimeError("gate error")
         runner = DefenseRunner(gate_engine=mock_engine)
         scenario = make_scenario()
-        result = runner._try_real_gate(scenario, "G1")
+        result = runner.try_real_gate(scenario, "G1")
         assert result is None
 
 
@@ -408,14 +408,14 @@ class TestDefenseRunnerClose:
     def test_context_manager_closes_gate_engine(self):
         mock_engine = MagicMock()
         with DefenseRunner(gate_engine=mock_engine) as runner:
-            assert runner._gate_engine is not None
+            assert runner.gate_engine is not None
         mock_engine.close.assert_called_once()
 
     def test_close_sets_gate_engine_to_none(self):
         mock_engine = MagicMock()
         runner = DefenseRunner(gate_engine=mock_engine)
         runner.close()
-        assert runner._gate_engine is None
+        assert runner.gate_engine is None
 
 
 # ===========================================================================
@@ -439,7 +439,7 @@ class TestRedBlueValidatorImport:
 
     def test_has_defense(self):
         validator = RedBlueValidator()
-        assert hasattr(validator, "_defense")
+        assert hasattr(validator, "defense")
 
     def test_has_recorder(self):
         validator = RedBlueValidator()
@@ -570,13 +570,13 @@ class TestLoadAndFilter:
 
 
 # ===========================================================================
-# RedBlueValidator — _process_scenario
+# RedBlueValidator — process_scenario
 # ===========================================================================
 class TestProcessScenario:
     def test_blocked_scenario(self):
         validator = RedBlueValidator()
         scenario = make_scenario(tier=AttackTier.TIER_1)
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert isinstance(result, ScenarioResult)
         assert result.result == ResultClass.BLOCKED
 
@@ -584,55 +584,55 @@ class TestProcessScenario:
         validator = RedBlueValidator()
         scenario = make_scenario(tier=AttackTier.TIER_7)
         # fail-closed 后 TIER_7 不再自然 bypass；mock defense 返回 passed=False
-        # 以隔离测试 _process_scenario 的 BYPASSED 映射分支（保留覆盖率）
-        validator._defense = MagicMock()
-        validator._defense.run_defense.return_value = DefenseResult(
+        # 以隔离测试 process_scenario 的 BYPASSED 映射分支（保留覆盖率）
+        validator.defense = MagicMock()
+        validator.defense.run_defense.return_value = DefenseResult(
             passed=False, gate_id="G1",
             detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
         )
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert result.result == ResultClass.BYPASSED
 
     def test_result_has_scenario_id(self):
         validator = RedBlueValidator()
         scenario = make_scenario(scenario_id="PROC-001")
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert result.scenario_id == "PROC-001"
 
     def test_result_has_name(self):
         validator = RedBlueValidator()
         scenario = make_scenario(name="proc test")
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert result.name == "proc test"
 
     def test_result_has_gate_id(self):
         validator = RedBlueValidator()
         scenario = make_scenario(gate_id="prompt_injection_filter")
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert result.gate_id == "G1"
 
     def test_bypassed_has_bypass_entry(self):
         validator = RedBlueValidator()
         scenario = make_scenario(tier=AttackTier.TIER_7)
         # fail-closed 后 TIER_7 不再自然 bypass；mock defense 返回 passed=False
-        # 以隔离测试 _process_scenario 的 BYPASSED 映射分支（保留覆盖率）
-        validator._defense = MagicMock()
-        validator._defense.run_defense.return_value = DefenseResult(
+        # 以隔离测试 process_scenario 的 BYPASSED 映射分支（保留覆盖率）
+        validator.defense = MagicMock()
+        validator.defense.run_defense.return_value = DefenseResult(
             passed=False, gate_id="G1",
             detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
         )
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert result.bypass_entry is not None
 
     def test_blocked_has_no_bypass_entry(self):
         validator = RedBlueValidator()
         scenario = make_scenario(tier=AttackTier.TIER_1)
-        result = validator._process_scenario(scenario)
+        result = validator.process_scenario(scenario)
         assert result.bypass_entry is None
 
 
 # ===========================================================================
-# RedBlueValidator — _build_report
+# RedBlueValidator — build_report
 # ===========================================================================
 class TestBuildReport:
     def test_build_report_basic(self):
@@ -641,7 +641,7 @@ class TestBuildReport:
         validator = RedBlueValidator()
         results: list[ScenarioResult] = []
         start = datetime.now(UTC)
-        report = validator._build_report("RB-TEST", results, 0, 0, start)
+        report = validator.build_report("RB-TEST", results, 0, 0, start)
         assert report.session_id == "RB-TEST"
         assert report.total == 0
         assert report.blocked == 0
@@ -668,7 +668,7 @@ class TestBuildReport:
             ),
         ]
         start = datetime.now(UTC)
-        report = validator._build_report("RB-TEST", results, 1, 1, start)
+        report = validator.build_report("RB-TEST", results, 1, 1, start)
         assert report.total == 2
         assert report.blocked == 1
         assert report.bypassed == 1
@@ -679,7 +679,7 @@ class TestBuildReport:
 
         validator = RedBlueValidator()
         start = datetime.now(UTC) - timedelta(seconds=1)
-        report = validator._build_report("RB-TEST", [], 0, 0, start)
+        report = validator.build_report("RB-TEST", [], 0, 0, start)
         assert report.duration_ms > 0
 
 
@@ -703,12 +703,12 @@ class TestCLIMain:
 
 
 # ===========================================================================
-# CLI — _run 命令
+# CLI — run 命令
 # ===========================================================================
 class TestCLIRun:
     def test_run_function_exists(self):
-        assert hasattr(cli_mod, "_run")
-        assert callable(cli_mod._run)
+        assert hasattr(cli_mod, "run")
+        assert callable(cli_mod.run)
 
     @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
     def test_run_calls_validator(self, mock_validator_cls):
@@ -722,7 +722,7 @@ class TestCLIRun:
         args.name = "test"
         args.tier = None
         args.blast_radius = None
-        cli_mod._run(args)
+        cli_mod.run(args)
         mock_validator.run_adversarial_session.assert_called_once()
 
     @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
@@ -736,7 +736,7 @@ class TestCLIRun:
         args.name = "test"
         args.tier = "L1"
         args.blast_radius = None
-        cli_mod._run(args)
+        cli_mod.run(args)
         call_kwargs = mock_validator.run_adversarial_session.call_args
         assert call_kwargs.kwargs.get("tier") is not None or len(call_kwargs.args) >= 2
 
@@ -751,18 +751,18 @@ class TestCLIRun:
         args.name = "test"
         args.tier = None
         args.blast_radius = "MODULE"
-        cli_mod._run(args)
+        cli_mod.run(args)
         call_kwargs = mock_validator.run_adversarial_session.call_args
         assert call_kwargs.kwargs.get("blast_radius") == BlastRadiusLevel.MODULE or BlastRadiusLevel.MODULE in call_kwargs.args
 
 
 # ===========================================================================
-# CLI — _list 命令
+# CLI — list_scenarios 命令
 # ===========================================================================
 class TestCLIList:
     def test_list_function_exists(self):
-        assert hasattr(cli_mod, "_list")
-        assert callable(cli_mod._list)
+        assert hasattr(cli_mod, "list_scenarios")
+        assert callable(cli_mod.list_scenarios)
 
     @patch("zephyr.security.adversarial_validation.cli.ScenarioLoader")
     def test_list_calls_loader(self, mock_loader_cls):
@@ -773,7 +773,7 @@ class TestCLIList:
 
         args = MagicMock()
         args.active_only = False
-        cli_mod._list(args)
+        cli_mod.list_scenarios(args)
         mock_loader.load.assert_called_once()
         mock_loader.list_all.assert_called_once()
 
@@ -786,17 +786,17 @@ class TestCLIList:
 
         args = MagicMock()
         args.active_only = True
-        cli_mod._list(args)
+        cli_mod.list_scenarios(args)
         mock_loader.list_active.assert_called_once()
 
 
 # ===========================================================================
-# CLI — _report_fn 命令
+# CLI — report_fn 命令
 # ===========================================================================
 class TestCLIReport:
     def test_report_function_exists(self):
-        assert hasattr(cli_mod, "_report_fn")
-        assert callable(cli_mod._report_fn)
+        assert hasattr(cli_mod, "report_fn")
+        assert callable(cli_mod.report_fn)
 
     @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
     def test_report_calls_validator(self, mock_validator_cls):
@@ -810,17 +810,17 @@ class TestCLIReport:
         args = MagicMock()
         args.name = "test"
         args.tier = None
-        cli_mod._report_fn(args)
+        cli_mod.report_fn(args)
         mock_validator.run_adversarial_session.assert_called_once()
 
 
 # ===========================================================================
-# CLI — _status 命令
+# CLI — status 命令
 # ===========================================================================
 class TestCLIStatus:
     def test_status_function_exists(self):
-        assert hasattr(cli_mod, "_status")
-        assert callable(cli_mod._status)
+        assert hasattr(cli_mod, "status")
+        assert callable(cli_mod.status)
 
     @patch("zephyr.security.adversarial_validation.cli.ScenarioLoader")
     def test_status_calls_loader(self, mock_loader_cls):
@@ -830,18 +830,18 @@ class TestCLIStatus:
         mock_loader_cls.return_value = mock_loader
 
         args = MagicMock()
-        cli_mod._status(args)
+        cli_mod.status(args)
         mock_loader.load.assert_called_once()
         mock_loader.tier_counts.assert_called_once()
 
 
 # ===========================================================================
-# CLI — _gameday 命令
+# CLI — gameday 命令
 # ===========================================================================
 class TestCLIGameDay:
     def test_gameday_function_exists(self):
-        assert hasattr(cli_mod, "_gameday")
-        assert callable(cli_mod._gameday)
+        assert hasattr(cli_mod, "gameday")
+        assert callable(cli_mod.gameday)
 
     @patch("zephyr.security.adversarial_validation.cli.GameDayRunner")
     def test_gameday_calls_runner(self, mock_runner_cls):
@@ -855,17 +855,17 @@ class TestCLIGameDay:
 
         args = MagicMock()
         args.frequency = "per_commit"
-        cli_mod._gameday(args)
+        cli_mod.gameday(args)
         mock_runner.run_game_day.assert_called_once()
 
 
 # ===========================================================================
-# CLI — _onboard 命令
+# CLI — onboard 命令
 # ===========================================================================
 class TestCLIOnboard:
     def test_onboard_function_exists(self):
-        assert hasattr(cli_mod, "_onboard")
-        assert callable(cli_mod._onboard)
+        assert hasattr(cli_mod, "onboard")
+        assert callable(cli_mod.onboard)
 
     @patch("zephyr.security.adversarial_validation.cli.ColdStart")
     def test_onboard_calls_coldstart(self, mock_cs_cls):
@@ -875,7 +875,7 @@ class TestCLIOnboard:
 
         args = MagicMock()
         args.module_path = "src/test.py"
-        cli_mod._onboard(args)
+        cli_mod.onboard(args)
         mock_cs.onboard_module.assert_called_once_with("src/test.py")
 
     @patch("zephyr.security.adversarial_validation.cli.ColdStart")
@@ -886,7 +886,7 @@ class TestCLIOnboard:
 
         args = MagicMock()
         args.module_path = "src/test.py"
-        cli_mod._onboard(args)
+        cli_mod.onboard(args)
         mock_cs.onboard_module.assert_called_once()
 
 
