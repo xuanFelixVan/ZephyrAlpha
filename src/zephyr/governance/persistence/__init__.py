@@ -19,4 +19,4 @@ from . import intent_parser, intent_keyword_mapper  # noqa: F401
 
 __all__ = [
     "dataflowgraph_schema",
-'base_repo', 'database_service', 'depgraph_reader', 'intent_keyword_mapper', 'intent_parser', 'protocol_state_store', 'sqlite_schema', 'task_repo']
+'base_repo', 'database_service', 'depgraph_reader', 'intent_keyword_mapper', 'intent_parser', 'pg_wrapper', 'protocol_state_store', 'sqlite_schema', 'task_repo']

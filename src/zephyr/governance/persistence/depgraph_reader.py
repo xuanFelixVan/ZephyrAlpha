@@ -45,36 +45,11 @@ import threading
 from pathlib import Path
 from typing import Any
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
-
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+# R3 治本（2026-07-28）：_PgConnExecuteWrapper 规范副本下沉到 pg_wrapper（消除三处重复）
+from zephyr.governance.persistence.pg_wrapper import _PgConnExecuteWrapper
 
 logger = logging.getLogger(__name__)
-
-
-class _PgConnExecuteWrapper:
-    """兼容 sqlite3.Connection.execute() 接口的 psycopg2 connection 包装器。
-
-    P2迁移后：psycopg2 connection 没有 execute() 方法，此包装器使原 SQLite 代码无需修改。
-    每次调用 execute() 创建一个新的 RealDictCursor（与原 sqlite3.Row 的 dict(row) 用法等价）。
-    """
-
-    def __init__(self, pg_conn: psycopg2.extensions.connection) -> None:
-        self._pg_conn = pg_conn
-
-    def execute(self, sql: str, params: tuple = ()) -> object:
-        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql, params)
-        return cur
-
-    @property
-    def closed(self) -> bool:
-        """底层 PG 连接是否已关闭（5.64.2：close() 后各线程据此惰性重建）。"""
-        return bool(self._pg_conn.closed)
-
-    def close(self) -> None:
-        self._pg_conn.close()
 
 
 class DepgraphReader:

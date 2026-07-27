@@ -35,11 +35,12 @@ import warnings
 from pathlib import Path
 from typing import Any
 
-import psycopg2
 import yaml
-from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import PgConnectionProvider, get_depgraph_pg_connection
+# R3 治本（2026-07-28）：_PgConnExecuteWrapper + PgError 规范副本下沉到 pg_wrapper，
+# 消除业务模块顶层 import psycopg2（DIP——业务逻辑仅依赖 persistence 抽象，不再硬耦合驱动）
+from zephyr.governance.persistence.pg_wrapper import PgError, _PgConnExecuteWrapper
 
 
 def _find_project_root() -> Path:
@@ -52,25 +53,6 @@ def _find_project_root() -> Path:
 
 _PROJECT_ROOT = _find_project_root()
 _RULES_DIR = _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
-
-
-class _PgConnExecuteWrapper:
-    """兼容 sqlite3.Connection.execute() 接口的 psycopg2 connection 包装器。
-
-    P2迁移后：psycopg2 connection 没有 execute() 方法，此包装器使原 SQLite 代码无需修改。
-    每次调用 execute() 创建一个新的 RealDictCursor（与原 sqlite3.Row 的 dict(row)/row['col'] 用法等价）。
-    """
-
-    def __init__(self, pg_conn: psycopg2.extensions.connection) -> None:
-        self._pg_conn = pg_conn
-
-    def execute(self, sql: str, params: tuple = ()) -> object:
-        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql, params)
-        return cur
-
-    def close(self) -> None:
-        self._pg_conn.close()
 
 
 def _rule_id_to_filename(rule_id: str) -> str:
@@ -127,7 +109,7 @@ class RuleLoader:
                 return None
             self._db_available = True
             return conn
-        except (psycopg2.Error, OSError, FileNotFoundError, ValueError):
+        except (PgError, OSError, FileNotFoundError, ValueError):
             # PG 连接失败、配置文件缺失等情况：降级到 YAML 扫描
             self._db_available = False
             return None
@@ -183,7 +165,7 @@ class RuleLoader:
             if not rule_ids:
                 return []
             return self._load_rules_from_db(rule_ids)
-        except psycopg2.Error:
+        except PgError:
             return []
         finally:
             conn.close()
@@ -201,7 +183,7 @@ class RuleLoader:
             if not rule_ids:
                 return []
             return self._load_rules_from_db(rule_ids)
-        except psycopg2.Error:
+        except PgError:
             return []
         finally:
             conn.close()
@@ -219,7 +201,7 @@ class RuleLoader:
             if not rule_ids:
                 return []
             return self._load_rules_from_db(rule_ids)
-        except psycopg2.Error:
+        except PgError:
             return []
         finally:
             conn.close()
@@ -236,7 +218,7 @@ class RuleLoader:
                 all_rules = self._scan_rules_dir()
                 return [r for r in all_rules if r.get("metadata", {}).get("impact_level") == "H"]
             return self._load_rules_from_db(rule_ids)
-        except psycopg2.Error:
+        except PgError:
             all_rules = self._scan_rules_dir()
             return [r for r in all_rules if r.get("metadata", {}).get("impact_level") == "H"]
         finally:

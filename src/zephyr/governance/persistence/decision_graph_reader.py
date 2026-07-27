@@ -55,33 +55,11 @@ import json
 from pathlib import Path
 from typing import Any
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
-
 from zephyr.governance.persistence.decisiongraph_schema import (
     get_decisiongraph_pg_connection,
 )
-
-
-# class-name-alias: 复用 depgraph_reader.py 的 psycopg2 execute() 兼容包装器模式（同库不同表，设计同源）
-class _PgConnExecuteWrapper:
-    """兼容 sqlite3.Connection.execute() 接口的 psycopg2 connection 包装器。
-
-    与 DepgraphReader._PgConnExecuteWrapper 同源设计：
-    psycopg2 connection 没有 execute() 方法，此包装器使查询代码无需修改。
-    每次调用 execute() 创建一个新的 RealDictCursor（与 sqlite3.Row 的 dict(row) 用法等价）。
-    """
-
-    def __init__(self, pg_conn: psycopg2.extensions.connection) -> None:
-        self._pg_conn = pg_conn
-
-    def execute(self, sql: str, params: tuple = ()) -> object:
-        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql, params)
-        return cur
-
-    def close(self) -> None:
-        self._pg_conn.close()
+# R3 治本（2026-07-28）：_PgConnExecuteWrapper 规范副本下沉到 pg_wrapper（消除三处重复）
+from zephyr.governance.persistence.pg_wrapper import _PgConnExecuteWrapper
 
 
 # JSONB 字段名（自动解析为 dict/list）
