@@ -132,6 +132,18 @@ def _make_e2e_passthrough(repo_root: Path):
 # ============================================================================
 
 
+@pytest.fixture(autouse=True)
+def _isolate_mv_strategy_env(monkeypatch):
+    """每个测试前确保 MV_STRATEGY_ENV 不泄漏。
+
+    治本：线程化 patch.dict(os.environ, ...) 在并发线程中竞态导致 env var
+    交叉污染（线程 A set stage → 线程 B save stage → A restore delete →
+    B restore stage → stage 泄漏）。autouse monkeypatch.delenv 确保每个测试
+    开始时 env 干净，不依赖前序测试的 patch.dict 恢复正确性。
+    """
+    monkeypatch.delenv(MV_STRATEGY_ENV, raising=False)
+
+
 @pytest.fixture
 def repo():
     """创建临时 git 仓库。"""
