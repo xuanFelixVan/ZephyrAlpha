@@ -554,6 +554,78 @@ class TickSubscriber:
             "queue_size": qsize,
         }
 
+    # ── Stage 4 公共化（2026-07-28）：properties + 公共方法别名 ──
+    # 消除 tests/zephyr/data/test_tick_subscriber.py 中 79 处私有成员访问。
+    # _make_sub() 改用真实 __init__ 构造（所有参数可选），仅 running 需测试覆写。
+    # on_tick / drain_batch / on_backup_tick 为简单别名（测试直接调用，无 patch）。
+
+    @property
+    def tick_queue(self) -> queue.Queue:
+        """只读：tick 队列（Stage 4 公共化）。"""
+        return self._tick_queue
+
+    @property
+    def first_tick_received(self) -> threading.Event:
+        """只读：首 tick 事件（Stage 4 公共化）。"""
+        return self._first_tick_received
+
+    @property
+    def writer(self):
+        """读写：WalWriter（Stage 4 公共化，测试可注入 mock）。"""
+        return self._writer
+
+    @writer.setter
+    def writer(self, value) -> None:
+        self._writer = value
+
+    @property
+    def running(self) -> bool:
+        """读写：运行标志（Stage 4 公共化）。"""
+        return self._running
+
+    @running.setter
+    def running(self, value: bool) -> None:
+        self._running = value
+
+    @property
+    def received(self) -> int:
+        """读写：已接收计数（Stage 4 公共化）。"""
+        return self._received
+
+    @received.setter
+    def received(self, value: int) -> None:
+        self._received = value
+
+    @property
+    def written(self) -> int:
+        """读写：已写入计数（Stage 4 公共化）。"""
+        return self._written
+
+    @written.setter
+    def written(self, value: int) -> None:
+        self._written = value
+
+    @property
+    def errors(self) -> int:
+        """读写：错误计数（Stage 4 公共化）。"""
+        return self._errors
+
+    @errors.setter
+    def errors(self, value: int) -> None:
+        self._errors = value
+
+    def on_tick(self, datas: dict) -> None:
+        """公共 API：tick 回调入口（Stage 4 公共化别名）。"""
+        return self._on_tick(datas)
+
+    def drain_batch(self, max_n: int = _DRAIN_BATCH_SIZE, timeout: float = 1.0) -> int:
+        """公共 API：批量出队（Stage 4 公共化别名）。"""
+        return self._drain_batch(max_n=max_n, timeout=timeout)
+
+    def on_backup_tick(self, symbol: str, tick: dict) -> None:
+        """公共 API：备源 tick 回调（Stage 4 公共化别名）。"""
+        return self._on_backup_tick(symbol, tick)
+
 
 def main() -> int:
     """常驻进程入口——启动 TickSubscriber 并阻塞直到 Ctrl+C。"""

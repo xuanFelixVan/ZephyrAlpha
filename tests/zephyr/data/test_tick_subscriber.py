@@ -135,26 +135,14 @@ class TestInferMarketType:
 
 
 def _make_sub():
-    """构造最小可测试 TickSubscriber 实例（绕过 __init__ 的 xtdata 依赖）。"""
+    """构造最小可测试 TickSubscriber 实例（Stage 4：用真实 __init__ 构造）。
+
+    __init__ 所有参数可选且不导入 xtdata（延迟到 start()），故可直接 TickSubscriber()。
+    仅 running 需测试覆写（__init__ 设 False，测试默认 True）。
+    """
     from zephyr.data.tick_subscriber import TickSubscriber
-    sub = TickSubscriber.__new__(TickSubscriber)
-    sub._tick_queue = queue.Queue()
-    sub._running = True
-    sub._received = 0
-    sub._written = 0
-    sub._errors = 0
-    sub._writer = None
-    sub._flush_thread = None
-    sub._xtdata = None
-    sub._subscribed = set()
-    sub._heartbeat = None  # P2-8: 心跳集成——_make_sub 须与 __init__ 属性集对齐
-    # P0-2: 预热逻辑字段
-    sub._first_tick_received = threading.Event()
-    sub._start_time = 0.0
-    # P1-3: 双源冗余字段
-    sub._backup_provider = None
-    sub._switcher = None
-    sub._backup_poller = None
+    sub = TickSubscriber()
+    sub.running = True
     return sub
 
 
@@ -164,25 +152,25 @@ class TestTickSubscriber:
         sub = _make_sub()
         # QMT subscribe_quote 回调: tick_data 是 list[dict]
         datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
-        sub._on_tick(datas)
+        sub.on_tick(datas)
 
-        assert not sub._tick_queue.empty()
-        symbol, tick = sub._tick_queue.get_nowait()
+        assert not sub.tick_queue.empty()
+        symbol, tick = sub.tick_queue.get_nowait()
         assert symbol == "000001.SZ"
         assert tick["lastPrice"] == 10.5
-        assert sub._received == 1  # 无锁计数
+        assert sub.received == 1  # 无锁计数
 
     def test_callback_handles_dict_format(self):
         """dict 格式 tick 向后兼容（subscribe_whole_quote 快照）"""
         sub = _make_sub()
         datas = {"000001.SZ": {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}}
-        sub._on_tick(datas)
+        sub.on_tick(datas)
 
-        assert not sub._tick_queue.empty()
-        symbol, tick = sub._tick_queue.get_nowait()
+        assert not sub.tick_queue.empty()
+        symbol, tick = sub.tick_queue.get_nowait()
         assert symbol == "000001.SZ"
         assert tick["lastPrice"] == 10.5
-        assert sub._received == 1
+        assert sub.received == 1
 
     def test_callback_handles_multi_tick_list(self):
         """list 包含多个 tick 时全部入队"""
@@ -191,157 +179,157 @@ class TestTickSubscriber:
             {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050},
             {"time": 1720838406000, "lastPrice": 10.6, "volume": 200, "amount": 2120},
         ]}
-        sub._on_tick(datas)
+        sub.on_tick(datas)
 
-        assert sub._tick_queue.qsize() == 2
-        assert sub._received == 2
+        assert sub.tick_queue.qsize() == 2
+        assert sub.received == 2
 
     def test_drain_batch_single_tick(self):
-        """_drain_batch 取一条 tick 交给 WalWriter（Phase C: 替代 _flush_once）"""
+        """drain_batch 取一条 tick 交给 WalWriter（Phase C: 替代 _flush_once）"""
         sub = _make_sub()
-        sub._writer = MagicMock()
-        sub._writer.add.return_value = True
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = True
 
-        sub._tick_queue.put(("000001.SZ", {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}))
+        sub.tick_queue.put(("000001.SZ", {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}))
 
-        n = sub._drain_batch(timeout=0.1)
+        n = sub.drain_batch(timeout=0.1)
         assert n == 1
-        assert sub._writer.add.called
-        assert sub._written == 1
+        assert sub.writer.add.called
+        assert sub.written == 1
 
     def test_drain_batch_batch_output(self):
-        """_drain_batch 批量出队多个 tick，构造单个 FetchResult 交给 WalWriter（Phase C 核心改进）"""
+        """drain_batch 批量出队多个 tick，构造单个 FetchResult 交给 WalWriter（Phase C 核心改进）"""
         sub = _make_sub()
-        sub._writer = MagicMock()
-        sub._writer.add.return_value = True
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = True
 
         # 放入 3 条 tick
         for i in range(3):
-            sub._tick_queue.put(("000001.SZ", {
+            sub.tick_queue.put(("000001.SZ", {
                 "time": 1720838403000 + i * 1000,
                 "lastPrice": 10.5 + i,
                 "volume": 100,
                 "amount": 1050,
             }))
 
-        n = sub._drain_batch(max_n=500, timeout=0.1)
+        n = sub.drain_batch(max_n=500, timeout=0.1)
         assert n == 3
-        assert sub._written == 3
+        assert sub.written == 3
         # writer.add 只被调用一次（批量构造单个多行 FetchResult）
-        assert sub._writer.add.call_count == 1
+        assert sub.writer.add.call_count == 1
 
     def test_drain_batch_empty_returns_zero(self):
-        """空队列 _drain_batch 返回 0"""
+        """空队列 drain_batch 返回 0"""
         sub = _make_sub()
-        sub._writer = MagicMock()
-        n = sub._drain_batch(timeout=0.05)
+        sub.writer = MagicMock()
+        n = sub.drain_batch(timeout=0.05)
         assert n == 0
-        assert not sub._writer.add.called
+        assert not sub.writer.add.called
 
     def test_drain_batch_writer_failure_counts_errors(self):
         """WalWriter.add 失败时 errors 递增"""
         sub = _make_sub()
-        sub._writer = MagicMock()
-        sub._writer.add.return_value = False  # 写入失败
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = False  # 写入失败
 
-        sub._tick_queue.put(("000001.SZ", {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}))
-        n = sub._drain_batch(timeout=0.1)
+        sub.tick_queue.put(("000001.SZ", {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}))
+        n = sub.drain_batch(timeout=0.1)
         assert n == 0
-        assert sub._errors == 1
+        assert sub.errors == 1
 
     def test_stats_returns_all_fields(self):
         """stats() 返回 received/written/errors/queue_size（无锁快照）"""
         sub = _make_sub()
-        sub._received = 10
-        sub._written = 8
-        sub._errors = 2
-        sub._tick_queue.put(("s", {}))
-        sub._tick_queue.put(("s", {}))
+        sub.received = 10
+        sub.written = 8
+        sub.errors = 2
+        sub.tick_queue.put(("s", {}))
+        sub.tick_queue.put(("s", {}))
 
         stats = sub.stats()
         assert stats == {"received": 10, "written": 8, "errors": 2, "queue_size": 2}
 
     def test_stop_sets_running_false(self):
-        """stop() 设置 _running=False"""
+        """stop() 设置 running=False"""
         sub = _make_sub()
-        sub._running = True
+        sub.running = True
         sub.stop()
-        assert sub._running is False
+        assert sub.running is False
 
 
 class TestWarmupLogic:
     """P0-2: 预热逻辑测试——订阅完成 + 首个 tick 收到 = ready"""
 
     def test_event_initially_not_set(self):
-        """_first_tick_received 初始未设置"""
+        """first_tick_received 初始未设置"""
         sub = _make_sub()
-        assert not sub._first_tick_received.is_set()
+        assert not sub.first_tick_received.is_set()
 
     def test_first_tick_sets_event(self):
-        """首个 tick 成功入队后 _first_tick_received 被 set"""
+        """首个 tick 成功入队后 first_tick_received 被 set"""
         sub = _make_sub()
         datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
-        sub._on_tick(datas)
-        assert sub._first_tick_received.is_set()
+        sub.on_tick(datas)
+        assert sub.first_tick_received.is_set()
 
     def test_event_set_only_once(self):
         """Event 已 set 后后续 tick 不重复加锁（is_set 短路）"""
         sub = _make_sub()
-        sub._first_tick_received.set()
+        sub.first_tick_received.set()
         datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
-        sub._on_tick(datas)
+        sub.on_tick(datas)
         # 仍为 set，无异常
-        assert sub._first_tick_received.is_set()
-        assert sub._received == 1
+        assert sub.first_tick_received.is_set()
+        assert sub.received == 1
 
     def test_event_not_set_when_not_running(self):
-        """_running=False 时 _on_tick 不处理 tick，Event 不 set"""
+        """running=False 时 on_tick 不处理 tick，Event 不 set"""
         sub = _make_sub()
-        sub._running = False
+        sub.running = False
         datas = {"000001.SZ": [{"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}]}
-        sub._on_tick(datas)
-        assert not sub._first_tick_received.is_set()
-        assert sub._received == 0
+        sub.on_tick(datas)
+        assert not sub.first_tick_received.is_set()
+        assert sub.received == 0
 
     def test_wait_returns_immediately_when_already_set(self):
         """Event 已 set 时 wait(timeout) 立即返回 True"""
         sub = _make_sub()
-        sub._first_tick_received.set()
-        assert sub._first_tick_received.wait(timeout=0.01) is True
+        sub.first_tick_received.set()
+        assert sub.first_tick_received.wait(timeout=0.01) is True
 
     def test_wait_times_out_when_not_set(self):
         """Event 未 set 时 wait(timeout) 超时返回 False"""
         sub = _make_sub()
-        assert sub._first_tick_received.wait(timeout=0.05) is False
+        assert sub.first_tick_received.wait(timeout=0.05) is False
 
 
 class TestBackupTickSource:
     """P1-3: 备源 tick 回调 + data_source 标记"""
 
     def test_backup_tick_tags_data_source(self):
-        """_on_backup_tick 在 tick dict 中标记 _data_source='tdx_backup'"""
+        """on_backup_tick 在 tick dict 中标记 _data_source='tdx_backup'"""
         sub = _make_sub()
         tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}
-        sub._on_backup_tick("000001.SZ", tick)
-        symbol, queued_tick = sub._tick_queue.get_nowait()
+        sub.on_backup_tick("000001.SZ", tick)
+        symbol, queued_tick = sub.tick_queue.get_nowait()
         assert symbol == "000001.SZ"
         assert queued_tick["_data_source"] == "tdx_backup"
-        assert sub._received == 1
+        assert sub.received == 1
 
     def test_backup_tick_not_processed_when_not_running(self):
-        """_running=False 时 _on_backup_tick 不入队"""
+        """running=False 时 on_backup_tick 不入队"""
         sub = _make_sub()
-        sub._running = False
+        sub.running = False
         tick = {"time": 1720838403000, "lastPrice": 10.5, "volume": 100, "amount": 1050}
-        sub._on_backup_tick("000001.SZ", tick)
-        assert sub._tick_queue.empty()
-        assert sub._received == 0
+        sub.on_backup_tick("000001.SZ", tick)
+        assert sub.tick_queue.empty()
+        assert sub.received == 0
 
     def test_drain_batch_extracts_backup_data_source(self):
-        """_drain_batch 从 tick dict 提取 _data_source 并传给 tick_to_row"""
+        """drain_batch 从 tick dict 提取 _data_source 并传给 tick_to_row"""
         sub = _make_sub()
-        sub._writer = MagicMock()
-        sub._writer.add.return_value = True
+        sub.writer = MagicMock()
+        sub.writer.add.return_value = True
 
         tick = {
             "time": 1720838403000,
@@ -350,11 +338,11 @@ class TestBackupTickSource:
             "amount": 1050,
             "_data_source": "tdx_backup",
         }
-        sub._tick_queue.put(("000001.SZ", tick))
-        n = sub._drain_batch(timeout=0.1)
+        sub.tick_queue.put(("000001.SZ", tick))
+        n = sub.drain_batch(timeout=0.1)
         assert n == 1
         # 验证 FetchResult 中 data_source 列为 tdx_backup
-        result = sub._writer.add.call_args[0][0]
+        result = sub.writer.add.call_args[0][0]
         # columns 列表中 data_source 的索引
         ds_idx = result.columns.index("data_source")
         assert result.rows[0][ds_idx] == "tdx_backup"
