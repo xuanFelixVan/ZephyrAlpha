@@ -162,7 +162,11 @@ from zephyr.gov_enforcement.rule_bridge.session_claim import generate_session_id
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-from zephyr.shared.infra.process_pool import is_pid_alive
+from zephyr.shared.infra.process_pool import (
+    is_pid_alive,
+    run_subprocess_hidden,
+    spawn_python_hidden,
+)
 
 from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbeat_file
 
@@ -1256,47 +1260,15 @@ def _spawn_heartbeat_daemon(
 
         env["ZEPHYR_RUNTIME_GATE"] = "0"
 
-        creationflags = 0
+        # TRAE-067 铁律2：通过 spawn_python_hidden 统一无窗口 spawn——Windows 用
 
-        start_new_session = False
+        # CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP，POSIX 用 start_new_session，
 
-        if os.name == "nt":
+        # stdin/stdout/stderr→DEVNULL + close_fds=True（detached 语义由 helper 保证）
 
-            # CREATE_NO_WINDOW: 不创建控制台窗口，无闪窗（TRAE-067 铁律2）
-
-            # CREATE_NEW_PROCESS_GROUP: 独立进程组，不受 Ctrl+C 影响
-
-            # 注：CREATE_NO_WINDOW 与 DETACHED_PROCESS 互斥（MSDN），CREATE_NO_WINDOW
-
-            # 同时满足"无窗口"+"detached"（父退出后子存活，因 close_fds=True）
-
-            creationflags = (
-
-                getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
-
-                | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
-
-            )
-
-        else:
-
-            start_new_session = True  # Unix: 新 session（setsid）
-
-        proc = subprocess.Popen(
+        proc = spawn_python_hidden(
 
             cmd,
-
-            creationflags=creationflags,
-
-            start_new_session=start_new_session,
-
-            stdin=subprocess.DEVNULL,
-
-            stdout=subprocess.DEVNULL,
-
-            stderr=subprocess.DEVNULL,
-
-            close_fds=True,
 
             cwd=str(root),
 
@@ -1358,7 +1330,7 @@ def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
 
         if os.name == "nt":
 
-            subprocess.run(
+            run_subprocess_hidden(
 
                 ["taskkill", "/PID", str(pid), "/F"],
 
@@ -1441,7 +1413,7 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
                 # 此函数仅用于测试 fixture teardown，安全 taskkill + reap 所有残留 proc。
                 try:
                     if os.name == "nt":
-                        subprocess.run(
+                        run_subprocess_hidden(
                             ["taskkill", "/PID", str(proc.pid), "/F"],
                             capture_output=True, timeout=5,
                         )
@@ -1457,7 +1429,7 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 
             if os.name == "nt":
 
-                subprocess.run(
+                run_subprocess_hidden(
 
                     ["taskkill", "/PID", str(pid), "/F"],
 
@@ -3335,7 +3307,7 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
 
         except OSError:
 
-            subprocess.run(
+            run_subprocess_hidden(
 
                 ["git", "rm", "--cached", "--", rel_file],
 
@@ -3393,7 +3365,7 @@ def _run_git_with_retry(
 
         try:
 
-            r = subprocess.run(
+            r = run_subprocess_hidden(
 
                 cmd, cwd=str(cwd), capture_output=True, text=True,
 
@@ -3523,7 +3495,7 @@ def _ensure_worktree_base_fresh(
 
         # P1.3 fast-path：session_worktree 是可信调用方，跳过 git_guard alias 扫描
 
-        reset_r = subprocess.run(
+        reset_r = run_subprocess_hidden(
 
             ["git", "reset", "--hard", main_head],
 
@@ -3555,7 +3527,7 @@ def _ensure_worktree_base_fresh(
 
         # 有 session commit，rebase 到主工作区 HEAD（可能有冲突）
 
-        rebase_r = subprocess.run(
+        rebase_r = run_subprocess_hidden(
 
             ["git", "rebase", main_head],
 
@@ -3565,7 +3537,7 @@ def _ensure_worktree_base_fresh(
 
         if rebase_r.returncode != 0:
 
-            subprocess.run(["git", "rebase", "--abort"], cwd=str(wt_path), capture_output=True, timeout=30)
+            run_subprocess_hidden(["git", "rebase", "--abort"], cwd=str(wt_path), capture_output=True, timeout=30)
 
             _log_base_freshness_event(root, session_id, stage, "fail_closed", main_head=main_head[:8], wt_head=wt_head[:8], session_commit_count=session_commit_count, event_detail="rebase conflict")
 
@@ -3591,7 +3563,7 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 
     import shutil
 
-    tracked_r = subprocess.run(
+    tracked_r = run_subprocess_hidden(
 
         ["git", "ls-files", "--"] + rel_files,
 
@@ -3691,7 +3663,7 @@ def _run_pre_commit_gates_once(
 
             _effective_cwd = cwd if cwd is not None else _wt
 
-            return subprocess.run(
+            return run_subprocess_hidden(
 
                 cmd, cwd=_effective_cwd, capture_output=True, text=True,
 
@@ -3973,7 +3945,7 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
         commit_cmd = ["git", "commit", "--no-verify", "-F", msg_file_path]
 
-        commit_r = subprocess.run(
+        commit_r = run_subprocess_hidden(
 
             commit_cmd, cwd=str(wt_path), capture_output=True, text=True,
 
@@ -4005,7 +3977,7 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
 
         }
 
-    sha_r = subprocess.run(
+    sha_r = run_subprocess_hidden(
 
         ["git", "rev-parse", "--short", "HEAD"],
 
@@ -4041,7 +4013,7 @@ def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | Non
 
     try:
 
-        diff_r = subprocess.run(
+        diff_r = run_subprocess_hidden(
 
             ["git", "diff", "--name-only", "HEAD"],
 
@@ -4085,7 +4057,7 @@ def _check_stash_for_files(
 
     try:
 
-        show_r = subprocess.run(
+        show_r = run_subprocess_hidden(
 
             ["git", "stash", "show", "--name-only", stash_ref],
 
@@ -4131,7 +4103,7 @@ def _scan_stash_for_files(
 
     try:
 
-        stash_list_r = subprocess.run(
+        stash_list_r = run_subprocess_hidden(
 
             ["git", "stash", "list", "--format=%gd|%s"],
 
@@ -4217,7 +4189,7 @@ def _drop_session_pre_merge_stash(
 
     try:
 
-        list_r = subprocess.run(
+        list_r = run_subprocess_hidden(
 
             ["git", "stash", "list", "--format=%gd|%s"],
 
@@ -4293,7 +4265,7 @@ def _drop_session_pre_merge_stash(
 
         ref = f"stash@{{{idx}}}"
 
-        drop_r = subprocess.run(
+        drop_r = run_subprocess_hidden(
 
             ["git", "stash", "drop", ref],
 
@@ -4423,7 +4395,7 @@ def _recover_changes_from_stash(
 
     # 子命令拦截保护，安全性不降级）
 
-    restore_r = subprocess.run(
+    restore_r = run_subprocess_hidden(
 
         ["git", "restore", "--source", stash_ref, "--"] + hits,
 
@@ -4929,7 +4901,7 @@ def session_worktree_commit(
 
     add_cmd = ["git", "add", "-A", "--"] + rel_files
 
-    add_r = subprocess.run(
+    add_r = run_subprocess_hidden(
 
         add_cmd, cwd=str(wt_path), capture_output=True, text=True,
 
@@ -4951,7 +4923,7 @@ def session_worktree_commit(
 
         }
 
-    diff_r = subprocess.run(
+    diff_r = run_subprocess_hidden(
 
         ["git", "diff", "--cached", "--quiet"],
 
@@ -5073,7 +5045,7 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
     """获取 worktree branch 相对 merge-base 的变更文件列表。"""
 
-    merge_base_r = subprocess.run(
+    merge_base_r = run_subprocess_hidden(
 
         ["git", "merge-base", "HEAD", branch],
 
@@ -5087,7 +5059,7 @@ def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
 
     merge_base = merge_base_r.stdout.strip()
 
-    changed_r = subprocess.run(
+    changed_r = run_subprocess_hidden(
 
         ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
 
@@ -5105,7 +5077,7 @@ def _get_dirty_files(root: Path) -> set[str] | None:
 
     """获取主工作区未提交改动文件（staged + unstaged），失败返回 None。"""
 
-    dirty_r = subprocess.run(
+    dirty_r = run_subprocess_hidden(
 
         ["git", "diff", "--name-only", "HEAD"],
 
@@ -5169,11 +5141,11 @@ def _collect_tracked_cleanups(
 
         main_content = main_file.read_bytes()
 
-        wt_content_r = subprocess.run(
+        wt_content_r = run_subprocess_hidden(
 
             ["git", "show", f"{branch}:{rel_file}"],
 
-            cwd=str(root), capture_output=True,
+            cwd=str(root), capture_output=True, text=False,
 
         )
 
@@ -5211,7 +5183,7 @@ def _collect_untracked_cleanups(
 
     """
 
-    untracked_r = subprocess.run(
+    untracked_r = run_subprocess_hidden(
 
         ["git", "ls-files", "--others", "--exclude-standard"],
 
@@ -5255,11 +5227,11 @@ def _collect_untracked_cleanups(
 
         main_content = main_file.read_bytes()
 
-        wt_content_r = subprocess.run(
+        wt_content_r = run_subprocess_hidden(
 
             ["git", "show", f"{branch}:{rel_file}"],
 
-            cwd=str(root), capture_output=True,
+            cwd=str(root), capture_output=True, text=False,
 
         )
 
@@ -5333,7 +5305,7 @@ def _execute_cleanups(
 
             pre_stash_hashes[rel_file] = _compute_content_hash(root / rel_file)
 
-        subprocess.run(
+        run_subprocess_hidden(
 
             ["git", "stash", "push", "-m", stash_msg, "--"] + to_checkout,
 
@@ -5665,7 +5637,7 @@ def _get_merge_files(root: Path) -> list[str]:
 
     try:
 
-        result = subprocess.run(
+        result = run_subprocess_hidden(
 
             ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
 
@@ -5733,7 +5705,7 @@ def _run_reconcilers_after_merge(
 
         # 获取 merge commit SHA（post-merge HEAD = merge commit），作为 status file key
 
-        sha_r = subprocess.run(
+        sha_r = run_subprocess_hidden(
 
             ["git", "rev-parse", "HEAD"],
 
@@ -5903,7 +5875,7 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
     branch = f"session/{session_id}"
 
-    mb_r = subprocess.run(
+    mb_r = run_subprocess_hidden(
 
         ["git", "merge-base", "HEAD", branch],
 
@@ -5917,7 +5889,7 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
     merge_base = mb_r.stdout.strip()
 
-    diff_r = subprocess.run(
+    diff_r = run_subprocess_hidden(
 
         ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
 
@@ -6203,7 +6175,7 @@ def _pre_merge_gate_check(
 
         branch = f"session/{session_id}"
 
-        mb_r = subprocess.run(
+        mb_r = run_subprocess_hidden(
 
             ["git", "merge-base", "HEAD", branch],
 
@@ -6217,7 +6189,7 @@ def _pre_merge_gate_check(
 
         merge_base = mb_r.stdout.strip()
 
-        diff_r = subprocess.run(
+        diff_r = run_subprocess_hidden(
 
             ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
 
@@ -6233,7 +6205,7 @@ def _pre_merge_gate_check(
 
         # 保存当前 HEAD（用于恢复）
 
-        head_r = subprocess.run(
+        head_r = run_subprocess_hidden(
 
             ["git", "rev-parse", "HEAD"],
 
@@ -6251,7 +6223,7 @@ def _pre_merge_gate_check(
 
         # P1.3 fast-path：session_worktree pre-merge gate check 是可信调用方，跳过 git_guard alias 扫描
 
-        reset_r = subprocess.run(
+        reset_r = run_subprocess_hidden(
 
             ["git", "reset", "--soft", merge_base],
 
@@ -6309,7 +6281,7 @@ def _pre_merge_gate_check(
 
                 _effective_cwd = cwd if cwd is not None else _wt
 
-                return subprocess.run(
+                return run_subprocess_hidden(
 
                     cmd, cwd=_effective_cwd, capture_output=True, text=True,
 
@@ -6461,7 +6433,7 @@ def _pre_merge_gate_check(
 
             # P1.3 fast-path：pre-merge gate HEAD 恢复是可信调用方，跳过 git_guard alias 扫描
 
-            subprocess.run(
+            run_subprocess_hidden(
 
                 ["git", "reset", "--soft", orig_head],
 
@@ -6609,9 +6581,7 @@ def _merge_with_retry(
 
                 wt_path = manager._wt_path(session_id)
 
-                import subprocess as _sp
-
-                r = _sp.run(
+                r = run_subprocess_hidden(
 
                     ["git", "status", "--porcelain"],
 
@@ -7613,7 +7583,7 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
     """批量查询 rel_files 中被 git tracked 的文件集合。"""
 
-    tracked_r = subprocess.run(
+    tracked_r = run_subprocess_hidden(
 
         ["git", "ls-files", "--"] + rel_files,
 
@@ -7723,7 +7693,7 @@ def _dispose_main_workdir_files(
 
             pre_stash_hashes[rel_file] = _compute_content_hash(root / rel_file)
 
-        subprocess.run(
+        run_subprocess_hidden(
 
             ["git", "stash", "push", "-m", stash_msg, "--"] + to_stash,
 
