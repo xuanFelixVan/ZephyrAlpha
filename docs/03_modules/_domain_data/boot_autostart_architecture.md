@@ -13,6 +13,7 @@ ttl: permanent
 language: zh
 created_by: human_plus_agent
 description: "ZephyrAlpha 开机启动架构: 任务计划程序为唯一自启真源, 7 项第一性原理约束, watchdog 三层防御, legacy 清除记录"
+responsibility_domain: 
 ---
 
 # Boot Autostart Architecture
