@@ -377,8 +377,8 @@ class AKShareProvider(DataSourceBase):
     # ---- 日期解析辅助 ----
 
     @staticmethod
-    def _quarter_to_date(s: str) -> str:
-        """'2025年第1季度' -> '2025-03-31'（季度末日期）。
+    def quarter_to_date(s: str) -> str:
+        """'2025年第1季度' -> '2025-03-31'（季度末日期）（Stage 4 公共化，primary）。
 
         支持 '2025年第1-3季度' 形式（取末季度）。
         """
@@ -396,14 +396,24 @@ class AKShareProvider(DataSourceBase):
         return f"{year}-{md}" if md else ""
 
     @staticmethod
-    def _month_to_date(s: str) -> str:
-        """'2025年6月' -> '2025-06-30'（月末日期）。"""
+    def _quarter_to_date(s: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return AKShareProvider.quarter_to_date(s)
+
+    @staticmethod
+    def month_to_date(s: str) -> str:
+        """'2025年6月' -> '2025-06-30'（月末日期）（Stage 4 公共化，primary）。"""
         m = re.match(r"(\d{4})年(\d{1,2})月?", s)
         if not m:
             return ""
         y, mo = m.group(1), int(m.group(2))
         last_day = calendar.monthrange(int(y), mo)[1]
         return f"{y}-{mo:02d}-{last_day:02d}"
+
+    @staticmethod
+    def _month_to_date(s: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return AKShareProvider.month_to_date(s)
 
     # ---- 通用辅助（日期/标的） ----
 

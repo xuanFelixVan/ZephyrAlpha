@@ -139,17 +139,19 @@ class IFindProvider(DataSourceBase):
     # ---- kline_daily 能力 ----
     _KLINE_INDICATORS = "preClose,open,high,low,close,change,changeRatio,volume,turnoverRatio,amount"
     _KLINE_PARAMS = "Interval:D,CPS:1,baseDate:1900-01-01,Currency:YSHB,fill:Previous"
-    _KLINE_COLUMNS = ["trade_date", "symbol", "open", "close", "high", "low",
-                      "volume", "amount", "amplitude", "pct_change", "change",
-                      "turnover", "data_source"]
+    KLINE_COLUMNS = ["trade_date", "symbol", "open", "close", "high", "low",
+                     "volume", "amount", "amplitude", "pct_change", "change",
+                     "turnover", "data_source"]
+    _KLINE_COLUMNS = KLINE_COLUMNS  # 向后兼容别名（Stage 4 公共化）
     _KLINE_TABLE = _TBL_KLINE_DAILY
 
     # ---- kline_index 能力 ----
     _INDEX_KLINE_INDICATORS = "open,high,low,close,volume,amount"
     _INDEX_KLINE_PARAMS = "Interval:D,CPS:0,baseDate:1900-01-01,Currency:YSHB,fill:Previous"
-    _INDEX_KLINE_COLUMNS = ["trade_date", "symbol", "name", "open", "high", "low",
-                            "close", "volume", "amount", "advance_count",
-                            "decline_count", "data_source", "quality_flag"]
+    INDEX_KLINE_COLUMNS = ["trade_date", "symbol", "name", "open", "high", "low",
+                           "close", "volume", "amount", "advance_count",
+                           "decline_count", "data_source", "quality_flag"]
+    _INDEX_KLINE_COLUMNS = INDEX_KLINE_COLUMNS  # 向后兼容别名（Stage 4 公共化）
     _INDEX_KLINE_TABLE = _TBL_INDEX_KLINE
     # 主要指数代码 -> 名称 映射（iFind 格式）
     _INDEX_NAME_MAP = {
@@ -165,13 +167,14 @@ class IFindProvider(DataSourceBase):
     }
 
     # ---- money_flow 能力 ----
-    _MONEY_FLOW_COLUMNS = ["trade_date", "symbol", "close", "pct_change",
-                           "main_net_inflow", "main_net_inflow_pct",
-                           "super_large_net_inflow", "super_large_net_inflow_pct",
-                           "large_net_inflow", "large_net_inflow_pct",
-                           "medium_net_inflow", "medium_net_inflow_pct",
-                           "small_net_inflow", "small_net_inflow_pct",
-                           "data_source"]
+    MONEY_FLOW_COLUMNS = ["trade_date", "symbol", "close", "pct_change",
+                          "main_net_inflow", "main_net_inflow_pct",
+                          "super_large_net_inflow", "super_large_net_inflow_pct",
+                          "large_net_inflow", "large_net_inflow_pct",
+                          "medium_net_inflow", "medium_net_inflow_pct",
+                          "small_net_inflow", "small_net_inflow_pct",
+                          "data_source"]
+    _MONEY_FLOW_COLUMNS = MONEY_FLOW_COLUMNS  # 向后兼容别名（Stage 4 公共化）
     _MONEY_FLOW_TABLE = _TBL_MONEY_FLOW
 
     # CH fallback: 从 stock_list 获取在册 A 股 ts_code（SQL_ 前缀豁免 NO-BARE-SQL gate）
@@ -625,10 +628,10 @@ class IFindProvider(DataSourceBase):
             "ifind_qfq",
         )
 
-    def _fetch_kline_daily(
+    def fetch_kline_daily(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取日K线（前复权），写入 c1_market.kline_daily。
+        """拉取日K线（前复权），写入 c1_market.kline_daily（Stage 4 公共化，primary）。
 
         使用 THS_HistoryQuotes（Interval:D, CPS:1 前复权）。
         每 500 行 yield 一批。配额耗尽时 yield error 并 return。
@@ -686,10 +689,16 @@ class IFindProvider(DataSourceBase):
                 elapsed_sec=time.time() - start_ts,
             )
 
-    def _fetch_kline_index(
+    def _fetch_kline_daily(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取指数日K线，写入 c1_market.kline_index。
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_kline_daily(payload, policy)
+
+    def fetch_kline_index(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取指数日K线，写入 c1_market.kline_index（Stage 4 公共化，primary）。
 
         使用 THS_HistoryQuotes（Interval:D, CPS:0 不复权）。
         payload.symbols 为指数代码列表（如 ["000300.SH"]）；
@@ -786,6 +795,12 @@ class IFindProvider(DataSourceBase):
                 elapsed_sec=time.time() - start_ts,
             )
 
+    def _fetch_kline_index(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_kline_index(payload, policy)
+
     @staticmethod
     def _build_index_kline_row(trade_date, ts_code, name, row) -> tuple:
         """构造 kline_index 行元组（open/high/low/close/volume/amount）。"""
@@ -808,10 +823,10 @@ class IFindProvider(DataSourceBase):
 
     # ============== money_flow 能力 ==============
 
-    def _fetch_money_flow(
+    def fetch_money_flow(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取资金流向数据，写入 c1_market.money_flow。
+        """拉取资金流向数据，写入 c1_market.money_flow（Stage 4 公共化，primary）。
 
         使用 THS_iwencai（i问财）自然语言查询。
         逐日查询 "{date} 主力资金流向" 获取全市场资金流数据。
@@ -892,10 +907,16 @@ class IFindProvider(DataSourceBase):
 
             current += datetime.timedelta(days=1)
 
-    def _parse_iwencai_money_flow(
+    def _fetch_money_flow(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_money_flow(payload, policy)
+
+    def parse_iwencai_money_flow(
         self, raw, date_iso: str
     ) -> list[tuple]:
-        """解析 i问财资金流向返回结果。
+        """解析 i问财资金流向返回结果（Stage 4 公共化，primary）。
 
         i问财返回 dict 格式：
             {
@@ -959,6 +980,12 @@ class IFindProvider(DataSourceBase):
             )
 
         return rows
+
+    def _parse_iwencai_money_flow(
+        self, raw, date_iso: str
+    ) -> list[tuple]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.parse_iwencai_money_flow(raw, date_iso)
 
     # ============== edb_data 能力（宏观经济数据库） ==============
 
@@ -1414,13 +1441,14 @@ class IFindProvider(DataSourceBase):
     # ============== concept_sector 能力（概念板块列表） ==============
 
     # 概念板块表列顺序
-    _CONCEPT_SECTOR_COLUMNS = ["sector_code", "sector_name", "data_source"]
+    CONCEPT_SECTOR_COLUMNS = ["sector_code", "sector_name", "data_source"]
+    _CONCEPT_SECTOR_COLUMNS = CONCEPT_SECTOR_COLUMNS  # 向后兼容别名（Stage 4 公共化）
     _CONCEPT_SECTOR_TABLE = _TBL_CONCEPT_SECTOR
 
-    def _fetch_concept_sector(
+    def fetch_concept_sector(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取概念板块列表，写入 c1_market.concept_sector。
+        """拉取概念板块列表，写入 c1_market.concept_sector（Stage 4 公共化，primary）。
 
         使用 THS_iwencai（i问财）查询"概念板块"，获取全市场股票的概念板块归属，
         然后解析"所属概念"字段提取唯一概念板块名称。
@@ -1499,8 +1527,14 @@ class IFindProvider(DataSourceBase):
                 error="概念板块列表为空（i问财返回无所属概念列）",
             )
 
-    def _parse_concept_sectors(self, raw) -> list[tuple]:
-        """解析 i问财概念板块返回，提取唯一概念板块名称。
+    def _fetch_concept_sector(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_concept_sector(payload, policy)
+
+    def parse_concept_sectors(self, raw) -> list[tuple]:
+        """解析 i问财概念板块返回，提取唯一概念板块名称（Stage 4 公共化，primary）。
 
         i问财返回 dict 格式：
             {'tables': [{'table': {'股票代码': [...], '所属概念': [...]}}]}
@@ -1546,13 +1580,18 @@ class IFindProvider(DataSourceBase):
         self._log.info(f"concept_sector 提取到 {len(rows)} 个概念板块")
         return rows
 
+    def _parse_concept_sectors(self, raw) -> list[tuple]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.parse_concept_sectors(raw)
+
     # ============== realtime_snapshot 能力（实时行情快照） ==============
 
     # 实时快照表列顺序
-    _REALTIME_SNAPSHOT_COLUMNS = [
+    REALTIME_SNAPSHOT_COLUMNS = [
         "snapshot_time", "symbol", "open", "high", "low",
         "close", "volume", "amount", "data_source",
     ]
+    _REALTIME_SNAPSHOT_COLUMNS = REALTIME_SNAPSHOT_COLUMNS  # 向后兼容别名（Stage 4 公共化）
     _REALTIME_SNAPSHOT_TABLE = _TBL_REALTIME_SNAPSHOT
     # THS_RealtimeQuotes 指标（分号分隔，支持多指标）
     # 治本修复 #ARCH-REALTIME-INDICATOR-FIX（2026-07-24）：
@@ -1560,10 +1599,10 @@ class IFindProvider(DataSourceBase):
     # ths_ 前缀是 THS_BasicData（历史数据）的格式，用于实时接口会返回 -4001 no data。
     _REALTIME_INDICATORS = "open;high;low;close;volume;amount"
 
-    def _fetch_realtime_snapshot(
+    def fetch_realtime_snapshot(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """拉取实时行情快照，写入 c1_market.realtime_snapshot。
+        """拉取实时行情快照，写入 c1_market.realtime_snapshot（Stage 4 公共化，primary）。
 
         使用 THS_RealtimeQuotes(thscode, jsonIndicator) 获取实时 OHLCV 数据。
         非交易时段返回 -4001（无数据），属正常行为。
@@ -1645,10 +1684,16 @@ class IFindProvider(DataSourceBase):
                 elapsed_sec=time.time() - start_ts,
             )
 
-    def _query_realtime_chunk(
+    def _fetch_realtime_snapshot(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_realtime_snapshot(payload, policy)
+
+    def query_realtime_chunk(
         self, codes_str: str, policy: "SourcePolicy",
     ) -> tuple[list[tuple], str | None]:
-        """查询单批实时行情并解析为行元组（降低 _fetch_realtime_snapshot 复杂度）。
+        """查询单批实时行情并解析为行元组（降低 _fetch_realtime_snapshot 复杂度）（Stage 4 公共化，primary）。
 
         Args:
             codes_str: 逗号分隔的 ts_code 字符串（如 "000001.SZ,600000.SH"）
@@ -1694,7 +1739,13 @@ class IFindProvider(DataSourceBase):
         rows = self._parse_realtime_quotes(raw, now_str, codes_str)
         return (rows, None)
 
-    def _parse_realtime_quotes(
+    def _query_realtime_chunk(
+        self, codes_str: str, policy: "SourcePolicy",
+    ) -> tuple[list[tuple], str | None]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.query_realtime_chunk(codes_str, policy)
+
+    def parse_realtime_quotes(
         self, raw, now_str: str, codes_str: str,
     ) -> list[tuple]:
         """解析 THS_RealtimeQuotes 返回为行元组列表。
@@ -1765,11 +1816,17 @@ class IFindProvider(DataSourceBase):
 
         return rows
 
+    def _parse_realtime_quotes(
+        self, raw, now_str: str, codes_str: str,
+    ) -> list[tuple]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.parse_realtime_quotes(raw, now_str, codes_str)
+
     # ============== 辅助方法 ==============
 
     @staticmethod
-    def _get_list_val(col_data: dict, key: str, idx: int) -> float | None:
-        """从字典中按键取列表值并安全转 float。
+    def get_list_val(col_data: dict, key: str, idx: int) -> float | None:
+        """从字典中按键取列表值并安全转 float（Stage 4 公共化，primary）。
 
         Args:
             col_data: 列数据字典 {key: [val1, val2, ...]}
@@ -1785,8 +1842,13 @@ class IFindProvider(DataSourceBase):
         return IFindProvider.safe_float(vals[idx])
 
     @staticmethod
-    def _ts_code_to_symbol(ts_code: str) -> str:
-        """ts_code 转纯代码：'000001.SZ' -> '000001'。
+    def _get_list_val(col_data: dict, key: str, idx: int) -> float | None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return IFindProvider.get_list_val(col_data, key, idx)
+
+    @staticmethod
+    def ts_code_to_symbol(ts_code: str) -> str:
+        """ts_code 转纯代码：'000001.SZ' -> '000001'（Stage 4 公共化，primary）。
 
         Args:
             ts_code: iFind 标的代码，格式 'XXXXXX.SZ/SH/BJ'。
@@ -1797,6 +1859,11 @@ class IFindProvider(DataSourceBase):
         if not ts_code:
             return ""
         return ts_code.split(".")[0]
+
+    @staticmethod
+    def _ts_code_to_symbol(ts_code: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return IFindProvider.ts_code_to_symbol(ts_code)
 
     @staticmethod
     def safe_float(v) -> float | None:
@@ -1819,8 +1886,8 @@ class IFindProvider(DataSourceBase):
             return None
         return f
 
-    def _check_ifind_error(self, raw) -> tuple[bool, int | None, str, bool]:
-        """检查 iFind 返回值是否含错误码。
+    def check_ifind_error(self, raw) -> tuple[bool, int | None, str, bool]:
+        """检查 iFind 返回值是否含错误码（Stage 4 公共化，primary）。
 
         iFind 错误返回通常为 dict，含 errorcode/errcode 等键。
         常见错误码：
@@ -1874,6 +1941,10 @@ class IFindProvider(DataSourceBase):
                 pass
 
         return (False, code, msg, False)
+
+    def _check_ifind_error(self, raw) -> tuple[bool, int | None, str, bool]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_ifind_error(raw)
 
     # ---- 新能力辅助方法 ----
 
@@ -1963,8 +2034,8 @@ class IFindProvider(DataSourceBase):
         return codes
 
     @staticmethod
-    def _extract_date(idx, row) -> str:
-        """从 DataFrame 行提取日期字符串 "YYYY-MM-DD"。
+    def extract_date(idx, row) -> str:
+        """从 DataFrame 行提取日期字符串 "YYYY-MM-DD"（Stage 4 公共化，primary）。
 
         THS_Trans2DataFrame 返回的 DataFrame index 可能是：
         - pandas Timestamp
@@ -1998,8 +2069,13 @@ class IFindProvider(DataSourceBase):
         return ""
 
     @staticmethod
-    def _find_column(table_data: dict, candidates: list[str]):
-        """在 i问财返回的 table dict 中按候选键名列表查找列数据。
+    def _extract_date(idx, row) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return IFindProvider.extract_date(idx, row)
+
+    @staticmethod
+    def find_column(table_data: dict, candidates: list[str]):
+        """在 i问财返回的 table dict 中按候选键名列表查找列数据（Stage 4 公共化，primary）。
 
         i问财返回的列名带日期后缀（如 "主力资金流向[20250704]"），
         先精确匹配，再前缀匹配（startswith），返回第一个找到的列数据。
@@ -2020,8 +2096,13 @@ class IFindProvider(DataSourceBase):
         return None
 
     @staticmethod
-    def _ts_code_to_money_flow_symbol(ts_code: str) -> str:
-        """ts_code 转 money_flow 表的 symbol 格式。
+    def _find_column(table_data: dict, candidates: list[str]):
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return IFindProvider.find_column(table_data, candidates)
+
+    @staticmethod
+    def ts_code_to_money_flow_symbol(ts_code: str) -> str:
+        """ts_code 转 money_flow 表的 symbol 格式（Stage 4 公共化，primary）。
 
         "600000.SH" -> "sh600000"
         "000001.SZ" -> "sz000001"
@@ -2037,6 +2118,11 @@ class IFindProvider(DataSourceBase):
         if suffix_lower in ("sh", "sz", "bj"):
             return f"{suffix_lower}{code}"
         return ""
+
+    @staticmethod
+    def _ts_code_to_money_flow_symbol(ts_code: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return IFindProvider.ts_code_to_money_flow_symbol(ts_code)
 
     # ============== sector_meta 能力（同花顺881二级行业板块） ==============
 

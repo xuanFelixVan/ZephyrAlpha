@@ -613,7 +613,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== K线通用方法（日K/分钟K） ==============
 
-    def _fetch_kline(
+    def fetch_kline(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
@@ -715,6 +715,12 @@ class MiniQMTProvider(DataSourceBase):
                 )
 
     # ============== 财务报表 ==============
+
+    def _fetch_kline(
+        self, payload: FetchPayload, policy: SourcePolicy, period: str, dividend_type: str = "none", sector: str = "沪深A股"
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_kline(payload, policy, period, dividend_type=dividend_type, sector=sector)
 
     @staticmethod
     def _kline_columns(table: str, is_daily: bool, is_hfq: bool) -> list[str]:
@@ -838,7 +844,7 @@ class MiniQMTProvider(DataSourceBase):
                     ))
         return rows
 
-    def _fetch_financial_statement(
+    def fetch_financial_statement(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
@@ -960,7 +966,13 @@ class MiniQMTProvider(DataSourceBase):
         "创业板指": "399006.SZ",
     }
 
-    def _fetch_index_constituent(
+    def _fetch_financial_statement(
+        self, payload: FetchPayload, policy: SourcePolicy, table_list: str
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_financial_statement(payload, policy, table_list)
+
+    def fetch_index_constituent(
         self,
         payload: FetchPayload,
         policy: SourcePolicy,
@@ -1033,6 +1045,12 @@ class MiniQMTProvider(DataSourceBase):
                 )
 
     # ============== 指数K线 ==============
+
+    def _fetch_index_constituent(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_index_constituent(payload, policy)
 
     def _fetch_kline_index(
         self,
@@ -2652,8 +2670,8 @@ class MiniQMTProvider(DataSourceBase):
         return rows
 
     @staticmethod
-    def _detect_market_type(stock_code: str) -> str:
-        """根据代码后缀和前缀推断 market_type。
+    def detect_market_type(stock_code: str) -> str:
+        """根据代码后缀和前缀推断 market_type（Stage 4 公共化，primary）。
 
         .BJ → stock_bj；指数(000/399.SH/SZ) → index；
         ETF(15/51/52) → etf；可转债(11/12) → cb；其余 → stock。
@@ -2672,8 +2690,13 @@ class MiniQMTProvider(DataSourceBase):
         return "stock"
 
     @staticmethod
-    def _format_tick_timestamp(s: str, end_date) -> tuple[str, str]:
-        """格式化 tick 时间戳为 (trade_date, timestamp) 字符串。
+    def _detect_market_type(stock_code: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.detect_market_type(stock_code)
+
+    @staticmethod
+    def format_tick_timestamp(s: str, end_date) -> tuple[str, str]:
+        """格式化 tick 时间戳为 (trade_date, timestamp) 字符串（Stage 4 公共化，primary）。
 
         tick 索引为 YYYYMMDDHHMMSS 格式整数或时间戳。
 
@@ -2696,6 +2719,11 @@ class MiniQMTProvider(DataSourceBase):
         else:
             timestamp = trade_date + " 00:00:00"
         return trade_date, timestamp
+
+    @staticmethod
+    def _format_tick_timestamp(s: str, end_date) -> tuple[str, str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.format_tick_timestamp(s, end_date)
 
     # ============== 集合竞价快照（占位） ==============
 
@@ -3000,7 +3028,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 可转债K线 ==============
 
-    def _fetch_kline_cb(
+    def fetch_kline_cb(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取可转债日K线数据。
@@ -3037,7 +3065,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 期权K线 ==============
 
-    def _fetch_option_kline(
+    def _fetch_kline_cb(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_kline_cb(payload, policy)
+
+    def fetch_option_kline(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期权日K线数据。
@@ -3079,7 +3113,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 期权Greeks ==============
 
-    def _fetch_option_greeks(
+    def _fetch_option_kline(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_option_kline(payload, policy)
+
+    def fetch_option_greeks(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期权Greeks数据（delta/gamma/theta/vega）。
@@ -3137,6 +3177,12 @@ class MiniQMTProvider(DataSourceBase):
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
                 self._log.warning(f"{opt_code} Greeks抓取失败，跳过: {e}")
                 continue
+
+    def _fetch_option_greeks(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_option_greeks(payload, policy)
 
     def _compute_greeks_for_option(
         self, opt_code: str, start_str: str, end_str: str,
@@ -3252,8 +3298,8 @@ class MiniQMTProvider(DataSourceBase):
         return ul_data.get(underlying) if ul_data else None
 
     @staticmethod
-    def _calc_bs_greeks(S, K, T, r, sigma, opt_type):
-        """Black-Scholes 模型计算期权 Greeks。
+    def calc_bs_greeks(S, K, T, r, sigma, opt_type):
+        """Black-Scholes 模型计算期权 Greeks（Stage 4 公共化，primary）。
 
         Args:
             S: 标的现价
@@ -3297,9 +3343,14 @@ class MiniQMTProvider(DataSourceBase):
             "vega": round(vega, 6),
         }
 
+    @staticmethod
+    def _calc_bs_greeks(S, K, T, r, sigma, opt_type):
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.calc_bs_greeks(S, K, T, r, sigma, opt_type)
+
     # ============== 指数权重 ==============
 
-    def _fetch_index_weight(
+    def fetch_index_weight(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取指数成分股权重数据。
@@ -3360,7 +3411,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 板块列表 ==============
 
-    def _fetch_sector_list(
+    def _fetch_index_weight(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_index_weight(payload, policy)
+
+    def fetch_sector_list(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取板块成分股列表。
@@ -3417,7 +3474,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== Level-2逐笔 ==============
 
-    def _fetch_l2_tick(
+    def _fetch_sector_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_sector_list(payload, policy)
+
+    def fetch_l2_tick(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取 Level-2 逐笔行情数据。
@@ -3486,6 +3549,12 @@ class MiniQMTProvider(DataSourceBase):
                     error=f"{stock_code} L2抓取失败: {e}",
                 )
 
+    def _fetch_l2_tick(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_l2_tick(payload, policy)
+
     def _parse_l2_records(self, data, stock_code: str, end_date) -> list[tuple]:
         """解析 L2 numpy structured array 为行列表（降低 _fetch_l2_tick 复杂度）。
 
@@ -3529,7 +3598,7 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 集合竞价数据 ==============
 
-    def _fetch_auction_data(
+    def fetch_auction_data(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取集合竞价数据（实时快照）。
@@ -3622,6 +3691,12 @@ class MiniQMTProvider(DataSourceBase):
                 last_key="", elapsed_sec=time.time() - t0,
                 error=f"集合竞价数据抓取失败: {e}",
             )
+
+    def _fetch_auction_data(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_auction_data(payload, policy)
 
     @staticmethod
     def _parse_timetag(timetag) -> str:
@@ -3743,7 +3818,7 @@ class MiniQMTProvider(DataSourceBase):
                 error=f"集合竞价盘口抓取失败: {e}",
             )
 
-    def _fetch_kline_futures_qmt(
+    def fetch_kline_futures_qmt(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取期货日K线数据（QMT 专用表）。
@@ -3783,7 +3858,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 港股K线 ==============
 
-    def _fetch_hk_kline(
+    def _fetch_kline_futures_qmt(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_kline_futures_qmt(payload, policy)
+
+    def fetch_hk_kline(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取港股日K线数据。
@@ -3820,7 +3901,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== 美股K线 ==============
 
-    def _fetch_us_kline(
+    def _fetch_hk_kline(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_hk_kline(payload, policy)
+
+    def fetch_us_kline(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取美股日K线数据。
@@ -3848,7 +3935,13 @@ class MiniQMTProvider(DataSourceBase):
 
     # ============== ETF净值 ==============
 
-    def _fetch_etf_nav(
+    def _fetch_us_kline(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_us_kline(payload, policy)
+
+    def fetch_etf_nav(
         self, payload: FetchPayload, policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
         """抓取 ETF 基金净值数据。
@@ -3874,6 +3967,12 @@ class MiniQMTProvider(DataSourceBase):
         )
 
     # ============== 回购数据（占位） ==============
+
+    def _fetch_etf_nav(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        yield from self.fetch_etf_nav(payload, policy)
 
     def _fetch_repurchase(
         self, payload: FetchPayload, policy: SourcePolicy,
@@ -3960,13 +4059,18 @@ class MiniQMTProvider(DataSourceBase):
     # ============== 辅助方法 ==============
 
     @staticmethod
-    def _date_to_str(d: datetime.date) -> str:
-        """datetime.date -> "YYYYMMDD" 字符串。"""
+    def date_to_str(d: datetime.date) -> str:
+        """datetime.date -> "YYYYMMDD" 字符串（Stage 4 公共化，primary）。"""
         return d.strftime("%Y%m%d")
 
     @staticmethod
-    def _ts_to_date(ts_ms) -> str:
-        """毫秒时间戳 -> "YYYY-MM-DD" 字符串（按 UTC 解释，避免本地时区跨日）。
+    def _date_to_str(d: datetime.date) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.date_to_str(d)
+
+    @staticmethod
+    def ts_to_date(ts_ms) -> str:
+        """毫秒时间戳 -> "YYYY-MM-DD" 字符串（按 UTC 解释，避免本地时区跨日）（Stage 4 公共化，primary）。
 
         xtquant 返回的 time 列为中国市场收盘后的毫秒时间戳，但 trade_date
         只取日期部分，使用 UTC 解释可避免本地时区偏移导致跨日。
@@ -3974,17 +4078,32 @@ class MiniQMTProvider(DataSourceBase):
         return datetime.datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d")
 
     @staticmethod
-    def _ts_to_datetime(ts_ms) -> str:
-        """毫秒时间戳 -> "YYYY-MM-DD HH:MM:SS" 字符串（按 UTC 解释）。
+    def _ts_to_date(ts_ms) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.ts_to_date(ts_ms)
+
+    @staticmethod
+    def ts_to_datetime(ts_ms) -> str:
+        """毫秒时间戳 -> "YYYY-MM-DD HH:MM:SS" 字符串（按 UTC 解释）（Stage 4 公共化，primary）。
 
         分钟K线需要完整时间戳，用于 trade_time 列。
         """
         return datetime.datetime.utcfromtimestamp(ts_ms / 1000).strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
-    def _stock_to_symbol(stock_code: str) -> str:
-        """stock_code 去后缀："000001.SZ" -> "000001"。"""
+    def _ts_to_datetime(ts_ms) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.ts_to_datetime(ts_ms)
+
+    @staticmethod
+    def stock_to_symbol(stock_code: str) -> str:
+        """stock_code 去后缀："000001.SZ" -> "000001"（Stage 4 公共化，primary）。"""
         return stock_code.split(".")[0]
+
+    @staticmethod
+    def _stock_to_symbol(stock_code: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MiniQMTProvider.stock_to_symbol(stock_code)
 
     @staticmethod
     def safe_float(v) -> float | None:

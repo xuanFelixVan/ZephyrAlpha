@@ -238,14 +238,14 @@ class DataSourceBase(abc.ABC):
 
     # ---- 基类辅助方法（子类直接用） ----
 
-    def _call_with_policy(
+    def call_with_policy(
         self,
         fn: Callable,
         policy: "SourcePolicy",
         *args,
         **kwargs,
     ) -> object:
-        """按策略调用 SDK 函数：先限流休眠，再调用，失败按策略重试。
+        """按策略调用 SDK 函数：先限流休眠，再调用，失败按策略重试（Stage 4 公共化，primary）。
 
         Args:
             fn: SDK 调用函数（如 THS_BasicData / ak.macro_china_gdp）
@@ -292,6 +292,16 @@ class DataSourceBase(abc.ABC):
                 # 但避免被 PERM-TRIGGER gate 误判为"时间触发模式"（本模块是限流，非调度）
                 threading.Event().wait(wait)
         raise last_exc  # 不会到这
+
+    def _call_with_policy(
+        self,
+        fn: Callable,
+        policy: "SourcePolicy",
+        *args,
+        **kwargs,
+    ) -> object:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.call_with_policy(fn, policy, *args, **kwargs)
 
     def _rate_limit_sleep(self, policy: "SourcePolicy") -> None:
         """按 RPM 限流：确保两次调用间隔 >= 60/RPM 秒。"""

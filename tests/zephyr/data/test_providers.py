@@ -25,13 +25,13 @@ from src.zephyr.data.implementations.miniqmt_provider import MiniQMTProvider
 
 class TestIFindHelpers:
     def test_ts_code_to_symbol_sz(self):
-        assert IFindProvider._ts_code_to_symbol("000001.SZ") == "000001"
+        assert IFindProvider.ts_code_to_symbol("000001.SZ") == "000001"
 
     def test_ts_code_to_symbol_sh(self):
-        assert IFindProvider._ts_code_to_symbol("600000.SH") == "600000"
+        assert IFindProvider.ts_code_to_symbol("600000.SH") == "600000"
 
     def test_ts_code_to_symbol_no_suffix(self):
-        assert IFindProvider._ts_code_to_symbol("000001") == "000001"
+        assert IFindProvider.ts_code_to_symbol("000001") == "000001"
 
     def test_safe_float_normal(self):
         assert IFindProvider.safe_float(1.5) == 1.5
@@ -50,13 +50,13 @@ class TestIFindHelpers:
 
     def test_check_ifind_error_non_dict(self):
         p = IFindProvider()
-        assert p._check_ifind_error(None) == (False, None, "")
-        assert p._check_ifind_error("string") == (False, None, "")
+        assert p.check_ifind_error(None) == (False, None, "", False)
+        assert p.check_ifind_error("string") == (False, None, "", False)
 
     def test_check_ifind_error_quota_exceeded(self):
         p = IFindProvider()
         raw = {"errorcode": -4318, "errmsg": "月度配额耗尽"}
-        is_err, code, msg = p._check_ifind_error(raw)
+        is_err, code, msg, _is_auth = p.check_ifind_error(raw)
         assert is_err is True
         assert code == -4318
         assert "配额" in msg
@@ -64,20 +64,20 @@ class TestIFindHelpers:
     def test_check_ifind_error_negative_201(self):
         p = IFindProvider()
         raw = {"errcode": -201, "errormsg": "通用失败"}
-        is_err, code, _ = p._check_ifind_error(raw)
+        is_err, code, _, _is_auth = p.check_ifind_error(raw)
         assert is_err is True
         assert code == -201
 
     def test_check_ifind_error_no_code(self):
         p = IFindProvider()
         raw = {"data": "some data"}
-        assert p._check_ifind_error(raw) == (False, None, "")
+        assert p.check_ifind_error(raw) == (False, None, "", False)
 
     def test_check_ifind_error_alt_key(self):
         """兼容 error_code / code 等键名。"""
         p = IFindProvider()
         raw = {"code": -4309, "message": "quota"}
-        is_err, code, msg = p._check_ifind_error(raw)
+        is_err, code, msg, _is_auth = p.check_ifind_error(raw)
         assert is_err is True
         assert code == -4309
 
@@ -116,29 +116,29 @@ class TestIFindFetchRoute:
 
 class TestAKShareHelpers:
     def test_quarter_to_date_q1(self):
-        assert AKShareProvider._quarter_to_date("2025年第1季度") == "2025-03-31"
+        assert AKShareProvider.quarter_to_date("2025年第1季度") == "2025-03-31"
 
     def test_quarter_to_date_q4(self):
-        assert AKShareProvider._quarter_to_date("2024年第4季度") == "2024-12-31"
+        assert AKShareProvider.quarter_to_date("2024年第4季度") == "2024-12-31"
 
     def test_quarter_to_date_q2(self):
-        assert AKShareProvider._quarter_to_date("2025年第2季度") == "2025-06-30"
+        assert AKShareProvider.quarter_to_date("2025年第2季度") == "2025-06-30"
 
     def test_quarter_to_date_q3(self):
-        assert AKShareProvider._quarter_to_date("2025年第3季度") == "2025-09-30"
+        assert AKShareProvider.quarter_to_date("2025年第3季度") == "2025-09-30"
 
     def test_month_to_date_june(self):
-        assert AKShareProvider._month_to_date("2025年6月") == "2025-06-30"
+        assert AKShareProvider.month_to_date("2025年6月") == "2025-06-30"
 
     def test_month_to_date_december(self):
-        assert AKShareProvider._month_to_date("2025年12月") == "2025-12-31"
+        assert AKShareProvider.month_to_date("2025年12月") == "2025-12-31"
 
     def test_month_to_date_february_leap(self):
         """闰年 2 月末。"""
-        assert AKShareProvider._month_to_date("2024年2月") == "2024-02-29"
+        assert AKShareProvider.month_to_date("2024年2月") == "2024-02-29"
 
     def test_month_to_date_february_nonleap(self):
-        assert AKShareProvider._month_to_date("2025年2月") == "2025-02-28"
+        assert AKShareProvider.month_to_date("2025年2月") == "2025-02-28"
 
     def test_module_safe_float(self):
         assert ak_safe_float(1.5) == 1.5
@@ -168,24 +168,24 @@ class TestAKShareFetchRoute:
 
 class TestMiniQMTHelpers:
     def test_date_to_str(self):
-        assert MiniQMTProvider._date_to_str(datetime.date(2024, 1, 9)) == "20240109"
-        assert MiniQMTProvider._date_to_str(datetime.date(2024, 12, 31)) == "20241231"
+        assert MiniQMTProvider.date_to_str(datetime.date(2024, 1, 9)) == "20240109"
+        assert MiniQMTProvider.date_to_str(datetime.date(2024, 12, 31)) == "20241231"
 
     def test_ts_to_date(self):
         """毫秒时间戳 → YYYY-MM-DD。1704067200000 = 2024-01-01 00:00:00 UTC。"""
-        result = MiniQMTProvider._ts_to_date(1704067200000)
+        result = MiniQMTProvider.ts_to_date(1704067200000)
         assert result == "2024-01-01"
 
     def test_ts_to_date_end_of_day(self):
         """2024-01-01 23:59:59 UTC → 2024-01-01。"""
-        result = MiniQMTProvider._ts_to_date(1704153599000)
+        result = MiniQMTProvider.ts_to_date(1704153599000)
         assert result == "2024-01-01"
 
     def test_stock_to_symbol_sz(self):
-        assert MiniQMTProvider._stock_to_symbol("000001.SZ") == "000001"
+        assert MiniQMTProvider.stock_to_symbol("000001.SZ") == "000001"
 
     def test_stock_to_symbol_sh(self):
-        assert MiniQMTProvider._stock_to_symbol("600000.SH") == "600000"
+        assert MiniQMTProvider.stock_to_symbol("600000.SH") == "600000"
 
     def test_safe_float_normal(self):
         assert MiniQMTProvider.safe_float(1.5) == 1.5
@@ -227,31 +227,31 @@ class TestIFindNewCapabilities:
 
     def test_ts_code_to_money_flow_symbol_sh(self):
         """600000.SH → sh600000。"""
-        assert IFindProvider._ts_code_to_money_flow_symbol("600000.SH") == "sh600000"
+        assert IFindProvider.ts_code_to_money_flow_symbol("600000.SH") == "sh600000"
 
     def test_ts_code_to_money_flow_symbol_sz(self):
         """000001.SZ → sz000001。"""
-        assert IFindProvider._ts_code_to_money_flow_symbol("000001.SZ") == "sz000001"
+        assert IFindProvider.ts_code_to_money_flow_symbol("000001.SZ") == "sz000001"
 
     def test_ts_code_to_money_flow_symbol_bj(self):
         """830001.BJ → bj830001。"""
-        assert IFindProvider._ts_code_to_money_flow_symbol("830001.BJ") == "bj830001"
+        assert IFindProvider.ts_code_to_money_flow_symbol("830001.BJ") == "bj830001"
 
     def test_ts_code_to_money_flow_symbol_invalid(self):
         """无后缀或未知后缀 → 空串。"""
-        assert IFindProvider._ts_code_to_money_flow_symbol("600000") == ""
-        assert IFindProvider._ts_code_to_money_flow_symbol("600000.US") == ""
-        assert IFindProvider._ts_code_to_money_flow_symbol("") == ""
+        assert IFindProvider.ts_code_to_money_flow_symbol("600000") == ""
+        assert IFindProvider.ts_code_to_money_flow_symbol("600000.US") == ""
+        assert IFindProvider.ts_code_to_money_flow_symbol("") == ""
 
     def test_extract_date_from_string(self):
         """字符串日期 '2025-06-01' → '2025-06-01'。"""
-        result = IFindProvider._extract_date("2025-06-01", {})
+        result = IFindProvider.extract_date("2025-06-01", {})
         assert result == "2025-06-01"
 
     def test_extract_date_from_timestamp(self):
         """pandas Timestamp 日期提取（用 datetime.date 模拟）。"""
         import datetime as dt
-        result = IFindProvider._extract_date(dt.date(2025, 6, 1), {})
+        result = IFindProvider.extract_date(dt.date(2025, 6, 1), {})
         assert result == "2025-06-01"
 
     def test_extract_date_from_row_time(self):
@@ -261,29 +261,29 @@ class TestIFindNewCapabilities:
                 if key == "time":
                     return "2025-06-15"
                 return None
-        result = IFindProvider._extract_date(None, FakeRow())
+        result = IFindProvider.extract_date(None, FakeRow())
         assert result == "2025-06-15"
 
     def test_extract_date_empty(self):
         """无法提取时返回空串。"""
-        assert IFindProvider._extract_date(None, {}) == ""
+        assert IFindProvider.extract_date(None, {}) == ""
 
     def test_find_column_exact(self):
         """精确匹配列名。"""
         data = {"主力净流入-净额": [1.0, 2.0]}
-        result = IFindProvider._find_column(data, ["主力净流入-净额", "主力净流入"])
+        result = IFindProvider.find_column(data, ["主力净流入-净额", "主力净流入"])
         assert result == [1.0, 2.0]
 
     def test_find_column_fallback(self):
         """第一个候选不存在时回退到第二个。"""
         data = {"主力净流入": [3.0, 4.0]}
-        result = IFindProvider._find_column(data, ["主力净流入-净额", "主力净流入"])
+        result = IFindProvider.find_column(data, ["主力净流入-净额", "主力净流入"])
         assert result == [3.0, 4.0]
 
     def test_find_column_not_found(self):
         """所有候选都不存在时返回 None。"""
         data = {"other": [1.0]}
-        result = IFindProvider._find_column(data, ["主力净流入-净额", "主力净流入"])
+        result = IFindProvider.find_column(data, ["主力净流入-净额", "主力净流入"])
         assert result is None
 
     def test_kline_daily_route(self, monkeypatch):
@@ -298,7 +298,7 @@ class TestIFindNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(IFindProvider, "_fetch_kline_daily", fake_fetch)
+        monkeypatch.setattr(IFindProvider, "fetch_kline_daily", fake_fetch)
         payload = FetchPayload(
             table="c1_market.kline_daily", symbols=["600000.SH"],
             start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 30),
@@ -319,7 +319,7 @@ class TestIFindNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(IFindProvider, "_fetch_kline_index", fake_fetch)
+        monkeypatch.setattr(IFindProvider, "fetch_kline_index", fake_fetch)
         payload = FetchPayload(
             table="c1_market.index_kline", symbols=["000300.SH"],
             start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 30),
@@ -340,7 +340,7 @@ class TestIFindNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(IFindProvider, "_fetch_money_flow", fake_fetch)
+        monkeypatch.setattr(IFindProvider, "fetch_money_flow", fake_fetch)
         payload = FetchPayload(
             table="c1_market.money_flow", symbols=None,
             start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 1),
@@ -371,7 +371,7 @@ class TestIFindNewCapabilities:
                 }
             }]
         }
-        rows = p._parse_iwencai_money_flow(raw, "2025-06-30")
+        rows = p.parse_iwencai_money_flow(raw, "2025-06-30")
         assert len(rows) == 2
         assert rows[0][0] == "2025-06-30"  # trade_date
         assert rows[0][1] == "sh600000"     # symbol
@@ -384,29 +384,29 @@ class TestIFindNewCapabilities:
     def test_parse_iwencai_money_flow_empty(self):
         """i问财返回无 table 数据 → 空列表。"""
         p = IFindProvider()
-        assert p._parse_iwencai_money_flow({}, "2025-06-30") == []
-        assert p._parse_iwencai_money_flow({"tables": []}, "2025-06-30") == []
-        assert p._parse_iwencai_money_flow("not dict", "2025-06-30") == []
+        assert p.parse_iwencai_money_flow({}, "2025-06-30") == []
+        assert p.parse_iwencai_money_flow({"tables": []}, "2025-06-30") == []
+        assert p.parse_iwencai_money_flow("not dict", "2025-06-30") == []
 
     def test_parse_iwencai_money_flow_no_codes(self):
         """i问财返回无股票代码列 → 空列表。"""
         p = IFindProvider()
         raw = {"tables": [{"table": {"其他字段": [1.0]}}]}
-        assert p._parse_iwencai_money_flow(raw, "2025-06-30") == []
+        assert p.parse_iwencai_money_flow(raw, "2025-06-30") == []
 
     def test_kline_columns_match_schema(self):
         """kline_daily 列顺序与 ClickHouse schema 一致。"""
         expected = ["trade_date", "symbol", "open", "close", "high", "low",
                     "volume", "amount", "amplitude", "pct_change", "change",
                     "turnover", "data_source"]
-        assert IFindProvider._KLINE_COLUMNS == expected
+        assert IFindProvider.KLINE_COLUMNS == expected
 
     def test_index_kline_columns_match_schema(self):
         """index_kline 列顺序与 ClickHouse schema 一致。"""
         expected = ["trade_date", "symbol", "name", "open", "high", "low",
                     "close", "volume", "amount", "advance_count",
                     "decline_count", "data_source", "quality_flag"]
-        assert IFindProvider._INDEX_KLINE_COLUMNS == expected
+        assert IFindProvider.INDEX_KLINE_COLUMNS == expected
 
     def test_money_flow_columns_match_schema(self):
         """money_flow 列顺序与 ClickHouse schema 一致。"""
@@ -417,7 +417,7 @@ class TestIFindNewCapabilities:
                     "medium_net_inflow", "medium_net_inflow_pct",
                     "small_net_inflow", "small_net_inflow_pct",
                     "data_source"]
-        assert IFindProvider._MONEY_FLOW_COLUMNS == expected
+        assert IFindProvider.MONEY_FLOW_COLUMNS == expected
 
     # ---- concept_sector 能力测试 ----
 
@@ -433,7 +433,7 @@ class TestIFindNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(IFindProvider, "_fetch_concept_sector", fake_fetch)
+        monkeypatch.setattr(IFindProvider, "fetch_concept_sector", fake_fetch)
         payload = FetchPayload(
             table="c1_market.concept_sector", symbols=None,
             start=datetime.date(2025, 7, 1), end=datetime.date(2025, 7, 1),
@@ -445,7 +445,7 @@ class TestIFindNewCapabilities:
     def test_concept_sector_columns_match_schema(self):
         """concept_sector 列顺序与 ClickHouse schema 一致。"""
         expected = ["sector_code", "sector_name", "data_source"]
-        assert IFindProvider._CONCEPT_SECTOR_COLUMNS == expected
+        assert IFindProvider.CONCEPT_SECTOR_COLUMNS == expected
 
     def test_parse_concept_sectors_normal(self):
         """解析 i问财概念板块返回（正常情况）。"""
@@ -458,7 +458,7 @@ class TestIFindNewCapabilities:
                 }
             }]
         }
-        rows = p._parse_concept_sectors(raw)
+        rows = p.parse_concept_sectors(raw)
         # 唯一概念板块：融资融券、深股通、小金属概念、黄金概念
         # sorted() 按 Unicode 码点排序：小(U+5C0F) < 深(U+6DF1) < 融(U+878D) < 黄(U+9EC4)
         assert len(rows) == 4
@@ -470,15 +470,15 @@ class TestIFindNewCapabilities:
     def test_parse_concept_sectors_empty(self):
         """i问财返回无 table 数据 → 空列表。"""
         p = IFindProvider()
-        assert p._parse_concept_sectors({}) == []
-        assert p._parse_concept_sectors({"tables": []}) == []
-        assert p._parse_concept_sectors("not dict") == []
+        assert p.parse_concept_sectors({}) == []
+        assert p.parse_concept_sectors({"tables": []}) == []
+        assert p.parse_concept_sectors("not dict") == []
 
     def test_parse_concept_sectors_no_concept_col(self):
         """i问财返回无'所属概念'列 → 空列表。"""
         p = IFindProvider()
         raw = {"tables": [{"table": {"其他字段": [1.0]}}]}
-        assert p._parse_concept_sectors(raw) == []
+        assert p.parse_concept_sectors(raw) == []
 
     def test_parse_concept_sectors_dedup(self):
         """重复的概念板块名称去重。"""
@@ -491,7 +491,7 @@ class TestIFindNewCapabilities:
                 }
             }]
         }
-        rows = p._parse_concept_sectors(raw)
+        rows = p.parse_concept_sectors(raw)
         # 唯一概念板块：融资融券、深股通、黄金概念
         assert len(rows) == 3
 
@@ -506,7 +506,7 @@ class TestIFindNewCapabilities:
                 }
             }]
         }
-        rows = p._parse_concept_sectors(raw)
+        rows = p.parse_concept_sectors(raw)
         assert len(rows) == 1
         assert rows[0][1] == "融资融券"
 
@@ -524,7 +524,7 @@ class TestIFindNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(IFindProvider, "_fetch_realtime_snapshot", fake_fetch)
+        monkeypatch.setattr(IFindProvider, "fetch_realtime_snapshot", fake_fetch)
         payload = FetchPayload(
             table="c1_market.realtime_snapshot", symbols=["000001.SZ"],
             start=datetime.date(2025, 7, 1), end=datetime.date(2025, 7, 1),
@@ -539,27 +539,27 @@ class TestIFindNewCapabilities:
             "snapshot_time", "symbol", "open", "high", "low",
             "close", "volume", "amount", "data_source",
         ]
-        assert IFindProvider._REALTIME_SNAPSHOT_COLUMNS == expected
+        assert IFindProvider.REALTIME_SNAPSHOT_COLUMNS == expected
 
     def test_get_list_val_normal(self):
         """_get_list_val 正常取值并转 float。"""
         col_data = {"open": [10.5, 11.0]}
-        assert IFindProvider._get_list_val(col_data, "open", 0) == 10.5
-        assert IFindProvider._get_list_val(col_data, "open", 1) == 11.0
+        assert IFindProvider.get_list_val(col_data, "open", 0) == 10.5
+        assert IFindProvider.get_list_val(col_data, "open", 1) == 11.0
 
     def test_get_list_val_missing_key(self):
         """键不存在返回 None。"""
-        assert IFindProvider._get_list_val({}, "open", 0) is None
+        assert IFindProvider.get_list_val({}, "open", 0) is None
 
     def test_get_list_val_idx_out_of_range(self):
         """索引越界返回 None。"""
         col_data = {"open": [10.5]}
-        assert IFindProvider._get_list_val(col_data, "open", 5) is None
+        assert IFindProvider.get_list_val(col_data, "open", 5) is None
 
     def test_get_list_val_invalid_value(self):
         """非法值转 float 失败返回 None。"""
         col_data = {"open": ["abc"]}
-        assert IFindProvider._get_list_val(col_data, "open", 0) is None
+        assert IFindProvider.get_list_val(col_data, "open", 0) is None
 
     def test_parse_realtime_quotes_normal(self):
         """解析 THS_RealtimeQuotes 返回（正常情况）。"""
@@ -577,7 +577,7 @@ class TestIFindNewCapabilities:
                 }
             }]
         }
-        rows = p._parse_realtime_quotes(raw, "2025-07-11 15:00:00", "000001.SZ,600000.SH")
+        rows = p.parse_realtime_quotes(raw, "2025-07-11 15:00:00", "000001.SZ,600000.SH")
         assert len(rows) == 2
         # 第一行
         assert rows[0][0] == "2025-07-11 15:00:00"  # snapshot_time
@@ -596,9 +596,9 @@ class TestIFindNewCapabilities:
     def test_parse_realtime_quotes_empty(self):
         """返回无 table 数据 → 空列表。"""
         p = IFindProvider()
-        assert p._parse_realtime_quotes({}, "2025-07-11 15:00:00", "000001.SZ") == []
-        assert p._parse_realtime_quotes({"tables": []}, "2025-07-11 15:00:00", "000001.SZ") == []
-        assert p._parse_realtime_quotes("not dict", "2025-07-11 15:00:00", "000001.SZ") == []
+        assert p.parse_realtime_quotes({}, "2025-07-11 15:00:00", "000001.SZ") == []
+        assert p.parse_realtime_quotes({"tables": []}, "2025-07-11 15:00:00", "000001.SZ") == []
+        assert p.parse_realtime_quotes("not dict", "2025-07-11 15:00:00", "000001.SZ") == []
 
     def test_parse_realtime_quotes_fallback_codes(self):
         """无 thscode 列时用 codes_str 回退。"""
@@ -615,7 +615,7 @@ class TestIFindNewCapabilities:
                 }
             }]
         }
-        rows = p._parse_realtime_quotes(raw, "2025-07-11 15:00:00", "000001.SZ")
+        rows = p.parse_realtime_quotes(raw, "2025-07-11 15:00:00", "000001.SZ")
         assert len(rows) == 1
         assert rows[0][1] == "000001"  # symbol 来自 codes_str 回退
 
@@ -627,10 +627,10 @@ class TestIFindNewCapabilities:
         def fake_call_with_policy(func, policy, *args, **kwargs):
             return {"errorcode": -4318, "errmsg": "月度配额耗尽"}
 
-        monkeypatch.setattr(IFindProvider, "_call_with_policy", fake_call_with_policy)
-        monkeypatch.setattr(IFindProvider, "_check_ifind_error",
-                            lambda self, raw: (True, -4318, "月度配额耗尽"))
-        rows, fatal = p._query_realtime_chunk("000001.SZ", SourcePolicy())
+        monkeypatch.setattr(IFindProvider, "call_with_policy", fake_call_with_policy)
+        monkeypatch.setattr(IFindProvider, "check_ifind_error",
+                            lambda self, raw: (True, -4318, "月度配额耗尽", False))
+        rows, fatal = p.query_realtime_chunk("000001.SZ", SourcePolicy())
         assert rows == []
         assert fatal is not None
         assert "配额" in fatal
@@ -643,10 +643,10 @@ class TestIFindNewCapabilities:
         def fake_call_with_policy(func, policy, *args, **kwargs):
             return {"errorcode": -4001, "errmsg": "无数据"}
 
-        monkeypatch.setattr(IFindProvider, "_call_with_policy", fake_call_with_policy)
-        monkeypatch.setattr(IFindProvider, "_check_ifind_error",
-                            lambda self, raw: (True, -4001, "无数据"))
-        rows, fatal = p._query_realtime_chunk("000001.SZ", SourcePolicy())
+        monkeypatch.setattr(IFindProvider, "call_with_policy", fake_call_with_policy)
+        monkeypatch.setattr(IFindProvider, "check_ifind_error",
+                            lambda self, raw: (True, -4001, "无数据", False))
+        rows, fatal = p.query_realtime_chunk("000001.SZ", SourcePolicy())
         assert rows == []
         assert fatal is None  # -4001 不视为致命错误
 
@@ -656,12 +656,12 @@ class TestMiniQMTNewCapabilities:
 
     def test_ts_to_datetime(self):
         """毫秒时间戳 → YYYY-MM-DD HH:MM:SS。1704067200000 = 2024-01-01 00:00:00 UTC。"""
-        result = MiniQMTProvider._ts_to_datetime(1704067200000)
+        result = MiniQMTProvider.ts_to_datetime(1704067200000)
         assert result == "2024-01-01 00:00:00"
 
     def test_ts_to_datetime_end_of_day(self):
         """2024-01-01 23:59:59 UTC。"""
-        result = MiniQMTProvider._ts_to_datetime(1704153599000)
+        result = MiniQMTProvider.ts_to_datetime(1704153599000)
         assert result == "2024-01-01 23:59:59"
 
     def test_kline_1min_route(self, monkeypatch):
@@ -676,7 +676,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline", fake_fetch_kline)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
             table="c1_market.kline_1min", symbols=["000001.SZ"],
             start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
@@ -697,7 +697,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline", fake_fetch_kline)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
             table="c1_market.kline_5min", symbols=["000001.SZ"],
             start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
@@ -718,7 +718,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline", fake_fetch_kline)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
             table="c1_market.kline_daily", symbols=["000001.SZ"],
             start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 30),
@@ -739,7 +739,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_financial_statement", fake_fetch)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_financial_statement", fake_fetch)
         payload = FetchPayload(
             table="c3_fundamental.balance", symbols=["000001.SZ"],
             start=datetime.date(2024, 1, 1), end=datetime.date(2025, 6, 30),
@@ -760,7 +760,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_index_constituent", fake_fetch)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_index_constituent", fake_fetch)
         payload = FetchPayload(
             table="c1_market.index_constituent", symbols=None,
             start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
@@ -775,9 +775,9 @@ class TestMiniQMTNewCapabilities:
         # 检查 fetch 方法中的映射字典
         # 由于 _FINANCIAL_CAPABILITIES 是方法内局部变量，这里通过路由测试间接验证
         # 已在 test_balance_sheet_route 中验证 Balance 映射
-        assert hasattr(M, "_fetch_financial_statement")
-        assert hasattr(M, "_fetch_index_constituent")
-        assert hasattr(M, "_fetch_kline")
+        assert hasattr(M, "fetch_financial_statement")
+        assert hasattr(M, "fetch_index_constituent")
+        assert hasattr(M, "fetch_kline")
 
 
 # ============== 第二批新增能力测试（15 个数据下载能力）==============
@@ -801,7 +801,7 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_calc_bs_greeks_call(self):
         """BS 模型 call Greeks 计算（S=100,K=100,T=0.25,r=0.05,sigma=0.2）。"""
-        g = MiniQMTProvider._calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "call")
+        g = MiniQMTProvider.calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "call")
         assert g is not None
         assert abs(g["delta"] - 0.569) < 0.01
         assert abs(g["gamma"] - 0.0393) < 0.001
@@ -809,17 +809,17 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_calc_bs_greeks_put(self):
         """BS 模型 put Greeks 计算。"""
-        g = MiniQMTProvider._calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "put")
+        g = MiniQMTProvider.calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "put")
         assert g is not None
         assert g["delta"] < 0  # put delta 为负
         assert abs(g["delta"] - (-0.431)) < 0.01
 
     def test_calc_bs_greeks_none_params(self):
         """参数不足时返回 None。"""
-        assert MiniQMTProvider._calc_bs_greeks(None, 100, 0.25, 0.05, 0.2, "call") is None
-        assert MiniQMTProvider._calc_bs_greeks(100, None, 0.25, 0.05, 0.2, "call") is None
-        assert MiniQMTProvider._calc_bs_greeks(100, 0, 0.25, 0.05, 0.2, "call") is None
-        assert MiniQMTProvider._calc_bs_greeks(100, 100, 0, 0.05, 0.2, "call") is None
+        assert MiniQMTProvider.calc_bs_greeks(None, 100, 0.25, 0.05, 0.2, "call") is None
+        assert MiniQMTProvider.calc_bs_greeks(100, None, 0.25, 0.05, 0.2, "call") is None
+        assert MiniQMTProvider.calc_bs_greeks(100, 0, 0.25, 0.05, 0.2, "call") is None
+        assert MiniQMTProvider.calc_bs_greeks(100, 100, 0, 0.05, 0.2, "call") is None
 
     def test_cb_kline_route(self, monkeypatch):
         """fetch(capability=kline_cb) 路由到 _fetch_kline_cb。"""
@@ -830,7 +830,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("kline_cb")
             yield FetchResult(table="c1_market.cb_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline_cb", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_kline_cb", fake)
         payload = FetchPayload(table="", symbols=["113001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_cb"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["kline_cb"]
@@ -844,7 +844,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("option_kline")
             yield FetchResult(table="c1_market.option_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_option_kline", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_option_kline", fake)
         payload = FetchPayload(table="", symbols=["10000001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "option_kline"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["option_kline"]
@@ -858,7 +858,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("option_greeks")
             yield FetchResult(table="c1_market.option_greeks", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_option_greeks", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_option_greeks", fake)
         payload = FetchPayload(table="", symbols=["10000001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "option_greeks"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["option_greeks"]
@@ -872,7 +872,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("index_weight")
             yield FetchResult(table="c1_market.index_weight", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_index_weight", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_index_weight", fake)
         payload = FetchPayload(table="", symbols=["000300.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "index_weight"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["index_weight"]
@@ -886,7 +886,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("sector_list")
             yield FetchResult(table="c1_market.sector_list", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_sector_list", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_sector_list", fake)
         payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "sector_list"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["sector_list"]
@@ -900,7 +900,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("l2_tick")
             yield FetchResult(table="c1_market.l2_tick", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_l2_tick", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_l2_tick", fake)
         payload = FetchPayload(table="", symbols=["000001.SZ"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "l2_tick"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["l2_tick"]
@@ -914,7 +914,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("auction_data")
             yield FetchResult(table="c1_market.auction_snapshot", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_auction_data", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_auction_data", fake)
         payload = FetchPayload(table="", symbols=["000001.SZ"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "auction_data"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["auction_data"]
@@ -928,7 +928,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("futures_kline_qmt")
             yield FetchResult(table="c1_market.futures_kline_qmt", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_kline_futures_qmt", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_kline_futures_qmt", fake)
         payload = FetchPayload(table="", symbols=["IF2407.CFFEX"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "futures_kline_qmt"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["futures_kline_qmt"]
@@ -942,7 +942,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("hk_kline")
             yield FetchResult(table="c1_market.hk_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_hk_kline", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_hk_kline", fake)
         payload = FetchPayload(table="", symbols=["00700.HK"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "hk_kline"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["hk_kline"]
@@ -956,7 +956,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("kline_us_daily")
             yield FetchResult(table="c1_market.us_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_us_kline", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_us_kline", fake)
         payload = FetchPayload(table="", symbols=["AAPL.US"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_us_daily"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["kline_us_daily"]
@@ -970,7 +970,7 @@ class TestMiniQMTBatch2Capabilities:
             called.append("etf_nav")
             yield FetchResult(table="c1_market.etf_nav", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "_fetch_etf_nav", fake)
+        monkeypatch.setattr(MiniQMTProvider, "fetch_etf_nav", fake)
         payload = FetchPayload(table="", symbols=["510050.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "etf_nav"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["etf_nav"]
@@ -1010,11 +1010,11 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_detect_market_type_cb(self):
         """可转债代码识别为 cb。"""
-        assert MiniQMTProvider._detect_market_type("113001.SH") == "cb"
-        assert MiniQMTProvider._detect_market_type("128001.SZ") == "cb"
+        assert MiniQMTProvider.detect_market_type("113001.SH") == "cb"
+        assert MiniQMTProvider.detect_market_type("128001.SZ") == "cb"
 
     def test_format_tick_timestamp(self):
         """tick 时间戳格式化。"""
-        td, ts = MiniQMTProvider._format_tick_timestamp("20240103093015", datetime.date(2024, 1, 3))
+        td, ts = MiniQMTProvider.format_tick_timestamp("20240103093015", datetime.date(2024, 1, 3))
         assert td == "2024-01-03"
         assert ts == "2024-01-03 09:30:15"
