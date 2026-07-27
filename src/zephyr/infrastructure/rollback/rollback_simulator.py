@@ -28,14 +28,13 @@ CI 集成: 每次 PR 运行真实回滚 -> 确认回滚可行 + 无副作用。
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
-import subprocess
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-
 
 @dataclass
 class SimulationResult:
@@ -47,7 +46,6 @@ class SimulationResult:
     files_changed: int
     db_impact: int
     details: list[str] = field(default_factory=list)
-
 
 class RollbackSimulator:
     WORKTREE_PREFIX: str = ".zephyr/sim_worktree_"
@@ -68,7 +66,7 @@ class RollbackSimulator:
             self._run_git(["worktree", "add", str(worktree_path), commit_sha])
             details.append(f"Worktree created: {worktree_path}")
 
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "revert", "--no-edit", commit_sha],
                 cwd=str(worktree_path),
                 capture_output=True,
@@ -112,7 +110,7 @@ class RollbackSimulator:
 
     def _run_git(self, args: list[str], cwd: Path | None = None) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git"] + args,
                 cwd=str(cwd or self._project_root),
                 capture_output=True,

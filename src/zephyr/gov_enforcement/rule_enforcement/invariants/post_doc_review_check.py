@@ -14,6 +14,7 @@
 # [TESTS] tests/test_post_doc_review.py
 # [A_module] module_id=MOD-GOV-post_doc_review_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 """
 PostDocReviewScanner — Session 关门时文档内容审查扫描器。
 
@@ -313,7 +314,7 @@ class PostDocReviewScanner:
 
         try:
             # 已跟踪文件的修改（start_commit -> HEAD）
-            tracked_result = subprocess.run(
+            tracked_result = run_subprocess_hidden(
                 ["git", "diff", "--name-only", start_commit, "HEAD"],
                 cwd=str(self._root),
                 capture_output=True,
@@ -325,7 +326,7 @@ class PostDocReviewScanner:
                 raise GitUnavailableError(f"git diff 失败 (exit={tracked_result.returncode}): {tracked_result.stderr}")
 
             # 新建未跟踪文件
-            untracked_result = subprocess.run(
+            untracked_result = run_subprocess_hidden(
                 ["git", "ls-files", "--others", "--exclude-standard"],
                 cwd=str(self._root),
                 capture_output=True,

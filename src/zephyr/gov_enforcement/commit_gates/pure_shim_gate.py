@@ -58,6 +58,7 @@ import subprocess
 import sys
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +156,7 @@ def _run_shim_checker(abs_files: list[str], wt_root: str) -> subprocess.Complete
         return None
 
     try:
-        return subprocess.run(
+        return run_subprocess_hidden(
             [sys.executable, _SHIM_SCRIPT, "--ci"] + abs_files,
             capture_output=True,
             text=True,

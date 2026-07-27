@@ -66,6 +66,7 @@ import re
 import subprocess
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -113,12 +114,12 @@ def make_r5_digit_suffix_gate() -> GateSpec:
         historical: list[str] = []
         for dir_path in sorted(suspect_dirs):
             try:
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     ["git", "ls-tree", "HEAD", dir_path],
                     capture_output=True,
                     cwd=str(project_root),
                     timeout=10,
-                )
+                text=False)
             except (subprocess.TimeoutExpired, OSError) as e:
                 # fail-closed：git 操作失败阻断（R5 是核心约束）
                 return False, f"R5 gate fail-closed: git ls-tree failed for {dir_path}: {e}"

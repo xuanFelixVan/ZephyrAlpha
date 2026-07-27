@@ -20,7 +20,6 @@ from __future__ import annotations
 import logging
 import os
 import re
-import subprocess
 import tempfile
 import time
 from collections import defaultdict
@@ -38,6 +37,7 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 )
 # 5.12.2#1 修复：atomic_write 委托 canonical 真源，消除签名漂移
 from zephyr.shared.io.file_utils import AtomicWriteError, atomic_write as _canonical_atomic_write
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,6 @@ _SECRET_PATTERNS = [
     re.compile(r"(?i)-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----"),
     re.compile(r"(?i)xox[bpsa]-[A-Za-z0-9\-]{10,}"),
 ]
-
 
 class SafetyGate:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
@@ -82,7 +81,6 @@ class SafetyGate:
             )
         return SafetyDecision(approved=True, confidence=action.confidence, reason="Safety gate passed")
 
-
 class LockGuard:
     def __init__(self) -> None:
         self._locks_dir = Path(".ailocks")
@@ -104,7 +102,6 @@ class LockGuard:
     def check(self, filepath: str) -> tuple[bool, str]:
         return self.is_locked(filepath)
 
-
 class WriteSafety:
     @staticmethod
     def atomic_write(filepath: str, content: str) -> bool:
@@ -123,7 +120,6 @@ class WriteSafety:
             return actual == expected_content
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
-
 
 class FixValidator:
     # 5.141.2 修复: timeout 通过环境变量外部化, 避免散落硬编码
@@ -164,7 +160,7 @@ class FixValidator:
             cmd = ["python", "-m", "pytest", "-x", "-q", "--tb=short"]
             if target:
                 cmd.append(target)
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=self.PYTEST_TIMEOUT_S, cwd=self._project_root)
+            result = run_subprocess_hidden(cmd, capture_output=True, text=True, timeout=self.PYTEST_TIMEOUT_S, cwd=self._project_root)
             return ValidationResult(
                 valid=result.returncode == 0,
                 check_name="pytest",
@@ -176,7 +172,7 @@ class FixValidator:
 
     def run_mypy(self, target: str) -> ValidationResult:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["python", "-m", "mypy", target, "--no-error-summary"],
                 capture_output=True,
                 text=True,
@@ -194,7 +190,7 @@ class FixValidator:
 
     def run_ruff(self, target: str) -> ValidationResult:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["python", "-m", "ruff", "check", target],
                 capture_output=True,
                 text=True,
@@ -209,7 +205,6 @@ class FixValidator:
             )
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="ruff", evidence="", error=str(exc))
-
 
 class CascadeBreaker:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
@@ -269,7 +264,6 @@ class CascadeBreaker:
             if now >= self._module_frozen[mod]:
                 del self._module_frozen[mod]
 
-
 class SandboxExecutor:
     def __init__(self, base_dir: str | None = None) -> None:
         self._base_dir = base_dir or os.path.join(tempfile.gettempdir(), "auto_fix_sandbox")
@@ -289,7 +283,6 @@ class SandboxExecutor:
                 shutil.rmtree(sandbox_dir, ignore_errors=True)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in fix_safety", exc_info=True)
-
 
 class SecretLeakGuard:
     def __init__(self) -> None:

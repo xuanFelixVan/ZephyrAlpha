@@ -31,6 +31,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
@@ -47,7 +48,6 @@ BLUEPRINT_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yam
 MODULE_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 GATE_REGISTRY = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule_enforcement_registry.yaml"
 CROSSCHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "crosscheck_sys_master_deps.py"
-
 
 def load_blueprint_path(module_id: str) -> Path | None:
     """从 blueprint_registry.yaml（SSoT 派生）查询蓝图磁盘路径，不硬编码。
@@ -67,11 +67,9 @@ def load_blueprint_path(module_id: str) -> Path | None:
             return REPO_ROOT / "docs" / bp["file_path"]
     return None
 
-
 # 蓝图路径从 registry 查询（SSoT），不硬编码——消除连字符/下划线漂移根因
 SYS_MASTER_PATH = load_blueprint_path("SYS-MASTER-001")
 MOD_MASTER_PATH = load_blueprint_path("MOD-MASTER_BLUEPRINT")
-
 
 def extract_frontmatter(filepath: Path) -> dict:
     text = filepath.read_text(encoding="utf-8")
@@ -86,7 +84,6 @@ def extract_frontmatter(filepath: Path) -> dict:
         return yaml.safe_load(m.group(1)) or {}
     except yaml.YAMLError:
         return {}
-
 
 def check_blueprint_existence() -> list[dict]:
     results = []
@@ -104,7 +101,6 @@ def check_blueprint_existence() -> list[dict]:
             }
         )
     return results
-
 
 def check_cold_start_integration() -> list[dict]:
     if not PROJECT_RULES.exists():
@@ -137,7 +133,6 @@ def check_cold_start_integration() -> list[dict]:
         }
     ]
 
-
 def check_depends_on_integrity() -> list[dict]:
     if SYS_MASTER_PATH is None:
         return [{"check_id": "SYS-C02", "label": "depends_on_integrity", "status": "FAIL", "detail": "SYS-MASTER-001 not found in blueprint_registry.yaml"}]
@@ -162,7 +157,6 @@ def check_depends_on_integrity() -> list[dict]:
         }
     ]
 
-
 def check_ai_rules_count() -> list[dict]:
     rules_dir = REPO_ROOT / ".trae" / "rules"
     count = 0
@@ -179,7 +173,6 @@ def check_ai_rules_count() -> list[dict]:
             "detail": f"{count} numbered rules found (minimum required: 32)",
         }
     ]
-
 
 def check_gate_registry_entry() -> list[dict]:
     if not GATE_REGISTRY.exists():
@@ -201,7 +194,6 @@ def check_gate_registry_entry() -> list[dict]:
             "detail": "SYS-MASTER-CMP found in gate registry" if has_entry else "SYS-MASTER-CMP NOT in gate registry",
         }
     ]
-
 
 def check_version_consistency() -> list[dict]:
     results = []
@@ -271,7 +263,6 @@ def check_version_consistency() -> list[dict]:
         )
     return results
 
-
 def check_sli_data_sources() -> list[dict]:
     results = []
     sli_sources = [
@@ -331,9 +322,7 @@ def check_sli_data_sources() -> list[dict]:
             )
     return results
 
-
 def check_crosscheck_script() -> list[dict]:
-    import subprocess
 
     # Step 1 治标（2026-07-19）：crosscheck_sys_master_deps.py 于 commit 20b7392141
     # 作为 24 个孤儿脚本之一被删除，导致 subprocess 调用 FileNotFoundError。
@@ -350,7 +339,7 @@ def check_crosscheck_script() -> list[dict]:
         ]
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             [sys.executable, str(CROSSCHECK_SCRIPT)], capture_output=True, text=True, timeout=30, cwd=str(REPO_ROOT)
         )
         ok = result.returncode == 0
@@ -364,7 +353,6 @@ def check_crosscheck_script() -> list[dict]:
         ]
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": "internal error"}]
-
 
 def main() -> int:
     use_json = "--json" in sys.argv
@@ -392,7 +380,6 @@ def main() -> int:
         print(f"\n{failed} FAILED, {warnings} WARNINGS, {len(all_checks) - failed - warnings} PASSED")
 
     return 1 if failed > 0 else 0
-
 
 class SysMasterCompliance:
     def __init__(self) -> None:
@@ -425,7 +412,6 @@ class SysMasterCompliance:
 
     def invalidate_cache(self) -> None:
         self._last_results = None
-
 
 if __name__ == "__main__":
     sys.exit(main())

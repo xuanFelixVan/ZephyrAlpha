@@ -73,6 +73,7 @@ import subprocess
 import tarfile
 from pathlib import Path
 from typing import Optional
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -116,9 +117,9 @@ class GitCommandBatcher:
 
         try:
             cmd = ["git", "archive", "--format=tar", ref, "--"] + files
-            r = subprocess.run(
+            r = run_subprocess_hidden(
                 cmd, cwd=str(self._root), capture_output=True, timeout=timeout,
-            )
+            text=False)
         except subprocess.TimeoutExpired:
             logger.warning("git_show_batch: timeout after %ss (ref=%s, %d files)", timeout, ref, len(files))
             return {}
@@ -215,7 +216,7 @@ class GitCommandBatcher:
         cmd += ["--"] + files
 
         try:
-            r = subprocess.run(
+            r = run_subprocess_hidden(
                 cmd, cwd=str(self._root), capture_output=True, text=True,
                 encoding="utf-8", errors="replace", timeout=timeout,
             )
@@ -270,7 +271,7 @@ class GitCommandBatcher:
         fail-open：subprocess 失败返回空列表。
         """
         try:
-            r = subprocess.run(
+            r = run_subprocess_hidden(
                 cmd, cwd=str(self._root), capture_output=True, text=True,
                 encoding="utf-8", errors="replace", timeout=timeout,
             )

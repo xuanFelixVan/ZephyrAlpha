@@ -19,9 +19,7 @@
 """
 Auto Reconciler — reconciler.py
 
-
 自动对账引擎：pre-fix 快照 -> 自动修复 -> 验证 -> 回滚闭环。
-
 
 对标 blueprint.md §2.5（自动对账策略）。"""
 
@@ -31,7 +29,6 @@ import hashlib
 import os
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 import uuid
@@ -39,15 +36,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 def _compute_file_hash(fp: str) -> str:
     with open(fp, "rb") as fh:
         return hashlib.sha256(fh.read()).hexdigest()
 
-
 from .drift_models import DriftEvent
-
 
 @dataclass
 class FixSnapshot:
@@ -60,7 +55,6 @@ class FixSnapshot:
     mtimes: dict[str, float] = field(default_factory=dict)
 
     captured_at: str = ""
-
 
 @dataclass
 class Suggestion:
@@ -77,7 +71,6 @@ class Suggestion:
     recommendation: str = ""
 
     references: list[str] = field(default_factory=list)
-
 
 class AutoFixer:
     fix_snapshots_dir: str = ""
@@ -219,7 +212,7 @@ class AutoFixer:
             if not os.path.exists(script_path):
                 return False
 
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 [sys.executable, script_path, "--auto-fix"],
                 capture_output=True,
                 text=True,
@@ -277,7 +270,7 @@ class AutoFixer:
             )
 
             if os.path.exists(script_path):
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     [sys.executable, script_path, "--recount"],
                     capture_output=True,
                     text=True,
@@ -307,7 +300,7 @@ class AutoFixer:
                 else:
                     return False
 
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 [sys.executable, "-m", "pip", "freeze"],
                 capture_output=True,
                 text=True,

@@ -22,6 +22,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 @dataclass
@@ -100,7 +101,7 @@ class ZeroResidueScanner:
             # （-B 参数只影响主脚本，不影响 import 的模块）
             env = os.environ.copy()
             env["PYTHONDONTWRITEBYTECODE"] = "1"
-            proc = subprocess.run(
+            proc = run_subprocess_hidden(
                 [sys.executable, "-B", str(script_path)],
                 capture_output=True,
                 text=True,

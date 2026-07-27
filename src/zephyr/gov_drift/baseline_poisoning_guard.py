@@ -18,18 +18,13 @@
 """
 Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。
 
-
 cross_validation: 基线快照 vs git对应commit原始代码diff，每DEEP scan抽样10%
-
 
 multi_baseline_voting: 保留3版本，>=2基线同意才信任
 
-
 git_as_ultimate_truth: baseline_hash_chain=SHA256(prev+current)写入commit message
 
-
 integrity_manifest: 每DEEP scan签名存Git
-
 
 对标 blueprint.md §6.25。"""
 
@@ -37,15 +32,14 @@ from __future__ import annotations
 
 from typing import Final
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
 import hashlib
 import json
-import subprocess
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-
 
 @dataclass
 class FileBaselineSnapshot:
@@ -63,7 +57,6 @@ class FileBaselineSnapshot:
 
     cross_validated: bool = False
 
-
 @dataclass
 class MultiBaselineVote:
     file_path: str
@@ -77,7 +70,6 @@ class MultiBaselineVote:
     dissenters: int = 0
 
     consensus: bool = False
-
 
 @dataclass
 class HashChainEntry:
@@ -93,16 +85,12 @@ class HashChainEntry:
 
     verified: bool = False
 
-
 HASH_CHAIN: Final[list[HashChainEntry]] = []
-
 
 INTEGRITY_MANIFEST: Final[dict[str, object]] = {}
 
-
 def _sha256(data: str) -> str:
     return hashlib.sha256(data.encode("utf-8")).hexdigest()
-
 
 def cross_validate_baseline(
     baseline_content: str,
@@ -118,7 +106,7 @@ def cross_validate_baseline(
     }
 
     try:
-        proc = subprocess.run(
+        proc = run_subprocess_hidden(
             ["git", "show", f"{git_commit}:{file_path}"],
             capture_output=True,
             text=True,
@@ -158,7 +146,6 @@ def cross_validate_baseline(
 
     return result
 
-
 def multi_baseline_vote(
     snapshots: list[FileBaselineSnapshot],
     threshold: int = 2,
@@ -197,7 +184,6 @@ def multi_baseline_vote(
 
     return results
 
-
 def build_hash_chain(
     prev_hash: str,
     current_data: str,
@@ -225,7 +211,6 @@ def build_hash_chain(
 
     return entry
 
-
 def verify_hash_chain(entries: list[HashChainEntry]) -> list[str]:
     violations: list[str] = []
 
@@ -244,7 +229,6 @@ def verify_hash_chain(entries: list[HashChainEntry]) -> list[str]:
             violations.append(f"Chain break at index {i}: expected {expected_chain[:12]} got {entry.chain_hash[:12]}")
 
     return violations
-
 
 def generate_integrity_manifest(
     scan_id: str,

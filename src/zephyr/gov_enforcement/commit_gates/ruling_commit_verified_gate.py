@@ -65,6 +65,7 @@ Usage::
 """
 
 from __future__ import annotations
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import logging
 import os
@@ -143,12 +144,12 @@ def _verify_commit_exists(project_root: Path, commit_hash: str) -> bool:
         True 表示存在；False 表示不存在或 git 命令失败（fail-closed）。
     """
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["git", "cat-file", "-e", commit_hash + "^{commit}"],
             capture_output=True,
             cwd=str(project_root),
             timeout=_GIT_CAT_FILE_TIMEOUT,
-        )
+        text=False)
         return result.returncode == 0
     except (subprocess.TimeoutExpired, OSError) as e:
         logger.warning(

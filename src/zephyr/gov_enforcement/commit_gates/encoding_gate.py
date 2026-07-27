@@ -70,6 +70,7 @@ import sys
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -126,12 +127,12 @@ def make_encoding_gate() -> GateSpec:
         for rel in rel_files:
             cmd = [sys.executable, str(check_script), "--file", rel]
             try:
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     cmd,
                     capture_output=True,
                     cwd=str(project_root),
                     timeout=30,
-                )
+                text=False)
             except (subprocess.TimeoutExpired, OSError) as e:
                 # fail-open：subprocess 异常是环境问题，不阻断
                 logger.warning(

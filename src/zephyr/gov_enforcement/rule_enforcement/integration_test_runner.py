@@ -39,6 +39,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 from uuid import UUID
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # 复用现有的 CITier/CITrigger/TIER_TRIGGERS/SMOKE_CONTRACTS/CORE_CONTRACTS/TestResult/GateResult
 # 但 IntegrationTestRunner 和 SelfTestResult 需要按测试期望重写
@@ -214,7 +215,7 @@ class IntegrationTestRunner:
         """运行 pip check 验证依赖完整性."""
         result = SelfTestResult(test_id=None, passed=True, tests_run=1)
         try:
-            proc = subprocess.run(  # noqa: bare-subprocess  test patches integration_test_runner.subprocess.run directly
+            proc = run_subprocess_hidden(  # noqa: bare-subprocess  test patches integration_test_runner.subprocess.run directly
                 ["pip", "check"], capture_output=True, text=True, timeout=60,
             )
             if proc.returncode == 0:

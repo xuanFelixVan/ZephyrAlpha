@@ -48,6 +48,7 @@ from pathlib import Path
 from typing import Callable
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 _GIT_SHOW_TIMEOUT = 10
 _SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
@@ -65,12 +66,12 @@ def get_head_content(project_root: Path, rel_path: str) -> str | None:
         git 命令本身失败（非"文件不存在"）抛 OSError 让调用方 fail-closed。
     """
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["git", "show", f"HEAD:{rel_path}"],
             capture_output=True,
             cwd=str(project_root),
             timeout=_GIT_SHOW_TIMEOUT,
-        )
+        text=False)
     except (subprocess.TimeoutExpired, OSError) as e:
         raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
     if result.returncode != 0:
@@ -138,12 +139,12 @@ def load_head_registered_nums(
         非 git 仓库或 git 异常返回 None（跳过 L2）。
     """
     try:
-        rev_result = subprocess.run(
+        rev_result = run_subprocess_hidden(
             ["git", "rev-parse", "HEAD"],
             capture_output=True,
             cwd=str(project_root),
             timeout=_GIT_SHOW_TIMEOUT,
-        )
+        text=False)
         if rev_result.returncode != 0:
             return None
     except (subprocess.TimeoutExpired, OSError):

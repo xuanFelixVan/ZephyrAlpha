@@ -53,6 +53,7 @@ import subprocess
 import yaml
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -141,14 +142,14 @@ def make_data_task_completeness_gate() -> GateSpec:
 
         # 2. git diff HEAD 检测新增的 task_id
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "diff", "HEAD", "--", _TASKS_YAML_REL],
                 capture_output=True,
                 cwd=str(project_root),
                 timeout=30,
                 encoding="utf-8",
                 errors="replace",
-            )
+            text=False)
         except (subprocess.TimeoutExpired, OSError) as e:
             # git diff 失败不阻断（warn 级）
             logger.warning("git diff 失败，跳过检测: %s", e)

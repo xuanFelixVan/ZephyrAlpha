@@ -32,12 +32,10 @@ Usage::
 """
 
 from __future__ import annotations
-
-import subprocess
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # git show 超时（秒）——对标 _reference_helpers._GIT_SHOW_TIMEOUT
 _GIT_SHOW_TIMEOUT = 15
-
 
 def git_show_file(repo_root: str, rel_path: str, ref: str) -> str | None:
     """``git show <ref>:<path>`` 获取指定 ref 的文件内容。
@@ -53,7 +51,7 @@ def git_show_file(repo_root: str, rel_path: str, ref: str) -> str | None:
         文件内容字符串；失败或文件不存在返回 None。
     """
     try:
-        result = subprocess.run(  # noqa: bare-subprocess  git 命令非 Python spawn，对标 _reference_helpers.get_head_content 模式
+        result = run_subprocess_hidden(  # noqa: bare-subprocess  git 命令非 Python spawn，对标 _reference_helpers.get_head_content 模式
             ["git", "show", f"{ref}:{rel_path}"],
             cwd=repo_root,
             capture_output=True,

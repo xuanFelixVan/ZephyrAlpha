@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-healthcheck_service | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 """
 Healthcheck Service — 运行时健康检查服务。
 
@@ -100,7 +101,7 @@ class HealthcheckService:
     def _check_git(self) -> HealthStatus:
         t0 = time.time()
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "status", "--porcelain"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -126,7 +127,7 @@ class HealthcheckService:
     def _check_python(self) -> HealthStatus:
         t0 = time.time()
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["python", "--version"],
                 capture_output=True,
                 text=True,

@@ -85,6 +85,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 # ---------------------------------------------------------------------------
@@ -682,7 +683,7 @@ class CapabilityLookup:
             return self._git_deletions
         deletions: list[tuple[str, str]] = []
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 [
                     "git", "log", "--diff-filter=D", "--name-only",
                     "--format=%H", "--", "src/zephyr/",
@@ -766,7 +767,7 @@ class CapabilityLookup:
         if cache_key in self._git_show_cache:
             return self._git_show_cache[cache_key]
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "show", f"{commit}^:{path}"],
                 cwd=str(self._base_root),
                 capture_output=True,

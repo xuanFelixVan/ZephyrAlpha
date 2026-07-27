@@ -117,6 +117,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from zephyr.shared.utils.time_utils import now_utc
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -242,7 +243,7 @@ def _run_subprocess(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
 
     kwargs.setdefault("errors", "replace")
 
-    return subprocess.run(cmd, **kwargs)
+    return run_subprocess_hidden(cmd, **kwargs)
 
 # SQL 集中化（§5.160.2 NO-BARE-SQL gate 合规）
 

@@ -96,7 +96,7 @@ from psycopg2.pool import PoolError, ThreadedConnectionPool
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.security.secrets import SecretsError, get_secret_from_file  # §5.34.8 修复：DB密码走SecretProvider真源
-
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # PostgreSQL 连接配置文件路径（P2迁移真源：MOD-DB_DEPGRAPH_PG）
 _PG_ENV_PATH: Path = REPO_ROOT / "config" / ".env.postgres"
@@ -117,7 +117,6 @@ _PG_OPTIONAL_KEYS: tuple[str, ...] = (
     "POSTGRES_WRITER_USER",
     "POSTGRES_WRITER_PASSWORD",
 )
-
 
 def _load_pg_config() -> dict[str, str]:
     """加载 PostgreSQL 连接参数。
@@ -158,7 +157,6 @@ def _load_pg_config() -> dict[str, str]:
             pass
     return config
 
-
 def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
     """从 DATABASE_URL 环境变量解析 PG 连接参数（§5.34.5）。
 
@@ -188,7 +186,6 @@ def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
         except SecretsError:
             pass
     return config
-
 
 def _build_pg_dsn(
     config: dict[str, str] | None = None,
@@ -225,7 +222,6 @@ def _build_pg_dsn(
         kwargs["user"] = config["POSTGRES_WRITER_USER"]
         kwargs["password"] = config["POSTGRES_WRITER_PASSWORD"]
     return kwargs
-
 
 def _check_role_config(config: dict[str, str], role: str) -> None:
     """检查角色凭证是否已配置（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL）。"""
@@ -566,7 +562,6 @@ _DDL_INDEXES = [
 # ---------------------------------------------------------------------------
 # PRAGMA 配置（P2迁移后已删除：PostgreSQL 不需要 PRAGMA，由服务器配置管理）
 # ---------------------------------------------------------------------------
-
 
 # ---------------------------------------------------------------------------
 # DDL — v5 重建表（node_id INTEGER PK + edges FK + arch_directory_tree node_id）
@@ -1270,7 +1265,6 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
 # verify_schema_health.py 继续引用 _MIGRATIONS（保持不变）。
 MIGRATIONS: list[tuple[int, str, list[str]]] = _MIGRATIONS
 
-
 def _get_current_version(conn: object) -> int:
     """获取 PG schema 版本。
 
@@ -1298,7 +1292,6 @@ def _get_current_version(conn: object) -> int:
         cur.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
         row = cur.fetchone()
         return row[0] if row else 0
-
 
 def _run_migration(
     conn: object,
@@ -1337,7 +1330,6 @@ def _run_migration(
             "ON CONFLICT (version) DO NOTHING",
             (version, now, description),
         )
-
 
 def init_db(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
@@ -1380,7 +1372,6 @@ def init_db(
     finally:
         release_depgraph_pg_connection(conn)
 
-
 # ---------------------------------------------------------------------------
 # §5.64.1 治本：per-role 轻量连接池（ThreadedConnectionPool, minconn=1 maxconn=5）
 # ---------------------------------------------------------------------------
@@ -1388,7 +1379,6 @@ def init_db(
 _POOL_MINCONN = 1
 _POOL_MAXCONN = 5
 _POOLED_CONNS_SWEEP_THRESHOLD = 512  # 归属登记表超过此规模时清理已关闭连接的条目
-
 
 class _SelfHealingPool(ThreadedConnectionPool):
     """自愈连接池：回收被调用方 close() 但未归还的连接槽位（防池耗尽）。
@@ -1412,7 +1402,6 @@ class _SelfHealingPool(ThreadedConnectionPool):
                 conn = self._connect(key)
             return conn
 
-
 _pools: dict[str, _SelfHealingPool] = {}
 _pools_lock = threading.Lock()
 _pools_pid: int | None = None  # 池所属进程 PID（fork 安全：子进程丢弃继承的池引用）
@@ -1422,12 +1411,10 @@ _atexit_registered = False
 _pooled_conns: dict[int, tuple[_SelfHealingPool, psycopg2.extensions.connection]] = {}
 _pooled_conns_lock = threading.Lock()
 
-
 def _pool_role(superuser: bool, read_only: bool) -> str:
     if superuser:
         return "superuser"
     return "reader" if read_only else "writer"
-
 
 def _get_role_pool(role: str) -> _SelfHealingPool:
     """按角色获取/创建连接池（lazy 创建 + fork 安全 + atexit 注册）。"""
@@ -1454,7 +1441,6 @@ def _get_role_pool(role: str) -> _SelfHealingPool:
             _atexit_registered = True
     return pool
 
-
 def _checkout_pooled(superuser: bool, read_only: bool) -> psycopg2.extensions.connection:
     """从角色池取出连接并登记归属（供 release_depgraph_pg_connection 路由）。"""
     pool = _get_role_pool(_pool_role(superuser, read_only))
@@ -1475,7 +1461,6 @@ def _checkout_pooled(superuser: bool, read_only: bool) -> psycopg2.extensions.co
                     del _pooled_conns[stale_id]
         _pooled_conns[id(conn)] = (pool, conn)
     return conn
-
 
 def release_depgraph_pg_connection(conn: psycopg2.extensions.connection | None) -> None:
     """归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。
@@ -1519,7 +1504,6 @@ def release_depgraph_pg_connection(conn: psycopg2.extensions.connection | None) 
         except Exception:  # noqa: BLE001
             pass
 
-
 def _close_all_pools() -> None:
     """进程退出时关闭全部连接池（atexit 注册，首次建池时挂载）。"""
     with _pools_lock:
@@ -1530,11 +1514,9 @@ def _close_all_pools() -> None:
                 pass
         _pools.clear()
 
-
 # ---------------------------------------------------------------------------
 # 公共 API
 # ---------------------------------------------------------------------------
-
 
 def get_depgraph_pg_connection(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
@@ -1604,10 +1586,8 @@ def get_depgraph_pg_connection(
 
     return conn
 
-
 # 原 get_db_connection 废弃别名已删除（5.61.7+5.1.5#2 治本：全仓零活跃调用点）。
 # 禁止恢复——与 SQLite 同名函数冲突（AGENTS.md §11.4 的历史描述以本代码为准）。
-
 
 # ---------------------------------------------------------------------------
 # PgConnectionProvider Protocol（#ARCH-DI-SEAM-001 DIP 注入缝，2026-07-27 立项）
@@ -1641,10 +1621,8 @@ class PgConnectionProvider(Protocol):
     ) -> "psycopg2.extensions.connection":
         ...
 
-
 # 默认提供者 = get_depgraph_pg_connection（保持向后兼容）
 _DEFAULT_PG_CONN_PROVIDER: PgConnectionProvider = get_depgraph_pg_connection
-
 
 def table_names(db_path: Path | str | None = None) -> list[str]:
     """返回 depgraph (PostgreSQL) 中所有 public schema 表名。"""
@@ -1661,7 +1639,6 @@ def table_names(db_path: Path | str | None = None) -> list[str]:
     finally:
         release_depgraph_pg_connection(conn)
 
-
 def schema_version(db_path: Path | str | None = None) -> int:
     """返回当前 depgraph (PostgreSQL) 的 schema 版本。"""
     conn = get_depgraph_pg_connection()
@@ -1670,13 +1647,11 @@ def schema_version(db_path: Path | str | None = None) -> int:
     finally:
         release_depgraph_pg_connection(conn)
 
-
 # ---------------------------------------------------------------------------
 # 5.18.12 治本：PG 迁移框架恢复（轻量级，不依赖 alembic）
 # ---------------------------------------------------------------------------
 
 _PG_SCHEMA_SQL_PATH: Path = REPO_ROOT / "scripts" / "governance" / "migrate_sqlite_to_pg" / "02_create_pg_schema.sql"
-
 
 def apply_pg_schema(*, version: int | None = None, description: str = "") -> None:
     """从 02_create_pg_schema.sql 执行 DDL（幂等，CREATE IF NOT EXISTS）。
@@ -1709,7 +1684,6 @@ def apply_pg_schema(*, version: int | None = None, description: str = "") -> Non
     finally:
         release_depgraph_pg_connection(conn)
 
-
 # ---------------------------------------------------------------------------
 # 5.18.13 治本：迁移前备份（downgrade 替代方案）
 # ---------------------------------------------------------------------------
@@ -1724,7 +1698,6 @@ def backup_before_migration(backup_path: Path | str) -> Path:
     :param backup_path: 备份文件路径（.dump 格式）
     :return: 备份文件 Path
     """
-    import subprocess
 
     config = _load_pg_config()
     backup_file = Path(backup_path)
@@ -1739,18 +1712,16 @@ def backup_before_migration(backup_path: Path | str) -> Path:
         "-F", "c",  # custom format for pg_restore
         "-f", str(backup_file),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
+    result = run_subprocess_hidden(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
     if result.returncode != 0:
         raise RuntimeError(f"pg_dump failed: {result.stderr}")
     return backup_file
-
 
 def restore_from_backup(backup_path: Path | str) -> None:
     """从 pg_dump 备份恢复 PG depgraph（downgrade 执行入口）。
 
     :param backup_path: 备份文件路径（.dump 格式，由 backup_before_migration 创建）
     """
-    import subprocess
 
     config = _load_pg_config()
     backup_file = Path(backup_path)
@@ -1767,10 +1738,9 @@ def restore_from_backup(backup_path: Path | str) -> None:
         "--if-exists",
         str(backup_file),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
+    result = run_subprocess_hidden(cmd, capture_output=True, text=True, env={**os.environ, "PGPASSWORD": config["POSTGRES_PASSWORD"]})
     if result.returncode != 0:
         raise RuntimeError(f"pg_restore failed: {result.stderr}")
-
 
 __all__ = [
     "get_depgraph_pg_connection",
@@ -1782,7 +1752,6 @@ __all__ = [
     "backup_before_migration",  # 5.18.13: 迁移前备份
     "restore_from_backup",  # 5.18.13: 从备份恢复（downgrade）
 ]
-
 
 if __name__ == "__main__":
     import sys

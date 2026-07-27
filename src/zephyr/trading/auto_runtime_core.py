@@ -25,8 +25,6 @@ AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 from __future__ import annotations
 
 import logging
-import os
-import subprocess
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -35,6 +33,7 @@ import requests
 
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
 from zephyr.shared.foundation.constants import TaskStatus
+from zephyr.shared.infra.process_pool import spawn_python_hidden
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 if TYPE_CHECKING:
@@ -535,14 +534,9 @@ class _OllamaProcessManager:
     @staticmethod
     def ensure_running(core: AutoRuntimeCore) -> bool:
         try:
-            kwargs: dict[str, object] = {
-                "stdout": subprocess.DEVNULL,
-                "stderr": subprocess.DEVNULL,
-            }
-            if os.name == "nt":
-                kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
             # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
-            core._ollama_proc = subprocess.Popen(["ollama", "serve"], **kwargs)  # type: ignore[arg-type]
+            # TRAE-067 铁律2：复用 process_pool 统一无窗口 spawn 入口
+            core._ollama_proc = spawn_python_hidden(["ollama", "serve"])  # type: ignore[arg-type]
         except FileNotFoundError as e:
             logger.warning("_ensure_ollama_running: ollama binary not found (%s: %s)", type(e).__name__, e)
             return False

@@ -30,6 +30,7 @@ import hashlib
 import os
 import subprocess
 from dataclasses import dataclass, field
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 @dataclass
@@ -85,7 +86,7 @@ class IncrementalScanner:
 
     def get_changed_files(self, base_ref: str = "HEAD~1") -> list[FileChange]:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "diff", base_ref, "--name-status"],
                 capture_output=True,
                 text=True,

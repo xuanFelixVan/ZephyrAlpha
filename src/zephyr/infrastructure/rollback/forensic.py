@@ -55,6 +55,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 # 5.12.2#1 修复：atomic_write 委托 canonical 真源，消除签名漂移
 from zephyr.shared.io.file_utils import AtomicWriteError, atomic_write as _canonical_atomic_write
 
@@ -225,7 +226,7 @@ class ForensicEngine:
 
         for server in servers:
             try:
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     ["w32tm", "/stripchart", "/computer:" + server, "/dataonly", "/samples:1"],
                     capture_output=True,
                     text=True,
@@ -419,7 +420,7 @@ class ForensicEngine:
         backup_path = backup_dir / f"reflog-{ts}.txt"
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "reflog"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -452,7 +453,7 @@ class ForensicEngine:
         )
 
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "notes", "--ref", self._notes_ref, "add", "-m", note_content, "HEAD"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -467,7 +468,7 @@ class ForensicEngine:
         notes: list[dict[str, Any]] = []
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "notes", "--ref", self._notes_ref, "list"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -481,7 +482,7 @@ class ForensicEngine:
 
                 parts = line.strip().split(None, 1)
                 if len(parts) == 2:
-                    show_result = subprocess.run(
+                    show_result = run_subprocess_hidden(
                         ["git", "notes", "--ref", self._notes_ref, "show", parts[0]],
                         cwd=str(self._project_root),
                         capture_output=True,
@@ -649,7 +650,7 @@ class ForensicEngine:
 
     def _git_hash_object(self, file_path: str) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "hash-object", file_path],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -662,7 +663,7 @@ class ForensicEngine:
 
     def _get_current_commit(self) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "rev-parse", "--short", "HEAD"],
                 cwd=str(self._project_root),
                 capture_output=True,

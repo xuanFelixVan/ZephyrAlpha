@@ -48,6 +48,7 @@ import sys
 import threading
 import time
 from pathlib import Path
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +214,7 @@ class RuleWatcher:
         logger.info("[RuleWatcher] Syncing %d file(s) to depgraph", len(active_files))
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 [
                     sys.executable,
                     str(_SYNC_SCRIPT),
@@ -267,7 +268,7 @@ class RuleWatcher:
         logger.info("[RuleWatcher] Verifying %d file(s)", len(active_files))
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 [
                     sys.executable,
                     str(_VERIFY_SCRIPT),

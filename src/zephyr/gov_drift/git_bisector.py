@@ -27,6 +27,7 @@ Git bisect 自动溯源：bisect start->每step跑detector->定位root_cause com
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ class GitBisector:
         self._cache: dict[str, dict[str, str]] = {}
 
     def _git(self, *args: str) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(["git", *args], capture_output=True, text=True, cwd=self._project_root, timeout=30)
+        return run_subprocess_hidden(["git", *args], capture_output=True, text=True, cwd=self._project_root, timeout=30)
 
     def find_last_good_commit(self, module_id: str) -> str | None:
         audit_dir = os.path.join(self._project_root, "data", "drift_audit", "manifest.json")
@@ -87,7 +88,7 @@ class GitBisector:
             return self._cache[cache_key].get("status") == "pass"
 
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "checkout", commit_hash], capture_output=True, text=True, cwd=self._project_root, timeout=10
             )
 
@@ -96,7 +97,7 @@ class GitBisector:
             if not os.path.exists(script_path):
                 return True
 
-            result = subprocess.run(["python", script_path], capture_output=True, text=True, timeout=30)
+            result = run_subprocess_hidden(["python", script_path], capture_output=True, text=True, timeout=30)
 
             passed = result.returncode == 0
 
@@ -116,7 +117,7 @@ class GitBisector:
             # 若 subprocess 抛 TimeoutExpired/FileNotFoundError 会掩盖 try 块中正在传播的异常,
             # 并使仓库停留在 bisect 的分离 HEAD 状态。包裹 try/except 确保清理始终执行
             try:
-                subprocess.run(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
+                run_subprocess_hidden(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in git_bisector", exc_info=True)
 

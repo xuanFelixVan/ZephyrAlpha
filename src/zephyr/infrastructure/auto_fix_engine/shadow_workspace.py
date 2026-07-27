@@ -28,6 +28,7 @@ from typing import Any
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, ShadowResult
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +121,7 @@ class ShadowWorkspace:
     def _run_test(self, shadow_dir: str, project_root: str | None = None) -> dict[str, Any]:
         try:
             cmd = ["python", "-m", "pytest", "-x", "-q", "--tb=short", shadow_dir]
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,
@@ -140,7 +141,7 @@ class ShadowWorkspace:
     def _run_type_check(self, shadow_file: str, project_root: str | None = None) -> dict[str, Any]:
         try:
             cmd = ["python", "-m", "mypy", shadow_file, "--no-error-summary"]
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,
@@ -157,7 +158,7 @@ class ShadowWorkspace:
     def _run_lint(self, shadow_file: str, project_root: str | None = None) -> dict[str, Any]:
         try:
             cmd = ["python", "-m", "ruff", "check", shadow_file]
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,

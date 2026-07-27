@@ -22,7 +22,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-import subprocess
 import threading
 import traceback
 import uuid
@@ -32,17 +31,16 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from zephyr.shared.utils.async_utils import run_sync
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 if TYPE_CHECKING:
     from zephyr.gov_drift.cold_start import ColdStartResult
 
 logger = logging.getLogger(__name__)
 
-
 # 5.155.20 修复：原独立计算项目根（重复SSoT），改用REPO_ROOT
 from zephyr.shared.io.paths import REPO_ROOT
 _PROJECT_ROOT = str(REPO_ROOT)
-
 
 class ProbeStatus:
     PASS = "PASS"
@@ -52,7 +50,6 @@ class ProbeStatus:
     FAIL = "FAIL"
 
     SKIPPED = "SKIPPED"
-
 
 @dataclass
 class L0StartupResult:
@@ -76,7 +73,6 @@ class L0StartupResult:
 
     warnings: list[str] = field(default_factory=list)
 
-
 @dataclass
 class L1ReadinessResult:
     phase: str = "L1_READINESS"
@@ -99,7 +95,6 @@ class L1ReadinessResult:
 
     warnings: list[str] = field(default_factory=list)
 
-
 @dataclass
 class L2LivenessResult:
     phase: str = "L2_LIVENESS"
@@ -117,7 +112,6 @@ class L2LivenessResult:
     errors: list[str] = field(default_factory=list)
 
     warnings: list[str] = field(default_factory=list)
-
 
 @dataclass
 class L3ReconcileResult:
@@ -138,7 +132,6 @@ class L3ReconcileResult:
     errors: list[str] = field(default_factory=list)
 
     warnings: list[str] = field(default_factory=list)
-
 
 @dataclass
 class FullProbeResult:
@@ -207,11 +200,9 @@ class FullProbeResult:
             + self.classification
         )
 
-
 def _run_async(coro):
     # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
     return run_sync(coro)
-
 
 def _l0_startup_probe(project_root, result):
     try:
@@ -253,7 +244,7 @@ def _l0_startup_probe(project_root, result):
         env_check_path = Path(project_root) / "scripts" / "governance" / "env_check.py"
 
         if env_check_path.exists():
-            proc = subprocess.run(
+            proc = run_subprocess_hidden(
                 [os.sys.executable, str(env_check_path)],
                 capture_output=True,
                 text=True,
@@ -290,7 +281,6 @@ def _l0_startup_probe(project_root, result):
     else:
         result.status = ProbeStatus.PASS
 
-
 def _l1_readiness_probe(project_root, result):
     import re
 
@@ -298,7 +288,7 @@ def _l1_readiness_probe(project_root, result):
         session_check_path = Path(project_root) / "scripts" / "governance" / "session_startup_check.py"
 
         if session_check_path.exists():
-            proc = subprocess.run(
+            proc = run_subprocess_hidden(
                 [os.sys.executable, str(session_check_path)],
                 capture_output=True,
                 text=True,
@@ -333,7 +323,7 @@ def _l1_readiness_probe(project_root, result):
         gate_check_path = Path(project_root) / "scripts" / "governance" / "gate_engine_selfcheck.py"
 
         if gate_check_path.exists():
-            proc = subprocess.run(
+            proc = run_subprocess_hidden(
                 [os.sys.executable, str(gate_check_path)],
                 capture_output=True,
                 text=True,
@@ -364,7 +354,6 @@ def _l1_readiness_probe(project_root, result):
 
     else:
         result.status = ProbeStatus.PASS
-
 
 def _l2_liveness_probe(result):
     try:
@@ -432,7 +421,6 @@ def _l2_liveness_probe(result):
     else:
         result.status = ProbeStatus.PASS
 
-
 def _l3_reconcile(result, scan_level="LIGHT"):
     try:
         try:
@@ -497,7 +485,6 @@ def _l3_reconcile(result, scan_level="LIGHT"):
     else:
         result.status = ProbeStatus.FAIL
 
-
 def execute_full_probe(project_root: str = "", scan_level: str = "LIGHT") -> FullProbeResult:
     root = project_root or _PROJECT_ROOT
 
@@ -528,7 +515,6 @@ def execute_full_probe(project_root: str = "", scan_level: str = "LIGHT") -> Ful
 
     return result
 
-
 def session_entry_full_probe(project_root: str = "") -> tuple[ColdStartResult, FullProbeResult | None]:
     from zephyr.gov_drift.cold_start import session_entry_activate
 
@@ -546,11 +532,8 @@ def session_entry_full_probe(project_root: str = "") -> tuple[ColdStartResult, F
 
     return cold_result, probe_result
 
-
 execute_closed_loop = execute_full_probe
 
-
 session_entry_closed_loop = session_entry_full_probe
-
 
 ClosedLoopResult = FullProbeResult

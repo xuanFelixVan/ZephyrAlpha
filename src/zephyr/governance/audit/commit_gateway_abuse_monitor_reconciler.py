@@ -78,6 +78,7 @@ Usage
 """
 
 from __future__ import annotations
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import json
 import logging
@@ -435,7 +436,7 @@ def _count_emergency_commits(repo_root: Path, since_hours: int) -> int:
     fail-open：git log 失败返回 0（降级为不触发维度2）。
     """
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["git", "log", f"--since={since_hours} hours ago", "--format=%B%x1f"],
             cwd=str(repo_root),
             capture_output=True,

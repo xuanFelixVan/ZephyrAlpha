@@ -31,21 +31,19 @@ Tag 作为语义化回滚目标: zephyr rollback --to rollback/refactor/auth:bef
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
-import subprocess
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
-
 class TagType(str, Enum):
     TASK = "task"
     REFACTOR = "refactor"
     MIGRATION = "migration"
-
 
 @dataclass
 class RollbackTag:
@@ -55,7 +53,6 @@ class RollbackTag:
     phase: str
     commit_sha: str
     created_at: str
-
 
 class SemanticRollbackTag:
     def __init__(self, project_root: Path | None = None) -> None:
@@ -108,7 +105,7 @@ class SemanticRollbackTag:
 
     def list_tags(self, tag_type: TagType | None = None) -> list[str]:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "tag", "-l", "rollback/*"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -125,7 +122,7 @@ class SemanticRollbackTag:
 
     def resolve_tag(self, tag_name: str) -> str | None:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "rev-list", "-1", tag_name],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -140,7 +137,7 @@ class SemanticRollbackTag:
 
     def delete_tag_safe(self, tag_name: str) -> bool:
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "tag", "-d", tag_name],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -156,7 +153,7 @@ class SemanticRollbackTag:
         return [t for t in self.list_tags(TagType.TASK) if task_id in t]
 
     def _create_git_tag(self, tag_name: str, commit_sha: str) -> None:
-        subprocess.run(
+        run_subprocess_hidden(
             ["git", "tag", "-f", tag_name, commit_sha],
             cwd=str(self._project_root),
             capture_output=True,
@@ -166,7 +163,7 @@ class SemanticRollbackTag:
 
     def _get_head_short(self) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "rev-parse", "--short", "HEAD"],
                 cwd=str(self._project_root),
                 capture_output=True,

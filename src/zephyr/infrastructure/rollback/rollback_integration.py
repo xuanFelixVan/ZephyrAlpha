@@ -51,6 +51,7 @@ from zephyr.infrastructure.rollback.contract import ExitCode
 from zephyr.shared.security.secrets import get_secret_or_default
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 PROMPT_INJECTION_PATTERNS = [
     re.compile(r"ignore\s+(all\s+)?(previous|above)\s+(instructions?|prompts?)", re.IGNORECASE),
@@ -215,18 +216,18 @@ class RollbackIntegration:
                 pass
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["systemd-detect-virt", "--quiet"],
                 capture_output=True,
                 timeout=3,
-            )
+            text=False)
             if result.returncode == 0:
                 is_vm = True
                 container_type = "vm"
                 timeout_adjustment = 20
         except (FileNotFoundError, subprocess.TimeoutExpired):
             try:
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     ["wmic", "computersystem", "get", "manufacturer"],
                     capture_output=True,
                     text=True,
@@ -326,7 +327,7 @@ class RollbackIntegration:
 
     def verify_git_binary_integrity(self, known_hashes: dict[str, str] | None = None) -> tuple[bool, str, int]:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "--version"],
                 capture_output=True,
                 text=True,

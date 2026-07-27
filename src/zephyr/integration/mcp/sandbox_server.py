@@ -36,6 +36,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 __all__ = ["SandboxServer", "main"]
 
@@ -119,7 +120,7 @@ class SandboxServer(BaseMCPServer):
             else:
                 raise MCPError(-32602, f"unsupported language: {language!r}")
 
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,

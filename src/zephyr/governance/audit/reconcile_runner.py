@@ -82,6 +82,7 @@ import time
 from pathlib import Path
 from typing import Any, TypedDict
 
+from zephyr.shared.infra.process_pool import spawn_python_hidden
 from zephyr.shared.io.paths import REPO_ROOT
 
 # Status 枚举（字符串常量，避免 enum 序列化复杂度）
@@ -372,26 +373,14 @@ def launch_reconcile_async(
     # 设 ZEPHYR_RECONCILE_SYNC=1 让 worker 内所有 commit 走 sync 路径。
     env["ZEPHYR_RECONCILE_SYNC"] = "1"
 
-    creationflags = 0
-    if os.name == "nt":
-        # Windows: CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP
-        # CREATE_NO_WINDOW(0x08000000): 不创建控制台窗口，无闪窗（TRAE-067 铁律2）
-        # CREATE_NEW_PROCESS_GROUP(0x00000200): 独立进程组，Ctrl+C 不传播
-        # 注：CREATE_NO_WINDOW 与 DETACHED_PROCESS 互斥（MSDN），CREATE_NO_WINDOW
-        # 同时满足"无窗口"+"detached 语义"（父退出不影响子，因 close_fds=True）
-        creationflags = 0x08000000 | 0x00000200  # CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP
-
     try:
-        proc = subprocess.Popen(
+        # TRAE-067 铁律2：复用 process_pool 统一无窗口 spawn 入口
+        # spawn_python_hidden 自动处理 CREATE_NO_WINDOW|CREATE_NEW_PROCESS_GROUP
+        # (Windows) / start_new_session (POSIX) + stdin/stdout/stderr=DEVNULL + close_fds
+        proc = spawn_python_hidden(
             cmd,
             cwd=str(root),
             env=env,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            close_fds=True,
-            creationflags=creationflags,
-            start_new_session=(os.name != "nt"),  # POSIX: 新 session
         )
         # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
         _WORKER_PROCS[commit_sha] = proc

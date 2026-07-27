@@ -34,6 +34,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 
 from .drift_models import DriftBudget
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # ── Maintenance Window ──────────────────────────────────────
 
@@ -84,7 +85,7 @@ def declare_maintenance_window(hours: int = 2, triggered_by_auto: bool = False) 
 
 def check_large_diff(threshold: int = 50) -> bool:
     try:
-        result = subprocess.run(["git", "diff", "--stat", "HEAD~1"], capture_output=True, text=True, timeout=10)
+        result = run_subprocess_hidden(["git", "diff", "--stat", "HEAD~1"], capture_output=True, text=True, timeout=10)
 
         lines = result.stdout.strip().split("\n")
 

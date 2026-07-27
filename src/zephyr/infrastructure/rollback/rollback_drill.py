@@ -28,6 +28,7 @@ RollbackDrill — 定期回滚演练调度器 (DiRT-style)。
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -35,19 +36,16 @@ import json
 import random
 import sqlite3
 from zephyr.shared.io.sqlite_factory import get_db_connection
-import subprocess
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-
 
 @dataclass
 class ChaosScenario:
     name: str
     description: str
     enabled: bool = True
-
 
 @dataclass
 class DrillResult:
@@ -61,14 +59,12 @@ class DrillResult:
     success: bool
     details: list[str] = field(default_factory=list)
 
-
 CHAOS_SCENARIOS: list[ChaosScenario] = [
     ChaosScenario("gc_concurrent", "并发 GC 压力——多线程垃圾回收与回滚竞争"),
     ChaosScenario("sqlite_locked", "SQLite 锁竞争——回滚期间 DB 被外部锁定"),
     ChaosScenario("disk_90pct", "磁盘 90% 满载——限制 dump JSONL 写入空间"),
     ChaosScenario("cpu_saturation", "CPU 极限——stress-ng 满载所有核心"),
 ]
-
 
 class RollbackDrill:
     DRILL_SCHEDULE_DAY: int = 5
@@ -123,7 +119,7 @@ class RollbackDrill:
             self._run_git(["worktree", "add", str(worktree_path), commit_sha])
             details.append(f"Worktree created at {worktree_path}")
 
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "revert", "--no-edit", commit_sha],
                 cwd=str(worktree_path),
                 capture_output=True,
@@ -235,7 +231,7 @@ class RollbackDrill:
 
     def _run_git(self, args: list[str], timeout: int = 15) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git"] + args,
                 cwd=str(self._project_root),
                 capture_output=True,

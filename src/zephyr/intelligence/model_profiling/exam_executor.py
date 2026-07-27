@@ -35,6 +35,7 @@
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +108,7 @@ class ExamExecutor:
         # 2. 全量执行（代码 + 所有测试 + ALL_TESTS_PASSED 标记）
         test_code = code + "\n\n" + "\n".join(test_cases) + "\nprint('ALL_TESTS_PASSED')"
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 [sys.executable, "-c", test_code],
                 capture_output=True,
                 text=True,
@@ -127,7 +128,7 @@ class ExamExecutor:
         for tc in test_cases:
             single_test = code + "\n\n" + tc
             try:
-                r = subprocess.run(
+                r = run_subprocess_hidden(
                     [sys.executable, "-c", single_test],
                     capture_output=True,
                     text=True,

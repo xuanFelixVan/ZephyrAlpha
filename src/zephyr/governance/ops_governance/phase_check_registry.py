@@ -45,6 +45,7 @@ from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +70,7 @@ def _run_script(script_rel: str, *args: str, timeout: int = 30) -> tuple[int, st
     if not script_path.exists():
         return -1, f"SCRIPT_NOT_FOUND: {script_path}"
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             [sys.executable, str(script_path), *args],
             capture_output=True,
             text=True,
@@ -775,7 +776,7 @@ def check_e2e_integration_test() -> GateResult:
     if not test_dir.exists():
         return GateResult.YELLOW
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             [sys.executable, "-m", "pytest", str(test_dir), "-q", "--tb=no", "--timeout=30"],
             capture_output=True,
             text=True,
@@ -793,7 +794,7 @@ def check_mcp_e2e() -> GateResult:
     if not test_dir.exists():
         return GateResult.YELLOW
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             [sys.executable, "-m", "pytest", str(test_dir), "-q", "--tb=no", "--timeout=60"],
             capture_output=True,
             text=True,

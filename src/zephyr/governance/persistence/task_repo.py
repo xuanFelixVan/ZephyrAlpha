@@ -66,6 +66,7 @@ from __future__ import annotations
 
 from typing import Final
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -1188,7 +1189,7 @@ def _validate_post_sync_script_flags(
         return
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             [sys.executable, str(script_path), "--help"],
             capture_output=True,
             text=True,
@@ -2370,7 +2371,7 @@ class TaskRepository:
                 try:
                     # 5.17.7 修复：shell=True 违反 D-A-03 红线，改用 shlex.split + shell=False
                     # Windows 兼容：shell builtins（echo 等）需经 cmd.exe /c 执行
-                    result = subprocess.run(
+                    result = run_subprocess_hidden(
                         _build_cmd(cmd),
                         shell=False,
                         capture_output=True,

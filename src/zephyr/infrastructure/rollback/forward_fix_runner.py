@@ -26,12 +26,11 @@ preview 评估 -> 冲突风险低 + 变更文件 ≤3 -> 自动生成 fix patch 
 
 from __future__ import annotations
 
-import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
-
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 @dataclass
 class FixResult:
@@ -40,7 +39,6 @@ class FixResult:
     fix_type: str
     patch_file: str
     details: list[str] = field(default_factory=list)
-
 
 class ForwardFixRunner:
     def __init__(self, project_root: Path | None = None) -> None:
@@ -58,7 +56,7 @@ class ForwardFixRunner:
         patch_path.parent.mkdir(parents=True, exist_ok=True)
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "diff", f"{commit_sha}..HEAD"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -88,7 +86,7 @@ class ForwardFixRunner:
 
     def _run_git(self, args: list[str]) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git"] + args,
                 cwd=str(self._project_root),
                 capture_output=True,

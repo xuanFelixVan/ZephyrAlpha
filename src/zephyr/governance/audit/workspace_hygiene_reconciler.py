@@ -189,6 +189,7 @@ Usage
 
 
 from __future__ import annotations
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 
@@ -496,7 +497,7 @@ def _git_status_porcelain(repo_root: str) -> list[str]:
 
     try:
 
-        result = subprocess.run(
+        result = run_subprocess_hidden(
 
             ["git", "status", "--porcelain"],
 

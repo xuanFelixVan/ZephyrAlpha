@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-trust_anchor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 """MOD-INF-026 §26 — 三重信任锚验证门 R20。
 
 TripleTrustAnchorGate: Git clean + pytest green + audit continuity -> trust level。
@@ -80,7 +81,7 @@ class TripleTrustAnchorGate:
 
     def _check_git_clean(self) -> bool:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "status", "--porcelain", "--", self.SELF_SRC_SEARCH],
                 capture_output=True,
                 text=True,
@@ -93,7 +94,7 @@ class TripleTrustAnchorGate:
 
     def _run_pytest(self) -> bool:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["python", "-m", "pytest", "tests/asset-inventory/", "-q", "--tb=line", "-x"],
                 capture_output=True,
                 text=True,

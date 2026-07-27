@@ -102,7 +102,11 @@ def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProce
     """
     kwargs.setdefault("capture_output", True)
     kwargs.setdefault("text", True)
-    kwargs.setdefault("errors", "replace")
+    # 仅在 text 模式下设 errors——Python subprocess 在 errors 被设时会强制
+    # text 模式（即使 text=False），导致 stdout 返回 str 而非 bytes，
+    # 破坏调用方的 .decode() 逻辑（如 git show 字节比较场景）。
+    if kwargs.get("text", True):
+        kwargs.setdefault("errors", "replace")
     if os.name == "nt":
         # 调用方可能已设 creationflags（如需 DETACHED_PROCESS）——不覆盖，
         # 仅在未设时注入 hidden flags

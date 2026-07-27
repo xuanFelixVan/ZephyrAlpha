@@ -18,12 +18,9 @@
 """
 Drift Forensics Engine — 漂移取证引擎 §6.17。
 
-
 replay: git checkout还原代码 + drift_events表活跃漂移 + baseline历史重放
 
-
 forensics_report: timeline + state_diffs + actor_trace + dependency_impact
-
 
 对标 blueprint.md §6.17。"""
 
@@ -33,15 +30,14 @@ from typing import Final
 from zephyr.shared.io.serialization import dumps
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
 import os
-import subprocess
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-
 
 @dataclass
 class ForensicsTimelineEntry:
@@ -58,7 +54,6 @@ class ForensicsTimelineEntry:
     file_changed: str
 
     diff_summary: str
-
 
 @dataclass
 class ForensicsReport:
@@ -84,7 +79,6 @@ class ForensicsReport:
 
     generated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
-
 @dataclass
 class ForensicsConfig:
     state_dir: str = ""
@@ -93,9 +87,7 @@ class ForensicsConfig:
 
     include_blame: bool = True
 
-
 FORENSICS_CONFIG: Final[ForensicsConfig] = ForensicsConfig()
-
 
 def replay_baseline_history(
     file_path: str,
@@ -192,7 +184,6 @@ def replay_baseline_history(
         dependency_impact=dep_impact,
     )
 
-
 def git_checkout_snapshot(
     commit_hash: str,
     file_path: str,
@@ -201,7 +192,7 @@ def git_checkout_snapshot(
     """用git checkout还原代码到指定commit状态。"""
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["git", "show", f"{commit_hash}:{file_path}"],
             capture_output=True,
             text=True,
@@ -216,7 +207,6 @@ def git_checkout_snapshot(
         logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return None
-
 
 def generate_forensics_report(
     drift_event_id: str,
@@ -235,7 +225,7 @@ def generate_forensics_report(
 
     if FORENSICS_CONFIG.include_blame and project_root:
         try:
-            blame_result = subprocess.run(
+            blame_result = run_subprocess_hidden(
                 ["git", "log", "-n", "5", "--oneline", "--", source_file],
                 capture_output=True,
                 text=True,
@@ -256,7 +246,6 @@ def generate_forensics_report(
             logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return report
-
 
 def serialize_report(report: ForensicsReport, output_dir: str) -> str:
     """序列化取证报告为JSON。"""

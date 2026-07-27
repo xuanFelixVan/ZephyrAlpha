@@ -35,6 +35,7 @@ import subprocess
 import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 warnings.warn(
     "zephyr.infrastructure.rollback.venv_sync is deprecated (legacy trio "
@@ -91,7 +92,7 @@ class VenvSync:
             )
 
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["pip", "install", "-r", str(self._req_path)],
                 capture_output=True,
                 text=True,
@@ -118,7 +119,7 @@ class VenvSync:
 
     def _freeze(self) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["pip", "freeze"],
                 capture_output=True,
                 text=True,

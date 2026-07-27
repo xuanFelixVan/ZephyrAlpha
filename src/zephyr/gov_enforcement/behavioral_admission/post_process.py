@@ -54,6 +54,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 @unique
@@ -235,7 +236,7 @@ def lint_hook(files: list[str] | None = None) -> HookResult:
         return HookResult("lint", True, "no files to lint")
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["ruff", "check", *files],
             capture_output=True,
             text=True,
@@ -264,7 +265,7 @@ def format_hook(files: list[str] | None = None) -> HookResult:
         return HookResult("format", True, "no files to format")
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["ruff", "format", "--check", *files],
             capture_output=True,
             text=True,
@@ -293,7 +294,7 @@ def typecheck_hook(files: list[str] | None = None) -> HookResult:
         return HookResult("typecheck", True, "no files to typecheck")
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["pyright", *files],
             capture_output=True,
             text=True,

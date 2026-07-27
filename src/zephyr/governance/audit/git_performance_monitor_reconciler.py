@@ -61,6 +61,7 @@ Usage
 """
 
 from __future__ import annotations
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import json
 import logging
@@ -112,7 +113,7 @@ def _measure_git_status(repo_root: Path) -> tuple[float, int, str]:
     """
     start = time.monotonic()
     try:
-        r = subprocess.run(
+        r = run_subprocess_hidden(
             ["git", "status", "--short"],
             cwd=str(repo_root),
             capture_output=True,

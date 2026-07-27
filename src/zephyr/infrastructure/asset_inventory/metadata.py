@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-metadata | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 """MOD-INF-026 §24-25 — Git 历史元数据提取 + 多 IDE 规则生成器。
 
 SRC-0040: 从 git_metadata.py + multi_ide.py 合并。
@@ -113,7 +114,7 @@ class GitMetadataExtractor:
 
     def _run_git_log(self, file_path: str) -> list[GitCommitInfo]:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "log", "--follow", "--numstat", "--format=%H|%an|%ai|%s", "--", file_path],
                 capture_output=True,
                 text=True,
@@ -191,7 +192,7 @@ class GitMetadataExtractor:
 
     def _find_co_changed(self, file_path: str) -> list[tuple[str, str]]:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "log", "--follow", "--name-only", "--format=COMMIT %H", "--", file_path],
                 capture_output=True,
                 text=True,

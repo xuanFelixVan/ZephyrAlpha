@@ -42,6 +42,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.shared.event_bus import DomainEvent, EventBus, EventType
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +105,7 @@ class HookDispatcher:
                 "ZEPHYR_TASK_ID": event.task_id,
                 "ZEPHYR_EVENT_TYPE": event.event_type.value,
             }
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 hook.callback_script.split(),
                 env=env,
                 capture_output=True,

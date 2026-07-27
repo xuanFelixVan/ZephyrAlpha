@@ -34,6 +34,7 @@ from __future__ import annotations
 
 from typing import Final
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -192,7 +193,7 @@ class LLMImpactAnalyzer:
 
     def _get_diff(self, commit_sha: str) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "show", "--format=%B", "-p", commit_sha],
                 cwd=str(self._project_root),
                 capture_output=True,

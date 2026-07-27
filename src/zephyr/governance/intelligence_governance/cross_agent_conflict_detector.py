@@ -27,14 +27,13 @@ CrossAgentConflictDetector — 多 Agent 并发冲突检测。
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
-import subprocess
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-
 
 @dataclass
 class ConflictReport:
@@ -44,7 +43,6 @@ class ConflictReport:
     has_conflict: bool
     resolution: str
     timestamp_utc: str
-
 
 class CrossAgentConflictDetector:
     def __init__(self, project_root: Path | None = None) -> None:
@@ -116,7 +114,7 @@ class CrossAgentConflictDetector:
 
     def _run_git(self, args: list[str]) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git"] + args,
                 cwd=str(self._project_root),
                 capture_output=True,

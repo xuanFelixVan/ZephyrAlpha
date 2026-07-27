@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-INF-zero_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 """
 Zero Config — 零配置自检扫描器。
 
@@ -95,7 +96,7 @@ class ZeroConfig:
 
     def _check_python(self) -> ConfigCheck:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["python", "--version"],
                 capture_output=True,
                 text=True,
@@ -118,14 +119,14 @@ class ZeroConfig:
 
     def _check_git_config(self) -> ConfigCheck:
         try:
-            user_name = subprocess.run(
+            user_name = run_subprocess_hidden(
                 ["git", "config", "user.name"],
                 capture_output=True,
                 text=True,
                 timeout=5,
             ).stdout.strip()
 
-            user_email = subprocess.run(
+            user_email = run_subprocess_hidden(
                 ["git", "config", "user.email"],
                 capture_output=True,
                 text=True,

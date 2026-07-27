@@ -43,10 +43,11 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 def _git(args: list[str], cwd: Path | None = None, timeout: int = 15) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
+    return run_subprocess_hidden(
         ["git"] + args,
         cwd=str(cwd or Path.cwd()),
         capture_output=True,

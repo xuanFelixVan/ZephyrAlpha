@@ -47,6 +47,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 if TYPE_CHECKING:
     from zephyr.governance.ops_governance.budget_engine import BudgetEngineProtocol
@@ -65,7 +66,7 @@ def _run_script(script_rel: str, *args: str) -> dict[str, Any]:
     script_path = REPO_ROOT / script_rel
     cmd = [sys.executable, str(script_path), *args]
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             cmd,
             capture_output=True,
             text=True,
@@ -798,7 +799,7 @@ class GovernanceServer(BaseMCPServer):
                 if not checkpoint_id:
                     import subprocess as _sp
 
-                    head = _sp.run(
+                    head = run_subprocess_hidden(
                         ["git", "rev-parse", "--short", "HEAD"],
                         capture_output=True,
                         text=True,
@@ -823,7 +824,7 @@ class GovernanceServer(BaseMCPServer):
             if not checkpoint_id:
                 import subprocess as _sp
 
-                head = _sp.run(
+                head = run_subprocess_hidden(
                     ["git", "rev-parse", "--short", "HEAD"],
                     capture_output=True,
                     text=True,

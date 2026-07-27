@@ -104,6 +104,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +155,7 @@ def _run_dashboard(
     cmd = [sys.executable, str(dashboard), "--json", "--metric", *metric_ids]
     child_env = {**os.environ, "PYTHONPATH": str(project_root / "src")}
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             cmd,
             capture_output=True,
             text=True,

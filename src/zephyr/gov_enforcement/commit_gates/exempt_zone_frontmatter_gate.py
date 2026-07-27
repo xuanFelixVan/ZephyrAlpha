@@ -36,6 +36,7 @@ import subprocess
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -107,12 +108,12 @@ def make_exempt_zone_frontmatter_gate() -> GateSpec:
 
             # 历史违规豁免：git ls-tree HEAD 判断文件是否已存在
             try:
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     ["git", "ls-tree", "HEAD", rel],
                     capture_output=True,
                     cwd=str(project_root),
                     timeout=10,
-                )
+                text=False)
                 if result.stdout.strip():
                     historical.append(rel)
                     continue

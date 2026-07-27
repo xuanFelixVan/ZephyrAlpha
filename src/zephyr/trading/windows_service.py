@@ -34,34 +34,30 @@ from __future__ import annotations
 
 import logging
 import sys
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
-
 def install_service() -> None:
-    import subprocess
 
     python_exe = sys.executable
     bin_path = f'"{python_exe}" -m zephyr.trading'
-    subprocess.run(
+    run_subprocess_hidden(
         ["sc", "create", "ZephyrAlpha", f"binPath={bin_path}"],
         check=True,
-    )
-    subprocess.run(
+    text=False)
+    run_subprocess_hidden(
         ["sc", "config", "ZephyrAlpha", "start=auto"],
         check=True,
-    )
+    text=False)
     # 5.170.6 修复: 库代码 CLI 入口 print -> logger.info
     logger.info("ZephyrAlpha Windows Service installed and set to auto-start.")
 
-
 def uninstall_service() -> None:
-    import subprocess
 
-    subprocess.run(["sc", "delete", "ZephyrAlpha"], check=True)
+    run_subprocess_hidden(["sc", "delete", "ZephyrAlpha"], check=True, text=False)
     # 5.170.7 修复: 库代码 CLI 入口 print -> logger.info
     logger.info("ZephyrAlpha Windows Service uninstalled.")
-
 
 def run_as_service() -> None:
     try:
@@ -108,7 +104,6 @@ def run_as_service() -> None:
             core.shutdown()
 
     win32serviceutil.HandleCommandLine(_ZephyrAlphaService)
-
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

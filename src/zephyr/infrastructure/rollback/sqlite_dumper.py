@@ -44,6 +44,7 @@ Merkle 树验证：
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -74,13 +75,11 @@ HMAC_KEY_DEFAULT = b"ZephyrAlpha-Rollback-Integrity-v1"
 # P0 安全修复（Phase 2）：表名白名单校验——表名无法参数化，用正则白名单防 SQL 注入
 _TABLE_NAME_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 
-
 def _validate_table_name(table: str) -> str:
     """校验表名仅含字母/数字/下划线（防 SQL 注入——表名无法参数化，用白名单替代）。"""
     if not isinstance(table, str) or not _TABLE_NAME_RE.match(table):
         raise ValueError(f"非法表名: {table!r}（仅允许字母/数字/下划线，防 SQL 注入）")
     return table
-
 
 def _read_dump_lines(source_path: Path) -> list[str]:
     lines: list[str] = []
@@ -90,7 +89,6 @@ def _read_dump_lines(source_path: Path) -> list[str]:
             if line and not line.startswith("#"):
                 lines.append(line)
     return lines
-
 
 @dataclass
 class DumpResult:
@@ -102,14 +100,12 @@ class DumpResult:
     file_size_bytes: int
     hmac_signature: str
 
-
 @dataclass
 class RestoreResult:
     source_path: Path
     tables_restored: int
     rows_restored: int
     db_path: Path
-
 
 @dataclass
 class VerifyResult:
@@ -124,7 +120,6 @@ class VerifyResult:
     def passed(self) -> bool:
         """5.96.1 修复: passed 从其他4个 match 字段派生,消除冗余布尔字段。"""
         return self.merkle_match and self.hmac_match and self.table_count_match and self.row_count_match
-
 
 class SqliteDumper:
     def __init__(
@@ -475,10 +470,9 @@ class SqliteDumper:
         return hmac.compare_digest(computed, hmac_signature)
 
     def _resolve_current_commit(self) -> str:
-        import subprocess
 
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "rev-parse", "--short", "HEAD"],
                 capture_output=True,
                 text=True,

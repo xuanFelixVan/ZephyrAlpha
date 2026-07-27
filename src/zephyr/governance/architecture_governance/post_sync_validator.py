@@ -44,6 +44,7 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 __all__ = [
     "validate_post_sync_command",
@@ -165,7 +166,7 @@ def _validate_flags_via_help(parts: list[str], script_path_obj: Path) -> str | N
         return None
 
     try:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             [sys.executable, str(script_path_obj), "--help"],
             capture_output=True,
             text=True,

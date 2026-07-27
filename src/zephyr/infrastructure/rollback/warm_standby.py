@@ -32,11 +32,11 @@ RTO 从 ~2s 降低到 <100ms（worktree 切换 + 指针替换）。
 from __future__ import annotations
 
 import logging
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
 import json
-import subprocess
 import time
 import warnings
 from dataclasses import dataclass, field
@@ -53,7 +53,6 @@ warnings.warn(
     stacklevel=2,
 )
 
-
 @dataclass
 class StandbyState:
     standby_commit: str
@@ -61,7 +60,6 @@ class StandbyState:
     last_verified_at: str
     is_active: bool
     is_stale: bool
-
 
 @dataclass
 class CutoverResult:
@@ -71,7 +69,6 @@ class CutoverResult:
     rto_ms: int
     exit_code: int
     details: list[str] = field(default_factory=list)
-
 
 class WarmStandby:
     STANDBY_DIR: str = ".zephyr/warm_standby"
@@ -88,7 +85,7 @@ class WarmStandby:
             return True
 
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "worktree", "add", str(self._standby_dir), commit_sha],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -167,7 +164,7 @@ class WarmStandby:
 
     def rotate(self, new_commit: str) -> bool:
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "worktree", "remove", "--force", str(self._standby_dir)],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -183,7 +180,7 @@ class WarmStandby:
         if not self._standby_dir.exists():
             return False
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "rev-parse", "HEAD"],
                 cwd=str(self._standby_dir),
                 capture_output=True,
@@ -217,7 +214,7 @@ class WarmStandby:
         self._state_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
     def _run_git(self, args: list[str], cwd: Path | None = None) -> str:
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["git"] + args,
             cwd=str(cwd or self._project_root),
             capture_output=True,

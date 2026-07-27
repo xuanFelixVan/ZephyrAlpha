@@ -22,6 +22,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
 # ============================================================================
@@ -226,11 +227,14 @@ class SupplyChainGuard:
     def scan_dependencies(self) -> list[SimpleNamespace]:
         """Scan installed dependencies via pip-audit; return per-dep safety."""
         try:
-            output = subprocess.check_output(
+            # TRAE-067 铁律2：复用 process_pool 统一无窗口入口
+            # run_subprocess_hidden 默认 capture_output=True + text=True + CREATE_NO_WINDOW
+            result = run_subprocess_hidden(
                 ["pip-audit", "--format=json"],
-                stderr=subprocess.DEVNULL,
                 timeout=60,
+                check=True,
             )
+            output = result.stdout
         except (FileNotFoundError, subprocess.SubprocessError):
             return []
         try:
@@ -461,7 +465,7 @@ class SlopsquattingDetector:
     def _check_pypi_existence(self, package_name: str) -> bool:
         """Check if a package exists on PyPI (overridable for testing)."""
         try:
-            r = subprocess.run(
+            r = run_subprocess_hidden(
                 ["pip", "index", "versions", package_name],
                 capture_output=True,
                 text=True,

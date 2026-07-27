@@ -45,6 +45,7 @@ from zephyr.gov_audit.finding_model import (
     generate_finding_id,
 )
 from zephyr.shared.schema.base_config import BASE_CONFIG
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -598,7 +599,7 @@ class PipelineRunner:
         self, script_path: str, repo_root: str, extra_args: list[str]
     ) -> subprocess.CompletedProcess | None:
         try:
-            return subprocess.run(
+            return run_subprocess_hidden(
                 [sys.executable, script_path, *extra_args],
                 capture_output=True,
                 text=True,
@@ -969,7 +970,7 @@ class PipelineRunner:
             if not script_path.is_file():
                 return findings
             try:
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     [sys.executable, str(script_path), "--warn-only"],
                     capture_output=True,
                     text=True,

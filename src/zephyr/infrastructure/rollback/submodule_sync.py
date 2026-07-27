@@ -36,6 +36,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 EXIT_SUBMODULE_OUT_OF_SYNC = 16
 
@@ -90,7 +91,7 @@ class SubmoduleSync:
             return submodules
 
         try:
-            output = subprocess.run(
+            output = run_subprocess_hidden(
                 ["git", "submodule", "status"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -119,7 +120,7 @@ class SubmoduleSync:
     def get_submodule_shas(self) -> dict[str, str]:
         sha_map: dict[str, str] = {}
         try:
-            output = subprocess.run(
+            output = run_subprocess_hidden(
                 ["git", "submodule", "foreach", "--quiet", "echo $path $sha1"],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -142,7 +143,7 @@ class SubmoduleSync:
             return False
 
         try:
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "-C", str(sub_path), "checkout", target_sha],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -150,7 +151,7 @@ class SubmoduleSync:
                 timeout=30,
             )
 
-            subprocess.run(
+            run_subprocess_hidden(
                 ["git", "add", submodule_path],
                 cwd=str(self._project_root),
                 capture_output=True,
@@ -240,7 +241,7 @@ class SubmoduleSync:
 
     def _get_submodule_url(self, path: str) -> str:
         try:
-            output = subprocess.run(
+            output = run_subprocess_hidden(
                 ["git", "config", "--file", ".gitmodules", f"submodule.{path}.url"],
                 cwd=str(self._project_root),
                 capture_output=True,

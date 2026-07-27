@@ -42,6 +42,7 @@ from typing import Any, Protocol
 from pydantic import BaseModel
 
 from zephyr.shared.io.yaml_utils import load_vocabulary_values
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +267,7 @@ class SelfHealer:
             try:
                 # 修复命令注入：原 f-string 插值 target_path 到 python -c 命令字符串，
                 # 路径含特殊字符可执行任意命令。改用 -m py_compile + 参数列表传递。
-                result = subprocess.run(
+                result = run_subprocess_hidden(
                     ["python", "-m", "py_compile", target_path],
                     capture_output=True,
                     text=True,
@@ -290,7 +291,7 @@ class SelfHealer:
         try:
             # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
             # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git", "restore", "--", target_path],
                 capture_output=True,
                 text=True,

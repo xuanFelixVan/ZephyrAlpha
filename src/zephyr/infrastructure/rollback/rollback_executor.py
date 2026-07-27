@@ -38,6 +38,7 @@ RollbackExecutor — 回滚执行器核心封装。
 """
 
 from __future__ import annotations
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import importlib
 import json
@@ -936,7 +937,7 @@ class RollbackExecutor:
 
     def _run_git(self, args: list[str], timeout: int = 10) -> str:
         try:
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["git"] + args,
                 cwd=str(self._project_root),
                 capture_output=True,
