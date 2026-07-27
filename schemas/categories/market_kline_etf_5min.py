@@ -1,0 +1,76 @@
+# [BLUEPRINT] MOD-L04-001
+# [MODULE] schemas.categories.market_kline_etf_5min
+# [DOMAIN] D_DATA
+# [DEPENDENCIES] none
+# [CONSUMERS] apply_market_tables_ddl; zephyr.data.c1_market_writer
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] kline_etf_5min 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_schema.py 执行
+# [MODIFY-GUARD] schema-change
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] human_only
+# [TTL] permanent
+"""kline_etf_5min 表 DDL-as-Code（category_id: market_kline_etf_5min, calc_mode: lazy）。
+
+本文件是 c1_market.kline_etf_5min 表结构的唯一真源（DDL-as-Code 模式）。
+ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 apply_schema.py 执行。
+
+来源：由 .runtime/_gen_truth_sources.py 从 ClickHouse system.tables/system.columns
+反向生成（机构升级 DDL 真源回写，#ARCH-CH-025 Schema 真源体系收口）。
+
+列清单：
+#   trade_date: Date
+#   trade_time: DateTime64(3, 'Asia/Shanghai')
+#   symbol: String
+#   open: Decimal(18, 4)
+#   close: Decimal(18, 4)
+#   high: Decimal(18, 4)
+#   low: Decimal(18, 4)
+#   volume: UInt64
+#   amount: Decimal(18, 2)
+#   pct_change: Decimal(18, 4)
+#   amplitude: Decimal(18, 4)
+#   data_source: LowCardinality(String)
+#   ingest_ts: DateTime64(3, 'UTC')
+"""
+from __future__ import annotations
+
+# category_id: market_kline_etf_5min
+# calc_mode: lazy
+
+MARKET_KLINE_ETF_5MIN_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.kline_etf_5min
+(
+    trade_date               Date,
+    trade_time               DateTime64(3, 'Asia/Shanghai'),
+    symbol                   String,
+    open                     Decimal(18, 4),
+    close                    Decimal(18, 4),
+    high                     Decimal(18, 4),
+    low                      Decimal(18, 4),
+    volume                   UInt64,
+    amount                   Decimal(18, 2),
+    pct_change               Decimal(18, 4)  DEFAULT 0,
+    amplitude                Decimal(18, 4)  DEFAULT 0,
+    data_source              LowCardinality(String)  DEFAULT 'bdpan',
+    ingest_ts                DateTime64(3, 'UTC')  DEFAULT now()
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY toYYYYMM(trade_date)
+ORDER BY symbol, trade_time
+"""
+
+# 表元数据
+TABLE_NAME = "kline_etf_5min"
+DATABASE = "c1_market"
+CATEGORY_ID = "market_kline_etf_5min"
+CALC_MODE = "lazy"
+ENGINE = "ReplacingMergeTree"
+PARTITION_KEY = "toYYYYMM(trade_date)"
+ORDER_BY = "symbol, trade_time"
+
+# 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
+INSERT_COLUMNS = (
+    "(trade_date, trade_time, symbol, open, close, high, low, volume, amount)"
+)

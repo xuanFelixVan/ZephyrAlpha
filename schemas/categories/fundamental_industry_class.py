@@ -1,0 +1,67 @@
+# [BLUEPRINT] MOD-L04-001
+# [MODULE] schemas.categories.fundamental_industry_class
+# [DOMAIN] D_DATA
+# [DEPENDENCIES] none
+# [CONSUMERS] apply_market_tables_ddl; zephyr.data.c1_market_writer
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] industry_class 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_schema.py 执行
+# [MODIFY-GUARD] schema-change
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] human_only
+# [TTL] permanent
+"""industry_class 表 DDL-as-Code（category_id: fundamental_industry_class, calc_mode: lazy）。
+
+本文件是 c1_market.industry_class 表结构的唯一真源（DDL-as-Code 模式）。
+ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 apply_schema.py 执行。
+
+来源：由 .runtime/_gen_truth_sources.py 从 ClickHouse system.tables/system.columns
+反向生成（机构升级 DDL 真源回写，#ARCH-CH-025 Schema 真源体系收口）。
+
+列清单：
+#   symbol: String
+#   industry_sw: String
+#   industry_zsi: String
+#   industry_level: UInt8
+#   data_source: LowCardinality(String)
+#   valid_from: Date
+#   valid_to: Nullable(Date)
+#   updated_at: DateTime64(3, 'UTC')
+#   ingest_ts: DateTime64(3, 'UTC')
+"""
+from __future__ import annotations
+
+# category_id: fundamental_industry_class
+# calc_mode: lazy
+
+FUNDAMENTAL_INDUSTRY_CLASS_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.industry_class
+(
+    symbol                   String,
+    industry_sw              String,
+    industry_zsi             String,
+    industry_level           UInt8,
+    data_source              LowCardinality(String)  DEFAULT 'ifind',
+    valid_from               Date  DEFAULT today()  COMMENT 'SCD-2生效起始日',
+    valid_to                 Nullable(Date)  COMMENT 'SCD-2生效终止日(NULL=当前有效)',
+    updated_at               DateTime64(3, 'UTC')  DEFAULT now()  COMMENT '记录更新时间',
+    ingest_ts                DateTime64(3, 'UTC')  DEFAULT now()
+)
+ENGINE = ReplacingMergeTree
+ORDER BY (symbol)
+"""
+
+# 表元数据
+TABLE_NAME = "industry_class"
+DATABASE = "c1_market"
+CATEGORY_ID = "fundamental_industry_class"
+CALC_MODE = "lazy"
+ENGINE = "ReplacingMergeTree"
+PARTITION_KEY = ""
+ORDER_BY = "(symbol)"
+
+# 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
+INSERT_COLUMNS = (
+    "(symbol, industry_sw, industry_zsi, industry_level, valid_to)"
+)
