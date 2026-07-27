@@ -1,0 +1,25 @@
+# 因子域 core 基础设施模块策略参数配置
+# 所有 core 子模块的默认参数集中于此，代码读配置不硬编码
+# 改后重启进程即生效（运行时配置，无需 DB 同步——裁定 #ARCH-SSOT-REFERENCE-INTEGRITY-001）
+
+factor_dag:
+  max_layers: 20              # 单 DAG 最大拓扑层数（防环+防爆炸）
+
+backpressure:
+  max_inflight: 8             # 最大在途并发因子计算数
+  acquire_timeout_s: 30       # 单次 acquire 超时（秒）
+  high_watermark: 0.8         # 高水位（inflight/max_inflight ≥此值 → THROTTLED）
+  low_watermark: 0.5          # 低水位（inflight/max_inflight ≤此值 → NORMAL）
+
+batch_output:
+  batch_size: 500             # 定量刷新阈值（条）
+  flush_interval_s: 5.0       # 定时刷新间隔（秒）
+  target_table: "c1_market.factor_signal"  # 默认写入表（调用方可覆盖）
+
+dag_manager:
+  max_workers: 4              # 层内 ThreadPoolExecutor 并发数
+  factor_timeout_s: 60.0      # 单因子计算超时（秒）
+
+dist_feature_eng:
+  max_workers: 4              # ProcessPoolExecutor 工作进程数
+  factor_timeout_s: 120.0     # 单标的因子计算超时（秒）
