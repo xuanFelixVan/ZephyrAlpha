@@ -342,6 +342,57 @@ class IntegratorScheduler:
         # 注册内部默认事件处理器（config_changed -> 策略热更新）
         self.subscribe("config_changed", self._on_config_changed)
 
+    # ── Stage 4 公共化（2026-07-28）：properties + 公共方法 ──
+    # 消除 tests/zephyr/data/test_scheduler.py 中 63 处私有成员访问。
+
+    @property
+    def providers(self) -> dict:
+        """只读：已注册的 Provider 字典（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._providers
+
+    @property
+    def started(self) -> bool:
+        """读写：调度器是否已启动（Stage 4 公共化）。"""
+        return self._started
+
+    @started.setter
+    def started(self, value: bool) -> None:
+        self._started = value
+
+    @property
+    def scheduler(self):
+        """读写：APScheduler 实例（Stage 4 公共化）。"""
+        return self._scheduler
+
+    @scheduler.setter
+    def scheduler(self, value) -> None:
+        self._scheduler = value
+
+    @property
+    def progress_store(self):
+        """只读：进度存储（Stage 4 公共化）。"""
+        return self._progress_store
+
+    @property
+    def tasks(self) -> list:
+        """读写：任务清单（Stage 4 公共化，返回可变 list 引用）。"""
+        return self._tasks
+
+    @property
+    def event_handlers(self) -> dict:
+        """只读：事件处理器字典（Stage 4 公共化）。"""
+        return self._event_handlers
+
+    @property
+    def schedules(self) -> dict:
+        """读写：调度计划字典（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._schedules
+
+    @property
+    def policy_registry(self):
+        """只读：策略注册表（Stage 4 公共化）。"""
+        return self._policy_registry
+
     # ============== 事件订阅 ==============
 
     def subscribe(self, event: str, handler: Callable) -> None:
@@ -359,13 +410,17 @@ class IntegratorScheduler:
         self._event_handlers.setdefault(event, []).append(handler)
         log.info("已订阅事件 %s，handler=%s", event, handler.__name__)
 
-    def _emit_event(self, event: str, *args, **kwargs) -> None:
-        """触发事件（调用所有订阅者）。异常不抛出。"""
+    def emit_event(self, event: str, *args, **kwargs) -> None:
+        """触发事件（调用所有订阅者）。异常不抛出（Stage 4 公共化，primary）。"""
         for handler in self._event_handlers.get(event, []):
             try:
                 handler(*args, **kwargs)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("事件 %s handler 异常: %s", event, e)
+
+    def _emit_event(self, event: str, *args, **kwargs) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        self.emit_event(event, *args, **kwargs)
 
     def _on_config_changed(self, **kwargs) -> None:
         """config_changed 事件默认处理器：策略热更新。"""
@@ -669,8 +724,8 @@ class IntegratorScheduler:
 
     # ============== 配置加载 ==============
 
-    def _load_config(self) -> None:
-        """加载 schedule.yaml + tasks.yaml。"""
+    def load_config(self) -> None:
+        """加载 schedule.yaml + tasks.yaml（Stage 4 公共化，primary）。"""
         import yaml
 
         # 加载调度计划
@@ -709,6 +764,10 @@ class IntegratorScheduler:
                 log.info("[TableRegistry] tasks.yaml 表名与品类真源一致")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("[TableRegistry] 表名校验失败（不阻断启动）: %s", e)
+
+    def _load_config(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        self.load_config()
 
     def reload_policies(self) -> bool:
         """热更新策略（手动调用或 config_changed 事件触发）。"""
@@ -800,7 +859,7 @@ class IntegratorScheduler:
             if source in self._providers:
                 return self._providers[source]
             # 创建新实例
-            provider = self._create_provider(source)
+            provider = self.create_provider(source)
             if provider is None:
                 log.error("未知数据源: %s", source)
                 return None
@@ -819,8 +878,8 @@ class IntegratorScheduler:
                 )
                 return None
 
-    def _create_provider(self, source: str) -> DataSourceBase | None:
-        """创建 Provider 实例。"""
+    def create_provider(self, source: str) -> DataSourceBase | None:
+        """创建 Provider 实例（Stage 4 公共化，primary）。"""
         try:
             if source == "ifind":
                 from zephyr.data.implementations.ifind_provider import IFindProvider
@@ -858,6 +917,10 @@ class IntegratorScheduler:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("创建 Provider %s 异常: %s", source, e)
             return None
+
+    def _create_provider(self, source: str) -> DataSourceBase | None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.create_provider(source)
 
     # ============== 任务执行 ==============
 
@@ -1020,7 +1083,7 @@ class IntegratorScheduler:
                             run_id, "DEFERRED_PERSISTENCE", total_rows, writer.total_flushed, detail
                         )
                     tq.mark_deferred_persistence(task_id)
-                    self._emit_event("task_completed", task_id=task_id, success=False, deferred=True)
+                    self.emit_event("task_completed", task_id=task_id, success=False, deferred=True)
                     return True, None
                 last_error = f"ClickHouse 写入失败(flush): {table}"
                 log.error("任务 %s CH flush 失败", task_id)
@@ -1037,7 +1100,7 @@ class IntegratorScheduler:
                 self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
                 self._metrics.record_task(task_id, source, "FAILED", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
-                self._emit_event("task_completed", task_id=task_id, success=False)
+                self.emit_event("task_completed", task_id=task_id, success=False)
                 return False, last_error
             else:
                 self._progress_store.save_progress(
@@ -1060,7 +1123,7 @@ class IntegratorScheduler:
                     log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
                 self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
-                self._emit_event("task_completed", task_id=task_id, success=True)
+                self.emit_event("task_completed", task_id=task_id, success=True)
                 return True, None
 
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -1077,7 +1140,7 @@ class IntegratorScheduler:
             self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
             self._metrics.record_task(task_id, source, "FAILED", task_elapsed, rows_written)
             self._metrics.flush()
-            self._emit_event("task_completed", task_id=task_id, success=False)
+            self.emit_event("task_completed", task_id=task_id, success=False)
             return False, last_error
 
     # ===== _try_source() 辅助方法 =====
@@ -1263,9 +1326,9 @@ class IntegratorScheduler:
             return True
 
         try:
-            self._load_config()
+            self.load_config()
             self._validate_capability_contracts()
-            self._init_scheduler()
+            self.init_scheduler()
 
             # 注册 cron/interval job（每个时段一个 job）
             for sched_name, sched_config in self._schedules.items():
@@ -1345,8 +1408,8 @@ class IntegratorScheduler:
             log.error("调度器启动失败: %s", e, exc_info=True)
             return False
 
-    def _init_scheduler(self) -> None:
-        """初始化 APScheduler BackgroundScheduler。"""
+    def init_scheduler(self) -> None:
+        """初始化 APScheduler BackgroundScheduler（Stage 4 公共化，primary）。"""
         from apscheduler.schedulers.background import BackgroundScheduler
         from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
         from apscheduler.executors.pool import ThreadPoolExecutor
@@ -1369,10 +1432,14 @@ class IntegratorScheduler:
             },
         )
 
+    def _init_scheduler(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        self.init_scheduler()
+
     def stop(self) -> None:
         """优雅停止调度器。"""
         # 触发 shutdown 事件
-        self._emit_event("shutdown")
+        self.emit_event("shutdown")
 
         if self._scheduler and self._started:
             try:
