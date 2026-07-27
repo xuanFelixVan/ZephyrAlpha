@@ -88,7 +88,7 @@ def make_foreign_change_gate() -> GateSpec:
 
         # 读取本 session 的 claim 快照（异常安全降级为空 dict）
         try:
-            snapshots = gateway._claim_snapshots.get(session_id, {})
+            snapshots = gateway.claim_snapshots.get(session_id, {})
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # _claim_snapshots 读取异常 -> 安全降级为无快照（不阻断）
             # 理由：快照基础设施故障不应卡死 commit 工作流

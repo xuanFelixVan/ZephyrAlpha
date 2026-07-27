@@ -434,14 +434,68 @@ class PipelineOrchestrator:
         self._periodic_thread: threading.Thread | None = None
         self._profile_results: list[dict[str, object]] = []
 
-        if self._auto_profile_on_startup and self._model_profiler is not None:
-            self._start_auto_profile()
+        if self.auto_profile_on_startup and self.model_profiler is not None:
+            self.start_auto_profile()
+
+    # ------------------------------------------------------------------
+    # Stage 4 公共化 — @property 暴露（保留 _attr 作为 backing store）
+    # ------------------------------------------------------------------
+
+    @property
+    def model_profiler(self):
+        """Stage 4 公共化。"""
+        return self._model_profiler
+
+    @model_profiler.setter
+    def model_profiler(self, value):
+        self._model_profiler = value
+
+    @property
+    def profile_thread(self):
+        """Stage 4 公共化。"""
+        return self._profile_thread
+
+    @profile_thread.setter
+    def profile_thread(self, value):
+        self._profile_thread = value
+
+    @property
+    def auto_profile_on_startup(self):
+        """Stage 4 公共化。"""
+        return self._auto_profile_on_startup
+
+    @property
+    def router(self):
+        """Stage 4 公共化。"""
+        return self._router
+
+    @router.setter
+    def router(self, value):
+        self._router = value
+
+    @property
+    def periodic_stop_flag(self):
+        """Stage 4 公共化。"""
+        return self._periodic_stop_flag
+
+    @periodic_stop_flag.setter
+    def periodic_stop_flag(self, value):
+        self._periodic_stop_flag = value
+
+    @property
+    def periodic_thread(self):
+        """Stage 4 公共化。"""
+        return self._periodic_thread
+
+    @periodic_thread.setter
+    def periodic_thread(self, value):
+        self._periodic_thread = value
 
     # ------------------------------------------------------------------
     # 模型性能检测 — 触发策略
     # ------------------------------------------------------------------
 
-    def _start_auto_profile(self) -> None:
+    def start_auto_profile(self) -> None:
         """启动时自动运行一次 benchmark（后台线程，不阻塞初始化）。"""
         import threading
 
@@ -449,14 +503,18 @@ class PipelineOrchestrator:
             self._log("INFO", "ModelProfiler: auto-startup benchmark initiated")
             try:
                 results = self.run_model_benchmark()
-                self._feed_results_to_router(results)
+                self.feed_results_to_router(results)
                 self._log("INFO", f"ModelProfiler: auto-startup complete ({len(results)} models)")
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"ModelProfiler: auto-startup failed: {exc}")
 
         t = threading.Thread(target=_run, daemon=True, name="model-profiler-startup")
         t.start()
-        self._profile_thread = t
+        self.profile_thread = t
+
+    def _start_auto_profile(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.start_auto_profile()
 
     def start_periodic_profile(self) -> None:
         """启动定时 benchmark（每隔 periodic_profile_interval_s 秒运行一次）。
@@ -469,23 +527,23 @@ class PipelineOrchestrator:
         if self._periodic_profile_interval_s <= 0:
             self._log("INFO", "ModelProfiler: periodic profiling disabled (interval <= 0)")
             return
-        if self._periodic_thread is not None and self._periodic_thread.is_alive():
+        if self.periodic_thread is not None and self.periodic_thread.is_alive():
             self._log("INFO", "ModelProfiler: periodic profiling already running")
             return
 
-        self._periodic_stop_flag = False
+        self.periodic_stop_flag = False
 
         def _loop():
             import time
 
-            while not self._periodic_stop_flag:
+            while not self.periodic_stop_flag:
                 time.sleep(self._periodic_profile_interval_s)
-                if self._periodic_stop_flag:
+                if self.periodic_stop_flag:
                     break
                 try:
                     self._log("INFO", "ModelProfiler: periodic benchmark triggered")
                     results = self.run_model_benchmark()
-                    self._feed_results_to_router(results)
+                    self.feed_results_to_router(results)
                     for r in results:
                         name = r.get("model_name", "")
                         if name:
@@ -497,12 +555,12 @@ class PipelineOrchestrator:
 
         t = threading.Thread(target=_loop, daemon=True, name="model-profiler-periodic")
         t.start()
-        self._periodic_thread = t
+        self.periodic_thread = t
         self._log("INFO", f"ModelProfiler: periodic profiling every {self._periodic_profile_interval_s}s")
 
     def stop_periodic_profile(self) -> None:
         """请求停止周期 benchmark 线程——设置停止标志，线程在下个周期边界退出。"""
-        self._periodic_stop_flag = True
+        self.periodic_stop_flag = True
         self._log("INFO", "ModelProfiler: periodic profile stop requested")
 
     def shutdown(self, timeout: float = 5.0) -> None:
@@ -515,10 +573,10 @@ class PipelineOrchestrator:
             timeout: join 等待秒数，超时后线程仍由 daemon 属性随进程退出回收。
         """
         self.stop_periodic_profile()
-        t = self._periodic_thread
+        t = self.periodic_thread
         if t is not None and t.is_alive():
             t.join(timeout=timeout)
-        self._periodic_thread = None
+        self.periodic_thread = None
         self._log("INFO", "shutdown complete")
 
     def on_model_registered(self, model_name: str) -> None:
@@ -534,7 +592,7 @@ class PipelineOrchestrator:
         def _run() -> None:
             try:
                 results = self.run_model_benchmark()
-                self._feed_results_to_router(results)
+                self.feed_results_to_router(results)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"model_registered benchmark failed: {exc}")
 
@@ -553,30 +611,34 @@ class PipelineOrchestrator:
         def _run() -> None:
             try:
                 results = self.run_model_benchmark()
-                self._feed_results_to_router(results)
+                self.feed_results_to_router(results)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"drift_detected benchmark failed: {exc}")
 
         t = threading.Thread(target=_run, daemon=True, name="model-profiler-drift")
         t.start()
 
-    def _feed_results_to_router(self, results: list[dict[str, object]]) -> None:
+    def feed_results_to_router(self, results: list[dict[str, object]]) -> None:
         """将 benchmark 结果注入 ModelRouter。"""
-        if self._router is None:
+        if self.router is None:
             return
         try:
-            count = self._router.load_benchmark_profiles(results)  # type: ignore[union-attr]
+            count = self.router.load_benchmark_profiles(results)  # type: ignore[union-attr]
             self._log("INFO", f"ModelProfiler: fed {count} profiles to ModelRouter")
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log("WARN", f"ModelProfiler: failed to feed router: {exc}")
 
+    def _feed_results_to_router(self, results: list[dict[str, object]]) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.feed_results_to_router(results)
+
     def run_model_benchmark(self) -> list[dict[str, object]]:
         """运行全量模型性能 benchmark，返回排名结果列表。"""
-        if self._model_profiler is None:
+        if self.model_profiler is None:
             self._log("WARN", "ModelProfiler not available")
             return []
 
-        profiles = self._model_profiler.profile_ollama_only()
+        profiles = self.model_profiler.profile_ollama_only()
         from zephyr.intelligence.model_profiling.pipeline_routing.results_writer import (
             to_model_benchmark_result,
             write_benchmark_results,
@@ -589,10 +651,10 @@ class PipelineOrchestrator:
 
     def get_best_model(self) -> dict[str, object] | None:
         """获取当前 benchmark 排名第一的模型信息。"""
-        if self._model_profiler is None:
+        if self.model_profiler is None:
             return None
 
-        profiles = self._model_profiler.profile_ollama_only()
+        profiles = self.model_profiler.profile_ollama_only()
         best = next((p for p in profiles if p.rank == 1 and p.available), None)
         if best is None:
             return None
@@ -1368,8 +1430,8 @@ class PipelineOrchestrator:
     # ------------------------------------------------------------------
 
     def _resolve_ct_pipe(self, hints):
-        if self._router is not None:
-            return self._router.route(hints)
+        if self.router is not None:
+            return self.router.route(hints)
         return resolve_ct_pipe_orc001(hints)
 
     # ------------------------------------------------------------------

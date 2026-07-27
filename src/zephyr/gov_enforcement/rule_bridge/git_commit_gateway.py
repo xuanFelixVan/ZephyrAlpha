@@ -361,7 +361,37 @@ class GitCommitGateway:
         # 进程崩溃后重启可恢复快照（原纯内存 dict 崩溃即丢失，gate 降级为 PASS）。
         self._claim_snapshots: dict[str, dict[str, str]] = {}
         self._claim_snapshots_dir: Path = self.project_root / _CLAIM_SNAPSHOTS_DIR
-        self._load_claim_snapshots_from_disk()
+        self.load_claim_snapshots_from_disk()
+
+    # ------------------------------------------------------------------
+    # R5 (Stage 4): public properties for private backing attributes
+    # ------------------------------------------------------------------
+    @property
+    def claim_snapshots(self) -> dict[str, dict[str, str]]:
+        """本 session 的 claim 基线快照（公开接口，backing store: _claim_snapshots）。"""
+        return self._claim_snapshots
+
+    @claim_snapshots.setter
+    def claim_snapshots(self, value: dict[str, dict[str, str]]) -> None:
+        self._claim_snapshots = value
+
+    @property
+    def claim_snapshots_dir(self) -> Path:
+        """claim 快照磁盘持久化目录（公开接口，backing store: _claim_snapshots_dir）。"""
+        return self._claim_snapshots_dir
+
+    @claim_snapshots_dir.setter
+    def claim_snapshots_dir(self, value: Path) -> None:
+        self._claim_snapshots_dir = value
+
+    @property
+    def registry(self):
+        """session 注册表（公开接口，backing store: _registry）。"""
+        return self._registry
+
+    @registry.setter
+    def registry(self, value) -> None:
+        self._registry = value
 
     def _get_worktree_manager(self):
         """延迟获取 WorktreeManager 单例。"""
@@ -392,7 +422,7 @@ class GitCommitGateway:
         # 非 worktree commit——检查是否有其他活跃 session（并发风险判定）
         try:
             other_active = [
-                s for s in self._registry.list_active()
+                s for s in self.registry.list_active()
                 if s.session_id != session_id
             ]
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -428,12 +458,12 @@ class GitCommitGateway:
         """
         claimed: list[str] = []
         for f in files:
-            if self._registry.claim_file(session_id, f):
+            if self.registry.claim_file(session_id, f):
                 claimed.append(f)
                 #ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
                 try:
                     abs_f = os.path.abspath(f)
-                    actual_baseline = self._capture_baseline_diff(abs_f)
+                    actual_baseline = self.capture_baseline_diff(abs_f)
                     if adopt_prior_work and actual_baseline:
                         # 治本(2026-07-23): 认领跨 session 前序工作——审计记录实际基线，
                         # 存储空基线让 FOREIGN-CHANGE gate 放行（替代 stash 舞蹈/逃生通道）
@@ -441,9 +471,9 @@ class GitCommitGateway:
                         baseline = ""
                     else:
                         baseline = actual_baseline
-                    self._claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
+                    self.claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
                     # S3-C: 持久化到磁盘（进程崩溃后可恢复）
-                    self._save_session_snapshot(session_id)
+                    self.save_session_snapshot(session_id)
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
@@ -462,19 +492,19 @@ class GitCommitGateway:
         ARCH-054: 同时清理该 session 的基线快照。
         """
         for f in files:
-            if not self._registry.release_file(session_id, f):
+            if not self.registry.release_file(session_id, f):
                 logger.debug(
                     "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
                     f, session_id,
                 )
         #ARCH-054: 清理 session 的基线快照（内存 + 磁盘，S3-C 治本）
         try:
-            self._claim_snapshots.pop(session_id, None)
-            self._delete_session_snapshot(session_id)
+            self.claim_snapshots.pop(session_id, None)
+            self.delete_session_snapshot(session_id)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
-    def _capture_baseline_diff(self, abs_file: str) -> str:
+    def capture_baseline_diff(self, abs_file: str) -> str:
         """ARCH-054: 捕获文件相对 HEAD 的 diff 基线。
 
         claim_files 时调用，记录文件在 claim 时刻的 git diff HEAD 状态。
@@ -493,6 +523,10 @@ class GitCommitGateway:
             return ""
         return result.stdout or ""
 
+    def _capture_baseline_diff(self, abs_file: str) -> str:
+        """Deprecated thin wrapper — use capture_baseline_diff."""
+        return self.capture_baseline_diff(abs_file)
+
     def _log_adopted_work(
         self, session_id: str, abs_file: str, actual_baseline: str
     ) -> None:
@@ -503,7 +537,7 @@ class GitCommitGateway:
         commit_gateway_abuse_monitor_reconciler 检测滥用。审计失败不阻断主流程。
         """
         try:
-            self._claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
+            self.claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
             import hashlib
             import time as _t
             record = {
@@ -515,7 +549,7 @@ class GitCommitGateway:
                     actual_baseline.encode("utf-8", errors="replace")
                 ).hexdigest()[:16],
             }
-            with (self._claim_snapshots_dir / f"{session_id}_adopted.jsonl").open(
+            with (self.claim_snapshots_dir / f"{session_id}_adopted.jsonl").open(
                 "a", encoding="utf-8"
             ) as fh:
                 fh.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -533,22 +567,22 @@ class GitCommitGateway:
     # 后，新 gateway 实例 __init__ 时从磁盘恢复，gate 可正常对比基线。
     # 磁盘 I/O 异常不阻断主流程（内存 dict 仍为 primary，磁盘是 backup）。
 
-    def _load_claim_snapshots_from_disk(self) -> None:
+    def load_claim_snapshots_from_disk(self) -> None:
         """__init__ 时从磁盘恢复所有 session 的 claim 快照。
 
-        遍历 ``.runtime/claim_snapshots/*.json``，加载到 ``self._claim_snapshots``。
+        遍历 ``.runtime/claim_snapshots/*.json``，加载到 ``self.claim_snapshots``。
         损坏文件跳过（log warning），不抛异常。
         """
         try:
-            if not self._claim_snapshots_dir.is_dir():
+            if not self.claim_snapshots_dir.is_dir():
                 return
-            for snap_file in self._claim_snapshots_dir.glob("*.json"):
+            for snap_file in self.claim_snapshots_dir.glob("*.json"):
                 try:
                     data = json.loads(snap_file.read_text(encoding="utf-8"))
                     sid = data.get("session_id", snap_file.stem)
                     snapshots = data.get("snapshots", {})
                     if isinstance(snapshots, dict):
-                        self._claim_snapshots[sid] = snapshots
+                        self.claim_snapshots[sid] = snapshots
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim snapshot file corrupt, skipped — %s",
@@ -556,47 +590,59 @@ class GitCommitGateway:
                     )
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
-                "GitCommitGateway: _load_claim_snapshots_from_disk failed", exc_info=True,
+                "GitCommitGateway: load_claim_snapshots_from_disk failed", exc_info=True,
             )
 
-    def _save_session_snapshot(self, session_id: str) -> None:
+    def _load_claim_snapshots_from_disk(self) -> None:
+        """Deprecated thin wrapper — use load_claim_snapshots_from_disk."""
+        self.load_claim_snapshots_from_disk()
+
+    def save_session_snapshot(self, session_id: str) -> None:
         """将单个 session 的快照持久化到 ``{session_id}.json``（原子写入）。
 
         内存 dict 为 primary，磁盘为 backup——写入失败仅 log warning 不阻断。
         """
-        snapshots = self._claim_snapshots.get(session_id)
+        snapshots = self.claim_snapshots.get(session_id)
         if snapshots is None:
             return
         try:
-            self._claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
+            self.claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
             payload = json.dumps(
                 {"session_id": session_id, "snapshots": snapshots},
                 ensure_ascii=False,
             )
             # 原子写入：tmp + os.replace（对标 SessionRegistry._save）
-            snap_path = self._claim_snapshots_dir / f"{session_id}.json"
+            snap_path = self.claim_snapshots_dir / f"{session_id}.json"
             tmp_path = snap_path.with_suffix(".json.tmp")
             tmp_path.write_text(payload, encoding="utf-8")
             os.replace(tmp_path, snap_path)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
-                "GitCommitGateway: _save_session_snapshot failed — session=%s",
+                "GitCommitGateway: save_session_snapshot failed — session=%s",
                 session_id, exc_info=True,
             )
 
-    def _delete_session_snapshot(self, session_id: str) -> None:
+    def _save_session_snapshot(self, session_id: str) -> None:
+        """Deprecated thin wrapper — use save_session_snapshot."""
+        self.save_session_snapshot(session_id)
+
+    def delete_session_snapshot(self, session_id: str) -> None:
         """删除 session 的磁盘快照文件（release_files 时调用）。
 
         文件不存在或删除失败均静默（磁盘残留无害，下次 claim 会覆盖）。
         """
         try:
-            snap_path = self._claim_snapshots_dir / f"{session_id}.json"
+            snap_path = self.claim_snapshots_dir / f"{session_id}.json"
             snap_path.unlink(missing_ok=True)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug(
-                "GitCommitGateway: _delete_session_snapshot failed — session=%s",
+                "GitCommitGateway: delete_session_snapshot failed — session=%s",
                 session_id, exc_info=True,
             )
+
+    def _delete_session_snapshot(self, session_id: str) -> None:
+        """Deprecated thin wrapper — use delete_session_snapshot."""
+        self.delete_session_snapshot(session_id)
 
     def _register_default_reconcilers(self) -> None:
         """注册默认 post-commit reconciler（声明式框架，P2-T1~T9 + 红蓝发现1 + P3收尾）。"""

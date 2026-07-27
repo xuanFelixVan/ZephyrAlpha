@@ -98,18 +98,18 @@ class TestAutoProfileOnStartup:
         orch = PipelineOrchestrator(config=config)
 
         # 注入 mock profiler（绕过 _PROFILER_AVAILABLE 检查）
-        orch._model_profiler = _make_mock_profiler([_FakeProfile()])
+        orch.model_profiler = _make_mock_profiler([_FakeProfile()])
         # 手动触发 _start_auto_profile
-        orch._start_auto_profile()
+        orch.start_auto_profile()
 
         # 验证线程已启动
-        assert orch._profile_thread is not None
-        assert isinstance(orch._profile_thread, threading.Thread)
-        assert orch._profile_thread.daemon is True
+        assert orch.profile_thread is not None
+        assert isinstance(orch.profile_thread, threading.Thread)
+        assert orch.profile_thread.daemon is True
 
         # 等待线程完成（daemon 线程，应很快完成）
-        orch._profile_thread.join(timeout=5.0)
-        assert not orch._profile_thread.is_alive()
+        orch.profile_thread.join(timeout=5.0)
+        assert not orch.profile_thread.is_alive()
 
     def test_startup_false_does_not_start(self) -> None:
         """auto_profile_on_startup=False → __init__ 不启动自动 profile。"""
@@ -117,7 +117,7 @@ class TestAutoProfileOnStartup:
         orch = PipelineOrchestrator(config=config)
 
         # _profile_thread 应为 None（未启动）
-        assert orch._profile_thread is None
+        assert orch.profile_thread is None
 
     def test_startup_true_but_profiler_none_does_not_start(self) -> None:
         """auto_profile_on_startup=True 但 profiler=None → __init__ 不启动。"""
@@ -125,11 +125,11 @@ class TestAutoProfileOnStartup:
         orch = PipelineOrchestrator(config=config)
 
         # 强制 profiler=None
-        orch._model_profiler = None
+        orch.model_profiler = None
 
         # 重新构造验证 __init__ 逻辑
         # 由于 __init__ 已执行，我们检查 _auto_profile_on_startup 标志
-        assert orch._auto_profile_on_startup is True
+        assert orch.auto_profile_on_startup is True
         # _profile_thread 可能在 __init__ 时已启动（如果 _PROFILER_AVAILABLE=True）
         # 关键验证：profiler=None 时 run_model_benchmark 返回空列表
         assert orch.run_model_benchmark() == []
@@ -147,7 +147,7 @@ class TestStartPeriodicProfile:
         """interval > 0 → 启动周期线程。"""
         config = PipelineOrchestratorConfig(periodic_profile_interval_s=3600.0)
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = _make_mock_profiler([])
+        orch.model_profiler = _make_mock_profiler([])
 
         orch.start_periodic_profile()
 
@@ -197,7 +197,7 @@ class TestRunModelBenchmark:
         orch = PipelineOrchestrator(config=config)
 
         profiles = [_FakeProfile(model_name="qwen3:8b", rank=1), _FakeProfile(model_name="llama3:8b", rank=2)]
-        orch._model_profiler = _make_mock_profiler(profiles)
+        orch.model_profiler = _make_mock_profiler(profiles)
 
         with patch(
             "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
@@ -223,7 +223,7 @@ class TestRunModelBenchmark:
         """profiler=None → 返回空列表。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = None
+        orch.model_profiler = None
 
         results = orch.run_model_benchmark()
 
@@ -235,7 +235,7 @@ class TestRunModelBenchmark:
         orch = PipelineOrchestrator(config=config)
 
         profiles = [_FakeProfile(model_name="test-model:latest")]
-        orch._model_profiler = _make_mock_profiler(profiles)
+        orch.model_profiler = _make_mock_profiler(profiles)
 
         with patch(
             "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
@@ -263,10 +263,10 @@ class TestFeedResultsToRouter:
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
         router = _make_mock_router()
-        orch._router = router
+        orch.router = router
 
         results = [{"model_name": "test-model", "task_scores": {}}]
-        orch._feed_results_to_router(results)
+        orch.feed_results_to_router(results)
 
         router.load_benchmark_profiles.assert_called_once_with(results)
 
@@ -274,10 +274,10 @@ class TestFeedResultsToRouter:
         """router=None → 静默跳过，不抛异常。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._router = None
+        orch.router = None
 
         # 不应抛出异常
-        orch._feed_results_to_router([{"model_name": "test"}])
+        orch.feed_results_to_router([{"model_name": "test"}])
 
     def test_feed_results_router_exception_handled(self) -> None:
         """router.load_benchmark_profiles 抛异常 → 捕获不传播。"""
@@ -285,10 +285,10 @@ class TestFeedResultsToRouter:
         orch = PipelineOrchestrator(config=config)
         router = MagicMock()
         router.load_benchmark_profiles.side_effect = RuntimeError("router error")
-        orch._router = router
+        orch.router = router
 
         # 不应抛出异常
-        orch._feed_results_to_router([{"model_name": "test"}])
+        orch.feed_results_to_router([{"model_name": "test"}])
 
 
 # ------------------------------------------------------------------
@@ -308,7 +308,7 @@ class TestGetBestModel:
             _FakeProfile(model_name="model-a:latest", rank=1, available=True),
             _FakeProfile(model_name="model-b:latest", rank=2, available=True),
         ]
-        orch._model_profiler = _make_mock_profiler(profiles)
+        orch.model_profiler = _make_mock_profiler(profiles)
 
         with patch(
             "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
@@ -324,7 +324,7 @@ class TestGetBestModel:
         """profiler=None → 返回 None。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = None
+        orch.model_profiler = None
 
         assert orch.get_best_model() is None
 
@@ -334,7 +334,7 @@ class TestGetBestModel:
         orch = PipelineOrchestrator(config=config)
 
         profiles = [_FakeProfile(model_name="unavailable-model", rank=0, available=False)]
-        orch._model_profiler = _make_mock_profiler(profiles)
+        orch.model_profiler = _make_mock_profiler(profiles)
 
         assert orch.get_best_model() is None
 
@@ -416,7 +416,7 @@ class TestProperties:
         """benchmark 后 has_profiles 为 True。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = _make_mock_profiler([_FakeProfile()])
+        orch.model_profiler = _make_mock_profiler([_FakeProfile()])
 
         with patch(
             "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
@@ -474,7 +474,7 @@ class TestEventDrivenStartup:
         """on_model_registered() 启动后台 benchmark 线程。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = _make_mock_profiler([_FakeProfile()])
+        orch.model_profiler = _make_mock_profiler([_FakeProfile()])
 
         def _slow_benchmark() -> list[dict[str, object]]:
             # 慢速桩：mock 路径毫秒级完成会产生竞态（enumerate 时线程已退出），
@@ -495,7 +495,7 @@ class TestEventDrivenStartup:
         """on_model_registered() 输出 INFO 日志。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = None  # 避免 benchmark 实际运行
+        orch.model_profiler = None  # 避免 benchmark 实际运行
 
         capsys.readouterr()
         orch.on_model_registered("test-model")
@@ -513,7 +513,7 @@ class TestEventDrivenStartup:
         """on_drift_detected() 启动后台 benchmark 线程。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = _make_mock_profiler([_FakeProfile()])
+        orch.model_profiler = _make_mock_profiler([_FakeProfile()])
 
         def _slow_benchmark() -> list[dict[str, object]]:
             # 慢速桩：mock 路径毫秒级完成会产生竞态（enumerate 时线程已退出），
@@ -534,7 +534,7 @@ class TestEventDrivenStartup:
         """on_drift_detected() 带 drift_info 输出 WARN 日志。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = None
+        orch.model_profiler = None
 
         capsys.readouterr()
         orch.on_drift_detected("drift-model", {"details": {"score_delta": -0.2}})
@@ -551,7 +551,7 @@ class TestEventDrivenStartup:
         """on_drift_detected() 无 drift_info 参数也能正常工作。"""
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = None
+        orch.model_profiler = None
 
         capsys.readouterr()
         orch.on_drift_detected("drift-model")
@@ -580,9 +580,9 @@ class TestGracefulShutdown:
         config = PipelineOrchestratorConfig()
         orch = PipelineOrchestrator(config=config)
 
-        assert orch._periodic_stop_flag is False
+        assert orch.periodic_stop_flag is False
         orch.stop_periodic_profile()
-        assert orch._periodic_stop_flag is True
+        assert orch.periodic_stop_flag is True
 
     def test_shutdown_logs_stop_requested(self, capsys: pytest.CaptureFixture[str]) -> None:
         """stop_periodic_profile() 输出停止请求日志。"""
@@ -601,8 +601,8 @@ class TestGracefulShutdown:
         orch = PipelineOrchestrator(config=config)
 
         orch.shutdown(timeout=1.0)
-        assert orch._periodic_thread is None
-        assert orch._profile_thread is None
+        assert orch.periodic_thread is None
+        assert orch.profile_thread is None
 
     def test_shutdown_logs_complete(self, capsys: pytest.CaptureFixture[str]) -> None:
         """shutdown() 输出完成日志。"""
@@ -619,15 +619,15 @@ class TestGracefulShutdown:
         """shutdown() 启动周期线程后能正确 join 并清理。"""
         config = PipelineOrchestratorConfig(periodic_profile_interval_s=0.01)
         orch = PipelineOrchestrator(config=config)
-        orch._model_profiler = _make_mock_profiler([])
+        orch.model_profiler = _make_mock_profiler([])
 
         orch.start_periodic_profile()
-        assert orch._periodic_thread is not None
-        assert orch._periodic_thread.is_alive()
+        assert orch.periodic_thread is not None
+        assert orch.periodic_thread.is_alive()
 
         # 给线程一点时间进入 sleep
         time.sleep(0.05)
 
         orch.shutdown(timeout=2.0)
         # shutdown 后 _periodic_thread 被清理为 None
-        assert orch._periodic_thread is None
+        assert orch.periodic_thread is None

@@ -66,8 +66,8 @@ class TestRollbackExecutorInit:
             patch("zephyr.infrastructure.rollback.rollback_executor.RollbackLock"),
         ):
             ex = RollbackExecutor(project_root=tmp_project)
-            assert ex._project_root == tmp_project
-            assert ex._owner_session_id is None
+            assert ex.project_root == tmp_project
+            assert ex.owner_session_id is None
 
     def test_custom_params(self, tmp_project, mock_dumper, mock_lock):
         ex = RollbackExecutor(
@@ -76,71 +76,71 @@ class TestRollbackExecutorInit:
             rollback_lock=mock_lock,
             owner_session_id="session-abc",
         )
-        assert ex._project_root == tmp_project
-        assert ex._dumper is mock_dumper
-        assert ex._lock is mock_lock
-        assert ex._owner_session_id == "session-abc"
+        assert ex.project_root == tmp_project
+        assert ex.dumper is mock_dumper
+        assert ex.lock is mock_lock
+        assert ex.owner_session_id == "session-abc"
 
     def test_in_flight_dir_path(self, executor, tmp_project):
         expected = tmp_project / ".zephyr" / "rollback_in_flight"
-        assert executor._in_flight_dir == expected
+        assert executor.in_flight_dir == expected
 
 
 class TestExecutionId:
     def test_format(self, executor):
-        eid = executor._generate_execution_id()
+        eid = executor.generate_execution_id()
         assert eid.startswith("RBEXEC-")
         parts = eid.split("-")
         assert len(parts) >= 3
 
     def test_unique(self, executor):
-        ids = {executor._generate_execution_id() for _ in range(20)}
+        ids = {executor.generate_execution_id() for _ in range(20)}
         assert len(ids) == 20
 
 
 class TestInFlightManagement:
     def test_write_and_read(self, executor):
-        executor._write_in_flight("EID-001", "preflight", "PENDING")
-        record = executor._read_in_flight("EID-001")
+        executor.write_in_flight("EID-001", "preflight", "PENDING")
+        record = executor.read_in_flight("EID-001")
         assert record is not None
         assert record["execution_id"] == "EID-001"
         assert record["step"] == "preflight"
         assert record["status"] == "PENDING"
 
     def test_write_with_data(self, executor):
-        executor._write_in_flight("EID-002", "git_revert", "SUCCESS", {"files_changed": 3})
-        record = executor._read_in_flight("EID-002")
+        executor.write_in_flight("EID-002", "git_revert", "SUCCESS", {"files_changed": 3})
+        record = executor.read_in_flight("EID-002")
         assert record["data"]["files_changed"] == 3
 
     def test_read_nonexistent(self, executor):
-        assert executor._read_in_flight("NO-SUCH-ID") is None
+        assert executor.read_in_flight("NO-SUCH-ID") is None
 
     def test_delete(self, executor):
-        executor._write_in_flight("EID-003", "step", "PENDING")
-        executor._delete_in_flight("EID-003")
-        assert executor._read_in_flight("EID-003") is None
+        executor.write_in_flight("EID-003", "step", "PENDING")
+        executor.delete_in_flight("EID-003")
+        assert executor.read_in_flight("EID-003") is None
 
     def test_delete_nonexistent_no_error(self, executor):
-        executor._delete_in_flight("NO-SUCH-ID")
+        executor.delete_in_flight("NO-SUCH-ID")
 
     def test_get_in_flight_status(self, executor):
-        executor._write_in_flight("EID-004", "step", "RUNNING")
-        assert executor._get_in_flight_status("EID-004") == "RUNNING"
+        executor.write_in_flight("EID-004", "step", "RUNNING")
+        assert executor.get_in_flight_status("EID-004") == "RUNNING"
 
     def test_get_in_flight_status_missing(self, executor):
-        assert executor._get_in_flight_status("MISSING") is None
+        assert executor.get_in_flight_status("MISSING") is None
 
     def test_recover_stale_in_flight(self, executor):
-        executor._write_in_flight("EID-005", "git_revert", "FAILED", {"error": "boom"})
-        recovered = executor._recover_stale_in_flight()
+        executor.write_in_flight("EID-005", "git_revert", "FAILED", {"error": "boom"})
+        recovered = executor.recover_stale_in_flight()
         assert "EID-005" in recovered
-        record = executor._read_in_flight("EID-005")
+        record = executor.read_in_flight("EID-005")
         assert record["status"] == "RECOVERING"
 
 
 class TestPreflightCheck:
     def test_clean_tree_passes(self, executor):
-        executor._run_git = MagicMock(return_value="")
+        executor.run_git = MagicMock(return_value="")
         result = executor.preflight_check()
         assert isinstance(result, PreflightResult)
         assert result.working_tree_clean is True
@@ -154,7 +154,7 @@ class TestPreflightCheck:
                 return "main"
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
+        executor.run_git = MagicMock(side_effect=fake_git)
         result = executor.preflight_check()
         assert result.passed is False
         assert result.working_tree_clean is False
@@ -166,7 +166,7 @@ class TestPreflightCheck:
                 return "HEAD"
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
+        executor.run_git = MagicMock(side_effect=fake_git)
         result = executor.preflight_check()
         assert result.not_detached_head is False
         assert "Detached HEAD state" in result.errors
@@ -183,7 +183,7 @@ class TestPreview:
                 return ""
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
+        executor.run_git = MagicMock(side_effect=fake_git)
         result = executor.preview("abc123")
         assert len(result.changed_files) == 2
         assert result.conflict_risk == "low"
@@ -198,7 +198,7 @@ class TestPreview:
                 return ""
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
+        executor.run_git = MagicMock(side_effect=fake_git)
         result = executor.preview("abc123")
         assert result.conflict_risk == "high"
 
@@ -212,33 +212,33 @@ class TestPreview:
                 return ""
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
+        executor.run_git = MagicMock(side_effect=fake_git)
         result = executor.preview("abc123")
         assert result.conflict_risk == "medium"
 
 
 class TestIsCommitted:
     def test_committed_file(self, executor):
-        executor._run_git = MagicMock(return_value="src/a.py")
+        executor.run_git = MagicMock(return_value="src/a.py")
         result = executor.is_committed(["src/a.py"])
         assert result["src/a.py"] is True
 
     def test_uncommitted_file(self, executor):
-        executor._run_git = MagicMock(side_effect=Exception("not tracked"))
+        executor.run_git = MagicMock(side_effect=Exception("not tracked"))
         result = executor.is_committed(["src/missing.py"])
         assert result["src/missing.py"] is False
 
 
 class TestDiscardChanges:
     def test_no_uncommitted_returns_no_changes(self, executor):
-        executor._run_git = MagicMock(return_value="")
-        executor._detect_owner_session_in_files = MagicMock(return_value=[])
+        executor.run_git = MagicMock(return_value="")
+        executor.detect_owner_session_in_files = MagicMock(return_value=[])
         result = executor.discard_changes(["src/a.py"])
         assert result.decision == DiscardDecision.NO_CHANGES
         assert result.success is False
 
     def test_blocked_by_owner(self, executor):
-        executor._detect_owner_session_in_files = MagicMock(return_value=["src/owned.py"])
+        executor.detect_owner_session_in_files = MagicMock(return_value=["src/owned.py"])
         result = executor.discard_changes(["src/owned.py"])
         assert result.decision == DiscardDecision.BLOCKED_BY_OWNER
         assert result.success is False
@@ -254,9 +254,9 @@ class TestDiscardChanges:
                 return ""
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
-        executor._detect_owner_session_in_files = MagicMock(return_value=["src/a.py"])
-        executor._write_audit_log = MagicMock()
+        executor.run_git = MagicMock(side_effect=fake_git)
+        executor.detect_owner_session_in_files = MagicMock(return_value=["src/a.py"])
+        executor.write_audit_log = MagicMock()
         result = executor.discard_changes(["src/a.py"], force=True)
         assert result.success is True
         assert result.decision == DiscardDecision.DISCARD
@@ -289,14 +289,14 @@ class TestDependencyImpactAnalysis:
                 return "src/zephyr/shared/utils.py\nsrc/zephyr/budget/main.py\nREADME.md\n"
             return ""
 
-        executor._run_git = MagicMock(side_effect=fake_git)
+        executor.run_git = MagicMock(side_effect=fake_git)
         result = executor.dependency_impact_analysis("abc123")
         assert "shared" in result["impacted_modules"]
         assert "budget" in result["impacted_modules"]
         assert result["impact_breadth"] == 2
 
     def test_no_zephyr_files(self, executor):
-        executor._run_git = MagicMock(return_value="README.md\nsetup.py\n")
+        executor.run_git = MagicMock(return_value="README.md\nsetup.py\n")
         result = executor.dependency_impact_analysis("abc123")
         assert result["impact_breadth"] == 0
 
@@ -311,15 +311,15 @@ class TestCancelPendingRollback:
         assert result["canceled"] is False
 
     def test_with_token_pending(self, executor):
-        executor._write_in_flight("EID-CANCEL", "preflight", "PENDING")
-        executor._write_op_audit = MagicMock()
+        executor.write_in_flight("EID-CANCEL", "preflight", "PENDING")
+        executor.write_op_audit = MagicMock()
         result = executor.cancel_pending_rollback("task-1", "reason", token="BREAK_GLASS")
         assert result["canceled"] is True
 
 
 class TestBuildDiscardAudit:
     def test_audit_record_fields(self, executor):
-        record = executor._build_discard_audit(
+        record = executor.build_discard_audit(
             decision=DiscardDecision.DISCARD,
             files=["a.py"],
             blocked=[],
@@ -352,7 +352,7 @@ class TestDiscardDecisionEnum:
 class TestKillSwitchManagerInit:
     def test_default_path(self, tmp_project):
         ks = KillSwitchManager(project_root=tmp_project)
-        assert ks._kill_path == tmp_project / ".zephyr" / "kill_switches.jsonl"
+        assert ks.kill_path == tmp_project / ".zephyr" / "kill_switches.jsonl"
 
 
 class TestKillSwitchActivate:
@@ -379,8 +379,8 @@ class TestKillSwitchActivate:
 
     def test_persists_to_file(self, kill_switch, tmp_project):
         kill_switch.activate(KillLevel.L1_SESSION, "sess-1", "reason")
-        assert kill_switch._kill_path.exists()
-        lines = kill_switch._kill_path.read_text(encoding="utf-8").strip().split("\n")
+        assert kill_switch.kill_path.exists()
+        lines = kill_switch.kill_path.read_text(encoding="utf-8").strip().split("\n")
         assert len(lines) == 1
         record = json.loads(lines[0])
         assert record["level"] == "L1_SESSION"

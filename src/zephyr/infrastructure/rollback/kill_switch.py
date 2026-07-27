@@ -71,6 +71,11 @@ class KillSwitchManager:
         self._project_root = project_root or Path.cwd()
         self._kill_path = self._project_root / self.KILL_SWITCH_FILE
 
+    # === Public read-only property (R5: reverse hierarchy for private attr) ===
+    @property
+    def kill_path(self) -> Path:
+        return self._kill_path
+
     def activate(
         self,
         level: KillLevel,
@@ -100,15 +105,15 @@ class KillSwitchManager:
             "token_used": entry.token_used,
         }
 
-        self._kill_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self._kill_path, "a", encoding="utf-8") as f:
+        self.kill_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.kill_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             f.flush()
 
         return entry
 
     def deactivate(self, level: KillLevel, target: str) -> bool:
-        if not self._kill_path.exists():
+        if not self.kill_path.exists():
             return False
 
         entries = self._read_all()
@@ -122,12 +127,12 @@ class KillSwitchManager:
             new_entries.append(entry)
 
         if updated:
-            tmp_path = f"{self._kill_path}.{os.getpid()}.tmp"
+            tmp_path = f"{self.kill_path}.{os.getpid()}.tmp"
             try:
                 with open(tmp_path, "w", encoding="utf-8") as f:
                     for e in new_entries:
                         f.write(json.dumps(e, ensure_ascii=False) + "\n")
-                os.replace(tmp_path, self._kill_path)
+                os.replace(tmp_path, self.kill_path)
             except PermissionError:
                 try:
                     os.remove(tmp_path)
@@ -171,10 +176,10 @@ class KillSwitchManager:
         return self.activate(KillLevel.L1_SESSION, target, reason)
 
     def _read_all(self) -> list[dict[str, Any]]:
-        if not self._kill_path.exists():
+        if not self.kill_path.exists():
             return []
         entries: list[dict[str, Any]] = []
-        with open(self._kill_path, encoding="utf-8") as f:
+        with open(self.kill_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:

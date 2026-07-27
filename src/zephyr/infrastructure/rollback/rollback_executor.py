@@ -151,9 +151,9 @@ class RollbackExecutor:
     ) -> None:
         self._project_root = project_root or Path.cwd()
         self._dumper = sqlite_dumper or SqliteDumper()
-        self._lock = rollback_lock or RollbackLock(project_root=self._project_root)
+        self._lock = rollback_lock or RollbackLock(project_root=self.project_root)
         self._owner_session_id = owner_session_id or self._resolve_env_owner()
-        self._in_flight_dir = self._project_root / ".zephyr" / "rollback_in_flight"
+        self._in_flight_dir = self.project_root / ".zephyr" / "rollback_in_flight"
         self._audit_writer: _CoreAuditWriter | None = None
         if _AUDIT_AVAILABLE:
             try:
@@ -162,16 +162,40 @@ class RollbackExecutor:
                 # 5.12.1 修复：原 except: pass 静默吞审计写入器初始化失败（审计链断链不可见）
                 logger.warning("AuditWriter init failed; audit trail will fall back to jsonl", exc_info=True)
 
-    def _generate_execution_id(self) -> str:
+    # === Public property accessors (R5: reverse hierarchy) ===
+    @property
+    def project_root(self) -> Path:
+        return self._project_root
+
+    @property
+    def owner_session_id(self) -> str | None:
+        return self._owner_session_id
+
+    @property
+    def dumper(self) -> SqliteDumper:
+        return self._dumper
+
+    @property
+    def lock(self) -> RollbackLock:
+        return self._lock
+
+    @property
+    def in_flight_dir(self) -> Path:
+        return self._in_flight_dir
+
+    def generate_execution_id(self) -> str:
         ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
         short_uuid = uuid.uuid4().hex[:8]
         return f"RBEXEC-{ts}-{short_uuid}"
 
-    def _in_flight_path(self, execution_id: str) -> Path:
-        return self._in_flight_dir / f"{execution_id}.json"
+    def _generate_execution_id(self) -> str:
+        return self.generate_execution_id()
 
-    def _write_in_flight(self, execution_id: str, step: str, status: str, data: dict[str, Any] | None = None) -> None:
-        self._in_flight_dir.mkdir(parents=True, exist_ok=True)
+    def _in_flight_path(self, execution_id: str) -> Path:
+        return self.in_flight_dir / f"{execution_id}.json"
+
+    def write_in_flight(self, execution_id: str, step: str, status: str, data: dict[str, Any] | None = None) -> None:
+        self.in_flight_dir.mkdir(parents=True, exist_ok=True)
         record: dict[str, Any] = {
             "execution_id": execution_id,
             "updated_at": datetime.now(UTC).isoformat(),
@@ -183,7 +207,10 @@ class RollbackExecutor:
         path = self._in_flight_path(execution_id)
         path.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    def _read_in_flight(self, execution_id: str) -> dict[str, Any] | None:
+    def _write_in_flight(self, execution_id: str, step: str, status: str, data: dict[str, Any] | None = None) -> None:
+        return self.write_in_flight(execution_id, step, status, data=data)
+
+    def read_in_flight(self, execution_id: str) -> dict[str, Any] | None:
         path = self._in_flight_path(execution_id)
         if not path.exists():
             return None
@@ -192,7 +219,10 @@ class RollbackExecutor:
         except json.JSONDecodeError:
             return None
 
-    def _delete_in_flight(self, execution_id: str) -> None:
+    def _read_in_flight(self, execution_id: str) -> dict[str, Any] | None:
+        return self.read_in_flight(execution_id)
+
+    def delete_in_flight(self, execution_id: str) -> None:
         path = self._in_flight_path(execution_id)
         try:
             path.unlink(missing_ok=True)
@@ -200,28 +230,37 @@ class RollbackExecutor:
             # 5.12.1 修复：原 except: pass 静默吞 in-flight 标记清理失败（残留标记会导致下次回滚误判）
             logger.debug("in-flight marker unlink failed for execution_id=%s", execution_id, exc_info=True)
 
-    def _recover_stale_in_flight(self) -> list[str]:
+    def _delete_in_flight(self, execution_id: str) -> None:
+        return self.delete_in_flight(execution_id)
+
+    def recover_stale_in_flight(self) -> list[str]:
         recovered: list[str] = []
-        if not self._in_flight_dir.exists():
+        if not self.in_flight_dir.exists():
             return recovered
-        for f in self._in_flight_dir.glob("*.json"):
+        for f in self.in_flight_dir.glob("*.json"):
             try:
                 record = json.loads(f.read_text(encoding="utf-8"))
                 status = record.get("status", "")
                 step = record.get("step", "")
                 if status == "FAILED":
                     execution_id = record.get("execution_id", f.stem)
-                    self._write_in_flight(execution_id, step, "RECOVERING", {"recovered_from": f.stem})
+                    self.write_in_flight(execution_id, step, "RECOVERING", {"recovered_from": f.stem})
                     recovered.append(execution_id)
             except (json.JSONDecodeError, KeyError):
                 pass
         return recovered
 
-    def _get_in_flight_status(self, execution_id: str) -> str | None:
-        record = self._read_in_flight(execution_id)
+    def _recover_stale_in_flight(self) -> list[str]:
+        return self.recover_stale_in_flight()
+
+    def get_in_flight_status(self, execution_id: str) -> str | None:
+        record = self.read_in_flight(execution_id)
         if record:
             return record.get("status")
         return None
+
+    def _get_in_flight_status(self, execution_id: str) -> str | None:
+        return self.get_in_flight_status(execution_id)
 
     def preflight_check(self) -> PreflightResult:
         errors: list[str] = []
@@ -231,34 +270,34 @@ class RollbackExecutor:
         not_in_rebase = True
         not_in_merge = True
 
-        git_status = self._run_git(["status", "--porcelain"])
+        git_status = self.run_git(["status", "--porcelain"])
         if git_status.strip():
             working_tree_clean = False
             errors.append("Working tree is dirty")
 
-        head_ref = self._run_git(["rev-parse", "--abbrev-ref", "HEAD"])
+        head_ref = self.run_git(["rev-parse", "--abbrev-ref", "HEAD"])
         if head_ref.strip() == "HEAD":
             not_detached_head = False
             errors.append("Detached HEAD state")
 
-        rebase_merge_dir = self._project_root / ".git" / "rebase-merge"
-        rebase_apply_dir = self._project_root / ".git" / "rebase-apply"
+        rebase_merge_dir = self.project_root / ".git" / "rebase-merge"
+        rebase_apply_dir = self.project_root / ".git" / "rebase-apply"
         if rebase_merge_dir.exists() or rebase_apply_dir.exists():
             not_in_rebase = False
             errors.append("Rebase in progress")
 
-        merge_head = self._project_root / ".git" / "MERGE_HEAD"
+        merge_head = self.project_root / ".git" / "MERGE_HEAD"
         if merge_head.exists():
             not_in_merge = False
             errors.append("Merge in progress")
 
-        cherry_pick_head = self._project_root / ".git" / "CHERRY_PICK_HEAD"
+        cherry_pick_head = self.project_root / ".git" / "CHERRY_PICK_HEAD"
         if cherry_pick_head.exists():
             errors.append("Cherry-pick in progress")
 
         try:
-            merge_base = self._run_git(["merge-base", "HEAD", "origin/main"])
-            remote_head = self._run_git(["rev-parse", "origin/main"])
+            merge_base = self.run_git(["merge-base", "HEAD", "origin/main"])
+            remote_head = self.run_git(["rev-parse", "origin/main"])
             if merge_base.strip() != remote_head.strip():
                 remote_not_ahead = False
                 errors.append("Remote may be ahead of local")
@@ -278,11 +317,11 @@ class RollbackExecutor:
         )
 
     def preview(self, commit_sha: str) -> PreviewResult:
-        changed = self._run_git(["diff", "--name-only", f"{commit_sha}..HEAD"])
+        changed = self.run_git(["diff", "--name-only", f"{commit_sha}..HEAD"])
         changed_files = [f for f in changed.strip().split("\n") if f]
 
         conflict_risk = "low"
-        diff_stat = self._run_git(["diff", "--stat", f"{commit_sha}..HEAD"])
+        diff_stat = self.run_git(["diff", "--stat", f"{commit_sha}..HEAD"])
         estimated_bytes = len(diff_stat.encode("utf-8"))
 
         if len(changed_files) > 10:
@@ -290,7 +329,7 @@ class RollbackExecutor:
         elif len(changed_files) > 5:
             conflict_risk = "medium"
 
-        existing_merges = self._run_git(["log", "--oneline", "--merges", f"{commit_sha}..HEAD"])
+        existing_merges = self.run_git(["log", "--oneline", "--merges", f"{commit_sha}..HEAD"])
         if existing_merges.strip():
             conflict_risk = "high"
 
@@ -304,33 +343,36 @@ class RollbackExecutor:
         result: dict[str, bool] = {}
         for f in files:
             try:
-                tracked = self._run_git(["ls-files", "--error-unmatch", f])
+                tracked = self.run_git(["ls-files", "--error-unmatch", f])
                 result[f] = True
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result[f] = False
         return result
 
     def get_uncommitted_files(self) -> list[str]:
-        output = self._run_git(["diff", "--name-only", "HEAD"])
+        output = self.run_git(["diff", "--name-only", "HEAD"])
         unstaged = [f for f in output.strip().split("\n") if f]
         return unstaged
 
     def get_staged_uncommitted_files(self) -> list[str]:
-        output = self._run_git(["diff", "--cached", "--name-only"])
+        output = self.run_git(["diff", "--cached", "--name-only"])
         staged = [f for f in output.strip().split("\n") if f]
         return staged
 
-    def _detect_owner_session_in_files(self, files: list[str]) -> list[str]:
+    def detect_owner_session_in_files(self, files: list[str]) -> list[str]:
         blocked: list[str] = []
         for f in files:
             try:
-                log_output = self._run_git(["log", "-1", "--format=%an %ae %s", "--", f])
-                if self._owner_session_id and self._owner_session_id in log_output:
+                log_output = self.run_git(["log", "-1", "--format=%an %ae %s", "--", f])
+                if self.owner_session_id and self.owner_session_id in log_output:
                     blocked.append(f)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 git log 查询失败（owner 检测漏判不可见）
                 logger.debug("git log owner detection failed for file=%s", f, exc_info=True)
         return blocked
+
+    def _detect_owner_session_in_files(self, files: list[str]) -> list[str]:
+        return self.detect_owner_session_in_files(files)
 
     def discard_changes(
         self,
@@ -341,14 +383,14 @@ class RollbackExecutor:
         files_blocked: list[str] = []
 
         if not force:
-            owner_files = self._detect_owner_session_in_files(file_list)
+            owner_files = self.detect_owner_session_in_files(file_list)
             if owner_files:
                 files_blocked = owner_files
-                audit_record = self._build_discard_audit(
+                audit_record = self.build_discard_audit(
                     decision=DiscardDecision.BLOCKED_BY_OWNER,
                     files=file_list,
                     blocked=owner_files,
-                    reason=f"Owner session {self._owner_session_id} detected in: {owner_files}",
+                    reason=f"Owner session {self.owner_session_id} detected in: {owner_files}",
                     audit_session=audit_session,
                 )
                 return DiscardResult(
@@ -367,7 +409,7 @@ class RollbackExecutor:
         already_committed = [f for f in file_list if f not in all_uncommitted]
 
         if not discardable:
-            audit_record = self._build_discard_audit(
+            audit_record = self.build_discard_audit(
                 decision=DiscardDecision.NO_CHANGES,
                 files=file_list,
                 blocked=[],
@@ -387,7 +429,7 @@ class RollbackExecutor:
             try:
                 # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
                 # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
-                self._run_git(["restore", "--", f])
+                self.run_git(["restore", "--", f])
                 files_discarded.append(f)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 discard 失败（回滚失败不可见——最危险）
@@ -396,12 +438,12 @@ class RollbackExecutor:
         for f in staged_files:
             if f in discardable:
                 try:
-                    self._run_git(["reset", "HEAD", "--", f])
+                    self.run_git(["reset", "HEAD", "--", f])
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     # 5.12.1 修复：原 except: pass 静默吞 staged reset 失败（staged 变更残留）
                     logger.warning("git reset HEAD failed for staged file=%s", f, exc_info=True)
 
-        audit_record = self._build_discard_audit(
+        audit_record = self.build_discard_audit(
             decision=DiscardDecision.DISCARD,
             files=discardable,
             blocked=files_blocked,
@@ -409,7 +451,7 @@ class RollbackExecutor:
             audit_session=audit_session,
         )
 
-        self._write_audit_log(audit_record)
+        self.write_audit_log(audit_record)
 
         return DiscardResult(
             success=True,
@@ -434,18 +476,18 @@ class RollbackExecutor:
 
         if all_committed:
             if not commit_sha:
-                commit_sha = self._run_git(["rev-parse", "--short", "HEAD"]).strip()
+                commit_sha = self.run_git(["rev-parse", "--short", "HEAD"]).strip()
 
             result = self.full_revert(commit_sha)
 
-            audit_record = self._build_discard_audit(
+            audit_record = self.build_discard_audit(
                 decision=DiscardDecision.REVERT,
                 files=files,
                 blocked=[],
                 reason=f"Reverted to commit {commit_sha}: {result.files_reverted} files",
                 audit_session=audit_session,
             )
-            self._write_audit_log(audit_record)
+            self.write_audit_log(audit_record)
 
             return DiscardResult(
                 success=result.success,
@@ -463,14 +505,14 @@ class RollbackExecutor:
         if committed and commit_sha:
             revert_result = self.full_revert(commit_sha)
 
-        audit_record = self._build_discard_audit(
+        audit_record = self.build_discard_audit(
             decision=DiscardDecision.DISCARD if uncommitted else DiscardDecision.REVERT,
             files=files,
             blocked=result.files_blocked,
             reason=f"Mixed: discarded {len(uncommitted)} uncommitted, reverted {len(committed)} committed",
             audit_session=audit_session,
         )
-        self._write_audit_log(audit_record)
+        self.write_audit_log(audit_record)
 
         return DiscardResult(
             success=result.success,
@@ -521,7 +563,7 @@ class RollbackExecutor:
         return False
 
     def dependency_impact_analysis(self, commit_sha: str) -> dict[str, Any]:
-        changed = self._run_git(["diff", "--name-only", f"{commit_sha}..HEAD"])
+        changed = self.run_git(["diff", "--name-only", f"{commit_sha}..HEAD"])
         changed_files = [f for f in changed.strip().split("\n") if f]
         impacted_modules: set[str] = set()
         for f in changed_files:
@@ -538,7 +580,7 @@ class RollbackExecutor:
             "impact_breadth": len(impacted_modules),
         }
 
-    def _build_discard_audit(
+    def build_discard_audit(
         self,
         decision: DiscardDecision,
         files: list[str],
@@ -558,7 +600,19 @@ class RollbackExecutor:
             "executor_version": "0.10.0",
         }
 
-    def _write_audit_log(self, record: dict[str, Any]) -> None:
+    def _build_discard_audit(
+        self,
+        decision: DiscardDecision,
+        files: list[str],
+        blocked: list[str],
+        reason: str,
+        audit_session: str,
+    ) -> dict[str, Any]:
+        return self.build_discard_audit(
+            decision=decision, files=files, blocked=blocked, reason=reason, audit_session=audit_session,
+        )
+
+    def write_audit_log(self, record: dict[str, Any]) -> None:
         if self._audit_writer is not None:
             try:
                 event = dict(record)
@@ -579,12 +633,15 @@ class RollbackExecutor:
             # 5.12.1 修复：原 except: pass 静默吞 jsonl 兜底写入失败（审计记录彻底丢失）
             logger.error("jsonl audit fallback write failed for discard audit (audit record LOST)", exc_info=True)
 
+    def _write_audit_log(self, record: dict[str, Any]) -> None:
+        return self.write_audit_log(record)
+
     def cancel_pending_rollback(self, task_id: str, reason: str, token: str = "") -> dict[str, Any]:
         if not token:
             return {"canceled": False, "task_id": task_id, "reason": "BREAK_GLASS token required"}
         canceled = False
-        if self._in_flight_dir.exists():
-            for f_path in self._in_flight_dir.glob("*.json"):
+        if self.in_flight_dir.exists():
+            for f_path in self.in_flight_dir.glob("*.json"):
                 try:
                     record = json.loads(f_path.read_text(encoding="utf-8"))
                     if record.get("status") in ("PENDING", "RETRYING"):
@@ -593,7 +650,7 @@ class RollbackExecutor:
                 except (json.JSONDecodeError, FileNotFoundError):
                     pass
         if canceled:
-            self._write_op_audit(
+            self.write_op_audit(
                 operation="BREAK_GLASS_CANCEL",
                 commit_sha="",
                 success=True,
@@ -620,7 +677,7 @@ class RollbackExecutor:
         db_tables_restored = 0
         db_rows_restored = 0
         g0_passed = False
-        execution_id = self._generate_execution_id()
+        execution_id = self.generate_execution_id()
         stashed = False
 
         # === 1. 并发安全守卫（方案C）：检测回滚文件是否与活跃文件锁冲突 ===
@@ -638,13 +695,13 @@ class RollbackExecutor:
             return preflight_result
 
         # === 3. 获取锁 ===
-        lock_result = self._lock.acquire(
-            owner=audit_session or self._owner_session_id or "auto",
+        lock_result = self.lock.acquire(
+            owner=audit_session or self.owner_session_id or "auto",
             priority=LockPriority.NORMAL,
             task=operation.value,
         )
         if not lock_result.acquired:
-            self._write_in_flight(execution_id, "acquire_lock", "FAILED", {"reason": lock_result.reason})
+            self.write_in_flight(execution_id, "acquire_lock", "FAILED", {"reason": lock_result.reason})
             return RollbackExecutionResult(
                 success=False,
                 operation=operation,
@@ -655,7 +712,7 @@ class RollbackExecutor:
                 execution_id=execution_id,
                 errors=[f"Could not acquire rollback lock: {lock_result.reason}"],
             )
-        self._write_in_flight(execution_id, "acquire_lock", "SUCCESS")
+        self.write_in_flight(execution_id, "acquire_lock", "SUCCESS")
 
         # === 4. 执行回滚操作 ===
         try:
@@ -684,9 +741,9 @@ class RollbackExecutor:
                 # 5.12.1 修复：原 except: pass 静默吞 exit_code 解析失败（门禁决策信号丢失）
                 logger.debug("exit_code resolution failed for execution_id=%s", execution_id, exc_info=True)
 
-            self._write_in_flight(execution_id, "complete", "SUCCESS")
+            self.write_in_flight(execution_id, "complete", "SUCCESS")
 
-            self._write_op_audit(
+            self.write_op_audit(
                 operation=operation.value,
                 commit_sha=commit_sha,
                 success=True,
@@ -702,8 +759,8 @@ class RollbackExecutor:
             return result
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append("internal error")
-            self._write_in_flight(execution_id, "error", "FAILED", {"error": "internal error"})
-            self._write_op_audit(
+            self.write_in_flight(execution_id, "error", "FAILED", {"error": "internal error"})
+            self.write_op_audit(
                 operation=operation.value,
                 commit_sha=commit_sha,
                 success=False,
@@ -721,14 +778,14 @@ class RollbackExecutor:
                 errors=errors,
             )
         finally:
-            self._lock.release(lock_result.lock_id)
+            self.lock.release(lock_result.lock_id)
             if stashed:
                 try:
-                    self._run_git(["stash", "pop"])
-                    self._write_in_flight(execution_id, "stash_pop", "SUCCESS")
+                    self.run_git(["stash", "pop"])
+                    self.write_in_flight(execution_id, "stash_pop", "SUCCESS")
                 except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    self._write_in_flight(execution_id, "stash_pop", "FAILED", {"error": "internal error"})
-            self._delete_in_flight(execution_id)
+                    self.write_in_flight(execution_id, "stash_pop", "FAILED", {"error": "internal error"})
+            self.delete_in_flight(execution_id)
 
     def _concurrency_guard(
         self, operation: RollbackOp, commit_sha: str,
@@ -741,13 +798,13 @@ class RollbackExecutor:
             return None
         conflict = check_rollback_conflict(
             files_to_check,
-            self._owner_session_id or audit_session or "auto",
-            self._project_root,
+            self.owner_session_id or audit_session or "auto",
+            self.project_root,
         )
         if not conflict.has_conflict:
             return None
-        self._write_in_flight(execution_id, "concurrency_check", "BLOCKED", conflict.locked_by)
-        self._write_op_audit(
+        self.write_in_flight(execution_id, "concurrency_check", "BLOCKED", conflict.locked_by)
+        self.write_op_audit(
             operation=operation.value,
             commit_sha=commit_sha,
             success=False,
@@ -770,14 +827,14 @@ class RollbackExecutor:
         audit_session: str, commit_sha: str,
     ) -> tuple[RollbackExecutionResult | None, bool]:
         """预检 + stash 安全化。返回 (阻断结果或None, stashed)。"""
-        self._write_in_flight(execution_id, "preflight", "PENDING")
+        self.write_in_flight(execution_id, "preflight", "PENDING")
         preflight = self.preflight_check()
         if preflight.passed or operation is RollbackOp.HARD_RESET:
-            self._write_in_flight(execution_id, "preflight", "SUCCESS")
+            self.write_in_flight(execution_id, "preflight", "SUCCESS")
             return None, False
         if not (preflight.errors and "Working tree is dirty" in str(preflight.errors)):
-            self._write_in_flight(execution_id, "preflight", "FAILED", {"errors": preflight.errors})
-            self._write_op_audit(
+            self.write_in_flight(execution_id, "preflight", "FAILED", {"errors": preflight.errors})
+            self.write_op_audit(
                 operation=operation.value,
                 commit_sha=commit_sha,
                 success=False,
@@ -798,12 +855,12 @@ class RollbackExecutor:
         uncommitted = self.get_uncommitted_files() + self.get_staged_uncommitted_files()
         stash_plan = classify_uncommitted_files(
             uncommitted,
-            self._owner_session_id or audit_session or "auto",
-            self._project_root,
+            self.owner_session_id or audit_session or "auto",
+            self.project_root,
         )
         if stash_plan.other_files:
-            self._write_in_flight(execution_id, "stash_check", "BLOCKED", {"other_files": stash_plan.other_files})
-            self._write_op_audit(
+            self.write_in_flight(execution_id, "stash_check", "BLOCKED", {"other_files": stash_plan.other_files})
+            self.write_op_audit(
                 operation=operation.value,
                 commit_sha=commit_sha,
                 success=False,
@@ -820,8 +877,8 @@ class RollbackExecutor:
                 execution_id=execution_id,
                 errors=[f"Other session uncommitted files blocked stash: {stash_plan.other_files}"],
             ), False
-        self._run_git(["stash"])
-        self._write_in_flight(execution_id, "preflight", "SUCCESS", {"stashed": True})
+        self.run_git(["stash"])
+        self.write_in_flight(execution_id, "preflight", "SUCCESS", {"stashed": True})
         return None, True
 
     def _dispatch_rollback_op(
@@ -834,28 +891,28 @@ class RollbackExecutor:
             preview = self.preview(commit_sha)
             return len(preview.changed_files), False
         if operation is RollbackOp.FULL_REVERT:
-            self._write_in_flight(execution_id, "git_revert", "PENDING")
+            self.write_in_flight(execution_id, "git_revert", "PENDING")
             git_result = self._git_revert(commit_sha)
             files_reverted = git_result.get("files_changed", 0)
-            self._write_in_flight(execution_id, "git_revert", "SUCCESS", {"files_changed": files_reverted})
-            self._write_in_flight(execution_id, "g0_verify", "PENDING")
+            self.write_in_flight(execution_id, "git_revert", "SUCCESS", {"files_changed": files_reverted})
+            self.write_in_flight(execution_id, "g0_verify", "PENDING")
             g0_passed = self._g0_verify()
-            self._write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
+            self.write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
             return files_reverted, g0_passed
         if operation is RollbackOp.PARTIAL_REVERT:
             if not file_globs:
                 raise ValueError("partial_revert requires file_globs")
-            self._write_in_flight(execution_id, "partial_revert", "PENDING")
+            self.write_in_flight(execution_id, "partial_revert", "PENDING")
             git_result = self._git_partial_revert(commit_sha, file_globs)
             files_reverted = git_result.get("files_changed", 0)
-            self._write_in_flight(execution_id, "partial_revert", "SUCCESS", {"files_changed": files_reverted})
+            self.write_in_flight(execution_id, "partial_revert", "SUCCESS", {"files_changed": files_reverted})
             g0_passed = self._g0_verify(files=file_globs)
-            self._write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
+            self.write_in_flight(execution_id, "g0_verify", "SUCCESS" if g0_passed else "FAILED")
             return files_reverted, g0_passed
         if operation is RollbackOp.DISCARD:
             if not file_list:
                 raise ValueError("discard requires file_list")
-            self._write_in_flight(execution_id, "discard", "PENDING")
+            self.write_in_flight(execution_id, "discard", "PENDING")
             uncommitted = self.get_uncommitted_files()
             staged = self.get_staged_uncommitted_files()
             all_uncommitted = set(uncommitted + staged)
@@ -863,17 +920,17 @@ class RollbackExecutor:
             for f in discardable:
                 # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
                 # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
-                self._run_git(["restore", "--", f])
+                self.run_git(["restore", "--", f])
             for f in staged:
                 if f in discardable:
-                    self._run_git(["reset", "HEAD", "--", f])
+                    self.run_git(["reset", "HEAD", "--", f])
             files_reverted = len(discardable)
-            self._write_in_flight(execution_id, "discard", "SUCCESS", {"files_discarded": discardable})
+            self.write_in_flight(execution_id, "discard", "SUCCESS", {"files_discarded": discardable})
             return files_reverted, False
         # HARD_RESET
-        self._write_in_flight(execution_id, "hard_reset", "PENDING")
-        self._run_git(["reset", "--hard", commit_sha])
-        self._write_in_flight(execution_id, "hard_reset", "SUCCESS")
+        self.write_in_flight(execution_id, "hard_reset", "PENDING")
+        self.run_git(["reset", "--hard", commit_sha])
+        self.write_in_flight(execution_id, "hard_reset", "SUCCESS")
         return 0, True
 
     def _restore_db_snapshots(
@@ -883,9 +940,9 @@ class RollbackExecutor:
         jsonl_path = Path(f"data/rollback/db_snapshots/{commit_sha}.jsonl")
         if not (jsonl_path.exists() and not dry_run):
             return 0, 0
-        self._write_in_flight(execution_id, "db_restore", "PENDING")
-        restore_result = self._dumper.restore(jsonl_path)
-        self._write_in_flight(
+        self.write_in_flight(execution_id, "db_restore", "PENDING")
+        restore_result = self.dumper.restore(jsonl_path)
+        self.write_in_flight(
             execution_id, "db_restore", "SUCCESS",
             {"tables": restore_result.tables_restored, "rows": restore_result.rows_restored},
         )
@@ -911,35 +968,35 @@ class RollbackExecutor:
                 return []
         if operation is RollbackOp.HARD_RESET:
             try:
-                output = self._run_git(["ls-files"])
+                output = self.run_git(["ls-files"])
                 return [f for f in output.strip().split("\n") if f]
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return []
         return []
 
     def _git_revert(self, commit_sha: str) -> dict[str, Any]:
-        output = self._run_git(["revert", "--no-edit", commit_sha])
-        diff_files = self._run_git(["diff-tree", "--no-commit-id", "-r", "HEAD"])
+        output = self.run_git(["revert", "--no-edit", commit_sha])
+        diff_files = self.run_git(["diff-tree", "--no-commit-id", "-r", "HEAD"])
         files_changed = len([f for f in diff_files.strip().split("\n") if f])
         return {"output": output, "files_changed": files_changed}
 
     def _git_partial_revert(self, commit_sha: str, file_globs: list[str]) -> dict[str, Any]:
-        self._run_git(["revert", "--no-commit", commit_sha])
-        all_files = self._run_git(["diff", "--name-only", "HEAD~1..HEAD"])
+        self.run_git(["revert", "--no-commit", commit_sha])
+        all_files = self.run_git(["diff", "--name-only", "HEAD~1..HEAD"])
         keep_files = [f for f in all_files.strip().split("\n") if f and f not in file_globs]
         for f in keep_files:
-            self._run_git(["reset", "HEAD", "--", f])
+            self.run_git(["reset", "HEAD", "--", f])
             # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
             # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
-            self._run_git(["restore", "--", f])
-        self._run_git(["commit", "-m", f"Partial revert: {commit_sha} [selected files]"])
+            self.run_git(["restore", "--", f])
+        self.run_git(["commit", "-m", f"Partial revert: {commit_sha} [selected files]"])
         return {"files_changed": len(file_globs)}
 
-    def _run_git(self, args: list[str], timeout: int = 10) -> str:
+    def run_git(self, args: list[str], timeout: int = 10) -> str:
         try:
             result = run_subprocess_hidden(
                 ["git"] + args,
-                cwd=str(self._project_root),
+                cwd=str(self.project_root),
                 capture_output=True,
                 text=True,
                 timeout=timeout,
@@ -950,13 +1007,16 @@ class RollbackExecutor:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
+    def _run_git(self, args: list[str], timeout: int = 10) -> str:
+        return self.run_git(args, timeout=timeout)
+
     def _g0_verify(self, files: list[str] | None = None) -> bool:
         try:
             import ast
 
             target_files = files or []
             if not target_files:
-                output = self._run_git(["diff", "--name-only", "HEAD~1..HEAD"])
+                output = self.run_git(["diff", "--name-only", "HEAD~1..HEAD"])
                 target_files = [f for f in output.strip().split("\n") if f]
 
             py_files = [f for f in target_files if f.endswith(".py")]
@@ -964,7 +1024,7 @@ class RollbackExecutor:
                 return True
 
             for py_file in py_files:
-                full_path = self._project_root / py_file
+                full_path = self.project_root / py_file
                 if not full_path.exists():
                     continue
 
@@ -977,7 +1037,7 @@ class RollbackExecutor:
                 if "def " not in source and "class " not in source:
                     continue
 
-            cache_dirs = list(self._project_root.glob("**/__pycache__"))
+            cache_dirs = list(self.project_root.glob("**/__pycache__"))
             for cache_dir in cache_dirs:
                 try:
                     shutil.rmtree(cache_dir)
@@ -989,7 +1049,7 @@ class RollbackExecutor:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
-    def _write_op_audit(
+    def write_op_audit(
         self,
         operation: str,
         commit_sha: str,
@@ -1028,3 +1088,15 @@ class RollbackExecutor:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 jsonl 兜底写入失败（操作审计记录彻底丢失）
             logger.error("jsonl audit fallback write failed for op audit (audit record LOST)", exc_info=True)
+
+    def _write_op_audit(
+        self,
+        operation: str,
+        commit_sha: str,
+        success: bool,
+        details: dict[str, Any],
+        audit_session: str,
+    ) -> None:
+        return self.write_op_audit(
+            operation=operation, commit_sha=commit_sha, success=success, details=details, audit_session=audit_session,
+        )

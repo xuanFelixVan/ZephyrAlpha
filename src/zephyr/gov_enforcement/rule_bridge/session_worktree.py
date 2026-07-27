@@ -442,6 +442,32 @@ def _trusted_git_env() -> dict:
 
     return env
 
+
+def _make_wt_run_git(wt_path, gw, block_reason: str, env_var: str):
+    """创建 _run_git 覆盖函数：重定向 cwd 到 worktree + 阻断 git commit。
+
+    用于 pre-commit gates 和 pre-merge gates，使 git 命令在 worktree 目录执行
+    而非主仓库。R6 去重：消除两处重复的 _wt_run_git 闭包定义。
+    """
+    _wt = str(wt_path)
+
+    def _wt_run_git(cmd, cwd=None):
+        _env = os.environ.copy()
+        _env[env_var] = "1"
+        if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
+                and not getattr(gw, "_in_commit_flow", False)):
+            return subprocess.CompletedProcess(
+                cmd, 1, "", f"git commit blocked in {block_reason}"
+            )
+        _effective_cwd = cwd if cwd is not None else _wt
+        return run_subprocess_hidden(
+            cmd, cwd=_effective_cwd, capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=60, env=_env,
+        )
+
+    return _wt_run_git
+
+
 def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root: Path) -> None:
 
     """worktree 删除遥测（GATE-DEPGRAPH-OPS 治本 Phase 4）。
@@ -3645,33 +3671,7 @@ def _run_pre_commit_gates_once(
 
         _orig_run_git = _gw._run_git
 
-        def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
-
-            _env = os.environ.copy()
-
-            _env[_env_var] = "1"
-
-            if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
-
-                    and not getattr(_gw, "_in_commit_flow", False)):
-
-                return subprocess.CompletedProcess(
-
-                    cmd, 1, "", "git commit blocked in worktree gate check"
-
-                )
-
-            _effective_cwd = cwd if cwd is not None else _wt
-
-            return run_subprocess_hidden(
-
-                cmd, cwd=_effective_cwd, capture_output=True, text=True,
-
-                encoding="utf-8", errors="replace", timeout=60, env=_env,
-
-            )
-
-        _gw._run_git = _wt_run_git
+        _gw._run_git = _make_wt_run_git(wt_path, _gw, "worktree gate check", _GATEWAY_ENV)
 
         try:
 
@@ -6261,35 +6261,7 @@ def _pre_merge_gate_check(
 
             _orig_run_git = _gw._run_git
 
-            def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
-
-                _env = os.environ.copy()
-
-                _env[_env_var] = "1"
-
-                # 阻断 git commit（gate 检查不应触发 commit）
-
-                if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
-
-                        and not getattr(_gw, "_in_commit_flow", False)):
-
-                    return subprocess.CompletedProcess(
-
-                        cmd, 1, "", "git commit blocked in pre-merge gate check"
-
-                    )
-
-                _effective_cwd = cwd if cwd is not None else _wt
-
-                return run_subprocess_hidden(
-
-                    cmd, cwd=_effective_cwd, capture_output=True, text=True,
-
-                    encoding="utf-8", errors="replace", timeout=60, env=_env,
-
-                )
-
-            _gw._run_git = _wt_run_git
+            _gw._run_git = _make_wt_run_git(wt_path, _gw, "pre-merge gate check", _GATEWAY_ENV)
 
             # monkeypatch TEST-SOURCE-CONSISTENCY gate 的 _SRC_ROOT 指向 worktree src
 
