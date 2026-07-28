@@ -256,11 +256,11 @@ class TestKillSwitchFuse:
         ks = KillSwitch(threshold=3)
         for i in range(3):
             ks.record_error(f"error_{i}")
-        assert ks._fuse_on, "3次错误后应熔断"
+        assert ks.fuse_on, "3次错误后应熔断"
 
         ks.reset()
-        assert not ks._fuse_on, "reset后应恢复"
-        assert ks._error_count == 0, "reset后错误计数应清零"
+        assert not ks.fuse_on, "reset后应恢复"
+        assert ks.error_count == 0, "reset后错误计数应清零"
 
     def test_kill_switch_below_threshold_no_trigger(self) -> None:
         """低于阈值不触发熔断。"""
@@ -291,7 +291,7 @@ class TestKillSwitchFuse:
         # 模拟3次错误触发熔断
         for i in range(3):
             ks.record_error(f"pipeline_error_{i}")
-        assert ks._fuse_on, "3次错误后应熔断"
+        assert ks.fuse_on, "3次错误后应熔断"
 
         # 熔断后pipeline仍可安全调用（不崩溃）
         result = run_context_four_stage(
@@ -302,7 +302,7 @@ class TestKillSwitchFuse:
 
         # reset后恢复正常
         ks.reset()
-        assert not ks._fuse_on
+        assert not ks.fuse_on
 
 
 # ============================================================================

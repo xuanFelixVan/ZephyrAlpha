@@ -90,11 +90,11 @@ class TestTriggerDecision:
 class TestAutoRollbackTriggerInstantiation:
     def test_default_max_retries(self):
         trigger = AutoRollbackTrigger()
-        assert trigger._max_retries == 3
+        assert trigger.max_retries == 3
 
     def test_custom_max_retries(self):
         trigger = AutoRollbackTrigger(max_retries=5)
-        assert trigger._max_retries == 5
+        assert trigger.max_retries == 5
 
     def test_empty_retry_counts(self):
         trigger = AutoRollbackTrigger()

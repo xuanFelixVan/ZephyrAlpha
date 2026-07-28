@@ -25,39 +25,39 @@ class TestCanaryManagerInstantiation:
 
     def test_default_weight(self):
         cm = CanaryManager()
-        assert cm._canary_weight == 0.1
+        assert cm.canary_weight == 0.1
 
 
 class TestCanaryManagerSetWeight:
     def test_set_weight_normal(self):
         cm = CanaryManager()
         cm.set_weight(0.5)
-        assert cm._canary_weight == 0.5
+        assert cm.canary_weight == 0.5
 
     def test_set_weight_zero(self):
         cm = CanaryManager()
         cm.set_weight(0.0)
-        assert cm._canary_weight == 0.0
+        assert cm.canary_weight == 0.0
 
     def test_set_weight_one(self):
         cm = CanaryManager()
         cm.set_weight(1.0)
-        assert cm._canary_weight == 1.0
+        assert cm.canary_weight == 1.0
 
     def test_set_weight_above_one_clamped(self):
         cm = CanaryManager()
         cm.set_weight(2.0)
-        assert cm._canary_weight == 1.0
+        assert cm.canary_weight == 1.0
 
     def test_set_weight_below_zero_clamped(self):
         cm = CanaryManager()
         cm.set_weight(-0.5)
-        assert cm._canary_weight == 0.0
+        assert cm.canary_weight == 0.0
 
     def test_set_weight_small_positive(self):
         cm = CanaryManager()
         cm.set_weight(0.01)
-        assert cm._canary_weight == pytest.approx(0.01)
+        assert cm.canary_weight == pytest.approx(0.01)
 
 
 class TestCanaryManagerShouldRollback:
@@ -95,16 +95,16 @@ class TestCanaryManagerPromote:
         cm = CanaryManager()
         cm.set_weight(0.1)
         cm.promote()
-        assert cm._canary_weight == 1.0
+        assert cm.canary_weight == 1.0
 
     def test_promote_from_zero(self):
         cm = CanaryManager()
         cm.set_weight(0.0)
         cm.promote()
-        assert cm._canary_weight == 1.0
+        assert cm.canary_weight == 1.0
 
     def test_promote_idempotent(self):
         cm = CanaryManager()
         cm.promote()
         cm.promote()
-        assert cm._canary_weight == 1.0
+        assert cm.canary_weight == 1.0

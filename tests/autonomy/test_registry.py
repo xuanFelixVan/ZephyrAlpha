@@ -64,7 +64,7 @@ class TestSpecRegistryInit:
     def test_init_with_missing_registry_file(self, tmp_path):
         missing = tmp_path / "nonexistent.yaml"
         reg = SpecRegistry(registry_path=missing)
-        assert len(reg._entries) == 0
+        assert len(reg.entries) == 0
 
     def test_init_with_valid_registry(self, tmp_path):
         reg_file = tmp_path / "skill-registry.yaml"
@@ -88,20 +88,20 @@ class TestSpecRegistryInit:
         }
         reg_file.write_text(yaml.dump(data, allow_unicode=True), encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
-        assert "gov-spec" in reg._entries
-        assert "arch" in reg._entries
+        assert "gov-spec" in reg.entries
+        assert "arch" in reg.entries
 
     def test_init_with_empty_registry(self, tmp_path):
         reg_file = tmp_path / "skill-registry.yaml"
         reg_file.write_text("", encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
-        assert len(reg._entries) == 0
+        assert len(reg.entries) == 0
 
     def test_init_with_null_yaml(self, tmp_path):
         reg_file = tmp_path / "skill-registry.yaml"
         reg_file.write_text("null", encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
-        assert len(reg._entries) == 0
+        assert len(reg.entries) == 0
 
 
 class TestSpecRegistryRegister:
@@ -248,11 +248,11 @@ class TestSpecRegistryReload:
         }
         reg_file.write_text(yaml.dump(data, allow_unicode=True), encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
-        assert len(reg._entries) == 1
+        assert len(reg.entries) == 1
         reg.register(AgentCapability(agent_id="manual", capabilities=["M", "domain"]))
-        assert len(reg._entries) == 2
+        assert len(reg.entries) == 2
         reg.reload()
-        assert len(reg._entries) == 1
+        assert len(reg.entries) == 1
         assert reg.get("manual") is None
 
     def test_reload_with_updated_file(self, tmp_path):
@@ -292,13 +292,13 @@ class TestSpecRegistryBoundary:
         reg_file = tmp_path / "skill-registry.yaml"
         reg_file.write_text(yaml.dump({"other_key": "value"}, allow_unicode=True), encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
-        assert len(reg._entries) == 0
+        assert len(reg.entries) == 0
 
     def test_registry_with_missing_category_keys(self, tmp_path):
         reg_file = tmp_path / "skill-registry.yaml"
         reg_file.write_text(yaml.dump({"skills": {}}, allow_unicode=True), encoding="utf-8")
         reg = SpecRegistry(registry_path=reg_file)
-        assert len(reg._entries) == 0
+        assert len(reg.entries) == 0
 
     def test_skill_with_missing_name_uses_id(self, tmp_path):
         reg_file = tmp_path / "skill-registry.yaml"

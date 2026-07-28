@@ -25,7 +25,7 @@ class TestCanaryRegister:
     def test_register(self, tmp_path):
         cr = CanaryRegister(registry_path=str(tmp_path / "canary.yaml"))
         cr.register("func_name", "module_path", stage="active")
-        assert len(cr._canaries) == 1
+        assert len(cr.canaries) == 1
 
     def test_check_staleness(self, tmp_path):
         cr = CanaryRegister(registry_path=str(tmp_path / "canary.yaml"))
@@ -35,4 +35,4 @@ class TestCanaryRegister:
     def test_register_empty(self, tmp_path):
         cr = CanaryRegister(registry_path=str(tmp_path / "canary.yaml"))
         cr.register("", "", stage="active")
-        assert len(cr._canaries) == 1
+        assert len(cr.canaries) == 1

@@ -45,10 +45,10 @@ def bridge_with_events(tmp_path):
 class TestAuditTieredStorageBridge:
     def test_instantiation(self, tmp_path):
         b = AuditTieredStorageBridge(data_dir=tmp_path)
-        assert b._data_dir == tmp_path
-        assert b._hot_dir == tmp_path
-        assert b._warm_dir == tmp_path / "warm"
-        assert b._cold_dir == tmp_path / "cold"
+        assert b.data_dir == tmp_path
+        assert b.hot_dir == tmp_path
+        assert b.warm_dir == tmp_path / "warm"
+        assert b.cold_dir == tmp_path / "cold"
 
     def test_classify_events_hot(self, bridge):
         now = datetime.now(UTC)

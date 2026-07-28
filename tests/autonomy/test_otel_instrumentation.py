@@ -44,7 +44,7 @@ class TestOTelInstrumentationInstantiation:
 
     def test_initial_spans_empty(self):
         otel = OTelInstrumentation()
-        assert otel._spans == []
+        assert otel.spans == []
 
 
 class TestOTelInstrumentationStartSpan:
@@ -82,9 +82,9 @@ class TestOTelInstrumentationStartSpan:
         otel = OTelInstrumentation()
         otel.start_span("a")
         otel.start_span("b")
-        assert len(otel._spans) == 2
-        assert otel._spans[0].name == "a"
-        assert otel._spans[1].name == "b"
+        assert len(otel.spans) == 2
+        assert otel.spans[0].name == "a"
+        assert otel.spans[1].name == "b"
 
 
 class TestOTelInstrumentationEndSpan:

@@ -226,6 +226,6 @@ class TestBudgetEngineConsumptionVersion:
 
     def test_version_no_policy(self):
         engine = BudgetEngine()
-        engine._policies.pop(BudgetDimension.TIME, None)
+        engine.policies.pop(BudgetDimension.TIME, None)
         v = engine.get_consumption_version(BudgetDimension.TIME)
         assert v == -1

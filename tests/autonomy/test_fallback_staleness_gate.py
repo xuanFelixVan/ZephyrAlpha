@@ -48,15 +48,15 @@ class TestFallbackStalenessGate:
     def test_instantiation_default(self):
         gate = FallbackStalenessGate()
         assert gate is not None
-        assert gate._file == Path("AGENTS.md")
+        assert gate.file == Path("AGENTS.md")
 
     def test_instantiation_custom_path(self):
         gate = FallbackStalenessGate(defaults_file="/custom/path.md")
-        assert gate._file == Path("/custom/path.md")
+        assert gate.file == Path("/custom/path.md")
 
     def test_instantiation_path_object(self):
         gate = FallbackStalenessGate(defaults_file=Path("/obj/path.md"))
-        assert gate._file == Path("/obj/path.md")
+        assert gate.file == Path("/obj/path.md")
 
     def test_check_returns_staleness_report(self):
         with tempfile.NamedTemporaryFile(suffix=".md", delete=False, mode="w", encoding="utf-8") as f:

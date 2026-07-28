@@ -56,12 +56,12 @@ class TestSelfTestResult:
 class TestIntegrationTestRunner:
     def test_instantiation_with_root(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
-        assert runner._project_root == str(tmp_path)
-        assert os.path.isdir(runner._result_dir)
+        assert runner.project_root == str(tmp_path)
+        assert os.path.isdir(runner.result_dir)
 
     def test_instantiation_default_root(self):
         runner = IntegrationTestRunner()
-        assert runner._project_root is not None
+        assert runner.project_root is not None
 
     def test_pip_check_returns_result(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
@@ -94,7 +94,7 @@ class TestIntegrationTestRunner:
     def test_finalize_writes_json(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         result = runner.pip_check()
-        result_file = os.path.join(runner._result_dir, f"{result.test_id}_test.json")
+        result_file = os.path.join(runner.result_dir, f"{result.test_id}_test.json")
         assert os.path.exists(result_file)
         with open(result_file, encoding="utf-8") as fh:
             data = json.load(fh)

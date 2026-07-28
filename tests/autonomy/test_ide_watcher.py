@@ -37,11 +37,11 @@ class TestIDEWatcherInit:
 
     def test_initial_mtimes_empty(self, tmp_path):
         watcher = IDEWatcher(skills_dir=tmp_path)
-        assert watcher._last_mtimes == {}
+        assert watcher.last_mtimes == {}
 
     def test_initial_callbacks_empty(self, tmp_path):
         watcher = IDEWatcher(skills_dir=tmp_path)
-        assert watcher._callbacks == []
+        assert watcher.callbacks == []
 
 
 class TestIDEWatcherScan:
@@ -116,7 +116,7 @@ class TestIDEWatcherOnChange:
         watcher = IDEWatcher(skills_dir=tmp_path)
         cb = MagicMock()
         watcher.on_change(cb)
-        assert cb in watcher._callbacks
+        assert cb in watcher.callbacks
 
     def test_on_change_callback_fired_on_change(self, tmp_path):
         f = tmp_path / "skill.md"

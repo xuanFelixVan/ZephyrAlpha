@@ -114,7 +114,7 @@ class TestPreFlightCheck:
     def test_gate_history_recorded(self, engine: BudgetEngine) -> None:
         engine.pre_flight_check("req-008")
         engine.pre_flight_check("req-009")
-        assert len(engine._gate_history) == 2
+        assert len(engine.gate_history) == 2
 
 
 class TestBudgetAlert:
@@ -146,7 +146,7 @@ class TestBudgetAlert:
             level=BudgetLevel.L1_WARNING,
             message="Test alert",
         )
-        engine._alerts.append(alert)
+        engine.alerts.append(alert)
         result = engine.acknowledge_alert(alert.alert_id)
         assert result is True
         assert alert.acknowledged is True
@@ -155,7 +155,7 @@ class TestBudgetAlert:
         a1 = BudgetAlert(policy_id="p1", dimension=BudgetDimension.TOKEN, level=BudgetLevel.L1_WARNING, message="a1")
         a2 = BudgetAlert(policy_id="p2", dimension=BudgetDimension.COST, level=BudgetLevel.L2_THROTTLED, message="a2")
         a2.acknowledged = True
-        engine._alerts.extend([a1, a2])
+        engine.alerts.extend([a1, a2])
         unack = engine.get_alerts(unacknowledged_only=True)
         assert len(unack) == 1
         assert unack[0].alert_id == a1.alert_id
@@ -164,7 +164,7 @@ class TestBudgetAlert:
         a1 = BudgetAlert(policy_id="p1", dimension=BudgetDimension.TOKEN, level=BudgetLevel.L1_WARNING, message="a1")
         a2 = BudgetAlert(policy_id="p2", dimension=BudgetDimension.COST, level=BudgetLevel.L2_THROTTLED, message="a2")
         a2.acknowledged = True
-        engine._alerts.extend([a1, a2])
+        engine.alerts.extend([a1, a2])
         all_alerts = engine.get_alerts(unacknowledged_only=False)
         assert len(all_alerts) == 2
 
@@ -277,19 +277,19 @@ class TestTryClaimBudget:
 
 class TestDegradation:
     def test_initial_degradation_level(self, engine: BudgetEngine) -> None:
-        assert engine._current_degradation_level == BudgetLevel.L0_NORMAL
-        assert engine._active_step_idx == 0
+        assert engine.current_degradation_level == BudgetLevel.L0_NORMAL
+        assert engine.active_step_idx == 0
 
     def test_advance_degradation(self, engine: BudgetEngine) -> None:
         advanced = engine.advance_degradation()
         assert advanced is True
-        assert engine._active_step_idx == 1
-        assert engine._current_degradation_level == BudgetLevel.L1_WARNING
+        assert engine.active_step_idx == 1
+        assert engine.current_degradation_level == BudgetLevel.L1_WARNING
 
     def test_advance_degradation_max(self, engine: BudgetEngine) -> None:
         for _ in range(10):
             engine.advance_degradation()
-        assert engine._active_step_idx == len(engine._degradation_steps) - 1
+        assert engine.active_step_idx == len(engine.degradation_steps) - 1
         result = engine.advance_degradation()
         assert result is False
 
@@ -297,7 +297,7 @@ class TestDegradation:
         engine.advance_degradation()
         retreated = engine.retreat_degradation()
         assert retreated is True
-        assert engine._active_step_idx == 0
+        assert engine.active_step_idx == 0
 
     def test_retreat_degradation_min(self, engine: BudgetEngine) -> None:
         result = engine.retreat_degradation()

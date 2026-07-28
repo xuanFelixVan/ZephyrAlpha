@@ -62,19 +62,19 @@ class TestAutonomyMonitorDowngrade:
         monitor = AutonomyMonitor()
         monitor.downgrade(reason="r1")
         monitor.downgrade(reason="r2")
-        assert monitor._state.downgrade_count == 2
+        assert monitor.state.downgrade_count == 2
 
     def test_downgrade_updates_previous_level(self):
         monitor = AutonomyMonitor()
         monitor.downgrade(reason="r1")
-        assert monitor._state.previous_level == AutonomyLevel.SUPERVISED
+        assert monitor.state.previous_level == AutonomyLevel.SUPERVISED
 
     def test_downgrade_logs_event(self):
         monitor = AutonomyMonitor()
         monitor.downgrade(reason="test reason")
-        assert len(monitor._event_log) == 1
-        assert monitor._event_log[0]["type"] == "DOWNGRADE"
-        assert monitor._event_log[0]["reason"] == "test reason"
+        assert len(monitor.event_log) == 1
+        assert monitor.event_log[0]["type"] == "DOWNGRADE"
+        assert monitor.event_log[0]["reason"] == "test reason"
 
 
 class TestAutonomyMonitorUpgrade:
@@ -100,13 +100,13 @@ class TestAutonomyMonitorUpgrade:
         monitor = AutonomyMonitor()
         monitor.upgrade(reason="r1")
         monitor.upgrade(reason="r2")
-        assert monitor._state.upgrade_count == 2
+        assert monitor.state.upgrade_count == 2
 
     def test_upgrade_logs_event(self):
         monitor = AutonomyMonitor()
         monitor.upgrade(reason="test upgrade")
-        assert len(monitor._event_log) == 1
-        assert monitor._event_log[0]["type"] == "UPGRADE"
+        assert len(monitor.event_log) == 1
+        assert monitor.event_log[0]["type"] == "UPGRADE"
 
 
 class TestAutonomyMonitorCanAutoExecute:

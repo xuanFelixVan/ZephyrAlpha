@@ -55,7 +55,7 @@ class TestDriftStateMachineInit:
     def test_initial_state(self):
         sm = DriftStateMachine()
         assert sm.TTL_DETECTED_HOURS == 24
-        assert len(sm._events) == 0
+        assert len(sm.events) == 0
 
 
 class TestValidateTransition:
@@ -136,7 +136,7 @@ class TestTransition:
             DriftState.RESOLVED,
             resolved_by="agent-1",
         )
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolved_by == "agent-1"
         assert rec.resolved_at is not None
 
@@ -150,7 +150,7 @@ class TestTransition:
             DriftState.ACKNOWLEDGED,
             resolution_detail="manual review",
         )
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolution_detail == "manual review"
 
 
@@ -223,7 +223,7 @@ class TestCheckTtl:
             state=DriftState.DETECTED,
             created_at=datetime.now(UTC) - timedelta(hours=48),
         )
-        sm._events[eid3] = rec
+        sm.events[eid3] = rec
         expired = sm.check_ttl()
         assert eid3 in expired
         assert sm.get_state(eid3) == DriftState.DEAD_LETTER
@@ -280,7 +280,7 @@ class TestCheckTtl:
         eid7 = uuid.uuid4()
         rec7 = DriftEventRecord(event_id=eid7, state=DriftState.SUPPRESSED)
         rec7.suppressed_until = datetime.now(UTC) - timedelta(hours=1)
-        sm._events[eid7] = rec7
+        sm.events[eid7] = rec7
         expired = sm.check_ttl()
         assert eid7 in expired
         assert sm.get_state(eid7) == DriftState.DETECTED
