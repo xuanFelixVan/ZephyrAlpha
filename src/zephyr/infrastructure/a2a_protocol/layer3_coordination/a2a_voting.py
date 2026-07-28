@@ -62,6 +62,13 @@ class A2AVoting:
         self._vote_timeout = vote_timeout_seconds
         self._boxes: dict[str, dict[str, tuple[VoteAction, float]]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def default_quorum(self):
+        """只读：default_quorum（Stage 4 公共化）。"""
+        return self._default_quorum
+
+
     def open_proposal(self, proposal_id: str, quorum_ratio: float | None = None):
         self._boxes[proposal_id] = {}
         self._boxes[proposal_id]["_quorum"] = (VoteAction.APPROVE, quorum_ratio or self._default_quorum)

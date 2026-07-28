@@ -52,6 +52,18 @@ class EventHooks:
         self._hooks: dict[FixEvent, list[Callable[..., None]]] = {}
         self._event_log: list[dict[str, Any]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def event_log(self) -> list[dict[str, Any]]:
+        """只读：event_log（Stage 4 公共化）。"""
+        return self._event_log
+
+    @property
+    def hooks(self) -> dict[FixEvent, list[Callable[..., None]]]:
+        """只读：hooks（Stage 4 公共化）。"""
+        return self._hooks
+
+
     def register(self, event: FixEvent, callback: Callable[..., None]) -> None:
         self._hooks.setdefault(event, []).append(callback)
 

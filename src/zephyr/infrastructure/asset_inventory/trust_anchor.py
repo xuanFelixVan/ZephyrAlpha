@@ -259,6 +259,13 @@ class BypassManager:
         else:
             self._override_path = self._DEFAULT_OVERRIDE_PATH
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def override_path(self):
+        """只读：override_path（Stage 4 公共化）。"""
+        return self._override_path
+
+
     def get_bypass_state(self) -> BypassState:
         data = _load_override_yaml(self._override_path)
         if data is None:

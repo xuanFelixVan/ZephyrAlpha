@@ -628,6 +628,18 @@ class RegistryManager:
         self._root = project_root
         self._init_defaults()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def known(self) -> dict[str, RegistryAdapter]:
+        """只读：known（Stage 4 公共化）。"""
+        return self._known
+
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+
     def _init_defaults(self) -> None:
         self._known: dict[str, RegistryAdapter] = {}
 

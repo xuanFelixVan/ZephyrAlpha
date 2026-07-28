@@ -77,6 +77,13 @@ class GitMetadataExtractor:
     def __init__(self, project_root: Path) -> None:
         self._root = project_root
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+
     def extract(self, file_path: str) -> GitAssetMetadata | None:
         log = self._run_git_log(file_path)
         if not log:
@@ -232,6 +239,18 @@ class MultiIDERuleGenerator:
 
     def __init__(self, project_root: Path) -> None:
         self._root = project_root
+
+    # ── Stage 4 公共化（2026-07-29）：只读 property ──
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+    @root.setter
+    def root(self, value):
+        """写入：root（Stage 4 公共化）。"""
+        self._root = value
+
 
     def _collect_project_rules(self) -> str:
         rules_path = self._root / ".trae" / "rules" / "project_rules.md"

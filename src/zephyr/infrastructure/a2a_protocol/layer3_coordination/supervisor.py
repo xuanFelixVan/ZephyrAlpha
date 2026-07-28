@@ -32,6 +32,13 @@ class Supervisor:
         self.MIN_TIMEOUT_MINUTES = 10
         self.MAX_TIMEOUT_HOURS = 24
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def tasks(self) -> dict[str, A2ATask]:
+        """只读：tasks（Stage 4 公共化）。"""
+        return self._tasks
+
+
     def submit_task(self, task: A2ATask) -> A2ATask:
         if task.deadline is None:
             task.deadline = now_utc() + timedelta(hours=1)

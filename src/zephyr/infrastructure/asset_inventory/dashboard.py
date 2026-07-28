@@ -156,6 +156,13 @@ class KnowledgeTransferGate:
     def __init__(self, project_root: Path) -> None:
         self._root = project_root
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+
     def generate_summary(self) -> str:
         index_path = self._root / "data" / "asset_index" / "unified-asset-index.yaml"
 

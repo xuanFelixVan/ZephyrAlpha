@@ -83,6 +83,13 @@ class A2ASaga:
         self._compensations: dict[str, dict] = {}
         self._status = SagaStatus.PENDING
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def compensations(self) -> dict[str, dict]:
+        """只读：compensations（Stage 4 公共化）。"""
+        return self._compensations
+
+
     def add_step(
         self,
         step_id: str,

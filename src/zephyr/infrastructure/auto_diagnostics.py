@@ -121,6 +121,18 @@ class AutoDiagnostics:
         else:
             self._load_default_rules()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def diagnosis_count(self) -> int:
+        """只读：diagnosis_count（Stage 4 公共化）。"""
+        return self._diagnosis_count
+
+    @property
+    def rules(self) -> list[DiagnosisRule]:
+        """只读：rules（Stage 4 公共化）。"""
+        return self._rules
+
+
     def _load_default_rules(self) -> None:
         self._rules = [
             DiagnosisRule(

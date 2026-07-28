@@ -351,6 +351,13 @@ class NotificationManager:
                 )
             )
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def channels(self) -> list[NotificationChannel]:
+        """只读：channels（Stage 4 公共化）。"""
+        return self._channels
+
+
     def notify_all(self, severity: str, message: str) -> list[NotificationRecord]:
         return [ch.send(severity, message) for ch in self._channels]
 

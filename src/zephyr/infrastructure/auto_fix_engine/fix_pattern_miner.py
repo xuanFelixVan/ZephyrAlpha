@@ -38,6 +38,24 @@ class FixPatternMiner:
         self._pattern_cache: dict[str, dict[str, Any]] = {}
         self._ensure_db()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def db_path(self):
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
+
+
+    @property
+    def pattern_cache(self) -> dict[str, dict[str, Any]]:
+        """只读：pattern_cache（Stage 4 公共化）。"""
+        return self._pattern_cache
+
+
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = get_db_connection(self._db_path)

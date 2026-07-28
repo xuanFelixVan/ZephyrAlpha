@@ -466,6 +466,13 @@ class ConcurrentScanner:
         self._root = project_root
         self._lock_dir = project_root / ".ailocks"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+
     def _is_locked(self, path: Path) -> bool:
         try:
             rel = path.relative_to(self._root)

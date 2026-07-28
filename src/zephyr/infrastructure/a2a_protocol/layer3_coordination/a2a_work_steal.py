@@ -78,6 +78,18 @@ class A2AWorkSteal:
         self._idle_threshold = idle_threshold
         self._stolen: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_steal_per_cycle(self):
+        """只读：max_steal_per_cycle（Stage 4 公共化）。"""
+        return self._max_steal_per_cycle
+
+    @property
+    def stolen(self) -> set[str]:
+        """只读：stolen（Stage 4 公共化）。"""
+        return self._stolen
+
+
     def steal(
         self,
         idle_agent_id: str,

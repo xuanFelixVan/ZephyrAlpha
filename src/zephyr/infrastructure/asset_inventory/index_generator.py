@@ -251,6 +251,13 @@ class SchemaEvolutionManager:
         self._root = project_root
         self._log_dir = project_root / "data" / "migrations"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+
     def check_compatibility(self, current_version: str) -> MigrationPlan:
         plan = MigrationPlan(current_version=current_version, target_version=self.VERSIONS[-1])
 

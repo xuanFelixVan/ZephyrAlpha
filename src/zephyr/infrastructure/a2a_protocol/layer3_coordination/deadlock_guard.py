@@ -22,6 +22,13 @@ class DeadlockGuard:
     def __init__(self):
         self._locks: dict = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def locks(self) -> dict:
+        """只读：locks（Stage 4 公共化）。"""
+        return self._locks
+
+
     def try_acquire(self, resource: str, holder: str) -> bool:
         if resource in self._locks:
             return False
