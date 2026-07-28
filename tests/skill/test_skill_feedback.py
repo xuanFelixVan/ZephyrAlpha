@@ -80,27 +80,27 @@ class TestFeedbackSignalInstantiation:
 
 class TestSkillFeedbackInstantiation:
     def test_create_instance(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
         assert isinstance(sf, SkillFeedback)
 
     def test_has_history(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        assert isinstance(sf._history, list)
+        assert isinstance(sf.history, list)
 
     def test_has_consecutive_failures(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        assert isinstance(sf._consecutive_failures, dict)
+        assert isinstance(sf.consecutive_failures, dict)
 
 
 class TestRecordModuleResult:
     def test_success_result(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "freshness_boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "freshness_boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 result = sf.record_module_result(
                     skill_id="SKILL-SUCC",
                     module_result=FakeModuleResult(status="SUCCESS"),
@@ -111,11 +111,11 @@ class TestRecordModuleResult:
         assert result["signal"]["success"] is True
 
     def test_failure_result(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_decay_freshness", return_value={"action": "freshness_decay"}):
-            with patch.object(sf, "_check_auto_kill", return_value=None):
-                with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "decay_freshness", return_value={"action": "freshness_decay"}):
+            with patch.object(sf, "check_auto_kill", return_value=None):
+                with patch.object(sf, "append_signal_to_log"):
                     result = sf.record_module_result(
                         skill_id="SKILL-FAIL",
                         module_result=FakeModuleResult(status="FAILURE", errors=["err1"]),
@@ -129,10 +129,10 @@ class TestRecordModuleResult:
             status="SUCCESS",
             raw_output={"tokens_used": 100, "cost_usd": 0.05, "latency_ms": 200},
         )
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 result = sf.record_module_result("SKILL-RAW", mod, "TASK-003")
         assert result["signal"]["tokens_used"] == 100
         assert result["signal"]["cost_usd"] == 0.05
@@ -140,62 +140,62 @@ class TestRecordModuleResult:
 
     def test_none_raw_output(self):
         mod = FakeModuleResult(status="SUCCESS", raw_output=None)
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 result = sf.record_module_result("SKILL-NONE-RAW", mod, "TASK-004")
         assert result["signal"]["tokens_used"] == 0
         assert result["signal"]["cost_usd"] == 0.0
 
     def test_history_capped_at_max(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        sf._MAX_HISTORY = 5
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        sf.MAX_HISTORY = 5
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 for i in range(10):
                     sf.record_module_result(
                         "SKILL-CAP",
                         FakeModuleResult(status="SUCCESS"),
                         f"TASK-{i}",
                     )
-        assert len(sf._history) <= 5
+        assert len(sf.history) <= 5
 
 
 class TestGetHistory:
     def test_get_all_history(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 sf.record_module_result("SKILL-A", FakeModuleResult(), "T1")
                 sf.record_module_result("SKILL-B", FakeModuleResult(), "T2")
         history = sf.get_history()
         assert len(history) == 2
 
     def test_get_history_filtered_by_skill(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 sf.record_module_result("SKILL-A", FakeModuleResult(), "T1")
                 sf.record_module_result("SKILL-B", FakeModuleResult(), "T2")
         history = sf.get_history(skill_id="SKILL-A")
         assert all(h["skill_id"] == "SKILL-A" for h in history)
 
     def test_get_history_with_limit(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 for i in range(5):
                     sf.record_module_result("SKILL-LIM", FakeModuleResult(), f"T{i}")
         history = sf.get_history(limit=2)
         assert len(history) == 2
 
     def test_empty_history(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
         history = sf.get_history()
         assert history == []
@@ -203,12 +203,12 @@ class TestGetHistory:
 
 class TestStats:
     def test_stats_with_data(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_decay_freshness", return_value={"action": "decay"}):
-                with patch.object(sf, "_check_auto_kill", return_value=None):
-                    with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "decay_freshness", return_value={"action": "decay"}):
+                with patch.object(sf, "check_auto_kill", return_value=None):
+                    with patch.object(sf, "append_signal_to_log"):
                         sf.record_module_result(
                             "SKILL-STAT",
                             FakeModuleResult(
@@ -228,16 +228,16 @@ class TestStats:
         assert stats["success_rate"] == 0.5
 
     def test_stats_empty(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
         stats = sf.stats()
         assert stats["total_signals"] == 0
 
     def test_stats_filtered_by_skill(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        with patch.object(sf, "_boost_freshness", return_value={"action": "boost"}):
-            with patch.object(sf, "_append_signal_to_log"):
+        with patch.object(sf, "boost_freshness", return_value={"action": "boost"}):
+            with patch.object(sf, "append_signal_to_log"):
                 sf.record_module_result("SKILL-X", FakeModuleResult(), "T1")
                 sf.record_module_result("SKILL-Y", FakeModuleResult(), "T2")
         stats = sf.stats("SKILL-X")
@@ -246,13 +246,13 @@ class TestStats:
 
 class TestOnSuccessReset:
     def test_resets_consecutive_failures(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
-        sf._consecutive_failures["SKILL-RESET"] = 2
+        sf.consecutive_failures["SKILL-RESET"] = 2
         sf.on_success_reset("SKILL-RESET")
-        assert "SKILL-RESET" not in sf._consecutive_failures
+        assert "SKILL-RESET" not in sf.consecutive_failures
 
     def test_reset_nonexistent_no_error(self):
-        with patch.object(SkillFeedback, "_load_history"):
+        with patch.object(SkillFeedback, "load_history"):
             sf = SkillFeedback()
         sf.on_success_reset("SKILL-NONEXIST")

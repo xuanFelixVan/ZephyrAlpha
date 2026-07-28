@@ -38,7 +38,7 @@ class TestPreflightCheck:
 
     def test_all_clean(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 "",
                 "main",
@@ -52,7 +52,7 @@ class TestPreflightCheck:
 
     def test_dirty_working_tree(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 " M file.py",
                 "main",
@@ -65,7 +65,7 @@ class TestPreflightCheck:
 
     def test_detached_head(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 "",
                 "HEAD",
@@ -83,7 +83,7 @@ class TestPreview:
 
     def test_preview_low_risk(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 "src/a.py\nsrc/b.py",
                 " 2 files changed | 50 ++",
@@ -95,7 +95,7 @@ class TestPreview:
 
     def test_preview_medium_risk(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 "\n".join(f"src/f{i}.py" for i in range(8)),
                 " 8 files changed",
@@ -106,7 +106,7 @@ class TestPreview:
 
     def test_preview_high_risk(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 "\n".join(f"src/f{i}.py" for i in range(15)),
                 " 15 files changed",
@@ -117,7 +117,7 @@ class TestPreview:
 
     def test_preview_merge_detected_high_risk(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = [
                 "src/a.py",
                 " 1 file changed",
@@ -133,11 +133,11 @@ class TestDiscardChanges:
     def test_discard_uncommitted_files(self):
         exec = RollbackExecutor()
         with (
-            patch.object(exec, "_run_git") as mock_git,
-            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "run_git") as mock_git,
+            patch.object(exec, "detect_owner_session_in_files", return_value=[]),
             patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
-            patch.object(exec, "_write_audit_log"),
+            patch.object(exec, "write_audit_log"),
         ):
             mock_git.return_value = ""
             result = exec.discard_changes(["file.py"])
@@ -147,7 +147,7 @@ class TestDiscardChanges:
 
     def test_discard_blocked_by_owner(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_detect_owner_session_in_files", return_value=["file.py"]):
+        with patch.object(exec, "detect_owner_session_in_files", return_value=["file.py"]):
             result = exec.discard_changes(["file.py"], force=False)
             assert not result.success
             assert result.decision == DiscardDecision.BLOCKED_BY_OWNER
@@ -156,11 +156,11 @@ class TestDiscardChanges:
     def test_discard_force_bypasses_owner(self):
         exec = RollbackExecutor()
         with (
-            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "detect_owner_session_in_files", return_value=[]),
             patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
-            patch.object(exec, "_run_git") as mock_git,
-            patch.object(exec, "_write_audit_log"),
+            patch.object(exec, "run_git") as mock_git,
+            patch.object(exec, "write_audit_log"),
         ):
             mock_git.return_value = ""
             result = exec.discard_changes(["file.py"], force=True)
@@ -169,7 +169,7 @@ class TestDiscardChanges:
     def test_discard_no_changes(self):
         exec = RollbackExecutor()
         with (
-            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "detect_owner_session_in_files", return_value=[]),
             patch.object(exec, "get_uncommitted_files", return_value=[]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
         ):
@@ -202,9 +202,9 @@ class TestRollbackOrDiscard:
         exec = RollbackExecutor()
         with (
             patch.object(exec, "is_committed", return_value={"file.py": True}),
-            patch.object(exec, "_run_git", return_value="abc1234"),
+            patch.object(exec, "run_git", return_value="abc1234"),
             patch.object(exec, "full_revert") as mock_revert,
-            patch.object(exec, "_write_audit_log"),
+            patch.object(exec, "write_audit_log"),
         ):
             mock_revert.return_value = RollbackExecutionResult(
                 success=True,
@@ -228,7 +228,7 @@ class TestHardReset:
 
     def test_hard_reset_with_token(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_lsg_verify_critical_operation"), patch.object(exec, "_execute") as mock_exec:
+        with patch.object(exec, "lsg_verify_critical_operation"), patch.object(exec, "execute") as mock_exec:
             mock_exec.return_value = RollbackExecutionResult(
                 success=True,
                 operation=RollbackOp.HARD_RESET,
@@ -278,7 +278,7 @@ class TestDependencyImpactAnalysis:
 
     def test_identifies_impacted_modules(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.return_value = "src/zephyr/rollback/executor.py\nsrc/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
             result = exec.dependency_impact_analysis("abc123")
             modules = result.get("impacted_modules", [])
@@ -310,7 +310,7 @@ class TestDiscardConcurrencyGuard:
             reason="locked",
         )
         with (
-            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "detect_owner_session_in_files", return_value=[]),
             patch("zephyr.infrastructure.rollback.rollback_executor.check_rollback_conflict", return_value=conflict),
         ):
             result = exec.discard_changes(["file.py"], force=False)
@@ -325,12 +325,12 @@ class TestDiscardConcurrencyGuard:
         exec = RollbackExecutor()
         conflict = ConflictResult(has_conflict=False, blocked_files=[])
         with (
-            patch.object(exec, "_detect_owner_session_in_files", return_value=[]),
+            patch.object(exec, "detect_owner_session_in_files", return_value=[]),
             patch("zephyr.infrastructure.rollback.rollback_executor.check_rollback_conflict", return_value=conflict),
             patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
-            patch.object(exec, "_run_git", return_value=""),
-            patch.object(exec, "_write_audit_log"),
+            patch.object(exec, "run_git", return_value=""),
+            patch.object(exec, "write_audit_log"),
         ):
             result = exec.discard_changes(["file.py"], force=False)
             assert result.success
@@ -352,12 +352,12 @@ class TestExecuteConcurrencyGuard:
             reason="locked",
         )
         with (
-            patch.object(exec, "_resolve_conflict_files", return_value=["src/a.py"]),
+            patch.object(exec, "resolve_conflict_files", return_value=["src/a.py"]),
             patch("zephyr.infrastructure.rollback.rollback_executor.check_rollback_conflict", return_value=conflict),
-            patch.object(exec, "_write_in_flight"),
-            patch.object(exec, "_write_op_audit"),
+            patch.object(exec, "write_in_flight"),
+            patch.object(exec, "write_op_audit"),
         ):
-            result = exec._execute(
+            result = exec.execute(
                 operation=RollbackOp.FULL_REVERT,
                 commit_sha="abc123",
                 audit_session="test",
@@ -387,15 +387,15 @@ class TestExecuteConcurrencyGuard:
             other_owners={"other.py": "session-OTHER"},
         )
         with (
-            patch.object(exec, "_resolve_conflict_files", return_value=[]),
+            patch.object(exec, "resolve_conflict_files", return_value=[]),
             patch.object(exec, "preflight_check", return_value=preflight),
             patch.object(exec, "get_uncommitted_files", return_value=["own.py"]),
             patch.object(exec, "get_staged_uncommitted_files", return_value=["other.py"]),
             patch("zephyr.infrastructure.rollback.rollback_executor.classify_uncommitted_files", return_value=stash_plan),
-            patch.object(exec, "_write_in_flight"),
-            patch.object(exec, "_write_op_audit"),
+            patch.object(exec, "write_in_flight"),
+            patch.object(exec, "write_op_audit"),
         ):
-            result = exec._execute(
+            result = exec.execute(
                 operation=RollbackOp.FULL_REVERT,
                 commit_sha="abc123",
                 audit_session="test",
@@ -410,23 +410,23 @@ class TestInFlightLifecycle:
     def test_in_flight_create_read_delete(self):
         exec = RollbackExecutor(project_root=Path(tempfile.mkdtemp()))
         eid = "RBEXEC-test-001"
-        exec._write_in_flight(eid, "test_step", "PENDING")
-        record = exec._read_in_flight(eid)
+        exec.write_in_flight(eid, "test_step", "PENDING")
+        record = exec.read_in_flight(eid)
         assert record is not None
         assert record["step"] == "test_step"
         assert record["status"] == "PENDING"
-        exec._delete_in_flight(eid)
-        assert exec._read_in_flight(eid) is None
+        exec.delete_in_flight(eid)
+        assert exec.read_in_flight(eid) is None
 
     def test_recover_stale_in_flight(self):
         exec = RollbackExecutor(project_root=Path(tempfile.mkdtemp()))
         eid = "RBEXEC-stale-001"
-        exec._write_in_flight(eid, "stale_step", "FAILED")
-        recovered = exec._recover_stale_in_flight()
+        exec.write_in_flight(eid, "stale_step", "FAILED")
+        recovered = exec.recover_stale_in_flight()
         assert len(recovered) > 0
-        record = exec._read_in_flight(eid)
+        record = exec.read_in_flight(eid)
         assert record["status"] == "RECOVERING"
-        exec._delete_in_flight(eid)
+        exec.delete_in_flight(eid)
 
 
 class TestIsCommitted:
@@ -434,21 +434,21 @@ class TestIsCommitted:
 
     def test_tracked_file(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.return_value = ""
             result = exec.is_committed(["tracked.py"])
             assert result["tracked.py"]
 
     def test_untracked_file(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.side_effect = Exception("not tracked")
             result = exec.is_committed(["untracked.py"])
             assert not result["untracked.py"]
 
     def test_get_uncommitted_files(self):
         exec = RollbackExecutor()
-        with patch.object(exec, "_run_git") as mock_git:
+        with patch.object(exec, "run_git") as mock_git:
             mock_git.return_value = "src/a.py\nconfig/b.yaml"
             result = exec.get_uncommitted_files()
             assert len(result) == 2

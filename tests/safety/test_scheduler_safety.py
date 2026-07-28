@@ -56,7 +56,7 @@ def _mocked_manager() -> SafetyGateManager:
     mgr.deployment_suppression = MagicMock()
     mgr.config_reload_guard = MagicMock()
     mgr.boot_attestation = MagicMock()
-    mgr._fle_gate_cache = {}
+    mgr.fle_gate_cache = {}
     return mgr
 
 
@@ -80,11 +80,11 @@ class TestSafetyGateManagerInstantiation:
 
     def test_fle_gate_cache_initially_empty(self):
         mgr = _mocked_manager()
-        assert mgr._fle_gate_cache == {}
+        assert mgr.fle_gate_cache == {}
 
     def test_fle_gate_cache_is_dict(self):
         mgr = _mocked_manager()
-        assert isinstance(mgr._fle_gate_cache, dict)
+        assert isinstance(mgr.fle_gate_cache, dict)
 
 
 class TestRunSafetyGates:
@@ -92,7 +92,7 @@ class TestRunSafetyGates:
         mgr = _mocked_manager()
         _setup_mocked_guards(mgr)
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert isinstance(result, dict)
@@ -108,7 +108,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.numerical_guard.validate.return_value = {"classification": "ANOMALY"}
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["numerical_stability"] is False
@@ -118,7 +118,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.temporal_guard.validate_timestamp.return_value = {"valid": False}
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["temporal_integrity"] is False
@@ -128,7 +128,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.wireheading_prevention.validate_metric.return_value = False
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["wireheading"] is False
@@ -138,7 +138,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.wireheading_prevention.validate_metric.return_value = {"status": "ok"}
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["wireheading"] is True
@@ -148,7 +148,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.deployment_suppression.check.return_value = {"allowed": False}
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["deployment_suppression"] is False
@@ -158,7 +158,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.deployment_suppression.check.return_value = True
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["deployment_suppression"] is True
@@ -168,7 +168,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
         mgr.config_reload_guard.check_stale_acks.return_value = ["consumer_a"]
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["config_consistency"] is False
@@ -178,7 +178,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
 
         fle_result = {"FLE-CUSTOM-GATE": True, "FLE-OTHER-GATE": False}
-        with patch.object(mgr, "_dispatch_fle_gates", return_value=fle_result):
+        with patch.object(mgr, "dispatch_fle_gates", return_value=fle_result):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["FLE-CUSTOM-GATE"] is True
@@ -189,7 +189,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
 
         anomaly = _make_anomaly(evidence={"value": 1.0})
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             mgr.run_safety_gates(anomaly, _make_diagnosis())
 
         mgr.numerical_guard.validate.assert_called_once_with("pre_action_", 1.0)
@@ -199,7 +199,7 @@ class TestRunSafetyGates:
         _setup_mocked_guards(mgr)
 
         anomaly = _make_anomaly(evidence={"metric_name": "latency"})
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             mgr.run_safety_gates(anomaly, _make_diagnosis())
 
         mgr.numerical_guard.validate.assert_called_once_with("pre_action_latency", 0.0)
@@ -211,7 +211,7 @@ class TestRunSafetyGatesBoundary:
         _setup_mocked_guards(mgr)
 
         anomaly = _make_anomaly(evidence={})
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(anomaly, _make_diagnosis())
 
         assert isinstance(result, dict)
@@ -222,7 +222,7 @@ class TestRunSafetyGatesBoundary:
         _setup_mocked_guards(mgr)
 
         anomaly = _make_anomaly(evidence={"metric_name": "test", "value": None})
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(anomaly, _make_diagnosis())
 
         assert isinstance(result, dict)
@@ -247,7 +247,7 @@ class TestRunSafetyGatesBoundary:
         _setup_mocked_guards(mgr)
         mgr.deployment_suppression.check.return_value = {"status": "blocked"}
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["deployment_suppression"] is True
@@ -257,7 +257,7 @@ class TestRunSafetyGatesBoundary:
         _setup_mocked_guards(mgr)
         mgr.deployment_suppression.check.return_value = {"ok": True}
 
-        with patch.object(mgr, "_dispatch_fle_gates", return_value={}):
+        with patch.object(mgr, "dispatch_fle_gates", return_value={}):
             result = mgr.run_safety_gates(_make_anomaly(), _make_diagnosis())
 
         assert result["deployment_suppression"] is True
@@ -269,13 +269,13 @@ class TestDispatchFleGates:
         anomaly = _make_anomaly()
         diagnosis = _make_diagnosis()
 
-        # 治本(2026-07-19): _dispatch_fle_gates 使用 GATES_DIR（从 zephyr.shared.io.paths
+        # 治本(2026-07-19): dispatch_fle_gates 使用 GATES_DIR（从 zephyr.shared.io.paths
         # 导入的 Final[Path] 常量），不依赖 __file__。patch GATES_DIR 指向不存在路径
         # 让 registry_path.exists() 返回 False。
         nonexistent_dir = tmp_path / "nonexistent-gates-dir"
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", nonexistent_dir):
-            result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
 
@@ -295,7 +295,7 @@ class TestDispatchFleGates:
         registry_file.write_text("{{invalid yaml content", encoding="utf-8")
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", gates_dir):
-            result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
 
@@ -315,7 +315,7 @@ class TestDispatchFleGates:
         registry_file.write_text("gates: []\n", encoding="utf-8")
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", gates_dir):
-            result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
 
@@ -341,7 +341,7 @@ class TestDispatchFleGates:
         )
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", gates_dir):
-            result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert "FLE-DEPLOYMENT-SUPPRESSION" not in result
 
@@ -367,8 +367,8 @@ class TestDispatchFleGates:
         )
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", gates_dir):
-            with patch.object(mgr, "_invoke_fle_gate", side_effect=RuntimeError("boom")):
-                result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            with patch.object(mgr, "invoke_fle_gate", side_effect=RuntimeError("boom")):
+                result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert result.get("FLE-TEST-GATE") is True
 
@@ -394,7 +394,7 @@ class TestDispatchFleGates:
         )
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", gates_dir):
-            result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
 
@@ -417,7 +417,7 @@ class TestDispatchFleGates:
         )
 
         with patch("zephyr.feedback_loop.scheduler_safety.GATES_DIR", gates_dir):
-            result = mgr._dispatch_fle_gates(anomaly, diagnosis)
+            result = mgr.dispatch_fle_gates(anomaly, diagnosis)
 
         assert result == {}
 
@@ -431,16 +431,16 @@ class TestInvokeFleGate:
                 return {"allowed": True}
 
         cached_instance = FakeGate()
-        mgr._fle_gate_cache["FLE-CACHED"] = cached_instance
+        mgr.fle_gate_cache["FLE-CACHED"] = cached_instance
 
-        result = mgr._invoke_fle_gate("FLE-CACHED", "some/file.py", _make_anomaly(), _make_diagnosis())
+        result = mgr.invoke_fle_gate("FLE-CACHED", "some/file.py", _make_anomaly(), _make_diagnosis())
         assert result is True
 
     def test_import_error_returns_true(self):
         mgr = _mocked_manager()
 
         with patch.object(importlib, "import_module", side_effect=ImportError("no module")):
-            result = mgr._invoke_fle_gate("FLE-NEW", "nonexistent/module.py", _make_anomaly(), _make_diagnosis())
+            result = mgr.invoke_fle_gate("FLE-NEW", "nonexistent/module.py", _make_anomaly(), _make_diagnosis())
 
         assert result is True
 
@@ -452,7 +452,7 @@ class TestInvokeFleGate:
         fake_module = types.ModuleType("zephyr.fake_gate_module")
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-NO-CLASS", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-NO-CLASS", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
@@ -469,7 +469,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-CHECK-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-CHECK-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
@@ -486,7 +486,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-PASSED-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-PASSED-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
@@ -503,7 +503,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-OK-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-OK-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
@@ -520,7 +520,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-BOOL-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-BOOL-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is False
 
@@ -537,7 +537,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-GATE-SINGLE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-GATE-SINGLE", "some/file.py", anomaly, diagnosis)
 
         assert result is False
 
@@ -554,7 +554,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-AUDIT-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-AUDIT-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
@@ -571,7 +571,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-CRASH-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-CRASH-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
@@ -586,7 +586,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-NULL-ANOMALY", "some/file.py", None, None)
+            result = mgr.invoke_fle_gate("FLE-NULL-ANOMALY", "some/file.py", None, None)
 
         assert isinstance(result, bool)
 
@@ -606,7 +606,7 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-TYPEERR-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-TYPEERR-GATE", "some/file.py", anomaly, diagnosis)
 
         assert isinstance(result, bool)
 
@@ -623,11 +623,11 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            result = mgr._invoke_fle_gate("FLE-NOMETHOD-GATE", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-NOMETHOD-GATE", "some/file.py", anomaly, diagnosis)
 
         assert result is True
 
-    def test_gate_result_cached_in_fle_gate_cache(self):
+    def test_gate_result_cached_infle_gate_cache(self):
         mgr = _mocked_manager()
         anomaly = _make_anomaly()
         diagnosis = _make_diagnosis()
@@ -640,12 +640,12 @@ class TestInvokeFleGate:
         fake_module.FakeGate = FakeGate
 
         with patch.object(importlib, "import_module", return_value=fake_module):
-            mgr._invoke_fle_gate("FLE-CACHE-TEST", "some/file.py", anomaly, diagnosis)
+            mgr.invoke_fle_gate("FLE-CACHE-TEST", "some/file.py", anomaly, diagnosis)
 
-        assert "FLE-CACHE-TEST" in mgr._fle_gate_cache
-        assert isinstance(mgr._fle_gate_cache["FLE-CACHE-TEST"], FakeGate)
+        assert "FLE-CACHE-TEST" in mgr.fle_gate_cache
+        assert isinstance(mgr.fle_gate_cache["FLE-CACHE-TEST"], FakeGate)
 
         with patch.object(importlib, "import_module", side_effect=AssertionError("should not be called")):
-            result = mgr._invoke_fle_gate("FLE-CACHE-TEST", "some/file.py", anomaly, diagnosis)
+            result = mgr.invoke_fle_gate("FLE-CACHE-TEST", "some/file.py", anomaly, diagnosis)
 
         assert result is True

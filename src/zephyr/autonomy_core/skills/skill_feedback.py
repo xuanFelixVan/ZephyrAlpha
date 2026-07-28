@@ -67,7 +67,8 @@ class SkillFeedback:
     """Skill 反馈环 —— ModuleResult->SkillLifecycle->自动优化."""
 
     _FEEDBACK_LOG = Path("_journals/skill_feedback.jsonl")
-    _MAX_HISTORY = 100
+    MAX_HISTORY = 100  # public primary constant
+    _MAX_HISTORY = 100  # backward-compat alias
     _SUCCESS_BOOST = 10.0
     _FAILURE_DECAY = 25.0
     _CONSECUTIVE_FAILURE_KILL = 3
@@ -75,7 +76,20 @@ class SkillFeedback:
     def __init__(self):
         self._history: list[FeedbackSignal] = []
         self._consecutive_failures: dict[str, int] = {}
-        self._load_history()
+        self.load_history()
+
+    # ------------------------------------------------------------------ #
+    # Public access surface (primary)
+    # ------------------------------------------------------------------ #
+    @property
+    def history(self) -> list[FeedbackSignal]:
+        """Recorded feedback signals (primary public accessor)."""
+        return self._history
+
+    @property
+    def consecutive_failures(self) -> dict[str, int]:
+        """Per-skill consecutive failure counters (primary public accessor)."""
+        return self._consecutive_failures
 
     def record_module_result(
         self,
@@ -113,19 +127,19 @@ class SkillFeedback:
         )
 
         self._history.append(signal)
-        if len(self._history) > self._MAX_HISTORY:
-            self._history = self._history[-self._MAX_HISTORY :]
+        if len(self._history) > self.MAX_HISTORY:
+            self._history = self._history[-self.MAX_HISTORY :]
 
         actions = []
         if success:
-            actions.append(self._boost_freshness(skill_id, signal))
+            actions.append(self.boost_freshness(skill_id, signal))
         else:
-            actions.append(self._decay_freshness(skill_id, signal))
-            kill_action = self._check_auto_kill(skill_id, signal)
+            actions.append(self.decay_freshness(skill_id, signal))
+            kill_action = self.check_auto_kill(skill_id, signal)
             if kill_action:
                 actions.append(kill_action)
 
-        self._append_signal_to_log(signal)
+        self.append_signal_to_log(signal)
 
         return {
             "skill_id": skill_id,
@@ -134,7 +148,7 @@ class SkillFeedback:
             "success": success,
         }
 
-    def _boost_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
+    def boost_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
         from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
 
         fdm = FreshnessDecayModel()
@@ -146,7 +160,7 @@ class SkillFeedback:
             "reason": "module_success",
         }
 
-    def _decay_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
+    def decay_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
         self._consecutive_failures[skill_id] = self._consecutive_failures.get(skill_id, 0) + 1
         from zephyr.autonomy_core.skills.skill_freshness import FreshnessDecayModel
 
@@ -159,7 +173,7 @@ class SkillFeedback:
             "consecutive_failures": self._consecutive_failures[skill_id],
         }
 
-    def _check_auto_kill(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any] | None:
+    def check_auto_kill(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any] | None:
         count = self._consecutive_failures.get(skill_id, 0)
         if count >= self._CONSECUTIVE_FAILURE_KILL:
             from zephyr.autonomy_core.skills.skill_kill_switch import SkillKillSwitch
@@ -190,7 +204,7 @@ class SkillFeedback:
             "avg_latency_ms": int(sum(s.latency_ms for s in subset) / len(subset)),
         }
 
-    def _load_history(self):
+    def load_history(self):
         try:
             if self._FEEDBACK_LOG.exists():
                 with open(self._FEEDBACK_LOG, encoding="utf-8") as f:
@@ -202,18 +216,36 @@ class SkillFeedback:
                                 self._history.append(FeedbackSignal(**filter_dataclass_fields(FeedbackSignal, data)))
                             except (json.JSONDecodeError, TypeError):
                                 pass
-                if len(self._history) > self._MAX_HISTORY:
-                    self._history = self._history[-self._MAX_HISTORY :]
+                if len(self._history) > self.MAX_HISTORY:
+                    self._history = self._history[-self.MAX_HISTORY :]
         except OSError:
             pass
 
-    def _append_signal_to_log(self, signal: FeedbackSignal):
+    def append_signal_to_log(self, signal: FeedbackSignal):
         try:
             self._FEEDBACK_LOG.parent.mkdir(parents=True, exist_ok=True)
             with open(self._FEEDBACK_LOG, "a", encoding="utf-8") as f:
                 f.write(json.dumps(signal.to_dict(), ensure_ascii=False) + "\n")
         except OSError:
             pass
+
+    # ------------------------------------------------------------------ #
+    # Private backward-compat wrappers (delegate to public primary)
+    # ------------------------------------------------------------------ #
+    def _boost_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
+        return self.boost_freshness(skill_id, signal)
+
+    def _decay_freshness(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any]:
+        return self.decay_freshness(skill_id, signal)
+
+    def _check_auto_kill(self, skill_id: str, signal: FeedbackSignal) -> dict[str, Any] | None:
+        return self.check_auto_kill(skill_id, signal)
+
+    def _append_signal_to_log(self, signal: FeedbackSignal):
+        return self.append_signal_to_log(signal)
+
+    def _load_history(self):
+        return self.load_history()
 
 
 __all__ = ["FeedbackSignal", "SkillFeedback"]

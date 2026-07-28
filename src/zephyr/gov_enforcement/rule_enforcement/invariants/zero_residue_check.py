@@ -72,16 +72,24 @@ class ZeroResidueScanner:
         self._root = project_root
         self._scripts_dir = project_root / "scripts" / "governance"
 
+    @property
+    def root(self) -> Path:
+        return self._root
+
+    @property
+    def scripts_dir(self) -> Path:
+        return self._scripts_dir
+
     def scan(self) -> ResidueReport:
         report = ResidueReport()
 
         # 并行运行5个子脚本（RULE-SEVEN: 强制 ThreadPoolExecutor）
         scan_jobs = [
-            self._scan_temp_files,
-            self._scan_residual_files,
-            self._scan_ruins_references,
-            self._scan_orphan_py,
-            self._scan_orphan_docs,
+            self.scan_temp_files,
+            self.scan_residual_files,
+            self.scan_ruins_references,
+            self.scan_orphan_py,
+            self.scan_orphan_docs,
         ]
 
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -92,8 +100,8 @@ class ZeroResidueScanner:
 
         return report
 
-    def _run_script(self, script_rel: str) -> tuple[int, str, str]:
-        script_path = self._scripts_dir / script_rel
+    def run_script(self, script_rel: str) -> tuple[int, str, str]:
+        script_path = self.scripts_dir / script_rel
         if not script_path.exists():
             return (1, "", f"Script not found: {script_path}")
         try:
@@ -105,7 +113,7 @@ class ZeroResidueScanner:
                 [sys.executable, "-B", str(script_path)],
                 capture_output=True,
                 text=True,
-                cwd=str(self._root),
+                cwd=str(self.root),
                 env=env,
                 timeout=30,
             )
@@ -115,7 +123,10 @@ class ZeroResidueScanner:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return (1, "", str(exc))
 
-    def _parse_findings(self, exit_code: int, stderr: str) -> list[str]:
+    def _run_script(self, script_rel: str) -> tuple[int, str, str]:
+        return self.run_script(script_rel)
+
+    def parse_findings(self, exit_code: int, stderr: str) -> list[str]:
         if exit_code == 0:
             return []
         issues: list[str] = []
@@ -127,39 +138,57 @@ class ZeroResidueScanner:
                 issues.append(stripped)
         return issues
 
-    def _scan_temp_files(self) -> list[tuple[str, str, str, str]]:
-        code, out, err = self._run_script("d1_structure/detect_temp_files.py")
+    def _parse_findings(self, exit_code: int, stderr: str) -> list[str]:
+        return self.parse_findings(exit_code, stderr)
+
+    def scan_temp_files(self) -> list[tuple[str, str, str, str]]:
+        code, out, err = self.run_script("d1_structure/detect_temp_files.py")
         # __pycache__/.pytest_cache/.mypy_cache/.ruff_cache 是 Python 运行时产物，
         # 已被 .gitignore 忽略（不会提交），降为 warning 不阻断；
         # temp_*/tmp_*/.bak/.orig 等临时文件保持 error（防止开发者提交）。
         runtime_cache_markers = ("__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", "目录")
         results: list[tuple[str, str, str, str]] = []
-        for issue in self._parse_findings(code, err):
+        for issue in self.parse_findings(code, err):
             severity = "warning" if any(m in issue for m in runtime_cache_markers) else "error"
             results.append(("ZR-001", issue, severity, ""))
         return results
 
-    def _scan_residual_files(self) -> list[tuple[str, str, str, str]]:
-        code, out, err = self._run_script("d1_structure/detect_residual_files.py")
-        return [("ZR-006", issue, "error", "") for issue in self._parse_findings(code, err)]
+    def _scan_temp_files(self) -> list[tuple[str, str, str, str]]:
+        return self.scan_temp_files()
 
-    def _scan_ruins_references(self) -> list[tuple[str, str, str, str]]:
-        code, out, err = self._run_script("d4_paths/detect_ruins_references.py")
+    def scan_residual_files(self) -> list[tuple[str, str, str, str]]:
+        code, out, err = self.run_script("d1_structure/detect_residual_files.py")
+        return [("ZR-006", issue, "error", "") for issue in self.parse_findings(code, err)]
+
+    def _scan_residual_files(self) -> list[tuple[str, str, str, str]]:
+        return self.scan_residual_files()
+
+    def scan_ruins_references(self) -> list[tuple[str, str, str, str]]:
+        code, out, err = self.run_script("d4_paths/detect_ruins_references.py")
         # "废弃"/"迁移"/"v2.0" 上下文的 findings 通常是文档审计追踪信息
         # （说明"此路径已废弃，迁移至DB"时引用废弃路径），降为 warning 不阻断；
         # 真正违规引用废弃路径作为规则来源/操作目标保持 error。
         audit_markers = ("废弃", "迁移", "v2.0", "已废弃")
         results: list[tuple[str, str, str, str]] = []
-        for issue in self._parse_findings(code, err):
+        for issue in self.parse_findings(code, err):
             severity = "warning" if any(m in issue for m in audit_markers) else "error"
             results.append(("ZR-005", issue, severity, ""))
         return results
 
+    def _scan_ruins_references(self) -> list[tuple[str, str, str, str]]:
+        return self.scan_ruins_references()
+
+    def scan_orphan_py(self) -> list[tuple[str, str, str, str]]:
+        code, out, err = self.run_script("d1_structure/detect_orphan_py.py")
+        return [("ZR-003", issue, "error", "") for issue in self.parse_findings(code, err)]
+
     def _scan_orphan_py(self) -> list[tuple[str, str, str, str]]:
-        code, out, err = self._run_script("d1_structure/detect_orphan_py.py")
-        return [("ZR-003", issue, "error", "") for issue in self._parse_findings(code, err)]
+        return self.scan_orphan_py()
+
+    def scan_orphan_docs(self) -> list[tuple[str, str, str, str]]:
+        code, out, err = self.run_script("d9_knowledge/detect_orphan_documents.py")
+        # ZR-004 保持 warning：孤儿文档可能是新文件尚未提交，不一定是垃圾
+        return [("ZR-004", issue, "warning", "") for issue in self.parse_findings(code, err)]
 
     def _scan_orphan_docs(self) -> list[tuple[str, str, str, str]]:
-        code, out, err = self._run_script("d9_knowledge/detect_orphan_documents.py")
-        # ZR-004 保持 warning：孤儿文档可能是新文件尚未提交，不一定是垃圾
-        return [("ZR-004", issue, "warning", "") for issue in self._parse_findings(code, err)]
+        return self.scan_orphan_docs()

@@ -127,12 +127,22 @@ class SafetyGateManager:
         c_check = self.config_reload_guard.check_stale_acks()
         gates["config_consistency"] = len(c_check) == 0
 
-        fle_gates = self._dispatch_fle_gates(anomaly, diagnosis)
+        fle_gates = self.dispatch_fle_gates(anomaly, diagnosis)
         gates.update(fle_gates)
 
         return gates
 
-    def _dispatch_fle_gates(self, anomaly: object, diagnosis: object) -> dict[str, bool]:
+    @property
+    def fle_gate_cache(self) -> dict[str, Any]:
+        """Public accessor for the FLE gate instance cache."""
+        return self._fle_gate_cache
+
+    @fle_gate_cache.setter
+    def fle_gate_cache(self, value: dict[str, Any]) -> None:
+        """Public mutator for the FLE gate instance cache."""
+        self._fle_gate_cache = value
+
+    def dispatch_fle_gates(self, anomaly: object, diagnosis: object) -> dict[str, bool]:
         results: dict[str, bool] = {}
         registry_path = GATES_DIR / "_registry.yaml"
         if not registry_path.exists():
@@ -155,15 +165,19 @@ class SafetyGateManager:
             if gate_id in ("FLE-DEPLOYMENT-SUPPRESSION",):
                 continue
             try:
-                gate_result = self._invoke_fle_gate(gate_id, gate_file, anomaly, diagnosis)
+                gate_result = self.invoke_fle_gate(gate_id, gate_file, anomaly, diagnosis)
                 results[gate_id] = gate_result
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results[gate_id] = True
 
         return results
 
-    def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: object, diagnosis: object) -> bool:
-        gate_instance = _load_fle_gate_instance(self._fle_gate_cache, gate_id, gate_file)
+    def _dispatch_fle_gates(self, anomaly: object, diagnosis: object) -> dict[str, bool]:
+        """Backward-compatible thin wrapper around :meth:`dispatch_fle_gates`."""
+        return self.dispatch_fle_gates(anomaly, diagnosis)
+
+    def invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: object, diagnosis: object) -> bool:
+        gate_instance = _load_fle_gate_instance(self.fle_gate_cache, gate_id, gate_file)
         if gate_instance is None:
             return True
 
@@ -177,3 +191,7 @@ class SafetyGateManager:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return True
         return True
+
+    def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: object, diagnosis: object) -> bool:
+        """Backward-compatible thin wrapper around :meth:`invoke_fle_gate`."""
+        return self.invoke_fle_gate(gate_id, gate_file, anomaly, diagnosis)

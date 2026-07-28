@@ -523,25 +523,25 @@ class RollbackExecutor:
         )
 
     def full_revert(self, commit_sha: str, dry_run: bool = False, audit_session: str = "") -> RollbackExecutionResult:
-        return self._execute(RollbackOp.FULL_REVERT, commit_sha, dry_run=dry_run, audit_session=audit_session)
+        return self.execute(RollbackOp.FULL_REVERT, commit_sha, dry_run=dry_run, audit_session=audit_session)
 
     def partial_revert(
         self, commit_sha: str, file_globs: list[str], dry_run: bool = False, audit_session: str = ""
     ) -> RollbackExecutionResult:
-        return self._execute(
+        return self.execute(
             RollbackOp.PARTIAL_REVERT, commit_sha, file_globs=file_globs, dry_run=dry_run, audit_session=audit_session
         )
 
     def discard(self, files: list[str], audit_session: str = "") -> RollbackExecutionResult:
-        return self._execute(RollbackOp.DISCARD, "", file_list=files, audit_session=audit_session)
+        return self.execute(RollbackOp.DISCARD, "", file_list=files, audit_session=audit_session)
 
     def hard_reset(self, commit_sha: str, token: str = "", audit_session: str = "") -> RollbackExecutionResult:
         if not token:
             raise ValueError("hard_reset requires a valid BREAK_GLASS token")
-        self._lsg_verify_critical_operation("hard_reset", commit_sha)
-        return self._execute(RollbackOp.HARD_RESET, commit_sha, token=token, audit_session=audit_session)
+        self.lsg_verify_critical_operation("hard_reset", commit_sha)
+        return self.execute(RollbackOp.HARD_RESET, commit_sha, token=token, audit_session=audit_session)
 
-    def _lsg_verify_critical_operation(self, operation: str, target: str) -> None:
+    def lsg_verify_critical_operation(self, operation: str, target: str) -> None:
         try:
             _lsg_mod = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway")
             LSGSecurityGateway = _lsg_mod.LSGSecurityGateway
@@ -553,6 +553,9 @@ class RollbackExecutor:
                 raise PermissionError(f"LSG blocked rollback operation: {operation}")
         except ImportError:
             pass
+
+    def _lsg_verify_critical_operation(self, operation: str, target: str) -> None:
+        return self.lsg_verify_critical_operation(operation, target)
 
     def forward_fix_evaluate(self, commit_sha: str) -> bool:
         preview_result = self.preview(commit_sha)
@@ -662,7 +665,7 @@ class RollbackExecutor:
     def _resolve_env_owner(self) -> str | None:
         return os.environ.get("ZEPHYR_OWNER_SESSION_ID") or os.environ.get("OWNER_SESSION_ID")
 
-    def _execute(
+    def execute(
         self,
         operation: RollbackOp,
         commit_sha: str,
@@ -787,13 +790,33 @@ class RollbackExecutor:
                     self.write_in_flight(execution_id, "stash_pop", "FAILED", {"error": "internal error"})
             self.delete_in_flight(execution_id)
 
+    def _execute(
+        self,
+        operation: RollbackOp,
+        commit_sha: str,
+        file_globs: list[str] | None = None,
+        file_list: list[str] | None = None,
+        token: str = "",
+        dry_run: bool = False,
+        audit_session: str = "",
+    ) -> RollbackExecutionResult:
+        return self.execute(
+            operation,
+            commit_sha,
+            file_globs=file_globs,
+            file_list=file_list,
+            token=token,
+            dry_run=dry_run,
+            audit_session=audit_session,
+        )
+
     def _concurrency_guard(
         self, operation: RollbackOp, commit_sha: str,
         file_globs: list[str] | None, file_list: list[str] | None,
         execution_id: str, audit_session: str,
     ) -> RollbackExecutionResult | None:
         """检测回滚文件是否与活跃文件锁冲突。返回阻断结果或 None（通过）。"""
-        files_to_check = self._resolve_conflict_files(operation, commit_sha, file_globs, file_list)
+        files_to_check = self.resolve_conflict_files(operation, commit_sha, file_globs, file_list)
         if not files_to_check:
             return None
         conflict = check_rollback_conflict(
@@ -948,7 +971,7 @@ class RollbackExecutor:
         )
         return restore_result.tables_restored, restore_result.rows_restored
 
-    def _resolve_conflict_files(
+    def resolve_conflict_files(
         self,
         operation: RollbackOp,
         commit_sha: str,
@@ -973,6 +996,15 @@ class RollbackExecutor:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return []
         return []
+
+    def _resolve_conflict_files(
+        self,
+        operation: RollbackOp,
+        commit_sha: str,
+        file_globs: list[str] | None = None,
+        file_list: list[str] | None = None,
+    ) -> list[str]:
+        return self.resolve_conflict_files(operation, commit_sha, file_globs, file_list)
 
     def _git_revert(self, commit_sha: str) -> dict[str, Any]:
         output = self.run_git(["revert", "--no-edit", commit_sha])
