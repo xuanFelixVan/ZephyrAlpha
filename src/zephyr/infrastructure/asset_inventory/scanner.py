@@ -115,6 +115,26 @@ class Scanner:
         # MOD-INF-017: 单文件扫描结果缓存（find_duplicates 使用）
         self._file_results: list[ScanResult] = []
 
+    def tokenize_and_normalize(self, code) -> list[str]:
+        """公共接口：tokenize_and_normalize（Stage 4 公共化）。"""
+        return self._tokenize_and_normalize(code)
+
+
+    def jaccard_estimate(self, a, b) -> float:
+        """公共接口：jaccard_estimate（Stage 4 公共化）。"""
+        return self._jaccard_estimate(a, b)
+
+
+    def get_threshold(self, path) -> float:
+        """公共接口：get_threshold（Stage 4 公共化）。"""
+        return self._get_threshold(path)
+
+
+    def compute_minhash(self, tokens) -> list[int]:
+        """公共接口：compute_minhash（Stage 4 公共化）。"""
+        return self._compute_minhash(tokens)
+
+
     def scan(self, *, incremental: bool = False, last_scan_time: datetime | None = None) -> ScanResult:
         scan_id = _generate_scan_id()
         scanned_at = datetime.now(UTC)
@@ -465,6 +485,27 @@ class ConcurrentScanner:
     def __init__(self, project_root: Path) -> None:
         self._root = project_root
         self._lock_dir = project_root / ".ailocks"
+
+    def verify_sha(self, path, expected) -> bool:
+        """公共接口：verify_sha（Stage 4 公共化）。"""
+        return self._verify_sha(path, expected)
+
+
+    def scan_normal(self, path) -> RawFileEntry | None:
+        """公共接口：scan_normal（Stage 4 公共化）。"""
+        return self._scan_normal(path)
+
+
+    @property
+    def lock_dir(self):
+        """只读：lock_dir（Stage 4 公共化）。"""
+        return self._lock_dir
+
+
+    def is_locked(self, path) -> bool:
+        """公共接口：is_locked（Stage 4 公共化）。"""
+        return self._is_locked(path)
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property

@@ -251,6 +251,16 @@ class SchemaEvolutionManager:
         self._root = project_root
         self._log_dir = project_root / "data" / "migrations"
 
+    def migrate_1_1_to_2_0(self, data) -> dict:
+        """公共接口：migrate_1_1_to_2_0（Stage 4 公共化）。"""
+        return self._migrate_1_1_to_2_0(data)
+
+
+    def migrate_1_0_to_1_1(self, data) -> dict:
+        """公共接口：migrate_1_0_to_1_1（Stage 4 公共化）。"""
+        return self._migrate_1_0_to_1_1(data)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def root(self):

@@ -49,6 +49,28 @@ class LLMFixAdapter(BaseFixer):
         self._secret_guard = SecretLeakGuard()
         self._llm_bridge: LLMGateway | None = None
 
+    @property
+    def secret_guard(self):
+        """只读：secret_guard（Stage 4 公共化）。"""
+        return self._secret_guard
+
+
+    @property
+    def llm_bridge(self) -> LLMGateway | None:
+        """只读：llm_bridge（Stage 4 公共化）。"""
+        return self._llm_bridge
+
+
+    def call_llm(self, bridge, prompt) -> str:
+        """公共接口：call_llm（Stage 4 公共化）。"""
+        return self._call_llm(bridge, prompt)
+
+
+    def build_fix_prompt(self, target, content) -> str:
+        """公共接口：build_fix_prompt（Stage 4 公共化）。"""
+        return self._build_fix_prompt(target, content)
+
+
     def _get_llm_bridge(self) -> object:
         if self._llm_bridge is not None:
             return self._llm_bridge

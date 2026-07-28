@@ -51,6 +51,35 @@ class PolicySandbox:
         self._trials: list[SandboxTrial] = []
         self._trial_counter: int = 0
 
+    @property
+    def sandbox_policy(self) -> dict | None:
+        """只读：sandbox_policy（Stage 4 公共化）。"""
+        return self._sandbox_policy
+
+
+    @property
+    def policy_path(self):
+        """只读：policy_path（Stage 4 公共化）。"""
+        return self._policy_path
+
+
+    @property
+    def changes(self) -> dict:
+        """只读：changes（Stage 4 公共化）。"""
+        return self._changes
+
+
+    def assess_impact(self, policy) -> dict[str, float]:
+        """公共接口：assess_impact（Stage 4 公共化）。"""
+        return self._assess_impact(policy)
+
+
+    @staticmethod
+    def set_nested(d, path, value) -> None:
+        """公共接口：set_nested（Stage 4 公共化，委托到 _set_nested）。"""
+        return _set_nested(d, path, value)
+
+
     def load_current(self) -> dict:
         with open(self._policy_path, encoding="utf-8") as f:
             return yaml.safe_load(f)

@@ -87,6 +87,22 @@ class GovernanceAutoRunner:
         self._resources: list[Any] = []
         self._temp_files: list[Path] = []
 
+    def write_audit_log(self) -> None:
+        """公共接口：write_audit_log（Stage 4 公共化）。"""
+        return self._write_audit_log()
+
+
+    @property
+    def result(self):
+        """只读：result（Stage 4 公共化）。"""
+        return self._result
+
+
+    def execute_gate(self, gate_name) -> bool:
+        """公共接口：execute_gate（Stage 4 公共化）。"""
+        return self._execute_gate(gate_name)
+
+
     def run(self) -> AutoRunnerResult:
         """执行自动运行 + 自动关闭的完整流程。
 

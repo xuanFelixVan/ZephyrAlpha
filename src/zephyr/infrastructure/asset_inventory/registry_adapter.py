@@ -628,6 +628,11 @@ class RegistryManager:
         self._root = project_root
         self._init_defaults()
 
+    def find_adapter(self, file_path) -> RegistryAdapter | None:
+        """公共接口：find_adapter（Stage 4 公共化）。"""
+        return self._find_adapter(file_path)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def known(self) -> dict[str, RegistryAdapter]:

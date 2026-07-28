@@ -172,6 +172,11 @@ class DefaultSecurityGateway(SecurityGateway):
         self._findings: list[ScanFinding] = []
         self._l1_clean = True
 
+    def lsg_full_scan(self, content, metadata) -> str | None:
+        """公共接口：lsg_full_scan（Stage 4 公共化）。"""
+        return self._lsg_full_scan(content, metadata)
+
+
     # ─── Layer 1: Prompt Injection ───
 
     def pre_filter(self, content: str, source: str = "") -> str | bool:

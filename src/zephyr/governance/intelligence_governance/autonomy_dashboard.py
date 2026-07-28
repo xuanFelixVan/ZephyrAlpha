@@ -130,6 +130,17 @@ class AutonomyDashboard:
         self._degradation_threshold = 0.3
         self._downgrade_events: list[DowngradeEvent] = []
 
+    def load_metrics(self) -> AutonomyMetrics:
+        """公共接口：load_metrics（Stage 4 公共化）。"""
+        return self._load_metrics()
+
+
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+
     def record_rollback(self, success: bool, token_cost: int = 0, rto_ms: int = 0) -> AutonomyMetrics:
         metrics = self._load_metrics()
 

@@ -48,6 +48,22 @@ class CrossAgentConflictDetector:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    def run_git(self, args) -> str:
+        """公共接口：run_git（Stage 4 公共化）。"""
+        return self._run_git(args)
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    def get_most_recent_author(self, file_path) -> str:
+        """公共接口：get_most_recent_author（Stage 4 公共化）。"""
+        return self._get_most_recent_author(file_path)
+
+
     def detect_conflicts(self) -> list[ConflictReport]:
         reports: list[ConflictReport] = []
 

@@ -74,6 +74,7 @@ class DataSourceMeta:
 
 
 class DataSourceBase(abc.ABC):
+
     """
     数据源抽象基类（OCP 扩展点）
 
@@ -87,6 +88,7 @@ class DataSourceBase(abc.ABC):
 
     # Phase-B 骨架，插件注册表备将来发现（__init_subclass__ 自动注册，读取侧工厂待 Phase-B 落地）
     _registry: ClassVar[dict[str, type[DataSourceBase]]] = {}
+    registry: ClassVar[dict[str, type[DataSourceBase]]] = _registry  # public alias（Stage 4 公共化）
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

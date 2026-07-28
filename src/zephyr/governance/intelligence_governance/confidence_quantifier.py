@@ -57,6 +57,18 @@ class ConfidenceQuantifier:
         self._history: list[ConfidenceRecord] = []
         self._consecutive_low = 0
 
+    @property
+    def consecutive_low(self):
+        """只读：consecutive_low（Stage 4 公共化）。"""
+        return self._consecutive_low
+
+
+    @staticmethod
+    def determine_tier(confidence) -> str:
+        """公共接口：determine_tier（Stage 4 公共化，委托到 _determine_tier）。"""
+        return _determine_tier(confidence)
+
+
     def record(self, operation_id: str, confidence: float) -> ConfidenceResult:
         tier = self._determine_tier(confidence)
 

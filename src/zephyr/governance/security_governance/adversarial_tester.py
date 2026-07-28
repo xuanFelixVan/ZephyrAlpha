@@ -222,6 +222,11 @@ class AdversarialTester:
 
         self._total_failed: int = 0
 
+    def run_one(self, test, detector) -> AdversarialResult:
+        """公共接口：run_one（Stage 4 公共化）。"""
+        return self._run_one(test, detector)
+
+
 
 
     def run_all(self, detector=None) -> list[AdversarialResult]:

@@ -1261,6 +1261,30 @@ class TaskRepository:
         else:
             self._gate_engine = None
 
+    @property
+    def enable_gate(self):
+        """只读：enable_gate（Stage 4 公共化）。"""
+        return self._enable_gate
+
+
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def validate_template_fields(self, task) -> list[str]:
+        """公共接口：validate_template_fields（Stage 4 公共化，委托到 self._validate_template_fields）。"""
+        return self._validate_template_fields(task)
+
+
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def determine_split_strategy(self, violations, requested) -> str:
+        """公共接口：determine_split_strategy（Stage 4 公共化，委托到 self._determine_split_strategy）。"""
+        return self._determine_split_strategy(violations, requested)
+
+
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def auto_commit_on_completion(self, task_id, task_obj) -> None:
+        """公共接口：auto_commit_on_completion（Stage 4 公共化，委托到 self._auto_commit_on_completion）。"""
+        return self._auto_commit_on_completion(task_id, task_obj)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def db_path(self) -> Path:

@@ -137,6 +137,24 @@ class EngineSandbox:
         self._state = SandboxState.RUNNING
 
     @property
+    def profile(self):
+        """只读：profile（Stage 4 公共化）。"""
+        return self._profile
+
+
+    @property
+    def access_log(self) -> list[SandboxAccessEvent]:
+        """只读：access_log（Stage 4 公共化）。"""
+        return self._access_log
+
+
+    @staticmethod
+    def match_path(rel, patterns) -> bool:
+        """公共接口：match_path（Stage 4 公共化，委托到 _match_path）。"""
+        return _match_path(rel, patterns)
+
+
+    @property
     def state(self) -> SandboxState:
         return self._state
 

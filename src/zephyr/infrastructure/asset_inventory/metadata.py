@@ -77,6 +77,23 @@ class GitMetadataExtractor:
     def __init__(self, project_root: Path) -> None:
         self._root = project_root
 
+    def current_lines(self, file_path) -> int:
+        """公共接口：current_lines（Stage 4 公共化）。"""
+        return self._current_lines(file_path)
+
+
+    @staticmethod
+    def parse_date(date_str) -> datetime:
+        """公共接口：parse_date（Stage 4 公共化，委托到 _parse_date）。"""
+        return _parse_date(date_str)
+
+
+    @staticmethod
+    def is_ai_commit(message) -> bool:
+        """公共接口：is_ai_commit（Stage 4 公共化，委托到 _is_ai_commit）。"""
+        return _is_ai_commit(message)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def root(self):

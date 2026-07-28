@@ -84,6 +84,22 @@ class BurnRateMonitor:
         self._lock = threading.Lock()
         self._init_windows()
 
+    def wasserstein_1d(self, p, q) -> float:
+        """公共接口：wasserstein_1d（Stage 4 公共化）。"""
+        return self._wasserstein_1d(p, q)
+
+
+    @property
+    def distribution_baseline(self) -> list[float] | None:
+        """只读：distribution_baseline（Stage 4 公共化）。"""
+        return self._distribution_baseline
+
+
+    def classify_burn(self, rate) -> BurnSeverity:
+        """公共接口：classify_burn（Stage 4 公共化）。"""
+        return self._classify_burn(rate)
+
+
     def _init_windows(self) -> None:
         for name, duration, _max_samples in self.WINDOWS:
             self._windows[name] = BurnWindow(name=name, duration_seconds=duration)

@@ -96,6 +96,12 @@ class DegradationManager:
         self._circuit_breaker_threshold: int = 3
         self._circuit_breaker_reset_seconds: float = 300.0
 
+    @staticmethod
+    def compute_target_tier(level, current) -> ModelTier:
+        """公共接口：compute_target_tier（Stage 4 公共化，委托到 _compute_target_tier）。"""
+        return _compute_target_tier(level, current)
+
+
     @property
     def state(self) -> DegradationState:
         with self._lock:

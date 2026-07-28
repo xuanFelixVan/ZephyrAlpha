@@ -80,6 +80,11 @@ class DependencyExtractor:
 
         return edges
 
+    def classify_import(self, imported) -> str:
+        """公共接口：classify_import（Stage 4 公共化）。"""
+        return self._classify_import(imported)
+
+
     def _to_edge(self, file_path: str, imported: str, lineno: int) -> DependencyEdge:
         return DependencyEdge(
             from_file=file_path,
