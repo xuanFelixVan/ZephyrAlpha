@@ -378,14 +378,14 @@ class TestParseTarArchive:
         with tarfile.open(fileobj=bio, mode="w|") as tar:
             pass  # 不添加任何成员
         empty_tar = bio.getvalue()
-        result = batcher._parse_tar_archive(empty_tar)
+        result = batcher.parse_tar_archive(empty_tar)
         assert result == {}
 
     def test_corrupted_data_returns_empty_dict(self, tmp_path):
         _init_git_repo(tmp_path)
         batcher = GitCommandBatcher(tmp_path)
         # 非 tar 数据 → TarError → 空字典
-        result = batcher._parse_tar_archive(b"not a tar file")
+        result = batcher.parse_tar_archive(b"not a tar file")
         assert result == {}
 
     def test_valid_tar_with_files(self, tmp_path):
@@ -399,7 +399,7 @@ class TestParseTarArchive:
                 info.size = len(content)
                 tar.addfile(info, io.BytesIO(content))
         tar_bytes = bio.getvalue()
-        result = batcher._parse_tar_archive(tar_bytes)
+        result = batcher.parse_tar_archive(tar_bytes)
         assert result["foo.py"] == b"foo\n"
         assert result["bar.py"] == b"bar\n"
 
@@ -418,6 +418,6 @@ class TestParseTarArchive:
             file_info.size = 4
             tar.addfile(file_info, io.BytesIO(b"foo\n"))
         tar_bytes = bio.getvalue()
-        result = batcher._parse_tar_archive(tar_bytes)
+        result = batcher.parse_tar_archive(tar_bytes)
         assert "src/foo.py" in result
         assert "src/" not in result  # 目录被跳过

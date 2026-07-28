@@ -270,11 +270,11 @@ class TestMcpProcessLifecycle:
     def test_process_reuse_on_same_name(self, gateway, standin_script):
         """同名进程应复用（reuse_count 增加）。"""
         gateway.launch("mcp-e2e-reuse", [sys.executable, str(standin_script)], idle_timeout_s=600.0)
-        entry1 = gateway.pool._pool.get("mcp-e2e-reuse")
+        entry1 = gateway.pool.pool.get("mcp-e2e-reuse")
         assert entry1 is not None
 
         gateway.launch("mcp-e2e-reuse", [sys.executable, str(standin_script)], idle_timeout_s=600.0)
-        entry2 = gateway.pool._pool.get("mcp-e2e-reuse")
+        entry2 = gateway.pool.pool.get("mcp-e2e-reuse")
 
         assert entry2 is not None
         assert entry2.pid == entry1.pid, "Same name should reuse same process"

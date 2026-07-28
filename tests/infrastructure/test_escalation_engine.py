@@ -187,9 +187,9 @@ class TestDelegationEngine:
     def test_register_and_unregister_delegate(self):
         de = DelegationEngine()
         de.register_delegate("architect", ["architecture", "design"])
-        assert "architect" in de._delegate_load
+        assert "architect" in de.delegate_load
         de.unregister_delegate("architect")
-        assert "architect" not in de._delegate_load
+        assert "architect" not in de.delegate_load
 
     def test_delegate_load_balanced(self):
         de = DelegationEngine()

@@ -67,14 +67,14 @@ class TestSelfTestResult:
 class TestIntegrationTestRunnerInit:
     def test_init_with_explicit_root(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
-        assert runner._project_root == str(tmp_path)
-        assert runner._result_dir == str(tmp_path / "data" / "drift_audit")
-        assert os.path.isdir(runner._result_dir)
+        assert runner.project_root == str(tmp_path)
+        assert runner.result_dir == str(tmp_path / "data" / "drift_audit")
+        assert os.path.isdir(runner.result_dir)
 
     def test_init_with_none_uses_default(self):
         runner = IntegrationTestRunner(project_root=None)
-        assert os.path.isdir(runner._result_dir)
-        assert runner._project_root != ""
+        assert os.path.isdir(runner.result_dir)
+        assert runner.project_root != ""
 
     def test_result_dir_created_on_init(self, tmp_path):
         result_dir = tmp_path / "data" / "drift_audit"
@@ -264,9 +264,9 @@ class TestFinalize:
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         test_id = uuid.uuid4()
         result = SelfTestResult(test_id=test_id, passed=True, tests_run=2, failures=0, errors=0, checks=[])
-        returned = runner._finalize(result)
+        returned = runner.finalize(result)
         assert returned.run_at != ""
-        json_path = os.path.join(runner._result_dir, f"{test_id}_test.json")
+        json_path = os.path.join(runner.result_dir, f"{test_id}_test.json")
         assert os.path.isfile(json_path)
         with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
@@ -278,7 +278,7 @@ class TestFinalize:
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         result = SelfTestResult(test_id=uuid.uuid4(), passed=True)
         assert result.run_at == ""
-        runner._finalize(result)
+        runner.finalize(result)
         assert result.run_at != ""
 
     def test_finalize_json_contains_all_fields(self, tmp_path):
@@ -286,8 +286,8 @@ class TestFinalize:
         test_id = uuid.uuid4()
         checks = [{"check": "a", "status": "PASS", "detail": "ok"}]
         result = SelfTestResult(test_id=test_id, passed=False, tests_run=5, failures=2, errors=1, checks=checks)
-        runner._finalize(result)
-        json_path = os.path.join(runner._result_dir, f"{test_id}_test.json")
+        runner.finalize(result)
+        json_path = os.path.join(runner.result_dir, f"{test_id}_test.json")
         with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
         assert data["passed"] is False

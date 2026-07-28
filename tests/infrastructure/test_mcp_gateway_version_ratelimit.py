@@ -135,8 +135,8 @@ class TestRateLimitConfigLoading:
 
     def test_defaults_from_mcp_json(self) -> None:
         pt = PerToolRateLimiter()
-        assert pt._default_qps == 10.0
-        assert pt._default_burst == 30.0
+        assert pt.default_qps == 10.0
+        assert pt.default_burst == 30.0
 
     def test_per_server_override(self) -> None:
         pt = PerToolRateLimiter()
@@ -146,7 +146,7 @@ class TestRateLimitConfigLoading:
 
     def test_explicit_values_skip_file(self) -> None:
         pt = PerToolRateLimiter(100.0, 100.0)
-        assert pt._default_qps == 100.0
+        assert pt.default_qps == 100.0
         assert pt.get_or_create("blueprint_search.find")._rate == 100.0
 
 

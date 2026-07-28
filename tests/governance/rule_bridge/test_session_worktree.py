@@ -1856,7 +1856,7 @@ class TestBaseFreshnessFullLifecycle:
     def test_run_git_with_retry_returns_on_success(self, _isolated_repo):
         """_run_git_with_retry 成功时立即返回。"""
         import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
-        r = sw._run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
+        r = sw.run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
         assert r is not None, "Expected CompletedProcess, got None"
         assert r.returncode == 0
 
@@ -1873,7 +1873,7 @@ class TestBaseFreshnessFullLifecycle:
                 raise OSError("test transient error")
             return original_run(*args, **kwargs)
         monkeypatch.setattr(sw.subprocess, "run", _mock_run)
-        r = sw._run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
+        r = sw.run_git_with_retry(["git", "rev-parse", "HEAD"], cwd=_isolated_repo, retries=3)
         assert r is None, f"Expected None after OSError, got: {r}"
         assert call_count[0] == 3, f"Expected 3 retries, got: {call_count[0]}"
 
@@ -1883,7 +1883,7 @@ class TestBaseFreshnessFullLifecycle:
         def _failing_retry(cmd, cwd, retries=3, timeout=10):
             return subprocess.CompletedProcess(args=cmd, returncode=1, stdout="", stderr="fatal: error")
         monkeypatch.setattr(sw, "_run_git_with_retry", _failing_retry)
-        r = sw._ensure_worktree_base_fresh(_isolated_repo, _isolated_repo, "sess-test-fail", stage="commit")
+        r = sw.ensure_worktree_base_fresh(_isolated_repo, _isolated_repo, "sess-test-fail", stage="commit")
         assert r is not None, "Expected error dict (fail-closed), got None"
         assert r.get("base_sync_failed") is True
         assert r.get("stage") == "commit"

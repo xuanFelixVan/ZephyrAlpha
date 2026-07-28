@@ -129,12 +129,12 @@ class TestProcessCreationScanner:
         tree = ast.parse(code)
         scanner = ProcessCreationScanner(str(py))
         scanner.visit(tree)
-        assert scanner._imported_gateway is True
+        assert scanner.imported_gateway is True
         assert len(scanner.violations) >= 1
 
     def test_resolve_call_path_name(self):
         node = ast.Name(id="func", ctx=ast.Load())
-        assert ProcessCreationScanner._resolve_call_path(node) == "func"
+        assert ProcessCreationScanner.resolve_call_path(node) == "func"
 
     def test_resolve_call_path_attribute(self):
         node = ast.Attribute(
@@ -142,7 +142,7 @@ class TestProcessCreationScanner:
             attr="Popen",
             ctx=ast.Load(),
         )
-        assert ProcessCreationScanner._resolve_call_path(node) == "subprocess.Popen"
+        assert ProcessCreationScanner.resolve_call_path(node) == "subprocess.Popen"
 
     def test_resolve_call_path_nested(self):
         node = ast.Attribute(
@@ -154,11 +154,11 @@ class TestProcessCreationScanner:
             attr="c",
             ctx=ast.Load(),
         )
-        assert ProcessCreationScanner._resolve_call_path(node) == "a.b.c"
+        assert ProcessCreationScanner.resolve_call_path(node) == "a.b.c"
 
     def test_resolve_call_path_constant(self):
         node = ast.Constant(value=42)
-        result = ProcessCreationScanner._resolve_call_path(node)
+        result = ProcessCreationScanner.resolve_call_path(node)
         assert result == ""
 
     def test_forbidden_calls_dict(self):
@@ -173,7 +173,7 @@ class TestProcessCreationScanner:
         tree = ast.parse(code)
         scanner = ProcessCreationScanner(str(py))
         scanner.visit(tree)
-        assert scanner._imported_gateway is True
+        assert scanner.imported_gateway is True
 
     def test_visit_import_from_sets_flag(self, tmp_path):
         code = "from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway\n"
@@ -182,7 +182,7 @@ class TestProcessCreationScanner:
         tree = ast.parse(code)
         scanner = ProcessCreationScanner(str(py))
         scanner.visit(tree)
-        assert scanner._imported_gateway is True
+        assert scanner.imported_gateway is True
 
     def test_violation_has_line_number(self, tmp_path):
         code = "import subprocess\nsubprocess.Popen(['cmd'])\n"

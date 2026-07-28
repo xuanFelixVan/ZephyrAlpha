@@ -174,7 +174,7 @@ class TestTaskCardInstantiation:
     def test_source_blueprint_empty_accepted_at_model_level(self):
         card = _make_card(source_blueprint="")
         assert card.source_blueprint == ""
-        assert TaskRepository._validate_template_fields(TaskRepository.__new__(TaskRepository), card) != []
+        assert TaskRepository.validate_template_fields(TaskRepository.__new__(TaskRepository), card) != []
 
     def test_description_too_short_rejected(self):
         with pytest.raises(ValidationError):

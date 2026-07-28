@@ -153,4 +153,4 @@ class TestSignatureMatcher:
         assert sm.match("abc", "a.py") is None
 
     def test_classify_path_core(self):
-        assert SignatureMatcher._classify_path("src/core/engine.py") == "HIGH"
+        assert SignatureMatcher.classify_path("src/core/engine.py") == "HIGH"

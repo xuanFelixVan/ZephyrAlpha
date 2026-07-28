@@ -165,8 +165,8 @@ class TestLauncherProcessStartup:
                 idle_timeout_s=600.0,
             )
             time.sleep(0.5)
-            # launcher.check_server_health 使用 gateway.pool._pool.get(f"mcp-{server_id}")
-            entry = gateway.pool._pool.get("mcp-test_server")
+            # launcher.check_server_health 使用 gateway.pool.pool.get(f"mcp-{server_id}")
+            entry = gateway.pool.pool.get("mcp-test_server")
             assert entry is not None, "Pool should track the launched process"
             assert entry.is_alive, "Tracked process should be alive"
         finally:

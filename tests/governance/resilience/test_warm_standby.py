@@ -101,17 +101,17 @@ class TestCutoverResult:
 class TestWarmStandbyInit:
     def test_init_with_root(self, tmp_project: Path) -> None:
         ws = WarmStandby(project_root=tmp_project)
-        assert ws._project_root == tmp_project
-        assert ws._standby_dir == tmp_project / ".zephyr/warm_standby"
-        assert ws._state_path == tmp_project / ".zephyr/warm_standby_state.json"
+        assert ws.project_root == tmp_project
+        assert ws.standby_dir == tmp_project / ".zephyr/warm_standby"
+        assert ws.state_path == tmp_project / ".zephyr/warm_standby_state.json"
 
     def test_init_default_root(self) -> None:
         ws = WarmStandby()
-        assert ws._project_root == Path.cwd()
+        assert ws.project_root == Path.cwd()
 
     def test_init_none_root(self) -> None:
         ws = WarmStandby(project_root=None)
-        assert ws._project_root == Path.cwd()
+        assert ws.project_root == Path.cwd()
 
     def test_exit_code_constant(self) -> None:
         assert WarmStandby.EXIT_CODE_CUTOVER == 14

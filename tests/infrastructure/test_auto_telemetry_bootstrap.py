@@ -20,10 +20,10 @@
 def test_import_triggers_bootstrap():
     import zephyr
 
-    assert zephyr._auto_bootstrap_result is not None
-    assert zephyr._auto_bootstrap_result["session_continuity"] is True
-    assert zephyr._auto_bootstrap_result["phase_manager"] is True
-    assert zephyr._auto_bootstrap_result["blueprint_metrics"] is True
+    assert zephyr.auto_bootstrap_result is not None
+    assert zephyr.auto_bootstrap_result["session_continuity"] is True
+    assert zephyr.auto_bootstrap_result["phase_manager"] is True
+    assert zephyr.auto_bootstrap_result["blueprint_metrics"] is True
 
 
 def test_global_telemetry_singleton():

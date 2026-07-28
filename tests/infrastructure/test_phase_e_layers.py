@@ -115,7 +115,7 @@ class TestL02AlphaFactor:
 
                 return pd.Series([1.0, 2.0], name=data.index[:2])
 
-        assert len(FactorRegistry._registry) >= 1
+        assert len(FactorRegistry.registry) >= 1
         cls = FactorRegistry.get("test_factor_001")
         assert cls is TestFactor
         FactorRegistry.clear()

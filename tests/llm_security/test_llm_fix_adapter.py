@@ -40,7 +40,7 @@ class TestLLMFixAdapterInstantiation:
 
     def test_secret_guard_initialized(self):
         adapter = LLMFixAdapter()
-        assert adapter._secret_guard is not None
+        assert adapter.secret_guard is not None
 
 
 class TestLLMFixAdapterScan:
@@ -52,7 +52,7 @@ class TestLLMFixAdapterScan:
 class TestLLMFixAdapterFix:
     def test_fix_returns_failed_when_llm_bridge_unavailable(self):
         adapter = LLMFixAdapter()
-        adapter._llm_bridge = None
+        adapter.llm_bridge = None
         with patch.object(adapter, "_get_llm_bridge", return_value=None):
             action = adapter.fix("some_file.py")
         assert action.status == FixStatus.FAILED
@@ -122,12 +122,12 @@ class TestLLMFixAdapterFix:
 class TestLLMFixAdapterBuildFixPrompt:
     def test_build_fix_prompt_contains_target(self):
         adapter = LLMFixAdapter()
-        prompt = adapter._build_fix_prompt("test.py", "x = 1")
+        prompt = adapter.build_fix_prompt("test.py", "x = 1")
         assert "test.py" in prompt
 
     def test_build_fix_prompt_contains_content(self):
         adapter = LLMFixAdapter()
-        prompt = adapter._build_fix_prompt("test.py", "x = 1")
+        prompt = adapter.build_fix_prompt("test.py", "x = 1")
         assert "x = 1" in prompt
 
 
@@ -136,27 +136,27 @@ class TestLLMFixAdapterCallLLM:
         adapter = LLMFixAdapter()
         mock_bridge = MagicMock()
         mock_bridge.generate.return_value = "fixed code"
-        result = adapter._call_llm(mock_bridge, "fix this")
+        result = adapter.call_llm(mock_bridge, "fix this")
         assert result == "fixed code"
 
     def test_call_llm_with_call_method(self):
         adapter = LLMFixAdapter()
         mock_bridge = MagicMock(spec=["call"])
         mock_bridge.call.return_value = "fixed code"
-        result = adapter._call_llm(mock_bridge, "fix this")
+        result = adapter.call_llm(mock_bridge, "fix this")
         assert result == "fixed code"
 
     def test_call_llm_returns_empty_on_exception(self):
         adapter = LLMFixAdapter()
         mock_bridge = MagicMock()
         mock_bridge.generate.side_effect = RuntimeError("API error")
-        result = adapter._call_llm(mock_bridge, "fix this")
+        result = adapter.call_llm(mock_bridge, "fix this")
         assert result == ""
 
     def test_call_llm_returns_empty_for_bridge_without_methods(self):
         adapter = LLMFixAdapter()
         mock_bridge = MagicMock(spec=[])
-        result = adapter._call_llm(mock_bridge, "fix this")
+        result = adapter.call_llm(mock_bridge, "fix this")
         assert result == ""
 
 

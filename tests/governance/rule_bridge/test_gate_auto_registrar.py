@@ -314,7 +314,7 @@ class TestRealProjectIntegration:
 
         # 显式注册（通过 GitCommitGateway 实例化）
         gw = GitCommitGateway()
-        explicit_ids = set(gw.gate_registry._specs.keys())
+        explicit_ids = set(gw.gate_registry.specs.keys())
 
         # auto_register
         auto_registry = CommitGateRegistry()

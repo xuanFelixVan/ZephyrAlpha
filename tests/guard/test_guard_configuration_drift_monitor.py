@@ -110,11 +110,11 @@ class TestGuardConfigurationDriftMonitor:
 
     def test_compute_drift_empty_configs(self):
         mon = GuardConfigurationDriftMonitor()
-        drift = mon._compute_drift({}, {})
+        drift = mon.compute_drift({}, {})
         assert drift == 0.0
 
     def test_compute_drift_identical_configs(self):
         mon = GuardConfigurationDriftMonitor()
         config = {"x": 1.0, "y": 2.0}
-        drift = mon._compute_drift(config, config)
+        drift = mon.compute_drift(config, config)
         assert drift == 0.0
