@@ -32,6 +32,8 @@ from typing import Any
 
 
 class SkillPromptCache:
+    cache: dict[str, tuple[str, float]] = _cache  # public alias（Stage 4 公共化）
+
     """Skill Prompt 缓存——减少重复 LLM 调用."""
 
     _cache: dict[str, tuple[str, float]] = {}

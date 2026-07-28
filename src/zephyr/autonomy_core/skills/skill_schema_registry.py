@@ -30,6 +30,8 @@ from typing import Any
 
 
 class SkillSchemaRegistry:
+    schemas: dict[str, dict[str, Any]] = _schemas  # public alias（Stage 4 公共化）
+
     """Skill I/O Schema 注册与契约验证."""
 
     _schemas: dict[str, dict[str, Any]] = {}

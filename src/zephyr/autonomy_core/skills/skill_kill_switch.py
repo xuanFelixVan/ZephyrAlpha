@@ -34,6 +34,8 @@ from zephyr.autonomy_core.skills.skill_model import SkillStatus
 
 
 class SkillKillSwitch:
+    killed: dict[str, dict[str, Any]] = _killed  # public alias（Stage 4 公共化）
+
     """Skill 熔断开关 —— 紧急停用."""
 
     _killed: dict[str, dict[str, Any]] = {}

@@ -38,6 +38,27 @@ class SkillLoader:
         self.registry_path = registry_path or _REGISTRY_PATH
         self._l0_cache: dict[str, Any] | None = None
 
+    def resolve_skill_path(self, skill_id) -> Path:
+        """公共接口：resolve_skill_path（Stage 4 公共化）。"""
+        return self._resolve_skill_path(skill_id)
+
+
+    def parse_yaml_frontmatter(self, content) -> dict[str, Any]:
+        """公共接口：parse_yaml_frontmatter（Stage 4 公共化）。"""
+        return self._parse_yaml_frontmatter(content)
+
+
+    def load_registry(self) -> dict[str, Any]:
+        """公共接口：load_registry（Stage 4 公共化）。"""
+        return self._load_registry()
+
+
+    @property
+    def l0_cache(self) -> dict[str, Any] | None:
+        """只读：l0_cache（Stage 4 公共化）。"""
+        return self._l0_cache
+
+
     def _load_registry(self) -> dict[str, Any]:
         with open(self.registry_path, encoding="utf-8") as f:
             return yaml.safe_load(f) or {}

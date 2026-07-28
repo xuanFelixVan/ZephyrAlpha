@@ -287,3 +287,5 @@ __all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
     "signal_quality",
     "simulation",
 ]
+auto_bootstrap_result = _auto_bootstrap_result  # public alias（Stage 4 公共化）
+

@@ -34,6 +34,16 @@ from typing import Any
 class SkillBreakageChecker:
     TOOL_PATTERN = re.compile(r"`(\w+)`\s*[(:]")
 
+    def extract_tools(self, content) -> set[str]:
+        """公共接口：extract_tools（Stage 4 公共化）。"""
+        return self._extract_tools(content)
+
+
+    def extract_constraints(self, content) -> set[str]:
+        """公共接口：extract_constraints（Stage 4 公共化）。"""
+        return self._extract_constraints(content)
+
+
     CONSTRAINT_PATTERNS = [
         (r"MUST\s+(NOT\s+)?\w+", "must_directive"),
         (r"CRITICAL", "critical_label"),

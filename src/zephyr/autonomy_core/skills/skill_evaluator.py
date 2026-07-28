@@ -40,6 +40,36 @@ from typing import Any, Tuple
 class SkillEvaluator:
     """Skill 多维度质量评估器"""
 
+    @classmethod
+    def evaluate_token_efficiency(cls, cls, body, token_count) -> Tuple[float, dict[str, Any]]:
+        """公共接口：evaluate_token_efficiency（Stage 4 公共化，委托到 cls._evaluate_token_efficiency）。"""
+        return cls._evaluate_token_efficiency(cls, body, token_count)
+
+
+    @classmethod
+    def evaluate_structure(cls, cls, body, l1_data) -> Tuple[float, list[str]]:
+        """公共接口：evaluate_structure（Stage 4 公共化，委托到 cls._evaluate_structure）。"""
+        return cls._evaluate_structure(cls, body, l1_data)
+
+
+    @classmethod
+    def evaluate_freshness(cls, cls, freshness_data) -> Tuple[float, dict[str, Any]]:
+        """公共接口：evaluate_freshness（Stage 4 公共化，委托到 cls._evaluate_freshness）。"""
+        return cls._evaluate_freshness(cls, freshness_data)
+
+
+    @classmethod
+    def evaluate_density(cls, cls, body) -> Tuple[float, dict[str, Any]]:
+        """公共接口：evaluate_density（Stage 4 公共化，委托到 cls._evaluate_density）。"""
+        return cls._evaluate_density(cls, body)
+
+
+    @classmethod
+    def evaluate_constraints(cls, cls, body) -> Tuple[float, list[str]]:
+        """公共接口：evaluate_constraints（Stage 4 公共化，委托到 cls._evaluate_constraints）。"""
+        return cls._evaluate_constraints(cls, body)
+
+
     STRUCTURE_WEIGHT = 0.25
     DENSITY_WEIGHT = 0.25
     CONSTRAINT_WEIGHT = 0.20

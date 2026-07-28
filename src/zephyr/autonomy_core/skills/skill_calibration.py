@@ -50,6 +50,12 @@ class CalibrationEntry:
 class SkillCalibration:
     """Skill 校准 —— 置信度 vs 准确率对齐."""
 
+    @staticmethod
+    def trend_direction(drifts) -> str:
+        """公共接口：trend_direction（Stage 4 公共化，委托到 _trend_direction）。"""
+        return _trend_direction(drifts)
+
+
     _history: dict[str, list[CalibrationEntry]] = {}
     _MAX_HISTORY = 50
     _OVERCONFIDENCE_THRESHOLD = 0.15

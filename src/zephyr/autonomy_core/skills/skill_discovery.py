@@ -72,6 +72,24 @@ class SkillDiscovery:
     """Skill 发现——从模块蓝图自动发现可生成 Skill 的模块."""
 
     @staticmethod
+    def parse_frontmatter(md_file) -> dict[str, Any]:
+        """公共接口：parse_frontmatter（Stage 4 公共化，委托到 _parse_frontmatter）。"""
+        return _parse_frontmatter(md_file)
+
+
+    @staticmethod
+    def extract_module_name(content, bp_file) -> str:
+        """公共接口：extract_module_name（Stage 4 公共化，委托到 _extract_module_name）。"""
+        return _extract_module_name(content, bp_file)
+
+
+    @staticmethod
+    def derive_skill_id(module_name) -> str:
+        """公共接口：derive_skill_id（Stage 4 公共化，委托到 _derive_skill_id）。"""
+        return _derive_skill_id(module_name)
+
+
+    @staticmethod
     def scan_modules(modules_path: str) -> list[dict[str, Any]]:
         results: list[dict[str, Any]] = []
         base = Path(modules_path)

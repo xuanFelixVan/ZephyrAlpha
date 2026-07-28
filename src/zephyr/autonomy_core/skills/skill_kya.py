@@ -37,6 +37,17 @@ class SkillKYA:
     def __init__(self):
         self._certs: dict[str, dict[str, Any]] = {}
 
+    @property
+    def certs(self) -> dict[str, dict[str, Any]]:
+        """只读：certs（Stage 4 公共化）。"""
+        return self._certs
+
+
+    def assess(self, tools) -> str:
+        """公共接口：assess（Stage 4 公共化）。"""
+        return self._assess(tools)
+
+
     def _assess(self, tools: list[str]) -> str:
         risky = sum(1 for t in tools if t in RISKY)
         total = len(tools)

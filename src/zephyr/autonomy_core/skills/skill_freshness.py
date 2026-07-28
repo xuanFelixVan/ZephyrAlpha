@@ -33,6 +33,16 @@ _HISTORY = Path(__file__).resolve().parent / "_freshness.json"
 
 class FreshnessDecayModel:
     HOURS_TO_ZERO = 720
+
+    def save(self, data):
+        """公共接口：save（Stage 4 公共化）。"""
+        return self._save(data)
+
+
+    def load(self) -> dict:
+        """公共接口：load（Stage 4 公共化）。"""
+        return self._load()
+
     WARNING_THRESHOLD = 30.0
     CRITICAL_THRESHOLD = 10.0
 

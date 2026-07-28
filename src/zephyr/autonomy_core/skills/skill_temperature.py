@@ -31,6 +31,7 @@ from typing import Any
 
 
 class SkillTemperature:
+
     """Skill Temperature——自适应 LLM 创造性调度."""
 
     DEFAULT_TEMPERATURE = 0.3
@@ -46,6 +47,8 @@ class SkillTemperature:
         "documentation": 0.2,
         "testing": 0.0,
     }
+    overrides: dict[str, float] = _overrides  # public alias（Stage 4 公共化）
+    task_defaults = _task_defaults  # public alias（Stage 4 公共化）
 
     @classmethod
     def get_temperature(cls, skill_id: str, task_type: str | None = None) -> float:

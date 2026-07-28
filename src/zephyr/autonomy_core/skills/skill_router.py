@@ -115,6 +115,12 @@ class SkillRouter:
         self._semantic_index: dict[str, Any] | None = None
         self._embedding_router: EmbeddingRouter | None = embedding_router
 
+    @property
+    def registry_path(self):
+        """只读：registry_path（Stage 4 公共化）。"""
+        return self._registry_path
+
+
     def _init_semantic_index(self) -> None:
         if self._semantic_index is not None:
             return
