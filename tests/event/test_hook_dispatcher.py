@@ -60,15 +60,15 @@ class TestHookDispatcher:
     def test_instantiation_with_explicit_bus(self, tmp_path):
         bus = EventBus()
         dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
-        assert dispatcher._bus is bus
-        assert dispatcher._data_dir == tmp_path
+        assert dispatcher.bus is bus
+        assert dispatcher.data_dir == tmp_path
 
     def test_register_hook(self, tmp_path):
         bus = EventBus()
         dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
         hook = HookConfig(hook_id="HK-REG", event_type=EventType.TASK_COMPLETED)
         dispatcher.register_hook(hook)
-        assert hook in dispatcher._hooks[EventType.TASK_COMPLETED]
+        assert hook in dispatcher.hooks[EventType.TASK_COMPLETED]
 
     def test_register_multiple_hooks_same_type(self, tmp_path):
         bus = EventBus()
@@ -77,7 +77,7 @@ class TestHookDispatcher:
         h2 = HookConfig(hook_id="HK-B", event_type=EventType.TASK_COMPLETED)
         dispatcher.register_hook(h1)
         dispatcher.register_hook(h2)
-        assert len(dispatcher._hooks[EventType.TASK_COMPLETED]) == 2
+        assert len(dispatcher.hooks[EventType.TASK_COMPLETED]) == 2
 
     def test_script_hook_dispatches_on_task_completed(self, tmp_path):
         bus = EventBus()

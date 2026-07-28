@@ -122,7 +122,7 @@ class TestPipelineFullBlockageDLQOverflow:
         victim = cycle[0]
         result = det.break_deadlock(victim)
         assert result is True
-        assert victim not in det._wait_graph
+        assert victim not in det.wait_graph
 
     def test_concurrent_edge_addition_threadsafe(self):
         det = DeadlockDetector()
@@ -136,7 +136,7 @@ class TestPipelineFullBlockageDLQOverflow:
             futures = [pool.submit(add_edges_batch, i * 50) for i in range(8)]
             total = sum(f.result() for f in as_completed(futures))
         assert total == 400
-        assert len(det._wait_graph) == 400
+        assert len(det.wait_graph) == 400
 
     def test_break_all_blocked_agents_clears_graph(self):
         det = DeadlockDetector()
@@ -145,7 +145,7 @@ class TestPipelineFullBlockageDLQOverflow:
             det.add_edge(agents[i], agents[(i + 1) % len(agents)])
         for agent in agents:
             det.break_deadlock(agent)
-        assert det._wait_graph == {}
+        assert det.wait_graph == {}
 
     def test_break_timeout_clears_expired_locks_under_load(self):
         det = DeadlockDetector()
@@ -153,7 +153,7 @@ class TestPipelineFullBlockageDLQOverflow:
             det.try_acquire(f"res_{i}", f"holder_{i}")
         expired = det.break_timeout(0.0)
         assert len(expired) == 50
-        assert det._locks == {}
+        assert det.locks == {}
 
 
 class TestBackpressureCascadeCollapse:

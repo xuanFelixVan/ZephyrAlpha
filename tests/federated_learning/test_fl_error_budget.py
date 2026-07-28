@@ -31,7 +31,7 @@ class TestErrorBudgetInstantiation:
 class TestErrorBudgetManagerInit:
     def test_creates_empty(self):
         mgr = ErrorBudgetManager()
-        assert mgr._budgets == {}
+        assert mgr.budgets == {}
 
 
 class TestInitBudget:
@@ -39,7 +39,7 @@ class TestInitBudget:
         mgr = ErrorBudgetManager()
         budget = mgr.init_budget("CT-001")
         assert budget.contract_id == "CT-001"
-        assert "CT-001" in mgr._budgets
+        assert "CT-001" in mgr.budgets
 
 
 class TestRecordConsumption:

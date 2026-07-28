@@ -284,7 +284,7 @@ class TestEventBusBackpressureBackpressure:
         bus.emit("count-topic", "payload2")
         bus.emit("count-topic", "payload3")
 
-        assert bus._emit_count == 3
+        assert bus.emit_count == 3
 
 
 # ---------------------------------------------------------------------------

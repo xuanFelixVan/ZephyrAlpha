@@ -35,12 +35,12 @@ class TestEventDrivenMonitoring:
     def setup_method(self) -> None:
         """每个测试前重置订阅状态。"""
         import zephyr.shared.lifecycle.health as health_mod
-        health_mod._monitoring_events_subscribed = False
+        health_mod.monitoring_events_subscribed = False
         # 使用 .clear() 而非重新赋值，保持 handler 闭包引用同一 list
-        health_mod._event_health_log.clear()
+        health_mod.event_health_log.clear()
 
         import zephyr.shared.observability.metrics as metrics_mod
-        metrics_mod._metrics_events_subscribed = False
+        metrics_mod.metrics_events_subscribed = False
 
     def test_event_bus_importable(self) -> None:
         """EventBus 可导入。"""
@@ -71,9 +71,9 @@ class TestEventDrivenMonitoring:
         import zephyr.shared.lifecycle.health as health_mod
 
         subscribe_monitoring_events()
-        flag1 = health_mod._monitoring_events_subscribed
+        flag1 = health_mod.monitoring_events_subscribed
         subscribe_monitoring_events()  # 第二次
-        flag2 = health_mod._monitoring_events_subscribed
+        flag2 = health_mod.monitoring_events_subscribed
 
         assert flag1 is True
         assert flag2 is True  # 仍然 True，没有重复注册
@@ -149,8 +149,8 @@ class TestEventDrivenMonitoring:
 
         # 重置订阅状态
         import zephyr.shared.lifecycle.health as health_mod
-        health_mod._monitoring_events_subscribed = False
-        health_mod._event_health_log.clear()
+        health_mod.monitoring_events_subscribed = False
+        health_mod.event_health_log.clear()
 
         subscribe_monitoring_events()
 

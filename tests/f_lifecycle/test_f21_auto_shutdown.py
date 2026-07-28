@@ -35,8 +35,8 @@ class TestFinalizerAutoShutdown:
     def setup_method(self) -> None:
         """每个测试前重置状态。"""
         import zephyr.trading.finalizer as fin_mod
-        fin_mod._monitoring_finalizers_registered = False
-        fin_mod._global_finalizer = None
+        fin_mod.monitoring_finalizers_registered = False
+        fin_mod.global_finalizer = None
 
     def test_finalizer_importable(self) -> None:
         """Finalizer 可导入。"""
@@ -59,7 +59,7 @@ class TestFinalizerAutoShutdown:
             called.append(True)
 
         f.register("test-resource", _cleanup)
-        assert len(f._cleanup_fns) == 1
+        assert len(f.cleanup_fns) == 1
 
     def test_finalizer_run(self) -> None:
         """Finalizer run 执行所有 cleanup。"""
@@ -106,9 +106,9 @@ class TestFinalizerAutoShutdown:
         from zephyr.trading.finalizer import Finalizer, register_monitoring_finalizers
         f = Finalizer()
 
-        initial = len(f._cleanup_fns)
+        initial = len(f.cleanup_fns)
         register_monitoring_finalizers(f)
-        after = len(f._cleanup_fns)
+        after = len(f.cleanup_fns)
 
         assert after == initial + 2, f"应注册 2 个 cleanup，实际增加 {after - initial}"
 
@@ -118,9 +118,9 @@ class TestFinalizerAutoShutdown:
         f = Finalizer()
 
         register_monitoring_finalizers(f)
-        after_first = len(f._cleanup_fns)
+        after_first = len(f.cleanup_fns)
         register_monitoring_finalizers(f)  # 第二次
-        after_second = len(f._cleanup_fns)
+        after_second = len(f.cleanup_fns)
 
         assert after_first == after_second, f"幂等失败: {after_first} -> {after_second}"
 
@@ -129,7 +129,7 @@ class TestFinalizerAutoShutdown:
         from zephyr.trading.finalizer import register_monitoring_finalizers_auto, get_finalizer
         register_monitoring_finalizers_auto()
         f = get_finalizer()
-        assert len(f._cleanup_fns) == 2
+        assert len(f.cleanup_fns) == 2
 
     def test_monitor_flush_cleanup(self) -> None:
         """monitor-flush cleanup 执行成功。"""
@@ -154,8 +154,8 @@ class TestFinalizerAutoShutdown:
         from zephyr.shared.event_bus import bus
 
         import zephyr.shared.lifecycle.health as health_mod
-        health_mod._monitoring_events_subscribed = False
-        health_mod._event_health_log = []
+        health_mod.monitoring_events_subscribed = False
+        health_mod.event_health_log = []
 
         # 订阅事件
         subscribe_monitoring_events()

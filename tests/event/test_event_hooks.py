@@ -32,11 +32,11 @@ def _make_action(status: FixStatus = FixStatus.PENDING, escalated: bool = False)
 class TestEventHooksInstantiation:
     def test_empty_hooks(self):
         eh = EventHooks()
-        assert eh._hooks == {}
+        assert eh.hooks == {}
 
     def test_empty_event_log(self):
         eh = EventHooks()
-        assert eh._event_log == []
+        assert eh.event_log == []
 
 
 class TestRegister:
@@ -44,8 +44,8 @@ class TestRegister:
         eh = EventHooks()
         cb = MagicMock()
         eh.register(FixEvent.FIX_STARTED, cb)
-        assert FixEvent.FIX_STARTED in eh._hooks
-        assert cb in eh._hooks[FixEvent.FIX_STARTED]
+        assert FixEvent.FIX_STARTED in eh.hooks
+        assert cb in eh.hooks[FixEvent.FIX_STARTED]
 
     def test_register_multiple_callbacks(self):
         eh = EventHooks()
@@ -53,7 +53,7 @@ class TestRegister:
         cb2 = MagicMock()
         eh.register(FixEvent.FIX_STARTED, cb1)
         eh.register(FixEvent.FIX_STARTED, cb2)
-        assert len(eh._hooks[FixEvent.FIX_STARTED]) == 2
+        assert len(eh.hooks[FixEvent.FIX_STARTED]) == 2
 
 
 class TestUnregister:
@@ -62,7 +62,7 @@ class TestUnregister:
         cb = MagicMock()
         eh.register(FixEvent.FIX_STARTED, cb)
         eh.unregister(FixEvent.FIX_STARTED, cb)
-        assert cb not in eh._hooks.get(FixEvent.FIX_STARTED, [])
+        assert cb not in eh.hooks.get(FixEvent.FIX_STARTED, [])
 
     def test_unregister_nonexistent_callback(self):
         eh = EventHooks()
@@ -174,7 +174,7 @@ class TestClearHooks:
         eh = EventHooks()
         eh.register(FixEvent.FIX_STARTED, MagicMock())
         eh.clear_hooks()
-        assert eh._hooks == {}
+        assert eh.hooks == {}
 
 
 class TestClearLog:
@@ -182,7 +182,7 @@ class TestClearLog:
         eh = EventHooks()
         eh.emit(FixEvent.FIX_STARTED)
         eh.clear_log()
-        assert eh._event_log == []
+        assert eh.event_log == []
 
 
 class TestFixEventEnum:

@@ -57,11 +57,11 @@ class TestScopeGuardConfig:
 class TestScopeGuardInit:
     def test_default_root(self):
         guard = ScopeGuard()
-        assert guard._project_root == Path.cwd()
+        assert guard.project_root == Path.cwd()
 
     def test_custom_root(self, tmp_path):
         guard = ScopeGuard(project_root=tmp_path)
-        assert guard._project_root == tmp_path
+        assert guard.project_root == tmp_path
 
 
 class TestScopeGuardValidateScope:
@@ -209,7 +209,7 @@ class TestScopeGuardBlocking:
     def test_no_auto_block_when_disabled(self):
         cfg = ScopeGuardConfig(auto_block_on_critical=False)
         guard = ScopeGuard()
-        guard._config = cfg
+        guard.config = cfg
         card = {
             "task_id": "T1",
             "allowed_touch": ["a.py"],

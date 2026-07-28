@@ -45,11 +45,11 @@ def _create_files(tmp_path: Path, file_dict: dict[str, str]) -> list[str]:
 class TestExternalMerkleProofInit:
     def test_default_project_root(self, tmp_path: Path):
         emp = ExternalMerkleProof(project_root=tmp_path)
-        assert emp._project_root == tmp_path
+        assert emp.project_root == tmp_path
 
     def test_none_project_root_uses_cwd(self):
         emp = ExternalMerkleProof(project_root=None)
-        assert emp._project_root == Path.cwd()
+        assert emp.project_root == Path.cwd()
 
 
 class TestExternalMerkleProofMerklize:

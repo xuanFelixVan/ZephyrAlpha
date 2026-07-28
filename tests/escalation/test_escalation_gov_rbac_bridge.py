@@ -102,7 +102,7 @@ class TestPreExecuteCheck:
     @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", False)
     def test_pass_through_without_rbac_available(self):
         bridge = EscalationRBACBridge()
-        bridge._guard = None
+        bridge.guard = None
         result = bridge.pre_execute_check("sess-1", "write", "/some/path")
         assert result.passed is True
         assert "pass-through" in result.reason
@@ -125,7 +125,7 @@ class TestPreExecuteCheck:
         mock_guard.check.return_value = mock_result
 
         bridge = EscalationRBACBridge()
-        bridge._guard = mock_guard
+        bridge.guard = mock_guard
 
         result = bridge.pre_execute_check("sess-1", "delete", "/path")
         assert result.passed is False
@@ -146,7 +146,7 @@ class TestPreExecuteCheck:
         mock_guard.check.return_value = mock_result
 
         bridge = EscalationRBACBridge()
-        bridge._guard = mock_guard
+        bridge.guard = mock_guard
 
         result = bridge.pre_execute_check("sess-1", "modify", "/path")
         assert result.passed is True
@@ -166,7 +166,7 @@ class TestPreExecuteCheck:
         mock_guard.check.return_value = mock_result
 
         bridge = EscalationRBACBridge()
-        bridge._guard = mock_guard
+        bridge.guard = mock_guard
 
         result = bridge.pre_execute_check("sess-1", "read", "/path")
         assert result.passed is True
@@ -178,7 +178,7 @@ class TestPreExecuteCheck:
         mock_guard.check.side_effect = RuntimeError("RBAC down")
 
         bridge = EscalationRBACBridge()
-        bridge._guard = mock_guard
+        bridge.guard = mock_guard
 
         result = bridge.pre_execute_check("sess-1", "read")
         assert result.passed is True

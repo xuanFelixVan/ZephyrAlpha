@@ -57,7 +57,7 @@ class TestF5BootIntegrationConstruction:
 
     def test_with_project_root(self, tmp_path: Path):
         integration = F5BootIntegration(project_root=tmp_path)
-        assert integration._project_root == tmp_path
+        assert integration.project_root == tmp_path
 
     def test_hook_name_constant(self):
         assert F5BootIntegration.HOOK_NAME == "f5_boot_init"
@@ -112,13 +112,13 @@ class TestOnStartup:
     def test_delegation_engine_injects_deadlock_detector(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        assert integration.delegation_engine._deadlock_detector is integration.deadlock_detector
+        assert integration.delegation_engine.deadlock_detector is integration.deadlock_detector
 
     def test_arbitrator_injects_engines(self):
         integration = F5BootIntegration()
         integration.on_startup()
-        assert integration.arbitrator._escalation_engine is integration.escalation_engine
-        assert integration.arbitrator._deadlock_detector is integration.deadlock_detector
+        assert integration.arbitrator.escalation_engine is integration.escalation_engine
+        assert integration.arbitrator.deadlock_detector is integration.deadlock_detector
 
     def test_delegation_max_depth_recorded(self):
         integration = F5BootIntegration()
@@ -204,13 +204,13 @@ class TestRunPeriodicChecks:
         integration = F5BootIntegration()
         integration.on_startup()
         # Inject broken components — run_health_checks should swallow exceptions
-        integration._deadlock_detector = MagicMock()
-        integration._deadlock_detector.detect_cycle.side_effect = RuntimeError("broken")
-        integration._deadlock_detector.break_timeout.side_effect = RuntimeError("broken")
-        integration._escalation_engine = MagicMock()
-        integration._escalation_engine.get_active_count.side_effect = RuntimeError("broken")
-        integration._delegation_engine = MagicMock()
-        integration._delegation_engine.cleanup_expired.side_effect = RuntimeError("broken")
+        integration.deadlock_detector = MagicMock()
+        integration.deadlock_detector.detect_cycle.side_effect = RuntimeError("broken")
+        integration.deadlock_detector.break_timeout.side_effect = RuntimeError("broken")
+        integration.escalation_engine = MagicMock()
+        integration.escalation_engine.get_active_count.side_effect = RuntimeError("broken")
+        integration.delegation_engine = MagicMock()
+        integration.delegation_engine.cleanup_expired.side_effect = RuntimeError("broken")
         result = integration.run_health_checks()
         assert isinstance(result, dict)
         assert len(result["errors"]) == 4
@@ -292,7 +292,7 @@ class TestRegisterF5BootHookModuleFunction:
         with patch("zephyr.governance.ops_governance.event_hook.hook_registry") as mock_reg:
             mock_reg.get_all.return_value = []
             integration = register_f5_boot_hook(project_root=tmp_path)
-            assert integration._project_root == tmp_path
+            assert integration.project_root == tmp_path
 
 
 class TestEndToEndBootCycle:

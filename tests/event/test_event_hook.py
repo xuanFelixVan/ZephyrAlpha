@@ -41,8 +41,8 @@ class TestTransitionEvent:
 class TestHookRegistry:
     def test_instantiation(self):
         registry = HookRegistry()
-        assert registry._hooks == []
-        assert registry._active is True
+        assert registry.hooks == []
+        assert registry.active is True
 
     def test_register_and_fire(self):
         registry = HookRegistry()
@@ -69,10 +69,10 @@ class TestHookRegistry:
             pass
 
         registry.register(cb, name="removable")
-        assert len(registry._hooks) == 1
+        assert len(registry.hooks) == 1
         result = registry.unregister(cb)
         assert result is True
-        assert len(registry._hooks) == 0
+        assert len(registry.hooks) == 0
 
     def test_unregister_not_found(self):
         registry = HookRegistry()
@@ -84,7 +84,7 @@ class TestHookRegistry:
         registry.register(lambda e: None, name="a")
         registry.register(lambda e: None, name="b")
         registry.clear()
-        assert len(registry._hooks) == 0
+        assert len(registry.hooks) == 0
 
     def test_exception_isolation(self):
         registry = HookRegistry()

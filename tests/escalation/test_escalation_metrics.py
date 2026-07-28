@@ -19,35 +19,35 @@ from zephyr.governance.escalation.escalation_metrics import EscalationMetrics
 class TestEscalationMetrics:
     def test_instantiation(self):
         m = EscalationMetrics()
-        assert m._total_evals == 0
-        assert m._blocks == 0
-        assert m._auto_guards == 0
-        assert m._autonomous == 0
-        assert m._false_positives == 0
-        assert m._latencies == []
+        assert m.total_evals == 0
+        assert m.blocks == 0
+        assert m.auto_guards == 0
+        assert m.autonomous == 0
+        assert m.false_positives == 0
+        assert m.latencies == []
 
     def test_record_blocked(self):
         m = EscalationMetrics()
         m.record("blocked", 0.5)
-        assert m._blocks == 1
-        assert m._total_evals == 1
+        assert m.blocks == 1
+        assert m.total_evals == 1
 
     def test_record_auto_guard(self):
         m = EscalationMetrics()
         m.record("auto_guard", 0.3)
-        assert m._auto_guards == 1
-        assert m._total_evals == 1
+        assert m.auto_guards == 1
+        assert m.total_evals == 1
 
     def test_record_autonomous(self):
         m = EscalationMetrics()
         m.record("autonomous", 0.1)
-        assert m._autonomous == 1
-        assert m._total_evals == 1
+        assert m.autonomous == 1
+        assert m.total_evals == 1
 
     def test_record_false_positive(self):
         m = EscalationMetrics()
         m.record("blocked", 0.5, was_false_positive=True)
-        assert m._false_positives == 1
+        assert m.false_positives == 1
 
     def test_escalation_rate_empty(self):
         m = EscalationMetrics()

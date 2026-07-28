@@ -22,26 +22,26 @@ class TestEscalationLoopDetectorInstantiation:
 
     def test_empty_history(self):
         eld = EscalationLoopDetector()
-        assert eld._history == []
+        assert eld.history == []
 
 
 class TestRecordTransition:
     def test_record_adds_two_entries(self):
         eld = EscalationLoopDetector()
         eld.record_transition("T-1", "L1", "L2")
-        assert len(eld._history) == 2
+        assert len(eld.history) == 2
 
     def test_record_multiple_transitions(self):
         eld = EscalationLoopDetector()
         eld.record_transition("T-1", "L1", "L2")
         eld.record_transition("T-1", "L2", "L3")
-        assert len(eld._history) == 4
+        assert len(eld.history) == 4
 
     def test_record_different_tasks(self):
         eld = EscalationLoopDetector()
         eld.record_transition("T-1", "L1", "L2")
         eld.record_transition("T-2", "L1", "L2")
-        assert len(eld._history) == 4
+        assert len(eld.history) == 4
 
 
 class TestDetectLoop:

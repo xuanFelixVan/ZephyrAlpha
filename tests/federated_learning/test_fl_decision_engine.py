@@ -27,13 +27,13 @@ from zephyr.feedback_loop.protocols import ActionType
 class TestDecisionEngineInstantiation:
     def test_creates_without_adapter(self):
         engine = DecisionEngine()
-        assert engine._adapter is None
-        assert engine._pending == []
+        assert engine.adapter is None
+        assert engine.pending == []
 
     def test_creates_with_adapter(self):
         adapter = MagicMock()
         engine = DecisionEngine(adapter=adapter)
-        assert engine._adapter is adapter
+        assert engine.adapter is adapter
 
 
 class TestEvaluateAnomaly:
