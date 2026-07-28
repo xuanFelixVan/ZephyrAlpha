@@ -55,8 +55,18 @@ class CacheLayer:
         self._lock = threading.Lock()
 
     @staticmethod
+    def hash_text(text: str) -> str:
+        """Stage 4 公共化。"""
+        return CacheLayer._hash_text(text)
+
+    @staticmethod
     def _hash_text(text: str) -> str:
         return hashlib.sha256(text.encode("utf-8")).hexdigest()[:32]
+
+    @staticmethod
+    def cache_key(text_hash: str, model_version: str = "", collection: str = "") -> str:
+        """Stage 4 公共化。"""
+        return CacheLayer._cache_key(text_hash, model_version, collection)
 
     @staticmethod
     def _cache_key(text_hash: str, model_version: str = "", collection: str = "") -> str:

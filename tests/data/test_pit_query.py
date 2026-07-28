@@ -44,16 +44,16 @@ from zephyr.data.pit_query import (
 # ============================================================================
 class TestFmtQueryTime:
     def test_date_object(self):
-        assert pit_query._fmt_query_time(date(2026, 6, 1)) == "2026-06-01"
+        assert pit_query.fmt_query_time(date(2026, 6, 1)) == "2026-06-01"
 
     def test_datetime_object(self):
-        assert pit_query._fmt_query_time(datetime(2026, 6, 1, 14, 30)) == "2026-06-01"
+        assert pit_query.fmt_query_time(datetime(2026, 6, 1, 14, 30)) == "2026-06-01"
 
     def test_string_iso(self):
-        assert pit_query._fmt_query_time("2026-06-01") == "2026-06-01"
+        assert pit_query.fmt_query_time("2026-06-01") == "2026-06-01"
 
     def test_string_with_time(self):
-        assert pit_query._fmt_query_time("2026-06-01T14:30:00") == "2026-06-01"
+        assert pit_query.fmt_query_time("2026-06-01T14:30:00") == "2026-06-01"
 
 
 # ============================================================================
@@ -61,27 +61,27 @@ class TestFmtQueryTime:
 # ============================================================================
 class TestEscapeSymbol:
     def test_normal_symbol(self):
-        assert pit_query._escape_symbol("000001.SZ") == "000001.SZ"
+        assert pit_query.escape_symbol("000001.SZ") == "000001.SZ"
 
     def test_quote_injection(self):
         # 单引号被转义，防 SQL 注入
-        assert pit_query._escape_symbol("x' OR 1=1") == "x\\' OR 1=1"
+        assert pit_query.escape_symbol("x' OR 1=1") == "x\\' OR 1=1"
 
     def test_non_string(self):
-        assert pit_query._escape_symbol(123) == "123"
+        assert pit_query.escape_symbol(123) == "123"
 
 
 class TestFormatSymbols:
     def test_multiple(self):
-        out = pit_query._format_symbols(["000001.SZ", "600000.SH"])
+        out = pit_query.format_symbols(["000001.SZ", "600000.SH"])
         assert out == "'000001.SZ','600000.SH'"
 
     def test_empty_raises(self):
         with pytest.raises(PITQueryError, match="不能为空"):
-            pit_query._format_symbols([])
+            pit_query.format_symbols([])
 
     def test_filters_empty_strings(self):
-        out = pit_query._format_symbols(["000001.SZ", "", "  "])
+        out = pit_query.format_symbols(["000001.SZ", "", "  "])
         assert "000001.SZ" in out
 
 
@@ -90,26 +90,26 @@ class TestFormatSymbols:
 # ============================================================================
 class TestEmbargoClause:
     def test_zero(self):
-        assert pit_query._embargo_clause(0) == ""
+        assert pit_query.embargo_clause(0) == ""
 
     def test_negative(self):
-        assert pit_query._embargo_clause(-3) == ""
+        assert pit_query.embargo_clause(-3) == ""
 
     def test_positive(self):
-        assert pit_query._embargo_clause(5) == " - INTERVAL 5 DAY"
+        assert pit_query.embargo_clause(5) == " - INTERVAL 5 DAY"
 
 
 class TestLimitByClause:
     def test_with_period(self):
-        out = pit_query._limit_by_clause("report_period")
+        out = pit_query.limit_by_clause("report_period")
         assert out == " LIMIT 1 BY symbol, report_period"
 
     def test_without_period(self):
         # repurchase 无报告期列，不做版本去重
-        assert pit_query._limit_by_clause(None) == ""
+        assert pit_query.limit_by_clause(None) == ""
 
     def test_dividend_year(self):
-        out = pit_query._limit_by_clause("dividend_year")
+        out = pit_query.limit_by_clause("dividend_year")
         assert out == " LIMIT 1 BY symbol, dividend_year"
 
 
@@ -118,20 +118,20 @@ class TestLimitByClause:
 # ============================================================================
 class TestResolveTable:
     def test_logical_name(self):
-        qualified, period = pit_query._resolve_table("balance_sheet")
+        qualified, period = pit_query.resolve_table("balance_sheet")
         assert qualified == FINANCIAL_PIT_TABLES["balance_sheet"]
         assert period == "report_period"
 
     def test_repurchase_no_period(self):
-        qualified, period = pit_query._resolve_table("repurchase")
+        qualified, period = pit_query.resolve_table("repurchase")
         assert period is None
 
     def test_non_whitelist_raises(self):
         with pytest.raises(PITQueryError, match="不在财报 PIT 白名单"):
-            pit_query._resolve_table("kline_daily")
+            pit_query.resolve_table("kline_daily")
 
     def test_dividend_period_is_dividend_year(self):
-        _q, period = pit_query._resolve_table("dividend")
+        _q, period = pit_query.resolve_table("dividend")
         assert period == "dividend_year"
 
 
@@ -143,7 +143,7 @@ class TestBuildAsOfSql:
         self.pit = FinancialPITQuery()
 
     def test_single_symbol_basic(self):
-        sql = self.pit._build_as_of_sql(
+        sql = self.pit.build_as_of_sql(
             "balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True
         )
         assert "FROM " + FINANCIAL_PIT_TABLES["balance_sheet"] in sql
@@ -155,7 +155,7 @@ class TestBuildAsOfSql:
         assert "INTERVAL" not in sql
 
     def test_panel_symbols(self):
-        sql = self.pit._build_as_of_sql(
+        sql = self.pit.build_as_of_sql(
             "income_statement", ["000001.SZ", "600000.SH"], "2026-06-01", "symbol,report_period,total_assets", single=False
         )
         assert "symbol IN ('000001.SZ','600000.SH')" in sql
@@ -163,26 +163,26 @@ class TestBuildAsOfSql:
 
     def test_embargo_applied(self):
         pit = FinancialPITQuery(PITQueryConfig(embargo_days=5))
-        sql = pit._build_as_of_sql(
+        sql = pit.build_as_of_sql(
             "balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True
         )
         assert "announce_date <= toDate('2026-06-01') - INTERVAL 5 DAY" in sql
 
     def test_repurchase_no_limit_by(self):
-        sql = self.pit._build_as_of_sql(
+        sql = self.pit.build_as_of_sql(
             "repurchase", ["000001.SZ"], "2026-06-01", "*", single=True
         )
         assert "LIMIT 1 BY" not in sql
 
     def test_non_whitelist_raises(self):
         with pytest.raises(PITQueryError):
-            self.pit._build_as_of_sql(
+            self.pit.build_as_of_sql(
                 "kline_daily", ["000001.SZ"], "2026-06-01", "*", single=True
             )
 
     def test_sql_injection_blocked(self):
         # 恶意 symbol 被转义
-        sql = self.pit._build_as_of_sql(
+        sql = self.pit.build_as_of_sql(
             "balance_sheet", ["x' OR '1'='1"], "2026-06-01", "*", single=True
         )
         assert "\\'" in sql
@@ -324,7 +324,7 @@ class TestConfig:
 
     def test_embargo_propagates_to_sql(self):
         pit = FinancialPITQuery(PITQueryConfig(embargo_days=10))
-        sql = pit._build_as_of_sql(
+        sql = pit.build_as_of_sql(
             "balance_sheet", ["000001.SZ"], "2026-06-01", "*", single=True
         )
         assert "INTERVAL 10 DAY" in sql

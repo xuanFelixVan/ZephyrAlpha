@@ -33,8 +33,8 @@ from zephyr.governance.escalation import (
 @pytest.fixture(autouse=True)
 def _disable_lsg():
     with (
-        patch.object(EscalationEngine, "_lsg_scan_input", lambda self, desc: None),
-        patch.object(DelegationEngine, "_lsg_verify_delegation", lambda self, event: None),
+        patch.object(EscalationEngine, "lsg_scan_input", lambda self, desc: None),
+        patch.object(DelegationEngine, "lsg_verify_delegation", lambda self, event: None),
     ):
         yield
 

@@ -26,13 +26,13 @@ from zephyr.intelligence.model_profiling.deepseek_v4_chat import (
 class TestDeepSeekV4ChatInit:
     def test_default_init(self):
         chat = DeepSeekV4Chat()
-        assert chat._model == "deepseek-v4-pro"
-        assert isinstance(chat._api_key, str)
-        assert chat._base_url == DEFAULT_BASE_URL
-        assert chat._thinking is True
-        assert chat._temperature == 0.1
-        assert chat._max_tokens == 4096
-        assert chat._timeout == 120.0
+        assert chat.raw_model == "deepseek-v4-pro"
+        assert isinstance(chat.api_key, str)
+        assert chat.base_url == DEFAULT_BASE_URL
+        assert chat.thinking is True
+        assert chat.temperature == 0.1
+        assert chat.max_tokens == 4096
+        assert chat.timeout == 120.0
         assert chat.cumulative_cost_rmb == 0.0
         assert chat.cumulative_input_tokens == 0
         assert chat.cumulative_output_tokens == 0
@@ -48,27 +48,27 @@ class TestDeepSeekV4ChatInit:
             max_tokens=2048,
             timeout_s=60.0,
         )
-        assert chat._model == "deepseek-v4-flash"
-        assert chat._api_key == "sk-test"
-        assert chat._base_url == "https://custom.api.com"
-        assert chat._thinking is False
-        assert chat._temperature == 0.5
-        assert chat._max_tokens == 2048
-        assert chat._timeout == 60.0
+        assert chat.raw_model == "deepseek-v4-flash"
+        assert chat.api_key == "sk-test"
+        assert chat.base_url == "https://custom.api.com"
+        assert chat.thinking is False
+        assert chat.temperature == 0.5
+        assert chat.max_tokens == 2048
+        assert chat.timeout == 60.0
 
     def test_none_api_key_falls_back_to_env(self):
         import os as _os
 
         chat = DeepSeekV4Chat(api_key=None)
         expected = _os.getenv("DEEPSEEK_API_KEY", "")
-        assert chat._api_key == expected
+        assert chat.api_key == expected
 
     def test_empty_api_key_falls_back_to_env(self):
         import os as _os
 
         chat = DeepSeekV4Chat(api_key="")
         expected = _os.getenv("DEEPSEEK_API_KEY", "")
-        assert chat._api_key == expected
+        assert chat.api_key == expected
 
 
 class TestModelProperty:
@@ -92,7 +92,7 @@ class TestSupportedWorkTypes:
 
     def test_supported_types_count(self):
         chat = DeepSeekV4Chat()
-        assert len(chat.supported_work_types) == 31
+        assert len(chat.supported_work_types) == 33
 
     def test_matches_system_prompts_keys(self):
         chat = DeepSeekV4Chat()
@@ -115,54 +115,54 @@ class TestResetCostCounters:
 
 class TestParseJson:
     def test_valid_json(self):
-        result = DeepSeekV4Chat._parse_json('{"key": "value"}')
+        result = DeepSeekV4Chat.parse_json('{"key": "value"}')
         assert result == {"key": "value"}
 
     def test_json_in_code_block(self):
         raw = '```json\n{"key": "value"}\n```'
-        result = DeepSeekV4Chat._parse_json(raw)
+        result = DeepSeekV4Chat.parse_json(raw)
         assert result == {"key": "value"}
 
     def test_invalid_json_returns_empty(self):
-        result = DeepSeekV4Chat._parse_json("not json at all")
+        result = DeepSeekV4Chat.parse_json("not json at all")
         assert result == {}
 
     def test_empty_string_returns_empty(self):
-        result = DeepSeekV4Chat._parse_json("")
+        result = DeepSeekV4Chat.parse_json("")
         assert result == {}
 
     def test_json_with_extra_text(self):
         raw = 'Here is the result: {"key": "value"} done'
-        result = DeepSeekV4Chat._parse_json(raw)
+        result = DeepSeekV4Chat.parse_json(raw)
         assert result == {"key": "value"}
 
     def test_expected_keys_missing(self):
-        result = DeepSeekV4Chat._parse_json('{"key": "value"}', expected_keys=["missing"])
+        result = DeepSeekV4Chat.parse_json('{"key": "value"}', expected_keys=["missing"])
         assert result == {"key": "value"}
 
     def test_non_dict_json_returns_empty(self):
-        result = DeepSeekV4Chat._parse_json("[1, 2, 3]")
+        result = DeepSeekV4Chat.parse_json("[1, 2, 3]")
         assert result == {}
 
 
 class TestStripThinkBlock:
     def test_with_think_tags(self):
         text = "<think>reasoning here</think> actual output"
-        result = DeepSeekV4Chat._strip_think_block(text)
+        result = DeepSeekV4Chat.strip_think_block(text)
         assert "actual output" in result
         assert "reasoning" not in result
 
     def test_no_think_tags(self):
         text = "just normal output"
-        result = DeepSeekV4Chat._strip_think_block(text)
+        result = DeepSeekV4Chat.strip_think_block(text)
         assert result == "just normal output"
 
     def test_empty_string(self):
-        result = DeepSeekV4Chat._strip_think_block("")
+        result = DeepSeekV4Chat.strip_think_block("")
         assert result == ""
 
     def test_none_input(self):
-        result = DeepSeekV4Chat._strip_think_block(None)
+        result = DeepSeekV4Chat.strip_think_block(None)
         assert result is None
 
 
@@ -185,7 +185,7 @@ class TestPricingRmb:
 
 class TestSystemPrompts:
     def test_prompts_count(self):
-        assert len(SYSTEM_PROMPTS) == 31
+        assert len(SYSTEM_PROMPTS) == 33
 
     def test_all_values_are_strings(self):
         for key, value in SYSTEM_PROMPTS.items():
@@ -195,4 +195,4 @@ class TestSystemPrompts:
 
 class TestDefaultBaseUrl:
     def test_value(self):
-        assert DEFAULT_BASE_URL == "https://api.deepseek.com"
+        assert DEFAULT_BASE_URL == "https://api.deepseek.com/v1"

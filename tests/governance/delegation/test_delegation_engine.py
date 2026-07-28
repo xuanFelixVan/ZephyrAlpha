@@ -35,7 +35,7 @@ def _make_event(owner_id="owner1", description="test event"):
 
 @pytest.fixture(autouse=True)
 def _mock_lsg():
-    with patch.object(DelegationEngine, "_lsg_verify_delegation"):
+    with patch.object(DelegationEngine, "lsg_verify_delegation"):
         yield
 
 

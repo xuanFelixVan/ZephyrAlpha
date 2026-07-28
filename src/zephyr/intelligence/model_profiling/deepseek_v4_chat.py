@@ -337,6 +337,42 @@ class DeepSeekV4Chat:
     def model_id(self) -> str:
         return self.model
 
+    @property
+    def raw_model(self) -> str:
+        """Raw model name without thinking suffix (public API)."""
+        return self._model
+
+    # ── Stage 4 公共化属性 ──
+    @property
+    def api_key(self) -> str:
+        """API key (public API)."""
+        return self._api_key
+
+    @property
+    def base_url(self) -> str:
+        """Base URL (public API)."""
+        return self._base_url
+
+    @property
+    def thinking(self) -> bool:
+        """Whether thinking mode is enabled (public API)."""
+        return self._thinking
+
+    @property
+    def temperature(self) -> float:
+        """Temperature setting (public API)."""
+        return self._temperature
+
+    @property
+    def max_tokens(self) -> int:
+        """Max tokens (public API)."""
+        return self._max_tokens
+
+    @property
+    def timeout(self) -> float:
+        """Timeout seconds (public API)."""
+        return self._timeout
+
     def _get_client(self):
         _patch_win32_ver()
         from openai import OpenAI
@@ -572,6 +608,11 @@ class DeepSeekV4Chat:
         return frozenset(SYSTEM_PROMPTS.keys())
 
     @staticmethod
+    def parse_json(raw: str, expected_keys: list[str] | None = None) -> dict[str, Any]:
+        """Stage 4 公共化。"""
+        return DeepSeekV4Chat._parse_json(raw, expected_keys)
+
+    @staticmethod
     def _parse_json(raw: str, expected_keys: list[str] | None = None) -> dict[str, Any]:
         text = raw.strip()
         if text.startswith("```"):
@@ -599,6 +640,11 @@ class DeepSeekV4Chat:
                     break
         _log.warning("DeepSeekV4Chat JSON parse failed; raw=%s", raw[:200])
         return {}
+
+    @staticmethod
+    def strip_think_block(text: str) -> str:
+        """Stage 4 公共化。"""
+        return DeepSeekV4Chat._strip_think_block(text)
 
     @staticmethod
     def _strip_think_block(text: str) -> str:

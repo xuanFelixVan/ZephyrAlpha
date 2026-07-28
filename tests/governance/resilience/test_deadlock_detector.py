@@ -379,7 +379,7 @@ class TestDelegationEngineIntegration:
 
         det = DeadlockDetector()
         engine = DelegationEngine(deadlock_detector=det)
-        monkeypatch.setattr(engine, "_lsg_verify_delegation", lambda event: None)
+        monkeypatch.setattr(engine, "lsg_verify_delegation", lambda event: None)
         engine.register_delegate("delegate1", ["custom"])
 
         event = EscalationEvent(
@@ -401,7 +401,7 @@ class TestDelegationEngineIntegration:
 
         det = DeadlockDetector()
         engine = DelegationEngine(deadlock_detector=det)
-        monkeypatch.setattr(engine, "_lsg_verify_delegation", lambda event: None)
+        monkeypatch.setattr(engine, "lsg_verify_delegation", lambda event: None)
         engine.register_delegate("delegate1", ["custom"])
 
         event = EscalationEvent(

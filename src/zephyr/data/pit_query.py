@@ -114,6 +114,11 @@ class PITQueryConfig:
     embargo_days: int = 0
 
 
+def fmt_query_time(query_time: datetime | date | str) -> str:
+    """将查询时点格式化为 'YYYY-MM-DD' 字符串（toDate() 入参）。Stage 4 公共化。"""
+    return _fmt_query_time(query_time)
+
+
 def _fmt_query_time(query_time: datetime | date | str) -> str:
     """将查询时点格式化为 'YYYY-MM-DD' 字符串（toDate() 入参）。"""
     if isinstance(query_time, str):
@@ -121,9 +126,19 @@ def _fmt_query_time(query_time: datetime | date | str) -> str:
     return query_time.strftime("%Y-%m-%d")
 
 
+def escape_symbol(symbol: str) -> str:
+    """转义标的代码中的单引号，防 SQL 注入。Stage 4 公共化。"""
+    return _escape_symbol(symbol)
+
+
 def _escape_symbol(symbol: str) -> str:
     """转义标的代码中的单引号，防 SQL 注入。"""
     return str(symbol).replace("'", "\\'")
+
+
+def format_symbols(symbols: Iterable[str]) -> str:
+    """将标的列表格式化为 SQL IN 子句内容。Stage 4 公共化。"""
+    return _format_symbols(symbols)
 
 
 def _format_symbols(symbols: Iterable[str]) -> str:
@@ -134,11 +149,21 @@ def _format_symbols(symbols: Iterable[str]) -> str:
     return ",".join(f"'{s}'" for s in escaped)
 
 
+def embargo_clause(embargo_days: int) -> str:
+    """构建 announce_date 截止回退子句。Stage 4 公共化。"""
+    return _embargo_clause(embargo_days)
+
+
 def _embargo_clause(embargo_days: int) -> str:
     """构建 announce_date 截止回退子句。"""
     if embargo_days and embargo_days > 0:
         return f" - INTERVAL {embargo_days} DAY"
     return ""
+
+
+def limit_by_clause(period_col: str | None) -> str:
+    """构建 LIMIT 1 BY 子句。Stage 4 公共化。"""
+    return _limit_by_clause(period_col)
 
 
 def _limit_by_clause(period_col: str | None) -> str:
@@ -150,6 +175,11 @@ def _limit_by_clause(period_col: str | None) -> str:
     if period_col is None:
         return ""
     return f" LIMIT 1 BY symbol, {period_col}"
+
+
+def resolve_table(table: str) -> tuple[str, str | None]:
+    """解析逻辑表名为全限定表名。Stage 4 公共化。"""
+    return _resolve_table(table)
 
 
 def _resolve_table(table: str) -> tuple[str, str | None]:
@@ -361,6 +391,17 @@ class FinancialPITQuery:
     # ------------------------------------------------------------------
     # SQL 构建（纯函数，便于单测）
     # ------------------------------------------------------------------
+    def build_as_of_sql(
+        self,
+        table: str,
+        symbols: list[str],
+        query_time: datetime | date | str,
+        columns: str,
+        single: bool,
+    ) -> str:
+        """构建 AS OF JOIN SQL。Stage 4 公共化。"""
+        return self._build_as_of_sql(table, symbols, query_time, columns, single)
+
     def _build_as_of_sql(
         self,
         table: str,

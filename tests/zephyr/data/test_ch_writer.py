@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ch_writer 单测（MOD-L00-004 阶段2，Hyper-V 迁移后修订 2026-07-16）。
 
 测试内容：

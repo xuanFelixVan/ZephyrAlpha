@@ -268,7 +268,7 @@ class EscalationEngine:
         source_event_id: str | None = None,
     ) -> EscalationEvent:
         start_time = __import__("time").monotonic()
-        self._lsg_scan_input(description)
+        self.lsg_scan_input(description)
         event = EscalationEvent(
             category=category,
             description=description,
@@ -494,6 +494,10 @@ class EscalationEngine:
         self._hooks_enabled = False
 
     def _lsg_scan_input(self, description: str) -> None:
+        """[DEPRECATED] 薄包装, 转发到公共 lsg_scan_input (reverse hierarchy)。"""
+        self.lsg_scan_input(description)
+
+    def lsg_scan_input(self, description: str) -> None:
         if not description:
             return
         try:
