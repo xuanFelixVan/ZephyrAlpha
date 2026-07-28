@@ -91,7 +91,7 @@ class TestBaseMCPServer:
             },
             handler=_echo,
         )
-        server._rbac_guard = None
+        server.rbac_guard = None
         return server
 
     def test_initialize(self) -> None:

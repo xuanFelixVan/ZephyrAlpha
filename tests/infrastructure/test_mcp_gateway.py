@@ -109,7 +109,7 @@ class TestMCPGateway:
         assert result.get("content")
 
     def test_gateway_own_tools_exist(self, gw: MCPGateway) -> None:
-        names = gw._tools
+        names = gw.tools
         assert "mcp_gateway.health_status" in names
         assert "mcp_gateway.list_servers" in names
         assert "mcp_gateway.audit_stats" in names
@@ -169,24 +169,24 @@ class TestCircuitBreaker:
     """断路器三态测试。"""
 
     def test_initial_closed(self, gw: MCPGateway) -> None:
-        for sid, cb in gw._circuit_breakers.items():
+        for sid, cb in gw.circuit_breakers.items():
             assert cb.state == "CLOSED"
 
     def test_failure_opens_breaker(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["gate_engine"]
+        cb = gw.circuit_breakers["gate_engine"]
         for _ in range(4):
             cb.failure()
         assert cb.state == "OPEN"
 
     def test_allow_returns_false_when_open(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["gate_engine"]
+        cb = gw.circuit_breakers["gate_engine"]
         for _ in range(5):
             cb.failure()
         assert cb.allow() is False
 
     def test_recovery_after_timeout(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["gate_engine"]
-        cb._recovery = 0.01  # 10ms for test
+        cb = gw.circuit_breakers["gate_engine"]
+        cb.recovery = 0.01  # 10ms for test
         for _ in range(5):
             cb.failure()
         time.sleep(0.02)
@@ -194,8 +194,8 @@ class TestCircuitBreaker:
         assert cb.state == "HALF_OPEN"
 
     def test_success_closes_half_open(self, gw: MCPGateway) -> None:
-        cb = gw._circuit_breakers["gate_engine"]
-        cb._recovery = 0.01
+        cb = gw.circuit_breakers["gate_engine"]
+        cb.recovery = 0.01
         for _ in range(5):
             cb.failure()
         time.sleep(0.02)
@@ -239,5 +239,5 @@ class TestAuditIntegration:
                 "_session_id": "test_audit",
             }
         )
-        stats = gw._audit.stats("test_audit")
+        stats = gw.audit.stats("test_audit")
         assert stats["total_calls"] >= 1

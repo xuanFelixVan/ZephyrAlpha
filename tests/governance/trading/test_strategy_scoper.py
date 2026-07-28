@@ -32,43 +32,43 @@ class TestScopeLevel:
 class TestStrategyScoperInstantiation:
     def test_empty_on_creation(self):
         scoper = StrategyScoper()
-        assert scoper._scopes == {}
+        assert scoper.scopes == {}
 
     def test_independent_instances(self):
         s1 = StrategyScoper()
         s2 = StrategyScoper()
         s1.assign_scope("a", ScopeLevel.SIG)
-        assert "a" not in s2._scopes
+        assert "a" not in s2.scopes
 
 
 class TestAssignScope:
     def test_assign_sig(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent_1", ScopeLevel.SIG)
-        assert scoper._scopes["agent_1"] is ScopeLevel.SIG
+        assert scoper.scopes["agent_1"] is ScopeLevel.SIG
 
     def test_assign_strategy(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent_2", ScopeLevel.STRATEGY)
-        assert scoper._scopes["agent_2"] is ScopeLevel.STRATEGY
+        assert scoper.scopes["agent_2"] is ScopeLevel.STRATEGY
 
     def test_assign_capital(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent_3", ScopeLevel.CAPITAL)
-        assert scoper._scopes["agent_3"] is ScopeLevel.CAPITAL
+        assert scoper.scopes["agent_3"] is ScopeLevel.CAPITAL
 
     def test_reassign_overwrites(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent_1", ScopeLevel.SIG)
         scoper.assign_scope("agent_1", ScopeLevel.CAPITAL)
-        assert scoper._scopes["agent_1"] is ScopeLevel.CAPITAL
+        assert scoper.scopes["agent_1"] is ScopeLevel.CAPITAL
 
     def test_multiple_agents(self):
         scoper = StrategyScoper()
         scoper.assign_scope("a", ScopeLevel.SIG)
         scoper.assign_scope("b", ScopeLevel.STRATEGY)
         scoper.assign_scope("c", ScopeLevel.CAPITAL)
-        assert len(scoper._scopes) == 3
+        assert len(scoper.scopes) == 3
 
 
 class TestCanAccess:

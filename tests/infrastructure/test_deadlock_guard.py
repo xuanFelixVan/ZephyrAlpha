@@ -17,12 +17,12 @@ from zephyr.infrastructure.a2a_protocol.layer3_coordination.deadlock_guard impor
 class TestDeadlockGuard:
     def test_create(self):
         dg = DeadlockGuard()
-        assert dg._locks == {}
+        assert dg.locks == {}
 
     def test_acquire_success(self):
         dg = DeadlockGuard()
         assert dg.try_acquire("resource-1", "agent-a") is True
-        assert dg._locks["resource-1"] == "agent-a"
+        assert dg.locks["resource-1"] == "agent-a"
 
     def test_acquire_already_held(self):
         dg = DeadlockGuard()
@@ -33,13 +33,13 @@ class TestDeadlockGuard:
         dg = DeadlockGuard()
         dg.try_acquire("resource-1", "agent-a")
         assert dg.release("resource-1", "agent-a") is True
-        assert "resource-1" not in dg._locks
+        assert "resource-1" not in dg.locks
 
     def test_release_wrong_holder(self):
         dg = DeadlockGuard()
         dg.try_acquire("resource-1", "agent-a")
         assert dg.release("resource-1", "agent-b") is False
-        assert dg._locks["resource-1"] == "agent-a"
+        assert dg.locks["resource-1"] == "agent-a"
 
     def test_release_nonexistent(self):
         dg = DeadlockGuard()

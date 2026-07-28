@@ -51,15 +51,15 @@ class TestPropagationReport:
 class TestImpactPropagatorInit:
     def test_default_project_root(self):
         prop = ImpactPropagator()
-        assert prop._project_root == Path.cwd()
+        assert prop.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         prop = ImpactPropagator(project_root=tmp_path)
-        assert prop._project_root == tmp_path
+        assert prop.project_root == tmp_path
 
     def test_none_project_root(self):
         prop = ImpactPropagator(project_root=None)
-        assert prop._project_root == Path.cwd()
+        assert prop.project_root == Path.cwd()
 
 
 class TestAnalyzePropagation:

@@ -176,7 +176,7 @@ class TestToYaml:
 class TestSchemaEvolutionManagerInstantiation:
     def test_create(self, tmp_path):
         mgr = SchemaEvolutionManager(project_root=tmp_path)
-        assert mgr._root == tmp_path
+        assert mgr.root == tmp_path
 
 
 class TestSchemaEvolutionManagerCheckCompatibility:

@@ -270,11 +270,11 @@ class TestMcpProcessLifecycle:
     def test_process_reuse_on_same_name(self, gateway, standin_script):
         """同名进程应复用（reuse_count 增加）。"""
         gateway.launch("mcp-e2e-reuse", [sys.executable, str(standin_script)], idle_timeout_s=600.0)
-        entry1 = gateway._pool._pool.get("mcp-e2e-reuse")
+        entry1 = gateway.pool._pool.get("mcp-e2e-reuse")
         assert entry1 is not None
 
         gateway.launch("mcp-e2e-reuse", [sys.executable, str(standin_script)], idle_timeout_s=600.0)
-        entry2 = gateway._pool._pool.get("mcp-e2e-reuse")
+        entry2 = gateway.pool._pool.get("mcp-e2e-reuse")
 
         assert entry2 is not None
         assert entry2.pid == entry1.pid, "Same name should reuse same process"
@@ -316,7 +316,7 @@ class TestBootShutdownE2E:
         try:
             core.boot()
             # boot 可能因环境限制失败，但 _booted 应反映实际状态
-            assert isinstance(core._booted, bool)
+            assert isinstance(core.booted, bool)
         finally:
             try:
                 core.shutdown()
@@ -346,7 +346,7 @@ class TestBootShutdownE2E:
         core = AutoRuntimeCore()
         core.boot()
         core.shutdown()
-        assert core._booted is False, "_booted should be False after shutdown"
+        assert core.booted is False, "_booted should be False after shutdown"
 
     def test_boot_shutdown_idempotent(self):
         """连续 boot→shutdown→boot→shutdown 不应抛异常。"""
@@ -360,7 +360,7 @@ class TestBootShutdownE2E:
             core.shutdown()
         finally:
             try:
-                if core._booted:
+                if core.booted:
                     core.shutdown()
             except Exception:
                 pass

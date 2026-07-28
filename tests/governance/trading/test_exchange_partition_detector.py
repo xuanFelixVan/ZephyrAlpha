@@ -19,18 +19,18 @@ from zephyr.governance.data_governance.exchange_partition_detector import Exchan
 class TestExchangePartitionDetectorInit:
     def test_default_empty_exchanges(self):
         detector = ExchangePartitionDetector()
-        assert len(detector._known_exchanges) == 0
+        assert len(detector.known_exchanges) == 0
 
     def test_register_single_exchange(self):
         detector = ExchangePartitionDetector()
         detector.register("NYSE")
-        assert "NYSE" in detector._known_exchanges
+        assert "NYSE" in detector.known_exchanges
 
     def test_register_multiple_exchanges(self):
         detector = ExchangePartitionDetector()
         for ex in ["NYSE", "NASDAQ", "HKEX"]:
             detector.register(ex)
-        assert len(detector._known_exchanges) == 3
+        assert len(detector.known_exchanges) == 3
 
 
 class TestDetectPartition:

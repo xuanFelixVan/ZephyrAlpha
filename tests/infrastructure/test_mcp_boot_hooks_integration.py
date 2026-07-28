@@ -165,8 +165,8 @@ class TestLauncherProcessStartup:
                 idle_timeout_s=600.0,
             )
             time.sleep(0.5)
-            # launcher.check_server_health 使用 gateway._pool._pool.get(f"mcp-{server_id}")
-            entry = gateway._pool._pool.get("mcp-test_server")
+            # launcher.check_server_health 使用 gateway.pool._pool.get(f"mcp-{server_id}")
+            entry = gateway.pool._pool.get("mcp-test_server")
             assert entry is not None, "Pool should track the launched process"
             assert entry.is_alive, "Tracked process should be alive"
         finally:
@@ -354,7 +354,7 @@ class TestRedBlueExtremeScenarios:
 
         # 创建 max_processes=2 的小池
         small_gw = ProcessLifecycleGateway(idle_timeout_s=600.0)
-        small_gw._pool._max_processes = 2
+        small_gw.pool._max_processes = 2
         try:
             # 启动 2 个进程
             for i in range(2):

@@ -61,7 +61,7 @@ class TestKillSwitchSimulator:
     def test_trigger_returns_probe(self, tmp_path, monkeypatch):
         monkeypatch.setattr("zephyr.infrastructure.kill_switch_sim.METRICS_DIR", tmp_path / "metrics")
         sim = KillSwitchSimulator(target_ms=1.0)
-        sim._metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
+        sim.metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
         probe = sim.trigger()
         assert isinstance(probe, KillSwitchProbe)
         assert probe.trigger_timestamp > 0
@@ -72,17 +72,17 @@ class TestKillSwitchSimulator:
         metrics_dir = tmp_path / "metrics"
         monkeypatch.setattr("zephyr.infrastructure.kill_switch_sim.METRICS_DIR", metrics_dir)
         sim = KillSwitchSimulator(target_ms=1.0)
-        sim._metrics_path = metrics_dir / "kill_switch_probes.jsonl"
+        sim.metrics_path = metrics_dir / "kill_switch_probes.jsonl"
         sim.trigger()
-        assert sim._metrics_path.exists()
-        content = sim._metrics_path.read_text(encoding="utf-8").strip()
+        assert sim.metrics_path.exists()
+        content = sim.metrics_path.read_text(encoding="utf-8").strip()
         data = json.loads(content)
         assert "probe_id" in data
 
     def test_trigger_with_ack_callback(self, tmp_path, monkeypatch):
         monkeypatch.setattr("zephyr.infrastructure.kill_switch_sim.METRICS_DIR", tmp_path / "metrics")
         sim = KillSwitchSimulator(target_ms=1.0)
-        sim._metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
+        sim.metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
         callback_called = []
         sim.register_ack_callback(lambda: callback_called.append(True))
         sim.trigger()
@@ -91,21 +91,21 @@ class TestKillSwitchSimulator:
     def test_probe_history(self, tmp_path, monkeypatch):
         monkeypatch.setattr("zephyr.infrastructure.kill_switch_sim.METRICS_DIR", tmp_path / "metrics")
         sim = KillSwitchSimulator(target_ms=1.0)
-        sim._metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
+        sim.metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
         sim.trigger()
         sim.trigger()
-        assert len(sim._probe_history) == 2
+        assert len(sim.probe_history) == 2
 
     def test_health_check(self, tmp_path, monkeypatch):
         monkeypatch.setattr("zephyr.infrastructure.kill_switch_sim.METRICS_DIR", tmp_path / "metrics")
         sim = KillSwitchSimulator(target_ms=1.0)
-        sim._metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
+        sim.metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
         result = sim.health_check()
         assert isinstance(result, bool)
 
     def test_custom_target_ms(self, tmp_path, monkeypatch):
         monkeypatch.setattr("zephyr.infrastructure.kill_switch_sim.METRICS_DIR", tmp_path / "metrics")
         sim = KillSwitchSimulator(target_ms=100.0)
-        sim._metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
+        sim.metrics_path = tmp_path / "metrics" / "kill_switch_probes.jsonl"
         probe = sim.trigger()
         assert probe.target_met is True

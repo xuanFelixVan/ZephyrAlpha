@@ -30,8 +30,8 @@ class TestArbitratorInstantiation:
 
     def test_creates_instance_with_engines(self):
         arb = Arbitrator(escalation_engine=object(), deadlock_detector=object())
-        assert arb._escalation_engine is not None
-        assert arb._deadlock_detector is not None
+        assert arb.escalation_engine is not None
+        assert arb.deadlock_detector is not None
 
     def test_initial_audit_log_empty(self):
         arb = Arbitrator()

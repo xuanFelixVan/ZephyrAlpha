@@ -120,15 +120,15 @@ class TestConcurrent100Tasks:
                 # 直接设置 batch_id 在 DB 中
                 repo.create(task, allow_direct_create=True)
                 # 更新状态为 READY 和 batch_id
-                repo._conn.execute(
+                repo.conn.execute(
                     "UPDATE tasks SET status='READY', batch_id=? WHERE task_id=?",
                     ("extreme-batch", tid),
                 )
-                repo._conn.commit()
+                repo.conn.commit()
                 task_ids.append(tid)
 
             # 验证100个任务都已创建
-            count = repo._conn.execute(
+            count = repo.conn.execute(
                 "SELECT COUNT(*) FROM tasks WHERE batch_id='extreme-batch' AND status='READY'"
             ).fetchone()[0]
             assert count == 100, f"Expected 100 READY tasks, got {count}"
@@ -165,7 +165,7 @@ class TestConcurrent100Tasks:
             )
 
             # 验证：所有被认领的任务状态为 IN_PROGRESS
-            in_progress_count = repo._conn.execute(
+            in_progress_count = repo.conn.execute(
                 "SELECT COUNT(*) FROM tasks WHERE batch_id='extreme-batch' AND status='IN_PROGRESS'"
             ).fetchone()[0]
             assert in_progress_count == 100, (
@@ -188,11 +188,11 @@ class TestConcurrent100Tasks:
                     try:
                         task = _make_taskcard(tid)
                         repo.create(task, allow_direct_create=True)
-                        repo._conn.execute(
+                        repo.conn.execute(
                             "UPDATE tasks SET status='READY', batch_id=? WHERE task_id=?",
                             ("mixed-batch", tid),
                         )
-                        repo._conn.commit()
+                        repo.conn.commit()
                     except Exception as e:
                         with error_lock:
                             errors.append(f"producer: {e}")
@@ -227,7 +227,7 @@ class TestConcurrent100Tasks:
             assert not errors, f"Errors during mixed create+claim: {errors[:5]}"
 
             # 验证数据一致性
-            total = repo._conn.execute(
+            total = repo.conn.execute(
                 "SELECT COUNT(*) FROM tasks WHERE batch_id='mixed-batch'"
             ).fetchone()[0]
             assert total == 50, f"Expected 50 tasks, got {total}"
@@ -485,7 +485,7 @@ class TestBudgetExhaustion:
         dimension = BudgetDimension.TOKEN
 
         # 尝试认领超过日限额的Token
-        daily_limit = engine._policies[dimension].daily_limit
+        daily_limit = engine.policies[dimension].daily_limit
         result = engine.try_claim_budget(
             provider_id=provider_id,
             dimension=dimension,
@@ -509,7 +509,7 @@ class TestBudgetExhaustion:
         dimension = BudgetDimension.COST
 
         # 尝试认领超过日限额的成本
-        daily_limit = engine._policies[dimension].daily_limit
+        daily_limit = engine.policies[dimension].daily_limit
         result = engine.try_claim_budget(
             provider_id=provider_id,
             dimension=dimension,

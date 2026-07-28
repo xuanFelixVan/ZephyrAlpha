@@ -161,7 +161,7 @@ class TestDashboardPrintSummary:
 class TestKnowledgeTransferGate:
     def test_instantiation(self, tmp_path):
         gate = KnowledgeTransferGate(project_root=tmp_path)
-        assert gate._root == tmp_path
+        assert gate.root == tmp_path
 
     def test_generate_summary_no_index(self, tmp_path):
         gate = KnowledgeTransferGate(project_root=tmp_path)

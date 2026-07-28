@@ -92,10 +92,10 @@ def _kill_process(pid: int) -> None:
 def _check_server_health(server_id: str, gateway) -> bool:
     """模拟 launcher.check_server_health 的逻辑。
 
-    通过 gateway._pool._pool.get(f"mcp-{server_id}") 获取进程条目，
+    通过 gateway.pool._pool.get(f"mcp-{server_id}") 获取进程条目，
     返回 entry.is_alive。
     """
-    entry = gateway._pool._pool.get(f"mcp-{server_id}")
+    entry = gateway.pool._pool.get(f"mcp-{server_id}")
     if entry is None:
         return False
     return entry.is_alive
@@ -109,7 +109,7 @@ def _restart_server(server_id: str, gateway, cmd: list[str] | None = None) -> bo
     3. 返回新进程是否存活
     """
     # 终止旧进程
-    gateway._pool.terminate(f"mcp-{server_id}")
+    gateway.pool.terminate(f"mcp-{server_id}")
 
     # 重新启动
     if cmd is None:
@@ -274,7 +274,7 @@ class TestProcessRestartRecovery:
         assert recovered is True, "restart_server should recover dead process"
 
         # 验证新进程存活且 PID 不同
-        new_entry = gateway._pool._pool.get("mcp-restart1")
+        new_entry = gateway.pool._pool.get("mcp-restart1")
         assert new_entry is not None
         assert new_entry.is_alive is True
         assert new_entry.pid != old_pid, "New process should have different PID"
@@ -295,13 +295,13 @@ class TestProcessRestartRecovery:
         """对存活进程调用 restart_server 应终止旧进程并启动新进程。"""
         gateway.launch("mcp-alive3", [sys.executable, str(standin_script)], idle_timeout_s=600.0)
         time.sleep(0.3)
-        old_pid = gateway._pool._pool.get("mcp-alive3").pid
+        old_pid = gateway.pool._pool.get("mcp-alive3").pid
 
         cmd = [sys.executable, str(standin_script)]
         recovered = _restart_server("alive3", gateway, cmd)
         assert recovered is True
 
-        new_pid = gateway._pool._pool.get("mcp-alive3").pid
+        new_pid = gateway.pool._pool.get("mcp-alive3").pid
         assert new_pid != old_pid, "restart should create new process"
 
     def test_restart_returns_false_for_missing_cmd(self, gateway):
@@ -319,7 +319,7 @@ class TestProcessRestartRecovery:
         cmd = [sys.executable, str(standin_script)]
         _restart_server("verify", gateway, cmd)
 
-        new_entry = gateway._pool._pool.get("mcp-verify")
+        new_entry = gateway.pool._pool.get("mcp-verify")
         assert new_entry is not None
         assert _is_pid_alive(new_entry.pid), f"New PID {new_entry.pid} should be alive in OS"
 
@@ -365,7 +365,7 @@ class TestMcpHealthCheckSimulation:
         assert results["srv3"] == "healthy"
 
         # 验证 srv2 新进程存活
-        new_entry = gateway._pool._pool.get("mcp-srv2")
+        new_entry = gateway.pool._pool.get("mcp-srv2")
         assert new_entry is not None
         assert new_entry.is_alive is True
 

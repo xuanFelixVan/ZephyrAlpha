@@ -33,11 +33,11 @@ def runner(tmp_project):
 class TestForwardFixRunnerInstantiation:
     def test_default_project_root(self):
         r = ForwardFixRunner()
-        assert r._project_root == Path.cwd()
+        assert r.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_project):
         r = ForwardFixRunner(project_root=tmp_project)
-        assert r._project_root == tmp_project
+        assert r.project_root == tmp_project
 
 
 class TestCanForwardFix:
