@@ -30,6 +30,18 @@ class ClockGuard:
         self._monotonic_start = time.monotonic()
         self._wall_start = time.time()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def monotonic_start(self):
+        """只读：monotonic_start（Stage 4 公共化）。"""
+        return self._monotonic_start
+
+    @property
+    def wall_start(self):
+        """只读：wall_start（Stage 4 公共化）。"""
+        return self._wall_start
+
+
     def detect_drift(self) -> float:
         mono_elapsed = time.monotonic() - self._monotonic_start
         wall_elapsed = time.time() - self._wall_start

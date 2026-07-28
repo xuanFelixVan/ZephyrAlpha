@@ -27,6 +27,13 @@ class SubagentHookPropagator:
     def __init__(self):
         self._hooks: dict[str, dict] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def hooks(self) -> dict[str, dict]:
+        """只读：hooks（Stage 4 公共化）。"""
+        return self._hooks
+
+
     def register_hook(self, parent_agent: str, hook_name: str, propagate: bool = True):
         self._hooks[parent_agent] = {"name": hook_name, "propagate_to_subagents": propagate}
 

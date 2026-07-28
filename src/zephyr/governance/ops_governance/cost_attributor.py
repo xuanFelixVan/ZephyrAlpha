@@ -48,6 +48,23 @@ class CostAttributor:
         self._attributions: list[CostAttribution] = []
         self._counter: int = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def attributions(self) -> list[CostAttribution]:
+        """只读：attributions（Stage 4 公共化）。"""
+        return self._attributions
+
+    @property
+    def counter(self) -> int:
+        """只读：counter（Stage 4 公共化）。"""
+        return self._counter
+
+    @property
+    def top_n(self):
+        """只读：top_n（Stage 4 公共化）。"""
+        return self._top_n
+
+
     def attribute(
         self,
         action_type: str,

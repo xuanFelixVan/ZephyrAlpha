@@ -30,6 +30,13 @@ class ProviderFailover:
     def __init__(self):
         self._healthy: dict[str, bool] = {p: True for p in FALLBACK_CHAIN}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def healthy(self) -> dict[str, bool]:
+        """只读：healthy（Stage 4 公共化）。"""
+        return self._healthy
+
+
     def mark_unhealthy(self, provider: str):
         self._healthy[provider] = False
 

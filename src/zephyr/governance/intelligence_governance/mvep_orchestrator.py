@@ -36,6 +36,13 @@ class MVEPOrchestrator:
     def __init__(self):
         self._implemented: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def implemented(self) -> set[str]:
+        """只读：implemented（Stage 4 公共化）。"""
+        return self._implemented
+
+
     def mark_implemented(self, decision_id: str):
         self._implemented.add(decision_id)
 

@@ -31,6 +31,29 @@ class BurstLimiter:
         self._max_burst = 10
         self._requests: list[float] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def burst_window_s(self):
+        """只读：burst_window_s（Stage 4 公共化）。"""
+        return self._burst_window_s
+
+    @burst_window_s.setter
+    def burst_window_s(self, value):
+        """写入：burst_window_s（Stage 4 公共化）。"""
+        self._burst_window_s = value
+
+
+    @property
+    def max_burst(self):
+        """只读：max_burst（Stage 4 公共化）。"""
+        return self._max_burst
+
+    @property
+    def requests(self) -> list[float]:
+        """只读：requests（Stage 4 公共化）。"""
+        return self._requests
+
+
     def allow(self) -> bool:
         now = time.time()
         self._requests = [t for t in self._requests if now - t < self._burst_window_s]

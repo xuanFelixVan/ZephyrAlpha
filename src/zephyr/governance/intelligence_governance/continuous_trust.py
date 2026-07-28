@@ -154,6 +154,13 @@ class ContinuousTrust:
         self._ledger_path = self._ledger_dir / "continuous_trust_ledger.jsonl"
         self._score_path = self._ledger_dir / "trust-score.json"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def ledger_dir(self):
+        """只读：ledger_dir（Stage 4 公共化）。"""
+        return self._ledger_dir
+
+
     def record_trust_event(
         self,
         trust_delta: float,

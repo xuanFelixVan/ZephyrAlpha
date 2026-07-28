@@ -30,6 +30,13 @@ class CrossAssistantAdapter:
     def __init__(self):
         self._adapters: dict[str, dict] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def adapters(self) -> dict[str, dict]:
+        """只读：adapters（Stage 4 公共化）。"""
+        return self._adapters
+
+
     def register_adapter(self, ide_name: str, config: dict = None) -> bool:
         if ide_name not in SUPPORTED_IDES:
             return False

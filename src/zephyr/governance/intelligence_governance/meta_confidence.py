@@ -27,6 +27,13 @@ class MetaConfidence:
     def __init__(self):
         self._history: list[tuple[float, float, bool]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> list[tuple[float, float, bool]]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def self_assess(self, confidence: float, evidence_count: int, domain_familiarity: float) -> float:
         ev_score = min(1.0, evidence_count / 5.0)
         return confidence * 0.5 + ev_score * 0.3 + domain_familiarity * 0.2

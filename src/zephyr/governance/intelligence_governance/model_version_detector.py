@@ -27,6 +27,13 @@ class ModelVersionDetector:
     def __init__(self):
         self._known_versions: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def known_versions(self) -> dict[str, str]:
+        """只读：known_versions（Stage 4 公共化）。"""
+        return self._known_versions
+
+
     def record_version(self, model_id: str, version: str):
         self._known_versions[model_id] = version
 

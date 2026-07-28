@@ -139,6 +139,20 @@ class BudgetEngine:
         self._closed = False
         self._init_consumption()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def policies(self) -> dict[BudgetDimension, BudgetPolicy]:
+        """只读：policies（Stage 4 公共化）。"""
+        return self._policies
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def alerts(self) -> list[BudgetAlert]:
+        """只读：alerts（Stage 4 公共化）。"""
+        return self._alerts
+
+
     @property
     def degradation_steps(self) -> list[DegradationStep]:
         """当前生效的降级阶梯（只读视图）。"""

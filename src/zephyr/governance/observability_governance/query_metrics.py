@@ -161,6 +161,24 @@ class QueryMetrics:
         self._lock = threading.Lock()
         self._enabled = True
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def db_path(self) -> Path:
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+    @property
+    def slow_threshold_ms(self):
+        """只读：slow_threshold_ms（Stage 4 公共化）。"""
+        return self._slow_threshold_ms
+
+    @slow_threshold_ms.setter
+    def slow_threshold_ms(self, value):
+        """写入：slow_threshold_ms（Stage 4 公共化）。"""
+        self._slow_threshold_ms = value
+
+
+
     @classmethod
     def instance(cls) -> QueryMetrics:
         if cls._instance is None:

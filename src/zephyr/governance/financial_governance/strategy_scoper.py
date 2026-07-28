@@ -35,6 +35,13 @@ class StrategyScoper:
     def __init__(self):
         self._scopes: dict[str, ScopeLevel] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def scopes(self) -> dict[str, ScopeLevel]:
+        """只读：scopes（Stage 4 公共化）。"""
+        return self._scopes
+
+
     def assign_scope(self, agent_id: str, scope: ScopeLevel):
         self._scopes[agent_id] = scope
 

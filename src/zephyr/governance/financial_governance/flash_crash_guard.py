@@ -33,6 +33,13 @@ class FlashCrashGuard:
         self._tripped = False
         self._trip_time = 0.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def trip_time(self):
+        """只读：trip_time（Stage 4 公共化）。"""
+        return self._trip_time
+
+
     def evaluate(self, price_drop_pct: float, velocity_pct_per_s: float, bid_ask_spread_pct: float) -> bool:
         if price_drop_pct > self.LIQUIDITY_THRESHOLD or velocity_pct_per_s > self.VELOCITY_THRESHOLD:
             self._tripped = True

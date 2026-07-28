@@ -57,6 +57,13 @@ class DelegationEngine:
         self._deadlock_detector = deadlock_detector
         self._delegation_depth: dict[str, int] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def delegate_load(self) -> dict[str, int]:
+        """只读：delegate_load（Stage 4 公共化）。"""
+        return self._delegate_load
+
+
     @property
     def deadlock_detector(self):
         """公共只读属性 (reverse hierarchy: _deadlock_detector 仍为存储)。"""
