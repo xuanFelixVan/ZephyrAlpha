@@ -29,6 +29,11 @@ class RuleShadowRunner:
     def __init__(self):
         self._shadow_rules: dict[str, dict] = {}
 
+    # Stage 4 公共化：shadow_rules 属性公共只读（primary），私有属性向后兼容。
+    @property
+    def shadow_rules(self) -> dict[str, dict]:
+        return self._shadow_rules
+
     def deploy_shadow(self, rule_id: str, rule_def: dict, shadow_days: int = 3):
         self._shadow_rules[rule_id] = {
             "rule": rule_def,

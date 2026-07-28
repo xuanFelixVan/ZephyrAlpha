@@ -19,50 +19,50 @@ from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_shadow_runner impo
 class TestRuleShadowRunnerInit:
     def test_instantiation(self):
         rsr = RuleShadowRunner()
-        assert rsr._shadow_rules == {}
+        assert rsr.shadow_rules == {}
 
 
 class TestDeployShadow:
     def test_deploy_single_rule(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
-        assert "RULE-001" in rsr._shadow_rules
-        assert rsr._shadow_rules["RULE-001"]["rule"] == {"action": "block"}
+        assert "RULE-001" in rsr.shadow_rules
+        assert rsr.shadow_rules["RULE-001"]["rule"] == {"action": "block"}
 
     def test_deploy_with_default_shadow_days(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
-        assert rsr._shadow_rules["RULE-001"]["shadow_days"] == 3
+        assert rsr.shadow_rules["RULE-001"]["shadow_days"] == 3
 
     def test_deploy_with_custom_shadow_days(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"}, shadow_days=7)
-        assert rsr._shadow_rules["RULE-001"]["shadow_days"] == 7
+        assert rsr.shadow_rules["RULE-001"]["shadow_days"] == 7
 
     def test_deploy_records_timestamp(self):
         rsr = RuleShadowRunner()
         before = time.time()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
         after = time.time()
-        assert before <= rsr._shadow_rules["RULE-001"]["deployed_at"] <= after
+        assert before <= rsr.shadow_rules["RULE-001"]["deployed_at"] <= after
 
     def test_deploy_initializes_empty_decisions(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
-        assert rsr._shadow_rules["RULE-001"]["decisions"] == []
+        assert rsr.shadow_rules["RULE-001"]["decisions"] == []
 
     def test_deploy_multiple_rules(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
         rsr.deploy_shadow("RULE-002", {"action": "warn"})
-        assert len(rsr._shadow_rules) == 2
+        assert len(rsr.shadow_rules) == 2
 
     def test_redeploy_overwrites(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
         rsr.deploy_shadow("RULE-001", {"action": "warn"})
-        assert rsr._shadow_rules["RULE-001"]["rule"] == {"action": "warn"}
-        assert rsr._shadow_rules["RULE-001"]["decisions"] == []
+        assert rsr.shadow_rules["RULE-001"]["rule"] == {"action": "warn"}
+        assert rsr.shadow_rules["RULE-001"]["decisions"] == []
 
 
 class TestRecordShadowDecision:
@@ -70,20 +70,20 @@ class TestRecordShadowDecision:
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
         rsr.record_shadow_decision("RULE-001", "op_a", "low", "high")
-        assert len(rsr._shadow_rules["RULE-001"]["decisions"]) == 1
-        assert rsr._shadow_rules["RULE-001"]["decisions"][0] == {"op": "op_a", "old": "low", "new": "high"}
+        assert len(rsr.shadow_rules["RULE-001"]["decisions"]) == 1
+        assert rsr.shadow_rules["RULE-001"]["decisions"][0] == {"op": "op_a", "old": "low", "new": "high"}
 
     def test_record_multiple_decisions(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"})
         rsr.record_shadow_decision("RULE-001", "op_a", "low", "high")
         rsr.record_shadow_decision("RULE-001", "op_b", "low", "low")
-        assert len(rsr._shadow_rules["RULE-001"]["decisions"]) == 2
+        assert len(rsr.shadow_rules["RULE-001"]["decisions"]) == 2
 
     def test_record_for_undeployed_rule_ignored(self):
         rsr = RuleShadowRunner()
         rsr.record_shadow_decision("RULE-999", "op_a", "low", "high")
-        assert "RULE-999" not in rsr._shadow_rules
+        assert "RULE-999" not in rsr.shadow_rules
 
 
 class TestDiff:
@@ -153,18 +153,18 @@ class TestBoundary:
     def test_empty_rule_def(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {})
-        assert rsr._shadow_rules["RULE-001"]["rule"] == {}
+        assert rsr.shadow_rules["RULE-001"]["rule"] == {}
 
     def test_complex_rule_def(self):
         rsr = RuleShadowRunner()
         rule_def = {"action": "block", "conditions": [{"field": "amount", "op": ">", "value": 1000}]}
         rsr.deploy_shadow("RULE-001", rule_def)
-        assert rsr._shadow_rules["RULE-001"]["rule"]["conditions"][0]["value"] == 1000
+        assert rsr.shadow_rules["RULE-001"]["rule"]["conditions"][0]["value"] == 1000
 
     def test_zero_shadow_days(self):
         rsr = RuleShadowRunner()
         rsr.deploy_shadow("RULE-001", {"action": "block"}, shadow_days=0)
-        assert rsr._shadow_rules["RULE-001"]["shadow_days"] == 0
+        assert rsr.shadow_rules["RULE-001"]["shadow_days"] == 0
 
     def test_unicode_rule_id(self):
         rsr = RuleShadowRunner()
