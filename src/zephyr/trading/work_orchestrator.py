@@ -59,6 +59,25 @@ class WorkOrchestrator:
         self._slots_used: dict[str, int] = {"trae": 0, "local": 0, "api": 0}
         self._lock = threading.Lock()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def items(self) -> dict[str, WorkItem]:
+        """只读：items（Stage 4 公共化）。"""
+        return self._items
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def slots(self) -> dict[str, int]:
+        """只读：slots（Stage 4 公共化）。"""
+        return self._slots
+
+    @property
+    def slots_used(self) -> dict[str, int]:
+        """只读：slots_used（Stage 4 公共化）。"""
+        return self._slots_used
+
+
     def register_dag(self, dag: WorkDAG) -> None:
         # 5.142.3 修复: _dags 访问统一用 self._lock 保护, 避免与 list_dags/load_dags 并发抛 RuntimeError
         with self._lock:

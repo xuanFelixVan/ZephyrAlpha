@@ -21,11 +21,11 @@ from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_negotiation impo
 class TestA2ANegotiation:
     def test_create_default(self):
         neg = A2ANegotiation()
-        assert neg._max_rounds == 5
+        assert neg.max_rounds == 5
 
     def test_create_custom(self):
         neg = A2ANegotiation(max_rounds=3, round_timeout=30.0)
-        assert neg._max_rounds == 3
+        assert neg.max_rounds == 3
 
     def test_propose_accepted(self):
         neg = A2ANegotiation()

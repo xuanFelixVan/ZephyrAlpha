@@ -20,7 +20,7 @@ from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_voting import (
 class TestA2AVoting:
     def test_create_default(self):
         v = A2AVoting()
-        assert v._default_quorum == 0.5
+        assert v.default_quorum == 0.5
 
     def test_open_proposal_and_cast_vote(self):
         v = A2AVoting()

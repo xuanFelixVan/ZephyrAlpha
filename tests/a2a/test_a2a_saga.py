@@ -80,5 +80,5 @@ class TestA2ASaga:
     def test_add_step_with_compensate(self):
         saga = A2ASaga("saga-6")
         saga.add_step("s1", "a", "act", {}, compensate_action="undo_act", compensate_params={"undo": True})
-        assert saga._compensations["s1"]["action"] == "undo_act"
-        assert saga._compensations["s1"]["params"] == {"undo": True}
+        assert saga.compensations["s1"]["action"] == "undo_act"
+        assert saga.compensations["s1"]["params"] == {"undo": True}

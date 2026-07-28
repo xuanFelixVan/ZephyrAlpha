@@ -1,0 +1,18 @@
+skills:
+  domain:
+    SKILL-DOM-DS0-001:
+      name: database-specialist
+      description: Domain skill for database-specialist
+      skill_type: domain
+      tier: L1
+      path: database-specialist/SKILL.md
+      references: []
+    SKILL-DOM-MB0-002:
+      name: master-blueprint
+      description: Domain skill for master-blueprint
+      skill_type: domain
+      tier: L1
+      path: master-blueprint/SKILL.md
+      references: []
+metadata:
+  total_skills: 2

@@ -51,7 +51,7 @@ class TestTaskQueue:
 class TestA2AWorkSteal:
     def test_create_default(self):
         ws = A2AWorkSteal()
-        assert ws._max_steal_per_cycle == 3
+        assert ws.max_steal_per_cycle == 3
 
     def test_steal_from_busy_agent(self):
         ws = A2AWorkSteal(steal_threshold=1)
@@ -107,4 +107,4 @@ class TestA2AWorkSteal:
         stolen1 = ws.steal("idle", queues)
         assert len(stolen1) >= 1
         for t in stolen1:
-            assert ws._stolen.__contains__(t.get("task_id", ""))
+            assert ws.stolen.__contains__(t.get("task_id", ""))

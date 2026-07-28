@@ -109,13 +109,13 @@ class TestAgentCreationPolicy:
 
     def test_record_spawn_creates_entry(self):
         self.policy_engine.record_spawn("new-agent")
-        assert "new-agent" in self.policy_engine._child_counts
-        assert len(self.policy_engine._child_counts["new-agent"]) == 1
+        assert "new-agent" in self.policy_engine.child_counts
+        assert len(self.policy_engine.child_counts["new-agent"]) == 1
 
     def test_record_spawn_appends(self):
         self.policy_engine.record_spawn("agent-x")
         self.policy_engine.record_spawn("agent-x")
-        assert len(self.policy_engine._child_counts["agent-x"]) == 2
+        assert len(self.policy_engine.child_counts["agent-x"]) == 2
 
     def test_can_create_different_agents_independent(self):
         p1 = self._make_policy(parent_agent_id="a1", max_children=1)

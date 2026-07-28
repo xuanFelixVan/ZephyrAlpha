@@ -60,7 +60,7 @@ class TestAgentCooldownInstantiation:
 
     def test_default_project_root(self):
         ac = AgentCooldown()
-        assert ac._project_root == Path.cwd()
+        assert ac.project_root == Path.cwd()
 
 
 class TestAgentCooldownQuarantine:

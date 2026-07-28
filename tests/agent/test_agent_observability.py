@@ -19,11 +19,11 @@ from zephyr.autonomy_core.agent_observability import AgentObservability
 class TestAgentObservabilityInit:
     def test_instantiation_creates_empty_traces(self):
         obs = AgentObservability()
-        assert obs._traces == {}
+        assert obs.traces == {}
 
     def test_instantiation_traces_is_dict(self):
         obs = AgentObservability()
-        assert isinstance(obs._traces, dict)
+        assert isinstance(obs.traces, dict)
 
 
 class TestStartTrace:
@@ -36,7 +36,7 @@ class TestStartTrace:
     def test_start_trace_creates_trace_entry(self):
         obs = AgentObservability()
         trace_id = obs.start_trace("skill-xyz")
-        trace = obs._traces[trace_id]
+        trace = obs.traces[trace_id]
         assert trace["skill_id"] == "skill-xyz"
         assert isinstance(trace["spans"], list)
         assert len(trace["spans"]) == 0
@@ -47,7 +47,7 @@ class TestStartTrace:
         tid1 = obs.start_trace("skill-a")
         tid2 = obs.start_trace("skill-b")
         assert tid1 != tid2
-        assert len(obs._traces) == 2
+        assert len(obs.traces) == 2
 
     def test_start_trace_with_empty_skill_id(self):
         obs = AgentObservability()
@@ -84,7 +84,7 @@ class TestAddSpan:
         obs.add_span(trace_id, "span-1")
         obs.add_span(trace_id, "span-2")
         obs.add_span(trace_id, "span-3")
-        assert len(obs._traces[trace_id]["spans"]) == 3
+        assert len(obs.traces[trace_id]["spans"]) == 3
 
     def test_add_span_raises_keyerror_for_unknown_trace(self):
         obs = AgentObservability()
