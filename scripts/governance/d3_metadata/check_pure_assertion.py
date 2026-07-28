@@ -79,7 +79,7 @@ _SCOPE_EXCLUDE_BASENAMES = [
 ]
 
 
-def _is_in_scope(rel_path: str) -> bool:
+def is_in_scope(rel_path: str) -> bool:
     """判定 .md 文件是否在 PURE-ASSERTION gate 检测范围内。
 
     Args:
@@ -112,7 +112,12 @@ def _is_in_scope(rel_path: str) -> bool:
     return False
 
 
-def _check_file(content: str, added_lines: set[int] | None) -> list[str]:
+def _is_in_scope(rel_path: str) -> bool:
+    """已废弃别名，转发到 is_in_scope（向后兼容）。"""
+    return is_in_scope(rel_path)
+
+
+def check_file(content: str, added_lines: set[int] | None) -> list[str]:
     """检测文件内容中的纯陈述违规。
 
     Args:
@@ -178,6 +183,11 @@ def _check_file(content: str, added_lines: set[int] | None) -> list[str]:
     return violations
 
 
+def _check_file(content: str, added_lines: set[int] | None) -> list[str]:
+    """已废弃别名，转发到 check_file（向后兼容）。"""
+    return check_file(content, added_lines)
+
+
 # ---------------------------------------------------------------------------
 # --ci / --full-scan 双模式入口（Task 2 追加）
 # ---------------------------------------------------------------------------
@@ -213,7 +223,7 @@ def _to_rel_path(abs_or_rel: str, project_root: str) -> str:
     return abs_or_rel.replace("\\", "/")
 
 
-def _get_added_lines_ci(rel_path: str) -> set[int]:
+def get_added_lines_ci(rel_path: str) -> set[int]:
     """--ci 模式：从 git diff --cached 提取 added 行号集合。"""
     try:
         r = subprocess.run(
@@ -243,6 +253,11 @@ def _get_added_lines_ci(rel_path: str) -> set[int]:
     return added
 
 
+def _get_added_lines_ci(rel_path: str) -> set[int]:
+    """已废弃别名，转发到 get_added_lines_ci（向后兼容）。"""
+    return get_added_lines_ci(rel_path)
+
+
 def _read_staged_content(rel_path: str) -> str:
     """读取 staged 版本文件内容（git show :path）。"""
     try:
@@ -257,7 +272,7 @@ def _read_staged_content(rel_path: str) -> str:
     return ""
 
 
-def _walk_scope_files(project_root: str) -> list[str]:
+def walk_scope_files(project_root: str) -> list[str]:
     """--full-scan 模式：遍历项目根，返回所有 in-scope .md 文件绝对路径。"""
     result: list[str] = []
     for dirpath, _dirs, filenames in os.walk(project_root):
@@ -269,9 +284,14 @@ def _walk_scope_files(project_root: str) -> list[str]:
                 continue
             abs_path = os.path.join(dirpath, fname)
             rel = _to_rel_path(abs_path, project_root)
-            if _is_in_scope(rel):
+            if is_in_scope(rel):
                 result.append(abs_path)
     return result
+
+
+def _walk_scope_files(project_root: str) -> list[str]:
+    """已废弃别名，转发到 walk_scope_files（向后兼容）。"""
+    return walk_scope_files(project_root)
 
 
 def _run_ci_mode(files: list[str], project_root: str) -> int:
@@ -279,15 +299,15 @@ def _run_ci_mode(files: list[str], project_root: str) -> int:
     all_violations: list[str] = []
     for abs_file in files:
         rel = _to_rel_path(abs_file, project_root)
-        if not _is_in_scope(rel):
+        if not is_in_scope(rel):
             continue
-        added = _get_added_lines_ci(rel)
+        added = get_added_lines_ci(rel)
         if not added:
             continue
         content = _read_staged_content(rel)
         if not content:
             continue
-        violations = _check_file(content, added)
+        violations = check_file(content, added)
         for v in violations:
             all_violations.append(f"{rel}: {v}")
     if all_violations:
@@ -302,7 +322,7 @@ def _run_ci_mode(files: list[str], project_root: str) -> int:
 
 def _run_full_scan(project_root: str) -> int:
     """--full-scan 模式：全量扫描所有 in-scope .md 文件。"""
-    files = _walk_scope_files(project_root)
+    files = walk_scope_files(project_root)
     all_violations: list[str] = []
     for abs_file in files:
         rel = _to_rel_path(abs_file, project_root)
@@ -312,7 +332,7 @@ def _run_full_scan(project_root: str) -> int:
         except OSError as e:
             print(f"PURE-ASSERTION full-scan: 读取失败跳过 {rel}: {e}", file=sys.stderr)
             continue
-        violations = _check_file(content, None)
+        violations = check_file(content, None)
         for v in violations:
             all_violations.append(f"{rel}: {v}")
     if all_violations:

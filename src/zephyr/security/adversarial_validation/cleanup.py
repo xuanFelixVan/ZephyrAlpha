@@ -125,3 +125,11 @@ class Cleanup:
             return True
         except CleanupVerificationError:
             return False
+
+    # ── Stage 4 公共化（2026-07-28）：backups property ──
+    # 消除 tests/safety/test_circuit_breaker.py 对 _backups 的直接访问。
+
+    @property
+    def backups(self) -> dict[Path, bytes]:
+        """公共 API：当前已登记的备份字典（路径 -> 原始字节内容）。"""
+        return self._backups

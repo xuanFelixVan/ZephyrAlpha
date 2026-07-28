@@ -90,11 +90,20 @@ class CircuitBreaker:
         elif self._state is CircuitState.CLOSED and report.circuit_breaker_open:
             self._trip()
 
-    def _trip(self) -> None:
+    def trip(self) -> None:
+        """公共 API（primary）：触发熔断。
+
+        Stage 4 公共化：将熔断器状态置为 OPEN，记录打开时间戳并递增 trip_count。
+        私有 _trip() 为 thin wrapper，委托到本方法。
+        """
         self._state = CircuitState.OPEN
         self._opened_at = time.time() * 1000
         self._trip_count += 1
         logger.warning("circuit_breaker_tripped trip_count=%d cool_down_ms=%d", self._trip_count, self._cool_down_ms)
+
+    def _trip(self) -> None:
+        # Stage 4 公共化：thin wrapper，保留以兼容既有内部调用。
+        self.trip()
 
     def _reset(self) -> None:
         self._state = CircuitState.CLOSED
@@ -130,5 +139,27 @@ class CircuitBreaker:
 
     @property
     def opened_at(self) -> float:
-        """只读：熔断打开时间戳（毫秒，Stage 4 公共化）。"""
+        """熔断打开时间戳（毫秒，Stage 4 公共化，可读写）。"""
         return self._opened_at
+
+    @opened_at.setter
+    def opened_at(self, value: float) -> None:
+        self._opened_at = value
+
+    # ── Stage 4 公共化（2026-07-28）：只读属性暴露 ──
+    # 消除 tests/safety/test_circuit_breaker.py 对私有属性的直接访问。
+
+    @property
+    def cool_down_ms(self) -> int:
+        """公共 API：冷却时间（毫秒）。"""
+        return self._cool_down_ms
+
+    @property
+    def bypass_history(self) -> list[float]:
+        """公共 API：bypass 率历史记录（最近 20 条）。"""
+        return self._bypass_history
+
+    @property
+    def trip_count(self) -> int:
+        """公共 API：熔断累计触发次数。"""
+        return self._trip_count

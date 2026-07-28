@@ -4,16 +4,16 @@
 
 测试内容：
 - notify 写日志 + 写失败汇总文件
-- _write_failure_file JSON 格式正确
+- 失败汇总文件 JSON 格式正确
 - check_daily_failure_rate 阈值判断
 - check_consecutive_failures 连续失败告警
 - check_quota_exhausted iFind 配额告警
 - list_failure_files / read_failure_file 查询
-- _format_alert_text 告警正文格式化
-- _notify_channels 通道分发与级别过滤
-- _send_feishu_webhook 飞书 webhook（未配置跳过 / mock 发送 / 异常吞掉）
-- _send_email_smtp SMTP 邮件（未配置跳过 / mock 发送 / 异常吞掉）
-- _alert_timeout 超时配置读取
+- format_alert_text 告警正文格式化
+- notify_channels 通道分发与级别过滤
+- send_feishu_webhook 飞书 webhook（未配置跳过 / mock 发送 / 异常吞掉）
+- send_email_smtp SMTP 邮件（未配置跳过 / mock 发送 / 异常吞掉）
+- alert_timeout 超时配置读取
 - notify 集成：ERROR 触达通道、WARN 不触达、冷却期不重复触达
 
 用 tmp_path fixture 隔离测试 failures/ 目录。
@@ -234,11 +234,11 @@ def clean_alert_env(monkeypatch):
 
 
 class TestFormatAlertText:
-    """_format_alert_text 测试。"""
+    """format_alert_text 测试。"""
 
     def test_basic_format(self):
         """基本字段格式正确。"""
-        text = Alerter._format_alert_text(
+        text = Alerter.format_alert_text(
             "kline_daily", "连接超时", LEVEL_ERROR, "ifind", None
         )
         assert "[ZephyrAlpha 告警]" in text
@@ -250,14 +250,14 @@ class TestFormatAlertText:
 
     def test_source_none_shows_na(self):
         """source 为 None 显示 N/A。"""
-        text = Alerter._format_alert_text(
+        text = Alerter.format_alert_text(
             "task_x", "err", LEVEL_CRITICAL, None, None
         )
         assert "数据源: N/A" in text
 
     def test_extra_included(self):
         """extra 字典序列化到正文。"""
-        text = Alerter._format_alert_text(
+        text = Alerter.format_alert_text(
             "task_x", "err", LEVEL_ERROR, None, {"retry": 3, "code": "-4318"}
         )
         assert "附加:" in text
@@ -266,36 +266,36 @@ class TestFormatAlertText:
 
     def test_no_extra_line_when_none(self):
         """extra 为 None 时不出现附加行。"""
-        text = Alerter._format_alert_text(
+        text = Alerter.format_alert_text(
             "task_x", "err", LEVEL_ERROR, None, None
         )
         assert "附加:" not in text
 
 
 class TestNotifyChannelsDispatch:
-    """_notify_channels 分发与级别过滤测试。"""
+    """notify_channels 分发与级别过滤测试。"""
 
     def test_warn_does_not_reach_channels(self, alerter, clean_alert_env):
         """WARN 级别不触达通道。"""
-        with patch.object(alerter, "_send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "_send_email_smtp") as mock_em:
-            alerter._notify_channels("task", "err", LEVEL_WARN, None, None)
+        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
+             patch.object(alerter, "send_email_smtp") as mock_em:
+            alerter.notify_channels("task", "err", LEVEL_WARN, None, None)
             mock_fw.assert_not_called()
             mock_em.assert_not_called()
 
     def test_info_does_not_reach_channels(self, alerter, clean_alert_env):
         """INFO 级别不触达通道。"""
-        with patch.object(alerter, "_send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "_send_email_smtp") as mock_em:
-            alerter._notify_channels("task", "err", LEVEL_INFO, None, None)
+        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
+             patch.object(alerter, "send_email_smtp") as mock_em:
+            alerter.notify_channels("task", "err", LEVEL_INFO, None, None)
             mock_fw.assert_not_called()
             mock_em.assert_not_called()
 
     def test_error_reaches_both_channels(self, alerter, clean_alert_env):
         """ERROR 级别触达飞书+邮件两个通道。"""
-        with patch.object(alerter, "_send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "_send_email_smtp") as mock_em:
-            alerter._notify_channels("task", "err", LEVEL_ERROR, "ifind", {"k": "v"})
+        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
+             patch.object(alerter, "send_email_smtp") as mock_em:
+            alerter.notify_channels("task", "err", LEVEL_ERROR, "ifind", {"k": "v"})
             mock_fw.assert_called_once()
             mock_em.assert_called_once()
             # 验证飞书收到的 text 含任务名
@@ -304,19 +304,19 @@ class TestNotifyChannelsDispatch:
 
     def test_critical_reaches_both_channels(self, alerter, clean_alert_env):
         """CRITICAL 级别触达两个通道。"""
-        with patch.object(alerter, "_send_feishu_webhook") as mock_fw, \
-             patch.object(alerter, "_send_email_smtp") as mock_em:
-            alerter._notify_channels("task", "err", LEVEL_CRITICAL, None, None)
+        with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
+             patch.object(alerter, "send_email_smtp") as mock_em:
+            alerter.notify_channels("task", "err", LEVEL_CRITICAL, None, None)
             mock_fw.assert_called_once()
             mock_em.assert_called_once()
 
 
 class TestSendFeishuWebhook:
-    """_send_feishu_webhook 测试。"""
+    """send_feishu_webhook 测试。"""
 
     def test_skip_when_not_configured(self, alerter, clean_alert_env):
         """未配置 webhook 时静默跳过（返回 False，不抛异常）。"""
-        assert alerter._send_feishu_webhook("hello") is False
+        assert alerter.send_feishu_webhook("hello") is False
 
     def test_send_success_when_configured(self, alerter, monkeypatch):
         """配置 webhook 后 mock 发送成功。"""
@@ -326,7 +326,7 @@ class TestSendFeishuWebhook:
         mock_resp.__enter__ = MagicMock(return_value=mock_resp)
         mock_resp.__exit__ = MagicMock(return_value=False)
         with patch("src.zephyr.data.alerter.urllib.request.urlopen", return_value=mock_resp) as mock_open:
-            result = alerter._send_feishu_webhook("test message")
+            result = alerter.send_feishu_webhook("test message")
         assert result is True
         mock_open.assert_called_once()
         # 验证 request 的 url 和 method
@@ -342,30 +342,30 @@ class TestSendFeishuWebhook:
         mock_resp.__enter__ = MagicMock(return_value=mock_resp)
         mock_resp.__exit__ = MagicMock(return_value=False)
         with patch("src.zephyr.data.alerter.urllib.request.urlopen", return_value=mock_resp):
-            result = alerter._send_feishu_webhook("msg")
+            result = alerter.send_feishu_webhook("msg")
         assert result is False
 
     def test_network_exception_swallowed(self, alerter, monkeypatch):
         """网络异常被吞掉，返回 False 不抛异常。"""
         monkeypatch.setenv("ZEPHYR_FEISHU_WEBHOOK", "https://example.com/hook")
         with patch("src.zephyr.data.alerter.urllib.request.urlopen", side_effect=ConnectionError("refused")):
-            result = alerter._send_feishu_webhook("msg")
+            result = alerter.send_feishu_webhook("msg")
         assert result is False
 
 
 class TestSendEmailSmtp:
-    """_send_email_smtp 测试。"""
+    """send_email_smtp 测试。"""
 
     def test_skip_when_not_configured(self, alerter, clean_alert_env):
         """未配置 SMTP host 时静默跳过。"""
-        assert alerter._send_email_smtp("task", LEVEL_ERROR, "body") is False
+        assert alerter.send_email_smtp("task", LEVEL_ERROR, "body") is False
 
     def test_skip_when_host_but_no_user(self, alerter, monkeypatch):
         """配置了 host 但缺 user/recipient 时跳过。"""
         monkeypatch.setenv("ZEPHYR_SMTP_HOST", "smtp.example.com")
         monkeypatch.delenv("ZEPHYR_SMTP_USER", raising=False)
         monkeypatch.delenv("ZEPHYR_ALERT_RECIPIENT", raising=False)
-        assert alerter._send_email_smtp("task", LEVEL_ERROR, "body") is False
+        assert alerter.send_email_smtp("task", LEVEL_ERROR, "body") is False
 
     def test_send_success_when_configured(self, alerter, monkeypatch):
         """完整配置后 mock 发送成功。"""
@@ -378,7 +378,7 @@ class TestSendEmailSmtp:
         mock_smtp.__enter__ = MagicMock(return_value=mock_smtp)
         mock_smtp.__exit__ = MagicMock(return_value=False)
         with patch("src.zephyr.data.alerter.smtplib.SMTP", return_value=mock_smtp) as mock_ctor:
-            result = alerter._send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
+            result = alerter.send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
         assert result is True
         # local_hostname 必须显式传 ASCII 值（B2 验证发现，#ARCH-CH-023）
         mock_ctor.assert_called_once_with(
@@ -413,7 +413,7 @@ class TestSendEmailSmtp:
         mock_smtp.__exit__ = MagicMock(return_value=False)
         mock_smtp.sendmail.side_effect = _capture_sendmail
         with patch("src.zephyr.data.alerter.smtplib.SMTP", return_value=mock_smtp):
-            alerter._send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
+            alerter.send_email_smtp("kline_daily", LEVEL_ERROR, "body text")
         # msg.as_string() 整体必须可 ASCII 编码（SMTP 协议要求）
         assert len(captured_msg) == 1
         msg_str = captured_msg[0]
@@ -432,7 +432,7 @@ class TestSendEmailSmtp:
         mock_smtp.__enter__ = MagicMock(return_value=mock_smtp)
         mock_smtp.__exit__ = MagicMock(return_value=False)
         with patch("src.zephyr.data.alerter.smtplib.SMTP", return_value=mock_smtp):
-            alerter._send_email_smtp("task", LEVEL_ERROR, "body")
+            alerter.send_email_smtp("task", LEVEL_ERROR, "body")
         sender = mock_smtp.sendmail.call_args[0][0]
         assert sender == "noreply@example.com"
 
@@ -446,7 +446,7 @@ class TestSendEmailSmtp:
         mock_smtp.__enter__ = MagicMock(return_value=mock_smtp)
         mock_smtp.__exit__ = MagicMock(return_value=False)
         with patch("src.zephyr.data.alerter.smtplib.SMTP", return_value=mock_smtp):
-            alerter._send_email_smtp("task", LEVEL_ERROR, "body")
+            alerter.send_email_smtp("task", LEVEL_ERROR, "body")
         mock_smtp.login.assert_not_called()
 
     def test_smtp_exception_swallowed(self, alerter, monkeypatch):
@@ -455,26 +455,26 @@ class TestSendEmailSmtp:
         monkeypatch.setenv("ZEPHYR_SMTP_USER", "user@example.com")
         monkeypatch.setenv("ZEPHYR_ALERT_RECIPIENT", "ops@example.com")
         with patch("src.zephyr.data.alerter.smtplib.SMTP", side_effect=ConnectionRefusedError("refused")):
-            result = alerter._send_email_smtp("task", LEVEL_ERROR, "body")
+            result = alerter.send_email_smtp("task", LEVEL_ERROR, "body")
         assert result is False
 
 
 class TestAlertTimeout:
-    """_alert_timeout 配置读取测试。"""
+    """alert_timeout 配置读取测试。"""
 
     def test_default_when_not_set(self, clean_alert_env):
         """未配置时返回默认 5s。"""
-        assert Alerter._alert_timeout() == 5
+        assert Alerter.alert_timeout() == 5
 
     def test_env_override(self, monkeypatch):
         """env 可覆盖超时。"""
         monkeypatch.setenv("ZEPHYR_ALERT_TIMEOUT", "10")
-        assert Alerter._alert_timeout() == 10
+        assert Alerter.alert_timeout() == 10
 
     def test_invalid_value_falls_back(self, monkeypatch):
         """非法值回退到默认。"""
         monkeypatch.setenv("ZEPHYR_ALERT_TIMEOUT", "not-a-number")
-        assert Alerter._alert_timeout() == 5
+        assert Alerter.alert_timeout() == 5
 
 
 class TestNotifyChannelIntegration:
@@ -482,31 +482,31 @@ class TestNotifyChannelIntegration:
 
     def test_error_triggers_channels(self, alerter, clean_alert_env, tmp_path):
         """ERROR 级别 notify 应触达通道（failure file 写入后）。"""
-        with patch.object(alerter, "_notify_channels") as mock_ch:
+        with patch.object(alerter, "notify_channels") as mock_ch:
             alerter.notify("task_a", "err", level=LEVEL_ERROR, source="ifind")
         mock_ch.assert_called_once()
 
     def test_critical_triggers_channels(self, alerter, clean_alert_env, tmp_path):
         """CRITICAL 级别 notify 应触达通道。"""
-        with patch.object(alerter, "_notify_channels") as mock_ch:
+        with patch.object(alerter, "notify_channels") as mock_ch:
             alerter.notify("task_a", "err", level=LEVEL_CRITICAL, source="ifind")
         mock_ch.assert_called_once()
 
     def test_warn_does_not_trigger_channels(self, alerter, clean_alert_env):
         """WARN 级别 notify 不触达通道。"""
-        with patch.object(alerter, "_notify_channels") as mock_ch:
+        with patch.object(alerter, "notify_channels") as mock_ch:
             alerter.notify("task_a", "err", level=LEVEL_WARN)
         mock_ch.assert_not_called()
 
     def test_info_does_not_trigger_channels(self, alerter, clean_alert_env):
         """INFO 级别 notify 不触达通道。"""
-        with patch.object(alerter, "_notify_channels") as mock_ch:
+        with patch.object(alerter, "notify_channels") as mock_ch:
             alerter.notify("task_a", "err", level=LEVEL_INFO)
         mock_ch.assert_not_called()
 
     def test_cooldown_prevents_duplicate_channel_notify(self, alerter, clean_alert_env):
         """冷却期内重复 ERROR 不重复触达通道（failure file 跳过则通道也跳过）。"""
-        with patch.object(alerter, "_notify_channels") as mock_ch:
+        with patch.object(alerter, "notify_channels") as mock_ch:
             alerter.notify("task_a", "err1", level=LEVEL_ERROR)
             # 第二次在 300s 冷却期内 → failure file 返回 False → 通道不触达
             alerter.notify("task_a", "err2", level=LEVEL_ERROR)

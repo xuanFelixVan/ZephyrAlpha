@@ -148,7 +148,7 @@ class Alerter:
             #    写入后发送，与 300s 冷却对齐，防 crash-restart 循环刷屏。
             #    通道未配置或发送失败均不影响返回值（告警失败不应影响主流程）。
             if written:
-                self._notify_channels(task_id, error, level, source, extra)
+                self.notify_channels(task_id, error, level, source, extra)
             return written
         return True
 
@@ -204,7 +204,7 @@ class Alerter:
     # ============== 告警触达通道（audit 8.3，#ARCH-DATA-PIPELINE-001）==============
     # 密钥走 .env（禁止入库）；未配置的通道静默跳过；发送失败 log 后吞掉。
 
-    def _notify_channels(
+    def notify_channels(
         self,
         task_id: str,
         error: str,
@@ -219,12 +219,23 @@ class Alerter:
         """
         if level not in _CHANNEL_THRESHOLD_LEVELS:
             return  # WARN/INFO 不触达人
-        text = self._format_alert_text(task_id, error, level, source, extra)
-        self._send_feishu_webhook(text)
-        self._send_email_smtp(task_id, level, text)
+        text = self.format_alert_text(task_id, error, level, source, extra)
+        self.send_feishu_webhook(text)
+        self.send_email_smtp(task_id, level, text)
+
+    def _notify_channels(
+        self,
+        task_id: str,
+        error: str,
+        level: str,
+        source: str | None,
+        extra: dict | None,
+    ) -> None:
+        """[已废弃] 使用 notify_channels；本方法为向后兼容的瘦封装。"""
+        return self.notify_channels(task_id, error, level, source, extra)
 
     @staticmethod
-    def _format_alert_text(
+    def format_alert_text(
         task_id: str,
         error: str,
         level: str,
@@ -245,7 +256,18 @@ class Alerter:
             lines.append(f"附加: {json.dumps(extra, ensure_ascii=False)}")
         return "\n".join(lines)
 
-    def _send_feishu_webhook(self, text: str) -> bool:
+    @staticmethod
+    def _format_alert_text(
+        task_id: str,
+        error: str,
+        level: str,
+        source: str | None,
+        extra: dict | None,
+    ) -> str:
+        """[已废弃] 使用 format_alert_text；本方法为向后兼容的瘦封装。"""
+        return Alerter.format_alert_text(task_id, error, level, source, extra)
+
+    def send_feishu_webhook(self, text: str) -> bool:
         """发送飞书机器人 webhook（未配置则跳过，发送失败 log 后吞掉）。
 
         飞书自定义机器人 API: POST {webhook_url}
@@ -254,7 +276,7 @@ class Alerter:
         webhook = get_secret_or_default(_FEISHU_WEBHOOK_ENV, "")
         if not webhook:
             return False  # 未配置，静默跳过
-        timeout = self._alert_timeout()
+        timeout = self.alert_timeout()
         payload = json.dumps(
             {"msg_type": "text", "content": {"text": text}},
             ensure_ascii=False,
@@ -276,7 +298,11 @@ class Alerter:
             log.error("飞书 webhook 发送异常: %s", e)
             return False
 
-    def _send_email_smtp(self, task_id: str, level: str, body: str) -> bool:
+    def _send_feishu_webhook(self, text: str) -> bool:
+        """[已废弃] 使用 send_feishu_webhook；本方法为向后兼容的瘦封装。"""
+        return self.send_feishu_webhook(text)
+
+    def send_email_smtp(self, task_id: str, level: str, body: str) -> bool:
         """发送 SMTP 告警邮件（未配置则跳过，发送失败 log 后吞掉）。
 
         配置项（均走 .env）：
@@ -294,7 +320,7 @@ class Alerter:
             return False
         sender = get_secret_or_default(_ALERT_SENDER_ENV, user)
         port = int(get_secret_or_default(_SMTP_PORT_ENV, "587"))
-        timeout = self._alert_timeout()
+        timeout = self.alert_timeout()
         subject = f"[ZephyrAlpha 告警] {level} - {task_id}"
         msg = MIMEText(body, "plain", "utf-8")
         # Subject 含中文，须 RFC 2047 编码（=?utf-8?b?...?=），否则 msg.as_string()
@@ -318,13 +344,22 @@ class Alerter:
             log.error("SMTP 邮件发送异常: %s", e)
             return False
 
+    def _send_email_smtp(self, task_id: str, level: str, body: str) -> bool:
+        """[已废弃] 使用 send_email_smtp；本方法为向后兼容的瘦封装。"""
+        return self.send_email_smtp(task_id, level, body)
+
     @staticmethod
-    def _alert_timeout() -> int:
+    def alert_timeout() -> int:
         """读取告警网络超时配置（env 可覆盖，默认 5s）。"""
         try:
             return int(get_secret_or_default(_ALERT_TIMEOUT_ENV, str(_DEFAULT_ALERT_TIMEOUT)))
         except ValueError:
             return _DEFAULT_ALERT_TIMEOUT
+
+    @staticmethod
+    def _alert_timeout() -> int:
+        """[已废弃] 使用 alert_timeout；本方法为向后兼容的瘦封装。"""
+        return Alerter.alert_timeout()
 
     # ============== 告警条件检查 ==============
 

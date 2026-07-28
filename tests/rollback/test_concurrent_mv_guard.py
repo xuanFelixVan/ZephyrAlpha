@@ -61,8 +61,8 @@ for _p in [str(_SRC), str(_PROJECT_ROOT)]:
 from scripts.git_guard import (
     DANGEROUS_SUBCOMMANDS,
     MV_STRATEGY_ENV,
-    _handle_mv,
-    _scan_untracked_in_dir,
+    handle_mv,
+    scan_untracked_in_dir,
     check_and_execute,
 )
 
@@ -322,7 +322,7 @@ class TestMvWithLockConflict:
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
             with patch("scripts.git_guard.get_session_id", return_value="session-b"):
-                # mv 检测到未跟踪文件会先阻断；若无未跟踪文件，_extract_files_mv 返回 []
+                # mv 检测到未跟踪文件会先阻断；若无未跟踪文件，mv extractor 返回 []
                 # 所以锁冲突不会通过 mv 路径检测（extractor 返回空）
                 # 这里验证 mv 路径的行为：无未跟踪文件 → 透传
                 with patch("scripts.git_guard.passthrough", return_value=0) as mock_pt:
@@ -378,7 +378,7 @@ class TestMvNestedUntracked:
         _add_untracked(repo, "dir_a/sub/deep/l3.py")
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
-            untracked = _scan_untracked_in_dir("dir_a", repo)
+            untracked = scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 3, f"应检测到 3 个未跟踪文件，实际: {untracked}"
         assert "dir_a/l1.py" in untracked
@@ -400,7 +400,7 @@ class TestMvSpecialChars:
         _add_untracked(repo, "dir_a/中文报告.md", "中文内容")
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
-            untracked = _scan_untracked_in_dir("dir_a", repo)
+            untracked = scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 1
         assert "中文" in untracked[0]
@@ -411,7 +411,7 @@ class TestMvSpecialChars:
         _add_untracked(repo, "dir_a/file with space.py", "space content")
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
-            untracked = _scan_untracked_in_dir("dir_a", repo)
+            untracked = scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 1
         assert "file with space.py" in untracked[0]
@@ -422,7 +422,7 @@ class TestMvSpecialChars:
         _add_untracked(repo, "dir_a/报告 (最终版).md", "mixed")
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
-            untracked = _scan_untracked_in_dir("dir_a", repo)
+            untracked = scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 1
         assert "报告" in untracked[0]
@@ -447,7 +447,7 @@ class TestMvGitignoreFiles:
         _add_untracked(repo, "dir_a/debug.log", "log content")
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
-            untracked = _scan_untracked_in_dir("dir_a", repo)
+            untracked = scan_untracked_in_dir("dir_a", repo)
 
         # git status --porcelain --untracked-files=all 会显示 ignored 文件吗？
         # 实际上 --untracked-files=all 显示未跟踪文件，但不显示 ignored 文件
@@ -613,7 +613,7 @@ class TestMultipleAiCreateUntracked:
                 f.result(timeout=10)
 
         with patch("scripts.git_guard.get_project_root", return_value=repo):
-            untracked = _scan_untracked_in_dir("dir_a", repo)
+            untracked = scan_untracked_in_dir("dir_a", repo)
 
         assert len(untracked) == 3, f"应检测到 3 个文件，实际: {untracked}"
 

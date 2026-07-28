@@ -72,6 +72,11 @@ __all__ = [
     "DANGEROUS_SUBCOMMANDS",
     "MV_STRATEGY_ENV",
     "check_and_execute",
+    "handle_mv",
+    "scan_untracked_in_dir",
+    "get_project_root",
+    "get_session_id",
+    "passthrough",
 ]
 
 # 危险子命令集合
@@ -236,7 +241,7 @@ def _extract_files_restore(args: list[str]) -> list[str]:
 
 
 def _extract_files_mv(args: list[str]) -> list[str]:
-    """git mv → 由 _handle_mv 特殊处理，extractor 返回空（不走锁冲突检查）。"""
+    """git mv → 由 handle_mv 特殊处理，extractor 返回空（不走锁冲突检查）。"""
     return []
 
 
@@ -284,20 +289,20 @@ def _handle_stash(git_args: list[str]) -> int:
     """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区。"""
     args = git_args[1:]  # 去掉 'stash'
     if args and args[0] in STASH_READONLY:
-        return passthrough(git_args)
+        return _passthrough(git_args)
     if args and args[0] in STASH_OVERWRITE:
         files_in_scope = _extract_files_stash(args)
         return _check_conflict_or_passthrough(git_args, files_in_scope)
     if args and args[0] == "clear":
         print("[GIT-GUARD] 警告：git stash clear 会删除所有 stash（含未恢复的修改）", file=sys.stderr)
-        return passthrough(git_args)
+        return _passthrough(git_args)
     # push（含无参数 git stash）：会移走未提交修改
     files_in_scope = _extract_files_stash(args)
     if not files_in_scope:
-        return passthrough(git_args)
+        return _passthrough(git_args)
     if _is_gateway_authorized():
         print(f"[GIT-GUARD] stash 授权（{FORCE_STASH_ENV}|{GATEWAY_ENV}），强制 stash {len(files_in_scope)} 个未提交文件", file=sys.stderr)
-        return passthrough(git_args)
+        return _passthrough(git_args)
     print("", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
     print("[GIT-GUARD] git stash 被阻断——会移走未提交的修改", file=sys.stderr)
@@ -483,8 +488,8 @@ def _mv_strategy_stage(
     return passthrough(git_args)
 
 
-def _handle_mv(git_args: list[str]) -> int:
-    """git mv 特殊处理：目录重命名时检测未跟踪文件。
+def handle_mv(git_args: list[str]) -> int:
+    """git mv 特殊处理：目录重命名时检测未跟踪文件（Stage 4 公共化，primary）。
 
     根因：git mv old_dir new_dir 只移动已跟踪文件，未跟踪文件留在旧目录，
     随后旧目录被清理时未跟踪文件丢失。
@@ -525,6 +530,11 @@ def _handle_mv(git_args: list[str]) -> int:
     return _mv_strategy_block(untracked, source, dest, git_args)
 
 
+def _handle_mv(git_args: list[str]) -> int:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return handle_mv(git_args)
+
+
 def check_and_execute(git_args: list[str]) -> int:
     """检查 git 命令是否安全，安全则透传执行。
 
@@ -538,19 +548,19 @@ def check_and_execute(git_args: list[str]) -> int:
     """
     if not git_args:
         # 无参数，直接透传
-        return passthrough(git_args)
+        return _passthrough(git_args)
 
     subcommand = git_args[0]
 
     # 非危险命令，直接透传
     if subcommand not in DANGEROUS_SUBCOMMANDS:
-        return passthrough(git_args)
+        return _passthrough(git_args)
 
     # Fast-path（ARCH-GIT-CALL-BUDGET P1.3）：可信内部调用方已自检，跳过 ls-files
     # 全扫 + 冲突检测，直接透传。仅对 checkout/reset/restore/revert 等危险命令生效；
     # stash/mv 仍走原路径（stash 涉及工作区覆盖语义复杂，mv 涉及未跟踪文件策略）。
     if _is_fast_path_authorized() and subcommand in {"checkout", "reset", "restore", "revert"}:
-        return passthrough(git_args)
+        return _passthrough(git_args)
 
     # stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读
     if subcommand == "stash":
@@ -558,18 +568,18 @@ def check_and_execute(git_args: list[str]) -> int:
 
     # mv 特殊处理：目录重命名时检测未跟踪文件
     if subcommand == "mv":
-        return _handle_mv(git_args)
+        return handle_mv(git_args)
 
     # 危险命令，提取文件范围
     extractor = _EXTRACTORS.get(subcommand)
     if extractor is None:
-        return passthrough(git_args)
+        return _passthrough(git_args)
 
     try:
         files_in_scope = extractor(git_args[1:])
     except Exception as e:
         print(f"[GIT-GUARD] 内部错误（文件提取失败）: {e}", file=sys.stderr)
-        return passthrough(git_args)
+        return _passthrough(git_args)
 
     # 检查 .ailocks/ 冲突，无冲突则透传
     return _check_conflict_or_passthrough(git_args, files_in_scope)

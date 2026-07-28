@@ -90,7 +90,7 @@ class TestCircuitBreakerStateTransitions:
         assert cb.state == CircuitState.CLOSED
         cb.after_run(_make_report(total=10, bypassed=5))
         assert cb.state == CircuitState.OPEN
-        cb._opened_at = time.time() * 1000 - 11000
+        cb.opened_at = time.time() * 1000 - 11000
         assert cb.state == CircuitState.HALF_OPEN
         cb.after_run(_make_report(total=10, bypassed=1))
         assert cb.state == CircuitState.CLOSED
@@ -117,37 +117,37 @@ class TestCircuitBreakerBypassThreshold:
         cb = CircuitBreaker()
         for _ in range(25):
             cb.after_run(_make_report(total=10, bypassed=1))
-        assert len(cb._bypass_history) == 20
+        assert len(cb.bypass_history) == 20
         assert cb.state == CircuitState.CLOSED
 
     def test_zero_total_report_no_effect(self):
         cb = CircuitBreaker()
         cb.after_run(_make_report(total=0, bypassed=0))
         assert cb.state == CircuitState.CLOSED
-        assert cb._bypass_history == []
+        assert cb.bypass_history == []
 
 
 class TestCircuitBreakerCoolDown:
     def test_default_cooldown_is_30000_ms(self):
         cb = CircuitBreaker()
-        assert cb._cool_down_ms == DEFAULT_COOL_DOWN_MS
-        assert cb._cool_down_ms == 30000
+        assert cb.cool_down_ms == DEFAULT_COOL_DOWN_MS
+        assert cb.cool_down_ms == 30000
 
     def test_cooldown_clamped_to_min_10000_ms(self):
         cb = CircuitBreaker(cool_down_ms=5000)
-        assert cb._cool_down_ms == 10000
+        assert cb.cool_down_ms == 10000
 
     def test_open_to_half_open_after_cooldown(self):
         cb = CircuitBreaker(cool_down_ms=10000)
         cb.after_run(_make_report(total=10, bypassed=5))
         assert cb.state == CircuitState.OPEN
-        cb._opened_at = time.time() * 1000 - 11000
+        cb.opened_at = time.time() * 1000 - 11000
         assert cb.state == CircuitState.HALF_OPEN
 
     def test_still_open_within_cooldown(self):
         cb = CircuitBreaker(cool_down_ms=10000)
         cb.after_run(_make_report(total=10, bypassed=5))
-        cb._opened_at = time.time() * 1000 - 5000
+        cb.opened_at = time.time() * 1000 - 5000
         assert cb.state == CircuitState.OPEN
         with pytest.raises(CircuitBreakerOpenError):
             cb.before_run()
@@ -155,7 +155,7 @@ class TestCircuitBreakerCoolDown:
     def test_half_open_state_allows_before_run(self):
         cb = CircuitBreaker(cool_down_ms=10000)
         cb.after_run(_make_report(total=10, bypassed=5))
-        cb._opened_at = time.time() * 1000 - 11000
+        cb.opened_at = time.time() * 1000 - 11000
         assert cb.state == CircuitState.HALF_OPEN
         cb.before_run()
 
@@ -164,7 +164,7 @@ class TestCircuitBreakerHalfOpenRecovery:
     def test_half_open_low_bypass_resets_to_closed(self):
         cb = CircuitBreaker(cool_down_ms=10000)
         cb.after_run(_make_report(total=10, bypassed=5))
-        cb._opened_at = time.time() * 1000 - 11000
+        cb.opened_at = time.time() * 1000 - 11000
         assert cb.state == CircuitState.HALF_OPEN
         cb.after_run(_make_report(total=10, bypassed=1))
         assert cb.state == CircuitState.CLOSED
@@ -172,7 +172,7 @@ class TestCircuitBreakerHalfOpenRecovery:
     def test_half_open_high_bypass_trips_again(self):
         cb = CircuitBreaker(cool_down_ms=10000)
         cb.after_run(_make_report(total=10, bypassed=5))
-        cb._opened_at = time.time() * 1000 - 11000
+        cb.opened_at = time.time() * 1000 - 11000
         assert cb.state == CircuitState.HALF_OPEN
         cb.after_run(_make_report(total=10, bypassed=6))
         assert cb.state == CircuitState.OPEN
@@ -181,24 +181,24 @@ class TestCircuitBreakerHalfOpenRecovery:
 class TestCircuitBreakerTripMethod:
     def test_trip_sets_state_open(self):
         cb = CircuitBreaker()
-        cb._trip()
-        assert cb._state == CircuitState.OPEN
+        cb.trip()
+        assert cb.state == CircuitState.OPEN
         assert cb.state == CircuitState.OPEN
 
     def test_trip_increments_trip_count(self):
         cb = CircuitBreaker()
-        assert cb._trip_count == 0
-        cb._trip()
-        assert cb._trip_count == 1
-        cb._trip()
-        assert cb._trip_count == 2
+        assert cb.trip_count == 0
+        cb.trip()
+        assert cb.trip_count == 1
+        cb.trip()
+        assert cb.trip_count == 2
 
     def test_trip_records_opened_at(self):
         cb = CircuitBreaker()
         before = time.time() * 1000
-        cb._trip()
+        cb.trip()
         after = time.time() * 1000
-        assert before <= cb._opened_at <= after
+        assert before <= cb.opened_at <= after
 
 
 class TestCircuitBreakerResetMethod:
@@ -211,25 +211,25 @@ class TestCircuitBreakerResetMethod:
 
     def test_reset_clears_trip_count(self):
         cb = CircuitBreaker()
-        cb._trip()
-        cb._trip()
-        assert cb._trip_count == 2
+        cb.trip()
+        cb.trip()
+        assert cb.trip_count == 2
         cb.reset()
-        assert cb._trip_count == 0
+        assert cb.trip_count == 0
 
     def test_reset_clears_bypass_history(self):
         cb = CircuitBreaker()
         cb.after_run(_make_report(total=10, bypassed=5))
-        assert len(cb._bypass_history) == 1
+        assert len(cb.bypass_history) == 1
         cb.reset()
-        assert cb._bypass_history == []
+        assert cb.bypass_history == []
 
     def test_reset_clears_opened_at(self):
         cb = CircuitBreaker()
-        cb._trip()
-        assert cb._opened_at > 0
+        cb.trip()
+        assert cb.opened_at > 0
         cb.reset()
-        assert cb._opened_at == 0.0
+        assert cb.opened_at == 0.0
 
     def test_reset_allows_before_run(self):
         cb = CircuitBreaker()
@@ -361,7 +361,7 @@ class TestCleanupBackupRestore:
         (d / "b.txt").write_text("b", encoding="utf-8")
         c = Cleanup()
         c.backup_directory(d)
-        assert len(c._backups) >= 2
+        assert len(c.backups) >= 2
         (d / "a.txt").write_text("changed", encoding="utf-8")
         c.restore_backups()
         assert (d / "a.txt").read_text(encoding="utf-8") == "a"
@@ -373,7 +373,7 @@ class TestCleanupBackupRestore:
         c = Cleanup()
         c.backup_file(f)
         c.restore_backups()
-        assert c._backups == {}
+        assert c.backups == {}
 
 
 class TestCleanupArtifact:
