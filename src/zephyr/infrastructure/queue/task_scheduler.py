@@ -69,6 +69,18 @@ class TaskScheduler:
         self._schedule_path = self._data_dir / "schedules.jsonl"
         self._tasks: dict[str, ScheduledTask] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def tasks(self) -> dict[str, ScheduledTask]:
+        """只读：tasks（Stage 4 公共化）。"""
+        return self._tasks
+
+
     def schedule(self, task_id: str, estimated_tokens: int = 0) -> ScheduledTask:
         scheduled = ScheduledTask(
             schedule_id=f"SCHED-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",

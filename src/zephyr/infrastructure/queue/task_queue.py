@@ -78,6 +78,28 @@ class TaskQueue:
         self._dispatch_handler: Callable[[QueueItem], bool] | None = None
         self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start_polling/stop_polling 的 check-then-act, 避免 TOCTOU
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def config(self):
+        """只读：config（Stage 4 公共化）。"""
+        return self._config
+
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def dispatch_handler(self) -> Callable[[QueueItem], bool] | None:
+        """只读：dispatch_handler（Stage 4 公共化）。"""
+        return self._dispatch_handler
+
+    @property
+    def items(self) -> list[QueueItem]:
+        """只读：items（Stage 4 公共化）。"""
+        return self._items
+
+
     def enqueue(self, task_id: str, priority: str = "P2") -> QueueItem:
         item = QueueItem(
             item_id=f"QITEM-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",

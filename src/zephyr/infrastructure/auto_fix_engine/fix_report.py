@@ -39,6 +39,13 @@ class FixReportGenerator:
         # 改为 deque(maxlen=1000)，自动淘汰最旧记录。
         self._history: deque[FixReport] = deque(maxlen=1000)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> deque[FixReport]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def generate(
         self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None
     ) -> FixReport:

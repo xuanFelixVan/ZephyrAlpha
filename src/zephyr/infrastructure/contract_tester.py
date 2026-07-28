@@ -73,6 +73,13 @@ class ContractTester:
         self._strict = strict
         self._test_count: int = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def strict(self):
+        """只读：strict（Stage 4 公共化）。"""
+        return self._strict
+
+
     def test_contract(
         self,
         contract_path: str | Path,

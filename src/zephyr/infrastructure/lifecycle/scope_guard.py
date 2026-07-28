@@ -53,6 +53,24 @@ class ScopeGuard:
         self._drift_log: list[ScopeDrift] = []
         self._blocked_tasks: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def config(self):
+        """只读：config（Stage 4 公共化）。"""
+        return self._config
+
+    @config.setter
+    def config(self, value):
+        """写入：config（Stage 4 公共化）。"""
+        self._config = value
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def validate_scope(self, task_card: dict[str, Any], actual_touched: list[str]) -> ScopeDrift | None:
         task_id = task_card.get("task_id", "")
         expected = set(task_card.get("allowed_touch", []))

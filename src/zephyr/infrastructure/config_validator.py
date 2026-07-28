@@ -91,6 +91,13 @@ class ConfigValidator:
     def __init__(self, schema_path: str | Path | None = None):
         self._schema_path = Path(schema_path) if schema_path else None
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def schema_path(self):
+        """只读：schema_path（Stage 4 公共化）。"""
+        return self._schema_path
+
+
     def validate(
         self,
         config_path: str | Path,

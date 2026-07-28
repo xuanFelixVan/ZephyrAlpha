@@ -57,6 +57,13 @@ class SafetyGate:
         self._protected_patterns: list[str] = config.get("protected_patterns", [])
         self._enabled = config.get("safety_gate_enabled", True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def enabled(self):
+        """只读：enabled（Stage 4 公共化）。"""
+        return self._enabled
+
+
     def check(self, action: FixAction) -> SafetyDecision:
         if not self._enabled:
             return SafetyDecision(approved=True, confidence=FixConfidence.HIGH, reason="Safety gate disabled")
@@ -84,6 +91,13 @@ class SafetyGate:
 class LockGuard:
     def __init__(self) -> None:
         self._locks_dir = Path(".ailocks")
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def locks_dir(self):
+        """只读：locks_dir（Stage 4 公共化）。"""
+        return self._locks_dir
+
 
     def is_locked(self, filepath: str) -> tuple[bool, str]:
         sanitized = filepath.replace(os.sep, "_").replace(":", "_").replace("/", "_")
@@ -129,6 +143,13 @@ class FixValidator:
 
     def __init__(self, project_root: str | None = None) -> None:
         self._project_root = project_root or str(Path.cwd())
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
 
     def validate_fix(self, target: str) -> ValidationResult:
         errors: list[str] = []
@@ -220,6 +241,18 @@ class CascadeBreaker:
         self._module_frozen: dict[str, float] = {}
         self._global_frozen_until: float = 0.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def global_threshold(self) -> int:
+        """只读：global_threshold（Stage 4 公共化）。"""
+        return self._global_threshold
+
+    @property
+    def module_threshold(self) -> int:
+        """只读：module_threshold（Stage 4 公共化）。"""
+        return self._module_threshold
+
+
     def record(self, module: str) -> None:
         now = time.time()
         self._module_events[module].append(now)
@@ -268,6 +301,13 @@ class SandboxExecutor:
     def __init__(self, base_dir: str | None = None) -> None:
         self._base_dir = base_dir or os.path.join(tempfile.gettempdir(), "auto_fix_sandbox")
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def base_dir(self):
+        """只读：base_dir（Stage 4 公共化）。"""
+        return self._base_dir
+
+
     def execute(self, action: FixAction, fix_fn: Callable[..., object]) -> tuple[bool, str]:
         sandbox_dir = os.path.join(self._base_dir, action.action_id)
         os.makedirs(sandbox_dir, exist_ok=True)
@@ -287,6 +327,13 @@ class SandboxExecutor:
 class SecretLeakGuard:
     def __init__(self) -> None:
         self._patterns = _SECRET_PATTERNS
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def patterns(self):
+        """只读：patterns（Stage 4 公共化）。"""
+        return self._patterns
+
 
     def scan(self, text: str) -> tuple[bool, list[str]]:
         findings: list[str] = []

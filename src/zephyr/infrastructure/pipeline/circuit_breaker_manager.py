@@ -79,6 +79,23 @@ class CircuitBreakerManager:
 
         self._log_fn = log_fn or (lambda level, msg: None)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def cooldown_s(self):
+        """只读：cooldown_s（Stage 4 公共化）。"""
+        return self._cooldown_s
+
+    @property
+    def failure_threshold(self):
+        """只读：failure_threshold（Stage 4 公共化）。"""
+        return self._failure_threshold
+
+    @property
+    def failure_window_s(self):
+        """只读：failure_window_s（Stage 4 公共化）。"""
+        return self._failure_window_s
+
+
     # ------------------------------------------------------------------
     # 公共 API
     # ------------------------------------------------------------------

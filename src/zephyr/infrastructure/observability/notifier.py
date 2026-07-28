@@ -68,6 +68,18 @@ class Notifier:
         self._notification_count = 0
         self._window_start = datetime.now(UTC)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def config(self):
+        """只读：config（Stage 4 公共化）。"""
+        return self._config
+
+    @property
+    def notification_count(self):
+        """只读：notification_count（Stage 4 公共化）。"""
+        return self._notification_count
+
+
     def notify(self, level: NotificationLevel, title: str, message: str, task_id: str = "") -> Notification:
         notification = Notification(
             notification_id=f"NOTIF-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",

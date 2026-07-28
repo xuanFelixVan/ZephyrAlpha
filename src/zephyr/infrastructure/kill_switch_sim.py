@@ -98,6 +98,24 @@ class KillSwitchSimulator:
         self._probe_history: list[KillSwitchProbe] = []
         self._metrics_path = METRICS_DIR / "kill_switch_probes.jsonl"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def metrics_path(self):
+        """只读：metrics_path（Stage 4 公共化）。"""
+        return self._metrics_path
+
+    @metrics_path.setter
+    def metrics_path(self, value):
+        """写入：metrics_path（Stage 4 公共化）。"""
+        self._metrics_path = value
+
+
+    @property
+    def probe_history(self) -> list[KillSwitchProbe]:
+        """只读：probe_history（Stage 4 公共化）。"""
+        return self._probe_history
+
+
     def register_ack_callback(self, cb: Callable[[], None]) -> None:
         """注册硬件确认回调（T1 真实硬件时替换此回调）"""
         self._ack_callback = cb

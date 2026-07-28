@@ -94,6 +94,13 @@ class TaskLifecycleManager:
         self._states: dict[str, LifecycleState] = {}
         self._lock = threading.RLock()  # 5.41.9 修复: 保护状态读写，消除多 worker 并发竞态
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def initialize(self, task_id: str) -> LifecycleState:
         with self._lock:
             state = self._states.get(task_id)

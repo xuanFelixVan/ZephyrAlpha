@@ -89,6 +89,13 @@ class BackpressureManager:
         self._on_resume_handlers: list[Callable[[BpSymbolState], None]] = []
         self._on_throttle_handlers: list[Callable[[BpSymbolState], None]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> list[BpSymbolState]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def handle_pause(self, signal: BackpressurePause) -> BpSymbolState:
         with self._lock:
             state = self._get_or_create(signal.symbol)

@@ -50,6 +50,13 @@ class IdempotencyGuard:
         self._cache: dict[str, tuple[str, float]] = {}
         self._ensure_db()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def ttl(self):
+        """只读：ttl（Stage 4 公共化）。"""
+        return self._ttl
+
+
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = get_db_connection(self._db_path)
@@ -118,6 +125,20 @@ class ConflictResolver:
         self._global_lock = threading.Lock()
         self._queue: dict[str, list[FixAction]] = defaultdict(list)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def queue(self) -> dict[str, list[FixAction]]:
+        """只读：queue（Stage 4 公共化）。"""
+        return self._queue
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def locks(self) -> dict[str, threading.Lock]:
+        """只读：locks（Stage 4 公共化）。"""
+        return self._locks
+
+
     def acquire(self, target: str) -> threading.Lock:
         with self._global_lock:
             if target not in self._locks:
@@ -150,6 +171,13 @@ class FixOrderResolver:
     def __init__(self) -> None:
         self._dependency_map: dict[str, set[str]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def dependency_map(self) -> dict[str, set[str]]:
+        """只读：dependency_map（Stage 4 公共化）。"""
+        return self._dependency_map
+
+
     def add_dependency(self, fixer_type: str, depends_on: str) -> None:
         self._dependency_map.setdefault(fixer_type, set()).add(depends_on)
 
@@ -180,6 +208,13 @@ class FixResultCache:
         self._cache: dict[str, Any] = {}
         self._max_size = max_size
         self._lock = threading.Lock()
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_size(self):
+        """只读：max_size（Stage 4 公共化）。"""
+        return self._max_size
+
 
     def get(self, key: str) -> object | None:
         with self._lock:
@@ -228,6 +263,25 @@ class DeadLetterQueue:
         self._db_path = db_path or str(_DB_PATH)
         self._queue: list[FixDeadLetter] = []
         self._lock = threading.Lock()
+
+    # ── Stage 4 公共化（2026-07-29）：只读 property ──
+    @property
+    def queue(self):
+        """只读：queue（Stage 4 公共化）。"""
+        return self._queue
+
+    @queue.setter
+    def queue(self, value):
+        """写入：queue（Stage 4 公共化）。"""
+        self._queue = value
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_retries(self):
+        """只读：max_retries（Stage 4 公共化）。"""
+        return self._max_retries
+
 
     def add(self, action: FixAction, reason: str) -> FixDeadLetter:
         entry = FixDeadLetter(
@@ -307,6 +361,18 @@ class CanaryFixer:
         self._ratios = ratios or [0.1, 0.3, 0.5, 1.0]
         self._delay_sec = delay_sec
         self._current_stage: dict[str, int] = {}
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def delay_sec(self):
+        """只读：delay_sec（Stage 4 公共化）。"""
+        return self._delay_sec
+
+    @property
+    def ratios(self):
+        """只读：ratios（Stage 4 公共化）。"""
+        return self._ratios
+
 
     def get_ratio(self, fixer_type: str) -> float:
         stage = self._current_stage.get(fixer_type, 0)

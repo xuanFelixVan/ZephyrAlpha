@@ -51,6 +51,13 @@ class LLMImpactAnalyzer:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def analyze_impact(self, task_card: dict[str, Any]) -> ImpactAssessment:
         downstream = task_card.get("downstream_outputs", [])
         files_affected = [o.get("path", "") for o in downstream]
