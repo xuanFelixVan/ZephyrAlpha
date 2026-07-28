@@ -16,7 +16,7 @@
 """test_git_commit_gateway.py — GitCommitGateway 单元测试（OPS-2026062512 验收）
 
 覆盖:
-1. _GlobalCommitLock 获取/释放（跨进程原子锁）
+1. GlobalCommitLock 获取/释放（跨进程原子锁）
 2. GitCommitGateway 初始化（非 git 仓库抛 GatewayError）
 3. commit 无变更 → NOTHING_TO_COMMIT
 4. commit 受限——只提交 files_in_scope，不捡拾其他文件
@@ -45,9 +45,9 @@ from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E40
     CommitStatus,
     GatewayError,
     GitCommitGateway,
-    _GlobalCommitLock,
-    _GATEWAY_ENV,
-    _GLOBAL_LOCK_FILE,
+    GlobalCommitLock,
+    GATEWAY_ENV,
+    GLOBAL_LOCK_FILE,
 )
 
 
@@ -177,7 +177,7 @@ def _last_commit_files(repo_dir: Path) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# _GlobalCommitLock 测试
+# GlobalCommitLock 测试
 # ---------------------------------------------------------------------------
 class TestGlobalCommitLock:
     """跨进程全局串行锁测试。"""
@@ -185,16 +185,16 @@ class TestGlobalCommitLock:
     def test_acquire_and_release(self, tmp_path: Path) -> None:
         """锁获取后释放，锁文件被删除。"""
         _init_git_repo(tmp_path)
-        lock_file = tmp_path / ".ailocks" / _GLOBAL_LOCK_FILE
-        with _GlobalCommitLock(tmp_path, timeout=2.0):
+        lock_file = tmp_path / ".ailocks" / GLOBAL_LOCK_FILE
+        with GlobalCommitLock(tmp_path, timeout=2.0):
             assert lock_file.exists(), "锁文件应存在"
         assert not lock_file.exists(), "锁文件应已删除"
 
     def test_lock_is_exclusive(self, tmp_path: Path) -> None:
         """锁互斥——第二个锁获取应超时。"""
         _init_git_repo(tmp_path)
-        lock1 = _GlobalCommitLock(tmp_path, timeout=2.0, poll_interval=0.05)
-        lock2 = _GlobalCommitLock(tmp_path, timeout=0.5, poll_interval=0.05)
+        lock1 = GlobalCommitLock(tmp_path, timeout=2.0, poll_interval=0.05)
+        lock2 = GlobalCommitLock(tmp_path, timeout=0.5, poll_interval=0.05)
         with lock1:
             with pytest.raises(GatewayError, match="timeout"):
                 with lock2:
@@ -203,9 +203,9 @@ class TestGlobalCommitLock:
     def test_lock_released_on_exception(self, tmp_path: Path) -> None:
         """异常时锁仍释放（finally 语义）。"""
         _init_git_repo(tmp_path)
-        lock_file = tmp_path / ".ailocks" / _GLOBAL_LOCK_FILE
+        lock_file = tmp_path / ".ailocks" / GLOBAL_LOCK_FILE
         with pytest.raises(ValueError, match="boom"):
-            with _GlobalCommitLock(tmp_path, timeout=2.0):
+            with GlobalCommitLock(tmp_path, timeout=2.0):
                 raise ValueError("boom")
         assert not lock_file.exists(), "异常后锁文件应已删除"
 
@@ -294,7 +294,7 @@ class TestGitCommitGatewayCommit:
         gw = GitCommitGateway(project_root=tmp_path)
         gw.commit(session_id="s1", files=[str(f)], allow_overlap=True, message="feat: env test")
         # finally 块清理后环境变量应被移除
-        assert _GATEWAY_ENV not in os.environ or os.environ.get(_GATEWAY_ENV) != "1" or True
+        assert GATEWAY_ENV not in os.environ or os.environ.get(GATEWAY_ENV) != "1" or True
         # 注: 环境变量在 commit 子进程内设置，主进程 finally 清理；
         # 这里验证 finally 清理逻辑不残留（不抛异常即通过）
 
@@ -316,7 +316,7 @@ class TestGitCommitGatewayCommit:
         # 用 MagicMock 替换 _gate_registry，捕获 check_all 调用参数
         mock_registry = MagicMock()
         mock_registry.check_all.return_value = []  # 所有 gate 通过
-        gw._gate_registry = mock_registry
+        gw.gate_registry = mock_registry
 
         gw.commit(
             session_id="sess-test",
@@ -447,7 +447,7 @@ class TestSessionAwareStash:
         - 内联：``git stash push -- <paths>``（``--`` 之后的参数）
         - pathspec 文件：``git stash push --pathspec-from-file=<file>``（读取文件内容）
         """
-        original = gw._run_git
+        original = gw.run_git
         recorded: list[str] = []
 
         def spy(cmd: list[str]) -> object:
@@ -474,7 +474,7 @@ class TestSessionAwareStash:
                         break
             return original(cmd)
 
-        gw._run_git = spy  # type: ignore[assignment]
+        gw.run_git = spy  # type: ignore[assignment]
         return recorded
 
     @staticmethod
@@ -1041,12 +1041,12 @@ class TestRunGitCommitGuard:
         """
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        assert gw._in_commit_flow is False  # 默认 False
+        assert gw.in_commit_flow is False  # 默认 False
         head_before = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
             capture_output=True, text=True,
         ).stdout.strip()
-        result = gw._run_git(["git", "commit", "-m", "sneaky", "--allow-empty"])
+        result = gw.run_git(["git", "commit", "-m", "sneaky", "--allow-empty"])
         assert result.returncode == 1, "裸 git commit 应被守卫拦截（returncode=1）"
         assert "禁止裸调" in result.stderr, f"stderr 应含拦截信息: {result.stderr}"
         # 守卫拦截后 HEAD 不应变化（git commit 未执行）
@@ -1060,14 +1060,14 @@ class TestRunGitCommitGuard:
         """_in_commit_flow=True 时 _run_git(["git","commit",...]) 放行（实际执行）。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        gw._in_commit_flow = True
+        gw.in_commit_flow = True
         try:
             head_before = subprocess.run(
                 ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
                 capture_output=True, text=True,
             ).stdout.strip()
             # --allow-empty 确保即使无 staged 变更也能成功 commit
-            result = gw._run_git(["git", "commit", "-m", "test", "--allow-empty"])
+            result = gw.run_git(["git", "commit", "-m", "test", "--allow-empty"])
             assert result.returncode == 0, (
                 f"_in_commit_flow=True 时 git commit 应放行成功: {result.stderr}"
             )
@@ -1078,14 +1078,14 @@ class TestRunGitCommitGuard:
             ).stdout.strip()
             assert head_before != head_after, "应产生新 commit（证明 git commit 实际执行）"
         finally:
-            gw._in_commit_flow = False  # 清理标志
+            gw.in_commit_flow = False  # 清理标志
 
     def test_non_commit_commands_not_blocked(self, tmp_path: Path) -> None:
         """非 commit 的 git 命令（如 status）不受守卫影响。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        assert gw._in_commit_flow is False
-        result = gw._run_git(["git", "status", "--porcelain"])
+        assert gw.in_commit_flow is False
+        result = gw.run_git(["git", "status", "--porcelain"])
         assert result.returncode == 0, f"git status 不应被守卫拦截: {result.stderr}"
 
 
@@ -1117,7 +1117,7 @@ def _make_gateway_for_warning_test(
         mock_s.session_id = sid
         mock_sessions.append(mock_s)
     mock_registry.list_active.return_value = mock_sessions
-    gw._registry = mock_registry
+    gw.registry = mock_registry
     return gw
 
 
@@ -1137,7 +1137,7 @@ class TestNonWorktreeCommitWarning:
             logging.WARNING,
             logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
         ):
-            gw._warn_non_worktree_commit("sess-current", wt_session=None)
+            gw.warn_non_worktree_commit("sess-current", wt_session=None)
         warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
         assert len(warnings) == 1, f"应有 1 条 WARNING，实际 {len(warnings)}: {warnings}"
         assert "并发风险" in warnings[0].message, f"WARNING 消息应含 '并发风险': {warnings[0].message!r}"
@@ -1150,7 +1150,7 @@ class TestNonWorktreeCommitWarning:
             logging.DEBUG,
             logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
         ):
-            gw._warn_non_worktree_commit("sess-current", wt_session=None)
+            gw.warn_non_worktree_commit("sess-current", wt_session=None)
         # 不应有 WARNING 级别日志
         warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
         assert len(warnings) == 0, f"不应有 WARNING，实际 {len(warnings)}: {warnings}"
@@ -1168,7 +1168,7 @@ class TestNonWorktreeCommitWarning:
             logging.DEBUG,
             logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
         ):
-            gw._warn_non_worktree_commit("sess-current", wt_session="sess-current")
+            gw.warn_non_worktree_commit("sess-current", wt_session="sess-current")
         # 不应有 WARNING 级别日志
         warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
         assert len(warnings) == 0, f"worktree 内不应有 WARNING: {warnings}"
@@ -1182,12 +1182,12 @@ class TestNonWorktreeCommitWarning:
         """_registry.list_active() 异常 → 降级为 INFO（fail-open，不阻断 commit）。"""
         gw = _make_gateway_for_warning_test(tmp_path, other_session_ids=[])
         # 让 list_active 抛异常
-        gw._registry.list_active.side_effect = RuntimeError("registry corrupted")
+        gw.registry.list_active.side_effect = RuntimeError("registry corrupted")
         with caplog.at_level(
             logging.DEBUG,
             logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
         ):
-            gw._warn_non_worktree_commit("sess-current", wt_session=None)
+            gw.warn_non_worktree_commit("sess-current", wt_session=None)
         # 异常降级为 INFO（无其他 session），不应有 WARNING
         warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
         assert len(warnings) == 0, f"registry 异常不应 WARN（fail-open）: {warnings}"
@@ -1199,62 +1199,62 @@ class TestNonWorktreeCommitWarning:
 
 # ---------------------------------------------------------------------------
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
-# _classify_git_timeout 单元测试——验证按 git 子命令类型分类 timeout。
+# classify_git_timeout 单元测试——验证按 git 子命令类型分类 timeout。
 # 原硬编码 timeout=120s → 改为 read 15s / write 60s / default 30s。
 # ---------------------------------------------------------------------------
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
-    _classify_git_timeout,
-    _GIT_TIMEOUT_DEFAULT,
-    _GIT_TIMEOUT_READ,
-    _GIT_TIMEOUT_WRITE,
+    classify_git_timeout,
+    GIT_TIMEOUT_DEFAULT,
+    GIT_TIMEOUT_READ,
+    GIT_TIMEOUT_WRITE,
 )
 
 
 class TestClassifyGitTimeout:
-    """_classify_git_timeout 按命令类型分类 timeout（P2-2b 治本）。"""
+    """classify_git_timeout 按命令类型分类 timeout（P2-2b 治本）。"""
 
     def test_read_commands_return_15s(self) -> None:
         """rev-parse/show/status/diff/log 等 read 子命令返回 15s。"""
         for subcmd in ["rev-parse", "show", "status", "diff", "log", "ls-tree",
                         "merge-base", "config", "cat-file", "rev-list"]:
-            assert _classify_git_timeout(["git", subcmd]) == _GIT_TIMEOUT_READ, (
-                f"git {subcmd} 应返回 READ timeout ({_GIT_TIMEOUT_READ}s)"
+            assert classify_git_timeout(["git", subcmd]) == GIT_TIMEOUT_READ, (
+                f"git {subcmd} 应返回 READ timeout ({GIT_TIMEOUT_READ}s)"
             )
 
     def test_write_commands_return_60s(self) -> None:
         """commit/merge/checkout/reset 等 write 子命令返回 60s。"""
         for subcmd in ["commit", "merge", "checkout", "reset", "update-ref",
                         "rebase", "cherry-pick", "revert", "apply", "am"]:
-            assert _classify_git_timeout(["git", subcmd]) == _GIT_TIMEOUT_WRITE, (
-                f"git {subcmd} 应返回 WRITE timeout ({_GIT_TIMEOUT_WRITE}s)"
+            assert classify_git_timeout(["git", subcmd]) == GIT_TIMEOUT_WRITE, (
+                f"git {subcmd} 应返回 WRITE timeout ({GIT_TIMEOUT_WRITE}s)"
             )
 
     def test_unknown_subcommand_returns_default(self) -> None:
         """未登记的 git 子命令返回 default timeout（30s）。"""
         # stash/show-ref 已登记为 read；用一个未登记的命令名
-        assert _classify_git_timeout(["git", "weird-command"]) == _GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout(["git", "weird-command"]) == GIT_TIMEOUT_DEFAULT
         # 空字符串子命令
-        assert _classify_git_timeout(["git", ""]) == _GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout(["git", ""]) == GIT_TIMEOUT_DEFAULT
 
     def test_non_git_command_returns_default(self) -> None:
         """非 git 命令返回 default timeout（30s）。"""
-        assert _classify_git_timeout(["python", "script.py"]) == _GIT_TIMEOUT_DEFAULT
-        assert _classify_git_timeout(["cmd", "/c", "dir"]) == _GIT_TIMEOUT_DEFAULT
-        assert _classify_git_timeout(["echo", "hello"]) == _GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout(["python", "script.py"]) == GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout(["cmd", "/c", "dir"]) == GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout(["echo", "hello"]) == GIT_TIMEOUT_DEFAULT
 
     def test_empty_or_short_command_returns_default(self) -> None:
         """空命令或长度不足返回 default timeout（30s）。"""
-        assert _classify_git_timeout([]) == _GIT_TIMEOUT_DEFAULT
-        assert _classify_git_timeout(["git"]) == _GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout([]) == GIT_TIMEOUT_DEFAULT
+        assert classify_git_timeout(["git"]) == GIT_TIMEOUT_DEFAULT
         # 仅 1 个元素不能取 cmd[1]，返回 default
 
     def test_timeout_values_unchanged(self) -> None:
         """timeout 值常量未被意外修改。"""
-        assert _GIT_TIMEOUT_READ == 15
-        assert _GIT_TIMEOUT_WRITE == 60
-        assert _GIT_TIMEOUT_DEFAULT == 30
+        assert GIT_TIMEOUT_READ == 15
+        assert GIT_TIMEOUT_WRITE == 60
+        assert GIT_TIMEOUT_DEFAULT == 30
         # read < default < write（read 应最快，write 最慢）
-        assert _GIT_TIMEOUT_READ < _GIT_TIMEOUT_DEFAULT < _GIT_TIMEOUT_WRITE
+        assert GIT_TIMEOUT_READ < GIT_TIMEOUT_DEFAULT < GIT_TIMEOUT_WRITE
 
     def test_run_git_uses_classified_timeout(self, tmp_path: Path, monkeypatch) -> None:
         """_run_git 调用 run_subprocess_hidden 时使用分类 timeout（集成测试）。
@@ -1279,18 +1279,18 @@ class TestClassifyGitTimeout:
         )
 
         # read 命令 → 15s
-        gw._run_git(["git", "status", "--porcelain"])
-        assert captured_timeouts[-1] == _GIT_TIMEOUT_READ, (
+        gw.run_git(["git", "status", "--porcelain"])
+        assert captured_timeouts[-1] == GIT_TIMEOUT_READ, (
             f"git status 应传 READ timeout: {captured_timeouts[-1]}"
         )
 
         # write 命令 → 60s（需 _in_commit_flow=True 避开守卫）
-        gw._in_commit_flow = True
+        gw.in_commit_flow = True
         try:
-            gw._run_git(["git", "commit", "-m", "test", "--allow-empty"])
-            assert captured_timeouts[-1] == _GIT_TIMEOUT_WRITE, (
+            gw.run_git(["git", "commit", "-m", "test", "--allow-empty"])
+            assert captured_timeouts[-1] == GIT_TIMEOUT_WRITE, (
                 f"git commit 应传 WRITE timeout: {captured_timeouts[-1]}"
             )
         finally:
-            gw._in_commit_flow = False
+            gw.in_commit_flow = False
 

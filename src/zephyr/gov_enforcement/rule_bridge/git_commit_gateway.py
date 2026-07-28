@@ -123,6 +123,10 @@ _POLL_INTERVAL = 0.1
 # S3-C: claim 快照持久化目录（FOREIGN_CHANGE gate 崩溃恢复）
 _CLAIM_SNAPSHOTS_DIR = ".runtime/claim_snapshots"
 
+# Stage 4 公共化：模块级公共别名（primary 仍为私有定义，公共别名为同对象引用）。
+GATEWAY_ENV = _GATEWAY_ENV
+GLOBAL_LOCK_FILE = _GLOBAL_LOCK_FILE
+
 
 class CommitStatus(str, Enum):
     """commit 结果状态。"""
@@ -258,6 +262,10 @@ class _GlobalCommitLock:
         return False
 
 
+# Stage 4 公共化：公共别名（primary 仍为 _GlobalCommitLock，公共别名为同对象引用）。
+GlobalCommitLock = _GlobalCommitLock
+
+
 def _audit_commit_lock_fallback(project_root: Path, session_id: str, error_detail: str) -> None:
     """TRAE-079 铁律6：文件锁 fail-open 降级落审计。
 
@@ -285,6 +293,11 @@ def _audit_commit_lock_fallback(project_root: Path, session_id: str, error_detai
 _GIT_TIMEOUT_READ = 15    # rev-parse/show/status/diff/log/ls-tree/merge-base/config
 _GIT_TIMEOUT_WRITE = 60   # commit/merge/checkout/reset/update-ref/rebase
 _GIT_TIMEOUT_DEFAULT = 30  # 其他默认
+
+# Stage 4 公共化：timeout 常量公共别名。
+GIT_TIMEOUT_READ = _GIT_TIMEOUT_READ
+GIT_TIMEOUT_WRITE = _GIT_TIMEOUT_WRITE
+GIT_TIMEOUT_DEFAULT = _GIT_TIMEOUT_DEFAULT
 
 _GIT_READ_SUBCMDS: frozenset[str] = frozenset({
     "rev-parse", "show", "status", "diff", "log", "ls-tree", "ls-files",
@@ -317,6 +330,10 @@ def _classify_git_timeout(cmd: list[str]) -> int:
     if subcmd in _GIT_WRITE_SUBCMDS:
         return _GIT_TIMEOUT_WRITE
     return _GIT_TIMEOUT_DEFAULT
+
+
+# Stage 4 公共化：公共别名。
+classify_git_timeout = _classify_git_timeout
 
 
 class GitCommitGateway:
@@ -353,7 +370,7 @@ class GitCommitGateway:
         self._gate_registry = CommitGateRegistry()
         # Phase 4 迁移（#ARCH-GATE-REGISTRY-AUTO-001）：82 个显式 register 替换为 auto_register_gates 调用
         auto_register_gates(self._gate_registry, self.project_root)
-        self._in_commit_flow = False  # commit 守卫（红攻1治本）
+        self.in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
         # commit 时 FOREIGN-CHANGE-DETECTION gate 对比检测搭便车变更。
@@ -393,6 +410,24 @@ class GitCommitGateway:
     def registry(self, value) -> None:
         self._registry = value
 
+    @property
+    def gate_registry(self):
+        """pre-commit 门禁注册表（Stage 4 公共化，backing store: _gate_registry）。"""
+        return self._gate_registry
+
+    @gate_registry.setter
+    def gate_registry(self, value) -> None:
+        self._gate_registry = value
+
+    @property
+    def in_commit_flow(self) -> bool:
+        """commit 守卫标志（Stage 4 公共化，backing store: _in_commit_flow）。"""
+        return self._in_commit_flow
+
+    @in_commit_flow.setter
+    def in_commit_flow(self, value: bool) -> None:
+        self._in_commit_flow = value
+
     def _get_worktree_manager(self):
         """延迟获取 WorktreeManager 单例。"""
         if self._worktree_mgr is None:
@@ -400,7 +435,7 @@ class GitCommitGateway:
             self._worktree_mgr = WorktreeManager(self.project_root)
         return self._worktree_mgr
 
-    def _warn_non_worktree_commit(self, session_id: str, wt_session: str | None) -> None:
+    def warn_non_worktree_commit(self, session_id: str, wt_session: str | None) -> None:
         """S3-D 治本（2026-07-17）：非 worktree commit 并发风险警告。
 
         非 worktree commit 时检测是否有其他活跃 session：
@@ -441,6 +476,10 @@ class GitCommitGateway:
                 "建议使用 WorktreeManager.create_session_worktree 实现物理隔离，向后兼容直接 commit",
                 session_id,
             )
+
+    def _warn_non_worktree_commit(self, session_id: str, wt_session: str | None) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.warn_non_worktree_commit(session_id, wt_session)
 
     def claim_files(
         self, session_id: str, files: list[str], adopt_prior_work: bool = False
@@ -518,7 +557,7 @@ class GitCommitGateway:
             rel = os.path.relpath(abs_file, str(self.project_root)).replace("\\", "/")
         except ValueError:
             rel = abs_file
-        result = self._run_git(["git", "diff", "HEAD", "--", rel])
+        result = self.run_git(["git", "diff", "HEAD", "--", rel])
         if result.returncode != 0:
             return ""
         return result.stdout or ""
@@ -1138,7 +1177,7 @@ class GitCommitGateway:
         _BATCH = 300
         for i in range(0, len(rels), _BATCH):
             batch = rels[i : i + _BATCH]
-            chk = self._run_git(["git", "check-ignore", "--no-index", "--"] + batch)
+            chk = self.run_git(["git", "check-ignore", "--no-index", "--"] + batch)
             if chk.returncode == 0 and chk.stdout:
                 for line in chk.stdout.splitlines():
                     if line.strip():
@@ -1161,7 +1200,7 @@ class GitCommitGateway:
             return None
         pathspec = self._write_pathspec_file(tracked)
         try:
-            r = self._run_git(git_args + [f"--pathspec-from-file={pathspec}"])
+            r = self.run_git(git_args + [f"--pathspec-from-file={pathspec}"])
         finally:
             try:
                 os.remove(pathspec)
@@ -1278,7 +1317,7 @@ class GitCommitGateway:
             if existing_files:
                 add_pathspec_file = self._write_pathspec_file(existing_files)
                 try:
-                    add_result = self._run_git(
+                    add_result = self.run_git(
                         ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
                     )
                     add_ok = add_result.returncode == 0
@@ -1297,7 +1336,7 @@ class GitCommitGateway:
             if add_ok and deleted_files:
                 del_pathspec = self._write_pathspec_file(deleted_files)
                 try:
-                    rm_result = self._run_git(
+                    rm_result = self.run_git(
                         ["git", "rm", "--cached", "--ignore-unmatch",
                          f"--pathspec-from-file={del_pathspec}"]
                     )
@@ -1327,7 +1366,7 @@ class GitCommitGateway:
         # 4. 判断是否需要无 pathspec commit（gitignored / staged rename）
         has_gitignored = self._should_use_no_pathspec(files, normal_files)
         # 5. 检查 staged 变更
-        diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+        diff_result = self.run_git(["git", "diff", "--cached", "--quiet"])
         if diff_result.returncode == 0:
             logger.info("GitCommitGateway: files 无 staged 变更，跳过 commit")
             return CommitResult(
@@ -1424,7 +1463,7 @@ class GitCommitGateway:
             os.path.relpath(f, str(self.project_root)).replace("\\", "/")
             for f in target_files
         }
-        result = self._run_git(["git", "diff", "--cached", "--name-status", "-M"])
+        result = self.run_git(["git", "diff", "--cached", "--name-status", "-M"])
         if result.returncode != 0:
             return False
         for line in result.stdout.splitlines():
@@ -1442,7 +1481,7 @@ class GitCommitGateway:
         返回 (is_clean, error_msg, non_target_files)。
         non_target_files 为完整的非目标文件相对路径列表（供调用方自动 unstage）。
         """
-        staged_result = self._run_git(["git", "diff", "--cached", "--name-only"])
+        staged_result = self.run_git(["git", "diff", "--cached", "--name-only"])
         if staged_result.returncode != 0:
             return False, f"git diff --cached failed: {staged_result.stderr.strip()}", []
         staged_files = {
@@ -1470,7 +1509,7 @@ class GitCommitGateway:
         """
         if not non_target_files:
             return True, ""
-        result = self._run_git(["git", "reset", "HEAD", "--"] + non_target_files)
+        result = self.run_git(["git", "reset", "HEAD", "--"] + non_target_files)
         if result.returncode != 0:
             return False, result.stderr.strip() or result.stdout.strip()
         logger.info(
@@ -1513,7 +1552,7 @@ class GitCommitGateway:
             prefix="gw_commit_msg_", suffix=".txt"
         )
         try:
-            self._in_commit_flow = True  # 放行 _run_git 的 commit 守卫（红攻1治本）
+            self.in_commit_flow = True  # 放行 _run_git 的 commit 守卫（红攻1治本）
             with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
                 f.write(message)
             if use_pathspec:
@@ -1521,15 +1560,15 @@ class GitCommitGateway:
                               f"--pathspec-from-file={pathspec_file}"]
             else:
                 commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
-            result = self._run_git(commit_cmd)
+            result = self.run_git(commit_cmd)
             if result.returncode != 0:
                 return None, result.stderr.strip() or result.stdout.strip()
-            rev_result = self._run_git(["git", "rev-parse", "HEAD"])
+            rev_result = self.run_git(["git", "rev-parse", "HEAD"])
             if rev_result.returncode == 0:
                 return rev_result.stdout.strip(), ""
             return "", ""
         finally:
-            self._in_commit_flow = False
+            self.in_commit_flow = False
             try:
                 os.remove(msg_path)
             except OSError:
@@ -1658,7 +1697,7 @@ class GitCommitGateway:
             with _GlobalCommitLock(self.project_root):
                 pathspec_file = self._write_pathspec_file(existing)
                 try:
-                    add_result = self._run_git(
+                    add_result = self.run_git(
                         ["git", "add", f"--pathspec-from-file={pathspec_file}"]
                     )
                     if add_result.returncode != 0:
@@ -1666,7 +1705,7 @@ class GitCommitGateway:
                             status=CommitStatus.COMMIT_FAILED,
                             message=f"git add failed (auto-commit): {add_result.stderr.strip()}",
                         )
-                    diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+                    diff_result = self.run_git(["git", "diff", "--cached", "--quiet"])
                     if diff_result.returncode == 0:
                         return CommitResult(
                             status=CommitStatus.NOTHING_TO_COMMIT,
@@ -1708,7 +1747,7 @@ class GitCommitGateway:
             # 无锁降级：直接执行 auto-commit（不串行化，但 gate 仍在）
             pathspec_file = self._write_pathspec_file(existing)
             try:
-                add_result = self._run_git(
+                add_result = self.run_git(
                     ["git", "add", f"--pathspec-from-file={pathspec_file}"]
                 )
                 if add_result.returncode != 0:
@@ -1716,7 +1755,7 @@ class GitCommitGateway:
                         status=CommitStatus.COMMIT_FAILED,
                         message=f"git add failed (auto-commit): {add_result.stderr.strip()}",
                     )
-                diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+                diff_result = self.run_git(["git", "diff", "--cached", "--quiet"])
                 if diff_result.returncode == 0:
                     return CommitResult(
                         status=CommitStatus.NOTHING_TO_COMMIT,
@@ -1761,7 +1800,7 @@ class GitCommitGateway:
                 f.write(f":(icase){rel}\n")
         return path
 
-    def _run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
+    def run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
         """执行 git 命令（统一 cwd + encoding）。reconciler 禁止裸调 git commit——必须走 _commit_auto()，commit 守卫 _in_commit_flow 技术强制。
 
         Args:
@@ -1781,7 +1820,7 @@ class GitCommitGateway:
             len(cmd) >= 2
             and cmd[0] == "git"
             and cmd[1] == "commit"
-            and not getattr(self, "_in_commit_flow", False)
+            and not getattr(self, "in_commit_flow", False)
         ):
             return subprocess.CompletedProcess(
                 args=cmd,
@@ -1809,3 +1848,7 @@ class GitCommitGateway:
             timeout=timeout,
             env=env,
         )
+
+    def _run_git(self, cmd: list[str], cwd: str | None = None) -> subprocess.CompletedProcess:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd, cwd)
