@@ -71,8 +71,8 @@ class TestBasicFlows:
         from zephyr.security.access_control.immutable_core import ImmutableCore
 
         guard = PermissionGuard()
-        guard._l0 = ImmutableCore(project_root=tmp_path)
-        guard._l1 = type(guard._l1)(immutable_core=guard._l0)
+        guard.l0 = ImmutableCore(project_root=tmp_path)
+        guard.l1 = type(guard.l1)(immutable_core=guard.l0)
         agent = AgentIdentity(session_id="test-pg-1")
         result = guard.check(agent, "read:docs")
         assert result.decision == GuardDecision.ALLOW
@@ -83,8 +83,8 @@ class TestBasicFlows:
         from zephyr.security.access_control.immutable_core import ImmutableCore
 
         guard = PermissionGuard()
-        guard._l0 = ImmutableCore(project_root=tmp_path)
-        guard._l1 = type(guard._l1)(immutable_core=guard._l0)
+        guard.l0 = ImmutableCore(project_root=tmp_path)
+        guard.l1 = type(guard.l1)(immutable_core=guard.l0)
         agent = AgentIdentity(session_id="test-pg-2")
         result = guard.check(agent, "delete:audit_logs")
         assert result.decision == GuardDecision.BLOCKED
@@ -95,8 +95,8 @@ class TestBasicFlows:
         from zephyr.security.access_control.immutable_core import ImmutableCore
 
         guard = PermissionGuard()
-        guard._l0 = ImmutableCore(project_root=tmp_path)
-        guard._l1 = type(guard._l1)(immutable_core=guard._l0)
+        guard.l0 = ImmutableCore(project_root=tmp_path)
+        guard.l1 = type(guard.l1)(immutable_core=guard.l0)
         agent = AgentIdentity(
             session_id="test-pg-3",
             auto_guard_eligible=True,
@@ -111,8 +111,8 @@ class TestBlockedScenarios:
         from zephyr.security.access_control.immutable_core import ImmutableCore
 
         guard = PermissionGuard()
-        guard._l0 = ImmutableCore(project_root=tmp_path)
-        guard._l1 = type(guard._l1)(immutable_core=guard._l0)
+        guard.l0 = ImmutableCore(project_root=tmp_path)
+        guard.l1 = type(guard.l1)(immutable_core=guard.l0)
         agent = AgentIdentity(session_id="test-pg-4")
         result = guard.check(agent, "delete:audit_logs")
         assert guard.is_blocked(result) or result.decision == GuardDecision.BLOCKED
@@ -122,8 +122,8 @@ class TestBlockedScenarios:
         from zephyr.security.access_control.immutable_core import ImmutableCore
 
         guard = PermissionGuard()
-        guard._l0 = ImmutableCore(project_root=tmp_path)
-        guard._l1 = type(guard._l1)(immutable_core=guard._l0)
+        guard.l0 = ImmutableCore(project_root=tmp_path)
+        guard.l1 = type(guard.l1)(immutable_core=guard.l0)
         agent = AgentIdentity(session_id="test-pg-5")
         result = guard.check(agent, "delete:audit_logs")
         if guard.is_blocked(result):

@@ -88,6 +88,26 @@ class PermissionGuard:
         self._l0 = ImmutableCore()
         self._l1 = RBACGuard()
 
+    # Stage 4 公共化：l0/l1 公共属性（primary），私有属性向后兼容 thin wrapper。
+    # 测试可通过公共属性读写 L0/L1 守卫，无需耦合内部实现。
+    @property
+    def l0(self):
+        """L0 不可变核心层守卫（Stage 4 公共化，primary）。"""
+        return self._l0
+
+    @l0.setter
+    def l0(self, value) -> None:
+        self._l0 = value
+
+    @property
+    def l1(self):
+        """L1 RBAC 守卫（Stage 4 公共化，primary）。"""
+        return self._l1
+
+    @l1.setter
+    def l1(self, value) -> None:
+        self._l1 = value
+
     def is_blocked(self, result: GuardResult) -> bool:
         """判断结果是否为 BLOCKED."""
         return result.decision is GuardDecision.BLOCKED
