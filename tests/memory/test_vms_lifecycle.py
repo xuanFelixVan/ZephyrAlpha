@@ -107,10 +107,10 @@ class TestVMSLifecycle:
         vms = InMemoryFakeVMS()
         vms.write("decisions", "content 1", {"origin": "test"})
         vms.write("knowledge", "content 2", {"origin": "test"})
-        assert len(vms._store) == 2
+        assert vms.store_size == 2
 
         vms.shutdown()
-        assert len(vms._store) == 0
+        assert vms.store_size == 0
 
     def test_search_after_shutdown_returns_empty(self) -> None:
         """shutdown 后 search 返回空列表。"""
@@ -146,7 +146,7 @@ class TestVMSLifecycle:
 
             vms.shutdown()
             assert not vms.started
-            assert len(vms._store) == 0
+            assert vms.store_size == 0
 
 
 # ============================================================================
@@ -161,13 +161,13 @@ class TestEmbeddingWarmupFallback:
         """双模型不可用 → in_memory 降级模式。"""
         router = EmbeddingRouter()
 
-        with patch.object(router, "_load_bge_m3") as mock_m3, patch.object(router, "_load_bge_small") as mock_small:
+        with patch.object(router, "load_bge_m3") as mock_m3, patch.object(router, "load_bge_small") as mock_small:
             # 模拟双模型加载失败
             def fail_m3() -> None:
-                router._bge_m3_available = False
+                router.bge_m3_available = False
 
             def fail_small() -> None:
-                router._bge_small_available = False
+                router.bge_small_available = False
 
             mock_m3.side_effect = fail_m3
             mock_small.side_effect = fail_small
@@ -181,8 +181,8 @@ class TestEmbeddingWarmupFallback:
     def test_embed_in_memory_returns_zero_vector(self) -> None:
         """in_memory 模式 embed 返回零向量。"""
         router = EmbeddingRouter()
-        router._fallback_mode = "in_memory"
-        router._bge_small_dim = 384
+        router.fallback_mode = "in_memory"
+        router.bge_small_dim = 384
 
         vec = router.embed("test text", "decisions")
         assert isinstance(vec, np.ndarray)
@@ -192,8 +192,8 @@ class TestEmbeddingWarmupFallback:
     def test_embed_batch_in_memory_returns_zeros(self) -> None:
         """in_memory 模式 embed_batch 返回零向量矩阵。"""
         router = EmbeddingRouter()
-        router._fallback_mode = "in_memory"
-        router._bge_small_dim = 512
+        router.fallback_mode = "in_memory"
+        router.bge_small_dim = 512
 
         texts = ["text1", "text2", "text3"]
         vecs = router.embed_batch(texts, "knowledge")
@@ -203,7 +203,7 @@ class TestEmbeddingWarmupFallback:
     def test_health_check_reports_fallback(self) -> None:
         """health_check 报告 fallback_mode。"""
         router = EmbeddingRouter()
-        router._fallback_mode = "in_memory"
+        router.fallback_mode = "in_memory"
 
         health = router.health_check()
         assert health["fallback_mode"] == "in_memory"
@@ -213,17 +213,17 @@ class TestEmbeddingWarmupFallback:
     def test_shutdown_clears_models(self) -> None:
         """shutdown 后模型引用清空，available=False。"""
         router = EmbeddingRouter()
-        router._bge_m3_available = True
-        router._bge_small_available = True
-        router._bge_m3_model = object()  # 模拟已加载
-        router._bge_small_model = object()
+        router.bge_m3_available = True
+        router.bge_small_available = True
+        router.bge_m3_model = object()  # 模拟已加载
+        router.bge_small_model = object()
 
         router.shutdown()
 
-        assert router._bge_m3_model is None
-        assert router._bge_small_model is None
-        assert not router._bge_m3_available
-        assert not router._bge_small_available
+        assert router.bge_m3_model is None
+        assert router.bge_small_model is None
+        assert not router.bge_m3_available
+        assert not router.bge_small_available
 
     def test_repeat_warmup_not_crash(self) -> None:
         """重复 warmup 不崩溃。"""

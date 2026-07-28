@@ -179,9 +179,19 @@ class EmbeddingRouter:
     def bge_m3_available(self) -> bool:
         return self._bge_m3_available
 
+    @bge_m3_available.setter
+    def bge_m3_available(self, value: bool) -> None:
+        """Set BGE-M3 availability (Stage 4 公共化，read-write)。"""
+        self._bge_m3_available = value
+
     @property
     def bge_small_available(self) -> bool:
         return self._bge_small_available
+
+    @bge_small_available.setter
+    def bge_small_available(self, value: bool) -> None:
+        """Set bge-small availability (Stage 4 公共化，read-write)。"""
+        self._bge_small_available = value
 
     @property
     def bge_m3_dim(self) -> int:
@@ -190,6 +200,29 @@ class EmbeddingRouter:
     @property
     def bge_small_dim(self) -> int:
         return self._bge_small_dim
+
+    @bge_small_dim.setter
+    def bge_small_dim(self, value: int) -> None:
+        """Set bge-small embedding dimension (Stage 4 公共化，read-write)。"""
+        self._bge_small_dim = value
+
+    @property
+    def bge_m3_model(self) -> Any:
+        """BGE-M3 模型实例（Stage 4 公共化，read-write）。"""
+        return self._bge_m3_model
+
+    @bge_m3_model.setter
+    def bge_m3_model(self, value: Any) -> None:
+        self._bge_m3_model = value
+
+    @property
+    def bge_small_model(self) -> Any:
+        """bge-small 模型实例（Stage 4 公共化，read-write）。"""
+        return self._bge_small_model
+
+    @bge_small_model.setter
+    def bge_small_model(self, value: Any) -> None:
+        self._bge_small_model = value
 
     @property
     def fallback_mode(self) -> str:
@@ -248,8 +281,8 @@ class EmbeddingRouter:
 
     def warmup(self) -> None:
         _logger.info("EmbeddingRouter: 开始预热双嵌入模型 (backend=%s)...", self._backend)
-        self._load_bge_m3()
-        self._load_bge_small()
+        self.load_bge_m3()
+        self.load_bge_small()
 
         if not self._bge_m3_available and not self._bge_small_available:
             _logger.critical("EmbeddingRouter: 双模型均不可用，进入 InMemory 降级模式")
@@ -290,17 +323,27 @@ class EmbeddingRouter:
         if self._bge_small_available:
             self._touch_model("small")
 
-    def _load_bge_m3(self) -> None:
+    def load_bge_m3(self) -> None:
+        """加载 BGE-M3 模型（Stage 4 公共化，primary）。"""
         if self._backend == "ollama":
             self._load_ollama("m3")
         else:
             self._load_local("m3")
 
-    def _load_bge_small(self) -> None:
+    def _load_bge_m3(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        self.load_bge_m3()
+
+    def load_bge_small(self) -> None:
+        """加载 bge-small 模型（Stage 4 公共化，primary）。"""
         if self._backend == "ollama":
             self._load_ollama("small")
         else:
             self._load_local("small")
+
+    def _load_bge_small(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        self.load_bge_small()
 
     def _load_ollama(self, model_key: str) -> None:
         try:

@@ -44,6 +44,11 @@ class InMemoryFakeVMS:
     def started(self) -> bool:
         return self._started
 
+    @property
+    def store_size(self) -> int:
+        """当前存储条目数（Stage 4 公共化，read-only）。"""
+        return len(self._store)
+
     def start(self) -> None:
         self._started = True
 
