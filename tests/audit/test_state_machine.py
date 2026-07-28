@@ -64,11 +64,11 @@ class TestDriftStateMachineInit:
     def test_default_construction(self):
         sm = DriftStateMachine()
         assert sm.TTL_DETECTED_HOURS == 24
-        assert sm._events == {}
+        assert sm.events == {}
 
     def test_events_dict_is_empty(self):
         sm = DriftStateMachine()
-        assert len(sm._events) == 0
+        assert len(sm.events) == 0
 
 
 class TestValidateTransition:
@@ -162,7 +162,7 @@ class TestTransition:
             DriftState.RESOLVED,
             resolved_by="agent-001",
         )
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolved_by == "agent-001"
 
     def test_transition_with_resolution_detail(self):
@@ -176,7 +176,7 @@ class TestTransition:
             DriftState.RESOLVED,
             resolution_detail="fixed import path",
         )
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolution_detail == "fixed import path"
 
     def test_resolved_state_sets_resolved_at(self):
@@ -185,14 +185,14 @@ class TestTransition:
         sm.transition(eid, DriftState.DETECTED, DriftState.TRIAGED)
         sm.transition(eid, DriftState.TRIAGED, DriftState.RESOLVING)
         sm.transition(eid, DriftState.RESOLVING, DriftState.RESOLVED)
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolved_at is not None
 
     def test_non_resolved_state_no_resolved_at(self):
         sm = DriftStateMachine()
         eid = uuid.uuid4()
         sm.transition(eid, DriftState.DETECTED, DriftState.TRIAGED)
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolved_at is None
 
 
@@ -229,7 +229,7 @@ class TestAutoTransition:
         sm.transition(eid, DriftState.RESOLVING, DriftState.FIX_FAILED)
         result = sm.auto_transition(eid)
         assert result == DriftState.ACKNOWLEDGED
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.needs_human is True
 
     def test_auto_transition_unknown_event(self):
@@ -277,7 +277,7 @@ class TestCheckTtl:
             state=DriftState.DETECTED,
             created_at=datetime.now(UTC) - timedelta(hours=1),
         )
-        sm._events[eid] = rec
+        sm.events[eid] = rec
         expired = sm.check_ttl()
         assert eid in expired
         assert sm.get_state(eid) == DriftState.DEAD_LETTER
@@ -299,7 +299,7 @@ class TestCheckTtl:
             created_at=datetime.now(UTC),
         )
         rec.suppressed_until = past
-        sm._events[eid] = rec
+        sm.events[eid] = rec
         expired = sm.check_ttl()
         assert eid in expired
         assert sm.get_state(eid) == DriftState.DETECTED
@@ -343,7 +343,7 @@ class TestMarkAutoFixable:
         eid = uuid.uuid4()
         sm.transition(eid, DriftState.DETECTED, DriftState.TRIAGED)
         sm.mark_auto_fixable(eid)
-        assert sm._events[eid].auto_fixable is True
+        assert sm.events[eid].auto_fixable is True
 
     def test_mark_nonexistent_no_error(self):
         sm = DriftStateMachine()
@@ -402,7 +402,7 @@ class TestBoundaryConditions:
         sm.transition(eid, DriftState.DETECTED, DriftState.TRIAGED)
         sm.transition(eid, DriftState.TRIAGED, DriftState.RESOLVING)
         sm.transition(eid, DriftState.RESOLVING, DriftState.RESOLVED, resolved_by="")
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolved_by is None
 
     def test_multiple_events_independent(self):
@@ -424,7 +424,7 @@ class TestBoundaryConditions:
         sm.transition(eid, DriftState.RESOLVING, DriftState.RESOLVED, resolved_by="bot")
         sm.transition(eid, DriftState.RESOLVED, DriftState.VERIFIED)
         assert sm.is_terminal(eid) is True
-        rec = sm._events[eid]
+        rec = sm.events[eid]
         assert rec.resolved_by == "bot"
         assert rec.resolved_at is not None
 

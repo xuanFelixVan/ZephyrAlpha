@@ -40,30 +40,30 @@ class TestSpawnEngine:
     def test_spawn_creates_process_entry(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
-        assert "eng-1" in isolator._processes
+        assert "eng-1" in isolator.processes
 
     def test_spawn_status_is_running(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
-        assert isolator._processes["eng-1"]["status"] == "running"
+        assert isolator.processes["eng-1"]["status"] == "running"
 
     def test_spawn_with_config(self):
         isolator = ProcessIsolator()
         config = {"mode": "strict", "timeout": 30}
         isolator.spawn_engine("eng-1", config=config)
-        assert isolator._processes["eng-1"]["config"] == config
+        assert isolator.processes["eng-1"]["config"] == config
 
     def test_spawn_without_config_defaults_empty(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
-        assert isolator._processes["eng-1"]["config"] == {}
+        assert isolator.processes["eng-1"]["config"] == {}
 
     def test_spawn_multiple_engines(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
         isolator.spawn_engine("eng-2")
-        assert "eng-1" in isolator._processes
-        assert "eng-2" in isolator._processes
+        assert "eng-1" in isolator.processes
+        assert "eng-2" in isolator.processes
 
 
 class TestIsolate:
@@ -83,13 +83,13 @@ class TestIsolate:
         isolator.spawn_engine("eng-1")
         limits = {"cpu": 2, "memory_mb": 512}
         isolator.isolate("eng-1", resource_limits=limits)
-        assert isolator._processes["eng-1"]["limits"] == limits
+        assert isolator.processes["eng-1"]["limits"] == limits
 
     def test_isolate_default_limits(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
         isolator.isolate("eng-1")
-        assert isolator._processes["eng-1"]["limits"] == {"cpu": 1, "memory_mb": 256}
+        assert isolator.processes["eng-1"]["limits"] == {"cpu": 1, "memory_mb": 256}
 
     def test_isolate_after_kill_returns_false(self):
         isolator = ProcessIsolator()
@@ -110,7 +110,7 @@ class TestKillEngine:
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
         isolator.kill_engine("eng-1")
-        assert "eng-1" not in isolator._processes
+        assert "eng-1" not in isolator.processes
 
     def test_kill_nonexistent_engine(self):
         isolator = ProcessIsolator()
@@ -130,8 +130,8 @@ class TestKillEngine:
         isolator.spawn_engine("eng-1")
         isolator.spawn_engine("eng-2")
         isolator.kill_engine("eng-1")
-        assert "eng-1" not in isolator._processes
-        assert "eng-2" in isolator._processes
+        assert "eng-1" not in isolator.processes
+        assert "eng-2" in isolator.processes
 
 
 class TestBoundaryConditions:
@@ -139,7 +139,7 @@ class TestBoundaryConditions:
         isolator = ProcessIsolator()
         result = isolator.spawn_engine("")
         assert result is True
-        assert "" in isolator._processes
+        assert "" in isolator.processes
 
     def test_isolate_before_spawn(self):
         isolator = ProcessIsolator()
@@ -155,18 +155,18 @@ class TestBoundaryConditions:
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1", config={"v": 1})
         isolator.spawn_engine("eng-1", config={"v": 2})
-        assert isolator._processes["eng-1"]["config"] == {"v": 2}
+        assert isolator.processes["eng-1"]["config"] == {"v": 2}
 
     def test_isolate_with_empty_limits_uses_default(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
         isolator.isolate("eng-1", resource_limits={})
-        assert isolator._processes["eng-1"]["limits"] == {"cpu": 1, "memory_mb": 256}
+        assert isolator.processes["eng-1"]["limits"] == {"cpu": 1, "memory_mb": 256}
 
     def test_isolate_with_custom_cpu_and_memory(self):
         isolator = ProcessIsolator()
         isolator.spawn_engine("eng-1")
         limits = {"cpu": 4, "memory_mb": 1024}
         isolator.isolate("eng-1", resource_limits=limits)
-        assert isolator._processes["eng-1"]["limits"]["cpu"] == 4
-        assert isolator._processes["eng-1"]["limits"]["memory_mb"] == 1024
+        assert isolator.processes["eng-1"]["limits"]["cpu"] == 4
+        assert isolator.processes["eng-1"]["limits"]["memory_mb"] == 1024

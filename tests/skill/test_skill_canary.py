@@ -19,7 +19,7 @@ from zephyr.autonomy_core.skills.skill_canary import SkillCanary
 class TestSkillCanaryInit:
     def test_instantiation_creates_empty_canary_dict(self):
         sc = SkillCanary()
-        assert sc._canary == {}
+        assert sc.canary == {}
 
     def test_steps_constant(self):
         assert SkillCanary.STEPS == [5, 10, 25, 50, 100]
@@ -39,14 +39,14 @@ class TestDeployCanary:
     def test_deploy_canary_stores_in_internal_dict(self):
         sc = SkillCanary()
         sc.deploy_canary("skill-x", "2.0.0")
-        assert "skill-x" in sc._canary
-        assert sc._canary["skill-x"]["version"] == "2.0.0"
+        assert "skill-x" in sc.canary
+        assert sc.canary["skill-x"]["version"] == "2.0.0"
 
     def test_deploy_canary_overwrites_existing(self):
         sc = SkillCanary()
         sc.deploy_canary("skill-x", "1.0.0")
         sc.deploy_canary("skill-x", "2.0.0")
-        assert sc._canary["skill-x"]["version"] == "2.0.0"
+        assert sc.canary["skill-x"]["version"] == "2.0.0"
 
     def test_deploy_canary_empty_skill_id(self):
         sc = SkillCanary()
@@ -74,8 +74,8 @@ class TestPromote:
         sc = SkillCanary()
         sc.deploy_canary("skill-abc", "1.0.0")
         sc.promote("skill-abc")
-        assert sc._canary["skill-abc"]["mode"] == "stable"
-        assert sc._canary["skill-abc"]["traffic_percent"] == 100
+        assert sc.canary["skill-abc"]["mode"] == "stable"
+        assert sc.canary["skill-abc"]["traffic_percent"] == 100
 
     def test_promote_nonexistent_canary(self):
         sc = SkillCanary()
@@ -103,8 +103,8 @@ class TestRollbackCanary:
         sc = SkillCanary()
         sc.deploy_canary("skill-abc", "1.0.0")
         sc.rollback_canary("skill-abc")
-        assert sc._canary["skill-abc"]["mode"] == "rolled_back"
-        assert sc._canary["skill-abc"]["traffic_percent"] == 0
+        assert sc.canary["skill-abc"]["mode"] == "rolled_back"
+        assert sc.canary["skill-abc"]["traffic_percent"] == 0
 
     def test_rollback_nonexistent_canary(self):
         sc = SkillCanary()
@@ -123,17 +123,17 @@ class TestCanaryWorkflow:
     def test_deploy_then_promote_then_rollback(self):
         sc = SkillCanary()
         sc.deploy_canary("skill-wf", "3.0.0")
-        assert sc._canary["skill-wf"]["mode"] == "canary"
+        assert sc.canary["skill-wf"]["mode"] == "canary"
         sc.promote("skill-wf")
-        assert sc._canary["skill-wf"]["mode"] == "stable"
+        assert sc.canary["skill-wf"]["mode"] == "stable"
         sc.rollback_canary("skill-wf")
-        assert sc._canary["skill-wf"]["mode"] == "rolled_back"
-        assert sc._canary["skill-wf"]["traffic_percent"] == 0
+        assert sc.canary["skill-wf"]["mode"] == "rolled_back"
+        assert sc.canary["skill-wf"]["traffic_percent"] == 0
 
     def test_multiple_skills_independent(self):
         sc = SkillCanary()
         sc.deploy_canary("skill-a", "1.0.0")
         sc.deploy_canary("skill-b", "2.0.0")
         sc.promote("skill-a")
-        assert sc._canary["skill-a"]["mode"] == "stable"
-        assert sc._canary["skill-b"]["mode"] == "canary"
+        assert sc.canary["skill-a"]["mode"] == "stable"
+        assert sc.canary["skill-b"]["mode"] == "canary"

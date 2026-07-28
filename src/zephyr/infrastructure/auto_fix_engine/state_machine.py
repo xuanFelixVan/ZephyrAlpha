@@ -240,6 +240,12 @@ class DriftStateMachine:
     def __init__(self) -> None:
         self._events: dict = {}
 
+    # ── Stage 4 公共化（2026-07-28）：只读 property ──
+    @property
+    def events(self) -> dict:
+        """只读：事件记录表（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._events
+
     @staticmethod
     def _state_value(state) -> str:
         """归一化 DriftState 枚举或字符串为字符串值。"""

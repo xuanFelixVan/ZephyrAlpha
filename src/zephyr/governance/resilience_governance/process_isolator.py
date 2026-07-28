@@ -27,6 +27,12 @@ class ProcessIsolator:
     def __init__(self):
         self._processes: dict[str, dict] = {}
 
+    # ── Stage 4 公共化（2026-07-28）：只读 property ──
+    @property
+    def processes(self) -> dict[str, dict]:
+        """只读：引擎进程表（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._processes
+
     def spawn_engine(self, engine_id: str, config: dict = None) -> bool:
         self._processes[engine_id] = {"status": "running", "config": config or {}}
         return True
