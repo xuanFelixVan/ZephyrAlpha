@@ -77,6 +77,23 @@ class ContextEngine:
             reserve_tokens=int(max_tokens * 0.1),
         )
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def budget(self):
+        """只读：budget（Stage 4 公共化）。"""
+        return self._budget
+
+    @property
+    def max_tokens(self):
+        """只读：max_tokens（Stage 4 公共化）。"""
+        return self._max_tokens
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def assemble_context(
         self,
         task_id: str,

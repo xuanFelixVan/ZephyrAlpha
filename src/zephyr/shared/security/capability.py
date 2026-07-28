@@ -177,6 +177,12 @@ class CapabilityRegistry:
     def capabilities(self) -> list[Capability]:
         return list(self._capabilities)
 
+    @capabilities.setter
+    def capabilities(self, value):
+        """写入：capabilities（Stage 4 公共化）。"""
+        self._capabilities = value
+
+
     def _match_glob(self, pattern: str, path: str) -> bool:
         normalized_pattern = pattern.replace("\\", "/")
         normalized_path = path.replace("\\", "/")

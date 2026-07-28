@@ -179,6 +179,18 @@ class FlagRegistry:
         self._audit_path: Path | None = Path(audit_path) if audit_path is not None else None
         self._persist_audit: bool = persist_audit or self._audit_path is not None
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def audit(self) -> list[dict[str, Any]]:
+        """只读：audit（Stage 4 公共化）。"""
+        return self._audit
+
+    @property
+    def flags(self) -> dict[str, FeatureFlag]:
+        """只读：flags（Stage 4 公共化）。"""
+        return self._flags
+
+
     def _default_audit_path(self) -> Path | None:
         """惰性解析默认审计路径——shared 层禁止向上 import audit 组件，JSONL 落盘即可。"""
         try:

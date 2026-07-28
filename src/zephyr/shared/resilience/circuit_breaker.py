@@ -114,10 +114,28 @@ class CircuitBreaker:
         self._opened_at: float = 0.0
         self._half_open_calls: int = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def failure_threshold(self) -> int:
+        """只读：failure_threshold（Stage 4 公共化）。"""
+        return self._failure_threshold
+
+    @property
+    def recovery_timeout_ms(self) -> int:
+        """只读：recovery_timeout_ms（Stage 4 公共化）。"""
+        return self._recovery_timeout_ms
+
+
     @property
     def state(self) -> CircuitState:
         with self._lock:
             return self._state
+
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
 
     @property
     def failure_count(self) -> int:

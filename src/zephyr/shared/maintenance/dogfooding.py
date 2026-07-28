@@ -63,6 +63,13 @@ class Dogfooding:
         self._data_dir = data_dir or Path("data/maintenance/dogfooding")
         self._tasks = list(DOGFOOD_TASKS)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def tasks(self):
+        """只读：tasks（Stage 4 公共化）。"""
+        return self._tasks
+
+
     def register_dogfood_task(self, task: DogfoodTask) -> None:
         self._tasks.append(task)
 

@@ -60,6 +60,18 @@ class AutonomyMonitor:
         self._state = AutonomyState(current_level=AutonomyLevel.SUPERVISED)
         self._event_log: list[dict[str, Any]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def event_log(self) -> list[dict[str, Any]]:
+        """只读：event_log（Stage 4 公共化）。"""
+        return self._event_log
+
+    @property
+    def state(self):
+        """只读：state（Stage 4 公共化）。"""
+        return self._state
+
+
     def get_level(self) -> AutonomyLevel:
         return self._state.current_level
 

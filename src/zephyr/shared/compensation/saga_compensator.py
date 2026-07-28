@@ -61,6 +61,13 @@ class SagaCompensator:
     def __init__(self) -> None:
         self._sagas: dict[str, SagaContext] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def sagas(self) -> dict[str, SagaContext]:
+        """只读：sagas（Stage 4 公共化）。"""
+        return self._sagas
+
+
     def create_saga(self, saga_id: str, steps: list[SagaStep]) -> SagaContext:
         context = SagaContext(saga_id=saga_id, steps=steps)
         self._sagas[saga_id] = context

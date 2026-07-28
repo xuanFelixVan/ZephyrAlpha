@@ -161,6 +161,13 @@ class DOSLauncher:
         self._directive_dir = directive_dir or _DIRECTIVE_DIR
         self._cache: dict[str, DirectiveInfo] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def cache(self) -> dict[str, DirectiveInfo]:
+        """只读：cache（Stage 4 公共化）。"""
+        return self._cache
+
+
     def load_directive(self, directive_id: str) -> DirectiveInfo | None:
         if directive_id in self._cache:
             return self._cache[directive_id]

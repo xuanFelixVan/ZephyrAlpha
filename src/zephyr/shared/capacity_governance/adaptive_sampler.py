@@ -34,6 +34,13 @@ class AdaptiveSampler:
         self._error_count = 0
         self._total_count = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def base_rate(self):
+        """只读：base_rate（Stage 4 公共化）。"""
+        return self._base_rate
+
+
     def decide(self, is_error: bool = False) -> SamplingDecision:
         self._total_count += 1
         if is_error:

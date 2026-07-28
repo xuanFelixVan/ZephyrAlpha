@@ -62,6 +62,13 @@ class DependencyGraph:
     def __init__(self) -> None:
         self._nodes: dict[str, DependencyNode] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def nodes(self) -> dict[str, DependencyNode]:
+        """只读：nodes（Stage 4 公共化）。"""
+        return self._nodes
+
+
     def add_node(
         self, task_id: str, depends_on: list[str] | None = None, blocked_by: list[str] | None = None
     ) -> DependencyNode:

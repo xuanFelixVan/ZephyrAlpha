@@ -58,6 +58,18 @@ class PromptVersionManager:
             last_updated=datetime.now(UTC).isoformat(),
         )
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def registry(self):
+        """只读：registry（Stage 4 公共化）。"""
+        return self._registry
+
+
     def register(
         self, prompt_id: str, version: str, content: str, model: str = "deepseek", pipeline_module: str = ""
     ) -> PromptVersion:

@@ -78,6 +78,23 @@ class HookDispatcher:
         self._bus.subscribe(EventType.TASK_COMPLETED, self._on_event)
         self._bus.subscribe(EventType.TASK_FAILED, self._on_event)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def bus(self):
+        """只读：bus（Stage 4 公共化）。"""
+        return self._bus
+
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def hooks(self) -> dict[EventType, list[HookConfig]]:
+        """只读：hooks（Stage 4 公共化）。"""
+        return self._hooks
+
+
     def register_hook(self, hook: HookConfig) -> None:
         if hook.event_type in self._hooks:
             self._hooks[hook.event_type].append(hook)
