@@ -330,5 +330,14 @@ def main(argv: list[str]) -> int:
         return EXIT_FINDINGS
     print(f"\nPASS: all {len(commits)} commit(s) compliant")
     return EXIT_PASS
+
+
+# ── Stage 4 公共 API 别名（for testing, thin wrappers） ──
+extract_session_id = _extract_session_id
+load_registered_sessions = _load_registered_sessions
+extract_commit_type = _extract_commit_type
+is_merge_commit = _is_merge_commit
+check_commit = _check_commit
+
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
