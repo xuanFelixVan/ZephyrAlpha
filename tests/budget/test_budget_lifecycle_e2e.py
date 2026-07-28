@@ -34,10 +34,10 @@ from zephyr.governance.ops_governance.budget_models import BudgetDimension, Budg
 @pytest.fixture
 def engine():
     """提供干净的 BudgetEngine 实例。"""
-    BudgetEngine._instance = None
+    BudgetEngine.instance = None
     e = BudgetEngine()
     yield e
-    BudgetEngine._instance = None
+    BudgetEngine.instance = None
 
 
 class TestFullLifecycle:
@@ -56,8 +56,8 @@ class TestFullLifecycle:
         persist_path = tmp_path / "shutdown_snapshot.json"
 
         # Step 1: 模拟 session_startup 自动初始化
-        BudgetEngine._instance = engine
-        assert BudgetEngine._instance is not None
+        BudgetEngine.instance = engine
+        assert BudgetEngine.instance is not None
 
         # Step 2: 模拟 LLM 调用 pre_flight_check
         result = engine.pre_flight_check("req-lifecycle-001", estimated_tokens=100, estimated_cost=0.01)
@@ -87,13 +87,13 @@ class TestFullLifecycle:
         assert saved["health"] == "DEGRADED"
 
         # 验证单例已重置
-        assert BudgetEngine._instance is None
+        assert BudgetEngine.instance is None
 
     def test_full_lifecycle_with_ipi_attack(self, engine, tmp_path):
         """完整生命周期含 IPI 攻击检测。"""
         persist_path = tmp_path / "shutdown_snapshot.json"
 
-        BudgetEngine._instance = engine
+        BudgetEngine.instance = engine
 
         # 正常调用
         result = engine.pre_flight_check("req-001", estimated_tokens=100, estimated_cost=0.01)
@@ -113,7 +113,7 @@ class TestFullLifecycle:
         with patch("os.path.join", return_value=str(persist_path)):
             engine.shutdown()
 
-        assert BudgetEngine._instance is None
+        assert BudgetEngine.instance is None
 
 
 class TestRestartStateRecovery:
@@ -123,7 +123,7 @@ class TestRestartStateRecovery:
         """shutdown 后重新初始化，验证从快照恢复的消费数据一致。"""
         persist_path = tmp_path / "shutdown_snapshot.json"
 
-        BudgetEngine._instance = engine
+        BudgetEngine.instance = engine
 
         # 记录消费
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
@@ -137,7 +137,7 @@ class TestRestartStateRecovery:
         with patch("os.path.join", return_value=str(persist_path)):
             engine.shutdown()
 
-        assert BudgetEngine._instance is None
+        assert BudgetEngine.instance is None
 
         # 从快照恢复
         recovered = BudgetEngine.recover_from_snapshot(str(persist_path))
@@ -149,7 +149,7 @@ class TestRestartStateRecovery:
 
     def test_restart_without_snapshot_starts_fresh(self, engine, tmp_path):
         """无快照文件时重启应从零开始。"""
-        BudgetEngine._instance = engine
+        BudgetEngine.instance = engine
         engine.shutdown()
 
         # 从不存在的快照恢复

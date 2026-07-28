@@ -13,7 +13,7 @@
 - 旧备份自动清理（保留最近 max_backups 份）
 - backup_runtime_handoffs 备份 .runtime/ handoffs+reconcile_reports 可回读恢复（5.33.7 配套）
 
-不连真实 PG：monkeypatch psycopg2.connect + depgraph_schema._build_pg_dsn，
+不连真实 PG：monkeypatch psycopg2.connect + depgraph_schema.build_pg_dsn，
 REPO_ROOT 重定向到 tmp_path（测试隔离，不写生产路径）。
 """
 

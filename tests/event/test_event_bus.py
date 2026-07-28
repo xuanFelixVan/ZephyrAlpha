@@ -58,8 +58,8 @@ class TestEventBus:
     def test_instantiation(self):
         bus = EventBus()
         assert bus is not None
-        assert bus._subscribers is not None
-        assert bus._event_log is not None
+        assert bus.subscribers is not None
+        assert bus.event_log is not None
 
     def test_publish_creates_domain_event(self):
         bus = EventBus()
@@ -160,8 +160,8 @@ class TestEventBus:
         assert len(received) == 1
 
     def test_get_instance_returns_same_object(self):
-        EventBus._instance = None
+        EventBus.instance = None
         a = EventBus.get_instance()
         b = EventBus.get_instance()
         assert a is b
-        EventBus._instance = None
+        EventBus.instance = None

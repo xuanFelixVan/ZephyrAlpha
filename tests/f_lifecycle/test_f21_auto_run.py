@@ -60,13 +60,13 @@ class TestHealthMonitorAutoRun:
         hm.start()
 
         # 验证线程已启动
-        assert hm._monitor_thread is not None, "后台线程未启动"
-        assert hm._monitor_thread.is_alive(), "后台线程未运行"
+        assert hm.monitor_thread is not None, "后台线程未启动"
+        assert hm.monitor_thread.is_alive(), "后台线程未运行"
 
         hm.stop()
 
         # 验证线程已停止
-        assert not hm._running, "HealthMonitor 仍在运行"
+        assert not hm.running, "HealthMonitor 仍在运行"
 
     def test_health_monitor_register_probe(self) -> None:
         """HealthMonitor 可注册 probe。"""
@@ -77,7 +77,7 @@ class TestHealthMonitorAutoRun:
             return ProbeResult(capability_id="test", alive=True, ready=True)
 
         hm.register_probe("test.capability", _test_probe)
-        assert "test.capability" in hm._probe_fns or len(hm._probe_fns) > 0
+        assert "test.capability" in hm.probe_fns or len(hm.probe_fns) > 0
 
     def test_health_monitor_register_shared_monitoring_probes(self) -> None:
         """HealthMonitor 可注册 shared/ 监控模块 probe。"""
@@ -97,7 +97,7 @@ class TestHealthMonitorAutoRun:
         """HealthMonitor _collect_metrics 可调用。"""
         from zephyr.trading.health_monitor import HealthMonitor
         hm = HealthMonitor()
-        hm._collect_metrics()
+        hm.collect_metrics()
         assert True  # 不抛异常即可
 
 
@@ -119,5 +119,5 @@ class TestCircadianSchedulerAutoRun:
         hm.start()
         time.sleep(0.15)
         # 即使内部有异常，循环也应继续
-        assert hm._monitor_thread.is_alive() if hm._monitor_thread else False, "监控循环因异常退出"
+        assert hm.monitor_thread.is_alive() if hm.monitor_thread else False, "监控循环因异常退出"
         hm.stop()

@@ -78,7 +78,7 @@ class TestMetricCardinalityGuard:
         guard = MetricCardinalityGuard(max_cardinality=5, warning_cardinality=2)
         for i in range(6):
             guard.record_labels("m", (("k", str(i)),))
-        assert guard._classify_cardinality(5) == CardinalityStatus.CRITICAL
+        assert guard.classify_cardinality(5) == CardinalityStatus.CRITICAL
 
     def test_record_labels_generates_alert_for_dangerous(self):
         guard = MetricCardinalityGuard(warning_cardinality=2, max_cardinality=100)
@@ -95,28 +95,28 @@ class TestMetricCardinalityGuard:
 
     def test_classify_cardinality_safe(self):
         guard = MetricCardinalityGuard(warning_cardinality=5, max_cardinality=100)
-        assert guard._classify_cardinality(3) == CardinalityStatus.SAFE
+        assert guard.classify_cardinality(3) == CardinalityStatus.SAFE
 
     def test_classify_cardinality_elevated(self):
         guard = MetricCardinalityGuard(warning_cardinality=5, max_cardinality=100)
-        assert guard._classify_cardinality(5) == CardinalityStatus.ELEVATED
+        assert guard.classify_cardinality(5) == CardinalityStatus.ELEVATED
 
     def test_classify_cardinality_dangerous(self):
         guard = MetricCardinalityGuard(warning_cardinality=5, max_cardinality=100)
-        assert guard._classify_cardinality(10) == CardinalityStatus.DANGEROUS
+        assert guard.classify_cardinality(10) == CardinalityStatus.DANGEROUS
 
     def test_classify_cardinality_critical(self):
         guard = MetricCardinalityGuard(warning_cardinality=5, max_cardinality=100)
-        assert guard._classify_cardinality(100) == CardinalityStatus.CRITICAL
+        assert guard.classify_cardinality(100) == CardinalityStatus.CRITICAL
 
     def test_compute_growth_rate_insufficient_data(self):
         guard = MetricCardinalityGuard()
         guard.record_labels("m", (("k", "v"),))
-        assert guard._compute_growth_rate("m") == 0.0
+        assert guard.compute_growth_rate("m") == 0.0
 
     def test_compute_growth_rate_unknown_metric(self):
         guard = MetricCardinalityGuard()
-        assert guard._compute_growth_rate("nonexistent") == 0.0
+        assert guard.compute_growth_rate("nonexistent") == 0.0
 
     def test_get_top_cardinality_metrics_empty(self):
         guard = MetricCardinalityGuard()

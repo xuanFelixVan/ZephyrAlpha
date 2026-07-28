@@ -35,14 +35,14 @@ class TestAlphaSignalPipeline:
         try:
             from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
 
-            SignalSynthesizerBase._registry.clear()
+            SignalSynthesizerBase.registry.clear()
         except Exception:
             pass
         yield
         try:
             from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
 
-            SignalSynthesizerBase._registry.clear()
+            SignalSynthesizerBase.registry.clear()
         except Exception:
             pass
 

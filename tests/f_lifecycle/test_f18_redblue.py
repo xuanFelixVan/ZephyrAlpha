@@ -142,7 +142,7 @@ class TestGateExecutionFailure:
         runner = GovernanceAutoRunner()
         with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.side_effect = RuntimeError("gate exploded")
-            result = runner._execute_gate("gate_broken")
+            result = runner.execute_gate("gate_broken")
             assert result is False  # fail-closed: 异常时不视为通过
 
     def test_gate_returns_none(self) -> None:
@@ -152,7 +152,7 @@ class TestGateExecutionFailure:
         runner = GovernanceAutoRunner()
         with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.return_value = None
-            result = runner._execute_gate("gate_none")
+            result = runner.execute_gate("gate_none")
             # None != GateResult.GREEN → 返回 False，但不应崩溃
             assert isinstance(result, bool)
 
@@ -163,7 +163,7 @@ class TestGateExecutionFailure:
         runner = GovernanceAutoRunner()
         with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.return_value = "INVALID_STRING"
-            result = runner._execute_gate("gate_invalid")
+            result = runner.execute_gate("gate_invalid")
             assert isinstance(result, bool)
 
     def test_gate_import_error(self) -> None:
@@ -172,7 +172,7 @@ class TestGateExecutionFailure:
 
         runner = GovernanceAutoRunner()
         with patch.dict("sys.modules", {"zephyr.governance.ops_governance.phase_check_registry": None}):
-            result = runner._execute_gate("gate_any")
+            result = runner.execute_gate("gate_any")
             assert result is False  # fail-closed: 导入失败不视为通过
 
     def test_run_with_all_gates_failing(self) -> None:
@@ -290,11 +290,11 @@ class TestAuditLogFailure:
         runner = GovernanceAutoRunner()
         # 注入 1000 条 error
         for i in range(1000):
-            runner._result.errors.append(f"error_{i}")
+            runner.result.errors.append(f"error_{i}")
         # _write_audit_log 应截断到前 10 条
-        runner._write_audit_log()
+        runner.write_audit_log()
         # 验证写入成功（不崩溃即通过）
-        assert runner._result.audit_logged is True or len(runner._result.errors) > 0
+        assert runner.result.audit_logged is True or len(runner.result.errors) > 0
 
 
 
@@ -442,8 +442,8 @@ class TestBoundaryValues:
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        runner._result.errors.append("E" * 100000)
-        runner._write_audit_log()
+        runner.result.errors.append("E" * 100000)
+        runner.write_audit_log()
         # 不崩溃即通过
 
 
@@ -456,7 +456,7 @@ class TestBoundaryValues:
 
         def concurrent_verify() -> bool:
             try:
-                return runner._execute_gate("gate_test")
+                return runner.execute_gate("gate_test")
             except Exception as e:
                 errors.append(e)
                 return False

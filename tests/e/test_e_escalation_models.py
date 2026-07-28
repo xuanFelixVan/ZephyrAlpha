@@ -234,7 +234,7 @@ class TestEconomicGuard:
 
         monkeypatch.setattr("zephyr.governance.escalation.escalation_models.datetime", _FakeDatetime(new_time))
 
-        guard._maybe_reset()
+        guard.maybe_reset()
         assert guard.consumed_today == 0.0
         assert guard.hard_limit_reached is False
         assert guard.last_reset == new_time
@@ -248,7 +248,7 @@ class TestEconomicGuard:
 
         monkeypatch.setattr("zephyr.governance.escalation.escalation_models.datetime", _FakeDatetime(same_day))
 
-        guard._maybe_reset()
+        guard.maybe_reset()
         assert guard.consumed_today == 90.0
         assert guard.hard_limit_reached is True
 

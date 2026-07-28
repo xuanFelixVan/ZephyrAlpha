@@ -657,7 +657,7 @@ def test_parse_header_from_text_string_input():
         "# [A_module] module_id=MOD-OLD_ghost\n"
         "pass\n"
     )
-    info = CapabilityLookup._parse_header_from_text(text, "src/zephyr/old/ghost.py")
+    info = CapabilityLookup.parse_header_from_text(text, "src/zephyr/old/ghost.py")
     assert info.module_path == "zephyr.old.ghost"
     assert info.module_id == "MOD-OLD_ghost"
     assert info.blueprint_id == "MOD-OLD"

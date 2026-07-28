@@ -46,14 +46,14 @@ class TestEventReactor:
     def test_instantiation_with_explicit_bus(self):
         bus = EventBus()
         reactor = EventReactor(event_bus=bus)
-        assert reactor._bus is bus
+        assert reactor.bus is bus
         assert reactor.get_reactions() == []
 
     def test_instantiation_with_default_bus(self):
-        EventBus._instance = None
+        EventBus.instance = None
         reactor = EventReactor()
-        assert reactor._bus is not None
-        EventBus._instance = None
+        assert reactor.bus is not None
+        EventBus.instance = None
 
     def test_task_failed_triggers_reaction(self):
         bus = EventBus()

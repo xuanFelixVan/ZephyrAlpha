@@ -153,9 +153,9 @@ class TestExamCheatingAttack:
             "fixes": [{"old_str": case.expected_old_str, "new_str": "replacement"}]
         }
 
-        is_suspicious = orch._detect_optimization(case, malicious_result)
+        is_suspicious = orch.detect_optimization(case, malicious_result)
         assert is_suspicious is True, "防护失败: 精确匹配 old_str 未被检测为优化"
-        assert orch._optimization_suspicions > 0
+        assert orch.optimization_suspicions > 0
 
     def test_attack_optimization_exact_category_without_reason(self) -> None:
         """攻击: 模型精确匹配分类但无推理过程。
@@ -170,9 +170,9 @@ class TestExamCheatingAttack:
             # 没有 "reason" 字段
         }
 
-        is_suspicious = orch._detect_optimization(case, malicious_result)
+        is_suspicious = orch.detect_optimization(case, malicious_result)
         assert is_suspicious is True, "防护失败: 无推理精确匹配未被检测"
-        assert orch._optimization_suspicions > 0
+        assert orch.optimization_suspicions > 0
 
     def test_attack_normal_result_not_flagged(self) -> None:
         """正常结果不应被误报为攻击。"""
@@ -193,11 +193,11 @@ class TestExamCheatingAttack:
         orch = ExamOrchestrator(_make_mock_chat(), randomize_order=True)
 
         # mock _infer 返回有效结果
-        orch._infer = MagicMock(return_value={"category": "test", "reason": "test"})
+        orch.infer = MagicMock(return_value={"category": "test", "reason": "test"})
 
         # 运行两次，验证随机化不影响功能正确性
-        result1 = orch._run_breadth()
-        result2 = orch._run_breadth()
+        result1 = orch.run_breadth()
+        result2 = orch.run_breadth()
 
         # 两次运行都应成功完成（不抛异常）
         assert result1.total > 0
@@ -509,7 +509,7 @@ class TestCombinedAttack:
         """
         # 层次1: 随机化
         orch = ExamOrchestrator(_make_mock_chat(), randomize_order=True)
-        assert orch._randomize_order is True
+        assert orch.randomize_order is True
 
         # 层次2: 完整性校验
         case = _find_case("tag_completion")
@@ -521,7 +521,7 @@ class TestCombinedAttack:
         optimized_result = {
             "fixes": [{"old_str": code_case.expected_old_str, "new_str": "x"}]
         }
-        assert orch._detect_optimization(code_case, optimized_result) is True
+        assert orch.detect_optimization(code_case, optimized_result) is True
 
         # 层次4: HMAC 签名
         data = {"model_id": "defense-test", "overall_score": 0.85}

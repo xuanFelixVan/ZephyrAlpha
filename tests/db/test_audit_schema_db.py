@@ -41,7 +41,7 @@ class TestAuditQueryInit:
     def test_init_without_auto_init(self, tmp_path):
         db_path = tmp_path / "aq_no_init.db"
         aq = AuditQuery(db_path, auto_init=False)
-        conn = aq._get_conn()
+        conn = aq.get_conn()
         assert conn is not None
         conn.close()
 
@@ -53,7 +53,7 @@ class TestAuditQueryTrail:
         assert len(results) == 0
 
     def test_query_audit_for_session_with_data(self, aq):
-        conn = aq._get_conn()
+        conn = aq.get_conn()
         try:
             conn.execute(
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"
@@ -91,7 +91,7 @@ class TestAuditQueryTrail:
         assert len(results) == 0
 
     def test_query_task_status_history_with_event(self, aq):
-        conn = aq._get_conn()
+        conn = aq.get_conn()
         try:
             conn.execute(
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"
@@ -146,7 +146,7 @@ class TestAuditQuerySessions:
         assert isinstance(results, list)
 
     def test_query_recent_sessions_audit_with_data(self, aq):
-        conn = aq._get_conn()
+        conn = aq.get_conn()
         try:
             conn.execute(
                 "INSERT INTO tasks (task_id, namespace, seq, title, status, phase, execution_model,"

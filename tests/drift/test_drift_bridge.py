@@ -33,12 +33,12 @@ class TestBridgeResult:
 class TestDriftBridgeInstantiation:
     def test_default_path(self):
         bridge = DriftBridge()
-        assert bridge._audit_events_path is not None
+        assert bridge.audit_events_path is not None
 
     def test_custom_path(self, tmp_path):
         p = tmp_path / "events.jsonl"
         bridge = DriftBridge(p)
-        assert bridge._audit_events_path == p
+        assert bridge.audit_events_path == p
 
 
 class TestDriftBridgeSync:
@@ -116,12 +116,12 @@ class TestDriftBridgeSync:
 class TestDriftBridgeLoadEvents:
     def test_load_events_nonexistent_file(self, tmp_path):
         bridge = DriftBridge(tmp_path / "nonexistent.jsonl")
-        events = bridge._load_events()
+        events = bridge.load_events()
         assert events == []
 
     def test_load_events_with_data(self, tmp_path):
         log_file = tmp_path / "events.jsonl"
         log_file.write_text('{"event_type": "test"}\n{"event_type": "test2"}\n', encoding="utf-8")
         bridge = DriftBridge(log_file)
-        events = bridge._load_events()
+        events = bridge.load_events()
         assert len(events) == 2

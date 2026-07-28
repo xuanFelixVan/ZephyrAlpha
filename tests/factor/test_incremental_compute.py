@@ -62,7 +62,7 @@ class TestDefaultFallback:
             inc = factor.incremental_compute(data, cached=pd.Series(dtype=float))
             pd.testing.assert_series_equal(inc, full)
         finally:
-            FactorRegistry._registry.pop("_test_inc_default", None)
+            FactorRegistry.registry.pop("_test_inc_default", None)
 
 
 class TestMomentumIncremental:

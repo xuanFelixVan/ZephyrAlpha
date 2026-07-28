@@ -91,13 +91,13 @@ class TestAuditTrustBridge:
             assert all("trust-score" in r for r in results)
 
     def test_classify_tier_tier2(self):
-        assert AuditTrustBridge._classify_tier(0.9) == "TIER_2_AUTO_REVERT"
+        assert AuditTrustBridge.classify_tier(0.9) == "TIER_2_AUTO_REVERT"
 
     def test_classify_tier_tier1(self):
-        assert AuditTrustBridge._classify_tier(0.6) == "TIER_1_PROPOSE_ONLY"
+        assert AuditTrustBridge.classify_tier(0.6) == "TIER_1_PROPOSE_ONLY"
 
     def test_classify_tier_tier0(self):
-        assert AuditTrustBridge._classify_tier(0.3) == "TIER_0_READ_ONLY"
+        assert AuditTrustBridge.classify_tier(0.3) == "TIER_0_READ_ONLY"
 
     def test_detect_trust_score_rise(self, bridge):
         with patch.object(bridge, "get_trust_score", return_value=0.9):

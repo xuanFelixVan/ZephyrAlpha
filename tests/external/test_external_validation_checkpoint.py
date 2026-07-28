@@ -157,8 +157,8 @@ class TestRegisterKnownState:
         checkpoint = ExternalValidationCheckpoint()
         checkpoint.register_known_state("hash1")
         checkpoint.register_known_state("hash2")
-        assert checkpoint._hash_in_known_variants("hash1")
-        assert checkpoint._hash_in_known_variants("hash2")
+        assert checkpoint.hash_in_known_variants("hash1")
+        assert checkpoint.hash_in_known_variants("hash2")
 
 
 class TestGetPendingEscalations:

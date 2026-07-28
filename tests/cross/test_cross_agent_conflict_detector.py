@@ -72,11 +72,11 @@ class TestConflictReport:
 class TestCrossAgentConflictDetectorInstantiation:
     def test_default_project_root(self):
         detector = CrossAgentConflictDetector()
-        assert detector._project_root == Path.cwd()
+        assert detector.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         detector = CrossAgentConflictDetector(project_root=tmp_path)
-        assert detector._project_root == tmp_path
+        assert detector.project_root == tmp_path
 
 
 class TestDetectConflicts:
@@ -196,23 +196,23 @@ class TestRunGit:
     def test_git_success(self, detector: CrossAgentConflictDetector):
         with patch("zephyr.infrastructure.rollback.cross_agent_conflict_detector.subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(stdout="file1.py\nfile2.py\n")
-            result = detector._run_git(["diff", "--name-only", "HEAD"])
+            result = detector.run_git(["diff", "--name-only", "HEAD"])
         assert "file1.py" in result
 
     def test_git_failure_returns_empty(self, detector: CrossAgentConflictDetector):
         with patch("zephyr.infrastructure.rollback.cross_agent_conflict_detector.subprocess.run") as mock_run:
             mock_run.side_effect = Exception("git not found")
-            result = detector._run_git(["status"])
+            result = detector.run_git(["status"])
         assert result == ""
 
 
 class TestGetMostRecentAuthor:
     def test_author_found(self, detector: CrossAgentConflictDetector):
         with patch.object(detector, "_run_git", return_value="user@example.com\n"):
-            author = detector._get_most_recent_author("file1.py")
+            author = detector.get_most_recent_author("file1.py")
         assert author == "user@example.com"
 
     def test_author_not_found(self, detector: CrossAgentConflictDetector):
         with patch.object(detector, "_run_git", return_value=""):
-            author = detector._get_most_recent_author("nonexistent.py")
+            author = detector.get_most_recent_author("nonexistent.py")
         assert author == ""

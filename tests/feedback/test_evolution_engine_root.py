@@ -38,12 +38,12 @@ class TestEvolutionEngineInstantiation:
 
     def test_init_with_custom_thresholds(self):
         engine = EvolutionEngine(thresholds={"low_score_threshold": 5})
-        assert engine._thresholds["low_score_threshold"] == 5
+        assert engine.thresholds["low_score_threshold"] == 5
 
     def test_init_with_now_fn(self):
         fixed = datetime(2026, 1, 1, 12, 0, 0)
         engine = EvolutionEngine(now=lambda: fixed)
-        assert engine._now() == fixed
+        assert engine.now() == fixed
 
 
 class TestEvolutionEngineQTable:
