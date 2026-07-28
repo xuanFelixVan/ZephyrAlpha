@@ -36,6 +36,18 @@ class IDEWatcher:
         self._last_mtimes: dict[str, float] = {}
         self._callbacks: list = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def callbacks(self) -> list:
+        """只读：callbacks（Stage 4 公共化）。"""
+        return self._callbacks
+
+    @property
+    def last_mtimes(self) -> dict[str, float]:
+        """只读：last_mtimes（Stage 4 公共化）。"""
+        return self._last_mtimes
+
+
     def scan(self) -> dict[str, Any]:
         changes = []
         for root, dirs, files in os.walk(str(self.skills_dir)):

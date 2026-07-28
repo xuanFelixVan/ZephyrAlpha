@@ -66,6 +66,13 @@ class SpecRegistry:
         self._raw_cache: dict[str, Any] | None = None
         self._load_from_skill_registry()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def entries(self) -> dict[str, AgentCapability]:
+        """只读：entries（Stage 4 公共化）。"""
+        return self._entries
+
+
     def _load_from_skill_registry(self) -> None:
         if not self._registry_path.exists():
             return

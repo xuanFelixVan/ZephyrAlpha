@@ -44,6 +44,23 @@ class SkillLearning:
         self._learned_patterns: dict[str, list[str]] = {}
         self._session_deltas: dict[str, list[float]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def learned_patterns(self) -> dict[str, list[str]]:
+        """只读：learned_patterns（Stage 4 公共化）。"""
+        return self._learned_patterns
+
+    @property
+    def learning_history(self) -> dict[str, list[dict[str, Any]]]:
+        """只读：learning_history（Stage 4 公共化）。"""
+        return self._learning_history
+
+    @property
+    def session_deltas(self) -> dict[str, list[float]]:
+        """只读：session_deltas（Stage 4 公共化）。"""
+        return self._session_deltas
+
+
     def add_execution(
         self,
         skill_id: str,

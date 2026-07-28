@@ -35,6 +35,13 @@ class ContextOutcomeTracker:
     def __init__(self) -> None:
         self._links: dict[str, ContextOutcomeLink] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def links(self) -> dict[str, ContextOutcomeLink]:
+        """只读：links（Stage 4 公共化）。"""
+        return self._links
+
+
     def record(self, context_id: str, actions: list[str], successes: list[bool]) -> ContextOutcomeLink:
         rate = sum(successes) / max(1, len(successes))
         link = ContextOutcomeLink(

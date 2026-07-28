@@ -36,6 +36,13 @@ class SkillLineage:
     def __init__(self):
         self._lineages: dict[str, list[dict[str, Any]]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def lineages(self) -> dict[str, list[dict[str, Any]]]:
+        """只读：lineages（Stage 4 公共化）。"""
+        return self._lineages
+
+
     def record_version(self, skill_id: str, version: str, parent: str | None, changes: str) -> dict[str, Any]:
         entry = {"version": version, "parent": parent, "changes": changes, "timestamp": time.time()}
         self._lineages.setdefault(skill_id, []).append(entry)

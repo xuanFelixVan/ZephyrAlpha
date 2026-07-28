@@ -42,6 +42,13 @@ class FallbackStalenessGate:
     def __init__(self, defaults_file: str | Path = "AGENTS.md") -> None:
         self._file = Path(defaults_file)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def file(self):
+        """只读：file（Stage 4 公共化）。"""
+        return self._file
+
+
     def check(self) -> StalenessReport:
         exists = self._file.exists()
         sha = hashlib.sha256(self._file.read_bytes()).hexdigest() if exists else ""

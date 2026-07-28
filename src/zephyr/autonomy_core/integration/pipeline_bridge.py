@@ -66,6 +66,13 @@ class SkillContextInjector:
     def __init__(self, loader: SkillLoader | None = None):
         self._loader = loader or SkillLoader()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def loader(self):
+        """只读：loader（Stage 4 公共化）。"""
+        return self._loader
+
+
     def inject(self, domain_skill_id: str, role_skill_id: str, load_l3: bool = False) -> SkillInjectionResult:
         try:
             domain = self._loader.progressive_load(domain_skill_id)
@@ -174,6 +181,23 @@ class PipelineSkillBridge:
             "post_audit": ConstructionStage.POST_AUDIT,
             "audit": ConstructionStage.POST_AUDIT,
         }
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def injector(self):
+        """只读：injector（Stage 4 公共化）。"""
+        return self._injector
+
+    @property
+    def router(self):
+        """只读：router（Stage 4 公共化）。"""
+        return self._router
+
+    @property
+    def stage_map(self):
+        """只读：stage_map（Stage 4 公共化）。"""
+        return self._stage_map
+
 
     def inject_for_task(
         self,

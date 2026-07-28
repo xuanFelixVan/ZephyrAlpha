@@ -44,6 +44,24 @@ class SkillGuardrails:
         self._violations: list[dict[str, Any]] = []
         self._active = True
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def active(self):
+        """只读：active（Stage 4 公共化）。"""
+        return self._active
+
+    @active.setter
+    def active(self, value):
+        """写入：active（Stage 4 公共化）。"""
+        self._active = value
+
+
+    @property
+    def violations(self) -> list[dict[str, Any]]:
+        """只读：violations（Stage 4 公共化）。"""
+        return self._violations
+
+
     @property
     def allowed(self) -> bool:
         return self._active and len(self._violations) == 0

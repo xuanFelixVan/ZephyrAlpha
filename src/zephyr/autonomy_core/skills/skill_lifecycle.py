@@ -73,6 +73,18 @@ class SkillLifecycle:
         self._guards: dict[str, list[Callable[[str, str], bool]]] = {}
         self._history: dict[str, list[Transition]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def guards(self) -> dict[str, list[Callable[[str, str], bool]]]:
+        """只读：guards（Stage 4 公共化）。"""
+        return self._guards
+
+    @property
+    def states(self) -> dict[str, str]:
+        """只读：states（Stage 4 公共化）。"""
+        return self._states
+
+
     def register(self, skill_id: str, status: str = SkillStatus.ACTIVE.value):
         self._states[skill_id] = status
 

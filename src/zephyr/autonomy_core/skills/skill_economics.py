@@ -43,6 +43,18 @@ class SkillEconomics:
         self._costs: dict[str, dict[str, Any]] = {}
         self._spent = 0.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def costs(self) -> dict[str, dict[str, Any]]:
+        """只读：costs（Stage 4 公共化）。"""
+        return self._costs
+
+    @property
+    def spent(self):
+        """只读：spent（Stage 4 公共化）。"""
+        return self._spent
+
+
     def _price(self, model: str) -> dict[str, float]:
         for k, v in PRICING.items():
             if k in model.lower():

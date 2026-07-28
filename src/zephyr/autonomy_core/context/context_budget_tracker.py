@@ -146,6 +146,20 @@ class ContextBudgetTracker:
         self._sessions: dict[str, dict[str, Any]] = {}
         self._doc_compressor: Any | None = None  # DocCompressor（TYPE_CHECKING 避免循环导入）
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def sessions(self) -> dict[str, dict[str, Any]]:
+        """只读：sessions（Stage 4 公共化）。"""
+        return self._sessions
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def session_limit(self):
+        """只读：session_limit（Stage 4 公共化）。"""
+        return self._session_limit
+
+
     def _get_session(self, session_id: str) -> dict[str, Any]:
         self._cleanup_expired_sessions()
         if session_id not in self._sessions:

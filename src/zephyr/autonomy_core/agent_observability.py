@@ -32,6 +32,13 @@ class AgentObservability:
     def __init__(self):
         self._traces: dict[str, dict[str, Any]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def traces(self) -> dict[str, dict[str, Any]]:
+        """只读：traces（Stage 4 公共化）。"""
+        return self._traces
+
+
     def start_trace(self, skill_id: str) -> str:
         trace_id = f"trace-{skill_id}-{datetime.now(UTC).timestamp()}"
         self._traces[trace_id] = {"skill_id": skill_id, "spans": [], "start_time": datetime.now(UTC).isoformat()}

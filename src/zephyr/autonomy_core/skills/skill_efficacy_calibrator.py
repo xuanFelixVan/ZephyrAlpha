@@ -47,6 +47,18 @@ class SkillsBenchRunner:
         self._history_path = history_path or (Path(__file__).resolve().parent / "_benchmark_history.json")
         self._history: dict[str, list[dict[str, Any]]] = self._load_history()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> dict[str, list[dict[str, Any]]]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+    @property
+    def history_path(self):
+        """只读：history_path（Stage 4 公共化）。"""
+        return self._history_path
+
+
     def _load_history(self) -> dict[str, list[dict[str, Any]]]:
         if self._history_path.exists():
             try:
@@ -185,6 +197,18 @@ class SkillEfficacyCalibrator:
     def __init__(self):
         self._runner = SkillsBenchRunner()
         self._bench_results: dict[str, list[dict[str, Any]]] = {}
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def bench_results(self) -> dict[str, list[dict[str, Any]]]:
+        """只读：bench_results（Stage 4 公共化）。"""
+        return self._bench_results
+
+    @property
+    def runner(self):
+        """只读：runner（Stage 4 公共化）。"""
+        return self._runner
+
 
     def run_benchmark(self, skill_id: str, check_items: list[str] | None = None) -> dict[str, Any]:
         checks = check_items or [

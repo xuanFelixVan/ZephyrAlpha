@@ -46,6 +46,19 @@ class _MemoryCache:
         self._store: OrderedDict = OrderedDict()
         self._lock = threading.Lock()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max(self):
+        """只读：max（Stage 4 公共化）。"""
+        return self._max
+
+    @max.setter
+    def max(self, value):
+        """写入：max（Stage 4 公共化）。"""
+        self._max = value
+
+
+
     def get(self, key: str) -> object | None:
         with self._lock:
             if key in self._store:
@@ -111,6 +124,13 @@ class SkillCacheProvider:
         self._backend_name = "memory"
         self.__backend = None
         self.configure(backend)
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def backend_name(self):
+        """只读：backend_name（Stage 4 公共化）。"""
+        return self._backend_name
+
 
     def configure(self, backend: str) -> dict[str, Any]:
         avail = backend.lower().strip() in self._BACKENDS

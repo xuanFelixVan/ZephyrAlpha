@@ -118,6 +118,23 @@ class SkillCrossModel:
             "stop_phrase_mapping": {},
         }
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def adapter_registry(self) -> dict[str, callable]:
+        """只读：adapter_registry（Stage 4 公共化）。"""
+        return self._adapter_registry
+
+    @property
+    def default_provider(self):
+        """只读：default_provider（Stage 4 公共化）。"""
+        return self._default_provider
+
+    @property
+    def fallback_chain(self) -> list[str]:
+        """只读：fallback_chain（Stage 4 公共化）。"""
+        return self._fallback_chain
+
+
     def get_capability(self, provider: str) -> ModelCapability | None:
         return _MODEL_CAPABILITIES.get(provider)
 
