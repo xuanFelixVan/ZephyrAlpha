@@ -1261,6 +1261,20 @@ class TaskRepository:
         else:
             self._gate_engine = None
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def db_path(self) -> Path:
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def conn(self) -> sqlite3.Connection:
+        """只读：conn（Stage 4 公共化）。"""
+        return self._conn
+
+
     # ------------------------------------------------------------------
     # 连接管理
     # ------------------------------------------------------------------

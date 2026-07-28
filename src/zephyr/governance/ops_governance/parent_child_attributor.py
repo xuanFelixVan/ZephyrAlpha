@@ -46,6 +46,13 @@ class ParentChildAttributor:
         self._chains: list[AttributionChain] = []
         self._delegation_map: dict[str, list[AttributionChain]] = defaultdict(list)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_depth(self):
+        """只读：max_depth（Stage 4 公共化）。"""
+        return self._max_depth
+
+
     def record_delegation(
         self, parent_id: str, child_id: str, tokens: int, cost: float, depth: int = 1
     ) -> AttributionChain:

@@ -81,6 +81,18 @@ class HookRegistry:
         self._hooks: list[_HookEntry] = []
         self._active: bool = True
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def active(self) -> bool:
+        """只读：active（Stage 4 公共化）。"""
+        return self._active
+
+    @property
+    def hooks(self) -> list[_HookEntry]:
+        """只读：hooks（Stage 4 公共化）。"""
+        return self._hooks
+
+
     # ── public API ────────────────────────────────────────────────
 
     def register(

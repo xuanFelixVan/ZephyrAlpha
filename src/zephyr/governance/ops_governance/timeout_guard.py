@@ -64,6 +64,13 @@ class TimeoutGuard:
         self._active_scopes: dict[tuple[TimeoutLevel, str], float] = {}
         self._events: list[TimeoutEvent] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def timeouts(self) -> dict[TimeoutLevel, float]:
+        """只读：timeouts（Stage 4 公共化）。"""
+        return self._timeouts
+
+
     def watch(
         self,
         level: TimeoutLevel,

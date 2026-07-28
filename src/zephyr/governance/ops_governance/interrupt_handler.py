@@ -36,6 +36,13 @@ class InterruptHandler:
         self._interrupted = False
         self._signal: InterruptSignal | None = None
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def signal(self) -> InterruptSignal | None:
+        """只读：signal（Stage 4 公共化）。"""
+        return self._signal
+
+
     def interrupt(self, signal: InterruptSignal) -> None:
         self._interrupted = True
         self._signal = signal

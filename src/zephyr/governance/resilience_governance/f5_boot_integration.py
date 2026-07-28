@@ -82,6 +82,13 @@ class F5BootIntegration:
         self._initialized = False
         self._last_periodic_result: dict = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def register_startup_hook(self) -> None:
         """注册到 boot_hooks 启动序列 (幂等)。"""
         try:
@@ -269,13 +276,25 @@ class F5BootIntegration:
     def escalation_engine(self) -> EscalationEngine | None:
         return self._escalation_engine
 
+    @escalation_engine.setter
+    def escalation_engine(self, value: EscalationEngine | None) -> None:
+        self._escalation_engine = value
+
     @property
     def delegation_engine(self) -> DelegationEngine | None:
         return self._delegation_engine
 
+    @delegation_engine.setter
+    def delegation_engine(self, value: DelegationEngine | None) -> None:
+        self._delegation_engine = value
+
     @property
     def deadlock_detector(self) -> DeadlockDetector | None:
         return self._deadlock_detector
+
+    @deadlock_detector.setter
+    def deadlock_detector(self, value: DeadlockDetector | None) -> None:
+        self._deadlock_detector = value
 
     @property
     def arbitrator(self) -> Arbitrator | None:

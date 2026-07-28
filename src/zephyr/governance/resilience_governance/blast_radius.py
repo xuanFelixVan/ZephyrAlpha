@@ -141,6 +141,13 @@ class BlastRadiusAnalyzer:
         self._id_to_path: dict[str, str] = {}
         self._loaded = False
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_depth(self):
+        """只读：max_depth（Stage 4 公共化）。"""
+        return self._max_depth
+
+
     def _ensure_loaded(self) -> None:
         """延迟加载 depgraph 并构建反向依赖索引."""
         if self._loaded:

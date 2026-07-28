@@ -27,6 +27,13 @@ class LastResortWatchdog:
     def __init__(self):
         self._activated = False
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def activated(self):
+        """只读：activated（Stage 4 公共化）。"""
+        return self._activated
+
+
     def activate(self) -> None:
         self._activated = True
 

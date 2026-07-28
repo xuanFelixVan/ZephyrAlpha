@@ -33,6 +33,13 @@ class ProtocolStateStore:
         self._state: dict = {}
         os.makedirs(self._dir, exist_ok=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def state(self) -> dict:
+        """只读：state（Stage 4 公共化）。"""
+        return self._state
+
+
     def save(self) -> str:
         snapshot = {"state": self._state, "timestamp": datetime.now(UTC).isoformat()}
         path = os.path.join(self._dir, "protocol_state.json")

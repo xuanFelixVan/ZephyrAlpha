@@ -27,6 +27,13 @@ class WitnessIsolator:
     def __init__(self):
         self._witnesses: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def witnesses(self) -> dict[str, str]:
+        """只读：witnesses（Stage 4 公共化）。"""
+        return self._witnesses
+
+
     def register_witness(self, witness_id: str, decision: str):
         self._witnesses[witness_id] = decision
 

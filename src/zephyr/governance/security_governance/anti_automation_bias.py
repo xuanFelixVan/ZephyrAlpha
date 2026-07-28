@@ -109,6 +109,41 @@ class AntiAutomationBias:
         self._consecutive_confirms = 0
         self._audit_feedback: dict[str, bool] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def consecutive_confirms(self):
+        """只读：consecutive_confirms（Stage 4 公共化）。"""
+        return self._consecutive_confirms
+
+    @consecutive_confirms.setter
+    def consecutive_confirms(self, value):
+        """写入：consecutive_confirms（Stage 4 公共化）。"""
+        self._consecutive_confirms = value
+
+
+    @property
+    def last_response_times(self) -> list[float]:
+        """只读：last_response_times（Stage 4 公共化）。"""
+        return self._last_response_times
+
+    @last_response_times.setter
+    def last_response_times(self, value):
+        """写入：last_response_times（Stage 4 公共化）。"""
+        self._last_response_times = value
+
+
+    @property
+    def review_records(self) -> list[ReviewRecord]:
+        """只读：review_records（Stage 4 公共化）。"""
+        return self._review_records
+
+    @review_records.setter
+    def review_records(self, value):
+        """写入：review_records（Stage 4 公共化）。"""
+        self._review_records = value
+
+
+
     @property
     def forced_review_ratio(self) -> float:
         return self._forced_review_ratio
@@ -120,6 +155,12 @@ class AntiAutomationBias:
     @property
     def fatigue_level(self) -> FatigueLevel:
         return self._fatigue_level
+
+    @fatigue_level.setter
+    def fatigue_level(self, value):
+        """写入：fatigue_level（Stage 4 公共化）。"""
+        self._fatigue_level = value
+
 
     def evaluate(
         self,

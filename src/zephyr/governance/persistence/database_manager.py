@@ -273,6 +273,13 @@ class DatabaseManager:
             schema_version=schema_version(self._db_path),
         )
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def closed(self):
+        """只读：closed（Stage 4 公共化）。"""
+        return self._closed
+
+
     @classmethod
     def instance(cls) -> DatabaseManager:
         """返回全局单例（线程安全）。"""
