@@ -88,21 +88,21 @@ class TestHealthReport:
 class TestHealthcheckServiceInit:
     def test_default_project_root_is_cwd(self):
         svc = HealthcheckService()
-        assert svc._project_root == Path.cwd()
+        assert svc.project_root == Path.cwd()
 
     def test_explicit_project_root(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        assert svc._project_root == PROJECT_ROOT
+        assert svc.project_root == PROJECT_ROOT
 
     def test_none_project_root_falls_back_to_cwd(self):
         svc = HealthcheckService(project_root=None)
-        assert svc._project_root == Path.cwd()
+        assert svc.project_root == Path.cwd()
 
     def test_start_time_recorded(self):
         before = time.time()
         svc = HealthcheckService(project_root=PROJECT_ROOT)
         after = time.time()
-        assert before <= svc._start_time <= after
+        assert before <= svc.start_time <= after
 
 
 class TestHealthcheckServiceCheckAll:
@@ -160,7 +160,7 @@ class TestHealthcheckServiceCheckGit:
             "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run",
             side_effect=sp.TimeoutExpired(cmd="git", timeout=5),
         ):
-            status = svc._check_git()
+            status = svc.check_git()
             assert status.healthy is False
 
     def test_git_not_found_returns_unhealthy(self):
@@ -168,7 +168,7 @@ class TestHealthcheckServiceCheckGit:
         with patch(
             "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError
         ):
-            status = svc._check_git()
+            status = svc.check_git()
             assert status.healthy is False
 
 
@@ -200,38 +200,38 @@ class TestHealthcheckServiceCheckDependencies:
 class TestHealthcheckServicePrivateChecks:
     def test_check_python_returns_health_status(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        status = svc._check_python()
+        status = svc.check_python()
         assert isinstance(status, HealthStatus)
         assert status.component == "python"
 
     def test_check_disk_returns_health_status(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        status = svc._check_disk()
+        status = svc.check_disk()
         assert isinstance(status, HealthStatus)
         assert status.component == "disk"
         assert status.healthy is True
 
     def test_check_disk_unhealthy_on_oserror(self):
         svc = HealthcheckService(project_root=Path("/nonexistent/path/that/does/not/exist"))
-        status = svc._check_disk()
+        status = svc.check_disk()
         assert status.healthy is False
 
     def test_check_network_returns_health_status(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        status = svc._check_network()
+        status = svc.check_network()
         assert isinstance(status, HealthStatus)
         assert status.component == "network"
         assert status.healthy is True
 
     def test_check_file_system_returns_health_status(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
-        status = svc._check_file_system()
+        status = svc.check_file_system()
         assert isinstance(status, HealthStatus)
         assert status.component == "filesystem"
 
     def test_check_file_system_missing_files(self):
         svc = HealthcheckService(project_root=Path("/nonexistent"))
-        status = svc._check_file_system()
+        status = svc.check_file_system()
         assert status.healthy is False
         assert "Missing" in status.message
 
@@ -254,6 +254,6 @@ class TestHealthcheckServiceBoundary:
         with patch(
             "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError
         ):
-            status = svc._check_python()
+            status = svc.check_python()
             assert status.healthy is False
             assert status.message == "Python not found"

@@ -135,17 +135,17 @@ class TestTemporalCoherenceOfSelfModelCheckCoherence:
 
 class TestTemporalCoherenceComputeDictSimilarity:
     def test_identical_dicts(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({"a": 1.0, "b": 2.0}, {"a": 1.0, "b": 2.0})
+        result = TemporalCoherenceOfSelfModel.compute_dict_similarity({"a": 1.0, "b": 2.0}, {"a": 1.0, "b": 2.0})
         assert result == 1.0
 
     def test_empty_dicts(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({}, {})
+        result = TemporalCoherenceOfSelfModel.compute_dict_similarity({}, {})
         assert result == 1.0
 
     def test_completely_different(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({"a": 100.0}, {"a": 1.0})
+        result = TemporalCoherenceOfSelfModel.compute_dict_similarity({"a": 100.0}, {"a": 1.0})
         assert result < 0.5
 
     def test_one_empty_one_not(self):
-        result = TemporalCoherenceOfSelfModel._compute_dict_similarity({"a": 1.0}, {})
+        result = TemporalCoherenceOfSelfModel.compute_dict_similarity({"a": 1.0}, {})
         assert result < 1.0

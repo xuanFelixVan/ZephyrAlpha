@@ -1,7 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_temperature | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_temperature
-# [INVARIANTS] SkillTemperature._overrides cleared between tests; temperature clamped [0.0, 2.0]
+# [INVARIANTS] SkillTemperature.overrides cleared between tests; temperature clamped [0.0, 2.0]
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
 # [STABILITY] evolving
@@ -22,9 +22,9 @@ class TestSkillTemperatureInstantiation:
         assert SkillTemperature.DEFAULT_TEMPERATURE == 0.3
 
     def test_task_defaults_populated(self):
-        assert "construction" in SkillTemperature._task_defaults
-        assert "design" in SkillTemperature._task_defaults
-        assert "audit" in SkillTemperature._task_defaults
+        assert "construction" in SkillTemperature.task_defaults
+        assert "design" in SkillTemperature.task_defaults
+        assert "audit" in SkillTemperature.task_defaults
 
     def test_overrides_initially_empty_or_cleared(self):
         SkillTemperature.clear_overrides()

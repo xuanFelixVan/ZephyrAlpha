@@ -30,19 +30,19 @@ class TestSkillTeamOptimizerInstantiation:
 
 class TestSkillTeamOptimizerCompatScore:
     def test_same_skill_low_score(self):
-        score = SkillTeamOptimizer._compat_score("database-specialist", "database-specialist")
+        score = SkillTeamOptimizer.compat_score("database-specialist", "database-specialist")
         assert score == 0.3
 
     def test_known_pair(self):
-        score = SkillTeamOptimizer._compat_score("database-specialist", "implementer")
+        score = SkillTeamOptimizer.compat_score("database-specialist", "implementer")
         assert score >= 0.9
 
     def test_unknown_pair_default(self):
-        score = SkillTeamOptimizer._compat_score("unknown-a", "unknown-b")
+        score = SkillTeamOptimizer.compat_score("unknown-a", "unknown-b")
         assert score == 0.5
 
     def test_slash_prefixed_skill(self):
-        score = SkillTeamOptimizer._compat_score("domain/database-specialist", "implementer")
+        score = SkillTeamOptimizer.compat_score("domain/database-specialist", "implementer")
         assert score >= 0.9
 
 
@@ -50,46 +50,46 @@ class TestSkillTeamOptimizerCoverage:
     def test_full_coverage(self):
         team = ["database-specialist", "mcp-specialist"]
         keywords = ["database", "mcp"]
-        cov = SkillTeamOptimizer._coverage(team, keywords)
+        cov = SkillTeamOptimizer.coverage(team, keywords)
         assert cov == 1.0
 
     def test_partial_coverage(self):
         team = ["database-specialist"]
         keywords = ["database", "mcp"]
-        cov = SkillTeamOptimizer._coverage(team, keywords)
+        cov = SkillTeamOptimizer.coverage(team, keywords)
         assert 0.0 < cov <= 1.0
 
     def test_no_coverage(self):
         team = ["database-specialist"]
         keywords = ["security"]
-        cov = SkillTeamOptimizer._coverage(team, keywords)
+        cov = SkillTeamOptimizer.coverage(team, keywords)
         assert cov == 0.0
 
     def test_empty_keywords(self):
         team = ["database-specialist"]
-        cov = SkillTeamOptimizer._coverage(team, [])
+        cov = SkillTeamOptimizer.coverage(team, [])
         assert cov == 0.0
 
     def test_empty_team(self):
-        cov = SkillTeamOptimizer._coverage([], ["database"])
+        cov = SkillTeamOptimizer.coverage([], ["database"])
         assert cov == 0.0
 
 
 class TestSkillTeamOptimizerTeamScore:
     def test_single_member_team(self):
-        total, compat, coverage = SkillTeamOptimizer._team_score(["only-one"], ["db"])
+        total, compat, coverage = SkillTeamOptimizer.team_score(["only-one"], ["db"])
         assert total == 0.3
         assert compat == 0.5
         assert coverage == 0.4
 
     def test_two_member_team(self):
-        total, compat, coverage = SkillTeamOptimizer._team_score(["database-specialist", "implementer"], ["database"])
+        total, compat, coverage = SkillTeamOptimizer.team_score(["database-specialist", "implementer"], ["database"])
         assert 0.0 <= total <= 1.0
         assert 0.0 <= compat <= 1.0
         assert 0.0 <= coverage <= 1.0
 
     def test_empty_team(self):
-        total, compat, coverage = SkillTeamOptimizer._team_score([], [])
+        total, compat, coverage = SkillTeamOptimizer.team_score([], [])
         assert total == 0.3
 
 

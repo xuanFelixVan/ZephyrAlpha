@@ -300,7 +300,7 @@ class TestPhaseFL11:
 
     def test_model_registry_operations(self):
         ModelRegistry.clear()
-        assert ModelRegistry._registry == {}
+        assert ModelRegistry.registry == {}
 
         class TestTrainer(ModelTrainerBase):
             __model_id__ = "test-model"
@@ -391,7 +391,7 @@ class TestPhaseFL12:
 
     def test_contract_drift_detection(self):
         collector = ContractMetricsCollector()
-        collector._field_baselines["CTR-002:signal_value"] = {"median": 0.01, "std": 0.1}
+        collector.field_baselines["CTR-002:signal_value"] = {"median": 0.01, "std": 0.1}
 
         alert = collector.detect_contract_drift(
             contract_id="CTR-002",
@@ -404,7 +404,7 @@ class TestPhaseFL12:
 
     def test_contract_drift_no_alert_for_normal_value(self):
         collector = ContractMetricsCollector()
-        collector._field_baselines["CTR-002:signal_value"] = {"median": 0.01, "std": 0.1}
+        collector.field_baselines["CTR-002:signal_value"] = {"median": 0.01, "std": 0.1}
 
         alert = collector.detect_contract_drift(
             contract_id="CTR-002",
@@ -417,7 +417,7 @@ class TestPhaseFL12:
         collector = ContractMetricsCollector()
         collector.record_violation("CTR-005")
         collector.record_violation("CTR-005")
-        assert collector._violation_counts["CTR-005"] == 2
+        assert collector.violation_counts["CTR-005"] == 2
 
     def test_metrics_get_stats_empty(self):
         collector = ContractMetricsCollector()

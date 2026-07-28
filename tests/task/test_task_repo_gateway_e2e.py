@@ -16,7 +16,7 @@
 # [TTL] task_bound
 """test_task_repo_gateway_e2e.py — 端到端链路测试（OPS-2026062516）
 
-验证 TaskRepository._auto_commit_on_completion → GitCommitGateway 完整链路：
+验证 TaskRepository.auto_commit_on_completion → GitCommitGateway 完整链路：
 1. 正常链路：任务完成 → 网关提交 → commit 成功
 2. 无文件链路：files_in_scope 为空 → 跳过 commit
 3. 文件不存在链路：files_in_scope 文件不存在 → 跳过 commit
@@ -254,7 +254,7 @@ class TestAutoCommitE2E:
         # patch GitCommitGateway 的 project_root 为临时仓库
         with patch.object(
             TaskRepository, "_auto_commit_on_completion",
-            TaskRepository._auto_commit_on_completion,
+            TaskRepository.auto_commit_on_completion,
         ):
             # 直接调用，但需要 patch GitCommitGateway 的初始化
             from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway

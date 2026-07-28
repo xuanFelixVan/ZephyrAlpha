@@ -105,7 +105,7 @@ class TestModelTaskMatrixConstruction:
     def test_default_storage_dir(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         matrix = ModelTaskMatrix(storage_dir=str(tmp_path / "test_learning"))
-        assert matrix._dir.exists()
+        assert matrix.dir.exists()
 
     def test_custom_storage_dir(self, tmp_path):
         storage = tmp_path / "custom_matrix"
@@ -212,7 +212,7 @@ class TestModelTaskMatrixPersistence:
         storage = tmp_path / "persist_learn"
         matrix = ModelTaskMatrix(storage_dir=str(storage))
         matrix.record("M3", "qwen3:8b", duration_ms=1000.0, tokens=100, confidence=0.8)
-        matrix._save()
+        matrix.save()
 
         matrix2 = ModelTaskMatrix(storage_dir=str(storage))
         snap = matrix2.snapshot()

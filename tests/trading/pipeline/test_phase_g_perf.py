@@ -583,7 +583,7 @@ class TestPhaseGLatencyByLayer:
         collector = PerfCollector()
         metrics = ContractMetricsCollector()
         metrics.enable()
-        metrics._field_baselines["CTR-002:signal_value"] = {"median": 0.01, "std": 0.1}
+        metrics.field_baselines["CTR-002:signal_value"] = {"median": 0.01, "std": 0.1}
 
         for _ in range(3):
             metrics.measure_sla("CTR-001", "trace-warm", 1000, 10000)
@@ -933,7 +933,7 @@ class TestPhaseGSLACompliance:
         """验证 L12 get_stats 聚合报告"""
         metrics = ContractMetricsCollector()
         metrics.enable()
-        metrics._field_baselines["CTR-001:close"] = {"median": 100.0, "std": 10.0}
+        metrics.field_baselines["CTR-001:close"] = {"median": 100.0, "std": 10.0}
 
         metrics.measure_sla("CTR-001", "t1", 5000, 10000)
         metrics.measure_sla("CTR-001", "t2", 15000, 10000)
@@ -1084,7 +1084,7 @@ class TestPhaseGMemoryBaseline:
         FactorRegistry.clear()
         autodiscover_factors()
 
-        registry_size_kb = sys.getsizeof(FactorRegistry._registry) / 1024.0
+        registry_size_kb = sys.getsizeof(FactorRegistry.registry) / 1024.0
         assert registry_size_kb < 10.0, f"FactorRegistry memory {registry_size_kb:.2f}KB"
 
         FactorRegistry.clear()

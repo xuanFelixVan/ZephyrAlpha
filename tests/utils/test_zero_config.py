@@ -99,20 +99,20 @@ class TestZeroConfigScan:
 class TestZeroConfigCheckPython:
     def test_python_check_returns_config_check(self, tmp_path):
         zc = ZeroConfig(project_root=tmp_path)
-        check = zc._check_python()
+        check = zc.check_python()
         assert isinstance(check, ConfigCheck)
         assert check.name == "PYTHON"
 
     def test_python_check_has_value(self, tmp_path):
         zc = ZeroConfig(project_root=tmp_path)
-        check = zc._check_python()
+        check = zc.check_python()
         assert len(check.value) > 0
 
 
 class TestZeroConfigCheckGitConfig:
     def test_git_config_check_returns_config_check(self, tmp_path):
         zc = ZeroConfig(project_root=tmp_path)
-        check = zc._check_git_config()
+        check = zc.check_git_config()
         assert isinstance(check, ConfigCheck)
         assert check.name == "GIT_CONFIG"
 

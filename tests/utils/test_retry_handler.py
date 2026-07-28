@@ -25,14 +25,14 @@ from zephyr.shared.reliability.retry_handler import (
 class TestRetryHandlerInstantiation:
     def test_default_construction(self):
         handler = RetryHandler()
-        assert isinstance(handler._config, RetryConfig)
-        assert handler._config.max_retries == 5
+        assert isinstance(handler.config, RetryConfig)
+        assert handler.config.max_retries == 5
 
     def test_custom_config(self):
         config = RetryConfig(max_retries=2, base_delay_s=0.01, jitter=False)
         handler = RetryHandler(config=config)
-        assert handler._config.max_retries == 2
-        assert handler._config.base_delay_s == 0.01
+        assert handler.config.max_retries == 2
+        assert handler.config.base_delay_s == 0.01
 
 
 class TestExecute:
@@ -121,16 +121,16 @@ class TestExecute:
 
 class TestIsUnrecoverable:
     def test_value_error_is_unrecoverable(self):
-        assert RetryHandler._is_unrecoverable(ValueError("x")) is True
+        assert RetryHandler.is_unrecoverable(ValueError("x")) is True
 
     def test_connection_error_is_recoverable(self):
-        assert RetryHandler._is_unrecoverable(ConnectionError("x")) is False
+        assert RetryHandler.is_unrecoverable(ConnectionError("x")) is False
 
     def test_runtime_error_is_recoverable(self):
-        assert RetryHandler._is_unrecoverable(RuntimeError("x")) is False
+        assert RetryHandler.is_unrecoverable(RuntimeError("x")) is False
 
     def test_type_error_is_unrecoverable(self):
-        assert RetryHandler._is_unrecoverable(TypeError("x")) is True
+        assert RetryHandler.is_unrecoverable(TypeError("x")) is True
 
 
 class TestRetryConfigDataclass:

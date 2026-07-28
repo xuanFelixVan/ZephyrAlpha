@@ -48,7 +48,7 @@ class TestAutoCommitOnCompletion:
                 MagicMock(returncode=0, stdout="commit ok", stderr=""),  # git commit
             ]
 
-            repo._auto_commit_on_completion("DM-TEST-001", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-001", task_obj)
 
             assert mock_run.call_count == 3
             add_call = mock_run.call_args_list[0]
@@ -82,7 +82,7 @@ class TestAutoCommitOnCompletion:
         task_obj.task_id = "DM-TEST-002"
 
         with patch("subprocess.run") as mock_run:
-            repo._auto_commit_on_completion("DM-TEST-002", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-002", task_obj)
             mock_run.assert_not_called()
 
     def test_auto_commit_skips_when_files_not_exist(self):
@@ -95,7 +95,7 @@ class TestAutoCommitOnCompletion:
 
         with patch("os.path.isfile", return_value=False), \
              patch("subprocess.run") as mock_run:
-            repo._auto_commit_on_completion("DM-TEST-003", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-003", task_obj)
             mock_run.assert_not_called()
 
     def test_auto_commit_skips_when_no_staged_changes(self):
@@ -113,7 +113,7 @@ class TestAutoCommitOnCompletion:
                 MagicMock(returncode=0, stdout="", stderr=""),  # git diff --cached --quiet (无变更)
             ]
 
-            repo._auto_commit_on_completion("DM-TEST-004", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-004", task_obj)
 
             assert mock_run.call_count == 2
             commit_calls = [c for c in mock_run.call_args_list if "commit" in c.args[0]]
@@ -134,7 +134,7 @@ class TestAutoCommitOnCompletion:
             ]
 
             # 不应抛异常
-            repo._auto_commit_on_completion("DM-TEST-005", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-005", task_obj)
             assert mock_run.call_count == 1
 
     def test_commit_message_contains_task_id(self):
@@ -153,7 +153,7 @@ class TestAutoCommitOnCompletion:
                 MagicMock(returncode=0, stdout="ok", stderr=""),  # git commit
             ]
 
-            repo._auto_commit_on_completion("DM-TEST-006", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-006", task_obj)
 
             commit_call = mock_run.call_args_list[2]
             commit_args = commit_call.args[0]
@@ -184,7 +184,7 @@ class TestAutoCommitOnCompletion:
                 MagicMock(returncode=0, stdout="ok", stderr=""),  # git commit
             ]
 
-            repo._auto_commit_on_completion("DM-TEST-007", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-007", task_obj)
 
             commit_call = mock_run.call_args_list[2]
             commit_args = commit_call.args[0]
@@ -218,7 +218,7 @@ class TestAutoCommitOnCompletion:
                 MagicMock(returncode=0, stdout="", stderr=""),  # git diff --cached (无变更)
             ]
 
-            repo._auto_commit_on_completion("DM-TEST-008", task_obj)
+            repo.auto_commit_on_completion("DM-TEST-008", task_obj)
 
             diff_call = mock_run.call_args_list[1]
             diff_args = diff_call.args[0]

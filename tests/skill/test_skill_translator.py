@@ -30,27 +30,27 @@ class TestSkillTranslatorInstantiation:
 
 class TestInferSourceFamily:
     def test_detects_claude(self):
-        result = SkillTranslator._infer_source_family("This uses Claude and Anthropic models")
+        result = SkillTranslator.infer_source_family("This uses Claude and Anthropic models")
         assert result == "claude"
 
     def test_detects_glm(self):
-        result = SkillTranslator._infer_source_family("基于智谱 GLM 模型")
+        result = SkillTranslator.infer_source_family("基于智谱 GLM 模型")
         assert result == "glm"
 
     def test_detects_openai(self):
-        result = SkillTranslator._infer_source_family("Using GPT and OpenAI APIs")
+        result = SkillTranslator.infer_source_family("Using GPT and OpenAI APIs")
         assert result == "openai"
 
     def test_defaults_to_deepseek(self):
-        result = SkillTranslator._infer_source_family("普通文本没有关键词")
+        result = SkillTranslator.infer_source_family("普通文本没有关键词")
         assert result == "deepseek"
 
     def test_empty_string_defaults_deepseek(self):
-        result = SkillTranslator._infer_source_family("")
+        result = SkillTranslator.infer_source_family("")
         assert result == "deepseek"
 
     def test_claude_takes_priority_over_openai(self):
-        result = SkillTranslator._infer_source_family("Claude is better than GPT")
+        result = SkillTranslator.infer_source_family("Claude is better than GPT")
         assert result == "claude"
 
 
@@ -120,7 +120,7 @@ class TestApplyAdaptation:
         body = "MUST ensure quality"
         source = _MODEL_ADAPTATIONS["deepseek"]
         target = _MODEL_ADAPTATIONS["claude"]
-        result = SkillTranslator._apply_adaptation(body, target, source)
+        result = SkillTranslator.apply_adaptation(body, target, source)
         assert "MUST" in result
         assert "MUST ALWAYS ensure that" in result
 
@@ -128,5 +128,5 @@ class TestApplyAdaptation:
         body = "structured, step-by-step, table-heavy approach"
         source = _MODEL_ADAPTATIONS["deepseek"]
         target = _MODEL_ADAPTATIONS["claude"]
-        result = SkillTranslator._apply_adaptation(body, target, source)
+        result = SkillTranslator.apply_adaptation(body, target, source)
         assert "section-by-section, chain-of-thought, descriptive" in result
