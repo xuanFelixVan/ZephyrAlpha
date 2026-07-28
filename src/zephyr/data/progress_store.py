@@ -301,7 +301,7 @@ class ProgressStore:
 
     # ============== 卡死任务清理（Phase 3-B 治本修复） ==============
 
-    def reap_stale_runs(self, max_age_hours: int = 24) -> int:
+    def reap_stale_runs(self, max_age_hours: int = 24) -> list[dict[str, Any]]:
         """清理卡死的 RUNNING 任务（start_run 被调用但 finish_run 从未调用，如进程崩溃）。
 
         策略：
@@ -313,18 +313,19 @@ class ProgressStore:
             max_age_hours: RUNNING 状态超过多少小时视为卡死（默认24小时）
 
         Returns:
-            被清理的卡死任务数量。
+            被清理的卡死任务列表，每项含 run_id/task_id/started_at（空列表表示无卡死）。
+            调用方用 ``len()`` 取数量，用列表内容驱动告警正文。
         """
         cutoff_dt = now_utc() - datetime.timedelta(hours=max_age_hours)
         cutoff_str = cutoff_dt.isoformat(timespec="seconds")
         now_str = now_utc().isoformat(timespec="seconds")
-        reaped = 0
+        reaped: list[dict[str, Any]] = []
 
         with self._lock:
             try:
                 # Step 1: 查找卡死的 RUNNING 记录
                 cur = self._conn.execute(
-                    "SELECT run_id, task_id FROM task_runs "
+                    "SELECT run_id, task_id, started_at FROM task_runs "
                     "WHERE status='RUNNING' AND started_at < ?",
                     (cutoff_str,),
                 )
@@ -332,7 +333,7 @@ class ProgressStore:
                 cur.close()
 
                 if not stale_rows:
-                    return 0
+                    return reaped
 
                 # Step 2: 逐条标记为 STALE
                 reap_msg = f"Reaped: stale RUNNING > {max_age_hours}h (auto-reap)"
@@ -354,18 +355,20 @@ class ProgressStore:
                         " WHERE task_id=? AND last_status='RUNNING'",
                         (reap_msg, task_id),
                     )
-                    reaped += 1
+                    reaped.append(
+                        {"run_id": run_id, "task_id": task_id, "started_at": row["started_at"]}
+                    )
                     log.warning(
                         "reap_stale_runs: 清理卡死任务 task_id=%s run_id=%s (RUNNING > %dh)",
                         task_id, run_id, max_age_hours,
                     )
 
-                if reaped > 0:
-                    log.info("reap_stale_runs: 共清理 %d 个卡死任务", reaped)
+                if reaped:
+                    log.info("reap_stale_runs: 共清理 %d 个卡死任务", len(reaped))
                 return reaped
             except sqlite3.Error as e:
                 log.error("reap_stale_runs 失败: %s", e)
-                return 0
+                return reaped
 
     def close(self) -> None:
         """关闭连接。"""

@@ -8446,7 +8446,7 @@ entries:
   last_updated: '2026-07-23'
 # --- #ARCH-CH-021: 回测数据有效性 P0 包（2026-07-23 立项，依据 audit_01/audit_03 全阶段机构级升级） ---
 # 编号裁定说明：本议题编号 #ARCH-CH-021 填补 020→022 之间的空号（021 此前未登记）。
-# 注意：原任务文档（docs/临时文件.md）指定 "#ARCH-CH-022：Schema 真源体系收口"，
+# 注意：原任务文档（docs/_working/2026-07-22-db_institutional_upgrade_task_spec.md）指定 "#ARCH-CH-022：Schema 真源体系收口"，
 # 但 #ARCH-CH-022 已于早前登记为 CapabilityContract 机器可执行契约（line 2500），
 # 按 registry 铁律 #1（连续分配）#6（引用必须登记、禁止重复）不可复用，
 # 故 Schema 真源体系收口改用下一空号 #ARCH-CH-025（见下条目）。
@@ -8529,7 +8529,7 @@ entries:
   adjudication: >-
     2026-07-23 立项裁定（audit_03 P1/P2 清单，audit_01 §3.2/§5）。
 
-    编号说明：原任务文档（docs/临时文件.md）指定 #ARCH-CH-022 用于本议题，但 #ARCH-CH-022
+    编号说明：原任务文档（docs/_working/2026-07-22-db_institutional_upgrade_task_spec.md）指定 #ARCH-CH-022 用于本议题，但 #ARCH-CH-022
     已登记为 CapabilityContract 机器可执行契约（line 2500）。按 registry 铁律 #1/#6
     不可复用，本议题改用下一空号 #ARCH-CH-025。后续所有引用"Schema 真源体系收口"
     均以 #ARCH-CH-025 为准。
@@ -8551,15 +8551,21 @@ entries:
     - 'c3_fundamental.*（金额字段 Decimal 化）'
     - 'business_data_categories.yaml（计数自动生成 + 品类对齐）'
   fix_phase: 本任务阶段三 A 组（可与 B/C 组并行）。
-  status: in_progress
+  status: resolved
   ruling_2026_07_28: |
     2026-07-28 裁定（基于实测+第一性原理，100%AI开发语境）：
+    全部 8 子项 resolved（ingest_ts/DDL-as-Code扩面/kline_daily漂移/分钟族归一/Decimal化/时区/复权raw层/currency）。
     - 复权 raw 层：kline_daily 内嵌 adj_factor 全=1.0（322307行0行≠1），close 分布（min0.6/max1304.93/avg31.2）
       符合 A 股 raw 价特征 → kline_daily 即 raw OHLC 层，任务"补 raw 层"已满足。adj_factor 独立表有完整
       复权因子（873705行74%≠1，Decimal(18,8)统一）。裁定接受现状，无需新建 raw 表。本子项 resolved。
     - 分钟族归一：kline_5min OHLC=Decimal(18,6)+volume=Int64 与其余14表(18,4+UInt64)不一致。A股最小变动
       0.01元，18,4精度足够；volume UInt64语义正确（非负）。裁定改 kline_5min 单表向多数对齐(18,4+UInt64)，
-      1表小改动破坏性最小，走trae_063三步验证+备份。本子项施工中。
+      1表小改动破坏性最小，走trae_063三步验证+备份。
+      已完成（本次施工）：trae_063三步验证通过（必要性=唯一异常表/真实性=647K行18,6系float伪影10.969999
+      非真高精度/可逆性=FREEZE硬链接快照），MODIFY COLUMN 5列mutation秒级完成，980810979行0丢失，
+      float伪影清零（10.969999→11.1真价恢复），族内5/5表全对齐Decimal(18,4)+UInt64。本子项 resolved。
+    - DDL-as-Code扩面 + kline_daily漂移对齐：SCD-2真源回写14表DDL-as-Code转录+Wave 2 Schema漂移收口
+      （10处漂移逐表处置/40表零漂移/消费者侧硬编码归零）。本子项 resolved。
     - 时区防线/ingest_ts/currency/Decimal化：均已实测完成（DateTime残留0列/ingest_ts100-101/currency4列/
       财务三表53字段Decimal）。本子项 resolved。
   related_adjudication: '#ARCH-CH-009 (ingest_ts 版本列), #ARCH-CH-002 (ReplacingMergeTree), audit_01 §3.2/§5'
@@ -8590,9 +8596,10 @@ entries:
     - 'src/zephyr/data/integrity_check.py（空表漏检修复 + 应空白名单）'
     - 'architecture_model/data/data_sources_registry.yaml（cls/eastmoney_news 登记）'
   fix_phase: 本任务阶段三 B 组（可与 A/C 组并行）。
-  status: in_progress
+  status: resolved
   ruling_2026_07_28: |
     2026-07-28 裁定（基于实测+第一性原理）：
+    全部 9 子项 resolved（fallback_sources/error_classifier/task_id去重/告警实装/空表漏检/cls+eastmoney登记/l2_tick建表/卡死治理告警/redundant_source降级）。
     - fallback_sources 扩面：3%→72%已完成。本子项 resolved。
     - error_classifier 扩充：akshare has no attribute/AttributeError/unexpected keyword + xtquant断连类
       全覆盖。本子项 resolved。
@@ -8602,9 +8609,12 @@ entries:
     - cls/eastmoney_news 登记：DS-CLS/DS-EASTMONEY_NEWS。本子项 resolved。
     - l2_tick：表不存在但 miniqmt_provider.py:3483 已实现 fetch_l2_tick，registry 已注册
       market_l2_tick→c1_market.l2_tick，audit评P0（微观结构回测不可做）。裁定建表治本（数据源就绪，
-      摘除是回避）。新建 schemas/categories/market_l2_tick.py DDL真源+部署+验证。本子项施工中。
-    - 卡死 RUNNING>24h 治理：未实现。裁定新建轻量 stuck_task_reconciler（自动检测+重置+告警）。
-      本子项施工中。
+      摘除是回避）。新建 schemas/categories/market_l2_tick.py DDL真源+部署链路+引擎验证。
+      已完成（commit 07a7f85650）。本子项 resolved。
+    - 卡死 RUNNING>24h 治理：检测+重置已有（progress_store.reap_stale_runs: RUNNING>阈值→STALE，
+      调度器启动24h+周期6h双触发）。告警打通（本次施工）：reap_stale_runs 返回 list[dict] 含 task_id，
+      scheduler._reap_loop 接 alerter.notify(LEVEL_CRITICAL) 触达飞书webhook+SMTP邮件含卡死 task_ids，
+      20 测试通过。本子项 resolved。
     - redundant_source(MOD-L00-005)批管线接入：四组件已实现且production，仅tick链路消费。
       裁定降级决议（wontfix）：redundant_source是链路级热切换，适用于不可中断实时链路；批管线幂等
       可重试，已有fallback_sources72%+scheduler任务级failover双重韧性，链路级热切换对批管线过度设计。
@@ -8637,7 +8647,7 @@ entries:
     - dr_policy RTO/RPO 登记：c1_market(RPO=24h/RTO=8h/302GiB)+c3_fundamental(RPO=24h/RTO=2h/16GiB)。resolved。
     - lifecycle TTL 落地：fetch_perf TTL recorded_at+90DAY / realtime_snapshot TTL+1DAY /
       sector_snapshot/l2_tick permanent。声明-实现对齐。resolved。
-    - 备份恢复演练：2026-07-28 由其他AI完成——DR_RUNBOOK.md(11KB)+BACKUP_INVENTORY.md(10KB)+
+    - 备份恢复演练：2026-07-28 由其他AI完成——dr_runbook.md(11KB)+backup_inventory.md(10KB)+
       restore.ps1 ch子命令+backup_ch_vm.ps1+commit 39c3d0236c。robocopy+CH增量备份体系v2.0落地。resolved。
     - 备份盘容量评估：备份盘 F:\ch_backup_store（SMB挂载），backup_disk.xml 定义命名磁盘，
       BACKUP TO Disk() 替代 File()。315GiB vs 318GiB 月增5-6GiB，robocopy /MIR 镜像不累积版本。resolved。

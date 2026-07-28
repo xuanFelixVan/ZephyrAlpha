@@ -305,10 +305,11 @@ class IntegratorScheduler:
         # 防止僵尸任务状态阻塞断点续传判断（get_last_key 返回 RUNNING 但实际进程已死）
         try:
             reaped = self._progress_store.reap_stale_runs(max_age_hours=24)
-            if reaped > 0:
+            if reaped:
                 import logging
                 logging.getLogger(__name__).warning(
-                    "调度器启动时清理了 %d 个卡死任务（RUNNING > 24h，可能是上次进程崩溃）", reaped
+                    "调度器启动时清理了 %d 个卡死任务（RUNNING > 24h，可能是上次进程崩溃）",
+                    len(reaped),
                 )
         except Exception:  # noqa: BLE001 — 5.135治标: 不阻塞调度器启动
             pass
@@ -499,10 +500,21 @@ class IntegratorScheduler:
                     reaped = self._progress_store.reap_stale_runs(
                         max_age_hours=self._stale_reap_max_age_hours
                     )
-                    if reaped > 0:
+                    if reaped:
+                        n = len(reaped)
+                        task_ids = [r["task_id"] for r in reaped]
                         log.warning(
-                            "定期清理：发现并清理了 %d 个卡死任务（RUNNING > %dh）",
-                            reaped, self._stale_reap_max_age_hours,
+                            "定期清理：发现并清理了 %d 个卡死任务（RUNNING > %dh）: %s",
+                            n, self._stale_reap_max_age_hours, task_ids,
+                        )
+                        # 告警触达（#ARCH-DATA-PIPELINE-001 B-卡死治理）：
+                        # 飞书 webhook / SMTP 邮件（未配置则静默跳过，不影响主流程）
+                        self._alerter.notify(
+                            "_stale_reaper",
+                            f"清理了 {n} 个卡死任务（RUNNING > {self._stale_reap_max_age_hours}h）: "
+                            f"{', '.join(task_ids)}",
+                            level=LEVEL_CRITICAL,
+                            extra={"reaped_tasks": task_ids, "threshold_hours": self._stale_reap_max_age_hours},
                         )
                 except Exception as e:  # noqa: BLE001 — 不影响主循环
                     log.error("定期清理卡死任务异常: %s", e)

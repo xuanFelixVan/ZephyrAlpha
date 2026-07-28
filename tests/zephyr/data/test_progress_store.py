@@ -205,7 +205,8 @@ class TestReapStaleRuns:
         store.save_progress("crashed_task", "ifind", "2026-07-01", "RUNNING", 500)
 
         reaped = store.reap_stale_runs(max_age_hours=24)
-        assert reaped == 1
+        assert len(reaped) == 1
+        assert reaped[0]["task_id"] == "crashed_task"
 
         # task_runs 应更新为 STALE
         cur = store._conn.execute(
@@ -227,7 +228,7 @@ class TestReapStaleRuns:
         assert run_id is not None
 
         reaped = store.reap_stale_runs(max_age_hours=24)
-        assert reaped == 0
+        assert len(reaped) == 0
 
         # 任务仍为 RUNNING
         cur = store._conn.execute(
@@ -241,7 +242,7 @@ class TestReapStaleRuns:
         store.finish_run(run_id, "SUCCESS", rows_fetched=100)
 
         reaped = store.reap_stale_runs(max_age_hours=24)
-        assert reaped == 0
+        assert len(reaped) == 0
 
     def test_reap_multiple_stale(self, store):
         """多个卡死任务应全部被清理。"""
@@ -254,7 +255,8 @@ class TestReapStaleRuns:
             )
 
         reaped = store.reap_stale_runs(max_age_hours=24)
-        assert reaped == 3
+        assert len(reaped) == 3
+        assert {r["task_id"] for r in reaped} == {"stale_0", "stale_1", "stale_2"}
 
     def test_reap_no_stale_returns_zero(self, store):
         """无卡死任务时返回0。"""
@@ -262,4 +264,4 @@ class TestReapStaleRuns:
         store.finish_run(store.start_run("finished_task"), "SUCCESS")
 
         reaped = store.reap_stale_runs(max_age_hours=24)
-        assert reaped == 0
+        assert len(reaped) == 0
