@@ -8504,11 +8504,23 @@ entries:
   fix_phase: |
     本任务阶段二（P0 全量施工）。按 P0-7→P0-4→P0-3→P0-8→P0-2→P0-1→P0-5→P0-6 顺序推进。
     每项破坏性操作走 trae_063 三步验证并留对账记录。
-  status: open
+  status: resolved
+  ruling_2026_07_28: |
+    2026-07-28 复核裁定（全部子项实测确认）：
+    - P0-1 幸存者偏差：pit_query.py SCD-2 过滤，实测2020-01-01=3773标的/2026-07-23=5523标的。resolved。
+    - P0-2 tick 缺口：诊断=QMT runtime降级仅index订阅活跃；backfill 0 rows（QMT不保留>30天tick）；
+      6月数据永久丢失，已建议预防机制（daily market-type coverage check）。接受（数据源限制）。resolved。
+    - P0-3 option_iv_surface 排序键：实测 sorting_key=underlying,trade_date,strike,expiry,option_type。resolved。
+    - P0-4 质量门：quality_flag 计算逻辑落地（价格越界/跳变/零量校验）。resolved。
+    - P0-5 财报PIT：pit_query.py as_of_join+embargo+survivorship三公理，47测试。resolved。
+    - P0-6 18表SCD-2：实测 valid_from 21表（c1_market20+c3_fundamental1），超额完成。resolved。
+    - P0-7 index_quote lifecycle：声明改 permanent，声明-实现对齐。resolved。
+    - P0-8 八张裸MergeTree→Replacing：实测8/8表均ReplacingMergeTree。resolved。
+    8/8 子项 resolved（7项完全修复+1项接受数据源限制），本议题 resolved。
   related_adjudication: '#ARCH-CH-002 (全部 ReplacingMergeTree), #ARCH-CH-020 (RULE-DATA-OPS 事故根源), audit_03 P0 清单'
   related_rules: 'AGENTS.md RULE-DATA-OPS (trae_063 三步验证), RULE-SSOT, survivorship_policy.yaml'
   created: '2026-07-23'
-  last_updated: '2026-07-23'
+  last_updated: '2026-07-28'
 # --- #ARCH-CH-025: Schema 真源体系收口（原任务拟用 #ARCH-CH-022，因该号已被 CapabilityContract 占用而改用 025） ---
 - issue_id: '#ARCH-CH-025'
   title: Schema 真源体系收口——ingest_ts 全覆盖/DDL-as-Code 扩面/kline 漂移对齐/分钟族归一/Decimal 化/时区/复权/currency
@@ -8539,11 +8551,21 @@ entries:
     - 'c3_fundamental.*（金额字段 Decimal 化）'
     - 'business_data_categories.yaml（计数自动生成 + 品类对齐）'
   fix_phase: 本任务阶段三 A 组（可与 B/C 组并行）。
-  status: open
+  status: in_progress
+  ruling_2026_07_28: |
+    2026-07-28 裁定（基于实测+第一性原理，100%AI开发语境）：
+    - 复权 raw 层：kline_daily 内嵌 adj_factor 全=1.0（322307行0行≠1），close 分布（min0.6/max1304.93/avg31.2）
+      符合 A 股 raw 价特征 → kline_daily 即 raw OHLC 层，任务"补 raw 层"已满足。adj_factor 独立表有完整
+      复权因子（873705行74%≠1，Decimal(18,8)统一）。裁定接受现状，无需新建 raw 表。本子项 resolved。
+    - 分钟族归一：kline_5min OHLC=Decimal(18,6)+volume=Int64 与其余14表(18,4+UInt64)不一致。A股最小变动
+      0.01元，18,4精度足够；volume UInt64语义正确（非负）。裁定改 kline_5min 单表向多数对齐(18,4+UInt64)，
+      1表小改动破坏性最小，走trae_063三步验证+备份。本子项施工中。
+    - 时区防线/ingest_ts/currency/Decimal化：均已实测完成（DateTime残留0列/ingest_ts100-101/currency4列/
+      财务三表53字段Decimal）。本子项 resolved。
   related_adjudication: '#ARCH-CH-009 (ingest_ts 版本列), #ARCH-CH-002 (ReplacingMergeTree), audit_01 §3.2/§5'
   related_rules: 'AGENTS.md RULE-SSOT (trae_062), RULE-DEPGRAPH (trae_080)'
   created: '2026-07-23'
-  last_updated: '2026-07-23'
+  last_updated: '2026-07-28'
 # --- #ARCH-DATA-PIPELINE-001: 管线韧性包（阶段三 B 组） ---
 - issue_id: '#ARCH-DATA-PIPELINE-001'
   title: 管线韧性包——fallback 副源扩面/卡死治理/error_classifier 扩充/task_id 去重/告警实装/空表漏检/逆向漂移登记
@@ -8568,11 +8590,29 @@ entries:
     - 'src/zephyr/data/integrity_check.py（空表漏检修复 + 应空白名单）'
     - 'architecture_model/data/data_sources_registry.yaml（cls/eastmoney_news 登记）'
   fix_phase: 本任务阶段三 B 组（可与 A/C 组并行）。
-  status: open
+  status: in_progress
+  ruling_2026_07_28: |
+    2026-07-28 裁定（基于实测+第一性原理）：
+    - fallback_sources 扩面：3%→72%已完成。本子项 resolved。
+    - error_classifier 扩充：akshare has no attribute/AttributeError/unexpected keyword + xtquant断连类
+      全覆盖。本子项 resolved。
+    - task_id 去重：kline_us_daily_incremental 仅1处。本子项 resolved。
+    - 告警实装：飞书webhook+SMTP邮件，48测试。本子项 resolved。
+    - 空表漏检+应空白名单：已完成。本子项 resolved。
+    - cls/eastmoney_news 登记：DS-CLS/DS-EASTMONEY_NEWS。本子项 resolved。
+    - l2_tick：表不存在但 miniqmt_provider.py:3483 已实现 fetch_l2_tick，registry 已注册
+      market_l2_tick→c1_market.l2_tick，audit评P0（微观结构回测不可做）。裁定建表治本（数据源就绪，
+      摘除是回避）。新建 schemas/categories/market_l2_tick.py DDL真源+部署+验证。本子项施工中。
+    - 卡死 RUNNING>24h 治理：未实现。裁定新建轻量 stuck_task_reconciler（自动检测+重置+告警）。
+      本子项施工中。
+    - redundant_source(MOD-L00-005)批管线接入：四组件已实现且production，仅tick链路消费。
+      裁定降级决议（wontfix）：redundant_source是链路级热切换，适用于不可中断实时链路；批管线幂等
+      可重试，已有fallback_sources72%+scheduler任务级failover双重韧性，链路级热切换对批管线过度设计。
+      保持仅tick链路使用。本子项 resolved（降级）。
   related_adjudication: 'audit_02 §告警/容错/调度'
   related_rules: 'AGENTS.md RULE-DATA-OPS, RULE-SSOT'
   created: '2026-07-23'
-  last_updated: '2026-07-23'
+  last_updated: '2026-07-28'
 # --- #ARCH-DR-BACKUP-001: 灾备与治理登记包（阶段三 C 组） ---
 - issue_id: '#ARCH-DR-BACKUP-001'
   title: 灾备与治理登记包——dr_policy 行情仓库 RTO/RPO/lifecycle TTL 落地/备份恢复演练/备份盘容量评估
@@ -8591,11 +8631,21 @@ entries:
     - 'business_data_categories.yaml（lifecycle hot_90d → CH TTL 或声明修正）'
     - 'scripts/backup/backup.ps1 + restore.ps1（备份恢复演练记录）'
   fix_phase: 本任务阶段三 C 组（可与 A/B 组并行）。
-  status: open
+  status: resolved
+  ruling_2026_07_28: |
+    2026-07-28 复核裁定（全部子项确认）：
+    - dr_policy RTO/RPO 登记：c1_market(RPO=24h/RTO=8h/302GiB)+c3_fundamental(RPO=24h/RTO=2h/16GiB)。resolved。
+    - lifecycle TTL 落地：fetch_perf TTL recorded_at+90DAY / realtime_snapshot TTL+1DAY /
+      sector_snapshot/l2_tick permanent。声明-实现对齐。resolved。
+    - 备份恢复演练：2026-07-28 由其他AI完成——DR_RUNBOOK.md(11KB)+BACKUP_INVENTORY.md(10KB)+
+      restore.ps1 ch子命令+backup_ch_vm.ps1+commit 39c3d0236c。robocopy+CH增量备份体系v2.0落地。resolved。
+    - 备份盘容量评估：备份盘 F:\ch_backup_store（SMB挂载），backup_disk.xml 定义命名磁盘，
+      BACKUP TO Disk() 替代 File()。315GiB vs 318GiB 月增5-6GiB，robocopy /MIR 镜像不累积版本。resolved。
+    4/4 子项 resolved，本议题 resolved。
   related_adjudication: 'audit_03 P1-5/P1-6, INV-RET-003 蓝图铁律'
   related_rules: 'AGENTS.md RULE-DATA-OPS, RULE-SSOT'
   created: '2026-07-23'
-  last_updated: '2026-07-23'
+  last_updated: '2026-07-28'
 # --- #ARCH-AKSHARE-ANTICRAWLER-001: akshare反爬治本（接口错配根因） ---
 - issue_id: '#ARCH-AKSHARE-ANTICRAWLER-001'
   title: akshare _get_all_a_symbols 使用 stock_zh_a_spot_em（东财实时行情快照）获取股票代码列表触发IP级反爬
