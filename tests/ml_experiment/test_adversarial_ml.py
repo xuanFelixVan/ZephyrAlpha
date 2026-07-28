@@ -58,8 +58,7 @@ def attack_01_metadata_forgery() -> dict[str, Any]:
         from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
-        MLExperimentPipeline._global_run_count = 0
-        MLExperimentPipeline._seen_idempotency_keys.clear()
+        MLExperimentPipeline.reset_run_state()
 
         pipeline = MLExperimentPipeline()
         fake_model = ModelMetadata(
@@ -89,8 +88,7 @@ def attack_02_inference_tampering() -> dict[str, Any]:
         from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
-        MLExperimentPipeline._global_run_count = 0
-        MLExperimentPipeline._seen_idempotency_keys.clear()
+        MLExperimentPipeline.reset_run_state()
 
         pipeline = MLExperimentPipeline()
 
@@ -131,8 +129,7 @@ def attack_03_p_hacking() -> dict[str, Any]:
     try:
         from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
 
-        MLExperimentPipeline._global_run_count = 0
-        MLExperimentPipeline._seen_idempotency_keys.clear()
+        MLExperimentPipeline.reset_run_state()
 
         significant_runs = 0
         total_runs = 20
@@ -171,8 +168,7 @@ def attack_04_promotion_bypass() -> dict[str, Any]:
         from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
-        MLExperimentPipeline._global_run_count = 0
-        MLExperimentPipeline._seen_idempotency_keys.clear()
+        MLExperimentPipeline.reset_run_state()
 
         pipeline = MLExperimentPipeline()
 
@@ -219,8 +215,7 @@ def attack_05_feature_leakage() -> dict[str, Any]:
     try:
         from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
 
-        MLExperimentPipeline._global_run_count = 0
-        MLExperimentPipeline._seen_idempotency_keys.clear()
+        MLExperimentPipeline.reset_run_state()
 
         pipeline = MLExperimentPipeline()
 
@@ -272,11 +267,11 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
         from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
 
         pipeline = MLExperimentPipeline()
-        clean_snapshot = pipeline._snapshot_builtins()
+        clean_snapshot = pipeline.snapshot_builtins()
 
         builtins.__dict__["ML_POISONED"] = True
 
-        restore_violations = pipeline._check_and_restore_builtins(clean_snapshot)
+        restore_violations = pipeline.check_and_restore_builtins(clean_snapshot)
 
         post_restore_keys = set(builtins.__dict__.keys())
         still_tampered = post_restore_keys != original_builtins_keys

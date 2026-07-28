@@ -119,7 +119,7 @@ def _run_inference_stage(
     idempotency_key: str,
 ) -> list[dict[str, Any]]:
     predictions: list[dict[str, Any]] = []
-    builtins_snapshot = pipeline._snapshot_builtins()  # 5.12.10 修复：移除死分支条件（guard始终启用）
+    builtins_snapshot = pipeline.snapshot_builtins()  # 5.12.10 修复：移除死分支条件（guard始终启用）
 
     with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(pipeline._models))) as executor:
         futures = {}
@@ -135,7 +135,7 @@ def _run_inference_stage(
             try:
                 pred = future.result()
                 # 5.12.10 修复：移除 if self._BUILTINS_GUARD_ENABLED: 死分支（guard始终启用）
-                violations = pipeline._check_and_restore_builtins(builtins_snapshot)
+                violations = pipeline.check_and_restore_builtins(builtins_snapshot)
                 if violations:
                     result.inferences_failed += 1
                     result.errors.append(
@@ -178,14 +178,52 @@ class MLExperimentPipeline:
         self._engines: list[type] = []
         self._experiment_config: ExperimentConfig | None = None
 
+    @classmethod
+    def reset_run_state(cls) -> None:
+        """重置运行计数和幂等键集合（Stage 4 公共化，primary）。
+
+        测试与冷启动前调用以隔离 p-hacking 检测状态。
+        """
+        cls._global_run_count = 0
+        cls._seen_idempotency_keys.clear()
+
     @staticmethod
-    def _snapshot_builtins() -> frozenset[str]:
+    def snapshot_builtins() -> frozenset[str]:
+        """快照内置函数状态（Stage 4 公共化，primary）。"""
         try:
             import builtins
 
             return frozenset(builtins.__dict__.keys())
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return frozenset()
+
+    @staticmethod
+    def _snapshot_builtins() -> frozenset[str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MLExperimentPipeline.snapshot_builtins()
+
+    @staticmethod
+    def check_and_restore_builtins(snapshot: frozenset[str]) -> list[str]:
+        """检查并恢复内置函数完整性（Stage 4 公共化，primary）。
+
+        返回违规列表；同时物理删除运行期新增的 builtins 键以恢复完整性。
+        """
+        violations = MLExperimentPipeline._check_builtins_integrity(snapshot)
+        try:
+            import builtins
+
+            current = set(builtins.__dict__.keys())
+            added = current - set(snapshot)
+            for key in added:
+                del builtins.__dict__[key]
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            violations.append(f"builtins restore error: {e}")
+        return violations
+
+    @staticmethod
+    def _check_and_restore_builtins(snapshot: frozenset[str]) -> list[str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return MLExperimentPipeline.check_and_restore_builtins(snapshot)
 
     @staticmethod
     def _check_builtins_integrity(snapshot: frozenset[str]) -> list[str]:
