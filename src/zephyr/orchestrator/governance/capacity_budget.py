@@ -90,6 +90,13 @@ class CapacityBudgetController:
         self._state = CapacityState(max_concurrent=max_concurrent_tasks)
         self._queue: list[str] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def budget(self):
+        """只读：budget（Stage 4 公共化）。"""
+        return self._budget
+
+
     @property
     def state(self) -> CapacityState:
         return self._state

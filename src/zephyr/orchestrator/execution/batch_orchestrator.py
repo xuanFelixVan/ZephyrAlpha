@@ -105,6 +105,13 @@ class BatchOrchestrator:  # 5.143.3 修复: 移除Protocol显式继承, Protocol
         self.worker_id = worker_id
         self._stale_timeout = stale_timeout_minutes
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def stale_timeout(self):
+        """只读：stale_timeout（Stage 4 公共化）。"""
+        return self._stale_timeout
+
+
     def claim_next(self) -> TaskCard | None:
         """原子认领下一个依赖已满足的 READY 任务。
 

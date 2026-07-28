@@ -42,6 +42,13 @@ class DLQManager:
     def __init__(self):
         self._messages: dict[str, DLQMessage] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def messages(self) -> dict[str, DLQMessage]:
+        """只读：messages（Stage 4 公共化）。"""
+        return self._messages
+
+
     def enqueue(self, message_id: str, contract_id: str, payload: dict | None = None) -> DLQMessage:
         msg = DLQMessage(
             message_id=message_id,

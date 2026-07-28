@@ -56,6 +56,13 @@ class ReconciliationLoop:
         self._results: list[ReconcileResult] = []
         self._interval_s: float = 30.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def results(self) -> list[ReconcileResult]:
+        """只读：results（Stage 4 公共化）。"""
+        return self._results
+
+
     def reconcile(self, states: dict[str, bool] | None = None) -> ReconcileResult:
         invariants: list[Invariant] = []
         for name in RECONCILE_INVARIANTS:

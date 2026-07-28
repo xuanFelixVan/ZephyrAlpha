@@ -357,6 +357,13 @@ class AgentRouter:
         self._matrix = matrix or DEFAULT_ROLE_DOMAIN_MATRIX
         self._pool: list[AgentProfile] = list(agent_pool or [])
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def pool(self) -> list[AgentProfile]:
+        """只读：pool（Stage 4 公共化）。"""
+        return self._pool
+
+
     @property
     def pool_size(self) -> int:
         return len(self._pool)
@@ -755,6 +762,13 @@ class AgentOrchestrator:
         #   lsg_gateway=None + enable_lsg=True → lazy init 类级单例（生产路径，保持原行为）。
         self._lsg_gateway = lsg_gateway
         self._enable_lsg = enable_lsg
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def input_sanitizer(self):
+        """只读：input_sanitizer（Stage 4 公共化）。"""
+        return self._input_sanitizer
+
 
     # ---- accessors ---------------------------------------------------
 

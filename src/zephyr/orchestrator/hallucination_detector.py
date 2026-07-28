@@ -443,6 +443,13 @@ class HallucinationDetector:
             per_call_max_usd=per_call_max_usd,
         )
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def budget(self):
+        """只读：budget（Stage 4 公共化）。"""
+        return self._budget
+
+
     # ------------------------------------------------------------------ public
 
     @property

@@ -23,6 +23,13 @@ class SchemaMigration:
         self._version: int = 1
         self._history: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> list[dict]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def current_version(self) -> int:
         return self._version
 

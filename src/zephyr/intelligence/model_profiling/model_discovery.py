@@ -74,6 +74,18 @@ class ModelDiscovery:
         self._url = ollama_url.rstrip("/")
         self._timeout = timeout_s
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def timeout(self):
+        """只读：timeout（Stage 4 公共化）。"""
+        return self._timeout
+
+    @property
+    def url(self):
+        """只读：url（Stage 4 公共化）。"""
+        return self._url
+
+
     def discover_ollama(self) -> list[DiscoveredModel]:
         """通过 Ollama API 列出所有本地模型。"""
         import requests

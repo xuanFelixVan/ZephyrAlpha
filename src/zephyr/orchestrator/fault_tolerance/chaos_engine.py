@@ -143,6 +143,18 @@ class ChaosEngine:
         self._active_faults: dict[str, FaultRecord] = {}
         self._lock = threading.Lock()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def injection_state(self) -> dict[str, bool]:
+        """只读：injection_state（Stage 4 公共化）。"""
+        return self._injection_state
+
+    @property
+    def last_result(self) -> InjectionResult | None:
+        """只读：last_result（Stage 4 公共化）。"""
+        return self._last_result
+
+
     def get_injection_points(self) -> list[dict[str, Any]]:
         return INJECTION_POINTS
 

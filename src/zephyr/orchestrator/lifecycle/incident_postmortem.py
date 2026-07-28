@@ -36,6 +36,13 @@ class IncidentManager:
     def __init__(self):
         self._incidents: dict[str, Incident] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def incidents(self) -> dict[str, Incident]:
+        """只读：incidents（Stage 4 公共化）。"""
+        return self._incidents
+
+
     def create(self, incident_id: str, description: str, severity: str = "P2") -> Incident:
         inc = Incident(incident_id=incident_id, description=description, severity=severity)
         self._incidents[incident_id] = inc

@@ -22,6 +22,13 @@ class SessionConflictGuard:
     def __init__(self):
         self._active_sessions: dict[str, set[str]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def active_sessions(self) -> dict[str, set[str]]:
+        """只读：active_sessions（Stage 4 公共化）。"""
+        return self._active_sessions
+
+
     def register_session(self, session_id: str, files: list[str]) -> bool:
         for f in files:
             for sid, locked in self._active_sessions.items():

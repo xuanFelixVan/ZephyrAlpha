@@ -288,6 +288,18 @@ class TriggerRouter:
         if auto_load:
             self._load()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def injected_handlers(self) -> dict[str, Callable[..., Any]]:
+        """只读：injected_handlers（Stage 4 公共化）。"""
+        return self._injected_handlers
+
+    @property
+    def specs(self) -> dict[str, TriggerHandlerSpec]:
+        """只读：specs（Stage 4 公共化）。"""
+        return self._specs
+
+
     # ------------------------------------------------------------------
     # 加载
     # ------------------------------------------------------------------

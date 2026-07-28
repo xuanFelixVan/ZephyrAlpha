@@ -22,6 +22,13 @@ class CanaryManager:
     def __init__(self):
         self._canary_weight: float = 0.1
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def canary_weight(self) -> float:
+        """只读：canary_weight（Stage 4 公共化）。"""
+        return self._canary_weight
+
+
     def set_weight(self, weight: float) -> None:
         self._canary_weight = min(1.0, max(0.0, weight))
 

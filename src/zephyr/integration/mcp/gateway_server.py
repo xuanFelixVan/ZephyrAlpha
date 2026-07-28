@@ -160,10 +160,29 @@ class CircuitBreaker:
         self._last_failure: float | None = None
         self._lock = threading.Lock()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def recovery(self):
+        """只读：recovery（Stage 4 公共化）。"""
+        return self._recovery
+
+    @recovery.setter
+    def recovery(self, value):
+        """写入：recovery（Stage 4 公共化）。"""
+        self._recovery = value
+
+
+
     @property
     def state(self) -> str:
         with self._lock:
             return self._state
+
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
 
     @property
     def is_open(self) -> bool:
@@ -272,6 +291,25 @@ class MCPGateway(BaseMCPServer):
         self._agg_tool_count = 0
 
         self._register_gateway_tools()
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def server_instances(self) -> dict[str, BaseMCPServer | Any]:
+        """只读：server_instances（Stage 4 公共化）。"""
+        return self._server_instances
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def audit(self):
+        """只读：audit（Stage 4 公共化）。"""
+        return self._audit
+
+    @property
+    def circuit_breakers(self) -> dict[str, CircuitBreaker]:
+        """只读：circuit_breakers（Stage 4 公共化）。"""
+        return self._circuit_breakers
+
 
     def _init_server_handlers(self) -> None:
         try:

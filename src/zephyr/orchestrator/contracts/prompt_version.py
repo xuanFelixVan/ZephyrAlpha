@@ -22,6 +22,13 @@ class PromptVersionManager:
     def __init__(self):
         self._versions: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def versions(self) -> dict[str, str]:
+        """只读：versions（Stage 4 公共化）。"""
+        return self._versions
+
+
     def register(self, prompt_id: str, version: str, template: str) -> None:
         self._versions[prompt_id] = version
 
