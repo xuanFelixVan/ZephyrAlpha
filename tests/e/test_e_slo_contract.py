@@ -249,7 +249,7 @@ class TestBudgetTierOrdering:
 class TestSLOContractEngineInit:
     def test_init_with_defaults(self):
         engine = SLOContractEngine()
-        assert len(engine._slis) == 7
+        assert len(engine.slis) == 7
         assert engine.window_seconds == 86400.0
 
     def test_init_with_custom_slis(self):
@@ -262,7 +262,7 @@ class TestSLOContractEngineInit:
             ),
         }
         engine = SLOContractEngine(slis=custom_slis)
-        assert len(engine._slis) == 1
+        assert len(engine.slis) == 1
 
     def test_init_with_custom_window(self):
         engine = SLOContractEngine(window_seconds=3600.0)
@@ -281,7 +281,7 @@ class TestSLOContractEngineRecord:
     def test_record_stores_reading(self):
         engine = SLOContractEngine()
         engine.record(SLIName.DEADLOCK, 0.9995)
-        readings = engine._readings[SLIName.DEADLOCK]
+        readings = engine.readings[SLIName.DEADLOCK]
         assert len(readings) == 1
         assert readings[0].value == 0.9995
         assert readings[0].within_slo is True
@@ -415,8 +415,8 @@ class TestSLOContractEngineForceExhaust:
     def test_sets_engine_cooldown(self):
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.RESPONSE_LATENCY)
-        assert engine._cooldown_lock is True
-        assert engine._cooldown_until > time.time()
+        assert engine.cooldown_lock is True
+        assert engine.cooldown_until > time.time()
 
 
 class TestSLOContractEngineResetBudget:
@@ -432,16 +432,16 @@ class TestSLOContractEngineResetBudget:
     def test_reset_clears_readings(self):
         engine = SLOContractEngine()
         engine.record(SLIName.DEADLOCK, 1.0)
-        assert len(engine._readings[SLIName.DEADLOCK]) > 0
+        assert len(engine.readings[SLIName.DEADLOCK]) > 0
         engine.reset_budget(SLIName.DEADLOCK)
-        assert len(engine._readings[SLIName.DEADLOCK]) == 0
+        assert len(engine.readings[SLIName.DEADLOCK]) == 0
 
     def test_reset_all_resets_every_sli(self):
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)
         engine.force_exhaust(SLIName.DEADLOCK)
         engine.reset_budget()
-        for sli_name in engine._slis:
+        for sli_name in engine.slis:
             snap = engine.get_budget(sli_name)
             assert snap.tier == BudgetTier.HEALTHY
             assert snap.error_budget_remaining_pct == 100.0
@@ -481,7 +481,7 @@ class TestSLOContractEngineSummary:
         result = engine.summary()
         budgets = result["budgets"]
         assert len(budgets) == 7
-        for sli_name in engine._slis:
+        for sli_name in engine.slis:
             assert sli_name.value in budgets
 
     def test_contract_slo_has_all_priorities(self):

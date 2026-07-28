@@ -72,8 +72,8 @@ class TestReboundDetector:
         rd = ReboundDetector()
         now = time.time()
         rd.record("agent-1", "violation", "high", timestamp=now)
-        assert "agent-1" in rd._records
-        assert len(rd._records["agent-1"]) == 1
+        assert "agent-1" in rd.records
+        assert len(rd.records["agent-1"]) == 1
 
     def test_detect_rebound_no_data(self):
         rd = ReboundDetector()

@@ -21,7 +21,7 @@ from zephyr.governance.intelligence_governance.meta_confidence import MetaConfid
 class TestMetaConfidenceInit:
     def test_empty_history(self):
         mc = MetaConfidence()
-        assert mc._history == []
+        assert mc.history == []
 
 
 class TestSelfAssess:
@@ -52,13 +52,13 @@ class TestCalibrate:
     def test_adds_to_history(self):
         mc = MetaConfidence()
         mc.calibrate(0.8, True)
-        assert len(mc._history) == 1
+        assert len(mc.history) == 1
 
     def test_multiple_calibrations(self):
         mc = MetaConfidence()
         mc.calibrate(0.9, True)
         mc.calibrate(0.3, False)
-        assert len(mc._history) == 2
+        assert len(mc.history) == 2
 
 
 class TestCalibrationError:

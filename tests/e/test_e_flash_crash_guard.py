@@ -27,8 +27,8 @@ class TestFlashCrashGuardConstants:
 class TestFlashCrashGuardInit:
     def test_default_state(self):
         fcg = FlashCrashGuard()
-        assert fcg._tripped is False
-        assert fcg._trip_time == 0.0
+        assert fcg.tripped is False
+        assert fcg.trip_time == 0.0
         assert fcg.tripped is False
 
 
@@ -60,7 +60,7 @@ class TestFlashCrashGuardEvaluate:
     def test_trip_time_set(self):
         fcg = FlashCrashGuard()
         fcg.evaluate(60.0, 5.0, 0.1)
-        assert fcg._trip_time > 0
+        assert fcg.trip_time > 0
 
 
 class TestFlashCrashGuardReset:

@@ -21,30 +21,30 @@ from zephyr.gov_drift.silence_detector import SilenceDetector
 class TestSilenceDetectorInit:
     def test_default_state(self):
         sd = SilenceDetector()
-        assert sd._last_activity == {}
-        assert sd._timeout_s == 1800
+        assert sd.last_activity == {}
+        assert sd.timeout_s == 1800
 
 
 class TestSilenceDetectorRecordActivity:
     def test_sets_timestamp(self):
         sd = SilenceDetector()
         sd.record_activity("agent-1")
-        assert "agent-1" in sd._last_activity
-        assert sd._last_activity["agent-1"] > 0
+        assert "agent-1" in sd.last_activity
+        assert sd.last_activity["agent-1"] > 0
 
     def test_multiple_agents(self):
         sd = SilenceDetector()
         sd.record_activity("agent-1")
         sd.record_activity("agent-2")
-        assert len(sd._last_activity) == 2
+        assert len(sd.last_activity) == 2
 
     def test_overwrite_existing(self):
         sd = SilenceDetector()
         sd.record_activity("agent-1")
-        first = sd._last_activity["agent-1"]
+        first = sd.last_activity["agent-1"]
         time.sleep(0.01)
         sd.record_activity("agent-1")
-        assert sd._last_activity["agent-1"] > first
+        assert sd.last_activity["agent-1"] > first
 
 
 class TestSilenceDetectorDetectSilence:

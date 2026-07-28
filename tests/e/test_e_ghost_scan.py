@@ -19,20 +19,20 @@ from zephyr.governance.security_governance.ghost_scan import GhostScanner
 class TestGhostScannerInit:
     def test_default_state(self):
         gs = GhostScanner()
-        assert gs._registered_pids == set()
+        assert gs.registered_pids == set()
 
 
 class TestGhostScannerRegister:
     def test_register_single(self):
         gs = GhostScanner()
         gs.register("pid-1")
-        assert "pid-1" in gs._registered_pids
+        assert "pid-1" in gs.registered_pids
 
     def test_register_multiple(self):
         gs = GhostScanner()
         gs.register("pid-1")
         gs.register("pid-2")
-        assert len(gs._registered_pids) == 2
+        assert len(gs.registered_pids) == 2
 
 
 class TestGhostScannerDetectGhosts:
@@ -60,7 +60,7 @@ class TestGhostScannerCleanup:
         gs.register("pid-1")
         result = gs.cleanup("pid-1")
         assert result is True
-        assert "pid-1" not in gs._registered_pids
+        assert "pid-1" not in gs.registered_pids
 
     def test_cleanup_nonexistent(self):
         gs = GhostScanner()

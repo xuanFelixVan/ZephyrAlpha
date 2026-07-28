@@ -22,8 +22,8 @@ from zephyr.gov_audit.forensic_package import ForensicPackage
 class TestForensicPackageInit:
     def test_init_events_and_chain_empty(self):
         fp = ForensicPackage()
-        assert fp._events == []
-        assert fp._chain == []
+        assert fp.events == []
+        assert fp.chain == []
 
 
 class TestForensicPackageBundle:
@@ -33,10 +33,10 @@ class TestForensicPackageBundle:
         result = fp.bundle(event)
         assert isinstance(result, str)
         assert len(result) == 64
-        assert len(fp._events) == 1
-        assert len(fp._chain) == 1
-        assert fp._events[0]["event"] == event
-        assert fp._chain[0] == result
+        assert len(fp.events) == 1
+        assert len(fp.chain) == 1
+        assert fp.events[0]["event"] == event
+        assert fp.chain[0] == result
 
     def test_bundle_multiple_events(self):
         fp = ForensicPackage()
@@ -44,8 +44,8 @@ class TestForensicPackageBundle:
         h2 = fp.bundle({"type": "b", "id": 2})
         h3 = fp.bundle({"type": "c", "id": 3})
         assert h1 != h2 != h3
-        assert len(fp._events) == 3
-        assert len(fp._chain) == 3
+        assert len(fp.events) == 3
+        assert len(fp.chain) == 3
         expected_h2 = hashlib.sha256(
             (h1 + json.dumps({"type": "b", "id": 2}, sort_keys=True, default=str)).encode()
         ).hexdigest()
@@ -88,7 +88,7 @@ class TestForensicPackageVerifyChain:
         fp.bundle({"type": "a", "id": 1})
         fp.bundle({"type": "b", "id": 2})
         fp.bundle({"type": "c", "id": 3})
-        fp._events[1]["event"]["id"] = 999
+        fp.events[1]["event"]["id"] = 999
         assert fp.verify_chain() is False
 
     def test_verify_chain_tampered_chain(self):
@@ -96,5 +96,5 @@ class TestForensicPackageVerifyChain:
         fp.bundle({"type": "a", "id": 1})
         fp.bundle({"type": "b", "id": 2})
         fp.bundle({"type": "c", "id": 3})
-        fp._chain[1] = "0" * 64
+        fp.chain[1] = "0" * 64
         assert fp.verify_chain() is False

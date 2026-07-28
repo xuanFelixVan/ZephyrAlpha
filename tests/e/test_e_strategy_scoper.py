@@ -36,22 +36,22 @@ class TestScopeLevel:
 class TestStrategyScoperInit:
     def test_init_empty_scopes(self):
         scoper = StrategyScoper()
-        assert scoper._scopes == {}
+        assert scoper.scopes == {}
 
 
 class TestAssignScope:
     def test_assign_adds_agent_to_dict(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent-1", ScopeLevel.SIG)
-        assert scoper._scopes == {"agent-1": ScopeLevel.SIG}
+        assert scoper.scopes == {"agent-1": ScopeLevel.SIG}
 
     def test_assign_multiple_agents(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent-1", ScopeLevel.SIG)
         scoper.assign_scope("agent-2", ScopeLevel.STRATEGY)
-        assert scoper._scopes["agent-1"] == ScopeLevel.SIG
-        assert scoper._scopes["agent-2"] == ScopeLevel.STRATEGY
-        assert len(scoper._scopes) == 2
+        assert scoper.scopes["agent-1"] == ScopeLevel.SIG
+        assert scoper.scopes["agent-2"] == ScopeLevel.STRATEGY
+        assert len(scoper.scopes) == 2
 
 
 class TestCanAccess:
@@ -85,9 +85,9 @@ class TestCanAccess:
     def test_overwrite_scope_for_same_agent(self):
         scoper = StrategyScoper()
         scoper.assign_scope("agent-1", ScopeLevel.SIG)
-        assert scoper._scopes["agent-1"] == ScopeLevel.SIG
+        assert scoper.scopes["agent-1"] == ScopeLevel.SIG
         scoper.assign_scope("agent-1", ScopeLevel.CAPITAL)
-        assert scoper._scopes["agent-1"] == ScopeLevel.CAPITAL
+        assert scoper.scopes["agent-1"] == ScopeLevel.CAPITAL
 
     def test_empty_agent_id_boundary(self):
         scoper = StrategyScoper()

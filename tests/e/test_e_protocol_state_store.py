@@ -28,7 +28,7 @@ class TestProtocolStateStore:
     def test_update_stores_value(self, tmp_path):
         store = ProtocolStateStore(state_dir=str(tmp_path / "state"))
         store.update("key1", "value1")
-        assert store._state["key1"] == "value1"
+        assert store.state["key1"] == "value1"
 
     def test_save_writes_json(self, tmp_path):
         state_dir = str(tmp_path / "state")
@@ -45,4 +45,4 @@ class TestProtocolStateStore:
         store = ProtocolStateStore(state_dir=str(tmp_path / "state"))
         store.update("key1", "old")
         store.update("key1", "new")
-        assert store._state["key1"] == "new"
+        assert store.state["key1"] == "new"

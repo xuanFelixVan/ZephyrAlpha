@@ -19,28 +19,28 @@ from zephyr.gov_audit.integrity_verifier import IntegrityVerifier
 class TestIntegrityVerifierInit:
     def test_default_state(self):
         verifier = IntegrityVerifier()
-        assert verifier._hashes == {}
+        assert verifier.hashes == {}
 
 
 class TestIntegrityVerifierRegisterHash:
     def test_register_stores_hash(self):
         verifier = IntegrityVerifier()
         verifier.register_hash("/path/to/file.py", "content")
-        assert "/path/to/file.py" in verifier._hashes
-        assert len(verifier._hashes["/path/to/file.py"]) == 64
+        assert "/path/to/file.py" in verifier.hashes
+        assert len(verifier.hashes["/path/to/file.py"]) == 64
 
     def test_register_multiple_files(self):
         verifier = IntegrityVerifier()
         verifier.register_hash("a.py", "a")
         verifier.register_hash("b.py", "b")
-        assert len(verifier._hashes) == 2
+        assert len(verifier.hashes) == 2
 
     def test_register_overwrites(self):
         verifier = IntegrityVerifier()
         verifier.register_hash("f.py", "old")
-        old_hash = verifier._hashes["f.py"]
+        old_hash = verifier.hashes["f.py"]
         verifier.register_hash("f.py", "new")
-        assert verifier._hashes["f.py"] != old_hash
+        assert verifier.hashes["f.py"] != old_hash
 
 
 class TestIntegrityVerifierVerify:

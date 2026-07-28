@@ -22,26 +22,26 @@ class TestEscalationAPIInstantiation:
 
     def test_empty_api_keys(self):
         api = EscalationAPI()
-        assert api._api_keys == {}
+        assert api.api_keys == {}
 
 
 class TestRegisterService:
     def test_register_service(self):
         api = EscalationAPI()
         api.register_service("monitoring", "key-123")
-        assert api._api_keys["monitoring"] == "key-123"
+        assert api.api_keys["monitoring"] == "key-123"
 
     def test_register_multiple_services(self):
         api = EscalationAPI()
         api.register_service("monitoring", "key-1")
         api.register_service("deployer", "key-2")
-        assert len(api._api_keys) == 2
+        assert len(api.api_keys) == 2
 
     def test_register_overwrites(self):
         api = EscalationAPI()
         api.register_service("svc", "old-key")
         api.register_service("svc", "new-key")
-        assert api._api_keys["svc"] == "new-key"
+        assert api.api_keys["svc"] == "new-key"
 
 
 class TestValidateRequest:

@@ -30,7 +30,7 @@ class TestInterruptHandlerInit:
     def test_default_not_interrupted(self):
         ih = InterruptHandler()
         assert ih.interrupted is False
-        assert ih._signal is None
+        assert ih.signal is None
 
 
 class TestInterruptHandlerInterrupt:
@@ -38,13 +38,13 @@ class TestInterruptHandlerInterrupt:
         ih = InterruptHandler()
         ih.interrupt(InterruptSignal.OWNER_OVERRIDE)
         assert ih.interrupted is True
-        assert ih._signal == InterruptSignal.OWNER_OVERRIDE
+        assert ih.signal == InterruptSignal.OWNER_OVERRIDE
 
     def test_safety_breach(self):
         ih = InterruptHandler()
         ih.interrupt(InterruptSignal.SAFETY_BREACH)
         assert ih.interrupted is True
-        assert ih._signal == InterruptSignal.SAFETY_BREACH
+        assert ih.signal == InterruptSignal.SAFETY_BREACH
 
     def test_hard_timeout(self):
         ih = InterruptHandler()
@@ -73,7 +73,7 @@ class TestInterruptHandlerResume:
         ih.interrupt(InterruptSignal.SAFETY_BREACH)
         assert ih.resume() is True
         assert ih.interrupted is False
-        assert ih._signal is None
+        assert ih.signal is None
 
     def test_resume_when_not_interrupted(self):
         ih = InterruptHandler()

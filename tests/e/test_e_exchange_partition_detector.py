@@ -19,27 +19,27 @@ from zephyr.governance.data_governance.exchange_partition_detector import Exchan
 class TestExchangePartitionDetectorInit:
     def test_default_state(self):
         epd = ExchangePartitionDetector()
-        assert epd._known_exchanges == set()
+        assert epd.known_exchanges == set()
 
 
 class TestExchangePartitionDetectorRegister:
     def test_adds_single_exchange(self):
         epd = ExchangePartitionDetector()
         epd.register("binance")
-        assert epd._known_exchanges == {"binance"}
+        assert epd.known_exchanges == {"binance"}
 
     def test_adds_multiple_exchanges(self):
         epd = ExchangePartitionDetector()
         epd.register("binance")
         epd.register("ftx")
         epd.register("coinbase")
-        assert len(epd._known_exchanges) == 3
+        assert len(epd.known_exchanges) == 3
 
     def test_duplicate_is_noop(self):
         epd = ExchangePartitionDetector()
         epd.register("binance")
         epd.register("binance")
-        assert len(epd._known_exchanges) == 1
+        assert len(epd.known_exchanges) == 1
 
 
 class TestExchangePartitionDetectorDetectPartition:

@@ -19,18 +19,18 @@ from zephyr.governance.architecture_governance.gap_analyzer import GapAnalyzer
 class TestGapAnalyzerInit:
     def test_default_state(self):
         ga = GapAnalyzer()
-        assert ga._covered_operations == set()
-        assert ga._observed_operations == set()
+        assert ga.covered_operations == set()
+        assert ga.observed_operations == set()
 
     def test_register_coverage(self):
         ga = GapAnalyzer()
         ga.register_coverage("file_write")
-        assert "file_write" in ga._covered_operations
+        assert "file_write" in ga.covered_operations
 
     def test_observe_operation(self):
         ga = GapAnalyzer()
         ga.observe_operation("network_call")
-        assert "network_call" in ga._observed_operations
+        assert "network_call" in ga.observed_operations
 
 
 class TestGapAnalyzerFindGaps:

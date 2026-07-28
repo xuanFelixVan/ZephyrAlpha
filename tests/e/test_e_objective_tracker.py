@@ -20,8 +20,8 @@ class TestObjectiveTracker:
     def test_set_objective_stores(self):
         ot = ObjectiveTracker()
         ot.set_objective("agent-1", "maximize profit")
-        assert ot._objectives["agent-1"] == ["maximize profit"]
-        assert ot._versions["agent-1"] == 1
+        assert ot.objectives["agent-1"] == ["maximize profit"]
+        assert ot.versions["agent-1"] == 1
 
     def test_detect_drift_no_drift(self):
         ot = ObjectiveTracker()
@@ -44,7 +44,7 @@ class TestObjectiveTracker:
         ot.set_objective("agent-1", "obj-b")
         result = ot.rollback("agent-1")
         assert result == "obj-a"
-        assert ot._objectives["agent-1"] == ["obj-a"]
+        assert ot.objectives["agent-1"] == ["obj-a"]
 
     def test_rollback_single_objective(self):
         ot = ObjectiveTracker()
@@ -62,4 +62,4 @@ class TestObjectiveTracker:
         ot.set_objective("agent-1", "v1")
         ot.set_objective("agent-1", "v2")
         ot.set_objective("agent-1", "v3")
-        assert ot._versions["agent-1"] == 3
+        assert ot.versions["agent-1"] == 3
