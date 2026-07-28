@@ -411,6 +411,35 @@ class FeedbackLoopScheduler:
     _instance: ClassVar[FeedbackLoopScheduler | None] = None
     _instance_lock: ClassVar[threading.Lock] = threading.Lock()
 
+    # ── Stage 4 公共化属性（property getter/setter） ──
+    @property
+    def running(self) -> bool:
+        """Stage 4 公共化。"""
+        return self._running
+
+    @running.setter
+    def running(self, value: bool) -> None:
+        self._running = value
+
+    @property
+    def thread(self):
+        """Stage 4 公共化。"""
+        return self._thread
+
+    @property
+    def consecutive_errors(self) -> int:
+        """Stage 4 公共化。"""
+        return self._consecutive_errors
+
+    @consecutive_errors.setter
+    def consecutive_errors(self, value: int) -> None:
+        self._consecutive_errors = value
+
+    @property
+    def cycle_count(self) -> int:
+        """Stage 4 公共化。"""
+        return self._cycle_count
+
     # ── 单例管理 ──────────────────────────────────────────────────
 
     @classmethod
@@ -440,9 +469,9 @@ class FeedbackLoopScheduler:
         PERM-TRIGGER compliance: subscribes to ``fle.shutdown`` event so the
         scheduler can be gracefully stopped via event bus (not just stop()).
         """
-        if self._running and self._thread is not None and self._thread.is_alive():
+        if self.running and self._thread is not None and self._thread.is_alive():
             return  # idempotent
-        self._running = True
+        self.running = True
         self._consecutive_errors = 0
         # Event subscription for graceful shutdown (PERM-TRIGGER gate compliance).
         try:
@@ -461,7 +490,7 @@ class FeedbackLoopScheduler:
         Allows external systems to stop the scheduler via event bus without
         holding a direct reference to the scheduler instance.
         """
-        self._running = False
+        self.running = False
 
     def stop(self) -> None:
         """Stop background polling thread (manual/test control only).
@@ -470,7 +499,7 @@ class FeedbackLoopScheduler:
         without start() or to call multiple times. Preserves the (dead) thread
         reference on `self._thread` so callers can inspect `is_alive()` post-stop.
         """
-        self._running = False
+        self.running = False
         thread = self._thread
         if thread is not None and thread.is_alive():
             thread.join(timeout=self.poll_interval * 3 + 5.0)
@@ -488,7 +517,7 @@ class FeedbackLoopScheduler:
         NOT crash the loop. On success, resets _consecutive_errors to 0.
         Exits cleanly when stop() sets _running=False.
         """
-        while self._running:
+        while self.running:
             try:
                 self._run_once()
                 self._cycle_count += 1
@@ -504,7 +533,7 @@ class FeedbackLoopScheduler:
                 )
             # Sleep in small increments so stop() is responsive
             slept = 0.0
-            while self._running and slept < self.poll_interval:
+            while self.running and slept < self.poll_interval:
                 time.sleep(min(0.05, self.poll_interval - slept))
                 slept += 0.05
 
@@ -640,8 +669,13 @@ class FeedbackLoopScheduler:
         )
         return event
 
-    def _persist_failure_pattern(self, event: FLEPipelineEvent) -> None:
+    def persist_failure_pattern(self, event: FLEPipelineEvent) -> None:
+        """Stage 4 公共化：persist a failure pattern to VMS lessons."""
         ExternalPersistenceWriter.persist_failure_pattern(self.vector_bridge, event)
+
+    def _persist_failure_pattern(self, event: FLEPipelineEvent) -> None:
+        """向后兼容 thin wrapper。"""
+        return self.persist_failure_pattern(event)
 
     def _run_safety_gates(self, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> dict[str, bool]:
         return self.safety_gate_manager.run_safety_gates(anomaly, diagnosis)

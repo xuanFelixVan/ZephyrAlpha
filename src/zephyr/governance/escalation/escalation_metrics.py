@@ -32,6 +32,42 @@ class EscalationMetrics:
         self._false_positives = 0
         self._latencies: list[float] = []
 
+    # --- Public properties (Reverse Hierarchy) ---
+
+    @property
+    def blocks(self):
+        """Block events list (public API)."""
+        return self._blocks
+
+    @property
+    def total_evals(self) -> int:
+        """Total evaluation count (public API)."""
+        return self._total_evals
+
+    @total_evals.setter
+    def total_evals(self, value: int) -> None:
+        self._total_evals = value
+
+    @property
+    def auto_guards(self):
+        """Auto guard events list (public API)."""
+        return self._auto_guards
+
+    @property
+    def autonomous(self):
+        """Autonomous events list (public API)."""
+        return self._autonomous
+
+    @property
+    def false_positives(self):
+        """False positive events list (public API)."""
+        return self._false_positives
+
+    @property
+    def latencies(self):
+        """Latency records list (public API)."""
+        return self._latencies
+
     def record(self, level: str, latency_s: float, was_false_positive: bool = False):
         self._total_evals += 1
         if level == "blocked":

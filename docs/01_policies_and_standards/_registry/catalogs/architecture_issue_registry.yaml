@@ -9417,3 +9417,69 @@ entries:
   related_rules: 'AGENTS.md (DIP 原则), 软件工程 SOLID 原则'
   created: '2026-07-27'
   last_updated: '2026-07-27'
+
+# --- #ARCH-GATE-FP-001: commit gate 误报（IMPORT-INTEGRITY + MANUAL-ONLY-PERMANENT）---
+- issue_id: '#ARCH-GATE-FP-001'
+  title: 'commit gate 误报阻断合法提交：IMPORT-INTEGRITY 不识别 __init__.py re-exports + MANUAL-ONLY-PERMANENT 误报 escalation_engine.py + gate 扫描未暂存文件'
+  category: governance
+  severity: P2中
+  adjudication: >-
+    2026-07-28 立项。AI 提议裁定（铁律#9 → status=proposed，待用户确认）。
+    根因三重：
+    (1) IMPORT-INTEGRITY gate 不识别 __init__.py re-export 链：当 __init__.py 执行
+    `from .module import Class` 后，其他文件 `from package import Class` 合法但 gate
+    报 dangling import。scheduler.py 的 dangling imports 也被误报。
+    (2) MANUAL-ONLY-PERMANENT gate 对 escalation_engine.py 的 manual trigger 方法
+    误报为"永久手动only"——实际该方法是设计意图（人工触发的应急升级通道），非缺陷。
+    (3) commit gate 扫描工作区所有修改文件而非仅暂存文件：导致未纳入本次 commit 的
+    文件（如 scheduler.py/escalation_engine.py 的无关改动）也触发 gate 阻断。
+    治本提议：
+    - IMPORT-INTEGRITY：扩展 re-export 识别逻辑，追踪 __init__.py 的 from-import 链
+    - MANUAL-ONLY-PERMANENT：增加白名单或改进检测逻辑，区分"设计意图的 manual trigger"
+      与"应自动化但遗留的手动only"
+    - gate 扫描范围：改为仅扫描 `git diff --cached` 暂存文件，而非 `git status` 全部修改
+    临时绕过：用户已采用 revert → commit → restore 策略绕过误报。
+  impact:
+    - 'scripts/governance/commit_gates/（IMPORT-INTEGRITY + MANUAL-ONLY-PERMANENT gate 逻辑）'
+    - 'src/zephyr/feedback_loop/scheduler.py（dangling imports 误报）'
+    - 'src/zephyr/governance/escalation/escalation_engine.py（manual trigger 误报）'
+  fix_phase: 待用户确认后施工。
+  status: proposed
+  related_rules: 'AGENTS.md 铁律#9（用户裁定优先）, RULE-COMMIT-GATE'
+  created: '2026-07-28'
+  last_updated: '2026-07-28'
+
+# --- #ARCH-AI-GHOST-AGENT-001: 上下文压缩导致 Ghost Agent 幻觉 ---
+- issue_id: '#ARCH-AI-GHOST-AGENT-001'
+  title: '上下文压缩后 Session Memory 存储 agent 运行意图为事实，新会话加载后产生 Ghost Agent 幻觉'
+  category: ai_governance
+  severity: P1高
+  adjudication: >-
+    2026-07-28 立项。AI 提议裁定（铁律#9 → status=proposed，待用户确认）。
+    根因链：
+    (1) 上下文压缩是 lossy 的——压缩器将"agent 在运行中"写入 topics.md 和 session_memory，
+    但实际后台 agent 进程已在会话切换时被 kill。
+    (2) Session Memory 不区分"意图描述"和"可验证事实"——`topics.md` 中
+    "3 agents running" 被当作权威状态，但无任何活性校验机制。
+    (3) 新会话加载 summary 时，系统提醒（system-reminder）注入 phantom agent 状态，
+    AI 误以为有 agent 在运行，实际一个都没有。
+    (4) 无跨会话 agent 活性检查——派发 agent 后的 PID/agent_id 在压缩时丢失，
+    新会话无法验证 agent 是否真实存活。
+    影响：已发生多次，每次导致 AI 等待不存在的 agent 完成，浪费 token 和时间，
+    且用户困惑"为什么 agent 在跑但看不到进度"。
+    治本提议（三层防御）：
+    L1 会话启动校验：新会话加载 summary 后，对比 memory 声称的"运行中 agent" 
+    vs 实际 git diff / worktree 状态，不一致时显式标记为 phantom 并清理。
+    L2 Memory 字段区分：`session_memory` 和 `topics.md` 加 `status: "intent" | "confirmed"` 
+    字段，未确认的意图不得作为事实引用。
+    L3 Agent 活性检查：派发 agent 时记录 agent_id 到持久化状态文件，
+    新会话启动时检查 agent 是否真实存活（通过 TaskOutput 查询）。
+  impact:
+    - '所有使用 Agent(..., run_in_background=true) 的长会话'
+    - 'Session Memory 写入和读取流程'
+    - '上下文压缩/摘要生成逻辑'
+  fix_phase: 待用户确认后施工。L1/L2 为 AI 行为规范（君子协定），L3 需改动 TRAE 平台。
+  status: proposed
+  related_rules: 'AGENTS.md 铁律#9（用户裁定优先）, project_memory.md'
+  created: '2026-07-28'
+  last_updated: '2026-07-28'

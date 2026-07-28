@@ -56,7 +56,7 @@ class TestAutoStart:
         """auto_start() 注册 EventBus 订阅。"""
         pipeline = ContextPipelineAuto(timeout_seconds=10, auto_kill_threshold=3)
         pipeline.auto_start()
-        assert pipeline._event_subscribed
+        assert pipeline.event_subscribed
 
     def test_auto_start_with_custom_kill_switch(self) -> None:
         """auto_start() 接受自定义 KillSwitch。"""
@@ -86,7 +86,7 @@ class TestEventDriven:
         """fuse ON 时跳过 TASK_STARTED 事件。"""
         pipeline = ContextPipelineAuto(timeout_seconds=10, auto_kill_threshold=5)
         pipeline.auto_start()
-        pipeline._kill_switch._fuse_on = True
+        pipeline.kill_switch.fuse_on = True
 
         bus = EventBus.get_instance()
         bus.publish(EventType.TASK_STARTED, "DM-TEST-002", {"test": True})
@@ -97,17 +97,17 @@ class TestEventDriven:
         pipeline = ContextPipelineAuto(timeout_seconds=10, auto_kill_threshold=5)
         pipeline.auto_start()
 
-        initial_count = pipeline._kill_switch._error_count
+        initial_count = pipeline.kill_switch.error_count
         bus = EventBus.get_instance()
         bus.publish(EventType.TASK_FAILED, "DM-TEST-003", {"reason": "test_failure"})
-        assert pipeline._kill_switch._error_count > initial_count
+        assert pipeline.kill_switch.error_count > initial_count
 
     def test_on_task_failed_triggers_shutdown_when_fuse_on(self) -> None:
         """TASK_FAILED 触发熔断时自动关闭。"""
         pipeline = ContextPipelineAuto(timeout_seconds=10, auto_kill_threshold=1)
         pipeline.auto_start()
 
-        pipeline._kill_switch._threshold = 1
+        pipeline.kill_switch.threshold = 1
         bus = EventBus.get_instance()
         bus.publish(EventType.TASK_FAILED, "DM-TEST-004", {"reason": "critical"})
         assert pipeline.fuse_on
@@ -146,7 +146,7 @@ class TestAutoRun:
     def test_auto_run_with_fuse_on_raises(self) -> None:
         """fuse ON 时 auto_run() 抛出 RuntimeError。"""
         pipeline = ContextPipelineAuto(timeout_seconds=10, auto_kill_threshold=5)
-        pipeline._kill_switch._fuse_on = True
+        pipeline.kill_switch.fuse_on = True
 
         with pytest.raises(RuntimeError, match="KillSwitch fuse is ON"):
             pipeline.auto_run([{"file_path": "test", "reason": "test"}])
@@ -171,14 +171,14 @@ class TestAutoRun:
         f.write_text("content", encoding="utf-8")
 
         pipeline = ContextPipelineAuto(timeout_seconds=30, auto_kill_threshold=5)
-        initial_count = pipeline._kill_switch._error_count
+        initial_count = pipeline.kill_switch.error_count
 
         pipeline.auto_run(
             [{"file_path": str(f), "reason": "g3_test"}],
             require_absolute_manifest_paths=False,
         )
-        if not pipeline._kill_switch._fuse_on:
-            assert pipeline._kill_switch._error_count >= initial_count
+        if not pipeline.kill_switch.fuse_on:
+            assert pipeline.kill_switch.error_count >= initial_count
 
 
 # ── 自动关闭测试 ──────────────────────────────────────────────
@@ -226,16 +226,16 @@ class TestAutoShutdown:
         pipeline.auto_start()
 
         pipeline.register_cleanup(lambda: None)
-        assert len(pipeline._cleanup_callbacks) == 1
+        assert len(pipeline.cleanup_callbacks) == 1
 
         pipeline.auto_shutdown(reason="test")
-        assert len(pipeline._cleanup_callbacks) == 0
+        assert len(pipeline.cleanup_callbacks) == 0
 
     def test_reset_fuse_after_shutdown(self) -> None:
         """shutdown 后可以 reset_fuse 重新启动。"""
         pipeline = ContextPipelineAuto(timeout_seconds=10, auto_kill_threshold=5)
         pipeline.auto_start()
-        pipeline._kill_switch._fuse_on = True
+        pipeline.kill_switch.fuse_on = True
 
         pipeline.auto_shutdown(reason="fuse_test")
         assert not pipeline.is_started
@@ -258,21 +258,21 @@ class TestKillSwitchExtension:
         ks = KillSwitch(threshold=2, auto_kill_threshold=2)
         result = ks.check_errors_and_kill(["error1", "error2"])
         assert result is True
-        assert ks._fuse_on
+        assert ks.fuse_on
 
     def test_check_errors_and_kill_disabled_when_threshold_zero(self) -> None:
         """auto_kill_threshold=0 时禁用。"""
         ks = KillSwitch(threshold=5, auto_kill_threshold=0)
         result = ks.check_errors_and_kill(["error1", "error2", "error3"])
         assert result is False
-        assert not ks._fuse_on
+        assert not ks.fuse_on
 
     def test_check_errors_and_kill_below_threshold(self) -> None:
         """错误数低于 auto_kill_threshold 时不触发。"""
         ks = KillSwitch(threshold=10, auto_kill_threshold=5)
         result = ks.check_errors_and_kill(["error1", "error2"])
         assert result is False
-        assert not ks._fuse_on
+        assert not ks.fuse_on
 
     def test_register_cleanup_and_trigger_shutdown(self) -> None:
         """注册回调并触发熔断时执行回调。"""
@@ -281,7 +281,7 @@ class TestKillSwitchExtension:
         ks.register_cleanup(lambda: cleanup_called.append(True))
 
         ks.trigger_shutdown()
-        assert ks._fuse_on
+        assert ks.fuse_on
         assert cleanup_called == [True]
 
     def test_trigger_shutdown_clears_callbacks(self) -> None:
@@ -289,10 +289,10 @@ class TestKillSwitchExtension:
         ks = KillSwitch(threshold=5)
         ks.register_cleanup(lambda: None)
         ks.register_cleanup(lambda: None)
-        assert len(ks._cleanup_callbacks) == 2
+        assert len(ks.cleanup_callbacks) == 2
 
         ks.trigger_shutdown()
-        assert len(ks._cleanup_callbacks) == 0
+        assert len(ks.cleanup_callbacks) == 0
 
     def test_trigger_shutdown_callback_exception_does_not_block(self) -> None:
         """回调异常不阻止其他回调执行。"""
@@ -306,7 +306,7 @@ class TestKillSwitchExtension:
         ks.register_cleanup(lambda: success_called.append(True))
 
         ks.trigger_shutdown()
-        assert ks._fuse_on
+        assert ks.fuse_on
         assert success_called == [True]
 
 
@@ -345,10 +345,10 @@ class TestIntegration:
         f.write_text("content", encoding="utf-8")
 
         pipeline = ContextPipelineAuto(timeout_seconds=30, auto_kill_threshold=1)
-        pipeline._kill_switch._threshold = 1
+        pipeline.kill_switch.threshold = 1
 
         pipeline.auto_start()
-        pipeline._kill_switch.record_error("triggering_error")
+        pipeline.kill_switch.record_error("triggering_error")
         assert pipeline.fuse_on
 
         with pytest.raises(RuntimeError, match="KillSwitch fuse is ON"):

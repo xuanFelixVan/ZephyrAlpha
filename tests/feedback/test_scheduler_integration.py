@@ -36,7 +36,7 @@ def scheduler():
         s = FeedbackLoopScheduler(poll_interval=0.1)
         yield s
         # Cleanup: ensure stopped
-        if s._running:
+        if s.running:
             s.stop()
         FeedbackLoopScheduler.reset_instance()
 
@@ -45,61 +45,61 @@ class TestSchedulerStart:
     """Test start() lifecycle."""
 
     def test_start_sets_running_flag(self, scheduler):
-        """start() sets _running=True."""
-        assert scheduler._running is False
+        """start() sets running=True."""
+        assert scheduler.running is False
         scheduler.start()
-        assert scheduler._running is True
+        assert scheduler.running is True
 
     def test_start_creates_thread(self, scheduler):
         """start() creates a daemon thread."""
-        assert scheduler._thread is None
+        assert scheduler.thread is None
         scheduler.start()
-        assert scheduler._thread is not None
-        assert scheduler._thread.daemon is True
-        assert scheduler._thread.name == "FLE-Scheduler"
+        assert scheduler.thread is not None
+        assert scheduler.thread.daemon is True
+        assert scheduler.thread.name == "FLE-Scheduler"
 
     def test_start_is_idempotent(self, scheduler):
         """start() called twice does not create a second thread."""
         scheduler.start()
-        thread1 = scheduler._thread
+        thread1 = scheduler.thread
         scheduler.start()
-        assert scheduler._thread is thread1
+        assert scheduler.thread is thread1
 
     def test_start_resets_consecutive_errors(self, scheduler):
-        """start() resets _consecutive_errors to 0."""
-        scheduler._consecutive_errors = 5
+        """start() resets consecutive_errors to 0."""
+        scheduler.consecutive_errors = 5
         scheduler.start()
-        assert scheduler._consecutive_errors == 0
+        assert scheduler.consecutive_errors == 0
 
 
 class TestSchedulerStop:
     """Test stop() lifecycle."""
 
     def test_stop_clears_running_flag(self, scheduler):
-        """stop() sets _running=False."""
+        """stop() sets running=False."""
         scheduler.start()
-        assert scheduler._running is True
+        assert scheduler.running is True
         scheduler.stop()
-        assert scheduler._running is False
+        assert scheduler.running is False
 
     def test_stop_joins_thread(self, scheduler):
         """stop() joins the background thread."""
         scheduler.start()
-        thread = scheduler._thread
+        thread = scheduler.thread
         scheduler.stop()
         assert not thread.is_alive()
 
     def test_stop_without_start(self, scheduler):
         """stop() without start() does not raise."""
         scheduler.stop()
-        assert scheduler._running is False
+        assert scheduler.running is False
 
     def test_stop_is_idempotent(self, scheduler):
         """stop() called twice does not raise."""
         scheduler.start()
         scheduler.stop()
         scheduler.stop()
-        assert scheduler._running is False
+        assert scheduler.running is False
 
 
 class TestSchedulerTick:
@@ -120,7 +120,7 @@ class TestSchedulerTick:
 
     def test_tick_does_not_require_start(self, scheduler):
         """tick() works without start() (manual mode)."""
-        assert scheduler._running is False
+        assert scheduler.running is False
         # Should not raise
         scheduler.tick()
 
@@ -129,11 +129,11 @@ class TestSchedulerRunLoop:
     """Test _run_loop behavior with actual thread."""
 
     def test_run_loop_executes_cycles(self, scheduler):
-        """start() runs _run_loop which increments _cycle_count."""
+        """start() runs _run_loop which increments cycle_count."""
         scheduler.start()
         time.sleep(0.5)  # Allow at least 1 cycle (poll_interval=0.1)
         scheduler.stop()
-        assert scheduler._cycle_count > 0
+        assert scheduler.cycle_count > 0
 
     def test_run_loop_stops_on_stop(self, scheduler):
         """_run_loop exits when stop() is called."""
@@ -141,29 +141,29 @@ class TestSchedulerRunLoop:
         time.sleep(0.3)
         scheduler.stop()
         # Thread should be dead
-        assert not scheduler._thread.is_alive()
+        assert not scheduler.thread.is_alive()
 
     def test_run_loop_records_events(self, scheduler):
-        """_run_loop records events in _events list."""
+        """_run_loop records events in events list."""
         scheduler.start()
         time.sleep(0.5)
         scheduler.stop()
-        # Events may be empty if _run_once returns None, but _events should be a list
-        assert isinstance(scheduler._events, list)
+        # Events may be empty if _run_once returns None, but events() should return a list
+        assert isinstance(scheduler.events(), list)
 
 
 class TestSchedulerErrorRecovery:
     """Test error recovery in _run_loop."""
 
     def test_consecutive_errors_increment_on_failure(self, scheduler):
-        """_run_loop increments _consecutive_errors on exception."""
+        """_run_loop increments consecutive_errors on exception."""
         # Mock _run_once to raise
         with patch.object(scheduler, "_run_once", side_effect=RuntimeError("test")):
             scheduler.start()
             time.sleep(0.5)
             scheduler.stop()
         # Should have some consecutive errors
-        assert scheduler._consecutive_errors >= 0
+        assert scheduler.consecutive_errors >= 0
 
     def test_scheduler_recovers_from_errors(self, scheduler):
         """Scheduler does not crash permanently on errors."""
@@ -181,7 +181,7 @@ class TestSchedulerErrorRecovery:
             time.sleep(0.5)
             scheduler.stop()
         # Scheduler should still be stoppable (not crashed)
-        assert scheduler._running is False
+        assert scheduler.running is False
 
 
 class TestSchedulerSingleton:
@@ -260,14 +260,14 @@ class TestPersistFailurePattern:
         s = self._make_bare_scheduler()
         s.vector_bridge = None
         event = self._make_event(diagnosis=MagicMock(summary="x"))
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
 
     def test_no_diagnosis_skips(self):
         """diagnosis is None → no write."""
         s = self._make_bare_scheduler()
         s.vector_bridge = MagicMock()
         event = self._make_event(diagnosis=None)
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
         s.vector_bridge.write_failure_pattern.assert_not_called()
 
     def test_summary_present_writes(self):
@@ -280,7 +280,7 @@ class TestPersistFailurePattern:
         verification = MagicMock()
         verification.verdict = "ANOMALY"
         event = self._make_event(diagnosis=diag, verification=verification)
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
         s.vector_bridge.write_failure_pattern.assert_called_once_with("CPU elevated")
 
     def test_root_cause_strips_zscore(self):
@@ -293,7 +293,7 @@ class TestPersistFailurePattern:
         verification = MagicMock()
         verification.verdict = "ANOMALY"
         event = self._make_event(diagnosis=diag, verification=verification)
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
         s.vector_bridge.write_failure_pattern.assert_called_once_with("Elevated cpu_usage")
 
     def test_no_verification_skips(self):
@@ -304,7 +304,7 @@ class TestPersistFailurePattern:
         diag.summary = "test"
         diag.root_cause = None
         event = self._make_event(diagnosis=diag, verification=None)
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
         s.vector_bridge.write_failure_pattern.assert_not_called()
 
     def test_healthy_verdict_skips(self):
@@ -317,7 +317,7 @@ class TestPersistFailurePattern:
         verification = MagicMock()
         verification.verdict = "HEALTHY"
         event = self._make_event(diagnosis=diag, verification=verification)
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
         s.vector_bridge.write_failure_pattern.assert_not_called()
 
     def test_nominal_verdict_skips(self):
@@ -330,7 +330,7 @@ class TestPersistFailurePattern:
         verification = MagicMock()
         verification.verdict = "NOMINAL"
         event = self._make_event(diagnosis=diag, verification=verification)
-        s._persist_failure_pattern(event)
+        s.persist_failure_pattern(event)
         s.vector_bridge.write_failure_pattern.assert_not_called()
 
     def test_write_exception_suppressed(self):
@@ -344,4 +344,4 @@ class TestPersistFailurePattern:
         verification = MagicMock()
         verification.verdict = "ANOMALY"
         event = self._make_event(diagnosis=diag, verification=verification)
-        s._persist_failure_pattern(event)  # should not raise
+        s.persist_failure_pattern(event)  # should not raise

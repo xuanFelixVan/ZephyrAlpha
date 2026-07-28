@@ -65,6 +65,34 @@ class KillSwitch:
         self._fuse_on = False
         self._cleanup_callbacks: list[Callable[[], None]] = []
 
+    @property
+    def fuse_on(self) -> bool:
+        """Whether the kill switch fuse is on (public API)."""
+        return self._fuse_on
+
+    @fuse_on.setter
+    def fuse_on(self, value: bool) -> None:
+        self._fuse_on = value
+
+    @property
+    def error_count(self) -> int:
+        """Current error count (public API)."""
+        return self._error_count
+
+    @property
+    def threshold(self) -> int:
+        """Error threshold for fuse activation (public API)."""
+        return self._threshold
+
+    @threshold.setter
+    def threshold(self, value: int) -> None:
+        self._threshold = value
+
+    @property
+    def cleanup_callbacks(self) -> list[Callable[[], None]]:
+        """Registered cleanup callbacks (public API)."""
+        return self._cleanup_callbacks
+
     def record_error(self, reason: str = "") -> FuseState:
         self._error_count += 1
         if self._error_count >= self._threshold:

@@ -75,6 +75,16 @@ class ContextPipelineAuto:
     def fuse_on(self) -> bool:
         return self._kill_switch._fuse_on
 
+    @property
+    def cleanup_callbacks(self) -> list[Callable[[], None]]:
+        """Registered cleanup callbacks (public API)."""
+        return self._cleanup_callbacks
+
+    @property
+    def event_subscribed(self) -> bool:
+        """Whether event subscriptions are registered (public API)."""
+        return self._event_subscribed
+
     def auto_start(self) -> None:
         """自动启动：初始化 ContextPipeline，注册 EventBus 订阅。幂等。"""
         with self._lock:
