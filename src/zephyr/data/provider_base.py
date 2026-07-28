@@ -266,7 +266,7 @@ class DataSourceBase(abc.ABC):
         last_exc = None
         for attempt in range(max_retries + 1):
             # 限流
-            self._rate_limit_sleep(policy)
+            self.rate_limit_sleep(policy)
             try:
                 result = fn(*args, **kwargs)
                 return result
@@ -283,7 +283,7 @@ class DataSourceBase(abc.ABC):
                 if not should_retry or attempt >= max_retries:
                     raise
                 # 计算退避时间
-                wait = self._calc_backoff(backoff, initial_wait, attempt)
+                wait = self.calc_backoff(backoff, initial_wait, attempt)
                 self._log.warning(
                     f"  {fn.__name__ if hasattr(fn,'__name__') else 'call'} 失败({err_name}), "
                     f"第{attempt+1}/{max_retries}次重试，等待{wait:.2f}s: {err_str[:120]}"
@@ -303,8 +303,8 @@ class DataSourceBase(abc.ABC):
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.call_with_policy(fn, policy, *args, **kwargs)
 
-    def _rate_limit_sleep(self, policy: "SourcePolicy") -> None:
-        """按 RPM 限流：确保两次调用间隔 >= 60/RPM 秒。"""
+    def rate_limit_sleep(self, policy: "SourcePolicy") -> None:
+        """按 RPM 限流：确保两次调用间隔 >= 60/RPM 秒（Stage 4 公共化，primary）。"""
         if not policy or policy.rpm <= 0:
             return
         min_interval = 60.0 / policy.rpm
@@ -316,9 +316,13 @@ class DataSourceBase(abc.ABC):
                 threading.Event().wait(min_interval - elapsed)
             self._last_call_ts = time.time()
 
+    def _rate_limit_sleep(self, policy: "SourcePolicy") -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.rate_limit_sleep(policy)
+
     @staticmethod
-    def _calc_backoff(mode: str, initial: float, attempt: int) -> float:
-        """计算退避时间。
+    def calc_backoff(mode: str, initial: float, attempt: int) -> float:
+        """计算退避时间（Stage 4 公共化，primary）。
 
         Args:
             mode: "exponential" / "fixed" / "jittered"
@@ -332,6 +336,11 @@ class DataSourceBase(abc.ABC):
             return base + random.uniform(-0.5, 0.5)
         else:  # fixed
             return initial
+
+    @staticmethod
+    def _calc_backoff(mode: str, initial: float, attempt: int) -> float:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return DataSourceBase.calc_backoff(mode, initial, attempt)
 
     # ---- 上下文管理（支持 with 语法） ----
 

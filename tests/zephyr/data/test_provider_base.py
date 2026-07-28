@@ -2,9 +2,9 @@
 
 测试内容：
 - FetchPayload / FetchResult / DataSourceMeta 数据类
-- DataSourceBase._call_with_policy（限流+重试）
-- DataSourceBase._rate_limit_sleep
-- DataSourceBase._calc_backoff
+- DataSourceBase.call_with_policy（限流+重试）
+- DataSourceBase.rate_limit_sleep
+- DataSourceBase.calc_backoff
 - 上下文管理（with 语法）
 
 不依赖真实 SDK，用 mock 子类和 mock 函数。
@@ -114,7 +114,7 @@ class TestCallWithPolicy:
             calls.append(1)
             return "ok"
 
-        result = p._call_with_policy(fn, policy)
+        result = p.call_with_policy(fn, policy)
         assert result == "ok"
         assert len(calls) == 1
 
@@ -133,7 +133,7 @@ class TestCallWithPolicy:
                 raise ValueError("transient")
             return "ok"
 
-        result = p._call_with_policy(fn, policy)
+        result = p.call_with_policy(fn, policy)
         assert result == "ok"
         assert len(calls) == 3
 
@@ -149,7 +149,7 @@ class TestCallWithPolicy:
             raise ValueError("permanent")
 
         with pytest.raises(ValueError, match="permanent"):
-            p._call_with_policy(fn, policy)
+            p.call_with_policy(fn, policy)
 
     def test_no_retry_on_unmatched_error(self):
         """错误不在 retry_on 列表则不重试。"""
@@ -162,7 +162,7 @@ class TestCallWithPolicy:
             raise KeyError("not in retry_on")
 
         with pytest.raises(KeyError):
-            p._call_with_policy(fn, policy)
+            p.call_with_policy(fn, policy)
         assert len(calls) == 1
 
     def test_retry_on_error_message(self):
@@ -180,7 +180,7 @@ class TestCallWithPolicy:
                 raise RuntimeError("quota error -4318 exceeded")
             return "ok"
 
-        result = p._call_with_policy(fn, policy)
+        result = p.call_with_policy(fn, policy)
         assert result == "ok"
         assert len(calls) == 2
 
@@ -191,7 +191,7 @@ class TestCallWithPolicy:
         def fn():
             return "ok"
 
-        result = p._call_with_policy(fn, None)
+        result = p.call_with_policy(fn, None)
         assert result == "ok"
 
 
@@ -203,17 +203,17 @@ class TestRateLimitSleep:
         p = _MockProvider()
         policy = SourcePolicy(rpm=0)
         t0 = time.time()
-        p._rate_limit_sleep(policy)
-        p._rate_limit_sleep(policy)
+        p.rate_limit_sleep(policy)
+        p.rate_limit_sleep(policy)
         assert time.time() - t0 < 0.1
 
     def test_sleep_enforces_interval(self):
         """rpm=600 → 间隔 0.1s，连续调用应 sleep。"""
         p = _MockProvider()
         policy = SourcePolicy(rpm=600)  # 60/600=0.1s 间隔
-        p._rate_limit_sleep(policy)  # 第一次不 sleep
+        p.rate_limit_sleep(policy)  # 第一次不 sleep
         t0 = time.time()
-        p._rate_limit_sleep(policy)  # 第二次应 sleep ~0.1s
+        p.rate_limit_sleep(policy)  # 第二次应 sleep ~0.1s
         elapsed = time.time() - t0
         assert elapsed >= 0.08  # 允许少量误差
 
@@ -222,24 +222,24 @@ class TestRateLimitSleep:
 
 class TestCalcBackoff:
     def test_fixed(self):
-        assert DataSourceBase._calc_backoff("fixed", 2.0, 0) == 2.0
-        assert DataSourceBase._calc_backoff("fixed", 2.0, 3) == 2.0
+        assert DataSourceBase.calc_backoff("fixed", 2.0, 0) == 2.0
+        assert DataSourceBase.calc_backoff("fixed", 2.0, 3) == 2.0
 
     def test_exponential(self):
-        assert DataSourceBase._calc_backoff("exponential", 1.0, 0) == 1.0
-        assert DataSourceBase._calc_backoff("exponential", 1.0, 1) == 2.0
-        assert DataSourceBase._calc_backoff("exponential", 1.0, 2) == 4.0
-        assert DataSourceBase._calc_backoff("exponential", 1.0, 3) == 8.0
+        assert DataSourceBase.calc_backoff("exponential", 1.0, 0) == 1.0
+        assert DataSourceBase.calc_backoff("exponential", 1.0, 1) == 2.0
+        assert DataSourceBase.calc_backoff("exponential", 1.0, 2) == 4.0
+        assert DataSourceBase.calc_backoff("exponential", 1.0, 3) == 8.0
 
     def test_jittered(self):
         """jittered = exponential ± 0.5。"""
         for attempt in range(5):
-            val = DataSourceBase._calc_backoff("jittered", 1.0, attempt)
+            val = DataSourceBase.calc_backoff("jittered", 1.0, attempt)
             base = 1.0 * (2 ** attempt)
             assert base - 0.5 <= val <= base + 0.5
 
     def test_unknown_mode_defaults_fixed(self):
-        assert DataSourceBase._calc_backoff("unknown", 3.0, 2) == 3.0
+        assert DataSourceBase.calc_backoff("unknown", 3.0, 2) == 3.0
 
 
 # ============== 上下文管理测试 ==============
