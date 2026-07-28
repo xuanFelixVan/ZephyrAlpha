@@ -39,7 +39,8 @@ class SkillFactory:
         with open(self.template_path, encoding="utf-8") as f:
             return f.read()
 
-    def _read_blueprint(self, blueprint_path: str) -> str:
+    def read_blueprint(self, blueprint_path: str) -> str:
+        """读取蓝图内容（Stage 4 公共化，primary）。"""
         path = Path(blueprint_path)
         if not path.is_absolute():
             candidate = REPO_ROOT / path
@@ -51,10 +52,11 @@ class SkillFactory:
                     path = legacy
         return path.read_text(encoding="utf-8")
 
-    def _extract_module_info(self, module_name: str, blueprint_content: str) -> dict[str, str]:
-        core_ops = self._find_section(blueprint_content, ["核心操作", "Core Operations", "操作"])
-        constraints = self._find_section(blueprint_content, ["约束", "Constraints", "限制"])
-        errors = self._find_section(blueprint_content, ["常见错误", "Common Errors", "错误模式", "Error Patterns"])
+    def extract_module_info(self, module_name: str, blueprint_content: str) -> dict[str, str]:
+        """从蓝图提取模块信息（Stage 4 公共化，primary）。"""
+        core_ops = self.find_section(blueprint_content, ["核心操作", "Core Operations", "操作"])
+        constraints = self.find_section(blueprint_content, ["约束", "Constraints", "限制"])
+        errors = self.find_section(blueprint_content, ["常见错误", "Common Errors", "错误模式", "Error Patterns"])
         return {
             "module_name": module_name,
             "core_operations": core_ops or "待填写",
@@ -62,7 +64,8 @@ class SkillFactory:
             "common_errors": errors or "待填写",
         }
 
-    def _find_section(self, content: str, keywords: list[str]) -> str:
+    def find_section(self, content: str, keywords: list[str]) -> str:
+        """查找蓝图章节（Stage 4 公共化，primary）。"""
         for kw in keywords:
             pattern = rf"^#{{1,3}}\s+.*{re.escape(kw)}.*$"
             match = re.search(pattern, content, re.MULTILINE | re.IGNORECASE)
@@ -73,7 +76,8 @@ class SkillFactory:
                 return content[start:end].strip()
         return ""
 
-    def _render_template(self, template: str, info: dict[str, str]) -> str:
+    def render_template(self, template: str, info: dict[str, str]) -> str:
+        """渲染技能模板（Stage 4 公共化，primary）。"""
         result = template
         result = result.replace("{{MODULE_NAME}}", info["module_name"])
         result = result.replace("{{CORE_OPERATIONS}}", info["core_operations"])
@@ -81,7 +85,8 @@ class SkillFactory:
         result = result.replace("{{COMMON_ERRORS}}", info["common_errors"])
         return result
 
-    def _sanitize_dir_name(self, module_name: str) -> str:
+    def sanitize_dir_name(self, module_name: str) -> str:
+        """规范化目录名（Stage 4 公共化，primary）。"""
         return re.sub(r"[^a-z0-9_-]", "-", module_name.lower().replace(" ", "-"))
 
     def _write_skill_file(self, module_name: str, content: str) -> Path:
@@ -96,7 +101,8 @@ class SkillFactory:
         agents_md.write_text(f"# {module_name} Domain Skill\n\nCreated by SkillFactory.\n", encoding="utf-8")
         return skill_md
 
-    def _generate_skill_id(self, module_name: str) -> str:
+    def generate_skill_id(self, module_name: str) -> str:
+        """生成技能 ID（Stage 4 公共化，primary）。"""
         abbr = "".join(w[0].upper() for w in module_name.split("-") if w)[:3]
         existing = self._count_domain_skills()
         num = str(existing + 1).zfill(3)
@@ -148,13 +154,39 @@ class SkillFactory:
                 content = content[: line_end + 1] + new_entry + content[line_end + 1 :]
                 _AGENTS_MD_PATH.write_text(content, encoding="utf-8")
 
+    # ── Stage 4 公共化：向后兼容 thin wrappers ──
+
+    def _read_blueprint(self, blueprint_path: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.read_blueprint(blueprint_path)
+
+    def _extract_module_info(self, module_name: str, blueprint_content: str) -> dict[str, str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.extract_module_info(module_name, blueprint_content)
+
+    def _find_section(self, content: str, keywords: list[str]) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.find_section(content, keywords)
+
+    def _render_template(self, template: str, info: dict[str, str]) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.render_template(template, info)
+
+    def _sanitize_dir_name(self, module_name: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.sanitize_dir_name(module_name)
+
+    def _generate_skill_id(self, module_name: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.generate_skill_id(module_name)
+
     def generate_domain_skill(self, module_name: str, blueprint_path: str) -> Path:
-        blueprint_content = self._read_blueprint(blueprint_path)
-        info = self._extract_module_info(module_name, blueprint_content)
+        blueprint_content = self.read_blueprint(blueprint_path)
+        info = self.extract_module_info(module_name, blueprint_content)
         template = self._load_template()
-        skill_content = self._render_template(template, info)
+        skill_content = self.render_template(template, info)
         skill_path = self._write_skill_file(module_name, skill_content)
-        skill_id = self._generate_skill_id(module_name)
+        skill_id = self.generate_skill_id(module_name)
         self._update_registry(module_name, skill_id, str(skill_path.relative_to(_SKILLS_DIR)))
         return skill_path
 

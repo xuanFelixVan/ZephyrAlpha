@@ -38,24 +38,24 @@ class TestSkillFactoryInstantiation:
 class TestSanitizeDirName:
     def test_basic_name(self):
         sf = SkillFactory()
-        assert sf._sanitize_dir_name("my-module") == "my-module"
+        assert sf.sanitize_dir_name("my-module") == "my-module"
 
     def test_uppercase_lowered(self):
         sf = SkillFactory()
-        assert sf._sanitize_dir_name("MyModule") == "mymodule"
+        assert sf.sanitize_dir_name("MyModule") == "mymodule"
 
     def test_spaces_replaced(self):
         sf = SkillFactory()
-        assert sf._sanitize_dir_name("my module name") == "my-module-name"
+        assert sf.sanitize_dir_name("my module name") == "my-module-name"
 
     def test_special_chars_removed(self):
         sf = SkillFactory()
-        result = sf._sanitize_dir_name("mod@#$!")
+        result = sf.sanitize_dir_name("mod@#$!")
         assert all(c.isalnum() or c in "-_" for c in result)
 
     def test_empty_string(self):
         sf = SkillFactory()
-        result = sf._sanitize_dir_name("")
+        result = sf.sanitize_dir_name("")
         assert isinstance(result, str)
 
 
@@ -63,23 +63,23 @@ class TestFindSection:
     def test_finds_heading(self):
         sf = SkillFactory()
         content = "# Core Operations\n- op1\n- op2\n## Next Section"
-        result = sf._find_section(content, ["Core Operations"])
+        result = sf.find_section(content, ["Core Operations"])
         assert "op1" in result
 
     def test_finds_by_alternate_keyword(self):
         sf = SkillFactory()
         content = "# Constraints\n- c1\n- c2\n# Other"
-        result = sf._find_section(content, ["约束", "Constraints"])
+        result = sf.find_section(content, ["约束", "Constraints"])
         assert "c1" in result
 
     def test_returns_empty_on_no_match(self):
         sf = SkillFactory()
-        result = sf._find_section("no relevant content", ["Missing"])
+        result = sf.find_section("no relevant content", ["Missing"])
         assert result == ""
 
     def test_empty_content(self):
         sf = SkillFactory()
-        result = sf._find_section("", ["Core Operations"])
+        result = sf.find_section("", ["Core Operations"])
         assert result == ""
 
 
@@ -87,7 +87,7 @@ class TestExtractModuleInfo:
     def test_basic_extraction(self):
         sf = SkillFactory()
         blueprint = "# Core Operations\n- op1\n- op2\n# Constraints\n- c1\n# Common Errors\n- e1\n"
-        info = sf._extract_module_info("test-mod", blueprint)
+        info = sf.extract_module_info("test-mod", blueprint)
         assert info["module_name"] == "test-mod"
         assert "op1" in info["core_operations"]
         assert "c1" in info["unique_constraints"]
@@ -95,7 +95,7 @@ class TestExtractModuleInfo:
 
     def test_missing_sections_use_placeholder(self):
         sf = SkillFactory()
-        info = sf._extract_module_info("empty-mod", "no sections here")
+        info = sf.extract_module_info("empty-mod", "no sections here")
         assert info["core_operations"] == "待填写"
         assert info["unique_constraints"] == "待填写"
         assert info["common_errors"] == "待填写"
@@ -116,7 +116,7 @@ class TestRenderTemplate:
             "unique_constraints": "c1",
             "common_errors": "e1",
         }
-        result = sf._render_template(template, info)
+        result = sf.render_template(template, info)
         assert "test-mod" in result
         assert "op1, op2" in result
         assert "c1" in result
@@ -130,7 +130,7 @@ class TestRenderTemplate:
             "unique_constraints": "cons",
             "common_errors": "errs",
         }
-        result = sf._render_template("{{MODULE_NAME}}-{{CORE_OPERATIONS}}", info)
+        result = sf.render_template("{{MODULE_NAME}}-{{CORE_OPERATIONS}}", info)
         assert "{{" not in result
 
 
@@ -138,20 +138,20 @@ class TestGenerateSkillId:
     def test_basic_id_format(self):
         sf = SkillFactory()
         with patch.object(sf, "_count_domain_skills", return_value=5):
-            sid = sf._generate_skill_id("database-migration")
+            sid = sf.generate_skill_id("database-migration")
         assert sid.startswith("SKILL-DOM-")
         assert len(sid) > 10
 
     def test_abbreviation_from_name(self):
         sf = SkillFactory()
         with patch.object(sf, "_count_domain_skills", return_value=0):
-            sid = sf._generate_skill_id("database-migration")
+            sid = sf.generate_skill_id("database-migration")
         assert "DM" in sid
 
     def test_single_word_name(self):
         sf = SkillFactory()
         with patch.object(sf, "_count_domain_skills", return_value=0):
-            sid = sf._generate_skill_id("security")
+            sid = sf.generate_skill_id("security")
         assert "S" in sid
 
 
@@ -160,13 +160,13 @@ class TestReadBlueprint:
         bp = tmp_path / "blueprint.md"
         bp.write_text("# Test Blueprint", encoding="utf-8")
         sf = SkillFactory()
-        result = sf._read_blueprint(str(bp))
+        result = sf.read_blueprint(str(bp))
         assert "Test Blueprint" in result
 
     def test_nonexistent_path_raises(self):
         sf = SkillFactory()
         with pytest.raises((FileNotFoundError, OSError)):
-            sf._read_blueprint("/nonexistent/path/blueprint.md")
+            sf.read_blueprint("/nonexistent/path/blueprint.md")
 
 
 class TestBootstrapSequence:
