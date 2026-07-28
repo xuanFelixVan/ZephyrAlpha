@@ -27,11 +27,11 @@ from zephyr.infrastructure.reliability.context_guard import (
 class TestContextGuardInstantiation:
     def test_default_construction(self):
         guard = ContextGuard()
-        assert guard._project_root == Path.cwd()
+        assert guard.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         guard = ContextGuard(project_root=tmp_path)
-        assert guard._project_root == tmp_path
+        assert guard.project_root == tmp_path
 
 
 class TestValidateAccess:

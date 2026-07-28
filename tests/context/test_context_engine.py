@@ -84,17 +84,17 @@ class TestTokenBudget:
 class TestContextEngineInit:
     def test_default_init(self):
         engine = ContextEngine()
-        assert engine._max_tokens == 20000
-        assert engine._budget.reserve_tokens == 2000
+        assert engine.max_tokens == 20000
+        assert engine.budget.reserve_tokens == 2000
 
     def test_custom_max_tokens(self):
         engine = ContextEngine(max_tokens=5000)
-        assert engine._max_tokens == 5000
-        assert engine._budget.reserve_tokens == 500
+        assert engine.max_tokens == 5000
+        assert engine.budget.reserve_tokens == 500
 
     def test_custom_project_root(self):
         engine = ContextEngine(project_root=Path("/tmp"))
-        assert engine._project_root == Path("/tmp")
+        assert engine.project_root == Path("/tmp")
 
 
 from pathlib import Path
@@ -175,7 +175,7 @@ class TestAssembleContext:
             f.write(big_content)
         manifest = [{"file_path": "src/big.py", "reason": "a"}]
         result = engine.assemble_context("T-105", manifest, truncate=True)
-        assert result.total_tokens <= engine._budget.max_tokens - engine._budget.reserve_tokens
+        assert result.total_tokens <= engine.budget.max_tokens - engine.budget.reserve_tokens
 
     def test_no_truncation_flag(self, tmp_project):
         engine = ContextEngine(project_root=Path(tmp_project), max_tokens=10)

@@ -23,7 +23,7 @@ class TestCrossAssistantAdapterInstantiation:
 
     def test_initial_adapters_empty(self):
         adapter = CrossAssistantAdapter()
-        assert adapter._adapters == {}
+        assert adapter.adapters == {}
 
 
 class TestRegisterAdapter:
@@ -31,7 +31,7 @@ class TestRegisterAdapter:
         adapter = CrossAssistantAdapter()
         result = adapter.register_adapter("trae")
         assert result is True
-        assert "trae" in adapter._adapters
+        assert "trae" in adapter.adapters
 
     def test_register_all_supported_ides(self):
         adapter = CrossAssistantAdapter()
@@ -48,18 +48,18 @@ class TestRegisterAdapter:
         config = {"endpoint": "http://localhost:8080", "version": "1.0"}
         result = adapter.register_adapter("cursor", config)
         assert result is True
-        assert adapter._adapters["cursor"] == config
+        assert adapter.adapters["cursor"] == config
 
     def test_register_without_config_stores_empty_dict(self):
         adapter = CrossAssistantAdapter()
         adapter.register_adapter("windsurf")
-        assert adapter._adapters["windsurf"] == {}
+        assert adapter.adapters["windsurf"] == {}
 
     def test_register_overwrites_existing(self):
         adapter = CrossAssistantAdapter()
         adapter.register_adapter("trae", {"v": "1"})
         adapter.register_adapter("trae", {"v": "2"})
-        assert adapter._adapters["trae"] == {"v": "2"}
+        assert adapter.adapters["trae"] == {"v": "2"}
 
     def test_register_case_sensitive(self):
         adapter = CrossAssistantAdapter()

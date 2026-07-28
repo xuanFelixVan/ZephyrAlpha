@@ -39,7 +39,7 @@ class TestCapabilitySyncInit:
     def test_init_with_registry(self) -> None:
         registry = CapabilityRegistry()
         sync = CapabilitySync(registry)
-        assert sync._registry is registry
+        assert sync.registry is registry
 
     def test_init_with_empty_registry(self) -> None:
         registry = CapabilityRegistry()

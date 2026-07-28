@@ -23,26 +23,26 @@ class TestConfigScannerInstantiation:
 
     def test_initial_baseline_empty(self):
         scanner = ConfigScanner()
-        assert scanner._baseline == {}
+        assert scanner.baseline == {}
 
 
 class TestSetBaseline:
     def test_set_single_baseline(self):
         scanner = ConfigScanner()
         scanner.set_baseline("config.yaml", "abc123")
-        assert scanner._baseline["config.yaml"] == "abc123"
+        assert scanner.baseline["config.yaml"] == "abc123"
 
     def test_overwrite_baseline(self):
         scanner = ConfigScanner()
         scanner.set_baseline("config.yaml", "abc123")
         scanner.set_baseline("config.yaml", "def456")
-        assert scanner._baseline["config.yaml"] == "def456"
+        assert scanner.baseline["config.yaml"] == "def456"
 
     def test_multiple_baselines(self):
         scanner = ConfigScanner()
         scanner.set_baseline("a.yaml", "hash_a")
         scanner.set_baseline("b.yaml", "hash_b")
-        assert len(scanner._baseline) == 2
+        assert len(scanner.baseline) == 2
 
 
 class TestDetectModification:

@@ -23,11 +23,11 @@ class TestContextSwitchGovernorInstantiation:
 
     def test_initial_daily_switches_empty(self):
         gov = ContextSwitchGovernor()
-        assert gov._daily_switches == {}
+        assert gov.daily_switches == {}
 
     def test_max_switches_per_owner(self):
         gov = ContextSwitchGovernor()
-        assert gov._max_switches_per_owner == 12
+        assert gov.max_switches_per_owner == 12
 
 
 class TestCanSwitch:
@@ -75,27 +75,27 @@ class TestRecordSwitch:
     def test_record_single_switch(self):
         gov = ContextSwitchGovernor()
         gov.record_switch("owner_1")
-        assert gov._daily_switches["owner_1"] == 1
+        assert gov.daily_switches["owner_1"] == 1
 
     def test_record_multiple_switches(self):
         gov = ContextSwitchGovernor()
         gov.record_switch("owner_1")
         gov.record_switch("owner_1")
         gov.record_switch("owner_1")
-        assert gov._daily_switches["owner_1"] == 3
+        assert gov.daily_switches["owner_1"] == 3
 
     def test_record_switches_different_owners(self):
         gov = ContextSwitchGovernor()
         gov.record_switch("owner_a")
         gov.record_switch("owner_b")
-        assert gov._daily_switches["owner_a"] == 1
-        assert gov._daily_switches["owner_b"] == 1
+        assert gov.daily_switches["owner_a"] == 1
+        assert gov.daily_switches["owner_b"] == 1
 
     def test_record_beyond_max_still_increments(self):
         gov = ContextSwitchGovernor()
         for _ in range(15):
             gov.record_switch("owner_1")
-        assert gov._daily_switches["owner_1"] == 15
+        assert gov.daily_switches["owner_1"] == 15
 
     def test_can_and_record_integration(self):
         gov = ContextSwitchGovernor()

@@ -446,7 +446,7 @@ class TestBudgetTrackerDocCompressorIntegration:
             },
         )
         # 向 session 直接写入超过 L2 阈值的 token 数
-        tracker._sessions["s1"] = {
+        tracker.sessions["s1"] = {
             "token_count": 90,  # 90% > L2(85%)
             "limit": 100,
             "triggered_levels": set(),

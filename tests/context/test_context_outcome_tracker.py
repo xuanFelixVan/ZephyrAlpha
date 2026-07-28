@@ -45,7 +45,7 @@ class TestContextOutcomeLink:
 class TestContextOutcomeTrackerInit:
     def test_instantiation(self):
         tracker = ContextOutcomeTracker()
-        assert tracker._links == {}
+        assert tracker.links == {}
 
 
 class TestContextOutcomeTrackerRecord:
@@ -74,7 +74,7 @@ class TestContextOutcomeTrackerRecord:
         tracker = ContextOutcomeTracker()
         tracker.record("CB-020", ["a1"], [True])
         link2 = tracker.record("CB-020", ["a1", "a2"], [True, False])
-        assert tracker._links["CB-020"] is link2
+        assert tracker.links["CB-020"] is link2
         assert link2.success_rate == 0.5
 
     def test_record_empty_actions(self):

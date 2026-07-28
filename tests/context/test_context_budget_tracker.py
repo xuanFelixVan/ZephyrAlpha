@@ -46,12 +46,12 @@ class TestContextBudgetTrackerInit:
     def test_default_session_limit(self):
         obs = _make_observer()
         tracker = ContextBudgetTracker(obs)
-        assert tracker._session_limit > 0
+        assert tracker.session_limit > 0
 
     def test_custom_session_limit(self):
         obs = _make_observer()
         tracker = ContextBudgetTracker(obs, session_limit=1000)
-        assert tracker._session_limit == 1000
+        assert tracker.session_limit == 1000
 
 
 class TestCountTokens:

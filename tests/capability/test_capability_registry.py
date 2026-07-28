@@ -41,11 +41,11 @@ class TestCapabilityRegistryInit:
     def test_init_no_dir(self):
         reg = CapabilityRegistry()
         assert reg.count() == 0
-        assert reg._card_dir is None
+        assert reg.card_dir is None
 
     def test_init_with_dir(self, tmp_path):
         reg = CapabilityRegistry(card_dir=tmp_path)
-        assert reg._card_dir == tmp_path
+        assert reg.card_dir == tmp_path
 
 
 class TestCapabilityRegistryRegister:

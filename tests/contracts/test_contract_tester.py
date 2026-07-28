@@ -64,11 +64,11 @@ class TestContractTester:
     def test_instantiation(self):
         tester = ContractTester()
         assert tester is not None
-        assert tester._strict is True
+        assert tester.strict is True
 
     def test_instantiation_non_strict(self):
         tester = ContractTester(strict=False)
-        assert tester._strict is False
+        assert tester.strict is False
 
     def test_test_contract_nonexistent_file(self):
         tester = ContractTester()

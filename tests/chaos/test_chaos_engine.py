@@ -151,14 +151,14 @@ class TestChaosEngineInjectDirect:
     def test_inject_updates_last_result(self):
         engine = ChaosEngine()
         engine.inject("error", target="test_target")
-        assert engine._last_result is not None
-        assert engine._last_result.injection_type == "error"
+        assert engine.last_result is not None
+        assert engine.last_result.injection_type == "error"
 
     def test_inject_updates_injection_state(self):
         engine = ChaosEngine()
         engine.inject("error", target="test_target")
-        assert "test_target" in engine._injection_state
-        assert engine._injection_state["test_target"] is True
+        assert "test_target" in engine.injection_state
+        assert engine.injection_state["test_target"] is True
 
     def test_inject_returns_duration_ms(self):
         result = ChaosEngine().inject("latency", delay_ms=1, target="test_target")

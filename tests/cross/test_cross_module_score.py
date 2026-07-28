@@ -130,7 +130,7 @@ class TestCrossModuleScorer:
         ms = ModuleScore(module_id="M1", health_index=0.8, last_resolved_at=now)
         scorer.compute({"M1": ms})
         scorer.compute({"M1": ms})
-        assert len(scorer._history) == 2
+        assert len(scorer.history) == 2
 
     def test_check_thresholds_disaster(self):
         scorer = CrossModuleScorer()

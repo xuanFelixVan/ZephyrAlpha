@@ -55,7 +55,7 @@ class TestConfigValidator:
 
     def test_instantiation_with_schema_path(self):
         validator = ConfigValidator(schema_path="/some/path")
-        assert validator._schema_path == Path("/some/path")
+        assert validator.schema_path == Path("/some/path")
 
     def test_validate_nonexistent_file(self):
         validator = ConfigValidator()
