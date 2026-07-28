@@ -48,11 +48,11 @@ class TestFileState:
 class TestHallucinationGuardInstantiation:
     def test_default_project_root(self, tmp_path):
         guard = HallucinationGuard()
-        assert guard._project_root == Path.cwd()
+        assert guard.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         guard = HallucinationGuard(project_root=tmp_path)
-        assert guard._project_root == tmp_path
+        assert guard.project_root == tmp_path
 
     def test_initial_rounds_empty(self, tmp_path):
         guard = HallucinationGuard(project_root=tmp_path)
@@ -275,25 +275,25 @@ class TestRunFullVerification:
 class TestExtractHelpers:
     def test_extract_functions_valid(self):
         src = "def foo(x, y):\n    pass\n\ndef bar():\n    pass\n"
-        funcs = HallucinationGuard._extract_functions(src)
+        funcs = HallucinationGuard.extract_functions(src)
         assert "foo(x, y)" in funcs
         assert "bar()" in funcs
 
     def test_extract_functions_syntax_error(self):
-        funcs = HallucinationGuard._extract_functions("def (broken")
+        funcs = HallucinationGuard.extract_functions("def (broken")
         assert funcs == []
 
     def test_extract_classes_valid(self):
         src = "class Foo:\n    pass\n\nclass Bar(Foo):\n    pass\n"
-        classes = HallucinationGuard._extract_classes(src)
+        classes = HallucinationGuard.extract_classes(src)
         assert "Foo" in classes
         assert "Bar" in classes
 
     def test_extract_classes_syntax_error(self):
-        classes = HallucinationGuard._extract_classes("class (broken")
+        classes = HallucinationGuard.extract_classes("class (broken")
         assert classes == []
 
     def test_extract_functions_async(self):
         src = "async def fetch():\n    pass\n"
-        funcs = HallucinationGuard._extract_functions(src)
+        funcs = HallucinationGuard.extract_functions(src)
         assert "fetch()" in funcs

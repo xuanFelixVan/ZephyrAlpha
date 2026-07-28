@@ -35,11 +35,11 @@ def health_check(tmp_db):
 class TestFixHealthCheckInstantiation:
     def test_creates_instance_with_default_path(self):
         hc = FixHealthCheck()
-        assert hc._db_path == "data/auto_fix/auto_fix.db"
+        assert hc.db_path == "data/auto_fix/auto_fix.db"
 
     def test_creates_instance_with_custom_path(self, tmp_db):
         hc = FixHealthCheck(db_path=tmp_db)
-        assert hc._db_path == tmp_db
+        assert hc.db_path == tmp_db
 
 
 class TestCheck:
@@ -111,7 +111,7 @@ class TestCheckDb:
             "zephyr.infrastructure.auto_fix_engine.fix_health_check.sqlite3.connect",
             side_effect=OSError("permission denied"),
         ):
-            result = hc._check_db()
+            result = hc.check_db()
         assert result is False
 
 

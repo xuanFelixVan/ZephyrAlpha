@@ -138,7 +138,7 @@ class TestComputeAdaptiveThresholds:
 
     def test_empty_baseline_returns_empty_dict(self):
         """空 baseline 返回空 dict（调用方降级为纯静态阈值）。"""
-        result = reconciler_mod._compute_adaptive_thresholds([])
+        result = reconciler_mod.compute_adaptive_thresholds([])
         assert result == {}, f"空 baseline 应返回空 dict，实际: {result}"
 
     def test_7d_baseline_produces_6_dim_thresholds(self):
@@ -157,7 +157,7 @@ class TestComputeAdaptiveThresholds:
                     "force_merge_7d": 0,
                 },
             })
-        result = reconciler_mod._compute_adaptive_thresholds(daily_records)
+        result = reconciler_mod.compute_adaptive_thresholds(daily_records)
         # 应返回 6 维阈值
         assert len(result) == 6, f"应返回 6 维阈值，实际: {len(result)} 个"
         # 每维阈值应 >= static_floor（_DEFAULT_THRESHOLDS 值）
@@ -178,7 +178,7 @@ class TestComputeAdaptiveThresholds:
             }}
             for _ in range(7)
         ]
-        high_thresholds = reconciler_mod._compute_adaptive_thresholds(high_records)
+        high_thresholds = reconciler_mod.compute_adaptive_thresholds(high_records)
 
         # 低基线场景
         low_records = [
@@ -189,7 +189,7 @@ class TestComputeAdaptiveThresholds:
             }}
             for _ in range(7)
         ]
-        low_thresholds = reconciler_mod._compute_adaptive_thresholds(low_records)
+        low_thresholds = reconciler_mod.compute_adaptive_thresholds(low_records)
 
         # 高基线的阈值应 >= 低基线的阈值（EWMA 跟随）
         for dim_name in reconciler_mod._DEFAULT_THRESHOLDS:
@@ -291,7 +291,7 @@ class TestClassifyAbuseIntegration:
         """_classify_abuse 接受 adaptive_thresholds 参数并计算有效阈值。"""
         # 构造空报告（无违规）
         now_ts = 1784553000
-        result = reconciler_mod._classify_abuse(
+        result = reconciler_mod.classify_abuse(
             post_commit_reports=[],
             audit_reports=[],
             emergency_count=0,
@@ -318,7 +318,7 @@ class TestClassifyAbuseIntegration:
     def test_classify_abuse_without_adaptive_falls_back_to_static(self):
         """无 adaptive_thresholds 时降级为纯静态阈值（向后兼容）。"""
         now_ts = 1784553000
-        result = reconciler_mod._classify_abuse(
+        result = reconciler_mod.classify_abuse(
             post_commit_reports=[],
             audit_reports=[],
             emergency_count=0,
@@ -366,14 +366,14 @@ class TestFullPipelineIntegration:
             (health_score, classify_result)
         """
         # Step 1: 7d baseline → adaptive thresholds（P3-1）
-        adaptive_thresholds = reconciler_mod._compute_adaptive_thresholds(
+        adaptive_thresholds = reconciler_mod.compute_adaptive_thresholds(
             baseline_records
         )
 
         # Step 2: _classify_abuse 产出 effective_thresholds（P3-1/P3-3）
         # 传 emergency_count + allow_overlap_count 以覆盖维度 2/3
         now_ts = 1784553000
-        classify_result = reconciler_mod._classify_abuse(
+        classify_result = reconciler_mod.classify_abuse(
             post_commit_reports=[],
             audit_reports=[],
             emergency_count=today_metrics.get("emergency_commit_24h", 0),

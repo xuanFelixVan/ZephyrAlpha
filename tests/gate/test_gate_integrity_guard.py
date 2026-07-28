@@ -69,7 +69,7 @@ class TestLoadManifest:
     def test_load_valid_manifest(self, tmp_path: Path):
         real_file = tmp_path / "alpha.py"
         real_file.write_text("print('hi')", encoding="utf-8")
-        sha = GateIntegrityGuard._compute_sha256(str(real_file))
+        sha = GateIntegrityGuard.compute_sha256(str(real_file))
         manifest = tmp_path / "manifest.txt"
         manifest.write_text(f"{real_file} hash_a\nbeta.py hash_b\n", encoding="utf-8")
         guard = GateIntegrityGuard(manifest_path=str(manifest))
@@ -99,7 +99,7 @@ class TestVerify:
     def test_verify_matching_hash(self, tmp_path: Path):
         target = tmp_path / "target.py"
         target.write_text("hello world", encoding="utf-8")
-        sha = GateIntegrityGuard._compute_sha256(str(target))
+        sha = GateIntegrityGuard.compute_sha256(str(target))
         guard = GateIntegrityGuard()
         report = guard.verify(str(target), expected_hash=sha)
         assert report.valid is True
@@ -124,7 +124,7 @@ class TestVerify:
     def test_verify_uses_manifest_when_no_expected_hash(self, tmp_path: Path):
         target = tmp_path / "mod.py"
         target.write_text("data", encoding="utf-8")
-        sha = GateIntegrityGuard._compute_sha256(str(target))
+        sha = GateIntegrityGuard.compute_sha256(str(target))
         manifest = tmp_path / "manifest.txt"
         manifest.write_text(f"{target} {sha}\n", encoding="utf-8")
         guard = GateIntegrityGuard(manifest_path=str(manifest))
@@ -142,7 +142,7 @@ class TestVerify:
     def test_verify_appends_to_reports(self, tmp_path: Path):
         target = tmp_path / "mod.py"
         target.write_text("data", encoding="utf-8")
-        sha = GateIntegrityGuard._compute_sha256(str(target))
+        sha = GateIntegrityGuard.compute_sha256(str(target))
         guard = GateIntegrityGuard()
         guard.verify(str(target), expected_hash=sha)
         guard.verify(str(target), expected_hash=sha)
@@ -162,14 +162,14 @@ class TestComputeSha256:
         content = "test content for sha256"
         target.write_text(content, encoding="utf-8")
         expected = hashlib.sha256(content.encode("utf-8")).hexdigest()
-        result = GateIntegrityGuard._compute_sha256(str(target))
+        result = GateIntegrityGuard.compute_sha256(str(target))
         assert result == expected
 
     def test_compute_sha256_empty_file(self, tmp_path: Path):
         target = tmp_path / "empty.txt"
         target.write_bytes(b"")
         expected = hashlib.sha256(b"").hexdigest()
-        result = GateIntegrityGuard._compute_sha256(str(target))
+        result = GateIntegrityGuard.compute_sha256(str(target))
         assert result == expected
 
     def test_compute_sha256_binary_content(self, tmp_path: Path):
@@ -177,7 +177,7 @@ class TestComputeSha256:
         data = bytes(range(256))
         target.write_bytes(data)
         expected = hashlib.sha256(data).hexdigest()
-        result = GateIntegrityGuard._compute_sha256(str(target))
+        result = GateIntegrityGuard.compute_sha256(str(target))
         assert result == expected
 
 
@@ -185,7 +185,7 @@ class TestReportsProperty:
     def test_reports_returns_copy(self, tmp_path: Path):
         target = tmp_path / "mod.py"
         target.write_text("x", encoding="utf-8")
-        sha = GateIntegrityGuard._compute_sha256(str(target))
+        sha = GateIntegrityGuard.compute_sha256(str(target))
         guard = GateIntegrityGuard()
         guard.verify(str(target), expected_hash=sha)
         r1 = guard.reports
@@ -198,7 +198,7 @@ class TestAllValidProperty:
     def test_all_valid_true_when_all_pass(self, tmp_path: Path):
         target = tmp_path / "mod.py"
         target.write_text("x", encoding="utf-8")
-        sha = GateIntegrityGuard._compute_sha256(str(target))
+        sha = GateIntegrityGuard.compute_sha256(str(target))
         guard = GateIntegrityGuard()
         guard.verify(str(target), expected_hash=sha)
         assert guard.all_valid is True
@@ -219,7 +219,7 @@ class TestAllValidProperty:
         t2 = tmp_path / "bad.py"
         t1.write_text("good", encoding="utf-8")
         t2.write_text("bad", encoding="utf-8")
-        sha1 = GateIntegrityGuard._compute_sha256(str(t1))
+        sha1 = GateIntegrityGuard.compute_sha256(str(t1))
         guard = GateIntegrityGuard()
         guard.verify(str(t1), expected_hash=sha1)
         guard.verify(str(t2), expected_hash="wrong_hash")

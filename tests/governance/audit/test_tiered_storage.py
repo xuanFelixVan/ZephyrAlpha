@@ -164,4 +164,4 @@ class TestTieredStorageManager:
         test_file = data_dir / "hot" / "test.jsonl"
         with open(test_file, "w", encoding="utf-8") as f:
             f.write('{"a": 1}\n{"b": 2}\n\n{"c": 3}\n')
-        assert TieredStorageManager._count_jsonl_lines(test_file) == 3
+        assert TieredStorageManager.count_jsonl_lines(test_file) == 3

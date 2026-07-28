@@ -76,7 +76,7 @@ class TestCircuitBreakerTransitions:
         import time
 
         time.sleep(0.01)
-        state = cb._transition()
+        state = cb.transition()
         assert state == CircuitState.HALF_OPEN
 
     def test_half_open_success_closes(self):
@@ -85,7 +85,7 @@ class TestCircuitBreakerTransitions:
         import time
 
         time.sleep(0.01)
-        cb._transition()
+        cb.transition()
         cb.record_success()
         assert cb.state == CircuitState.CLOSED
 
@@ -95,7 +95,7 @@ class TestCircuitBreakerTransitions:
         import time
 
         time.sleep(0.01)
-        cb._transition()
+        cb.transition()
         cb.record_failure()
         assert cb.state == CircuitState.OPEN
 

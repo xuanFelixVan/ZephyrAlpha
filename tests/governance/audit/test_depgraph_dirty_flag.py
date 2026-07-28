@@ -224,7 +224,7 @@ class TestClearDepgraphDirtyFlag:
     """验证 reconcile 成功路径会删除 dirty flag，warn 路径不删（下次 commit 重试）。
 
     由于 _reconcile_domain_doc 内部调用 _run_subprocess 跑生成器脚本，本测试通过
-    monkeypatch reconciliation_registry._run_subprocess 模拟"生成器成功/失败"两种场景，
+    monkeypatch reconciliation_registry.run_subprocess 模拟"生成器成功/失败"两种场景，
     断言 flag 是否被正确清理。同时 monkeypatch gateway._run_git / _commit_auto 模拟 git 行为。
     """
 

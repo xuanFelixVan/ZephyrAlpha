@@ -159,6 +159,6 @@ class TestFileWatcher:
         (tmp_path / "callback_test.py").write_text("test", encoding="utf-8")
         events = watcher.scan_once()
         for event in events:
-            if watcher._on_change:
-                watcher._on_change(event)
+            if watcher.on_change:
+                watcher.on_change(event)
         assert len(received) >= 1

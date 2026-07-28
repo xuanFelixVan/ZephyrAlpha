@@ -111,16 +111,16 @@ class TestPlaceboActionDetector:
     def test_mann_whitney_u_static(self):
         group_a = [1.0, 2.0, 3.0, 4.0, 5.0]
         group_b = [6.0, 7.0, 8.0, 9.0, 10.0]
-        u_stat, p_value = PlaceboActionDetector._mann_whitney_u(group_a, group_b)
+        u_stat, p_value = PlaceboActionDetector.mann_whitney_u(group_a, group_b)
         assert isinstance(u_stat, float)
         assert isinstance(p_value, float)
         assert p_value > 0.0
 
     def test_mann_whitney_u_identical_groups(self):
         group = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
-        u_stat, p_value = PlaceboActionDetector._mann_whitney_u(group[:4], group[4:])
+        u_stat, p_value = PlaceboActionDetector.mann_whitney_u(group[:4], group[4:])
         assert p_value > 0.0
 
     def test_mann_whitney_u_single_element(self):
-        u_stat, p_value = PlaceboActionDetector._mann_whitney_u([1.0], [2.0])
+        u_stat, p_value = PlaceboActionDetector.mann_whitney_u([1.0], [2.0])
         assert isinstance(u_stat, float)

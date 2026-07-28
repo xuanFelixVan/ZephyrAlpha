@@ -20,7 +20,7 @@
   2. reconcile_runner.launch_reconcile_async spawn subprocess + payload/status file 写入
   3. reconcile_runner.query_reconcile_status 状态查询（running/done/failed/stale/unknown）
   4. reconcile_worker._load_payload 读后即焚
-  5. GitCommitGateway._run_post_commit_reconcile 分发（sync env / async 默认）
+  5. GitCommitGateway.run_post_commit_reconcile 分发（sync env / async 默认）
   6. _run_post_commit_reconcile_async fallback（commit_sha 缺失 / launch 失败）
 """
 
@@ -341,7 +341,7 @@ class TestWorkerLoadPayload:
 
 
 class TestGitCommitGatewayDispatcher:
-    """GitCommitGateway._run_post_commit_reconcile 分发逻辑。"""
+    """GitCommitGateway.run_post_commit_reconcile 分发逻辑。"""
 
     def test_sync_mode_dispatches_to_sync(self, tmp_repo, monkeypatch):
         """ZEPHYR_RECONCILE_SYNC=1 时调用 _run_post_commit_reconcile_sync。"""
@@ -380,7 +380,7 @@ class TestGitCommitGatewayDispatcher:
         result = CommitResult(status=CommitStatus.OK, commit_hash="sha_sync_test")
         monkeypatch.setenv("ZEPHYR_RECONCILE_SYNC", "1")
         # 用 unbound 方法调用
-        GitCommitGateway._run_post_commit_reconcile(
+        GitCommitGateway.run_post_commit_reconcile(
             fake_gw, ["d:/fake.py"], "sess-sync", result, commit_message="msg",
         )
         assert call_log == ["sync"], f"expected ['sync'], got {call_log}"
@@ -410,7 +410,7 @@ class TestGitCommitGatewayDispatcher:
 
         result = CommitResult(status=CommitStatus.OK, commit_hash="sha_async_test")
         monkeypatch.delenv("ZEPHYR_RECONCILE_SYNC", raising=False)
-        GitCommitGateway._run_post_commit_reconcile(
+        GitCommitGateway.run_post_commit_reconcile(
             fake_gw, ["d:/fake.py"], "sess-async", result, commit_message="msg",
         )
         assert call_log == ["async"], f"expected ['async'], got {call_log}"
@@ -436,7 +436,7 @@ class TestGitCommitGatewayDispatcher:
 
         fake_gw = FakeGateway()
         result = CommitResult(status=CommitStatus.COMMIT_FAILED, commit_hash="")
-        GitCommitGateway._run_post_commit_reconcile(
+        GitCommitGateway.run_post_commit_reconcile(
             fake_gw, [], "sess-fail", result, commit_message="",
         )
         assert call_log == [], "FAILED commit 不应触发 reconcile"
@@ -462,7 +462,7 @@ class TestGitCommitGatewayDispatcher:
 
         fake_gw = FakeGateway()
         result = CommitResult(status=CommitStatus.OK, commit_hash="sha")
-        GitCommitGateway._run_post_commit_reconcile(
+        GitCommitGateway.run_post_commit_reconcile(
             fake_gw, [], "sess", result, commit_message="",
         )
         assert call_log == [], "非 Zephyr 项目应跳过 reconcile"
@@ -493,7 +493,7 @@ class TestAsyncFallback:
 
         fake_gw = FakeGateway()
         # 绑定真实 _run_post_commit_reconcile_async 方法
-        GitCommitGateway._run_post_commit_reconcile_async(
+        GitCommitGateway.run_post_commit_reconcile_async(
             fake_gw, ["d:/fake.py"], "sess-no-sha", "", "msg",
         )
         assert call_log == ["sync"], "空 commit_sha 应回退 sync"
@@ -522,7 +522,7 @@ class TestAsyncFallback:
         monkeypatch.setattr(runner_mod, "launch_reconcile_async", fake_launch)
 
         fake_gw = FakeGateway()
-        GitCommitGateway._run_post_commit_reconcile_async(
+        GitCommitGateway.run_post_commit_reconcile_async(
             fake_gw, ["d:/fake.py"], "sess-launch-fail", "sha_launch_fail", "msg",
         )
         assert call_log == ["sync"], "launch 失败应回退 sync"
@@ -549,7 +549,7 @@ class TestAsyncFallback:
         monkeypatch.setattr(runner_mod, "launch_reconcile_async", fake_launch)
 
         fake_gw = FakeGateway()
-        GitCommitGateway._run_post_commit_reconcile_async(
+        GitCommitGateway.run_post_commit_reconcile_async(
             fake_gw, ["d:/fake.py"], "sess-launch-exc", "sha_exc", "msg",
         )
         assert call_log == ["sync"], "launch 异常应回退 sync"

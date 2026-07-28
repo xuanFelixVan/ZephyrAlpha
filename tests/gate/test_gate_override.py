@@ -3,7 +3,7 @@
 
 # [MODULE] tests.test_gate_override
 
-# [INVARIANTS] OverrideRecord.is_expired reflects UTC now vs expires_at; GateOverride._active keys are gate_id strings; audit-trail is append-only
+# [INVARIANTS] OverrideRecord.is_expired reflects UTC now vs expires_at; GateOverride.active keys are gate_id strings; audit-trail is append-only
 
 # [MODIFY-GUARD] changes require source gate_override.py review
 

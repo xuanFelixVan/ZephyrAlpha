@@ -231,7 +231,7 @@ class TestRunWorkerSelfHealIntegration:
             mock_gw = mock_gw_class.return_value
             mock_gw._run_post_commit_reconcile_sync_worker.return_value = []
 
-            rc = rw_mod._run_worker(payload)
+            rc = rw_mod.run_worker(payload)
 
         assert rc == 0
         # write_status_file 被调 2 次：running（L154）+ done（L242）
@@ -258,7 +258,7 @@ class TestRunWorkerSelfHealIntegration:
 
         # mock GitCommitGateway 构造抛异常
         with patch.object(gtw_mod, "GitCommitGateway", side_effect=ImportError("no module")):
-            rc = rw_mod._run_worker(payload)
+            rc = rw_mod.run_worker(payload)
 
         assert rc == 1
         records = _query_records(tmp_repo_with_db)

@@ -380,7 +380,7 @@ class TestStashConflictAndDataSafety:
         (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
 
         # mock commit 失败
-        original_commit = gw._commit_with_file_message
+        original_commit = gw.commit_with_file_message
 
         def failing_commit(message, pathspec_file=None, target_files=None):
             return None, "injected commit failure"

@@ -30,11 +30,11 @@ class TestLogRotationManagerInit:
 
     def test_default_compress(self, tmp_path):
         manager = LogRotationManager(data_dir=tmp_path / "r1")
-        assert manager._compress_rotated is True
+        assert manager.compress_rotated is True
 
     def test_custom_max_days(self, tmp_path):
         manager = LogRotationManager(data_dir=tmp_path / "r2", max_rotated_days=30)
-        assert manager._max_rotated_days == 30
+        assert manager.max_rotated_days == 30
 
 
 class TestRotate:
@@ -142,13 +142,13 @@ class TestCleanupOldRotations:
 
 class TestExtractDate:
     def test_valid_filename(self):
-        result = LogRotationManager._extract_date("audit-trail-2026-05-22.jsonl")
+        result = LogRotationManager.extract_date("audit-trail-2026-05-22.jsonl")
         assert result == "2026-05-22"
 
     def test_compressed_filename(self):
-        result = LogRotationManager._extract_date("audit-trail-2026-05-22.jsonl.gz")
+        result = LogRotationManager.extract_date("audit-trail-2026-05-22.jsonl.gz")
         assert result == "2026-05-22"
 
     def test_invalid_filename(self):
-        result = LogRotationManager._extract_date("random.txt")
+        result = LogRotationManager.extract_date("random.txt")
         assert result is None
