@@ -208,6 +208,41 @@ class GPUConsensusScheduler:
         self._local_gpu_count: int = 0
         self._check_gpu_availability()
 
+    # ── Stage 4 公共化属性 ──
+
+    @property
+    def gpu_status(self) -> GPUStatus:
+        """GPU 状态（public API, Stage 4）."""
+        return self._gpu_status
+
+    @gpu_status.setter
+    def gpu_status(self, value: GPUStatus) -> None:
+        """设置 GPU 状态（for testing, Stage 4）."""
+        self._gpu_status = value
+
+    @property
+    def local_model(self) -> str:
+        """本地模型名（public API, Stage 4）."""
+        return self._local_model
+
+    @local_model.setter
+    def local_model(self, value: str) -> None:
+        """设置本地模型名（for testing, Stage 4）."""
+        self._local_model = value
+
+    @property
+    def queue(self) -> "_PriorityQueue":
+        """优先级队列（public API, Stage 4）."""
+        return self._queue
+
+    def determine_route(self, request: ConsensusRequest) -> ConsensusRoute:
+        """路由判定（public API, Stage 4）."""
+        return self._determine_route(request)
+
+    def parse_model_response(self, text: str, model_id: str) -> dict[str, Any]:
+        """解析模型响应（public API, Stage 4）."""
+        return self._parse_model_response(text, model_id)
+
     async def submit(self, request: ConsensusRequest) -> ConsensusResult:
         start = time.monotonic()
         # 5.142.5/5.111.3 修复: async 方法改用 asyncio.Lock + async with, 避免持 threading.Lock 阻塞事件循环

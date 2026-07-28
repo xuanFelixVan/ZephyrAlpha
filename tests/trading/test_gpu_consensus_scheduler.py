@@ -31,9 +31,9 @@ from zephyr.trading.verdict_engine import ProtectionLevel, VerdictLevel
 
 def _no_gpu_scheduler(**kwargs) -> GPUConsensusScheduler:
     s = GPUConsensusScheduler(**kwargs)
-    s._gpu_status = GPUStatus(
+    s.gpu_status = GPUStatus(
         available=False,
-        model_name=s._local_model,
+        model_name=s.local_model,
         last_check_time=0.0,
         ollama_responding=False,
     )
@@ -289,54 +289,54 @@ class TestGPUConsensusSchedulerInit:
 class TestDetermineRoute:
     def test_anchor_with_gpu(self):
         scheduler = GPUConsensusScheduler()
-        scheduler._gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
+        scheduler.gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
         req = ConsensusRequest(protection_level=ProtectionLevel.anchor)
-        assert scheduler._determine_route(req) == ConsensusRoute.DUAL_API
+        assert scheduler.determine_route(req) == ConsensusRoute.DUAL_API
 
     def test_anchor_without_gpu(self):
         scheduler = _no_gpu_scheduler()
         req = ConsensusRequest(protection_level=ProtectionLevel.anchor)
-        assert scheduler._determine_route(req) == ConsensusRoute.SINGLE_API
+        assert scheduler.determine_route(req) == ConsensusRoute.SINGLE_API
 
     def test_protected_with_gpu(self):
         scheduler = GPUConsensusScheduler()
-        scheduler._gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
+        scheduler.gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
         req = ConsensusRequest(protection_level=ProtectionLevel.protected)
-        assert scheduler._determine_route(req) == ConsensusRoute.DUAL_API
+        assert scheduler.determine_route(req) == ConsensusRoute.DUAL_API
 
     def test_protected_without_gpu(self):
         scheduler = _no_gpu_scheduler()
         req = ConsensusRequest(protection_level=ProtectionLevel.protected)
-        assert scheduler._determine_route(req) == ConsensusRoute.SINGLE_API
+        assert scheduler.determine_route(req) == ConsensusRoute.SINGLE_API
 
     def test_normal_with_gpu(self):
         scheduler = GPUConsensusScheduler()
-        scheduler._gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
+        scheduler.gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
         req = ConsensusRequest(protection_level=ProtectionLevel.normal)
-        assert scheduler._determine_route(req) == ConsensusRoute.LOCAL_GPU
+        assert scheduler.determine_route(req) == ConsensusRoute.LOCAL_GPU
 
     def test_normal_without_gpu(self):
         scheduler = _no_gpu_scheduler()
         req = ConsensusRequest(protection_level=ProtectionLevel.normal)
-        assert scheduler._determine_route(req) == ConsensusRoute.SINGLE_API
+        assert scheduler.determine_route(req) == ConsensusRoute.SINGLE_API
 
     def test_public_with_gpu(self):
         scheduler = GPUConsensusScheduler()
-        scheduler._gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
+        scheduler.gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
         req = ConsensusRequest(protection_level=ProtectionLevel.public)
-        assert scheduler._determine_route(req) == ConsensusRoute.LOCAL_GPU
+        assert scheduler.determine_route(req) == ConsensusRoute.LOCAL_GPU
 
     def test_public_without_gpu(self):
         scheduler = _no_gpu_scheduler()
         req = ConsensusRequest(protection_level=ProtectionLevel.public)
-        assert scheduler._determine_route(req) == ConsensusRoute.SINGLE_API
+        assert scheduler.determine_route(req) == ConsensusRoute.SINGLE_API
 
 
 class TestParseModelResponse:
     def test_valid_json_response(self):
         scheduler = _no_gpu_scheduler()
         text = '{"verdict": "RED", "confidence": 0.9, "reasoning": "dangerous op"}'
-        result = scheduler._parse_model_response(text, "model-a")
+        result = scheduler.parse_model_response(text, "model-a")
         assert result["verdict"] == "RED"
         assert result["confidence"] == 0.9
         assert result["reasoning"] == "dangerous op"
@@ -345,51 +345,51 @@ class TestParseModelResponse:
     def test_json_with_surrounding_text(self):
         scheduler = _no_gpu_scheduler()
         text = 'Here is my analysis: {"verdict": "YELLOW", "confidence": 0.7, "reasoning": "suspicious"} end'
-        result = scheduler._parse_model_response(text, "model-b")
+        result = scheduler.parse_model_response(text, "model-b")
         assert result["verdict"] == "YELLOW"
         assert result["confidence"] == 0.7
 
     def test_fallback_red_on_invalid_json(self):
         scheduler = _no_gpu_scheduler()
         text = "{this is not valid json and contains red flag}"
-        result = scheduler._parse_model_response(text, "model-c")
+        result = scheduler.parse_model_response(text, "model-c")
         assert result["verdict"] == "RED"
 
     def test_fallback_yellow_on_invalid_json(self):
         scheduler = _no_gpu_scheduler()
         text = "{invalid json with yellow warning}"
-        result = scheduler._parse_model_response(text, "model-d")
+        result = scheduler.parse_model_response(text, "model-d")
         assert result["verdict"] == "YELLOW"
 
     def test_fallback_no_keyword_pass_on_invalid_json(self):
         scheduler = _no_gpu_scheduler()
         text = "{broken json no color keyword}"
-        result = scheduler._parse_model_response(text, "model-e")
+        result = scheduler.parse_model_response(text, "model-e")
         assert result["verdict"] == "PASS"
 
     def test_plain_text_no_braces_defaults_pass(self):
         scheduler = _no_gpu_scheduler()
         text = "Everything looks fine here"
-        result = scheduler._parse_model_response(text, "model-e")
+        result = scheduler.parse_model_response(text, "model-e")
         assert result["verdict"] == "PASS"
         assert result["confidence"] == 0.5
 
     def test_json_with_invalid_verdict(self):
         scheduler = _no_gpu_scheduler()
         text = '{"verdict": "INVALID", "confidence": 0.5}'
-        result = scheduler._parse_model_response(text, "model-f")
+        result = scheduler.parse_model_response(text, "model-f")
         assert result["verdict"] == "PASS"
 
     def test_empty_text(self):
         scheduler = _no_gpu_scheduler()
-        result = scheduler._parse_model_response("", "model-g")
+        result = scheduler.parse_model_response("", "model-g")
         assert result["verdict"] == "PASS"
         assert result["confidence"] == 0.5
 
     def test_json_missing_confidence_defaults(self):
         scheduler = _no_gpu_scheduler()
         text = '{"verdict": "PASS"}'
-        result = scheduler._parse_model_response(text, "model-h")
+        result = scheduler.parse_model_response(text, "model-h")
         assert result["verdict"] == "PASS"
         assert result["confidence"] == 0.5
         assert result["reasoning"] == ""
@@ -397,7 +397,7 @@ class TestParseModelResponse:
     def test_red_takes_precedence_over_yellow_in_fallback(self):
         scheduler = _no_gpu_scheduler()
         text = "{broken json with both red and yellow}"
-        result = scheduler._parse_model_response(text, "model-i")
+        result = scheduler.parse_model_response(text, "model-i")
         assert result["verdict"] == "RED"
 
 
@@ -427,7 +427,7 @@ class TestHealthCheck:
 
     def test_healthy_when_gpu_available(self):
         scheduler = GPUConsensusScheduler()
-        scheduler._gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
+        scheduler.gpu_status = GPUStatus(available=True, model_name="qwen3:8b")
         result = scheduler.health_check()
         assert result["status"] == "healthy"
 
@@ -466,7 +466,7 @@ class TestCancel:
     def test_cancel_updates_metrics(self):
         scheduler = _no_gpu_scheduler()
         req = ConsensusRequest(request_id="cancel-me")
-        scheduler._queue.push(req)
+        scheduler.queue.push(req)
         assert scheduler.cancel("cancel-me") is True
         m = scheduler.get_metrics()
         assert m.cancelled == 1
