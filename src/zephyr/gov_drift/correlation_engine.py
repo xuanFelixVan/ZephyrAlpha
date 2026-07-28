@@ -55,6 +55,13 @@ class CorrelationEngine:
 
         self._db_path = db_path
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def db_path(self):
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+
     def compute_co_occurrence(self) -> dict[str, dict[str, float]]:
         if not os.path.exists(self._db_path):
             return {}

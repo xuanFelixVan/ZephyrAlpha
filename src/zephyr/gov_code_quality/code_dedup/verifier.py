@@ -42,6 +42,13 @@ class Verifier:
             project_root = Path.cwd()
         self._root = Path(project_root)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def root(self):
+        """只读：root（Stage 4 公共化）。"""
+        return self._root
+
+
     def verify_file(self, file_path: str | Path) -> VerifyResult:
         """验证单个文件——import可用 + 语法正确."""
         path = Path(file_path)

@@ -105,6 +105,18 @@ class SupplyChainAuditor:
         self._verify_hashes = verify_hashes
         self._audited_packages: dict[str, PackageRecord] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def trusted_sources(self):
+        """只读：trusted_sources（Stage 4 公共化）。"""
+        return self._trusted_sources
+
+    @property
+    def verify_hashes(self):
+        """只读：verify_hashes（Stage 4 公共化）。"""
+        return self._verify_hashes
+
+
     def audit_package(
         self,
         package_name: str,

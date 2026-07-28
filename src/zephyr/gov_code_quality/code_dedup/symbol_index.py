@@ -29,6 +29,23 @@ class SymbolIndex:
         self._classes: dict[str, list[str]] = {}
         self._imports: dict[str, list[str]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def classes(self) -> dict[str, list[str]]:
+        """只读：classes（Stage 4 公共化）。"""
+        return self._classes
+
+    @property
+    def functions(self) -> dict[str, list[str]]:
+        """只读：functions（Stage 4 公共化）。"""
+        return self._functions
+
+    @property
+    def imports(self) -> dict[str, list[str]]:
+        """只读：imports（Stage 4 公共化）。"""
+        return self._imports
+
+
     def index_file(self, file_path: str | Path) -> None:
         """索引单个文件."""
         path = Path(file_path)

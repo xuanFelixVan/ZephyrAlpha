@@ -35,6 +35,13 @@ class DriftDetector:
         self._baseline: dict[str, float] = {}
         self._history: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def baseline(self) -> dict[str, float]:
+        """只读：baseline（Stage 4 公共化）。"""
+        return self._baseline
+
+
     def establish_baseline(self, metrics: dict[str, float]):
         self._baseline = dict(metrics)
 

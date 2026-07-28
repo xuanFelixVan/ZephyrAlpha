@@ -77,6 +77,13 @@ class BaselineManager:
 
         os.makedirs(self._baselines_root, exist_ok=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def baselines_root(self):
+        """只读：baselines_root（Stage 4 公共化）。"""
+        return self._baselines_root
+
+
     def module_baseline_dir(self, module_id: str) -> str:
         safe_id = module_id.replace("\\", "_").replace("/", "_")
 

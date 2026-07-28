@@ -33,6 +33,13 @@ class CanaryRegister:
         self._canaries: list[dict] = []
         self._load()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def canaries(self) -> list[dict]:
+        """只读：canaries（Stage 4 公共化）。"""
+        return self._canaries
+
+
     def register(self, function_name: str, module: str, stage: str = "active") -> None:
         self._canaries.append(
             {

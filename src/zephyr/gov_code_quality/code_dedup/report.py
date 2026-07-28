@@ -117,6 +117,18 @@ class ReportGenerator:
         self._exit_code: int = ExitCode.CLEAN
         self._degradation_level: str = "none"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def degradation_level(self) -> str:
+        """只读：degradation_level（Stage 4 公共化）。"""
+        return self._degradation_level
+
+    @property
+    def exit_code(self) -> int:
+        """只读：exit_code（Stage 4 公共化）。"""
+        return self._exit_code
+
+
     # ── 公共 API ──────────────────────────────────────────────
 
     def generate(

@@ -174,6 +174,29 @@ class AuditWriter:
         self._lock = threading.Lock()
         self._load_state()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_write_failures(self):
+        """只读：max_write_failures（Stage 4 公共化）。"""
+        return self._max_write_failures
+
+    @property
+    def readonly(self):
+        """只读：readonly（Stage 4 公共化）。"""
+        return self._readonly
+
+    @readonly.setter
+    def readonly(self, value):
+        """写入：readonly（Stage 4 公共化）。"""
+        self._readonly = value
+
+
+    @property
+    def write_failures(self):
+        """只读：write_failures（Stage 4 公共化）。"""
+        return self._write_failures
+
+
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     # 消除 tests/audit/test_audit_adversarial.py 中 15 处私有成员访问。
 

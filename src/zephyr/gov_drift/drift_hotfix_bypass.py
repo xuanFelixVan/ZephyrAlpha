@@ -95,6 +95,34 @@ class HotfixBypass:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def audit_dir(self):
+        """只读：audit_dir（Stage 4 公共化）。"""
+        return self._audit_dir
+
+    @property
+    def audit_log_path(self):
+        """只读：audit_log_path（Stage 4 公共化）。"""
+        return self._audit_log_path
+
+    @property
+    def core_writer(self) -> AuditWriterProtocol | None:
+        """只读：core_writer（Stage 4 公共化）。"""
+        return self._core_writer
+
+    @core_writer.setter
+    def core_writer(self, value):
+        """写入：core_writer（Stage 4 公共化）。"""
+        self._core_writer = value
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def is_hotfix_commit(self, commit_message: str) -> bool:
         upper = commit_message.strip().upper()
 

@@ -66,6 +66,18 @@ class GitBisector:
 
         self._cache: dict[str, dict[str, str]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def cache(self) -> dict[str, dict[str, str]]:
+        """只读：cache（Stage 4 公共化）。"""
+        return self._cache
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def _git(self, *args: str) -> subprocess.CompletedProcess[str]:
         return run_subprocess_hidden(["git", *args], capture_output=True, text=True, cwd=self._project_root, timeout=30)
 

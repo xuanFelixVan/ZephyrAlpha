@@ -65,6 +65,13 @@ class DoomLoopGuard:
         self._frozen: dict[str, FreezeEntry] = {}
         self._load_freeze_list()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def frozen(self) -> dict[str, FreezeEntry]:
+        """只读：frozen（Stage 4 公共化）。"""
+        return self._frozen
+
+
     # ── 公共 API ──────────────────────────────────────────────
 
     def escalate(

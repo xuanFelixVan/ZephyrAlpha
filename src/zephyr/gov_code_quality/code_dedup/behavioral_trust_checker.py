@@ -36,6 +36,13 @@ class BehavioralTrustChecker:
     def __init__(self) -> None:
         self._signatures: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def signatures(self) -> dict[str, str]:
+        """只读：signatures（Stage 4 公共化）。"""
+        return self._signatures
+
+
     def register(self, function_name: str, behavior_signature: str) -> None:
         self._signatures[function_name] = behavior_signature
 

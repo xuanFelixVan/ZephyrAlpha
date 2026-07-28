@@ -87,6 +87,18 @@ class DetectorDispatcher:
 
         self._scripts_root = ""
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_parallel(self):
+        """只读：max_parallel（Stage 4 公共化）。"""
+        return self._max_parallel
+
+    @property
+    def registry_path(self):
+        """只读：registry_path（Stage 4 公共化）。"""
+        return self._registry_path
+
+
     @property
     def scripts_root(self) -> str:
         if not self._scripts_root:

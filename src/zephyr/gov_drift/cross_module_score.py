@@ -72,6 +72,13 @@ class CrossModuleScorer:
     def __init__(self) -> None:
         self._history: list[CrossModuleReport] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> list[CrossModuleReport]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def compute(self, module_scores: dict[str, ModuleScore]) -> CrossModuleReport:
         if not module_scores:
             return CrossModuleReport(overall_score=1.0)
