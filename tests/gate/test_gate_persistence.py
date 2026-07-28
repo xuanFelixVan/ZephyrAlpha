@@ -26,26 +26,26 @@ from zephyr.gov_drift.gate_persistence import GatePersistence
 class TestGatePersistenceInstantiation:
     def test_with_explicit_project_root(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
-        assert gp._project_root == str(tmp_path)
+        assert gp.project_root == str(tmp_path)
 
     def test_default_project_root_not_empty(self):
         gp = GatePersistence()
-        assert gp._project_root != ""
-        assert os.path.isdir(gp._project_root)
+        assert gp.project_root != ""
+        assert os.path.isdir(gp.project_root)
 
     def test_creates_audit_dir(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
-        assert os.path.isdir(gp._audit_dir)
-        assert gp._audit_dir == os.path.join(str(tmp_path), "data", "drift_audit")
+        assert os.path.isdir(gp.audit_dir)
+        assert gp.audit_dir == os.path.join(str(tmp_path), "data", "drift_audit")
 
     def test_creates_db_file(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
-        assert os.path.exists(gp._db_path)
-        assert gp._db_path.endswith("drift_events.db")
+        assert os.path.exists(gp.db_path)
+        assert gp.db_path.endswith("drift_events.db")
 
     def test_db_tables_exist(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
-        conn = sqlite3.connect(gp._db_path)
+        conn = sqlite3.connect(gp.db_path)
         tables = [row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()]
         conn.close()
         assert "drift_events" in tables
@@ -65,14 +65,14 @@ class TestGatePersistencePersistScanResult:
         gp = GatePersistence(project_root=str(tmp_path))
         scan_id = uuid.uuid4()
         gp.persist_scan_result(scan_id, {"detectors_run": 3, "total_drift_events": 1})
-        result_path = os.path.join(gp._audit_dir, f"{scan_id}_result.json")
+        result_path = os.path.join(gp.audit_dir, f"{scan_id}_result.json")
         assert os.path.exists(result_path)
 
     def test_json_contains_sha256_and_timestamp(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
         scan_id = uuid.uuid4()
         gp.persist_scan_result(scan_id, {"detectors_run": 1})
-        result_path = os.path.join(gp._audit_dir, f"{scan_id}_result.json")
+        result_path = os.path.join(gp.audit_dir, f"{scan_id}_result.json")
         with open(result_path, encoding="utf-8") as f:
             data = json.load(f)
         assert "sha256" in data
@@ -82,7 +82,7 @@ class TestGatePersistencePersistScanResult:
         gp = GatePersistence(project_root=str(tmp_path))
         scan_id = uuid.uuid4()
         gp.persist_scan_result(scan_id, {"detectors_run": 4, "total_drift_events": 0, "storm_mode_triggered": True})
-        conn = sqlite3.connect(gp._db_path)
+        conn = sqlite3.connect(gp.db_path)
         row = conn.execute("SELECT * FROM scan_results WHERE scan_id = ?", (str(scan_id),)).fetchone()
         conn.close()
         assert row is not None
@@ -106,7 +106,7 @@ class TestGatePersistencePersistGateDecision:
     def test_single_decision(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
         gp.persist_gate_decision("MOD-A", "GATE-1", "PASS", "All checks ok")
-        conn = sqlite3.connect(gp._db_path)
+        conn = sqlite3.connect(gp.db_path)
         rows = conn.execute("SELECT * FROM gate_decisions WHERE module_id = 'MOD-A'").fetchall()
         conn.close()
         assert len(rows) == 1
@@ -116,7 +116,7 @@ class TestGatePersistencePersistGateDecision:
         gp = GatePersistence(project_root=str(tmp_path))
         gp.persist_gate_decision("MOD-A", "GATE-1", "PASS")
         gp.persist_gate_decision("MOD-B", "GATE-2", "FAIL", "Missing test")
-        conn = sqlite3.connect(gp._db_path)
+        conn = sqlite3.connect(gp.db_path)
         rows = conn.execute("SELECT * FROM gate_decisions").fetchall()
         conn.close()
         assert len(rows) == 2
@@ -124,7 +124,7 @@ class TestGatePersistencePersistGateDecision:
     def test_empty_detail_default(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
         gp.persist_gate_decision("MOD-C", "GATE-3", "PASS")
-        conn = sqlite3.connect(gp._db_path)
+        conn = sqlite3.connect(gp.db_path)
         row = conn.execute("SELECT detail FROM gate_decisions WHERE module_id = 'MOD-C'").fetchone()
         conn.close()
         assert row[0] == ""
@@ -147,14 +147,14 @@ class TestGatePersistenceUpdateManifest:
     def test_creates_manifest_file(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
         gp.update_manifest(uuid.uuid4(), "COMPLETED")
-        manifest_path = os.path.join(gp._audit_dir, "manifest.json")
+        manifest_path = os.path.join(gp.audit_dir, "manifest.json")
         assert os.path.exists(manifest_path)
 
     def test_appends_entries(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
         gp.update_manifest(uuid.uuid4(), "COMPLETED")
         gp.update_manifest(uuid.uuid4(), "FAILED")
-        manifest_path = os.path.join(gp._audit_dir, "manifest.json")
+        manifest_path = os.path.join(gp.audit_dir, "manifest.json")
         with open(manifest_path, encoding="utf-8") as f:
             data = json.load(f)
         assert len(data["entries"]) == 2
@@ -165,14 +165,14 @@ class TestGatePersistenceUpdateManifest:
         gp = GatePersistence(project_root=str(tmp_path))
         for _ in range(110):
             gp.update_manifest(uuid.uuid4(), "COMPLETED")
-        manifest_path = os.path.join(gp._audit_dir, "manifest.json")
+        manifest_path = os.path.join(gp.audit_dir, "manifest.json")
         with open(manifest_path, encoding="utf-8") as f:
             data = json.load(f)
         assert len(data["entries"]) == 100
 
     def test_recovers_from_corrupt_manifest(self, tmp_path):
         gp = GatePersistence(project_root=str(tmp_path))
-        manifest_path = os.path.join(gp._audit_dir, "manifest.json")
+        manifest_path = os.path.join(gp.audit_dir, "manifest.json")
         with open(manifest_path, "w", encoding="utf-8") as f:
             f.write("NOT VALID JSON{{{")
         gp.update_manifest(uuid.uuid4(), "COMPLETED")

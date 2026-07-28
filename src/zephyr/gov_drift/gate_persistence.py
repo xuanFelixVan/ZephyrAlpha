@@ -53,6 +53,25 @@ class GatePersistence:
 
         self._init_db()
 
+    # ── Stage 4 公共化（2026-07-28）：只读 properties ──
+    # 消除 tests/gate/test_gate_persistence.py 中 18 处私有成员访问。
+    # 存储仍为 self._project_root/_audit_dir/_db_path（primary），公共 property 为访问器。
+
+    @property
+    def project_root(self) -> str:
+        """只读：项目根目录（Stage 4 公共化）。"""
+        return self._project_root
+
+    @property
+    def audit_dir(self) -> str:
+        """只读：审计输出目录（Stage 4 公共化）。"""
+        return self._audit_dir
+
+    @property
+    def db_path(self) -> str:
+        """只读：drift_events.db 路径（Stage 4 公共化）。"""
+        return self._db_path
+
     def _init_db(self) -> None:
         conn = get_db_connection(self._db_path)
 
