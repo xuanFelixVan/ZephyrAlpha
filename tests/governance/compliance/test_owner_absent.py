@@ -29,15 +29,15 @@ from zephyr.governance.escalation.owner_absent import (
 class TestOwnerAbsentInstantiation:
     def test_default_data_dir(self):
         oa = OwnerAbsent()
-        assert oa._data_dir == Path("data/rollback/owner")
+        assert oa.data_dir == Path("data/rollback/owner")
 
     def test_custom_data_dir(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path / "owner_data")
-        assert oa._data_dir == tmp_path / "owner_data"
+        assert oa.data_dir == tmp_path / "owner_data"
 
     def test_state_path_derived(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        assert oa._state_path == tmp_path / "owner_absent_state.json"
+        assert oa.state_path == tmp_path / "owner_absent_state.json"
 
 
 class TestCheckOwnerStatus:
@@ -88,14 +88,14 @@ class TestRecordOwnerInteraction:
     def test_record_creates_state_file(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
         timestamp = oa.record_owner_interaction()
-        assert oa._state_path.exists()
+        assert oa.state_path.exists()
         assert isinstance(timestamp, str)
         assert len(timestamp) > 0
 
     def test_record_updates_state_json(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
         oa.record_owner_interaction()
-        data = json.loads(oa._state_path.read_text(encoding="utf-8"))
+        data = json.loads(oa.state_path.read_text(encoding="utf-8"))
         assert "last_owner_interaction" in data
         assert data["ping_attempts"] == 0
 
@@ -147,8 +147,8 @@ class TestGetAbsentStatus:
     def test_with_old_interaction(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
         old_ts = (datetime.now(UTC) - timedelta(days=10)).isoformat()
-        oa._data_dir.mkdir(parents=True, exist_ok=True)
-        oa._state_path.write_text(
+        oa.data_dir.mkdir(parents=True, exist_ok=True)
+        oa.state_path.write_text(
             json.dumps({"last_owner_interaction": old_ts, "ping_attempts": 5}),
             encoding="utf-8",
         )
@@ -205,7 +205,7 @@ class TestGenerateEscalationMessage:
 class TestCorruptedStateFile:
     def test_corrupted_state_returns_defaults(self, tmp_path: Path):
         oa = OwnerAbsent(data_dir=tmp_path)
-        oa._data_dir.mkdir(parents=True, exist_ok=True)
-        oa._state_path.write_text("BROKEN JSON{{{", encoding="utf-8")
+        oa.data_dir.mkdir(parents=True, exist_ok=True)
+        oa.state_path.write_text("BROKEN JSON{{{", encoding="utf-8")
         status = oa.get_absent_status()
         assert isinstance(status, AbsentStatus)

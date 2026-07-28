@@ -82,8 +82,8 @@ class TestFiveSystemDiscovery:
         e = EscalationEngine("gct009-test")
         ev = e.evaluate(RuleCategory.AUTO_GUARD_FAILURE, "test guard failure")
         assert ev.level.value <= 4
-        assert e._circuit_breaker.state.name == "CLOSED"
-        assert len(e._rules) >= 9
+        assert e.circuit_breaker.state.name == "CLOSED"
+        assert len(e.rules) >= 9
 
     def test_budget_engine_functional(self):
         from zephyr.governance.ops_governance.budget_engine import BudgetEngine

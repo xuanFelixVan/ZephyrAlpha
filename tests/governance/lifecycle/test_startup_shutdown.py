@@ -82,7 +82,7 @@ class TestStartupPhaseDef:
 class TestStartupOrchestrator:
     def test_instantiation(self) -> None:
         orch = StartupOrchestrator(health_check_fn=lambda _: True)
-        assert orch._health_check is not None
+        assert orch.health_check is not None
 
     def test_run_all_healthy(self) -> None:
         orch = StartupOrchestrator(health_check_fn=lambda _: True)
@@ -121,7 +121,7 @@ class TestStartupOrchestrator:
 class TestShutdownOrchestrator:
     def test_instantiation(self) -> None:
         orch = ShutdownOrchestrator(shutdown_fn=lambda _: True)
-        assert orch._shutdown is not None
+        assert orch.shutdown is not None
 
     def test_run_all_succeed(self) -> None:
         for phase in StartupPhase:

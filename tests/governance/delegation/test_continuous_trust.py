@@ -144,11 +144,11 @@ class TestTrustTierPerms:
 class TestContinuousTrust:
     def test_instantiation_default(self):
         ct = ContinuousTrust()
-        assert ct._ledger_dir == Path("data/rollback/trust")
+        assert ct.ledger_dir == Path("data/rollback/trust")
 
     def test_instantiation_custom_dir(self, tmp_path: Path):
         ct = ContinuousTrust(ledger_dir=tmp_path / "custom")
-        assert ct._ledger_dir == tmp_path / "custom"
+        assert ct.ledger_dir == tmp_path / "custom"
 
     def test_record_trust_event(self, tmp_ledger: ContinuousTrust):
         entry = tmp_ledger.record_trust_event(0.1, "test reason", "rollback")

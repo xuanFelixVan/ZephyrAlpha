@@ -19,30 +19,30 @@ from zephyr.governance.security_governance.ghost_scan import GhostScanner
 class TestGhostScannerInstantiation:
     def test_init_creates_empty_registered_pids(self):
         gs = GhostScanner()
-        assert gs._registered_pids == set()
+        assert gs.registered_pids == set()
 
     def test_init_is_set_type(self):
         gs = GhostScanner()
-        assert isinstance(gs._registered_pids, set)
+        assert isinstance(gs.registered_pids, set)
 
 
 class TestGhostScannerRegister:
     def test_register_single_pid(self):
         gs = GhostScanner()
         gs.register("1234")
-        assert "1234" in gs._registered_pids
+        assert "1234" in gs.registered_pids
 
     def test_register_multiple_pids(self):
         gs = GhostScanner()
         gs.register("1234")
         gs.register("5678")
-        assert gs._registered_pids == {"1234", "5678"}
+        assert gs.registered_pids == {"1234", "5678"}
 
     def test_register_duplicate_pid_idempotent(self):
         gs = GhostScanner()
         gs.register("1234")
         gs.register("1234")
-        assert len(gs._registered_pids) == 1
+        assert len(gs.registered_pids) == 1
 
 
 class TestGhostScannerDetectGhosts:
@@ -99,7 +99,7 @@ class TestGhostScannerCleanup:
         gs.register("1234")
         result = gs.cleanup("1234")
         assert result is True
-        assert "1234" not in gs._registered_pids
+        assert "1234" not in gs.registered_pids
 
     def test_cleanup_nonexistent_pid_returns_true(self):
         gs = GhostScanner()
@@ -122,4 +122,4 @@ class TestGhostScannerCleanup:
         gs.cleanup("1")
         gs.cleanup("2")
         gs.cleanup("3")
-        assert gs._registered_pids == set()
+        assert gs.registered_pids == set()

@@ -23,7 +23,7 @@ class TestMaintenanceWindowAdapterInstantiation:
 
     def test_initial_state_is_false(self):
         adapter = MaintenanceWindowAdapter()
-        assert adapter._in_maintenance is False
+        assert adapter.in_maintenance is False
 
 
 class TestStartMaintenance:

@@ -133,7 +133,7 @@ class TestPostProcessPipeline:
 
     def test_create_default(self):
         pipeline = PostProcessPipeline.create_default()
-        assert len(pipeline._hooks) == 3
+        assert len(pipeline.hooks) == 3
 
 
 class TestLintHook:

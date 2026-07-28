@@ -40,11 +40,11 @@ def sync(project_root: Path) -> SubmoduleSync:
 class TestSubmoduleSyncInstantiation:
     def test_with_explicit_root(self, project_root: Path) -> None:
         s = SubmoduleSync(project_root=project_root)
-        assert s._project_root == project_root
+        assert s.project_root == project_root
 
     def test_with_none_uses_cwd(self) -> None:
         s = SubmoduleSync(project_root=None)
-        assert s._project_root == Path.cwd()
+        assert s.project_root == Path.cwd()
 
 
 class TestDetectLayout:

@@ -52,35 +52,35 @@ class TestUpdate:
     def test_update_stores_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("key1", "value1")
-        assert store._state["key1"] == "value1"
+        assert store.state["key1"] == "value1"
 
     def test_update_overwrites(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("key1", "old")
         store.update("key1", "new")
-        assert store._state["key1"] == "new"
+        assert store.state["key1"] == "new"
 
     def test_update_multiple_keys(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("a", 1)
         store.update("b", 2)
-        assert store._state["a"] == 1
-        assert store._state["b"] == 2
+        assert store.state["a"] == 1
+        assert store.state["b"] == 2
 
     def test_update_with_dict_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("config", {"mode": "strict", "level": 3})
-        assert store._state["config"]["mode"] == "strict"
+        assert store.state["config"]["mode"] == "strict"
 
     def test_update_with_none_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("key", None)
-        assert store._state["key"] is None
+        assert store.state["key"] is None
 
     def test_update_with_list_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("items", [1, 2, 3])
-        assert store._state["items"] == [1, 2, 3]
+        assert store.state["items"] == [1, 2, 3]
 
 
 class TestSave:
@@ -141,7 +141,7 @@ class TestBoundaryConditions:
     def test_update_empty_key(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("", "empty_key_value")
-        assert store._state[""] == "empty_key_value"
+        assert store.state[""] == "empty_key_value"
 
     def test_save_with_special_characters_in_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
@@ -162,7 +162,7 @@ class TestBoundaryConditions:
     def test_update_with_boolean_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)
         store.update("flag", True)
-        assert store._state["flag"] is True
+        assert store.state["flag"] is True
 
     def test_save_with_boolean_value(self, state_dir):
         store = ProtocolStateStore(state_dir=state_dir)

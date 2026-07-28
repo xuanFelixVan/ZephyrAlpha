@@ -141,7 +141,7 @@ class TestDelegationEngine:
         engine = DelegationEngine()
         engine.register_delegate("d1")
         for _ in range(5):
-            engine._delegate_load["d1"] += 1
+            engine.delegate_load["d1"] += 1
         assert "d1" not in engine.get_available_delegates()
 
     def test_get_pending_delegations(self):

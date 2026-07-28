@@ -22,9 +22,9 @@ from zephyr.gov_code_quality.code_dedup.symbol_index import SymbolIndex
 class TestSymbolIndex:
     def test_instantiation(self):
         si = SymbolIndex()
-        assert si._functions == {}
-        assert si._classes == {}
-        assert si._imports == {}
+        assert si.functions == {}
+        assert si.classes == {}
+        assert si.imports == {}
 
     def test_index_file_valid(self):
         with tempfile.NamedTemporaryFile(suffix=".py", mode="w", encoding="utf-8", delete=False) as f:

@@ -71,7 +71,7 @@ class TestParentChildAttributor:
         attr.record_delegation("c2", "c3", tokens=100, cost=0.1, depth=3)
         attr.record_delegation("c3", "c4", tokens=100, cost=0.1, depth=4)
         report = attr.analyze()
-        assert "过深" in report.bottleneck or report.max_depth > attr._max_depth
+        assert "过深" in report.bottleneck or report.max_depth > attr.max_depth
 
     def test_children_of(self):
         attr = ParentChildAttributor()

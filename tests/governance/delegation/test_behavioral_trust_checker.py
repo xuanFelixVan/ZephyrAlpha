@@ -24,7 +24,7 @@ class TestBehavioralTrustChecker:
     def test_register(self):
         checker = BehavioralTrustChecker()
         checker.register("func_a", "return_type=int;params=1")
-        assert "func_a" in checker._signatures
+        assert "func_a" in checker.signatures
 
     def test_verify(self):
         checker = BehavioralTrustChecker()
@@ -40,4 +40,4 @@ class TestBehavioralTrustChecker:
     def test_register_empty_name(self):
         checker = BehavioralTrustChecker()
         checker.register("", "")
-        assert "" in checker._signatures
+        assert "" in checker.signatures

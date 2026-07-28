@@ -109,8 +109,8 @@ class TestPostProcessPipeline:
 
     def test_create_default(self):
         pipeline = PostProcessPipeline.create_default()
-        assert len(pipeline._hooks) == 3
-        names = [h.name for h in pipeline._hooks]
+        assert len(pipeline.hooks) == 3
+        names = [h.name for h in pipeline.hooks]
         assert "lint" in names
         assert "format" in names
         assert "typecheck" in names
