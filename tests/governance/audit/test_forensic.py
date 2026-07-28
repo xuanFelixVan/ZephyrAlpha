@@ -41,15 +41,15 @@ def engine(tmp_project):
 class TestForensicEngineInstantiation:
     def test_default_project_root(self):
         eng = ForensicEngine()
-        assert eng._project_root == Path.cwd()
+        assert eng.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_project):
         eng = ForensicEngine(project_root=tmp_project)
-        assert eng._project_root == tmp_project
+        assert eng.project_root == tmp_project
 
     def test_forensic_dir_set(self, engine, tmp_project):
         expected = tmp_project / "data" / "rollback" / "forensic"
-        assert engine._forensic_dir == expected
+        assert engine.forensic_dir == expected
 
 
 class TestScanShellInjection:
@@ -224,7 +224,7 @@ class TestAtomicWrite:
 
 class TestMerkleChain:
     def test_append_and_verify(self, engine):
-        engine._forensic_dir.mkdir(parents=True, exist_ok=True)
+        engine.forensic_dir.mkdir(parents=True, exist_ok=True)
         link1 = engine.append_merkle_chain("root_aaa", "create", "sha1")
         assert link1.index == 0
         assert link1.prev_root == ""
@@ -241,7 +241,7 @@ class TestMerkleChain:
         assert ok is True
 
     def test_single_link_verifies(self, engine):
-        engine._forensic_dir.mkdir(parents=True, exist_ok=True)
+        engine.forensic_dir.mkdir(parents=True, exist_ok=True)
         engine.append_merkle_chain("root_x", "op", "sha")
         ok, msg = engine.verify_merkle_chain()
         assert ok is True

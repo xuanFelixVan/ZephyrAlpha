@@ -48,14 +48,14 @@ class TestEvidencePackExporterInstantiation:
     def test_default_dirs(self, tmp_path):
         data_dir = tmp_path / "audit"
         exporter = EvidencePackExporter(data_dir=data_dir)
-        assert exporter._data_dir == data_dir
-        assert exporter._output_dir == data_dir / "evidence_packs"
+        assert exporter.data_dir == data_dir
+        assert exporter.output_dir == data_dir / "evidence_packs"
 
     def test_custom_output_dir(self, tmp_path):
         data_dir = tmp_path / "audit"
         output_dir = tmp_path / "output"
         exporter = EvidencePackExporter(data_dir=data_dir, output_dir=output_dir)
-        assert exporter._output_dir == output_dir
+        assert exporter.output_dir == output_dir
 
     def test_output_dir_created(self, tmp_path):
         data_dir = tmp_path / "audit"

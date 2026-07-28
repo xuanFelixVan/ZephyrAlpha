@@ -57,22 +57,22 @@ class TestReboundSeverityOrdering:
 class TestReboundDetectorInit:
     def test_default_window_parameters(self):
         det = ReboundDetector()
-        assert det._sliding_window_seconds == 90 * 86400
-        assert det._min_gap_seconds == 30 * 86400
-        assert det._max_gap_seconds == 90 * 86400
+        assert det.sliding_window_seconds == 90 * 86400
+        assert det.min_gap_seconds == 30 * 86400
+        assert det.max_gap_seconds == 90 * 86400
 
     def test_custom_window_parameters(self):
         det = ReboundDetector(sliding_window_days=60, min_rebound_gap_days=10, max_rebound_gap_days=50)
-        assert det._sliding_window_seconds == 60 * 86400
-        assert det._min_gap_seconds == 10 * 86400
-        assert det._max_gap_seconds == 50 * 86400
+        assert det.sliding_window_seconds == 60 * 86400
+        assert det.min_gap_seconds == 10 * 86400
+        assert det.max_gap_seconds == 50 * 86400
 
 
 class TestRecord:
     def test_record_adds_behavior(self):
         det = ReboundDetector()
         det.record("agent-1", "violation", "high", "bad behavior", "evt-1", timestamp=1000.0)
-        records = det._records.get("agent-1", [])
+        records = det.records.get("agent-1", [])
         assert len(records) == 1
         assert records[0].agent_id == "agent-1"
         assert records[0].phase == ReboundPhase.VIOLATION
@@ -83,14 +83,14 @@ class TestRecord:
         before = time.time()
         det.record("agent-1", "improvement", "low")
         after = time.time()
-        records = det._records["agent-1"]
+        records = det.records["agent-1"]
         assert before <= records[0].timestamp <= after
 
     def test_multiple_records_for_same_agent(self):
         det = ReboundDetector()
         det.record("agent-1", "violation", "high", timestamp=1000.0)
         det.record("agent-1", "improvement", "low", timestamp=2000.0)
-        assert len(det._records["agent-1"]) == 2
+        assert len(det.records["agent-1"]) == 2
 
 
 class TestDetectRebound:
@@ -185,7 +185,7 @@ class TestReboundDetectorBoundary:
         now = time.time()
         det.record("agent-1", "violation", "high", timestamp=now - 20 * 86400)
         det.record("agent-1", "improvement", "low", timestamp=now)
-        records = det._records["agent-1"]
+        records = det.records["agent-1"]
         assert all(r.timestamp >= now - 10 * 86400 for r in records)
 
     def test_empty_agent_records_returns_no_detection(self):

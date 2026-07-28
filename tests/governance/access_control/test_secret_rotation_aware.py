@@ -50,11 +50,11 @@ class TestStaleSecret:
 class TestSecretRotationAwareInit:
     def test_default_project_root(self):
         scanner = SecretRotationAware()
-        assert scanner._project_root == Path.cwd()
+        assert scanner.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         scanner = SecretRotationAware(project_root=tmp_path)
-        assert scanner._project_root == tmp_path
+        assert scanner.project_root == tmp_path
 
 
 class TestScan:

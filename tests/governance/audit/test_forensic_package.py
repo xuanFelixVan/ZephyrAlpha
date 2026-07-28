@@ -22,11 +22,11 @@ from zephyr.gov_audit.forensic_package import ForensicPackage
 class TestForensicPackageInstantiation:
     def test_init_creates_empty_events_list(self):
         fp = ForensicPackage()
-        assert fp._events == []
+        assert fp.events == []
 
     def test_init_creates_empty_chain_list(self):
         fp = ForensicPackage()
-        assert fp._chain == []
+        assert fp.chain == []
 
 
 class TestForensicPackageBundle:
@@ -40,27 +40,27 @@ class TestForensicPackageBundle:
     def test_bundle_appends_event_to_internal_list(self):
         fp = ForensicPackage()
         fp.bundle({"rule_id": "R001"})
-        assert len(fp._events) == 1
-        assert fp._events[0]["event"] == {"rule_id": "R001"}
+        assert len(fp.events) == 1
+        assert fp.events[0]["event"] == {"rule_id": "R001"}
 
     def test_bundle_event_has_timestamp(self):
         fp = ForensicPackage()
         fp.bundle({"rule_id": "R001"})
-        assert "timestamp" in fp._events[0]
-        assert fp._events[0]["timestamp"].startswith("2")
+        assert "timestamp" in fp.events[0]
+        assert fp.events[0]["timestamp"].startswith("2")
 
     def test_bundle_event_has_hash_field(self):
         fp = ForensicPackage()
         fp.bundle({"rule_id": "R001"})
-        assert "hash" in fp._events[0]
-        assert len(fp._events[0]["hash"]) == 64
+        assert "hash" in fp.events[0]
+        assert len(fp.events[0]["hash"]) == 64
 
     def test_bundle_multiple_events_grows_chain(self):
         fp = ForensicPackage()
         fp.bundle({"rule_id": "R001"})
         fp.bundle({"rule_id": "R002"})
         fp.bundle({"rule_id": "R003"})
-        assert len(fp._chain) == 3
+        assert len(fp.chain) == 3
 
     def test_bundle_first_event_hash_is_sha256_of_serialized(self):
         fp = ForensicPackage()
@@ -122,14 +122,14 @@ class TestForensicPackageVerifyChain:
         fp = ForensicPackage()
         fp.bundle({"rule_id": "R001"})
         fp.bundle({"rule_id": "R002"})
-        fp._events[1]["event"] = {"rule_id": "TAMPERED"}
+        fp.events[1]["event"] = {"rule_id": "TAMPERED"}
         assert fp.verify_chain() is False
 
     def test_verify_chain_tampered_hash_detected(self):
         fp = ForensicPackage()
         fp.bundle({"rule_id": "R001"})
         fp.bundle({"rule_id": "R002"})
-        fp._chain[1] = "0" * 64
+        fp.chain[1] = "0" * 64
         assert fp.verify_chain() is False
 
     def test_verify_chain_after_ten_bundles(self):

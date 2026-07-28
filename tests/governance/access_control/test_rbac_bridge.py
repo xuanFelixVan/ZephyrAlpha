@@ -46,7 +46,7 @@ class TestRBACCheckResultInit:
 class TestEscalationRBACBridgeInit:
     def test_creates_instance_without_dependencies(self):
         bridge = EscalationRBACBridge()
-        assert bridge._guard is not None or bridge._guard is None
+        assert bridge.guard is not None or bridge.guard is None
 
 
 class TestRequestEscalation:
@@ -87,7 +87,7 @@ class TestPreExecuteCheck:
     def test_pass_through_when_no_rbac(self):
         bridge = EscalationRBACBridge()
         result = bridge.pre_execute_check("session-1", "read_file")
-        if bridge._guard is None:
+        if bridge.guard is None:
             assert result.passed is True
             assert "pass-through" in result.reason
 

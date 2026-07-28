@@ -21,49 +21,49 @@ from zephyr.governance.architecture_governance.gap_analyzer import GapAnalyzer
 class TestGapAnalyzerInstantiation:
     def test_init_creates_empty_covered_operations(self):
         ga = GapAnalyzer()
-        assert ga._covered_operations == set()
+        assert ga.covered_operations == set()
 
     def test_init_creates_empty_observed_operations(self):
         ga = GapAnalyzer()
-        assert ga._observed_operations == set()
+        assert ga.observed_operations == set()
 
 
 class TestGapAnalyzerRegisterCoverage:
     def test_register_single_operation(self):
         ga = GapAnalyzer()
         ga.register_coverage("read")
-        assert "read" in ga._covered_operations
+        assert "read" in ga.covered_operations
 
     def test_register_multiple_operations(self):
         ga = GapAnalyzer()
         ga.register_coverage("read")
         ga.register_coverage("write")
-        assert ga._covered_operations == {"read", "write"}
+        assert ga.covered_operations == {"read", "write"}
 
     def test_register_duplicate_operation_idempotent(self):
         ga = GapAnalyzer()
         ga.register_coverage("read")
         ga.register_coverage("read")
-        assert len(ga._covered_operations) == 1
+        assert len(ga.covered_operations) == 1
 
 
 class TestGapAnalyzerObserveOperation:
     def test_observe_single_operation(self):
         ga = GapAnalyzer()
         ga.observe_operation("read")
-        assert "read" in ga._observed_operations
+        assert "read" in ga.observed_operations
 
     def test_observe_multiple_operations(self):
         ga = GapAnalyzer()
         ga.observe_operation("read")
         ga.observe_operation("write")
-        assert ga._observed_operations == {"read", "write"}
+        assert ga.observed_operations == {"read", "write"}
 
     def test_observe_duplicate_idempotent(self):
         ga = GapAnalyzer()
         ga.observe_operation("read")
         ga.observe_operation("read")
-        assert len(ga._observed_operations) == 1
+        assert len(ga.observed_operations) == 1
 
 
 class TestGapAnalyzerFindGaps:

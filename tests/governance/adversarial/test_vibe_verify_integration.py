@@ -17,11 +17,11 @@ from zephyr.governance.security_governance.vibe_verify_integration import VibeVe
 class TestVibeVerifyIntegrationInstantiation:
     def test_default_scan_count_is_zero(self):
         obj = VibeVerifyIntegration()
-        assert obj._scan_count == 0
+        assert obj.scan_count == 0
 
     def test_default_violations_patched_is_zero(self):
         obj = VibeVerifyIntegration()
-        assert obj._violations_patched == 0
+        assert obj.violations_patched == 0
 
     def test_patch_count_property_initial_zero(self):
         obj = VibeVerifyIntegration()
@@ -54,7 +54,7 @@ class TestScanAndPatch:
         obj.scan_and_patch("x=1")
         obj.scan_and_patch("eval('1')")
         obj.scan_and_patch("x=2")
-        assert obj._scan_count == 3
+        assert obj.scan_count == 3
 
     def test_patch_count_accumulates_across_scans(self):
         obj = VibeVerifyIntegration()

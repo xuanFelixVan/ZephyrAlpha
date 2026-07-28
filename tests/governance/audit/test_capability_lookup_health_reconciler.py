@@ -323,7 +323,7 @@ class TestRegistrationInGateway:
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
         gw = GitCommitGateway(project_root=tmp_path)
-        gate_ids = [s.gate_id for s in gw._reconciliation_registry._specs]
+        gate_ids = [s.gate_id for s in gw.reconciliation_registry._specs]
         assert "CAPABILITY-LOOKUP-HEALTH" in gate_ids, (
             f"CAPABILITY-LOOKUP-HEALTH not registered, got: {gate_ids}"
         )

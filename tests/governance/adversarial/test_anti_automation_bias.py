@@ -68,20 +68,20 @@ class TestEvaluate:
 
     def test_fatigued_level_blocks(self):
         ab = AntiAutomationBias()
-        ab._fatigue_level = FatigueLevel.FATIGUED
+        ab.fatigue_level = FatigueLevel.FATIGUED
         result = ab.evaluate("op-1", is_autonomous=True)
         assert result.action == OversightAction.BLOCK_AND_NOTIFY
 
     def test_elevated_level_forces_review(self):
         ab = AntiAutomationBias()
-        ab._fatigue_level = FatigueLevel.ELEVATED
+        ab.fatigue_level = FatigueLevel.ELEVATED
         result = ab.evaluate("op-1", is_autonomous=True)
         assert result.action == OversightAction.FORCE_REVIEW
         assert result.forced_review is True
 
     def test_mechanical_confirmation_forces_review(self):
         ab = AntiAutomationBias(forced_review_ratio=0.0)
-        ab._consecutive_confirms = 10
+        ab.consecutive_confirms = 10
         result = ab.evaluate("op-1", is_autonomous=True)
         assert result.action == OversightAction.FORCE_REVIEW
         assert "Mechanical confirmation" in result.reason
@@ -91,25 +91,25 @@ class TestRecordReview:
     def test_confirmed_safe_increments_consecutive(self):
         ab = AntiAutomationBias()
         ab.record_review("op-1", ReviewDecision.CONFIRMED_SAFE, response_time_s=2.0)
-        assert ab._consecutive_confirms == 1
+        assert ab.consecutive_confirms == 1
 
     def test_overridden_resets_consecutive(self):
         ab = AntiAutomationBias()
-        ab._consecutive_confirms = 5
+        ab.consecutive_confirms = 5
         ab.record_review("op-1", ReviewDecision.OVERRIDDEN, response_time_s=1.0)
-        assert ab._consecutive_confirms == 0
+        assert ab.consecutive_confirms == 0
 
     def test_timed_out_does_not_update_consecutive(self):
         ab = AntiAutomationBias()
-        ab._consecutive_confirms = 3
+        ab.consecutive_confirms = 3
         ab.record_review("op-1", ReviewDecision.TIMED_OUT, response_time_s=30.0)
-        assert ab._consecutive_confirms == 3
+        assert ab.consecutive_confirms == 3
 
     def test_response_times_capped_at_20(self):
         ab = AntiAutomationBias()
         for i in range(25):
             ab.record_review(f"op-{i}", ReviewDecision.CONFIRMED_SAFE, response_time_s=1.0)
-        assert len(ab._last_response_times) <= 20
+        assert len(ab.last_response_times) <= 20
 
 
 class TestRecordAuditFeedback:
@@ -117,7 +117,7 @@ class TestRecordAuditFeedback:
         ab = AntiAutomationBias()
         ab.record_review("op-1", ReviewDecision.CONFIRMED_SAFE, response_time_s=1.0)
         ab.record_audit_feedback("op-1", actually_unsafe=True)
-        for rec in ab._review_records:
+        for rec in ab.review_records:
             if rec.operation_id == "op-1":
                 assert rec.was_safe_in_audit is False
 
@@ -125,7 +125,7 @@ class TestRecordAuditFeedback:
         ab = AntiAutomationBias()
         ab.record_review("op-1", ReviewDecision.CONFIRMED_SAFE, response_time_s=1.0)
         ab.record_audit_feedback("op-1", actually_unsafe=False)
-        for rec in ab._review_records:
+        for rec in ab.review_records:
             if rec.operation_id == "op-1":
                 assert rec.was_safe_in_audit is True
 
@@ -296,4 +296,4 @@ class TestBoundary:
         ab = AntiAutomationBias()
         for i in range(100):
             ab.record_review(f"op-{i}", ReviewDecision.CONFIRMED_SAFE, response_time_s=1.0)
-        assert len(ab._review_records) == 100
+        assert len(ab.review_records) == 100

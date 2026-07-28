@@ -529,13 +529,13 @@ class TestGetDefaultLibrary:
         assert lib.is_empty is True
         # 验证路径正确
         expected_path = tmp_path / ".runtime" / "ai_error_patterns" / "aggregated_patterns.json"
-        assert lib._path == expected_path  # noqa: SLF001 — 测试需要验证内部路径
+        assert lib.path == expected_path  # noqa: SLF001 — 测试需要验证内部路径
 
     def test_custom_project_root(self, tmp_path: Path) -> None:
         """显式 project_root 优先。"""
         lib = get_default_library(project_root=tmp_path)
         expected_path = tmp_path / ".runtime" / "ai_error_patterns" / "aggregated_patterns.json"
-        assert lib._path == expected_path  # noqa: SLF001
+        assert lib.path == expected_path  # noqa: SLF001
         assert lib.is_empty is True
 
     def test_loads_existing_file(self, tmp_path: Path) -> None:

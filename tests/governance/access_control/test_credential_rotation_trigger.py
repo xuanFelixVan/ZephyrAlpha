@@ -84,11 +84,11 @@ class TestCredentialPatterns:
 class TestCredentialRotationTriggerInstantiation:
     def test_default_project_root(self):
         crt = CredentialRotationTrigger()
-        assert crt._project_root == Path.cwd()
+        assert crt.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         crt = CredentialRotationTrigger(project_root=tmp_path)
-        assert crt._project_root == tmp_path
+        assert crt.project_root == tmp_path
 
     def test_exit_code_constant(self):
         assert CredentialRotationTrigger.EXIT_CODE_CREDENTIAL_LEAK == 43

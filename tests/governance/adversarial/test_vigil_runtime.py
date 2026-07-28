@@ -19,19 +19,19 @@ from zephyr.gov_drift.vigil_runtime import VigilRuntime
 class TestVigilRuntimeInstantiation:
     def test_default_token_budget(self):
         obj = VigilRuntime()
-        assert obj._token_budget == 2000
+        assert obj.token_budget == 2000
 
     def test_default_tokens_used_zero(self):
         obj = VigilRuntime()
-        assert obj._tokens_used == 0
+        assert obj.tokens_used == 0
 
     def test_default_override_window_closed(self):
         obj = VigilRuntime()
-        assert obj._override_window_open is False
+        assert obj.override_window_open is False
 
     def test_default_override_expiry_zero(self):
         obj = VigilRuntime()
-        assert obj._override_expiry == 0.0
+        assert obj.override_expiry == 0.0
 
     def test_override_active_initially_false(self):
         obj = VigilRuntime()
@@ -64,7 +64,7 @@ class TestConsume:
     def test_failed_consume_does_not_increment(self):
         obj = VigilRuntime()
         obj.consume(2001)
-        assert obj._tokens_used == 0
+        assert obj.tokens_used == 0
 
     def test_remaining_tokens_after_consume(self):
         obj = VigilRuntime()
@@ -103,12 +103,12 @@ class TestOverrideWindow:
     def test_default_duration(self):
         obj = VigilRuntime()
         obj.open_override_window()
-        assert obj._override_expiry > time.time()
+        assert obj.override_expiry > time.time()
 
     def test_override_window_open_flag(self):
         obj = VigilRuntime()
         obj.open_override_window(600)
-        assert obj._override_window_open is True
+        assert obj.override_window_open is True
 
 
 class TestConsumeBoundary:
@@ -125,5 +125,5 @@ class TestConsumeBoundary:
     def test_negative_tokens_consume(self):
         obj = VigilRuntime()
         result = obj.consume(-1)
-        assert obj._tokens_used == -1
+        assert obj.tokens_used == -1
         assert result is True

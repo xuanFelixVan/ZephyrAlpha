@@ -57,7 +57,7 @@ class TestGenesisManagerInit:
 
     def test_default_system_id(self, tmp_path):
         manager = GenesisManager(data_dir=tmp_path / "g1")
-        assert manager._system_id == "zephyr-alpha"
+        assert manager.system_id == "zephyr-alpha"
 
 
 class TestCreateGenesis:
