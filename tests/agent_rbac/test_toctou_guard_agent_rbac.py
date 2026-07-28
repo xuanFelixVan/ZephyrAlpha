@@ -50,6 +50,6 @@ class TestTOCTOUGuard:
 
     def test_clear(self):
         guard = TOCTOUGuard()
-        guard._pre_state["test"] = None
+        guard.pre_state["test"] = None
         guard.clear()
-        assert len(guard._pre_state) == 0
+        assert len(guard.pre_state) == 0

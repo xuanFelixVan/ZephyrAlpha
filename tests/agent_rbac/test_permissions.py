@@ -68,8 +68,8 @@ def _setup_guard(tmp_path, monkeypatch):
     from zephyr.security.access_control.immutable_core import ImmutableCore
 
     guard = PermissionGuard()
-    guard._l0 = ImmutableCore(project_root=tmp_path)
-    guard._l1 = type(guard._l1)(immutable_core=guard._l0)
+    guard.l0 = ImmutableCore(project_root=tmp_path)
+    guard.l1 = type(guard.l1)(immutable_core=guard.l0)
     return guard
 
 
@@ -93,13 +93,13 @@ class TestPermissionAutomation:
 
         agent = AgentIdentity(session_id="admin", maturity=MaturityLevel.L2_REGULAR, role=AgentRole.ADMIN)
         ks = get_kill_switch()
-        ks._status.global_tripped = True
+        ks.status.global_tripped = True
         try:
             guard = _setup_guard(tmp_path, monkeypatch)
             result = guard.check(agent, "read", "any")
             assert result is not None
         finally:
-            ks._status.global_tripped = False
+            ks.status.global_tripped = False
 
     def test_dry_run_no_side_effects(self):
         from zephyr.security.access_control.dry_run import DryRunSimulator
@@ -149,7 +149,7 @@ class TestPermissionAutomation:
         from zephyr.security.access_control.guard_layers import ColdStartLock
 
         lock = ColdStartLock()
-        assert lock._locked is True
+        assert lock.locked is True
 
     def test_toctou_guard(self):
         from zephyr.security.access_control.guards.toctou_guard import TOCTOUGuard

@@ -49,12 +49,12 @@ class TestAnomalyResult:
 class TestAnomalyDetectorInstantiation:
     def test_default_path(self):
         detector = AnomalyDetector()
-        assert detector._event_log_path == Path("data/audit-trail/events.jsonl")
+        assert detector.event_log_path == Path("data/audit-trail/events.jsonl")
 
     def test_custom_path(self, tmp_path):
         p = tmp_path / "custom.jsonl"
         detector = AnomalyDetector(p)
-        assert detector._event_log_path == p
+        assert detector.event_log_path == p
 
 
 class TestAnomalyDetectorScan:

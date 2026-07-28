@@ -17,7 +17,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 class TestMultiIDERuleGenerator:
     def test_constructor(self) -> None:
         gen = MultiIDERuleGenerator(REPO_ROOT)
-        assert gen._root
+        assert gen.root
 
     def test_generate_cursor_rules(self, tmp_path) -> None:
         gen = MultiIDERuleGenerator(REPO_ROOT)

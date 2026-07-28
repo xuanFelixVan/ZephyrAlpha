@@ -95,7 +95,7 @@ class TestWhitelist:
     def test_whitelist_basic(self):
         guard = SequenceGuard()
         guard.add_whitelist(["read:docs", "write:docs"])
-        assert len(guard._whitelist) == 1
+        assert len(guard.whitelist) == 1
 
 
 class TestReset:

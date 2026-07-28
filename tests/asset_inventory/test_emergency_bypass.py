@@ -28,7 +28,7 @@ class TestBypassState:
 class TestBypassManager:
     def test_constructor(self) -> None:
         bm = BypassManager(REPO_ROOT)
-        assert bm._override_path
+        assert bm.override_path
 
     def test_not_bypass_when_no_file(self, tmp_path) -> None:
         bm = BypassManager(tmp_path)

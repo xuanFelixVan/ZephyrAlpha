@@ -113,21 +113,21 @@ class TestAgentRouterUpdateLoad:
         router = AgentRouter()
         router.register(AgentProfile(agent_id="a1", role=AgentRole.ARCHITECT, current_load=1))
         router.update_load("a1", delta=2)
-        agents = [a for a in router._pool if a.agent_id == "a1"]
+        agents = [a for a in router.pool if a.agent_id == "a1"]
         assert agents[0].current_load == 3
 
     def test_update_load_decrease(self):
         router = AgentRouter()
         router.register(AgentProfile(agent_id="a1", role=AgentRole.ARCHITECT, current_load=3))
         router.update_load("a1", delta=-2)
-        agents = [a for a in router._pool if a.agent_id == "a1"]
+        agents = [a for a in router.pool if a.agent_id == "a1"]
         assert agents[0].current_load == 1
 
     def test_update_load_floor_zero(self):
         router = AgentRouter()
         router.register(AgentProfile(agent_id="a1", role=AgentRole.ARCHITECT, current_load=0))
         router.update_load("a1", delta=-5)
-        agents = [a for a in router._pool if a.agent_id == "a1"]
+        agents = [a for a in router.pool if a.agent_id == "a1"]
         assert agents[0].current_load == 0
 
     def test_update_load_nonexistent_agent(self):

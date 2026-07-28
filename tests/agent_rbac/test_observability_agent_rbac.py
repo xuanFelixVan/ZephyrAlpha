@@ -29,7 +29,7 @@ class TestMetrics:
     def test_noise_recording(self):
         reporter = ObservabilityReporter()
         reporter.record_noise("test_source")
-        assert reporter._noise_count == 1
+        assert reporter.noise_count == 1
 
     def test_signal_noise_alert_with_high_noise(self):
         reporter = ObservabilityReporter()

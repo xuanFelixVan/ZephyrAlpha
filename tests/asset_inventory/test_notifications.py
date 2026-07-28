@@ -111,8 +111,8 @@ class TestSmtpEmailChannel:
 class TestNotificationManager:
     def test_constructor_console_only(self) -> None:
         mgr = NotificationManager(console=True)
-        assert len(mgr._channels) == 1
-        assert mgr._channels[0].channel_name == "console"
+        assert len(mgr.channels) == 1
+        assert mgr.channels[0].channel_name == "console"
 
     def test_notify_all(self) -> None:
         mgr = NotificationManager(console=True)
@@ -137,6 +137,6 @@ class TestNotificationManager:
             smtp_host="smtp.example.com",
             email_to=["to@example.com"],
         )
-        names = {ch.channel_name for ch in mgr._channels}
+        names = {ch.channel_name for ch in mgr.channels}
         assert "console" in names
         assert "email" in names

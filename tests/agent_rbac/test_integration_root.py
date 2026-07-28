@@ -90,4 +90,4 @@ class TestIntegrationManager:
         mgr = IntegrationManager()
         mgr.register_all()
         for key in ["audit-trail", "rollback_system", "circuit_breaker"]:
-            assert key in mgr._integrations
+            assert key in mgr.integrations

@@ -98,7 +98,7 @@ class TestCircuitBreakerInstantiation:
 
     def test_initial_failure_count_is_zero(self):
         cb = CircuitBreaker()
-        assert cb._failure_count == 0
+        assert cb.failure_count == 0
 
 
 class TestCircuitBreakerRecordFailure:
@@ -130,7 +130,7 @@ class TestCircuitBreakerRecordFailure:
         for _ in range(5):
             cb.record_failure()
         assert cb.state == CircuitBreakerState.OPEN
-        assert cb._failure_count == 5
+        assert cb.failure_count == 5
 
     def test_boundary_one_below_threshold(self):
         cb = CircuitBreaker()
@@ -168,7 +168,7 @@ class TestCircuitBreakerRecordSuccess:
             cb.record_failure()
         cb.attempt_reset()
         cb.record_success()
-        assert cb._failure_count == 0
+        assert cb.failure_count == 0
 
     def test_success_from_open_does_not_close(self):
         cb = CircuitBreaker()

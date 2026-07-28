@@ -28,11 +28,11 @@ class TestAiAuditLoggerInit:
 
     def test_session_id_default(self, tmp_path):
         logger = AiAuditLogger(log_dir=tmp_path)
-        assert logger._session_id == ""
+        assert logger.session_id == ""
 
     def test_session_id_custom(self, tmp_path):
         logger = AiAuditLogger(log_dir=tmp_path, session_id="sess-001")
-        assert logger._session_id == "sess-001"
+        assert logger.session_id == "sess-001"
 
 
 class TestAiAuditLoggerLogInference:

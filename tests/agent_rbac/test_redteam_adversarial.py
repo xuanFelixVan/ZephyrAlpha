@@ -231,7 +231,7 @@ class TestPhase4_CrossCuttingBypass:
     def test_crosscut_a_hooks_registered(self):
         hooks = PermissionHooks()
         hooks.register_defaults()
-        all_hooks = hooks._hooks
+        all_hooks = hooks.hooks
         total = sum(len(v) for v in all_hooks.values())
         assert total >= 8, f"Cross-A FAIL: only {total} hooks registered (expected >=8)"
 

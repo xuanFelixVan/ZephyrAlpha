@@ -17,7 +17,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 class TestKnowledgeTransferGate:
     def test_constructor(self) -> None:
         gate = KnowledgeTransferGate(REPO_ROOT)
-        assert gate._root
+        assert gate.root
 
     def test_generate_summary(self) -> None:
         gate = KnowledgeTransferGate(REPO_ROOT)
