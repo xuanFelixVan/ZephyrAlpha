@@ -149,6 +149,11 @@ class BudgetEngine:
         """当前降级等级（只读视图）。"""
         return self._current_degradation_level
 
+    @property
+    def active_step_idx(self) -> int:
+        """当前降级阶梯索引（public API, Stage 4 公共化）。"""
+        return self._active_step_idx
+
     @classmethod
     def ensure_initialized(cls) -> "BudgetEngine":
         """确保 BudgetEngine 已初始化并返回实例（幂等）。"""
@@ -394,7 +399,7 @@ class BudgetEngine:
 
         # IPI 检查——若 prompt 含注入攻击，直接 DENY 并触发隔离
         if prompt:
-            if self._check_ipi_attack(prompt):
+            if self.check_ipi_attack(prompt):
                 return GateResult(
                     request_id=request_id,
                     decision=GateDecision.DENY,
@@ -492,7 +497,7 @@ class BudgetEngine:
         # 事件驱动响应链 1: 预算超限 -> 自动降级
         self._check_budget_exceeded()
         # 事件驱动响应链 3: 螺旋预警 -> 自动告警/降级
-        self._check_spiral_warning(tokens, cost)
+        self.check_spiral_warning(tokens, cost)
 
     def get_model_router_recommendation(self) -> tuple[ModelTier, int]:
         step = self._degradation_steps[self._active_step_idx]
@@ -726,8 +731,8 @@ class BudgetEngine:
                 with self._lock:
                     self._alerts.append(alert)
 
-    def _check_ipi_attack(self, prompt: str) -> bool:
-        """响应链 2: IPI 攻击 -> 自动隔离。
+    def check_ipi_attack(self, prompt: str) -> bool:
+        """响应链 2: IPI 攻击 -> 自动隔离（Stage 4 公共化，primary）。
 
         检测到 IPI 攻击时，降级强制推进到 L4_EMERGENCY。
         返回 True 表示检测到攻击。
@@ -761,8 +766,8 @@ class BudgetEngine:
             return True
         return False
 
-    def _check_spiral_warning(self, tokens: int, cost: float) -> None:
-        """响应链 3: 螺旋预警 -> 自动告警/降级。
+    def check_spiral_warning(self, tokens: int, cost: float) -> None:
+        """响应链 3: 螺旋预警 -> 自动告警/降级（Stage 4 公共化，primary）。
 
         喂入消费数据到 SpiralEWS，检测到 WARNING/CRITICAL 时创建告警。
         """
@@ -795,6 +800,14 @@ class BudgetEngine:
 
             if signal.level == "CRITICAL" and self._spiral_ews.is_spiraling():
                 self.advance_degradation()
+
+    def _check_ipi_attack(self, prompt: str) -> bool:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_ipi_attack(prompt)
+
+    def _check_spiral_warning(self, tokens: int, cost: float) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        self.check_spiral_warning(tokens, cost)
 
 
 # ── EventBusBackpressure 订阅 (DM-2507-B) ──────────────────────────────
