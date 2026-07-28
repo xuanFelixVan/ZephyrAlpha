@@ -35,7 +35,7 @@ class TestNonExistentSkill:
         """请求不存在的 skill_id → 应抛出 KeyError."""
         loader = SkillLoader()
         with pytest.raises(KeyError):
-            loader._resolve_skill_path("nonexistent-skill-99999")
+            loader.resolve_skill_path("nonexistent-skill-99999")
 
     def test_progressive_load_nonexistent_raises(self):
         """progressive_load 不存在的 skill → 应抛出异常."""
@@ -51,13 +51,13 @@ class TestEmptyNullInputs:
         """空字符串 skill_id → 应抛出 KeyError."""
         loader = SkillLoader()
         with pytest.raises(KeyError):
-            loader._resolve_skill_path("")
+            loader.resolve_skill_path("")
 
     def test_skill_id_with_only_spaces(self):
         """纯空格 skill_id → 应抛出 KeyError."""
         loader = SkillLoader()
         with pytest.raises(KeyError):
-            loader._resolve_skill_path("   ")
+            loader.resolve_skill_path("   ")
 
 
 class TestTokenBudget:
@@ -71,7 +71,7 @@ class TestTokenBudget:
     def test_token_budget_for_skills(self):
         """检查已注册技能对的 token budget——处理缺失文件."""
         loader = SkillLoader()
-        reg_data = loader._load_registry()
+        reg_data = loader.load_registry()
         domain_skills = list(reg_data.get("skills", {}).get("domain", {}).keys())
         role_skills = list(reg_data.get("skills", {}).get("role", {}).keys())
 
@@ -93,7 +93,7 @@ class TestRegistryIntegrity:
     def test_all_registered_skills_integrity_report(self):
         """审计所有已注册技能——报告缺失/可加载的状态."""
         loader = SkillLoader()
-        reg_data = loader._load_registry()
+        reg_data = loader.load_registry()
         skills = reg_data.get("skills", {})
         all_skills: list[str] = []
         for category in ("domain", "role"):
@@ -144,17 +144,17 @@ class TestFrontmatterParsing:
     def test_no_frontmatter_returns_empty(self):
         """无 frontmatter 的内容 → 返回空字典."""
         loader = SkillLoader()
-        result = loader._parse_yaml_frontmatter("Just plain text, no YAML")
+        result = loader.parse_yaml_frontmatter("Just plain text, no YAML")
         assert result == {}
 
     def test_malformed_yaml_frontmatter(self):
         """格式错误的 YAML frontmatter → 应优雅降级而非崩溃."""
         loader = SkillLoader()
         with pytest.raises((yaml.YAMLError, yaml.parser.ParserError)):
-            loader._parse_yaml_frontmatter("---\nkey: [unclosed bracket\n---\nbody")
+            loader.parse_yaml_frontmatter("---\nkey: [unclosed bracket\n---\nbody")
 
     def test_empty_frontmatter(self):
         """空的 frontmatter 块 → 返回空字典."""
         loader = SkillLoader()
-        result = loader._parse_yaml_frontmatter("---\n---\nbody")
+        result = loader.parse_yaml_frontmatter("---\n---\nbody")
         assert result == {}

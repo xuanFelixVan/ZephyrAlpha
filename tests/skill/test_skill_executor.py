@@ -293,24 +293,24 @@ class TestSkillExecutorExecute:
 class TestSkillExecutorInferPermission:
     def test_admin_permission(self):
         ex = SkillExecutor(loader=MagicMock())
-        assert ex._infer_permission(["Execute", "Read"]) == PermissionLevel.ADMIN
+        assert ex.infer_permission(["Execute", "Read"]) == PermissionLevel.ADMIN
 
     def test_code_modify_permission(self):
         ex = SkillExecutor(loader=MagicMock())
-        assert ex._infer_permission(["Write", "Read"]) == PermissionLevel.CODE_MODIFY
+        assert ex.infer_permission(["Write", "Read"]) == PermissionLevel.CODE_MODIFY
 
     def test_read_only_permission(self):
         ex = SkillExecutor(loader=MagicMock())
-        assert ex._infer_permission(["Read", "Grep"]) == PermissionLevel.READ_ONLY
+        assert ex.infer_permission(["Read", "Grep"]) == PermissionLevel.READ_ONLY
 
     def test_runcommand_admin(self):
         ex = SkillExecutor(loader=MagicMock())
-        assert ex._infer_permission(["RunCommand"]) == PermissionLevel.ADMIN
+        assert ex.infer_permission(["RunCommand"]) == PermissionLevel.ADMIN
 
     def test_searchreplace_code_modify(self):
         ex = SkillExecutor(loader=MagicMock())
-        assert ex._infer_permission(["SearchReplace"]) == PermissionLevel.CODE_MODIFY
+        assert ex.infer_permission(["SearchReplace"]) == PermissionLevel.CODE_MODIFY
 
     def test_empty_tools(self):
         ex = SkillExecutor(loader=MagicMock())
-        assert ex._infer_permission([]) == PermissionLevel.READ_ONLY
+        assert ex.infer_permission([]) == PermissionLevel.READ_ONLY

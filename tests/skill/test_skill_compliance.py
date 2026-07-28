@@ -30,34 +30,34 @@ class TestSkillComplianceInit:
 
 class TestCheckPii:
     def test_no_pii_in_clean_content(self):
-        result = SkillCompliance._check_pii("hello world")
+        result = SkillCompliance.check_pii("hello world")
         assert result["pii_detected"] is False
         assert result["findings"] == []
 
     def test_email_detected(self):
-        result = SkillCompliance._check_pii("contact user@example.com for info")
+        result = SkillCompliance.check_pii("contact user@example.com for info")
         assert result["pii_detected"] is True
         assert any(f["type"] == "email" for f in result["findings"])
 
     def test_credit_card_detected(self):
-        result = SkillCompliance._check_pii("card number 4111222233334444 on file")
+        result = SkillCompliance.check_pii("card number 4111222233334444 on file")
         assert result["pii_detected"] is True
         assert any(f["type"] == "credit_card" for f in result["findings"])
 
     def test_multiple_pii_types(self):
-        result = SkillCompliance._check_pii("email: user@example.com card: 4111222233334444")
+        result = SkillCompliance.check_pii("email: user@example.com card: 4111222233334444")
         assert result["pii_detected"] is True
         types = {f["type"] for f in result["findings"]}
         assert "email" in types
         assert "credit_card" in types
 
     def test_empty_string(self):
-        result = SkillCompliance._check_pii("")
+        result = SkillCompliance.check_pii("")
         assert result["pii_detected"] is False
         assert result["findings"] == []
 
     def test_pii_value_truncated(self):
-        result = SkillCompliance._check_pii("user: averylongemailaddress@verylongdomain.example.com")
+        result = SkillCompliance.check_pii("user: averylongemailaddress@verylongdomain.example.com")
         for f in result["findings"]:
             if f["type"] == "email":
                 assert f["value"].endswith("...")

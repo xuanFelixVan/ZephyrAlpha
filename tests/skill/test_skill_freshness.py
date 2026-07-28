@@ -139,7 +139,7 @@ class TestLoadSave:
     def test_load_nonexistent_returns_empty(self, tmp_path):
         fdm = FreshnessDecayModel()
         with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", tmp_path / "nonexistent.json"):
-            result = fdm._load()
+            result = fdm.load()
         assert result == {}
 
     def test_load_valid_json(self, tmp_path):
@@ -149,7 +149,7 @@ class TestLoadSave:
         )
         fdm = FreshnessDecayModel()
         with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", hist):
-            result = fdm._load()
+            result = fdm.load()
         assert "SKILL-X" in result
 
     def test_load_corrupt_json_returns_empty(self, tmp_path):
@@ -157,7 +157,7 @@ class TestLoadSave:
         hist.write_text("not valid json{{{", encoding="utf-8")
         fdm = FreshnessDecayModel()
         with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", hist):
-            result = fdm._load()
+            result = fdm.load()
         assert result == {}
 
     def test_save_and_load_roundtrip(self, tmp_path):
@@ -165,6 +165,6 @@ class TestLoadSave:
         fdm = FreshnessDecayModel()
         data = {"SKILL-RT": {"last_validated": "2025-06-01T00:00:00+00:00", "boost": 30}}
         with patch("zephyr.autonomy_core.skills.skill_freshness._HISTORY", hist):
-            fdm._save(data)
-            loaded = fdm._load()
+            fdm.save(data)
+            loaded = fdm.load()
         assert loaded == data

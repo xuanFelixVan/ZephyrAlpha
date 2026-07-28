@@ -57,12 +57,12 @@ class TestConstructionStage:
 class TestSkillRouterInstantiation:
     def test_default_construction(self):
         router = SkillRouter()
-        assert router._registry_path is not None
+        assert router.registry_path is not None
 
     def test_custom_registry_path(self):
         custom_path = Path("/tmp/fake_registry.yaml")
         router = SkillRouter(registry_path=custom_path)
-        assert router._registry_path == custom_path
+        assert router.registry_path == custom_path
 
     def test_trigger_router_alias(self):
         assert TriggerRouter is SkillRouter

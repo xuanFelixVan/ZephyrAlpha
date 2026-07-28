@@ -116,7 +116,7 @@ class TestSkillPostmortem:
         assert result["symptom_category"] == "security"
 
     def test_infer_symptom_category_unknown(self):
-        result = SkillPostmortem._infer_symptom_category("something completely unexpected happened")
+        result = SkillPostmortem.infer_symptom_category("something completely unexpected happened")
         assert result == "unknown"
 
 

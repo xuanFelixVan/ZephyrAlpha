@@ -68,7 +68,7 @@ def tmp_registry_dir(tmp_path):
 @pytest.fixture
 def loader(tmp_registry_dir):
     sl = SkillLoader(registry_path=tmp_registry_dir / "skill-registry.yaml")
-    sl._l0_cache = None
+    sl.l0_cache = None
     return sl
 
 
@@ -98,7 +98,7 @@ class TestSkillLoaderInstantiation:
     def test_default_registry_path(self):
         sl = SkillLoader()
         assert sl.registry_path is not None
-        assert sl._l0_cache is None
+        assert sl.l0_cache is None
 
     def test_custom_registry_path(self, tmp_path):
         custom = tmp_path / "custom.yaml"

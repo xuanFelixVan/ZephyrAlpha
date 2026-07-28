@@ -204,19 +204,19 @@ class TestSkillCalibrationClearHistory:
 
 class TestSkillCalibrationTrendDirection:
     def test_insufficient_data(self):
-        assert SkillCalibration._trend_direction([0.1]) == "insufficient_data"
+        assert SkillCalibration.trend_direction([0.1]) == "insufficient_data"
 
     def test_increasing_overconfidence_all_positive(self):
-        assert SkillCalibration._trend_direction([0.1, 0.2, 0.3]) == "increasing_overconfidence"
+        assert SkillCalibration.trend_direction([0.1, 0.2, 0.3]) == "increasing_overconfidence"
 
     def test_increasing_underconfidence_all_negative(self):
-        assert SkillCalibration._trend_direction([-0.1, -0.2, -0.3]) == "increasing_underconfidence"
+        assert SkillCalibration.trend_direction([-0.1, -0.2, -0.3]) == "increasing_underconfidence"
 
     def test_stable_mixed(self):
-        assert SkillCalibration._trend_direction([0.1, -0.1, 0.1]) == "stable"
+        assert SkillCalibration.trend_direction([0.1, -0.1, 0.1]) == "stable"
 
     def test_ascending_sequence(self):
-        assert SkillCalibration._trend_direction([-0.1, 0.0, 0.1]) == "increasing_overconfidence"
+        assert SkillCalibration.trend_direction([-0.1, 0.0, 0.1]) == "increasing_overconfidence"
 
     def test_descending_sequence(self):
-        assert SkillCalibration._trend_direction([0.1, 0.0, -0.1]) == "increasing_underconfidence"
+        assert SkillCalibration.trend_direction([0.1, 0.0, -0.1]) == "increasing_underconfidence"

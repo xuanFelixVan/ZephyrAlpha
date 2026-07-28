@@ -29,45 +29,45 @@ class TestSkillContractInstantiation:
 class TestParseContracts:
     def test_parse_input_schema(self):
         body = "输入：\nname: str\nage: int\n\nOther text"
-        result = SkillContract._parse_contracts(body)
+        result = SkillContract.parse_contracts(body)
         assert "input_schema" in result
         assert "name" in result["input_schema"]
 
     def test_parse_output_schema(self):
         body = "输出：\nresult: dict\nstatus: str\n\nOther"
-        result = SkillContract._parse_contracts(body)
+        result = SkillContract.parse_contracts(body)
         assert "output_schema" in result
 
     def test_parse_side_effects(self):
         body = "副作用：\nWrites to database\nSends email\n\nOther"
-        result = SkillContract._parse_contracts(body)
+        result = SkillContract.parse_contracts(body)
         assert "side_effects" in result
 
     def test_parse_dependencies(self):
         body = "依赖：\nzephyr.shared\nzephyr.knowledge.kb\n\nOther"
-        result = SkillContract._parse_contracts(body)
+        result = SkillContract.parse_contracts(body)
         assert "dependencies" in result
 
     def test_parse_english_keywords(self):
         body = "input:\nname: str\n\noutput:\nresult: dict\n\nside_effects:\nNone\n\ndependencies:\nos, sys"
-        result = SkillContract._parse_contracts(body)
+        result = SkillContract.parse_contracts(body)
         assert "input_schema" in result
         assert "output_schema" in result
         assert "side_effects" in result
         assert "dependencies" in result
 
     def test_parse_empty_body(self):
-        result = SkillContract._parse_contracts("")
+        result = SkillContract.parse_contracts("")
         assert result == {}
 
     def test_parse_no_matching_sections(self):
-        result = SkillContract._parse_contracts("Just some random text\nwith no contract sections")
+        result = SkillContract.parse_contracts("Just some random text\nwith no contract sections")
         assert result == {}
 
     def test_parse_truncates_long_content(self):
         long_content = "x" * 600
         body = f"输入：\n{long_content}\n\nEnd"
-        result = SkillContract._parse_contracts(body)
+        result = SkillContract.parse_contracts(body)
         if "input_schema" in result:
             assert len(result["input_schema"]) <= 500
 

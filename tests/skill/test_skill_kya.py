@@ -17,8 +17,8 @@ from zephyr.autonomy_core.skills.skill_kya import RISKY, SkillKYA
 class TestSkillKYAInstantiation:
     def test_default_instantiation(self):
         kya = SkillKYA()
-        assert isinstance(kya._certs, dict)
-        assert len(kya._certs) == 0
+        assert isinstance(kya.certs, dict)
+        assert len(kya.certs) == 0
 
     def test_expire_days_constant(self):
         assert SkillKYA.EXPIRE_DAYS == 90
@@ -27,46 +27,46 @@ class TestSkillKYAInstantiation:
 class TestAssess:
     def test_basic_tier_no_risky_few_tools(self):
         kya = SkillKYA()
-        tier = kya._assess(["read", "list", "search"])
+        tier = kya.assess(["read", "list", "search"])
         assert tier == "basic"
 
     def test_intermediate_tier_one_risky(self):
         kya = SkillKYA()
-        tier = kya._assess(["read", "write_file", "search"])
+        tier = kya.assess(["read", "write_file", "search"])
         assert tier == "intermediate"
 
     def test_advanced_tier_two_risky(self):
         kya = SkillKYA()
-        tier = kya._assess(["write_file", "delete_file", "read", "search"])
+        tier = kya.assess(["write_file", "delete_file", "read", "search"])
         assert tier == "advanced"
 
     def test_privileged_tier_many_risky(self):
         kya = SkillKYA()
         tools = list(RISKY)
-        tier = kya._assess(tools)
+        tier = kya.assess(tools)
         assert tier == "privileged"
 
     def test_privileged_tier_many_tools(self):
         kya = SkillKYA()
         tools = [f"tool_{i}" for i in range(16)]
-        tier = kya._assess(tools)
+        tier = kya.assess(tools)
         assert tier == "privileged"
 
     def test_empty_tools_is_basic(self):
         kya = SkillKYA()
-        tier = kya._assess([])
+        tier = kya.assess([])
         assert tier == "basic"
 
     def test_advanced_tier_many_tools(self):
         kya = SkillKYA()
         tools = [f"tool_{i}" for i in range(11)]
-        tier = kya._assess(tools)
+        tier = kya.assess(tools)
         assert tier == "advanced"
 
     def test_intermediate_tier_many_tools(self):
         kya = SkillKYA()
         tools = [f"tool_{i}" for i in range(6)]
-        tier = kya._assess(tools)
+        tier = kya.assess(tools)
         assert tier == "intermediate"
 
 
@@ -92,7 +92,7 @@ class TestCertify:
     def test_certify_stored_in_certs(self):
         kya = SkillKYA()
         kya.certify("skill-3", tools=["read"])
-        assert "skill-3" in kya._certs
+        assert "skill-3" in kya.certs
 
     def test_certify_expires_in_days(self):
         kya = SkillKYA()

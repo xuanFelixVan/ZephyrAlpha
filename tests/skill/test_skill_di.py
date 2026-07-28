@@ -25,13 +25,13 @@ def clean_registry():
 
 class TestSkillDIInstantiation:
     def test_registry_starts_empty(self):
-        assert SkillDI._registry == {}
+        assert SkillDI.registry == {}
 
     def test_clear_empties_registry(self):
         SkillDI.register("skill-a", {"dep1": "fallback1"})
-        assert len(SkillDI._registry) > 0
+        assert len(SkillDI.registry) > 0
         SkillDI.clear()
-        assert SkillDI._registry == {}
+        assert SkillDI.registry == {}
 
 
 class TestRegister:

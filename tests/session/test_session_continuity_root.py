@@ -117,8 +117,8 @@ class TestSessionContinuityInit:
             db_path=tmp_env["db_path"],
             project_root=tmp_env["project_root"],
         )
-        assert sc._db_path == tmp_env["db_path"]
-        assert sc._project_root == tmp_env["project_root"]
+        assert sc.db_path == tmp_env["db_path"]
+        assert sc.project_root == tmp_env["project_root"]
 
     def test_db_schema_created(self, tmp_env: dict[str, Path]):
         sc = SessionContinuity(
@@ -132,7 +132,7 @@ class TestSessionContinuityInit:
 
     def test_none_db_path_uses_default(self, tmp_path: Path):
         sc = SessionContinuity(project_root=tmp_path)
-        assert sc._db_path == tmp_path / "data" / "databases" / "governance.db"
+        assert sc.db_path == tmp_path / "data" / "databases" / "governance.db"
 
 
 class TestSaveLoadSessionState:
@@ -334,7 +334,7 @@ class TestPrintRestoreSummary:
 
 class TestDetectAgentContext:
     def test_returns_dict_with_required_keys(self, sc: SessionContinuity):
-        ctx = sc._detect_agent_context()
+        ctx = sc.detect_agent_context()
         assert "ide_source" in ctx
         assert "maturity" in ctx
         assert "role" in ctx
@@ -342,25 +342,25 @@ class TestDetectAgentContext:
         assert "owner_approved" in ctx
 
     def test_unknown_env_returns_unknown(self, sc: SessionContinuity):
-        ctx = sc._detect_agent_context()
+        ctx = sc.detect_agent_context()
         assert ctx["ide_source"] in ("unknown", "trae", "cursor", "vscode")
 
 
 class TestAutoGenerateQuestions:
     def test_with_blocked_items(self, sc: SessionContinuity):
         blocked = [{"task_id": "T1"}, {"task_id": "T2"}]
-        questions = sc._auto_generate_questions(blocked, 0)
+        questions = sc.auto_generate_questions(blocked, 0)
         assert any("T1" in q for q in questions)
 
     def test_with_many_completed(self, sc: SessionContinuity):
-        questions = sc._auto_generate_questions([], 15)
+        questions = sc.auto_generate_questions([], 15)
         assert any("15" in q for q in questions)
 
     def test_with_empty_inputs(self, sc: SessionContinuity):
-        questions = sc._auto_generate_questions([], 0)
+        questions = sc.auto_generate_questions([], 0)
         assert isinstance(questions, list)
         assert len(questions) >= 1
 
     def test_always_includes_blueprint_question(self, sc: SessionContinuity):
-        questions = sc._auto_generate_questions([], 0)
+        questions = sc.auto_generate_questions([], 0)
         assert any("蓝图" in q for q in questions)

@@ -161,7 +161,7 @@ class TestResilienceCircuitBreaker:
         SkillResilience.record_failure("TEST-CB2")
         SkillResilience.record_failure("TEST-CB2")
         SkillResilience.record_success("TEST-CB2")
-        assert SkillResilience._failure_count.get("TEST-CB2", 0) == 0
+        assert SkillResilience.failure_count.get("TEST-CB2", 0) == 0
 
     def test_retry_success_on_first(self):
         SkillResilience.reset("TEST-RETRY")

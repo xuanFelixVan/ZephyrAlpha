@@ -31,7 +31,7 @@ def _clean_killed():
 class TestSkillKillSwitchInstantiation:
     def test_class_has_killed_dict(self):
         assert hasattr(SkillKillSwitch, "_killed")
-        assert isinstance(SkillKillSwitch._killed, dict)
+        assert isinstance(SkillKillSwitch.killed, dict)
 
     def test_class_has_fail_threshold(self):
         assert SkillKillSwitch._FAIL_THRESHOLD == 3
@@ -40,7 +40,7 @@ class TestSkillKillSwitchInstantiation:
         assert SkillKillSwitch._COOLDOWN_S == 300.0
 
     def test_fresh_state_empty(self):
-        assert SkillKillSwitch._killed == {}
+        assert SkillKillSwitch.killed == {}
 
 
 class TestKill:
@@ -49,7 +49,7 @@ class TestKill:
         assert result["action"] == "killed"
         assert result["skill_id"] == "sk-1"
         assert result["status"] == SkillStatus.DEPRECATED.value
-        assert "sk-1" in SkillKillSwitch._killed
+        assert "sk-1" in SkillKillSwitch.killed
 
     def test_kill_with_manual_trigger(self):
         result = SkillKillSwitch.kill("sk-2", "manual kill", trigger="manual")
@@ -72,7 +72,7 @@ class TestKill:
         before = time.time()
         SkillKillSwitch.kill("sk-6", "reason")
         after = time.time()
-        entry = SkillKillSwitch._killed["sk-6"]
+        entry = SkillKillSwitch.killed["sk-6"]
         assert before <= entry["killed_at"] <= after
 
 
@@ -82,7 +82,7 @@ class TestRevive:
         result = SkillKillSwitch.revive("sk-1")
         assert result["action"] == "revived"
         assert result["status"] == SkillStatus.ACTIVE.value
-        assert "sk-1" not in SkillKillSwitch._killed
+        assert "sk-1" not in SkillKillSwitch.killed
 
     def test_revive_not_killed_skill(self):
         result = SkillKillSwitch.revive("sk-unknown")
@@ -109,7 +109,7 @@ class TestIsKilled:
 
     def test_expired_cooldown_not_killed(self):
         SkillKillSwitch.kill("sk-3", "reason")
-        SkillKillSwitch._killed["sk-3"]["killed_at"] = time.time() - 600
+        SkillKillSwitch.killed["sk-3"]["killed_at"] = time.time() - 600
         assert SkillKillSwitch.is_killed("sk-3") is False
 
 
@@ -154,7 +154,7 @@ class TestListKilled:
 
     def test_excludes_expired(self):
         SkillKillSwitch.kill("sk-old", "old")
-        SkillKillSwitch._killed["sk-old"]["killed_at"] = time.time() - 600
+        SkillKillSwitch.killed["sk-old"]["killed_at"] = time.time() - 600
         result = SkillKillSwitch.list_killed()
         skill_ids = [e["skill_id"] for e in result]
         assert "sk-old" not in skill_ids
@@ -171,4 +171,4 @@ class TestClearAll:
         SkillKillSwitch.kill("sk-1", "r1")
         SkillKillSwitch.kill("sk-2", "r2")
         SkillKillSwitch.clear_all()
-        assert SkillKillSwitch._killed == {}
+        assert SkillKillSwitch.killed == {}

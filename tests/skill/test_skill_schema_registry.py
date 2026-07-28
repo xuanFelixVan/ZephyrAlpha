@@ -27,7 +27,7 @@ def _clear_registry():
 class TestSkillSchemaRegistryInstantiation:
     def test_schemas_initially_empty(self):
         SkillSchemaRegistry.clear()
-        assert SkillSchemaRegistry._schemas == {}
+        assert SkillSchemaRegistry.schemas == {}
 
     def test_list_registered_empty(self):
         SkillSchemaRegistry.clear()
@@ -189,4 +189,4 @@ class TestClear:
         SkillSchemaRegistry.register("b", {}, {})
         SkillSchemaRegistry.clear()
         assert SkillSchemaRegistry.list_registered() == []
-        assert SkillSchemaRegistry._schemas == {}
+        assert SkillSchemaRegistry.schemas == {}

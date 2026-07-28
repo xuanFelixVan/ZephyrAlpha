@@ -30,7 +30,7 @@ def _clean_history():
 class TestSkillIdempotencyInstantiation:
     def test_class_has_execution_history(self):
         assert hasattr(SkillIdempotency, "_execution_history")
-        assert isinstance(SkillIdempotency._execution_history, dict)
+        assert isinstance(SkillIdempotency.execution_history, dict)
 
     def test_class_has_default_ttl(self):
         assert SkillIdempotency._DEFAULT_TTL_S == 3600.0
@@ -84,14 +84,14 @@ class TestIsDuplicate:
     def test_expired_entry_not_duplicate(self):
         SkillIdempotency.mark_executed("skill-1", "hash-old")
         key = "skill-1:hash-old"
-        SkillIdempotency._execution_history[key] = ("executed", time.time() - 7200)
+        SkillIdempotency.execution_history[key] = ("executed", time.time() - 7200)
         result = SkillIdempotency.is_duplicate("skill-1", "hash-old", ttl_s=3600.0)
         assert result is False
 
     def test_custom_ttl_respected(self):
         SkillIdempotency.mark_executed("skill-1", "hash-x")
         key = "skill-1:hash-x"
-        SkillIdempotency._execution_history[key] = ("executed", time.time() - 10)
+        SkillIdempotency.execution_history[key] = ("executed", time.time() - 10)
         result = SkillIdempotency.is_duplicate("skill-1", "hash-x", ttl_s=5.0)
         assert result is False
 
@@ -105,21 +105,21 @@ class TestMarkExecuted:
     def test_mark_and_check(self):
         SkillIdempotency.mark_executed("skill-2", "hash-m")
         key = "skill-2:hash-m"
-        assert key in SkillIdempotency._execution_history
-        result, ts = SkillIdempotency._execution_history[key]
+        assert key in SkillIdempotency.execution_history
+        result, ts = SkillIdempotency.execution_history[key]
         assert result == "executed"
 
     def test_mark_with_custom_result(self):
         SkillIdempotency.mark_executed("skill-3", "hash-n", result="failed")
         key = "skill-3:hash-n"
-        result, ts = SkillIdempotency._execution_history[key]
+        result, ts = SkillIdempotency.execution_history[key]
         assert result == "failed"
 
     def test_mark_overwrites_previous(self):
         SkillIdempotency.mark_executed("skill-4", "hash-o", result="first")
         SkillIdempotency.mark_executed("skill-4", "hash-o", result="second")
         key = "skill-4:hash-o"
-        result, ts = SkillIdempotency._execution_history[key]
+        result, ts = SkillIdempotency.execution_history[key]
         assert result == "second"
 
 
@@ -127,26 +127,26 @@ class TestClearExpired:
     def test_clears_expired_entries(self):
         SkillIdempotency.mark_executed("skill-old", "h1")
         key = "skill-old:h1"
-        SkillIdempotency._execution_history[key] = ("executed", time.time() - 7200)
+        SkillIdempotency.execution_history[key] = ("executed", time.time() - 7200)
         SkillIdempotency.clear_expired(ttl_s=3600.0)
-        assert key not in SkillIdempotency._execution_history
+        assert key not in SkillIdempotency.execution_history
 
     def test_keeps_fresh_entries(self):
         SkillIdempotency.mark_executed("skill-new", "h2")
         SkillIdempotency.clear_expired(ttl_s=3600.0)
         key = "skill-new:h2"
-        assert key in SkillIdempotency._execution_history
+        assert key in SkillIdempotency.execution_history
 
     def test_clear_expired_with_empty_history(self):
         SkillIdempotency.clear_expired()
-        assert SkillIdempotency._execution_history == {}
+        assert SkillIdempotency.execution_history == {}
 
 
 class TestClearAll:
     def test_clear_all_empties_history(self):
         SkillIdempotency.mark_executed("sk", "h")
         SkillIdempotency.clear_all()
-        assert SkillIdempotency._execution_history == {}
+        assert SkillIdempotency.execution_history == {}
 
 
 class TestStats:
@@ -163,6 +163,6 @@ class TestStats:
     def test_stats_excludes_expired(self):
         SkillIdempotency.mark_executed("sk-old", "h1")
         key = "sk-old:h1"
-        SkillIdempotency._execution_history[key] = ("executed", time.time() - 7200)
+        SkillIdempotency.execution_history[key] = ("executed", time.time() - 7200)
         result = SkillIdempotency.stats()
         assert result["active_entries"] == 0

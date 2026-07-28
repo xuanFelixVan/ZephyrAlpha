@@ -1,7 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_prompt_cache | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_prompt_cache
-# [INVARIANTS] SkillPromptCache._cache is class-level dict; tests must clear between runs
+# [INVARIANTS] SkillPromptCache.cache is class-level dict; tests must clear between runs
 # [MODIFY-GUARD] changes require review of skill_prompt_cache.py API
 # [CONSUMERS] pytest
 # [STABILITY] stable

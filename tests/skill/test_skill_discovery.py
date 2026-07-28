@@ -56,26 +56,26 @@ class TestDiscoveryResultInstantiation:
 
 class TestDeriveSkillId:
     def test_simple_name(self):
-        result = SkillDiscovery._derive_skill_id("governance")
+        result = SkillDiscovery.derive_skill_id("governance")
         assert result == "SKILL-DOM-GOV-001"
 
     def test_dashed_name_uses_last_segment(self):
-        result = SkillDiscovery._derive_skill_id("MOD-INF-019")
+        result = SkillDiscovery.derive_skill_id("MOD-INF-019")
         assert result == "SKILL-DOM-019-001"
 
     def test_empty_string(self):
-        result = SkillDiscovery._derive_skill_id("")
+        result = SkillDiscovery.derive_skill_id("")
         assert result == ""
 
     def test_short_name(self):
-        result = SkillDiscovery._derive_skill_id("ab")
+        result = SkillDiscovery.derive_skill_id("ab")
         assert result == "SKILL-DOM-AB-001"
 
 
 class TestExtractModuleName:
     def test_from_mod_heading(self):
         content = "# MOD-INF-019 Some Blueprint\n\nBody text"
-        result = SkillDiscovery._extract_module_name(
+        result = SkillDiscovery.extract_module_name(
             content, type("P", (), {"parent": type("X", (), {"name": "test"}), "parts": ()})
         )
         assert result == "MOD-INF-019"
@@ -84,7 +84,7 @@ class TestExtractModuleName:
         content = "# 蓝图说明: My-Module\n\nBody"
         from pathlib import Path
 
-        result = SkillDiscovery._extract_module_name(content, Path("dummy"))
+        result = SkillDiscovery.extract_module_name(content, Path("dummy"))
         assert result == "蓝图说明"
 
     def test_from_parent_directory(self):
@@ -92,14 +92,14 @@ class TestExtractModuleName:
         from pathlib import Path
 
         bp_file = Path("/some/path/my-module/blueprint.md")
-        result = SkillDiscovery._extract_module_name(content, bp_file)
+        result = SkillDiscovery.extract_module_name(content, bp_file)
         assert result == "my-module"
 
     def test_empty_content(self):
         from pathlib import Path
 
         bp_file = Path("/some/path/my-mod/blueprint.md")
-        result = SkillDiscovery._extract_module_name("", bp_file)
+        result = SkillDiscovery.extract_module_name("", bp_file)
         assert result == "my-mod"
 
 
@@ -172,7 +172,7 @@ class TestParseFrontmatter:
 
         path, tmpdir = self._write_temp_md("---\nversion: 2.0.0\ndescription: A test\n---\nBody")
         try:
-            result = SkillDiscovery._parse_frontmatter(Path(path))
+            result = SkillDiscovery.parse_frontmatter(Path(path))
             assert result.get("version") == "2.0.0"
             assert result.get("description") == "A test"
         finally:
@@ -185,7 +185,7 @@ class TestParseFrontmatter:
 
         path, tmpdir = self._write_temp_md("Just some content without frontmatter")
         try:
-            result = SkillDiscovery._parse_frontmatter(Path(path))
+            result = SkillDiscovery.parse_frontmatter(Path(path))
             assert result == {}
         finally:
             import shutil
@@ -197,7 +197,7 @@ class TestParseFrontmatter:
 
         path, tmpdir = self._write_temp_md("---\n: invalid: yaml: [broken\n---\nBody")
         try:
-            result = SkillDiscovery._parse_frontmatter(Path(path))
+            result = SkillDiscovery.parse_frontmatter(Path(path))
             assert result == {}
         finally:
             import shutil
@@ -209,7 +209,7 @@ class TestParseFrontmatter:
 
         path, tmpdir = self._write_temp_md("---\nversion: 1.0")
         try:
-            result = SkillDiscovery._parse_frontmatter(Path(path))
+            result = SkillDiscovery.parse_frontmatter(Path(path))
             assert result == {}
         finally:
             import shutil

@@ -118,23 +118,23 @@ class TestSkillBreakageCheckerExtractMethods:
 
     def test_extract_tools(self):
         content = "Use `grep`(search) and `edit`(modify)"
-        tools = self.checker._extract_tools(content)
+        tools = self.checker.extract_tools(content)
         assert "grep" in tools
         assert "edit" in tools
 
     def test_extract_tools_empty(self):
-        tools = self.checker._extract_tools("")
+        tools = self.checker.extract_tools("")
         assert tools == set()
 
     def test_extract_tools_no_match(self):
-        tools = self.checker._extract_tools("no tools here")
+        tools = self.checker.extract_tools("no tools here")
         assert tools == set()
 
     def test_extract_constraints(self):
         content = "MUST validate input\nCRITICAL: check\n禁止 delete"
-        constraints = self.checker._extract_constraints(content)
+        constraints = self.checker.extract_constraints(content)
         assert len(constraints) >= 2
 
     def test_extract_constraints_empty(self):
-        constraints = self.checker._extract_constraints("")
+        constraints = self.checker.extract_constraints("")
         assert constraints == set()
