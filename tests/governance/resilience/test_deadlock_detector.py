@@ -23,34 +23,34 @@ class TestDeadlockDetectorInstantiation:
 
     def test_initial_wait_graph_empty(self):
         det = DeadlockDetector()
-        assert det._wait_graph == {}
+        assert det.wait_graph == {}
 
     def test_initial_locks_empty(self):
         det = DeadlockDetector()
-        assert det._locks == {}
+        assert det.locks == {}
 
     def test_initial_preemption_order_empty(self):
         det = DeadlockDetector()
-        assert det._preemption_order == []
+        assert det.preemption_order == []
 
 
 class TestAddEdge:
     def test_add_single_edge(self):
         det = DeadlockDetector()
         det.add_edge("A", "B")
-        assert "B" in det._wait_graph["A"]
+        assert "B" in det.wait_graph["A"]
 
     def test_add_multiple_edges_same_waiter(self):
         det = DeadlockDetector()
         det.add_edge("A", "B")
         det.add_edge("A", "C")
-        assert det._wait_graph["A"] == {"B", "C"}
+        assert det.wait_graph["A"] == {"B", "C"}
 
     def test_add_duplicate_edge_no_duplication(self):
         det = DeadlockDetector()
         det.add_edge("A", "B")
         det.add_edge("A", "B")
-        assert det._wait_graph["A"] == {"B"}
+        assert det.wait_graph["A"] == {"B"}
 
 
 class TestDetectCycle:
@@ -95,7 +95,7 @@ class TestBreakDeadlock:
         det.add_edge("B", "A")
         result = det.break_deadlock("A")
         assert result is True
-        assert "A" not in det._wait_graph
+        assert "A" not in det.wait_graph
 
     def test_nonexistent_node_returns_true(self):
         det = DeadlockDetector()
@@ -117,7 +117,7 @@ class TestTryAcquire:
         det = DeadlockDetector()
         result = det.try_acquire("res1", "holder1")
         assert result is True
-        assert det._locks["res1"] == "holder1"
+        assert det.locks["res1"] == "holder1"
 
     def test_acquire_locked_resource_fails(self):
         det = DeadlockDetector()
@@ -138,14 +138,14 @@ class TestRelease:
         det.try_acquire("res1", "holder1")
         result = det.release("res1", "holder1")
         assert result is True
-        assert "res1" not in det._locks
+        assert "res1" not in det.locks
 
     def test_release_by_non_owner_fails(self):
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         result = det.release("res1", "holder2")
         assert result is False
-        assert det._locks["res1"] == "holder1"
+        assert det.locks["res1"] == "holder1"
 
     def test_release_nonexistent_resource_fails(self):
         det = DeadlockDetector()
@@ -183,7 +183,7 @@ class TestDijkstraOrder:
         det = DeadlockDetector()
         det.add_edge("A", "B")
         det.dijkstra_order()
-        assert len(det._preemption_order) > 0
+        assert len(det.preemption_order) > 0
 
 
 class TestPreemptLowest:
@@ -206,7 +206,7 @@ class TestPreemptLowest:
         det.add_edge("B", "C")
         det.dijkstra_order()
         victim = det.preempt_lowest()
-        assert victim not in det._wait_graph
+        assert victim not in det.wait_graph
 
     def test_preempt_auto_computes_order(self):
         det = DeadlockDetector()
@@ -284,7 +284,7 @@ class TestDetectCycleWithArgs:
     def test_detect_cycle_with_args_adds_edge(self):
         det = DeadlockDetector()
         result = det.detect_cycle("X", "Y")
-        assert "Y" in det._wait_graph.get("X", set())
+        assert "Y" in det.wait_graph.get("X", set())
 
     def test_detect_cycle_with_none_args_ignores(self):
         det = DeadlockDetector()
@@ -304,20 +304,20 @@ class TestBreakTimeout:
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         det.break_timeout(0.0)
-        assert "res1" not in det._locks
+        assert "res1" not in det.locks
 
     def test_break_timeout_keeps_active_locks(self):
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         result = det.break_timeout(100.0)
         assert result == []
-        assert "res1" in det._locks
+        assert "res1" in det.locks
 
     def test_break_timeout_clears_timestamps(self):
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         det.break_timeout(0.0)
-        assert "res1" not in det._lock_timestamps
+        assert "res1" not in det.lock_timestamps
 
     def test_break_timeout_empty_returns_empty(self):
         det = DeadlockDetector()
@@ -354,13 +354,13 @@ class TestBreakDeadlockCleansLocks:
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         det.break_deadlock("holder1")
-        assert "res1" not in det._locks
+        assert "res1" not in det.locks
 
     def test_break_deadlock_clears_timestamps(self):
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         det.break_deadlock("holder1")
-        assert "res1" not in det._lock_timestamps
+        assert "res1" not in det.lock_timestamps
 
 
 class TestReleaseCleansTimestamps:
@@ -368,7 +368,7 @@ class TestReleaseCleansTimestamps:
         det = DeadlockDetector()
         det.try_acquire("res1", "holder1")
         det.release("res1", "holder1")
-        assert "res1" not in det._lock_timestamps
+        assert "res1" not in det.lock_timestamps
 
 
 class TestDelegationEngineIntegration:
