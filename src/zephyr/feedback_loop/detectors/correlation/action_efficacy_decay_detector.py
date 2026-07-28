@@ -36,6 +36,18 @@ class ActionEfficacyRecord:
 @dataclass
 class ActionEfficacyDecayDetector:
     records: dict[str, ActionEfficacyRecord] = field(default_factory=dict)
+
+    @staticmethod
+    def compute_slope(values) -> float:
+        """公共接口：compute_slope（Stage 4 公共化，委托到 _compute_slope）。"""
+        return _compute_slope(values)
+
+
+    @staticmethod
+    def compute_ewma(values, alpha) -> list[float]:
+        """公共接口：compute_ewma（Stage 4 公共化，委托到 _compute_ewma）。"""
+        return _compute_ewma(values, alpha)
+
     decay_threshold: float = -0.02
     min_samples: int = 10
 

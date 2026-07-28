@@ -56,6 +56,18 @@ class AuditFeedbackBridge:
             "ANM-013": "BLUEPRINT_DRIFT",
         }
 
+    @property
+    def anomaly_to_signal(self):
+        """只读：anomaly_to_signal（Stage 4 公共化）。"""
+        return self._anomaly_to_signal
+
+
+    @staticmethod
+    def classify_layer(severity) -> str:
+        """公共接口：classify_layer（Stage 4 公共化，委托到 _classify_layer）。"""
+        return _classify_layer(severity)
+
+
     def anomaly_to_fle_signal(self, anomaly: dict[str, Any]) -> dict[str, Any] | None:
         """将审计异常事件转化为 FLE EvolutionSignal.
 

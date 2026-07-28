@@ -154,6 +154,24 @@ class LogRotationManager:
         self.config = config or {}
 
     @property
+    def max_rotated_days(self):
+        """只读：max_rotated_days（Stage 4 公共化）。"""
+        return self._max_rotated_days
+
+
+    @property
+    def compress_rotated(self):
+        """只读：compress_rotated（Stage 4 公共化）。"""
+        return self._compress_rotated
+
+
+    @staticmethod
+    def extract_date(filename) -> str | None:
+        """公共接口：extract_date（Stage 4 公共化，委托到 _extract_date）。"""
+        return _extract_date(filename)
+
+
+    @property
     def _active_log_path(self) -> Path:
         return self._data_dir / self._ACTIVE_LOG_NAME
 

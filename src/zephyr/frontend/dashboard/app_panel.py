@@ -176,6 +176,30 @@ class DashboardPanelApp:
         self._miniqmt_broker = miniqmt_broker
         self._execution_engine = execution_engine
 
+    @property
+    def task_repo(self):
+        """只读：task_repo（Stage 4 公共化）。"""
+        return self._task_repo
+
+
+    @property
+    def olap_engine(self):
+        """只读：olap_engine（Stage 4 公共化）。"""
+        return self._olap_engine
+
+
+    @property
+    def backtest_result(self):
+        """只读：backtest_result（Stage 4 公共化）。"""
+        return self._backtest_result
+
+
+    @staticmethod
+    def demo_backtest_data() -> BacktestResultData:
+        """公共接口：demo_backtest_data（Stage 4 公共化，委托到 _demo_backtest_data）。"""
+        return _demo_backtest_data()
+
+
     # ===== 治理类 Tab =====
 
     def _tab_task_progress(self) -> object:

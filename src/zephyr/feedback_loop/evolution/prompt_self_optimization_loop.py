@@ -47,6 +47,11 @@ class PromptVariant:
 @dataclass
 class PromptSelfOptimizationLoop:
     current_prompt_hash: str = ""
+
+    def get_baseline_effectiveness(self) -> float:
+        """公共接口：get_baseline_effectiveness（Stage 4 公共化）。"""
+        return self._get_baseline_effectiveness()
+
     variants: dict[str, PromptVariant] = field(default_factory=dict)
     effectiveness_history: list[dict] = field(default_factory=list)
     max_history: int = 50

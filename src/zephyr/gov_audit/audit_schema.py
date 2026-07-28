@@ -87,6 +87,11 @@ class AuditQuery:
         if auto_init:
             init_db(self._db_path)
 
+    def get_conn(self) -> sqlite3.Connection:
+        """公共接口：get_conn（Stage 4 公共化）。"""
+        return self._get_conn()
+
+
     def _get_conn(self) -> sqlite3.Connection:
         conn = get_db_connection(str(self._db_path))
         conn.row_factory = sqlite3.Row

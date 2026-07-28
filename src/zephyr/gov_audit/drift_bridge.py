@@ -65,6 +65,17 @@ class DriftBridge:
         except Exception as exc:  # noqa: BLE001
             logger.warning("DriftDetector init failed: %s", exc, exc_info=True)
 
+    def load_events(self) -> list[dict[str, Any]]:
+        """公共接口：load_events（Stage 4 公共化）。"""
+        return self._load_events()
+
+
+    @property
+    def audit_events_path(self) -> Path | None:
+        """只读：audit_events_path（Stage 4 公共化）。"""
+        return self._audit_events_path
+
+
     # --- new API ---
 
     def _load_events(self) -> list[dict[str, Any]]:

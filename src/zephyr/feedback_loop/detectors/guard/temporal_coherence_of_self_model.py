@@ -38,6 +38,12 @@ class SelfModelSnapshot:
 @dataclass
 class TemporalCoherenceOfSelfModel:
     snapshots: list[SelfModelSnapshot] = field(default_factory=list)
+
+    @staticmethod
+    def compute_dict_similarity(a, b) -> float:
+        """公共接口：compute_dict_similarity（Stage 4 公共化，委托到 _compute_dict_similarity）。"""
+        return _compute_dict_similarity(a, b)
+
     max_snapshots: int = 30
     coherence_threshold: float = 0.7
 

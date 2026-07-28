@@ -28,6 +28,12 @@ from dataclasses import dataclass, field
 @dataclass
 class PlaceboActionDetector:
     action_outcomes: dict[str, list[float]] = field(default_factory=dict)
+
+    @staticmethod
+    def mann_whitney_u(group_a, group_b) -> tuple[float, float]:
+        """公共接口：mann_whitney_u（Stage 4 公共化，委托到 _mann_whitney_u）。"""
+        return _mann_whitney_u(group_a, group_b)
+
     control_outcomes: list[float] = field(default_factory=list)
     min_samples_per_group: int = 8
     significance_level: float = 0.05

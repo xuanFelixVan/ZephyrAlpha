@@ -45,6 +45,21 @@ class TrajectoryEvent:
 @dataclass
 class AgentTrajectoryAnomalyDetector:
     expected_phases: tuple[str, ...] = ("collect", "detect", "diagnose", "act", "verify")
+
+    def detect_missing_steps(self) -> list[dict]:
+        """公共接口：detect_missing_steps（Stage 4 公共化）。"""
+        return self._detect_missing_steps()
+
+
+    def detect_drift(self) -> list[dict]:
+        """公共接口：detect_drift（Stage 4 公共化）。"""
+        return self._detect_drift()
+
+
+    def detect_cycles(self) -> list[dict]:
+        """公共接口：detect_cycles（Stage 4 公共化）。"""
+        return self._detect_cycles()
+
     trajectory_history: list[TrajectoryEvent] = field(default_factory=list)
     max_history: int = 200
     cycle_threshold: int = 3

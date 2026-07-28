@@ -130,6 +130,11 @@ class BacktestScheduler:
         self._results: dict[str, BacktestResult] = {}
         self._task_meta: dict[str, tuple[str, dict]] = {}
 
+    def run_task(self, task) -> BacktestResult:
+        """公共接口：run_task（Stage 4 公共化）。"""
+        return self._run_task(task)
+
+
     def submit(
         self,
         strategy_id: str,

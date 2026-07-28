@@ -38,6 +38,12 @@ class AuditTrustBridge:
     并在信任分数剧烈变化时触发 TRUST_SCORE_CHANGE 异常。
     """
 
+    @staticmethod
+    def classify_tier(score) -> str:
+        """公共接口：classify_tier（Stage 4 公共化，委托到 _classify_tier）。"""
+        return _classify_tier(score)
+
+
     _TRUST_SCORE_CHANGE_THRESHOLD = 0.3
 
     def get_trust_score(self, agent_id: str) -> float | None:

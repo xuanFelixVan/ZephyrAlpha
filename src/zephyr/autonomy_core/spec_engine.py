@@ -109,6 +109,11 @@ class SpecEngine:
         self.router = TriggerRouter()
         self._audit_writer = AuditWriter() if _AUDIT_AVAILABLE else None
 
+    def discover(self, blueprint_path, result) -> str:
+        """公共接口：discover（Stage 4 公共化）。"""
+        return self._discover(blueprint_path, result)
+
+
     def upgrade(self, blueprint_path: str) -> UpgradeResult:
         result = UpgradeResult(blueprint_path)
 

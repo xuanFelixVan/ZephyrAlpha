@@ -37,6 +37,11 @@ class GuardConfigSnapshot:
 @dataclass
 class GuardConfigurationDriftMonitor:
     golden_baseline: dict[str, float] = field(default_factory=dict)
+
+    def compute_drift(self, baseline, current) -> float:
+        """公共接口：compute_drift（Stage 4 公共化）。"""
+        return self._compute_drift(baseline, current)
+
     golden_hash: str = ""
     snapshots: list[GuardConfigSnapshot] = field(default_factory=list)
     max_snapshots: int = 50

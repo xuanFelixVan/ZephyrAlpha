@@ -349,3 +349,8 @@ _WRITER: object | None = None
 # _CoreWriter: None in production (test patches this via patch(create=True))
 
 _CoreWriter: object | None = None
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_writer(backend):
+    """公共接口：get_writer（Stage 4 公共化，委托到 _get_writer）。"""
+    return _get_writer(backend)

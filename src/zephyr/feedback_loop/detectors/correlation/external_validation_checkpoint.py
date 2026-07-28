@@ -34,6 +34,11 @@ class EscalationReason(str, Enum):
 @dataclass
 class ExternalValidationCheckpoint:
     consecutive_self_mod_failures: int = 0
+
+    def hash_in_known_variants(self, h) -> bool:
+        """公共接口：hash_in_known_variants（Stage 4 公共化）。"""
+        return self._hash_in_known_variants(h)
+
     max_consecutive_failures: int = 3
     guard_consensus_threshold: float = 0.6
     known_state_space_hash: str = ""

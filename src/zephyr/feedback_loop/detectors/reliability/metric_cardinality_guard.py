@@ -46,6 +46,16 @@ class CardinalityStatus(str, Enum):
 @dataclass
 class MetricCardinalityGuard:
     max_cardinality: int = 10000
+
+    def compute_growth_rate(self, metric_name) -> float:
+        """公共接口：compute_growth_rate（Stage 4 公共化）。"""
+        return self._compute_growth_rate(metric_name)
+
+
+    def classify_cardinality(self, count) -> CardinalityStatus:
+        """公共接口：classify_cardinality（Stage 4 公共化）。"""
+        return self._classify_cardinality(count)
+
     warning_cardinality: int = 5000
     max_growth_rate_per_hour: float = 100.0
     window_size: int = 100

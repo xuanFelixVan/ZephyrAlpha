@@ -151,6 +151,7 @@ class FactorBase(abc.ABC):
 
 
 class FactorRegistry:
+
     """
     因子全局注册表（单例）。
 
@@ -163,6 +164,7 @@ class FactorRegistry:
     """
 
     _registry: ClassVar[dict[str, type[FactorBase]]] = {}
+    registry: ClassVar[dict[str, type[FactorBase]]] = _registry  # public alias（Stage 4 公共化）
 
     @classmethod
     def register(cls, factor_cls: type[FactorBase]) -> type[FactorBase]:
