@@ -49,27 +49,27 @@ try:
     )
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
-    _build_status_color = _mod._build_status_color
-    _load_invariants = _mod._load_invariants
-    _gen_overview_mmd = _mod._gen_overview_mmd
-    _gen_layers_mmd = _mod._gen_layers_mmd
-    _gen_invariants_mmd = _mod._gen_invariants_mmd
-    _gen_index_md = _mod._gen_index_md
-    _resolve_blueprint_names = _mod._resolve_blueprint_names
-    _truncate = _mod._truncate
+    _build_status_color = _mod.build_status_color
+    _load_invariants = _mod.load_invariants
+    _gen_overview_mmd = _mod.gen_overview_mmd
+    _gen_layers_mmd = _mod.gen_layers_mmd
+    _gen_invariants_mmd = _mod.gen_invariants_mmd
+    _gen_index_md = _mod.gen_index_md
+    _resolve_blueprint_names = _mod.resolve_blueprint_names
+    _truncate = _mod.truncate
     # 拆分重构新增函数（per-track / per-domain 文件生成）
-    _filter_overview_inputs = _mod._filter_overview_inputs
-    _gen_track_file_md = _mod._gen_track_file_md
-    _gen_domain_file_md = _mod._gen_domain_file_md
-    _gen_layers_file_md = _mod._gen_layers_file_md
-    _gen_invariants_file_md = _mod._gen_invariants_file_md
-    _track_filename = _mod._track_filename
-    _domain_filename = _mod._domain_filename
-    _build_domain_index = _mod._build_domain_index
-    _node_domain = _mod._node_domain
-    _STALE_FILE_REGEX = _mod._STALE_FILE_REGEX
+    _filter_overview_inputs = _mod.filter_overview_inputs
+    _gen_track_file_md = _mod.gen_track_file_md
+    _gen_domain_file_md = _mod.gen_domain_file_md
+    _gen_layers_file_md = _mod.gen_layers_file_md
+    _gen_invariants_file_md = _mod.gen_invariants_file_md
+    _track_filename = _mod.track_filename
+    _domain_filename = _mod.domain_filename
+    _build_domain_index = _mod.build_domain_index
+    _node_domain = _mod.node_domain
+    _STALE_FILE_REGEX = _mod.STALE_FILE_REGEX
     OUTPUT_DIR = _mod.OUTPUT_DIR
-    _YAML_PATH_FROM_MOD = _mod._YAML_PATH
+    _YAML_PATH_FROM_MOD = _mod.YAML_PATH
 except Exception as e:  # noqa: BLE001
     pytest.skip(
         f"generate_decision_diagram 模块加载失败（可能缺少 zephyr 依赖）: {e}",
@@ -255,7 +255,7 @@ class TestImportAndStructure:
 
     def test_fetch_function_exists(self):
         """_fetch_decision_data 函数存在。"""
-        assert callable(_mod._fetch_decision_data)
+        assert callable(_mod.fetch_decision_data)
 
 
 # ---------- _build_status_color 测试 ----------
@@ -456,20 +456,20 @@ class TestMaturityTag:
     """design_maturity → 标注标签映射。"""
 
     def test_production(self):
-        assert _mod._maturity_tag("production") == "[production]"
+        assert _mod.maturity_tag("production") == "[production]"
 
     def test_design(self):
-        assert _mod._maturity_tag("design") == "[design]"
+        assert _mod.maturity_tag("design") == "[design]"
 
     def test_unknown_value_passthrough(self):
         """ARCH-MM-002: prototype 已删除，_maturity_tag 对未知值透传（无特殊处理）。"""
-        assert _mod._maturity_tag("prototype") == "[prototype]"
+        assert _mod.maturity_tag("prototype") == "[prototype]"
 
     def test_none_returns_empty(self):
-        assert _mod._maturity_tag(None) == ""
+        assert _mod.maturity_tag(None) == ""
 
     def test_empty_returns_empty(self):
-        assert _mod._maturity_tag("") == ""
+        assert _mod.maturity_tag("") == ""
 
 
 # ---------- _gen_layers_mmd 测试 ----------

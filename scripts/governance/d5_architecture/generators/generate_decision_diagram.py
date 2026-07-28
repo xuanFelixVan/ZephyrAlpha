@@ -1122,5 +1122,31 @@ def main() -> int:
         f"{len(domain_index)} domains + 2 aux) 到 {out_dir}"
     )
     return EXIT_PASS
+
+
+# ── Stage 4 公共 API 别名（for testing, thin wrappers） ──
+# 模块级私有函数/常量的公共别名，消除测试对 _mod._xxx 的私有访问。
+build_status_color = _build_status_color
+load_invariants = _load_invariants
+gen_overview_mmd = _gen_overview_mmd
+gen_layers_mmd = _gen_layers_mmd
+gen_invariants_mmd = _gen_invariants_mmd
+gen_index_md = _gen_index_md
+resolve_blueprint_names = _resolve_blueprint_names
+truncate = _truncate
+maturity_tag = _maturity_tag
+filter_overview_inputs = _filter_overview_inputs
+gen_track_file_md = _gen_track_file_md
+gen_domain_file_md = _gen_domain_file_md
+gen_layers_file_md = _gen_layers_file_md
+gen_invariants_file_md = _gen_invariants_file_md
+track_filename = _track_filename
+domain_filename = _domain_filename
+build_domain_index = _build_domain_index
+node_domain = _node_domain
+fetch_decision_data = _fetch_decision_data
+STALE_FILE_REGEX = _STALE_FILE_REGEX
+YAML_PATH = _YAML_PATH
+
 if __name__ == "__main__":
     sys.exit(main())
