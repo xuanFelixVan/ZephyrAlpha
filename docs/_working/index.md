@@ -17,12 +17,12 @@ completes_when: _working 目录被清空或重构
 | `2026-07-10-panorama_remaining_7_issues_remediation.md` | 2026-07-10 | spec | ARCH-056 剩余7问题治本方案落地 |
 | `2026-07-10-panorama_remaining_7_plan.md` | 2026-07-10 | plan | ARCH-056 计划落地 |
 | `2026-07-13-tick-subscriber-plan.md` | 2026-07-13 | plan | tick-subscriber 施工完成 |
-| `2026-07-22-db_institutional_upgrade_task_spec.md` | 2026-07-22 | task_spec | P0-P2 全阶段升级建设完成，audit_03 复评≥90% |
 | `domain_split_proposal_d_governance_d_trading.md` | 2026-07-12 | 待审批 | 域拆分方案审批并落地 |
 | `handoff_llm_security_15fail.md` | 2026-06-xx | 进行中 | llm_security 15 个失败测试修复任务结案 |
 | `hyperv_clickhouse_migration_2026_07_15.md` | 2026-07-15 | 待授权 | Hyper-V 迁移施工授权 |
 | `phase1_baseline.md` | 2026-07-12 | baseline | Phase 1 完成归档 |
 | `trae_060_s5_evidence_audit.md` | 2026-06-26 | 审计报告 | Owner 审阅并决定是否修订 trae_060.yaml |
+| `2026-07-28-three_systems_upgrade_plan.md` | 2026-07-28 | plan(执行中) | 7项施工任务全部完成并通过验证 |
 
 ## 子目录
 
