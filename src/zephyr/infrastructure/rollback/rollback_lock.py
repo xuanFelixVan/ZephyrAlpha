@@ -112,6 +112,35 @@ class RollbackLock:
         self._held_token: int = 0
         self._renewer: SyncLockRenewer | None = None
 
+    # ── Stage 4 公共化属性 + 方法 ──
+
+    @property
+    def lock_dir(self) -> Path:
+        """锁目录路径（public API, Stage 4）."""
+        return self._lock_dir
+
+    @property
+    def lock_path(self) -> Path:
+        """锁文件路径（public API, Stage 4）."""
+        return self._lock_path
+
+    @property
+    def queue_path(self) -> Path:
+        """队列文件路径（public API, Stage 4）."""
+        return self._queue_path
+
+    def try_steal_expired_lock(self) -> bool:
+        """尝试抢占过期锁（public API, Stage 4）."""
+        return self._try_steal_expired_lock()
+
+    def enqueue_request(self, request: LockRequest) -> None:
+        """入队等待请求（public API, Stage 4）."""
+        self._enqueue_request(request)
+
+    def count_queue(self) -> int:
+        """统计队列长度（public API, Stage 4）."""
+        return self._count_queue()
+
     def _try_create_lock(
         self,
         request: LockRequest,

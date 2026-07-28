@@ -42,17 +42,17 @@ def rollback_lock(tmp_path: Path, lock_dir: Path) -> RollbackLock:
 class TestRollbackLockInstantiation:
     def test_creates_with_defaults(self, tmp_path: Path):
         lk = RollbackLock(project_root=tmp_path)
-        assert lk._lock_dir.exists()
+        assert lk.lock_dir.exists()
 
     def test_creates_with_custom_dir(self, tmp_path: Path, lock_dir: Path):
         lk = RollbackLock(project_root=tmp_path, lock_dir=lock_dir)
-        assert lk._lock_dir == lock_dir
+        assert lk.lock_dir == lock_dir
 
     def test_lock_path_set(self, rollback_lock: RollbackLock):
-        assert rollback_lock._lock_path.name == "rollback.lock"
+        assert rollback_lock.lock_path.name == "rollback.lock"
 
     def test_queue_path_set(self, rollback_lock: RollbackLock):
-        assert rollback_lock._queue_path.name == "rollback_lock_queue.jsonl"
+        assert rollback_lock.queue_path.name == "rollback_lock_queue.jsonl"
 
 
 class TestAcquire:
@@ -65,14 +65,14 @@ class TestAcquire:
 
     def test_acquire_creates_lock_file(self, rollback_lock: RollbackLock):
         rollback_lock.acquire(owner="test-owner")
-        assert rollback_lock._lock_path.exists()
-        data = json.loads(rollback_lock._lock_path.read_text(encoding="utf-8"))
+        assert rollback_lock.lock_path.exists()
+        data = json.loads(rollback_lock.lock_path.read_text(encoding="utf-8"))
         assert data["owner"] == "test-owner"
 
     def test_acquire_with_priority(self, rollback_lock: RollbackLock):
         result = rollback_lock.acquire(owner="test-owner", priority=LockPriority.CRITICAL, task="urgent")
         assert result.acquired is True
-        data = json.loads(rollback_lock._lock_path.read_text(encoding="utf-8"))
+        data = json.loads(rollback_lock.lock_path.read_text(encoding="utf-8"))
         assert data["priority"] == "critical"
 
     def test_double_acquire_fails(self, rollback_lock: RollbackLock):
@@ -83,7 +83,7 @@ class TestAcquire:
 
     def test_acquire_default_priority(self, rollback_lock: RollbackLock):
         result = rollback_lock.acquire(owner="test")
-        data = json.loads(rollback_lock._lock_path.read_text(encoding="utf-8"))
+        data = json.loads(rollback_lock.lock_path.read_text(encoding="utf-8"))
         assert data["priority"] == "normal"
 
 
@@ -92,7 +92,7 @@ class TestRelease:
         acquire_result = rollback_lock.acquire(owner="test-owner")
         release_result = rollback_lock.release(acquire_result.lock_id)
         assert release_result.acquired is True
-        assert not rollback_lock._lock_path.exists()
+        assert not rollback_lock.lock_path.exists()
 
     def test_release_wrong_lock_id(self, rollback_lock: RollbackLock):
         acquire_result = rollback_lock.acquire(owner="test-owner")
@@ -106,7 +106,7 @@ class TestRelease:
         assert "does not exist" in result.reason
 
     def test_release_corrupted_lock(self, rollback_lock: RollbackLock):
-        rollback_lock._lock_path.write_text("not-json", encoding="utf-8")
+        rollback_lock.lock_path.write_text("not-json", encoding="utf-8")
         result = rollback_lock.release("any-id")
         assert result.acquired is True
         assert "Corrupted" in result.reason
@@ -115,7 +115,7 @@ class TestRelease:
         acquire_result = rollback_lock.acquire(owner="test-owner")
         release_result = rollback_lock.release("")
         assert release_result.acquired is True
-        assert not rollback_lock._lock_path.exists()
+        assert not rollback_lock.lock_path.exists()
 
 
 class TestStatus:
@@ -146,7 +146,7 @@ class TestForceRelease:
         result = rollback_lock.force_release()
         assert result.acquired is True
         assert "Forced" in result.reason
-        assert not rollback_lock._lock_path.exists()
+        assert not rollback_lock.lock_path.exists()
 
     def test_force_release_no_lock(self, rollback_lock: RollbackLock):
         result = rollback_lock.force_release()
@@ -163,17 +163,17 @@ class TestForceRelease:
 class TestLockExpiry:
     def test_expired_lock_can_be_stolen(self, rollback_lock: RollbackLock):
         rollback_lock.acquire(owner="old-owner")
-        data = json.loads(rollback_lock._lock_path.read_text(encoding="utf-8"))
+        data = json.loads(rollback_lock.lock_path.read_text(encoding="utf-8"))
         data["acquired_at"] = "2000-01-01T00:00:00+00:00"
-        rollback_lock._lock_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-        assert rollback_lock._try_steal_expired_lock() is True
+        rollback_lock.lock_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        assert rollback_lock.try_steal_expired_lock() is True
 
     def test_fresh_lock_cannot_be_stolen(self, rollback_lock: RollbackLock):
         rollback_lock.acquire(owner="fresh-owner")
-        assert rollback_lock._try_steal_expired_lock() is False
+        assert rollback_lock.try_steal_expired_lock() is False
 
     def test_no_lock_file_steal(self, rollback_lock: RollbackLock):
-        assert rollback_lock._try_steal_expired_lock() is False
+        assert rollback_lock.try_steal_expired_lock() is False
 
 
 class TestQueueManagement:
@@ -189,11 +189,11 @@ class TestQueueManagement:
             timeout_ms=5000,
             expires_at="",
         )
-        rollback_lock._enqueue_request(req)
-        assert rollback_lock._queue_path.exists()
+        rollback_lock.enqueue_request(req)
+        assert rollback_lock.queue_path.exists()
 
     def test_count_empty_queue(self, rollback_lock: RollbackLock):
-        assert rollback_lock._count_queue() == 0
+        assert rollback_lock.count_queue() == 0
 
     def test_count_queue_with_entries(self, rollback_lock: RollbackLock):
         from datetime import datetime
@@ -209,6 +209,6 @@ class TestQueueManagement:
             timeout_ms=5000,
             expires_at="",
         )
-        rollback_lock._enqueue_request(req)
-        count = rollback_lock._count_queue()
+        rollback_lock.enqueue_request(req)
+        count = rollback_lock.count_queue()
         assert count >= 1
