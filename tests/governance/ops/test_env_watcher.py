@@ -30,16 +30,16 @@ from zephyr.infrastructure.rollback.env_watcher import EnvChangeAlert, EnvWatche
 class TestEnvWatcherInit:
     def test_default_project_root(self, tmp_path: Path):
         watcher = EnvWatcher(project_root=tmp_path)
-        assert watcher._project_root == tmp_path
-        assert watcher._sentinel_path == tmp_path / EnvWatcher.SENTINEL_FILE
+        assert watcher.project_root == tmp_path
+        assert watcher.sentinel_path == tmp_path / EnvWatcher.SENTINEL_FILE
 
     def test_sentinel_parent_created(self, tmp_path: Path):
         watcher = EnvWatcher(project_root=tmp_path)
-        assert watcher._sentinel_path.parent.exists()
+        assert watcher.sentinel_path.parent.exists()
 
     def test_none_project_root_uses_cwd(self):
         watcher = EnvWatcher(project_root=None)
-        assert watcher._project_root == Path.cwd()
+        assert watcher.project_root == Path.cwd()
 
 
 class TestEnvWatcherCheckForChanges:
@@ -124,7 +124,7 @@ class TestEnvWatcherBoundary:
         env_path = tmp_path / ".env"
         env_path.write_text("KEY1=val1\n", encoding="utf-8")
         watcher = EnvWatcher(project_root=tmp_path)
-        watcher._sentinel_path.write_text("{invalid json", encoding="utf-8")
+        watcher.sentinel_path.write_text("{invalid json", encoding="utf-8")
         result = watcher.check_for_changes()
         assert result is not None
         assert "KEY1" in result.changed_keys

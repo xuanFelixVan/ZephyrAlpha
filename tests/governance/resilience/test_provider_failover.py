@@ -20,7 +20,7 @@ class TestProviderFailoverInit:
     def test_all_providers_start_healthy(self):
         pf = ProviderFailover()
         for provider in FALLBACK_CHAIN:
-            assert pf._healthy[provider] is True
+            assert pf.healthy[provider] is True
 
     def test_fallback_chain_has_expected_providers(self):
         assert FALLBACK_CHAIN == ["deepseek", "claude", "gpt"]
@@ -30,30 +30,30 @@ class TestMarkUnhealthy:
     def test_mark_single_provider_unhealthy(self):
         pf = ProviderFailover()
         pf.mark_unhealthy("deepseek")
-        assert pf._healthy["deepseek"] is False
-        assert pf._healthy["claude"] is True
-        assert pf._healthy["gpt"] is True
+        assert pf.healthy["deepseek"] is False
+        assert pf.healthy["claude"] is True
+        assert pf.healthy["gpt"] is True
 
     def test_mark_all_providers_unhealthy(self):
         pf = ProviderFailover()
         for p in FALLBACK_CHAIN:
             pf.mark_unhealthy(p)
         for p in FALLBACK_CHAIN:
-            assert pf._healthy[p] is False
+            assert pf.healthy[p] is False
 
 
 class TestMarkHealthy:
     def test_restore_previously_unhealthy_provider(self):
         pf = ProviderFailover()
         pf.mark_unhealthy("claude")
-        assert pf._healthy["claude"] is False
+        assert pf.healthy["claude"] is False
         pf.mark_healthy("claude")
-        assert pf._healthy["claude"] is True
+        assert pf.healthy["claude"] is True
 
     def test_mark_healthy_on_already_healthy_is_idempotent(self):
         pf = ProviderFailover()
         pf.mark_healthy("deepseek")
-        assert pf._healthy["deepseek"] is True
+        assert pf.healthy["deepseek"] is True
 
 
 class TestGetAvailable:
@@ -80,7 +80,7 @@ class TestGetAvailable:
 
     def test_unknown_provider_not_returned(self):
         pf = ProviderFailover()
-        pf._healthy["unknown"] = True
+        pf.healthy["unknown"] = True
         assert pf.get_available() == "deepseek"
 
 
@@ -112,11 +112,11 @@ class TestProviderFailoverBoundary:
     def test_mark_unhealthy_unknown_provider_still_records(self):
         pf = ProviderFailover()
         pf.mark_unhealthy("nonexistent")
-        assert pf._healthy.get("nonexistent") is False
+        assert pf.healthy.get("nonexistent") is False
 
     def test_get_available_skips_unhealthy_unknown_provider(self):
         pf = ProviderFailover()
-        pf._healthy["nonexistent"] = True
+        pf.healthy["nonexistent"] = True
         result = pf.get_available()
         assert result == "deepseek"
 

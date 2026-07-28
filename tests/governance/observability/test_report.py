@@ -83,8 +83,8 @@ class TestHotspotCategory:
 class TestReportGenerator:
     def test_instantiation(self):
         rg = ReportGenerator()
-        assert rg._exit_code == ReportExitCode.CLEAN
-        assert rg._degradation_level == "none"
+        assert rg.exit_code == ReportExitCode.CLEAN
+        assert rg.degradation_level == "none"
 
     def test_generate_minimal(self):
         rg = ReportGenerator()
@@ -156,13 +156,13 @@ class TestReportGenerator:
     def test_set_degradation(self):
         rg = ReportGenerator()
         rg.set_degradation("stage2_failed")
-        assert rg._degradation_level == "stage2_failed"
-        assert rg._exit_code == ReportExitCode.DEGRADED
+        assert rg.degradation_level == "stage2_failed"
+        assert rg.exit_code == ReportExitCode.DEGRADED
 
     def test_set_exit_code(self):
         rg = ReportGenerator()
         rg.set_exit_code(2)
-        assert rg._exit_code == 2
+        assert rg.exit_code == 2
 
     def test_generate_scan_metadata_fields(self):
         rg = ReportGenerator()

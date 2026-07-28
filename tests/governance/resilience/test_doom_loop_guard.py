@@ -39,7 +39,7 @@ class TestDoomLoopGuard:
         guard = DoomLoopGuard()
         guard.escalate("group-001", current_level=0, reason="test")
         guard.reset_group("group-001")
-        assert "group-001" not in guard._frozen
+        assert "group-001" not in guard.frozen
 
     def test_get_frozen_groups(self):
         guard = DoomLoopGuard()

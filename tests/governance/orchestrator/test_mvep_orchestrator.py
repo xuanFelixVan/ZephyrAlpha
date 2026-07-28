@@ -28,8 +28,8 @@ from zephyr.governance.intelligence_governance.mvep_orchestrator import MVE_SEQU
 class TestMVEPOrchestratorInit:
     def test_init_creates_empty_implemented_set(self):
         orch = MVEPOrchestrator()
-        assert isinstance(orch._implemented, set)
-        assert len(orch._implemented) == 0
+        assert isinstance(orch.implemented, set)
+        assert len(orch.implemented) == 0
 
     def test_init_no_args_required(self):
         orch = MVEPOrchestrator()
@@ -40,29 +40,29 @@ class TestMarkImplemented:
     def test_mark_single_decision(self):
         orch = MVEPOrchestrator()
         orch.mark_implemented("D-022-01")
-        assert "D-022-01" in orch._implemented
+        assert "D-022-01" in orch.implemented
 
     def test_mark_multiple_decisions(self):
         orch = MVEPOrchestrator()
         for did in ["D-022-01", "D-022-02", "D-022-03"]:
             orch.mark_implemented(did)
-        assert orch._implemented == {"D-022-01", "D-022-02", "D-022-03"}
+        assert orch.implemented == {"D-022-01", "D-022-02", "D-022-03"}
 
     def test_mark_duplicate_idempotent(self):
         orch = MVEPOrchestrator()
         orch.mark_implemented("D-022-01")
         orch.mark_implemented("D-022-01")
-        assert len(orch._implemented) == 1
+        assert len(orch.implemented) == 1
 
     def test_mark_empty_string(self):
         orch = MVEPOrchestrator()
         orch.mark_implemented("")
-        assert "" in orch._implemented
+        assert "" in orch.implemented
 
     def test_mark_none_still_added(self):
         orch = MVEPOrchestrator()
         orch.mark_implemented(None)
-        assert None in orch._implemented
+        assert None in orch.implemented
 
 
 class TestMissingMvps:

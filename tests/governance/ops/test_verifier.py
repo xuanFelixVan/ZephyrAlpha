@@ -38,11 +38,11 @@ class TestVerifyResult:
 class TestVerifier:
     def test_instantiation_default(self):
         v = Verifier()
-        assert v._root == Path.cwd()
+        assert v.root == Path.cwd()
 
     def test_instantiation_custom_root(self):
         v = Verifier(project_root="/tmp")
-        assert v._root == Path("/tmp")
+        assert v.root == Path("/tmp")
 
     def test_verify_file_nonexistent(self):
         v = Verifier()

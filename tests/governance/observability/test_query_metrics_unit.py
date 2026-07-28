@@ -73,17 +73,17 @@ class TestPercentileTracker:
 
 class TestQueryMetricsInit:
     def test_init_with_db_path(self, qm):
-        assert qm._enabled is True
+        assert qm.enabled is True
 
     def test_disable_enable(self, qm):
         qm.disable()
-        assert qm._enabled is False
+        assert qm.enabled is False
         qm.enable()
-        assert qm._enabled is True
+        assert qm.enabled is True
 
     def test_execute_when_disabled(self, qm):
         qm.disable()
-        conn = sqlite3.connect(str(qm._db_path))
+        conn = sqlite3.connect(str(qm.db_path))
         cursor = qm.execute(conn, "SELECT 1", ())
         assert cursor.fetchone()[0] == 1
         conn.close()
@@ -91,7 +91,7 @@ class TestQueryMetricsInit:
 
 class TestQueryMetricsExecute:
     def test_execute_tracks_operation(self, qm):
-        conn = sqlite3.connect(str(qm._db_path))
+        conn = sqlite3.connect(str(qm.db_path))
         try:
             cursor = qm.execute(conn, "SELECT COUNT(*) FROM tasks", ())
             row = cursor.fetchone()
@@ -100,7 +100,7 @@ class TestQueryMetricsExecute:
             conn.close()
 
     def test_stats_all_returns_dict(self, qm):
-        conn = sqlite3.connect(str(qm._db_path))
+        conn = sqlite3.connect(str(qm.db_path))
         try:
             qm.execute(conn, "SELECT 1", ())
         finally:
@@ -109,7 +109,7 @@ class TestQueryMetricsExecute:
         assert isinstance(stats, dict)
 
     def test_reset_clears_trackers(self, qm):
-        conn = sqlite3.connect(str(qm._db_path))
+        conn = sqlite3.connect(str(qm.db_path))
         try:
             qm.execute(conn, "SELECT 1", ())
         finally:
@@ -121,17 +121,17 @@ class TestQueryMetricsExecute:
 
 class TestSlowQueryDetection:
     def test_slow_query_records(self, qm):
-        orig_threshold = qm._slow_threshold_ms
-        qm._slow_threshold_ms = 0
-        conn = sqlite3.connect(str(qm._db_path))
+        orig_threshold = qm.slow_threshold_ms
+        qm.slow_threshold_ms = 0
+        conn = sqlite3.connect(str(qm.db_path))
         try:
             qm.execute(conn, "SELECT * FROM tasks", ())
         finally:
             conn.close()
-        qm._slow_threshold_ms = orig_threshold
+        qm.slow_threshold_ms = orig_threshold
 
     def test_fast_query_not_flagged(self, qm):
-        conn = sqlite3.connect(str(qm._db_path))
+        conn = sqlite3.connect(str(qm.db_path))
         try:
             qm.execute(conn, "SELECT 1", ())
         finally:

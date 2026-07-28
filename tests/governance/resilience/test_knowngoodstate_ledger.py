@@ -41,11 +41,11 @@ class TestKnownGoodRecord:
 class TestKnowngoodstateLedgerInstantiation:
     def test_default_project_root(self):
         ledger = KnowngoodstateLedger()
-        assert ledger._project_root == Path.cwd()
+        assert ledger.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         ledger = KnowngoodstateLedger(project_root=tmp_path)
-        assert ledger._project_root == tmp_path
+        assert ledger.project_root == tmp_path
 
 
 class TestDeclareKnownGood:
@@ -119,7 +119,7 @@ class TestGetLatestKnownGood:
 
     def test_no_ledger_file(self, tmp_path):
         ledger = KnowngoodstateLedger(project_root=tmp_path)
-        ledger._ledger_path.unlink(missing_ok=True)
+        ledger.ledger_path.unlink(missing_ok=True)
         records = ledger.get_latest_known_good()
         assert records == []
 

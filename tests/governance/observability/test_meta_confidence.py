@@ -18,7 +18,7 @@ class TestMetaConfidenceInstantiation:
     def test_creates_instance_with_empty_history(self):
         mc = MetaConfidence()
         assert isinstance(mc, MetaConfidence)
-        assert mc._history == []
+        assert mc.history == []
 
 
 class TestSelfAssess:
@@ -62,12 +62,12 @@ class TestCalibrate:
     def test_calibrate_appends_to_history(self):
         mc = MetaConfidence()
         mc.calibrate(0.8, True)
-        assert len(mc._history) == 1
+        assert len(mc.history) == 1
 
     def test_calibrate_stores_prediction_and_correctness(self):
         mc = MetaConfidence()
         mc.calibrate(0.7, False)
-        entry = mc._history[0]
+        entry = mc.history[0]
         assert entry[0] == 0.7
         assert entry[2] is False
 
@@ -76,7 +76,7 @@ class TestCalibrate:
         mc.calibrate(0.9, True)
         mc.calibrate(0.6, False)
         mc.calibrate(0.8, True)
-        assert len(mc._history) == 3
+        assert len(mc.history) == 3
 
 
 class TestCalibrationError:

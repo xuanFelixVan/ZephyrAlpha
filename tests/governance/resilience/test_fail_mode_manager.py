@@ -121,19 +121,19 @@ class TestFailModeManager:
 
     def test_should_recover_auto_recovery_at_future(self):
         mgr = FailModeManager(default_mode=FailMode.CLOSED)
-        mgr._state.auto_recovery_at = time.time() + 9999
+        mgr.state.auto_recovery_at = time.time() + 9999
         assert mgr.should_recover() is False
 
     def test_should_recover_auto_recovery_at_past(self):
         mgr = FailModeManager(default_mode=FailMode.CLOSED)
-        mgr._state.auto_recovery_at = time.time() - 1
+        mgr.state.auto_recovery_at = time.time() - 1
         assert mgr.should_recover() is True
 
     def test_auto_recover(self):
         mgr = FailModeManager(default_mode=FailMode.DEAD)
         mgr.record_health_check("budget_engine", False, "down")
         mgr.auto_recover()
-        assert mgr._state.mode == FailMode.OPEN
+        assert mgr.state.mode == FailMode.OPEN
         assert mgr.component_fail_count("budget_engine") == 0
 
     def test_recent_checks(self):

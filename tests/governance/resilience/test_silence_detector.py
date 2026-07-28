@@ -24,14 +24,14 @@ class TestSilenceDetector:
 
     def test_record_activity_creates_entry(self):
         self.detector.record_activity("agent-1")
-        assert "agent-1" in self.detector._last_activity
+        assert "agent-1" in self.detector.last_activity
 
     def test_record_activity_updates_timestamp(self):
         self.detector.record_activity("agent-1")
-        t1 = self.detector._last_activity["agent-1"]
+        t1 = self.detector.last_activity["agent-1"]
         time.sleep(0.01)
         self.detector.record_activity("agent-1")
-        t2 = self.detector._last_activity["agent-1"]
+        t2 = self.detector.last_activity["agent-1"]
         assert t2 > t1
 
     def test_detect_silence_no_agents(self):
@@ -45,13 +45,13 @@ class TestSilenceDetector:
 
     def test_detect_silence_expired_activity(self):
         past = time.time() - 2000
-        self.detector._last_activity["agent-1"] = past
+        self.detector.last_activity["agent-1"] = past
         result = self.detector.detect_silence()
         assert "agent-1" in result
 
     def test_detect_silence_mixed(self):
         self.detector.record_activity("active-agent")
-        self.detector._last_activity["silent-agent"] = time.time() - 2000
+        self.detector.last_activity["silent-agent"] = time.time() - 2000
         result = self.detector.detect_silence()
         assert "silent-agent" in result
         assert "active-agent" not in result
@@ -64,14 +64,14 @@ class TestSilenceDetector:
         assert self.detector.is_silent("agent-1") is False
 
     def test_is_silent_expired_activity(self):
-        self.detector._last_activity["agent-1"] = time.time() - 2000
+        self.detector.last_activity["agent-1"] = time.time() - 2000
         assert self.detector.is_silent("agent-1") is True
 
     def test_timeout_default(self):
-        assert self.detector._timeout_s == 1800
+        assert self.detector.timeout_s == 1800
 
     def test_multiple_agents_independent(self):
         self.detector.record_activity("a1")
-        self.detector._last_activity["a2"] = time.time() - 2000
+        self.detector.last_activity["a2"] = time.time() - 2000
         assert self.detector.is_silent("a1") is False
         assert self.detector.is_silent("a2") is True

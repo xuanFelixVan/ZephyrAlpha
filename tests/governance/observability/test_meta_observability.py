@@ -18,22 +18,22 @@ class TestMetaObservabilityInstantiation:
     def test_creates_instance_with_empty_state(self):
         mo = MetaObservability()
         assert isinstance(mo, MetaObservability)
-        assert mo._self_latencies == []
-        assert mo._edge_cases == 0
+        assert mo.self_latencies == []
+        assert mo.edge_cases == 0
 
 
 class TestRecordSelfLatency:
     def test_record_appends_latency(self):
         mo = MetaObservability()
         mo.record_self_latency(0.5)
-        assert mo._self_latencies == [0.5]
+        assert mo.self_latencies == [0.5]
 
     def test_record_multiple_latencies(self):
         mo = MetaObservability()
         mo.record_self_latency(0.1)
         mo.record_self_latency(0.2)
         mo.record_self_latency(0.3)
-        assert len(mo._self_latencies) == 3
+        assert len(mo.self_latencies) == 3
 
 
 class TestP99SelfLatency:
@@ -66,13 +66,13 @@ class TestRegisterEdgeCase:
     def test_register_increments_counter(self):
         mo = MetaObservability()
         mo.register_edge_case()
-        assert mo._edge_cases == 1
+        assert mo.edge_cases == 1
 
     def test_register_multiple_edge_cases(self):
         mo = MetaObservability()
         for _ in range(5):
             mo.register_edge_case()
-        assert mo._edge_cases == 5
+        assert mo.edge_cases == 5
 
 
 class TestEdgeCaseRate:

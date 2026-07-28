@@ -23,7 +23,7 @@ class TestLastResortWatchdogInstantiation:
 
     def test_initial_state_is_deactivated(self):
         wd = LastResortWatchdog()
-        assert wd._activated is False
+        assert wd.activated is False
 
 
 class TestActivate:

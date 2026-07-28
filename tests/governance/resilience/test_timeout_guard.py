@@ -49,21 +49,21 @@ class TestTimeoutEvent:
 class TestTimeoutGuardInit:
     def test_default_timeouts(self):
         guard = TimeoutGuard()
-        assert guard._timeouts == DEFAULT_TIMEOUTS
+        assert guard.timeouts == DEFAULT_TIMEOUTS
 
     def test_custom_timeouts(self):
         custom = {TimeoutLevel.REQUEST: 5.0}
         guard = TimeoutGuard(custom_timeouts=custom)
-        assert guard._timeouts[TimeoutLevel.REQUEST] == 5.0
-        assert guard._timeouts[TimeoutLevel.TURN] == DEFAULT_TIMEOUTS[TimeoutLevel.TURN]
+        assert guard.timeouts[TimeoutLevel.REQUEST] == 5.0
+        assert guard.timeouts[TimeoutLevel.TURN] == DEFAULT_TIMEOUTS[TimeoutLevel.TURN]
 
     def test_empty_custom_timeouts(self):
         guard = TimeoutGuard(custom_timeouts={})
-        assert guard._timeouts == DEFAULT_TIMEOUTS
+        assert guard.timeouts == DEFAULT_TIMEOUTS
 
     def test_none_custom_timeouts(self):
         guard = TimeoutGuard(custom_timeouts=None)
-        assert guard._timeouts == DEFAULT_TIMEOUTS
+        assert guard.timeouts == DEFAULT_TIMEOUTS
 
 
 class TestTimeoutGuardWatch:
