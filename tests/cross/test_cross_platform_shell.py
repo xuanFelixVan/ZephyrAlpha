@@ -30,16 +30,16 @@ from zephyr.infrastructure.rollback.cross_platform_shell import CrossPlatformScr
 class TestCrossPlatformShellInit:
     def test_default_project_root(self, tmp_path: Path):
         shell = CrossPlatformShell(project_root=tmp_path)
-        assert shell._project_root == tmp_path
-        assert shell._output_dir == tmp_path / CrossPlatformShell.OUTPUT_DIR
+        assert shell.project_root == tmp_path
+        assert shell.output_dir == tmp_path / CrossPlatformShell.OUTPUT_DIR
 
     def test_output_dir_created(self, tmp_path: Path):
         shell = CrossPlatformShell(project_root=tmp_path)
-        assert shell._output_dir.exists()
+        assert shell.output_dir.exists()
 
     def test_none_project_root_uses_cwd(self):
         shell = CrossPlatformShell(project_root=None)
-        assert shell._project_root == Path.cwd()
+        assert shell.project_root == Path.cwd()
 
 
 class TestCrossPlatformShellGenerate:

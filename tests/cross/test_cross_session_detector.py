@@ -82,15 +82,15 @@ class TestCrossSessionDetector:
         csd = CrossSessionDetector(secret_key="testsecret1234567890123456789012")
         csd.sign_token("agent-1", "session-1")
         csd.verify_token("agent-evil", "session-1", "n", "t", "s")
-        assert len(csd._violations) == 1
-        assert csd._violations[0]["type"] == "CROSS_SESSION_FORGERY"
+        assert len(csd.violations) == 1
+        assert csd.violations[0]["type"] == "CROSS_SESSION_FORGERY"
 
     def test_default_secret_key(self):
         csd = CrossSessionDetector()
-        assert len(csd._secret) > 0
+        assert len(csd.secret) > 0
 
     def test_sign_token_populates_active_sessions(self):
         csd = CrossSessionDetector(secret_key="testsecret1234567890123456789012")
         csd.sign_token("a1", "s1")
-        assert "s1" in csd._active_sessions
-        assert csd._active_sessions["s1"].agent_id == "a1"
+        assert "s1" in csd.active_sessions
+        assert csd.active_sessions["s1"].agent_id == "a1"

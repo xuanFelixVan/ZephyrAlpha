@@ -22,25 +22,25 @@ class TestDriftDetectorInstantiation:
 
     def test_empty_baseline(self):
         dd = DriftDetector()
-        assert dd._baseline == {}
+        assert dd.baseline == {}
 
 
 class TestEstablishBaseline:
     def test_establish_baseline(self):
         dd = DriftDetector()
         dd.establish_baseline({"cpu": 0.5, "mem": 0.8})
-        assert dd._baseline == {"cpu": 0.5, "mem": 0.8}
+        assert dd.baseline == {"cpu": 0.5, "mem": 0.8}
 
     def test_establish_baseline_overwrites(self):
         dd = DriftDetector()
         dd.establish_baseline({"cpu": 0.5})
         dd.establish_baseline({"cpu": 0.9})
-        assert dd._baseline == {"cpu": 0.9}
+        assert dd.baseline == {"cpu": 0.9}
 
     def test_establish_baseline_empty(self):
         dd = DriftDetector()
         dd.establish_baseline({})
-        assert dd._baseline == {}
+        assert dd.baseline == {}
 
 
 class TestDetect:

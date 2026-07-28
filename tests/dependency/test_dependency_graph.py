@@ -61,7 +61,7 @@ class TestKillChain:
 class TestDependencyGraph:
     def test_instantiation(self):
         graph = DependencyGraph()
-        assert graph._nodes == {}
+        assert graph.nodes == {}
 
     def test_add_node(self):
         graph = DependencyGraph()

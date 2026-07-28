@@ -70,7 +70,7 @@ class TestCircuitBreakerCall:
 
     def test_half_open_returns_true(self):
         cb = CircuitBreaker("test")
-        cb._state = CircuitState.HALF_OPEN
+        cb.state = CircuitState.HALF_OPEN
         assert cb.call() is True
 
 
@@ -78,7 +78,7 @@ class TestCircuitBreakerRecord:
     def test_failure_increments_count(self):
         cb = CircuitBreaker("test")
         cb.record_failure()
-        assert cb._failure_count == 1
+        assert cb.failure_count == 1
 
     def test_threshold_exceeded_opens(self):
         cb = CircuitBreaker("test", CircuitBreakerConfig(failure_threshold=2))
@@ -89,7 +89,7 @@ class TestCircuitBreakerRecord:
 
     def test_success_in_half_open_closes(self):
         cb = CircuitBreaker("test", CircuitBreakerConfig(success_threshold=1))
-        cb._state = CircuitState.HALF_OPEN
+        cb.state = CircuitState.HALF_OPEN
         cb.record_success()
         assert cb.state == CircuitState.CLOSED
 
@@ -97,7 +97,7 @@ class TestCircuitBreakerRecord:
         cb = CircuitBreaker("test")
         cb.record_failure()
         cb.record_success()
-        assert cb._failure_count == 0
+        assert cb.failure_count == 0
 
 
 class TestCircuitBreakerForce:
@@ -111,7 +111,7 @@ class TestCircuitBreakerForce:
         cb.force_open()
         cb.force_close()
         assert cb.state == CircuitState.CLOSED
-        assert cb._failure_count == 0
+        assert cb.failure_count == 0
 
 
 class TestCircuitBreakerErrorBudget:

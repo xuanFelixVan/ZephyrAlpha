@@ -332,7 +332,7 @@ class TestDriftEngineHelpers:
 class TestBaselineManager:
     def test_instantiation(self, baseline_mgr, tmp_project):
         baselines_root = os.path.join(str(tmp_project), "data", "drift_baselines")
-        assert baseline_mgr._baselines_root == baselines_root
+        assert baseline_mgr.baselines_root == baselines_root
         assert os.path.isdir(baselines_root)
 
     def test_module_baseline_dir(self, baseline_mgr):

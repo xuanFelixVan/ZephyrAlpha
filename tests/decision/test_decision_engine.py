@@ -136,7 +136,7 @@ class TestDecisionEngine:
     def test_flush_with_adapter_success(self):
         adapter = MagicMock()
         engine = DecisionEngine(adapter=adapter)
-        engine._pending = [ScheduleAdjustment(action_type=ActionType.REPAIR, reason="test")]
+        engine.pending = [ScheduleAdjustment(action_type=ActionType.REPAIR, reason="test")]
         engine.flush_pending()
         assert engine.pending_count == 0
 

@@ -150,7 +150,7 @@ class TestDatabaseManagerLifecycle:
         db_path = tmp_path / "ctx.db"
         with DatabaseManager(db_path, auto_init=True) as dm:
             assert dm.get_connection() is not None
-        assert dm._closed is True
+        assert dm.closed is True
 
 
 class TestDatabaseManagerConnection:

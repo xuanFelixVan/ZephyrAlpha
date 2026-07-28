@@ -23,32 +23,32 @@ class TestCrossSessionCorrelatorInstantiation:
 
     def test_initial_sessions_empty(self):
         corr = CrossSessionCorrelator()
-        assert corr._sessions == {}
+        assert corr.sessions == {}
 
 
 class TestRegisterSession:
     def test_register_single_session(self):
         corr = CrossSessionCorrelator()
         corr.register_session("s1", {"cpu": 50, "mem": 60})
-        assert "s1" in corr._sessions
-        assert corr._sessions["s1"] == {"cpu": 50, "mem": 60}
+        assert "s1" in corr.sessions
+        assert corr.sessions["s1"] == {"cpu": 50, "mem": 60}
 
     def test_register_multiple_sessions(self):
         corr = CrossSessionCorrelator()
         corr.register_session("s1", {"cpu": 50})
         corr.register_session("s2", {"cpu": 60})
-        assert len(corr._sessions) == 2
+        assert len(corr.sessions) == 2
 
     def test_register_overwrites_existing_session(self):
         corr = CrossSessionCorrelator()
         corr.register_session("s1", {"cpu": 50})
         corr.register_session("s1", {"cpu": 90})
-        assert corr._sessions["s1"] == {"cpu": 90}
+        assert corr.sessions["s1"] == {"cpu": 90}
 
     def test_register_empty_metrics(self):
         corr = CrossSessionCorrelator()
         corr.register_session("s1", {})
-        assert corr._sessions["s1"] == {}
+        assert corr.sessions["s1"] == {}
 
 
 class TestDetectAnomalousSession:

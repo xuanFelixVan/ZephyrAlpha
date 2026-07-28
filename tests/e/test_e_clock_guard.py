@@ -23,8 +23,8 @@ class TestClockGuardInit:
         cg = ClockGuard()
         assert hasattr(cg, "_monotonic_start")
         assert hasattr(cg, "_wall_start")
-        assert isinstance(cg._monotonic_start, float)
-        assert isinstance(cg._wall_start, float)
+        assert isinstance(cg.monotonic_start, float)
+        assert isinstance(cg.wall_start, float)
 
 
 class TestDetectDrift:

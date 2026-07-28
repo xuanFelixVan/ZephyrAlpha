@@ -19,9 +19,9 @@ from zephyr.governance.ops_governance.error_budget_burst_limiter import BurstLim
 class TestBurstLimiterInit:
     def test_default_state(self):
         limiter = BurstLimiter()
-        assert limiter._burst_window_s == 60
-        assert limiter._max_burst == 10
-        assert limiter._requests == []
+        assert limiter.burst_window_s == 60
+        assert limiter.max_burst == 10
+        assert limiter.requests == []
 
 
 class TestBurstLimiterAllow:
@@ -43,10 +43,10 @@ class TestBurstLimiterAllow:
     def test_requests_stored(self):
         limiter = BurstLimiter()
         limiter.allow()
-        assert len(limiter._requests) == 1
+        assert len(limiter.requests) == 1
 
     def test_requests_capped_at_max_burst(self):
         limiter = BurstLimiter()
         for _ in range(15):
             limiter.allow()
-        assert len(limiter._requests) == 10
+        assert len(limiter.requests) == 10

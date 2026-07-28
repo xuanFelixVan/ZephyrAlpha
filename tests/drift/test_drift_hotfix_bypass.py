@@ -74,8 +74,8 @@ class TestHotfixAuditEntry:
 class TestHotfixBypass:
     def test_init_with_custom_root(self, tmp_path):
         bypass = HotfixBypass(project_root=str(tmp_path))
-        assert bypass._project_root == str(tmp_path)
-        assert os.path.isdir(bypass._audit_dir)
+        assert bypass.project_root == str(tmp_path)
+        assert os.path.isdir(bypass.audit_dir)
 
     def test_is_hotfix_commit_hotfix(self, tmp_path):
         bypass = HotfixBypass(project_root=str(tmp_path))
@@ -130,14 +130,14 @@ class TestHotfixBypass:
 
     def test_process_hotfix_writes_audit_log(self, tmp_path):
         bypass = HotfixBypass(project_root=str(tmp_path))
-        bypass._core_writer = None
+        bypass.core_writer = None
         bypass.process_hotfix(
             commit_hash="abc123",
             commit_message="[HOTFIX] fix",
             module_ids=["mod_a"],
             affected_dimensions=["dim_x"],
         )
-        log_path = bypass._audit_log_path
+        log_path = bypass.audit_log_path
         assert os.path.exists(log_path)
         with open(log_path, encoding="utf-8") as f:
             line = f.readline().strip()

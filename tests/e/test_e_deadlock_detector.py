@@ -19,22 +19,22 @@ from zephyr.governance.resilience_governance.deadlock_detector import DeadlockDe
 class TestDeadlockDetectorInit:
     def test_empty_state(self):
         dd = DeadlockDetector()
-        assert dd._wait_graph == {}
-        assert dd._locks == {}
-        assert dd._preemption_order == []
+        assert dd.wait_graph == {}
+        assert dd.locks == {}
+        assert dd.preemption_order == []
 
 
 class TestDeadlockDetectorAddEdge:
     def test_single_edge(self):
         dd = DeadlockDetector()
         dd.add_edge("agent-1", "agent-2")
-        assert dd._wait_graph == {"agent-1": {"agent-2"}}
+        assert dd.wait_graph == {"agent-1": {"agent-2"}}
 
     def test_multiple_edges(self):
         dd = DeadlockDetector()
         dd.add_edge("a", "b")
         dd.add_edge("a", "c")
-        assert dd._wait_graph["a"] == {"b", "c"}
+        assert dd.wait_graph["a"] == {"b", "c"}
 
 
 class TestDeadlockDetectorDetectCycle:
@@ -69,7 +69,7 @@ class TestDeadlockDetectorBreakDeadlock:
         dd.add_edge("a", "b")
         result = dd.break_deadlock("a")
         assert result is True
-        assert "a" not in dd._wait_graph
+        assert "a" not in dd.wait_graph
 
     def test_nonexistent_node(self):
         dd = DeadlockDetector()
@@ -81,7 +81,7 @@ class TestDeadlockDetectorAcquireRelease:
     def test_try_acquire_success(self):
         dd = DeadlockDetector()
         assert dd.try_acquire("resource-1", "agent-1") is True
-        assert dd._locks["resource-1"] == "agent-1"
+        assert dd.locks["resource-1"] == "agent-1"
 
     def test_try_acquire_already_held(self):
         dd = DeadlockDetector()
@@ -92,13 +92,13 @@ class TestDeadlockDetectorAcquireRelease:
         dd = DeadlockDetector()
         dd.try_acquire("r1", "agent-1")
         assert dd.release("r1", "agent-1") is True
-        assert "r1" not in dd._locks
+        assert "r1" not in dd.locks
 
     def test_release_wrong_holder(self):
         dd = DeadlockDetector()
         dd.try_acquire("r1", "agent-1")
         assert dd.release("r1", "agent-2") is False
-        assert "r1" in dd._locks
+        assert "r1" in dd.locks
 
 
 class TestDeadlockDetectorSerialize:

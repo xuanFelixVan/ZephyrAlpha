@@ -19,26 +19,26 @@ from zephyr.governance.escalation.escalation_api import EscalationAPI
 class TestEscalationAPIInit:
     def test_default_state(self):
         api = EscalationAPI()
-        assert api._api_keys == {}
+        assert api.api_keys == {}
 
 
 class TestEscalationAPIRegisterService:
     def test_register_single(self):
         api = EscalationAPI()
         api.register_service("payment_svc", "key-123")
-        assert api._api_keys["payment_svc"] == "key-123"
+        assert api.api_keys["payment_svc"] == "key-123"
 
     def test_register_multiple(self):
         api = EscalationAPI()
         api.register_service("svc1", "k1")
         api.register_service("svc2", "k2")
-        assert len(api._api_keys) == 2
+        assert len(api.api_keys) == 2
 
     def test_register_overwrites(self):
         api = EscalationAPI()
         api.register_service("svc", "old-key")
         api.register_service("svc", "new-key")
-        assert api._api_keys["svc"] == "new-key"
+        assert api.api_keys["svc"] == "new-key"
 
 
 class TestEscalationAPIValidateRequest:

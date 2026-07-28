@@ -132,7 +132,7 @@ class TestCreate:
         repo.create(_make_task("SRC-2"))
         import sqlite3
 
-        conn = sqlite3.connect(str(repo._db_path))
+        conn = sqlite3.connect(str(repo.db_path))
         conn.row_factory = sqlite3.Row
         rows = conn.execute("SELECT * FROM events WHERE task_id = 'SRC-2' AND event_type = 'task_event'").fetchall()
         conn.close()
@@ -277,7 +277,7 @@ class TestTransition:
 
         repo.create(_make_task("SRC-36"))
         repo.transition("SRC-36", TaskStatus.IN_PROGRESS, session_id="sess-x")
-        conn = sqlite3.connect(str(repo._db_path))
+        conn = sqlite3.connect(str(repo.db_path))
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
             "SELECT * FROM events WHERE task_id = 'SRC-36' AND event_type = 'state_transition'"
@@ -396,7 +396,7 @@ class TestDelete:
         repo.create(_make_task("SRC-42"))
         repo.transition("SRC-42", TaskStatus.IN_PROGRESS)
         repo.delete("SRC-42")
-        conn = sqlite3.connect(str(repo._db_path))
+        conn = sqlite3.connect(str(repo.db_path))
         conn.row_factory = sqlite3.Row
         rows = conn.execute("SELECT * FROM events WHERE task_id = 'SRC-42' ORDER BY created_at DESC").fetchall()
         conn.close()
