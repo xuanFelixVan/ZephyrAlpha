@@ -251,7 +251,7 @@ class TestRunPeriodicChecks:
             owner_id="test-owner",
         )
         event.state = EscalationState.EVALUATING
-        integration.escalation_engine._recent_escalations.append(event)
+        integration.escalation_engine.recent_escalations.append(event)
         result = integration.run_health_checks()
         assert result["active_escalations"] >= 1
 

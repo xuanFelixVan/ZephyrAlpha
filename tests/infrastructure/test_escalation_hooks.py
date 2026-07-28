@@ -41,7 +41,7 @@ class TestExtensionHookLoading:
         return engine
 
     def test_all_17_active_detectors_loaded(self, engine):
-        detectors = engine._extension_detectors
+        detectors = engine.extension_detectors
         assert len(detectors) >= 16
         expected = [
             "PersuasionDetector",
@@ -97,17 +97,17 @@ class TestExtensionHookLoading:
 class TestHookLifecycle:
     def test_enable_disable_hooks(self):
         engine = EscalationEngine("lifecycle-test", hooks_enabled=False)
-        assert engine._hooks_enabled is False
+        assert engine.hooks_enabled is False
 
         engine.disable_hooks()
-        assert engine._hooks_enabled is False
+        assert engine.hooks_enabled is False
 
         engine.enable_hooks()
-        assert engine._hooks_enabled is True
-        assert len(engine._extension_detectors) >= 14
+        assert engine.hooks_enabled is True
+        assert len(engine.extension_detectors) >= 14
 
         engine.disable_hooks()
-        assert engine._hooks_enabled is False
+        assert engine.hooks_enabled is False
 
     def test_hooks_disabled_does_not_crash(self):
         engine = EscalationEngine("no-hooks", hooks_enabled=False)

@@ -42,8 +42,8 @@ def _disable_lsg():
 class TestEscalationEngineCore:
     def test_engine_initializes_with_default_rules(self):
         engine = EscalationEngine("test-core")
-        assert len(engine._rules) >= 9
-        assert engine._circuit_breaker.state == CircuitState.CLOSED
+        assert len(engine.rules) >= 9
+        assert engine.circuit_breaker.state == CircuitState.CLOSED
 
     def test_evaluate_security_violation_triggers_l4(self):
         engine = EscalationEngine("test-sec")
@@ -119,9 +119,9 @@ class TestEscalationEngineCore:
 
         new_rule = EscalationRule("X999", RuleCategory.CUSTOM, EscalationLevel.L3_CRITICAL, priority=99)
         engine.register_rule(new_rule)
-        assert "X999" in engine._rules
+        assert "X999" in engine.rules
         engine.remove_rule("X999")
-        assert "X999" not in engine._rules
+        assert "X999" not in engine.rules
 
 
 class TestCircuitBreaker:

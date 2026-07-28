@@ -214,9 +214,9 @@ class TestSLOBudgetExhaustion:
 
     def test_economic_guard_blocks_after_budget_exhausted(self):
         engine = EscalationEngine(hooks_enabled=False)
-        engine._economic_guard.daily_budget = 5.0
-        engine._economic_guard.consumed_today = 5.0
-        engine._economic_guard.hard_limit_reached = True
+        engine.economic_guard.daily_budget = 5.0
+        engine.economic_guard.consumed_today = 5.0
+        engine.economic_guard.hard_limit_reached = True
         event = engine.evaluate(
             category=RuleCategory.DEADLOCK,
             description="budget exhausted test",
@@ -237,7 +237,7 @@ class TestSLOBudgetExhaustion:
 
     def test_concurrent_budget_consumption_threadsafe(self):
         engine = EscalationEngine(hooks_enabled=False)
-        engine._economic_guard.daily_budget = 1000.0
+        engine.economic_guard.daily_budget = 1000.0
 
         def evaluate_one(idx: int) -> str:
             event = engine.evaluate(
@@ -255,8 +255,8 @@ class TestSLOBudgetExhaustion:
 
     def test_budget_exhausted_category_rejected(self):
         engine = EscalationEngine(hooks_enabled=False)
-        engine._economic_guard.daily_budget = 0.0
-        engine._economic_guard.hard_limit_reached = True
+        engine.economic_guard.daily_budget = 0.0
+        engine.economic_guard.hard_limit_reached = True
         event = engine.evaluate(
             category=RuleCategory.BUDGET_EXCEEDED,
             description="budget zero",
@@ -353,7 +353,7 @@ class TestConcurrent100TasksMixed:
 
     def test_100_concurrent_escalations_stable(self):
         engine = EscalationEngine(hooks_enabled=False)
-        engine._economic_guard.daily_budget = 10000.0
+        engine.economic_guard.daily_budget = 10000.0
 
         def evaluate_one(idx: int) -> str:
             event = engine.evaluate(
@@ -414,7 +414,7 @@ class TestConcurrent100TasksMixed:
         det = DeadlockDetector()
         engine = DelegationEngine(deadlock_detector=det)
         esc_engine = EscalationEngine(hooks_enabled=False)
-        esc_engine._economic_guard.daily_budget = 10000.0
+        esc_engine.economic_guard.daily_budget = 10000.0
         arb = Arbitrator(deadlock_detector=det)
         guard = CascadeGuard(threshold=1000)
         for i in range(10):

@@ -248,6 +248,38 @@ class EscalationEngine:
         if self._hooks_enabled:
             self._load_extension_detectors()
 
+    # ── Stage 4 公共化属性 ──
+
+    @property
+    def rules(self) -> dict[str, "EscalationRule"]:
+        """已注册的规则字典（public API, Stage 4）."""
+        return self._rules
+
+    @property
+    def hooks_enabled(self) -> bool:
+        """hooks 是否启用（public API, Stage 4）."""
+        return self._hooks_enabled
+
+    @property
+    def circuit_breaker(self) -> CircuitBreaker:
+        """关联的断路器实例（public API, Stage 4）."""
+        return self._circuit_breaker
+
+    @property
+    def economic_guard(self) -> EconomicGuard:
+        """关联的经济守卫实例（public API, Stage 4）."""
+        return self._economic_guard
+
+    @property
+    def extension_detectors(self) -> dict[str, "ExtensionDetector"]:
+        """扩展检测器字典（public API, Stage 4）."""
+        return self._extension_detectors
+
+    @property
+    def recent_escalations(self) -> list["EscalationEvent"]:
+        """最近的升级事件列表（public API, Stage 4）."""
+        return self._recent_escalations
+
     def _register_default_rules(self) -> None:
         for rule in DEFAULT_ESCALATION_RULES:
             self.register_rule(rule)
@@ -363,7 +395,7 @@ class EscalationEngine:
             delegated_to=delegated_to,
             circuit_broken=False,
             message=result_msg,
-            suggestion=self._generate_suggestion(event, rule),
+            suggestion=self.generate_suggestion(event, rule),
         )
 
     def record_resolution(self, event: EscalationEvent) -> None:
@@ -432,7 +464,8 @@ class EscalationEngine:
         self._recent_escalations = [e for e in self._recent_escalations if e.created_at > cutoff]
 
     @staticmethod
-    def _generate_suggestion(event: EscalationEvent, rule: EscalationRule) -> str:
+    def generate_suggestion(event: EscalationEvent, rule: EscalationRule) -> str:
+        """生成升级建议文本（public API, Stage 4）."""
         suggestions: dict[EscalationLevel, str] = {
             EscalationLevel.L0_SELF_HEAL: "Self-healing deployed. Monitor for 5 minutes.",
             EscalationLevel.L1_AUTO_FIX: "Auto-fix triggered. Check audit log for fix details.",

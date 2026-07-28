@@ -166,7 +166,7 @@ class TestReboundDetectorIntegration:
         from zephyr.governance.escalation.escalation_engine import EscalationEngine
 
         engine = EscalationEngine("rebound-test", hooks_enabled=True)
-        rd = engine._extension_detectors.get("ReboundDetector")
+        rd = engine.extension_detectors.get("ReboundDetector")
         assert rd is not None, "ReboundDetector should be loaded as extension detector"
 
     def test_rebound_category_triggers_l4(self):

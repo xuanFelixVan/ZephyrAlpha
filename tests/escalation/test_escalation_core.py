@@ -60,19 +60,19 @@ class TestEscalationEngineInit:
 
     def test_default_rules_registered(self, engine):
         for rule in DEFAULT_ESCALATION_RULES:
-            assert rule.rule_id in engine._rules
+            assert rule.rule_id in engine.rules
 
     def test_hooks_disabled(self, engine):
-        assert engine._hooks_enabled is False
-        assert engine._extension_detectors == {}
+        assert engine.hooks_enabled is False
+        assert engine.extension_detectors == {}
 
     def test_circuit_breaker_initialized(self, engine):
-        assert engine._circuit_breaker is not None
-        assert engine._circuit_breaker.state == CircuitState.CLOSED
+        assert engine.circuit_breaker is not None
+        assert engine.circuit_breaker.state == CircuitState.CLOSED
 
     def test_economic_guard_initialized(self, engine):
-        assert engine._economic_guard is not None
-        assert engine._economic_guard.daily_budget == 100.0
+        assert engine.economic_guard is not None
+        assert engine.economic_guard.daily_budget == 100.0
 
 
 class TestRuleManagement:
@@ -83,17 +83,17 @@ class TestRuleManagement:
             target_level=EscalationLevel.L1_AUTO_FIX,
         )
         engine.register_rule(rule)
-        assert "CUSTOM-001" in engine._rules
+        assert "CUSTOM-001" in engine.rules
 
     def test_remove_rule(self, engine):
         engine.remove_rule("R001")
-        assert "R001" not in engine._rules
+        assert "R001" not in engine.rules
 
     def test_remove_nonexistent_rule(self, engine):
         engine.remove_rule("NO-SUCH-RULE")
 
     def test_register_replaces_existing(self, engine):
-        original = engine._rules["R001"]
+        original = engine.rules["R001"]
         new_rule = EscalationRule(
             rule_id="R001",
             category=RuleCategory.AUTO_GUARD_FAILURE,
@@ -101,7 +101,7 @@ class TestRuleManagement:
             priority=999,
         )
         engine.register_rule(new_rule)
-        assert engine._rules["R001"].priority == 999
+        assert engine.rules["R001"].priority == 999
 
 
 class TestEvaluate:
@@ -111,18 +111,18 @@ class TestEvaluate:
         assert event.category == RuleCategory.AUTO_GUARD_FAILURE
 
     def test_evaluate_no_matching_rule(self, engine):
-        engine._rules.clear()
+        engine.rules.clear()
         event = engine.evaluate(RuleCategory.AUTO_GUARD_FAILURE, description="no rules")
         assert event.state == EscalationState.REJECTED
 
     def test_evaluate_circuit_breaker_open(self, engine):
-        engine._circuit_breaker.force_open()
+        engine.circuit_breaker.force_open()
         event = engine.evaluate(RuleCategory.AUTO_GUARD_FAILURE, description="blocked")
         assert event.circuit_breaker_triggered is True
         assert event.state == EscalationState.REJECTED
 
     def test_evaluate_economic_guard_blocked(self, engine):
-        engine._economic_guard.hard_limit_reached = True
+        engine.economic_guard.hard_limit_reached = True
         event = engine.evaluate(RuleCategory.AUTO_GUARD_FAILURE, description="no budget")
         assert event.economic_guard_passed is False
         assert event.state == EscalationState.REJECTED
@@ -140,7 +140,7 @@ class TestEvaluate:
 
     def test_evaluate_records_recent_escalation(self, engine):
         engine.evaluate(RuleCategory.AUTO_GUARD_FAILURE, description="test")
-        assert len(engine._recent_escalations) == 1
+        assert len(engine.recent_escalations) == 1
 
 
 class TestEscalate:
@@ -172,10 +172,10 @@ class TestEscalate:
         assert event.state == EscalationState.DELEGATED
 
     def test_escalate_consumes_economic_budget(self, engine):
-        initial_consumed = engine._economic_guard.consumed_today
+        initial_consumed = engine.economic_guard.consumed_today
         event = engine.evaluate(RuleCategory.SECURITY_VIOLATION, description="breach")
         engine.escalate(event)
-        assert engine._economic_guard.consumed_today > initial_consumed
+        assert engine.economic_guard.consumed_today > initial_consumed
 
     def test_escalate_max_level_cap(self, engine):
         event = EscalationEvent(
@@ -202,9 +202,9 @@ class TestRecordResolutionAndFailure:
 
     def test_record_failure_trips_circuit_breaker(self, engine):
         event = EscalationEvent(category=RuleCategory.AUTO_GUARD_FAILURE)
-        for _ in range(engine._circuit_breaker.config.failure_threshold):
+        for _ in range(engine.circuit_breaker.config.failure_threshold):
             engine.record_failure(event)
-        assert engine._circuit_breaker.state == CircuitState.OPEN
+        assert engine.circuit_breaker.state == CircuitState.OPEN
 
 
 class TestCircuitBreakerIntegration:
@@ -212,9 +212,9 @@ class TestCircuitBreakerIntegration:
         assert engine.get_circuit_state() == CircuitState.CLOSED
 
     def test_circuit_breaker_transitions(self, engine):
-        engine._circuit_breaker.force_open()
+        engine.circuit_breaker.force_open()
         assert engine.get_circuit_state() == CircuitState.OPEN
-        engine._circuit_breaker.force_close()
+        engine.circuit_breaker.force_close()
         assert engine.get_circuit_state() == CircuitState.CLOSED
 
 
@@ -251,11 +251,11 @@ class TestGetActiveCount:
 class TestHooksToggle:
     def test_enable_hooks(self, engine):
         engine.enable_hooks()
-        assert engine._hooks_enabled is True
+        assert engine.hooks_enabled is True
 
     def test_disable_hooks(self, engine):
         engine.disable_hooks()
-        assert engine._hooks_enabled is False
+        assert engine.hooks_enabled is False
 
 
 class TestGenerateSuggestion:
@@ -263,7 +263,7 @@ class TestGenerateSuggestion:
         for level in EscalationLevel:
             event = EscalationEvent(level=level)
             rule = EscalationRule(rule_id="T", category=RuleCategory.CUSTOM, target_level=level)
-            suggestion = EscalationEngine._generate_suggestion(event, rule)
+            suggestion = EscalationEngine.generate_suggestion(event, rule)
             assert isinstance(suggestion, str)
             assert len(suggestion) > 0
 
