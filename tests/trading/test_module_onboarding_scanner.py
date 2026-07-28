@@ -58,8 +58,8 @@ class TestModuleOnboardingScannerInit:
             blueprint_root=tmp_path / "blueprints",
             registry=registry,
         )
-        assert scanner._src_root == tmp_path / "src"
-        assert scanner._blueprint_root == tmp_path / "blueprints"
+        assert scanner.src_root == tmp_path / "src"
+        assert scanner.blueprint_root == tmp_path / "blueprints"
 
 
 class TestScanFilesystem:

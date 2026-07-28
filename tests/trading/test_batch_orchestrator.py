@@ -74,7 +74,7 @@ class TestBatchOrchestratorInstantiation:
     def test_custom_stale_timeout(self):
         repo = MagicMock()
         bo = BatchOrchestrator(repo, batch_id="b1", worker_id="w1", stale_timeout_minutes=60)
-        assert bo._stale_timeout == 60
+        assert bo.stale_timeout == 60
 
 
 class TestBatchOrchestratorClaimNext:

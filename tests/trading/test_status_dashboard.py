@@ -53,8 +53,8 @@ class TestStatusDashboardInit:
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
         )
-        assert dash._registry is not None
-        assert dash._uptime_start != ""
+        assert dash.registry is not None
+        assert dash.uptime_start != ""
 
     def test_creation_with_custom_uptime(self):
         dash = StatusDashboard(
@@ -64,7 +64,7 @@ class TestStatusDashboardInit:
             work_orchestrator=_make_work_orchestrator(),
             uptime_start="2026-01-01T00:00:00",
         )
-        assert dash._uptime_start == "2026-01-01T00:00:00"
+        assert dash.uptime_start == "2026-01-01T00:00:00"
 
     def test_creation_with_orphan_detector(self):
         od = MagicMock()
@@ -76,7 +76,7 @@ class TestStatusDashboardInit:
             work_orchestrator=_make_work_orchestrator(),
             orphan_detector=od,
         )
-        assert dash._orphan is od
+        assert dash.orphan is od
 
 
 class TestRenderTui:

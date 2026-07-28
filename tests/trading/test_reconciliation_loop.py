@@ -112,7 +112,7 @@ class TestReconcile:
         loop = ReconciliationLoop()
         loop.reconcile()
         loop.reconcile()
-        assert len(loop._results) == 2
+        assert len(loop.results) == 2
 
     def test_reconcile_invariant_has_correct_name(self):
         loop = ReconciliationLoop()

@@ -62,7 +62,7 @@ class TestLifecycleManagerInit:
     def test_init(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
         lm = LifecycleManager(config)
-        assert lm._config is config
+        assert lm.config is config
 
 
 class TestBootSequence:
@@ -133,8 +133,8 @@ class TestBootSequence:
                 finalizer=finalizer,
             )
 
-        assert len(finalizer._cleanup_fns) == 3
-        types = [t for t, _ in finalizer._cleanup_fns]
+        assert len(finalizer.cleanup_fns) == 3
+        types = [t for t, _ in finalizer.cleanup_fns]
         assert "night_shift_queue" in types
         assert "capability_registry" in types
         assert "health-monitor" in types

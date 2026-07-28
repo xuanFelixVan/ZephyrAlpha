@@ -56,7 +56,7 @@ class TestValidationReport:
 class TestIntegrationRegistryInit:
     def test_init_empty(self) -> None:
         reg = IntegrationRegistry()
-        assert reg._points == {}
+        assert reg.points == {}
 
 
 class TestRegister:
@@ -64,7 +64,7 @@ class TestRegister:
         reg = IntegrationRegistry()
         ip = IntegrationPoint(point_id="ip-1", target_system="sys-a", interface="os")
         reg.register(ip)
-        assert "ip-1" in reg._points
+        assert "ip-1" in reg.points
 
     def test_register_overwrites(self) -> None:
         reg = IntegrationRegistry()
@@ -72,7 +72,7 @@ class TestRegister:
         ip2 = IntegrationPoint(point_id="ip-1", target_system="sys-b", interface="os", status="CONNECTED")
         reg.register(ip1)
         reg.register(ip2)
-        assert reg._points["ip-1"].target_system == "sys-b"
+        assert reg.points["ip-1"].target_system == "sys-b"
 
 
 class TestValidateAll:

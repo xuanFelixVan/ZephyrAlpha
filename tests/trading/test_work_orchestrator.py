@@ -29,11 +29,11 @@ def _make_registry():
 class TestWorkOrchestratorInit:
     def test_default_slots(self):
         wo = WorkOrchestrator(_make_registry())
-        assert wo._slots == {"trae": 1, "local": 3, "api": 2}
+        assert wo.slots == {"trae": 1, "local": 3, "api": 2}
 
     def test_custom_slots(self):
         wo = WorkOrchestrator(_make_registry(), max_parallel_l1=2, max_parallel_l2=5, max_parallel_l3=3)
-        assert wo._slots == {"trae": 2, "local": 5, "api": 3}
+        assert wo.slots == {"trae": 2, "local": 5, "api": 3}
 
 
 class TestRegisterDag:
@@ -169,7 +169,7 @@ class TestSlotManagement:
     def test_release_never_below_zero(self):
         wo = WorkOrchestrator(_make_registry())
         wo.release_slot("local")
-        assert wo._slots_used["local"] == 0
+        assert wo.slots_used["local"] == 0
 
 
 class TestCompleteItem:

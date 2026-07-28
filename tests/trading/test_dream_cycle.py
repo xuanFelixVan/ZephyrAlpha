@@ -41,13 +41,13 @@ class TestDreamCycleInit:
     def test_init_creates_dirs(self, tmp_path: Path) -> None:
         archive = tmp_path / "archive"
         cycle = DreamCycle(archive_dir=archive)
-        assert cycle._archive_dir == archive
-        assert cycle._episodic_dir == archive / "episodic"
-        assert cycle._semantic_dir == archive / "semantic"
+        assert cycle.archive_dir == archive
+        assert cycle.episodic_dir == archive / "episodic"
+        assert cycle.semantic_dir == archive / "semantic"
 
     def test_init_no_audit_dir(self, tmp_path: Path) -> None:
         cycle = DreamCycle(archive_dir=tmp_path / "archive")
-        assert cycle._audit_log_dir is None
+        assert cycle.audit_log_dir is None
 
 
 class TestTriggerArchival:

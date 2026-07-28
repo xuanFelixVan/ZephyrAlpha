@@ -67,9 +67,9 @@ class TestMigrate:
         sm = SchemaMigration()
         sm.migrate(2)
         sm.migrate(5)
-        assert len(sm._history) == 2
-        assert sm._history[0] == {"from": 1, "to": 2}
-        assert sm._history[1] == {"from": 2, "to": 5}
+        assert len(sm.history) == 2
+        assert sm.history[0] == {"from": 1, "to": 2}
+        assert sm.history[1] == {"from": 2, "to": 5}
 
     def test_migrate_sequential(self):
         sm = SchemaMigration()

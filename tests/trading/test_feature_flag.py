@@ -45,11 +45,11 @@ class TestFeatureFlagModel:
 class TestFlagRegistryInstantiation:
     def test_empty_flags_on_init(self):
         registry = FlagRegistry()
-        assert registry._flags == {}
+        assert registry.flags == {}
 
     def test_empty_audit_on_init(self):
         registry = FlagRegistry()
-        assert registry._audit == []
+        assert registry.audit == []
 
 
 class TestSet:
@@ -63,23 +63,23 @@ class TestSet:
     def test_set_stores_flag(self):
         registry = FlagRegistry()
         registry.set("CT-A", True, "desc A")
-        assert "CT-A" in registry._flags
-        assert registry._flags["CT-A"].is_enabled() is True
-        assert registry._flags["CT-A"].description == "desc A"
+        assert "CT-A" in registry.flags
+        assert registry.flags["CT-A"].is_enabled() is True
+        assert registry.flags["CT-A"].description == "desc A"
 
     def test_set_appends_audit(self):
         registry = FlagRegistry()
         registry.set("CT-B", False, "audit test")
-        assert len(registry._audit) == 1
-        assert registry._audit[0]["key"] == "CT-B"
-        assert registry._audit[0]["state"] == FlagState.ALWAYS_OFF.value
+        assert len(registry.audit) == 1
+        assert registry.audit[0]["key"] == "CT-B"
+        assert registry.audit[0]["state"] == FlagState.ALWAYS_OFF.value
 
     def test_set_overwrites_existing(self):
         registry = FlagRegistry()
         registry.set("CT-C", True)
         registry.set("CT-C", False)
-        assert registry._flags["CT-C"].is_enabled() is False
-        assert len(registry._audit) == 2
+        assert registry.flags["CT-C"].is_enabled() is False
+        assert len(registry.audit) == 2
 
 
 class TestIsEnabled:
@@ -148,7 +148,7 @@ class TestAuditPersistence:
         registry = FlagRegistry(audit_path=bad_path)
         flag = registry.set("CT-RESILIENT", True)
         assert flag.is_enabled() is True
-        assert len(registry._audit) == 1
+        assert len(registry.audit) == 1
 
 
 class TestLoadFlagsFromYaml:
@@ -206,4 +206,4 @@ class TestBoundary:
         registry = FlagRegistry()
         for i in range(5):
             registry.set(f"CT-{i}", True)
-        assert len(registry._audit) == 5
+        assert len(registry.audit) == 5

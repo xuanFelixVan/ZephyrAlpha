@@ -79,15 +79,15 @@ class TestIncidentManagerCreate:
     def test_create_incident_stored(self):
         mgr = IncidentManager()
         inc = mgr.create("INC-102", "Test")
-        retrieved = mgr._incidents.get("INC-102")
+        retrieved = mgr.incidents.get("INC-102")
         assert retrieved is inc
 
     def test_create_incident_overwrites_existing(self):
         mgr = IncidentManager()
         inc1 = mgr.create("INC-200", "First", severity="P1")
         inc2 = mgr.create("INC-200", "Second", severity="P0")
-        assert mgr._incidents["INC-200"].description == "Second"
-        assert mgr._incidents["INC-200"].severity == "P0"
+        assert mgr.incidents["INC-200"].description == "Second"
+        assert mgr.incidents["INC-200"].severity == "P0"
 
 
 class TestIncidentManagerAddActionItem:
@@ -96,7 +96,7 @@ class TestIncidentManagerAddActionItem:
         mgr.create("INC-300", "Test incident")
         result = mgr.add_action_item("INC-300", "Run diagnostics")
         assert result is True
-        assert "Run diagnostics" in mgr._incidents["INC-300"].action_items
+        assert "Run diagnostics" in mgr.incidents["INC-300"].action_items
 
     def test_add_action_item_to_nonexistent_incident(self):
         mgr = IncidentManager()
@@ -109,11 +109,11 @@ class TestIncidentManagerAddActionItem:
         mgr.add_action_item("INC-301", "Action 1")
         mgr.add_action_item("INC-301", "Action 2")
         mgr.add_action_item("INC-301", "Action 3")
-        assert len(mgr._incidents["INC-301"].action_items) == 3
+        assert len(mgr.incidents["INC-301"].action_items) == 3
 
     def test_add_empty_action_item(self):
         mgr = IncidentManager()
         mgr.create("INC-302", "Test")
         result = mgr.add_action_item("INC-302", "")
         assert result is True
-        assert "" in mgr._incidents["INC-302"].action_items
+        assert "" in mgr.incidents["INC-302"].action_items

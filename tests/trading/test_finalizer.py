@@ -19,22 +19,22 @@ from zephyr.trading.finalizer import Finalizer
 class TestFinalizerInit:
     def test_init_empty(self) -> None:
         f = Finalizer()
-        assert f._cleanup_fns == []
+        assert f.cleanup_fns == []
 
 
 class TestRegister:
     def test_register_single(self) -> None:
         f = Finalizer()
         f.register("db", lambda: None)
-        assert len(f._cleanup_fns) == 1
-        assert f._cleanup_fns[0][0] == "db"
+        assert len(f.cleanup_fns) == 1
+        assert f.cleanup_fns[0][0] == "db"
 
     def test_register_multiple(self) -> None:
         f = Finalizer()
         f.register("db", lambda: None)
         f.register("cache", lambda: None)
         f.register("logs", lambda: None)
-        assert len(f._cleanup_fns) == 3
+        assert len(f.cleanup_fns) == 3
 
 
 class TestRun:

@@ -26,9 +26,9 @@ class TestCircuitBreakerManagerInit:
 
     def test_custom_params(self):
         cb = CircuitBreakerManager(failure_window_s=30.0, failure_threshold=5, cooldown_s=10.0)
-        assert cb._failure_window_s == 30.0
-        assert cb._failure_threshold == 5
-        assert cb._cooldown_s == 10.0
+        assert cb.failure_window_s == 30.0
+        assert cb.failure_threshold == 5
+        assert cb.cooldown_s == 10.0
 
     def test_log_fn_callback(self):
         logs = []

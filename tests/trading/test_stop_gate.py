@@ -19,14 +19,14 @@ from zephyr.trading.stop_gate import StopGate, StopGateResult
 class TestStopGateInit:
     def test_default_state(self):
         gate = StopGate()
-        assert gate._session_start == ""
-        assert gate._shutdown_acknowledged is False
+        assert gate.session_start == ""
+        assert gate.shutdown_acknowledged is False
 
     def test_initialize_sets_session_start(self):
         gate = StopGate()
         gate.initialize()
-        assert gate._session_start != ""
-        assert gate._shutdown_acknowledged is False
+        assert gate.session_start != ""
+        assert gate.shutdown_acknowledged is False
 
 
 class TestCheck:
@@ -96,14 +96,14 @@ class TestAcknowledgeShutdown:
     def test_acknowledge(self):
         gate = StopGate()
         gate.acknowledge_shutdown()
-        assert gate._shutdown_acknowledged is True
+        assert gate.shutdown_acknowledged is True
 
     def test_initialize_resets_acknowledgement(self):
         gate = StopGate()
         gate.acknowledge_shutdown()
-        assert gate._shutdown_acknowledged is True
+        assert gate.shutdown_acknowledged is True
         gate.initialize()
-        assert gate._shutdown_acknowledged is False
+        assert gate.shutdown_acknowledged is False
 
 
 class TestStopGateResult:

@@ -158,7 +158,7 @@ class TestStartLayer:
     def test_start_layer_sets_status_running(self):
         seq = StartupSequencer()
         seq.start_layer(StartupLayer.L1_DATABASE)
-        assert seq._states[StartupLayer.L1_DATABASE].status == "running"
+        assert seq.states[StartupLayer.L1_DATABASE].status == "running"
 
 
 class TestCompleteLayer:
@@ -166,10 +166,10 @@ class TestCompleteLayer:
         seq = StartupSequencer()
         seq.start_layer(StartupLayer.L1_DATABASE)
         seq.complete_layer(StartupLayer.L1_DATABASE)
-        assert seq._states[StartupLayer.L1_DATABASE].status == "completed"
+        assert seq.states[StartupLayer.L1_DATABASE].status == "completed"
 
     def test_complete_sets_timestamp(self):
         seq = StartupSequencer()
         seq.start_layer(StartupLayer.L1_DATABASE)
         seq.complete_layer(StartupLayer.L1_DATABASE)
-        assert seq._states[StartupLayer.L1_DATABASE].completed_at is not None
+        assert seq.states[StartupLayer.L1_DATABASE].completed_at is not None
