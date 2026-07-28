@@ -148,6 +148,45 @@ def _is_bare_subprocess_call(node: ast.AST, subprocess_aliases: set[str]) -> boo
     return func.value.id in subprocess_aliases
 
 
+def _is_bare_subprocess_ref(node: ast.AST, subprocess_aliases: set[str]) -> bool:
+    """检测 subprocess.run/Popen/check_output/check_call 作为**引用**传递（非直接调用）。
+
+    覆盖 gate 盲区（2026-07-29 修复，#ARCH-PREVENTABILITY-LAYER-001）：
+      - ``executor.submit(subprocess.run, ...)`` — subprocess.run 作为 callable 参数传递
+      - ``fn = subprocess.run`` — subprocess.run 赋值给变量
+      - ``callback(subprocess.Popen, ...)`` — subprocess.Popen 作为参数传递
+
+    这类模式绕过 _is_bare_subprocess_call 的 ast.Call.func 检测，但同样会在
+    Windows 上创建控制台窗口闪现（trae_067 铁律2）。
+
+    检测逻辑：node 是 ast.Attribute 且 attr in _SUBPROCESS_CALL_ATTRS 且
+    value.id in subprocess_aliases——无论 node 出现在 AST 的哪个位置。
+    排除直接调用形式（由 _is_bare_subprocess_call 覆盖，避免重复报告）。
+    """
+    if not isinstance(node, ast.Attribute):
+        return False
+    if node.attr not in _SUBPROCESS_CALL_ATTRS:
+        return False
+    if not isinstance(node.value, ast.Name):
+        return False
+    return node.value.id in subprocess_aliases
+
+
+def _collect_direct_call_func_ids(tree: ast.AST, subprocess_aliases: set[str]) -> set[int]:
+    """收集所有直接调用 subprocess.run(...) 的 func Attribute 节点 id。
+
+    用于排除 _is_bare_subprocess_ref 的重复报告——直接调用 ``subprocess.run(...)``
+    中的 ``subprocess.run`` 是 ast.Call.func（ast.Attribute），ast.walk 会同时
+    访问 Call 和 Attribute 节点，若不排除会导致同一行被报告两次（调用 + 引用传递）。
+    """
+    consumed: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and _is_bare_subprocess_call(node, subprocess_aliases):
+            # node.func 是 ast.Attribute，记录其 id 供 ref 检测排除
+            consumed.add(id(node.func))
+    return consumed
+
+
 def _extract_noqa_lines(file_content: str) -> set[int]:
     """提取带 `# noqa: bare-subprocess  <reason>` 注释的行号集合（1-based）。
 
@@ -198,17 +237,32 @@ def make_bare_subprocess_gate() -> GateSpec:
 
             subprocess_aliases = _collect_subprocess_aliases(tree)
             noqa_lines = _extract_noqa_lines(file_content)
+            # 预收集直接调用的 func Attribute 节点 id——避免 ref_pass 重复报告同一行
+            direct_call_func_ids = _collect_direct_call_func_ids(tree, subprocess_aliases)
 
             for node in ast.walk(tree):
-                if not _is_bare_subprocess_call(node, subprocess_aliases):
+                # 检测 1：直接调用 subprocess.run(...)（_is_bare_subprocess_call）
+                # 检测 2：引用传递 executor.submit(subprocess.run, ...)（_is_bare_subprocess_ref）
+                # 两个检测器互补——_is_bare_subprocess_call 检测 ast.Call.func 位置，
+                # _is_bare_subprocess_ref 检测 ast.Attribute 在任意位置（含参数传递/赋值）
+                is_direct_call = _is_bare_subprocess_call(node, subprocess_aliases)
+                is_ref_pass = (
+                    not is_direct_call
+                    and id(node) not in direct_call_func_ids
+                    and _is_bare_subprocess_ref(node, subprocess_aliases)
+                )
+                if not is_direct_call and not is_ref_pass:
                     continue
                 call_line = node.lineno
                 if call_line not in added_lines:
                     continue  # 不是 added 行，放行（存量违规由人工排查）
                 if call_line in noqa_lines:
                     continue  # 行级 noqa 逃生
+                # 提取 attr 名称——直接调用走 node.func.attr，引用传递走 node.attr
+                attr_name = node.func.attr if is_direct_call else node.attr
+                violation_type = "调用" if is_direct_call else "引用传递（绕过 gate 检测）"
                 warnings.append(
-                    f"  {py_file}:{call_line}: 裸 subprocess.{node.func.attr}(...) 调用"
+                    f"  {py_file}:{call_line}: 裸 subprocess.{attr_name}(...) {violation_type}"
                     f"（违反 trae_067 铁律2 CREATE_NO_WINDOW 强制）"
                 )
 

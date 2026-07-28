@@ -822,7 +822,7 @@ def check_pipeline_e2e() -> GateResult:
         with ThreadPoolExecutor(max_workers=4) as executor:
             futures = {
                 executor.submit(
-                    subprocess.run,
+                    run_subprocess_hidden,  # #ARCH-PREVENTABILITY-LAYER-001 gate 盲区修复：subprocess.run 作为 callable 传给 executor.submit 绕过 bare_subprocess_gate AST 检测，改用 run_subprocess_hidden 消除根因
                     [sys.executable, "-m", "pytest", p, "-q", "--tb=no", "--timeout=30"],
                     capture_output=True,
                     text=True,

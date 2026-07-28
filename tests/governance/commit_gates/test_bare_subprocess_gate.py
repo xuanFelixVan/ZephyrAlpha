@@ -41,9 +41,11 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.commit_gates.bare_subprocess_gate import (  # noqa: E402
+    _collect_direct_call_func_ids,
     _collect_subprocess_aliases,
     _is_bare_subprocess_call,
     _is_bare_subprocess_exempt_file,
+    _is_bare_subprocess_ref,
     _extract_noqa_lines,
     make_bare_subprocess_gate,
 )
@@ -165,6 +167,135 @@ class TestIsBareSubprocessCall:
     def test_ignores_function_call(self):
         node = self._check('run(["ls"])')
         assert node is None  # 裸函数调用，不是 Attribute
+
+
+# ---------------------------------------------------------------------------
+# TestIsBareSubprocessRef — 引用传递检测（2026-07-29 gate 盲区修复）
+# ---------------------------------------------------------------------------
+class TestIsBareSubprocessRef:
+    """测试 _is_bare_subprocess_ref：检测 subprocess.run 作为引用传递（非直接调用）。
+
+    覆盖 gate 盲区：executor.submit(subprocess.run, ...) / fn = subprocess.run 等。
+    """
+
+    def _find_ref(self, code):
+        tree = ast.parse(code)
+        aliases = _collect_subprocess_aliases(tree)
+        direct_ids = _collect_direct_call_func_ids(tree, aliases)
+        for node in ast.walk(tree):
+            if (
+                not _is_bare_subprocess_call(node, aliases)
+                and id(node) not in direct_ids
+                and _is_bare_subprocess_ref(node, aliases)
+            ):
+                return node
+        return None
+
+    def test_detects_executor_submit_subprocess_run(self):
+        """executor.submit(subprocess.run, ...) — 引用传递检测"""
+        code = (
+            'import subprocess\n'
+            'from concurrent.futures import ThreadPoolExecutor\n'
+            'ex = ThreadPoolExecutor()\n'
+            'ex.submit(subprocess.run, ["ls"])\n'
+        )
+        node = self._find_ref(code)
+        assert node is not None
+        assert node.attr == "run"
+
+    def test_detects_assignment_subprocess_run(self):
+        """fn = subprocess.run — 赋值引用检测"""
+        code = 'import subprocess\nfn = subprocess.run\n'
+        node = self._find_ref(code)
+        assert node is not None
+        assert node.attr == "run"
+
+    def test_detects_callback_subprocess_popen(self):
+        """callback(subprocess.Popen, ...) — 参数传递检测"""
+        code = 'import subprocess\ncallback(subprocess.Popen, extra=True)\n'
+        node = self._find_ref(code)
+        assert node is not None
+        assert node.attr == "Popen"
+
+    def test_detects_alias_sp_ref(self):
+        """import subprocess as sp; ex.submit(sp.run, ...) — 别名引用检测"""
+        code = (
+            'import subprocess as sp\n'
+            'ex.submit(sp.run, ["ls"])\n'
+        )
+        node = self._find_ref(code)
+        assert node is not None
+        assert node.attr == "run"
+
+    def test_no_double_report_for_direct_call(self):
+        """直接调用 subprocess.run(...) 不应被 ref 检测重复报告"""
+        code = 'import subprocess\nsubprocess.run(["ls"])\n'
+        node = self._find_ref(code)
+        assert node is None  # 直接调用由 _is_bare_subprocess_call 覆盖，不应被 ref 重复检测
+
+    def test_ignores_non_subprocess_ref(self):
+        """os.run 作为引用传递不检测（非 subprocess 模块）"""
+        code = 'import os\nfn = os.run\n'
+        node = self._find_ref(code)
+        assert node is None
+
+    def test_ignores_object_method_ref(self):
+        """obj.run 作为引用传递不检测（非模块级）"""
+        code = 'fn = obj.run\n'
+        node = self._find_ref(code)
+        assert node is None
+
+
+# ---------------------------------------------------------------------------
+# TestRefPassGatewayIntegration — 引用传递 gate 集成测试
+# ---------------------------------------------------------------------------
+class TestRefPassGatewayIntegration:
+    """引用传递场景的端到端 gate 检测。"""
+
+    def test_executor_submit_subprocess_run_blocks(self):
+        """executor.submit(subprocess.run, ...) → 阻断 commit"""
+        content = (
+            'import subprocess\n'
+            'from concurrent.futures import ThreadPoolExecutor\n'
+            'ex = ThreadPoolExecutor()\n'
+            'ex.submit(subprocess.run, ["ls"])\n'
+        )
+        gw = _make_gateway(
+            staged_files=["src/foo.py"],
+            staged_content_map={"src/foo.py": content},
+        )
+        gate = make_bare_subprocess_gate()
+        passed, detail = gate.check(gw, ["src/foo.py"])
+        assert passed is False  # fail-closed 阻断
+        assert "src/foo.py:4" in detail
+        assert "引用传递" in detail
+
+    def test_assignment_subprocess_run_blocks(self):
+        """fn = subprocess.run → 阻断 commit"""
+        content = 'import subprocess\nfn = subprocess.run\n'
+        gw = _make_gateway(
+            staged_files=["src/foo.py"],
+            staged_content_map={"src/foo.py": content},
+        )
+        gate = make_bare_subprocess_gate()
+        passed, detail = gate.check(gw, ["src/foo.py"])
+        assert passed is False
+        assert "src/foo.py:2" in detail
+        assert "引用传递" in detail
+
+    def test_direct_call_not_double_reported(self):
+        """直接调用只报告一次（调用），不重复报告为引用传递"""
+        content = 'import subprocess\nsubprocess.run(["ls"])\n'
+        gw = _make_gateway(
+            staged_files=["src/foo.py"],
+            staged_content_map={"src/foo.py": content},
+        )
+        gate = make_bare_subprocess_gate()
+        passed, detail = gate.check(gw, ["src/foo.py"])
+        assert passed is False
+        # "调用" 出现一次，"引用传递" 不出现
+        assert "调用" in detail
+        assert "引用传递" not in detail
 
 
 # ---------------------------------------------------------------------------

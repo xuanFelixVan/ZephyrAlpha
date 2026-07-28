@@ -9537,3 +9537,227 @@ entries:
   related_rules: 'AGENTS.md 铁律#9（用户裁定优先）, project_memory.md Hard Constraints'
   created: '2026-07-28'
   last_updated: '2026-07-28'
+# ============================================================
+# 批量补登：24 个已实现但未登记的 #ARCH 引用（2026-07-29 铁律#6 合规治本）
+# 病根：前序 AI 在代码中标记 #ARCH-XXX 治本编号但未在 registry 登记，
+# 违反铁律#6（任何 #ARCH-XXX 引用必须在本注册表有对应条目）。
+# 所有条目均为已落地代码中的治本标记，status=decided。
+# ============================================================
+# --- Group A: CAPABILITY-LOOKUP-BYPASS-DEAD 系列（5 个子议题） ---
+- issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1'
+  title: CAPABILITY-LOOKUP-REQUIRED gate commit_message 透传止血
+  severity: P2中
+  adjudication: 'git_commit_gateway.py 中 CAPABILITY-LOOKUP-REQUIRED gate 需 commit_message 检测 [no-lookup:reason] 逃生标记，原未透传导致 gate 无法识别合法逃生。止血修复：commit_message 透传给 gate_registry.check_all。'
+  fix_phase: '已落地（git_commit_gateway.py:1107）'
+  status: decided
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型)'
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3'
+  title: capability_lookup 审计日志目录与 rule_discovery_server 对称
+  severity: P2中
+  adjudication: 'capability_lookup.py find()/get() 原不写审计日志，CAPABILITY-LOOKUP-REQUIRED gate 仅识别 MCP 路径不识别 Python API 路径。治本 G3：find()/get() 调用时自动写 audit log 到 .runtime/lookup_audit/<session_id>.jsonl，与 rule_discovery_server 对称。'
+  fix_phase: '已落地（capability_lookup.py:96,271,872,965）'
+  status: decided
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP'
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S6'
+  title: 老库幂等迁移 commit_message 列补齐
+  severity: P2中
+  adjudication: 'reconciliation_registry.py 中 2026-07-19 前创建的 governance.db 无 commit_message 列，写入/查询路径统一经 _ensure_commit_message_column 补列（PRAGMA 检测，幂等）。'
+  fix_phase: '已落地（reconciliation_registry.py:414）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S7'
+  title: AI session 启动健康度 smoke test
+  severity: P2中
+  adjudication: 'session_worktree.py 原无启动 smoke test，gate 故障时 AI 静默 workaround（最大风险）。治本：session_worktree_start 前置 _run_startup_health_check，检测 CAPABILITY-LOOKUP-REQUIRED gate 机制健康度，失败时 [ESCALATION] 警告（非阻断）。'
+  fix_phase: '已落地（session_worktree.py:2406,2650）'
+  status: decided
+  related_rules: 'AGENTS.md §11.0.3 #ARCH-TOOL-HEALTH-V1'
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S8'
+  title: CAPABILITY-LOOKUP-REQUIRED gate 健康度监控 reconciler
+  severity: P2中
+  adjudication: 'reconciliation_registry.py 病根 G6——.runtime/lookup_audit/ 曾长期为空（铁证），无监控检测 gate 静默失效；ZEPHYR_BYPASS_LOOKUP=1 无升级机制。治本：构造 gate 健康度监控 reconciler，高频率使用 ZEPHYR_BYPASS_LOOKUP=1 应触发告警。'
+  fix_phase: '已落地（reconciliation_registry.py:11555）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+# --- Group B: scheduler.py 数据管线治本系列（2 个） ---
+- issue_id: '#ARCH-SILENT-SUCCESS'
+  title: 0 行写入被标记 SUCCESS 且无告警（静默成功陷阱）
+  severity: P2中
+  adjudication: 'scheduler.py 中 0 行写入被标记为 SUCCESS 且无告警=静默成功陷阱，是多个表数据过期未发现的 root cause。治本：WARN 级别记录（不 FAIL），使 0 行完成可见可诊断，配合 provider 侧 error guard 消除静默失败。'
+  fix_phase: '已落地（scheduler.py:1124）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-CURSOR-DRIFT'
+  title: 0 行也推进 last_key 游标导致永久跳过
+  severity: P2中
+  adjudication: 'scheduler.py 中 Provider 在 FetchResult 中设置 last_key=end_str（今天）即使返回 0 行。若 0 行也推进游标，则下次查询 start=今天，永久跳过历史数据。治本：仅当本批有实际数据时才推进 last_key 游标。'
+  fix_phase: '已落地（scheduler.py:1283）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+# --- Group C: ifind_provider.py 数据层治本（3 个） ---
+- issue_id: '#ARCH-REALTIME-INDICATOR-FIX'
+  title: THS_RealtimeQuotes 指标名前缀修复
+  severity: P2中
+  adjudication: 'ifind_provider.py 中 THS_RealtimeQuotes（实时行情）用不带 ths_ 前缀的指标名（open/high/...），ths_ 前缀是 THS_BasicData（历史数据）格式，用于实时接口会返回 -4001 no data。'
+  fix_phase: '已落地（ifind_provider.py:1597, _REALTIME_INDICATORS 常量）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-REALTIME-SILENT-FAIL'
+  title: THS_RealtimeQuotes 异常吞没修复（静默失败→致命错误）
+  severity: P2中
+  adjudication: 'ifind_provider.py 原 return ([], None) 吞掉异常=静默失败，scheduler 标记 SUCCESS 但 0 行。治本：异常视为致命错误，让 scheduler 标记 FAILED 触发告警和重试。'
+  fix_phase: '已落地（ifind_provider.py:1717,1734）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-SECTOR-META-KEYS'
+  title: THS_WC 板块代码键名模糊匹配修复
+  severity: P2中
+  adjudication: 'ifind_provider.py 原用 tbl.get("thscode", []) 精确匹配，THS_WC 可能返回 "板块代码"/"code"/带日期后缀的键，导致 sector_codes=[] → rows=[] → 静默 SUCCESS 0 行（数据过期 21 天未发现）。治本：使用 _extract_wencai_column 模糊匹配。'
+  fix_phase: '已落地（ifind_provider.py:2193）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+# --- Group D: miniqmt_provider.py 数据层治本（4 个） ---
+- issue_id: '#ARCH-CB-IV-SYMBOLS'
+  title: 可转债/IV symbols 为空时静默 SUCCESS 修复
+  severity: P2中
+  adjudication: 'miniqmt_provider.py 原 code 无 error guard，symbols 为空时 for 循环 0 次 → 静默 SUCCESS 0 行。治本：akshare 失败时 fallback 到 QMT get_stock_list_in_sector("可转债") 加载合约列表。'
+  fix_phase: '已落地（miniqmt_provider.py:2211,2235）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-FINANCIAL-REPORT-TIME-FILTER'
+  title: 财务数据 m_timetag vs start/end 过滤错误修复
+  severity: P2中
+  adjudication: 'miniqmt_provider.py 原代码用 start/end 作为 get_financial_data 的第 3/4 参数，但 xtdata 按 m_timetag（报告期）过滤，而 scheduler 传入的 start/end 是公告日期窗口，导致 m_timetag < start 的数据被过滤掉。治本：全量读取 + provider 层按 m_anntime 过滤。'
+  fix_phase: '已落地（miniqmt_provider.py:858,1611,1749）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-FUTURES-SYMBOLS'
+  title: 期货 symbols 为空时从 QMT 板块加载
+  severity: P2中
+  adjudication: 'miniqmt_provider.py futures_position/futures_term_structure 原用 symbols = payload.symbols or []，tasks.yaml 中 symbols 为 null → 空 list → 循环 0 次 → 静默 SUCCESS 0 行。治本：复用 _fetch_kline_futures_qmt 已验证的板块加载模式。'
+  fix_phase: '已落地（miniqmt_provider.py:1433,1488,2488）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-OPTION-SYMBOLS'
+  title: 期权 symbols 为空时 fallback 到 QMT 板块接口
+  severity: P2中
+  adjudication: 'miniqmt_provider.py 当 option_kline 表数据过期（>30 天）时，CH 查询返回空 → symbols=[] → 静默 SUCCESS 0 行。治本：CH 查询为空时 fallback 到 QMT 板块接口 get_stock_list_in_sector 加载活跃期权合约。'
+  fix_phase: '已落地（miniqmt_provider.py:1991）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+# --- Group E: 其他数据层（2 个） ---
+- issue_id: '#ARCH-DISCLOSURE-PERIODS'
+  title: akshare 报告期 vs 披露窗口过滤错误修复
+  severity: P2中
+  adjudication: 'akshare_provider.py 原条件 start <= period_date 排除了仍有数据的历史报告期。报告期(period_date)是财报截止日，但披露窗口(announce_date)通常在报告期后 1-4 个月。治本：按披露窗口过滤而非报告期。'
+  fix_phase: '已落地（akshare_provider.py:2574）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-LOCAL-REPLAY-SKIPPED-ORPHAN'
+  title: local_replay 孤儿 manifest 条目永久存在修复
+  severity: P3低
+  adjudication: 'local_replay.py 文件不存在的 skipped 条目必须从 manifest 移除，否则既不在 remaining_entries 也不在 replayed_files，会在后续 manifest 合并步骤被重新加回，导致积压永不归零（孤儿 manifest 条目永久存在）。'
+  fix_phase: '已落地（local_replay.py:269）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+# --- Group F: Governance/测试治本（4 个） ---
+- issue_id: '#ARCH-HEARTBEAT-001-TEST-FAIL'
+  title: session_worktree 测试残留 daemon 进程清理
+  severity: P3低
+  adjudication: 'test_session_worktree.py 不调用 merge/abort 的测试会留下运行中的 daemon，累积导致系统资源耗尽（43 测试 × 1-2 daemon = 最多 86 个 Python 解释器进程）。治本：kill_all_heartbeat_daemons 遍历 _DAEMON_PROCS 批量清理。'
+  fix_phase: '已落地（test_session_worktree.py:84, reconcile_runner.py）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-STASH-LIFECYCLE-GAP-001'
+  title: stash 生命周期缺口（test_stash_lifecycle 覆盖缺失）
+  severity: P3低
+  adjudication: 'test_stash_lifecycle.py 覆盖 stash 生命周期缺口的测试场景，确保 stash 操作的完整生命周期（创建/恢复/清理）有测试覆盖。'
+  fix_phase: '已落地（test_stash_lifecycle.py）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-TTL-EXEMPT-DECOUPLE'
+  title: TTL 豁免与 frontmatter metadata 检查解耦
+  severity: P3低
+  adjudication: 'test_check_frontmatter_metadata.py 中 TTL 豁免逻辑与 frontmatter 检查耦合，解耦后可独立测试 TTL 豁免规则。'
+  fix_phase: '已落地（test_check_frontmatter_metadata.py）'
+  status: decided
+  created: '2026-07-24'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-DATAQUALITY-V1'
+  title: 数据质量治理 V1 系列（含 V1.4 scripts_import_integrity + V1.7 reconciler_health gate）
+  severity: P2中
+  adjudication: '数据质量治理 V1 系列议题，涵盖多个子版本：V1.4（scripts_import_integrity_gate 符号导入完整性门禁）、V1.7（reconciler_health_gate reconciler 健康度门禁）等。各子版本已分别在 gate_registry.yaml 和 capability_canonical_file_registry.yaml 中落地。'
+  fix_phase: '已落地（gate_registry.py:1044, capability_canonical_file_registry.yaml:6350,6355）'
+  status: decided
+  created: '2026-07-18'
+  last_updated: '2026-07-29'
+# --- Group G: 其他（4 个） ---
+- issue_id: '#ARCH-ANTI-RECURRENCE-P0'
+  title: P0 级防复发机制（datetime.now()/time.time() 禁止等）
+  severity: P1高
+  adjudication: '防复发 P0 级议题——DATETIME-NOW-FORBIDDEN 时间戳约定硬阻断门禁。生成器代码禁止 datetime.now() 任何形式（非幂等）；src/zephyr/ 全量代码禁止 time.time() 和 datetime.now() 无参数（naive datetime，5.46 时区处理防复发）。扩展自原 DATETIME-NOW-FORBIDDEN gate。'
+  fix_phase: '已落地（capability_canonical_file_registry.yaml:4322, noqa_exempt_registry.yaml:200）'
+  status: decided
+  created: '2026-07-20'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-PYTHON-SITECUSTOMIZE'
+  title: 开发环境 usercustomize.py 安装工具
+  severity: P3低
+  adjudication: '开发环境一次性初始化——setup_dev_env.py 安装 usercustomize.py 工具，确保 Python 环境配置自动化。'
+  fix_phase: '已落地（capability_canonical_file_registry.yaml:6613, scripts/setup_dev_env.py）'
+  status: decided
+  created: '2026-07-19'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-TORCH-CPU-ONLY'
+  title: PyTorch CPU 版替换（2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB）
+  severity: P2中
+  adjudication: '项目代码 0 个 import torch，由 sentence-transformers 间接引入。裁定将 torch 替换为 CPU 版（2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB），embedding_router.py 明确 device="cpu"。节省 3.79GB 依赖体积。'
+  fix_phase: '已落地（requirements.txt L5-10, embedding_router.py device="cpu"）'
+  status: decided
+  created: '2026-07-16'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-DEBT-BACKUP-CLEANUP'
+  title: 备份清理技术债务（directory_contract gate 文件存在性检查）
+  severity: P3低
+  adjudication: 'check_deprecated_directory 现在检查文件存在性，虚构路径会被当作删除操作跳过。deprecated_directories 设计意图是阻断新建文件进入废弃目录，而非阻断删除废弃目录中的已有文件。删除废弃目录中的文件正是期望的迁移行为。'
+  fix_phase: '已落地（test_directory_contract_gate.py:261,316）'
+  status: decided
+  created: '2026-07-08'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-GOV-CONVERGENCE-META'
+  title: 治理收敛元议题（Phase 3.x 多阶段治理基础设施收敛）
+  severity: P1高
+  adjudication: '元议题——治理基础设施 Phase 3 多阶段收敛的总括性裁定。Phase 3.1 治本进度新鲜度对账（remediation_progress_reconciler）、Phase 3.2b 规则发现 MCP Server（rule_discovery_server）、Phase 3.4a Capability Lookup 强制门禁（capability_lookup_required_gate）、Phase 3.4b 运行时违规快照（runtime_violation_snapshot + reconciler）、Phase 3.6 enforceability 补齐（manual_only_permanent_gate / snapshot_drift_gate / vocab_chain_gate）。覆盖 git_commit_gateway 中 reconciler 注册和 import 链。'
+  fix_phase: '已落地（多文件：remediation_progress_reconciler.py, runtime_violation_snapshot.py, rule_discovery_server.py, capability_lookup_required_gate.py, manual_only_permanent_gate.py, snapshot_drift_gate.py, vocab_chain_gate.py, git_commit_gateway.py）'
+  status: decided
+  created: '2026-07-15'
+  last_updated: '2026-07-29'
+- issue_id: '#ARCH-P3-FOLLOWUP-TODOS-001'
+  title: P3 延期跟进 TODO 批量裁定（A/B/C 三项）
+  severity: P2中
+  adjudication: 'P3 延期跟进项批量裁定——裁定 A：主工作区文件操作遥测提取到 shared（workspace_telemetry.py），session_worktree P3-1.1 治本；裁定 B/C：manual_only_permanent_gate 的 m11-perm-manual-legitimate noqa 标记正则化，P3-1.2 治本。三项均已落地。'
+  fix_phase: '已落地（workspace_telemetry.py, session_worktree.py, manual_only_permanent_gate.py）'
+  status: decided
+  created: '2026-07-19'
+  last_updated: '2026-07-29'
