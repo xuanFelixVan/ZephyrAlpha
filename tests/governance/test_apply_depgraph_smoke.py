@@ -511,3 +511,90 @@ class TestMaturityHeaderGateSmoke:
         assert result is False, (
             "production→design 是非法倒退，应被合法转换表阻断，但返回了 True"
         )
+
+
+# ============================================================================
+# Test 7: SQL 占位符契约 smoke —— 防列名/VALUES/%s 不匹配（治本 #ARCH-GOV-SQL-001）
+# ============================================================================
+
+class TestSqlPlaceholderContract:
+    """SQL INSERT 常量的列名/VALUES/%s 占位符静态契约（治本 #ARCH-GOV-SQL-001）。
+
+    病根（第一性原理）
+    -----------------
+    commit 3872d956124 移除 edges.cross_domain 列（改由 DB 触发器维护）时，
+    SQL_INSERT_DESIGN_EDGE/PRODUCTION_EDGE 的 VALUES 末尾误删 1个%s + 1个字面量，
+    导致列名(18) vs VALUES(17) 不匹配：relationship_type 被错位映射成 0、
+    verified 映射成 'design'、dep_maturity 丢值。add_design_edge/add_edge 4天全失败。
+
+    mock smoke test（test_add_design_edge_callable_with_mock_db）因 mock 替换
+    get_depgraph_pg_connection 且用不存在的 node_id（早期返回-1），从不执行
+    SQL_INSERT_*，故 4 天未发现此 bug——违反硬约束"核心治理工具必须有真实 e2e smoke"。
+
+    治本方案
+    --------
+    静态解析 SQL 常量，断言：①列名数==VALUES项数（列/值对齐）②%s数==函数参数数（占位符/参数对齐）。
+    不需 DB、不污染生产库、确定性、<1ms，能 100% 防住此类 bug。
+    """
+
+    @staticmethod
+    def _parse_insert_sql(sql: str):
+        """解析 INSERT SQL 的列名数、VALUES 项数、%s 占位符数。
+
+        返回 (col_count, value_count, placeholder_count)。
+        """
+        # 列名：INSERT INTO edges (...) VALUES → 取最后一个 ( ... ) 内
+        col_part = sql.split("VALUES", 1)[0].rsplit("(", 1)[1].rsplit(")", 1)[0]
+        cols = [c.strip() for c in col_part.split(",") if c.strip()]
+        # VALUES 项：VALUES (...) RETURNING → 取 () 内
+        vals_part = sql.split("VALUES", 1)[1].split("RETURNING", 1)[0].strip().strip("()")
+        vals = [v.strip() for v in vals_part.split(",") if v.strip()]
+        return len(cols), len(vals), sql.count("%s")
+
+    def test_design_edge_column_value_alignment(self, adg):
+        """SQL_INSERT_DESIGN_EDGE: 列名数 == VALUES 项数（列/值对齐）。"""
+        col_ct, val_ct, _ = self._parse_insert_sql(adg.SQL_INSERT_DESIGN_EDGE)
+        assert col_ct == val_ct, (
+            f"SQL_INSERT_DESIGN_EDGE 列/值不匹配: 列={col_ct} VALUES={val_ct}。"
+            f"占位符或字面量缺失——add_design_edge 会报 'not all arguments converted'。"
+            f"治本#ARCH-GOV-SQL-001"
+        )
+
+    def test_design_edge_placeholder_matches_function_params(self, adg):
+        """SQL_INSERT_DESIGN_EDGE 的 %s 数 == add_design_edge 参数数（排除 db_path）。"""
+        import inspect
+        _, _, ph_ct = self._parse_insert_sql(adg.SQL_INSERT_DESIGN_EDGE)
+        sig = inspect.signature(adg.add_design_edge)
+        param_ct = len([p for p in sig.parameters.values() if p.name != "db_path"])
+        assert ph_ct == param_ct, (
+            f"SQL_INSERT_DESIGN_EDGE %s数={ph_ct} != add_design_edge 参数数={param_ct}。"
+            f"占位符/参数不匹配——psycopg 报 'not all arguments converted'。"
+            f"治本#ARCH-GOV-SQL-001"
+        )
+
+    def test_production_edge_column_value_alignment(self, adg):
+        """SQL_INSERT_PRODUCTION_EDGE: 列名数 == VALUES 项数。"""
+        col_ct, val_ct, _ = self._parse_insert_sql(adg.SQL_INSERT_PRODUCTION_EDGE)
+        assert col_ct == val_ct, (
+            f"SQL_INSERT_PRODUCTION_EDGE 列/值不匹配: 列={col_ct} VALUES={val_ct}。"
+            f"治本#ARCH-GOV-SQL-001"
+        )
+
+    def test_production_edge_placeholder_matches_function_params(self, adg):
+        """SQL_INSERT_PRODUCTION_EDGE 的 %s 数 == add_edge 参数数（含 dep_maturity，排除 db_path）。"""
+        import inspect
+        _, _, ph_ct = self._parse_insert_sql(adg.SQL_INSERT_PRODUCTION_EDGE)
+        sig = inspect.signature(adg.add_edge)
+        param_ct = len([p for p in sig.parameters.values() if p.name != "db_path"])
+        assert ph_ct == param_ct, (
+            f"SQL_INSERT_PRODUCTION_EDGE %s数={ph_ct} != add_edge 参数数={param_ct}。"
+            f"治本#ARCH-GOV-SQL-001"
+        )
+
+    def test_design_edge_hardcoded_dep_maturity_is_design(self, adg):
+        """SQL_INSERT_DESIGN_EDGE 硬编码 dep_maturity='design'（设计态边契约）。"""
+        vals = adg.SQL_INSERT_DESIGN_EDGE.split("VALUES", 1)[1].split("RETURNING", 1)[0]
+        assert "'design'" in vals, (
+            "设计态边 SQL 应硬编码 dep_maturity='design'——"
+            "add_design_edge 的核心契约（设计态边只能连设计态节点）"
+        )

@@ -9761,3 +9761,11 @@ entries:
   status: decided
   created: '2026-07-19'
   last_updated: '2026-07-29'
+- issue_id: '#ARCH-GOV-SQL-001'
+  title: apply_depgraph SQL_INSERT_*_EDGE 占位符缺失致 add_design_edge/add_edge 4天全失败
+  severity: P1高
+  adjudication: 'commit 3872d956124（#ARCH-CROSS-DOMAIN-TRIGGER-001）移除 edges.cross_domain 列（改由 DB 触发器 trg_edges_cross_domain_bi 维护）时，SQL_INSERT_DESIGN_EDGE/PRODUCTION_EDGE 的 VALUES 末尾误删 1个%s + 1个字面量，导致列名(18) vs VALUES(17) 不匹配：relationship_type 被错位映射成 0、verified 映射成 design、dep_maturity 丢值。add_design_edge 传15参数但SQL仅14个%s，add_edge 传16参数但SQL仅15个%s，psycopg 报 "not all arguments converted during string formatting"，两个核心函数4天全失败。治本：①补回缺失的%s（给relationship_type列）；②新增 TestSqlPlaceholderContract 静态契约测试（列名数==VALUES项数、%s数==函数参数数），防占位符/参数不匹配类 bug 重现——mock smoke test 因不执行真实 SQL 而漏网，静态契约测试不依赖 DB 即可捕获。纯技术修复（bug fix + 测试补强，无价值判断），按铁律#9 AI 直接标 decided。'
+  fix_phase: '已落地（apply_depgraph.py SQL_INSERT_DESIGN_EDGE/PRODUCTION_EDGE 补%s + test_apply_depgraph_smoke.py TestSqlPlaceholderContract 5个测试）'
+  status: decided
+  created: '2026-07-29'
+  last_updated: '2026-07-29'

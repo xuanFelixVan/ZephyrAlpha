@@ -226,7 +226,7 @@ SQL_INSERT_DESIGN_EDGE = (
     "event_ref, ddd_integration_pattern, failure_mode, fallback, "
     "activation_condition, data_transfer_description, resource_impact, "
     "relationship_type, verified, dep_maturity) "
-    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 'design') "
+    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 'design') "
     "RETURNING edge_id"
 )
 SQL_INSERT_PRODUCTION_EDGE = (
@@ -235,7 +235,7 @@ SQL_INSERT_PRODUCTION_EDGE = (
     "event_ref, ddd_integration_pattern, failure_mode, fallback, "
     "activation_condition, data_transfer_description, resource_impact, "
     "relationship_type, verified, dep_maturity) "
-    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, %s) "
+    "VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, %s) "
     "RETURNING edge_id"
 )
 SQL_SELECT_TO_NODES_BY_FROM = "SELECT to_node_id FROM edges WHERE from_node_id=%s"
