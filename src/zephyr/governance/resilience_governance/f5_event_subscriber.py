@@ -257,7 +257,7 @@ class F5EventSubscriber:
         - node (str): 死锁节点 ID (可选, 缺省用 preempt_lowest)
         - cycle (list[str]): 死锁循环 (可选, 仅记录)
         """
-        payload = self._extract_payload(event)
+        payload = self.extract_payload(event)
         node = payload.get("node")
         cycle = payload.get("cycle", [])
         result = EventHandlerResult(
@@ -300,7 +300,7 @@ class F5EventSubscriber:
         - description (str): 升级描述
         - owner_id (str): 责任人 ID
         """
-        payload = self._extract_payload(event)
+        payload = self.extract_payload(event)
         category_str = payload.get("category", "custom")
         description = payload.get("description", "event-driven escalation")
         owner_id = payload.get("owner_id")
@@ -347,7 +347,7 @@ class F5EventSubscriber:
         - agent_b (dict): 同上
         - conflicted_files (list[str]): 冲突文件列表
         """
-        payload = self._extract_payload(event)
+        payload = self.extract_payload(event)
         agent_a_data = payload.get("agent_a", {})
         agent_b_data = payload.get("agent_b", {})
         conflicted_files = payload.get("conflicted_files", [])
@@ -438,8 +438,8 @@ class F5EventSubscriber:
     # ── 工具方法 ─────────────────────────────────────────────────────────
 
     @staticmethod
-    def _extract_payload(event: object) -> dict:
-        """从 EventBus Event 或 dict 提取 payload (兼容多种事件格式)。"""
+    def extract_payload(event: object) -> dict:
+        """从 EventBus Event 或 dict 提取 payload（Stage 4 公共化，primary）。"""
         if event is None:
             return {}
         if isinstance(event, dict):
@@ -458,6 +458,11 @@ class F5EventSubscriber:
             return dict(event)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
+
+    @staticmethod
+    def _extract_payload(event: object) -> dict:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return F5EventSubscriber.extract_payload(event)
 
     def _log_dispatch(self, result: EventHandlerResult) -> None:
         """记录事件派发结果 (环形缓冲)。"""
@@ -498,6 +503,25 @@ class F5EventSubscriber:
     @property
     def feedback_loop(self) -> object:
         return self._feedback_loop
+
+    @property
+    def bus(self) -> EventBusBackpressure:
+        """事件总线实例（Stage 4 公共化，read-only）。"""
+        return self._bus
+
+    @property
+    def handler_registry(self) -> dict[str, Any]:
+        """处理器注册表快照（Stage 4 公共化，read-only）。"""
+        return dict(self._handler_registry)
+
+    @property
+    def max_log_entries(self) -> int:
+        """派发日志最大条数（Stage 4 公共化，read-write）。"""
+        return self._max_log_entries
+
+    @max_log_entries.setter
+    def max_log_entries(self, value: int) -> None:
+        self._max_log_entries = value
 
     def get_stats(self) -> dict:
         """返回订阅器统计信息。"""

@@ -135,11 +135,11 @@ class TestConstruction:
     def test_default_construction_uses_global_bus(self):
         from zephyr.governance.resilience_governance.f5_event_subscriber import default_bus
         sub = F5EventSubscriber()
-        assert sub._bus is default_bus
+        assert sub.bus is default_bus
 
     def test_custom_bus(self, isolated_bus: EventBusBackpressure):
         sub = F5EventSubscriber(event_bus=isolated_bus)
-        assert sub._bus is isolated_bus
+        assert sub.bus is isolated_bus
 
     def test_custom_rule_bindings(self, isolated_bus: EventBusBackpressure):
         custom = [RuleBinding(category="x", topic="x.topic", handler_name="h")]
@@ -163,9 +163,9 @@ class TestConstruction:
         assert subscriber.feedback_loop is None
 
     def test_handler_registry_populated(self, subscriber: F5EventSubscriber):
-        assert TOPIC_DEADLOCK_DETECTED in subscriber._handler_registry
-        assert TOPIC_ESCALATION_NEEDED in subscriber._handler_registry
-        assert TOPIC_CONFLICT_DETECTED in subscriber._handler_registry
+        assert TOPIC_DEADLOCK_DETECTED in subscriber.handler_registry
+        assert TOPIC_ESCALATION_NEEDED in subscriber.handler_registry
+        assert TOPIC_CONFLICT_DETECTED in subscriber.handler_registry
 
 
 class TestBindComponents:
@@ -227,9 +227,9 @@ class TestSubscribeAll:
 
     def test_subscribe_registers_handler_in_bus(self, subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
         subscriber.subscribe_all()
-        assert TOPIC_DEADLOCK_DETECTED in isolated_bus._handlers
-        assert TOPIC_ESCALATION_NEEDED in isolated_bus._handlers
-        assert TOPIC_CONFLICT_DETECTED in isolated_bus._handlers
+        assert TOPIC_DEADLOCK_DETECTED in isolated_bus.subscribed_topics
+        assert TOPIC_ESCALATION_NEEDED in isolated_bus.subscribed_topics
+        assert TOPIC_CONFLICT_DETECTED in isolated_bus.subscribed_topics
 
 
 class TestUnsubscribeAll:
@@ -475,7 +475,7 @@ class TestEventDispatchLog:
         assert log[0].action == "break_deadlock"
 
     def test_dispatch_log_capped_at_max(self, subscriber: F5EventSubscriber):
-        subscriber._max_log_entries = 5
+        subscriber.max_log_entries = 5
         ddl = MagicMock()
         ddl.break_deadlock.return_value = True
         subscriber.bind_components(deadlock_detector=ddl)
@@ -490,12 +490,12 @@ class TestEmitHelpers:
     def test_emit_deadlock_event(self, subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
         ok = subscriber.emit_deadlock_event(node="agent-1", cycle=["a", "b"])
         assert ok is True
-        assert isolated_bus._emit_count == 1
+        assert isolated_bus.emit_count == 1
 
     def test_emit_escalation_event(self, subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
         ok = subscriber.emit_escalation_event(category="deadlock", description="test", owner_id="o1")
         assert ok is True
-        assert isolated_bus._emit_count == 1
+        assert isolated_bus.emit_count == 1
 
     def test_emit_conflict_event(self, subscriber: F5EventSubscriber, isolated_bus: EventBusBackpressure):
         ok = subscriber.emit_conflict_event(
@@ -504,7 +504,7 @@ class TestEmitHelpers:
             conflicted_files=["f.py"],
         )
         assert ok is True
-        assert isolated_bus._emit_count == 1
+        assert isolated_bus.emit_count == 1
 
 
 class TestGetStats:
@@ -539,7 +539,7 @@ class TestCreateF5EventSubscriber:
         assert sub.delegation_engine is dele
         assert sub.deadlock_detector is ddl
         assert sub.arbitrator is arb
-        assert sub._bus is isolated_bus
+        assert sub.bus is isolated_bus
 
     def test_creates_with_feedback_loop(self, isolated_bus: EventBusBackpressure):
         fl = MagicMock()
@@ -549,7 +549,7 @@ class TestCreateF5EventSubscriber:
     def test_creates_without_components(self, isolated_bus: EventBusBackpressure):
         sub = create_f5_event_subscriber(event_bus=isolated_bus)
         assert sub.escalation_engine is None
-        assert sub._bus is isolated_bus
+        assert sub.bus is isolated_bus
 
 
 class TestEndToEndEventFlow:
@@ -616,21 +616,21 @@ class TestEndToEndEventFlow:
 
 class TestExtractPayload:
     def test_extract_from_dict(self, subscriber: F5EventSubscriber):
-        payload = F5EventSubscriber._extract_payload({"key": "value"})
+        payload = F5EventSubscriber.extract_payload({"key": "value"})
         assert payload == {"key": "value"}
 
     def test_extract_from_none(self, subscriber: F5EventSubscriber):
-        payload = F5EventSubscriber._extract_payload(None)
+        payload = F5EventSubscriber.extract_payload(None)
         assert payload == {}
 
     def test_extract_from_event_with_dict_payload(self, subscriber: F5EventSubscriber):
         event = MagicMock()
         event.payload = {"key": "value"}
-        payload = F5EventSubscriber._extract_payload(event)
+        payload = F5EventSubscriber.extract_payload(event)
         assert payload == {"key": "value"}
 
     def test_extract_from_event_with_none_payload(self, subscriber: F5EventSubscriber):
         event = MagicMock()
         event.payload = None
-        payload = F5EventSubscriber._extract_payload(event)
+        payload = F5EventSubscriber.extract_payload(event)
         assert payload == {}

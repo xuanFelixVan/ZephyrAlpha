@@ -297,6 +297,18 @@ class EventBusBackpressure:
                 "critical_threshold": self.critical_threshold,
             }
 
+    @property
+    def subscribed_topics(self) -> frozenset[str]:
+        """已注册处理器的话题集合（Stage 4 公共化，read-only）。"""
+        with self._lock:
+            return frozenset(self._handlers.keys())
+
+    @property
+    def emit_count(self) -> int:
+        """累计发射事件数（Stage 4 公共化，read-only）。"""
+        with self._lock:
+            return self._emit_count
+
     def drain(self, max_events: int = 100) -> int:
         drained = 0
         with self._lock:
