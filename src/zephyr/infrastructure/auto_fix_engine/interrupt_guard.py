@@ -46,6 +46,30 @@ class InterruptGuard:
         self._original_sigterm: Any = None
         self._handlers_installed = False
 
+    # ── Stage 4 公共化（2026-07-28）：只读 properties ──
+    # 消除 tests/llm_security/test_interrupt_guard.py 中 16 处私有成员访问。
+    # active_fixes 返回可变 dict 引用（调用方可读写内容但不可重新绑定属性）。
+
+    @property
+    def wal_dir(self) -> Path:
+        """只读：WAL 目录路径（Stage 4 公共化）。"""
+        return self._wal_dir
+
+    @property
+    def db_path(self) -> str | Path:
+        """只读：治理 DB 路径（Stage 4 公共化）。"""
+        return self._db_path
+
+    @property
+    def active_fixes(self) -> dict[str, dict[str, Any]]:
+        """只读：当前活跃修复表（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._active_fixes
+
+    @property
+    def handlers_installed(self) -> bool:
+        """只读：信号处理器是否已安装（Stage 4 公共化）。"""
+        return self._handlers_installed
+
     def install_handlers(self) -> None:
         if self._handlers_installed:
             return

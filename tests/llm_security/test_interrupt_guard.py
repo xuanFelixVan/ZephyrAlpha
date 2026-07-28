@@ -24,32 +24,32 @@ from zephyr.infrastructure.auto_fix_engine.interrupt_guard import InterruptGuard
 class TestInterruptGuardInstantiation:
     def test_default_wal_dir(self):
         guard = InterruptGuard()
-        assert guard._wal_dir == Path("data/auto_fix/wal")
+        assert guard.wal_dir == Path("data/auto_fix/wal")
 
     def test_custom_wal_dir(self):
         guard = InterruptGuard(wal_dir="/tmp/custom_wal")
-        assert guard._wal_dir == Path("/tmp/custom_wal")
+        assert guard.wal_dir == Path("/tmp/custom_wal")
 
     def test_default_db_path(self):
         from zephyr.shared.io.paths import DB_PATH
         guard = InterruptGuard()
-        assert guard._db_path == DB_PATH
+        assert guard.db_path == DB_PATH
 
     def test_active_fixes_starts_empty(self):
         guard = InterruptGuard()
-        assert guard._active_fixes == {}
+        assert guard.active_fixes == {}
 
     def test_handlers_not_installed_initially(self):
         guard = InterruptGuard()
-        assert guard._handlers_installed is False
+        assert guard.handlers_installed is False
 
 
 class TestInterruptGuardBeginFix:
     def test_begin_fix_adds_to_active_fixes(self):
         guard = InterruptGuard()
         guard.begin_fix("action-001", "target.py", "original content")
-        assert "action-001" in guard._active_fixes
-        assert guard._active_fixes["action-001"]["target"] == "target.py"
+        assert "action-001" in guard.active_fixes
+        assert guard.active_fixes["action-001"]["target"] == "target.py"
 
     def test_begin_fix_writes_wal_file(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -64,12 +64,12 @@ class TestInterruptGuardBeginFix:
     def test_begin_fix_stores_before_content(self):
         guard = InterruptGuard()
         guard.begin_fix("action-003", "target.py", "before_content")
-        assert guard._active_fixes["action-003"]["before_content"] == "before_content"
+        assert guard.active_fixes["action-003"]["before_content"] == "before_content"
 
     def test_begin_fix_with_empty_before_content(self):
         guard = InterruptGuard()
         guard.begin_fix("action-004", "target.py")
-        assert guard._active_fixes["action-004"]["before_content"] == ""
+        assert guard.active_fixes["action-004"]["before_content"] == ""
 
 
 class TestInterruptGuardUpdatePhase:
@@ -77,7 +77,7 @@ class TestInterruptGuardUpdatePhase:
         guard = InterruptGuard()
         guard.begin_fix("action-005", "target.py", "original")
         guard.update_phase("action-005", "fixing")
-        assert guard._active_fixes["action-005"]["phase"] == "fixing"
+        assert guard.active_fixes["action-005"]["phase"] == "fixing"
 
     def test_update_phase_writes_wal(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -91,7 +91,7 @@ class TestInterruptGuardUpdatePhase:
     def test_update_phase_ignores_unknown_action_id(self):
         guard = InterruptGuard()
         guard.update_phase("nonexistent", "fixing")
-        assert "nonexistent" not in guard._active_fixes
+        assert "nonexistent" not in guard.active_fixes
 
 
 class TestInterruptGuardCompleteFix:
@@ -99,7 +99,7 @@ class TestInterruptGuardCompleteFix:
         guard = InterruptGuard()
         guard.begin_fix("action-007", "target.py", "original")
         guard.complete_fix("action-007")
-        assert "action-007" not in guard._active_fixes
+        assert "action-007" not in guard.active_fixes
 
     def test_complete_fix_removes_wal_file(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -174,7 +174,7 @@ class TestInterruptGuardInstallHandlers:
         guard = InterruptGuard()
         try:
             guard.install_handlers()
-            assert guard._handlers_installed is True
+            assert guard.handlers_installed is True
         finally:
             guard.remove_handlers()
 
@@ -183,7 +183,7 @@ class TestInterruptGuardInstallHandlers:
         try:
             guard.install_handlers()
             guard.install_handlers()
-            assert guard._handlers_installed is True
+            assert guard.handlers_installed is True
         finally:
             guard.remove_handlers()
 
@@ -193,9 +193,9 @@ class TestInterruptGuardInstallHandlers:
             guard.install_handlers()
         finally:
             guard.remove_handlers()
-        assert guard._handlers_installed is False
+        assert guard.handlers_installed is False
 
     def test_remove_handlers_when_not_installed(self):
         guard = InterruptGuard()
         guard.remove_handlers()
-        assert guard._handlers_installed is False
+        assert guard.handlers_installed is False
