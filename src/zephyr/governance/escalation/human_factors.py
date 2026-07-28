@@ -32,6 +32,38 @@ class HumanFactors:
         self._min_interval_s = 300
         self._max_per_hour = 12
 
+    # ── Stage 4 公共化属性 ──
+
+    @property
+    def notification_count(self) -> dict[str, int]:
+        """每 owner 通知计数（public API, Stage 4）."""
+        return self._notification_count
+
+    @property
+    def last_notified(self) -> dict[str, float]:
+        """每 owner 最近通知时间戳（public API, Stage 4）."""
+        return self._last_notified
+
+    @property
+    def min_interval_s(self) -> int:
+        """最小通知间隔秒数（public API, Stage 4）."""
+        return self._min_interval_s
+
+    @min_interval_s.setter
+    def min_interval_s(self, value: int) -> None:
+        """设置最小通知间隔秒数（for testing, Stage 4）."""
+        self._min_interval_s = value
+
+    @property
+    def max_per_hour(self) -> int:
+        """每小时最大通知数（public API, Stage 4）."""
+        return self._max_per_hour
+
+    @max_per_hour.setter
+    def max_per_hour(self, value: int) -> None:
+        """设置每小时最大通知数（for testing, Stage 4）."""
+        self._max_per_hour = value
+
     def should_notify(self, owner_id: str) -> tuple[bool, str]:
         now = time.time()
         window_start = now - 3600
