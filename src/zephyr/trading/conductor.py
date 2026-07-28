@@ -82,6 +82,19 @@ class Conductor:
         self._autopilot = None
         self._repo = None
 
+    # Stage 4 公共化：属性公共读写（primary），私有属性向后兼容。
+    @property
+    def max_parallel(self) -> int:
+        return self._max_parallel
+
+    @max_parallel.setter
+    def max_parallel(self, value: int) -> None:
+        self._max_parallel = value
+
+    @property
+    def db_path(self):
+        return self._db_path
+
     @property
     def autopilot(self) -> AutoPilot:
         from zephyr.trading.autopilot import AutoPilot
@@ -90,6 +103,10 @@ class Conductor:
             self._autopilot = AutoPilot(self.session_id, self._db_path)
         return self._autopilot
 
+    @autopilot.setter
+    def autopilot(self, value) -> None:
+        self._autopilot = value
+
     @property
     def repo(self) -> TaskRepository:
         if self._repo is None:
@@ -97,6 +114,10 @@ class Conductor:
 
             self._repo = TaskRepository(self._db_path, enable_gate=False)
         return self._repo
+
+    @repo.setter
+    def repo(self, value) -> None:
+        self._repo = value
 
     def plan_cycle(self, max_tasks: int = 10) -> list[list[TaskCard]]:
         """认领任务 + 冲突检测 + 返回并行执行分组。
@@ -130,8 +151,8 @@ class Conductor:
 
         logger.info("Conductor: 认领到 %d 个任务", len(claimed))
 
-        conflict_map = self._detect_file_conflicts(claimed)
-        groups = self._group_by_conflict(claimed, conflict_map)
+        conflict_map = self.detect_file_conflicts(claimed)
+        groups = self.group_by_conflict(claimed, conflict_map)
 
         for i, group in enumerate(groups):
             task_ids = [t.task_id for t in group]
@@ -166,14 +187,14 @@ class Conductor:
         conductor_info = [
             "",
             f"  Conductor: session={self.session_id}",
-            f"  Conductor: max_parallel={self._max_parallel}",
+            f"  Conductor: max_parallel={self.max_parallel}",
             f"  Conductor: is_done={self.is_done()}",
             f"  Conductor: remaining={ready + in_progress}",
         ]
         return base + "\n".join(conductor_info)
 
-    def _get_task_files(self, task: TaskCard) -> set[str]:
-        """提取任务涉及的所有文件路径（files_in_scope + allowed_touch）。"""
+    def get_task_files(self, task: TaskCard) -> set[str]:
+        """提取任务涉及的所有文件路径（files_in_scope + allowed_touch）（Stage 4 公共化，primary）。"""
         files: set[str] = set()
 
         fis = _coerce_field_to_list(getattr(task, "files_in_scope", None) or [], True)
@@ -187,15 +208,19 @@ class Conductor:
 
         return files
 
-    def _detect_file_conflicts(self, tasks: list[TaskCard]) -> dict[str, set[str]]:
-        """检测任务间的文件冲突。
+    def _get_task_files(self, task: TaskCard) -> set[str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.get_task_files(task)
+
+    def detect_file_conflicts(self, tasks: list[TaskCard]) -> dict[str, set[str]]:
+        """检测任务间的文件冲突（Stage 4 公共化，primary）。
 
         Returns:
             {task_id: {conflicting_task_id, ...}} — 冲突邻接表。
         """
         task_files: dict[str, set[str]] = {}
         for t in tasks:
-            task_files[t.task_id] = self._get_task_files(t)
+            task_files[t.task_id] = self.get_task_files(t)
 
         conflict_map: dict[str, set[str]] = {t.task_id: set() for t in tasks}
 
@@ -214,12 +239,16 @@ class Conductor:
 
         return conflict_map
 
-    def _group_by_conflict(
+    def _detect_file_conflicts(self, tasks: list[TaskCard]) -> dict[str, set[str]]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.detect_file_conflicts(tasks)
+
+    def group_by_conflict(
         self,
         tasks: list[TaskCard],
         conflict_map: dict[str, set[str]],
     ) -> list[list[TaskCard]]:
-        """贪心图着色分组：无冲突的任务分到同一组可并行执行。
+        """贪心图着色分组：无冲突的任务分到同一组可并行执行（Stage 4 公共化，primary）。
 
         算法:
             1. 按优先级排序（高优先级先分配，确保其在最早组）
@@ -253,11 +282,19 @@ class Conductor:
                 group_task_ids.append({task.task_id})
 
         for i, group in enumerate(groups):
-            if len(group) > self._max_parallel:
-                groups[i] = group[: self._max_parallel]
-                overflow = group[self._max_parallel :]
+            if len(group) > self.max_parallel:
+                groups[i] = group[: self.max_parallel]
+                overflow = group[self.max_parallel :]
                 for t in overflow:
                     groups.append([t])
                     group_task_ids.append({t.task_id})
 
         return groups
+
+    def _group_by_conflict(
+        self,
+        tasks: list[TaskCard],
+        conflict_map: dict[str, set[str]],
+    ) -> list[list[TaskCard]]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.group_by_conflict(tasks, conflict_map)

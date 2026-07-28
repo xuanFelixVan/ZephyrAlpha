@@ -24,9 +24,9 @@ def conductor(tmp_path):
     from zephyr.trading.conductor import Conductor
 
     c = Conductor("session-test-001", db_path=str(tmp_path / "tasks.db"), max_parallel=2)
-    # 替换 autopilot 和 repo 为 mock
-    c._autopilot = MagicMock()
-    c._repo = MagicMock()
+    # 替换 autopilot 和 repo 为 mock（Stage 4 公共化：使用公共 setter）
+    c.autopilot = MagicMock()
+    c.repo = MagicMock()
     return c
 
 
@@ -36,17 +36,16 @@ class TestConductorInit:
 
         c = Conductor("session-001")
         assert c.session_id == "session-001"
-        assert c._max_parallel == 3
-        assert c._autopilot is None
-        assert c._repo is None
+        assert c.max_parallel == 3
+        # autopilot/repo 为懒加载实现细节，行为由其它测试覆盖（Stage 4 公共化）
 
     def test_init_custom(self):
         from zephyr.trading.conductor import Conductor
 
         c = Conductor("session-002", db_path="/tmp/x.db", max_parallel=5)
         assert c.session_id == "session-002"
-        assert c._db_path == "/tmp/x.db"
-        assert c._max_parallel == 5
+        assert c.db_path == "/tmp/x.db"
+        assert c.max_parallel == 5
 
 
 class TestConductorPlanCycle:
@@ -151,7 +150,7 @@ class TestConductorGetTaskFiles:
         t.files_in_scope = ["a.py", "b.py"]
         t.allowed_touch = []
         t.downstream_outputs = []
-        files = conductor._get_task_files(t)
+        files = conductor.get_task_files(t)
         assert files == {"a.py", "b.py"}
 
     def test_get_task_files_from_allowed_touch(self, conductor):
@@ -159,7 +158,7 @@ class TestConductorGetTaskFiles:
         t.files_in_scope = []
         t.allowed_touch = ["c.py"]
         t.downstream_outputs = []
-        files = conductor._get_task_files(t)
+        files = conductor.get_task_files(t)
         assert files == {"c.py"}
 
     def test_get_task_files_from_downstream_outputs(self, conductor):
@@ -167,7 +166,7 @@ class TestConductorGetTaskFiles:
         t.files_in_scope = []
         t.allowed_touch = []
         t.downstream_outputs = [{"path": "d.py"}, {"path": "e.py"}]
-        files = conductor._get_task_files(t)
+        files = conductor.get_task_files(t)
         assert files == {"d.py", "e.py"}
 
     def test_get_task_files_json_string(self, conductor):
@@ -175,7 +174,7 @@ class TestConductorGetTaskFiles:
         t.files_in_scope = '["x.py", "y.py"]'
         t.allowed_touch = []
         t.downstream_outputs = []
-        files = conductor._get_task_files(t)
+        files = conductor.get_task_files(t)
         assert files == {"x.py", "y.py"}
 
 
@@ -193,7 +192,7 @@ class TestConductorDetectConflicts:
         t2.allowed_touch = []
         t2.downstream_outputs = []
 
-        cm = conductor._detect_file_conflicts([t1, t2])
+        cm = conductor.detect_file_conflicts([t1, t2])
         assert cm["T1"] == set()
         assert cm["T2"] == set()
 
@@ -210,7 +209,7 @@ class TestConductorDetectConflicts:
         t2.allowed_touch = []
         t2.downstream_outputs = []
 
-        cm = conductor._detect_file_conflicts([t1, t2])
+        cm = conductor.detect_file_conflicts([t1, t2])
         assert "T2" in cm["T1"]
         assert "T1" in cm["T2"]
 
@@ -232,7 +231,7 @@ class TestConductorGroupByConflict:
         t2.created_at.isoformat.return_value = "2026-01-01T00:00:01"
 
         cm = {"T1": set(), "T2": set()}
-        groups = conductor._group_by_conflict([t1, t2], cm)
+        groups = conductor.group_by_conflict([t1, t2], cm)
         assert len(groups) == 1
         assert len(groups[0]) == 2
 
@@ -252,12 +251,12 @@ class TestConductorGroupByConflict:
         t2.created_at.isoformat.return_value = "2026-01-01T00:00:01"
 
         cm = {"T1": {"T2"}, "T2": {"T1"}}
-        groups = conductor._group_by_conflict([t1, t2], cm)
+        groups = conductor.group_by_conflict([t1, t2], cm)
         assert len(groups) == 2
 
     def test_group_max_parallel_truncation(self, conductor):
         """max_parallel=2，3个无冲突任务应分成2组（2+1）。"""
-        conductor._max_parallel = 2
+        conductor.max_parallel = 2
         tasks = []
         for i in range(3):
             t = MagicMock()
@@ -269,7 +268,7 @@ class TestConductorGroupByConflict:
             tasks.append(t)
 
         cm = {f"T{i}": set() for i in range(3)}
-        groups = conductor._group_by_conflict(tasks, cm)
+        groups = conductor.group_by_conflict(tasks, cm)
         # 第一组2个，第二组1个
         assert len(groups) == 2
         assert len(groups[0]) == 2
