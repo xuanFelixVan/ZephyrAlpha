@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-24T16:48:34Z'
+generated_at: '2026-07-27T18:27:15Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -455,10 +455,9 @@ gates:
   status: active
   source: commit-gate
 - gate_id: BARE-SUBPROCESS
-  name: 'BARE-SUBPROCESS: 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS）（CommitGate,
-    priority=108）'
+  name: 'BARE-SUBPROCESS: 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）（CommitGate, priority=108）'
   entry: in-process (GitCommitGateway)
-  description: 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS）
+  description: 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1051,9 +1050,9 @@ gates:
   status: active
   source: commit-gate
 - gate_id: RELATIVE-PATH-LITERAL
-  name: 'RELATIVE-PATH-LITERAL: 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）（CommitGate, priority=115）'
+  name: 'RELATIVE-PATH-LITERAL: RELATIVE-PATH-LITERAL（CommitGate, priority=115）'
   entry: in-process (GitCommitGateway)
-  description: 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
+  description: RELATIVE-PATH-LITERAL
   files_trigger: ''
   always_run: false
   category: commit_gate

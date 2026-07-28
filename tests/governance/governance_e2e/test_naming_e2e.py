@@ -10,8 +10,11 @@
 
 """DM-398: 命名规范端到端测试 — 验证完整防护链路。
 
-测试链路: 创建违规文件 → check_naming_convention.py 检测 → scaffold.py 强制 kebab-case
+测试链路: 创建违规文件 → check_naming_convention.py 检测 → scaffold.py 强制 snake_case
 不依赖 git pre-commit（CI 环境无 git config），直接调用检查器验证。
+
+修复(2026-07-28 Gap-2): N-13 从 kebab-case 纠正为 snake_case，对齐 trae_028 SSoT 真源。
+测试断言已翻转：snake_case 通过 / kebab-case 违规。
 """
 
 from __future__ import annotations
@@ -52,13 +55,13 @@ def _run_scaffold(mode: str, name: str, desc: str = "Test") -> subprocess.Comple
 class TestNamingConventionDetection:
     """验证 check_naming_convention.py 能检测各类违规文件名。"""
 
-    def test_snake_case_yaml_detected(self, tmp_path: Path) -> None:
-        """snake_case YAML 文件名应被 N-13 检测为违规。"""
-        bad_file = tmp_path / "my_config.yaml"
+    def test_kebab_case_yaml_detected(self, tmp_path: Path) -> None:
+        """kebab-case YAML 文件名应被 N-13 检测为违规。"""
+        bad_file = tmp_path / "my-config.yaml"
         bad_file.write_text("key: value\n", encoding="utf-8")
 
         result = _run_checker(str(tmp_path))
-        assert result.returncode != 0, "snake_case YAML 应被检测为违规"
+        assert result.returncode != 0, "kebab-case YAML 应被检测为违规"
         assert "N-13" in result.stdout or "N-13" in result.stderr
 
     def test_uppercase_md_detected(self, tmp_path: Path) -> None:
@@ -70,79 +73,79 @@ class TestNamingConventionDetection:
         assert result.returncode != 0, "大写 MD 文件名应被检测为违规"
         assert "N-01" in result.stdout or "N-01" in result.stderr
 
-    def test_kebab_case_yaml_passes(self, tmp_path: Path) -> None:
-        """kebab-case YAML 文件名应通过检查。"""
-        good_file = tmp_path / "my-config.yaml"
+    def test_snake_case_yaml_passes(self, tmp_path: Path) -> None:
+        """snake_case YAML 文件名应通过检查。"""
+        good_file = tmp_path / "my_config.yaml"
         good_file.write_text("key: value\n", encoding="utf-8")
 
         result = _run_checker(str(tmp_path))
-        assert result.returncode == 0, f"kebab-case YAML 应通过检查, got: {result.stdout}"
+        assert result.returncode == 0, f"snake_case YAML 应通过检查, got: {result.stdout}"
 
-    def test_kebab_case_json_passes(self, tmp_path: Path) -> None:
-        """kebab-case JSON 文件名应通过检查。"""
-        good_file = tmp_path / "my-config.json"
+    def test_snake_case_json_passes(self, tmp_path: Path) -> None:
+        """snake_case JSON 文件名应通过检查。"""
+        good_file = tmp_path / "my_config.json"
         good_file.write_text('{"key": "value"}\n', encoding="utf-8")
 
         result = _run_checker(str(tmp_path))
-        assert result.returncode == 0, f"kebab-case JSON 应通过检查, got: {result.stdout}"
+        assert result.returncode == 0, f"snake_case JSON 应通过检查, got: {result.stdout}"
 
-    def test_kebab_case_md_passes(self, tmp_path: Path) -> None:
-        """kebab-case MD 文件名应通过检查。"""
-        good_file = tmp_path / "my-guide.md"
+    def test_snake_case_md_passes(self, tmp_path: Path) -> None:
+        """snake_case MD 文件名应通过检查。"""
+        good_file = tmp_path / "my_guide.md"
         good_file.write_text("# Guide\n", encoding="utf-8")
 
         result = _run_checker(str(tmp_path))
-        assert result.returncode == 0, f"kebab-case MD 应通过检查, got: {result.stdout}"
+        assert result.returncode == 0, f"snake_case MD 应通过检查, got: {result.stdout}"
 
 
-class TestScaffoldKebabEnforcement:
-    """验证 scaffold.py 的 kebab-case 强制执行。"""
+class TestScaffoldSnakeCaseEnforcement:
+    """验证 scaffold.py 的 snake_case 强制执行。"""
 
-    def test_scaffold_yaml_rejects_snake_case(self) -> None:
-        """scaffold.py yaml 模式应拒绝 snake_case 文件名。"""
-        result = _run_scaffold("yaml", "test_dir/my_test_config", "Test config")
-        assert result.returncode != 0, f"snake_case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
+    def test_scaffold_yaml_rejects_kebab_case(self) -> None:
+        """scaffold.py yaml 模式应拒绝 kebab-case 文件名。"""
+        result = _run_scaffold("yaml", "test_dir/my-test-config", "Test config")
+        assert result.returncode != 0, f"kebab-case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
         output = result.stdout + result.stderr
-        assert "kebab-case" in output
+        assert "snake_case" in output
 
     def test_scaffold_yaml_rejects_uppercase(self) -> None:
         """scaffold.py yaml 模式应拒绝大写文件名。"""
         result = _run_scaffold("yaml", "test_dir/MyConfig", "Test config")
         assert result.returncode != 0, f"大写文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
         output = result.stdout + result.stderr
-        assert "kebab-case" in output
+        assert "snake_case" in output
 
-    def test_scaffold_json_rejects_snake_case(self) -> None:
-        """scaffold.py json 模式应拒绝 snake_case 文件名。"""
-        result = _run_scaffold("json", "test_dir/my_test_data", "Test data")
-        assert result.returncode != 0, f"snake_case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
+    def test_scaffold_json_rejects_kebab_case(self) -> None:
+        """scaffold.py json 模式应拒绝 kebab-case 文件名。"""
+        result = _run_scaffold("json", "test_dir/my-test-data", "Test data")
+        assert result.returncode != 0, f"kebab-case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
 
-    def test_scaffold_md_rejects_snake_case(self) -> None:
-        """scaffold.py md 模式应拒绝 snake_case 文件名。"""
-        result = _run_scaffold("md", "test_dir/my_test_guide", "Test guide")
-        assert result.returncode != 0, f"snake_case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
+    def test_scaffold_md_rejects_kebab_case(self) -> None:
+        """scaffold.py md 模式应拒绝 kebab-case 文件名。"""
+        result = _run_scaffold("md", "test_dir/my-test-guide", "Test guide")
+        assert result.returncode != 0, f"kebab-case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
 
     def test_scaffold_md_rejects_uppercase(self) -> None:
         """scaffold.py md 模式应拒绝大写文件名。"""
         result = _run_scaffold("md", "test_dir/MyGuide", "Test guide")
         assert result.returncode != 0, f"大写文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
         output = result.stdout + result.stderr
-        assert "kebab-case" in output
+        assert "snake_case" in output
 
-    def test_scaffold_yaml_accepts_kebab_case(self) -> None:
-        """scaffold.py yaml 模式应接受 kebab-case 文件名。"""
-        result = _run_scaffold("yaml", "test_dir/my-test-config", "Test config")
-        assert result.returncode == 0, f"kebab-case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
+    def test_scaffold_yaml_accepts_snake_case(self) -> None:
+        """scaffold.py yaml 模式应接受 snake_case 文件名。"""
+        result = _run_scaffold("yaml", "test_dir/my_test_config", "Test config")
+        assert result.returncode == 0, f"snake_case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
 
-    def test_scaffold_json_accepts_kebab_case(self) -> None:
-        """scaffold.py json 模式应接受 kebab-case 文件名。"""
-        result = _run_scaffold("json", "test_dir/my-test-data", "Test data")
-        assert result.returncode == 0, f"kebab-case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
+    def test_scaffold_json_accepts_snake_case(self) -> None:
+        """scaffold.py json 模式应接受 snake_case 文件名。"""
+        result = _run_scaffold("json", "test_dir/my_test_data", "Test data")
+        assert result.returncode == 0, f"snake_case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
 
-    def test_scaffold_md_accepts_kebab_case(self) -> None:
-        """scaffold.py md 模式应接受 kebab-case 文件名。"""
-        result = _run_scaffold("md", "test_dir/my-test-guide", "Test guide")
-        assert result.returncode == 0, f"kebab-case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
+    def test_scaffold_md_accepts_snake_case(self) -> None:
+        """scaffold.py md 模式应接受 snake_case 文件名。"""
+        result = _run_scaffold("md", "test_dir/my_test_guide", "Test guide")
+        assert result.returncode == 0, f"snake_case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
 
 
 class TestWhitelistProtection:
@@ -184,13 +187,13 @@ class TestDirectWriteBypassDetection:
             f"应检测到 N-13 违规, stdout: {result.stdout}, stderr: {result.stderr}"
         )
 
-    def test_direct_write_snake_case_bypass_detected(self, tmp_path: Path) -> None:
-        """直接写入 snake_case JSON 文件名 → check_naming_convention.py 应检测到。"""
-        bad_file = tmp_path / "my_data_config.json"
+    def test_direct_write_kebab_case_bypass_detected(self, tmp_path: Path) -> None:
+        """直接写入 kebab-case JSON 文件名 → check_naming_convention.py 应检测到。"""
+        bad_file = tmp_path / "my-data-config.json"
         bad_file.write_text('{"key": "value"}\n', encoding="utf-8")
 
         result = _run_checker(str(tmp_path))
-        assert result.returncode != 0, "直接写入的 snake_case JSON 文件名应被检测为违规"
+        assert result.returncode != 0, "直接写入的 kebab-case JSON 文件名应被检测为违规"
         assert "N-13" in result.stdout or "N-13" in result.stderr
 
     def test_direct_write_md_bypass_detected(self, tmp_path: Path) -> None:

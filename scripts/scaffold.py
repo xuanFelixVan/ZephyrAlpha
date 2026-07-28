@@ -23,10 +23,10 @@
     module: src/zephyr/<package>/<name>.py → 更新 <package>/__init__.py
     script: scripts/<path>/<name>.py       → 更新 script_manifest.yaml
     gate:   src/zephyr/gov_enforcement/rule_enforcement/<name>.yaml   → 更新 _registry.yaml
-    yaml:   <path>/<name>.yaml             → 通知资产盘点（kebab-case 强制）
+    yaml:   <path>/<name>.yaml             → 通知资产盘点（snake_case 强制）
     rule:   docs/.../rules/trae_XXX.yaml   → 自动分配 rule_id + 标准 frontmatter
-    json:   <path>/<name>.json             → 通知资产盘点（kebab-case 强制）
-    md:     <path>/<name>.md               → 通知资产盘点（kebab-case 强制）
+    json:   <path>/<name>.json             → 通知资产盘点（snake_case 强制）
+    md:     <path>/<name>.md               → 通知资产盘点（snake_case 强制）
 
 用法:
     python scripts/scaffold.py module feedback-loop scheduler --desc "FLE 全链路调度器"
@@ -504,10 +504,10 @@ class ScaffoldEngine:
         domain: str = "",
         subdomain: str = "",
     ) -> Path:
-        """在指定路径创建 YAML 文件（kebab-case 强制），通知资产盘点。"""
-        # ── 检查 1: kebab-case 命名 ──
+        """在指定路径创建 YAML 文件（snake_case 强制），通知资产盘点。"""
+        # ── 检查 1: snake_case 命名 ──
         name_part = Path(rel_path).name
-        _enforce_kebab_case(name_part)
+        _enforce_snake_case(name_part)
 
         file_path = PROJECT_ROOT / f"{rel_path}.yaml"
 
@@ -649,10 +649,10 @@ class ScaffoldEngine:
         domain: str = "",
         subdomain: str = "",
     ) -> Path:
-        """在指定路径创建 JSON 文件（kebab-case 强制），通知资产盘点。"""
-        # ── 检查 1: kebab-case 命名 ──
+        """在指定路径创建 JSON 文件（snake_case 强制），通知资产盘点。"""
+        # ── 检查 1: snake_case 命名 ──
         name_part = Path(rel_path).name
-        _enforce_kebab_case(name_part)
+        _enforce_snake_case(name_part)
 
         file_path = PROJECT_ROOT / f"{rel_path}.json"
 
@@ -692,10 +692,10 @@ class ScaffoldEngine:
         domain: str = "",
         subdomain: str = "",
     ) -> Path:
-        """在指定路径创建 Markdown 文件（kebab-case 强制），通知资产盘点。"""
-        # ── 检查 1: kebab-case 命名 ──
+        """在指定路径创建 Markdown 文件（snake_case 强制），通知资产盘点。"""
+        # ── 检查 1: snake_case 命名 ──
         name_part = Path(rel_path).name
-        _enforce_kebab_case(name_part)
+        _enforce_snake_case(name_part)
 
         file_path = PROJECT_ROOT / f"{rel_path}.md"
 
@@ -1310,24 +1310,24 @@ def _to_class_name(name: str) -> str:
     return "".join(part.capitalize() for part in name.split("_"))
 
 
-def _to_kebab_case(name: str) -> str:
-    """将任意命名转换为 kebab-case。支持 snake_case、PascalCase、camelCase。"""
-    # 先处理 camelCase / PascalCase：在大写字母前插入连字符
-    result = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", name)
-    # 再将下划线和空格替换为连字符
-    result = re.sub(r"[_\s]+", "-", result).lower().strip("-")
-    result = re.sub(r"-+", "-", result)
+def _to_snake_case(name: str) -> str:
+    """将任意命名转换为 snake_case。支持 kebab-case、PascalCase、camelCase。"""
+    # 先处理 camelCase / PascalCase：在大写字母前插入下划线
+    result = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
+    # 再将连字符和空格替换为下划线
+    result = re.sub(r"[-\s]+", "_", result).lower().strip("_")
+    result = re.sub(r"_+", "_", result)
     return result
 
 
-def _enforce_kebab_case(name: str) -> str:
-    """强制 kebab-case 命名。不符合时抛出 ScaffoldError 并建议正确形式。"""
-    kebab = _to_kebab_case(name)
-    if kebab != name:
+def _enforce_snake_case(name: str) -> str:
+    """强制 snake_case 命名。不符合时抛出 ScaffoldError 并建议正确形式。"""
+    snake = _to_snake_case(name)
+    if snake != name:
         raise ScaffoldError(
-            f"命名规范阻断: '{name}' 不符合 kebab-case 规范。\n"
-            f"  建议使用: '{kebab}'\n"
-            f"  YAML/JSON/MD 文件名必须使用 kebab-case（小写+连字符），禁止下划线和大写字母。"
+            f"命名规范阻断: '{name}' 不符合 snake_case 规范。\n"
+            f"  建议使用: '{snake}'\n"
+            f"  YAML/JSON/MD 文件名必须使用 snake_case（小写+下划线），禁止连字符和大写字母。"
         )
     return name
 
@@ -1381,7 +1381,7 @@ def main() -> None:
     p_gate.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
     # yaml
-    p_yaml = sub.add_parser("yaml", help="创建 YAML 文件（kebab-case 强制）")
+    p_yaml = sub.add_parser("yaml", help="创建 YAML 文件（snake_case 强制）")
     p_yaml.add_argument("path", help="项目根目录下的相对路径（不含扩展名，e.g. docs/01_policies/my-policy）")
     p_yaml.add_argument("--desc", default="", help="功能描述")
     p_yaml.add_argument("--domain", default="", help="功能域 (e.g. governance)")
@@ -1403,7 +1403,7 @@ def main() -> None:
     p_rule.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
     # json
-    p_json = sub.add_parser("json", help="创建 JSON 文件（kebab-case 强制）")
+    p_json = sub.add_parser("json", help="创建 JSON 文件（snake_case 强制）")
     p_json.add_argument("path", help="项目根目录下的相对路径（不含扩展名，e.g. data/config/my-config）")
     p_json.add_argument("--desc", default="", help="功能描述")
     p_json.add_argument("--domain", default="", help="功能域 (e.g. governance)")
@@ -1411,7 +1411,7 @@ def main() -> None:
     p_json.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
     # md
-    p_md = sub.add_parser("md", help="创建 Markdown 文件（kebab-case 强制）")
+    p_md = sub.add_parser("md", help="创建 Markdown 文件（snake_case 强制）")
     p_md.add_argument("path", help="项目根目录下的相对路径（不含扩展名，e.g. docs/guides/my-guide）")
     p_md.add_argument("--desc", default="", help="功能描述")
     p_md.add_argument("--domain", default="", help="功能域 (e.g. governance)")

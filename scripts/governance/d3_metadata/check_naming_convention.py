@@ -480,23 +480,24 @@ def _check_n07_module_id_number_mismatch(filepath: str, abspath: Path | None = N
 
 
 # ---------------------------------------------------------------------------
-# N-08: Python 文件名 snake_case 合规检测
+# N-08: Python/PowerShell 脚本文件名 snake_case 合规检测
 # ---------------------------------------------------------------------------
 
-_SNAKE_CASE_PY_RE = re.compile(r"^[a-z_][a-z0-9_]*\.py$")
-_PY_EXEMPT_NAMES: set[str] = {"__init__.py", "setup.py", "conftest.py", "__main__.py"}
+_SNAKE_CASE_SCRIPT_RE = re.compile(r"^[a-z_][a-z0-9_]*\.(py|ps1)$")
+_SCRIPT_EXEMPT_NAMES: set[str] = {"__init__.py", "setup.py", "conftest.py", "__main__.py"}
 
 
-def _check_n08_python_snake_case(filepath: str) -> list[NamingViolation]:
-    """Python 源文件必须使用 snake_case 命名（PEP 8）。
-    强化: __main__.py 豁免; test_ 前缀文件强制 snake_case; 禁止 CamelCase.py
+def _check_n08_script_snake_case(filepath: str) -> list[NamingViolation]:
+    """Python/PowerShell 脚本文件必须使用 snake_case 命名（PEP 8 / PowerShell 最佳实践）。
+    强化: __main__.py 豁免; test_ 前缀文件强制 snake_case; 禁止 CamelCase.py/.ps1;
+          .ps1 扩展覆盖（Gap-1 修复 2026-07-28：原仅检 .py，.ps1 无 case-style 强制）
     """
     name = Path(filepath).name
-    if not name.endswith(".py"):
+    if not name.endswith((".py", ".ps1")):
         return []
-    if name in _PY_EXEMPT_NAMES:
+    if name in _SCRIPT_EXEMPT_NAMES:
         return []
-    if not _SNAKE_CASE_PY_RE.match(name):
+    if not _SNAKE_CASE_SCRIPT_RE.match(name):
         reasons = []
         if re.search(r"[A-Z]", name):
             reasons.append("含大写字母(CamelCase)")
@@ -508,7 +509,7 @@ def _check_n08_python_snake_case(filepath: str) -> list[NamingViolation]:
             reasons.append("不符合 snake_case")
         return [
             NamingViolation(
-                rule="N-08", message=f"Python 文件名不符合 snake_case({', '.join(reasons)}): {name}", filepath=filepath
+                rule="N-08", message=f"脚本文件名不符合 snake_case({', '.join(reasons)}): {name}", filepath=filepath
             )
         ]
     return []
@@ -734,10 +735,10 @@ def _check_n12_ke_naming(filepath: str) -> list[NamingViolation]:
 
 
 # ---------------------------------------------------------------------------
-# N-13: YAML/JSON/MD 文件名 kebab-case 合规检测
+# N-13: YAML/JSON/MD 文件名 snake_case 合规检测
 # ---------------------------------------------------------------------------
 
-_KEBAB_CASE_DATA_RE = re.compile(r"^[a-z][a-z0-9-]*\.(yaml|yml|json|md)$")
+_SNAKE_CASE_DATA_RE = re.compile(r"^[a-z][a-z0-9_]*\.(yaml|yml|json|md)$")
 _DATA_FILE_EXEMPT_NAMES: set[str] = {
     "AGENTS.md",
     "Makefile",
@@ -763,9 +764,12 @@ _AUTO_GENERATED_TS_RE = re.compile(r"(_\d{4}-\d{2}-\d{2}[T-]|_\d{8}T\d{6}Z)")
 
 
 def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
-    """YAML/JSON/MD 数据文件名必须使用 kebab-case（小写+连字符）。
-    强化: 禁止大写字母/空格/下划线(除白名单); .trae/ 和 config/ 豁免;
-          dot-prefix 文件豁免; 前导下划线注册/模板文件豁免
+    """YAML/JSON/MD 数据文件名必须使用 snake_case（小写+下划线）。
+    对标: trae_028 SSoT gov_doc_008 — "全项目统一下划线(snake_case)，一条规则零例外"。
+    强化: 禁止大写字母/空格/连字符(kebab-case); .trae/ 和 config/ 豁免;
+          dot-prefix 文件豁免; 前导下划线注册/模板文件豁免;
+          ID前缀文件豁免(ke-/session-/kbg-/task-/dm- — 这些是ID格式，非文件命名风格)
+    修复(2026-07-28 Gap-2): 原实现误用 kebab-case，与 trae_028 SSoT 矛盾，已纠正为 snake_case。
     """
     name = Path(filepath).name
     if name in _DATA_FILE_EXEMPT_NAMES:
@@ -800,21 +804,21 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
     # Auto-generated timestamp files (e.g. secret_baseline_2026-01-15T..., score_snapshot_2026-...)
     if _AUTO_GENERATED_TS_RE.search(name):
         return []
-    if _KEBAB_CASE_DATA_RE.match(name):
+    if _SNAKE_CASE_DATA_RE.match(name):
         return []
     reasons = []
     if re.search(r"[A-Z]", name):
         reasons.append("含大写字母")
     if " " in name:
         reasons.append("含空格")
-    if "_" in name.replace(".yaml", "").replace(".yml", "").replace(".json", "").replace(".md", ""):
-        reasons.append("含下划线(snake_case)")
+    if "-" in name.replace(".yaml", "").replace(".yml", "").replace(".json", "").replace(".md", ""):
+        reasons.append("含连字符(kebab-case)")
     if not reasons:
-        reasons.append("不符合 kebab-case")
+        reasons.append("不符合 snake_case")
     return [
         NamingViolation(
             rule="N-13",
-            message=f"YAML/JSON/MD 文件名不符合 kebab-case({', '.join(reasons)}): {name}",
+            message=f"YAML/JSON/MD 文件名不符合 snake_case({', '.join(reasons)}): {name}",
             filepath=filepath,
         )
     ]
@@ -1560,7 +1564,7 @@ def check_file(filepath: str, abspath: Path | None = None, project_root: Path | 
     violations.extend(_check_n05_adr_missing_suffix(filepath))
     violations.extend(_check_n06_module_id_scope(filepath, abspath))
     violations.extend(_check_n07_module_id_number_mismatch(filepath, abspath))
-    violations.extend(_check_n08_python_snake_case(filepath))
+    violations.extend(_check_n08_script_snake_case(filepath))
     violations.extend(_check_n11_doctype_suffix(filepath, abspath))
     violations.extend(_check_n12_ke_naming(filepath))
     violations.extend(_check_n13_data_file_naming(filepath))
