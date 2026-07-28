@@ -600,7 +600,7 @@ def test_parse_header_full(tmp_path: Path):
         "pass\n",
         encoding="utf-8",
     )
-    info = CapabilityLookup._parse_header(py, "mod.py")
+    info = CapabilityLookup.parse_header(py, "mod.py")
     assert info.module_path == "zephyr.test.mod"
     assert info.module_id == "MOD-TEST_mod"
     assert info.blueprint_id == "MOD-TEST"
@@ -617,7 +617,7 @@ def test_parse_header_missing_fields(tmp_path: Path):
         "pass\n",
         encoding="utf-8",
     )
-    info = CapabilityLookup._parse_header(py, "mod.py")
+    info = CapabilityLookup.parse_header(py, "mod.py")
     assert info.module_path == "zephyr.minimal"
     assert info.module_id == ""
     assert info.blueprint_id == ""
@@ -634,15 +634,15 @@ def test_parse_header_multiline_docstring(tmp_path: Path):
         "pass\n",
         encoding="utf-8",
     )
-    info = CapabilityLookup._parse_header(py, "mod.py")
+    info = CapabilityLookup.parse_header(py, "mod.py")
     assert info.docstring == "First line of multi-line docstring."
 
 
 def test_parse_header_no_header(tmp_path: Path):
-    """无头部声明的文件不被收录（_scan_disk_headers 过滤）。"""
+    """无头部声明的文件不被收录（scan_disk_headers 过滤）。"""
     py = tmp_path / "mod.py"
     py.write_text("print('hello')\n", encoding="utf-8")
-    info = CapabilityLookup._parse_header(py, "mod.py")
+    info = CapabilityLookup.parse_header(py, "mod.py")
     assert info.module_path == ""
     assert info.module_id == ""
 

@@ -376,7 +376,7 @@ class CapabilityLookup:
         # YAML 真源必须加载（与 scan 解耦——scan=False 只跳过磁盘扫描+派生，不跳过 YAML）
         self._capabilities = self._load_yaml()
         if scan:
-            self._disk_headers = self._scan_disk_headers()
+            self._disk_headers = self.scan_disk_headers()
             self._derive_all()
             self._reconcile()
         self._loaded = True
@@ -386,7 +386,7 @@ class CapabilityLookup:
     def reload(self) -> None:
         """重新加载 YAML + 重扫磁盘 + 重派生（YAML 更新后调用）。"""
         self._capabilities = self._load_yaml()
-        self._disk_headers = self._scan_disk_headers()
+        self._disk_headers = self.scan_disk_headers()
         self._git_deletions = None
         self._git_show_cache.clear()
         self._removed_derived = False
@@ -416,13 +416,15 @@ class CapabilityLookup:
             ))
         return caps
 
-    def _scan_disk_headers(self) -> dict[str, HeaderInfo]:
+    def scan_disk_headers(self) -> dict[str, HeaderInfo]:
         """扫描所有 scan_roots/**/*.py 头部，返回 path -> HeaderInfo 映射。
 
         path 用 _base_root 相对路径（与 YAML 中 canonical_file 格式 src/zephyr/xxx
         或 scripts/governance/yyy 对齐）。
 
         治本（P8 Phase 3）：多根化遍历 self._scan_roots 而非单根 self._scan_root。
+
+        （Stage 4 公共化，primary）
         """
         result: dict[str, HeaderInfo] = {}
         for root in self._scan_roots:
@@ -433,20 +435,32 @@ class CapabilityLookup:
                     rel = py.relative_to(self._base_root).as_posix()
                 except ValueError:
                     continue
-                header = self._parse_header(py, rel)
+                header = self.parse_header(py, rel)
                 # 只收录有 module_id 或 module_path 的文件（有头部声明的）
                 if header.module_id or header.module_path:
                     result[rel] = header
         return result
 
+    def _scan_disk_headers(self) -> dict[str, HeaderInfo]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.scan_disk_headers()
+
     @staticmethod
-    def _parse_header(py: Path, rel: str) -> HeaderInfo:
-        """解析单个 .py 文件的头部（薄包装：读文件 -> _parse_header_from_text）。"""
+    def parse_header(py: Path, rel: str) -> HeaderInfo:
+        """解析单个 .py 文件的头部（薄包装：读文件 -> _parse_header_from_text）。
+
+        （Stage 4 公共化，primary）
+        """
         try:
             text = py.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             return HeaderInfo(path=rel)
         return CapabilityLookup._parse_header_from_text(text, rel)
+
+    @staticmethod
+    def _parse_header(py: Path, rel: str) -> HeaderInfo:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return CapabilityLookup.parse_header(py, rel)
 
     @staticmethod
     def _parse_header_from_text(text: str, rel: str) -> HeaderInfo:
@@ -1097,7 +1111,7 @@ class CapabilityLookup:
             return []
         violations: list[SSoTConflict] = []
         for abs_path, rel_path in new_py_files:
-            header = self._parse_header(Path(abs_path), rel_path)
+            header = self.parse_header(Path(abs_path), rel_path)
             if not header.module_path:
                 continue  # 无 [MODULE] 头，跳过（无法判断）
             matched = self.find_files_by_module_path(header.module_path)
@@ -1317,7 +1331,7 @@ class CapabilityLookup:
             return []
         violations: list[ModuleIdConflict] = []
         for abs_path, rel_path in new_py_files:
-            header = self._parse_header(Path(abs_path), rel_path)
+            header = self.parse_header(Path(abs_path), rel_path)
             if not header.module_id:
                 continue
             matched = [
@@ -1347,7 +1361,7 @@ class CapabilityLookup:
             return []
         violations: list[DomainMismatch] = []
         for abs_path, rel_path in new_py_files:
-            header = self._parse_header(Path(abs_path), rel_path)
+            header = self.parse_header(Path(abs_path), rel_path)
             if not header.module_path:
                 continue
             mp_parts = header.module_path.split(".")

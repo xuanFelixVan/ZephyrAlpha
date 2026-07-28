@@ -779,7 +779,7 @@ class GitCommitGateway:
                 existing.append(f)
             else:
                 rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                if self._is_git_tracked(rel) or self._is_staged_delete(rel):
+                if self.is_git_tracked(rel) or self._is_staged_delete(rel):
                     existing.append(f)
         return existing
 
@@ -801,7 +801,7 @@ class GitCommitGateway:
                 )
         return None
 
-    def _check_ssot_canonical(self, abs_files: list[str]) -> tuple[bool, str]:
+    def check_ssot_canonical(self, abs_files: list[str]) -> tuple[bool, str]:
         """L2 兜底门禁：检测新增 .py 文件是否声明已有 module_path（SSoT 冲突）。
 
         L1 scaffold 是主防线，本方法是 L2 兜底——防止 AI 绕过 scaffold 直接 Write
@@ -813,6 +813,8 @@ class GitCommitGateway:
           - 解析 [MODULE] 头，反查 find_files_by_module_path
           - 命中已有文件 = SSoT 冲突 = 阻断
           - capability_lookup 不可用时 fail-open（L1 是主防线，L2 是兜底）
+
+        （Stage 4 公共化，primary）
         """
         # 步骤1：筛选 src/zephyr/ 下未跟踪的 .py 文件
         new_py_files: list[tuple[str, str]] = []
@@ -826,7 +828,7 @@ class GitCommitGateway:
                 continue
             if not rel.startswith("src/zephyr/"):
                 continue
-            if self._is_git_tracked(rel):
+            if self.is_git_tracked(rel):
                 continue
             new_py_files.append((abs_path, rel))
 
@@ -845,7 +847,7 @@ class GitCommitGateway:
 
         for abs_path, rel_path in new_py_files:
             try:
-                header = lookup._parse_header(Path(abs_path), rel_path)
+                header = lookup.parse_header(Path(abs_path), rel_path)
             except Exception:  # noqa: BLE001 — 单文件解析失败不阻断整体
                 continue
             if not header.module_path:
@@ -867,6 +869,10 @@ class GitCommitGateway:
             True,
             f"SSoT 兜底门禁 passed: {len(new_py_files)} new src/zephyr/*.py files checked, no new conflict",
         )
+
+    def _check_ssot_canonical(self, abs_files: list[str]) -> tuple[bool, str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_ssot_canonical(abs_files)
 
     def _run_post_commit_reconcile(
         self, existing: list[str], session_id: str, result: CommitResult,
@@ -1132,8 +1138,11 @@ class GitCommitGateway:
         self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
         return result
 
-    def _is_git_tracked(self, rel_path: str) -> bool:
-        """检查相对路径是否被 git 跟踪（:(icase) pathspec 兼容 Windows 大小写不敏感）。"""
+    def is_git_tracked(self, rel_path: str) -> bool:
+        """检查相对路径是否被 git 跟踪（:(icase) pathspec 兼容 Windows 大小写不敏感）。
+
+        （Stage 4 公共化，primary）
+        """
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
         chk = run_subprocess_hidden(
@@ -1143,9 +1152,13 @@ class GitCommitGateway:
         )
         return chk.returncode == 0
 
+    def _is_git_tracked(self, rel_path: str) -> bool:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.is_git_tracked(rel_path)
+
     def _is_staged_delete(self, rel_path: str) -> bool:
         """检查相对路径是否为 staged delete（不在 index 但仍在 HEAD）。必需：_is_git_tracked 对 staged delete 返回 False，凡保留/排除 staged delete 场景必须用本方法补充。"""
-        if self._is_git_tracked(rel_path):
+        if self.is_git_tracked(rel_path):
             return False
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -1228,7 +1241,7 @@ class GitCommitGateway:
                 os.path.relpath(f, str(self.project_root)).replace("\\", "/")
                 for f in deleted
             ]
-            del_tracked = [f for f, rel in zip(deleted, del_rels) if self._is_git_tracked(rel)]
+            del_tracked = [f for f, rel in zip(deleted, del_rels) if self.is_git_tracked(rel)]
             err = self._run_pathspec_git_cmd(
                 del_tracked,
                 ["git", "rm", "--cached", "--ignore-unmatch"],
@@ -1243,7 +1256,7 @@ class GitCommitGateway:
             ]
             ex_tracked = [
                 f for f, rel in zip(existing, ex_rels)
-                if self._is_git_tracked(rel) and not self._is_staged_delete(rel)
+                if self.is_git_tracked(rel) and not self._is_staged_delete(rel)
             ]
             err = self._run_pathspec_git_cmd(
                 ex_tracked,
@@ -1586,7 +1599,7 @@ class GitCommitGateway:
                 existing.append(f)
             else:
                 rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                if self._is_git_tracked(rel):
+                if self.is_git_tracked(rel):
                     existing.append(f)
         return existing
 

@@ -285,7 +285,7 @@ def make_file_placement_ttl_gate() -> GateSpec:
             # 判断是否新增文件（未 git tracked = 新增；tracked = 修改）
             # 规则1/3 只对新增文件检查（永久区准入和根目录子目录准入是"新文件进入"约束）
             # 规则2 对所有文件检查（TTL↔zone 一致性是持续约束）
-            is_new_file = not gateway._is_git_tracked(rel)
+            is_new_file = not gateway.is_git_tracked(rel)
 
             # 规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件
             v1 = _check_rule1_permanent_admission(

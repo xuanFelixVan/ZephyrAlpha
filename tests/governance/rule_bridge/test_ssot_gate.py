@@ -6,9 +6,9 @@ test_ssot_gate — SSoT 创建门禁红蓝变异测试。
 
 测试方案 E（零新真源，复用 [MODULE] 头）的核心链路：
   1. capability_lookup.find_files_by_module_path 反查正确性
-  2. scaffold._check_duplicate_functionality 维度3 阻断正确性
+  2. scaffold.check_duplicate_functionality 维度3 阻断正确性
   3. force_override 不跳过维度3（强不变量——同 module_path = 同文件身份）
-  4. GitCommitGateway._check_ssot_canonical L2 兜底门禁
+  4. GitCommitGateway.check_ssot_canonical L2 兜底门禁
   5. 变异测试（falsifiability）：注入失效后阻断应消失，还原后阻断应恢复
 
 红蓝对抗三层验证：
@@ -30,7 +30,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from scripts.scaffold import ScaffoldError, _check_duplicate_functionality
+from scripts.scaffold import ScaffoldError, check_duplicate_functionality
 from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitStatus, GitCommitGateway
 
@@ -91,12 +91,12 @@ class TestFindFilesByModulePath:
 # ---------------------------------------------------------------------------
 
 class TestScaffoldSSoTGate:
-    """测试 scaffold._check_duplicate_functionality 维度3 阻断。"""
+    """测试 scaffold.check_duplicate_functionality 维度3 阻断。"""
 
     def test_block_on_conflicting_module_path(self, skip_dim1_dim2):
         """维度3：已有 module_path 应被阻断。"""
         with pytest.raises(ScaffoldError, match="module_path 冲突"):
-            _check_duplicate_functionality(
+            check_duplicate_functionality(
                 name="capability_lookup",
                 description="测试探针",
                 expected_module_path="zephyr.governance.capability_lookup",
@@ -104,7 +104,7 @@ class TestScaffoldSSoTGate:
 
     def test_allow_on_new_module_path(self, skip_dim1_dim2):
         """维度3：新 module_path 应放行（不抛异常）。"""
-        _check_duplicate_functionality(
+        check_duplicate_functionality(
             name="test_ssot_probe_xyz_999",
             description="测试探针",
             expected_module_path="zephyr.governance.test_ssot_probe_xyz_999",
@@ -113,7 +113,7 @@ class TestScaffoldSSoTGate:
     def test_no_expected_module_path_skips_dim3(self, skip_dim1_dim2):
         """未传 expected_module_path 时维度3不执行（向后兼容）。"""
         # 不传 expected_module_path，不应因维度3抛异常
-        _check_duplicate_functionality(
+        check_duplicate_functionality(
             name="test_ssot_probe_xyz_999",
             description="测试探针",
         )
@@ -134,7 +134,7 @@ class TestForceOverrideInvariant:
     def test_force_override_does_not_skip_dim3(self, skip_dim1_dim2):
         """force_override=True 时维度3仍应阻断。"""
         with pytest.raises(ScaffoldError, match="module_path 冲突"):
-            _check_duplicate_functionality(
+            check_duplicate_functionality(
                 name="capability_lookup",
                 description="测试探针",
                 force_override=True,
@@ -166,7 +166,7 @@ class TestMutationFalsifiability:
             return_value=[],
         ):
             # 注入失效后，维度3应放行（不抛 ScaffoldError）
-            _check_duplicate_functionality(
+            check_duplicate_functionality(
                 name="capability_lookup",
                 description="测试探针",
                 expected_module_path="zephyr.governance.capability_lookup",
@@ -179,7 +179,7 @@ class TestMutationFalsifiability:
         证明门禁逻辑是可恢复的，不是永久失效。
         """
         with pytest.raises(ScaffoldError, match="module_path 冲突"):
-            _check_duplicate_functionality(
+            check_duplicate_functionality(
                 name="capability_lookup",
                 description="测试探针",
                 expected_module_path="zephyr.governance.capability_lookup",
@@ -197,7 +197,7 @@ class TestMutationFalsifiability:
             return_value=fake_conflicts,
         ):
             with pytest.raises(ScaffoldError, match="module_path 冲突") as exc_info:
-                _check_duplicate_functionality(
+                check_duplicate_functionality(
                     name="anything",
                     description="测试探针",
                     expected_module_path="zephyr.totally.new.module",
@@ -211,10 +211,10 @@ class TestMutationFalsifiability:
 # ---------------------------------------------------------------------------
 
 class TestGitCommitGatewaySSoT:
-    """测试 GitCommitGateway._check_ssot_canonical L2 兜底门禁。
+    """测试 GitCommitGateway.check_ssot_canonical L2 兜底门禁。
 
     L2 是 L1（scaffold）的兜底——防止 AI 绕过 scaffold 直接 Write 新文件后 commit。
-    通过 mock _is_git_tracked / _parse_header / find_files_by_module_path 隔离测试，
+    通过 mock is_git_tracked / parse_header / find_files_by_module_path 隔离测试，
     避免真实创建文件污染仓库。
 
     GitCommitGateway 实例化需要 git 仓库 + SessionRegistry。
@@ -224,7 +224,7 @@ class TestGitCommitGatewaySSoT:
     @pytest.fixture
     def gateway(self):
         """构造 GitCommitGateway 实例（真实项目根 + mock registry）。"""
-        # registry 被 mock 掉——_check_ssot_canonical 不使用 registry
+        # registry 被 mock 掉——check_ssot_canonical 不使用 registry
         return GitCommitGateway(project_root=_PROJECT_ROOT, registry=MagicMock())
 
     def _fake_new_py_abs(self, rel: str) -> str:
@@ -240,18 +240,18 @@ class TestGitCommitGatewaySSoT:
         fake_new_rel = "src/zephyr/governance/fake_new_ssot_xyz.py"
         fake_new_abs = self._fake_new_py_abs(fake_new_rel)
 
-        # mock _is_git_tracked 让 fake_new 被判为"未跟踪"（即新增）
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        # mock is_git_tracked 让 fake_new 被判为"未跟踪"（即新增）
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
-        # mock _parse_header 返回声明已有 module_path 的 header
+        # mock parse_header 返回声明已有 module_path 的 header
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # mock find_files_by_module_path 返回已有文件冲突
-        # （_disk_headers 被 mock 的 _parse_header 污染，故需控制 find 返回值；
+        # （_disk_headers 被 mock 的 parse_header 污染，故需控制 find 返回值；
         #  find 的正确性在 L1 测试组 TestFindFilesByModulePath 已覆盖）
         existing_conflict = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
@@ -259,7 +259,7 @@ class TestGitCommitGatewaySSoT:
             lambda self, mp: [existing_conflict] if mp == existing_mp else [],
         )
 
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        passed, detail = gateway.check_ssot_canonical([fake_new_abs])
         assert not passed, "声明已有 module_path 的新文件应被阻断"
         assert "SSoT" in detail
         assert existing_mp in detail
@@ -273,22 +273,22 @@ class TestGitCommitGatewaySSoT:
         fake_new_rel = "src/zephyr/governance/fake_new_module_xyz_999.py"
         fake_new_abs = self._fake_new_py_abs(fake_new_rel)
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
         new_mp = "zephyr.governance.fake_new_module_xyz_999"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=new_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # mock find_files_by_module_path 返回空（新 module_path 无冲突）
-        # （_disk_headers 被 mock 的 _parse_header 污染，故需控制 find 返回值）
+        # （_disk_headers 被 mock 的 parse_header 污染，故需控制 find 返回值）
         monkeypatch.setattr(
             CapabilityLookup, "find_files_by_module_path",
             lambda self, mp: [],
         )
 
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        passed, detail = gateway.check_ssot_canonical([fake_new_abs])
         assert passed, "声明全新 module_path 的新文件应放行"
         assert "passed" in detail
 
@@ -296,14 +296,14 @@ class TestGitCommitGatewaySSoT:
         """L2-3：已跟踪文件修改 → 放行（不视为新增）。
 
         场景：AI 修改已有文件（非新增），门禁不应阻断。
-        不 mock _is_git_tracked——让真实 git 判断该文件已跟踪。
+        不 mock is_git_tracked——让真实 git 判断该文件已跟踪。
         """
         tracked_rel = "src/zephyr/governance/capability_lookup.py"
         tracked_abs = self._fake_new_py_abs(tracked_rel)
 
-        # 不 mock _is_git_tracked——真实 git ls-files 会返回 True（已跟踪）
+        # 不 mock is_git_tracked——真实 git ls-files 会返回 True（已跟踪）
         # 该文件不会进入 new_py_files → 放行
-        passed, detail = gateway._check_ssot_canonical([tracked_abs])
+        passed, detail = gateway.check_ssot_canonical([tracked_abs])
         assert passed, "已跟踪文件修改应放行"
         assert "no new" in detail.lower()
 
@@ -312,16 +312,16 @@ class TestGitCommitGatewaySSoT:
         fake_new_rel = "src/zephyr/governance/fake_no_header_xyz.py"
         fake_new_abs = self._fake_new_py_abs(fake_new_rel)
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
-        # mock _parse_header 返回空 module_path（无 [MODULE] 头）
+        # mock parse_header 返回空 module_path（无 [MODULE] 头）
         fake_header = HeaderInfo(path=fake_new_rel, module_path="")
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
 
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        passed, detail = gateway.check_ssot_canonical([fake_new_abs])
         assert passed, "无 [MODULE] 头的新文件应放行（无法判断）"
         assert "passed" in detail
 
@@ -334,7 +334,7 @@ class TestGitCommitGatewaySSoT:
         fake_new_rel = "src/zephyr/governance/fake_import_fail_xyz.py"
         fake_new_abs = self._fake_new_py_abs(fake_new_rel)
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
         # 让 from zephyr.governance.capability_lookup import CapabilityLookup 失败
         # 通过 sys.modules 注入 None，import 会抛 ImportError
@@ -342,7 +342,7 @@ class TestGitCommitGatewaySSoT:
         monkeypatch.setitem(sys.modules, "zephyr.governance.capability_lookup", None)
 
         try:
-            passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+            passed, detail = gateway.check_ssot_canonical([fake_new_abs])
             assert passed, "capability_lookup 不可用时应 fail-open 放行"
             assert "不可用" in detail or "capability_lookup" in detail.lower()
         finally:
@@ -355,9 +355,9 @@ class TestGitCommitGatewaySSoT:
         # scripts/ 下的 .py 不在检查范围
         non_src_abs = str(_PROJECT_ROOT / "scripts/fake_outside_xyz.py").replace("\\", "/")
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
-        passed, detail = gateway._check_ssot_canonical([non_src_abs])
+        passed, detail = gateway.check_ssot_canonical([non_src_abs])
         assert passed, "非 src/zephyr/ 下的 .py 应跳过"
         assert "no new" in detail.lower()
 
@@ -365,15 +365,15 @@ class TestGitCommitGatewaySSoT:
         """L2-7：非 .py 文件 → 跳过（只检查 .py）。"""
         md_abs = str(_PROJECT_ROOT / "src/zephyr/fake_doc.md").replace("\\", "/")
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
-        passed, detail = gateway._check_ssot_canonical([md_abs])
+        passed, detail = gateway.check_ssot_canonical([md_abs])
         assert passed, "非 .py 文件应跳过"
         assert "no new" in detail.lower()
 
     def test_empty_file_list_passes(self, gateway):
         """L2-8：空文件列表 → 放行。"""
-        passed, detail = gateway._check_ssot_canonical([])
+        passed, detail = gateway.check_ssot_canonical([])
         assert passed
         assert "no new" in detail.lower()
 
@@ -383,7 +383,7 @@ class TestGitCommitGatewaySSoT:
 # ---------------------------------------------------------------------------
 
 class TestL2MutationFalsifiability:
-    """L2 红蓝变异测试：验证 _check_ssot_canonical 确实在起作用。"""
+    """L2 红蓝变异测试：验证 check_ssot_canonical 确实在起作用。"""
 
     @pytest.fixture
     def gateway(self):
@@ -397,12 +397,12 @@ class TestL2MutationFalsifiability:
         fake_new_rel = "src/zephyr/governance/fake_mutation_xyz.py"
         fake_new_abs = str(_PROJECT_ROOT / fake_new_rel).replace("\\", "/")
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # 注入 find_files_by_module_path 返回空（变异：门禁失效）
@@ -411,7 +411,7 @@ class TestL2MutationFalsifiability:
             lambda self, mp: [],
         )
 
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        passed, detail = gateway.check_ssot_canonical([fake_new_abs])
         assert passed, "变异注入空列表后，门禁应失效（放行）——证明门禁依赖返回值"
 
     def test_l2_mutation_restore_re_enables_gate(self, gateway, monkeypatch):
@@ -422,17 +422,17 @@ class TestL2MutationFalsifiability:
         fake_new_rel = "src/zephyr/governance/fake_restore_xyz.py"
         fake_new_abs = str(_PROJECT_ROOT / fake_new_rel).replace("\\", "/")
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # 不注入 find_files_by_module_path——真实运行，返回已有文件
 
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        passed, detail = gateway.check_ssot_canonical([fake_new_abs])
         assert not passed, "还原后门禁应恢复阻断"
         assert "SSoT" in detail
 
@@ -444,12 +444,12 @@ class TestL2MutationFalsifiability:
         fake_new_rel = "src/zephyr/governance/fake_inject_xyz.py"
         fake_new_abs = str(_PROJECT_ROOT / fake_new_rel).replace("\\", "/")
 
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        monkeypatch.setattr(GitCommitGateway, "is_git_tracked", lambda self, rel: False)
 
         new_mp = "zephyr.totally.new.module_xyz_999"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=new_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # 注入假冲突
@@ -459,7 +459,7 @@ class TestL2MutationFalsifiability:
             lambda self, mp: fake_conflicts,
         )
 
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        passed, detail = gateway.check_ssot_canonical([fake_new_abs])
         assert not passed, "注入假冲突后应阻断"
         assert "injected_conflict.py" in detail
 
@@ -485,7 +485,7 @@ class TestCheckSsotConflicts:
         lookup = CapabilityLookup()
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path="")
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
@@ -497,7 +497,7 @@ class TestCheckSsotConflicts:
         new_mp = "zephyr.totally.new.module_xyz_999"
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=new_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         monkeypatch.setattr(
@@ -513,7 +513,7 @@ class TestCheckSsotConflicts:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path="src/zephyr/fake_new.py", module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         existing_file = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
@@ -537,7 +537,7 @@ class TestCheckSsotConflicts:
         new_rel = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         fake_header = HeaderInfo(path=new_rel, module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         # find 返回包含新文件自己的列表
@@ -561,7 +561,7 @@ class TestCheckSsotConflicts:
             "src/zephyr/conflict.py": HeaderInfo(path="src/zephyr/conflict.py", module_path=existing_mp),
         }
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
         )
         existing_file = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
@@ -587,7 +587,7 @@ class TestCheckSsotConflicts:
         existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=existing_mp)
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
         monkeypatch.setattr(
@@ -629,9 +629,9 @@ class TestRedBlueExtreme:
 
     def _mock_capability_lookup(self, monkeypatch, headers: dict, conflicts: dict):
         """mock CapabilityLookup 避免 scan 磁盘 + 控制解析/反查。"""
-        monkeypatch.setattr(CapabilityLookup, "_scan_disk_headers", lambda self: {})
+        monkeypatch.setattr(CapabilityLookup, "scan_disk_headers", lambda self: {})
         monkeypatch.setattr(
-            CapabilityLookup, "_parse_header",
+            CapabilityLookup, "parse_header",
             staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
         )
         monkeypatch.setattr(
@@ -701,7 +701,7 @@ class TestRedBlueExtreme:
             "src/zephyr/fake_a.py": HeaderInfo(path="src/zephyr/fake_a.py", module_path=new_mp),
             "src/zephyr/fake_b.py": HeaderInfo(path="src/zephyr/fake_b.py", module_path=new_mp),
         }
-        monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
+        monkeypatch.setattr(CapabilityLookup, "parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
         monkeypatch.setattr(CapabilityLookup, "find_files_by_module_path", lambda self, mp: [])
         files = [("/abs/fake_a.py", "src/zephyr/fake_a.py"), ("/abs/fake_b.py", "src/zephyr/fake_b.py")]
         result = lookup.check_ssot_conflicts(files)
@@ -720,7 +720,7 @@ class TestRedBlueExtreme:
             f.write("# [module] zephyr.gov_enforcement.rule_bridge.git_commit_gateway\n")
             tmp = f.name
         try:
-            header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
+            header = CapabilityLookup.parse_header(Path(tmp), "fake.py")
             assert header.module_path == "", "小写 [module] 应不匹配"
         finally:
             os.unlink(tmp)
@@ -732,7 +732,7 @@ class TestRedBlueExtreme:
             f.write("# [MODULE]\n")
             tmp = f.name
         try:
-            header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
+            header = CapabilityLookup.parse_header(Path(tmp), "fake.py")
             assert header.module_path == "", "空 [MODULE] 应解析为空"
         finally:
             os.unlink(tmp)
@@ -744,7 +744,7 @@ class TestRedBlueExtreme:
             f.write("")
             tmp = f.name
         try:
-            header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
+            header = CapabilityLookup.parse_header(Path(tmp), "fake.py")
             assert header.module_path == "", "空文件应解析为空"
         finally:
             os.unlink(tmp)
@@ -761,7 +761,7 @@ class TestRedBlueExtreme:
         lookup = CapabilityLookup()
         wrong_case_mp = "Zephyr.Governance.Git_Commit_Gateway"
         headers = {"src/zephyr/fake_case.py": HeaderInfo(path="src/zephyr/fake_case.py", module_path=wrong_case_mp)}
-        monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
+        monkeypatch.setattr(CapabilityLookup, "parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
         monkeypatch.setattr(
             CapabilityLookup, "find_files_by_module_path",
             lambda self, mp: ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"] if mp == "zephyr.gov_enforcement.rule_bridge.git_commit_gateway" else [],

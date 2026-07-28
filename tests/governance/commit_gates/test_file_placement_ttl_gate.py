@@ -94,7 +94,7 @@ def _setup_repo(tmp_path: Path) -> Path:
 
 
 def _make_gateway(project_root: Path, tracked_files: set[str] | None = None) -> MagicMock:
-    """构建 mock gateway（project_root + _is_git_tracked）。
+    """构建 mock gateway（project_root + is_git_tracked）。
 
     Args:
         project_root: 仓库根路径。
@@ -107,7 +107,7 @@ def _make_gateway(project_root: Path, tracked_files: set[str] | None = None) -> 
     def _is_git_tracked(rel_path: str) -> bool:
         return rel_path.replace("\\", "/") in tracked
 
-    gw._is_git_tracked = _is_git_tracked
+    gw.is_git_tracked = _is_git_tracked
     return gw
 
 

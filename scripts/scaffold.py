@@ -367,7 +367,7 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(
+        check_duplicate_functionality(
             name, description, domain, subdomain,
             expected_module_path=f"zephyr.{package}.{name}",
         )
@@ -425,7 +425,7 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(
+        check_duplicate_functionality(
             rel_path, description, domain, subdomain,
             force_override=force_override,
             expected_module_path=f"scripts.{rel_path.replace('/', '.')}",
@@ -521,7 +521,7 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 4: 功能重复 ──
-        _check_duplicate_functionality(name_part, description, domain, subdomain)
+        check_duplicate_functionality(name_part, description, domain, subdomain)
 
         # ── 检查 5: 命名规范 ──
         _check_naming(str(file_path), str(parent))
@@ -613,7 +613,7 @@ class ScaffoldEngine:
             raise ScaffoldError(f"规则文件已存在: {file_path}")
 
         # ── 检查 6: 功能重复 ──
-        _check_duplicate_functionality(name, title, "trae", "rules")
+        check_duplicate_functionality(name, title, "trae", "rules")
 
         # ── 检查 7: 命名规范 ──
         _check_naming(str(file_path), str(RULES_DIR))
@@ -666,7 +666,7 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 4: 功能重复 ──
-        _check_duplicate_functionality(name_part, description, domain, subdomain)
+        check_duplicate_functionality(name_part, description, domain, subdomain)
 
         # ── 检查 5: 命名规范 ──
         _check_naming(str(file_path), str(parent))
@@ -709,7 +709,7 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 4: 功能重复 ──
-        _check_duplicate_functionality(name_part, description, domain, subdomain)
+        check_duplicate_functionality(name_part, description, domain, subdomain)
 
         # ── 检查 5: 命名规范 ──
         _check_naming(str(file_path), str(parent))
@@ -888,7 +888,7 @@ def _register_to_gate_registry(
 # ===================================================================
 
 
-def _check_duplicate_functionality(
+def check_duplicate_functionality(
     name: str,
     description: str,
     domain: str = "",
@@ -908,6 +908,7 @@ def _check_duplicate_functionality(
 
     force_override=True 时跳过维度2（蓝图关键词匹配），维度1和维度3仍执行。
     用于确认 SSoT 误报后强制创建。
+    （Stage 4 公共化，primary）
     """
     # ── 维度3a: SSoT module_path 冲突检测（方案 E：零新真源，复用 [MODULE] 头）──
     # force_override 不跳过——同 module_path = 同文件身份 = 确凿重复信号。
@@ -1030,6 +1031,20 @@ def _check_duplicate_functionality(
             raise
         except Exception:
             pass
+
+
+def _check_duplicate_functionality(
+    name: str,
+    description: str,
+    domain: str = "",
+    subdomain: str = "",
+    force_override: bool = False,
+    expected_module_path: str = "",
+) -> None:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    check_duplicate_functionality(
+        name, description, domain, subdomain, force_override, expected_module_path,
+    )
 
 
 def _check_manifest_duplicate(rel_path: str) -> None:
