@@ -45,6 +45,13 @@ class CapabilityRegistry:
         self._lock = threading.Lock()
         self._card_dir = card_dir
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def card_dir(self):
+        """只读：card_dir（Stage 4 公共化）。"""
+        return self._card_dir
+
+
     def register(self, card: CapabilityCard) -> None:
         with self._lock:
             if card.capability_id in self._cards:

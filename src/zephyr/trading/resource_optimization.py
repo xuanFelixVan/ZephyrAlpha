@@ -136,6 +136,12 @@ class CircuitBreaker:
         with self._lock:
             return self._state
 
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
+
     def _try_recover(self) -> None:
         """5.91.3 修复: 提取状态转换逻辑,仅在allow()中调用。"""
         if self._state is CircuitBreakerState.OPEN:
@@ -596,6 +602,25 @@ class ResourceOptimizationEngine:
             self._initialized = True
             self._load_config()
             logger.info("ResourceOptimizationEngine: initialized (singleton)")
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def monitor_running(self):
+        """只读：monitor_running（Stage 4 公共化）。"""
+        return self._monitor_running
+
+    @property
+    def pressure_callbacks(self) -> list[Callable[[PressureLevel, ResourceSnapshot], None]]:
+        """只读：pressure_callbacks（Stage 4 公共化）。"""
+        return self._pressure_callbacks
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def pressure_sm(self):
+        """只读：pressure_sm（Stage 4 公共化）。"""
+        return self._pressure_sm
+
 
     # ══ 职责分区① Monitor/Analyze 核心（保留，不外移） ══
     # 保留理由：snapshot() 的副作用链环环相扣——psutil/ctypes 采集 →

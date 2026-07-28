@@ -74,6 +74,13 @@ class AiAuditLogger:
         self._last_hash = _GENESIS_HASH
         self._load_last_hash()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def session_id(self):
+        """只读：session_id（Stage 4 公共化）。"""
+        return self._session_id
+
+
     def _load_last_hash(self) -> None:
         """从今日日志最后一行恢复 _last_hash（重启后链连续）。"""
         try:

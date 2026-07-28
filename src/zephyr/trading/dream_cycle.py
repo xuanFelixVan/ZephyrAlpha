@@ -63,6 +63,28 @@ class DreamCycle:
         self._semantic_dir = self._archive_dir / "semantic"
         self._forgotten_log = self._archive_dir / "forgotten.log"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def archive_dir(self):
+        """只读：archive_dir（Stage 4 公共化）。"""
+        return self._archive_dir
+
+    @property
+    def audit_log_dir(self):
+        """只读：audit_log_dir（Stage 4 公共化）。"""
+        return self._audit_log_dir
+
+    @property
+    def episodic_dir(self):
+        """只读：episodic_dir（Stage 4 公共化）。"""
+        return self._episodic_dir
+
+    @property
+    def semantic_dir(self):
+        """只读：semantic_dir（Stage 4 公共化）。"""
+        return self._semantic_dir
+
+
     def trigger_archival(self) -> DreamReport:
         report = DreamReport()
 

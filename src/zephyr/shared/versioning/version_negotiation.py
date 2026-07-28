@@ -91,6 +91,13 @@ class VersionNegotiator:
     def __init__(self) -> None:
         self._deprecations: list[DeprecationRecord] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def deprecations(self) -> list[DeprecationRecord]:
+        """只读：deprecations（Stage 4 公共化）。"""
+        return self._deprecations
+
+
     def register_deprecation(
         self,
         schema_name: SchemaName,

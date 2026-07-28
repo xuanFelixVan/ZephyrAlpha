@@ -134,6 +134,18 @@ class SessionContinuity:
                 self._db_path = self._project_root / "data" / "databases" / "session_continuity.db"
         self._init_schema()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+    @property
+    def sessions_dir(self):
+        """只读：sessions_dir（Stage 4 公共化）。"""
+        return self._sessions_dir
+
+
     def _get_conn(self) -> sqlite3.Connection:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = get_db_connection(str(self._db_path))

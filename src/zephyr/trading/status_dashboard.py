@@ -69,6 +69,23 @@ class StatusDashboard:
         self._orphan = orphan_detector
         self._uptime_start = uptime_start or now_utc().isoformat()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def orphan(self):
+        """只读：orphan（Stage 4 公共化）。"""
+        return self._orphan
+
+    @property
+    def registry(self):
+        """只读：registry（Stage 4 公共化）。"""
+        return self._registry
+
+    @property
+    def uptime_start(self):
+        """只读：uptime_start（Stage 4 公共化）。"""
+        return self._uptime_start
+
+
     def render_tui(self) -> str:
         phase = _current_phase()
         nq_stats = self._nq.stats()

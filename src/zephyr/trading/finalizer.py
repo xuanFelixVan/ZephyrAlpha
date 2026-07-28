@@ -35,6 +35,13 @@ class Finalizer:
     def __init__(self) -> None:
         self._cleanup_fns: list[tuple[str, Callable[[], None]]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def cleanup_fns(self) -> list[tuple[str, Callable[[], None]]]:
+        """只读：cleanup_fns（Stage 4 公共化）。"""
+        return self._cleanup_fns
+
+
     def register(self, resource_type: str, cleanup_fn: Callable[[], None]) -> None:
         self._cleanup_fns.append((resource_type, cleanup_fn))
 
@@ -114,3 +121,8 @@ def register_monitoring_finalizers_auto() -> None:
     无需传入 Finalizer 实例，使用全局单例。
     """
     register_monitoring_finalizers(get_finalizer())
+
+# ── Stage 4 公共化（2026-07-29）：module-level public aliases ──
+global_finalizer: Finalizer | None = _global_finalizer  # public alias（Stage 4 公共化）
+monitoring_finalizers_registered = _monitoring_finalizers_registered  # public alias（Stage 4 公共化）
+

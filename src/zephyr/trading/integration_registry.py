@@ -53,6 +53,13 @@ class IntegrationRegistry:
     def __init__(self) -> None:
         self._points: dict[str, IntegrationPoint] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def points(self) -> dict[str, IntegrationPoint]:
+        """只读：points（Stage 4 公共化）。"""
+        return self._points
+
+
     def register(self, point: IntegrationPoint) -> None:
         self._points[point.point_id] = point
 

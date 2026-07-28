@@ -153,6 +153,13 @@ class ZephyrLogger:
         self._logger = logging.getLogger(name)
         self._name = name
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def name(self):
+        """只读：name（Stage 4 公共化）。"""
+        return self._name
+
+
     def _log(
         self,
         level: int,

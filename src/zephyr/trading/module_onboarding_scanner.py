@@ -63,6 +63,18 @@ class ModuleOnboardingScanner:
         self._blueprint_root = Path(blueprint_root)
         self._registry = registry
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def blueprint_root(self):
+        """只读：blueprint_root（Stage 4 公共化）。"""
+        return self._blueprint_root
+
+    @property
+    def src_root(self):
+        """只读：src_root（Stage 4 公共化）。"""
+        return self._src_root
+
+
     def scan_filesystem(self) -> list[ModuleDiscovery]:
         discoveries: list[ModuleDiscovery] = []
         if not self._src_root.exists():

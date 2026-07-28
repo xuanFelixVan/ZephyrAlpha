@@ -237,6 +237,13 @@ class AdmissionController:
         self._rejected: int = 0
         self._last_admit_time: float = 0.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def circuit_breaker(self):
+        """只读：circuit_breaker（Stage 4 公共化）。"""
+        return self._circuit_breaker
+
+
     def admit(self, event: VerdictEvent | dict[str, Any]) -> AdmissionResult:
         with self._metrics_lock:
             self._total_requests += 1

@@ -47,6 +47,18 @@ class StopGate:
         self._session_start: str = ""
         self._shutdown_acknowledged = False
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def session_start(self) -> str:
+        """只读：session_start（Stage 4 公共化）。"""
+        return self._session_start
+
+    @property
+    def shutdown_acknowledged(self):
+        """只读：shutdown_acknowledged（Stage 4 公共化）。"""
+        return self._shutdown_acknowledged
+
+
     def initialize(self) -> None:
         self._session_start = now_utc().isoformat()
         self._shutdown_acknowledged = False

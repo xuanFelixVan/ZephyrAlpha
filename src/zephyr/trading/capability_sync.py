@@ -57,6 +57,13 @@ class CapabilitySync:
     def __init__(self, registry: CapabilityRegistry) -> None:
         self._registry = registry
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def registry(self):
+        """只读：registry（Stage 4 公共化）。"""
+        return self._registry
+
+
     def sync_a2a(self, a2a_registry: A2ARegistry | None) -> int:
         if a2a_registry is None:
             return 0

@@ -73,6 +73,13 @@ class LifecycleManager:
     def __init__(self, config: RuntimeConfig) -> None:
         self._config = config
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def config(self):
+        """只读：config（Stage 4 公共化）。"""
+        return self._config
+
+
     def boot_sequence(
         self,
         audit_logger: AiAuditLogger,
