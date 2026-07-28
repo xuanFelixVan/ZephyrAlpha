@@ -173,6 +173,18 @@ class IntegrationTestRunner:
         # 兼容旧 API
         self._results: list[TestResult] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+    @property
+    def result_dir(self):
+        """只读：result_dir（Stage 4 公共化）。"""
+        return self._result_dir
+
+
     # ── 旧 API 兼容（CITier 评估）──
     def add_result(
         self, contract_id: str, passed: bool, assertions_ran: int = 1, assertions_passed: int = 0, error: str = ""

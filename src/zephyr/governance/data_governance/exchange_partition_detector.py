@@ -27,6 +27,13 @@ class ExchangePartitionDetector:
     def __init__(self):
         self._known_exchanges: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def known_exchanges(self) -> set[str]:
+        """只读：known_exchanges（Stage 4 公共化）。"""
+        return self._known_exchanges
+
+
     def register(self, exchange: str):
         self._known_exchanges.add(exchange)
 

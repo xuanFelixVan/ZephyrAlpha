@@ -28,6 +28,18 @@ class ContextSwitchGovernor:
         self._daily_switches: dict[str, int] = {}
         self._max_switches_per_owner = 12
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def daily_switches(self) -> dict[str, int]:
+        """只读：daily_switches（Stage 4 公共化）。"""
+        return self._daily_switches
+
+    @property
+    def max_switches_per_owner(self):
+        """只读：max_switches_per_owner（Stage 4 公共化）。"""
+        return self._max_switches_per_owner
+
+
     def can_switch(self, owner_id: str) -> bool:
         current = self._daily_switches.get(owner_id, 0)
         return current < self._max_switches_per_owner

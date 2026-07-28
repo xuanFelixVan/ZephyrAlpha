@@ -29,6 +29,13 @@ class EscalationLoopDetector:
     def __init__(self):
         self._history: list[tuple[str, str, float]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def history(self) -> list[tuple[str, str, float]]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def record_transition(self, task_id: str, from_level: str, to_level: str):
         self._history.append((task_id, from_level, time.time()))
         self._history.append((task_id, to_level, time.time()))

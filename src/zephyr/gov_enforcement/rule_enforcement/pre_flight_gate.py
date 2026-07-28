@@ -47,6 +47,13 @@ class PreFlightGate:
     def __init__(self, engine: BudgetEngine | None = None):
         self._engine = engine or BudgetEngine()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def engine(self):
+        """只读：engine（Stage 4 公共化）。"""
+        return self._engine
+
+
     def gate(
         self,
         action: str,

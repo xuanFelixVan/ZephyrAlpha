@@ -66,6 +66,18 @@ class OwnerAbsent:
         self._data_dir = data_dir or Path("data/rollback/owner")
         self._state_path = self._data_dir / "owner_absent_state.json"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def state_path(self):
+        """只读：state_path（Stage 4 公共化）。"""
+        return self._state_path
+
+
     def check_owner_status(self, last_owner_interaction: str) -> AbsentStatus:
         try:
             last_ts = datetime.fromisoformat(last_owner_interaction)

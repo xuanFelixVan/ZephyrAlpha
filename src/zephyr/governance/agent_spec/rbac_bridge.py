@@ -79,6 +79,19 @@ class EscalationRBACBridge:
     def __init__(self) -> None:
         self._guard = PermissionGuard() if _AGENT_RBAC_AVAILABLE else None
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def guard(self):
+        """只读：guard（Stage 4 公共化）。"""
+        return self._guard
+
+    @guard.setter
+    def guard(self, value):
+        """写入：guard（Stage 4 公共化）。"""
+        self._guard = value
+
+
+
     def request_escalation(self, agent_id: str, target_permission: str, reason: str) -> dict:
         return {
             "agent_id": agent_id,

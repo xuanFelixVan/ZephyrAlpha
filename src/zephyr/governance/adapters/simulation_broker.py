@@ -88,6 +88,18 @@ class SimulationBroker(BrokerInterface):
         self._fill_callbacks: list[FillCallback] = []
         self._order_id_counter = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 property ──
+    @property
+    def fill_callbacks(self):
+        """只读：fill_callbacks（Stage 4 公共化）。"""
+        return self._fill_callbacks
+
+    @fill_callbacks.setter
+    def fill_callbacks(self, value):
+        """写入：fill_callbacks（Stage 4 公共化）。"""
+        self._fill_callbacks = value
+
+
     def connect(self) -> bool:
         self._connected = True
         _logger.info("SimulationBroker connected. initial_cash=%s", self._initial_cash)

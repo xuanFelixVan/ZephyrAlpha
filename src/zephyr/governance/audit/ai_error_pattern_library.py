@@ -216,6 +216,13 @@ class AIErrorPatternLibrary:
         self._last_updated: int = 0
         self._load()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def path(self):
+        """只读：path（Stage 4 公共化）。"""
+        return self._path
+
+
     def _load(self) -> None:
         """从磁盘加载聚合文件（fail-open）。
 

@@ -48,6 +48,13 @@ class OutputQualityGate:
     def __init__(self, rules: list[QualityRule] | None = None):
         self._rules = rules or DEFAULT_RULES
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def rules(self):
+        """只读：rules（Stage 4 公共化）。"""
+        return self._rules
+
+
     def evaluate(self, output: str, cost: float) -> QualityVerdict:
         violations: list[str] = []
         scores: list[float] = []

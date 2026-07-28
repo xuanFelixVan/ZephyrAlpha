@@ -67,9 +67,22 @@ class CircuitBreaker:
         self._threshold: int = 5
         self._window_seconds: int = 60
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def failure_count(self) -> int:
+        """只读：failure_count（Stage 4 公共化）。"""
+        return self._failure_count
+
+
     @property
     def state(self) -> CircuitBreakerState:
         return self._state
+
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
 
     def record_failure(self) -> None:
         self._failure_count += 1

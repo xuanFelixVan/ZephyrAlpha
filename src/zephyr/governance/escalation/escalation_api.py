@@ -40,6 +40,13 @@ class EscalationAPI:
         self._rate_buckets: dict[str, deque] = {}
         self._audit_log: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def api_keys(self) -> dict[str, str]:
+        """只读：api_keys（Stage 4 公共化）。"""
+        return self._api_keys
+
+
     def register_service(self, service_name: str, api_key: str):
         self._api_keys[service_name] = api_key
 

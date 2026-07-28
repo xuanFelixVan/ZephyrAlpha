@@ -209,6 +209,28 @@ class SLOContractEngine:
         for sli in self._slis:
             self._recompute_budget(sli)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def cooldown_lock(self):
+        """只读：cooldown_lock（Stage 4 公共化）。"""
+        return self._cooldown_lock
+
+    @property
+    def cooldown_until(self):
+        """只读：cooldown_until（Stage 4 公共化）。"""
+        return self._cooldown_until
+
+    @property
+    def readings(self) -> dict[SLIName, list[SLIReading]]:
+        """只读：readings（Stage 4 公共化）。"""
+        return self._readings
+
+    @property
+    def slis(self):
+        """只读：slis（Stage 4 公共化）。"""
+        return self._slis
+
+
     @property
     def window_seconds(self) -> float:
         return self._window_seconds

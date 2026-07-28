@@ -29,6 +29,23 @@ class RuleCanaryManager:
         self._baseline_metrics: dict = {}
         self._canary_metrics: dict = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def baseline_metrics(self) -> dict:
+        """只读：baseline_metrics（Stage 4 公共化）。"""
+        return self._baseline_metrics
+
+    @property
+    def canary_metrics(self) -> dict:
+        """只读：canary_metrics（Stage 4 公共化）。"""
+        return self._canary_metrics
+
+    @property
+    def canary_weight(self):
+        """只读：canary_weight（Stage 4 公共化）。"""
+        return self._canary_weight
+
+
     def set_baseline(self, metrics: dict):
         self._baseline_metrics = metrics
 

@@ -28,6 +28,18 @@ class GapAnalyzer:
         self._covered_operations: set[str] = set()
         self._observed_operations: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def covered_operations(self) -> set[str]:
+        """只读：covered_operations（Stage 4 公共化）。"""
+        return self._covered_operations
+
+    @property
+    def observed_operations(self) -> set[str]:
+        """只读：observed_operations（Stage 4 公共化）。"""
+        return self._observed_operations
+
+
     def register_coverage(self, operation_type: str):
         self._covered_operations.add(operation_type)
 
