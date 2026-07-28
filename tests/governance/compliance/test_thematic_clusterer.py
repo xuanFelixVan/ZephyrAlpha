@@ -105,8 +105,8 @@ class TestThematicClusterer:
         assert "themes cover" in result["recommendation"]
 
     def test_classify_static(self):
-        assert ThematicClusterer._classify(["tests/a.py"]) == "Test Patterns"
-        assert ThematicClusterer._classify(["shared/b.py"]) == "Shared Library"
-        assert ThematicClusterer._classify(["l01-infrastructure/c.py"]) == "Infrastructure"
-        assert ThematicClusterer._classify(["pipeline/d.py"]) == "Pipeline"
-        assert ThematicClusterer._classify(["random/x.py"]) == "General"
+        assert ThematicClusterer.classify(["tests/a.py"]) == "Test Patterns"
+        assert ThematicClusterer.classify(["shared/b.py"]) == "Shared Library"
+        assert ThematicClusterer.classify(["l01-infrastructure/c.py"]) == "Infrastructure"
+        assert ThematicClusterer.classify(["pipeline/d.py"]) == "Pipeline"
+        assert ThematicClusterer.classify(["random/x.py"]) == "General"

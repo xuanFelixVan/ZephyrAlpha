@@ -162,63 +162,63 @@ class TestScanner:
         assert blocks == []
 
     def test_token_normalize_preserves_keywords(self):
-        tokens = self.scanner._tokenize_and_normalize("def add(a, b): return a + b")
+        tokens = self.scanner.tokenize_and_normalize("def add(a, b): return a + b")
         assert "def" in tokens
         assert "return" in tokens
         assert "_NAME_" in tokens
 
     def test_token_normalize_strips_comments(self):
-        tokens = self.scanner._tokenize_and_normalize("# comment\nx = 1")
+        tokens = self.scanner.tokenize_and_normalize("# comment\nx = 1")
         assert "#" not in tokens
 
     def test_token_normalize_handles_strings(self):
-        tokens = self.scanner._tokenize_and_normalize('s = "hello"')
+        tokens = self.scanner.tokenize_and_normalize('s = "hello"')
         assert "_STR_" in tokens
 
     def test_compute_minhash_empty(self):
-        minhash = self.scanner._compute_minhash([])
+        minhash = self.scanner.compute_minhash([])
         assert minhash == [0] * 8
 
     def test_compute_minhash_nonempty(self):
         tokens = ["def", "_NAME_", "(", ")", ":", "return", "_NAME_"]
-        minhash = self.scanner._compute_minhash(tokens)
+        minhash = self.scanner.compute_minhash(tokens)
         assert len(minhash) == 8
         assert any(x != 0 for x in minhash)
 
     def test_jaccard_identical(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
         b = [1, 2, 3, 4, 5, 6, 7, 8]
-        sim = self.scanner._jaccard_estimate(a, b)
+        sim = self.scanner.jaccard_estimate(a, b)
         assert sim == 1.0
 
     def test_jaccard_different(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8]
         b = [9, 10, 11, 12, 13, 14, 15, 16]
-        sim = self.scanner._jaccard_estimate(a, b)
+        sim = self.scanner.jaccard_estimate(a, b)
         assert sim == 0.0
 
     def test_jaccard_empty_input(self):
-        assert self.scanner._jaccard_estimate([], [1, 2]) == 0.0
-        assert self.scanner._jaccard_estimate([1, 2], []) == 0.0
+        assert self.scanner.jaccard_estimate([], [1, 2]) == 0.0
+        assert self.scanner.jaccard_estimate([1, 2], []) == 0.0
 
     def test_path_threshold_shared(self):
-        th = self.scanner._get_threshold("src/zephyr/shared/utils.py")
+        th = self.scanner.get_threshold("src/zephyr/shared/utils.py")
         assert th == 0.3
 
     def test_path_threshold_core(self):
-        th = self.scanner._get_threshold("src/zephyr/core/models.py")
+        th = self.scanner.get_threshold("src/zephyr/core/models.py")
         assert th == 0.6
 
     def test_path_threshold_tests(self):
-        th = self.scanner._get_threshold("tests/governance/test_thing.py")
+        th = self.scanner.get_threshold("tests/governance/test_thing.py")
         assert th == 0.9
 
     def test_path_threshold_scripts(self):
-        th = self.scanner._get_threshold("scripts/governance/audit.py")
+        th = self.scanner.get_threshold("scripts/governance/audit.py")
         assert th == 0.7
 
     def test_path_threshold_default(self):
-        th = self.scanner._get_threshold("random/file.py")
+        th = self.scanner.get_threshold("random/file.py")
         assert th == 0.7
 
     def test_scan_result_defaults(self):

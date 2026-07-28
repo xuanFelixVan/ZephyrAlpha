@@ -49,14 +49,14 @@ def _write_sample_policy(path, data=None):
 class TestPolicySandbox:
     def test_init_default_path(self):
         sb = PolicySandbox()
-        assert sb._policy_path.name == "budget_policy.yaml"
-        assert "config" in str(sb._policy_path)
+        assert sb.policy_path.name == "budget_policy.yaml"
+        assert "config" in str(sb.policy_path)
 
     def test_init_custom_path(self, tmp_path):
         policy_file = tmp_path / "policy.yaml"
         _write_sample_policy(policy_file)
         sb = PolicySandbox(policy_path=str(policy_file))
-        assert sb._policy_path == policy_file
+        assert sb.policy_path == policy_file
 
     def test_load_current(self, tmp_path):
         policy_file = tmp_path / "policy.yaml"
@@ -75,7 +75,7 @@ class TestPolicySandbox:
         _write_sample_policy(policy_file)
         sb = PolicySandbox(policy_path=str(policy_file))
         sb.start_sandbox()
-        assert sb._sandbox_policy is not None
+        assert sb.sandbox_policy is not None
 
     def test_propose_change(self, tmp_path):
         policy_file = tmp_path / "policy.yaml"
@@ -83,14 +83,14 @@ class TestPolicySandbox:
         sb = PolicySandbox(policy_path=str(policy_file))
         sb.start_sandbox()
         sb.propose_change("budget_levels.normal.hard_limit", 2000)
-        assert "budget_levels.normal.hard_limit" in sb._changes
+        assert "budget_levels.normal.hard_limit" in sb.changes
 
     def test_propose_change_auto_starts_sandbox(self, tmp_path):
         policy_file = tmp_path / "policy.yaml"
         _write_sample_policy(policy_file)
         sb = PolicySandbox(policy_path=str(policy_file))
         sb.propose_change("key", "value")
-        assert sb._sandbox_policy is not None
+        assert sb.sandbox_policy is not None
 
     def test_simulate(self, tmp_path):
         policy_file = tmp_path / "policy.yaml"
@@ -142,8 +142,8 @@ class TestPolicySandbox:
         sb.start_sandbox()
         sb.propose_change("key", "value")
         sb.rollback()
-        assert sb._sandbox_policy is None
-        assert sb._changes == {}
+        assert sb.sandbox_policy is None
+        assert sb.changes == {}
 
     def test_recent_trials(self, tmp_path):
         policy_file = tmp_path / "policy.yaml"
@@ -187,7 +187,7 @@ class TestPolicySandbox:
                 "normal": {"hard_limit": 1000, "soft_limit": 700},
             },
         }
-        impact = sb._assess_impact(policy)
+        impact = sb.assess_impact(policy)
         assert "normal_strictness" in impact
         assert impact["normal_strictness"] == 700 / 1000
 
@@ -200,15 +200,15 @@ class TestPolicySandbox:
                 "broken": {"hard_limit": 0, "soft_limit": 0},
             },
         }
-        impact = sb._assess_impact(policy)
+        impact = sb.assess_impact(policy)
         assert impact["broken_strictness"] == 0.5
 
     def test_set_nested(self, tmp_path):
         d = {"a": {"b": {}}}
-        PolicySandbox._set_nested(d, "a.b.c", 42)
+        PolicySandbox.set_nested(d, "a.b.c", 42)
         assert d["a"]["b"]["c"] == 42
 
     def test_set_nested_creates_intermediate(self, tmp_path):
         d = {}
-        PolicySandbox._set_nested(d, "x.y.z", "deep")
+        PolicySandbox.set_nested(d, "x.y.z", "deep")
         assert d["x"]["y"]["z"] == "deep"

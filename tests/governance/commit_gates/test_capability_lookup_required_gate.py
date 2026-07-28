@@ -442,7 +442,7 @@ class TestEndToEnd:
 
         # Step 1: AI 调 rule_discovery
         server = RuleDiscoveryServer()
-        result = server._discover_applicable_rules(
+        result = server.discover_applicable_rules(
             operation="file_write", session_id="sess-e2e"
         )
         assert result["count"] >= 1, "rule_discovery should return ≥1 rule for file_write"

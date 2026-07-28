@@ -116,11 +116,11 @@ class TestDegradationManager:
         assert mgr.state.current_level == DegradationLevel.NORMAL
 
     def test_compute_target_tier_model_switch(self):
-        tier = DegradationManager._compute_target_tier(DegradationLevel.MODEL_SWITCH, ModelTier.PREMIUM)
+        tier = DegradationManager.compute_target_tier(DegradationLevel.MODEL_SWITCH, ModelTier.PREMIUM)
         assert tier == ModelTier.ECONOMY
 
     def test_compute_target_tier_no_downgrade(self):
-        tier = DegradationManager._compute_target_tier(DegradationLevel.NOTIFY, ModelTier.MINIMAL)
+        tier = DegradationManager.compute_target_tier(DegradationLevel.NOTIFY, ModelTier.MINIMAL)
         assert tier == ModelTier.MINIMAL
 
 

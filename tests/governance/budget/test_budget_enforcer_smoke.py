@@ -28,7 +28,7 @@ class TestBudgetEngineSmoke:
 
     def test_three_dimensions_registered(self):
         be = BudgetEngine()
-        assert len(be._policies) == 3
+        assert len(be.policies) == 3
 
     def test_get_active_policy(self):
         be = BudgetEngine()

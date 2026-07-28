@@ -60,14 +60,14 @@ def dumper(tmp_db: Path, output_dir: Path) -> SqliteDumper:
 class TestSqliteDumperInstantiation:
     def test_default_construction(self, tmp_db: Path, output_dir: Path) -> None:
         d = SqliteDumper(db_path=tmp_db, output_dir=output_dir)
-        assert d._db_path == tmp_db
-        assert d._output_dir == output_dir
-        assert d._hmac_key == HMAC_KEY_DEFAULT
+        assert d.db_path == tmp_db
+        assert d.output_dir == output_dir
+        assert d.hmac_key == HMAC_KEY_DEFAULT
 
     def test_custom_hmac_key(self, tmp_db: Path, output_dir: Path) -> None:
         custom_key = b"my-custom-key"
         d = SqliteDumper(db_path=tmp_db, output_dir=output_dir, hmac_key=custom_key)
-        assert d._hmac_key == custom_key
+        assert d.hmac_key == custom_key
 
     def test_none_db_path_uses_default(self) -> None:
         with patch.dict("sys.modules", {}):
@@ -80,7 +80,7 @@ class TestSqliteDumperInstantiation:
         from zephyr.shared.io.paths import REPO_ROOT
         d = SqliteDumper(db_path=tmp_db, output_dir=None)
         # 治本（裁定#6 路径SSoT）：项目硬约束禁止相对路径，默认 output_dir 为 REPO_ROOT 绝对路径
-        assert d._output_dir == REPO_ROOT / "data" / "rollback" / "db_snapshots"
+        assert d.output_dir == REPO_ROOT / "data" / "rollback" / "db_snapshots"
 
 
 class TestSqliteDumperDump:

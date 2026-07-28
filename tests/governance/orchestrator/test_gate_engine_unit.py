@@ -54,7 +54,7 @@ GATES_DIR = Path(__file__).parent.parent.parent.parent / "src" / "zephyr" / "gov
 def _compute_expected_gate_ids() -> frozenset[str]:
     """从 _registry.yaml 动态计算期望的 gate_id 集合（5.176.1 Phase 1）。
 
-    镜像 GateEngine._load_gate_configs_from_registry 的两遍加载逻辑：
+    镜像 GateEngine.load_gate_configs_from_registry 的两遍加载逻辑：
     - 第一遍：有 checks:/entry_conditions: 的可执行 gate 优先
     - 第二遍：仅有 rules: 的叙述型 gate 填补空缺
     - gate_id 取自 YAML 文件本身（hyphen 格式）
@@ -521,9 +521,9 @@ def test_task_repo_other_transitions_no_gate(tmp_path: Path) -> None:
     )
     repo.create(task)
     # 先用 enable_gate=False 的方式把任务推进到 IN_PROGRESS
-    repo._enable_gate = False
+    repo.enable_gate = False
     repo.transition("SRC-081", TaskStatus.IN_PROGRESS)
-    repo._enable_gate = True
+    repo.enable_gate = True
     # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
     repo.batch_review("SRC-081")
     repo.batch_review("SRC-081")

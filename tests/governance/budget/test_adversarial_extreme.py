@@ -23,13 +23,13 @@ class TestDegradationChainStress:
     def test_degradation_chain_monotonic_advancement(self):
         """验证 advance_degradation 返回True且级别单调递增L0→L4。"""
         engine = BudgetEngine()
-        assert engine._current_degradation_level == BudgetLevel.L0_NORMAL
+        assert engine.current_degradation_level == BudgetLevel.L0_NORMAL
 
-        levels = [engine._current_degradation_level]
+        levels = [engine.current_degradation_level]
         for _ in range(4):
             ok = engine.advance_degradation()
             assert ok is True, "advance_degradation should return True for non-max level"
-            levels.append(engine._current_degradation_level)
+            levels.append(engine.current_degradation_level)
 
         # 验证级别单调递增
         for i in range(len(levels) - 1):
@@ -42,14 +42,14 @@ class TestDegradationChainStress:
     def test_degradation_chain_no_skip(self):
         """验证降级链不可跳跃——每次只推进1级。"""
         engine = BudgetEngine()
-        initial_idx = engine._active_step_idx
+        initial_idx = engine.active_step_idx
         assert initial_idx == 0
 
         engine.advance_degradation()
-        assert engine._active_step_idx == 1, "Should advance to idx 1, not skip"
+        assert engine.active_step_idx == 1, "Should advance to idx 1, not skip"
 
         engine.advance_degradation()
-        assert engine._active_step_idx == 2, "Should advance to idx 2, not skip"
+        assert engine.active_step_idx == 2, "Should advance to idx 2, not skip"
 
     def test_degradation_retreat(self):
         """验证 retreat_degradation 可回退且边界返回False。"""
@@ -57,17 +57,17 @@ class TestDegradationChainStress:
         # 先推进到 idx 2
         engine.advance_degradation()
         engine.advance_degradation()
-        assert engine._active_step_idx == 2
+        assert engine.active_step_idx == 2
 
         # 回退
         ok = engine.retreat_degradation()
         assert ok is True
-        assert engine._active_step_idx == 1
+        assert engine.active_step_idx == 1
 
         # 回退到0
         ok = engine.retreat_degradation()
         assert ok is True
-        assert engine._active_step_idx == 0
+        assert engine.active_step_idx == 0
 
         # 边界: 已在0，回退返回False
         ok = engine.retreat_degradation()
@@ -210,7 +210,7 @@ class TestAdversarialTesterIntegration:
 
         for tid in extreme_ids:
             test = next(t for t in tester.BUDGET_ADVERSARIAL_TESTS if t.test_id == tid)
-            result = tester._run_one(test)
+            result = tester.run_one(test)
             assert result.passed, f"{tid} FAILED: {result.detail}"
 
     def test_run_all_includes_extreme_tests(self):

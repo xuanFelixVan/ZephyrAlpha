@@ -273,7 +273,7 @@ class TestFailClosedGitDiffFailure:
         mock_result = MagicMock()
         mock_result.returncode = 1
         mock_result.stdout = ""
-        gw._run_git.return_value = mock_result
+        gw.run_git.return_value = mock_result
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
         assert passed is False, f"git diff 失败应 fail-closed 阻断: {detail}"
@@ -293,7 +293,7 @@ class TestFailClosedGitDiffFailure:
         )
         gw = MagicMock()
         gw.project_root = tmp_path
-        gw._run_git.side_effect = RuntimeError("git down")
+        gw.run_git.side_effect = RuntimeError("git down")
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
         assert passed is False, f"git diff 异常应 fail-closed 阻断: {detail}"

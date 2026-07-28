@@ -57,15 +57,15 @@ class TestLifecyclePolicy:
 class TestS3SnapshotLifecycleInit:
     def test_default_snapshot_dir(self):
         mgr = S3SnapshotLifecycle()
-        assert mgr._snapshot_dir == Path("data/rollback/db_snapshots")
+        assert mgr.snapshot_dir == Path("data/rollback/db_snapshots")
 
     def test_custom_snapshot_dir(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path / "snapshots")
-        assert mgr._snapshot_dir == tmp_path / "snapshots"
+        assert mgr.snapshot_dir == tmp_path / "snapshots"
 
     def test_manifest_dir_derived(self, tmp_path):
         mgr = S3SnapshotLifecycle(snapshot_dir=tmp_path / "snapshots")
-        assert mgr._manifest_dir == tmp_path / "snapshots" / ".manifests"
+        assert mgr.manifest_dir == tmp_path / "snapshots" / ".manifests"
 
 
 class TestApplyLifecyclePolicy:
@@ -103,7 +103,7 @@ class TestClassifySnapshots:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.classify_snapshots()
         assert len(result["hot"]) == 1
         assert result["hot"][0].snapshot_key == "snap1"
@@ -119,7 +119,7 @@ class TestClassifySnapshots:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.classify_snapshots()
         assert len(result["expired"]) == 1
 
@@ -134,7 +134,7 @@ class TestClassifySnapshots:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.classify_snapshots()
         assert len(result["warm"]) == 1
 
@@ -149,7 +149,7 @@ class TestClassifySnapshots:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.classify_snapshots()
         assert len(result["cold"]) == 1
 
@@ -166,7 +166,7 @@ class TestFastPurge:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.fast_purge(max_age_days=90, dry_run=True)
         assert isinstance(result, FastPurgeResult)
         assert result.purged_count == 1
@@ -185,7 +185,7 @@ class TestFastPurge:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.fast_purge(max_age_days=90, dry_run=False)
         assert result.purged_count == 1
         manifest_path = tmp_path / ".manifests" / "snap_del.manifest.json"
@@ -202,7 +202,7 @@ class TestFastPurge:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         result = mgr.fast_purge(max_age_days=90, dry_run=False)
         assert result.purged_count == 0
 
@@ -269,9 +269,9 @@ class TestTouchReference:
             sha256="abc",
             commit_sha="def",
         )
-        mgr._save_manifest(manifest)
+        mgr.save_manifest(manifest)
         mgr.touch_reference("touch_me")
-        updated = mgr._load_manifests()
+        updated = mgr.load_manifests()
         assert len(updated) == 1
         assert updated[0].last_referenced_at > old_time
 

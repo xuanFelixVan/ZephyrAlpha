@@ -79,12 +79,12 @@ class TestSensitiveMatch:
 class TestRightToBeForgotten:
     def test_instantiation_with_tmp_dir(self, tmp_path):
         rtbf = RightToBeForgotten(registry_dir=tmp_path / "gdpr")
-        assert rtbf._registry_dir == tmp_path / "gdpr"
-        assert len(rtbf._forgotten_hashes) == 0
+        assert rtbf.registry_dir == tmp_path / "gdpr"
+        assert len(rtbf.forgotten_hashes) == 0
 
     def test_instantiation_default_dir(self):
         rtbf = RightToBeForgotten()
-        assert rtbf._registry_dir == Path("data/rollback/gdpr")
+        assert rtbf.registry_dir == Path("data/rollback/gdpr")
 
     def test_register_forgotten_user(self, tmp_path):
         rtbf = RightToBeForgotten(registry_dir=tmp_path / "gdpr")
@@ -181,11 +181,11 @@ class TestRightToBeForgotten:
 
     def test_mask_identifier_short(self, tmp_path):
         rtbf = RightToBeForgotten(registry_dir=tmp_path / "gdpr")
-        assert rtbf._mask_identifier("ab") == "****"
+        assert rtbf.mask_identifier("ab") == "****"
 
     def test_mask_identifier_long(self, tmp_path):
         rtbf = RightToBeForgotten(registry_dir=tmp_path / "gdpr")
-        masked = rtbf._mask_identifier("abcdefgh")
+        masked = rtbf.mask_identifier("abcdefgh")
         assert masked.startswith("ab")
         assert masked.endswith("gh")
         assert "*" in masked

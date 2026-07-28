@@ -78,45 +78,45 @@ class TestVenvSyncResult:
 class TestVenvSyncInit:
     def test_init_with_root(self, tmp_project: Path) -> None:
         vs = VenvSync(project_root=tmp_project)
-        assert vs._project_root == tmp_project
-        assert vs._req_path == tmp_project / "requirements.txt"
+        assert vs.project_root == tmp_project
+        assert vs.req_path == tmp_project / "requirements.txt"
 
     def test_init_default_root(self) -> None:
         vs = VenvSync()
-        assert vs._project_root == Path.cwd()
+        assert vs.project_root == Path.cwd()
 
     def test_init_none_root(self) -> None:
         vs = VenvSync(project_root=None)
-        assert vs._project_root == Path.cwd()
+        assert vs.project_root == Path.cwd()
 
 
 class TestParseFreeze:
     def test_parse_single_package(self) -> None:
-        result = VenvSync._parse_freeze("requests==2.31.0")
+        result = VenvSync.parse_freeze("requests==2.31.0")
         assert result == {"requests": "2.31.0"}
 
     def test_parse_multiple_packages(self) -> None:
         freeze = "requests==2.31.0\npyyaml==6.0\nflask==3.0.0"
-        result = VenvSync._parse_freeze(freeze)
+        result = VenvSync.parse_freeze(freeze)
         assert len(result) == 3
         assert result["pyyaml"] == "6.0"
 
     def test_parse_empty_string(self) -> None:
-        result = VenvSync._parse_freeze("")
+        result = VenvSync.parse_freeze("")
         assert result == {}
 
     def test_parse_ignores_non_versioned(self) -> None:
         freeze = "requests==2.31.0\nsome-local-package\n-e git+https://..."
-        result = VenvSync._parse_freeze(freeze)
+        result = VenvSync.parse_freeze(freeze)
         assert len(result) == 1
         assert "requests" in result
 
     def test_parse_case_insensitive(self) -> None:
-        result = VenvSync._parse_freeze("PyYAML==6.0")
+        result = VenvSync.parse_freeze("PyYAML==6.0")
         assert "pyyaml" in result
 
     def test_parse_strips_whitespace(self) -> None:
-        result = VenvSync._parse_freeze("  requests == 2.31.0  ")
+        result = VenvSync.parse_freeze("  requests == 2.31.0  ")
         assert "requests" in result
 
 

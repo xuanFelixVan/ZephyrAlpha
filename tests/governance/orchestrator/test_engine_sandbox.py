@@ -329,9 +329,9 @@ class TestGrantTemporaryAccess:
     def test_grant_no_duplicate(self) -> None:
         sb = EngineSandbox()
         sb.grant_temporary_access("docs/", duration_s=0, mode="read")
-        count_before = len(sb._profile.read_paths)
+        count_before = len(sb.profile.read_paths)
         sb.grant_temporary_access("docs/", duration_s=0, mode="read")
-        assert len(sb._profile.read_paths) == count_before
+        assert len(sb.profile.read_paths) == count_before
 
     def test_temporary_access_expires(self) -> None:
         sb = EngineSandbox()
@@ -408,10 +408,10 @@ class TestAccessLogRecording:
         sb.check_file_read("docs/a.md", actor="a1")
         sb.check_file_write("docs/_working/audit/b.txt", actor="a2")
         sb.check_network_access("localhost", actor="a3")
-        assert len(sb._access_log) == 3
-        assert sb._access_log[0].actor == "a1"
-        assert sb._access_log[1].actor == "a2"
-        assert sb._access_log[2].actor == "a3"
+        assert len(sb.access_log) == 3
+        assert sb.access_log[0].actor == "a1"
+        assert sb.access_log[1].actor == "a2"
+        assert sb.access_log[2].actor == "a3"
 
     def test_summary_method_alias(self) -> None:
         sb = EngineSandbox()
@@ -420,13 +420,13 @@ class TestAccessLogRecording:
 
 class TestMatchPathStatic:
     def test_exact_match(self) -> None:
-        assert EngineSandbox._match_path(Path("docs/readme.md"), ["docs/"]) is True
+        assert EngineSandbox.match_path(Path("docs/readme.md"), ["docs/"]) is True
 
     def test_no_match(self) -> None:
-        assert EngineSandbox._match_path(Path("tmp/file.txt"), ["docs/"]) is False
+        assert EngineSandbox.match_path(Path("tmp/file.txt"), ["docs/"]) is False
 
     def test_empty_patterns(self) -> None:
-        assert EngineSandbox._match_path(Path("any/path"), []) is False
+        assert EngineSandbox.match_path(Path("any/path"), []) is False
 
 
 class TestUptime:

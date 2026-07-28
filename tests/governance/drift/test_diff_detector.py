@@ -43,11 +43,11 @@ class TestDiffResult:
 class TestDiffDetector:
     def test_instantiation_default(self):
         dd = DiffDetector()
-        assert dd._repo_root == Path.cwd()
+        assert dd.repo_root == Path.cwd()
 
     def test_instantiation_custom_root(self):
         dd = DiffDetector(repo_root="/tmp")
-        assert dd._repo_root == Path("/tmp")
+        assert dd.repo_root == Path("/tmp")
 
     def test_extract_functions_valid_file(self):
         with tempfile.NamedTemporaryFile(suffix=".py", mode="w", encoding="utf-8", delete=False) as f:
@@ -55,7 +55,7 @@ class TestDiffDetector:
             f.flush()
             path = Path(f.name)
         try:
-            funcs = DiffDetector._extract_functions(path)
+            funcs = DiffDetector.extract_functions(path)
             assert len(funcs) == 2
             assert funcs[0].name == "hello"
             assert funcs[1].name == "world"
@@ -68,13 +68,13 @@ class TestDiffDetector:
             f.flush()
             path = Path(f.name)
         try:
-            funcs = DiffDetector._extract_functions(path)
+            funcs = DiffDetector.extract_functions(path)
             assert funcs == []
         finally:
             path.unlink()
 
     def test_extract_functions_nonexistent(self):
-        funcs = DiffDetector._extract_functions(Path("/nonexistent/file.py"))
+        funcs = DiffDetector.extract_functions(Path("/nonexistent/file.py"))
         assert funcs == []
 
     def test_extract_functions_async(self):
@@ -83,7 +83,7 @@ class TestDiffDetector:
             f.flush()
             path = Path(f.name)
         try:
-            funcs = DiffDetector._extract_functions(path)
+            funcs = DiffDetector.extract_functions(path)
             assert len(funcs) == 1
             assert funcs[0].name == "async_handler"
         finally:
@@ -95,7 +95,7 @@ class TestDiffDetector:
             f.flush()
             path = Path(f.name)
         try:
-            funcs = DiffDetector._extract_functions(path)
+            funcs = DiffDetector.extract_functions(path)
             assert funcs == []
         finally:
             path.unlink()
@@ -120,7 +120,7 @@ class TestDiffDetector:
     def test_git_diff_files_no_repo(self):
         dd = DiffDetector(repo_root="/nonexistent/repo")
         try:
-            result = dd._git_diff_files(cached=True)
+            result = dd.git_diff_files(cached=True)
             assert isinstance(result, list)
         except (OSError, NotADirectoryError):
             pass
@@ -128,7 +128,7 @@ class TestDiffDetector:
     def test_git_diff_files_unstaged_no_repo(self):
         dd = DiffDetector(repo_root="/nonexistent/repo")
         try:
-            result = dd._git_diff_files(cached=False)
+            result = dd.git_diff_files(cached=False)
             assert isinstance(result, list)
         except (OSError, NotADirectoryError):
             pass

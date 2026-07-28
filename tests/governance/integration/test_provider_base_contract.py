@@ -37,7 +37,7 @@ class _UnitStubProvider(DataSourceBase):
 
 
 def test_stub_provider_registers_in_registry() -> None:
-    assert DataSourceBase._registry.get("unit-stub-provider") is _UnitStubProvider
+    assert DataSourceBase.registry.get("unit-stub-provider") is _UnitStubProvider
 
 
 def test_stub_validate_schema_empty_frame_columns_only_ok() -> None:

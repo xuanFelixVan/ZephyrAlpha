@@ -58,8 +58,8 @@ class TestTrustRecord:
 class TestTrustScoreEngine:
     def test_instantiation(self):
         eng = TrustScoreEngine()
-        assert eng._initial_score == 0.5
-        assert eng._decay_rate == 0.005
+        assert eng.initial_score == 0.5
+        assert eng.decay_rate == 0.005
 
     def test_compute_score_new_agent(self, engine):
         score = engine.compute_score("agent-new")

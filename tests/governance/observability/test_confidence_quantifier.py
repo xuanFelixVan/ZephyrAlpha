@@ -27,7 +27,7 @@ class TestConfidenceQuantifierInstantiation:
     def test_initial_state(self):
         cq = ConfidenceQuantifier()
         assert cq.average_confidence == 1.0
-        assert cq._consecutive_low == 0
+        assert cq.consecutive_low == 0
         assert cq.history == []
 
     def test_class_constants(self):
@@ -113,20 +113,20 @@ class TestRecord:
 
 class TestDetermineTier:
     def test_tier_1_full_auto(self):
-        assert ConfidenceQuantifier._determine_tier(0.80) == "TIER_1_FULL_AUTO"
-        assert ConfidenceQuantifier._determine_tier(1.0) == "TIER_1_FULL_AUTO"
+        assert ConfidenceQuantifier.determine_tier(0.80) == "TIER_1_FULL_AUTO"
+        assert ConfidenceQuantifier.determine_tier(1.0) == "TIER_1_FULL_AUTO"
 
     def test_tier_2_auto_with_audit(self):
-        assert ConfidenceQuantifier._determine_tier(0.50) == "TIER_2_AUTO_WITH_AUDIT"
-        assert ConfidenceQuantifier._determine_tier(0.79) == "TIER_2_AUTO_WITH_AUDIT"
+        assert ConfidenceQuantifier.determine_tier(0.50) == "TIER_2_AUTO_WITH_AUDIT"
+        assert ConfidenceQuantifier.determine_tier(0.79) == "TIER_2_AUTO_WITH_AUDIT"
 
     def test_tier_3_human_review(self):
-        assert ConfidenceQuantifier._determine_tier(0.30) == "TIER_3_HUMAN_REVIEW"
-        assert ConfidenceQuantifier._determine_tier(0.49) == "TIER_3_HUMAN_REVIEW"
+        assert ConfidenceQuantifier.determine_tier(0.30) == "TIER_3_HUMAN_REVIEW"
+        assert ConfidenceQuantifier.determine_tier(0.49) == "TIER_3_HUMAN_REVIEW"
 
     def test_tier_4_human_only(self):
-        assert ConfidenceQuantifier._determine_tier(0.29) == "TIER_4_HUMAN_ONLY"
-        assert ConfidenceQuantifier._determine_tier(0.0) == "TIER_4_HUMAN_ONLY"
+        assert ConfidenceQuantifier.determine_tier(0.29) == "TIER_4_HUMAN_ONLY"
+        assert ConfidenceQuantifier.determine_tier(0.0) == "TIER_4_HUMAN_ONLY"
 
 
 class TestAverageConfidence:

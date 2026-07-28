@@ -121,7 +121,7 @@ class TestBurnRateMonitor:
         brm.record_consumption(100.0)
         brm.compute_burn_rates(daily_limit=1_000_000)
         brm.update_baseline()
-        assert brm._distribution_baseline is not None
+        assert brm.distribution_baseline is not None
 
     def test_generate_alert_normal_returns_none(self):
         brm = BurnRateMonitor()
@@ -186,25 +186,25 @@ class TestBurnRateMonitor:
 
     def test_wasserstein_1d(self):
         brm = BurnRateMonitor()
-        result = brm._wasserstein_1d([0.1, 0.2, 0.3, 0.4], [0.1, 0.2, 0.3, 0.4])
+        result = brm.wasserstein_1d([0.1, 0.2, 0.3, 0.4], [0.1, 0.2, 0.3, 0.4])
         assert result == pytest.approx(0.0)
 
     def test_wasserstein_1d_different(self):
         brm = BurnRateMonitor()
-        result = brm._wasserstein_1d([0.1, 0.2], [0.5, 0.6])
+        result = brm.wasserstein_1d([0.1, 0.2], [0.5, 0.6])
         assert result > 0.0
 
     def test_wasserstein_1d_empty(self):
         brm = BurnRateMonitor()
-        assert brm._wasserstein_1d([], []) == 0.0
+        assert brm.wasserstein_1d([], []) == 0.0
 
     def test_wasserstein_1d_mismatched_length(self):
         brm = BurnRateMonitor()
-        assert brm._wasserstein_1d([0.1], [0.1, 0.2]) == 0.0
+        assert brm.wasserstein_1d([0.1], [0.1, 0.2]) == 0.0
 
     def test_classify_burn_default_thresholds(self):
         brm = BurnRateMonitor(dimension=BudgetDimension.TIME)
-        assert brm._classify_burn(0.1) == BurnSeverity.NORMAL
-        assert brm._classify_burn(0.4) == BurnSeverity.ELEVATED
-        assert brm._classify_burn(0.6) == BurnSeverity.HIGH
-        assert brm._classify_burn(0.9) == BurnSeverity.CRITICAL
+        assert brm.classify_burn(0.1) == BurnSeverity.NORMAL
+        assert brm.classify_burn(0.4) == BurnSeverity.ELEVATED
+        assert brm.classify_burn(0.6) == BurnSeverity.HIGH
+        assert brm.classify_burn(0.9) == BurnSeverity.CRITICAL

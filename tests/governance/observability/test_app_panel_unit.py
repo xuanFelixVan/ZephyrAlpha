@@ -29,9 +29,9 @@ class TestDashboardPanelApp:
     def test_instantiate_no_deps(self) -> None:
         """无依赖实例化——所有数据源为 None。"""
         app = DashboardPanelApp()
-        assert app._task_repo is None
-        assert app._olap_engine is None
-        assert app._backtest_result is None
+        assert app.task_repo is None
+        assert app.olap_engine is None
+        assert app.backtest_result is None
 
     def test_instantiate_with_deps(self) -> None:
         """有依赖实例化——注入 mock 数据源。"""
@@ -40,13 +40,13 @@ class TestDashboardPanelApp:
             olap_engine="mock_engine",
             backtest_result="mock_result",
         )
-        assert app._task_repo == "mock_repo"
-        assert app._olap_engine == "mock_engine"
-        assert app._backtest_result == "mock_result"
+        assert app.task_repo == "mock_repo"
+        assert app.olap_engine == "mock_engine"
+        assert app.backtest_result == "mock_result"
 
     def test_demo_backtest_data(self) -> None:
         """_demo_backtest_data 返回合法 BacktestResultData。"""
-        data = DashboardPanelApp._demo_backtest_data()
+        data = DashboardPanelApp.demo_backtest_data()
         assert isinstance(data, BacktestResultData)
         assert data.backtest_id == "demo-001"
         assert data.strategy_id == "demo-strategy"
