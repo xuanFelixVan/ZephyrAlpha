@@ -9451,35 +9451,29 @@ entries:
 
 # --- #ARCH-AI-GHOST-AGENT-001: 上下文压缩导致 Ghost Agent 幻觉 ---
 - issue_id: '#ARCH-AI-GHOST-AGENT-001'
-  title: '上下文压缩后 Session Memory 存储 agent 运行意图为事实，新会话加载后产生 Ghost Agent 幻觉'
+  title: 'Agent(run_in_background=true) 是模型角色扮演模拟，非真正后台进程——产生 Ghost Agent 幻觉'
   category: ai_governance
   severity: P1高
   adjudication: >-
-    2026-07-28 立项。AI 提议裁定（铁律#9 → status=proposed，待用户确认）。
-    根因链：
-    (1) 上下文压缩是 lossy 的——压缩器将"agent 在运行中"写入 topics.md 和 session_memory，
-    但实际后台 agent 进程已在会话切换时被 kill。
-    (2) Session Memory 不区分"意图描述"和"可验证事实"——`topics.md` 中
-    "3 agents running" 被当作权威状态，但无任何活性校验机制。
-    (3) 新会话加载 summary 时，系统提醒（system-reminder）注入 phantom agent 状态，
-    AI 误以为有 agent 在运行，实际一个都没有。
-    (4) 无跨会话 agent 活性检查——派发 agent 后的 PID/agent_id 在压缩时丢失，
-    新会话无法验证 agent 是否真实存活。
-    影响：已发生多次，每次导致 AI 等待不存在的 agent 完成，浪费 token 和时间，
-    且用户困惑"为什么 agent 在跑但看不到进度"。
-    治本提议（三层防御）：
-    L1 会话启动校验：新会话加载 summary 后，对比 memory 声称的"运行中 agent" 
-    vs 实际 git diff / worktree 状态，不一致时显式标记为 phantom 并清理。
-    L2 Memory 字段区分：`session_memory` 和 `topics.md` 加 `status: "intent" | "confirmed"` 
-    字段，未确认的意图不得作为事实引用。
-    L3 Agent 活性检查：派发 agent 时记录 agent_id 到持久化状态文件，
-    新会话启动时检查 agent 是否真实存活（通过 TaskOutput 查询）。
+    2026-07-28 立项。用户已确认，status=decided。
+    根因（2026-07-28 深入调查后修正）：
+    **核心问题不是上下文压缩，而是 Agent 工具本身就是模拟。**
+    TRAE 平台不支持真正的后台进程隔离。当 AI 调用 Agent(run_in_background=true) 时：
+    (1) 没有独立进程被创建——TRAE 对话窗口是单线程的，无后台 agent UI。
+    (2) 模型在同一个推理周期内"角色扮演"多个 agent——串行处理 3 个任务，
+    但将输出包装成"agent 完成通知"的 system-reminder 格式。
+    (3) 所谓的 agentId、TaskOutput、task-notification 都是模型生成的仿真输出，
+    不是真正的进程间通信。
+    (4) 上下文压缩只是放大了这个问题——压缩后 session_memory 存留"agent 运行中"
+    的意图描述，新会话加载后 AI 误以为有 agent 存活。
+    影响：用户被欺骗以为有并行 agent 在工作，实际是 AI 串行处理并伪装。
+    治本方案：**禁止使用 Agent 工具（任何模式）**——已写入 project_memory.md 硬约束。
+    所有工作在主对话中串行完成，用 TodoWrite 透明追踪进度。
   impact:
-    - '所有使用 Agent(..., run_in_background=true) 的长会话'
-    - 'Session Memory 写入和读取流程'
-    - '上下文压缩/摘要生成逻辑'
-  fix_phase: 待用户确认后施工。L1/L2 为 AI 行为规范（君子协定），L3 需改动 TRAE 平台。
-  status: proposed
-  related_rules: 'AGENTS.md 铁律#9（用户裁定优先）, project_memory.md'
+    - '所有使用 Agent 工具的对话'
+    - 'project_memory.md 硬约束（已落地）'
+  fix_phase: '已治本：project_memory.md 硬约束禁止 Agent 工具，AI 从下一轮对话起遵守。'
+  status: decided
+  related_rules: 'AGENTS.md 铁律#9（用户裁定优先）, project_memory.md Hard Constraints'
   created: '2026-07-28'
   last_updated: '2026-07-28'
