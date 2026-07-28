@@ -34,13 +34,13 @@ def _make_task(task_id="a2a-task-sup-1", status=A2ATaskStatus.QUEUED, to_agent=N
 class TestSupervisor:
     def test_create(self):
         sv = Supervisor()
-        assert sv._tasks == {}
+        assert sv.tasks == {}
 
     def test_submit_task(self):
         sv = Supervisor()
         task = _make_task()
         result = sv.submit_task(task)
-        assert result.task_id in sv._tasks
+        assert result.task_id in sv.tasks
         assert result.deadline is not None
 
     def test_submit_task_deadline_clamped_min(self):
@@ -56,7 +56,7 @@ class TestSupervisor:
         sv.submit_task(task)
         result = sv.assign_task("a2a-task-sup-1", "agent-b")
         assert result is True
-        assert sv._tasks["a2a-task-sup-1"].status == A2ATaskStatus.ASSIGNED
+        assert sv.tasks["a2a-task-sup-1"].status == A2ATaskStatus.ASSIGNED
 
     def test_assign_nonexistent_task(self):
         sv = Supervisor()
@@ -81,10 +81,10 @@ class TestSupervisor:
         sv = Supervisor()
         task = _make_task()
         sv.submit_task(task)
-        sv._tasks["a2a-task-sup-1"].deadline = datetime.utcnow() - timedelta(hours=1)
+        sv.tasks["a2a-task-sup-1"].deadline = datetime.utcnow() - timedelta(hours=1)
         timeouts = sv.escalate_timeouts()
         assert len(timeouts) > 0
-        assert sv._tasks["a2a-task-sup-1"].status == A2ATaskStatus.TIMEOUT
+        assert sv.tasks["a2a-task-sup-1"].status == A2ATaskStatus.TIMEOUT
 
     def test_detect_deadlocks_no_deadlock(self):
         sv = Supervisor()

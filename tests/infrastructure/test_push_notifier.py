@@ -17,7 +17,7 @@ from zephyr.infrastructure.a2a_protocol.layer2_communication.push_notifier impor
 class TestPushNotifier:
     def test_create(self):
         pn = PushNotifier()
-        assert pn._subscribers == {}
+        assert pn.subscribers == {}
 
     def test_subscribe_and_notify(self):
         pn = PushNotifier()

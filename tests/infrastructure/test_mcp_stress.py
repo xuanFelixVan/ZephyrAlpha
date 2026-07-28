@@ -51,7 +51,7 @@ class TestMCPStress:
     def gw(self):
         gw = create_gateway()
         for sid in ["test_a", "test_b", "test_c"]:
-            gw._server_instances[sid] = DummyServer(sid, delay_ms=0)
+            gw.server_instances[sid] = DummyServer(sid, delay_ms=0)
         return gw
 
     def test_concurrent_sessions_no_deadlock(self, gw: MCPGateway):
@@ -81,7 +81,7 @@ class TestMCPStress:
     def test_rate_limit_activated(self):
         """RateLimit 在批量调用时生效。"""
         gw = create_gateway()
-        gw._server_instances["dummy"] = DummyServer("dummy_server", delay_ms=10)
+        gw.server_instances["dummy"] = DummyServer("dummy_server", delay_ms=10)
 
         rate_limited = 0
         for i in range(15):

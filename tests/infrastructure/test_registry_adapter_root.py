@@ -226,11 +226,11 @@ type = "script"
 class TestRegistryManagerInstantiation:
     def test_default(self, tmp_path):
         mgr = RegistryManager(project_root=tmp_path)
-        assert mgr._root == tmp_path
+        assert mgr.root == tmp_path
 
     def test_known_adapters_initialized(self, tmp_path):
         mgr = RegistryManager(project_root=tmp_path)
-        assert len(mgr._known) > 0
+        assert len(mgr.known) > 0
 
 
 class TestRegistryManagerCrossMatch:

@@ -21,11 +21,11 @@ PROJECT_ROOT = str(REPO_ROOT)
 class TestCodeIntegrityGuardInit:
     def test_default_project_root(self):
         guard = CodeIntegrityGuard()
-        assert guard._project_root == os.getcwd()
+        assert guard.project_root == os.getcwd()
 
     def test_custom_project_root(self):
         guard = CodeIntegrityGuard(project_root=str(Path("/tmp")))
-        assert guard._project_root == str(Path("/tmp"))
+        assert guard.project_root == str(Path("/tmp"))
 
     def test_initial_state_not_compromised(self):
         guard = CodeIntegrityGuard()
@@ -103,7 +103,7 @@ class TestPeriodicScan:
     def test_periodic_scan_due_after_interval(self):
         guard = CodeIntegrityGuard(project_root=PROJECT_ROOT)
         guard.compute_full_baseline()
-        guard._last_scan_time = 0.0
+        guard.last_scan_time = 0.0
         result = guard.periodic_scan_if_due()
         assert result is not None
         assert "total" in result

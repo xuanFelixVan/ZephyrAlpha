@@ -167,7 +167,7 @@ class TestResourceOptimizationEngine:
         engine = ResourceOptimizationEngine()
         received = []
         engine.on_pressure(lambda level, snap: received.append(level))
-        assert len(engine._pressure_callbacks) == 1
+        assert len(engine.pressure_callbacks) == 1
 
 
 class TestAutoRuntimeCoreInit:
@@ -224,7 +224,7 @@ class TestAutoRuntimeCoreInit:
         mock_cfg.ollama_base_url = "http://localhost:11434"
         mock_cfg_cls.return_value = mock_cfg
         core = AutoRuntimeCore(config=mock_cfg)
-        assert core._booted is False
+        assert core.booted is False
         assert core.capability_registry is not None
         assert core.integration_registry is not None
         assert core.work_orchestrator is not None

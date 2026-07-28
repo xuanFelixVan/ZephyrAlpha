@@ -67,17 +67,17 @@ class TestSLAReportDataclass:
 class TestSLAMonitor:
     def test_instantiation_with_tmp_path(self, tmp_path):
         mon = SLAMonitor(data_dir=tmp_path / "sla")
-        assert mon._data_dir == tmp_path / "sla"
+        assert mon.data_dir == tmp_path / "sla"
 
     def test_instantiation_default(self):
         mon = SLAMonitor()
-        assert mon._data_dir == Path("data/sla")
+        assert mon.data_dir == Path("data/sla")
 
     def test_record_rto_within_target(self, tmp_path):
         mon = SLAMonitor(data_dir=tmp_path)
         breach = mon.record_rto(100.0)
         assert breach is None
-        assert 100.0 in mon._rto_samples
+        assert 100.0 in mon.rto_samples
 
     def test_record_rto_exceeds_target(self, tmp_path):
         mon = SLAMonitor(data_dir=tmp_path)
@@ -102,7 +102,7 @@ class TestSLAMonitor:
         mon = SLAMonitor(data_dir=tmp_path)
         breach = mon.record_rpo(0)
         assert breach is None
-        assert 0 in mon._rpo_counts
+        assert 0 in mon.rpo_counts
 
     def test_record_rpo_exceeds_target(self, tmp_path):
         mon = SLAMonitor(data_dir=tmp_path)

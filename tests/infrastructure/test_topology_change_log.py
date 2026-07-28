@@ -100,16 +100,16 @@ class TestTopologyChange:
 class TestTopologyChangeLogInit:
     def test_init_with_project_root(self, tmp_project: Path) -> None:
         tcl = TopologyChangeLog(project_root=tmp_project)
-        assert tcl._project_root == tmp_project
-        assert tcl._log_path == tmp_project / ".zephyr/topology_change_log.jsonl"
+        assert tcl.project_root == tmp_project
+        assert tcl.log_path == tmp_project / ".zephyr/topology_change_log.jsonl"
 
     def test_init_default_root(self) -> None:
         tcl = TopologyChangeLog()
-        assert tcl._project_root == Path.cwd()
+        assert tcl.project_root == Path.cwd()
 
     def test_init_none_root(self) -> None:
         tcl = TopologyChangeLog(project_root=None)
-        assert tcl._project_root == Path.cwd()
+        assert tcl.project_root == Path.cwd()
 
 
 class TestRecord:

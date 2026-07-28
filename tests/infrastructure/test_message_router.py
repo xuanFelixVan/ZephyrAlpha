@@ -33,7 +33,7 @@ def _make_message(*part_specs):
 class TestMessageRouter:
     def test_create(self):
         router = MessageRouter()
-        assert router._handlers == {}
+        assert router.handlers == {}
 
     def test_register_and_route(self):
         router = MessageRouter()

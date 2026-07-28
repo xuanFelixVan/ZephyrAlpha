@@ -17,7 +17,7 @@ from zephyr.infrastructure.a2a_protocol.layer2_communication.trigger_monitor imp
 class TestTriggerMonitor:
     def test_create(self):
         tm = TriggerMonitor()
-        assert tm._triggers == {}
+        assert tm.triggers == {}
 
     def test_watch_and_check(self):
         tm = TriggerMonitor()

@@ -727,7 +727,7 @@ class TestRedBlueExtremeScenarios:
         """
         # 让 terminate_all 抛异常
         with patch.object(
-            gateway._pool,
+            gateway.pool,
             "terminate_all",
             side_effect=RuntimeError("simulated cleanup failure"),
         ):

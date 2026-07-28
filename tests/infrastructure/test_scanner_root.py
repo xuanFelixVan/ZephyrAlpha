@@ -123,7 +123,7 @@ class TestScannerSave:
 class TestConcurrentScanner:
     def test_instantiation(self, tmp_path):
         cs = ConcurrentScanner(project_root=tmp_path)
-        assert cs._root == tmp_path
+        assert cs.root == tmp_path
 
     def test_scan_file(self, tmp_path):
         f = tmp_path / "test.py"

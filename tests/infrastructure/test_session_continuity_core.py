@@ -45,7 +45,7 @@ def _make_state(session_id: str = "core-test", **overrides) -> SessionState:
 class TestSessionContinuityInit:
     def test_init_with_project_root(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        assert sc._project_root == tmp_path
+        assert sc.project_root == tmp_path
 
 
 class TestGenerateAndSave:

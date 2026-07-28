@@ -40,12 +40,12 @@ class TestIntentRecord:
 class TestIntentArchiverInstantiation:
     def test_default_project_root(self):
         archiver = IntentArchiver()
-        assert archiver._project_root == Path.cwd()
+        assert archiver.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
-        assert archiver._project_root == tmp_path
-        assert archiver._archive_dir.exists()
+        assert archiver.project_root == tmp_path
+        assert archiver.archive_dir.exists()
 
     def test_archive_dir_created(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
@@ -66,7 +66,7 @@ class TestArchive:
     def test_archive_creates_file(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
         record = archiver.archive("OP-002", "Rollback config change")
-        intent_file = archiver._archive_dir / f"{record.intent_id}.txt"
+        intent_file = archiver.archive_dir / f"{record.intent_id}.txt"
         assert intent_file.exists()
         content = intent_file.read_text(encoding="utf-8")
         assert "OP-002" in content
@@ -77,7 +77,7 @@ class TestArchive:
         archiver.archive("OP-003", "Intent A")
         archiver.archive("OP-004", "Intent B")
 
-        manifest = archiver._manifest_path.read_text(encoding="utf-8")
+        manifest = archiver.manifest_path.read_text(encoding="utf-8")
         lines = [l for l in manifest.strip().splitlines() if l.strip()]
         assert len(lines) == 2
 
@@ -112,7 +112,7 @@ class TestVerifyIntegrity:
     def test_pruned_file_fails(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
         record = archiver.archive("OP-011", "Will be pruned")
-        intent_file = archiver._archive_dir / f"{record.intent_id}.txt"
+        intent_file = archiver.archive_dir / f"{record.intent_id}.txt"
         intent_file.unlink()
 
         status = archiver.verify_integrity()
@@ -122,7 +122,7 @@ class TestVerifyIntegrity:
 
     def test_no_manifest_returns_pass(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
-        archiver._manifest_path.unlink(missing_ok=True)
+        archiver.manifest_path.unlink(missing_ok=True)
         status = archiver.verify_integrity()
         assert status.integrity_pass is True
         assert status.total_entries == 0
@@ -142,7 +142,7 @@ class TestGetIntent:
 
     def test_returns_none_when_no_manifest(self, tmp_path):
         archiver = IntentArchiver(project_root=tmp_path)
-        archiver._manifest_path.unlink(missing_ok=True)
+        archiver.manifest_path.unlink(missing_ok=True)
         result = archiver.get_intent("OP-999")
         assert result is None
 
