@@ -26,16 +26,16 @@ from zephyr.infrastructure.rollback.rollback_target_staleness import (
 class TestInstantiation:
     def test_default_project_root(self):
         checker = RollbackTargetStaleness()
-        assert checker._project_root == Path.cwd()
+        assert checker.project_root == Path.cwd()
 
     def test_custom_project_root(self):
         root = Path("/tmp/fake_project")
         checker = RollbackTargetStaleness(project_root=root)
-        assert checker._project_root == root
+        assert checker.project_root == root
 
     def test_none_project_root_defaults_to_cwd(self):
         checker = RollbackTargetStaleness(project_root=None)
-        assert checker._project_root == Path.cwd()
+        assert checker.project_root == Path.cwd()
 
 
 class TestCheckFreshCommit:
@@ -89,7 +89,7 @@ class TestGetCommitDate:
         mock_result.returncode = 0
         mock_result.stdout = "2026-01-15T10:30:00+00:00\n"
         with patch("zephyr.infrastructure.rollback.rollback_target_staleness.subprocess.run", return_value=mock_result):
-            dt = checker._get_commit_date("abc123")
+            dt = checker.get_commit_date("abc123")
         assert dt is not None
         assert dt.year == 2026
 
@@ -99,7 +99,7 @@ class TestGetCommitDate:
         mock_result.returncode = 1
         mock_result.stdout = ""
         with patch("zephyr.infrastructure.rollback.rollback_target_staleness.subprocess.run", return_value=mock_result):
-            dt = checker._get_commit_date("bad_sha")
+            dt = checker.get_commit_date("bad_sha")
         assert dt is None
 
     def test_git_exception_returns_none(self):
@@ -107,7 +107,7 @@ class TestGetCommitDate:
         with patch(
             "zephyr.infrastructure.rollback.rollback_target_staleness.subprocess.run", side_effect=Exception("no git")
         ):
-            dt = checker._get_commit_date("abc")
+            dt = checker.get_commit_date("abc")
         assert dt is None
 
     def test_empty_stdout_returns_none(self):
@@ -116,7 +116,7 @@ class TestGetCommitDate:
         mock_result.returncode = 0
         mock_result.stdout = "   \n"
         with patch("zephyr.infrastructure.rollback.rollback_target_staleness.subprocess.run", return_value=mock_result):
-            dt = checker._get_commit_date("abc")
+            dt = checker.get_commit_date("abc")
         assert dt is None
 
 

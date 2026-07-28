@@ -195,12 +195,12 @@ class TestSessionRegistryClaimRelease:
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-A")
         # 手动把 last_heartbeat 改老
-        data = reg._load()
+        data = reg.load()
         data["sess-A"]["last_heartbeat"] = 0.0
-        reg._save(data)
+        reg.save(data)
         assert reg.get_session("sess-A") is None
         # 过期 session 仍留在文件里（get_session 不删除）
-        assert "sess-A" in reg._load()
+        assert "sess-A" in reg.load()
 
 
 class TestSessionConflictDetectorAcquireWriteback:
@@ -286,7 +286,7 @@ class TestSessionRegistryPidLiveness:
         active = reg.list_active()
         assert len(active) == 0  # 死 PID 立即 reap
         # 注册表中也应被删除
-        assert "sess-dead" not in reg._load()
+        assert "sess-dead" not in reg.load()
 
     def test_list_active_keeps_alive_pid(self, tmp_path):
         """活 PID session 在 list_active() 中保留。"""
@@ -355,7 +355,7 @@ class TestSessionRegistryPidLiveness:
         assert len(active) == 1
         assert active[0].session_id == "sess-alive"
         # 死 PID 被清理
-        data = reg._load()
+        data = reg.load()
         assert "sess-dead-1" not in data
         assert "sess-dead-2" not in data
         assert "sess-alive" in data

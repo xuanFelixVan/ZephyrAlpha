@@ -26,10 +26,10 @@ from zephyr.infrastructure.auto_fix_engine.shadow_workspace import ShadowWorkspa
 class TestShadowWorkspaceInstantiation:
     def test_default_config(self):
         ws = ShadowWorkspace()
-        assert ws._run_pytest is True
-        assert ws._run_mypy is True
-        assert ws._run_ruff is True
-        assert ws._pytest_timeout == 120
+        assert ws.run_pytest is True
+        assert ws.run_mypy is True
+        assert ws.run_ruff is True
+        assert ws.pytest_timeout == 120
 
     def test_custom_config(self):
         cfg = {
@@ -40,15 +40,15 @@ class TestShadowWorkspaceInstantiation:
             "pytest_timeout": 60,
         }
         ws = ShadowWorkspace(config=cfg)
-        assert ws._base_dir == "/tmp/custom_shadow"
-        assert ws._run_pytest is False
-        assert ws._run_mypy is False
-        assert ws._run_ruff is False
-        assert ws._pytest_timeout == 60
+        assert ws.base_dir == "/tmp/custom_shadow"
+        assert ws.run_pytest is False
+        assert ws.run_mypy is False
+        assert ws.run_ruff is False
+        assert ws.pytest_timeout == 60
 
     def test_none_config_uses_defaults(self):
         ws = ShadowWorkspace(config=None)
-        assert ws._run_pytest is True
+        assert ws.run_pytest is True
 
 
 class TestShadowWorkspacePreflight:
@@ -121,13 +121,13 @@ class TestShadowWorkspaceRunTest:
     def test_run_test_handles_timeout(self):
         ws = ShadowWorkspace(config={"pytest_timeout": 1})
         with tempfile.TemporaryDirectory() as tmpdir:
-            result = ws._run_test(tmpdir)
+            result = ws.run_test(tmpdir)
             assert isinstance(result, dict)
             assert "passed" in result
 
     def test_run_test_returns_dict(self):
         ws = ShadowWorkspace()
-        result = ws._run_test("/nonexistent/dir")
+        result = ws.run_test("/nonexistent/dir")
         assert isinstance(result, dict)
         assert "passed" in result
 
@@ -138,7 +138,7 @@ class TestShadowWorkspaceRunTypeCheck:
         with tempfile.TemporaryDirectory() as tmpdir:
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text("x: int = 1\n", encoding="utf-8")
-            result = ws._run_type_check(str(py_file))
+            result = ws.run_type_check(str(py_file))
             assert isinstance(result, dict)
             assert "passed" in result
 
@@ -149,6 +149,6 @@ class TestShadowWorkspaceRunLint:
         with tempfile.TemporaryDirectory() as tmpdir:
             py_file = Path(tmpdir) / "test.py"
             py_file.write_text("x = 1\n", encoding="utf-8")
-            result = ws._run_lint(str(py_file))
+            result = ws.run_lint(str(py_file))
             assert isinstance(result, dict)
             assert "passed" in result

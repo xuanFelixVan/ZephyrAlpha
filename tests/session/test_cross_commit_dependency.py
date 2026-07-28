@@ -277,9 +277,9 @@ class TestCheckCrossCommitDeps:
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-B")
         # 手动把 sess-B 的 last_heartbeat 改老（pid=0 + 心跳过期 = 不活跃）
-        data = reg._load()
+        data = reg.load()
         data["sess-B"]["last_heartbeat"] = 0.0
-        reg._save(data)
+        reg.save(data)
         # 注册 sess-A 依赖 sess-B
         reg.register("sess-A", depends_on_sessions=["sess-B"])
         result = _check_cross_commit_deps(Path(tmp_path), "sess-A")
@@ -316,7 +316,7 @@ class TestCheckCrossCommitDeps:
             sw_mod, "_get_registry",
             side_effect=RuntimeError("registry corrupted"),
         ):
-            result = sw_mod._check_cross_commit_deps(Path(tmp_path), "sess-A")
+            result = sw_mod.check_cross_commit_deps(Path(tmp_path), "sess-A")
         assert result is None  # 异常降级为放行
 
 

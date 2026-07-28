@@ -90,55 +90,55 @@ class TestPressureClassification:
 
     def test_normal(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.NORMAL
+        assert self.engine.classify_pressure(snap) == PressureLevel.NORMAL
 
     def test_warning_memory(self):
         snap = ResourceSnapshot(memory_percent=76.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.WARNING
+        assert self.engine.classify_pressure(snap) == PressureLevel.WARNING
 
     def test_warning_cpu(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=81.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.WARNING
+        assert self.engine.classify_pressure(snap) == PressureLevel.WARNING
 
     def test_warning_process(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=50.0, process_count=55)
-        assert self.engine._classify_pressure(snap) == PressureLevel.WARNING
+        assert self.engine.classify_pressure(snap) == PressureLevel.WARNING
 
     def test_critical_memory(self):
         snap = ResourceSnapshot(memory_percent=86.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.CRITICAL
+        assert self.engine.classify_pressure(snap) == PressureLevel.CRITICAL
 
     def test_critical_cpu(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=91.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.CRITICAL
+        assert self.engine.classify_pressure(snap) == PressureLevel.CRITICAL
 
     def test_critical_process(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=50.0, process_count=110)
-        assert self.engine._classify_pressure(snap) == PressureLevel.CRITICAL
+        assert self.engine.classify_pressure(snap) == PressureLevel.CRITICAL
 
     def test_emergency_memory(self):
         snap = ResourceSnapshot(memory_percent=96.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.EMERGENCY
+        assert self.engine.classify_pressure(snap) == PressureLevel.EMERGENCY
 
     def test_emergency_cpu(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=99.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.EMERGENCY
+        assert self.engine.classify_pressure(snap) == PressureLevel.EMERGENCY
 
     def test_emergency_process(self):
         snap = ResourceSnapshot(memory_percent=50.0, cpu_percent=50.0, process_count=260)
-        assert self.engine._classify_pressure(snap) == PressureLevel.EMERGENCY
+        assert self.engine.classify_pressure(snap) == PressureLevel.EMERGENCY
 
     def test_boundary_warning(self):
         snap = ResourceSnapshot(memory_percent=75.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.WARNING
+        assert self.engine.classify_pressure(snap) == PressureLevel.WARNING
 
     def test_boundary_critical(self):
         snap = ResourceSnapshot(memory_percent=85.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.CRITICAL
+        assert self.engine.classify_pressure(snap) == PressureLevel.CRITICAL
 
     def test_boundary_emergency(self):
         snap = ResourceSnapshot(memory_percent=95.0, cpu_percent=50.0, process_count=20)
-        assert self.engine._classify_pressure(snap) == PressureLevel.EMERGENCY
+        assert self.engine.classify_pressure(snap) == PressureLevel.EMERGENCY
 
 
 class TestPressureStateMachine:
@@ -331,7 +331,7 @@ class TestResourceOptimizationEngine:
 
     def test_optimize_circuit_breaker_blocks(self):
         engine = ResourceOptimizationEngine()
-        cb = engine._circuit_breakers["cache_warm"] = CircuitBreaker(failure_threshold=1)
+        cb = engine.circuit_breakers["cache_warm"] = CircuitBreaker(failure_threshold=1)
         cb.record_failure()
         assert cb.state == CircuitBreakerState.OPEN
         result = engine.optimize(OptimizationStrategy.CACHE_WARM)
@@ -363,7 +363,7 @@ class TestResourceOptimizationEngine:
         engine = ResourceOptimizationEngine()
         received = []
         engine.on_pressure(lambda level, snap: received.append((level, snap)))
-        engine._pressure_callbacks[0](PressureLevel.WARNING, ResourceSnapshot())
+        engine.pressure_callbacks[0](PressureLevel.WARNING, ResourceSnapshot())
         assert len(received) == 1
         assert received[0][0] == PressureLevel.WARNING
 

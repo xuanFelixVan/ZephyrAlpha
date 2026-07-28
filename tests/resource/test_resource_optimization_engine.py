@@ -38,9 +38,9 @@ def _reset_engine():
     ResourceOptimizationEngine.reset()
     DaemonRegistry.reset()
     yield
-    ResourceOptimizationEngine._instance = None
-    if ResourceOptimizationEngine._instance is not None:
-        ResourceOptimizationEngine._instance.stop_monitor()
+    ResourceOptimizationEngine.instance = None
+    if ResourceOptimizationEngine.instance is not None:
+        ResourceOptimizationEngine.instance.stop_monitor()
     ResourceOptimizationEngine.reset()
     DaemonRegistry.reset()
 
@@ -106,7 +106,7 @@ class TestCircuitBreakerRecordFailure:
         time.sleep(0.01)
         cb.allow()
         cb.record_failure()
-        assert cb._state == CircuitBreakerState.OPEN
+        assert cb.state == CircuitBreakerState.OPEN
 
 
 class TestCircuitBreakerReset:
@@ -233,15 +233,15 @@ class TestResourceOptimizationEngineMonitor:
     def test_start_stop_monitor(self):
         engine = ResourceOptimizationEngine()
         engine.start_monitor(interval=1.0)
-        assert engine._monitor_running is True
+        assert engine.monitor_running is True
         engine.stop_monitor()
-        assert engine._monitor_running is False
+        assert engine.monitor_running is False
 
     def test_start_monitor_idempotent(self):
         engine = ResourceOptimizationEngine()
         engine.start_monitor(interval=1.0)
         engine.start_monitor(interval=1.0)
-        assert engine._monitor_running is True
+        assert engine.monitor_running is True
         engine.stop_monitor()
 
 
@@ -295,4 +295,4 @@ class TestResourceOptimizationEngineOnPressure:
     def test_register_callback(self):
         engine = ResourceOptimizationEngine()
         engine.on_pressure(lambda lvl, snap: None)
-        assert len(engine._pressure_callbacks) == 1
+        assert len(engine.pressure_callbacks) == 1

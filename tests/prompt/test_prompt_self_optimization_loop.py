@@ -132,7 +132,7 @@ class TestPromptSelfOptimizationLoopBoundaries:
     def test_empty_effectiveness_history(self):
         psol = PromptSelfOptimizationLoop()
         psol.register_current_prompt(content="base")
-        baseline = psol._get_baseline_effectiveness()
+        baseline = psol.get_baseline_effectiveness()
         assert baseline == pytest.approx(0.5)
 
     def test_zero_improvement_threshold(self):

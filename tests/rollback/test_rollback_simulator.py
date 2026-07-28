@@ -30,11 +30,11 @@ def simulator(tmp_path: Path) -> RollbackSimulator:
 class TestRollbackSimulatorInstantiation:
     def test_creates_with_defaults(self):
         sim = RollbackSimulator()
-        assert sim._project_root is not None
+        assert sim.project_root is not None
 
     def test_creates_with_custom_root(self, tmp_path: Path):
         sim = RollbackSimulator(project_root=tmp_path)
-        assert sim._project_root == tmp_path
+        assert sim.project_root == tmp_path
 
     def test_worktree_prefix_constant(self):
         assert RollbackSimulator.WORKTREE_PREFIX == ".zephyr/sim_worktree_"

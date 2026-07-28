@@ -37,15 +37,15 @@ def wal(wal_dir):
 class TestInstantiation:
     def test_custom_root(self, wal_dir):
         w = RollbackWAL(project_root=wal_dir)
-        assert w._project_root == wal_dir
+        assert w.project_root == wal_dir
 
     def test_none_root_defaults_to_cwd(self):
         w = RollbackWAL(project_root=None)
-        assert w._project_root == Path.cwd()
+        assert w.project_root == Path.cwd()
 
     def test_wal_path_set(self, wal_dir):
         w = RollbackWAL(project_root=wal_dir)
-        assert w._wal_path == wal_dir / ".zephyr" / "rollback_wal.jsonl"
+        assert w.wal_path == wal_dir / ".zephyr" / "rollback_wal.jsonl"
 
 
 class TestWriteAhead:
@@ -178,7 +178,7 @@ class TestReadAll:
 
     def test_no_wal_file(self, wal_dir):
         w = RollbackWAL(project_root=wal_dir)
-        entries = w._read_all()
+        entries = w.read_all()
         assert entries == []
 
 

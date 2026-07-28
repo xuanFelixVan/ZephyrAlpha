@@ -76,7 +76,7 @@ class TestFullRevertE2E:
             mock_lock.release.return_value = True
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
-            exec._g0_verify = MagicMock(return_value=True)
+            exec.g0_verify = MagicMock(return_value=True)
 
             with patch.object(exec, "_run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()
@@ -141,7 +141,7 @@ class TestPartialRevertE2E:
             )
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
-            exec._g0_verify = MagicMock(return_value=True)
+            exec.g0_verify = MagicMock(return_value=True)
 
             with patch.object(exec, "_run_git") as mock_git:
                 mock_git.side_effect = _build_partial_revert_git_responses()
@@ -191,7 +191,7 @@ class TestAuditTrailE2E:
             )
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
-            exec._g0_verify = MagicMock(return_value=True)
+            exec.g0_verify = MagicMock(return_value=True)
 
             with patch.object(exec, "_run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()
@@ -241,7 +241,7 @@ class TestVerifierIntegrationE2E:
                 g0_results.append(True)
                 return True
 
-            exec._g0_verify = MagicMock(side_effect=_track_g0)
+            exec.g0_verify = MagicMock(side_effect=_track_g0)
 
             with patch.object(exec, "_run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()

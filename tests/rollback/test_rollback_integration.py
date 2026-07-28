@@ -37,11 +37,11 @@ def integration(tmp_path: Path) -> RollbackIntegration:
 class TestRollbackIntegrationInstantiation:
     def test_creates_with_defaults(self):
         ri = RollbackIntegration()
-        assert ri._project_root is not None
+        assert ri.project_root is not None
 
     def test_creates_with_custom_root(self, tmp_path: Path):
         ri = RollbackIntegration(project_root=tmp_path)
-        assert ri._project_root == tmp_path
+        assert ri.project_root == tmp_path
 
     def test_initial_notify_state(self, integration: RollbackIntegration):
         assert integration._notify_state.window_count == 0
@@ -249,37 +249,37 @@ class TestThreeWayMerge:
     def test_merge_disjoint_keys(self):
         base = {"a": 1}
         incoming = {"b": 2}
-        result = RollbackIntegration._three_way_merge(base, incoming)
+        result = RollbackIntegration.three_way_merge(base, incoming)
         assert result == {"a": 1, "b": 2}
 
     def test_merge_overlapping_scalar(self):
         base = {"a": 1}
         incoming = {"a": 2}
-        result = RollbackIntegration._three_way_merge(base, incoming)
+        result = RollbackIntegration.three_way_merge(base, incoming)
         assert result["a"] == 2
 
     def test_merge_lists_dedup(self):
         base = {"items": [1, 2]}
         incoming = {"items": [2, 3]}
-        result = RollbackIntegration._three_way_merge(base, incoming)
+        result = RollbackIntegration.three_way_merge(base, incoming)
         assert set(result["items"]) == {1, 2, 3}
 
     def test_merge_nested_dicts(self):
         base = {"config": {"x": 1}}
         incoming = {"config": {"y": 2}}
-        result = RollbackIntegration._three_way_merge(base, incoming)
+        result = RollbackIntegration.three_way_merge(base, incoming)
         assert result["config"] == {"x": 1, "y": 2}
 
     def test_merge_base_none(self):
         base = {}
         incoming = {"a": 1}
-        result = RollbackIntegration._three_way_merge(base, incoming)
+        result = RollbackIntegration.three_way_merge(base, incoming)
         assert result["a"] == 1
 
     def test_merge_incoming_none(self):
         base = {"a": 1}
         incoming = {}
-        result = RollbackIntegration._three_way_merge(base, incoming)
+        result = RollbackIntegration.three_way_merge(base, incoming)
         assert result["a"] == 1
 
 

@@ -101,7 +101,7 @@ class TestProcessPoolZombie:
         entry = pool.get_or_create("quick-die", [sys.executable, "-c", "pass"])
         time.sleep(1.0)
         assert not entry.is_alive
-        reaped = pool._reap_zombies()
+        reaped = pool.reap_zombies()
         assert reaped >= 1
 
     def test_get_or_create_replaces_dead(self):

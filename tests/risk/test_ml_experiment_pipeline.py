@@ -84,13 +84,13 @@ class TestExperimentResult:
 
 class TestMLExperimentPipeline:
     def setup_method(self):
-        MLExperimentPipeline._global_run_count = 0
-        MLExperimentPipeline._seen_idempotency_keys = set()
+        MLExperimentPipeline.global_run_count = 0
+        MLExperimentPipeline.seen_idempotency_keys = set()
 
     def test_instantiation(self):
         pipe = MLExperimentPipeline()
-        assert pipe._models == []
-        assert pipe._engines == []
+        assert pipe.models == []
+        assert pipe.engines == []
 
     def test_run_no_models(self):
         pipe = MLExperimentPipeline()
@@ -104,24 +104,24 @@ class TestMLExperimentPipeline:
         assert result.idempotency_key == "key-abc"
 
     def test_p_hacking_warning(self):
-        MLExperimentPipeline._global_run_count = 10
+        MLExperimentPipeline.global_run_count = 10
         pipe = MLExperimentPipeline()
         result = pipe.run()
         assert result.status == "p_hacking_warning"
         assert any("p_hacking" in e.get("message", "") or "p-hacking" in e.get("message", "") for e in result.errors)
 
     def test_snapshot_builtins(self):
-        snap = MLExperimentPipeline._snapshot_builtins()
+        snap = MLExperimentPipeline.snapshot_builtins()
         assert isinstance(snap, frozenset)
         assert "print" in snap
 
     def test_check_builtins_integrity_clean(self):
-        snap = MLExperimentPipeline._snapshot_builtins()
-        violations = MLExperimentPipeline._check_builtins_integrity(snap)
+        snap = MLExperimentPipeline.snapshot_builtins()
+        violations = MLExperimentPipeline.check_builtins_integrity(snap)
         assert violations == []
 
     def test_run_significance_test_empty(self):
-        result = MLExperimentPipeline._run_significance_test([])
+        result = MLExperimentPipeline.run_significance_test([])
         assert result["significant_count"] == 0
         assert result["best_model"] is None
 
@@ -130,7 +130,7 @@ class TestMLExperimentPipeline:
             {"model_id": "m1", "prediction": 0.5, "confidence": 0.96},
             {"model_id": "m2", "prediction": 0.3, "confidence": 0.8},
         ]
-        result = MLExperimentPipeline._run_significance_test(preds)
+        result = MLExperimentPipeline.run_significance_test(preds)
         assert result["significant_count"] == 1
         assert result["best_model"] == "m1"
 
@@ -138,13 +138,13 @@ class TestMLExperimentPipeline:
         pipe = MLExperimentPipeline()
         meta = MagicMock()
         pipe.register_model(meta)
-        assert len(pipe._models) == 1
+        assert len(pipe.models) == 1
 
     def test_register_engine(self):
         pipe = MLExperimentPipeline()
         engine = type("TestEngine", (), {})
         pipe.register_engine(engine)
-        assert len(pipe._engines) == 1
+        assert len(pipe.engines) == 1
 
     def test_run_with_mock_model_and_engine(self):
         pipe = MLExperimentPipeline()

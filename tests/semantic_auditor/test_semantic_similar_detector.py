@@ -164,36 +164,36 @@ class TestSensitiveApis:
     def test_sensitive_api_count_in_code(self):
         detector = SemanticSimilarDetector()
         code = "eval('1+1')\nos.system('ls')\n"
-        count = detector._count_sensitive_api_matches(code)
+        count = detector.count_sensitive_api_matches(code)
         assert count == 2
 
     def test_no_sensitive_apis(self):
         detector = SemanticSimilarDetector()
         code = "x = 1\ny = 2\n"
-        count = detector._count_sensitive_api_matches(code)
+        count = detector.count_sensitive_api_matches(code)
         assert count == 0
 
     def test_sensitive_api_in_syntax_error(self):
         detector = SemanticSimilarDetector()
-        count = detector._count_sensitive_api_matches("def ( broken")
+        count = detector.count_sensitive_api_matches("def ( broken")
         assert count == 0
 
 
 class TestAstStructureSimilarity:
     def test_both_none_returns_one(self):
         detector = SemanticSimilarDetector()
-        assert detector._ast_structure_similarity(None, None) == 1.0
+        assert detector.ast_structure_similarity(None, None) == 1.0
 
     def test_one_none_returns_zero(self):
         detector = SemanticSimilarDetector()
         import ast
 
         tree = ast.parse("x = 1")
-        assert detector._ast_structure_similarity(tree, None) == 0.0
-        assert detector._ast_structure_similarity(None, tree) == 0.0
+        assert detector.ast_structure_similarity(tree, None) == 0.0
+        assert detector.ast_structure_similarity(None, tree) == 0.0
 
     def test_same_code_returns_one(self):
         detector = SemanticSimilarDetector()
         code = "def foo(): return 1\n"
-        sim = detector._ast_structure_similarity(detector._parse_safe(code), detector._parse_safe(code))
+        sim = detector.ast_structure_similarity(detector.parse_safe(code), detector.parse_safe(code))
         assert sim == 1.0

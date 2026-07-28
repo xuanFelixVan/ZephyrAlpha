@@ -116,7 +116,7 @@ class TestHybridRetriever:
     def test_bm25_tokenize(self):
         from zephyr.integration.vector_memory.bm25_index import BM25Index
 
-        tokens = BM25Index._tokenize("Hello World 你好世界 test_123")
+        tokens = BM25Index.tokenize("Hello World 你好世界 test_123")
         assert "hello" in tokens
         assert "你好世界" in tokens
         assert "test_123" in tokens

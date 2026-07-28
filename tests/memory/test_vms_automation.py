@@ -169,7 +169,7 @@ class TestRetrievalFeedbackCollection:
         assert entry.query == "test query"
         assert entry.hit_count == 3
         assert entry.rating == 4.0
-        assert len(fb._feedback_log) == 1
+        assert len(fb.feedback_log) == 1
 
     def test_track_hit_rates_calculates(self) -> None:
         """track_hit_rates 计算各 collection 命中率。"""
@@ -205,8 +205,8 @@ class TestRetrievalFeedbackCollection:
         fb.track_long_tail("rare query")
         fb.track_long_tail("another query")
 
-        assert fb._long_tail["rare query"] == 2
-        assert fb._long_tail["another query"] == 1
+        assert fb.long_tail["rare query"] == 2
+        assert fb.long_tail["another query"] == 1
 
     def test_sample_for_quality_monitor(self) -> None:
         """sample_for_quality_monitor 返回最近 N 条反馈。"""
@@ -242,7 +242,7 @@ class TestMaintenanceLoopTasks:
 
         from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
-        source = inspect.getsource(InProcessVectorMemory._maintenance_loop)
+        source = inspect.getsource(InProcessVectorMemory.maintenance_loop)
         assert "CHECK_INTERVAL = 60" in source
         assert "DAILY_INTERVAL = 86400" in source
 

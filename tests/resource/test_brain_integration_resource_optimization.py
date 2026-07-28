@@ -40,7 +40,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm._current = ROELevel.WARNING
+        engine.pressure_sm.current = ROELevel.WARNING
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -51,7 +51,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm._current = ROELevel.CRITICAL
+        engine.pressure_sm.current = ROELevel.CRITICAL
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -62,7 +62,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm._current = ROELevel.EMERGENCY
+        engine.pressure_sm.current = ROELevel.EMERGENCY
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -73,7 +73,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm._current = ROELevel.NORMAL
+        engine.pressure_sm.current = ROELevel.NORMAL
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()

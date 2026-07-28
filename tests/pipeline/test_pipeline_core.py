@@ -338,20 +338,20 @@ class TestPipelineOrchestratorInit:
     def test_text_similarity(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
-        sim = PipelineOrchestrator._text_similarity("hello world foo", "hello world bar")
+        sim = PipelineOrchestrator.text_similarity("hello world foo", "hello world bar")
         assert 0.0 < sim < 1.0
 
     def test_text_similarity_identical(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
-        sim = PipelineOrchestrator._text_similarity("hello world test", "hello world test")
+        sim = PipelineOrchestrator.text_similarity("hello world test", "hello world test")
         assert sim == 1.0
 
     def test_text_similarity_empty(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
-        assert PipelineOrchestrator._text_similarity("", "hello") == 0.0
-        assert PipelineOrchestrator._text_similarity("hello", "") == 0.0
+        assert PipelineOrchestrator.text_similarity("", "hello") == 0.0
+        assert PipelineOrchestrator.text_similarity("hello", "") == 0.0
 
     def test_determine_status_all_success(self):
         from zephyr.infrastructure.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
@@ -368,7 +368,7 @@ class TestPipelineOrchestratorInit:
                 finished_at="",
             ),
         ]
-        assert PipelineOrchestrator._determine_status(results) == PipelineStatus.SUCCESS
+        assert PipelineOrchestrator.determine_status(results) == PipelineStatus.SUCCESS
 
     def test_determine_status_all_failure(self):
         from zephyr.infrastructure.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
@@ -386,10 +386,10 @@ class TestPipelineOrchestratorInit:
                 finished_at="",
             ),
         ]
-        assert PipelineOrchestrator._determine_status(results) == PipelineStatus.FAILURE
+        assert PipelineOrchestrator.determine_status(results) == PipelineStatus.FAILURE
 
     def test_determine_status_empty(self):
         from zephyr.infrastructure.pipeline.models import PipelineStatus
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
-        assert PipelineOrchestrator._determine_status([]) == PipelineStatus.FAILURE
+        assert PipelineOrchestrator.determine_status([]) == PipelineStatus.FAILURE

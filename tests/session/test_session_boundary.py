@@ -61,11 +61,11 @@ class TestSessionBudgetDataclass:
 class TestSessionBoundaryManager:
     def test_instantiation_with_tmp_path(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path / "sessions")
-        assert mgr._data_dir == tmp_path / "sessions"
+        assert mgr.data_dir == tmp_path / "sessions"
 
     def test_instantiation_default(self):
         mgr = SessionBoundaryManager()
-        assert mgr._data_dir == Path("data/session")
+        assert mgr.data_dir == Path("data/session")
 
     def test_open_session(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path)
@@ -73,7 +73,7 @@ class TestSessionBoundaryManager:
         assert boundary.session_id == "session-20260522-001"
         assert boundary.start_time != ""
         assert boundary.end_time == ""
-        assert boundary in mgr._boundaries
+        assert boundary in mgr.boundaries
 
     def test_open_session_empty_id(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path)
@@ -98,15 +98,15 @@ class TestSessionBoundaryManager:
         assert boundary.cards_processed == 2
         assert boundary.files_created == 1
         assert boundary.tokens_used == 500
-        assert mgr._budget.used_cards == 2
-        assert mgr._budget.used_tokens == 500
+        assert mgr.budget.used_cards == 2
+        assert mgr.budget.used_tokens == 500
 
     def test_record_activity_zero_values(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path)
         boundary = mgr.open_session("session-20260522-004")
         mgr.record_activity(boundary, cards=0, files=0, tokens=0)
         assert boundary.cards_processed == 0
-        assert mgr._budget.used_cards == 0
+        assert mgr.budget.used_cards == 0
 
     def test_record_activity_accumulates(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path)
@@ -115,8 +115,8 @@ class TestSessionBoundaryManager:
         mgr.record_activity(boundary, cards=2, tokens=200)
         assert boundary.cards_processed == 5
         assert boundary.tokens_used == 300
-        assert mgr._budget.used_cards == 5
-        assert mgr._budget.used_tokens == 300
+        assert mgr.budget.used_cards == 5
+        assert mgr.budget.used_tokens == 300
 
     def test_check_budget_within(self, tmp_path):
         mgr = SessionBoundaryManager(data_dir=tmp_path)
@@ -177,7 +177,7 @@ class TestSessionBoundaryManager:
             start_time="2020-01-01T00:00:00+00:00",
             end_time=(datetime.now(UTC) - timedelta(days=60)).isoformat(),
         )
-        mgr._save_boundary(old_boundary)
+        mgr.save_boundary(old_boundary)
         cleared = mgr.clean_old_boundaries(max_age_days=30)
         assert cleared == 1
 
@@ -188,7 +188,7 @@ class TestSessionBoundaryManager:
             start_time=datetime.now(UTC).isoformat(),
             end_time=datetime.now(UTC).isoformat(),
         )
-        mgr._save_boundary(recent_boundary)
+        mgr.save_boundary(recent_boundary)
         cleared = mgr.clean_old_boundaries(max_age_days=30)
         assert cleared == 0
 
@@ -207,6 +207,6 @@ class TestSessionBoundaryManager:
             start_time="2020-01-01T00:00:00+00:00",
             end_time="",
         )
-        mgr._save_boundary(open_boundary)
+        mgr.save_boundary(open_boundary)
         cleared = mgr.clean_old_boundaries(max_age_days=30)
         assert cleared == 0

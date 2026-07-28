@@ -91,19 +91,19 @@ class TestRollbackDrillInstantiation:
     def test_default_project_root(self):
         with patch.object(RollbackDrill, "__init__", lambda self, **kw: None):
             d = RollbackDrill()
-            d._project_root = Path.cwd()
-            d._drill_log_dir = Path.cwd() / RollbackDrill.DRILL_LOG_DIR
-            d._consecutive_fails = 0
-            d._automatic_rollback_melted = False
-            assert d._project_root == Path.cwd()
+            d.project_root = Path.cwd()
+            d.drill_log_dir = Path.cwd() / RollbackDrill.DRILL_LOG_DIR
+            d.consecutive_fails = 0
+            d.automatic_rollback_melted = False
+            assert d.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
-        assert d._project_root == tmp_path
+        assert d.project_root == tmp_path
 
     def test_creates_log_dir(self, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
-        assert d._drill_log_dir.exists()
+        assert d.drill_log_dir.exists()
 
     def test_initial_state(self, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
@@ -280,7 +280,7 @@ class TestRollbackDrillSaveResult:
         mock_git.return_value = ""
         mock_subprocess.return_value = MagicMock(returncode=0, stderr="")
         result = d.run_drill(force_chaos="gc_concurrent")
-        log_path = d._drill_log_dir / f"{result.drill_id}.json"
+        log_path = d.drill_log_dir / f"{result.drill_id}.json"
         assert log_path.exists()
         data = json.loads(log_path.read_text(encoding="utf-8"))
         assert data["drill_id"] == result.drill_id
@@ -290,7 +290,7 @@ class TestRollbackDrillSaveResult:
 class TestRollbackDrillCheckDbIntegrity:
     def test_returns_true_when_no_db(self, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
-        assert d._check_db_integrity(tmp_path) is True
+        assert d.check_db_integrity(tmp_path) is True
 
     def test_returns_false_on_corrupted_db(self, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
@@ -298,5 +298,5 @@ class TestRollbackDrillCheckDbIntegrity:
         db_dir.mkdir(parents=True, exist_ok=True)
         db_path = db_dir / "governance.db"
         db_path.write_text("not a valid sqlite database", encoding="utf-8")
-        result = d._check_db_integrity(tmp_path)
+        result = d.check_db_integrity(tmp_path)
         assert result is False
