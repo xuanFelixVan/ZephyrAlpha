@@ -1265,6 +1265,13 @@ class TaskRepository:
     # 连接管理
     # ------------------------------------------------------------------
 
+    # ── Stage 4 公共化方法（for testing） ──
+
+    def execute_sql(self, sql: str, params: tuple = ()) -> None:
+        """执行原始 SQL 并提交（for testing, Stage 4）."""
+        self._conn.execute(sql, params)
+        self._conn.commit()
+
     def close(self) -> None:
         """关闭底层 SQLite 连接（及 GateEngine 连接）。"""
         if self._gate_engine is not None:

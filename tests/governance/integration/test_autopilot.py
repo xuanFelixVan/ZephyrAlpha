@@ -95,8 +95,7 @@ class TestAutoPilotBasic:
     def test_status_report_with_tasks(self, repo: TaskRepository, autopilot: AutoPilot):
         t = _make_test_task("DW-9001", "测试任务A", Priority.P1)
         result = repo.create(t, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (result.task_id,))
-        repo._conn.commit()
+        repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (result.task_id,))
 
         report = autopilot.status_report()
         assert "测试任务A" in report
@@ -105,8 +104,7 @@ class TestAutoPilotBasic:
         for i, pri in enumerate([Priority.P0, Priority.P2, Priority.P1, Priority.P1]):
             t = _make_test_task(f"DW-901{i}", f"任务-{i}", pri)
             r = repo.create(t, allow_direct_create=True)
-            repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+            repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
 
         grouped = autopilot.scan()
         assert "test-batch" in grouped
@@ -122,8 +120,7 @@ class TestAutoPilotBasic:
     def test_claim_next(self, repo: TaskRepository, autopilot: AutoPilot):
         t = _make_test_task("DW-9100", "可认领任务", Priority.P1)
         r = repo.create(t, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+        repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
 
         claimed = autopilot.claim_next("test-batch")
         assert claimed is not None
@@ -138,8 +135,7 @@ class TestAutoPilotBasic:
         """任务没有 batch_id（__no_batch__），claim_next 不应认领"""
         t = _make_test_task("DW-9101", "无批次任务")
         r = repo.create(t, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+        repo.execute_sql("UPDATE tasks SET status='READY' WHERE task_id=?", (r.task_id,))
 
         claimed = autopilot.claim_next("__no_batch__")
         assert claimed is None
@@ -148,8 +144,7 @@ class TestAutoPilotBasic:
         for i in range(5):
             t = _make_test_task(f"DW-902{i}", f"周期任务-{i}", Priority.P1 if i < 3 else Priority.P2)
             r = repo.create(t, allow_direct_create=True)
-            repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+            repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
 
         claimed = autopilot.run_cycle(max_tasks=3)
         assert 1 <= len(claimed) <= 3
@@ -165,19 +160,17 @@ class TestClaimAndExecuteCycle:
     def test_full_cycle(self, repo: TaskRepository, autopilot: AutoPilot):
         t = _make_test_task("DW-9200", "全链路测试", Priority.P0)
         r = repo.create(t, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+        repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
 
         claimed = autopilot.claim_next("test-batch")
         assert claimed is not None
         assert claimed.task_id == "DW-9200"
         assert claimed.status == TaskStatus.IN_PROGRESS
 
-        repo._conn.execute(
+        repo.execute_sql(
             "UPDATE tasks SET status='COMPLETED', completed_at=? WHERE task_id=?",
             (datetime.now(UTC).isoformat(), claimed.task_id),
         )
-        repo._conn.commit()
 
         finished = repo.get("DW-9200")
         assert finished.status == TaskStatus.COMPLETED
@@ -188,16 +181,14 @@ class TestClaimAndExecuteCycle:
     def test_dependency_blocks_claim(self, repo: TaskRepository, autopilot: AutoPilot):
         t_parent = _make_test_task("DW-9210", "父任务", Priority.P1)
         r_parent = repo.create(t_parent, allow_direct_create=True)
-        repo._conn.execute(
+        repo.execute_sql(
             "UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_parent.task_id,)
         )
-        repo._conn.commit()
 
         t_child = _make_test_task("DW-9211", "子任务（依赖父任务）", Priority.P1)
         t_child.depends_on = ["DW-9210"]
         r_child = repo.create(t_child, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_child.task_id,))
-        repo._conn.commit()
+        repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r_child.task_id,))
 
         claimed = autopilot.claim_next("test-batch")
         assert claimed is not None
@@ -211,8 +202,7 @@ class TestConcurrentClaim:
         for i in range(10):
             t = _make_test_task(f"DW-93{i:02d}", f"并发任务-{i}", Priority.P1)
             r = repo.create(t, allow_direct_create=True)
-            repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+            repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
 
         time.sleep(0.1)
 
@@ -237,8 +227,7 @@ class TestConcurrentClaim:
         """100 个 session 同时抢 1 个任务 → 只有 1 个成功"""
         t = _make_test_task("DW-9400", "抢手任务", Priority.P0)
         r = repo.create(t, allow_direct_create=True)
-        repo._conn.execute("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
-        repo._conn.commit()
+        repo.execute_sql("UPDATE tasks SET status='READY', batch_id='test-batch' WHERE task_id=?", (r.task_id,))
 
         results: list[str | None] = []
 
