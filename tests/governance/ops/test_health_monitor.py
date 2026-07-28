@@ -51,7 +51,7 @@ class TestHealthMonitor:
 
     def test_compute_all_perfect(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 100.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 100.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics)
         assert report.overall == 100
         assert report.grade == "A"
@@ -59,7 +59,7 @@ class TestHealthMonitor:
 
     def test_compute_all_zero(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 0.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 0.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics)
         assert report.overall == 0
         assert report.grade == "F"
@@ -78,65 +78,65 @@ class TestHealthMonitor:
 
     def test_compute_trend_up(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 80.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 80.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics, previous_overall=70)
         assert report.trend == "up"
 
     def test_compute_trend_down(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 50.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 50.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics, previous_overall=80)
         assert report.trend == "down"
 
     def test_compute_trend_flat(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 75.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 75.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics, previous_overall=76)
         assert report.trend == "flat"
 
     def test_compute_trend_no_previous(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 75.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 75.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics, previous_overall=None)
         assert report.trend == "flat"
 
     def test_compute_with_hotspots(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 80.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 80.0 for dim in hm.DIMENSIONS}
         hotspots = [{"category": "shared"}, {"category": "core"}, {"category": "tests"}]
         report = hm.compute(metrics, hotspots=hotspots)
         assert len(report.hotspots) <= 3
 
     def test_compute_dimensions_count(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 80.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 80.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics)
-        assert len(report.dimensions) == len(hm._DIMENSIONS)
+        assert len(report.dimensions) == len(hm.DIMENSIONS)
 
     def test_classify_dimension_excellent(self):
-        assert HealthMonitor._classify_dimension(95) == "excellent"
+        assert HealthMonitor.classify_dimension(95) == "excellent"
 
     def test_classify_dimension_good(self):
-        assert HealthMonitor._classify_dimension(75) == "good"
+        assert HealthMonitor.classify_dimension(75) == "good"
 
     def test_classify_dimension_warning(self):
-        assert HealthMonitor._classify_dimension(55) == "warning"
+        assert HealthMonitor.classify_dimension(55) == "warning"
 
     def test_classify_dimension_critical(self):
-        assert HealthMonitor._classify_dimension(30) == "critical"
+        assert HealthMonitor.classify_dimension(30) == "critical"
 
     def test_compute_grade_boundaries(self):
-        assert HealthMonitor._compute_grade(90) == "A"
-        assert HealthMonitor._compute_grade(89) == "B"
-        assert HealthMonitor._compute_grade(80) == "B"
-        assert HealthMonitor._compute_grade(79) == "C"
-        assert HealthMonitor._compute_grade(70) == "C"
-        assert HealthMonitor._compute_grade(69) == "D"
-        assert HealthMonitor._compute_grade(59) == "F"
+        assert HealthMonitor.compute_grade(90) == "A"
+        assert HealthMonitor.compute_grade(89) == "B"
+        assert HealthMonitor.compute_grade(80) == "B"
+        assert HealthMonitor.compute_grade(79) == "C"
+        assert HealthMonitor.compute_grade(70) == "C"
+        assert HealthMonitor.compute_grade(69) == "D"
+        assert HealthMonitor.compute_grade(59) == "F"
 
     def test_compute_session_summary(self):
         hm = HealthMonitor()
-        metrics = {dim["name"]: 80.0 for dim in hm._DIMENSIONS}
+        metrics = {dim["name"]: 80.0 for dim in hm.DIMENSIONS}
         report = hm.compute(metrics)
         assert "Dedup Health" in report.session_summary
 

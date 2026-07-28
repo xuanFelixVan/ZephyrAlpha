@@ -75,6 +75,19 @@ class HealthMonitor:
         {"name": "intentional_duplicate_ratio", "max": 100, "w": 0.5, "desc": "有意重复占比(设计模式等)"},
     ]
 
+    # ── Stage 4 公共化属性 + 方法 ──
+    DIMENSIONS = _DIMENSIONS  # public alias（public API, Stage 4）
+
+    @staticmethod
+    def classify_dimension(score: float) -> str:
+        """维度分级（public API, Stage 4）."""
+        return HealthMonitor._classify_dimension(score)
+
+    @staticmethod
+    def compute_grade(overall: int) -> str:
+        """总分评级（public API, Stage 4）."""
+        return HealthMonitor._compute_grade(overall)
+
     def compute(
         self,
         metrics: dict[str, float],
