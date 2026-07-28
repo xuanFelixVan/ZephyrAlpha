@@ -27,6 +27,13 @@ class GhostScanner:
     def __init__(self):
         self._registered_pids: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def registered_pids(self) -> set[str]:
+        """只读：registered_pids（Stage 4 公共化）。"""
+        return self._registered_pids
+
+
     def register(self, pid: str):
         self._registered_pids.add(pid)
 

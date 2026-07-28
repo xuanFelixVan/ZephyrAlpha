@@ -27,6 +27,13 @@ class MemoryPoisonGuard:
     def __init__(self):
         self._trusted_agents: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def trusted_agents(self) -> set[str]:
+        """只读：trusted_agents（Stage 4 公共化）。"""
+        return self._trusted_agents
+
+
     def register_trusted(self, agent_id: str):
         self._trusted_agents.add(agent_id)
 

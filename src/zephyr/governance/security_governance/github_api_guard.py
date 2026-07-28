@@ -28,6 +28,13 @@ class GitHubAPIGuard:
         self._allowed_commands = {"run_tests", "format_code", "lint", "build", "deploy_staging"}
         self._audit: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def allowed_commands(self):
+        """只读：allowed_commands（Stage 4 公共化）。"""
+        return self._allowed_commands
+
+
     def validate_command(self, command: str, user: str) -> tuple[bool, str]:
         if command not in self._allowed_commands:
             self._audit.append({"command": command, "user": user, "result": "denied"})

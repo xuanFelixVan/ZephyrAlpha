@@ -64,6 +64,13 @@ class IPIDefense:
         self._block_threshold = block_threshold
         self._reports: list[IPIDefenseReport] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def block_threshold(self):
+        """只读：block_threshold（Stage 4 公共化）。"""
+        return self._block_threshold
+
+
     def scan(self, prompt: str, context: str = "") -> IPIDefenseReport:
         evidence: list[str] = []
         max_confidence = 0.0

@@ -27,6 +27,13 @@ class CrossSessionCorrelator:
     def __init__(self):
         self._sessions: dict[str, dict] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def sessions(self) -> dict[str, dict]:
+        """只读：sessions（Stage 4 公共化）。"""
+        return self._sessions
+
+
     def register_session(self, session_id: str, metrics: dict):
         self._sessions[session_id] = metrics
 

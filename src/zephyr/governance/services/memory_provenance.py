@@ -30,6 +30,13 @@ class MemoryProvenanceLog:
     def __init__(self):
         self._records: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def records(self) -> list[dict]:
+        """只读：records（Stage 4 公共化）。"""
+        return self._records
+
+
     def record(self, agent_id: str, content: str, source_contract: str = "") -> str:
         h = hashlib.sha256(content.encode()).hexdigest()
         ts = datetime.now(UTC).isoformat()

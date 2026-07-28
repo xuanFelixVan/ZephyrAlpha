@@ -27,6 +27,13 @@ class SBOMGuard:
     def __init__(self):
         self._sbom: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def sbom(self) -> dict[str, str]:
+        """只读：sbom（Stage 4 公共化）。"""
+        return self._sbom
+
+
     def register_dependency(self, name: str, version: str, hash_checksum: str = ""):
         self._sbom[name] = {"version": version, "hash": hash_checksum}
 

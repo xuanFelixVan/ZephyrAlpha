@@ -27,6 +27,13 @@ class ConfigScanner:
     def __init__(self):
         self._baseline: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def baseline(self) -> dict[str, str]:
+        """只读：baseline（Stage 4 公共化）。"""
+        return self._baseline
+
+
     def set_baseline(self, filepath: str, content_hash: str):
         self._baseline[filepath] = content_hash
 

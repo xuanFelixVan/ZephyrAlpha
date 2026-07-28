@@ -22,6 +22,13 @@ class TriggerMonitor:
     def __init__(self):
         self._triggers: dict = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def triggers(self) -> dict:
+        """只读：triggers（Stage 4 公共化）。"""
+        return self._triggers
+
+
     def watch(self, trigger_id: str, condition: callable) -> None:
         self._triggers[trigger_id] = condition
 

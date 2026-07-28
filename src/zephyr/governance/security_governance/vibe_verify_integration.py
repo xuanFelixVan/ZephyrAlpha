@@ -28,6 +28,18 @@ class VibeVerifyIntegration:
         self._scan_count = 0
         self._violations_patched = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def scan_count(self):
+        """只读：scan_count（Stage 4 公共化）。"""
+        return self._scan_count
+
+    @property
+    def violations_patched(self):
+        """只读：violations_patched（Stage 4 公共化）。"""
+        return self._violations_patched
+
+
     def scan_and_patch(self, code: str) -> tuple[bool, int]:
         self._scan_count += 1
         violations = 0

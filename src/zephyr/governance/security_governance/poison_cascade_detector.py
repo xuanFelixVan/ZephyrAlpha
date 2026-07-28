@@ -52,6 +52,13 @@ class PoisonCascadeDetector:
         self._events: list[PoisonEvent] = []
         self._infections: dict[str, int] = defaultdict(int)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def suspicion_threshold(self):
+        """只读：suspicion_threshold（Stage 4 公共化）。"""
+        return self._suspicion_threshold
+
+
     def scan(self, source: str, target: str, content: str, tokens: int = 0) -> PoisonEvent:
         score = self._compute_suspicion(content)
         sig_found = self._detect_signature(content)

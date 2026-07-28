@@ -27,6 +27,13 @@ class HooksIntegrityGuard:
     def __init__(self):
         self._hooks_hashes: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def hooks_hashes(self) -> dict[str, str]:
+        """只读：hooks_hashes（Stage 4 公共化）。"""
+        return self._hooks_hashes
+
+
     def register(self, hook_path: str, hash_value: str):
         self._hooks_hashes[hook_path] = hash_value
 

@@ -66,6 +66,13 @@ class A2ANegotiation:
         self._max_rounds = max_rounds
         self._round_timeout = round_timeout
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_rounds(self):
+        """只读：max_rounds（Stage 4 公共化）。"""
+        return self._max_rounds
+
+
     def propose(
         self,
         initiator: str,

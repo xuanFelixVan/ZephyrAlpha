@@ -26,6 +26,13 @@ class MessageRouter:
     def __init__(self):
         self._handlers: dict[PartType, list[Callable]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def handlers(self) -> dict[PartType, list[Callable]]:
+        """只读：handlers（Stage 4 公共化）。"""
+        return self._handlers
+
+
     def register_handler(self, part_type: PartType, handler: Callable):
         self._handlers.setdefault(part_type, []).append(handler)
 

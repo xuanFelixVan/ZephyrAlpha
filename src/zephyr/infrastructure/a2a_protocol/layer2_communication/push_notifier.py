@@ -24,6 +24,13 @@ class PushNotifier:
     def __init__(self):
         self._subscribers: dict[str, list[Callable]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def subscribers(self) -> dict[str, list[Callable]]:
+        """只读：subscribers（Stage 4 公共化）。"""
+        return self._subscribers
+
+
     def subscribe(self, agent_id: str, callback: Callable):
         self._subscribers.setdefault(agent_id, []).append(callback)
 
