@@ -19,11 +19,11 @@ from zephyr.autonomy_core.skills.skill_guardrails import DESTRUCTIVE, SkillGuard
 class TestSkillGuardrailsInstantiation:
     def test_init_creates_empty_violations(self):
         g = SkillGuardrails()
-        assert g._violations == []
+        assert g.violations == []
 
     def test_init_active_by_default(self):
         g = SkillGuardrails()
-        assert g._active is True
+        assert g.active is True
 
     def test_allowed_property_true_on_fresh(self):
         g = SkillGuardrails()
@@ -36,7 +36,7 @@ class TestSkillGuardrailsInstantiation:
 
     def test_allowed_false_when_deactivated(self):
         g = SkillGuardrails()
-        g._active = False
+        g.active = False
         assert g.allowed is False
 
     def test_min_output_constant(self):
@@ -92,7 +92,7 @@ class TestCheckPreExecution:
     def test_violations_accumulate(self):
         g = SkillGuardrails()
         g.check_pre_execution("sk", "rm -rf /", budget_remaining=0)
-        assert len(g._violations) == 2
+        assert len(g.violations) == 2
 
     def test_case_insensitive_destructive(self):
         g = SkillGuardrails()

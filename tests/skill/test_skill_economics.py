@@ -25,8 +25,8 @@ def econ():
 
 class TestSkillEconomicsInit:
     def test_instantiation(self, econ):
-        assert econ._costs == {}
-        assert econ._spent == 0.0
+        assert econ.costs == {}
+        assert econ.spent == 0.0
 
     def test_pricing_table_not_empty(self):
         assert len(PRICING) > 0

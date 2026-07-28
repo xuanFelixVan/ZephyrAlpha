@@ -54,7 +54,7 @@ class TestSessionConflictGuard:
     def test_release_session(self, guard):
         guard.register_session("s1", ["file_a.py"])
         guard.release_session("s1")
-        assert "s1" not in guard._active_sessions
+        assert "s1" not in guard.active_sessions
 
     def test_release_nonexistent_session(self, guard):
         guard.release_session("nonexistent")

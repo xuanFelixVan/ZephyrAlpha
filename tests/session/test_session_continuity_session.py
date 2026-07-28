@@ -69,12 +69,12 @@ class TestContinuityContextDataclass:
 class TestSessionContinuity:
     def test_instantiation_with_path(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        assert sc._project_root == tmp_path
-        assert sc._sessions_dir == tmp_path / "session_logs"
+        assert sc.project_root == tmp_path
+        assert sc.sessions_dir == tmp_path / "session_logs"
 
     def test_instantiation_default(self):
         sc = SessionContinuity()
-        assert sc._project_root == Path.cwd()
+        assert sc.project_root == Path.cwd()
 
     def test_save_session_state(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)

@@ -52,11 +52,11 @@ class TestRollbackTag:
 class TestSemanticRollbackTagInit:
     def test_default_project_root(self):
         mgr = SemanticRollbackTag()
-        assert mgr._project_root == Path.cwd()
+        assert mgr.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         mgr = SemanticRollbackTag(project_root=tmp_path)
-        assert mgr._project_root == tmp_path
+        assert mgr.project_root == tmp_path
 
 
 class TestTagTask:

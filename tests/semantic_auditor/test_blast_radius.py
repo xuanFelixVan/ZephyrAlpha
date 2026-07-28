@@ -108,7 +108,7 @@ class TestBlastRadiusAnalyzerInstantiation:
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
         assert analyzer is not None
-        assert analyzer._max_depth == 5
+        assert analyzer.max_depth == 5
 
     def test_instantiate_with_depgraph_and_custom_max_depth(self, tmp_path):
         # 传 depgraph_path 和 max_depth=3 应该成功
@@ -116,7 +116,7 @@ class TestBlastRadiusAnalyzerInstantiation:
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph, max_depth=3)
         assert analyzer is not None
-        assert analyzer._max_depth == 3
+        assert analyzer.max_depth == 3
 
     def test_instantiate_invalid_max_depth_zero(self, tmp_path):
         # 治本：max_depth < 1 抛 ValueError，消息为中文 "max_depth 必须 >= 1"

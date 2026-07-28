@@ -38,12 +38,12 @@ class TestVerifierResult:
 class TestSelfTestVerifierInit:
     def test_default_base_dir(self):
         v = SelfTestVerifier()
-        assert v._base_dir is not None
-        assert os.path.isdir(v._base_dir)
+        assert v.base_dir is not None
+        assert os.path.isdir(v.base_dir)
 
     def test_custom_base_dir(self):
         v = SelfTestVerifier(base_dir=".")
-        assert v._base_dir == "."
+        assert v.base_dir == "."
 
     def test_min_checks_constant(self):
         assert SelfTestVerifier.MIN_CHECKS == 8

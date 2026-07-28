@@ -17,12 +17,12 @@ from zephyr.autonomy_core.skills.skill_learning import SkillLearning
 class TestSkillLearningInstantiation:
     def test_default_instantiation(self):
         sl = SkillLearning()
-        assert isinstance(sl._learning_history, dict)
-        assert isinstance(sl._learned_patterns, dict)
-        assert isinstance(sl._session_deltas, dict)
-        assert len(sl._learning_history) == 0
-        assert len(sl._learned_patterns) == 0
-        assert len(sl._session_deltas) == 0
+        assert isinstance(sl.learning_history, dict)
+        assert isinstance(sl.learned_patterns, dict)
+        assert isinstance(sl.session_deltas, dict)
+        assert len(sl.learning_history) == 0
+        assert len(sl.learned_patterns) == 0
+        assert len(sl.session_deltas) == 0
 
 
 class TestAddExecution:
@@ -71,14 +71,14 @@ class TestAddExecution:
     def test_add_stores_in_history(self):
         sl = SkillLearning()
         sl.add_execution("skill-8", "output", success=True)
-        assert "skill-8" in sl._learning_history
-        assert len(sl._learning_history["skill-8"]) == 1
+        assert "skill-8" in sl.learning_history
+        assert len(sl.learning_history["skill-8"]) == 1
 
     def test_pattern_dedup(self):
         sl = SkillLearning()
         sl.add_execution("skill-9", "error: fail", success=False)
         sl.add_execution("skill-9", "error: fail again", success=False)
-        patterns = sl._learned_patterns["skill-9"]
+        patterns = sl.learned_patterns["skill-9"]
         assert patterns.count("error_in_output") == 1
 
 

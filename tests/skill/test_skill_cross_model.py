@@ -69,16 +69,16 @@ class TestCrossModelContextDataclass:
 class TestSkillCrossModelInstantiation:
     def test_default_provider(self):
         scm = SkillCrossModel()
-        assert scm._default_provider == "DeepSeek"
+        assert scm.default_provider == "DeepSeek"
 
     def test_custom_default_provider(self):
         scm = SkillCrossModel(default_provider="Claude")
-        assert scm._default_provider == "Claude"
+        assert scm.default_provider == "Claude"
 
     def test_internal_state_initialized(self):
         scm = SkillCrossModel()
-        assert scm._fallback_chain == []
-        assert scm._adapter_registry == {}
+        assert scm.fallback_chain == []
+        assert scm.adapter_registry == {}
 
 
 class TestGetCapability:
@@ -126,22 +126,22 @@ class TestSetFallbackChain:
     def test_valid_providers(self):
         scm = SkillCrossModel()
         scm.set_fallback_chain(["Claude", "GPT", "Qwen"])
-        assert scm._fallback_chain == ["Claude", "GPT", "Qwen"]
+        assert scm.fallback_chain == ["Claude", "GPT", "Qwen"]
 
     def test_filters_unknown_providers(self):
         scm = SkillCrossModel()
         scm.set_fallback_chain(["Claude", "FakeModel", "GPT"])
-        assert scm._fallback_chain == ["Claude", "GPT"]
+        assert scm.fallback_chain == ["Claude", "GPT"]
 
     def test_empty_list(self):
         scm = SkillCrossModel()
         scm.set_fallback_chain([])
-        assert scm._fallback_chain == []
+        assert scm.fallback_chain == []
 
     def test_all_unknown(self):
         scm = SkillCrossModel()
         scm.set_fallback_chain(["Fake1", "Fake2"])
-        assert scm._fallback_chain == []
+        assert scm.fallback_chain == []
 
 
 class TestResolveProvider:

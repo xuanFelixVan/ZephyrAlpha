@@ -45,18 +45,18 @@ def calibrator():
 class TestSkillsBenchRunnerInit:
     def test_instantiation_with_custom_path(self, tmp_history):
         r = SkillsBenchRunner(history_path=tmp_history)
-        assert r._history_path == tmp_history
-        assert r._history == {}
+        assert r.history_path == tmp_history
+        assert r.history == {}
 
     def test_instantiation_default_path(self):
         r = SkillsBenchRunner()
-        assert r._history_path is not None
+        assert r.history_path is not None
 
     def test_load_history_corrupt_file(self, tmp_path):
         bad = tmp_path / "bad.json"
         bad.write_text("NOT JSON", encoding="utf-8")
         r = SkillsBenchRunner(history_path=bad)
-        assert r._history == {}
+        assert r.history == {}
 
 
 class TestSkillsBenchRunnerRecordRun:
@@ -145,8 +145,8 @@ class TestSkillsBenchRunnerDetectRegression:
 
 class TestSkillEfficacyCalibratorInit:
     def test_instantiation(self, calibrator):
-        assert calibrator._runner is not None
-        assert calibrator._bench_results == {}
+        assert calibrator.runner is not None
+        assert calibrator.bench_results == {}
         assert calibrator.PASS_THRESHOLD == 70.0
         assert calibrator.SUITE_NAME == "SkillsBench-Zephyr"
 

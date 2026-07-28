@@ -21,15 +21,15 @@ from zephyr.autonomy_core.skills.skill_cache_provider import SkillCacheProvider
 class TestSkillCacheProviderInstantiation:
     def test_default_memory_backend(self):
         cache = SkillCacheProvider()
-        assert cache._backend_name == "memory"
+        assert cache.backend_name == "memory"
 
     def test_disk_backend(self):
         cache = SkillCacheProvider(backend="disk")
-        assert cache._backend_name == "disk"
+        assert cache.backend_name == "disk"
 
     def test_invalid_backend_falls_back_to_memory(self):
         cache = SkillCacheProvider(backend="nonexistent")
-        assert cache._backend_name == "memory"
+        assert cache.backend_name == "memory"
 
 
 class TestSkillCacheProviderConfigure:
@@ -108,7 +108,7 @@ class TestSkillCacheProviderMemoryOps:
 
     def test_lru_eviction(self):
         cache = SkillCacheProvider(backend="memory")
-        cache._SkillCacheProvider__backend._max = 3
+        cache._SkillCacheProvider__backend.max = 3
         cache.set("k1", "v1")
         cache.set("k2", "v2")
         cache.set("k3", "v3")
@@ -156,13 +156,13 @@ class TestSkillCacheProviderBackendSwitch:
         cache = SkillCacheProvider(backend="memory")
         cache.set("mk", "mv")
         cache.configure("disk")
-        assert cache._backend_name == "disk"
+        assert cache.backend_name == "disk"
         assert cache.get("mk") is None
 
     def test_switch_disk_to_memory(self):
         cache = SkillCacheProvider(backend="disk")
         cache.set("dk", "dv")
         cache.configure("memory")
-        assert cache._backend_name == "memory"
+        assert cache.backend_name == "memory"
         assert cache.get("dk") is None
         cache.clear()

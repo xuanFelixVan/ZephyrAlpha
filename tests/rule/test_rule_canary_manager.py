@@ -19,43 +19,43 @@ from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_canary_manager imp
 class TestRuleCanaryManagerInit:
     def test_default_canary_weight(self):
         mgr = RuleCanaryManager()
-        assert mgr._canary_weight == 0.01
+        assert mgr.canary_weight == 0.01
 
     def test_default_baseline_metrics_empty(self):
         mgr = RuleCanaryManager()
-        assert mgr._baseline_metrics == {}
+        assert mgr.baseline_metrics == {}
 
     def test_default_canary_metrics_empty(self):
         mgr = RuleCanaryManager()
-        assert mgr._canary_metrics == {}
+        assert mgr.canary_metrics == {}
 
 
 class TestSetBaseline:
     def test_sets_baseline_metrics(self):
         mgr = RuleCanaryManager()
         mgr.set_baseline({"false_positive_rate": 0.05, "accuracy": 0.95})
-        assert mgr._baseline_metrics["false_positive_rate"] == 0.05
-        assert mgr._baseline_metrics["accuracy"] == 0.95
+        assert mgr.baseline_metrics["false_positive_rate"] == 0.05
+        assert mgr.baseline_metrics["accuracy"] == 0.95
 
     def test_overwrites_previous_baseline(self):
         mgr = RuleCanaryManager()
         mgr.set_baseline({"false_positive_rate": 0.05})
         mgr.set_baseline({"false_positive_rate": 0.03})
-        assert mgr._baseline_metrics["false_positive_rate"] == 0.03
+        assert mgr.baseline_metrics["false_positive_rate"] == 0.03
 
 
 class TestSetCanaryMetrics:
     def test_sets_canary_metrics(self):
         mgr = RuleCanaryManager()
         mgr.set_canary_metrics({"false_positive_rate": 0.10, "latency_ms": 200})
-        assert mgr._canary_metrics["false_positive_rate"] == 0.10
-        assert mgr._canary_metrics["latency_ms"] == 200
+        assert mgr.canary_metrics["false_positive_rate"] == 0.10
+        assert mgr.canary_metrics["latency_ms"] == 200
 
     def test_overwrites_previous_canary_metrics(self):
         mgr = RuleCanaryManager()
         mgr.set_canary_metrics({"false_positive_rate": 0.10})
         mgr.set_canary_metrics({"false_positive_rate": 0.02})
-        assert mgr._canary_metrics["false_positive_rate"] == 0.02
+        assert mgr.canary_metrics["false_positive_rate"] == 0.02
 
 
 class TestShouldRollback:
@@ -101,15 +101,15 @@ class TestShouldRollback:
 class TestPromote:
     def test_promote_sets_weight_to_one(self):
         mgr = RuleCanaryManager()
-        assert mgr._canary_weight == 0.01
+        assert mgr.canary_weight == 0.01
         mgr.promote()
-        assert mgr._canary_weight == 1.0
+        assert mgr.canary_weight == 1.0
 
     def test_promote_idempotent(self):
         mgr = RuleCanaryManager()
         mgr.promote()
         mgr.promote()
-        assert mgr._canary_weight == 1.0
+        assert mgr.canary_weight == 1.0
 
 
 class TestRuleCanaryManagerBoundary:

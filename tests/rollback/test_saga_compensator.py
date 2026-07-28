@@ -69,7 +69,7 @@ class TestSagaContext:
 class TestSagaCompensator:
     def test_instantiation(self):
         comp = SagaCompensator()
-        assert comp._sagas == {}
+        assert comp.sagas == {}
 
     def test_create_saga(self):
         comp = SagaCompensator()

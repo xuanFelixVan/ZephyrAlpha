@@ -39,10 +39,10 @@ class TestTransitionInstantiation:
 class TestSkillLifecycleInstantiation:
     def test_default_instantiation(self):
         lc = SkillLifecycle()
-        assert isinstance(lc._states, dict)
-        assert isinstance(lc._guards, dict)
-        assert isinstance(lc._history, dict)
-        assert len(lc._states) == 0
+        assert isinstance(lc.states, dict)
+        assert isinstance(lc.guards, dict)
+        assert isinstance(lc.history, dict)
+        assert len(lc.states) == 0
 
     def test_register_default_active(self):
         lc = SkillLifecycle()
