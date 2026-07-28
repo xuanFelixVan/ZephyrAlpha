@@ -240,17 +240,6 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         )
 
     try:
-        # 从config/.env.restic读取RESTIC_PASSWORD（自动触发时环境变量不可用）
-        restic_env = PROJECT_ROOT / "config" / ".env.restic"
-        if restic_env.exists() and not os.environ.get("RESTIC_PASSWORD"):
-            try:
-                with open(restic_env, encoding="utf-8") as f:
-                    for line in f:
-                        if line.strip().startswith("RESTIC_PASSWORD="):
-                            os.environ["RESTIC_PASSWORD"] = line.strip().split("=", 1)[1]
-                            break
-            except OSError:
-                pass  # 读取失败不阻断，backup.ps1会报错
         result = subprocess.run(
             [
                 "powershell", "-ExecutionPolicy", "Bypass",
@@ -283,7 +272,7 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
             detail=f"backup ok (clickhouse={ch_status}): {summary}",
         )
     if result.returncode == 2:
-        # CH阶段失败但代码/PG/SQLite/restic成功（backup.ps1已持久化last_ch_backup_*
+        # CH阶段失败但代码/PG/SQLite/CH配置同步成功（backup.ps1已持久化last_ch_backup_*
         # 到backup_state.json）。8h代码备份计时照常推进；CH 24h计时仅在成功时推进
         # （失败在下一个调度窗口重试）。返回warn使失败在commit/merge时可见——
         # CH失败禁止静默跳过（2026-07-19事件：两次自动备份记录ok但CH未备份）。

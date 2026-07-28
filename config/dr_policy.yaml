@@ -60,11 +60,11 @@ dr_policy:
       rpo: 24h
       rto: 8h
       backup_source:
-        - ch_s3_bridge      # scripts/backup/backup.ps1 CH 备份经 MinIO S3 bridge，24h 节奏（L222-249）
+        - ch_vhdx_disk      # scripts/backup/backup.ps1 CH 备份经 VHDX 虚拟硬盘 Disk('backups')，24h 节奏
         - ch_freeze         # ALTER TABLE ... FREEZE PARTITION 快照（增量可选）
-      verify_method: "scripts/backup/restore.ps1 ch <snapshot> 恢复到 D:/restore_test/ 后比对 system.tables 行数 + 抽样表 count() 对账"
+      verify_method: "scripts/backup/restore.ps1 ch 恢复后比对 system.tables 行数 + 抽样表 count() 对账"
       owner: ZephyrAlpha-Owner
-      rationale: "CH 备份 24h 节奏决定 RPO=24h；302 GiB 经 S3 bridge 恢复受限于磁盘 IO 与网络，worst-case RTO 估 8h（待 restore.ps1 ch 实测校准）"
+      rationale: "CH 备份 24h 节奏决定 RPO=24h；302 GiB 经 VHDX 本地磁盘恢复受限于磁盘 IO，worst-case RTO 估 8h（待 restore.ps1 ch 实测校准）"
 
     - component: c3_fundamental_clickhouse
       name: "c3_fundamental (ClickHouse 基本面库)"
@@ -72,7 +72,7 @@ dr_policy:
       rpo: 24h
       rto: 2h
       backup_source:
-        - ch_s3_bridge      # scripts/backup/backup.ps1 CH 备份经 MinIO S3 bridge（与 c1_market 同管线）
-      verify_method: "scripts/backup/restore.ps1 ch <snapshot> 恢复后比对 23 表行数 + 财报 PIT 查询抽样验证"
+        - ch_vhdx_disk      # scripts/backup/backup.ps1 CH 备份经 VHDX 虚拟硬盘 Disk('backups')（与 c1_market 同管线）
+      verify_method: "scripts/backup/restore.ps1 ch 恢复后比对 23 表行数 + 财报 PIT 查询抽样验证"
       owner: ZephyrAlpha-Owner
       rationale: "16 GiB 体量小，恢复快，RTO=2h；RPO 与 c1_market 共用 24h CH 备份节奏"

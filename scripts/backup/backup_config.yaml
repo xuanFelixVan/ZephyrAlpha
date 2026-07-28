@@ -7,35 +7,38 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 
-# 灾备备份系统配置 v1.1.0
-# 消费者映射（F-06 Track B 治本，2026-07-17）：
-#   repository.path  -> backup.ps1 L50 (regex 读取 restic repo path)
-#   dump_dir         -> backup.ps1 L51 (regex 读取 DB dump 目录)
-#   trigger.*        -> backup_reconciler.py _trigger() + _get_state_file() (_load_config 加载)
+# 灾备备份系统配置 v2.0.0 (robocopy + CH incremental, 2026-07-28)
+# 消费者映射：
+#   code_backup.*  -> backup.ps1 robocopy 代码备份
+#   db_dumps.*     -> backup.ps1 robocopy DB dumps
+#   ch_backup.*    -> backup.ps1 CH 增量备份决策
+#   dump_dir       -> backup.ps1 DB dump 目录
+#   trigger.*      -> backup_reconciler.py trigger() + get_state_file()
 #
-# 已删除死配置（无消费者）：databases / excludes / report
-# retention 保留为文档参考（实际值硬编码在 backup.ps1 L49，YAML 非真源）
+# v2.0.0 变更（2026-07-28）：
+#   - restic 替换为 robocopy /MIR（增量覆盖，不累积版本）
+#   - CH 全量备份改为增量（base + inc 每日覆盖）
+#   - 移除 retention（restic 专属，robocopy 无版本概念）
 
-repository:
-  path: "F:\\restic-zephyr"
-  target_drive: "F:"
+code_backup:
+  source: "D:\\ZephyrAlpha"
+  target: "F:\\code_backup"
+  exclude_dirs: [".git", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".runtime", ".aidrafts", "tmp", ".venv"]
+  exclude_files: ["*.pyc", "*.db-wal", "*.db-shm"]
 
-# 异地备份配置已移除（用户裁定 #ARCH-CH-032 overruled_by_user，2026-07-24：
-# 单用户回测期仅本地外接盘备份 F:\restic-zephyr 足够，不引入异地/云存储凭证/密码）。
-# 如未来实盘立项需异地副本，参考 registry #ARCH-CH-032 历史背景重新评估。
+db_dumps:
+  source: "D:\\tmp_db_dumps"
+  target: "F:\\db_dumps"
+
+ch_backup:
+  base_file: "market.zip"       # 全量基线（一次性创建，inc 膨胀时自动重建）
+  inc_file: "inc.zip"           # 每日增量（覆盖重写，非累积）
+  rebase_threshold: 0.5         # inc >= 50% × base 时自动重建基线
 
 dump_dir: "D:\\tmp_db_dumps"
 
-# --- DOCUMENTATION ONLY（非真源，不被任何脚本消费）---
-# 实际 retention 值硬编码在 backup.ps1 L49：$KeepDaily=7; $KeepWeekly=4; $KeepMonthly=3
-# 修改 retention 时 MUST 同步修改 backup.ps1 L49（backup.ps1 是 retention 真源）
-retention:
-  keep_daily: 7    # = backup.ps1 $KeepDaily
-  keep_weekly: 4    # = backup.ps1 $KeepWeekly
-  keep_monthly: 3   # = backup.ps1 $KeepMonthly
-
 trigger:
-  min_interval_seconds: 28800  # 8小时间隔保护
+  min_interval_seconds: 28800  # 8小时间隔保护（post-commit 触发用）
   important_prefixes:
     - "src/"
     - "config/"
