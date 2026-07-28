@@ -123,6 +123,53 @@ class AlphaSignalPipeline:
         self._degraded_reasons: list[str] = []
         self._builtins_guard_enabled: bool = True
 
+    # ── Stage 4 公共化属性 + 方法 ──
+
+    @property
+    def factors(self) -> list[type]:
+        """已注册因子列表（public API, Stage 4）."""
+        return self._factors
+
+    @factors.setter
+    def factors(self, value: list[type]) -> None:
+        """设置因子列表（for testing, Stage 4）."""
+        self._factors = value
+
+    @property
+    def synthesizers(self) -> list[type]:
+        """已注册合成器列表（public API, Stage 4）."""
+        return self._synthesizers
+
+    @synthesizers.setter
+    def synthesizers(self, value: list[type]) -> None:
+        """设置合成器列表（for testing, Stage 4）."""
+        self._synthesizers = value
+
+    @property
+    def degraded_reasons(self) -> list[str]:
+        """降级原因列表（public API, Stage 4）."""
+        return self._degraded_reasons
+
+    @degraded_reasons.setter
+    def degraded_reasons(self, value: list[str]) -> None:
+        """设置降级原因列表（for testing, Stage 4）."""
+        self._degraded_reasons = value
+
+    @staticmethod
+    def aggregate_confidence(synthesized: list) -> float:
+        """聚合置信度（public API, Stage 4）."""
+        return AlphaSignalPipeline._aggregate_confidence(synthesized)
+
+    @staticmethod
+    def snapshot_builtins() -> frozenset[str]:
+        """快照 builtins（public API, Stage 4）."""
+        return AlphaSignalPipeline._snapshot_builtins()
+
+    @staticmethod
+    def check_builtins_integrity(snapshot: frozenset[str]) -> list[str]:
+        """检查 builtins 完整性（public API, Stage 4）."""
+        return AlphaSignalPipeline._check_builtins_integrity(snapshot)
+
     @staticmethod
     def _snapshot_builtins() -> frozenset[str]:
         try:

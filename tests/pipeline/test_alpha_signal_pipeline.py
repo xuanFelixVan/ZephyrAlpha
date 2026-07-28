@@ -88,9 +88,9 @@ class TestPipelineResult:
 class TestAlphaSignalPipeline:
     def test_instantiation(self):
         pipe = AlphaSignalPipeline()
-        assert pipe._factors == []
-        assert pipe._synthesizers == []
-        assert pipe._degraded_reasons == []
+        assert pipe.factors == []
+        assert pipe.synthesizers == []
+        assert pipe.degraded_reasons == []
 
     def test_run_no_factors(self):
         pipe = AlphaSignalPipeline()
@@ -110,7 +110,7 @@ class TestAlphaSignalPipeline:
             def compute(self):
                 return [MagicMock(confidence=0.8, signal_value=1.0)]
 
-        pipe._factors = [GoodFactor]
+        pipe.factors = [GoodFactor]
         result = pipe.run()
         assert result.factors_computed == 1
         assert result.signal_count >= 1
@@ -122,7 +122,7 @@ class TestAlphaSignalPipeline:
             def compute(self):
                 raise RuntimeError("factor error")
 
-        pipe._factors = [BadFactor]
+        pipe.factors = [BadFactor]
         result = pipe.run()
         assert result.factors_failed == 1
         assert any("factor error" in e.get("error", "") for e in result.errors)
@@ -133,7 +133,7 @@ class TestAlphaSignalPipeline:
         class EmptyFactor:
             pass
 
-        pipe._factors = [EmptyFactor]
+        pipe.factors = [EmptyFactor]
         result = pipe.run()
         assert result.factors_computed == 0
 
@@ -146,8 +146,8 @@ class TestAlphaSignalPipeline:
 
             MaliciousFactor.__name__ = "MaliciousPoison"
             pipe.register_factor(MaliciousFactor)
-            assert len(pipe._factors) == 0
-            assert len(pipe._degraded_reasons) > 0
+            assert len(pipe.factors) == 0
+            assert len(pipe.degraded_reasons) > 0
 
     def test_register_synthesizer_blacklisted(self):
         pipe = AlphaSignalPipeline()
@@ -158,35 +158,35 @@ class TestAlphaSignalPipeline:
 
             HackSynth.__name__ = "HackSynthesizer"
             pipe.register_synthesizer(HackSynth)
-            assert len(pipe._synthesizers) == 0
-            assert len(pipe._degraded_reasons) > 0
+            assert len(pipe.synthesizers) == 0
+            assert len(pipe.degraded_reasons) > 0
 
     def test_aggregate_confidence_empty(self):
-        assert AlphaSignalPipeline._aggregate_confidence([]) == 0.0
+        assert AlphaSignalPipeline.aggregate_confidence([]) == 0.0
 
     def test_aggregate_confidence_with_objects(self):
         items = [MagicMock(confidence=0.6), MagicMock(confidence=0.8)]
-        result = AlphaSignalPipeline._aggregate_confidence(items)
+        result = AlphaSignalPipeline.aggregate_confidence(items)
         assert result == pytest.approx(0.7)
 
     def test_aggregate_confidence_with_dicts(self):
         items = [{"confidence": 0.5}, {"confidence": 0.9}]
-        result = AlphaSignalPipeline._aggregate_confidence(items)
+        result = AlphaSignalPipeline.aggregate_confidence(items)
         assert result == pytest.approx(0.7)
 
     def test_aggregate_confidence_no_confidence_attr(self):
         items = [MagicMock(spec=[]), MagicMock(spec=[])]
-        result = AlphaSignalPipeline._aggregate_confidence(items)
+        result = AlphaSignalPipeline.aggregate_confidence(items)
         assert result == 0.5
 
     def test_snapshot_builtins(self):
-        snap = AlphaSignalPipeline._snapshot_builtins()
+        snap = AlphaSignalPipeline.snapshot_builtins()
         assert isinstance(snap, frozenset)
         assert "print" in snap
 
     def test_check_builtins_integrity_clean(self):
-        snap = AlphaSignalPipeline._snapshot_builtins()
-        violations = AlphaSignalPipeline._check_builtins_integrity(snap)
+        snap = AlphaSignalPipeline.snapshot_builtins()
+        violations = AlphaSignalPipeline.check_builtins_integrity(snap)
         assert violations == []
 
     def test_extreme_signal_degraded(self):
@@ -199,6 +199,6 @@ class TestAlphaSignalPipeline:
                 sig.signal_value = 5000.0
                 return [sig]
 
-        pipe._factors = [ExtremeFactor]
+        pipe.factors = [ExtremeFactor]
         result = pipe.run()
         assert result.degraded is True or result.confidence <= 1.0
