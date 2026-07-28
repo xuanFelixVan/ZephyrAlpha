@@ -23,7 +23,7 @@ class TestAdversarialValidationGateInit:
 
     def test_custom_confidence_threshold(self):
         gate = AdversarialValidationGate(confidence_threshold=0.9)
-        assert gate._confidence_threshold == 0.9
+        assert gate.confidence_threshold == 0.9
 
 
 class TestValidate:

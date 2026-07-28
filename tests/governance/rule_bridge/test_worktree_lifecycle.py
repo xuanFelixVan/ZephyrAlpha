@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_ENFORCEMENT_worktree_lifecycle | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §ARCH-WORKTREE-LIFECYCLE-001
+# [BLUEPRINT] MOD-GOV_ENFORCEMENT_WORKTREE_LIFECYCLE | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §ARCH-WORKTREE-LIFECYCLE-001
 # [MODULE] tests.governance.rule_bridge.test_worktree_lifecycle
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
@@ -382,7 +382,7 @@ class TestPersistence:
 
         # 新实例（同 records_dir）
         wl2 = wl_mod.WorktreeLifecycle(
-            config_path=wl._config_path,
+            config_path=wl.config_path,
             records_dir=records_dir,
         )
         state = wl2.get_state("sess-p1")

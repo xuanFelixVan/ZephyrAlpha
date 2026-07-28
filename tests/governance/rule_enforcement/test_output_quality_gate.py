@@ -24,12 +24,12 @@ from zephyr.gov_enforcement.rule_enforcement.output_quality_gate import (
 class TestOutputQualityGate:
     def test_instantiation_defaults(self):
         gate = OutputQualityGate()
-        assert len(gate._rules) > 0
+        assert len(gate.rules) > 0
 
     def test_instantiation_custom_rules(self):
         rules = [QualityRule(name="test", check_fn="len>0", threshold=0.5, severity="soft")]
         gate = OutputQualityGate(rules=rules)
-        assert len(gate._rules) == 1
+        assert len(gate.rules) == 1
 
     def test_evaluate_good_output(self):
         gate = OutputQualityGate()
@@ -70,9 +70,9 @@ class TestOutputQualityGate:
 
     def test_add_rule(self):
         gate = OutputQualityGate()
-        initial_count = len(gate._rules)
+        initial_count = len(gate.rules)
         gate.add_rule(QualityRule(name="custom", check_fn="custom_check", threshold=0.9, severity="soft"))
-        assert len(gate._rules) == initial_count + 1
+        assert len(gate.rules) == initial_count + 1
 
     def test_score_range(self):
         gate = OutputQualityGate()

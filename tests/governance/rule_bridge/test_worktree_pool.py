@@ -1,5 +1,5 @@
-# [A_test] module_id: MOD-GOV_worktree_pool | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_ENFORCEMENT_worktree_pool | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P3.3
+# [A_test] module_id: MOD-GOV_WORKTREE_POOL | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV_ENFORCEMENT_WORKTREE_POOL | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P3.3
 # [MODULE] tests.governance.rule_bridge.test_worktree_pool
 # [STABILITY] evolving
 # [SAFETY] L
@@ -137,10 +137,10 @@ def clean_pool():
     wp_module = importlib.import_module(
         "zephyr.gov_enforcement.rule_bridge.worktree_pool"
     )
-    wp_module._pool_instances.clear()
+    wp_module.pool_instances.clear()
     yield
     _cleanup_pool_artifacts(REPO_ROOT)
-    wp_module._pool_instances.clear()
+    wp_module.pool_instances.clear()
 
 
 def test_stats_empty(clean_pool):

@@ -177,7 +177,7 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_with_mixed_results(self):
         walker = EndToEndWalkthrough()
-        walker._results = [
+        walker.results = [
             ScenarioResult("A", True),
             ScenarioResult("B", False, ["fail"]),
             ScenarioResult("C", True),
@@ -187,7 +187,7 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_all_failed(self):
         walker = EndToEndWalkthrough()
-        walker._results = [
+        walker.results = [
             ScenarioResult("A", False, ["fail"]),
             ScenarioResult("B", False, ["err"]),
         ]
@@ -195,12 +195,12 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_single_pass(self):
         walker = EndToEndWalkthrough()
-        walker._results = [ScenarioResult("A", True)]
+        walker.results = [ScenarioResult("A", True)]
         assert walker.pass_rate() == 1.0
 
     def test_pass_rate_single_fail(self):
         walker = EndToEndWalkthrough()
-        walker._results = [ScenarioResult("A", False, ["fail"])]
+        walker.results = [ScenarioResult("A", False, ["fail"])]
         assert walker.pass_rate() == 0.0
 
     def test_pass_rate_returns_float(self):
@@ -210,7 +210,7 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_between_zero_and_one(self):
         walker = EndToEndWalkthrough()
-        walker._results = [
+        walker.results = [
             ScenarioResult("A", True),
             ScenarioResult("B", False, ["fail"]),
         ]

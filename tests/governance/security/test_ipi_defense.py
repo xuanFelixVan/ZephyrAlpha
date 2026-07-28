@@ -46,11 +46,11 @@ class TestIPIDefenseReport:
 class TestIPIDefense:
     def test_init_default_threshold(self):
         defense = IPIDefense()
-        assert defense._block_threshold == 0.75
+        assert defense.block_threshold == 0.75
 
     def test_init_custom_threshold(self):
         defense = IPIDefense(block_threshold=0.5)
-        assert defense._block_threshold == 0.5
+        assert defense.block_threshold == 0.5
 
     def test_scan_clean_prompt(self):
         defense = IPIDefense()

@@ -158,7 +158,7 @@ class TestCircuitBreaker:
 
     def test_record_failure_increments(self, breaker):
         breaker.record_failure()
-        assert breaker._failure_count == 1
+        assert breaker.failure_count == 1
         assert breaker.state == CircuitBreakerState.CLOSED
 
     def test_opens_after_threshold(self, breaker):
@@ -180,7 +180,7 @@ class TestCircuitBreaker:
         assert breaker.state == CircuitBreakerState.HALF_OPEN
         breaker.record_success()
         assert breaker.state == CircuitBreakerState.CLOSED
-        assert breaker._failure_count == 0
+        assert breaker.failure_count == 0
 
     def test_success_in_closed_does_nothing(self, breaker):
         breaker.record_success()

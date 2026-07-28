@@ -19,7 +19,7 @@ from zephyr.governance.resilience_governance.witness_isolation import WitnessIso
 class TestWitnessIsolatorInstantiation:
     def test_default_witnesses_empty(self):
         obj = WitnessIsolator()
-        assert obj._witnesses == {}
+        assert obj.witnesses == {}
 
     def test_initial_majority_is_no_decision(self):
         obj = WitnessIsolator()
@@ -35,19 +35,19 @@ class TestRegisterWitness:
     def test_register_single_witness(self):
         obj = WitnessIsolator()
         obj.register_witness("w1", "approve")
-        assert obj._witnesses == {"w1": "approve"}
+        assert obj.witnesses == {"w1": "approve"}
 
     def test_register_multiple_witnesses(self):
         obj = WitnessIsolator()
         obj.register_witness("w1", "approve")
         obj.register_witness("w2", "reject")
-        assert len(obj._witnesses) == 2
+        assert len(obj.witnesses) == 2
 
     def test_register_overwrites_existing(self):
         obj = WitnessIsolator()
         obj.register_witness("w1", "approve")
         obj.register_witness("w1", "reject")
-        assert obj._witnesses["w1"] == "reject"
+        assert obj.witnesses["w1"] == "reject"
 
 
 class TestMajorityDecision:

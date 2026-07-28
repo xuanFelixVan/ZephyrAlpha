@@ -73,8 +73,8 @@ class TestExecutionProfile:
 class TestExecutionTuner:
     def test_instantiation(self):
         tuner = ExecutionTuner()
-        assert tuner._history == []
-        assert tuner._default_params is not None
+        assert tuner.history == []
+        assert tuner.default_params is not None
 
     def test_tune_p0_priority(self):
         tuner = ExecutionTuner()

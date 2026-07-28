@@ -28,38 +28,38 @@ from zephyr.governance.security_governance.hooks_integrity_guard import HooksInt
 class TestHooksIntegrityGuardInit:
     def test_init_creates_empty_hashes(self):
         guard = HooksIntegrityGuard()
-        assert guard._hooks_hashes == {}
+        assert guard.hooks_hashes == {}
 
 
 class TestHooksIntegrityGuardRegister:
     def test_register_stores_hash(self):
         guard = HooksIntegrityGuard()
         guard.register("hook_a", "abc123")
-        assert guard._hooks_hashes["hook_a"] == "abc123"
+        assert guard.hooks_hashes["hook_a"] == "abc123"
 
     def test_register_overwrites_existing(self):
         guard = HooksIntegrityGuard()
         guard.register("hook_a", "abc123")
         guard.register("hook_a", "def456")
-        assert guard._hooks_hashes["hook_a"] == "def456"
+        assert guard.hooks_hashes["hook_a"] == "def456"
 
     def test_register_multiple_hooks(self):
         guard = HooksIntegrityGuard()
         guard.register("hook_a", "hash_a")
         guard.register("hook_b", "hash_b")
-        assert len(guard._hooks_hashes) == 2
-        assert guard._hooks_hashes["hook_a"] == "hash_a"
-        assert guard._hooks_hashes["hook_b"] == "hash_b"
+        assert len(guard.hooks_hashes) == 2
+        assert guard.hooks_hashes["hook_a"] == "hash_a"
+        assert guard.hooks_hashes["hook_b"] == "hash_b"
 
     def test_register_empty_path(self):
         guard = HooksIntegrityGuard()
         guard.register("", "some_hash")
-        assert guard._hooks_hashes[""] == "some_hash"
+        assert guard.hooks_hashes[""] == "some_hash"
 
     def test_register_empty_hash_value(self):
         guard = HooksIntegrityGuard()
         guard.register("hook_a", "")
-        assert guard._hooks_hashes["hook_a"] == ""
+        assert guard.hooks_hashes["hook_a"] == ""
 
 
 class TestHooksIntegrityGuardVerify:

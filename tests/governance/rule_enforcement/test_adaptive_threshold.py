@@ -44,14 +44,14 @@ class TestThresholdState:
 class TestAdaptiveThresholdInit:
     def test_default_params(self) -> None:
         at = AdaptiveThreshold()
-        assert at._window == 50
-        assert at._smoothing == 0.2
-        assert at._states == {}
+        assert at.window == 50
+        assert at.smoothing == 0.2
+        assert at.states == {}
 
     def test_custom_params(self) -> None:
         at = AdaptiveThreshold(window=20, smoothing=0.5)
-        assert at._window == 20
-        assert at._smoothing == 0.5
+        assert at.window == 20
+        assert at.smoothing == 0.5
 
 
 class TestGetState:
@@ -125,7 +125,7 @@ class TestObserve:
     def test_observe_creates_state_if_missing(self) -> None:
         at = AdaptiveThreshold()
         new_t = at.observe("NEW_GATE", 0.5, "PASS")
-        assert "NEW_GATE" in at._states
+        assert "NEW_GATE" in at.states
         assert isinstance(new_t, float)
 
     def test_multiple_observations_accumulate(self) -> None:

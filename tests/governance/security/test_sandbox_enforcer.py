@@ -37,19 +37,19 @@ class TestSandboxMode:
 class TestSandboxEnforcerInit:
     def test_default_project_root(self):
         enforcer = SandboxEnforcer()
-        assert enforcer._project_root == Path.cwd()
+        assert enforcer.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         enforcer = SandboxEnforcer(project_root=tmp_path)
-        assert enforcer._project_root == tmp_path
+        assert enforcer.project_root == tmp_path
 
     def test_default_mode_strict(self):
         enforcer = SandboxEnforcer()
-        assert enforcer._mode == SandboxMode.STRICT
+        assert enforcer.mode == SandboxMode.STRICT
 
     def test_custom_mode(self):
         enforcer = SandboxEnforcer(mode=SandboxMode.LAX)
-        assert enforcer._mode == SandboxMode.LAX
+        assert enforcer.mode == SandboxMode.LAX
 
     def test_mode_property(self):
         enforcer = SandboxEnforcer(mode=SandboxMode.NONE)

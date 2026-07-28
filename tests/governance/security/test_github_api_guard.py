@@ -22,8 +22,8 @@ class TestGitHubAPIGuardInstantiation:
 
     def test_allowed_commands(self):
         guard = GitHubAPIGuard()
-        assert "run_tests" in guard._allowed_commands
-        assert "deploy_staging" in guard._allowed_commands
+        assert "run_tests" in guard.allowed_commands
+        assert "deploy_staging" in guard.allowed_commands
 
     def test_empty_audit_log(self):
         guard = GitHubAPIGuard()
@@ -55,7 +55,7 @@ class TestValidateCommand:
 
     def test_all_allowed_commands(self):
         guard = GitHubAPIGuard()
-        for cmd in guard._allowed_commands:
+        for cmd in guard.allowed_commands:
             ok, msg = guard.validate_command(cmd, "user1")
             assert ok is True
 

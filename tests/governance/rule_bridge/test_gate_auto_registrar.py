@@ -305,7 +305,7 @@ class TestRealProjectIntegration:
         if failures:
             pytest.skip(f"some gates failed to register (may need runtime context): {failures[:3]}")
         # 验证至少注册了 77 个
-        assert len(registry._specs) >= 77, f"only {len(registry._specs)} gates registered"
+        assert len(registry.specs) >= 77, f"only {len(registry.specs)} gates registered"
 
     def test_auto_register_matches_explicit_register(self) -> None:
         """auto_register 注册的 gate 集合与显式注册一致。"""
@@ -314,14 +314,14 @@ class TestRealProjectIntegration:
 
         # 显式注册（通过 GitCommitGateway 实例化）
         gw = GitCommitGateway()
-        explicit_ids = set(gw._gate_registry._specs.keys())
+        explicit_ids = set(gw.gate_registry._specs.keys())
 
         # auto_register
         auto_registry = CommitGateRegistry()
         failures = auto_register_gates(auto_registry, Path(REPO_ROOT))
         if failures:
             pytest.skip(f"some gates failed: {failures[:3]}")
-        auto_ids = set(auto_registry._specs.keys())
+        auto_ids = set(auto_registry.specs.keys())
 
         # auto_register 应是 explicit 的子集（explicit 可能含 reconciler 等非 gate）
         missing = auto_ids - explicit_ids

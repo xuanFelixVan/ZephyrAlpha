@@ -17,37 +17,37 @@ from zephyr.governance.security_governance.sbom_guard import SBOMGuard
 class TestSBOMGuardInit:
     def test_instantiation(self):
         sg = SBOMGuard()
-        assert sg._sbom == {}
+        assert sg.sbom == {}
 
 
 class TestRegisterDependency:
     def test_register_single(self):
         sg = SBOMGuard()
         sg.register_dependency("numpy", "1.24.0")
-        assert "numpy" in sg._sbom
-        assert sg._sbom["numpy"]["version"] == "1.24.0"
+        assert "numpy" in sg.sbom
+        assert sg.sbom["numpy"]["version"] == "1.24.0"
 
     def test_register_with_hash(self):
         sg = SBOMGuard()
         sg.register_dependency("numpy", "1.24.0", hash_checksum="abc123")
-        assert sg._sbom["numpy"]["hash"] == "abc123"
+        assert sg.sbom["numpy"]["hash"] == "abc123"
 
     def test_register_default_empty_hash(self):
         sg = SBOMGuard()
         sg.register_dependency("numpy", "1.24.0")
-        assert sg._sbom["numpy"]["hash"] == ""
+        assert sg.sbom["numpy"]["hash"] == ""
 
     def test_register_multiple(self):
         sg = SBOMGuard()
         sg.register_dependency("numpy", "1.24.0")
         sg.register_dependency("pandas", "2.0.1")
-        assert len(sg._sbom) == 2
+        assert len(sg.sbom) == 2
 
     def test_register_overwrites(self):
         sg = SBOMGuard()
         sg.register_dependency("numpy", "1.24.0")
         sg.register_dependency("numpy", "1.25.0")
-        assert sg._sbom["numpy"]["version"] == "1.25.0"
+        assert sg.sbom["numpy"]["version"] == "1.25.0"
 
 
 class TestVerifySBOM:
@@ -118,7 +118,7 @@ class TestBoundary:
     def test_empty_name(self):
         sg = SBOMGuard()
         sg.register_dependency("", "1.0.0")
-        assert "" in sg._sbom
+        assert "" in sg.sbom
 
     def test_empty_version(self):
         sg = SBOMGuard()
