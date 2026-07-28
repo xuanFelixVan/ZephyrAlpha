@@ -67,19 +67,19 @@ class TestDependencyExtractor:
 
     def test_classify_stdlib(self) -> None:
         ex = DependencyExtractor()
-        assert ex._classify_import("os.path") == "stdlib"
+        assert ex.classify_import("os.path") == "stdlib"
 
     def test_classify_absolute(self) -> None:
         ex = DependencyExtractor()
-        assert ex._classify_import("zephyr.gov_audit.models") == "absolute"
+        assert ex.classify_import("zephyr.gov_audit.models") == "absolute"
 
     def test_classify_relative(self) -> None:
         ex = DependencyExtractor()
-        assert ex._classify_import(".utils") == "relative"
+        assert ex.classify_import(".utils") == "relative"
 
     def test_classify_third_party(self) -> None:
         ex = DependencyExtractor()
-        assert ex._classify_import("pandas") == "third_party"
+        assert ex.classify_import("pandas") == "third_party"
 
     def test_import_from_with_alias(self) -> None:
         ex = DependencyExtractor()

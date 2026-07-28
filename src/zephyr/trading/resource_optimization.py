@@ -533,6 +533,8 @@ class _ExternalNotifier:
 
 
 class ResourceOptimizationEngine:
+    instance: ResourceOptimizationEngine | None = _instance  # public alias（Stage 4 公共化）
+
     """MAPE-K 自治资源优化引擎（单例 facade）。
 
     5.150.1 God Class 治本：3 个高内聚零耦合职责簇已提取为同文件协作者类——
@@ -602,6 +604,17 @@ class ResourceOptimizationEngine:
             self._initialized = True
             self._load_config()
             logger.info("ResourceOptimizationEngine: initialized (singleton)")
+
+    def classify_pressure(self, snap) -> PressureLevel:
+        """公共接口：classify_pressure（Stage 4 公共化）。"""
+        return self._classify_pressure(snap)
+
+
+    @property
+    def circuit_breakers(self) -> dict[str, CircuitBreaker]:
+        """只读：circuit_breakers（Stage 4 公共化）。"""
+        return self._circuit_breakers
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property

@@ -53,6 +53,8 @@ from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 
 class SignalSynthesizerBase(abc.ABC):
+    registry: ClassVar[dict[str, type[SignalSynthesizerBase]]] = _registry  # public alias（Stage 4 公共化）
+
     """信号合成器抽象基类（OCP 扩展点）
 
     实现者要求：

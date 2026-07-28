@@ -19,15 +19,15 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 class TestConcurrentScanner:
     def test_constructor(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
-        assert cs._lock_dir
+        assert cs.lock_dir
 
     def test_not_locked_normal_file(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
-        assert not cs._is_locked(REPO_ROOT / "README.md")
+        assert not cs.is_locked(REPO_ROOT / "README.md")
 
     def test_scan_normal_existing_file(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
-        entry = cs._scan_normal(REPO_ROOT / "README.md")
+        entry = cs.scan_normal(REPO_ROOT / "README.md")
         assert entry is not None
         assert entry.sha256
         assert len(entry.sha256) == 64
@@ -35,24 +35,24 @@ class TestConcurrentScanner:
 
     def test_shas_match_for_same_file(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
-        e1 = cs._scan_normal(REPO_ROOT / "README.md")
-        e2 = cs._scan_normal(REPO_ROOT / "README.md")
+        e1 = cs.scan_normal(REPO_ROOT / "README.md")
+        e2 = cs.scan_normal(REPO_ROOT / "README.md")
         assert e1 and e2
         assert e1.sha256 == e2.sha256
 
     def test_verify_sha_matches(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
         path = REPO_ROOT / "README.md"
-        sha = cs._scan_normal(path).sha256  # type: ignore[union-attr]
-        assert cs._verify_sha(path, sha)
+        sha = cs.scan_normal(path).sha256  # type: ignore[union-attr]
+        assert cs.verify_sha(path, sha)
 
     def test_verify_sha_mismatch(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
-        assert not cs._verify_sha(REPO_ROOT / "README.md", "not_a_real_sha")
+        assert not cs.verify_sha(REPO_ROOT / "README.md", "not_a_real_sha")
 
     def test_scan_nonexistent_file(self) -> None:
         cs = ConcurrentScanner(REPO_ROOT)
-        entry = cs._scan_normal(REPO_ROOT / "_nonexistent_xyz.txt")
+        entry = cs.scan_normal(REPO_ROOT / "_nonexistent_xyz.txt")
         assert entry is None
 
     def test_scan_batch_multiple_files(self) -> None:

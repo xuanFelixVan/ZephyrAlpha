@@ -73,8 +73,8 @@ class TestAgentHealthMonitorInstantiation:
     def test_custom_slo_config(self):
         slo = SLOConfig(latency_p99_ms_hard=10000.0, error_rate_hard=0.1)
         mon = AgentHealthMonitor(slo_config=slo)
-        assert mon._slo.latency_p99_ms_hard == 10000.0
-        assert mon._slo.error_rate_hard == 0.1
+        assert mon.slo.latency_p99_ms_hard == 10000.0
+        assert mon.slo.error_rate_hard == 0.1
 
 
 class TestAgentHealthMonitorRecord:
@@ -200,14 +200,14 @@ class TestAgentHealthMonitorReset:
 
 class TestAgentHealthMonitorPercentile:
     def test_percentile_empty(self):
-        assert AgentHealthMonitor._percentile([], 99) == 0.0
+        assert AgentHealthMonitor.percentile([], 99) == 0.0
 
     def test_percentile_single_value(self):
-        assert AgentHealthMonitor._percentile([42.0], 99) == 42.0
+        assert AgentHealthMonitor.percentile([42.0], 99) == 42.0
 
     def test_percentile_multiple_values(self):
         values = [float(i) for i in range(1, 101)]
-        result = AgentHealthMonitor._percentile(values, 99)
+        result = AgentHealthMonitor.percentile(values, 99)
         assert result >= 90.0
 
 

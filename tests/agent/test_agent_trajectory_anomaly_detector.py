@@ -117,7 +117,7 @@ class TestDetectDrift:
         phases = ["collect", "detect", "diagnose", "act", "verify"]
         for i, phase in enumerate(phases):
             det.record_step(TrajectoryEvent(phase, f"comp_{i}", float(i), "h1", "h2"))
-        result = det._detect_drift()
+        result = det.detect_drift()
         assert result == []
 
     def test_drift_backward(self):
@@ -125,7 +125,7 @@ class TestDetectDrift:
         backward_phases = ["act", "detect", "collect", "verify", "act", "collect", "detect", "act", "verify", "collect"]
         for i, phase in enumerate(backward_phases):
             det.record_step(TrajectoryEvent(phase, f"comp_{i}", float(i), "h1", "h2"))
-        result = det._detect_drift()
+        result = det.detect_drift()
         if result:
             assert result[0]["type"] == TrajectoryAnomalyType.DRIFT.value
 
@@ -135,7 +135,7 @@ class TestDetectCycles:
         det = AgentTrajectoryAnomalyDetector()
         for i in range(10):
             det.record_step(TrajectoryEvent("collect", f"comp_{i}", float(i), "h1", "h2"))
-        result = det._detect_cycles()
+        result = det.detect_cycles()
         assert result == []
 
     def test_cycle_with_repeated_component(self):
@@ -143,7 +143,7 @@ class TestDetectCycles:
         for i in range(6):
             det.record_step(TrajectoryEvent("detect", f"comp_{i}", float(i), "h1", "h2"))
         det.record_step(TrajectoryEvent("detect", "comp_2", 6.0, "h1", "h2"))
-        result = det._detect_cycles()
+        result = det.detect_cycles()
         if result:
             assert result[0]["type"] == TrajectoryAnomalyType.CYCLE.value
 
@@ -154,13 +154,13 @@ class TestDetectMissingSteps:
         phases = ["collect", "detect", "diagnose", "act", "verify"]
         for i, phase in enumerate(phases):
             det.record_step(TrajectoryEvent(phase, f"comp_{i}", float(i), "h1", "h2"))
-        result = det._detect_missing_steps()
+        result = det.detect_missing_steps()
         assert result == []
 
     def test_missing_phases(self):
         det = AgentTrajectoryAnomalyDetector()
         for i in range(5):
             det.record_step(TrajectoryEvent("collect", f"comp_{i}", float(i), "h1", "h2"))
-        result = det._detect_missing_steps()
+        result = det.detect_missing_steps()
         assert len(result) > 0
         assert "missing_phases" in result[0]

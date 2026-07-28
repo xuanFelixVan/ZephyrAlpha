@@ -143,14 +143,14 @@ class TestGetDecayingActions:
 
 class TestComputeEwma:
     def test_empty_input(self):
-        assert ActionEfficacyDecayDetector._compute_ewma([]) == []
+        assert ActionEfficacyDecayDetector.compute_ewma([]) == []
 
     def test_single_value(self):
-        result = ActionEfficacyDecayDetector._compute_ewma([5.0])
+        result = ActionEfficacyDecayDetector.compute_ewma([5.0])
         assert result == [5.0]
 
     def test_multi_value(self):
-        result = ActionEfficacyDecayDetector._compute_ewma([1.0, 2.0, 3.0], alpha=0.5)
+        result = ActionEfficacyDecayDetector.compute_ewma([1.0, 2.0, 3.0], alpha=0.5)
         assert len(result) == 3
         assert result[0] == 1.0
         assert result[1] == pytest.approx(0.5 * 2.0 + 0.5 * 1.0)
@@ -159,15 +159,15 @@ class TestComputeEwma:
 
 class TestComputeSlope:
     def test_single_value(self):
-        assert ActionEfficacyDecayDetector._compute_slope([1.0]) == 0.0
+        assert ActionEfficacyDecayDetector.compute_slope([1.0]) == 0.0
 
     def test_constant_values(self):
-        assert ActionEfficacyDecayDetector._compute_slope([5.0, 5.0, 5.0]) == 0.0
+        assert ActionEfficacyDecayDetector.compute_slope([5.0, 5.0, 5.0]) == 0.0
 
     def test_increasing_trend(self):
-        slope = ActionEfficacyDecayDetector._compute_slope([1.0, 2.0, 3.0, 4.0, 5.0])
+        slope = ActionEfficacyDecayDetector.compute_slope([1.0, 2.0, 3.0, 4.0, 5.0])
         assert slope > 0.0
 
     def test_decreasing_trend(self):
-        slope = ActionEfficacyDecayDetector._compute_slope([5.0, 4.0, 3.0, 2.0, 1.0])
+        slope = ActionEfficacyDecayDetector.compute_slope([5.0, 4.0, 3.0, 2.0, 1.0])
         assert slope < 0.0

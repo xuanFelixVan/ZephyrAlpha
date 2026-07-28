@@ -58,22 +58,22 @@ class TestGitAssetMetadata:
 class TestGitMetadataExtractor:
     def test_constructor(self) -> None:
         ex = GitMetadataExtractor(REPO_ROOT)
-        assert ex._root
+        assert ex.root
 
     def test_current_lines_real_file(self) -> None:
         ex = GitMetadataExtractor(REPO_ROOT)
-        lines = ex._current_lines("README.md")
+        lines = ex.current_lines("README.md")
         assert lines > 0
 
     def test_current_lines_nonexistent(self) -> None:
         ex = GitMetadataExtractor(REPO_ROOT)
-        assert ex._current_lines("_nonexistent_xyz.txt") == 0
+        assert ex.current_lines("_nonexistent_xyz.txt") == 0
 
     def test_parse_date(self) -> None:
-        dt = GitMetadataExtractor._parse_date("2024-06-15 12:30:45 +0000")
+        dt = GitMetadataExtractor.parse_date("2024-06-15 12:30:45 +0000")
         assert dt.year == 2024
         assert dt.month == 6
 
     def test_is_ai_commit(self) -> None:
-        assert GitMetadataExtractor._is_ai_commit("[AI] auto generated")
-        assert not GitMetadataExtractor._is_ai_commit("normal commit")
+        assert GitMetadataExtractor.is_ai_commit("[AI] auto generated")
+        assert not GitMetadataExtractor.is_ai_commit("normal commit")

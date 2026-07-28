@@ -114,6 +114,11 @@ class CircuitBreaker:
         self._opened_at: float = 0.0
         self._half_open_calls: int = 0
 
+    def transition(self) -> CircuitState:
+        """公共接口：transition（Stage 4 公共化）。"""
+        return self._transition()
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def failure_threshold(self) -> int:

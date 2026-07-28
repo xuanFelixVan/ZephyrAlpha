@@ -54,6 +54,29 @@ class SessionBoundaryManager:
         self._boundaries: list[SessionBoundary] = []
         self._budget = SessionBudget()
 
+    def save_boundary(self, boundary) -> None:
+        """公共接口：save_boundary（Stage 4 公共化）。"""
+        return self._save_boundary(boundary)
+
+
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+
+    @property
+    def budget(self):
+        """只读：budget（Stage 4 公共化）。"""
+        return self._budget
+
+
+    @property
+    def boundaries(self) -> list[SessionBoundary]:
+        """只读：boundaries（Stage 4 公共化）。"""
+        return self._boundaries
+
+
     def open_session(self, session_id: str) -> SessionBoundary:
         boundary = SessionBoundary(
             session_id=session_id,

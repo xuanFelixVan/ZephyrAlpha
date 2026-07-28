@@ -58,6 +58,16 @@ class ZeroConfig:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    def check_python(self) -> ConfigCheck:
+        """公共接口：check_python（Stage 4 公共化）。"""
+        return self._check_python()
+
+
+    def check_git_config(self) -> ConfigCheck:
+        """公共接口：check_git_config（Stage 4 公共化）。"""
+        return self._check_git_config()
+
+
     def scan(self) -> ZeroConfigResult:
         checks: list[ConfigCheck] = []
         missing: list[str] = []

@@ -134,6 +134,22 @@ class SessionContinuity:
                 self._db_path = self._project_root / "data" / "databases" / "session_continuity.db"
         self._init_schema()
 
+    def detect_agent_context(self) -> dict:
+        """公共接口：detect_agent_context（Stage 4 公共化）。"""
+        return self._detect_agent_context()
+
+
+    @property
+    def db_path(self):
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+
+    def auto_generate_questions(self, blocked_items, completed_count) -> list[str]:
+        """公共接口：auto_generate_questions（Stage 4 公共化）。"""
+        return self._auto_generate_questions(blocked_items, completed_count)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def project_root(self):

@@ -222,7 +222,7 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
         from zephyr.signal_fundamental.pipeline import AlphaSignalPipeline
 
         pipeline = AlphaSignalPipeline()
-        clean_snapshot = pipeline._snapshot_builtins()
+        clean_snapshot = pipeline.snapshot_builtins()
 
         from zephyr.factor.factor_base import FactorBase, FactorMeta
 

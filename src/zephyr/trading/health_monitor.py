@@ -113,6 +113,29 @@ class HealthMonitor:
         self._metrics_interval = metrics_interval
         self._last_health_check: float = 0.0
 
+    @property
+    def running(self):
+        """只读：running（Stage 4 公共化）。"""
+        return self._running
+
+
+    @property
+    def probe_fns(self) -> dict[str, Callable[[], ProbeResult]]:
+        """只读：probe_fns（Stage 4 公共化）。"""
+        return self._probe_fns
+
+
+    @property
+    def monitor_thread(self) -> threading.Thread | None:
+        """只读：monitor_thread（Stage 4 公共化）。"""
+        return self._monitor_thread
+
+
+    def collect_metrics(self) -> None:
+        """公共接口：collect_metrics（Stage 4 公共化）。"""
+        return self._collect_metrics()
+
+
     def register_probe(
         self, capability_id: str, probe_fn: Callable[[], ProbeResult], restart_fn: Callable[[], bool] | None = None
     ) -> None:

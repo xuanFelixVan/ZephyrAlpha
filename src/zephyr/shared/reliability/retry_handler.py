@@ -76,6 +76,18 @@ class RetryHandler:
     def __init__(self, config: RetryConfig | None = None) -> None:
         self._config = config or RetryConfig()
 
+    @property
+    def config(self):
+        """只读：config（Stage 4 公共化）。"""
+        return self._config
+
+
+    @staticmethod
+    def is_unrecoverable(exc) -> bool:
+        """公共接口：is_unrecoverable（Stage 4 公共化，委托到 _is_unrecoverable）。"""
+        return _is_unrecoverable(exc)
+
+
     def execute(self, func: Callable, *args: Any, **kwargs: Any) -> RetryResult:
         attempts: list[RetryAttempt] = []
         t0 = time.time()

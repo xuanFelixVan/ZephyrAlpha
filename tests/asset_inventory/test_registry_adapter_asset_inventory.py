@@ -123,17 +123,17 @@ class TestMarkdownTableAdapter:
 class TestRegistryManager:
     def test_constructor(self) -> None:
         mgr = RegistryManager(REPO_ROOT)
-        assert mgr._known
+        assert mgr.known
 
     def test_find_adapter_known(self) -> None:
         mgr = RegistryManager(REPO_ROOT)
-        ad = mgr._find_adapter(str(REPO_ROOT / "docs/03_modules/module-registry.yaml"))
+        ad = mgr.find_adapter(str(REPO_ROOT / "docs/03_modules/module-registry.yaml"))
         assert ad is not None
         assert ad.registry_id == "REG-MOD-001"
 
     def test_find_adapter_csv_fallback(self) -> None:
         mgr = RegistryManager(REPO_ROOT)
-        ad = mgr._find_adapter(str(REPO_ROOT / "data/export.csv"))
+        ad = mgr.find_adapter(str(REPO_ROOT / "data/export.csv"))
         assert ad is not None
         assert isinstance(ad, CsvAdapter)
 

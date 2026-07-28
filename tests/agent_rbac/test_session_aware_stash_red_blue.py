@@ -89,7 +89,7 @@ def _commit_file(repo_dir: Path, rel: str, content: str) -> Path:
 
 def _attach_stash_spy(gw: GitCommitGateway) -> list[str]:
     """包装 _run_git，记录所有 `git stash push` 的 pathspec（'--' 之后的参数）。"""
-    original = gw._run_git
+    original = gw.run_git
     recorded: list[str] = []
 
     def spy(cmd: list[str]) -> object:
@@ -98,7 +98,7 @@ def _attach_stash_spy(gw: GitCommitGateway) -> list[str]:
             recorded.extend(cmd[idx + 1:])
         return original(cmd)
 
-    gw._run_git = spy  # type: ignore[assignment]
+    gw.run_git = spy  # type: ignore[assignment]
     return recorded
 
 
@@ -324,9 +324,9 @@ class TestOrphanClaim:
         assert reg.claim_file("sess-A", target) is True
 
         # 手动把 sess-A 的心跳改到 TTL 之前
-        data = reg._load()
+        data = reg.load()
         data["sess-A"]["last_heartbeat"] = time.time() - _SESSION_TTL_SECONDS - 1
-        reg._save(data)
+        reg.save(data)
 
         # session-B 应能 claim（sess-A 已过期）
         assert reg.claim_file("sess-B", target) is True, "过期 session 的 claim 应可被重新 claim"
@@ -487,7 +487,7 @@ class TestConcurrentCommitNoCrossTheft:
         def commit_and_spy(sess: str, target: Path) -> tuple[str, CommitStatus, list[str]]:
             # 每个 session 独立的 spy（共享 gw，但线程局部记录）
             local_recorded: list[str] = []
-            original = gw._run_git
+            original = gw.run_git
 
             def spy(cmd: list[str]) -> object:
                 if "stash" in cmd and "push" in cmd and "--" in cmd:
@@ -497,12 +497,12 @@ class TestConcurrentCommitNoCrossTheft:
                         stash_recorded.extend(cmd[idx + 1:])
                 return original(cmd)
 
-            gw._run_git = spy  # type: ignore[assignment]
+            gw.run_git = spy  # type: ignore[assignment]
             try:
                 r = gw.commit(sess, [str(target)], f"feat: {sess}")
                 return (sess, r.status, local_recorded)
             finally:
-                gw._run_git = original  # type: ignore[assignment]
+                gw.run_git = original  # type: ignore[assignment]
 
         with ThreadPoolExecutor(max_workers=2) as pool:
             futures = [

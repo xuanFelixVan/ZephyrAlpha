@@ -59,14 +59,14 @@ class TestSchemaEvolutionManager:
     def test_migrate_1_0_to_1_1(self) -> None:
         mgr = SchemaEvolutionManager(REPO_ROOT)
         data = {"schema_version": "1.0.0", "total_assets": 10, "assets": [{"tags": None}]}
-        result = mgr._migrate_1_0_to_1_1(data)
+        result = mgr.migrate_1_0_to_1_1(data)
         assert result["schema_version"] == "1.1.0"
         assert result["assets"][0]["tags"] == []
 
     def test_migrate_1_1_to_2_0(self) -> None:
         mgr = SchemaEvolutionManager(REPO_ROOT)
         data = {"schema_version": "1.1.0"}
-        result = mgr._migrate_1_1_to_2_0(data)
+        result = mgr.migrate_1_1_to_2_0(data)
         assert result["schema_version"] == "2.0.0"
         assert result["orphan_rate_pct"] == 0.0
 

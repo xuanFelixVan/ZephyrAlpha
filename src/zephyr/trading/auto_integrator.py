@@ -63,6 +63,34 @@ class AutoIntegrator:
         self._daily_l3_count = 0
         self._last_reset_date = now_utc().strftime("%Y-%m-%d")
 
+    @property
+    def max_daily_l3(self):
+        """只读：max_daily_l3（Stage 4 公共化）。"""
+        return self._max_daily_l3
+
+
+    @property
+    def last_reset_date(self):
+        """只读：last_reset_date（Stage 4 公共化）。"""
+        return self._last_reset_date
+
+
+    def infer_category(self, package) -> CapabilityCategory:
+        """公共接口：infer_category（Stage 4 公共化）。"""
+        return self._infer_category(package)
+
+
+    @property
+    def daily_l3_count(self):
+        """只读：daily_l3_count（Stage 4 公共化）。"""
+        return self._daily_l3_count
+
+
+    def check_daily_reset(self) -> None:
+        """公共接口：check_daily_reset（Stage 4 公共化）。"""
+        return self._check_daily_reset()
+
+
     def analyze_module(self, module: UnregisteredModule) -> IntegrationAnalysis:
         self._check_daily_reset()
         analysis = IntegrationAnalysis(module_path=module.discovery.module_path)
