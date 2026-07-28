@@ -32,6 +32,18 @@ class ForensicPackage:
         self._events: list[dict] = []
         self._chain: list[str] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def chain(self) -> list[str]:
+        """只读：chain（Stage 4 公共化）。"""
+        return self._chain
+
+    @property
+    def events(self) -> list[dict]:
+        """只读：events（Stage 4 公共化）。"""
+        return self._events
+
+
     def bundle(self, event: dict) -> str:
         serialized = dumps(event, sort_keys=True)
         h = hashlib.sha256(serialized.encode()).hexdigest()

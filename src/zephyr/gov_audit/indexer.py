@@ -144,6 +144,18 @@ class AuditIndexer(AuditIndexerABC):
         self._index_path: Path = self._index_dir / INDEX_FILE
         self._index: dict[str, Any] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def db_path(self) -> Path:
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+    @property
+    def events_path(self) -> Path:
+        """只读：events_path（Stage 4 公共化）。"""
+        return self._events_path
+
+
     # ------------------------------------------------------------------
     # 新 API（裁定#18 G5）：rebuild + query_stats
     # ------------------------------------------------------------------

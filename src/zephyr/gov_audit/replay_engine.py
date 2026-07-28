@@ -75,6 +75,13 @@ class ReplayEngine:
         self._event_log_path = Path(event_log_path) if event_log_path is not None else None
         self._snapshot_interval = snapshot_interval
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def snapshot_interval(self):
+        """只读：snapshot_interval（Stage 4 公共化）。"""
+        return self._snapshot_interval
+
+
     def _load_events(self) -> list[dict[str, Any]]:
         if self._event_log_path is None or not self._event_log_path.exists():
             return []

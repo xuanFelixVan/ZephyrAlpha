@@ -51,6 +51,28 @@ class AuditTieredStorageBridge:
         self._warm_dir = self._data_dir / "warm"
         self._cold_dir = self._data_dir / "cold"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def cold_dir(self):
+        """只读：cold_dir（Stage 4 公共化）。"""
+        return self._cold_dir
+
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def hot_dir(self):
+        """只读：hot_dir（Stage 4 公共化）。"""
+        return self._hot_dir
+
+    @property
+    def warm_dir(self):
+        """只读：warm_dir（Stage 4 公共化）。"""
+        return self._warm_dir
+
+
     def classify_events(self, events: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """按时间将事件分为三层.
 

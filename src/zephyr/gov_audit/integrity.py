@@ -122,6 +122,18 @@ class IntegrityVerifier:
             )
         self._hmac_key = hmac_key.encode("utf-8") if hmac_key else b""
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def event_log_path(self):
+        """只读：event_log_path（Stage 4 公共化）。"""
+        return self._event_log_path
+
+    @property
+    def hmac_key(self):
+        """只读：hmac_key（Stage 4 公共化）。"""
+        return self._hmac_key
+
+
     def verify_chain(self) -> dict[str, Any]:
         if not self._event_log_path.exists():
             return {"status": "no_data", "events_checked": 0, "issues": []}

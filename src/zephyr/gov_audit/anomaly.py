@@ -364,6 +364,13 @@ class AnomalyDetector:
 
         self._values: list[float] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def event_log_path(self) -> Path:
+        """只读：event_log_path（Stage 4 公共化）。"""
+        return self._event_log_path
+
+
 
 
     # ------------------------------------------------------------------

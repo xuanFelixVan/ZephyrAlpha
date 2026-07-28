@@ -264,6 +264,18 @@ class PolicyFeedbackBridge:
         self._patterns: dict[str, AnomalyPattern] = {}
         self._recommendations: list[PolicyRecommendation] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def patterns(self) -> dict[str, AnomalyPattern]:
+        """只读：patterns（Stage 4 公共化）。"""
+        return self._patterns
+
+    @property
+    def recommendations(self) -> list[PolicyRecommendation]:
+        """只读：recommendations（Stage 4 公共化）。"""
+        return self._recommendations
+
+
     def aggregate_patterns(self, results: list[dict[str, Any]]) -> list[AnomalyPattern]:
         """Aggregate anomaly results into patterns.
 

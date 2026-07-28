@@ -31,6 +31,13 @@ class MerkleTree:
         self._leaves: list[str] = []
         self._aggregator = _MerkleAggregator
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def leaves(self) -> list[str]:
+        """只读：leaves（Stage 4 公共化）。"""
+        return self._leaves
+
+
     def add_event(self, event: dict) -> None:
         import hashlib
         import json
@@ -46,6 +53,13 @@ class MerkleTree:
 class MerkleAudit:
     def __init__(self):
         self._tree = MerkleTree()
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def tree(self):
+        """只读：tree（Stage 4 公共化）。"""
+        return self._tree
+
 
     def record(self, escalation_event: dict) -> str:
         self._tree.add_event(escalation_event)

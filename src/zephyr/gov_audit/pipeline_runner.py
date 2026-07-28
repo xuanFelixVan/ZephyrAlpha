@@ -279,6 +279,13 @@ class PipelineRunner:
         self._script_output_mode: dict[str, str] = {}
         self._dimension_scripts: dict[str, list[str]] = self._discover_scripts()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def dimension_scripts(self) -> dict[str, list[str]]:
+        """只读：dimension_scripts（Stage 4 公共化）。"""
+        return self._dimension_scripts
+
+
     def run(self, dimensions: list[str] | None = None, dry_run: bool = False) -> PipelineResult:
         start = time.monotonic()
         all_findings: list[AuditFinding] = []

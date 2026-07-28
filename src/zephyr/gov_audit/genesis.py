@@ -119,6 +119,13 @@ class GenesisManager:
         self._system_id = system_id
         self._creator = creator
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def system_id(self):
+        """只读：system_id（Stage 4 公共化）。"""
+        return self._system_id
+
+
     @property
     def data_dir(self) -> Path:
         return self._data_dir

@@ -79,6 +79,18 @@ class EvidencePackExporter:
         self._output_dir = Path(output_dir) if output_dir else self._data_dir / "evidence_packs"
         self._output_dir.mkdir(parents=True, exist_ok=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def output_dir(self):
+        """只读：output_dir（Stage 4 公共化）。"""
+        return self._output_dir
+
+
     def export_json(
         self,
         events: list[dict[str, Any]],

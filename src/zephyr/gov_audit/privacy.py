@@ -92,6 +92,18 @@ class PrivacyGuard:
                     self._patterns[category] = []
                 self._patterns[category].extend(re.compile(p) for p in pattern_strs)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def default_policy(self):
+        """只读：default_policy（Stage 4 公共化）。"""
+        return self._default_policy
+
+    @property
+    def patterns(self) -> dict[PIICategory, list[re.Pattern[str]]]:
+        """只读：patterns（Stage 4 公共化）。"""
+        return self._patterns
+
+
     def detect_pii(self, text: str) -> PIIScanResult:
         detections: list[PIIDetection] = []
         for category, patterns in self._patterns.items():

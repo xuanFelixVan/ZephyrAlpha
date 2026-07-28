@@ -105,6 +105,18 @@ class RetentionEnforcer:
         self._policy = policy or RetentionPolicy()
         self._approved_deletions: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def approved_deletions(self) -> set[str]:
+        """只读：approved_deletions（Stage 4 公共化）。"""
+        return self._approved_deletions
+
+    @property
+    def policy(self):
+        """只读：policy（Stage 4 公共化）。"""
+        return self._policy
+
+
     def _iter_files(self) -> list[tuple[Path, str, int]]:
         result: list[tuple[Path, str, int]] = []
         for tier, retention_days in self._policy._tier_dirs():

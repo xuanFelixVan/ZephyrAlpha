@@ -29,6 +29,13 @@ class IntegrityVerifier:
     def __init__(self):
         self._hashes: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def hashes(self) -> dict[str, str]:
+        """只读：hashes（Stage 4 公共化）。"""
+        return self._hashes
+
+
     def register_hash(self, filepath: str, content: str):
         self._hashes[filepath] = hashlib.sha256(content.encode()).hexdigest()
 
