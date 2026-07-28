@@ -107,4 +107,4 @@ class TestContextRotModelSingleton:
     def test_reset_instance(self):
         ContextRotModel.instance()
         ContextRotModel.reset_instance()
-        assert ContextRotModel._instance is None
+        assert ContextRotModel.instance is None

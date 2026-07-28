@@ -91,16 +91,16 @@ class TestRollbackExecutorIntegration:
 
         writer = AuditWriter(data_dir=data_dir)
         executor = RollbackExecutor(project_root=tmp_path)
-        executor._audit_writer = writer
+        executor.audit_writer = writer
 
-        record = executor._build_discard_audit(
+        record = executor.build_discard_audit(
             decision=DiscardDecision.NO_CHANGES,
             files=["test.py"],
             blocked=[],
             reason="test",
             audit_session="test_session",
         )
-        executor._write_audit_log(record)
+        executor.write_audit_log(record)
 
         events_file = data_dir / "events.jsonl"
         assert events_file.exists(), "events.jsonl must exist after rollback audit write"
@@ -123,7 +123,7 @@ class TestRollbackAuditNexusIntegration:
 
         writer = AuditWriter(data_dir=data_dir)
         nexus = RollbackAuditNexus(project_root=tmp_path)
-        nexus._core_writer = writer
+        nexus.core_writer = writer
 
         event = AuditEvent(
             event_id="test-001",
@@ -159,7 +159,7 @@ class TestDriftHotfixBypassIntegration:
 
         writer = AuditWriter(data_dir=data_dir)
         bypass = HotfixBypass(project_root=str(tmp_path))
-        bypass._core_writer = writer
+        bypass.core_writer = writer
 
         entry = bypass.process_hotfix(
             commit_hash="abc123",
@@ -190,7 +190,7 @@ class TestMCPAuditLoggerIntegration:
 
         writer = AuditWriter(data_dir=data_dir)
         logger = AuditLogger(log_dir=tmp_path / "logs" / "mcp_audit")
-        logger._core_writer = writer
+        logger.core_writer = writer
 
         logger.log_call(
             client_session_id="test_session",
@@ -223,7 +223,7 @@ class TestGatesAuditChainVerifierIntegration:
 
         writer = AuditWriter(data_dir=data_dir)
         verifier = AuditChainVerifier()
-        verifier._core_writer = writer
+        verifier.core_writer = writer
 
         result = GateResult(
             gate_id="G0",

@@ -28,8 +28,8 @@ def bridge():
 class TestAuditFeedbackBridge:
     def test_instantiation(self):
         b = AuditFeedbackBridge()
-        assert len(b._anomaly_to_signal) == 13
-        assert "ANM-001" in b._anomaly_to_signal
+        assert len(b.anomaly_to_signal) == 13
+        assert "ANM-001" in b.anomaly_to_signal
 
     def test_anomaly_to_fle_signal_known(self, bridge):
         anomaly = {
@@ -122,13 +122,13 @@ class TestAuditFeedbackBridge:
             assert result == []
 
     def test_classify_layer_critical(self):
-        assert AuditFeedbackBridge._classify_layer("CRITICAL") == "L3_ARCHITECTURE"
+        assert AuditFeedbackBridge.classify_layer("CRITICAL") == "L3_ARCHITECTURE"
 
     def test_classify_layer_high(self):
-        assert AuditFeedbackBridge._classify_layer("HIGH") == "L3_ARCHITECTURE"
+        assert AuditFeedbackBridge.classify_layer("HIGH") == "L3_ARCHITECTURE"
 
     def test_classify_layer_medium(self):
-        assert AuditFeedbackBridge._classify_layer("MEDIUM") == "L2_PATTERN"
+        assert AuditFeedbackBridge.classify_layer("MEDIUM") == "L2_PATTERN"
 
     def test_classify_layer_low(self):
-        assert AuditFeedbackBridge._classify_layer("LOW") == "L1_TASK"
+        assert AuditFeedbackBridge.classify_layer("LOW") == "L1_TASK"

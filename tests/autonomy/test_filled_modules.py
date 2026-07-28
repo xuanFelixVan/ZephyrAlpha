@@ -73,21 +73,21 @@ class TestSkillConstructor:
         from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
-        result = c._infer_skill_name({"frontmatter": {}, "body": "database migration sql"})
+        result = c.infer_skill_name({"frontmatter": {}, "body": "database migration sql"})
         assert result == "database-specialist"
 
     def test_keyword_mcp(self):
         from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
-        result = c._infer_skill_name({"frontmatter": {}, "body": "MCP server tool"})
+        result = c.infer_skill_name({"frontmatter": {}, "body": "MCP server tool"})
         assert result == "mcp-specialist"
 
     def test_keyword_security(self):
         from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 
         c = SkillConstructor()
-        result = c._infer_skill_name({"frontmatter": {}, "body": "prompt injection security"})
+        result = c.infer_skill_name({"frontmatter": {}, "body": "prompt injection security"})
         assert result == "lsg-security"
 
     def test_construct_blueprint_missing_file(self):

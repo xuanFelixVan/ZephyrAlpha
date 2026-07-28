@@ -270,7 +270,7 @@ class TestDetermineSplitStrategy:
             warnings.simplefilter("ignore")
             task = _make_task(deliverables=["A", "B"])
         violations = repo._validate_granularity(task)
-        strategy = TaskRepository._determine_split_strategy(task, violations)
+        strategy = TaskRepository.determine_split_strategy(task, violations)
         assert strategy == "by_deliverable"
 
     def test_strategy_by_file(self):
@@ -282,5 +282,5 @@ class TestDetermineSplitStrategy:
                 files_in_scope=["f1", "f2", "f3", "f4"],
             )
         violations = repo._validate_granularity(task)
-        strategy = TaskRepository._determine_split_strategy(task, violations)
+        strategy = TaskRepository.determine_split_strategy(task, violations)
         assert strategy == "by_file"

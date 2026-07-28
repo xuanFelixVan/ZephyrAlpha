@@ -200,7 +200,7 @@ class TestBlueprintDecomposerInit:
         decomposer = BlueprintDecomposer()
         assert decomposer.task_repo is None
         assert decomposer.docs_dir is None
-        assert decomposer._global_seq == {}
+        assert decomposer.global_seq == {}
 
     def test_init_with_task_repo(self):
         mock_repo = MagicMock()
@@ -520,13 +520,13 @@ class TestCheckGate:
 class TestNextGlobalSeq:
     def test_sequential(self):
         decomposer = BlueprintDecomposer()
-        assert decomposer._next_global_seq(TaskNamespace.CP) == 1
-        assert decomposer._next_global_seq(TaskNamespace.CP) == 2
-        assert decomposer._next_global_seq(TaskNamespace.CP) == 3
+        assert decomposer.next_global_seq(TaskNamespace.CP) == 1
+        assert decomposer.next_global_seq(TaskNamespace.CP) == 2
+        assert decomposer.next_global_seq(TaskNamespace.CP) == 3
 
     def test_independent_namespaces(self):
         decomposer = BlueprintDecomposer()
-        assert decomposer._next_global_seq(TaskNamespace.CP) == 1
-        assert decomposer._next_global_seq(TaskNamespace.KBG) == 1
-        assert decomposer._next_global_seq(TaskNamespace.CP) == 2
-        assert decomposer._next_global_seq(TaskNamespace.KBG) == 2
+        assert decomposer.next_global_seq(TaskNamespace.CP) == 1
+        assert decomposer.next_global_seq(TaskNamespace.KBG) == 1
+        assert decomposer.next_global_seq(TaskNamespace.CP) == 2
+        assert decomposer.next_global_seq(TaskNamespace.KBG) == 2

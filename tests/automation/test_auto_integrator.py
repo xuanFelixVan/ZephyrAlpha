@@ -49,13 +49,13 @@ class TestAutoIntegratorInit:
     def test_default_init(self, tmp_path):
         registry = CapabilityRegistry(card_dir=tmp_path)
         integrator = AutoIntegrator(registry)
-        assert integrator._max_daily_l3 == 10
-        assert integrator._daily_l3_count == 0
+        assert integrator.max_daily_l3 == 10
+        assert integrator.daily_l3_count == 0
 
     def test_custom_max_daily(self, tmp_path):
         registry = CapabilityRegistry(card_dir=tmp_path)
         integrator = AutoIntegrator(registry, max_daily_l3_activations=5)
-        assert integrator._max_daily_l3 == 5
+        assert integrator.max_daily_l3 == 5
 
 
 class TestAutoIntegratorAnalyzeModule:
@@ -221,22 +221,22 @@ class TestAutoIntegratorInferCategory:
     def test_infer_category_known_packages(self, tmp_path):
         registry = CapabilityRegistry(card_dir=tmp_path)
         integrator = AutoIntegrator(registry)
-        assert integrator._infer_category("pipeline") == CapabilityCategory.ORCHESTRATION
-        assert integrator._infer_category("gates") == CapabilityCategory.SECURITY
-        assert integrator._infer_category("kb") == CapabilityCategory.DATA
-        assert integrator._infer_category("mcp") == CapabilityCategory.INFRA
+        assert integrator.infer_category("pipeline") == CapabilityCategory.ORCHESTRATION
+        assert integrator.infer_category("gates") == CapabilityCategory.SECURITY
+        assert integrator.infer_category("kb") == CapabilityCategory.DATA
+        assert integrator.infer_category("mcp") == CapabilityCategory.INFRA
 
     def test_infer_category_unknown_defaults_infra(self, tmp_path):
         registry = CapabilityRegistry(card_dir=tmp_path)
         integrator = AutoIntegrator(registry)
-        assert integrator._infer_category("unknown_pkg") == CapabilityCategory.INFRA
+        assert integrator.infer_category("unknown_pkg") == CapabilityCategory.INFRA
 
 
 class TestAutoIntegratorDailyReset:
     def test_daily_reset(self, tmp_path):
         registry = CapabilityRegistry(card_dir=tmp_path)
         integrator = AutoIntegrator(registry)
-        integrator._daily_l3_count = 5
-        integrator._last_reset_date = "2000-01-01"
-        integrator._check_daily_reset()
-        assert integrator._daily_l3_count == 0
+        integrator.daily_l3_count = 5
+        integrator.last_reset_date = "2000-01-01"
+        integrator.check_daily_reset()
+        assert integrator.daily_l3_count == 0

@@ -128,4 +128,4 @@ class TestContextEvictorSingleton:
     def test_reset_instance(self):
         ContextEvictor.instance()
         ContextEvictor.reset_instance()
-        assert ContextEvictor._instance is None
+        assert ContextEvictor.instance is None

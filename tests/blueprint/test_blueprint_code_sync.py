@@ -85,16 +85,16 @@ class TestSyncReport:
 class TestBlueprintCodeSyncInit:
     def test_init_with_explicit_root(self):
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
-        assert sync._project_root == PROJECT_ROOT
+        assert sync.project_root == PROJECT_ROOT
 
     def test_init_with_none_falls_back_to_cwd(self):
         sync = BlueprintCodeSync(project_root=None)
-        assert sync._project_root == Path.cwd()
+        assert sync.project_root == Path.cwd()
 
     def test_registry_path_constructed(self):
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         expected = PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
-        assert sync._registry_path == expected
+        assert sync.registry_path == expected
 
 
 class TestVerifySync:
@@ -220,12 +220,12 @@ class TestValidateTaskCard:
 class TestCollectEntries:
     def test_collect_entries_returns_list(self):
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
-        entries = sync._collect_entries()
+        entries = sync.collect_entries()
         assert isinstance(entries, list)
 
     def test_collect_entries_with_nonexistent_dir(self):
         sync = BlueprintCodeSync(project_root=Path(r"C:\nonexistent_project_root_xyz"))
-        entries = sync._collect_entries()
+        entries = sync.collect_entries()
         assert entries == []
 
     def test_collect_entries_with_mocked_glob(self):
@@ -242,6 +242,6 @@ class TestCollectEntries:
         )
         with patch.object(Path, "glob", return_value=[fake_card]):
             with patch.object(Path, "exists", return_value=True):
-                entries = sync._collect_entries()
+                entries = sync.collect_entries()
         assert len(entries) >= 1
         assert entries[0].status == "PENDING"

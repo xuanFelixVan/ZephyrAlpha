@@ -744,7 +744,7 @@ def test_06_mcp_persist_and_load():
         repo = TaskRepository(db_path=db_file, enable_gate=False)
         mcp = TaskManagerMCP(task_repo=repo, docs_dir=tmpdir)
 
-        seq = mcp._next_seq(TaskNamespace.CP)
+        seq = mcp.next_seq(TaskNamespace.CP)
         assert seq >= 1
 
         tc = TaskCard(
@@ -759,7 +759,7 @@ def test_06_mcp_persist_and_load():
             safety_level=SafetyLevel.L,
             source_blueprint="MOD-TEST-001",
             source_section="§1.0",
-            description="根因：验证 TaskManagerMCP._persist + _load 全链路 SQLite 持久化。治根：通过 MCP↔Repo 协作测试确保接口契约一致。施工步骤：1) mcp._persist(tc) 写入 2) mcp._load(task_id) 读取。验收标准：loaded 非空且 task_id 匹配。",
+            description="根因：验证 TaskManagerMCP.persist + _load 全链路 SQLite 持久化。治根：通过 MCP↔Repo 协作测试确保接口契约一致。施工步骤：1) mcp.persist(tc) 写入 2) mcp.load(task_id) 读取。验收标准：loaded 非空且 task_id 匹配。",
             directive="DIR-001",
             files_in_scope=["tests/autonomy/test_task_system_red_team.py"],
             deliverables=["tests/autonomy/output.py"],
@@ -769,9 +769,9 @@ def test_06_mcp_persist_and_load():
             created_at=datetime.now(),
             updated_at=datetime.now(),
         )
-        mcp._persist(tc)
+        mcp.persist(tc)
 
-        loaded = mcp._load("CP-500")
+        loaded = mcp.load("CP-500")
         assert loaded is not None, "_load 返回 None——持久化失败"
         assert loaded.task_id == "CP-500"
         repo.close()

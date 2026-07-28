@@ -70,15 +70,15 @@ class TestDraftInput:
 class TestDraftAssistantInit:
     def test_default_output_dir(self):
         assistant = DraftAssistant()
-        assert assistant._output_dir == Path("data/drafts")
+        assert assistant.output_dir == Path("data/drafts")
 
     def test_custom_output_dir(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path / "custom")
-        assert assistant._output_dir == tmp_path / "custom"
+        assert assistant.output_dir == tmp_path / "custom"
 
     def test_none_output_dir(self):
         assistant = DraftAssistant(output_dir=None)
-        assert assistant._output_dir == Path("data/drafts")
+        assert assistant.output_dir == Path("data/drafts")
 
 
 class TestGenerateDraft:
@@ -270,29 +270,29 @@ class TestRenderBlueprintSkeleton:
 class TestExtractTargets:
     def test_chinese_implement_keyword(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_targets("实现用户认证功能。构建日志系统。")
+        result = assistant.extract_targets("实现用户认证功能。构建日志系统。")
         assert len(result) >= 1
 
     def test_english_develop_keyword(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_targets("Develop a new module. Implement the feature.")
+        result = assistant.extract_targets("Develop a new module. Implement the feature.")
         assert len(result) >= 1
 
     def test_empty_string(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_targets("")
+        result = assistant.extract_targets("")
         assert len(result) == 1
 
     def test_max_five_targets(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
         text = ". ".join(["Implement feature " + str(i) for i in range(10)])
-        result = assistant._extract_targets(text)
+        result = assistant.extract_targets(text)
         assert len(result) <= 5
 
     def test_target_truncated_at_100(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
         long_sentence = "Implement " + "x" * 200
-        result = assistant._extract_targets(long_sentence)
+        result = assistant.extract_targets(long_sentence)
         for t in result:
             assert len(t) <= 100
 
@@ -300,26 +300,26 @@ class TestExtractTargets:
 class TestExtractBoundaries:
     def test_returns_default_boundaries(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_boundaries("any text")
+        result = assistant.extract_boundaries("any text")
         assert "Only create files, never delete" in result
         assert "Follow RULE-ZERO lock protocol" in result
 
     def test_empty_text(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_boundaries("")
+        result = assistant.extract_boundaries("")
         assert len(result) > 0
 
 
 class TestExtractConstraints:
     def test_returns_default_constraints(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_constraints("any text")
+        result = assistant.extract_constraints("any text")
         assert "Python 3.10+" in result
         assert "UTF-8 encoding required" in result
 
     def test_empty_text(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
-        result = assistant._extract_constraints("")
+        result = assistant.extract_constraints("")
         assert len(result) > 0
 
 

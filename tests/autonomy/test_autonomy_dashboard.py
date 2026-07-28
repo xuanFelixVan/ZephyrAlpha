@@ -129,11 +129,11 @@ class TestDowngradeEvent:
 class TestAutonomyDashboardInstantiation:
     def test_with_data_dir(self, tmp_path):
         dash = AutonomyDashboard(data_dir=tmp_path)
-        assert dash._data_dir == tmp_path
+        assert dash.data_dir == tmp_path
 
     def test_default_data_dir(self):
         dash = AutonomyDashboard()
-        assert dash._data_dir == Path("data/rollback/autonomy")
+        assert dash.data_dir == Path("data/rollback/autonomy")
 
 
 class TestRecordRollback:
@@ -316,5 +316,5 @@ class TestCorruptedMetricsFile:
         metrics_path = tmp_path / "autonomy_metrics.json"
         metrics_path.write_text("{invalid json", encoding="utf-8")
         dash2 = AutonomyDashboard(data_dir=tmp_path)
-        metrics = dash2._load_metrics()
+        metrics = dash2.load_metrics()
         assert metrics.total_rollbacks == 0

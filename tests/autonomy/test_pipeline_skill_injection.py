@@ -175,7 +175,7 @@ class TestPipelineOrchestratorSkillFlow:
             updated_at=datetime.now().isoformat(),
         )
 
-        output = PipelineOrchestrator._call_model(
+        output = PipelineOrchestrator.call_model(
             "M1",
             "A",
             "deepseek",

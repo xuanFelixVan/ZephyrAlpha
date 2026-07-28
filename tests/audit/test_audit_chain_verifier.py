@@ -196,7 +196,7 @@ class TestAuditChainVerifierVerifyChain:
     def test_verify_tampered_hash_breaks_chain(self):
         v = AuditChainVerifier()
         _append_sync(v, "G1", _make_result("G1", GateStatus.PASS))
-        v._chain[0].hash = "tampered_hash_value_that_is_wrong"
+        v.chain[0].hash = "tampered_hash_value_that_is_wrong"
         report = v.verify_chain()
         assert report.chain_valid is False
 
@@ -204,7 +204,7 @@ class TestAuditChainVerifierVerifyChain:
         v = AuditChainVerifier()
         _append_sync(v, "G1", _make_result("G1", GateStatus.PASS))
         _append_sync(v, "G2", _make_result("G2", GateStatus.PASS))
-        v._chain[1].previous_hash = "wrong_previous_hash"
+        v.chain[1].previous_hash = "wrong_previous_hash"
         report = v.verify_chain()
         assert report.chain_valid is False
 
@@ -286,29 +286,29 @@ class TestAuditChainVerifierReplay:
 class TestAuditChainVerifierComputeHash:
     def test_deterministic(self):
         payload = {"gate_id": "G1", "status": "PASS", "reasons": [], "previous_hash": "0" * 64}
-        h1 = AuditChainVerifier._compute_hash(payload)
-        h2 = AuditChainVerifier._compute_hash(payload)
+        h1 = AuditChainVerifier.compute_hash(payload)
+        h2 = AuditChainVerifier.compute_hash(payload)
         assert h1 == h2
 
     def test_different_payload_different_hash(self):
         p1 = {"gate_id": "G1", "status": "PASS", "reasons": [], "previous_hash": "0" * 64}
         p2 = {"gate_id": "G2", "status": "PASS", "reasons": [], "previous_hash": "0" * 64}
-        assert AuditChainVerifier._compute_hash(p1) != AuditChainVerifier._compute_hash(p2)
+        assert AuditChainVerifier.compute_hash(p1) != AuditChainVerifier.compute_hash(p2)
 
     def test_hash_is_sha256_hex(self):
         payload = {"key": "value"}
-        h = AuditChainVerifier._compute_hash(payload)
+        h = AuditChainVerifier.compute_hash(payload)
         assert len(h) == 64
         assert all(c in "0123456789abcdef" for c in h)
 
     def test_empty_payload(self):
-        h = AuditChainVerifier._compute_hash({})
+        h = AuditChainVerifier.compute_hash({})
         assert len(h) == 64
 
     def test_key_order_does_not_matter(self):
         p1 = {"a": "1", "b": "2"}
         p2 = {"b": "2", "a": "1"}
-        assert AuditChainVerifier._compute_hash(p1) == AuditChainVerifier._compute_hash(p2)
+        assert AuditChainVerifier.compute_hash(p1) == AuditChainVerifier.compute_hash(p2)
 
 
 class TestAuditChainVerifierClear:
@@ -389,11 +389,11 @@ class TestAuditChainVerifierPersistence:
         # verify_chain 以 entry.timestamp 重算——与既有测试契约一致）
         _append_sync(v1, "G1", _make_result("G1", GateStatus.PASS))
         _append_sync(v1, "G2", _make_result("G2", GateStatus.FAIL, reasons=["x"]))
-        tail_hash = v1._last_hash
+        tail_hash = v1.last_hash
 
         v2 = AuditChainVerifier(persist_path=path)
         assert v2.length == 2
-        assert v2._last_hash == tail_hash
+        assert v2.last_hash == tail_hash
         assert v2.verify_chain().chain_valid is True
 
     def test_clear_confirm_removes_persisted_file(self, tmp_path):
@@ -439,7 +439,7 @@ class TestAuditChainVerifierBoundary:
     def test_replay_with_tampered_chain(self):
         v = AuditChainVerifier()
         _append_sync(v, "G1", _make_result("G1", GateStatus.PASS))
-        v._chain[0].hash = "broken"
+        v.chain[0].hash = "broken"
         ctx = _make_ctx()
         checkers = {"G1": lambda c: _make_result("G1", GateStatus.PASS)}
         report = v.replay(ctx, checkers)
@@ -473,5 +473,5 @@ class TestAuditChainVerifierBoundary:
             "timestamp": result.timestamp.isoformat(),
             "previous_hash": "0" * 64,
         }
-        expected = AuditChainVerifier._compute_hash(payload)
+        expected = AuditChainVerifier.compute_hash(payload)
         assert entry.hash == expected

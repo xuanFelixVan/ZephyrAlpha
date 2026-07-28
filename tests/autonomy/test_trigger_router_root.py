@@ -146,21 +146,21 @@ class TestMatchTaskRouting:
         self.router = TriggerRouter()
 
     def test_match_database(self):
-        result = self.router._match_task_routing("run database migration")
+        result = self.router.match_task_routing("run database migration")
         assert result is not None
         assert result[0] == "database-specialist"
 
     def test_match_audit(self):
-        result = self.router._match_task_routing("perform audit compliance check")
+        result = self.router.match_task_routing("perform audit compliance check")
         assert result is not None
         assert result[0] == "drift-detector"
 
     def test_no_match(self):
-        result = self.router._match_task_routing("random text nothing matches")
+        result = self.router.match_task_routing("random text nothing matches")
         assert result is None
 
     def test_match_case_insensitive(self):
-        result = self.router._match_task_routing("SQL MIGRATION")
+        result = self.router.match_task_routing("SQL MIGRATION")
         assert result is not None
         assert result[0] == "database-specialist"
 
@@ -170,9 +170,9 @@ class TestMatchDomain:
         self.router = TriggerRouter()
 
     def test_match_domain_returns_domain(self):
-        result = self.router._match_domain("database migration")
+        result = self.router.match_domain("database migration")
         assert result == "database-specialist"
 
     def test_match_domain_no_match(self):
-        result = self.router._match_domain("nothing here")
+        result = self.router.match_domain("nothing here")
         assert result is None

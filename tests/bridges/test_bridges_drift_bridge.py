@@ -65,7 +65,7 @@ class TestBridgeResult:
 class TestDriftBridge:
     def test_instantiation(self, tmp_path):
         b = DriftBridge(audit_events_path=tmp_path / "events.jsonl")
-        assert b._audit_events_path == tmp_path / "events.jsonl"
+        assert b.audit_events_path == tmp_path / "events.jsonl"
 
     def test_sync_no_events(self, bridge):
         with (

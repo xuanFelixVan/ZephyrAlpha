@@ -87,20 +87,20 @@ class TestDetectorFileMapping:
 class TestIncrementalScanner:
     def test_init_default_root(self):
         scanner = IncrementalScanner()
-        assert scanner._project_root is not None
+        assert scanner.project_root is not None
 
     def test_init_custom_root(self, tmp_path):
         scanner = IncrementalScanner(project_root=str(tmp_path))
-        assert scanner._project_root == str(tmp_path)
+        assert scanner.project_root == str(tmp_path)
 
     def test_extract_module_src(self):
         scanner = IncrementalScanner()
-        result = scanner._extract_module("src/zephyr/governance/check.py")
+        result = scanner.extract_module("src/zephyr/governance/check.py")
         assert result == "governance"
 
     def test_extract_module_docs(self):
         scanner = IncrementalScanner()
-        result = scanner._extract_module("docs/03_modules/_domain-infra_ops/file.md")
+        result = scanner.extract_module("docs/03_modules/_domain-infra_ops/file.md")
         # 治本（裁定#17）：_extract_module 语义是"从路径提取模块/域目录名"（parts[2]），
         # 非"域→层映射"（后者职责在 generate_project_depgraph，需查 depgraph DB，破坏单测隔离）。
         # DB 真值 layer_id 为 L0_infrastructure（非 l01-infrastructure），
@@ -109,18 +109,18 @@ class TestIncrementalScanner:
 
     def test_extract_module_unknown(self):
         scanner = IncrementalScanner()
-        result = scanner._extract_module("scripts/run.py")
+        result = scanner.extract_module("scripts/run.py")
         assert result == "unknown"
 
     def test_extract_module_short_path(self):
         scanner = IncrementalScanner()
-        result = scanner._extract_module("src/zephyr/")
+        result = scanner.extract_module("src/zephyr/")
         assert result == ""
 
     def test_register_mapping(self):
         scanner = IncrementalScanner()
         scanner.register_mapping("det_a", ["*.py", "*.yaml"])
-        result = scanner._mapping.find_detectors(["test.py"])
+        result = scanner.mapping.find_detectors(["test.py"])
         assert "det_a" in result
 
     def test_file_hash_existing(self, tmp_path):

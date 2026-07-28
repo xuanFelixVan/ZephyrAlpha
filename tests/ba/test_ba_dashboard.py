@@ -43,11 +43,11 @@ class TestDashboardData:
 class TestDashboard:
     def test_instantiation_with_project_root(self, tmp_path):
         db = Dashboard(project_root=str(tmp_path))
-        assert db._project_root == str(tmp_path)
+        assert db.project_root == str(tmp_path)
 
     def test_instantiation_default_root(self):
         db = Dashboard()
-        assert db._project_root != ""
+        assert db.project_root != ""
 
     def test_compute_module_health_no_db(self, tmp_path):
         db = Dashboard(project_root=str(tmp_path))
@@ -116,5 +116,5 @@ class TestDashboard:
 
     def test_load_coverage_matrix_no_registry(self, tmp_path):
         db = Dashboard(project_root=str(tmp_path))
-        matrix = db._load_coverage_matrix()
+        matrix = db.load_coverage_matrix()
         assert isinstance(matrix, dict)

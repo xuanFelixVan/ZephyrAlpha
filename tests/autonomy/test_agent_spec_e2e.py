@@ -56,13 +56,13 @@ class TestSpecEngineDiscover:
     def test_discover_from_agent_spec_blueprint(self):
         engine = SpecEngine()
         result = UpgradeResult("docs/03_modules/_domain-infra_ops/agent-spec/blueprint.md")
-        name = engine._discover(result.blueprint_path, result)
+        name = engine.discover(result.blueprint_path, result)
         assert len(name) > 0
 
     def test_discover_nonexistent_blueprint(self):
         engine = SpecEngine()
         result = UpgradeResult("docs/03_modules/nonexistent/blueprint.md")
-        name = engine._discover(result.blueprint_path, result)
+        name = engine.discover(result.blueprint_path, result)
         assert name == ""
         assert len(result.errors) >= 1
 
