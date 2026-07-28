@@ -28,6 +28,18 @@ class ObjectiveTracker:
         self._objectives: dict[str, list[str]] = {}
         self._versions: dict[str, int] = {}
 
+    # ── Stage 4 公共化属性 ──
+
+    @property
+    def objectives(self) -> dict[str, list[str]]:
+        """每 agent 目标列表（public API, Stage 4）."""
+        return self._objectives
+
+    @property
+    def versions(self) -> dict[str, int]:
+        """每 agent 版本号（public API, Stage 4）."""
+        return self._versions
+
     def set_objective(self, agent_id: str, objective: str):
         if agent_id not in self._objectives:
             self._objectives[agent_id] = []
