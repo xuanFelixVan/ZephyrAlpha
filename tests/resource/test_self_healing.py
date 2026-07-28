@@ -50,13 +50,13 @@ class TestConfigLoad:
         cfg_path.write_text(yaml.dump(cfg), encoding="utf-8")
 
         engine = ResourceOptimizationEngine()
-        engine._config_path = str(cfg_path)
-        engine._apply_config(str(cfg_path))
+        engine.config_path = str(cfg_path)
+        engine.apply_config(str(cfg_path))
 
-        assert engine._thresholds.memory_warning_percent == 70.0
-        assert engine._thresholds.memory_critical_percent == 80.0
-        assert engine._hysteresis.confirmation_count == 3
-        assert engine._self_healing_max_retries == 5
+        assert engine.thresholds.memory_warning_percent == 70.0
+        assert engine.thresholds.memory_critical_percent == 80.0
+        assert engine.hysteresis.confirmation_count == 3
+        assert engine.self_healing_max_retries == 5
 
     def test_config_hot_reload(self, tmp_path):
         cfg_v1 = {"pressure_thresholds": {"memory_warning_percent": 70.0}}
@@ -64,21 +64,21 @@ class TestConfigLoad:
         cfg_path.write_text(yaml.dump(cfg_v1), encoding="utf-8")
 
         engine = ResourceOptimizationEngine()
-        engine._config_path = str(cfg_path)
-        engine._apply_config(str(cfg_path))
-        assert engine._thresholds.memory_warning_percent == 70.0
+        engine.config_path = str(cfg_path)
+        engine.apply_config(str(cfg_path))
+        assert engine.thresholds.memory_warning_percent == 70.0
 
         time.sleep(0.05)
         cfg_v2 = {"pressure_thresholds": {"memory_warning_percent": 60.0}}
         cfg_path.write_text(yaml.dump(cfg_v2), encoding="utf-8")
 
-        engine._check_config_reload()
-        assert engine._thresholds.memory_warning_percent == 60.0
+        engine.check_config_reload()
+        assert engine.thresholds.memory_warning_percent == 60.0
 
     def test_config_missing_file_no_crash(self):
         engine = ResourceOptimizationEngine()
-        engine._config_path = "/nonexistent/path.yaml"
-        engine._check_config_reload()
+        engine.config_path = "/nonexistent/path.yaml"
+        engine.check_config_reload()
 
 
 class TestSelfHealing:
@@ -90,26 +90,26 @@ class TestSelfHealing:
 
     def test_self_heal_disabled(self):
         engine = ResourceOptimizationEngine()
-        engine._self_healing_enabled = False
-        result = engine._self_heal_cycle(ResourceSnapshot(memory_percent=90.0, pressure=PressureLevel.CRITICAL))
+        engine.self_healing_enabled = False
+        result = engine.self_heal_cycle(ResourceSnapshot(memory_percent=90.0, pressure=PressureLevel.CRITICAL))
         assert result is None
 
     def test_self_heal_normal_pressure_skipped(self):
         engine = ResourceOptimizationEngine()
-        result = engine._self_heal_cycle(ResourceSnapshot(pressure=PressureLevel.NORMAL))
+        result = engine.self_heal_cycle(ResourceSnapshot(pressure=PressureLevel.NORMAL))
         assert result is None
 
     def test_select_healing_strategy(self):
         engine = ResourceOptimizationEngine()
-        assert engine._select_healing_strategy(PressureLevel.EMERGENCY) == OptimizationStrategy.MEMORY_COMPACT
-        assert engine._select_healing_strategy(PressureLevel.CRITICAL) == OptimizationStrategy.MEMORY_COMPACT
-        assert engine._select_healing_strategy(PressureLevel.WARNING) == OptimizationStrategy.SCHEDULE_ADAPT
+        assert engine.select_healing_strategy(PressureLevel.EMERGENCY) == OptimizationStrategy.MEMORY_COMPACT
+        assert engine.select_healing_strategy(PressureLevel.CRITICAL) == OptimizationStrategy.MEMORY_COMPACT
+        assert engine.select_healing_strategy(PressureLevel.WARNING) == OptimizationStrategy.SCHEDULE_ADAPT
 
     @patch.object(ResourceOptimizationEngine, "optimize")
     @patch.object(ResourceOptimizationEngine, "snapshot")
     def test_self_heal_succeeds_on_first_try(self, mock_snap, mock_opt):
         engine = ResourceOptimizationEngine()
-        engine._self_healing_verification_delay_s = 0.0
+        engine.self_healing_verification_delay_s = 0.0
 
         from zephyr.shared.lifecycle.resource_optimization_models import OptimizationResult
 
@@ -125,7 +125,7 @@ class TestSelfHealing:
         warning_snap = ResourceSnapshot(memory_percent=70.0, pressure=PressureLevel.WARNING)
         mock_snap.return_value = warning_snap
 
-        result = engine._self_heal_cycle(critical_snap)
+        result = engine.self_heal_cycle(critical_snap)
         assert result is not None
         assert result.success is True
 
@@ -133,13 +133,13 @@ class TestSelfHealing:
     @patch.object(ResourceOptimizationEngine, "snapshot")
     def test_self_heal_retries_on_failure(self, mock_snap, mock_opt):
         engine = ResourceOptimizationEngine()
-        engine._self_healing_verification_delay_s = 0.0
-        engine._self_healing_max_retries = 2
+        engine.self_healing_verification_delay_s = 0.0
+        engine.self_healing_max_retries = 2
 
         mock_opt.return_value = MagicMock(success=False)
         mock_snap.return_value = ResourceSnapshot(memory_percent=90.0, pressure=PressureLevel.CRITICAL)
 
-        result = engine._self_heal_cycle(mock_snap.return_value)
+        result = engine.self_heal_cycle(mock_snap.return_value)
         assert result is None
         assert mock_opt.call_count == 2
 
@@ -153,25 +153,22 @@ class TestEventBusIntegration:
 
     def test_emit_skipped_when_disabled(self):
         engine = ResourceOptimizationEngine()
-        engine._eventbus_enabled = False
-        engine._emit_pressure_event(ResourceSnapshot(pressure=PressureLevel.WARNING))
+        engine.eventbus_enabled = False
+        engine.emit_pressure_event(ResourceSnapshot(pressure=PressureLevel.WARNING))
 
     def test_emit_skipped_when_same_level(self):
         engine = ResourceOptimizationEngine()
-        engine._last_pressure_level = PressureLevel.WARNING
-        engine._emit_pressure_event(ResourceSnapshot(pressure=PressureLevel.WARNING))
+        engine.last_pressure_level = PressureLevel.WARNING
+        engine.emit_pressure_event(ResourceSnapshot(pressure=PressureLevel.WARNING))
 
-    @patch("zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.get_bus", create=True)
-    def test_emit_on_pressure_change(self, mock_get_bus):
+    def test_emit_on_pressure_change(self):
         engine = ResourceOptimizationEngine()
-        engine._eventbus_enabled = True
-        engine._last_pressure_level = PressureLevel.NORMAL
+        engine.eventbus_enabled = True
+        engine.last_pressure_level = PressureLevel.NORMAL
 
         mock_bus = MagicMock()
-        mock_get_bus.return_value = mock_bus
-
-        with patch.dict("sys.modules", {"zephyr.shared.event_bus": MagicMock(get_bus=mock_get_bus)}):
-            engine._emit_pressure_event(
+        with patch.dict("sys.modules", {"zephyr.shared.event_bus": MagicMock(bus=mock_bus)}):
+            engine.emit_pressure_event(
                 ResourceSnapshot(
                     pressure=PressureLevel.WARNING,
                     memory_percent=80.0,
@@ -179,6 +176,7 @@ class TestEventBusIntegration:
                     process_count=30,
                 )
             )
+        mock_bus.emit.assert_called_once()
 
 
 class TestAuditIntegration:
@@ -190,19 +188,18 @@ class TestAuditIntegration:
 
     def test_audit_skipped_when_disabled(self):
         engine = ResourceOptimizationEngine()
-        engine._audit_enabled = False
+        engine.audit_enabled = False
         from zephyr.shared.lifecycle.resource_optimization_models import OptimizationRecord
 
         record = OptimizationRecord(
             trigger=PressureLevel.WARNING,
             strategy=OptimizationStrategy.MEMORY_COMPACT,
         )
-        engine._audit_optimization(record)
+        engine.audit_optimization(record)
 
-    @patch("zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.write_to_core", create=True)
-    def test_audit_called_when_enabled(self, mock_write):
+    def test_audit_called_when_enabled(self):
         engine = ResourceOptimizationEngine()
-        engine._audit_enabled = True
+        engine.audit_enabled = True
 
         from zephyr.shared.lifecycle.resource_optimization_models import OptimizationRecord
 
@@ -213,5 +210,7 @@ class TestAuditIntegration:
             success=True,
         )
 
+        mock_write = MagicMock()
         with patch.dict("sys.modules", {"zephyr.gov_audit.bridge": MagicMock(write_to_core=mock_write)}):
-            engine._audit_optimization(record)
+            engine.audit_optimization(record)
+        mock_write.assert_called_once()

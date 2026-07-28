@@ -332,9 +332,9 @@ class ActionDispatcher:
         return self._dry_run
 
     def dispatch(self, task: TaskCard) -> ActionReport:
-        """主路由: 根据 capability 分发到对应 thin wrapper 方法。
+        """主路由: 根据 capability 分发到对应 public 方法。
 
-        使用 thin wrapper（而非直接调 worker）以支持测试 patch.object(d, "_method", ...)。
+        调用 public 方法（而非 worker 实例）以支持测试 patch.object(d, "method", ...)。
         """
         capability = task.capability
         result = task.result
@@ -347,23 +347,23 @@ class ActionDispatcher:
 
         try:
             if capability == "task_classification":
-                return self._annotate_py_file(source_text, result)
+                return self.annotate_py_file(source_text, result)
             elif capability == "tag_completion":
-                return self._tag_module(source_text, result)
+                return self.tag_module(source_text, result)
             elif capability == "summary_extraction":
-                return self._annotate_blueprint(source_text, result)
+                return self.annotate_blueprint(source_text, result)
             elif capability == "naming_suggest":
-                return self._annotate_py_file(source_text, result, field="names")
+                return self.annotate_py_file(source_text, result, field="names")
             elif capability == "anomaly_triage":
-                return self._write_triage_log(result)
+                return self.write_triage_log(result)
             elif capability == "code_fix":
-                return self._search_replace_file(source_text, result, field="fixes")
+                return self.search_replace_file(source_text, result, field="fixes")
             elif capability == "refactor":
-                return self._search_replace_file(source_text, result, field="changes")
+                return self.search_replace_file(source_text, result, field="changes")
             elif capability == "code_generate":
-                return self._create_file(result)
+                return self.create_file(result)
             elif capability == "dead_code_removal":
-                return self._search_replace_file(source_text, result, field="dead_sections", remove=True)
+                return self.search_replace_file(source_text, result, field="dead_sections", remove=True)
             else:
                 return self._skip(task.task_id, capability, "no actuator")
         except Exception as exc:  # noqa: BLE001
@@ -372,20 +372,20 @@ class ActionDispatcher:
     def drain_results(self, scheduler: TaskScheduler) -> list[ActionReport]:
         """消费 TaskScheduler 已完成队列, 逐个 dispatch 并返回报告列表。"""
         reports: list[ActionReport] = []
-        with scheduler._lock:
-            task_ids = list(scheduler._results.keys())
+        with scheduler.lock:
+            task_ids = list(scheduler.results.keys())
 
         for tid in task_ids:
-            with scheduler._lock:
-                task = scheduler._results.get(tid)
+            with scheduler.lock:
+                task = scheduler.results.get(tid)
 
             if task is None or task.status != "completed":
                 continue
-            if getattr(task, "_acted", False):
+            if getattr(task, "acted", False):
                 continue
 
             report = self.dispatch(task)
-            task._acted = True
+            task.acted = True
             reports.append(report)
 
             self._stats["dispatched"] += 1
@@ -407,17 +407,17 @@ class ActionDispatcher:
         """跳过此任务（无数据/不支持的能力）。"""
         return ActionReport(task_id, capability, "skipped", reason)
 
-    def _version_backup(self, filepath: Path) -> str | None:
-        """版本链备份 — 外观薄包装, 委托给 FileLifecycleManager。
-
-        保留此方法在 Facade 是为了 patch.object 测试兼容性。
-        """
+    def version_backup(self, filepath: Path) -> str | None:
+        """版本链备份 — 外观薄包装, 委托给 FileLifecycleManager。"""
         return self._file_lifecycle.version_backup(filepath)
 
-    # ── 业务方法 thin wrappers（委托给 worker 实例, 保留 patch.object 测试兼容性） ──
-    # dispatch 路由通过这些 wrapper 而非直接调 worker, 使 patch.object(d, "_method", ...) 生效。
+    def _version_backup(self, filepath: Path) -> str | None:
+        """向后兼容薄包装 — 委托给 public version_backup。"""
+        return self.version_backup(filepath)
 
-    def _search_replace_file(
+    # ── 业务方法 public（委托给 worker 实例, 支持测试 patch.object(d, "method", ...)） ──
+
+    def search_replace_file(
         self,
         source_text: str,
         result: dict,
@@ -427,51 +427,115 @@ class ActionDispatcher:
         """SearchReplace 入口 — 委托给 SearchReplaceEngine.search_replace_file。"""
         return self._search_replace.search_replace_file(source_text, result, field=field, remove=remove)
 
-    def _create_file(self, result: dict) -> ActionReport:
+    def _search_replace_file(
+        self,
+        source_text: str,
+        result: dict,
+        field: str = "fixes",
+        remove: bool = False,
+    ) -> ActionReport:
+        """向后兼容薄包装 — 委托给 public search_replace_file。"""
+        return self.search_replace_file(source_text, result, field=field, remove=remove)
+
+    def create_file(self, result: dict) -> ActionReport:
         """创建新文件 — 委托给 FileLifecycleManager.create_file。"""
         return self._file_lifecycle.create_file(result)
 
-    def _delete_file(self, source_text: str, result: dict) -> ActionReport:
+    def _create_file(self, result: dict) -> ActionReport:
+        """向后兼容薄包装 — 委托给 public create_file。"""
+        return self.create_file(result)
+
+    def delete_file(self, source_text: str, result: dict) -> ActionReport:
         """删除文件（移到 .brain_trash/）— 委托给 FileLifecycleManager.delete_file。"""
         return self._file_lifecycle.delete_file(source_text, result)
 
-    def _annotate_py_file(self, source_text: str, result: dict, field: str = "category") -> ActionReport:
+    def _delete_file(self, source_text: str, result: dict) -> ActionReport:
+        """向后兼容薄包装 — 委托给 public delete_file。"""
+        return self.delete_file(source_text, result)
+
+    def annotate_py_file(self, source_text: str, result: dict, field: str = "category") -> ActionReport:
         """Python 文件 BRAIN 注释 — 委托给 AnnotationWriter.annotate_py_file。"""
         return self._annotation.annotate_py_file(source_text, result, field=field)
 
-    def _tag_module(self, source_text: str, result: dict) -> ActionReport:
+    def _annotate_py_file(self, source_text: str, result: dict, field: str = "category") -> ActionReport:
+        """向后兼容薄包装 — 委托给 public annotate_py_file。"""
+        return self.annotate_py_file(source_text, result, field=field)
+
+    def tag_module(self, source_text: str, result: dict) -> ActionReport:
         """Capability card 标签追加 — 委托给 AnnotationWriter.tag_module。"""
         return self._annotation.tag_module(source_text, result)
 
-    def _annotate_blueprint(self, source_text: str, result: dict) -> ActionReport:
+    def _tag_module(self, source_text: str, result: dict) -> ActionReport:
+        """向后兼容薄包装 — 委托给 public tag_module。"""
+        return self.tag_module(source_text, result)
+
+    def annotate_blueprint(self, source_text: str, result: dict) -> ActionReport:
         """Blueprint 摘要注释 — 委托给 AnnotationWriter.annotate_blueprint。"""
         return self._annotation.annotate_blueprint(source_text, result)
 
-    def _write_triage_log(self, result: dict) -> ActionReport:
+    def _annotate_blueprint(self, source_text: str, result: dict) -> ActionReport:
+        """向后兼容薄包装 — 委托给 public annotate_blueprint。"""
+        return self.annotate_blueprint(source_text, result)
+
+    def write_triage_log(self, result: dict) -> ActionReport:
         """审计日志写入 — 委托给 AuditLogWriter.write_triage_log。"""
         return self._audit.write_triage_log(result)
 
-    # ── locator 包装方法（对外部消费者透明） ──
+    def _write_triage_log(self, result: dict) -> ActionReport:
+        """向后兼容薄包装 — 委托给 public write_triage_log。"""
+        return self.write_triage_log(result)
 
-    def _extract_module_name(self, text: str) -> str:
+    # ── locator public 包装方法（委托给 ModuleFileLocator） ──
+
+    def extract_module_name(self, text: str) -> str:
         return self._locator.extract_module_name(text)
 
-    def _parse_file_path(self, text: str) -> Path | None:
+    def _extract_module_name(self, text: str) -> str:
+        """向后兼容薄包装 — 委托给 public extract_module_name。"""
+        return self.extract_module_name(text)
+
+    def parse_file_path(self, text: str) -> Path | None:
         return self._locator.parse_file_path(text)
 
-    def _find_module_file(self, module_name: str) -> Path | None:
+    def _parse_file_path(self, text: str) -> Path | None:
+        """向后兼容薄包装 — 委托给 public parse_file_path。"""
+        return self.parse_file_path(text)
+
+    def find_module_file(self, module_name: str) -> Path | None:
         return self._locator.find_module_file(module_name)
 
-    def _find_capability_card(self, module_name: str) -> Path | None:
+    def _find_module_file(self, module_name: str) -> Path | None:
+        """向后兼容薄包装 — 委托给 public find_module_file。"""
+        return self.find_module_file(module_name)
+
+    def find_capability_card(self, module_name: str) -> Path | None:
         return self._locator.find_capability_card(module_name)
 
-    def _find_blueprint_file(self, module_name: str) -> Path | None:
+    def _find_capability_card(self, module_name: str) -> Path | None:
+        """向后兼容薄包装 — 委托给 public find_capability_card。"""
+        return self.find_capability_card(module_name)
+
+    def find_blueprint_file(self, module_name: str) -> Path | None:
         return self._locator.find_blueprint_file(module_name)
 
-    def _find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:
+    def _find_blueprint_file(self, module_name: str) -> Path | None:
+        """向后兼容薄包装 — 委托给 public find_blueprint_file。"""
+        return self.find_blueprint_file(module_name)
+
+    def find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:
         return self._locator.find_file_by_name(name, search_dirs)
 
-    # ── BrainBlock 别名（staticmethod assignments, 对外部消费者透明） ──
+    def _find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:
+        """向后兼容薄包装 — 委托给 public find_file_by_name。"""
+        return self.find_file_by_name(name, search_dirs)
+
+    # ── BrainBlock public static methods ──
+
+    build_py_brain_block = staticmethod(BrainBlockEditor.build_block)
+    insert_brain_block = staticmethod(BrainBlockEditor.insert_block)
+    update_brain_block = staticmethod(BrainBlockEditor.update_block)
+
+    # ── BrainBlock 向后兼容别名（staticmethod assignments, 委托给 public） ──
 
     _build_py_brain_block = staticmethod(BrainBlockEditor.build_block)
     _insert_brain_block = staticmethod(BrainBlockEditor.insert_block)

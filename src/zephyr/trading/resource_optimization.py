@@ -308,7 +308,7 @@ class _ConfigReloader:
 
         pt = cfg.get("pressure_thresholds", {})
         if pt:
-            engine._thresholds = _PressureThresholds(
+            engine.thresholds = _PressureThresholds(
                 memory_warning_percent=pt.get("memory_warning_percent", 75.0),
                 memory_critical_percent=pt.get("memory_critical_percent", 85.0),
                 memory_emergency_percent=pt.get("memory_emergency_percent", 95.0),
@@ -325,40 +325,40 @@ class _ConfigReloader:
 
         hy = cfg.get("hysteresis", {})
         if hy:
-            engine._hysteresis = _HysteresisConfig(
+            engine.hysteresis = _HysteresisConfig(
                 confirmation_count=hy.get("confirmation_count", 2),
                 cooldown_seconds=hy.get("cooldown_seconds", 60.0),
                 hysteresis_percent=hy.get("hysteresis_percent", 10.0),
                 oscillation_threshold_per_hour=hy.get("oscillation_threshold_per_hour", 3),
             )
-            engine._pressure_sm = _PressureStateMachine(engine._hysteresis)
+            engine._pressure_sm = _PressureStateMachine(engine.hysteresis)
 
         sh = cfg.get("self_healing", {})
         if sh:
-            engine._self_healing_enabled = sh.get("enabled", True)
+            engine.self_healing_enabled = sh.get("enabled", True)
             engine._self_healing_max_recovery_s = sh.get("max_recovery_time_s", 60.0)
-            engine._self_healing_verification_delay_s = sh.get("verification_delay_s", 5.0)
-            engine._self_healing_max_retries = sh.get("max_retries", 3)
+            engine.self_healing_verification_delay_s = sh.get("verification_delay_s", 5.0)
+            engine.self_healing_max_retries = sh.get("max_retries", 3)
 
         au = cfg.get("audit", {})
         if au:
-            engine._audit_enabled = au.get("enabled", True)
+            engine.audit_enabled = au.get("enabled", True)
 
         eb = cfg.get("eventbus", {})
         if eb:
-            engine._eventbus_enabled = eb.get("enabled", True)
+            engine.eventbus_enabled = eb.get("enabled", True)
             engine._eventbus_topic = eb.get("topic", "resource.pressure.changed")
 
         logger.info("ResourceOptimizationEngine: config loaded from %s", path)
 
     @staticmethod
     def check_reload(engine: ResourceOptimizationEngine) -> None:
-        if engine._config_path is None:
+        if engine.config_path is None:
             return
         try:
-            current_mtime = os.path.getmtime(engine._config_path)
+            current_mtime = os.path.getmtime(engine.config_path)
             if current_mtime != engine._config_mtime:
-                engine._apply_config(engine._config_path)
+                engine.apply_config(engine.config_path)
         except OSError as e:
             # 5.54.5 修复：原 except OSError: pass 静默停止热重载，配置文件误删后引擎无感知。
             # 改为 warning 级别日志记录。
@@ -482,11 +482,11 @@ class _ExternalNotifier:
 
     @staticmethod
     def emit_pressure_event(engine: ResourceOptimizationEngine, snap: ResourceSnapshot) -> None:
-        if not engine._eventbus_enabled:
+        if not engine.eventbus_enabled:
             return
-        if snap.pressure == engine._last_pressure_level:
+        if snap.pressure == engine.last_pressure_level:
             return
-        engine._last_pressure_level = snap.pressure
+        engine.last_pressure_level = snap.pressure
         try:
             from zephyr.shared.event_bus import bus
             bus.emit(
@@ -504,7 +504,7 @@ class _ExternalNotifier:
 
     @staticmethod
     def audit_optimization(engine: ResourceOptimizationEngine, record: OptimizationRecord) -> None:
-        if not engine._audit_enabled:
+        if not engine.audit_enabled:
             return
         try:
             from zephyr.gov_audit.bridge import write_to_core
@@ -772,7 +772,7 @@ class ResourceOptimizationEngine:
         if len(self._optimization_history) > self._max_history:
             self._optimization_history = self._optimization_history[-self._max_history :]
 
-        self._audit_optimization(record)
+        self.audit_optimization(record)
 
         return OptimizationResult(
             strategy=strategy,
@@ -938,7 +938,7 @@ class ResourceOptimizationEngine:
         if not self._monitor_running:
             return
         try:
-            self._check_config_reload()
+            self.check_config_reload()
             snap = self.snapshot()
 
             if snap.pressure is not PressureLevel.NORMAL:
@@ -955,11 +955,11 @@ class ResourceOptimizationEngine:
                     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.debug("suppressed error in resource_optimization", exc_info=True)
 
-            self._emit_pressure_event(snap)
+            self.emit_pressure_event(snap)
 
             if snap.pressure in (PressureLevel.EMERGENCY, PressureLevel.CRITICAL):
                 self._execute_defensive(snap.pressure)
-                self._self_heal_cycle(snap)
+                self.self_heal_cycle(snap)
 
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("ResourceOptimizationEngine: monitor tick failed", exc_info=True)
@@ -976,13 +976,19 @@ class ResourceOptimizationEngine:
         self._config_path = _ConfigReloader.discover_path()
         if self._config_path is None:
             return
-        self._apply_config(self._config_path)
+        self.apply_config(self._config_path)
 
-    def _apply_config(self, path: str) -> None:
+    def apply_config(self, path: str) -> None:
         _ConfigReloader.apply(self, path)
 
-    def _check_config_reload(self) -> None:
+    def _apply_config(self, path: str) -> None:
+        self.apply_config(path)
+
+    def check_config_reload(self) -> None:
         _ConfigReloader.check_reload(self)
+
+    def _check_config_reload(self) -> None:
+        self.check_config_reload()
 
     # ══ 职责分区⑤ 自愈闭环（保留，不外移） ══
     # 保留理由：_self_heal_cycle 与 optimize()/snapshot() 调用顺序深度交织——
@@ -990,23 +996,23 @@ class ResourceOptimizationEngine:
     # 且测试以 patch.object(ResourceOptimizationEngine, "optimize"/"snapshot")
     # 类级补丁验证该编排，外移会破坏补丁语义与重试时序。
 
-    def _self_heal_cycle(self, snap: ResourceSnapshot) -> OptimizationResult | None:
-        if not self._self_healing_enabled:
+    def self_heal_cycle(self, snap: ResourceSnapshot) -> OptimizationResult | None:
+        if not self.self_healing_enabled:
             return None
         if snap.pressure is PressureLevel.NORMAL:
             return None
 
         start = time.monotonic()
         retries = 0
-        while retries < self._self_healing_max_retries:
+        while retries < self.self_healing_max_retries:
             if time.monotonic() - start > self._self_healing_max_recovery_s:
                 logger.warning("ResourceOptimizationEngine: self-heal timeout after %.0fs", time.monotonic() - start)
                 break
 
-            strategy = self._select_healing_strategy(snap.pressure)
+            strategy = self.select_healing_strategy(snap.pressure)
             result = self.optimize(strategy)
             if result.success:
-                time.sleep(self._self_healing_verification_delay_s)
+                time.sleep(self.self_healing_verification_delay_s)
                 verify_snap = self.snapshot()
                 level_order = [
                     PressureLevel.NORMAL,
@@ -1025,28 +1031,114 @@ class ResourceOptimizationEngine:
             logger.warning(
                 "ResourceOptimizationEngine: self-heal retry %d/%d",
                 retries,
-                self._self_healing_max_retries,
+                self.self_healing_max_retries,
             )
             # 5.72.4 修复：exponential backoff + jitter 避免重试风暴
-            if retries < self._self_healing_max_retries:
+            if retries < self.self_healing_max_retries:
                 _delay = (2 ** retries) + random.uniform(0, 1)
                 time.sleep(min(_delay, 30.0))
 
         logger.warning("ResourceOptimizationEngine: self-heal failed after %d retries", retries)
         return None
 
-    def _select_healing_strategy(self, pressure: PressureLevel) -> OptimizationStrategy:
+    def _self_heal_cycle(self, snap: ResourceSnapshot) -> OptimizationResult | None:
+        return self.self_heal_cycle(snap)
+
+    def select_healing_strategy(self, pressure: PressureLevel) -> OptimizationStrategy:
         if pressure is PressureLevel.EMERGENCY or pressure is PressureLevel.CRITICAL:
             return OptimizationStrategy.MEMORY_COMPACT
         else:
             return OptimizationStrategy.SCHEDULE_ADAPT
 
+    def _select_healing_strategy(self, pressure: PressureLevel) -> OptimizationStrategy:
+        return self.select_healing_strategy(pressure)
+
     # ── 外部通知 facade（委托 _ExternalNotifier，5.150.1 Extract Class） ──
     # 开关/去抖状态（_eventbus_enabled/_eventbus_topic/_last_pressure_level/
     # _audit_enabled）保留在本类，同名薄封装保留实例级 patch 面。
 
-    def _emit_pressure_event(self, snap: ResourceSnapshot) -> None:
+    def emit_pressure_event(self, snap: ResourceSnapshot) -> None:
         _ExternalNotifier.emit_pressure_event(self, snap)
 
-    def _audit_optimization(self, record: OptimizationRecord) -> None:
+    def _emit_pressure_event(self, snap: ResourceSnapshot) -> None:
+        self.emit_pressure_event(snap)
+
+    def audit_optimization(self, record: OptimizationRecord) -> None:
         _ExternalNotifier.audit_optimization(self, record)
+
+    def _audit_optimization(self, record: OptimizationRecord) -> None:
+        self.audit_optimization(record)
+
+    # ══ 公共属性访问器（reverse hierarchy: backing field 保持 _name，property 暴露公共面） ══
+
+    @property
+    def config_path(self) -> str | None:
+        return self._config_path
+
+    @config_path.setter
+    def config_path(self, value: str | None) -> None:
+        self._config_path = value
+
+    @property
+    def thresholds(self) -> _PressureThresholds:
+        return self._thresholds
+
+    @thresholds.setter
+    def thresholds(self, value: _PressureThresholds) -> None:
+        self._thresholds = value
+
+    @property
+    def hysteresis(self) -> _HysteresisConfig:
+        return self._hysteresis
+
+    @hysteresis.setter
+    def hysteresis(self, value: _HysteresisConfig) -> None:
+        self._hysteresis = value
+
+    @property
+    def self_healing_enabled(self) -> bool:
+        return self._self_healing_enabled
+
+    @self_healing_enabled.setter
+    def self_healing_enabled(self, value: bool) -> None:
+        self._self_healing_enabled = value
+
+    @property
+    def self_healing_max_retries(self) -> int:
+        return self._self_healing_max_retries
+
+    @self_healing_max_retries.setter
+    def self_healing_max_retries(self, value: int) -> None:
+        self._self_healing_max_retries = value
+
+    @property
+    def self_healing_verification_delay_s(self) -> float:
+        return self._self_healing_verification_delay_s
+
+    @self_healing_verification_delay_s.setter
+    def self_healing_verification_delay_s(self, value: float) -> None:
+        self._self_healing_verification_delay_s = value
+
+    @property
+    def eventbus_enabled(self) -> bool:
+        return self._eventbus_enabled
+
+    @eventbus_enabled.setter
+    def eventbus_enabled(self, value: bool) -> None:
+        self._eventbus_enabled = value
+
+    @property
+    def last_pressure_level(self) -> PressureLevel:
+        return self._last_pressure_level
+
+    @last_pressure_level.setter
+    def last_pressure_level(self, value: PressureLevel) -> None:
+        self._last_pressure_level = value
+
+    @property
+    def audit_enabled(self) -> bool:
+        return self._audit_enabled
+
+    @audit_enabled.setter
+    def audit_enabled(self, value: bool) -> None:
+        self._audit_enabled = value

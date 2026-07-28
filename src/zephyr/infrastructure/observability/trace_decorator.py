@@ -65,6 +65,33 @@ class TraceCollector:
                     cls._instance = cls()
         return cls._instance
 
+    @classmethod
+    def reset_instance(cls) -> None:
+        """Reset the singleton instance to ``None`` (for testing)."""
+        with cls._lock:
+            cls._instance = None
+
+    @classmethod
+    def set_instance(cls, instance: TraceCollector | None) -> None:
+        """Set the singleton instance explicitly (for testing)."""
+        with cls._lock:
+            cls._instance = instance
+
+    @property
+    def spans(self) -> list[TraceSpan]:
+        """Return a snapshot copy of the currently buffered spans."""
+        with self._spans_lock:
+            return list(self._spans)
+
+    @property
+    def output_dir(self) -> Path:
+        """Directory where trace files are written."""
+        return self._output_dir
+
+    @output_dir.setter
+    def output_dir(self, value: Path) -> None:
+        self._output_dir = value
+
     def add_span(self, span: TraceSpan) -> None:
         with self._spans_lock:
             self._spans.append(span)

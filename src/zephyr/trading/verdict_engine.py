@@ -161,8 +161,12 @@ class Verdict(BaseModel):
     reason: str = ""
 
 
-_YELLOW_TRUST_THRESHOLD: float = 30.0
-_YELLOW_VIOLATION_THRESHOLD: int = 3
+YELLOW_TRUST_THRESHOLD: float = 30.0
+YELLOW_VIOLATION_THRESHOLD: int = 3
+# Backward-compat aliases (reverse hierarchy): private names kept as thin
+# references to the public constants so existing imports keep working.
+_YELLOW_TRUST_THRESHOLD = YELLOW_TRUST_THRESHOLD
+_YELLOW_VIOLATION_THRESHOLD = YELLOW_VIOLATION_THRESHOLD
 
 
 class VerdictEngine:
@@ -184,6 +188,54 @@ class VerdictEngine:
         self._red_count: int = 0
         self._yellow_count: int = 0
         self._pass_count: int = 0
+
+    # --- Public read/write surface (reverse hierarchy) ---
+    # Private storage attributes are kept; these properties expose them publicly
+    # so callers (incl. tests) need not touch private members.
+
+    @property
+    def protection_index(self) -> "ProtectionIndex | None":
+        return self._protection_index
+
+    @property
+    def gpu_scheduler(self) -> "LocalModelScheduler | None":
+        return self._gpu_scheduler
+
+    @property
+    def verdict_timeout_s(self) -> float:
+        return self._verdict_timeout_s
+
+    @property
+    def eval_count(self) -> int:
+        return self._eval_count
+
+    @eval_count.setter
+    def eval_count(self, value: int) -> None:
+        self._eval_count = value
+
+    @property
+    def red_count(self) -> int:
+        return self._red_count
+
+    @red_count.setter
+    def red_count(self, value: int) -> None:
+        self._red_count = value
+
+    @property
+    def yellow_count(self) -> int:
+        return self._yellow_count
+
+    @yellow_count.setter
+    def yellow_count(self, value: int) -> None:
+        self._yellow_count = value
+
+    @property
+    def pass_count(self) -> int:
+        return self._pass_count
+
+    @pass_count.setter
+    def pass_count(self, value: int) -> None:
+        self._pass_count = value
 
     async def evaluate(self, event: AuditEntryV1 | AuditEvent | dict[str, Any]) -> Verdict:
         start = time.monotonic()
@@ -216,7 +268,7 @@ class VerdictEngine:
                 # 存在安全风险。记录 warning 使查询失败可见 (不阻断决策, 但留审计痕迹)
                 logger.warning("verdict_engine: protection_index.query failed for %s: %s", operation.target_path, e, exc_info=True)
 
-        verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)
+        verdict_level, reason = self.apply_decision_tree(actor, operation, gate_passed, violation_count)
 
         graduated = self.resolve_graduated_level(verdict_level, prot_level, gate_passed, violation_count)
         needs_consensus = self.should_trigger_consensus(verdict_level, prot_level)
@@ -330,7 +382,7 @@ class VerdictEngine:
         )
         return actor, operation, event.get("gate_passed", False), event.get("violation_count", 0)
 
-    def _apply_decision_tree(
+    def apply_decision_tree(
         self,
         actor: ActorInfo,
         operation: OperationInfo,
@@ -356,13 +408,23 @@ class VerdictEngine:
             return VerdictLevel.PASS, "ai_on_protected_gate_passed"
 
         if operation.protection_level is ProtectionLevel.normal:
-            if actor.trust_score < _YELLOW_TRUST_THRESHOLD:
+            if actor.trust_score < YELLOW_TRUST_THRESHOLD:
                 return VerdictLevel.YELLOW, "low_trust_score"
-            if violation_count >= _YELLOW_VIOLATION_THRESHOLD:
+            if violation_count >= YELLOW_VIOLATION_THRESHOLD:
                 return VerdictLevel.YELLOW, "high_violation_count"
             return VerdictLevel.PASS, "ai_on_normal"
 
         return VerdictLevel.PASS, "ai_on_public"
+
+    def _apply_decision_tree(
+        self,
+        actor: ActorInfo,
+        operation: OperationInfo,
+        gate_passed: bool,
+        violation_count: int,
+    ) -> tuple[VerdictLevel, str]:
+        """Backward-compat wrapper (reverse hierarchy); delegates to :meth:`apply_decision_tree`."""
+        return self.apply_decision_tree(actor, operation, gate_passed, violation_count)
 
     async def evaluate_batch(self, events: list[AuditEntryV1 | AuditEvent | dict[str, Any]]) -> list[Verdict]:
         if not events:

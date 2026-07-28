@@ -52,7 +52,7 @@ class TestTraceSpanDataclass:
 
 class TestTraceCollector:
     def setup_method(self):
-        TraceCollector._instance = None
+        TraceCollector.reset_instance()
 
     def test_get_instance_creates_singleton(self):
         inst1 = TraceCollector.get_instance()
@@ -70,8 +70,8 @@ class TestTraceCollector:
             success=True,
         )
         collector.add_span(span)
-        assert len(collector._spans) == 1
-        assert collector._spans[0].span_id == "test-1"
+        assert len(collector.spans) == 1
+        assert collector.spans[0].span_id == "test-1"
 
     def test_add_multiple_spans(self):
         collector = TraceCollector()
@@ -86,11 +86,11 @@ class TestTraceCollector:
                     success=True,
                 )
             )
-        assert len(collector._spans) == 3
+        assert len(collector.spans) == 3
 
     def test_flush_writes_file(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
+        collector.output_dir = tmp_path / "traces"
         collector.add_span(
             TraceSpan(
                 span_id="flush-1",
@@ -103,7 +103,7 @@ class TestTraceCollector:
         )
         flushed = collector.flush()
         assert len(flushed) == 1
-        assert len(collector._spans) == 0
+        assert len(collector.spans) == 0
         trace_files = list((tmp_path / "traces").glob("trace-*.jsonl"))
         assert len(trace_files) == 1
         lines = trace_files[0].read_text(encoding="utf-8").strip().split("\n")
@@ -114,13 +114,13 @@ class TestTraceCollector:
 
     def test_flush_empty(self, tmp_path):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
+        collector.output_dir = tmp_path / "traces"
         flushed = collector.flush()
         assert flushed == []
 
     def test_flush_clears_spans(self, tmp_path):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
+        collector.output_dir = tmp_path / "traces"
         collector.add_span(
             TraceSpan(
                 span_id="clear-1",
@@ -132,17 +132,17 @@ class TestTraceCollector:
             )
         )
         collector.flush()
-        assert len(collector._spans) == 0
+        assert len(collector.spans) == 0
 
 
 class TestTraceDecorator:
     def setup_method(self):
-        TraceCollector._instance = None
+        TraceCollector.reset_instance()
 
     def test_trace_success(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
-        TraceCollector._instance = collector
+        collector.output_dir = tmp_path / "traces"
+        TraceCollector.set_instance(collector)
 
         @trace(operation="custom_op")
         def my_func(x, y):
@@ -150,27 +150,27 @@ class TestTraceDecorator:
 
         result = my_func(1, 2)
         assert result == 3
-        assert len(collector._spans) == 1
-        assert collector._spans[0].success is True
-        assert collector._spans[0].operation == "custom_op"
-        assert collector._spans[0].error == ""
+        assert len(collector.spans) == 1
+        assert collector.spans[0].success is True
+        assert collector.spans[0].operation == "custom_op"
+        assert collector.spans[0].error == ""
 
     def test_trace_default_operation_name(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
-        TraceCollector._instance = collector
+        collector.output_dir = tmp_path / "traces"
+        TraceCollector.set_instance(collector)
 
         @trace()
         def compute():
             return 42
 
         compute()
-        assert collector._spans[0].operation == "compute"
+        assert collector.spans[0].operation == "compute"
 
     def test_trace_exception_recorded(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
-        TraceCollector._instance = collector
+        collector.output_dir = tmp_path / "traces"
+        TraceCollector.set_instance(collector)
 
         @trace(operation="failing_op")
         def boom():
@@ -178,14 +178,14 @@ class TestTraceDecorator:
 
         with pytest.raises(RuntimeError, match="kaboom"):
             boom()
-        assert len(collector._spans) == 1
-        assert collector._spans[0].success is False
-        assert "kaboom" in collector._spans[0].error
+        assert len(collector.spans) == 1
+        assert collector.spans[0].success is False
+        assert "kaboom" in collector.spans[0].error
 
     def test_trace_preserves_return_value(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
-        TraceCollector._instance = collector
+        collector.output_dir = tmp_path / "traces"
+        TraceCollector.set_instance(collector)
 
         @trace()
         def greet(name):
@@ -195,24 +195,24 @@ class TestTraceDecorator:
 
     def test_trace_duration_positive(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
-        TraceCollector._instance = collector
+        collector.output_dir = tmp_path / "traces"
+        TraceCollector.set_instance(collector)
 
         @trace()
         def slow():
             return "done"
 
         slow()
-        assert collector._spans[0].duration_ms >= 0
+        assert collector.spans[0].duration_ms >= 0
 
     def test_trace_no_args(self, tmp_path, monkeypatch):
         collector = TraceCollector()
-        collector._output_dir = tmp_path / "traces"
-        TraceCollector._instance = collector
+        collector.output_dir = tmp_path / "traces"
+        TraceCollector.set_instance(collector)
 
         @trace("static_name")
         def no_args():
             return True
 
         assert no_args() is True
-        assert collector._spans[0].operation == "static_name"
+        assert collector.spans[0].operation == "static_name"

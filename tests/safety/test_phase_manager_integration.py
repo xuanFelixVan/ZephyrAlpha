@@ -77,7 +77,7 @@ class TestAutoStartImport:
         assert hasattr(scheduler, "auto_stop")
         assert hasattr(scheduler, "is_auto_start_running")
         assert hasattr(scheduler, "register_to_phase_manager")
-        assert hasattr(scheduler, "_auto_start_loop")
+        assert hasattr(scheduler, "auto_start_loop")
 
     def test_schedule_conflict_error_class(self):
         assert issubclass(ScheduleConflictError, RuntimeError)
@@ -95,10 +95,10 @@ class TestAutoStartImport:
 
 class TestConstructorAutoStartAttributes:
     def test_auto_start_thread_default_none(self, scheduler: GameDayScheduler):
-        assert scheduler._auto_start_thread is None
+        assert scheduler.auto_start_thread is None
 
     def test_auto_start_running_default_false(self, scheduler: GameDayScheduler):
-        assert scheduler._auto_start_running is False
+        assert scheduler.auto_start_running is False
 
     def test_is_auto_start_running_default_false(self, scheduler: GameDayScheduler):
         assert scheduler.is_auto_start_running() is False
@@ -107,7 +107,7 @@ class TestConstructorAutoStartAttributes:
         """验证构造函数接受 enable_event_subscription 参数。"""
         s = GameDayScheduler(state_path=temp_state_path, enable_event_subscription=False)
         assert s is not None
-        assert s._auto_start_running is False
+        assert s.auto_start_running is False
 
 
 # ── auto_start 方法测试 ──────────────────────────────────────────────────
@@ -131,24 +131,24 @@ class TestAutoStart:
     def test_auto_start_creates_thread(self, scheduler: GameDayScheduler):
         scheduler.auto_start(interval_seconds=60)
         try:
-            assert scheduler._auto_start_thread is not None
-            assert isinstance(scheduler._auto_start_thread, threading.Thread)
+            assert scheduler.auto_start_thread is not None
+            assert isinstance(scheduler.auto_start_thread, threading.Thread)
         finally:
             scheduler.auto_stop()
 
     def test_auto_start_thread_is_daemon(self, scheduler: GameDayScheduler):
         scheduler.auto_start(interval_seconds=60)
         try:
-            assert scheduler._auto_start_thread is not None
-            assert scheduler._auto_start_thread.daemon is True
+            assert scheduler.auto_start_thread is not None
+            assert scheduler.auto_start_thread.daemon is True
         finally:
             scheduler.auto_stop()
 
     def test_auto_start_thread_name(self, scheduler: GameDayScheduler):
         scheduler.auto_start(interval_seconds=60)
         try:
-            assert scheduler._auto_start_thread is not None
-            assert scheduler._auto_start_thread.name == "GameDayAutoStart"
+            assert scheduler.auto_start_thread is not None
+            assert scheduler.auto_start_thread.name == "GameDayAutoStart"
         finally:
             scheduler.auto_stop()
 
@@ -162,7 +162,7 @@ class TestAutoStart:
 
     def test_auto_start_default_interval(self, scheduler: GameDayScheduler):
         """验证默认间隔为 86400 秒（每天）。"""
-        with patch.object(scheduler, "_auto_start_loop") as mock_loop:
+        with patch.object(scheduler, "auto_start_loop") as mock_loop:
             scheduler.auto_start()
             try:
                 # 检查调用参数
@@ -173,7 +173,7 @@ class TestAutoStart:
                 scheduler.auto_stop()
 
     def test_auto_start_custom_interval(self, scheduler: GameDayScheduler):
-        with patch.object(scheduler, "_auto_start_loop") as mock_loop:
+        with patch.object(scheduler, "auto_start_loop") as mock_loop:
             scheduler.auto_start(interval_seconds=3600)
             try:
                 args = mock_loop.call_args.args
@@ -182,12 +182,12 @@ class TestAutoStart:
                 scheduler.auto_stop()
 
     def test_auto_start_starts_thread(self, scheduler: GameDayScheduler):
-        with patch.object(scheduler, "_auto_start_loop"):
+        with patch.object(scheduler, "auto_start_loop"):
             scheduler.auto_start(interval_seconds=60)
             try:
                 # Thread 可能已退出（因为 mock 了 loop），但 start 被调用过
-                # 检查 _auto_start_thread 被赋值
-                assert scheduler._auto_start_thread is not None
+                # 检查 auto_start_thread 被赋值
+                assert scheduler.auto_start_thread is not None
             finally:
                 scheduler.auto_stop()
 
@@ -213,7 +213,7 @@ class TestAutoStop:
     def test_auto_stop_clears_thread_reference(self, scheduler: GameDayScheduler):
         scheduler.auto_start(interval_seconds=60)
         scheduler.auto_stop()
-        assert scheduler._auto_start_thread is None
+        assert scheduler.auto_start_thread is None
 
     def test_auto_stop_idempotent(self, scheduler: GameDayScheduler):
         scheduler.auto_start(interval_seconds=60)
@@ -253,23 +253,23 @@ class TestIsAutoStartRunning:
         assert isinstance(result, bool)
 
 
-# ── _auto_start_loop 方法测试 ──────────────────────────────────────────
+# ── auto_start_loop 方法测试 ──────────────────────────────────────────
 
 
 class TestAutoStartLoop:
     def test_loop_calls_trigger(self, scheduler: GameDayScheduler):
         """验证循环体调用 trigger 方法。"""
         with patch.object(scheduler, "trigger") as mock_trigger:
-            # 设置 _auto_start_running=True 让循环进入，然后立即设为 False 退出
-            scheduler._auto_start_running = True
+            # 设置 auto_start_running=True 让循环进入，然后立即设为 False 退出
+            scheduler.auto_start_running = True
 
             # 使用极短的 interval 让 sleep 快速返回
             def stop_after_first_call(*args, **kwargs):
-                scheduler._auto_start_running = False
+                scheduler.auto_start_running = False
                 return []
 
             mock_trigger.side_effect = stop_after_first_call
-            scheduler._auto_start_loop(interval_seconds=1)
+            scheduler.auto_start_loop(interval_seconds=1)
 
             assert mock_trigger.call_count >= 1
             mock_trigger.assert_called_with("cron_daily")
@@ -277,7 +277,7 @@ class TestAutoStartLoop:
     def test_loop_handles_schedule_conflict(self, scheduler: GameDayScheduler):
         """验证循环体处理 ScheduleConflictError 不崩溃。"""
         with patch.object(scheduler, "trigger", side_effect=ScheduleConflictError("conflict")):
-            scheduler._auto_start_running = True
+            scheduler.auto_start_running = True
 
             # 让循环只跑一次
             original_sleep = time.sleep
@@ -287,33 +287,33 @@ class TestAutoStartLoop:
             def fast_sleep(seconds):
                 call_count[0] += 1
                 if call_count[0] >= 1:
-                    scheduler._auto_start_running = False
+                    scheduler.auto_start_running = False
 
             with patch("zephyr.security.adversarial_validation.game_day_scheduler.time.sleep", side_effect=fast_sleep):
                 # 不应抛出异常
-                scheduler._auto_start_loop(interval_seconds=1)
+                scheduler.auto_start_loop(interval_seconds=1)
 
     def test_loop_handles_generic_exception(self, scheduler: GameDayScheduler):
         """验证循环体处理通用异常不崩溃。"""
         with patch.object(scheduler, "trigger", side_effect=ValueError("test error")):
-            scheduler._auto_start_running = True
+            scheduler.auto_start_running = True
 
             call_count = [0]
 
             def fast_sleep(seconds):
                 call_count[0] += 1
                 if call_count[0] >= 1:
-                    scheduler._auto_start_running = False
+                    scheduler.auto_start_running = False
 
             with patch("zephyr.security.adversarial_validation.game_day_scheduler.time.sleep", side_effect=fast_sleep):
                 # 不应抛出异常
-                scheduler._auto_start_loop(interval_seconds=1)
+                scheduler.auto_start_loop(interval_seconds=1)
 
     def test_loop_exits_when_running_flag_false(self, scheduler: GameDayScheduler):
-        """验证循环体在 _auto_start_running=False 时退出。"""
-        scheduler._auto_start_running = False
+        """验证循环体在 auto_start_running=False 时退出。"""
+        scheduler.auto_start_running = False
         with patch.object(scheduler, "trigger") as mock_trigger:
-            scheduler._auto_start_loop(interval_seconds=1)
+            scheduler.auto_start_loop(interval_seconds=1)
             # 循环应立即退出，不调用 trigger
             assert mock_trigger.call_count == 0
 
@@ -408,14 +408,14 @@ class TestPhaseManagerIntegration:
     def test_start_trigger_integration(self, scheduler: GameDayScheduler):
         """验证 auto_start 后 trigger 被调用（通过 mock）。"""
         with patch.object(scheduler, "trigger") as mock_trigger:
-            scheduler._auto_start_running = True
+            scheduler.auto_start_running = True
 
             def stop_after_first(*args, **kwargs):
-                scheduler._auto_start_running = False
+                scheduler.auto_start_running = False
                 return []
 
             mock_trigger.side_effect = stop_after_first
-            scheduler._auto_start_loop(interval_seconds=1)
+            scheduler.auto_start_loop(interval_seconds=1)
 
             assert mock_trigger.called
             mock_trigger.assert_called_with("cron_daily")
@@ -437,11 +437,11 @@ class TestPhaseManagerIntegration:
     def test_stop_cleanup_thread_reference(self, scheduler: GameDayScheduler):
         """验证停止后线程引用被清理。"""
         scheduler.auto_start(interval_seconds=60)
-        assert scheduler._auto_start_thread is not None
+        assert scheduler.auto_start_thread is not None
 
         scheduler.auto_stop()
-        assert scheduler._auto_start_thread is None
-        assert scheduler._auto_start_running is False
+        assert scheduler.auto_start_thread is None
+        assert scheduler.auto_start_running is False
 
     def test_multiple_start_stop_cycles(self, scheduler: GameDayScheduler):
         """验证多次启停循环。"""
@@ -468,9 +468,9 @@ class TestEventBusAndAutoStartCoexistence:
     def test_constructor_accepts_both_flags(self, temp_state_path: Path):
         """验证构造函数同时支持 event_subscription 和 auto_start 属性。"""
         s = GameDayScheduler(state_path=temp_state_path, enable_event_subscription=False)
-        assert s._event_subscribed is False
-        assert s._auto_start_running is False
-        assert s._auto_start_thread is None
+        assert s.event_subscribed is False
+        assert s.auto_start_running is False
+        assert s.auto_start_thread is None
 
     def test_event_subscribe_then_auto_start(self, scheduler: GameDayScheduler):
         """验证先订阅事件再启动自动守护。"""
@@ -505,7 +505,7 @@ class TestEventBusAndAutoStartCoexistence:
         scheduler.unsubscribe_from_events()
 
         assert scheduler.is_auto_start_running() is False
-        assert scheduler._event_subscribed is False
+        assert scheduler.event_subscribed is False
 
 
 # ── 并发安全测试 ────────────────────────────────────────────────────────

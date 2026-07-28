@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
+import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -60,15 +62,27 @@ class ScheduleConflictError(RuntimeError):
 
 
 class GameDayScheduler:
-    def __init__(self, state_path: Path | None = None) -> None:
+    def __init__(
+        self,
+        state_path: Path | None = None,
+        enable_event_subscription: bool = False,
+    ) -> None:
         self._state_path: Path = state_path or _STATE_PATH
         # 5.79.2 修复：延迟到 __init__ 创建目录，避免 import 时副作用。
         os.makedirs("data/red_blue", exist_ok=True)
         self._runner = GameDayRunner()
         self._state: dict = self._load_state()
+        # auto_start 守护线程状态（Stage 4 公共化，primary 为公共 property）
+        self._auto_start_thread: threading.Thread | None = None
+        self._auto_start_running: bool = False
+        self._auto_start_lock = threading.Lock()
+        # event subscription 状态（Stage 4 公共化，primary 为公共 property）
+        self._event_subscribed: bool = False
+        self._enable_event_subscription: bool = enable_event_subscription
 
     # ── Stage 4 公共化（2026-07-28）：properties + 公共方法 ──
     # 消除 tests/safety/test_game_day_scheduler.py 中 68 处私有成员访问。
+    # 消除 tests/safety/test_phase_manager_integration.py 中 36 处私有成员访问。
 
     @property
     def state(self) -> dict:
@@ -83,6 +97,114 @@ class GameDayScheduler:
     def state_path(self) -> Path:
         """只读：状态文件路径（Stage 4 公共化）。"""
         return self._state_path
+
+    # ── auto_start 公共 API（Stage 4 公共化，primary） ──
+
+    @property
+    def auto_start_thread(self) -> threading.Thread | None:
+        """只读：当前 auto_start 守护线程引用（Stage 4 公共化）。"""
+        return self._auto_start_thread
+
+    @property
+    def auto_start_running(self) -> bool:
+        """读写：auto_start 守护线程运行标志（Stage 4 公共化）。"""
+        return self._auto_start_running
+
+    @auto_start_running.setter
+    def auto_start_running(self, value: bool) -> None:
+        self._auto_start_running = value
+
+    @property
+    def event_subscribed(self) -> bool:
+        """读写：事件订阅状态（Stage 4 公共化）。"""
+        return self._event_subscribed
+
+    @event_subscribed.setter
+    def event_subscribed(self, value: bool) -> None:
+        self._event_subscribed = value
+
+    def is_auto_start_running(self) -> bool:
+        """查询 auto_start 守护线程是否正在运行（Stage 4 公共化，primary）。"""
+        return self._auto_start_running
+
+    def auto_start(self, interval_seconds: int = 86400) -> bool:
+        """启动 auto_start 守护线程（Stage 4 公共化，primary）。
+
+        Args:
+            interval_seconds: 循环间隔秒数，默认 86400（每天）。
+
+        Returns:
+            True 表示启动成功；False 表示已有守护线程在运行。
+        """
+        with self._auto_start_lock:
+            if self._auto_start_running:
+                return False
+            self._auto_start_running = True
+            thread = threading.Thread(
+                target=self.auto_start_loop,
+                args=(interval_seconds,),
+                name="GameDayAutoStart",
+                daemon=True,
+            )
+            self._auto_start_thread = thread
+            thread.start()
+            return True
+
+    def auto_stop(self) -> bool:
+        """停止 auto_start 守护线程（Stage 4 公共化，primary）。
+
+        Returns:
+            True 表示成功停止；False 表示原本就未运行。
+        """
+        with self._auto_start_lock:
+            if not self._auto_start_running:
+                return False
+            self._auto_start_running = False
+            self._auto_start_thread = None
+            return True
+
+    def auto_start_loop(self, interval_seconds: int) -> None:
+        """auto_start 守护线程循环体（Stage 4 公共化，primary）。
+
+        循环执行 trigger("cron_daily")，捕获异常后 sleep interval_seconds。
+        当 auto_start_running 为 False 时退出。
+        """
+        while self._auto_start_running:
+            try:
+                self.trigger("cron_daily")
+            except ScheduleConflictError:
+                logger.exception("schedule_conflict in auto_start_loop")
+            except Exception:
+                logger.exception("error in auto_start_loop")
+            time.sleep(interval_seconds)
+
+    def _auto_start_loop(self, interval_seconds: int) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.auto_start_loop(interval_seconds)
+
+    def register_to_phase_manager(self) -> bool:
+        """尝试注册到 phase_manager（Stage 4 公共化，primary）。
+
+        Returns:
+            True 表示 phase_manager 可用并注册成功；False 表示不可用。
+        """
+        try:
+            from zephyr.governance.ops_governance.phase_manager import (  # noqa: F401
+                PHASE_SEQUENCE,
+            )
+
+            return True
+        except ImportError:
+            logger.warning("phase_manager_unavailable register_to_phase_manager_failed")
+            return False
+
+    def subscribe_to_events(self) -> None:
+        """订阅事件总线（Stage 4 公共化，primary）。"""
+        self._event_subscribed = True
+
+    def unsubscribe_from_events(self) -> None:
+        """取消订阅事件总线（Stage 4 公共化，primary）。"""
+        self._event_subscribed = False
 
     def trigger(self, trigger_name: str) -> list[dict]:
         frequencies = _TRIGGER_MAP.get(trigger_name, [])

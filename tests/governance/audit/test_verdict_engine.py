@@ -19,8 +19,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from zephyr.trading.verdict_engine import (
-    _YELLOW_TRUST_THRESHOLD,
-    _YELLOW_VIOLATION_THRESHOLD,
+    YELLOW_TRUST_THRESHOLD,
+    YELLOW_VIOLATION_THRESHOLD,
     ActorInfo,
     AuditEvent,
     AuthCheckResult,
@@ -190,24 +190,24 @@ class TestVerdict:
 class TestVerdictEngineInit:
     def test_defaults(self):
         engine = VerdictEngine()
-        assert engine._protection_index is None
-        assert engine._gpu_scheduler is None
-        assert engine._verdict_timeout_s == 10.0
-        assert engine._eval_count == 0
-        assert engine._red_count == 0
-        assert engine._yellow_count == 0
-        assert engine._pass_count == 0
+        assert engine.protection_index is None
+        assert engine.gpu_scheduler is None
+        assert engine.verdict_timeout_s == 10.0
+        assert engine.eval_count == 0
+        assert engine.red_count == 0
+        assert engine.yellow_count == 0
+        assert engine.pass_count == 0
 
     def test_custom_timeout(self):
         engine = VerdictEngine(verdict_timeout_s=30.0)
-        assert engine._verdict_timeout_s == 30.0
+        assert engine.verdict_timeout_s == 30.0
 
     def test_with_dependencies(self):
         pi = MagicMock()
         gs = MagicMock()
         engine = VerdictEngine(protection_index=pi, gpu_scheduler=gs)
-        assert engine._protection_index is pi
-        assert engine._gpu_scheduler is gs
+        assert engine.protection_index is pi
+        assert engine.gpu_scheduler is gs
 
 
 @pytest.mark.asyncio
@@ -336,36 +336,36 @@ class TestEvaluate:
     async def test_counter_increment_pass(self):
         engine = VerdictEngine()
         await engine.evaluate(_audit_event(protection_level="public"))
-        assert engine._pass_count == 1
-        assert engine._eval_count == 1
+        assert engine.pass_count == 1
+        assert engine.eval_count == 1
 
     async def test_counter_increment_red(self):
         engine = VerdictEngine()
         await engine.evaluate(_audit_event(protection_level="anchor"))
-        assert engine._red_count == 1
+        assert engine.red_count == 1
 
     async def test_counter_increment_yellow(self):
         engine = VerdictEngine()
         await engine.evaluate(_audit_event(protection_level="normal", trust_score=10.0))
-        assert engine._yellow_count == 1
+        assert engine.yellow_count == 1
 
     async def test_trust_threshold_boundary(self):
         engine = VerdictEngine()
-        event_at = _audit_event(protection_level="normal", trust_score=_YELLOW_TRUST_THRESHOLD)
+        event_at = _audit_event(protection_level="normal", trust_score=YELLOW_TRUST_THRESHOLD)
         result = await engine.evaluate(event_at)
         assert result.verdict_level == VerdictLevel.PASS
 
-        event_below = _audit_event(protection_level="normal", trust_score=_YELLOW_TRUST_THRESHOLD - 0.1)
+        event_below = _audit_event(protection_level="normal", trust_score=YELLOW_TRUST_THRESHOLD - 0.1)
         result_below = await engine.evaluate(event_below)
         assert result_below.verdict_level == VerdictLevel.YELLOW
 
     async def test_violation_threshold_boundary(self):
         engine = VerdictEngine()
-        event_at = _audit_event(protection_level="normal", violation_count=_YELLOW_VIOLATION_THRESHOLD)
+        event_at = _audit_event(protection_level="normal", violation_count=YELLOW_VIOLATION_THRESHOLD)
         result = await engine.evaluate(event_at)
         assert result.verdict_level == VerdictLevel.YELLOW
 
-        event_below = _audit_event(protection_level="normal", violation_count=_YELLOW_VIOLATION_THRESHOLD - 1)
+        event_below = _audit_event(protection_level="normal", violation_count=YELLOW_VIOLATION_THRESHOLD - 1)
         result_below = await engine.evaluate(event_below)
         assert result_below.verdict_level == VerdictLevel.PASS
 
@@ -662,10 +662,10 @@ class TestEvaluateBatch:
             _audit_event(protection_level="normal", trust_score=10.0),
         ]
         await engine.evaluate_batch(events)
-        assert engine._eval_count == 3
-        assert engine._pass_count == 1
-        assert engine._red_count == 1
-        assert engine._yellow_count == 1
+        assert engine.eval_count == 3
+        assert engine.pass_count == 1
+        assert engine.red_count == 1
+        assert engine.yellow_count == 1
 
     async def test_batch_timeout(self):
         engine = VerdictEngine(verdict_timeout_s=0.001)
@@ -732,10 +732,10 @@ class TestHealthCheck:
 
     def test_health_after_evaluations(self):
         engine = VerdictEngine()
-        engine._eval_count = 10
-        engine._red_count = 2
-        engine._yellow_count = 3
-        engine._pass_count = 5
+        engine.eval_count = 10
+        engine.red_count = 2
+        engine.yellow_count = 3
+        engine.pass_count = 5
         health = engine.health_check()
         assert health["total_evaluations"] == 10
         assert health["red_rate"] == 0.2
@@ -762,76 +762,76 @@ class TestApplyDecisionTree:
     def test_human_pass(self):
         actor = ActorInfo(is_human=True)
         op = OperationInfo(protection_level=ProtectionLevel.anchor)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.PASS
         assert reason == "human_actor_auto_pass"
 
     def test_cross_module_red(self):
         actor = ActorInfo(is_human=False)
         op = OperationInfo(is_cross_module=True)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.RED
         assert reason == "cross_module_blocked"
 
     def test_anchor_red(self):
         actor = ActorInfo(is_human=False)
         op = OperationInfo(protection_level=ProtectionLevel.anchor)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.RED
         assert reason == "ai_on_anchor_blocked"
 
     def test_protected_no_gate_red(self):
         actor = ActorInfo(is_human=False)
         op = OperationInfo(protection_level=ProtectionLevel.protected)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.RED
         assert reason == "ai_on_protected_no_gate"
 
     def test_protected_gate_pass(self):
         actor = ActorInfo(is_human=False)
         op = OperationInfo(protection_level=ProtectionLevel.protected)
-        level, reason = self.engine._apply_decision_tree(actor, op, True, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, True, 0)
         assert level == VerdictLevel.PASS
         assert reason == "ai_on_protected_gate_passed"
 
     def test_normal_low_trust(self):
         actor = ActorInfo(is_human=False, trust_score=10.0)
         op = OperationInfo(protection_level=ProtectionLevel.normal)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.YELLOW
         assert reason == "low_trust_score"
 
     def test_normal_high_violations(self):
         actor = ActorInfo(is_human=False, trust_score=50.0, violation_count=3)
         op = OperationInfo(protection_level=ProtectionLevel.normal)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 3)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 3)
         assert level == VerdictLevel.YELLOW
         assert reason == "high_violation_count"
 
     def test_normal_pass(self):
         actor = ActorInfo(is_human=False, trust_score=50.0, violation_count=0)
         op = OperationInfo(protection_level=ProtectionLevel.normal)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.PASS
         assert reason == "ai_on_normal"
 
     def test_public_pass(self):
         actor = ActorInfo(is_human=False)
         op = OperationInfo(protection_level=ProtectionLevel.public)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.PASS
         assert reason == "ai_on_public"
 
     def test_cross_module_takes_priority_over_anchor(self):
         actor = ActorInfo(is_human=False)
         op = OperationInfo(is_cross_module=True, protection_level=ProtectionLevel.anchor)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.RED
         assert reason == "cross_module_blocked"
 
     def test_human_overrides_cross_module(self):
         actor = ActorInfo(is_human=True)
         op = OperationInfo(is_cross_module=True, protection_level=ProtectionLevel.anchor)
-        level, reason = self.engine._apply_decision_tree(actor, op, False, 0)
+        level, reason = self.engine.apply_decision_tree(actor, op, False, 0)
         assert level == VerdictLevel.PASS
         assert reason == "human_actor_auto_pass"

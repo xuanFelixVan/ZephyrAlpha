@@ -27,7 +27,7 @@ class _FakeTask:
     result: dict[str, Any] | None
     payload: dict[str, Any] | None = None
     status: str = "completed"
-    _acted: bool = False
+    acted: bool = False
 
 
 class TestActionDispatcherInit:
@@ -67,7 +67,7 @@ class TestActionDispatcherDispatch:
     def test_dispatch_exception_returns_error(self):
         d = ActionDispatcher()
         task = _FakeTask(task_id="t3", capability="task_classification", result={"category": "test"})
-        with patch.object(d, "_annotate_py_file", side_effect=RuntimeError("boom")):
+        with patch.object(d, "annotate_py_file", side_effect=RuntimeError("boom")):
             report = d.dispatch(task)
         assert report.status == "error"
         assert "boom" in report.detail
@@ -76,16 +76,16 @@ class TestActionDispatcherDispatch:
 class TestActionDispatcherSearchReplace:
     def test_search_replace_file_not_found(self, tmp_path):
         d = ActionDispatcher()
-        report = d._search_replace_file("nonexistent_module", {"fixes": [{"old_str": "a", "new_str": "b"}]})
+        report = d.search_replace_file("nonexistent_module", {"fixes": [{"old_str": "a", "new_str": "b"}]})
         assert report.status == "skipped"
 
     def test_search_replace_empty_field(self, tmp_path):
         d = ActionDispatcher()
         py_file = tmp_path / "sample.py"
         py_file.write_text("x = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="sample"):
-                report = d._search_replace_file("sample", {"fixes": []})
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="sample"):
+                report = d.search_replace_file("sample", {"fixes": []})
         assert report.status == "skipped"
         assert "empty fixes" in report.detail
 
@@ -93,10 +93,10 @@ class TestActionDispatcherSearchReplace:
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "target.py"
         py_file.write_text("old_value = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="target"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="target"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.search_replace_file(
                         "target",
                         {"fixes": [{"old_str": "old_value", "new_str": "new_value", "reason": "fix"}]},
                     )
@@ -107,9 +107,9 @@ class TestActionDispatcherSearchReplace:
         d = ActionDispatcher()
         py_file = tmp_path / "nomatch.py"
         py_file.write_text("x = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="nomatch"):
-                report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="nomatch"):
+                report = d.search_replace_file(
                     "nomatch",
                     {"fixes": [{"old_str": "not_present", "new_str": "y"}]},
                 )
@@ -117,17 +117,17 @@ class TestActionDispatcherSearchReplace:
 
 
 class TestActionDispatcherSearchReplacePaths:
-    """Phase 7e 补充测试：覆盖 _search_replace_file 的宽松匹配/remove/unchanged/空old_str/部分失败/实际写入/backup 路径"""
+    """Phase 7e 补充测试：覆盖 search_replace_file 的宽松匹配/remove/unchanged/空old_str/部分失败/实际写入/backup 路径"""
 
     def test_search_replace_fuzzy_match_stripped(self, tmp_path):
         """宽松匹配: old_str 带首尾空白, strip 后命中"""
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "fuzzy.py"
         py_file.write_text("target_value = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="fuzzy"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="fuzzy"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.search_replace_file(
                         "fuzzy",
                         {"fixes": [{"old_str": "  target_value  ", "new_str": "replaced"}]},
                     )
@@ -139,10 +139,10 @@ class TestActionDispatcherSearchReplacePaths:
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "remove.py"
         py_file.write_text("keep\n\n\n\ndelete_me\n\n\n\nkeep2\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="remove"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="remove"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.search_replace_file(
                         "remove",
                         {"dead_sections": [{"old_str": "delete_me"}]},
                         field="dead_sections",
@@ -155,9 +155,9 @@ class TestActionDispatcherSearchReplacePaths:
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "same.py"
         py_file.write_text("value = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="same"):
-                report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="same"):
+                report = d.search_replace_file(
                     "same",
                     {"fixes": [{"old_str": "value", "new_str": "value"}]},
                 )
@@ -169,9 +169,9 @@ class TestActionDispatcherSearchReplacePaths:
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "emptyold.py"
         py_file.write_text("x = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="emptyold"):
-                report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="emptyold"):
+                report = d.search_replace_file(
                     "emptyold",
                     {"fixes": [{"old_str": "", "new_str": "y"}]},
                 )
@@ -183,10 +183,10 @@ class TestActionDispatcherSearchReplacePaths:
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "partial.py"
         py_file.write_text("alpha = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="partial"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="partial"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.search_replace_file(
                         "partial",
                         {"fixes": [
                             {"old_str": "alpha", "new_str": "beta"},
@@ -202,10 +202,10 @@ class TestActionDispatcherSearchReplacePaths:
         d = ActionDispatcher(dry_run=False)
         py_file = tmp_path / "writetest.py"
         py_file.write_text("old_content = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="writetest"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="writetest"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.search_replace_file(
                         "writetest",
                         {"fixes": [{"old_str": "old_content", "new_str": "new_content"}]},
                     )
@@ -213,15 +213,15 @@ class TestActionDispatcherSearchReplacePaths:
         assert "new_content" in py_file.read_text(encoding="utf-8")
 
     def test_search_replace_backup_increments_stats(self, tmp_path):
-        """_version_backup 返回非空 → stats['backups'] 递增"""
+        """version_backup 返回非空 → stats['backups'] 递增"""
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "backup.py"
         py_file.write_text("val = 1\n", encoding="utf-8")
         original_backups = d.stats["backups"]
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="backup"):
-                with patch.object(d, "_version_backup", return_value="backup_001.bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="backup"):
+                with patch.object(d, "version_backup", return_value="backup_001.bak"):
+                    report = d.search_replace_file(
                         "backup",
                         {"fixes": [{"old_str": "val", "new_str": "newval"}]},
                     )
@@ -233,10 +233,10 @@ class TestActionDispatcherSearchReplacePaths:
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "reason.py"
         py_file.write_text("target = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="reason"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._search_replace_file(
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="reason"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.search_replace_file(
                         "reason",
                         {"fixes": [{"old_str": "target", "new_str": "replaced", "reason": "security fix"}]},
                     )
@@ -247,20 +247,20 @@ class TestActionDispatcherSearchReplacePaths:
 class TestActionDispatcherCreateFile:
     def test_create_file_no_path(self):
         d = ActionDispatcher()
-        report = d._create_file({"file_path": "", "content": "x"})
+        report = d.create_file({"file_path": "", "content": "x"})
         assert report.status == "skipped"
         assert "no file_path" in report.detail
 
     def test_create_file_empty_content(self):
         d = ActionDispatcher()
-        report = d._create_file({"file_path": "a.py", "content": ""})
+        report = d.create_file({"file_path": "a.py", "content": ""})
         assert report.status == "skipped"
         assert "empty content" in report.detail
 
     def test_create_file_path_escape(self, tmp_path):
         d = ActionDispatcher()
         with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
-            report = d._create_file({"file_path": "../../etc/passwd", "content": "x"})
+            report = d.create_file({"file_path": "../../etc/passwd", "content": "x"})
         assert report.status == "error"
         assert "escapes" in report.detail
 
@@ -269,14 +269,14 @@ class TestActionDispatcherCreateFile:
         existing = tmp_path / "exists.py"
         existing.write_text("old", encoding="utf-8")
         with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
-            report = d._create_file({"file_path": "exists.py", "content": "new"})
+            report = d.create_file({"file_path": "exists.py", "content": "new"})
         assert report.status == "skipped"
         assert "already exists" in report.detail
 
     def test_create_file_success_dry_run(self, tmp_path):
         d = ActionDispatcher(dry_run=True)
         with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
-            report = d._create_file({"file_path": "new_file.py", "content": "print('hi')"})
+            report = d.create_file({"file_path": "new_file.py", "content": "print('hi')"})
         assert report.status == "created"
         assert not (tmp_path / "new_file.py").exists()
 
@@ -284,7 +284,7 @@ class TestActionDispatcherCreateFile:
 class TestActionDispatcherDeleteFile:
     def test_delete_file_not_found(self):
         d = ActionDispatcher()
-        report = d._delete_file("nonexistent", {"file_path": ""})
+        report = d.delete_file("nonexistent", {"file_path": ""})
         assert report.status == "skipped"
 
     def test_delete_file_success_dry_run(self, tmp_path):
@@ -293,41 +293,41 @@ class TestActionDispatcherDeleteFile:
         target.write_text("content", encoding="utf-8")
         with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
             with patch("zephyr.trading.action_dispatcher.BRAIN_TRASH_DIR", tmp_path / ".brain_trash"):
-                with patch.object(d, "_find_module_file", return_value=target):
-                    with patch.object(d, "_extract_module_name", return_value="to_delete"):
-                        with patch.object(d, "_version_backup", return_value="bak"):
-                            report = d._delete_file("to_delete", {})
+                with patch.object(d, "find_module_file", return_value=target):
+                    with patch.object(d, "extract_module_name", return_value="to_delete"):
+                        with patch.object(d, "version_backup", return_value="bak"):
+                            report = d.delete_file("to_delete", {})
         assert report.status == "deleted"
 
 
 class TestActionDispatcherAnnotatePyFile:
     def test_annotate_py_file_not_found(self):
         d = ActionDispatcher()
-        report = d._annotate_py_file("unknown_mod", {"category": "test"})
+        report = d.annotate_py_file("unknown_mod", {"category": "test"})
         assert report.status == "skipped"
 
     def test_annotate_py_file_success_dry_run(self, tmp_path):
         d = ActionDispatcher(dry_run=True)
         py_file = tmp_path / "mod.py"
         py_file.write_text("x = 1\n", encoding="utf-8")
-        with patch.object(d, "_find_module_file", return_value=py_file):
-            with patch.object(d, "_extract_module_name", return_value="mod"):
-                with patch.object(d, "_version_backup", return_value="bak"):
-                    report = d._annotate_py_file("mod", {"category": "governance"})
+        with patch.object(d, "find_module_file", return_value=py_file):
+            with patch.object(d, "extract_module_name", return_value="mod"):
+                with patch.object(d, "version_backup", return_value="bak"):
+                    report = d.annotate_py_file("mod", {"category": "governance"})
         assert report.status == "modified"
 
 
 class TestActionDispatcherTagModule:
     def test_tag_module_empty_tags(self):
         d = ActionDispatcher()
-        report = d._tag_module("mod", {"tags": []})
+        report = d.tag_module("mod", {"tags": []})
         assert report.status == "skipped"
         assert "empty tags" in report.detail
 
     def test_tag_module_no_card(self):
         d = ActionDispatcher()
-        with patch.object(d, "_find_capability_card", return_value=None):
-            report = d._tag_module("mod", {"tags": ["a"]})
+        with patch.object(d, "find_capability_card", return_value=None):
+            report = d.tag_module("mod", {"tags": ["a"]})
         assert report.status == "skipped"
         assert "no card" in report.detail
 
@@ -336,14 +336,14 @@ class TestActionDispatcherWriteTriageLog:
     def test_write_triage_log(self, tmp_path):
         d = ActionDispatcher()
         with patch("zephyr.trading.action_dispatcher.AUDIT_LOGS_DIR", tmp_path):
-            report = d._write_triage_log({"result": {"needs_human": True, "reason": "anomaly"}})
+            report = d.write_triage_log({"result": {"needs_human": True, "reason": "anomaly"}})
         assert report.status == "modified"
         assert "ALERT" in report.detail
 
     def test_write_triage_log_clear(self, tmp_path):
         d = ActionDispatcher()
         with patch("zephyr.trading.action_dispatcher.AUDIT_LOGS_DIR", tmp_path):
-            report = d._write_triage_log({"result": {"needs_human": False, "reason": "ok"}})
+            report = d.write_triage_log({"result": {"needs_human": False, "reason": "ok"}})
         assert report.status == "modified"
         assert "CLEAR" in report.detail
 
@@ -353,10 +353,10 @@ class TestActionDispatcherDrainResults:
         d = ActionDispatcher()
         task = _FakeTask(task_id="t1", capability="unknown_cap", result={"x": 1})
         scheduler = MagicMock()
-        scheduler._lock = MagicMock()
-        scheduler._results = {"t1": task}
-        scheduler._lock.__enter__ = MagicMock(return_value=None)
-        scheduler._lock.__exit__ = MagicMock(return_value=None)
+        scheduler.lock = MagicMock()
+        scheduler.results = {"t1": task}
+        scheduler.lock.__enter__ = MagicMock(return_value=None)
+        scheduler.lock.__exit__ = MagicMock(return_value=None)
         reports = d.drain_results(scheduler)
         assert len(reports) == 1
         assert d.stats["dispatched"] == 1
@@ -364,12 +364,12 @@ class TestActionDispatcherDrainResults:
     def test_drain_results_skips_acted(self):
         d = ActionDispatcher()
         task = _FakeTask(task_id="t1", capability="unknown_cap", result={"x": 1})
-        task._acted = True
+        task.acted = True
         scheduler = MagicMock()
-        scheduler._lock = MagicMock()
-        scheduler._results = {"t1": task}
-        scheduler._lock.__enter__ = MagicMock(return_value=None)
-        scheduler._lock.__exit__ = MagicMock(return_value=None)
+        scheduler.lock = MagicMock()
+        scheduler.results = {"t1": task}
+        scheduler.lock.__enter__ = MagicMock(return_value=None)
+        scheduler.lock.__exit__ = MagicMock(return_value=None)
         reports = d.drain_results(scheduler)
         assert len(reports) == 0
 
@@ -377,28 +377,28 @@ class TestActionDispatcherDrainResults:
 class TestActionDispatcherHelpers:
     def test_extract_module_name_empty(self):
         d = ActionDispatcher()
-        assert d._extract_module_name("") == "unknown"
+        assert d.extract_module_name("") == "unknown"
 
     def test_extract_module_name_with_prefix(self):
         d = ActionDispatcher()
-        assert d._extract_module_name("classify this module: my_mod") == "my_mod"
+        assert d.extract_module_name("classify this module: my_mod") == "my_mod"
 
     def test_build_py_brain_block(self):
-        block = ActionDispatcher._build_py_brain_block({"key": "val"})
+        block = ActionDispatcher.build_py_brain_block({"key": "val"})
         assert "# BRAIN key:" in block
         assert "# BRAIN at:" in block
 
     def test_insert_brain_block(self):
         original = "x = 1\n"
         block = "# BRAIN test: true"
-        result = ActionDispatcher._insert_brain_block(original, block)
+        result = ActionDispatcher.insert_brain_block(original, block)
         assert "# BRAIN test: true" in result
         assert "x = 1" in result
 
     def test_update_brain_block(self):
         original = "# BRAIN old: true\nx = 1\n"
         block = "# BRAIN new: true"
-        result = ActionDispatcher._update_brain_block(original, block)
+        result = ActionDispatcher.update_brain_block(original, block)
         assert "# BRAIN new: true" in result
         assert "# BRAIN old: true" not in result
 

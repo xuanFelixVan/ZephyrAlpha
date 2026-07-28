@@ -74,6 +74,37 @@ class AutoTaskGenerator:
         self._last_scan_ts: float = 0.0
         self._stats: dict[str, int] = {"generated": 0, "submitted": 0, "skipped": 0}
 
+    # ------------------------------------------------------------------
+    # 公共只读属性（reverse hierarchy pattern: 私有 backing field + public getter）
+    # ------------------------------------------------------------------
+    @property
+    def root(self) -> Path:
+        return self._root
+
+    @property
+    def max_batch(self) -> int:
+        return self._max_batch
+
+    @property
+    def max_queue_depth(self) -> int:
+        return self._max_queue_depth
+
+    @property
+    def cooldown(self) -> float:
+        return self._cooldown
+
+    @property
+    def file_queue(self) -> deque[Path]:
+        return self._file_queue
+
+    @property
+    def last_scan_ts(self) -> float:
+        return self._last_scan_ts
+
+    @last_scan_ts.setter
+    def last_scan_ts(self, value: float) -> None:
+        self._last_scan_ts = value
+
     @property
     def stats(self) -> dict[str, int]:
         return dict(self._stats)
@@ -88,23 +119,23 @@ class AutoTaskGenerator:
         now = time.time()
         if not force and (now - self._last_scan_ts) < self._cooldown:
             if self._file_queue:
-                return self._drain_queue(scheduler)
+                return self.drain_queue(scheduler)
             return 0
 
         self._last_scan_ts = now
 
         if not self._file_queue:
-            self._scan_sources()
+            self.scan_sources()
 
-        submitted = self._drain_queue(scheduler)
+        submitted = self.drain_queue(scheduler)
 
         if not self._file_queue or submitted < self._max_batch:
-            self._scan_sources()
-            submitted += self._drain_queue(scheduler)
+            self.scan_sources()
+            submitted += self.drain_queue(scheduler)
 
         return submitted
 
-    def _scan_sources(self) -> None:
+    def scan_sources(self) -> None:
         """扫描各数据源，发现新的文件加入处理队列。"""
         sources: list[tuple[str, str]] = [
             ("src/zephyr/**/*.py", "python"),
@@ -117,7 +148,7 @@ class AutoTaskGenerator:
                 for fp in self._root.glob(glob_pattern):
                     if not fp.is_file():
                         continue
-                    fp_hash = self._file_hash(fp)
+                    fp_hash = self.file_hash(fp)
                     if fp_hash in self._processed:
                         continue
                     if len(self._file_queue) >= self._max_queue_depth:
@@ -132,7 +163,11 @@ class AutoTaskGenerator:
             len(self._file_queue),
         )
 
-    def _drain_queue(self, scheduler: LocalModelScheduler | None) -> int:
+    def _scan_sources(self) -> None:
+        """已废弃的私有别名——转发到 scan_sources()。"""
+        return self.scan_sources()
+
+    def drain_queue(self, scheduler: LocalModelScheduler | None) -> int:
         """从文件队列中消耗，生成推理任务提交到调度器。"""
         if scheduler is None:
             return 0
@@ -142,12 +177,12 @@ class AutoTaskGenerator:
             fp = self._file_queue.popleft()
 
             try:
-                content = self._read_file_snippet(fp)
+                content = self.read_file_snippet(fp)
                 if not content:
                     self._stats["skipped"] += 1
                     continue
 
-                tasks = self._file_to_tasks(fp, content)
+                tasks = self.file_to_tasks(fp, content)
                 for task_id, capability, payload in tasks:
                     try:
                         scheduler.enqueue(task_id, capability, payload)
@@ -174,7 +209,11 @@ class AutoTaskGenerator:
 
         return submitted
 
-    def _file_to_tasks(self, fp: Path, content: str) -> list[tuple[str, str, dict]]:
+    def _drain_queue(self, scheduler: LocalModelScheduler | None) -> int:
+        """已废弃的私有别名——转发到 drain_queue()。"""
+        return self.drain_queue(scheduler)
+
+    def file_to_tasks(self, fp: Path, content: str) -> list[tuple[str, str, dict]]:
         """根据文件类型生成不同的推理任务。"""
         tasks: list[tuple[str, str, dict]] = []
         suffix = fp.suffix.lower()
@@ -239,7 +278,11 @@ class AutoTaskGenerator:
 
         return tasks
 
-    def _read_file_snippet(self, fp: Path, max_chars: int = FILE_READ_LIMIT_CHARS) -> str:
+    def _file_to_tasks(self, fp: Path, content: str) -> list[tuple[str, str, dict]]:
+        """已废弃的私有别名——转发到 file_to_tasks()。"""
+        return self.file_to_tasks(fp, content)
+
+    def read_file_snippet(self, fp: Path, max_chars: int = FILE_READ_LIMIT_CHARS) -> str:
         """读取文件前 N 个字符作为任务输入。"""
         try:
             content = fp.read_text(encoding="utf-8", errors="replace")
@@ -247,8 +290,12 @@ class AutoTaskGenerator:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
+    def _read_file_snippet(self, fp: Path, max_chars: int = FILE_READ_LIMIT_CHARS) -> str:
+        """已废弃的私有别名——转发到 read_file_snippet()。"""
+        return self.read_file_snippet(fp, max_chars)
+
     @staticmethod
-    def _file_hash(fp: Path) -> str:
+    def file_hash(fp: Path) -> str:
         """文件路径 + mtime 哈希，用于去重。"""
         try:
             stat = fp.stat()
@@ -256,6 +303,11 @@ class AutoTaskGenerator:
         except OSError:
             raw = fp.as_posix()
         return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+    @staticmethod
+    def _file_hash(fp: Path) -> str:
+        """已废弃的私有别名——转发到 file_hash()。"""
+        return AutoTaskGenerator.file_hash(fp)
 
 
 # ============================================================================
