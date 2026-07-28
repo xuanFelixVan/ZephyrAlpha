@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] _reconcile异常降级为warn ReconcileResult，不阻断其他reconciler
+# [ERROR_CONTRACT] reconcile异常降级为warn ReconcileResult，不阻断其他reconciler
 # [TESTS] tests/scripts/backup/test_backup_reconciler.py
 # [A_module] module_id=MOD-GOV-backup_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -28,6 +28,10 @@
   - 间隔保护：8小时最小间隔，避免频繁备份
   - 状态持久化：backup_state.json 记录上次备份时间/快照ID/状态
   - 容错：备份失败降级为 warn ReconcileResult，不阻断其他reconciler
+
+公共 API（无下划线前缀）为真源实现；带下划线前缀的私有名（_load_config /
+_get_state_file / _load_state / _update_state / _trigger / _reconcile 等）保留为
+向后兼容的薄包装，委托给同名公共函数，便于历史调用方平滑过渡。
 
 Usage::
 
@@ -55,61 +59,87 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_backup_reconciler"]
 
 # ── 配置常量（从backup_config.yaml加载，此处为默认值兜底）──
-_project_root = Path(__file__).resolve().parent.parent.parent  # D:\ZephyrAlpha
-_CONFIG_FILE = _project_root / "scripts" / "backup" / "backup_config.yaml"
-_STATE_FILE = _project_root / "data" / "databases" / "backup_state.json"
+# 公共名为真源；PROJECT_ROOT 与 CONFIG_FILE / STATE_FILE 同为模块级路径常量。
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # D:\ZephyrAlpha
+CONFIG_FILE = PROJECT_ROOT / "scripts" / "backup" / "backup_config.yaml"
+STATE_FILE = PROJECT_ROOT / "data" / "databases" / "backup_state.json"
 
 # 重要文件路径前缀（触发条件1）
-_IMPORTANT_PREFIXES: tuple[str, ...] = (
+IMPORTANT_PREFIXES: tuple[str, ...] = (
     "src/", "config/", "docs/", "scripts/", "tests/", "architecture_model/",
     "data/databases/", "data/raw/bdpan/", "data/vector_db/",
 )
 
 # 重要根文件（触发条件1）
-_IMPORTANT_FILES: frozenset[str] = frozenset({
+IMPORTANT_FILES: frozenset[str] = frozenset({
     "AGENTS.md", "pyproject.toml", "docker-compose.yml",
 })
 
 # 最小间隔秒数（触发条件2，默认8小时）
-_MIN_INTERVAL_SECONDS = 8 * 3600
+MIN_INTERVAL_SECONDS = 8 * 3600
+
+# ── 向后兼容别名（公共名为真源；私有名为静态快照/薄包装，仅供历史调用方过渡）──
+# 注意：PROJECT_ROOT / CONFIG_FILE / STATE_FILE 可被 make_backup_reconciler 重新赋值，
+# 这些私有别名仅反映导入时的快照，不应在新代码中依赖。
+_project_root = PROJECT_ROOT
+_CONFIG_FILE = CONFIG_FILE
+_STATE_FILE = STATE_FILE
+_IMPORTANT_PREFIXES = IMPORTANT_PREFIXES
+_IMPORTANT_FILES = IMPORTANT_FILES
+_MIN_INTERVAL_SECONDS = MIN_INTERVAL_SECONDS
 
 
-def _load_config() -> dict[str, Any]:
+def load_config() -> dict[str, Any]:
     """加载backup_config.yaml配置"""
     try:
-        with open(_CONFIG_FILE, encoding="utf-8") as f:
+        with open(CONFIG_FILE, encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
     except FileNotFoundError:
         logger.warning("backup_config.yaml not found, using defaults")
         return {}
 
 
-def _rel_path(file_path: str | Path) -> str:
+def _load_config() -> dict[str, Any]:
+    """向后兼容包装：委托给 load_config()。"""
+    return load_config()
+
+
+def rel_path(file_path: str | Path) -> str:
     """将绝对路径转为相对项目根的相对路径（正斜杠）"""
     try:
-        rel = os.path.relpath(str(file_path), str(_project_root)).replace("\\", "/")
+        rel = os.path.relpath(str(file_path), str(PROJECT_ROOT)).replace("\\", "/")
         return rel
     except ValueError:
         return str(file_path)
 
 
-def _get_state_file() -> Path:
-    """获取状态文件路径（从 backup_config.yaml §trigger.state_file 读取，fallback 到 _STATE_FILE）。
+def _rel_path(file_path: str | Path) -> str:
+    """向后兼容包装：委托给 rel_path()。"""
+    return rel_path(file_path)
 
-    F-06 Track A 治本：state_file 真源从硬编码 _STATE_FILE 迁移到 YAML trigger.state_file，
+
+def get_state_file() -> Path:
+    """获取状态文件路径（从 backup_config.yaml §trigger.state_file 读取，fallback 到 STATE_FILE）。
+
+    F-06 Track A 治本：state_file 真源从硬编码 STATE_FILE 迁移到 YAML trigger.state_file，
     硬编码常量仅作 YAML 缺失时的 fallback。
     """
-    config = _load_config()
+    config = load_config()
     trigger_cfg = config.get("trigger", {}) if config else {}
     state_file_rel = trigger_cfg.get("state_file")
     if state_file_rel:
-        return _project_root / state_file_rel
-    return _STATE_FILE
+        return PROJECT_ROOT / state_file_rel
+    return STATE_FILE
 
 
-def _load_state() -> dict[str, Any]:
+def _get_state_file() -> Path:
+    """向后兼容包装：委托给 get_state_file()。"""
+    return get_state_file()
+
+
+def load_state() -> dict[str, Any]:
     """加载备份状态文件（INV-10）"""
-    state_file = _get_state_file()
+    state_file = get_state_file()
     try:
         with open(state_file, encoding="utf-8") as f:
             return json.load(f)
@@ -117,36 +147,46 @@ def _load_state() -> dict[str, Any]:
         return {}
 
 
-def _update_state(**kwargs: Any) -> None:
+def _load_state() -> dict[str, Any]:
+    """向后兼容包装：委托给 load_state()。"""
+    return load_state()
+
+
+def update_state(**kwargs: Any) -> None:
     """更新备份状态文件（INV-10）"""
-    state_file = _get_state_file()
-    state = _load_state()
+    state_file = get_state_file()
+    state = load_state()
     state.update(kwargs)
     state_file.parent.mkdir(parents=True, exist_ok=True)
     with open(state_file, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
 
 
-def _trigger(committed_files: list[str]) -> bool:
+def _update_state(**kwargs: Any) -> None:
+    """向后兼容包装：委托给 update_state()。"""
+    return update_state(**kwargs)
+
+
+def trigger(committed_files: list[str]) -> bool:
     """触发条件判断（INV-09：双条件触发）
 
     条件1：committed_files 中存在重要文件
     条件2：距上次成功备份 ≥ 8小时（首次备份无状态时视为满足）
 
     F-06 Track A 治本（2026-07-17）：触发参数（prefixes/files/min_interval）真源
-    从硬编码常量迁移到 backup_config.yaml §trigger（_load_config 加载），硬编码
-    常量仅作 YAML 缺失时的 fallback（消除 _load_config 定义但未调用的死代码）。
+    从硬编码常量迁移到 backup_config.yaml §trigger（load_config 加载），硬编码
+    常量仅作 YAML 缺失时的 fallback（消除 load_config 定义但未调用的死代码）。
     """
     # 加载配置（YAML 真源 + 硬编码 fallback）
-    config = _load_config()
+    config = load_config()
     trigger_cfg = config.get("trigger", {}) if config else {}
 
     # 条件1：检测重要文件变更（prefixes/files 从 YAML 读取，fallback 到硬编码）
-    prefixes = tuple(trigger_cfg.get("important_prefixes", _IMPORTANT_PREFIXES))
-    important_files = frozenset(trigger_cfg.get("important_files", _IMPORTANT_FILES))
+    prefixes = tuple(trigger_cfg.get("important_prefixes", IMPORTANT_PREFIXES))
+    important_files = frozenset(trigger_cfg.get("important_files", IMPORTANT_FILES))
     has_important = False
     for f in committed_files:
-        rel = _rel_path(f)
+        rel = rel_path(f)
         if rel.startswith(prefixes) or rel in important_files:
             has_important = True
             break
@@ -154,8 +194,8 @@ def _trigger(committed_files: list[str]) -> bool:
         return False
 
     # 条件2：检查最小间隔（min_interval_seconds 从 YAML 读取，fallback 到硬编码）
-    min_interval = trigger_cfg.get("min_interval_seconds", _MIN_INTERVAL_SECONDS)
-    state = _load_state()
+    min_interval = trigger_cfg.get("min_interval_seconds", MIN_INTERVAL_SECONDS)
+    state = load_state()
     last_backup_str = state.get("last_backup_time")
     if last_backup_str:
         try:
@@ -176,7 +216,12 @@ def _trigger(committed_files: list[str]) -> bool:
     return True
 
 
-def _reconcile(committed_files: list[str], session_id: str) -> Any:
+def _trigger(committed_files: list[str]) -> bool:
+    """向后兼容包装：委托给 trigger()。"""
+    return trigger(committed_files)
+
+
+def reconcile(committed_files: list[str], session_id: str) -> Any:
     """执行备份——调用PowerShell backup.ps1
 
     返回 ReconcileResult（auto_committed 或 warn）。
@@ -187,7 +232,7 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
         # 测试环境无zephyr模块时，返回简单dict
         ReconcileResult = dict  # type: ignore
 
-    backup_script = _project_root / "scripts" / "backup" / "backup.ps1"
+    backup_script = PROJECT_ROOT / "scripts" / "backup" / "backup.ps1"
     if not backup_script.exists():
         return ReconcileResult(
             action="warn",
@@ -196,7 +241,7 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
 
     try:
         # 从config/.env.restic读取RESTIC_PASSWORD（自动触发时环境变量不可用）
-        restic_env = _project_root / "config" / ".env.restic"
+        restic_env = PROJECT_ROOT / "config" / ".env.restic"
         if restic_env.exists() and not os.environ.get("RESTIC_PASSWORD"):
             try:
                 with open(restic_env, encoding="utf-8") as f:
@@ -213,11 +258,11 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
             ],
             capture_output=True,
             text=True,
-            timeout=14400,  # 4h超时（CH 315GiB S3桥备份，见blueprint §4.3）
-            cwd=str(_project_root),
+            timeout=14400,  # 4h超时（CH ~200GiB VHDX Disk备份，见blueprint §4.3）
+            cwd=str(PROJECT_ROOT),
         )
     except subprocess.TimeoutExpired:
-        _update_state(last_backup_status="timeout")
+        update_state(last_backup_status="timeout")
         return ReconcileResult(
             action="warn",
             detail="backup timed out after 14400s",
@@ -225,14 +270,14 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
 
     if result.returncode == 0:
         now_iso = datetime.now(timezone.utc).isoformat()
-        _update_state(
+        update_state(
             last_backup_time=now_iso,
             last_backup_status="ok",
             last_session_id=session_id,
         )
         # 取最后200字符作为摘要；附带CH阶段状态（ok/skipped及原因）保持可见性
         summary = result.stdout[-200:] if result.stdout else ""
-        ch_status = _load_state().get("last_ch_backup_status", "unknown")
+        ch_status = load_state().get("last_ch_backup_status", "unknown")
         return ReconcileResult(
             action="auto_committed",
             detail=f"backup ok (clickhouse={ch_status}): {summary}",
@@ -243,22 +288,27 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
         # （失败在下一个调度窗口重试）。返回warn使失败在commit/merge时可见——
         # CH失败禁止静默跳过（2026-07-19事件：两次自动备份记录ok但CH未备份）。
         now_iso = datetime.now(timezone.utc).isoformat()
-        _update_state(
+        update_state(
             last_backup_time=now_iso,
             last_backup_status="ch_failed",
             last_session_id=session_id,
         )
-        ch_err = _load_state().get("last_ch_backup_error", "unknown")
+        ch_err = load_state().get("last_ch_backup_error", "unknown")
         return ReconcileResult(
             action="warn",
             detail=f"backup ok but ClickHouse stage failed: {ch_err}",
         )
-    _update_state(last_backup_status="failed")
+    update_state(last_backup_status="failed")
     err_summary = result.stderr[-200:] if result.stderr else result.stdout[-200:]
     return ReconcileResult(
         action="warn",
         detail=f"backup failed (exit={result.returncode}): {err_summary}",
     )
+
+
+def _reconcile(committed_files: list[str], session_id: str) -> Any:
+    """向后兼容包装：委托给 reconcile()。"""
+    return reconcile(committed_files, session_id)
 
 
 def make_backup_reconciler(project_root: Path | None = None):
@@ -270,11 +320,11 @@ def make_backup_reconciler(project_root: Path | None = None):
     Returns:
         ReconcilerSpec（含 gate_id/trigger/reconcile/priority）
     """
-    global _project_root, _STATE_FILE, _CONFIG_FILE
+    global PROJECT_ROOT, STATE_FILE, CONFIG_FILE
     if project_root is not None:
-        _project_root = Path(project_root)
-        _CONFIG_FILE = _project_root / "scripts" / "backup" / "backup_config.yaml"
-        _STATE_FILE = _project_root / "data" / "databases" / "backup_state.json"
+        PROJECT_ROOT = Path(project_root)
+        CONFIG_FILE = PROJECT_ROOT / "scripts" / "backup" / "backup_config.yaml"
+        STATE_FILE = PROJECT_ROOT / "data" / "databases" / "backup_state.json"
 
     try:
         from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
@@ -290,8 +340,8 @@ def make_backup_reconciler(project_root: Path | None = None):
 
     return ReconcilerSpec(
         gate_id="BACKUP-RECONCILER",
-        trigger=_trigger,
-        reconcile=_reconcile,
+        trigger=trigger,
+        reconcile=reconcile,
         priority=200,  # 低优先级（晚于其他reconciler执行）
     )
 
@@ -300,4 +350,4 @@ if __name__ == "__main__":
     # 手动测试入口
     spec = make_backup_reconciler()
     print(f"gate_id={spec.gate_id}, priority={spec.priority}")
-    print(f"_trigger(['{_project_root / 'src' / 'test.py'}']) = {spec.trigger([str(_project_root / 'src' / 'test.py')])}")
+    print(f"trigger(['{PROJECT_ROOT / 'src' / 'test.py'}']) = {spec.trigger([str(PROJECT_ROOT / 'src' / 'test.py')])}")

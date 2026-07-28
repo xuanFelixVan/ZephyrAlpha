@@ -218,6 +218,57 @@ class AutoRuntimeCore:
     def vms(self, value: InProcessVectorMemory | None) -> None:
         self._vms = value
 
+    @property
+    def registry(self) -> CapabilityRegistry:
+        """Stage 4 公共化。"""
+        return self._registry
+
+    @property
+    def audit_logger(self) -> AiAuditLogger:
+        """Stage 4 公共化。"""
+        return self._audit_logger
+
+    @audit_logger.setter
+    def audit_logger(self, value: AiAuditLogger) -> None:
+        self._audit_logger = value
+
+    @property
+    def night_shift_queue(self) -> NightShiftQueue:
+        """Stage 4 公共化。"""
+        return self._night_shift_queue
+
+    @property
+    def dream_cycle(self) -> DreamCycle:
+        """Stage 4 公共化。"""
+        return self._dream_cycle
+
+    @property
+    def task_learner(self) -> ModelTaskMatrix | None:
+        """Stage 4 公共化。"""
+        return self._task_learner
+
+    @task_learner.setter
+    def task_learner(self, value: ModelTaskMatrix | None) -> None:
+        self._task_learner = value
+
+    @property
+    def ollama_chat(self) -> OllamaChat | None:
+        """Stage 4 公共化。"""
+        return self._ollama_chat
+
+    @ollama_chat.setter
+    def ollama_chat(self, value: OllamaChat | None) -> None:
+        self._ollama_chat = value
+
+    @property
+    def embedding_router(self) -> EmbeddingRouter | None:
+        """Stage 4 公共化。"""
+        return self._embedding_router
+
+    @embedding_router.setter
+    def embedding_router(self, value: EmbeddingRouter | None) -> None:
+        self._embedding_router = value
+
     # ── boot 编排区（交织保留：调用顺序即语义） ──
     # 保留理由：boot_sequence→L2 模型栈→benchmark→资源引擎→RBAC→子系统注册 的顺序
     # 与 report 累积语义/_booted 状态翻转/降级标记深度交织，是纯编排而非职责簇。
@@ -298,11 +349,21 @@ class AutoRuntimeCore:
             logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
 
     # ── ollama 进程生命周期（委托 _OllamaProcessManager） ──
-    def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
+    def ollama_alive(self, timeout_s: float = 2.0) -> bool:
+        """Stage 4 公共化，primary。"""
         return _OllamaProcessManager.ollama_alive(self._config.ollama_base_url, timeout_s)
 
-    def _ensure_ollama_running(self) -> bool:
+    def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.ollama_alive(timeout_s)
+
+    def ensure_ollama_running(self) -> bool:
+        """Stage 4 公共化，primary。"""
         return _OllamaProcessManager.ensure_running(self)
+
+    def _ensure_ollama_running(self) -> bool:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.ensure_ollama_running()
 
     def _ensure_ollama_available(self, report: BootReport) -> bool:
         """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
@@ -373,13 +434,17 @@ class AutoRuntimeCore:
         return self.run_boot_triple_alignment()
 
     # ── 本地模型栈启动编排（委托 _LocalModelBootstrap） ──
-    def _start_local_models(self, report: BootReport) -> None:
-        """启动本地模型组件——编排 ollama/chat/embedding/scheduler/vms。
+    def start_local_models(self, report: BootReport) -> None:
+        """Stage 4 公共化，primary。启动本地模型组件——编排 ollama/chat/embedding/scheduler/vms。
 
         5.158.11 重构：extract method（chat backend 保留 inline 维持 warmup sleep 语义，
         避免 time.sleep 迁移触发 PERM-TRIGGER 误判）。主函数 McCabe 16→8。
         """
         return _LocalModelBootstrap.start_local_models(self, report)
+
+    def _start_local_models(self, report: BootReport) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.start_local_models(report)
 
     def _warmup_embedding_router(self, report: BootReport) -> None:
         """初始化并预热 embedding router。"""

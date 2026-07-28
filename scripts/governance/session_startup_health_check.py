@@ -150,6 +150,7 @@ _GATEWAY_MODULES = [
         "required_attrs": ["main", "_load_payload"],
     },
 ]
+GATEWAY_MODULES = _GATEWAY_MODULES  # public alias (R5 reverse hierarchy)
 
 
 def _load_script_module(script_path: Path, module_name: str):
@@ -168,7 +169,7 @@ def _load_script_module(script_path: Path, module_name: str):
         return None, f"{type(e).__name__}: {e}"
 
 
-def _check_core_tool_import(tool: dict, repo_root: Path) -> dict:
+def check_core_tool_import(tool: dict, repo_root: Path) -> dict:
     """检查核心工具能否被 importlib 加载（检测 Phase 1 类 NameError）。"""
     script_path = repo_root / tool["rel_path"]
     if not script_path.exists():
@@ -199,7 +200,12 @@ def _check_core_tool_import(tool: dict, repo_root: Path) -> dict:
     }
 
 
-def _check_core_tool_cli(tool: dict, repo_root: Path) -> dict:
+def _check_core_tool_import(tool: dict, repo_root: Path) -> dict:
+    """向后兼容包装：委托给 check_core_tool_import。"""
+    return check_core_tool_import(tool, repo_root)
+
+
+def check_core_tool_cli(tool: dict, repo_root: Path) -> dict:
     """检查核心工具 CLI 能否运行（--list-ops / --list-readonly-tables 返回 rc=0）。"""
     script_path = repo_root / tool["rel_path"]
     if not script_path.exists():
@@ -254,7 +260,12 @@ def _check_core_tool_cli(tool: dict, repo_root: Path) -> dict:
     }
 
 
-def _check_gateway_module(mod_spec: dict, repo_root: Path) -> dict:
+def _check_core_tool_cli(tool: dict, repo_root: Path) -> dict:
+    """向后兼容包装：委托给 check_core_tool_cli。"""
+    return check_core_tool_cli(tool, repo_root)
+
+
+def check_gateway_module(mod_spec: dict, repo_root: Path) -> dict:
     """检查 gateway 模块能否 import + 关键属性存在。"""
     src_path = repo_root / "src"
     if str(src_path) not in sys.path:
@@ -281,7 +292,12 @@ def _check_gateway_module(mod_spec: dict, repo_root: Path) -> dict:
     }
 
 
-def _check_git_health_smoke(repo_root: Path) -> dict:
+def _check_gateway_module(mod_spec: dict, repo_root: Path) -> dict:
+    """向后兼容包装：委托给 check_gateway_module。"""
+    return check_gateway_module(mod_spec, repo_root)
+
+
+def check_git_health_smoke(repo_root: Path) -> dict:
     """可选：委托 git_health_smoke.py 做 git 层面检查。
 
     若 git_health_smoke.py 不可用则跳过（warn）——不阻断核心工具检查。
@@ -315,6 +331,11 @@ def _check_git_health_smoke(repo_root: Path) -> dict:
         "status": "pass",
         "detail": "git_health_smoke 全通过（git version/fscache/status/aliases）",
     }
+
+
+def _check_git_health_smoke(repo_root: Path) -> dict:
+    """向后兼容包装：委托给 check_git_health_smoke。"""
+    return check_git_health_smoke(repo_root)
 
 
 def run_startup_health_check(
@@ -361,19 +382,19 @@ def run_startup_health_check(
 
     # 1. 核心工具 import 检查
     for tool in _CORE_TOOLS:
-        checks.append(_check_core_tool_import(tool, root))
+        checks.append(check_core_tool_import(tool, root))
 
     # 2. 核心工具 CLI 检查
     for tool in _CORE_TOOLS:
-        checks.append(_check_core_tool_cli(tool, root))
+        checks.append(check_core_tool_cli(tool, root))
 
     # 3. Gateway 模块 import 检查
-    for mod_spec in _GATEWAY_MODULES:
-        checks.append(_check_gateway_module(mod_spec, root))
+    for mod_spec in GATEWAY_MODULES:
+        checks.append(check_gateway_module(mod_spec, root))
 
     # 4. 可选：git 层面检查
     if include_git:
-        checks.append(_check_git_health_smoke(root))
+        checks.append(check_git_health_smoke(root))
 
     # 总状态 = 最高优先级的检查项状态
     overall = "pass"

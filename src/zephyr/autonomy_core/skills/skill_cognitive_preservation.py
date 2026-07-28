@@ -53,20 +53,26 @@ class SkillCognitivePreservation:
     """Skill 认知保留 —— 跨 Session 记忆持久化与暖启动."""
 
     _SNAPSHOT_DIR = Path("_journals/cognitive_snapshots")
-    _MAX_SNAPSHOTS_PER_SKILL = 20
+    MAX_SNAPSHOTS_PER_SKILL: int = 20
+    _MAX_SNAPSHOTS_PER_SKILL = MAX_SNAPSHOTS_PER_SKILL  # backward-compat alias
     _MERGE_STRATEGY = "latest_wins"
 
     def __init__(self):
         self._memory: dict[str, CognitiveSnapshot] = {}
-        self._load_all()
+        self.load_all()
+
+    @property
+    def memory(self) -> dict[str, CognitiveSnapshot]:
+        """Public accessor for the in-memory snapshot store (Stage 4 publicization)."""
+        return self._memory
 
     def save(self, skill_id: str, state: dict[str, Any]) -> dict[str, Any]:
         state["_version"] = state.get("_version", 0) + 1
         state["_saved_at"] = time.time()
         snapshot = CognitiveSnapshot(skill_id, state)
         self._memory[skill_id] = snapshot
-        self._persist_snapshot(snapshot)
-        self._prune_old_snapshots(skill_id)
+        self.persist_snapshot(snapshot)
+        self.prune_old_snapshots(skill_id)
         return {"skill_id": skill_id, "version": state["_version"], "persisted": True}
 
     def restore(self, skill_id: str) -> dict[str, Any]:
@@ -116,11 +122,12 @@ class SkillCognitivePreservation:
 
     def forget(self, skill_id: str):
         self._memory.pop(skill_id, None)
-        self._delete_snapshots(skill_id)
+        self.delete_snapshots(skill_id)
 
     # ---- Internal persistence ----
 
-    def _persist_snapshot(self, snapshot: CognitiveSnapshot):
+    def persist_snapshot(self, snapshot: CognitiveSnapshot):
+        """Public method: persist a snapshot to disk (Stage 4 publicization)."""
         try:
             self._SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
             fname = f"{snapshot.skill_id}_{int(snapshot.timestamp)}.json"
@@ -129,16 +136,26 @@ class SkillCognitivePreservation:
         except OSError:
             pass
 
-    def _prune_old_snapshots(self, skill_id: str):
+    def _persist_snapshot(self, snapshot: CognitiveSnapshot):
+        """Backward-compat thin wrapper."""
+        return self.persist_snapshot(snapshot)
+
+    def prune_old_snapshots(self, skill_id: str):
+        """Public method: prune old snapshots beyond the retention limit (Stage 4 publicization)."""
         try:
             pattern = f"{skill_id}_*.json"
             files = sorted(self._SNAPSHOT_DIR.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
-            for f in files[self._MAX_SNAPSHOTS_PER_SKILL :]:
+            for f in files[self.MAX_SNAPSHOTS_PER_SKILL :]:
                 f.unlink(missing_ok=True)
         except OSError:
             pass
 
-    def _load_all(self):
+    def _prune_old_snapshots(self, skill_id: str):
+        """Backward-compat thin wrapper."""
+        return self.prune_old_snapshots(skill_id)
+
+    def load_all(self):
+        """Public method: load all snapshots from disk into memory (Stage 4 publicization)."""
         try:
             if not self._SNAPSHOT_DIR.exists():
                 return
@@ -155,12 +172,21 @@ class SkillCognitivePreservation:
         except OSError:
             pass
 
-    def _delete_snapshots(self, skill_id: str):
+    def _load_all(self):
+        """Backward-compat thin wrapper."""
+        return self.load_all()
+
+    def delete_snapshots(self, skill_id: str):
+        """Public method: delete all on-disk snapshots for a skill (Stage 4 publicization)."""
         try:
             for f in self._SNAPSHOT_DIR.glob(f"{skill_id}_*.json"):
                 f.unlink(missing_ok=True)
         except OSError:
             pass
+
+    def _delete_snapshots(self, skill_id: str):
+        """Backward-compat thin wrapper."""
+        return self.delete_snapshots(skill_id)
 
 
 __all__ = ["CognitiveSnapshot", "SkillCognitivePreservation"]

@@ -20,11 +20,11 @@ commit deb695006f 误删 import 导致 NameError 静默累积，5 层防线全�
 
 测试策略
 --------
-1. `_check_core_tool_import`: 构造临时脚本，验证 success / missing file /
+1. `check_core_tool_import`: 构造临时脚本，验证 success / missing file /
    syntax error / missing symbol 四种场景
-2. `_check_core_tool_cli`: 构造可执行 CLI 脚本，验证 rc=0 / rc!=0 /
+2. `check_core_tool_cli`: 构造可执行 CLI 脚本，验证 rc=0 / rc!=0 /
    超时 / 输出缺字符串（warn）四种场景
-3. `_check_gateway_module`: monkeypatch sys.modules，验证 import 成功 /
+3. `check_gateway_module`: monkeypatch sys.modules，验证 import 成功 /
    import 失败 / 关键属性缺失三种场景
 4. `run_startup_health_check`: monkeypatch 子检查函数，验证 status 聚合
    （pass/warn/fail）+ escalation_required 标志
@@ -72,7 +72,7 @@ def hc():
 
 
 # ---------------------------------------------------------------------------
-# _check_core_tool_import 测试
+# check_core_tool_import 测试
 # ---------------------------------------------------------------------------
 
 
@@ -88,7 +88,7 @@ pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestCheckCoreToolImport:
-    """_check_core_tool_import 的四种场景。"""
+    """check_core_tool_import 的四种场景。"""
 
     def test_import_success_with_required_symbols(self, hc, tmp_path):
         """脚本正常 + 关键符号齐全 → pass。"""
@@ -104,7 +104,7 @@ class TestCheckCoreToolImport:
             "rel_path": "tools/good_tool.py",
             "required_symbols": ["EXIT_PASS", "EXIT_ERROR", "get_conn"],
         }
-        result = hc._check_core_tool_import(tool, tmp_path)
+        result = hc.check_core_tool_import(tool, tmp_path)
         assert result["status"] == "pass"
         assert "3 个关键符号" in result["detail"]
 
@@ -116,7 +116,7 @@ class TestCheckCoreToolImport:
             "rel_path": "tools/missing.py",
             "required_symbols": [],
         }
-        result = hc._check_core_tool_import(tool, tmp_path)
+        result = hc.check_core_tool_import(tool, tmp_path)
         assert result["status"] == "fail"
         assert "文件不存在" in result["detail"]
 
@@ -134,7 +134,7 @@ class TestCheckCoreToolImport:
             "rel_path": "tools/broken.py",
             "required_symbols": [],
         }
-        result = hc._check_core_tool_import(tool, tmp_path)
+        result = hc.check_core_tool_import(tool, tmp_path)
         assert result["status"] == "fail"
         # SyntaxError 或 import 失败信息
         assert "import 失败" in result["detail"]
@@ -151,19 +151,19 @@ class TestCheckCoreToolImport:
             "rel_path": "tools/partial.py",
             "required_symbols": ["EXIT_PASS", "EXIT_ERROR"],
         }
-        result = hc._check_core_tool_import(tool, tmp_path)
+        result = hc.check_core_tool_import(tool, tmp_path)
         assert result["status"] == "fail"
         assert "缺少关键符号" in result["detail"]
         assert "EXIT_ERROR" in result["detail"]
 
 
 # ---------------------------------------------------------------------------
-# _check_core_tool_cli 测试
+# check_core_tool_cli 测试
 # ---------------------------------------------------------------------------
 
 
 class TestCheckCoreToolCli:
-    """_check_core_tool_cli 的四种场景。"""
+    """check_core_tool_cli 的四种场景。"""
 
     def test_cli_success(self, hc, tmp_path):
         """CLI rc=0 → pass。"""
@@ -182,7 +182,7 @@ class TestCheckCoreToolCli:
             "cli_output_contains": "cmd_batch",
             "required_symbols": [],
         }
-        result = hc._check_core_tool_cli(tool, tmp_path)
+        result = hc.check_core_tool_cli(tool, tmp_path)
         assert result["status"] == "pass"
         assert "CLI rc=0" in result["detail"]
 
@@ -202,7 +202,7 @@ class TestCheckCoreToolCli:
             "cli_output_contains": None,
             "required_symbols": [],
         }
-        result = hc._check_core_tool_cli(tool, tmp_path)
+        result = hc.check_core_tool_cli(tool, tmp_path)
         assert result["status"] == "fail"
         assert "rc=1" in result["detail"]
 
@@ -222,7 +222,7 @@ class TestCheckCoreToolCli:
             "cli_output_contains": "cmd_batch",
             "required_symbols": [],
         }
-        result = hc._check_core_tool_cli(tool, tmp_path)
+        result = hc.check_core_tool_cli(tool, tmp_path)
         assert result["status"] == "warn"
         assert "缺少 'cmd_batch'" in result["detail"]
 
@@ -236,18 +236,18 @@ class TestCheckCoreToolCli:
             "cli_output_contains": None,
             "required_symbols": [],
         }
-        result = hc._check_core_tool_cli(tool, tmp_path)
+        result = hc.check_core_tool_cli(tool, tmp_path)
         assert result["status"] == "fail"
         assert "文件不存在" in result["detail"]
 
 
 # ---------------------------------------------------------------------------
-# _check_gateway_module 测试
+# check_gateway_module 测试
 # ---------------------------------------------------------------------------
 
 
 class TestCheckGatewayModule:
-    """_check_gateway_module 的三种场景。"""
+    """check_gateway_module 的三种场景。"""
 
     def test_gateway_success(self, hc, tmp_path, monkeypatch):
         """模块 import 成功 + 关键属性齐全 → pass。"""
@@ -259,7 +259,7 @@ class TestCheckGatewayModule:
             "module": "fake_test.gateway_ok",
             "required_attrs": ["GitCommitGateway"],
         }
-        result = hc._check_gateway_module(mod_spec, tmp_path)
+        result = hc.check_gateway_module(mod_spec, tmp_path)
         assert result["status"] == "pass"
         assert "1 个关键属性" in result["detail"]
 
@@ -273,7 +273,7 @@ class TestCheckGatewayModule:
             "module": "fake_test.gateway_missing",
             "required_attrs": ["GitCommitGateway", "NotExistAttr"],
         }
-        result = hc._check_gateway_module(mod_spec, tmp_path)
+        result = hc.check_gateway_module(mod_spec, tmp_path)
         assert result["status"] == "fail"
         assert "缺少关键属性" in result["detail"]
         assert "NotExistAttr" in result["detail"]
@@ -291,7 +291,7 @@ class TestCheckGatewayModule:
             "module": "definitely.does.not.exist",
             "required_attrs": ["Anything"],
         }
-        result = hc._check_gateway_module(mod_spec, tmp_path)
+        result = hc.check_gateway_module(mod_spec, tmp_path)
         assert result["status"] == "fail"
         assert "import 失败" in result["detail"]
 
@@ -311,10 +311,10 @@ class TestRunStartupHealthCheckAggregation:
         def fake_check(*args, **kwargs):
             return {"check": "fake", "status": "pass", "detail": "ok"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", fake_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", fake_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", fake_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", fake_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", fake_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", fake_check)
+        monkeypatch.setattr(hc, "check_gateway_module", fake_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", fake_check)
 
         result = hc.run_startup_health_check(repo_root=str(tmp_path))
         assert result["status"] == "pass"
@@ -331,10 +331,10 @@ class TestRunStartupHealthCheckAggregation:
         def warn_check(*args, **kwargs):
             return {"check": "fake_warn", "status": "warn", "detail": "be careful"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", pass_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", warn_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", pass_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", warn_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", warn_check)
+        monkeypatch.setattr(hc, "check_gateway_module", pass_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", warn_check)
 
         result = hc.run_startup_health_check(repo_root=str(tmp_path))
         assert result["status"] == "warn"
@@ -352,10 +352,10 @@ class TestRunStartupHealthCheckAggregation:
             return {"check": "fake_fail", "status": "fail",
                     "detail": "NameError: missing_import"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", pass_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", pass_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", pass_check)
+        monkeypatch.setattr(hc, "check_gateway_module", pass_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", pass_check)
 
         result = hc.run_startup_health_check(repo_root=str(tmp_path))
         assert result["status"] == "fail"
@@ -380,12 +380,12 @@ class TestRunStartupHealthCheckAggregation:
             return {"check": "fake_pass", "status": "pass", "detail": "ok"}
 
         def should_not_call(*args, **kwargs):
-            pytest.fail("_check_git_health_smoke 不应被调用")
+            pytest.fail("check_git_health_smoke 不应被调用")
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", pass_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", pass_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", pass_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", should_not_call)
+        monkeypatch.setattr(hc, "check_core_tool_import", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", pass_check)
+        monkeypatch.setattr(hc, "check_gateway_module", pass_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", should_not_call)
 
         result = hc.run_startup_health_check(repo_root=str(tmp_path), include_git=False)
         assert result["status"] == "pass"
@@ -409,10 +409,10 @@ class TestMainExitCodes:
         def pass_check(*args, **kwargs):
             return {"check": "fake", "status": "pass", "detail": "ok"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", pass_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", pass_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", pass_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", pass_check)
+        monkeypatch.setattr(hc, "check_gateway_module", pass_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", pass_check)
         monkeypatch.setattr(sys, "argv", ["health_check.py", str(tmp_path)])
 
         rc = hc.main()
@@ -425,10 +425,10 @@ class TestMainExitCodes:
         def fail_check(*args, **kwargs):
             return {"check": "fake", "status": "fail", "detail": "broken"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", fail_check)
         monkeypatch.setattr(sys, "argv", ["health_check.py", str(tmp_path)])
 
         rc = hc.main()
@@ -441,10 +441,10 @@ class TestMainExitCodes:
         def warn_check(*args, **kwargs):
             return {"check": "fake", "status": "warn", "detail": "be careful"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", warn_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", warn_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", warn_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", warn_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", warn_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", warn_check)
+        monkeypatch.setattr(hc, "check_gateway_module", warn_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", warn_check)
         monkeypatch.setattr(sys, "argv", ["health_check.py", str(tmp_path)])
 
         rc = hc.main()
@@ -461,31 +461,31 @@ class TestP2_4Extensions:
 
     病根：原 health check 不覆盖 P2-1/P2-2/P2-3 新工具——AI 用 emergency_commit
     逃生时如果 emergency_commit 模块本身有 import bug，AI 不会知道。
-    治本：扩展 _GATEWAY_MODULES 覆盖新工具 + session_id 失败持久化到 DB。
+    治本：扩展 GATEWAY_MODULES 覆盖新工具 + session_id 失败持久化到 DB。
     """
 
     def test_gateway_modules_includes_p2_1_emergency_commit(self, hc):
-        """_GATEWAY_MODULES 应包含 emergency_commit 模块。"""
-        modules = [m["module"] for m in hc._GATEWAY_MODULES]
+        """GATEWAY_MODULES 应包含 emergency_commit 模块。"""
+        modules = [m["module"] for m in hc.GATEWAY_MODULES]
         assert "zephyr.gov_enforcement.rule_bridge.emergency_commit" in modules, \
             "P2-1 emergency_commit 必须纳入 health check"
 
     def test_gateway_modules_includes_p2_3_reconcile_runner(self, hc):
-        """_GATEWAY_MODULES 应包含 reconcile_runner 模块。"""
-        modules = [m["module"] for m in hc._GATEWAY_MODULES]
+        """GATEWAY_MODULES 应包含 reconcile_runner 模块。"""
+        modules = [m["module"] for m in hc.GATEWAY_MODULES]
         assert "zephyr.governance.audit.reconcile_runner" in modules, \
             "P2-3 reconcile_runner 必须纳入 health check"
 
     def test_gateway_modules_includes_p2_3_reconcile_worker(self, hc):
-        """_GATEWAY_MODULES 应包含 reconcile_worker 模块。"""
-        modules = [m["module"] for m in hc._GATEWAY_MODULES]
+        """GATEWAY_MODULES 应包含 reconcile_worker 模块。"""
+        modules = [m["module"] for m in hc.GATEWAY_MODULES]
         assert "zephyr.governance.audit.reconcile_worker" in modules, \
             "P2-3 reconcile_worker 必须纳入 health check"
 
     def test_session_worktree_includes_claim_files_for_edit(self, hc):
         """session_worktree 模块的 required_attrs 应包含 P2-2 claim_files_for_edit。"""
         sw_spec = next(
-            (m for m in hc._GATEWAY_MODULES
+            (m for m in hc.GATEWAY_MODULES
              if m["module"] == "zephyr.gov_enforcement.rule_bridge.session_worktree"),
             None,
         )
@@ -502,10 +502,10 @@ class TestP2_4Extensions:
         def fail_check(*args, **kwargs):
             return {"check": "fake_fail", "status": "fail", "detail": "mocked failure"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", fail_check)
 
         # mock log_gate_failure 捕获调用
         persist_calls: list[dict] = []
@@ -549,10 +549,10 @@ class TestP2_4Extensions:
         def fail_check(*args, **kwargs):
             return {"check": "fake_fail", "status": "fail", "detail": "mocked"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", fail_check)
 
         # mock log_gate_failure，断言不被调用
         def fake_log_gate_failure(*args, **kwargs):
@@ -581,10 +581,10 @@ class TestP2_4Extensions:
         def pass_check(*args, **kwargs):
             return {"check": "fake_pass", "status": "pass", "detail": "ok"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", pass_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", pass_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", pass_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", pass_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", pass_check)
+        monkeypatch.setattr(hc, "check_gateway_module", pass_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", pass_check)
 
         def fake_log_gate_failure(*args, **kwargs):
             pytest.fail("log_gate_failure 不应被调用（status=pass）")
@@ -612,10 +612,10 @@ class TestP2_4Extensions:
         def fail_check(*args, **kwargs):
             return {"check": "fake_fail", "status": "fail", "detail": "mocked"}
 
-        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
-        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
-        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
-        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "check_git_health_smoke", fail_check)
 
         def fake_log_gate_failure(*args, **kwargs):
             raise RuntimeError("mocked DB failure")
