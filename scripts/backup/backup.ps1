@@ -1,21 +1,34 @@
 <#
 .SYNOPSIS
-    Disaster backup system main script - six-stage pipeline
+    Disaster backup system main script (v2.0 -- robocopy + CH incremental)
 .DESCRIPTION
     [BLUEPRINT] MOD-INF-043 | Section 3.2
-    Stages: Pre-check -> DB dump -> Restic backup -> Retention cleanup -> Integrity check -> Report
-    Auto-trigger: backup_reconciler.py post-commit call
-    Manual trigger: run backup_manual.ps1 (with -Force to skip interval protection)
-.PARAMETER Force
-    Skip interval protection (for manual trigger)
-#>
-param([switch]$Force)
+    Stages: Pre-check -> DB dump (+PG/CH config sync) -> CH backup (incremental) -> Code backup (robocopy /MIR) -> Report
 
-# Note: not using 'Stop' - native command (restic/pg_dump) writing to stderr triggers NativeCommandError that terminates script
+    Overwrite policy (no version accumulation):
+    - Code: robocopy /MIR -- only copies changed files, overwrites in place
+    - PG/SQLite: full dump, overwrite (small files, trivial)
+    - CH: incremental backup (base + daily inc overwrite) -- only writes changed parts
+
+    Triggers: daily Task Scheduler (6AM) + post-commit reconciler (8h)
+    Lock file (.runtime/backup.lock) prevents concurrent runs.
+.PARAMETER Force
+    Skip interval/cadence protection (for manual / scheduled trigger)
+.PARAMETER Mode
+    all  - Full pipeline (PG + SQLite + CH + code) [default]
+    ch   - ClickHouse backup only (skip PG/SQLite/code)
+    code - Code backup only (skip CH stage)
+#>
+param([switch]$Force, [ValidateSet("all","ch","code")][string]$Mode = "all")
+
 $ErrorActionPreference = "Continue"
 $ProjectRoot = "D:\ZephyrAlpha"
 $ConfigFile = "$ProjectRoot\scripts\backup\backup_config.yaml"
 $LogFile = "$ProjectRoot\logs\backup_report_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+$LockFile = "$ProjectRoot\.runtime\backup.lock"
+$StateFile = "$ProjectRoot\data\databases\backup_state.json"
+$DumpDir = "D:\tmp_db_dumps"
+$ChSshHelper = "$ProjectRoot\scripts\backup\ch_vm_ssh.py"
 
 # -- Utility functions --
 function Write-Stage($msg) { Write-Host "[BACKUP] $msg" -ForegroundColor Cyan }
@@ -23,221 +36,175 @@ function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 
-# -- Dynamic port selection --
-# Hyper-V Host Network Service dynamically reserves random tcp ranges (2026-07-19
-# incident: 9101-9200 reserved -> WinError 10013, MinIO would not start and the CH
-# stage silently skipped). .env ports are preferences only; bind-test is the only
-# reliable check.
-function Test-PortFree([int]$Port) {
-    # Check 1: Get-NetTCPConnection catches existing listeners on ANY IP
-    # (0.0.0.0:port), which a loopback-only bind test misses on Windows when
-    # the existing socket used SO_REUSEADDR (http.server.HTTPServer sets
-    # allow_reuse_address=1). 2026-07-24: zephyr.data.scheduler monitor on
-    # 0.0.0.0:9100 silently shadowed the relay -- Test-PortFree(9100) returned
-    # true (loopback bind succeeded via SO_REUSEADDR) but the relay couldn't
-    # receive connections, causing "No route to host" from the CH VM.
-    $existing = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
-    if ($existing) { return $false }
-    # Check 2: bind-test on IPAddress.Any (0.0.0.0 -- same as relay LISTEN_HOST)
-    # for race-condition safety.
-    $listener = $null
-    try {
-        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, $Port)
-        $listener.Start()
-        return $true
-    } catch {
-        return $false
-    } finally {
-        if ($listener) { $listener.Stop() }
-    }
-}
-
-function Get-FreePort([int]$Preferred, [int[]]$Exclude = @()) {
-    # Scan window +2000: HNS exclusion clusters observed 300+ ports wide
-    # (9101-9400 on 2026-07-19), a +200 window cannot escape them (2026-07-19 fix).
-    if (($Exclude -notcontains $Preferred) -and (Test-PortFree $Preferred)) { return $Preferred }
-    for ($p = $Preferred + 1; $p -le [math]::Min($Preferred + 2000, 65535); $p++) {
-        if ($Exclude -contains $p) { continue }
-        if (Test-PortFree $p) { return $p }
-    }
-    throw "no free tcp port in [$Preferred, $($Preferred + 2000)] (HNS excluded ranges shifting?)"
-}
-
-# -- Dynamic vEthernet IP discovery --
-# Hyper-V vEthernet IPs change across reboots (Default Switch / custom switch
-# reassign 172.24.x.1). The hardcoded CH_S3_ENDPOINT host goes stale, causing
-# "No route to host" (errno 113) from the CH VM. Discover the live vEthernet IP
-# via Hyper-V cmdlets at backup time; fall back to CH_S3_ENDPOINT host if
-# Hyper-V is unavailable (non-Hyper-V host, missing module, etc.).
-# 2026-07-24: .env had 172.24.16.1 but vEthernet (ZephyrCH-Net) was 172.24.30.1.
-function Resolve-ChHostIP([hashtable]$Config) {
-    $fallbackHost = ($Config.CH_S3_ENDPOINT -replace '^https?://', '') -replace ':\d+\s*$', ''
-    $vmName = $Config.CH_VM_NAME
-    if (-not $vmName) {
-        Write-Warn "CH_VM_NAME not set in .env.ch_backup, using fallback host: $fallbackHost"
-        return $fallbackHost
-    }
-    try {
-        $adapter = Get-VMNetworkAdapter -VMName $vmName -ErrorAction Stop | Select-Object -First 1
-        $switch = $adapter.SwitchName
-        if (-not $switch) { return $fallbackHost }
-        $alias = "vEthernet ($switch)"
-        $ip = (Get-NetIPAddress -InterfaceAlias $alias -AddressFamily IPv4 -ErrorAction Stop |
-            Select-Object -First 1).IPAddress
-        if ($ip) {
-            Write-OK "Resolved CH host IP: $ip (vEthernet '$switch', VM '$vmName')"
-            return $ip
+# -- Lock file (prevent concurrent runs from daily task + post-commit) --
+function Test-BackupLock {
+    if (Test-Path $LockFile) {
+        $lockAge = ((Get-Date) - (Get-Item $LockFile).LastWriteTime).TotalHours
+        if ($lockAge -lt 4) {
+            Write-Warn "Another backup is running (lock age $([math]::Round($lockAge,1))h < 4h). Exiting."
+            return $true
         }
-    } catch {
-        Write-Warn "Hyper-V IP discovery failed ($($_.Exception.Message)), fallback: $fallbackHost"
+        Write-Warn "Stale lock found (age $([math]::Round($lockAge,1))h >= 4h). Proceeding."
     }
-    return $fallbackHost
+    return $false
+}
+function Acquire-Lock {
+    $lockDir = Split-Path $LockFile
+    if (-not (Test-Path $lockDir)) { New-Item -ItemType Directory -Path $lockDir -Force | Out-Null }
+    [System.IO.File]::WriteAllText($LockFile, "PID:$PID START:$(Get-Date -Format 'o')", (New-Object System.Text.UTF8Encoding($false)))
+}
+function Release-Lock {
+    if (Test-Path $LockFile) { Remove-Item $LockFile -Force -ErrorAction SilentlyContinue }
 }
 
-# -- Load config --
+# -- Load config (simple regex parse, avoid powershell-yaml dependency) --
 if (-not (Test-Path $ConfigFile)) { Write-Err "config not found: $ConfigFile"; exit 1 }
 $yamlContent = Get-Content $ConfigFile -Raw -Encoding UTF8
 
-# Read RESTIC_PASSWORD from config/.env.restic (env var unavailable when auto-triggered)
-$resticEnvFile = "$ProjectRoot\config\.env.restic"
-if (-not $env:RESTIC_PASSWORD -and (Test-Path $resticEnvFile)) {
-    $envContent = Get-Content $resticEnvFile -Encoding UTF8
-    foreach ($line in $envContent) {
-        if ($line -match '^RESTIC_PASSWORD=(.+)$') {
-            $env:RESTIC_PASSWORD = $matches[1].Trim()
-            break
-        }
-    }
-}
-if (-not $env:RESTIC_PASSWORD) {
-    Write-Err "RESTIC_PASSWORD not set. Set env var or create config/.env.restic"
-    exit 1
-}
-
-# Simple parsing (avoid depending on powershell-yaml module)
-$RepoPath = "F:\restic-zephyr"
-$DumpDir = "D:\tmp_db_dumps"
-$KeepDaily = 7; $KeepWeekly = 4; $KeepMonthly = 3
-if ($yamlContent -match 'path:\s*"([^"]+restic[^"]*)"') { $RepoPath = $matches[1] -replace '\\\\','\' }
+$CodeSource = "$ProjectRoot";  $CodeTarget = "F:\code_backup"
+$DumpsTarget = "F:\db_dumps"
+$ChBaseFile = "market.zip"; $ChIncFile = "inc.zip"; $RebaseThreshold = 0.5
+if ($yamlContent -match 'source:\s*"([^"]*ZephyrAlpha[^"]*)"') { $CodeSource = $matches[1] -replace '\\\\','\' }
+if ($yamlContent -match 'code_backup:[\s\S]*?target:\s*"([^"]+)"') { $CodeTarget = $matches[1] -replace '\\\\','\' }
+if ($yamlContent -match 'db_dumps:[\s\S]*?target:\s*"([^"]+)"') { $DumpsTarget = $matches[1] -replace '\\\\','\' }
 if ($yamlContent -match 'dump_dir:\s*"([^"]+)"') { $DumpDir = $matches[1] -replace '\\\\','\' }
+if ($yamlContent -match 'base_file:\s*"([^"]+)"') { $ChBaseFile = $matches[1].Trim() }
+if ($yamlContent -match 'inc_file:\s*"([^"]+)"') { $ChIncFile = $matches[1].Trim() }
+if ($yamlContent -match 'rebase_threshold:\s*([\d.]+)') { $RebaseThreshold = [double]$matches[1] }
 
-# -- Stage 1: Pre-check --
-Write-Stage "Stage 1: Pre-check"
-$targetDrive = $RepoPath.Substring(0,2)
-if (-not (Test-Path $targetDrive)) { Write-Err "Target drive $targetDrive not online"; exit 1 }
-Write-OK "Target drive $targetDrive online"
-
-$restic = Get-Command restic -ErrorAction SilentlyContinue
-if (-not $restic) { Write-Err "restic not installed. Run: winget install restic.restic"; exit 1 }
-Write-OK "restic found: $($restic.Source)"
-
-# Initialize repository on first run
-if (-not (Test-Path "$RepoPath\config")) {
-    Write-Stage "Initializing restic repository..."
-    restic init --repo $RepoPath
-    if ($LASTEXITCODE -ne 0) { Write-Err "restic init failed"; exit 1 }
-    Write-OK "Repository initialized at $RepoPath"
-} else {
-    Write-OK "Repository exists at $RepoPath"
+# Parse exclude lists (inline YAML format: [item1, item2, ...])
+$ExcludeDirs = @(".git","node_modules","__pycache__",".pytest_cache",".mypy_cache",".ruff_cache",".runtime",".aidrafts","tmp",".venv")
+$ExcludeFiles = @("*.pyc","*.db-wal","*.db-shm")
+if ($yamlContent -match 'exclude_dirs:\s*\[([^\]]+)\]') {
+    $ExcludeDirs = $matches[1] -split ',' | ForEach-Object { $_.Trim().Trim('"').Trim("'") } | Where-Object { $_ }
+}
+if ($yamlContent -match 'exclude_files:\s*\[([^\]]+)\]') {
+    $ExcludeFiles = $matches[1] -split ',' | ForEach-Object { $_.Trim().Trim('"').Trim("'") } | Where-Object { $_ }
 }
 
-# -- Stage 2: Database dump --
-Write-Stage "Stage 2: Database dump"
-New-Item -ItemType Directory -Path $DumpDir -Force | Out-Null
 $dbStatus = @{}
 
-# PostgreSQL
-# Resolve pg_dump: PATH first, fallback to standard install dirs (highest version wins)
-$pgDumpCmd = $null
-$pgDumpInPath = Get-Command pg_dump -ErrorAction SilentlyContinue
-if ($pgDumpInPath) {
-    $pgDumpCmd = $pgDumpInPath.Source
-} else {
-    $pgDumpCmd = Get-ChildItem "C:\Program Files\PostgreSQL\*\bin\pg_dump.exe" -ErrorAction SilentlyContinue |
-        Sort-Object { [int]($_.FullName -replace '.*\\PostgreSQL\\(\d+)\\.*', '$1') } -Descending |
-        Select-Object -First 1 -ExpandProperty FullName
+# -- Acquire lock --
+if (Test-BackupLock) { exit 0 }
+Acquire-Lock
+$backupStartTime = Get-Date
+
+try {
+
+# ==================== STAGE 1: Pre-check ====================
+if ($Mode -ne "ch") {
+    Write-Stage "Stage 1: Pre-check"
+    $targetDrive = $CodeTarget.Substring(0,2)
+    if (-not (Test-Path $targetDrive)) { Write-Err "Target drive $targetDrive not online"; exit 1 }
+    Write-OK "Target drive $targetDrive online"
+
+    $robocopy = Get-Command robocopy -ErrorAction SilentlyContinue
+    if (-not $robocopy) { Write-Err "robocopy not found (should be built-in on Windows)"; exit 1 }
+    Write-OK "robocopy found: $($robocopy.Source)"
 }
-if ($pgDumpCmd) {
-    try {
-        # Read PostgreSQL credentials from config/.env.postgres (avoid hardcoding)
-        $pgEnvFile = "$ProjectRoot\config\.env.postgres"
-        $pgUser = "postgres"; $pgPassword = ""
-        if (Test-Path $pgEnvFile) {
-            $pgEnv = Get-Content $pgEnvFile -Encoding UTF8
-            foreach ($line in $pgEnv) {
-                if ($line -match '^POSTGRES_USER=(.+)$') { $pgUser = $matches[1].Trim() }
-                if ($line -match '^POSTGRES_PASSWORD=(.+)$') { $pgPassword = $matches[1].Trim() }
+
+# ==================== STAGE 2: DB dump + config sync ====================
+if ($Mode -ne "ch") {
+    Write-Stage "Stage 2: Database dump + config sync"
+    New-Item -ItemType Directory -Path $DumpDir -Force | Out-Null
+
+    # -- PostgreSQL dump --
+    $pgDumpCmd = Get-Command pg_dump -ErrorAction SilentlyContinue
+    if (-not $pgDumpCmd) {
+        $pgDumpCmd = Get-ChildItem "C:\Program Files\PostgreSQL\*\bin\pg_dump.exe" -ErrorAction SilentlyContinue |
+            Sort-Object { [int]($_.FullName -replace '.*\\PostgreSQL\\(\d+)\\.*', '$1') } -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+    } else { $pgDumpCmd = $pgDumpCmd.Source }
+    if ($pgDumpCmd) {
+        try {
+            $pgEnvFile = "$ProjectRoot\config\.env.postgres"
+            $pgUser = "postgres"; $pgPassword = ""
+            if (Test-Path $pgEnvFile) {
+                foreach ($line in (Get-Content $pgEnvFile -Encoding UTF8)) {
+                    if ($line -match '^POSTGRES_USER=(.+)$') { $pgUser = $matches[1].Trim() }
+                    if ($line -match '^POSTGRES_PASSWORD=(.+)$') { $pgPassword = $matches[1].Trim() }
+                }
             }
-        }
-        $env:PGPASSWORD = $pgPassword
-        & $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump" 2>&1 | Out-Null
-        if ($LASTEXITCODE -eq 0) {
-            $pgSize = (Get-Item "$DumpDir\depgraph.dump").Length
-            $dbStatus.postgres = @{status="ok"; size_bytes=$pgSize}
-            Write-OK "PostgreSQL dump: $([math]::Round($pgSize/1MB,2))MB"
-        } else {
-            $dbStatus.postgres = @{status="failed"; error="pg_dump exit $LASTEXITCODE"}
-            Write-Warn "PostgreSQL dump failed (exit $LASTEXITCODE)"
-        }
-        # Dump cluster globals (roles) - pg_dumpall -g requires superuser (zephyr has no pg_authid
-        # access), so generate CREATE ROLE from the public pg_roles view. Passwords are masked in
-        # pg_roles; restore runbook: reset passwords from config/.env.postgres after restore.
-        $psqlCmd = $pgDumpCmd -replace 'pg_dump\.exe$', 'psql.exe'
-        if (Test-Path $psqlCmd) {
-            $roleQuery = "SELECT 'CREATE ROLE ' || quote_ident(rolname) || ' WITH ' || CASE WHEN rolcanlogin THEN 'LOGIN' ELSE 'NOLOGIN' END || CASE WHEN rolsuper THEN ' SUPERUSER' ELSE '' END || CASE WHEN rolcreatedb THEN ' CREATEDB' ELSE '' END || CASE WHEN rolcreaterole THEN ' CREATEROLE' ELSE '' END || ';' FROM pg_roles WHERE rolname !~ '^pg_' AND rolname <> 'postgres' ORDER BY rolname;"
-            $globalsOut = & $psqlCmd -h localhost -U $pgUser -d postgres -t -A -c $roleQuery 2>$null
+            $env:PGPASSWORD = $pgPassword
+            & $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump" 2>&1 | Out-Null
             if ($LASTEXITCODE -eq 0) {
-                $globalsHeader = "-- PG cluster roles from pg_roles (passwords masked; reset from config/.env.postgres after restore)"
-                [System.IO.File]::WriteAllText("$DumpDir\pg_globals.sql", "$globalsHeader`n$($globalsOut -join "`n")`n", (New-Object System.Text.UTF8Encoding($false)))
-                $dbStatus.postgres_globals = @{status="ok"}
-                Write-OK "PostgreSQL globals dump: ok"
+                $pgSize = (Get-Item "$DumpDir\depgraph.dump").Length
+                $dbStatus.postgres = @{status="ok"; size_bytes=$pgSize}
+                Write-OK "PostgreSQL dump: $([math]::Round($pgSize/1MB,2))MB"
             } else {
-                $dbStatus.postgres_globals = @{status="failed"; error="psql exit $LASTEXITCODE"}
-                Write-Warn "PostgreSQL globals dump failed (exit $LASTEXITCODE)"
+                $dbStatus.postgres = @{status="failed"; error="pg_dump exit $LASTEXITCODE"}
+                Write-Warn "PostgreSQL dump failed (exit $LASTEXITCODE)"
             }
-        } else {
-            $dbStatus.postgres_globals = @{status="skipped"; reason="psql not found"}
+            # PG globals (roles)
+            $psqlCmd = $pgDumpCmd -replace 'pg_dump\.exe$', 'psql.exe'
+            if (Test-Path $psqlCmd) {
+                $roleQuery = "SELECT 'CREATE ROLE ' || quote_ident(rolname) || ' WITH ' || CASE WHEN rolcanlogin THEN 'LOGIN' ELSE 'NOLOGIN' END || CASE WHEN rolsuper THEN ' SUPERUSER' ELSE '' END || CASE WHEN rolcreatedb THEN ' CREATEDB' ELSE '' END || CASE WHEN rolcreaterole THEN ' CREATEROLE' ELSE '' END || ';' FROM pg_roles WHERE rolname !~ '^pg_' AND rolname <> 'postgres' ORDER BY rolname;"
+                $globalsOut = & $psqlCmd -h localhost -U $pgUser -d postgres -t -A -c $roleQuery 2>$null
+                if ($LASTEXITCODE -eq 0) {
+                    $header = "-- PG cluster roles (passwords masked; reset from config/.env.postgres after restore)"
+                    [System.IO.File]::WriteAllText("$DumpDir\pg_globals.sql", "$header`n$($globalsOut -join "`n")`n", (New-Object System.Text.UTF8Encoding($false)))
+                    $dbStatus.postgres_globals = @{status="ok"}
+                    Write-OK "PostgreSQL globals dump: ok"
+                } else { $dbStatus.postgres_globals = @{status="failed"; error="psql exit $LASTEXITCODE"} }
+            }
+        } catch {
+            $dbStatus.postgres = @{status="error"; error=$_.Exception.Message}
+            Write-Warn "PostgreSQL dump error: $($_.Exception.Message)"
         }
-    } catch {
-        $dbStatus.postgres = @{status="error"; error=$_.Exception.Message}
-        Write-Warn "PostgreSQL dump error: $($_.Exception.Message)"
+    } else { $dbStatus.postgres = @{status="skipped"; reason="pg_dump not found"}; Write-Warn "pg_dump not found" }
+
+    # -- SQLite backup --
+    $sqlite3 = Get-Command sqlite3 -ErrorAction SilentlyContinue
+    $sqliteDbs = @(
+        @{src="$ProjectRoot\data\databases\governance.db"; dump="governance_backup.db"},
+        @{src="$ProjectRoot\data\databases\session_continuity.db"; dump="session_backup.db"}
+    )
+    $sqliteOk = 0
+    foreach ($db in $sqliteDbs) {
+        if (Test-Path $db.src) {
+            if ($sqlite3) {
+                & sqlite3 $db.src ".backup $($DumpDir)\$($db.dump)" 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) { $sqliteOk++ } else { Write-Warn "sqlite3 backup failed: $($db.src), trying Python fallback" }
+            }
+            if (-not $sqlite3 -or $LASTEXITCODE -ne 0) {
+                $pyResult = & python -c "import sqlite3; src=r'$($db.src)'; dst=r'$DumpDir\$($db.dump)'; con=sqlite3.connect(src); con.backup(sqlite3.connect(dst)); con.close(); print('ok')" 2>&1
+                if ($pyResult -match 'ok') { $sqliteOk++ } else { Write-Warn "Python SQLite backup also failed: $($db.src)" }
+            }
+        }
     }
-} else {
-    $dbStatus.postgres = @{status="skipped"; reason="pg_dump not found"}
-    Write-Warn "pg_dump not found, skipping PostgreSQL"
+    $dbStatus.sqlite = @{status=$(if($sqliteOk -gt 0){"ok"}else{"skipped"}); count=$sqliteOk}
+    Write-OK "SQLite dump: $sqliteOk databases"
+
+    # -- PG config copy (pg_hba.conf, postgresql.conf, pg_ident.conf) --
+    $pgConfigSrc = "C:\Program Files\PostgreSQL\16\data"
+    $pgConfigDst = "$ProjectRoot\config\system_configs\pg"
+    if (Test-Path $pgConfigSrc) {
+        New-Item -ItemType Directory -Path $pgConfigDst -Force | Out-Null
+        foreach ($f in @("pg_hba.conf","postgresql.conf","pg_ident.conf","postgresql.auto.conf")) {
+            $srcPath = Join-Path $pgConfigSrc $f
+            if (Test-Path $srcPath) { Copy-Item $srcPath $pgConfigDst -Force }
+        }
+        Write-OK "PG config synced to config/system_configs/pg/"
+    } else { Write-Warn "PG config source not found: $pgConfigSrc" }
+
+    # -- CH config sync (SSH: config.xml, users.xml, backup_disk.xml, fstab) --
+    $chConfigDst = "$ProjectRoot\config\system_configs\ch"
+    if (Test-Path "$ProjectRoot\config\.env.ch_backup") {
+        $syncResult = & python $ChSshHelper --sync-config $chConfigDst 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-OK "CH config synced to config/system_configs/ch/"
+        } else { Write-Warn "CH config sync failed: $syncResult" }
+    } else { Write-Warn "config/.env.ch_backup not found, skipping CH config sync" }
 }
 
-# SQLite
-$sqlite3 = Get-Command sqlite3 -ErrorAction SilentlyContinue
-$sqliteDbs = @(
-    @{src="$ProjectRoot\data\databases\governance.db"; dump="governance_backup.db"},
-    @{src="$ProjectRoot\data\databases\session_continuity.db"; dump="session_backup.db"}
-)
-$sqliteOk = 0
-foreach ($db in $sqliteDbs) {
-    if (Test-Path $db.src) {
-        if ($sqlite3) {
-            & sqlite3 $db.src ".backup $($DumpDir)\$($db.dump)" 2>&1 | Out-Null
-            if ($LASTEXITCODE -eq 0) { $sqliteOk++ } else { Write-Warn "sqlite3 backup failed: $($db.src), trying Python fallback" }
-        }
-        # Python fallback (when sqlite3 unavailable or failed)
-        if (-not $sqlite3 -or $LASTEXITCODE -ne 0) {
-            $pyResult = & python -c "import sqlite3; src=r'$($db.src)'; dst=r'$DumpDir\$($db.dump)'; con=sqlite3.connect(src); con.backup(sqlite3.connect(dst)); con.close(); print('ok')" 2>&1
-            if ($pyResult -match 'ok') { $sqliteOk++ } else { Write-Warn "Python SQLite backup also failed: $($db.src)" }
-        }
-    }
-}
-$dbStatus.sqlite = @{status=$(if($sqliteOk -gt 0){"ok"}else{"skipped"}); count=$sqliteOk}
-Write-OK "SQLite dump: $sqliteOk databases"
-
-# ClickHouse (c1_market + c3_fundamental) via MinIO S3 bridge
-# Architecture: CH server runs in Hyper-V VM whose data disk (588G, 211G free) cannot
-# hold a 315GiB full backup. MinIO runs on the HOST (localhost-only, Windows Firewall
-# auto-blocks minio.exe so a python TCP relay on :9100 - already firewall-allowed -
-# exposes it to the VM). CH streams BACKUP ... TO S3 straight out of the VM onto F:.
-# Same object key "market.zip" every run: restic content-defined chunking dedups
-# unchanged CH parts, so daily restic cost ~= new market data (~9GiB/day).
-# Credentials: config/.env.ch_backup (gitignored), CH host: config/.env.clickhouse.
+# ==================== ClickHouse backup (incremental) ====================
+# Architecture: CH runs in Hyper-V VM. 1TB dynamic VHDX (F:\ch_backup_disk.vhdx)
+# attached to VM as /dev/sdc, mounted at /mnt/chbackup_local. CH named disk
+# "backups" -> /mnt/chbackup_local/ (config.d/backup_disk.xml).
+#
+# Incremental: market.zip = full base (one-time, rebased when inc grows);
+# inc.zip = daily incremental (overwritten each run). CH BACKUP SETTINGS
+# base_backup captures only changed parts since base.
 $chBkEnvFile = "$ProjectRoot\config\.env.ch_backup"
 $chBk = @{}
 if (Test-Path $chBkEnvFile) {
@@ -255,33 +222,25 @@ if (Test-Path $chEnvFile) {
 }
 $chBaseUrl = "http://${chHttpHost}:${chHttpPort}/"
 $chAlive = $false
-try {
-    curl.exe -s --max-time 5 $chBaseUrl --data-binary "SELECT 1" | Out-Null
-    $chAlive = ($LASTEXITCODE -eq 0)
-} catch { $chAlive = $false }
+try { curl.exe -s --max-time 5 $chBaseUrl --data-binary "SELECT 1" | Out-Null; $chAlive = ($LASTEXITCODE -eq 0) } catch { $chAlive = $false }
 
-# CH 24h cadence gate (2026-07-19 fix): a full CH backup is ~315GiB/3h, so it is
-# decoupled from the 8h code-backup cadence. last_ch_backup_time only advances on
-# SUCCESS - a failed run retries at the next scheduled window. -Force bypasses
-# (manual drills).
-$chCadenceDue = $true
-if (-not $Force) {
-    $chStateFile = "$ProjectRoot\data\databases\backup_state.json"
-    if (Test-Path $chStateFile) {
-        try {
-            $prevState = Get-Content $chStateFile -Raw -Encoding UTF8 | ConvertFrom-Json
-            if ($prevState.last_ch_backup_time) {
-                $chElapsedH = ((Get-Date) - [datetime]::Parse($prevState.last_ch_backup_time)).TotalHours
-                if ($chElapsedH -lt 24) {
-                    $chCadenceDue = $false
-                }
-            }
-        } catch { }  # corrupt state -> treat as due
-    }
+# CH 24h cadence gate: last_ch_backup_time only advances on SUCCESS. -Force bypasses.
+$chCadenceDue = $true; $chPrevBytes = 0
+if (Test-Path $StateFile) {
+    try {
+        $prevState = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json
+        if (-not $Force -and $prevState.last_ch_backup_time) {
+            $chElapsedH = ((Get-Date) - [datetime]::Parse($prevState.last_ch_backup_time)).TotalHours
+            if ($chElapsedH -lt 24) { $chCadenceDue = $false }
+        }
+        if ($prevState.last_ch_backup_bytes) { $chPrevBytes = [int64]$prevState.last_ch_backup_bytes }
+    } catch { }
 }
 
-$minioProc = $null; $relayProc = $null
-if (-not $chAlive) {
+if ($Mode -eq "code") {
+    $dbStatus.clickhouse = @{status="skipped"; reason="Mode=code, CH stage skipped"}
+    Write-OK "ClickHouse: Mode=code, stage skipped"
+} elseif (-not $chAlive) {
     $dbStatus.clickhouse = @{status="skipped"; reason="service down"}
     Write-Warn "ClickHouse not reachable ($chBaseUrl), skipping"
 } elseif ($chBk.Count -eq 0) {
@@ -289,216 +248,182 @@ if (-not $chAlive) {
     Write-Warn "config/.env.ch_backup not found, skipping ClickHouse backup"
 } elseif (-not $chCadenceDue) {
     $dbStatus.clickhouse = @{status="skipped"; reason=("24h cadence (last {0:N1}h ago)" -f $chElapsedH)}
-    Write-OK ("ClickHouse: last CH backup {0:N1}h ago (< 24h cadence), stage skipped" -f $chElapsedH)
+    Write-OK ("ClickHouse: last backup {0:N1}h ago (< 24h cadence), stage skipped" -f $chElapsedH)
 } else {
     try {
-        # 1. Delete previous market.zip object BEFORE MinIO starts (plain FS delete in
-        #    single-drive mode) so CH does not fail with BACKUP_ALREADY_EXISTS.
-        $objDir = "$($chBk.MINIO_ROOT)\$($chBk.MINIO_BUCKET)\market.zip"
-        if (Test-Path $objDir) { Remove-Item $objDir -Recurse -Force }
-        # Stale write-lock + aborted multipart leftovers from a killed BACKUP run also
-        # trigger BACKUP_ALREADY_EXISTS ("being written already") - remove them too.
-        # (2026-07-18 incident: KILLed 315GiB BACKUP left market.zip.lock behind.)
-        $objLock = "$objDir.lock"
-        if (Test-Path $objLock) { Remove-Item $objLock -Recurse -Force }
-        $mpDir = "$($chBk.MINIO_ROOT)\.minio.sys\multipart"
-        if (Test-Path $mpDir) {
-            Get-ChildItem $mpDir -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        # 1. Pre-backup manifest
+        $manifestQ = "SELECT database, name, total_rows FROM system.tables WHERE database IN ('c1_market','c3_fundamental') AND engine NOT LIKE '%View%' FORMAT JSONEachRow"
+        $chManifest = curl.exe -s --max-time 30 $chBaseUrl --data-binary $manifestQ
+        $chTableCount = ($chManifest -split "`n" | Where-Object { $_.Trim() }).Count
+        Write-OK "Pre-backup manifest: $chTableCount tables"
+
+        # 2. Decide full vs incremental (stat base + inc via SSH)
+        $baseStat = & python $ChSshHelper --stat-backup $ChBaseFile --json 2>&1 | ConvertFrom-Json
+        $incStat  = & python $ChSshHelper --stat-backup $ChIncFile --json 2>&1 | ConvertFrom-Json
+        $incRatio = if ($baseStat.exists -and $baseStat.bytes -gt 0 -and $incStat.exists) { [double]$incStat.bytes / [double]$baseStat.bytes } else { 0.0 }
+
+        if (-not $baseStat.exists) {
+            $chMode = "full"; $chTarget = $ChBaseFile; $chDeleteFiles = @($ChIncFile)
+            $chReason = "base missing (first run or after rebase)"
+        } elseif ($incRatio -ge $RebaseThreshold) {
+            $chMode = "full"; $chTarget = $ChBaseFile; $chDeleteFiles = @($ChIncFile, $ChBaseFile)
+            $chReason = "inc ratio $('{0:N2}' -f $incRatio) >= $RebaseThreshold, rebasing"
+        } else {
+            $chMode = "incremental"; $chTarget = $ChIncFile; $chDeleteFiles = @($ChIncFile)
+            $chReason = "incremental (ratio $('{0:N2}' -f $incRatio))"
         }
+        Write-Stage "CH backup mode: $chMode -- $chReason"
 
-        # 2. Kill stale MinIO/relay from previous runs, pick HNS-safe ports via
-        #    bind-test, then start MinIO (localhost only) + python TCP relay
-        #    (VM-facing, ports passed as argv). .env ports are preferences only -
-        #    HNS reserved ranges shift across reboots.
-        Get-Process -Name minio -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-        Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
-            Where-Object { $_.CommandLine -match 'minio_tcp_relay' } |
-            ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
-        $minioPref = 9101; $consolePref = 9102; $relayPref = 9100
-        if ($chBk.MINIO_ADDRESS -match ':(\d+)$')         { $minioPref = [int]$Matches[1] }
-        if ($chBk.MINIO_CONSOLE_ADDRESS -match ':(\d+)$') { $consolePref = [int]$Matches[1] }
-        if ($chBk.CH_S3_ENDPOINT -match ':(\d+)\s*$')     { $relayPref = [int]$Matches[1] }
-        $minioPort = Get-FreePort $minioPref
-        $consolePort = Get-FreePort $consolePref @($minioPort)
-        $relayPort = Get-FreePort $relayPref @($minioPort, $consolePort)
-        $minioAddress = "127.0.0.1:$minioPort"
-        $consoleAddress = "127.0.0.1:$consolePort"
-        $s3EndpointHost = Resolve-ChHostIP $chBk
-        $s3Endpoint = "http://${s3EndpointHost}:$relayPort"
-
-        # 3. Start MinIO + relay, wait for health
-        $env:MINIO_ROOT_USER = $chBk.CH_S3_ACCESS_KEY
-        $env:MINIO_ROOT_PASSWORD = $chBk.CH_S3_SECRET_KEY
-        $minioProc = Start-Process -FilePath $chBk.MINIO_EXE `
-            -ArgumentList 'server', "`"$($chBk.MINIO_ROOT)`"", '--address', "`"$minioAddress`"", '--console-address', "`"$consoleAddress`"" `
-            -WindowStyle Hidden -PassThru
-        $relayProc = Start-Process -FilePath "python" -ArgumentList "`"$($chBk.RELAY_SCRIPT)`"", "$relayPort", "$minioPort" -WindowStyle Hidden -PassThru
-        $minioReady = $false
-        for ($i = 0; $i -lt 30 -and -not $minioReady; $i++) {
-            Start-Sleep -Seconds 1
-            curl.exe -s --max-time 2 "http://$minioAddress/minio/health/live" -o NUL
-            $minioReady = ($LASTEXITCODE -eq 0)
+        # 3. Delete files before backup (overwrite policy)
+        foreach ($f in $chDeleteFiles) {
+            & python $ChSshHelper --delete-backup $f 2>&1 | Out-Null
         }
-        if (-not $minioReady) { throw "MinIO failed to start on $minioAddress" }
-        Write-OK "MinIO + relay started (endpoint $s3Endpoint)"
+        if ($chDeleteFiles.Count -gt 0) { Write-OK "Removed previous file(s): $($chDeleteFiles -join ', ')" }
 
-        # 3b. Pre-flight: verify CH (in VM) can reach the relay via the discovered
-        #     IP. Catches stale vEthernet IPs, firewall blocks, and port shadowing
-        #     in seconds -- not after a 3-hour async BACKUP fails with "No route to
-        #     host" (2026-07-24 root cause: stale IP 172.24.16.1 + port 9100
-        #     shadowed by zephyr.data.scheduler).
-        #     Uses url() to hit MinIO health through the relay: 200+empty=0 rows
-        #     (connectivity OK); network error = abort immediately.
-        $probeQ = "SELECT count() FROM url('http://${s3EndpointHost}:${relayPort}/minio/health/live', 'LineAsString')"
-        $probeResp = curl.exe -s --max-time 15 $chBaseUrl --data-binary $probeQ 2>&1
-        if ($probeResp -match 'No route to host|Connection refused|Connection timed out|NETWORK_CONNECTION|UNFINISHED') {
-            throw "CH cannot reach S3 relay at ${s3EndpointHost}:${relayPort} (probe: $probeResp). Check vEthernet IP / firewall / port shadowing."
+        # 4. Fire async BACKUP
+        if ($chMode -eq "full") {
+            $backupQuery = "BACKUP DATABASE c1_market, DATABASE c3_fundamental TO Disk('backups', '$chTarget') ASYNC"
+        } else {
+            $backupQuery = "BACKUP DATABASE c1_market, DATABASE c3_fundamental TO Disk('backups', '$chTarget') SETTINGS base_backup = Disk('backups', '$ChBaseFile') ASYNC"
         }
-        Write-OK "CH -> S3 relay connectivity verified (${s3EndpointHost}:${relayPort})"
-
-        # 4. Fire async BACKUP to S3 (path style: endpoint is a bare IP, virtual-hosted
-        #    style would require bucket-as-subdomain DNS which does not exist here).
-        $s3Url = "$s3Endpoint/$($chBk.MINIO_BUCKET)/market.zip"
-        $backupQuery = "BACKUP DATABASE c1_market, DATABASE c3_fundamental TO S3('$s3Url', '$($chBk.CH_S3_ACCESS_KEY)', '$($chBk.CH_S3_SECRET_KEY)') ASYNC"
-        $fireResp = curl.exe -s --max-time 60 "${chBaseUrl}?s3_uri_style=path" --data-binary $backupQuery
+        $fireResp = curl.exe -s --max-time 60 $chBaseUrl --data-binary $backupQuery
         if ($LASTEXITCODE -ne 0 -or $fireResp -notmatch '([0-9a-f-]{36})') { throw "BACKUP fire failed: $fireResp" }
         $backupId = $Matches[1]
-        Write-Stage "ClickHouse BACKUP async id=$backupId (315GiB, may take hours)"
+        Write-Stage "ClickHouse BACKUP ($chMode) async id=$backupId"
 
-        # 5. Poll system.backups until done (max 3h)
-        $chFinal = "TIMEOUT"
+        # 5. Poll system.backups (max 3h)
+        $chFinal = "TIMEOUT"; $chErr = ""
         for ($elapsed = 0; $elapsed -lt 10800; $elapsed += 60) {
             Start-Sleep -Seconds 60
-            $st = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT status FROM system.backups WHERE id='$backupId'"
-            if ($st -match 'BACKUP_CREATED') { $chFinal = "OK"; break }
-            if ($st -match 'BACKUP_FAILED')  { $chFinal = "FAILED"; break }
+            $stJson = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT status, substring(error,1,300) as error FROM system.backups WHERE id='$backupId' FORMAT JSON"
+            try {
+                $stObj = $stJson | ConvertFrom-Json
+                if ($stObj.data.Count -gt 0) {
+                    $stStatus = $stObj.data[0].status
+                    if ($stStatus -eq 'BACKUP_CREATED') { $chFinal = "OK"; break }
+                    if ($stStatus -eq 'BACKUP_FAILED')  { $chFinal = "FAILED"; $chErr = $stObj.data[0].error; break }
+                }
+            } catch { }
         }
-        if ($chFinal -ne "OK") {
-            $chErr = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT substring(error,1,300) FROM system.backups WHERE id='$backupId'"
-            throw "ClickHouse backup $chFinal`: $chErr"
+        if ($chFinal -ne "OK") { throw "ClickHouse backup $chFinal`: $chErr" }
+
+        # 6. Verification
+        $bkMetaJson = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT total_size, num_files FROM system.backups WHERE id='$backupId' FORMAT JSON"
+        $bkMeta = $bkMetaJson | ConvertFrom-Json
+        $chTotalSize = if ($bkMeta.data.Count -gt 0) { [int64]$bkMeta.data[0].total_size } else { 0 }
+        $chNumFiles = if ($bkMeta.data.Count -gt 0) { [int64]$bkMeta.data[0].num_files } else { 0 }
+
+        $statJson = & python $ChSshHelper --stat-backup $chTarget --json 2>&1 | ConvertFrom-Json
+        $fileExists = [bool]$statJson.exists
+        $fileBytes = if ($fileExists) { [int64]$statJson.bytes } else { 0 }
+
+        if ($chMode -eq "incremental") {
+            # Incremental: just check file exists and > 1MB (inc can be small)
+            if (-not $fileExists -or $fileBytes -lt 1MB) { throw "$chTarget missing or too small ($fileBytes bytes)" }
+            $sizeVerified = $true; $sizeMatch = $true; $sizeRatio = 1.0
+        } else {
+            # Full: check > 1GB, compression sanity, size ratio vs previous
+            if (-not $fileExists -or $fileBytes -lt 1GB) { throw "$chTarget missing or too small ($fileBytes bytes)" }
+            $sizeMatch = if ($chTotalSize -gt 0) { $fileBytes -le ($chTotalSize * 1.05) } else { $true }
+            $sizeRatio = if ($chPrevBytes -gt 0) { $fileBytes / $chPrevBytes } else { 1.0 }
+            $sizeVerified = ($sizeRatio -gt 0.5 -and $sizeRatio -lt 2.0)
+            if (-not $sizeVerified -and $chPrevBytes -gt 0) {
+                Write-Warn "Size ratio unusual: $([math]::Round($sizeRatio,3)) (current=$([math]::Round($fileBytes/1GB,2))GB prev=$([math]::Round($chPrevBytes/1GB,2))GB)"
+            }
+            if (-not $sizeMatch) { Write-Warn "File size ($fileBytes) exceeds CH uncompressed total_size ($chTotalSize)" }
         }
 
-        # 6. Verify object landed on F: and is non-empty (institutional practice: verify)
-        $sizeSum = (Get-ChildItem $objDir -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        if (-not $sizeSum -or $sizeSum -lt 1MB) { throw "market.zip missing or too small ($sizeSum bytes)" }
-        $dbStatus.clickhouse = @{status="ok"; method="BACKUP TO S3(MinIO relay)"; file="market.zip"; bytes=$sizeSum}
-        Write-OK ("ClickHouse dump: ok ({0:N1} GiB)" -f ($sizeSum/1GB))
+        $dbStatus.clickhouse = @{
+            status="ok"; mode=$chMode; target=$chTarget
+            file="/mnt/chbackup_local/$chTarget"; bytes=$fileBytes
+            ch_total_size=$chTotalSize; ch_num_files=$chNumFiles
+            size_match=$sizeMatch; verified=($fileExists -and $sizeVerified -and $sizeMatch)
+            table_count=$chTableCount; manifest=$chManifest
+            prev_bytes=$chPrevBytes; size_ratio=[math]::Round($sizeRatio,4)
+            base_bytes=if($baseStat.exists){[int64]$baseStat.bytes}else{0}
+        }
+        Write-OK ("ClickHouse dump ($chMode): ok ({0:N1} GiB, {1} files, {2} tables, verified={3})" -f ($fileBytes/1GB), $chNumFiles, $chTableCount, ($fileExists -and $sizeVerified -and $sizeMatch))
     } catch {
         $dbStatus.clickhouse = @{status="failed"; error=$_.Exception.Message}
         Write-Warn "ClickHouse backup failed: $($_.Exception.Message)"
-    } finally {
-        # 7. Always stop MinIO + relay (on-demand only, not a resident service)
-        if ($relayProc -and -not $relayProc.HasExited) { Stop-Process -Id $relayProc.Id -Force -ErrorAction SilentlyContinue }
-        if ($minioProc -and -not $minioProc.HasExited) { Stop-Process -Id $minioProc.Id -Force -ErrorAction SilentlyContinue }
     }
 }
 
-# -- Stage 3: Restic backup --
-Write-Stage "Stage 3: Restic backup"
-$backupStartTime = Get-Date
+# ==================== STAGE 3: Code backup (robocopy /MIR) ====================
+if ($Mode -eq "ch") {
+    Write-Stage "Mode=ch, skipping code backup (Stage 3)"
+    $codeResult = @{status="skipped"}
+} else {
+    Write-Stage "Stage 3: Code backup (robocopy /MIR)"
+    # 3a. Code: D:\ZephyrAlpha -> F:\code_backup
+    # /XJ excludes junction points (e.g. metadata/system -> ../store/, avoids ERROR 1920)
+    $rcArgs = @($CodeSource, $CodeTarget, "/MIR", "/XJ", "/R:2", "/W:5", "/MT:8", "/NFL", "/NDL", "/NP")
+    if ($ExcludeDirs)  { $rcArgs += "/XD"; $rcArgs += $ExcludeDirs }
+    if ($ExcludeFiles) { $rcArgs += "/XF"; $rcArgs += $ExcludeFiles }
+    & robocopy @rcArgs 2>&1 | Out-Null
+    $rcCode = $LASTEXITCODE
+    if ($rcCode -ge 8) { Write-Err "robocopy code failed (exit $rcCode)" } else { Write-OK "Code robocopy done (exit $rcCode, <8=ok)" }
 
-# Exclude list (aligned with backup_config.yaml)
-$excludeArgs = @(
-    "--exclude","**/__pycache__/",
-    "--exclude","**/.pytest_cache/",
-    "--exclude","**/.mypy_cache/",
-    "--exclude","**/.ruff_cache/",
-    "--exclude","**/*.pyc",
-    "--exclude",".aidrafts/",
-    "--exclude",".runtime/",
-    "--exclude","tmp/",
-    "--exclude","logs/*.log",
-    "--exclude","logs/*.log.*",
-    "--exclude",".venv/",
-    "--exclude","node_modules/",
-    "--exclude","metadata/",
-    "--exclude","access/",
-    "--exclude","preprocessed_configs/",
-    "--exclude","status",
-    "--exclude","uuid"
-)
-
-# restic --json outputs JSON to stdout, progress info to stderr; avoid 2>&1 to prevent stderr mixing into stdout causing ConvertFrom-Json failure
-# CH backup store (MinIO root on F:) included when CH stage succeeded; same market.zip
-# key each run -> restic CDC dedups unchanged CH parts (~9GiB/day incremental).
-$backupSources = @($ProjectRoot, $DumpDir)
-if ($dbStatus.clickhouse -and $dbStatus.clickhouse.status -eq "ok" -and $chBk.MINIO_ROOT) {
-    $backupSources += $chBk.MINIO_ROOT
+    # 3b. DB dumps: D:\tmp_db_dumps -> F:\db_dumps
+    if (Test-Path $DumpDir) {
+        & robocopy $DumpDir $DumpsTarget "/MIR" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
+        $rcDumps = $LASTEXITCODE
+        if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK "DB dumps robocopy done (exit $rcDumps)" }
+    }
+    $codeResult = @{status=$(if($rcCode -lt 8){"ok"}else{"failed"}); robocopy_exit=$rcCode}
 }
-$backupResult = & restic -r $RepoPath backup @backupSources @excludeArgs --exclude ".minio.sys/" --json | ConvertFrom-Json
-if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3) { Write-Err "restic backup failed (exit $LASTEXITCODE)"; exit 1 }
-if ($LASTEXITCODE -eq 3) { Write-Warn "restic backup completed with warnings (some files could not be read)" }
-$snapshotId = ($backupResult | Where-Object { $_.message_type -eq "summary" } | Select-Object -Last 1).snapshot_id
-if (-not $snapshotId) {
-    Write-Err "restic backup failed - no snapshot_id in summary"
-    exit 1
-}
-Write-OK "Snapshot created: $snapshotId"
 
-# -- Stage 4: Retention policy cleanup --
-Write-Stage "Stage 4: Retention policy"
-& restic -r $RepoPath forget --keep-daily $KeepDaily --keep-weekly $KeepWeekly --keep-monthly $KeepMonthly --prune 2>&1 | ForEach-Object { Write-Host "  $_" }
-Write-OK "Retention applied (daily=$KeepDaily, weekly=$KeepWeekly, monthly=$KeepMonthly)"
-
-# -- Stage 5: Integrity check --
-Write-Stage "Stage 5: Integrity check"
-& restic -r $RepoPath check 2>&1 | ForEach-Object { Write-Host "  $_" }
-$checkResult = if ($LASTEXITCODE -eq 0) { "ok" } else { "failed" }
-$stats = & restic -r $RepoPath stats 2>&1
-Write-OK "Check result: $checkResult"
-
-# -- Stage 6: Report --
-Write-Stage "Stage 6: Report"
+# ==================== STAGE 4: Report ====================
+Write-Stage "Stage 4: Report"
 $duration = (Get-Date) - $backupStartTime
 $report = @{
     timestamp = (Get-Date).ToString("o")
     duration_seconds = [math]::Round($duration.TotalSeconds, 1)
-    snapshot_id = $snapshotId
-    databases = $dbStatus
-    check_result = $checkResult
+    mode = $Mode
     force_mode = $Force.IsPresent
-    stats = $stats -join "`n"
+    databases = $dbStatus
+    code_backup = $codeResult
 }
 
-# Ensure logs directory exists
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
 $report | ConvertTo-Json -Depth 5 | Out-File $LogFile -Encoding UTF8
 Write-OK "Report saved: $LogFile"
 
 # Update state file
-$stateFile = "$ProjectRoot\data\databases\backup_state.json"
-# Note: $state must be PSCustomObject - ConvertTo-Json drops note properties attached to a hashtable
-$state = if (Test-Path $stateFile) { Get-Content $stateFile -Raw | ConvertFrom-Json } else { [PSCustomObject]@{} }
+$state = if (Test-Path $StateFile) { Get-Content $StateFile -Raw | ConvertFrom-Json } else { [PSCustomObject]@{} }
 if (-not $state) { $state = [PSCustomObject]@{} }
-$state | Add-Member -NotePropertyName last_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
-$state | Add-Member -NotePropertyName last_backup_snapshot_id -NotePropertyValue $snapshotId -Force
-$state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue "ok" -Force
-# CH stage outcome (2026-07-19 fix: failure visible, 24h cadence tracked separately).
-# last_ch_backup_time advances ONLY on success - a failure retries at the next window.
+if ($Mode -ne "ch") {
+    $state | Add-Member -NotePropertyName last_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
+    $state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue "ok" -Force
+}
 if ($dbStatus.clickhouse) {
     $chSt = [string]$dbStatus.clickhouse.status
     $state | Add-Member -NotePropertyName last_ch_backup_status -NotePropertyValue $chSt -Force
     if ($chSt -eq "ok") {
         $state | Add-Member -NotePropertyName last_ch_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
-        if ($state.PSObject.Properties['last_ch_backup_error']) {
-            $state.PSObject.Properties.Remove('last_ch_backup_error')
-        }
+        $state | Add-Member -NotePropertyName last_ch_backup_verified -NotePropertyValue ([bool]$dbStatus.clickhouse.verified) -Force
+        $state | Add-Member -NotePropertyName last_ch_backup_mode -NotePropertyValue ([string]$dbStatus.clickhouse.mode) -Force
+        $state | Add-Member -NotePropertyName last_ch_backup_target -NotePropertyValue ([string]$dbStatus.clickhouse.target) -Force
+        $state | Add-Member -NotePropertyName last_ch_backup_file -NotePropertyValue ([string]$dbStatus.clickhouse.file) -Force
+        $state | Add-Member -NotePropertyName last_ch_backup_bytes -NotePropertyValue ([int64]$dbStatus.clickhouse.bytes) -Force
+        $state | Add-Member -NotePropertyName last_ch_backup_base_bytes -NotePropertyValue ([int64]$dbStatus.clickhouse.base_bytes) -Force
+        if ($state.PSObject.Properties['last_ch_backup_error']) { $state.PSObject.Properties.Remove('last_ch_backup_error') }
     } elseif ($chSt -eq "failed") {
+        $state | Add-Member -NotePropertyName last_ch_backup_verified -NotePropertyValue $false -Force
         $state | Add-Member -NotePropertyName last_ch_backup_error -NotePropertyValue ([string]$dbStatus.clickhouse.error) -Force
     }
 }
-# Write UTF-8 without BOM + LF (ENCODING-SAFETY INJ-007; PS5.1 Out-File -Encoding UTF8 emits BOM)
 $stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
-[System.IO.File]::WriteAllText($stateFile, $stateJson, (New-Object System.Text.UTF8Encoding($false)))
+[System.IO.File]::WriteAllText($StateFile, $stateJson, (New-Object System.Text.UTF8Encoding($false)))
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
 Write-OK "Backup completed in $([math]::Round($duration.TotalSeconds,1))s"
 Write-Host "==========================================" -ForegroundColor Green
 
-# CH stage failed but code/PG/SQLite/restic succeeded -> exit 2 so backup_reconciler
-# reports warn (failure must be visible; 2026-07-19 incident: CH silently skipped
-# twice while state recorded ok). exit 0 = all ok or CH skipped as planned;
-# exit 1 = pipeline fatal; exit 2 = CH stage failed.
 $chFailed = ($dbStatus.clickhouse -and $dbStatus.clickhouse.status -eq "failed")
 if ($chFailed) { exit 2 }
+
+} finally {
+    Release-Lock
+}
