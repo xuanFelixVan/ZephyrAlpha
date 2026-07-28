@@ -174,6 +174,14 @@ class AuditWriter:
         self._lock = threading.Lock()
         self._load_state()
 
+    # ── Stage 4 公共化（2026-07-28）：只读 property ──
+    # 消除 tests/audit/test_audit_adversarial.py 中 15 处私有成员访问。
+
+    @property
+    def event_log_path(self) -> Path:
+        """只读：events.jsonl 审计日志路径（Stage 4 公共化）。"""
+        return self._event_log_path
+
     def _load_state(self) -> None:
         """从已有 events.jsonl 恢复 _last_hash 和 event_count（重启后链连续）。"""
         if not self._event_log_path.exists():

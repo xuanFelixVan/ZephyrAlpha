@@ -54,21 +54,21 @@ class TestChainIntegrity:
         writer.write({"event": "e2", "actor": "bob"})
         writer.write({"event": "e3", "actor": "carol"})
 
-        verifier = IntegrityVerifier(writer._event_log_path)
+        verifier = IntegrityVerifier(writer.event_log_path)
         clean = verifier.verify_chain()
         assert clean["status"] == "valid", f"Initial chain should be valid: {clean}"
 
-        lines = writer._event_log_path.read_text("utf-8").splitlines()
+        lines = writer.event_log_path.read_text("utf-8").splitlines()
         assert len(lines) >= 3
 
         e2 = json.loads(lines[1])
         e2["actor"] = "MALLORY_TAMPERED"
         lines[1] = json.dumps(e2, ensure_ascii=False, sort_keys=True)
 
-        tmp = f"{writer._event_log_path}.{os.getpid()}.tmp"
+        tmp = f"{writer.event_log_path}.{os.getpid()}.tmp"
         with open(tmp, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
-        os.replace(tmp, str(writer._event_log_path))
+        os.replace(tmp, str(writer.event_log_path))
 
         tampered = verifier.verify_chain()
         assert tampered["status"] == "compromised", f"Tampered chain should be compromised, got: {tampered}"
@@ -81,15 +81,15 @@ class TestChainIntegrity:
         writer.write({"event": "e2"})
         writer.write({"event": "e3"})
 
-        lines = writer._event_log_path.read_text("utf-8").splitlines()
+        lines = writer.event_log_path.read_text("utf-8").splitlines()
         del lines[1]
 
-        tmp = f"{writer._event_log_path}.{os.getpid()}.tmp"
+        tmp = f"{writer.event_log_path}.{os.getpid()}.tmp"
         with open(tmp, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
-        os.replace(tmp, str(writer._event_log_path))
+        os.replace(tmp, str(writer.event_log_path))
 
-        verifier = IntegrityVerifier(writer._event_log_path)
+        verifier = IntegrityVerifier(writer.event_log_path)
         result = verifier.verify_chain()
         assert result["status"] == "compromised"
 
@@ -108,10 +108,10 @@ class TestEventInjection:
             "prev_hash": "",
             "timestamp": "2020-01-01T00:00:00",
         }
-        with open(writer._event_log_path, "a", encoding="utf-8") as f:
+        with open(writer.event_log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(fake_event, ensure_ascii=False) + "\n")
 
-        verifier = IntegrityVerifier(writer._event_log_path)
+        verifier = IntegrityVerifier(writer.event_log_path)
         result = verifier.verify_chain()
         assert result["status"] == "compromised"
 
@@ -149,7 +149,7 @@ class TestChainStateTampering:
         writer.write({"event": "e1"})
 
         # 篡改 events.jsonl 最后一条的 entry_hash（模拟链状态篡改）
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         lines = log_path.read_text(encoding="utf-8").strip().split("\n")
         last_entry = json.loads(lines[-1])
         last_entry["entry_hash"] = "0" * 64
@@ -160,7 +160,7 @@ class TestChainStateTampering:
         writer2 = AuditWriter(temp_audit_dir)
         writer2.write({"event": "e2"})
 
-        verifier = IntegrityVerifier(writer2._event_log_path)
+        verifier = IntegrityVerifier(writer2.event_log_path)
         result = verifier.verify_chain()
         assert result["status"] == "compromised", f"Chain should be compromised after state tamper, got: {result}"
 
@@ -181,7 +181,7 @@ class TestConcurrentWrite:
             for f in as_completed(futures):
                 f.result()
 
-        verifier = IntegrityVerifier(writer._event_log_path)
+        verifier = IntegrityVerifier(writer.event_log_path)
         result = verifier.verify_chain()
         assert result["events_checked"] >= 1
         assert result["status"] == "valid", f"Concurrent writes should produce valid chain: {result}"
@@ -263,10 +263,10 @@ class TestHMACKeyMismatch:
         event = {"event": "hmac_test", "agent_id": "agent-1"}
         writer.write(event)
 
-        verifier_correct = IntegrityVerifier(writer._event_log_path, hmac_key="")
+        verifier_correct = IntegrityVerifier(writer.event_log_path, hmac_key="")
         result = verifier_correct.verify_chain()
         assert result["status"] in ("valid", "no_data")
 
-        verifier_wrong = IntegrityVerifier(writer._event_log_path, hmac_key="wrong_key_12345")
+        verifier_wrong = IntegrityVerifier(writer.event_log_path, hmac_key="wrong_key_12345")
         result = verifier_wrong.verify_chain()
         assert result["status"] in ("valid", "compromised", "no_data")
