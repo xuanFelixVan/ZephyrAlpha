@@ -62,6 +62,29 @@ class TemporalContextAdapter:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    # ── Stage 4 公共化属性 + 方法 ──
+
+    @property
+    def project_root(self) -> Path:
+        """项目根路径（public API, Stage 4）."""
+        return self._project_root
+
+    def generate_totp(self, timestamp: int) -> str:
+        """生成 TOTP 码（public API, Stage 4）."""
+        return self._generate_totp(timestamp)
+
+    def compute_hmac(self, session: str, timestamp: int) -> str:
+        """计算 HMAC 签名（public API, Stage 4）."""
+        return self._compute_hmac(session, timestamp)
+
+    def verify_totp(self, totp_code: str, timestamp: int, window: int) -> bool:
+        """验证 TOTP 码（public API, Stage 4）."""
+        return self._verify_totp(totp_code, timestamp, window)
+
+    def verify_hmac(self, attest: TimeAttestion) -> bool:
+        """验证 HMAC 签名（public API, Stage 4）."""
+        return self._verify_hmac(attest)
+
     def verify_time_attest(self, attest: TimeAttestion) -> AttestResult:
         now = datetime.now(UTC)
         actual_unix = int(now.timestamp())

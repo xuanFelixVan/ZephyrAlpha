@@ -37,10 +37,10 @@ def adapter_with_cwd() -> TemporalContextAdapter:
 
 class TestTemporalContextAdapterInstantiation:
     def test_with_explicit_root(self, adapter: TemporalContextAdapter) -> None:
-        assert adapter._project_root == Path("/tmp/test")
+        assert adapter.project_root == Path("/tmp/test")
 
     def test_with_none_uses_cwd(self, adapter_with_cwd: TemporalContextAdapter) -> None:
-        assert adapter_with_cwd._project_root == Path.cwd()
+        assert adapter_with_cwd.project_root == Path.cwd()
 
     def test_class_constants(self, adapter: TemporalContextAdapter) -> None:
         assert adapter.EXIT_CODE_TIME_ATTEST_FAIL == 26
@@ -96,8 +96,8 @@ class TestVerifyTimeAttest:
     def test_valid_attestation(self, adapter: TemporalContextAdapter) -> None:
         now = datetime.now(UTC)
         unix_ts = int(now.timestamp())
-        totp = adapter._generate_totp(unix_ts)
-        hmac_sig = adapter._compute_hmac("test-session", unix_ts)
+        totp = adapter.generate_totp(unix_ts)
+        hmac_sig = adapter.compute_hmac("test-session", unix_ts)
         attest = TimeAttestion(
             unix_timestamp=unix_ts,
             iso_timestamp=now.isoformat(),
@@ -139,8 +139,8 @@ class TestVerifyTimeAttest:
     def test_details_populated(self, adapter: TemporalContextAdapter) -> None:
         now = datetime.now(UTC)
         unix_ts = int(now.timestamp())
-        totp = adapter._generate_totp(unix_ts)
-        hmac_sig = adapter._compute_hmac("session", unix_ts)
+        totp = adapter.generate_totp(unix_ts)
+        hmac_sig = adapter.compute_hmac("session", unix_ts)
         attest = TimeAttestion(
             unix_timestamp=unix_ts,
             iso_timestamp=now.isoformat(),
@@ -156,8 +156,8 @@ class TestVerifyTimeAttest:
     def test_boundary_drift_within_limit(self, adapter: TemporalContextAdapter) -> None:
         now = datetime.now(UTC)
         unix_ts = int(now.timestamp()) - 30
-        totp = adapter._generate_totp(unix_ts)
-        hmac_sig = adapter._compute_hmac("session", unix_ts)
+        totp = adapter.generate_totp(unix_ts)
+        hmac_sig = adapter.compute_hmac("session", unix_ts)
         attest = TimeAttestion(
             unix_timestamp=unix_ts,
             iso_timestamp=now.isoformat(),
@@ -224,18 +224,18 @@ class TestGenerateAttestPrompt:
 class TestTotpGeneration:
     def test_deterministic(self, adapter: TemporalContextAdapter) -> None:
         ts = 1700000000
-        code1 = adapter._generate_totp(ts)
-        code2 = adapter._generate_totp(ts)
+        code1 = adapter.generate_totp(ts)
+        code2 = adapter.generate_totp(ts)
         assert code1 == code2
 
     def test_different_timestamps_different_codes(self, adapter: TemporalContextAdapter) -> None:
-        code1 = adapter._generate_totp(1700000000)
-        code2 = adapter._generate_totp(1700000060)
+        code1 = adapter.generate_totp(1700000000)
+        code2 = adapter.generate_totp(1700000060)
         assert code1 != code2
 
     def test_six_digit_format(self, adapter: TemporalContextAdapter) -> None:
         for ts in [0, 100, 1700000000, 9999999999]:
-            code = adapter._generate_totp(ts)
+            code = adapter.generate_totp(ts)
             assert len(code) == 6
             assert code.isdigit()
 
@@ -243,32 +243,32 @@ class TestTotpGeneration:
 class TestTotpVerification:
     def test_valid_within_window(self, adapter: TemporalContextAdapter) -> None:
         ts = int(datetime.now(UTC).timestamp())
-        code = adapter._generate_totp(ts)
-        assert adapter._verify_totp(code, ts, adapter.TOTP_WINDOW) is True
+        code = adapter.generate_totp(ts)
+        assert adapter.verify_totp(code, ts, adapter.TOTP_WINDOW) is True
 
     def test_invalid_code(self, adapter: TemporalContextAdapter) -> None:
         ts = int(datetime.now(UTC).timestamp())
-        assert adapter._verify_totp("000000", ts, adapter.TOTP_WINDOW) is False
+        assert adapter.verify_totp("000000", ts, adapter.TOTP_WINDOW) is False
 
     def test_window_zero(self, adapter: TemporalContextAdapter) -> None:
         ts = int(datetime.now(UTC).timestamp())
-        code = adapter._generate_totp(ts)
-        assert adapter._verify_totp(code, ts, 0) is True
+        code = adapter.generate_totp(ts)
+        assert adapter.verify_totp(code, ts, 0) is True
 
 
 class TestHmacComputation:
     def test_deterministic(self, adapter: TemporalContextAdapter) -> None:
-        sig1 = adapter._compute_hmac("session-1", 1700000000)
-        sig2 = adapter._compute_hmac("session-1", 1700000000)
+        sig1 = adapter.compute_hmac("session-1", 1700000000)
+        sig2 = adapter.compute_hmac("session-1", 1700000000)
         assert sig1 == sig2
 
     def test_different_inputs_different_sigs(self, adapter: TemporalContextAdapter) -> None:
-        sig1 = adapter._compute_hmac("session-1", 1700000000)
-        sig2 = adapter._compute_hmac("session-2", 1700000000)
+        sig1 = adapter.compute_hmac("session-1", 1700000000)
+        sig2 = adapter.compute_hmac("session-2", 1700000000)
         assert sig1 != sig2
 
     def test_signature_length(self, adapter: TemporalContextAdapter) -> None:
-        sig = adapter._compute_hmac("session-1", 1700000000)
+        sig = adapter.compute_hmac("session-1", 1700000000)
         assert len(sig) == 16
 
 
@@ -280,7 +280,7 @@ class TestVerifyHmac:
             totp_code="",
             hmac_sig="",
         )
-        assert adapter._verify_hmac(attest) is True
+        assert adapter.verify_hmac(attest) is True
 
 
 class TestRoundtrip:
