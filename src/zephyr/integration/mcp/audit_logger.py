@@ -99,6 +99,12 @@ class AuditLogger:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("suppressed error in audit_logger", exc_info=True)
 
+    @property
+    def core_writer(self) -> _CoreAuditWriter | None:
+        """只读：core_writer（Stage 4 公共化）。"""
+        return self._core_writer
+
+
     def hash_args(self, arguments: dict[str, Any]) -> str:
         raw = json.dumps(arguments, sort_keys=True, ensure_ascii=False)
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]

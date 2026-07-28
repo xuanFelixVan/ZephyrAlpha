@@ -262,6 +262,11 @@ class RuleDiscoveryServer(BaseMCPServer):
             handler=self._discover_applicable_rules,
         )
 
+    def discover_applicable_rules(self, operation, gate_id, scope, domain, tags, rule_id, session_id) -> dict[str, Any]:
+        """公共接口：discover_applicable_rules（Stage 4 公共化）。"""
+        return self._discover_applicable_rules(operation, gate_id, scope, domain, tags, rule_id, session_id)
+
+
     # ------------------------------------------------------------------
     # Tool handlers
     # ------------------------------------------------------------------

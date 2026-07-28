@@ -61,6 +61,18 @@ class RetrievalFeedback:
         self._feedback_log: list[FeedbackEntry] = []
         self._long_tail: dict[str, int] = {}
 
+    @property
+    def long_tail(self) -> dict[str, int]:
+        """只读：long_tail（Stage 4 公共化）。"""
+        return self._long_tail
+
+
+    @property
+    def feedback_log(self) -> list[FeedbackEntry]:
+        """只读：feedback_log（Stage 4 公共化）。"""
+        return self._feedback_log
+
+
     def record(self, hit_id: str, was_useful: bool, task_id: str = "", collection: str = "") -> FeedbackEntry:
         entry = FeedbackEntry(
             query=task_id,

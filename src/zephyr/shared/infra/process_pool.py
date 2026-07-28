@@ -230,6 +230,11 @@ class MCPProcessPool:
         # W2 治本: stop 事件让扫描循环即时退出（替代 sleep 长等待），stop 可 join
         self._zombie_stop = threading.Event()
 
+    def reap_zombies(self) -> int:
+        """公共接口：reap_zombies（Stage 4 公共化）。"""
+        return self._reap_zombies()
+
+
     # ----- Stage 4 公共化：属性 getter -----
     @property
     def idle_timeout_s(self) -> float:

@@ -39,6 +39,12 @@ class BM25Index:
         self._k1: float = 1.5
         self._b: float = 0.75
 
+    @staticmethod
+    def tokenize(text) -> list[str]:
+        """公共接口：tokenize（Stage 4 公共化，委托到 _tokenize）。"""
+        return _tokenize(text)
+
+
     def index(self, documents: list[dict[str, Any]]) -> None:
         self._documents = documents
         self._term_freqs.clear()

@@ -267,6 +267,16 @@ class SessionRegistry:
         # os.replace 兜底；此处只解决进程内多线程竞态（红蓝对抗 TestConcurrentClaimRace）。
         self._lock = threading.RLock()
 
+    def save(self, data) -> None:
+        """公共接口：save（Stage 4 公共化）。"""
+        return self._save(data)
+
+
+    def load(self) -> dict[str, dict]:
+        """公共接口：load（Stage 4 公共化）。"""
+        return self._load()
+
+
     def register(
         self,
         session_id: str,

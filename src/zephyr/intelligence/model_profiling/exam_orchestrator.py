@@ -178,6 +178,33 @@ class ExamOrchestrator:
                 depth_samples_per_case = 1
         self._depth_samples_per_case = max(1, depth_samples_per_case)
 
+    def run_breadth(self) -> BreadthResult:
+        """公共接口：run_breadth（Stage 4 公共化）。"""
+        return self._run_breadth()
+
+
+    @property
+    def randomize_order(self):
+        """只读：randomize_order（Stage 4 公共化）。"""
+        return self._randomize_order
+
+
+    @property
+    def optimization_suspicions(self):
+        """只读：optimization_suspicions（Stage 4 公共化）。"""
+        return self._optimization_suspicions
+
+
+    def infer(self, case) -> dict:
+        """公共接口：infer（Stage 4 公共化）。"""
+        return self._infer(case)
+
+
+    def detect_optimization(self, case, result) -> bool:
+        """公共接口：detect_optimization（Stage 4 公共化）。"""
+        return self._detect_optimization(case, result)
+
+
     # ── Stage 4 公共化：只读 property + 公共方法别名 ────────────────────
     # 治本（2026-07-27 Stage 4 私有成员断言消除）：
     # 测试需读取/断言内部状态（_model_id/_chat/_depth_samples_per_case/

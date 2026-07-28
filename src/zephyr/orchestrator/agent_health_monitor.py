@@ -190,6 +190,18 @@ class AgentHealthMonitor:
         self._ctx_util: deque[float] = deque(maxlen=window_size)
         self._completions: deque[datetime] = deque(maxlen=window_size * 4)
 
+    @property
+    def slo(self):
+        """只读：slo（Stage 4 公共化）。"""
+        return self._slo
+
+
+    @staticmethod
+    def percentile(values, pct) -> float:
+        """公共接口：percentile（Stage 4 公共化，委托到 _percentile）。"""
+        return _percentile(values, pct)
+
+
     def record(self, result: OrchestrationResult) -> None:
         self._latencies.append(float(result.latency_ms))
         self._errors.append(0 if result.success else 1)

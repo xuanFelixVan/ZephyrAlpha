@@ -55,6 +55,38 @@ class HealthcheckService:
         self._project_root = project_root or Path.cwd()
         self._start_time = time.time()
 
+    @property
+    def start_time(self):
+        """只读：start_time（Stage 4 公共化）。"""
+        return self._start_time
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    def check_python(self) -> HealthStatus:
+        """公共接口：check_python（Stage 4 公共化）。"""
+        return self._check_python()
+
+
+    def check_network(self) -> HealthStatus:
+        """公共接口：check_network（Stage 4 公共化）。"""
+        return self._check_network()
+
+
+    def check_file_system(self) -> HealthStatus:
+        """公共接口：check_file_system（Stage 4 公共化）。"""
+        return self._check_file_system()
+
+
+    def check_disk(self) -> HealthStatus:
+        """公共接口：check_disk（Stage 4 公共化）。"""
+        return self._check_disk()
+
+
     def check_all(self) -> HealthReport:
         components: list[HealthStatus] = []
 

@@ -44,6 +44,12 @@ class EventReactor:
         self._reactions: list[Reaction] = []
         self._register_handlers()
 
+    @property
+    def bus(self):
+        """只读：bus（Stage 4 公共化）。"""
+        return self._bus
+
+
     def _register_handlers(self) -> None:
         self._bus.subscribe(EventType.TASK_FAILED, self._on_task_failed)
         self._bus.subscribe(EventType.TASK_COMPLETED, self._on_task_completed)

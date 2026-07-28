@@ -112,6 +112,12 @@ class InProcessVectorMemory:
         self._stop_event = threading.Event()
         self._maintenance_thread: threading.Thread | None = None
 
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def maintenance_loop(self) -> None:
+        """公共接口：maintenance_loop（Stage 4 公共化，委托到 self._maintenance_loop）。"""
+        return self._maintenance_loop()
+
+
     @staticmethod
     def _init_chunk_router() -> ChunkStrategyRouter:
         from zephyr.integration.vector_memory.chunk_strategy_router import ChunkStrategyRouter

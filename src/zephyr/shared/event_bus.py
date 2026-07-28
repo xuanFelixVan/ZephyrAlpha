@@ -84,6 +84,8 @@ EventHandler = Callable[[DomainEvent], None]
 
 
 class EventBus:
+    instance: 'EventBus | None' = _instance  # public alias（Stage 4 公共化）
+
     """
     任务事件发布/订阅总线（单例模式）
     与 EventBusBackpressure 互补：EventBus 面向领域事件，EventBusBackpressure 面向系统事件
@@ -97,6 +99,18 @@ class EventBus:
         self._subscribers: dict[EventType, list[EventHandler]] = {et: [] for et in EventType}
         self._event_log: list[DomainEvent] = []
         self._lock = threading.Lock()
+
+    @property
+    def subscribers(self) -> dict[EventType, list[EventHandler]]:
+        """只读：subscribers（Stage 4 公共化）。"""
+        return self._subscribers
+
+
+    @property
+    def event_log(self) -> list[DomainEvent]:
+        """只读：event_log（Stage 4 公共化）。"""
+        return self._event_log
+
 
     @classmethod
     def get_instance(cls) -> "EventBus":

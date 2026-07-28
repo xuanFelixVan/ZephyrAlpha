@@ -161,6 +161,17 @@ class BlueprintDecomposer:
         self.docs_dir = Path(docs_dir) if docs_dir else None
         self._global_seq: dict[str, int] = {}
 
+    def next_global_seq(self, ns) -> int:
+        """公共接口：next_global_seq（Stage 4 公共化）。"""
+        return self._next_global_seq(ns)
+
+
+    @property
+    def global_seq(self) -> dict[str, int]:
+        """只读：global_seq（Stage 4 公共化）。"""
+        return self._global_seq
+
+
     # === target_layer 自动映射（对齐 target_layer_vocabulary.yaml v1.0.0）===
 
     # 功能域 -> 域标识符映射（基于 target_layer_vocabulary.yaml）

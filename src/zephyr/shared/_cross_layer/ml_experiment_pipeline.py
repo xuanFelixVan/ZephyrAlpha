@@ -162,6 +162,10 @@ def _run_inference_stage(
 
 
 class MLExperimentPipeline:
+    seen_idempotency_keys: set[str] = _seen_idempotency_keys  # public alias（Stage 4 公共化）
+
+    global_run_count: int = _global_run_count  # public alias（Stage 4 公共化）
+
     """D_ML_TRAIN->实验 ML Experiment 跨层集成管道。
 
     将 D_ML_TRAIN ML平台层的模型推理结果输入 实验 实验管线，
@@ -177,6 +181,30 @@ class MLExperimentPipeline:
         self._models: list[ModelMetadata] = []
         self._engines: list[type] = []
         self._experiment_config: ExperimentConfig | None = None
+
+    @property
+    def models(self) -> list[ModelMetadata]:
+        """只读：models（Stage 4 公共化）。"""
+        return self._models
+
+
+    @property
+    def engines(self) -> list[type]:
+        """只读：engines（Stage 4 公共化）。"""
+        return self._engines
+
+
+    @staticmethod
+    def run_significance_test(predictions) -> dict[str, Any]:
+        """公共接口：run_significance_test（Stage 4 公共化）。"""
+        return _run_significance_test(predictions)
+
+
+    @staticmethod
+    def check_builtins_integrity(snapshot) -> list[str]:
+        """公共接口：check_builtins_integrity（Stage 4 公共化）。"""
+        return _check_builtins_integrity(snapshot)
+
 
     @classmethod
     def reset_run_state(cls) -> None:

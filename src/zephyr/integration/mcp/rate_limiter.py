@@ -165,6 +165,18 @@ class PerToolRateLimiter:
             {} if explicit else _load_mcp_rate_limits()
         )
 
+    @property
+    def default_qps(self):
+        """只读：default_qps（Stage 4 公共化）。"""
+        return self._default_qps
+
+
+    @property
+    def default_burst(self):
+        """只读：default_burst（Stage 4 公共化）。"""
+        return self._default_burst
+
+
     def _make_key(self, tool_name: str, client_id: str | None = None) -> str:
         if client_id is None:
             return tool_name

@@ -437,6 +437,42 @@ class PipelineOrchestrator:
         if self.auto_profile_on_startup and self.model_profiler is not None:
             self.start_auto_profile()
 
+    @staticmethod
+    def call_model(module_id, pipeline, model, task, *, token_divisor, prior_artifacts, dry_run, skill_injection) -> dict:
+        """公共接口：call_model（Stage 4 公共化，委托到 _call_model）。"""
+        return _call_model(module_id, pipeline, model, task, token_divisor=token_divisor, prior_artifacts=prior_artifacts, dry_run=dry_run, skill_injection=skill_injection)
+
+
+    @staticmethod
+    def lsg_scan_agent_action(tool_name, tool_params) -> str | None:
+        """公共接口：lsg_scan_agent_action（Stage 4 公共化，委托到 _lsg_scan_agent_action）。"""
+        return _lsg_scan_agent_action(tool_name, tool_params)
+
+
+    @staticmethod
+    def lsg_sanitize_output(module_id, output) -> dict:
+        """公共接口：lsg_sanitize_output（Stage 4 公共化，委托到 _lsg_sanitize_output）。"""
+        return _lsg_sanitize_output(module_id, output)
+
+
+    @staticmethod
+    def lsg_sanitize_input(text) -> str:
+        """公共接口：lsg_sanitize_input（Stage 4 公共化，委托到 _lsg_sanitize_input）。"""
+        return _lsg_sanitize_input(text)
+
+
+    @staticmethod
+    def text_similarity(a, b) -> float:
+        """公共接口：text_similarity（Stage 4 公共化，委托到 _text_similarity）。"""
+        return _text_similarity(a, b)
+
+
+    @staticmethod
+    def determine_status(results) -> PipelineStatus:
+        """公共接口：determine_status（Stage 4 公共化，委托到 _determine_status）。"""
+        return _determine_status(results)
+
+
     # ------------------------------------------------------------------
     # Stage 4 公共化 — @property 暴露（保留 _attr 作为 backing store）
     # ------------------------------------------------------------------

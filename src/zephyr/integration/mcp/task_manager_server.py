@@ -91,6 +91,22 @@ class TaskManagerMCP:
         self._global_seq = 0
         self._idempotency_cache: dict[str, dict] = {}
 
+    def next_seq(self, namespace) -> int:
+        """公共接口：next_seq（Stage 4 公共化）。"""
+        return self._next_seq(namespace)
+
+
+    def load(self, task_id) -> TaskCard | None:
+        """公共接口：load（Stage 4 公共化）。"""
+        return self._load(task_id)
+
+
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def persist(self, tc) -> None:
+        """公共接口：persist（Stage 4 公共化，委托到 self._persist）。"""
+        return self._persist(tc)
+
+
     @property
     def server(self) -> object:
         """向后兼容：指向 FastMCP 内部 lowlevel ``Server``（tests/ 与红队脚本读 ``.name``）。"""

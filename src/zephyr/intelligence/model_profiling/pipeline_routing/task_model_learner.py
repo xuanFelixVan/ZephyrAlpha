@@ -131,6 +131,17 @@ class ModelTaskMatrix:
         self._benchmark_baseline: dict[str, dict[str, float]] = {}
         self._load()
 
+    def save(self) -> None:
+        """公共接口：save（Stage 4 公共化）。"""
+        return self._save()
+
+
+    @property
+    def dir(self):
+        """只读：dir（Stage 4 公共化）。"""
+        return self._dir
+
+
     def record(
         self,
         task_type: str,
