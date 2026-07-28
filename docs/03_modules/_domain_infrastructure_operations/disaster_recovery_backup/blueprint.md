@@ -1,11 +1,11 @@
 ---
 module_id: MOD-INF-043
 submodule_path: scripts/backup
-title: "灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告"
+title: "灾备备份系统蓝图 v2.0 — robocopy代码镜像+VHDX虚拟硬盘CH备份+DB dump+VM全量+校验+报告"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.4.1"
+version: "2.0.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,12 +14,12 @@ created_by: human_plus_agent
 date: "2026-07-09"
 ttl: permanent
 actual_disk_path: "scripts/backup/"
-last_updated: "2026-07-19"
-last_verified: "2026-07-09"
-generation: 1
+last_updated: "2026-07-28"
+last_verified: "2026-07-28"
+generation: 2
 functional_domain: operations
-summary: "灾备备份系统——事件触发的Restic去重备份流水线，post-commit reconciler自动驱动（重要文件变更+8小时间隔保护，日均1-2次），覆盖代码+配置+数据库+不可替代数据，目标盘F:(SanDisk 2TB)，遵循3-2-1原则与数据最小化原则"
-tags: [backup, disaster-recovery, restic, pg-dump, sqlite-backup, clickhouse-backup, 3-2-1-rule, reconciler, event-triggered]
+summary: "灾备备份系统v2.0——restic退役，改为robocopy /MIR代码镜像+VHDX虚拟硬盘CH增量备份(base+inc)+pg_dump+sqlite3 .backup+CH VM全量周备。post-commit reconciler事件触发(8h间隔)+Windows计划任务(每日06:00/每周六06:00)双轨自动驱动，覆盖代码/PG/SQLite/CH数据/CH VM，目标盘F:(SanDisk 2TB)，RPO=24h RTO=2-4h"
+tags: [backup, disaster-recovery, vhdx, robocopy, pg-dump, sqlite-backup, clickhouse-backup, vm-backup, reconciler, event-triggered]
 priority: P1
 belongs_to: MOD-MASTER_BLUEPRINT
 parent_module: ""
@@ -41,14 +41,24 @@ responsibility_domain:
 build_status: generated
 design_maturity: production
 ---
-> module_id: MOD-INF-043 | version: 1.4.1 | status: active | layer: L0_infrastructure
-> actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: completed
+> module_id: MOD-INF-043 | version: 2.0.0 | status: active | layer: L0_infrastructure
+> actual_disk_path: scripts/backup/ | generation: 2 | construction_progress: completed
 
-# 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
+# 灾备备份系统蓝图 v2.0 — robocopy代码镜像+VHDX虚拟硬盘CH备份+DB dump+VM全量+校验+报告
+
+## v2.0 变更纪要（2026-07-28）
+
+**v1.x→v2.0 重大变更**：restic 退役（F:\restic-zephyr 405GB 已清理），MinIO S3 桥/minio_tcp_relay.py 已删除。新方案：
+- **代码备份**：robocopy /MIR 镜像（替代 restic backup），F:\code_backup\（~4.3GB）
+- **CH 数据备份**：VHDX 虚拟硬盘（F:\ch_backup_disk.vhdx 1TB 动态）附加到 Hyper-V VM 为 /dev/sdc，CH `BACKUP TO Disk('backups', 'market.zip')` 增量(base+inc)，速率 3-4 GiB/min
+- **CH VM 备份**：每周六 06:00 计划任务检查，仅 CH 升级/配置变更时触发全量（99%周次跳过），F:\ch_vm_backup\
+- **触发**：post-commit reconciler(8h间隔) + Windows计划任务 ZephyrAlpha-DailyBackup(每日06:00) + ZephyrAlpha-WeeklyVMBackup(每周六06:00)
+- **恢复**：restore.ps1 all (vm→ch→pg→sqlite→code) / restore.ps1 verify
+- 每日写入从~209GB降至~1-5GB（降98%），DR 演练 5 组件 PASS
 
 ## 概述
 
-灾备备份系统是 ZephyrAlpha 的数据安全底线——解决"单点故障=项目死亡"的核心风险。系统采用 Restic 去重备份工具，通过 **post-commit reconciler 事件触发**（重要文件变更+8小时间隔保护，日均1-2次）自动执行：预检→数据库dump→Restic备份→保留策略清理→完整性校验→报告输出。备份目标为外置盘 F:(SanDisk 2TB NTFS)。备份内容遵循数据最小化原则（ISO/IEC 27001）：不可替代数据必备份，可重建数据排除，可重新下载数据由Restic去重红利决定包含。系统遵循3-2-1原则的本地实现（3副本=原盘+Restic快照+git历史，2介质=SSD+外置盘，1异地=未来扩展云备份）。同时保留手动一键触发能力作为兜底。
+灾备备份系统是 ZephyrAlpha 的数据安全底线——解决"单点故障=项目死亡"的核心风险。系统 v2.0 采用 **robocopy /MIR 代码镜像 + VHDX 虚拟硬盘 CH 增量备份** 方案（restic/MinIO 已退役），通过 **post-commit reconciler 事件触发 + Windows 计划任务双轨**自动驱动。覆盖代码/PG/SQLite/CH 数据/CH VM 五组件，目标盘 F:(SanDisk 2TB NTFS)，RPO=24h RTO=2-4h。
 
 ---
 
@@ -66,12 +76,14 @@ design_maturity: production
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
 | 1 | `backup_reconciler.py` | §3.1 | post-commit reconciler（事件触发+间隔保护+调用backup.ps1） | 已实现 | |
-| 2 | `backup.ps1` | §3.2 | 主备份脚本（预检+dump+restic+清理+校验+报告） | 已实现 | |
-| 3 | `backup_config.yaml` | §3.3 | 备份配置（路径/保留策略/排除规则/触发条件） | 已实现 | |
+| 2 | `backup.ps1` | §3.2 | 主备份脚本v2.0（robocopy代码+pg_dump+sqlite+CH BACKUP+VM检查+校验+报告） | 已实现 | |
+| 3 | `backup_config.yaml` | §3.3 | 备份配置v2.0（路径/CH VM配置/触发条件/排除规则） | 已实现 | |
 | 4 | `backup_manual.ps1` | §3.4 | 手动兜底触发入口（调用backup.ps1 -Force，跳过间隔保护） | 已实现 | |
-| 5 | `restore.ps1` | §3.5 | 恢复脚本（list/verify/latest/ch 四子命令） | 已实现 | |
-| 6 | `README.md` | §3.6 | 使用说明（自动触发机制/手动触发/灾难恢复） | 已实现 | |
-| 7 | `minio_tcp_relay.py` | §4.3 | TCP中转 0.0.0.0:<relay端口>→127.0.0.1:<minio端口>（argv 传参，调用方 bind 实测选 HNS 安全端口；借python防火墙放行规则暴露MinIO给CH VM） | 已实现 | |
+| 5 | `restore.ps1` | §3.5 | 恢复脚本v2.0（all/verify/vm/ch/pg/sqlite/code 子命令） | 已实现 | |
+| 6 | `ch_vm_ssh.py` | §3.6 | SSH辅助——CH VM操作（执行命令/删备份/查状态/同步CH配置到config/system_configs/） | 已实现 | |
+| 7 | `backup_ch_vm.ps1` | §3.7 | CH VM全量备份（boot.vhdx+data.vhdx+VM配置→F:\ch_vm_backup\，AutoCheck智能跳过） | 已实现 | |
+| 8 | `backup_daily_trigger.ps1` | §3.8 | Windows计划任务入口脚本（每日06:00调用backup.ps1 -Force） | 已实现 | |
+| 9 | `README.md` | §3.9 | 使用说明（自动触发机制/手动触发/灾难恢复） | 已实现 | |
 
 ---
 
@@ -106,15 +118,15 @@ design_maturity: production
 
 ## §1 架构设计
 
-### §1.1 六阶段流水线
+### §1.1 v2.0 流水线
 
 ```
 ┌─────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
-│ 1.预检  │ → │ 2.DB dump │ → │ 3.Restic │ → │ 4.保留   │ → │ 5.校验   │ → │ 6.报告   │
-│         │   │           │   │   备份   │   │ 清理     │   │          │   │          │
-│ F盘在线?│   │ PG dump   │   │ restic   │   │ restic   │   │ restic   │   │ JSON报告 │
-│ restic? │   │ SQLite    │   │ backup   │   │ forget   │   │ check    │   │ 终端输出 │
-│ 仓库?   │   │ ClickHouse│   │ --exclude│   │ --prune  │   │ stats    │   │          │
+│ 1.预检  │ → │ 2.DB dump │ → │ 3.代码   │ → │ 4.CH数据 │ → │ 5.CH VM  │ → │ 6.校验   │
+│         │   │           │   │ 镜像     │   │ 增量备份 │   │ 智能检查 │   │ +报告    │
+│ F盘在线?│   │ pg_dump   │   │ robocopy │   │ BACKUP   │   │ AutoCheck│   │ 行数抽查 │
+│ VHDX?   │   │ sqlite3   │   │ /MIR →   │   │ TO Disk  │   │ skip if  │   │ JSON报告 │
+│ CH alive│   │ .backup   │   │ code_bak │   │ base+inc │   │ unchanged│   │ 终端输出 │
 └─────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘
 ```
 
@@ -137,11 +149,17 @@ design_maturity: production
 
 **手动触发（兜底路径）**：运行 `backup_manual.ps1`（右键"用PowerShell运行"或命令行），不受间隔保护限制（force模式）。
 
-### §1.3 备份目标
+### §1.3 备份目标（v2.0 F: 盘布局）
 
-- **仓库路径**：`F:\restic-zephyr`（Restic repository，加密+去重）
-- **目标盘**：F:(SanDisk Portable SSD 2TB NTFS，卷标SanDisk2TB)
-- **可用空间**：1862.84GB（足够容纳数年增量备份）
+| 路径 | 内容 | 大小 | 方式 |
+|------|------|------|------|
+| `F:\code_backup\` | 代码+配置+规则（D:\ZephyrAlpha 镜像） | ~4.3GB | robocopy /MIR |
+| `F:\db_dumps\` | PG dump + SQLite .backup + pg_globals.sql | ~50MB | pg_dump -Fc / sqlite3 .backup |
+| `F:\ch_backup_disk.vhdx` | CH 数据备份（1TB 动态 VHDX，附加到 VM 为 /dev/sdc） | base ~199GB + inc ~0.8GB | CH BACKUP TO Disk('backups', 'market.zip') 增量 |
+| `F:\ch_vm_backup\` | CH VM 全量（boot.vhdx + data.vhdx + VM 配置） | ~555GB | robocopy（仅 CH 升级/配置变更时触发） |
+
+- **目标盘**：F:(SanDisk Portable SSD 2TB NTFS，卷标 SanDisk2TB)
+- **配置真源**：`scripts/backup/backup_config.yaml` + `config/.env.ch_backup`（CH_VM_HOST/USER/PASSWORD + CH_VHDX_PATH + CH_BACKUP_FILE）
 
 ### §1.4 触发流程
 
@@ -276,41 +294,28 @@ param([switch]$Force)  # 手动触发时传 -Force 跳过间隔保护
 
 # 1. 预检
 Assert-Path F:\  # F盘在线
-Assert-Command restic  # restic已安装
-if (-not (Test-Path F:\restic-zephyr\config)) {
-    restic init --repo F:\restic-zephyr  # 首次初始化
-}
+Assert-Path F:\ch_backup_disk.vhdx  # VHDX存在
+# CH VM 在线检查（ch_vm_ssh.py --cmd "echo ok"）
 
-# 2. 数据库dump（写入项目外临时目录，避免被tmp/排除规则冲突）
-$dumpDir = "D:\tmp_db_dumps"
-New-Item $dumpDir -Force
-pg_dump -Fc depgraph > $dumpDir\depgraph.dump
-sqlite3 governance.db ".backup $dumpDir\governance_backup.db"
-# ClickHouse: 检测服务运行，运行则dump，否则warn跳过
+# 2. 数据库dump（写入 F:\db_dumps\）
+pg_dump -Fc depgraph > F:\db_dumps\depgraph.dump
+sqlite3 governance.db ".backup F:\db_dumps\governance_backup.db"
 
-# 3. Restic备份（项目目录 + dump目录，排除清单内嵌）
-restic -r F:\restic-zephyr backup D:\ZephyrAlpha $dumpDir `
-    --exclude "**/__pycache__/" `
-    --exclude "**/.pytest_cache/" `
-    --exclude "**/.mypy_cache/" `
-    --exclude "**/.ruff_cache/" `
-    --exclude ".aidrafts/" `
-    --exclude ".runtime/" `
-    --exclude "tmp/" `  # tmp整体排除，dump已在项目外
-    --exclude "logs/*.log" `
-    --exclude ".venv/" `
-    --exclude "node_modules/"
+# 3. 代码镜像（robocopy /MIR，排除清单内嵌）
+robocopy D:\ZephyrAlpha F:\code_backup /MIR `
+    /XD __pycache__ .pytest_cache .mypy_cache .ruff_cache .aidrafts .runtime tmp `
+    /XF *.log `
+    /XD .venv node_modules
 
-# 4. 保留策略清理
-restic -r F:\restic-zephyr forget `
-    --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --prune
+# 4. CH 数据增量备份（SSH 到 VM 执行 BACKUP TO Disk）
+ch_vm_ssh.py --cmd "clickhouse-client --query=BACKUP DATABASE c1_market, DATABASE c3_fundamental TO Disk('backups', 'market.zip') SETTINGS base_backup = Disk('backups', 'market.zip')"
+# inc>=50%base 时自动重建基线
 
-# 5. 校验
-restic -r F:\restic-zephyr check
-restic -r F:\restic-zephyr stats
+# 5. CH VM 智能检查（AutoCheck：版本+配置 hash 无变化则跳过）
+# 仅周六计划任务或 CH 升级时触发全量
 
-# 6. 报告
-# 输出到终端 + 写入 logs\backup_report_YYYYMMDD.json
+# 6. 校验 + 报告
+# 文件存在性 + 大小校验 → 输出终端 + logs\backup_report_YYYYMMDD.json
 ```
 
 ### §3.3 backup_config.yaml — 备份配置
@@ -365,16 +370,19 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 # 等价于: scripts\backup\backup.ps1 -Force
 ```
 
-### §3.5 restore.ps1 — 恢复脚本
+### §3.5 restore.ps1 — 恢复脚本（v2.0）
 
-**职责**：查看快照/恢复指定快照/灾难恢复最新快照。
+**职责**：查看备份清单/校验完整性/单组件恢复/全链路灾难恢复。
 
 **子命令**：
-- `.\restore.ps1 list` — 列出所有快照
-- `.\restore.ps1 verify <snapshot-id>` — 恢复到临时目录验证
-- `.\restore.ps1 latest` — 灾难恢复最新快照到 D:\ZephyrAlpha\
-- `.\restore.ps1 latest -target D:\restore_test\` — 恢复到指定目录
-- `.\restore.ps1 ch` — 灾难恢复 ClickHouse（c1_market + c3_fundamental，经 MinIO S3 桥，见 §4.3）
+- `.\restore.ps1 list` — 列出 F:\code_backup + db_dumps + ch_backup_disk.vhdx + ch_vm_backup 内容
+- `.\restore.ps1 verify` — 校验五组件文件存在性+大小（无需 snapshot-id）
+- `.\restore.ps1 all` — 全链路灾难恢复（vm→ch→pg→sqlite→code 顺序）
+- `.\restore.ps1 vm` — 恢复 CH VM（boot.vhdx + data.vhdx + 重建 VM）
+- `.\restore.ps1 ch` — 恢复 ClickHouse（SSH RESTORE FROM Disk('backups', 'market.zip') + inc.zip）
+- `.\restore.ps1 pg` — 恢复 PostgreSQL（pg_restore depgraph.dump）
+- `.\restore.ps1 sqlite` — 恢复 SQLite（覆盖 governance.db / session_continuity.db）
+- `.\restore.ps1 code` — 恢复代码（robocopy F:\code_backup → D:\ZephyrAlpha）
 
 ### §3.6 README.md — 使用说明
 
@@ -420,73 +428,73 @@ sqlite3 data\databases\session_continuity.db ".backup D:\tmp_db_dumps\session_ba
 
 - `.backup` 命令保证一致性快照，优于文件复制
 
-### §4.3 ClickHouse（c1_market + c3_fundamental）— MinIO S3 桥
+### §4.3 ClickHouse（c1_market + c3_fundamental）— VHDX 虚拟硬盘（v2.0）
 
-**部署约束（2026-07-18 实测）**：CH 26.6.1 部署于 Hyper-V VM（172.24.30.100），数据 315 GiB（c1_market 298.86 GiB/202.6亿行 + c3_fundamental 15.93 GiB），VM 数据盘仅剩 211 GiB **装不下全量备份**；宿主机无 clickhouse-client；Windows 防火墙自动拦截 minio.exe（无管理员权限改规则）。
+**部署约束**：CH 26.6.1 部署于 Hyper-V VM（172.24.30.100），数据 315 GiB（c1_market 298.86 GiB/202.6亿行 + c3_fundamental 15.93 GiB）。v1.x 通过 MinIO S3 桥备份（速率 ~1.4 GiB/min，协议开销大），v2.0 改为 VHDX 虚拟硬盘直挂（速率 3-4 GiB/min）。
 
-**架构**：备份数据流直接出 VM 落 F: 盘：
+**架构**：在 F: 盘创建 1TB 动态 VHDX，附加到 VM 为 /dev/sdc，ext4 格式化挂载到 /mnt/chbackup_local，CH 命名磁盘 backups 指向该路径：
 
 ```
 backup.ps1 (宿主机)
-  1. 删除旧 market.zip 对象目录 + 残留 market.zip.lock 写锁 + .minio.sys/multipart 未完成分片
-     （防 BACKUP_ALREADY_EXISTS；2026-07-18 事故：KILL 掉的备份留下写锁导致下次备份被拒）
-  2. 清理残留 MinIO/relay 进程（防端口占用污染bind实测）→ bind 实测选 HNS 安全端口
-     （.env 端口仅为首选值；Hyper-V HNS 动态保留随机 tcp 端口段，2026-07-19 事故：
-       9101-9200 被系统保留 → MinIO WinError 10013 启动失败 → CH 阶段静默跳过。
-       bind 实测是唯一可靠判据，netsh excludedportrange 仅作诊断）
-  3. 起 MinIO（127.0.0.1:<动态端口>，localhost-only 规避防火墙）+ minio_tcp_relay.py
-     （0.0.0.0:<relay端口>→127.0.0.1:<minio端口>，端口经 argv 传参；借 python.exe
-       已有 Public-allow 防火墙规则暴露给 VM）
-  4. HTTP 发 BACKUP DATABASE c1_market, DATABASE c3_fundamental
-     TO S3('http://<VM侧宿主机IP>:<relay端口>/chbk/market.zip', key, secret) ASYNC
-     （必须 s3_uri_style=path：裸 IP 端点无 bucket 子域 DNS；bucket 名≥3字符；
-       endpoint 主机取 .env CH_S3_ENDPOINT，端口替换为本轮动态 relay 端口）
-  5. 轮询 system.backups 至 BACKUP_CREATED（上限3h）→ 校验对象非空 → 停 MinIO/relay
-  6. restic 捕获 F:\ch_backup_store
+  1. 预检：F:\ch_backup_disk.vhdx 存在 + CH VM 在线（ch_vm_ssh.py --cmd "echo ok"）
+  2. SSH 到 VM 执行 CH BACKUP：
+     ch_vm_ssh.py --cmd "clickhouse-client --query=\"
+       BACKUP DATABASE c1_market, DATABASE c3_fundamental
+       TO Disk('backups', 'market.zip')
+       SETTINGS base_backup = Disk('backups', 'market.zip')\" "
+     （首次全量无 base_backup；后续增量基于 base_backup）
+  3. 轮询 system.backups 至 BACKUP_CREATED（ch_vm_ssh.py --stat-backup market.zip）
+  4. 增量≥50%base 时自动重建基线（删旧 base+inc，重新全量）
+  5. CH VM 智能周备：AutoCheck 检测 CH 版本+配置 hash 无变化则跳过（99%周次零停机）
 ```
 
-**节奏与失败可见性（2026-07-19 治本）**：
-- **24h 节奏**：全量 CH 备份 ≈3h，独立于代码备份 8h 节奏（见 §1.2）。
-- **失败可见**：CH 阶段失败时 backup.ps1 以 **exit 2** 退出（代码/PG/SQLite/restic 仍成功），
-  backup_reconciler 据此返回 warn ReconcileResult，状态文件落 `last_ch_backup_status/last_ch_backup_error`——
-  CH 失败禁止静默跳过（2026-07-19 事故：两次自动备份记录 ok 但 MinIO 未起、CH 未备份）。
-  exit 0=全部ok或CH按计划跳过，exit 1=流水线致命失败。
+**增量策略**：
+- base_backup：首次全量 `BACKUP ... TO Disk('backups', 'market.zip')`（~199GB）
+- 每日增量：`BACKUP ... SETTINGS base_backup = Disk('backups', 'market.zip')` → `inc.zip`（~0.8GB/天）
+- inc≥50%base 时自动重建基线（防增量链膨胀）
+- 速率 3-4 GiB/min（vs CIFS 1.4 GiB/min）
 
-**同一文件裁定（用户裁定 2026-07-18）**：每次写同一 key `market.zip`，不用日期后缀。restic 内容定义分块（CDC）对 zip 内未变化的 CH part 字节去重，每日 restic 增量 ≈ 当日新增行情（实测 ~9.2 GiB/天）；版本历史由 restic 快照管理，任意快照自包含可恢复（优于 base_backup 增量链，无需管链）。
+**CH VM 全量备份（backup_ch_vm.ps1）**：
+- 每周六 06:00 Windows 计划任务 ZephyrAlpha-WeeklyVMBackup 触发
+- AutoCheck：SSH 检测 CH 版本 + VM 配置 hash，无变化则 skip（99%周次跳过）
+- 仅 CH 升级/VM 配置变更时执行全量：boot.vhdx + data.vhdx + VM 配置 → F:\ch_vm_backup\
+- 2026-07-28 首次全量已完成：data.vhdx 554.72GB，restore.ps1 verify ALL PASSED
 
-**凭据**：`config/.env.ch_backup`（gitignored）：MINIO_EXE/MINIO_ADDRESS/MINIO_ROOT/MINIO_BUCKET/CH_S3_ACCESS_KEY/CH_S3_SECRET_KEY/CH_S3_ENDPOINT/RELAY_SCRIPT。MinIO 本体在 `D:\tools\minio\minio.exe`（环境软件，同 restic 规，下载自国内镜像 dl.minio.org.cn）。
+**凭据**：`config/.env.ch_backup`（gitignored）：CH_VM_HOST/CH_VM_USER/CH_VM_PASSWORD/CH_VHDX_PATH/CH_BACKUP_FILE。SSH 辅助 `scripts/backup/ch_vm_ssh.py`（paramiko），VM 配置同步 `ch_vm_ssh.py --sync-config` → `config/system_configs/`（gitignored，可重新生成）。
 
-**恢复**：`restore.ps1 ch` → 定位最近含 F:\ch_backup_store 的快照（CH 24h 节奏与代码 8h 解耦，latest 快照通常不含 CH 存储，禁止盲取 latest，2026-07-19 治本）→ restic 取回 → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查验证。
+**恢复**：`restore.ps1 ch` → SSH 到 VM 执行 `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM Disk('backups', 'market.zip')` + `RESTORE ... FROM Disk('backups', 'inc.zip')` → 行数抽查验证。全链路恢复用 `restore.ps1 all`（vm→ch→pg→sqlite→code 顺序）。
 
 ---
 
-## §5 保留策略
+## §5 保留策略（v2.0）
 
-### §5.1 Restic forget参数
+### §5.1 代码/DB 备份（robocopy /MIR 覆盖式）
 
-```
---keep-daily 7      # 近7天每天1份
---keep-weekly 4     # 近4周每周1份
---keep-monthly 3    # 近3个月每月1份
---prune             # 清理不再引用的数据块
-```
+robocopy /MIR 每次执行覆盖镜像——始终保留最新一份，无历史版本。版本历史依赖 git（代码）+ DB dump 文件（PG/SQLite 每日覆盖）。无需 forget/prune 清理。
 
-### §5.2 快照数量预估
+### §5.2 CH 数据备份（base+inc 增量链）
 
-- 总快照数：约14份（7 daily + 4 weekly + 3 monthly）
-- 首次全量：~22GB（含.git 7.2GB + models 7.1GB + bdpan 876MB + 代码250MB + 其他）
-- 后续增量：几十MB~几百MB（取决于代码改动量，Restic去重）
-- 2TB外置盘足够容纳数年备份
+- `market.zip`（base，~199GB）+ `inc.zip`（增量，~0.8GB/天）
+- inc≥50%base 时自动重建基线：删旧 base+inc → 重新全量 market.zip
+- 无需手动清理——CH BACKUP 增量链自动管理
+
+### §5.3 CH VM 备份（按需全量）
+
+- 仅 CH 升级/VM 配置变更时触发全量（AutoCheck 智能跳过）
+- F:\ch_vm_backup\ 覆盖式更新（boot.vhdx + data.vhdx + VM 配置）
+- 99%周次零停机跳过
 
 ---
 
-## §6 验证流程
+## §6 验证流程（v2.0）
 
 ### §6.1 自动校验（每次备份后）
 
-1. `restic check` — 校验仓库完整性（数据块+索引）
-2. `restic stats` — 输出快照大小统计
-3. `restic snapshots --latest 1` — 确认快照已写入
+1. 代码镜像：robocopy 退出码 0=成功（/MIR 镜像完成）
+2. DB dump：文件存在性 + 大小>0 检查（pg_dump/sqlite3 .backup）
+3. CH 数据：`ch_vm_ssh.py --stat-backup market.zip` 校验文件大小 >0 + ≤ chTotalSize*1.05
+4. CH VM：`restore.ps1 verify` 校验 boot.vhdx/data.vhdx 文件完整性
+5. 报告写入 `logs\backup_report_YYYYMMDD.json`
 
 ### §6.2 备份报告
 
@@ -510,39 +518,42 @@ backup.ps1 (宿主机)
 ### §6.3 定期完整性验证（手动，建议每月）
 
 ```powershell
-restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻底）
+# v2.0: restore.ps1 verify 全组件校验
+.\scripts\backup\restore.ps1 verify  # 校验 code/pg/sqlite/ch/vm 五组件
 ```
 
 ---
 
 ## §7 恢复流程
 
-### §7.1 查看快照
+### §7.1 查看备份清单
 
 ```powershell
 .\scripts\backup\restore.ps1 list
-# 或直接：restic -r F:\restic-zephyr snapshots
+# v2.0: 列出 F:\code_backup + db_dumps + ch_backup_disk.vhdx + ch_vm_backup 内容
 ```
 
-### §7.2 验证恢复（到临时目录）
+### §7.2 验证备份完整性
 
 ```powershell
-.\scripts\backup\restore.ps1 verify <snapshot-id>
-# 恢复到 D:\restore_test\ 供检查
+.\scripts\backup\restore.ps1 verify
+# v2.0: 校验 code/pg/sqlite/ch/vm 五组件文件存在性+大小
 ```
 
-### §7.3 灾难恢复（最新快照）
+### §7.3 灾难恢复（全链路）
 
 ```powershell
-.\scripts\backup\restore.ps1 latest
-# 恢复 D:\ZephyrAlpha\ 全部内容
+.\scripts\backup\restore.ps1 all
+# v2.0: 按顺序恢复 vm -> ch -> pg -> sqlite -> code
 ```
 
-### §7.4 数据库恢复
+### §7.4 单组件恢复
 
-- PostgreSQL：`pg_restore -d depgraph tmp\_db_dumps\depgraph.dump`
-- SQLite：覆盖 `governance.db` / `session_continuity.db`
-- ClickHouse：`.\scripts\backup\restore.ps1 ch` — 定位最近含 `F:\ch_backup_store` 的快照 → restic 取回 → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查（前置：目标表先 DROP；架构见 §4.3）
+- 代码：`restore.ps1 code`（robocopy F:\code_backup → D:\ZephyrAlpha）
+- PostgreSQL：`restore.ps1 pg`（pg_restore -d depgraph F:\db_dumps\depgraph.dump）
+- SQLite：`restore.ps1 sqlite`（覆盖 governance.db / session_continuity.db）
+- ClickHouse：`restore.ps1 ch`（SSH 到 VM 执行 RESTORE FROM Disk('backups', 'market.zip') + inc.zip）
+- CH VM：`restore.ps1 vm`（从 F:\ch_vm_backup 恢复 boot.vhdx + data.vhdx + 重建 VM）
 
 ---
 
@@ -550,8 +561,8 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 
 | ID | 不变量 | 验证方式 |
 |----|--------|---------|
-| INV-01 | 备份仓库必须加密（restic init时设置密码） | `restic cat config` 检查加密 |
-| INV-02 | 每次备份后必须执行 `restic check` | 脚本流程强制 |
+| INV-01 | F: 盘备份目录必须存在且可写（code_backup/db_dumps/ch_backup_disk.vhdx/ch_vm_backup） | 脚本预检 Assert-Path |
+| INV-02 | 每次备份后必须校验文件存在性+大小>0 | 脚本流程强制 |
 | INV-03 | dump文件必须先写入 `D:\tmp_db_dumps\`（项目外）再随项目一起备份 | 脚本流程强制 |
 | INV-04 | 备份报告必须写入 `logs/backup_report_YYYYMMDD.json` | 脚本流程强制 |
 | INV-05 | 排除清单必须包含 `.aidrafts/`（4.7GB临时草稿） | 配置文件校验 |
@@ -574,10 +585,12 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 | MOD-INF-026 (AssetInventory) | 资产分类为备份内容裁定提供依据 |
 | ReconciliationRegistry (zephyr.governance.audit) | post-commit reconciler注册与触发机制 |
 | GitCommitGateway (zephyr.gov_enforcement.rule_bridge) | merge后触发reconcile_for，驱动backup_reconciler |
-| Restic (外部工具) | 去重+加密+校验备份引擎 |
+| robocopy (Windows内置) | 代码 /MIR 镜像 + CH VM VHDX 文件复制 |
 | pg_dump (PostgreSQL客户端) | PG数据库dump |
 | sqlite3 (SQLite客户端) | SQLite数据库dump |
-| clickhouse-client (ClickHouse客户端) | ClickHouse数据库dump |
+| ch_vm_ssh.py (paramiko, pip) | SSH到CH VM执行BACKUP/RESTORE/配置同步 |
+| Windows Task Scheduler | 每日06:00 + 每周六06:00 计划任务自动触发 |
+| Hyper-V VHDX | 1TB动态虚拟硬盘附加到VM作为CH备份磁盘 |
 
 ### §9.2 下游消费者
 
