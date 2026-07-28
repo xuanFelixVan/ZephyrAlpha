@@ -26,11 +26,11 @@ from zephyr.shared.reliability.diff_planner import (
 class TestDiffPlannerInstantiation:
     def test_default_construction(self):
         planner = DiffPlanner()
-        assert planner._project_root == Path.cwd()
+        assert planner.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         planner = DiffPlanner(project_root=tmp_path)
-        assert planner._project_root == tmp_path
+        assert planner.project_root == tmp_path
 
 
 class TestComputeDiff:

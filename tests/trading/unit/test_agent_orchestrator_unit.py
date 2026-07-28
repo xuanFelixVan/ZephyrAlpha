@@ -132,7 +132,7 @@ class TestAgentRouterPoolHelpers:
         router.update_load("A", delta=2)
         router.update_load("A", delta=-1)
         # 剩 2 次
-        agent = [a for a in router._pool if a.agent_id == "A"][0]
+        agent = [a for a in router.pool if a.agent_id == "A"][0]
         assert agent.current_load == 2
 
     def test_score_lookup(self) -> None:
@@ -410,7 +410,7 @@ class TestAgentOrchestrator:
             enable_lsg=False,
             sanitize_llm_context=False,
         )
-        assert orch._input_sanitizer is None
+        assert orch.input_sanitizer is None
         res = orch.orchestrate(
             domain="D0",
             directive_chain="325",

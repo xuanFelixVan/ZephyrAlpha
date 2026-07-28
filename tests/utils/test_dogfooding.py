@@ -36,29 +36,29 @@ class TestDogfoodingInstantiation:
 
     def test_default_tasks_loaded(self):
         df = Dogfooding()
-        assert len(df._tasks) == len(DOGFOOD_TASKS)
+        assert len(df.tasks) == len(DOGFOOD_TASKS)
 
 
 class TestDogfoodingRegisterTask:
     def test_register_custom_task(self):
         df = Dogfooding()
-        initial_count = len(df._tasks)
+        initial_count = len(df.tasks)
         task = DogfoodTask("CUSTOM-001", "Custom test", "MOD-TEST", "P2")
         df.register_dogfood_task(task)
-        assert len(df._tasks) == initial_count + 1
+        assert len(df.tasks) == initial_count + 1
 
     def test_register_multiple_tasks(self):
         df = Dogfooding()
-        initial_count = len(df._tasks)
+        initial_count = len(df.tasks)
         for i in range(3):
             df.register_dogfood_task(DogfoodTask(f"CUSTOM-{i}", f"Test {i}", "MOD", "P2"))
-        assert len(df._tasks) == initial_count + 3
+        assert len(df.tasks) == initial_count + 3
 
     def test_register_task_with_self_test_false(self):
         df = Dogfooding()
         task = DogfoodTask("CUSTOM-NOSELF", "No self test", "MOD", "P3", self_test=False)
         df.register_dogfood_task(task)
-        assert df._tasks[-1].self_test is False
+        assert df.tasks[-1].self_test is False
 
 
 class TestDogfoodingRunCycle:

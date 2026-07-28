@@ -59,6 +59,6 @@ def test_execution_engine_twap_submits_via_order_manager() -> None:
     )
     broker_oid = engine.execute_order(order, AlgoType.TWAP, "simulation")
     assert broker_oid
-    info = engine._algo_orders.get(order.order_id)
+    info = engine.algo_orders.get(order.order_id)
     assert info is not None
     assert info["algo"] == "twap"

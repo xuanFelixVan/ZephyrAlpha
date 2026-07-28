@@ -155,7 +155,7 @@ class TestVersionNegotiator:
         negotiator = VersionNegotiator()
         negotiator.register_deprecation(SchemaName.TASKCARD, "f1", "v1.0.0")
         negotiator.register_deprecation(SchemaName.FINDING, "f2", "v1.0.0")
-        assert len(negotiator._deprecations) == 2
+        assert len(negotiator.deprecations) == 2
 
     def test_get_all_deprecations(self):
         negotiator = VersionNegotiator()

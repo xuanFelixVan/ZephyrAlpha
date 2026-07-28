@@ -134,7 +134,7 @@ class TestDOSLauncher:
         launcher = DOSLauncher(directive_dir=tmp_path)
         launcher.load_directive("325")
         launcher.clear_cache()
-        assert len(launcher._cache) == 0
+        assert len(launcher.cache) == 0
 
     def test_directive_dir_property(self, tmp_path: Path) -> None:
         launcher = DOSLauncher(directive_dir=tmp_path)

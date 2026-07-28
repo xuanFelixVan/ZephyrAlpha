@@ -22,7 +22,7 @@ class TestAdaptiveSampler:
         from zephyr.shared.capacity_governance.adaptive_sampler import AdaptiveSampler
 
         sampler = AdaptiveSampler(base_rate=0.1, error_boost=0.9, max_rate=1.0)
-        assert sampler._base_rate == 0.1
+        assert sampler.base_rate == 0.1
 
     def test_decide(self):
         from zephyr.shared.capacity_governance.adaptive_sampler import AdaptiveSampler

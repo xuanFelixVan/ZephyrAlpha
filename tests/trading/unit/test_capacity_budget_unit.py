@@ -43,7 +43,7 @@ class TestCanAccept:
 
     def test_system_pool_limit(self, controller):
         ctrl = CapacityBudgetController(max_concurrent_tasks=64)
-        ctrl._budget.wip_limit_per_system["orchestrator"] = 4
+        ctrl.budget.wip_limit_per_system["orchestrator"] = 4
         for i in range(4):
             assert ctrl.try_accept(f"T-{i}", "orchestrator")
         assert not ctrl.try_accept("T-OVER", "orchestrator")
