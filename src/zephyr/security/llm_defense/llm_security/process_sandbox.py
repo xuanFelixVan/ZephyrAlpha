@@ -195,6 +195,14 @@ class L2aSandbox:
     # 公共 API
     # ------------------------------------------------------------------
 
+    # ── Stage 4 公共化（2026-07-28）：property + 公共方法 ──
+    # 消除 tests/llm_security/test_process_sandbox_llm_security.py 中 17 处私有成员访问。
+
+    @property
+    def repo_root(self) -> Path:
+        """只读：沙箱仓库根目录（Stage 4 公共化）。"""
+        return self._repo_root
+
     def run(
         self,
         cmd: list[str],
@@ -241,10 +249,10 @@ class L2aSandbox:
         resolved_cwd = self._resolve_cwd(cwd)
 
         # 2. 验证 cwd 白名单
-        self._validate_cwd(resolved_cwd)
+        self.validate_cwd(resolved_cwd)
 
         # 3. 构建过滤后的环境
-        safe_env = self._build_env(extra_env, allow_extra_env)
+        safe_env = self.build_env(extra_env, allow_extra_env)
 
         # 4. timeout
         effective_timeout = timeout if timeout is not None else self._default_timeout
@@ -290,8 +298,8 @@ class L2aSandbox:
             p = self._repo_root / p
         return p.resolve()
 
-    def _validate_cwd(self, resolved_cwd: Path) -> None:
-        """检查 resolved_cwd 是否在白名单范围内。
+    def validate_cwd(self, resolved_cwd: Path) -> None:
+        """检查 resolved_cwd 是否在白名单范围内（Stage 4 公共化，primary）。
 
         白名单规则：resolved_cwd 必须以 repo_root/<whitelist_suffix> 开头。
         repo_root 本身视为豁免（命令未指定 cwd 时使用）。
@@ -313,12 +321,16 @@ class L2aSandbox:
             f"L2a SandboxViolation: cwd '{resolved_cwd}' 超出 CWD 白名单。\n允许前缀：{self._cwd_whitelist}"
         )
 
-    def _build_env(
+    def _validate_cwd(self, resolved_cwd: Path) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.validate_cwd(resolved_cwd)
+
+    def build_env(
         self,
         extra_env: dict[str, str] | None,
         allow_extra_env: bool,
     ) -> dict[str, str]:
-        """从系统环境中提取白名单键，合并 extra_env。"""
+        """从系统环境中提取白名单键，合并 extra_env（Stage 4 公共化，primary）。"""
         safe: dict[str, str] = {k: v for k, v in os.environ.items() if k in self._env_whitelist}
 
         if extra_env:
@@ -332,3 +344,11 @@ class L2aSandbox:
             safe.update(extra_env)
 
         return safe
+
+    def _build_env(
+        self,
+        extra_env: dict[str, str] | None,
+        allow_extra_env: bool,
+    ) -> dict[str, str]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.build_env(extra_env, allow_extra_env)

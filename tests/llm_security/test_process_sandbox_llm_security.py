@@ -24,44 +24,44 @@ from zephyr.shared.io.paths import REPO_ROOT
 class TestL2aSandboxInit:
     def test_default_init(self):
         sandbox = L2aSandbox()
-        assert sandbox._repo_root is not None
+        assert sandbox.repo_root is not None
 
     def test_custom_repo_root(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
-        assert str(sandbox._repo_root) == str(REPO_ROOT)
+        assert str(sandbox.repo_root) == str(REPO_ROOT)
 
     def test_repo_root_is_path(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
-        assert isinstance(sandbox._repo_root, Path)
+        assert isinstance(sandbox.repo_root, Path)
 
 
 class TestCWDValidation:
     def test_src_zephyr_cwd_allowed(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
-        sandbox._validate_cwd(sandbox._repo_root / "src" / "zephyr")
+        sandbox.validate_cwd(sandbox.repo_root / "src" / "zephyr")
 
     def test_scripts_cwd_allowed(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
-        sandbox._validate_cwd(sandbox._repo_root / "scripts")
+        sandbox.validate_cwd(sandbox.repo_root / "scripts")
 
     def test_docs_cwd_allowed(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
-        sandbox._validate_cwd(sandbox._repo_root / "docs")
+        sandbox.validate_cwd(sandbox.repo_root / "docs")
 
     def test_random_cwd_blocked(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
         with pytest.raises(SandboxViolation):
-            sandbox._validate_cwd(sandbox._repo_root / "etc" / "shadow")
+            sandbox.validate_cwd(sandbox.repo_root / "etc" / "shadow")
 
     def test_repo_root_allowed(self):
         sandbox = L2aSandbox(repo_root=REPO_ROOT)
-        sandbox._validate_cwd(sandbox._repo_root)
+        sandbox.validate_cwd(sandbox.repo_root)
 
 
 class TestEnvBuilding:
     def test_whitelist_env_included(self):
         sandbox = L2aSandbox()
-        env = sandbox._build_env(None, False)
+        env = sandbox.build_env(None, False)
         for key in ENV_WHITELIST:
             if key in __import__("os").environ:
                 assert key in env
@@ -69,16 +69,16 @@ class TestEnvBuilding:
     def test_extra_env_non_whitelist_blocked(self):
         sandbox = L2aSandbox()
         with pytest.raises(SandboxViolation):
-            sandbox._build_env({"EVIL_VAR": "value"}, False)
+            sandbox.build_env({"EVIL_VAR": "value"}, False)
 
     def test_extra_env_whitelist_allowed(self):
         sandbox = L2aSandbox()
-        env = sandbox._build_env({"PATH": "/usr/bin"}, False)
+        env = sandbox.build_env({"PATH": "/usr/bin"}, False)
         assert env["PATH"] == "/usr/bin"
 
     def test_extra_env_with_allow_flag(self):
         sandbox = L2aSandbox()
-        env = sandbox._build_env({"CUSTOM_VAR": "value"}, True)
+        env = sandbox.build_env({"CUSTOM_VAR": "value"}, True)
         assert env["CUSTOM_VAR"] == "value"
 
 
