@@ -55,7 +55,7 @@ class TestCanWrite:
     def test_can_write_false_after_max_failures(self, tmp_path):
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
-        for _ in range(writer._max_write_failures):
+        for _ in range(writer.max_write_failures):
             protector.record_failure()
         assert protector.can_write() is False
 
@@ -75,28 +75,28 @@ class TestRecordFailure:
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
         protector.record_failure()
-        assert writer._write_failures == 1
+        assert writer.write_failures == 1
 
     def test_exact_max_failures_triggers_readonly(self, tmp_path):
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
-        for _ in range(writer._max_write_failures):
+        for _ in range(writer.max_write_failures):
             protector.record_failure()
-        assert writer._readonly is True
+        assert writer.readonly is True
 
     def test_one_below_max_does_not_trigger_readonly(self, tmp_path):
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
-        for _ in range(writer._max_write_failures - 1):
+        for _ in range(writer.max_write_failures - 1):
             protector.record_failure()
-        assert writer._readonly is False
+        assert writer.readonly is False
 
 
 class TestReset:
     def test_reset_clears_readonly(self, tmp_path):
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
-        for _ in range(writer._max_write_failures):
+        for _ in range(writer.max_write_failures):
             protector.record_failure()
         assert protector.can_write() is False
         protector.reset()
@@ -108,12 +108,12 @@ class TestReset:
         protector.record_failure()
         protector.record_failure()
         protector.reset()
-        assert writer._write_failures == 0
+        assert writer.write_failures == 0
 
     def test_reset_then_record_failure_again(self, tmp_path):
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
-        for _ in range(writer._max_write_failures):
+        for _ in range(writer.max_write_failures):
             protector.record_failure()
         protector.reset()
         protector.record_failure()
@@ -136,7 +136,7 @@ class TestBoundaryConditions:
     def test_excess_failures_beyond_max_still_readonly(self, tmp_path):
         writer = _make_writer(tmp_path)
         protector = AuditWriteProtector(writer=writer)
-        for _ in range(writer._max_write_failures + 5):
+        for _ in range(writer.max_write_failures + 5):
             protector.record_failure()
         assert protector.can_write() is False
 
@@ -145,4 +145,4 @@ class TestBoundaryConditions:
         protector = AuditWriteProtector(writer=writer)
         protector.reset()
         assert protector.can_write() is True
-        assert writer._write_failures == 0
+        assert writer.write_failures == 0

@@ -53,7 +53,7 @@ class TestROIScore:
 class TestROIEngine:
     def test_instantiation(self):
         engine = ROIEngine()
-        assert engine._effort_feedback == {}
+        assert engine.effort_feedback == {}
 
     def test_compute_p0_high(self):
         engine = ROIEngine()

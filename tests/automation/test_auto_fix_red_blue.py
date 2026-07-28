@@ -167,7 +167,7 @@ class TestFixStormAttack:
             dlq.add(action, f"failure_{i}")
 
         # 死信队列应接受所有条目(无上限)
-        queue_len = len(dlq._queue)
+        queue_len = len(dlq.queue)
         assert queue_len == 200, f"死信队列长度不正确: {queue_len}"
 
 

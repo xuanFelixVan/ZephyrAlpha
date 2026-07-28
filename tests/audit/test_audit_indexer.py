@@ -21,15 +21,15 @@ from zephyr.gov_audit.indexer import AuditIndexer, IndexResult
 class TestAuditIndexerInit:
     def test_default_paths(self):
         indexer = AuditIndexer()
-        assert indexer._db_path.name == "audit_index.db"
-        assert indexer._events_path.name == "events.jsonl"
+        assert indexer.db_path.name == "audit_index.db"
+        assert indexer.events_path.name == "events.jsonl"
 
     def test_custom_paths(self, tmp_path):
         db = tmp_path / "custom.db"
         ev = tmp_path / "custom.jsonl"
         indexer = AuditIndexer(db_path=db, events_path=ev)
-        assert indexer._db_path == db
-        assert indexer._events_path == ev
+        assert indexer.db_path == db
+        assert indexer.events_path == ev
 
 
 class TestRebuild:

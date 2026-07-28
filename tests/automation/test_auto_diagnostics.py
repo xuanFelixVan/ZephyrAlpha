@@ -92,7 +92,7 @@ class TestAutoDiagnostics:
     def test_instantiation_no_config(self):
         engine = AutoDiagnostics()
         assert engine is not None
-        assert len(engine._rules) > 0
+        assert len(engine.rules) > 0
 
     def test_diagnose_matching_timeout(self):
         engine = AutoDiagnostics()
@@ -151,10 +151,10 @@ class TestAutoDiagnostics:
         engine = AutoDiagnostics()
         engine.diagnose("timeout")
         engine.diagnose("import failed")
-        assert engine._diagnosis_count == 2
+        assert engine.diagnosis_count == 2
 
     def test_diagnose_nonexistent_config_path_falls_back(self):
         engine = AutoDiagnostics(config_path="/nonexistent/path/rules.yaml")
-        assert len(engine._rules) > 0
+        assert len(engine.rules) > 0
         report = engine.diagnose("timeout")
         assert report.confidence > 0.0

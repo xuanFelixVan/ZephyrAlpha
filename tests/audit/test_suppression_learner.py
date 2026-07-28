@@ -92,7 +92,7 @@ class TestRecordFalsePositive:
         learner.record_false_positive("det", "mod", "dim", "sig")
         learner.record_false_positive("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        rule = learner._patterns[key]
+        rule = learner.patterns[key]
         assert rule.is_active is True
         assert rule.false_positive_count >= 3
 
@@ -102,7 +102,7 @@ class TestRecordFalsePositive:
         learner.record_false_positive("det", "mod", "dim", "sig")
         learner.record_false_positive("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        learner._patterns[key].is_active = False
+        learner.patterns[key].is_active = False
         result = learner.record_false_positive("det", "mod", "dim", "sig")
         assert result is not None
         assert result.is_active is True
@@ -114,7 +114,7 @@ class TestRecordFalsePositive:
         learner.record_false_positive("det", "mod", "dim", "sig")
         learner.record_false_positive("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        assert learner._patterns[key].false_positive_count == 4
+        assert learner.patterns[key].false_positive_count == 4
 
 
 class TestShouldSuppress:
@@ -135,7 +135,7 @@ class TestShouldSuppress:
         learner.should_suppress("det", "mod", "dim", "sig")
         learner.should_suppress("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        assert learner._patterns[key].suppressed_count == 2
+        assert learner.patterns[key].suppressed_count == 2
 
 
 class TestShadowObserve:
@@ -145,8 +145,8 @@ class TestShadowObserve:
             learner.record_false_positive("det", "mod", "dim", "sig")
         learner.shadow_observe("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        assert key in learner._shadow_observations
-        assert len(learner._shadow_observations[key]) == 1
+        assert key in learner.shadow_observations
+        assert len(learner.shadow_observations[key]) == 1
 
 
 class TestCheckPatternChange:
@@ -163,10 +163,10 @@ class TestCheckPatternChange:
             learner.record_false_positive("det", "mod", "dim", "sig_A")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig_A")
         learner.shadow_observe("det", "mod", "dim", "sig_A")
-        learner._shadow_observations[key].append("sig_B")
+        learner.shadow_observations[key].append("sig_B")
         result = learner.check_pattern_change("det", "mod", "dim", "sig_A")
         assert result is True
-        assert learner._patterns[key].is_active is False
+        assert learner.patterns[key].is_active is False
 
 
 class TestGetRulesNeedingReview:
@@ -185,7 +185,7 @@ class TestGetRulesNeedingReview:
         for _ in range(3):
             learner.record_false_positive("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        learner._patterns[key].created_at = datetime.now(UTC) - timedelta(days=31)
+        learner.patterns[key].created_at = datetime.now(UTC) - timedelta(days=31)
         needs = learner.get_rules_needing_review()
         assert len(needs) == 1
 
@@ -196,6 +196,6 @@ class TestMarkReviewed:
         for _ in range(3):
             learner.record_false_positive("det", "mod", "dim", "sig")
         key = "det:mod:" + learner.compute_pattern_hash("det", "dim", "sig")
-        rule = learner._patterns[key]
+        rule = learner.patterns[key]
         learner.mark_reviewed(rule.rule_id)
         assert rule.last_reviewed_at is not None

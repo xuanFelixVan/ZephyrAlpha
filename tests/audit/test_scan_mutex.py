@@ -71,13 +71,13 @@ class TestScanMutexInit:
     def test_instantiation_with_project_root(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             mutex = ScanMutex(project_root=tmpdir)
-            assert mutex._project_root == tmpdir
-            assert os.path.isdir(mutex._lock_dir)
+            assert mutex.project_root == tmpdir
+            assert os.path.isdir(mutex.lock_dir)
 
     def test_instantiation_default_root(self):
         mutex = ScanMutex()
-        assert mutex._project_root is not None
-        assert os.path.isdir(mutex._lock_dir)
+        assert mutex.project_root is not None
+        assert os.path.isdir(mutex.lock_dir)
 
 
 class TestScanMutexIsLocked:
@@ -131,8 +131,8 @@ class TestScanMutexReadLock:
     def test_read_lock_corrupt_file(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             mutex = ScanMutex(project_root=tmpdir)
-            os.makedirs(mutex._lock_dir, exist_ok=True)
-            with open(mutex._lock_path, "w", encoding="utf-8") as f:
+            os.makedirs(mutex.lock_dir, exist_ok=True)
+            with open(mutex.lock_path, "w", encoding="utf-8") as f:
                 f.write("NOT JSON")
             assert mutex.read_lock() is None
 
@@ -203,7 +203,7 @@ class TestScanMutexGetStaleLocks:
                 "scan_level": lock.scan_level.name,
                 "acquired_at": "2020-01-01T00:00:00+00:00",
             }
-            with open(mutex._lock_path, "w", encoding="utf-8") as f:
+            with open(mutex.lock_path, "w", encoding="utf-8") as f:
                 json.dump(stale_data, f)
             stale = mutex.get_stale_locks()
             assert len(stale) == 1

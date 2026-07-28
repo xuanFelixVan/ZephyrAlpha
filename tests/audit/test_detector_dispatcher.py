@@ -80,12 +80,12 @@ class TestResultCache:
 class TestDetectorDispatcher:
     def test_instantiation(self, tmp_path):
         dd = DetectorDispatcher(registry_path=str(tmp_path))
-        assert dd._registry_path == str(tmp_path)
-        assert dd._max_parallel == 8
+        assert dd.registry_path == str(tmp_path)
+        assert dd.max_parallel == 8
 
     def test_instantiation_custom_parallel(self, tmp_path):
         dd = DetectorDispatcher(registry_path=str(tmp_path), max_parallel=4)
-        assert dd._max_parallel == 4
+        assert dd.max_parallel == 4
 
     def test_scripts_root_property(self, tmp_path):
         dd = DetectorDispatcher(registry_path=str(tmp_path))

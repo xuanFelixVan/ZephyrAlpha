@@ -93,17 +93,17 @@ class TestTrendAlert:
 class TestTrendAnalyzer:
     def test_instantiation_with_project_root(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        assert analyzer._project_root == str(tmp_path)
-        assert os.path.isdir(analyzer._db_dir)
+        assert analyzer.project_root == str(tmp_path)
+        assert os.path.isdir(analyzer.db_dir)
 
     def test_instantiation_default_root(self):
         analyzer = TrendAnalyzer()
-        assert os.path.isdir(analyzer._db_dir)
-        assert os.path.isdir(analyzer._archive_dir)
+        assert os.path.isdir(analyzer.db_dir)
+        assert os.path.isdir(analyzer.archive_dir)
 
     def test_compute_metrics_empty_db(self, tmp_path):
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
-        conn = sqlite3.connect(analyzer._db_path)
+        conn = sqlite3.connect(analyzer.db_path)
         conn.execute(
             "CREATE TABLE IF NOT EXISTS drift_events ("
             "event_id TEXT, module_id TEXT, detector_id TEXT, drift_dimension TEXT, "
@@ -124,7 +124,7 @@ class TestTrendAnalyzer:
         week_ago = (now - timedelta(days=3)).isoformat()
         month_ago = (now - timedelta(days=10)).isoformat()
         _seed_db(
-            analyzer._db_path,
+            analyzer.db_path,
             [
                 {
                     "event_id": "e1",
@@ -174,7 +174,7 @@ class TestTrendAnalyzer:
                     "detector_id": "det-1",
                 }
             )
-        _seed_db(analyzer._db_path, rows)
+        _seed_db(analyzer.db_path, rows)
         alerts = analyzer.check_trend_alerts("MOD-SPIKE")
         spike_alerts = [a for a in alerts if a.alert_type == "spike"]
         assert len(spike_alerts) >= 1
@@ -184,7 +184,7 @@ class TestTrendAnalyzer:
         analyzer = TrendAnalyzer(project_root=str(tmp_path))
         now = datetime.now(UTC)
         _seed_db(
-            analyzer._db_path,
+            analyzer.db_path,
             [
                 {
                     "event_id": "h1",
@@ -206,7 +206,7 @@ class TestTrendAnalyzer:
         old_ts = (now - timedelta(days=120)).isoformat()
         recent_ts = (now - timedelta(days=10)).isoformat()
         _seed_db(
-            analyzer._db_path,
+            analyzer.db_path,
             [
                 {
                     "event_id": "old-1",
@@ -227,12 +227,12 @@ class TestTrendAnalyzer:
             ],
         )
         analyzer.archive_old_data()
-        conn = sqlite3.connect(analyzer._db_path)
+        conn = sqlite3.connect(analyzer.db_path)
         remaining = conn.execute("SELECT COUNT(*) FROM drift_events").fetchone()[0]
         conn.close()
         assert remaining == 1
         year = now.strftime("%Y")
-        archive_path = os.path.join(analyzer._archive_dir, f"drift_{year}.jsonl")
+        archive_path = os.path.join(analyzer.archive_dir, f"drift_{year}.jsonl")
         assert os.path.isfile(archive_path)
 
     def test_archive_old_data_no_old_records(self, tmp_path):
@@ -240,7 +240,7 @@ class TestTrendAnalyzer:
         now = datetime.now(UTC)
         recent_ts = (now - timedelta(days=5)).isoformat()
         _seed_db(
-            analyzer._db_path,
+            analyzer.db_path,
             [
                 {
                     "event_id": "r1",
@@ -253,7 +253,7 @@ class TestTrendAnalyzer:
             ],
         )
         analyzer.archive_old_data()
-        conn = sqlite3.connect(analyzer._db_path)
+        conn = sqlite3.connect(analyzer.db_path)
         remaining = conn.execute("SELECT COUNT(*) FROM drift_events").fetchone()[0]
         conn.close()
         assert remaining == 1
@@ -274,7 +274,7 @@ class TestTrendAnalyzer:
                     "detector_id": "det-bad",
                 }
             )
-        _seed_db(analyzer._db_path, rows)
+        _seed_db(analyzer.db_path, rows)
         alerts = analyzer.check_trend_alerts("MOD-FP")
         fp_alerts = [a for a in alerts if a.alert_type == "fp_ratio"]
         assert len(fp_alerts) >= 1

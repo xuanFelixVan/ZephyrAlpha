@@ -34,7 +34,7 @@ class TestBaselineManager:
     def test_instantiation(self, tmp_path):
         mgr = BaselineManager(project_root=str(tmp_path))
         assert mgr is not None
-        assert os.path.isdir(mgr._baselines_root)
+        assert os.path.isdir(mgr.baselines_root)
 
     def test_module_baseline_dir(self, tmp_path):
         mgr = BaselineManager(project_root=str(tmp_path))

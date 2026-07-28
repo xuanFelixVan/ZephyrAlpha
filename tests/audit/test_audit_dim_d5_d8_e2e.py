@@ -25,29 +25,29 @@ DimensionResult = pipeline_mod.DimensionResult
 class TestDimD5D8E2E:
     def test_d5_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D5" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D5"]) > 10
+        assert "D5" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D5"]) > 10
 
     def test_d6_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D6" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D6"]) > 0
+        assert "D6" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D6"]) > 0
 
     def test_d7_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D7" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D7"]) > 0
+        assert "D7" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D7"]) > 0
 
     def test_d8_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D8" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D8"]) > 0
+        assert "D8" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D8"]) > 0
 
     def test_d5_is_largest_dimension(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        d5_count = len(runner._dimension_scripts.get("D5", []))
+        d5_count = len(runner.dimension_scripts.get("D5", []))
         for dim in ["D6", "D7", "D8"]:
-            dim_count = len(runner._dimension_scripts.get(dim, []))
+            dim_count = len(runner.dimension_scripts.get(dim, []))
             assert d5_count >= dim_count
 
     def test_d5_dry_run(self):

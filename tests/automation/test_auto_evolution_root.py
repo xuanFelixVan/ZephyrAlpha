@@ -123,7 +123,7 @@ class TestAutoEvolutionEngineInstantiation:
         apply_fn = MagicMock(return_value=True)
         ae = AutoEvolutionEngine(evolution_engine=engine, apply_fn=apply_fn)
         assert ae.history == []
-        assert ae._consecutive_ka == 0
+        assert ae.consecutive_ka == 0
 
     def test_init_with_none_config(self):
         engine = EvolutionEngine()

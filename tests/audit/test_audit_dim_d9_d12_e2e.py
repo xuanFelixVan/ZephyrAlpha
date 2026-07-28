@@ -25,23 +25,23 @@ DimensionResult = pipeline_mod.DimensionResult
 class TestDimD9D12E2E:
     def test_d9_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D9" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D9"]) > 0
+        assert "D9" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D9"]) > 0
 
     def test_d10_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D10" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D10"]) > 0
+        assert "D10" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D10"]) > 0
 
     def test_d11_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D11" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D11"]) > 0
+        assert "D11" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D11"]) > 0
 
     def test_d12_scripts_discovered(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        assert "D12" in runner._dimension_scripts
-        assert len(runner._dimension_scripts["D12"]) > 0
+        assert "D12" in runner.dimension_scripts
+        assert len(runner.dimension_scripts["D12"]) > 0
 
     def test_d9_dry_run(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
