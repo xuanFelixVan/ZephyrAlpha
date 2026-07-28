@@ -29,19 +29,19 @@ from zephyr.infrastructure.auto_fix_engine.self_heal_agent import SelfHealAgent
 class TestSelfHealAgentInstantiation:
     def test_default_max_rounds(self):
         agent = SelfHealAgent()
-        assert agent._max_rounds == 5
+        assert agent.max_rounds == 5
 
     def test_default_circuit_threshold(self):
         agent = SelfHealAgent()
-        assert agent._circuit_threshold == 3
+        assert agent.circuit_threshold == 3
 
     def test_custom_max_rounds(self):
         agent = SelfHealAgent(max_rounds=10)
-        assert agent._max_rounds == 10
+        assert agent.max_rounds == 10
 
     def test_custom_circuit_threshold(self):
         agent = SelfHealAgent(circuit_threshold=5)
-        assert agent._circuit_threshold == 5
+        assert agent.circuit_threshold == 5
 
     def test_circuit_starts_closed(self):
         agent = SelfHealAgent()
@@ -86,7 +86,7 @@ class TestSelfHealAgentHeal:
 
     def test_heal_returns_failed_when_circuit_is_open(self):
         agent = SelfHealAgent()
-        agent._circuit_open = True
+        agent.circuit_open = True
         action = agent.heal("target.py", MagicMock(), MagicMock(), MagicMock())
         assert action.status == FixStatus.FAILED
         assert "Circuit breaker open" in action.metadata.get("error", "")
@@ -128,11 +128,11 @@ class TestSelfHealAgentHeal:
 class TestSelfHealAgentResetCircuit:
     def test_reset_circuit_closes_open_circuit(self):
         agent = SelfHealAgent()
-        agent._circuit_open = True
-        agent._consecutive_failures = 5
+        agent.circuit_open = True
+        agent.consecutive_failures = 5
         agent.reset_circuit()
         assert agent.circuit_open is False
-        assert agent._consecutive_failures == 0
+        assert agent.consecutive_failures == 0
 
     def test_reset_circuit_on_fresh_agent(self):
         agent = SelfHealAgent()
@@ -143,49 +143,49 @@ class TestSelfHealAgentResetCircuit:
 class TestSelfHealAgentObserve:
     def test_observe_returns_dict_from_diagnose_fn(self):
         agent = SelfHealAgent()
-        result = agent._observe("target.py", lambda t: {"issues": ["a"]})
+        result = agent.observe("target.py", lambda t: {"issues": ["a"]})
         assert result == {"issues": ["a"]}
 
     def test_observe_converts_list_to_dict(self):
         agent = SelfHealAgent()
-        result = agent._observe("target.py", lambda t: ["issue1", "issue2"])
+        result = agent.observe("target.py", lambda t: ["issue1", "issue2"])
         assert result == {"issues": ["issue1", "issue2"]}
 
     def test_observe_handles_exception(self):
         agent = SelfHealAgent()
-        result = agent._observe("target.py", MagicMock(side_effect=Exception("boom")))
+        result = agent.observe("target.py", MagicMock(side_effect=Exception("boom")))
         assert "error" in result
 
 
 class TestSelfHealAgentOrient:
     def test_orient_no_issues(self):
         agent = SelfHealAgent()
-        result = agent._orient({"issues": []})
+        result = agent.orient({"issues": []})
         assert result["action"] == "none"
 
     def test_orient_security_issue_is_high_severity(self):
         agent = SelfHealAgent()
-        result = agent._orient({"issues": [{"type": "security_breach"}]})
+        result = agent.orient({"issues": [{"type": "security_breach"}]})
         assert result["severity"] == "high"
 
     def test_orient_drift_issue_is_medium_severity(self):
         agent = SelfHealAgent()
-        result = agent._orient({"issues": [{"type": "drift_detected"}]})
+        result = agent.orient({"issues": [{"type": "drift_detected"}]})
         assert result["severity"] == "medium"
 
 
 class TestSelfHealAgentDecide:
     def test_decide_skip_when_no_action(self):
         agent = SelfHealAgent()
-        result = agent._decide({"action": "none", "reason": "clean"})
+        result = agent.decide({"action": "none", "reason": "clean"})
         assert result["plan"] == "skip"
 
     def test_decide_escalate_high_severity(self):
         agent = SelfHealAgent()
-        result = agent._decide({"action": "fix", "severity": "high"})
+        result = agent.decide({"action": "fix", "severity": "high"})
         assert result["plan"] == "escalate"
 
     def test_decide_auto_fix_low_severity(self):
         agent = SelfHealAgent()
-        result = agent._decide({"action": "fix", "severity": "low"})
+        result = agent.decide({"action": "fix", "severity": "low"})
         assert result["plan"] == "auto_fix"

@@ -40,9 +40,30 @@ class SelfHealAgent:
         self._circuit_open: bool = False
         self._round_history: list[dict[str, Any]] = []
 
+    # Stage 4 公共化：配置/状态属性公共读写（primary），私有属性向后兼容。
+    @property
+    def max_rounds(self) -> int:
+        return self._max_rounds
+
+    @property
+    def circuit_threshold(self) -> int:
+        return self._circuit_threshold
+
+    @property
+    def consecutive_failures(self) -> int:
+        return self._consecutive_failures
+
+    @consecutive_failures.setter
+    def consecutive_failures(self, value: int) -> None:
+        self._consecutive_failures = value
+
     @property
     def circuit_open(self) -> bool:
         return self._circuit_open
+
+    @circuit_open.setter
+    def circuit_open(self, value: bool) -> None:
+        self._circuit_open = value
 
     def heal(self, target: str, diagnose_fn: Callable[..., object], fix_fn: Callable[..., object], validate_fn: Callable[..., object]) -> FixAction:
         if self._circuit_open:
@@ -62,7 +83,7 @@ class SelfHealAgent:
         )
         for round_num in range(1, self._max_rounds + 1):
             round_record: dict[str, Any] = {"round": round_num, "phase": "observe"}
-            observation = self._observe(target, diagnose_fn)
+            observation = self.observe(target, diagnose_fn)
             round_record["observation"] = observation
             if not observation.get("issues"):
                 action.status = FixStatus.COMPLETED
@@ -72,10 +93,10 @@ class SelfHealAgent:
                 self._round_history.append(round_record)
                 return action
             round_record["phase"] = "orient"
-            decision = self._orient(observation)
+            decision = self.orient(observation)
             round_record["decision"] = decision
             round_record["phase"] = "decide"
-            fix_plan = self._decide(decision)
+            fix_plan = self.decide(decision)
             round_record["fix_plan"] = fix_plan
             round_record["phase"] = "act"
             fix_result = self._act(target, fix_plan, fix_fn)
@@ -103,7 +124,8 @@ class SelfHealAgent:
         action.metadata["round_history"] = [{"round": r["round"], "phase": r["phase"]} for r in self._round_history]
         return action
 
-    def _observe(self, target: str, diagnose_fn: Callable[..., object]) -> dict[str, Any]:
+    def observe(self, target: str, diagnose_fn: Callable[..., object]) -> dict[str, Any]:
+        """观察阶段（Stage 4 公共化，primary）。"""
         try:
             result = diagnose_fn(target)
             if isinstance(result, dict):
@@ -114,7 +136,12 @@ class SelfHealAgent:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"issues": [], "error": str(exc)}
 
-    def _orient(self, observation: dict[str, Any]) -> dict[str, Any]:
+    def _observe(self, target: str, diagnose_fn: Callable[..., object]) -> dict[str, Any]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.observe(target, diagnose_fn)
+
+    def orient(self, observation: dict[str, Any]) -> dict[str, Any]:
+        """判断阶段（Stage 4 公共化，primary）。"""
         issues = observation.get("issues", [])
         if not issues:
             return {"action": "none", "reason": "No issues observed"}
@@ -128,13 +155,22 @@ class SelfHealAgent:
                     severity = "medium"
         return {"action": "fix", "severity": severity, "issue_count": len(issues)}
 
-    def _decide(self, decision: dict[str, Any]) -> dict[str, Any]:
+    def _orient(self, observation: dict[str, Any]) -> dict[str, Any]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.orient(observation)
+
+    def decide(self, decision: dict[str, Any]) -> dict[str, Any]:
+        """决策阶段（Stage 4 公共化，primary）。"""
         if decision.get("action") == "none":
             return {"plan": "skip", "reason": decision.get("reason", "")}
         severity = decision.get("severity", "low")
         if severity == "high":
             return {"plan": "escalate", "reason": "High severity issue requires human review"}
         return {"plan": "auto_fix", "severity": severity}
+
+    def _decide(self, decision: dict[str, Any]) -> dict[str, Any]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.decide(decision)
 
     def _act(self, target: str, fix_plan: dict[str, Any], fix_fn: Callable[..., object]) -> FixAction:
         if fix_plan.get("plan") == "skip":
