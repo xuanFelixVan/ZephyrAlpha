@@ -8679,3 +8679,21 @@ def _log_workspace_drift_warn(
 
         )
 
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def run_git_with_retry(cmd, cwd, retries, timeout) -> subprocess.CompletedProcess | None:
+    """公共接口：run_git_with_retry（Stage 4 公共化，委托到 _run_git_with_retry）。"""
+    return _run_git_with_retry(cmd, cwd, retries, timeout)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def ensure_worktree_base_fresh(root, wt_path, session_id, stage) -> dict | None:
+    """公共接口：ensure_worktree_base_fresh（Stage 4 公共化，委托到 _ensure_worktree_base_fresh）。"""
+    return _ensure_worktree_base_fresh(root, wt_path, session_id, stage)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def check_cross_commit_deps(root, session_id) -> dict | None:
+    """公共接口：check_cross_commit_deps（Stage 4 公共化，委托到 _check_cross_commit_deps）。"""
+    return _check_cross_commit_deps(root, session_id)
+
+
+

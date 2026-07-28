@@ -95,6 +95,30 @@ class AuditChainVerifier:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
 
+    @property
+    def core_writer(self) -> _CoreAuditWriter | None:
+        """只读：core_writer（Stage 4 公共化）。"""
+        return self._core_writer
+
+
+    @property
+    def last_hash(self):
+        """只读：last_hash（Stage 4 公共化）。"""
+        return self._last_hash
+
+
+    @property
+    def chain(self) -> list[AuditEntry]:
+        """只读：chain（Stage 4 公共化）。"""
+        return self._chain
+
+
+    @staticmethod
+    def compute_hash(payload) -> str:
+        """公共接口：compute_hash（Stage 4 公共化，委托到 _compute_hash）。"""
+        return _compute_hash(payload)
+
+
     def _load_persisted_chain(self) -> None:
         """从 gate_chain.jsonl 恢复链与尾哈希（5.37.8：重启后链连续，可跨进程校验）。"""
         if not self._persist_path.exists():

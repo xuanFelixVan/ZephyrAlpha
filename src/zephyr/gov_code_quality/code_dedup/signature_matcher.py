@@ -53,6 +53,12 @@ class SignatureMatcher:
     def __init__(self) -> None:
         self._index: dict[str, list[str]] = {}
 
+    @classmethod
+    def classify_path(cls, cls, file_path) -> str:
+        """公共接口：classify_path（Stage 4 公共化，委托到 cls._classify_path）。"""
+        return cls._classify_path(cls, file_path)
+
+
     # ── 公共 API ──────────────────────────────────────────────
 
     def build_index(self, entries: list[dict]) -> None:

@@ -110,6 +110,11 @@ class EscalationRule:
 @dataclass
 class EconomicGuard:
     guard_id: str
+
+    def maybe_reset(self) -> None:
+        """公共接口：maybe_reset（Stage 4 公共化）。"""
+        return self._maybe_reset()
+
     max_cost_per_escalation: float = 5.0
     daily_budget: float = 100.0
     consumed_today: float = 0.0

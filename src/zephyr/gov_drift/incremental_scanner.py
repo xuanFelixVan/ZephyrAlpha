@@ -84,6 +84,23 @@ class IncrementalScanner:
 
         self._cache: dict[str, str] = {}
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    @property
+    def mapping(self):
+        """只读：mapping（Stage 4 公共化）。"""
+        return self._mapping
+
+
+    def extract_module(self, filepath) -> str:
+        """公共接口：extract_module（Stage 4 公共化）。"""
+        return self._extract_module(filepath)
+
+
     def get_changed_files(self, base_ref: str = "HEAD~1") -> list[FileChange]:
         try:
             result = run_subprocess_hidden(

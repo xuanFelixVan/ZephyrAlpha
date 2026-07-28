@@ -56,6 +56,23 @@ class DiffDetector:
     def __init__(self, repo_root: str | Path | None = None) -> None:
         self._repo_root = Path(repo_root) if repo_root else Path.cwd()
 
+    @property
+    def repo_root(self):
+        """只读：repo_root（Stage 4 公共化）。"""
+        return self._repo_root
+
+
+    def git_diff_files(self, cached) -> list[str]:
+        """公共接口：git_diff_files（Stage 4 公共化）。"""
+        return self._git_diff_files(cached)
+
+
+    @staticmethod
+    def extract_functions(file_path) -> list[ChangedFunction]:
+        """公共接口：extract_functions（Stage 4 公共化，委托到 _extract_functions）。"""
+        return _extract_functions(file_path)
+
+
     # ── 公共 API ──────────────────────────────────────────────
 
     def detect(self) -> DiffResult:

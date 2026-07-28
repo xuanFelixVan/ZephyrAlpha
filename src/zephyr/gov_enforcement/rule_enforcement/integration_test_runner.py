@@ -173,6 +173,11 @@ class IntegrationTestRunner:
         # 兼容旧 API
         self._results: list[TestResult] = []
 
+    def finalize(self, result) -> SelfTestResult:
+        """公共接口：finalize（Stage 4 公共化）。"""
+        return self._finalize(result)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def project_root(self):

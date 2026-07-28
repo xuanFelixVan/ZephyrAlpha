@@ -45,6 +45,12 @@ class GateIntegrityGuard:
         if manifest_path:
             self._load_manifest(manifest_path)
 
+    @staticmethod
+    def compute_sha256(path) -> str:
+        """公共接口：compute_sha256（Stage 4 公共化，委托到 _compute_sha256）。"""
+        return _compute_sha256(path)
+
+
     def _load_manifest(self, path: str) -> None:
         try:
             with open(path, encoding="utf-8") as f:

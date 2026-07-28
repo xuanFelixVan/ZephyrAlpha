@@ -149,6 +149,18 @@ class TrustScoreEngine:
         self._ceiling = ceiling
         self._records: dict[str, TrustRecord] = {}
 
+    @property
+    def initial_score(self):
+        """只读：initial_score（Stage 4 公共化）。"""
+        return self._initial_score
+
+
+    @property
+    def decay_rate(self):
+        """只读：decay_rate（Stage 4 公共化）。"""
+        return self._decay_rate
+
+
     def _get_or_create(self, agent_id: str) -> TrustRecord:
         if agent_id not in self._records:
             self._records[agent_id] = TrustRecord(

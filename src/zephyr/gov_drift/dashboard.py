@@ -89,6 +89,17 @@ class Dashboard:
 
         self._registry_path = os.path.join(os.path.dirname(__file__), "_detector-registry.yaml")
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    def load_coverage_matrix(self) -> dict[str, dict[str, object]]:
+        """公共接口：load_coverage_matrix（Stage 4 公共化）。"""
+        return self._load_coverage_matrix()
+
+
     def _load_coverage_matrix(self) -> dict[str, dict[str, object]]:
         import yaml
 

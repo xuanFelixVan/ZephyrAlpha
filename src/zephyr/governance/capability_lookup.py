@@ -381,6 +381,12 @@ class CapabilityLookup:
             self._reconcile()
         self._loaded = True
 
+    @staticmethod
+    def parse_header_from_text(text, rel) -> HeaderInfo:
+        """公共接口：parse_header_from_text（Stage 4 公共化，委托到 _parse_header_from_text）。"""
+        return _parse_header_from_text(text, rel)
+
+
     # ---- 加载 + 扫描 ----
 
     def reload(self) -> None:

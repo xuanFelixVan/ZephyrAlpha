@@ -380,6 +380,23 @@ class GitCommitGateway:
         self._claim_snapshots_dir: Path = self.project_root / _CLAIM_SNAPSHOTS_DIR
         self.load_claim_snapshots_from_disk()
 
+    def commit_with_file_message(self, message, pathspec_file, target_files) -> tuple[str | None, str]:
+        """公共接口：commit_with_file_message（Stage 4 公共化）。"""
+        return self._commit_with_file_message(message, pathspec_file, target_files)
+
+
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def run_post_commit_reconcile_async(self, existing, session_id, commit_sha, commit_message) -> None:
+        """公共接口：run_post_commit_reconcile_async（Stage 4 公共化，委托到 self._run_post_commit_reconcile_async）。"""
+        return self._run_post_commit_reconcile_async(existing, session_id, commit_sha, commit_message)
+
+
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def run_post_commit_reconcile(self, existing, session_id, result, commit_message) -> None:
+        """公共接口：run_post_commit_reconcile（Stage 4 公共化，委托到 self._run_post_commit_reconcile）。"""
+        return self._run_post_commit_reconcile(existing, session_id, result, commit_message)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def reconciliation_registry(self):

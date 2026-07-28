@@ -1763,3 +1763,9 @@ if __name__ == "__main__":
     print(f"  Schema version: v{ver}")
     print(f"  Tables ({len(tables)}): {', '.join(tables)}")
     sys.exit(0)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def build_pg_dsn(config, *, superuser, read_only) -> dict[str, Any]:
+    """公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。"""
+    return _build_pg_dsn(config, superuser=superuser, read_only=read_only)
+

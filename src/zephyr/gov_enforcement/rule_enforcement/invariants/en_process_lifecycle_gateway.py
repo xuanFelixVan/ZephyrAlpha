@@ -74,6 +74,18 @@ class ProcessCreationScanner(ast.NodeVisitor):
         self.violations: list[Violation] = []
         self._imported_gateway = False
 
+    @property
+    def imported_gateway(self):
+        """只读：imported_gateway（Stage 4 公共化）。"""
+        return self._imported_gateway
+
+
+    @staticmethod
+    def resolve_call_path(node) -> str:
+        """公共接口：resolve_call_path（Stage 4 公共化，委托到 _resolve_call_path）。"""
+        return _resolve_call_path(node)
+
+
     def visit_Import(self, node: ast.Import) -> None:
         for alias in node.names:
             if "process_lifecycle_gateway" in alias.name:

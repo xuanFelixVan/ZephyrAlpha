@@ -165,6 +165,12 @@ class TieredStorageManager:
         for d in (self._hot_dir, self._warm_dir, self._cold_dir):
             d.mkdir(parents=True, exist_ok=True)
 
+    @staticmethod
+    def count_jsonl_lines(path) -> int:
+        """公共接口：count_jsonl_lines（Stage 4 公共化，委托到 _count_jsonl_lines）。"""
+        return _count_jsonl_lines(path)
+
+
     def get_tier(self, timestamp: str | None) -> str:
         if not timestamp:
             return StorageTier.HOT

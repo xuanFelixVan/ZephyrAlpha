@@ -1480,6 +1480,12 @@ class GateEngine:
         self._gate_cache: dict[str, GateConfig] | None = None
         self._yaml_cache: FileCache = FileCache(max_entries=50, ttl_seconds=600.0)
 
+    # ── Stage 4 公共化（2026-07-29）：public wrapper ──
+    def load_gate_configs_from_registry(self) -> dict[str, GateConfig]:
+        """公共接口：load_gate_configs_from_registry（Stage 4 公共化，委托到 self._load_gate_configs_from_registry）。"""
+        return self._load_gate_configs_from_registry()
+
+
     @property
     def gate_cache(self) -> "dict[str, GateConfig] | None":
         """门禁配置缓存（Stage 4 R5 公共化）。"""

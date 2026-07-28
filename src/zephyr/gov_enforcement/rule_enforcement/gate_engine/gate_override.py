@@ -49,6 +49,12 @@ class GateOverride:
         self._active: dict[str, list[OverrideRecord]] = {}
         self._audit_log: list[OverrideRecord] = []
 
+    @property
+    def active(self) -> dict[str, list[OverrideRecord]]:
+        """只读：active（Stage 4 公共化）。"""
+        return self._active
+
+
     def grant(
         self,
         gate_id: str,

@@ -329,3 +329,9 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def run_worker(payload) -> int:
+    """公共接口：run_worker（Stage 4 公共化，委托到 _run_worker）。"""
+    return _run_worker(payload)
+

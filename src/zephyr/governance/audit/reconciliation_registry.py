@@ -684,6 +684,13 @@ class ReconciliationRegistry:
 
         self._specs: list[ReconcilerSpec] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def specs(self) -> list[ReconcilerSpec]:
+        """只读：specs（Stage 4 公共化）。"""
+        return self._specs
+
+
     def register(self, spec: ReconcilerSpec) -> None:
 
         """注册一个 reconciler spec（同 gate_id 覆盖旧 spec，幂等）。
@@ -12526,3 +12533,15 @@ def make_session_staging_lifecycle_reconciler(gateway: "object") -> ReconcilerSp
         # root_temp_sweep=803 之前（暂存层清理先于根目录清扫）
 
     )
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def run_subprocess(cmd, **kwargs) -> subprocess.CompletedProcess:
+    """公共接口：run_subprocess（Stage 4 公共化，委托到 _run_subprocess）。"""
+    return _run_subprocess(cmd, **kwargs)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def log_reconcile_results(project_root, results, session_id, trigger_source, committed_files, commit_message) -> None:
+    """公共接口：log_reconcile_results（Stage 4 公共化，委托到 _log_reconcile_results）。"""
+    return _log_reconcile_results(project_root, results, session_id, trigger_source, committed_files, commit_message)
+
+
