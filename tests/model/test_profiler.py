@@ -197,47 +197,47 @@ class TestSkipModelPatterns:
 class TestModelProfilerConstruction:
     def test_default_construction(self):
         profiler = ModelProfiler()
-        assert profiler._url == "http://localhost:11434"
-        assert profiler._timeout == 60.0
-        assert profiler._max_models == MAX_OLLAMA_MODELS
+        assert profiler.url == "http://localhost:11434"
+        assert profiler.timeout == 60.0
+        assert profiler.max_models == MAX_OLLAMA_MODELS
 
     def test_custom_url(self):
         profiler = ModelProfiler(ollama_url="http://custom:9999")
-        assert profiler._url == "http://custom:9999"
+        assert profiler.url == "http://custom:9999"
 
     def test_url_trailing_slash_stripped(self):
         profiler = ModelProfiler(ollama_url="http://localhost:11434/")
-        assert profiler._url == "http://localhost:11434"
+        assert profiler.url == "http://localhost:11434"
 
     def test_custom_timeout(self):
         profiler = ModelProfiler(timeout_per_case_s=30.0)
-        assert profiler._timeout == 30.0
+        assert profiler.timeout == 30.0
 
     def test_custom_max_models(self):
         profiler = ModelProfiler(max_ollama_models=5)
-        assert profiler._max_models == 5
+        assert profiler.max_models == 5
 
 
 class TestModelProfilerShouldSkipModel:
     def test_skip_embedding_model(self):
         profiler = ModelProfiler()
-        assert profiler._should_skip_model("bge-large-en") is True
+        assert profiler.should_skip_model("bge-large-en") is True
 
     def test_skip_nomic_model(self):
         profiler = ModelProfiler()
-        assert profiler._should_skip_model("nomic-embed-text") is True
+        assert profiler.should_skip_model("nomic-embed-text") is True
 
     def test_do_not_skip_chat_model(self):
         profiler = ModelProfiler()
-        assert profiler._should_skip_model("qwen3:8b") is False
+        assert profiler.should_skip_model("qwen3:8b") is False
 
     def test_do_not_skip_code_model(self):
         profiler = ModelProfiler()
-        assert profiler._should_skip_model("deepseek-coder:6b") is False
+        assert profiler.should_skip_model("deepseek-coder:6b") is False
 
     def test_case_insensitive_skip(self):
         profiler = ModelProfiler()
-        assert profiler._should_skip_model("BGE-LARGE") is True
+        assert profiler.should_skip_model("BGE-LARGE") is True
 
 
 class TestModelProfilerScoreOutput:
@@ -249,7 +249,7 @@ class TestModelProfilerScoreOutput:
             prompt="p",
             expected_patterns=["def"],
         )
-        assert ModelProfiler._score_output(case, "") == 0.0
+        assert ModelProfiler.score_output(case, "") == 0.0
 
     def test_matching_expected_patterns(self):
         case = BenchmarkCase(
@@ -259,7 +259,7 @@ class TestModelProfilerScoreOutput:
             prompt="p",
             expected_patterns=["def", "return"],
         )
-        score = ModelProfiler._score_output(case, "def foo():\n    return 42")
+        score = ModelProfiler.score_output(case, "def foo():\n    return 42")
         assert score > 0.0
 
     def test_forbidden_patterns_penalty(self):
@@ -271,8 +271,8 @@ class TestModelProfilerScoreOutput:
             expected_patterns=["def"],
             forbidden_patterns=["try:"],
         )
-        score_clean = ModelProfiler._score_output(case, "def foo(): return 1")
-        score_dirty = ModelProfiler._score_output(case, "def foo(): try: return 1")
+        score_clean = ModelProfiler.score_output(case, "def foo(): return 1")
+        score_dirty = ModelProfiler.score_output(case, "def foo(): try: return 1")
         assert score_clean >= score_dirty
 
     def test_score_bounded(self):
@@ -283,22 +283,22 @@ class TestModelProfilerScoreOutput:
             prompt="p",
             expected_patterns=["def", "return", "class", "if"],
         )
-        score = ModelProfiler._score_output(case, "def foo(): return 1")
+        score = ModelProfiler.score_output(case, "def foo(): return 1")
         assert 0.0 <= score <= 1.0
 
 
 class TestModelProfilerPercentile:
     def test_empty_data(self):
-        assert ModelProfiler._percentile([], 0.5) == 0.0
+        assert ModelProfiler.percentile([], 0.5) == 0.0
 
     def test_single_value(self):
-        assert ModelProfiler._percentile([100.0], 0.5) == 100.0
+        assert ModelProfiler.percentile([100.0], 0.5) == 100.0
 
     def test_two_values_p50(self):
-        result = ModelProfiler._percentile([10.0, 20.0], 0.5)
+        result = ModelProfiler.percentile([10.0, 20.0], 0.5)
         assert 10.0 <= result <= 20.0
 
     def test_multiple_values(self):
         data = [10.0, 20.0, 30.0, 40.0, 50.0]
-        p50 = ModelProfiler._percentile(data, 0.5)
+        p50 = ModelProfiler.percentile(data, 0.5)
         assert 20.0 <= p50 <= 40.0
