@@ -29,9 +29,9 @@ C-4  注册表暂存，存在反斜杠路径    → 阻断
 
 辅助函数
 --------
-_extract_declared_paths  正常提取 / 空文件 / 无匹配
-_validate_path_format    合法路径 / 绝对路径 / 反斜杠
-_is_watched              覆盖所有 WATCHED_PREFIXES / 非监控路径 / 非监控扩展名
+extract_declared_paths  正常提取 / 空文件 / 无匹配
+validate_path_format    合法路径 / 绝对路径 / 反斜杠
+is_watched              覆盖所有 WATCHED_PREFIXES / 非监控路径 / 非监控扩展名
 """
 
 from __future__ import annotations
@@ -48,8 +48,8 @@ from zephyr.shared.security.ssot_guard import (
     CheckResult,
     GuardReport,
     SsotGuard,
-    _extract_declared_paths,
-    _validate_path_format,
+    extract_declared_paths,
+    validate_path_format,
 )
 
 # ---------------------------------------------------------------------------
@@ -89,7 +89,7 @@ def guard(tmp_repo: Path) -> SsotGuard:
 
 
 # ---------------------------------------------------------------------------
-# 辅助：模拟 _staged_files 返回值
+# 辅助：模拟 staged_files 返回值
 # ---------------------------------------------------------------------------
 
 
@@ -97,15 +97,15 @@ def _make_guard_with_staged(
     tmp_repo: Path,
     staged: dict[str, str],
 ) -> tuple[SsotGuard, Any]:
-    """构造绑定 repo 的 guard，并 patch _staged_files 返回指定 staged 字典。"""
+    """构造绑定 repo 的 guard，并 patch staged_files 返回指定 staged 字典。"""
     g = SsotGuard(repo_root=tmp_repo)
-    patcher = patch("zephyr.shared.security.ssot_guard._staged_files", return_value=staged)
+    patcher = patch("zephyr.shared.security.ssot_guard.staged_files", return_value=staged)
     mock = patcher.start()
     return g, (patcher, mock)
 
 
 # ---------------------------------------------------------------------------
-# 单元测试：_extract_declared_paths
+# 单元测试：extract_declared_paths
 # ---------------------------------------------------------------------------
 
 
@@ -114,40 +114,40 @@ class TestExtractDeclaredPaths:
 
     def test_extracts_path_field(self) -> None:
         content = "  path: scripts/hooks/doc_guard.py\n"
-        result = _extract_declared_paths(content)
+        result = extract_declared_paths(content)
         assert "scripts/hooks/doc_guard.py" in result
 
     def test_extracts_core_file_field(self) -> None:
         content = "  core_file: docs/subsystem-registry.yaml\n"
-        result = _extract_declared_paths(content)
+        result = extract_declared_paths(content)
         assert "docs/subsystem-registry.yaml" in result
 
     def test_extracts_canonical_path_field(self) -> None:
         content = "  canonical_path: docs/01_GOVERNANCE/\n"
-        result = _extract_declared_paths(content)
+        result = extract_declared_paths(content)
         # 目录路径末尾 '/' 被 rstrip 移除
         assert "docs/01_GOVERNANCE" in result
 
     def test_deduplicates(self) -> None:
         content = "  path: scripts/hooks/a.py\n  path: scripts/hooks/a.py\n"
-        result = _extract_declared_paths(content)
+        result = extract_declared_paths(content)
         assert result.count("scripts/hooks/a.py") == 1
 
     def test_empty_content(self) -> None:
-        assert _extract_declared_paths("") == []
+        assert extract_declared_paths("") == []
 
     def test_no_matching_fields(self) -> None:
         content = "description: hello world\n"
-        assert _extract_declared_paths(content) == []
+        assert extract_declared_paths(content) == []
 
     def test_ignores_comment_lines(self) -> None:
         content = "  # path: scripts/hooks/commented.py\n"
-        result = _extract_declared_paths(content)
+        result = extract_declared_paths(content)
         assert not any("commented" in p for p in result)
 
 
 # ---------------------------------------------------------------------------
-# 单元测试：_validate_path_format
+# 单元测试：validate_path_format
 # ---------------------------------------------------------------------------
 
 
@@ -164,30 +164,30 @@ class TestValidatePathFormat:
         ],
     )
     def test_valid_paths(self, path: str) -> None:
-        assert _validate_path_format(path) is None
+        assert validate_path_format(path) is None
 
     def test_absolute_unix_path(self) -> None:
-        err = _validate_path_format("/etc/passwd")
+        err = validate_path_format("/etc/passwd")
         assert err is not None
         assert "绝对路径" in err
 
     def test_absolute_windows_path(self) -> None:
-        err = _validate_path_format("C:/Users/foo/bar.py")
+        err = validate_path_format("C:/Users/foo/bar.py")
         assert err is not None
         assert "绝对路径" in err
 
     def test_backslash_path(self) -> None:
-        err = _validate_path_format("scripts\\hooks\\doc_guard.py")
+        err = validate_path_format("scripts\\hooks\\doc_guard.py")
         assert err is not None
         assert "反斜杠" in err
 
     def test_single_char_path_not_flagged_as_windows(self) -> None:
         # 单字符路径不应被误判为 Windows 绝对路径
-        assert _validate_path_format("a") is None
+        assert validate_path_format("a") is None
 
 
 # ---------------------------------------------------------------------------
-# 单元测试：SsotGuard._is_watched
+# 单元测试：SsotGuard.is_watched
 # ---------------------------------------------------------------------------
 
 
@@ -208,7 +208,7 @@ class TestIsWatched:
         ],
     )
     def test_watched_paths(self, guard: SsotGuard, path: str) -> None:
-        assert guard._is_watched(path) is True
+        assert guard.is_watched(path) is True
 
     @pytest.mark.parametrize(
         "path",
@@ -220,11 +220,11 @@ class TestIsWatched:
         ],
     )
     def test_non_watched_paths(self, guard: SsotGuard, path: str) -> None:
-        assert guard._is_watched(path) is False
+        assert guard.is_watched(path) is False
 
     def test_non_watched_extension(self, guard: SsotGuard) -> None:
         # .txt 文件不在监控扩展名列表
-        assert guard._is_watched("scripts/hooks/readme.txt") is False
+        assert guard.is_watched("scripts/hooks/readme.txt") is False
 
 
 # ---------------------------------------------------------------------------
@@ -236,19 +236,19 @@ class TestCheckC1:
     """P0：新增治理文件时注册表必须同步暂存。"""
 
     def test_pass_no_new_files(self, guard: SsotGuard) -> None:
-        result = guard._check_c1(watched_staged={}, registry_staged=False)
+        result = guard.check_c1(watched_staged={}, registry_staged=False)
         assert result.passed is True
         assert "跳过" in result.message
 
     def test_pass_new_files_registry_staged(self, guard: SsotGuard) -> None:
         watched = {"scripts/hooks/new_hook.py": "A"}
-        result = guard._check_c1(watched_staged=watched, registry_staged=True)
+        result = guard.check_c1(watched_staged=watched, registry_staged=True)
         assert result.passed is True
         assert "已同步暂存" in result.message
 
     def test_fail_new_files_registry_not_staged(self, guard: SsotGuard) -> None:
         watched = {"scripts/hooks/new_hook.py": "A"}
-        result = guard._check_c1(watched_staged=watched, registry_staged=False)
+        result = guard.check_c1(watched_staged=watched, registry_staged=False)
         assert result.passed is False
         assert "scripts/hooks/new_hook.py" in result.details
 
@@ -257,14 +257,14 @@ class TestCheckC1:
             "scripts/hooks/hook_a.py": "A",
             "scripts/governance/tool_b.py": "A",
         }
-        result = guard._check_c1(watched_staged=watched, registry_staged=False)
+        result = guard.check_c1(watched_staged=watched, registry_staged=False)
         assert result.passed is False
         assert len(result.details) == 2
 
     def test_modified_files_not_blocked_without_registry(self, guard: SsotGuard) -> None:
         # 修改（'M'）不是新增，C-1 应该通过
         watched = {"scripts/hooks/existing_hook.py": "M"}
-        result = guard._check_c1(watched_staged=watched, registry_staged=False)
+        result = guard.check_c1(watched_staged=watched, registry_staged=False)
         assert result.passed is True
 
 
@@ -277,17 +277,17 @@ class TestCheckC3:
     """P0：删除治理文件时注册表必须同步暂存。"""
 
     def test_pass_no_deleted_files(self, guard: SsotGuard) -> None:
-        result = guard._check_c3(watched_staged={}, registry_staged=False)
+        result = guard.check_c3(watched_staged={}, registry_staged=False)
         assert result.passed is True
 
     def test_pass_deleted_files_registry_staged(self, guard: SsotGuard) -> None:
         watched = {"scripts/hooks/old_hook.py": "D"}
-        result = guard._check_c3(watched_staged=watched, registry_staged=True)
+        result = guard.check_c3(watched_staged=watched, registry_staged=True)
         assert result.passed is True
 
     def test_fail_deleted_files_registry_not_staged(self, guard: SsotGuard) -> None:
         watched = {"scripts/hooks/old_hook.py": "D"}
-        result = guard._check_c3(watched_staged=watched, registry_staged=False)
+        result = guard.check_c3(watched_staged=watched, registry_staged=False)
         assert result.passed is False
         assert "scripts/hooks/old_hook.py" in result.details
 
@@ -302,7 +302,7 @@ class TestCheckC2:
 
     def test_pass_all_paths_exist(self, tmp_repo: Path) -> None:
         guard = SsotGuard(repo_root=tmp_repo)
-        result = guard._check_c2()
+        result = guard.check_c2()
         assert result.passed is True
 
     def test_fail_missing_declared_path(self, tmp_repo: Path) -> None:
@@ -320,13 +320,13 @@ class TestCheckC2:
             encoding="utf-8",
         )
         guard = SsotGuard(repo_root=tmp_repo)
-        result = guard._check_c2()
+        result = guard.check_c2()
         assert result.passed is False
         assert "nonexistent_hook.py" in result.details[0]
 
     def test_fail_registry_not_found(self, tmp_path: Path) -> None:
         guard = SsotGuard(repo_root=tmp_path)
-        result = guard._check_c2()
+        result = guard.check_c2()
         assert result.passed is False
         assert "不存在" in result.message
 
@@ -340,13 +340,13 @@ class TestCheckC4Format:
     """P1：注册表路径格式合法性。"""
 
     def test_skip_when_registry_not_staged(self, guard: SsotGuard) -> None:
-        result = guard._check_c4_format(registry_staged=False)
+        result = guard.check_c4_format(registry_staged=False)
         assert result.passed is True
         assert "跳过" in result.message
 
     def test_pass_valid_paths(self, tmp_repo: Path) -> None:
         guard = SsotGuard(repo_root=tmp_repo)
-        result = guard._check_c4_format(registry_staged=True)
+        result = guard.check_c4_format(registry_staged=True)
         assert result.passed is True
 
     def test_fail_absolute_path_in_registry(self, tmp_repo: Path) -> None:
@@ -363,7 +363,7 @@ class TestCheckC4Format:
             encoding="utf-8",
         )
         guard = SsotGuard(repo_root=tmp_repo)
-        result = guard._check_c4_format(registry_staged=True)
+        result = guard.check_c4_format(registry_staged=True)
         assert result.passed is False
 
     def test_fail_backslash_path_in_registry(self, tmp_repo: Path) -> None:
@@ -380,7 +380,7 @@ class TestCheckC4Format:
             encoding="utf-8",
         )
         guard = SsotGuard(repo_root=tmp_repo)
-        result = guard._check_c4_format(registry_staged=True)
+        result = guard.check_c4_format(registry_staged=True)
         assert result.passed is False
 
 
@@ -417,17 +417,17 @@ class TestGuardReport:
 
 
 class TestSsotGuardRunIntegration:
-    """Q2 集成测试：run() 完整流程（patch _staged_files）。"""
+    """Q2 集成测试：run() 完整流程（patch staged_files）。"""
 
     def test_no_staged_files_all_pass(self, tmp_repo: Path) -> None:
-        with patch("zephyr.shared.security.ssot_guard._staged_files", return_value={}):
+        with patch("zephyr.shared.security.ssot_guard.staged_files", return_value={}):
             guard = SsotGuard(repo_root=tmp_repo)
             report = guard.run()
         assert report.passed is True
 
     def test_new_watched_file_without_registry_fails(self, tmp_repo: Path) -> None:
         staged = {"scripts/hooks/new_hook.py": "A"}
-        with patch("zephyr.shared.security.ssot_guard._staged_files", return_value=staged):
+        with patch("zephyr.shared.security.ssot_guard.staged_files", return_value=staged):
             guard = SsotGuard(repo_root=tmp_repo)
             report = guard.run()
         assert report.passed is False
@@ -439,7 +439,7 @@ class TestSsotGuardRunIntegration:
             "scripts/hooks/new_hook.py": "A",
             REGISTRY_REL_PATH: "M",
         }
-        with patch("zephyr.shared.security.ssot_guard._staged_files", return_value=staged):
+        with patch("zephyr.shared.security.ssot_guard.staged_files", return_value=staged):
             guard = SsotGuard(repo_root=tmp_repo)
             report = guard.run()
         # C-1 和 C-3 均应通过；C-2 和 C-4 在 tmp_repo 中注册表路径合法
@@ -448,7 +448,7 @@ class TestSsotGuardRunIntegration:
 
     def test_git_error_produces_failed_report(self, tmp_repo: Path) -> None:
         with patch(
-            "zephyr.shared.security.ssot_guard._staged_files",
+            "zephyr.shared.security.ssot_guard.staged_files",
             side_effect=subprocess.CalledProcessError(128, "git"),
         ):
             guard = SsotGuard(repo_root=tmp_repo)
@@ -470,7 +470,7 @@ class TestExtractPerformance:
 
         lines = "\n".join(f"  path: scripts/hooks/hook_{i}.py" for i in range(1000))
         t0 = time.perf_counter()
-        result = _extract_declared_paths(lines)
+        result = extract_declared_paths(lines)
         elapsed = time.perf_counter() - t0
         assert len(result) == 1000
         assert elapsed < 0.5, f"路径提取 1000 行耗时 {elapsed:.3f}s > 0.5s 预算"

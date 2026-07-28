@@ -201,10 +201,13 @@ def _repo_root() -> Path:
     return Path(result.stdout.strip())
 
 
-def _staged_files(repo_root: Path) -> dict[str, str]:
+def staged_files(repo_root: Path) -> dict[str, str]:
     """
     返回暂存区文件字典：{相对路径(forward-slash) -> git status 字符('A','M','D','R',...)}。
     使用 --diff-filter=ACDMR 涵盖新增/修改/删除/重命名/复制。
+
+    Stage 4 公共化（primary）：原 ``_staged_files`` 重命名为公共 API，
+    便于测试通过 ``patch(...staged_files)`` 注入 mock。
     """
     from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -229,6 +232,10 @@ def _staged_files(repo_root: Path) -> dict[str, str]:
         elif len(parts) >= 2:
             staged[parts[1].replace("\\", "/")] = status_char
     return staged
+
+
+# Stage 4 公共化：向后兼容别名（primary 已为公共 staged_files）。
+_staged_files = staged_files
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +272,12 @@ def _validate_path_format(path: str) -> str | None:
     if "\\" in path:
         return f"反斜杠分隔符不允许出现在注册表路径中: {path}"
     return None
+
+
+# Stage 4 公共化：模块级公共别名（primary 仍为私有函数，公共别名为同对象引用）。
+# 便于测试直接调用公共名称，消除对 _extract_declared_paths / _validate_path_format 的私有访问。
+extract_declared_paths = _extract_declared_paths
+validate_path_format = _validate_path_format
 
 
 # ---------------------------------------------------------------------------
@@ -304,7 +317,7 @@ class SsotGuard:
         """执行全量检查，返回报告。不抛出异常，所有结果封装在报告内。"""
         report = GuardReport()
         try:
-            staged = _staged_files(self._repo_root)
+            staged = staged_files(self._repo_root)
         except subprocess.CalledProcessError as exc:
             report.add(
                 CheckResult(
@@ -319,33 +332,37 @@ class SsotGuard:
         registry_staged = self._registry_rel in staged
 
         # 暂存区中的治理敏感文件列表
-        watched_staged = {path: status for path, status in staged.items() if self._is_watched(path)}
+        watched_staged = {path: status for path, status in staged.items() if self.is_watched(path)}
 
-        report.add(self._check_c1(watched_staged, registry_staged))
-        report.add(self._check_c3(watched_staged, registry_staged))
+        report.add(self.check_c1(watched_staged, registry_staged))
+        report.add(self.check_c3(watched_staged, registry_staged))
         if registry_staged:
-            report.add(self._check_c2())
-        report.add(self._check_c4_format(registry_staged))
+            report.add(self.check_c2())
+        report.add(self.check_c4_format(registry_staged))
 
         return report
 
     # ------------------------------------------------------------------ #
-    # 内部检查方法                                                         #
+    # 检查方法（Stage 4 公共化：public 为 primary，_private 为 thin wrapper） #
     # ------------------------------------------------------------------ #
 
-    def _is_watched(self, path: str) -> bool:
-        """判断路径是否属于治理敏感区域。"""
+    def is_watched(self, path: str) -> bool:
+        """判断路径是否属于治理敏感区域（Stage 4 公共化，primary）。"""
         normalized = path.replace("\\", "/")
         if Path(normalized).suffix not in WATCHED_EXTENSIONS:
             return False
         return any(normalized.startswith(prefix) for prefix in self._watched_prefixes)
 
-    def _check_c1(
+    def _is_watched(self, path: str) -> bool:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.is_watched(path)
+
+    def check_c1(
         self,
         watched_staged: dict[str, str],
         registry_staged: bool,
     ) -> CheckResult:
-        """C-1：新增治理文件时注册表必须同步暂存。"""
+        """C-1：新增治理文件时注册表必须同步暂存（Stage 4 公共化，primary）。"""
         new_files = [p for p, s in watched_staged.items() if s == "A"]
         if not new_files:
             return CheckResult(
@@ -371,12 +388,20 @@ class SsotGuard:
             details=new_files,
         )
 
-    def _check_c3(
+    def _check_c1(
         self,
         watched_staged: dict[str, str],
         registry_staged: bool,
     ) -> CheckResult:
-        """C-3：删除治理文件时注册表必须同步暂存。"""
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_c1(watched_staged, registry_staged)
+
+    def check_c3(
+        self,
+        watched_staged: dict[str, str],
+        registry_staged: bool,
+    ) -> CheckResult:
+        """C-3：删除治理文件时注册表必须同步暂存（Stage 4 公共化，primary）。"""
         deleted_files = [p for p, s in watched_staged.items() if s == "D"]
         if not deleted_files:
             return CheckResult(
@@ -402,8 +427,16 @@ class SsotGuard:
             details=deleted_files,
         )
 
-    def _check_c2(self) -> CheckResult:
-        """C-2：注册表已暂存时，声明路径必须真实存在（仅检查文件，不检查目录）。"""
+    def _check_c3(
+        self,
+        watched_staged: dict[str, str],
+        registry_staged: bool,
+    ) -> CheckResult:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_c3(watched_staged, registry_staged)
+
+    def check_c2(self) -> CheckResult:
+        """C-2：注册表已暂存时，声明路径必须真实存在（仅检查文件，不检查目录）（Stage 4 公共化，primary）。"""
         registry_path = self._repo_root / self._registry_rel.replace("/", "\\")
         if not registry_path.exists():
             return CheckResult(
@@ -420,7 +453,7 @@ class SsotGuard:
                 message=f"无法读取注册表文件: {exc}",
             )
 
-        declared = _extract_declared_paths(content)
+        declared = extract_declared_paths(content)
         missing: list[str] = []
         for p in declared:
             # 归一化：Windows 反斜杠 -> 正斜杠，再用 Path 解析
@@ -445,8 +478,12 @@ class SsotGuard:
             message=f"注册表声明的 {len(declared)} 条路径均有效",
         )
 
-    def _check_c4_format(self, registry_staged: bool) -> CheckResult:
-        """C-4：注册表已暂存时，路径字段格式必须合法。"""
+    def _check_c2(self) -> CheckResult:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_c2()
+
+    def check_c4_format(self, registry_staged: bool) -> CheckResult:
+        """C-4：注册表已暂存时，路径字段格式必须合法（Stage 4 公共化，primary）。"""
         if not registry_staged:
             return CheckResult(
                 check_id="C-4",
@@ -469,10 +506,10 @@ class SsotGuard:
                 message=f"无法读取注册表文件: {exc}",
             )
 
-        declared = _extract_declared_paths(content)
+        declared = extract_declared_paths(content)
         violations: list[str] = []
         for p in declared:
-            err = _validate_path_format(p)
+            err = validate_path_format(p)
             if err:
                 violations.append(err)
 
@@ -488,6 +525,10 @@ class SsotGuard:
             passed=True,
             message="注册表路径格式全部合法",
         )
+
+    def _check_c4_format(self, registry_staged: bool) -> CheckResult:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_c4_format(registry_staged)
 
 
 # ---------------------------------------------------------------------------
