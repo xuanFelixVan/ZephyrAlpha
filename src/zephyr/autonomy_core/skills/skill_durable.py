@@ -47,6 +47,23 @@ class DurableExecution:
         self._checkpoints: dict[str, list[dict[str, Any]]] = {}
         self._active_executions: dict[str, dict[str, Any]] = {}
 
+    # ── Stage 4 公共化属性 ──
+
+    @property
+    def storage_dir(self) -> Path:
+        """存储目录（public API, Stage 4）."""
+        return self._storage_dir
+
+    @property
+    def checkpoints(self) -> dict[str, list[dict[str, Any]]]:
+        """检查点字典（public API, Stage 4）."""
+        return self._checkpoints
+
+    @property
+    def active_executions(self) -> dict[str, dict[str, Any]]:
+        """活跃执行字典（public API, Stage 4）."""
+        return self._active_executions
+
     def start(self, skill_id: str, operation: str, input_context: str | None = None) -> str:
         execution_id = f"{skill_id}:{operation}:{datetime.now(UTC).timestamp()}"
 
