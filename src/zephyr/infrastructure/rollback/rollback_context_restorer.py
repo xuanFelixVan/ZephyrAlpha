@@ -48,6 +48,18 @@ class RollbackContextRestorer:
         self._project_root = project_root or Path.cwd()
         self._prompt_path = self._project_root / self.PROMPT_FILE
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+    @property
+    def prompt_path(self):
+        """只读：prompt_path（Stage 4 公共化）。"""
+        return self._prompt_path
+
+
     def generate_restore_prompt(self, context: RestoreContext) -> str:
         lines: list[str] = []
         lines.append("# AI Session Context Restore")

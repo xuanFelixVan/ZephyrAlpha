@@ -66,6 +66,13 @@ class SandboxEnforcer:
         self._mode = mode
         self._marker_path = self._project_root / self.SANDBOX_MARKER
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def is_in_sandbox(self) -> bool:
         return self._marker_path.exists()
 

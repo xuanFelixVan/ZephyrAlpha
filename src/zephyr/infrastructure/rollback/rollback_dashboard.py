@@ -47,6 +47,18 @@ class RollbackDashboard:
         self._project_root = project_root or Path.cwd()
         self._output_path = self._project_root / self.OUTPUT_PATH
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def output_path(self):
+        """只读：output_path（Stage 4 公共化）。"""
+        return self._output_path
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def generate(self, metrics: DashboardMetrics) -> Path:
         lines: list[str] = []
         lines.append("# Rollback Dashboard")

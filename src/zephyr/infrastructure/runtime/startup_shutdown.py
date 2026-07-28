@@ -107,6 +107,13 @@ class StartupOrchestrator:
     def __init__(self, health_check_fn: Callable[[str], bool]) -> None:
         self._health_check = health_check_fn
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def health_check(self):
+        """只读：health_check（Stage 4 公共化）。"""
+        return self._health_check
+
+
     def run(self) -> bool:
         for phase in StartupPhase:
             pdef = STARTUP_DAG[phase]
@@ -130,6 +137,13 @@ class StartupOrchestrator:
 class ShutdownOrchestrator:
     def __init__(self, shutdown_fn: Callable[[StartupPhase], bool]) -> None:
         self._shutdown = shutdown_fn
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def shutdown(self):
+        """只读：shutdown（Stage 4 公共化）。"""
+        return self._shutdown
+
 
     def run(self) -> bool:
         for phase in SHUTDOWN_SEQUENCE:

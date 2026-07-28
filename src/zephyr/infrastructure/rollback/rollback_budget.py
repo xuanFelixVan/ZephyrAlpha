@@ -67,6 +67,13 @@ class RollbackBudget:
         self._budget_path = self._project_root / self.BUDGET_LOG
         self._concurrent_count = 0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def status(self) -> BudgetStatus:
         today = datetime.now(UTC).date()
         daily_used = 0

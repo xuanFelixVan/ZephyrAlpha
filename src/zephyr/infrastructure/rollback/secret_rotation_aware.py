@@ -73,6 +73,13 @@ class SecretRotationAware:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def scan(self) -> RotationResult:
         stale: list[StaleSecret] = []
         total = 0

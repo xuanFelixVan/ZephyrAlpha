@@ -84,6 +84,18 @@ class RollbackStateMachine:
         self._current_step_idx = 0
         self._init_steps()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def current_step_idx(self):
+        """只读：current_step_idx（Stage 4 公共化）。"""
+        return self._current_step_idx
+
+    @property
+    def execution_id(self):
+        """只读：execution_id（Stage 4 公共化）。"""
+        return self._execution_id
+
+
     def _init_steps(self) -> None:
         self._steps = [RollbackStep(name=name, step_type=st, max_retries=retries) for name, st, retries in self.STEPS]
 

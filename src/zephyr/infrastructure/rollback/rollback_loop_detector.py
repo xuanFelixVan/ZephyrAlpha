@@ -57,6 +57,18 @@ class RollbackLoopDetector:
         self._project_root = project_root or Path.cwd()
         self._log_path = self._project_root / self.LOG_FILE
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def log_path(self):
+        """只读：log_path（Stage 4 公共化）。"""
+        return self._log_path
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def record(self, task_id: str, gate_id: str, success: bool = False) -> None:
         entry = {
             "timestamp_utc": datetime.now(UTC).isoformat(),

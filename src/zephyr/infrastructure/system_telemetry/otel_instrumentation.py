@@ -37,6 +37,13 @@ class OTelInstrumentation:
     def __init__(self) -> None:
         self._spans: list[PipelineTraceSpan] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def spans(self) -> list[PipelineTraceSpan]:
+        """只读：spans（Stage 4 公共化）。"""
+        return self._spans
+
+
     def start_span(self, name: str, attrs: dict[str, Any] | None = None) -> PipelineTraceSpan:
         span = PipelineTraceSpan(name=name, start_time=time.time(), attributes=attrs or {})
         self._spans.append(span)

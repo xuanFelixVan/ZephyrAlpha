@@ -223,6 +223,26 @@ class BaseMCPServer:
         if enable_rbac:
             self._try_auto_enable_rbac()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def rbac_guard(self):
+        """只读：rbac_guard（Stage 4 公共化）。"""
+        return self._rbac_guard
+
+    @rbac_guard.setter
+    def rbac_guard(self, value):
+        """写入：rbac_guard（Stage 4 公共化）。"""
+        self._rbac_guard = value
+
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def tools(self) -> dict[str, ToolDefinition]:
+        """只读：tools（Stage 4 公共化）。"""
+        return self._tools
+
+
     def _try_auto_enable_rbac(self) -> None:
         # 5.17.8 修复：翻转默认为 True（default-deny），未声明权限的 server 拒绝所有写
         if not getattr(self, "_AUTO_ENABLE_RBAC", True):

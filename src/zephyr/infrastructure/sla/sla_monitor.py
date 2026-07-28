@@ -100,6 +100,23 @@ class SLAMonitor:
         self._subscribed = False
         self._recovery_start_time: float | None = None
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def data_dir(self):
+        """只读：data_dir（Stage 4 公共化）。"""
+        return self._data_dir
+
+    @property
+    def rpo_counts(self) -> list[int]:
+        """只读：rpo_counts（Stage 4 公共化）。"""
+        return self._rpo_counts
+
+    @property
+    def rto_samples(self) -> list[float]:
+        """只读：rto_samples（Stage 4 公共化）。"""
+        return self._rto_samples
+
+
     def record_rto(self, recovery_time_s: float) -> SLABreach | None:
         self._rto_samples.append(recovery_time_s)
 
