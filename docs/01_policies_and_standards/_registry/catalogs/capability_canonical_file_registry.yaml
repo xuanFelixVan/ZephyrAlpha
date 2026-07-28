@@ -5229,6 +5229,10 @@ creation_tokens:
     token: "auto-ddl-truth-c3-share-unlock-20260725"
     created_by: "session-sess-78404-20260725001033"
     capability: "ddl_truth_source_c3"
+  - file: "schemas/categories/market_l2_tick.py"
+    token: "auto-ddl-truth-c1-l2-tick-20260728"
+    created_by: "session-sess-29488-20260728171405"
+    capability: "ddl_truth_source_c1"
 
   # --- 数据服务 watchdog 注册脚本（2026-07-23，guard-of-guard 治本：Task Scheduler OS 级看护）---
   - file: "scripts/register_guard_tasks.ps1"

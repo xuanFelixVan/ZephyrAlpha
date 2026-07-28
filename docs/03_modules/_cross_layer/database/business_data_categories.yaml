@@ -1361,20 +1361,20 @@
   blueprint: null
 
 - category_id: market_l2_tick
-  name: "Level2逐笔（预留，未启用）"
+  name: "Level2逐笔行情（含买卖盘）"
   engine: clickhouse
   database: c1_market
   table: l2_tick
-  schema_file: null
-  data_type: 预留
+  schema_file: schemas/categories/market_l2_tick.py
+  data_type: 行情
   lifecycle: permanent  # #ARCH-CH-022 P1-6：预留表统一permanent（声明-实现对齐，无TTL即永久保留）
   sla_level: L3
-  enabled: false
+  enabled: true
   hard_constraint: null
   calc_mode: replay
   frequency: 逐笔
-  data_source: []
-  blueprint: null
+  data_source: ['miniqmt']
+  blueprint: MOD-L04-002
 
 - category_id: market_realtime_snapshot
   name: "实时快照（预留，未启用）"

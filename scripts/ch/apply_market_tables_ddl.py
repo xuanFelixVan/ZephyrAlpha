@@ -79,6 +79,38 @@ ORDER BY (market_type, symbol, trade_date, timestamp, price)
 SETTINGS index_granularity = 8192
 """
 
+# l2_tick DDL — 真源: schemas/categories/market_l2_tick.py（2026-07-28 建表，#ARCH-DATA-PIPELINE-001）
+try:
+    from schemas.categories.market_l2_tick import L2_TICK_DDL
+except ImportError:
+    L2_TICK_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.l2_tick
+(
+    trade_date    Date,
+    timestamp     DateTime64(3, 'Asia/Shanghai'),
+    recorded_time DateTime64(3, 'UTC')  DEFAULT now(),
+    symbol        String,
+    market_type   LowCardinality(String)  DEFAULT '',
+    price         Decimal(18,4),
+    volume        UInt64,
+    amount        Decimal(18,2),
+    direction     LowCardinality(String)  DEFAULT '',
+    bid_price     Nullable(Decimal(18,4)),
+    ask_price     Nullable(Decimal(18,4)),
+    bid_volume    Nullable(UInt64),
+    ask_volume    Nullable(UInt64),
+    data_source   LowCardinality(String)  DEFAULT 'miniqmt',
+    quality_flag  UInt8          DEFAULT 1,
+    ingest_ts     DateTime64(3, 'UTC') DEFAULT now(),
+    INDEX idx_ts timestamp TYPE minmax GRANULARITY 1,
+    INDEX idx_symbol symbol TYPE set(10000) GRANULARITY 4
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY toYYYYMM(trade_date)
+ORDER BY (market_type, symbol, trade_date, timestamp, price)
+SETTINGS index_granularity = 8192
+"""
+
 # kline_daily DDL — 真源: schemas/categories/market_kline_daily.py
 try:
     from schemas.categories.market_kline_daily import KLINE_DAILY_DDL
@@ -225,6 +257,7 @@ ORDER BY (check_date, symbol, metric, check_time)
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.tick_data", TICK_DATA_DDL),
+    ("c1_market.l2_tick", L2_TICK_DDL),
     ("c1_market.kline_daily", KLINE_DAILY_DDL),
     ("c1_market.auction_book", AUCTION_BOOK_DDL),
     ("c1_market.sector_snapshot", SECTOR_SNAPSHOT_DDL),
@@ -247,6 +280,7 @@ _MIGRATIONS: list[tuple[str, str]] = [
 # 引擎选型矩阵（用于验证）
 _EXPECTED_ENGINES: dict[str, str] = {
     "tick_data": "ReplacingMergeTree",
+    "l2_tick": "ReplacingMergeTree",
     "kline_daily": "ReplacingMergeTree",
     "auction_book": "ReplacingMergeTree",
     "sector_snapshot": "ReplacingMergeTree",
