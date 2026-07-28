@@ -17,34 +17,34 @@ from zephyr.autonomy_core.skills.skill_postmortem import SkillPostmortem
 
 class TestSkillPostmortemInferSymptomCategory:
     def test_registration_category(self):
-        assert SkillPostmortem._infer_symptom_category("KeyError: skill not found") == "registration"
+        assert SkillPostmortem.infer_symptom_category("KeyError: skill not found") == "registration"
 
     def test_registration_missing(self):
-        assert SkillPostmortem._infer_symptom_category("missing skill in registry") == "registration"
+        assert SkillPostmortem.infer_symptom_category("missing skill in registry") == "registration"
 
     def test_budget_category(self):
-        assert SkillPostmortem._infer_symptom_category("token budget exceeded") == "budget"
+        assert SkillPostmortem.infer_symptom_category("token budget exceeded") == "budget"
 
     def test_gate_category(self):
-        assert SkillPostmortem._infer_symptom_category("gate rejected execution") == "gate"
+        assert SkillPostmortem.infer_symptom_category("gate rejected execution") == "gate"
 
     def test_performance_category(self):
-        assert SkillPostmortem._infer_symptom_category("timeout after 30s") == "performance"
+        assert SkillPostmortem.infer_symptom_category("timeout after 30s") == "performance"
 
     def test_security_category(self):
-        assert SkillPostmortem._infer_symptom_category("security injection detected") == "security"
+        assert SkillPostmortem.infer_symptom_category("security injection detected") == "security"
 
     def test_drift_category(self):
-        assert SkillPostmortem._infer_symptom_category("stale skill version detected") == "drift"
+        assert SkillPostmortem.infer_symptom_category("stale skill version detected") == "drift"
 
     def test_unknown_category(self):
-        assert SkillPostmortem._infer_symptom_category("something unexpected happened") == "unknown"
+        assert SkillPostmortem.infer_symptom_category("something unexpected happened") == "unknown"
 
     def test_empty_error_message(self):
-        assert SkillPostmortem._infer_symptom_category("") == "unknown"
+        assert SkillPostmortem.infer_symptom_category("") == "unknown"
 
     def test_case_insensitive(self):
-        assert SkillPostmortem._infer_symptom_category("KEYERROR NOT FOUND") == "registration"
+        assert SkillPostmortem.infer_symptom_category("KEYERROR NOT FOUND") == "registration"
 
 
 class TestSkillPostmortemAnalyze:
@@ -103,31 +103,31 @@ class TestSkillPostmortemAnalyze:
 
 class TestSkillPostmortemGenerateActions:
     def test_registration_actions(self):
-        result = SkillPostmortem._generate_actions("SKILL-TEST", "registration", ["root1"])
+        result = SkillPostmortem.generate_actions("SKILL-TEST", "registration", ["root1"])
         assert len(result["corrective"]) >= 1
         assert len(result["preventive"]) >= 1
         assert any(a["priority"] == "P0" for a in result["corrective"])
 
     def test_budget_actions(self):
-        result = SkillPostmortem._generate_actions("SKILL-TEST", "budget", ["root1"])
+        result = SkillPostmortem.generate_actions("SKILL-TEST", "budget", ["root1"])
         assert any("Compact skill" in a["action"] for a in result["corrective"])
 
     def test_gate_actions(self):
-        result = SkillPostmortem._generate_actions("SKILL-TEST", "gate", ["root1"])
+        result = SkillPostmortem.generate_actions("SKILL-TEST", "gate", ["root1"])
         assert any("gate" in a["action"].lower() for a in result["corrective"])
 
     def test_unknown_category_still_has_preventive(self):
-        result = SkillPostmortem._generate_actions("SKILL-TEST", "unknown", ["root1"])
+        result = SkillPostmortem.generate_actions("SKILL-TEST", "unknown", ["root1"])
         assert len(result["preventive"]) >= 1
 
     def test_preventive_always_includes_regression(self):
-        result = SkillPostmortem._generate_actions("SKILL-TEST", "registration", ["root1"])
+        result = SkillPostmortem.generate_actions("SKILL-TEST", "registration", ["root1"])
         assert any("regression" in a["action"].lower() for a in result["preventive"])
 
 
 class TestSkillPostmortemUnwindWhy:
     def test_unwind_returns_layers(self):
-        result = SkillPostmortem._unwind_why("SKILL-TEST", "registration", "KeyError: not found")
+        result = SkillPostmortem.unwind_why("SKILL-TEST", "registration", "KeyError: not found")
         assert len(result) >= 5
         for entry in result:
             assert "layer" in entry
@@ -136,10 +136,10 @@ class TestSkillPostmortemUnwindWhy:
             assert "evidence" in entry
 
     def test_unwind_first_layer_has_reason(self):
-        result = SkillPostmortem._unwind_why("SKILL-TEST", "registration", "KeyError: not found")
+        result = SkillPostmortem.unwind_why("SKILL-TEST", "registration", "KeyError: not found")
         assert result[0]["layer"] == 1
         assert "SKILL-TEST" in result[0]["reason"]
 
     def test_unwind_budget_symptom(self):
-        result = SkillPostmortem._unwind_why("SKILL-TEST", "budget", "token exceeded")
+        result = SkillPostmortem.unwind_why("SKILL-TEST", "budget", "token exceeded")
         assert "budget" in result[0]["reason"].lower() or "exceeded" in result[0]["reason"].lower()

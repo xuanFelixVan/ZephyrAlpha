@@ -165,7 +165,8 @@ class SkillPostmortem:
     """追问到底根因分析器"""
 
     @classmethod
-    def _infer_symptom_category(cls, error_message: str) -> str:
+    def infer_symptom_category(cls, error_message: str) -> str:
+        """推断症状分类（Stage 4 公共化，primary）。"""
         error_lower = error_message.lower()
         if any(w in error_lower for w in ["keyerror", "not found", "missing", "unregistered"]):
             return "registration"
@@ -182,12 +183,13 @@ class SkillPostmortem:
         return "unknown"
 
     @classmethod
-    def _unwind_why(
+    def unwind_why(
         cls,
         skill_id: str,
         symptom_category: str,
         error_message: str,
     ) -> list[dict[str, Any]]:
+        """逐层追问根因（Stage 4 公共化，primary）。"""
         responses: list[dict[str, Any]] = []
 
         layer_registry_cache = _load_skill_registry()
@@ -209,12 +211,13 @@ class SkillPostmortem:
         return responses
 
     @classmethod
-    def _generate_actions(
+    def generate_actions(
         cls,
         skill_id: str,
         symptom_category: str,
         root_causes: list[str],
     ) -> dict[str, list[dict[str, str]]]:
+        """生成纠正/预防措施（Stage 4 公共化，primary）。"""
         corrective: list[dict[str, str]] = []
         preventive: list[dict[str, str]] = []
 
@@ -286,6 +289,33 @@ class SkillPostmortem:
             "preventive": preventive,
         }
 
+    # ── Stage 4 公共化：向后兼容 thin wrappers ──
+
+    @classmethod
+    def _infer_symptom_category(cls, error_message: str) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return cls.infer_symptom_category(error_message)
+
+    @classmethod
+    def _unwind_why(
+        cls,
+        skill_id: str,
+        symptom_category: str,
+        error_message: str,
+    ) -> list[dict[str, Any]]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return cls.unwind_why(skill_id, symptom_category, error_message)
+
+    @classmethod
+    def _generate_actions(
+        cls,
+        skill_id: str,
+        symptom_category: str,
+        root_causes: list[str],
+    ) -> dict[str, list[dict[str, str]]]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return cls.generate_actions(skill_id, symptom_category, root_causes)
+
     @classmethod
     def analyze(
         cls,
@@ -293,11 +323,11 @@ class SkillPostmortem:
         error_message: str,
         failed_operation: str = "",
     ) -> dict[str, Any]:
-        symptom = cls._infer_symptom_category(error_message)
-        root_causes = cls._unwind_why(skill_id, symptom, error_message)
+        symptom = cls.infer_symptom_category(error_message)
+        root_causes = cls.unwind_why(skill_id, symptom, error_message)
 
         primary_root_cause = root_causes[-1]["reason"] if root_causes else error_message
-        actions = cls._generate_actions(skill_id, symptom, [rc["reason"] for rc in root_causes])
+        actions = cls.generate_actions(skill_id, symptom, [rc["reason"] for rc in root_causes])
 
         return {
             "incident_id": f"PM-{skill_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M')}",
