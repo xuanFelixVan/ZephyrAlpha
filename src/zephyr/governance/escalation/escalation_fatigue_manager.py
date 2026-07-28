@@ -31,6 +31,23 @@ class EscalationFatigueManager:
         self._cooldown_h = 4
         self._max_daily = 6
 
+    # ── Stage 4 公共化属性 ──
+
+    @property
+    def owner_escalations(self) -> dict[str, list[float]]:
+        """每 owner 升级时间戳列表（public API, Stage 4）."""
+        return self._owner_escalations
+
+    @property
+    def cooldown_h(self) -> int:
+        """冷却小时数（public API, Stage 4）."""
+        return self._cooldown_h
+
+    @property
+    def max_daily(self) -> int:
+        """每日最大升级数（public API, Stage 4）."""
+        return self._max_daily
+
     def record_escalation(self, owner_id: str) -> bool:
         now = time.time()
         recent = [t for t in self._owner_escalations.get(owner_id, []) if now - t < 86400]

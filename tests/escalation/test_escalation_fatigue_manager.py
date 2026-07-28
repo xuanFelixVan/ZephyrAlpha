@@ -23,16 +23,16 @@ from zephyr.governance.escalation.escalation_fatigue_manager import EscalationFa
 class TestEscalationFatigueManagerInit:
     def test_instantiation_creates_empty_state(self):
         mgr = EscalationFatigueManager()
-        assert isinstance(mgr._owner_escalations, dict)
-        assert len(mgr._owner_escalations) == 0
-        assert mgr._cooldown_h == 4
-        assert mgr._max_daily == 6
+        assert isinstance(mgr.owner_escalations, dict)
+        assert len(mgr.owner_escalations) == 0
+        assert mgr.cooldown_h == 4
+        assert mgr.max_daily == 6
 
     def test_instantiation_independent_instances(self):
         a = EscalationFatigueManager()
         b = EscalationFatigueManager()
         a.record_escalation("owner-1")
-        assert "owner-1" not in b._owner_escalations
+        assert "owner-1" not in b.owner_escalations
 
 
 class TestRecordEscalation:
@@ -45,7 +45,7 @@ class TestRecordEscalation:
         before = time.time()
         mgr.record_escalation("owner-1")
         after = time.time()
-        ts = mgr._owner_escalations["owner-1"][0]
+        ts = mgr.owner_escalations["owner-1"][0]
         assert before <= ts <= after
 
     def test_cooldown_blocks_second_escalation(self):
@@ -56,21 +56,21 @@ class TestRecordEscalation:
     def test_cooldown_allows_after_expiry(self):
         mgr = EscalationFatigueManager()
         now = time.time()
-        mgr._owner_escalations["owner-1"] = [now - mgr._cooldown_h * 3600 - 1]
+        mgr.owner_escalations["owner-1"] = [now - mgr.cooldown_h * 3600 - 1]
         assert mgr.record_escalation("owner-1") is True
 
     def test_daily_max_blocks_after_six(self):
         mgr = EscalationFatigueManager()
         now = time.time()
-        old_ts = now - mgr._cooldown_h * 3600 - 1
-        mgr._owner_escalations["owner-1"] = [old_ts] * mgr._max_daily
+        old_ts = now - mgr.cooldown_h * 3600 - 1
+        mgr.owner_escalations["owner-1"] = [old_ts] * mgr.max_daily
         assert mgr.record_escalation("owner-1") is False
 
     def test_daily_max_allows_sixth(self):
         mgr = EscalationFatigueManager()
         now = time.time()
-        old_ts = now - mgr._cooldown_h * 3600 - 1
-        mgr._owner_escalations["owner-1"] = [old_ts] * (mgr._max_daily - 1)
+        old_ts = now - mgr.cooldown_h * 3600 - 1
+        mgr.owner_escalations["owner-1"] = [old_ts] * (mgr.max_daily - 1)
         assert mgr.record_escalation("owner-1") is True
 
     def test_independent_owners(self):
@@ -84,7 +84,7 @@ class TestRecordEscalation:
         mgr = EscalationFatigueManager()
         now = time.time()
         stale = now - 86401
-        mgr._owner_escalations["owner-1"] = [stale] * 10
+        mgr.owner_escalations["owner-1"] = [stale] * 10
         assert mgr.record_escalation("owner-1") is True
 
 
@@ -100,14 +100,14 @@ class TestRecordEscalationBoundary:
     def test_cooldown_boundary_exact(self):
         mgr = EscalationFatigueManager()
         now = time.time()
-        mgr._owner_escalations["owner-1"] = [now - mgr._cooldown_h * 3600]
+        mgr.owner_escalations["owner-1"] = [now - mgr.cooldown_h * 3600]
         assert mgr.record_escalation("owner-1") is True
 
     def test_daily_max_boundary_exact(self):
         mgr = EscalationFatigueManager()
         now = time.time()
-        old_ts = now - mgr._cooldown_h * 3600 - 1
-        mgr._owner_escalations["owner-1"] = [old_ts] * mgr._max_daily
+        old_ts = now - mgr.cooldown_h * 3600 - 1
+        mgr.owner_escalations["owner-1"] = [old_ts] * mgr.max_daily
         assert mgr.record_escalation("owner-1") is False
 
     def test_integer_owner_id_accepted(self):
