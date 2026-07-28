@@ -85,6 +85,18 @@ class OrderManager:
         # order_id -> broker_id 映射（cancel_order 治本：消除硬编码 "simulation" + 反查逻辑）
         self._order_broker_map: dict[str, str] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def fill_callbacks(self) -> list[Callable[[Fill], None]]:
+        """只读：fill_callbacks（Stage 4 公共化）。"""
+        return self._fill_callbacks
+
+    @property
+    def orders(self) -> dict[str, Order]:
+        """只读：orders（Stage 4 公共化）。"""
+        return self._orders
+
+
     def register_broker(self, broker_id: str, broker: BrokerInterface) -> None:
         self._brokers[broker_id] = broker
         broker.register_fill_callback(self._on_fill)

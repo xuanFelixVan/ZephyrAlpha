@@ -100,6 +100,13 @@ class SkillTokenomics:
         self._skill_stats: dict[str, dict[str, Any]] = {}
         self._cost_tracker: float = 0.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def daily_budget(self):
+        """只读：daily_budget（Stage 4 公共化）。"""
+        return self._daily_budget
+
+
     # --- Budget Management ---
 
     def set_budget(

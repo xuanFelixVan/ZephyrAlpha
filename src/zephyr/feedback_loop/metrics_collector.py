@@ -61,6 +61,18 @@ class MetricsCollector:
         self._conn: sqlite3.Connection | None = None
         self._init_db()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def conn(self) -> sqlite3.Connection | None:
+        """只读：conn（Stage 4 公共化）。"""
+        return self._conn
+
+    @property
+    def db_path(self):
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+
     def _get_conn(self) -> sqlite3.Connection:
         if self._conn is None:
             self._conn = get_db_connection(self._db_path, check_same_thread=False)

@@ -34,6 +34,13 @@ class ErrorBudgetManager:
     def __init__(self):
         self._budgets: dict[str, ErrorBudget] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def budgets(self) -> dict[str, ErrorBudget]:
+        """只读：budgets（Stage 4 公共化）。"""
+        return self._budgets
+
+
     def init_budget(self, contract_id: str) -> ErrorBudget:
         budget = ErrorBudget(contract_id=contract_id)
         self._budgets[contract_id] = budget

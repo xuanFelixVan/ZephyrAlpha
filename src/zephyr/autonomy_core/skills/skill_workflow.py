@@ -117,6 +117,18 @@ class SkillWorkflow:
         self._workflows: dict[str, dict[str, Any]] = {}
         self._executions: dict[str, dict[str, Any]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def executions(self) -> dict[str, dict[str, Any]]:
+        """只读：executions（Stage 4 公共化）。"""
+        return self._executions
+
+    @property
+    def workflows(self) -> dict[str, dict[str, Any]]:
+        """只读：workflows（Stage 4 公共化）。"""
+        return self._workflows
+
+
     def define(
         self,
         workflow_id: str,

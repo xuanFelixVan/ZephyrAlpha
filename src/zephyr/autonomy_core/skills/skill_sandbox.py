@@ -94,6 +94,38 @@ class SkillSandbox:
         self._active = False
         self._audit_log: list[dict[str, Any]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def active(self):
+        """只读：active（Stage 4 公共化）。"""
+        return self._active
+
+    @property
+    def allowed_tools(self) -> set[str]:
+        """只读：allowed_tools（Stage 4 公共化）。"""
+        return self._allowed_tools
+
+    @property
+    def file_boundary(self) -> Path | None:
+        """只读：file_boundary（Stage 4 公共化）。"""
+        return self._file_boundary
+
+    @property
+    def network_allowed(self):
+        """只读：network_allowed（Stage 4 公共化）。"""
+        return self._network_allowed
+
+    @property
+    def sandbox_dir(self):
+        """只读：sandbox_dir（Stage 4 公共化）。"""
+        return self._sandbox_dir
+
+    @property
+    def skill_id(self):
+        """只读：skill_id（Stage 4 公共化）。"""
+        return self._skill_id
+
+
     @property
     def isolated_tools(self) -> list[str]:
         return sorted(self._allowed_tools) if self._active else []

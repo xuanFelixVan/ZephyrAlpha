@@ -123,6 +123,20 @@ class ExecutionEngine:
         self._reports: dict[str, ExecutionEngineRunRecord] = {}
         self._broker_scores: dict[str, float] = defaultdict(lambda: 1.0)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def algo_orders(self) -> dict[str, dict]:
+        """只读：algo_orders（Stage 4 公共化）。"""
+        return self._algo_orders
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def broker_scores(self) -> dict[str, float]:
+        """只读：broker_scores（Stage 4 公共化）。"""
+        return self._broker_scores
+
+
     def execute_order(
         self,
         order: Order,

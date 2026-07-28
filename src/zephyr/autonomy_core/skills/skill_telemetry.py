@@ -42,6 +42,13 @@ class SkillTelemetry:
     def __init__(self):
         self._events: list[dict[str, Any]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def events(self) -> list[dict[str, Any]]:
+        """只读：events（Stage 4 公共化）。"""
+        return self._events
+
+
     def record(self, skill_id: str, event: str, metadata: dict[str, Any] | None = None) -> None:
         entry = {
             "skill_id": skill_id,

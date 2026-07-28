@@ -96,6 +96,13 @@ class AutoEvolution:
 @dataclass
 class AutoEvolutionEngine:
     evolution_engine: EvolutionEngine
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def consecutive_ka(self) -> int:
+        """只读：consecutive_ka（Stage 4 公共化）。"""
+        return self._consecutive_ka
+
     apply_fn: ApplyFn
     config: AutoEvolutionConfig | None = field(default_factory=AutoEvolutionConfig)
     now: Callable[[], datetime] = field(default_factory=datetime.now)

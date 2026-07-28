@@ -43,6 +43,19 @@ class DRDrillResult:
 @dataclass
 class DRAutomation:
     max_drill_interval_days: int = 90
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def last_drill(self) -> float:
+        """只读：last_drill（Stage 4 公共化）。"""
+        return self._last_drill
+
+    @last_drill.setter
+    def last_drill(self, value):
+        """写入：last_drill（Stage 4 公共化）。"""
+        self._last_drill = value
+
+
     rpo_target_seconds: float = 300.0
     rto_target_seconds: float = 900.0
     drills: list[DRDrillResult] = field(default_factory=list)

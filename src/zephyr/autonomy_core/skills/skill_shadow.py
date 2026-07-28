@@ -48,6 +48,18 @@ class SkillShadowDeploy:
         self._shadow_runs: dict[str, list[dict[str, Any]]] = {}
         self._current_shadow_pct = 5.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def current_shadow_pct(self):
+        """只读：current_shadow_pct（Stage 4 公共化）。"""
+        return self._current_shadow_pct
+
+    @property
+    def shadow_runs(self) -> dict[str, list[dict[str, Any]]]:
+        """只读：shadow_runs（Stage 4 公共化）。"""
+        return self._shadow_runs
+
+
     def shadow_run(
         self,
         skill_id: str,

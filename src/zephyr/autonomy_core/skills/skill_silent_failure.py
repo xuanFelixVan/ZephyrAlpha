@@ -72,6 +72,18 @@ class SilentFailureDetector:
         self._execution_history: dict[str, list[dict[str, Any]]] = {}
         self._anomalies: list[dict[str, Any]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def anomalies(self) -> list[dict[str, Any]]:
+        """只读：anomalies（Stage 4 公共化）。"""
+        return self._anomalies
+
+    @property
+    def execution_history(self) -> dict[str, list[dict[str, Any]]]:
+        """只读：execution_history（Stage 4 公共化）。"""
+        return self._execution_history
+
+
     def _check_truncation(self, output: str) -> tuple[bool, dict[str, Any]]:
         for pattern in self._TRUNCATION_INDICATORS:
             found = re.findall(pattern, output[-500:], re.IGNORECASE)

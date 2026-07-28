@@ -101,6 +101,24 @@ class DecisionEngine:
         self._adapter = adapter
         self._pending: list[ScheduleAdjustment] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def adapter(self):
+        """只读：adapter（Stage 4 公共化）。"""
+        return self._adapter
+
+    @property
+    def pending(self) -> list[ScheduleAdjustment]:
+        """只读：pending（Stage 4 公共化）。"""
+        return self._pending
+
+    @pending.setter
+    def pending(self, value):
+        """写入：pending（Stage 4 公共化）。"""
+        self._pending = value
+
+
+
     def evaluate_anomaly(self, report: AnomalyReport) -> ScheduleAdjustment:
         action_type = _ANOMALY_TO_ACTION.get(report.severity, ActionType.REPAIR)
         throttle = 0.0

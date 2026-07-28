@@ -144,6 +144,20 @@ class EvolutionEngine:
         self._now = now or datetime.now
         self._thresholds = {**DEFAULT_THRESHOLDS, **(thresholds or {})}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def thresholds(self):
+        """只读：thresholds（Stage 4 公共化）。"""
+        return self._thresholds
+
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def now(self):
+        """只读：now（Stage 4 公共化）。"""
+        return self._now
+
+
     def _state_key(self, state: str) -> str:
         return state
 

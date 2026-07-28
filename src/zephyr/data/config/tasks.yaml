@@ -227,14 +227,14 @@ tasks:
 - task_id: futures_position_incremental
   table: c1_market.futures_position
   source: miniqmt
-  schedule: intraday_realtime
+  schedule: daily_capital    # 盘后下载（原 intraday_realtime，2026-07-29 改为盘后）
   incremental: true
   date_col: trade_date
   dependencies: ["kline_futures_incremental"]
   capability: futures_position
   symbols:
   extra:
-    description: "期货持仓增量"
+    description: "期货持仓增量（盘后下载当日持仓数据）"
 
   fallback_sources:
   - source: exchange
@@ -1329,14 +1329,14 @@ tasks:
 - task_id: limit_up_down_incremental
   table: c1_market.limit_up_down
   source: akshare
-  schedule: intraday_realtime
+  schedule: daily_capital    # 盘后下载（原 intraday_realtime，2026-07-29 改为盘后）
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: limit_up_down
   symbols:
   extra:
-    description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停）"
+    description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停，盘后下载当日数据）"
 
   fallback_sources:
   - source: exchange
@@ -1546,14 +1546,14 @@ tasks:
 - task_id: hk_kline_incremental
   table: c1_market.hk_kline
   source: miniqmt
-  schedule: intraday_realtime
+  schedule: daily_capital    # 盘后下载（原 intraday_realtime，2026-07-29 改为盘后）
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: hk_kline
   symbols:         # 需指定港股代码如00700.HK
   extra:
-    description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK）"
+    description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK，盘后下载当日K线）"
 
   fallback_sources:
   - source: akshare
@@ -1961,3 +1961,147 @@ tasks:
     description: "880xxx板块60分钟K线增量（mootdx TCP直连盘中实时获取）"
     period: 60m
     count: 4
+
+  # ============== 周末全量刷新（5年历史回补，2026-07-29 新增）==============
+  # 每周六运行，下载完整历史数据，确保5年覆盖
+  # 增量任务只补近期，全量任务补完整历史
+- task_id: kline_cb_full_refresh
+  table: c1_market.kline_cb
+  source: miniqmt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: kline_cb
+  symbols:
+  extra:
+    description: "可转债日K线全量刷新（miniQMT，5年历史回补）"
+
+  fallback_sources:
+  - source: akshare
+    capability: kline_cb
+- task_id: option_kline_full_refresh
+  table: c1_market.option_kline
+  source: miniqmt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: option_kline
+  symbols:
+  extra:
+    description: "期权日K线全量刷新（miniQMT，5年历史回补）"
+
+  fallback_sources:
+  - source: exchange
+    capability: option_kline
+- task_id: hk_kline_full_refresh
+  table: c1_market.hk_kline
+  source: miniqmt
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: hk_kline
+  symbols:
+  extra:
+    description: "港股日K线全量刷新（miniQMT，5年历史回补）"
+
+  fallback_sources:
+  - source: akshare
+    capability: hk_kline
+- task_id: analyst_forecast_full_refresh
+  table: c3_fundamental.analyst_forecast
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: analyst_forecast
+  symbols:
+  extra:
+    description: "分析师预期全量刷新（AKShare，5年历史回补）"
+
+  fallback_sources:
+  - source: ifind
+    capability: analyst_forecast
+- task_id: stock_indicator_full_refresh
+  table: c1_market.stock_indicator
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: stock_indicator
+  symbols:
+  extra:
+    description: "技术指标全量刷新（AKShare stock_value_em，5年历史回补）"
+
+  fallback_sources:
+  - source: internal
+    capability: stock_indicator
+- task_id: block_trade_detail_full_refresh
+  table: c1_market.block_trade_detail
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: block_trade_detail
+  symbols:
+  extra:
+    description: "大宗交易明细全量刷新（AKShare stock_dzjy_mrtj，5年历史回补）"
+
+  fallback_sources:
+  - source: exchange
+    capability: block_trade_detail
+- task_id: limit_up_down_full_refresh
+  table: c1_market.limit_up_down
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: limit_up_down
+  symbols:
+  extra:
+    description: "涨跌停全量刷新（AKShare stock_zt_pool_em，5年历史回补）"
+
+  fallback_sources:
+  - source: exchange
+    capability: limit_up_down
+- task_id: etf_nav_full_refresh
+  table: c1_market.etf_nav
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: etf_nav
+  symbols:
+  extra:
+    description: "ETF净值全量刷新（AKShare fund_etf_fund_info_em，5年历史回补）"
+
+  fallback_sources:
+  - source: ifind
+    capability: etf_nav
+- task_id: repurchase_full_refresh
+  table: c3_fundamental.repurchase
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: repurchase
+  symbols:
+  extra:
+    description: "回购数据全量刷新（AKShare stock_repurchase_em，5年历史回补）"
+
+  fallback_sources:
+  - source: exchange
+    capability: repurchase
+- task_id: equity_pledge_full_refresh
+  table: c3_fundamental.equity_pledge_detail
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: equity_pledge
+  symbols:
+  extra:
+    description: "股权质押明细全量刷新（AKShare stock_gpzy_pledge_ratio_em，5年历史回补）"
+
+  fallback_sources:
+  - source: exchange
+    capability: equity_pledge
