@@ -69,8 +69,8 @@ class TestRollbackExecutorInstantiation:
         with patch("zephyr.infrastructure.rollback.rollback_executor.SqliteDumper"):
             with patch("zephyr.infrastructure.rollback.rollback_executor.RollbackLock"):
                 ex = RollbackExecutor(project_root=tmp_project)
-                assert ex._project_root == tmp_project
-                assert ex._owner_session_id is not None or True
+                assert ex.project_root == tmp_project
+                assert ex.owner_session_id is not None or True
 
     def test_creates_with_custom_params(self, tmp_project: Path, mock_dumper: MagicMock, mock_lock: MagicMock):
         ex = RollbackExecutor(
@@ -79,16 +79,16 @@ class TestRollbackExecutorInstantiation:
             rollback_lock=mock_lock,
             owner_session_id="custom-session",
         )
-        assert ex._project_root == tmp_project
-        assert ex._owner_session_id == "custom-session"
+        assert ex.project_root == tmp_project
+        assert ex.owner_session_id == "custom-session"
 
     def test_in_flight_dir_created(self, executor: RollbackExecutor):
-        assert executor._in_flight_dir.name == "rollback_in_flight"
+        assert executor.in_flight_dir.name == "rollback_in_flight"
 
 
 class TestPreflightCheck:
     def test_preflight_clean_tree(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 "",
                 "main",
@@ -102,7 +102,7 @@ class TestPreflightCheck:
             assert result.not_detached_head is True
 
     def test_preflight_dirty_tree(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 "M file1.py",
                 "main",
@@ -115,7 +115,7 @@ class TestPreflightCheck:
             assert "Working tree is dirty" in result.errors
 
     def test_preflight_detached_head(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 "",
                 "HEAD",
@@ -130,7 +130,7 @@ class TestPreflightCheck:
     def test_preflight_rebase_in_progress(self, executor: RollbackExecutor, tmp_project: Path):
         rebase_dir = tmp_project / ".git" / "rebase-merge"
         rebase_dir.mkdir()
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = ["", "main", "abc1234", "abc1234"]
             result = executor.preflight_check()
             assert result.passed is False
@@ -139,7 +139,7 @@ class TestPreflightCheck:
     def test_preflight_merge_in_progress(self, executor: RollbackExecutor, tmp_project: Path):
         merge_head = tmp_project / ".git" / "MERGE_HEAD"
         merge_head.write_text("deadbeef\n", encoding="utf-8")
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = ["", "main", "abc1234", "abc1234"]
             result = executor.preflight_check()
             assert result.passed is False
@@ -148,7 +148,7 @@ class TestPreflightCheck:
 
 class TestPreview:
     def test_preview_few_files(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 "file1.py\nfile2.py",
                 " 2 files changed, 10 insertions(+), 5 deletions(-)",
@@ -161,7 +161,7 @@ class TestPreview:
 
     def test_preview_many_files_high_risk(self, executor: RollbackExecutor):
         files = "\n".join([f"file{i}.py" for i in range(15)])
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 files,
                 " 15 files changed",
@@ -173,7 +173,7 @@ class TestPreview:
 
     def test_preview_medium_risk(self, executor: RollbackExecutor):
         files = "\n".join([f"file{i}.py" for i in range(7)])
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 files,
                 " 7 files changed",
@@ -183,7 +183,7 @@ class TestPreview:
             assert result.conflict_risk == "medium"
 
     def test_preview_with_merges(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = [
                 "file1.py\nfile2.py",
                 " 2 files changed",
@@ -195,13 +195,13 @@ class TestPreview:
 
 class TestIsCommitted:
     def test_committed_files(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.return_value = "file1.py"
             result = executor.is_committed(["file1.py"])
             assert result["file1.py"] is True
 
     def test_uncommitted_files(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.side_effect = Exception("not tracked")
             result = executor.is_committed(["unknown.py"])
             assert result["unknown.py"] is False
@@ -220,17 +220,17 @@ class TestDiscardChanges:
                 assert result.decision == DiscardDecision.NO_CHANGES
 
     def test_discard_blocked_by_owner(self, executor: RollbackExecutor):
-        with patch.object(executor, "_detect_owner_session_in_files", return_value=["file1.py"]):
+        with patch.object(executor, "detect_owner_session_in_files", return_value=["file1.py"]):
             result = executor.discard_changes(["file1.py"], force=False)
             assert result.success is False
             assert result.decision == DiscardDecision.BLOCKED_BY_OWNER
             assert "file1.py" in result.files_blocked
 
     def test_discard_force_bypasses_owner(self, executor: RollbackExecutor):
-        with patch.object(executor, "_detect_owner_session_in_files", return_value=["file1.py"]):
+        with patch.object(executor, "detect_owner_session_in_files", return_value=["file1.py"]):
             with patch.object(executor, "get_uncommitted_files", return_value=["file1.py"]):
                 with patch.object(executor, "get_staged_uncommitted_files", return_value=[]):
-                    with patch.object(executor, "_run_git", return_value=""):
+                    with patch.object(executor, "run_git", return_value=""):
                         result = executor.discard_changes(["file1.py"], force=True)
                         assert result.decision == DiscardDecision.DISCARD
 
@@ -241,8 +241,8 @@ class TestHardReset:
             executor.hard_reset("abc1234")
 
     def test_hard_reset_with_token(self, executor: RollbackExecutor):
-        with patch.object(executor, "_lsg_verify_critical_operation"):
-            with patch.object(executor, "_execute") as mock_exec:
+        with patch.object(executor, "lsg_verify_critical_operation"):
+            with patch.object(executor, "execute") as mock_exec:
                 mock_exec.return_value = RollbackExecutionResult(
                     success=True,
                     operation=RollbackOp.HARD_RESET,
@@ -283,7 +283,7 @@ class TestForwardFixEvaluate:
 
 class TestDependencyImpactAnalysis:
     def test_impact_with_zephyr_files(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.return_value = "src/zephyr/rollback/executor.py\nsrc/zephyr/budget/main.py\nREADME.md"
             result = executor.dependency_impact_analysis("abc1234")
             assert "rollback" in result["impacted_modules"]
@@ -291,14 +291,14 @@ class TestDependencyImpactAnalysis:
             assert result["impact_breadth"] == 2
 
     def test_impact_no_zephyr_files(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.return_value = "README.md\ndocs/guide.md"
             result = executor.dependency_impact_analysis("abc1234")
             assert result["impacted_modules"] == []
             assert result["impact_breadth"] == 0
 
     def test_impact_empty_diff(self, executor: RollbackExecutor):
-        with patch.object(executor, "_run_git") as mock_git:
+        with patch.object(executor, "run_git") as mock_git:
             mock_git.return_value = ""
             result = executor.dependency_impact_analysis("abc1234")
             assert result["changed_files"] == []
@@ -306,25 +306,25 @@ class TestDependencyImpactAnalysis:
 
 class TestInFlightManagement:
     def test_write_and_read_in_flight(self, executor: RollbackExecutor):
-        eid = executor._generate_execution_id()
-        executor._write_in_flight(eid, "test_step", "PENDING", {"key": "value"})
-        record = executor._read_in_flight(eid)
+        eid = executor.generate_execution_id()
+        executor.write_in_flight(eid, "test_step", "PENDING", {"key": "value"})
+        record = executor.read_in_flight(eid)
         assert record is not None
         assert record["step"] == "test_step"
         assert record["status"] == "PENDING"
         assert record["data"]["key"] == "value"
-        executor._delete_in_flight(eid)
+        executor.delete_in_flight(eid)
 
     def test_read_nonexistent_in_flight(self, executor: RollbackExecutor):
-        record = executor._read_in_flight("NONEXISTENT-ID")
+        record = executor.read_in_flight("NONEXISTENT-ID")
         assert record is None
 
     def test_recover_stale_in_flight(self, executor: RollbackExecutor):
-        eid = executor._generate_execution_id()
-        executor._write_in_flight(eid, "git_revert", "FAILED", {"error": "test"})
-        recovered = executor._recover_stale_in_flight()
+        eid = executor.generate_execution_id()
+        executor.write_in_flight(eid, "git_revert", "FAILED", {"error": "test"})
+        recovered = executor.recover_stale_in_flight()
         assert len(recovered) >= 1
-        executor._delete_in_flight(eid)
+        executor.delete_in_flight(eid)
 
 
 class TestCancelPendingRollback:
@@ -337,14 +337,14 @@ class TestCancelPendingRollback:
         assert result["canceled"] is False
 
     def test_cancel_with_pending(self, executor: RollbackExecutor):
-        eid = executor._generate_execution_id()
-        executor._write_in_flight(eid, "revert", "PENDING")
+        eid = executor.generate_execution_id()
+        executor.write_in_flight(eid, "revert", "PENDING")
         result = executor.cancel_pending_rollback("task-001", "test reason", token="BREAK_GLASS")
         assert result["canceled"] is True
 
 
 class TestGenerateExecutionId:
     def test_format(self, executor: RollbackExecutor):
-        eid = executor._generate_execution_id()
+        eid = executor.generate_execution_id()
         assert eid.startswith("RBEXEC-")
         assert len(eid) > 10

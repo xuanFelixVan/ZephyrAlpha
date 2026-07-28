@@ -243,6 +243,11 @@ class AutoRuntimeCore:
         return self._dream_cycle
 
     @property
+    def health_monitor(self) -> HealthMonitor:
+        """Stage 4 公共化。"""
+        return self._health_monitor
+
+    @property
     def task_learner(self) -> ModelTaskMatrix | None:
         """Stage 4 公共化。"""
         return self._task_learner

@@ -92,12 +92,15 @@ class CompatibilityResult:
         return f"[FAIL] EN-003: {len(self.mismatches)} mismatch(es)\n" + "\n".join(f"  - {m}" for m in self.mismatches)
 
 
-def _load_contracts() -> dict[str, Any]:
+def load_contracts() -> dict[str, Any]:
     with open(CONTRACTS_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 
-def _get_dataclass_fields(module_path: str, class_name: str) -> dict[str, str] | None:
+_load_contracts = load_contracts
+
+
+def get_dataclass_fields(module_path: str, class_name: str) -> dict[str, str] | None:
     try:
         mod = importlib.import_module(module_path)
         cls = getattr(mod, class_name, None)
@@ -116,7 +119,10 @@ def _get_dataclass_fields(module_path: str, class_name: str) -> dict[str, str] |
         return None
 
 
-def _strip_module_path(physical_path: str) -> tuple[str, str] | None:
+_get_dataclass_fields = get_dataclass_fields
+
+
+def strip_module_path(physical_path: str) -> tuple[str, str] | None:
     path = Path(physical_path)
     if path.suffix != ".py":
         return None
@@ -138,15 +144,21 @@ def _strip_module_path(physical_path: str) -> tuple[str, str] | None:
     return module_path, class_name
 
 
-def _normalize_type(t: str) -> str:
+_strip_module_path = strip_module_path
+
+
+def normalize_type(t: str) -> str:
     t = t.strip()
     if t in TYPE_ALIAS_MAP:
         return TYPE_ALIAS_MAP[t]
     return t
 
 
+_normalize_type = normalize_type
+
+
 def run_check() -> CompatibilityResult:
-    data = _load_contracts()
+    data = load_contracts()
     contracts = data.get("contracts", [])
     mismatches: list[str] = []
     skipped: list[str] = []
@@ -162,13 +174,13 @@ def run_check() -> CompatibilityResult:
             skipped.append(f"{cid}: no physical_path or fields")
             continue
 
-        resolved = _strip_module_path(physical_path)
+        resolved = strip_module_path(physical_path)
         if resolved is None:
             skipped.append(f"{cid}: could not resolve module path from {physical_path}")
             continue
 
         module_path, class_name = resolved
-        actual_fields = _get_dataclass_fields(module_path, class_name)
+        actual_fields = get_dataclass_fields(module_path, class_name)
         if actual_fields is None:
             skipped.append(f"{cid}: could not load dataclass {class_name} from {module_path}")
             continue
@@ -194,8 +206,8 @@ def run_check() -> CompatibilityResult:
             fname = sf["name"]
             if fname not in actual_fields:
                 continue
-            spec_type = _normalize_type(sf.get("type", "Any"))
-            actual_type = _normalize_type(actual_fields[fname])
+            spec_type = normalize_type(sf.get("type", "Any"))
+            actual_type = normalize_type(actual_fields[fname])
 
             spec_type_short = spec_type.split("[")[0]
             actual_type_short = actual_type.split("[")[0]

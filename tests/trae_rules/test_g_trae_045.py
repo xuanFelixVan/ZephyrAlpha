@@ -69,13 +69,13 @@ class TestGTrae045:
         assert MOCK_YAML.exists(), f"Mock file not found: {MOCK_YAML}"
 
     def test_gate_registered_in_gate_files(self):
-        """PASS: gate is registered in gate_engine._GATE_FILES."""
+        """PASS: gate is registered in gate_engine.GATE_FILES."""
         import sys
 
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
         from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
-        assert "G_TRAE_045" in GateEngine._GATE_FILES, "Gate G_TRAE_045 not in _GATE_FILES"
+        assert "G_TRAE_045" in GateEngine.GATE_FILES, "Gate G_TRAE_045 not in GATE_FILES"
 
     def test_gate_loadable_by_engine(self):
         """PASS: gate_engine can load this gate."""
@@ -85,17 +85,17 @@ class TestGTrae045:
         from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
-        # Temporarily add to _GATE_FILES if not there
-        original = dict(GateEngine._GATE_FILES)
+        # Temporarily add to GATE_FILES if not there
+        original = dict(GateEngine.GATE_FILES)
         try:
-            if "G_TRAE_045" not in GateEngine._GATE_FILES:
-                GateEngine._GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
-                engine._gate_cache = None  # Clear cache
+            if "G_TRAE_045" not in GateEngine.GATE_FILES:
+                GateEngine.GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
+                engine.gate_cache = None  # Clear cache
             gates = engine.load_gates()
             assert "G_TRAE_045" in gates, "Gate G_TRAE_045 not loaded"
         finally:
-            GateEngine._GATE_FILES = original
-            engine._gate_cache = None
+            GateEngine.GATE_FILES = original
+            engine.gate_cache = None
 
     def test_gate_evaluates_pass(self):
         """BLUE: valid task passes the gate."""
@@ -109,11 +109,11 @@ class TestGTrae045:
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
         # Temporarily register gate
-        original = dict(GateEngine._GATE_FILES)
+        original = dict(GateEngine.GATE_FILES)
         try:
-            if "G_TRAE_045" not in GateEngine._GATE_FILES:
-                GateEngine._GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
-                engine._gate_cache = None
+            if "G_TRAE_045" not in GateEngine.GATE_FILES:
+                GateEngine.GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
+                engine.gate_cache = None
             # Create a valid task
             valid_task = Task(
                 task_id="DM-100001",
@@ -138,8 +138,8 @@ class TestGTrae045:
             result = engine.evaluate(valid_task, "G_TRAE_045")
             assert result.passed is True, f"Valid task should pass but got violations: {result.violations}"
         finally:
-            GateEngine._GATE_FILES = original
-            engine._gate_cache = None
+            GateEngine.GATE_FILES = original
+            engine.gate_cache = None
 
     def test_gate_evaluates_fail(self):
         """RED: invalid task is blocked by the gate."""
@@ -152,11 +152,11 @@ class TestGTrae045:
         from zephyr.gov_enforcement.rule_enforcement.task_types import Task
 
         engine = GateEngine(project_root=str(PROJECT_ROOT))
-        original = dict(GateEngine._GATE_FILES)
+        original = dict(GateEngine.GATE_FILES)
         try:
-            if "G_TRAE_045" not in GateEngine._GATE_FILES:
-                GateEngine._GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
-                engine._gate_cache = None
+            if "G_TRAE_045" not in GateEngine.GATE_FILES:
+                GateEngine.GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
+                engine.gate_cache = None
             # Create a task with empty optional fields — gate should detect violations
             sparse_task = Task(
                 task_id="DM-100002",
@@ -180,8 +180,8 @@ class TestGTrae045:
             result = engine.evaluate(sparse_task, "G_TRAE_045")
             assert result is not None, "evaluate() should return a result"
         finally:
-            GateEngine._GATE_FILES = original
-            engine._gate_cache = None
+            GateEngine.GATE_FILES = original
+            engine.gate_cache = None
 
     def test_gate_bypass_detection(self):
         """RED: deleting gate YAML should cause load_gates() to fail."""
@@ -190,18 +190,18 @@ class TestGTrae045:
         sys.path.insert(0, str(PROJECT_ROOT / "src"))
         from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GateEngine
 
-        original = dict(GateEngine._GATE_FILES)
+        original = dict(GateEngine.GATE_FILES)
         try:
-            if "G_TRAE_045" not in GateEngine._GATE_FILES:
-                GateEngine._GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
+            if "G_TRAE_045" not in GateEngine.GATE_FILES:
+                GateEngine.GATE_FILES["G_TRAE_045"] = "g_trae_045.yaml"
             engine = GateEngine(project_root=str(PROJECT_ROOT))
-            engine._gate_cache = None
+            engine.gate_cache = None
             # If gate YAML exists, load should succeed
             gates = engine.load_gates()
             assert "G_TRAE_045" in gates, "Gate should be loadable when YAML exists"
         finally:
-            GateEngine._GATE_FILES = original
-            engine._gate_cache = None
+            GateEngine.GATE_FILES = original
+            engine.gate_cache = None
 
 
 if __name__ == "__main__":

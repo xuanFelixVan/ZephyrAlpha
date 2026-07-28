@@ -19,137 +19,137 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from zephyr.infrastructure.rollback.rollback_bootstrap import (
-    _check_git_available,
-    _get_recent_commits,
-    _git,
-    _git_head_short,
-    _git_revert,
-    _git_status_clean,
     bootstrap_from_failure_log,
     bootstrap_rollback,
+    check_git_available,
+    get_recent_commits,
+    git,
+    git_head_short,
+    git_revert,
+    git_status_clean,
 )
 
 
 class TestGitHelper:
     def test_git_returns_completed_process(self):
-        result = _git(["--version"])
+        result = git(["--version"])
         assert isinstance(result, subprocess.CompletedProcess)
 
     def test_git_with_timeout(self):
-        result = _git(["--version"], timeout=30)
+        result = git(["--version"], timeout=30)
         assert result.returncode == 0
 
     def test_git_invalid_args_returns_nonzero(self):
-        result = _git(["nonexistent-arg-xyz"])
+        result = git(["nonexistent-arg-xyz"])
         assert result.returncode != 0
 
 
 class TestCheckGitAvailable:
     def test_git_available(self):
-        assert _check_git_available() is True
+        assert check_git_available() is True
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_git_not_available(self, mock_git):
         mock_git.return_value = MagicMock(returncode=1)
-        assert _check_git_available() is False
+        assert check_git_available() is False
 
 
 class TestGetRecentCommits:
     def test_returns_list_of_strings(self, tmp_path: Path):
-        commits = _get_recent_commits(tmp_path)
+        commits = get_recent_commits(tmp_path)
         assert isinstance(commits, list)
 
     def test_returns_at_most_count_commits(self, tmp_path: Path):
-        commits = _get_recent_commits(tmp_path, count=3)
+        commits = get_recent_commits(tmp_path, count=3)
         assert len(commits) <= 3
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_returns_empty_on_git_failure(self, mock_git):
         mock_git.return_value = MagicMock(returncode=1, stdout="")
-        result = _get_recent_commits(Path("/nonexistent"), count=5)
+        result = get_recent_commits(Path("/nonexistent"), count=5)
         assert result == []
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_parses_oneline_output(self, mock_git):
         mock_git.return_value = MagicMock(returncode=0, stdout="abc1234 msg1\ndef5678 msg2\n")
-        result = _get_recent_commits(Path("/tmp"), count=5)
+        result = get_recent_commits(Path("/tmp"), count=5)
         assert result == ["abc1234", "def5678"]
 
 
 class TestGitRevert:
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_revert_success(self, mock_git):
         mock_git.return_value = MagicMock(returncode=0)
-        assert _git_revert(Path("/tmp"), "abc1234") is True
+        assert git_revert(Path("/tmp"), "abc1234") is True
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_revert_conflict(self, mock_git):
         mock_git.return_value = MagicMock(returncode=1)
-        assert _git_revert(Path("/tmp"), "abc1234") is False
+        assert git_revert(Path("/tmp"), "abc1234") is False
 
 
 class TestGitStatusClean:
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_clean_working_tree(self, mock_git):
         mock_git.return_value = MagicMock(returncode=0, stdout="")
-        assert _git_status_clean(Path("/tmp")) is True
+        assert git_status_clean(Path("/tmp")) is True
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_dirty_working_tree(self, mock_git):
         mock_git.return_value = MagicMock(returncode=0, stdout="M file.py\n")
-        assert _git_status_clean(Path("/tmp")) is False
+        assert git_status_clean(Path("/tmp")) is False
 
 
 class TestGitHeadShort:
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_returns_short_sha(self, mock_git):
         mock_git.return_value = MagicMock(returncode=0, stdout="abc1234\n")
-        assert _git_head_short(Path("/tmp")) == "abc1234"
+        assert git_head_short(Path("/tmp")) == "abc1234"
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git")
     def test_returns_empty_on_failure(self, mock_git):
         mock_git.return_value = MagicMock(returncode=128, stdout="")
-        assert _git_head_short(Path("/tmp")) == ""
+        assert git_head_short(Path("/tmp")) == ""
 
 
 class TestBootstrapRollback:
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._check_git_available", return_value=False)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.check_git_available", return_value=False)
     def test_returns_1_when_git_unavailable(self, mock_check):
         assert bootstrap_rollback() == 1
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._check_git_available", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._get_recent_commits", return_value=[])
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.check_git_available", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.get_recent_commits", return_value=[])
     def test_returns_2_when_no_commits(self, mock_commits, mock_check):
         assert bootstrap_rollback() == 2
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._check_git_available", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._get_recent_commits", return_value=["abc1234"])
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_revert", return_value=False)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_head_short", return_value="def5678")
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_status_clean", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.check_git_available", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.get_recent_commits", return_value=["abc1234"])
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_revert", return_value=False)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_head_short", return_value="def5678")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_status_clean", return_value=True)
     def test_returns_3_on_revert_conflict(self, mock_clean, mock_head, mock_revert, mock_commits, mock_check):
         assert bootstrap_rollback() == 3
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._check_git_available", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_revert", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_head_short", return_value="def5678")
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_status_clean", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.check_git_available", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_revert", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_head_short", return_value="def5678")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_status_clean", return_value=True)
     def test_returns_0_on_success_with_explicit_commit(self, mock_clean, mock_head, mock_revert, mock_check):
         assert bootstrap_rollback(commit_sha="abc1234") == 0
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._check_git_available", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_revert", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_head_short", return_value="def5678")
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_status_clean", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.check_git_available", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_revert", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_head_short", return_value="def5678")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_status_clean", return_value=True)
     def test_uses_project_root_when_provided(self, mock_clean, mock_head, mock_revert, mock_check):
         root = Path("/some/project")
         result = bootstrap_rollback(project_root=root, commit_sha="abc1234")
         assert result == 0
 
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._check_git_available", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_revert", return_value=True)
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_head_short", return_value="def5678")
-    @patch("zephyr.infrastructure.rollback.rollback_bootstrap._git_status_clean", return_value=False)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.check_git_available", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_revert", return_value=True)
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_head_short", return_value="def5678")
+    @patch("zephyr.infrastructure.rollback.rollback_bootstrap.git_status_clean", return_value=False)
     def test_returns_0_even_with_dirty_tree(self, mock_clean, mock_head, mock_revert, mock_check):
         assert bootstrap_rollback(commit_sha="abc1234") == 0
 

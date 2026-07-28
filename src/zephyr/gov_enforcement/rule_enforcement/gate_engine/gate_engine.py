@@ -1438,10 +1438,12 @@ class GateEngine:
         首次连接时是否调用 init_db()（默认 True）。
     """
 
-    # 5.176.1 Phase 1: _GATE_FILES 从 _registry.yaml 动态加载（替代硬编码字典）。
-    # 保留为类变量以兼容 tests/trae_rules/ 中的成员检查（GateEngine._GATE_FILES）。
+    # 5.176.1 Phase 1: GATE_FILES 从 _registry.yaml 动态加载（替代硬编码字典）。
+    # 公开类变量，供 tests/trae_rules/ 成员检查（GateEngine.GATE_FILES）。
     # reload_gates() 不再使用此变量——直接从 _registry.yaml 加载。
-    _GATE_FILES: dict[str, str] = _load_gate_files_from_registry(GATES_DIR)
+    GATE_FILES: dict[str, str] = _load_gate_files_from_registry(GATES_DIR)
+    # 向后兼容别名（Stage 4 R5 公共化）。
+    _GATE_FILES = GATE_FILES
 
     MANDATORY_GATES: frozenset[str] = frozenset(
         {
@@ -1477,6 +1479,15 @@ class GateEngine:
         self._conn: sqlite3.Connection = get_db_connection(self._db_path)
         self._gate_cache: dict[str, GateConfig] | None = None
         self._yaml_cache: FileCache = FileCache(max_entries=50, ttl_seconds=600.0)
+
+    @property
+    def gate_cache(self) -> "dict[str, GateConfig] | None":
+        """门禁配置缓存（Stage 4 R5 公共化）。"""
+        return self._gate_cache
+
+    @gate_cache.setter
+    def gate_cache(self, value: "dict[str, GateConfig] | None") -> None:
+        self._gate_cache = value
 
     # ------------------------------------------------------------------
     # 公共 API

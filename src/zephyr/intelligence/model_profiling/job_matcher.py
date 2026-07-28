@@ -144,6 +144,18 @@ class JobMatcher:
     def job_ids(self) -> list[str]:
         return list(self._jobs.keys())
 
+    # ── 公开数据视图 (R5: 私有断言消除, 暴露只读快照) ────
+
+    @property
+    def jobs(self) -> dict[str, dict[str, Any]]:
+        """已加载岗位矩阵的只读视图 (快照拷贝, 修改不影响内部状态)。"""
+        return dict(self._jobs)
+
+    @property
+    def hallu_dims(self) -> dict[str, float]:
+        """幻觉维度权重表的只读视图 (快照拷贝)。"""
+        return dict(self._hallu_dims)
+
     # ── 内部: 单岗位匹配 ─────────────────────────────────
 
     def _match_one(
@@ -197,7 +209,7 @@ class JobMatcher:
             description=job_def.get("description", ""),
         )
 
-    def _check_required(
+    def check_required(
         self,
         grades: dict[str, str],
         required: dict[str, str],
@@ -217,7 +229,15 @@ class JobMatcher:
                 missing.append(f"{cap}(need>={need_grade},got={actual})")
         return (len(missing) == 0, missing)
 
-    def _compute_bonus(
+    def _check_required(
+        self,
+        grades: dict[str, str],
+        required: dict[str, str],
+    ) -> tuple[bool, list[str]]:
+        """Deprecated thin wrapper; use :meth:`check_required`."""
+        return self.check_required(grades, required)
+
+    def compute_bonus(
         self,
         grades: dict[str, str],
         bonus: dict[str, str],
@@ -237,7 +257,15 @@ class JobMatcher:
         ratio = len(hits) / len(bonus)
         return round(ratio, 3), ", ".join(hits) if hits else "none"
 
-    def _compute_hallucination_score(
+    def _compute_bonus(
+        self,
+        grades: dict[str, str],
+        bonus: dict[str, str],
+    ) -> tuple[float, str]:
+        """Deprecated thin wrapper; use :meth:`compute_bonus`."""
+        return self.compute_bonus(grades, bonus)
+
+    def compute_hallucination_score(
         self,
         hallu: HallucinationBreakdown,
         max_hallu: float,
@@ -260,7 +288,15 @@ class JobMatcher:
         excess = (rate - max_hallu) / max_hallu
         return round(max(0.0, 0.7 - 0.7 * min(1.0, excess)), 3)
 
-    def _compute_cost_score(
+    def _compute_hallucination_score(
+        self,
+        hallu: HallucinationBreakdown,
+        max_hallu: float,
+    ) -> float:
+        """Deprecated thin wrapper; use :meth:`compute_hallucination_score`."""
+        return self.compute_hallucination_score(hallu, max_hallu)
+
+    def compute_cost_score(
         self,
         cost: CostBreakdown,
         max_cost: float,
@@ -287,6 +323,14 @@ class JobMatcher:
         # 超出期望: 0.7 ~ 0.0 线性衰减 (超 2 倍归零)
         excess = (actual_cost - max_cost) / max_cost
         return round(max(0.0, 0.7 - 0.7 * min(1.0, excess)), 3)
+
+    def _compute_cost_score(
+        self,
+        cost: CostBreakdown,
+        max_cost: float,
+    ) -> float:
+        """Deprecated thin wrapper; use :meth:`compute_cost_score`."""
+        return self.compute_cost_score(cost, max_cost)
 
 
 # ── 便捷函数 ──────────────────────────────────────────────

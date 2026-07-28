@@ -19,11 +19,11 @@ from unittest.mock import patch
 from zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility import (
     TYPE_ALIAS_MAP,
     CompatibilityResult,
-    _get_dataclass_fields,
-    _normalize_type,
-    _strip_module_path,
     check,
+    get_dataclass_fields,
+    normalize_type,
     run_check,
+    strip_module_path,
 )
 
 
@@ -87,51 +87,51 @@ class TestCompatibilityResult:
 
 class TestNormalizeType:
     def test_known_type(self):
-        assert _normalize_type("str") == "str"
+        assert normalize_type("str") == "str"
 
     def test_known_optional(self):
-        assert _normalize_type("Optional[int]") == "Optional[int]"
+        assert normalize_type("Optional[int]") == "Optional[int]"
 
     def test_unknown_type_passthrough(self):
-        assert _normalize_type("CustomType") == "CustomType"
+        assert normalize_type("CustomType") == "CustomType"
 
     def test_whitespace_stripped(self):
-        assert _normalize_type("  str  ") == "str"
+        assert normalize_type("  str  ") == "str"
 
     def test_dict_type(self):
-        assert _normalize_type("Dict[str,float]") == "Dict[str,float]"
+        assert normalize_type("Dict[str,float]") == "Dict[str,float]"
 
     def test_empty_string(self):
-        assert _normalize_type("") == ""
+        assert normalize_type("") == ""
 
 
 class TestStripModulePath:
     def test_standard_path(self):
-        result = _strip_module_path("src/zephyr/shared/contracts/my_class.py")
+        result = strip_module_path("src/zephyr/shared/contracts/my_class.py")
         assert result is not None
         module_path, class_name = result
         assert module_path.startswith("zephyr.")
         assert class_name == "MyClass"
 
     def test_non_py_file(self):
-        result = _strip_module_path("src/zephyr/shared/contracts/data.yaml")
+        result = strip_module_path("src/zephyr/shared/contracts/data.yaml")
         assert result is None
 
     def test_path_with_zephyr_parent(self):
-        result = _strip_module_path("src/zephyr/l01-infrastructure/telemetry.py")
+        result = strip_module_path("src/zephyr/l01-infrastructure/telemetry.py")
         assert result is not None
         module_path, class_name = result
         assert "zephyr.l01_infrastructure" in module_path
         assert class_name == "Telemetry"
 
     def test_underscore_to_camelcase(self):
-        result = _strip_module_path("src/zephyr/shared/contracts/my_long_name.py")
+        result = strip_module_path("src/zephyr/shared/contracts/my_long_name.py")
         assert result is not None
         _, class_name = result
         assert class_name == "MyLongName"
 
     def test_single_word_filename(self):
-        result = _strip_module_path("src/zephyr/shared/contracts/gateway.py")
+        result = strip_module_path("src/zephyr/shared/contracts/gateway.py")
         assert result is not None
         _, class_name = result
         assert class_name == "Gateway"
@@ -152,35 +152,35 @@ class TestGetDataclassFields:
         ) as mock_import:
             mock_mod = type("mod", (), {"SampleDC": SampleDC})()
             mock_import.return_value = mock_mod
-            result = _get_dataclass_fields("_test_sample_dc", "SampleDC")
+            result = get_dataclass_fields("_test_sample_dc", "SampleDC")
             assert result is not None
             assert "name" in result
             assert "value" in result
 
     def test_nonexistent_module(self):
-        result = _get_dataclass_fields("nonexistent.module.xyz", "Foo")
+        result = get_dataclass_fields("nonexistent.module.xyz", "Foo")
         assert result is None
 
     def test_nonexistent_class(self):
-        result = _get_dataclass_fields("zephyr.shared.schema.schemas", "NonexistentClass12345")
+        result = get_dataclass_fields("zephyr.shared.schema.schemas", "NonexistentClass12345")
         assert result is None
 
     def test_non_dataclass(self):
-        result = _get_dataclass_fields(
+        result = get_dataclass_fields(
             "zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility", "TYPE_ALIAS_MAP"
         )
         assert result is None
 
 
 class TestRunCheck:
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
     def test_empty_contracts_passes(self, mock_load):
         mock_load.return_value = {"contracts": []}
         result = run_check()
         assert result.passed is True
         assert result.total == 0
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
     def test_contract_no_physical_path_skipped(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -191,7 +191,7 @@ class TestRunCheck:
         assert result.passed is True
         assert len(result.skipped) >= 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
     def test_contract_no_fields_skipped(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -202,9 +202,9 @@ class TestRunCheck:
         assert result.passed is True
         assert len(result.skipped) >= 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.strip_module_path")
     def test_matching_fields_passes(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str", "value": "int"}
@@ -224,9 +224,9 @@ class TestRunCheck:
         assert result.passed is True
         assert result.matched == 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.strip_module_path")
     def test_missing_field_in_code_fails(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str"}
@@ -246,9 +246,9 @@ class TestRunCheck:
         assert result.passed is False
         assert len(result.mismatches) >= 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.strip_module_path")
     def test_extra_field_in_code_fails(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str", "value": "int", "extra": "float"}
@@ -267,8 +267,8 @@ class TestRunCheck:
         result = run_check()
         assert result.passed is False
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.strip_module_path")
     def test_unresolvable_module_skipped(self, mock_strip, mock_load):
         mock_strip.return_value = None
         mock_load.return_value = {
@@ -283,9 +283,9 @@ class TestRunCheck:
         result = run_check()
         assert len(result.skipped) >= 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.strip_module_path")
     def test_type_mismatch_fails(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "int"}

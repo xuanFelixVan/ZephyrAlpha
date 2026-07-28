@@ -71,81 +71,81 @@ class TestEscalationDecision:
 
 class TestEscalateIfNeeded:
     def test_returns_pass_through_when_engine_unavailable(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = escalate_if_needed("security_violation", "test desc")
             assert result.should_block is False
             assert "pass-through" in result.reason
 
     def test_returns_decision_with_operation_type(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = escalate_if_needed("timeout", "timeout desc")
             assert result.operation == "timeout"
 
     def test_returns_decision_with_owner_id(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = escalate_if_needed("custom", "desc", owner_id="sess-1")
             assert result.operation == "custom"
 
 
 class TestCheckOperation:
     def test_detects_rm_rf_as_security_violation(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("rm -rf /tmp/junk")
             assert result.operation == "security_violation"
 
     def test_detects_drop_as_security_violation(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("DROP TABLE users")
             assert result.operation == "security_violation"
 
     def test_detects_deadlock(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("deadlock detected in pipeline")
             assert result.operation == "deadlock"
 
     def test_detects_budget_exceeded(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("budget: exceeded limit")
             assert result.operation == "budget_exceeded"
 
     def test_detects_timeout(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("timeout waiting for response")
             assert result.operation == "timeout"
 
     def test_detects_cascade_failure(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("cascade failure in module")
             assert result.operation == "cascade_failure"
 
     def test_detects_owner_absent(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("owner absent for review")
             assert result.operation == "owner_absent"
 
     def test_defaults_to_custom_for_unknown(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("normal operation")
             assert result.operation == "custom"
 
     def test_case_insensitive_detection(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("RM -RF /everything")
             assert result.operation == "security_violation"
 
 
 class TestCheckOperationBoundary:
     def test_empty_operation_string(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("")
             assert result.operation == "custom"
 
     def test_operation_with_target_path(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("rm -rf /data", target_path="/data/important")
             assert "path=/data/important" in result.reason or result.operation == "security_violation"
 
     def test_operation_with_session_id(self):
-        with patch("zephyr.governance.services.adapter._get_engine", return_value=None):
+        with patch("zephyr.governance.services.adapter.get_engine", return_value=None):
             result = check_operation("deadlock", session_id="sess-123")
             assert result.operation == "deadlock"

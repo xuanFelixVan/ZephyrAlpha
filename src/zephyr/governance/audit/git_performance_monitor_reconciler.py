@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] post-commit 事件触发（任何 commit 都触发，性能监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；测量失败不阻断 commit（warn-only）
-# [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量
+# [MODIFY-GUARD] GATE_ID / PRIORITY / 阈值常量
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -78,22 +78,22 @@ from zephyr.governance.audit.reconciliation_registry import (
 
 logger = logging.getLogger(__name__)
 
-_GATE_ID = "GATE-GIT-PERFORMANCE-MONITOR"
+GATE_ID = "GATE-GIT-PERFORMANCE-MONITOR"
 # priority=870: 晚于 runtime_violation_snapshot(850)，早于 remediation_progress(900)
-_PRIORITY = 870
+PRIORITY = 870
 
 # 阈值（对标 git_health_smoke.py，单一真源原则——两边一致）
-_STATUS_WARN_SECONDS = 10.0
-_STATUS_FAIL_SECONDS = 30.0
+STATUS_WARN_SECONDS = 10.0
+STATUS_FAIL_SECONDS = 30.0
 
 # stale worktree 累积预警阈值——超过此数提示运行 session_worktree_sweep()
-_STALE_WORKTREE_WARN_THRESHOLD = 10
+STALE_WORKTREE_WARN_THRESHOLD = 10
 
 # 性能日志路径（相对 repo root）
-_PERF_LOG_SUBPATH = ".runtime" + "/" + "git_performance_log.jsonl"
+PERF_LOG_SUBPATH = ".runtime" + "/" + "git_performance_log.jsonl"
 
 # 退化趋势检测：连续 N 次计时递增视为退化趋势
-_DEGRADATION_TREND_COUNT = 3
+DEGRADATION_TREND_COUNT = 3
 
 # 单次 git status 超时（秒）
 _STATUS_TIMEOUT = 120.0
@@ -101,10 +101,10 @@ _STATUS_TIMEOUT = 120.0
 
 def _perf_log_path(repo_root: Path) -> Path:
     """性能日志文件路径：.runtime/git_performance_log.jsonl。"""
-    return repo_root / Path(_PERF_LOG_SUBPATH)
+    return repo_root / Path(PERF_LOG_SUBPATH)
 
 
-def _measure_git_status(repo_root: Path) -> tuple[float, int, str]:
+def measure_git_status(repo_root: Path) -> tuple[float, int, str]:
     """测量 git status --short 耗时。
 
     Returns:
@@ -132,7 +132,7 @@ def _measure_git_status(repo_root: Path) -> tuple[float, int, str]:
         return elapsed, -2, str(e)[:120]
 
 
-def _count_stale_worktrees(repo_root: Path) -> int:
+def count_stale_worktrees(repo_root: Path) -> int:
     """统计 .aidrafts/ 下的 sess-* worktree 目录数。
 
     这些是潜在的 stale worktree——session_worktree_sweep 会根据 age + 注册状态 +
@@ -151,7 +151,7 @@ def _count_stale_worktrees(repo_root: Path) -> int:
     return count
 
 
-def _append_perf_log(repo_root: Path, entry: dict) -> None:
+def append_perf_log(repo_root: Path, entry: dict) -> None:
     """追加性能日志条目到 .runtime/git_performance_log.jsonl。
 
     降级：写入失败仅 debug 日志，绝不阻断 reconciler 主流程。
@@ -165,7 +165,7 @@ def _append_perf_log(repo_root: Path, entry: dict) -> None:
         logger.warning("git_performance_monitor: log write failed: %s", e)
 
 
-def _read_recent_perf_entries(repo_root: Path, count: int) -> list[dict]:
+def read_recent_perf_entries(repo_root: Path, count: int) -> list[dict]:
     """读取最近 N 条性能日志条目（用 deque 避免读整个大文件）。
 
     fail-open：读取失败返回空列表（退化趋势检测降级为不触发）。
@@ -191,16 +191,16 @@ def _read_recent_perf_entries(repo_root: Path, count: int) -> list[dict]:
         return []
 
 
-def _detect_degradation_trend(recent_entries: list[dict]) -> tuple[bool, list[float]]:
+def detect_degradation_trend(recent_entries: list[dict]) -> tuple[bool, list[float]]:
     """检测最近 N 条计时是否呈递增趋势（连续 N 次增加）。
 
     Returns:
         ``(is_degrading, recent_times)``——``recent_times`` 为参与判定的计时列表
         （供告警消息展示）。无足够数据时返回 ``(False, [])``。
     """
-    if len(recent_entries) < _DEGRADATION_TREND_COUNT:
+    if len(recent_entries) < DEGRADATION_TREND_COUNT:
         return False, []
-    recent = recent_entries[-_DEGRADATION_TREND_COUNT:]
+    recent = recent_entries[-DEGRADATION_TREND_COUNT:]
     times = [float(e.get("elapsed_s", 0)) for e in recent]
     # 连续递增：每对相邻元素后者严格大于前者
     is_increasing = all(times[i + 1] > times[i] for i in range(len(times) - 1))
@@ -214,7 +214,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
         gateway: GitCommitGateway 实例（仅用其 project_root + _run_git）。
 
     Returns:
-        ReconcilerSpec(gate_id=_GATE_ID, priority=_PRIORITY)。
+        ReconcilerSpec(gate_id=GATE_ID, priority=PRIORITY)。
         trigger 永远返回 True（任何 commit 都触发性能测量）。
     """
     project_root = gateway.project_root
@@ -226,10 +226,10 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         try:
             # 1. 测量 git status 耗时
-            elapsed, status_rc, status_err = _measure_git_status(project_root)
+            elapsed, status_rc, status_err = measure_git_status(project_root)
 
             # 2. 统计 stale worktree
-            stale_count = _count_stale_worktrees(project_root)
+            stale_count = count_stale_worktrees(project_root)
 
             # 3. 获取 commit sha（用于日志关联）
             commit_sha = ""
@@ -249,7 +249,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
                 "status_rc": status_rc,
                 "stale_worktree_count": stale_count,
             }
-            _append_perf_log(project_root, entry)
+            append_perf_log(project_root, entry)
 
             # 5. 三重预警维度判定
             warnings: list[str] = []
@@ -259,14 +259,14 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
                 warnings.append(
                     f"git status 失败(rc={status_rc}): {status_err}"
                 )
-            elif elapsed > _STATUS_FAIL_SECONDS:
+            elif elapsed > STATUS_FAIL_SECONDS:
                 warnings.append(
-                    f"git status 耗时 {elapsed:.1f}s > {_STATUS_FAIL_SECONDS}s fail 阈值"
+                    f"git status 耗时 {elapsed:.1f}s > {STATUS_FAIL_SECONDS}s fail 阈值"
                     f"——index 缓存可能损坏，建议 git gc 或排查 worktree 堆积"
                 )
-            elif elapsed > _STATUS_WARN_SECONDS:
+            elif elapsed > STATUS_WARN_SECONDS:
                 warnings.append(
-                    f"git status 耗时 {elapsed:.1f}s > {_STATUS_WARN_SECONDS}s warn 阈值"
+                    f"git status 耗时 {elapsed:.1f}s > {STATUS_WARN_SECONDS}s warn 阈值"
                     f"——index 缓存需刷新或 worktree 数过多"
                 )
 
@@ -274,7 +274,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
             # #ARCH-WORKTREE-AUTO-SWEEP-001 Phase 1（2026-07-21）：
             # 从 warn-only 升级为 auto-sweep——sweep 三重保护保证安全
             # （不会清理活跃 session 或有未合并提交的 worktree）
-            if stale_count > _STALE_WORKTREE_WARN_THRESHOLD:
+            if stale_count > STALE_WORKTREE_WARN_THRESHOLD:
                 try:
                     from zephyr.gov_enforcement.rule_bridge.session_worktree import (
                         session_worktree_sweep,
@@ -285,14 +285,14 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
                         force_clean_hours=0,
                     )
                     warnings.append(
-                        f"stale worktree {stale_count} > {_STALE_WORKTREE_WARN_THRESHOLD} 阈值，"
+                        f"stale worktree {stale_count} > {STALE_WORKTREE_WARN_THRESHOLD} 阈值，"
                         f"auto-sweep 触发: swept={sweep_result.get('swept', 0)}, "
                         f"skipped={sweep_result.get('skipped', 0)}, "
                         f"warnings={len(sweep_result.get('warnings', []))}"
                     )
                 except Exception as sweep_err:  # noqa: BLE001 — sweep 失败降级为 warn
                     warnings.append(
-                        f"stale worktree {stale_count} > {_STALE_WORKTREE_WARN_THRESHOLD} 阈值，"
+                        f"stale worktree {stale_count} > {STALE_WORKTREE_WARN_THRESHOLD} 阈值，"
                         f"auto-sweep 失败（降级为手动）: {sweep_err}——"
                         f"建议手动运行 session_worktree_sweep()"
                     )
@@ -300,12 +300,12 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
             # 维度 3：退化趋势检测（连续 N 次计时递增）
             # 读最近 N+1 条（含本次刚写的）——但本次刚写未刷盘前读不到，
             # 所以读 N 条历史 + 本次内存中 entry 共 N+1 个数据点
-            recent = _read_recent_perf_entries(project_root, _DEGRADATION_TREND_COUNT + 1)
-            # 包含本次 entry（recent 末尾应已包含，因 _append_perf_log 已写盘）
-            is_degrading, trend_times = _detect_degradation_trend(recent)
+            recent = read_recent_perf_entries(project_root, DEGRADATION_TREND_COUNT + 1)
+            # 包含本次 entry（recent 末尾应已包含，因 append_perf_log 已写盘）
+            is_degrading, trend_times = detect_degradation_trend(recent)
             if is_degrading:
                 warnings.append(
-                    f"git status 计时连续 {_DEGRADATION_TREND_COUNT} 次递增："
+                    f"git status 计时连续 {DEGRADATION_TREND_COUNT} 次递增："
                     f"{[round(t, 2) for t in trend_times]}s——性能退化趋势，"
                     f"建议排查 index 缓存或运行 session_worktree_sweep()"
                 )
@@ -317,28 +317,44 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
                         "; ".join(warnings)
                         + f" (elapsed={elapsed:.2f}s, stale_wt={stale_count})"
                     ),
-                    gate_id=_GATE_ID,
+                    gate_id=GATE_ID,
                 )
             return ReconcileResult(
                 action="clean",
                 detail=(
                     f"git status {elapsed:.2f}s, stale_worktrees={stale_count} "
-                    f"(warn阈值={_STATUS_WARN_SECONDS}s, "
-                    f"stale阈值={_STALE_WORKTREE_WARN_THRESHOLD})"
+                    f"(warn阈值={STATUS_WARN_SECONDS}s, "
+                    f"stale阈值={STALE_WORKTREE_WARN_THRESHOLD})"
                 ),
-                gate_id=_GATE_ID,
+                gate_id=GATE_ID,
             )
         except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
             logger.warning("git_performance_monitor reconciler failed: %s", e)
             return ReconcileResult(
                 action="warn",
                 detail=f"monitor failed: {e}",
-                gate_id=_GATE_ID,
+                gate_id=GATE_ID,
             )
 
     return ReconcilerSpec(
-        gate_id=_GATE_ID,
+        gate_id=GATE_ID,
         trigger=_trigger,
         reconcile=_reconcile,
-        priority=_PRIORITY,
+        priority=PRIORITY,
     )
+
+# === Reverse-hierarchy backward-compat aliases (R5 private-assert elimination) ===
+# Public names above are the primary API. These _-prefixed aliases are kept
+# for backward compatibility with any external importer that still references them.
+_DEGRADATION_TREND_COUNT = DEGRADATION_TREND_COUNT
+_GATE_ID = GATE_ID
+_PERF_LOG_SUBPATH = PERF_LOG_SUBPATH
+_PRIORITY = PRIORITY
+_STALE_WORKTREE_WARN_THRESHOLD = STALE_WORKTREE_WARN_THRESHOLD
+_STATUS_FAIL_SECONDS = STATUS_FAIL_SECONDS
+_STATUS_WARN_SECONDS = STATUS_WARN_SECONDS
+_measure_git_status = measure_git_status
+_count_stale_worktrees = count_stale_worktrees
+_detect_degradation_trend = detect_degradation_trend
+_append_perf_log = append_perf_log
+_read_recent_perf_entries = read_recent_perf_entries

@@ -19,8 +19,8 @@
 - TestMetric31McpVersionCoverage: MCP 工具 version 字段覆盖检测
 - TestMetricsRegistered: METRICS 列表注册完整性（P2 扩展）
 
-测试隔离：mock _iter_prod_py_files() 返回 tmp_path 下的合成 .py 文件；
-不依赖真实仓库状态。M31 测试 mock _MCP_JSON_CANDIDATES 路径。
+测试隔离：mock iter_prod_py_files() 返回 tmp_path 下的合成 .py 文件；
+不依赖真实仓库状态。M31 测试 mock MCP_JSON_CANDIDATES 路径。
 """
 from __future__ import annotations
 
@@ -75,7 +75,7 @@ class TestMetric24FieldShadowing:
             "    id: int\n"
             "    name: str\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
         assert result["metric_id"] == "M24"
@@ -92,7 +92,7 @@ class TestMetric24FieldShadowing:
             "    name: str\n"
             "    value: int\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
         assert result["count"] == 0
@@ -104,7 +104,7 @@ class TestMetric24FieldShadowing:
             "    type: str\n"
             "    format: str\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
         assert result["count"] == 2
@@ -116,7 +116,7 @@ class TestMetric24FieldShadowing:
             "    id: int = 0\n"
             "    type: str = ''\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
         assert result["count"] == 0
@@ -133,7 +133,7 @@ class TestMetric24FieldShadowing:
             "    type: str\n"
             "    format: str\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_24_field_shadowing()
         assert result["count"] == 4
@@ -153,7 +153,7 @@ class TestMetric25ModuleConstMissingFinal:
             "MAX_RETRIES = 5\n"
             "TIMEOUT = 30.0\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
         assert result["metric_id"] == "M25"
@@ -167,7 +167,7 @@ class TestMetric25ModuleConstMissingFinal:
             "MAX_RETRIES: Final[int] = 5\n"
             "TIMEOUT: Final[float] = 30.0\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
         assert result["count"] == 0
@@ -177,7 +177,7 @@ class TestMetric25ModuleConstMissingFinal:
         fp = _write_py(tmp_path, "mod.py", (
             "CONFIG = load_config()\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
         assert result["count"] == 0
@@ -188,7 +188,7 @@ class TestMetric25ModuleConstMissingFinal:
             "retries = 5\n"
             "timeout = 30.0\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
         assert result["count"] == 0
@@ -198,7 +198,7 @@ class TestMetric25ModuleConstMissingFinal:
         fp = _write_py(tmp_path, "mod.py", (
             "MAX_RETRIES: int = 5\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
         assert result["count"] == 1
@@ -210,7 +210,7 @@ class TestMetric25ModuleConstMissingFinal:
             "def foo():\n"
             "    return 42\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_25_module_const_missing_final()
         assert result["count"] == 0
@@ -236,7 +236,7 @@ class TestMetric28SingletonNoLock:
             "            cls._instance = cls()\n"
             "        return cls._instance\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
         assert result["metric_id"] == "M28"
@@ -259,7 +259,7 @@ class TestMetric28SingletonNoLock:
             "                cls._instance = cls()\n"
             "        return cls._instance\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
         assert result["count"] == 0
@@ -270,7 +270,7 @@ class TestMetric28SingletonNoLock:
             "class Foo:\n"
             "    pass\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
         assert result["count"] == 0
@@ -281,7 +281,7 @@ class TestMetric28SingletonNoLock:
             "class Foo:\n"
             "    __instance = None\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
         assert result["count"] == 1
@@ -292,7 +292,7 @@ class TestMetric28SingletonNoLock:
             "class Foo:\n"
             "    _instance = Foo()\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_28_singleton_no_lock()
         assert result["count"] == 0
@@ -312,7 +312,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
             "import os\n"
             "env = os.environ['ZEPHYR_ENV']\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
         assert result["metric_id"] == "M30"
@@ -324,7 +324,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
             "import os\n"
             "env = os.environ.get('ZEPHYR_ENV')\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
         assert result["count"] == 1
@@ -335,7 +335,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
             "import os\n"
             "env = os.getenv('ZEPHYR_ENV')\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
         assert result["count"] == 1
@@ -347,7 +347,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
             "if is_prod():\n"
             "    pass\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
         assert result["count"] == 0
@@ -360,7 +360,7 @@ class TestMetric30ZephyrEnvEnumConsistency:
             "b = os.getenv('ZEPHYR_ENV')\n"
             "c = os.environ.get('ZEPHYR_ENV')\n"
         ))
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_30_zephyr_env_enum_consistency()
         assert result["count"] == 3
@@ -383,7 +383,7 @@ class TestMetric31McpVersionCoverage:
                 {"name": "tool2", "version": "1.0.0"},
             ]
         }), encoding="utf-8")
-        with patch("architecture_health_dashboard._MCP_JSON_CANDIDATES", (mcp_path,)):
+        with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["metric_id"] == "M31"
         assert result["count"] == 1
@@ -398,14 +398,14 @@ class TestMetric31McpVersionCoverage:
                 {"name": "tool2", "version": "2.0.0"},
             ]
         }), encoding="utf-8")
-        with patch("architecture_health_dashboard._MCP_JSON_CANDIDATES", (mcp_path,)):
+        with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 0
 
     def test_mcp_json_not_found(self, tmp_path):
         """mcp.json 不存在返回 error。"""
         nonexistent = tmp_path / "nonexistent.json"
-        with patch("architecture_health_dashboard._MCP_JSON_CANDIDATES", (nonexistent,)):
+        with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (nonexistent,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 0
         assert "not found" in result["error"]
@@ -421,7 +421,7 @@ class TestMetric31McpVersionCoverage:
                 {"name": "d"},
             ]
         }), encoding="utf-8")
-        with patch("architecture_health_dashboard._MCP_JSON_CANDIDATES", (mcp_path,)):
+        with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 3
 
@@ -429,7 +429,7 @@ class TestMetric31McpVersionCoverage:
         """空 tools 列表通过。"""
         mcp_path = tmp_path / "mcp.json"
         mcp_path.write_text(json.dumps({"tools": []}), encoding="utf-8")
-        with patch("architecture_health_dashboard._MCP_JSON_CANDIDATES", (mcp_path,)):
+        with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 0
 
@@ -437,7 +437,7 @@ class TestMetric31McpVersionCoverage:
         """无效 JSON 返回 error。"""
         mcp_path = tmp_path / "mcp.json"
         mcp_path.write_text("{invalid json}", encoding="utf-8")
-        with patch("architecture_health_dashboard._MCP_JSON_CANDIDATES", (mcp_path,)):
+        with patch("architecture_health_dashboard.MCP_JSON_CANDIDATES", (mcp_path,)):
             result = metric_31_mcp_version_coverage()
         assert result["count"] == 0
         assert "parse failed" in result["error"]

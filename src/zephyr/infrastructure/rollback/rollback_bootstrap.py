@@ -46,7 +46,7 @@ from pathlib import Path
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 
-def _git(args: list[str], cwd: Path | None = None, timeout: int = 15) -> subprocess.CompletedProcess[str]:
+def git(args: list[str], cwd: Path | None = None, timeout: int = 15) -> subprocess.CompletedProcess[str]:
     return run_subprocess_hidden(
         ["git"] + args,
         cwd=str(cwd or Path.cwd()),
@@ -56,58 +56,88 @@ def _git(args: list[str], cwd: Path | None = None, timeout: int = 15) -> subproc
     )
 
 
-def _check_git_available() -> bool:
-    result = _git(["--version"])
+def _git(args: list[str], cwd: Path | None = None, timeout: int = 15) -> subprocess.CompletedProcess[str]:
+    """Backward-compatible thin wrapper around :func:`git`."""
+    return git(args, cwd=cwd, timeout=timeout)
+
+
+def check_git_available() -> bool:
+    result = git(["--version"])
     return result.returncode == 0
 
 
-def _get_recent_commits(project_root: Path, count: int = 5) -> list[str]:
-    result = _git(["log", "--oneline", f"-{count}"], cwd=project_root)
+def _check_git_available() -> bool:
+    """Backward-compatible thin wrapper around :func:`check_git_available`."""
+    return check_git_available()
+
+
+def get_recent_commits(project_root: Path, count: int = 5) -> list[str]:
+    result = git(["log", "--oneline", f"-{count}"], cwd=project_root)
     if result.returncode != 0:
         return []
     return [line.split()[0] for line in result.stdout.strip().split("\n") if line]
 
 
-def _git_revert(project_root: Path, commit_sha: str) -> bool:
-    result = _git(["revert", "--no-edit", commit_sha], cwd=project_root)
+def _get_recent_commits(project_root: Path, count: int = 5) -> list[str]:
+    """Backward-compatible thin wrapper around :func:`get_recent_commits`."""
+    return get_recent_commits(project_root, count=count)
+
+
+def git_revert(project_root: Path, commit_sha: str) -> bool:
+    result = git(["revert", "--no-edit", commit_sha], cwd=project_root)
     return result.returncode == 0
 
 
-def _git_status_clean(project_root: Path) -> bool:
-    result = _git(["status", "--porcelain"], cwd=project_root)
+def _git_revert(project_root: Path, commit_sha: str) -> bool:
+    """Backward-compatible thin wrapper around :func:`git_revert`."""
+    return git_revert(project_root, commit_sha)
+
+
+def git_status_clean(project_root: Path) -> bool:
+    result = git(["status", "--porcelain"], cwd=project_root)
     return result.stdout.strip() == ""
 
 
-def _git_head_short(project_root: Path) -> str:
-    result = _git(["rev-parse", "--short", "HEAD"], cwd=project_root)
+def _git_status_clean(project_root: Path) -> bool:
+    """Backward-compatible thin wrapper around :func:`git_status_clean`."""
+    return git_status_clean(project_root)
+
+
+def git_head_short(project_root: Path) -> str:
+    result = git(["rev-parse", "--short", "HEAD"], cwd=project_root)
     return result.stdout.strip()
+
+
+def _git_head_short(project_root: Path) -> str:
+    """Backward-compatible thin wrapper around :func:`git_head_short`."""
+    return git_head_short(project_root)
 
 
 def bootstrap_rollback(project_root: Path | None = None, commit_sha: str = "") -> int:
     project_root = project_root or Path.cwd()
 
-    if not _check_git_available():
+    if not check_git_available():
         # 保留 print（5.20 B/C 类）：本模块是零依赖灾难恢复 CLI，print 即操作员 UX
         # （恢复场景下 logging 未必已配置，直出 stderr/stdout 是必须的可见性通道）
         print("BOOTSTRAP ERROR: git not available", file=sys.stderr)
         return 1
 
     if not commit_sha:
-        commits = _get_recent_commits(project_root, 5)
+        commits = get_recent_commits(project_root, 5)
         if not commits:
             print("BOOTSTRAP ERROR: no commits available for rollback", file=sys.stderr)
             return 2
         commit_sha = commits[0]
 
     print(f"BOOTSTRAP: reverting to {commit_sha}")
-    if not _git_revert(project_root, commit_sha):
+    if not git_revert(project_root, commit_sha):
         print(f"BOOTSTRAP ERROR: revert conflict for {commit_sha}", file=sys.stderr)
         return 3
 
-    head_after = _git_head_short(project_root)
+    head_after = git_head_short(project_root)
     print(f"BOOTSTRAP: reverted to {head_after}")
 
-    if _git_status_clean(project_root):
+    if git_status_clean(project_root):
         print("BOOTSTRAP: working tree clean after revert")
     else:
         print("BOOTSTRAP WARNING: working tree not clean after revert", file=sys.stderr)

@@ -269,33 +269,33 @@ class TestAutoRuntimeCoreLifecycle:
             auto_start_l2=False,
         )
 
-        # mock _init_a2a 和 StatusDashboard 避免外部依赖（参考 test_auto_runtime_fle_integration.py）
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        # mock init_a2a 和 StatusDashboard 避免外部依赖（参考 test_auto_runtime_fle_integration.py）
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             with patch("zephyr.trading.auto_runtime_core.StatusDashboard"):
                 core = AutoRuntimeCore(config=config)
 
         mock_report = _make_mock_boot_report(success=True)
         with (
-            patch.object(core._lifecycle, "boot_sequence", return_value=mock_report),
-            patch.object(core, "_register_task_system_cron_jobs"),
-            patch.object(core, "_register_task_system_hooks"),
-            patch.object(core, "_start_task_queue"),
-            patch.object(core, "_start_blueprint_watcher"),
-            patch.object(core, "_start_fle_scheduler"),
-            patch.object(core, "_run_boot_triple_alignment"),
-            patch.object(core, "_init_escalation_protocol"),
+            patch.object(core.lifecycle, "boot_sequence", return_value=mock_report),
+            patch.object(core, "register_task_system_cron_jobs"),
+            patch.object(core, "register_task_system_hooks"),
+            patch.object(core, "start_task_queue"),
+            patch.object(core, "start_blueprint_watcher"),
+            patch.object(core, "start_fle_scheduler"),
+            patch.object(core, "run_boot_triple_alignment"),
+            patch.object(core, "init_escalation_protocol"),
         ):
             report = core.boot()
             assert report is not None
             assert report.success is True
-            assert core._booted is True
+            assert core.booted is True
 
             shutdown_report = core.shutdown()
             assert shutdown_report is not None
-            assert core._booted is False
+            assert core.booted is False
 
     def test_boot_failure_does_not_set_booted(self, tmp_path):
-        """boot 失败时 _booted 保持 False。"""
+        """boot 失败时 booted 保持 False。"""
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
         from zephyr.trading.runtime_config import RuntimeConfig
 
@@ -310,18 +310,18 @@ class TestAutoRuntimeCoreLifecycle:
             auto_start_l2=False,
         )
 
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             with patch("zephyr.trading.auto_runtime_core.StatusDashboard"):
                 core = AutoRuntimeCore(config=config)
 
         mock_report = _make_mock_boot_report(success=False)
         with (
-            patch.object(core._lifecycle, "boot_sequence", return_value=mock_report),
-            patch.object(core, "_start_fle_scheduler") as mock_fle,
+            patch.object(core.lifecycle, "boot_sequence", return_value=mock_report),
+            patch.object(core, "start_fle_scheduler") as mock_fle,
         ):
             report = core.boot()
             assert report.success is False
-            assert core._booted is False
+            assert core.booted is False
             mock_fle.assert_not_called()  # boot 失败不应调用后续步骤
 
     def test_multiple_boot_shutdown_cycles_no_leak(self, tmp_path):
@@ -341,25 +341,25 @@ class TestAutoRuntimeCoreLifecycle:
         )
 
         for i in range(3):
-            with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+            with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
                 with patch("zephyr.trading.auto_runtime_core.StatusDashboard"):
                     core = AutoRuntimeCore(config=config)
 
             mock_report = _make_mock_boot_report(success=True)
             with (
-                patch.object(core._lifecycle, "boot_sequence", return_value=mock_report),
-                patch.object(core, "_register_task_system_cron_jobs"),
-                patch.object(core, "_register_task_system_hooks"),
-                patch.object(core, "_start_task_queue"),
-                patch.object(core, "_start_blueprint_watcher"),
-                patch.object(core, "_start_fle_scheduler"),
-                patch.object(core, "_run_boot_triple_alignment"),
-                patch.object(core, "_init_escalation_protocol"),
+                patch.object(core.lifecycle, "boot_sequence", return_value=mock_report),
+                patch.object(core, "register_task_system_cron_jobs"),
+                patch.object(core, "register_task_system_hooks"),
+                patch.object(core, "start_task_queue"),
+                patch.object(core, "start_blueprint_watcher"),
+                patch.object(core, "start_fle_scheduler"),
+                patch.object(core, "run_boot_triple_alignment"),
+                patch.object(core, "init_escalation_protocol"),
             ):
                 core.boot()
-                assert core._booted is True
+                assert core.booted is True
                 core.shutdown()
-                assert core._booted is False
+                assert core.booted is False
 
 
 # ============================================================================

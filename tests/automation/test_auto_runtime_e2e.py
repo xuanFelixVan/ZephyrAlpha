@@ -22,7 +22,7 @@
   - 真实 DreamCycle（trigger_archival 真实执行）
 
 仅 mock 外部依赖:
-  - _init_a2a（A2A 协议初始化依赖网络）
+  - init_a2a（A2A 协议初始化依赖网络）
   - boot() 成功后的额外步骤（task_queue/blueprint_watcher/triple_align/escalation/fle_scheduler）
     这些步骤依赖外部服务，不属于 LifecycleManager 核心链路
 
@@ -61,13 +61,13 @@ def _patch_boot_extras(core: AutoRuntimeCore):
     不属于 LifecycleManager 核心链路，mock 掉以隔离外部依赖。
     """
     return [
-        patch.object(core, "_register_task_system_cron_jobs"),
-        patch.object(core, "_register_task_system_hooks"),
-        patch.object(core, "_start_task_queue"),
-        patch.object(core, "_start_blueprint_watcher"),
-        patch.object(core, "_start_fle_scheduler"),
-        patch.object(core, "_run_boot_triple_alignment"),
-        patch.object(core, "_init_escalation_protocol"),
+        patch.object(core, "register_task_system_cron_jobs"),
+        patch.object(core, "register_task_system_hooks"),
+        patch.object(core, "start_task_queue"),
+        patch.object(core, "start_blueprint_watcher"),
+        patch.object(core, "start_fle_scheduler"),
+        patch.object(core, "run_boot_triple_alignment"),
+        patch.object(core, "init_escalation_protocol"),
     ]
 
 
@@ -86,7 +86,7 @@ class TestAutoRuntimeCoreRealBoot:
 
     def test_boot_with_real_lifecycle(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         patches = _patch_boot_extras(core)
@@ -103,12 +103,12 @@ class TestAutoRuntimeCoreRealBoot:
         assert core.capability_registry is not None
         assert core.work_orchestrator is not None
         assert core.stop_gate is not None
-        assert core._health_monitor is not None
+        assert core.health_monitor is not None
 
     def test_boot_creates_real_dirs(self, tmp_path: Path) -> None:
         """验证 boot() 真实创建目录（ensure_runtime_dirs 真实执行）。"""
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         patches = _patch_boot_extras(core)
@@ -132,7 +132,7 @@ class TestAutoRuntimeCoreRealShutdown:
 
     def test_shutdown_with_real_lifecycle(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         patches = _patch_boot_extras(core)
@@ -144,13 +144,13 @@ class TestAutoRuntimeCoreRealShutdown:
 
         # 真实 shutdown
         report = core.shutdown()
-        assert core._booted is False
+        assert core.booted is False
         assert report.steps_completed > 0
 
     def test_shutdown_idempotent(self, tmp_path: Path) -> None:
         """验证多次 shutdown() 不崩溃。"""
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         patches = _patch_boot_extras(core)
@@ -163,7 +163,7 @@ class TestAutoRuntimeCoreRealShutdown:
         core.shutdown()
         # 第二次 shutdown 不应崩溃
         core.shutdown()
-        assert core._booted is False
+        assert core.booted is False
 
 
 class TestAutoRuntimeCoreRealCanStop:
@@ -171,7 +171,7 @@ class TestAutoRuntimeCoreRealCanStop:
 
     def test_can_stop_returns_bool(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         # can_stop 返回 bool（通过 stop_gate.can_stop）
@@ -180,10 +180,10 @@ class TestAutoRuntimeCoreRealCanStop:
 
     def test_can_stop_with_pending_flush(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
-        with patch.object(core._audit_logger, "has_pending_flush", return_value=True):
+        with patch.object(core.audit_logger, "has_pending_flush", return_value=True):
             result = core.can_stop()
             # 有 pending flush 时应不能停止（stop_gate 判断）
             assert isinstance(result, bool)
@@ -194,7 +194,7 @@ class TestAutoRuntimeCoreRealReconcile:
 
     def test_reconcile_returns_report(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         report = core.reconcile()
@@ -208,7 +208,7 @@ class TestAutoRuntimeCoreRealFullCycle:
 
     def test_full_boot_run_shutdown_cycle(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         # Boot
@@ -227,13 +227,13 @@ class TestAutoRuntimeCoreRealFullCycle:
 
         # Shutdown
         shutdown_report = core.shutdown()
-        assert core._booted is False
+        assert core.booted is False
         assert shutdown_report.steps_completed > 0
 
     def test_multiple_boot_shutdown_cycles(self, tmp_path: Path) -> None:
         """验证多次 boot → shutdown 循环不泄漏资源。"""
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         for cycle in range(3):
@@ -247,7 +247,7 @@ class TestAutoRuntimeCoreRealFullCycle:
             assert boot_report.steps_completed > 0
 
             core.shutdown()
-            assert core._booted is False
+            assert core.booted is False
 
 
 class TestAutoRuntimeCoreRealComponents:
@@ -255,7 +255,7 @@ class TestAutoRuntimeCoreRealComponents:
 
     def test_components_are_real_instances(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         # 验证核心组件是真实类型（不是 MagicMock）
@@ -266,13 +266,13 @@ class TestAutoRuntimeCoreRealComponents:
 
         assert isinstance(core.capability_registry, CapabilityRegistry)
         assert isinstance(core.work_orchestrator, WorkOrchestrator)
-        assert isinstance(core._health_monitor, HealthMonitor)
-        assert isinstance(core._dream_cycle, DreamCycle)
+        assert isinstance(core.health_monitor, HealthMonitor)
+        assert isinstance(core.dream_cycle, DreamCycle)
 
     def test_work_orchestrator_real_submit(self, tmp_path: Path) -> None:
         """验证 boot() 后 WorkOrchestrator 可真实 submit 任务。"""
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         from zephyr.trading.work_dag import WorkItem
@@ -291,15 +291,15 @@ class TestAutoRuntimeCoreRealComponents:
     def test_health_monitor_real_probe(self, tmp_path: Path) -> None:
         """验证 boot() 后 HealthMonitor 可真实 register_probe + probe。"""
         config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
+        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore.init_a2a"):
             core = AutoRuntimeCore(config)
 
         from zephyr.trading.health_monitor import ProbeResult
 
-        core._health_monitor.register_probe(
+        core.health_monitor.register_probe(
             "test-cap",
             lambda: ProbeResult(capability_id="test-cap", alive=True, ready=True),
         )
-        result = core._health_monitor.probe("test-cap")
+        result = core.health_monitor.probe("test-cap")
         assert result.alive is True
         assert result.ready is True

@@ -2,11 +2,11 @@
 
 测试内容：
 - tsv_escape（纯函数）
-- write_tsv（mock _http_insert）
-- write_result（mock _http_insert + FetchResult）
-- delete_where（mock _get_client + _get_http_host）
-- query（mock _get_client + _get_http_host）
-- _get_insert_columns（mock query）
+- write_tsv（mock http_insert）
+- write_result（mock http_insert + FetchResult）
+- delete_where（mock get_client + get_http_host）
+- query（mock get_client + get_http_host）
+- get_insert_columns（mock query）
 
 不依赖真实 ClickHouse，用 unittest.mock.patch 替换 TCP/HTTP 传输层。
 """
@@ -22,7 +22,7 @@ from src.zephyr.data.ch_writer import (
     write_result,
     delete_where,
     query,
-    _get_insert_columns,
+    get_insert_columns,
     get_table_engine,
     is_replacing_engine,
 )
@@ -72,14 +72,14 @@ class TestQuery:
     def setup_method(self):
         """每个测试前重置客户端单例。"""
         import src.zephyr.data.ch_writer as cw
-        cw._ch_client = None
-        cw._ch_http_host = None
+        cw.ch_client = None
+        cw.ch_http_host = None
 
     def test_query_select_success(self):
         """SELECT 查询通过 clickhouse-driver 返回 TSV 格式。"""
         mock_client = MagicMock()
         mock_client.execute.return_value = [("col1", "col2")]
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client):
             result = query("SELECT 1")
         assert result == "col1\tcol2\n"
 
@@ -90,7 +90,7 @@ class TestQuery:
             ("code", "String", "", "", "", "", ""),
             ("date", "Date", "DEFAULT", "today()", "", "", ""),
         ]
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client):
             result = query("DESCRIBE TABLE c1_market.kline_daily")
         assert "code\tString" in result
         assert "date\tDate" in result
@@ -99,7 +99,7 @@ class TestQuery:
         """DDL 语句（TRUNCATE/ALTER）返回空字符串。"""
         mock_client = MagicMock()
         mock_client.execute.return_value = []
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client):
             result = query("TRUNCATE TABLE c1_market.test")
         assert result == ""
 
@@ -107,7 +107,7 @@ class TestQuery:
         """SELECT 返回空结果时返回空字符串。"""
         mock_client = MagicMock()
         mock_client.execute.return_value = []
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client):
             result = query("SELECT 1 WHERE 0")
         assert result == ""
 
@@ -118,8 +118,8 @@ class TestQuery:
         mock_resp.read.return_value = b"fallback_result\n"
         mock_conn = MagicMock()
         mock_conn.getresponse.return_value = mock_resp
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._get_http_host", return_value="172.24.30.100"):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer.get_http_host", return_value="172.24.30.100"):
                 with patch("http.client.HTTPConnection", return_value=mock_conn):
                     result = query("SELECT 1")
         assert result == "fallback_result\n"
@@ -133,47 +133,47 @@ class TestQuery:
         mock_resp.read.return_value = b"fallback_result\n"
         mock_conn = MagicMock()
         mock_conn.getresponse.return_value = mock_resp
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
-            with patch("src.zephyr.data.ch_writer._get_http_host", return_value="172.24.30.100"):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client):
+            with patch("src.zephyr.data.ch_writer.get_http_host", return_value="172.24.30.100"):
                 with patch("http.client.HTTPConnection", return_value=mock_conn):
                     result = query("SELECT 1")
         assert result == "fallback_result\n"
 
     def test_query_both_fail_returns_empty(self):
         """driver 不可用且 HTTP 也不可用时返回空字符串。"""
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._get_http_host", return_value=""):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer.get_http_host", return_value=""):
                 result = query("SELECT 1")
         assert result == ""
 
 
 class TestWriteTsv:
-    """write_tsv 函数测试（mock _http_insert）。"""
+    """write_tsv 函数测试（mock http_insert）。"""
 
     def test_write_success(self):
         """成功写入返回 True。"""
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http:
             ok = write_tsv("c1_market.kline_daily", "(col1, col2)", b"v1\tv2\n")
         assert ok is True
         mock_http.assert_called_once()
 
     def test_write_empty_data(self):
         """空数据返回 False。"""
-        with patch("src.zephyr.data.ch_writer._http_insert") as mock_http:
+        with patch("src.zephyr.data.ch_writer.http_insert") as mock_http:
             ok = write_tsv("c1_market.kline_daily", "(col1)", b"")
         assert ok is False
         mock_http.assert_not_called()
 
     def test_write_failure_http_local_fallback(self):
         """HTTP 失败后本地落盘也成功，write_tsv 返回 False（非 CH 已提交）。"""
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=False):
             with patch("zephyr.data.local_replay.save_fallback", return_value=True):
                 ok = write_tsv("c1_market.kline_daily", "(col1)", b"v1\n")
         assert ok is False  # 本地落盘不等于 CH 已提交
 
     def test_write_outcome_local_fallback_is_not_ch_commit(self):
         """本地落盘成功必须可区分于 ClickHouse 已提交。"""
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=False):
             with patch("zephyr.data.local_replay.save_fallback", return_value=True):
                 outcome = write_tsv_outcome("c1_market.kline_daily", "(col1)", b"v1\n")
         assert outcome.disposition is WriteDisposition.LOCAL_DURABLE
@@ -181,26 +181,26 @@ class TestWriteTsv:
 
     def test_write_outcome_ch_committed(self):
         """HTTP 成功时 outcome 为 CH_COMMITTED。"""
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True):
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=True):
             outcome = write_tsv_outcome("c1_market.kline_daily", "(col1)", b"v1\n")
         assert outcome.disposition is WriteDisposition.CH_COMMITTED
         assert outcome.is_ch_committed is True
 
     def test_write_auto_columns(self):
         """columns=None 时自动查询列清单。"""
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
-            with patch("src.zephyr.data.ch_writer._get_insert_columns", return_value="(a, b)"):
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http:
+            with patch("src.zephyr.data.ch_writer.get_insert_columns", return_value="(a, b)"):
                 ok = write_tsv("c1_market.kline_daily", None, b"v1\tv2\n")
         assert ok is True
 
 
 class TestWriteResult:
-    """write_result 函数测试（mock _http_insert）。"""
+    """write_result 函数测试（mock http_insert）。"""
 
     def setup_method(self):
         """清理模块级缓存，防止跨用例污染。"""
         from src.zephyr.data import ch_writer
-        ch_writer._table_cols_cache.clear()
+        ch_writer.table_cols_cache.clear()
 
     def test_write_result_success(self):
         """成功写入 FetchResult。"""
@@ -211,8 +211,8 @@ class TestWriteResult:
             last_key="2026-07-05",
             elapsed_sec=1.0,
         )
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http, \
-             patch("src.zephyr.data.ch_writer._get_table_columns_set",
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http, \
+             patch("src.zephyr.data.ch_writer.get_table_columns_set",
                    return_value={"code", "date", "close"}):
             ok = write_result(result)
         assert ok is True
@@ -232,7 +232,7 @@ class TestWriteResult:
             elapsed_sec=0,
             error="连接超时",
         )
-        with patch("src.zephyr.data.ch_writer._http_insert") as mock_http:
+        with patch("src.zephyr.data.ch_writer.http_insert") as mock_http:
             ok = write_result(result)
         assert ok is False
         mock_http.assert_not_called()
@@ -246,7 +246,7 @@ class TestWriteResult:
             last_key="2026-07-05",
             elapsed_sec=0,
         )
-        with patch("src.zephyr.data.ch_writer._http_insert") as mock_http:
+        with patch("src.zephyr.data.ch_writer.http_insert") as mock_http:
             ok = write_result(result)
         assert ok is True
         mock_http.assert_not_called()
@@ -260,7 +260,7 @@ class TestWriteResult:
             last_key="",
             elapsed_sec=0,
         )
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
+        with patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http:
             ok = write_result(result)
         assert ok is True
         tsv_bytes = mock_http.call_args[0][1]
@@ -273,13 +273,13 @@ class TestDeleteWhere:
     def setup_method(self):
         """每个测试前重置客户端单例。"""
         import src.zephyr.data.ch_writer as cw
-        cw._ch_client = None
-        cw._ch_http_host = None
+        cw.ch_client = None
+        cw.ch_http_host = None
 
     def test_delete_success_via_driver(self):
         """通过 clickhouse-driver 成功删除。"""
         mock_client = MagicMock()
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client) as mock_gc:
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=mock_client) as mock_gc:
             ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
         assert ok is True
         mock_client.execute.assert_called_once()
@@ -290,28 +290,28 @@ class TestDeleteWhere:
         mock_resp.status = 200
         mock_conn = MagicMock()
         mock_conn.getresponse.return_value = mock_resp
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._get_http_host", return_value="172.24.30.100"):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer.get_http_host", return_value="172.24.30.100"):
                 with patch("http.client.HTTPConnection", return_value=mock_conn):
                     ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
         assert ok is True
 
     def test_delete_both_fail_returns_false(self):
         """driver 不可用且 HTTP 也不可用时返回 False。"""
-        with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._get_http_host", return_value=""):
+        with patch("src.zephyr.data.ch_writer.get_client", return_value=None):
+            with patch("src.zephyr.data.ch_writer.get_http_host", return_value=""):
                 ok = delete_where("nonexistent", "1=1")
         assert ok is False
 
 
 class TestGetInsertColumns:
-    """_get_insert_columns 函数测试（mock query）。"""
+    """get_insert_columns 函数测试（mock query）。"""
 
     def test_with_default_columns(self):
         """含 DEFAULT 列时应排除。"""
         describe_output = "code\tString\t\ndate\tDate\tDEFAULT\ttoday()\nclose\tFloat64\t\n"
         with patch("src.zephyr.data.ch_writer.query", return_value=describe_output):
-            cols = _get_insert_columns("c1_market.kline_daily")
+            cols = get_insert_columns("c1_market.kline_daily")
         assert "code" in cols
         assert "close" in cols
         assert "date" not in cols  # DEFAULT 列排除
@@ -319,7 +319,7 @@ class TestGetInsertColumns:
     def test_empty_describe(self):
         """DESCRIBE 返回空时返回 *。"""
         with patch("src.zephyr.data.ch_writer.query", return_value=""):
-            cols = _get_insert_columns("nonexistent")
+            cols = get_insert_columns("nonexistent")
         assert cols == "*"
 
 
@@ -329,7 +329,7 @@ class TestGetTableEngine:
     def setup_method(self):
         """每个测试前清空引擎缓存，避免测试间污染。"""
         import src.zephyr.data.ch_writer as cw
-        cw._table_engine_cache.clear()
+        cw.table_engine_cache.clear()
 
     def test_replacing_engine(self):
         """ReplacingMergeTree 引擎正确识别。"""

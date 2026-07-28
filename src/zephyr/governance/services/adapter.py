@@ -91,7 +91,7 @@ _engine_cache: dict[str, Any] = {}
 _cache_lock: threading.Lock | None = None
 
 
-def _get_engine(name: str = "adapter") -> object:
+def get_engine(name: str = "adapter") -> object:
     global _cache_lock
     if name in _engine_cache:
         return _engine_cache[name]
@@ -111,13 +111,18 @@ def _get_engine(name: str = "adapter") -> object:
         return None
 
 
+def _get_engine(name: str = "adapter") -> object:
+    """Backward-compatible thin wrapper; prefer :func:`get_engine`."""
+    return get_engine(name)
+
+
 def escalate_if_needed(
     operation_type: str,
     description: str,
     owner_id: str = "",
     source_event_id: str = "",
 ) -> EscalationDecision:
-    engine = _get_engine()
+    engine = get_engine()
     if engine is None:
         return EscalationDecision(
             operation=operation_type,

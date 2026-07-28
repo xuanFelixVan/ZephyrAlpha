@@ -19,7 +19,7 @@
 - TestMetric29ResourceNotInTryFinally: 资源未在 try/finally 检测
 - TestMetricsRegistered: METRICS 列表注册完整性
 
-测试隔离：mock _iter_prod_py_files() 返回 tmp_path 下的合成 .py 文件；
+测试隔离：mock iter_prod_py_files() 返回 tmp_path 下的合成 .py 文件；
 不依赖真实仓库状态。
 """
 from __future__ import annotations
@@ -67,7 +67,7 @@ class TestMetric22DocstringCoverage:
     def test_public_function_without_docstring_detected(self, tmp_path):
         """公共函数无 docstring → 计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "def foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_22_docstring_coverage()
         assert result["metric_id"] == "M22"
@@ -77,7 +77,7 @@ class TestMetric22DocstringCoverage:
     def test_public_function_with_docstring_passes(self, tmp_path):
         """公共函数有 docstring → 不计入违规。"""
         fp = _write_py(tmp_path, "mod.py", 'def foo():\n    """doc."""\n    pass\n')
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_22_docstring_coverage()
         assert result["count"] == 0
@@ -85,7 +85,7 @@ class TestMetric22DocstringCoverage:
     def test_private_function_without_docstring_passes(self, tmp_path):
         """私有函数（_ 开头）无 docstring → 不计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "def _foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_22_docstring_coverage()
         assert result["count"] == 0
@@ -93,7 +93,7 @@ class TestMetric22DocstringCoverage:
     def test_async_function_without_docstring_detected(self, tmp_path):
         """async 公共函数无 docstring → 计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "async def foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_22_docstring_coverage()
         assert result["count"] == 1
@@ -101,7 +101,7 @@ class TestMetric22DocstringCoverage:
     def test_multiple_violations_all_reported(self, tmp_path):
         """多个无 docstring 函数全报告。"""
         fp = _write_py(tmp_path, "mod.py", "def foo():\n    pass\ndef bar():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_22_docstring_coverage()
         assert result["count"] == 2
@@ -118,7 +118,7 @@ class TestMetric23AsyncioCalls:
     def test_asyncio_run_detected(self, tmp_path):
         """asyncio.run( 调用 → 计入。"""
         fp = _write_py(tmp_path, "mod.py", "import asyncio\nasyncio.run(main())\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_23_asyncio_calls()
         assert result["metric_id"] == "M23"
@@ -127,7 +127,7 @@ class TestMetric23AsyncioCalls:
     def test_get_event_loop_detected(self, tmp_path):
         """get_event_loop( 调用 → 计入。"""
         fp = _write_py(tmp_path, "mod.py", "loop = get_event_loop()\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_23_asyncio_calls()
         assert result["count"] == 1
@@ -135,7 +135,7 @@ class TestMetric23AsyncioCalls:
     def test_no_asyncio_calls_passes(self, tmp_path):
         """无 asyncio 调用 → 0。"""
         fp = _write_py(tmp_path, "mod.py", "def foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_23_asyncio_calls()
         assert result["count"] == 0
@@ -143,7 +143,7 @@ class TestMetric23AsyncioCalls:
     def test_asyncio_module_attribute_not_counted(self, tmp_path):
         """asyncio.sleep 等非 run/get_event_loop 调用 → 不计入。"""
         fp = _write_py(tmp_path, "mod.py", "import asyncio\nasyncio.sleep(1)\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_23_asyncio_calls()
         assert result["count"] == 0
@@ -160,7 +160,7 @@ class TestMetric26TodoFixme:
     def test_todo_detected(self, tmp_path):
         """# TODO 标记 → 计入。"""
         fp = _write_py(tmp_path, "mod.py", "# TODO: fix this\npass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_26_todo_fixme()
         assert result["metric_id"] == "M26"
@@ -169,7 +169,7 @@ class TestMetric26TodoFixme:
     def test_fixme_detected(self, tmp_path):
         """# FIXME 标记 → 计入。"""
         fp = _write_py(tmp_path, "mod.py", "# FIXME: broken\npass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_26_todo_fixme()
         assert result["count"] == 1
@@ -177,7 +177,7 @@ class TestMetric26TodoFixme:
     def test_case_insensitive(self, tmp_path):
         """# todo / # Todo 大小写不敏感 → 计入。"""
         fp = _write_py(tmp_path, "mod.py", "# todo: lower case\n# Todo: mixed case\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_26_todo_fixme()
         assert result["count"] == 2
@@ -185,7 +185,7 @@ class TestMetric26TodoFixme:
     def test_no_todo_fixme_passes(self, tmp_path):
         """无 TODO/FIXME → 0。"""
         fp = _write_py(tmp_path, "mod.py", "def foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_26_todo_fixme()
         assert result["count"] == 0
@@ -193,7 +193,7 @@ class TestMetric26TodoFixme:
     def test_word_boundary_not_false_positive(self, tmp_path):
         """'todolist' 等无 word boundary → 不计入。"""
         fp = _write_py(tmp_path, "mod.py", "x = 'todolist for today'\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_26_todo_fixme()
         assert result["count"] == 0
@@ -210,7 +210,7 @@ class TestMetric27OpenNotInWith:
     def test_open_not_in_with_detected(self, tmp_path):
         """裸 open() 调用 → 计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "f = open('file.txt')\nf.read()\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_27_open_not_in_with()
         assert result["metric_id"] == "M27"
@@ -219,7 +219,7 @@ class TestMetric27OpenNotInWith:
     def test_open_in_with_passes(self, tmp_path):
         """with open() → 不计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "with open('file.txt') as f:\n    f.read()\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_27_open_not_in_with()
         assert result["count"] == 0
@@ -227,7 +227,7 @@ class TestMetric27OpenNotInWith:
     def test_multiple_open_calls_all_reported(self, tmp_path):
         """多个裸 open() → 全报告。"""
         fp = _write_py(tmp_path, "mod.py", "f1 = open('a')\nf2 = open('b')\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_27_open_not_in_with()
         assert result["count"] == 2
@@ -235,7 +235,7 @@ class TestMetric27OpenNotInWith:
     def test_no_open_calls_passes(self, tmp_path):
         """无 open() → 0。"""
         fp = _write_py(tmp_path, "mod.py", "def foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_27_open_not_in_with()
         assert result["count"] == 0
@@ -252,7 +252,7 @@ class TestMetric29ResourceNotInTryFinally:
     def test_bare_open_not_in_try_detected(self, tmp_path):
         """裸 open() 不在 try/finally → 计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "f = open('file.txt')\nf.read()\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_29_resource_not_in_try_finally()
         assert result["metric_id"] == "M29"
@@ -262,7 +262,7 @@ class TestMetric29ResourceNotInTryFinally:
         """open() 在 try/finally → 不计入违规。"""
         content = "try:\n    f = open('file.txt')\n    f.read()\nfinally:\n    f.close()\n"
         fp = _write_py(tmp_path, "mod.py", content)
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_29_resource_not_in_try_finally()
         assert result["count"] == 0
@@ -270,7 +270,7 @@ class TestMetric29ResourceNotInTryFinally:
     def test_open_in_with_passes(self, tmp_path):
         """open() 在 with → 不计入违规（with 等价 try/finally）。"""
         fp = _write_py(tmp_path, "mod.py", "with open('file.txt') as f:\n    f.read()\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_29_resource_not_in_try_finally()
         assert result["count"] == 0
@@ -278,7 +278,7 @@ class TestMetric29ResourceNotInTryFinally:
     def test_lock_acquire_not_in_try_detected(self, tmp_path):
         """Lock() 不在 try/finally → 计入违规。"""
         fp = _write_py(tmp_path, "mod.py", "lock = Lock()\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_29_resource_not_in_try_finally()
         assert result["count"] == 1
@@ -287,7 +287,7 @@ class TestMetric29ResourceNotInTryFinally:
         """Lock() 在 try/finally → 不计入违规。"""
         content = "try:\n    lock = Lock()\nfinally:\n    pass\n"
         fp = _write_py(tmp_path, "mod.py", content)
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_29_resource_not_in_try_finally()
         assert result["count"] == 0
@@ -295,7 +295,7 @@ class TestMetric29ResourceNotInTryFinally:
     def test_no_resource_acquire_passes(self, tmp_path):
         """无资源获取 → 0。"""
         fp = _write_py(tmp_path, "mod.py", "def foo():\n    pass\n")
-        with patch("architecture_health_dashboard._iter_prod_py_files", return_value=[fp]):
+        with patch("architecture_health_dashboard.iter_prod_py_files", return_value=[fp]):
             with patch("architecture_health_dashboard.REPO_ROOT", tmp_path):
                 result = metric_29_resource_not_in_try_finally()
         assert result["count"] == 0

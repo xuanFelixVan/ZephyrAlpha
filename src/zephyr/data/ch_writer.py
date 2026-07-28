@@ -36,7 +36,7 @@
 
 设计要点：
 - 不依赖 tmp/_ds_common.py（TTL=task_bound，src/ 不能长期依赖 tmp/）
-- 自封装 _http_insert / tsv_escape / _get_insert_columns 逻辑
+- 自封装 http_insert / tsv_escape / get_insert_columns 逻辑
 - 端点配置从 config/.env.clickhouse 读取，不硬编码 IP/端口
 """
 from __future__ import annotations
@@ -83,7 +83,8 @@ SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
 SQL_INSERT_TSV = "INSERT INTO {table} {cols_clause} SETTINGS async_insert=0, max_partitions_per_insert_block=0 FORMAT TSV"
 
 # clickhouse-driver TCP 客户端单例
-_ch_client = None
+ch_client = None
+_ch_client = ch_client  # 向后兼容别名（R5 公共化）
 # TCP 失败冷却时间戳（避免每次 query 都重试 TCP 连接）
 _tcp_fail_ts: float = 0
 _TCP_COOLDOWN_SEC = 15  # TCP 连接失败后 15 秒内不再重试
@@ -91,7 +92,7 @@ _TCP_COOLDOWN_SEC = 15  # TCP 连接失败后 15 秒内不再重试
 # 线程安全锁（run_schedule 并行化后多任务共用 ch_writer 全局状态）
 # clickhouse-driver Client 非线程安全（TCP 长连接并发 execute 会导致协议错乱）
 _ch_lock = threading.Lock()
-# 连接创建锁（保护 _ch_client/_ch_http_host 单例创建，秒级临界区）
+# 连接创建锁（保护 ch_client/ch_http_host 单例创建，秒级临界区）
 # 锁顺序：_cache_lock → _connect_lock → _ch_lock（单向，无死锁）
 _connect_lock = threading.Lock()
 # 表列/引擎缓存读写保护（防 TOCTOU 竞态，避免多线程重复查询）
@@ -133,7 +134,7 @@ def _record_write_outcome(disposition: WriteDisposition, elapsed: float) -> None
     reg.observe("zephyr_ch_write_latency_seconds", elapsed)
 
 
-def _get_client():
+def get_client():
     """获取 clickhouse-driver TCP 客户端单例（懒初始化）。
 
     clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口）。
@@ -148,18 +149,18 @@ def _get_client():
     - 与 _ch_lock（execute 串行化）分离
     - 冷却期检查在锁外快速路径
     """
-    global _ch_client, _tcp_fail_ts
+    global ch_client, _tcp_fail_ts
     # 快速路径1（无锁读，CPython GIL 保证引用读原子）
-    if _ch_client is not None:
-        return _ch_client
+    if ch_client is not None:
+        return ch_client
     # 快速路径2：冷却期内跳过 TCP 连接尝试（无锁读）
     import time as _time
     if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
         return None
     with _connect_lock:
         # double-check（防止竞态期间其他线程已创建）
-        if _ch_client is not None:
-            return _ch_client
+        if ch_client is not None:
+            return ch_client
         # 锁内二次检查冷却期
         if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
             return None
@@ -171,10 +172,10 @@ def _get_client():
                        password=_CH_PASSWORD, connect_timeout=3,
                        tcp_keepalive=True, sync_request_timeout=10)
             c.execute("SELECT 1")
-            _ch_client = c
+            ch_client = c
             _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 0)
             log.info("clickhouse-driver TCP 已连接 (%s:%s)", _CH_HOST, _CH_TCP_PORT)
-            return _ch_client
+            return ch_client
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("clickhouse-driver TCP 连接失败 (%s:%s): %s", _CH_HOST, _CH_TCP_PORT, e)
         _tcp_fail_ts = _time.time()
@@ -182,36 +183,42 @@ def _get_client():
         return None
 
 
+def _get_client():
+    """向后兼容 thin wrapper（R5 公共化）。"""
+    return get_client()
+
+
 # HTTP 主机缓存 + 冷却期
-_ch_http_host: str | None = None
+ch_http_host: str | None = None
+_ch_http_host = ch_http_host  # 向后兼容别名（R5 公共化）
 _http_fail_ts: float = 0
 _HTTP_COOLDOWN_SEC = 15  # HTTP 失败后 15 秒内不再重试（缩短冷却期减少偶发降级时间）
 
 
-def _get_http_host() -> str:
+def get_http_host() -> str:
     """获取可用的 ClickHouse HTTP 主机。
 
     策略（Hyper-V 迁移，2026-07-16）：
     - 直连配置的 CLICKHOUSE_HOST（默认 172.24.30.100）
-    - 结果缓存到全局 _ch_http_host
+    - 结果缓存到全局 ch_http_host
     - HTTP 失败后冷却期内返回空字符串（调用方应降级到本地落盘）
 
     线程安全：
     - 用 _connect_lock double-check locking 保护单例创建
     - 冷却期检查在锁外快速路径
     """
-    global _ch_http_host, _http_fail_ts
+    global ch_http_host, _http_fail_ts
     # 快速路径1（无锁读）
-    if _ch_http_host is not None:
-        return _ch_http_host
+    if ch_http_host is not None:
+        return ch_http_host
     # 快速路径2：冷却期内跳过（无锁读）
     import time as _time
     if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
         return ""
     with _connect_lock:
         # double-check
-        if _ch_http_host is not None:
-            return _ch_http_host
+        if ch_http_host is not None:
+            return ch_http_host
         if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
             return ""
         # 直连配置的 ClickHouse host
@@ -220,11 +227,11 @@ def _get_http_host() -> str:
             conn.request("GET", "/ping")
             resp = conn.getresponse()
             if resp.status == 200:
-                _ch_http_host = _CH_HOST
+                ch_http_host = _CH_HOST
                 conn.close()
                 _get_metrics_registry().set_gauge("zephyr_ch_http_cooldown_active", 0)
                 log.info("ClickHouse HTTP 已连接 (%s:%s)", _CH_HOST, _CH_HTTP_PORT)
-                return _ch_http_host
+                return ch_http_host
             conn.close()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("ClickHouse HTTP 连接失败 (%s:%s): %s", _CH_HOST, _CH_HTTP_PORT, e)
@@ -235,21 +242,26 @@ def _get_http_host() -> str:
         return ""
 
 
+def _get_http_host() -> str:
+    """向后兼容 thin wrapper（R5 公共化）。"""
+    return get_http_host()
+
+
 def _invalidate_tcp_client(reason: str = "") -> None:
     """清理已断开的 TCP 连接单例 + 设置冷却期（CH 重启自愈，裁定 #ARCH-CH-014）。
 
-    当 client.execute 失败时调用，确保下次 _get_client() 会重新创建连接。
-    不清理的话 _get_client 快速路径1返回旧 Client，冷却期机制完全失效。
+    当 client.execute 失败时调用，确保下次 get_client() 会重新创建连接。
+    不清理的话 get_client 快速路径1返回旧 Client，冷却期机制完全失效。
     """
-    global _ch_client, _tcp_fail_ts
+    global ch_client, _tcp_fail_ts
     import time as _time
     with _connect_lock:
-        if _ch_client is not None:
+        if ch_client is not None:
             try:
-                _ch_client.disconnect()
+                ch_client.disconnect()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
-            _ch_client = None
+            ch_client = None
             _tcp_fail_ts = _time.time()
             _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 1)
             log.info("TCP 连接已失效（%s），%ds 冷却后重试", reason, _TCP_COOLDOWN_SEC)
@@ -257,11 +269,11 @@ def _invalidate_tcp_client(reason: str = "") -> None:
 
 def _invalidate_http_host(reason: str = "") -> None:
     """清理已断开的 HTTP host 单例 + 设置冷却期（CH 重启自愈，裁定 #ARCH-CH-014）。"""
-    global _ch_http_host, _http_fail_ts
+    global ch_http_host, _http_fail_ts
     import time as _time
     with _connect_lock:
-        if _ch_http_host is not None:
-            _ch_http_host = None
+        if ch_http_host is not None:
+            ch_http_host = None
             _http_fail_ts = _time.time()
             _get_metrics_registry().set_gauge("zephyr_ch_http_cooldown_active", 1)
             log.info("HTTP 连接已失效（%s），%ds 冷却后重试", reason, _HTTP_COOLDOWN_SEC)
@@ -279,7 +291,7 @@ def _ch_http_headers() -> dict[str, str]:
     }
 
 
-def _http_insert(
+def http_insert(
     sql: str,
     tsv_bytes: bytes,
     timeout: int = _DEFAULT_TIMEOUT,
@@ -299,7 +311,7 @@ def _http_insert(
     Returns:
         是否成功。
     """
-    http_host = _get_http_host()
+    http_host = get_http_host()
     if not http_host:
         return False  # HTTP 不可用（冷却期内或探测失败），调用方降级到本地落盘
     path = f"/?query={urllib.parse.quote(sql)}"
@@ -319,6 +331,15 @@ def _http_insert(
         return False
 
 
+def _http_insert(
+    sql: str,
+    tsv_bytes: bytes,
+    timeout: int = _DEFAULT_TIMEOUT,
+) -> bool:
+    """向后兼容 thin wrapper（R5 公共化）。"""
+    return http_insert(sql, tsv_bytes, timeout=timeout)
+
+
 def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
     """执行 CH 查询，返回 TSV 格式字符串。
 
@@ -329,7 +350,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
     失败时 log 错误并返回空字符串（不抛异常）。
     """
     # 策略1: clickhouse-driver TCP
-    client = _get_client()
+    client = get_client()
     if client is not None:
         try:
             sql_stripped = sql.strip()
@@ -353,7 +374,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
             _invalidate_tcp_client(f"query execute 失败: {e}")
 
     # 策略2: HTTP API
-    http_host = _get_http_host()
+    http_host = get_http_host()
     if http_host:
         path = f"/?query={urllib.parse.quote(sql)}"
         try:
@@ -411,7 +432,7 @@ def _parse_cols_clause(columns: str) -> list[str] | None:
     return [p for p in parts if p] or None
 
 
-def _get_insert_columns(table: str) -> str:
+def get_insert_columns(table: str) -> str:
     """查询表的非 DEFAULT 列清单（用于 INSERT 时显式指定列）。
 
     DESCRIBE TABLE 输出字段: name, type, default_type, default_expression, ...
@@ -440,11 +461,17 @@ def _get_insert_columns(table: str) -> str:
     return "(" + ", ".join(cols) + ")"
 
 
+def _get_insert_columns(table: str) -> str:
+    """向后兼容 thin wrapper（R5 公共化）。"""
+    return get_insert_columns(table)
+
+
 # 表列缓存（避免每次 write_result 都查 DESCRIBE TABLE）
-_table_cols_cache: dict[str, set[str]] = {}
+table_cols_cache: dict[str, set[str]] = {}
+_table_cols_cache = table_cols_cache  # 向后兼容别名（R5 公共化）
 
 
-def _get_table_columns_set(table: str) -> set[str]:
+def get_table_columns_set(table: str) -> set[str]:
     """查询表的全部列名集合（含 DEFAULT/MATERIALIZED/ALIAS 列）。
 
     用于 write_result 列过滤：只插入表中存在的列。
@@ -455,12 +482,12 @@ def _get_table_columns_set(table: str) -> set[str]:
         列名集合。查询失败返回空集合。
     """
     # 快速路径（无锁读）
-    if table in _table_cols_cache:
-        return _table_cols_cache[table]
+    if table in table_cols_cache:
+        return table_cols_cache[table]
     with _cache_lock:
         # double-check
-        if table in _table_cols_cache:
-            return _table_cols_cache[table]
+        if table in table_cols_cache:
+            return table_cols_cache[table]
         out = query(f"DESCRIBE TABLE {table}")
         if not out.strip():
             return set()
@@ -471,12 +498,18 @@ def _get_table_columns_set(table: str) -> set[str]:
             parts = line.split("\t")
             if len(parts) >= 1:
                 cols.add(parts[0])
-        _table_cols_cache[table] = cols
+        table_cols_cache[table] = cols
         return cols
 
 
+def _get_table_columns_set(table: str) -> set[str]:
+    """向后兼容 thin wrapper（R5 公共化）。"""
+    return get_table_columns_set(table)
+
+
 # 表引擎缓存（避免每次都查 system.tables）
-_table_engine_cache: dict[str, str] = {}
+table_engine_cache: dict[str, str] = {}
+_table_engine_cache = table_engine_cache  # 向后兼容别名（R5 公共化）
 
 
 def get_table_engine(table: str) -> str:
@@ -492,12 +525,12 @@ def get_table_engine(table: str) -> str:
         引擎名字符串。查询失败返回空字符串。
     """
     # 快速路径（无锁读）
-    if table in _table_engine_cache:
-        return _table_engine_cache[table]
+    if table in table_engine_cache:
+        return table_engine_cache[table]
     with _cache_lock:
         # double-check
-        if table in _table_engine_cache:
-            return _table_engine_cache[table]
+        if table in table_engine_cache:
+            return table_engine_cache[table]
         # table 形如 "c1_market.kline_daily"，拆成 database + name
         parts = table.split(".", 1)
         if len(parts) == 2:
@@ -507,7 +540,7 @@ def get_table_engine(table: str) -> str:
             sql = SQL_ENGINE_BY_NAME.format(table)
         out = query(sql)
         engine = out.strip()
-        _table_engine_cache[table] = engine
+        table_engine_cache[table] = engine
         return engine
 
 
@@ -549,11 +582,11 @@ def write_tsv_outcome(
         log.warning("write_tsv(%s): 空数据，跳过", table)
         _record_write_outcome(WriteDisposition.NOT_DURABLE, time.time() - _t0)
         return WriteOutcome(WriteDisposition.NOT_DURABLE, "empty payload")
-    cols_clause = columns if columns else _get_insert_columns(table)
+    cols_clause = columns if columns else get_insert_columns(table)
     sql = SQL_INSERT_TSV.format(table=table, cols_clause=cols_clause)
 
     # 策略1: HTTP API（主路径）
-    if _http_insert(sql, tsv_bytes, timeout=timeout):
+    if http_insert(sql, tsv_bytes, timeout=timeout):
         _record_write_outcome(WriteDisposition.CH_COMMITTED, time.time() - _t0)
         return WriteOutcome(WriteDisposition.CH_COMMITTED, "http")
     if not create_fallback:
@@ -565,7 +598,7 @@ def write_tsv_outcome(
     # 策略2: 本地落盘兜底（裁定 #ARCH-CH-013，CH 不可达时数据不丢失）
     # 数据写入本地 TSV 文件，待 CH 恢复后自动回灌
     from zephyr.data.local_replay import save_fallback
-    # cols_clause=="*" 意味着 _get_insert_columns 在 CH 不可用时返回的未校验值，
+    # cols_clause=="*" 意味着 get_insert_columns 在 CH 不可用时返回的未校验值，
     # 回灌时 "INSERT INTO t * FORMAT TSV" 非法；存 None 让回灌时重新查询表列
     # （裁定 #ARCH-CH-013 Phase 1 根因修复）
     fallback_cols = None if cols_clause == "*" else cols_clause
@@ -625,7 +658,7 @@ def write_result(
             eff_cols = _parse_cols_clause(columns)
     elif result.columns:
         # 自动列过滤：只插入表中存在的列
-        table_cols = _get_table_columns_set(result.table)
+        table_cols = get_table_columns_set(result.table)
         if table_cols:
             common_cols = [c for c in result.columns if c in table_cols]
             if not common_cols:
@@ -698,7 +731,7 @@ def delete_where(
     """
     sql = f"ALTER TABLE {table} DELETE WHERE {condition}"
     # 策略1: clickhouse-driver TCP
-    client = _get_client()
+    client = get_client()
     if client is not None:
         try:
             with _ch_lock:  # 串行化 execute（clickhouse-driver Client 非线程安全）
@@ -708,7 +741,7 @@ def delete_where(
             log.warning("clickhouse-driver delete 失败，降级到 HTTP: %s", e)
             _invalidate_tcp_client(f"delete execute 失败: {e}")
     # 策略2: HTTP API
-    http_host = _get_http_host()
+    http_host = get_http_host()
     if http_host:
         path = f"/?query={urllib.parse.quote(sql)}"
         try:
@@ -767,13 +800,13 @@ def health_check() -> dict[str, str]:
     result["endpoint"] = f"{_CH_HOST}:{_CH_TCP_PORT}/{_CH_HTTP_PORT}"
 
     # TCP 探测（重置冷却期强制测试）
-    global _tcp_fail_ts, _ch_client, _ch_http_host, _http_fail_ts
+    global _tcp_fail_ts, ch_client, ch_http_host, _http_fail_ts
     old_tcp_ts = _tcp_fail_ts
-    old_client = _ch_client
+    old_client = ch_client
     _tcp_fail_ts = 0
-    _ch_client = None
+    ch_client = None
     try:
-        c = _get_client()
+        c = get_client()
         if c is not None:
             c.execute("SELECT 1")
             result["tcp"] = "ok"
@@ -784,14 +817,14 @@ def health_check() -> dict[str, str]:
     finally:
         # 恢复原状态（不污染全局单例）
         _tcp_fail_ts = old_tcp_ts
-        _ch_client = old_client
+        ch_client = old_client
 
     # HTTP 探测（重置冷却期强制测试）
     old_http_ts = _http_fail_ts
-    old_http_host = _ch_http_host
+    old_http_host = ch_http_host
     _http_fail_ts = 0
-    _ch_http_host = None
-    host = _get_http_host()
+    ch_http_host = None
+    host = get_http_host()
     result["http_host"] = host or ""
     if host:
         try:
@@ -806,6 +839,6 @@ def health_check() -> dict[str, str]:
         result["http"] = "fail"
     # 恢复原状态
     _http_fail_ts = old_http_ts
-    _ch_http_host = old_http_host
+    ch_http_host = old_http_host
 
     return result

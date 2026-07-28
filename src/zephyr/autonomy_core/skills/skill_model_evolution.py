@@ -34,7 +34,7 @@ from __future__ import annotations
 
 from typing import Any
 
-_MODEL_PROFILES: dict[str, dict[str, Any]] = {
+MODEL_PROFILES: dict[str, dict[str, Any]] = {
     "deepseek-v3": {
         "family": "deepseek",
         "max_context": 65536,
@@ -85,24 +85,31 @@ _MODEL_PROFILES: dict[str, dict[str, Any]] = {
     },
 }
 
+# Backward-compatible alias for legacy private access.
+_MODEL_PROFILES = MODEL_PROFILES
+
 
 class SkillModelEvolution:
     """Skill 模型进化兼容性评估器"""
 
     @classmethod
-    def _find_model(cls, model_ref: str) -> dict[str, Any] | None:
+    def find_model(cls, model_ref: str) -> dict[str, Any] | None:
         model_lower = model_ref.lower().replace(" ", "-")
-        for key, profile in _MODEL_PROFILES.items():
+        for key, profile in MODEL_PROFILES.items():
             if key in model_lower or model_lower in key:
                 return profile
-        for key, profile in _MODEL_PROFILES.items():
+        for key, profile in MODEL_PROFILES.items():
             family = profile["family"]
             if family in model_lower:
                 return profile
         return None
 
     @classmethod
-    def _check_tool_compat(
+    def _find_model(cls, model_ref: str) -> dict[str, Any] | None:
+        return cls.find_model(model_ref)
+
+    @classmethod
+    def check_tool_compat(
         cls,
         old_profile: dict[str, Any],
         new_profile: dict[str, Any],
@@ -124,7 +131,15 @@ class SkillModelEvolution:
         }
 
     @classmethod
-    def _check_style_compat(
+    def _check_tool_compat(
+        cls,
+        old_profile: dict[str, Any],
+        new_profile: dict[str, Any],
+    ) -> dict[str, Any]:
+        return cls.check_tool_compat(old_profile, new_profile)
+
+    @classmethod
+    def check_style_compat(
         cls,
         old_profile: dict[str, Any],
         new_profile: dict[str, Any],
@@ -143,7 +158,15 @@ class SkillModelEvolution:
         }
 
     @classmethod
-    def _check_budget_impact(
+    def _check_style_compat(
+        cls,
+        old_profile: dict[str, Any],
+        new_profile: dict[str, Any],
+    ) -> dict[str, Any]:
+        return cls.check_style_compat(old_profile, new_profile)
+
+    @classmethod
+    def check_budget_impact(
         cls,
         old_profile: dict[str, Any],
         new_profile: dict[str, Any],
@@ -174,7 +197,15 @@ class SkillModelEvolution:
         }
 
     @classmethod
-    def _compute_risk(cls, scores: list[float]) -> str:
+    def _check_budget_impact(
+        cls,
+        old_profile: dict[str, Any],
+        new_profile: dict[str, Any],
+    ) -> dict[str, Any]:
+        return cls.check_budget_impact(old_profile, new_profile)
+
+    @classmethod
+    def compute_risk(cls, scores: list[float]) -> str:
         avg = sum(scores) / len(scores) if scores else 100.0
         if avg >= 90:
             return "minimal"
@@ -187,7 +218,11 @@ class SkillModelEvolution:
         return "critical"
 
     @classmethod
-    def _generate_actions(
+    def _compute_risk(cls, scores: list[float]) -> str:
+        return cls.compute_risk(scores)
+
+    @classmethod
+    def generate_actions(
         cls,
         tool_compat: dict[str, Any],
         style_compat: dict[str, Any],
@@ -240,14 +275,24 @@ class SkillModelEvolution:
         return actions
 
     @classmethod
+    def _generate_actions(
+        cls,
+        tool_compat: dict[str, Any],
+        style_compat: dict[str, Any],
+        budget_impact: dict[str, Any],
+        risk: str,
+    ) -> list[dict[str, str]]:
+        return cls.generate_actions(tool_compat, style_compat, budget_impact, risk)
+
+    @classmethod
     def assess_impact(
         cls,
         skill_id: str,
         old_model: str,
         new_model: str,
     ) -> dict[str, Any]:
-        old_prof = cls._find_model(old_model)
-        new_prof = cls._find_model(new_model)
+        old_prof = cls.find_model(old_model)
+        new_prof = cls.find_model(new_model)
 
         if old_prof is None:
             return {
@@ -271,17 +316,17 @@ class SkillModelEvolution:
                 "actions": [],
             }
 
-        tool_compat = cls._check_tool_compat(old_prof, new_prof)
-        style_compat = cls._check_style_compat(old_prof, new_prof)
-        budget_impact = cls._check_budget_impact(old_prof, new_prof)
+        tool_compat = cls.check_tool_compat(old_prof, new_prof)
+        style_compat = cls.check_style_compat(old_prof, new_prof)
+        budget_impact = cls.check_budget_impact(old_prof, new_prof)
 
         scores = [
             tool_compat["score"],
             style_compat["score"],
             budget_impact["score"],
         ]
-        risk = cls._compute_risk(scores)
-        actions = cls._generate_actions(tool_compat, style_compat, budget_impact, risk)
+        risk = cls.compute_risk(scores)
+        actions = cls.generate_actions(tool_compat, style_compat, budget_impact, risk)
 
         return {
             "skill_id": skill_id,

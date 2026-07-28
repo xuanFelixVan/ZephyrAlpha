@@ -877,7 +877,7 @@ def metric_11_pg_domain_consistency() -> dict:
 # ── 指标 12/13/14 共享：生产 .py 文件 AST 扫描 ─────────────────────────────
 
 
-def _iter_prod_py_files() -> list[Path]:
+def iter_prod_py_files() -> list[Path]:
     """生产 .py 文件清单（src/zephyr + scripts/governance，排除 tests/_archive）。"""
     exclude = EXCLUDE_DIRS | {"_archive", "tests", "__pycache__"}
     files: list[Path] = []
@@ -885,6 +885,10 @@ def _iter_prod_py_files() -> list[Path]:
         if scan_dir.exists():
             files.extend(iter_files(scan_dir, extensions=frozenset({".py"}), exclude_dirs=exclude))
     return files
+
+
+# 向后兼容别名（R5 私有断言消除：公共 API 为主实现，_xxx 保留为别名）
+_iter_prod_py_files = iter_prod_py_files
 
 
 def _scan_py_file_ast(fp: Path) -> tuple[ast.Module | None, list[str]]:
@@ -974,7 +978,7 @@ def metric_12_broad_except_swallow() -> dict:
     豁免：`# noqa: BLE001`（ruff 标准码，项目既有"已审视宽泛捕获"约定）。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, lines = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -1198,7 +1202,7 @@ def metric_14_abc_completeness() -> dict:
     ABC 名），比对每个抽象方法是否覆写、覆写签名位置参数是否漂移。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _lines = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -1704,7 +1708,7 @@ def metric_22_docstring_coverage() -> dict:
     豁免：无（warn-only 趋势监控）。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _ = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -1738,7 +1742,7 @@ def metric_23_asyncio_calls() -> dict:
     范围：生产代码，排除 tests/_archive。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         try:
             source = fp.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
@@ -1767,7 +1771,7 @@ def metric_26_todo_fixme() -> dict:
     范围：生产代码，排除 tests/_archive。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         try:
             source = fp.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
@@ -1801,7 +1805,7 @@ def metric_27_open_not_in_with() -> dict:
     范围：生产代码，排除 tests/_archive。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _ = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -1852,7 +1856,7 @@ def metric_29_resource_not_in_try_finally() -> dict:
     简化策略：只统计 acquire 调用（open()/Lock()/acquire()）不在 try 块内。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _ = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -1921,7 +1925,7 @@ def metric_24_field_shadowing() -> dict:
     范围：src/zephyr/**/*.py，排除 tests/_archive。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _ = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -2015,7 +2019,7 @@ def metric_25_module_const_missing_final() -> dict:
     仅检测大写常量命名风格（CONST_NAME）。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _ = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -2081,7 +2085,7 @@ def metric_28_singleton_no_lock() -> dict:
     范围：src/zephyr/**/*.py，排除 tests/_archive。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         tree, _ = _scan_py_file_ast(fp)
         if tree is None:
             continue
@@ -2118,7 +2122,7 @@ def metric_30_zephyr_env_enum_consistency() -> dict:
     范围：src/zephyr/**/*.py，排除 tests/_archive。
     """
     violations: list[str] = []
-    for fp in _iter_prod_py_files():
+    for fp in iter_prod_py_files():
         try:
             source = fp.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
@@ -2136,11 +2140,14 @@ def metric_30_zephyr_env_enum_consistency() -> dict:
 # ── 指标 31：MCP version 字段覆盖率（5.35 API 版本管理）─────────────────────
 
 
-_MCP_JSON_CANDIDATES = (
+MCP_JSON_CANDIDATES = (
     REPO_ROOT / "src" / "zephyr" / "integration" / "mcp" / "mcp.json",
     REPO_ROOT / "config" / "mcp.json",
     REPO_ROOT / "mcp.json",
 )
+
+# 向后兼容别名（R5 私有断言消除：公共 API 为主实现，_xxx 保留为别名）
+_MCP_JSON_CANDIDATES = MCP_JSON_CANDIDATES
 
 
 def metric_31_mcp_version_coverage() -> dict:
@@ -2151,7 +2158,7 @@ def metric_31_mcp_version_coverage() -> dict:
     范围：mcp.json（候选路径：src/zephyr/integration/mcp/mcp.json, config/mcp.json, mcp.json）。
     """
     mcp_path = None
-    for candidate in _MCP_JSON_CANDIDATES:
+    for candidate in MCP_JSON_CANDIDATES:
         if candidate.exists():
             mcp_path = candidate
             break

@@ -157,26 +157,26 @@ class TestLoadMatrix:
         assert m.match(_make_profile()) == []
 
     def test_hallu_dims_loaded(self, matcher: JobMatcher):
-        assert "fabrication" in matcher._hallu_dims
-        assert matcher._hallu_dims["fabrication"] == pytest.approx(0.20)
-        assert len(matcher._hallu_dims) == 9
+        assert "fabrication" in matcher.hallu_dims
+        assert matcher.hallu_dims["fabrication"] == pytest.approx(0.20)
+        assert len(matcher.hallu_dims) == 9
 
     def test_tool_axis_capabilities_in_matrix(self):
         """Tool 轴 (ROADMAP-02): function_calling/tool_chaining 出现在岗位 bonus 中。"""
         m = JobMatcher()
         # refactor_specialist 应有 function_calling + tool_chaining bonus
-        refactor = m._jobs.get("refactor_specialist", {})
+        refactor = m.jobs.get("refactor_specialist", {})
         bonus = refactor.get("bonus", {})
         assert "function_calling" in bonus
         assert "tool_chaining" in bonus
         # code_generator 应有 function_calling bonus
-        gen = m._jobs.get("code_generator", {})
+        gen = m.jobs.get("code_generator", {})
         assert "function_calling" in gen.get("bonus", {})
         # architecture_reviewer 应有 tool_chaining bonus
-        arch = m._jobs.get("architecture_reviewer", {})
+        arch = m.jobs.get("architecture_reviewer", {})
         assert "tool_chaining" in arch.get("bonus", {})
         # rule_gatekeeper 必须有 max_cost (Cost 轴修复)
-        assert "max_cost" in m._jobs.get("rule_gatekeeper", {})
+        assert "max_cost" in m.jobs.get("rule_gatekeeper", {})
 
 
 # ── 2. _check_required ────────────────────────────────────
@@ -184,7 +184,7 @@ class TestLoadMatrix:
 class TestCheckRequired:
     def test_all_satisfied(self, matcher: JobMatcher):
         grades = {"code_edit_precision": "B", "refactor": "C"}
-        ok, missing = matcher._check_required(
+        ok, missing = matcher.check_required(
             grades, {"code_edit_precision": "C", "refactor": "D"}
         )
         assert ok is True
@@ -192,7 +192,7 @@ class TestCheckRequired:
 
     def test_partial_fail(self, matcher: JobMatcher):
         grades = {"code_edit_precision": "B", "refactor": "F"}
-        ok, missing = matcher._check_required(
+        ok, missing = matcher.check_required(
             grades, {"code_edit_precision": "C", "refactor": "D"}
         )
         assert ok is False
@@ -202,20 +202,20 @@ class TestCheckRequired:
     def test_missing_capability_defaults_F(self, matcher: JobMatcher):
         """能力缺失 → 默认 F 级, 不满足 C 要求。"""
         grades = {"code_edit_precision": "B"}  # refactor 缺失
-        ok, missing = matcher._check_required(
+        ok, missing = matcher.check_required(
             grades, {"code_edit_precision": "C", "refactor": "D"}
         )
         assert ok is False
         assert any("refactor" in m for m in missing)
 
     def test_empty_required(self, matcher: JobMatcher):
-        ok, missing = matcher._check_required({}, {})
+        ok, missing = matcher.check_required({}, {})
         assert ok is True
         assert missing == []
 
     def test_exact_grade_satisfies(self, matcher: JobMatcher):
         """刚好达到 required 级别 = 满足 (>=)。"""
-        ok, _ = matcher._check_required({"cap": "C"}, {"cap": "C"})
+        ok, _ = matcher.check_required({"cap": "C"}, {"cap": "C"})
         assert ok is True
 
 
@@ -224,7 +224,7 @@ class TestCheckRequired:
 class TestComputeBonus:
     def test_all_hit(self, matcher: JobMatcher):
         grades = {"dead_code_removal": "B", "code_generate": "C"}
-        ratio, summary = matcher._compute_bonus(
+        ratio, summary = matcher.compute_bonus(
             grades, {"dead_code_removal": "C", "code_generate": "D"}
         )
         assert ratio == 1.0
@@ -233,7 +233,7 @@ class TestComputeBonus:
 
     def test_partial_hit(self, matcher: JobMatcher):
         grades = {"dead_code_removal": "B", "code_generate": "F"}
-        ratio, summary = matcher._compute_bonus(
+        ratio, summary = matcher.compute_bonus(
             grades, {"dead_code_removal": "C", "code_generate": "D"}
         )
         assert ratio == 0.5
@@ -241,13 +241,13 @@ class TestComputeBonus:
         assert "code_generate" not in summary
 
     def test_empty_bonus(self, matcher: JobMatcher):
-        ratio, summary = matcher._compute_bonus({"cap": "A"}, {})
+        ratio, summary = matcher.compute_bonus({"cap": "A"}, {})
         assert ratio == 0.0
         assert summary == ""
 
     def test_none_hit(self, matcher: JobMatcher):
         grades = {"dead_code_removal": "F", "code_generate": "F"}
-        ratio, summary = matcher._compute_bonus(
+        ratio, summary = matcher.compute_bonus(
             grades, {"dead_code_removal": "C", "code_generate": "D"}
         )
         assert ratio == 0.0
@@ -261,7 +261,7 @@ class TestComputeHallucinationScore:
     def test_zero_hallucination_full_score(self, matcher: JobMatcher):
         """零幻觉 → 满分 1.0。"""
         hallu = HallucinationBreakdown()  # 全 0
-        score = matcher._compute_hallucination_score(hallu, max_hallu=0.4)
+        score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         assert score == pytest.approx(1.0, abs=0.01)
 
     def test_within_expectation(self, matcher: JobMatcher):
@@ -272,7 +272,7 @@ class TestComputeHallucinationScore:
             instruction_drift=0.2, format_hallucination=0.2, quantity_hallucination=0.2,
         )
         assert hallu.overall_rate == pytest.approx(0.2, abs=0.01)
-        score = matcher._compute_hallucination_score(hallu, max_hallu=0.4)
+        score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         # 0.7 + 0.3 * (1 - 0.2/0.4) = 0.7 + 0.15 = 0.85
         assert score == pytest.approx(0.85, abs=0.02)
 
@@ -283,7 +283,7 @@ class TestComputeHallucinationScore:
             overclaim=0.4, context_drift=0.4, source_confusion=0.4,
             instruction_drift=0.4, format_hallucination=0.4, quantity_hallucination=0.4,
         )
-        score = matcher._compute_hallucination_score(hallu, max_hallu=0.4)
+        score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         assert score == pytest.approx(0.7, abs=0.02)
 
     def test_exceed_expectation_decay(self, matcher: JobMatcher):
@@ -293,7 +293,7 @@ class TestComputeHallucinationScore:
             overclaim=0.6, context_drift=0.6, source_confusion=0.6,
             instruction_drift=0.6, format_hallucination=0.6, quantity_hallucination=0.6,
         )
-        score = matcher._compute_hallucination_score(hallu, max_hallu=0.4)
+        score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         # excess = (0.6-0.4)/0.4 = 0.5; score = 0.7 - 0.7*0.5 = 0.35
         assert score == pytest.approx(0.35, abs=0.02)
 
@@ -304,7 +304,7 @@ class TestComputeHallucinationScore:
             overclaim=0.8, context_drift=0.8, source_confusion=0.8,
             instruction_drift=0.8, format_hallucination=0.8, quantity_hallucination=0.8,
         )
-        score = matcher._compute_hallucination_score(hallu, max_hallu=0.4)
+        score = matcher.compute_hallucination_score(hallu, max_hallu=0.4)
         assert score == 0.0
 
     def test_max_hallu_zero_uses_absolute(self, matcher: JobMatcher):
@@ -314,7 +314,7 @@ class TestComputeHallucinationScore:
             overclaim=0.3, context_drift=0.3, source_confusion=0.3,
             instruction_drift=0.3, format_hallucination=0.3, quantity_hallucination=0.3,
         )
-        score = matcher._compute_hallucination_score(hallu, max_hallu=0.0)
+        score = matcher.compute_hallucination_score(hallu, max_hallu=0.0)
         assert score == pytest.approx(0.7, abs=0.01)
 
 
@@ -533,44 +533,44 @@ class TestCostBreakdown:
 # 成本是维度非硬门: claude 贵但必要时仍可用
 
 class TestComputeCostScore:
-    """JobMatcher._compute_cost_score 测试。"""
+    """JobMatcher.compute_cost_score 测试。"""
 
     def test_local_model_full_score(self, matcher: JobMatcher):
         """本地模型 → cost_score=1.0 (成本≈0)。"""
         c = CostBreakdown(deployment_mode="local")
-        score = matcher._compute_cost_score(c, max_cost=0.05)
+        score = matcher.compute_cost_score(c, max_cost=0.05)
         assert score == 1.0
 
     def test_api_within_budget(self, matcher: JobMatcher):
         """API cost<=max_cost → 0.7~1.0 线性 (越便宜越好)。"""
         c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.01)
         # cost=0.01, max=0.05 → 0.7+0.3*(1-0.01/0.05)=0.7+0.3*0.8=0.94
-        score = matcher._compute_cost_score(c, max_cost=0.05)
+        score = matcher.compute_cost_score(c, max_cost=0.05)
         assert score == pytest.approx(0.94, abs=0.02)
 
     def test_api_at_threshold(self, matcher: JobMatcher):
         """API cost=max_cost → 0.7 (刚好满足期望下限)。"""
         c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.05)
-        score = matcher._compute_cost_score(c, max_cost=0.05)
+        score = matcher.compute_cost_score(c, max_cost=0.05)
         assert score == pytest.approx(0.7, abs=0.02)
 
     def test_api_exceed_budget_decay(self, matcher: JobMatcher):
         """API cost>max_cost → 衰减但不一票否决。"""
         c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.075)
         # cost=0.075, max=0.05 → excess=(0.075-0.05)/0.05=0.5 → 0.7-0.7*0.5=0.35
-        score = matcher._compute_cost_score(c, max_cost=0.05)
+        score = matcher.compute_cost_score(c, max_cost=0.05)
         assert score == pytest.approx(0.35, abs=0.02)
 
     def test_api_double_exceed_zero(self, matcher: JobMatcher):
         """API cost=2*max → 超出 100%, score=0.0 (但仍参与匹配)。"""
         c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.10)
-        score = matcher._compute_cost_score(c, max_cost=0.05)
+        score = matcher.compute_cost_score(c, max_cost=0.05)
         assert score == 0.0
 
     def test_max_cost_zero_uses_absolute(self, matcher: JobMatcher):
         """max_cost=0 (只接受本地) → 用 cost.cost_score 绝对分。"""
         c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.5)
-        score = matcher._compute_cost_score(c, max_cost=0.0)
+        score = matcher.compute_cost_score(c, max_cost=0.0)
         # cost_score = 1.0 - (0.5-0.01)/0.99 = 0.505
         assert score == pytest.approx(0.505, abs=0.01)
 

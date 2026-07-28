@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.autonomy_core.skills.skill_model_evolution import _MODEL_PROFILES, SkillModelEvolution
+from zephyr.autonomy_core.skills.skill_model_evolution import MODEL_PROFILES, SkillModelEvolution
 
 
 class TestSkillModelEvolutionInstantiation:
@@ -23,41 +23,41 @@ class TestSkillModelEvolutionInstantiation:
         assert hasattr(SkillModelEvolution, "assess_impact")
 
     def test_has_find_model(self):
-        assert hasattr(SkillModelEvolution, "_find_model")
+        assert hasattr(SkillModelEvolution, "find_model")
 
 
 class TestFindModel:
     def test_exact_match(self):
-        result = SkillModelEvolution._find_model("deepseek-v3")
+        result = SkillModelEvolution.find_model("deepseek-v3")
         assert result is not None
         assert result["family"] == "deepseek"
 
     def test_case_insensitive(self):
-        result = SkillModelEvolution._find_model("DeepSeek-V3")
+        result = SkillModelEvolution.find_model("DeepSeek-V3")
         assert result is not None
         assert result["family"] == "deepseek"
 
     def test_partial_match(self):
-        result = SkillModelEvolution._find_model("claude-sonnet")
+        result = SkillModelEvolution.find_model("claude-sonnet")
         assert result is not None
         assert result["family"] == "claude"
 
     def test_family_match(self):
-        result = SkillModelEvolution._find_model("deepseek-custom-model")
+        result = SkillModelEvolution.find_model("deepseek-custom-model")
         assert result is not None
         assert result["family"] == "deepseek"
 
     def test_unknown_model_returns_none(self):
-        result = SkillModelEvolution._find_model("nonexistent-model-xyz")
+        result = SkillModelEvolution.find_model("nonexistent-model-xyz")
         assert result is None
 
     def test_empty_string_returns_first_match(self):
-        result = SkillModelEvolution._find_model("")
+        result = SkillModelEvolution.find_model("")
         assert result is not None
 
     def test_all_known_models_findable(self):
-        for name in _MODEL_PROFILES:
-            result = SkillModelEvolution._find_model(name)
+        for name in MODEL_PROFILES:
+            result = SkillModelEvolution.find_model(name)
             assert result is not None, f"Failed to find model: {name}"
 
 
@@ -65,7 +65,7 @@ class TestCheckToolCompat:
     def test_compatible_models(self):
         old = {"tool_support": ["read_file", "write_file", "grep"]}
         new = {"tool_support": ["read_file", "write_file", "grep", "glob"]}
-        result = SkillModelEvolution._check_tool_compat(old, new)
+        result = SkillModelEvolution.check_tool_compat(old, new)
         assert result["compatible"] is True
         assert result["score"] == 100.0
         assert result["tools_lost"] == []
@@ -73,7 +73,7 @@ class TestCheckToolCompat:
     def test_lost_tools(self):
         old = {"tool_support": ["read_file", "write_file", "run_command"]}
         new = {"tool_support": ["read_file", "write_file"]}
-        result = SkillModelEvolution._check_tool_compat(old, new)
+        result = SkillModelEvolution.check_tool_compat(old, new)
         assert result["compatible"] is False
         assert "run_command" in result["tools_lost"]
         assert result["score"] < 100.0
@@ -81,14 +81,14 @@ class TestCheckToolCompat:
     def test_empty_old_tools(self):
         old = {"tool_support": []}
         new = {"tool_support": ["read_file"]}
-        result = SkillModelEvolution._check_tool_compat(old, new)
+        result = SkillModelEvolution.check_tool_compat(old, new)
         assert result["compatible"] is True
         assert result["score"] == 100.0
 
     def test_gained_tools(self):
         old = {"tool_support": ["read_file"]}
         new = {"tool_support": ["read_file", "write_file"]}
-        result = SkillModelEvolution._check_tool_compat(old, new)
+        result = SkillModelEvolution.check_tool_compat(old, new)
         assert "write_file" in result["tools_gained"]
 
 
@@ -96,21 +96,21 @@ class TestCheckStyleCompat:
     def test_shared_styles(self):
         old = {"recommended_style": ["structured", "step-by-step", "table"]}
         new = {"recommended_style": ["structured", "step-by-step", "chain-of-thought"]}
-        result = SkillModelEvolution._check_style_compat(old, new)
+        result = SkillModelEvolution.check_style_compat(old, new)
         assert result["compatible"] is True
         assert len(result["styles_shared"]) >= 2
 
     def test_no_shared_styles(self):
         old = {"recommended_style": ["style_a", "style_b"]}
         new = {"recommended_style": ["style_c", "style_d"]}
-        result = SkillModelEvolution._check_style_compat(old, new)
+        result = SkillModelEvolution.check_style_compat(old, new)
         assert result["compatible"] is False
         assert result["styles_shared"] == []
 
     def test_empty_old_styles(self):
         old = {"recommended_style": []}
         new = {"recommended_style": ["structured"]}
-        result = SkillModelEvolution._check_style_compat(old, new)
+        result = SkillModelEvolution.check_style_compat(old, new)
         assert result["score"] == 0.0
 
 
@@ -118,53 +118,53 @@ class TestCheckBudgetImpact:
     def test_same_efficiency(self):
         old = {"token_efficiency": 0.85, "max_context": 65536}
         new = {"token_efficiency": 0.85, "max_context": 65536}
-        result = SkillModelEvolution._check_budget_impact(old, new)
+        result = SkillModelEvolution.check_budget_impact(old, new)
         assert result["compatible"] is True
         assert result["efficiency_change_pct"] == 0.0
 
     def test_lower_efficiency(self):
         old = {"token_efficiency": 0.90, "max_context": 131072}
         new = {"token_efficiency": 0.50, "max_context": 32768}
-        result = SkillModelEvolution._check_budget_impact(old, new)
+        result = SkillModelEvolution.check_budget_impact(old, new)
         assert result["efficiency_change_pct"] < 0
 
     def test_zero_old_efficiency(self):
         old = {"token_efficiency": 0.0, "max_context": 65536}
         new = {"token_efficiency": 0.85, "max_context": 65536}
-        result = SkillModelEvolution._check_budget_impact(old, new)
+        result = SkillModelEvolution.check_budget_impact(old, new)
         assert "score" in result
 
 
 class TestComputeRisk:
     def test_minimal_risk(self):
-        assert SkillModelEvolution._compute_risk([95, 92, 90]) == "minimal"
+        assert SkillModelEvolution.compute_risk([95, 92, 90]) == "minimal"
 
     def test_low_risk(self):
-        assert SkillModelEvolution._compute_risk([75, 80, 70]) == "low"
+        assert SkillModelEvolution.compute_risk([75, 80, 70]) == "low"
 
     def test_medium_risk(self):
-        assert SkillModelEvolution._compute_risk([55, 60, 50]) == "medium"
+        assert SkillModelEvolution.compute_risk([55, 60, 50]) == "medium"
 
     def test_high_risk(self):
-        assert SkillModelEvolution._compute_risk([35, 40, 30]) == "high"
+        assert SkillModelEvolution.compute_risk([35, 40, 30]) == "high"
 
     def test_critical_risk(self):
-        assert SkillModelEvolution._compute_risk([10, 15, 20]) == "critical"
+        assert SkillModelEvolution.compute_risk([10, 15, 20]) == "critical"
 
     def test_empty_scores(self):
-        assert SkillModelEvolution._compute_risk([]) == "minimal"
+        assert SkillModelEvolution.compute_risk([]) == "minimal"
 
     def test_boundary_90(self):
-        assert SkillModelEvolution._compute_risk([90, 90, 90]) == "minimal"
+        assert SkillModelEvolution.compute_risk([90, 90, 90]) == "minimal"
 
     def test_boundary_70(self):
-        assert SkillModelEvolution._compute_risk([70, 70, 70]) == "low"
+        assert SkillModelEvolution.compute_risk([70, 70, 70]) == "low"
 
     def test_boundary_50(self):
-        assert SkillModelEvolution._compute_risk([50, 50, 50]) == "medium"
+        assert SkillModelEvolution.compute_risk([50, 50, 50]) == "medium"
 
     def test_boundary_30(self):
-        assert SkillModelEvolution._compute_risk([30, 30, 30]) == "high"
+        assert SkillModelEvolution.compute_risk([30, 30, 30]) == "high"
 
 
 class TestGenerateActions:
@@ -172,28 +172,28 @@ class TestGenerateActions:
         tool = {"tools_lost": []}
         style = {"compatible": True, "styles_new_only": []}
         budget = {"compatible": True, "context_ratio": 1.0}
-        actions = SkillModelEvolution._generate_actions(tool, style, budget, "minimal")
+        actions = SkillModelEvolution.generate_actions(tool, style, budget, "minimal")
         assert any(a["priority"] == "P3" for a in actions)
 
     def test_lost_tools_generates_p0(self):
         tool = {"tools_lost": ["run_command"]}
         style = {"compatible": True, "styles_new_only": []}
         budget = {"compatible": True, "context_ratio": 1.0}
-        actions = SkillModelEvolution._generate_actions(tool, style, budget, "low")
+        actions = SkillModelEvolution.generate_actions(tool, style, budget, "low")
         assert any(a["priority"] == "P0" for a in actions)
 
     def test_incompatible_style_generates_p1(self):
         tool = {"tools_lost": []}
         style = {"compatible": False, "styles_new_only": ["expert", "chain-of-thought"]}
         budget = {"compatible": True, "context_ratio": 1.0}
-        actions = SkillModelEvolution._generate_actions(tool, style, budget, "medium")
+        actions = SkillModelEvolution.generate_actions(tool, style, budget, "medium")
         assert any(a["priority"] == "P1" for a in actions)
 
     def test_high_risk_generates_bench_action(self):
         tool = {"tools_lost": []}
         style = {"compatible": True, "styles_new_only": []}
         budget = {"compatible": True, "context_ratio": 1.0}
-        actions = SkillModelEvolution._generate_actions(tool, style, budget, "high")
+        actions = SkillModelEvolution.generate_actions(tool, style, budget, "high")
         assert any("SkillsBench" in a["action"] for a in actions)
 
 
