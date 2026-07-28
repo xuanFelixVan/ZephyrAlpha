@@ -61,6 +61,18 @@ class CrossPlatformShell:
         self._output_dir = self._project_root / self.OUTPUT_DIR
         self._output_dir.mkdir(parents=True, exist_ok=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def output_dir(self):
+        """只读：output_dir（Stage 4 公共化）。"""
+        return self._output_dir
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def generate(self, commit_sha: str, gpg_sign: bool = False) -> CrossPlatformScripts:
         now = datetime.now(UTC).isoformat()
 

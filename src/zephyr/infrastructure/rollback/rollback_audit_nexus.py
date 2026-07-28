@@ -76,6 +76,23 @@ class RollbackAuditNexus:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_audit_nexus", exc_info=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def nexus_log(self):
+        """只读：nexus_log（Stage 4 公共化）。"""
+        return self._nexus_log
+
+    @property
+    def nexus_summary(self):
+        """只读：nexus_summary（Stage 4 公共化）。"""
+        return self._nexus_summary
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def publish(self, event: AuditEvent) -> None:
         record = {
             "event_id": event.event_id,

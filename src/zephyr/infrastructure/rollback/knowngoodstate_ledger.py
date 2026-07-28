@@ -51,6 +51,18 @@ class KnowngoodstateLedger:
         self._project_root = project_root or Path.cwd()
         self._ledger_path = self._project_root / self.LEDGER_FILE
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def ledger_path(self):
+        """只读：ledger_path（Stage 4 公共化）。"""
+        return self._ledger_path
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def declare_known_good(
         self,
         commit_sha: str,

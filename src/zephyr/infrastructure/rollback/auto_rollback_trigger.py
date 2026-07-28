@@ -153,6 +153,13 @@ class AutoRollbackTrigger:
         self._max_retries = max_retries
         self._retry_counts: dict[str, int] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_retries(self):
+        """只读：max_retries（Stage 4 公共化）。"""
+        return self._max_retries
+
+
     def classify(self, result: AutoGuardResult) -> TriggerDecision:
         category = self._classify_failure(result)
         return self._build_decision(category, result)

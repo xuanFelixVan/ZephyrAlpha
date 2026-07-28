@@ -49,6 +49,18 @@ class GitInfraSnapshot:
         self._project_root = project_root or Path.cwd()
         self._snapshot_dir = self._project_root / self.SNAPSHOT_DIR
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+    @property
+    def snapshot_dir(self):
+        """只读：snapshot_dir（Stage 4 公共化）。"""
+        return self._snapshot_dir
+
+
     def create_snapshot(self) -> bool:
         git_dir = self._project_root / ".git"
         if not git_dir.exists():

@@ -51,6 +51,18 @@ class EnvWatcher:
         self._sentinel_path = self._project_root / self.SENTINEL_FILE
         self._sentinel_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+    @property
+    def sentinel_path(self):
+        """只读：sentinel_path（Stage 4 公共化）。"""
+        return self._sentinel_path
+
+
     def check_for_changes(self) -> EnvChangeAlert | None:
         current_state = self._read_env_files()
         if not current_state:

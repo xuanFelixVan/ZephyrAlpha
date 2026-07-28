@@ -58,6 +58,13 @@ class AgentCooldown:
         self._db_path = self._project_root / self.DB_NAME
         self._init_db()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def _init_db(self) -> None:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         # 5.144.6 修复: conn.close() 移入 finally, 防止 execute/commit 抛异常跳过 close

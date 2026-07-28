@@ -61,6 +61,23 @@ class IntentArchiver:
         self._archive_dir.mkdir(parents=True, exist_ok=True)
         self._manifest_path = self._archive_dir / "manifest.jsonl"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def archive_dir(self):
+        """只读：archive_dir（Stage 4 公共化）。"""
+        return self._archive_dir
+
+    @property
+    def manifest_path(self):
+        """只读：manifest_path（Stage 4 公共化）。"""
+        return self._manifest_path
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def archive(self, operation_id: str, intent_text: str, author: str = "") -> IntentRecord:
         now = datetime.now(UTC)
         intent_id = f"INTENT-{now.strftime('%Y%m%d-%H%M%S-%f')}"

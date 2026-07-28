@@ -166,6 +166,18 @@ class ForensicEngine:
         self._chain_path = self._forensic_dir / "merkle_chain.jsonl"
         self._notes_ref = "refs/notes/forensic"
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def forensic_dir(self):
+        """只读：forensic_dir（Stage 4 公共化）。"""
+        return self._forensic_dir
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def scan_shell_injection(self, trigger: str, message: str, context: str = "") -> list[ShellInjectionFinding]:
         findings: list[ShellInjectionFinding] = []
 
