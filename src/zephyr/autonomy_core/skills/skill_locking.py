@@ -51,6 +51,28 @@ class SkillLock:
                 cls._LOCKS[key] = threading.RLock()
             return cls._LOCKS[key]
 
+    # ── Stage 4 公共化属性 + 方法 ──
+
+    @classmethod
+    def get_locks(cls) -> dict[str, threading.RLock]:
+        """获取锁字典（public API, Stage 4）."""
+        return cls._LOCKS
+
+    @classmethod
+    def get_lock_factory(cls) -> threading.Lock:
+        """获取锁工厂（public API, Stage 4）."""
+        return cls._LOCK_FACTORY
+
+    @classmethod
+    def get_lock(cls, key: str) -> threading.RLock:
+        """获取指定 key 的锁（public API, Stage 4）."""
+        return cls._get_lock(key)
+
+    @classmethod
+    def is_lock_owned(cls, key: str) -> bool:
+        """检查指定 key 的锁是否被当前线程持有（public API, Stage 4）."""
+        return cls._get_lock(key)._is_owned()
+
     @classmethod
     @contextmanager
     def read_lock(cls, skill_id: str):
@@ -102,6 +124,11 @@ class SkillFileLock:
     def _lock_path(cls, name: str) -> Path:
         cls.LOCK_DIR.mkdir(parents=True, exist_ok=True)
         return cls.LOCK_DIR / f"{name}.lock"
+
+    @classmethod
+    def lock_path(cls, name: str) -> Path:
+        """获取锁文件路径（public API, Stage 4）."""
+        return cls._lock_path(name)
 
     @classmethod
     @contextmanager

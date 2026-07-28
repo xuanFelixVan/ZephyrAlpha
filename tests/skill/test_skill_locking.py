@@ -24,10 +24,10 @@ from zephyr.autonomy_core.skills.skill_locking import SkillFileLock, SkillLock
 
 class TestSkillLockInstantiation:
     def test_class_has_locks_dict(self):
-        assert isinstance(SkillLock._LOCKS, dict)
+        assert isinstance(SkillLock.get_locks(), dict)
 
     def test_class_has_lock_factory(self):
-        assert isinstance(SkillLock._LOCK_FACTORY, type(threading.Lock()))
+        assert isinstance(SkillLock.get_lock_factory(), type(threading.Lock()))
 
     def test_default_timeout(self):
         assert SkillLock.DEFAULT_TIMEOUT_S == 30.0
@@ -38,25 +38,23 @@ class TestSkillLockInstantiation:
 
 class TestSkillLockGetLock:
     def test_creates_new_lock_for_new_key(self):
-        original_count = len(SkillLock._LOCKS)
-        lock = SkillLock._get_lock("test-new-key-001")
+        original_count = len(SkillLock.get_locks())
+        lock = SkillLock.get_lock("test-new-key-001")
         assert lock is not None
         assert isinstance(lock, type(threading.RLock()))
-        assert len(SkillLock._LOCKS) >= original_count + 1
+        assert len(SkillLock.get_locks()) >= original_count + 1
 
     def test_returns_same_lock_for_same_key(self):
-        lock1 = SkillLock._get_lock("test-same-key-002")
-        lock2 = SkillLock._get_lock("test-same-key-002")
+        lock1 = SkillLock.get_lock("test-same-key-002")
+        lock2 = SkillLock.get_lock("test-same-key-002")
         assert lock1 is lock2
 
 
 class TestSkillLockReadLock:
     def test_read_lock_acquires_and_releases(self):
         with SkillLock.read_lock("test-read-001"):
-            lock = SkillLock._get_lock("r:test-read-001")
-            assert lock._is_owned()
-        lock_after = SkillLock._get_lock("r:test-read-001")
-        assert not lock_after._is_owned()
+            assert SkillLock.is_lock_owned("r:test-read-001")
+        assert not SkillLock.is_lock_owned("r:test-read-001")
 
     def test_read_lock_context_manager(self):
         executed = False
@@ -68,10 +66,8 @@ class TestSkillLockReadLock:
 class TestSkillLockWriteLock:
     def test_write_lock_acquires_and_releases(self):
         with SkillLock.write_lock("test-write-001"):
-            lock = SkillLock._get_lock("w:test-write-001")
-            assert lock._is_owned()
-        lock_after = SkillLock._get_lock("w:test-write-001")
-        assert not lock_after._is_owned()
+            assert SkillLock.is_lock_owned("w:test-write-001")
+        assert not SkillLock.is_lock_owned("w:test-write-001")
 
     def test_write_lock_context_manager(self):
         executed = False
@@ -83,10 +79,8 @@ class TestSkillLockWriteLock:
 class TestSkillLockRegistryLock:
     def test_registry_lock_acquires_and_releases(self):
         with SkillLock.registry_lock():
-            lock = SkillLock._get_lock("registry")
-            assert lock._is_owned()
-        lock_after = SkillLock._get_lock("registry")
-        assert not lock_after._is_owned()
+            assert SkillLock.is_lock_owned("registry")
+        assert not SkillLock.is_lock_owned("registry")
 
     def test_registry_lock_context_manager(self):
         executed = False
@@ -103,14 +97,14 @@ class TestSkillLockStats:
 
     def test_lock_stats_reflects_locks(self):
         before = SkillLock.lock_stats()["active_locks"]
-        SkillLock._get_lock("test-stats-key-999")
+        SkillLock.get_lock("test-stats-key-999")
         after = SkillLock.lock_stats()["active_locks"]
         assert after >= before
 
 
 class TestSkillLockTimeout:
     def test_read_lock_timeout_raises(self):
-        lock = SkillLock._get_lock("r:test-timeout-read")
+        lock = SkillLock.get_lock("r:test-timeout-read")
         acquired = threading.Event()
 
         def hold_lock():
@@ -129,7 +123,7 @@ class TestSkillLockTimeout:
         t.join(timeout=5)
 
     def test_write_lock_timeout_raises(self):
-        lock = SkillLock._get_lock("w:test-timeout-write")
+        lock = SkillLock.get_lock("w:test-timeout-write")
         acquired = threading.Event()
 
         def hold_lock():
@@ -198,6 +192,6 @@ class TestSkillFileLockLockPath:
     def test_lock_path_creates_dir(self, tmp_path):
         lock_dir = tmp_path / "nested" / "flocks"
         with patch.object(SkillFileLock, "LOCK_DIR", lock_dir):
-            path = SkillFileLock._lock_path("mylock")
+            path = SkillFileLock.lock_path("mylock")
             assert lock_dir.exists()
             assert path.name == "mylock.lock"
