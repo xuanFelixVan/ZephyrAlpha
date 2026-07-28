@@ -58,6 +58,26 @@ class ModelDriftDetector:
         self._project_root = project_root or REPO_ROOT
         self._baseline_path = self._project_root / self.BASELINE_FILE
 
+    # ── Stage 4 公共化属性 + 方法 ──
+
+    @property
+    def project_root(self) -> Path:
+        """项目根路径（public API, Stage 4）."""
+        return self._project_root
+
+    @property
+    def baseline_path(self) -> Path:
+        """基线文件路径（public API, Stage 4）."""
+        return self._baseline_path
+
+    def compute_feature_vector(self, outputs: list[dict[str, Any]]) -> dict[str, float]:
+        """计算 feature vector（public API, Stage 4）."""
+        return self._compute_feature_vector(outputs)
+
+    def js_divergence(self, p: dict[str, float], q: dict[str, float]) -> float:
+        """计算 JS 散度（public API, Stage 4）."""
+        return self._js_divergence(p, q)
+
     def establish_baseline(self, sample_outputs: list[dict[str, Any]]) -> bool:
         feature_vector = self._compute_feature_vector(sample_outputs)
         baseline = {

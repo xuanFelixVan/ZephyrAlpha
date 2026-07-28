@@ -24,15 +24,15 @@ from zephyr.intelligence.model_drift_detector import DriftResult, ModelDriftDete
 class TestModelDriftDetectorInstantiation:
     def test_default_project_root(self):
         detector = ModelDriftDetector()
-        assert detector._project_root == Path.cwd()
+        assert detector.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        assert detector._project_root == tmp_path
+        assert detector.project_root == tmp_path
 
     def test_baseline_path_derived(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        assert detector._baseline_path == tmp_path / ModelDriftDetector.BASELINE_FILE
+        assert detector.baseline_path == tmp_path / ModelDriftDetector.BASELINE_FILE
 
 
 class TestEstablishBaseline:
@@ -41,13 +41,13 @@ class TestEstablishBaseline:
         samples = [{"text": "hello"}, {"text": "world"}]
         result = detector.establish_baseline(samples)
         assert result is True
-        assert detector._baseline_path.exists()
+        assert detector.baseline_path.exists()
 
     def test_establish_baseline_writes_valid_json(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
         samples = [{"text": "hello"}]
         detector.establish_baseline(samples)
-        data = json.loads(detector._baseline_path.read_text(encoding="utf-8"))
+        data = json.loads(detector.baseline_path.read_text(encoding="utf-8"))
         assert "established_at" in data
         assert "feature_vector" in data
         assert "sample_count" in data
@@ -57,15 +57,15 @@ class TestEstablishBaseline:
         detector = ModelDriftDetector(project_root=tmp_path)
         result = detector.establish_baseline([])
         assert result is True
-        data = json.loads(detector._baseline_path.read_text(encoding="utf-8"))
+        data = json.loads(detector.baseline_path.read_text(encoding="utf-8"))
         assert data["sample_count"] == 0
         assert data["feature_vector"] == {}
 
     def test_establish_baseline_creates_parent_dirs(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        assert not detector._baseline_path.parent.exists()
+        assert not detector.baseline_path.parent.exists()
         detector.establish_baseline([{"a": 1}])
-        assert detector._baseline_path.parent.exists()
+        assert detector.baseline_path.parent.exists()
 
 
 class TestCheckDrift:
@@ -81,8 +81,8 @@ class TestCheckDrift:
         detector = ModelDriftDetector(project_root=tmp_path)
         samples = [{"text": "hello"}, {"text": "world"}]
         detector.establish_baseline(samples)
-        baseline_fv = detector._compute_feature_vector(samples)
-        current_fv = detector._compute_feature_vector(samples)
+        baseline_fv = detector.compute_feature_vector(samples)
+        current_fv = detector.compute_feature_vector(samples)
         assert baseline_fv.keys() == current_fv.keys()
         for k in baseline_fv:
             assert baseline_fv[k] == pytest.approx(current_fv[k])
@@ -99,8 +99,8 @@ class TestCheckDrift:
 
     def test_check_drift_corrupted_baseline(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        detector._baseline_path.parent.mkdir(parents=True, exist_ok=True)
-        detector._baseline_path.write_text("NOT JSON{{{", encoding="utf-8")
+        detector.baseline_path.parent.mkdir(parents=True, exist_ok=True)
+        detector.baseline_path.write_text("NOT JSON{{{", encoding="utf-8")
         result = detector.detect_drift([{"text": "hello"}])
         assert result.drift_detected is False
         assert "Baseline file corrupted" in result.details
@@ -125,24 +125,24 @@ class TestCheckDrift:
 class TestComputeFeatureVector:
     def test_empty_outputs(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        fv = detector._compute_feature_vector([])
+        fv = detector.compute_feature_vector([])
         assert fv == {}
 
     def test_single_output(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        fv = detector._compute_feature_vector([{"text": "hello"}])
+        fv = detector.compute_feature_vector([{"text": "hello"}])
         assert len(fv) == 1
         assert sum(fv.values()) == pytest.approx(1.0)
 
     def test_identical_outputs_grouped(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        fv = detector._compute_feature_vector([{"text": "hello"}, {"text": "hello"}])
+        fv = detector.compute_feature_vector([{"text": "hello"}, {"text": "hello"}])
         assert len(fv) == 1
         assert sum(fv.values()) == pytest.approx(1.0)
 
     def test_multiple_distinct_outputs(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        fv = detector._compute_feature_vector([{"text": "a"}, {"text": "b"}, {"text": "c"}])
+        fv = detector.compute_feature_vector([{"text": "a"}, {"text": "b"}, {"text": "c"}])
         assert len(fv) == 3
         assert sum(fv.values()) == pytest.approx(1.0)
 
@@ -150,27 +150,27 @@ class TestComputeFeatureVector:
 class TestJsDivergence:
     def test_both_empty(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
-        assert detector._js_divergence({}, {}) == 0.0
+        assert detector.js_divergence({}, {}) == 0.0
 
     def test_identical_distributions_symmetric(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
         p = {"a": 0.5, "b": 0.5}
         q = {"a": 0.5, "b": 0.5}
-        div_pq = detector._js_divergence(p, q)
-        div_qp = detector._js_divergence(q, p)
+        div_pq = detector.js_divergence(p, q)
+        div_qp = detector.js_divergence(q, p)
         assert div_pq == pytest.approx(div_qp)
 
     def test_completely_different_distributions(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
         p = {"a": 1.0}
         q = {"b": 1.0}
-        divergence = detector._js_divergence(p, q)
+        divergence = detector.js_divergence(p, q)
         assert divergence > 0.0
 
     def test_one_empty_distribution(self, tmp_path: Path):
         detector = ModelDriftDetector(project_root=tmp_path)
         p = {"a": 1.0}
-        divergence = detector._js_divergence(p, {})
+        divergence = detector.js_divergence(p, {})
         assert divergence > 0.0
 
 
