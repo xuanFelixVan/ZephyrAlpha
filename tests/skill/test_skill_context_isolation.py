@@ -31,9 +31,9 @@ class TestContextIsolationInstantiation:
 
     def test_internal_state_initialized(self):
         ci = ContextIsolation()
-        assert ci._namespaces == {}
-        assert ci._snapshots == {}
-        assert ci._contamination_log == []
+        assert ci.namespaces == {}
+        assert ci.snapshots == {}
+        assert ci.contamination_log == []
 
 
 class TestCreateNamespace:
@@ -41,19 +41,19 @@ class TestCreateNamespace:
         ci = ContextIsolation()
         ns_key = ci.create_namespace("skill-a")
         assert ns_key == "ns:skill-a"
-        assert "ns:skill-a" in ci._namespaces
+        assert "ns:skill-a" in ci.namespaces
 
     def test_idempotent_create(self):
         ci = ContextIsolation()
         key1 = ci.create_namespace("skill-a")
         key2 = ci.create_namespace("skill-a")
         assert key1 == key2
-        assert len(ci._namespaces) == 1
+        assert len(ci.namespaces) == 1
 
     def test_namespace_has_required_fields(self):
         ci = ContextIsolation()
         ci.create_namespace("skill-x")
-        ns = ci._namespaces["ns:skill-x"]
+        ns = ci.namespaces["ns:skill-x"]
         assert "skill_id" in ns
         assert "created_at" in ns
         assert "data" in ns
@@ -67,7 +67,7 @@ class TestCreateNamespace:
         ci = ContextIsolation()
         ci.create_namespace("a")
         ci.create_namespace("b")
-        assert len(ci._namespaces) == 2
+        assert len(ci.namespaces) == 2
 
 
 class TestIsolateExecution:
@@ -93,16 +93,16 @@ class TestIsolateExecution:
         ci = ContextIsolation(mode="strict")
         ci.create_namespace("prev-skill")
         ci.isolate_execution("skill-b", {}, previous_skill_id="prev-skill")
-        assert ci._namespaces["ns:prev-skill"]["locked"] is True
+        assert ci.namespaces["ns:prev-skill"]["locked"] is True
 
     def test_contamination_log_recorded_on_leak(self):
         ci = ContextIsolation(mode="strict")
         ci.create_namespace("prev-skill")
         ctx = {"skill_data": "leak"}
         ci.isolate_execution("skill-b", ctx, previous_skill_id="prev-skill")
-        assert len(ci._contamination_log) == 1
-        assert ci._contamination_log[0]["action"] == "context_cleaned"
-        assert "skill_data" in ci._contamination_log[0]["leaked_keys"]
+        assert len(ci.contamination_log) == 1
+        assert ci.contamination_log[0]["action"] == "context_cleaned"
+        assert "skill_data" in ci.contamination_log[0]["leaked_keys"]
 
     def test_no_previous_skill_no_cleaning(self):
         ci = ContextIsolation(mode="strict")
@@ -137,11 +137,11 @@ class TestSnapshotRestore:
     def test_snapshot_and_restore_roundtrip(self):
         ci = ContextIsolation()
         ci.create_namespace("skill-a")
-        ci._namespaces["ns:skill-a"]["data"] = {"x": 1}
+        ci.namespaces["ns:skill-a"]["data"] = {"x": 1}
         snap_id = ci.snapshot("skill-a")
         assert snap_id.startswith("snap:skill-a:")
 
-        ci._namespaces["ns:skill-a"]["data"] = {"x": 999}
+        ci.namespaces["ns:skill-a"]["data"] = {"x": 999}
         restored = ci.restore(snap_id)
         assert restored is not None
         assert restored["data"]["x"] == 1
@@ -161,11 +161,11 @@ class TestSnapshotRestore:
     def test_restore_creates_namespace_if_missing(self):
         ci = ContextIsolation()
         ci.create_namespace("skill-a")
-        ci._namespaces["ns:skill-a"]["data"] = {"val": 42}
+        ci.namespaces["ns:skill-a"]["data"] = {"val": 42}
         snap_id = ci.snapshot("skill-a")
-        del ci._namespaces["ns:skill-a"]
+        del ci.namespaces["ns:skill-a"]
         restored = ci.restore(snap_id)
-        assert "ns:skill-a" in ci._namespaces
+        assert "ns:skill-a" in ci.namespaces
         assert restored["data"]["val"] == 42
 
 

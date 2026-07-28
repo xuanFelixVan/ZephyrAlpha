@@ -55,6 +55,26 @@ class ContextIsolation:
     def isolation_level(self) -> str:
         return self._mode
 
+    # ── Stage 4 公共化（2026-07-28）：只读 properties ──
+    # 消除 tests/skill/test_skill_context_isolation.py 中 16 处私有成员访问。
+    # 返回可变容器引用（与 _namespaces/_snapshots/_contamination_log 同一对象），
+    # 调用方可读写容器内容但不可重新绑定属性本身。
+
+    @property
+    def namespaces(self) -> dict[str, dict[str, Any]]:
+        """只读：命名空间表（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._namespaces
+
+    @property
+    def snapshots(self) -> dict[str, dict[str, Any]]:
+        """只读：快照表（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._snapshots
+
+    @property
+    def contamination_log(self) -> list[dict[str, Any]]:
+        """只读：污染日志（Stage 4 公共化，返回可变 list 引用）。"""
+        return self._contamination_log
+
     def create_namespace(self, skill_id: str) -> str:
         ns_key = f"ns:{skill_id}"
         if ns_key not in self._namespaces:
