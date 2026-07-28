@@ -303,7 +303,7 @@ class TestAdmissionControllerAdmit:
             enable_circuit_breaker=True,
             cb_failure_threshold=1,
         )
-        ctrl._circuit_breaker.record_failure()
+        ctrl.circuit_breaker.record_failure()
         result = ctrl.admit({"event_type": "file_write"})
         assert result.decision == AdmissionDecision.CIRCUIT_OPEN
         assert result.is_circuit_open is True  # 5.153.4 修复: 字段重命名
@@ -314,8 +314,8 @@ class TestAdmissionControllerAdmit:
             enable_circuit_breaker=False,
             global_config=TokenBucketConfig(rate=1000.0, burst=1000.0),
         )
-        ctrl._circuit_breaker.record_failure()
-        ctrl._circuit_breaker.record_failure()
+        ctrl.circuit_breaker.record_failure()
+        ctrl.circuit_breaker.record_failure()
         result = ctrl.admit({"event_type": "file_write"})
         assert result.decision == AdmissionDecision.ADMIT
 
@@ -377,7 +377,7 @@ class TestAdmissionControllerMetrics:
 
     def test_metrics_after_circuit_open(self):
         ctrl = AdmissionController(cb_failure_threshold=1)
-        ctrl._circuit_breaker.record_failure()
+        ctrl.circuit_breaker.record_failure()
         ctrl.admit({"event_type": "default"})
         m = ctrl.get_metrics()
         assert m.circuit_open_count == 1  # 5.153.4 修复: 字段重命名
@@ -393,7 +393,7 @@ class TestAdmissionControllerHealthCheck:
 
     def test_degraded_when_circuit_open(self):
         ctrl = AdmissionController(cb_failure_threshold=1)
-        ctrl._circuit_breaker.record_failure()
+        ctrl.circuit_breaker.record_failure()
         h = ctrl.health_check()
         assert h["status"] == "degraded"
 
@@ -407,7 +407,7 @@ class TestAdmissionControllerHealthCheck:
 class TestAdmissionControllerRetryAfter:
     def test_retry_after_when_circuit_open(self):
         ctrl = AdmissionController(cb_failure_threshold=1, cb_recovery_timeout_s=30.0)
-        ctrl._circuit_breaker.record_failure()
+        ctrl.circuit_breaker.record_failure()
         ms = ctrl.get_retry_after("file_write")
         assert ms > 0
 
@@ -420,10 +420,10 @@ class TestAdmissionControllerRetryAfter:
 class TestAdmissionControllerResetCircuitBreaker:
     def test_reset(self):
         ctrl = AdmissionController(cb_failure_threshold=1)
-        ctrl._circuit_breaker.record_failure()
-        assert ctrl._circuit_breaker.is_open() is True
+        ctrl.circuit_breaker.record_failure()
+        assert ctrl.circuit_breaker.is_open() is True
         ctrl.reset_circuit_breaker()
-        assert ctrl._circuit_breaker.is_open() is False
+        assert ctrl.circuit_breaker.is_open() is False
 
 
 class TestAdmissionControllerUpdateRate:

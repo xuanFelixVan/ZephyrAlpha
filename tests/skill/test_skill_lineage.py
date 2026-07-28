@@ -17,8 +17,8 @@ from zephyr.autonomy_core.skills.skill_lineage import SkillLineage
 class TestSkillLineageInstantiation:
     def test_default_instantiation(self):
         lin = SkillLineage()
-        assert isinstance(lin._lineages, dict)
-        assert len(lin._lineages) == 0
+        assert isinstance(lin.lineages, dict)
+        assert len(lin.lineages) == 0
 
 
 class TestRecordVersion:
@@ -41,8 +41,8 @@ class TestRecordVersion:
     def test_record_version_stores_in_lineages(self):
         lin = SkillLineage()
         lin.record_version("skill-3", "0.1.0", None, "draft")
-        assert "skill-3" in lin._lineages
-        assert len(lin._lineages["skill-3"]) == 1
+        assert "skill-3" in lin.lineages
+        assert len(lin.lineages["skill-3"]) == 1
 
 
 class TestGetLineage:
@@ -154,9 +154,9 @@ class TestClear:
         lin.record_version("s12", "1.0.0", None, "init")
         lin.record_version("s13", "1.0.0", None, "init")
         lin.clear()
-        assert len(lin._lineages) == 0
+        assert len(lin.lineages) == 0
 
     def test_clear_nonexistent_skill_no_error(self):
         lin = SkillLineage()
         lin.clear("nonexistent")
-        assert len(lin._lineages) == 0
+        assert len(lin.lineages) == 0

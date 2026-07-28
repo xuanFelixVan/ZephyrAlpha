@@ -234,7 +234,7 @@ class TestOrderManager:
         om = OrderManager()
         callback = MagicMock()
         om.register_fill_callback(callback)
-        assert callback in om._fill_callbacks
+        assert callback in om.fill_callbacks
 
 
 class TestExecutionConfig:
@@ -308,21 +308,21 @@ class TestExecutionEngine:
     def test_execute_order_market(self):
         engine, om = self._make_engine()
         order = _make_order()
-        om._orders[order.order_id] = order
+        om.orders[order.order_id] = order
         result = engine.execute_order(order, algo=AlgoType.MARKET)
         assert result == "bo-1"
 
     def test_execute_order_twap(self):
         engine, om = self._make_engine()
         order = _make_order()
-        om._orders[order.order_id] = order
+        om.orders[order.order_id] = order
         result = engine.execute_order(order, algo=AlgoType.TWAP)
         assert result == "bo-1"
 
     def test_execute_order_vwap(self):
         engine, om = self._make_engine()
         order = _make_order()
-        om._orders[order.order_id] = order
+        om.orders[order.order_id] = order
         result = engine.execute_order(order, algo=AlgoType.VWAP)
         assert result == "bo-1"
 
@@ -336,7 +336,7 @@ class TestExecutionEngine:
         engine, om = self._make_engine()
         orders = [_make_order(order_id="o1"), _make_order(order_id="o2")]
         for o in orders:
-            om._orders[o.order_id] = o
+            om.orders[o.order_id] = o
         results = engine.execute_batch(orders)
         assert len(results) == 2
 
@@ -357,7 +357,7 @@ class TestExecutionEngine:
         engine, _ = self._make_engine()
         engine.update_broker_score("sim_a", 0.8)
         engine.update_broker_score("sim_a", 0.6)
-        assert engine._broker_scores["sim_a"] > 0
+        assert engine.broker_scores["sim_a"] > 0
 
     def test_get_engine_run_record_none(self):
         engine, _ = self._make_engine()
@@ -436,7 +436,7 @@ class TestSimulationBroker:
         b = self.SimulationBroker()
         callback = MagicMock()
         b.register_fill_callback(callback)
-        assert callback in b._fill_callbacks
+        assert callback in b.fill_callbacks
 
     def test_broker_id_prop(self):
         b = self.SimulationBroker()

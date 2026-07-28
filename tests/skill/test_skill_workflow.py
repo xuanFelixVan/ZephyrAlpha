@@ -17,8 +17,8 @@ from zephyr.autonomy_core.skills.skill_workflow import SkillWorkflow
 class TestSkillWorkflowInstantiation:
     def test_init(self):
         wf = SkillWorkflow()
-        assert wf._workflows == {}
-        assert wf._executions == {}
+        assert wf.workflows == {}
+        assert wf.executions == {}
 
 
 class TestDefine:
@@ -73,7 +73,7 @@ class TestDefine:
 
     def test_define_stores_workflow(self):
         self.wf.define("wf_stored", ["x", "y"])
-        assert "wf_stored" in self.wf._workflows
+        assert "wf_stored" in self.wf.workflows
 
     def test_define_with_partial_dependencies(self):
         result = self.wf.define(
@@ -103,7 +103,7 @@ class TestExecute:
     def test_execute_stores_execution_record(self):
         self.wf.define("wf_rec", ["a"])
         self.wf.execute("wf_rec")
-        assert len(self.wf._executions) > 0
+        assert len(self.wf.executions) > 0
 
     def test_execute_with_context(self):
         self.wf.define("wf_ctx", ["a"])

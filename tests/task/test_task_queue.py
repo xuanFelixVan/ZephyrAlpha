@@ -24,12 +24,12 @@ from zephyr.infrastructure.queue.task_queue import (
 class TestTaskQueueInstantiation:
     def test_default_construction(self):
         q = TaskQueue()
-        assert q._items == []
-        assert isinstance(q._config, QueueConfig)
+        assert q.items == []
+        assert isinstance(q.config, QueueConfig)
 
     def test_custom_data_dir(self, tmp_path):
         q = TaskQueue(data_dir=tmp_path / "queue")
-        assert q._data_dir == tmp_path / "queue"
+        assert q.data_dir == tmp_path / "queue"
 
 
 class TestEnqueue:
@@ -50,7 +50,7 @@ class TestEnqueue:
         q = TaskQueue()
         q.enqueue("TASK-001")
         q.enqueue("TASK-002")
-        assert len(q._items) == 2
+        assert len(q.items) == 2
 
     def test_enqueue_generates_unique_item_id(self):
         q = TaskQueue()
@@ -95,7 +95,7 @@ class TestDequeueNext:
 
     def test_dequeue_respects_only_p0_config(self):
         q = TaskQueue()
-        q._config.only_p0 = True
+        q.config.only_p0 = True
         q.enqueue("LOW", priority="P2")
         q.enqueue("HIGH", priority="P0")
         item = q.dequeue_next()
@@ -104,7 +104,7 @@ class TestDequeueNext:
 
     def test_dequeue_skips_non_p0_when_only_p0(self):
         q = TaskQueue()
-        q._config.only_p0 = True
+        q.config.only_p0 = True
         q.enqueue("LOW", priority="P2")
         assert q.dequeue_next() is None
 
@@ -137,7 +137,7 @@ class TestClearCompleted:
         item.status = QueueItemStatus.COMPLETED
         removed = q.clear_completed()
         assert removed == 1
-        assert len(q._items) == 0
+        assert len(q.items) == 0
 
     def test_clear_completed_removes_failed_items(self):
         q = TaskQueue()
@@ -151,7 +151,7 @@ class TestClearCompleted:
         q.enqueue("TASK-001")
         removed = q.clear_completed()
         assert removed == 0
-        assert len(q._items) == 1
+        assert len(q.items) == 1
 
     def test_clear_completed_on_empty_queue(self):
         q = TaskQueue()
@@ -169,7 +169,7 @@ class TestSetDispatchHandler:
             return True
 
         q.set_dispatch_handler(handler)
-        assert q._dispatch_handler is not None
+        assert q.dispatch_handler is not None
 
 
 class TestQueueItemDataclass:

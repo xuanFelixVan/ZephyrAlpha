@@ -337,7 +337,7 @@ class TestBackpressureCascadeFailure:
             mgr.handle_pause(_make_pause(f"SYM-HIST-{i}", duration_ms=1))
             mgr.handle_resume(_make_resume(f"SYM-HIST-{i}"))
 
-        assert len(mgr._history) == 1000
+        assert len(mgr.history) == 1000
 
     def test_concurrent_pause_resume_no_deadlock(self):
         """蓝队验证：并发 PAUSE/RESUME 无死锁（RLock 可重入）。"""
@@ -449,7 +449,7 @@ class TestSLOViolationBudgetExhaustion:
             futures = [pool.submit(consume_batch) for _ in range(10)]
             sum(f.result() for f in as_completed(futures))
 
-        budget = mgr._budgets.get("CT-TEST-006")
+        budget = mgr.budgets.get("CT-TEST-006")
         assert budget is not None
         assert budget.exhausted is True
 
@@ -496,20 +496,20 @@ class TestFeedbackLoopDetectionFailure:
             FeedbackLoopScheduler.reset_instance()
             s = FeedbackLoopScheduler(poll_interval=0.05)
             yield s
-            if s._running:
+            if s.running:
                 s.stop()
             FeedbackLoopScheduler.reset_instance()
 
     def test_scheduler_start_stop_lifecycle(self, scheduler):
         """蓝队验证：start → _running=True, stop → _running=False。"""
-        assert scheduler._running is False
+        assert scheduler.running is False
 
         scheduler.start()
-        assert scheduler._running is True
-        assert scheduler._thread is not None
+        assert scheduler.running is True
+        assert scheduler.thread is not None
 
         scheduler.stop()
-        assert scheduler._running is False
+        assert scheduler.running is False
 
     def test_scheduler_tick_executes_once(self, scheduler):
         """蓝队验证：tick() 同步执行单次 pipeline。"""
@@ -523,7 +523,7 @@ class TestFeedbackLoopDetectionFailure:
         验证 _consecutive_errors 计数和 _max_consecutive_errors 阈值。
         """
         assert scheduler._max_consecutive_errors == 10
-        assert scheduler._consecutive_errors == 0
+        assert scheduler.consecutive_errors == 0
         assert scheduler._error_backoff_base == 5.0
 
     def test_scheduler_singleton_thread_safe(self, scheduler):

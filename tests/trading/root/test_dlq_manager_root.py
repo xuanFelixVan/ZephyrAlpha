@@ -116,15 +116,15 @@ class TestDLQManagerReplay:
         mgr = DLQManager()
         mgr.enqueue("m1", "c1")
         mgr.replay("m1")
-        mgr._messages["m1"].status = "pending"
+        mgr.messages["m1"].status = "pending"
         mgr.replay("m1")
-        mgr._messages["m1"].status = "pending"
+        mgr.messages["m1"].status = "pending"
         mgr.replay("m1")
-        mgr._messages["m1"].status = "pending"
+        mgr.messages["m1"].status = "pending"
         ok, reason = mgr.replay("m1")
         assert ok is False
         assert reason == "MAX_ATTEMPTS_EXCEEDED"
-        msg = mgr._messages["m1"]
+        msg = mgr.messages["m1"]
         assert msg.status == "dead"
         assert msg.attempt_count == 4
 
@@ -132,7 +132,7 @@ class TestDLQManagerReplay:
         mgr = DLQManager()
         mgr.enqueue("m1", "c1")
         mgr.replay("m1")
-        assert mgr._messages["m1"].attempt_count == 1
+        assert mgr.messages["m1"].attempt_count == 1
 
 
 class TestDLQManagerListAll:
@@ -158,11 +158,11 @@ class TestDLQManagerListDead:
         mgr.enqueue("m1", "c1")
         mgr.enqueue("m2", "c2")
         mgr.replay("m1")
-        mgr._messages["m1"].status = "pending"
+        mgr.messages["m1"].status = "pending"
         mgr.replay("m1")
-        mgr._messages["m1"].status = "pending"
+        mgr.messages["m1"].status = "pending"
         mgr.replay("m1")
-        mgr._messages["m1"].status = "pending"
+        mgr.messages["m1"].status = "pending"
         mgr.replay("m1")
         dead = mgr.list_dead()
         assert len(dead) == 1

@@ -34,22 +34,22 @@ def _mock_write_to_core():
 def sandbox():
     sb = SkillSandbox("test-skill-001")
     yield sb
-    if sb._active:
+    if sb.active:
         sb.deactivate()
 
 
 class TestSkillSandboxInstantiation:
     def test_creates_with_skill_id(self, sandbox):
-        assert sandbox._skill_id == "test-skill-001"
+        assert sandbox.skill_id == "test-skill-001"
 
     def test_default_tools_are_safe(self, sandbox):
-        assert sandbox._allowed_tools == set(_DEFAULT_SAFE_TOOLS)
+        assert sandbox.allowed_tools == set(_DEFAULT_SAFE_TOOLS)
 
     def test_initially_inactive(self, sandbox):
-        assert sandbox._active is False
+        assert sandbox.active is False
 
     def test_network_not_allowed_by_default(self, sandbox):
-        assert sandbox._network_allowed is False
+        assert sandbox.network_allowed is False
 
     def test_isolated_tools_empty_when_inactive(self, sandbox):
         assert sandbox.isolated_tools == []
@@ -57,7 +57,7 @@ class TestSkillSandboxInstantiation:
     def test_sandbox_dir_derived_from_skill_id(self):
         sb = SkillSandbox("my:skill/path")
         expected_name = "my_skill_path"
-        assert sb._sandbox_dir.name == expected_name
+        assert sb.sandbox_dir.name == expected_name
 
 
 class TestActivate:
@@ -68,7 +68,7 @@ class TestActivate:
 
     def test_activate_sets_active_flag(self, sandbox):
         sandbox.activate()
-        assert sandbox._active is True
+        assert sandbox.active is True
 
     def test_activate_with_custom_tools(self, sandbox):
         result = sandbox.activate(allowed_tools=["read_file", "write_file"])
@@ -181,7 +181,7 @@ class TestCheckCommand:
 class TestCheckFileAccess:
     def test_file_inside_sandbox_allowed(self, sandbox):
         sandbox.activate(restrict_files=True)
-        sandbox_dir = str(sandbox._file_boundary)
+        sandbox_dir = str(sandbox.file_boundary)
         ok, reason = sandbox.check_file_access(sandbox_dir + "/subdir/file.txt")
         assert ok is True
         assert "sandbox" in reason
@@ -205,7 +205,7 @@ class TestCheckFileAccess:
 
     def test_sandbox_dir_itself_allowed(self, sandbox):
         sandbox.activate(restrict_files=True)
-        ok, reason = sandbox.check_file_access(str(sandbox._file_boundary))
+        ok, reason = sandbox.check_file_access(str(sandbox.file_boundary))
         assert ok is True
 
 
@@ -219,7 +219,7 @@ class TestDeactivate:
     def test_deactivate_sets_inactive_flag(self, sandbox):
         sandbox.activate()
         sandbox.deactivate()
-        assert sandbox._active is False
+        assert sandbox.active is False
 
     def test_deactivate_writes_audit(self, sandbox, _mock_write_to_core):
         sandbox.activate()

@@ -25,11 +25,11 @@ from zephyr.infrastructure.queue.task_scheduler import (
 class TestTaskSchedulerInstantiation:
     def test_default_construction(self):
         s = TaskScheduler()
-        assert s._tasks == {}
+        assert s.tasks == {}
 
     def test_custom_data_dir(self, tmp_path):
         s = TaskScheduler(data_dir=tmp_path / "sched")
-        assert s._data_dir == tmp_path / "sched"
+        assert s.data_dir == tmp_path / "sched"
 
 
 class TestSchedule:

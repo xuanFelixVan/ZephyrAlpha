@@ -18,8 +18,8 @@ class TestSilentFailureDetectorInstantiation:
     def test_instantiation(self):
         detector = SilentFailureDetector()
         assert detector is not None
-        assert detector._execution_history == {}
-        assert detector._anomalies == []
+        assert detector.execution_history == {}
+        assert detector.anomalies == []
 
     def test_anomaly_constants(self):
         assert SilentFailureDetector.ANOMALY_TRUNCATION == "output_truncation"

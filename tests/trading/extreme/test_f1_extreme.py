@@ -373,7 +373,7 @@ class TestConcurrent100Tasks:
             submitted_ids.append(item.item_id)
 
         # 所有 100 个任务都被记录
-        assert len(orch._items) == 100
+        assert len(orch.items) == 100
         for iid in submitted_ids:
             assert orch.status(iid) in ("READY", "PENDING", "COMPLETED", "FAILED")
 
@@ -391,7 +391,7 @@ class TestConcurrent100Tasks:
 
         assert len(ids) == 100
         assert len(set(ids)) == 100  # 无重复 ID
-        assert len(orch._items) == 100
+        assert len(orch.items) == 100
 
     def test_100_tasks_slot_limit_enforced(self) -> None:
         orch = _make_orchestrator(max_l1=1, max_l2=3, max_l3=2)

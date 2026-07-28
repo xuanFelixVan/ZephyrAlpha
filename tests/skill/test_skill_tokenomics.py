@@ -93,11 +93,11 @@ class TestUsageRecord:
 class TestSkillTokenomicsInstantiation:
     def test_default_daily_budget(self):
         tk = SkillTokenomics()
-        assert tk._daily_budget.max_tokens == 500_000
+        assert tk.daily_budget.max_tokens == 500_000
 
     def test_custom_daily_budget(self):
         tk = SkillTokenomics(daily_budget_tokens=1_000_000)
-        assert tk._daily_budget.max_tokens == 1_000_000
+        assert tk.daily_budget.max_tokens == 1_000_000
 
 
 class TestSetBudget:

@@ -79,11 +79,11 @@ class TestLifecycleState:
 class TestTaskLifecycleManagerInit:
     def test_default_root(self):
         mgr = TaskLifecycleManager()
-        assert mgr._project_root == Path.cwd()
+        assert mgr.project_root == Path.cwd()
 
     def test_custom_root(self, tmp_path):
         mgr = TaskLifecycleManager(project_root=tmp_path)
-        assert mgr._project_root == tmp_path
+        assert mgr.project_root == tmp_path
 
 
 class TestTaskLifecycleManagerInitialize:

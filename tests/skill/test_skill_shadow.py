@@ -18,8 +18,8 @@ class TestSkillShadowDeployInstantiation:
     def test_instantiation(self):
         deployer = SkillShadowDeploy()
         assert deployer is not None
-        assert deployer._shadow_runs == {}
-        assert deployer._current_shadow_pct == 5.0
+        assert deployer.shadow_runs == {}
+        assert deployer.current_shadow_pct == 5.0
 
 
 class TestSkillShadowDeployShadowRun:
@@ -64,8 +64,8 @@ class TestSkillShadowDeployShadowRun:
     def test_run_stored_internally(self):
         deployer = SkillShadowDeploy()
         deployer.shadow_run("skill-g", "a", "b")
-        assert "skill-g" in deployer._shadow_runs
-        assert len(deployer._shadow_runs["skill-g"]) == 1
+        assert "skill-g" in deployer.shadow_runs
+        assert len(deployer.shadow_runs["skill-g"]) == 1
 
 
 class TestSkillShadowDeployAnalyzeResults:

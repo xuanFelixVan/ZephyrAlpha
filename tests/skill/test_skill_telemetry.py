@@ -21,7 +21,7 @@ class TestSkillTelemetryInstantiation:
     def test_instantiation(self):
         tel = SkillTelemetry()
         assert tel is not None
-        assert tel._events == []
+        assert tel.events == []
 
     def test_max_events_constant(self):
         assert SkillTelemetry._MAX_EVENTS == 500
@@ -32,36 +32,36 @@ class TestSkillTelemetryRecord:
     def test_record_basic(self, mock_persist):
         tel = SkillTelemetry()
         tel.record("skill-a", "invoked")
-        assert len(tel._events) == 1
-        assert tel._events[0]["skill_id"] == "skill-a"
-        assert tel._events[0]["event"] == "invoked"
+        assert len(tel.events) == 1
+        assert tel.events[0]["skill_id"] == "skill-a"
+        assert tel.events[0]["event"] == "invoked"
         mock_persist.assert_called_once()
 
     @patch.object(SkillTelemetry, "_persist")
     def test_record_with_metadata(self, mock_persist):
         tel = SkillTelemetry()
         tel.record("skill-b", "completed", metadata={"duration_ms": 150})
-        assert tel._events[0]["metadata"] == {"duration_ms": 150}
+        assert tel.events[0]["metadata"] == {"duration_ms": 150}
 
     @patch.object(SkillTelemetry, "_persist")
     def test_record_none_metadata(self, mock_persist):
         tel = SkillTelemetry()
         tel.record("skill-c", "started", metadata=None)
-        assert tel._events[0]["metadata"] == {}
+        assert tel.events[0]["metadata"] == {}
 
     @patch.object(SkillTelemetry, "_persist")
     def test_record_has_timestamp(self, mock_persist):
         tel = SkillTelemetry()
         tel.record("skill-d", "invoked")
-        assert "timestamp" in tel._events[0]
-        assert "epoch" in tel._events[0]
+        assert "timestamp" in tel.events[0]
+        assert "epoch" in tel.events[0]
 
     @patch.object(SkillTelemetry, "_persist")
     def test_record_trims_at_max(self, mock_persist):
         tel = SkillTelemetry()
         for i in range(550):
             tel.record("skill-e", f"event-{i}")
-        assert len(tel._events) == 500
+        assert len(tel.events) == 500
 
 
 class TestSkillTelemetryQuery:
@@ -93,7 +93,7 @@ class TestSkillTelemetryQuery:
             "timestamp": "2020-01-01T00:00:00+00:00",
             "epoch": time.time() - 48 * 3600,
         }
-        tel._events.append(old_event)
+        tel.events.append(old_event)
         results = tel.query("skill-i", since_hours=24)
         assert len(results) == 1
         assert results[0]["event"] == "recent"
