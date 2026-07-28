@@ -62,7 +62,7 @@ class TestLogLevel:
 class TestZephyrLogger:
     def test_creates_logger(self):
         zl = ZephyrLogger("test.module")
-        assert zl._name == "test.module"
+        assert zl.name == "test.module"
 
     def test_info_logs_without_error(self):
         zl = ZephyrLogger("test.info")

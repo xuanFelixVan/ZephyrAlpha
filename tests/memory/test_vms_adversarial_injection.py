@@ -152,8 +152,8 @@ class TestAdversarialEmbeddingInput:
         from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
         router = EmbeddingRouter()
-        router._fallback_mode = "in_memory"
-        router._bge_small_dim = 384
+        router.fallback_mode = "in_memory"
+        router.bge_small_dim = 384
         return router
 
     def test_empty_text_embedding_returns_vector(self, in_memory_router):

@@ -136,21 +136,21 @@ class TestFailurePatternMatcherActivate:
     def test_activate_sets_active(self):
         matcher = FailurePatternMatcher()
         matcher.activate()
-        assert matcher._active is True
+        assert matcher.active is True
 
     def test_deactivate_clears_active(self):
         matcher = FailurePatternMatcher()
         matcher.activate()
         matcher.deactivate()
-        assert matcher._active is False
+        assert matcher.active is False
 
     def test_double_activate_idempotent(self):
         matcher = FailurePatternMatcher()
         matcher.activate()
         matcher.activate()
-        assert matcher._active is True
+        assert matcher.active is True
 
     def test_deactivate_when_inactive(self):
         matcher = FailurePatternMatcher()
         matcher.deactivate()
-        assert matcher._active is False
+        assert matcher.active is False

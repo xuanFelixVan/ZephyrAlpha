@@ -61,15 +61,15 @@ class TestDependencyCluster:
 class TestLLMImpactAnalyzerInit:
     def test_default_project_root(self):
         analyzer = LLMImpactAnalyzer()
-        assert analyzer._project_root == Path.cwd()
+        assert analyzer.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path):
         analyzer = LLMImpactAnalyzer(project_root=tmp_path)
-        assert analyzer._project_root == tmp_path
+        assert analyzer.project_root == tmp_path
 
     def test_none_project_root(self):
         analyzer = LLMImpactAnalyzer(project_root=None)
-        assert analyzer._project_root == Path.cwd()
+        assert analyzer.project_root == Path.cwd()
 
 
 class TestAnalyzeImpact:

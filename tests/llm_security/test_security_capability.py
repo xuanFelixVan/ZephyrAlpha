@@ -94,7 +94,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = []
+        registry.capabilities = []
         ok, info = registry.check("read", "any/path")
         assert ok is False
         assert info["reason"] == "no_matching_rule"
@@ -103,7 +103,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="allow_src", allow=["src/**"], deny=[]),
         ]
         ok, info = registry.check("read", "src/zephyr/main.py")
@@ -114,7 +114,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="deny_secrets", allow=[], deny=["*.pem"]),
         ]
         ok, info = registry.check("read", "key.pem")
@@ -125,7 +125,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="mixed", allow=["src/**"], deny=["key.pem"]),
         ]
         ok, info = registry.check("read", "key.pem")
@@ -135,7 +135,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="allow_all", allow=["**"], deny=[]),
         ]
         ok, info = registry.check("read", "any/deep/path/file.py")
@@ -145,7 +145,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="allow_py", allow=["*.py"], deny=[]),
         ]
         ok, info = registry.check("read", "test.py")
@@ -157,7 +157,7 @@ class TestCapabilityRegistry:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="multi", allow=["src/**", "tests/**"], deny=[]),
         ]
         ok1, _ = registry.check("read", "src/main.py")
@@ -173,7 +173,7 @@ class TestCapabilityCheck:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = [
+        registry.capabilities = [
             Capability(name="allow_all", allow=["**"], deny=[]),
         ]
         ok, info = capability_check("read", "any/path")
@@ -183,7 +183,7 @@ class TestCapabilityCheck:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             registry = CapabilityRegistry()
-        registry._capabilities = []
+        registry.capabilities = []
         with pytest.raises(CapabilityDenied) as exc_info:
             capability_check("write", "secret.key")
         assert exc_info.value.rule_name == "default_deny"

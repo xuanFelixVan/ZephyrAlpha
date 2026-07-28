@@ -351,16 +351,16 @@ class TestHallucinationDetectorBudgetSkip:
     def test_budget_skip_for_l_risk(self):
         d = HallucinationDetector()
         today = datetime.now(UTC).date().isoformat()
-        d._budget.current_day = today
-        d._budget.current_month = datetime.now(UTC).strftime("%Y-%m")
-        d._budget.daily_spent_usd = 1.0
+        d.budget.current_day = today
+        d.budget.current_month = datetime.now(UTC).strftime("%Y-%m")
+        d.budget.daily_spent_usd = 1.0
         result = d.detect("normal claim", risk_level=RiskLevel.L)
         assert result.fallback_used == FallbackMode.BUDGET_SKIP.value
         assert result.triggered is False
 
     def test_h_risk_forces_through_budget(self):
         d = HallucinationDetector()
-        d._budget.daily_spent_usd = 1.0
+        d.budget.daily_spent_usd = 1.0
         result = d.detect("normal claim", risk_level=RiskLevel.H)
         assert result.triggered is True
 

@@ -20,7 +20,7 @@ class TestMemoryProvenanceLogInstantiation:
     def test_creates_instance_with_empty_records(self):
         mpl = MemoryProvenanceLog()
         assert isinstance(mpl, MemoryProvenanceLog)
-        assert mpl._records == []
+        assert mpl.records == []
 
 
 class TestRecord:
@@ -35,8 +35,8 @@ class TestRecord:
         mpl = MemoryProvenanceLog()
         content = "hello world"
         h = mpl.record("agent-x", content, source_contract="contract-1")
-        assert len(mpl._records) == 1
-        entry = mpl._records[0]
+        assert len(mpl.records) == 1
+        entry = mpl.records[0]
         assert entry["agent"] == "agent-x"
         assert entry["hash"] == h
         assert entry["contract"] == "contract-1"
@@ -46,17 +46,17 @@ class TestRecord:
         mpl.record("a1", "content-1")
         mpl.record("a2", "content-2")
         mpl.record("a3", "content-3")
-        assert len(mpl._records) == 3
+        assert len(mpl.records) == 3
 
     def test_record_default_contract_is_empty(self):
         mpl = MemoryProvenanceLog()
         mpl.record("agent-1", "data")
-        assert mpl._records[0]["contract"] == ""
+        assert mpl.records[0]["contract"] == ""
 
     def test_record_timestamp_is_iso_format(self):
         mpl = MemoryProvenanceLog()
         mpl.record("agent-1", "data")
-        ts = mpl._records[0]["timestamp"]
+        ts = mpl.records[0]["timestamp"]
         assert "T" in ts
 
     def test_record_same_content_produces_same_hash(self):

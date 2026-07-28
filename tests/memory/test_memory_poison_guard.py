@@ -19,30 +19,30 @@ from zephyr.governance.security_governance.memory_poison_guard import MemoryPois
 class TestMemoryPoisonGuardInstantiation:
     def test_creates_instance_with_empty_trusted_set(self):
         guard = MemoryPoisonGuard()
-        assert len(guard._trusted_agents) == 0
+        assert len(guard.trusted_agents) == 0
 
     def test_trusted_agents_is_set(self):
         guard = MemoryPoisonGuard()
-        assert isinstance(guard._trusted_agents, set)
+        assert isinstance(guard.trusted_agents, set)
 
 
 class TestRegisterTrusted:
     def test_register_trusted_adds_agent(self):
         guard = MemoryPoisonGuard()
         guard.register_trusted("agent-001")
-        assert "agent-001" in guard._trusted_agents
+        assert "agent-001" in guard.trusted_agents
 
     def test_register_trusted_multiple_agents(self):
         guard = MemoryPoisonGuard()
         guard.register_trusted("agent-001")
         guard.register_trusted("agent-002")
-        assert len(guard._trusted_agents) == 2
+        assert len(guard.trusted_agents) == 2
 
     def test_register_trusted_idempotent(self):
         guard = MemoryPoisonGuard()
         guard.register_trusted("agent-001")
         guard.register_trusted("agent-001")
-        assert len(guard._trusted_agents) == 1
+        assert len(guard.trusted_agents) == 1
 
 
 class TestValidateWrite:

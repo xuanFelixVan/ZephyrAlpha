@@ -18,26 +18,26 @@ class TestModelVersionDetectorInstantiation:
     def test_creates_instance_with_empty_versions(self):
         mvd = ModelVersionDetector()
         assert isinstance(mvd, ModelVersionDetector)
-        assert mvd._known_versions == {}
+        assert mvd.known_versions == {}
 
 
 class TestRecordVersion:
     def test_record_stores_version(self):
         mvd = ModelVersionDetector()
         mvd.record_version("gpt-4", "v1.0")
-        assert mvd._known_versions["gpt-4"] == "v1.0"
+        assert mvd.known_versions["gpt-4"] == "v1.0"
 
     def test_record_overwrites_existing_version(self):
         mvd = ModelVersionDetector()
         mvd.record_version("gpt-4", "v1.0")
         mvd.record_version("gpt-4", "v2.0")
-        assert mvd._known_versions["gpt-4"] == "v2.0"
+        assert mvd.known_versions["gpt-4"] == "v2.0"
 
     def test_record_multiple_models(self):
         mvd = ModelVersionDetector()
         mvd.record_version("model-a", "1.0")
         mvd.record_version("model-b", "2.0")
-        assert len(mvd._known_versions) == 2
+        assert len(mvd.known_versions) == 2
 
 
 class TestDetectChange:

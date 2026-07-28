@@ -183,7 +183,7 @@ class TestPhaseExecutorGetPhaseStatus:
 
     def test_nonexistent_phase_returns_none(self):
         ex = PhaseExecutor()
-        ex._progress.phases.pop("phase_0", None)
+        ex.progress.phases.pop("phase_0", None)
         state = ex.get_phase_status(ConstructionPhase.PHASE_0)
         assert state is None
 

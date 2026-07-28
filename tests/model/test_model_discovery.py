@@ -104,23 +104,23 @@ class TestDiscoveredModelDefaults:
 class TestModelDiscoveryConstruction:
     def test_default_url(self):
         discovery = ModelDiscovery()
-        assert discovery._url == DEFAULT_OLLAMA_URL
+        assert discovery.url == DEFAULT_OLLAMA_URL
 
     def test_custom_url(self):
         discovery = ModelDiscovery(ollama_url="http://custom:9999")
-        assert discovery._url == "http://custom:9999"
+        assert discovery.url == "http://custom:9999"
 
     def test_url_trailing_slash_stripped(self):
         discovery = ModelDiscovery(ollama_url="http://localhost:11434/")
-        assert discovery._url == "http://localhost:11434"
+        assert discovery.url == "http://localhost:11434"
 
     def test_default_timeout(self):
         discovery = ModelDiscovery()
-        assert discovery._timeout == 15.0
+        assert discovery.timeout == 15.0
 
     def test_custom_timeout(self):
         discovery = ModelDiscovery(timeout_s=30.0)
-        assert discovery._timeout == 30.0
+        assert discovery.timeout == 30.0
 
 
 class TestDefaultOllamaUrl:

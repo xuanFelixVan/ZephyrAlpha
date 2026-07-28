@@ -82,8 +82,8 @@ class TestOrphanDetector:
 
     def test_instantiation(self):
         detector = self._make_detector()
-        assert detector._scanner is not None
-        assert detector._registry is not None
+        assert detector.scanner is not None
+        assert detector.registry is not None
 
     def test_find_orphans_empty(self):
         detector = self._make_detector(orphans=[])

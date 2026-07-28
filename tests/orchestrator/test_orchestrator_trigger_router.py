@@ -108,7 +108,7 @@ class TestTriggerRouterWithInjectedHandlers:
             safety=spec.safety,
             enabled=False,
         )
-        router._specs["disabled_type"] = disabled_spec
+        router.specs["disabled_type"] = disabled_spec
         result = router.dispatch("disabled_type", {})
         assert result.success is False
         assert result.skipped is True
@@ -153,7 +153,7 @@ class TestTriggerRouterReload:
         )
         result1 = router.dispatch("test_type", {})
         assert result1.success is True
-        router._injected_handlers["test_type"] = lambda p, **kw: {"v": 2}
+        router.injected_handlers["test_type"] = lambda p, **kw: {"v": 2}
         router.reload()
         result2 = router.dispatch("test_type", {})
         assert result2.handler_result == {"v": 2}

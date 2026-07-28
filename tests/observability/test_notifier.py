@@ -93,7 +93,7 @@ class TestNotifierNotify:
     def test_notify_disabled_config(self, tmp_path):
         output_dir = tmp_path / "notifs"
         n = Notifier(output_dir=output_dir)
-        n._config.enabled = False
+        n.config.enabled = False
         result = n.notify(NotificationLevel.INFO, "Title", "msg")
         assert isinstance(result, Notification)
         assert not output_dir.exists()
@@ -102,7 +102,7 @@ class TestNotifierNotify:
         n = Notifier(output_dir=tmp_path / "notifs")
         n.notify(NotificationLevel.INFO, "T1", "m1")
         n.notify(NotificationLevel.INFO, "T2", "m2")
-        assert n._notification_count == 2
+        assert n.notification_count == 2
 
     def test_notify_creates_output_dir(self, tmp_path):
         output_dir = tmp_path / "deep" / "nested" / "notifs"
