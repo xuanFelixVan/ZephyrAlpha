@@ -94,6 +94,51 @@ class ShadowWorkspace:
         self._run_ruff: bool = config.get("run_ruff", True)
         self._pytest_timeout: int = config.get("pytest_timeout", 120)
 
+    def run_type_check(self, shadow_file, project_root) -> dict[str, Any]:
+        """公共接口：run_type_check（Stage 4 公共化）。"""
+        return self._run_type_check(shadow_file, project_root)
+
+
+    def run_test(self, shadow_dir, project_root) -> dict[str, Any]:
+        """公共接口：run_test（Stage 4 公共化）。"""
+        return self._run_test(shadow_dir, project_root)
+
+
+    @property
+    def run_ruff(self) -> bool:
+        """只读：run_ruff（Stage 4 公共化）。"""
+        return self._run_ruff
+
+
+    @property
+    def run_pytest(self) -> bool:
+        """只读：run_pytest（Stage 4 公共化）。"""
+        return self._run_pytest
+
+
+    @property
+    def run_mypy(self) -> bool:
+        """只读：run_mypy（Stage 4 公共化）。"""
+        return self._run_mypy
+
+
+    def run_lint(self, shadow_file, project_root) -> dict[str, Any]:
+        """公共接口：run_lint（Stage 4 公共化）。"""
+        return self._run_lint(shadow_file, project_root)
+
+
+    @property
+    def pytest_timeout(self) -> int:
+        """只读：pytest_timeout（Stage 4 公共化）。"""
+        return self._pytest_timeout
+
+
+    @property
+    def base_dir(self) -> str:
+        """只读：base_dir（Stage 4 公共化）。"""
+        return self._base_dir
+
+
     def preflight(self, action: FixAction, project_root: str | None = None) -> ShadowResult:
         shadow_dir = os.path.join(self._base_dir, action.action_id)
         try:

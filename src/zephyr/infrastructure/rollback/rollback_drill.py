@@ -79,6 +79,29 @@ class RollbackDrill:
         self._consecutive_fails = 0
         self._automatic_rollback_melted = False
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    @property
+    def drill_log_dir(self):
+        """只读：drill_log_dir（Stage 4 公共化）。"""
+        return self._drill_log_dir
+
+
+    def check_db_integrity(self, path) -> bool:
+        """公共接口：check_db_integrity（Stage 4 公共化）。"""
+        return self._check_db_integrity(path)
+
+
+    @property
+    def automatic_rollback_melted(self):
+        """只读：automatic_rollback_melted（Stage 4 公共化）。"""
+        return self._automatic_rollback_melted
+
+
     def is_drill_time(self) -> bool:
         now = datetime.now(UTC)
         return now.weekday() == self.DRILL_SCHEDULE_DAY and now.hour == self.DRILL_SCHEDULE_HOUR

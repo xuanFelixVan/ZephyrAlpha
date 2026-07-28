@@ -63,6 +63,23 @@ class RollbackWAL:
         self._project_root = project_root or Path.cwd()
         self._wal_path = self._project_root / self.WAL_FILE
 
+    @property
+    def wal_path(self):
+        """只读：wal_path（Stage 4 公共化）。"""
+        return self._wal_path
+
+
+    def read_all(self) -> list[dict[str, Any]]:
+        """公共接口：read_all（Stage 4 公共化）。"""
+        return self._read_all()
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def write_ahead(self, operation: str, from_commit: str, to_commit: str, files: list[str]) -> WALEntry:
         entry_id = f"WAL-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S-%f')}"
 

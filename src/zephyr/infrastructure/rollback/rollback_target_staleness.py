@@ -51,6 +51,17 @@ class RollbackTargetStaleness:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    def get_commit_date(self, commit_sha) -> datetime | None:
+        """公共接口：get_commit_date（Stage 4 公共化）。"""
+        return self._get_commit_date(commit_sha)
+
+
     def check(self, commit_sha: str) -> StalenessResult:
         commit_date = self._get_commit_date(commit_sha)
         if not commit_date:

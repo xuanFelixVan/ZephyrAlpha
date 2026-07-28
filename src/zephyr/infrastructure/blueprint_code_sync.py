@@ -52,6 +52,23 @@ class BlueprintCodeSync:
         self._project_root = project_root or Path.cwd()
         self._registry_path = self._project_root / "docs" / "03_modules" / "blueprint_registry.yaml"
 
+    @property
+    def registry_path(self):
+        """只读：registry_path（Stage 4 公共化）。"""
+        return self._registry_path
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    def collect_entries(self) -> list[SyncEntry]:
+        """公共接口：collect_entries（Stage 4 公共化）。"""
+        return self._collect_entries()
+
+
     def verify_sync(self) -> SyncReport:
         entries = self._collect_entries()
 

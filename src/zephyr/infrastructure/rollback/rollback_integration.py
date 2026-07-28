@@ -132,6 +132,18 @@ class RollbackIntegration:
         self._notify_state = NotificationState()
         self._last_checkpoint_time: datetime | None = None
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    @staticmethod
+    def three_way_merge(base, incoming) -> dict[str, Any]:
+        """公共接口：three_way_merge（Stage 4 公共化，委托到 _three_way_merge）。"""
+        return _three_way_merge(base, incoming)
+
+
     def acl_check_to_target(self, session_id: str, target: str, owner_session_id: str | None = None) -> AclCheckResult:
         env_owner = owner_session_id or os.environ.get("ZEPHYR_OWNER_SESSION_ID", "")
 

@@ -162,6 +162,17 @@ class RollbackExecutor:
                 # 5.12.1 修复：原 except: pass 静默吞审计写入器初始化失败（审计链断链不可见）
                 logger.warning("AuditWriter init failed; audit trail will fall back to jsonl", exc_info=True)
 
+    def g0_verify(self, files) -> bool:
+        """公共接口：g0_verify（Stage 4 公共化）。"""
+        return self._g0_verify(files)
+
+
+    @property
+    def audit_writer(self) -> _CoreAuditWriter | None:
+        """只读：audit_writer（Stage 4 公共化）。"""
+        return self._audit_writer
+
+
     # === Public property accessors (R5: reverse hierarchy) ===
     @property
     def project_root(self) -> Path:

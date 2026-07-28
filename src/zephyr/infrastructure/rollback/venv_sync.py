@@ -69,6 +69,24 @@ class VenvSync:
         self._project_root = project_root or Path.cwd()
         self._req_path = self._project_root / self.REQUIREMENTS_FILE
 
+    @property
+    def req_path(self):
+        """只读：req_path（Stage 4 公共化）。"""
+        return self._req_path
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    @staticmethod
+    def parse_freeze(freeze_output) -> dict[str, str]:
+        """公共接口：parse_freeze（Stage 4 公共化，委托到 _parse_freeze）。"""
+        return _parse_freeze(freeze_output)
+
+
     def sync(self, skip_deps: bool = False) -> VenvSyncResult:
         before = self._freeze()
         details: list[str] = []

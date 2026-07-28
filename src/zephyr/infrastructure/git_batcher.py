@@ -94,6 +94,11 @@ class GitCommandBatcher:
         """
         self._root = Path(project_root)
 
+    def parse_tar_archive(self, tar_bytes) -> dict[str, bytes]:
+        """公共接口：parse_tar_archive（Stage 4 公共化）。"""
+        return self._parse_tar_archive(tar_bytes)
+
+
     def git_show_batch(
         self, ref: str, files: list[str], timeout: int = 60
     ) -> dict[str, bytes]:

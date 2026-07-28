@@ -135,6 +135,24 @@ class SqliteDumper:
         # 与本模块 hmac_key: bytes | None 契约不符。直接用模块级 HMAC_KEY_DEFAULT 兜底。
         self._hmac_key = hmac_key if hmac_key is not None else HMAC_KEY_DEFAULT
 
+    @property
+    def output_dir(self):
+        """只读：output_dir（Stage 4 公共化）。"""
+        return self._output_dir
+
+
+    @property
+    def hmac_key(self):
+        """只读：hmac_key（Stage 4 公共化）。"""
+        return self._hmac_key
+
+
+    @property
+    def db_path(self):
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+
     def _get_all_tables(self, conn: sqlite3.Connection) -> list[str]:
         rows = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"

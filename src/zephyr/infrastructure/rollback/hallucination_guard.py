@@ -76,6 +76,24 @@ class HallucinationGuard:
         self._project_root = project_root or Path.cwd()
         self._rounds: list[VerificationRound] = []
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
+    @staticmethod
+    def extract_functions(source) -> list[str]:
+        """公共接口：extract_functions（Stage 4 公共化，委托到 _extract_functions）。"""
+        return _extract_functions(source)
+
+
+    @staticmethod
+    def extract_classes(source) -> list[str]:
+        """公共接口：extract_classes（Stage 4 公共化，委托到 _extract_classes）。"""
+        return _extract_classes(source)
+
+
     def compute_actual_state(self, files: list[str] | None = None) -> list[FileState]:
         target_files = files or list(self._project_root.glob("src/zephyr/**/*.py"))
         states: list[FileState] = []

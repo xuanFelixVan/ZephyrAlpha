@@ -53,6 +53,12 @@ class RollbackSimulator:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def simulate_rollback(self, commit_sha: str) -> SimulationResult:
         start_time = time.time()
         sim_id = f"SIM-{int(start_time)}"

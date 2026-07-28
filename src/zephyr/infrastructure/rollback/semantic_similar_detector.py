@@ -71,6 +71,21 @@ class SemanticSimilarDetector:
     def __init__(self) -> None:
         pass
 
+    def parse_safe(self, source) -> ast.AST | None:
+        """公共接口：parse_safe（Stage 4 公共化）。"""
+        return self._parse_safe(source)
+
+
+    def count_sensitive_api_matches(self, source) -> int:
+        """公共接口：count_sensitive_api_matches（Stage 4 公共化）。"""
+        return self._count_sensitive_api_matches(source)
+
+
+    def ast_structure_similarity(self, old_tree, new_tree) -> float:
+        """公共接口：ast_structure_similarity（Stage 4 公共化）。"""
+        return self._ast_structure_similarity(old_tree, new_tree)
+
+
     def compare(self, old_source: str, new_source: str, file_path: str = "") -> MorphingReport:
         old_ast = self._parse_safe(old_source)
         new_ast = self._parse_safe(new_source)

@@ -80,6 +80,24 @@ class WarmStandby:
         self._standby_dir = self._project_root / self.STANDBY_DIR
         self._state_path = self._project_root / self.STANDBY_STATE_FILE
 
+    @property
+    def state_path(self):
+        """只读：state_path（Stage 4 公共化）。"""
+        return self._state_path
+
+
+    @property
+    def standby_dir(self):
+        """只读：standby_dir（Stage 4 公共化）。"""
+        return self._standby_dir
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def initialize(self, commit_sha: str) -> bool:
         if self._standby_dir.exists():
             return True

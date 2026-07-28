@@ -82,6 +82,12 @@ class FileWatcher:
         self._lock = threading.Lock()
         self._started = False
 
+    @property
+    def on_change(self):
+        """只读：on_change（Stage 4 公共化）。"""
+        return self._on_change
+
+
     def start(self) -> None:
         if self._started:
             return

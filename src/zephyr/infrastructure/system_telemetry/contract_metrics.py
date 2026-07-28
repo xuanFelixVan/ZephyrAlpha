@@ -84,6 +84,18 @@ class ContractMetricsCollector:
         self._violation_counts: dict[str, int] = defaultdict(int)
         self._field_baselines: dict[str, dict[str, float]] = defaultdict(dict)
 
+    @property
+    def violation_counts(self) -> dict[str, int]:
+        """只读：violation_counts（Stage 4 公共化）。"""
+        return self._violation_counts
+
+
+    @property
+    def field_baselines(self) -> dict[str, dict[str, float]]:
+        """只读：field_baselines（Stage 4 公共化）。"""
+        return self._field_baselines
+
+
     def enable(self) -> None:
         self._enabled = True
 

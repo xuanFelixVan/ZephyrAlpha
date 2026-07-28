@@ -76,6 +76,12 @@ class RollbackAuditNexus:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_audit_nexus", exc_info=True)
 
+    @property
+    def core_writer(self) -> _CoreAuditWriter | None:
+        """只读：core_writer（Stage 4 公共化）。"""
+        return self._core_writer
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def nexus_log(self):

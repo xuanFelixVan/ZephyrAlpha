@@ -83,6 +83,23 @@ class RightToBeForgotten:
         self._forgotten_hashes: set[str] = set()
         self._load_registry()
 
+    @property
+    def registry_dir(self):
+        """只读：registry_dir（Stage 4 公共化）。"""
+        return self._registry_dir
+
+
+    def mask_identifier(self, identifier) -> str:
+        """公共接口：mask_identifier（Stage 4 公共化）。"""
+        return self._mask_identifier(identifier)
+
+
+    @property
+    def forgotten_hashes(self) -> set[str]:
+        """只读：forgotten_hashes（Stage 4 公共化）。"""
+        return self._forgotten_hashes
+
+
     def register_forgotten_user(
         self,
         identifier: str,
