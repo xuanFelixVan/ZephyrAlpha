@@ -49,41 +49,41 @@ class TestTrustAnchorResult:
 class TestTripleTrustAnchorGateInstantiation:
     def test_default(self, tmp_path):
         gate = TripleTrustAnchorGate(project_root=tmp_path)
-        assert gate._root == tmp_path
-        assert gate._cache is None
+        assert gate.root == tmp_path
+        assert gate.cache is None
 
     def test_cache_initially_none(self, tmp_path):
         gate = TripleTrustAnchorGate(project_root=tmp_path)
-        assert gate._cache is None
+        assert gate.cache is None
 
 
 class TestCalculateTrust:
     def test_all_true(self):
-        assert TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": True}) == TrustLevel.FULL
+        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": True}) == TrustLevel.FULL
 
     def test_two_true(self):
-        assert TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": False}) == TrustLevel.PARTIAL
-        assert TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": True}) == TrustLevel.PARTIAL
-        assert TripleTrustAnchorGate._calculate_trust({"git_ok": False, "test_ok": True, "audit_ok": True}) == TrustLevel.PARTIAL
+        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": True, "audit_ok": False}) == TrustLevel.PARTIAL
+        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": True}) == TrustLevel.PARTIAL
+        assert TripleTrustAnchorGate.calculate_trust({"git_ok": False, "test_ok": True, "audit_ok": True}) == TrustLevel.PARTIAL
 
     def test_one_true(self):
-        assert TripleTrustAnchorGate._calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": False}) == TrustLevel.BROKEN
+        assert TripleTrustAnchorGate.calculate_trust({"git_ok": True, "test_ok": False, "audit_ok": False}) == TrustLevel.BROKEN
 
     def test_none_true(self):
-        assert TripleTrustAnchorGate._calculate_trust({"git_ok": False, "test_ok": False, "audit_ok": False}) == TrustLevel.BROKEN
+        assert TripleTrustAnchorGate.calculate_trust({"git_ok": False, "test_ok": False, "audit_ok": False}) == TrustLevel.BROKEN
 
 
 class TestRecommend:
     def test_full(self):
-        r = TripleTrustAnchorGate._recommend(TrustLevel.FULL)
+        r = TripleTrustAnchorGate.recommend(TrustLevel.FULL)
         assert "完全可信" in r
 
     def test_partial(self):
-        r = TripleTrustAnchorGate._recommend(TrustLevel.PARTIAL)
+        r = TripleTrustAnchorGate.recommend(TrustLevel.PARTIAL)
         assert "部分可信" in r
 
     def test_broken(self):
-        r = TripleTrustAnchorGate._recommend(TrustLevel.BROKEN)
+        r = TripleTrustAnchorGate.recommend(TrustLevel.BROKEN)
         assert "不可信" in r
 
 
@@ -110,14 +110,14 @@ class TestVerify:
 class TestCheckAuditContinuity:
     def test_no_log_file(self, tmp_path):
         gate = TripleTrustAnchorGate(project_root=tmp_path)
-        assert gate._check_audit_continuity() is True
+        assert gate.check_audit_continuity() is True
 
     def test_empty_log(self, tmp_path):
         log_dir = tmp_path / "data" / "reports"
         log_dir.mkdir(parents=True)
         (log_dir / "security_access_log.jsonl").write_text("", encoding="utf-8")
         gate = TripleTrustAnchorGate(project_root=tmp_path)
-        assert gate._check_audit_continuity() is True
+        assert gate.check_audit_continuity() is True
 
     def test_recent_entries_pass(self, tmp_path):
         log_dir = tmp_path / "data" / "reports"
@@ -129,7 +129,7 @@ class TestCheckAuditContinuity:
         ]
         (log_dir / "security_access_log.jsonl").write_text("\n".join(lines), encoding="utf-8")
         gate = TripleTrustAnchorGate(project_root=tmp_path)
-        assert gate._check_audit_continuity() is True
+        assert gate.check_audit_continuity() is True
 
     def test_large_gap_fails(self, tmp_path):
         log_dir = tmp_path / "data" / "reports"
@@ -141,7 +141,7 @@ class TestCheckAuditContinuity:
         ]
         (log_dir / "security_access_log.jsonl").write_text("\n".join(lines), encoding="utf-8")
         gate = TripleTrustAnchorGate(project_root=tmp_path)
-        assert gate._check_audit_continuity() is False
+        assert gate.check_audit_continuity() is False
 
 
 class TestBypassState:

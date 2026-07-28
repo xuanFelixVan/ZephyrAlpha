@@ -56,15 +56,24 @@ class TripleTrustAnchorGate:
         self._root = project_root
         self._cache: TrustAnchorResult | None = None
 
+    # Stage 4 公共化：root/cache 属性公共只读（primary），私有属性向后兼容。
+    @property
+    def root(self) -> Path:
+        return self._root
+
+    @property
+    def cache(self) -> TrustAnchorResult | None:
+        return self._cache
+
     def verify(self, force: bool = False) -> TrustAnchorResult:
         if not force and self._cache and self._cache_age_minutes() < self.MAX_CACHE_AGE_MINUTES:
             return self._cache
 
         git_ok = self._check_git_clean()
         test_ok = self._run_pytest()
-        audit_ok = self._check_audit_continuity()
+        audit_ok = self.check_audit_continuity()
 
-        trust_level = self._calculate_trust({
+        trust_level = self.calculate_trust({
             "git_ok": git_ok,
             "test_ok": test_ok,
             "audit_ok": audit_ok,
@@ -75,7 +84,7 @@ class TripleTrustAnchorGate:
             test_ok=test_ok,
             audit_ok=audit_ok,
             trust_level=trust_level,
-            recommendation=self._recommend(trust_level),
+            recommendation=self.recommend(trust_level),
         )
         return self._cache
 
@@ -105,7 +114,8 @@ class TripleTrustAnchorGate:
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return False
 
-    def _check_audit_continuity(self) -> bool:
+    def check_audit_continuity(self) -> bool:
+        """检查审计日志连续性（Stage 4 公共化，primary）。"""
         log_path = self._root / "data" / "reports" / "security_access_log.jsonl"
         if not log_path.exists():
             return True
@@ -141,9 +151,16 @@ class TripleTrustAnchorGate:
         except (OSError, PermissionError):
             return False
 
+    def _check_audit_continuity(self) -> bool:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.check_audit_continuity()
+
     @staticmethod
-    def _calculate_trust(checks: dict[str, bool]) -> TrustLevel:
-        # 5.96.3 修复：原 (git_ok, test_ok, audit_ok) 三布尔参数蔓延，改为 dict 提升调用点可读性
+    def calculate_trust(checks: dict[str, bool]) -> TrustLevel:
+        """计算信任等级（Stage 4 公共化，primary）。
+
+        5.96.3 修复：原 (git_ok, test_ok, audit_ok) 三布尔参数蔓延，改为 dict 提升调用点可读性
+        """
         green_count = sum(checks.values())
         if green_count == 3:
             return TrustLevel.FULL
@@ -152,12 +169,23 @@ class TripleTrustAnchorGate:
         return TrustLevel.BROKEN
 
     @staticmethod
-    def _recommend(trust_level: TrustLevel) -> str:
+    def _calculate_trust(checks: dict[str, bool]) -> TrustLevel:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return TripleTrustAnchorGate.calculate_trust(checks)
+
+    @staticmethod
+    def recommend(trust_level: TrustLevel) -> str:
+        """生成信任等级建议（Stage 4 公共化，primary）。"""
         if trust_level is TrustLevel.FULL:
             return "盘点器完全可信——正常运行：索引更新、对账、自愈全部开启"
         if trust_level is TrustLevel.PARTIAL:
             return "盘点器部分可信——正常运行，Dashboard 标记 trust_level=partial"
         return "盘点器不可信——停止自愈，仅作只读扫描+报告"
+
+    @staticmethod
+    def _recommend(trust_level: TrustLevel) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return TripleTrustAnchorGate.recommend(trust_level)
 
     def _cache_age_minutes(self) -> float:
         if not self._cache:
