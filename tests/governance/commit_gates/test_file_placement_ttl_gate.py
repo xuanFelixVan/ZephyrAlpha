@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GATE_ENGINE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] task_bound
 """test_file_placement_ttl_gate.py — 文件放置与 TTL 一致性门禁单元测试（ARCH-049）。
 

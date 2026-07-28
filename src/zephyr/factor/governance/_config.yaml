@@ -21,3 +21,9 @@ lifecycle_state_machine:
     - deprecated           # 废弃
     - retired              # 退役
   initial: research
+
+factor_pool:
+  n_max: 64                # 运行上限（全池）
+  active_capacity: 60      # 活跃池容量 (N_max - 4)
+  dormant_capacity: 4      # 休眠池容量
+  min_ic_to_enter: 0.02    # 入池最低IC均值（低于此值拒绝入池）

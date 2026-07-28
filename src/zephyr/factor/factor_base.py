@@ -110,6 +110,29 @@ class FactorBase(abc.ABC):
             pd.Series，index 与 data 对齐，值为因子截面得分。
         """
 
+    def incremental_compute(
+        self,
+        data: pd.DataFrame,
+        window: int = 20,
+        cached: pd.Series | None = None,
+        **kwargs,
+    ) -> pd.Series:
+        """增量计算因子值——滑动窗口避免全量重算。
+
+        默认回退到全量 compute()。子类可覆盖以实现真正的增量计算。
+        盘中增量场景（09:30-15:00）只重算新增数据点，拼接已有缓存结果。
+
+        Args:
+            data: 完整行情数据（含历史+新增）
+            window: 滑动窗口大小
+            cached: 上次计算的缓存结果（None 时回退到全量 compute）
+            **kwargs: 扩展参数
+
+        Returns:
+            完整因子值 Series（缓存 + 新增部分）
+        """
+        return self.compute(data, **kwargs)
+
     def validate(self, data: pd.DataFrame) -> bool:
         """
         （可选覆盖）校验输入数据是否满足本因子的计算前提。

@@ -3055,10 +3055,14 @@ class AKShareProvider(DataSourceBase):
                     continue
                 rows: list[tuple] = []
                 for _, r in df.iterrows():
-                    trade_date = str(r.get("净值日期", "") or "")
-                    nav = safe_float(r.get("单位净值"))
-                    if not trade_date:
+                    raw_date = r.get("净值日期")
+                    # 过滤 NaT/NaN/None（已退市ETF在请求日期范围内无数据时返回NaT）
+                    if raw_date is None:
                         continue
+                    trade_date = str(raw_date)
+                    if not trade_date or trade_date in ("NaT", "nan", "None"):
+                        continue
+                    nav = safe_float(r.get("单位净值"))
                     rows.append((
                         trade_date, symbol, fund_code, nav, None, "akshare",
                     ))

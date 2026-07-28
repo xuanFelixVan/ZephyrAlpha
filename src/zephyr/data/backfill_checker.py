@@ -258,7 +258,8 @@ def _infer_threshold(table: str, date_col: str) -> int:
         avg = float(out.strip()) if out and out.strip() else 0.0
     except (ValueError, TypeError):
         return 0
-    if avg <= 0:
+    # NaN 检查：表无近7天数据时 avg() 返回 NaN，int(NaN) 会抛 ValueError
+    if avg != avg or avg <= 0:  # noqa: PLR0124 — NaN != NaN 是标准 NaN 检测法
         return 0
     return int(avg * 0.5)
 

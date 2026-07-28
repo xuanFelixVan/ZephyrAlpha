@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_TEST_CLAIM_FILES_FOR_EDIT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id=MOD-GOV_ssot_gate_test | suite=ssot_gate | scope=unit | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-043 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """SSH helper for ClickHouse VM operations (VHDX backup scheme).
 
 Usage from PowerShell / Python:

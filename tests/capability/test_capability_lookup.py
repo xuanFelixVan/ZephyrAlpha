@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-018 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id=MOD-GOV_capability_lookup_test | suite=capability_lookup | scope=unit | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """provider_base 单测（MOD-L00-004 阶段1）。
 
 测试内容：
