@@ -27,6 +27,12 @@ class MultiTurnIntentAnalyzer:
     def __init__(self):
         self._turn_history: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-28）：只读 property ──
+    @property
+    def turn_history(self) -> list[dict]:
+        """只读：对话轮次历史（Stage 4 公共化，返回可变 list 引用）。"""
+        return self._turn_history
+
     def record_turn(self, turn: dict):
         self._turn_history.append(turn)
 

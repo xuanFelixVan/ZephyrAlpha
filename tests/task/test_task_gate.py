@@ -99,7 +99,7 @@ class TestCanDispatch:
     def test_dispatch_safe_capability(self):
         passport = _make_passport("model-a")
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         ok, reason = gate.can_dispatch("model-a", "task_classification")
         assert ok is True
         assert reason == "ok"
@@ -107,7 +107,7 @@ class TestCanDispatch:
     def test_dispatch_unsafe_capability(self):
         passport = _make_passport("model-a")
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         ok, reason = gate.can_dispatch("model-a", "code_fix")
         assert ok is False
         assert "low_accuracy" in reason
@@ -122,7 +122,7 @@ class TestCanDispatch:
         passport = _make_passport("model-a")
         passport.depth = DepthResult(overall_score=0.0, capabilities={})
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         ok, reason = gate.can_dispatch("model-a", "task_classification")
         assert ok is False
         assert reason == "no_depth_data"
@@ -130,7 +130,7 @@ class TestCanDispatch:
     def test_dispatch_capability_not_tested(self):
         passport = _make_passport("model-a")
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         ok, reason = gate.can_dispatch("model-a", "unknown_capability")
         assert ok is False
         assert reason == "capability_not_tested"
@@ -140,13 +140,13 @@ class TestCanDoAny:
     def test_has_safe_capabilities(self):
         passport = _make_passport("model-a")
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         assert gate.can_do_any("model-a") is True
 
     def test_no_safe_capabilities(self):
         passport = _make_passport("model-a", safe_caps=[], unsafe_caps=["code_fix"])
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         assert gate.can_do_any("model-a") is False
 
     def test_no_passport(self):
@@ -158,7 +158,7 @@ class TestGetSafeCapabilities:
     def test_returns_safe(self):
         passport = _make_passport("model-a", safe_caps=["task_classification", "tag_completion"])
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         caps = gate.get_safe_capabilities("model-a")
         assert "task_classification" in caps
         assert "tag_completion" in caps
@@ -172,7 +172,7 @@ class TestGetUnsafeCapabilities:
     def test_returns_unsafe(self):
         passport = _make_passport("model-a", unsafe_caps=["code_fix", "refactor"])
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         caps = gate.get_unsafe_capabilities("model-a")
         assert "code_fix" in caps
         assert "refactor" in caps
@@ -186,7 +186,7 @@ class TestGetPassport:
     def test_existing(self):
         passport = _make_passport("model-a")
         gate = TaskGate()
-        gate._passports["model-a"] = passport
+        gate.passports["model-a"] = passport
         assert gate.get_passport("model-a") is passport
 
     def test_missing(self):
@@ -199,8 +199,8 @@ class TestSummary:
         p1 = _make_passport("model-a", grade="B", score=0.75)
         p2 = _make_passport("model-b", grade="A", score=0.9)
         gate = TaskGate()
-        gate._passports["model-a"] = p1
-        gate._passports["model-b"] = p2
+        gate.passports["model-a"] = p1
+        gate.passports["model-b"] = p2
         s = gate.summary()
         assert s["models"] == 2
         assert "model-a" in s["details"]
@@ -217,5 +217,5 @@ class TestRepr:
     def test_repr(self):
         gate = TaskGate()
         assert repr(gate) == "TaskGate(models=0)"
-        gate._passports["m1"] = _make_passport("m1")
+        gate.passports["m1"] = _make_passport("m1")
         assert repr(gate) == "TaskGate(models=1)"

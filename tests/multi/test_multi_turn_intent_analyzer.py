@@ -30,53 +30,53 @@ from zephyr.governance.context_governance.multi_turn_intent_analyzer import Mult
 class TestMultiTurnIntentAnalyzerInit:
     def test_init_creates_empty_history(self):
         analyzer = MultiTurnIntentAnalyzer()
-        assert analyzer._turn_history == []
+        assert analyzer.turn_history == []
 
     def test_init_history_is_list(self):
         analyzer = MultiTurnIntentAnalyzer()
-        assert isinstance(analyzer._turn_history, list)
+        assert isinstance(analyzer.turn_history, list)
 
     def test_init_history_length_zero(self):
         analyzer = MultiTurnIntentAnalyzer()
-        assert len(analyzer._turn_history) == 0
+        assert len(analyzer.turn_history) == 0
 
 
 class TestRecordTurn:
     def test_record_single_turn(self):
         analyzer = MultiTurnIntentAnalyzer()
         analyzer.record_turn({"intent": "query", "text": "hello"})
-        assert len(analyzer._turn_history) == 1
-        assert analyzer._turn_history[0] == {"intent": "query", "text": "hello"}
+        assert len(analyzer.turn_history) == 1
+        assert analyzer.turn_history[0] == {"intent": "query", "text": "hello"}
 
     def test_record_multiple_turns(self):
         analyzer = MultiTurnIntentAnalyzer()
         analyzer.record_turn({"intent": "query"})
         analyzer.record_turn({"intent": "command"})
         analyzer.record_turn({"intent": "override"})
-        assert len(analyzer._turn_history) == 3
+        assert len(analyzer.turn_history) == 3
 
     def test_record_turn_empty_dict(self):
         analyzer = MultiTurnIntentAnalyzer()
         analyzer.record_turn({})
-        assert len(analyzer._turn_history) == 1
-        assert analyzer._turn_history[0] == {}
+        assert len(analyzer.turn_history) == 1
+        assert analyzer.turn_history[0] == {}
 
     def test_record_turn_preserves_all_keys(self):
         analyzer = MultiTurnIntentAnalyzer()
         turn = {"intent": "query", "role": "user", "timestamp": 1234567890}
         analyzer.record_turn(turn)
-        assert analyzer._turn_history[0]["role"] == "user"
-        assert analyzer._turn_history[0]["timestamp"] == 1234567890
+        assert analyzer.turn_history[0]["role"] == "user"
+        assert analyzer.turn_history[0]["timestamp"] == 1234567890
 
     def test_record_turn_none_value_in_dict(self):
         analyzer = MultiTurnIntentAnalyzer()
         analyzer.record_turn({"intent": None})
-        assert analyzer._turn_history[0]["intent"] is None
+        assert analyzer.turn_history[0]["intent"] is None
 
     def test_record_turn_missing_intent_key(self):
         analyzer = MultiTurnIntentAnalyzer()
         analyzer.record_turn({"text": "no intent field"})
-        assert "intent" not in analyzer._turn_history[0]
+        assert "intent" not in analyzer.turn_history[0]
 
 
 class TestAccumulatedIntent:

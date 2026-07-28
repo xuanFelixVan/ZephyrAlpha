@@ -47,6 +47,12 @@ class TaskGate:
         self._passports: dict[str, CapabilityPassport] = {}
         self._fallback_allowed: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-28）：只读 property ──
+    @property
+    def passports(self) -> dict[str, CapabilityPassport]:
+        """只读：模型护照表（Stage 4 公共化，返回可变 dict 引用）。"""
+        return self._passports
+
     # ── 加载 ────────────────────────────────────────────
 
     def load_passports(self) -> int:
