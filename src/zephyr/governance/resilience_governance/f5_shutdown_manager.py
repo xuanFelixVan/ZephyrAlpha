@@ -99,7 +99,7 @@ class F5ShutdownManager:
         db_path: Path | None = None,
         idle_timeout_seconds: float | None = None,
     ) -> None:
-        self._integration = integration
+        self.integration = integration
         self._project_root = project_root or Path.cwd()
         # 默认数据库路径: data/databases/governance.db
         if db_path is None:
@@ -118,7 +118,7 @@ class F5ShutdownManager:
         self._idle_timer: threading.Timer | None = None
         self._previous_sigint = None
         self._previous_sigterm = None
-        self._atexit_registered = False
+        self.atexit_registered = False
 
     # ------------------------------------------------------------------ #
     # 安装: signal + atexit + idle 监控
@@ -138,8 +138,8 @@ class F5ShutdownManager:
         try:
             self._previous_sigint = signal.getsignal(signal.SIGINT)
             self._previous_sigterm = signal.getsignal(signal.SIGTERM)
-            signal.signal(signal.SIGINT, self._on_signal)
-            signal.signal(signal.SIGTERM, self._on_signal)
+            signal.signal(signal.SIGINT, self.on_signal)
+            signal.signal(signal.SIGTERM, self.on_signal)
             details["signal_handlers_registered"] = True
             logger.info("F5ShutdownManager: SIGINT/SIGTERM handlers registered")
         except (ValueError, OSError) as e:
@@ -149,8 +149,8 @@ class F5ShutdownManager:
 
         # 2. 注册 atexit 兜底
         try:
-            atexit.register(self._on_atexit)
-            self._atexit_registered = True
+            atexit.register(self.on_atexit)
+            self.atexit_registered = True
             details["atexit_registered"] = True
             logger.info("F5ShutdownManager: atexit hook registered")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -228,9 +228,9 @@ class F5ShutdownManager:
             logger.error("F5ShutdownManager: persist_state failed: %s", e, exc_info=True)
 
         # 3. 调用 F5BootIntegration.on_shutdown() 清理资源
-        if self._integration is not None:
+        if self.integration is not None:
             try:
-                boot_result = self._integration.on_shutdown()
+                boot_result = self.integration.on_shutdown()
                 details["boot_shutdown"] = boot_result.details
                 if not boot_result.success:
                     errors.extend(boot_result.errors)
@@ -269,7 +269,7 @@ class F5ShutdownManager:
             "delegation_history": None,
         }
 
-        integration = self._integration
+        integration = self.integration
         if integration is not None:
             # DeadlockDetector 状态
             deadlock = getattr(integration, "deadlock_detector", None)
@@ -322,7 +322,7 @@ class F5ShutdownManager:
 
         # 写入 SQLite (原子写入: 先写临时文件, 再 replace)
         try:
-            self._write_state_to_db(state_payload)
+            self.write_state_to_db(state_payload)
             details["db_path"] = str(self._db_path)
             details["state_written"] = True
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -337,6 +337,10 @@ class F5ShutdownManager:
         )
 
     def _write_state_to_db(self, payload: dict[str, Any]) -> None:
+        """[DEPRECATED] 薄包装, 转发到公共 write_state_to_db (reverse hierarchy)。"""
+        self.write_state_to_db(payload)
+
+    def write_state_to_db(self, payload: dict[str, Any]) -> None:
         """将状态写入 SQLite (原子写入)。"""
         # 5.66.6 修复：白名单校验表名后再用于 f-string 拼接
         safe_table = _validate_table_name(self.STATE_TABLE)
@@ -414,8 +418,8 @@ class F5ShutdownManager:
 
             # 恢复 DeadlockDetector 状态
             deadlock_state = state.get("deadlock_state")
-            if deadlock_state is not None and self._integration is not None:
-                deadlock = getattr(self._integration, "deadlock_detector", None)
+            if deadlock_state is not None and self.integration is not None:
+                deadlock = getattr(self.integration, "deadlock_detector", None)
                 if deadlock is not None:
                     try:
                         self._restore_deadlock_state(deadlock, deadlock_state)
@@ -460,31 +464,35 @@ class F5ShutdownManager:
         preemption_order = state.get("preemption_order", [])
 
         # 恢复等待图
-        if hasattr(deadlock, "_wait_graph"):
-            deadlock._wait_graph.clear()
+        if hasattr(deadlock, "wait_graph"):
+            deadlock.wait_graph.clear()
             for waiter, holders in wait_graph.items():
-                deadlock._wait_graph[waiter] = set(holders)
+                deadlock.wait_graph[waiter] = set(holders)
 
         # 恢复锁 (注意: lock_timestamps 无法恢复, 因为是 monotonic 时间)
-        if hasattr(deadlock, "_locks"):
-            deadlock._locks.clear()
+        if hasattr(deadlock, "locks"):
+            deadlock.locks.clear()
             for resource, holder in locks.items():
-                deadlock._locks[resource] = holder
+                deadlock.locks[resource] = holder
             # 重建 lock_timestamps (用当前 monotonic 时间)
-            if hasattr(deadlock, "_lock_timestamps"):
-                deadlock._lock_timestamps.clear()
+            if hasattr(deadlock, "lock_timestamps"):
+                deadlock.lock_timestamps.clear()
                 now = time.monotonic()
                 for resource in locks:
-                    deadlock._lock_timestamps[resource] = now
+                    deadlock.lock_timestamps[resource] = now
 
         # 恢复抢占顺序
-        if hasattr(deadlock, "_preemption_order"):
-            deadlock._preemption_order = list(preemption_order)
+        if hasattr(deadlock, "preemption_order"):
+            deadlock.preemption_order = list(preemption_order)
 
     # ------------------------------------------------------------------ #
     # 信号处理 / atexit / idle 监控
     # ------------------------------------------------------------------ #
     def _on_signal(self, signum, frame) -> None:
+        """[DEPRECATED] 薄包装, 转发到公共 on_signal (reverse hierarchy)。"""
+        self.on_signal(signum, frame)
+
+    def on_signal(self, signum, frame) -> None:
         """SIGINT/SIGTERM 信号处理 (永不抛异常)。"""
         try:
             sig_name = signal.Signals(signum).name
@@ -498,6 +506,10 @@ class F5ShutdownManager:
             logger.error("F5ShutdownManager: shutdown in signal handler failed: %s", e, exc_info=True)
 
     def _on_atexit(self) -> None:
+        """[DEPRECATED] 薄包装, 转发到公共 on_atexit (reverse hierarchy)。"""
+        self.on_atexit()
+
+    def on_atexit(self) -> None:
         """atexit 兜底钩子 (永不抛异常)。"""
         logger.info("F5ShutdownManager: atexit triggered, running shutdown")
         try:
@@ -515,23 +527,23 @@ class F5ShutdownManager:
         if self._shutdown_done:
             return
         self._last_activity = time.monotonic()
-        self._idle_timer = threading.Timer(
+        self.idle_timer = threading.Timer(
             self._idle_timeout,
             self._on_idle_timeout,
         )
-        self._idle_timer.daemon = True
-        self._idle_timer.name = "f5_idle_timer"
-        self._idle_timer.start()
+        self.idle_timer.daemon = True
+        self.idle_timer.name = "f5_idle_timer"
+        self.idle_timer.start()
 
     def _cancel_idle_timer(self) -> None:
         """取消当前 idle 计时器（若存在）。"""
-        timer = self._idle_timer
+        timer = self.idle_timer
         if timer is not None:
             try:
                 timer.cancel()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
-            self._idle_timer = None
+            self.idle_timer = None
 
     def _on_idle_timeout(self) -> None:
         """idle 计时器到期回调：触发自动关闭（事件驱动，无轮询）。"""
@@ -576,6 +588,30 @@ class F5ShutdownManager:
     @property
     def db_path(self) -> Path:
         return self._db_path
+
+    @property
+    def integration(self) -> object:
+        return self._integration
+
+    @integration.setter
+    def integration(self, value: object) -> None:
+        self._integration = value
+
+    @property
+    def idle_timer(self):
+        return self._idle_timer
+
+    @idle_timer.setter
+    def idle_timer(self, value) -> None:
+        self._idle_timer = value
+
+    @property
+    def atexit_registered(self) -> bool:
+        return self._atexit_registered
+
+    @atexit_registered.setter
+    def atexit_registered(self, value: bool) -> None:
+        self._atexit_registered = value
 
 
 def register_f5_shutdown_hook(

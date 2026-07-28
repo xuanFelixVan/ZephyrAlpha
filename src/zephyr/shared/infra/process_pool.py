@@ -230,14 +230,30 @@ class MCPProcessPool:
         # W2 治本: stop 事件让扫描循环即时退出（替代 sleep 长等待），stop 可 join
         self._zombie_stop = threading.Event()
 
+    # ----- Stage 4 公共化：属性 getter -----
+    @property
+    def idle_timeout_s(self) -> float:
+        """Stage 4 公共化。"""
+        return self._idle_timeout_s
+
+    @property
+    def lock(self) -> threading.Lock:
+        """Stage 4 公共化。"""
+        return self._lock
+
+    @property
+    def pool(self) -> dict[str, PooledProcess]:
+        """Stage 4 公共化。"""
+        return self._pool
+
     def get_or_create(
         self,
         name: str,
         cmd: list[str] | None = None,
         env: dict[str, str] | None = None,
     ) -> PooledProcess | None:
-        with self._lock:
-            entry = self._pool.get(name)
+        with self.lock:
+            entry = self.pool.get(name)
             if entry is not None:
                 if entry.is_alive:
                     entry.reuse_count += 1
@@ -246,7 +262,7 @@ class MCPProcessPool:
                 else:
                     self._remove_entry(name)
 
-            if len(self._pool) >= self._max_processes:
+            if len(self.pool) >= self._max_processes:
                 logger.warning(
                     "MCPProcessPool: max processes (%d) reached, cannot create '%s'",
                     self._max_processes,
@@ -272,35 +288,35 @@ class MCPProcessPool:
                 return None
 
             entry = PooledProcess(name=name, process=proc)
-            self._pool[name] = entry
+            self.pool[name] = entry
             logger.info("MCPProcessPool: created process '%s' (pid=%d)", name, proc.pid)
             return entry
 
     def terminate(self, name: str) -> bool:
-        with self._lock:
-            entry = self._pool.get(name)
+        with self.lock:
+            entry = self.pool.get(name)
             if entry is None:
                 return False
             self._remove_entry(name)
             return True
 
     def terminate_all(self) -> int:
-        with self._lock:
-            count = len(self._pool)
-            for name in list(self._pool.keys()):
+        with self.lock:
+            count = len(self.pool)
+            for name in list(self.pool.keys()):
                 self._remove_entry(name)
             return count
 
     def get_stats(self) -> ProcessPoolStats:
-        with self._lock:
-            active = sum(1 for e in self._pool.values() if e.is_alive)
-            zombies = sum(1 for e in self._pool.values() if not e.is_alive)
-            reuse = sum(e.reuse_count for e in self._pool.values())
+        with self.lock:
+            active = sum(1 for e in self.pool.values() if e.is_alive)
+            zombies = sum(1 for e in self.pool.values() if not e.is_alive)
+            reuse = sum(e.reuse_count for e in self.pool.values())
             now = time.monotonic()
             idle = sum(
                 1
-                for e in self._pool.values()
-                if e.is_alive and self._idle_timeout_s > 0 and (now - e.last_used_at) > self._idle_timeout_s
+                for e in self.pool.values()
+                if e.is_alive and self.idle_timeout_s > 0 and (now - e.last_used_at) > self.idle_timeout_s
             )
             return ProcessPoolStats(
                 active_processes=active,
@@ -346,13 +362,13 @@ class MCPProcessPool:
             self._zombie_stop.wait(self._zombie_check_interval)
 
     def _reap_zombies(self) -> int:
-        with self._lock:
-            zombie_names = [name for name, entry in self._pool.items() if not entry.is_alive]
+        with self.lock:
+            zombie_names = [name for name, entry in self.pool.items() if not entry.is_alive]
             now = time.monotonic()
             idle_names = [
                 name
-                for name, entry in self._pool.items()
-                if entry.is_alive and self._idle_timeout_s > 0 and (now - entry.last_used_at) > self._idle_timeout_s
+                for name, entry in self.pool.items()
+                if entry.is_alive and self.idle_timeout_s > 0 and (now - entry.last_used_at) > self.idle_timeout_s
             ]
             for name in zombie_names:
                 self._remove_entry(name)
@@ -362,12 +378,12 @@ class MCPProcessPool:
                 logger.info(
                     "MCPProcessPool: reaped idle process '%s' (idle_timeout=%.0fs)",
                     name,
-                    self._idle_timeout_s,
+                    self.idle_timeout_s,
                 )
             return len(zombie_names) + len(idle_names)
 
     def _remove_entry(self, name: str) -> None:
-        entry = self._pool.pop(name, None)
+        entry = self.pool.pop(name, None)
         if entry is not None:
             # 5.144.3 修复: 先 terminate()->wait()->关闭管道（申请逆序释放）
             # 原顺序：先关管道再 terminate, 子进程写日志触发 BrokenPipeError, 关 stdin 发 EOF 让子进程提前退出跳过自身清理

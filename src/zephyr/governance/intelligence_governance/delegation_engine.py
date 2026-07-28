@@ -57,6 +57,11 @@ class DelegationEngine:
         self._deadlock_detector = deadlock_detector
         self._delegation_depth: dict[str, int] = {}
 
+    @property
+    def deadlock_detector(self):
+        """公共只读属性 (reverse hierarchy: _deadlock_detector 仍为存储)。"""
+        return self._deadlock_detector
+
     def register_delegate(self, delegate_id: str, expertise: list[str] | None = None) -> None:
         with self._lock:
             self._delegate_load.setdefault(delegate_id, 0)
@@ -77,7 +82,7 @@ class DelegationEngine:
         strategy: DelegationStrategy = DelegationStrategy.LOAD_BALANCED,
         task_id: str | None = None,
     ) -> DelegationRecord:
-        self._lsg_verify_delegation(event)
+        self.lsg_verify_delegation(event)
 
         depth_key = task_id or event.event_id or ""
         current_depth = self._delegation_depth.get(depth_key, 0)
@@ -218,6 +223,10 @@ class DelegationEngine:
         return self._select_least_loaded(available)
 
     def _lsg_verify_delegation(self, event: EscalationEvent) -> None:
+        """[DEPRECATED] 薄包装, 转发到公共 lsg_verify_delegation (reverse hierarchy)。"""
+        self.lsg_verify_delegation(event)
+
+    def lsg_verify_delegation(self, event: EscalationEvent) -> None:
         try:
             import asyncio
 
@@ -246,9 +255,9 @@ def _check_depth_exceeded(engine, current_depth, event, task_id, strategy):
 
 
 def _check_deadlock(engine, event, task_id, strategy):
-    if engine._deadlock_detector is not None:
+    if engine.deadlock_detector is not None:
         try:
-            cycle = engine._deadlock_detector.detect_cycle(event.owner_id or "", None)
+            cycle = engine.deadlock_detector.detect_cycle(event.owner_id or "", None)
             if cycle:
                 record = DelegationRecord(
                     from_owner=event.owner_id or "",

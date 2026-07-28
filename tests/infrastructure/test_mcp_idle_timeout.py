@@ -97,12 +97,12 @@ def fast_gateway():
 
     # 直接创建带短间隔的 pool，注入到 gateway
     gw = ProcessLifecycleGateway.__new__(ProcessLifecycleGateway)
-    gw._pool = MCPProcessPool(
+    gw.pool = MCPProcessPool(
         max_processes=30,
         zombie_check_interval=0.5,
         idle_timeout_s=2.0,
     )
-    gw._pool.start_zombie_scanner()
+    gw.pool.start_zombie_scanner()
     yield gw
     try:
         gw.terminate_all()
@@ -130,7 +130,7 @@ class TestIdleTimeoutConfiguration:
         from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway
 
         gw = ProcessLifecycleGateway(idle_timeout_s=600.0)
-        assert gw._pool._idle_timeout_s == 600.0
+        assert gw.pool.idle_timeout_s == 600.0
         gw.shutdown()
 
     def test_pool_idle_timeout_configurable(self):
@@ -138,7 +138,7 @@ class TestIdleTimeoutConfiguration:
         from zephyr.shared.infra.process_pool import MCPProcessPool
 
         pool = MCPProcessPool(idle_timeout_s=2.0)
-        assert pool._idle_timeout_s == 2.0
+        assert pool.idle_timeout_s == 2.0
         pool.stop_zombie_scanner()
 
 
@@ -169,8 +169,8 @@ class TestIdleTimeoutAutoReclaim:
         reclaimed = False
         while time.monotonic() < deadline:
             # 检查进程是否已从池中移除
-            with fast_pool._lock:
-                if "mcp-idle-test" not in fast_pool._pool:
+            with fast_pool.lock:
+                if "mcp-idle-test" not in fast_pool.pool:
                     reclaimed = True
                     break
             time.sleep(0.2)
@@ -197,9 +197,9 @@ class TestIdleTimeoutAutoReclaim:
             fast_pool.get_or_create("mcp-active-test")
 
         # 进程应该仍然存活（因为持续使用，未超时）
-        with fast_pool._lock:
-            assert "mcp-active-test" in fast_pool._pool, "Active process should not be reclaimed"
-            assert fast_pool._pool["mcp-active-test"].is_alive
+        with fast_pool.lock:
+            assert "mcp-active-test" in fast_pool.pool, "Active process should not be reclaimed"
+            assert fast_pool.pool["mcp-active-test"].is_alive
 
         assert _is_pid_alive(pid), "Active process should still be alive"
 
@@ -217,8 +217,8 @@ class TestIdleTimeoutAutoReclaim:
         deadline = time.monotonic() + 6.0
         reclaimed = False
         while time.monotonic() < deadline:
-            with fast_gateway._pool._lock:
-                if "mcp-gw-idle" not in fast_gateway._pool._pool:
+            with fast_gateway.pool.lock:
+                if "mcp-gw-idle" not in fast_gateway.pool.pool:
                     reclaimed = True
                     break
             time.sleep(0.2)
@@ -241,8 +241,8 @@ class TestIdleTimeoutAutoReclaim:
         # 等待回收
         deadline = time.monotonic() + 6.0
         while time.monotonic() < deadline:
-            with fast_pool._lock:
-                if "mcp-reclaim-verify" not in fast_pool._pool:
+            with fast_pool.lock:
+                if "mcp-reclaim-verify" not in fast_pool.pool:
                     break
             time.sleep(0.2)
 
@@ -276,19 +276,19 @@ class TestZombieScannerBehavior:
         time.sleep(0.3)
 
         # 进程应该在池中（还未超时）
-        with fast_pool._lock:
-            assert "mcp-scanner-test" in fast_pool._pool
+        with fast_pool.lock:
+            assert "mcp-scanner-test" in fast_pool.pool
 
         # 等待超时 + 扫描
         deadline = time.monotonic() + 6.0
         while time.monotonic() < deadline:
-            with fast_pool._lock:
-                if "mcp-scanner-test" not in fast_pool._pool:
+            with fast_pool.lock:
+                if "mcp-scanner-test" not in fast_pool.pool:
                     break
             time.sleep(0.2)
 
-        with fast_pool._lock:
-            assert "mcp-scanner-test" not in fast_pool._pool, "Scanner should have reclaimed idle process"
+        with fast_pool.lock:
+            assert "mcp-scanner-test" not in fast_pool.pool, "Scanner should have reclaimed idle process"
 
     def test_zombie_scanner_detects_dead_process(self, fast_pool, standin_script):
         """验证僵尸扫描器检测到已死亡进程（僵尸）。"""
@@ -312,13 +312,13 @@ class TestZombieScannerBehavior:
         # 等待扫描器检测并清理僵尸
         deadline = time.monotonic() + 3.0
         while time.monotonic() < deadline:
-            with fast_pool._lock:
-                if "mcp-zombie-test" not in fast_pool._pool:
+            with fast_pool.lock:
+                if "mcp-zombie-test" not in fast_pool.pool:
                     break
             time.sleep(0.2)
 
-        with fast_pool._lock:
-            assert "mcp-zombie-test" not in fast_pool._pool, "Scanner should have reaped zombie process"
+        with fast_pool.lock:
+            assert "mcp-zombie-test" not in fast_pool.pool, "Scanner should have reaped zombie process"
 
     def test_multiple_idle_processes_all_reclaimed(self, fast_pool, standin_script):
         """验证多个 idle 进程都被回收。"""
@@ -334,8 +334,8 @@ class TestZombieScannerBehavior:
         # 等待所有进程超时并被回收
         deadline = time.monotonic() + 8.0
         while time.monotonic() < deadline:
-            with fast_pool._lock:
-                remaining = [n for n in ["mcp-multi-1", "mcp-multi-2", "mcp-multi-3"] if n in fast_pool._pool]
+            with fast_pool.lock:
+                remaining = [n for n in ["mcp-multi-1", "mcp-multi-2", "mcp-multi-3"] if n in fast_pool.pool]
             if not remaining:
                 break
             time.sleep(0.2)
@@ -377,8 +377,8 @@ class TestRedBlueExtremeScenarios:
             # 等待一段时间，进程不应被回收
             time.sleep(2.0)
 
-            with pool._lock:
-                assert "mcp-no-timeout" in pool._pool, "Process should not be reclaimed when timeout=0"
+            with pool.lock:
+                assert "mcp-no-timeout" in pool.pool, "Process should not be reclaimed when timeout=0"
         finally:
             pool.terminate_all()
             pool.stop_zombie_scanner()
@@ -396,14 +396,14 @@ class TestRedBlueExtremeScenarios:
         for i in range(6):
             time.sleep(0.5)
             # 模拟活跃使用
-            with fast_pool._lock:
-                e = fast_pool._pool.get("mcp-in-use")
+            with fast_pool.lock:
+                e = fast_pool.pool.get("mcp-in-use")
                 if e:
                     e.last_used_at = time.monotonic()
 
         # 进程应该仍然存活
-        with fast_pool._lock:
-            assert "mcp-in-use" in fast_pool._pool, "Active process should not be reclaimed"
+        with fast_pool.lock:
+            assert "mcp-in-use" in fast_pool.pool, "Active process should not be reclaimed"
         assert _is_pid_alive(pid)
 
     def test_reclaim_then_recreate(self, fast_pool, standin_script):
@@ -419,13 +419,13 @@ class TestRedBlueExtremeScenarios:
         # 等待回收
         deadline = time.monotonic() + 6.0
         while time.monotonic() < deadline:
-            with fast_pool._lock:
-                if "mcp-recreate" not in fast_pool._pool:
+            with fast_pool.lock:
+                if "mcp-recreate" not in fast_pool.pool:
                     break
             time.sleep(0.2)
 
-        with fast_pool._lock:
-            assert "mcp-recreate" not in fast_pool._pool
+        with fast_pool.lock:
+            assert "mcp-recreate" not in fast_pool.pool
 
         # 重新创建
         entry2 = fast_pool.get_or_create(
@@ -477,13 +477,13 @@ class TestRedBlueExtremeScenarios:
         assert count == 2
 
         # 池应为空
-        with fast_pool._lock:
-            assert len(fast_pool._pool) == 0
+        with fast_pool.lock:
+            assert len(fast_pool.pool) == 0
 
         # 等待一段时间，不应有残留进程被回收（因为池已空）
         time.sleep(1.0)
-        with fast_pool._lock:
-            assert len(fast_pool._pool) == 0
+        with fast_pool.lock:
+            assert len(fast_pool.pool) == 0
 
 
 # ---------------------------------------------------------------------------

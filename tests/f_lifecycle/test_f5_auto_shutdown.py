@@ -116,15 +116,15 @@ class TestInstall:
         # signal handler 应该已被注册 (在主线程中)
         current_sigint = signal.getsignal(signal.SIGINT)
         current_sigterm = signal.getsignal(signal.SIGTERM)
-        assert current_sigint == manager._on_signal
-        assert current_sigterm == manager._on_signal
+        assert current_sigint == manager.on_signal
+        assert current_sigterm == manager.on_signal
 
     def test_install_registers_atexit(self, manager: F5ShutdownManager):
-        assert manager._atexit_registered is True
+        assert manager.atexit_registered is True
 
     def test_install_starts_idle_monitor(self, manager: F5ShutdownManager):
         # 事件驱动模型：install 后存在活跃的 idle timer
-        assert manager._idle_timer is not None
+        assert manager.idle_timer is not None
 
     def test_install_is_idempotent(self, manager: F5ShutdownManager):
         first = manager.install()
@@ -140,8 +140,8 @@ class TestInstall:
             db_path=temp_db,
             idle_timeout_seconds=60.0,
         )
-        with patch("zephyr.governance.f5_shutdown_manager.signal.signal") as mock_signal, \
-             patch("zephyr.governance.f5_shutdown_manager.atexit.register") as mock_atexit:
+        with patch("zephyr.governance.resilience_governance.f5_shutdown_manager.signal.signal") as mock_signal, \
+             patch("zephyr.governance.resilience_governance.f5_shutdown_manager.atexit.register") as mock_atexit:
             mock_signal.return_value = None
             result = mgr.install()
             assert result.success is True
@@ -170,7 +170,7 @@ class TestShutdown:
         assert second.details.get("already_shutdown") is True
 
     def test_shutdown_calls_integration_on_shutdown(self, manager: F5ShutdownManager):
-        integration = manager._integration
+        integration = manager.integration
         with patch.object(integration, "on_shutdown") as mock_on_shutdown:
             mock_on_shutdown.return_value = MagicMock(success=True, errors=[], details={})
             manager.shutdown()
@@ -194,7 +194,7 @@ class TestShutdown:
         assert result.success is True
 
     def test_shutdown_handles_integration_failure(self, manager: F5ShutdownManager):
-        integration = manager._integration
+        integration = manager.integration
         with patch.object(integration, "on_shutdown") as mock_on_shutdown:
             mock_on_shutdown.side_effect = RuntimeError("boom")
             result = manager.shutdown()
@@ -202,11 +202,11 @@ class TestShutdown:
             assert any("integration on_shutdown failed" in e for e in result.errors)
 
     def test_shutdown_stops_idle_monitor(self, manager: F5ShutdownManager):
-        timer = manager._idle_timer
+        timer = manager.idle_timer
         assert timer is not None
         manager.shutdown()
         # shutdown 后 timer 应已取消
-        assert manager._idle_timer is None
+        assert manager.idle_timer is None
 
 
 class TestPersistState:
@@ -234,8 +234,8 @@ class TestPersistState:
 
     def test_persist_state_captures_deadlock_state(self, manager: F5ShutdownManager):
         # 添加一些 deadlock 状态
-        manager._integration.deadlock_detector.add_edge("a", "b")
-        manager._integration.deadlock_detector.try_acquire("resource-1", "holder-1")
+        manager.integration.deadlock_detector.add_edge("a", "b")
+        manager.integration.deadlock_detector.try_acquire("resource-1", "holder-1")
 
         result = manager.persist_state()
         assert result.details.get("deadlock_state_captured") is True
@@ -259,7 +259,7 @@ class TestPersistState:
             AgentMeta,
             AgentRole,
         )
-        arb = manager._integration.arbitrator
+        arb = manager.integration.arbitrator
         arb.arbitrate(
             AgentMeta(agent_id="a", role=AgentRole.SUPERADMIN),
             AgentMeta(agent_id="b", role=AgentRole.BUILDER),
@@ -275,7 +275,7 @@ class TestPersistState:
             EscalationEvent,
             RuleCategory,
         )
-        delegation = manager._integration.delegation_engine
+        delegation = manager.integration.delegation_engine
         delegation.register_delegate("delegate-1", expertise=["deadlock"])
 
         event = EscalationEvent(
@@ -283,7 +283,7 @@ class TestPersistState:
             description="test",
             owner_id="owner-1",
         )
-        with patch.object(delegation, "_lsg_verify_delegation"):
+        with patch.object(delegation, "lsg_verify_delegation"):
             delegation.delegate(event)
 
         result = manager.persist_state()
@@ -292,12 +292,12 @@ class TestPersistState:
 
     def test_persist_state_replaces_old_state(self, manager: F5ShutdownManager):
         # 第一次持久化
-        manager._integration.deadlock_detector.add_edge("a", "b")
+        manager.integration.deadlock_detector.add_edge("a", "b")
         manager.persist_state()
 
         # 第二次持久化 (不同状态)
-        manager._integration.deadlock_detector._wait_graph.clear()
-        manager._integration.deadlock_detector.add_edge("x", "y")
+        manager.integration.deadlock_detector.wait_graph.clear()
+        manager.integration.deadlock_detector.add_edge("x", "y")
         manager.persist_state()
 
         # 应该只有最新状态
@@ -343,29 +343,29 @@ class TestRestoreState:
 
     def test_restore_state_restores_deadlock_graph(self, manager: F5ShutdownManager):
         # 添加状态并持久化
-        deadlock = manager._integration.deadlock_detector
+        deadlock = manager.integration.deadlock_detector
         deadlock.add_edge("a", "b")
         deadlock.add_edge("b", "c")
         deadlock.try_acquire("resource-1", "holder-1")
         manager.persist_state()
 
         # 清空状态
-        deadlock._wait_graph.clear()
-        deadlock._locks.clear()
-        deadlock._lock_timestamps.clear()
-        deadlock._preemption_order.clear()
-        assert len(deadlock._wait_graph) == 0
+        deadlock.wait_graph.clear()
+        deadlock.locks.clear()
+        deadlock.lock_timestamps.clear()
+        deadlock.preemption_order.clear()
+        assert len(deadlock.wait_graph) == 0
 
         # 恢复
         result = manager.restore_state()
         assert result.details.get("deadlock_state_restored") is True
 
         # 验证恢复
-        assert "a" in deadlock._wait_graph
-        assert "b" in deadlock._wait_graph
-        assert deadlock._wait_graph["a"] == {"b"}
-        assert deadlock._wait_graph["b"] == {"c"}
-        assert deadlock._locks["resource-1"] == "holder-1"
+        assert "a" in deadlock.wait_graph
+        assert "b" in deadlock.wait_graph
+        assert deadlock.wait_graph["a"] == {"b"}
+        assert deadlock.wait_graph["b"] == {"c"}
+        assert deadlock.locks["resource-1"] == "holder-1"
 
     def test_restore_state_never_raises_on_missing_keys(self, manager: F5ShutdownManager):
         # 写入空状态
@@ -377,7 +377,7 @@ class TestRestoreState:
     def test_restore_state_without_integration(self, temp_db: Path):
         mgr = F5ShutdownManager(integration=None, db_path=temp_db)
         # 先写一些状态
-        mgr._write_state_to_db({"timestamp": time.time(), "deadlock_state": None})
+        mgr.write_state_to_db({"timestamp": time.time(), "deadlock_state": None})
         result = mgr.restore_state()
         assert result.success is True
 
@@ -388,13 +388,13 @@ class TestSignalHandler:
             mock_shutdown.return_value = ShutdownResult(
                 success=True, component="f5_shutdown"
             )
-            manager._on_signal(signal.SIGTERM, None)
+            manager.on_signal(signal.SIGTERM, None)
             mock_shutdown.assert_called_once()
 
     def test_signal_handler_never_raises(self, manager: F5ShutdownManager):
         with patch.object(manager, "shutdown", side_effect=RuntimeError("boom")):
             # 不应该抛异常
-            manager._on_signal(signal.SIGTERM, None)
+            manager.on_signal(signal.SIGTERM, None)
 
     def test_signal_handler_logs_signal_name(self, manager: F5ShutdownManager):
         with patch.object(manager, "shutdown") as mock_shutdown:
@@ -402,7 +402,7 @@ class TestSignalHandler:
                 success=True, component="f5_shutdown"
             )
             # SIGINT = 2
-            manager._on_signal(2, None)
+            manager.on_signal(2, None)
             mock_shutdown.assert_called_once()
 
 
@@ -412,13 +412,13 @@ class TestAtexitHandler:
             mock_shutdown.return_value = ShutdownResult(
                 success=True, component="f5_shutdown"
             )
-            manager._on_atexit()
+            manager.on_atexit()
             mock_shutdown.assert_called_once()
 
     def test_atexit_handler_never_raises(self, manager: F5ShutdownManager):
         with patch.object(manager, "shutdown", side_effect=RuntimeError("boom")):
             # 不应该抛异常
-            manager._on_atexit()
+            manager.on_atexit()
 
 
 class TestIdleMonitor:
@@ -431,7 +431,7 @@ class TestIdleMonitor:
     def test_is_idle_timeout_false_when_recent_activity(self, manager: F5ShutdownManager):
         # 事件驱动模型：update_activity 重排 timer，timer 仍活跃
         manager.update_activity()
-        assert manager._idle_timer is not None
+        assert manager.idle_timer is not None
 
     def test_is_idle_timeout_true_when_timeout_reached(self, temp_db: Path):
         # 事件驱动模型：极短 timeout 让 timer 触发 shutdown
@@ -449,7 +449,7 @@ class TestIdleMonitor:
     def test_is_idle_timeout_false_after_shutdown(self, manager: F5ShutdownManager):
         manager.shutdown()
         # shutdown 后 timer 应已取消
-        assert manager._idle_timer is None
+        assert manager.idle_timer is None
 
     def test_idle_monitor_triggers_shutdown(self, temp_db: Path):
         """测试 idle timer 在 timeout 后触发 shutdown（事件驱动）。"""
@@ -471,11 +471,11 @@ class TestIdleMonitor:
 
 class TestUninstall:
     def test_uninstall_stops_idle_thread(self, manager: F5ShutdownManager):
-        timer = manager._idle_timer
+        timer = manager.idle_timer
         assert timer is not None
         manager.uninstall()
         # uninstall 后 timer 应已取消
-        assert manager._idle_timer is None
+        assert manager.idle_timer is None
 
     def test_uninstall_restores_signal_handlers(self, integration: F5BootIntegration, temp_db: Path):
         # 保存原始 signal handler
@@ -490,8 +490,8 @@ class TestUninstall:
         mgr.install()
 
         # signal handler 应该已被替换
-        assert signal.getsignal(signal.SIGINT) == mgr._on_signal
-        assert signal.getsignal(signal.SIGTERM) == mgr._on_signal
+        assert signal.getsignal(signal.SIGINT) == mgr.on_signal
+        assert signal.getsignal(signal.SIGTERM) == mgr.on_signal
 
         mgr.uninstall()
 
@@ -507,7 +507,7 @@ class TestUninstall:
 
 class TestRegisterF5ShutdownHookModuleFunction:
     def test_returns_manager_instance(self, integration: F5BootIntegration, temp_db: Path):
-        with patch("zephyr.governance.f5_shutdown_manager.atexit.register"):
+        with patch("zephyr.governance.resilience_governance.f5_shutdown_manager.atexit.register"):
             mgr = register_f5_shutdown_hook(
                 integration=integration,
                 db_path=temp_db,
@@ -564,8 +564,8 @@ class TestEndToEndShutdownCycle:
         assert restore_result.details.get("deadlock_state_restored") is True
 
         # 验证恢复
-        assert "a" in integration2.deadlock_detector._wait_graph
-        assert integration2.deadlock_detector._locks["resource-1"] == "holder-1"
+        assert "a" in integration2.deadlock_detector.wait_graph
+        assert integration2.deadlock_detector.locks["resource-1"] == "holder-1"
 
     def test_shutdown_via_signal_handler(self, integration: F5BootIntegration, temp_db: Path):
         mgr = F5ShutdownManager(
@@ -576,7 +576,7 @@ class TestEndToEndShutdownCycle:
         mgr.install()
 
         # 模拟信号触发
-        mgr._on_signal(signal.SIGTERM, None)
+        mgr.on_signal(signal.SIGTERM, None)
 
         assert mgr.is_shutdown is True
         assert integration.is_initialized is False
@@ -591,7 +591,7 @@ class TestEndToEndShutdownCycle:
         mgr.install()
 
         # 模拟 atexit 触发
-        mgr._on_atexit()
+        mgr.on_atexit()
 
         assert mgr.is_shutdown is True
         assert integration.is_initialized is False

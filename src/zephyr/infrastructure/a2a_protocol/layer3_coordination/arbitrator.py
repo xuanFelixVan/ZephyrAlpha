@@ -113,6 +113,16 @@ class Arbitrator:
         self._deadlock_detector = deadlock_detector
         self._audit_log: list[dict] = []
 
+    @property
+    def escalation_engine(self):
+        """公共只读属性 (reverse hierarchy: _escalation_engine 仍为存储)。"""
+        return self._escalation_engine
+
+    @property
+    def deadlock_detector(self):
+        """公共只读属性 (reverse hierarchy: _deadlock_detector 仍为存储)。"""
+        return self._deadlock_detector
+
     def _record_audit(
         self,
         agent_a: str,
@@ -167,17 +177,17 @@ class Arbitrator:
         agent_b: AgentMeta,
         conflicted_files: list[str],
     ) -> ArbitrationVerdict:
-        if self._deadlock_detector is not None:
+        if self.deadlock_detector is not None:
             try:
-                cycle = self._deadlock_detector.detect_cycle(agent_a.agent_id, agent_b.agent_id)
+                cycle = self.deadlock_detector.detect_cycle(agent_a.agent_id, agent_b.agent_id)
                 if cycle:
                     return ArbitrationVerdict.BLOCKED
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in arbitrator", exc_info=True)
-        if self._escalation_engine is not None:
+        if self.escalation_engine is not None:
             try:
                 from zephyr.governance.escalation.escalation_models import RuleCategory
-                self._escalation_engine.evaluate(
+                self.escalation_engine.evaluate(
                     category=RuleCategory.DEADLOCK,
                     description=f"A2A conflict: {agent_a.agent_id} vs {agent_b.agent_id} on {conflicted_files}",
                     owner_id=agent_a.agent_id,

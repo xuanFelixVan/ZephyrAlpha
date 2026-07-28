@@ -162,7 +162,7 @@ class AutoRuntimeCore:
 
         self._a2a_registry: A2ARegistry | None = None
         self._a2a_protocol_gateway: A2AProtocolGateway | None = None
-        self._init_a2a()
+        self.init_a2a()
 
         self._booted = False
         self._local_scheduler: LocalModelScheduler | None = local_scheduler
@@ -176,11 +176,53 @@ class AutoRuntimeCore:
         self._model_profiler: ModelProfiler | None = model_profiler
         self._task_repo: TaskRepositoryProtocol | None = task_repo
 
+    # ── Stage 4 公共化属性（property getter/setter） ──
+    @property
+    def lifecycle(self) -> LifecycleManager:
+        """Stage 4 公共化。"""
+        return self._lifecycle
+
+    @property
+    def booted(self) -> bool:
+        """Stage 4 公共化。"""
+        return self._booted
+
+    @booted.setter
+    def booted(self, value: bool) -> None:
+        self._booted = value
+
+    @property
+    def fle_scheduler(self) -> FeedbackLoopScheduler | None:
+        """Stage 4 公共化。"""
+        return self._fle_scheduler
+
+    @fle_scheduler.setter
+    def fle_scheduler(self, value: FeedbackLoopScheduler | None) -> None:
+        self._fle_scheduler = value
+
+    @property
+    def local_scheduler(self) -> LocalModelScheduler | None:
+        """Stage 4 公共化。"""
+        return self._local_scheduler
+
+    @local_scheduler.setter
+    def local_scheduler(self, value: LocalModelScheduler | None) -> None:
+        self._local_scheduler = value
+
+    @property
+    def vms(self) -> InProcessVectorMemory | None:
+        """Stage 4 公共化。"""
+        return self._vms
+
+    @vms.setter
+    def vms(self, value: InProcessVectorMemory | None) -> None:
+        self._vms = value
+
     # ── boot 编排区（交织保留：调用顺序即语义） ──
     # 保留理由：boot_sequence→L2 模型栈→benchmark→资源引擎→RBAC→子系统注册 的顺序
     # 与 report 累积语义/_booted 状态翻转/降级标记深度交织，是纯编排而非职责簇。
     def boot(self) -> BootReport:
-        report = self._lifecycle.boot_sequence(
+        report = self.lifecycle.boot_sequence(
             audit_logger=self._audit_logger,
             registry=self._registry,
             night_shift_queue=self._night_shift_queue,
@@ -210,15 +252,15 @@ class AutoRuntimeCore:
                 self._resource_engine_degraded = True
 
             self._bootstrap_rbac()
-            self._register_task_system_cron_jobs()
-            self._register_task_system_hooks()
-            self._start_task_queue()
-            self._start_blueprint_watcher()
-            self._start_fle_scheduler()
-            self._run_boot_triple_alignment()
-            self._init_escalation_protocol()
+            self.register_task_system_cron_jobs()
+            self.register_task_system_hooks()
+            self.start_task_queue()
+            self.start_blueprint_watcher()
+            self.start_fle_scheduler()
+            self.run_boot_triple_alignment()
+            self.init_escalation_protocol()
 
-        self._booted = report.success
+        self.booted = report.success
         return report
 
     # ── RBAC 生命周期区（交织保留：boot 成功末段启动 / shutdown 最先关闭） ──
@@ -267,11 +309,16 @@ class AutoRuntimeCore:
         return _OllamaProcessManager.ensure_available(self, report)
 
     # ── boot 子系统注册（委托 _BootSubsystemRegistrar） ──
-    def _init_escalation_protocol(self) -> None:
+    def init_escalation_protocol(self) -> None:
+        """Stage 4 公共化，primary。"""
         return _BootSubsystemRegistrar.init_escalation_protocol(self)
 
-    def _register_task_system_cron_jobs(self) -> None:
-        """注册任务系统定时作业的残留事件订阅（容错——失败仅告警，不阻断 boot）。
+    def _init_escalation_protocol(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.init_escalation_protocol()
+
+    def register_task_system_cron_jobs(self) -> None:
+        """Stage 4 公共化，primary。注册任务系统定时作业的残留事件订阅（容错——失败仅告警，不阻断 boot）。
 
         历史：原 boot_cron_jobs.register_boot_cron_jobs 已于 2026-06-26 裁定随
         CircadianScheduler 定时调度机制一并废除；本方法保留为 boot 流程钩子，
@@ -281,20 +328,49 @@ class AutoRuntimeCore:
         """
         return _BootSubsystemRegistrar.register_task_system_cron_jobs(self)
 
-    def _register_task_system_hooks(self) -> None:
+    def _register_task_system_cron_jobs(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.register_task_system_cron_jobs()
+
+    def register_task_system_hooks(self) -> None:
+        """Stage 4 公共化，primary。"""
         return _BootSubsystemRegistrar.register_task_system_hooks(self)
 
-    def _start_task_queue(self) -> None:
+    def _register_task_system_hooks(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.register_task_system_hooks()
+
+    def start_task_queue(self) -> None:
+        """Stage 4 公共化，primary。"""
         return _BootSubsystemRegistrar.start_task_queue(self)
 
-    def _start_blueprint_watcher(self) -> None:
+    def _start_task_queue(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.start_task_queue()
+
+    def start_blueprint_watcher(self) -> None:
+        """Stage 4 公共化，primary。"""
         return _BootSubsystemRegistrar.start_blueprint_watcher(self)
 
-    def _start_fle_scheduler(self) -> None:
+    def _start_blueprint_watcher(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.start_blueprint_watcher()
+
+    def start_fle_scheduler(self) -> None:
+        """Stage 4 公共化，primary。"""
         return _BootSubsystemRegistrar.start_fle_scheduler(self)
 
-    def _run_boot_triple_alignment(self) -> None:
+    def _start_fle_scheduler(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.start_fle_scheduler()
+
+    def run_boot_triple_alignment(self) -> None:
+        """Stage 4 公共化，primary。"""
         return _BootSubsystemRegistrar.run_boot_triple_alignment(self)
+
+    def _run_boot_triple_alignment(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_boot_triple_alignment()
 
     # ── 本地模型栈启动编排（委托 _LocalModelBootstrap） ──
     def _start_local_models(self, report: BootReport) -> None:
@@ -352,21 +428,21 @@ class AutoRuntimeCore:
         self._shutdown_rbac()
         # 5.49.1 修复：shutdown 时终止 ollama 进程，避免孤儿进程
         _OllamaProcessManager.terminate_proc(self)
-        if self._local_scheduler is not None:
+        if self.local_scheduler is not None:
             try:
-                self._local_scheduler.stop()
+                self.local_scheduler.stop()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞本地模型调度器关闭失败
                 logger.exception("local_scheduler.stop() failed during shutdown", exc_info=True)
-        if hasattr(self, "_fle_scheduler") and self._fle_scheduler is not None:
+        if hasattr(self, "fle_scheduler") and self.fle_scheduler is not None:
             try:
-                self._fle_scheduler.stop()
+                self.fle_scheduler.stop()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 FLE 调度器关闭失败
                 logger.exception("fle_scheduler.stop() failed during shutdown", exc_info=True)
-        if self._vms is not None:
+        if self.vms is not None:
             try:
-                self._vms.shutdown()
+                self.vms.shutdown()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
                 logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
@@ -378,14 +454,14 @@ class AutoRuntimeCore:
         # 5.144.4 修复: shutdown_sequence() 无 try/except, 若抛异常则 self._booted = False 不执行,
         # 运行时状态卡在"已关闭但 booted=True"。用 try/finally 保证 _booted=False 必定执行
         try:
-            report = self._lifecycle.shutdown_sequence(
+            report = self.lifecycle.shutdown_sequence(
                 stop_gate=self._stop_gate,
                 finalizer=self._finalizer,
                 health_monitor=self._health_monitor,
                 audit_logger=self._audit_logger,
             )
         finally:
-            self._booted = False
+            self.booted = False
         return report
 
     # ── 对账编排区（交织保留：orphan→reconcile→学习→双 sync 顺序敏感） ──
@@ -459,7 +535,8 @@ class AutoRuntimeCore:
     # ── A2A 集成区（交织保留：_init_a2a 为 class-level patch 面，sync 已极简） ──
     # 保留理由：全部测试 patch AutoRuntimeCore._init_a2a（类级 patch 面），
     # 两个 sync 方法已是 CapabilitySync 薄委托（2 行），无簇可提。
-    def _init_a2a(self) -> None:
+    def init_a2a(self) -> None:
+        """Stage 4 公共化，primary。"""
         try:
             self._a2a_registry = card_registry
             self._a2a_protocol_gateway = A2AProtocolGateway()
@@ -485,6 +562,10 @@ class AutoRuntimeCore:
                     status="DISCONNECTED",
                 )
             )
+
+    def _init_a2a(self) -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.init_a2a()
 
     def sync_a2a_to_capability_registry(self) -> int:
         return CapabilitySync(self._registry).sync_a2a(self._a2a_registry)
@@ -639,18 +720,18 @@ class _LocalModelBootstrap:
     @staticmethod
     def start_local_scheduler(core: AutoRuntimeCore, report: BootReport) -> None:
         """启动本地模型调度器。"""
-        if core._local_scheduler is not None:
+        if core.local_scheduler is not None:
             try:
-                core._local_scheduler.start()
+                core.local_scheduler.start()
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 report.errors.append(f"local_scheduler_start: {e}")
             return
         try:
-            core._local_scheduler = LocalModelScheduler(
+            core.local_scheduler = LocalModelScheduler(
                 embedding_router=core._embedding_router,
                 ollama_chat=core._ollama_chat,
             )
-            core._local_scheduler.start()
+            core.local_scheduler.start()
             core._audit_logger.log_registration("local-model-scheduler", "STARTED")
             report.components_started.append("12_local_scheduler_start")
             report.steps_completed += 1
@@ -660,16 +741,16 @@ class _LocalModelBootstrap:
     @staticmethod
     def start_vms(core: AutoRuntimeCore) -> None:
         """启动向量记忆存储（容错——失败仅警告）。"""
-        if core._vms is None:
+        if core.vms is None:
             try:
-                core._vms = InProcessVectorMemory()
-                core._vms.start()
+                core.vms = InProcessVectorMemory()
+                core.vms.start()
                 logger.info("VMS started via AutoRuntimeCore.boot()")
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
         else:
             try:
-                core._vms.start()
+                core.vms.start()
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
 
@@ -757,7 +838,7 @@ class _BootSubsystemRegistrar:
     @staticmethod
     def start_fle_scheduler(core: AutoRuntimeCore) -> None:
         try:
-            core._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
+            core.fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
             # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。
             # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
             logger.info("FLE Scheduler instantiated (daemon mode abolished per trae_053 v2.0.0)")
@@ -879,12 +960,12 @@ class _TaskModelLearning:
     @staticmethod
     def learn_from_completed_tasks(core: AutoRuntimeCore) -> int:
         """从已完成的任务中学习最优模型映射。"""
-        if core._task_learner is None or core._local_scheduler is None:
+        if core._task_learner is None or core.local_scheduler is None:
             return 0
 
         count = 0
         try:
-            results = getattr(core._local_scheduler, "_results", {})
+            results = getattr(core.local_scheduler, "_results", {})
             for tid, task in list(results.items()):
                 if getattr(task, "status", "") != "completed":
                     continue

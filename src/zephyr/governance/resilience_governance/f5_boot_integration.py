@@ -174,9 +174,9 @@ class F5BootIntegration:
         # 2. 重置 DeadlockDetector 等待图
         if self._deadlock_detector is not None:
             try:
-                self._deadlock_detector._wait_graph.clear()
-                self._deadlock_detector._locks.clear()
-                self._deadlock_detector._lock_timestamps.clear()
+                self._deadlock_detector.wait_graph.clear()
+                self._deadlock_detector.locks.clear()
+                self._deadlock_detector.lock_timestamps.clear()
                 details["deadlock_graph_reset"] = True
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"Deadlock reset failed: {e}")

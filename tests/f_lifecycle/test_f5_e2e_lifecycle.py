@@ -71,13 +71,13 @@ def temp_db(tmp_path: Path) -> Path:
 def patched_lsg(integration: F5BootIntegration):
     """绕过 LSG 扫描 (SupplyChainGuard 签名不匹配的预存在问题)。
 
-    patch EscalationEngine._lsg_scan_input 和 DelegationEngine._lsg_verify_delegation
+    patch EscalationEngine.lsg_scan_input 和 DelegationEngine.lsg_verify_delegation
     为 no-op, 使 evaluate() / delegate() 可在测试环境正常运行。
     """
     esc_engine = integration.escalation_engine
     del_engine = integration.delegation_engine
-    with patch.object(esc_engine, "_lsg_scan_input", lambda desc: None), \
-         patch.object(del_engine, "_lsg_verify_delegation", lambda evt: None):
+    with patch.object(esc_engine, "lsg_scan_input", lambda desc: None), \
+         patch.object(del_engine, "lsg_verify_delegation", lambda evt: None):
         yield
 
 
@@ -115,14 +115,14 @@ class TestBootPhase:
         """DelegationEngine 必须注入 DeadlockDetector 实例。"""
         integ = F5BootIntegration()
         integ.on_startup()
-        assert integ.delegation_engine._deadlock_detector is integ.deadlock_detector
+        assert integ.delegation_engine.deadlock_detector is integ.deadlock_detector
 
     def test_dependency_injection_engines_to_arbitrator(self):
         """Arbitrator 必须注入 EscalationEngine + DeadlockDetector。"""
         integ = F5BootIntegration()
         integ.on_startup()
-        assert integ.arbitrator._escalation_engine is integ.escalation_engine
-        assert integ.arbitrator._deadlock_detector is integ.deadlock_detector
+        assert integ.arbitrator.escalation_engine is integ.escalation_engine
+        assert integ.arbitrator.deadlock_detector is integ.deadlock_detector
 
     def test_delegation_max_depth_recorded(self):
         integ = F5BootIntegration()
@@ -221,7 +221,7 @@ class TestRunPhase:
         assert log[0].handled is True
         assert log[0].success is True
         # break_deadlock 后 a 应从 wait_graph 移除
-        assert "a" not in integration.deadlock_detector._wait_graph
+        assert "a" not in integration.deadlock_detector.wait_graph
 
     def test_escalation_event_triggers_evaluate(
         self, integration: F5BootIntegration, event_bus: EventBusBackpressure, patched_lsg
@@ -380,7 +380,7 @@ class TestShutdownPhase:
         assert second.details.get("already_shutdown") is True
 
     def test_shutdown_clears_integration_references(self, manager: F5ShutdownManager):
-        integration = manager._integration
+        integration = manager.integration
         assert integration.is_initialized is True
         manager.shutdown()
         assert integration.is_initialized is False
@@ -403,7 +403,7 @@ class TestShutdownPhase:
         self, manager: F5ShutdownManager, patched_lsg
     ):
         """shutdown 前添加 deadlock 状态, 验证持久化。"""
-        integration = manager._integration
+        integration = manager.integration
         integration.deadlock_detector.add_edge("a", "b")
         integration.deadlock_detector.try_acquire("resource-1", "holder-1")
 
@@ -429,7 +429,7 @@ class TestShutdownPhase:
             AgentMeta,
             AgentRole,
         )
-        arb = manager._integration.arbitrator
+        arb = manager.integration.arbitrator
         arb.arbitrate(
             AgentMeta(agent_id="a", role=AgentRole.SUPERADMIN),
             AgentMeta(agent_id="b", role=AgentRole.BUILDER),
@@ -455,14 +455,14 @@ class TestShutdownPhase:
 
     def test_shutdown_stops_idle_monitor_thread(self, manager: F5ShutdownManager):
         # 事件驱动模型：install 后存在活跃的 idle timer
-        timer = manager._idle_timer
+        timer = manager.idle_timer
         assert timer is not None
         manager.shutdown()
         # shutdown 后 timer 应已取消
-        assert manager._idle_timer is None
+        assert manager.idle_timer is None
 
     def test_shutdown_calls_integration_on_shutdown(self, manager: F5ShutdownManager):
-        integration = manager._integration
+        integration = manager.integration
         with patch.object(integration, "on_shutdown") as mock_on_shutdown:
             mock_on_shutdown.return_value = BootResult(
                 success=True, component="f5_shutdown", details={}
@@ -506,21 +506,21 @@ class TestRestartPhase:
         mgr.persist_state()
 
         # 清空状态
-        deadlock._wait_graph.clear()
-        deadlock._locks.clear()
-        deadlock._lock_timestamps.clear()
-        deadlock._preemption_order.clear()
-        assert len(deadlock._wait_graph) == 0
+        deadlock.wait_graph.clear()
+        deadlock.locks.clear()
+        deadlock.lock_timestamps.clear()
+        deadlock.preemption_order.clear()
+        assert len(deadlock.wait_graph) == 0
 
         # 恢复
         result = mgr.restore_state()
         assert result.details.get("deadlock_state_restored") is True
-        assert "a" in deadlock._wait_graph
-        assert "b" in deadlock._wait_graph
-        assert "c" in deadlock._wait_graph
-        assert deadlock._wait_graph["a"] == {"b"}
-        assert deadlock._wait_graph["b"] == {"c"}
-        assert deadlock._wait_graph["c"] == {"a"}
+        assert "a" in deadlock.wait_graph
+        assert "b" in deadlock.wait_graph
+        assert "c" in deadlock.wait_graph
+        assert deadlock.wait_graph["a"] == {"b"}
+        assert deadlock.wait_graph["b"] == {"c"}
+        assert deadlock.wait_graph["c"] == {"a"}
 
     def test_restore_state_restores_locks(
         self, integration: F5BootIntegration, temp_db: Path
@@ -533,16 +533,16 @@ class TestRestartPhase:
         mgr = F5ShutdownManager(integration=integration, db_path=temp_db)
         mgr.persist_state()
 
-        deadlock._locks.clear()
-        deadlock._lock_timestamps.clear()
-        assert len(deadlock._locks) == 0
+        deadlock.locks.clear()
+        deadlock.lock_timestamps.clear()
+        assert len(deadlock.locks) == 0
 
         mgr.restore_state()
-        assert deadlock._locks["res-1"] == "holder-1"
-        assert deadlock._locks["res-2"] == "holder-2"
+        assert deadlock.locks["res-1"] == "holder-1"
+        assert deadlock.locks["res-2"] == "holder-2"
         # lock_timestamps 应重建 (用当前 monotonic 时间)
-        assert "res-1" in deadlock._lock_timestamps
-        assert "res-2" in deadlock._lock_timestamps
+        assert "res-1" in deadlock.lock_timestamps
+        assert "res-2" in deadlock.lock_timestamps
 
     def test_restore_state_restores_preemption_order(
         self, integration: F5BootIntegration, temp_db: Path
@@ -552,15 +552,15 @@ class TestRestartPhase:
         deadlock.add_edge("a", "b")
         deadlock.add_edge("b", "c")
         deadlock.dijkstra_order()  # 填充 _preemption_order
-        expected_order = list(deadlock._preemption_order)
+        expected_order = list(deadlock.preemption_order)
         assert len(expected_order) > 0
 
         mgr = F5ShutdownManager(integration=integration, db_path=temp_db)
         mgr.persist_state()
 
-        deadlock._preemption_order.clear()
+        deadlock.preemption_order.clear()
         mgr.restore_state()
-        assert deadlock._preemption_order == expected_order
+        assert deadlock.preemption_order == expected_order
 
     def test_restore_state_never_raises_on_empty_state(
         self, integration: F5BootIntegration, temp_db: Path
@@ -593,8 +593,8 @@ class TestRestartPhase:
         assert result.details.get("deadlock_state_restored") is True
 
         # 验证恢复
-        assert "x" in integration_b.deadlock_detector._wait_graph
-        assert integration_b.deadlock_detector._locks["shared-res"] == "proc-a"
+        assert "x" in integration_b.deadlock_detector.wait_graph
+        assert integration_b.deadlock_detector.locks["shared-res"] == "proc-a"
 
     def test_restored_state_supports_continued_operation(
         self, integration: F5BootIntegration, temp_db: Path
@@ -608,9 +608,9 @@ class TestRestartPhase:
         mgr.persist_state()
 
         # 清空 + 恢复
-        deadlock._wait_graph.clear()
-        deadlock._locks.clear()
-        deadlock._preemption_order.clear()
+        deadlock.wait_graph.clear()
+        deadlock.locks.clear()
+        deadlock.preemption_order.clear()
         mgr.restore_state()
 
         # 恢复后 detect_cycle 应能检测到循环
@@ -620,7 +620,7 @@ class TestRestartPhase:
         # 恢复后可继续 try_acquire 新资源
         acquired = deadlock.try_acquire("new-res", "new-holder")
         assert acquired is True
-        assert deadlock._locks["new-res"] == "new-holder"
+        assert deadlock.locks["new-res"] == "new-holder"
 
 
 # ── 5. 端到端全链路: boot→run→shutdown→restart→run_again ───────────────
@@ -715,13 +715,13 @@ class TestEndToEndLifecycle:
         assert restore_result.details.get("deadlock_state_restored") is True
 
         # 验证恢复一致性
-        assert "a" in integration2.deadlock_detector._wait_graph
-        assert integration2.deadlock_detector._locks["lifecycle-res"] == "lifecycle-holder"
+        assert "a" in integration2.deadlock_detector.wait_graph
+        assert integration2.deadlock_detector.locks["lifecycle-res"] == "lifecycle-holder"
 
         # ── Step 5: run_again — 恢复后继续处理事件 ──────────────────
         # 绕过新 integration 的 LSG
-        with patch.object(integration2.escalation_engine, "_lsg_scan_input", lambda d: None), \
-             patch.object(integration2.delegation_engine, "_lsg_verify_delegation", lambda e: None):
+        with patch.object(integration2.escalation_engine, "lsg_scan_input", lambda d: None), \
+             patch.object(integration2.delegation_engine, "lsg_verify_delegation", lambda e: None):
             sub2 = F5EventSubscriber(event_bus=EventBusBackpressure())
             sub2.bind_components(
                 escalation_engine=integration2.escalation_engine,
@@ -788,7 +788,7 @@ class TestEndToEndLifecycle:
         integ2.on_startup()
         mgr2 = F5ShutdownManager(integration=integ2, db_path=temp_db)
         mgr2.restore_state()
-        assert integ2.deadlock_detector._locks["consistency-res"] == "v1"
+        assert integ2.deadlock_detector.locks["consistency-res"] == "v1"
 
         # 第二次持久化 (恢复后再持久化, 应保持一致)
         mgr2.persist_state()
@@ -819,7 +819,7 @@ class TestEndToEndLifecycle:
 
         # 模拟信号触发
         import signal as sig_mod
-        mgr._on_signal(sig_mod.SIGTERM, None)
+        mgr.on_signal(sig_mod.SIGTERM, None)
 
         assert mgr.is_shutdown is True
         assert integration.is_initialized is False
@@ -831,5 +831,5 @@ class TestEndToEndLifecycle:
         mgr2 = F5ShutdownManager(integration=integ2, db_path=temp_db)
         result = mgr2.restore_state()
         assert result.success is True
-        assert "sig-a" in integ2.deadlock_detector._wait_graph
-        assert integ2.deadlock_detector._locks["sig-res"] == "sig-holder"
+        assert "sig-a" in integ2.deadlock_detector.wait_graph
+        assert integ2.deadlock_detector.locks["sig-res"] == "sig-holder"

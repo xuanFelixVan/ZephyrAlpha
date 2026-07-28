@@ -34,8 +34,31 @@ class DeadlockDetector:
         self._lock_timestamps: dict[str, float] = {}
         self._preemption_order: list[str] = []
 
+    # ------------------------------------------------------------------ #
+    # 公共只读属性 (reverse hierarchy: _attr 仍为存储, @property 暴露公共名)
+    # ------------------------------------------------------------------ #
+    @property
+    def wait_graph(self) -> dict[str, set[str]]:
+        return self._wait_graph
+
+    @property
+    def locks(self) -> dict[str, str]:
+        return self._locks
+
+    @property
+    def lock_timestamps(self) -> dict[str, float]:
+        return self._lock_timestamps
+
+    @property
+    def preemption_order(self) -> list[str]:
+        return self._preemption_order
+
+    @preemption_order.setter
+    def preemption_order(self, value: list[str]) -> None:
+        self._preemption_order = value
+
     def add_edge(self, waiter: str, holder: str):
-        self._wait_graph.setdefault(waiter, set()).add(holder)
+        self.wait_graph.setdefault(waiter, set()).add(holder)
 
     def detect_cycle(self, waiter: str | None = None, holder: str | None = None) -> list[str]:
         if waiter is not None and holder is not None:
@@ -48,7 +71,7 @@ class DeadlockDetector:
             visited.add(node)
             rec_stack.add(node)
             path.append(node)
-            for neighbor in self._wait_graph.get(node, set()):
+            for neighbor in self.wait_graph.get(node, set()):
                 if neighbor not in visited:
                     result = dfs(neighbor)
                     if result:
@@ -60,7 +83,7 @@ class DeadlockDetector:
             rec_stack.discard(node)
             return None
 
-        for node in self._wait_graph:
+        for node in self.wait_graph:
             if node not in visited:
                 path = []
                 result = dfs(node)
@@ -69,47 +92,47 @@ class DeadlockDetector:
         return []
 
     def break_deadlock(self, node: str) -> bool:
-        self._wait_graph.pop(node, None)
-        res_to_remove = [r for r, h in self._locks.items() if h == node]
+        self.wait_graph.pop(node, None)
+        res_to_remove = [r for r, h in self.locks.items() if h == node]
         for r in res_to_remove:
-            self._locks.pop(r, None)
-            self._lock_timestamps.pop(r, None)
+            self.locks.pop(r, None)
+            self.lock_timestamps.pop(r, None)
         return True
 
     def try_acquire(self, resource: str, holder: str) -> bool:
-        if resource in self._locks:
+        if resource in self.locks:
             return False
-        self._locks[resource] = holder
-        self._lock_timestamps[resource] = time.monotonic()
+        self.locks[resource] = holder
+        self.lock_timestamps[resource] = time.monotonic()
         return True
 
     def release(self, resource: str, holder: str) -> bool:
-        if self._locks.get(resource) == holder:
-            del self._locks[resource]
-            self._lock_timestamps.pop(resource, None)
+        if self.locks.get(resource) == holder:
+            del self.locks[resource]
+            self.lock_timestamps.pop(resource, None)
             return True
         return False
 
     def break_timeout(self, timeout_seconds: float) -> list[str]:
         now = time.monotonic()
         expired = [
-            r for r, ts in self._lock_timestamps.items()
+            r for r, ts in self.lock_timestamps.items()
             if now - ts >= timeout_seconds
         ]
         for r in expired:
-            holder = self._locks.pop(r, None)
-            self._lock_timestamps.pop(r, None)
+            holder = self.locks.pop(r, None)
+            self.lock_timestamps.pop(r, None)
             if holder:
-                self._wait_graph.pop(holder, None)
+                self.wait_graph.pop(holder, None)
         return expired
 
     def dijkstra_order(self) -> list[str]:
-        nodes = set(self._wait_graph.keys())
-        for holders in self._wait_graph.values():
+        nodes = set(self.wait_graph.keys())
+        for holders in self.wait_graph.values():
             nodes.update(holders)
         in_degree: dict[str, int] = {n: 0 for n in nodes}
-        for waiter in self._wait_graph:
-            for holder in self._wait_graph[waiter]:
+        for waiter in self.wait_graph:
+            for holder in self.wait_graph[waiter]:
                 in_degree[holder] = in_degree.get(holder, 0) + 1
 
         queue = [n for n in nodes if in_degree.get(n, 0) == 0]
@@ -117,25 +140,25 @@ class DeadlockDetector:
         while queue:
             node = queue.pop(0)
             order.append(node)
-            for neighbor in self._wait_graph.get(node, set()):
+            for neighbor in self.wait_graph.get(node, set()):
                 in_degree[neighbor] = in_degree.get(neighbor, 1) - 1
                 if in_degree[neighbor] <= 0:
                     queue.append(neighbor)
-        self._preemption_order = order
+        self.preemption_order = order
         return order
 
     def preempt_lowest(self) -> str | None:
-        if not self._preemption_order:
+        if not self.preemption_order:
             self.dijkstra_order()
-        if self._preemption_order:
-            victim = self._preemption_order.pop(0)
+        if self.preemption_order:
+            victim = self.preemption_order.pop(0)
             self.break_deadlock(victim)
             return victim
         return None
 
     def serialize(self) -> dict[str, Any]:
         return {
-            "wait_graph": {k: list(v) for k, v in self._wait_graph.items()},
-            "locks": dict(self._locks),
-            "preemption_order": list(self._preemption_order),
+            "wait_graph": {k: list(v) for k, v in self.wait_graph.items()},
+            "locks": dict(self.locks),
+            "preemption_order": list(self.preemption_order),
         }

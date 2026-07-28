@@ -53,7 +53,17 @@ class ProcessLifecycleGateway:
 
     def __init__(self, idle_timeout_s: float = 600.0) -> None:
         self._pool = MCPProcessPool(idle_timeout_s=idle_timeout_s)
-        self._pool.start_zombie_scanner()
+        self.pool.start_zombie_scanner()
+
+    # ----- Stage 4 公共化：属性 getter/setter -----
+    @property
+    def pool(self) -> MCPProcessPool:
+        """Stage 4 公共化。"""
+        return self._pool
+
+    @pool.setter
+    def pool(self, value: MCPProcessPool) -> None:
+        self._pool = value
 
     def launch(
         self,
@@ -73,7 +83,7 @@ class ProcessLifecycleGateway:
         Returns:
             PooledProcess 如果启动成功，None 如果失败
         """
-        entry = self._pool.get_or_create(name, cmd)
+        entry = self.pool.get_or_create(name, cmd)
         if entry is None:
             logger.error("ProcessLifecycleGateway: launch('%s') failed", name)
             return None
@@ -82,8 +92,8 @@ class ProcessLifecycleGateway:
             daemon_name = f"gateway:{name}"
             DaemonRegistry.register(
                 daemon_name,
-                start_fn=lambda n=name: self._pool.get_or_create(n),
-                stop_fn=lambda n=name: self._pool.terminate(n),
+                start_fn=lambda n=name: self.pool.get_or_create(n),
+                stop_fn=lambda n=name: self.pool.terminate(n),
                 priority=priority,
             )
             logger.info(
@@ -132,7 +142,7 @@ class ProcessLifecycleGateway:
             DaemonRegistry.stop(daemon_name)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in process_lifecycle_gateway", exc_info=True)
-        return self._pool.terminate(name)
+        return self.pool.terminate(name)
 
     def terminate_all(self) -> int:
         """终止所有池中进程。
@@ -140,16 +150,16 @@ class ProcessLifecycleGateway:
         Returns:
             已终止的进程数
         """
-        count = self._pool.terminate_all()
+        count = self.pool.terminate_all()
         logger.info("ProcessLifecycleGateway: terminated_all — %d processes", count)
         return count
 
     def get_stats(self):
         """获取进程池统计信息。"""
-        return self._pool.get_stats()
+        return self.pool.get_stats()
 
     def shutdown(self) -> None:
         """优雅关闭：终止所有进程 + 停止僵尸扫描。"""
-        self._pool.stop_zombie_scanner()
+        self.pool.stop_zombie_scanner()
         self.terminate_all()
         logger.info("ProcessLifecycleGateway: shutdown complete")
