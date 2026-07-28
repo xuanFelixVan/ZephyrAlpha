@@ -33,11 +33,11 @@ class TestColdStartLockInit:
     def test_custom_immutable_core(self):
         core = ImmutableCore()
         lock = ColdStartLock(immutable_core=core)
-        assert lock._immutable_core is core
+        assert lock.immutable_core is core
 
     def test_default_immutable_core_created(self):
         lock = ColdStartLock()
-        assert isinstance(lock._immutable_core, ImmutableCore)
+        assert isinstance(lock.immutable_core, ImmutableCore)
 
 
 class TestLoadConfig:
@@ -45,7 +45,7 @@ class TestLoadConfig:
         lock = ColdStartLock()
         result = lock.load_config({"version": "1.0"})
         assert result is True
-        assert lock._config_loaded is True
+        assert lock.config_loaded is True
 
     def test_config_with_version_string(self):
         lock = ColdStartLock()
@@ -61,7 +61,7 @@ class TestLoadConfig:
         lock = ColdStartLock()
         result = lock.load_config({"other_key": "value"})
         assert result is False
-        assert lock._config_loaded is False
+        assert lock.config_loaded is False
 
     def test_empty_config(self):
         lock = ColdStartLock()
@@ -92,18 +92,18 @@ class TestVerifyIntegrity:
 
     def test_increments_checks_on_success(self):
         lock = ColdStartLock()
-        initial = lock._checks_passed
+        initial = lock.checks_passed
         lock.verify_integrity()
-        if lock._immutable_core.verify_immutable_core_integrity().intact:
-            assert lock._checks_passed == initial + 1
+        if lock.immutable_core.verify_immutable_core_integrity().intact:
+            assert lock.checks_passed == initial + 1
 
     def test_no_increment_on_failure(self):
         mock_core = MagicMock()
-        mock_core.verify_immutable_core_integrity.return_value = IntegrityResult(intact=False, tampered_items=["test"])
+        mock_core.verify_immutable_core_integrity.return_value = IntegrityResult(intact=False, violations=["test"])
         lock = ColdStartLock(immutable_core=mock_core)
-        initial = lock._checks_passed
+        initial = lock.checks_passed
         lock.verify_integrity()
-        assert lock._checks_passed == initial
+        assert lock.checks_passed == initial
 
 
 class TestVerifyStaticConstants:
@@ -114,20 +114,20 @@ class TestVerifyStaticConstants:
 
     def test_increments_checks_on_success(self):
         lock = ColdStartLock()
-        initial = lock._checks_passed
+        initial = lock.checks_passed
         lock.verify_static_constants()
-        if lock._immutable_core.verify_static_constants_integrity().intact:
-            assert lock._checks_passed == initial + 1
+        if lock.immutable_core.verify_static_constants_integrity().intact:
+            assert lock.checks_passed == initial + 1
 
     def test_no_increment_on_failure(self):
         mock_core = MagicMock()
         mock_core.verify_static_constants_integrity.return_value = IntegrityResult(
-            intact=False, tampered_items=["test"]
+            intact=False, violations=["test"]
         )
         lock = ColdStartLock(immutable_core=mock_core)
-        initial = lock._checks_passed
+        initial = lock.checks_passed
         lock.verify_static_constants()
-        assert lock._checks_passed == initial
+        assert lock.checks_passed == initial
 
 
 class TestAttemptUnlock:
@@ -138,22 +138,22 @@ class TestAttemptUnlock:
 
     def test_unlock_fails_without_config(self):
         lock = ColdStartLock()
-        lock._checks_passed = 3
-        assert lock._config_loaded is False
+        lock.checks_passed = 3
+        assert lock.config_loaded is False
         assert lock.attempt_unlock() is False
         assert lock.is_locked is True
 
     def test_unlock_fails_with_only_config(self):
         lock = ColdStartLock()
         lock.load_config({"version": "1.0"})
-        assert lock._checks_passed == 1
+        assert lock.checks_passed == 1
         assert lock.attempt_unlock() is False
         assert lock.is_locked is True
 
     def test_unlock_succeeds_with_all_checks(self):
         lock = ColdStartLock()
-        lock._checks_passed = 3
-        lock._config_loaded = True
+        lock.checks_passed = 3
+        lock.config_loaded = True
         result = lock.attempt_unlock()
         assert result is True
         assert lock.is_locked is False
@@ -161,16 +161,16 @@ class TestAttemptUnlock:
 
     def test_unlock_succeeds_with_more_than_required_checks(self):
         lock = ColdStartLock()
-        lock._checks_passed = 5
-        lock._config_loaded = True
+        lock.checks_passed = 5
+        lock.config_loaded = True
         result = lock.attempt_unlock()
         assert result is True
         assert lock.is_locked is False
 
     def test_unlock_fails_with_two_checks(self):
         lock = ColdStartLock()
-        lock._checks_passed = 2
-        lock._config_loaded = True
+        lock.checks_passed = 2
+        lock.config_loaded = True
         assert lock.attempt_unlock() is False
         assert lock.is_locked is True
 
@@ -191,7 +191,7 @@ class TestOwnerBypass:
         lock = ColdStartLock()
         lock.owner_bypass()
         assert lock.is_locked is False
-        assert lock._checks_passed == 0
+        assert lock.checks_passed == 0
 
 
 class TestStatusDict:
@@ -211,8 +211,8 @@ class TestStatusDict:
 
     def test_status_after_unlock(self):
         lock = ColdStartLock()
-        lock._checks_passed = 3
-        lock._config_loaded = True
+        lock.checks_passed = 3
+        lock.config_loaded = True
         lock.attempt_unlock()
         status = lock.status_dict()
         assert status["locked"] is False

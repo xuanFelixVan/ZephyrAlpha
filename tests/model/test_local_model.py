@@ -115,25 +115,25 @@ class TestCacheLayer:
         assert cl.should_cache_query("rules") is True
 
     def test_cache_key_with_model_version(self):
-        key = CacheLayer._cache_key("abc123", model_version="v2", collection="rules")
+        key = CacheLayer.cache_key("abc123", model_version="v2", collection="rules")
         assert "rules" in key
         assert "v2" in key
 
     def test_hash_text_deterministic(self):
-        h1 = CacheLayer._hash_text("hello")
-        h2 = CacheLayer._hash_text("hello")
+        h1 = CacheLayer.hash_text("hello")
+        h2 = CacheLayer.hash_text("hello")
         assert h1 == h2
 
     def test_hash_text_different_inputs(self):
-        h1 = CacheLayer._hash_text("hello")
-        h2 = CacheLayer._hash_text("world")
+        h1 = CacheLayer.hash_text("hello")
+        h2 = CacheLayer.hash_text("world")
         assert h1 != h2
 
 
 class TestEmbeddingRouter:
     def test_init_defaults(self):
         router = EmbeddingRouter()
-        assert router.backend == "local"
+        assert router.backend == "ollama"
         assert router.bge_m3_available is False
         assert router.bge_small_available is False
         assert router.fallback_mode == "none"
@@ -154,20 +154,20 @@ class TestEmbeddingRouter:
 
     def test_embed_unknown_collection_raises(self):
         router = EmbeddingRouter()
-        router._fallback_mode = "none"
+        router.fallback_mode = "none"
         with pytest.raises(KeyError, match="未知 Collection"):
             router.embed("text", "unknown_collection")
 
     def test_embed_fallback_in_memory(self):
         router = EmbeddingRouter()
-        router._fallback_mode = "in_memory"
+        router.fallback_mode = "in_memory"
         vec = router.embed("text", "knowledge")
         assert isinstance(vec, np.ndarray)
         assert vec.shape[0] > 0
 
     def test_embed_batch_fallback_in_memory(self):
         router = EmbeddingRouter()
-        router._fallback_mode = "in_memory"
+        router.fallback_mode = "in_memory"
         mat = router.embed_batch(["a", "b"], "knowledge")
         assert isinstance(mat, np.ndarray)
         assert mat.shape[0] == 2
@@ -183,7 +183,7 @@ class TestEmbeddingRouter:
         np.testing.assert_array_equal(result, vec)
 
     def test_verify_model_checksum_nonexistent(self):
-        assert embedding_router.verify_model_checksum(Path("/nonexistent")) is False
+        assert embedding_router.verify_model_checksum(Path("Z:\\nonexistent\\path\\model")) is False
 
     def test_verify_model_checksum_no_expected(self):
         import tempfile
@@ -197,19 +197,18 @@ class TestEmbeddingRouter:
 class TestOllamaEmbedder:
     def test_init_defaults(self):
         emb = OllamaEmbedder()
-        assert emb._model == "BGE-M3:latest"
-        assert emb._url == "http://localhost:11434"
-        assert emb._normalize is True
+        assert emb.model == "BGE-M3:latest"
+        assert emb.url == "http://localhost:11434"
+        assert emb.normalize is True
 
     def test_dim_returns_zero_when_not_verified(self):
         emb = OllamaEmbedder()
-        emb._dim = None
-        emb._verified = True
+        emb.verified = True
         assert emb.dim == 0
 
     def test_available_false_when_not_reachable(self):
         emb = OllamaEmbedder()
-        with patch.object(emb, "_verify", side_effect=RuntimeError("not reachable")):
+        with patch.object(emb, "verify", side_effect=RuntimeError("not reachable")):
             assert emb.available is False
 
     def test_encode_empty_list(self):
@@ -219,11 +218,9 @@ class TestOllamaEmbedder:
 
     def test_shutdown(self):
         emb = OllamaEmbedder()
-        emb._verified = True
-        emb._dim = 1024
+        emb.verified = True
         emb.shutdown()
-        assert emb._verified is False
-        assert emb._dim is None
+        assert emb.verified is False
 
     def test_quick_alive_unreachable(self):
         with patch("requests.get", side_effect=Exception("connection refused")):
@@ -234,12 +231,12 @@ class TestOllamaChat:
     def test_init_defaults(self):
         chat = OllamaChat()
         assert chat.model == "qwen3:8b"
-        assert chat._url == "http://localhost:11434"
-        assert chat._temperature == 0.1
+        assert chat.url == "http://localhost:11434"
+        assert chat.temperature == 0.1
 
     def test_available_false_when_not_reachable(self):
         chat = OllamaChat()
-        with patch.object(chat, "_verify", side_effect=RuntimeError("not reachable")):
+        with patch.object(chat, "verify", side_effect=RuntimeError("not reachable")):
             assert chat.available is False
 
     def test_supported_work_types(self):
@@ -251,34 +248,34 @@ class TestOllamaChat:
 
     def test_strip_think_block(self):
         text = "<think\nsome reasoning\n</think\nactual output"
-        result = OllamaChat._strip_think_block(text)
+        result = OllamaChat.strip_think_block(text)
         assert "actual output" in result
 
     def test_strip_think_block_empty(self):
-        assert OllamaChat._strip_think_block("") == ""
+        assert OllamaChat.strip_think_block("") == ""
 
     def test_parse_json_valid(self):
-        result = OllamaChat._parse_json('{"key": "value"}')
+        result = OllamaChat.parse_json('{"key": "value"}')
         assert result["key"] == "value"
 
     def test_parse_json_with_code_fence(self):
         raw = '```json\n{"key": "value"}\n```'
-        result = OllamaChat._parse_json(raw)
+        result = OllamaChat.parse_json(raw)
         assert result["key"] == "value"
 
     def test_parse_json_invalid_returns_empty(self):
-        result = OllamaChat._parse_json("not json at all")
+        result = OllamaChat.parse_json("not json at all")
         assert result == {}
 
     def test_parse_json_with_expected_keys(self):
-        result = OllamaChat._parse_json('{"a": 1}', expected_keys=["a", "b"])
+        result = OllamaChat.parse_json('{"a": 1}', expected_keys=["a", "b"])
         assert "a" in result
 
     def test_shutdown(self):
         chat = OllamaChat()
-        chat._verified = True
+        chat.verified = True
         chat.shutdown()
-        assert chat._verified is False
+        assert chat.verified is False
 
     def test_quick_alive_unreachable(self):
         with patch("requests.get", side_effect=Exception("connection refused")):

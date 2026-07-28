@@ -43,6 +43,27 @@ class SkillResilience:
     _circuit_open: dict[str, bool] = {}
     _circuit_open_until: dict[str, float] = {}
 
+    # ── Stage 4 公共化：类级别状态访问器 ──
+    @classmethod
+    def get_failure_count(cls) -> dict[str, int]:
+        """Public accessor for failure count state (Stage 4)."""
+        return cls._failure_count
+
+    @classmethod
+    def get_last_failure_time(cls) -> dict[str, float]:
+        """Public accessor for last failure time state (Stage 4)."""
+        return cls._last_failure_time
+
+    @classmethod
+    def get_circuit_open(cls) -> dict[str, bool]:
+        """Public accessor for circuit open state (Stage 4)."""
+        return cls._circuit_open
+
+    @classmethod
+    def get_circuit_open_until(cls) -> dict[str, float]:
+        """Public accessor for circuit open until state (Stage 4)."""
+        return cls._circuit_open_until
+
     @classmethod
     def should_retry(cls, skill_id: str) -> bool:
         if cls.is_circuit_open(skill_id):

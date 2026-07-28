@@ -109,6 +109,26 @@ class SkillConstructor:
         self._skills_dir = self._base_dir / "skills"
         self._registry_path = self._base_dir / "skill-registry.yaml"
 
+    # ── Stage 4 公共化属性 ──
+    @property
+    def base_dir(self) -> Path:
+        """Base directory for skill files (public API)."""
+        return self._base_dir
+
+    @property
+    def skills_dir(self) -> Path:
+        """Skills directory (public API)."""
+        return self._skills_dir
+
+    @property
+    def registry_path(self) -> Path:
+        """Registry YAML path (public API)."""
+        return self._registry_path
+
+    def parse_blueprint(self, blueprint_path: str) -> dict[str, Any]:
+        """Stage 4 公共化。"""
+        return self._parse_blueprint(blueprint_path)
+
     def _parse_blueprint(self, blueprint_path: str) -> dict[str, Any]:
         path = Path(blueprint_path)
         if not path.is_absolute():
@@ -133,6 +153,10 @@ class SkillConstructor:
             "content": content,
         }
 
+    def extract_sections(self, body: str) -> dict[str, str]:
+        """Stage 4 公共化。"""
+        return self._extract_sections(body)
+
     def _extract_sections(self, body: str) -> dict[str, str]:
         sections: dict[str, str] = {}
         current_section = "preamble"
@@ -153,6 +177,10 @@ class SkillConstructor:
 
         return sections
 
+    def extract_core_operations(self, sections: dict[str, str], body: str) -> str:
+        """Stage 4 公共化。"""
+        return self._extract_core_operations(sections, body)
+
     def _extract_core_operations(self, sections: dict[str, str], body: str) -> str:
         for key in ["核心操作", "core operations", "操作", "operations", "核心职能"]:
             for sk, sv in sections.items():
@@ -171,6 +199,10 @@ class SkillConstructor:
 
         return "\n\n".join(parts) if parts else ""
 
+    def extract_constraints(self, sections: dict[str, str], body: str) -> str:
+        """Stage 4 公共化。"""
+        return self._extract_constraints(sections, body)
+
     def _extract_constraints(self, sections: dict[str, str], body: str) -> str:
         for key in ["约束", "constraints", "限制", "restrictions", "注意事项"]:
             for sk, sv in sections.items():
@@ -180,6 +212,10 @@ class SkillConstructor:
         constraints = re.findall(r"(?:MUST|必须|必须确保|不可|不能|禁止|不允许)\s*(.+?)(?:[。；\n]|$)", body)
         return "\n".join(f"- {c.strip()}" for c in constraints[:12]) if constraints else ""
 
+    def extract_common_errors(self, sections: dict[str, str]) -> str:
+        """Stage 4 公共化。"""
+        return self._extract_common_errors(sections)
+
     def _extract_common_errors(self, sections: dict[str, str]) -> str:
         for key in ["常见错误", "common errors", "错误模式", "error patterns", "陷阱", "pitfalls", "注意事项"]:
             for sk, sv in sections.items():
@@ -187,6 +223,10 @@ class SkillConstructor:
                     return sv.split("\n")[1:][:10] if "\n" in sv else ""
 
         return ""
+
+    def infer_skill_name(self, blueprint_data: dict[str, Any]) -> str:
+        """Stage 4 公共化。"""
+        return self._infer_skill_name(blueprint_data)
 
     def _infer_skill_name(self, blueprint_data: dict[str, Any]) -> str:
         fm = blueprint_data.get("frontmatter", {})
@@ -218,6 +258,17 @@ class SkillConstructor:
                 if data.get("name") == skill_name:
                     return sid
         return None
+
+    def generate_skill_content(
+        self,
+        skill_name: str,
+        skill_id: str,
+        core_ops: str,
+        constraints: str,
+        errors: str,
+    ) -> str:
+        """Stage 4 公共化。"""
+        return self._generate_skill_content(skill_name, skill_id, core_ops, constraints, errors)
 
     def _generate_skill_content(
         self,
@@ -360,6 +411,10 @@ class SkillConstructor:
         if not _REGISTRY_PATH.exists():
             return {}
         return yaml.safe_load(_REGISTRY_PATH.read_text(encoding="utf-8")) or {}
+
+    def update_registry(self, skill_name: str, skill_id: str, path: str):
+        """Stage 4 公共化。"""
+        self._update_registry(skill_name, skill_id, path)
 
     def _update_registry(self, skill_name: str, skill_id: str, path: str):
         registry = self._load_registry()

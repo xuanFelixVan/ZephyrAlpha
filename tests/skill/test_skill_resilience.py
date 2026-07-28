@@ -34,10 +34,10 @@ class TestSkillResilienceInstantiation:
 
     def test_internal_dicts_initially_empty(self):
         SkillResilience.reset()
-        assert SkillResilience._failure_count == {}
-        assert SkillResilience._last_failure_time == {}
-        assert SkillResilience._circuit_open == {}
-        assert SkillResilience._circuit_open_until == {}
+        assert SkillResilience.get_failure_count() == {}
+        assert SkillResilience.get_last_failure_time() == {}
+        assert SkillResilience.get_circuit_open() == {}
+        assert SkillResilience.get_circuit_open_until() == {}
 
 
 class TestShouldRetry:
@@ -55,8 +55,8 @@ class TestShouldRetry:
         assert SkillResilience.should_retry("skill_a") is False
 
     def test_should_not_retry_when_circuit_open(self):
-        SkillResilience._circuit_open["skill_a"] = True
-        SkillResilience._circuit_open_until["skill_a"] = 9999999999.0
+        SkillResilience.get_circuit_open()["skill_a"] = True
+        SkillResilience.get_circuit_open_until()["skill_a"] = 9999999999.0
         assert SkillResilience.should_retry("skill_a") is False
 
     def test_should_retry_empty_skill_id(self):
@@ -73,18 +73,18 @@ class TestRecordFailure:
     def test_opens_circuit_at_max_retries(self):
         for _ in range(SkillResilience.MAX_RETRIES):
             SkillResilience.record_failure("skill_a")
-        assert SkillResilience._circuit_open.get("skill_a") is True
+        assert SkillResilience.get_circuit_open().get("skill_a") is True
 
     def test_records_last_failure_time(self):
         SkillResilience.record_failure("skill_a")
-        assert "skill_a" in SkillResilience._last_failure_time
-        assert SkillResilience._last_failure_time["skill_a"] > 0
+        assert "skill_a" in SkillResilience.get_last_failure_time()
+        assert SkillResilience.get_last_failure_time()["skill_a"] > 0
 
     def test_independent_skill_ids(self):
         SkillResilience.record_failure("skill_a")
         SkillResilience.record_failure("skill_b")
-        assert SkillResilience._failure_count["skill_a"] == 1
-        assert SkillResilience._failure_count["skill_b"] == 1
+        assert SkillResilience.get_failure_count()["skill_a"] == 1
+        assert SkillResilience.get_failure_count()["skill_b"] == 1
 
 
 class TestRecordSuccess:
@@ -92,14 +92,14 @@ class TestRecordSuccess:
         SkillResilience.record_failure("skill_a")
         SkillResilience.record_failure("skill_a")
         SkillResilience.record_success("skill_a")
-        assert "skill_a" not in SkillResilience._failure_count
-        assert "skill_a" not in SkillResilience._last_failure_time
-        assert "skill_a" not in SkillResilience._circuit_open
-        assert "skill_a" not in SkillResilience._circuit_open_until
+        assert "skill_a" not in SkillResilience.get_failure_count()
+        assert "skill_a" not in SkillResilience.get_last_failure_time()
+        assert "skill_a" not in SkillResilience.get_circuit_open()
+        assert "skill_a" not in SkillResilience.get_circuit_open_until()
 
     def test_record_success_on_never_failed_skill(self):
         SkillResilience.record_success("skill_never_failed")
-        assert "skill_never_failed" not in SkillResilience._failure_count
+        assert "skill_never_failed" not in SkillResilience.get_failure_count()
 
 
 class TestRetryWithBackoff:
@@ -150,15 +150,15 @@ class TestIsCircuitOpen:
         assert SkillResilience.is_circuit_open("skill_a") is False
 
     def test_open_when_set_and_not_expired(self):
-        SkillResilience._circuit_open["skill_a"] = True
-        SkillResilience._circuit_open_until["skill_a"] = 9999999999.0
+        SkillResilience.get_circuit_open()["skill_a"] = True
+        SkillResilience.get_circuit_open_until()["skill_a"] = 9999999999.0
         assert SkillResilience.is_circuit_open("skill_a") is True
 
     def test_auto_closes_when_expired(self):
-        SkillResilience._circuit_open["skill_a"] = True
-        SkillResilience._circuit_open_until["skill_a"] = 0.0
+        SkillResilience.get_circuit_open()["skill_a"] = True
+        SkillResilience.get_circuit_open_until()["skill_a"] = 0.0
         assert SkillResilience.is_circuit_open("skill_a") is False
-        assert SkillResilience._circuit_open["skill_a"] is False
+        assert SkillResilience.get_circuit_open()["skill_a"] is False
 
 
 class TestReset:
@@ -166,17 +166,17 @@ class TestReset:
         SkillResilience.record_failure("skill_a")
         SkillResilience.record_failure("skill_b")
         SkillResilience.reset("skill_a")
-        assert "skill_a" not in SkillResilience._failure_count
-        assert "skill_b" in SkillResilience._failure_count
+        assert "skill_a" not in SkillResilience.get_failure_count()
+        assert "skill_b" in SkillResilience.get_failure_count()
 
     def test_reset_all_skills(self):
         SkillResilience.record_failure("skill_a")
         SkillResilience.record_failure("skill_b")
         SkillResilience.reset()
-        assert SkillResilience._failure_count == {}
-        assert SkillResilience._circuit_open == {}
+        assert SkillResilience.get_failure_count() == {}
+        assert SkillResilience.get_circuit_open() == {}
 
     def test_reset_none_arg_clears_all(self):
         SkillResilience.record_failure("skill_x")
         SkillResilience.reset(None)
-        assert SkillResilience._failure_count == {}
+        assert SkillResilience.get_failure_count() == {}

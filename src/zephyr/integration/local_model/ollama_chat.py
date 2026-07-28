@@ -291,6 +291,27 @@ class OllamaChat:
     def model(self) -> str:
         return self._model
 
+    # ── Stage 4 公共化属性 ──
+    @property
+    def url(self) -> str:
+        """Ollama server URL (public API)."""
+        return self._url
+
+    @property
+    def temperature(self) -> float:
+        """Inference temperature (public API)."""
+        return self._temperature
+
+    @property
+    def verified(self) -> bool:
+        """Whether the server has been verified (public API)."""
+        return self._verified
+
+    @verified.setter
+    def verified(self, value: bool) -> None:
+        """Set verification state (for testing)."""
+        self._verified = value
+
     @property
     def available(self) -> bool:
         try:
@@ -461,12 +482,22 @@ class OllamaChat:
             _log.warning("suppressed error in ollama_chat", exc_info=True)
 
     @staticmethod
+    def strip_think_block(text: str) -> str:
+        """Stage 4 公共化。"""
+        return OllamaChat._strip_think_block(text)
+
+    @staticmethod
     def _strip_think_block(text: str) -> str:
         """qwen3 思考块剥离——移除 response...response 标签对，只保留实际输出。"""
         if not text:
             return text
         stripped = re.sub(r"\x3cthink\x3e[\s\S]*?\x3c\x2fthink\x3e", "", text, flags=re.IGNORECASE)
         return stripped.strip()
+
+    @staticmethod
+    def parse_json(raw: str, expected_keys: list[str] | None = None) -> dict[str, Any]:
+        """Stage 4 公共化。"""
+        return OllamaChat._parse_json(raw, expected_keys)
 
     @staticmethod
     def _parse_json(raw: str, expected_keys: list[str] | None = None) -> dict[str, Any]:
@@ -518,6 +549,10 @@ class OllamaChat:
             _log.info("OllamaChat: %s verified", self._model)
         else:
             raise RuntimeError(f"OllamaChat verification failed for {self._model}, got: {result[:80]!r}")
+
+    def verify(self) -> None:
+        """Stage 4 公共化：验证 Ollama 可连通且模型正常工作。"""
+        self._verify()
 
     def shutdown(self) -> None:
         self._verified = False

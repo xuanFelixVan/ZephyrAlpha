@@ -195,6 +195,11 @@ class EmbeddingRouter:
     def fallback_mode(self) -> str:
         return self._fallback_mode
 
+    @fallback_mode.setter
+    def fallback_mode(self, value: str) -> None:
+        """Set fallback mode (for testing)."""
+        self._fallback_mode = value
+
     @property
     def backend(self) -> str:
         return self._backend

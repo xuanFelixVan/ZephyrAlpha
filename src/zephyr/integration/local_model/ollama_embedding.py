@@ -70,6 +70,36 @@ class OllamaEmbedder:
             self._verify()
         return self._dim or 0
 
+    # ── Stage 4 公共化属性 ──
+    @property
+    def model(self) -> str:
+        """Embedding model name (public API)."""
+        return self._model
+
+    @property
+    def url(self) -> str:
+        """Ollama server URL (public API)."""
+        return self._url
+
+    @property
+    def normalize(self) -> bool:
+        """Whether to normalize embeddings (public API)."""
+        return self._normalize
+
+    @property
+    def verified(self) -> bool:
+        """Whether the embedder has been verified (public API)."""
+        return self._verified
+
+    @verified.setter
+    def verified(self, value: bool) -> None:
+        """Set verification state (for testing)."""
+        self._verified = value
+
+    def verify(self) -> None:
+        """Public API: verify that Ollama is reachable and the model is working."""
+        self._verify()
+
     @property
     def available(self) -> bool:
         try:

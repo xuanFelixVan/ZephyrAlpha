@@ -24,15 +24,15 @@ from zephyr.autonomy_core.skills.skill_constructor import SkillConstructor
 class TestSkillConstructorInit:
     def test_instantiation_with_default_dir(self):
         sc = SkillConstructor()
-        assert sc._base_dir is not None
-        assert sc._skills_dir == sc._base_dir / "skills"
-        assert sc._registry_path == sc._base_dir / "skill-registry.yaml"
+        assert sc.base_dir is not None
+        assert sc.skills_dir == sc.base_dir / "skills"
+        assert sc.registry_path == sc.base_dir / "skill-registry.yaml"
 
     def test_instantiation_with_custom_dir(self, tmp_path):
         sc = SkillConstructor(base_dir=tmp_path)
-        assert sc._base_dir == tmp_path
-        assert sc._skills_dir == tmp_path / "skills"
-        assert sc._registry_path == tmp_path / "skill-registry.yaml"
+        assert sc.base_dir == tmp_path
+        assert sc.skills_dir == tmp_path / "skills"
+        assert sc.registry_path == tmp_path / "skill-registry.yaml"
 
     def test_keyword_map_not_empty(self):
         assert len(SkillConstructor.KEYWORD_MAP) > 0
@@ -51,7 +51,7 @@ class TestParseBlueprint:
         bp_file = tmp_path / "test_bp.md"
         bp_file.write_text(bp_content, encoding="utf-8")
         sc = SkillConstructor(base_dir=tmp_path)
-        result = sc._parse_blueprint(str(bp_file))
+        result = sc.parse_blueprint(str(bp_file))
         assert result["frontmatter"]["module_id"] == "MOD-TEST-001"
         assert "Test Blueprint" in result["body"]
 
@@ -60,33 +60,33 @@ class TestParseBlueprint:
         bp_file = tmp_path / "no_fm.md"
         bp_file.write_text(bp_content, encoding="utf-8")
         sc = SkillConstructor(base_dir=tmp_path)
-        result = sc._parse_blueprint(str(bp_file))
+        result = sc.parse_blueprint(str(bp_file))
         assert result["frontmatter"] == {}
         assert "No Frontmatter" in result["body"]
 
     def test_parse_nonexistent_file_raises(self, tmp_path):
         sc = SkillConstructor(base_dir=tmp_path)
         with pytest.raises(Exception):
-            sc._parse_blueprint(str(tmp_path / "nonexistent.md"))
+            sc.parse_blueprint(str(tmp_path / "nonexistent.md"))
 
 
 class TestExtractSections:
     def test_extract_multiple_sections(self):
         body = "# Section One\nContent 1\n# Section Two\nContent 2"
         sc = SkillConstructor()
-        sections = sc._extract_sections(body)
+        sections = sc.extract_sections(body)
         assert "section one" in sections
         assert "section two" in sections
 
     def test_extract_no_headers(self):
         body = "Just some text\nNo headers"
         sc = SkillConstructor()
-        sections = sc._extract_sections(body)
+        sections = sc.extract_sections(body)
         assert "preamble" in sections
 
     def test_extract_empty_body(self):
         sc = SkillConstructor()
-        sections = sc._extract_sections("")
+        sections = sc.extract_sections("")
         assert "preamble" in sections
 
 
@@ -94,19 +94,19 @@ class TestExtractCoreOperations:
     def test_extract_from_matching_section(self):
         sections = {"核心操作": "# 核心操作\n- op1\n- op2\n- op3"}
         sc = SkillConstructor()
-        result = sc._extract_core_operations(sections, "")
+        result = sc.extract_core_operations(sections, "")
         assert result != ""
 
     def test_extract_from_body_fallback(self):
         sections = {}
         body = "1. First step\n2. Second step\ndef my_function():"
         sc = SkillConstructor()
-        result = sc._extract_core_operations(sections, body)
+        result = sc.extract_core_operations(sections, body)
         assert "First step" in result or "my_function" in result
 
     def test_extract_nothing(self):
         sc = SkillConstructor()
-        result = sc._extract_core_operations({}, "plain text only")
+        result = sc.extract_core_operations({}, "plain text only")
         assert result == ""
 
 
@@ -114,13 +114,13 @@ class TestExtractConstraints:
     def test_extract_must_constraint(self):
         body = "You MUST validate all inputs before processing."
         sc = SkillConstructor()
-        result = sc._extract_constraints({}, body)
+        result = sc.extract_constraints({}, body)
         assert "validate all inputs" in result
 
     def test_extract_no_constraints(self):
         body = "This is a simple description with no rules."
         sc = SkillConstructor()
-        result = sc._extract_constraints({}, body)
+        result = sc.extract_constraints({}, body)
         assert result == ""
 
 
@@ -128,12 +128,12 @@ class TestExtractCommonErrors:
     def test_extract_from_matching_section(self):
         sections = {"常见错误": "# 常见错误\n- error1\n- error2"}
         sc = SkillConstructor()
-        result = sc._extract_common_errors(sections)
+        result = sc.extract_common_errors(sections)
         assert result != ""
 
     def test_extract_no_matching_section(self):
         sc = SkillConstructor()
-        result = sc._extract_common_errors({})
+        result = sc.extract_common_errors({})
         assert result == ""
 
 
@@ -141,26 +141,26 @@ class TestInferSkillName:
     def test_infer_from_module_id(self):
         bp = {"frontmatter": {"module_id": "MOD-DATABASE-001"}, "body": ""}
         sc = SkillConstructor()
-        name = sc._infer_skill_name(bp)
+        name = sc.infer_skill_name(bp)
         assert name == "database-specialist"
 
     def test_infer_from_body(self):
         bp = {"frontmatter": {"module_id": "MOD-XYZ"}, "body": "This module handles security and injection prevention."}
         sc = SkillConstructor()
-        name = sc._infer_skill_name(bp)
+        name = sc.infer_skill_name(bp)
         assert name == "lsg-security"
 
     def test_default_to_master_blueprint(self):
         bp = {"frontmatter": {"module_id": "MOD-UNKNOWN"}, "body": "generic content"}
         sc = SkillConstructor()
-        name = sc._infer_skill_name(bp)
+        name = sc.infer_skill_name(bp)
         assert name == "master-blueprint"
 
 
 class TestGenerateSkillContent:
     def test_generate_with_all_fields(self):
         sc = SkillConstructor()
-        content = sc._generate_skill_content(
+        content = sc.generate_skill_content(
             "test-skill",
             "SKILL-DOM-TES-001",
             "op1\nop2",
@@ -175,7 +175,7 @@ class TestGenerateSkillContent:
 
     def test_generate_without_optional_fields(self):
         sc = SkillConstructor()
-        content = sc._generate_skill_content(
+        content = sc.generate_skill_content(
             "minimal-skill",
             "SKILL-DOM-MIN-001",
             "",
@@ -203,7 +203,7 @@ class TestConstruct:
         bp_file = tmp_path / "db_bp.md"
         bp_file.write_text(bp_content, encoding="utf-8")
         sc = SkillConstructor(base_dir=tmp_path)
-        with patch.object(sc, "_update_registry"):
+        with patch.object(sc, "update_registry"):
             result = sc.construct(str(bp_file))
         assert result["status"] == "constructed"
         assert result["skill_name"] == "database-specialist"
@@ -220,7 +220,7 @@ class TestConstruct:
         bp_file = tmp_path / "empty_bp.md"
         bp_file.write_text("", encoding="utf-8")
         sc = SkillConstructor(base_dir=tmp_path)
-        with patch.object(sc, "_update_registry"):
+        with patch.object(sc, "update_registry"):
             result = sc.construct(str(bp_file))
         assert result["status"] == "constructed"
 
