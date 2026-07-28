@@ -37,15 +37,15 @@ class TestRedactionPolicy:
 class TestPrivacyGuardInit:
     def test_default_policy(self):
         guard = PrivacyGuard()
-        assert guard._default_policy == RedactionPolicy.MASK
+        assert guard.default_policy == RedactionPolicy.MASK
 
     def test_custom_policy(self):
         guard = PrivacyGuard(default_policy=RedactionPolicy.HASH)
-        assert guard._default_policy == RedactionPolicy.HASH
+        assert guard.default_policy == RedactionPolicy.HASH
 
     def test_custom_patterns(self):
         guard = PrivacyGuard(custom_patterns={PIICategory.CUSTOM: [r"\bTEST_\w+\b"]})
-        assert PIICategory.CUSTOM in guard._patterns
+        assert PIICategory.CUSTOM in guard.patterns
 
 
 class TestDetectPII:

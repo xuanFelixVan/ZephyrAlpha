@@ -23,7 +23,7 @@ class TestGCT024HardChecks:
 
     def test_three_dimension_coverage(self):
         be = BudgetEngine()
-        assert len(be._policies) == 3
+        assert len(be.policies) == 3
 
     def test_policy_file_exists_and_parsable(self):
         policy_path = Path("config/budget_policy.yaml")

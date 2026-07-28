@@ -23,15 +23,15 @@ class TestBurstLimiterInstantiation:
 
     def test_initial_requests_empty(self):
         bl = BurstLimiter()
-        assert bl._requests == []
+        assert bl.requests == []
 
     def test_max_burst_default(self):
         bl = BurstLimiter()
-        assert bl._max_burst == 10
+        assert bl.max_burst == 10
 
     def test_burst_window_default(self):
         bl = BurstLimiter()
-        assert bl._burst_window_s == 60
+        assert bl.burst_window_s == 60
 
 
 class TestBurstLimiterAllow:
@@ -61,18 +61,18 @@ class TestBurstLimiterAllow:
         bl = BurstLimiter()
         bl.allow()
         bl.allow()
-        assert len(bl._requests) == 2
+        assert len(bl.requests) == 2
 
     def test_window_expiry_allows_again(self):
         bl = BurstLimiter()
-        bl._burst_window_s = 0
+        bl.burst_window_s = 0
         for _ in range(10):
             bl.allow()
         assert bl.allow() is True
 
     def test_partial_window_expiry(self):
         bl = BurstLimiter()
-        bl._burst_window_s = 1
+        bl.burst_window_s = 1
         for _ in range(10):
             bl.allow()
         assert bl.allow() is False

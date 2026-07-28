@@ -93,15 +93,15 @@ class TestAuditIndexerInit:
         db_path = tmp_path / "custom.db"
         events_path = tmp_path / "custom.jsonl"
         indexer = AuditIndexer(db_path=db_path, events_path=events_path)
-        assert indexer._db_path == db_path
-        assert indexer._events_path == events_path
+        assert indexer.db_path == db_path
+        assert indexer.events_path == events_path
 
     def test_string_paths_accepted(self, tmp_path):
         db_path = str(tmp_path / "str.db")
         events_path = str(tmp_path / "str.jsonl")
         indexer = AuditIndexer(db_path=db_path, events_path=events_path)
-        assert isinstance(indexer._db_path, Path)
-        assert isinstance(indexer._events_path, Path)
+        assert isinstance(indexer.db_path, Path)
+        assert isinstance(indexer.events_path, Path)
 
 
 class TestRebuild:

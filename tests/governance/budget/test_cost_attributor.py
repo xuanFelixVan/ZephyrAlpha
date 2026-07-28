@@ -71,12 +71,12 @@ class TestCostSummary:
 class TestCostAttributor:
     def test_instantiation(self):
         ca = CostAttributor()
-        assert ca._top_n == 10
-        assert len(ca._attributions) == 0
+        assert ca.top_n == 10
+        assert len(ca.attributions) == 0
 
     def test_instantiation_custom_top_n(self):
         ca = CostAttributor(top_n=5)
-        assert ca._top_n == 5
+        assert ca.top_n == 5
 
     def test_attribute_returns_attribution(self):
         ca = CostAttributor()
@@ -140,8 +140,8 @@ class TestCostAttributor:
         ca.attribute("call", 100, 0.01)
         ca.attribute("call2", 200, 0.02)
         ca.clear()
-        assert len(ca._attributions) == 0
-        assert ca._counter == 0
+        assert len(ca.attributions) == 0
+        assert ca.counter == 0
         summary = ca.summarize()
         assert summary.total_tokens == 0
 

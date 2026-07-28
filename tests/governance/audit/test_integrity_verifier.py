@@ -21,11 +21,11 @@ from zephyr.gov_audit.integrity_verifier import IntegrityVerifier
 class TestIntegrityVerifierInstantiation:
     def test_creates_instance_with_empty_hashes(self):
         verifier = IntegrityVerifier()
-        assert verifier._hashes == {}
+        assert verifier.hashes == {}
 
     def test_hashes_attribute_is_dict(self):
         verifier = IntegrityVerifier()
-        assert isinstance(verifier._hashes, dict)
+        assert isinstance(verifier.hashes, dict)
 
 
 class TestRegisterHash:
@@ -34,35 +34,35 @@ class TestRegisterHash:
         content = "hello world"
         expected = hashlib.sha256(content.encode()).hexdigest()
         verifier.register_hash("file.py", content)
-        assert verifier._hashes["file.py"] == expected
+        assert verifier.hashes["file.py"] == expected
 
     def test_register_hash_overwrites_previous(self):
         verifier = IntegrityVerifier()
         verifier.register_hash("file.py", "v1")
         verifier.register_hash("file.py", "v2")
         expected = hashlib.sha256(b"v2").hexdigest()
-        assert verifier._hashes["file.py"] == expected
+        assert verifier.hashes["file.py"] == expected
 
     def test_register_hash_multiple_files(self):
         verifier = IntegrityVerifier()
         verifier.register_hash("a.py", "alpha")
         verifier.register_hash("b.py", "beta")
-        assert len(verifier._hashes) == 2
-        assert "a.py" in verifier._hashes
-        assert "b.py" in verifier._hashes
+        assert len(verifier.hashes) == 2
+        assert "a.py" in verifier.hashes
+        assert "b.py" in verifier.hashes
 
     def test_register_hash_empty_content(self):
         verifier = IntegrityVerifier()
         verifier.register_hash("empty.py", "")
         expected = hashlib.sha256(b"").hexdigest()
-        assert verifier._hashes["empty.py"] == expected
+        assert verifier.hashes["empty.py"] == expected
 
     def test_register_hash_unicode_content(self):
         verifier = IntegrityVerifier()
         content = "中文内容 🚀"
         expected = hashlib.sha256(content.encode()).hexdigest()
         verifier.register_hash("unicode.py", content)
-        assert verifier._hashes["unicode.py"] == expected
+        assert verifier.hashes["unicode.py"] == expected
 
 
 class TestVerify:

@@ -63,12 +63,12 @@ class TestPreFlightReport:
 class TestPreFlightGate:
     def test_init_default_engine(self):
         gate = PreFlightGate()
-        assert isinstance(gate._engine, BudgetEngine)
+        assert isinstance(gate.engine, BudgetEngine)
 
     def test_init_custom_engine(self):
         engine = BudgetEngine()
         gate = PreFlightGate(engine=engine)
-        assert gate._engine is engine
+        assert gate.engine is engine
 
     def test_gate_allow(self):
         gate = PreFlightGate()

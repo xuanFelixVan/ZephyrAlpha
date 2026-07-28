@@ -74,8 +74,8 @@ class TestIntegrityVerifyResult:
 
 class TestSupplyChainAuditor:
     def test_instantiation(self, auditor):
-        assert auditor._verify_hashes is False
-        assert len(auditor._trusted_sources) > 0
+        assert auditor.verify_hashes is False
+        assert len(auditor.trusted_sources) > 0
 
     def test_audit_safe_package(self, auditor):
         result = auditor.audit_package(

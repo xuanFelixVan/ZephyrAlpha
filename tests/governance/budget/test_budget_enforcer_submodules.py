@@ -181,7 +181,7 @@ class TestPoisonCascadeDetector:
 
         det = PoisonCascadeDetector()
         event = det.scan("user", "system", "normal content", 100)
-        assert event.suspicion_score < det._suspicion_threshold
+        assert event.suspicion_score < det.suspicion_threshold
 
     def test_poison_detected(self):
         from zephyr.governance.security_governance.poison_cascade_detector import PoisonCascadeDetector

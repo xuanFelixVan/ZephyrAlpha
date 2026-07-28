@@ -105,7 +105,7 @@ class TestRetentionResult:
 class TestRetentionEnforcer:
     def test_instantiation(self, tmp_path):
         enf = RetentionEnforcer(data_dir=tmp_path)
-        assert enf._policy.hot_retention_days == 30
+        assert enf.policy.hot_retention_days == 30
 
     def test_dry_run_does_not_delete(self, enforcer):
         result = enforcer.dry_run()
@@ -137,8 +137,8 @@ class TestRetentionEnforcer:
 
     def test_approve_deletion(self, enforcer):
         enforcer.approve_deletion(["file1.jsonl", "file2.jsonl"])
-        assert "file1.jsonl" in enforcer._approved_deletions
-        assert "file2.jsonl" in enforcer._approved_deletions
+        assert "file1.jsonl" in enforcer.approved_deletions
+        assert "file2.jsonl" in enforcer.approved_deletions
 
     def test_enforce_no_approval_required(self, tmp_path):
         policy = RetentionPolicy(require_owner_approval=False)

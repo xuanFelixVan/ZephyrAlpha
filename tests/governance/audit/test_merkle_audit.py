@@ -21,7 +21,7 @@ class TestMerkleTreeInstantiation:
     def test_creates_instance_with_empty_leaves(self):
         tree = MerkleTree()
         assert isinstance(tree, MerkleTree)
-        assert tree._leaves == []
+        assert tree.leaves == []
 
 
 class TestMerkleTreeAddEvent:
@@ -29,16 +29,16 @@ class TestMerkleTreeAddEvent:
         tree = MerkleTree()
         event = {"action": "escalate", "rule_id": "R-001"}
         tree.add_event(event)
-        assert len(tree._leaves) == 1
+        assert len(tree.leaves) == 1
         expected = hashlib.sha256(json.dumps(event, sort_keys=True).encode()).hexdigest()
-        assert tree._leaves[0] == expected
+        assert tree.leaves[0] == expected
 
     def test_add_multiple_events(self):
         tree = MerkleTree()
         tree.add_event({"a": 1})
         tree.add_event({"b": 2})
         tree.add_event({"c": 3})
-        assert len(tree._leaves) == 3
+        assert len(tree.leaves) == 3
 
 
 class TestMerkleTreeRootHash:
@@ -75,7 +75,7 @@ class TestMerkleAuditInstantiation:
     def test_creates_instance(self):
         audit = MerkleAudit()
         assert isinstance(audit, MerkleAudit)
-        assert isinstance(audit._tree, MerkleTree)
+        assert isinstance(audit.tree, MerkleTree)
 
 
 class TestMerkleAuditRecord:

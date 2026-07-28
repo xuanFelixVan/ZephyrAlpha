@@ -45,7 +45,7 @@ def bridge_with_events(tmp_path):
 class TestAuditTieredStorageBridge:
     def test_instantiation(self, tmp_path):
         bridge = AuditTieredStorageBridge(data_dir=tmp_path)
-        assert bridge._data_dir == tmp_path
+        assert bridge.data_dir == tmp_path
 
     def test_classify_events_hot(self, bridge):
         now = datetime.now(UTC)

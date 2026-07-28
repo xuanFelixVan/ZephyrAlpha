@@ -94,7 +94,7 @@ class TestReplayResult:
 class TestReplayEngine:
     def test_instantiation(self, tmp_path):
         eng = ReplayEngine(event_log_path=tmp_path / "events.jsonl")
-        assert eng._snapshot_interval == 100
+        assert eng.snapshot_interval == 100
 
     def test_replay_basic(self, engine, sample_events):
         result = engine.replay(sample_events)

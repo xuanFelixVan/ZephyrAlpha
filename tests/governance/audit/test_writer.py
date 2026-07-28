@@ -82,7 +82,7 @@ class TestAuditWriter:
     def test_write_adds_timestamp(self, writer):
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "timestamp" in written
@@ -90,7 +90,7 @@ class TestAuditWriter:
     def test_write_adds_chain_hash(self, writer):
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "entry_hash" in written
@@ -99,7 +99,7 @@ class TestAuditWriter:
     def test_write_adds_hmac(self, writer):
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "hmac_signature" in written
@@ -107,7 +107,7 @@ class TestAuditWriter:
     def test_write_adds_lamport_clock(self, writer):
         event = {"event_type": "file_write", "agent_id": "a"}
         writer.write(event)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "lamport_time" in written
@@ -119,7 +119,7 @@ class TestAuditWriter:
         event2 = {"event_type": "file_read", "agent_id": "b"}
         hash1 = writer.write(event1)
         hash2 = writer.write(event2)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             lines = f.readlines()
         second = json.loads(lines[1])
@@ -136,7 +136,7 @@ class TestAuditWriter:
         event = {"event_type": "file_write", "agent_id": "a"}
         long_trace = "x" * 600
         result = writer.write_with_cot(event, reasoning_trace=long_trace)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert len(written["reasoning_trace"]) <= 500
@@ -172,14 +172,14 @@ class TestAuditWriter:
         assert result == initial + 1
 
     def test_readonly_mode(self, writer):
-        writer._readonly = True
+        writer.readonly = True
         with pytest.raises(RuntimeError, match="readonly"):
             writer.write({"event_type": "file_write", "agent_id": "a"})
 
     def test_entry_id_generation(self, writer):
         event = {"event_type": "heartbeat", "agent_id": "a"}
         writer.write(event)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert written["entry_id"].startswith("AUD-T-")
@@ -187,7 +187,7 @@ class TestAuditWriter:
     def test_file_detail_entry_id(self, writer):
         event = {"event_type": "file_detail", "agent_id": "a"}
         writer.write(event)
-        log_path = writer._event_log_path
+        log_path = writer.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert written["entry_id"].startswith("AUD-F-")
@@ -204,7 +204,7 @@ class TestAuditWriter:
         w = AuditWriter(data_dir=data_dir, hmac_key="", enable_merkle=False)
         event = {"event_type": "file_write", "agent_id": "a"}
         w.write(event)
-        log_path = w._event_log_path
+        log_path = w.event_log_path
         with open(log_path, encoding="utf-8") as f:
             written = json.loads(f.readline())
         assert "hmac_signature" not in written or written.get("hmac_signature") is not None

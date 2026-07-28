@@ -114,20 +114,20 @@ class TestIntegrityVerifierInit:
         # 真源为 zephyr.shared.io.paths.AUDIT_DATA_DIR。
         from zephyr.shared.io.paths import AUDIT_DATA_DIR
         verifier = IntegrityVerifier()
-        assert verifier._event_log_path == AUDIT_DATA_DIR / "events.jsonl"
+        assert verifier.event_log_path == AUDIT_DATA_DIR / "events.jsonl"
 
     def test_custom_path(self, tmp_path):
         path = tmp_path / "custom.jsonl"
         verifier = IntegrityVerifier(event_log_path=path)
-        assert verifier._event_log_path == path
+        assert verifier.event_log_path == path
 
     def test_hmac_key_stored_as_bytes(self):
         verifier = IntegrityVerifier(hmac_key="secret")
-        assert verifier._hmac_key == b"secret"
+        assert verifier.hmac_key == b"secret"
 
     def test_empty_hmac_key_stored_as_empty_bytes(self):
         verifier = IntegrityVerifier(hmac_key="")
-        assert verifier._hmac_key == b""
+        assert verifier.hmac_key == b""
 
 
 class TestVerifyChain:
