@@ -26,16 +26,16 @@ class TestFixBudget:
     def test_default_instantiation(self, tmp_path):
         db = str(tmp_path / "budget_test.db")
         fb = FixBudget(db_path=db)
-        assert fb._daily_limit == 50
-        assert fb._monthly_limit == 500
-        assert fb._llm_token_limit == 500000
+        assert fb.daily_limit == 50
+        assert fb.monthly_limit == 500
+        assert fb.llm_token_limit == 500000
 
     def test_custom_config(self, tmp_path):
         db = str(tmp_path / "budget_test.db")
         fb = FixBudget(config={"daily_limit": 10, "monthly_limit": 100, "llm_token_limit": 1000}, db_path=db)
-        assert fb._daily_limit == 10
-        assert fb._monthly_limit == 100
-        assert fb._llm_token_limit == 1000
+        assert fb.daily_limit == 10
+        assert fb.monthly_limit == 100
+        assert fb.llm_token_limit == 1000
 
     def test_check_allowed(self, tmp_path):
         db = str(tmp_path / "budget_test.db")
@@ -113,7 +113,7 @@ class TestFixBudget:
     def test_none_config_defaults(self, tmp_path):
         db = str(tmp_path / "budget_test.db")
         fb = FixBudget(config=None, db_path=db)
-        assert fb._daily_limit == 50
+        assert fb.daily_limit == 50
 
 
 class TestDriftBudgetLink:
@@ -128,7 +128,7 @@ class TestDriftBudgetLink:
         db = str(tmp_path / "budget_test.db")
         fb = FixBudget(config={"daily_limit": 100, "monthly_limit": 1000}, db_path=db)
         dbl = DriftBudgetLink(fb)
-        dbl._drift_fix_limit = 2
+        dbl.drift_fix_limit = 2
         dbl.record_drift_fix()
         dbl.record_drift_fix()
         decision = dbl.evaluate_drift_budget()
@@ -140,18 +140,18 @@ class TestDriftBudgetLink:
         fb = FixBudget(db_path=db)
         dbl = DriftBudgetLink(fb)
         dbl.record_drift_fix()
-        assert dbl._drift_fix_count == 1
+        assert dbl.drift_fix_count == 1
         dbl.record_drift_fix()
-        assert dbl._drift_fix_count == 2
+        assert dbl.drift_fix_count == 2
 
 
 class TestFixStormGuard:
     def test_default_instantiation(self):
         guard = FixStormGuard()
-        assert guard._short_window == 60
-        assert guard._short_threshold == 30
-        assert guard._long_window == 300
-        assert guard._long_threshold == 100
+        assert guard.short_window == 60
+        assert guard.short_threshold == 30
+        assert guard.long_window == 300
+        assert guard.long_threshold == 100
 
     def test_check_initially_passes(self):
         guard = FixStormGuard()
@@ -184,15 +184,15 @@ class TestFixStormGuard:
 
     def test_custom_config(self):
         guard = FixStormGuard(config={"short_window_sec": 30, "short_threshold": 5})
-        assert guard._short_window == 30
-        assert guard._short_threshold == 5
+        assert guard.short_window == 30
+        assert guard.short_threshold == 5
 
 
 class TestLLMCostEstimator:
     def test_default_instantiation(self):
         est = LLMCostEstimator()
-        assert est._cost_per_1k_input == 0.001
-        assert est._cost_per_1k_output == 0.002
+        assert est.cost_per_1k_input == 0.001
+        assert est.cost_per_1k_output == 0.002
 
     def test_estimate(self):
         est = LLMCostEstimator(cost_per_1k_input=0.01, cost_per_1k_output=0.03)

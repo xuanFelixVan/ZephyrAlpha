@@ -54,6 +54,19 @@ class FixBudget:
         self._ensure_db()
         self._load_from_db()
 
+    # Stage 4 公共化：limit 属性公共只读（primary），私有属性向后兼容。
+    @property
+    def daily_limit(self) -> int:
+        return self._daily_limit
+
+    @property
+    def monthly_limit(self) -> int:
+        return self._monthly_limit
+
+    @property
+    def llm_token_limit(self) -> int:
+        return self._llm_token_limit
+
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = get_db_connection(self._db_path)
@@ -187,6 +200,19 @@ class DriftBudgetLink:
         self._drift_fix_count: int = 0
         self._drift_fix_limit: int = 20
 
+    # Stage 4 公共化：drift 预算属性公共读写（primary），私有属性向后兼容。
+    @property
+    def drift_fix_limit(self) -> int:
+        return self._drift_fix_limit
+
+    @drift_fix_limit.setter
+    def drift_fix_limit(self, value: int) -> None:
+        self._drift_fix_limit = value
+
+    @property
+    def drift_fix_count(self) -> int:
+        return self._drift_fix_count
+
     def evaluate_drift_budget(self) -> BudgetDecision:
         if self._drift_fix_count >= self._drift_fix_limit:
             return BudgetDecision(
@@ -218,6 +244,23 @@ class FixStormGuard:
         self._events: list[float] = []
         self._frozen_until: float = 0.0
         self._lock = threading.Lock()
+
+    # Stage 4 公共化：窗口/阈值属性公共只读（primary），私有属性向后兼容。
+    @property
+    def short_window(self) -> int:
+        return self._short_window
+
+    @property
+    def short_threshold(self) -> int:
+        return self._short_threshold
+
+    @property
+    def long_window(self) -> int:
+        return self._long_window
+
+    @property
+    def long_threshold(self) -> int:
+        return self._long_threshold
 
     def record(self) -> None:
         with self._lock:
@@ -251,6 +294,15 @@ class LLMCostEstimator:
     def __init__(self, cost_per_1k_input: float = 0.001, cost_per_1k_output: float = 0.002) -> None:
         self._cost_per_1k_input = cost_per_1k_input
         self._cost_per_1k_output = cost_per_1k_output
+
+    # Stage 4 公共化：成本属性公共只读（primary），私有属性向后兼容。
+    @property
+    def cost_per_1k_input(self) -> float:
+        return self._cost_per_1k_input
+
+    @property
+    def cost_per_1k_output(self) -> float:
+        return self._cost_per_1k_output
 
     def estimate(self, input_tokens: int, output_tokens: int = 0) -> dict[str, float]:
         input_cost = (input_tokens / 1000) * self._cost_per_1k_input
