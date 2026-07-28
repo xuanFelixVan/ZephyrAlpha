@@ -55,6 +55,24 @@ class CodeIntegrityGuard:
         self._last_scan_time: float = 0.0
         self._scan_interval_seconds: float = 1800.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def last_scan_time(self) -> float:
+        """只读：last_scan_time（Stage 4 公共化）。"""
+        return self._last_scan_time
+
+    @last_scan_time.setter
+    def last_scan_time(self, value):
+        """写入：last_scan_time（Stage 4 公共化）。"""
+        self._last_scan_time = value
+
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def compute_baseline_for_directory(self, dir_path: str) -> list[FileIntegrityRecord]:
         records: list[FileIntegrityRecord] = []
         base = Path(os.path.join(self._project_root, dir_path))

@@ -112,6 +112,13 @@ class FailurePatternMatcher:
         self._active = False
         self._diagnoses: list[FailureDiagnosis] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def active(self):
+        """只读：active（Stage 4 公共化）。"""
+        return self._active
+
+
     def activate(self) -> None:
         if self._active:
             return

@@ -84,6 +84,13 @@ class SequenceGuard:
         self._history: dict[str, list[str]] = {}
         self._whitelist: list[list[str]] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def whitelist(self) -> list[list[str]]:
+        """只读：whitelist（Stage 4 公共化）。"""
+        return self._whitelist
+
+
     def _format_op(self, event: SequenceEvent) -> str:
         """将事件格式化为 operation:target 字符串."""
         operation = getattr(event, "operation", "")

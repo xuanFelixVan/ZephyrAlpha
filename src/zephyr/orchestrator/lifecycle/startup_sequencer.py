@@ -77,6 +77,13 @@ class StartupSequencer:
         self._states: dict[StartupLayer, StartupState] = {}
         self._init_states()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def states(self) -> dict[StartupLayer, StartupState]:
+        """只读：states（Stage 4 公共化）。"""
+        return self._states
+
+
     def _init_states(self) -> None:
         for layer in STARTUP_ORDER:
             self._states[layer] = StartupState(layer=layer)

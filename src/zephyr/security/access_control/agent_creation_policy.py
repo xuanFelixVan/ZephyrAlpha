@@ -62,6 +62,13 @@ class AgentCreationPolicy:
     def __init__(self) -> None:
         self._child_counts: dict[str, list[float]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def child_counts(self) -> dict[str, list[float]]:
+        """只读：child_counts（Stage 4 公共化）。"""
+        return self._child_counts
+
+
     def record_spawn(self, parent_agent_id: str) -> None:
         """记录一次子 agent 创建事件."""
         if parent_agent_id not in self._child_counts:

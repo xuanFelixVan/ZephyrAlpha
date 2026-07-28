@@ -81,6 +81,13 @@ class TOCTOUGuard:
         self._snapshots: dict[str, FileSnapshot] = {}
         self._pre_state: dict[str, Any] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def pre_state(self) -> dict[str, Any]:
+        """只读：pre_state（Stage 4 公共化）。"""
+        return self._pre_state
+
+
     def snapshot(self, file_path: str) -> dict[str, Any] | None:
         """对文件做快照.
 

@@ -61,6 +61,13 @@ class IntegrationManager:
     def __init__(self) -> None:
         self._integrations: dict[str, IntegrationPoint] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def integrations(self) -> dict[str, IntegrationPoint]:
+        """只读：integrations（Stage 4 公共化）。"""
+        return self._integrations
+
+
     def register_all(self) -> dict[str, IntegrationPoint]:
         """Register all subsystems. Returns dict[name, IntegrationPoint] with status REGISTERED."""
         for name, module_ref in self.SYSTEM_SPECS:

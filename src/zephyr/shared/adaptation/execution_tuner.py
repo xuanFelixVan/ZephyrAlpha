@@ -57,6 +57,18 @@ class ExecutionTuner:
         self._history: list[dict[str, Any]] = []
         self._default_params = TuningParams()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def default_params(self):
+        """只读：default_params（Stage 4 公共化）。"""
+        return self._default_params
+
+    @property
+    def history(self) -> list[dict[str, Any]]:
+        """只读：history（Stage 4 公共化）。"""
+        return self._history
+
+
     def tune(self, task_card: dict[str, Any]) -> ExecutionProfile:
         task_id = task_card.get("task_id", "")
         priority = task_card.get("priority", "P2")

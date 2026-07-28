@@ -40,6 +40,13 @@ class RollbackSandbox:
     def __init__(self) -> None:
         self._operations: dict[str, SandboxedOperation] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def operations(self) -> dict[str, SandboxedOperation]:
+        """只读：operations（Stage 4 公共化）。"""
+        return self._operations
+
+
     def isolate(self, op_id: str, before_data: str) -> SandboxedOperation:
         op = SandboxedOperation(op_id=op_id, before_data=before_data)
         self._operations[op_id] = op

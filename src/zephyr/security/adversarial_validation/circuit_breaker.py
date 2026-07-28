@@ -61,6 +61,12 @@ class CircuitBreaker:
         self._maybe_transition()
         return self._state
 
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
+
     @property
     def is_open(self) -> bool:
         return self.state is CircuitState.OPEN

@@ -127,6 +127,13 @@ class ColdStartLock:
     def __init__(self) -> None:
         self._locked: bool = True
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def locked(self) -> bool:
+        """只读：locked（Stage 4 公共化）。"""
+        return self._locked
+
+
     def unlock(self) -> None:
         """解锁."""
         self._locked = False

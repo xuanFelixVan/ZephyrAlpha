@@ -104,6 +104,18 @@ class OrphanDetector:
 
         self._registry = registry
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def registry(self):
+        """只读：registry（Stage 4 公共化）。"""
+        return self._registry
+
+    @property
+    def scanner(self):
+        """只读：scanner（Stage 4 公共化）。"""
+        return self._scanner
+
+
     def compute_orphan_rate(self) -> float:
         orphans = self.find_orphans()
 

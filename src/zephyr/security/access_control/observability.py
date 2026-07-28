@@ -76,6 +76,13 @@ class ObservabilityReporter:
         self._noise_sources: list[str] = []
         self._density_window: dict[str, list[float]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def noise_count(self) -> int:
+        """只读：noise_count（Stage 4 公共化）。"""
+        return self._noise_count
+
+
     def record_decision(self, agent_id: str, layer: str, decision: str) -> None:
         """记录权限决策指标."""
         entry = MetricEntry(

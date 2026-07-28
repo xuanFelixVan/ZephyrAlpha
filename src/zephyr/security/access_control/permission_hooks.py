@@ -48,6 +48,13 @@ class PermissionHooks:
         self._hooks: dict[str, list[Callable[..., Any]]] = {}
         self._hook_ids: dict[str, list[str]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def hooks(self) -> dict[str, list[Callable[..., Any]]]:
+        """只读：hooks（Stage 4 公共化）。"""
+        return self._hooks
+
+
     def register(self, event_type: str, hook_id: str, hook: Callable[..., Any] = None) -> None:
         """注册钩子.
 

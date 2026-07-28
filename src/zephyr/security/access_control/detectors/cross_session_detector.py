@@ -73,6 +73,23 @@ class CrossSessionDetector:
         self._active_sessions: dict[str, SignedToken] = {}
         self._violations: list[dict] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def active_sessions(self) -> dict[str, SignedToken]:
+        """只读：active_sessions（Stage 4 公共化）。"""
+        return self._active_sessions
+
+    @property
+    def secret(self) -> str:
+        """只读：secret（Stage 4 公共化）。"""
+        return self._secret
+
+    @property
+    def violations(self) -> list[dict]:
+        """只读：violations（Stage 4 公共化）。"""
+        return self._violations
+
+
     def _compute_signature(
         self,
         agent_id: str,
