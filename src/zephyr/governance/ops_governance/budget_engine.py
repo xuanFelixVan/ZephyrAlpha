@@ -162,6 +162,48 @@ class BudgetEngine:
             cls._instance = engine
             return cls._instance
 
+    # ── Stage 4 公共化属性 + 方法（for testing） ──
+
+    @classmethod
+    def reset_instance(cls) -> None:
+        """清除单例实例（for testing, Stage 4）."""
+        cls._instance = None
+
+    @classmethod
+    def set_instance(cls, engine: "BudgetEngine") -> None:
+        """设置单例实例（for testing, Stage 4）."""
+        cls._instance = engine
+
+    @classmethod
+    def has_instance(cls) -> bool:
+        """检查单例是否存在（public API, Stage 4）."""
+        return cls._instance is not None
+
+    @property
+    def ipi_defense(self):
+        """IPI 防御实例（public API, Stage 4）."""
+        return self._ipi_defense
+
+    @ipi_defense.setter
+    def ipi_defense(self, value) -> None:
+        """设置 IPI 防御实例（for testing, Stage 4）."""
+        self._ipi_defense = value
+
+    @property
+    def spiral_ews(self):
+        """螺旋 EWS 实例（public API, Stage 4）."""
+        return self._spiral_ews
+
+    @spiral_ews.setter
+    def spiral_ews(self, value) -> None:
+        """设置螺旋 EWS 实例（for testing, Stage 4）."""
+        self._spiral_ews = value
+
+    @property
+    def gate_history(self) -> list:
+        """门禁历史（public API, Stage 4）."""
+        return self._gate_history
+
     def get_snapshot(self) -> dict:
         """获取当前预算快照。不持有锁，由子方法各自加锁。"""
         return {

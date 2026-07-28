@@ -37,10 +37,10 @@ from zephyr.governance.ops_governance.budget_engine import BudgetEngine
 @pytest.fixture
 def engine():
     """提供干净的 BudgetEngine 实例。"""
-    BudgetEngine._instance = None
+    BudgetEngine.reset_instance()
     e = BudgetEngine()
     yield e
-    BudgetEngine._instance = None
+    BudgetEngine.reset_instance()
 
 
 class TestShutdown:
@@ -64,28 +64,28 @@ class TestShutdown:
         from zephyr.governance.security_governance.ipi_defense import IPIDefense
         from zephyr.gov_drift.spiral_ews import SpiralEarlyWarningSystem
 
-        engine._ipi_defense = IPIDefense()
-        engine._spiral_ews = SpiralEarlyWarningSystem()
-        engine._gate_history.append(MagicMock())
+        engine.ipi_defense = IPIDefense()
+        engine.spiral_ews = SpiralEarlyWarningSystem()
+        engine.gate_history.append(MagicMock())
 
-        assert engine._ipi_defense is not None
-        assert engine._spiral_ews is not None
-        assert len(engine._gate_history) > 0
+        assert engine.ipi_defense is not None
+        assert engine.spiral_ews is not None
+        assert len(engine.gate_history) > 0
 
         engine.shutdown()
 
-        assert engine._ipi_defense is None
-        assert engine._spiral_ews is None
-        assert len(engine._gate_history) == 0
+        assert engine.ipi_defense is None
+        assert engine.spiral_ews is None
+        assert len(engine.gate_history) == 0
 
     def test_shutdown_resets_singleton(self, engine):
         """shutdown() 应重置单例 _instance。"""
-        BudgetEngine._instance = engine
-        assert BudgetEngine._instance is not None
+        BudgetEngine.set_instance(engine)
+        assert BudgetEngine.has_instance()
 
         engine.shutdown()
 
-        assert BudgetEngine._instance is None
+        assert not BudgetEngine.has_instance()
 
     def test_shutdown_is_idempotent(self, engine):
         """shutdown() 重复调用不应抛异常。"""
@@ -123,7 +123,7 @@ class TestShutdown:
 class TestSessionShutdownHook:
     def test_session_shutdown_hook_registered(self):
         """验证 session_shutdown_budget_close 钩子已注册。"""
-        BudgetEngine._instance = None
+        BudgetEngine.reset_instance()
 
         mock_registry = MagicMock()
         captured = {}
@@ -142,11 +142,11 @@ class TestSessionShutdownHook:
             register_boot_hooks()
 
         assert "session_shutdown_budget_close" in captured
-        BudgetEngine._instance = None
+        BudgetEngine.reset_instance()
 
     def test_session_shutdown_hook_calls_shutdown(self):
         """session_shutdown 钩子应调用 BudgetEngine.shutdown()。"""
-        BudgetEngine._instance = None
+        BudgetEngine.reset_instance()
 
         mock_registry = MagicMock()
         captured = {}
@@ -168,17 +168,17 @@ class TestSessionShutdownHook:
         assert cb is not None
 
         engine = BudgetEngine.ensure_initialized()
-        assert BudgetEngine._instance is not None
+        assert BudgetEngine.has_instance()
 
         event = MagicMock()
         cb(event)
 
-        assert BudgetEngine._instance is None
-        BudgetEngine._instance = None
+        assert not BudgetEngine.has_instance()
+        BudgetEngine.reset_instance()
 
     def test_session_shutdown_hook_safe_when_no_instance(self):
         """无单例时 session_shutdown 钩子应安全跳过。"""
-        BudgetEngine._instance = None
+        BudgetEngine.reset_instance()
 
         mock_registry = MagicMock()
         captured = {}
@@ -202,4 +202,4 @@ class TestSessionShutdownHook:
         event = MagicMock()
         cb(event)
 
-        assert BudgetEngine._instance is None
+        assert not BudgetEngine.has_instance()
