@@ -186,7 +186,7 @@ class TestKnowledgePollution:
         ]
         sparse_hits.append(("quality-1", 6.0, {"written_at": datetime.now(UTC).isoformat()}))
 
-        fused = retriever._rrf_fusion(dense_hits, sparse_hits, "knowledge")
+        fused = retriever.rrf_fusion(dense_hits, sparse_hits, "knowledge")
         top_ids = [f[0] for f in fused[:5]]
 
         # 安全发现: RRF 对大规模污染敏感——quality-1 因 rank 靠后被压低
@@ -296,7 +296,7 @@ class TestRetrievalHijack:
         future_date = (datetime.now(UTC) + timedelta(days=365)).isoformat()
         metadata = {"written_at": future_date}
 
-        decay = retriever._time_decay(metadata, "decisions")
+        decay = retriever.time_decay(metadata, "decisions")
         decay_rate = COLLECTION_DECAY_RATES["decisions"]
 
         # 漏洞记录: 当前 decay > 1.0（未来时间戳放大权重）
@@ -315,7 +315,7 @@ class TestRetrievalHijack:
 
         for days_ahead in [30, 180, 365, 3650]:
             future = (now + timedelta(days=days_ahead)).isoformat()
-            decay = retriever._time_decay({"written_at": future}, "knowledge")
+            decay = retriever.time_decay({"written_at": future}, "knowledge")
             decay_rate = COLLECTION_DECAY_RATES["knowledge"]
             expected_amplification = math.exp(decay_rate * days_ahead)
 
@@ -327,18 +327,18 @@ class TestRetrievalHijack:
         """空metadata不崩溃，返回默认decay=1.0。"""
         retriever = HybridRetriever(collection_manager=None, embedding_router=None)
 
-        decay = retriever._time_decay({}, "knowledge")
+        decay = retriever.time_decay({}, "knowledge")
         assert decay == 1.0, "空metadata应返回默认decay=1.0"
 
-        # None metadata 是已知漏洞——_time_decay 未防御 None
+        # None metadata 是已知漏洞——time_decay 未防御 None
         # DesignPrinciplesEnforcer.validate_provenance 会在写入时拒绝 None，
-        # 但 _time_decay 本身应防御性处理
+        # 但 time_decay 本身应防御性处理
         try:
-            decay = retriever._time_decay(None, "knowledge")
+            decay = retriever.time_decay(None, "knowledge")
             assert decay == 1.0, "None metadata应返回默认decay=1.0"
         except AttributeError:
             pytest.skip(
-                "☠️已知漏洞: _time_decay 未防御 None metadata，"
+                "☠️已知漏洞: time_decay 未防御 None metadata，"
                 "依赖上游 validate_provenance 拦截。需修复: 加 if metadata is None: return 1.0"
             )
 
@@ -354,7 +354,7 @@ class TestRetrievalHijack:
             "9999-99-99T99:99:99",
         ]
         for ts in invalid_timestamps:
-            decay = retriever._time_decay({"written_at": ts}, "knowledge")
+            decay = retriever.time_decay({"written_at": ts}, "knowledge")
             assert decay == 1.0, f"无效时间戳 '{ts}' 应降级为decay=1.0，实际={decay}"
 
     def test_past_timestamp_decay_decreases(self) -> None:
@@ -365,8 +365,8 @@ class TestRetrievalHijack:
         recent = (now - timedelta(days=1)).isoformat()
         old = (now - timedelta(days=365)).isoformat()
 
-        recent_decay = retriever._time_decay({"written_at": recent}, "knowledge")
-        old_decay = retriever._time_decay({"written_at": old}, "knowledge")
+        recent_decay = retriever.time_decay({"written_at": recent}, "knowledge")
+        old_decay = retriever.time_decay({"written_at": old}, "knowledge")
 
         assert recent_decay > old_decay, "近期内容decay应高于旧内容"
         assert old_decay < 1.0, "旧内容decay应小于1.0"
@@ -394,7 +394,7 @@ class TestRetrievalHijack:
         dense_hits = [("doc-1", 0.9, {"written_at": datetime.now(UTC).isoformat()})]
         sparse_hits = [("doc-1", 5.0, {"written_at": datetime.now(UTC).isoformat()})]
 
-        fused = retriever._rrf_fusion(dense_hits, sparse_hits, "knowledge")
+        fused = retriever.rrf_fusion(dense_hits, sparse_hits, "knowledge")
         if fused:
             _, score, _, _ = fused[0]
             # RRF双路最高: 2 * (1/61) ≈ 0.0328
@@ -420,7 +420,7 @@ class TestRetrievalHijack:
             ("tampered-1", 3.0, tampered_meta),
         ]
 
-        fused = retriever._rrf_fusion(dense_hits, sparse_hits, "knowledge")
+        fused = retriever.rrf_fusion(dense_hits, sparse_hits, "knowledge")
         if len(fused) >= 2:
             score_normal = next((s for did, s, _, _ in fused if did == "normal-1"), 0.0)
             score_tampered = next((s for did, s, _, _ in fused if did == "tampered-1"), 0.0)
@@ -434,7 +434,7 @@ class TestRetrievalHijack:
         retriever = HybridRetriever(collection_manager=None, embedding_router=None)
         now = datetime.now(UTC).isoformat()
 
-        decay = retriever._time_decay({"written_at": now}, "knowledge")
+        decay = retriever.time_decay({"written_at": now}, "knowledge")
         assert 0.99 <= decay <= 1.01, f"age=0时decay应≈1.0，实际={decay:.4f}"
 
     def test_time_decay_collection_specific_rates(self) -> None:
@@ -443,8 +443,8 @@ class TestRetrievalHijack:
         old_date = (datetime.now(UTC) - timedelta(days=365)).isoformat()
         metadata = {"written_at": old_date}
 
-        rules_decay = retriever._time_decay(metadata, "rules")
-        traces_decay = retriever._time_decay(metadata, "execution_traces")
+        rules_decay = retriever.time_decay(metadata, "rules")
+        traces_decay = retriever.time_decay(metadata, "execution_traces")
 
         assert rules_decay > traces_decay, (
             f"rules(0.0001)应几乎不衰减: rules={rules_decay:.4f} > "

@@ -189,7 +189,8 @@ class HybridRetriever:
                 self._bm25_indexes[collection_name] = bm25
         return self._bm25_indexes[collection_name]
 
-    def _time_decay(self, metadata: dict[str, Any], collection_name: str) -> float:
+    def time_decay(self, metadata: dict[str, Any], collection_name: str) -> float:
+        """计算基于时间衰减的权重因子（Stage 4 公共化，primary）。"""
         decay_rate = COLLECTION_DECAY_RATES.get(collection_name, 0.005)
         written_at = metadata.get("written_at", "")
         if not written_at:
@@ -201,6 +202,10 @@ class HybridRetriever:
             return math.exp(-decay_rate * age_days)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 1.0
+
+    def _time_decay(self, metadata: dict[str, Any], collection_name: str) -> float:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.time_decay(metadata, collection_name)
 
     def _dense_search(self, query: str, collection_name: str, k: int) -> list[tuple[str, float, dict[str, Any]]]:
         col = self._collection_manager.get_collection(collection_name)
@@ -233,25 +238,26 @@ class HybridRetriever:
             _logger.warning("suppressed error in hybrid_retriever", exc_info=True)
         return [(doc_id, score, meta_map.get(doc_id, {})) for doc_id, score in scores]
 
-    def _rrf_fusion(
+    def rrf_fusion(
         self,
         dense_hits: list[tuple[str, float, dict[str, Any]]],
         sparse_hits: list[tuple[str, float, dict[str, Any]]],
         collection_name: str,
         k: int = RRF_K,
     ) -> list[tuple[str, float, dict[str, float], dict[str, Any]]]:
+        """RRF（Reciprocal Rank Fusion）融合 dense/sparse 检索结果（Stage 4 公共化，primary）。"""
         rrf_scores: dict[str, float] = {}
         breakdowns: dict[str, dict[str, float]] = {}
 
         for rank, (doc_id, dense_score, meta) in enumerate(dense_hits):
             rrf = 1.0 / (k + rank + 1)
-            decay = self._time_decay(meta, collection_name)
+            decay = self.time_decay(meta, collection_name)
             rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + rrf * decay
             breakdowns[doc_id] = {"dense": dense_score, "sparse": 0.0, "rrf": 0.0}
 
         for rank, (doc_id, sparse_score, meta) in enumerate(sparse_hits):
             rrf = 1.0 / (k + rank + 1)
-            decay = self._time_decay(meta, collection_name)
+            decay = self.time_decay(meta, collection_name)
             rrf_scores[doc_id] = rrf_scores.get(doc_id, 0.0) + rrf * decay
             if doc_id in breakdowns:
                 breakdowns[doc_id]["sparse"] = sparse_score
@@ -267,6 +273,16 @@ class HybridRetriever:
             reverse=True,
         )
         return merged
+
+    def _rrf_fusion(
+        self,
+        dense_hits: list[tuple[str, float, dict[str, Any]]],
+        sparse_hits: list[tuple[str, float, dict[str, Any]]],
+        collection_name: str,
+        k: int = RRF_K,
+    ) -> list[tuple[str, float, dict[str, float], dict[str, Any]]]:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.rrf_fusion(dense_hits, sparse_hits, collection_name, k)
 
     def search(
         self,
@@ -304,7 +320,7 @@ class HybridRetriever:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             sparse_hits = []
 
-        fused = self._rrf_fusion(dense_hits, sparse_hits, collection_name)
+        fused = self.rrf_fusion(dense_hits, sparse_hits, collection_name)
 
         filtered: list[ScoredHit] = []
         for doc_id, score, breakdown, _ in fused:
