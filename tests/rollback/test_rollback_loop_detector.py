@@ -46,14 +46,14 @@ def _write_log_entries(log_path: Path, entries: list[dict]) -> None:
 class TestRollbackLoopDetectorInstantiation:
     def test_creates_with_defaults(self):
         d = RollbackLoopDetector()
-        assert d._project_root is not None
+        assert d.project_root is not None
 
     def test_creates_with_custom_root(self, tmp_path: Path):
         d = RollbackLoopDetector(project_root=tmp_path)
-        assert d._project_root == tmp_path
+        assert d.project_root == tmp_path
 
     def test_log_path_set(self, detector: RollbackLoopDetector):
-        assert detector._log_path.name == "rollback_loop_log.jsonl"
+        assert detector.log_path.name == "rollback_loop_log.jsonl"
 
     def test_max_rollbacks_constants(self):
         assert RollbackLoopDetector.MAX_ROLLBACKS_PER_HOUR == 3

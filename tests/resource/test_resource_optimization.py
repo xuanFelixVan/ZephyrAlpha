@@ -215,15 +215,15 @@ class TestStartStopMonitor:
     def test_start_and_stop(self):
         engine = ResourceOptimizationEngine()
         engine.start_monitor(interval=1.0)
-        assert engine._monitor_running is True
+        assert engine.monitor_running is True
         engine.stop_monitor()
-        assert engine._monitor_running is False
+        assert engine.monitor_running is False
 
     def test_start_idempotent(self):
         engine = ResourceOptimizationEngine()
         engine.start_monitor(interval=1.0)
         engine.start_monitor(interval=1.0)
-        assert engine._monitor_running is True
+        assert engine.monitor_running is True
         engine.stop_monitor()
 
 
@@ -232,4 +232,4 @@ class TestOnPressure:
         engine = ResourceOptimizationEngine()
         called = []
         engine.on_pressure(lambda level, snap: called.append(level))
-        assert len(engine._pressure_callbacks) == 1
+        assert len(engine.pressure_callbacks) == 1

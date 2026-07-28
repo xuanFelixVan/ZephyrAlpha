@@ -56,11 +56,11 @@ class TestAbuseReport:
 class TestRollbackAbuseDetector:
     def test_instantiation_with_path(self, tmp_path):
         detector = RollbackAbuseDetector(project_root=tmp_path)
-        assert detector._project_root == tmp_path
+        assert detector.project_root == tmp_path
 
     def test_instantiation_default(self):
         detector = RollbackAbuseDetector()
-        assert detector._project_root == Path.cwd()
+        assert detector.project_root == Path.cwd()
 
     def test_check_abuse_no_audit_log(self, tmp_path):
         detector = RollbackAbuseDetector(project_root=tmp_path)

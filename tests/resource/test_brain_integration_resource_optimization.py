@@ -40,7 +40,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine._pressure_sm._current = ROELevel.WARNING
+        engine.pressure_sm._current = ROELevel.WARNING
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -51,7 +51,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine._pressure_sm._current = ROELevel.CRITICAL
+        engine.pressure_sm._current = ROELevel.CRITICAL
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -62,7 +62,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine._pressure_sm._current = ROELevel.EMERGENCY
+        engine.pressure_sm._current = ROELevel.EMERGENCY
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -73,7 +73,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine._pressure_sm._current = ROELevel.NORMAL
+        engine.pressure_sm._current = ROELevel.NORMAL
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -113,7 +113,7 @@ class TestAutoRuntimeCoreLifecycle:
             # Without Ollama it hangs 25s+, must mock.
             with (
                 patch.object(core, "_start_local_models"),
-                patch.object(core._lifecycle, "boot_sequence", return_value=BootReport(success=True)),
+                patch.object(core.lifecycle, "boot_sequence", return_value=BootReport(success=True)),
             ):
                 core.boot()
             mock_engine.start_monitor.assert_called_once_with(interval=30.0)
@@ -130,7 +130,7 @@ class TestAutoRuntimeCoreLifecycle:
             core = AutoRuntimeCore()
             with (
                 patch.object(core, "_start_local_models"),
-                patch.object(core._lifecycle, "shutdown_sequence", return_value=ShutdownReport()),
+                patch.object(core.lifecycle, "shutdown_sequence", return_value=ShutdownReport()),
             ):
                 core.shutdown()
             mock_engine.stop_monitor.assert_called_once()
@@ -140,7 +140,7 @@ class TestAutoRuntimeCoreLifecycle:
         from zephyr.trading.lifecycle_manager import BootReport
 
         core = AutoRuntimeCore()
-        with patch.object(core._lifecycle, "boot_sequence", return_value=BootReport(success=False)):
+        with patch.object(core.lifecycle, "boot_sequence", return_value=BootReport(success=False)):
             report = core.boot()
 
         assert report.success is False

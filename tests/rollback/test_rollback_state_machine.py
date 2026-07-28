@@ -64,11 +64,11 @@ class TestRollbackStep:
 class TestRollbackStateMachineInstantiation:
     def test_default_execution_id(self):
         sm = RollbackStateMachine()
-        assert sm._execution_id == ""
+        assert sm.execution_id == ""
 
     def test_custom_execution_id(self):
         sm = RollbackStateMachine(execution_id="exec-001")
-        assert sm._execution_id == "exec-001"
+        assert sm.execution_id == "exec-001"
 
     def test_steps_initialized(self):
         sm = RollbackStateMachine()
@@ -91,13 +91,13 @@ class TestMarkCurrent:
     def test_mark_success_advances(self):
         sm = RollbackStateMachine()
         sm.mark_current(StepStatus.SUCCESS)
-        assert sm._current_step_idx == 1
+        assert sm.current_step_idx == 1
         assert sm.current_step.name == "acquire_lock"
 
     def test_mark_failed_no_advance(self):
         sm = RollbackStateMachine()
         sm.mark_current(StepStatus.FAILED, error="timeout")
-        assert sm._current_step_idx == 0
+        assert sm.current_step_idx == 0
         assert sm.steps[0].status == StepStatus.FAILED
         assert sm.steps[0].error == "timeout"
         assert sm.steps[0].completed_at != ""
@@ -118,7 +118,7 @@ class TestMarkCurrent:
     def test_mark_pending_no_advance(self):
         sm = RollbackStateMachine()
         sm.mark_current(StepStatus.PENDING)
-        assert sm._current_step_idx == 0
+        assert sm.current_step_idx == 0
 
 
 class TestRetryCurrent:
@@ -207,16 +207,16 @@ class TestSerialization:
         sm.retry_current()
         data = sm.to_in_flight_data()
         restored = RollbackStateMachine.from_in_flight_data(data)
-        assert restored._execution_id == "exec-99"
-        assert restored._current_step_idx == 1
+        assert restored.execution_id == "exec-99"
+        assert restored.current_step_idx == 1
         assert restored.steps[0].status == StepStatus.SUCCESS
         assert restored.steps[1].status == StepStatus.RETRYING
         assert restored.steps[1].retry_count == 1
 
     def test_from_in_flight_data_empty(self):
         restored = RollbackStateMachine.from_in_flight_data({})
-        assert restored._execution_id == ""
-        assert restored._current_step_idx == 0
+        assert restored.execution_id == ""
+        assert restored.current_step_idx == 0
 
     def test_from_in_flight_data_partial_steps(self):
         data = {
@@ -228,6 +228,6 @@ class TestSerialization:
             ],
         }
         restored = RollbackStateMachine.from_in_flight_data(data)
-        assert restored._current_step_idx == 2
+        assert restored.current_step_idx == 2
         assert len(restored.steps) == 6
         assert restored.steps[0].status == StepStatus.SUCCESS

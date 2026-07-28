@@ -51,19 +51,19 @@ class TestDashboardMetrics:
 class TestRollbackDashboardInstantiation:
     def test_default_project_root(self):
         d = RollbackDashboard()
-        assert d._project_root == Path.cwd()
+        assert d.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         d = RollbackDashboard(project_root=tmp_path)
-        assert d._project_root == tmp_path
+        assert d.project_root == tmp_path
 
     def test_none_project_root(self):
         d = RollbackDashboard(project_root=None)
-        assert d._project_root == Path.cwd()
+        assert d.project_root == Path.cwd()
 
     def test_output_path_set(self, tmp_path: Path):
         d = RollbackDashboard(project_root=tmp_path)
-        assert d._output_path == tmp_path / d.OUTPUT_PATH
+        assert d.output_path == tmp_path / d.OUTPUT_PATH
 
 
 class TestRollbackDashboardGenerate:

@@ -63,8 +63,8 @@ class TestConcurrentFullRevert:
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
             with patch.object(executor, "_run_git", return_value="src/file.py"):
                 with patch.object(executor, "_dumper"):
-                    executor._dumper.dump.return_value = Path("/tmp/dump.sql")
-                    executor._dumper.restore.return_value = 0
+                    executor.dumper.dump.return_value = Path("/tmp/dump.sql")
+                    executor.dumper.restore.return_value = 0
 
                     with ThreadPoolExecutor(max_workers=10) as pool:
                         futures = {
@@ -174,7 +174,7 @@ class TestBudgetExhaustion:
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
             with patch.object(executor, "_run_git", return_value="src/file.py"):
                 # Mock lock to simulate budget exhaustion
-                executor._lock.acquire.return_value = MagicMock(
+                executor.lock.acquire.return_value = MagicMock(
                     acquired=False, reason="budget_exhausted: daily limit 20 reached"
                 )
 

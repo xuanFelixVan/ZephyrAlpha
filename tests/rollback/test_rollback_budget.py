@@ -71,15 +71,15 @@ class TestBudgetConsumeResult:
 class TestRollbackBudgetInstantiation:
     def test_default_project_root(self):
         b = RollbackBudget()
-        assert b._project_root == Path.cwd()
+        assert b.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         b = RollbackBudget(project_root=tmp_path)
-        assert b._project_root == tmp_path
+        assert b.project_root == tmp_path
 
     def test_none_project_root_defaults_to_cwd(self):
         b = RollbackBudget(project_root=None)
-        assert b._project_root == Path.cwd()
+        assert b.project_root == Path.cwd()
 
     def test_initial_concurrent_count(self, tmp_path: Path):
         b = RollbackBudget(project_root=tmp_path)

@@ -88,12 +88,12 @@ class TestSkillInjectionResult:
 class TestSkillContextInjector:
     def test_instantiation_default_loader(self):
         injector = SkillContextInjector()
-        assert injector._loader is not None
+        assert injector.loader is not None
 
     def test_instantiation_custom_loader(self):
         mock_loader = MagicMock()
         injector = SkillContextInjector(loader=mock_loader)
-        assert injector._loader is mock_loader
+        assert injector.loader is mock_loader
 
     def test_inject_success(self):
         mock_loader = MagicMock()
@@ -158,17 +158,17 @@ class TestSkillContextInjector:
 class TestPipelineSkillBridge:
     def test_instantiation(self):
         bridge = PipelineSkillBridge()
-        assert bridge._router is not None
-        assert bridge._injector is not None
+        assert bridge.router is not None
+        assert bridge.injector is not None
 
     def test_stage_map_populated(self):
         bridge = PipelineSkillBridge()
-        assert "construction" in bridge._stage_map
-        assert bridge._stage_map["construction"] == ConstructionStage.CONSTRUCTION
+        assert "construction" in bridge.stage_map
+        assert bridge.stage_map["construction"] == ConstructionStage.CONSTRUCTION
 
     def test_inject_for_task_with_stage(self):
         bridge = PipelineSkillBridge()
-        with patch.object(bridge._injector, "inject") as mock_inject:
+        with patch.object(bridge.injector, "inject") as mock_inject:
             mock_inject.return_value = SkillInjectionResult(
                 skill_id="test",
                 domain_skill_id="d",
@@ -176,7 +176,7 @@ class TestPipelineSkillBridge:
                 l0_constitution={},
                 loaded=True,
             )
-            with patch.object(bridge._injector._loader, "_load_registry") as mock_reg:
+            with patch.object(bridge.injector.loader, "_load_registry") as mock_reg:
                 mock_reg.return_value = {
                     "skills": {
                         "domain": {"domain-1": {"name": "database-specialist"}},

@@ -58,12 +58,12 @@ class TestAuditEvent:
 class TestRollbackAuditNexus:
     def test_instantiation_with_path(self, tmp_path):
         nexus = RollbackAuditNexus(project_root=tmp_path)
-        assert nexus._project_root == tmp_path
-        assert nexus._nexus_log.parent.exists()
+        assert nexus.project_root == tmp_path
+        assert nexus.nexus_log.parent.exists()
 
     def test_instantiation_default(self):
         nexus = RollbackAuditNexus()
-        assert nexus._project_root == Path.cwd()
+        assert nexus.project_root == Path.cwd()
 
     def test_publish_creates_log_file(self, tmp_path):
         nexus = RollbackAuditNexus(project_root=tmp_path)
@@ -78,8 +78,8 @@ class TestRollbackAuditNexus:
             success=True,
         )
         nexus.publish(event)
-        assert nexus._nexus_log.exists()
-        lines = nexus._nexus_log.read_text(encoding="utf-8").strip().split("\n")
+        assert nexus.nexus_log.exists()
+        lines = nexus.nexus_log.read_text(encoding="utf-8").strip().split("\n")
         assert len(lines) == 1
         record = json.loads(lines[0])
         assert record["event_id"] == "RB-001"
@@ -99,7 +99,7 @@ class TestRollbackAuditNexus:
                 success=True,
             )
             nexus.publish(event)
-        lines = nexus._nexus_log.read_text(encoding="utf-8").strip().split("\n")
+        lines = nexus.nexus_log.read_text(encoding="utf-8").strip().split("\n")
         assert len(lines) == 3
 
     def test_create_event(self, tmp_path):
@@ -117,7 +117,7 @@ class TestRollbackAuditNexus:
         assert event.operator == "agent-1"
         assert event.success is True
         assert event.details == {"reason": "test"}
-        assert nexus._nexus_log.exists()
+        assert nexus.nexus_log.exists()
 
     def test_create_event_default_details(self, tmp_path):
         nexus = RollbackAuditNexus(project_root=tmp_path)
@@ -153,8 +153,8 @@ class TestRollbackAuditNexus:
         nexus = RollbackAuditNexus(project_root=tmp_path)
         nexus.create_event("rollback", "a1", "c1", "c2", success=True)
         nexus.generate_summary()
-        assert nexus._nexus_summary.exists()
-        data = json.loads(nexus._nexus_summary.read_text(encoding="utf-8"))
+        assert nexus.nexus_summary.exists()
+        data = json.loads(nexus.nexus_summary.read_text(encoding="utf-8"))
         assert data["total_events"] == 1
 
     def test_get_recent_events_empty(self, tmp_path):
@@ -180,8 +180,8 @@ class TestRollbackAuditNexus:
 
     def test_malformed_log_lines_skipped(self, tmp_path):
         nexus = RollbackAuditNexus(project_root=tmp_path)
-        nexus._nexus_log.parent.mkdir(parents=True, exist_ok=True)
-        with open(nexus._nexus_log, "a", encoding="utf-8") as f:
+        nexus.nexus_log.parent.mkdir(parents=True, exist_ok=True)
+        with open(nexus.nexus_log, "a", encoding="utf-8") as f:
             f.write("bad json line\n")
             f.write("\n")
         nexus.create_event("rollback", "a1", "c1", "c2", success=True)

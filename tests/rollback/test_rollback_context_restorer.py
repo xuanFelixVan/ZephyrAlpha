@@ -61,19 +61,19 @@ class TestRestoreContext:
 class TestRollbackContextRestorerInstantiation:
     def test_default_project_root(self):
         r = RollbackContextRestorer()
-        assert r._project_root == Path.cwd()
+        assert r.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_path: Path):
         r = RollbackContextRestorer(project_root=tmp_path)
-        assert r._project_root == tmp_path
+        assert r.project_root == tmp_path
 
     def test_none_project_root(self):
         r = RollbackContextRestorer(project_root=None)
-        assert r._project_root == Path.cwd()
+        assert r.project_root == Path.cwd()
 
     def test_prompt_path_set(self, tmp_path: Path):
         r = RollbackContextRestorer(project_root=tmp_path)
-        assert r._prompt_path == tmp_path / r.PROMPT_FILE
+        assert r.prompt_path == tmp_path / r.PROMPT_FILE
 
 
 class TestGenerateRestorePrompt:
@@ -161,8 +161,8 @@ class TestGenerateRestorePrompt:
             action_plan="Re-run",
         )
         r.generate_restore_prompt(ctx)
-        assert r._prompt_path.exists()
-        content = r._prompt_path.read_text(encoding="utf-8")
+        assert r.prompt_path.exists()
+        content = r.prompt_path.read_text(encoding="utf-8")
         assert "abc1234" in content
 
     def test_empty_files_list(self, tmp_path: Path):

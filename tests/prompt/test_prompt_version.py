@@ -19,26 +19,26 @@ from zephyr.orchestrator.contracts.prompt_version import PromptVersionManager
 class TestPromptVersionManagerInstantiation:
     def test_empty_versions_on_init(self):
         mgr = PromptVersionManager()
-        assert mgr._versions == {}
+        assert mgr.versions == {}
 
 
 class TestRegister:
     def test_register_stores_version(self):
         mgr = PromptVersionManager()
         mgr.register("prompt-1", "v1.0.0", "template content")
-        assert mgr._versions["prompt-1"] == "v1.0.0"
+        assert mgr.versions["prompt-1"] == "v1.0.0"
 
     def test_register_overwrites(self):
         mgr = PromptVersionManager()
         mgr.register("prompt-1", "v1.0.0", "old")
         mgr.register("prompt-1", "v2.0.0", "new")
-        assert mgr._versions["prompt-1"] == "v2.0.0"
+        assert mgr.versions["prompt-1"] == "v2.0.0"
 
     def test_register_multiple_prompts(self):
         mgr = PromptVersionManager()
         mgr.register("p-a", "v1.0.0", "a")
         mgr.register("p-b", "v2.0.0", "b")
-        assert len(mgr._versions) == 2
+        assert len(mgr.versions) == 2
 
 
 class TestGetVersion:
@@ -87,7 +87,7 @@ class TestBoundary:
     def test_register_empty_template(self):
         mgr = PromptVersionManager()
         mgr.register("p-y", "v1.0.0", "")
-        assert mgr._versions["p-y"] == "v1.0.0"
+        assert mgr.versions["p-y"] == "v1.0.0"
 
     def test_diff_whitespace_difference(self):
         mgr = PromptVersionManager()

@@ -61,7 +61,7 @@ class TestRollbackSandbox:
 
     def test_rollback_irreversible(self):
         self.sandbox.isolate("op-1", "state-before")
-        op = self.sandbox._operations["op-1"]
+        op = self.sandbox.operations["op-1"]
         op.reversible = False
         result = self.sandbox.rollback("op-1")
         assert result["success"] is False

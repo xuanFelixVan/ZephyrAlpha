@@ -76,8 +76,8 @@ class TestPromptRegistry:
 class TestPromptVersionManager:
     def test_instantiation_with_tmp_path(self, tmp_path):
         mgr = PromptVersionManager(data_dir=tmp_path / "prompts")
-        assert mgr._data_dir == tmp_path / "prompts"
-        assert mgr._registry.prompts == {}
+        assert mgr.data_dir == tmp_path / "prompts"
+        assert mgr.registry.prompts == {}
 
     def test_register_and_get_current(self, tmp_path):
         mgr = PromptVersionManager(data_dir=tmp_path / "prompts")

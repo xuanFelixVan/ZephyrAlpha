@@ -39,11 +39,11 @@ def verifier(tmp_project):
 class TestInstantiation:
     def test_custom_root(self, tmp_project):
         v = RollbackVerifier(project_root=tmp_project)
-        assert v._project_root == tmp_project
+        assert v.project_root == tmp_project
 
     def test_none_root_defaults_to_cwd(self):
         v = RollbackVerifier(project_root=None)
-        assert v._project_root == Path.cwd()
+        assert v.project_root == Path.cwd()
 
 
 class TestG0Verify:
