@@ -30,6 +30,18 @@ class SilenceDetector:
         self._last_activity: dict[str, float] = {}
         self._timeout_s = 1800
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def last_activity(self) -> dict[str, float]:
+        """只读：last_activity（Stage 4 公共化）。"""
+        return self._last_activity
+
+    @property
+    def timeout_s(self):
+        """只读：timeout_s（Stage 4 公共化）。"""
+        return self._timeout_s
+
+
     def record_activity(self, agent_id: str):
         self._last_activity[agent_id] = time.time()
 

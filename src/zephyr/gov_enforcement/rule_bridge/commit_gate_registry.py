@@ -251,6 +251,13 @@ class CommitGateRegistry:
     def __init__(self) -> None:
         self._specs: dict[str, GateSpec] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def specs(self) -> dict[str, GateSpec]:
+        """只读：specs（Stage 4 公共化）。"""
+        return self._specs
+
+
     def register(self, spec: GateSpec) -> None:
         """注册门禁（幂等，同 gate_id 覆盖；同 priority 不同 gate_id 阻断）。
 

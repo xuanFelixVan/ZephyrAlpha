@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_ENFORCEMENT_worktree_pool | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P3.3
+# [BLUEPRINT] MOD-GOV_ENFORCEMENT_WORKTREE_POOL | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P3.3
 # [MODULE] zephyr.gov_enforcement.rule_bridge.worktree_pool
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.shared.io.paths (REPO_ROOT); zephyr.gov_enforcement.rule_bridge.worktree_manager (_force_rmtree 复用)
@@ -612,3 +612,6 @@ def get_pool(project_root: str | Path | None = None) -> WorktreePool:
         if key not in _pool_instances:
             _pool_instances[key] = WorktreePool(root)
     return _pool_instances[key]
+
+# ── Stage 4 公共化（2026-07-29）：module-level public aliases ──
+pool_instances: dict[str, WorktreePool] = _pool_instances  # public alias（Stage 4 公共化）

@@ -380,6 +380,13 @@ class GitCommitGateway:
         self._claim_snapshots_dir: Path = self.project_root / _CLAIM_SNAPSHOTS_DIR
         self.load_claim_snapshots_from_disk()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def reconciliation_registry(self):
+        """只读：reconciliation_registry（Stage 4 公共化）。"""
+        return self._reconciliation_registry
+
+
     # ------------------------------------------------------------------
     # R5 (Stage 4): public properties for private backing attributes
     # ------------------------------------------------------------------

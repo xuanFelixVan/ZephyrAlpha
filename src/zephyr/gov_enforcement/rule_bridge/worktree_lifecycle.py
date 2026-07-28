@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_ENFORCEMENT_worktree_lifecycle | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §ARCH-WORKTREE-LIFECYCLE-001
+# [BLUEPRINT] MOD-GOV_ENFORCEMENT_WORKTREE_LIFECYCLE | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §ARCH-WORKTREE-LIFECYCLE-001
 # [MODULE] zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.foundation.errors
@@ -127,6 +127,13 @@ class WorktreeLifecycle:
         self._transitions: list[dict[str, Any]] = []
         self._timeout_rules: list[dict[str, Any]] = []
         self._load_config()
+
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def config_path(self):
+        """只读：config_path（Stage 4 公共化）。"""
+        return self._config_path
+
 
     def _load_config(self) -> None:
         try:

@@ -65,6 +65,13 @@ class ROIEngine:
     def __init__(self) -> None:
         self._effort_feedback: dict[str, float] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def effort_feedback(self) -> dict[str, float]:
+        """只读：effort_feedback（Stage 4 公共化）。"""
+        return self._effort_feedback
+
+
     def record_feedback(self, detector_id: str, actual_hours: float) -> None:
         self._effort_feedback[detector_id] = actual_hours
 

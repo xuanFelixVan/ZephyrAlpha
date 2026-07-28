@@ -67,6 +67,13 @@ class AdversarialValidationGate:
         self._confidence_threshold = confidence_threshold
         self._history: list[ValidationResult] = []
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def confidence_threshold(self):
+        """只读：confidence_threshold（Stage 4 公共化）。"""
+        return self._confidence_threshold
+
+
     def validate(self, output: str, context: dict[str, Any] | None = None) -> ValidationResult:
         context = context or {}
         violations: list[str] = []

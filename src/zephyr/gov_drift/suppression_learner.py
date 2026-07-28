@@ -67,6 +67,18 @@ class SuppressionLearner:
 
         self._shadow_observations: dict[str, list[str]] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def patterns(self) -> dict[str, SuppressionRule]:
+        """只读：patterns（Stage 4 公共化）。"""
+        return self._patterns
+
+    @property
+    def shadow_observations(self) -> dict[str, list[str]]:
+        """只读：shadow_observations（Stage 4 公共化）。"""
+        return self._shadow_observations
+
+
     def compute_pattern_hash(
         self,
         detector_id: str,

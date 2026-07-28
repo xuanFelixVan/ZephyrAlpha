@@ -115,6 +115,28 @@ class ReboundDetector:
         self._max_gap_seconds = max_rebound_gap_days * 86400
         self._rebound_agents: set[str] = set()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def max_gap_seconds(self):
+        """只读：max_gap_seconds（Stage 4 公共化）。"""
+        return self._max_gap_seconds
+
+    @property
+    def min_gap_seconds(self):
+        """只读：min_gap_seconds（Stage 4 公共化）。"""
+        return self._min_gap_seconds
+
+    @property
+    def records(self) -> dict[str, list[BehaviorRecord]]:
+        """只读：records（Stage 4 公共化）。"""
+        return self._records
+
+    @property
+    def sliding_window_seconds(self):
+        """只读：sliding_window_seconds（Stage 4 公共化）。"""
+        return self._sliding_window_seconds
+
+
     def record(
         self,
         agent_id: str,

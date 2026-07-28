@@ -100,6 +100,23 @@ class ScanMutex:
 
         self._renewers: dict[str, SyncLockRenewer] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def lock_dir(self):
+        """只读：lock_dir（Stage 4 公共化）。"""
+        return self._lock_dir
+
+    @property
+    def lock_path(self):
+        """只读：lock_path（Stage 4 公共化）。"""
+        return self._lock_path
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def is_locked(self) -> bool:
         return os.path.exists(self._lock_path)
 

@@ -93,6 +93,28 @@ class TrendAnalyzer:
 
         os.makedirs(self._archive_dir, exist_ok=True)
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def archive_dir(self):
+        """只读：archive_dir（Stage 4 公共化）。"""
+        return self._archive_dir
+
+    @property
+    def db_dir(self):
+        """只读：db_dir（Stage 4 公共化）。"""
+        return self._db_dir
+
+    @property
+    def db_path(self):
+        """只读：db_path（Stage 4 公共化）。"""
+        return self._db_path
+
+    @property
+    def project_root(self):
+        """只读：project_root（Stage 4 公共化）。"""
+        return self._project_root
+
+
     def compute_metrics(self, module_id: str) -> TrendMetrics:
         conn = get_db_connection(self._db_path)
 

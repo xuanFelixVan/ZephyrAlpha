@@ -32,6 +32,28 @@ class VigilRuntime:
         self._override_window_open = False
         self._override_expiry = 0.0
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def override_expiry(self):
+        """只读：override_expiry（Stage 4 公共化）。"""
+        return self._override_expiry
+
+    @property
+    def override_window_open(self):
+        """只读：override_window_open（Stage 4 公共化）。"""
+        return self._override_window_open
+
+    @property
+    def token_budget(self):
+        """只读：token_budget（Stage 4 公共化）。"""
+        return self._token_budget
+
+    @property
+    def tokens_used(self):
+        """只读：tokens_used（Stage 4 公共化）。"""
+        return self._tokens_used
+
+
     def consume(self, tokens: int) -> bool:
         if self._tokens_used + tokens > self._token_budget:
             return False

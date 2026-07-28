@@ -73,6 +73,13 @@ class SelfTestVerifier:
 
         self._base_dir = base_dir
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def base_dir(self):
+        """只读：base_dir（Stage 4 公共化）。"""
+        return self._base_dir
+
+
     def check_circular_import(self) -> dict[str, str]:
         try:
             import ast

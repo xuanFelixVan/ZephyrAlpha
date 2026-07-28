@@ -125,6 +125,13 @@ class PostProcessPipeline:
         self._hooks: list[PostProcessHook] = []
         self._lock = threading.RLock()
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def hooks(self) -> list[PostProcessHook]:
+        """只读：hooks（Stage 4 公共化）。"""
+        return self._hooks
+
+
     def register_hook(
         self,
         name: str,

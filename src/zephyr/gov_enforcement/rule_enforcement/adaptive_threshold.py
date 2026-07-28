@@ -103,6 +103,23 @@ class AdaptiveThreshold:
         self._smoothing = smoothing
         self._states: dict[str, ThresholdState] = {}
 
+    # ── Stage 4 公共化（2026-07-29）：只读 properties ──
+    @property
+    def smoothing(self):
+        """只读：smoothing（Stage 4 公共化）。"""
+        return self._smoothing
+
+    @property
+    def states(self) -> dict[str, ThresholdState]:
+        """只读：states（Stage 4 公共化）。"""
+        return self._states
+
+    @property
+    def window(self):
+        """只读：window（Stage 4 公共化）。"""
+        return self._window
+
+
     def get_state(
         self,
         gate_id: str,
