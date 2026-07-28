@@ -80,6 +80,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 _NO_AUTO_FIX_TYPES = {"behavioral_audit_red", "security_critical", "data_loss_risk"}  # noqa: gate-vocab  无对应词表真源（无 finding-type 词表），禁止自动修复的发现类型为本地安全策略
+# ── Stage 4 公共 API 别名（for testing） ──
+NO_AUTO_FIX_TYPES = _NO_AUTO_FIX_TYPES
 
 
 class AutoFixEngine:
@@ -118,6 +120,88 @@ class AutoFixEngine:
         )
         self._fixers: dict[str, Any] = {}
         self._load_fixers()
+
+    # ── Stage 4 公共化属性（component accessors, for testing） ──
+
+    @property
+    def safety_gate(self):
+        return self._safety_gate
+
+    @property
+    def cascade_breaker(self):
+        return self._cascade_breaker
+
+    @property
+    def fix_budget(self):
+        return self._fix_budget
+
+    @property
+    def storm_guard(self):
+        return self._storm_guard
+
+    @property
+    def idempotency(self):
+        return self._idempotency
+
+    @property
+    def conflict_resolver(self):
+        return self._conflict_resolver
+
+    @property
+    def blast_radius(self):
+        return self._blast_radius
+
+    @property
+    def dead_letter_queue(self):
+        return self._dead_letter_queue
+
+    @property
+    def approval_queue(self):
+        return self._approval_queue
+
+    @property
+    def canary_fixer(self):
+        return self._canary_fixer
+
+    @property
+    def secret_guard(self):
+        return self._secret_guard
+
+    @property
+    def validator(self):
+        return self._validator
+
+    @property
+    def write_safety(self):
+        return self._write_safety
+
+    @property
+    def shadow(self):
+        return self._shadow
+
+    @property
+    def compliance(self):
+        return self._compliance
+
+    @property
+    def escalation(self):
+        return self._escalation
+
+    @property
+    def pattern_miner(self):
+        return self._pattern_miner
+
+    @property
+    def report_generator(self):
+        return self._report_generator
+
+    @property
+    def batch_fixer(self):
+        return self._batch_fixer
+
+    @property
+    def fixers(self) -> dict[str, Any]:
+        return self._fixers
 
     def _load_config(self, config_path: str | None = None) -> dict[str, Any]:
         default_path = Path(__file__).parent / "auto_fix_config.yaml"

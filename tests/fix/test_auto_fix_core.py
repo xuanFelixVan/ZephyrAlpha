@@ -13,7 +13,7 @@ import tempfile
 
 import pytest
 
-from zephyr.infrastructure.auto_fix_engine.engine import _NO_AUTO_FIX_TYPES, AutoFixEngine
+from zephyr.infrastructure.auto_fix_engine.engine import NO_AUTO_FIX_TYPES, AutoFixEngine
 from zephyr.infrastructure.auto_fix_engine.fix_safety import (
     CascadeBreaker,
     FixValidator,
@@ -60,37 +60,37 @@ def secret_guard():
 
 class TestAutoFixEngineInit:
     def test_engine_creates_with_config(self, engine):
-        assert engine._safety_gate is not None
-        assert engine._cascade_breaker is not None
-        assert engine._fix_budget is not None
-        assert engine._storm_guard is not None
-        assert engine._idempotency is not None
-        assert engine._conflict_resolver is not None
-        assert engine._blast_radius is not None
-        assert engine._dead_letter_queue is not None
-        assert engine._approval_queue is not None
-        assert engine._canary_fixer is not None
-        assert engine._secret_guard is not None
-        assert engine._validator is not None
-        assert engine._write_safety is not None
-        assert engine._shadow is not None
-        assert engine._compliance is not None
-        assert engine._escalation is not None
-        assert engine._pattern_miner is not None
-        assert engine._report_generator is not None
-        assert engine._batch_fixer is not None
+        assert engine.safety_gate is not None
+        assert engine.cascade_breaker is not None
+        assert engine.fix_budget is not None
+        assert engine.storm_guard is not None
+        assert engine.idempotency is not None
+        assert engine.conflict_resolver is not None
+        assert engine.blast_radius is not None
+        assert engine.dead_letter_queue is not None
+        assert engine.approval_queue is not None
+        assert engine.canary_fixer is not None
+        assert engine.secret_guard is not None
+        assert engine.validator is not None
+        assert engine.write_safety is not None
+        assert engine.shadow is not None
+        assert engine.compliance is not None
+        assert engine.escalation is not None
+        assert engine.pattern_miner is not None
+        assert engine.report_generator is not None
+        assert engine.batch_fixer is not None
 
     def test_engine_creates_without_config(self):
         engine = AutoFixEngine(config_path="/nonexistent/config.yaml")
-        assert engine._safety_gate is not None
+        assert engine.safety_gate is not None
 
     def test_no_auto_fix_types(self):
-        assert "behavioral_audit_red" in _NO_AUTO_FIX_TYPES
-        assert "security_critical" in _NO_AUTO_FIX_TYPES
-        assert "data_loss_risk" in _NO_AUTO_FIX_TYPES
+        assert "behavioral_audit_red" in NO_AUTO_FIX_TYPES
+        assert "security_critical" in NO_AUTO_FIX_TYPES
+        assert "data_loss_risk" in NO_AUTO_FIX_TYPES
 
     def test_fixers_dict_initialized(self, engine):
-        assert isinstance(engine._fixers, dict)
+        assert isinstance(engine.fixers, dict)
 
 
 class TestAutoFixEngineNoAutoFixTypes:
