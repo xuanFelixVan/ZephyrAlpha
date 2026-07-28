@@ -34,7 +34,7 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 class TestSafetyGate:
     def test_default_instantiation(self):
         sg = SafetyGate()
-        assert sg._enabled is True
+        assert sg.enabled is True
 
     def test_check_l1_approved(self):
         sg = SafetyGate()
@@ -103,7 +103,7 @@ class TestSafetyGate:
 class TestLockGuard:
     def test_instantiation(self):
         lg = LockGuard()
-        assert lg._locks_dir.name == ".ailocks"
+        assert lg.locks_dir.name == ".ailocks"
 
     def test_check_unlocked_file(self):
         lg = LockGuard()
@@ -153,7 +153,7 @@ class TestWriteSafety:
 class TestFixValidator:
     def test_instantiation(self):
         fv = FixValidator()
-        assert fv._project_root is not None
+        assert fv.project_root is not None
 
     def test_validate_fix_nonexistent_file(self):
         fv = FixValidator()
@@ -187,8 +187,8 @@ class TestFixValidator:
 class TestCascadeBreaker:
     def test_default_instantiation(self):
         cb = CascadeBreaker()
-        assert cb._module_threshold == 10
-        assert cb._global_threshold == 150
+        assert cb.module_threshold == 10
+        assert cb.global_threshold == 150
 
     def test_check_initially_passes(self):
         cb = CascadeBreaker()
@@ -228,14 +228,14 @@ class TestCascadeBreaker:
 
     def test_custom_config(self):
         cb = CascadeBreaker(config={"module_threshold": 5, "global_threshold": 50})
-        assert cb._module_threshold == 5
-        assert cb._global_threshold == 50
+        assert cb.module_threshold == 5
+        assert cb.global_threshold == 50
 
 
 class TestSandboxExecutor:
     def test_instantiation(self):
         se = SandboxExecutor()
-        assert "auto_fix_sandbox" in se._base_dir
+        assert "auto_fix_sandbox" in se.base_dir
 
     def test_execute_success(self):
         se = SandboxExecutor()
@@ -262,7 +262,7 @@ class TestSandboxExecutor:
 class TestSecretLeakGuard:
     def test_instantiation(self):
         slg = SecretLeakGuard()
-        assert len(slg._patterns) > 0
+        assert len(slg.patterns) > 0
 
     def test_scan_clean_text(self):
         slg = SecretLeakGuard()

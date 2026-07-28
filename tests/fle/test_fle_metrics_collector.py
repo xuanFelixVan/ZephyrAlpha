@@ -21,11 +21,11 @@ from zephyr.feedback_loop.metrics_collector import MetricsCollector, MetricType
 class TestMetricsCollectorInstantiation:
     def test_default_in_memory(self):
         mc = MetricsCollector()
-        assert mc._db_path == ":memory:"
+        assert mc.db_path == ":memory:"
 
     def test_custom_db_path(self):
         mc = MetricsCollector(db_path=":memory:")
-        assert mc._db_path == ":memory:"
+        assert mc.db_path == ":memory:"
 
 
 class TestMetricsCollectorRecord:
@@ -127,13 +127,13 @@ class TestMetricsCollectorClose:
     def test_close(self):
         mc = MetricsCollector()
         mc.close()
-        assert mc._conn is None
+        assert mc.conn is None
 
     def test_double_close(self):
         mc = MetricsCollector()
         mc.close()
         mc.close()
-        assert mc._conn is None
+        assert mc.conn is None
 
 
 class TestMetricType:

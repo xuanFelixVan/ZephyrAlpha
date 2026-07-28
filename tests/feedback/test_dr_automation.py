@@ -40,7 +40,7 @@ class TestNeedsDrill:
 
     def test_stale_drill_needs_drill(self):
         dr = DRAutomation(max_drill_interval_days=0)
-        dr._last_drill = 0
+        dr.last_drill = 0
         assert dr.needs_drill() is True
 
 
@@ -61,7 +61,7 @@ class TestRecordDrill:
 
     def test_record_drill_updates_last_drill(self):
         dr = DRAutomation()
-        old_last = dr._last_drill
+        old_last = dr.last_drill
         result = DRDrillResult(
             drill_id="drill-002",
             timestamp=time.time(),
@@ -71,7 +71,7 @@ class TestRecordDrill:
             rto_pass=False,
         )
         dr.record_drill(result)
-        assert dr._last_drill >= old_last
+        assert dr.last_drill >= old_last
 
 
 class TestSummary:

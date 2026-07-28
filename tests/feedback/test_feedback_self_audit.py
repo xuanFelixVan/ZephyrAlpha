@@ -25,11 +25,11 @@ from zephyr.gov_audit.feedback_self_audit import (
 class TestFeedbackSelfAuditorInit:
     def test_default_threshold(self):
         auditor = FeedbackSelfAuditor()
-        assert auditor._amplification_threshold == 2.0
+        assert auditor.amplification_threshold == 2.0
 
     def test_custom_threshold(self):
         auditor = FeedbackSelfAuditor(amplification_threshold=3.0)
-        assert auditor._amplification_threshold == 3.0
+        assert auditor.amplification_threshold == 3.0
 
 
 class TestDetectSelfReinforcement:

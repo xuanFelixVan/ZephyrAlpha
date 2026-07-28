@@ -31,7 +31,7 @@ class TestEvolutionEngineInstantiation:
 
     def test_creates_with_custom_thresholds(self):
         engine = EvolutionEngine(thresholds={"low_score_threshold": 5})
-        assert engine._thresholds["low_score_threshold"] == 5
+        assert engine.thresholds["low_score_threshold"] == 5
 
 
 class TestQTableOperations:

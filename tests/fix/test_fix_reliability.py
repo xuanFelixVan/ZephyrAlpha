@@ -36,7 +36,7 @@ class TestIdempotencyGuard:
     def test_instantiation(self, tmp_path):
         db = str(tmp_path / "idem_test.db")
         ig = IdempotencyGuard(db_path=db, ttl_hours=24)
-        assert ig._ttl.total_seconds() == 86400
+        assert ig.ttl.total_seconds() == 86400
 
     def test_check_new_action_allowed(self, tmp_path):
         db = str(tmp_path / "idem_test.db")
@@ -77,7 +77,7 @@ class TestIdempotencyGuard:
 class TestConflictResolver:
     def test_instantiation(self):
         cr = ConflictResolver()
-        assert cr._locks == {}
+        assert cr.locks == {}
 
     def test_acquire_returns_lock(self):
         cr = ConflictResolver()
@@ -116,7 +116,7 @@ class TestConflictResolver:
 class TestFixOrderResolver:
     def test_instantiation(self):
         for_ = FixOrderResolver()
-        assert for_._dependency_map == {}
+        assert for_.dependency_map == {}
 
     def test_resolve_empty(self):
         for_ = FixOrderResolver()
@@ -142,14 +142,14 @@ class TestFixOrderResolver:
         for_ = FixOrderResolver()
         for_.add_dependency("fix_c", "fix_a")
         for_.add_dependency("fix_c", "fix_b")
-        assert "fix_a" in for_._dependency_map["fix_c"]
-        assert "fix_b" in for_._dependency_map["fix_c"]
+        assert "fix_a" in for_.dependency_map["fix_c"]
+        assert "fix_b" in for_.dependency_map["fix_c"]
 
 
 class TestFixResultCache:
     def test_instantiation(self):
         cache = FixResultCache()
-        assert cache._max_size == 1000
+        assert cache.max_size == 1000
 
     def test_set_and_get(self):
         cache = FixResultCache()
@@ -217,7 +217,7 @@ class TestBlastRadiusEstimator:
 class TestDeadLetterQueue:
     def test_instantiation(self):
         dlq = DeadLetterQueue(max_retries=3)
-        assert dlq._max_retries == 3
+        assert dlq.max_retries == 3
         assert dlq.size == 0
 
     def test_add(self):
@@ -327,13 +327,13 @@ class TestApprovalQueue:
 class TestCanaryFixer:
     def test_instantiation(self):
         cf = CanaryFixer()
-        assert cf._ratios == [0.1, 0.3, 0.5, 1.0]
-        assert cf._delay_sec == 60
+        assert cf.ratios == [0.1, 0.3, 0.5, 1.0]
+        assert cf.delay_sec == 60
 
     def test_custom_ratios(self):
         cf = CanaryFixer(ratios=[0.2, 0.5, 1.0], delay_sec=30)
-        assert cf._ratios == [0.2, 0.5, 1.0]
-        assert cf._delay_sec == 30
+        assert cf.ratios == [0.2, 0.5, 1.0]
+        assert cf.delay_sec == 30
 
     def test_get_ratio_initial(self):
         cf = CanaryFixer(ratios=[0.1, 0.3, 0.5, 1.0])

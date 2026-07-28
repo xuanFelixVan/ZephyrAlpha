@@ -54,18 +54,18 @@ class TestBisectResultInstantiation:
 class TestGitBisectorInstantiation:
     def test_with_explicit_project_root(self, tmp_path):
         gb = GitBisector(project_root=str(tmp_path))
-        assert gb._project_root == str(tmp_path)
+        assert gb.project_root == str(tmp_path)
 
     def test_default_project_root_not_empty(self):
         gb = GitBisector()
-        assert gb._project_root != ""
+        assert gb.project_root != ""
 
     def test_max_bisect_commits_constant(self):
         assert GitBisector.MAX_BISECT_COMMITS == 50
 
     def test_cache_initialized_empty(self, tmp_path):
         gb = GitBisector(project_root=str(tmp_path))
-        assert gb._cache == {}
+        assert gb.cache == {}
 
 
 class TestGitBisectorFindLastGoodCommit:
@@ -109,18 +109,18 @@ class TestGitBisectorRunDetectorOnCommit:
 
     def test_cached_pass_returns_true(self, tmp_path):
         gb = GitBisector(project_root=str(tmp_path))
-        gb._cache["test.py:abc123"] = {"commit": "abc123", "status": "pass", "cached_at": "2025-01-01"}
+        gb.cache["test.py:abc123"] = {"commit": "abc123", "status": "pass", "cached_at": "2025-01-01"}
         result = gb.run_detector_on_commit("abc123", "test.py")
         assert result is True
 
     def test_cached_fail_returns_false(self, tmp_path):
         gb = GitBisector(project_root=str(tmp_path))
-        gb._cache["test.py:def456"] = {"commit": "def456", "status": "fail", "cached_at": "2025-01-01"}
+        gb.cache["test.py:def456"] = {"commit": "def456", "status": "fail", "cached_at": "2025-01-01"}
         result = gb.run_detector_on_commit("def456", "test.py")
         assert result is False
 
     def test_cache_key_format(self, tmp_path):
         gb = GitBisector(project_root=str(tmp_path))
-        gb._cache["my_script.py:commit1"] = {"commit": "commit1", "status": "pass", "cached_at": "2025-01-01"}
+        gb.cache["my_script.py:commit1"] = {"commit": "commit1", "status": "pass", "cached_at": "2025-01-01"}
         assert gb.run_detector_on_commit("commit1", "my_script.py") is True
-        assert gb.run_detector_on_commit("commit2", "my_script.py") is not gb._cache.get("my_script.py:commit1")
+        assert gb.run_detector_on_commit("commit2", "my_script.py") is not gb.cache.get("my_script.py:commit1")

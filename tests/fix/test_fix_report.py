@@ -28,7 +28,7 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 class TestFixReportGenerator:
     def test_instantiation(self):
         gen = FixReportGenerator()
-        assert gen._history == []
+        assert gen.history == []
 
     def test_generate_empty_actions(self):
         gen = FixReportGenerator()
@@ -72,7 +72,7 @@ class TestFixReportGenerator:
         gen = FixReportGenerator()
         gen.generate([])
         gen.generate([])
-        assert len(gen._history) == 2
+        assert len(gen.history) == 2
 
 
 class TestFixReportGeneratorSummary:

@@ -35,7 +35,7 @@ class TestFeedbackLoopSchedulerInstantiation:
         scheduler = FeedbackLoopScheduler()
         assert scheduler.poll_interval == 30.0
         assert scheduler.max_events == 1000
-        assert scheduler._running is False
+        assert scheduler.running is False
 
     def test_creates_with_custom_params(self):
         scheduler = FeedbackLoopScheduler(poll_interval=10.0, max_events=500)

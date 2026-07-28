@@ -25,8 +25,8 @@ from zephyr.gov_audit.feedback_policy import (
 class TestPolicyFeedbackBridgeInit:
     def test_instantiation(self):
         bridge = PolicyFeedbackBridge()
-        assert bridge._patterns == {}
-        assert bridge._recommendations == []
+        assert bridge.patterns == {}
+        assert bridge.recommendations == []
 
 
 class TestAggregatePatterns:

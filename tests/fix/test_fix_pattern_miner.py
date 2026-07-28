@@ -44,14 +44,14 @@ def _make_action(action_type: str, status: FixStatus, target: str = "t.py", dime
 class TestFixPatternMinerInstantiation:
     def test_creates_instance_with_default_path(self):
         miner = FixPatternMiner(db_path="data/auto_fix/test_instantiation.db")
-        assert miner._db_path == "data/auto_fix/test_instantiation.db"
+        assert miner.db_path == "data/auto_fix/test_instantiation.db"
 
     def test_creates_db_directory(self, tmp_db):
         FixPatternMiner(db_path=tmp_db)
         assert os.path.isdir(os.path.dirname(tmp_db))
 
     def test_pattern_cache_initialized(self, miner):
-        assert isinstance(miner._pattern_cache, dict)
+        assert isinstance(miner.pattern_cache, dict)
 
 
 class TestMine:
@@ -129,7 +129,7 @@ class TestGetPatterns:
 
     def test_get_patterns_handles_db_error(self, tmp_path):
         miner = FixPatternMiner(db_path=str(tmp_path / "nonexistent" / "bad.db"))
-        miner._db_path = "/invalid/path/bad.db"
+        miner.db_path = "/invalid/path/bad.db"
         result = miner.get_patterns()
         assert result == []
 

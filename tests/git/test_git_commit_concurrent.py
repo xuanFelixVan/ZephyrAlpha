@@ -337,7 +337,7 @@ class TestTRAE079CriticalSectionSerialization:
 
         gw = GitCommitGateway(project_root=tmp_path)
         # 用最小注册表隔离真实门禁（本测试聚焦锁/gate 放置不变式，非门禁本身）
-        gw._gate_registry = CommitGateRegistry()
+        gw.gate_registry = CommitGateRegistry()
 
         def _probe_check(gateway: object, files: list[str], **kwargs) -> tuple[bool, str]:
             with events_mu:
@@ -348,7 +348,7 @@ class TestTRAE079CriticalSectionSerialization:
                 events.append(("gate_exit", time.monotonic()))
             return (True, "")
 
-        gw._gate_registry.register(GateSpec(
+        gw.gate_registry.register(GateSpec(
             gate_id="PROBE-TRAE079",
             check=_probe_check,
             priority=1,

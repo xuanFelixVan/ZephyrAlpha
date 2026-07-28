@@ -40,29 +40,29 @@ def snapshot(tmp_project):
 class TestGitInfraSnapshotInstantiation:
     def test_default_project_root(self):
         s = GitInfraSnapshot()
-        assert s._project_root == Path.cwd()
+        assert s.project_root == Path.cwd()
 
     def test_custom_project_root(self, tmp_project):
         s = GitInfraSnapshot(project_root=tmp_project)
-        assert s._project_root == tmp_project
+        assert s.project_root == tmp_project
 
     def test_snapshot_dir_set(self, tmp_project):
         s = GitInfraSnapshot(project_root=tmp_project)
         expected = tmp_project / ".zephyr" / "git_infra_snapshot"
-        assert s._snapshot_dir == expected
+        assert s.snapshot_dir == expected
 
 
 class TestCreateSnapshot:
     def test_creates_snapshot(self, snapshot, tmp_project):
         result = snapshot.create_snapshot()
         assert result is True
-        assert snapshot._snapshot_dir.exists()
-        assert (snapshot._snapshot_dir / "config").exists()
-        assert (snapshot._snapshot_dir / "hooks" / "pre-commit").exists()
+        assert snapshot.snapshot_dir.exists()
+        assert (snapshot.snapshot_dir / "config").exists()
+        assert (snapshot.snapshot_dir / "hooks" / "pre-commit").exists()
 
     def test_manifest_created(self, snapshot):
         snapshot.create_snapshot()
-        manifest_path = snapshot._snapshot_dir / "manifest.json"
+        manifest_path = snapshot.snapshot_dir / "manifest.json"
         assert manifest_path.exists()
         data = json.loads(manifest_path.read_text(encoding="utf-8"))
         assert "snapshot_at" in data

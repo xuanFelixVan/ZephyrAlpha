@@ -29,13 +29,13 @@ class TestCircuitBreakerInstantiation:
         cb = CircuitBreaker("test")
         assert cb.name == "test"
         assert cb.state == CircuitState.CLOSED
-        assert cb._failure_threshold == 5
-        assert cb._recovery_timeout_ms == 30_000
+        assert cb.failure_threshold == 5
+        assert cb.recovery_timeout_ms == 30_000
 
     def test_custom_thresholds(self):
         cb = CircuitBreaker("custom", failure_threshold=5, recovery_timeout_ms=30_000)
-        assert cb._failure_threshold == 5
-        assert cb._recovery_timeout_ms == 30_000
+        assert cb.failure_threshold == 5
+        assert cb.recovery_timeout_ms == 30_000
 
 
 class TestCall:
@@ -83,9 +83,9 @@ class TestCall:
         cb = CircuitBreaker("test", failure_threshold=3)
         with pytest.raises(RuntimeError):
             cb.call(lambda: (_ for _ in ()).throw(RuntimeError("fail")))
-        assert cb._failure_count == 1
+        assert cb.failure_count == 1
         cb.call(lambda: "ok")
-        assert cb._failure_count == 0
+        assert cb.failure_count == 0
 
 
 class TestReset:
@@ -96,7 +96,7 @@ class TestReset:
         assert cb.state == CircuitState.OPEN
         cb.reset()
         assert cb.state == CircuitState.CLOSED
-        assert cb._failure_count == 0
+        assert cb.failure_count == 0
 
     def test_reset_allows_calls_again(self):
         cb = CircuitBreaker("test", failure_threshold=1, recovery_timeout_ms=600_000)

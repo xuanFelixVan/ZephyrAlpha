@@ -158,7 +158,7 @@ class TestTriggerDetection:
         base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(3):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.10, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
         kinds = {t.trigger_type for t in triggers}
@@ -170,7 +170,7 @@ class TestTriggerDetection:
         base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(2):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.10, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
         assert all(t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers)
@@ -179,7 +179,7 @@ class TestTriggerDetection:
         base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(2):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.55, cr=0.50, hi=0.80))
         triggers = eng.detect_triggers()
         kinds = {t.trigger_type for t in triggers}
@@ -203,7 +203,7 @@ class TestTriggerDetection:
         base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset, ka in enumerate([0.10, 0.10, 0.50, 0.10]):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=ka, cr=0.95, hi=0.80))
         triggers = eng.detect_triggers()
         assert all(t.trigger_type != AutoTriggerType.KNOWLEDGE_EXPANSION for t in triggers)
@@ -242,7 +242,7 @@ class TestRunAutoCycle:
         eng = make_engine(now_fn=_clock(base))
         # 连续 3 天低激活率
         for offset in range(3):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             out = eng.run_auto_cycle(
                 fitness_report=_make_fitness(ka=0.10, cr=0.95, hi=0.80),
                 owner_approved_high=True,
@@ -313,7 +313,7 @@ class TestSafetyGate:
         base = datetime(2026, 4, 20, tzinfo=UTC)
         eng = make_engine(now_fn=_clock(base))
         for offset in range(2):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.55, cr=0.50, hi=0.80))
         triggers = eng.detect_triggers()
         gt = next(t for t in triggers if t.trigger_type == AutoTriggerType.GATE_TIGHTENING)
@@ -384,7 +384,7 @@ class TestHistoryAndConfig:
             now_fn=_clock(base),
         )
         for offset in range(10):
-            eng._now = _clock(base + timedelta(days=offset))
+            eng.now = _clock(base + timedelta(days=offset))
             eng.record_fitness(_make_fitness(ka=0.5, cr=0.95, hi=0.85))
         assert len(eng.history) == 5
 
