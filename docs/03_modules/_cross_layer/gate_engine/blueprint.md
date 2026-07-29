@@ -229,6 +229,7 @@ build_status: planned
 | `commit_gates/open_without_with_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/schema_file_exists_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/zephyr_env_direct_access_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/diff_helpers.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 

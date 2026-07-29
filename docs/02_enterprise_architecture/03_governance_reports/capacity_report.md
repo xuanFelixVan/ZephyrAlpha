@@ -29,11 +29,11 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_DATA | 数据接入层 | 155 | 150 | +5 |
+| D_DATA | 数据接入层 | 160 | 150 | +10 |
 | D_GOVERNANCE | 生命周期管理 | 220 | 150 | +70 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 168 | 150 | +18 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 150 | +19 |
 | D_GOV_SCRIPTS | 脚本治理 | 380 | 150 | +230 |
-| D_INFRA_RUNTIME | 运行时集成 | 160 | 150 | +10 |
+| D_INFRA_RUNTIME | 运行时集成 | 156 | 150 | +6 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
 
@@ -86,7 +86,7 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_CONTRACTS | 共享契约 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 7 | 150 | 4.7% | 正常 |
-| D_DATA | 数据接入层 | L1_foundation | 155 | 150 | 103.3% | 超容 |
+| D_DATA | 数据接入层 | L1_foundation | 160 | 150 | 106.7% | 超容 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 10 | 150 | 6.7% | 正常 |
 | D_DATA_SCRIPTS | 数据治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
@@ -104,7 +104,7 @@ ttl: permanent
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 10 | 150 | 6.7% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 220 | 150 | 146.7% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 121 | 150 | 80.7% | 接近超容 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 168 | 150 | 112.0% | 超容 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 169 | 150 | 112.7% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 74 | 150 | 49.3% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 40 | 150 | 26.7% | 正常 |
@@ -116,7 +116,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 55 | 150 | 36.7% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 160 | 150 | 106.7% | 超容 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 156 | 150 | 104.0% | 超容 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |

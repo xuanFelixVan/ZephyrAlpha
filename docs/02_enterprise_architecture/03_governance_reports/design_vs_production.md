@@ -20,18 +20,18 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2839 | 96.0% |
-| design（设计态） | 118 | 4.0% |
+| production（生产态） | 2841 | 95.9% |
+| design（设计态） | 123 | 4.1% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2957** | **100%** |
+| **总计** | **2964** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4009 | 135.6% |
-| stable | 1644 | 55.6% |
-| planned | 110 | 3.7% |
+| generated | 4014 | 135.4% |
+| stable | 1641 | 55.4% |
+| planned | 115 | 3.9% |
 | deprecated | 4 | 0.1% |
 
 ## 各域设计成熟度统计
@@ -53,14 +53,14 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_CONTRACTS | 共享契约 | 0 | 0 | 0 | 0 | N/A |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 167 | 155 | 12 | 0 | 92.8% |
+| D_DATA | 数据接入层 | 173 | 160 | 13 | 0 | 92.5% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 13 | 0 | 35.0% |
 | D_DATA_GOV | 数据治理 | 10 | 10 | 0 | 0 | 100.0% |
 | D_DATA_SCRIPTS | 数据治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_DATA_SEC | 数据安全与契约 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DIGITAL_TWIN | 数字孪生 | 7 | 7 | 0 | 0 | 100.0% |
 | D_EXEC_SIM | 执行仿真 | 7 | 7 | 0 | 0 | 100.0% |
-| D_EX_CORE | 执行核心 | 7 | 7 | 0 | 0 | 100.0% |
+| D_EX_CORE | 执行核心 | 8 | 7 | 1 | 0 | 87.5% |
 | D_EX_SOR | 执行路由 | 7 | 7 | 0 | 0 | 100.0% |
 | D_FACTOR | 因子 | 86 | 37 | 49 | 0 | 43.0% |
 | D_FBL_DETECTORS | 反馈检测器 | 65 | 65 | 0 | 0 | 100.0% |
@@ -71,7 +71,7 @@ ttl: permanent
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 10 | 10 | 0 | 0 | 100.0% |
 | D_GOVERNANCE | 生命周期管理 | 220 | 220 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 124 | 121 | 3 | 0 | 97.6% |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 168 | 168 | 0 | 0 | 100.0% |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 169 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 26 | 2 | 24 | 0 | 7.7% |
 | D_GOV_DRIFT | 漂移检测 | 75 | 74 | 1 | 0 | 98.7% |
 | D_GOV_ENFORCEMENT | 规则执行 | 41 | 40 | 1 | 0 | 97.6% |
@@ -83,14 +83,14 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 161 | 160 | 1 | 0 | 99.4% |
+| D_INFRA_RUNTIME | 运行时集成 | 157 | 156 | 1 | 0 | 99.4% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
 | D_INTEGRATION | 管线路由 | 71 | 71 | 0 | 0 | 100.0% |
 | D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | N/A |
 | D_INTELLIGENCE | 上下文管理 | 31 | 31 | 0 | 0 | 100.0% |
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 1 | 0 | 0.0% |
 | D_META_SCRIPTS | 元治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_MKT_DATA | 行情数据 | 9 | 9 | 0 | 0 | 100.0% |
+| D_MKT_DATA | 行情数据 | 12 | 9 | 3 | 0 | 75.0% |
 | D_ML_SERVE | 推理 | 7 | 7 | 0 | 0 | 100.0% |
 | D_ML_TRAIN | 训练 | 4 | 3 | 1 | 0 | 75.0% |
 | D_OPS | 反馈循环 | 11 | 11 | 0 | 0 | 100.0% |
@@ -120,8 +120,8 @@ ttl: permanent
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
 | D_FACTOR | 因子 | 86 | 37 | 43.0% |
 | D_BACKTEST | 回测 | 27 | 18 | 66.7% |
+| D_MKT_DATA | 行情数据 | 12 | 9 | 75.0% |
 | D_ML_TRAIN | 训练 | 4 | 3 | 75.0% |
 | D_ALT_DATA | 另类数据 | 8 | 7 | 87.5% |
 | D_ASHARE_SIGNAL | A股特色信号 | 8 | 7 | 87.5% |
-| D_DATA | 数据接入层 | 167 | 155 | 92.8% |
-| D_GOV_ENFORCEMENT | 规则执行 | 41 | 40 | 97.6% |
+| D_EX_CORE | 执行核心 | 8 | 7 | 87.5% |
