@@ -50,6 +50,10 @@ import yaml
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+# 治本：_shared 在 scripts/governance/_shared，须将其父目录加入 sys.path
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 try:
@@ -368,7 +372,16 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
     for layer in layers:
         lid = layer["id"].replace("-", "_")
         mtag = _maturity_tag(layer.get("maturity"))
-        label = f'{layer["id"]} {layer["name"]}<br/>{layer["name_en"]}'
+        # 去重：避免 id/name/name_en 相同时重复显示（CFG/INFRA/MOD 聚合节点常见）
+        _lid_raw = layer["id"]
+        _lname = layer["name"]
+        _lname_en = layer["name_en"]
+        _name_parts = [_lid_raw]
+        if _lname and _lname != _lid_raw:
+            _name_parts.append(_lname)
+        label = " ".join(_name_parts)
+        if _lname_en and _lname_en != _lid_raw and _lname_en != _lname:
+            label += f'<br/>{_lname_en}'
         if mtag:
             label = f'{mtag} {label}'
         is_design = layer.get("maturity") == "design"
