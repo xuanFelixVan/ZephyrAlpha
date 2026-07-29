@@ -24,14 +24,12 @@ date: '2026-07-22'
 ttl: permanent
 ---
 
-# 应用流程时序图（价值评估中）
-# Application Flow Sequence Diagrams (Pending Value Review)
+# 应用流程时序图
+# Application Flow Sequence Diagrams
 
-> ⚠️ **价值评估中 / Pending value review** — 本文档由 5 张独立 `.mmd`（`seq_order_submit` / `seq_fill_received` / `seq_risk_trigger` / `seq_rebalance` / `seq_exception_handling`）转换为内嵌 mermaid，供挨个评估其架构价值。
+> **单一真源 / Single Source of Truth** — 本文档内嵌 5 张应用流程端到端时序图（订单提交 / 成交回报 / 风控触发 / 组合再平衡 / 异常处置），原独立 `.mmd` 已删除。
 >
-> **背景**：H11 系列 5 张时序图原为独立 `.mmd`，AI 不会主动读取独立 `.mmd`，人亦难直接查看；转为内嵌 mermaid 后可在 IDE 直接渲染，便于评估。
->
-> **评估后处置**：保留 → 本文档成为应用流程时序图单一真源（原 `.mmd` 删除）；删除 → 一并清理 `.mmd` 与本文档。原 `.mmd` 暂存于 `target_architecture/diagrams/`，评估期允许临时双份。
+> **背景**：H11 系列 5 张时序图原为独立 `.mmd`，AI 不会主动读取独立 `.mmd`，人亦难直接查看；转为内嵌 mermaid 后可在 IDE 直接渲染。
 
 ---
 
@@ -523,8 +521,8 @@ sequenceDiagram
 
 - **来源 / Source**: 5 张 `.mmd`（`seq_order_submit` / `seq_fill_received` / `seq_risk_trigger` / `seq_rebalance` / `seq_exception_handling`），原存于 `target_architecture/diagrams/`，H11 系列时序图 1/5 ~ 5/5
 - **转换规则**: 剥离文件级 `%%` 注释（标题/描述/版本/契约真源/来源/一致性）为 `>` 引用行；`sequenceDiagram` 主体原样保留于 mermaid 代码块
-- **评估要点 / Review Focus**:
+- **审核要点 / Review Focus**:
   - 时序图描绘的参与者（OMS / SOR / Fill Handler / meta_router / Drift Tracker 等）是否与实际代码一致？
   - 事件命名（E-EX-01/02/04/07、E-RK-01~04、E-PF-01/02、E-SG-01/02、E-OP-01/03）是否与 `domain-event-catalog.md` 真源一致？
   - 契约标注（CTR-001~006）是否与 `cross_layer_contracts.yaml` 真源一致？
-  - 作为应用流程时序图单一真源保留，还是因与代码/契约脱节而删除？
+  - 已决定：作为应用流程时序图单一真源保留（原 `.mmd` 已删除）

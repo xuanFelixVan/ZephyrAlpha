@@ -14,7 +14,7 @@ tags:
 
 # 治理架构图
 
-> ⚠️ **价值评估中** — 本文档由独立 `.mmd` 转换为内嵌 mermaid，供挨个评估其架构价值。
+> **单一真源 / Single Source of Truth** — 本文档内嵌 mermaid 图，原独立 `.mmd` 已删除。
 
 ---
 

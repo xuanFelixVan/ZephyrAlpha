@@ -26,14 +26,12 @@ date: '2026-07-22'
 ttl: permanent
 ---
 
-# C4-L3 域组件图（价值评估中）
-# C4 Level 3 Component Diagrams (Pending Value Review)
+# C4-L3 域组件图
+# C4 Level 3 Component Diagrams
 
-> ⚠️ **价值评估中 / Pending value review** — 本文档由 3 张独立 `.mmd`（`c4_l3_d_mkt_data` / `c4_l3_d_ex_core` / `c4_l3_d_ml_train`）转换为内嵌 mermaid，供挨个评估其架构价值。
+> **单一真源 / Single Source of Truth** — 本文档内嵌 3 张 C4-L3 域组件图（D_MKT_DATA / D_EX_CORE / D_ML_TRAIN），原独立 `.mmd` 已删除。
 >
 > **背景**：原计划将 C4-L3 内嵌到各域文档（`02_domain_architecture_docs/`），但 `generate_domain_doc.py` 每次运行完全覆盖域文档（无保留机制），手动内容会被擦除，故改为独立成文。
->
-> **评估后处置**：保留 → 本文档成为 C4-L3 单一真源（原 `.mmd` 删除）；删除 → 一并清理 `.mmd` 与本文档。原 `.mmd` 暂存于 `target_architecture/diagrams/`，评估期允许临时双份。
 
 ---
 
@@ -265,8 +263,8 @@ C4Component
 
 - **来源 / Source**: 3 张 `.mmd`（`c4_l3_d_mkt_data` / `c4_l3_d_ex_core` / `c4_l3_d_ml_train`），原存于 `target_architecture/diagrams/`
 - **转换规则**: 剥离文件级 `%%` 注释（重写时间/数据源/图例/契约真源/命名沿革）为 `>` 引用行；保留 `%%{init:...}%%` 主题指令与 `C4Component` 主体于 mermaid 代码块
-- **评估要点 / Review Focus**:
+- **审核要点 / Review Focus**:
   - 组件命名是否与实际代码（`src/zephyr/market_data/` / `src/zephyr/ex_core/` / `src/zephyr/ml_train/`）一致？
   - 是否描绘了尚未实现的理想化结构（如 SOR / Drift Monitor / AI Operator Slot）？
-  - 作为 C4-L3 单一真源保留，还是因与代码脱节而删除？
+  - 已决定：作为 C4-L3 单一真源保留（原 `.mmd` 已删除）
 - **关联 / Related**: `application_principles.md` §2.3/§2.4（C4 视图分层）已指向本文档
