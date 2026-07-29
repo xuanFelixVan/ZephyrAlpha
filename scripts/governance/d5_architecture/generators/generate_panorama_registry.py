@@ -281,15 +281,15 @@ BUILT_PANORAMAS: list[dict] = [
     # --- target_architecture/ ---
     {
         "panorama_id": "PAN-BUILT-01",
-        "name": "TOGAF 4视图 + 6正交视图",
+        "name": "架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线）",
         "category": "架构视图",
-        "category_id": "target_architecture",
+        "category_id": "architecture_principles",
         "data_source": "YAML (architecture_model/) + 手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
-        "output_path": "target_architecture/",
-        "artifact_path": "target_architecture/overview.md",
-        "description": "TOGAF 业务/信息/应用/技术 4视图 + 安全/集成/运营/治理/前端/运行时平面/能力热力图 6正交视图",
+        "output_path": "04_architecture_principles_decisions/principles/",
+        "artifact_path": "04_architecture_principles_decisions/principles/architecture_principles.md",
+        "description": "架构方法论 SSoT：TOGAF/C4/功能域裁定/三棵树 + 4条安全红线 + 核心架构决策（原 target_architecture/overview.md v3.5.0 删除，80%+内容已在此 SSoT）",
     },
     {
         "panorama_id": "PAN-BUILT-03",
