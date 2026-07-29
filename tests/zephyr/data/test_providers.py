@@ -19,6 +19,10 @@ from src.zephyr.data.implementations.akshare_provider import (
     safe_float as ak_safe_float,
 )
 from src.zephyr.data.implementations.miniqmt_provider import MiniQMTProvider
+from src.zephyr.data.implementations.tqcenter_provider import (
+    TQCenterProvider,
+    _safe_val as tq_safe_val,
+)
 
 
 # ============== IFindProvider 测试 ==============
@@ -218,6 +222,141 @@ class TestMiniQMTFetchRoute:
         assert MiniQMTProvider.source_name == "miniqmt"
         assert MiniQMTProvider.meta.requires_process is True
         assert MiniQMTProvider.meta.thread_safety == "single_thread"
+
+
+# ============== TQCenterProvider 测试 ==============
+# 纯函数单测（不依赖通达信客户端 SDK，符合 test_providers.py 既有约定）
+
+class TestTQCenterHelpers:
+    """TQCenterProvider 辅助方法（纯函数，不依赖真实 tqcenter SDK）。"""
+
+    def test_safe_val_none(self):
+        assert tq_safe_val(None, "def") == "def"
+
+    def test_safe_val_nan(self):
+        assert tq_safe_val(float("nan"), 0) == 0
+
+    def test_safe_val_normal(self):
+        assert tq_safe_val(1.5, 0) == 1.5
+        assert tq_safe_val("x", "def") == "x"
+
+    def test_ts_to_datetime_datetime(self):
+        """datetime 直接返回 (date, datetime)。"""
+        dt = datetime.datetime(2026, 7, 30, 14, 30, 0)
+        d, out = TQCenterProvider._ts_to_datetime(dt, "1d")
+        assert d == datetime.date(2026, 7, 30)
+        assert out == dt
+
+    def test_ts_to_datetime_str(self):
+        """字符串时间戳解析。"""
+        d, dt = TQCenterProvider._ts_to_datetime("2026-07-30 14:30:00", "1d")
+        assert d == datetime.date(2026, 7, 30)
+        assert dt == datetime.datetime(2026, 7, 30, 14, 30, 0)
+
+    def test_ts_to_datetime_pd_timestamp_1d(self):
+        """pandas.Timestamp 日K → date + naive datetime。"""
+        pd = pytest.importorskip("pandas")
+        ts = pd.Timestamp("2026-07-30")
+        d, dt = TQCenterProvider._ts_to_datetime(ts, "1d")
+        assert d == datetime.date(2026, 7, 30)
+        assert dt == datetime.datetime(2026, 7, 30)
+
+    def test_parse_snapshot_valid(self):
+        """有效快照 dict → 元组行（含 18 字段 + data_source）。"""
+        trade_date = datetime.date(2026, 7, 30)
+        ts = datetime.datetime(2026, 7, 30, 15, 0, 0)
+        snap = {
+            "now_price": 10.5, "open_price": 10.0, "max_price": 10.8,
+            "min_price": 9.9, "last_close": 10.2, "before_5min_now": 10.3,
+            "average_price": 10.4, "volume": 1000, "now_vol": 50, "amount": 10500.0,
+            "up_home": 100, "down_home": 80, "inside": 40, "outside": 60, "zangsu": 0.5,
+        }
+        row = TQCenterProvider._parse_snapshot("880001", snap, trade_date, ts)
+        assert row is not None
+        assert row[0] == trade_date      # trade_date
+        assert row[1] == ts              # timestamp
+        assert row[2] == "880001"        # sector_code
+        assert row[3] == "sector"        # market_type
+        assert row[4] == 10.5            # now_price
+        assert row[8] == 10.2            # last_close
+        assert row[11] == 1000           # volume
+        assert row[-1] == "tqcenter"     # data_source
+
+    def test_parse_snapshot_none(self):
+        """None 快照 → None。"""
+        row = TQCenterProvider._parse_snapshot(
+            "880001", None, datetime.date(2026, 7, 30), datetime.datetime(2026, 7, 30)
+        )
+        assert row is None
+
+    def test_parse_kline_df_empty(self):
+        """空/None DataFrame → 空行列表。"""
+        p = TQCenterProvider()
+        assert p._parse_kline_df(None, ["880001"], "1d") == []
+        assert p._parse_kline_df({}, ["880001"], "1d") == []
+
+    def test_parse_kline_df_valid(self):
+        """有效 dict-of-DataFrames → 解析出 K线行。"""
+        pd = pytest.importorskip("pandas")
+        ts = datetime.datetime(2026, 7, 30)
+        idx = pd.DatetimeIndex([ts])
+        df = {
+            "Open": pd.DataFrame({"880001": [10.0]}, index=idx),
+            "High": pd.DataFrame({"880001": [10.8]}, index=idx),
+            "Low": pd.DataFrame({"880001": [9.9]}, index=idx),
+            "Close": pd.DataFrame({"880001": [10.5]}, index=idx),
+            "Volume": pd.DataFrame({"880001": [1000]}, index=idx),
+            "Amount": pd.DataFrame({"880001": [10500.0]}, index=idx),
+            "ForwardFactor": pd.DataFrame({"880001": [1.0]}, index=idx),
+        }
+        p = TQCenterProvider()
+        rows = p._parse_kline_df(df, ["880001"], "1d")
+        assert len(rows) == 1
+        row = rows[0]
+        assert row[0] == "1d"            # period
+        assert row[3] == "880001"        # sector_code
+        assert float(row[5]) == 10.0     # open (Decimal→float 比较)
+        assert float(row[6]) == 10.8     # high
+        assert row[-1] == "tqcenter"     # data_source
+
+
+class TestTQCenterFetchRoute:
+    """TQCenterProvider fetch 路由 + meta 单测（不连接真实 SDK）。"""
+
+    def test_meta(self):
+        assert TQCenterProvider.meta.name == "tqcenter"
+        assert TQCenterProvider.source_name == "tqcenter"
+        assert TQCenterProvider.meta.requires_process is True
+        assert TQCenterProvider.meta.thread_safety == "single_thread"
+        assert TQCenterProvider.meta.auth_type == "anonymous"
+
+    def test_not_connected_yields_error(self):
+        """未连接时 fetch 返回 error 结果。"""
+        p = TQCenterProvider()
+        payload = FetchPayload(
+            table="t", symbols=["880001"],
+            start=datetime.date(2026, 7, 30), end=datetime.date(2026, 7, 31),
+            extra={"capability": "kline_sector_880"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is not None
+        assert "未连接" in results[0].error
+
+    def test_unknown_capability_yields_error(self):
+        """已连接但 capability 未知 → error（用 mock tq 绕过 SDK）。"""
+        p = TQCenterProvider()
+        p._connected = True
+        p._tq = MagicMock()
+        payload = FetchPayload(
+            table="t", symbols=["880001"],
+            start=datetime.date(2026, 7, 30), end=datetime.date(2026, 7, 31),
+            extra={"capability": "nonexistent"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is not None
+        assert "unsupported capability" in results[0].error
 
 
 # ============== 新能力测试（阶段4） ==============

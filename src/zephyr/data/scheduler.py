@@ -953,6 +953,9 @@ class IntegratorScheduler:
             elif source == "eastmoney_news":
                 from zephyr.data.implementations.eastmoney_news_provider import EastmoneyNewsProvider
                 return EastmoneyNewsProvider()
+            elif source == "tqcenter":
+                from zephyr.data.implementations.tqcenter_provider import TQCenterProvider
+                return TQCenterProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None
