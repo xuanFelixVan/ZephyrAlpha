@@ -324,9 +324,9 @@ BUILT_PANORAMAS: list[dict] = [
         "data_source": "手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
-        "output_path": "target_architecture/diagrams/",
-        "artifact_path": "target_architecture/diagrams/c4_l1_system_context.mmd",
-        "description": "C4 模型 L1 系统上下文 / L2 容器 / L3 组件图（d_ex_core / d_mkt_data / d_ml_train）",
+        "output_path": "target_architecture/",
+        "artifact_path": "target_architecture/c4_l1_l2_views.md",
+        "description": "C4 模型 L1 系统上下文 / L2 容器 / L3 组件图（d_ex_core / d_mkt_data / d_ml_train）。内嵌于 c4_l1_l2_views.md（L1/L2）+ c4_component_views.md（L3）",
     },
     {
         "panorama_id": "PAN-BUILT-03",
@@ -336,9 +336,9 @@ BUILT_PANORAMAS: list[dict] = [
         "data_source": "手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
-        "output_path": "target_architecture/diagrams/",
-        "artifact_path": "target_architecture/diagrams/",
-        "description": "拓扑/时序/数据流/部署/激活甘特/三层治理等 28 张 Mermaid 图",
+        "output_path": "target_architecture/",
+        "artifact_path": "target_architecture/topology_views.md",
+        "description": "拓扑/时序/数据流/部署/激活甘特/三层治理等 28 张 Mermaid 图。内嵌于 topology/dataflow/governance/application_flows _views.md",
     },
     # --- 02_enterprise_architecture/ 根目录（排在最后） ---
     {

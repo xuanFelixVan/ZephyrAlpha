@@ -78,6 +78,10 @@ def evaluate_bus_factor(ownership: ModuleOwnership) -> ModuleOwnership:
     return ownership
 
 
+# 向后兼容别名（原 check_bus_factor 重命名为 evaluate_bus_factor）
+check_bus_factor = evaluate_bus_factor
+
+
 def create_decision_log(
     decision_id: str,
     problem: str,

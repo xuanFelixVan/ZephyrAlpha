@@ -63,6 +63,7 @@ __all__ = [
     "IdempotencyStore",
     "SQLiteIdempotencyStore",
     "_build_idempotency_key",
+    "build_idempotency_key",
 ]
 
 logger = logging.getLogger(__name__)
@@ -218,6 +219,12 @@ def _build_idempotency_key(prefix: str, *parts: str) -> str:
     raw = "|".join(parts)
     digest = hashlib.sha256(raw.encode()).hexdigest()[:16]
     return f"{prefix}:{digest}"
+
+
+# Stage 4 公共化：public wrapper
+def build_idempotency_key(prefix: str, *parts: str) -> str:
+    """公共接口：build_idempotency_key（Stage 4 公共化，委托到 _build_idempotency_key）。"""
+    return _build_idempotency_key(prefix, *parts)
 
 
 class SQLiteIdempotencyStore:
