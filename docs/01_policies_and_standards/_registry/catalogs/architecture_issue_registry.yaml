@@ -9773,7 +9773,15 @@ entries:
   title: Symbol 约定裁定——裸码 symbol + exchange 列 + 派生 symbol_canonical（治本 000001 裸码跨表碰撞）
   severity: P1高
   adjudication: '病根（第一性原理）：三套 symbol 约定并存——kline_*/tick_data(miniqmt 裸码,~19.5B行)、etf_nav/etf_list(akshare 带后缀,~7K行)、lof_list(akshare 前缀式,361行)。已证实 000001 在 kline_daily(平安银行) 与 kline_index(上证指数) 裸码碰撞→跨表 JOIN 零匹配或股价与指数点位混合（静默数据断裂）。用户战略直觉（带后缀跨市场不歧义）正确且为治本所需——裸码碰撞今天已发生。但 19.5B 行历史裸码（tick_data 14.5B + kline_1min 3.9B）物理全量改写为后缀不可行（阻塞热表）。故裁定采纳"裸码 symbol + exchange 列 + 派生 symbol_canonical"三字段模型：①symbol 列存裸码（纯代码，禁止含"."或前缀）；②exchange 列 LowCardinality(String) 消歧（SH/SZ/BJ/HK/US/CFFEX 等，000001.SZ 平安银行 vs 000001.SH 上证指数）；③symbol_canonical=concat(symbol,".",exchange) 派生视图列作跨表 JOIN canonical 身份键。结果与"统一到带后缀"等价（跨市场消歧+stock/index消歧），成本从重建数仓降至 ADD COLUMN+小回填+建视图。kline_daily 已有 market_type 列（DEFAULT A_share，初代架构师伏笔）激活改存 exchange 码。分5阶段落地（阶段0 SSoT登记/阶段1 补exchange列/阶段2 派生canonical+修小表/阶段3 消费者迁移+门禁/阶段4 验证）。对标 tushare ts_code 三列共存模型+ISO 10383 MIC+qlib 裸码+exchange列。边界裁定类议题，经用户确认（"全部按照顺序开始执行"含 3a 确认步骤）转 decided。配套规则 TRAE-082（symbol_convention 铁律）。'
-  fix_phase: '阶段0 进行中（TRAE-082 规则文件已落 + 本议题登记 + depgraph 设计态 symbol_normalizer 待登记）；阶段1-4 待施工'
+  fix_phase: '阶段0 完成（TRAE-082 规则文件 + 本议题登记 + depgraph 设计态 symbol_normalizer 模块已落地）；阶段1-3 由 #ARCH-DATA-SYMBOL-002 纠正原方案后全面开工'
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+- issue_id: '#ARCH-DATA-SYMBOL-002'
+  title: TRAE-082 阶段1 方案纠正——推翻 market_type 复用，改 MATERIALIZED exchange 列（零回填治本）
+  severity: P1高
+  adjudication: '病根（第一性原理实证）：TRAE-082 阶段1 原文"kline_daily 复用 market_type 改值存 exchange; tick_data/l2_tick 复用 market_type"存在两处设计缺陷。缺陷一（语义覆写破坏正交维度）：实测 tick_data.market_type 取值为 stock/index/sector/etf/cb/lof——交叉表证明 market_type=''stock'' 的 8.58B 行横跨 symbol 首位 6(SH)+0(SZ)+3(SZ) 三交易所，market_type 是资产类别(asset_class)而非交易所码，与 exchange 是正交两维。覆写会销毁 14.5B 行 asset_class 信息（下游因子区分股票/指数/ETF 的关键维度）。缺陷二（回填成本自相矛盾）：改值仍需 ALTER UPDATE 14.5B+18.8M 行，正是 TRAE-082 别处禁止的"全量改写历史裸码"。治本裁定：①推翻 market_type 复用子步骤，保留 market_type 的 asset_class 语义不变；②改用独立 exchange LowCardinality(String) MATERIALIZED multiIf(...) 列，对所有证券表统一 ADD COLUMN，零回填（MATERIALIZED 惰性求值+新行自动派生，实测通过）；③symbol_canonical String MATERIALIZED concat(symbol,''.'',exchange) 替代 v_{table} 视图族作 canonical 键载体，视图降级为可选契约层；④修订 _PREFIX_TO_EXCHANGE 补 ''2''→SZ（深市B股200xxx，实测281K行）+ ''9'' 按3位前缀消歧（900→SH B股, 920→BJ）；⑤表分三层（Tier-1 A股前缀可推导~45表 MATERIALIZED / Tier-2 市场隐含~8表 MATERIALIZED常量 / Tier-3 逐行exchange~9表 普通列 provider写）。对100%AI开发特殊意义：MATERIALIZED 把"消歧正确性"从"每个provider都得正确写exchange"下沉到"DDL表达式一次写对"——声明式约束>过程约束，AI改DDL一处胜过改N个provider且每个可能引bug。零回填=零机会让AI在14.5B行上跑错UPDATE。配套修订 TRAE-082 1.0.0→1.1.0。边界裁定类议题，经用户明确确认（"全部采纳、授权、可以开始执行"）转 decided。'
+  fix_phase: '阶段1进行中（议题登记 + TRAE-082修订 + apply_exchange_columns.py DDL落地 + normalizer修订）；阶段2契约视图+Tier-3 provider适配；阶段3消费者迁移+GATE-SYMBOL-CONVENTION硬阻断'
   status: decided
   created: '2026-07-30'
   last_updated: '2026-07-30'

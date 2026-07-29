@@ -1,6 +1,13 @@
 rule_id: TRAE-082
 title: Symbol 约定铁律（裸码 symbol + exchange 列 + 派生 symbol_canonical）
-version: '1.0.0'
+version: '1.1.0'
+# 变更记录：
+#   1.1.0 (2026-07-30, #ARCH-DATA-SYMBOL-002)：推翻阶段1"复用 market_type 改值存 exchange"子步骤
+#        （实测 market_type 是 asset_class 非交易所码，覆写破坏正交维度 + 自相矛盾回填14.5B行）；
+#        改为"ADD COLUMN exchange MATERIALIZED multiIf(...)"对所有证券表统一零回填；
+#        symbol_canonical 改为表内 MATERIALIZED 列（替代 v_{table} 视图族作主载体）；
+#        补 INV-005（market_type asset_class 语义保护）；补 _PREFIX_TO_EXCHANGE '2'→SZ + '9'三位消歧。
+#   1.0.0 (2026-07-30, #ARCH-DATA-SYMBOL-001)：初版三字段模型 + 5阶段落地计划。
 layer: L1_foundation
 module_id: TRAE-082
 depends_on:
