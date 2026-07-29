@@ -89,6 +89,10 @@ addopts = [
     "-v",
     "--tb=short",
     "--strict-markers",
+    # 治本 #ARCH-XDIST-WORKER-CRASH-001: Windows 并行测试时 xdist worker 崩溃
+    # （文件锁定/内存压力），--max-worker-restart 允许崩溃后自动重启，
+    # 确保所有测试有机会执行。100% AI 场景下不能容忍测试静默丢失。
+    "--max-worker-restart=5",
 ]
 # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: pytest 缓存归位 .runtime/tmp/（gitignored），
 # 防止 .pytest_cache/ 污染项目根目录。路径相对 rootdir 解析（pytest 文档保证）。
