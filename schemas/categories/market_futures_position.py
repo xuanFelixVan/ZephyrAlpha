@@ -35,10 +35,11 @@ CREATE TABLE IF NOT EXISTS c1_market.futures_position
     short_position UInt64         COMMENT '空头持仓量',
     long_volume    UInt64         COMMENT '多头成交量',
     short_volume   UInt64         COMMENT '空头成交量',
-    exchange       LowCardinality(String)  COMMENT '交易所(CZCE/DCE/SHFE/CFFEX)',
+    exchange       LowCardinality(String)  DEFAULT '' COMMENT '交易所码(provider写入TRAE-082 Tier-3: CZCE/DCE/SHFE/CFFEX/INE/GFEX)',
     data_source    LowCardinality(String)  COMMENT '数据来源(CZCE/DCE)',
     quality_flag   UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts      DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
+    ingest_ts      DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

@@ -56,7 +56,9 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_us_daily
     data_source              LowCardinality(String)  DEFAULT 'tickflow'  COMMENT '数据源',
     quality_flag             UInt8  DEFAULT 1  COMMENT '质量标志',
     ingest_ts                DateTime64(3, 'UTC')  DEFAULT now(),
-    currency                 LowCardinality(String)  DEFAULT 'USD'
+    currency                 LowCardinality(String)  DEFAULT 'USD',
+    exchange LowCardinality(String) MATERIALIZED 'US' COMMENT '交易所码(市场隐含TRAE-082)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

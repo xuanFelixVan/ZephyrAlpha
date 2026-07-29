@@ -38,7 +38,9 @@ CREATE TABLE IF NOT EXISTS c1_market.futures_term_structure
     basis          Decimal(18,4)  COMMENT '基差(近月-次月)',
     data_source    LowCardinality(String)  COMMENT '数据来源(交易所)',
     quality_flag   UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts      DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
+    ingest_ts      DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
+    exchange LowCardinality(String) DEFAULT '' COMMENT '交易所码(provider按stock_list写入TRAE-082)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

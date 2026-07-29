@@ -52,7 +52,9 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_hk_daily
     amount                   Decimal(18, 2),
     data_source              LowCardinality(String)  DEFAULT 'qmt',
     ingest_ts                DateTime64(3, 'UTC')  DEFAULT now(),
-    currency                 LowCardinality(String)  DEFAULT 'HKD'
+    currency                 LowCardinality(String)  DEFAULT 'HKD',
+    exchange LowCardinality(String) MATERIALIZED 'HK' COMMENT '交易所码(市场隐含TRAE-082)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

@@ -52,7 +52,9 @@ CREATE TABLE IF NOT EXISTS c1_market.option_greeks
     theta                    Decimal(10, 6),
     vega                     Decimal(10, 6),
     data_source              LowCardinality(String),
-    ingest_ts                DateTime64(3, 'UTC')  DEFAULT now()
+    ingest_ts                DateTime64(3, 'UTC')  DEFAULT now(),
+    exchange LowCardinality(String) DEFAULT '' COMMENT '交易所码(provider按stock_list写入TRAE-082)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)

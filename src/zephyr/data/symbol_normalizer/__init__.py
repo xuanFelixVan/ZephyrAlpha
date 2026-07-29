@@ -32,12 +32,13 @@ exchange 码体系（TRAE-082）：
   美股：US
   期货：CFFEX / SHFE / CZCE / DCE / INE / GFEX
 
-前缀推断规则（A 股标准编码，对标 tushare ts_code 后缀）：
-  6/9 → SH（沪市股票：600519 / 900901 B 股）
-  0/3 → SZ（深市股票：000001 / 300750）
-  5   → SH（沪市基金/ETF：510050 / 588000 / 501001 LOF）
-  1   → SZ（深市基金/ETF：159915 / 150018 LOF）
+前缀推断规则（A 股标准编码，对标 tushare ts_code 后缀，TRAE-082 1.1.0）：
+  6/5/9 → SH（沪市股票：600519 / 510050 ETF / 900901 B 股）
+  0/3/1/2 → SZ（深市股票：000001 / 300750；基金 159915；B 股 200026）
   8/4 → BJ（北交所：830799 / 430047）
+  9xx 消歧（1.1.0）：3 位 900/901/902/903 → SH（沪市 B 股）；
+                    2 位 92/93/94 → BJ（北交所 920xxx，避免 '9'→SH 误判）
+  与 CH MATERIALIZED multiIf 表达式严格对齐（单一真源，DRY）
 """
 from zephyr.data.symbol_normalizer.normalizer import (
     EXCHANGE_SH,
@@ -46,7 +47,11 @@ from zephyr.data.symbol_normalizer.normalizer import (
     EXCHANGE_HK,
     EXCHANGE_US,
     _PREFIX_TO_EXCHANGE,
+    _PREFIX2_TO_EXCHANGE,
+    _PREFIX3_TO_EXCHANGE,
+    _INDEX_PREFIX3_TO_EXCHANGE,
     derive_exchange,
+    derive_exchange_index,
     split_suffix_symbol,
     split_prefix_symbol,
     to_canonical,
@@ -60,7 +65,12 @@ __all__ = [
     "EXCHANGE_BJ",
     "EXCHANGE_HK",
     "EXCHANGE_US",
+    "_PREFIX_TO_EXCHANGE",
+    "_PREFIX2_TO_EXCHANGE",
+    "_PREFIX3_TO_EXCHANGE",
+    "_INDEX_PREFIX3_TO_EXCHANGE",
     "derive_exchange",
+    "derive_exchange_index",
     "split_suffix_symbol",
     "split_prefix_symbol",
     "to_canonical",

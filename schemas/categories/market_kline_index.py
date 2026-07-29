@@ -56,7 +56,9 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_index
     decline_count            UInt32  DEFAULT 0  COMMENT '下跌家数',
     data_source              String,
     quality_flag             UInt8  DEFAULT 1,
-    ingest_ts                DateTime64(3, 'UTC')  DEFAULT now()
+    ingest_ts                DateTime64(3, 'UTC')  DEFAULT now(),
+    exchange LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('000', '880', '930', '931', '932'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('399'), 'SZ', '') COMMENT '交易所码(TRAE-082 指数专用MATERIALIZED派生,000001.SH上证指数)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)

@@ -150,7 +150,11 @@ def _parse_column_def(seg: str) -> tuple[str, str] | None:
         return None
     name = m.group(1)
     rest = m.group(2).strip()
-    # type = rest 中第一个顶层 DEFAULT/COMMENT 之前的部分
+    # type = rest 中第一个顶层 DEFAULT/MATERIALIZED/ALIAS/COMMENT 之前的部分
+    # MATERIALIZED/ALIAS 是列修饰符（与 DEFAULT 同级），不属于数据类型；
+    # DB system.columns.type 只存纯类型（如 LowCardinality(String)），不含 MATERIALIZED 子句，
+    # 故解析真源 DDL 时也须在 MATERIALIZED/ALIAS 处截断，否则类型比对会误报漂移。
+    # （TRAE-082 1.1.0 #ARCH-DATA-SYMBOL-002：exchange/symbol_canonical 为 MATERIALIZED 列）
     depth, type_chars, i = 0, [], 0
     upper = rest.upper()
     while i < len(rest):
@@ -160,6 +164,10 @@ def _parse_column_def(seg: str) -> tuple[str, str] | None:
         elif ch == ")":
             depth -= 1
         if depth == 0 and upper[i:i + 7] == "DEFAULT":
+            break
+        if depth == 0 and upper[i:i + 12] == "MATERIALIZED":
+            break
+        if depth == 0 and upper[i:i + 5] == "ALIAS" and (i == 0 or not (rest[i - 1].isalnum() or rest[i - 1] == "_")):
             break
         if depth == 0 and upper[i:i + 7] == "COMMENT":
             break

@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-29T10:37:20Z'
+generated_at: '2026-07-29T19:41:21Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 127
+total_gates: 128
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -178,6 +178,16 @@ gates:
   description: 校验 schemas/categories/*.py 的 DDL 真源与 ClickHouse 实际表结构一致性——列/类型/引擎/排序键漂移即阻断提交。CH
     不可达不阻断（exit 0 + WARN），仅漂移阻断（exit 1）
   files_trigger: ^(schemas/categories/.*\.py|scripts/ch/verify_schema_truth\.py)$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-SYMBOL-CONVENTION
+  name: 'GATE-SYMBOL-CONVENTION: Symbol 约定 lint（TRAE-082 #ARCH-DATA-SYMBOL-002）'
+  entry: python scripts/ch/lint_symbol_convention.py
+  description: 静态 lint 校验所有含 symbol 列的 securities 表 DDL 必含 exchange+symbol_canonical
+    列——缺列即阻断提交（防回退）
+  files_trigger: ^schemas/categories/.*\.py$
   always_run: false
   category: unknown
   status: active

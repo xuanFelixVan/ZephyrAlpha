@@ -66,7 +66,9 @@ CREATE TABLE IF NOT EXISTS c3_fundamental.balance_sheet
     surplus_reserve              Nullable(Decimal(18,2))   COMMENT '未分配利润',
     data_source                  String                    COMMENT '数据来源',
     quality_flag                 UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    ingest_ts                    DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(兼任版本列)'
+    ingest_ts                    DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(兼任版本列)',
+    exchange LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('110', '113', '204', '900', '901', '902', '903'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('123', '128'), 'SZ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,2) IN ('43', '83', '87', '92', '93', '94'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('4', '8'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('5', '6', '9'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('0', '1', '2', '3'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,前缀推导)',
+    symbol_canonical String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(report_period)

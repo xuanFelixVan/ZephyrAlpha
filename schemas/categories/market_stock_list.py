@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS c1_market.stock_list
     enname               String                    COMMENT '英文名',
     cn_spell             String                    COMMENT '拼音',
     market               String                    COMMENT '市场(A股/港股/美股)',
-    exchange             String                    COMMENT '交易所(SSE/SZSE)',
+    exchange LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('110', '113', '204', '900', '901', '902', '903'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('123', '128'), 'SZ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,2) IN ('43', '83', '87', '92', '93', '94'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('4', '8'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('5', '6', '9'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('0', '1', '2', '3'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,前缀推导)',
     currency             String                    COMMENT '币种',
     list_status          String                    COMMENT '上市状态(上市/退市/暂停)',
     list_date            Date                      COMMENT '上市日期',
@@ -69,7 +69,8 @@ CREATE TABLE IF NOT EXISTS c1_market.stock_list
     valid_from           Date          DEFAULT toDate(list_date) COMMENT 'SCD-2生效起始日(#ARCH-CH-021 P0-1)',
     valid_to             Nullable(Date)             COMMENT 'SCD-2生效终止日(NULL=当前有效,退市股=delist_date)',
     updated_at           DateTime64(3, 'UTC')  DEFAULT now() COMMENT '记录更新时间',
-    ingest_ts            DateTime64(3, 'UTC')  DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
+    ingest_ts            DateTime64(3, 'UTC')  DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
+    symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY tuple()
@@ -91,6 +92,6 @@ ORDER_BY = "(ts_code)"
 # valid_from/updated_at/ingest_ts 由 DEFAULT 自动填充
 INSERT_COLUMNS = (
     "(ts_code, symbol, name, area, industry, fullname, enname, cn_spell, "
-    "market, exchange, currency, list_status, list_date, delist_date, "
+    "market, currency, list_status, list_date, delist_date, "
     "hs_hold, actual_controller, controller_type, valid_to)"
 )

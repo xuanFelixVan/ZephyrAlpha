@@ -402,6 +402,23 @@ repos:
         stages: [commit]
         description: "校验 schemas/categories/*.py 的 DDL 真源与 ClickHouse 实际表结构一致性——列/类型/引擎/排序键漂移即阻断提交。CH 不可达不阻断（exit 0 + WARN），仅漂移阻断（exit 1）"
 
+      # ── GATE-SYMBOL-CONVENTION: Symbol 约定 lint 门禁（TRAE-082 #ARCH-DATA-SYMBOL-002）──
+      # 权威依据：TRAE-082 1.1.0（symbol 约定铁律：裸码 symbol + exchange 列 + 派生 symbol_canonical）
+      # 真源声明：schemas/categories/*.py 的 *_DDL 中含 symbol 列的表必含 exchange+symbol_canonical 列
+      # 检测范围：schemas/categories/*.py 变更时触发
+      # 检测内容：静态 lint——所有含 symbol 列的 securities 表 DDL 必含 exchange+symbol_canonical 列（防回退）
+      # 模式：硬阻断（缺列 exit 1 拒绝提交）；无 DB 连接需求（纯静态 lint）
+      - id: gate-symbol-convention
+        name: "GATE-SYMBOL-CONVENTION: Symbol 约定 lint（TRAE-082 #ARCH-DATA-SYMBOL-002）"
+        entry: python scripts/ch/lint_symbol_convention.py
+        args: ["--ci", "--quiet"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^schemas/categories/.*\\.py$"
+        stages: [commit]
+        description: "静态 lint 校验所有含 symbol 列的 securities 表 DDL 必含 exchange+symbol_canonical 列——缺列即阻断提交（防回退）"
+
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
       # 权威依据：IRN-011（ai_behavior_iron_policy.md）9 条零残留规则（ZR-001~009）
       # 真源声明：Session 20260505 零残留原则落地
