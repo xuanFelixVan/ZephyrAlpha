@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-29'
-total_scripts: 599
+generated_at: '2026-07-30'
+total_scripts: 601
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -465,6 +465,14 @@ scripts:
 - name: ch/_recovery_drill.py
   path: ch/_recovery_drill.py
   description: 非破坏性：不碰 live 表，恢复到 _restore_drill 临时库。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/apply_exchange_columns.py
+  path: ch/apply_exchange_columns.py
+  description: DDL-as-Code 模式：对所有证券表 ADD COLUMN exchange + symbol_canonical，零回填。
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1960,7 +1968,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/generate_code_wiki_stats.py
   path: governance/d5_architecture/generators/generate_code_wiki_stats.py
-  description: '[BLUEPRINT] VIEW-CODE-WIKI | docs/02_enterprise_architecture/04_architecture_principles_decisions/code_wiki.md'
+  description: '[BLUEPRINT] VIEW-CODE-WIKI | docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2032,14 +2040,6 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/generate_design_vs_production.py
   path: governance/d5_architecture/generators/generate_design_vs_production.py
-  description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/generators/generate_domain_dependency_diagram.py
-  path: governance/d5_architecture/generators/generate_domain_dependency_diagram.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
   domain: governance
   execution_plane: warm-path
@@ -3673,6 +3673,22 @@ scripts:
 - name: governance/repair/rollback_depgraph.py
   path: governance/repair/rollback_depgraph.py
   description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/rollback_depgraph.py | §8.2'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/shared/__init__.py
+  path: governance/shared/__init__.py
+  description: 测试通过 ``from scripts.governance.shared.frontmatter import parse_frontmatter`` 导入，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/shared/frontmatter.py
+  path: governance/shared/frontmatter.py
+  description: 测试通过 ``from scripts.governance.shared.frontmatter import parse_frontmatter`` 导入，
   domain: governance
   execution_plane: warm-path
   status: registered
