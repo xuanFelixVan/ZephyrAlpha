@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_TEST_CLAIM_FILES_FOR_EDIT | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本测试（2026-07-20）。
 
 验证 pre-merge gate sys.path 不一致治本效果：

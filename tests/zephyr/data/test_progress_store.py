@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """progress_store 单测（MOD-L00-004 阶段2）。
 
 测试内容：

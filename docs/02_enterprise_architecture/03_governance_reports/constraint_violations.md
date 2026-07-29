@@ -49,7 +49,7 @@ ttl: permanent
 | V-CAP-D_DATA | 容量超限: D_DATA | capacity_exceeded | D_DATA |  | hard | gate | 域 D_DATA(数据接入层) production 节点 155 超过上限 150，需拆分或提升上限 (ARCH-CA... |
 | V-CAP-D_GOVERNANCE | 容量超限: D_GOVERNANCE | capacity_exceeded | D_GOVERNANCE |  | hard | gate | 域 D_GOVERNANCE(生命周期管理) production 节点 220 超过上限 150，需拆分或提升上限 (... |
 | V-CAP-D_GOV_CODE_QUALITY | 容量超限: D_GOV_CODE_QUALITY | capacity_exceeded | D_GOV_CODE_QUALITY |  | hard | gate | 域 D_GOV_CODE_QUALITY(代码质量治理) production 节点 168 超过上限 150，需拆分或... |
-| V-CAP-D_GOV_SCRIPTS | 容量超限: D_GOV_SCRIPTS | capacity_exceeded | D_GOV_SCRIPTS |  | hard | gate | 域 D_GOV_SCRIPTS(脚本治理) production 节点 378 超过上限 150，需拆分或提升上限 (A... |
+| V-CAP-D_GOV_SCRIPTS | 容量超限: D_GOV_SCRIPTS | capacity_exceeded | D_GOV_SCRIPTS |  | hard | gate | 域 D_GOV_SCRIPTS(脚本治理) production 节点 380 超过上限 150，需拆分或提升上限 (A... |
 | V-CAP-D_INFRA_RUNTIME | 容量超限: D_INFRA_RUNTIME | capacity_exceeded | D_INFRA_RUNTIME |  | hard | gate | 域 D_INFRA_RUNTIME(运行时集成) production 节点 160 超过上限 150，需拆分或提升上限... |
 | V-CAP-D_SECURITY | 容量超限: D_SECURITY | capacity_exceeded | D_SECURITY |  | hard | gate | 域 D_SECURITY(对抗验证) production 节点 166 超过上限 150，需拆分或提升上限 (ARCH... |
 | V-CAP-D_SHARED | 容量超限: D_SHARED | capacity_exceeded | D_SHARED |  | hard | gate | 域 D_SHARED(共享服务) production 节点 184 超过上限 150，需拆分或提升上限 (ARCH-C... |
@@ -100,19 +100,19 @@ ttl: permanent
 | V-HARD150-D_DATA | 硬上限违规: D_DATA | hard_limit_exceeded | D_DATA |  | error | gate | 域 D_DATA(数据接入层) production 节点 155 超过硬上限 150 (ARCH-CAP-002 v1... |
 | V-HARD150-D_GOVERNANCE | 硬上限违规: D_GOVERNANCE | hard_limit_exceeded | D_GOVERNANCE |  | error | gate | 域 D_GOVERNANCE(生命周期管理) production 节点 220 超过硬上限 150 (ARCH-CAP... |
 | V-HARD150-D_GOV_CODE_QUALITY | 硬上限违规: D_GOV_CODE_QUALITY | hard_limit_exceeded | D_GOV_CODE_QUALITY |  | error | gate | 域 D_GOV_CODE_QUALITY(代码质量治理) production 节点 168 超过硬上限 150 (AR... |
-| V-HARD150-D_GOV_SCRIPTS | 硬上限违规: D_GOV_SCRIPTS | hard_limit_exceeded | D_GOV_SCRIPTS |  | error | gate | 域 D_GOV_SCRIPTS(脚本治理) production 节点 378 超过硬上限 150 (ARCH-CAP-... |
+| V-HARD150-D_GOV_SCRIPTS | 硬上限违规: D_GOV_SCRIPTS | hard_limit_exceeded | D_GOV_SCRIPTS |  | error | gate | 域 D_GOV_SCRIPTS(脚本治理) production 节点 380 超过硬上限 150 (ARCH-CAP-... |
 | V-HARD150-D_INFRA_RUNTIME | 硬上限违规: D_INFRA_RUNTIME | hard_limit_exceeded | D_INFRA_RUNTIME |  | error | gate | 域 D_INFRA_RUNTIME(运行时集成) production 节点 160 超过硬上限 150 (ARCH-C... |
 | V-HARD150-D_SECURITY | 硬上限违规: D_SECURITY | hard_limit_exceeded | D_SECURITY |  | error | gate | 域 D_SECURITY(对抗验证) production 节点 166 超过硬上限 150 (ARCH-CAP-002... |
 | V-HARD150-D_SHARED | 硬上限违规: D_SHARED | hard_limit_exceeded | D_SHARED |  | error | gate | 域 D_SHARED(共享服务) production 节点 184 超过硬上限 150 (ARCH-CAP-002 v... |
-| V-LAYER-D_INFRA_RUNTIME-D_AUTONOMY_CORE | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_AUTONOMY_CORE | error | gate | 层级违规: 7312192 -> 7309852 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_DATA | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_DATA | error | gate | 层级违规: 7311102 -> 7309915 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_GOV_REPAIR | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | gate | 层级违规: 7311251 -> 7310535 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 层级违规: 7312208 -> 7311932 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_OPS | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_OPS | error | gate | 层级违规: 7312192 -> 7310589 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_ORCHESTRATOR | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_ORCHESTRATOR | error | gate | 层级违规: 7312192 -> 7311579 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 层级违规: 7312211 -> 7312204 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_INTEGRATION-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_INTEGRATION | D_TRADING | error | gate | 层级违规: 7311418 -> 7312185 (L1_foundation -> L2_domain) |
-| V-LAYER-D_SHARED-D_ML_TRAIN | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_ML_TRAIN | error | gate | 层级违规: 7312133 -> 7311543 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INFRA_RUNTIME-D_AUTONOMY_CORE | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_AUTONOMY_CORE | error | gate | 层级违规: 7351712 -> 7349344 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_DATA | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_DATA | error | gate | 层级违规: 7350619 -> 7349422 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_GOV_REPAIR | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | gate | 层级违规: 7350771 -> 7350059 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 层级违规: 7351735 -> 7351451 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_OPS | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_OPS | error | gate | 层级违规: 7351712 -> 7350108 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_ORCHESTRATOR | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_ORCHESTRATOR | error | gate | 层级违规: 7351712 -> 7351097 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 层级违规: 7351729 -> 7351732 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INTEGRATION-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_INTEGRATION | D_TRADING | error | gate | 层级违规: 7350935 -> 7351708 (L1_foundation -> L2_domain) |
+| V-LAYER-D_SHARED-D_ML_TRAIN | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_ML_TRAIN | error | gate | 层级违规: 7351652 -> 7351067 (L0_infrastructure -> L2_domain) |
 
 ## 完整约束清单
 

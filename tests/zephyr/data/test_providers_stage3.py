@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """阶段3 5 个新 Provider 单测（MOD-L00-004 阶段3）。
 
 测试内容：

@@ -20,18 +20,18 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2839 | 96.1% |
-| design（设计态） | 114 | 3.9% |
+| production（生产态） | 2839 | 96.0% |
+| design（设计态） | 118 | 4.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2953** | **100%** |
+| **总计** | **2957** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4010 | 135.8% |
-| stable | 1635 | 55.4% |
-| planned | 106 | 3.6% |
+| generated | 4009 | 135.6% |
+| stable | 1644 | 55.6% |
+| planned | 110 | 3.7% |
 | deprecated | 4 | 0.1% |
 
 ## 各域设计成熟度统计
@@ -53,7 +53,7 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_CONTRACTS | 共享契约 | 0 | 0 | 0 | 0 | N/A |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 163 | 155 | 8 | 0 | 95.1% |
+| D_DATA | 数据接入层 | 167 | 155 | 12 | 0 | 92.8% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 13 | 0 | 35.0% |
 | D_DATA_GOV | 数据治理 | 10 | 10 | 0 | 0 | 100.0% |
 | D_DATA_SCRIPTS | 数据治理脚本 | 0 | 0 | 0 | 0 | N/A |
@@ -123,5 +123,5 @@ ttl: permanent
 | D_ML_TRAIN | 训练 | 4 | 3 | 75.0% |
 | D_ALT_DATA | 另类数据 | 8 | 7 | 87.5% |
 | D_ASHARE_SIGNAL | A股特色信号 | 8 | 7 | 87.5% |
-| D_DATA | 数据接入层 | 163 | 155 | 95.1% |
+| D_DATA | 数据接入层 | 167 | 155 | 92.8% |
 | D_GOV_ENFORCEMENT | 规则执行 | 41 | 40 | 97.6% |

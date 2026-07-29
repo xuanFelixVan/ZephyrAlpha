@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """capability_validator 契约测试（裁定 #ARCH-CH-022 Phase 4.5）。
 
 测试内容：

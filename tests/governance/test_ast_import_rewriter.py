@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.test_ast_import_rewriter
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.ast_import_rewriter

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GATE_ENGINE | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test_helpers] module_id=SH-TEST-001 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """公共模块别名（R5 公共化）— 从 _gate_test_helpers 重新导出。

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L00-004 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """wal_writer 单测（P0-1 Phase A）。
 
 测试内容：
