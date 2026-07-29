@@ -91,6 +91,17 @@ class FeedbackBridge:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FeedbackLoop init failed: %s", exc, exc_info=True)
 
+    @property
+    def anomaly_to_signal(self) -> dict[str, str]:
+        """只读：anomaly_to_signal 映射表（R5 公共化）。"""
+        return self._anomaly_to_signal
+
+    @staticmethod
+    def classify_layer(severity) -> str:
+        """公共接口：classify_layer（Stage 4 公共化）。"""
+        return __class__._classify_layer(severity)
+
+
     # ------------------------------------------------------------------
     # Legacy FeedbackLoop delegation API
     # ------------------------------------------------------------------

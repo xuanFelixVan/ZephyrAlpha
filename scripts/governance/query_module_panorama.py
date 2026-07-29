@@ -310,3 +310,45 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def print_all_modules() -> int:
+    """公共接口：print_all_modules（Stage 4 公共化）。"""
+    return _print_all_modules()
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def print_single_module(module_id) -> int:
+    """公共接口：print_single_module（Stage 4 公共化）。"""
+    return _print_single_module(module_id)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_all_modules() -> list[dict]:
+    """公共接口：query_all_modules（Stage 4 公共化）。"""
+    return _query_all_modules()
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_decision_nodes(module_id) -> list[dict]:
+    """公共接口：query_decision_nodes（Stage 4 公共化）。"""
+    return _query_decision_nodes(module_id)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_dataflow_entities(module_id) -> list[dict]:
+    """公共接口：query_dataflow_entities（Stage 4 公共化）。"""
+    return _query_dataflow_entities(module_id)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_depgraph_metadata(module_id) -> dict | None:
+    """公共接口：query_depgraph_metadata（Stage 4 公共化）。"""
+    return _query_depgraph_metadata(module_id)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_depgraph_nodes(module_id) -> list[dict]:
+    """公共接口：query_depgraph_nodes（Stage 4 公共化）。"""
+    return _query_depgraph_nodes(module_id)
+

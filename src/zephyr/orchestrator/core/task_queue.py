@@ -148,6 +148,10 @@ class ActiveTaskQueue:
             wait = self._poll_interval if n == 0 else min(1.0, self._poll_interval / 2)
             self._stop_event.wait(timeout=wait)
 
+    def tick(self) -> int:
+        """公共接口：tick（R5 公共化）。执行一轮就绪任务派发。"""
+        return self._tick()
+
     def _tick(self) -> int:
         ready = self._repo.list_by_status("READY")
         dispatched = 0
