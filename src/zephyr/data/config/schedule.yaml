@@ -39,11 +39,21 @@ schedules:
     executor: intraday_sector
     description: "盘中板块K线层——880xxx板块分钟K线（mootdx TCP直连，独立于miniqmt慢任务）"
 
-  # L3 事件驱动层：每15分钟持续轮询（7×24）
+  # L3 事件驱动层：每5分钟持续轮询（7×24）
+  # 原*/15分钟导致新闻延迟过大，盘中实时分析需要新闻尽快入库，提速到*/5分钟
+  # （新闻buffer_max_seconds=300正好对齐；macro/research增量幂等，提速无副作用）
   event_driven:
-    cron: "*/15 * * * *"
+    cron: "*/5 * * * *"
     executor: default
-    description: "事件驱动层——新闻/研报/EDB宏观数据，来了就处理"
+    description: "事件驱动层——新闻/研报/EDB宏观数据，每5分钟轮询"
+
+  # L3.5 慢新闻层：个股新闻(stock_em)/研报(research_report) 5523只串行限流~90min，
+  # 独立 max_instances(APScheduler默认1) 不阻塞 event_driven 快新闻轮询。
+  # stock_em 与 research_report 共享 akshare 单例的 60次/分 限流额度，并行各~180min（总时间与串行相同，限流是瓶颈）。
+  news_slow:
+    cron: "*/30 * * * *"    # 每30分钟触发；max_instances=1 下跑完才再跑，实际~90-180min/轮
+    executor: default        # 复用8线程池（慢任务仅占2线程，快任务仍有6线程可用）
+    description: "慢新闻层——个股新闻(stock_em)/研报(research_report)，独立队列不堵 event_driven 快新闻"
 
   # L4 盘后日K线层：16:30 周一至周五
   daily_kline:

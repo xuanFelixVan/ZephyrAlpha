@@ -242,7 +242,7 @@ tasks:
 - task_id: kline_us_daily_incremental
   table: c1_market.kline_us_daily
   source: tickflow
-  schedule: weekend_calibration
+  schedule: daily_capital    # 美股每交易日有新数据，原weekend_calibration导致平时滞后1周；美股收盘北京凌晨5点，盘后18:00补昨日数据
   incremental: true
   date_col: trade_date
   dependencies: []
@@ -257,7 +257,7 @@ tasks:
 - task_id: us_index_incremental
   table: c1_market.us_index
   source: tickflow
-  schedule: weekend_calibration
+  schedule: daily_capital    # 美股指数每交易日有新数据，原weekend_calibration导致平时滞后1周；盘后18:00补昨日数据
   incremental: true
   date_col: trade_date
   dependencies: []
@@ -810,7 +810,7 @@ tasks:
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
   source: tdx
-  schedule: weekend_calibration
+  schedule: daily_kline    # 板块指数日K线应每日盘后更新，原weekend_calibration导致周一-周五无当日板块K线
   incremental: true
   date_col: trade_date
   dependencies: ["industry_class_refresh"]
@@ -1177,7 +1177,7 @@ tasks:
 - task_id: news_stock_em_incremental
   table: c3_fundamental.news_data
   source: akshare
-  schedule: event_driven
+  schedule: news_slow      # 从 event_driven 挪出：5523只串行限流~90min，独立 max_instances 不阻塞快新闻
   incremental: true
   date_col: publish_time
   buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
@@ -1294,7 +1294,7 @@ tasks:
 - task_id: research_report_incremental
   table: c3_fundamental.news_data
   source: akshare
-  schedule: event_driven
+  schedule: news_slow      # 从 event_driven 挪出：5523只串行限流~90min，独立 max_instances 不阻塞快新闻
   incremental: true
   date_col: publish_time
   buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
@@ -1519,7 +1519,7 @@ tasks:
 - task_id: auction_data_snapshot
   table: c1_market.auction_snapshot
   source: miniqmt
-  schedule: intraday_realtime
+  schedule: auction_highfreq    # 集合竞价9:15-9:25仅10分钟，intraday_realtime每5分钟仅抓2次；改用auction_highfreq每10秒~60次
   incremental: true
   date_col: trade_date
   dependencies: []
@@ -1834,61 +1834,51 @@ tasks:
     backfill_mode: detect_and_fill
     threshold: 5000000
 
-  # ============== tqcenter 880xxx板块数据（独立脚本触发，裁定 #ARCH-CH-024）==============
-  # manual_script 设计：schedule 填一个未在 schedule.yaml 注册的字面值（manual_script），
-  # 调度器 _filter_schedule_tasks 只匹配已注册时段，manual_script 不在其中→结构化排除自动调度。
-  # 比 trigger:manual_script 更安全（trigger 字段调度器不读仅作文档；schedule 才是调度依据）。
-  # tqcenter SDK 需 E:\tdx\PYPlugins 专用路径，由独立脚本触发，非 scheduler 自动调度。
-  fallback_sources:
-  - source: miniqmt
-    capability: tick_backfill
-  - source: bdpan
-    capability: tick_backfill
+  # ============== tqcenter 880xxx板块数据（自动调度，2026-07-30 从 manual_script 升级）==============
+  # tqcenter Provider 已注册到 scheduler.create_provider，支持自动调度。
+  # 需通达信客户端运行（requires_process=True），tqcenter SDK 路径 E:\tdx\PYPlugins\user。
 - task_id: kline_sector_880_incremental
   table: c1_market.kline_sector_880
   source: tqcenter
-  schedule: manual_script
+  schedule: daily_kline
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: kline_sector_880
   symbols:         # null=全部880xxx板块（实测2026-07-22: 460只，tqcenter get_sector_list动态获取）+9只市场指数
   extra:
-    description: "880xxx板块指数K线增量（tqcenter get_market_data，日K/1m/5m）"
-    trigger: manual_script    # 非 scheduler 自动调度，由独立脚本触发（tqcenter SDK 需 E:\tdx\PYPlugins 路径）
+    description: "880xxx板块指数日K线增量（tqcenter get_market_data，日K 5天）"
+    period: 1d
+    days: 5
 
 - task_id: sector_constituent_refresh
   table: c1_market.sector_constituent
   source: tqcenter
-  schedule: manual_script
+  schedule: monthly_static
   incremental: false    # 全量重建（约84,450条板块-成分股映射）
   dependencies: []
   capability: sector_constituent
   symbols:
   extra:
     description: "880xxx板块成分股映射全量刷新（tqcenter get_sector_list + get_stock_list_in_sector）"
-    trigger: manual_script
     refresh_cycle: monthly
 
 - task_id: sector_snapshot_incremental
   table: c1_market.sector_snapshot
   source: tqcenter
-  schedule: manual_script
+  schedule: intraday_realtime
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: sector_snapshot_collection
   symbols:
   extra:
-    description: "880xxx板块实时快照增量（tqcenter subscribe_hq推送99只 + get_market_snapshot全量轮询，轮询池从sector_constituent表动态获取，实测2026-07-22:
-      582只）"
-    trigger: manual_script
-    ranking_engine: sector_ranking_engine.get_push_pool
+    description: "880xxx板块实时快照增量（tqcenter get_market_snapshot 全量轮询，轮询池从sector_constituent表动态获取）"
 
 - task_id: kline_sector_880_resample
   table: c1_market.kline_sector_880
   source: tqcenter
-  schedule: manual_script
+  schedule: daily_kline
   incremental: true
   date_col: trade_date
   dependencies: ["kline_sector_880_incremental"]
@@ -1896,7 +1886,6 @@ tasks:
   symbols:
   extra:
     description: "880xxx板块K线合成（ClickHouse DB内 toStartOfInterval 聚合，1m/5m→15m/30m/60m，幂等DELETE+INSERT）"
-    trigger: manual_script
     resample_method: db_internal_aggregation
 
   # ============== 880xxx板块分钟K线（tdx mootdx TCP直连，盘中实时获取，2026-07-22）==============
