@@ -292,20 +292,8 @@ BUILT_PANORAMAS: list[dict] = [
         "description": "TOGAF 业务/信息/应用/技术 4视图 + 安全/集成/运营/治理/前端/运行时平面/能力热力图 6正交视图",
     },
     {
-        "panorama_id": "PAN-BUILT-02",
-        "name": "C4-L3 域组件图",
-        "category": "架构视图",
-        "category_id": "target_architecture",
-        "data_source": "手工",
-        "source_architecture": "手工",
-        "generator": "(手工维护)",
-        "output_path": "target_architecture/",
-        "artifact_path": "target_architecture/c4_component_views.md",
-        "description": "C4-L3 域组件图（d_ex_core / d_mkt_data / d_ml_train）。L1/L2 已由生成视图 integration_topology.md 取代（v3.4.0 删除 c4_l1_l2_views.md）",
-    },
-    {
         "panorama_id": "PAN-BUILT-03",
-        "name": "手绘 Mermaid 图（时序/治理/组件）",
+        "name": "手绘 Mermaid 图（时序/治理）",
         "category": "架构视图",
         "category_id": "target_architecture",
         "data_source": "手工",
@@ -313,7 +301,7 @@ BUILT_PANORAMAS: list[dict] = [
         "generator": "(手工维护)",
         "output_path": "target_architecture/",
         "artifact_path": "target_architecture/application_flows.md",
-        "description": "端到端时序图（application_flows）+ 治理 d2b 闭环（governance_views）+ 域组件（c4_component_views）。拓扑/数据流已由生成视图 integration_topology.md / dataflow_index.md 取代（v3.4.0 删除 topology_views.md / dataflow_views.md）",
+        "description": "端到端时序图（application_flows）+ 治理 d2b 闭环（governance_views）。拓扑/数据流已由生成视图 integration_topology.md / dataflow_index.md 取代（v3.4.0 删除 topology_views.md / dataflow_views.md）；C4-L3 域组件图已删除（v3.5.0 删除 c4_component_views.md，有效组件模式已登记 depgraph 设计态）",
     },
     # --- 02_enterprise_architecture/ 根目录（排在最后） ---
     {

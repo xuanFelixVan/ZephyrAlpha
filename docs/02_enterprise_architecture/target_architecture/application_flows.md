@@ -137,7 +137,7 @@ sequenceDiagram
 
 > **版本**: v1.1.0 (2026-05-04) — 标注 CTR-005 Fill + CTR-006 PositionSnapshot 契约作为架构承重墙 ｜ **契约真源**: `architecture_model/contracts/cross_layer_contracts.yaml`
 > **来源**: ddd-aggregates.md AR-01 Order.add_fill() + AR-02 Position.apply_fill() ｜ domain-event-catalog.md E-EX-04 FillReceived + E-PF-02 PositionLimitBreached ｜ interface-contracts.md §1.5 Fill + §1.6 PositionSnapshot
-> **一致性**: 03-AA §7.2 Broker 回调机制 ｜ fault-tolerance-matrix.md §D_RISK（Risk Fail-Closed）｜ c4_l3_d_ex_core（组件命名一致）
+> **一致性**: 03-AA §7.2 Broker 回调机制 ｜ fault-tolerance-matrix.md §D_RISK（Risk Fail-Closed）｜ depgraph D_EX_CORE 设计态（Fill Handler 等组件命名一致；原 c4_l3_d_ex_core v3.5.0 删除）
 
 ```mermaid
 sequenceDiagram

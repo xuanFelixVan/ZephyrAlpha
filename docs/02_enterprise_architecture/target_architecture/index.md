@@ -8,7 +8,7 @@ merged_from: README.md + index.md
 module_id: ARCH-006
 status: Active
 title: Target Architecture — Navigation Guide / 目标架构导航
-version: 3.4.0
+version: 3.5.0
 depends_on:
   - {target: EA-INDEX, at: "§子目录", why: "父级 EA 索引——target_architecture 为其子目录"}
 tags:
@@ -16,7 +16,7 @@ tags:
 - navigation
 - domain-driven
 - depgraph-derived
-summary: v3.4.0：删除 dataflow_views.md/topology_views.md/c4_l1_l2_views.md（均被生成视图或SSoT覆盖，手绘图已过时漂移）；§3/§5 同步清理引用。v3.3.0：删除 dimension_audit_matrix.md；§2 域表改为指针指向 generated domain_index。v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。
+summary: v3.5.0：删除 c4_component_views.md（75%组件为虚构理想化架构，误导读者；4 项有效设计模式 Vendor Registry/IDataSource Interface/Connector Facade/Fill Handler 已登记 depgraph 设计态节点）；§3/§5/overview 同步清理引用。v3.4.0：删除 dataflow_views.md/topology_views.md/c4_l1_l2_views.md（均被生成视图或SSoT覆盖，手绘图已过时漂移）。v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。
 ttl: permanent
 ---
 
@@ -59,7 +59,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 |------|------|
 | overview.md | 架构总览（v2.1.0：53域+全景图派生，方法论叙事）|
 | application_flows.md | 5 张端到端时序图（订单/成交/风控/再平衡/异常）|
-| c4_component_views.md | 3 张 C4-L3 域组件图（D_MKT_DATA/D_EX_CORE/D_ML_TRAIN）|
 | governance_views.md | 治理 d2b 闭环 + 三层边界图 |
 | revision_history.md | 完整修订历史归档（index.md §10 完整版）|
 | business_principles.md → ../04_architecture_principles_decisions/ + value_stream_map.yaml | BA 业务架构原则（原 business_architecture.md 已迁移） |
@@ -94,7 +93,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `index.md`（本文） | — | 本文档组是什么？怎么读？ | 所有人 | active |
 | `overview.md` | Cross-layer | 整体架构哲学？53域如何组织？ | 架构师、新加入者 | active |
 | `application_flows.md` | Cross-layer | 端到端时序如何编排？ | 架构师、开发者 | active |
-| `c4_component_views.md` | Cross-layer | 核心域组件分解？ | 开发者 | active |
 | `governance_views.md` | Cross-layer | 治理闭环+三层边界？ | 架构师、合规 | active |
 | [`business_principles.md`](../04_architecture_principles_decisions/business_principles.md) + [`value_stream_map.yaml`](../../../architecture_model/cross_cutting/value_stream_map.yaml) | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
@@ -150,9 +148,9 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
+| 2026-07-30 | **v3.5.0**：删除 `c4_component_views.md`——3 张 C4-L3 域组件图（D_MKT_DATA/D_EX_CORE/D_ML_TRAIN）75% 组件为虚构理想化架构（vendor registry + failover + OMS + SOR + feature store + model registry + drift monitor + shadow mode 均未实现），严重误导读者；4 项有效设计模式（Vendor Registry / IDataSource Interface / Connector Facade / Fill Handler）已通过 apply_depgraph.py 登记为 depgraph 设计态节点（node_id 7417174–7417177 + 3 条依赖边），组件级架构改由 depgraph 设计态 + 生成域文档承载；§3/§5/overview.md/application_flows.md 同步清理引用。 |
 | 2026-07-30 | **v3.4.0**：删除 `dataflow_views.md`/`topology_views.md`/`c4_l1_l2_views.md`——均被生成视图（integration_topology.md/dataflow_index.md）或 SSoT（value_stream_map.yaml/cross_layer_contracts.yaml/technology_landscape.yaml）覆盖，手绘图已过时漂移（TimescaleDB→ClickHouse、53域→72域）；§3/§5/§责任声明 同步清理引用。 |
 | 2026-07-30 | **v3.3.0**：删除 `dimension_audit_matrix.md`（12维评分卡无消费者，score_architecture.py 不存在）；§2 域表改为指针指向 `../02_domain_architecture_docs/domain_index.md`；§3/§5 修复 3 处 stale 引用（operations_architecture.md / dimension_audit_matrix.md / session_carryover_schema.md 均已删）。 |
-| 2026-07-29 | **v3.2.0**：删除 `diagrams/` 下 22 个冗余 .mmd 图源文件（已内嵌至 MD 文档），修复全项目 .mmd 引用。 |
 
 ## 排除规则（不应放入本目录的内容）
 
