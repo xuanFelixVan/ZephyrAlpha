@@ -29,22 +29,22 @@
 
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
-| 依赖图 depgraph | `domains` | 62 | 功能域清单——62 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5342 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5342 个 |
-| 依赖图 depgraph | `edges` | 7280 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7280 条 |
+| 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
+| 依赖图 depgraph | `nodes` | 5755 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5755 个 |
+| 依赖图 depgraph | `edges` | 7880 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7880 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 766 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 5 | 决策轨——5 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
-| 决策流图 decisiongraph | `decision_layers` | 175 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
-| 决策流图 decisiongraph | `decision_nodes` | 214 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
-| 决策流图 decisiongraph | `decision_edges` | 213 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条 |
+| 决策流图 decisiongraph | `decision_layers` | 658 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
+| 决策流图 decisiongraph | `decision_nodes` | 213 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
+| 决策流图 decisiongraph | `decision_edges` | 211 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），211 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_apis` | 124 | 数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，124 个 |
-| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 12 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，12 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 15 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，15 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 34 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），34 项 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 14 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，14 个 |
@@ -77,7 +77,7 @@
 > **可视化前端架构归属说明**：
 > - 代码进 `src/zephyr/frontend/`（已存在）
 > - 文档进 `13_visualization_architecture/`（待建）
-> - `target_architecture/frontend_architecture.md` 已迁移至 `04_architecture_principles_decisions/frontend_principles.md` + `architecture_model/frontend/frontend_model.yaml`
+> - `target_architecture/frontend_architecture.md` 是 TOGAF 视图集的一部分，保持不动
 
 ---
 
@@ -97,20 +97,20 @@
 | PAN-BUILT-09 | 能力热力图（53域×10能力） | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capability_heatmap.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/global_capability_heatmap.md) | ✅存在 |
 | PAN-BUILT-10 | 资产清单配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_asset_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/asset_catalog.md) | ✅存在 |
 | PAN-BUILT-11 | 契约目录配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_contract_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/contract_catalog.md) | ✅存在 |
-| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(84文件) |
+| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(73文件) |
 | PAN-BUILT-12 | 容量报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capacity_report.py` | [`03_governance_reports`](../03_governance_reports/capacity_report.md) | ✅存在 |
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`04_architecture_principles_decisions`](../04_architecture_principles_decisions/dependency_path_panorama.md) | ✅存在 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
-| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(63文件) |
+| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(72文件) |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-21 | 样板/模板区（7 个样板文件） | 样板 | 手工 | 手工 | `(手工维护)` | `sample/` | ✅存在(7文件) |
-| PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | `target_architecture/` | ❌缺失 |
-| PAN-BUILT-02 | C4 L1/L2/L3 架构图 | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture/diagrams`](../target_architecture/diagrams/c4_l1_system_context.mmd) | ✅存在 |
-| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | 架构视图 | 手工 | 手工 | `(手工维护)` | `target_architecture/diagrams/` | ✅存在(29文件) |
-| PAN-BUILT-16 | 架构债务注册表（337项） | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`02_enterprise_architecture`](../architecture_debt_registry.md) | ✅存在 |
+| PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/overview.md) | ✅存在 |
+| PAN-BUILT-02 | C4 L1/L2/L3 架构图 | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/c4_l1_l2_views.md) | ✅存在 |
+| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/topology_views.md) | ✅存在 |
+| PAN-BUILT-16 | 架构债务注册表（已归档） | 治理健康度 | 手工 | 手工 | `(手工维护)` | `_archive/` | ❌缺失 |
 
 ---
 
@@ -158,7 +158,7 @@
 | GAP-TBL-01 | `dataflow_datasets_metadata` | 空表待填 | 0 | 14 行（每个 dataset 一行扩展属性） | Dataset 的 physical_type / pit_policy / contract_ref 未填 | AI 查 dataflow 只能看到空壳名字，会幻觉编造物理类型（误把 ClickHouse 表当 PostgreSQL） | 从 YAML 真源同步设计态扩展属性 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-03 |
 | GAP-TBL-02 | `dataflow_jobs_metadata` | 空表待填 | 0 | 13 行（每个 job 一行扩展属性） | Job 的 source_code_ref / trigger_type / run_context 未填 | AI 查 job 找不到源码文件，不知道怎么触发（定时/事件/手动），改代码会找错文件 | 从代码扫描派生（解析每个 job 的源码文件和触发配置） | P0 必做 | 代码扫描派生 + DB 缓存 | PAN-ASSET-03 |
 | GAP-TBL-07 | `nodes (build_status 字段)` | 字段值缺失 | 0 | 应有 active 值（production 节点且实际运行中） | build_status 字段只有 planned/stable/generated 三种值，0 个 active。能力热力图算法 require build_status='active' 才判 L3，导致 L3 永远无法触发 | AI 看能力热力图会误判所有域最多 L2（可用未验证），无法区分「已上线验证」和「有代码但没跑过」，决策施工优先级时误判 | 1. 修 generate_capability_heatmap.py 算法：build_status='stable' 也算 L3；2. 排除 D_AUDITTEST/D_GOV_SCRIPTS 等测试/脚本域；3. 补 build_status 字段值 | P0 必做 | DB 直写（数据修复）+ 生成器算法修复 | PAN-BUILT-09 |
-| GAP-TBL-08 | `decision_edges` | 空表待填 | 213 | 200+ 行（214 个 decision_nodes 之间的决策传递边） | decision_nodes 有 214 个节点，但 decision_edges=0。同步脚本只同步了节点，没有同步边。历史曾有 213 条边，现已被清空（数据丢失或重建时遗漏） | AI 写新策略时看决策链路只有孤立节点，看不到 L0→L1→...→L6 的流向，无法判断策略在决策链中的位置和上下游依赖 | 从 decision_graph_model.yaml 的 §edges 段重新同步边到 decision_edges 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-BUILT-19 |
+| GAP-TBL-08 | `decision_edges` | 空表待填 | 211 | 200+ 行（214 个 decision_nodes 之间的决策传递边） | decision_nodes 有 214 个节点，但 decision_edges=0。同步脚本只同步了节点，没有同步边。历史曾有 213 条边，现已被清空（数据丢失或重建时遗漏） | AI 写新策略时看决策链路只有孤立节点，看不到 L0→L1→...→L6 的流向，无法判断策略在决策链中的位置和上下游依赖 | 从 decision_graph_model.yaml 的 §edges 段重新同步边到 decision_edges 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-BUILT-19 |
 | GAP-TBL-09 | `contracts` | 数据污染 | 65 | 30-40 行（真正的 P0/P1 契约，真源 cross_layer_contracts.yaml） | DB contracts 表 294 条是从代码注释正则提取的占位符（schema_definition 只有 description 壳子，promise/actual_consumer/gap/last_reviewed 全 None，fulfillment_status 全 unresolved，contract_type 全 'C'）。真正的契约在 cross_layer_contracts.yaml 里（CTR-001~006 + CTR-ERR + CTR-BP + P1×15 等），未同步到 DB | AI 查 contracts 表会看到 294 条垃圾数据，误以为是真契约，基于占位符做决策（幻觉根源）。真正的契约在 YAML 里 AI 不知道去查 | 1. 清空 contracts 表的占位符数据；2. 从 cross_layer_contracts.yaml 重新同步真契约到 contracts 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
 | GAP-TBL-04 | `interface_contracts` | 部分缺失 | 5 | 50+ 行（每个暴露接口的模块一行） | 50 个域只登记了 5 个模块接口（MOD-DATA/BACKTEST/TRADING/GOVERNANCE/INF-012B） | AI 调用别的模块时不知道暴露什么函数/参数签名，会瞎编函数名和参数 | 从代码扫描补全 exposed_interfaces / consumed_by_modules | P1 应做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
 | GAP-TBL-10 | `domains (layer_id 字段)` | 字段值缺失 | 2 | 0 个 NULL（50 个域都应有 layer_id：L0_infrastructure / L1_foundation / L2_domain） | domains 表 50 行中有 2 行 layer_id 为 NULL，无法归入 L0/L1/L2 分层 | AI 按层级筛选域时会漏掉这 2 个域，导致它们在热力图/容量报告/域文档中缺失或归类错误 | 从 ddd_model.yaml 或 domain 映射表补全这 2 个域的 layer_id | P1 应做 | YAML 真源 + DB 缓存 | PAN-BUILT-20 |
@@ -268,9 +268,9 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | ✅已建 | 手工 | TOGAF 业务/信息/应用/技术 4视图 + 安全/集成/运营/治理/前端/运行时平面/能力热力图 6正交视图 | 真源：YAML (architecture_model/) + 手工<br>生成器：`(手工维护)`<br>产物：`target_architecture/overview.md` |
-| PAN-BUILT-02 | C4 L1/L2/L3 架构图 | ✅已建 | 手工 | C4 模型 L1 系统上下文 / L2 容器 / L3 组件图（d_ex_core / d_mkt_data / d_ml_train） | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/diagrams/c4_l1_system_context.mmd`](../target_architecture/diagrams/c4_l1_system_context.mmd) |
-| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | ✅已建 | 手工 | 拓扑/时序/数据流/部署/激活甘特/三层治理等 28 张 Mermaid 图 | 真源：手工<br>生成器：`(手工维护)`<br>产物：`target_architecture/diagrams/` |
+| PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | ✅已建 | 手工 | TOGAF 业务/信息/应用/技术 4视图 + 安全/集成/运营/治理/前端/运行时平面/能力热力图 6正交视图 | 真源：YAML (architecture_model/) + 手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/overview.md`](../target_architecture/overview.md) |
+| PAN-BUILT-02 | C4 L1/L2/L3 架构图 | ✅已建 | 手工 | C4 模型 L1 系统上下文 / L2 容器 / L3 组件图（d_ex_core / d_mkt_data / d_ml_train）。内嵌于 c4_l1_l2_views.md（L1/L2）+ c4_component_views.md（L3） | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/c4_l1_l2_views.md`](../target_architecture/c4_l1_l2_views.md) |
+| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | ✅已建 | 手工 | 拓扑/时序/数据流/部署/激活甘特/三层治理等 28 张 Mermaid 图。内嵌于 topology/dataflow/governance/application_flows _views.md | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/topology_views.md`](../target_architecture/topology_views.md) |
 
 ### 08 资产全景（待建）
 
@@ -294,7 +294,7 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-SEC-01 | 威胁模型图 STRIDE | ⏳待建 | 待裁定（YAML 威胁建模 vs 独立表） | STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注） | 规划目录：`10_security_panorama/`<br>生成器：`generate_stride_threat_model.py (待建)`<br>真源待裁定：待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。STRIDE/OWASP 威胁映射已迁入 threat_model.yaml，但缺攻击面/信任边界/数据流威胁标注<br>相关蓝图：[`security_principles.md`](../04_architecture_principles_decisions/security_principles.md) + [`threat_model.yaml`](../../../architecture_model/security/threat_model.yaml) / [`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| PAN-SEC-01 | 威胁模型图 STRIDE | ⏳待建 | 待裁定（YAML 威胁建模 vs 独立表） | STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注） | 规划目录：`10_security_panorama/`<br>生成器：`generate_stride_threat_model.py (待建)`<br>真源待裁定：待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。有 security_architecture.md 但缺攻击面/信任边界/数据流威胁标注<br>相关蓝图：[`security_architecture.md`](../target_architecture/security_architecture.md) / [`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | PAN-SEC-02 | 合规矩阵 | ⏳待建 | 待裁定（depgraph compliance 扩展 vs 独立表） | 规则×系统×状态 合规全景看板 | 规划目录：`10_security_panorama/`<br>生成器：`generate_compliance_matrix.py (待建)`<br>真源待裁定：待裁定：扩展现有 compliance 域 916 模块元信息 vs 独立 compliance_matrix 表。compliance 域有 916 模块但没规则×系统×状态看板<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_compliance/blueprint.md) |
 
 ### 11 风险全景（待建）
@@ -316,13 +316,13 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已迁移至 frontend_principles.md，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_principles.md`](../04_architecture_principles_decisions/frontend_principles.md) |
+| PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已有 TOGAF 视图，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_architecture.md`](../target_architecture/frontend_architecture.md) |
 
-### 根目录（架构债务注册表）
+### _archive
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-BUILT-16 | 架构债务注册表（337项） | ✅已建 | 手工 | 全项目架构债务单一真源，337 个违规点 + 6 个根因 | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`architecture_debt_registry.md`](../architecture_debt_registry.md) |
+| PAN-BUILT-16 | 架构债务注册表（已归档） | ✅已建 | 手工 | 已归档（2026-07-24 裁定#221/#222）。活跃治理改由 ai_first_governance_principles.md + trae_081_audit_dimensions_framework.yaml + architecture_issue_registry.yaml 三件套承接 | 真源：手工<br>生成器：`(手工维护)`<br>产物：`architecture_debt_registry_v2.md` |
 
 ---
 

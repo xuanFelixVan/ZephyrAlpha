@@ -27,7 +27,7 @@ ttl: permanent
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**目标架构视图（TOGAF）— overview 到 dimension-audit-matrix + architecture_model/ + diagrams/**。
+本目录只存放：**目标架构视图（TOGAF）— overview 到 dimension-audit-matrix + architecture_model/**。
 
 ---
 
@@ -176,7 +176,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | [`frontend_principles.md`](../04_architecture_principles_decisions/frontend_principles.md) + [`frontend_model.yaml`](../../../architecture_model/frontend/frontend_model.yaml) | FE | 前端层分层？ | 前端开发者、架构师 | active |
 | `dimension_audit_matrix.md` | Cross-layer | 12维架构质量评分 | 架构师、审计 | active |
 | `session_carryover_schema.md` | Cross-layer | AI会话接续Schema | AI 协作者、架构师 | active |
-| `diagrams/` | All | Mermaid 图源文件 | 所有人 | active |
 
 ---
 
@@ -194,7 +193,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 7. View dependencies / 视图依赖关系
 
-> **📊 视图依赖关系总览**：见 [`diagrams/readme_view_dependency_graph.mmd`](diagrams/readme_view_dependency_graph.mmd)
+> **📊 视图依赖关系总览**：见 [`overview.md`](overview.md) §3 C4 模型（内嵌 mermaid）
 
 **正交视图说明**：原 `04bis` runtime_planes 正交视图已迁移至 [`runtime_planes_principles.md`](../04_architecture_principles_decisions/runtime_planes_principles.md) + [`runtime_planes.yaml`](../../../architecture_model/cross_cutting/runtime_planes.yaml)。能力成熟度方法论见 [`capability_maturity_principles.md`](../04_architecture_principles_decisions/capability_maturity_principles.md)，热力图数据见 [`global_capability_heatmap.md`](../01_global_architecture_diagram/global_capability_heatmap.md)（depgraph 自动生成）。
 
@@ -224,6 +223,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
+| 2026-07-29 | **v3.2.0**：删除 `diagrams/` 下 22 个冗余 .mmd 图源文件（已内嵌至 MD 文档），修复全项目 .mmd 引用。 |
 | 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为53域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-05-02 | v2.1.0：修复 4 项 SSoT 对齐问题。 |

@@ -1,6 +1,6 @@
 ---
 module_id: VIEW-04PRINC-APPFLOWS
-title: 应用流程时序图（价值评估中）/ Application Flow Sequence Diagrams (Pending Value Review)
+title: 应用流程时序图 / Application Flow Sequence Diagrams
 doc_type: architecture_view
 status: Active
 version: 0.1.0
@@ -19,7 +19,7 @@ tags:
 - application-flow
 - methodology
 - pending-review
-summary: 5 张应用流程端到端时序图（订单提交 / 成交回报 / 风控触发 / 组合再平衡 / 异常处置），由 target_architecture/diagrams/ 下独立 .mmd 转换为内嵌 mermaid，供价值评估。评估通过则保留为应用流程时序图单一真源；评估不通过则删除。
+summary: 5 张应用流程端到端时序图（订单提交 / 成交回报 / 风控触发 / 组合再平衡 / 异常处置），原 .mmd 已删除，本文档为应用流程时序图单一真源（内嵌 mermaid）。
 date: '2026-07-22'
 ttl: permanent
 ---

@@ -136,8 +136,8 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 | Level / 级别 | Focus / 关注点 | Usage in this project / 本项目用法 |
 |-------------|--------------|----------------------------------|
-| **L1 — System Context** | System's position in the external world | ✅ Required → `diagrams/c4_l1_system_context.mmd` |
-| **L2 — Container** | Independent deployable units inside the system | ✅ Required → `diagrams/c4_l2_containers.mmd` |
+| **L1 — System Context** | System's position in the external world | ✅ Required → `c4_l1_l2_views.md`（内嵌 mermaid） |
+| **L2 — Container** | Independent deployable units inside the system | ✅ Required → `c4_l1_l2_views.md`（内嵌 mermaid） |
 | **L3 — Component** | Components inside a container | 🟡 As needed, in blueprints |
 | **L4 — Code** | Class/function level | ❌ Not drawn (code itself is documentation)|
 

@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-24'
-total_scripts: 590
+generated_at: '2026-07-29'
+total_scripts: 599
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -446,10 +446,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: backup/minio_tcp_relay.py
-  path: backup/minio_tcp_relay.py
-  description: Spawned on-demand by backup.ps1 CH stage and restore.ps1 ch; killed right after the
+- name: backup/ch_vm_ssh.py
+  path: backup/ch_vm_ssh.py
+  description: 'Usage from PowerShell / Python:'
   domain: backup
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/_data_inventory.py
+  path: ch/_data_inventory.py
+  description: 输出完整数据资产清单，用于"收口"——确认数据完整性 + 识别缺口。
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/_recovery_drill.py
+  path: ch/_recovery_drill.py
+  description: 非破坏性：不碰 live 表，恢复到 _restore_drill 临时库。
+  domain: ch
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -481,6 +497,14 @@ scripts:
 - name: ch/apply_timezone_migration.py
   path: ch/apply_timezone_migration.py
   description: 背景（audit_01_schema_review.md）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/verify_schema_truth.py
+  path: ch/verify_schema_truth.py
+  description: 病根（第一性原理，#ARCH-CH-025 Schema 真源体系收口）：
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -622,6 +646,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/add_deferred_design_edges.py
+  path: governance/add_deferred_design_edges.py
+  description: 为暂缓模块添加设计态依赖边（dep_maturity='design'）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/apply_dataflowgraph.py
   path: governance/apply_dataflowgraph.py
   description: apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI）
@@ -753,6 +785,14 @@ scripts:
 - name: governance/query_module_panorama.py
   path: governance/query_module_panorama.py
   description: 输入 module_id（MOD-XXX），输出该模块在三图（depgraph/dataflow/decision）的所有记录，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/register_deferred_modules.py
+  path: governance/register_deferred_modules.py
+  description: 将42项暂缓模块写入 depgraph 设计态，含3图对齐设计。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1160,7 +1200,7 @@ scripts:
   dimensions: []
 - name: governance/d1_structure/detect_orphan_py.py
   path: governance/d1_structure/detect_orphan_py.py
-  description: detect_orphan_py.py — 项目根目录孤儿 .py 文件检测
+  description: detect_orphan_py.py — 全库孤儿 .py 文件检测
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3558,6 +3598,30 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/oneoff/data_domain_audit_query.py
+  path: governance/oneoff/data_domain_audit_query.py
+  description: 查询场内 depgraph DB 中所有数据相关域的现状：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/data_domain_design_state_complete.py
+  path: governance/oneoff/data_domain_design_state_complete.py
+  description: 执行计划 Step 1-3：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/factor_design_state_complete.py
+  path: governance/oneoff/factor_design_state_complete.py
+  description: 执行计划 Step 1-4：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/repair/apply_verification_results.py
   path: governance/repair/apply_verification_results.py
   description: 1. 批量替换DRIFTED路径（12条已知路径迁移）
@@ -4242,6 +4306,14 @@ scripts:
   path: migration/governance_root_split.py
   description: Orchestrator that delegates import rewriting to ``ast_import_rewriter.py``
   domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/verify_alert_channels.py
+  path: ops/verify_alert_channels.py
+  description: 验证 Alerter 的飞书 webhook 和 SMTP 邮件通道在真实网络调用下能正确触达，
+  domain: ops
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60

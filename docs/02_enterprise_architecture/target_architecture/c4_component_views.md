@@ -1,6 +1,6 @@
 ---
 module_id: VIEW-04PRINC-C4L3
-title: C4-L3 域组件图（价值评估中）/ C4 Level 3 Component Diagrams (Pending Value Review)
+title: C4-L3 域组件图 / C4 Level 3 Component Diagrams
 doc_type: architecture_view
 status: Active
 version: 0.1.0
@@ -21,7 +21,7 @@ tags:
 - component-diagram
 - methodology
 - pending-review
-summary: 3 张 C4-L3 域组件图（D_MKT_DATA / D_EX_CORE / D_ML_TRAIN），由 target_architecture/diagrams/ 下独立 .mmd 转换为内嵌 mermaid，供价值评估。评估通过则保留为 C4-L3 单一真源；评估不通过则删除。
+summary: 3 张 C4-L3 域组件图（D_MKT_DATA / D_EX_CORE / D_ML_TRAIN），原 .mmd 已删除，本文档为 C4-L3 单一真源（内嵌 mermaid）。
 date: '2026-07-22'
 ttl: permanent
 ---
