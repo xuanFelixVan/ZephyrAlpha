@@ -207,7 +207,6 @@ _ARCH_SUBDIR_ORDER = [
     "generated",
     "_archive",
     "archive",
-    "sample",
 ]
 
 
@@ -230,7 +229,7 @@ def _sort_children_key(child_path: str, parent_path: str) -> tuple:
     return (0, 0, child_name)
 
 
-# 目录功能描述（中英文）——参考 path_tree_sample.md 格式
+# 目录功能描述（中英文）
 DIR_DESCRIPTIONS_ZH = {
     "00_overview_entry": "总览入口：导航索引",
     "01_global_architecture_diagram": "全局架构图：路径树/能力热图/跨域矩阵",
@@ -239,7 +238,6 @@ DIR_DESCRIPTIONS_ZH = {
     "04_architecture_principles_decisions": "架构原则与决策：设计规范",
     "_archive": "临时归档：待处理的旧文档",
     "archive": "正式归档：历史文档",
-    "sample": "样板文件：文档格式参考",
     "generated": "自动生成产物：依赖图等",
     "domains": "域依赖图：各功能域Mermaid图",
     "architecture_model": "架构模型：契约/事件/分层模型",
@@ -260,7 +258,6 @@ DIR_DESCRIPTIONS_EN = {
     "04_architecture_principles_decisions": "Architecture principles & decisions",
     "_archive": "Temporary archive: pending old docs",
     "archive": "Formal archive: historical docs",
-    "sample": "Sample files: format reference",
     "generated": "Generated artifacts: dependency graphs",
     "domains": "Domain dependency graphs: Mermaid per domain",
     "architecture_model": "Architecture model: contracts/events/layers",
@@ -427,14 +424,6 @@ FILE_DESC_ZH = {
     "design_vs_production.md": "设计态vs运营态",
     "orphan_cleanup_audit.md": "孤儿清理审计",
     "_update_audit_doc.py": "审计文档更新脚本",
-    # sample
-    "00_overview_entry_sample.md": "总览入口样板",
-    "04_architecture_principles_decisions_sample.md": "架构原则样板",
-    "05_manual_architecture_views_sample.md": "手工架构图样板",
-    "16_d_trading_sample.md": "交易域样板",
-    "6_手工架构图_样板.mmd": "手工架构图样板",
-    "integration_topology_sample.md": "集成拓扑样板",
-    "path_tree_sample.md": "路径树样板",
     # 原位于 target_architecture/ 的文件——部分已迁移至其他目录（04_architecture_principles_decisions/ / 03_modules/ / _archive/），描述保留供跨目录复用
     "architecture_principles.md": "架构原则",
     "overview.md": "概览",

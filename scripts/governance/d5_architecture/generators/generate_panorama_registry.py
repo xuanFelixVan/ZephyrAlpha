@@ -290,19 +290,6 @@ BUILT_PANORAMAS: list[dict] = [
         "artifact_path": "generated/panorama_alignment_report.md",
         "description": "内置 Tarjan SCC 算法检测循环依赖，输出循环报告",
     },
-    # --- sample/ ---
-    {
-        "panorama_id": "PAN-BUILT-21",
-        "name": "样板/模板区（7 个样板文件）",
-        "category": "样板",
-        "category_id": "sample",
-        "data_source": "手工",
-        "source_architecture": "手工",
-        "generator": "(手工维护)",
-        "output_path": "sample/",
-        "artifact_path": "sample/",
-        "description": "给人类写文档时参考的样板（overview_entry_sample / architecture_principles_sample / manual_architecture_views_sample / d_trading_sample / 手工架构图样板 / integration_topology_sample / path_tree_sample）",
-    },
     # --- target_architecture/ ---
     {
         "panorama_id": "PAN-BUILT-01",
@@ -625,7 +612,7 @@ PENDING_PANORAMAS: list[dict] = [
 
 # ============================================================
 # 目录排序键：与目录规划顺序一致
-# 顺序：00→01→02_domain→03→04→05→06→generated→sample→target_architecture→08→...→13→根目录
+# 顺序：00→01→02_domain→03→04→05→06→generated→target_architecture→08→...→13→根目录
 # 根目录文件（02_enterprise_architecture/xxx.md）排在最后
 # ============================================================
 _DIRECTORY_ORDER: list[str] = [
@@ -637,7 +624,6 @@ _DIRECTORY_ORDER: list[str] = [
     "05_dataflow_architecture",
     "06_decision_architecture",
     "generated",
-    "sample",
     "target_architecture",
     "08_asset_panorama",
     "09_runtime_panorama",
@@ -1146,7 +1132,6 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
         "05_dataflow_architecture": "05 数据流架构",
         "06_decision_architecture": "06 决策流架构",
         "generated": "generated 自动生成中间产物",
-        "sample": "sample 样板/模板区",
         "target_architecture": "target_architecture TOGAF 目标架构",
         "08_asset_panorama": "08 资产全景（待建）",
         "09_runtime_panorama": "09 运行时全景（待建）",
@@ -1219,7 +1204,6 @@ def _generate_directory_plan_section() -> list[str]:
     lines.append("| `05_dataflow_architecture/` | 数据流架构（dataflowgraph） | ✅ |")
     lines.append("| `06_decision_architecture/` | 决策流架构（decisiongraph） | ✅ |")
     lines.append("| `generated/` | 自动生成中间产物（域依赖图/对齐报告） | ✅ |")
-    lines.append("| `sample/` | 样板/模板区（7 个样板文件） | ✅ |")
     lines.append("| `target_architecture/` | TOGAF 目标架构视图集 | ✅ |")
     lines.append("| `02_enterprise_architecture/`（根目录） | 架构债务注册表（根目录文件） | ✅ |")
     lines.append("| `08_asset_panorama/` | 资产/契约/数据目录/数据血缘（待建） | ⏳ |")

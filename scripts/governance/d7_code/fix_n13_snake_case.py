@@ -62,22 +62,10 @@ RENAMES: list[tuple[str, str]] = [
     ("docs/08_knowledge/index.md", "docs/08_knowledge/index.md"),
     ("docs/_working/audit/index.md", "docs/_working/audit/index.md"),
     ("docs/_working/audit/state/index.md", "docs/_working/audit/state/index.md"),
-    # Chinese filenames → English snake_case (4 files, ai_team_mode_full_config.md 已删除)
+    # Chinese filenames → English snake_case (1 file, ai_team_mode_full_config.md 已删除)
     (
         "docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md",
         "docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md",
-    ),
-    (
-        "docs/02_enterprise_architecture/sample/00_overview_entry_sample.md",
-        "docs/02_enterprise_architecture/sample/00_overview_entry_sample.md",
-    ),
-    (
-        "docs/02_enterprise_architecture/sample/04_architecture_principles_decisions_sample.md",
-        "docs/02_enterprise_architecture/sample/04_architecture_principles_decisions_sample.md",
-    ),
-    (
-        "docs/02_enterprise_architecture/sample/05_manual_architecture_views_sample.md",
-        "docs/02_enterprise_architecture/sample/05_manual_architecture_views_sample.md",
     ),
     # kebab-case → snake_case (1 file, schedule_state.json 已删除)
     (
@@ -106,9 +94,6 @@ REPLACEMENTS: list[tuple[str, str, str]] = [
     ("index.md", "index.md", "index.md → index.md"),
     # Chinese filenames → English (ai_team_mode_full_config.md 已删除)
     ("dependency_path_panorama.md", "dependency_path_panorama.md", "中文→英文"),
-    ("00_overview_entry_sample.md", "00_overview_entry_sample.md", "中文→英文"),
-    ("04_architecture_principles_decisions_sample.md", "04_architecture_principles_decisions_sample.md", "中文→英文"),
-    ("05_manual_architecture_views_sample.md", "05_manual_architecture_views_sample.md", "中文→英文"),
     # kebab-case → snake_case (schedule_state.json 已删除)
     ("blueprint_registry.yaml", "blueprint_registry.yaml", "kebab→snake"),
     ("auto_fix_config.yaml", "auto_fix_config.yaml", "kebab→snake"),
