@@ -267,7 +267,7 @@ class TestFailClosedGitDiffFailure:
             tmp_path,
             "src/zephyr/gov_enforcement/commit_gates/__create_guard_test_fake_20260630__.py",
         )
-        # mock gateway._run_git 返回 returncode=1（git diff 失败）
+        # mock gateway.run_git 返回 returncode=1（git diff 失败）
         gw = MagicMock()
         gw.project_root = tmp_path
         mock_result = MagicMock()

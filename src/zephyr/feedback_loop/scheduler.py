@@ -423,8 +423,13 @@ class FeedbackLoopScheduler:
 
     @property
     def thread(self):
-        """Stage 4 公共化。"""
+        """只读：thread（Stage 4 公共化）。"""
         return self._thread
+
+    @thread.setter
+    def thread(self, value):
+        """写入：thread（Stage 4 公共化）。"""
+        self._thread = value
 
     @property
     def consecutive_errors(self) -> int:
@@ -437,8 +442,13 @@ class FeedbackLoopScheduler:
 
     @property
     def cycle_count(self) -> int:
-        """Stage 4 公共化。"""
+        """只读：cycle_count（Stage 4 公共化）。"""
         return self._cycle_count
+
+    @cycle_count.setter
+    def cycle_count(self, value):
+        """写入：cycle_count（Stage 4 公共化）。"""
+        self._cycle_count = value
 
     # ── 单例管理 ──────────────────────────────────────────────────
 

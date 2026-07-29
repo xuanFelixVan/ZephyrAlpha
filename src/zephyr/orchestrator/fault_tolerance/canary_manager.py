@@ -28,6 +28,11 @@ class CanaryManager:
         """只读：canary_weight（Stage 4 公共化）。"""
         return self._canary_weight
 
+    @canary_weight.setter
+    def canary_weight(self, value):
+        """写入：canary_weight（Stage 4 公共化）。"""
+        self._canary_weight = value
+
 
     def set_weight(self, weight: float) -> None:
         self._canary_weight = min(1.0, max(0.0, weight))

@@ -69,7 +69,7 @@ class TestAuditAdmissionControllerE2E:
                 "behavioral-auditor": True,
             }
             controller = AuditAdmissionController()
-            controller._modules["orphan-judge"] = None
+            controller.modules["orphan-judge"] = None
             result = controller.check_admission("write", "/some/path")
             assert isinstance(result, AdmissionResult)
             assert result.allowed is False
@@ -105,7 +105,7 @@ class TestResourceAwarePoolE2E:
             future = pool.submit("file_scan", lambda: "cpu_result")
             result = future.result(timeout=5)
             assert result == "cpu_result"
-            assert future in pool._cpu_futures
+            assert future in pool.cpu_futures
         finally:
             pool.shutdown()
 
@@ -115,7 +115,7 @@ class TestResourceAwarePoolE2E:
             future = pool.submit("llm_inference", lambda: "gpu_result")
             result = future.result(timeout=5)
             assert result == "gpu_result"
-            assert future in pool._gpu_futures
+            assert future in pool.gpu_futures
         finally:
             pool.shutdown()
 
@@ -157,7 +157,7 @@ class TestResourceAwarePoolE2E:
         pool = ResourceAwarePool(cpu_workers=2, gpu_workers=1)
         pool.submit("file_scan", lambda: "done")
         pool.shutdown()
-        assert pool._shutdown is True
+        assert pool.shutdown is True
         with pytest.raises(RuntimeError, match="shut down"):
             pool.submit("file_scan", lambda: "should_fail")
 
@@ -176,7 +176,7 @@ class TestResourceAwarePoolE2E:
 
             assert cpu_results == [0, 2, 4, 6]
             assert gpu_results == [10, 11, 12]
-            assert len(pool._cpu_futures) == 4
-            assert len(pool._gpu_futures) == 3
+            assert len(pool.cpu_futures) == 4
+            assert len(pool.gpu_futures) == 3
         finally:
             pool.shutdown()

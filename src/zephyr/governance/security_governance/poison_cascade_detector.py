@@ -58,6 +58,11 @@ class PoisonCascadeDetector:
         """只读：suspicion_threshold（Stage 4 公共化）。"""
         return self._suspicion_threshold
 
+    @suspicion_threshold.setter
+    def suspicion_threshold(self, value):
+        """写入：suspicion_threshold（Stage 4 公共化）。"""
+        self._suspicion_threshold = value
+
 
     def scan(self, source: str, target: str, content: str, tokens: int = 0) -> PoisonEvent:
         score = self._compute_suspicion(content)

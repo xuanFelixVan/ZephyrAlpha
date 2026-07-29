@@ -57,10 +57,20 @@ class EnvWatcher:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
     @property
     def sentinel_path(self):
         """只读：sentinel_path（Stage 4 公共化）。"""
         return self._sentinel_path
+
+    @sentinel_path.setter
+    def sentinel_path(self, value):
+        """写入：sentinel_path（Stage 4 公共化）。"""
+        self._sentinel_path = value
 
 
     def check_for_changes(self) -> EnvChangeAlert | None:

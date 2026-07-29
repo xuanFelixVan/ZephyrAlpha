@@ -157,9 +157,9 @@ class TestProcessOneGateClosed:
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)
         # 注入 mock validator 探针：若被调则证明门禁失效
         mock_validator = MagicMock()
-        consumer._validator = mock_validator
+        consumer.validator = mock_validator
         qf = _make_queue_file(tmp_path)
-        consumer._process_one(qf)
+        consumer.process_one(qf)
         assert not qf.exists(), "gate closed should unlink queue file"
         mock_validator.run_adversarial_session.assert_not_called()
 
@@ -170,7 +170,7 @@ class TestProcessOneGateOpenCircuitClosed:
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)
         # mock circuit：before_run 不抛、after_run 记录
         mock_circuit = MagicMock()
-        consumer._circuit = mock_circuit
+        consumer.circuit = mock_circuit
         # mock validator：返回 fake report
         fake_report = MagicMock()
         fake_report.blocked = 14
@@ -179,10 +179,10 @@ class TestProcessOneGateOpenCircuitClosed:
         fake_report.total = 14
         mock_validator = MagicMock()
         mock_validator.run_adversarial_session.return_value = fake_report
-        consumer._validator = mock_validator
+        consumer.validator = mock_validator
 
         qf = _make_queue_file(tmp_path, "cafebabe1234")
-        consumer._process_one(qf)
+        consumer.process_one(qf)
 
         mock_circuit.before_run.assert_called_once()
         mock_validator.run_adversarial_session.assert_called_once()
@@ -203,12 +203,12 @@ class TestProcessOneGateOpenCircuitOpen:
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)
         mock_circuit = MagicMock()
         mock_circuit.before_run.side_effect = CircuitBreakerOpenError("OPEN")
-        consumer._circuit = mock_circuit
+        consumer.circuit = mock_circuit
         mock_validator = MagicMock()
-        consumer._validator = mock_validator
+        consumer.validator = mock_validator
 
         qf = _make_queue_file(tmp_path, "feedface5678")
-        consumer._process_one(qf)
+        consumer.process_one(qf)
 
         mock_circuit.before_run.assert_called_once()
         mock_validator.run_adversarial_session.assert_not_called()
@@ -223,16 +223,16 @@ class TestConsumerLifecycle:
     def test_start_idempotent(self, tmp_path):
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)
         consumer.start()
-        assert consumer._started is True
+        assert consumer.started is True
         consumer.start()  # 幂等，不应重复订阅
-        assert consumer._started is True
+        assert consumer.started is True
         consumer.stop()
-        assert consumer._started is False
+        assert consumer.started is False
 
     def test_drain_empty_dir_no_error(self, tmp_path):
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)
         # 空目录不应抛
-        consumer._drain_queue()
+        consumer.drain_queue()
         # 不存在的目录也不抛
-        consumer._queue_dir = tmp_path / "nonexistent"
-        consumer._drain_queue()
+        consumer.queue_dir = tmp_path / "nonexistent"
+        consumer.drain_queue()

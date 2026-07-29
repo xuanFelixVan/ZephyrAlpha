@@ -62,6 +62,11 @@ class ContextGuard:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     def validate_access(self, task_card: dict[str, Any], actual_touched: list[str]) -> ContextGuardResult:
         allowed_touch = set(task_card.get("allowed_touch", []))

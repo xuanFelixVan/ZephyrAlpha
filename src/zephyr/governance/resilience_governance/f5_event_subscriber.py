@@ -506,13 +506,23 @@ class F5EventSubscriber:
 
     @property
     def bus(self) -> EventBusBackpressure:
-        """事件总线实例（Stage 4 公共化，read-only）。"""
+        """只读：bus（Stage 4 公共化）。"""
         return self._bus
+
+    @bus.setter
+    def bus(self, value):
+        """写入：bus（Stage 4 公共化）。"""
+        self._bus = value
 
     @property
     def handler_registry(self) -> dict[str, Any]:
-        """处理器注册表快照（Stage 4 公共化，read-only）。"""
-        return dict(self._handler_registry)
+        """只读：handler_registry（Stage 4 公共化）。"""
+        return self._handler_registry
+
+    @handler_registry.setter
+    def handler_registry(self, value):
+        """写入：handler_registry（Stage 4 公共化）。"""
+        self._handler_registry = value
 
     @property
     def max_log_entries(self) -> int:

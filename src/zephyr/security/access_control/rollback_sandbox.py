@@ -46,6 +46,11 @@ class RollbackSandbox:
         """只读：operations（Stage 4 公共化）。"""
         return self._operations
 
+    @operations.setter
+    def operations(self, value):
+        """写入：operations（Stage 4 公共化）。"""
+        self._operations = value
+
 
     def isolate(self, op_id: str, before_data: str) -> SandboxedOperation:
         op = SandboxedOperation(op_id=op_id, before_data=before_data)

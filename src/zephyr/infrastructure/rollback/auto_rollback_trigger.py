@@ -159,6 +159,11 @@ class AutoRollbackTrigger:
         """只读：max_retries（Stage 4 公共化）。"""
         return self._max_retries
 
+    @max_retries.setter
+    def max_retries(self, value):
+        """写入：max_retries（Stage 4 公共化）。"""
+        self._max_retries = value
+
 
     def classify(self, result: AutoGuardResult) -> TriggerDecision:
         category = self._classify_failure(result)

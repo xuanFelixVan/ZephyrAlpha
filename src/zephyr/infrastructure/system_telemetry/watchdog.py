@@ -51,6 +51,12 @@ class Watchdog:
         self._panic_mode = False
 
     @property
+    def external_file(self):
+        """只读：external_file（Stage 4 公共化）。"""
+        return self._external_file
+
+
+    @property
     def panic_mode(self) -> bool:
         return self._panic_mode
 

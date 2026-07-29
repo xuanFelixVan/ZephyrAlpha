@@ -147,6 +147,11 @@ class BlastRadiusAnalyzer:
         """只读：max_depth（Stage 4 公共化）。"""
         return self._max_depth
 
+    @max_depth.setter
+    def max_depth(self, value):
+        """写入：max_depth（Stage 4 公共化）。"""
+        self._max_depth = value
+
 
     def _ensure_loaded(self) -> None:
         """延迟加载 depgraph 并构建反向依赖索引."""

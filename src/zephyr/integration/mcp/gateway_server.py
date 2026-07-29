@@ -292,11 +292,43 @@ class MCPGateway(BaseMCPServer):
 
         self._register_gateway_tools()
 
+    @property
+    def rate_limiter(self):
+        """只读：rate_limiter（Stage 4 公共化）。"""
+        return self._rate_limiter
+
+    @rate_limiter.setter
+    def rate_limiter(self, value):
+        """写入：rate_limiter（Stage 4 公共化）。"""
+        self._rate_limiter = value
+
+
+    def route_tool_name(self, tool_name) -> str | None:
+        """公共接口：route_tool_name（Stage 4 公共化）。"""
+        return self._route_tool_name(tool_name)
+
+
+    @property
+    def routes(self):
+        """只读：routes（Stage 4 公共化）。"""
+        return self._routes
+
+    @routes.setter
+    def routes(self, value):
+        """写入：routes（Stage 4 公共化）。"""
+        self._routes = value
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def server_instances(self) -> dict[str, BaseMCPServer | Any]:
         """只读：server_instances（Stage 4 公共化）。"""
         return self._server_instances
+
+    @server_instances.setter
+    def server_instances(self, value):
+        """写入：server_instances（Stage 4 公共化）。"""
+        self._server_instances = value
 
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -305,10 +337,20 @@ class MCPGateway(BaseMCPServer):
         """只读：audit（Stage 4 公共化）。"""
         return self._audit
 
+    @audit.setter
+    def audit(self, value):
+        """写入：audit（Stage 4 公共化）。"""
+        self._audit = value
+
     @property
     def circuit_breakers(self) -> dict[str, CircuitBreaker]:
         """只读：circuit_breakers（Stage 4 公共化）。"""
         return self._circuit_breakers
+
+    @circuit_breakers.setter
+    def circuit_breakers(self, value):
+        """写入：circuit_breakers（Stage 4 公共化）。"""
+        self._circuit_breakers = value
 
 
     def _init_server_handlers(self) -> None:

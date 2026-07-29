@@ -172,7 +172,46 @@ class DefaultSecurityGateway(SecurityGateway):
         self._findings: list[ScanFinding] = []
         self._l1_clean = True
 
-    def lsg_full_scan(self, content, metadata) -> str | None:
+    @staticmethod
+    def filter_backtick_escape(content) -> str:
+        """公共接口：filter_backtick_escape（Stage 4 公共化）。"""
+        return __class__._filter_backtick_escape(content)
+
+
+    @property
+    def findings(self) -> list[ScanFinding]:
+        """只读：findings（Stage 4 公共化）。"""
+        return self._findings
+
+    @findings.setter
+    def findings(self, value):
+        """写入：findings（Stage 4 公共化）。"""
+        self._findings = value
+
+
+    @property
+    def l1_clean(self):
+        """只读：l1_clean（Stage 4 公共化）。"""
+        return self._l1_clean
+
+    @l1_clean.setter
+    def l1_clean(self, value):
+        """写入：l1_clean（Stage 4 公共化）。"""
+        self._l1_clean = value
+
+
+    @property
+    def context(self):
+        """只读：context（Stage 4 公共化）。"""
+        return self._context
+
+    @context.setter
+    def context(self, value):
+        """写入：context（Stage 4 公共化）。"""
+        self._context = value
+
+
+    def lsg_full_scan(self, content, metadata=None) -> str | None:
         """公共接口：lsg_full_scan（Stage 4 公共化）。"""
         return self._lsg_full_scan(content, metadata)
 

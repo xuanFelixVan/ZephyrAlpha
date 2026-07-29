@@ -61,7 +61,7 @@ class TestOrchestratorLSGIntegration:
         from zephyr.orchestrator.agent_orchestrator import AgentOrchestrator
 
         ao = AgentOrchestrator.__new__(AgentOrchestrator)
-        result = ao._lsg_scan_agent_action(
+        result = ao.lsg_scan_agent_action(
             "unknown_dangerous_tool",
             {"command": "rm -rf /"},
         )

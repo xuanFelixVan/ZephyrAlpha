@@ -75,7 +75,7 @@ def _is_tracked_in_head(gateway, rel: str) -> bool:
     返回 True（假定已跟踪，避免误阻断）。
     """
     try:
-        result = gateway._run_git(["git", "ls-tree", "HEAD", rel])
+        result = gateway.run_git(["git", "ls-tree", "HEAD", rel])
         return result.returncode == 0 and bool(result.stdout.strip())
     except (subprocess.TimeoutExpired, OSError):
         return True
@@ -178,7 +178,7 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
             continue
         mid = m.group(1)
         try:
-            result = gateway._run_git(["git", "grep", "-l", "-F", mid, "--", "*.py"])
+            result = gateway.run_git(["git", "grep", "-l", "-F", mid, "--", "*.py"])
         except (subprocess.TimeoutExpired, OSError):
             continue  # fail-open on git grep error
         if result.returncode != 0:

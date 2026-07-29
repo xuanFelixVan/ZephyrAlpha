@@ -85,5 +85,5 @@ def make_mock_gateway(
         result.stdout = "\n".join(diff_lines)
         return result
 
-    gw._run_git.side_effect = _run_git
+    gw.run_git.side_effect = _run_git
     return gw

@@ -102,7 +102,7 @@ def _get_registered_markers(registry: dict[str, Any]) -> frozenset[str]:
 def _get_staged_py_files(gateway) -> list[str]:
     """获取所有 staged .py 文件（新增+修改）。git 异常时返回空列表（fail-open）。"""
     try:
-        r = gateway._run_git(["git", "diff", "--cached", "--name-only"])
+        r = gateway.run_git(["git", "diff", "--cached", "--name-only"])
         if r.returncode != 0:
             logger.warning("NOQA-VALIDATION fail-open: git diff 失败(rc=%d)。", r.returncode)
             return []
@@ -118,7 +118,7 @@ def _get_staged_py_files(gateway) -> list[str]:
 def _resolve_worktree_root(gateway) -> str:
     """获取 worktree root 绝对路径，失败回退 gateway.project_root。"""
     try:
-        r = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+        r = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if r.returncode == 0:
             return r.stdout.strip()
     except Exception:  # noqa: BLE001

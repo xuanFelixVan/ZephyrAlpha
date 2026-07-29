@@ -69,20 +69,40 @@ class DreamCycle:
         """只读：archive_dir（Stage 4 公共化）。"""
         return self._archive_dir
 
+    @archive_dir.setter
+    def archive_dir(self, value):
+        """写入：archive_dir（Stage 4 公共化）。"""
+        self._archive_dir = value
+
     @property
     def audit_log_dir(self):
         """只读：audit_log_dir（Stage 4 公共化）。"""
         return self._audit_log_dir
+
+    @audit_log_dir.setter
+    def audit_log_dir(self, value):
+        """写入：audit_log_dir（Stage 4 公共化）。"""
+        self._audit_log_dir = value
 
     @property
     def episodic_dir(self):
         """只读：episodic_dir（Stage 4 公共化）。"""
         return self._episodic_dir
 
+    @episodic_dir.setter
+    def episodic_dir(self, value):
+        """写入：episodic_dir（Stage 4 公共化）。"""
+        self._episodic_dir = value
+
     @property
     def semantic_dir(self):
         """只读：semantic_dir（Stage 4 公共化）。"""
         return self._semantic_dir
+
+    @semantic_dir.setter
+    def semantic_dir(self, value):
+        """写入：semantic_dir（Stage 4 公共化）。"""
+        self._semantic_dir = value
 
 
     def trigger_archival(self) -> DreamReport:

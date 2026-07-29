@@ -146,7 +146,7 @@ class WorktreePool:
     # ------------------------------------------------------------------
     # 内部辅助
     # ------------------------------------------------------------------
-    def _run_git(
+    def run_git(
         self,
         cmd: list[str],
         cwd: str | Path | None = None,
@@ -167,9 +167,13 @@ class WorktreePool:
             env=env,
         )
 
+    def _run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd, cwd)
+
     def _current_head_sha(self) -> str | None:
         """获取主工作目录当前 HEAD 的 commit SHA，失败返回 None。"""
-        r = self._run_git(["git", "rev-parse", "HEAD"])
+        r = self.run_git(["git", "rev-parse", "HEAD"])
         if r.returncode != 0:
             logger.warning(
                 "WorktreePool: git rev-parse HEAD failed: %s",
@@ -206,7 +210,7 @@ class WorktreePool:
         用于验证 pool worktree 是否仍被 git 识别（防止孤儿目录误判）。
         路径比较用 os.path.normcase 标准化（Windows 大小写不敏感）。
         """
-        r = self._run_git(["git", "worktree", "list", "--porcelain"])
+        r = self.run_git(["git", "worktree", "list", "--porcelain"])
         if r.returncode != 0:
             return False
         target = os.path.normcase(str(path))
@@ -234,21 +238,21 @@ class WorktreePool:
         pool_branch = f"{_POOL_BRANCH_PREFIX}{pool_id}"
 
         # Step 1: git worktree remove --force
-        r = self._run_git(
+        r = self.run_git(
             ["git", "worktree", "remove", "--force", str(pool_path)]
         )
         if r.returncode != 0:
             # Step 2: prune + 物理删除 fallback
-            self._run_git(["git", "worktree", "prune"])
+            self.run_git(["git", "worktree", "prune"])
             if pool_path.exists():
                 try:
                     shutil.rmtree(str(pool_path), ignore_errors=True)
                 except Exception:  # noqa: BLE001 — best-effort cleanup
                     pass
-            self._run_git(["git", "worktree", "prune"])
+            self.run_git(["git", "worktree", "prune"])
 
         # Step 3: 删除分支（force，因可能未 merge）
-        self._run_git(["git", "branch", "-D", pool_branch])
+        self.run_git(["git", "branch", "-D", pool_branch])
 
         cleaned = not self._worktree_registered(pool_path) and not pool_path.exists()
         if cleaned:
@@ -328,7 +332,7 @@ class WorktreePool:
             # 每次 0.5s 间隔。同类问题见 worktree_manager._force_rmtree 的 onerror 重试。
             r_move = None
             for _attempt in range(3):
-                r_move = self._run_git(
+                r_move = self.run_git(
                     ["git", "worktree", "move", str(pool_path), str(session_path)]
                 )
                 if r_move.returncode == 0:
@@ -346,7 +350,7 @@ class WorktreePool:
                 return None
 
             # Step 2: git branch -m <pool_branch> <session_branch>
-            r_branch = self._run_git(
+            r_branch = self.run_git(
                 ["git", "branch", "-m", pool_branch, session_branch]
             )
             if r_branch.returncode != 0:
@@ -356,7 +360,7 @@ class WorktreePool:
                     pool_id, session_id, r_branch.stderr.strip(),
                 )
                 # 回滚：将 worktree 移回 pool 路径
-                r_back = self._run_git(
+                r_back = self.run_git(
                     ["git", "worktree", "move", str(session_path), str(pool_path)]
                 )
                 if r_back.returncode != 0:
@@ -420,7 +424,7 @@ class WorktreePool:
                 )
                 continue
 
-            r = self._run_git(
+            r = self.run_git(
                 [
                     "git", "worktree", "add",
                     "-b", pool_branch,
@@ -506,7 +510,7 @@ class WorktreePool:
                 pool_path = self.pool_dir / pool_id
                 head_sha = ""
                 if pool_path.exists():
-                    r = self._run_git(
+                    r = self.run_git(
                         ["git", "rev-parse", "--short", "HEAD"],
                         cwd=str(pool_path),
                     )

@@ -263,6 +263,12 @@ class CostBreakdown:
 @dataclass
 class CapabilityPassport:
     passport_version: str = "1.0.0"
+
+    @staticmethod
+    def from_dict(data) -> CapabilityPassport:
+        """公共接口：from_dict（Stage 4 公共化）。"""
+        return __class__._from_dict(data)
+
     model_id: str = ""
     exam_timestamp: str = ""
     exam_duration_seconds: float = 0.0

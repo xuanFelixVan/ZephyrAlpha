@@ -157,7 +157,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
     """
     # 1. 获取 staged 新增 .py 文件
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -192,7 +192,7 @@ def _resolve_worktree_root(gateway) -> str:
         worktree 根目录绝对路径字符串。
     """
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:

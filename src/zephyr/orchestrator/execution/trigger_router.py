@@ -294,10 +294,20 @@ class TriggerRouter:
         """只读：injected_handlers（Stage 4 公共化）。"""
         return self._injected_handlers
 
+    @injected_handlers.setter
+    def injected_handlers(self, value):
+        """写入：injected_handlers（Stage 4 公共化）。"""
+        self._injected_handlers = value
+
     @property
     def specs(self) -> dict[str, TriggerHandlerSpec]:
         """只读：specs（Stage 4 公共化）。"""
         return self._specs
+
+    @specs.setter
+    def specs(self, value):
+        """写入：specs（Stage 4 公共化）。"""
+        self._specs = value
 
 
     # ------------------------------------------------------------------

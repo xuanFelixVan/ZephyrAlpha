@@ -51,6 +51,8 @@ __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 # Re-export GateViolationError / GateResult for backward compat
 
 from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolationError
+is_valid_transition = _is_valid_transition  # public alias（Stage 4 公共化）
+
 
 # PENDING -> IN_PROGRESS 转换时触发的门禁 ID
 

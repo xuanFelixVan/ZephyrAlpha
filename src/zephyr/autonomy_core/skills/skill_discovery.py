@@ -72,21 +72,39 @@ class SkillDiscovery:
     """Skill 发现——从模块蓝图自动发现可生成 Skill 的模块."""
 
     @staticmethod
-    def parse_frontmatter(md_file) -> dict[str, Any]:
-        """公共接口：parse_frontmatter（Stage 4 公共化，委托到 _parse_frontmatter）。"""
-        return _parse_frontmatter(md_file)
+    def parse_frontmatter(md_file: Path) -> dict[str, Any]:
+        content = md_file.read_text(encoding='utf-8')
+        if not content.startswith('---'):
+            return {}
+        parts = content.split('---', 2)
+        if len(parts) < 3:
+            return {}
+        try:
+            return yaml.safe_load(parts[1]) or {}
+        except yaml.YAMLError:
+            return {}
 
 
     @staticmethod
-    def extract_module_name(content, bp_file) -> str:
-        """公共接口：extract_module_name（Stage 4 公共化，委托到 _extract_module_name）。"""
-        return _extract_module_name(content, bp_file)
+    def extract_module_name(content: str, bp_file: Path) -> str:
+        name = SkillDiscovery._find_mod_id_in_header(content)
+        if name:
+            return name
+        name = SkillDiscovery._find_mod_id_in_blueprint_line(content)
+        if name:
+            return name
+        name = SkillDiscovery._derive_from_parent_dir(bp_file)
+        if name:
+            return name
+        return SkillDiscovery._derive_from_path_parts(bp_file)
 
 
     @staticmethod
-    def derive_skill_id(module_name) -> str:
-        """公共接口：derive_skill_id（Stage 4 公共化，委托到 _derive_skill_id）。"""
-        return _derive_skill_id(module_name)
+    def derive_skill_id(module_name: str) -> str:
+        if not module_name:
+            return ''
+        short = module_name.split('-')[-1] if '-' in module_name else module_name
+        return f'SKILL-DOM-{short[:3].upper()}-001'
 
 
     @staticmethod
@@ -208,16 +226,8 @@ class SkillDiscovery:
 
     @staticmethod
     def _extract_module_name(content: str, bp_file: Path) -> str:
-        name = SkillDiscovery._find_mod_id_in_header(content)
-        if name:
-            return name
-        name = SkillDiscovery._find_mod_id_in_blueprint_line(content)
-        if name:
-            return name
-        name = SkillDiscovery._derive_from_parent_dir(bp_file)
-        if name:
-            return name
-        return SkillDiscovery._derive_from_path_parts(bp_file)
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return SkillDiscovery.extract_module_name(content, bp_file)
 
     @staticmethod
     def _find_mod_id_in_header(content: str) -> str:
@@ -278,23 +288,13 @@ class SkillDiscovery:
 
     @staticmethod
     def _derive_skill_id(module_name: str) -> str:
-        if not module_name:
-            return ""
-        short = module_name.split("-")[-1] if "-" in module_name else module_name
-        return f"SKILL-DOM-{short[:3].upper()}-001"
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return SkillDiscovery.derive_skill_id(module_name)
 
     @staticmethod
     def _parse_frontmatter(md_file: Path) -> dict[str, Any]:
-        content = md_file.read_text(encoding="utf-8")
-        if not content.startswith("---"):
-            return {}
-        parts = content.split("---", 2)
-        if len(parts) < 3:
-            return {}
-        try:
-            return yaml.safe_load(parts[1]) or {}
-        except yaml.YAMLError:
-            return {}
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return SkillDiscovery.parse_frontmatter(md_file)
 
 
 __all__ = ["DiscoveryGap", "DiscoveryResult", "SkillDiscovery"]

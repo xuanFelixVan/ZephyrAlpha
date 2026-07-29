@@ -52,6 +52,22 @@ class DedupExtractor(BaseFixer):
         )
         self._min_occurrences = min_occurrences
 
+    def normalize_code(self, code) -> str:
+        """公共接口：normalize_code（Stage 4 公共化）。"""
+        return self._normalize_code(code)
+
+
+    @property
+    def min_occurrences(self):
+        """只读：min_occurrences（Stage 4 公共化）。"""
+        return self._min_occurrences
+
+    @min_occurrences.setter
+    def min_occurrences(self, value):
+        """写入：min_occurrences（Stage 4 公共化）。"""
+        self._min_occurrences = value
+
+
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
         repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）

@@ -84,20 +84,40 @@ class TaskQueue:
         """只读：config（Stage 4 公共化）。"""
         return self._config
 
+    @config.setter
+    def config(self, value):
+        """写入：config（Stage 4 公共化）。"""
+        self._config = value
+
     @property
     def data_dir(self):
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
+
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
 
     @property
     def dispatch_handler(self) -> Callable[[QueueItem], bool] | None:
         """只读：dispatch_handler（Stage 4 公共化）。"""
         return self._dispatch_handler
 
+    @dispatch_handler.setter
+    def dispatch_handler(self, value):
+        """写入：dispatch_handler（Stage 4 公共化）。"""
+        self._dispatch_handler = value
+
     @property
     def items(self) -> list[QueueItem]:
         """只读：items（Stage 4 公共化）。"""
         return self._items
+
+    @items.setter
+    def items(self, value):
+        """写入：items（Stage 4 公共化）。"""
+        self._items = value
 
 
     def enqueue(self, task_id: str, priority: str = "P2") -> QueueItem:

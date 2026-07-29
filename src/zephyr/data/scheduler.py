@@ -348,8 +348,13 @@ class IntegratorScheduler:
 
     @property
     def providers(self) -> dict:
-        """只读：已注册的 Provider 字典（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：providers（Stage 4 公共化）。"""
         return self._providers
+
+    @providers.setter
+    def providers(self, value):
+        """写入：providers（Stage 4 公共化）。"""
+        self._providers = value
 
     @property
     def started(self) -> bool:
@@ -371,28 +376,53 @@ class IntegratorScheduler:
 
     @property
     def progress_store(self):
-        """只读：进度存储（Stage 4 公共化）。"""
+        """只读：progress_store（Stage 4 公共化）。"""
         return self._progress_store
+
+    @progress_store.setter
+    def progress_store(self, value):
+        """写入：progress_store（Stage 4 公共化）。"""
+        self._progress_store = value
 
     @property
     def tasks(self) -> list:
-        """读写：任务清单（Stage 4 公共化，返回可变 list 引用）。"""
+        """只读：tasks（Stage 4 公共化）。"""
         return self._tasks
+
+    @tasks.setter
+    def tasks(self, value):
+        """写入：tasks（Stage 4 公共化）。"""
+        self._tasks = value
 
     @property
     def event_handlers(self) -> dict:
-        """只读：事件处理器字典（Stage 4 公共化）。"""
+        """只读：event_handlers（Stage 4 公共化）。"""
         return self._event_handlers
+
+    @event_handlers.setter
+    def event_handlers(self, value):
+        """写入：event_handlers（Stage 4 公共化）。"""
+        self._event_handlers = value
 
     @property
     def schedules(self) -> dict:
-        """读写：调度计划字典（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：schedules（Stage 4 公共化）。"""
         return self._schedules
+
+    @schedules.setter
+    def schedules(self, value):
+        """写入：schedules（Stage 4 公共化）。"""
+        self._schedules = value
 
     @property
     def policy_registry(self):
-        """只读：策略注册表（Stage 4 公共化）。"""
+        """只读：policy_registry（Stage 4 公共化）。"""
         return self._policy_registry
+
+    @policy_registry.setter
+    def policy_registry(self, value):
+        """写入：policy_registry（Stage 4 公共化）。"""
+        self._policy_registry = value
 
     # ============== 事件订阅 ==============
 

@@ -65,6 +65,11 @@ class WorkOrchestrator:
         """只读：items（Stage 4 公共化）。"""
         return self._items
 
+    @items.setter
+    def items(self, value):
+        """写入：items（Stage 4 公共化）。"""
+        self._items = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -72,10 +77,20 @@ class WorkOrchestrator:
         """只读：slots（Stage 4 公共化）。"""
         return self._slots
 
+    @slots.setter
+    def slots(self, value):
+        """写入：slots（Stage 4 公共化）。"""
+        self._slots = value
+
     @property
     def slots_used(self) -> dict[str, int]:
         """只读：slots_used（Stage 4 公共化）。"""
         return self._slots_used
+
+    @slots_used.setter
+    def slots_used(self, value):
+        """写入：slots_used（Stage 4 公共化）。"""
+        self._slots_used = value
 
 
     def register_dag(self, dag: WorkDAG) -> None:

@@ -97,6 +97,11 @@ class ConfigValidator:
         """只读：schema_path（Stage 4 公共化）。"""
         return self._schema_path
 
+    @schema_path.setter
+    def schema_path(self, value):
+        """写入：schema_path（Stage 4 公共化）。"""
+        self._schema_path = value
+
 
     def validate(
         self,

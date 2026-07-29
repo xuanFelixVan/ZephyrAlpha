@@ -116,6 +116,11 @@ class ImportFixer(BaseFixer):
             description="修复损坏 import",
         )
 
+    def try_fix_module(self, module, src_root) -> str | None:
+        """公共接口：try_fix_module（Stage 4 公共化）。"""
+        return self._try_fix_module(module, src_root)
+
+
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
         src_root = REPO_ROOT / "src"  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）

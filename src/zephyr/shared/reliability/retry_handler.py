@@ -81,11 +81,15 @@ class RetryHandler:
         """只读：config（Stage 4 公共化）。"""
         return self._config
 
+    @config.setter
+    def config(self, value):
+        """写入：config（Stage 4 公共化）。"""
+        self._config = value
+
 
     @staticmethod
-    def is_unrecoverable(exc) -> bool:
-        """公共接口：is_unrecoverable（Stage 4 公共化，委托到 _is_unrecoverable）。"""
-        return _is_unrecoverable(exc)
+    def is_unrecoverable(exc: Exception) -> bool:
+        return isinstance(exc, UNRECOVERABLE_EXCEPTIONS)
 
 
     def execute(self, func: Callable, *args: Any, **kwargs: Any) -> RetryResult:
@@ -141,4 +145,5 @@ class RetryHandler:
 
     @staticmethod
     def _is_unrecoverable(exc: Exception) -> bool:
-        return isinstance(exc, UNRECOVERABLE_EXCEPTIONS)
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return RetryHandler.is_unrecoverable(exc)

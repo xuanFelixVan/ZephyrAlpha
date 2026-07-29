@@ -83,6 +83,11 @@ class BaselineManager:
         """只读：baselines_root（Stage 4 公共化）。"""
         return self._baselines_root
 
+    @baselines_root.setter
+    def baselines_root(self, value):
+        """写入：baselines_root（Stage 4 公共化）。"""
+        self._baselines_root = value
+
 
     def module_baseline_dir(self, module_id: str) -> str:
         safe_id = module_id.replace("\\", "_").replace("/", "_")

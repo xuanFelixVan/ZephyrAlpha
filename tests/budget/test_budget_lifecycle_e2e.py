@@ -158,7 +158,7 @@ class TestRestartStateRecovery:
         consumption = recovered.get_consumption_summary()
         token_policy = recovered.get_active_policy(BudgetDimension.TOKEN)
         assert consumption[token_policy.policy_id]["daily"] == 0.0
-        assert recovered._active_step_idx == 0
+        assert recovered.active_step_idx == 0
 
 
 class TestClosedEngineRejectsOps:

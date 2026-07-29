@@ -390,8 +390,8 @@ class TestChromaDBThreadGuard:
 
     def test_recycle_after_threshold(self):
         guard = ChromaDBThreadGuard(max_workers=2)
-        guard._recycle_threshold = 3
+        guard.recycle_threshold = 3
         for i in range(4):
             guard.submit(lambda: None)
-        assert guard._task_count == 1
+        assert guard.task_count == 1
         guard.shutdown(wait=True)

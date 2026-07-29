@@ -31,8 +31,8 @@ factor_base = pytest.importorskip("zephyr.factor.factor_base")
 EvaluationResult = backtest.EvaluationResult
 load_history = backtest.load_history
 evaluate_factor = backtest.evaluate_factor
-_format_symbols = backtest._format_symbols
-_tsv_to_dataframe = backtest._tsv_to_dataframe
+_format_symbols = backtest.format_symbols
+_tsv_to_dataframe = backtest.tsv_to_dataframe
 
 FactorBase = factor_base.FactorBase
 FactorMeta = factor_base.FactorMeta

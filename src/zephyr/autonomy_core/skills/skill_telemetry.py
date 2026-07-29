@@ -48,6 +48,11 @@ class SkillTelemetry:
         """只读：events（Stage 4 公共化）。"""
         return self._events
 
+    @events.setter
+    def events(self, value):
+        """写入：events（Stage 4 公共化）。"""
+        self._events = value
+
 
     def record(self, skill_id: str, event: str, metadata: dict[str, Any] | None = None) -> None:
         entry = {

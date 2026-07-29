@@ -171,6 +171,11 @@ class BlueprintDecomposer:
         """只读：global_seq（Stage 4 公共化）。"""
         return self._global_seq
 
+    @global_seq.setter
+    def global_seq(self, value):
+        """写入：global_seq（Stage 4 公共化）。"""
+        self._global_seq = value
+
 
     # === target_layer 自动映射（对齐 target_layer_vocabulary.yaml v1.0.0）===
 

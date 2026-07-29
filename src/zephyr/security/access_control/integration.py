@@ -67,6 +67,11 @@ class IntegrationManager:
         """只读：integrations（Stage 4 公共化）。"""
         return self._integrations
 
+    @integrations.setter
+    def integrations(self, value):
+        """写入：integrations（Stage 4 公共化）。"""
+        self._integrations = value
+
 
     def register_all(self) -> dict[str, IntegrationPoint]:
         """Register all subsystems. Returns dict[name, IntegrationPoint] with status REGISTERED."""

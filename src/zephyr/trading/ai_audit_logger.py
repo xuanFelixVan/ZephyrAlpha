@@ -80,6 +80,11 @@ class AiAuditLogger:
         """只读：session_id（Stage 4 公共化）。"""
         return self._session_id
 
+    @session_id.setter
+    def session_id(self, value):
+        """写入：session_id（Stage 4 公共化）。"""
+        self._session_id = value
+
 
     def _load_last_hash(self) -> None:
         """从今日日志最后一行恢复 _last_hash（重启后链连续）。"""

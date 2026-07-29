@@ -53,10 +53,20 @@ class StopGate:
         """只读：session_start（Stage 4 公共化）。"""
         return self._session_start
 
+    @session_start.setter
+    def session_start(self, value):
+        """写入：session_start（Stage 4 公共化）。"""
+        self._session_start = value
+
     @property
     def shutdown_acknowledged(self):
         """只读：shutdown_acknowledged（Stage 4 公共化）。"""
         return self._shutdown_acknowledged
+
+    @shutdown_acknowledged.setter
+    def shutdown_acknowledged(self, value):
+        """写入：shutdown_acknowledged（Stage 4 公共化）。"""
+        self._shutdown_acknowledged = value
 
 
     def initialize(self) -> None:

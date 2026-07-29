@@ -128,10 +128,20 @@ class IntegrityVerifier:
         """只读：event_log_path（Stage 4 公共化）。"""
         return self._event_log_path
 
+    @event_log_path.setter
+    def event_log_path(self, value):
+        """写入：event_log_path（Stage 4 公共化）。"""
+        self._event_log_path = value
+
     @property
     def hmac_key(self):
         """只读：hmac_key（Stage 4 公共化）。"""
         return self._hmac_key
+
+    @hmac_key.setter
+    def hmac_key(self, value):
+        """写入：hmac_key（Stage 4 公共化）。"""
+        self._hmac_key = value
 
 
     def verify_chain(self) -> dict[str, Any]:

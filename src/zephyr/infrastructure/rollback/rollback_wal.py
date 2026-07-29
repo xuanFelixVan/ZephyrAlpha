@@ -68,6 +68,11 @@ class RollbackWAL:
         """只读：wal_path（Stage 4 公共化）。"""
         return self._wal_path
 
+    @wal_path.setter
+    def wal_path(self, value):
+        """写入：wal_path（Stage 4 公共化）。"""
+        self._wal_path = value
+
 
     def read_all(self) -> list[dict[str, Any]]:
         """公共接口：read_all（Stage 4 公共化）。"""
@@ -78,6 +83,11 @@ class RollbackWAL:
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def write_ahead(self, operation: str, from_commit: str, to_commit: str, files: list[str]) -> WALEntry:

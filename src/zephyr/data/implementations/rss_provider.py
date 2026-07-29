@@ -94,6 +94,8 @@ class RSSProvider(DataSourceBase):
 
     # robots.txt 缓存（per-domain）
     _robots_cache: dict[str, RobotFileParser | None] = {}
+    robots_cache: dict[str, RobotFileParser | None] = _robots_cache  # public alias（Stage 4 公共化）
+
 
     # ---- 生命周期 ----
 

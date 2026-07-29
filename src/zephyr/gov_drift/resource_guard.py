@@ -335,3 +335,9 @@ def validate_scalability() -> dict[str, object]:
         }
 
     return results
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_memory_usage_mb() -> float:
+    """公共接口：get_memory_usage_mb（Stage 4 公共化）。"""
+    return _get_memory_usage_mb()
+

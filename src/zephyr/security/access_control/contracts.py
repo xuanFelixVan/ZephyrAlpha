@@ -44,6 +44,13 @@ class RBACAuditBridge:
     destroy/admin_override/delete/未知 -> granted=False。
     """
 
+    @staticmethod
+    @staticmethod
+    def check_permission(agent_id, permission, resource) -> bool:
+        """公共接口：check_permission（Stage 4 公共化）。"""
+        return __class__._check_permission(agent_id, permission, resource)
+
+
     # 允许的权限白名单（lowercase 比较）。命中 -> granted=True。
     _ALLOWED_PERMISSIONS: set[str] = {"read", "write", "execute"}
 

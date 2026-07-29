@@ -195,7 +195,7 @@ def make_import_direction_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged added/modified .py 文件
         try:
-            diff_result = gateway._run_git(
+            diff_result = gateway.run_git(
                 ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
             )
             if diff_result.returncode != 0:
@@ -224,7 +224,7 @@ def make_import_direction_gate() -> GateSpec:
 
         # 3. 获取 worktree root
         try:
-            toplevel_result = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+            toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
             wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_root = str(gateway.project_root)

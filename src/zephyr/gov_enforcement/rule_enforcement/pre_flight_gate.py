@@ -53,6 +53,11 @@ class PreFlightGate:
         """只读：engine（Stage 4 公共化）。"""
         return self._engine
 
+    @engine.setter
+    def engine(self, value):
+        """写入：engine（Stage 4 公共化）。"""
+        self._engine = value
+
 
     def gate(
         self,

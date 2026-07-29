@@ -39,9 +39,12 @@ class AuditTrustBridge:
     """
 
     @staticmethod
-    def classify_tier(score) -> str:
-        """公共接口：classify_tier（Stage 4 公共化，委托到 _classify_tier）。"""
-        return _classify_tier(score)
+    def classify_tier(score: float) -> str:
+        if score >= 0.8:
+            return 'TIER_2_AUTO_REVERT'
+        if score >= 0.5:
+            return 'TIER_1_PROPOSE_ONLY'
+        return 'TIER_0_READ_ONLY'
 
 
     _TRUST_SCORE_CHANGE_THRESHOLD = 0.3
@@ -136,8 +139,5 @@ class AuditTrustBridge:
 
     @staticmethod
     def _classify_tier(score: float) -> str:
-        if score >= 0.8:
-            return "TIER_2_AUTO_REVERT"
-        if score >= 0.5:
-            return "TIER_1_PROPOSE_ONLY"
-        return "TIER_0_READ_ONLY"
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return AuditTrustBridge.classify_tier(score)

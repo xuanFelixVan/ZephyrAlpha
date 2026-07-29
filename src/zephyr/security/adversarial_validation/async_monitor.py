@@ -106,18 +106,33 @@ class AsyncMonitor:
 
     @property
     def stop_event(self) -> threading.Event:
-        """只读：停止事件（Stage 4 公共化）。"""
+        """只读：stop_event（Stage 4 公共化）。"""
         return self._stop_event
+
+    @stop_event.setter
+    def stop_event(self, value):
+        """写入：stop_event（Stage 4 公共化）。"""
+        self._stop_event = value
 
     @property
     def poll_interval_s(self) -> int:
-        """只读：轮询间隔秒数（Stage 4 公共化）。"""
+        """只读：poll_interval_s（Stage 4 公共化）。"""
         return self._poll_interval_s
+
+    @poll_interval_s.setter
+    def poll_interval_s(self, value):
+        """写入：poll_interval_s（Stage 4 公共化）。"""
+        self._poll_interval_s = value
 
     @property
     def thread(self) -> threading.Thread | None:
-        """只读：后台监控线程（Stage 4 公共化）。"""
+        """只读：thread（Stage 4 公共化）。"""
         return self._thread
+
+    @thread.setter
+    def thread(self, value):
+        """写入：thread（Stage 4 公共化）。"""
+        self._thread = value
 
     @property
     def circuit_breaker(self) -> CircuitBreaker:

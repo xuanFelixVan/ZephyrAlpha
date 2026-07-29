@@ -468,3 +468,15 @@ def search(
 
     finally:
         conn.close()
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def new_id(prefix) -> str:
+    """公共接口：new_id（Stage 4 公共化）。"""
+    return _new_id(prefix)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def is_valid_transition(from_status, to_status) -> bool:
+    """公共接口：is_valid_transition（Stage 4 公共化）。"""
+    return _is_valid_transition(from_status, to_status)
+

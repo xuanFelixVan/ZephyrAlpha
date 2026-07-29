@@ -69,10 +69,20 @@ class VenvSync:
         self._project_root = project_root or Path.cwd()
         self._req_path = self._project_root / self.REQUIREMENTS_FILE
 
+    def compute_diff(self, before, after) -> DepDiff:
+        """公共接口：compute_diff（Stage 4 公共化）。"""
+        return self._compute_diff(before, after)
+
+
     @property
     def req_path(self):
         """只读：req_path（Stage 4 公共化）。"""
         return self._req_path
+
+    @req_path.setter
+    def req_path(self, value):
+        """写入：req_path（Stage 4 公共化）。"""
+        self._req_path = value
 
 
     @property
@@ -80,11 +90,17 @@ class VenvSync:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     @staticmethod
+    @staticmethod
     def parse_freeze(freeze_output) -> dict[str, str]:
-        """公共接口：parse_freeze（Stage 4 公共化，委托到 _parse_freeze）。"""
-        return _parse_freeze(freeze_output)
+        """公共接口：parse_freeze（Stage 4 公共化）。"""
+        return __class__._parse_freeze(freeze_output)
 
 
     def sync(self, skip_deps: bool = False) -> VenvSyncResult:

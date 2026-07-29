@@ -38,6 +38,16 @@ class SkillLoader:
         self.registry_path = registry_path or _REGISTRY_PATH
         self._l0_cache: dict[str, Any] | None = None
 
+    def extract_body(self, content) -> str:
+        """公共接口：extract_body（Stage 4 公共化）。"""
+        return self._extract_body(content)
+
+
+    def compress_to_critical_rules(self, body) -> str:
+        """公共接口：compress_to_critical_rules（Stage 4 公共化）。"""
+        return self._compress_to_critical_rules(body)
+
+
     def resolve_skill_path(self, skill_id) -> Path:
         """公共接口：resolve_skill_path（Stage 4 公共化）。"""
         return self._resolve_skill_path(skill_id)
@@ -57,6 +67,11 @@ class SkillLoader:
     def l0_cache(self) -> dict[str, Any] | None:
         """只读：l0_cache（Stage 4 公共化）。"""
         return self._l0_cache
+
+    @l0_cache.setter
+    def l0_cache(self, value):
+        """写入：l0_cache（Stage 4 公共化）。"""
+        self._l0_cache = value
 
 
     def _load_registry(self) -> dict[str, Any]:

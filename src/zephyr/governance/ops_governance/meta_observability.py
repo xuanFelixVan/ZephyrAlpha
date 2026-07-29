@@ -34,10 +34,20 @@ class MetaObservability:
         """只读：edge_cases（Stage 4 公共化）。"""
         return self._edge_cases
 
+    @edge_cases.setter
+    def edge_cases(self, value):
+        """写入：edge_cases（Stage 4 公共化）。"""
+        self._edge_cases = value
+
     @property
     def self_latencies(self) -> list[float]:
         """只读：self_latencies（Stage 4 公共化）。"""
         return self._self_latencies
+
+    @self_latencies.setter
+    def self_latencies(self, value):
+        """写入：self_latencies（Stage 4 公共化）。"""
+        self._self_latencies = value
 
 
     def record_self_latency(self, seconds: float):

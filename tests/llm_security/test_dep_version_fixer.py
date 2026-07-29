@@ -108,22 +108,22 @@ class TestFix:
 
 class TestIsHigher:
     def test_higher_major(self, fixer):
-        assert fixer._is_higher("2.0.0", "1.0.0") is True
+        assert fixer.is_higher("2.0.0", "1.0.0") is True
 
     def test_higher_minor(self, fixer):
-        assert fixer._is_higher("1.2.0", "1.1.0") is True
+        assert fixer.is_higher("1.2.0", "1.1.0") is True
 
     def test_higher_patch(self, fixer):
-        assert fixer._is_higher("1.0.1", "1.0.0") is True
+        assert fixer.is_higher("1.0.1", "1.0.0") is True
 
     def test_not_higher(self, fixer):
-        assert fixer._is_higher("1.0.0", "2.0.0") is False
+        assert fixer.is_higher("1.0.0", "2.0.0") is False
 
     def test_equal(self, fixer):
-        assert fixer._is_higher("1.0.0", "1.0.0") is False
+        assert fixer.is_higher("1.0.0", "1.0.0") is False
 
     def test_invalid_version(self, fixer):
-        assert fixer._is_higher("abc", "1.0.0") is False
+        assert fixer.is_higher("abc", "1.0.0") is False
 
 
 class TestValidate:

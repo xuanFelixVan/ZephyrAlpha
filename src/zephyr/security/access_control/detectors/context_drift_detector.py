@@ -38,6 +38,17 @@ class ContextDriftDetector:
         # `_operations` is kept as a read-only backward-compat alias via __getattr__.
         self._contexts: dict[str, list[str]] = defaultdict(list)
 
+    @property
+    def contexts(self) -> dict[str, list[str]]:
+        """只读：contexts（Stage 4 公共化）。"""
+        return self._contexts
+
+    @contexts.setter
+    def contexts(self, value):
+        """写入：contexts（Stage 4 公共化）。"""
+        self._contexts = value
+
+
     def __getattr__(self, name: str) -> Any:
         # Backward-compat: `_operations` -> `_contexts` (legacy callers/tests).
         if name == "_operations":

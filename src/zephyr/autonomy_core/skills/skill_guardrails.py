@@ -61,6 +61,11 @@ class SkillGuardrails:
         """只读：violations（Stage 4 公共化）。"""
         return self._violations
 
+    @violations.setter
+    def violations(self, value):
+        """写入：violations（Stage 4 公共化）。"""
+        self._violations = value
+
 
     @property
     def allowed(self) -> bool:

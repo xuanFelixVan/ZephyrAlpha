@@ -137,6 +137,11 @@ class FeedbackSelfAuditor:
         """只读：amplification_threshold（Stage 4 公共化）。"""
         return self._amplification_threshold
 
+    @amplification_threshold.setter
+    def amplification_threshold(self, value):
+        """写入：amplification_threshold（Stage 4 公共化）。"""
+        self._amplification_threshold = value
+
 
     def detect_self_reinforcement(
         self,

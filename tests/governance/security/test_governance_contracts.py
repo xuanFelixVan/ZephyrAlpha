@@ -33,16 +33,16 @@ pytestmark = pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 @pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)
 class TestRBACAuditBridgeCheckPermission:
     def test_allowed_permission(self):
-        assert RBACAuditBridge._check_permission("agent-1", "read", "file") is True
-        assert RBACAuditBridge._check_permission("agent-1", "write", "file") is True
-        assert RBACAuditBridge._check_permission("agent-1", "execute", "file") is True
+        assert RBACAuditBridge.check_permission("agent-1", "read", "file") is True
+        assert RBACAuditBridge.check_permission("agent-1", "write", "file") is True
+        assert RBACAuditBridge.check_permission("agent-1", "execute", "file") is True
 
     def test_denied_permission(self):
-        assert RBACAuditBridge._check_permission("agent-1", "destroy", "file") is False
-        assert RBACAuditBridge._check_permission("agent-1", "admin_override", "file") is False
+        assert RBACAuditBridge.check_permission("agent-1", "destroy", "file") is False
+        assert RBACAuditBridge.check_permission("agent-1", "admin_override", "file") is False
 
     def test_unknown_permission(self):
-        assert RBACAuditBridge._check_permission("agent-1", "unknown_perm", "file") is False
+        assert RBACAuditBridge.check_permission("agent-1", "unknown_perm", "file") is False
 
 
 @pytest.mark.skipif(not _IMPORT_OK, reason=_IMPORT_REASON)

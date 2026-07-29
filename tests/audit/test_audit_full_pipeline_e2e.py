@@ -96,7 +96,7 @@ class TestFindingIngestE2E:
         received_events = []
 
         with patch.object(finding_ingest_mod, "bus", create=True) as mock_bus_module:
-            with patch("zephyr.gov_audit.finding_ingest.FindingIngest._emit_event") as mock_emit:
+            with patch("zephyr.gov_audit.finding_ingest.FindingIngest.emit_event") as mock_emit:
                 mock_emit.side_effect = lambda f: received_events.append(f)
                 result = ingest.ingest_string(jsonl_line)
 
@@ -178,7 +178,7 @@ class TestTextToFindingAdapterE2E:
 class TestPipelineRunnerE2E:
     def test_discover_all_dimensions(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        discovered = set(runner._dimension_scripts.keys())
+        discovered = set(runner.dimension_scripts.keys())
         all_dims = {f"D{i}" for i in range(1, 13)}
         assert discovered == all_dims
 

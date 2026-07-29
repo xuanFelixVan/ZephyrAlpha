@@ -79,6 +79,11 @@ class SelfTestVerifier:
         """只读：base_dir（Stage 4 公共化）。"""
         return self._base_dir
 
+    @base_dir.setter
+    def base_dir(self, value):
+        """写入：base_dir（Stage 4 公共化）。"""
+        self._base_dir = value
+
 
     def check_circular_import(self) -> dict[str, str]:
         try:

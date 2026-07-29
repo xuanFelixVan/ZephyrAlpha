@@ -615,6 +615,11 @@ class ResourceOptimizationEngine:
         """只读：circuit_breakers（Stage 4 公共化）。"""
         return self._circuit_breakers
 
+    @circuit_breakers.setter
+    def circuit_breakers(self, value):
+        """写入：circuit_breakers（Stage 4 公共化）。"""
+        self._circuit_breakers = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -622,10 +627,20 @@ class ResourceOptimizationEngine:
         """只读：monitor_running（Stage 4 公共化）。"""
         return self._monitor_running
 
+    @monitor_running.setter
+    def monitor_running(self, value):
+        """写入：monitor_running（Stage 4 公共化）。"""
+        self._monitor_running = value
+
     @property
     def pressure_callbacks(self) -> list[Callable[[PressureLevel, ResourceSnapshot], None]]:
         """只读：pressure_callbacks（Stage 4 公共化）。"""
         return self._pressure_callbacks
+
+    @pressure_callbacks.setter
+    def pressure_callbacks(self, value):
+        """写入：pressure_callbacks（Stage 4 公共化）。"""
+        self._pressure_callbacks = value
 
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -633,6 +648,11 @@ class ResourceOptimizationEngine:
     def pressure_sm(self):
         """只读：pressure_sm（Stage 4 公共化）。"""
         return self._pressure_sm
+
+    @pressure_sm.setter
+    def pressure_sm(self, value):
+        """写入：pressure_sm（Stage 4 公共化）。"""
+        self._pressure_sm = value
 
 
     # ══ 职责分区① Monitor/Analyze 核心（保留，不外移） ══

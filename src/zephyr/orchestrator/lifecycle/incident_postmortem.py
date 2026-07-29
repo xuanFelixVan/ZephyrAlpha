@@ -42,6 +42,11 @@ class IncidentManager:
         """只读：incidents（Stage 4 公共化）。"""
         return self._incidents
 
+    @incidents.setter
+    def incidents(self, value):
+        """写入：incidents（Stage 4 公共化）。"""
+        self._incidents = value
+
 
     def create(self, incident_id: str, description: str, severity: str = "P2") -> Incident:
         inc = Incident(incident_id=incident_id, description=description, severity=severity)

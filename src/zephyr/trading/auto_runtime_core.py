@@ -179,8 +179,13 @@ class AutoRuntimeCore:
     # ── Stage 4 公共化属性（property getter/setter） ──
     @property
     def lifecycle(self) -> LifecycleManager:
-        """Stage 4 公共化。"""
+        """只读：lifecycle（Stage 4 公共化）。"""
         return self._lifecycle
+
+    @lifecycle.setter
+    def lifecycle(self, value):
+        """写入：lifecycle（Stage 4 公共化）。"""
+        self._lifecycle = value
 
     @property
     def booted(self) -> bool:
@@ -220,8 +225,13 @@ class AutoRuntimeCore:
 
     @property
     def registry(self) -> CapabilityRegistry:
-        """Stage 4 公共化。"""
+        """只读：registry（Stage 4 公共化）。"""
         return self._registry
+
+    @registry.setter
+    def registry(self, value):
+        """写入：registry（Stage 4 公共化）。"""
+        self._registry = value
 
     @property
     def audit_logger(self) -> AiAuditLogger:
@@ -234,18 +244,33 @@ class AutoRuntimeCore:
 
     @property
     def night_shift_queue(self) -> NightShiftQueue:
-        """Stage 4 公共化。"""
+        """只读：night_shift_queue（Stage 4 公共化）。"""
         return self._night_shift_queue
+
+    @night_shift_queue.setter
+    def night_shift_queue(self, value):
+        """写入：night_shift_queue（Stage 4 公共化）。"""
+        self._night_shift_queue = value
 
     @property
     def dream_cycle(self) -> DreamCycle:
-        """Stage 4 公共化。"""
+        """只读：dream_cycle（Stage 4 公共化）。"""
         return self._dream_cycle
+
+    @dream_cycle.setter
+    def dream_cycle(self, value):
+        """写入：dream_cycle（Stage 4 公共化）。"""
+        self._dream_cycle = value
 
     @property
     def health_monitor(self) -> HealthMonitor:
-        """Stage 4 公共化。"""
+        """只读：health_monitor（Stage 4 公共化）。"""
         return self._health_monitor
+
+    @health_monitor.setter
+    def health_monitor(self, value):
+        """写入：health_monitor（Stage 4 公共化）。"""
+        self._health_monitor = value
 
     @property
     def task_learner(self) -> ModelTaskMatrix | None:

@@ -33,6 +33,11 @@ class ModelVersionDetector:
         """只读：known_versions（Stage 4 公共化）。"""
         return self._known_versions
 
+    @known_versions.setter
+    def known_versions(self, value):
+        """写入：known_versions（Stage 4 公共化）。"""
+        self._known_versions = value
+
 
     def record_version(self, model_id: str, version: str):
         self._known_versions[model_id] = version

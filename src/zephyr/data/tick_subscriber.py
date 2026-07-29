@@ -561,13 +561,23 @@ class TickSubscriber:
 
     @property
     def tick_queue(self) -> queue.Queue:
-        """只读：tick 队列（Stage 4 公共化）。"""
+        """只读：tick_queue（Stage 4 公共化）。"""
         return self._tick_queue
+
+    @tick_queue.setter
+    def tick_queue(self, value):
+        """写入：tick_queue（Stage 4 公共化）。"""
+        self._tick_queue = value
 
     @property
     def first_tick_received(self) -> threading.Event:
-        """只读：首 tick 事件（Stage 4 公共化）。"""
+        """只读：first_tick_received（Stage 4 公共化）。"""
         return self._first_tick_received
+
+    @first_tick_received.setter
+    def first_tick_received(self, value):
+        """写入：first_tick_received（Stage 4 公共化）。"""
+        self._first_tick_received = value
 
     @property
     def writer(self):

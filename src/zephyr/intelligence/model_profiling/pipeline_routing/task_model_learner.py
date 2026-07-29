@@ -141,6 +141,11 @@ class ModelTaskMatrix:
         """只读：dir（Stage 4 公共化）。"""
         return self._dir
 
+    @dir.setter
+    def dir(self, value):
+        """写入：dir（Stage 4 公共化）。"""
+        self._dir = value
+
 
     def record(
         self,

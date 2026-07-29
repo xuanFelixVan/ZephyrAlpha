@@ -78,7 +78,7 @@ __all__ = ["make_bare_subprocess_gate"]
 
 # 文件级豁免：定义点 / 检测器自身 / AST 检测器引用 subprocess.run 字符串
 # - process_pool.py: 定义 run_subprocess_hidden / spawn_python_hidden（必然含 subprocess.run/Popen）
-# - _diff_helpers.py: gate 共享 helper（_read_staged_file 内部 gateway._run_git，不直接 subprocess）
+# - _diff_helpers.py: gate 共享 helper（_read_staged_file 内部 gateway.run_git，不直接 subprocess）
 # - git_call_budget_gate.py: AST 检测器，源码含 "subprocess.run" 字符串用于检测模式
 # - git_commit_gateway.py: 注释引用 "subprocess.run(["git",...])" AST 检测逻辑说明
 # - bare_subprocess_gate.py: 本检测器自身

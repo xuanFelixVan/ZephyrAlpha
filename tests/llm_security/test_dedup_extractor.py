@@ -30,11 +30,11 @@ FixLevel = models.FixLevel
 class TestDedupExtractorInstantiation:
     def test_default_min_occurrences(self):
         ext = DedupExtractor()
-        assert ext._min_occurrences == 3
+        assert ext.min_occurrences == 3
 
     def test_custom_min_occurrences(self):
         ext = DedupExtractor(min_occurrences=5)
-        assert ext._min_occurrences == 5
+        assert ext.min_occurrences == 5
 
     def test_fixer_id(self):
         ext = DedupExtractor()
@@ -161,7 +161,7 @@ class TestDedupExtractorNormalize:
     def test_normalize_strips_comments(self):
         ext = DedupExtractor()
         code = "x = 1\n# comment\ny = 2"
-        result = ext._normalize_code(code)
+        result = ext.normalize_code(code)
         assert "#" not in result
         assert "x = 1" in result
         assert "y = 2" in result
@@ -169,10 +169,10 @@ class TestDedupExtractorNormalize:
     def test_normalize_strips_blank_lines(self):
         ext = DedupExtractor()
         code = "x = 1\n\n\ny = 2"
-        result = ext._normalize_code(code)
+        result = ext.normalize_code(code)
         assert "\n\n" not in result
 
     def test_normalize_empty_input(self):
         ext = DedupExtractor()
-        result = ext._normalize_code("")
+        result = ext.normalize_code("")
         assert result == ""

@@ -75,6 +75,17 @@ class AuditAdmissionController:
             except ImportError:
                 self._modules[name] = None
 
+    @property
+    def modules(self) -> dict[str, Any]:
+        """只读：modules（Stage 4 公共化）。"""
+        return self._modules
+
+    @modules.setter
+    def modules(self, value):
+        """写入：modules（Stage 4 公共化）。"""
+        self._modules = value
+
+
     def check_admission(self, operation: str, target_path: str) -> AdmissionResult:
         health = self.full_health_check()
         passed = [k for k, v in health.items() if v]

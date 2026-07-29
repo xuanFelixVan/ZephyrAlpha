@@ -70,6 +70,11 @@ class TimeoutGuard:
         """只读：timeouts（Stage 4 公共化）。"""
         return self._timeouts
 
+    @timeouts.setter
+    def timeouts(self, value):
+        """写入：timeouts（Stage 4 公共化）。"""
+        self._timeouts = value
+
 
     def watch(
         self,

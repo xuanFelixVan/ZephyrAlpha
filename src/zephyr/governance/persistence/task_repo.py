@@ -1261,10 +1261,35 @@ class TaskRepository:
         else:
             self._gate_engine = None
 
+    def is_timeout_exempt(self, task_id) -> bool:
+        """公共接口：is_timeout_exempt（Stage 4 公共化）。"""
+        return self._is_timeout_exempt(task_id)
+
+
+    def post_completion_actions(self, task_id, to_status, session_id, updated_row) -> None:
+        """公共接口：post_completion_actions（Stage 4 公共化）。"""
+        return self._post_completion_actions(task_id, to_status, session_id, updated_row)
+
+
+    def count_by_status_and_session(self, status, session_id) -> int:
+        """公共接口：count_by_status_and_session（Stage 4 公共化）。"""
+        return self._count_by_status_and_session(status, session_id)
+
+
+    def validate_granularity(self, task) -> list[str]:
+        """公共接口：validate_granularity（Stage 4 公共化）。"""
+        return self._validate_granularity(task)
+
+
     @property
     def enable_gate(self):
         """只读：enable_gate（Stage 4 公共化）。"""
         return self._enable_gate
+
+    @enable_gate.setter
+    def enable_gate(self, value):
+        """写入：enable_gate（Stage 4 公共化）。"""
+        self._enable_gate = value
 
 
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
@@ -1291,12 +1316,22 @@ class TaskRepository:
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
 
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def conn(self) -> sqlite3.Connection:
         """只读：conn（Stage 4 公共化）。"""
         return self._conn
+
+    @conn.setter
+    def conn(self, value):
+        """写入：conn（Stage 4 公共化）。"""
+        self._conn = value
 
 
     # ------------------------------------------------------------------

@@ -224,7 +224,7 @@ def _detect_event_or_auto_trigger(tree: ast.AST) -> bool:
 def _get_staged_py_files(gateway) -> tuple[list[str], str]:
     """获取 staged 新增+修改的 .py 文件列表和 worktree root。"""
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -249,7 +249,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
         return [], ""
 
     try:
-        toplevel = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+        toplevel = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         wt_root = toplevel.stdout.strip() if toplevel.returncode == 0 else str(gateway.project_root)
     except Exception:  # noqa: BLE001 — broad exception catch for fail-open
         wt_root = str(gateway.project_root)
@@ -260,7 +260,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
 def _get_added_set(gateway) -> set[str]:
     """获取 staged 新增(A)文件集合。"""
     try:
-        result = gateway._run_git(
+        result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         return set(result.stdout.strip().splitlines()) if result.returncode == 0 else set()
@@ -321,7 +321,7 @@ def _has_m11_exemption(content: str) -> bool:
 def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
     """检测修改文件的 staged 新增行是否含 manual 触发且全文件无事件订阅。"""
     try:
-        diff_content = gateway._run_git(
+        diff_content = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path]
         )
         if diff_content.returncode != 0:

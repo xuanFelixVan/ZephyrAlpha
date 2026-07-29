@@ -152,12 +152,22 @@ class ContextBudgetTracker:
         """只读：sessions（Stage 4 公共化）。"""
         return self._sessions
 
+    @sessions.setter
+    def sessions(self, value):
+        """写入：sessions（Stage 4 公共化）。"""
+        self._sessions = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def session_limit(self):
         """只读：session_limit（Stage 4 公共化）。"""
         return self._session_limit
+
+    @session_limit.setter
+    def session_limit(self, value):
+        """写入：session_limit（Stage 4 公共化）。"""
+        self._session_limit = value
 
 
     def _get_session(self, session_id: str) -> dict[str, Any]:

@@ -51,9 +51,19 @@ class SkillCalibration:
     """Skill 校准 —— 置信度 vs 准确率对齐."""
 
     @staticmethod
-    def trend_direction(drifts) -> str:
-        """公共接口：trend_direction（Stage 4 公共化，委托到 _trend_direction）。"""
-        return _trend_direction(drifts)
+    def trend_direction(drifts: list[float]) -> str:
+        if len(drifts) < 3:
+            return 'insufficient_data'
+        recent = drifts[-3:]
+        if all((d > 0 for d in recent)):
+            return 'increasing_overconfidence'
+        if all((d < 0 for d in recent)):
+            return 'increasing_underconfidence'
+        if recent[-1] > recent[-2] > recent[-3]:
+            return 'increasing_overconfidence'
+        if recent[-1] < recent[-2] < recent[-3]:
+            return 'increasing_underconfidence'
+        return 'stable'
 
 
     _history: dict[str, list[CalibrationEntry]] = {}
@@ -126,18 +136,8 @@ class SkillCalibration:
 
     @staticmethod
     def _trend_direction(drifts: list[float]) -> str:
-        if len(drifts) < 3:
-            return "insufficient_data"
-        recent = drifts[-3:]
-        if all(d > 0 for d in recent):
-            return "increasing_overconfidence"
-        if all(d < 0 for d in recent):
-            return "increasing_underconfidence"
-        if recent[-1] > recent[-2] > recent[-3]:
-            return "increasing_overconfidence"
-        if recent[-1] < recent[-2] < recent[-3]:
-            return "increasing_underconfidence"
-        return "stable"
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return SkillCalibration.trend_direction(drifts)
 
     @classmethod
     def clear_history(cls, skill_id: Optional[str] = None):

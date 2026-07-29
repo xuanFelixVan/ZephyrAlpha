@@ -29,7 +29,7 @@
   - 多违规截断到 30 条 + (...+N more)
   - 返回 tuple[bool, str]
 
-测试隔离：MagicMock 模拟 gateway._run_git；monkeypatch os.path.exists 模拟文件存在性。
+测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch os.path.exists 模拟文件存在性。
 """
 from __future__ import annotations
 
@@ -83,7 +83,7 @@ def _make_mock_gateway(
         return _MockResult(1, "")
 
     gw = MagicMock()
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     gw.project_root = Path(project_root)
     return gw
 

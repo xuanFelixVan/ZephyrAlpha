@@ -102,6 +102,11 @@ class FactorPoolManager:
         """只读：entries（Stage 4 公共化）。"""
         return self._entries
 
+    @entries.setter
+    def entries(self, value):
+        """写入：entries（Stage 4 公共化）。"""
+        self._entries = value
+
 
     def add_factor(
         self, factor_id: str, ic_mean: float, is_core: bool = False

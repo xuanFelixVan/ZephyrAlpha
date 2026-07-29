@@ -97,6 +97,11 @@ class VersionNegotiator:
         """只读：deprecations（Stage 4 公共化）。"""
         return self._deprecations
 
+    @deprecations.setter
+    def deprecations(self, value):
+        """写入：deprecations（Stage 4 公共化）。"""
+        self._deprecations = value
+
 
     def register_deprecation(
         self,

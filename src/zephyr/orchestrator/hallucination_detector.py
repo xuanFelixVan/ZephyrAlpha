@@ -449,6 +449,11 @@ class HallucinationDetector:
         """只读：budget（Stage 4 公共化）。"""
         return self._budget
 
+    @budget.setter
+    def budget(self, value):
+        """写入：budget（Stage 4 公共化）。"""
+        self._budget = value
+
 
     # ------------------------------------------------------------------ public
 

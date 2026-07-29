@@ -147,12 +147,22 @@ class BudgetEngine:
         """只读：policies（Stage 4 公共化）。"""
         return self._policies
 
+    @policies.setter
+    def policies(self, value):
+        """写入：policies（Stage 4 公共化）。"""
+        self._policies = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def alerts(self) -> list[BudgetAlert]:
         """只读：alerts（Stage 4 公共化）。"""
         return self._alerts
+
+    @alerts.setter
+    def alerts(self, value):
+        """写入：alerts（Stage 4 公共化）。"""
+        self._alerts = value
 
 
     @property
@@ -167,8 +177,13 @@ class BudgetEngine:
 
     @property
     def active_step_idx(self) -> int:
-        """当前降级阶梯索引（public API, Stage 4 公共化）。"""
+        """只读：active_step_idx（Stage 4 公共化）。"""
         return self._active_step_idx
+
+    @active_step_idx.setter
+    def active_step_idx(self, value):
+        """写入：active_step_idx（Stage 4 公共化）。"""
+        self._active_step_idx = value
 
     @classmethod
     def ensure_initialized(cls) -> "BudgetEngine":

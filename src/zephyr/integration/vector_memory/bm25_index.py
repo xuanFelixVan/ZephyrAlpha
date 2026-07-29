@@ -40,9 +40,9 @@ class BM25Index:
         self._b: float = 0.75
 
     @staticmethod
-    def tokenize(text) -> list[str]:
-        """公共接口：tokenize（Stage 4 公共化，委托到 _tokenize）。"""
-        return _tokenize(text)
+    def tokenize(text: str) -> list[str]:
+        tokens = re.findall('[\\u4e00-\\u9fff]+|[a-zA-Z0-9_]+', text.lower())
+        return [t for t in tokens if len(t) > 0]
 
 
     def index(self, documents: list[dict[str, Any]]) -> None:
@@ -88,8 +88,8 @@ class BM25Index:
 
     @staticmethod
     def _tokenize(text: str) -> list[str]:
-        tokens = re.findall(r"[\u4e00-\u9fff]+|[a-zA-Z0-9_]+", text.lower())
-        return [t for t in tokens if len(t) > 0]
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return BM25Index.tokenize(text)
 
 
 __all__: list[str] = ["BM25Index"]

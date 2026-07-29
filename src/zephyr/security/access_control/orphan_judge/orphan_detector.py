@@ -110,10 +110,20 @@ class OrphanDetector:
         """只读：registry（Stage 4 公共化）。"""
         return self._registry
 
+    @registry.setter
+    def registry(self, value):
+        """写入：registry（Stage 4 公共化）。"""
+        self._registry = value
+
     @property
     def scanner(self):
         """只读：scanner（Stage 4 公共化）。"""
         return self._scanner
+
+    @scanner.setter
+    def scanner(self, value):
+        """写入：scanner（Stage 4 公共化）。"""
+        self._scanner = value
 
 
     def compute_orphan_rate(self) -> float:

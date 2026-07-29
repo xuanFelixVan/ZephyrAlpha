@@ -17,7 +17,7 @@ GATE-DEPGRAPH-OPS 治本 Phase 1，F821 零防护缺口）
 - TestCheckGate: mock gateway 完整流程（阻断/放行/范围外跳过/fail-open）
 - TestScanAll: 全仓 baseline 扫描（tmp_path 隔离）
 
-测试隔离：MagicMock 模拟 gateway._run_git；scan_all 用 tmp_path 构造文件树。
+测试隔离：MagicMock 模拟 gateway.run_git；scan_all 用 tmp_path 构造文件树。
 """
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ def _make_gateway(staged_files: list[str], file_contents: dict[str, str]) -> Mag
     """构造 mock gateway：按 git 子命令路由返回 staged 文件列表/文件内容。"""
 
     gw = MagicMock()
-    gw._run_git = MagicMock()
+    gw.run_git = MagicMock()
 
     def _run(cmd):
         if "--name-only" in cmd:
@@ -61,7 +61,7 @@ def _make_gateway(staged_files: list[str], file_contents: dict[str, str]) -> Mag
             return _MockResult(stdout=content, returncode=0 if content else 1)
         return _MockResult(returncode=1)
 
-    gw._run_git.side_effect = _run
+    gw.run_git.side_effect = _run
     return gw
 
 

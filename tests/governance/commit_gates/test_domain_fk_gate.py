@@ -29,7 +29,7 @@
   - tests/ 路径豁免
   - 存量 [DOMAIN] 行未改动 → 不检测（diff-based）
 
-测试隔离：MagicMock 模拟 gateway._run_git，按 git 子命令路由返回不同结果。
+测试隔离：MagicMock 模拟 gateway.run_git，按 git 子命令路由返回不同结果。
 """
 from __future__ import annotations
 
@@ -105,7 +105,7 @@ class TestLoadValidDomains:
     def test_yaml_unreadable_returns_none(self) -> None:
         """YAML 不可读（git show 失败）→ None (fail-open)。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(1, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(1, ""))
         result = _load_valid_domains(gw)
         assert result is None
 
@@ -311,7 +311,7 @@ def _make_yaml_gateway(yaml_content: str) -> MagicMock:
             return _MockResult(0, yaml_content)
         return _MockResult(1, "")
     gw = MagicMock()
-    gw._run_git = MagicMock(side_effect=_run_git)
+    gw.run_git = MagicMock(side_effect=_run_git)
     return gw
 
 
@@ -346,5 +346,5 @@ def _make_full_gateway(
         return _MockResult(1, "")
 
     gw = MagicMock()
-    gw._run_git = MagicMock(side_effect=_run_git)
+    gw.run_git = MagicMock(side_effect=_run_git)
     return gw

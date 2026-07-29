@@ -68,7 +68,7 @@ class TestHealthAggregator:
     def test_poll_all_populates_snapshots(self):
         agg = ha.HealthAggregator()
         agg.poll_all()
-        assert len(agg._snapshots) > 0
+        assert len(agg.snapshots) > 0
 
     def test_latest_snapshots_empty(self):
         agg = ha.HealthAggregator()
@@ -96,7 +96,7 @@ class TestHealthAggregator:
         agg = ha.HealthAggregator()
         for _ in range(100):
             agg.poll_all()
-        assert len(agg._snapshots) <= agg._MAX_SNAPSHOTS
+        assert len(agg.snapshots) <= agg._MAX_SNAPSHOTS
 
 
 class TestBoundary:

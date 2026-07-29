@@ -29,7 +29,7 @@ check_code_duplication.py（subprocess 调用 --files --ast --threshold 0.7）�
 os.path.isfile 通过。只检测新增文件（diff-filter=A）。路径解析对标
 gateway.project_root（主仓库根，非 worktree root）。
 
-测试隔离：MagicMock 模拟 gateway._run_git + monkeypatch subprocess.run，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git + monkeypatch subprocess.run，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -75,7 +75,7 @@ def _make_gateway(staged_new=None, project_root=None, diff_fails=False, diff_rai
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -86,7 +86,7 @@ def _make_gateway(staged_new=None, project_root=None, diff_fails=False, diff_rai
             return _MockResult(0, "\n".join(staged_new or []))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

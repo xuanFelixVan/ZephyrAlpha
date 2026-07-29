@@ -124,20 +124,20 @@ class TestDriftBridge:
 
     def test_scan_audit_anomalies_import_error(self, bridge):
         with patch("zephyr.gov_audit.anomaly.AnomalyDetector", side_effect=ImportError):
-            result = bridge._scan_audit_anomalies()
+            result = bridge.scan_audit_anomalies()
             assert result == []
 
     def test_scan_drift_events_import_error(self, bridge):
         with patch("builtins.__import__", side_effect=ImportError("no module")):
-            result = bridge._scan_drift_events()
+            result = bridge.scan_drift_events()
             assert result == []
 
     def test_load_events_no_file(self, bridge):
-        events = bridge._load_events()
+        events = bridge.load_events()
         assert events == []
 
     def test_load_events_with_data(self, bridge_with_events):
-        events = bridge_with_events._load_events()
+        events = bridge_with_events.load_events()
         assert len(events) == 1
 
     def test_sync_timestamp_set(self, bridge):

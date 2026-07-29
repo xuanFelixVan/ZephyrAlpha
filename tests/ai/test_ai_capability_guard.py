@@ -136,7 +136,7 @@ class TestRequireCapability:
 
             with (
                 patch(
-                    "zephyr.gov_enforcement.rule_enforcement.ai_capability_guard._check_file_level",
+                    "zephyr.gov_enforcement.rule_enforcement.ai_capability_guard.check_file_level",
                     return_value=CapabilityLevel.IMMUTABLE,
                 ),
                 pytest.raises(PermissionError),
@@ -154,7 +154,7 @@ class TestRequireCapability:
                 return "ok"
 
             with patch(
-                "zephyr.gov_enforcement.rule_enforcement.ai_capability_guard._check_file_level",
+                "zephyr.gov_enforcement.rule_enforcement.ai_capability_guard.check_file_level",
                 return_value=CapabilityLevel.FULL,
             ):
                 result = open_func()

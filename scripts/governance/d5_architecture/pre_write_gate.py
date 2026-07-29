@@ -349,3 +349,9 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def check_session_overlap(file_path, session_id) -> tuple[bool, str]:
+    """公共接口：check_session_overlap（Stage 4 公共化）。"""
+    return _check_session_overlap(file_path, session_id)
+

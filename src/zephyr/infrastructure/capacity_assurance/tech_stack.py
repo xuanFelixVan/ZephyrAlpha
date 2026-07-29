@@ -63,6 +63,11 @@ class TechStackValidator:
         self.results: list[ComponentStatus] = []
         self._load_manifest()
 
+    def default_decisions(self) -> list[dict]:
+        """公共接口：default_decisions（Stage 4 公共化）。"""
+        return self._default_decisions()
+
+
     def _load_manifest(self):
         if os.path.exists(self.manifest_path):
             with open(self.manifest_path, encoding="utf-8") as f:

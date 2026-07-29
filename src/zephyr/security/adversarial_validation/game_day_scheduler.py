@@ -95,15 +95,25 @@ class GameDayScheduler:
 
     @property
     def state_path(self) -> Path:
-        """只读：状态文件路径（Stage 4 公共化）。"""
+        """只读：state_path（Stage 4 公共化）。"""
         return self._state_path
+
+    @state_path.setter
+    def state_path(self, value):
+        """写入：state_path（Stage 4 公共化）。"""
+        self._state_path = value
 
     # ── auto_start 公共 API（Stage 4 公共化，primary） ──
 
     @property
     def auto_start_thread(self) -> threading.Thread | None:
-        """只读：当前 auto_start 守护线程引用（Stage 4 公共化）。"""
+        """只读：auto_start_thread（Stage 4 公共化）。"""
         return self._auto_start_thread
+
+    @auto_start_thread.setter
+    def auto_start_thread(self, value):
+        """写入：auto_start_thread（Stage 4 公共化）。"""
+        self._auto_start_thread = value
 
     @property
     def auto_start_running(self) -> bool:

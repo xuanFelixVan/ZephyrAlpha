@@ -241,17 +241,17 @@ class TestSqliteDumperHealthCheck:
 
 class TestSqliteDumperMerkleRoot:
     def test_empty_table_hashes(self, dumper: SqliteDumper) -> None:
-        result = dumper._compute_merkle_root([])
+        result = dumper.compute_merkle_root([])
         assert result == hashlib.sha256(b"").hexdigest()
 
     def test_single_table_hash(self, dumper: SqliteDumper) -> None:
         h = hashlib.sha256(b"test").digest()
-        result = dumper._compute_merkle_root([h])
+        result = dumper.compute_merkle_root([h])
         assert result == h.hex()
 
     def test_two_table_hashes(self, dumper: SqliteDumper) -> None:
         h1 = hashlib.sha256(b"table1").digest()
         h2 = hashlib.sha256(b"table2").digest()
         expected = hashlib.sha256(h1 + h2).hexdigest()
-        result = dumper._compute_merkle_root([h1, h2])
+        result = dumper.compute_merkle_root([h1, h2])
         assert result == expected

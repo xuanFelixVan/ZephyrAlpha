@@ -36,10 +36,20 @@ class SilenceDetector:
         """只读：last_activity（Stage 4 公共化）。"""
         return self._last_activity
 
+    @last_activity.setter
+    def last_activity(self, value):
+        """写入：last_activity（Stage 4 公共化）。"""
+        self._last_activity = value
+
     @property
     def timeout_s(self):
         """只读：timeout_s（Stage 4 公共化）。"""
         return self._timeout_s
+
+    @timeout_s.setter
+    def timeout_s(self, value):
+        """写入：timeout_s（Stage 4 公共化）。"""
+        self._timeout_s = value
 
 
     def record_activity(self, agent_id: str):

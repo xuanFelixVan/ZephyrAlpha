@@ -118,6 +118,11 @@ class FailurePatternMatcher:
         """只读：active（Stage 4 公共化）。"""
         return self._active
 
+    @active.setter
+    def active(self, value):
+        """写入：active（Stage 4 公共化）。"""
+        self._active = value
+
 
     def activate(self) -> None:
         if self._active:

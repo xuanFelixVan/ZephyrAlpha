@@ -56,17 +56,32 @@ class PolicySandbox:
         """只读：sandbox_policy（Stage 4 公共化）。"""
         return self._sandbox_policy
 
+    @sandbox_policy.setter
+    def sandbox_policy(self, value):
+        """写入：sandbox_policy（Stage 4 公共化）。"""
+        self._sandbox_policy = value
+
 
     @property
     def policy_path(self):
         """只读：policy_path（Stage 4 公共化）。"""
         return self._policy_path
 
+    @policy_path.setter
+    def policy_path(self, value):
+        """写入：policy_path（Stage 4 公共化）。"""
+        self._policy_path = value
+
 
     @property
     def changes(self) -> dict:
         """只读：changes（Stage 4 公共化）。"""
         return self._changes
+
+    @changes.setter
+    def changes(self, value):
+        """写入：changes（Stage 4 公共化）。"""
+        self._changes = value
 
 
     def assess_impact(self, policy) -> dict[str, float]:
@@ -75,9 +90,11 @@ class PolicySandbox:
 
 
     @staticmethod
-    def set_nested(d, path, value) -> None:
-        """公共接口：set_nested（Stage 4 公共化，委托到 _set_nested）。"""
-        return _set_nested(d, path, value)
+    def set_nested(d: dict, path: str, value) -> None:
+        keys = path.split('.')
+        for key in keys[:-1]:
+            d = d.setdefault(key, {})
+        d[keys[-1]] = value
 
 
     def load_current(self) -> dict:
@@ -144,10 +161,8 @@ class PolicySandbox:
 
     @staticmethod
     def _set_nested(d: dict, path: str, value) -> None:
-        keys = path.split(".")
-        for key in keys[:-1]:
-            d = d.setdefault(key, {})
-        d[keys[-1]] = value
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return PolicySandbox.set_nested(d, path, value)
 
     def recent_trials(self, n: int = 10) -> list[SandboxTrial]:
         return self._trials[-n:]

@@ -98,7 +98,7 @@ def _collect_staged_py_files(gateway):
     None=fail-open(git diff 不可达)。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -133,7 +133,7 @@ def _scan_file_violations(gateway, py_file):
 
     # 解析 diff，获取 added 行及行号
     try:
-        file_diff = gateway._run_git(
+        file_diff = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

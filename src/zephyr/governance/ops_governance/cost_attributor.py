@@ -54,15 +54,30 @@ class CostAttributor:
         """只读：attributions（Stage 4 公共化）。"""
         return self._attributions
 
+    @attributions.setter
+    def attributions(self, value):
+        """写入：attributions（Stage 4 公共化）。"""
+        self._attributions = value
+
     @property
     def counter(self) -> int:
         """只读：counter（Stage 4 公共化）。"""
         return self._counter
 
+    @counter.setter
+    def counter(self, value):
+        """写入：counter（Stage 4 公共化）。"""
+        self._counter = value
+
     @property
     def top_n(self):
         """只读：top_n（Stage 4 公共化）。"""
         return self._top_n
+
+    @top_n.setter
+    def top_n(self, value):
+        """写入：top_n（Stage 4 公共化）。"""
+        self._top_n = value
 
 
     def attribute(

@@ -273,11 +273,27 @@ class DatabaseManager:
             schema_version=schema_version(self._db_path),
         )
 
+    @property
+    def backup_dir(self) -> Path:
+        """只读：backup_dir（Stage 4 公共化）。"""
+        return self._backup_dir
+
+    @backup_dir.setter
+    def backup_dir(self, value):
+        """写入：backup_dir（Stage 4 公共化）。"""
+        self._backup_dir = value
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def closed(self):
         """只读：closed（Stage 4 公共化）。"""
         return self._closed
+
+    @closed.setter
+    def closed(self, value):
+        """写入：closed（Stage 4 公共化）。"""
+        self._closed = value
 
 
     @classmethod

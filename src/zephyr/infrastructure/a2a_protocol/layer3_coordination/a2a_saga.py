@@ -89,6 +89,11 @@ class A2ASaga:
         """只读：compensations（Stage 4 公共化）。"""
         return self._compensations
 
+    @compensations.setter
+    def compensations(self, value):
+        """写入：compensations（Stage 4 公共化）。"""
+        self._compensations = value
+
 
     def add_step(
         self,

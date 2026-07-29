@@ -338,8 +338,8 @@ class TestSaveAndReadState:
         state_path = tmp_project / ".zephyr/warm_standby_state.json"
         state_path.parent.mkdir(parents=True, exist_ok=True)
         original = _make_state()
-        standby._save_state(original)
-        loaded = standby._read_state()
+        standby.save_state(original)
+        loaded = standby.read_state()
         assert loaded is not None
         assert loaded.standby_commit == original.standby_commit
         assert loaded.standby_path == original.standby_path
@@ -347,4 +347,4 @@ class TestSaveAndReadState:
         assert loaded.is_stale == original.is_stale
 
     def test_read_state_missing_file(self, standby: WarmStandby) -> None:
-        assert standby._read_state() is None
+        assert standby.read_state() is None

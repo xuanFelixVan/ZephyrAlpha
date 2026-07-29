@@ -72,11 +72,11 @@ class TestCheckDualLevel:
     def test_no_records_pass(self, tmp_path: Path, monkeypatch):
         """无 block_next / critical_warn 记录 → 放行。"""
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             lambda root: [],
         )
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             lambda root: [],
         )
         gw = _make_gateway(tmp_path)
@@ -88,7 +88,7 @@ class TestCheckDualLevel:
     def test_block_next_blocks(self, tmp_path: Path, monkeypatch):
         """有 block_next 记录 → 硬阻断。"""
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             lambda root: [
                 {
                     "gate_id": "GATE-DEPGRAPH-OPS",
@@ -98,7 +98,7 @@ class TestCheckDualLevel:
             ],
         )
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             lambda root: [],
         )
         gw = _make_gateway(tmp_path)
@@ -111,11 +111,11 @@ class TestCheckDualLevel:
     def test_critical_warn_passes_with_warning(self, tmp_path: Path, monkeypatch):
         """有 critical_warn 记录但无 block_next → 放行 + 警告。"""
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             lambda root: [],
         )
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             lambda root: [
                 {
                     "gate_id": "GATE-DRIFT-SCAN",
@@ -134,7 +134,7 @@ class TestCheckDualLevel:
     def test_block_next_takes_priority_over_critical_warn(self, tmp_path: Path, monkeypatch):
         """同时有 block_next 和 critical_warn → 阻断（block_next 优先）。"""
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             lambda root: [
                 {
                     "gate_id": "GATE-BLOCK",
@@ -144,7 +144,7 @@ class TestCheckDualLevel:
             ],
         )
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             lambda root: [
                 {
                     "gate_id": "GATE-WARN",
@@ -170,11 +170,11 @@ class TestFailOpen:
             raise RuntimeError("db connection failed")
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             _raise,
         )
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             lambda root: [],
         )
         gw = _make_gateway(tmp_path)
@@ -185,7 +185,7 @@ class TestFailOpen:
     def test_warns_query_exception_passes(self, tmp_path: Path, monkeypatch):
         """_check_recent_critical_warns 抛异常 → fail-open 放行。"""
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             lambda root: [],
         )
 
@@ -193,7 +193,7 @@ class TestFailOpen:
             raise RuntimeError("db connection failed")
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             _raise,
         )
         gw = _make_gateway(tmp_path)
@@ -208,11 +208,11 @@ class TestFailOpen:
             raise RuntimeError("db connection failed")
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_blocks",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
             _raise,
         )
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate._check_recent_critical_warns",
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
             _raise,
         )
         gw = _make_gateway(tmp_path)

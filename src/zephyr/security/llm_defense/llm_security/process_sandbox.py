@@ -200,8 +200,13 @@ class L2aSandbox:
 
     @property
     def repo_root(self) -> Path:
-        """只读：沙箱仓库根目录（Stage 4 公共化）。"""
+        """只读：repo_root（Stage 4 公共化）。"""
         return self._repo_root
+
+    @repo_root.setter
+    def repo_root(self, value):
+        """写入：repo_root（Stage 4 公共化）。"""
+        self._repo_root = value
 
     def run(
         self,

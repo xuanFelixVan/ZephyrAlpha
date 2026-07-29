@@ -59,6 +59,8 @@ class RetentionPolicy:
 
 
 _policy: RetentionPolicy = RetentionPolicy()
+policy = _policy  # public alias（Stage 4 公共化）
+
 
 
 def configure(

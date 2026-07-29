@@ -63,7 +63,7 @@ class _FakeGateway:
         self.project_root = project_root
         self._head_sha = head_sha
 
-    def _run_git(self, cmd: list[str]):
+    def run_git(self, cmd: list[str]):
         mock = MagicMock()
         mock.returncode = 0
         mock.stderr = ""
@@ -72,6 +72,10 @@ class _FakeGateway:
         else:
             mock.stdout = ""
         return mock
+
+    def _run_git(self, cmd: list[str]):
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd)
 
 
 class TestFactorySpec:

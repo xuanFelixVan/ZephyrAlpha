@@ -131,8 +131,13 @@ class ColdStart:
 
     @property
     def registry_path(self) -> Path:
-        """只读：场景注册表路径（Stage 4 公共化）。"""
+        """只读：registry_path（Stage 4 公共化）。"""
         return self._registry_path
+
+    @registry_path.setter
+    def registry_path(self, value):
+        """写入：registry_path（Stage 4 公共化）。"""
+        self._registry_path = value
 
     def classify(self, path: str) -> str:
         """公共 API：分类模块路径（Stage 4 公共化，primary 实现）。"""

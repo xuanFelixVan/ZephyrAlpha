@@ -445,3 +445,9 @@ def compare_baseline_with_live(project_root: Path | str | None = None) -> dict:
         "violations": violations_detail,
         "error": "" if fresh else "snapshot stale (generated_at > 24h)",
     }
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def run_dashboard(project_root, metric_ids, timeout) -> tuple[int, str, str]:
+    """公共接口：run_dashboard（Stage 4 公共化）。"""
+    return _run_dashboard(project_root, metric_ids, timeout)
+

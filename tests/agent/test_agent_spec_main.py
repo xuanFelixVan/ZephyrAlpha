@@ -61,7 +61,7 @@ class TestLoadRegistry:
         assert "skills" in reg
 
     def test_load_registry_missing_file(self):
-        with patch("zephyr.autonomy_core.__main__._registry_path", return_value=Path("/nonexistent/registry.yaml")):
+        with patch("zephyr.autonomy_core.__main__.registry_path", return_value=Path("/nonexistent/registry.yaml")):
             with pytest.raises(FileNotFoundError):
                 _load_registry()
 
@@ -77,12 +77,12 @@ class TestCmdList:
         assert "已注册 Skill" in out or "Skill" in out
 
     def test_handles_registry_error(self, capsys):
-        with patch("zephyr.autonomy_core.__main__._load_registry", side_effect=RuntimeError("boom")):
+        with patch("zephyr.autonomy_core.__main__.load_registry", side_effect=RuntimeError("boom")):
             result = cmd_list()
             assert result == 1
 
     def test_empty_skills_prints_zero(self, capsys):
-        with patch("zephyr.autonomy_core.__main__._load_registry", return_value={"skills": {}}):
+        with patch("zephyr.autonomy_core.__main__.load_registry", return_value={"skills": {}}):
             result = cmd_list()
             assert result == 0
             out = capsys.readouterr().out
@@ -102,7 +102,7 @@ class TestCmdStatus:
         assert "skill_model" in out or "skill_loader" in out or "skill-registry" in out
 
     def test_reports_degraded_on_import_failure(self, capsys):
-        with patch("zephyr.autonomy_core.__main__._load_registry", side_effect=RuntimeError("fail")):
+        with patch("zephyr.autonomy_core.__main__.load_registry", side_effect=RuntimeError("fail")):
             with patch.dict(sys.modules, {"zephyr.autonomy_core.skills.skill_model": None}):
                 result = cmd_status()
                 assert result == 1

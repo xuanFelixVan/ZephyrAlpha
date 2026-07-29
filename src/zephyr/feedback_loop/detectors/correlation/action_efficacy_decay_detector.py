@@ -38,15 +38,25 @@ class ActionEfficacyDecayDetector:
     records: dict[str, ActionEfficacyRecord] = field(default_factory=dict)
 
     @staticmethod
-    def compute_slope(values) -> float:
-        """公共接口：compute_slope（Stage 4 公共化，委托到 _compute_slope）。"""
-        return _compute_slope(values)
+    def compute_slope(values: list[float]) -> float:
+        if len(values) < 2:
+            return 0.0
+        n = len(values)
+        x_mean = (n - 1) / 2.0
+        y_mean = sum(values) / n
+        num = sum(((i - x_mean) * (v - y_mean) for i, v in enumerate(values)))
+        den = sum(((i - x_mean) ** 2 for i in range(n)))
+        return num / den if den != 0 else 0.0
 
 
     @staticmethod
-    def compute_ewma(values, alpha) -> list[float]:
-        """公共接口：compute_ewma（Stage 4 公共化，委托到 _compute_ewma）。"""
-        return _compute_ewma(values, alpha)
+    def compute_ewma(values: list[float], alpha: float=0.3) -> list[float]:
+        if not values:
+            return []
+        result = [values[0]]
+        for v in values[1:]:
+            result.append(alpha * v + (1 - alpha) * result[-1])
+        return result
 
     decay_threshold: float = -0.02
     min_samples: int = 10
@@ -82,21 +92,11 @@ class ActionEfficacyDecayDetector:
         return [k for k, v in findings.items() if v["is_decaying"]]
 
     @staticmethod
-    def _compute_ewma(values: list[float], alpha: float = 0.3) -> list[float]:
-        if not values:
-            return []
-        result = [values[0]]
-        for v in values[1:]:
-            result.append(alpha * v + (1 - alpha) * result[-1])
-        return result
+    def _compute_ewma(values: list[float], alpha: float=0.3) -> list[float]:
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return ActionEfficacyDecayDetector.compute_ewma(values, alpha)
 
     @staticmethod
     def _compute_slope(values: list[float]) -> float:
-        if len(values) < 2:
-            return 0.0
-        n = len(values)
-        x_mean = (n - 1) / 2.0
-        y_mean = sum(values) / n
-        num = sum((i - x_mean) * (v - y_mean) for i, v in enumerate(values))
-        den = sum((i - x_mean) ** 2 for i in range(n))
-        return num / den if den != 0 else 0.0
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return ActionEfficacyDecayDetector.compute_slope(values)

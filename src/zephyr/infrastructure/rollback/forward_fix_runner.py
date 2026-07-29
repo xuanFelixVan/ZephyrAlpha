@@ -50,6 +50,11 @@ class ForwardFixRunner:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     def can_forward_fix(self, changed_files: list[str], conflict_risk: str) -> bool:
         if conflict_risk == "high":
@@ -72,8 +77,8 @@ class ForwardFixRunner:
             )
             patch_path.write_text(result.stdout, encoding="utf-8")
 
-            self._run_git(["add", "-A"])
-            self._run_git(["commit", "-m", f"Forward-Fix: {error_message[:72]} [target:{commit_sha}]"])
+            self.run_git(["add", "-A"])
+            self.run_git(["commit", "-m", f"Forward-Fix: {error_message[:72]} [target:{commit_sha}]"])
 
             return FixResult(
                 success=True,
@@ -91,7 +96,7 @@ class ForwardFixRunner:
                 details=["internal error"],
             )
 
-    def _run_git(self, args: list[str]) -> str:
+    def run_git(self, args: list[str]) -> str:
         try:
             result = run_subprocess_hidden(
                 ["git"] + args,
@@ -103,3 +108,7 @@ class ForwardFixRunner:
             return result.stdout
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
+
+    def _run_git(self, args: list[str]) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(args)

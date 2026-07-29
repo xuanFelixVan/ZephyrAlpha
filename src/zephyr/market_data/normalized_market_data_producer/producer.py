@@ -295,3 +295,39 @@ def produce(
         NormalizedMarketData 列表
     """
     return load_kline(symbols, start, end)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def to_int(value, default) -> int:
+    """公共接口：to_int（Stage 4 公共化）。"""
+    return _to_int(value, default)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def to_decimal(value) -> Decimal | None:
+    """公共接口：to_decimal（Stage 4 公共化）。"""
+    return _to_decimal(value)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def strip_symbol_suffix(symbol) -> str:
+    """公共接口：strip_symbol_suffix（Stage 4 公共化）。"""
+    return _strip_symbol_suffix(symbol)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def row_to_record(row) -> NormalizedMarketData | None:
+    """公共接口：row_to_record（Stage 4 公共化）。"""
+    return _row_to_record(row)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def normalize_symbol(symbol) -> str:
+    """公共接口：normalize_symbol（Stage 4 公共化）。"""
+    return _normalize_symbol(symbol)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def format_symbols(symbols) -> str:
+    """公共接口：format_symbols（Stage 4 公共化）。"""
+    return _format_symbols(symbols)
+

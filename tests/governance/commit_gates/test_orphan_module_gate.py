@@ -24,7 +24,7 @@
   - fail-open on git grep 超时
   - fail-open on git grep 异常
 
-测试隔离：MagicMock 模拟 gateway._run_git；monkeypatch 模拟 subprocess.run（git grep）；
+测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 subprocess.run（git grep）；
 tmp_path 创建真实 .py 文件（gate 通过 os.path.join(wt_root, rel) 读盘）。
 """
 from __future__ import annotations
@@ -64,7 +64,7 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = MagicMock(side_effect=_raise)
+        gw.run_git = MagicMock(side_effect=_raise)
         return gw
 
     def _run_git(cmd, cwd=None):
@@ -76,7 +76,7 @@ def _make_gateway(tmp_path, staged_files=None, diff_fails=False, diff_raises=Fal
             return _MockResult(0, str(tmp_path))
         return _MockResult(0, "")
 
-    gw._run_git = MagicMock(side_effect=_run_git)
+    gw.run_git = MagicMock(side_effect=_run_git)
     return gw
 
 
@@ -99,16 +99,16 @@ class _GrepResult:
 
 
 def _patch_grep(gateway, returncode=1, stdout="", raises=None):
-    """patch gateway._run_git 的 git grep 调用。
+    """patch gateway.run_git 的 git grep 调用。
     returncode=1 → 无匹配（孤儿）；0 → 有匹配（非孤儿）。"""
-    original_side_effect = gateway._run_git.side_effect
+    original_side_effect = gateway.run_git.side_effect
 
     if raises is not None:
         def _grep_run(cmd, cwd=None):
             if len(cmd) >= 2 and cmd[0:2] == ["git", "grep"]:
                 raise raises
             return original_side_effect(cmd)
-        gateway._run_git.side_effect = _grep_run
+        gateway.run_git.side_effect = _grep_run
         return
 
     def _grep_run(cmd, cwd=None):
@@ -116,7 +116,7 @@ def _patch_grep(gateway, returncode=1, stdout="", raises=None):
             return _GrepResult(returncode=returncode, stdout=stdout)
         return original_side_effect(cmd)
 
-    gateway._run_git.side_effect = _grep_run
+    gateway.run_git.side_effect = _grep_run
 
 
 @pytest.fixture(autouse=True)

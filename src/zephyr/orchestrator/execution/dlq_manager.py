@@ -48,6 +48,11 @@ class DLQManager:
         """只读：messages（Stage 4 公共化）。"""
         return self._messages
 
+    @messages.setter
+    def messages(self, value):
+        """写入：messages（Stage 4 公共化）。"""
+        self._messages = value
+
 
     def enqueue(self, message_id: str, contract_id: str, payload: dict | None = None) -> DLQMessage:
         msg = DLQMessage(

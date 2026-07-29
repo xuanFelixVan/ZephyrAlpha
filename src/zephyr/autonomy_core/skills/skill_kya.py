@@ -42,6 +42,11 @@ class SkillKYA:
         """只读：certs（Stage 4 公共化）。"""
         return self._certs
 
+    @certs.setter
+    def certs(self, value):
+        """写入：certs（Stage 4 公共化）。"""
+        self._certs = value
+
 
     def assess(self, tools) -> str:
         """公共接口：assess（Stage 4 公共化）。"""

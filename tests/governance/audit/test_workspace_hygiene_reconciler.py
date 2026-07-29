@@ -575,7 +575,7 @@ class TestReconcile:
         spec = make_workspace_hygiene_reconciler(gw)
         # mock _git_status_porcelain 抛异常
         with patch(
-            "zephyr.governance.audit.workspace_hygiene_reconciler._git_status_porcelain",
+            "zephyr.governance.audit.workspace_hygiene_reconciler.git_status_porcelain",
             side_effect=RuntimeError("simulated failure"),
         ):
             result = spec.reconcile(["any"], "test-session")

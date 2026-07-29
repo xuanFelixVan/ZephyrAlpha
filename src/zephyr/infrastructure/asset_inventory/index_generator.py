@@ -267,6 +267,11 @@ class SchemaEvolutionManager:
         """只读：root（Stage 4 公共化）。"""
         return self._root
 
+    @root.setter
+    def root(self, value):
+        """写入：root（Stage 4 公共化）。"""
+        self._root = value
+
 
     def check_compatibility(self, current_version: str) -> MigrationPlan:
         plan = MigrationPlan(current_version=current_version, target_version=self.VERSIONS[-1])

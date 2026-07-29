@@ -34,10 +34,20 @@ class VibeVerifyIntegration:
         """只读：scan_count（Stage 4 公共化）。"""
         return self._scan_count
 
+    @scan_count.setter
+    def scan_count(self, value):
+        """写入：scan_count（Stage 4 公共化）。"""
+        self._scan_count = value
+
     @property
     def violations_patched(self):
         """只读：violations_patched（Stage 4 公共化）。"""
         return self._violations_patched
+
+    @violations_patched.setter
+    def violations_patched(self, value):
+        """写入：violations_patched（Stage 4 公共化）。"""
+        self._violations_patched = value
 
 
     def scan_and_patch(self, code: str) -> tuple[bool, int]:

@@ -280,7 +280,7 @@ class TestAuditLog:
             "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
             tmp_path,
         ), patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate._audit_log_dir_exists",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
             return_value=False,
         ):
             spec = make_capability_lookup_required_gate()
@@ -301,10 +301,10 @@ class TestAuditLog:
             "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
             tmp_path,
         ), patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate._audit_log_dir_exists",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
             return_value=True,
         ), patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate._get_audit_log_path",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.get_audit_log_path",
             return_value=tmp_path / "nonexistent.jsonl",
         ):
             spec = make_capability_lookup_required_gate()

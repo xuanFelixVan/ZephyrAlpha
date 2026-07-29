@@ -110,7 +110,7 @@ def make_rule_execution_pairing_gate() -> GateSpec:
     def _validate_single_rule(gateway, rel, known_gate_ids):
         """验证单个 trae 规则文件的 paired_gate_id。返回 violation 字符串或 None。"""
         try:
-            result = gateway._run_git(["git", "show", f":{rel}"])
+            result = gateway.run_git(["git", "show", f":{rel}"])
         except Exception as e:  # noqa: BLE001
             logger.warning("RULE-EXECUTION-PAIRING: git show :%s 失败(%s)，跳过", rel, e)
             return None

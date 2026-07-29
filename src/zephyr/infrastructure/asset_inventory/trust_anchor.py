@@ -265,6 +265,11 @@ class BypassManager:
         """只读：override_path（Stage 4 公共化）。"""
         return self._override_path
 
+    @override_path.setter
+    def override_path(self, value):
+        """写入：override_path（Stage 4 公共化）。"""
+        self._override_path = value
+
 
     def get_bypass_state(self) -> BypassState:
         data = _load_override_yaml(self._override_path)

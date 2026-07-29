@@ -53,10 +53,20 @@ class RollbackSimulator:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
+    def run_git(self, args, cwd=None) -> str:
+        """公共接口：run_git（Stage 4 公共化，forward 至 _run_git 实现）。"""
+        return self._run_git(args, cwd)
+
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def simulate_rollback(self, commit_sha: str) -> SimulationResult:
@@ -69,7 +79,7 @@ class RollbackSimulator:
         details: list[str] = []
 
         try:
-            self._run_git(["worktree", "add", str(worktree_path), commit_sha])
+            self.run_git(["worktree", "add", str(worktree_path), commit_sha])
             details.append(f"Worktree created: {worktree_path}")
 
             result = run_subprocess_hidden(
@@ -87,7 +97,7 @@ class RollbackSimulator:
                 stderr = result.stderr
                 details.append(f"Revert conflict: {stderr[:200]}")
                 if "CONFLICT" in stderr:
-                    conflict_output = self._run_git(
+                    conflict_output = self.run_git(
                         ["diff", "--name-only", "--diff-filter=U"],
                         cwd=worktree_path,
                     )
@@ -97,7 +107,7 @@ class RollbackSimulator:
             details.append(f"Simulation error: {e}")
         finally:
             try:
-                self._run_git(["worktree", "remove", "--force", str(worktree_path)])
+                self.run_git(["worktree", "remove", "--force", str(worktree_path)])
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_simulator", exc_info=True)
 

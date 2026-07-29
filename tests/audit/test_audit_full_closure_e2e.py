@@ -118,8 +118,8 @@ class TestFullClosureE2E:
 
     def test_ingest_string_to_jsonl_file(self, tmp_path):
         ingest = FindingIngest(audit_dir=str(tmp_path / "audit"))
-        ingest._writer = None
-        ingest._writer_initialized = True
+        ingest.writer = None
+        ingest.writer_initialized = True
         jsonl_line = _make_finding_jsonl()
         result = ingest.ingest_string(jsonl_line)
         assert result.ingested == 1

@@ -24,9 +24,17 @@ class ThematicClusterer:
     """重复组主题聚类——将50组重复归约到3-5个主题."""
 
     @staticmethod
-    def classify(paths) -> str:
-        """公共接口：classify（Stage 4 公共化，委托到 _classify）。"""
-        return _classify(paths)
+    def classify(paths: list[str]) -> str:
+        combined = '/'.join(paths).lower()
+        if 'test' in combined:
+            return 'Test Patterns'
+        if 'shared' in combined:
+            return 'Shared Library'
+        if any((kw in combined for kw in ('infrastructure', 'l01_'))):
+            return 'Infrastructure'
+        if any((kw in combined for kw in ('pipeline', 'workflow'))):
+            return 'Pipeline'
+        return 'General'
 
 
     def cluster(self, duplicate_groups: list[dict], max_clusters: int = 5) -> dict:
@@ -51,13 +59,5 @@ class ThematicClusterer:
 
     @staticmethod
     def _classify(paths: list[str]) -> str:
-        combined = "/".join(paths).lower()
-        if "test" in combined:
-            return "Test Patterns"
-        if "shared" in combined:
-            return "Shared Library"
-        if any(kw in combined for kw in ("infrastructure", "l01_")):
-            return "Infrastructure"
-        if any(kw in combined for kw in ("pipeline", "workflow")):
-            return "Pipeline"
-        return "General"
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return ThematicClusterer.classify(paths)

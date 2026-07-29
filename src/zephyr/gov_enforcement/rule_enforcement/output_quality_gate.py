@@ -54,6 +54,11 @@ class OutputQualityGate:
         """只读：rules（Stage 4 公共化）。"""
         return self._rules
 
+    @rules.setter
+    def rules(self, value):
+        """写入：rules（Stage 4 公共化）。"""
+        self._rules = value
+
 
     def evaluate(self, output: str, cost: float) -> QualityVerdict:
         violations: list[str] = []

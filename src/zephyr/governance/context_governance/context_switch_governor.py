@@ -34,10 +34,20 @@ class ContextSwitchGovernor:
         """只读：daily_switches（Stage 4 公共化）。"""
         return self._daily_switches
 
+    @daily_switches.setter
+    def daily_switches(self, value):
+        """写入：daily_switches（Stage 4 公共化）。"""
+        self._daily_switches = value
+
     @property
     def max_switches_per_owner(self):
         """只读：max_switches_per_owner（Stage 4 公共化）。"""
         return self._max_switches_per_owner
+
+    @max_switches_per_owner.setter
+    def max_switches_per_owner(self, value):
+        """写入：max_switches_per_owner（Stage 4 公共化）。"""
+        self._max_switches_per_owner = value
 
 
     def can_switch(self, owner_id: str) -> bool:

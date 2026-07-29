@@ -23,9 +23,9 @@ btb = pytest.importorskip(
 
 @pytest.fixture(autouse=True)
 def _reset_bridge():
-    btb._telemetry_getter = None
+    btb.telemetry_getter = None
     yield
-    btb._telemetry_getter = None
+    btb.telemetry_getter = None
 
 
 class TestSetTelemetryGetter:
@@ -65,5 +65,5 @@ class TestBoundary:
 
     def test_set_getter_with_none_not_allowed(self):
         btb.set_telemetry_getter(lambda: "ok")
-        btb._telemetry_getter = None
+        btb.telemetry_getter = None
         assert btb.get_telemetry() is None

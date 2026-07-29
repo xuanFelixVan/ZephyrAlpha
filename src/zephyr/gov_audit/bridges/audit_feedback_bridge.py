@@ -61,11 +61,19 @@ class AuditFeedbackBridge:
         """只读：anomaly_to_signal（Stage 4 公共化）。"""
         return self._anomaly_to_signal
 
+    @anomaly_to_signal.setter
+    def anomaly_to_signal(self, value):
+        """写入：anomaly_to_signal（Stage 4 公共化）。"""
+        self._anomaly_to_signal = value
+
 
     @staticmethod
-    def classify_layer(severity) -> str:
-        """公共接口：classify_layer（Stage 4 公共化，委托到 _classify_layer）。"""
-        return _classify_layer(severity)
+    def classify_layer(severity: str) -> str:
+        if severity in ('CRITICAL', 'HIGH'):
+            return 'L3_ARCHITECTURE'
+        if severity == 'MEDIUM':
+            return 'L2_PATTERN'
+        return 'L1_TASK'
 
 
     def anomaly_to_fle_signal(self, anomaly: dict[str, Any]) -> dict[str, Any] | None:
@@ -160,8 +168,5 @@ class AuditFeedbackBridge:
 
     @staticmethod
     def _classify_layer(severity: str) -> str:
-        if severity in ("CRITICAL", "HIGH"):
-            return "L3_ARCHITECTURE"
-        if severity == "MEDIUM":
-            return "L2_PATTERN"
-        return "L1_TASK"
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return AuditFeedbackBridge.classify_layer(severity)

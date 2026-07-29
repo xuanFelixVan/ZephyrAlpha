@@ -281,3 +281,9 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def file_exists(module_path) -> bool:
+    """公共接口：file_exists（Stage 4 公共化）。"""
+    return _file_exists(module_path)
+

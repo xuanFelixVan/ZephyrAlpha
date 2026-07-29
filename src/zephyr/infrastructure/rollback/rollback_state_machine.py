@@ -90,10 +90,20 @@ class RollbackStateMachine:
         """只读：current_step_idx（Stage 4 公共化）。"""
         return self._current_step_idx
 
+    @current_step_idx.setter
+    def current_step_idx(self, value):
+        """写入：current_step_idx（Stage 4 公共化）。"""
+        self._current_step_idx = value
+
     @property
     def execution_id(self):
         """只读：execution_id（Stage 4 公共化）。"""
         return self._execution_id
+
+    @execution_id.setter
+    def execution_id(self, value):
+        """写入：execution_id（Stage 4 公共化）。"""
+        self._execution_id = value
 
 
     def _init_steps(self) -> None:

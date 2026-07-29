@@ -69,6 +69,7 @@ _TBL_HK_STOCK_LIST = get_registry().table("market_hk_stock_list")
 _TBL_HK_TRADE_CALENDAR = get_registry().table("market_hk_trade_calendar")
 _TBL_INDEX_LIST = get_registry().table("market_index_list")
 _TBL_KLINE_FUTURES = get_registry().table("market_futures_kline")
+_TBL_KLINE_HK_DAILY = get_registry().table("market_hk_kline_daily")
 _TBL_LIMIT_UP_DOWN = get_registry().table("market_limit_up_down")
 _TBL_LOF_LIST = get_registry().table("market_lof_list")
 _TBL_MACRO_DATA = get_registry().table("market_macro_data")
@@ -97,13 +98,14 @@ _AKSHARE_CAPABILITIES = frozenset({
     "equity_pledge", "equity_pledge_summary", "dividend", "restricted_shares",
     "stock_news_em", "news_cctv", "news_economic_baidu", "news_baidu",
     "news_stock", "analyst_forecast", "rights_issue", "research_report",
-    "hk_connect_flow", "kline_futures", "limit_up_down", "share_change",
+    "hk_connect_flow", "kline_futures", "kline_hk_daily", "limit_up_down", "share_change",
     "st_stock_list", "concept_board", "stock_indicator", "block_trade_detail",
     "top10_shareholders", "top10_circulating_shareholders", "disclosure_plan",
     "repurchase", "convertible_bond_list", "etf_list", "lof_list",
     "hk_stock_list", "hk_trade_calendar", "index_list", "etf_benchmark",
     "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
     "stock_list_delisted",  # #ARCH-CH-021 P0-1: 退市股票列表（SH+SZ delist）
+    "futures_position",  # #ARCH-FUTURES-POSITION: 替代 QMT（QMT get_instrument_detail 返回全0）
 })
 
 
@@ -214,6 +216,7 @@ class AKShareProvider(DataSourceBase):
             # 研报 & 北向资金 & 期货主力合约
             CapabilityContract("hk_connect_flow", supports_symbols_null=True),
             CapabilityContract("kline_futures", supports_symbols_null=True),
+            CapabilityContract("kline_hk_daily", supports_symbols_null=True),
             # 涨跌停 & 股本变动 & ST股票 & 概念板块 & 指标 & 大宗交易明细
             CapabilityContract("limit_up_down", supports_symbols_null=True),
             CapabilityContract("st_stock_list", supports_symbols_null=True),
@@ -233,6 +236,7 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("etf_benchmark", supports_symbols_null=True),
             CapabilityContract("etf_nav", supports_symbols_null=True),  # #ARCH-CH-023
             CapabilityContract("stock_list_delisted", supports_symbols_null=True),  # #ARCH-CH-021 P0-1
+            CapabilityContract("futures_position", supports_symbols_null=True),  # #ARCH-FUTURES-POSITION
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -2346,6 +2350,116 @@ class AKShareProvider(DataSourceBase):
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
 
+    # ---- 22b. 港股日K线（kline_hk_daily） ----
+
+    @staticmethod
+    def _parse_kline_hk_row(
+        row, code: str, name: str, start_str: str, end_str: str,
+    ) -> tuple | None:
+        """解析单行港股日K线数据，不在日期范围内返回 None。
+
+        ak.stock_hk_hist 返回列: 日期, 开盘, 收盘, 最高, 最低, 成交量, 成交额, ...
+        """
+        trade_date = AKShareProvider._norm_date_str(row.get("日期"))
+        if not trade_date or trade_date < start_str or trade_date > end_str:
+            return None
+        return (
+            trade_date,
+            f"{code}.HK",
+            name,
+            safe_float(row.get("开盘")),
+            safe_float(row.get("最高")),
+            safe_float(row.get("最低")),
+            safe_float(row.get("收盘")),
+            safe_int(row.get("成交量")) or 0,
+            safe_float(row.get("成交额")),
+        )
+
+    def _fetch_kline_hk_daily(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取港股日K线，写入 c1_market.kline_hk_daily。
+
+        1. 调用 ak.stock_hk_spot_em() 获取港股列表（代码+名称），限制前 500 只
+        2. 对每只港股调用 ak.stock_hk_hist(symbol, period="daily", ...) 获取K线
+        """
+        import akshare as ak
+
+        table = _TBL_KLINE_HK_DAILY
+        columns = [
+            "trade_date", "symbol", "name", "open", "high", "low",
+            "close", "volume", "amount",
+        ]
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        ak_start = payload.start.strftime("%Y%m%d")
+        ak_end = payload.end.strftime("%Y%m%d")
+        last_key = end_str
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        # 步骤1：获取港股列表（代码+名称）
+        try:
+            spot_df = self._call_with_policy(ak.stock_hk_spot_em, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0,
+                error=f"stock_hk_spot_em 失败: {e}",
+            )
+            return
+
+        if spot_df is None or len(spot_df) == 0:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0,
+                error="stock_hk_spot_em 返回空",
+            )
+            return
+
+        # 取代码+名称，限制前 500 只（避免全量 ~2500 只超时）
+        hk_list = []
+        for _, r in spot_df.head(500).iterrows():
+            code = str(r.get("代码", "") or "").strip()
+            name = str(r.get("名称", "") or "").strip()
+            if code:
+                hk_list.append((code, name))
+        self._log.info(f"港股K线: 获取 {len(hk_list)} 只标的")
+
+        # 步骤2：逐标的获取K线
+        for idx, (code, name) in enumerate(hk_list):
+            if (idx + 1) % 50 == 0:
+                self._log.info(f"kline_hk_daily 进度: {idx+1}/{len(hk_list)}")
+            try:
+                df = self._call_with_policy(
+                    ak.stock_hk_hist, policy,
+                    symbol=code, period="daily",
+                    start_date=ak_start, end_date=ak_end, adjust="",
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标
+                self._log.debug(f"stock_hk_hist({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                parsed = self._parse_kline_hk_row(row, code, name, start_str, end_str)
+                if parsed:
+                    batch_rows.append(parsed)
+
+            if len(batch_rows) >= 500:
+                yield FetchResult(
+                    table=table, columns=columns, rows=batch_rows[:],
+                    last_key=last_key, elapsed_sec=time.time() - t0,
+                )
+                batch_rows.clear()
+
+            threading.Event().wait(0.5)
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
     # ---- 23. 十大股东（top10_shareholders） ----
 
     @staticmethod
@@ -2359,6 +2473,142 @@ class AKShareProvider(DataSourceBase):
         if len(parts) == 2:
             return parts[1].upper() + parts[0]
         return ts_code
+
+    def _fetch_futures_position(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取期货持仓排名数据（前20名经纪商汇总），写入 c1_market.futures_position。
+
+        #ARCH-FUTURES-POSITION: 替代 QMT（QMT get_instrument_detail 返回全0）。
+        从各交易所排名表 API 获取前20名经纪商的多头/空头持仓量，
+        汇总为合约级总计（long_position=Σlong_open_interest, 等）。
+
+        数据源:
+          CFFEX: ak.get_cffex_rank_table(date) → dict{合约: DataFrame}
+          SHFE:  ak.get_shfe_rank_table(date)
+          DCE:   ak.get_dce_rank_table(date)
+          CZCE:  ak.get_rank_table_czce(date)
+        每个合约 DataFrame 列: long_open_interest, short_open_interest, vol, ...
+        """
+        import akshare as ak
+
+        table = "c1_market.futures_position"
+        columns = [
+            "trade_date", "symbol", "long_position", "short_position",
+            "long_volume", "short_volume", "exchange", "data_source",
+        ]
+
+        date_str = payload.end.strftime("%Y%m%d") if payload.end else ""
+        if not date_str:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=0.0, error="futures_position 缺少 end 日期",
+            )
+            return
+
+        trade_date = payload.end.strftime("%Y-%m-%d")
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        # 各交易所排名表 API（#ARCH-FUTURES-POSITION: DCE/CZCE API 可能挂起，
+        # 用线程超时包装防止无限等待；超时的交易所跳过，不影响其他交易所）
+        from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+
+        exchange_apis = [
+            ("CFFEX", ak.get_cffex_rank_table, 200),  # CFFEX 较慢
+            ("SHFE", ak.get_shfe_rank_table, 30),
+            ("DCE", ak.get_dce_rank_table, 60),
+            ("CZCE", ak.get_rank_table_czce, 60),
+        ]
+
+        for exchange_name, api_fn, timeout_sec in exchange_apis:
+            try:
+                # 线程超时包装（不用 with 块，避免 shutdown(wait=True) 阻塞）
+                ex = ThreadPoolExecutor(max_workers=1)
+                future = ex.submit(api_fn, date=date_str)
+                try:
+                    result = future.result(timeout=timeout_sec)
+                except FuturesTimeout:
+                    ex.shutdown(wait=False)  # 不等待挂起线程
+                    self._log.warning(
+                        f"futures_position {exchange_name} 超时({timeout_sec}s)，跳过"
+                    )
+                    continue
+                finally:
+                    ex.shutdown(wait=False)
+
+                if result is None:
+                    continue
+                # result 可能是 dict{合约: DataFrame} 或 DataFrame
+                if isinstance(result, dict):
+                    for contract, df in result.items():
+                        if df is None or len(df) == 0:
+                            continue
+                        try:
+                            row = self._sum_futures_position_row(
+                                df, contract, trade_date, exchange_name,
+                            )
+                            if row:
+                                batch_rows.append(row)
+                        except Exception:  # noqa: BLE001 — 5.135治标
+                            pass  # 跳过格式异常的合约
+                elif hasattr(result, "columns"):
+                    try:
+                        row = self._sum_futures_position_row(
+                            result, "", trade_date, exchange_name,
+                        )
+                        if row:
+                            batch_rows.append(row)
+                    except Exception:  # noqa: BLE001 — 5.135治标
+                        pass
+            except Exception as e:  # noqa: BLE001 — 5.135治标
+                self._log.warning(f"futures_position {exchange_name} 失败: {e}")
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows,
+            last_key=date_str, elapsed_sec=time.time() - t0,
+        )
+
+    @staticmethod
+    def _sum_futures_position_row(
+        df, symbol: str, trade_date: str, exchange: str,
+    ) -> tuple | None:
+        """将前20名经纪商的持仓汇总为合约级单行。
+
+        #ARCH-FUTURES-POSITION: 用 pd.to_numeric 安全转换（CZCE 返回逗号拼接字符串，
+        直接 int(sum()) 会 ValueError）。
+        """
+        import pandas as pd
+
+        long_oi_col = "long_open_interest" if "long_open_interest" in df.columns else None
+        short_oi_col = "short_open_interest" if "short_open_interest" in df.columns else None
+        vol_col = "vol" if "vol" in df.columns else None
+
+        def _safe_sum(col):
+            if not col:
+                return 0
+            try:
+                return int(pd.to_numeric(df[col], errors="coerce").fillna(0).sum())
+            except Exception:  # noqa: BLE001 — 5.135治标
+                return 0
+
+        long_pos = _safe_sum(long_oi_col)
+        short_pos = _safe_sum(short_oi_col)
+        total_vol = _safe_sum(vol_col)
+
+        # 从 DataFrame 获取 symbol（若参数为空）
+        if not symbol and "symbol" in df.columns and len(df) > 0:
+            symbol = str(df.iloc[0].get("symbol", ""))
+
+        if not symbol:
+            return None
+
+        return (
+            trade_date, symbol,
+            long_pos, short_pos,
+            total_vol, total_vol,  # long_volume = short_volume = total_vol
+            exchange, "akshare",
+        )
 
     def _fetch_top10_shareholders(
         self, payload: FetchPayload, policy: SourcePolicy

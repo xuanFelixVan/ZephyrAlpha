@@ -67,6 +67,11 @@ class DraftAssistant:
         """只读：output_dir（Stage 4 公共化）。"""
         return self._output_dir
 
+    @output_dir.setter
+    def output_dir(self, value):
+        """写入：output_dir（Stage 4 公共化）。"""
+        self._output_dir = value
+
 
     def extract_targets(self, text) -> list[str]:
         """公共接口：extract_targets（Stage 4 公共化）。"""

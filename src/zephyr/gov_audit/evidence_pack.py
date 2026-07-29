@@ -85,10 +85,20 @@ class EvidencePackExporter:
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
     @property
     def output_dir(self):
         """只读：output_dir（Stage 4 公共化）。"""
         return self._output_dir
+
+    @output_dir.setter
+    def output_dir(self, value):
+        """写入：output_dir（Stage 4 公共化）。"""
+        self._output_dir = value
 
 
     def export_json(

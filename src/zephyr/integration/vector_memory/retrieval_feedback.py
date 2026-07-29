@@ -66,11 +66,21 @@ class RetrievalFeedback:
         """只读：long_tail（Stage 4 公共化）。"""
         return self._long_tail
 
+    @long_tail.setter
+    def long_tail(self, value):
+        """写入：long_tail（Stage 4 公共化）。"""
+        self._long_tail = value
+
 
     @property
     def feedback_log(self) -> list[FeedbackEntry]:
         """只读：feedback_log（Stage 4 公共化）。"""
         return self._feedback_log
+
+    @feedback_log.setter
+    def feedback_log(self, value):
+        """写入：feedback_log（Stage 4 公共化）。"""
+        self._feedback_log = value
 
 
     def record(self, hit_id: str, was_useful: bool, task_id: str = "", collection: str = "") -> FeedbackEntry:

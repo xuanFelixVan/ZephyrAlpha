@@ -106,15 +106,30 @@ class SLAMonitor:
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
     @property
     def rpo_counts(self) -> list[int]:
         """只读：rpo_counts（Stage 4 公共化）。"""
         return self._rpo_counts
 
+    @rpo_counts.setter
+    def rpo_counts(self, value):
+        """写入：rpo_counts（Stage 4 公共化）。"""
+        self._rpo_counts = value
+
     @property
     def rto_samples(self) -> list[float]:
         """只读：rto_samples（Stage 4 公共化）。"""
         return self._rto_samples
+
+    @rto_samples.setter
+    def rto_samples(self, value):
+        """写入：rto_samples（Stage 4 公共化）。"""
+        self._rto_samples = value
 
 
     def record_rto(self, recovery_time_s: float) -> SLABreach | None:

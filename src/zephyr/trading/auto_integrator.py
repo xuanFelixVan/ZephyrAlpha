@@ -68,11 +68,21 @@ class AutoIntegrator:
         """只读：max_daily_l3（Stage 4 公共化）。"""
         return self._max_daily_l3
 
+    @max_daily_l3.setter
+    def max_daily_l3(self, value):
+        """写入：max_daily_l3（Stage 4 公共化）。"""
+        self._max_daily_l3 = value
+
 
     @property
     def last_reset_date(self):
         """只读：last_reset_date（Stage 4 公共化）。"""
         return self._last_reset_date
+
+    @last_reset_date.setter
+    def last_reset_date(self, value):
+        """写入：last_reset_date（Stage 4 公共化）。"""
+        self._last_reset_date = value
 
 
     def infer_category(self, package) -> CapabilityCategory:
@@ -84,6 +94,11 @@ class AutoIntegrator:
     def daily_l3_count(self):
         """只读：daily_l3_count（Stage 4 公共化）。"""
         return self._daily_l3_count
+
+    @daily_l3_count.setter
+    def daily_l3_count(self, value):
+        """写入：daily_l3_count（Stage 4 公共化）。"""
+        self._daily_l3_count = value
 
 
     def check_daily_reset(self) -> None:

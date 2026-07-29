@@ -150,12 +150,22 @@ class EvolutionEngine:
         """只读：thresholds（Stage 4 公共化）。"""
         return self._thresholds
 
+    @thresholds.setter
+    def thresholds(self, value):
+        """写入：thresholds（Stage 4 公共化）。"""
+        self._thresholds = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def now(self):
         """只读：now（Stage 4 公共化）。"""
         return self._now
+
+    @now.setter
+    def now(self, value):
+        """写入：now（Stage 4 公共化）。"""
+        self._now = value
 
 
     def _state_key(self, state: str) -> str:

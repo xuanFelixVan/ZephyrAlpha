@@ -144,6 +144,11 @@ class SessionContinuity:
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
 
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
+
 
     def auto_generate_questions(self, blocked_items, completed_count) -> list[str]:
         """公共接口：auto_generate_questions（Stage 4 公共化）。"""
@@ -156,10 +161,20 @@ class SessionContinuity:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
     @property
     def sessions_dir(self):
         """只读：sessions_dir（Stage 4 公共化）。"""
         return self._sessions_dir
+
+    @sessions_dir.setter
+    def sessions_dir(self, value):
+        """写入：sessions_dir（Stage 4 公共化）。"""
+        self._sessions_dir = value
 
 
     def _get_conn(self) -> sqlite3.Connection:

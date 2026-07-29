@@ -94,6 +94,11 @@ class BurnRateMonitor:
         """只读：distribution_baseline（Stage 4 公共化）。"""
         return self._distribution_baseline
 
+    @distribution_baseline.setter
+    def distribution_baseline(self, value):
+        """写入：distribution_baseline（Stage 4 公共化）。"""
+        self._distribution_baseline = value
+
 
     def classify_burn(self, rate) -> BurnSeverity:
         """公共接口：classify_burn（Stage 4 公共化）。"""

@@ -83,7 +83,7 @@ def _make_mock_gateway(staged_files: dict[str, str] | None = None) -> MagicMock:
         return result
 
     gw = MagicMock()
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     gw.project_root = "/test"
     return gw
 

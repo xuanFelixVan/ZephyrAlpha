@@ -33,6 +33,11 @@ class MetaConfidence:
         """只读：history（Stage 4 公共化）。"""
         return self._history
 
+    @history.setter
+    def history(self, value):
+        """写入：history（Stage 4 公共化）。"""
+        self._history = value
+
 
     def self_assess(self, confidence: float, evidence_count: int, domain_familiarity: float) -> float:
         ev_score = min(1.0, evidence_count / 5.0)

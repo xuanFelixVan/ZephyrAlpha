@@ -347,6 +347,28 @@ class ChromaDBThreadGuard:
         self._recycle_threshold: int = 1000
 
     @property
+    def task_count(self) -> int:
+        """只读：task_count（Stage 4 公共化）。"""
+        return self._task_count
+
+    @task_count.setter
+    def task_count(self, value):
+        """写入：task_count（Stage 4 公共化）。"""
+        self._task_count = value
+
+
+    @property
+    def recycle_threshold(self) -> int:
+        """只读：recycle_threshold（Stage 4 公共化）。"""
+        return self._recycle_threshold
+
+    @recycle_threshold.setter
+    def recycle_threshold(self, value):
+        """写入：recycle_threshold（Stage 4 公共化）。"""
+        self._recycle_threshold = value
+
+
+    @property
     def executor(self) -> ThreadPoolExecutor:
         if self._executor is None:
             self._executor = ThreadPoolExecutor(max_workers=self.max_workers, thread_name_prefix="chroma")

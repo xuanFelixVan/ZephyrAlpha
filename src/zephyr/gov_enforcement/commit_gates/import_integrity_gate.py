@@ -216,7 +216,7 @@ def _check_project_module_resolvable(
     # 2. 再检查 main HEAD（已存在的目标文件）
     for candidate in candidates:
         try:
-            result = gateway._run_git(["git", "show", f"HEAD:{candidate}"])
+            result = gateway.run_git(["git", "show", f"HEAD:{candidate}"])
             if result.returncode == 0:
                 return True
         except Exception:  # noqa: BLE001 — find_spec / git 失败 fail-open

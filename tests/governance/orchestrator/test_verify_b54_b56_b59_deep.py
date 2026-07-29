@@ -123,7 +123,7 @@ class TestTimeoutExemption:
     def test_exempt_tag_skips_timeout(self, repo: TaskRepository) -> None:
         t = mt(4, tags=["exempt:timeout", "test"])
         repo.create(t)
-        assert repo._is_timeout_exempt(t.task_id) is True
+        assert repo.is_timeout_exempt(t.task_id) is True
         assert repo.check_task_timeout(t.task_id) is None
 
     def test_list_by_tag_finds_exempt(self, repo: TaskRepository) -> None:

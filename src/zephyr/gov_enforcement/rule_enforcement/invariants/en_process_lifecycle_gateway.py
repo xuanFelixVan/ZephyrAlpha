@@ -79,11 +79,20 @@ class ProcessCreationScanner(ast.NodeVisitor):
         """只读：imported_gateway（Stage 4 公共化）。"""
         return self._imported_gateway
 
+    @imported_gateway.setter
+    def imported_gateway(self, value):
+        """写入：imported_gateway（Stage 4 公共化）。"""
+        self._imported_gateway = value
+
 
     @staticmethod
-    def resolve_call_path(node) -> str:
-        """公共接口：resolve_call_path（Stage 4 公共化，委托到 _resolve_call_path）。"""
-        return _resolve_call_path(node)
+    def resolve_call_path(node: ast.expr) -> str:
+        if isinstance(node, ast.Name):
+            return node.id
+        if isinstance(node, ast.Attribute):
+            value_path = ProcessCreationScanner._resolve_call_path(node.value)
+            return f'{value_path}.{node.attr}' if value_path else node.attr
+        return ''
 
 
     def visit_Import(self, node: ast.Import) -> None:
@@ -123,12 +132,8 @@ class ProcessCreationScanner(ast.NodeVisitor):
 
     @staticmethod
     def _resolve_call_path(node: ast.expr) -> str:
-        if isinstance(node, ast.Name):
-            return node.id
-        if isinstance(node, ast.Attribute):
-            value_path = ProcessCreationScanner._resolve_call_path(node.value)
-            return f"{value_path}.{node.attr}" if value_path else node.attr
-        return ""
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return ProcessCreationScanner.resolve_call_path(node)
 
 
 def scan_file(file_path: str) -> list[Violation]:

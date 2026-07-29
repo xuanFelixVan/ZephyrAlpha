@@ -109,17 +109,32 @@ class ShadowWorkspace:
         """只读：run_ruff（Stage 4 公共化）。"""
         return self._run_ruff
 
+    @run_ruff.setter
+    def run_ruff(self, value):
+        """写入：run_ruff（Stage 4 公共化）。"""
+        self._run_ruff = value
+
 
     @property
     def run_pytest(self) -> bool:
         """只读：run_pytest（Stage 4 公共化）。"""
         return self._run_pytest
 
+    @run_pytest.setter
+    def run_pytest(self, value):
+        """写入：run_pytest（Stage 4 公共化）。"""
+        self._run_pytest = value
+
 
     @property
     def run_mypy(self) -> bool:
         """只读：run_mypy（Stage 4 公共化）。"""
         return self._run_mypy
+
+    @run_mypy.setter
+    def run_mypy(self, value):
+        """写入：run_mypy（Stage 4 公共化）。"""
+        self._run_mypy = value
 
 
     def run_lint(self, shadow_file, project_root) -> dict[str, Any]:
@@ -132,11 +147,21 @@ class ShadowWorkspace:
         """只读：pytest_timeout（Stage 4 公共化）。"""
         return self._pytest_timeout
 
+    @pytest_timeout.setter
+    def pytest_timeout(self, value):
+        """写入：pytest_timeout（Stage 4 公共化）。"""
+        self._pytest_timeout = value
+
 
     @property
     def base_dir(self) -> str:
         """只读：base_dir（Stage 4 公共化）。"""
         return self._base_dir
+
+    @base_dir.setter
+    def base_dir(self, value):
+        """写入：base_dir（Stage 4 公共化）。"""
+        self._base_dir = value
 
 
     def preflight(self, action: FixAction, project_root: str | None = None) -> ShadowResult:

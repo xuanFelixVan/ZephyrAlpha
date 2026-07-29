@@ -64,17 +64,32 @@ class SessionBoundaryManager:
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
 
     @property
     def budget(self):
         """只读：budget（Stage 4 公共化）。"""
         return self._budget
 
+    @budget.setter
+    def budget(self, value):
+        """写入：budget（Stage 4 公共化）。"""
+        self._budget = value
+
 
     @property
     def boundaries(self) -> list[SessionBoundary]:
         """只读：boundaries（Stage 4 公共化）。"""
         return self._boundaries
+
+    @boundaries.setter
+    def boundaries(self, value):
+        """写入：boundaries（Stage 4 公共化）。"""
+        self._boundaries = value
 
 
     def open_session(self, session_id: str) -> SessionBoundary:

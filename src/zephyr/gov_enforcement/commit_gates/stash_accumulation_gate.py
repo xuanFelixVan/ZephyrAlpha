@@ -83,7 +83,7 @@ def _count_stash_entries(gateway: object) -> int | None:
         stash 条目数（int）；git 失败时返回 None（调用方 fail-open）。
     """
     try:
-        result = gateway._run_git(["git", "stash", "list"])
+        result = gateway.run_git(["git", "stash", "list"])
         if result.returncode != 0:
             logger.warning(
                 "STASH-ACCUMULATION: git stash list failed (rc=%d): %s",

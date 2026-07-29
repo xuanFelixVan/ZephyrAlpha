@@ -85,7 +85,7 @@ def _collect_staged_trigger_files(gateway) -> list[str]:
     fail-open：git diff 失败返回空列表（不阻断 commit）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:

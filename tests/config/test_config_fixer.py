@@ -194,7 +194,7 @@ class TestConfigFixerInternalMethods:
         fixer = ConfigFixer()
         fixes = []
         content = "<<<<<<< HEAD\nlonger ours content here\n=======\nshort\n>>>>>>> branch\n"
-        result = fixer._fix_merge_conflicts(content, fixes)
+        result = fixer.fix_merge_conflicts(content, fixes)
         assert "longer ours content here" in result
         assert "short" not in result
         assert len(fixes) == 1
@@ -203,7 +203,7 @@ class TestConfigFixerInternalMethods:
         fixer = ConfigFixer()
         fixes = []
         content = "key:\n\tsub: value\n"
-        result = fixer._fix_tabs(content, fixes)
+        result = fixer.fix_tabs(content, fixes)
         assert "    " in result
         assert "\t" not in result
 
@@ -211,5 +211,5 @@ class TestConfigFixerInternalMethods:
         fixer = ConfigFixer()
         fixes = []
         content = "key: value   \n"
-        result = fixer._fix_trailing_whitespace(content, fixes)
+        result = fixer.fix_trailing_whitespace(content, fixes)
         assert result.strip() == "key: value"

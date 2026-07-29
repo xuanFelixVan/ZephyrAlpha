@@ -27,7 +27,7 @@
   - tests/ 路径豁免
   - 存量 [A_module] 行未改动 → 不检测（diff-based）
 
-测试隔离：MagicMock 模拟 gateway._run_git，按 git 子命令路由返回不同结果。
+测试隔离：MagicMock 模拟 gateway.run_git，按 git 子命令路由返回不同结果。
 """
 from __future__ import annotations
 
@@ -333,5 +333,5 @@ def _make_gateway(
         return _MockResult(1, "")
 
     gw = MagicMock()
-    gw._run_git = MagicMock(side_effect=_run_git)
+    gw.run_git = MagicMock(side_effect=_run_git)
     return gw

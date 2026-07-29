@@ -57,11 +57,11 @@ class TestComplianceAuditorInstantiation:
 
     def test_default_retention_days(self, temp_db):
         auditor = ComplianceAuditor(db_path=temp_db)
-        assert auditor._retention_days == 90
+        assert auditor.retention_days == 90
 
     def test_custom_retention_days(self, temp_db):
         auditor = ComplianceAuditor(db_path=temp_db, retention_days=30)
-        assert auditor._retention_days == 30
+        assert auditor.retention_days == 30
 
 
 class TestComplianceAuditorAuditFix:

@@ -49,8 +49,8 @@ class TestAlphaSignalPipeline:
     def test_instantiation(self):
         pipe = AlphaSignalPipeline()
         assert pipe is not None
-        assert pipe._factors == []
-        assert pipe._synthesizers == []
+        assert pipe.factors == []
+        assert pipe.synthesizers == []
 
     def test_register_factor(self):
         pipe = AlphaSignalPipeline()
@@ -60,7 +60,7 @@ class TestAlphaSignalPipeline:
                 return []
 
         pipe.register_factor(DummyFactor)
-        assert len(pipe._factors) == 1
+        assert len(pipe.factors) == 1
 
     def test_register_synthesizer(self):
         pipe = AlphaSignalPipeline()
@@ -70,7 +70,7 @@ class TestAlphaSignalPipeline:
                 return []
 
         pipe.register_synthesizer(DummySynth)
-        assert len(pipe._synthesizers) == 1
+        assert len(pipe.synthesizers) == 1
 
     def test_run_no_factors(self):
         pipe = AlphaSignalPipeline()
@@ -146,8 +146,8 @@ class TestMLExperimentPipeline:
     def test_instantiation(self):
         pipe = MLExperimentPipeline()
         assert pipe is not None
-        assert pipe._models == []
-        assert pipe._engines == []
+        assert pipe.models == []
+        assert pipe.engines == []
 
     def test_register_model(self):
         pipe = MLExperimentPipeline()
@@ -162,7 +162,7 @@ class TestMLExperimentPipeline:
             target="y",
         )
         pipe.register_model(meta)
-        assert len(pipe._models) == 1
+        assert len(pipe.models) == 1
 
     def test_register_engine(self):
         pipe = MLExperimentPipeline()
@@ -171,7 +171,7 @@ class TestMLExperimentPipeline:
             __name__ = "DummyEngine"
 
         pipe.register_engine(DummyEngine)
-        assert len(pipe._engines) == 1
+        assert len(pipe.engines) == 1
 
     def test_set_experiment_config(self):
         pipe = MLExperimentPipeline()
@@ -187,8 +187,8 @@ class TestMLExperimentPipeline:
             end_date="2026-02-01",
         )
         pipe.set_experiment_config(cfg)
-        assert pipe._experiment_config is not None
-        assert pipe._experiment_config.experiment_id == "exp-1"
+        assert pipe.experiment_config is not None
+        assert pipe.experiment_config.experiment_id == "exp-1"
 
     def test_run_no_models(self):
         pipe = MLExperimentPipeline()

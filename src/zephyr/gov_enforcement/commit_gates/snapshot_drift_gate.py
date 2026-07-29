@@ -77,7 +77,7 @@ def _is_snapshot_in_staged(gateway) -> tuple[bool, str]:
         git 命令异常时返回 (False, "") 并记录 warning。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only"]
         )
         if diff_result.returncode != 0:
@@ -99,7 +99,7 @@ def _is_snapshot_in_staged(gateway) -> tuple[bool, str]:
         return False, ""
 
     try:
-        toplevel = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+        toplevel = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         wt_root = toplevel.stdout.strip() if toplevel.returncode == 0 else str(gateway.project_root)
     except Exception:  # noqa: BLE001 — broad exception catch for fail-open
         wt_root = str(gateway.project_root)
@@ -146,7 +146,7 @@ def _validate_generated_at_freshness(gen_at: object) -> str:
 def _get_head_sha(gateway) -> str | None:
     """获取当前 HEAD SHA；失败返回 None（fail-open 信号）。"""
     try:
-        result = gateway._run_git(["git", "rev-parse", "HEAD"])
+        result = gateway.run_git(["git", "rev-parse", "HEAD"])
         if result.returncode == 0:
             return result.stdout.strip()
     except Exception as e:  # noqa: BLE001 — broad exception catch for fail-open

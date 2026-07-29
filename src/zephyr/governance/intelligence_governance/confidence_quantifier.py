@@ -62,11 +62,22 @@ class ConfidenceQuantifier:
         """只读：consecutive_low（Stage 4 公共化）。"""
         return self._consecutive_low
 
+    @consecutive_low.setter
+    def consecutive_low(self, value):
+        """写入：consecutive_low（Stage 4 公共化）。"""
+        self._consecutive_low = value
+
 
     @staticmethod
-    def determine_tier(confidence) -> str:
-        """公共接口：determine_tier（Stage 4 公共化，委托到 _determine_tier）。"""
-        return _determine_tier(confidence)
+    def determine_tier(confidence: float) -> str:
+        if confidence >= 0.8:
+            return 'TIER_1_FULL_AUTO'
+        elif confidence >= 0.5:
+            return 'TIER_2_AUTO_WITH_AUDIT'
+        elif confidence >= 0.3:
+            return 'TIER_3_HUMAN_REVIEW'
+        else:
+            return 'TIER_4_HUMAN_ONLY'
 
 
     def record(self, operation_id: str, confidence: float) -> ConfidenceResult:
@@ -119,14 +130,8 @@ class ConfidenceQuantifier:
 
     @staticmethod
     def _determine_tier(confidence: float) -> str:
-        if confidence >= 0.80:
-            return "TIER_1_FULL_AUTO"
-        elif confidence >= 0.50:
-            return "TIER_2_AUTO_WITH_AUDIT"
-        elif confidence >= 0.30:
-            return "TIER_3_HUMAN_REVIEW"
-        else:
-            return "TIER_4_HUMAN_ONLY"
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return ConfidenceQuantifier.determine_tier(confidence)
 
     @property
     def history(self) -> list[ConfidenceRecord]:

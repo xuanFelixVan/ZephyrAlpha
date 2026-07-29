@@ -48,6 +48,11 @@ class FallbackStalenessGate:
         """只读：file（Stage 4 公共化）。"""
         return self._file
 
+    @file.setter
+    def file(self, value):
+        """写入：file（Stage 4 公共化）。"""
+        self._file = value
+
 
     def check(self) -> StalenessReport:
         exists = self._file.exists()

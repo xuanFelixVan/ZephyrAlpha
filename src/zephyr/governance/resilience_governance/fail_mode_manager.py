@@ -66,6 +66,11 @@ class FailModeManager:
         """只读：state（Stage 4 公共化）。"""
         return self._state
 
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
 
     def record_health_check(self, component: str, healthy: bool, detail: str = "", latency_ms: float = 0.0) -> HealthCheck:
         """记录一次健康检查结果（5.12.2#4 治本：从 health_check 改名，消除"记录"vs"查询"语义混淆）。"""

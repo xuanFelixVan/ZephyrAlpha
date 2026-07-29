@@ -22,7 +22,7 @@
   - 非 scripts/governance/ 文件 → 跳过
   - 无 staged .py → 放行
 
-测试隔离：MagicMock 模拟 gateway._run_git，按 git 子命令路由返回不同结果。
+测试隔离：MagicMock 模拟 gateway.run_git，按 git 子命令路由返回不同结果。
 """
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def _make_gateway(staged_files: list[str], file_contents: dict[str, str]) -> Mag
     """构造 mock gateway：按 git 子命令路由返回 staged 文件列表/文件内容。"""
 
     gw = MagicMock()
-    gw._run_git = MagicMock()
+    gw.run_git = MagicMock()
 
     def _run(cmd):
         if "--name-only" in cmd:
@@ -66,7 +66,7 @@ def _make_gateway(staged_files: list[str], file_contents: dict[str, str]) -> Mag
             return _MockResult(stdout=content, returncode=0 if content else 1)
         return _MockResult(returncode=1)
 
-    gw._run_git.side_effect = _run
+    gw.run_git.side_effect = _run
     return gw
 
 

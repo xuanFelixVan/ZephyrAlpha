@@ -23,13 +23,13 @@ ss = pytest.importorskip(
 
 @pytest.fixture(autouse=True)
 def _clear_buffer():
-    with ss._buffer_lock:
-        ss._log_buffer.clear()
+    with ss.buffer_lock:
+        ss.log_buffer.clear()
     original_dir = ss._DEFAULT_LOG_DIR
     original_max = ss._BUFFER_MAX
     yield
-    with ss._buffer_lock:
-        ss._log_buffer.clear()
+    with ss.buffer_lock:
+        ss.log_buffer.clear()
     ss._DEFAULT_LOG_DIR = original_dir
     ss._BUFFER_MAX = original_max
 

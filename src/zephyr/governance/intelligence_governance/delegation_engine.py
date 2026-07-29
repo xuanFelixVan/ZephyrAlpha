@@ -63,6 +63,11 @@ class DelegationEngine:
         """只读：delegate_load（Stage 4 公共化）。"""
         return self._delegate_load
 
+    @delegate_load.setter
+    def delegate_load(self, value):
+        """写入：delegate_load（Stage 4 公共化）。"""
+        self._delegate_load = value
+
 
     @property
     def deadlock_detector(self):

@@ -100,7 +100,7 @@ class TestCapabilityPassport:
             breadth=BreadthResult(score=0.9, passed=8, total=9),
         )
         d = passport.to_dict()
-        restored = CapabilityPassport._from_dict(d)
+        restored = CapabilityPassport.from_dict(d)
         assert restored.model_id == "roundtrip-test"
         assert restored.overall_grade == "A"
         assert restored.overall_score == 0.88

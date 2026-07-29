@@ -75,15 +75,30 @@ class StatusDashboard:
         """只读：orphan（Stage 4 公共化）。"""
         return self._orphan
 
+    @orphan.setter
+    def orphan(self, value):
+        """写入：orphan（Stage 4 公共化）。"""
+        self._orphan = value
+
     @property
     def registry(self):
         """只读：registry（Stage 4 公共化）。"""
         return self._registry
 
+    @registry.setter
+    def registry(self, value):
+        """写入：registry（Stage 4 公共化）。"""
+        self._registry = value
+
     @property
     def uptime_start(self):
         """只读：uptime_start（Stage 4 公共化）。"""
         return self._uptime_start
+
+    @uptime_start.setter
+    def uptime_start(self, value):
+        """写入：uptime_start（Stage 4 公共化）。"""
+        self._uptime_start = value
 
 
     def render_tui(self) -> str:

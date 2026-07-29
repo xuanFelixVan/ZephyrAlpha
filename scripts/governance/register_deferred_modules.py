@@ -330,6 +330,7 @@ def _query_node_id(path: str) -> int | None:
 # ============================================================
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print("暂缓模块写入 depgraph 设计态 — 3图对齐")
     print("=" * 70)

@@ -45,7 +45,7 @@ def _setup_fallback_dir(tmp_path, monkeypatch):
 def _mock_table_cols(cols):
     """返回 mock _get_table_columns_set 的 patcher（避免查真实 CH）。"""
     return patch(
-        "src.zephyr.data.ch_writer._get_table_columns_set",
+        "src.zephyr.data.ch_writer.get_table_columns_set",
         return_value=set(cols),
     )
 
@@ -261,9 +261,9 @@ class TestLifecycle:
         with _mock_table_cols(["trade_date"]):
             w = WalWriter("c1_market.tick_data")
             w.start()
-            t1 = w._drain_thread
+            t1 = w.drain_thread
             w.start()  # 重复 start
-            assert w._drain_thread is t1  # 同一线程
+            assert w.drain_thread is t1  # 同一线程
             w.stop()
 
     def test_stop_joins_thread(self, tmp_path, monkeypatch):
@@ -273,7 +273,7 @@ class TestLifecycle:
         with _mock_table_cols(["trade_date"]):
             w = WalWriter("c1_market.tick_data")
             w.start()
-            assert w._drain_thread is not None
-            assert w._drain_thread.is_alive()
+            assert w.drain_thread is not None
+            assert w.drain_thread.is_alive()
             w.stop()
-            assert w._drain_thread is None
+            assert w.drain_thread is None

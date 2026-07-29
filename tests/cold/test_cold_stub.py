@@ -29,13 +29,13 @@ def _reset_config():
     original_db_path = cs._DB_PATH
     original_backup_dir = cs._BACKUP_DIR
     original_cost_limit = cs._COST_LIMIT_GB
-    original_policy = cs._policy
+    original_policy = cs.policy
     yield
     cs._DEFAULT_ARCHIVE_DIR = original_archive_dir
     cs._DB_PATH = original_db_path
     cs._BACKUP_DIR = original_backup_dir
     cs._COST_LIMIT_GB = original_cost_limit
-    cs._policy = original_policy
+    cs.policy = original_policy
 
 
 class TestRetentionPolicy:
@@ -63,7 +63,7 @@ class TestConfigure:
 
     def test_configure_policy_overrides(self):
         cs.configure(policy_overrides={"metrics_days": 90})
-        assert cs._policy.metrics_days == 90
+        assert cs.policy.metrics_days == 90
 
 
 class TestNextArchiveBatchId:

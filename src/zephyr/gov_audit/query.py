@@ -199,6 +199,22 @@ class AuditQuery:
         self._events: list[dict[str, Any]] | None = None
         self._meta_logger = MetaAuditLogger()
 
+    @property
+    def events(self) -> list[dict[str, Any]] | None:
+        """只读：events（Stage 4 公共化）。"""
+        return self._events
+
+    @events.setter
+    def events(self, value):
+        """写入：events（Stage 4 公共化）。"""
+        self._events = value
+
+
+    def load_events(self) -> None:
+        """公共接口：load_events（Stage 4 公共化）。"""
+        return self._load_events()
+
+
     def _load_events(self) -> None:
         """加载事件到缓存。"""
         if self._event_log_path is None or not self._event_log_path.exists():

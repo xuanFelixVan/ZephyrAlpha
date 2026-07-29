@@ -36,6 +36,11 @@ class MemoryProvenanceLog:
         """只读：records（Stage 4 公共化）。"""
         return self._records
 
+    @records.setter
+    def records(self, value):
+        """写入：records（Stage 4 公共化）。"""
+        self._records = value
+
 
     def record(self, agent_id: str, content: str, source_contract: str = "") -> str:
         h = hashlib.sha256(content.encode()).hexdigest()

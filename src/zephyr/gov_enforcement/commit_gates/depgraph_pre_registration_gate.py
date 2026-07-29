@@ -141,7 +141,7 @@ def _get_staged_py_files(gateway) -> list[str] | None:
         相对路径列表；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -259,3 +259,21 @@ def make_depgraph_pre_registration_gate() -> GateSpec:
     return GateSpec(
         gate_id="DEPGRAPH-PRE-REGISTRATION", check=_check, priority=113
     )
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_build_status(file_path) -> str | None:
+    """公共接口：query_build_status（Stage 4 公共化）。"""
+    return _query_build_status(file_path)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def extract_ttl(file_path) -> str | None:
+    """公共接口：extract_ttl（Stage 4 公共化）。"""
+    return _extract_ttl(file_path)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def count_impl_lines(file_path) -> int:
+    """公共接口：count_impl_lines（Stage 4 公共化）。"""
+    return _count_impl_lines(file_path)
+

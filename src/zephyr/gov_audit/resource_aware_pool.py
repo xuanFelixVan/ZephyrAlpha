@@ -50,6 +50,28 @@ class ResourceAwarePool:
         self._max_cpu_pending = max_pending if max_pending is not None else cpu_workers * 2
         self._max_gpu_pending = max_pending if max_pending is not None else gpu_workers * 2
 
+    @property
+    def gpu_futures(self) -> list[Future]:
+        """只读：gpu_futures（Stage 4 公共化）。"""
+        return self._gpu_futures
+
+    @gpu_futures.setter
+    def gpu_futures(self, value):
+        """写入：gpu_futures（Stage 4 公共化）。"""
+        self._gpu_futures = value
+
+
+    @property
+    def cpu_futures(self) -> list[Future]:
+        """只读：cpu_futures（Stage 4 公共化）。"""
+        return self._cpu_futures
+
+    @cpu_futures.setter
+    def cpu_futures(self, value):
+        """写入：cpu_futures（Stage 4 公共化）。"""
+        self._cpu_futures = value
+
+
     def _pending_count(self, pool: ThreadPoolExecutor) -> int:
         q = getattr(pool, "_work_queue", None)
         return q.qsize() if q is not None else 0

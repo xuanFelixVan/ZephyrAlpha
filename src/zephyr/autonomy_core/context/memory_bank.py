@@ -58,6 +58,13 @@ class MemoryBank:
             if not fp.exists():
                 fp.write_text(f"# {fname.replace('.md', '').replace('_', ' ').title()}\n\n", encoding="utf-8")
 
+    @staticmethod
+    @staticmethod
+    def validate_filename(filename) -> None:
+        """公共接口：validate_filename（Stage 4 公共化）。"""
+        return __class__._validate_filename(filename)
+
+
     def read_file(self, filename: str) -> str:
         self._validate_filename(filename)
         return (self._root / _resolve_filename(filename)).read_text(encoding="utf-8")

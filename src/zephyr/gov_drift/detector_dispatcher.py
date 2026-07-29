@@ -93,10 +93,20 @@ class DetectorDispatcher:
         """只读：max_parallel（Stage 4 公共化）。"""
         return self._max_parallel
 
+    @max_parallel.setter
+    def max_parallel(self, value):
+        """写入：max_parallel（Stage 4 公共化）。"""
+        self._max_parallel = value
+
     @property
     def registry_path(self):
         """只读：registry_path（Stage 4 公共化）。"""
         return self._registry_path
+
+    @registry_path.setter
+    def registry_path(self, value):
+        """写入：registry_path（Stage 4 公共化）。"""
+        self._registry_path = value
 
 
     @property

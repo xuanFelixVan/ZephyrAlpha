@@ -370,6 +370,11 @@ class AnomalyDetector:
         """只读：event_log_path（Stage 4 公共化）。"""
         return self._event_log_path
 
+    @event_log_path.setter
+    def event_log_path(self, value):
+        """写入：event_log_path（Stage 4 公共化）。"""
+        self._event_log_path = value
+
 
 
 

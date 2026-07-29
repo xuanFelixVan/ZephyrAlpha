@@ -54,10 +54,20 @@ class SkillShadowDeploy:
         """只读：current_shadow_pct（Stage 4 公共化）。"""
         return self._current_shadow_pct
 
+    @current_shadow_pct.setter
+    def current_shadow_pct(self, value):
+        """写入：current_shadow_pct（Stage 4 公共化）。"""
+        self._current_shadow_pct = value
+
     @property
     def shadow_runs(self) -> dict[str, list[dict[str, Any]]]:
         """只读：shadow_runs（Stage 4 公共化）。"""
         return self._shadow_runs
+
+    @shadow_runs.setter
+    def shadow_runs(self, value):
+        """写入：shadow_runs（Stage 4 公共化）。"""
+        self._shadow_runs = value
 
 
     def shadow_run(

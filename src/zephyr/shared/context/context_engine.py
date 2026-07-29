@@ -83,15 +83,30 @@ class ContextEngine:
         """只读：budget（Stage 4 公共化）。"""
         return self._budget
 
+    @budget.setter
+    def budget(self, value):
+        """写入：budget（Stage 4 公共化）。"""
+        self._budget = value
+
     @property
     def max_tokens(self):
         """只读：max_tokens（Stage 4 公共化）。"""
         return self._max_tokens
 
+    @max_tokens.setter
+    def max_tokens(self, value):
+        """写入：max_tokens（Stage 4 公共化）。"""
+        self._max_tokens = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def assemble_context(

@@ -452,3 +452,14 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def load_yaml(path) -> dict | list | None:
+    """公共接口：load_yaml（Stage 4 公共化）。"""
+    return _load_yaml(path)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def extract_dep_map_modules() -> dict[str, dict[str, str]]:
+    """公共接口：extract_dep_map_modules（Stage 4 公共化）。"""
+    return _extract_dep_map_modules()

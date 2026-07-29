@@ -41,6 +41,11 @@ class StrategyScoper:
         """只读：scopes（Stage 4 公共化）。"""
         return self._scopes
 
+    @scopes.setter
+    def scopes(self, value):
+        """写入：scopes（Stage 4 公共化）。"""
+        self._scopes = value
+
 
     def assign_scope(self, agent_id: str, scope: ScopeLevel):
         self._scopes[agent_id] = scope

@@ -35,15 +35,30 @@ class SymbolIndex:
         """只读：classes（Stage 4 公共化）。"""
         return self._classes
 
+    @classes.setter
+    def classes(self, value):
+        """写入：classes（Stage 4 公共化）。"""
+        self._classes = value
+
     @property
     def functions(self) -> dict[str, list[str]]:
         """只读：functions（Stage 4 公共化）。"""
         return self._functions
 
+    @functions.setter
+    def functions(self, value):
+        """写入：functions（Stage 4 公共化）。"""
+        self._functions = value
+
     @property
     def imports(self) -> dict[str, list[str]]:
         """只读：imports（Stage 4 公共化）。"""
         return self._imports
+
+    @imports.setter
+    def imports(self, value):
+        """写入：imports（Stage 4 公共化）。"""
+        self._imports = value
 
 
     def index_file(self, file_path: str | Path) -> None:

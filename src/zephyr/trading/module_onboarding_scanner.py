@@ -69,10 +69,20 @@ class ModuleOnboardingScanner:
         """只读：blueprint_root（Stage 4 公共化）。"""
         return self._blueprint_root
 
+    @blueprint_root.setter
+    def blueprint_root(self, value):
+        """写入：blueprint_root（Stage 4 公共化）。"""
+        self._blueprint_root = value
+
     @property
     def src_root(self):
         """只读：src_root（Stage 4 公共化）。"""
         return self._src_root
+
+    @src_root.setter
+    def src_root(self, value):
+        """写入：src_root（Stage 4 公共化）。"""
+        self._src_root = value
 
 
     def scan_filesystem(self) -> list[ModuleDiscovery]:

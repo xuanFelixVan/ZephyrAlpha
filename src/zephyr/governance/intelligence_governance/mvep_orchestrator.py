@@ -42,6 +42,11 @@ class MVEPOrchestrator:
         """只读：implemented（Stage 4 公共化）。"""
         return self._implemented
 
+    @implemented.setter
+    def implemented(self, value):
+        """写入：implemented（Stage 4 公共化）。"""
+        self._implemented = value
+
 
     def mark_implemented(self, decision_id: str):
         self._implemented.add(decision_id)

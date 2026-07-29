@@ -170,11 +170,21 @@ class PerToolRateLimiter:
         """只读：default_qps（Stage 4 公共化）。"""
         return self._default_qps
 
+    @default_qps.setter
+    def default_qps(self, value):
+        """写入：default_qps（Stage 4 公共化）。"""
+        self._default_qps = value
+
 
     @property
     def default_burst(self):
         """只读：default_burst（Stage 4 公共化）。"""
         return self._default_burst
+
+    @default_burst.setter
+    def default_burst(self, value):
+        """写入：default_burst（Stage 4 公共化）。"""
+        self._default_burst = value
 
 
     def _make_key(self, tool_name: str, client_id: str | None = None) -> str:

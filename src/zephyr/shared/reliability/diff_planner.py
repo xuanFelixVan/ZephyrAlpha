@@ -74,6 +74,11 @@ class DiffPlanner:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     def compute_diff(self, file_path: str, new_content: str) -> FileDiff:
         full_path = self._project_root / file_path

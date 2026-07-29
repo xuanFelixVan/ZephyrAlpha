@@ -30,8 +30,13 @@ class ProcessIsolator:
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     @property
     def processes(self) -> dict[str, dict]:
-        """只读：引擎进程表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：processes（Stage 4 公共化）。"""
         return self._processes
+
+    @processes.setter
+    def processes(self, value):
+        """写入：processes（Stage 4 公共化）。"""
+        self._processes = value
 
     def spawn_engine(self, engine_id: str, config: dict = None) -> bool:
         self._processes[engine_id] = {"status": "running", "config": config or {}}

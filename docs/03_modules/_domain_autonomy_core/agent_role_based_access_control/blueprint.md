@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.2"
+version: "1.1.3"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -7190,6 +7190,7 @@ class PermissionHooks:
 | `tests/blueprint/test_blueprint_fidelity.py` | ✅ 已实现 | |
 | `tests/canary/test_canary_rollout_manager.py` | ✅ 已实现 | |
 | `tests/capability/test_capability_check.py` | ✅ 已实现 | |
+| `tests/capability/test_capability_lookup.py` | ✅ 已实现 | |
 | `tests/cold/test_cold_start_lock.py` | ✅ 已实现 | |
 | `tests/context/test_context_drift_detector.py` | ✅ 已实现 | |
 | `tests/contracts/test_abac_guard_root.py` | ✅ 已实现 | |

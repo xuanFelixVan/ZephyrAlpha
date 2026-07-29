@@ -114,33 +114,33 @@ class TestSkillLoaderInstantiation:
 class TestParseYamlFrontmatter:
     def test_valid_frontmatter(self, loader):
         content = "---\nskill_id: X\nname: Y\n---\nBody"
-        fm = loader._parse_yaml_frontmatter(content)
+        fm = loader.parse_yaml_frontmatter(content)
         assert fm.get("skill_id") == "X"
         assert fm.get("name") == "Y"
 
     def test_no_frontmatter(self, loader):
         content = "Just plain text"
-        fm = loader._parse_yaml_frontmatter(content)
+        fm = loader.parse_yaml_frontmatter(content)
         assert fm == {}
 
     def test_empty_frontmatter(self, loader):
         content = "---\n---\nBody"
-        fm = loader._parse_yaml_frontmatter(content)
+        fm = loader.parse_yaml_frontmatter(content)
         assert fm == {}
 
 
 class TestExtractBody:
     def test_with_frontmatter(self, loader):
         content = "---\nskill_id: X\n---\nHello body"
-        assert loader._extract_body(content) == "Hello body"
+        assert loader.extract_body(content) == "Hello body"
 
     def test_without_frontmatter(self, loader):
         content = "Just body text"
-        assert loader._extract_body(content) == "Just body text"
+        assert loader.extract_body(content) == "Just body text"
 
     def test_empty_body_after_frontmatter(self, loader):
         content = "---\nskill_id: X\n---\n"
-        assert loader._extract_body(content) == ""
+        assert loader.extract_body(content) == ""
 
 
 class TestResolveSkillPath:
@@ -271,16 +271,16 @@ class TestCheckTokenBudget:
 class TestCompressToCriticalRules:
     def test_extracts_critical_section(self, loader):
         body = "## CRITICAL Rules\nDo this.\n## Other\nSkip.\n"
-        result = loader._compress_to_critical_rules(body)
+        result = loader.compress_to_critical_rules(body)
         assert "Do this." in result
         assert "Skip." not in result
 
     def test_no_critical_takes_first_20_lines(self, loader):
         lines = [f"Line {i}" for i in range(30)]
         body = "\n".join(lines)
-        result = loader._compress_to_critical_rules(body)
+        result = loader.compress_to_critical_rules(body)
         assert "Line 0" in result
 
     def test_empty_body(self, loader):
-        result = loader._compress_to_critical_rules("")
+        result = loader.compress_to_critical_rules("")
         assert result == ""

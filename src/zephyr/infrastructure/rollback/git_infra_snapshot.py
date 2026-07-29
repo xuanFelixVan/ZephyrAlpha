@@ -55,10 +55,20 @@ class GitInfraSnapshot:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
     @property
     def snapshot_dir(self):
         """只读：snapshot_dir（Stage 4 公共化）。"""
         return self._snapshot_dir
+
+    @snapshot_dir.setter
+    def snapshot_dir(self, value):
+        """写入：snapshot_dir（Stage 4 公共化）。"""
+        self._snapshot_dir = value
 
 
     def create_snapshot(self) -> bool:

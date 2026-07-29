@@ -185,10 +185,20 @@ class FlagRegistry:
         """只读：audit（Stage 4 公共化）。"""
         return self._audit
 
+    @audit.setter
+    def audit(self, value):
+        """写入：audit（Stage 4 公共化）。"""
+        self._audit = value
+
     @property
     def flags(self) -> dict[str, FeatureFlag]:
         """只读：flags（Stage 4 公共化）。"""
         return self._flags
+
+    @flags.setter
+    def flags(self, value):
+        """写入：flags（Stage 4 公共化）。"""
+        self._flags = value
 
 
     def _default_audit_path(self) -> Path | None:

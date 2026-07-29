@@ -45,7 +45,7 @@ class TestAggregateBuildStatus:
             {"blueprint_id": "MOD-A", "build_status": "generated"},
             {"blueprint_id": "MOD-A", "build_status": "stable"},
         ]
-        assert cbca._aggregate_build_status(rows) == {"MOD-A": "generated"}
+        assert cbca.aggregate_build_status(rows) == {"MOD-A": "generated"}
 
     def test_skip_empty_then_take_first_non_empty(self):
         rows = [
@@ -53,14 +53,14 @@ class TestAggregateBuildStatus:
             {"blueprint_id": "MOD-A", "build_status": "planned"},
             {"blueprint_id": "MOD-A", "build_status": "generated"},
         ]
-        assert cbca._aggregate_build_status(rows) == {"MOD-A": "planned"}
+        assert cbca.aggregate_build_status(rows) == {"MOD-A": "planned"}
 
     def test_none_build_status_skipped(self):
         rows = [
             {"blueprint_id": "MOD-A", "build_status": None},
             {"blueprint_id": "MOD-A", "build_status": "stable"},
         ]
-        assert cbca._aggregate_build_status(rows) == {"MOD-A": "stable"}
+        assert cbca.aggregate_build_status(rows) == {"MOD-A": "stable"}
 
     def test_multiple_modules(self):
         rows = [
@@ -68,13 +68,13 @@ class TestAggregateBuildStatus:
             {"blueprint_id": "MOD-B", "build_status": "planned"},
             {"blueprint_id": "MOD-A", "build_status": "stable"},
         ]
-        assert cbca._aggregate_build_status(rows) == {
+        assert cbca.aggregate_build_status(rows) == {
             "MOD-A": "generated",
             "MOD-B": "planned",
         }
 
     def test_empty_rows(self):
-        assert cbca._aggregate_build_status([]) == {}
+        assert cbca.aggregate_build_status([]) == {}
 
 
 class TestCheckFrontmatterStateStale:

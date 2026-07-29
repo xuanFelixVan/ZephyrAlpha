@@ -131,6 +131,11 @@ class SkillCacheProvider:
         """只读：backend_name（Stage 4 公共化）。"""
         return self._backend_name
 
+    @backend_name.setter
+    def backend_name(self, value):
+        """写入：backend_name（Stage 4 公共化）。"""
+        self._backend_name = value
+
 
     def configure(self, backend: str) -> dict[str, Any]:
         avail = backend.lower().strip() in self._BACKENDS

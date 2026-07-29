@@ -66,10 +66,20 @@ class AutonomyMonitor:
         """只读：event_log（Stage 4 公共化）。"""
         return self._event_log
 
+    @event_log.setter
+    def event_log(self, value):
+        """写入：event_log（Stage 4 公共化）。"""
+        self._event_log = value
+
     @property
     def state(self):
         """只读：state（Stage 4 公共化）。"""
         return self._state
+
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
 
 
     def get_level(self) -> AutonomyLevel:

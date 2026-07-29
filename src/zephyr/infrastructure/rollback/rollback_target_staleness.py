@@ -56,6 +56,11 @@ class RollbackTargetStaleness:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     def get_commit_date(self, commit_sha) -> datetime | None:
         """公共接口：get_commit_date（Stage 4 公共化）。"""

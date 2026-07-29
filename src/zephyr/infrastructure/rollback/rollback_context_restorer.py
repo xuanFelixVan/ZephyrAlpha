@@ -54,10 +54,20 @@ class RollbackContextRestorer:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
     @property
     def prompt_path(self):
         """只读：prompt_path（Stage 4 公共化）。"""
         return self._prompt_path
+
+    @prompt_path.setter
+    def prompt_path(self, value):
+        """写入：prompt_path（Stage 4 公共化）。"""
+        self._prompt_path = value
 
 
     def generate_restore_prompt(self, context: RestoreContext) -> str:

@@ -85,15 +85,30 @@ class CircuitBreakerManager:
         """只读：cooldown_s（Stage 4 公共化）。"""
         return self._cooldown_s
 
+    @cooldown_s.setter
+    def cooldown_s(self, value):
+        """写入：cooldown_s（Stage 4 公共化）。"""
+        self._cooldown_s = value
+
     @property
     def failure_threshold(self):
         """只读：failure_threshold（Stage 4 公共化）。"""
         return self._failure_threshold
 
+    @failure_threshold.setter
+    def failure_threshold(self, value):
+        """写入：failure_threshold（Stage 4 公共化）。"""
+        self._failure_threshold = value
+
     @property
     def failure_window_s(self):
         """只读：failure_window_s（Stage 4 公共化）。"""
         return self._failure_window_s
+
+    @failure_window_s.setter
+    def failure_window_s(self, value):
+        """写入：failure_window_s（Stage 4 公共化）。"""
+        self._failure_window_s = value
 
 
     # ------------------------------------------------------------------

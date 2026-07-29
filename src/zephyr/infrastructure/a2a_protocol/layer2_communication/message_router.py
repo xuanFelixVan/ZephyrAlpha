@@ -32,6 +32,11 @@ class MessageRouter:
         """只读：handlers（Stage 4 公共化）。"""
         return self._handlers
 
+    @handlers.setter
+    def handlers(self, value):
+        """写入：handlers（Stage 4 公共化）。"""
+        self._handlers = value
+
 
     def register_handler(self, part_type: PartType, handler: Callable):
         self._handlers.setdefault(part_type, []).append(handler)

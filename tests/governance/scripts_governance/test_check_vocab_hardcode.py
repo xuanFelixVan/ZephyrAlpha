@@ -60,7 +60,7 @@ def test_detection7_hardcoded_tests_slash(tmp_path, monkeypatch):
     """检测7: commit_gates 中硬编码 'tests/' 字面量 → 检出。"""
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", '_EXEMPT = "tests/"\n')
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 1, f"应检出1处硬编码tests/, 实际: {d7}"
     assert d7[0][0] == 1, f"应在第1行检出, 实际行号: {d7[0][0]}"
@@ -71,7 +71,7 @@ def test_detection7_docstring_exempt(tmp_path, monkeypatch):
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     content = '"""模块说明\n\ntests/ 豁免设计说明。\n"""\n'
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", content)
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 0, f"docstring 应豁免, 实际检出: {d7}"
 
@@ -81,7 +81,7 @@ def test_detection7_noqa_exempt(tmp_path, monkeypatch):
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     content = '_EXEMPT = "tests/"  # noqa: gate-vocab\n'
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", content)
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 0, f"noqa 应豁免, 实际检出: {d7}"
 
@@ -92,7 +92,7 @@ def test_detection7_non_commit_gates_scope(tmp_path, monkeypatch):
     fp = tmp_path / "src" / "zephyr" / "other_module.py"
     fp.parent.mkdir(parents=True, exist_ok=True)
     fp.write_text('_EXEMPT = "tests/"\n', encoding="utf-8")
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 0, f"非commit_gates不应检出, 实际: {d7}"
 
@@ -101,7 +101,7 @@ def test_detection7_tests_without_slash(tmp_path, monkeypatch):
     """检测7: 'tests' 无斜杠 → 不检出（子串匹配 'tests/'）。"""
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", '_X = "tests"\n')
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 0, f"'tests'无斜杠不应检出, 实际: {d7}"
 
@@ -110,7 +110,7 @@ def test_detection7_fstring(tmp_path, monkeypatch):
     """检测7: f-string 含 'tests/' → 检出（JoinedStr 内 Constant 节点）。"""
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", '_X = f"tests/{name}"\n')
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 1, f"f-string应检出, 实际: {d7}"
 
@@ -119,6 +119,6 @@ def test_detection7_list_multiple(tmp_path, monkeypatch):
     """检测7: 列表多元素含 'tests/' → 检出（每个 Constant 独立命中）。"""
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", '_X = ["tests/a", "tests/b"]\n')
-    issues = cvh._check_file(fp, tmp_path / "vocabs")
+    issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
     assert len(d7) == 2, f"列表2元素应各检出1处(共2), 实际: {len(d7)}"

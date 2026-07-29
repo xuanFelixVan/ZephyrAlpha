@@ -198,11 +198,11 @@ class TestAutoSplitWithTaskId:
             warnings.simplefilter("ignore")
             task = _make_task(task_id="OPS-1", seq=1)
         repo.create(task, allow_direct_create=True)
-        repo._conn.execute(
+        repo.conn.execute(
             "UPDATE tasks SET deliverables=? WHERE task_id=?",
             ('["产出A", "产出B"]', "OPS-1"),
         )
-        repo._conn.commit()
+        repo.conn.commit()
         sub_cards = repo.auto_split_task("OPS-1")
         assert len(sub_cards) >= 2
         original = repo.get("OPS-1")
@@ -228,7 +228,7 @@ class TestAutoSplitSubCardQuality:
             )
         sub_cards = repo.auto_split_task(task)
         for card in sub_cards:
-            violations = repo._validate_granularity(card)
+            violations = repo.validate_granularity(card)
             assert violations == [], f"子卡 {card.task_id} 粒度违规: {violations}"
 
     def test_sub_cards_have_auto_split_tag(self):
@@ -269,7 +269,7 @@ class TestDetermineSplitStrategy:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             task = _make_task(deliverables=["A", "B"])
-        violations = repo._validate_granularity(task)
+        violations = repo.validate_granularity(task)
         strategy = TaskRepository.determine_split_strategy(task, violations)
         assert strategy == "by_deliverable"
 
@@ -281,6 +281,6 @@ class TestDetermineSplitStrategy:
                 deliverables=["A"],
                 files_in_scope=["f1", "f2", "f3", "f4"],
             )
-        violations = repo._validate_granularity(task)
+        violations = repo.validate_granularity(task)
         strategy = TaskRepository.determine_split_strategy(task, violations)
         assert strategy == "by_file"

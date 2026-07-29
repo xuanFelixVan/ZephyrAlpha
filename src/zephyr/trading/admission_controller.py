@@ -243,6 +243,11 @@ class AdmissionController:
         """只读：circuit_breaker（Stage 4 公共化）。"""
         return self._circuit_breaker
 
+    @circuit_breaker.setter
+    def circuit_breaker(self, value):
+        """写入：circuit_breaker（Stage 4 公共化）。"""
+        self._circuit_breaker = value
+
 
     def admit(self, event: VerdictEvent | dict[str, Any]) -> AdmissionResult:
         with self._metrics_lock:

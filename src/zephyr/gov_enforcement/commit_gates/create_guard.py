@@ -195,7 +195,7 @@ def _resolve_main_branch_ref(gateway) -> str:
     """
     for _branch in ("dev", "main", "master"):
         try:
-            _r = gateway._run_git(["git", "rev-parse", "--verify", f"refs/heads/{_branch}"])
+            _r = gateway.run_git(["git", "rev-parse", "--verify", f"refs/heads/{_branch}"])
             if _r is not None and _r.returncode == 0:
                 return _branch
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -222,8 +222,8 @@ def _check_reconciler_marker(gateway, commit_files_rel: set[str]) -> tuple[bool,
     _main_ref = _resolve_main_branch_ref(gateway)
 
     try:
-        staged_res = gateway._run_git(["git", "show", f":{_RECONCILER_REGISTRY_REL}"])
-        head_res = gateway._run_git(["git", "show", f"{_main_ref}:{_RECONCILER_REGISTRY_REL}"])
+        staged_res = gateway.run_git(["git", "show", f":{_RECONCILER_REGISTRY_REL}"])
+        head_res = gateway.run_git(["git", "show", f"{_main_ref}:{_RECONCILER_REGISTRY_REL}"])
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         staged_res = head_res = None  # fail-open：git 故障时不阻断（避免误伤正常 commit）
 
@@ -265,7 +265,7 @@ def _get_staged_new_files(gateway) -> tuple[list[str] | None, str]:
         (staged_new, "") 成功； (None, detail) fail-closed 阻断。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -290,7 +290,7 @@ def _collect_renamed_rule_files(gateway, commit_files_rel: set[str]) -> list[str
     """
     renamed: list[str] = []
     try:
-        rename_result = gateway._run_git(
+        rename_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
         )
         if rename_result.returncode == 0:
@@ -395,7 +395,7 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
         )
     # 检测②: rename(R) .py 到 governance/ 根（防 git mv 绕过 --diff-filter=A 漏检）
     try:
-        _rename_result = gateway._run_git(
+        _rename_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-status", "--diff-filter=R"]
         )
         if _rename_result.returncode == 0:
@@ -453,7 +453,7 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
             # git grep 搜索同名 class 在 src/zephyr/ 下（排除当前文件）
             #ARCH-034 遗留3治本：git grep 故障改 fail-closed
             try:
-                _grep_res = gateway._run_git([
+                _grep_res = gateway.run_git([
                     "git", "grep", "-l", f"^class {_node.name}\\b",
                     "--", "src/zephyr/"
                 ])

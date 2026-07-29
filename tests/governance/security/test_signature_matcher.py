@@ -42,7 +42,7 @@ class TestSignatureMatch:
 class TestSignatureMatcher:
     def test_instantiation(self):
         sm = SignatureMatcher()
-        assert sm._index == {}
+        assert sm.index == {}
 
     def test_compute_fingerprint_no_return(self):
         sm = SignatureMatcher()

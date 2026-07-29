@@ -56,6 +56,11 @@ class IdempotencyGuard:
         """只读：ttl（Stage 4 公共化）。"""
         return self._ttl
 
+    @ttl.setter
+    def ttl(self, value):
+        """写入：ttl（Stage 4 公共化）。"""
+        self._ttl = value
+
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
@@ -131,12 +136,22 @@ class ConflictResolver:
         """只读：queue（Stage 4 公共化）。"""
         return self._queue
 
+    @queue.setter
+    def queue(self, value):
+        """写入：queue（Stage 4 公共化）。"""
+        self._queue = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def locks(self) -> dict[str, threading.Lock]:
         """只读：locks（Stage 4 公共化）。"""
         return self._locks
+
+    @locks.setter
+    def locks(self, value):
+        """写入：locks（Stage 4 公共化）。"""
+        self._locks = value
 
 
     def acquire(self, target: str) -> threading.Lock:
@@ -177,6 +192,11 @@ class FixOrderResolver:
         """只读：dependency_map（Stage 4 公共化）。"""
         return self._dependency_map
 
+    @dependency_map.setter
+    def dependency_map(self, value):
+        """写入：dependency_map（Stage 4 公共化）。"""
+        self._dependency_map = value
+
 
     def add_dependency(self, fixer_type: str, depends_on: str) -> None:
         self._dependency_map.setdefault(fixer_type, set()).add(depends_on)
@@ -214,6 +234,11 @@ class FixResultCache:
     def max_size(self):
         """只读：max_size（Stage 4 公共化）。"""
         return self._max_size
+
+    @max_size.setter
+    def max_size(self, value):
+        """写入：max_size（Stage 4 公共化）。"""
+        self._max_size = value
 
 
     def get(self, key: str) -> object | None:
@@ -281,6 +306,11 @@ class DeadLetterQueue:
     def max_retries(self):
         """只读：max_retries（Stage 4 公共化）。"""
         return self._max_retries
+
+    @max_retries.setter
+    def max_retries(self, value):
+        """写入：max_retries（Stage 4 公共化）。"""
+        self._max_retries = value
 
 
     def add(self, action: FixAction, reason: str) -> FixDeadLetter:
@@ -368,10 +398,20 @@ class CanaryFixer:
         """只读：delay_sec（Stage 4 公共化）。"""
         return self._delay_sec
 
+    @delay_sec.setter
+    def delay_sec(self, value):
+        """写入：delay_sec（Stage 4 公共化）。"""
+        self._delay_sec = value
+
     @property
     def ratios(self):
         """只读：ratios（Stage 4 公共化）。"""
         return self._ratios
+
+    @ratios.setter
+    def ratios(self, value):
+        """写入：ratios（Stage 4 公共化）。"""
+        self._ratios = value
 
 
     def get_ratio(self, fixer_type: str) -> float:

@@ -52,6 +52,11 @@ class ParentChildAttributor:
         """只读：max_depth（Stage 4 公共化）。"""
         return self._max_depth
 
+    @max_depth.setter
+    def max_depth(self, value):
+        """写入：max_depth（Stage 4 公共化）。"""
+        self._max_depth = value
+
 
     def record_delegation(
         self, parent_id: str, child_id: str, tokens: int, cost: float, depth: int = 1

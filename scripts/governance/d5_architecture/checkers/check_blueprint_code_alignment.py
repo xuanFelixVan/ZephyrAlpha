@@ -501,3 +501,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def aggregate_build_status(rows) -> dict[str, str]:
+    """公共接口：aggregate_build_status（Stage 4 公共化）。"""
+    return _aggregate_build_status(rows)
+

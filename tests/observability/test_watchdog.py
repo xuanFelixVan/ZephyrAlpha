@@ -86,7 +86,7 @@ class TestWatchdog:
 
     def test_write_external_heartbeat(self, tmp_path):
         w = wd.Watchdog(watchdog_id="wd-test")
-        w._external_file = str(tmp_path / "test_heartbeat")
+        w.external_file = str(tmp_path / "test_heartbeat")
         w.write_external_heartbeat()
         hb_file = tmp_path / "test_heartbeat"
         assert hb_file.exists()

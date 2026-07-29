@@ -111,10 +111,20 @@ class RetentionEnforcer:
         """只读：approved_deletions（Stage 4 公共化）。"""
         return self._approved_deletions
 
+    @approved_deletions.setter
+    def approved_deletions(self, value):
+        """写入：approved_deletions（Stage 4 公共化）。"""
+        self._approved_deletions = value
+
     @property
     def policy(self):
         """只读：policy（Stage 4 公共化）。"""
         return self._policy
+
+    @policy.setter
+    def policy(self, value):
+        """写入：policy（Stage 4 公共化）。"""
+        self._policy = value
 
 
     def _iter_files(self) -> list[tuple[Path, str, int]]:

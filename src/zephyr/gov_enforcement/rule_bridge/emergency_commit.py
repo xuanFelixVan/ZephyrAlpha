@@ -333,7 +333,7 @@ class EmergencyCommitResult(TypedDict, total=False):
     files_count: int  # 提交的文件数
 
 
-def _run_git(
+def run_git(
     cmd: list[str],
     cwd: str,
     env: dict | None = None,
@@ -355,6 +355,10 @@ def _run_git(
         timeout=timeout,
         env=full_env,
     )
+
+def _run_git(cmd: list[str], cwd: str, env: dict | None = None, timeout: int = _COMMIT_TREE_TIMEOUT) -> subprocess.CompletedProcess:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return run_git(cmd, cwd, env, timeout)
 
 
 def _get_current_branch(root: str) -> str | None:

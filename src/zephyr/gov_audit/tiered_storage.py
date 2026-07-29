@@ -166,9 +166,12 @@ class TieredStorageManager:
             d.mkdir(parents=True, exist_ok=True)
 
     @staticmethod
-    def count_jsonl_lines(path) -> int:
-        """公共接口：count_jsonl_lines（Stage 4 公共化，委托到 _count_jsonl_lines）。"""
-        return _count_jsonl_lines(path)
+    def count_jsonl_lines(path: Path) -> int:
+        try:
+            with open(path, encoding='utf-8') as f:
+                return sum((1 for line in f if line.strip()))
+        except Exception:
+            return 0
 
 
     def get_tier(self, timestamp: str | None) -> str:
@@ -253,8 +256,5 @@ class TieredStorageManager:
 
     @staticmethod
     def _count_jsonl_lines(path: Path) -> int:
-        try:
-            with open(path, encoding="utf-8") as f:
-                return sum(1 for line in f if line.strip())
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            return 0
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return TieredStorageManager.count_jsonl_lines(path)

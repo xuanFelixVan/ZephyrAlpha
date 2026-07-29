@@ -199,12 +199,12 @@ class TestSyncSavepointIsolation:
             ]
             # 替换 _ensure_sync_failures_log_table 为会失败的版本
             import sync_yaml_to_depgraph as sync_mod
-            original = sync_mod._ensure_sync_failures_log_table
+            original = sync_mod.ensure_sync_failures_log_table
 
             def _failing_ensure(cur):
                 cur.execute("SELECT invalid_sql_statement_here_to_force_error")
 
-            sync_mod._ensure_sync_failures_log_table = _failing_ensure
+            sync_mod.ensure_sync_failures_log_table = _failing_ensure
             try:
                 # 应该不抛异常（best-effort）
                 _log_sync_failures(cur, test_failures)
@@ -212,7 +212,7 @@ class TestSyncSavepointIsolation:
                 cur.execute("SELECT 1")
                 conn.commit()
             finally:
-                sync_mod._ensure_sync_failures_log_table = original
+                sync_mod.ensure_sync_failures_log_table = original
         finally:
             _cleanup_test_failures(cur, conn)
             cur.close()

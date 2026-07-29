@@ -74,10 +74,20 @@ class Notifier:
         """只读：config（Stage 4 公共化）。"""
         return self._config
 
+    @config.setter
+    def config(self, value):
+        """写入：config（Stage 4 公共化）。"""
+        self._config = value
+
     @property
     def notification_count(self):
         """只读：notification_count（Stage 4 公共化）。"""
         return self._notification_count
+
+    @notification_count.setter
+    def notification_count(self, value):
+        """写入：notification_count（Stage 4 公共化）。"""
+        self._notification_count = value
 
 
     def notify(self, level: NotificationLevel, title: str, message: str, task_id: str = "") -> Notification:

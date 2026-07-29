@@ -69,6 +69,11 @@ class CircuitBreaker:
         """只读：failure_count（Stage 4 公共化）。"""
         return self._failure_count
 
+    @failure_count.setter
+    def failure_count(self, value):
+        """写入：failure_count（Stage 4 公共化）。"""
+        self._failure_count = value
+
 
     @property
     def state(self) -> CircuitState:

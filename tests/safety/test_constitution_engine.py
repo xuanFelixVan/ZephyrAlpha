@@ -66,7 +66,7 @@ class TestConstitutionEngineInit:
 
     def test_custom_registry_path(self, temp_registry: Path):
         engine = ConstitutionEngine(registry_path=temp_registry)
-        assert engine._registry_path == temp_registry
+        assert engine.registry_path == temp_registry
 
 
 class TestLearnFromBypass:
@@ -114,50 +114,50 @@ class TestLearnFromBypass:
 
 class TestClassify:
     def test_classify_injection(self, engine: ConstitutionEngine):
-        assert engine._classify("prompt injection attack") == "security_boundary"
+        assert engine.classify("prompt injection attack") == "security_boundary"
 
     def test_classify_data(self, engine: ConstitutionEngine):
-        assert engine._classify("data privacy breach") == "data_sovereignty"
+        assert engine.classify("data privacy breach") == "data_sovereignty"
 
     def test_classify_transaction(self, engine: ConstitutionEngine):
-        assert engine._classify("atomic transaction failure") == "transaction_integrity"
+        assert engine.classify("atomic transaction failure") == "transaction_integrity"
 
     def test_classify_audit(self, engine: ConstitutionEngine):
-        assert engine._classify("audit log tampering") == "audit_immutability"
+        assert engine.classify("audit log tampering") == "audit_immutability"
 
     def test_classify_agent(self, engine: ConstitutionEngine):
-        assert engine._classify("agent mcp tool abuse") == "agent_safety"
+        assert engine.classify("agent mcp tool abuse") == "agent_safety"
 
     def test_classify_knowledge(self, engine: ConstitutionEngine):
-        assert engine._classify("kb knowledge provenance") == "knowledge_safety"
+        assert engine.classify("kb knowledge provenance") == "knowledge_safety"
 
     def test_classify_default(self, engine: ConstitutionEngine):
         """未知关键词默认分类为security_boundary。"""
-        assert engine._classify("unknown issue") == "security_boundary"
+        assert engine.classify("unknown issue") == "security_boundary"
 
 
 class TestNextArticleId:
     def test_next_id_with_existing(self, engine: ConstitutionEngine):
         """已有CONST-001时，下一个是CONST-002。"""
-        next_id = engine._next_article_id()
+        next_id = engine.next_article_id()
         assert next_id == "CONST-002"
 
     def test_next_id_without_registry(self, tmp_path: Path):
         """注册表不存在时返回CONST-001。"""
         engine = ConstitutionEngine(registry_path=tmp_path / "nonexistent.yaml")
-        next_id = engine._next_article_id()
+        next_id = engine.next_article_id()
         assert next_id == "CONST-001"
 
 
 class TestFindByAction:
     def test_find_existing(self, engine: ConstitutionEngine):
         """查找已存在的defense_action。"""
-        result = engine._find_by_action("test_gate.scan")
+        result = engine.find_by_action("test_gate.scan")
         assert result == "CONST-001"
 
     def test_find_nonexistent(self, engine: ConstitutionEngine):
         """查找不存在的defense_action返回None。"""
-        result = engine._find_by_action("nonexistent.action")
+        result = engine.find_by_action("nonexistent.action")
         assert result is None
 
 
@@ -175,7 +175,7 @@ class TestAppendToRegistry:
             "category": "security_boundary",
             "generated_from": "bp-test",
         }
-        engine._append_to_registry(new_article)
+        engine.append_to_registry(new_article)
 
         with open(temp_registry, encoding="utf-8") as f:
             raw = yaml.safe_load(f)
@@ -187,7 +187,7 @@ class TestAppendToRegistry:
         """注册表不存在时抛出RegistryWriteError。"""
         engine = ConstitutionEngine(registry_path=tmp_path / "nonexistent.yaml")
         with pytest.raises(RegistryWriteError):
-            engine._append_to_registry({"article_id": "CONST-001"})
+            engine.append_to_registry({"article_id": "CONST-001"})
 
 
 class TestRegistryIntegrity:

@@ -80,10 +80,20 @@ class ModelDiscovery:
         """只读：timeout（Stage 4 公共化）。"""
         return self._timeout
 
+    @timeout.setter
+    def timeout(self, value):
+        """写入：timeout（Stage 4 公共化）。"""
+        self._timeout = value
+
     @property
     def url(self):
         """只读：url（Stage 4 公共化）。"""
         return self._url
+
+    @url.setter
+    def url(self, value):
+        """写入：url（Stage 4 公共化）。"""
+        self._url = value
 
 
     def discover_ollama(self) -> list[DiscoveredModel]:

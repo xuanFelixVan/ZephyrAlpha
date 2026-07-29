@@ -32,6 +32,7 @@ import re
 import sys
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS  # 退出码常量（scripts/governance sys.path）
 
 DEFAULT_TEST_DIR = REPO_ROOT / "tests"
 
@@ -59,7 +60,6 @@ def _is_name_main_check(test: ast.expr) -> bool:
 
 def _is_sys_path_call(node: ast.expr) -> bool:
     """判断表达式是否是 sys.path.insert/append 调用（合法的 path 设置）。"""
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
     if not isinstance(node, ast.Call):
         return False
     func = node.func

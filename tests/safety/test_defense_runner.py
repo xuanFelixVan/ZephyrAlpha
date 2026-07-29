@@ -471,11 +471,11 @@ class TestRunAdversarialSession:
             make_scenario(scenario_id="S1", tier=AttackTier.TIER_1),
             make_scenario(scenario_id="S2", tier=AttackTier.TIER_1),
         ]
-        self.validator._load_and_filter = MagicMock(return_value=self.scenarios)
-        self.validator._steady.verify_before_attack = MagicMock()
+        self.validator.load_and_filter = MagicMock(return_value=self.scenarios)
+        self.validator.steady.verify_before_attack = MagicMock()
         from zephyr.security.adversarial_validation.models import SteadyStateSummary
-        self.validator._steady.verify_after_attack = MagicMock(return_value=SteadyStateSummary())
-        self.validator._cleanup.ensure_clean = MagicMock()
+        self.validator.steady.verify_after_attack = MagicMock(return_value=SteadyStateSummary())
+        self.validator.cleanup.ensure_clean = MagicMock()
 
     def test_returns_red_blue_report(self):
         report = self.validator.run_adversarial_session("test-session", tier=AttackTier.TIER_1)
@@ -546,25 +546,25 @@ class TestLoadAndFilter:
             make_scenario(scenario_id="S2", tier=AttackTier.TIER_7, status="active"),
             make_scenario(scenario_id="S3", tier=AttackTier.TIER_1, status="inactive"),
         ]
-        self.validator._loader.load = MagicMock(return_value=self.all_scenarios)
-        self.validator._blast.filter_scenarios = MagicMock(side_effect=lambda x: x)
+        self.validator.loader.load = MagicMock(return_value=self.all_scenarios)
+        self.validator.blast.filter_scenarios = MagicMock(side_effect=lambda x: x)
 
     def test_returns_list(self):
-        result = self.validator._load_and_filter()
+        result = self.validator.load_and_filter()
         assert isinstance(result, list)
 
     def test_filter_by_tier_1(self):
-        result = self.validator._load_and_filter(tier=AttackTier.TIER_1)
+        result = self.validator.load_and_filter(tier=AttackTier.TIER_1)
         for s in result:
             assert s.tier == AttackTier.TIER_1
 
     def test_filter_by_tier_7(self):
-        result = self.validator._load_and_filter(tier=AttackTier.TIER_7)
+        result = self.validator.load_and_filter(tier=AttackTier.TIER_7)
         for s in result:
             assert s.tier == AttackTier.TIER_7
 
     def test_all_scenarios_are_active(self):
-        result = self.validator._load_and_filter()
+        result = self.validator.load_and_filter()
         for s in result:
             assert s.status == "active"
 

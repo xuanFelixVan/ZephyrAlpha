@@ -188,11 +188,21 @@ class ExamOrchestrator:
         """只读：randomize_order（Stage 4 公共化）。"""
         return self._randomize_order
 
+    @randomize_order.setter
+    def randomize_order(self, value):
+        """写入：randomize_order（Stage 4 公共化）。"""
+        self._randomize_order = value
+
 
     @property
     def optimization_suspicions(self):
         """只读：optimization_suspicions（Stage 4 公共化）。"""
         return self._optimization_suspicions
+
+    @optimization_suspicions.setter
+    def optimization_suspicions(self, value):
+        """写入：optimization_suspicions（Stage 4 公共化）。"""
+        self._optimization_suspicions = value
 
 
     def infer(self, case) -> dict:
@@ -217,36 +227,63 @@ class ExamOrchestrator:
 
     @property
     def model_id(self) -> str:
-        """只读：被测模型 ID（Stage 4 公共化）。"""
+        """只读：model_id（Stage 4 公共化）。"""
         return self._model_id
+
+    @model_id.setter
+    def model_id(self, value):
+        """写入：model_id（Stage 4 公共化）。"""
+        self._model_id = value
 
     @property
     def chat(self) -> object:
-        """只读：被测 chat 对象（Stage 4 公共化，供测试验证装配）。"""
+        """只读：chat（Stage 4 公共化）。"""
         return self._chat
+
+    @chat.setter
+    def chat(self, value):
+        """写入：chat（Stage 4 公共化）。"""
+        self._chat = value
 
     @property
     def depth_samples_per_case(self) -> int:
-        """只读：depth 每题采样次数（Stage 4 公共化）。"""
+        """只读：depth_samples_per_case（Stage 4 公共化）。"""
         return self._depth_samples_per_case
+
+    @depth_samples_per_case.setter
+    def depth_samples_per_case(self, value):
+        """写入：depth_samples_per_case（Stage 4 公共化）。"""
+        self._depth_samples_per_case = value
 
     @property
     def olympiad_case_results(self) -> list[bool]:
-        """只读：奥赛题逐题通过记录（Stage 4 公共化）。
+        """只读：olympiad_case_results（Stage 4 公共化）。"""
+        return self._olympiad_case_results
 
-        返回内部 list 的浅拷贝，防止外部修改污染内部状态。
-        """
-        return list(self._olympiad_case_results)
+    @olympiad_case_results.setter
+    def olympiad_case_results(self, value):
+        """写入：olympiad_case_results（Stage 4 公共化）。"""
+        self._olympiad_case_results = value
 
     @property
     def judge(self) -> ExamJudge | None:
-        """只读：LLM 裁判器（Stage 4 公共化，judge_chat=None 时为 None）。"""
+        """只读：judge（Stage 4 公共化）。"""
         return self._judge
+
+    @judge.setter
+    def judge(self, value):
+        """写入：judge（Stage 4 公共化）。"""
+        self._judge = value
 
     @property
     def det_judge(self) -> DeterministicJudge:
-        """只读：确定性裁判 fallback（Stage 4 公共化）。"""
+        """只读：det_judge（Stage 4 公共化）。"""
         return self._det_judge
+
+    @det_judge.setter
+    def det_judge(self, value):
+        """写入：det_judge（Stage 4 公共化）。"""
+        self._det_judge = value
 
     def score_capability(
         self,

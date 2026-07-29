@@ -154,15 +154,15 @@ class TestCheckClosure:
         """构造 mock gateway。
 
         _read_staged_file 是 _diff_helpers 的模块级函数，内部调用
-        gateway._run_git(["git", "show", ":" + py_file])，返回 SubprocessResult。
-        因此需 mock gw._run_git 返回带 returncode + stdout 的结果。
+        gateway.run_git(["git", "show", ":" + py_file])，返回 SubprocessResult。
+        因此需 mock gw.run_git 返回带 returncode + stdout 的结果。
         """
         gw = MagicMock()
         gw.project_root = str(project_root) if project_root is not None else None
         result = MagicMock()
         result.returncode = 0 if content else 1
         result.stdout = content
-        gw._run_git = MagicMock(return_value=result)
+        gw.run_git = MagicMock(return_value=result)
         return gw
 
     def test_no_staged_registry(self, tmp_path):

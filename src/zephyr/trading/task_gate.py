@@ -50,8 +50,13 @@ class TaskGate:
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     @property
     def passports(self) -> dict[str, CapabilityPassport]:
-        """只读：模型护照表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：passports（Stage 4 公共化）。"""
         return self._passports
+
+    @passports.setter
+    def passports(self, value):
+        """写入：passports（Stage 4 公共化）。"""
+        self._passports = value
 
     # ── 加载 ────────────────────────────────────────────
 

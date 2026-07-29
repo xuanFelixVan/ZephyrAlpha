@@ -59,18 +59,33 @@ class GatePersistence:
 
     @property
     def project_root(self) -> str:
-        """只读：项目根目录（Stage 4 公共化）。"""
+        """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
     @property
     def audit_dir(self) -> str:
-        """只读：审计输出目录（Stage 4 公共化）。"""
+        """只读：audit_dir（Stage 4 公共化）。"""
         return self._audit_dir
+
+    @audit_dir.setter
+    def audit_dir(self, value):
+        """写入：audit_dir（Stage 4 公共化）。"""
+        self._audit_dir = value
 
     @property
     def db_path(self) -> str:
-        """只读：drift_events.db 路径（Stage 4 公共化）。"""
+        """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
+
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
 
     def _init_db(self) -> None:
         conn = get_db_connection(self._db_path)

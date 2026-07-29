@@ -245,7 +245,7 @@ class TestFactorRegistry:
             FactorRegistry.get("clear_me")
 
     def test_len(self):
-        assert len(FactorRegistry._registry) == 0
+        assert len(FactorRegistry.registry) == 0
 
         @FactorRegistry.register
         class LenFactor(FactorBase):
@@ -254,4 +254,4 @@ class TestFactorRegistry:
             def compute(self, data, **kwargs):
                 return data["close"]
 
-        assert len(FactorRegistry._registry) == 1
+        assert len(FactorRegistry.registry) == 1

@@ -115,10 +115,25 @@ class SkillRouter:
         self._semantic_index: dict[str, Any] | None = None
         self._embedding_router: EmbeddingRouter | None = embedding_router
 
+    def match_domain(self, task_description) -> str | None:
+        """公共接口：match_domain（Stage 4 公共化）。"""
+        return self._match_domain(task_description)
+
+
+    def match_task_routing(self, task_description) -> tuple[str, str] | None:
+        """公共接口：match_task_routing（Stage 4 公共化）。"""
+        return self._match_task_routing(task_description)
+
+
     @property
     def registry_path(self):
         """只读：registry_path（Stage 4 公共化）。"""
         return self._registry_path
+
+    @registry_path.setter
+    def registry_path(self, value):
+        """写入：registry_path（Stage 4 公共化）。"""
+        self._registry_path = value
 
 
     def _init_semantic_index(self) -> None:

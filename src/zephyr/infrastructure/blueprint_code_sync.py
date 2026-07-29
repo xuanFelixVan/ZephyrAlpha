@@ -57,11 +57,21 @@ class BlueprintCodeSync:
         """只读：registry_path（Stage 4 公共化）。"""
         return self._registry_path
 
+    @registry_path.setter
+    def registry_path(self, value):
+        """写入：registry_path（Stage 4 公共化）。"""
+        self._registry_path = value
+
 
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def collect_entries(self) -> list[SyncEntry]:

@@ -27,7 +27,7 @@
   - staged 文件检测、tests/ 豁免、__main__.py 豁免
   - 非 .py 文件忽略、fail-open on git error
 
-测试隔离：MagicMock 模拟 gateway._run_git，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -110,7 +110,7 @@ def _make_gateway(
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -129,7 +129,7 @@ def _make_gateway(
             return _MockResult(0, _make_diff(added))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

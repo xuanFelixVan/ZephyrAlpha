@@ -41,6 +41,11 @@ class Finalizer:
         """只读：cleanup_fns（Stage 4 公共化）。"""
         return self._cleanup_fns
 
+    @cleanup_fns.setter
+    def cleanup_fns(self, value):
+        """写入：cleanup_fns（Stage 4 公共化）。"""
+        self._cleanup_fns = value
+
 
     def register(self, resource_type: str, cleanup_fn: Callable[[], None]) -> None:
         self._cleanup_fns.append((resource_type, cleanup_fn))

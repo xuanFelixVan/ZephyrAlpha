@@ -150,15 +150,41 @@ class TrustScoreEngine:
         self._records: dict[str, TrustRecord] = {}
 
     @property
+    def records(self) -> dict[str, TrustRecord]:
+        """只读：records（Stage 4 公共化）。"""
+        return self._records
+
+    @records.setter
+    def records(self, value):
+        """写入：records（Stage 4 公共化）。"""
+        self._records = value
+
+
+    def get_or_create(self, agent_id) -> TrustRecord:
+        """公共接口：get_or_create（Stage 4 公共化）。"""
+        return self._get_or_create(agent_id)
+
+
+    @property
     def initial_score(self):
         """只读：initial_score（Stage 4 公共化）。"""
         return self._initial_score
+
+    @initial_score.setter
+    def initial_score(self, value):
+        """写入：initial_score（Stage 4 公共化）。"""
+        self._initial_score = value
 
 
     @property
     def decay_rate(self):
         """只读：decay_rate（Stage 4 公共化）。"""
         return self._decay_rate
+
+    @decay_rate.setter
+    def decay_rate(self, value):
+        """写入：decay_rate（Stage 4 公共化）。"""
+        self._decay_rate = value
 
 
     def _get_or_create(self, agent_id: str) -> TrustRecord:

@@ -1106,11 +1106,15 @@ class _MockManager:
         self._responses = list(responses) if responses else []
         self.calls: list[list[str]] = []
 
-    def _run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:
+    def run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:
         self.calls.append(cmd)
         if self._responses:
             return self._responses.pop(0)
         return _git_result()
+
+    def _run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd)
 
 
 def test_branch_commits_superseded_all_patch_id():

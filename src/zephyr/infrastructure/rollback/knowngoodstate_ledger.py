@@ -57,10 +57,20 @@ class KnowngoodstateLedger:
         """只读：ledger_path（Stage 4 公共化）。"""
         return self._ledger_path
 
+    @ledger_path.setter
+    def ledger_path(self, value):
+        """写入：ledger_path（Stage 4 公共化）。"""
+        self._ledger_path = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def declare_known_good(

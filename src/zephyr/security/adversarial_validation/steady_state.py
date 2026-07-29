@@ -90,6 +90,43 @@ class SteadyState:
         self._snapshot_before: dict[str, dict[str, float]] = {}
         self._snapshot_after: dict[str, dict[str, float]] = {}
 
+    def compute_drift(self) -> SteadyStateSummary:
+        """公共接口：compute_drift（Stage 4 公共化）。"""
+        return self._compute_drift()
+
+
+    @property
+    def snapshot_after(self) -> dict[str, dict[str, float]]:
+        """只读：snapshot_after（Stage 4 公共化）。"""
+        return self._snapshot_after
+
+    @snapshot_after.setter
+    def snapshot_after(self, value):
+        """写入：snapshot_after（Stage 4 公共化）。"""
+        self._snapshot_after = value
+
+
+    @property
+    def snapshot_before(self) -> dict[str, dict[str, float]]:
+        """只读：snapshot_before（Stage 4 公共化）。"""
+        return self._snapshot_before
+
+    @snapshot_before.setter
+    def snapshot_before(self, value):
+        """写入：snapshot_before（Stage 4 公共化）。"""
+        self._snapshot_before = value
+
+
+    def import_time(self, module) -> float:
+        """公共接口：import_time（Stage 4 公共化）。"""
+        return self._import_time(module)
+
+
+    def evaluate_metric(self, metric_def) -> float:
+        """公共接口：evaluate_metric（Stage 4 公共化）。"""
+        return self._evaluate_metric(metric_def)
+
+
     def verify_before_attack(self) -> dict[str, dict[str, float]]:
         self._snapshot_before = self._measure_all()
         logger.info("steady_state_before metrics=%d", len(self._snapshot_before))

@@ -564,13 +564,13 @@ def foo(x: Any) -> Any:
 
 def test_aggregate_evidence_empty():
     """空证据 → 空候选。"""
-    assert ati._aggregate_evidence([]) == []
+    assert ati.aggregate_evidence([]) == []
 
 
 def test_aggregate_evidence_single_type():
     """单类型证据 → 100% 置信度。"""
     ev = [ati.TypeEvidence("method_call", "x.upper()", "str", 1.0)]
-    cands = ati._aggregate_evidence(ev)
+    cands = ati.aggregate_evidence(ev)
     assert len(cands) == 1
     assert cands[0] == ("str", 1.0)
 
@@ -581,7 +581,7 @@ def test_aggregate_evidence_mixed():
         ati.TypeEvidence("method_call", "x.upper()", "str", 1.0),
         ati.TypeEvidence("isinstance_check", "isinstance(x, int)", "int", 0.9),
     ]
-    cands = ati._aggregate_evidence(ev)
+    cands = ati.aggregate_evidence(ev)
     assert len(cands) == 2
     # str 应该排第一（权重更高）
     assert cands[0][0] == "str"
@@ -593,6 +593,6 @@ def test_aggregate_evidence_mixed():
 def test_aggregate_evidence_ambiguous():
     """ambiguous 方法（如 pop）→ 分摊到多个候选。"""
     ev = [ati.TypeEvidence("method_call", "x.pop()", "ambiguous:list|dict", 0.5)]
-    cands = ati._aggregate_evidence(ev)
+    cands = ati.aggregate_evidence(ev)
     types = {t for t, _ in cands}
     assert types == {"list", "dict"}

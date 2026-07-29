@@ -88,7 +88,7 @@ class TestSubscribeToEvents:
     def test_subscribe_sets_event_subscribed_flag(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events()
-        assert scheduler._event_subscribed is True
+        assert scheduler.event_subscribed is True
 
     def test_subscribe_with_custom_event_bus(self, tmp_path):
         custom_bus = EventBus()
@@ -104,7 +104,7 @@ class TestSubscribeToEvents:
 
     def test_default_not_subscribed(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
-        assert scheduler._event_subscribed is False
+        assert scheduler.event_subscribed is False
         assert scheduler._event_bus is None
 
     def test_enable_event_subscription_in_init(self, tmp_path):
@@ -112,7 +112,7 @@ class TestSubscribeToEvents:
             state_path=tmp_path / "state.yaml",
             enable_event_subscription=True,
         )
-        assert scheduler._event_subscribed is True
+        assert scheduler.event_subscribed is True
         assert scheduler._event_bus is not None
 
 
@@ -163,7 +163,7 @@ class TestUnsubscribeFromEvents:
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events()
         scheduler.unsubscribe_from_events()
-        assert scheduler._event_subscribed is False
+        assert scheduler.event_subscribed is False
 
     def test_unsubscribe_clears_event_bus(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
@@ -174,7 +174,7 @@ class TestUnsubscribeFromEvents:
     def test_unsubscribe_without_subscribe(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.unsubscribe_from_events()
-        assert scheduler._event_subscribed is False
+        assert scheduler.event_subscribed is False
 
     def test_resubscribe_after_unsubscribe(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
@@ -182,7 +182,7 @@ class TestUnsubscribeFromEvents:
         scheduler.unsubscribe_from_events()
         result = scheduler.subscribe_to_events()
         assert result is True
-        assert scheduler._event_subscribed is True
+        assert scheduler.event_subscribed is True
 
 
 # ===========================================================================
@@ -304,26 +304,26 @@ class TestEventBusSingleton:
 class TestConstructorOptions:
     def test_default_no_subscription(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
-        assert scheduler._event_subscribed is False
+        assert scheduler.event_subscribed is False
 
     def test_enable_event_subscription_true(self, tmp_path):
         scheduler = GameDayScheduler(
             state_path=tmp_path / "state.yaml",
             enable_event_subscription=True,
         )
-        assert scheduler._event_subscribed is True
+        assert scheduler.event_subscribed is True
 
     def test_enable_event_subscription_false(self, tmp_path):
         scheduler = GameDayScheduler(
             state_path=tmp_path / "state.yaml",
             enable_event_subscription=False,
         )
-        assert scheduler._event_subscribed is False
+        assert scheduler.event_subscribed is False
 
     def test_state_path_still_works(self, tmp_path):
         state_path = tmp_path / "custom-state.yaml"
         scheduler = GameDayScheduler(state_path=state_path)
-        assert scheduler._state_path == state_path
+        assert scheduler.state_path == state_path
 
     def test_init_with_subscription_and_state_path(self, tmp_path):
         state_path = tmp_path / "combined-state.yaml"
@@ -331,5 +331,5 @@ class TestConstructorOptions:
             state_path=state_path,
             enable_event_subscription=True,
         )
-        assert scheduler._state_path == state_path
-        assert scheduler._event_subscribed is True
+        assert scheduler.state_path == state_path
+        assert scheduler.event_subscribed is True

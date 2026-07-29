@@ -501,6 +501,11 @@ class ConcurrentScanner:
         """只读：lock_dir（Stage 4 公共化）。"""
         return self._lock_dir
 
+    @lock_dir.setter
+    def lock_dir(self, value):
+        """写入：lock_dir（Stage 4 公共化）。"""
+        self._lock_dir = value
+
 
     def is_locked(self, path) -> bool:
         """公共接口：is_locked（Stage 4 公共化）。"""
@@ -512,6 +517,11 @@ class ConcurrentScanner:
     def root(self):
         """只读：root（Stage 4 公共化）。"""
         return self._root
+
+    @root.setter
+    def root(self, value):
+        """写入：root（Stage 4 公共化）。"""
+        self._root = value
 
 
     def _is_locked(self, path: Path) -> bool:

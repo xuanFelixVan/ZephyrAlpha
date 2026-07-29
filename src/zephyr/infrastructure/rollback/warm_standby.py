@@ -80,10 +80,25 @@ class WarmStandby:
         self._standby_dir = self._project_root / self.STANDBY_DIR
         self._state_path = self._project_root / self.STANDBY_STATE_FILE
 
+    def read_state(self) -> StandbyState | None:
+        """公共接口：read_state（Stage 4 公共化）。"""
+        return self._read_state()
+
+
+    def save_state(self, state) -> None:
+        """公共接口：save_state（Stage 4 公共化）。"""
+        return self._save_state(state)
+
+
     @property
     def state_path(self):
         """只读：state_path（Stage 4 公共化）。"""
         return self._state_path
+
+    @state_path.setter
+    def state_path(self, value):
+        """写入：state_path（Stage 4 公共化）。"""
+        self._state_path = value
 
 
     @property
@@ -91,11 +106,21 @@ class WarmStandby:
         """只读：standby_dir（Stage 4 公共化）。"""
         return self._standby_dir
 
+    @standby_dir.setter
+    def standby_dir(self, value):
+        """写入：standby_dir（Stage 4 公共化）。"""
+        self._standby_dir = value
+
 
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def initialize(self, commit_sha: str) -> bool:
@@ -153,7 +178,7 @@ class WarmStandby:
         previous_commit = state.standby_commit
 
         try:
-            self._run_git(["checkout", target_commit], cwd=self._standby_dir)
+            self.run_git(["checkout", target_commit], cwd=self._standby_dir)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return CutoverResult(
                 success=False,
@@ -231,7 +256,7 @@ class WarmStandby:
         }
         self._state_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
-    def _run_git(self, args: list[str], cwd: Path | None = None) -> str:
+    def run_git(self, args: list[str], cwd: Path | None = None) -> str:
         result = run_subprocess_hidden(
             ["git"] + args,
             cwd=str(cwd or self._project_root),
@@ -240,3 +265,7 @@ class WarmStandby:
             timeout=10,
         )
         return result.stdout
+
+    def _run_git(self, args: list[str], cwd: Path | None = None) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(args, cwd)

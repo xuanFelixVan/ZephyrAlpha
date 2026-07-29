@@ -270,10 +270,20 @@ class PolicyFeedbackBridge:
         """只读：patterns（Stage 4 公共化）。"""
         return self._patterns
 
+    @patterns.setter
+    def patterns(self, value):
+        """写入：patterns（Stage 4 公共化）。"""
+        self._patterns = value
+
     @property
     def recommendations(self) -> list[PolicyRecommendation]:
         """只读：recommendations（Stage 4 公共化）。"""
         return self._recommendations
+
+    @recommendations.setter
+    def recommendations(self, value):
+        """写入：recommendations（Stage 4 公共化）。"""
+        self._recommendations = value
 
 
     def aggregate_patterns(self, results: list[dict[str, Any]]) -> list[AnomalyPattern]:

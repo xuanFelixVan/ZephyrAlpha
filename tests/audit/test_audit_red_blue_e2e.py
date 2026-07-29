@@ -99,7 +99,7 @@ class TestDefenseRunnerE2E:
 
     def test_run_defense_without_gate_engine_fallback(self):
         runner = DefenseRunner(gate_engine=None)
-        runner._gate_engine = None
+        runner.gate_engine = None
         scenario = _make_scenario(
             scenario_id="E2E-DR-002",
             tier=AttackTier.TIER_1,
@@ -112,7 +112,7 @@ class TestDefenseRunnerE2E:
 
     def test_tier1_always_blocked(self):
         runner = DefenseRunner(gate_engine=None)
-        runner._gate_engine = None
+        runner.gate_engine = None
         for i in range(5):
             scenario = _make_scenario(
                 scenario_id=f"E2E-DR-T1-{i:03d}",
@@ -125,7 +125,7 @@ class TestDefenseRunnerE2E:
 
     def test_results_accumulated(self):
         runner = DefenseRunner(gate_engine=None)
-        runner._gate_engine = None
+        runner.gate_engine = None
         assert runner.results() == []
         scenario_a = _make_scenario(
             scenario_id="E2E-DR-ACC-001",
@@ -289,12 +289,12 @@ class TestSteadyStateE2E:
             if metric_def is not None:
                 break
         assert metric_def is not None, "import_time metric must exist in DOMAIN_METRICS"
-        value = ss._evaluate_metric(metric_def)
+        value = ss.evaluate_metric(metric_def)
         assert value >= 0, f"import_time measurement returned {value}, expected >= 0"
         assert isinstance(value, float)
-        t1 = ss._import_time("zephyr.red_blue_validator")
+        t1 = ss.import_time("zephyr.red_blue_validator")
         time.sleep(0.01)
-        t2 = ss._import_time("zephyr.red_blue_validator")
+        t2 = ss.import_time("zephyr.red_blue_validator")
         assert isinstance(t1, float)
         assert isinstance(t2, float)
         assert t1 >= 0
@@ -321,17 +321,17 @@ class TestSteadyStateE2E:
 
     def test_drift_detection(self):
         ss = SteadyState()
-        ss._snapshot_before = {
+        ss.snapshot_before = {
             "compliance": {"rule_coverage": 100.0, "registry_completeness": 30.0},
             "security": {"secret_leak_count": 0.0, "rbac_violations": 0.0},
             "performance": {"import_time_ms": 200.0},
         }
-        ss._snapshot_after = {
+        ss.snapshot_after = {
             "compliance": {"rule_coverage": 50.0, "registry_completeness": 30.0},
             "security": {"secret_leak_count": 10.0, "rbac_violations": 0.0},
             "performance": {"import_time_ms": 200.0},
         }
-        summary = ss._compute_drift()
+        summary = ss.compute_drift()
         assert isinstance(summary, SteadyStateSummary)
         assert summary.drifted >= 1, f"Artificially drifted metrics should be detected: drifted={summary.drifted}"
         assert summary.drift_rate > 0.0, (

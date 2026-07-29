@@ -29,7 +29,7 @@ check_vocab_hardcode.py（subprocess 调用 --files --ci）。本测试 mock
 subprocess.run，不调用真实脚本；用 tmp_path 创建真实文件使 os.path.isfile
 通过。只检测新增文件（diff-filter=A），不触碰存量违规。
 
-测试隔离：MagicMock 模拟 gateway._run_git + monkeypatch subprocess.run，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git + monkeypatch subprocess.run，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -75,7 +75,7 @@ def _make_gateway(staged_new=None, project_root=None, toplevel=None,
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -90,7 +90,7 @@ def _make_gateway(staged_new=None, project_root=None, toplevel=None,
             return _MockResult(0, toplevel or str(gw.project_root))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

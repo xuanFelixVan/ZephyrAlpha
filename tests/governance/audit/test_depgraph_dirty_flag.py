@@ -225,7 +225,7 @@ class TestClearDepgraphDirtyFlag:
 
     由于 _reconcile_domain_doc 内部调用 _run_subprocess 跑生成器脚本，本测试通过
     monkeypatch reconciliation_registry.run_subprocess 模拟"生成器成功/失败"两种场景，
-    断言 flag 是否被正确清理。同时 monkeypatch gateway._run_git / _commit_auto 模拟 git 行为。
+    断言 flag 是否被正确清理。同时 monkeypatch gateway.run_git / _commit_auto 模拟 git 行为。
     """
 
     def test_flag_cleared_on_clean_reconcile(
@@ -254,7 +254,7 @@ class TestClearDepgraphDirtyFlag:
         diff_result = MagicMock()
         diff_result.returncode = 0
         diff_result.stdout = ""  # 无漂移
-        gateway._run_git.return_value = diff_result
+        gateway.run_git.return_value = diff_result
 
         spec = _make_spec(tmp_path, gateway=gateway)
         result = spec.reconcile([], "test-session-id")
@@ -286,7 +286,7 @@ class TestClearDepgraphDirtyFlag:
         diff_result = MagicMock()
         diff_result.returncode = 0
         diff_result.stdout = "docs/02_enterprise_architecture/02_domain_architecture_docs/01_a_foo.md\n"
-        gateway._run_git.return_value = diff_result
+        gateway.run_git.return_value = diff_result
         # auto-commit 成功
         commit_result = MagicMock()
         commit_result.status = "OK"

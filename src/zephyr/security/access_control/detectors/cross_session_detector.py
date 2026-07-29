@@ -79,15 +79,30 @@ class CrossSessionDetector:
         """只读：active_sessions（Stage 4 公共化）。"""
         return self._active_sessions
 
+    @active_sessions.setter
+    def active_sessions(self, value):
+        """写入：active_sessions（Stage 4 公共化）。"""
+        self._active_sessions = value
+
     @property
     def secret(self) -> str:
         """只读：secret（Stage 4 公共化）。"""
         return self._secret
 
+    @secret.setter
+    def secret(self, value):
+        """写入：secret（Stage 4 公共化）。"""
+        self._secret = value
+
     @property
     def violations(self) -> list[dict]:
         """只读：violations（Stage 4 公共化）。"""
         return self._violations
+
+    @violations.setter
+    def violations(self, value):
+        """写入：violations（Stage 4 公共化）。"""
+        self._violations = value
 
 
     def _compute_signature(

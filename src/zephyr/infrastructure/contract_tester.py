@@ -79,6 +79,11 @@ class ContractTester:
         """只读：strict（Stage 4 公共化）。"""
         return self._strict
 
+    @strict.setter
+    def strict(self, value):
+        """写入：strict（Stage 4 公共化）。"""
+        self._strict = value
+
 
     def test_contract(
         self,

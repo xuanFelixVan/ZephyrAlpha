@@ -205,7 +205,7 @@ class TestCrossFileUniqueness:
                 "tests/other/test_other.py\n"
             )
 
-        gw._run_git.return_value = _FakeResult()
+        gw.run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_current.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -250,7 +250,7 @@ class TestCrossFileUniqueness:
                 "src/zephyr/gov_enforcement/commit_gates/fake_gate.py\n"
             )
 
-        gw._run_git.return_value = _FakeResult()
+        gw.run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_current.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -286,7 +286,7 @@ class TestCrossFileUniqueness:
             returncode = 1
             stdout = ""
 
-        gw._run_git.return_value = _FakeResult()
+        gw.run_git.return_value = _FakeResult()
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_unique.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -318,7 +318,7 @@ class TestCrossFileUniqueness:
             call_count["n"] += 1
             return _FakeResult()
 
-        gw._run_git.side_effect = _counting_run
+        gw.run_git.side_effect = _counting_run
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_tracked.py"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -363,7 +363,7 @@ class TestCrossFileUniqueness:
         def _raising_run(*a, **kw):
             raise _sp.TimeoutExpired(cmd=a[0] if a else "git", timeout=10)
 
-        gw._run_git.side_effect = _raising_run
+        gw.run_git.side_effect = _raising_run
         gate = make_module_id_consistency_gate()
         target = tmp_path / "tests/fake/test_timeout.py"
         target.parent.mkdir(parents=True, exist_ok=True)

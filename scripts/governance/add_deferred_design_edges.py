@@ -121,6 +121,7 @@ def _query_node_id(path: str) -> int | None:
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     print("=" * 70)
     print(f"添加 {len(DESIGN_EDGES)} 条设计态依赖边 (dep_maturity='design')")
     print("=" * 70)

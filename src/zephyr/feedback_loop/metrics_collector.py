@@ -67,10 +67,20 @@ class MetricsCollector:
         """只读：conn（Stage 4 公共化）。"""
         return self._conn
 
+    @conn.setter
+    def conn(self, value):
+        """写入：conn（Stage 4 公共化）。"""
+        self._conn = value
+
     @property
     def db_path(self):
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
+
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
 
 
     def _get_conn(self) -> sqlite3.Connection:

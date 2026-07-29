@@ -2434,3 +2434,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def ensure_sync_failures_log_table(cur):
+    """公共接口：ensure_sync_failures_log_table（Stage 4 公共化）。"""
+    return _ensure_sync_failures_log_table(cur)
+

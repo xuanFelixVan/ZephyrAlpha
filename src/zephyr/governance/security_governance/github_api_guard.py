@@ -34,6 +34,11 @@ class GitHubAPIGuard:
         """只读：allowed_commands（Stage 4 公共化）。"""
         return self._allowed_commands
 
+    @allowed_commands.setter
+    def allowed_commands(self, value):
+        """写入：allowed_commands（Stage 4 公共化）。"""
+        self._allowed_commands = value
+
 
     def validate_command(self, command: str, user: str) -> tuple[bool, str]:
         if command not in self._allowed_commands:

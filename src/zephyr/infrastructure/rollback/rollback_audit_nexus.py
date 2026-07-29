@@ -81,6 +81,11 @@ class RollbackAuditNexus:
         """只读：core_writer（Stage 4 公共化）。"""
         return self._core_writer
 
+    @core_writer.setter
+    def core_writer(self, value):
+        """写入：core_writer（Stage 4 公共化）。"""
+        self._core_writer = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -88,15 +93,30 @@ class RollbackAuditNexus:
         """只读：nexus_log（Stage 4 公共化）。"""
         return self._nexus_log
 
+    @nexus_log.setter
+    def nexus_log(self, value):
+        """写入：nexus_log（Stage 4 公共化）。"""
+        self._nexus_log = value
+
     @property
     def nexus_summary(self):
         """只读：nexus_summary（Stage 4 公共化）。"""
         return self._nexus_summary
 
+    @nexus_summary.setter
+    def nexus_summary(self, value):
+        """写入：nexus_summary（Stage 4 公共化）。"""
+        self._nexus_summary = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def publish(self, event: AuditEvent) -> None:

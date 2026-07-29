@@ -42,6 +42,11 @@ class InterruptHandler:
         """只读：signal（Stage 4 公共化）。"""
         return self._signal
 
+    @signal.setter
+    def signal(self, value):
+        """写入：signal（Stage 4 公共化）。"""
+        self._signal = value
+
 
     def interrupt(self, signal: InterruptSignal) -> None:
         self._interrupted = True

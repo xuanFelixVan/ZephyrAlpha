@@ -28,7 +28,7 @@
   - git diff 失败 → fail-open 放行
   - tests/ 豁免
 
-测试隔离：MagicMock 模拟 gateway._run_git；monkeypatch 模拟 DB 查询 + 文件读取。
+测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 DB 查询 + 文件读取。
 """
 from __future__ import annotations
 
@@ -162,7 +162,7 @@ class TestCheckClosure:
                 return _MockResult(returncode=0, stdout=git_diff_output)
             return _MockResult(returncode=0, stdout="")
 
-        gw._run_git = _run_git
+        gw.run_git = _run_git
         return gw
 
     def test_no_staged_py_passes(self) -> None:
@@ -176,7 +176,7 @@ class TestCheckClosure:
         """git diff 失败 → fail-open 放行。"""
         gw = MagicMock()
         gw.project_root = Path(_PROJECT_ROOT)
-        gw._run_git = lambda cmd: _MockResult(returncode=1, stdout="")
+        gw.run_git = lambda cmd: _MockResult(returncode=1, stdout="")
         gate = make_depgraph_pre_registration_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True
@@ -189,7 +189,7 @@ class TestCheckClosure:
         def _raise(_cmd):
             raise RuntimeError("boom")
 
-        gw._run_git = _raise
+        gw.run_git = _raise
         gate = make_depgraph_pre_registration_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True
@@ -212,9 +212,9 @@ class TestCheckClosure:
         gate = make_depgraph_pre_registration_gate()
         # Even with mocked DB returning planned, tests/ should be exempt
         with (
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._extract_ttl", return_value="permanent"),
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._query_build_status", return_value="planned"),
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._count_impl_lines", return_value=100),
+            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.extract_ttl", return_value="permanent"),
+            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status", return_value="planned"),
+            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.count_impl_lines", return_value=100),
         ):
             passed, detail = gate.check(gw, ["src/zephyr/foo.py", "tests/test_foo.py"])
         # src/zephyr/foo.py would block (planned + 100 lines), but tests/ exempt
@@ -239,7 +239,7 @@ class TestCheckClosure:
         )
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._query_build_status",
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
             lambda _fp: "planned",
         )
 
@@ -266,7 +266,7 @@ class TestCheckClosure:
         )
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._query_build_status",
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
             lambda _fp: "planned",
         )
 
@@ -292,7 +292,7 @@ class TestCheckClosure:
         )
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._query_build_status",
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
             lambda _fp: "stable",
         )
 
@@ -339,7 +339,7 @@ class TestCheckClosure:
         )
 
         monkeypatch.setattr(
-            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._query_build_status",
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
             lambda _fp: None,  # DB 不可达
         )
 

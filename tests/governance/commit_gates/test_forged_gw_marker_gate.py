@@ -65,7 +65,7 @@ class TestRegisteredSessionPass:
         gw = _make_gateway(tmp_path)
         gate = make_forged_gw_marker_gate()
         with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate._is_session_registered",
+            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.is_session_registered",
             return_value=True,
         ):
             passed, detail = gate.check(
@@ -84,7 +84,7 @@ class TestUnregisteredSessionWithEnvPass:
         gw = _make_gateway(tmp_path)
         gate = make_forged_gw_marker_gate()
         with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate._is_session_registered",
+            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.is_session_registered",
             return_value=False,
         ):
             passed, detail = gate.check(
@@ -103,7 +103,7 @@ class TestForgedMarkerBlocked:
         gw = _make_gateway(tmp_path)
         gate = make_forged_gw_marker_gate()
         with patch(
-            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate._is_session_registered",
+            "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.is_session_registered",
             return_value=False,
         ):
             passed, detail = gate.check(

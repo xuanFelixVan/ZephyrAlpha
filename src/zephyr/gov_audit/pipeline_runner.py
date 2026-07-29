@@ -279,11 +279,31 @@ class PipelineRunner:
         self._script_output_mode: dict[str, str] = {}
         self._dimension_scripts: dict[str, list[str]] = self._discover_scripts()
 
+    def discover_from_gate_registry(self) -> dict[str, list[str]]:
+        """公共接口：discover_from_gate_registry（Stage 4 公共化）。"""
+        return self._discover_from_gate_registry()
+
+
+    def discover_from_depgraph(self) -> dict[str, list[str]]:
+        """公共接口：discover_from_depgraph（Stage 4 公共化）。"""
+        return self._discover_from_depgraph()
+
+
+    def discover_from_manifest(self) -> dict[str, list[str]]:
+        """公共接口：discover_from_manifest（Stage 4 公共化）。"""
+        return self._discover_from_manifest()
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def dimension_scripts(self) -> dict[str, list[str]]:
         """只读：dimension_scripts（Stage 4 公共化）。"""
         return self._dimension_scripts
+
+    @dimension_scripts.setter
+    def dimension_scripts(self, value):
+        """写入：dimension_scripts（Stage 4 公共化）。"""
+        self._dimension_scripts = value
 
 
     def run(self, dimensions: list[str] | None = None, dry_run: bool = False) -> PipelineResult:

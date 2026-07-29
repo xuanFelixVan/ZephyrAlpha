@@ -639,10 +639,20 @@ class RegistryManager:
         """只读：known（Stage 4 公共化）。"""
         return self._known
 
+    @known.setter
+    def known(self, value):
+        """写入：known（Stage 4 公共化）。"""
+        self._known = value
+
     @property
     def root(self):
         """只读：root（Stage 4 公共化）。"""
         return self._root
+
+    @root.setter
+    def root(self, value):
+        """写入：root（Stage 4 公共化）。"""
+        self._root = value
 
 
     def _init_defaults(self) -> None:

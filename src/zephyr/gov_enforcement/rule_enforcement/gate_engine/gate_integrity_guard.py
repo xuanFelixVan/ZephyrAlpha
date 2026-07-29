@@ -46,9 +46,12 @@ class GateIntegrityGuard:
             self._load_manifest(manifest_path)
 
     @staticmethod
-    def compute_sha256(path) -> str:
-        """公共接口：compute_sha256（Stage 4 公共化，委托到 _compute_sha256）。"""
-        return _compute_sha256(path)
+    def compute_sha256(path: str) -> str:
+        hasher = hashlib.sha256()
+        with open(path, 'rb') as f:
+            for chunk in iter(lambda: f.read(65536), b''):
+                hasher.update(chunk)
+        return hasher.hexdigest()
 
 
     def _load_manifest(self, path: str) -> None:
@@ -104,11 +107,8 @@ class GateIntegrityGuard:
 
     @staticmethod
     def _compute_sha256(path: str) -> str:
-        hasher = hashlib.sha256()
-        with open(path, "rb") as f:
-            for chunk in iter(lambda: f.read(65536), b""):
-                hasher.update(chunk)
-        return hasher.hexdigest()
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return GateIntegrityGuard.compute_sha256(path)
 
     @property
     def reports(self) -> list[IntegrityReport]:

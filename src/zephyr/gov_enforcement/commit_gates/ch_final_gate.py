@@ -117,7 +117,7 @@ def _check_new_file(abs_path: str, rel_path: str) -> str | None:
 def _check_modified_file(gateway, rel_path: str) -> str | None:
     """修改文件检测 staged diff 新增行中的 ch_writer.query 文本模式。"""
     try:
-        diff_content = gateway._run_git(
+        diff_content = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path]
         )
         if diff_content.returncode != 0:
@@ -137,7 +137,7 @@ def _check_modified_file(gateway, rel_path: str) -> str | None:
 def _get_staged_py_files(gateway) -> list[str]:
     """获取 staged added/modified .py 文件（过滤 tests/ 和基础设施豁免）。"""
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -156,7 +156,7 @@ def _get_staged_py_files(gateway) -> list[str]:
 def _get_wt_root(gateway) -> str:
     """获取 worktree root 路径。"""
     try:
-        toplevel = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+        toplevel = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         return toplevel.stdout.strip() if toplevel.returncode == 0 else str(gateway.project_root)
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return str(gateway.project_root)
@@ -165,7 +165,7 @@ def _get_wt_root(gateway) -> str:
 def _get_added_set(gateway) -> set[str]:
     """获取 staged 新增(A)文件集合。"""
     try:
-        added_result = gateway._run_git(
+        added_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         return set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()

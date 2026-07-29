@@ -29,7 +29,7 @@
   - DB 不可达 → fail-open 放行
   - git diff 失败 → fail-open 放行
 
-测试隔离：MagicMock 模拟 gateway._run_git；monkeypatch 模拟 DB 查询。
+测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 DB 查询。
 """
 from __future__ import annotations
 
@@ -89,7 +89,7 @@ class TestGetStagedRenames:
     def test_normal_rename(self, tmp_path: Path) -> None:
         """正常 .py 重命名 → 返回 (old, new) 列表。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\told_module.py\tnew_module.py\n"
         ))
         result = _get_staged_renamed_py_files(gw)
@@ -98,7 +98,7 @@ class TestGetStagedRenames:
     def test_multiple_renames(self, tmp_path: Path) -> None:
         """多个重命名 → 全部返回。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\ta/old.py\ta/new.py\nR080\tb/old.py\tb/new.py\n"
         ))
         result = _get_staged_renamed_py_files(gw)
@@ -109,7 +109,7 @@ class TestGetStagedRenames:
     def test_non_py_skipped(self) -> None:
         """非 .py 文件跳过。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\told.md\tnew.md\nR100\told.py\tnew.py\n"
         ))
         result = _get_staged_renamed_py_files(gw)
@@ -118,7 +118,7 @@ class TestGetStagedRenames:
     def test_tests_exempt(self) -> None:
         """tests/ 路径豁免。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\ttests/test_old.py\ttests/test_new.py\nR100\tsrc/old.py\tsrc/new.py\n"
         ))
         result = _get_staged_renamed_py_files(gw)
@@ -127,21 +127,21 @@ class TestGetStagedRenames:
     def test_no_renames(self) -> None:
         """无重命名 → 空列表。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(0, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(0, ""))
         result = _get_staged_renamed_py_files(gw)
         assert result == []
 
     def test_diff_fails_returns_none(self) -> None:
         """git diff 失败 → None (fail-open)。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(1, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(1, ""))
         result = _get_staged_renamed_py_files(gw)
         assert result is None
 
     def test_diff_raises_returns_none(self) -> None:
         """git diff 异常 → None (fail-open)。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(side_effect=RuntimeError("git not found"))
+        gw.run_git = MagicMock(side_effect=RuntimeError("git not found"))
         result = _get_staged_renamed_py_files(gw)
         assert result is None
 
@@ -223,7 +223,7 @@ class TestGatewayIntegration:
     def test_no_rename_passes(self) -> None:
         """无重命名 → 放行。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(0, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(0, ""))
         gate = make_rename_depgraph_sync_gate()
         passed, msg = gate.check(gw, [])
         assert passed is True
@@ -232,7 +232,7 @@ class TestGatewayIntegration:
     def test_synced_rename_passes(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """重命名已同步 depgraph → 放行。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\told.py\tnew.py\n"
         ))
 
@@ -254,7 +254,7 @@ class TestGatewayIntegration:
     def test_unsynced_rename_blocks(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """重命名未同步 depgraph → 阻断。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\tsrc/old.py\tsrc/new.py\n"
         ))
 
@@ -279,7 +279,7 @@ class TestGatewayIntegration:
     def test_db_unreachable_fail_open(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """DB 不可达 → fail-open 放行。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "R100\told.py\tnew.py\n"
         ))
         monkeypatch.setattr(
@@ -293,7 +293,7 @@ class TestGatewayIntegration:
     def test_diff_fails_fail_open(self) -> None:
         """git diff 失败 → fail-open 放行。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(1, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(1, ""))
         gate = make_rename_depgraph_sync_gate()
         passed, msg = gate.check(gw, ["new.py"])
         assert passed is True

@@ -68,6 +68,11 @@ class DependencyGraph:
         """只读：nodes（Stage 4 公共化）。"""
         return self._nodes
 
+    @nodes.setter
+    def nodes(self, value):
+        """写入：nodes（Stage 4 公共化）。"""
+        self._nodes = value
+
 
     def add_node(
         self, task_id: str, depends_on: list[str] | None = None, blocked_by: list[str] | None = None

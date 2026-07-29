@@ -162,7 +162,7 @@ def _is_empty_handler_body(func: ast.FunctionDef | ast.AsyncFunctionDef) -> bool
 def _get_staged_new_py_files(gateway) -> list[str] | None:
     """获取 staged 新增 .py 文件（tests/ 豁免）。返回 None 表示 fail-open。"""
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -187,7 +187,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
 def _resolve_worktree_root(gateway) -> str:
     """获取 worktree root（失败回退到 project_root）。"""
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:

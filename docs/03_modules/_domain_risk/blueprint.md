@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.4"
+version: "2.2.5"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.4 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.5 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -921,23 +921,94 @@ class ViolationDetail(BaseModel):
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `schemas/categories/cross_validation_log.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_analyst_forecast.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental_balance_sheet.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental_cashflow_statement.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_disclosure_plan.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_equity_pledge_detail.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental_income_statement.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_industry_class.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_industry_class_suppl.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_restricted_shares.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_rights_issue.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_share_change.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental_share_unlock.py` | ✅ 已实现 | |
+| `schemas/categories/macro_edb_data.py` | ✅ 已实现 | |
+| `schemas/categories/macro_macro_data.py` | ✅ 已实现 | |
+| `schemas/categories/market_adj_factor.py` | ✅ 已实现 | |
 | `schemas/categories/market_auction.py` | ✅ 已实现 | |
 | `schemas/categories/market_auction_book.py` | ✅ 已实现 | |
+| `schemas/categories/market_block_trade.py` | ✅ 已实现 | |
+| `schemas/categories/market_block_trade_detail.py` | ✅ 已实现 | |
 | `schemas/categories/market_cb_iv.py` | ✅ 已实现 | |
+| `schemas/categories/market_concept_board.py` | ✅ 已实现 | |
+| `schemas/categories/market_concept_board_constituent.py` | ✅ 已实现 | |
+| `schemas/categories/market_concept_sector.py` | ✅ 已实现 | |
+| `schemas/categories/market_convertible_bond_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_daily_valuation.py` | ✅ 已实现 | |
+| `schemas/categories/market_dragon_tiger.py` | ✅ 已实现 | |
+| `schemas/categories/market_etf_benchmark.py` | ✅ 已实现 | |
+| `schemas/categories/market_etf_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_etf_nav.py` | ✅ 已实现 | |
+| `schemas/categories/market_futures_kline_qmt.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_position.py` | ✅ 已实现 | |
 | `schemas/categories/market_futures_term.py` | ✅ 已实现 | |
+| `schemas/categories/market_hk_connect_flow.py` | ✅ 已实现 | |
+| `schemas/categories/market_hk_kline.py` | ✅ 已实现 | |
+| `schemas/categories/market_hk_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_hk_trade_calendar.py` | ✅ 已实现 | |
 | `schemas/categories/market_index.py` | ✅ 已实现 | |
+| `schemas/categories/market_index_constituent.py` | ✅ 已实现 | |
+| `schemas/categories/market_index_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_index_meta.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_weight.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_15min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_1min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_30min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_5min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_60min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_cb.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_daily_hfq.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_etf_15min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_etf_1min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_etf_30min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_etf_5min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_etf_60min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_futures.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_hk_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_index.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_lof_15min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_lof_1min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_lof_30min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_lof_5min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_lof_60min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_monthly.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_monthly_hfq.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_sector.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_sector_880.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_sector_intraday.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_us_daily.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_weekly.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_weekly_hfq.py` | ✅ 已实现 | |
+| `schemas/categories/market_limit_up_down.py` | ✅ 已实现 | |
+| `schemas/categories/market_lof_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_margin_trading.py` | ✅ 已实现 | |
+| `schemas/categories/market_money_flow.py` | ✅ 已实现 | |
+| `schemas/categories/market_option_greeks.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
+| `schemas/categories/market_option_kline.py` | ✅ 已实现 | |
+| `schemas/categories/market_realtime_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market_sector_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_meta.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market_st_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_stock_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_tick.py` | ✅ 已实现 | |
+| `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market_us_index.py` | ✅ 已实现 | |
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/default_position_limit_checker.py` | ✅ 已实现 | |

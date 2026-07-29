@@ -223,6 +223,12 @@ class BaseMCPServer:
         if enable_rbac:
             self._try_auto_enable_rbac()
 
+    @staticmethod
+    def read_message(inp) -> tuple[str | None, bool]:
+        """公共接口：read_message（Stage 4 公共化）。"""
+        return __class__._read_message(inp)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def rbac_guard(self):
@@ -241,6 +247,11 @@ class BaseMCPServer:
     def tools(self) -> dict[str, ToolDefinition]:
         """只读：tools（Stage 4 公共化）。"""
         return self._tools
+
+    @tools.setter
+    def tools(self, value):
+        """写入：tools（Stage 4 公共化）。"""
+        self._tools = value
 
 
     def _try_auto_enable_rbac(self) -> None:

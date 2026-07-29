@@ -97,6 +97,37 @@ class ConstitutionEngine:
     def __init__(self, registry_path: Path | None = None) -> None:
         self._registry_path: Path = registry_path or _REGISTRY_PATH
 
+    def append_to_registry(self, article) -> None:
+        """公共接口：append_to_registry（Stage 4 公共化）。"""
+        return self._append_to_registry(article)
+
+
+    def find_by_action(self, defense_action) -> str | None:
+        """公共接口：find_by_action（Stage 4 公共化）。"""
+        return self._find_by_action(defense_action)
+
+
+    def next_article_id(self) -> str:
+        """公共接口：next_article_id（Stage 4 公共化）。"""
+        return self._next_article_id()
+
+
+    def classify(self, root_cause) -> str:
+        """公共接口：classify（Stage 4 公共化）。"""
+        return self._classify(root_cause)
+
+
+    @property
+    def registry_path(self) -> Path:
+        """只读：registry_path（Stage 4 公共化）。"""
+        return self._registry_path
+
+    @registry_path.setter
+    def registry_path(self, value):
+        """写入：registry_path（Stage 4 公共化）。"""
+        self._registry_path = value
+
+
     def learn_from_bypass(self, bypass: BypassEntry, target_module: str = "") -> str | None:
         if bypass.count < 3:
             return None

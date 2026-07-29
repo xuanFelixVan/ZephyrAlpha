@@ -42,10 +42,20 @@ class IDEWatcher:
         """只读：callbacks（Stage 4 公共化）。"""
         return self._callbacks
 
+    @callbacks.setter
+    def callbacks(self, value):
+        """写入：callbacks（Stage 4 公共化）。"""
+        self._callbacks = value
+
     @property
     def last_mtimes(self) -> dict[str, float]:
         """只读：last_mtimes（Stage 4 公共化）。"""
         return self._last_mtimes
+
+    @last_mtimes.setter
+    def last_mtimes(self, value):
+        """写入：last_mtimes（Stage 4 公共化）。"""
+        self._last_mtimes = value
 
 
     def scan(self) -> dict[str, Any]:

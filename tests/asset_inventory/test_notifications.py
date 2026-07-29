@@ -42,7 +42,7 @@ class TestFeishuWebhook:
         record = ch.send("semi_active", "test")
         assert not record.delivered
 
-    @patch("zephyr.infrastructure.asset_inventory.telemetry._urlopen")
+    @patch("zephyr.infrastructure.asset_inventory.telemetry.urlopen")
     def test_send_with_url_success(self, mock_urlopen) -> None:
         mock_resp = MagicMock()
         mock_resp.status = 200
@@ -54,7 +54,7 @@ class TestFeishuWebhook:
         record = ch.send("semi_active", "test alert")
         assert record.delivered
 
-    @patch("zephyr.infrastructure.asset_inventory.telemetry._urlopen")
+    @patch("zephyr.infrastructure.asset_inventory.telemetry.urlopen")
     def test_send_with_url_failure(self, mock_urlopen) -> None:
         from urllib.error import URLError
 

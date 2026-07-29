@@ -98,10 +98,20 @@ class PrivacyGuard:
         """只读：default_policy（Stage 4 公共化）。"""
         return self._default_policy
 
+    @default_policy.setter
+    def default_policy(self, value):
+        """写入：default_policy（Stage 4 公共化）。"""
+        self._default_policy = value
+
     @property
     def patterns(self) -> dict[PIICategory, list[re.Pattern[str]]]:
         """只读：patterns（Stage 4 公共化）。"""
         return self._patterns
+
+    @patterns.setter
+    def patterns(self, value):
+        """写入：patterns（Stage 4 公共化）。"""
+        self._patterns = value
 
 
     def detect_pii(self, text: str) -> PIIScanResult:

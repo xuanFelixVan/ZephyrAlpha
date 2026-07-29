@@ -30,6 +30,11 @@ class PushNotifier:
         """只读：subscribers（Stage 4 公共化）。"""
         return self._subscribers
 
+    @subscribers.setter
+    def subscribers(self, value):
+        """写入：subscribers（Stage 4 公共化）。"""
+        self._subscribers = value
+
 
     def subscribe(self, agent_id: str, callback: Callable):
         self._subscribers.setdefault(agent_id, []).append(callback)

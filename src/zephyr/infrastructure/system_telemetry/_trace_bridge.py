@@ -18,7 +18,11 @@ from __future__ import annotations
 from typing import Any, Callable
 
 _span_context_getter: Callable[[], Any] | None = None
+span_context_getter = _span_context_getter  # public alias（Stage 4 公共化）
+
 _record_writer: Callable[[dict[str, Any], dict[str, Any] | None], bool] | None = None
+record_writer = _record_writer  # public alias（Stage 4 公共化）
+
 
 
 def set_span_context_getter(fn: Callable[[], Any]) -> None:

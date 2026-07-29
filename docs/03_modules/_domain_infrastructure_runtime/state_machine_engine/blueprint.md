@@ -5,7 +5,7 @@ submodule_path: src/zephyr/shared
 title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理"
 doc_type: blueprint
 status: Draft
-version: "0.1.1"
+version: "0.1.2"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -449,7 +449,6 @@ STEP 9: 更新 REG-SM-001 entry_count
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/shared/lifecycle/state_machine.py` | ✅ 已实现 | |
 | `src/zephyr/signal_ashare/__init__.py` | ⚠️ 骨架 | |
 
 ### 1.5 路径索引使用指南
@@ -465,3 +464,5 @@ STEP 9: 更新 REG-SM-001 entry_count
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

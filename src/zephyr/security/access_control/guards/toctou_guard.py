@@ -87,6 +87,11 @@ class TOCTOUGuard:
         """只读：pre_state（Stage 4 公共化）。"""
         return self._pre_state
 
+    @pre_state.setter
+    def pre_state(self, value):
+        """写入：pre_state（Stage 4 公共化）。"""
+        self._pre_state = value
+
 
     def snapshot(self, file_path: str) -> dict[str, Any] | None:
         """对文件做快照.

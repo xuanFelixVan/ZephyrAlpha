@@ -56,6 +56,12 @@ class HealthAggregator:
         self._probes = probe_manager or HealthProbeManager()
         self._snapshots: list[SystemHealthSnapshot] = []
 
+    @property
+    def snapshots(self) -> list[SystemHealthSnapshot]:
+        """只读：snapshots（Stage 4 公共化）。"""
+        return self._snapshots
+
+
     def poll_all(self) -> list[SystemHealthSnapshot]:
         results: list[SystemHealthSnapshot] = []
         for system in SYSTEMS:

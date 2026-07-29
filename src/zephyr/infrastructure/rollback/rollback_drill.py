@@ -84,11 +84,21 @@ class RollbackDrill:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     @property
     def drill_log_dir(self):
         """只读：drill_log_dir（Stage 4 公共化）。"""
         return self._drill_log_dir
+
+    @drill_log_dir.setter
+    def drill_log_dir(self, value):
+        """写入：drill_log_dir（Stage 4 公共化）。"""
+        self._drill_log_dir = value
 
 
     def check_db_integrity(self, path) -> bool:
@@ -101,13 +111,18 @@ class RollbackDrill:
         """只读：automatic_rollback_melted（Stage 4 公共化）。"""
         return self._automatic_rollback_melted
 
+    @automatic_rollback_melted.setter
+    def automatic_rollback_melted(self, value):
+        """写入：automatic_rollback_melted（Stage 4 公共化）。"""
+        self._automatic_rollback_melted = value
+
 
     def is_drill_time(self) -> bool:
         now = datetime.now(UTC)
         return now.weekday() == self.DRILL_SCHEDULE_DAY and now.hour == self.DRILL_SCHEDULE_HOUR
 
     def select_random_commit(self) -> str:
-        log = self._run_git(["log", "--oneline", "-20"])
+        log = self.run_git(["log", "--oneline", "-20"])
         lines = [l.split()[0] for l in log.strip().split("\n") if l]
         if not lines:
             return ""
@@ -139,7 +154,7 @@ class RollbackDrill:
         details: list[str] = []
 
         try:
-            self._run_git(["worktree", "add", str(worktree_path), commit_sha])
+            self.run_git(["worktree", "add", str(worktree_path), commit_sha])
             details.append(f"Worktree created at {worktree_path}")
 
             result = run_subprocess_hidden(
@@ -164,7 +179,7 @@ class RollbackDrill:
             success = False
         finally:
             try:
-                self._run_git(["worktree", "remove", "--force", str(worktree_path)])
+                self.run_git(["worktree", "remove", "--force", str(worktree_path)])
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_drill", exc_info=True)
             self._cleanup_chaos(scenario)
@@ -252,7 +267,7 @@ class RollbackDrill:
     def consecutive_fails(self) -> int:
         return self._consecutive_fails
 
-    def _run_git(self, args: list[str], timeout: int = 15) -> str:
+    def run_git(self, args: list[str], timeout: int = 15) -> str:
         try:
             result = run_subprocess_hidden(
                 ["git"] + args,
@@ -264,3 +279,7 @@ class RollbackDrill:
             return result.stdout
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
+
+    def _run_git(self, args: list[str], timeout: int = 15) -> str:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(args, timeout)

@@ -66,17 +66,17 @@ class TestRegistryScanE2E:
 
     def test_pipeline_runner_discovers_from_manifest(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        manifest_scripts = runner._discover_from_manifest()
+        manifest_scripts = runner.discover_from_manifest()
         assert isinstance(manifest_scripts, dict)
 
     def test_pipeline_runner_discovers_from_depgraph(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        depgraph_scripts = runner._discover_from_depgraph()
+        depgraph_scripts = runner.discover_from_depgraph()
         assert isinstance(depgraph_scripts, dict)
 
     def test_pipeline_runner_discovers_from_gate_registry(self):
         runner = PipelineRunner(scripts_dir="scripts/governance")
-        gate_scripts = runner._discover_from_gate_registry()
+        gate_scripts = runner.discover_from_gate_registry()
         assert isinstance(gate_scripts, dict)
 
 

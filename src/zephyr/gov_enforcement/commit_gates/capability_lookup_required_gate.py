@@ -331,3 +331,15 @@ def make_capability_lookup_required_gate() -> GateSpec:
         return _check_audit_log(session_id)
 
     return GateSpec(gate_id="CAPABILITY-LOOKUP-REQUIRED", check=_check, priority=110)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_audit_log_path(session_id) -> Path:
+    """公共接口：get_audit_log_path（Stage 4 公共化）。"""
+    return _get_audit_log_path(session_id)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def audit_log_dir_exists() -> bool:
+    """公共接口：audit_log_dir_exists（Stage 4 公共化）。"""
+    return _audit_log_dir_exists()
+

@@ -38,7 +38,7 @@ class TestMainFunction:
                     assert result == 0
 
     def test_scan_command(self):
-        with patch("zephyr.autonomy_core.__main__._cmd_scan", return_value=0):
+        with patch("zephyr.autonomy_core.__main__.cmd_scan", return_value=0):
             with patch("sys.argv", ["prog", "scan"]):
                 from zephyr.autonomy_core.__main__ import main
 
@@ -46,7 +46,7 @@ class TestMainFunction:
                 assert result == 0
 
     def test_no_command_defaults(self):
-        with patch("zephyr.autonomy_core.__main__._cmd_status", return_value=0):
+        with patch("zephyr.autonomy_core.__main__.cmd_status", return_value=0):
             with patch("sys.argv", ["prog"]):
                 from zephyr.autonomy_core.__main__ import main
 

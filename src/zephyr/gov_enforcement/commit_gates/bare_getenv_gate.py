@@ -144,7 +144,7 @@ def _get_staged_added_files(gateway) -> list[str] | None:
         新增文件路径列表；None 表示 fail-open（git 失败/异常，检测器降级放行）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -165,7 +165,7 @@ def _get_staged_added_files(gateway) -> list[str] | None:
 def _resolve_worktree_root(gateway) -> str:
     """解析 worktree 根目录（git rev-parse --show-toplevel），失败回退 project_root。"""
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:

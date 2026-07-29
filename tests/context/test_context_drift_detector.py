@@ -33,21 +33,21 @@ class TestContextDriftDetectorRecord:
     def test_record_operation(self):
         d = ContextDriftDetector()
         d.record_operation("agent-1", "read")
-        assert "agent-1" in d._contexts
-        assert d._contexts["agent-1"] == ["read"]
+        assert "agent-1" in d.contexts
+        assert d.contexts["agent-1"] == ["read"]
 
     def test_record_multiple_operations(self):
         d = ContextDriftDetector()
         d.record_operation("agent-2", "read")
         d.record_operation("agent-2", "write")
-        assert len(d._contexts["agent-2"]) == 2
+        assert len(d.contexts["agent-2"]) == 2
 
     def test_record_multiple_agents(self):
         d = ContextDriftDetector()
         d.record_operation("agent-a", "read")
         d.record_operation("agent-b", "write")
-        assert "agent-a" in d._contexts
-        assert "agent-b" in d._contexts
+        assert "agent-a" in d.contexts
+        assert "agent-b" in d.contexts
 
 
 class TestContextDriftDetectorScopeCreep:
@@ -109,7 +109,7 @@ class TestContextDriftDetectorReset:
         d = ContextDriftDetector()
         d.record_operation("agent-1", "read")
         d.reset("agent-1")
-        assert "agent-1" not in d._contexts
+        assert "agent-1" not in d.contexts
 
     def test_reset_nonexistent_agent(self):
         d = ContextDriftDetector()
@@ -120,4 +120,4 @@ class TestContextDriftDetectorReset:
         d.record_operation("agent-2", "read")
         d.reset("agent-2")
         d.record_operation("agent-2", "write")
-        assert d._contexts["agent-2"] == ["write"]
+        assert d.contexts["agent-2"] == ["write"]

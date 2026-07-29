@@ -437,40 +437,121 @@ class PipelineOrchestrator:
         if self.auto_profile_on_startup and self.model_profiler is not None:
             self.start_auto_profile()
 
+    @property
+    def token_budget_total(self) -> int:
+        """只读：token_budget_total（Stage 4 公共化）。"""
+        return self._token_budget_total
+
+    @token_budget_total.setter
+    def token_budget_total(self, value):
+        """写入：token_budget_total（Stage 4 公共化）。"""
+        self._token_budget_total = value
+
+
+    @property
+    def failure_log(self) -> dict[str, int]:
+        """只读：failure_log（Stage 4 公共化）。"""
+        return self._failure_log
+
+    @failure_log.setter
+    def failure_log(self, value):
+        """写入：failure_log（Stage 4 公共化）。"""
+        self._failure_log = value
+
+
+    @property
+    def active_dispatches(self) -> set[str]:
+        """只读：active_dispatches（Stage 4 公共化）。"""
+        return self._active_dispatches
+
+    @active_dispatches.setter
+    def active_dispatches(self, value):
+        """写入：active_dispatches（Stage 4 公共化）。"""
+        self._active_dispatches = value
+
+
+    @property
+    def cfg(self):
+        """只读：cfg（Stage 4 公共化）。"""
+        return self._cfg
+
+    @cfg.setter
+    def cfg(self, value):
+        """写入：cfg（Stage 4 公共化）。"""
+        self._cfg = value
+
+
+    def resolve_experiment(self, task_card) -> ABExperimentRoute | None:
+        """公共接口：resolve_experiment（Stage 4 公共化）。"""
+        return self._resolve_experiment(task_card)
+
+
+    def emergency_fallback(self, results, task_card) -> EmergencyFallbackPlan:
+        """公共接口：emergency_fallback（Stage 4 公共化）。"""
+        return self._emergency_fallback(results, task_card)
+
+
+    def check_rate_limit(self, model) -> tuple[bool, float]:
+        """公共接口：check_rate_limit（Stage 4 公共化）。"""
+        return self._check_rate_limit(model)
+
+
+    @property
+    def cb_manager(self):
+        """只读：cb_manager（Stage 4 公共化）。"""
+        return self._cb_manager
+
+    @cb_manager.setter
+    def cb_manager(self, value):
+        """写入：cb_manager（Stage 4 公共化）。"""
+        self._cb_manager = value
+
+
+    def assess_impact(self, task_card) -> AIImpactAssessment:
+        """公共接口：assess_impact（Stage 4 公共化）。"""
+        return self._assess_impact(task_card)
+
+
     @staticmethod
-    def call_model(module_id, pipeline, model, task, *, token_divisor, prior_artifacts, dry_run, skill_injection) -> dict:
-        """公共接口：call_model（Stage 4 公共化，委托到 _call_model）。"""
-        return _call_model(module_id, pipeline, model, task, token_divisor=token_divisor, prior_artifacts=prior_artifacts, dry_run=dry_run, skill_injection=skill_injection)
+    @staticmethod
+    def call_model(module_id, pipeline, model, task, *, token_divisor, prior_artifacts=None, dry_run=False, skill_injection=None) -> dict:
+        """公共接口：call_model（Stage 4 公共化）。"""
+        return __class__._call_model(module_id, pipeline, model, task, token_divisor, prior_artifacts, dry_run, skill_injection)
 
 
+    @staticmethod
     @staticmethod
     def lsg_scan_agent_action(tool_name, tool_params) -> str | None:
-        """公共接口：lsg_scan_agent_action（Stage 4 公共化，委托到 _lsg_scan_agent_action）。"""
-        return _lsg_scan_agent_action(tool_name, tool_params)
+        """公共接口：lsg_scan_agent_action（Stage 4 公共化）。"""
+        return __class__._lsg_scan_agent_action(tool_name, tool_params)
 
 
+    @staticmethod
     @staticmethod
     def lsg_sanitize_output(module_id, output) -> dict:
-        """公共接口：lsg_sanitize_output（Stage 4 公共化，委托到 _lsg_sanitize_output）。"""
-        return _lsg_sanitize_output(module_id, output)
+        """公共接口：lsg_sanitize_output（Stage 4 公共化）。"""
+        return __class__._lsg_sanitize_output(module_id, output)
 
 
+    @staticmethod
     @staticmethod
     def lsg_sanitize_input(text) -> str:
-        """公共接口：lsg_sanitize_input（Stage 4 公共化，委托到 _lsg_sanitize_input）。"""
-        return _lsg_sanitize_input(text)
+        """公共接口：lsg_sanitize_input（Stage 4 公共化）。"""
+        return __class__._lsg_sanitize_input(text)
 
 
+    @staticmethod
     @staticmethod
     def text_similarity(a, b) -> float:
-        """公共接口：text_similarity（Stage 4 公共化，委托到 _text_similarity）。"""
-        return _text_similarity(a, b)
+        """公共接口：text_similarity（Stage 4 公共化）。"""
+        return __class__._text_similarity(a, b)
 
 
     @staticmethod
+    @staticmethod
     def determine_status(results) -> PipelineStatus:
-        """公共接口：determine_status（Stage 4 公共化，委托到 _determine_status）。"""
-        return _determine_status(results)
+        """公共接口：determine_status（Stage 4 公共化）。"""
+        return __class__._determine_status(results)
 
 
     # ------------------------------------------------------------------
@@ -497,8 +578,13 @@ class PipelineOrchestrator:
 
     @property
     def auto_profile_on_startup(self):
-        """Stage 4 公共化。"""
+        """只读：auto_profile_on_startup（Stage 4 公共化）。"""
         return self._auto_profile_on_startup
+
+    @auto_profile_on_startup.setter
+    def auto_profile_on_startup(self, value):
+        """写入：auto_profile_on_startup（Stage 4 公共化）。"""
+        self._auto_profile_on_startup = value
 
     @property
     def router(self):

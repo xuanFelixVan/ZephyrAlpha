@@ -97,6 +97,11 @@ class GovernanceAutoRunner:
         """只读：result（Stage 4 公共化）。"""
         return self._result
 
+    @result.setter
+    def result(self, value):
+        """写入：result（Stage 4 公共化）。"""
+        self._result = value
+
 
     def execute_gate(self, gate_name) -> bool:
         """公共接口：execute_gate（Stage 4 公共化）。"""

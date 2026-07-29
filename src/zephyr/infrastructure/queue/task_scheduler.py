@@ -75,10 +75,20 @@ class TaskScheduler:
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
     @property
     def tasks(self) -> dict[str, ScheduledTask]:
         """只读：tasks（Stage 4 公共化）。"""
         return self._tasks
+
+    @tasks.setter
+    def tasks(self, value):
+        """写入：tasks（Stage 4 公共化）。"""
+        self._tasks = value
 
 
     def schedule(self, task_id: str, estimated_tokens: int = 0) -> ScheduledTask:

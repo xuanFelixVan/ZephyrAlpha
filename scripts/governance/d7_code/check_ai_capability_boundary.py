@@ -59,7 +59,7 @@ import yaml
 MATRIX_PATH = REPO_ROOT / "config/ai_capability_matrix.yaml"
 
 
-def _run_git(*args: str, timeout: int = 30) -> tuple[int, str, str]:
+def run_git(*args: str, timeout: int = 30) -> tuple[int, str, str]:
     """_run_git implementation."""
     try:
         r = subprocess.run(
@@ -74,6 +74,10 @@ def _run_git(*args: str, timeout: int = 30) -> tuple[int, str, str]:
         return r.returncode, r.stdout, r.stderr
     except (OSError, subprocess.SubprocessError) as exc:
         return -1, "", str(exc)
+
+def _run_git(*args) -> tuple[int, str, str]:
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return run_git(*args)
 
 
 def load_matrix() -> dict | None:

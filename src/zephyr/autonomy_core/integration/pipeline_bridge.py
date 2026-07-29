@@ -72,6 +72,11 @@ class SkillContextInjector:
         """只读：loader（Stage 4 公共化）。"""
         return self._loader
 
+    @loader.setter
+    def loader(self, value):
+        """写入：loader（Stage 4 公共化）。"""
+        self._loader = value
+
 
     def inject(self, domain_skill_id: str, role_skill_id: str, load_l3: bool = False) -> SkillInjectionResult:
         try:
@@ -188,15 +193,30 @@ class PipelineSkillBridge:
         """只读：injector（Stage 4 公共化）。"""
         return self._injector
 
+    @injector.setter
+    def injector(self, value):
+        """写入：injector（Stage 4 公共化）。"""
+        self._injector = value
+
     @property
     def router(self):
         """只读：router（Stage 4 公共化）。"""
         return self._router
 
+    @router.setter
+    def router(self, value):
+        """写入：router（Stage 4 公共化）。"""
+        self._router = value
+
     @property
     def stage_map(self):
         """只读：stage_map（Stage 4 公共化）。"""
         return self._stage_map
+
+    @stage_map.setter
+    def stage_map(self, value):
+        """写入：stage_map（Stage 4 公共化）。"""
+        self._stage_map = value
 
 
     def inject_for_task(

@@ -100,30 +100,60 @@ class SkillSandbox:
         """只读：active（Stage 4 公共化）。"""
         return self._active
 
+    @active.setter
+    def active(self, value):
+        """写入：active（Stage 4 公共化）。"""
+        self._active = value
+
     @property
     def allowed_tools(self) -> set[str]:
         """只读：allowed_tools（Stage 4 公共化）。"""
         return self._allowed_tools
+
+    @allowed_tools.setter
+    def allowed_tools(self, value):
+        """写入：allowed_tools（Stage 4 公共化）。"""
+        self._allowed_tools = value
 
     @property
     def file_boundary(self) -> Path | None:
         """只读：file_boundary（Stage 4 公共化）。"""
         return self._file_boundary
 
+    @file_boundary.setter
+    def file_boundary(self, value):
+        """写入：file_boundary（Stage 4 公共化）。"""
+        self._file_boundary = value
+
     @property
     def network_allowed(self):
         """只读：network_allowed（Stage 4 公共化）。"""
         return self._network_allowed
+
+    @network_allowed.setter
+    def network_allowed(self, value):
+        """写入：network_allowed（Stage 4 公共化）。"""
+        self._network_allowed = value
 
     @property
     def sandbox_dir(self):
         """只读：sandbox_dir（Stage 4 公共化）。"""
         return self._sandbox_dir
 
+    @sandbox_dir.setter
+    def sandbox_dir(self, value):
+        """写入：sandbox_dir（Stage 4 公共化）。"""
+        self._sandbox_dir = value
+
     @property
     def skill_id(self):
         """只读：skill_id（Stage 4 公共化）。"""
         return self._skill_id
+
+    @skill_id.setter
+    def skill_id(self, value):
+        """写入：skill_id（Stage 4 公共化）。"""
+        self._skill_id = value
 
 
     @property

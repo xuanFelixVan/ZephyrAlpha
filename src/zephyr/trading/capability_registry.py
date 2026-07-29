@@ -51,6 +51,11 @@ class CapabilityRegistry:
         """只读：card_dir（Stage 4 公共化）。"""
         return self._card_dir
 
+    @card_dir.setter
+    def card_dir(self, value):
+        """写入：card_dir（Stage 4 公共化）。"""
+        self._card_dir = value
+
 
     def register(self, card: CapabilityCard) -> None:
         with self._lock:

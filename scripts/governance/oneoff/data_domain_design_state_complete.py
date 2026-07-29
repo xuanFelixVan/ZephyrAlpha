@@ -290,6 +290,7 @@ def step3_update_contracts(dry_run: bool) -> int:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="数据域四图设计态补全")
     parser.add_argument("--dry-run", action="store_true", help="仅预览，不写 DB")
     args = parser.parse_args()

@@ -235,7 +235,7 @@ def _filter_noqa_violations(
 def _get_staged_py_files(gateway) -> list[str] | None:
     """获取 staged added/modified .py 文件列表（tests/ 豁免）。None=fail-open。"""
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -304,7 +304,7 @@ def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
 def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> list[str]:
     """扫描修改文件（只检测 diff 新增行范围内的违规 + 行级 noqa 豁免）。"""
     try:
-        diff_content = gateway._run_git(
+        diff_content = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path]
         )
         if diff_content.returncode != 0:
@@ -358,14 +358,14 @@ def make_msg_exposure_gate() -> GateSpec:
 
         # worktree root
         try:
-            toplevel_result = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+            toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
             wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_root = str(gateway.project_root)
 
         # added(A) set
         try:
-            added_result = gateway._run_git(
+            added_result = gateway.run_git(
                 ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
             )
             added_set = set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()

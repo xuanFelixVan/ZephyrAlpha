@@ -24,7 +24,7 @@ ttl: permanent
 | P0(核心数据/错误/背压契约) | 0 |
 | P1(蓝图签名契约) | 0 |
 | 其他 | 65 |
-| 已冻结(planned) | 10 |
+| 已冻结(planned) | 8 |
 | 设计中(design) | 1 |
 
 ## 2. 契约流向矩阵(Provider → Consumer)
@@ -154,7 +154,7 @@ ttl: permanent
 - **版本**: 1.0
 - **提供方**: D_MKT_DATA
 - **消费方**: D_FACTOR, D_SIGLEGACY, D_SIMULATION, D_BACKTEST
-- **状态**: planned
+- **状态**: generated
 - **描述**: Data Source → Alpha Factor
 
 | 字段 | 类型 | 必填 | 描述 |
@@ -979,7 +979,7 @@ ttl: permanent
 - **版本**: 1.0
 - **提供方**: D_MKT_DATA
 - **消费方**: D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_ML_TRAIN
-- **状态**: planned
+- **状态**: generated
 - **描述**: Data Source → Factor → Signal → Portfolio → Execution → Analytics（贯穿全链路）
 
 | 字段 | 类型 | 必填 | 描述 |

@@ -54,11 +54,21 @@ class LLMFixAdapter(BaseFixer):
         """只读：secret_guard（Stage 4 公共化）。"""
         return self._secret_guard
 
+    @secret_guard.setter
+    def secret_guard(self, value):
+        """写入：secret_guard（Stage 4 公共化）。"""
+        self._secret_guard = value
+
 
     @property
     def llm_bridge(self) -> LLMGateway | None:
         """只读：llm_bridge（Stage 4 公共化）。"""
         return self._llm_bridge
+
+    @llm_bridge.setter
+    def llm_bridge(self, value):
+        """写入：llm_bridge（Stage 4 公共化）。"""
+        self._llm_bridge = value
 
 
     def call_llm(self, bridge, prompt) -> str:

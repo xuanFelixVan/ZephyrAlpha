@@ -73,10 +73,20 @@ class SuppressionLearner:
         """只读：patterns（Stage 4 公共化）。"""
         return self._patterns
 
+    @patterns.setter
+    def patterns(self, value):
+        """写入：patterns（Stage 4 公共化）。"""
+        self._patterns = value
+
     @property
     def shadow_observations(self) -> dict[str, list[str]]:
         """只读：shadow_observations（Stage 4 公共化）。"""
         return self._shadow_observations
+
+    @shadow_observations.setter
+    def shadow_observations(self, value):
+        """写入：shadow_observations（Stage 4 公共化）。"""
+        self._shadow_observations = value
 
 
     def compute_pattern_hash(

@@ -115,7 +115,7 @@ def _get_staged_new_md_files(gateway) -> list[str] | None:
         新增 .md 文件相对路径列表（正斜杠归一化）；git diff 失败/异常时返回 None。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -141,7 +141,7 @@ def _get_staged_new_md_files(gateway) -> list[str] | None:
 def _get_worktree_root(gateway) -> str:
     """获取 worktree 根目录（fail-open：失败回退 ``gateway.project_root``）。"""
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:

@@ -38,7 +38,7 @@
   - 源码模块不存在 → 阻断（模块已删除/迁移）
   - __all__ 不阻断 import（PRIVATE 不在 __all__ 但 import 放行）
 
-测试隔离：monkeypatch 设置 _SRC_ROOT 指向 tmp_path，MagicMock 模拟 gateway._run_git，
+测试隔离：monkeypatch 设置 _SRC_ROOT 指向 tmp_path，MagicMock 模拟 gateway.run_git，
 不读/不写真实仓库。
 """
 from __future__ import annotations
@@ -82,7 +82,7 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -106,7 +106,7 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
             return _MockResult(0, diff)
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

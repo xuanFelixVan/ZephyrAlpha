@@ -78,7 +78,7 @@ _UNSAFE_SPREAD_RE = re.compile(r"\b(\w+)\(\*\*([A-Za-z_]\w*)\s*\)")
 # hunk header: @@ -old_start,old_count +new_start,new_count @@
 def _get_staged_py_files(gateway):
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -101,7 +101,7 @@ def _collect_unsafe_spread_warnings(gateway, py_file):
     file_content = _read_staged_file(gateway, py_file)
     docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
     try:
-        file_diff = gateway._run_git(
+        file_diff = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

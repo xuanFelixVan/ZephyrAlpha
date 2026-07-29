@@ -173,5 +173,5 @@ class TestTokenBudgetManager:
 
     def test_degraded_with_zero_cap(self):
         mgr = TokenBudgetManager()
-        mgr._cap = 0
+        mgr.cap = 0
         assert mgr.degraded is False

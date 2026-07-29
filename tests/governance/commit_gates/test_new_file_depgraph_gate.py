@@ -37,7 +37,7 @@
   - 非 Zephyr 项目 → skip
   - commit_files 过滤：staged 区含非 commit files → 只检测 commit files
 
-测试隔离：MagicMock 模拟 gateway._run_git；monkeypatch 模拟 DB 查询。
+测试隔离：MagicMock 模拟 gateway.run_git；monkeypatch 模拟 DB 查询。
 """
 from __future__ import annotations
 
@@ -121,7 +121,7 @@ class TestGetStagedNewPyFiles:
     def test_normal_new_py_file(self) -> None:
         """正常新增 .py 文件 → 返回列表。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "src/zephyr/governance/audit/new_module.py\n"
         ))
         result = _get_staged_new_py_files(gw)
@@ -130,7 +130,7 @@ class TestGetStagedNewPyFiles:
     def test_multiple_new_py_files(self) -> None:
         """多个新增 .py 文件 → 全部返回。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0,
             "src/zephyr/foo.py\n"
             "scripts/governance/bar.py\n"
@@ -141,7 +141,7 @@ class TestGetStagedNewPyFiles:
     def test_non_py_file_skipped(self) -> None:
         """非 .py 文件跳过。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0,
             "src/zephyr/foo.py\n"
             "src/zephyr/bar.md\n"
@@ -153,7 +153,7 @@ class TestGetStagedNewPyFiles:
     def test_tests_exempt(self) -> None:
         """tests/ 下 .py 文件豁免。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0,
             "tests/governance/test_foo.py\n"
             "src/zephyr/foo.py\n"
@@ -164,7 +164,7 @@ class TestGetStagedNewPyFiles:
     def test_out_of_scope_skipped(self) -> None:
         """其他目录跳过（docs/ / 根级）。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0,
             "docs/foo.py\n"
             "foo.py\n"
@@ -176,28 +176,28 @@ class TestGetStagedNewPyFiles:
     def test_git_diff_fail_returns_none(self) -> None:
         """git diff 失败 → None (fail-open)。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(1, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(1, ""))
         result = _get_staged_new_py_files(gw)
         assert result is None
 
     def test_git_diff_exception_returns_none(self) -> None:
         """git diff 异常 → None (fail-open)。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(side_effect=RuntimeError("git broken"))
+        gw.run_git = MagicMock(side_effect=RuntimeError("git broken"))
         result = _get_staged_new_py_files(gw)
         assert result is None
 
     def test_empty_staged_returns_empty(self) -> None:
         """无 staged 文件 → 空列表。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(0, ""))
+        gw.run_git = MagicMock(return_value=_MockResult(0, ""))
         result = _get_staged_new_py_files(gw)
         assert result == []
 
     def test_windows_path_normalized(self) -> None:
         """Windows 反斜杠路径归一化为正斜杠。"""
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(
+        gw.run_git = MagicMock(return_value=_MockResult(
             0, "src\\zephyr\\foo.py\n"
         ))
         result = _get_staged_new_py_files(gw)
@@ -263,7 +263,7 @@ class TestGatewayIntegration:
         """构造 mock gateway，模拟 _run_git 返回 diff 结果。"""
         gw = MagicMock()
         gw.project_root = tmp_path
-        gw._run_git = MagicMock(return_value=_MockResult(diff_rc, diff_stdout))
+        gw.run_git = MagicMock(return_value=_MockResult(diff_rc, diff_stdout))
         # 模拟非 Zephyr 项目检测：d1_structure 目录存在
         (tmp_path / "scripts" / "governance" / "d1_structure").mkdir(parents=True, exist_ok=True)
         return gw
@@ -341,7 +341,7 @@ class TestGatewayIntegration:
         """非 Zephyr 项目（无 d1_structure 目录）→ skip。"""
         gw = MagicMock()
         gw.project_root = tmp_path
-        gw._run_git = MagicMock(return_value=_MockResult(0, "src/zephyr/foo.py\n"))
+        gw.run_git = MagicMock(return_value=_MockResult(0, "src/zephyr/foo.py\n"))
         # 不创建 d1_structure 目录（非 Zephyr 项目）
         gate = make_new_file_depgraph_gate()
         passed, msg = gate.check(gw, files=[])

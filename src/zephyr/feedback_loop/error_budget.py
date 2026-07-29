@@ -40,6 +40,11 @@ class ErrorBudgetManager:
         """只读：budgets（Stage 4 公共化）。"""
         return self._budgets
 
+    @budgets.setter
+    def budgets(self, value):
+        """写入：budgets（Stage 4 公共化）。"""
+        self._budgets = value
+
 
     def init_budget(self, contract_id: str) -> ErrorBudget:
         budget = ErrorBudget(contract_id=contract_id)

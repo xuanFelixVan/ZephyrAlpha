@@ -100,7 +100,7 @@ class TestWarnIfUncommitted:
         """文件有未提交修改时打印 WARNING."""
         buf = io.StringIO()
         with redirect_stdout(buf):
-            lock_files._warn_if_uncommitted(str(modified_file))
+            lock_files.warn_if_uncommitted(str(modified_file))
         output = buf.getvalue()
         assert "WARNING" in output, f"期望 WARNING，实际: {output!r}"
         assert "未提交修改" in output
@@ -110,7 +110,7 @@ class TestWarnIfUncommitted:
         """文件无未提交修改时不打印 WARNING."""
         buf = io.StringIO()
         with redirect_stdout(buf):
-            lock_files._warn_if_uncommitted(str(committed_file))
+            lock_files.warn_if_uncommitted(str(committed_file))
         output = buf.getvalue()
         assert "WARNING" not in output, f"不期望 WARNING，实际: {output!r}"
 
@@ -118,7 +118,7 @@ class TestWarnIfUncommitted:
         """文件已暂存未提交时打印 WARNING."""
         buf = io.StringIO()
         with redirect_stdout(buf):
-            lock_files._warn_if_uncommitted(str(staged_file))
+            lock_files.warn_if_uncommitted(str(staged_file))
         output = buf.getvalue()
         assert "WARNING" in output, f"期望 WARNING，实际: {output!r}"
 
@@ -126,7 +126,7 @@ class TestWarnIfUncommitted:
         """未跟踪文件打印 WARNING."""
         buf = io.StringIO()
         with redirect_stdout(buf):
-            lock_files._warn_if_uncommitted(str(untracked_file))
+            lock_files.warn_if_uncommitted(str(untracked_file))
         output = buf.getvalue()
         assert "WARNING" in output, f"期望 WARNING，实际: {output!r}"
 
@@ -135,7 +135,7 @@ class TestWarnIfUncommitted:
         nonexistent = tmp_path / "nonexistent.txt"
         buf = io.StringIO()
         with redirect_stdout(buf):
-            lock_files._warn_if_uncommitted(str(nonexistent))
+            lock_files.warn_if_uncommitted(str(nonexistent))
         output = buf.getvalue()
         assert "WARNING" not in output
 
@@ -158,7 +158,7 @@ class TestWarnIfUncommitted:
 
         buf = io.StringIO()
         with redirect_stdout(buf):
-            lock_files._warn_if_uncommitted(str(f))
+            lock_files.warn_if_uncommitted(str(f))
         output = buf.getvalue()
         # 非 git 仓库应静默跳过
         assert "WARNING" not in output
@@ -173,7 +173,7 @@ class TestCmdReleaseWarning:
         repo_dir = modified_file.parent
         monkeypatch.setattr(lock_files, "LOCK_ROOT", repo_dir / ".ailocks")
         monkeypatch.setattr(lock_files, "REGISTRY_PATH", repo_dir / ".ailocks" / "registry.json")
-        lock_files._ensure_lock_root()
+        lock_files.ensure_lock_root()
 
         # 使用绝对路径（_warn_if_uncommitted 需要绝对路径才能定位 git 仓库）
         abs_path = str(modified_file)
@@ -195,7 +195,7 @@ class TestCmdReleaseWarning:
         repo_dir = committed_file.parent
         monkeypatch.setattr(lock_files, "LOCK_ROOT", repo_dir / ".ailocks")
         monkeypatch.setattr(lock_files, "REGISTRY_PATH", repo_dir / ".ailocks" / "registry.json")
-        lock_files._ensure_lock_root()
+        lock_files.ensure_lock_root()
 
         abs_path = str(committed_file)
         rc = lock_files.cmd_acquire(abs_path, "test-session", "test task")
@@ -215,7 +215,7 @@ class TestCmdReleaseWarning:
         repo_dir = modified_file.parent
         monkeypatch.setattr(lock_files, "LOCK_ROOT", repo_dir / ".ailocks")
         monkeypatch.setattr(lock_files, "REGISTRY_PATH", repo_dir / ".ailocks" / "registry.json")
-        lock_files._ensure_lock_root()
+        lock_files.ensure_lock_root()
 
         abs_path = str(modified_file)
         lock_files.cmd_acquire(abs_path, "session-a", "task a")
@@ -238,7 +238,7 @@ class TestCmdReleaseAllWarning:
         repo_dir = modified_file.parent
         monkeypatch.setattr(lock_files, "LOCK_ROOT", repo_dir / ".ailocks")
         monkeypatch.setattr(lock_files, "REGISTRY_PATH", repo_dir / ".ailocks" / "registry.json")
-        lock_files._ensure_lock_root()
+        lock_files.ensure_lock_root()
 
         # 使用绝对路径
         lock_files.cmd_acquire(str(modified_file), "test-session", "task")

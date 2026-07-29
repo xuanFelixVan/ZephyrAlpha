@@ -48,6 +48,21 @@ class ConfigFixer(BaseFixer):
             description="修复配置与契约不一致",
         )
 
+    def fix_trailing_whitespace(self, content, fixes) -> str:
+        """公共接口：fix_trailing_whitespace（Stage 4 公共化）。"""
+        return self._fix_trailing_whitespace(content, fixes)
+
+
+    def fix_tabs(self, content, fixes) -> str:
+        """公共接口：fix_tabs（Stage 4 公共化）。"""
+        return self._fix_tabs(content, fixes)
+
+
+    def fix_merge_conflicts(self, content, fixes) -> str:
+        """公共接口：fix_merge_conflicts（Stage 4 公共化）。"""
+        return self._fix_merge_conflicts(content, fixes)
+
+
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
         repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）

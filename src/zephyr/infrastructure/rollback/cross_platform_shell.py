@@ -67,10 +67,20 @@ class CrossPlatformShell:
         """只读：output_dir（Stage 4 公共化）。"""
         return self._output_dir
 
+    @output_dir.setter
+    def output_dir(self, value):
+        """写入：output_dir（Stage 4 公共化）。"""
+        self._output_dir = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def generate(self, commit_sha: str, gpg_sign: bool = False) -> CrossPlatformScripts:

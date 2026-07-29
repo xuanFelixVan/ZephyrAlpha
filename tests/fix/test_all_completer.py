@@ -179,29 +179,29 @@ class TestAllCompleterInternalMethods:
     def test_extract_public_symbols_excludes_private(self):
         comp = AllCompleter()
         content = "def public_func():\n    return 1\n\ndef _private_func():\n    return 2\n"
-        symbols = comp._extract_public_symbols(content)
+        symbols = comp.extract_public_symbols(content)
         assert "public_func" in symbols
         assert "_private_func" not in symbols
 
     def test_extract_public_symbols_includes_classes(self):
         comp = AllCompleter()
         content = "class MyClass:\n    return 1\n"
-        symbols = comp._extract_public_symbols(content)
+        symbols = comp.extract_public_symbols(content)
         assert "MyClass" in symbols
 
     def test_parse_all_returns_list(self):
         comp = AllCompleter()
         content = '__all__ = ["func1", "func2"]\n'
-        result = comp._parse_all(content)
+        result = comp.parse_all(content)
         assert "func1" in result
         assert "func2" in result
 
     def test_parse_all_empty_content(self):
         comp = AllCompleter()
-        result = comp._parse_all("")
+        result = comp.parse_all("")
         assert result == []
 
     def test_extract_public_symbols_syntax_error(self):
         comp = AllCompleter()
-        result = comp._extract_public_symbols("def broken(:\n")
+        result = comp.extract_public_symbols("def broken(:\n")
         assert isinstance(result, list)

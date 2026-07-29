@@ -88,6 +88,11 @@ class F5BootIntegration:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     def register_startup_hook(self) -> None:
         """注册到 boot_hooks 启动序列 (幂等)。"""

@@ -142,7 +142,7 @@ def _make_dashboard_stdout(metric_counts: dict[str, int]) -> str:
 class TestGenerateSnapshot:
     """generate_snapshot 函数测试。"""
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_basic_structure(self, mock_run, tmp_path):
         """生成快照包含所有必需字段。"""
         _setup_baseline(tmp_path)
@@ -160,7 +160,7 @@ class TestGenerateSnapshot:
         assert len(snapshot["violations"]) == 4
         assert "summary" in snapshot
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_drift_calculation(self, mock_run, tmp_path):
         """drift = detected - claimed（负值表示已修复）。"""
         _setup_baseline(tmp_path)
@@ -178,7 +178,7 @@ class TestGenerateSnapshot:
         assert vmap["manual_trigger"]["drift"] == -25  # 0 - 25
         assert vmap["mergeable_clusters"]["drift"] == -3  # 3 - 6
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_drift_count(self, mock_run, tmp_path):
         """drift_count = |drift|>0 的类别数。"""
         _setup_baseline(tmp_path)
@@ -189,7 +189,7 @@ class TestGenerateSnapshot:
         snapshot = generate_snapshot(tmp_path)
         assert snapshot["summary"]["drift_count"] == 0
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_new_violations(self, mock_run, tmp_path):
         """drift 正值表示新增违规。"""
         _setup_baseline(tmp_path)
@@ -202,7 +202,7 @@ class TestGenerateSnapshot:
         assert vmap["vocab_hardcode"]["drift"] == 36  # 100 - 64
         assert snapshot["summary"]["drift_count"] == 1
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_dashboard_failure(self, mock_run, tmp_path):
         """dashboard 调用失败时降级为 detected=0 + error。"""
         _setup_baseline(tmp_path)
@@ -216,7 +216,7 @@ class TestGenerateSnapshot:
             assert v["drift"] == -v["claimed_count"]
             assert v["detector_error"]  # 非空
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_baseline_missing(self, mock_run, tmp_path):
         """baseline 文件不存在时，claimed=0，drift=detected。"""
         # 不创建 baseline
@@ -232,7 +232,7 @@ class TestGenerateSnapshot:
         assert vmap["vocab_hardcode"]["drift"] == 5
         assert snapshot["trae_rule_version"] == "unknown"
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_generate_snapshot_never_raises(self, mock_run, tmp_path):
         """generate_snapshot 永不抛异常（fail-open）。"""
         _setup_baseline(tmp_path)
@@ -250,7 +250,7 @@ class TestGenerateSnapshot:
 class TestSnapshotPersistence:
     """save_snapshot / load_snapshot 持久化测试。"""
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_save_and_load_roundtrip(self, mock_run, tmp_path):
         """保存后加载应得到相同数据。"""
         _setup_baseline(tmp_path)
@@ -269,7 +269,7 @@ class TestSnapshotPersistence:
         assert loaded["summary"]["total_detected"] == 10
         assert len(loaded["violations"]) == 4
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_save_snapshot_creates_archive(self, mock_run, tmp_path):
         """save_snapshot 同时创建时间戳归档文件。"""
         _setup_baseline(tmp_path)
@@ -388,7 +388,7 @@ class TestCompareBaselineWithLive:
         assert result["fresh"] is False
         assert "not found" in result["error"]
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_fresh_with_drift(self, mock_run, tmp_path):
         """fresh 快照有 drift 时正确报告。"""
         _setup_baseline(tmp_path)
@@ -405,7 +405,7 @@ class TestCompareBaselineWithLive:
         assert len(result["violations"]) == 4
         assert result["error"] == ""
 
-    @patch("zephyr.governance.audit.runtime_violation_snapshot._run_dashboard")
+    @patch("zephyr.governance.audit.runtime_violation_snapshot.run_dashboard")
     def test_stale_snapshot_reported(self, mock_run, tmp_path):
         """stale 快照（>24h）在 error 中报告。"""
         _setup_baseline(tmp_path)

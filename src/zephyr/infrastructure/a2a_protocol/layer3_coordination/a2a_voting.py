@@ -68,6 +68,11 @@ class A2AVoting:
         """只读：default_quorum（Stage 4 公共化）。"""
         return self._default_quorum
 
+    @default_quorum.setter
+    def default_quorum(self, value):
+        """写入：default_quorum（Stage 4 公共化）。"""
+        self._default_quorum = value
+
 
     def open_proposal(self, proposal_id: str, quorum_ratio: float | None = None):
         self._boxes[proposal_id] = {}

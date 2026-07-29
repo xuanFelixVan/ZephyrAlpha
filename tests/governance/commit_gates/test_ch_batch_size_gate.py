@@ -27,7 +27,7 @@
   - fail-open on ast.parse 失败
   - 新增 for 循环包裹已有 write_result → 阻断
 
-测试隔离：MagicMock 模拟 gateway._run_git，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -68,7 +68,7 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -88,7 +88,7 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
         diff_lines.extend(f"+{ln}" for ln in lines)
         return _MockResult(0, "\n".join(diff_lines))
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

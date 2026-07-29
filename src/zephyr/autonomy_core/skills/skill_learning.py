@@ -50,15 +50,30 @@ class SkillLearning:
         """只读：learned_patterns（Stage 4 公共化）。"""
         return self._learned_patterns
 
+    @learned_patterns.setter
+    def learned_patterns(self, value):
+        """写入：learned_patterns（Stage 4 公共化）。"""
+        self._learned_patterns = value
+
     @property
     def learning_history(self) -> dict[str, list[dict[str, Any]]]:
         """只读：learning_history（Stage 4 公共化）。"""
         return self._learning_history
 
+    @learning_history.setter
+    def learning_history(self, value):
+        """写入：learning_history（Stage 4 公共化）。"""
+        self._learning_history = value
+
     @property
     def session_deltas(self) -> dict[str, list[float]]:
         """只读：session_deltas（Stage 4 公共化）。"""
         return self._session_deltas
+
+    @session_deltas.setter
+    def session_deltas(self, value):
+        """写入：session_deltas（Stage 4 公共化）。"""
+        self._session_deltas = value
 
 
     def add_execution(

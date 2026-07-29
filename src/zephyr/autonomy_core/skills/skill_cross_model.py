@@ -124,15 +124,30 @@ class SkillCrossModel:
         """只读：adapter_registry（Stage 4 公共化）。"""
         return self._adapter_registry
 
+    @adapter_registry.setter
+    def adapter_registry(self, value):
+        """写入：adapter_registry（Stage 4 公共化）。"""
+        self._adapter_registry = value
+
     @property
     def default_provider(self):
         """只读：default_provider（Stage 4 公共化）。"""
         return self._default_provider
 
+    @default_provider.setter
+    def default_provider(self, value):
+        """写入：default_provider（Stage 4 公共化）。"""
+        self._default_provider = value
+
     @property
     def fallback_chain(self) -> list[str]:
         """只读：fallback_chain（Stage 4 公共化）。"""
         return self._fallback_chain
+
+    @fallback_chain.setter
+    def fallback_chain(self, value):
+        """写入：fallback_chain（Stage 4 公共化）。"""
+        self._fallback_chain = value
 
 
     def get_capability(self, provider: str) -> ModelCapability | None:

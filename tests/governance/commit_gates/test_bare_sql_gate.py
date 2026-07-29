@@ -25,7 +25,7 @@ r"""test_bare_sql_gate.py — NO-BARE-SQL 门禁单测
 注意：bare_sql 不做 AST 解析，按行扫描 added 行 + 正则匹配；
 docstring/注释/import 行级豁免由 _extract_docstring_lines / _is_exempt_line 处理。
 
-测试隔离：MagicMock 模拟 gateway._run_git，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -62,7 +62,7 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -82,7 +82,7 @@ def _make_gateway(staged_files=None, file_contents=None, diff_fails=False, diff_
         diff_lines.extend(f"+{ln}" for ln in lines)
         return _MockResult(0, "\n".join(diff_lines))
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

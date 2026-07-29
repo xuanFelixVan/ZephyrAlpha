@@ -59,7 +59,7 @@ def _make_gateway(staged_files=None, diff_fails=False, diff_raises=False):
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -69,7 +69,7 @@ def _make_gateway(staged_files=None, diff_fails=False, diff_raises=False):
             return _MockResult(0, "\n".join(staged_files or []))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

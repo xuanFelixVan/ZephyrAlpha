@@ -97,9 +97,17 @@ class DegradationManager:
         self._circuit_breaker_reset_seconds: float = 300.0
 
     @staticmethod
-    def compute_target_tier(level, current) -> ModelTier:
-        """公共接口：compute_target_tier（Stage 4 公共化，委托到 _compute_target_tier）。"""
-        return _compute_target_tier(level, current)
+    def compute_target_tier(level: DegradationLevel, current: ModelTier) -> ModelTier:
+        mapping = {DegradationLevel.MODEL_SWITCH: ModelTier.ECONOMY, DegradationLevel.COMPRESS: ModelTier.MINIMAL, DegradationLevel.MINIMAL: ModelTier.MINIMAL}
+        target = mapping.get(level)
+        if target is None:
+            return current
+        tier_order = [ModelTier.PREMIUM, ModelTier.STANDARD, ModelTier.ECONOMY, ModelTier.MINIMAL]
+        current_idx = tier_order.index(current) if current in tier_order else len(tier_order) - 1
+        target_idx = tier_order.index(target)
+        if target_idx <= current_idx:
+            return current
+        return target
 
 
     @property
@@ -213,20 +221,8 @@ class DegradationManager:
 
     @staticmethod
     def _compute_target_tier(level: DegradationLevel, current: ModelTier) -> ModelTier:
-        mapping = {
-            DegradationLevel.MODEL_SWITCH: ModelTier.ECONOMY,
-            DegradationLevel.COMPRESS: ModelTier.MINIMAL,
-            DegradationLevel.MINIMAL: ModelTier.MINIMAL,
-        }
-        target = mapping.get(level)
-        if target is None:
-            return current
-        tier_order = [ModelTier.PREMIUM, ModelTier.STANDARD, ModelTier.ECONOMY, ModelTier.MINIMAL]
-        current_idx = tier_order.index(current) if current in tier_order else len(tier_order) - 1
-        target_idx = tier_order.index(target)
-        if target_idx <= current_idx:
-            return current
-        return target
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return DegradationManager.compute_target_tier(level, current)
 
     def manual_retreat(self, reason: str = "manual") -> DegradationAction:
         with self._lock:

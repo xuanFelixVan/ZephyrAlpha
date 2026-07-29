@@ -72,6 +72,11 @@ class SpecRegistry:
         """只读：entries（Stage 4 公共化）。"""
         return self._entries
 
+    @entries.setter
+    def entries(self, value):
+        """写入：entries（Stage 4 公共化）。"""
+        self._entries = value
+
 
     def _load_from_skill_registry(self) -> None:
         if not self._registry_path.exists():

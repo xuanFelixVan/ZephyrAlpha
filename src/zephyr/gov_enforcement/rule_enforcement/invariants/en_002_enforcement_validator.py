@@ -119,4 +119,10 @@ if __name__ == "__main__":
     print(msg)
     sys.exit(0 if ok else 1)
 
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def load_contracts() -> dict[str, Any]:
+    """公共接口：load_contracts（Stage 4 公共化）。"""
+    return _load_contracts()
+
+
 # ==== END CODEGEN:EN-002 ====

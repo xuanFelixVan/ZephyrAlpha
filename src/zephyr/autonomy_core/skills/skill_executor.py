@@ -231,6 +231,22 @@ class SkillExecutor:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in skill_executor", exc_info=True)
 
+    def write_audit(self, event_type, skill_id, extra=None):
+        """公共接口：write_audit（Stage 4 公共化）。"""
+        return self._write_audit(event_type, skill_id, extra)
+
+
+    @property
+    def core_writer(self) -> _CoreAuditWriter | None:
+        """只读：core_writer（Stage 4 公共化）。"""
+        return self._core_writer
+
+    @core_writer.setter
+    def core_writer(self, value):
+        """写入：core_writer（Stage 4 公共化）。"""
+        self._core_writer = value
+
+
     def infer_permission(self, tools) -> str:
         """公共接口：infer_permission（Stage 4 公共化）。"""
         return self._infer_permission(tools)

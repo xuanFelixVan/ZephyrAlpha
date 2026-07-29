@@ -179,6 +179,60 @@ class RedBlueTriggerConsumer:
         self._circuit = None  # type: ignore[assignment]
         self._validator = None  # type: ignore[assignment]
 
+    @property
+    def queue_dir(self) -> Path:
+        """只读：queue_dir（Stage 4 公共化）。"""
+        return self._queue_dir
+
+    @queue_dir.setter
+    def queue_dir(self, value):
+        """写入：queue_dir（Stage 4 公共化）。"""
+        self._queue_dir = value
+
+
+    def drain_queue(self) -> None:
+        """公共接口：drain_queue（Stage 4 公共化）。"""
+        return self._drain_queue()
+
+
+    @property
+    def started(self):
+        """只读：started（Stage 4 公共化）。"""
+        return self._started
+
+    @started.setter
+    def started(self, value):
+        """写入：started（Stage 4 公共化）。"""
+        self._started = value
+
+
+    @property
+    def circuit(self):
+        """只读：circuit（Stage 4 公共化）。"""
+        return self._circuit
+
+    @circuit.setter
+    def circuit(self, value):
+        """写入：circuit（Stage 4 公共化）。"""
+        self._circuit = value
+
+
+    def process_one(self, qf) -> None:
+        """公共接口：process_one（Stage 4 公共化）。"""
+        return self._process_one(qf)
+
+
+    @property
+    def validator(self):
+        """只读：validator（Stage 4 公共化）。"""
+        return self._validator
+
+    @validator.setter
+    def validator(self, value):
+        """写入：validator（Stage 4 公共化）。"""
+        self._validator = value
+
+
     # ── 生命周期 ──────────────────────────────────────────────────────
     def start(self) -> None:
         """幂等启动：订阅 red_blue.trigger.queued 事件。"""

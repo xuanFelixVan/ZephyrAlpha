@@ -151,12 +151,12 @@ class TestImportFixerTryFixModule:
         fixer = ImportFixer()
         from pathlib import Path
 
-        result = fixer._try_fix_module("zephyr", Path("src"))
+        result = fixer.try_fix_module("zephyr", Path("src"))
         assert result is None
 
     def test_nonexistent_module_returns_none(self):
         fixer = ImportFixer()
         from pathlib import Path
 
-        result = fixer._try_fix_module("zephyr.nonexistent.module.xyz", Path("src"))
+        result = fixer.try_fix_module("zephyr.nonexistent.module.xyz", Path("src"))
         assert result is None or isinstance(result, str)

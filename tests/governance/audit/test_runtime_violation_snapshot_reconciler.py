@@ -49,7 +49,7 @@ class _FakeGateway:
         self.project_root = project_root
         self._head_sha = head_sha
 
-    def _run_git(self, cmd: list[str]):
+    def run_git(self, cmd: list[str]):
         mock = MagicMock()
         mock.returncode = 0
         mock.stderr = ""
@@ -58,6 +58,10 @@ class _FakeGateway:
         else:
             mock.stdout = ""
         return mock
+
+    def _run_git(self, cmd: list[str]):
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd)
 
 
 class TestFactorySpec:
@@ -206,7 +210,7 @@ class TestReconcile:
     @patch("zephyr.governance.audit.runtime_violation_snapshot_reconciler.generate_snapshot")
     @patch("zephyr.governance.audit.runtime_violation_snapshot_reconciler.save_snapshot")
     def test_reconcile_includes_commit_sha(self, mock_save, mock_gen, tmp_path):
-        """reconcile 从 gateway._run_git 获取 commit sha。"""
+        """reconcile 从 gateway.run_git 获取 commit sha。"""
         gw = _FakeGateway(tmp_path, head_sha="deadbeef1234")
         spec = make_runtime_violation_snapshot_reconciler(gw)
         mock_gen.return_value = {"summary": {"drift_count": 0, "total_detected": 0, "total_claimed": 0}}

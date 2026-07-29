@@ -89,7 +89,7 @@ def _collect_staged_new_files(gateway) -> list[str] | None:
         相对路径列表；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:

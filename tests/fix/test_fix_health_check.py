@@ -101,7 +101,7 @@ class TestCheck:
 
 class TestCheckDb:
     def test_check_db_accessible(self, health_check):
-        assert health_check._check_db() is True
+        assert health_check.check_db() is True
 
     def test_check_db_invalid_path(self, tmp_path):
         db_path = str(tmp_path / "readonly_dir" / "test.db")
@@ -117,5 +117,5 @@ class TestCheckDb:
 
 class TestCheckConfig:
     def test_check_config_returns_bool(self, health_check):
-        result = health_check._check_config()
+        result = health_check.check_config()
         assert isinstance(result, bool)

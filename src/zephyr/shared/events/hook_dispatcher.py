@@ -84,15 +84,30 @@ class HookDispatcher:
         """只读：bus（Stage 4 公共化）。"""
         return self._bus
 
+    @bus.setter
+    def bus(self, value):
+        """写入：bus（Stage 4 公共化）。"""
+        self._bus = value
+
     @property
     def data_dir(self):
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
     @property
     def hooks(self) -> dict[EventType, list[HookConfig]]:
         """只读：hooks（Stage 4 公共化）。"""
         return self._hooks
+
+    @hooks.setter
+    def hooks(self, value):
+        """写入：hooks（Stage 4 公共化）。"""
+        self._hooks = value
 
 
     def register_hook(self, hook: HookConfig) -> None:

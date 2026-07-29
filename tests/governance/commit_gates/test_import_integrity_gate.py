@@ -44,7 +44,7 @@ def _make_gateway() -> MagicMock:
     """构造 mock gateway（_run_git 返回可配置 result）。"""
     gw = MagicMock()
     # 默认 git show HEAD:path 返回 rc=1（找不到），由测试覆盖
-    gw._run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
+    gw.run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
     return gw
 
 
@@ -193,7 +193,7 @@ class TestProjectModuleResolvable:
         )
         assert result is True
         # 不应调用 git show（staged 命中即返回）
-        gw._run_git.assert_not_called()
+        gw.run_git.assert_not_called()
 
     def test_resolvable_in_main_head(self):
         """模块在 staged 不存在但 main HEAD 存在 → 可解析。"""
@@ -203,7 +203,7 @@ class TestProjectModuleResolvable:
 
         gw = _make_gateway()
         # 模拟 git show HEAD:src/zephyr/foo/bar.py 成功
-        gw._run_git.return_value = MagicMock(returncode=0, stdout="content", stderr="")
+        gw.run_git.return_value = MagicMock(returncode=0, stdout="content", stderr="")
         staged_files: set[str] = set()
         result = _check_project_module_resolvable(
             "zephyr.foo.bar", staged_files, gw
@@ -218,7 +218,7 @@ class TestProjectModuleResolvable:
 
         gw = _make_gateway()
         # git show HEAD 全部 rc=1
-        gw._run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
+        gw.run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
         staged_files: set[str] = set()
         result = _check_project_module_resolvable(
             "zephyr.foo.nonexistent", staged_files, gw
@@ -278,7 +278,7 @@ foo()
 """
         gw = _make_gateway()
         # git show HEAD 全部 rc=1（模块不存在）
-        gw._run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
+        gw.run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
         staged_files: set[str] = set()
         violations = scan_content_for_dangling_imports(
             "src/test.py", content, staged_files, gw
@@ -318,7 +318,7 @@ print(os.getcwd())
                 return MagicMock(returncode=0, stdout="content", stderr="")
             return MagicMock(returncode=1, stdout="", stderr="")
 
-        gw._run_git.side_effect = _mock_run_git
+        gw.run_git.side_effect = _mock_run_git
         staged_files: set[str] = set()
         violations = scan_content_for_dangling_imports(
             "src/test.py", content, staged_files, gw
@@ -410,7 +410,7 @@ class TestFailOpen:
         """无 staged 文件 → passed=True（_get_staged_py_files 返回空）。"""
         gw = _make_gateway()
         # 模拟 _get_staged_py_files 返回空（git diff 失败）
-        gw._run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
+        gw.run_git.return_value = MagicMock(returncode=1, stdout="", stderr="")
         gate = make_import_integrity_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True
@@ -448,7 +448,7 @@ class GitCommitGateway:
                 return MagicMock(returncode=1, stdout="", stderr="not in HEAD")
             return MagicMock(returncode=1, stdout="", stderr="")
 
-        gw._run_git.side_effect = _mock_run_git
+        gw.run_git.side_effect = _mock_run_git
         staged_files = {"src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"}
         violations = scan_content_for_dangling_imports(
             "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py",
@@ -477,7 +477,7 @@ class GitCommitGateway:
                 return MagicMock(returncode=0, stdout="content", stderr="")
             return MagicMock(returncode=1, stdout="", stderr="")
 
-        gw._run_git.side_effect = _mock_run_git
+        gw.run_git.side_effect = _mock_run_git
         staged_files = {"src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"}
         violations = scan_content_for_dangling_imports(
             "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py",
@@ -669,7 +669,7 @@ class TestCheckClosurePhase25Hint:
         def _mock_run_git(args):
             # git show HEAD:path → 找不到目标模块（rc=1）
             return MagicMock(returncode=1, stdout="", stderr="")
-        gw._run_git = _mock_run_git
+        gw.run_git = _mock_run_git
 
         # mock _get_staged_py_files 和 _read_staged_file
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
@@ -695,7 +695,7 @@ class TestCheckClosurePhase25Hint:
 
         def _mock_run_git(args):
             return MagicMock(returncode=1, stdout="", stderr="")
-        gw._run_git = _mock_run_git
+        gw.run_git = _mock_run_git
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
         with pytest.MonkeyPatch.context() as mp:
@@ -718,7 +718,7 @@ class TestCheckClosurePhase25Hint:
 
         def _mock_run_git(args):
             return MagicMock(returncode=1, stdout="", stderr="")
-        gw._run_git = _mock_run_git
+        gw.run_git = _mock_run_git
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
         with pytest.MonkeyPatch.context() as mp:
@@ -746,7 +746,7 @@ class TestCheckClosurePhase25Hint:
 
         def _mock_run_git(args):
             return MagicMock(returncode=1, stdout="", stderr="")
-        gw._run_git = _mock_run_git
+        gw.run_git = _mock_run_git
 
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
         with pytest.MonkeyPatch.context() as mp:

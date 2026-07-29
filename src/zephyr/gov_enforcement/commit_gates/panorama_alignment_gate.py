@@ -100,7 +100,7 @@ def make_panorama_alignment_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # P0-3 (2026-07-20): 调用前校验 cwd（wt_path）存在性，防 worktree 被 sweep 后 NotADirectoryError
         # 根因: session_worktree_merge 期间 worktree_lifecycle_reconciler 并发 sweep 删除 wt_path,
-        #       导致 gateway._run_git(cwd=wt_path) 抛 NotADirectoryError (P1-2 跨进程 lockfile 治本).
+        #       导致 gateway.run_git(cwd=wt_path) 抛 NotADirectoryError (P1-2 跨进程 lockfile 治本).
         # fail-open + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）.
         cwd_to_check = str(gateway.project_root)
         if not os.path.isdir(cwd_to_check):
@@ -119,7 +119,7 @@ def make_panorama_alignment_gate() -> GateSpec:
             return True, ""
         # 1. 获取 staged 文件清单
         try:
-            diff_result = gateway._run_git(
+            diff_result = gateway.run_git(
                 ["git", "diff", "--cached", "--name-only"]
             )
             if diff_result.returncode != 0:

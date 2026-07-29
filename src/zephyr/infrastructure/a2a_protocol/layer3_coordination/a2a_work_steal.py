@@ -84,10 +84,20 @@ class A2AWorkSteal:
         """只读：max_steal_per_cycle（Stage 4 公共化）。"""
         return self._max_steal_per_cycle
 
+    @max_steal_per_cycle.setter
+    def max_steal_per_cycle(self, value):
+        """写入：max_steal_per_cycle（Stage 4 公共化）。"""
+        self._max_steal_per_cycle = value
+
     @property
     def stolen(self) -> set[str]:
         """只读：stolen（Stage 4 公共化）。"""
         return self._stolen
+
+    @stolen.setter
+    def stolen(self, value):
+        """写入：stolen（Stage 4 公共化）。"""
+        self._stolen = value
 
 
     def steal(

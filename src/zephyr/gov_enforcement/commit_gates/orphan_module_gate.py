@@ -157,7 +157,7 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
     """
     # 1. 获取 staged 新增 .py 文件
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -188,7 +188,7 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
 
     # 3. 获取 worktree root
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:
@@ -249,7 +249,7 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> "list[str] |
             rf"import {module_path}\b"
         )
         try:
-            grep_result = gateway._run_git(
+            grep_result = gateway.run_git(
                 ["git", "grep", "-l", "-E", pattern, "--", "src/**/*.py"],
                 cwd=wt_root,
             )

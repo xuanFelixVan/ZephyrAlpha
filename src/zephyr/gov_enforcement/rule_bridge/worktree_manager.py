@@ -202,7 +202,7 @@ class WorktreeManager:
     # ------------------------------------------------------------------
     # 内部辅助
     # ------------------------------------------------------------------
-    def _run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
+    def run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
         """执行 git 命令（统一 cwd + encoding + CREATE_NO_WINDOW）。"""
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -216,6 +216,10 @@ class WorktreeManager:
             timeout=120,
         )
 
+    def _run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd, cwd)
+
     def _wt_path(self, session_id: str) -> Path:
         """session worktree 的绝对路径。"""
         return self._drafts_dir / session_id
@@ -226,7 +230,7 @@ class WorktreeManager:
 
     def _current_head_sha(self) -> str:
         """获取主工作目录当前 HEAD 的 commit SHA。"""
-        r = self._run_git(["git", "rev-parse", "HEAD"])
+        r = self.run_git(["git", "rev-parse", "HEAD"])
         if r.returncode != 0:
             raise WorktreeError(f"git rev-parse HEAD failed: {r.stderr.strip()}")
         return r.stdout.strip()
@@ -257,7 +261,7 @@ class WorktreeManager:
             HEAD 1234...
             branch refs/heads/session/sess-001
         """
-        r = self._run_git(["git", "worktree", "list", "--porcelain"])
+        r = self.run_git(["git", "worktree", "list", "--porcelain"])
         if r.returncode != 0:
             return []
         entries: list[dict] = []
@@ -287,7 +291,7 @@ class WorktreeManager:
 
     def _is_dirty(self, wt_path: Path) -> bool:
         """worktree 是否有未提交修改（含 untracked）。"""
-        r = self._run_git(
+        r = self.run_git(
             ["git", "status", "--porcelain"], cwd=str(wt_path)
         )
         if r.returncode != 0:
@@ -338,16 +342,16 @@ class WorktreeManager:
                 _force_rmtree(wt_path)
 
             # 清理可能残留的旧分支（上次未 merge 的 cleanup 可能留下分支）
-            self._run_git(["git", "branch", "-D", branch])
+            self.run_git(["git", "branch", "-D", branch])
 
             head_sha = self._current_head_sha()
             # git worktree add -b <new-branch> <path> <start-point>
-            r = self._run_git(
+            r = self.run_git(
                 ["git", "worktree", "add", "-b", branch, str(wt_path), head_sha]
             )
             if r.returncode != 0:
                 # 分支可能已存在（上次未清理），尝试复用分支
-                r2 = self._run_git(
+                r2 = self.run_git(
                     ["git", "worktree", "add", str(wt_path), branch]
                 )
                 if r2.returncode != 0:
@@ -387,7 +391,7 @@ class WorktreeManager:
                 )
             # 在主工作目录执行 merge（--no-ff 保留 session 提交拓扑）
             # merge message 末尾追加 [GW:{sid}:merge] 标记，与 session_worktree_commit 的 [GW:{sid}:worktree] 设计对齐
-            r = self._run_git(
+            r = self.run_git(
                 ["git", "merge", "--no-ff", "-m", f"merge session/{session_id}\n\n[GW:{session_id}:merge]", branch]
             )
             if r.returncode != 0:
@@ -397,7 +401,7 @@ class WorktreeManager:
                     session_id, stderr,
                 )
                 # merge 冲突时中止 merge，保持主分支干净
-                self._run_git(["git", "merge", "--abort"])
+                self.run_git(["git", "merge", "--abort"])
                 return False
             logger.info(
                 "WorktreeManager: merge 成功 (session=%s, branch=%s)",
@@ -453,11 +457,11 @@ class WorktreeManager:
         if force:
             cmd.append("--force")
         cmd.append(str(wt_path))
-        r = self._run_git(cmd)
+        r = self.run_git(cmd)
         if r.returncode != 0:
             # Windows 文件句柄延迟释放可能导致 remove 失败，sleep 后重试一次
             threading.Event().wait(0.5)
-            r = self._run_git(cmd)
+            r = self.run_git(cmd)
         if r.returncode != 0:
             # git worktree remove 在 Windows 上偶发失败(Invalid argument)，
             # 根因是 Windows/git 底层问题非时序问题，兜底逻辑(prune+rmtree+prune)已处理，
@@ -467,10 +471,10 @@ class WorktreeManager:
                 session_id, r.stderr.strip(),
             )
             # 尝试 prune + 物理删除兜底
-            self._run_git(["git", "worktree", "prune"])
+            self.run_git(["git", "worktree", "prune"])
             if wt_path.exists():
                 _force_rmtree(wt_path)
-            self._run_git(["git", "worktree", "prune"])
+            self.run_git(["git", "worktree", "prune"])
             # Windows 文件锁可能导致物理目录残留，但 git worktree 元数据已清理。
             # 物理残留无害（下次 create_session_worktree 会覆盖）。
             # 关键判定：git 是否还认这个 worktree（查 git worktree list）。
@@ -487,7 +491,7 @@ class WorktreeManager:
                     session_id,
                 )
         # 删除 session 分支（force 因可能未 merge）
-        br_r = self._run_git(
+        br_r = self.run_git(
             ["git", "branch", "-D" if force else "-d", branch]
         )
         if br_r.returncode != 0:
@@ -558,8 +562,8 @@ class WorktreeManager:
         Returns:
             True=在 linked worktree 内，False=在主工作目录。
         """
-        git_dir_r = self._run_git(["git", "rev-parse", "--git-dir"])
-        common_dir_r = self._run_git(["git", "rev-parse", "--git-common-dir"])
+        git_dir_r = self.run_git(["git", "rev-parse", "--git-dir"])
+        common_dir_r = self.run_git(["git", "rev-parse", "--git-common-dir"])
         if git_dir_r.returncode != 0 or common_dir_r.returncode != 0:
             return False
         git_dir = Path(git_dir_r.stdout.strip()).resolve()

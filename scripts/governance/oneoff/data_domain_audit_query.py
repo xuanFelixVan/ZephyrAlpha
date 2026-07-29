@@ -106,15 +106,18 @@ SQL_DOMAIN_DEPS = (
 
 
 def _rows(cur):
+    """_rows implementation."""
     return [dict(zip([c[0] for c in cur.description], r)) for r in cur.fetchall()]
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     conn = get_depgraph_pg_connection()
     cur = conn.cursor()
     lines: list[str] = []
 
     def out(s: str = "") -> None:
+        """out implementation."""
         lines.append(s)
         print(s)
 

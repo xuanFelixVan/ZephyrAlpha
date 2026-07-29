@@ -69,7 +69,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False,
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     staged_content_map = staged_content_map or {}
@@ -85,7 +85,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False,
             return _MockResult(0, staged_content_map.get(path, ""))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 
@@ -472,7 +472,7 @@ class TestConsumersAccuracyFilepathFormat:
     def test_real_world_git_commit_gateway_case(self, tmp_path):
         """真实用例：git_commit_gateway.py 的 [CONSUMERS] 声明不再误报。
 
-        原声明: zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
+        原声明: zephyr.governance.persistence.task_repo.TaskRepository.auto_commit_on_completion; scripts/git_commit.py
         """
         # 模拟项目结构
         (tmp_path / "src" / "zephyr" / "governance" / "persistence").mkdir(parents=True, exist_ok=True)
@@ -482,7 +482,7 @@ class TestConsumersAccuracyFilepathFormat:
         (tmp_path / "scripts").mkdir(exist_ok=True)
         (tmp_path / "scripts" / "git_commit.py").write_text("# fake\n", encoding="utf-8")
         content = (
-            "# [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py\n"
+            "# [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository.auto_commit_on_completion; scripts/git_commit.py\n"
             "def func():\n"
             "    pass\n"
         )
@@ -824,7 +824,7 @@ class TestGatewayIntegration:
         gw = MagicMock()
         gw.project_root = None
         # _get_staged_py_files 需要的 _run_git
-        gw._run_git.return_value = _MockResult(
+        gw.run_git.return_value = _MockResult(
             0, "src/zephyr/foo.py"
         )
         gate = make_consumers_accuracy_gate()

@@ -74,6 +74,17 @@ class AutoMaintenance:
     def __init__(self) -> None:
         self._rules: list[RuleHealth] = []
 
+    @property
+    def rules(self) -> list[RuleHealth]:
+        """只读：rules（Stage 4 公共化）。"""
+        return self._rules
+
+    @rules.setter
+    def rules(self, value):
+        """写入：rules（Stage 4 公共化）。"""
+        self._rules = value
+
+
     def register_rule(self, rule_id: str, healthy: bool = True, detail: str = "") -> RuleHealth:
         rule = RuleHealth(rule_id=rule_id, healthy=healthy, detail=detail)
         self._rules.append(rule)

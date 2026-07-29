@@ -86,7 +86,7 @@ class TestSnapshotDriftGate:
         diff_result = MagicMock()
         diff_result.returncode = 0
         diff_result.stdout = "src/some_file.py\n"
-        gw._run_git.return_value = diff_result
+        gw.run_git.return_value = diff_result
         gw.project_root = REPO_ROOT
 
         gate = make_snapshot_drift_gate()
@@ -127,7 +127,7 @@ OTHER = "regular string"
         diff_result = MagicMock()
         diff_result.returncode = 0
         diff_result.stdout = ""
-        gw._run_git.return_value = diff_result
+        gw.run_git.return_value = diff_result
         gw.project_root = REPO_ROOT
 
         gate = make_vocab_chain_gate()
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         diff_result = MagicMock()
         diff_result.returncode = 0
         diff_result.stdout = ""
-        gw._run_git.return_value = diff_result
+        gw.run_git.return_value = diff_result
         gw.project_root = REPO_ROOT
 
         gate = make_manual_only_permanent_gate()

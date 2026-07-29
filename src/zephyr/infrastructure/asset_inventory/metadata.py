@@ -83,15 +83,16 @@ class GitMetadataExtractor:
 
 
     @staticmethod
-    def parse_date(date_str) -> datetime:
-        """公共接口：parse_date（Stage 4 公共化，委托到 _parse_date）。"""
-        return _parse_date(date_str)
+    def parse_date(date_str: str) -> datetime:
+        try:
+            return datetime.strptime(date_str.strip()[:19], '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC)
+        except ValueError:
+            return datetime.min.replace(tzinfo=UTC)
 
 
     @staticmethod
-    def is_ai_commit(message) -> bool:
-        """公共接口：is_ai_commit（Stage 4 公共化，委托到 _is_ai_commit）。"""
-        return _is_ai_commit(message)
+    def is_ai_commit(message: str) -> bool:
+        return bool(_AI_COMMIT_PATTERNS.search(message))
 
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -99,6 +100,11 @@ class GitMetadataExtractor:
     def root(self):
         """只读：root（Stage 4 公共化）。"""
         return self._root
+
+    @root.setter
+    def root(self, value):
+        """写入：root（Stage 4 公共化）。"""
+        self._root = value
 
 
     def extract(self, file_path: str) -> GitAssetMetadata | None:
@@ -194,10 +200,8 @@ class GitMetadataExtractor:
 
     @staticmethod
     def _parse_date(date_str: str) -> datetime:
-        try:
-            return datetime.strptime(date_str.strip()[:19], "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
-        except ValueError:
-            return datetime.min.replace(tzinfo=UTC)
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return GitMetadataExtractor.parse_date(date_str)
 
     def _current_lines(self, file_path: str) -> int:
         full = self._root / file_path
@@ -212,7 +216,8 @@ class GitMetadataExtractor:
 
     @staticmethod
     def _is_ai_commit(message: str) -> bool:
-        return bool(_AI_COMMIT_PATTERNS.search(message))
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return GitMetadataExtractor.is_ai_commit(message)
 
     def _find_co_changed(self, file_path: str) -> list[tuple[str, str]]:
         try:

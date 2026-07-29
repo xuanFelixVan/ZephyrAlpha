@@ -125,10 +125,20 @@ class CircuitBreaker:
         """只读：failure_threshold（Stage 4 公共化）。"""
         return self._failure_threshold
 
+    @failure_threshold.setter
+    def failure_threshold(self, value):
+        """写入：failure_threshold（Stage 4 公共化）。"""
+        self._failure_threshold = value
+
     @property
     def recovery_timeout_ms(self) -> int:
         """只读：recovery_timeout_ms（Stage 4 公共化）。"""
         return self._recovery_timeout_ms
+
+    @recovery_timeout_ms.setter
+    def recovery_timeout_ms(self, value):
+        """写入：recovery_timeout_ms（Stage 4 公共化）。"""
+        self._recovery_timeout_ms = value
 
 
     @property

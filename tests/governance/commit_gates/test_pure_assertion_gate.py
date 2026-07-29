@@ -20,7 +20,7 @@ def _make_gateway(staged_md=None, wt_root="/fake"):
         elif cmd[0:2] == ["git", "rev-parse"] and "--show-toplevel" in cmd:
             r.stdout = wt_root
         return r
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     gw.project_root = wt_root
     return gw
 

@@ -257,6 +257,11 @@ class CommitGateRegistry:
         """只读：specs（Stage 4 公共化）。"""
         return self._specs
 
+    @specs.setter
+    def specs(self, value):
+        """写入：specs（Stage 4 公共化）。"""
+        self._specs = value
+
 
     def register(self, spec: GateSpec) -> None:
         """注册门禁（幂等，同 gate_id 覆盖；同 priority 不同 gate_id 阻断）。

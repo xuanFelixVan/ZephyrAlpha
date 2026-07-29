@@ -237,3 +237,15 @@ def evaluate_factor(
     return_panel = return_panel.dropna(how="all")
     ic_series = compute_ic_series(factor_panel, return_panel, horizon)
     return _build_result(factor_id, ic_series, oos_ratio)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def tsv_to_dataframe(tsv) -> pd.DataFrame:
+    """公共接口：tsv_to_dataframe（Stage 4 公共化）。"""
+    return _tsv_to_dataframe(tsv)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def format_symbols(symbols) -> str:
+    """公共接口：format_symbols（Stage 4 公共化）。"""
+    return _format_symbols(symbols)
+

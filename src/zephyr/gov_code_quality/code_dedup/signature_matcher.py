@@ -53,6 +53,17 @@ class SignatureMatcher:
     def __init__(self) -> None:
         self._index: dict[str, list[str]] = {}
 
+    @property
+    def index(self) -> dict[str, list[str]]:
+        """只读：index（Stage 4 公共化）。"""
+        return self._index
+
+    @index.setter
+    def index(self, value):
+        """写入：index（Stage 4 公共化）。"""
+        self._index = value
+
+
     @classmethod
     def classify_path(cls, file_path) -> str:
         """公共接口：classify_path（Stage 4 公共化，委托到 cls._classify_path）。"""

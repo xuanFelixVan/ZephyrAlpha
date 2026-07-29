@@ -104,10 +104,10 @@ def _write_rule_file(rules_dir: Path, filename: str, content: str) -> Path:
 
 def _run_validator_and_get_errors(path: Path) -> list[str]:
     """运行校验器，返回错误列表（清空全局 _errors 后重新填充）。"""
-    vrf._errors.clear()
-    vrf._warnings.clear()
-    vrf._validate_file(path)
-    return list(vrf._errors)
+    vrf.errors.clear()
+    vrf.warnings.clear()
+    vrf.validate_file(path)
+    return list(vrf.errors)
 
 
 # ===================================================================
@@ -248,13 +248,13 @@ def test_r11_binary_disguised_as_yaml(temp_rules_dir):
     path = temp_rules_dir / "trae_099_test_rule.yaml"
     # 写入二进制内容
     path.write_bytes(b"\xff\xfe\x00\x01\x02\x03binary garbage here \x00\xff")
-    vrf._errors.clear()
-    vrf._warnings.clear()
+    vrf.errors.clear()
+    vrf.warnings.clear()
     # 不应崩溃，应该报错
     try:
-        vrf._validate_file(path)
+        vrf.validate_file(path)
         # 如果没崩溃，检查是否有错误
-        assert len(vrf._errors) > 0, "R11失败：二进制文件未报错也未崩溃"
+        assert len(vrf.errors) > 0, "R11失败：二进制文件未报错也未崩溃"
     except UnicodeDecodeError:
         # 崩溃也是可接受的（只要不静默通过）
         pass
@@ -277,14 +277,14 @@ malicious: !!python/object/apply:os.system ["echo hacked"]
 """
     )
     path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
-    vrf._errors.clear()
-    vrf._warnings.clear()
+    vrf.errors.clear()
+    vrf.warnings.clear()
     # yaml.safe_load 会拒绝 !!python/object，所以应该报 YAML 解析失败
     try:
-        vrf._validate_file(path)
+        vrf.validate_file(path)
         # safe_load 拒绝危险标签，应该有错误
         # 如果没报错，检查是否静默通过了（这是严重漏洞）
-        assert len(vrf._errors) > 0, "R12失败：YAML注入未被检测（严重安全漏洞）"
+        assert len(vrf.errors) > 0, "R12失败：YAML注入未被检测（严重安全漏洞）"
     except Exception:
         # safe_load 抛异常是正确行为
         pass

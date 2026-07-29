@@ -180,6 +180,11 @@ class AuditWriter:
         """只读：max_write_failures（Stage 4 公共化）。"""
         return self._max_write_failures
 
+    @max_write_failures.setter
+    def max_write_failures(self, value):
+        """写入：max_write_failures（Stage 4 公共化）。"""
+        self._max_write_failures = value
+
     @property
     def readonly(self):
         """只读：readonly（Stage 4 公共化）。"""
@@ -196,14 +201,24 @@ class AuditWriter:
         """只读：write_failures（Stage 4 公共化）。"""
         return self._write_failures
 
+    @write_failures.setter
+    def write_failures(self, value):
+        """写入：write_failures（Stage 4 公共化）。"""
+        self._write_failures = value
+
 
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     # 消除 tests/audit/test_audit_adversarial.py 中 15 处私有成员访问。
 
     @property
     def event_log_path(self) -> Path:
-        """只读：events.jsonl 审计日志路径（Stage 4 公共化）。"""
+        """只读：event_log_path（Stage 4 公共化）。"""
         return self._event_log_path
+
+    @event_log_path.setter
+    def event_log_path(self, value):
+        """写入：event_log_path（Stage 4 公共化）。"""
+        self._event_log_path = value
 
     def _load_state(self) -> None:
         """从已有 events.jsonl 恢复 _last_hash 和 event_count（重启后链连续）。"""

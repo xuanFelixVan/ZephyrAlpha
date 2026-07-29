@@ -202,7 +202,7 @@ class TestCircuitBreaker:
 
     def test_initial_closed(self) -> None:
         o = PipelineOrchestrator()
-        assert o._cb_manager.open_count == 0
+        assert o.cb_manager.open_count == 0
 
     def test_reset_returns_zero_if_no_breaker(self) -> None:
         o = PipelineOrchestrator()
@@ -222,7 +222,7 @@ class TestEmergencyFallback:
         task = _make_task("CP-0032")
         o = PipelineOrchestrator()
         r = o.dispatch(task)
-        plan = o._emergency_fallback(r.modules_executed, task)
+        plan = o.emergency_fallback(r.modules_executed, task)
         assert not plan.activated
 
 
@@ -232,14 +232,14 @@ class TestImpactAssessment:
     def test_normal_task_is_low_risk(self) -> None:
         task = _make_task("CP-0033")
         o = PipelineOrchestrator()
-        impact = o._assess_impact(task)
+        impact = o.assess_impact(task)
         assert impact.risk_tier == "low"
         assert not impact.human_review_required
 
     def test_security_tag_is_critical(self) -> None:
         task = _make_task("CP-0034", tags=["security", "auth"])
         o = PipelineOrchestrator()
-        impact = o._assess_impact(task)
+        impact = o.assess_impact(task)
         assert impact.risk_tier == "critical"
         assert impact.human_review_required
 
@@ -249,7 +249,7 @@ class TestRateLimit:
 
     def test_no_backpressure_for_first_call(self) -> None:
         o = PipelineOrchestrator()
-        limited, wait = o._check_rate_limit("deepseek")
+        limited, wait = o.check_rate_limit("deepseek")
         assert not limited
         assert wait == 0.0
 
@@ -296,7 +296,7 @@ class TestConfigPersistence:
         state["config"]["max_retries"] = 7
         o2 = PipelineOrchestrator()
         o2.load_state(state)
-        assert o2._cfg.max_retries == 7
+        assert o2.cfg.max_retries == 7
 
 
 class TestExperimentRouting:
@@ -305,7 +305,7 @@ class TestExperimentRouting:
     def test_no_experiment_returns_none(self) -> None:
         o = PipelineOrchestrator()
         task = _make_task("CP-0037")
-        assert o._resolve_experiment(task) is None
+        assert o.resolve_experiment(task) is None
 
     def test_register_experiment(self) -> None:
         o = PipelineOrchestrator()

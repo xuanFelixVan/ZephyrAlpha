@@ -121,20 +121,40 @@ class ReboundDetector:
         """只读：max_gap_seconds（Stage 4 公共化）。"""
         return self._max_gap_seconds
 
+    @max_gap_seconds.setter
+    def max_gap_seconds(self, value):
+        """写入：max_gap_seconds（Stage 4 公共化）。"""
+        self._max_gap_seconds = value
+
     @property
     def min_gap_seconds(self):
         """只读：min_gap_seconds（Stage 4 公共化）。"""
         return self._min_gap_seconds
+
+    @min_gap_seconds.setter
+    def min_gap_seconds(self, value):
+        """写入：min_gap_seconds（Stage 4 公共化）。"""
+        self._min_gap_seconds = value
 
     @property
     def records(self) -> dict[str, list[BehaviorRecord]]:
         """只读：records（Stage 4 公共化）。"""
         return self._records
 
+    @records.setter
+    def records(self, value):
+        """写入：records（Stage 4 公共化）。"""
+        self._records = value
+
     @property
     def sliding_window_seconds(self):
         """只读：sliding_window_seconds（Stage 4 公共化）。"""
         return self._sliding_window_seconds
+
+    @sliding_window_seconds.setter
+    def sliding_window_seconds(self, value):
+        """写入：sliding_window_seconds（Stage 4 公共化）。"""
+        self._sliding_window_seconds = value
 
 
     def record(

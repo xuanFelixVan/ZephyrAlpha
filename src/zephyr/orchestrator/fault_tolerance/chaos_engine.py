@@ -149,10 +149,20 @@ class ChaosEngine:
         """只读：injection_state（Stage 4 公共化）。"""
         return self._injection_state
 
+    @injection_state.setter
+    def injection_state(self, value):
+        """写入：injection_state（Stage 4 公共化）。"""
+        self._injection_state = value
+
     @property
     def last_result(self) -> InjectionResult | None:
         """只读：last_result（Stage 4 公共化）。"""
         return self._last_result
+
+    @last_result.setter
+    def last_result(self, value):
+        """写入：last_result（Stage 4 公共化）。"""
+        self._last_result = value
 
 
     def get_injection_points(self) -> list[dict[str, Any]]:

@@ -166,7 +166,7 @@ class TestPartialRevertMidwayFailure:
 
         # in_flight file should exist for state recovery
         assert result.execution_id != ""
-        in_flight_path = executor._in_flight_path(result.execution_id)
+        in_flight_path = executor.in_flight_path(result.execution_id)
         # The in_flight file should have been written during execution
         assert in_flight_path.parent.exists()
 

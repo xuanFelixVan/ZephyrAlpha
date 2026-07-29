@@ -35,6 +35,11 @@ class IntegrityVerifier:
         """只读：hashes（Stage 4 公共化）。"""
         return self._hashes
 
+    @hashes.setter
+    def hashes(self, value):
+        """写入：hashes（Stage 4 公共化）。"""
+        self._hashes = value
+
 
     def register_hash(self, filepath: str, content: str):
         self._hashes[filepath] = hashlib.sha256(content.encode()).hexdigest()

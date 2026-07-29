@@ -51,7 +51,7 @@ class TestCheckSessionOverlap:
 
     def test_no_session_skips(self):
         """无 --session 时跳过 overlap 检测（向后兼容，对标旧调用方）。"""
-        ok, msg = pwg._check_session_overlap("/tmp/foo.py", "")
+        ok, msg = pwg.check_session_overlap("/tmp/foo.py", "")
         assert ok is True
         assert "skip" in msg
 
@@ -62,7 +62,7 @@ class TestCheckSessionOverlap:
         reg_mock = MagicMock()
         reg_mock.find_session_by_file.return_value = holder
         with patch(_SESSION_REG, return_value=reg_mock):
-            ok, msg = pwg._check_session_overlap(
+            ok, msg = pwg.check_session_overlap(
                 str(_REPO_ROOT / "scripts" / "git_commit.py"), "session-me-1"
             )
         assert ok is False
@@ -76,7 +76,7 @@ class TestCheckSessionOverlap:
         reg_mock = MagicMock()
         reg_mock.find_session_by_file.return_value = holder
         with patch(_SESSION_REG, return_value=reg_mock):
-            ok, msg = pwg._check_session_overlap("/tmp/foo.py", "session-me-1")
+            ok, msg = pwg.check_session_overlap("/tmp/foo.py", "session-me-1")
         assert ok is True
         assert msg == "OK"
 
@@ -85,14 +85,14 @@ class TestCheckSessionOverlap:
         reg_mock = MagicMock()
         reg_mock.find_session_by_file.return_value = None
         with patch(_SESSION_REG, return_value=reg_mock):
-            ok, msg = pwg._check_session_overlap("/tmp/foo.py", "session-me-1")
+            ok, msg = pwg.check_session_overlap("/tmp/foo.py", "session-me-1")
         assert ok is True
         assert msg == "OK"
 
     def test_registry_error_fail_open(self):
         """SessionRegistry 构造/读取异常 → fail-open PASS（对标 held_overlap_gate）。"""
         with patch(_SESSION_REG, side_effect=Exception("registry boom")):
-            ok, msg = pwg._check_session_overlap("/tmp/foo.py", "session-me-1")
+            ok, msg = pwg.check_session_overlap("/tmp/foo.py", "session-me-1")
         assert ok is True
         assert "OVERLAP_WARN" in msg
         assert "registry boom" in msg

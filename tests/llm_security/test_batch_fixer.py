@@ -80,20 +80,20 @@ class TestBatchFixerInstantiation:
     def test_default_max_workers(self, temp_db):
         budget = FixBudget(db_path=temp_db)
         fixer = BatchFixer(fix_budget=budget)
-        assert fixer._max_workers == 8
+        assert fixer.max_workers == 8
 
     def test_custom_max_workers(self, temp_db):
         budget = FixBudget(db_path=temp_db)
         fixer = BatchFixer(max_workers=4, fix_budget=budget)
-        assert fixer._max_workers == 4
+        assert fixer.max_workers == 4
 
     def test_default_components_created(self, temp_db):
         budget = FixBudget(db_path=temp_db)
         fixer = BatchFixer(fix_budget=budget)
-        assert fixer._budget is not None
-        assert fixer._storm_guard is not None
-        assert fixer._idempotency is not None
-        assert fixer._conflict_resolver is not None
+        assert fixer.budget is not None
+        assert fixer.storm_guard is not None
+        assert fixer.idempotency is not None
+        assert fixer.conflict_resolver is not None
 
 
 class TestBatchFixerExecuteBatch:

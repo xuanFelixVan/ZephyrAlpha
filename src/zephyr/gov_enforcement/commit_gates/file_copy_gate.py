@@ -91,7 +91,7 @@ def _get_staged_new_py_files(gateway) -> list[str]:
     与「无新增 .py 文件」在调用侧同走 (True, "") 放行路径。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:

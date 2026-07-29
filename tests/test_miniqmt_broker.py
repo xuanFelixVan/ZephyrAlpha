@@ -63,10 +63,10 @@ def make_order(
 def test_idempotency():
     """测试幂等去重"""
     broker = MiniQmtBroker(path="mock", session_id="test")
-    broker._connected = True
-    broker._xttrader = MagicMock()
-    broker._xttrader.start.return_value = 0
-    broker._xttrader.order_stock.return_value = 0
+    broker.connected = True
+    broker.xttrader = MagicMock()
+    broker.xttrader.start.return_value = 0
+    broker.xttrader.order_stock.return_value = 0
 
     order1 = make_order(idempotency_key="idem-001")
     broker_order_id1 = broker.submit_order(order1)
@@ -79,8 +79,8 @@ def test_idempotency():
 def test_a_share_constraints():
     """测试A股约束校验"""
     broker = MiniQmtBroker(path="mock", session_id="test")
-    broker._connected = True
-    broker._xttrader = MagicMock()
+    broker.connected = True
+    broker.xttrader = MagicMock()
 
     try:
         broker.submit_order(make_order(qty=50, idempotency_key="qty-001"))
@@ -107,10 +107,10 @@ def test_a_share_constraints():
 def test_t_plus_1():
     """测试T+1锁定"""
     broker = MiniQmtBroker(path="mock", session_id="test")
-    broker._connected = True
-    broker._xttrader = MagicMock()
-    broker._xttrader.start.return_value = 0
-    broker._xttrader.order_stock.return_value = 0
+    broker.connected = True
+    broker.xttrader = MagicMock()
+    broker.xttrader.start.return_value = 0
+    broker.xttrader.order_stock.return_value = 0
 
     buy_order = make_order(side=OrderSide.BUY, idempotency_key="t1-buy-001")
     broker.submit_order(buy_order)
@@ -126,18 +126,18 @@ def test_t_plus_1():
 def test_error_code_mapping():
     """测试错误码映射"""
     broker = MiniQmtBroker(path="mock", session_id="test")
-    broker._connected = True
-    broker._xttrader = MagicMock()
-    broker._xttrader.start.return_value = 0
+    broker.connected = True
+    broker.xttrader = MagicMock()
+    broker.xttrader.start.return_value = 0
 
-    broker._xttrader.order_stock.return_value = 50
+    broker.xttrader.order_stock.return_value = 50
     try:
         broker.submit_order(make_order(idempotency_key="err-001"))
         assert False, "涨停应被拒绝"
     except MiniQmtBrokerError as e:
         assert e.error_code == 50
 
-    broker._xttrader.order_stock.return_value = 54
+    broker.xttrader.order_stock.return_value = 54
     try:
         broker.submit_order(make_order(idempotency_key="err-002"))
         assert False, "资金不足应被拒绝"
@@ -178,4 +178,4 @@ def test_thread_safety():
     broker = MiniQmtBroker(path="mock", session_id="test")
     assert hasattr(broker, "_lock"), "broker 必须有 _lock"
     import threading
-    assert isinstance(broker._lock, type(threading.Lock())), "_lock 必须是 threading.Lock 实例"
+    assert isinstance(broker.lock, type(threading.Lock())), "_lock 必须是 threading.Lock 实例"

@@ -81,6 +81,11 @@ class ReplayEngine:
         """只读：snapshot_interval（Stage 4 公共化）。"""
         return self._snapshot_interval
 
+    @snapshot_interval.setter
+    def snapshot_interval(self, value):
+        """写入：snapshot_interval（Stage 4 公共化）。"""
+        self._snapshot_interval = value
+
 
     def _load_events(self) -> list[dict[str, Any]]:
         if self._event_log_path is None or not self._event_log_path.exists():

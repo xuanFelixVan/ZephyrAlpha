@@ -363,6 +363,11 @@ class AgentRouter:
         """只读：pool（Stage 4 公共化）。"""
         return self._pool
 
+    @pool.setter
+    def pool(self, value):
+        """写入：pool（Stage 4 公共化）。"""
+        self._pool = value
+
 
     @property
     def pool_size(self) -> int:
@@ -763,11 +768,21 @@ class AgentOrchestrator:
         self._lsg_gateway = lsg_gateway
         self._enable_lsg = enable_lsg
 
+    def lsg_scan_agent_action(self, tool_name, tool_params) -> str | None:
+        """公共接口：lsg_scan_agent_action（Stage 4 公共化）。"""
+        return self._lsg_scan_agent_action(tool_name, tool_params)
+
+
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def input_sanitizer(self):
         """只读：input_sanitizer（Stage 4 公共化）。"""
         return self._input_sanitizer
+
+    @input_sanitizer.setter
+    def input_sanitizer(self, value):
+        """写入：input_sanitizer（Stage 4 公共化）。"""
+        self._input_sanitizer = value
 
 
     # ---- accessors ---------------------------------------------------

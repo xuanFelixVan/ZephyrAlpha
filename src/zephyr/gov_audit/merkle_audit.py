@@ -37,6 +37,11 @@ class MerkleTree:
         """只读：leaves（Stage 4 公共化）。"""
         return self._leaves
 
+    @leaves.setter
+    def leaves(self, value):
+        """写入：leaves（Stage 4 公共化）。"""
+        self._leaves = value
+
 
     def add_event(self, event: dict) -> None:
         import hashlib
@@ -59,6 +64,11 @@ class MerkleAudit:
     def tree(self):
         """只读：tree（Stage 4 公共化）。"""
         return self._tree
+
+    @tree.setter
+    def tree(self, value):
+        """写入：tree（Stage 4 公共化）。"""
+        self._tree = value
 
 
     def record(self, escalation_event: dict) -> str:

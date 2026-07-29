@@ -234,7 +234,7 @@ def make_git_performance_monitor_reconciler(gateway: "object") -> ReconcilerSpec
             # 3. 获取 commit sha（用于日志关联）
             commit_sha = ""
             try:
-                sha_result = gateway._run_git(["git", "rev-parse", "HEAD"])
+                sha_result = gateway.run_git(["git", "rev-parse", "HEAD"])
                 if sha_result.returncode == 0:
                     commit_sha = sha_result.stdout.strip()[:12]
             except Exception:  # noqa: BLE001 — sha 非关键

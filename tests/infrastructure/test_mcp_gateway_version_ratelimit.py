@@ -59,20 +59,20 @@ class TestRoutesFromMcpJson:
     """5.35.1：路由表从 mcp.json server_id 单向生成，下划线命名唯一。"""
 
     def test_route_keys_use_underscore_server_id(self, gw: MCPGateway) -> None:
-        assert "vector_memory" in gw._routes
-        assert "vector-memory" not in gw._routes
-        assert gw._routes["vector_memory"]["prefix"] == "vector_memory."
+        assert "vector_memory" in gw.routes
+        assert "vector-memory" not in gw.routes
+        assert gw.routes["vector_memory"]["prefix"] == "vector_memory."
 
     def test_stdio_servers_not_inprocess_routed(self, gw: MCPGateway) -> None:
-        assert "red_blue_validator" not in gw._routes
+        assert "red_blue_validator" not in gw.routes
 
     def test_route_tool_name_resolves_vector_memory(self, gw: MCPGateway) -> None:
-        assert gw._route_tool_name("vector_memory.search") == "vector_memory"
+        assert gw.route_tool_name("vector_memory.search") == "vector_memory"
 
     def test_routes_carry_version(self, gw: MCPGateway) -> None:
         # 5.35.3：mcp.json servers 带 version 字段并透入路由表
-        assert gw._routes["governance"]["version"] == "1.1.0"
-        assert gw._routes["sandbox"]["version"] == "0.1.0"
+        assert gw.routes["governance"]["version"] == "1.1.0"
+        assert gw.routes["sandbox"]["version"] == "0.1.0"
 
 
 class TestApiVersion:
@@ -154,7 +154,7 @@ class TestRetryAfter:
     """5.36.7：限流拒绝响应携带 retry_after_seconds。"""
 
     def test_rejection_response_has_retry_after(self, gw: MCPGateway) -> None:
-        gw._rate_limiter = PerToolRateLimiter(
+        gw.rate_limiter = PerToolRateLimiter(
             0.01, 1.0, config={"rate_limit": {"retry_after_header": True}}
         )
         assert _call(gw, "mcp_gateway.list_servers").get("result")

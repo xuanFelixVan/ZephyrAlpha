@@ -31,12 +31,12 @@ from zephyr.shared.contracts.market_data import NormalizedMarketData  # noqa: E4
 
 load_kline = producer.load_kline
 produce = producer.produce
-_row_to_record = producer._row_to_record
-_format_symbols = producer._format_symbols
-_to_decimal = producer._to_decimal
-_to_int = producer._to_int
-_normalize_symbol = producer._normalize_symbol
-_strip_symbol_suffix = producer._strip_symbol_suffix
+_row_to_record = producer.row_to_record
+_format_symbols = producer.format_symbols
+_to_decimal = producer.to_decimal
+_to_int = producer.to_int
+_normalize_symbol = producer.normalize_symbol
+_strip_symbol_suffix = producer.strip_symbol_suffix
 
 
 def _make_tsv(n_days: int = 5, symbols: list[str] | None = None) -> str:

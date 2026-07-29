@@ -113,7 +113,7 @@ class TestAutoCommitE2E:
                 message="committed 1 files",
                 commit_hash="abc12345",
             )
-            repo._auto_commit_on_completion("E2E-001", task)
+            repo.auto_commit_on_completion("E2E-001", task)
 
             # 验证 GitCommitGateway 被调用
             MockGW.assert_called_once()
@@ -129,7 +129,7 @@ class TestAutoCommitE2E:
         repo = _make_repo(tmp_path)
 
         with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
-            repo._auto_commit_on_completion("E2E-002", task)
+            repo.auto_commit_on_completion("E2E-002", task)
             MockGW.assert_not_called()
 
     def test_nonexistent_files_skipped(self, tmp_path: Path) -> None:
@@ -139,7 +139,7 @@ class TestAutoCommitE2E:
         repo = _make_repo(tmp_path)
 
         with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
-            repo._auto_commit_on_completion("E2E-003", task)
+            repo.auto_commit_on_completion("E2E-003", task)
             MockGW.assert_not_called()
 
     def test_gateway_exception_no_crash(self, tmp_path: Path) -> None:
@@ -158,7 +158,7 @@ class TestAutoCommitE2E:
         with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway") as MockGW:
             MockGW.return_value.commit.side_effect = RuntimeError("gateway crashed")
             # 不应抛异常
-            repo._auto_commit_on_completion("E2E-004", task)
+            repo.auto_commit_on_completion("E2E-004", task)
 
     def test_nothing_to_commit_handled(self, tmp_path: Path) -> None:
         """场景5: 文件无变更 → NOTHING_TO_COMMIT → 任务完成。"""
@@ -176,7 +176,7 @@ class TestAutoCommitE2E:
                 message="no staged changes",
             )
             # 不应抛异常
-            repo._auto_commit_on_completion("E2E-005", task)
+            repo.auto_commit_on_completion("E2E-005", task)
 
     def test_stash_conflict_handled(self, tmp_path: Path) -> None:
         """场景6: stash pop 失败 → STASH_CONFLICT → 任务完成但警告。
@@ -200,7 +200,7 @@ class TestAutoCommitE2E:
                 stash_kept=True,
             )
             # 不应抛异常（任务仍完成）
-            repo._auto_commit_on_completion("E2E-006", task)
+            repo.auto_commit_on_completion("E2E-006", task)
 
     def test_commit_failed_handled(self, tmp_path: Path) -> None:
         """场景7: commit 命令失败 → COMMIT_FAILED → 任务完成但警告。"""
@@ -218,7 +218,7 @@ class TestAutoCommitE2E:
                 message="git commit failed: some error",
             )
             # 不应抛异常
-            repo._auto_commit_on_completion("E2E-007", task)
+            repo.auto_commit_on_completion("E2E-007", task)
 
     def test_lock_timeout_handled(self, tmp_path: Path) -> None:
         """场景8: 锁超时 → LOCK_TIMEOUT → 任务完成但警告。"""
@@ -236,7 +236,7 @@ class TestAutoCommitE2E:
                 message="Cannot acquire lock (timeout 60s)",
             )
             # 不应抛异常
-            repo._auto_commit_on_completion("E2E-008", task)
+            repo.auto_commit_on_completion("E2E-008", task)
 
     def test_real_gateway_integration(self, tmp_path: Path) -> None:
         """场景9: 真实网关集成——不 mock，验证完整链路。
@@ -264,7 +264,7 @@ class TestAutoCommitE2E:
                 original_init(self, project_root=str(tmp_path))
 
             with patch.object(GitCommitGateway, "__init__", patched_init):
-                repo._auto_commit_on_completion("E2E-009", task)
+                repo.auto_commit_on_completion("E2E-009", task)
 
         # 验证 commit 实际执行
         log = subprocess.run(

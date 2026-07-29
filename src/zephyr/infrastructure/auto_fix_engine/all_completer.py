@@ -49,6 +49,16 @@ class AllCompleter(BaseFixer):
             description="补全 __all__ 缺失导出",
         )
 
+    def parse_all(self, content) -> list[str]:
+        """公共接口：parse_all（Stage 4 公共化）。"""
+        return self._parse_all(content)
+
+
+    def extract_public_symbols(self, content) -> list[str]:
+        """公共接口：extract_public_symbols（Stage 4 公共化）。"""
+        return self._extract_public_symbols(content)
+
+
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
         repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）

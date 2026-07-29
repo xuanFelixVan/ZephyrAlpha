@@ -514,7 +514,7 @@ class TestRSSProvider:
         from src.zephyr.data.implementations.rss_provider import RSSProvider
         p = self._make_provider()
         # 清空缓存
-        RSSProvider._robots_cache.clear()
+        RSSProvider.robots_cache.clear()
         # 测试 fail-open（robots.txt 读取失败 → 允许）
         with patch("urllib.robotparser.RobotFileParser.read", side_effect=Exception("net error")):
             assert p._is_allowed("https://example.com/feed.xml") is True

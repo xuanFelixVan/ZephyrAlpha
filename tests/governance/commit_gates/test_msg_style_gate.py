@@ -234,7 +234,7 @@ class TestGatewayIntegration:
                 return _MockResult(0, str(_PROJECT_ROOT))
             return _MockResult(0, "")
 
-        gw._run_git = _run_git
+        gw.run_git = _run_git
         return gw
 
     def test_new_file_with_arrow_violation(self, tmp_path):
@@ -290,7 +290,7 @@ class TestGatewayIntegration:
 
     def test_fail_open_on_git_diff_error(self):
         gw = MagicMock()
-        gw._run_git = MagicMock(return_value=_MockResult(returncode=1))
+        gw.run_git = MagicMock(return_value=_MockResult(returncode=1))
         spec = make_msg_style_gate()
         passed, msg = spec.check(gw, [])
         assert passed  # fail-open

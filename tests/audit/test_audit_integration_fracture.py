@@ -254,9 +254,9 @@ class TestSkillExecutorIntegration:
 
         writer = AuditWriter(data_dir=data_dir)
         executor = SkillExecutor()
-        executor._core_writer = writer
+        executor.core_writer = writer
 
-        entry = executor._write_audit("skill_loaded", "test_skill", {"trigger": "test"})
+        entry = executor.write_audit("skill_loaded", "test_skill", {"trigger": "test"})
 
         assert entry is not None
         assert len(executor.audit_log) == 1, "in-memory audit_log must still work"
@@ -280,7 +280,7 @@ class TestAuditWriterWriteFailureProtection:
         from zephyr.gov_audit.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
-        writer._event_log_path = data_dir / "nonexistent" / "deep" / "events.jsonl"
+        writer.event_log_path = data_dir / "nonexistent" / "deep" / "events.jsonl"
 
         for i in range(5):
             try:
@@ -288,7 +288,7 @@ class TestAuditWriterWriteFailureProtection:
             except Exception:
                 pass
 
-        assert writer._readonly is True, "AuditWriter must enter readonly after 5 failures"
+        assert writer.readonly is True, "AuditWriter must enter readonly after 5 failures"
 
         with pytest.raises(RuntimeError, match="readonly mode"):
             writer.write({"event_type": "test", "agent_id": "test"})

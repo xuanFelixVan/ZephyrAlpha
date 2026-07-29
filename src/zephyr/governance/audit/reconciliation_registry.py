@@ -690,6 +690,11 @@ class ReconciliationRegistry:
         """只读：specs（Stage 4 公共化）。"""
         return self._specs
 
+    @specs.setter
+    def specs(self, value):
+        """写入：specs（Stage 4 公共化）。"""
+        self._specs = value
+
 
     def register(self, spec: ReconcilerSpec) -> None:
 
@@ -2097,7 +2102,7 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 manifest 变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", "scripts/script_manifest.yaml"]
 
@@ -2293,7 +2298,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
 
         ]
 
-        _diff_result = gateway._run_git(
+        _diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--"] + _tree_files
 
@@ -2427,7 +2432,7 @@ def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 path_ownership_map.yaml 是否有变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", ownership_file]
 
@@ -2925,7 +2930,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 检测 docs/03_modules/ 下 .md frontmatter 变更（DB 同步不进 git，无需提交）
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", "docs/03_modules/"]
 
@@ -4867,7 +4872,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
         #     2026-06-30 红蓝对抗修复：曾因无 .md 过滤误删 trae_001 ttl_design section）
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", "docs/"]
 
@@ -6601,7 +6606,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测制品变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", *_DOC_DIRS]
 
@@ -6729,7 +6734,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 index.yaml 变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", *_ARCH_MODEL_INDEX]
 
@@ -6837,7 +6842,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
             )
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", _MANIFEST_FILE]
 
@@ -7015,7 +7020,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 catalog 变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", _CATALOG_REL]
 
@@ -7451,7 +7456,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 index 变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", _INDEX_REL]
 
@@ -8493,7 +8498,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 unified-asset-index.yaml 变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", _INDEX_REL]
 
@@ -8957,7 +8962,7 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测 index.yaml 变更
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", _INDEX_REL]
 
@@ -9325,7 +9330,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 2. 检测输出文件变更（即使部分生成器失败，已成功的可能产生漂移）
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", *_OUTPUTS]
 
@@ -9901,7 +9906,7 @@ def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
         registry_rel = "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
 
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
 
             ["git", "diff", "--name-only", "--", registry_rel]
 

@@ -232,9 +232,9 @@ class TestAuditQuery:
         assert query.count() == 5
 
     def test_refresh(self, query):
-        query._load_events()
+        query.load_events()
         query.refresh()
-        assert query._events is None
+        assert query.events is None
 
     def test_meta_audit_report(self, query):
         query.by_agent("agent-a")

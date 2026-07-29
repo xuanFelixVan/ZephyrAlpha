@@ -159,6 +159,11 @@ class ZephyrLogger:
         """只读：name（Stage 4 公共化）。"""
         return self._name
 
+    @name.setter
+    def name(self, value):
+        """写入：name（Stage 4 公共化）。"""
+        self._name = value
+
 
     def _log(
         self,

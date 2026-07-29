@@ -49,22 +49,22 @@ class TestE2E:
 
     def test_count_by_status_and_session_returns_int(self, repo):
         """_count_by_status_and_session 返回 int。"""
-        count = repo._count_by_status_and_session("IN_PROGRESS", "nonexistent-session")
+        count = repo.count_by_status_and_session("IN_PROGRESS", "nonexistent-session")
         assert isinstance(count, int)
 
     def test_count_by_status_and_session_empty_session(self, repo):
         """不存在的 session_id 返回 0。"""
-        count = repo._count_by_status_and_session("IN_PROGRESS", "nonexistent-session-xyz")
+        count = repo.count_by_status_and_session("IN_PROGRESS", "nonexistent-session-xyz")
         assert count == 0
 
     def test_transition_has_dm401_reminder(self, repo):
         """_post_completion_actions() 包含 DM-401 提醒代码。"""
-        source = inspect.getsource(repo._post_completion_actions)
+        source = inspect.getsource(repo.post_completion_actions)
         assert "DM-401" in source, "_post_completion_actions() 缺少 DM-401 标记"
 
     def test_transition_no_session_id_guard(self, repo):
         """_post_completion_actions() 提醒逻辑不再依赖 session_id（DM-401 修复）。"""
-        source = inspect.getsource(repo._post_completion_actions)
+        source = inspect.getsource(repo.post_completion_actions)
         # DM-401 提醒应使用 if/else 分支处理 session_id，而非 `and session_id` 条件
         assert "DM-401" in source
         assert "and session_id" not in source, (
@@ -103,17 +103,17 @@ class TestRedBlue:
 
     def test_nonexistent_session_returns_zero(self, repo):
         """不存在的 session_id 返回 0（不崩溃）。"""
-        count = repo._count_by_status_and_session("IN_PROGRESS", "nonexistent-session-xyz")
+        count = repo.count_by_status_and_session("IN_PROGRESS", "nonexistent-session-xyz")
         assert count == 0
 
     def test_invalid_status_returns_zero(self, repo):
         """无效 status 返回 0（不崩溃）。"""
-        count = repo._count_by_status_and_session("INVALID_STATUS", "session-20260611-001")
+        count = repo.count_by_status_and_session("INVALID_STATUS", "session-20260611-001")
         assert count == 0
 
     def test_transition_reminder_wrapped_in_try_except(self, repo):
         """提醒逻辑被 try/except 包裹，不阻断 transition。"""
-        source = inspect.getsource(repo._post_completion_actions)
+        source = inspect.getsource(repo.post_completion_actions)
         assert "DM-401" in source
         assert "try:" in source
         assert "except Exception" in source
@@ -130,5 +130,5 @@ class TestRedBlue:
 
     def test_count_by_status_and_session_with_empty_string(self, repo):
         """空字符串 session_id 不崩溃。"""
-        count = repo._count_by_status_and_session("IN_PROGRESS", "")
+        count = repo.count_by_status_and_session("IN_PROGRESS", "")
         assert isinstance(count, int)

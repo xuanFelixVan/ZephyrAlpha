@@ -105,11 +105,21 @@ class EventBus:
         """只读：subscribers（Stage 4 公共化）。"""
         return self._subscribers
 
+    @subscribers.setter
+    def subscribers(self, value):
+        """写入：subscribers（Stage 4 公共化）。"""
+        self._subscribers = value
+
 
     @property
     def event_log(self) -> list[DomainEvent]:
         """只读：event_log（Stage 4 公共化）。"""
         return self._event_log
+
+    @event_log.setter
+    def event_log(self, value):
+        """写入：event_log（Stage 4 公共化）。"""
+        self._event_log = value
 
 
     @classmethod
@@ -313,15 +323,23 @@ class EventBusBackpressure:
 
     @property
     def subscribed_topics(self) -> frozenset[str]:
-        """已注册处理器的话题集合（Stage 4 公共化，read-only）。"""
-        with self._lock:
-            return frozenset(self._handlers.keys())
+        """只读：subscribed_topics（Stage 4 公共化）。"""
+        return self._subscribed_topics
+
+    @subscribed_topics.setter
+    def subscribed_topics(self, value):
+        """写入：subscribed_topics（Stage 4 公共化）。"""
+        self._subscribed_topics = value
 
     @property
     def emit_count(self) -> int:
-        """累计发射事件数（Stage 4 公共化，read-only）。"""
-        with self._lock:
-            return self._emit_count
+        """只读：emit_count（Stage 4 公共化）。"""
+        return self._emit_count
+
+    @emit_count.setter
+    def emit_count(self, value):
+        """写入：emit_count（Stage 4 公共化）。"""
+        self._emit_count = value
 
     def drain(self, max_events: int = 100) -> int:
         drained = 0

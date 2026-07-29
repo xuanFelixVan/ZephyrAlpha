@@ -141,17 +141,33 @@ class EngineSandbox:
         """只读：profile（Stage 4 公共化）。"""
         return self._profile
 
+    @profile.setter
+    def profile(self, value):
+        """写入：profile（Stage 4 公共化）。"""
+        self._profile = value
+
 
     @property
     def access_log(self) -> list[SandboxAccessEvent]:
         """只读：access_log（Stage 4 公共化）。"""
         return self._access_log
 
+    @access_log.setter
+    def access_log(self, value):
+        """写入：access_log（Stage 4 公共化）。"""
+        self._access_log = value
+
 
     @staticmethod
-    def match_path(rel, patterns) -> bool:
-        """公共接口：match_path（Stage 4 公共化，委托到 _match_path）。"""
-        return _match_path(rel, patterns)
+    def match_path(rel: Path, patterns: list[str]) -> bool:
+        rel_str = str(rel).replace('\\', '/')
+        for pattern in patterns:
+            p = pattern.replace('\\', '/')
+            if rel_str.startswith(p.rstrip('/')) or rel_str == p.rstrip('/'):
+                return True
+            if p.endswith('/') and rel_str.startswith(p):
+                return True
+        return False
 
 
     @property
@@ -286,14 +302,8 @@ class EngineSandbox:
 
     @staticmethod
     def _match_path(rel: Path, patterns: list[str]) -> bool:
-        rel_str = str(rel).replace("\\", "/")
-        for pattern in patterns:
-            p = pattern.replace("\\", "/")
-            if rel_str.startswith(p.rstrip("/")) or rel_str == p.rstrip("/"):
-                return True
-            if p.endswith("/") and rel_str.startswith(p):
-                return True
-        return False
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return EngineSandbox.match_path(rel, patterns)
 
     def _record(self, event: SandboxAccessEvent) -> None:
         with self._lock:

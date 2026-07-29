@@ -79,10 +79,20 @@ class SkillLifecycle:
         """只读：guards（Stage 4 公共化）。"""
         return self._guards
 
+    @guards.setter
+    def guards(self, value):
+        """写入：guards（Stage 4 公共化）。"""
+        self._guards = value
+
     @property
     def states(self) -> dict[str, str]:
         """只读：states（Stage 4 公共化）。"""
         return self._states
+
+    @states.setter
+    def states(self, value):
+        """写入：states（Stage 4 公共化）。"""
+        self._states = value
 
 
     def register(self, skill_id: str, status: str = SkillStatus.ACTIVE.value):

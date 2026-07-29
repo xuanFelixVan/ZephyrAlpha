@@ -61,6 +61,55 @@ class RedBlueValidator:
         self._blast = BlastRadius(BlastRadiusLevel.FILE)
 
     @property
+    def blast(self):
+        """只读：blast（Stage 4 公共化）。"""
+        return self._blast
+
+    @blast.setter
+    def blast(self, value):
+        """写入：blast（Stage 4 公共化）。"""
+        self._blast = value
+
+
+    @property
+    def loader(self):
+        """只读：loader（Stage 4 公共化）。"""
+        return self._loader
+
+    @loader.setter
+    def loader(self, value):
+        """写入：loader（Stage 4 公共化）。"""
+        self._loader = value
+
+
+    @property
+    def cleanup(self):
+        """只读：cleanup（Stage 4 公共化）。"""
+        return self._cleanup
+
+    @cleanup.setter
+    def cleanup(self, value):
+        """写入：cleanup（Stage 4 公共化）。"""
+        self._cleanup = value
+
+
+    @property
+    def steady(self):
+        """只读：steady（Stage 4 公共化）。"""
+        return self._steady
+
+    @steady.setter
+    def steady(self, value):
+        """写入：steady（Stage 4 公共化）。"""
+        self._steady = value
+
+
+    def load_and_filter(self, tier=None) -> list[AttackScenario]:
+        """公共接口：load_and_filter（Stage 4 公共化）。"""
+        return self._load_and_filter(tier)
+
+
+    @property
     def defense(self) -> DefenseRunner:
         """Public accessor for the defense runner (R5: reverse hierarchy)."""
         return self._defense

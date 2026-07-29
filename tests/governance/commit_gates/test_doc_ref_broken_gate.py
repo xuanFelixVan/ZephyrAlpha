@@ -23,7 +23,7 @@
 注意：gate 用 open(path).read() 未关闭（ResourceWarning），autouse fixture
 注入 shadow open 包装为读取后自动关闭。
 
-测试隔离：MagicMock 模拟 gateway._run_git + tmp_path 真实文件，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -63,7 +63,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     def _run_git(cmd):
@@ -75,7 +75,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
             return _MockResult(0, str(gw.project_root))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

@@ -284,16 +284,16 @@ class TestPipelineOrchestratorInit:
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
         orc = PipelineOrchestrator()
-        assert orc._cfg is not None
-        assert orc._failure_log == {}
-        assert orc._active_dispatches == set()
+        assert orc.cfg is not None
+        assert orc.failure_log == {}
+        assert orc.active_dispatches == set()
 
     def test_init_with_custom_config(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
         cfg = PipelineOrchestratorConfig(max_retries=7)
         orc = PipelineOrchestrator(config=cfg)
-        assert orc._cfg.max_retries == 7
+        assert orc.cfg.max_retries == 7
 
     def test_health_check_returns_dict(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
@@ -308,7 +308,7 @@ class TestPipelineOrchestratorInit:
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
         orc = PipelineOrchestrator()
-        orc._failure_log["test"] = 3
+        orc.failure_log["test"] = 3
         state = orc.save_state()
         assert "failure_log" in state
         assert state["failure_log"]["test"] == 3
@@ -333,7 +333,7 @@ class TestPipelineOrchestratorInit:
 
         orc = PipelineOrchestrator()
         orc.set_token_budget(500_000)
-        assert orc._token_budget_total == 500_000
+        assert orc.token_budget_total == 500_000
 
     def test_text_similarity(self):
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator

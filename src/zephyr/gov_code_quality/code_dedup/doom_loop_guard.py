@@ -71,6 +71,11 @@ class DoomLoopGuard:
         """只读：frozen（Stage 4 公共化）。"""
         return self._frozen
 
+    @frozen.setter
+    def frozen(self, value):
+        """写入：frozen（Stage 4 公共化）。"""
+        self._frozen = value
+
 
     # ── 公共 API ──────────────────────────────────────────────
 

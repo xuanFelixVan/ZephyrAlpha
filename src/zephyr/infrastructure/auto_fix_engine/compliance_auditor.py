@@ -36,6 +36,17 @@ class ComplianceAuditor:
         self._retention_days = retention_days
         self._ensure_db()
 
+    @property
+    def retention_days(self):
+        """只读：retention_days（Stage 4 公共化）。"""
+        return self._retention_days
+
+    @retention_days.setter
+    def retention_days(self, value):
+        """写入：retention_days（Stage 4 公共化）。"""
+        self._retention_days = value
+
+
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = get_db_connection(self._db_path)

@@ -172,10 +172,20 @@ class ForensicEngine:
         """只读：forensic_dir（Stage 4 公共化）。"""
         return self._forensic_dir
 
+    @forensic_dir.setter
+    def forensic_dir(self, value):
+        """写入：forensic_dir（Stage 4 公共化）。"""
+        self._forensic_dir = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def scan_shell_injection(self, trigger: str, message: str, context: str = "") -> list[ShellInjectionFinding]:

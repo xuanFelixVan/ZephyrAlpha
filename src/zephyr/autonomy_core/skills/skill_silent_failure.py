@@ -78,10 +78,20 @@ class SilentFailureDetector:
         """只读：anomalies（Stage 4 公共化）。"""
         return self._anomalies
 
+    @anomalies.setter
+    def anomalies(self, value):
+        """写入：anomalies（Stage 4 公共化）。"""
+        self._anomalies = value
+
     @property
     def execution_history(self) -> dict[str, list[dict[str, Any]]]:
         """只读：execution_history（Stage 4 公共化）。"""
         return self._execution_history
+
+    @execution_history.setter
+    def execution_history(self, value):
+        """写入：execution_history（Stage 4 公共化）。"""
+        self._execution_history = value
 
 
     def _check_truncation(self, output: str) -> tuple[bool, dict[str, Any]]:

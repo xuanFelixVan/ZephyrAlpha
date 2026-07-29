@@ -57,20 +57,40 @@ class AuditTieredStorageBridge:
         """只读：cold_dir（Stage 4 公共化）。"""
         return self._cold_dir
 
+    @cold_dir.setter
+    def cold_dir(self, value):
+        """写入：cold_dir（Stage 4 公共化）。"""
+        self._cold_dir = value
+
     @property
     def data_dir(self):
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
+
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
 
     @property
     def hot_dir(self):
         """只读：hot_dir（Stage 4 公共化）。"""
         return self._hot_dir
 
+    @hot_dir.setter
+    def hot_dir(self, value):
+        """写入：hot_dir（Stage 4 公共化）。"""
+        self._hot_dir = value
+
     @property
     def warm_dir(self):
         """只读：warm_dir（Stage 4 公共化）。"""
         return self._warm_dir
+
+    @warm_dir.setter
+    def warm_dir(self, value):
+        """写入：warm_dir（Stage 4 公共化）。"""
+        self._warm_dir = value
 
 
     def classify_events(self, events: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:

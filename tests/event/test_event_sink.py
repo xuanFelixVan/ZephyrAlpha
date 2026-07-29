@@ -23,11 +23,11 @@ es = pytest.importorskip(
 
 @pytest.fixture(autouse=True)
 def _clear_ring():
-    with es._ring_lock:
-        es._event_ring.clear()
+    with es.ring_lock:
+        es.event_ring.clear()
     yield
-    with es._ring_lock:
-        es._event_ring.clear()
+    with es.ring_lock:
+        es.event_ring.clear()
 
 
 class TestErrorContext:
@@ -164,14 +164,14 @@ class TestEmitAIBehaviorEvent:
 
     def test_appends_to_ring(self):
         es.emit_ai_behavior_event(model_name="gpt-4", task_type="test")
-        with es._ring_lock:
-            assert len(es._event_ring) >= 1
+        with es.ring_lock:
+            assert len(es.event_ring) >= 1
 
     def test_ring_cap(self):
         for i in range(es._EVENT_RING_MAX + 50):
             es.emit_ai_behavior_event(model_name=f"model-{i}", task_type="test")
-        with es._ring_lock:
-            assert len(es._event_ring) <= es._EVENT_RING_MAX
+        with es.ring_lock:
+            assert len(es.event_ring) <= es._EVENT_RING_MAX
 
 
 class TestBoundary:

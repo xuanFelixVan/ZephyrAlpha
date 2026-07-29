@@ -26,10 +26,10 @@ RejectedUpgradeCoolingOffError = base_repo.RejectedUpgradeCoolingOffError
 P0InflationFrozenError = base_repo.P0InflationFrozenError
 P0InflationWarning = base_repo.P0InflationWarning
 _ALLOWED_TRANSITIONS = base_repo._ALLOWED_TRANSITIONS
-_is_valid_transition = base_repo._is_valid_transition
+_is_valid_transition = base_repo.is_valid_transition
 allowed_transitions = base_repo.allowed_transitions
 is_terminal = base_repo.is_terminal
-_new_id = base_repo._new_id
+_new_id = base_repo.new_id
 now_iso = base_repo.now_iso
 
 try:

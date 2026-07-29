@@ -222,6 +222,11 @@ class AIErrorPatternLibrary:
         """只读：path（Stage 4 公共化）。"""
         return self._path
 
+    @path.setter
+    def path(self, value):
+        """写入：path（Stage 4 公共化）。"""
+        self._path = value
+
 
     def _load(self) -> None:
         """从磁盘加载聚合文件（fail-open）。

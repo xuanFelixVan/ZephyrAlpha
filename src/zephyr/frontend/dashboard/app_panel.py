@@ -181,11 +181,21 @@ class DashboardPanelApp:
         """只读：task_repo（Stage 4 公共化）。"""
         return self._task_repo
 
+    @task_repo.setter
+    def task_repo(self, value):
+        """写入：task_repo（Stage 4 公共化）。"""
+        self._task_repo = value
+
 
     @property
     def olap_engine(self):
         """只读：olap_engine（Stage 4 公共化）。"""
         return self._olap_engine
+
+    @olap_engine.setter
+    def olap_engine(self, value):
+        """写入：olap_engine（Stage 4 公共化）。"""
+        self._olap_engine = value
 
 
     @property
@@ -193,11 +203,24 @@ class DashboardPanelApp:
         """只读：backtest_result（Stage 4 公共化）。"""
         return self._backtest_result
 
+    @backtest_result.setter
+    def backtest_result(self, value):
+        """写入：backtest_result（Stage 4 公共化）。"""
+        self._backtest_result = value
+
 
     @staticmethod
     def demo_backtest_data() -> BacktestResultData:
-        """公共接口：demo_backtest_data（Stage 4 公共化，委托到 _demo_backtest_data）。"""
-        return _demo_backtest_data()
+        '生成演示用回测数据（净值/回撤曲线），证明 backtest_results Tab 可渲染'
+        nav = [1.0]
+        for r in [0.012, -0.008, 0.015, -0.005, 0.02, -0.012, 0.018, -0.003, 0.01, -0.007, 0.022, -0.01, 0.016, -0.004, 0.014]:
+            nav.append(nav[-1] * (1 + r))
+        peak = 0.0
+        drawdown = []
+        for v in nav:
+            peak = max(peak, v)
+            drawdown.append(v - peak)
+        return BacktestResultData(backtest_id='demo-001', strategy_id='demo-strategy', net_value_curve=nav, drawdown_curve=drawdown, timestamps=[f'2026-01-{i:02d}' for i in range(1, len(nav) + 1)], metrics=BacktestMetrics(sharpe=1.85, sortino=2.31, max_drawdown=-0.034, ic=0.062, ir=0.78, win_rate=0.56, annual_return=0.235), gate_status=BacktestGateStatus(is_passed=True, wfa_passed=True, oos_passed=False), overfitting_flag=False)
 
 
     # ===== 治理类 Tab =====
@@ -267,38 +290,8 @@ class DashboardPanelApp:
 
     @staticmethod
     def _demo_backtest_data() -> BacktestResultData:
-        """生成演示用回测数据（净值/回撤曲线），证明 backtest_results Tab 可渲染"""
-        nav = [1.0]
-        for r in [0.012, -0.008, 0.015, -0.005, 0.020, -0.012, 0.018, -0.003,
-                  0.010, -0.007, 0.022, -0.010, 0.016, -0.004, 0.014]:
-            nav.append(nav[-1] * (1 + r))
-        peak = 0.0
-        drawdown = []
-        for v in nav:
-            peak = max(peak, v)
-            drawdown.append(v - peak)
-        return BacktestResultData(
-            backtest_id="demo-001",
-            strategy_id="demo-strategy",
-            net_value_curve=nav,
-            drawdown_curve=drawdown,
-            timestamps=[f"2026-01-{i:02d}" for i in range(1, len(nav) + 1)],
-            metrics=BacktestMetrics(
-                sharpe=1.85,
-                sortino=2.31,
-                max_drawdown=-0.034,
-                ic=0.062,
-                ir=0.78,
-                win_rate=0.56,
-                annual_return=0.235,
-            ),
-            gate_status=BacktestGateStatus(
-                is_passed=True,
-                wfa_passed=True,
-                oos_passed=False,
-            ),
-            overfitting_flag=False,
-        )
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return DashboardPanelApp.demo_backtest_data()
 
     # ===== 组装 =====
 

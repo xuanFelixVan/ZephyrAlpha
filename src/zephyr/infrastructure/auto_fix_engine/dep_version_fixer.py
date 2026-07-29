@@ -96,6 +96,11 @@ class DepVersionFixer(BaseFixer):
             description="修复依赖版本不一致",
         )
 
+    def is_higher(self, ver_a, ver_b) -> bool:
+        """公共接口：is_higher（Stage 4 公共化）。"""
+        return self._is_higher(ver_a, ver_b)
+
+
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
         repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）

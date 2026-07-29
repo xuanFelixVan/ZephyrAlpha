@@ -123,7 +123,7 @@ class TestParseFreeze:
 class TestComputeDiff:
     def test_no_diff(self, venv_sync: VenvSync) -> None:
         before = "requests==2.31.0"
-        diff = venv_sync._compute_diff(before, before)
+        diff = venv_sync.compute_diff(before, before)
         assert diff.added == []
         assert diff.removed == []
         assert diff.changed == []
@@ -131,7 +131,7 @@ class TestComputeDiff:
     def test_added_package(self, venv_sync: VenvSync) -> None:
         before = "requests==2.31.0"
         after = "requests==2.31.0\nflask==3.0.0"
-        diff = venv_sync._compute_diff(before, after)
+        diff = venv_sync.compute_diff(before, after)
         assert "flask" in diff.added
         assert diff.removed == []
         assert diff.changed == []
@@ -139,24 +139,24 @@ class TestComputeDiff:
     def test_removed_package(self, venv_sync: VenvSync) -> None:
         before = "requests==2.31.0\nflask==3.0.0"
         after = "requests==2.31.0"
-        diff = venv_sync._compute_diff(before, after)
+        diff = venv_sync.compute_diff(before, after)
         assert "flask" in diff.removed
         assert diff.added == []
 
     def test_changed_version(self, venv_sync: VenvSync) -> None:
         before = "requests==2.30.0"
         after = "requests==2.31.0"
-        diff = venv_sync._compute_diff(before, after)
+        diff = venv_sync.compute_diff(before, after)
         assert "requests" in diff.changed
 
     def test_empty_before(self, venv_sync: VenvSync) -> None:
         after = "requests==2.31.0"
-        diff = venv_sync._compute_diff("", after)
+        diff = venv_sync.compute_diff("", after)
         assert "requests" in diff.added
 
     def test_empty_after(self, venv_sync: VenvSync) -> None:
         before = "requests==2.31.0"
-        diff = venv_sync._compute_diff(before, "")
+        diff = venv_sync.compute_diff(before, "")
         assert "requests" in diff.removed
 
 

@@ -79,6 +79,11 @@ class LifecycleManager:
         """只读：config（Stage 4 公共化）。"""
         return self._config
 
+    @config.setter
+    def config(self, value):
+        """写入：config（Stage 4 公共化）。"""
+        self._config = value
+
 
     def boot_sequence(
         self,

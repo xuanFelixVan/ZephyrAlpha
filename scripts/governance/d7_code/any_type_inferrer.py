@@ -862,3 +862,9 @@ def main(argv: list[str] | None = None) -> int:
     return EXIT_PASS
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def aggregate_evidence(evidence) -> list[tuple[str, float]]:
+    """公共接口：aggregate_evidence（Stage 4 公共化）。"""
+    return _aggregate_evidence(evidence)
+

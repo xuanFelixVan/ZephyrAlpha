@@ -123,10 +123,20 @@ class ReportGenerator:
         """只读：degradation_level（Stage 4 公共化）。"""
         return self._degradation_level
 
+    @degradation_level.setter
+    def degradation_level(self, value):
+        """写入：degradation_level（Stage 4 公共化）。"""
+        self._degradation_level = value
+
     @property
     def exit_code(self) -> int:
         """只读：exit_code（Stage 4 公共化）。"""
         return self._exit_code
+
+    @exit_code.setter
+    def exit_code(self, value):
+        """写入：exit_code（Stage 4 公共化）。"""
+        self._exit_code = value
 
 
     # ── 公共 API ──────────────────────────────────────────────

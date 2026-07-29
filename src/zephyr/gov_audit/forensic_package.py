@@ -38,10 +38,20 @@ class ForensicPackage:
         """只读：chain（Stage 4 公共化）。"""
         return self._chain
 
+    @chain.setter
+    def chain(self, value):
+        """写入：chain（Stage 4 公共化）。"""
+        self._chain = value
+
     @property
     def events(self) -> list[dict]:
         """只读：events（Stage 4 公共化）。"""
         return self._events
+
+    @events.setter
+    def events(self, value):
+        """写入：events（Stage 4 公共化）。"""
+        self._events = value
 
 
     def bundle(self, event: dict) -> str:

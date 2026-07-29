@@ -129,12 +129,22 @@ class ExecutionEngine:
         """只读：algo_orders（Stage 4 公共化）。"""
         return self._algo_orders
 
+    @algo_orders.setter
+    def algo_orders(self, value):
+        """写入：algo_orders（Stage 4 公共化）。"""
+        self._algo_orders = value
+
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
     def broker_scores(self) -> dict[str, float]:
         """只读：broker_scores（Stage 4 公共化）。"""
         return self._broker_scores
+
+    @broker_scores.setter
+    def broker_scores(self, value):
+        """写入：broker_scores（Stage 4 公共化）。"""
+        self._broker_scores = value
 
 
     def execute_order(

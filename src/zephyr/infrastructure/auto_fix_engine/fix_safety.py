@@ -63,6 +63,11 @@ class SafetyGate:
         """只读：enabled（Stage 4 公共化）。"""
         return self._enabled
 
+    @enabled.setter
+    def enabled(self, value):
+        """写入：enabled（Stage 4 公共化）。"""
+        self._enabled = value
+
 
     def check(self, action: FixAction) -> SafetyDecision:
         if not self._enabled:
@@ -97,6 +102,11 @@ class LockGuard:
     def locks_dir(self):
         """只读：locks_dir（Stage 4 公共化）。"""
         return self._locks_dir
+
+    @locks_dir.setter
+    def locks_dir(self, value):
+        """写入：locks_dir（Stage 4 公共化）。"""
+        self._locks_dir = value
 
 
     def is_locked(self, filepath: str) -> tuple[bool, str]:
@@ -149,6 +159,11 @@ class FixValidator:
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def validate_fix(self, target: str) -> ValidationResult:
@@ -247,10 +262,20 @@ class CascadeBreaker:
         """只读：global_threshold（Stage 4 公共化）。"""
         return self._global_threshold
 
+    @global_threshold.setter
+    def global_threshold(self, value):
+        """写入：global_threshold（Stage 4 公共化）。"""
+        self._global_threshold = value
+
     @property
     def module_threshold(self) -> int:
         """只读：module_threshold（Stage 4 公共化）。"""
         return self._module_threshold
+
+    @module_threshold.setter
+    def module_threshold(self, value):
+        """写入：module_threshold（Stage 4 公共化）。"""
+        self._module_threshold = value
 
 
     def record(self, module: str) -> None:
@@ -307,6 +332,11 @@ class SandboxExecutor:
         """只读：base_dir（Stage 4 公共化）。"""
         return self._base_dir
 
+    @base_dir.setter
+    def base_dir(self, value):
+        """写入：base_dir（Stage 4 公共化）。"""
+        self._base_dir = value
+
 
     def execute(self, action: FixAction, fix_fn: Callable[..., object]) -> tuple[bool, str]:
         sandbox_dir = os.path.join(self._base_dir, action.action_id)
@@ -333,6 +363,11 @@ class SecretLeakGuard:
     def patterns(self):
         """只读：patterns（Stage 4 公共化）。"""
         return self._patterns
+
+    @patterns.setter
+    def patterns(self, value):
+        """写入：patterns（Stage 4 公共化）。"""
+        self._patterns = value
 
 
     def scan(self, text: str) -> tuple[bool, list[str]]:

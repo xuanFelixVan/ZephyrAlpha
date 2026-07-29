@@ -28,7 +28,7 @@
 - TestUnrelatedSymbolPasses: 无关符号 → 通过
 
 测试隔离：使用 monkeypatch 改 REGISTRY_YAML 指向 tmp_path 下临时 yaml；
-MagicMock 模拟 gateway._run_git 返回预设 staged 文件列表 + diff content；
+MagicMock 模拟 gateway.run_git 返回预设 staged 文件列表 + diff content；
 不读/不写真实仓库，不依赖真实 registry。
 """
 from __future__ import annotations
@@ -105,7 +105,7 @@ def _make_mock_gateway(staged_files: list[str], file_diffs: dict[str, list[str]]
         result.stdout = "\n".join(diff_lines)
         return result
 
-    gw._run_git.side_effect = _run_git
+    gw.run_git.side_effect = _run_git
     return gw
 
 
@@ -465,14 +465,14 @@ class TestFailOpenGitDiffFails:
         result = MagicMock()
         result.returncode = 1
         result.stdout = ""
-        gw._run_git.return_value = result
+        gw.run_git.return_value = result
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed  # fail-open
 
     def test_git_diff_exception_passes(self, setup_registry):
         gw = MagicMock()
-        gw._run_git.side_effect = RuntimeError("git not found")
+        gw.run_git.side_effect = RuntimeError("git not found")
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed  # fail-open

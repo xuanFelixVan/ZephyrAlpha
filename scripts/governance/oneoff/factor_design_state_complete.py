@@ -180,6 +180,7 @@ def resolve_subdomain(path: str) -> str | None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="因子工厂四图设计态补全")
     parser.add_argument("--dry-run", action="store_true", help="仅预览，不写 DB")
     args = parser.parse_args()

@@ -68,6 +68,11 @@ class AgentCreationPolicy:
         """只读：child_counts（Stage 4 公共化）。"""
         return self._child_counts
 
+    @child_counts.setter
+    def child_counts(self, value):
+        """写入：child_counts（Stage 4 公共化）。"""
+        self._child_counts = value
+
 
     def record_spawn(self, parent_agent_id: str) -> None:
         """记录一次子 agent 创建事件."""

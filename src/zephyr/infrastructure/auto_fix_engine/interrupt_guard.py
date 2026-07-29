@@ -52,23 +52,43 @@ class InterruptGuard:
 
     @property
     def wal_dir(self) -> Path:
-        """只读：WAL 目录路径（Stage 4 公共化）。"""
+        """只读：wal_dir（Stage 4 公共化）。"""
         return self._wal_dir
+
+    @wal_dir.setter
+    def wal_dir(self, value):
+        """写入：wal_dir（Stage 4 公共化）。"""
+        self._wal_dir = value
 
     @property
     def db_path(self) -> str | Path:
-        """只读：治理 DB 路径（Stage 4 公共化）。"""
+        """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
+
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
 
     @property
     def active_fixes(self) -> dict[str, dict[str, Any]]:
-        """只读：当前活跃修复表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：active_fixes（Stage 4 公共化）。"""
         return self._active_fixes
+
+    @active_fixes.setter
+    def active_fixes(self, value):
+        """写入：active_fixes（Stage 4 公共化）。"""
+        self._active_fixes = value
 
     @property
     def handlers_installed(self) -> bool:
-        """只读：信号处理器是否已安装（Stage 4 公共化）。"""
+        """只读：handlers_installed（Stage 4 公共化）。"""
         return self._handlers_installed
+
+    @handlers_installed.setter
+    def handlers_installed(self, value):
+        """写入：handlers_installed（Stage 4 公共化）。"""
+        self._handlers_installed = value
 
     def install_handlers(self) -> None:
         if self._handlers_installed:

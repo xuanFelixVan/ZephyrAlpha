@@ -41,7 +41,11 @@ _FLUSH_INTERVAL_SECONDS: float = 5.0
 _MAX_FILE_BYTES: int = 10 * 1024 * 1024
 
 _log_buffer: deque[dict[str, Any]] = deque()
+log_buffer = _log_buffer  # public alias（Stage 4 公共化）
+
 _buffer_lock: threading.Lock = threading.Lock()
+buffer_lock = _buffer_lock  # public alias（Stage 4 公共化）
+
 _flush_timer: threading.Timer | None = None
 
 

@@ -74,7 +74,7 @@ class TestCanaryRolloutManagerSampling:
         mgr = CanaryRolloutManager()
         mgr.register("PERM-011", [])
         mgr.start_sampling("PERM-011")
-        assert mgr._canaries["PERM-011"].state == CanaryState.SAMPLING
+        assert mgr.canaries["PERM-011"].state == CanaryState.SAMPLING
 
 
 class TestCanaryRolloutManagerPromote:
@@ -113,7 +113,7 @@ class TestCanaryRolloutManagerRollback:
         mgr.register("PERM-030", ["RULE-A"])
         result = mgr.rollback("PERM-030")
         assert result["rolled_back"] is True
-        assert mgr._canaries["PERM-030"].state == CanaryState.ROLLED_BACK
+        assert mgr.canaries["PERM-030"].state == CanaryState.ROLLED_BACK
 
     def test_rollback_not_found(self):
         mgr = CanaryRolloutManager()

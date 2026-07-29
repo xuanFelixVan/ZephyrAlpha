@@ -55,7 +55,7 @@ class _FakeGateway:
         self._commit_status = commit_status
         self._commit_calls: list[tuple] = []
 
-    def _run_git(self, cmd: list[str]):
+    def run_git(self, cmd: list[str]):
         """模拟 git diff --name-only -- docs/03_modules/。"""
         mock = MagicMock()
         mock.returncode = 0
@@ -65,6 +65,10 @@ class _FakeGateway:
         else:
             mock.stdout = ""
         return mock
+
+    def _run_git(self, cmd: list[str]):
+        """向后兼容 thin wrapper（Stage 4 公共化）。"""
+        return self.run_git(cmd)
 
     def _commit_auto(self, session_id: str, files: list[str], msg: str):
         """模拟 _commit_auto 返回。"""
@@ -171,7 +175,7 @@ class TestTrigger:
 class TestReconcile:
     """reconcile 函数行为测试（用 mock 模拟 subprocess/git）。"""
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_subprocess_failure_returns_warn(self, mock_sub, tmp_path):
         """subprocess 失败时应返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(
@@ -184,7 +188,7 @@ class TestReconcile:
         assert "frontmatter sync failed" in result.detail
         assert "rc=1" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_no_md_changes_returns_clean(self, mock_sub, tmp_path):
         """subprocess 成功但无 .md 变更时应返回 clean。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -194,7 +198,7 @@ class TestReconcile:
         assert result.action == "clean"
         assert "no drift" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_md_changes_with_commit_ok_returns_auto_committed(self, mock_sub, tmp_path):
         """subprocess 成功且有 .md 变更、commit 成功时应返回 auto_committed。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -214,7 +218,7 @@ class TestReconcile:
         assert len(files) == 2
         assert "GATE-BLUEPRINT-FRONTMATTER-SYNC" in msg
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_md_changes_with_nothing_to_commit_returns_clean(self, mock_sub, tmp_path):
         """subprocess 成功且有 .md 变更但 commit 返回 NOTHING_TO_COMMIT 时返回 clean。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -228,7 +232,7 @@ class TestReconcile:
         assert result.action == "clean"
         assert "no staged changes" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_md_changes_with_commit_failure_returns_warn(self, mock_sub, tmp_path):
         """subprocess 成功且有 .md 变更但 commit 失败时返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -243,7 +247,7 @@ class TestReconcile:
         assert "auto-commit failed" in result.detail
         assert "COMMIT_FAILED" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_non_md_diff_files_ignored(self, mock_sub, tmp_path):
         """git diff 返回非 .md 文件时不应触发 commit（只关心 frontmatter .md）。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -257,7 +261,7 @@ class TestReconcile:
         assert "no drift" in result.detail
         assert len(gw._commit_calls) == 0
 
-    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_git_diff_failure_returns_warn(self, mock_sub, tmp_path):
         """git diff 命令失败时应返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -269,7 +273,7 @@ class TestReconcile:
             mock.stderr = "git error"
             mock.stdout = ""
             return mock
-        gw._run_git = failing_git
+        gw.run_git = failing_git
         spec = make_blueprint_frontmatter_reconciler(gw)
         result = spec.reconcile(["foo.py"], "sess-test")
         assert result.action == "warn"

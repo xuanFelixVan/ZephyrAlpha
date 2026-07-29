@@ -213,6 +213,39 @@ class MiniQmtBroker(BrokerInterface):
         # 成交回调（受 _lock 保护）
         self._fill_callbacks: list[FillCallback] = []
 
+    @property
+    def lock(self):
+        """只读：lock（Stage 4 公共化）。"""
+        return self._lock
+
+    @lock.setter
+    def lock(self, value):
+        """写入：lock（Stage 4 公共化）。"""
+        self._lock = value
+
+
+    @property
+    def xttrader(self) -> Any:
+        """只读：xttrader（Stage 4 公共化）。"""
+        return self._xttrader
+
+    @xttrader.setter
+    def xttrader(self, value):
+        """写入：xttrader（Stage 4 公共化）。"""
+        self._xttrader = value
+
+
+    @property
+    def connected(self):
+        """只读：connected（Stage 4 公共化）。"""
+        return self._connected
+
+    @connected.setter
+    def connected(self, value):
+        """写入：connected（Stage 4 公共化）。"""
+        self._connected = value
+
+
     # ------------------------------------------------------------------
     # BrokerInterface 实现
     # ------------------------------------------------------------------

@@ -27,7 +27,7 @@ subprocess.run，不调用真实脚本；用 tmp_path 创建真实文件使 _sho
 的 os.path.isfile 与 checker_path.is_file() 通过。触发条件=staged 文件含
 docs/01_policies_and_standards/ 下规则文件或 rule_catalog_registry.yaml。
 
-测试隔离：MagicMock 模拟 gateway._run_git + monkeypatch subprocess.run，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git + monkeypatch subprocess.run，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def _make_gateway(project_root, toplevel=None, toplevel_fails=False):
             return _MockResult(0, toplevel or str(project_root))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

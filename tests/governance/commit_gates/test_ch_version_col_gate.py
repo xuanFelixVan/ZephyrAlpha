@@ -23,7 +23,7 @@
   - git diff 失败 → fail-open
   - 空 staged → 放行
 
-测试隔离：MagicMock 模拟 gateway._run_git，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git，不读/不写真实仓库。
 """
 from __future__ import annotations
 
@@ -77,7 +77,7 @@ def _make_gateway(staged_files: list[str], added_lines: dict[str, list[str]]):
             return _MockResult(returncode=0, stdout="")
         return _MockResult(returncode=0, stdout="")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 
@@ -210,7 +210,7 @@ class TestGatewayIntegration:
                 return _MockResult(returncode=1, stdout="")
             return _MockResult(returncode=0, stdout="")
 
-        gw._run_git = _run_git
+        gw.run_git = _run_git
         passed, msg = make_ch_version_col_gate().check(gw, [])
         assert passed
         assert msg == ""

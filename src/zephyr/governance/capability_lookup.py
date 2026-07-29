@@ -382,9 +382,36 @@ class CapabilityLookup:
         self._loaded = True
 
     @staticmethod
-    def parse_header_from_text(text, rel) -> HeaderInfo:
-        """公共接口：parse_header_from_text（Stage 4 公共化，委托到 _parse_header_from_text）。"""
-        return _parse_header_from_text(text, rel)
+    def parse_header_from_text(text: str, rel: str) -> HeaderInfo:
+        '解析文本头部（核心逻辑，供 _parse_header 和 git show 输出共用）。\n\n        与 _parse_header 的区别：输入是已加载的文本字符串，适用于\n        - 磁盘文件（_parse_header 读文件后调用本方法）\n        - git show {commit}^:{path} 输出（_git_show_header 调用本方法）\n        '
+        info = HeaderInfo(path=rel)
+        lines = text.splitlines()[:HEADER_SCAN_LIMIT]
+        in_docstring = False
+        docstring_collected: list[str] = []
+        docstring_quote: str = ''
+        for line in lines:
+            stripped = line.rstrip('\n')
+            if (m := _RE_MODULE.match(stripped)):
+                info.module_path = m.group(1).strip()
+                continue
+            if (m := _RE_BLUEPRINT.match(stripped)):
+                info.blueprint_id = m.group(1).strip()
+                continue
+            if (m := _RE_DOMAIN.match(stripped)):
+                info.domain = m.group(1).strip()
+                continue
+            if (m := _RE_MATURITY.match(stripped)):
+                info.maturity = m.group(1).strip()
+                continue
+            if (m := _RE_MODULE_ID.search(stripped)):
+                info.module_id = m.group(1).strip()
+                continue
+            stop_loop, in_docstring, docstring_quote = _scan_header_docstring_step(stripped, in_docstring, docstring_quote, docstring_collected, info)
+            if stop_loop:
+                break
+        if docstring_collected and (not info.docstring):
+            info.docstring = docstring_collected[0]
+        return info
 
 
     # ---- 加载 + 扫描 ----
@@ -470,44 +497,8 @@ class CapabilityLookup:
 
     @staticmethod
     def _parse_header_from_text(text: str, rel: str) -> HeaderInfo:
-        """解析文本头部（核心逻辑，供 _parse_header 和 git show 输出共用）。
-
-        与 _parse_header 的区别：输入是已加载的文本字符串，适用于
-        - 磁盘文件（_parse_header 读文件后调用本方法）
-        - git show {commit}^:{path} 输出（_git_show_header 调用本方法）
-        """
-        info = HeaderInfo(path=rel)
-        lines = text.splitlines()[:HEADER_SCAN_LIMIT]
-        in_docstring = False
-        docstring_collected: list[str] = []
-        docstring_quote: str = ""
-        for line in lines:
-            stripped = line.rstrip("\n")
-            # 头部字段提取
-            if m := _RE_MODULE.match(stripped):
-                info.module_path = m.group(1).strip()
-                continue
-            if m := _RE_BLUEPRINT.match(stripped):
-                info.blueprint_id = m.group(1).strip()
-                continue
-            if m := _RE_DOMAIN.match(stripped):
-                info.domain = m.group(1).strip()
-                continue
-            if m := _RE_MATURITY.match(stripped):
-                info.maturity = m.group(1).strip()
-                continue
-            if m := _RE_MODULE_ID.search(stripped):
-                info.module_id = m.group(1).strip()
-                continue
-            # docstring 首行提取（三引号后第一行非空内容）
-            stop_loop, in_docstring, docstring_quote = _scan_header_docstring_step(
-                stripped, in_docstring, docstring_quote, docstring_collected, info
-            )
-            if stop_loop:
-                break
-        if docstring_collected and not info.docstring:
-            info.docstring = docstring_collected[0]
-        return info
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return CapabilityLookup.parse_header_from_text(text, rel)
 
     # ---- 派生逻辑：canonical + duplicates ----
 

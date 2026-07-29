@@ -60,13 +60,13 @@ class TestMemoryBank:
 
     def test_validate_filename_invalid(self):
         with pytest.raises(ValueError, match="Invalid bank file"):
-            MemoryBank._validate_filename("nonexistent_file")
+            MemoryBank.validate_filename("nonexistent_file")
 
     def test_validate_filename_valid_without_extension(self):
-        MemoryBank._validate_filename("decision_log")
+        MemoryBank.validate_filename("decision_log")
 
     def test_validate_filename_valid_with_extension(self):
-        MemoryBank._validate_filename("decision_log.md")
+        MemoryBank.validate_filename("decision_log.md")
 
     def test_root_dir_property(self, tmp_path):
         bank = MemoryBank(root_dir=str(tmp_path / "mb"))

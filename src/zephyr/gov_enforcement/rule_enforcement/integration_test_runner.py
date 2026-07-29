@@ -184,10 +184,20 @@ class IntegrationTestRunner:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
     @property
     def result_dir(self):
         """只读：result_dir（Stage 4 公共化）。"""
         return self._result_dir
+
+    @result_dir.setter
+    def result_dir(self, value):
+        """写入：result_dir（Stage 4 公共化）。"""
+        self._result_dir = value
 
 
     # ── 旧 API 兼容（CITier 评估）──

@@ -48,12 +48,12 @@ class TestAutoMaintenance:
         am.register_rule("R-001")
         am.record_trigger("R-001")
         am.record_trigger("R-001")
-        assert am._rules["R-001"].trigger_count == 2
+        assert am.rules["R-001"].trigger_count == 2
 
     def test_record_trigger_nonexistent(self):
         am = AutoMaintenance()
         am.record_trigger("R-999")
-        assert "R-999" not in am._rules
+        assert "R-999" not in am.rules
 
     def test_detect_zombies_none(self):
         am = AutoMaintenance()

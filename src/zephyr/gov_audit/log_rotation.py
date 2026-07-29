@@ -158,17 +158,29 @@ class LogRotationManager:
         """只读：max_rotated_days（Stage 4 公共化）。"""
         return self._max_rotated_days
 
+    @max_rotated_days.setter
+    def max_rotated_days(self, value):
+        """写入：max_rotated_days（Stage 4 公共化）。"""
+        self._max_rotated_days = value
+
 
     @property
     def compress_rotated(self):
         """只读：compress_rotated（Stage 4 公共化）。"""
         return self._compress_rotated
 
+    @compress_rotated.setter
+    def compress_rotated(self, value):
+        """写入：compress_rotated（Stage 4 公共化）。"""
+        self._compress_rotated = value
+
 
     @staticmethod
-    def extract_date(filename) -> str | None:
-        """公共接口：extract_date（Stage 4 公共化，委托到 _extract_date）。"""
-        return _extract_date(filename)
+    def extract_date(filename: str) -> str | None:
+        '从轮转文件名中提取日期（YYYY-MM-DD），无法提取返回 None。'
+        import re
+        m = re.search('(\\d{4}-\\d{2}-\\d{2})', filename)
+        return m.group(1) if m else None
 
 
     @property
@@ -177,11 +189,8 @@ class LogRotationManager:
 
     @staticmethod
     def _extract_date(filename: str) -> str | None:
-        """从轮转文件名中提取日期（YYYY-MM-DD），无法提取返回 None。"""
-        import re
-
-        m = re.search(r"(\d{4}-\d{2}-\d{2})", filename)
-        return m.group(1) if m else None
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return LogRotationManager.extract_date(filename)
 
     def rotate(self, force: bool = False) -> RotationRecord | None:
         """轮转活跃日志。返回 RotationRecord 或 None。"""

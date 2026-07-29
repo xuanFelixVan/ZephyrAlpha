@@ -125,6 +125,11 @@ class GenesisManager:
         """只读：system_id（Stage 4 公共化）。"""
         return self._system_id
 
+    @system_id.setter
+    def system_id(self, value):
+        """写入：system_id（Stage 4 公共化）。"""
+        self._system_id = value
+
 
     @property
     def data_dir(self) -> Path:

@@ -99,20 +99,40 @@ class TrendAnalyzer:
         """只读：archive_dir（Stage 4 公共化）。"""
         return self._archive_dir
 
+    @archive_dir.setter
+    def archive_dir(self, value):
+        """写入：archive_dir（Stage 4 公共化）。"""
+        self._archive_dir = value
+
     @property
     def db_dir(self):
         """只读：db_dir（Stage 4 公共化）。"""
         return self._db_dir
+
+    @db_dir.setter
+    def db_dir(self, value):
+        """写入：db_dir（Stage 4 公共化）。"""
+        self._db_dir = value
 
     @property
     def db_path(self):
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
 
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def compute_metrics(self, module_id: str) -> TrendMetrics:

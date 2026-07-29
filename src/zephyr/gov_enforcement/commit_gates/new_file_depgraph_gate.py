@@ -127,7 +127,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
         git diff 失败/异常时返回 None（fail-open 检测器失效）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:

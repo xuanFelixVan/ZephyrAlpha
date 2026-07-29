@@ -106,15 +106,30 @@ class ScanMutex:
         """只读：lock_dir（Stage 4 公共化）。"""
         return self._lock_dir
 
+    @lock_dir.setter
+    def lock_dir(self, value):
+        """写入：lock_dir（Stage 4 公共化）。"""
+        self._lock_dir = value
+
     @property
     def lock_path(self):
         """只读：lock_path（Stage 4 公共化）。"""
         return self._lock_path
 
+    @lock_path.setter
+    def lock_path(self, value):
+        """写入：lock_path（Stage 4 公共化）。"""
+        self._lock_path = value
+
     @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def is_locked(self) -> bool:

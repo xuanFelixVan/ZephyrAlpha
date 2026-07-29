@@ -35,7 +35,11 @@ from datetime import UTC, datetime
 from typing import Any
 
 _ring_lock = threading.Lock()
+ring_lock = _ring_lock  # public alias（Stage 4 公共化）
+
 _event_ring: list[dict[str, Any]] = []
+event_ring = _event_ring  # public alias（Stage 4 公共化）
+
 _EVENT_RING_MAX = 1000
 
 

@@ -387,18 +387,18 @@ class TestBaseMCPServer:
         body = '{"jsonrpc":"2.0","id":1,"method":"ping"}'
         cl_header = f"Content-Length: {len(body)}\r\n\r\n"
         inp = StringIO(cl_header + body)
-        result, used_cl = BaseMCPServer._read_message(inp)
+        result, used_cl = BaseMCPServer.read_message(inp)
         assert used_cl is True
         assert result == body
 
     def test_legacy_line_read(self):
         line = '{"jsonrpc":"2.0","id":1,"method":"ping"}'
         inp = StringIO(line + "\n")
-        result, used_cl = BaseMCPServer._read_message(inp)
+        result, used_cl = BaseMCPServer.read_message(inp)
         assert used_cl is False
         assert result == line
 
     def test_read_message_eof(self):
         inp = StringIO("")
-        result, used_cl = BaseMCPServer._read_message(inp)
+        result, used_cl = BaseMCPServer.read_message(inp)
         assert result is None

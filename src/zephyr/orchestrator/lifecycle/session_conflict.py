@@ -28,6 +28,11 @@ class SessionConflictGuard:
         """只读：active_sessions（Stage 4 公共化）。"""
         return self._active_sessions
 
+    @active_sessions.setter
+    def active_sessions(self, value):
+        """写入：active_sessions（Stage 4 公共化）。"""
+        self._active_sessions = value
+
 
     def register_session(self, session_id: str, files: list[str]) -> bool:
         for f in files:

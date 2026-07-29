@@ -27,7 +27,7 @@ AGENTS.md §11.1.1 时间戳约定
 - TestFailOpenGitDiffFails: git diff 失败/异常 → 通过（fail-open）
 - TestMultipleViolationsAllReported: 多违规全报告
 
-测试隔离：MagicMock 模拟 gateway._run_git 返回预设 staged 文件列表 + diff content；
+测试隔离：MagicMock 模拟 gateway.run_git 返回预设 staged 文件列表 + diff content；
 不读/不写真实仓库，不依赖真实 registry。
 """
 from __future__ import annotations
@@ -121,7 +121,7 @@ def _make_mock_gateway(
         result.stdout = "\n".join(diff_lines)
         return result
 
-    gw._run_git.side_effect = _run_git
+    gw.run_git.side_effect = _run_git
     return gw
 
 

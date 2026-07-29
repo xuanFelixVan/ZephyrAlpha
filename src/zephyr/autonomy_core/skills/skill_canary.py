@@ -36,8 +36,13 @@ class SkillCanary:
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     @property
     def canary(self) -> dict[str, dict[str, Any]]:
-        """只读：金丝雀部署表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：canary（Stage 4 公共化）。"""
         return self._canary
+
+    @canary.setter
+    def canary(self, value):
+        """写入：canary（Stage 4 公共化）。"""
+        self._canary = value
 
     def deploy_canary(self, skill_id: str, version: str) -> dict[str, Any]:
         e = {

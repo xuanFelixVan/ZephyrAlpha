@@ -89,11 +89,21 @@ class IncrementalScanner:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     @property
     def mapping(self):
         """只读：mapping（Stage 4 公共化）。"""
         return self._mapping
+
+    @mapping.setter
+    def mapping(self, value):
+        """写入：mapping（Stage 4 公共化）。"""
+        self._mapping = value
 
 
     def extract_module(self, filepath) -> str:

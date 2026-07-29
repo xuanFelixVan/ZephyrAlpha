@@ -135,6 +135,17 @@ class WalWriter:
         self._total_added = 0
         self._segment_count = 0
 
+    @property
+    def drain_thread(self) -> threading.Thread | None:
+        """只读：drain_thread（Stage 4 公共化）。"""
+        return self._drain_thread
+
+    @drain_thread.setter
+    def drain_thread(self, value):
+        """写入：drain_thread（Stage 4 公共化）。"""
+        self._drain_thread = value
+
+
     def add(self, result: "FetchResult") -> bool:
         """添加 FetchResult 到当前段。达阈值时触发段落盘。
 

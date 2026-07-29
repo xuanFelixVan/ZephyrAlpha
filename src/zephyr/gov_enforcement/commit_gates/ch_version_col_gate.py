@@ -74,7 +74,7 @@ def _get_staged_scan_files(gateway) -> list[str]:
     fail-open：git diff 失败/异常时返回空列表。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -96,7 +96,7 @@ def _get_added_lines_text(gateway, rel_path: str) -> list[str]:
     fail-open：git diff 失败/异常时返回空列表。
     """
     try:
-        diff_content = gateway._run_git(
+        diff_content = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path]
         )
         if diff_content.returncode != 0:

@@ -53,10 +53,20 @@ class SkillsBenchRunner:
         """只读：history（Stage 4 公共化）。"""
         return self._history
 
+    @history.setter
+    def history(self, value):
+        """写入：history（Stage 4 公共化）。"""
+        self._history = value
+
     @property
     def history_path(self):
         """只读：history_path（Stage 4 公共化）。"""
         return self._history_path
+
+    @history_path.setter
+    def history_path(self, value):
+        """写入：history_path（Stage 4 公共化）。"""
+        self._history_path = value
 
 
     def _load_history(self) -> dict[str, list[dict[str, Any]]]:
@@ -204,10 +214,20 @@ class SkillEfficacyCalibrator:
         """只读：bench_results（Stage 4 公共化）。"""
         return self._bench_results
 
+    @bench_results.setter
+    def bench_results(self, value):
+        """写入：bench_results（Stage 4 公共化）。"""
+        self._bench_results = value
+
     @property
     def runner(self):
         """只读：runner（Stage 4 公共化）。"""
         return self._runner
+
+    @runner.setter
+    def runner(self, value):
+        """写入：runner（Stage 4 公共化）。"""
+        self._runner = value
 
 
     def run_benchmark(self, skill_id: str, check_items: list[str] | None = None) -> dict[str, Any]:

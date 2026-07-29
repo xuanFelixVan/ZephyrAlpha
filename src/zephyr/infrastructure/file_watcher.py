@@ -87,6 +87,11 @@ class FileWatcher:
         """只读：on_change（Stage 4 公共化）。"""
         return self._on_change
 
+    @on_change.setter
+    def on_change(self, value):
+        """写入：on_change（Stage 4 公共化）。"""
+        self._on_change = value
+
 
     def start(self) -> None:
         if self._started:

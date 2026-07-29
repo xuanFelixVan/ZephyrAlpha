@@ -144,7 +144,7 @@ class TestHealthCheckNonBlocking:
             ],
         }
         with patch(
-            "zephyr.gov_enforcement.rule_bridge.session_worktree._run_startup_health_check",
+            "zephyr.gov_enforcement.rule_bridge.session_worktree.run_startup_health_check",
             return_value=failed_hc,
         ):
             result = session_worktree_start(

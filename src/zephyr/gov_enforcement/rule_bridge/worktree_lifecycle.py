@@ -134,6 +134,11 @@ class WorktreeLifecycle:
         """只读：config_path（Stage 4 公共化）。"""
         return self._config_path
 
+    @config_path.setter
+    def config_path(self, value):
+        """写入：config_path（Stage 4 公共化）。"""
+        self._config_path = value
+
 
     def _load_config(self) -> None:
         try:

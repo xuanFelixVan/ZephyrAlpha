@@ -92,7 +92,7 @@ def _collect_staged_py_files(gateway) -> list[str] | None:
         相对路径列表；git diff 失败/异常返回 None（fail-open）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -133,7 +133,7 @@ def _scan_file_violations(gateway, py_file: str) -> list[str]:
 
     # 解析 diff，获取 added 行及行号
     try:
-        file_diff = gateway._run_git(
+        file_diff = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断

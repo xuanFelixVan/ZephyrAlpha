@@ -238,18 +238,33 @@ class MCPProcessPool:
     # ----- Stage 4 公共化：属性 getter -----
     @property
     def idle_timeout_s(self) -> float:
-        """Stage 4 公共化。"""
+        """只读：idle_timeout_s（Stage 4 公共化）。"""
         return self._idle_timeout_s
+
+    @idle_timeout_s.setter
+    def idle_timeout_s(self, value):
+        """写入：idle_timeout_s（Stage 4 公共化）。"""
+        self._idle_timeout_s = value
 
     @property
     def lock(self) -> threading.Lock:
-        """Stage 4 公共化。"""
+        """只读：lock（Stage 4 公共化）。"""
         return self._lock
+
+    @lock.setter
+    def lock(self, value):
+        """写入：lock（Stage 4 公共化）。"""
+        self._lock = value
 
     @property
     def pool(self) -> dict[str, PooledProcess]:
-        """Stage 4 公共化。"""
+        """只读：pool（Stage 4 公共化）。"""
         return self._pool
+
+    @pool.setter
+    def pool(self, value):
+        """写入：pool（Stage 4 公共化）。"""
+        self._pool = value
 
     def get_or_create(
         self,

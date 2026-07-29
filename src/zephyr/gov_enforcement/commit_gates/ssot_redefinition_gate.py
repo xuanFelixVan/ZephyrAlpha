@@ -73,7 +73,7 @@ def _is_ssot_symbol(alias: str) -> bool:
 def _get_staged_files(gateway) -> list[str] | None:
     """获取 staged added/modified 文件列表。None=fail-open(git diff 不可达)。"""
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -176,7 +176,7 @@ def _compile_define_re(symbols) -> re.Pattern:
 def _scan_file_violations(gateway, py_file: str, symbol_to_canonical: dict[str, str], define_re: re.Pattern) -> list[str]:
     """扫描单个 staged .py 文件的 added 行，返回违规列表。"""
     try:
-        file_diff = gateway._run_git(
+        file_diff = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

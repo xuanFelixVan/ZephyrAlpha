@@ -64,6 +64,10 @@ from zephyr.governance.audit.reconciliation_registry import (
     _check_recent_blocks,
     _check_recent_critical_warns,
 )
+check_recent_critical_warns = _check_recent_critical_warns  # public alias（Stage 4 公共化）
+
+check_recent_blocks = _check_recent_blocks  # public alias（Stage 4 公共化）
+
 
 logger = logging.getLogger(__name__)
 

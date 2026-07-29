@@ -407,5 +407,5 @@ def _make_gateway(
         return _MockResult(1, "")
 
     gw = MagicMock()
-    gw._run_git = MagicMock(side_effect=_run_git)
+    gw.run_git = MagicMock(side_effect=_run_git)
     return gw

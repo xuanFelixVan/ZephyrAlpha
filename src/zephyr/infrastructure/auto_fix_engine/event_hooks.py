@@ -58,10 +58,20 @@ class EventHooks:
         """只读：event_log（Stage 4 公共化）。"""
         return self._event_log
 
+    @event_log.setter
+    def event_log(self, value):
+        """写入：event_log（Stage 4 公共化）。"""
+        self._event_log = value
+
     @property
     def hooks(self) -> dict[FixEvent, list[Callable[..., None]]]:
         """只读：hooks（Stage 4 公共化）。"""
         return self._hooks
+
+    @hooks.setter
+    def hooks(self, value):
+        """写入：hooks（Stage 4 公共化）。"""
+        self._hooks = value
 
 
     def register(self, event: FixEvent, callback: Callable[..., None]) -> None:

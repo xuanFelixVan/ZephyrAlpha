@@ -23,13 +23,13 @@ ab = pytest.importorskip(
 
 @pytest.fixture(autouse=True)
 def _reset_global_state():
-    ab._module_registry.clear()
-    ab._global_telemetry = None
-    ab._bootstrap_time = ""
+    ab.module_registry.clear()
+    ab.global_telemetry = None
+    ab.bootstrap_time = ""
     yield
-    ab._module_registry.clear()
-    ab._global_telemetry = None
-    ab._bootstrap_time = ""
+    ab.module_registry.clear()
+    ab.global_telemetry = None
+    ab.bootstrap_time = ""
 
 
 class TestRegisterModule:

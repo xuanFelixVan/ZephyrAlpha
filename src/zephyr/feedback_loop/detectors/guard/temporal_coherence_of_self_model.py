@@ -40,9 +40,12 @@ class TemporalCoherenceOfSelfModel:
     snapshots: list[SelfModelSnapshot] = field(default_factory=list)
 
     @staticmethod
-    def compute_dict_similarity(a, b) -> float:
-        """公共接口：compute_dict_similarity（Stage 4 公共化，委托到 _compute_dict_similarity）。"""
-        return _compute_dict_similarity(a, b)
+    def compute_dict_similarity(a: dict[str, float], b: dict[str, float]) -> float:
+        keys = set(a.keys()) | set(b.keys())
+        if not keys:
+            return 1.0
+        diffs = [abs(a.get(k, 0.0) - b.get(k, 0.0)) / max(abs(a.get(k, 0.0)), abs(b.get(k, 0.0)), 1e-06) for k in keys]
+        return 1.0 - sum(diffs) / len(keys)
 
     max_snapshots: int = 30
     coherence_threshold: float = 0.7
@@ -100,8 +103,5 @@ class TemporalCoherenceOfSelfModel:
 
     @staticmethod
     def _compute_dict_similarity(a: dict[str, float], b: dict[str, float]) -> float:
-        keys = set(a.keys()) | set(b.keys())
-        if not keys:
-            return 1.0
-        diffs = [abs(a.get(k, 0.0) - b.get(k, 0.0)) / max(abs(a.get(k, 0.0)), abs(b.get(k, 0.0)), 1e-6) for k in keys]
-        return 1.0 - sum(diffs) / len(keys)
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return TemporalCoherenceOfSelfModel.compute_dict_similarity(a, b)

@@ -83,6 +83,11 @@ class StartupSequencer:
         """只读：states（Stage 4 公共化）。"""
         return self._states
 
+    @states.setter
+    def states(self, value):
+        """写入：states（Stage 4 公共化）。"""
+        self._states = value
+
 
     def _init_states(self) -> None:
         for layer in STARTUP_ORDER:

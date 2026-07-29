@@ -23,11 +23,11 @@ tb = pytest.importorskip(
 
 @pytest.fixture(autouse=True)
 def _reset_bridge():
-    tb._span_context_getter = None
-    tb._record_writer = None
+    tb.span_context_getter = None
+    tb.record_writer = None
     yield
-    tb._span_context_getter = None
-    tb._record_writer = None
+    tb.span_context_getter = None
+    tb.record_writer = None
 
 
 class TestSpanContextGetter:

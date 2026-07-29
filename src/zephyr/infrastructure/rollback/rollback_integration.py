@@ -133,15 +133,43 @@ class RollbackIntegration:
         self._last_checkpoint_time: datetime | None = None
 
     @property
+    def last_checkpoint_time(self) -> datetime | None:
+        """只读：last_checkpoint_time（Stage 4 公共化）。"""
+        return self._last_checkpoint_time
+
+    @last_checkpoint_time.setter
+    def last_checkpoint_time(self, value):
+        """写入：last_checkpoint_time（Stage 4 公共化）。"""
+        self._last_checkpoint_time = value
+
+
+    @property
+    def notify_state(self):
+        """只读：notify_state（Stage 4 公共化）。"""
+        return self._notify_state
+
+    @notify_state.setter
+    def notify_state(self, value):
+        """写入：notify_state（Stage 4 公共化）。"""
+        self._notify_state = value
+
+
+    @property
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     @staticmethod
+    @staticmethod
     def three_way_merge(base, incoming) -> dict[str, Any]:
-        """公共接口：three_way_merge（Stage 4 公共化，委托到 _three_way_merge）。"""
-        return _three_way_merge(base, incoming)
+        """公共接口：three_way_merge（Stage 4 公共化）。"""
+        return __class__._three_way_merge(base, incoming)
 
 
     def acl_check_to_target(self, session_id: str, target: str, owner_session_id: str | None = None) -> AclCheckResult:

@@ -103,6 +103,11 @@ class AutoEvolutionEngine:
         """只读：consecutive_ka（Stage 4 公共化）。"""
         return self._consecutive_ka
 
+    @consecutive_ka.setter
+    def consecutive_ka(self, value):
+        """写入：consecutive_ka（Stage 4 公共化）。"""
+        self._consecutive_ka = value
+
     apply_fn: ApplyFn
     config: AutoEvolutionConfig | None = field(default_factory=AutoEvolutionConfig)
     now: Callable[[], datetime] = field(default_factory=datetime.now)

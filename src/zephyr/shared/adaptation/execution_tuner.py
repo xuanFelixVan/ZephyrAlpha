@@ -63,10 +63,20 @@ class ExecutionTuner:
         """只读：default_params（Stage 4 公共化）。"""
         return self._default_params
 
+    @default_params.setter
+    def default_params(self, value):
+        """写入：default_params（Stage 4 公共化）。"""
+        self._default_params = value
+
     @property
     def history(self) -> list[dict[str, Any]]:
         """只读：history（Stage 4 公共化）。"""
         return self._history
+
+    @history.setter
+    def history(self, value):
+        """写入：history（Stage 4 公共化）。"""
+        self._history = value
 
 
     def tune(self, task_card: dict[str, Any]) -> ExecutionProfile:

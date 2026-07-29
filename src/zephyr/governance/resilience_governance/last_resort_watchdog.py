@@ -33,6 +33,11 @@ class LastResortWatchdog:
         """只读：activated（Stage 4 公共化）。"""
         return self._activated
 
+    @activated.setter
+    def activated(self, value):
+        """写入：activated（Stage 4 公共化）。"""
+        self._activated = value
+
 
     def activate(self) -> None:
         self._activated = True

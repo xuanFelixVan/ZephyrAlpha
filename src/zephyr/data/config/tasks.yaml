@@ -226,18 +226,18 @@ tasks:
     capability: kline_futures
 - task_id: futures_position_incremental
   table: c1_market.futures_position
-  source: miniqmt
-  schedule: daily_capital    # 盘后下载（原 intraday_realtime，2026-07-29 改为盘后）
+  source: akshare
+  schedule: intraday_realtime
   incremental: true
   date_col: trade_date
   dependencies: ["kline_futures_incremental"]
   capability: futures_position
   symbols:
   extra:
-    description: "期货持仓增量（盘后下载当日持仓数据）"
+    description: "期货持仓增量（akshare 各交易所排名表前20名汇总，盘中实时下载）"
 
   fallback_sources:
-  - source: exchange
+  - source: miniqmt
     capability: futures_position
 - task_id: kline_us_daily_incremental
   table: c1_market.kline_us_daily
@@ -1329,14 +1329,14 @@ tasks:
 - task_id: limit_up_down_incremental
   table: c1_market.limit_up_down
   source: akshare
-  schedule: daily_capital    # 盘后下载（原 intraday_realtime，2026-07-29 改为盘后）
+  schedule: intraday_realtime
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: limit_up_down
   symbols:
   extra:
-    description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停，盘后下载当日数据）"
+    description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停）"
 
   fallback_sources:
   - source: exchange
@@ -1546,14 +1546,14 @@ tasks:
 - task_id: hk_kline_incremental
   table: c1_market.hk_kline
   source: miniqmt
-  schedule: daily_capital    # 盘后下载（原 intraday_realtime，2026-07-29 改为盘后）
+  schedule: intraday_realtime
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: hk_kline
-  symbols:         # 需指定港股代码如00700.HK
+  symbols:
   extra:
-    description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK，盘后下载当日K线）"
+    description: "港股日K线增量（miniQMT get_market_data_ex，盘中实时下载）"
 
   fallback_sources:
   - source: akshare

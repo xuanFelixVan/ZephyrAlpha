@@ -92,7 +92,7 @@ def _tokenize(name: str) -> set[str]:
 def _get_staged_new_files(gateway) -> list[str] | None:
     """获取 staged 新增(A) 文件列表。None=fail-loud（warn-only 契约仍 return True）。"""
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:

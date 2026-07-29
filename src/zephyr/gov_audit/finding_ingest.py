@@ -52,6 +52,33 @@ class FindingIngest:
         self._writer_initialized = False
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 MEDIUM）：_get_writer lazy init 线程安全
 
+    def emit_event(self, finding) -> None:
+        """公共接口：emit_event（Stage 4 公共化）。"""
+        return self._emit_event(finding)
+
+
+    @property
+    def writer_initialized(self):
+        """只读：writer_initialized（Stage 4 公共化）。"""
+        return self._writer_initialized
+
+    @writer_initialized.setter
+    def writer_initialized(self, value):
+        """写入：writer_initialized（Stage 4 公共化）。"""
+        self._writer_initialized = value
+
+
+    @property
+    def writer(self) -> AuditWriter | None:
+        """只读：writer（Stage 4 公共化）。"""
+        return self._writer
+
+    @writer.setter
+    def writer(self, value):
+        """写入：writer（Stage 4 公共化）。"""
+        self._writer = value
+
+
     def _get_writer(self) -> object:
         if self._writer_initialized:
             return self._writer

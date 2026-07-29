@@ -68,7 +68,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     staged_content_map = staged_content_map or {}
@@ -101,7 +101,7 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
             return _MockResult(0, diff_output)
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 
@@ -488,7 +488,7 @@ class TestGatewayIntegration:
                 ))
             return _MockResult(0, "")
 
-        gw._run_git = _run_git
+        gw.run_git = _run_git
         gate = make_bare_subprocess_gate()
         passed, detail = gate.check(gw, ["src/foo.py"])
         assert passed is True

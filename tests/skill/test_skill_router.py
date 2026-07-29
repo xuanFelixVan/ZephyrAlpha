@@ -138,29 +138,29 @@ class TestListRegisteredSkills:
 
 class TestMatchTaskRoutingFallback:
     def test_matches_mcp_keyword(self, fallback_router):
-        result = fallback_router._match_task_routing("set up mcp server")
+        result = fallback_router.match_task_routing("set up mcp server")
         assert result is not None
         assert result[0] == "mcp-specialist"
 
     def test_matches_knowledge_keyword(self, fallback_router):
-        result = fallback_router._match_task_routing("update knowledge base")
+        result = fallback_router.match_task_routing("update knowledge base")
         assert result is not None
         assert result[0] == "knowledge-specialist"
 
     def test_no_match_for_unrelated(self, fallback_router):
-        result = fallback_router._match_task_routing("paint a picture")
+        result = fallback_router.match_task_routing("paint a picture")
         assert result is None
 
     def test_empty_string_no_match(self, fallback_router):
-        result = fallback_router._match_task_routing("")
+        result = fallback_router.match_task_routing("")
         assert result is None
 
 
 class TestMatchDomainFallback:
     def test_returns_domain_on_match(self, fallback_router):
-        result = fallback_router._match_domain("run database migration")
+        result = fallback_router.match_domain("run database migration")
         assert result == "database-specialist"
 
     def test_returns_none_on_no_match(self, fallback_router):
-        result = fallback_router._match_domain("eat lunch")
+        result = fallback_router.match_domain("eat lunch")
         assert result is None

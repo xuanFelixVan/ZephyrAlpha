@@ -167,6 +167,11 @@ class DOSLauncher:
         """只读：cache（Stage 4 公共化）。"""
         return self._cache
 
+    @cache.setter
+    def cache(self, value):
+        """写入：cache（Stage 4 公共化）。"""
+        self._cache = value
+
 
     def load_directive(self, directive_id: str) -> DirectiveInfo | None:
         if directive_id in self._cache:

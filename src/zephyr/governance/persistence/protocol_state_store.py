@@ -39,6 +39,11 @@ class ProtocolStateStore:
         """只读：state（Stage 4 公共化）。"""
         return self._state
 
+    @state.setter
+    def state(self, value):
+        """写入：state（Stage 4 公共化）。"""
+        self._state = value
+
 
     def save(self) -> str:
         snapshot = {"state": self._state, "timestamp": datetime.now(UTC).isoformat()}

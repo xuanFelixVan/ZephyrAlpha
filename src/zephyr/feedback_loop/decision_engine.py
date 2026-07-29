@@ -107,6 +107,11 @@ class DecisionEngine:
         """只读：adapter（Stage 4 公共化）。"""
         return self._adapter
 
+    @adapter.setter
+    def adapter(self, value):
+        """写入：adapter（Stage 4 公共化）。"""
+        self._adapter = value
+
     @property
     def pending(self) -> list[ScheduleAdjustment]:
         """只读：pending（Stage 4 公共化）。"""

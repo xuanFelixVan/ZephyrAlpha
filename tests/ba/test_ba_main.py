@@ -148,7 +148,7 @@ class TestMainParser:
     def test_no_command_runs_status(self):
         with (
             patch.object(sys, "argv", ["__main__.py"]),
-            patch("zephyr.autonomy_core.__main__._cmd_status", return_value=0) as mock,
+            patch("zephyr.autonomy_core.__main__.cmd_status", return_value=0) as mock,
         ):
             result = main()
             mock.assert_called_once()
@@ -156,7 +156,7 @@ class TestMainParser:
     def test_scan_command(self):
         with (
             patch.object(sys, "argv", ["__main__.py", "scan"]),
-            patch("zephyr.autonomy_core.__main__._cmd_scan", return_value=0) as mock,
+            patch("zephyr.autonomy_core.__main__.cmd_scan", return_value=0) as mock,
         ):
             result = main()
             mock.assert_called_once()
@@ -164,7 +164,7 @@ class TestMainParser:
     def test_self_test_command(self):
         with (
             patch.object(sys, "argv", ["__main__.py", "self-test"]),
-            patch("zephyr.autonomy_core.__main__._cmd_self_test", return_value=0) as mock,
+            patch("zephyr.autonomy_core.__main__.cmd_self_test", return_value=0) as mock,
         ):
             result = main()
             mock.assert_called_once()
@@ -172,7 +172,7 @@ class TestMainParser:
     def test_budget_command(self):
         with (
             patch.object(sys, "argv", ["__main__.py", "budget"]),
-            patch("zephyr.autonomy_core.__main__._cmd_budget", return_value=0) as mock,
+            patch("zephyr.autonomy_core.__main__.cmd_budget", return_value=0) as mock,
         ):
             result = main()
             mock.assert_called_once()
@@ -180,7 +180,7 @@ class TestMainParser:
     def test_list_command(self):
         with (
             patch.object(sys, "argv", ["__main__.py", "list"]),
-            patch("zephyr.autonomy_core.__main__._cmd_list", return_value=0) as mock,
+            patch("zephyr.autonomy_core.__main__.cmd_list", return_value=0) as mock,
         ):
             result = main()
             mock.assert_called_once()
@@ -188,7 +188,7 @@ class TestMainParser:
     def test_status_command(self):
         with (
             patch.object(sys, "argv", ["__main__.py", "status"]),
-            patch("zephyr.autonomy_core.__main__._cmd_status", return_value=0) as mock,
+            patch("zephyr.autonomy_core.__main__.cmd_status", return_value=0) as mock,
         ):
             result = main()
             mock.assert_called_once()

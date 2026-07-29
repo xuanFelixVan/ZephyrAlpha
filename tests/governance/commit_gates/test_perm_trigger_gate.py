@@ -22,7 +22,7 @@
   - fail-open on git diff 失败/异常
   - fail-open on AST 解析失败（SyntaxError）
 
-测试隔离：MagicMock 模拟 gateway._run_git，tmp_path 创建真实 .py 文件。
+测试隔离：MagicMock 模拟 gateway.run_git，tmp_path 创建真实 .py 文件。
 """
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ def _make_gateway(tmp_path, staged_files=None, added_files=None,
     if diff_raises:
         def _raise(*a, **k):
             raise RuntimeError("git not found")
-        gw._run_git = _raise
+        gw.run_git = _raise
         return gw
 
     if added_files is None:
@@ -82,7 +82,7 @@ def _make_gateway(tmp_path, staged_files=None, added_files=None,
             return _MockResult(0, str(tmp_path))
         return _MockResult(0, "")
 
-    gw._run_git = _run_git
+    gw.run_git = _run_git
     return gw
 
 

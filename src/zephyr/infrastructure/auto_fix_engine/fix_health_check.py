@@ -33,10 +33,20 @@ class FixHealthCheck:
     def __init__(self, db_path: str | Path = DB_PATH) -> None:
         self._db_path = db_path
 
+    def check_config(self) -> bool:
+        """公共接口：check_config（Stage 4 公共化）。"""
+        return self._check_config()
+
+
     @property
     def db_path(self):
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
+
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
 
 
     def check_db(self) -> bool:

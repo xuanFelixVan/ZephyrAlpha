@@ -49,7 +49,7 @@ class CrossAgentConflictDetector:
         self._project_root = project_root or Path.cwd()
 
     def run_git(self, args) -> str:
-        """公共接口：run_git（Stage 4 公共化）。"""
+        """公共接口：run_git（Stage 4 公共化，forward 至 _run_git 实现）。"""
         return self._run_git(args)
 
 
@@ -57,6 +57,11 @@ class CrossAgentConflictDetector:
     def project_root(self):
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
+
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
 
 
     def get_most_recent_author(self, file_path) -> str:
@@ -107,15 +112,15 @@ class CrossAgentConflictDetector:
         for report in reports:
             if report.has_conflict:
                 try:
-                    self._run_git(["add", report.file_path])
+                    self.run_git(["add", report.file_path])
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in cross_agent_conflict_detector", exc_info=True)
         return reports
 
     def _get_all_uncommitted_files(self) -> list[str]:
         try:
-            mod = self._run_git(["diff", "--name-only", "HEAD"])
-            staged = self._run_git(["diff", "--cached", "--name-only"])
+            mod = self.run_git(["diff", "--name-only", "HEAD"])
+            staged = self.run_git(["diff", "--cached", "--name-only"])
             files = [f for f in mod.split("\n") if f] + [f for f in staged.split("\n") if f]
             return list(set(files))
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -123,7 +128,7 @@ class CrossAgentConflictDetector:
 
     def _get_most_recent_author(self, file_path: str) -> str:
         try:
-            result = self._run_git(["log", "-1", "--format=%ae", "--", file_path])
+            result = self.run_git(["log", "-1", "--format=%ae", "--", file_path])
             return result.strip()
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""

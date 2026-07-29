@@ -91,10 +91,20 @@ class OrderManager:
         """只读：fill_callbacks（Stage 4 公共化）。"""
         return self._fill_callbacks
 
+    @fill_callbacks.setter
+    def fill_callbacks(self, value):
+        """写入：fill_callbacks（Stage 4 公共化）。"""
+        self._fill_callbacks = value
+
     @property
     def orders(self) -> dict[str, Order]:
         """只读：orders（Stage 4 公共化）。"""
         return self._orders
+
+    @orders.setter
+    def orders(self, value):
+        """写入：orders（Stage 4 公共化）。"""
+        self._orders = value
 
 
     def register_broker(self, broker_id: str, broker: BrokerInterface) -> None:

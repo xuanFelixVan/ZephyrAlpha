@@ -118,17 +118,32 @@ class HealthMonitor:
         """只读：running（Stage 4 公共化）。"""
         return self._running
 
+    @running.setter
+    def running(self, value):
+        """写入：running（Stage 4 公共化）。"""
+        self._running = value
+
 
     @property
     def probe_fns(self) -> dict[str, Callable[[], ProbeResult]]:
         """只读：probe_fns（Stage 4 公共化）。"""
         return self._probe_fns
 
+    @probe_fns.setter
+    def probe_fns(self, value):
+        """写入：probe_fns（Stage 4 公共化）。"""
+        self._probe_fns = value
+
 
     @property
     def monitor_thread(self) -> threading.Thread | None:
         """只读：monitor_thread（Stage 4 公共化）。"""
         return self._monitor_thread
+
+    @monitor_thread.setter
+    def monitor_thread(self, value):
+        """写入：monitor_thread（Stage 4 公共化）。"""
+        self._monitor_thread = value
 
 
     def collect_metrics(self) -> None:

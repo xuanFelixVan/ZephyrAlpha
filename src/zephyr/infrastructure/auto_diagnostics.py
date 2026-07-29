@@ -127,10 +127,20 @@ class AutoDiagnostics:
         """只读：diagnosis_count（Stage 4 公共化）。"""
         return self._diagnosis_count
 
+    @diagnosis_count.setter
+    def diagnosis_count(self, value):
+        """写入：diagnosis_count（Stage 4 公共化）。"""
+        self._diagnosis_count = value
+
     @property
     def rules(self) -> list[DiagnosisRule]:
         """只读：rules（Stage 4 公共化）。"""
         return self._rules
+
+    @rules.setter
+    def rules(self, value):
+        """写入：rules（Stage 4 公共化）。"""
+        self._rules = value
 
 
     def _load_default_rules(self) -> None:

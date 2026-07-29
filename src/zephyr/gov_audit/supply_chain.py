@@ -111,10 +111,20 @@ class SupplyChainAuditor:
         """只读：trusted_sources（Stage 4 公共化）。"""
         return self._trusted_sources
 
+    @trusted_sources.setter
+    def trusted_sources(self, value):
+        """写入：trusted_sources（Stage 4 公共化）。"""
+        self._trusted_sources = value
+
     @property
     def verify_hashes(self):
         """只读：verify_hashes（Stage 4 公共化）。"""
         return self._verify_hashes
+
+    @verify_hashes.setter
+    def verify_hashes(self, value):
+        """写入：verify_hashes（Stage 4 公共化）。"""
+        self._verify_hashes = value
 
 
     def audit_package(

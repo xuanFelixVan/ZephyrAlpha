@@ -33,6 +33,11 @@ class WitnessIsolator:
         """只读：witnesses（Stage 4 公共化）。"""
         return self._witnesses
 
+    @witnesses.setter
+    def witnesses(self, value):
+        """写入：witnesses（Stage 4 公共化）。"""
+        self._witnesses = value
+
 
     def register_witness(self, witness_id: str, decision: str):
         self._witnesses[witness_id] = decision

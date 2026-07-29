@@ -113,6 +113,11 @@ class StartupOrchestrator:
         """只读：health_check（Stage 4 公共化）。"""
         return self._health_check
 
+    @health_check.setter
+    def health_check(self, value):
+        """写入：health_check（Stage 4 公共化）。"""
+        self._health_check = value
+
 
     def run(self) -> bool:
         for phase in StartupPhase:
@@ -143,6 +148,11 @@ class ShutdownOrchestrator:
     def shutdown(self):
         """只读：shutdown（Stage 4 公共化）。"""
         return self._shutdown
+
+    @shutdown.setter
+    def shutdown(self, value):
+        """写入：shutdown（Stage 4 公共化）。"""
+        self._shutdown = value
 
 
     def run(self) -> bool:

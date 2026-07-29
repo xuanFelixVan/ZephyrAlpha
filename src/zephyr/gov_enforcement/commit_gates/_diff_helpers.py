@@ -216,7 +216,7 @@ def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
 def _read_staged_file(gateway, py_file: str) -> str | None:
     """读取 staged 文件内容（index 版本，``git show :path``）。"""
     try:
-        result = gateway._run_git(["git", "show", ":" + py_file])
+        result = gateway.run_git(["git", "show", ":" + py_file])
         if result.returncode == 0:
             return result.stdout
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -231,7 +231,7 @@ def _get_staged_py_files(gateway, gate_name: str = "gate") -> list[str]:
     注意：不过滤 tests/，由调用方用 is_test_exempt() 过滤。
     """
     try:
-        result = gateway._run_git(
+        result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if result.returncode != 0:
@@ -260,7 +260,7 @@ def _get_added_lines(
     失败时返回空列表并记录 warning。
     """
     try:
-        result = gateway._run_git(
+        result = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
         if result.returncode != 0:
@@ -282,7 +282,7 @@ def _read_head_file(gateway, py_file: str) -> str | None:
     fail-open：文件不存在于 HEAD（新增文件）或 git 命令失败时返回 None。
     """
     try:
-        result = gateway._run_git(["git", "show", "HEAD:" + py_file])
+        result = gateway.run_git(["git", "show", "HEAD:" + py_file])
         if result.returncode == 0:
             return result.stdout
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

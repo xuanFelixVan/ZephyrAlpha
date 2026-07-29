@@ -72,6 +72,11 @@ class A2ANegotiation:
         """只读：max_rounds（Stage 4 公共化）。"""
         return self._max_rounds
 
+    @max_rounds.setter
+    def max_rounds(self, value):
+        """写入：max_rounds（Stage 4 公共化）。"""
+        self._max_rounds = value
+
 
     def propose(
         self,

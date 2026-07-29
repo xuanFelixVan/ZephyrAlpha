@@ -150,10 +150,20 @@ class AuditIndexer(AuditIndexerABC):
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
 
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
+
     @property
     def events_path(self) -> Path:
         """只读：events_path（Stage 4 公共化）。"""
         return self._events_path
+
+    @events_path.setter
+    def events_path(self, value):
+        """写入：events_path（Stage 4 公共化）。"""
+        self._events_path = value
 
 
     # ------------------------------------------------------------------

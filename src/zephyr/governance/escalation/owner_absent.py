@@ -72,10 +72,20 @@ class OwnerAbsent:
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
     @property
     def state_path(self):
         """只读：state_path（Stage 4 公共化）。"""
         return self._state_path
+
+    @state_path.setter
+    def state_path(self, value):
+        """写入：state_path（Stage 4 公共化）。"""
+        self._state_path = value
 
 
     def check_owner_status(self, last_owner_interaction: str) -> AbsentStatus:

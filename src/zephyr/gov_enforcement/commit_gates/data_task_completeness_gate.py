@@ -187,3 +187,9 @@ def make_data_task_completeness_gate() -> GateSpec:
     return GateSpec(
         gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=41
     )
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def load_tasks_yaml(project_root) -> list[dict]:
+    """公共接口：load_tasks_yaml（Stage 4 公共化）。"""
+    return _load_tasks_yaml(project_root)
+

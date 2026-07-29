@@ -156,7 +156,7 @@ def _get_staged_new_py_files(gateway) -> tuple[list[str], str]:
         (py_files, wt_root) — py_files 为空时表示无文件或 fail-open。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -181,7 +181,7 @@ def _get_staged_new_py_files(gateway) -> tuple[list[str], str]:
         return [], ""
 
     try:
-        toplevel = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+        toplevel = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         wt_root = toplevel.stdout.strip() if toplevel.returncode == 0 else str(gateway.project_root)
     except Exception:  # noqa: BLE001 — broad exception catch for fail-open
         wt_root = str(gateway.project_root)

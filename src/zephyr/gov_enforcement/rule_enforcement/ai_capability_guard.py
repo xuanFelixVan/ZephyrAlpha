@@ -264,3 +264,9 @@ def _legacy_check_file_level(rel: str) -> CapabilityLevel:
         return CapabilityLevel.EXTEND
 
     return CapabilityLevel.FULL
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def check_file_level(filepath) -> CapabilityLevel:
+    """公共接口：check_file_level（Stage 4 公共化）。"""
+    return _check_file_level(filepath)
+

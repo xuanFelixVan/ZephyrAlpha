@@ -607,3 +607,15 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def warn_if_uncommitted(file_path) -> None:
+    """公共接口：warn_if_uncommitted（Stage 4 公共化）。"""
+    return _warn_if_uncommitted(file_path)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def ensure_lock_root() -> None:
+    """公共接口：ensure_lock_root（Stage 4 公共化）。"""
+    return _ensure_lock_root()
+

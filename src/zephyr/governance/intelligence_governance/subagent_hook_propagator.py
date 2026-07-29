@@ -33,6 +33,11 @@ class SubagentHookPropagator:
         """只读：hooks（Stage 4 公共化）。"""
         return self._hooks
 
+    @hooks.setter
+    def hooks(self, value):
+        """写入：hooks（Stage 4 公共化）。"""
+        self._hooks = value
+
 
     def register_hook(self, parent_agent: str, hook_name: str, propagate: bool = True):
         self._hooks[parent_agent] = {"name": hook_name, "propagate_to_subagents": propagate}

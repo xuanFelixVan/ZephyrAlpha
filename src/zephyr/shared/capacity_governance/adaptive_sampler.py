@@ -40,6 +40,11 @@ class AdaptiveSampler:
         """只读：base_rate（Stage 4 公共化）。"""
         return self._base_rate
 
+    @base_rate.setter
+    def base_rate(self, value):
+        """写入：base_rate（Stage 4 公共化）。"""
+        self._base_rate = value
+
 
     def decide(self, is_error: bool = False) -> SamplingDecision:
         self._total_count += 1

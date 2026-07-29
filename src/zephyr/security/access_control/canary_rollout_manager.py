@@ -57,6 +57,17 @@ class CanaryRolloutManager:
     def __init__(self) -> None:
         self._canaries: dict[str, CanaryPermission] = {}
 
+    @property
+    def canaries(self) -> dict[str, CanaryPermission]:
+        """只读：canaries（Stage 4 公共化）。"""
+        return self._canaries
+
+    @canaries.setter
+    def canaries(self, value):
+        """写入：canaries（Stage 4 公共化）。"""
+        self._canaries = value
+
+
     def register(self, name: str, rules: list[str]) -> CanaryPermission:
         """注册灰度权限.
 

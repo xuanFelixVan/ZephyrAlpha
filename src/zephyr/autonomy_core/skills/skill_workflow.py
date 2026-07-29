@@ -123,10 +123,20 @@ class SkillWorkflow:
         """只读：executions（Stage 4 公共化）。"""
         return self._executions
 
+    @executions.setter
+    def executions(self, value):
+        """写入：executions（Stage 4 公共化）。"""
+        self._executions = value
+
     @property
     def workflows(self) -> dict[str, dict[str, Any]]:
         """只读：workflows（Stage 4 公共化）。"""
         return self._workflows
+
+    @workflows.setter
+    def workflows(self, value):
+        """写入：workflows（Stage 4 公共化）。"""
+        self._workflows = value
 
 
     def define(

@@ -386,15 +386,37 @@ class GitCommitGateway:
 
 
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-    def run_post_commit_reconcile_async(self, existing, session_id, commit_sha, commit_message) -> None:
-        """公共接口：run_post_commit_reconcile_async（Stage 4 公共化，委托到 self._run_post_commit_reconcile_async）。"""
-        return self._run_post_commit_reconcile_async(existing, session_id, commit_sha, commit_message)
+    def run_post_commit_reconcile_async(self, existing: list[str], session_id: str, commit_sha: str, commit_message: str='') -> None:
+        '异步 spawn detached worker subprocess（P2-3 治本）。\n\n        - commit_sha 缺失 → 回退 sync（兼容 edge case）\n        - launch 失败 → 回退 sync（fail-open，reconciler 仍需执行）\n        - launch 成功 → 立即返回，worker 在后台执行\n\n        Args:\n            existing: 已 commit 的文件绝对路径列表。\n            session_id: commit session_id。\n            commit_sha: 本次 commit 的 SHA（worker 用作 status file key）。\n            commit_message: commit message（审计追溯用）。\n        '
+        if not commit_sha:
+            logger.warning('GitCommitGateway: async reconcile fallback to sync (no commit_sha, session=%s)', session_id)
+            self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
+            return
+        try:
+            from zephyr.governance.audit.reconcile_runner import launch_reconcile_async
+            launch_result = launch_reconcile_async(self.project_root, commit_sha, session_id, existing, commit_message)
+            if launch_result['ok']:
+                logger.info('GitCommitGateway: post-commit reconcile async launched (session=%s, sha=%s, pid=%s)', session_id, commit_sha, launch_result.get('worker_pid', 0))
+            else:
+                logger.warning('GitCommitGateway: async launch failed, fallback to sync: %s', launch_result.get('error', ''))
+                self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
+        except Exception as e:
+            logger.warning('GitCommitGateway: async reconcile launch failed, fallback to sync: %s', e, exc_info=True)
+            self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
 
 
     # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-    def run_post_commit_reconcile(self, existing, session_id, result, commit_message) -> None:
-        """公共接口：run_post_commit_reconcile（Stage 4 公共化，委托到 self._run_post_commit_reconcile）。"""
-        return self._run_post_commit_reconcile(existing, session_id, result, commit_message)
+    def run_post_commit_reconcile(self, existing: list[str], session_id: str, result: CommitResult, commit_message: str='') -> None:
+        'Post-commit reconciler 调度器（Ruling:100PCT-AI-GOVERNANCE P2-3 异步化）。\n\n        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：\n        新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，\n        使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。\n        原断点4: commit() 不传 message 给 _run_post_commit_reconcile；\n        原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。\n\n        P2-3 治本（2026-07-19）：默认异步 spawn detached worker subprocess，避免 30+ 个\n        reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env\n        ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。\n        '
+        if result.status is not CommitStatus.OK:
+            return
+        _governance_dir = self.project_root / 'scripts' / 'governance' / 'd1_structure'
+        if not _governance_dir.is_dir():
+            return
+        if os.environ.get('ZEPHYR_RECONCILE_SYNC', '') == '1':
+            self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=result)
+        else:
+            self._run_post_commit_reconcile_async(existing, session_id, result.commit_hash, commit_message)
 
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -402,6 +424,11 @@ class GitCommitGateway:
     def reconciliation_registry(self):
         """只读：reconciliation_registry（Stage 4 公共化）。"""
         return self._reconciliation_registry
+
+    @reconciliation_registry.setter
+    def reconciliation_registry(self, value):
+        """写入：reconciliation_registry（Stage 4 公共化）。"""
+        self._reconciliation_registry = value
 
 
     # ------------------------------------------------------------------
@@ -898,41 +925,9 @@ class GitCommitGateway:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.check_ssot_canonical(abs_files)
 
-    def _run_post_commit_reconcile(
-        self, existing: list[str], session_id: str, result: CommitResult,
-        commit_message: str = "",
-    ) -> None:
-        """Post-commit reconciler 调度器（Ruling:100PCT-AI-GOVERNANCE P2-3 异步化）。
-
-        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：
-        新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，
-        使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。
-        原断点4: commit() 不传 message 给 _run_post_commit_reconcile；
-        原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。
-
-        P2-3 治本（2026-07-19）：默认异步 spawn detached worker subprocess，避免 30+ 个
-        reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env
-        ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。
-        """
-        if result.status is not CommitStatus.OK:
-            return
-        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip post-commit reconciler
-        # 原因：reconciler 依赖 Zephyr 项目结构（scripts/governance/、AGENTS.md 等），
-        # 在 tmp_path 测试仓库中运行会导致 S4 frontmatter 注入污染测试文件 + 脚本缺失 warning 刷屏。
-        # 对标 commit gates 的非 Zephyr skip 逻辑。
-        _governance_dir = self.project_root / "scripts" / "governance" / "d1_structure"
-        if not _governance_dir.is_dir():
-            return
-
-        # P2-3 分发：默认 async，ZEPHYR_RECONCILE_SYNC=1 强制 sync（测试）
-        if os.environ.get("ZEPHYR_RECONCILE_SYNC", "") == "1":
-            self._run_post_commit_reconcile_sync(
-                existing, session_id, commit_message, result=result,
-            )
-        else:
-            self._run_post_commit_reconcile_async(
-                existing, session_id, result.commit_hash, commit_message,
-            )
+    def _run_post_commit_reconcile(self, existing: list[str], session_id: str, result: CommitResult, commit_message: str='') -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return self.run_post_commit_reconcile(existing, session_id, result, commit_message)
 
     def _run_post_commit_reconcile_sync(
         self, existing: list[str], session_id: str, commit_message: str = "",
@@ -1008,59 +1003,9 @@ class GitCommitGateway:
                 logger.warning("GitCommitGateway: worker reconcile warning (session=%s): %s", session_id, rr.detail)
         return reconcile_results
 
-    def _run_post_commit_reconcile_async(
-        self, existing: list[str], session_id: str, commit_sha: str,
-        commit_message: str = "",
-    ) -> None:
-        """异步 spawn detached worker subprocess（P2-3 治本）。
-
-        - commit_sha 缺失 → 回退 sync（兼容 edge case）
-        - launch 失败 → 回退 sync（fail-open，reconciler 仍需执行）
-        - launch 成功 → 立即返回，worker 在后台执行
-
-        Args:
-            existing: 已 commit 的文件绝对路径列表。
-            session_id: commit session_id。
-            commit_sha: 本次 commit 的 SHA（worker 用作 status file key）。
-            commit_message: commit message（审计追溯用）。
-        """
-        if not commit_sha:
-            logger.warning(
-                "GitCommitGateway: async reconcile fallback to sync (no commit_sha, session=%s)",
-                session_id,
-            )
-            self._run_post_commit_reconcile_sync(
-                existing, session_id, commit_message, result=None,
-            )
-            return
-        try:
-            from zephyr.governance.audit.reconcile_runner import launch_reconcile_async
-            launch_result = launch_reconcile_async(
-                self.project_root, commit_sha, session_id, existing, commit_message,
-            )
-            if launch_result["ok"]:
-                logger.info(
-                    "GitCommitGateway: post-commit reconcile async launched "
-                    "(session=%s, sha=%s, pid=%s)",
-                    session_id, commit_sha, launch_result.get("worker_pid", 0),
-                )
-            else:
-                # launch 失败 → 回退 sync（reconciler 仍需执行，只是退化为同步阻塞）
-                logger.warning(
-                    "GitCommitGateway: async launch failed, fallback to sync: %s",
-                    launch_result.get("error", ""),
-                )
-                self._run_post_commit_reconcile_sync(
-                    existing, session_id, commit_message, result=None,
-                )
-        except Exception as e:  # noqa: BLE001 — async 启动失败 fail-open 回退 sync
-            logger.warning(
-                "GitCommitGateway: async reconcile launch failed, fallback to sync: %s",
-                e, exc_info=True,
-            )
-            self._run_post_commit_reconcile_sync(
-                existing, session_id, commit_message, result=None,
-            )
+    def _run_post_commit_reconcile_async(self, existing: list[str], session_id: str, commit_sha: str, commit_message: str='') -> None:
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return self.run_post_commit_reconcile_async(existing, session_id, commit_sha, commit_message)
 
     def commit(
         self,

@@ -87,7 +87,7 @@ class TestRunDailyCheck:
             {"table": "kline_daily", "date_column": "trade_date", "threshold": 100},
             {"table": "money_flow", "date_column": "trade_date", "threshold": 50},
         ]
-        with patch("zephyr.data.integrity_checker._discover_backfill_tables", return_value=tables_info), \
+        with patch("zephyr.data.integrity_checker.discover_backfill_tables", return_value=tables_info), \
              patch("zephyr.data.integrity_checker.ch_reader.query", return_value="200"):
             result = run_daily_check(scheduler=None)
         assert result["success"] is True
@@ -107,7 +107,7 @@ class TestRunDailyCheck:
                 return "50"
             return "200"
 
-        with patch("zephyr.data.integrity_checker._discover_backfill_tables", return_value=tables_info), \
+        with patch("zephyr.data.integrity_checker.discover_backfill_tables", return_value=tables_info), \
              patch("zephyr.data.integrity_checker.ch_reader.query", side_effect=mock_query):
             result = run_daily_check(scheduler=None)
         assert result["success"] is False
@@ -124,7 +124,7 @@ class TestRunDailyCheck:
         mock_scheduler = MagicMock()
         mock_scheduler._alerter = MagicMock()
 
-        with patch("zephyr.data.integrity_checker._discover_backfill_tables", return_value=tables_info), \
+        with patch("zephyr.data.integrity_checker.discover_backfill_tables", return_value=tables_info), \
              patch("zephyr.data.integrity_checker.ch_reader.query", return_value="50"):
             result = run_daily_check(scheduler=mock_scheduler)
 
@@ -134,7 +134,7 @@ class TestRunDailyCheck:
 
     def test_empty_tables(self):
         """无表 -> success=True, total=0。"""
-        with patch("zephyr.data.integrity_checker._discover_backfill_tables", return_value=[]):
+        with patch("zephyr.data.integrity_checker.discover_backfill_tables", return_value=[]):
             result = run_daily_check(scheduler=None)
         assert result["success"] is True
         assert result["total"] == 0

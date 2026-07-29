@@ -124,7 +124,7 @@ def make_runtime_violation_snapshot_reconciler(gateway: "object") -> ReconcilerS
             # 获取 commit sha（从 gateway 或留空）
             commit_sha = ""
             try:
-                sha_result = gateway._run_git(["git", "rev-parse", "HEAD"])
+                sha_result = gateway.run_git(["git", "rev-parse", "HEAD"])
                 if sha_result.returncode == 0:
                     commit_sha = sha_result.stdout.strip()[:12]
             except Exception:  # noqa: BLE001 — sha 非关键

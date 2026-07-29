@@ -63,6 +63,11 @@ class CapabilitySync:
         """只读：registry（Stage 4 公共化）。"""
         return self._registry
 
+    @registry.setter
+    def registry(self, value):
+        """写入：registry（Stage 4 公共化）。"""
+        self._registry = value
+
 
     def sync_a2a(self, a2a_registry: A2ARegistry | None) -> int:
         if a2a_registry is None:

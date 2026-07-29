@@ -83,7 +83,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
     正常时返回新增 .py 文件列表（可能为空）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         if diff_result.returncode != 0:
@@ -108,7 +108,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
 def _resolve_worktree_root(gateway) -> str:
     """获取 worktree root 路径；解析失败回退 gateway.project_root。"""
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:

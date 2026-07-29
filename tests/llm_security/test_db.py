@@ -210,7 +210,7 @@ class TestDatabaseManager:
     def test_backup(self, dm, tmp_path):
         backup_dir = tmp_path / "backups"
         backup_dir.mkdir(parents=True, exist_ok=True)
-        dm._backup_dir = backup_dir
+        dm.backup_dir = backup_dir
         backup_path = dm.backup(label="test")
         assert backup_path.exists()
 
@@ -367,5 +367,5 @@ class TestTransitionHelpers:
         assert len(transition_mod._ALLOWED_TRANSITIONS.get(TaskStatus.CANCELLED, frozenset())) == 0
 
     def test_is_valid_transition(self):
-        assert transition_mod._is_valid_transition(TaskStatus.PENDING, TaskStatus.IN_PROGRESS) is True
-        assert transition_mod._is_valid_transition(TaskStatus.PENDING, TaskStatus.COMPLETED) is False
+        assert transition_mod.is_valid_transition(TaskStatus.PENDING, TaskStatus.IN_PROGRESS) is True
+        assert transition_mod.is_valid_transition(TaskStatus.PENDING, TaskStatus.COMPLETED) is False

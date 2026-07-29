@@ -112,7 +112,11 @@ VALID_AUTONOMY = load_vocabulary_values("ai_autonomy_vocabulary.yaml", fallback_
 _TOP_KEY_RE = re.compile(r"^([a-z_][a-z0-9_]*)\s*:")
 
 _errors: list[str] = []
+errors = _errors  # public alias（Stage 4 公共化）
+
 _warnings: list[str] = []
+warnings = _warnings  # public alias（Stage 4 公共化）
+
 
 
 def _extract_top_fields(text: str) -> list[str]:
@@ -257,3 +261,9 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def validate_file(path) -> None:
+    """公共接口：validate_file（Stage 4 公共化）。"""
+    return _validate_file(path)
+

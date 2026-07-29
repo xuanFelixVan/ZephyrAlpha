@@ -48,10 +48,20 @@ class BurstLimiter:
         """只读：max_burst（Stage 4 公共化）。"""
         return self._max_burst
 
+    @max_burst.setter
+    def max_burst(self, value):
+        """写入：max_burst（Stage 4 公共化）。"""
+        self._max_burst = value
+
     @property
     def requests(self) -> list[float]:
         """只读：requests（Stage 4 公共化）。"""
         return self._requests
+
+    @requests.setter
+    def requests(self, value):
+        """写入：requests（Stage 4 公共化）。"""
+        self._requests = value
 
 
     def allow(self) -> bool:

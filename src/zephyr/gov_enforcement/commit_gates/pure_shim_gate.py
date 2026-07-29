@@ -83,7 +83,7 @@ def _get_staged_py_files(gateway) -> list[str]:
         .py 文件相对路径列表（正斜杠）；git 异常时返回空列表（fail-open）。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only"]
         )
         if diff_result.returncode != 0:
@@ -113,7 +113,7 @@ def _resolve_worktree_root(gateway) -> str:
         worktree root 绝对路径；获取失败时回退到 gateway.project_root。
     """
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         if toplevel_result.returncode == 0:

@@ -44,11 +44,11 @@ class TestRollbackIntegrationInstantiation:
         assert ri.project_root == tmp_path
 
     def test_initial_notify_state(self, integration: RollbackIntegration):
-        assert integration._notify_state.window_count == 0
-        assert integration._notify_state.throttled is False
+        assert integration.notify_state.window_count == 0
+        assert integration.notify_state.throttled is False
 
     def test_initial_checkpoint_time(self, integration: RollbackIntegration):
-        assert integration._last_checkpoint_time is None
+        assert integration.last_checkpoint_time is None
 
 
 class TestAclCheckToTarget:

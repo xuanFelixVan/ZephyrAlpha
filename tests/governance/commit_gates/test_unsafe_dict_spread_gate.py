@@ -28,7 +28,7 @@
 - TestMultipleViolationsAllReported: 多违规全报告
 - TestMixedSafeUnsafe: 同文件混合安全/危险模式只报危险项
 
-测试隔离：MagicMock 模拟 gateway._run_git 返回预设 staged 文件列表 + diff content；
+测试隔离：MagicMock 模拟 gateway.run_git 返回预设 staged 文件列表 + diff content；
 不读/不写真实仓库，不依赖真实 registry。
 """
 from __future__ import annotations
@@ -115,7 +115,7 @@ def _make_mock_gateway(
         result.stdout = "\n".join(diff_lines)
         return result
 
-    gw._run_git.side_effect = _run_git
+    gw.run_git.side_effect = _run_git
     return gw
 
 
@@ -612,7 +612,7 @@ class TestFailOpenGitDiffFails:
         result = MagicMock()
         result.returncode = 1
         result.stdout = ""
-        gw._run_git.return_value = result
+        gw.run_git.return_value = result
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed  # fail-open
@@ -621,7 +621,7 @@ class TestFailOpenGitDiffFails:
     def test_git_diff_exception_passes(self):
         """git diff 异常 → fail-open"""
         gw = MagicMock()
-        gw._run_git.side_effect = RuntimeError("git not found")
+        gw.run_git.side_effect = RuntimeError("git not found")
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed  # fail-open
@@ -638,7 +638,7 @@ class TestFailOpenGitDiffFails:
         file_result = MagicMock()
         file_result.returncode = 1
         file_result.stdout = ""
-        gw._run_git.side_effect = [name_result, file_result]
+        gw.run_git.side_effect = [name_result, file_result]
         gate = make_unsafe_dict_spread_gate()
         passed, detail = gate.check(gw, [])
         assert passed

@@ -62,18 +62,33 @@ class ContextIsolation:
 
     @property
     def namespaces(self) -> dict[str, dict[str, Any]]:
-        """只读：命名空间表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：namespaces（Stage 4 公共化）。"""
         return self._namespaces
+
+    @namespaces.setter
+    def namespaces(self, value):
+        """写入：namespaces（Stage 4 公共化）。"""
+        self._namespaces = value
 
     @property
     def snapshots(self) -> dict[str, dict[str, Any]]:
-        """只读：快照表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：snapshots（Stage 4 公共化）。"""
         return self._snapshots
+
+    @snapshots.setter
+    def snapshots(self, value):
+        """写入：snapshots（Stage 4 公共化）。"""
+        self._snapshots = value
 
     @property
     def contamination_log(self) -> list[dict[str, Any]]:
-        """只读：污染日志（Stage 4 公共化，返回可变 list 引用）。"""
+        """只读：contamination_log（Stage 4 公共化）。"""
         return self._contamination_log
+
+    @contamination_log.setter
+    def contamination_log(self, value):
+        """写入：contamination_log（Stage 4 公共化）。"""
+        self._contamination_log = value
 
     def create_namespace(self, skill_id: str) -> str:
         ns_key = f"ns:{skill_id}"

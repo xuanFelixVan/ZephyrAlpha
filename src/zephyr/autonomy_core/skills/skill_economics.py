@@ -49,10 +49,20 @@ class SkillEconomics:
         """只读：costs（Stage 4 公共化）。"""
         return self._costs
 
+    @costs.setter
+    def costs(self, value):
+        """写入：costs（Stage 4 公共化）。"""
+        self._costs = value
+
     @property
     def spent(self):
         """只读：spent（Stage 4 公共化）。"""
         return self._spent
+
+    @spent.setter
+    def spent(self, value):
+        """写入：spent（Stage 4 公共化）。"""
+        self._spent = value
 
 
     def _price(self, model: str) -> dict[str, float]:

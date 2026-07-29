@@ -44,8 +44,14 @@ if TYPE_CHECKING:
 _logger = logging.getLogger(__name__)
 
 _global_telemetry: Telemetry | None = None
+global_telemetry = _global_telemetry  # public alias（Stage 4 公共化）
+
 _bootstrap_time: str = ""
+bootstrap_time = _bootstrap_time  # public alias（Stage 4 公共化）
+
 _module_registry: dict[str, Any] = {}
+module_registry = _module_registry  # public alias（Stage 4 公共化）
+
 _registry_lock = threading.Lock()
 
 

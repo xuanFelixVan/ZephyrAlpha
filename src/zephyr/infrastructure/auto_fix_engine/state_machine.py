@@ -243,8 +243,13 @@ class DriftStateMachine:
     # ── Stage 4 公共化（2026-07-28）：只读 property ──
     @property
     def events(self) -> dict:
-        """只读：事件记录表（Stage 4 公共化，返回可变 dict 引用）。"""
+        """只读：events（Stage 4 公共化）。"""
         return self._events
+
+    @events.setter
+    def events(self, value):
+        """写入：events（Stage 4 公共化）。"""
+        self._events = value
 
     @staticmethod
     def _state_value(state) -> str:

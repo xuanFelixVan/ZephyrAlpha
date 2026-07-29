@@ -81,17 +81,33 @@ class HallucinationGuard:
         """只读：project_root（Stage 4 公共化）。"""
         return self._project_root
 
+    @project_root.setter
+    def project_root(self, value):
+        """写入：project_root（Stage 4 公共化）。"""
+        self._project_root = value
+
 
     @staticmethod
-    def extract_functions(source) -> list[str]:
-        """公共接口：extract_functions（Stage 4 公共化，委托到 _extract_functions）。"""
-        return _extract_functions(source)
+    def extract_functions(source: str) -> list[str]:
+        try:
+            tree = ast.parse(source)
+            funcs: list[str] = []
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    args = [a.arg for a in node.args.args]
+                    funcs.append(f'{node.name}({', '.join(args)})')
+            return funcs
+        except SyntaxError:
+            return []
 
 
     @staticmethod
-    def extract_classes(source) -> list[str]:
-        """公共接口：extract_classes（Stage 4 公共化，委托到 _extract_classes）。"""
-        return _extract_classes(source)
+    def extract_classes(source: str) -> list[str]:
+        try:
+            tree = ast.parse(source)
+            return [node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
+        except SyntaxError:
+            return []
 
 
     def compute_actual_state(self, files: list[str] | None = None) -> list[FileState]:
@@ -206,24 +222,13 @@ class HallucinationGuard:
 
     @staticmethod
     def _extract_functions(source: str) -> list[str]:
-        try:
-            tree = ast.parse(source)
-            funcs: list[str] = []
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    args = [a.arg for a in node.args.args]
-                    funcs.append(f"{node.name}({', '.join(args)})")
-            return funcs
-        except SyntaxError:
-            return []
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return HallucinationGuard.extract_functions(source)
 
     @staticmethod
     def _extract_classes(source: str) -> list[str]:
-        try:
-            tree = ast.parse(source)
-            return [node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
-        except SyntaxError:
-            return []
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return HallucinationGuard.extract_classes(source)
 
     @property
     def rounds(self) -> list[VerificationRound]:

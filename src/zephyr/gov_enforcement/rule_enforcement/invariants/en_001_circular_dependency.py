@@ -223,4 +223,16 @@ if __name__ == "__main__":
     print(msg)
     sys.exit(0 if ok else 1)
 
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def parse_imports(file_path) -> set[str]:
+    """公共接口：parse_imports（Stage 4 公共化）。"""
+    return _parse_imports(file_path)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def build_dependency_graph() -> dict[str, set[str]]:
+    """公共接口：build_dependency_graph（Stage 4 公共化）。"""
+    return _build_dependency_graph()
+
+
 # ==== END CODEGEN:EN-001 ====

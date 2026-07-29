@@ -167,6 +167,11 @@ class QueryMetrics:
         """只读：db_path（Stage 4 公共化）。"""
         return self._db_path
 
+    @db_path.setter
+    def db_path(self, value):
+        """写入：db_path（Stage 4 公共化）。"""
+        self._db_path = value
+
     @property
     def slow_threshold_ms(self):
         """只读：slow_threshold_ms（Stage 4 公共化）。"""

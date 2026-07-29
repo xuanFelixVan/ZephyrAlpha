@@ -23,9 +23,9 @@ cm = pytest.importorskip(
 
 @pytest.fixture(autouse=True)
 def _reset_collector():
-    cm._collector = None
+    cm.collector = None
     yield
-    cm._collector = None
+    cm.collector = None
 
 
 class TestSlaRecord:
@@ -66,7 +66,7 @@ class TestContractMetricsCollector:
         c = cm.ContractMetricsCollector()
         c.disable()
         c.enable()
-        assert c._enabled is True
+        assert c.enabled is True
 
     def test_measure_sla_pass(self):
         c = cm.ContractMetricsCollector()
@@ -92,7 +92,7 @@ class TestContractMetricsCollector:
         c = cm.ContractMetricsCollector()
         c.record_violation("CT-TEL-001")
         c.record_violation("CT-TEL-001")
-        assert c._violation_counts["CT-TEL-001"] == 2
+        assert c.violation_counts["CT-TEL-001"] == 2
 
     def test_get_stats_empty(self):
         c = cm.ContractMetricsCollector()
@@ -113,7 +113,7 @@ class TestContractMetricsCollector:
         c = cm.ContractMetricsCollector()
         for i in range(1100):
             c.measure_sla("CT-TEL-001", f"t{i}", 500_000, 1_000_000)
-        assert len(c._sla_buffer) <= c._MAX_SLA_BUFFER
+        assert len(c.sla_buffer) <= c._MAX_SLA_BUFFER
 
 
 class TestGetContractMetrics:
@@ -164,4 +164,4 @@ class TestBoundary:
     def test_record_violation_empty_id(self):
         c = cm.ContractMetricsCollector()
         c.record_violation("")
-        assert c._violation_counts[""] == 1
+        assert c.violation_counts[""] == 1

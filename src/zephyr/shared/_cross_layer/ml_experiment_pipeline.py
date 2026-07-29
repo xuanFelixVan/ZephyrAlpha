@@ -183,9 +183,25 @@ class MLExperimentPipeline:
         self._experiment_config: ExperimentConfig | None = None
 
     @property
+    def experiment_config(self) -> ExperimentConfig | None:
+        """只读：experiment_config（Stage 4 公共化）。"""
+        return self._experiment_config
+
+    @experiment_config.setter
+    def experiment_config(self, value):
+        """写入：experiment_config（Stage 4 公共化）。"""
+        self._experiment_config = value
+
+
+    @property
     def models(self) -> list[ModelMetadata]:
         """只读：models（Stage 4 公共化）。"""
         return self._models
+
+    @models.setter
+    def models(self, value):
+        """写入：models（Stage 4 公共化）。"""
+        self._models = value
 
 
     @property
@@ -193,17 +209,24 @@ class MLExperimentPipeline:
         """只读：engines（Stage 4 公共化）。"""
         return self._engines
 
+    @engines.setter
+    def engines(self, value):
+        """写入：engines（Stage 4 公共化）。"""
+        self._engines = value
 
+
+    @staticmethod
     @staticmethod
     def run_significance_test(predictions) -> dict[str, Any]:
         """公共接口：run_significance_test（Stage 4 公共化）。"""
-        return _run_significance_test(predictions)
+        return __class__._run_significance_test(predictions)
 
 
     @staticmethod
+    @staticmethod
     def check_builtins_integrity(snapshot) -> list[str]:
         """公共接口：check_builtins_integrity（Stage 4 公共化）。"""
-        return _check_builtins_integrity(snapshot)
+        return __class__._check_builtins_integrity(snapshot)
 
 
     @classmethod

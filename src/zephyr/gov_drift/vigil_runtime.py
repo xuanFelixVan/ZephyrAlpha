@@ -38,20 +38,40 @@ class VigilRuntime:
         """只读：override_expiry（Stage 4 公共化）。"""
         return self._override_expiry
 
+    @override_expiry.setter
+    def override_expiry(self, value):
+        """写入：override_expiry（Stage 4 公共化）。"""
+        self._override_expiry = value
+
     @property
     def override_window_open(self):
         """只读：override_window_open（Stage 4 公共化）。"""
         return self._override_window_open
+
+    @override_window_open.setter
+    def override_window_open(self, value):
+        """写入：override_window_open（Stage 4 公共化）。"""
+        self._override_window_open = value
 
     @property
     def token_budget(self):
         """只读：token_budget（Stage 4 公共化）。"""
         return self._token_budget
 
+    @token_budget.setter
+    def token_budget(self, value):
+        """写入：token_budget（Stage 4 公共化）。"""
+        self._token_budget = value
+
     @property
     def tokens_used(self):
         """只读：tokens_used（Stage 4 公共化）。"""
         return self._tokens_used
+
+    @tokens_used.setter
+    def tokens_used(self, value):
+        """写入：tokens_used（Stage 4 公共化）。"""
+        self._tokens_used = value
 
 
     def consume(self, tokens: int) -> bool:

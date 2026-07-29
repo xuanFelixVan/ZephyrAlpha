@@ -82,6 +82,11 @@ class ObservabilityReporter:
         """只读：noise_count（Stage 4 公共化）。"""
         return self._noise_count
 
+    @noise_count.setter
+    def noise_count(self, value):
+        """写入：noise_count（Stage 4 公共化）。"""
+        self._noise_count = value
+
 
     def record_decision(self, agent_id: str, layer: str, decision: str) -> None:
         """记录权限决策指标."""

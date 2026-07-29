@@ -30,9 +30,31 @@ class PlaceboActionDetector:
     action_outcomes: dict[str, list[float]] = field(default_factory=dict)
 
     @staticmethod
-    def mann_whitney_u(group_a, group_b) -> tuple[float, float]:
-        """公共接口：mann_whitney_u（Stage 4 公共化，委托到 _mann_whitney_u）。"""
-        return _mann_whitney_u(group_a, group_b)
+    def mann_whitney_u(group_a: list[float], group_b: list[float]) -> tuple[float, float]:
+        combined = [(v, 'a') for v in group_a] + [(v, 'b') for v in group_b]
+        combined.sort(key=lambda x: x[0])
+        ranks = {}
+        i = 0
+        while i < len(combined):
+            j = i
+            while j < len(combined) and combined[j][0] == combined[i][0]:
+                j += 1
+            avg_rank = (i + j - 1) / 2.0 + 1.0
+            for k in range(i, j):
+                ranks[combined[k][0], k] = avg_rank
+            i = j
+        rank_sum_a = 0.0
+        a_count = 0
+        for idx, item in enumerate(combined):
+            if item[1] == 'a':
+                rank_sum_a += ranks[item[0], idx]
+                a_count += 1
+        b_count = len(combined) - a_count
+        u_a = rank_sum_a - a_count * (a_count + 1) / 2.0
+        expected_u = a_count * b_count / 2.0
+        z = (u_a - expected_u) / math.sqrt(a_count * b_count * (a_count + b_count + 1) / 12.0) if a_count * b_count > 0 else 0.0
+        p_value = 2.0 * (1.0 - 0.5 * (1.0 + math.erf(abs(z) / math.sqrt(2.0))))
+        return (u_a, max(p_value, 1e-10))
 
     control_outcomes: list[float] = field(default_factory=list)
     min_samples_per_group: int = 8
@@ -79,37 +101,5 @@ class PlaceboActionDetector:
 
     @staticmethod
     def _mann_whitney_u(group_a: list[float], group_b: list[float]) -> tuple[float, float]:
-        combined = [(v, "a") for v in group_a] + [(v, "b") for v in group_b]
-        combined.sort(key=lambda x: x[0])
-
-        ranks = {}
-        i = 0
-        while i < len(combined):
-            j = i
-            while j < len(combined) and combined[j][0] == combined[i][0]:
-                j += 1
-            avg_rank = (i + j - 1) / 2.0 + 1.0
-            for k in range(i, j):
-                ranks[(combined[k][0], k)] = avg_rank
-            i = j
-
-        rank_sum_a = 0.0
-        a_count = 0
-        for idx, item in enumerate(combined):
-            if item[1] == "a":
-                rank_sum_a += ranks[(item[0], idx)]
-                a_count += 1
-        b_count = len(combined) - a_count
-
-        u_a = rank_sum_a - a_count * (a_count + 1) / 2.0
-        expected_u = a_count * b_count / 2.0
-
-        z = (
-            (u_a - expected_u) / math.sqrt(a_count * b_count * (a_count + b_count + 1) / 12.0)
-            if a_count * b_count > 0
-            else 0.0
-        )
-
-        p_value = 2.0 * (1.0 - 0.5 * (1.0 + math.erf(abs(z) / math.sqrt(2.0))))
-
-        return u_a, max(p_value, 1e-10)
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return PlaceboActionDetector.mann_whitney_u(group_a, group_b)

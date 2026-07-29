@@ -26,7 +26,7 @@
 治本方案
 --------
 在 GitCommitGateway pre-commit 阶段（in-process）注册门禁：
-  1. 获取 staged added/modified 文件（非 .py，需直接用 ``gateway._run_git``）
+  1. 获取 staged added/modified 文件（非 .py，需直接用 ``gateway.run_git``）
   2. 过滤文件名以 ``mcp.json`` 结尾的文件
   3. 对每个 mcp.json：``_read_staged_file`` 读取 → ``json.loads``
   4. 检查顶层是否含 ``version`` 字段（``"version" in data``）
@@ -35,7 +35,7 @@
 设计权衡
 --------
 1. **非 .py 检测面**：这是 5 个 gate 中唯一检测 JSON 文件的 gate，
-   ``_get_staged_py_files`` 不适用（只获取 .py），需直接用 ``gateway._run_git``
+   ``_get_staged_py_files`` 不适用（只获取 .py），需直接用 ``gateway.run_git``
    获取全部 staged 文件再过滤。
 2. **fail-open on json.loads**：JSON 语法错误由其他 gate 管完整性，
    本 gate 只管 version 字段存在性——解析失败时不阻断。
@@ -73,7 +73,7 @@ def _get_staged_files(gateway) -> list[str] | None:
     失败返回 None（fail-open）。
     """
     try:
-        result = gateway._run_git(
+        result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if result.returncode != 0:

@@ -311,7 +311,7 @@ def _make_mock_gateway(
         result.stdout = ""
         return result
 
-    gw._run_git.side_effect = _run_git
+    gw.run_git.side_effect = _run_git
     return gw
 
 

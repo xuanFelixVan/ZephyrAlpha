@@ -882,3 +882,9 @@ def _print_noqa_audit(all_noqa: list[tuple[Path, int, str]], checked: int) -> No
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def check_file(filepath, vocab_dir, startup_values, vocab_values) -> list[tuple[int, str]]:
+    """公共接口：check_file（Stage 4 公共化）。"""
+    return _check_file(filepath, vocab_dir, startup_values, vocab_values)
+

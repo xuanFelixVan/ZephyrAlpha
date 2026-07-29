@@ -78,7 +78,7 @@ class TestTechStackValidator:
     def test_default_decisions_count(self, tmp_path):
         manifest = str(tmp_path / "nonexistent.yaml")
         validator = TechStackValidator(manifest_path=manifest)
-        assert len(validator._default_decisions()) == 16
+        assert len(validator.default_decisions()) == 16
 
     def test_validate_on_startup(self, tmp_path):
         manifest = str(tmp_path / "nonexistent.yaml")

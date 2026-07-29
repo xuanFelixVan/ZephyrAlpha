@@ -64,10 +64,20 @@ class PromptVersionManager:
         """只读：data_dir（Stage 4 公共化）。"""
         return self._data_dir
 
+    @data_dir.setter
+    def data_dir(self, value):
+        """写入：data_dir（Stage 4 公共化）。"""
+        self._data_dir = value
+
     @property
     def registry(self):
         """只读：registry（Stage 4 公共化）。"""
         return self._registry
+
+    @registry.setter
+    def registry(self, value):
+        """写入：registry（Stage 4 公共化）。"""
+        self._registry = value
 
 
     def register(

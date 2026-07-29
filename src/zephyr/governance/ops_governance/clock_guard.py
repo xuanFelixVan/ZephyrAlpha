@@ -36,10 +36,20 @@ class ClockGuard:
         """只读：monotonic_start（Stage 4 公共化）。"""
         return self._monotonic_start
 
+    @monotonic_start.setter
+    def monotonic_start(self, value):
+        """写入：monotonic_start（Stage 4 公共化）。"""
+        self._monotonic_start = value
+
     @property
     def wall_start(self):
         """只读：wall_start（Stage 4 公共化）。"""
         return self._wall_start
+
+    @wall_start.setter
+    def wall_start(self, value):
+        """写入：wall_start（Stage 4 公共化）。"""
+        self._wall_start = value
 
 
     def detect_drift(self) -> float:

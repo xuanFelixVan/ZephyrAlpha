@@ -720,3 +720,8 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
         priority=_PRIORITY,
 
     )
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def git_status_porcelain(repo_root) -> list[str]:
+    """公共接口：git_status_porcelain（Stage 4 公共化）。"""
+    return _git_status_porcelain(repo_root)

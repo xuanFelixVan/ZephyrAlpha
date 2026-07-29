@@ -34,6 +34,8 @@ import logging
 
 from zephyr.data import ch_reader
 from zephyr.data.backfill_checker import _discover_backfill_tables
+discover_backfill_tables = _discover_backfill_tables  # public alias（Stage 4 公共化）
+
 
 log = logging.getLogger(__name__)
 

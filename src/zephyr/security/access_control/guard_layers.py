@@ -133,6 +133,11 @@ class ColdStartLock:
         """只读：locked（Stage 4 公共化）。"""
         return self._locked
 
+    @locked.setter
+    def locked(self, value):
+        """写入：locked（Stage 4 公共化）。"""
+        self._locked = value
+
 
     def unlock(self) -> None:
         """解锁."""

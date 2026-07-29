@@ -41,6 +41,11 @@ class DriftDetector:
         """只读：baseline（Stage 4 公共化）。"""
         return self._baseline
 
+    @baseline.setter
+    def baseline(self, value):
+        """写入：baseline（Stage 4 公共化）。"""
+        self._baseline = value
+
 
     def establish_baseline(self, metrics: dict[str, float]):
         self._baseline = dict(metrics)

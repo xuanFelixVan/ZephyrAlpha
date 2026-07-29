@@ -195,11 +195,22 @@ class AgentHealthMonitor:
         """只读：slo（Stage 4 公共化）。"""
         return self._slo
 
+    @slo.setter
+    def slo(self, value):
+        """写入：slo（Stage 4 公共化）。"""
+        self._slo = value
+
 
     @staticmethod
-    def percentile(values, pct) -> float:
-        """公共接口：percentile（Stage 4 公共化，委托到 _percentile）。"""
-        return _percentile(values, pct)
+    def percentile(values: list[float], pct: float) -> float:
+        if not values:
+            return 0.0
+        sorted_v = sorted(values)
+        if len(sorted_v) == 1:
+            return sorted_v[0]
+        rank = max(1, int(round(len(sorted_v) * pct / 100.0 + 0.5)) - 1)
+        rank = min(rank, len(sorted_v) - 1)
+        return sorted_v[rank]
 
 
     def record(self, result: OrchestrationResult) -> None:
@@ -299,14 +310,8 @@ class AgentHealthMonitor:
 
     @staticmethod
     def _percentile(values: list[float], pct: float) -> float:
-        if not values:
-            return 0.0
-        sorted_v = sorted(values)
-        if len(sorted_v) == 1:
-            return sorted_v[0]
-        rank = max(1, int(round(len(sorted_v) * pct / 100.0 + 0.5)) - 1)
-        rank = min(rank, len(sorted_v) - 1)
-        return sorted_v[rank]
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return AgentHealthMonitor.percentile(values, pct)
 
     def _throughput_per_min(self) -> float:
         if not self._completions:

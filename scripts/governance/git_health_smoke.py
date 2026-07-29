@@ -61,7 +61,7 @@ def _parse_git_version(version_str: str) -> Optional[tuple[int, int, int]]:
     return (int(m.group(1)), int(m.group(2)), int(m.group(3)))
 
 
-def _run_git(args, cwd, timeout=60.0):
+def run_git(args, cwd, timeout=60.0):
     """_run_git implementation."""
     try:
         r = subprocess.run(["git"]+args, cwd=cwd, capture_output=True, text=True,
@@ -71,6 +71,10 @@ def _run_git(args, cwd, timeout=60.0):
         return -1, "", f"timeout after {timeout}s"
     except Exception as e:
         return -2, "", str(e)
+
+def _run_git(args, cwd, timeout = 60.0):
+    """向后兼容 thin wrapper（Stage 4 公共化）。"""
+    return run_git(args, cwd, timeout)
 
 
 def _check_git_version(repo_root):

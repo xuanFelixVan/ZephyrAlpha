@@ -115,10 +115,10 @@ class TestTrustScoreEngine:
         assert results == {}
 
     def test_compute_score_with_old_record(self, engine):
-        record = engine._get_or_create("agent-old")
+        record = engine.get_or_create("agent-old")
         record.last_adjusted_at = (datetime.now(UTC) - timedelta(days=10)).isoformat()
         record.score = 0.8
-        engine._records["agent-old"] = record
+        engine.records["agent-old"] = record
         score = engine.compute_score("agent-old")
         assert score < 0.8
 

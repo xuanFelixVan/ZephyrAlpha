@@ -158,6 +158,8 @@ from email.mime.text import MIMEText as _MIMEText
 from urllib.error import URLError as _URLError
 from urllib.request import Request as _Request
 from urllib.request import urlopen as _urlopen
+urlopen = _urlopen  # public alias（Stage 4 公共化）
+
 
 
 class NotificationRecord(BaseModel):
@@ -356,6 +358,11 @@ class NotificationManager:
     def channels(self) -> list[NotificationChannel]:
         """只读：channels（Stage 4 公共化）。"""
         return self._channels
+
+    @channels.setter
+    def channels(self, value):
+        """写入：channels（Stage 4 公共化）。"""
+        self._channels = value
 
 
     def notify_all(self, severity: str, message: str) -> list[NotificationRecord]:

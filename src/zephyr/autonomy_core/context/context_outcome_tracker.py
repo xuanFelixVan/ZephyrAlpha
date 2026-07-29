@@ -41,6 +41,11 @@ class ContextOutcomeTracker:
         """只读：links（Stage 4 公共化）。"""
         return self._links
 
+    @links.setter
+    def links(self, value):
+        """写入：links（Stage 4 公共化）。"""
+        self._links = value
+
 
     def record(self, context_id: str, actions: list[str], successes: list[bool]) -> ContextOutcomeLink:
         rate = sum(successes) / max(1, len(successes))

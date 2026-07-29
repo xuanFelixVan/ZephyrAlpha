@@ -213,7 +213,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
     Returns: (py_files, wt_root) — py_files 为空时表示无文件或 fail-open。
     """
     try:
-        diff_result = gateway._run_git(
+        diff_result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
@@ -238,7 +238,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
         return [], ""
 
     try:
-        toplevel_result = gateway._run_git(
+        toplevel_result = gateway.run_git(
             ["git", "rev-parse", "--show-toplevel"]
         )
         wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
@@ -251,7 +251,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
 def _get_added_set(gateway) -> set[str]:
     """获取 staged 新增(A)文件集合。"""
     try:
-        result = gateway._run_git(
+        result = gateway.run_git(
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         return set(result.stdout.strip().splitlines()) if result.returncode == 0 else set()
@@ -277,7 +277,7 @@ def _check_permanent_trigger_new(abs_path: str, content: str) -> bool:
 def _check_permanent_trigger_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
     """检测修改文件的 staged 新增行是否含时间触发且全文件无事件订阅。"""
     try:
-        diff_content = gateway._run_git(
+        diff_content = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path]
         )
         if diff_content.returncode != 0:

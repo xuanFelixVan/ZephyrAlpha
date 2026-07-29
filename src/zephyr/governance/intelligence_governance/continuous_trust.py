@@ -160,6 +160,11 @@ class ContinuousTrust:
         """只读：ledger_dir（Stage 4 公共化）。"""
         return self._ledger_dir
 
+    @ledger_dir.setter
+    def ledger_dir(self, value):
+        """写入：ledger_dir（Stage 4 公共化）。"""
+        self._ledger_dir = value
+
 
     def record_trust_event(
         self,

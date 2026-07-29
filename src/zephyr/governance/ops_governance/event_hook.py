@@ -87,10 +87,20 @@ class HookRegistry:
         """只读：active（Stage 4 公共化）。"""
         return self._active
 
+    @active.setter
+    def active(self, value):
+        """写入：active（Stage 4 公共化）。"""
+        self._active = value
+
     @property
     def hooks(self) -> list[_HookEntry]:
         """只读：hooks（Stage 4 公共化）。"""
         return self._hooks
+
+    @hooks.setter
+    def hooks(self, value):
+        """写入：hooks（Stage 4 公共化）。"""
+        self._hooks = value
 
 
     # ── public API ────────────────────────────────────────────────

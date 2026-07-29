@@ -83,9 +83,9 @@ def _make_gateway(
     gw = MagicMock()
     gw.project_root = project_root
     if diff_raises is not None:
-        gw._run_git.side_effect = diff_raises
+        gw.run_git.side_effect = diff_raises
     else:
-        gw._run_git.return_value = FakeCompleted(returncode=diff_rc, stdout=diff_stdout)
+        gw.run_git.return_value = FakeCompleted(returncode=diff_rc, stdout=diff_stdout)
     return gw
 
 

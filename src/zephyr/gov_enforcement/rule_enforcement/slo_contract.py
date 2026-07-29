@@ -215,20 +215,40 @@ class SLOContractEngine:
         """只读：cooldown_lock（Stage 4 公共化）。"""
         return self._cooldown_lock
 
+    @cooldown_lock.setter
+    def cooldown_lock(self, value):
+        """写入：cooldown_lock（Stage 4 公共化）。"""
+        self._cooldown_lock = value
+
     @property
     def cooldown_until(self):
         """只读：cooldown_until（Stage 4 公共化）。"""
         return self._cooldown_until
+
+    @cooldown_until.setter
+    def cooldown_until(self, value):
+        """写入：cooldown_until（Stage 4 公共化）。"""
+        self._cooldown_until = value
 
     @property
     def readings(self) -> dict[SLIName, list[SLIReading]]:
         """只读：readings（Stage 4 公共化）。"""
         return self._readings
 
+    @readings.setter
+    def readings(self, value):
+        """写入：readings（Stage 4 公共化）。"""
+        self._readings = value
+
     @property
     def slis(self):
         """只读：slis（Stage 4 公共化）。"""
         return self._slis
+
+    @slis.setter
+    def slis(self, value):
+        """写入：slis（Stage 4 公共化）。"""
+        self._slis = value
 
 
     @property

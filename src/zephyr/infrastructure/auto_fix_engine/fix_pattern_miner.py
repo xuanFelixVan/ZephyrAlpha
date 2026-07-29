@@ -55,6 +55,11 @@ class FixPatternMiner:
         """只读：pattern_cache（Stage 4 公共化）。"""
         return self._pattern_cache
 
+    @pattern_cache.setter
+    def pattern_cache(self, value):
+        """写入：pattern_cache（Stage 4 公共化）。"""
+        self._pattern_cache = value
+
 
     def _ensure_db(self) -> None:
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)

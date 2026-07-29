@@ -94,7 +94,7 @@ class TestMarkComplete:
         entry = wal.write_ahead("git_revert", "a", "b", ["f1"])
         result = wal.mark_complete(entry.entry_id)
         assert result is True
-        entries = wal._read_all()
+        entries = wal.read_all()
         assert entries[0]["status"] == "COMPLETE"
         assert "completed_at" in entries[0]
 
@@ -173,7 +173,7 @@ class TestReadAll:
         with open(wal_file, "a", encoding="utf-8") as f:
             f.write("NOT JSON\n")
         wal.write_ahead("op2", "c", "d", ["f2"])
-        entries = wal._read_all()
+        entries = wal.read_all()
         assert len(entries) == 2
 
     def test_no_wal_file(self, wal_dir):

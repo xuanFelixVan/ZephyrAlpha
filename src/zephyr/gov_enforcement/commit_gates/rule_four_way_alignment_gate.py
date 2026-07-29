@@ -128,7 +128,7 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
 
         # 3. 获取 worktree root
         try:
-            toplevel_result = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
+            toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
             if toplevel_result.returncode == 0:
                 wt_root = toplevel_result.stdout.strip()
             else:

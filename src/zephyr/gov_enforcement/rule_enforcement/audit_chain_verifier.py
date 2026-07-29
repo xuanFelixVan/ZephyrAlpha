@@ -100,11 +100,21 @@ class AuditChainVerifier:
         """只读：core_writer（Stage 4 公共化）。"""
         return self._core_writer
 
+    @core_writer.setter
+    def core_writer(self, value):
+        """写入：core_writer（Stage 4 公共化）。"""
+        self._core_writer = value
+
 
     @property
     def last_hash(self):
         """只读：last_hash（Stage 4 公共化）。"""
         return self._last_hash
+
+    @last_hash.setter
+    def last_hash(self, value):
+        """写入：last_hash（Stage 4 公共化）。"""
+        self._last_hash = value
 
 
     @property
@@ -112,11 +122,16 @@ class AuditChainVerifier:
         """只读：chain（Stage 4 公共化）。"""
         return self._chain
 
+    @chain.setter
+    def chain(self, value):
+        """写入：chain（Stage 4 公共化）。"""
+        self._chain = value
+
 
     @staticmethod
-    def compute_hash(payload) -> str:
-        """公共接口：compute_hash（Stage 4 公共化，委托到 _compute_hash）。"""
-        return _compute_hash(payload)
+    def compute_hash(payload: dict) -> str:
+        payload_str = dumps(payload, sort_keys=True)
+        return hashlib.sha256(payload_str.encode()).hexdigest()
 
 
     def _load_persisted_chain(self) -> None:
@@ -257,8 +272,8 @@ class AuditChainVerifier:
 
     @staticmethod
     def _compute_hash(payload: dict) -> str:
-        payload_str = dumps(payload, sort_keys=True)
-        return hashlib.sha256(payload_str.encode()).hexdigest()
+        """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
+        return AuditChainVerifier.compute_hash(payload)
 
     @property
     def length(self) -> int:

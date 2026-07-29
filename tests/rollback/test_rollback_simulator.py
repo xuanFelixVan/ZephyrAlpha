@@ -112,19 +112,19 @@ class TestRunGit:
     def test_run_git_success(self, simulator: RollbackSimulator):
         with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(stdout="output", returncode=0)
-            result = simulator._run_git(["status"])
+            result = simulator.run_git(["status"])
             assert result == "output"
 
     def test_run_git_exception(self, simulator: RollbackSimulator):
         with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
             mock_run.side_effect = subprocess.TimeoutExpired(cmd="git", timeout=15)
-            result = simulator._run_git(["status"])
+            result = simulator.run_git(["status"])
             assert result == ""
 
     def test_run_git_with_cwd(self, simulator: RollbackSimulator, tmp_path: Path):
         with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(stdout="ok", returncode=0)
-            simulator._run_git(["status"], cwd=tmp_path / "subdir")
+            simulator.run_git(["status"], cwd=tmp_path / "subdir")
             call_kwargs = mock_run.call_args
             assert "subdir" in str(call_kwargs)
 
