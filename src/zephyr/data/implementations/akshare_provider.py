@@ -64,6 +64,9 @@ _TBL_EQUITY_PLEDGE_SUMMARY = get_registry().table("fund_equity_pledge_summary")
 _TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
 _TBL_ETF_NAV = get_registry().table("market_etf_nav")
+_TBL_HOG_SPOT_INDEX = get_registry().table("market_hog_spot_index")
+_TBL_HOG_FUTURES_CORE = get_registry().table("market_hog_futures_core")
+_TBL_HOG_PROVINCE_SPOT = get_registry().table("market_hog_province_spot")
 _TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
 _TBL_HK_STOCK_LIST = get_registry().table("market_hk_stock_list")
 _TBL_HK_TRADE_CALENDAR = get_registry().table("market_hk_trade_calendar")
@@ -104,6 +107,9 @@ _AKSHARE_CAPABILITIES = frozenset({
     "repurchase", "convertible_bond_list", "etf_list", "lof_list",
     "hk_stock_list", "hk_trade_calendar", "index_list", "etf_benchmark",
     "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
+    "hog_spot_index",  # 2026-07-29 生猪现货价格指数（akshare index_hog_spot_price）
+    "hog_futures_core",  # 生猪期货核心价（akshare futures_hog_core）
+    "hog_province_spot",  # 分省生猪现价（akshare spot_hog_soozhu）
     "stock_list_delisted",  # #ARCH-CH-021 P0-1: 退市股票列表（SH+SZ delist）
     "futures_position",  # #ARCH-FUTURES-POSITION: 替代 QMT（QMT get_instrument_detail 返回全0）
 })
@@ -237,6 +243,10 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("etf_nav", supports_symbols_null=True),  # #ARCH-CH-023
             CapabilityContract("stock_list_delisted", supports_symbols_null=True),  # #ARCH-CH-021 P0-1
             CapabilityContract("futures_position", supports_symbols_null=True),  # #ARCH-FUTURES-POSITION
+            # 2026-07-29 生猪价格数据接入（akshare，单一时间序列无 symbols 概念）
+            CapabilityContract("hog_spot_index", supports_symbols_null=True),
+            CapabilityContract("hog_futures_core", supports_symbols_null=True),
+            CapabilityContract("hog_province_spot", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -3259,6 +3269,164 @@ class AKShareProvider(DataSourceBase):
                           elapsed_sec=time.time() - t0)
 
     # ---- ETF基金净值（etf_nav，#ARCH-CH-023: 替代 miniQMT get_etf_info） ----
+
+    @staticmethod
+    def _norm_hog_date(v) -> str | None:
+        """规范化 akshare 日期为 'YYYY-MM-DD' 字符串（兼容 Timestamp/str/NaT）。"""
+        if v is None:
+            return None
+        s = str(v)
+        if s in ("NaT", "nan", "None", ""):
+            return None
+        return s[:10]
+
+    def _fetch_hog_spot_index(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """生猪现货价格指数（周度），写入 c1_market.hog_spot_index。
+
+        akshare index_hog_spot_price 返回全量历史（2015至今约580行，含指数/均线/成交均价/均重）。
+        增量模式按 payload.start 过滤；全量模式取全部。用于猪周期历史定位。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_HOG_SPOT_INDEX
+        columns = [
+            "trade_date", "index_value", "ma_4m", "ma_6m", "ma_12m",
+            "presale_avg_price", "deal_avg_price", "deal_avg_weight",
+        ]
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.index_hog_spot_price, policy)
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key="", elapsed_sec=time.monotonic() - t0,
+                    error="index_hog_spot_price 返回空",
+                )
+                return
+            start_str = payload.start.strftime("%Y-%m-%d") if payload.start else None
+            rows: list[tuple] = []
+            for _, r in df.iterrows():
+                trade_date = self._norm_hog_date(r.get("日期"))
+                if not trade_date:
+                    continue
+                if start_str and trade_date < start_str:
+                    continue
+                rows.append((
+                    trade_date,
+                    safe_float(r.get("指数")),
+                    safe_float(r.get("4个月均线")),
+                    safe_float(r.get("6个月均线")),
+                    safe_float(r.get("12个月均线")),
+                    safe_float(r.get("预售均价")),
+                    safe_float(r.get("成交均价")),
+                    safe_float(r.get("成交均重")),
+                ))
+            last_key = rows[-1][0] if rows else ""
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=last_key, elapsed_sec=time.monotonic() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"hog_spot_index 获取失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.monotonic() - t0, error=str(e),
+            )
+
+    def _fetch_hog_futures_core(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """生猪期货核心价（日度），写入 c1_market.hog_futures_core。
+
+        akshare futures_hog_core 返回约1年历史（date/value）。用于期现价差/高频信号。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_HOG_FUTURES_CORE
+        columns = ["trade_date", "value"]
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.futures_hog_core, policy)
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key="", elapsed_sec=time.monotonic() - t0,
+                    error="futures_hog_core 返回空",
+                )
+                return
+            start_str = payload.start.strftime("%Y-%m-%d") if payload.start else None
+            rows: list[tuple] = []
+            for _, r in df.iterrows():
+                trade_date = self._norm_hog_date(r.get("date"))
+                if not trade_date:
+                    continue
+                if start_str and trade_date < start_str:
+                    continue
+                rows.append((trade_date, safe_float(r.get("value"))))
+            last_key = rows[-1][0] if rows else ""
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=last_key, elapsed_sec=time.monotonic() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"hog_futures_core 获取失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.monotonic() - t0, error=str(e),
+            )
+
+    def _fetch_hog_province_spot(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """分省生猪现价（日度快照），写入 c1_market.hog_province_spot。
+
+        akshare spot_hog_soozhu 返回当天28省快照（省份/价格/涨跌幅，无日期列），
+        用 payload.end 补 trade_date。用于区域价差分析。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_HOG_PROVINCE_SPOT
+        columns = ["trade_date", "province", "price", "change"]
+        t0 = time.monotonic()
+        if not payload.end:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=0.0,
+                error="hog_province_spot 缺少 end 日期",
+            )
+            return
+        trade_date = payload.end.strftime("%Y-%m-%d")
+        try:
+            df = self._call_with_policy(ak.spot_hog_soozhu, policy)
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key="", elapsed_sec=time.monotonic() - t0,
+                    error="spot_hog_soozhu 返回空",
+                )
+                return
+            rows: list[tuple] = []
+            for _, r in df.iterrows():
+                province = str(r.get("省份", "") or "").strip()
+                if not province:
+                    continue
+                rows.append((
+                    trade_date, province,
+                    safe_float(r.get("价格")),
+                    safe_float(r.get("涨跌幅")),
+                ))
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=trade_date, elapsed_sec=time.monotonic() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"hog_province_spot 获取失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.monotonic() - t0, error=str(e),
+            )
 
     def _fetch_etf_nav(
         self, payload: FetchPayload, policy: SourcePolicy

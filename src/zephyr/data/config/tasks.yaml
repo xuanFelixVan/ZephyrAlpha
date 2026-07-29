@@ -425,6 +425,18 @@ tasks:
   extra:
     description: "ETF 60分钟K线增量（miniQMT get_market_data_ex，sector=ETF）"
 
+- task_id: kline_etf_daily_incremental
+  table: c1_market.kline_etf_daily
+  source: miniqmt
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: kline_etf_daily
+  symbols:         # null=自动取ETF板块（沪深ETF）
+  extra:
+    description: "ETF 日K线增量（miniQMT get_market_data_ex，sector=沪深ETF，period=1d）"
+
 - task_id: kline_lof_1min_incremental
   table: c1_market.kline_lof_1min
   source: miniqmt
@@ -2105,3 +2117,62 @@ tasks:
   fallback_sources:
   - source: exchange
     capability: equity_pledge
+
+# ============== 生猪价格数据（2026-07-11 新增，akshare 接入，补齐猪周期分析数据缺口）==============
+
+- task_id: hog_spot_index_refresh
+  table: c1_market.hog_spot_index
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: hog_spot_index
+  symbols:
+  extra:
+    description: "生猪现货价格指数增量（AKShare index_hog_spot_price，周度数据日度拉取幂等去重）"
+
+- task_id: hog_spot_index_full_refresh
+  table: c1_market.hog_spot_index
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: hog_spot_index
+  symbols:
+  extra:
+    description: "生猪现货价格指数全量刷新（AKShare index_hog_spot_price，2015年起约11年历史回补）"
+
+- task_id: hog_futures_core_refresh
+  table: c1_market.hog_futures_core
+  source: akshare
+  schedule: daily_event
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: hog_futures_core
+  symbols:
+  extra:
+    description: "生猪期货核心价增量（AKShare futures_hog_core，日度）"
+
+- task_id: hog_futures_core_full_refresh
+  table: c1_market.hog_futures_core
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: hog_futures_core
+  symbols:
+  extra:
+    description: "生猪期货核心价全量刷新（AKShare futures_hog_core，1年历史回补）"
+
+- task_id: hog_province_spot_refresh
+  table: c1_market.hog_province_spot
+  source: akshare
+  schedule: daily_event
+  incremental: false
+  dependencies: []
+  capability: hog_province_spot
+  symbols:
+  extra:
+    description: "分省生猪现价快照（AKShare spot_hog_soozhu，当天28省区域价差）"

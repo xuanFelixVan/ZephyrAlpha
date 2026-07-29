@@ -320,6 +320,22 @@
   data_source: [miniqmt]
   blueprint: null
 
+- category_id: market_kline_etf_daily
+  name: "ETF日K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_etf_daily
+  schema_file: schemas/categories/market_kline_etf_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt]
+  blueprint: null
+
 - category_id: market_etf_list
   name: "ETF列表（全量ETF基础信息，setup_date/list_date=1970-01-01表示未成立/未上市）"
   engine: clickhouse
@@ -1778,3 +1794,53 @@
   frequency: 实时(校验时)
   data_source: [miniqmt, tdx_backup]
   blueprint: docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §6.5
+
+# --- 生猪价格数据（2026-07-29 新增，akshare 接入，补齐猪周期分析数据缺口）---
+
+- category_id: market_hog_spot_index
+  name: "生猪现货价格指数"
+  engine: clickhouse
+  database: c1_market
+  table: hog_spot_index
+  schema_file: schemas/categories/market_hog_spot_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 周频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_hog_futures_core
+  name: "生猪期货核心价"
+  engine: clickhouse
+  database: c1_market
+  table: hog_futures_core
+  schema_file: schemas/categories/market_hog_futures_core.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_hog_province_spot
+  name: "分省生猪现价"
+  engine: clickhouse
+  database: c1_market
+  table: hog_province_spot
+  schema_file: schemas/categories/market_hog_province_spot.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null

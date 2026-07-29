@@ -142,6 +142,32 @@ ORDER BY (symbol, trade_date)
 SETTINGS index_granularity = 8192
 """
 
+# kline_etf_daily DDL — 真源: schemas/categories/market_kline_etf_daily.py
+try:
+    from schemas.categories.market_kline_etf_daily import MARKET_KLINE_ETF_DAILY_DDL
+except ImportError:
+    # fallback: 内联定义（与 schema 文件保持一致）
+    MARKET_KLINE_ETF_DAILY_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.kline_etf_daily
+(
+    trade_date   Date           COMMENT '交易日期',
+    symbol       String         COMMENT 'ETF代码',
+    open         Decimal(18,4)  COMMENT '开盘价',
+    high         Decimal(18,4)  COMMENT '最高价',
+    low          Decimal(18,4)  COMMENT '最低价',
+    close        Decimal(18,4)  COMMENT '收盘价',
+    volume       UInt64         COMMENT '成交量(份)',
+    amount       Decimal(18,2)  COMMENT '成交额(元)',
+    pct_change   Decimal(18,4)  DEFAULT 0 COMMENT '涨跌幅(%)',
+    amplitude    Decimal(18,4)  DEFAULT 0 COMMENT '振幅(%)',
+    data_source  LowCardinality(String) DEFAULT 'miniqmt' COMMENT '数据来源',
+    ingest_ts    DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳'
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY toYYYYMM(trade_date)
+ORDER BY (symbol, trade_date)
+"""
+
 # auction_book DDL — 真源: schemas/categories/market_auction_book.py
 try:
     from schemas.categories.market_auction_book import AUCTION_BOOK_DDL
@@ -254,14 +280,77 @@ PARTITION BY toYYYYMM(check_date)
 ORDER BY (check_date, symbol, metric, check_time)
 """
 
+# hog_spot_index DDL — 真源: schemas/categories/market_hog_spot_index.py (2026-07-29 生猪价格接入)
+try:
+    from schemas.categories.market_hog_spot_index import HOG_SPOT_INDEX_DDL
+except ImportError:
+    HOG_SPOT_INDEX_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.hog_spot_index
+(
+    trade_date          Date           COMMENT '统计日期(周度)',
+    index_value         Decimal(18,4)  COMMENT '生猪现货价格指数',
+    ma_4m               Float64        COMMENT '4个月均线',
+    ma_6m               Float64        COMMENT '6个月均线',
+    ma_12m              Float64        COMMENT '12个月均线',
+    presale_avg_price   Decimal(18,4)  COMMENT '预售均价(元/公斤)',
+    deal_avg_price      Decimal(18,4)  COMMENT '成交均价(元/公斤)',
+    deal_avg_weight     Float64        COMMENT '成交均重(公斤)',
+    ingest_ts           DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳'
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY tuple()
+ORDER BY (trade_date)
+SETTINGS index_granularity = 8192
+"""
+
+# hog_futures_core DDL — 真源: schemas/categories/market_hog_futures_core.py
+try:
+    from schemas.categories.market_hog_futures_core import HOG_FUTURES_CORE_DDL
+except ImportError:
+    HOG_FUTURES_CORE_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.hog_futures_core
+(
+    trade_date    Date           COMMENT '交易日期',
+    value         Decimal(18,4)  COMMENT '生猪期货核心价(元/公斤)',
+    ingest_ts     DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳'
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY tuple()
+ORDER BY (trade_date)
+SETTINGS index_granularity = 8192
+"""
+
+# hog_province_spot DDL — 真源: schemas/categories/market_hog_province_spot.py
+try:
+    from schemas.categories.market_hog_province_spot import HOG_PROVINCE_SPOT_DDL
+except ImportError:
+    HOG_PROVINCE_SPOT_DDL = """
+CREATE TABLE IF NOT EXISTS c1_market.hog_province_spot
+(
+    trade_date    Date           COMMENT '交易日期(快照日)',
+    province      String         COMMENT '省份',
+    price         Decimal(18,4)  COMMENT '生猪现价(元/公斤)',
+    change        Float64        COMMENT '涨跌幅(元/公斤)',
+    ingest_ts     DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳'
+)
+ENGINE = ReplacingMergeTree
+PARTITION BY toYYYYMM(trade_date)
+ORDER BY (trade_date, province)
+SETTINGS index_granularity = 8192
+"""
+
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.tick_data", TICK_DATA_DDL),
     ("c1_market.l2_tick", L2_TICK_DDL),
     ("c1_market.kline_daily", KLINE_DAILY_DDL),
+    ("c1_market.kline_etf_daily", MARKET_KLINE_ETF_DAILY_DDL),
     ("c1_market.auction_book", AUCTION_BOOK_DDL),
     ("c1_market.sector_snapshot", SECTOR_SNAPSHOT_DDL),
     ("c1_market.cross_validation_log", CROSS_VALIDATION_LOG_DDL),
+    ("c1_market.hog_spot_index", HOG_SPOT_INDEX_DDL),
+    ("c1_market.hog_futures_core", HOG_FUTURES_CORE_DDL),
+    ("c1_market.hog_province_spot", HOG_PROVINCE_SPOT_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -282,9 +371,13 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "tick_data": "ReplacingMergeTree",
     "l2_tick": "ReplacingMergeTree",
     "kline_daily": "ReplacingMergeTree",
+    "kline_etf_daily": "ReplacingMergeTree",
     "auction_book": "ReplacingMergeTree",
     "sector_snapshot": "ReplacingMergeTree",
     "cross_validation_log": "MergeTree",
+    "hog_spot_index": "ReplacingMergeTree",
+    "hog_futures_core": "ReplacingMergeTree",
+    "hog_province_spot": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"
