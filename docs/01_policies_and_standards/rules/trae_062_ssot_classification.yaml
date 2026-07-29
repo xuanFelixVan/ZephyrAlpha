@@ -89,7 +89,7 @@ sections:
       violation_action: reject_change
     - id: SSOT-INV-004
       title: 生成器从 DB 读取
-      description: 生成器（generate_decision_diagram.py / generate_domain_dependency_diagram.py / generate_dataflow_diagram.py）从 PostgreSQL DB 读取数据生成 MD 视图。重新生成不会丢失设计态——因为设计态在 DB 里
+      description: 生成器（generate_decision_diagram.py / generate_dataflow_diagram.py）从 PostgreSQL DB 读取数据生成 MD 视图。重新生成不会丢失设计态——因为设计态在 DB 里
       enforcement: 生成器代码只读 DB + 脚本头部真源说明注释
       violation_action: reject_change
     examples:
@@ -116,7 +116,6 @@ references:
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
   - scripts/governance/generate_decision_graph.py
   - scripts/governance/d5_architecture/generators/generate_decision_diagram.py
-  - scripts/governance/d5_architecture/generators/generate_domain_dependency_diagram.py
   - scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py
   modules:
   - MOD-GOVERNANCE

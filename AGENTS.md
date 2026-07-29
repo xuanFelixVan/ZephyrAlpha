@@ -1059,7 +1059,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > **ghost 自动检测+自动清理（已实现，勿重复造）**：删除文件 commit 时，GitCommitGateway post-commit 的 `GATE-DELETE-AUDIT` reconciler（含原 GHOST 功能，priority=400）自动调用 `diagnose_depgraph.py` 检测 ghost node（磁盘已删但 DB 残留），报告落盘 `.runtime/reconcile_reports/ghost_*.json`。无需手动跑 diagnose 检测 ghost。**清理路径（2026-07-04 P1 治本，auto_clean 闭环）**：① ghost 数 ≤ 50 → reconciler 自动调 `apply_depgraph.py --cleanup-orphan-nodes` + `--cleanup-orphan-edges` 清理（备份先行：`_backup_depgraph_for_autoclean` 用 F1 裸 psycopg2 connection + copy_expert 导出 nodes/edges CSV 到 `tmp/pg_backups/ghost_autoclean_<ts>/`（.gitignored，与 backup_pg_depgraph 标杆对齐；保留最近 10 个，`_cleanup_old_ghost_backups` 自动清理过期，ARCH-DEBT-BACKUP-CLEANUP 2026-07-08 治本），备份失败 fail-closed 不清理）；② ghost 数 > 50 或解析失败 → 走 warn 不清理（防批量误删），需人工 `apply_depgraph.py --cleanup-orphan-nodes`。阈值 `_GHOST_AUTO_CLEAN_THRESHOLD=50`（reconciliation_registry.py），与 generate_project_depgraph.py `_GHOST_WARNING_THRESHOLD=50` 对齐。trigger 仅覆盖"删除 commit"是 intentional（删除才会产生 ghost），勿扩展到 PG 写入脚本 commit（脚本 commit ≠ DB 内容变更，扩展会引入噪音）。
 
 > **三层 ghost 防御（2026-07-01 ARCH-038 铁律，勿重复造）**：
-> 1. **Layer 1（技术铁律）**：生成器（`generate_domain_doc.py` + `generate_domain_dependency_diagram.py`）内置 `_is_ghost()` 过滤——path 非空但磁盘不存在的节点自动排除。即使 depgraph 有 2774 个 ghost 节点，生成的文档也不会引用幽灵文件。**新 AI 不需要知道要跑 deprecate——不跑也不会有问题**。
+> 1. **Layer 1（技术铁律）**：生成器（`generate_domain_doc.py`）内置 `_is_ghost()` 过滤——path 非空但磁盘不存在的节点自动排除。即使 depgraph 有 2774 个 ghost 节点，生成的文档也不会引用幽灵文件。**新 AI 不需要知道要跑 deprecate——不跑也不会有问题**。
 > 2. **Layer 2（自动修复）**：GATE-REGENERATE trigger 已扩展——文件删除 commit 时自动触发生成器重生。GATE-MANIFEST（priority=620）自动重生 script_manifest.yaml。GitCommitGateway post-commit 全自动，无需人工触发。
 > 3. **Layer 3（规则补充）**：本段 AGENTS.md 规则。禁止裸连数据库，必须通过 `apply_depgraph.py` 程序化访问（真源方向见 §11.0 决策表）。架构文档由生成器自动产出，禁止手动编辑。
 
@@ -1109,7 +1109,6 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | `generate_capability_heatmap.py` | `01_global_architecture_diagram/` | 能力热图 |
 | `generate_domain_doc.py` | `02_domain_architecture_docs/` | 域架构文档 |
 | `generate_domain_index.py` | `02_domain_architecture_docs/` | 域索引 |
-| `generate_domain_dependency_diagram.py` | `02_domain_architecture_docs/` | 域依赖图 |
 | `generate_design_vs_production.py` | `03_governance_reports/` | 设计 vs 生产 |
 | `generate_constraint_violations.py` | `03_governance_reports/` | 约束违规（读 PG 展示） |
 | `detect_constraint_violations.py` | `03_governance_reports/` | 约束违规检测（写 PG，GATE-CONSTRAINT-DETECT） |
@@ -1134,9 +1133,9 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 - **真源实现**：所有生成器 docstring `[INVARIANTS]` 声明"输出幂等(相同输入→相同输出);零时间戳"
 - **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源
 - **检测**：`Select-String -Path "scripts/governance/d5_architecture/generators/*.py" -Pattern "datetime\.now\(\)"` 应返回零匹配
-- **自动触发**：GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能）在修改 depgraph 后自动调用 generate_domain_doc.py 和 generate_domain_dependency_diagram.py 重生域文档，生成器幂等性确保无噪音 auto-commit
-- **按域编号生成器 --all 模式 MUST 调用 cleanup_stale_files**：生成"按域编号文件"（`NN_d_xxx.md`/`.mmd`，域重命名/删除后旧编号会残留）的生成器，在 `--all` 模式下 MUST 调用 `_common.cleanup_stale_files()` 清理孤儿文件，治本"只增不删"。当前适用：`generate_domain_doc.py`、`generate_domain_dependency_diagram.py`（均已调用）。单域模式不清理（避免误删）；生成单文件/非编号文件的生成器（导航索引、容量报告、集成拓扑等）不适用。真源：[`_common.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/_common.py)
-- **检测**：对生成 `NN_d_xxx` 格式文件的生成器，`Select-String -Pattern "cleanup_stale_files"` 应返回至少 1 匹配（当前 2 个生成器均通过）
+- **自动触发**：GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能）在修改 depgraph 后自动调用 generate_domain_doc.py 重生域文档，生成器幂等性确保无噪音 auto-commit（2026-07-30 起 generate_domain_dependency_diagram.py 已下线，域依赖图内嵌于域文档）
+- **按域编号生成器 --all 模式 MUST 调用 cleanup_stale_files**：生成"按域编号文件"（`NN_d_xxx.md`，域重命名/删除后旧编号会残留）的生成器，在 `--all` 模式下 MUST 调用 `_common.cleanup_stale_files()` 清理孤儿文件，治本"只增不删"。当前适用：`generate_domain_doc.py`（已调用）。单域模式不清理（避免误删）；生成单文件/非编号文件的生成器（导航索引、容量报告、集成拓扑等）不适用。真源：[`_common.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/_common.py)
+- **检测**：对生成 `NN_d_xxx` 格式文件的生成器，`Select-String -Pattern "cleanup_stale_files"` 应返回至少 1 匹配（当前 1 个生成器通过）
 
 #### 11.1.2 ARCH 引用校验门禁（Phase 4 防御性门禁，ARCH-033，2026-07-02）
 

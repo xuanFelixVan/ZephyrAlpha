@@ -807,10 +807,6 @@ items:
   name: generate_design_vs_production.py
   node_type: script
   status: active
-- file: scripts/governance/d5_architecture/generators/generate_domain_dependency_diagram.py
-  name: generate_domain_dependency_diagram.py
-  node_type: script
-  status: active
 - file: scripts/governance/d5_architecture/generators/generate_domain_doc.py
   name: generate_domain_doc.py
   node_type: script

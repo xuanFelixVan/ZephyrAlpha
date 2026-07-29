@@ -126,9 +126,9 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 | Level / 级别 | Focus / 关注点 | Usage in this project / 本项目用法 |
 |-------------|--------------|----------------------------------|
-| **L1 — System Context** | System's position in the external world | ✅ Required → `c4_l1_l2_views.md`（内嵌 mermaid） |
-| **L2 — Container** | Independent deployable units inside the system | ✅ Required → `c4_l1_l2_views.md`（内嵌 mermaid） |
-| **L3 — Component** | Components inside a container | 🟡 As needed, in blueprints |
+| **L1 — System Context** | System's position in the external world | ✅ → 生成视图 [`integration_topology.md`](../01_global_architecture_diagram/integration_topology.md) + SSoT（外部系统见 `technology_landscape.yaml`） |
+| **L2 — Container** | Independent deployable units inside the system | ✅ → 生成视图 [`integration_topology.md`](../01_global_architecture_diagram/integration_topology.md)（72域容器+跨域依赖） |
+| **L3 — Component** | Components inside a container | 🟡 As needed → `c4_component_views.md` + blueprints |
 | **L4 — Code** | Class/function level | ❌ Not drawn (code itself is documentation)|
 
 ---
@@ -138,10 +138,10 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | Tree / 树 | Primary view / 核心视图归属 | Key diagrams / 主要图 | Owner document / 归属文档 |
 |----------|--------------------------|---------------------|--------------------------|
 | `docs/` | Information Architecture | `docs/` 抽屉拓扑图 + 文档生命周期图 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) + `directory_registry.yaml` |
-| `src/` | Application Architecture | C4-L1 系统上下文 + C4-L2 容器图 + 域依赖图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
+| `src/` | Application Architecture | 集成拓扑图（生成视图）+ C4-L3 域组件图 + 域依赖图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
 | `scripts/` | Application Architecture (sub-view) | 治理代码拓扑图 + pre-commit/CI 钩子流程图 | [`application_principles.md`](../04_architecture_principles_decisions/application_principles.md) |
 
-> **v2.0.0变更**：原"14层代码分层图"改为"域依赖图"，由`generate_domain_dependency_diagram.py`从depgraph派生。
+> **v2.0.0变更**：原"14层代码分层图"改为"域依赖图"，由`generate_domain_doc.py`从depgraph派生并内嵌于域文档（2026-07-30 起 generate_domain_dependency_diagram.py 已下线，独立 .mmd 文件不再生成）。
 
 ---
 

@@ -8,7 +8,7 @@ merged_from: README.md + index.md
 module_id: ARCH-006
 status: Active
 title: Target Architecture — Navigation Guide / 目标架构导航
-version: 3.3.0
+version: 3.4.0
 depends_on:
   - {target: EA-INDEX, at: "§子目录", why: "父级 EA 索引——target_architecture 为其子目录"}
 tags:
@@ -16,7 +16,7 @@ tags:
 - navigation
 - domain-driven
 - depgraph-derived
-summary: v3.3.0：删除 dimension_audit_matrix.md（无消费者的死评分卡）；§2 域表改为指针指向 generated domain_index；§3/§5 修复 3 处指向已删文件的 stale 引用。v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。
+summary: v3.4.0：删除 dataflow_views.md/topology_views.md/c4_l1_l2_views.md（均被生成视图或SSoT覆盖，手绘图已过时漂移）；§3/§5 同步清理引用。v3.3.0：删除 dimension_audit_matrix.md；§2 域表改为指针指向 generated domain_index。v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。
 ttl: permanent
 ---
 
@@ -27,7 +27,7 @@ ttl: permanent
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**目标架构视图（TOGAF）— overview / 索引 / 视觉视图（C4·流程·数据流·拓扑·治理）+ revision_history**。结构化数据真源在 `architecture_model/` YAML 与 `generated/` 派生视图。
+本目录只存放：**目标架构视图（TOGAF）— overview / 索引 / 视觉视图（C4组件·流程·治理）+ revision_history**。结构化数据真源在 `architecture_model/` YAML 与 `generated/` 派生视图。
 
 ---
 
@@ -39,7 +39,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 - **ISO 42010** — 定方法论：Architecture Description 由多个 View 组成
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology
-- **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）
+- **C4 Model** — 定应用视图的可视化：域组件分解（L3）；L1系统上下文/L2容器由生成视图（integration_topology.md）覆盖
 
 > **v3.0.0变更**：物理代码组织以53域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph派生。
 
@@ -59,10 +59,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 |------|------|
 | overview.md | 架构总览（v2.1.0：53域+全景图派生，方法论叙事）|
 | application_flows.md | 5 张端到端时序图（订单/成交/风控/再平衡/异常）|
-| c4_l1_l2_views.md | C4-L1 系统上下文 + L2 容器图 |
 | c4_component_views.md | 3 张 C4-L3 域组件图（D_MKT_DATA/D_EX_CORE/D_ML_TRAIN）|
-| dataflow_views.md | 业务价值流 + 部署拓扑（跨域数据流已生成至 `../05_dataflow_architecture/`）|
-| topology_views.md | TOGAF 层栈 + docs/scripts/runtime 拓扑（集成拓扑已生成至 `../01_global_architecture_diagram/`）|
 | governance_views.md | 治理 d2b 闭环 + 三层边界图 |
 | revision_history.md | 完整修订历史归档（index.md §10 完整版）|
 | business_principles.md → ../04_architecture_principles_decisions/ + value_stream_map.yaml | BA 业务架构原则（原 business_architecture.md 已迁移） |
@@ -87,7 +84,6 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | 集成拓扑图 | generate_integration_topology.py | `../01_global_architecture_diagram/integration_topology.md` | 外部系统+内部层+契约 |
 | 数据流图 | generate_dataflow_diagram.py | `../05_dataflow_architecture/dataflow_index.md` | 跨域核心数据流 |
 | 单域架构文档 | generate_domain_doc.py | `generated/domains/*.md` | 单域架构文档 |
-| 单域依赖图 | generate_domain_dependency_diagram.py | `generated/domains/*_dependency.mmd` | 单域依赖图 |
 
 ---
 
@@ -98,10 +94,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | `index.md`（本文） | — | 本文档组是什么？怎么读？ | 所有人 | active |
 | `overview.md` | Cross-layer | 整体架构哲学？53域如何组织？ | 架构师、新加入者 | active |
 | `application_flows.md` | Cross-layer | 端到端时序如何编排？ | 架构师、开发者 | active |
-| `c4_l1_l2_views.md` | Cross-layer | 系统上下文+容器？ | 架构师、新加入者 | active |
 | `c4_component_views.md` | Cross-layer | 核心域组件分解？ | 开发者 | active |
-| `dataflow_views.md` | Cross-layer | 业务价值流+部署拓扑？ | 架构师、SRE | active |
-| `topology_views.md` | Cross-layer | TOGAF层栈+代码拓扑？ | 架构师、开发者 | active |
 | `governance_views.md` | Cross-layer | 治理闭环+三层边界？ | 架构师、合规 | active |
 | [`business_principles.md`](../04_architecture_principles_decisions/business_principles.md) + [`value_stream_map.yaml`](../../../architecture_model/cross_cutting/value_stream_map.yaml) | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | [`information_principles.md`](../04_architecture_principles_decisions/information_principles.md) | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
@@ -157,9 +150,9 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-07-30 | **v3.3.0**：删除 `dimension_audit_matrix.md`（12维评分卡无消费者，score_architecture.py 不存在）；§2 域表改为指针指向 `../02_domain_architecture_docs/domain_index.md`；§3/§5 修复 3 处 stale 引用（operations_architecture.md / dimension_audit_matrix.md / session_carryover_schema.md 均已删）；dataflow_views/topology_views 瘦身（已生成视图段删除+指针）。 |
+| 2026-07-30 | **v3.4.0**：删除 `dataflow_views.md`/`topology_views.md`/`c4_l1_l2_views.md`——均被生成视图（integration_topology.md/dataflow_index.md）或 SSoT（value_stream_map.yaml/cross_layer_contracts.yaml/technology_landscape.yaml）覆盖，手绘图已过时漂移（TimescaleDB→ClickHouse、53域→72域）；§3/§5/§责任声明 同步清理引用。 |
+| 2026-07-30 | **v3.3.0**：删除 `dimension_audit_matrix.md`（12维评分卡无消费者，score_architecture.py 不存在）；§2 域表改为指针指向 `../02_domain_architecture_docs/domain_index.md`；§3/§5 修复 3 处 stale 引用（operations_architecture.md / dimension_audit_matrix.md / session_carryover_schema.md 均已删）。 |
 | 2026-07-29 | **v3.2.0**：删除 `diagrams/` 下 22 个冗余 .mmd 图源文件（已内嵌至 MD 文档），修复全项目 .mmd 引用。 |
-| 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为53域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。 |
 
 ## 排除规则（不应放入本目录的内容）
 

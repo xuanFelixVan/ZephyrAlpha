@@ -27,7 +27,7 @@
   1. ``git mv old.py new.py`` 改了文件名
   2. AI 直接 commit（或通过 GitCommitGateway commit）
   3. depgraph (PostgreSQL) nodes 表仍记录旧路径 ``old.py``
-  4. 下次 generate_path_tree / generate_domain_dependency_diagram / generate_domain_doc
+  4. 下次 generate_path_tree / generate_domain_doc
      读 depgraph → 引用不存在的 ``old.py`` → 产出 stale docs
   5. 后续 AI 读 docs 看到 ``old.py`` → import 失败 → 幻觉温床
 

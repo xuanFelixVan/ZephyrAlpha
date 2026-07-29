@@ -21489,13 +21489,6 @@ ownership:
     existence: 'generated'
     ownership_judgment: '本模块'
 
-  - path: 'scripts/governance/d5_architecture/generators/generate_domain_dependency_diagram.py'
-    owner_blueprint: 'MOD-GOV_GENERATE_DOMAIN_DEPENDENCY_DIAGRAM'
-    claim_type: 'depgraph_node'
-    declared_in: ''
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
   - path: 'scripts/governance/d5_architecture/generators/generate_integration_topology.py'
     owner_blueprint: 'MOD-GOV_GENERATE_INTEGRATION_TOPOLOGY'
     claim_type: 'depgraph_node'
