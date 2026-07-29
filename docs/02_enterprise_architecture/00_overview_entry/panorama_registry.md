@@ -16,12 +16,12 @@
 
 | 维度 | 值 |
 |------|:---:|
-| 已建全景图总数 | 22 |
+| 已建全景图总数 | 21 |
 | 待建全景图总数 | 16 |
-| 全景图总数 | 38 |
-| 已建覆盖率 | 57.9% |
+| 全景图总数 | 37 |
+| 已建覆盖率 | 56.8% |
 
-| 已建产物存在 | 21/22 |
+| 已建产物存在 | 20/21 |
 
 ### 数据库真源健康度
 
@@ -30,10 +30,10 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5755 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5755 个 |
-| 依赖图 depgraph | `edges` | 7880 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7880 条 |
+| 依赖图 depgraph | `nodes` | 5768 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5768 个 |
+| 依赖图 depgraph | `edges` | 7902 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7902 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 766 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 770 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
@@ -64,7 +64,6 @@
 | `05_dataflow_architecture/` | 数据流架构（dataflowgraph） | ✅ |
 | `06_decision_architecture/` | 决策流架构（decisiongraph） | ✅ |
 | `generated/` | 自动生成中间产物（域依赖图/对齐报告） | ✅ |
-| `sample/` | 样板/模板区（7 个样板文件） | ✅ |
 | `target_architecture/` | TOGAF 目标架构视图集 | ✅ |
 | `02_enterprise_architecture/`（根目录） | 架构债务注册表（根目录文件） | ✅ |
 | `08_asset_panorama/` | 资产/契约/数据目录/数据血缘（待建） | ⏳ |
@@ -83,7 +82,7 @@
 
 ## 已建全景图清单
 
-> 共 22 项已建全景图。状态由生成器扫描实际产物文件自动验证。
+> 共 21 项已建全景图。状态由生成器扫描实际产物文件自动验证。
 >
 > 排序：按输出目录顺序（00→01→02→...→target_architecture）。
 
@@ -106,7 +105,6 @@
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
 | PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(72文件) |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
-| PAN-BUILT-21 | 样板/模板区（7 个样板文件） | 样板 | 手工 | 手工 | `(手工维护)` | `sample/` | ✅存在(7文件) |
 | PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/overview.md) | ✅存在 |
 | PAN-BUILT-02 | C4 L1/L2/L3 架构图 | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/c4_l1_l2_views.md) | ✅存在 |
 | PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/topology_views.md) | ✅存在 |
@@ -179,7 +177,7 @@
 | 架构图来源 | 全景图数量 | 说明 |
 |------|:---:|------|
 | depgraph | 11 | 依赖图——模块节点和依赖边，生成域文档/矩阵/拓扑/热力图/容量/违规等 |
-| 手工 | 6 | 人工维护的架构文档，无自动生成器 |
+| 手工 | 5 | 人工维护的架构文档，无自动生成器 |
 | 待裁定（depgraph 域派生 vs 独立表） | 4 | 待裁定真源类型 |
 | 文件系统扫描 | 2 | 扫描实际文件系统派生，无 DB 真源 |
 | dataflowgraph | 1 | 数据流图——Dataset/Job/Edge，生成数据流图 |
@@ -197,7 +195,7 @@
 | 待裁定（depgraph contracts 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（代码扫描派生 vs 独立表） | 1 | 待裁定真源类型 |
-| **合计** | **38** | 已建 22 + 待建 16 |
+| **合计** | **37** | 已建 21 + 待建 16 |
 
 ---
 
@@ -257,12 +255,6 @@
 |------|------|:---:|------|------|------|
 | PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | ✅已建 | depgraph | 每个功能域一张 .mmd 依赖图，从 depgraph (PostgreSQL) nodes/edges 表派生 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_domain_dependency_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_domain_dependency_diagram.py)<br>产物：`generated/domains/` |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | ✅已建 | depgraph | 内置 Tarjan SCC 算法检测循环依赖，输出循环报告 | 真源：depgraph (PostgreSQL)<br>生成器：`内置在生成器（Tarjan SCC）`<br>产物：[`generated/panorama_alignment_report.md`](../generated/panorama_alignment_report.md) |
-
-### sample 样板/模板区
-
-| ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
-|------|------|:---:|------|------|------|
-| PAN-BUILT-21 | 样板/模板区（7 个样板文件） | ✅已建 | 手工 | 给人类写文档时参考的样板（overview_entry_sample / architecture_principles_sample / manual_architecture_views_sample / d_trading_sample / 手工架构图样板 / integration_topology_sample / path_tree_sample） | 真源：手工<br>生成器：`(手工维护)`<br>产物：`sample/` |
 
 ### target_architecture TOGAF 目标架构
 
