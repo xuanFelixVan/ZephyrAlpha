@@ -3,36 +3,17 @@ ttl: permanent
 doc_type: architecture_view
 ---
 
-> **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
-> D_GOV_DOCS→D_GOV_DOCS, D_GOV_ENFORCEMENT→D_GOV_ENFORCEMENT, D_GOV_SCRIPTS→D_GOV_SCRIPTS,
-> D_GOV_AUDIT_TESTS→D_AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
-> 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
-
-
 # 依赖与路径全景图能力定位书
 
-> 版本：V6.0 | 2026-06-30（全量更新版：P2/P3 迁移 + v15-v18 schema + 53 域）
+> 版本：V6.0 | 2026-07-30
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
-> 写法：大白话为主。这是我的私人项目，我写了给我自己看，也是给接手的 AI 看。
-> 变更历史见 git log。本文档只保留当前有效的设计规格和裁定结论。
-
-> **⚠️ 命名变更说明（2026-07-01）**：为消除"架构"一词的歧义（"架构"易被误解为"架构设计规则"，但实际管的是"物理路径"），本次重命名如下：
-> - **原"架构全景图" → 现"路径全景图"**（arch_ 表组，管"放在哪"——文件/目录的物理位置和域归属）
-> - **原"共享表" → 现"设计规则缓存表"**（domains/contracts/gates 等，从 YAML 同步过来的只读缓存）
-> - 文档标题同步从"依赖与架构全景图能力定位书"改为"依赖与路径全景图能力定位书"
-> - 英文文件名已从 `dependency_architecture_panorama.md` 重命名为 `dependency_path_panorama.md`（2026-07-01）
-> - 旧名"架构全景图"在本文档历史段落中若仍出现，均按本说明映射为"路径全景图"
+> 写法：大白话为主。变更历史见 git log。本文档只保留当前有效的设计规格和裁定结论。
 
 > **文档责任范围**：本文档定义**依赖与路径全景图**（depgraph + 生成器）的能力定位、设计决策和裁定记录。
 > 合并后覆盖：依赖全景图（dep_ 表组，管"谁依赖谁"）+ 路径全景图（arch_ 表组，管"放在哪"）+ 设计规则缓存表（domains/contracts 等）。
 > 不包含：施工步骤和问题清单（见 archive/depgraph_issue_registry.md）、架构升级项目导航（见 architecture_upgrade_discussion.md）、生成器技术问题清单（见 generator_issues.md）。
 
-> **⚠️ 数据源说明**：全景图数据库使用 **PostgreSQL 16**，数据库名统一为 `depgraph (PostgreSQL)`（一眼可知全景图所在引擎，避免与 SQLite 物理文件 `depgraph.db` 混淆）。PostgreSQL 带来的引擎差异：
-> - 自增主键：SQLite 的 `INTEGER PK AUTOINCREMENT` → PostgreSQL 的 `GENERATED ALWAYS AS IDENTITY`（不再需要 `sqlite_sequence` 序列跟踪表）
-> - 并发控制：SQLite 的文件级写锁 → PostgreSQL 的 MVCC 行级锁（多版本并发控制，读写互不阻塞）
-> - 约束校验：SQLite 的 `ALTER TABLE ADD CHECK` 不回溯限制 → PostgreSQL 支持 `NOT VALID` 延迟校验 + `VALIDATE CONSTRAINT`
-> - 序列管理：SQLite 由 `sqlite_sequence` 表自动维护 → PostgreSQL 由 IDENTITY 列内部序列自动维护，无需 PRAGMA
-> - 以下文中出现的 `AUTOINCREMENT` / `写锁` / `sqlite_sequence` 等 SQLite 特有术语，均按上述映射理解为 PostgreSQL 等价机制。
+> **数据源**：全景图数据库为 PostgreSQL 16，数据库名 `depgraph`（与 SQLite 物理文件 `depgraph.db` 区分）。PostgreSQL 特性：IDENTITY 列自增主键、MVCC 行级锁、`NOT VALID` 延迟校验 + `VALIDATE CONSTRAINT`。
 
 ---
 
@@ -434,50 +415,9 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 **业界依据**：Netflix Service Topology 用服务 ID 精确关联；Google Bazel 用目标 label 精确关联。业界一致用稳定标识符而非可变路径作为关联键。
 
-**node_id 格式**（V3.4 修正）：
-- **V3.4 前（历史）**：TEXT 类型，格式混乱（有 `D-TRADING-01` 也有文件名）
-- **当前（V3.4 P0-1 + PG 迁移后）**：bigint（INTEGER GENERATED ALWAYS AS IDENTITY），自增整数，与 path 完全解耦
-- **迁移策略**（P0-1 Schema 迁移执行）：
-  1. 创建新表 `nodes_new`，node_id 为 INTEGER GENERATED ALWAYS AS IDENTITY，其余字段与 nodes 相同 + 新增 5 字段（has_dynamic_import/blueprint_id_invalid/in_degree/out_degree/blueprint_path）
-  2. 从 nodes 复制数据到 nodes_new，node_id 自增分配新值
-  3. 创建 `node_id_mapping` 临时表，记录旧 node_id → 新 node_id 映射
-  4. edges 表新增 from_node_id/to_node_id（INTEGER FK），根据 mapping 填充
-  5. edges 表新增 dep_maturity 字段（TEXT，默认 'active'，区分 design/active edge）
-  6. 删除 edges 旧字段 from_node/to_node
-  7. arch_directory_tree 删除 state 字段，新增 node_id 外键（INTEGER FK → nodes.node_id）
-  8. 删除旧 nodes 表，重命名 nodes_new 为 nodes
-  9. 重建外键约束和索引
+**node_id 格式**：bigint（GENERATED ALWAYS AS IDENTITY），自增整数，与 path 完全解耦。edges 用 `from_node_id`/`to_node_id`（bigint FK）+ `dep_maturity`（design/active）。arch_directory_tree 无 `node_id` 外键（v15 重建表时移除），无 `state` 字段（统一用 `design_maturity`）。nodes 表当前 31 列。
 
 **业界依据**：Google Bazel 的 target label（//pkg:target）是稳定标识符；Jane Street 的模块路径是稳定标识符。node_id 作为边的端点，必须稳定——路径可变，ID 不变。
-
-> **⚠️ 迁移期统一说明（V3.4 P0-1 Schema 迁移，已完成）**
->
-> 以下字段在 V3.4 P0-1 前**不存在**，P0-1 施工时新增（现已存在，部分被 v15 删除见下方说明）：
-> - `edges.dep_maturity`（TEXT，默认 'active'，区分 design/active edge）
-> - `edges.from_node_id` / `edges.to_node_id`（INTEGER FK，替换旧的 `from_node`/`to_node` TEXT 字段）
-> - `nodes.has_dynamic_import` / `nodes.blueprint_id_invalid` / `nodes.in_degree` / `nodes.out_degree` / `nodes.blueprint_path`
-> - `arch_directory_tree.node_id`（INTEGER FK → nodes.node_id，**替换**删除的 `state` 字段，列数不变）
->
-> 以下字段在 V3.4 迁移前**存在**，迁移后**已删除**：
-> - `edges.from_node` / `edges.to_node`（TEXT，迁移后删除）
-> - `arch_directory_tree.state`（TEXT，迁移后删除，统一用 `design_maturity`）
->
-> 迁移前：edges 用 `from_node`/`to_node`（TEXT），无 `dep_maturity`；arch_directory_tree 有 `state` 字段，无 `node_id`。
-> 迁移后：edges 用 `from_node_id`/`to_node_id`（bigint FK），有 `dep_maturity`；arch_directory_tree 删除 `state`，新增 `node_id`（列数不变，11→11）。**v15 后**：arch_directory_tree 重建表时删除 `node_id`（最终 10 列），edges 的 `INTEGER FK` 在 PG 迁移后为 `bigint FK`。
->
-> **本文档其他章节引用上述字段时，不再重复此说明。**
->
-> **⚠️ v15/v16 Schema 变更裁定说明（#ARCH-016 治本，2026-06）**
->
-> V3.4 P0-1 新增的部分字段在 v15 migration 中被删除（dead column 清理），当前 schema 不再包含：
-> - `nodes.has_dynamic_import` / `nodes.in_degree` / `nodes.out_degree`（v15 删除；in/out_degree 改由生成器动态 COUNT 计算，不持久化）
-> - `nodes.business_stream` / `nodes.stream_role` / `nodes.runtime_plane` / `nodes.ddd_aggregate` / `nodes.provided_interfaces`（v15 删除；裁定#165-169 合并的字段经评估无业务读写）
-> - `nodes.implementation_ref`（v15 删除；无业务读写）
-> - `edges.migration_status`（v15 删除；无业务读写，连带删除 idx_edges_migration 索引 + chk_edges_migration_status* 触发器）
-> - `arch_directory_tree.node_id`（v15 删除；重建表模式移除 node_id FK + idx_arch_tree_node_id 索引）
-> - v16 删除 orphan trigger `chk_edges_design_immutable_update`（源码中不存在，仅 DB 实例遗留）
->
-> v15 后 nodes 表 31 列（V3.4 后曾达 36 列，v15 删 9 dead 列回到 31，但列组成与 V3.3 的 31 列不同）。本文档上述章节（§V3.4 迁移策略、§14.7 字段清单、§20.3 裁定表、§22.9 P0-6 扩展）引用上述字段时，均为历史记录，反映 V3.4/V5 当时的 schema 状态。
 
 ### 12.4 机械判定规则（AI零歧义执行）
 
@@ -775,102 +715,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 ---
 
-#### 裁定#209：依赖全景图运营态触发机制改造（2026-07-02）
-
-**背景**：原 §14.2 "禁止触发，因会覆盖手动修复"条款基于早期无保护机制的设计。经 §14.2.1 调研核实：生成器已内置 P1/P2 保护机制（`PRODUCTION_PROTECTED_FIELDS` 14字段 + `EDGES_PROTECTED_FIELDS` 9字段），DELETE 前读出保护字段、重建后仅当重建字段为空时恢复——原"覆盖手动修复"的禁用理由已大幅弱化。同时确认 15 个 reconciler 中**无任何针对 nodes/edges 运营态同步的 reconciler**（GATE-PATH-TREE 只管 arch_directory_tree，GATE-YAML-SYNC 只管规则缓存表），是设计缺口。
-
-**核心裁定**：依赖全景图运营态应改为自动触发，分 4 阶段实施：
-
-| 阶段 | 内容 | 产出 |
-|------|------|------|
-| 阶段0（立即） | 纠正文档与认知——本裁定即阶段0产出 | 本节修订 |
-| 阶段1（短期） | 新增 GATE-DEPGRAPH-OPS reconciler（priority=130，trigger=commit .py，reconcile=dry-run检测→有漂移则 --output-db --force，失败降级 warn）+ 加 pg_advisory_lock 与 apply_depgraph.py 互斥 | 新 reconciler + 任务卡 |
-| 阶段2（中期） | 字段角色分离治本——新建 nodes_metadata / edges_metadata 表，迁移 PRODUCTION_PROTECTED_FIELDS(14) + EDGES_PROTECTED_FIELDS(9) 出 nodes/edges；nodes/edges 回归纯派生态，可全量 DELETE+INSERT 无保护顾虑；P1/P2 保护机制下线 | schema 迁移 + 任务卡 |
-| 阶段3（已完成，commit 2093db3615） | 增量引擎 Stage 3——content_hash 列 + compute_file_hash() + --incremental skip（无变更时跳过 DB 重建，二元 skip） | 增量引擎 |
-| 阶段4（已完成，commit 8641f2b74） | scan-level 缓存（真正增量重建 Stage 4）——ScanCache 缓存 scan 结果到 .runtime/depgraph_scan_cache.json，key=(path, content_hash)，命中跳过 AST 解析；fingerprint（domain_derivation hash）+ SCAN_LOGIC_VERSION 双重失效；3.7x 加速（cached 3.13s vs no-cache 11.61s） | scan 缓存引擎 |
-
-**第一性原理病根**：依赖全景图运营态本质是"代码世界的派生投影"，重新生成本不应有信息丢失。当前设计的悖论是运营态字段同时承担"派生数据"（from_node_id/dep_type 等9字段，应自动重生）与"人工 curated 元数据"（PRODUCTION_PROTECTED_FIELDS 14 + EDGES_PROTECTED_FIELDS 9，不应被覆盖）两种角色——业界主流做法是物理分离这两种角色（Sourcegraph 派生索引+仓库元数据分离；Netflix 流量拓扑+服务所有权分离）。阶段2 的字段分离才是治本。
-
-**业界对标**（详见 §14.2.1）：Netflix "不完整数据比没有数据更糟糕"、Stripe 从"季度迁移"到"持续计算"、Sourcegraph 周期调度+webhook——业界主流是自动触发，"手动触发防覆盖"是反主流取舍。100% AI 开发场景下图漂移危害被放大（腾讯 Ghost Dependencies、SRI 论文 13.5× 依赖膨胀、Replit Agent 删库事件），自动触发必要性随 AI 改代码频率上升而上升。
-
-**关联议题**：#ARCH-040（[architecture_issue_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）。
-
----
-
-#### 14.2.1 自动触发机制调研依据（裁定#209 证据基础）
-
-> 调研时间：2026-07-02。方法：阅读 [generate_project_depgraph.py](../../../../scripts/governance/generate_project_depgraph.py)（3924行）+ [reconciliation_registry.py](../../../../src/zephyr/governance/audit/reconciliation_registry.py) + [git_commit_gateway.py](../../../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py) 代码实证 + 业界网络调研。
-
-##### A. 生成器实现证据
-
-| 项目 | 实证 |
-|------|------|
-| 扫描模式 | 全量扫描 + scan-level 缓存（裁定#209 Stage 4，commit 8641f2b74）；--incremental 支持二元 skip（Stage 3）；扫描范围 14 个白名单目录 |
-| DELETE+INSERT | 有保留范围：`WHERE design_maturity != 'design'` 保留设计态节点/边 |
-| 覆盖手动修复的真实含义 | 指运营态 production 字段的手动修改——**已有 P1/P2 保护机制**：`PRODUCTION_PROTECTED_FIELDS`（14字段：blueprint_id/owner/impact_level/build_status 等）+ `EDGES_PROTECTED_FIELDS`（9字段：failure_mode/fallback/resource_impact 等） |
-| 保护机制语义 | DELETE 前读出保护字段 → 重建后 `apply_production_metadata_protection` 恢复——"仅当重建字段为空时恢复，不覆盖磁盘新值" |
-| 并发控制 | **无显式跨进程锁**——生成器与 apply_depgraph.py 都仅依赖 PG MVCC 事务（autocommit=False），未用 advisory lock / row lock / table lock（阶段1需补） |
-| dry-run | 支持 `--dry-run`（只检测漂移不写入） |
-| 外部触发 | `main()` 不接受 argv，但可 subprocess 调用；当前无任何 reconciler 调用它 |
-| 运行时长 | 代码里有计时但无基线数值，无法验证"成本高"是否成立 |
-
-##### B. Reconciler 清单证据（确认缺口）
-
-当前注册 15 个 reconciler，**无任何针对 depgraph nodes/edges 运营态同步的 reconciler**：
-
-| priority | gate_id | 同步对象 |
-|---|---|---|
-| 50 | GATE-RUNTIME-CLEANUP | .runtime/ 旧文件 |
-| 100 | GATE-19-manifest | script_manifest.yaml |
-| 150 | GATE-PATH-TREE | **arch_directory_tree（路径全景图）** |
-| 160 | GATE-YAML-SYNC | 规则缓存表（domains/contracts/gates） |
-| 170 | GATE-ASSET-INDEX | unified-asset-index.yaml |
-| 200 | GATE-REGISTRY-SYNC | 注册主索引+审计 |
-| 250 | GATE-ID-UNIQ | pre-commit hook id 唯一性 |
-| 280 | GATE-VOCAB-CHANGE | ttl 重判 |
-| 300 | GATE-MODULE-ID-CONSISTENCY | module_id 三声明轨道一致 |
-| 500 | GATE-DELETE-AUDIT | 幽灵节点检测+归档 |
-| 600 | GATE-DEPRECATED-DIR | 废弃目录迁移 |
-| 620 | GATE-REGENERATE | 域文档/index.yaml/manifest 重生 |
-| 710 | GATE-EXEMPT-ZONE-FM | 豁免区 frontmatter |
-| 710 | GATE-RULE-AUDIT | 规则审计+DCR+ARCH引用 |
-| 810 | GATE-INTEGRITY-AUDIT | 规则完整性+裸commit审计 |
-
-**GATE-DEPGRAPH-OPS 应排 priority=130**（在 GATE-RUNTIME-CLEANUP=50 之后，GATE-19-manifest=100 之后，GATE-PATH-TREE=150 之前——depgraph nodes/edges 是更上游真源，路径全景图依赖它）。
-
-##### C. 业界对标证据
-
-| 工具/公司 | 触发方式 | 关键论断 |
-|----------|---------|---------|
-| Bazel Skyframe | on-demand + Watchman 增量失效 | 图是派生态，重生成不覆盖手工（无手工字段概念） |
-| Buck2 DICE | daemon + Watchman + 值相等 skip | 同上 |
-| Cargo | 命令调用全量重算 | 依赖图小，全量可控 |
-| Netflix Service Topology | 完全事件驱动 near-real-time | **"不完整或不正确的依赖数据比没有数据更糟糕"** |
-| Stripe AutoJDK | continuous computation | 从"季度迁移项目"改为"持续自动计算"是明确演进方向 |
-| Sourcegraph | 周期调度（2min任务+24h仓库）+ webhook | per-commit SCIP 全量上传 |
-| LSP（rust-analyzer/pyright） | didChange 事件驱动 | 全部自动触发，无"手动触发"概念 |
-
-**业界主流规律**：没有任何主流工具把"手动触发"作为长期方案。三个根本原因——① 派生态原则（图是 derived view，重生成不应有信息丢失）；② 漂移即事故（图漂移导致错误告警/根因定位/影响面判断）；③ 规模化不可承受手动（AI 改代码频率远高于人类，漂移窗口被放大）。
-
-**AI 开发场景危害案例**：腾讯 Ghost Dependencies（2026-02，LLM 幻觉包名→供应链投毒）、SRI 论文（AI 声明依赖 vs 运行时依赖膨胀 13.5×）、Replit Agent 删生产数据库（2025-07，不知下游影响）。
-
-##### D. 问题清单（7项）
-
-| # | 问题 | 类型 | 严重度 |
-|---|------|------|--------|
-| P1 | 依赖全景图运营态无自动触发 reconciler（15个里缺一个） | 架构缺口 | 高 |
-| P2 | §14.2"禁止触发"基于"覆盖手动修复"，但生成器已有 P1/P2 保护机制，原禁用理由已大幅弱化 | 文档失真 | 高 |
-| P3 | design edge 已被 WHERE 条件保护不被覆盖，production 字段已有 P1/P2 保护——"覆盖手动修复"具体场景已说不清，可能已不存在 | 语义漂移 | 高 |
-| P4 | 生成器与 apply_depgraph.py 之间无显式跨进程锁，自动触发时可能并发冲突 | 并发风险 | 中 |
-| P5 | 全量扫描成本无基线数值，"成本高"是主观判断未实证 | 决策依据缺失 | 中 |
-| P6 | 不支持增量，每次全量重算，制约自动触发频率上限 | 性能瓶颈 | 中 |
-| P7 | 100% AI 开发下，图漂移窗口被放大——AI 改代码后立即查图可能看到旧图 | 场景特殊性 | 高 |
-
-##### E. 裁定对用户观点的回应
-
-用户观点："自动生成→出现垃圾→优化→测试→再生成→优化，而不是直接禁止触发停在那里不管"——**完全认可**。与 Netflix "incomplete data is worse than no data" 教训一致，与 Stripe "持续计算"演进方向一致。
-
-关键补充认知：当前"垃圾"的来源不是自动触发本身，而是**字段角色混淆**——把人工 curated 数据塞进派生表，自动触发就会"覆盖手工"。这是设计债，不是自动触发的错。阶段2 的字段分离才是治本。阶段1 的 GATE-DEPGRAPH-OPS 是"先动起来"——用 P1/P2 保护机制兜底，让自动触发跑起来，发现什么字段被错误覆盖，再针对性分离。这正是"自动生成→出现垃圾→优化"的迭代循环。
+**裁定#209 结论**：依赖全景图运营态改为自动触发。commit `.py` 文件后由 GATE-DEPGRAPH-OPS post-commit reconciler（priority=130）触发：dry-run 检测漂移 → 有漂移则 `--output-db --force`，失败降级 warn。生成器内置 P1/P2 保护机制（`PRODUCTION_PROTECTED_FIELDS` 14 字段 + `EDGES_PROTECTED_FIELDS` 9 字段）：DELETE 前读出保护字段、重建后仅当重建字段为空时恢复，避免覆盖人工 curated 元数据。性能：增量引擎 Stage 3（content_hash 二元 skip）+ Stage 4 scan-level 缓存（ScanCache 命中跳过 AST 解析，3.7× 加速）。关联议题 #ARCH-040。
 
 ### 14.3 生成器覆盖矩阵
 
