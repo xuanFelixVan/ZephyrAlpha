@@ -9769,6 +9769,14 @@ entries:
   status: decided
   created: '2026-07-29'
   last_updated: '2026-07-29'
+- issue_id: '#ARCH-DATA-SYMBOL-001'
+  title: Symbol 约定裁定——裸码 symbol + exchange 列 + 派生 symbol_canonical（治本 000001 裸码跨表碰撞）
+  severity: P1高
+  adjudication: '病根（第一性原理）：三套 symbol 约定并存——kline_*/tick_data(miniqmt 裸码,~19.5B行)、etf_nav/etf_list(akshare 带后缀,~7K行)、lof_list(akshare 前缀式,361行)。已证实 000001 在 kline_daily(平安银行) 与 kline_index(上证指数) 裸码碰撞→跨表 JOIN 零匹配或股价与指数点位混合（静默数据断裂）。用户战略直觉（带后缀跨市场不歧义）正确且为治本所需——裸码碰撞今天已发生。但 19.5B 行历史裸码（tick_data 14.5B + kline_1min 3.9B）物理全量改写为后缀不可行（阻塞热表）。故裁定采纳"裸码 symbol + exchange 列 + 派生 symbol_canonical"三字段模型：①symbol 列存裸码（纯代码，禁止含"."或前缀）；②exchange 列 LowCardinality(String) 消歧（SH/SZ/BJ/HK/US/CFFEX 等，000001.SZ 平安银行 vs 000001.SH 上证指数）；③symbol_canonical=concat(symbol,".",exchange) 派生视图列作跨表 JOIN canonical 身份键。结果与"统一到带后缀"等价（跨市场消歧+stock/index消歧），成本从重建数仓降至 ADD COLUMN+小回填+建视图。kline_daily 已有 market_type 列（DEFAULT A_share，初代架构师伏笔）激活改存 exchange 码。分5阶段落地（阶段0 SSoT登记/阶段1 补exchange列/阶段2 派生canonical+修小表/阶段3 消费者迁移+门禁/阶段4 验证）。对标 tushare ts_code 三列共存模型+ISO 10383 MIC+qlib 裸码+exchange列。边界裁定类议题，经用户确认（"全部按照顺序开始执行"含 3a 确认步骤）转 decided。配套规则 TRAE-082（symbol_convention 铁律）。'
+  fix_phase: '阶段0 进行中（TRAE-082 规则文件已落 + 本议题登记 + depgraph 设计态 symbol_normalizer 待登记）；阶段1-4 待施工'
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
 - issue_id: '#ARCH-XDIST-WORKER-CRASH-001'
   title: xdist worker 启动失败——静态 basetemp Windows 文件锁定致 INTERNALERROR
   severity: P1高

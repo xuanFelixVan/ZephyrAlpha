@@ -1,0 +1,123 @@
+rule_id: TRAE-082
+title: Symbol 约定铁律（裸码 symbol + exchange 列 + 派生 symbol_canonical）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-082
+depends_on:
+- TRAE-054
+- TRAE-062
+- TRAE-080
+tags:
+- TRAE
+- symbol_convention
+- L1_foundation
+- 标识约定
+- 跨市场消歧
+- canonical_key
+- data_model
+- 君子协定
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-SYMBOL
+- symbol_convention
+- 符号约定
+- canonical_symbol
+- ARCH-DATA-SYMBOL-001
+severity: critical
+scope: symbol_convention
+domain: TRAE
+triggers:
+- operation: securities_table_create
+- operation: provider_symbol_write
+- operation: cross_table_join
+- operation: schema_ddl_edit
+- operation: factor_panel_assembly
+sections:
+  symbol_convention:
+    section_type: procedure
+    title: Symbol 约定铁律（裸码 symbol + exchange 列 + 派生 symbol_canonical）
+    original_rules:
+    - RULE-SYMBOL
+    - ARCH-DATA-SYMBOL-001
+    conditions:
+    - type: trigger
+      check: 任何 securities 表（kline/tick/nav/list/index/futures/option 等）的 DDL 建表或 provider 写入
+      pass: symbol 列存裸码 + exchange 列填交易所码 + symbol_canonical 派生为 {symbol}.{exchange}
+      fail: symbol 列混入后缀(.SZ)/前缀(sh) → 跨表 JOIN 零匹配或裸码碰撞 → 静默数据断裂
+    - type: constraint
+      check: 跨表 JOIN 的标的身份键
+      pass: 用 symbol_canonical（派生视图列）或 (symbol, exchange) 复合键
+      fail: 仅用裸 symbol 做 JOIN → 000001 平安银行(kline_daily) 与 000001 上证指数(kline_index) 碰撞 → 股价与指数点位混合
+    - type: constraint
+      check: symbol 唯一性维度 = 代码 + 交易所 + 资产类别；裸码单独不唯一（已证实 stock vs index 同码冲突）
+      pass: exchange 列消歧（000001.SZ 平安银行 vs 000001.SH 上证指数）；跨市场用 exchange=HK/US/CFFEX
+      fail: 依赖裸码格式差异（6位A股 vs 5位港股）消歧 → 不可靠且无法区分同市场 stock/index
+    actions:
+    - type: mandatory
+      step: '三字段语义定义: 【symbol】裸码，纯数字/字母代码，禁止含 "." 或交易所前缀（如 159865/000001/AAPL/IF2510）。【exchange】交易所码 LowCardinality(String)，A股 SH/SZ/BJ、港股 HK、美股 US、期货 CFFEX/SHFE/CZCE/DCE/INE/GFEX、指数 SH/SZ（与股票同码不同 exchange 区分，如 000001.SH=上证指数 vs 000001.SZ=平安银行）。【symbol_canonical】派生字段 = concat(symbol,".",exchange)，如 159865.SZ/000001.SH/IF2510.CFFEX，作为跨表 JOIN 的 canonical 身份键'
+    - type: mandatory
+      step: '历史数据零改写原则: 禁止全量 ALTER UPDATE 把 19.5B 行裸码（tick_data 14.5B + kline_1min 3.9B 等）改写为后缀——物理不可行且阻塞热表。改用"保留裸码 symbol + 补 exchange 列 + 派生 symbol_canonical 视图"达成等价消歧。exchange 列用 ADD COLUMN（元数据操作）+ 一次性按代码前缀/stock_list 权威映射回填'
+    - type: mandatory
+      step: 'kline_daily 已有 market_type 列（DEFAULT A_share，注释"预留港股/美股/期货"，见 schemas/categories/market_kline_daily.py）——此为初代架构师伏笔。本规则激活该伏笔: market_type 值改为存 exchange 码（SH/SZ/BJ/HK/US/...），kline_etf_daily/kline_lof_*/kline_index 等缺 exchange 列的表 ADD COLUMN exchange LowCardinality(String) 补齐'
+    - type: mandatory
+      step: '小表归一（~7000行，秒级）: etf_nav/etf_list 的 "159915.SZ" 拆为 symbol=159915 + exchange=SZ；lof_list 的 "sh501001" 拆为 symbol=501001 + exchange=SH。保留 symbol_canonical 视图向后兼容'
+    - type: mandatory
+      step: 'provider 写入路径: miniqmt 保留 stock_to_symbol（裸码）+ 新增 exchange 推导（6xx/588→SH, 0xx/3xx/159→SZ, 8xx/4xx→BJ）；akshare 拆后缀填 symbol+exchange 两列；ifind 同。禁止任何 provider 向 symbol 列写入含 "." 的值'
+    - type: mandatory
+      step: '派生视图族: 每张 securities 表建 v_{table} 视图 SELECT *, concat(symbol,".",exchange) AS symbol_canonical FROM {table}。消费者跨表 JOIN 走视图的 symbol_canonical'
+    - type: mandatory
+      step: 'commit gate（注册到 CommitGateRegistry）: lint 校验①securities 表 symbol 列样本不含 "." ②exchange 列非空 ③新表 DDL 必含 exchange 列。verify_schema_truth.py 增校验所有 securities 表含 exchange 列。防回退'
+    - type: forbidden
+      step: '禁止: symbol 列含交易所后缀（.SZ/.SH/.BJ/.HK）——后缀只允许出现在派生字段 symbol_canonical'
+    - type: forbidden
+      step: '禁止: symbol 列含交易所前缀（sh/sz/bj）——lof_list 旧格式须归一为裸码+exchange'
+    - type: forbidden
+      step: '禁止: 跨表 JOIN 仅用裸 symbol 做身份键——000001 在 kline_daily(平安银行) 与 kline_index(上证指数) 碰撞已证实，必须用 symbol_canonical 或 (symbol,exchange) 复合键'
+    - type: forbidden
+      step: '禁止: 全量改写历史裸码数据为后缀——tick_data 14.5B/kline_1min 3.9B 行物理不可行；须用派生替代'
+    - type: forbidden
+      step: '禁止: 新建 securities 表 DDL 不含 exchange 列——架构债务，须在 DDL 阶段就含 exchange LowCardinality(String)'
+    invariants:
+    - id: SYMBOL-INV-001
+      title: symbol 裸码纯净性
+      description: securities 表的 symbol 列只存裸码（纯代码，无 "." 无前缀），后缀仅存在于派生字段 symbol_canonical
+      enforcement: commit gate lint + verify_schema_truth.py + provider 写入路径强约束
+      violation_action: reject_write
+    - id: SYMBOL-INV-002
+      title: exchange 列必填
+      description: 所有 securities 表必含 exchange 列且非空，作为 symbol_canonical 派生源与跨市场消歧依据
+      enforcement: DDL 校验 + ADD COLUMN 补齐 + 回填校验
+      violation_action: reject_write
+    - id: SYMBOL-INV-003
+      title: symbol_canonical 派生唯一性
+      description: symbol_canonical = concat(symbol,".",exchange) 是跨表 JOIN 的 canonical 身份键，单字段唯一标识全球任一可交易标的（000001.SZ 平安银行 vs 000001.SH 上证指数 vs 00001.HK 长江）
+      enforcement: 派生视图 + 消费者 JOIN 规范
+      violation_action: reject_change
+    - id: SYMBOL-INV-004
+      title: 历史数据零破坏
+      description: 治本不依赖历史裸码数据物理改写；exchange 列 ADD COLUMN + 回填 + 派生视图达成消歧，历史裸码 symbol 原样保留
+      enforcement: 禁止大表 ALTER UPDATE 后缀化
+      violation_action: reject_change
+    migration:
+      current_state: '三套约定并存——kline_*/tick_data(miniqmt,裸码,~19.5B行)、etf_nav/etf_list(akshare,带后缀,~7K行)、lof_list(akshare,前缀式,361行)。已证实 000001 在 kline_daily(平安银行) 与 kline_index(上证指数) 裸码碰撞'
+      target_state: '统一 symbol(裸码)+exchange(列)+symbol_canonical(派生)。等价达成"带后缀 canonical"消歧目标，零历史改写'
+      phases:
+      - '阶段0 SSoT登记: 本规则文件 + #ARCH-DATA-SYMBOL-001 议题 + depgraph 设计态 symbol_normalizer 模块'
+      - '阶段1 补 exchange 列: kline_daily 复用 market_type 改值; kline_etf_daily 等表 ADD COLUMN; tick_data/l2_tick 复用 market_type; 按代码前缀+stock_list 权威映射回填'
+      - '阶段2 派生 canonical+修小表: 建 v_{table} 视图族; etf_nav/etf_list/lof_list 拆后缀填两列(~7K行秒级)'
+      - '阶段3 消费者迁移+门禁: 跨表 JOIN 改用 symbol_canonical; provider 写入填两列; commit gate lint + verify_schema_truth 增校验'
+      - '阶段4 验证: 000001.SZ vs 000001.SH 不再冲突; kline_etf_daily⋈etf_nav on symbol_canonical 非空; 138+测试回归'
+      industry_benchmark: 'tushare ts_code(000001.SZ 后缀,中国量化事实标准) + ISO 10383 MIC(市场标识须随标的同行) + qlib(裸码+exchange列) + vnpy(跨市场统一接口)。本规则 = tushare 三列共存模型的等价实现(symbol裸码/ts_code=symbol_canonical/exchange)'
+      reasoning: '用户战略直觉(带后缀跨市场不歧义)正确且为治本所需——裸码碰撞今天已发生。但 19.5B 行历史裸码(tick_data 14.5B+kline_1min 3.9B)物理改写不可行。故采纳"裸码 symbol + exchange 列 + 派生 symbol_canonical"——结果与"统一到带后缀"等价(跨市场消歧+stock/index消歧),成本从重建数仓降至加列+小回填+建视图'
+enforcement:
+  paired_gate_id: null
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - commit_gate_lint
+  bypass_allowed: false
+  pairing_note: '配套硬阻断 commit gate GATE-SYMBOL-CONVENTION（校验 symbol 列裸码纯净+exchange 非空+新表 DDL 含 exchange 列）在阶段3 落地，届时 paired_gate_id 从 null→GATE-SYMBOL-CONVENTION。当前阶段0-2 为君子协定，由 verify_schema_truth.py 增量校验兜底'
