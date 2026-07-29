@@ -1,0 +1,77 @@
+---
+module_id: INDEX-ARCH-PRINCIPLES
+title: "ZephyrAlpha 架构文档库 · 导航索引"
+doc_type: index
+rule_form: declarative
+status: active
+version: 1.0.0
+date: 2026-07-30
+owner: ZephyrAlpha-Owner
+ttl: permanent
+language: zh
+created_by: agent
+---
+
+# ZephyrAlpha 架构文档库 · 导航索引
+
+> 本索引是 `04_architecture_principles_decisions/` 的目录地图。
+> 单一入口与项目全貌请读 [README.md](README.md)。本页用于快速定位具体文档。
+
+## 一、项目现状手册（project_handbook/）— 描述"是什么"
+
+大白话项目现状，手册 + AUTO 统计块 + 外链权威源。AUTO 块由 `generate_code_wiki_stats.py` 自动刷新。
+
+| 文档 | 内容 | AUTO 块 | 外链权威源 |
+|------|------|---------|-----------|
+| [01_overview.md](project_handbook/01_overview.md) | 项目定位、大局架构、运行方式 | directory_tree / dependency_stats / external_deps | — |
+| [02_repository_and_modules.md](project_handbook/02_repository_and_modules.md) | 仓库布局与全模块清单 | module_counts / py_file_total | 01_global/full_project_tree |
+| [03_data_layer.md](project_handbook/03_data_layer.md) | 数据库架构全景（CH/PG/SQLite 分工） | table_counts | 05_dataflow/data_inventory |
+| [04_data_sources.md](project_handbook/04_data_sources.md) | 数据源集成与下载机制 | task_counts | — |
+| [05_trading_domains.md](project_handbook/05_trading_domains.md) | 交易与策略域清单 | domain_list | 02_domain_architecture_docs |
+| [06_governance_and_infra.md](project_handbook/06_governance_and_infra.md) | 治理与基础设施 | governance_script_counts / gate_counts | 03_governance_reports |
+| [07_dependencies.md](project_handbook/07_dependencies.md) | 依赖关系图 | edge_stats | 01_global/contract_catalog |
+
+## 二、架构原则（principles/）— 规范"该怎么"
+
+14 份永恒框架原则。文件名保持不变（保留 145 处交叉引用）。阅读顺序见 [principles/README.md](principles/README.md)。
+
+| 文件 | 主题 |
+|------|------|
+| [architecture_principles.md](principles/architecture_principles.md) | 架构方法论 / 安全红线 / 开源优先 / 核心决策 |
+| [business_principles.md](principles/business_principles.md) | 业务能力地图 / 价值流 / NFR·SLA |
+| [application_principles.md](principles/application_principles.md) | C4 视图 / 模块归属 / 五大服务 / 幂等容错 |
+| [data_principles.md](principles/data_principles.md) | PIT / 反幸存者偏差 / 血缘 / 质量门 / MDM |
+| [governance_principles.md](principles/governance_principles.md) | 三层治理边界 / D2-B 闭环 / D3-B 自治 / D4 激活 |
+| [information_principles.md](principles/information_principles.md) | docs 抽屉分类 / 文档生命周期 / 元数据标准 |
+| [integration_principles.md](principles/integration_principles.md) | 六种集成风格 / 接口契约 / ACL / 事件主干 |
+| [operations_principles.md](principles/operations_principles.md) | 8 运维域 / 监控可观测 / 5 服务运维 |
+| [runtime_planes_principles.md](principles/runtime_planes_principles.md) | Hot/Warm/Cold 正交视图 / 跨平面协议 |
+| [security_principles.md](principles/security_principles.md) | 威胁模型 / LSG / Agent 沙箱 / 密钥 / IAM |
+| [technology_principles.md](principles/technology_principles.md) | 技术栈决策 / 运行时拓扑 / 部署 / DR-BCP |
+| [frontend_principles.md](principles/frontend_principles.md) | 前端 7 铁律 / 4 层模型 / MFE / G0-G6 激活 |
+| [capability_maturity_principles.md](principles/capability_maturity_principles.md) | 五档成熟度模型 / 季度 Review |
+| [ai_first_governance_principles.md](principles/ai_first_governance_principles.md) | 100% AI 开发治理 / 病根分析 / 4 期治本框架 |
+
+## 三、全景图能力（panorama/）
+
+| 文档 | 内容 |
+|------|------|
+| [dependency_path_panorama.md](panorama/dependency_path_panorama.md) | 依赖与路径全景图能力定位：双态模型、SSoT 分层、生成器角色、AI 查询模板 |
+
+## 四、自动化说明（_automation/）
+
+| 文档 | 内容 |
+|------|------|
+| [_automation/README.md](_automation/README.md) | AUTO 块清单 / 触发方式 / 生成器入口 / 维护规则 |
+
+## 五、外部权威源矩阵（深度明细，不在本文件夹重复）
+
+| 权威源 | 路径 | 生成器 |
+|--------|------|--------|
+| 全局架构图 | `docs/02_enterprise_architecture/01_global_architecture_diagram/` | generate_path_tree / generate_asset_catalog / generate_contract_catalog / generate_cross_domain_matrix / generate_integration_topology / generate_capability_heatmap |
+| 域架构文档 | `docs/02_enterprise_architecture/02_domain_architecture_docs/` | generate_domain_doc |
+| 数据流架构 | `docs/02_enterprise_architecture/05_dataflow_architecture/` | generate_data_inventory / generate_data_acquisition_flow / generate_dataflow_diagram |
+| 决策架构 | `docs/02_enterprise_architecture/06_decision_architecture/` | generate_decision_diagram |
+| 治理报告 | `docs/02_enterprise_architecture/03_governance_reports/` | generate_capacity_report / generate_constraint_violations / generate_design_vs_production |
+| 全景注册表 | `docs/02_enterprise_architecture/00_overview_entry/` | generate_panorama_registry / generate_navigation_index |
+| 四图对齐 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` | align_panoramas |

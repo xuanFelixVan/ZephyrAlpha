@@ -4638,6 +4638,25 @@ def main():
         except Exception as e:
             print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
 
+    # post-refresh hook（非阻断）：depgraph 刷新成功后同步 project_handbook/ 统计 AUTO 块
+    # 真源：scripts/governance/d5_architecture/generators/generate_code_wiki_stats.py
+    # 触发：自动生成铁律——depgraph 刷新后文档统计自动跟进，无需手动运行
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+        _wiki_script = str(
+            Path(__file__).parent / "d5_architecture" / "generators" / "generate_code_wiki_stats.py"
+        )
+        _result = run_subprocess_hidden(
+            [sys.executable, _wiki_script], timeout=120, check=False
+        )
+        if _result.returncode != 0:
+            _err = (_result.stderr or "")[:300]
+            print(f"[WARN] project_handbook 统计刷新 rc={_result.returncode}: {_err}", file=sys.stderr)
+        else:
+            print("[DEPGRAPH] project_handbook 统计块已同步")
+    except Exception as e:  # noqa: m12-broad-except-legitimate  钩子必须非阻断
+        print(f"[WARN] project_handbook 统计刷新跳过（非阻断）: {e}", file=sys.stderr)
+
     sys.exit(EXIT_PASS)
 
 

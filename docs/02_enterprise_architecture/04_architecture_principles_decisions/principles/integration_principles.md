@@ -40,7 +40,7 @@ ttl: permanent
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
 - EXT 系列 status（planned/in use/partial）→ 由集成点注册表维护
-- 外部集成拓扑图 → `docs/02_enterprise_architecture/target_architecture/topology_views.md`（内嵌 mermaid，手工维护）
+- 外部集成拓扑图 → `docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology.md`（depgraph 自动生成）
 - 接口契约规格 → `architecture_model/contracts/cross_layer_contracts.yaml`（真源）
 - 当前阶段所有内部契约版本号 → 由契约文件自身维护
 
@@ -219,7 +219,7 @@ MarketDataTick (raw)
 |------|------|
 | 接口契约规格（数据结构、版本、稳定性） | `architecture_model/contracts/cross_layer_contracts.yaml` |
 | EXT 系列 status（planned/in use） | 集成点注册表（自动维护） |
-| 外部集成拓扑图 | `docs/02_enterprise_architecture/target_architecture/topology_views.md`（内嵌 mermaid，手工维护） |
+| 外部集成拓扑图 | `docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology.md`（depgraph 自动生成） |
 | 集成协议与技术选型 | `technology_principles.md` |
 | 安全认证机制 | `security_principles.md` |
 | 运维告警 | `operations_principles.md` |
