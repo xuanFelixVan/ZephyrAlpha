@@ -17,7 +17,7 @@
 - TestAsyncioGetEventLoopDetected: asyncio.get_event_loop() 命中
 - TestAsyncioNewEventLoopDetected: asyncio.new_event_loop() 命中
 - TestCleanFilePasses: 干净文件通过
-- TestNoqaExemption: # noqa: a100-asyncio 豁免
+- TestNoqaExemption: # noqa: a100-asyncio  测试gate豁免检测
 - TestTestExempt: tests/ 下文件豁免
 - TestNonSrcZephyrExempt: 非 src/zephyr/ 文件豁免
 - TestAddedLinesOnly: 存量违规非 added → 通过

@@ -17,7 +17,7 @@
 - TestEnvGetBlocked: os.environ.get("ZEPHYR_ENV") → hard-block
 - TestConfigLayerPasses: config 层目录豁免
 - TestCleanFilePasses: 干净文件通过
-- TestNoqaExemption: # noqa: e34-env 豁免
+- TestNoqaExemption: # noqa: e34-env  测试gate豁免检测
 - TestTestExempt: tests/ 下文件豁免
 - TestNonSrcZephyrPasses: 非 src/zephyr/ 文件豁免
 - TestAddedLinesOnly: 存量违规非 added → 通过
@@ -185,7 +185,7 @@ class TestNoqaExemption:
         src_file = "src/zephyr/trading/foo.py"
         gw = make_mock_gateway(
             [src_file],
-            {src_file: ['    env = os.environ["ZEPHYR_ENV"]  # noqa: e34-env  合法场景']},
+            {src_file: ['    env = os.environ["ZEPHYR_ENV"]  # noqa: e34-env  合法场景测试用']},
         )
         gate = make_zephyr_env_direct_access_gate()
         passed, detail = gate.check(gw, [])

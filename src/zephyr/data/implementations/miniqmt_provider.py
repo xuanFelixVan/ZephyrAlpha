@@ -94,6 +94,7 @@ _KLINE_CAPABILITIES = {
     "kline_etf_15min": ("15m", "沪深ETF"),
     "kline_etf_30min": ("30m", "沪深ETF"),
     "kline_etf_60min": ("1h", "沪深ETF"),
+    "kline_etf_daily": ("1d", "沪深ETF"),
     # miniQMT 无 LOF 独立板块，sector=None 标记从 c1_market.lof_list 表读标的
     "kline_lof_1min": ("1m", None),
     "kline_lof_5min": ("5m", None),
@@ -446,6 +447,7 @@ class MiniQMTProvider(DataSourceBase):
             CapabilityContract("kline_etf_15min", supports_symbols_null=True),
             CapabilityContract("kline_etf_30min", supports_symbols_null=True),
             CapabilityContract("kline_etf_60min", supports_symbols_null=True),
+            CapabilityContract("kline_etf_daily", supports_symbols_null=True),
             CapabilityContract("kline_lof_1min", supports_symbols_null=True),
             CapabilityContract("kline_lof_5min", supports_symbols_null=True),
             CapabilityContract("kline_lof_15min", supports_symbols_null=True),
@@ -3947,7 +3949,7 @@ class MiniQMTProvider(DataSourceBase):
         """抓取 ETF 基金净值数据。
 
         使用 xtdata.get_etf_info 获取 ETF 基金信息（含净值/现金余额等）。
-        表 schema: (trade_date, symbol, etf_code, nav, cash_balance, data_source)
+        表 schema: (trade_date, symbol, nav, total_assets, data_source)
 
         Args:
             payload: 下载请求（symbols 为 ETF 代码列表，如 ['510050.SH']）

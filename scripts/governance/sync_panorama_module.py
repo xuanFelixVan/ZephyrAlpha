@@ -54,10 +54,13 @@ try:
     from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
 except ImportError:
     import sys as _sys
+    import importlib as _im
     _pc_path = str(Path(__file__).resolve().parent / "d5_architecture")
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
-    from panorama_common import weighted_domain_vote, min_maturity as _min_mat
+    _pc_mod = _im.import_module("panorama_common")
+    weighted_domain_vote = _pc_mod.weighted_domain_vote
+    _min_mat = _pc_mod.min_maturity
 
 # Ruling:100PCT-AI-GOVERNANCE P1-1 (2026-07-19) 治本：
 # 统一用 normalize_to_none() 替代 `or None` 模式。

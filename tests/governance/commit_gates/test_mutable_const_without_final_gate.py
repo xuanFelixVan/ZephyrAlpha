@@ -16,7 +16,7 @@
 - TestMutableConstBlocked: List/Dict/Set 字面量 + list()/dict()/set() 调用 → hard-block
 - TestFinalAnnotatedPasses: X: Final = [...]（AnnAssign）→ 通过
 - TestImmutableValuePasses: 不可变值（int/str/tuple）→ 通过
-- TestNoqaExemption: # noqa: n114-final 豁免
+- TestNoqaExemption: # noqa: n114-final  测试gate豁免检测
 - TestTestExempt: tests/ 下文件豁免
 - TestAddedLinesOnly: 存量违规非 added → 通过
 - TestFailOpenGitDiff: git diff 失败 → 通过

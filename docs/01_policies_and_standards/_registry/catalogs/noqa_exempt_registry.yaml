@@ -344,6 +344,19 @@ markers:
     created: "2026-07-23"
     created_by: "ARCH-WARN-TO-HARD-GATE-BATCH"
 
+  - marker: "table-name-registry"
+    metric_id: null  # 非 dashboard 指标，是 TABLE-NAME-REGISTRY gate 行级豁免
+    description: "TABLE-NAME-REGISTRY gate 行级豁免——动态表名 fallback 的合法特殊情况"
+    applicable_conditions:
+      - "payload.table 缺失时的 fallback 表名（由 tasks.yaml 设置时此 fallback 不执行）"
+      - "xtquant 报表名转小写作为表名（c3_fundamental 域动态报表）"
+    reason_required: true
+    reason_format: "table-name-registry豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-29"
+    created_by: "ARCH-TABLE-NAME-REGISTRY-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

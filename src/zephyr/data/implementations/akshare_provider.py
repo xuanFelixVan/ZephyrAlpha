@@ -3267,11 +3267,11 @@ class AKShareProvider(DataSourceBase):
 
         使用 akshare fund_etf_fund_info_em 获取 ETF 历史净值数据。
         替代 miniQMT get_etf_info（客户端不支持，需升级投研版）。
-        表 schema: (trade_date, symbol, etf_code, nav, cash_balance, data_source)
+        表 schema: (trade_date, symbol, nav, total_assets, data_source)
         """
         import akshare as ak
         table = payload.table or _TBL_ETF_NAV
-        columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
+        columns = ["trade_date", "symbol", "nav", "total_assets", "data_source"]
         symbols = payload.symbols
         if not symbols:
             # 从 etf_list 表自动加载全市场 ETF 代码（约1764只）
@@ -3315,7 +3315,7 @@ class AKShareProvider(DataSourceBase):
                         continue
                     nav = safe_float(r.get("单位净值"))
                     rows.append((
-                        trade_date, symbol, fund_code, nav, None, "akshare",
+                        trade_date, symbol, nav, None, "akshare",
                     ))
                 self._log.info(f"ETF {fund_code} 净值获取完成，{len(rows)} 行")
                 yield FetchResult(

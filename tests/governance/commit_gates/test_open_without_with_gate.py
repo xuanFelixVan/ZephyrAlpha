@@ -17,7 +17,7 @@
 - TestWithOpenPasses: with open(...) as f → 通过
 - TestAsyncWithOpenPasses: async with open(...) → 通过
 - TestOsOpenPasses: os.open()（Attribute）→ 通过（系统调用不检测）
-- TestNoqaExemption: # noqa: r144-open 豁免
+- TestNoqaExemption: # noqa: r144-open  测试gate豁免检测
 - TestTestExempt: tests/ 下文件豁免
 - TestAddedLinesOnly: 存量违规非 added → 通过
 - TestFailOpenGitDiff: git diff 失败 → 通过
