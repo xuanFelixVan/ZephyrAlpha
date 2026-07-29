@@ -363,7 +363,7 @@ class TestICInformsDecision:
         # 实际生产中 scheduler 应扩展为传 strategy_name 到 engine.run(**kwargs)
         scheduler = BacktestScheduler(engine_factory=_factory)
         scheduler.submit(strategy_name, history, signals)
-        # 直接调用 engine 验证 strategy_name 端到端可达（scheduler.run_task 不传 kwargs）
+        # 直接调用 engine 验证 strategy_name 端到端可达（scheduler._run_task 不传 kwargs）
         engine = _factory()
         result = engine.run(history, signals, strategy_name=strategy_name)
 
