@@ -536,7 +536,7 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
 **铁律**：AI 禁止在项目根目录（depth-0）创建任何临时文件。诊断脚本/测试输出/分析中间产物 MUST 放 `.runtime/tmp/`（.py/.sh/.ps1/.txt/.log）或 `.runtime/logs/`（.log/.jsonl）；任务文档 MUST 放 `docs/_working/`。GitCommitGateway 进程 IPC token（`gw_*`）非项目文件，归宿为 OS temp dir（真源唯一/责任唯一：进程临时文件规范真源是 OS temp，由 OS 管理生命周期）。
 
 **三层防御（治本，不依赖 AI 自觉）**：
-1. **源头改写产生者**：GitCommitGateway 去 `dir=project_root`（gw_*→OS temp，2 行改动零治理面）；pytest `cache_dir`/`basetemp`/`xmlpath` 默认归位 `.runtime/tmp/`（conftest.py `pytest_configure`，绝对路径 cwd 无关，尊重 CLI 覆盖）。
+1. **源头改写产生者**：GitCommitGateway 去 `dir=project_root`（gw_*→OS temp，2 行改动零治理面）；pytest `cache_dir`/`basetemp`/`xmlpath` 默认归位 `.runtime/tmp/`（conftest.py `pytest_configure`，绝对路径 cwd 无关，尊重 CLI 覆盖）；`basetemp` 为 PID-unique（`.runtime/tmp/pytest_{pid}`）——#ARCH-XDIST-WORKER-CRASH-001 治本：静态 basetemp 被 xdist 崩溃 worker 留下锁定文件致下次 rm_rf PermissionError INTERNALERROR，PID-unique 彻底消除冲突；旧目录由 runtime_cleanup reconciler TTL+空目录回收。
 2. **root-sweep reconciler 兜底**：`make_root_temp_sweep_reconciler`（priority=803，gate=GATE-ROOT-TEMP-SWEEP）post-commit FS 扫描根目录 depth-0 平铺文件，混合策略——进程 token（`gw_*`/`*.log`/`tmp_commit_msg`）mtime>10min 删除；疑似成果（`tmp_*.py/.txt/.xml/.json/.md/.csv`、`.tmp_*`）移到 `.runtime/tmp/` 隔离（7 天 TTL 由 make_tmp_cleanup_reconciler 清理）。**仅扫平铺文件，不删目录**（目录删除风险高，由源头改写 Phase 1b 阻止产生 + 人工清理）。
 3. **DCR-007 第三道防线**：commit 时阻断 staged 根目录临时文件（已存在，目录契约 root_directory_whitelist）。
 

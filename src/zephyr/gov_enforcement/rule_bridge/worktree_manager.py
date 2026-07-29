@@ -329,10 +329,10 @@ class WorktreeManager:
         if not session_id:
             raise WorktreeError("session_id 不能为空")
         wt_path = self._wt_path(session_id)
-        branch = self._branch_name(session_id)
+        branch = self.branch_name(session_id)
 
         with _WorktreeLock(self.repo_root):
-            if self._worktree_exists(session_id):
+            if self.worktree_exists(session_id):
                 logger.info(
                     "WorktreeManager: session worktree 已存在，复用 (session=%s): %s",
                     session_id, wt_path,
@@ -389,11 +389,11 @@ class WorktreeManager:
         """
         if not session_id:
             raise WorktreeError("session_id 不能为空")
-        branch = self._branch_name(session_id)
+        branch = self.branch_name(session_id)
         wt_path = self._wt_path(session_id)
 
         with _WorktreeLock(self.repo_root):
-            if not self._worktree_exists(session_id):
+            if not self.worktree_exists(session_id):
                 raise WorktreeError(
                     f"session worktree 不存在: {wt_path}"
                 )
@@ -444,7 +444,7 @@ class WorktreeManager:
             raise WorktreeError("session_id 不能为空")
 
         with _WorktreeLock(self.repo_root):
-            if not self._worktree_exists(session_id):
+            if not self.worktree_exists(session_id):
                 logger.info(
                     "WorktreeManager: cleanup no-op——worktree 不存在 (session=%s)",
                     session_id,
@@ -460,7 +460,7 @@ class WorktreeManager:
             force: True=强制删除（丢弃修改），False=仅干净时删除。
         """
         wt_path = self._wt_path(session_id)
-        branch = self._branch_name(session_id)
+        branch = self.branch_name(session_id)
         cmd = ["git", "worktree", "remove"]
         if force:
             cmd.append("--force")
@@ -486,7 +486,7 @@ class WorktreeManager:
             # Windows 文件锁可能导致物理目录残留，但 git worktree 元数据已清理。
             # 物理残留无害（下次 create_session_worktree 会覆盖）。
             # 关键判定：git 是否还认这个 worktree（查 git worktree list）。
-            if self._worktree_exists(session_id):
+            if self.worktree_exists(session_id):
                 logger.warning(
                     "WorktreeManager: git 仍认 worktree (session=%s)——真删除失败",
                     session_id,

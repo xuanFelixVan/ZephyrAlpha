@@ -5417,9 +5417,9 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
     # P2-2: 查询其他活跃 session claim 的文件，转相对路径加入 skip_files
 
-    skip_files = _get_other_session_claimed_files(root, session_id)
+    skip_files = get_other_session_claimed_files(root, session_id)
 
-    cleaned_t, skipped_t, to_checkout = _collect_tracked_cleanups(
+    cleaned_t, skipped_t, to_checkout = collect_tracked_cleanups(
 
         root, branch, changed_files, dirty_files, skip_files=skip_files,
 
