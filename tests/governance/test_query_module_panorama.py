@@ -128,7 +128,7 @@ class TestQueryDepgraphNodes:
         ]
         conn = _make_mock_conn([(desc, rows, None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
-        result = qmp._query_depgraph_nodes("MOD-TEST")
+        result = qmp.query_depgraph_nodes("MOD-TEST")
         assert len(result) == 2
         assert result[0]["path"] == "src/a.py"
         assert result[0]["entry_point"] is True
@@ -145,14 +145,14 @@ class TestQueryDepgraphMetadata:
         row = ("src/a.py", "测试模块", "test_module", "desc", "desc_en", "t1", "2026-07-09")
         conn = _make_mock_conn([(desc, [], row)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
-        result = qmp._query_depgraph_metadata("MOD-TEST")
+        result = qmp.query_depgraph_metadata("MOD-TEST")
         assert result is not None
         assert result["module_name_cn"] == "测试模块"
 
     def test_returns_none_when_not_found(self, qmp, monkeypatch):
         conn = _make_mock_conn([((("path",),), [], None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
-        result = qmp._query_depgraph_metadata("MOD-MISSING")
+        result = qmp.query_depgraph_metadata("MOD-MISSING")
         assert result is None
 
 
@@ -172,7 +172,7 @@ class TestQueryDataflowEntities:
             (job_desc, job_rows, None),
         ])
         monkeypatch.setattr(qmp, "get_dataflowgraph_pg_connection", lambda: conn)
-        result = qmp._query_dataflow_entities("MOD-TEST")
+        result = qmp.query_dataflow_entities("MOD-TEST")
         assert len(result) == 2
         assert result[0]["entity_name"] == "ds1"
         assert result[1]["job_name"] == "job1"
@@ -193,7 +193,7 @@ class TestQueryDecisionNodes:
             (layer_desc, layer_rows, None),
         ])
         monkeypatch.setattr(qmp, "get_decisiongraph_pg_connection", lambda: conn)
-        result = qmp._query_decision_nodes("MOD-TEST")
+        result = qmp.query_decision_nodes("MOD-TEST")
         assert len(result) == 2
         # layers 在前（代码 return layers + nodes）
         assert result[0]["layer_name"] == "Layer1"
@@ -213,7 +213,7 @@ class TestQueryAllModules:
         ]
         conn = _make_mock_conn([(desc, rows, None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
-        result = qmp._query_all_modules()
+        result = qmp.query_all_modules()
         assert len(result) == 2
         assert result[0]["blueprint_id"] == "MOD-A"
         assert result[1]["file_count"] == 1
@@ -234,7 +234,7 @@ class TestSingleModuleNotFound:
                 ("entry_point",), ("public_api",), ("blueprint_path",)]
         conn = _make_mock_conn([(desc, [], None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
-        rc = qmp._print_single_module("MOD-MISSING")
+        rc = qmp.print_single_module("MOD-MISSING")
         assert rc == 3
         captured = capsys.readouterr()
         assert "MOD-MISSING" in captured.err
@@ -272,7 +272,7 @@ class TestSingleModuleFound:
                 ((("layer_name",),), [], None),
             ]),
         )
-        rc = qmp._print_single_module("MOD-TEST")
+        rc = qmp.print_single_module("MOD-TEST")
         assert rc == 0
 
 
@@ -286,7 +286,7 @@ class TestAllModules:
         rows = [("MOD-A", "D_GOVERNANCE", 2, "production", "stable", "bp.md", True)]
         conn = _make_mock_conn([(desc, rows, None)])
         monkeypatch.setattr(qmp, "get_depgraph_pg_connection", lambda: conn)
-        rc = qmp._print_all_modules()
+        rc = qmp.print_all_modules()
         assert rc == 0
         captured = capsys.readouterr()
         assert "MOD-A" in captured.out

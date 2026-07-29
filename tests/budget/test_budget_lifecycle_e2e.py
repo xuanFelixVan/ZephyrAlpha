@@ -69,8 +69,8 @@ class TestFullLifecycle:
         engine.record_consumption(token_policy.policy_id, int(threshold), 0.0, 0.0)
 
         # Step 4: 验证事件驱动降级已触发
-        assert engine._active_step_idx >= 3
-        assert engine._current_degradation_level == BudgetLevel.L3_DEGRADED
+        assert engine.active_step_idx >= 3
+        assert engine.current_degradation_level == BudgetLevel.L3_DEGRADED
 
         # Step 5: 模拟 session_shutdown 触发 shutdown()
         with patch("os.path.join", return_value=str(persist_path)):
@@ -106,8 +106,8 @@ class TestFullLifecycle:
         assert "IPI" in result.reason
 
         # 验证降级到 L4
-        assert engine._active_step_idx == 4
-        assert engine._current_degradation_level == BudgetLevel.L4_EMERGENCY
+        assert engine.active_step_idx == 4
+        assert engine.current_degradation_level == BudgetLevel.L4_EMERGENCY
 
         # shutdown
         with patch("os.path.join", return_value=str(persist_path)):

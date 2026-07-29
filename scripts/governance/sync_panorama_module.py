@@ -458,3 +458,9 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def query_depgraph_module(conn, module_id) -> dict | None:
+    """公共接口：query_depgraph_module（Stage 4 公共化）。"""
+    return _query_depgraph_module(conn, module_id)
+

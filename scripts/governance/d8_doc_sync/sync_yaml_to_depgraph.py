@@ -2440,3 +2440,9 @@ def ensure_sync_failures_log_table(cur):
     """公共接口：ensure_sync_failures_log_table（Stage 4 公共化）。"""
     return _ensure_sync_failures_log_table(cur)
 
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def resolve_module_to_single_node(cur, module_id, fallback_name):
+    """公共接口：resolve_module_to_single_node（Stage 4 公共化）。"""
+    return _resolve_module_to_single_node(cur, module_id, fallback_name)
+
+

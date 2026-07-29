@@ -817,7 +817,7 @@ class TestGitignoredTrackedDeleted:
 
     @staticmethod
     def git_env():
-        return __class__._git_env()
+        return __class__.git_env()
 
 
     @staticmethod

@@ -115,7 +115,7 @@ class TestImportSmoke:
 
     def test_supported_ops_nonempty(self, adg):
         """_get_supported_ops() 返回非空集合（op 注册完整性）。"""
-        ops = adg._get_supported_ops()
+        ops = adg.get_supported_ops()
         assert len(ops) > 0, "supported ops 为空——op 注册丢失"
         # 核心操作必须在列
         assert "add_design_node" in ops, "add_design_node 未注册"

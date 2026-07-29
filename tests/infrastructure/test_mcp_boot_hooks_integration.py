@@ -354,7 +354,7 @@ class TestRedBlueExtremeScenarios:
 
         # 创建 max_processes=2 的小池
         small_gw = ProcessLifecycleGateway(idle_timeout_s=600.0)
-        small_gw.pool._max_processes = 2
+        small_gw.pool.max_processes = 2
         try:
             # 启动 2 个进程
             for i in range(2):

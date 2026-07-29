@@ -2373,6 +2373,7 @@ class AKShareProvider(DataSourceBase):
             safe_float(row.get("收盘")),
             safe_int(row.get("成交量")) or 0,
             safe_float(row.get("成交额")),
+            "akshare",
         )
 
     def _fetch_kline_hk_daily(
@@ -2388,7 +2389,7 @@ class AKShareProvider(DataSourceBase):
         table = _TBL_KLINE_HK_DAILY
         columns = [
             "trade_date", "symbol", "name", "open", "high", "low",
-            "close", "volume", "amount",
+            "close", "volume", "amount", "data_source",
         ]
         start_str = payload.start.isoformat()
         end_str = payload.end.isoformat()

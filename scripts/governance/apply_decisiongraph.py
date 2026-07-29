@@ -949,3 +949,9 @@ build_status 状态机（单调推进，禁止跳态）：
 
 if __name__ == "__main__":
     main()
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_supported_ops() -> set[str]:
+    """公共接口：get_supported_ops（Stage 4 公共化）。"""
+    return _get_supported_ops()
+

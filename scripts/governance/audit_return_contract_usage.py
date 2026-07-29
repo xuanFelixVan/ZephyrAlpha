@@ -340,3 +340,15 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def audit_file_ast(path) -> list[Violation]:
+    """公共接口：audit_file_ast（Stage 4 公共化）。"""
+    return _audit_file_ast(path)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def audit_file_regex(path) -> list[Violation]:
+    """公共接口：audit_file_regex（Stage 4 公共化）。"""
+    return _audit_file_regex(path)
+
+

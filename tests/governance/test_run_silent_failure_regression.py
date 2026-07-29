@@ -110,7 +110,7 @@ class TestRunStageNeverThrows:
         """subprocess 退出 0 → RegressionStageResult.ok=True。"""
         def cmd_builder(root):
             return ([sys.executable, "-c", "print('hello')"], root)
-        result = runner._run_stage("test", "test", cmd_builder, tmp_path)
+        result = runner.run_stage("test", "test", cmd_builder, tmp_path)
         assert result["ok"] is True
         assert result["exit_code"] == 0
         assert result["name"] == "test"
@@ -121,7 +121,7 @@ class TestRunStageNeverThrows:
         """subprocess 退出 1 → RegressionStageResult.ok=False, exit_code=1。"""
         def cmd_builder(root):
             return ([sys.executable, "-c", "import sys; sys.exit(1)"], root)
-        result = runner._run_stage("test", "test", cmd_builder, tmp_path)
+        result = runner.run_stage("test", "test", cmd_builder, tmp_path)
         assert result["ok"] is False
         assert result["exit_code"] == 1
 
@@ -129,7 +129,7 @@ class TestRunStageNeverThrows:
         """cmd_builder 抛异常 → RegressionStageResult.ok=False, exit_code=-1, 不抛。"""
         def cmd_builder(root):
             raise RuntimeError("intentional test exception")
-        result = runner._run_stage("test", "test", cmd_builder, tmp_path)
+        result = runner.run_stage("test", "test", cmd_builder, tmp_path)
         assert result["ok"] is False
         assert result["exit_code"] == -1
         assert "intentional test exception" in result["detail"]
@@ -146,7 +146,7 @@ class TestRunStageNeverThrows:
             def fake_run(*args, **kwargs):
                 raise runner.subprocess.TimeoutExpired(cmd="test", timeout=1)
             runner.subprocess.run = fake_run
-            result = runner._run_stage("test", "test", cmd_builder, tmp_path)
+            result = runner.run_stage("test", "test", cmd_builder, tmp_path)
             assert result["ok"] is False
             assert result["exit_code"] == -1
             assert "timeout" in result["detail"].lower()
@@ -158,7 +158,7 @@ class TestRunStageNeverThrows:
         long_output = "x" * 500
         def cmd_builder(root):
             return ([sys.executable, "-c", f"print('{long_output}')"], root)
-        result = runner._run_stage("test", "test", cmd_builder, tmp_path)
+        result = runner.run_stage("test", "test", cmd_builder, tmp_path)
         # detail 取 stdout 最后一行，长度应 <= 200
         assert len(result["detail"]) <= 200
 
@@ -342,23 +342,23 @@ class TestE2ERealRepo:
         """_build_*_cmd 生成器在真实仓库下生成存在的脚本路径。"""
         repo_root = Path(__file__).resolve().parents[2]
         # pytest cmd: [sys.executable, "-m", "pytest", ...]
-        cmd, cwd = runner._build_pytest_cmd(repo_root)
+        cmd, cwd = runner.build_pytest_cmd(repo_root)
         assert cmd[0] == sys.executable
         assert "-m" in cmd
         assert "pytest" in cmd
         # return contract cmd: [sys.executable, <script_path>, ...]
-        cmd, cwd = runner._build_return_contract_cmd(repo_root)
+        cmd, cwd = runner.build_return_contract_cmd(repo_root)
         script_path = Path(cmd[1])
         assert script_path.exists(), f"audit_return_contract_usage.py 不存在: {script_path}"
         # worktree ops cmd: [sys.executable, <script_path>, ...]
-        cmd, cwd = runner._build_worktree_ops_cmd(repo_root)
+        cmd, cwd = runner.build_worktree_ops_cmd(repo_root)
         script_path = Path(cmd[1])
         assert script_path.exists(), f"audit_worktree_ops_telemetry.py 不存在: {script_path}"
 
     def test_e2e_audit_return_contract_passes_on_real_repo(self, runner):
         """e2e: audit_return_contract_usage 在真实仓库 src/+scripts/ 应 0 违规。"""
         repo_root = Path(__file__).resolve().parents[2]
-        cmd, cwd = runner._build_return_contract_cmd(repo_root)
+        cmd, cwd = runner.build_return_contract_cmd(repo_root)
         result = subprocess_run_safe(cmd, cwd)
         assert result.returncode == 0, (
             f"audit_return_contract_usage 失败 (exit={result.returncode}):\n"

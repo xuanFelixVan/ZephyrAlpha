@@ -326,12 +326,12 @@ class TestModelCollapseIntegration:
     def test_text_similarity_on_identical(self) -> None:
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator as PO
 
-        assert PO._text_similarity("hello world", "hello world") == 1.0
+        assert PO.text_similarity("hello world", "hello world") == 1.0
 
     def test_text_similarity_on_different(self) -> None:
         from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator as PO
 
-        sim = PO._text_similarity("hello world", "foo bar baz")
+        sim = PO.text_similarity("hello world", "foo bar baz")
         assert sim < 0.5
 
 

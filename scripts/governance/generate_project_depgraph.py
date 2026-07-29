@@ -4643,3 +4643,21 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_pg_conn_with_dict_cursor(**kwargs):
+    """公共接口：get_pg_conn_with_dict_cursor（Stage 4 公共化）。"""
+    return _get_pg_conn_with_dict_cursor(**kwargs)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_id):
+    """公共接口：restore_apply_depgraph_design_edges_by_path（Stage 4 公共化）。"""
+    return _restore_apply_depgraph_design_edges_by_path(cur, snapshot, path_to_db_node_id)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def snapshot_apply_depgraph_design_edges(cur):
+    """公共接口：snapshot_apply_depgraph_design_edges（Stage 4 公共化）。"""
+    return _snapshot_apply_depgraph_design_edges(cur)
+
+
+

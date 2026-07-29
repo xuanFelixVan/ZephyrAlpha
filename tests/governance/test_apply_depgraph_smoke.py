@@ -391,7 +391,7 @@ class TestMaturityHeaderGateSmoke:
 
     def test_read_maturity_header_returns_value(self, adg):
         """_read_maturity_header 能从真实文件读取 [MATURITY] 值。"""
-        header_val = adg._read_maturity_header(_SCRIPT_PATH)
+        header_val = adg.read_maturity_header(_SCRIPT_PATH)
         assert header_val is not None, (
             f"_read_maturity_header 返回 None——{_SCRIPT_PATH} 应有 [MATURITY] header"
         )

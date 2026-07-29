@@ -101,7 +101,7 @@ class TestOutputSchema:
             "mcp_gateway.list_servers",
             "mcp_gateway.audit_stats",
         ):
-            assert gw._tools[name].output_schema is not None
+            assert gw.tools[name].output_schema is not None
 
     def test_tools_list_includes_output_schema(self, gw: MCPGateway) -> None:
         resp = gw.handle_request({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})

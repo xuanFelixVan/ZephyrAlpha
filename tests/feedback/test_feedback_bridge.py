@@ -41,7 +41,7 @@ class TestAuditFeedbackBridgeInit:
             "ANM-012",
             "ANM-013",
         }
-        assert set(bridge._anomaly_to_signal.keys()) == expected_keys
+        assert set(bridge.anomaly_to_signal.keys()) == expected_keys
 
 
 class TestAnomalyToFleSignal:
@@ -146,7 +146,7 @@ class TestClassifyLayer:
         ],
     )
     def test_severity_to_layer_mapping(self, severity, expected):
-        result = AuditFeedbackBridge._classify_layer(severity)
+        result = AuditFeedbackBridge.classify_layer(severity)
         assert result == expected
 
 

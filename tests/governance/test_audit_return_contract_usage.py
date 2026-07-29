@@ -139,7 +139,7 @@ class TestAuditFileAst:
             if r["committed"]:
                 print("ok")
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert len(violations) == 1
         v = violations[0]
         assert v.function == "session_worktree_commit"
@@ -154,7 +154,7 @@ class TestAuditFileAst:
             r = session_worktree_start("sess-1")
             x = r["success"]
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert len(violations) == 1
         assert v_forbidden_key(violations, "session_worktree_start") == "success"
 
@@ -166,7 +166,7 @@ class TestAuditFileAst:
             if r["merged"]:
                 pass
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert len(violations) == 1
         v = violations[0]
         assert v.forbidden_key == "merged"
@@ -181,7 +181,7 @@ class TestAuditFileAst:
             if r["committed"]:
                 pass
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert len(violations) == 1
         assert violations[0].function == "emergency_commit"
         assert violations[0].forbidden_key == "committed"
@@ -195,7 +195,7 @@ class TestAuditFileAst:
             r = sw.session_worktree_commit("sess-1", ["a.py"], "msg")
             print(r["success"])
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert len(violations) == 1
         assert violations[0].function == "session_worktree_commit"
 
@@ -209,7 +209,7 @@ class TestAuditFileAst:
             if r["commit_hash"]:
                 print(r["commit_hash"])
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert violations == []
 
     def test_unrelated_dict_access_no_violation(self, au, tmp_path):
@@ -220,14 +220,14 @@ class TestAuditFileAst:
             if d["committed"]:
                 print("ok")
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert violations == []
 
     def test_syntax_error_file_skipped(self, au, tmp_path):
         """SyntaxError 文件 skip（返回空列表，不抛异常）。"""
         f = tmp_path / "broken.py"
         f.write_text("def broken(:\n    pass\n", encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert violations == []
 
     def test_no_call_no_violation(self, au, tmp_path):
@@ -237,7 +237,7 @@ class TestAuditFileAst:
             x = {"committed": True}
             print(x["committed"])
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert violations == []
 
     def test_violation_includes_line_col_snippet(self, au, tmp_path):
@@ -248,7 +248,7 @@ class TestAuditFileAst:
             if r["committed"]:
                 pass
         """), encoding="utf-8")
-        violations = au._audit_file_ast(f)
+        violations = au.audit_file_ast(f)
         assert len(violations) == 1
         v = violations[0]
         assert v.line > 0
@@ -280,7 +280,7 @@ class TestAuditFileRegex:
             if r["committed"]:
                 print("ok")
         """), encoding="utf-8")
-        violations = au._audit_file_regex(f)
+        violations = au.audit_file_regex(f)
         assert len(violations) >= 1
         keys = {v.forbidden_key for v in violations}
         assert "committed" in keys
@@ -292,7 +292,7 @@ class TestAuditFileRegex:
             r = session_worktree_start("sess-1")
             x = r['success']
         """), encoding="utf-8")
-        violations = au._audit_file_regex(f)
+        violations = au.audit_file_regex(f)
         assert len(violations) >= 1
         assert any(v.forbidden_key == "success" for v in violations)
 
@@ -303,7 +303,7 @@ class TestAuditFileRegex:
             d = {"committed": True}
             print(d["committed"])
         """), encoding="utf-8")
-        violations = au._audit_file_regex(f)
+        violations = au.audit_file_regex(f)
         assert violations == []
 
     def test_merged_regex_is_warning(self, au, tmp_path):
@@ -313,7 +313,7 @@ class TestAuditFileRegex:
             r = session_worktree_merge("sess-1")
             print(r["merged"])
         """), encoding="utf-8")
-        violations = au._audit_file_regex(f)
+        violations = au.audit_file_regex(f)
         assert len(violations) >= 1
         merged_v = [v for v in violations if v.forbidden_key == "merged"]
         assert len(merged_v) >= 1

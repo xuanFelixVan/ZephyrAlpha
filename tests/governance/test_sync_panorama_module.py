@@ -195,7 +195,7 @@ class TestWeightedVoting:
             _make_module_row("MOD-T", "D_GOV_SCRIPTS", "production", "stable", "scripts/gov2.py"),
         ]
         conn.cursor.return_value.__enter__.return_value = cursor
-        result = spm._query_depgraph_module(conn, "MOD-T")
+        result = spm.query_depgraph_module(conn, "MOD-T")
         assert result["domain_id"] == "D_GOV_SCRIPTS"
 
 

@@ -50,7 +50,7 @@ class TestLogWorkspaceOp:
         log_workspace_op(
             op="git_restore_rollback",
             session_id="sess-test-001",
-            source="self_healer._rollback",
+            source="self_healer.rollback",
             root=tmp_path,
             file="src/foo.py",
             content_hash="abc123def456abcd",
@@ -66,7 +66,7 @@ class TestLogWorkspaceOp:
         # 必填字段（项目记忆硬约束）
         assert entry["op"] == "git_restore_rollback"
         assert entry["session_id"] == "sess-test-001"
-        assert entry["source"] == "self_healer._rollback"
+        assert entry["source"] == "self_healer.rollback"
         assert entry["file"] == "src/foo.py"
         assert entry["content_hash"] == "abc123def456abcd"
         assert entry["backup_path"] == ""

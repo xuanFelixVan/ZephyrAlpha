@@ -75,7 +75,7 @@ class TestSyncPanoramaAfterTransition:
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: conn)
         sync_mock = _inject_sync_mock(monkeypatch, adg)
 
-        adg._sync_panorama_after_transition(42)
+        adg.sync_panorama_after_transition(42)
 
         sync_mock.assert_called_once_with("MOD-TEST")
 
@@ -87,7 +87,7 @@ class TestSyncPanoramaAfterTransition:
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: conn)
         sync_mock = _inject_sync_mock(monkeypatch, adg)
 
-        adg._sync_panorama_after_transition(42)
+        adg.sync_panorama_after_transition(42)
 
         sync_mock.assert_not_called()
 
@@ -97,7 +97,7 @@ class TestSyncPanoramaAfterTransition:
         monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: conn)
         sync_mock = _inject_sync_mock(monkeypatch, adg)
 
-        adg._sync_panorama_after_transition(999)
+        adg.sync_panorama_after_transition(999)
 
         sync_mock.assert_not_called()
 
@@ -111,4 +111,4 @@ class TestSyncPanoramaAfterTransition:
         sync_mock.side_effect = RuntimeError("DB down")
 
         # 不应抛异常
-        adg._sync_panorama_after_transition(42)
+        adg.sync_panorama_after_transition(42)

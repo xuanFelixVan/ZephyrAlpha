@@ -30,7 +30,7 @@ class TestInitDb:
 
     def test_tables_created(self, store):
         """task_progress 和 task_runs 表应存在。"""
-        cur = store._conn.execute(
+        cur = store.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
         )
         tables = [r[0] for r in cur.fetchall()]
@@ -39,7 +39,7 @@ class TestInitDb:
 
     def test_wal_mode(self, store):
         """WAL 模式应启用（提升并发读性能）。"""
-        cur = store._conn.execute("PRAGMA journal_mode")
+        cur = store.conn.execute("PRAGMA journal_mode")
         mode = cur.fetchone()[0]
         assert mode == "wal"
 
@@ -64,7 +64,7 @@ class TestSaveAndGetLastKey:
         assert status["last_key"] == "2026-07-06"
         assert status["rows_total"] == 2000
         # 应只有 1 行（UPSERT）
-        cur = store._conn.execute("SELECT COUNT(*) FROM task_progress WHERE task_id='kline_daily'")
+        cur = store.conn.execute("SELECT COUNT(*) FROM task_progress WHERE task_id='kline_daily'")
         assert cur.fetchone()[0] == 1
 
     def test_save_progress_with_error(self, store):
@@ -85,7 +85,7 @@ class TestRunRecords:
         assert isinstance(run_id, int)
 
         assert store.finish_run(run_id, "SUCCESS", rows_fetched=500, rows_written=500)
-        cur = store._conn.execute("SELECT * FROM task_runs WHERE run_id=?", (run_id,))
+        cur = store.conn.execute("SELECT * FROM task_runs WHERE run_id=?", (run_id,))
         row = dict(cur.fetchone())
         assert row["status"] == "SUCCESS"
         assert row["rows_fetched"] == 500
@@ -166,7 +166,7 @@ class TestThreadSafety:
         assert all(results)
         assert len(results) == 100
         # 最终状态一致（只有 1 行）
-        cur = store._conn.execute("SELECT COUNT(*) FROM task_progress WHERE task_id='shared_task'")
+        cur = store.conn.execute("SELECT COUNT(*) FROM task_progress WHERE task_id='shared_task'")
         assert cur.fetchone()[0] == 1
 
     def test_concurrent_start_run(self, store):
@@ -197,7 +197,7 @@ class TestReapStaleRuns:
         from zephyr.shared.utils.time_utils import now_utc
         # 手动插入一个25小时前的 RUNNING 记录（模拟进程崩溃后遗留）
         old_time = (now_utc() - datetime.timedelta(hours=25)).isoformat(timespec="seconds")
-        store._conn.execute(
+        store.conn.execute(
             "INSERT INTO task_runs (task_id, started_at, status) VALUES (?, ?, 'RUNNING')",
             ("crashed_task", old_time),
         )
@@ -209,7 +209,7 @@ class TestReapStaleRuns:
         assert reaped[0]["task_id"] == "crashed_task"
 
         # task_runs 应更新为 STALE
-        cur = store._conn.execute(
+        cur = store.conn.execute(
             "SELECT status, finished_at, error_msg FROM task_runs WHERE task_id='crashed_task'"
         )
         row = cur.fetchone()
@@ -231,7 +231,7 @@ class TestReapStaleRuns:
         assert len(reaped) == 0
 
         # 任务仍为 RUNNING
-        cur = store._conn.execute(
+        cur = store.conn.execute(
             "SELECT status FROM task_runs WHERE run_id=?", (run_id,)
         )
         assert cur.fetchone()["status"] == "RUNNING"
@@ -249,7 +249,7 @@ class TestReapStaleRuns:
         from zephyr.shared.utils.time_utils import now_utc
         old_time = (now_utc() - datetime.timedelta(hours=48)).isoformat(timespec="seconds")
         for i in range(3):
-            store._conn.execute(
+            store.conn.execute(
                 "INSERT INTO task_runs (task_id, started_at, status) VALUES (?, ?, 'RUNNING')",
                 (f"stale_{i}", old_time),
             )

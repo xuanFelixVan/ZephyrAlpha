@@ -277,7 +277,7 @@ class TestCrossModuleDepMultiNodeSkip:
                 cnt = cur.fetchone()["n"]
                 if cnt <= 1:
                     pytest.skip(f"MOD-L02-001 在 DB 中非多节点（count={cnt}），无法验证 multi 分支")
-                node_id, status = syd._resolve_module_to_single_node(cur, "MOD-L02-001", "")
+                node_id, status = syd.resolve_module_to_single_node(cur, "MOD-L02-001", "")
                 assert status == "multi", f"多节点模块应返回 'multi'，实际 {status}"
                 assert node_id is None, f"multi 分支应返回 None node_id，实际 {node_id}"
         finally:
@@ -290,7 +290,7 @@ class TestCrossModuleDepMultiNodeSkip:
         conn = self._get_conn(syd)
         try:
             with conn.cursor() as cur:
-                node_id, status = syd._resolve_module_to_single_node(
+                node_id, status = syd.resolve_module_to_single_node(
                     cur, "MOD-SMOKE-DOES-NOT-EXIST-999", ""
                 )
                 assert status == "none", f"不存在模块应返回 'none'，实际 {status}"
@@ -317,7 +317,7 @@ class TestCrossModuleDepMultiNodeSkip:
                 if not row:
                     pytest.skip("DB 中无单节点 MOD-xxx 模块，无法验证 single 分支")
                 single_module = row["blueprint_id"]
-                node_id, status = syd._resolve_module_to_single_node(cur, single_module, "")
+                node_id, status = syd.resolve_module_to_single_node(cur, single_module, "")
                 assert status == "single", f"单节点模块应返回 'single'，实际 {status}"
                 assert node_id is not None, "single 分支应返回非空 node_id"
         finally:

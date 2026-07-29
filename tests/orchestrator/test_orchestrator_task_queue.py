@@ -108,7 +108,7 @@ class TestTaskQueueTick:
         repo = FakeRepo(tasks)
         orch = FakeOrchestrator()
         q = TaskQueue(repo, orch, max_per_cycle=3)
-        n = q._tick()
+        n = q.tick()
         assert n == 2
         assert len(orch.dispatched) == 2
         assert repo.transitions == [("T-1", "IN_PROGRESS"), ("T-2", "IN_PROGRESS")]
@@ -118,20 +118,20 @@ class TestTaskQueueTick:
         repo = FakeRepo(tasks)
         orch = FakeOrchestrator()
         q = TaskQueue(repo, orch, max_per_cycle=2)
-        n = q._tick()
+        n = q.tick()
         assert n == 2
 
     def test_tick_no_ready_tasks(self):
         repo = FakeRepo([])
         q = TaskQueue(repo)
-        n = q._tick()
+        n = q.tick()
         assert n == 0
 
     def test_tick_with_no_orchestrator(self):
         tasks = [FakeTaskCard(task_id="T-1")]
         repo = FakeRepo(tasks)
         q = TaskQueue(repo, orchestrator=None, max_per_cycle=3)
-        n = q._tick()
+        n = q.tick()
         assert n == 1
         assert repo.transitions == [("T-1", "IN_PROGRESS")]
 
@@ -141,7 +141,7 @@ class TestTaskQueueTick:
         bad_orch = MagicMock()
         bad_orch.dispatch.side_effect = RuntimeError("boom")
         q = TaskQueue(repo, bad_orch, max_per_cycle=3)
-        n = q._tick()
+        n = q.tick()
         assert n == 0
         assert q.stats["errors"] == 1
 

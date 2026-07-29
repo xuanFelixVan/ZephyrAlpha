@@ -196,7 +196,7 @@ class TestParseSimpleFrontmatter:
             "\n"
             "正文\n"
         )
-        fm = gbp._parse_simple_frontmatter(content)
+        fm = gbp.parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert fm.get("build_status") == "generated"
         assert fm.get("status") == "Active"
@@ -209,7 +209,7 @@ class TestParseSimpleFrontmatter:
             "status: 'Active'\n"
             "---\n"
         )
-        fm = gbp._parse_simple_frontmatter(content)
+        fm = gbp.parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert fm.get("status") == "Active"
 
@@ -222,7 +222,7 @@ class TestParseSimpleFrontmatter:
             "meta: {key: value}\n"
             "---\n"
         )
-        fm = gbp._parse_simple_frontmatter(content)
+        fm = gbp.parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert "tags" not in fm
         assert "meta" not in fm
@@ -230,7 +230,7 @@ class TestParseSimpleFrontmatter:
     def test_no_frontmatter_returns_empty(self, gbp):
         """无 frontmatter 时返回空 dict。"""
         content = "正文无 frontmatter\n"
-        fm = gbp._parse_simple_frontmatter(content)
+        fm = gbp.parse_simple_frontmatter(content)
         assert fm == {}
 
     def test_skips_lines_without_colon(self, gbp):
@@ -241,7 +241,7 @@ class TestParseSimpleFrontmatter:
             "这是一行没有冒号的文本\n"
             "---\n"
         )
-        fm = gbp._parse_simple_frontmatter(content)
+        fm = gbp.parse_simple_frontmatter(content)
         assert fm.get("module_id") == "MOD-GOV-029"
         assert len(fm) == 1
 

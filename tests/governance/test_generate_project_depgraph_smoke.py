@@ -129,12 +129,12 @@ class TestDesignEdgeSurvivesRebuild:
 
     本测试在可回滚事务内直接验证两个 helper 协作，不运行 --force 全量 rebuild
     （会写生产 DB、破坏其他会话）。conn.rollback() 保证零持久副作用。
-    用与 write_depgraph_to_db 相同的 DictCursor 连接（gpd._get_pg_conn_with_dict_cursor）。
+    用与 write_depgraph_to_db 相同的 DictCursor 连接（gpd.get_pg_conn_with_dict_cursor）。
     """
 
     def _get_conn(self, gpd):
         try:
-            return gpd._get_pg_conn_with_dict_cursor(autocommit=False)
+            return gpd.get_pg_conn_with_dict_cursor(autocommit=False)
         except Exception as e:
             pytest.skip(f"PostgreSQL depgraph 不可达（CI 环境？）: {e}")
 
@@ -177,7 +177,7 @@ class TestDesignEdgeSurvivesRebuild:
                 )
 
                 # 步骤1：快照应含测试边（from_path/to_path 正确）
-                snapshot = gpd._snapshot_apply_depgraph_design_edges(cur)
+                snapshot = gpd.snapshot_apply_depgraph_design_edges(cur)
                 test_snaps = [
                     r for r in snapshot
                     if r["from_path"] == design_path and r["to_path"] == prod_path
@@ -208,7 +208,7 @@ class TestDesignEdgeSurvivesRebuild:
                 path_to_db_node_id = {design_path: design_node_id, prod_path: prod_node_id_new}
 
                 # 步骤4：按 path 重插
-                gpd._restore_apply_depgraph_design_edges_by_path(
+                gpd.restore_apply_depgraph_design_edges_by_path(
                     cur, snapshot, path_to_db_node_id
                 )
 

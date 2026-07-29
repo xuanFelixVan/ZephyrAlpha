@@ -5193,3 +5193,9 @@ if __name__ == "__main__":
                 mark_depgraph_dirty()
             except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程（DB 已成功写入）
                 print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def read_maturity_header(file_path) -> str | None:
+    """公共接口：read_maturity_header（Stage 4 公共化）。"""
+    return _read_maturity_header(file_path)
+

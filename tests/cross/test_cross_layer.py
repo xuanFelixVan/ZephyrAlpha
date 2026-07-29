@@ -124,7 +124,7 @@ class TestAlphaSignalPipeline:
         assert AlphaPipelineStage.CAPITAL_ALLOCATION.value == "capital_allocation"
 
     def test_aggregate_confidence_empty(self):
-        result = AlphaSignalPipeline._aggregate_confidence([])
+        result = AlphaSignalPipeline.aggregate_confidence([])
         assert result == 0.0
 
     def test_aggregate_confidence_with_values(self):
@@ -133,12 +133,12 @@ class TestAlphaSignalPipeline:
                 self.confidence = c
 
         signals = [FakeSignal(0.6), FakeSignal(0.8)]
-        result = AlphaSignalPipeline._aggregate_confidence(signals)
+        result = AlphaSignalPipeline.aggregate_confidence(signals)
         assert abs(result - 0.7) < 1e-9
 
     def test_aggregate_confidence_dicts(self):
         signals = [{"confidence": 0.5}, {"confidence": 0.9}]
-        result = AlphaSignalPipeline._aggregate_confidence(signals)
+        result = AlphaSignalPipeline.aggregate_confidence(signals)
         assert abs(result - 0.7) < 1e-9
 
 
@@ -228,12 +228,12 @@ class TestMLExperimentPipeline:
         assert MLPipelineStage.PRODUCTION_PROMOTE.value == "production_promote"
 
     def test_snapshot_builtins(self):
-        snapshot = MLExperimentPipeline._snapshot_builtins()
+        snapshot = MLExperimentPipeline.snapshot_builtins()
         assert isinstance(snapshot, frozenset)
         assert "print" in snapshot
 
     def test_check_builtins_integrity_clean(self):
-        snapshot = MLExperimentPipeline._snapshot_builtins()
-        violations = MLExperimentPipeline._check_builtins_integrity(snapshot)
+        snapshot = MLExperimentPipeline.snapshot_builtins()
+        violations = MLExperimentPipeline.check_builtins_integrity(snapshot)
         assert isinstance(violations, list)
         assert len(violations) == 0

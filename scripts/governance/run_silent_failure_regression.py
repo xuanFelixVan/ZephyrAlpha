@@ -333,3 +333,27 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def build_pytest_cmd(project_root) -> tuple[list[str], Path]:
+    """公共接口：build_pytest_cmd（Stage 4 公共化）。"""
+    return _build_pytest_cmd(project_root)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def build_return_contract_cmd(project_root) -> tuple[list[str], Path]:
+    """公共接口：build_return_contract_cmd（Stage 4 公共化）。"""
+    return _build_return_contract_cmd(project_root)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def build_worktree_ops_cmd(project_root) -> tuple[list[str], Path]:
+    """公共接口：build_worktree_ops_cmd（Stage 4 公共化）。"""
+    return _build_worktree_ops_cmd(project_root)
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def run_stage(name, description, cmd_builder, project_root) -> RegressionStageResult:
+    """公共接口：run_stage（Stage 4 公共化）。"""
+    return _run_stage(name, description, cmd_builder, project_root)
+
+
+
+

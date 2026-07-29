@@ -141,7 +141,7 @@ class TestDeprecatedDecorator:
             return "bare"
 
         assert bare_func() == "bare"
-        assert bare_func._zephyr_deprecated is True
+        assert bare_func.zephyr_deprecated is True
 
     def test_with_reason(self):
         set_deprecation_mode("strict")
