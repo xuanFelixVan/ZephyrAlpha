@@ -54,7 +54,7 @@ class SignatureMatcher:
         self._index: dict[str, list[str]] = {}
 
     @classmethod
-    def classify_path(cls, cls, file_path) -> str:
+    def classify_path(cls, file_path) -> str:
         """公共接口：classify_path（Stage 4 公共化，委托到 cls._classify_path）。"""
         return cls._classify_path(cls, file_path)
 

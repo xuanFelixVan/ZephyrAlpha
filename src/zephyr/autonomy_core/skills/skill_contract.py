@@ -34,7 +34,7 @@ class SkillContract:
     _CONTRACT_TYPES = ["input_schema", "output_schema", "side_effects", "dependencies"]
 
     @classmethod
-    def parse_contracts(cls, cls, body) -> dict[str, Any]:
+    def parse_contracts(cls, body) -> dict[str, Any]:
         """公共接口：parse_contracts（Stage 4 公共化，委托到 cls._parse_contracts）。"""
         return cls._parse_contracts(cls, body)
 

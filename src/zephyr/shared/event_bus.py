@@ -84,7 +84,6 @@ EventHandler = Callable[[DomainEvent], None]
 
 
 class EventBus:
-    instance: 'EventBus | None' = _instance  # public alias（Stage 4 公共化）
 
     """
     任务事件发布/订阅总线（单例模式）
@@ -94,6 +93,7 @@ class EventBus:
     """
 
     _instance: "EventBus | None" = None
+    instance: 'EventBus | None' = _instance  # public alias（Stage 4 公共化）
 
     def __init__(self) -> None:
         self._subscribers: dict[EventType, list[EventHandler]] = {et: [] for et in EventType}

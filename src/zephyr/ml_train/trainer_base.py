@@ -72,7 +72,6 @@ class ModelTrainerBase(abc.ABC):
 
 
 class ModelRegistry:
-    registry: ClassVar[dict[str, type[ModelTrainerBase]]] = _registry  # public alias（Stage 4 公共化）
 
     """
     模型注册表（OCP 扩展点 D_ML_TRAIN-REG）
@@ -83,6 +82,7 @@ class ModelRegistry:
     """
 
     _registry: ClassVar[dict[str, type[ModelTrainerBase]]] = {}
+    registry: ClassVar[dict[str, type[ModelTrainerBase]]] = _registry  # public alias（Stage 4 公共化）
 
     @classmethod
     def register(cls, trainer_cls: type[ModelTrainerBase]) -> type[ModelTrainerBase]:

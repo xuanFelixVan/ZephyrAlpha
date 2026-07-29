@@ -533,7 +533,6 @@ class _ExternalNotifier:
 
 
 class ResourceOptimizationEngine:
-    instance: ResourceOptimizationEngine | None = _instance  # public alias（Stage 4 公共化）
 
     """MAPE-K 自治资源优化引擎（单例 facade）。
 
@@ -546,6 +545,7 @@ class ResourceOptimizationEngine:
     """
 
     _instance: ResourceOptimizationEngine | None = None
+    instance: ResourceOptimizationEngine | None = _instance  # public alias（Stage 4 公共化）
     _init_lock = threading.Lock()
 
     def __new__(cls) -> ResourceOptimizationEngine:

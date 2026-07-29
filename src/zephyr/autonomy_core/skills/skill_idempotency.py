@@ -32,11 +32,11 @@ import time
 
 
 class SkillIdempotency:
-    execution_history: dict[str, tuple[str, float]] = _execution_history  # public alias（Stage 4 公共化）
 
     """Skill 幂等性保证 —— 重复执行安全."""
 
     _execution_history: dict[str, tuple[str, float]] = {}
+    execution_history: dict[str, tuple[str, float]] = _execution_history  # public alias（Stage 4 公共化）
     _DEFAULT_TTL_S = 3600.0
 
     @classmethod

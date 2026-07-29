@@ -81,13 +81,13 @@ class SkillTranslator:
     """跨模型 Skill 翻译器"""
 
     @classmethod
-    def infer_source_family(cls, cls, body) -> str:
+    def infer_source_family(cls, body) -> str:
         """公共接口：infer_source_family（Stage 4 公共化，委托到 cls._infer_source_family）。"""
         return cls._infer_source_family(cls, body)
 
 
     @classmethod
-    def apply_adaptation(cls, cls, body, target_adaptation, source_adaptation) -> str:
+    def apply_adaptation(cls, body, target_adaptation, source_adaptation) -> str:
         """公共接口：apply_adaptation（Stage 4 公共化，委托到 cls._apply_adaptation）。"""
         return cls._apply_adaptation(cls, body, target_adaptation, source_adaptation)
 

@@ -42,7 +42,7 @@ class SkillCompliance:
         return {"pii_detected": len(findings) > 0, "findings": findings}
 
     @classmethod
-    def check_pii(cls, cls, content) -> dict[str, Any]:
+    def check_pii(cls, content) -> dict[str, Any]:
         """公共接口：check_pii（Stage 4 公共化，委托到 cls._check_pii）。"""
         return cls._check_pii(cls, content)
 

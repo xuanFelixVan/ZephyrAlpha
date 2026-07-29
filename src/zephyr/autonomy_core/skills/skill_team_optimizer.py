@@ -134,19 +134,19 @@ class SkillTeamOptimizer:
         return 0.5
 
     @classmethod
-    def team_score(cls, cls, team, task_keywords) -> tuple[float, float, float]:
+    def team_score(cls, team, task_keywords) -> tuple[float, float, float]:
         """公共接口：team_score（Stage 4 公共化，委托到 cls._team_score）。"""
         return cls._team_score(cls, team, task_keywords)
 
 
     @classmethod
-    def coverage(cls, cls, team, task_keywords) -> float:
+    def coverage(cls, team, task_keywords) -> float:
         """公共接口：coverage（Stage 4 公共化，委托到 cls._coverage）。"""
         return cls._coverage(cls, team, task_keywords)
 
 
     @classmethod
-    def compat_score(cls, cls, skill_a, skill_b) -> float:
+    def compat_score(cls, skill_a, skill_b) -> float:
         """公共接口：compat_score（Stage 4 公共化，委托到 cls._compat_score）。"""
         return cls._compat_score(cls, skill_a, skill_b)
 

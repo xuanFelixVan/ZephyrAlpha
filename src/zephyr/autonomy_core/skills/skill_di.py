@@ -31,11 +31,11 @@ from typing import Any
 
 
 class SkillDI:
-    registry: dict[str, dict[str, Any]] = _registry  # public alias（Stage 4 公共化）
 
     """Skill DI——模块化 Skill 组装与依赖解析."""
 
     _registry: dict[str, dict[str, Any]] = {}
+    registry: dict[str, dict[str, Any]] = _registry  # public alias（Stage 4 公共化）
 
     @classmethod
     def register(cls, skill_id: str, deps: dict[str, Any]) -> dict[str, Any]:

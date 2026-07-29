@@ -32,7 +32,6 @@ from typing import Any
 
 
 class SkillResilience:
-    failure_count: dict[str, int] = _failure_count  # public alias（Stage 4 公共化）
 
     """Skill 韧性——重试/降级/熔断策略."""
 
@@ -41,6 +40,7 @@ class SkillResilience:
     MAX_DELAY_S = 30.0
 
     _failure_count: dict[str, int] = {}
+    failure_count: dict[str, int] = _failure_count  # public alias（Stage 4 公共化）
     _last_failure_time: dict[str, float] = {}
     _circuit_open: dict[str, bool] = {}
     _circuit_open_until: dict[str, float] = {}

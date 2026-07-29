@@ -162,9 +162,7 @@ def _run_inference_stage(
 
 
 class MLExperimentPipeline:
-    seen_idempotency_keys: set[str] = _seen_idempotency_keys  # public alias（Stage 4 公共化）
 
-    global_run_count: int = _global_run_count  # public alias（Stage 4 公共化）
 
     """D_ML_TRAIN->实验 ML Experiment 跨层集成管道。
 
@@ -173,7 +171,9 @@ class MLExperimentPipeline:
     """
 
     _global_run_count: int = 0
+    global_run_count: int = _global_run_count  # public alias（Stage 4 公共化）
     _seen_idempotency_keys: set[str] = set()
+    seen_idempotency_keys: set[str] = _seen_idempotency_keys  # public alias（Stage 4 公共化）
     _MAX_RUNS_BEFORE_P_HACKING_WARNING = 9
     # 5.12.10 修复：移除 _BUILTINS_GUARD_ENABLED = True 死分支（flag永远True，else路径不可达）
 

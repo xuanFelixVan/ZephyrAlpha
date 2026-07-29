@@ -32,11 +32,11 @@ from typing import Any
 
 
 class SkillPromptCache:
-    cache: dict[str, tuple[str, float]] = _cache  # public alias（Stage 4 公共化）
 
     """Skill Prompt 缓存——减少重复 LLM 调用."""
 
     _cache: dict[str, tuple[str, float]] = {}
+    cache: dict[str, tuple[str, float]] = _cache  # public alias（Stage 4 公共化）
     _DEFAULT_TTL_S = 3600.0
     _MAX_SIZE = 200
 
