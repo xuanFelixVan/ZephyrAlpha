@@ -5495,6 +5495,22 @@ def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
 
         return set()
 
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def collect_tracked_cleanups(
+    root: Path, branch: str, changed_files: list[str], dirty_files: set[str],
+    skip_files: set[str] | None = None,
+) -> tuple[int, list[str], list[str]]:
+    """公共接口：collect_tracked_cleanups（Stage 4 公共化，委托到 _collect_tracked_cleanups）。"""
+    return _collect_tracked_cleanups(root, branch, changed_files, dirty_files, skip_files)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
+    """公共接口：get_other_session_claimed_files（Stage 4 公共化，委托到 _get_other_session_claimed_files）。"""
+    return _get_other_session_claimed_files(root, session_id)
+
+
 def claim_files_for_edit(
 
     session_id: str,
