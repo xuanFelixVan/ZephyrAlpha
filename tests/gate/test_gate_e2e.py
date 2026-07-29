@@ -163,9 +163,9 @@ class TestFullPipeline:
         repo = _make_repo(tmp_path, "ip_co.db")
         task = _make_task("SRC-101")
         repo.create(task)
-        repo._enable_gate = False
+        repo.enable_gate = False
         repo.transition("SRC-101", TaskStatus.IN_PROGRESS)
-        repo._enable_gate = True
+        repo.enable_gate = True
         # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
         repo.batch_review("SRC-101")
         repo.batch_review("SRC-101")
@@ -178,9 +178,9 @@ class TestFullPipeline:
         repo = _make_repo(tmp_path, "co_ve.db")
         task = _make_task("SRC-102")
         repo.create(task)
-        repo._enable_gate = False
+        repo.enable_gate = False
         repo.transition("SRC-102", TaskStatus.IN_PROGRESS)
-        repo._enable_gate = True
+        repo.enable_gate = True
         # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
         repo.batch_review("SRC-102")
         repo.batch_review("SRC-102")
@@ -194,7 +194,7 @@ class TestFullPipeline:
         repo = _make_repo(tmp_path, "full_lc.db")
         task = _make_task("SRC-103")
         repo.create(task)
-        repo._enable_gate = False
+        repo.enable_gate = False
         repo.transition("SRC-103", TaskStatus.IN_PROGRESS)
         # DM-200921: COMPLETED 前需连续2次 batch_review 0问题
         repo.batch_review("SRC-103")
@@ -324,7 +324,7 @@ class TestGateDegradation:
         frontmatter = b"---\nmodule_id: X\ntitle: T\ncategory: c\n---\n"
         body = b"# Header\r\n\r\n" + b"Content line here. " * 8  # ~152 chars > 100
         crlf_file.write_bytes(frontmatter + body)
-        engine._project_root = tmp_path
+        engine.project_root = tmp_path
         task = _make_task("SRC-111", deliverables=["crlf_check.md"])
         result = engine.evaluate(task, "G1")
         assert result.passed is True
@@ -333,7 +333,7 @@ class TestGateDegradation:
 
     def test_only_p0_causes_gate_failure(self, engine: GateEngine, tmp_path: Path) -> None:
         """有 P1/P2 违规时 passed=True；只有 P0 违规时 passed=False。"""
-        engine._project_root = tmp_path
+        engine.project_root = tmp_path
         task = _make_task("SRC-112", deliverables=["nonexistent_file.md"])
         result = engine.evaluate(task, "G1")
         assert result.passed is True
@@ -363,7 +363,7 @@ class TestG1ToG5ViaEngine:
         """G2-C00 content_quality: 空文件被 G2 拦截（P0）。"""
         empty = tmp_path / "empty.md"
         empty.write_bytes(b"")
-        engine._project_root = tmp_path
+        engine.project_root = tmp_path
         result = engine.evaluate(_make_task("SRC-115", ["empty.md"]), "G2")
         assert result.passed is False
 
@@ -371,7 +371,7 @@ class TestG1ToG5ViaEngine:
         """G2-C00 content_quality: 内容丰富的文件通过 G2。"""
         rich = tmp_path / "rich.md"
         rich.write_bytes(("# Title\n\n" + "内容。" * 30).encode("utf-8"))
-        engine._project_root = tmp_path
+        engine.project_root = tmp_path
         result = engine.evaluate(_make_task("SRC-116", ["rich.md"]), "G2")
         assert result.passed is True
 
@@ -467,10 +467,10 @@ class TestRollbackAndIntegration:
         bom_file.write_bytes(b"\xef\xbb\xbf# BOM\n")
         task = _make_task("SRC-124", deliverables=["bom_ready.md"], status="PENDING")
         repo.create(task)
-        repo._enable_gate = False
+        repo.enable_gate = False
         repo.transition("SRC-124", TaskStatus.BLOCKED)
         repo.transition("SRC-124", TaskStatus.READY)
-        repo._enable_gate = True
+        repo.enable_gate = True
         with pytest.raises(GateViolationError) as exc_info:
             repo.transition("SRC-124", TaskStatus.IN_PROGRESS)
         assert exc_info.value.result.passed is False

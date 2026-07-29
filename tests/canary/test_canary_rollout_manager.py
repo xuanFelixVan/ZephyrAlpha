@@ -53,8 +53,8 @@ class TestCanaryRolloutManagerRegister:
     def test_register_records_history(self):
         mgr = CanaryRolloutManager()
         mgr.register("PERM-004", ["RULE-X"])
-        assert len(mgr._history) == 1
-        assert mgr._history[0]["action"] == "REGISTERED"
+        assert len(mgr.history) == 1
+        assert mgr.history[0]["action"] == "REGISTERED"
 
 
 class TestCanaryRolloutManagerSampling:
@@ -124,5 +124,5 @@ class TestCanaryRolloutManagerRollback:
         mgr = CanaryRolloutManager()
         mgr.register("PERM-031", [])
         mgr.rollback("PERM-031")
-        actions = [h["action"] for h in mgr._history]
+        actions = [h["action"] for h in mgr.history]
         assert "ROLLED_BACK" in actions

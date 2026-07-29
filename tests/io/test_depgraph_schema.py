@@ -47,7 +47,7 @@ table_names = schema_mod.table_names
 schema_version = schema_mod.schema_version
 _MIGRATIONS = schema_mod._MIGRATIONS
 _DDL_INDEXES = schema_mod._DDL_INDEXES
-_get_current_version = schema_mod._get_current_version
+_get_current_version = schema_mod.get_current_version
 
 # P2迁移：init_db 已迁移到 PostgreSQL（只验证 PG schema，不再创建 SQLite 文件），
 # PRAGMA/sqlite_master/_schema_version/SQLite 临时库测试均不适用 PG。

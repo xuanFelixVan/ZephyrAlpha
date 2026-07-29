@@ -1769,3 +1769,9 @@ def build_pg_dsn(config, *, superuser, read_only) -> dict[str, Any]:
     """公共接口：build_pg_dsn（Stage 4 公共化，委托到 _build_pg_dsn）。"""
     return _build_pg_dsn(config, superuser=superuser, read_only=read_only)
 
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_current_version(conn) -> int:
+    """公共接口：get_current_version（Stage 4 公共化）。"""
+    return _get_current_version(conn)
+
+

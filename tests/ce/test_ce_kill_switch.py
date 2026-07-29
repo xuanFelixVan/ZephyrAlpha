@@ -49,22 +49,22 @@ class TestFuseState:
 class TestKillSwitch:
     def test_init_default_threshold(self):
         ks = KillSwitch()
-        assert ks._threshold == 5
+        assert ks.threshold == 5
 
     def test_init_custom_threshold(self):
         ks = KillSwitch(threshold=3)
-        assert ks._threshold == 3
+        assert ks.threshold == 3
 
     def test_fuse_off_initially(self):
         ks = KillSwitch()
-        assert ks._fuse_on is False
-        assert ks._error_count == 0
+        assert ks.fuse_on is False
+        assert ks.error_count == 0
 
     def test_record_error_below_threshold(self):
         ks = KillSwitch(threshold=5)
         state = ks.record_error("err1")
         assert state.on is False
-        assert ks._error_count == 1
+        assert ks.error_count == 1
 
     def test_record_error_reaches_threshold(self):
         ks = KillSwitch(threshold=3)
@@ -91,8 +91,8 @@ class TestKillSwitch:
         ks.record_error("e1")
         ks.record_error("e2")
         ks.reset()
-        assert ks._error_count == 0
-        assert ks._fuse_on is False
+        assert ks.error_count == 0
+        assert ks.fuse_on is False
 
     def test_reset_allows_new_errors(self):
         ks = KillSwitch(threshold=2)
@@ -101,7 +101,7 @@ class TestKillSwitch:
         ks.reset()
         state = ks.record_error("e3")
         assert state.on is False
-        assert ks._error_count == 1
+        assert ks.error_count == 1
 
     def test_trigger_reason_preserved(self):
         ks = KillSwitch(threshold=1)

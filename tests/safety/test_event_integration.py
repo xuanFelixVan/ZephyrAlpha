@@ -83,7 +83,7 @@ class TestSubscribeToEvents:
     def test_subscribe_sets_event_bus(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events()
-        assert scheduler._event_bus is not None
+        assert scheduler.event_bus is not None
 
     def test_subscribe_sets_event_subscribed_flag(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
@@ -94,18 +94,18 @@ class TestSubscribeToEvents:
         custom_bus = EventBus()
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events(event_bus=custom_bus)
-        assert scheduler._event_bus is custom_bus
+        assert scheduler.event_bus is custom_bus
 
     def test_subscribe_uses_singleton_by_default(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events()
         singleton = EventBus.get_instance()
-        assert scheduler._event_bus is singleton
+        assert scheduler.event_bus is singleton
 
     def test_default_not_subscribed(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         assert scheduler.event_subscribed is False
-        assert scheduler._event_bus is None
+        assert scheduler.event_bus is None
 
     def test_enable_event_subscription_in_init(self, tmp_path):
         scheduler = GameDayScheduler(
@@ -113,7 +113,7 @@ class TestSubscribeToEvents:
             enable_event_subscription=True,
         )
         assert scheduler.event_subscribed is True
-        assert scheduler._event_bus is not None
+        assert scheduler.event_bus is not None
 
 
 # ===========================================================================
@@ -123,19 +123,19 @@ class TestOnSecurityEvent:
     def test_callback_exists(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         assert hasattr(scheduler, "_on_security_event")
-        assert callable(scheduler._on_security_event)
+        assert callable(scheduler.on_security_event)
 
     def test_callback_noop_when_not_subscribed(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         event = make_event()
-        scheduler._on_security_event(event)
+        scheduler.on_security_event(event)
 
     def test_callback_triggers_full_cycle_when_subscribed(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events()
         with patch.object(scheduler, "trigger", return_value=[]) as mock_trigger:
             event = make_event()
-            scheduler._on_security_event(event)
+            scheduler.on_security_event(event)
             mock_trigger.assert_called_once_with("full_cycle")
 
     def test_callback_swallows_schedule_conflict(self, tmp_path):
@@ -143,7 +143,7 @@ class TestOnSecurityEvent:
         scheduler.subscribe_to_events()
         with patch.object(scheduler, "trigger", side_effect=ScheduleConflictError("running")):
             event = make_event()
-            scheduler._on_security_event(event)
+            scheduler.on_security_event(event)
 
     def test_callback_does_not_trigger_after_unsubscribe(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
@@ -151,7 +151,7 @@ class TestOnSecurityEvent:
         scheduler.unsubscribe_from_events()
         with patch.object(scheduler, "trigger", return_value=[]) as mock_trigger:
             event = make_event()
-            scheduler._on_security_event(event)
+            scheduler.on_security_event(event)
             mock_trigger.assert_not_called()
 
 
@@ -169,7 +169,7 @@ class TestUnsubscribeFromEvents:
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
         scheduler.subscribe_to_events()
         scheduler.unsubscribe_from_events()
-        assert scheduler._event_bus is None
+        assert scheduler.event_bus is None
 
     def test_unsubscribe_without_subscribe(self, tmp_path):
         scheduler = GameDayScheduler(state_path=tmp_path / "state.yaml")
