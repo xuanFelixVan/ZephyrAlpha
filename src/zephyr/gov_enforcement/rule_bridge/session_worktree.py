@@ -2657,7 +2657,7 @@ def session_worktree_start(
 
     #     失败时强制 [ESCALATION] 标记暴露给 AI/人类，禁止静默 workaround。
 
-    health_check = _run_startup_health_check(root)
+    health_check = run_startup_health_check(root)
 
     if health_check.get("status") != "ok":
 
