@@ -25,7 +25,7 @@ ttl: permanent
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 34 | config/*.yaml |
-| 数据流作业 | 726 | dataflow_graph_registry.yaml |
+| 数据流作业 | 766 | dataflow_graph_registry.yaml |
 | 数据集 | 14 | dataflow_graph_registry.yaml |
 | **合计** | **262** | |
 
@@ -93,7 +93,7 @@ ttl: permanent
 | CT-TEL-002 | TelemetryLogs / 遥测日志持久化 | cross_layer | D_OPS | unresolved |
 | CT-TEL-003 | TelemetryTraces / 遥测链路追踪 | cross_layer | D_OPS | unresolved |
 | CT-TEL-004 | TelemetryHealth / 遥测健康检查 | cross_layer | D_OPS | unresolved |
-| CTR-001 | NormalizedMarketData / 标准化行情数据 | cross_layer | D_MKT_DATA | planned |
+| CTR-001 | NormalizedMarketData / 标准化行情数据 | cross_layer | D_MKT_DATA | generated |
 | CTR-002 | FactorSignal / 因子信号 | cross_layer | D_FACTOR | unresolved |
 | CTR-003 | RiskLimits / 风险限额 | cross_layer | D_RISK | unresolved |
 | CTR-004 | Order / 委托指令 | cross_layer | D_PF_CORE | design |
@@ -125,7 +125,7 @@ ttl: permanent
 | CTR-P1-015 | SynthesizedSignal / 合成交易信号 | cross_layer | D_ASHARE_SIGNAL | unresolved |
 | CTR-P1-016 | BacktestResult / 回测结果 | cross_layer | D_BACKTEST | unresolved |
 | CTR-P1-017 | BacktestRunArtifact / 回测运行产物 | cross_layer | D_BACKTEST | unresolved |
-| CTR-TRACE-001 | TraceContext / 全链路追踪上下文 | cross_layer | D_MKT_DATA | planned |
+| CTR-TRACE-001 | TraceContext / 全链路追踪上下文 | cross_layer | D_MKT_DATA | generated |
 | OCP-002 | StrategyBase + StrategyRegistry / 策略扩展点 | cross_layer | D_SHARED | unresolved |
 | OCP-003 | BrokerInterface / 券商扩展点 | cross_layer | D_SHARED | unresolved |
 | CT-001 | config/context-rules.yaml | declarative | D_DATA_SEC | resolved |
@@ -161,12 +161,12 @@ ttl: permanent
 
 | 文件路径 | 大小(KB) | 最后修改 |
 |----------|---------|----------|
-| `config/ai_capability_matrix.yaml` | 6.1 | 2026-07-23 |
+| `config/ai_capability_matrix.yaml` | 6.1 | 2026-07-24 |
 | `config/ai_context_policy.yaml` | 1.0 | 2026-07-04 |
 | `config/alert_rules.yaml` | 2.4 | 2026-07-20 |
 | `config/asset_inventory.yaml` | 2.3 | 2026-07-04 |
 | `config/auto_fix_cron.yaml` | 1.0 | 2026-07-05 |
-| `config/blueprint_routing.yaml` | 22.4 | 2026-07-23 |
+| `config/blueprint_routing.yaml` | 22.4 | 2026-07-24 |
 | `config/budget_policy.yaml` | 3.1 | 2026-06-12 |
 | `config/capabilities.yaml` | 0.9 | 2026-06-12 |
 | `config/capacity_params.yaml` | 7.2 | 2026-06-24 |
@@ -174,7 +174,7 @@ ttl: permanent
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
 | `config/context_rules.yaml` | 5.6 | 2026-07-17 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |
-| `config/dr_policy.yaml` | 4.5 | 2026-07-23 |
+| `config/dr_policy.yaml` | 4.5 | 2026-07-28 |
 | `config/embedding_model_registry.yaml` | 3.5 | 2026-06-23 |
 | `config/error_budget_config.yaml` | 1.6 | 2026-07-02 |
 | `config/external_watchdog.yaml` | 0.9 | 2026-07-02 |
@@ -191,7 +191,7 @@ ttl: permanent
 | `config/sandbox_policy.yaml` | 1.5 | 2026-07-05 |
 | `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
 | `config/sli_registry.yaml` | 2.8 | 2026-07-02 |
-| `config/survivorship_policy.yaml` | 0.8 | 2026-07-23 |
+| `config/survivorship_policy.yaml` | 0.8 | 2026-07-24 |
 | `config/tech_stack_manifest.yaml` | 5.4 | 2026-07-19 |
 | `config/trigger_router.yaml` | 5.0 | 2026-07-14 |
 | `config/worktree_state_machine.yaml` | 7.3 | 2026-07-21 |
