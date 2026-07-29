@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_daily
     change       Decimal(18,4)  DEFAULT 0 COMMENT '涨跌额(元)',
     turnover     Decimal(18,4)  DEFAULT 0 COMMENT '换手率(%)',
     adj_factor   Nullable(Decimal(18,8))  DEFAULT 1 COMMENT '复权因子(NULL=未知/缺失, 1=无复权, 0=无效已弃用→backfill为NULL. 裁定#ARCH-ADJFACTOR-NULL-001)',
-    market_type  LowCardinality(String) DEFAULT 'A_share' COMMENT '市场类型(预留港股/美股/期货)',
+    market_type  LowCardinality(String) DEFAULT 'A_share' COMMENT '交易所码(TRAE-082激活伏笔:存SH/SZ/BJ/HK/US消歧,旧值A_share待阶段1回填;000001.SZ平安银行vs000001.SH上证指数消歧)',
     data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT/iFind)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
     ingest_ts    DateTime64(3, 'UTC')  DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
