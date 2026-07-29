@@ -13,7 +13,7 @@
 
 """
 F21 自动启动测试 — DM-201250
-验证 boot_hooks._init_shared_monitoring_modules() 能自动初始化 6 个监控模块。
+验证 boot_hooks.init_shared_monitoring_modules() 能自动初始化 6 个监控模块。
 """
 
 from __future__ import annotations

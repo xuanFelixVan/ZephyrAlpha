@@ -147,9 +147,9 @@ class TestAkshareRealData:
 
         provider = AkshareProvider()
         assert provider is not None
-        assert provider._ak is None
-        _ = provider._akshare
-        assert provider._ak is not None
+        assert provider.ak is None
+        _ = provider.akshare
+        assert provider.ak is not None
 
     def test_get_stock_list(self):
         """获取全 A 股股票列表"""

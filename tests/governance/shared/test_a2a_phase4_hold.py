@@ -24,7 +24,7 @@ class TestA2APhase4Hold:
         from zephyr.infrastructure.a2a_protocol.phase_hold import Phase4Hold
 
         hold = Phase4Hold()
-        hold._phase3_complete = True
+        hold.phase3_complete = True
         result = hold.check()
         assert result is not None
 
@@ -32,6 +32,6 @@ class TestA2APhase4Hold:
         from zephyr.infrastructure.a2a_protocol.phase_hold import Phase4Hold
 
         hold = Phase4Hold()
-        hold._phase3_complete = False
+        hold.phase3_complete = False
         result = hold.check()
         assert result is not None

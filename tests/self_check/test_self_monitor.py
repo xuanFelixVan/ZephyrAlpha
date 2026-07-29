@@ -50,8 +50,8 @@ def monitor(data_dir):
 class TestSelfMonitor:
     def test_instantiation(self, data_dir):
         mon = SelfMonitor(data_dir=data_dir)
-        assert mon._heartbeat_interval == 300
-        assert mon._health_check_interval == 600
+        assert mon.heartbeat_interval == 300
+        assert mon.health_check_interval == 600
 
     def test_heartbeat_no_file(self, monitor):
         result = monitor.heartbeat()
@@ -116,15 +116,15 @@ class TestSelfMonitor:
         assert monitor.is_running is False
 
     def test_event_count_no_file(self, monitor):
-        assert monitor._event_count() == 0
+        assert monitor.event_count() == 0
 
     def test_file_size_mb_no_file(self, monitor):
-        assert monitor._file_size_mb() == 0.0
+        assert monitor.file_size_mb() == 0.0
 
     def test_load_events_raw_no_file(self, monitor):
-        assert monitor._load_events_raw(limit=10) == []
+        assert monitor.load_events_raw(limit=10) == []
 
     def test_load_events_raw_with_data(self, data_dir_with_events):
         mon = SelfMonitor(data_dir=data_dir_with_events)
-        events = mon._load_events_raw(limit=10)
+        events = mon.load_events_raw(limit=10)
         assert len(events) == 2

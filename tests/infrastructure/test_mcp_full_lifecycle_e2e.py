@@ -15,7 +15,7 @@
 覆盖目标：
   1. auto_runtime_core.boot() 全链路不抛异常
   2. boot 后 _booted=True
-  3. boot_hooks._start_mcp_cluster 函数存在且可调用
+  3. boot_hooks.start_mcp_cluster 函数存在且可调用
   4. launcher.launch_all 可调用（MCP DAG 启动）
   5. auto_runtime_core.shutdown() 全链路清理
   6. shutdown 后 _booted=False
@@ -23,7 +23,7 @@
 
 设计说明：
   - 不 mock 任何组件，实际调用 boot/shutdown 全链路
-  - MCP 启动通过 daemon 线程异步执行，boot_hooks._start_mcp_cluster 调用 launcher.launch_all
+  - MCP 启动通过 daemon 线程异步执行，boot_hooks.start_mcp_cluster 调用 launcher.launch_all
   - 由于 launcher.py 导入路径限制，MCP 进程启动可能失败但不影响 boot 流程
   - 测试验证流程完整性 + MCP 机制可用性
 """

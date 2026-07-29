@@ -244,7 +244,7 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
         factor = PoisonFactor()
         signals = factor.compute()
 
-        restore_violations = pipeline._check_and_restore_builtins(clean_snapshot)
+        restore_violations = pipeline.check_and_restore_builtins(clean_snapshot)
 
         post_restore_keys = set(builtins.__dict__.keys())
         still_tampered = post_restore_keys != original_builtins_keys

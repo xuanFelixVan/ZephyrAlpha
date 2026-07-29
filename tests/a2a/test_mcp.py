@@ -16,7 +16,7 @@ from io import StringIO
 
 import pytest
 
-base_mod = pytest.importorskip("zephyr.integration.mcp._base_server", reason="mcp._base_server not available")
+base_mod = pytest.importorskip("zephyr.integration.mcp.base_server", reason="mcp.base_server not available")
 BaseMCPServer = base_mod.BaseMCPServer
 ToolDefinition = base_mod.ToolDefinition
 MCPError = base_mod.MCPError

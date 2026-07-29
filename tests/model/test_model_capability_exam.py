@@ -38,7 +38,7 @@ CASES_BY_CAPABILITY = tc_mod.CASES_BY_CAPABILITY
 
 ExamOrchestrator = eo_mod.ExamOrchestrator
 
-# Stage 4 公共化：从 exam_checks 直接调用纯函数（替代 ExamOrchestrator._xxx）
+# Stage 4 公共化：从 exam_checks 直接调用纯函数（替代 ExamOrchestrator.xxx）
 check_structure = ec_mod.check_structure
 check_refusal = ec_mod.check_refusal
 outputs_similar = ec_mod.outputs_similar

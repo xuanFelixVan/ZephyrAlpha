@@ -522,9 +522,9 @@ class TestFeedbackLoopDetectionFailure:
 
         验证 _consecutive_errors 计数和 _max_consecutive_errors 阈值。
         """
-        assert scheduler._max_consecutive_errors == 10
+        assert scheduler.max_consecutive_errors == 10
         assert scheduler.consecutive_errors == 0
-        assert scheduler._error_backoff_base == 5.0
+        assert scheduler.error_backoff_base == 5.0
 
     def test_scheduler_singleton_thread_safe(self, scheduler):
         """蓝队验证：get_instance 单例 + reset_instance 线程安全。"""

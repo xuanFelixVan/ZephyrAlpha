@@ -75,6 +75,17 @@ class AkshareProvider(DataSourceBase):
         self._cache_dir = cache_dir
         self._ak = None
 
+    def akshare(self):
+        """公共接口：akshare（Stage 4 公共化）。"""
+        return self._akshare()
+
+
+    @property
+    def ak(self):
+        """只读：ak（Stage 4 公共化）。"""
+        return self._ak
+
+
     @property
     def _akshare(self):
         if self._ak is None:

@@ -167,7 +167,7 @@ class TestGetQueue:
     def teardown_method(self):
         import zephyr.orchestrator.task_queue as tq_mod
 
-        tq_mod._queue = None
+        tq_mod.queue = None
 
     def test_get_queue_returns_task_queue(self):
         repo = FakeRepo()

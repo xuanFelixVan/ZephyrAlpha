@@ -82,13 +82,13 @@ class TestPathGuard:
     def test_check_violations_recorded(self):
         pg = PathGuard()
         pg.check("/etc/shadow")
-        assert len(pg._violations) == 1
-        assert pg._violations[0]["matched"] == "/etc/shadow"
+        assert len(pg.violations) == 1
+        assert pg.violations[0]["matched"] == "/etc/shadow"
 
     def test_check_no_violations_for_allowed(self):
         pg = PathGuard()
         pg.check("src/main.py")
-        assert len(pg._violations) == 0
+        assert len(pg.violations) == 0
 
     def test_is_within_project_src(self):
         pg = PathGuard()
@@ -110,7 +110,7 @@ class TestPathGuard:
         pg = PathGuard()
         result = pg.check("/etc/shadow", operation="write")
         assert result["allowed"] is False
-        assert pg._violations[0]["operation"] == "write"
+        assert pg.violations[0]["operation"] == "write"
 
     def test_check_empty_path(self):
         pg = PathGuard()

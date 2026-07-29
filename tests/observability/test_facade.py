@@ -132,7 +132,7 @@ class TestTelemetry:
         t = facade.Telemetry("test_mod", test_mode=True)
         t.shutdown()
         t.shutdown()
-        assert t._shutdown_called is True
+        assert t.shutdown_called is True
 
     def test_metrics_gauge_through_telemetry(self):
         t = facade.Telemetry("test_mod", test_mode=True)

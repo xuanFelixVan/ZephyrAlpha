@@ -63,11 +63,11 @@ class TestChainValidationResult:
 class TestExternalToolCallAuditorInstantiation:
     def test_default_max_depth(self):
         auditor = ExternalToolCallAuditor()
-        assert auditor._max_chain_depth == 10
+        assert auditor.max_chain_depth == 10
 
     def test_custom_max_depth(self):
         auditor = ExternalToolCallAuditor(max_chain_depth=5)
-        assert auditor._max_chain_depth == 5
+        assert auditor.max_chain_depth == 5
 
 
 class TestExternalToolCallAuditorAuditCall:

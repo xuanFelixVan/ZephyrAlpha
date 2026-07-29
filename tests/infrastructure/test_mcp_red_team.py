@@ -34,7 +34,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 def test_00_imports_all_mcp_modules():
     """测试 8 Server + Gateway + 支撑模块全部可导入"""
     modules = [
-        ("_base_server", "zephyr.integration.mcp._base_server"),
+        ("_base_server", "zephyr.integration.mcp.base_server"),
         ("gateway_server", "zephyr.integration.mcp.gateway_server"),
         ("task_manager_server", "zephyr.integration.mcp.task_manager_server"),
         ("gate_engine_server", "zephyr.integration.mcp.gate_engine_server"),
@@ -69,7 +69,7 @@ def test_01_gateway_initializes_all_routes():
     from zephyr.integration.mcp.gateway_server import create_gateway
 
     gw = create_gateway()
-    routes = gw._routes
+    routes = gw.routes
 
     expected_sids = [
         "task_manager",
@@ -92,9 +92,9 @@ def test_02_gateway_registered_tools():
     from zephyr.integration.mcp.gateway_server import create_gateway
 
     gw = create_gateway()
-    assert "mcp_gateway.health_status" in gw._tools
-    assert "mcp_gateway.list_servers" in gw._tools
-    assert "mcp_gateway.audit_stats" in gw._tools
+    assert "mcp_gateway.health_status" in gw.tools
+    assert "mcp_gateway.list_servers" in gw.tools
+    assert "mcp_gateway.audit_stats" in gw.tools
 
 
 # ============================================================================
@@ -356,7 +356,7 @@ def test_14_circuit_breaker_open_after_failures():
             }
         )
 
-    cb = gw._circuit_breakers.get("invalid")
+    cb = gw.circuit_breakers.get("invalid")
     if cb:
         assert cb.state in ("OPEN", "CLOSED"), f"Unexpected CB state: {cb.state}"
 
@@ -386,7 +386,7 @@ def test_16_audit_log_call_records():
     from zephyr.integration.mcp.gateway_server import create_gateway
 
     gw = create_gateway()
-    initial = gw._audit.stats("audit-test-client").get("total_calls", 0)
+    initial = gw.audit.stats("audit-test-client").get("total_calls", 0)
 
     gw.handle_request(
         {
@@ -397,7 +397,7 @@ def test_16_audit_log_call_records():
             "_session_id": "audit-test-client",
         }
     )
-    final = gw._audit.stats("audit-test-client").get("total_calls", 0)
+    final = gw.audit.stats("audit-test-client").get("total_calls", 0)
     assert final >= initial, "Audit should record the call"
 
 
@@ -462,7 +462,7 @@ def test_22_sandbox_server_planning_does_not_crash_gateway():
     from zephyr.integration.mcp.gateway_server import create_gateway
 
     gw = create_gateway()
-    sandbox_route = gw._routes.get("sandbox")
+    sandbox_route = gw.routes.get("sandbox")
     assert sandbox_route is not None
     assert sandbox_route.get("status") == "planning"
 
@@ -519,5 +519,5 @@ def test_24_route_prefix_accuracy():
         ("mcp_gateway.health_status", "mcp_gateway"),
     ]
     for tool_name, expected_sid in test_cases:
-        sid = gw._route_tool_name(tool_name)
+        sid = gw.route_tool_name(tool_name)
         assert sid == expected_sid, f"{tool_name!r} should route to {expected_sid!r}, got {sid!r}"

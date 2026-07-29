@@ -391,7 +391,7 @@ class TestPhase6_SelfDefense:
         lock.verify_integrity()
         lock.verify_static_constants()
         unlocked = lock.attempt_unlock()
-        assert unlocked, f"SelfDefense FAIL: cold start lock couldn't unlock (checks={lock._checks_passed})"
+        assert unlocked, f"SelfDefense FAIL: cold start lock couldn't unlock (checks={lock.checks_passed})"
 
 
 class TestIntegrationReport:

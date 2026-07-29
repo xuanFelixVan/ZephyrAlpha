@@ -31,7 +31,7 @@ class TestConcurrencySafety:
             assert "w:TEST-LOCK-001" in SkillLock._LOCKS
         lock = SkillLock._LOCKS.get("w:TEST-LOCK-001")
         if lock:
-            assert not lock._is_owned()
+            assert not lock.is_owned()
 
     def test_read_lock_nonblocking(self):
         results = []

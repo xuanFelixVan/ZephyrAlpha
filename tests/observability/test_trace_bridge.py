@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 
 tb = pytest.importorskip(
-    "zephyr.infrastructure.system_telemetry._trace_bridge",
+    "zephyr.infrastructure.system_telemetry.trace_bridge",
     reason="_trace_bridge import failed",
 )
 

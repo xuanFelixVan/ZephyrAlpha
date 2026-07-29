@@ -432,14 +432,14 @@ class TestSequenceGuard:
         event = SequenceEvent(session_id="s1", operation="read:docs", target="file.py")
         guard.record(event)
         guard.reset_session("s1")
-        assert "s1" not in guard._sequences
+        assert "s1" not in guard.sequences
 
     def test_whitelist(self):
         guard = SequenceGuard()
         guard.add_whitelist(["read:docs"])
         event = SequenceEvent(session_id="s1", operation="read:docs", target="file.py")
         guard.record(event)
-        assert guard.is_whitelisted(guard._sequences["s1"]) is True
+        assert guard.is_whitelisted(guard.sequences["s1"]) is True
 
 
 @pytest.mark.xfail(reason="ARCH-036: stub pending implementation", strict=False)
@@ -479,7 +479,7 @@ class TestOutputGuard:
         guard = OutputGuard()
         guard.record_read("agent-reset", "source-1")
         guard.reset_agent("agent-reset")
-        assert "agent-reset" not in guard._read_sources
+        assert "agent-reset" not in guard.read_sources
 
 
 @pytest.mark.xfail(reason="ARCH-036: stub pending implementation", strict=False)
@@ -551,7 +551,7 @@ class TestABACGuard:
         ctx = ABACContext(operation="read:docs")
         guard.check(agent, ctx)
         guard.reset_all()
-        assert len(guard._tlb_records) == 0
+        assert len(guard.tlb_records) == 0
 
 
 @pytest.mark.xfail(reason="ARCH-036: stub pending implementation", strict=False)

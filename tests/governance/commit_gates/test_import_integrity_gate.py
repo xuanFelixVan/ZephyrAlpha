@@ -603,7 +603,7 @@ class TestFindTargetInActiveSessions:
         """Windows 反斜杠路径分隔符归一化匹配。"""
         from zephyr.security.access_control.session_concurrency import SessionRegistry
         reg = SessionRegistry(project_root=tmp_path)
-        # held_file 用 Windows 反斜杠（SessionRegistry._normalize_file_path 会 resolve，
+        # held_file 用 Windows 反斜杠（SessionRegistry.normalize_file_path 会 resolve，
         # 但测试直接构造反斜杠路径验证 endswith 匹配）
         target_file = str(tmp_path / "src" / "zephyr" / "forged_gw_marker_gate.py").replace("/", "\\")
         reg.register("sess-B", pid=0, held_files=[target_file])

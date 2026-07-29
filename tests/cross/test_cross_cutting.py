@@ -98,7 +98,7 @@ class TestPermissionTopology:
         topo.add_node("A")
         node_b = topo.add_node("B", depends_on=["A"])
         assert "A" in node_b.depends_on
-        assert "B" in topo._nodes["A"].depended_by
+        assert "B" in topo.nodes["A"].depended_by
 
     def test_detect_no_cycles_single_node(self):
         topo = PermissionTopology()
@@ -138,8 +138,8 @@ class TestPermissionTopology:
 class TestAutoMaintenance:
     def test_record_and_zombie_detection(self):
         am = AutoMaintenance()
-        am._rule_last_used["old_rule"] = time.time() - (31 * 86400)
-        am._rule_last_used["new_rule"] = time.time()
+        am.rule_last_used["old_rule"] = time.time() - (31 * 86400)
+        am.rule_last_used["new_rule"] = time.time()
         zombies = am.detect_zombie_rules()
         assert "old_rule" in zombies
         assert "new_rule" not in zombies

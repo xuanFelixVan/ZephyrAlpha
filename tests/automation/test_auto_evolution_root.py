@@ -216,21 +216,21 @@ class TestAutoEvolutionInstantiation:
         engine = EvolutionEngine()
         ae = AutoEvolution(engine=engine, interval_seconds=1.0)
         assert ae.interval_seconds == 1.0
-        assert ae._thread is None
+        assert ae.thread is None
 
     def test_start_and_stop(self):
         engine = EvolutionEngine()
         ae = AutoEvolution(engine=engine, interval_seconds=0.1)
         ae.start()
-        assert ae._thread is not None
+        assert ae.thread is not None
         ae.stop(timeout=2.0)
-        assert ae._thread is None
+        assert ae.thread is None
 
     def test_double_start_noop(self):
         engine = EvolutionEngine()
         ae = AutoEvolution(engine=engine, interval_seconds=10.0)
         ae.start()
-        first_thread = ae._thread
+        first_thread = ae.thread
         ae.start()
-        assert ae._thread is first_thread
+        assert ae.thread is first_thread
         ae.stop(timeout=2.0)

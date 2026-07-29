@@ -94,7 +94,7 @@ class TestMemoryProvenanceGuard:
         mp = guard.record_provenance("agent1", "session1", "hash123")
         guard.flag(mp.provenance_id)
         assert mp.flagged is True
-        assert mp.provenance_id in guard._quarantine
+        assert mp.provenance_id in guard.quarantine
 
     def test_flag_nonexistent_no_error(self):
         guard = MemoryProvenanceGuard()

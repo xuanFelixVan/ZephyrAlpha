@@ -133,8 +133,8 @@ class TestDecisionRegistry:
         reg._MAX_RECORDS = 5
         for i in range(10):
             reg.log(agent_id="a", action="act", resource=f"r{i}", result="ALLOWED")
-        assert len(reg._decisions) == 5
-        assert reg._decisions[0].resource == "r5"
+        assert len(reg.decisions) == 5
+        assert reg.decisions[0].resource == "r5"
 
     def test_log_empty_strings(self):
         reg = DecisionRegistry()

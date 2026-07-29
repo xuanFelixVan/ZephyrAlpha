@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 
 btb = pytest.importorskip(
-    "zephyr.infrastructure.system_telemetry._budget_telemetry_bridge",
+    "zephyr.infrastructure.system_telemetry.budget_telemetry_bridge",
     reason="_budget_telemetry_bridge import failed",
 )
 

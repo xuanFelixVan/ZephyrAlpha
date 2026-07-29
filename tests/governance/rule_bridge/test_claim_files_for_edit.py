@@ -322,7 +322,7 @@ class TestGetOtherSessionClaimedFiles:
             raise RuntimeError("mocked registry failure")
         monkeypatch.setattr(sw, "_get_registry", _raise)
 
-        result = sw._get_other_session_claimed_files(isolated_repo, "sess-test")
+        result = sw.get_other_session_claimed_files(isolated_repo, "sess-test")
         assert result == set(), "fail-open 应返回空集"
 
 
@@ -354,14 +354,14 @@ class TestPreMergeAutoCleanRespectsClaims:
         # 但因为 session A claim 了它，应该被跳过
         # 注意：_pre_merge_auto_clean 需要 session B 有 worktree branch，
         # 这里直接测试 _get_other_session_claimed_files 集成效果
-        skip_files = sw._get_other_session_claimed_files(isolated_repo, "sess-b-merger")
+        skip_files = sw.get_other_session_claimed_files(isolated_repo, "sess-b-merger")
         assert "protected.py" in skip_files, \
             "session A claim 的文件应在 session B 的 skip_files 中"
 
         # 验证 _collect_tracked_cleanups 尊重 skip_files
         changed_files = ["protected.py"]
         dirty_files = {"protected.py"}
-        cleaned, skipped, to_checkout = sw._collect_tracked_cleanups(
+        cleaned, skipped, to_checkout = sw.collect_tracked_cleanups(
             isolated_repo, "session/sess-b-merger", changed_files, dirty_files,
             skip_files=skip_files,
         )
@@ -387,14 +387,14 @@ class TestPreMergeAutoCleanRespectsClaims:
         registry.claim_file("sess-a-mix", "claimed.py")
 
         # session B 查询 skip_files
-        skip_files = sw._get_other_session_claimed_files(isolated_repo, "sess-b-mix")
+        skip_files = sw.get_other_session_claimed_files(isolated_repo, "sess-b-mix")
         assert "claimed.py" in skip_files
         assert "unclaimed.py" not in skip_files
 
         # _collect_tracked_cleanups：claimed 跳过，unclaimed 清理
         changed_files = ["claimed.py", "unclaimed.py"]
         dirty_files = {"claimed.py", "unclaimed.py"}
-        cleaned, skipped, to_checkout = sw._collect_tracked_cleanups(
+        cleaned, skipped, to_checkout = sw.collect_tracked_cleanups(
             isolated_repo, "session/sess-b-mix", changed_files, dirty_files,
             skip_files=skip_files,
         )
