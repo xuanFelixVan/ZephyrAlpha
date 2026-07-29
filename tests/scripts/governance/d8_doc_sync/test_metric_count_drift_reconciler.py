@@ -144,8 +144,8 @@ class TestReconcile:
     def test_clean_when_all_consistent(self):
         """所有文件描述一致 → clean。"""
         spec = make_metric_count_drift_reconciler()
-        with patch("metric_count_drift_reconciler._get_metric_count", return_value=30):
-            with patch("metric_count_drift_reconciler._read_text", return_value="# 30 项架构健康度指标\n"):
+        with patch("metric_count_drift_reconciler.get_metric_count", return_value=30):
+            with patch("metric_count_drift_reconciler.read_text", return_value="# 30 项架构健康度指标\n"):
                 result = spec.reconcile(
                     ["scripts/governance/architecture_health_dashboard.py"],
                     "test-session",
@@ -161,8 +161,8 @@ class TestReconcile:
         def mock_read_text(path):
             return "# 11 项架构健康度指标\n"
 
-        with patch("metric_count_drift_reconciler._get_metric_count", return_value=30):
-            with patch("metric_count_drift_reconciler._read_text", side_effect=mock_read_text):
+        with patch("metric_count_drift_reconciler.get_metric_count", return_value=30):
+            with patch("metric_count_drift_reconciler.read_text", side_effect=mock_read_text):
                 result = spec.reconcile(
                     ["scripts/governance/architecture_health_dashboard.py"],
                     "test-session",
@@ -173,7 +173,7 @@ class TestReconcile:
     def test_warn_when_metric_import_fails(self):
         """METRICS 导入失败 → warn（不阻断）。"""
         spec = make_metric_count_drift_reconciler()
-        with patch("metric_count_drift_reconciler._get_metric_count", return_value=None):
+        with patch("metric_count_drift_reconciler.get_metric_count", return_value=None):
             result = spec.reconcile(
                 ["scripts/governance/architecture_health_dashboard.py"],
                 "test-session",
@@ -184,8 +184,8 @@ class TestReconcile:
     def test_warn_when_file_read_fails(self):
         """文件读取失败 → warn（不阻断）。"""
         spec = make_metric_count_drift_reconciler()
-        with patch("metric_count_drift_reconciler._get_metric_count", return_value=30):
-            with patch("metric_count_drift_reconciler._read_text", return_value=None):
+        with patch("metric_count_drift_reconciler.get_metric_count", return_value=30):
+            with patch("metric_count_drift_reconciler.read_text", return_value=None):
                 result = spec.reconcile(
                     ["scripts/governance/architecture_health_dashboard.py"],
                     "test-session",
@@ -205,8 +205,8 @@ class TestReconcile:
                 return "# 30 项架构健康度指标\n"
             return "# 11 项架构健康度指标\n"
 
-        with patch("metric_count_drift_reconciler._get_metric_count", return_value=30):
-            with patch("metric_count_drift_reconciler._read_text", side_effect=mock_read_text):
+        with patch("metric_count_drift_reconciler.get_metric_count", return_value=30):
+            with patch("metric_count_drift_reconciler.read_text", side_effect=mock_read_text):
                 result = spec.reconcile(
                     ["scripts/governance/architecture_health_dashboard.py"],
                     "test-session",

@@ -243,7 +243,7 @@ class TestDashboardBase:
 
     def test_refresh_with_data(self):
         d = _ConcreteDashboard()
-        d._refresh_data = {"risk_score": 0.8}
+        d.refresh_data = {"risk_score": 0.8}
         result = d.refresh()
         assert result["risk_score"] == 0.8
 
@@ -263,13 +263,13 @@ class TestNotificationManagerBase:
         n = Notification(notification_id="n-1", title="T", body="B")
         result = m.send(n)
         assert result is True
-        assert len(m._sent) == 1
+        assert len(m.sent) == 1
 
     def test_send_specific_channels(self):
         m = _ConcreteNotificationManager()
         n = Notification(notification_id="n-1", title="T", body="B")
         m.send(n, channels=["slack"])
-        assert m._sent[0][1] == ["slack"]
+        assert m.sent[0][1] == ["slack"]
 
     def test_channels_list(self):
         m = _ConcreteNotificationManager()

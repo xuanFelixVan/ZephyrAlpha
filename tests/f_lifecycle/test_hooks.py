@@ -36,6 +36,24 @@ class FakeModule:
         self._init_raises = False
         self._startup_raises = False
 
+    @property
+    def startup_raises(self):
+        """只读：startup_raises（R5 公共化）。"""
+        return self._startup_raises
+
+
+    @property
+    def init_raises(self):
+        """只读：init_raises（R5 公共化）。"""
+        return self._init_raises
+
+
+    @property
+    def healthy(self):
+        """只读：healthy（R5 公共化）。"""
+        return self._healthy
+
+
     async def on_init(self) -> None:
         self.init_called = True
         if self._init_raises:
@@ -145,7 +163,7 @@ class TestLifecycleManagerStartupAll:
     def test_startup_all_init_failure_raises(self):
         mgr = LifecycleManager()
         mod = FakeModule()
-        mod._init_raises = True
+        mod.init_raises = True
         mgr.register(mod)
         with pytest.raises(RuntimeError, match="init failed"):
             _run(mgr.startup_all())
@@ -153,7 +171,7 @@ class TestLifecycleManagerStartupAll:
     def test_startup_all_startup_failure_raises(self):
         mgr = LifecycleManager()
         mod = FakeModule()
-        mod._startup_raises = True
+        mod.startup_raises = True
         mgr.register(mod)
         with pytest.raises(RuntimeError, match="startup failed"):
             _run(mgr.startup_all())
@@ -220,7 +238,7 @@ class TestLifecycleManagerHealthCheckAll:
     def test_health_check_all_unhealthy(self):
         mgr = LifecycleManager()
         mod = FakeModule()
-        mod._healthy = False
+        mod.healthy = False
         mgr.register(mod)
         results = _run(mgr.health_check_all())
         assert results["mod_a"].healthy is False

@@ -57,7 +57,7 @@ class TestBaostockProvider:
             p = self._make_provider()
             p.connect()
             assert p.is_connected is True
-            assert p._tls.logged_in is True
+            assert p.tls.logged_in is True
             bs.login.assert_called_once()
 
     def test_connect_login_failure(self):
@@ -76,7 +76,7 @@ class TestBaostockProvider:
             p.connect()
             p.disconnect()
             assert p.is_connected is False
-            assert p._tls.logged_in is False
+            assert p.tls.logged_in is False
             bs.logout.assert_called_once()
 
     def test_health_check_success(self):
@@ -517,4 +517,4 @@ class TestRSSProvider:
         RSSProvider.robots_cache.clear()
         # 测试 fail-open（robots.txt 读取失败 → 允许）
         with patch("urllib.robotparser.RobotFileParser.read", side_effect=Exception("net error")):
-            assert p._is_allowed("https://example.com/feed.xml") is True
+            assert p.is_allowed("https://example.com/feed.xml") is True

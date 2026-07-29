@@ -47,8 +47,8 @@ SessionTrustTier = sl_mod.SessionTrustTier
 class TestVerdictEngine:
     def test_instantiation(self):
         engine = VerdictEngine()
-        assert engine._eval_count == 0
-        assert engine._verdict_timeout_s == 10.0
+        assert engine.eval_count == 0
+        assert engine.verdict_timeout_s == 10.0
 
     def test_evaluate_normal_ai(self):
         engine = VerdictEngine()

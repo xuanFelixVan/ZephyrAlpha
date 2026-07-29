@@ -152,7 +152,7 @@ class TestIncrementalOnly:
         # mock get_head_content 返回含 #ARCH-999 的 HEAD 版本（历史已有此引用）
         # 治本（M03，2026-07-18）：get_head_content 已下沉到 _reference_helpers，
         # mock 需打在 _reference_helpers 模块上（scan_file_violations 内部调用）。
-        import zephyr.gov_enforcement.commit_gates._reference_helpers as helpers
+        import zephyr.gov_enforcement.commit_gates.reference_helpers as helpers
 
         monkeypatch.setattr(
             helpers, "get_head_content", lambda pr, rel: "# see #ARCH-999\n"

@@ -19,7 +19,7 @@ import time
 
 import pytest
 
-from zephyr.integration.mcp._base_server import BaseMCPServer
+from zephyr.integration.mcp.base_server import BaseMCPServer
 from zephyr.integration.mcp.gateway_server import MCPGateway, create_gateway
 
 

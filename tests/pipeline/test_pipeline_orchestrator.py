@@ -199,10 +199,10 @@ class TestCircuitBreaker:
 
     def test_initial_closed(self) -> None:
         # SRC-0024 重构后断路器状态由 CircuitBreakerManager 管理
-        # （_cb_manager._states），原 _circuit_breaker_states 属性已移除。
+        # （_cb_manager.states），原 _circuit_breaker_states 属性已移除。
         # 测试契约：初始无断路器注册（状态字典为空）。
         o = PipelineOrchestrator()
-        assert not o.cb_manager._states
+        assert not o.cb_manager.states
 
     def test_reset_returns_zero_if_no_breaker(self) -> None:
         o = PipelineOrchestrator()

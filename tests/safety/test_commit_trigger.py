@@ -135,7 +135,7 @@ class TestWriteTriggerRecord:
         assert out.exists()
 
 
-# ── RedBlueTriggerConsumer._process_one ──────────────────────────────
+# ── RedBlueTriggerConsumer.process_one ──────────────────────────────
 
 
 def _make_queue_file(qdir: Path, commit_hash: str = "deadbeef1234") -> Path:

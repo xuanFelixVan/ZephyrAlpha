@@ -64,7 +64,7 @@ def test_force_param_skips_pre_merge_topo_check(monkeypatch: pytest.MonkeyPatch)
 
     monkeypatch.setattr(_rr, "_print_block_banner", lambda *a, **kw: None)
     monkeypatch.setattr(_rr, "_print_critical_warn_banner", lambda *a, **kw: None)
-    # mock manager._wt_path 返回假路径
+    # mock manager.wt_path 返回假路径
     class _FakeMgr:
         def _wt_path(self, sid):
             from pathlib import Path

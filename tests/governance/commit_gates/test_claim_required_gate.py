@@ -41,9 +41,9 @@ def _make_gateway(
     """
     gw = MagicMock()
     if get_session_exc is not None:
-        gw._registry.get_session.side_effect = get_session_exc
+        gw.registry.get_session.side_effect = get_session_exc
     else:
-        gw._registry.get_session.return_value = get_session_return
+        gw.registry.get_session.return_value = get_session_return
     return gw
 
 

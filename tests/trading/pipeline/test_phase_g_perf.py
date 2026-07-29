@@ -162,6 +162,12 @@ class PerfCollector:
     def __init__(self):
         self._records: dict[str, PerfSample] = {}
 
+    @property
+    def records(self):
+        """只读：records（R5 公共化）。"""
+        return self._records
+
+
     def record(self, label: str, duration_ms: float) -> None:
         if label not in self._records:
             self._records[label] = PerfSample(label=label, duration_ms=duration_ms)
@@ -285,7 +291,7 @@ class TestPhaseGPerfFramework:
                 raise ValueError("test")
         except ValueError:
             pass
-        assert "exc" in collector._records
+        assert "exc" in collector.records
 
 
 class TestPhaseGLatencyByLayer:

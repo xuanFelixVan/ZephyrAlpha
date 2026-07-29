@@ -82,7 +82,7 @@ class TestPersuasionBypassAttacks:
         ]
         for desc in descriptions:
             ev = engine.evaluate(RuleCategory.CUSTOM, desc)
-        assert engine.circuit_breaker._failure_count <= engine.circuit_breaker.config.failure_threshold
+        assert engine.circuit_breaker.failure_count <= engine.circuit_breaker.config.failure_threshold
 
     def test_emotional_manipulation_framing(self, engine):
         ev = engine.evaluate(

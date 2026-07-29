@@ -189,7 +189,7 @@ class TestDrainAndRecovery:
         local_replay.save_fallback("c1_market.tick_data", None, b"d1\ts1\t1.0\n")
         assert local_replay.has_backlog()
         # 读取落盘的 tsv 文件路径（用于后续验证删除）
-        entries = local_replay._read_manifest()
+        entries = local_replay.read_manifest()
         tsv_path = tmp_path / entries[0]["file"]
 
         # 缩短 drain 间隔加速测试

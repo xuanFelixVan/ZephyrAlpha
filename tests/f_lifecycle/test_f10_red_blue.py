@@ -55,7 +55,7 @@ from zephyr.intelligence.model_profiling.exam_test_cases import (
 def _make_mock_chat() -> MagicMock:
     """创建模拟 chat 对象。"""
     chat = MagicMock()
-    chat._model = "red-team-attacker:latest"
+    chat.model = "red-team-attacker:latest"
     return chat
 
 

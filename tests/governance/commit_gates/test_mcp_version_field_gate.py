@@ -36,7 +36,7 @@ from zephyr.gov_enforcement.commit_gates.mcp_version_field_gate import (  # noqa
     make_mcp_version_field_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
-from tests.governance.commit_gates._gate_test_helpers import make_mock_gateway  # noqa: E402
+from tests.governance.commit_gates.gate_test_helpers import make_mock_gateway  # noqa: E402
 
 
 # ============================================================================

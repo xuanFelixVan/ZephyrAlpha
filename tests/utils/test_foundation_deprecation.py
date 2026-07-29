@@ -128,10 +128,10 @@ class TestDeprecatedDecorator:
         def attr_func():
             return 1
 
-        assert attr_func._zephyr_deprecated is True
-        assert attr_func._zephyr_deprecated_since == "0.5.0"
-        assert attr_func._zephyr_deprecated_remove_in == "0.7.0"
-        assert attr_func._zephyr_deprecated_replacement == "better_func"
+        assert attr_func.zephyr_deprecated is True
+        assert attr_func.zephyr_deprecated_since == "0.5.0"
+        assert attr_func.zephyr_deprecated_remove_in == "0.7.0"
+        assert attr_func.zephyr_deprecated_replacement == "better_func"
 
     def test_bare_decorator_no_args(self):
         set_deprecation_mode("silent")

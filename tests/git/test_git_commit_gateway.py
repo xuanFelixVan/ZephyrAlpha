@@ -302,7 +302,7 @@ class TestGitCommitGatewayCommit:
         """commit() 将 message 透传给 check_all 的 commit_message kwarg。
 
         #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复的回归测试：
-        验证直接路径与 session_worktree._run_pre_commit_gates L1174 对称，
+        验证直接路径与 session_worktree.run_pre_commit_gates L1174 对称，
         CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记。
 
         病根：git_commit_gateway.py:831 调 check_all 时漏传 commit_message，
@@ -816,6 +816,11 @@ class TestGitignoredTrackedDeleted:
     """
 
     @staticmethod
+    def git_env():
+        return __class__._git_env()
+
+
+    @staticmethod
     def _git_env() -> dict:
         env = os.environ.copy()
         env["GIT_AUTHOR_NAME"] = "Test"
@@ -836,7 +841,7 @@ class TestGitignoredTrackedDeleted:
             gateway commit 的目标文件列表（绝对路径）。
         """
         _init_git_repo(repo_dir)
-        env = TestGitignoredTrackedDeleted._git_env()
+        env = TestGitignoredTrackedDeleted.git_env()
         # 1. 创建将被 gitignore 的目录+文件，提交（使其被 tracked）
         ig_dir = repo_dir / "ignored_dir"
         ig_dir.mkdir()
@@ -869,7 +874,7 @@ class TestGitignoredTrackedDeleted:
     @staticmethod
     def _assert_commit_contents(repo_dir: Path) -> None:
         """验证 commit 含 foo.md 删除 + normal.txt 修改 + .gitignore。"""
-        env = TestGitignoredTrackedDeleted._git_env()
+        env = TestGitignoredTrackedDeleted.git_env()
         show = subprocess.run(
             ["git", "show", "--stat", "--name-status", "HEAD"],
             cwd=str(repo_dir), capture_output=True, text=True, env=env,

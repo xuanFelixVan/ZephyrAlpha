@@ -207,7 +207,7 @@ class TestExamOrchestratorInit:
 
     def test_instantiation_model_id_from_chat(self):
         chat = MagicMock()
-        chat._model = "inferred-model"
+        chat.model = "inferred-model"
         orch = ExamOrchestrator(chat)
         assert orch.model_id == "inferred-model"
 

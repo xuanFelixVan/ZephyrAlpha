@@ -49,11 +49,11 @@ try:
     PanoramaNode = _mod.PanoramaNode
     PanoramaAlignmentReport = _mod.PanoramaAlignmentReport
     PanoramaEmptyError = _mod.PanoramaEmptyError
-    _detect_orphans = _mod._detect_orphans
-    _detect_state_drifts = _mod._detect_state_drifts
-    _detect_domain_mismatches = _mod._detect_domain_mismatches
-    _detect_design_only_in_one = _mod._detect_design_only_in_one
-    _fetch_blueprint_nodes = _mod._fetch_blueprint_nodes
+    _detect_orphans = _mod.detect_orphans
+    _detect_state_drifts = _mod.detect_state_drifts
+    _detect_domain_mismatches = _mod.detect_domain_mismatches
+    _detect_design_only_in_one = _mod.detect_design_only_in_one
+    _fetch_blueprint_nodes = _mod.fetch_blueprint_nodes
 except Exception as e:  # noqa: BLE001
     pytest.skip(
         f"align_panoramas 模块加载失败（可能缺少 zephyr 依赖）: {e}",

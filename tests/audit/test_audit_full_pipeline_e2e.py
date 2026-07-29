@@ -222,7 +222,7 @@ class TestAutoFixFindingClosureE2E:
 
         monkeypatch.chdir(tmp_path)
         engine = AutoFixEngine()
-        engine._close_related_finding("zombie_cleanup", "src/zephyr/target_file.py")
+        engine.close_related_finding("zombie_cleanup", "src/zephyr/target_file.py")
 
         updated = json.loads(db_file.read_text(encoding="utf-8"))
         assert updated["findings"]["FIND-D1-20260526-test001"]["status"] == "FIXED"

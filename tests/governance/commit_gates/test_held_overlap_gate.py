@@ -43,9 +43,9 @@ def _make_gateway(
     gw = MagicMock()
     gw.project_root = project_root
     if raise_exc is not None:
-        gw._registry.other_held_files.side_effect = raise_exc
+        gw.registry.other_held_files.side_effect = raise_exc
     else:
-        gw._registry.other_held_files.return_value = other_held or set()
+        gw.registry.other_held_files.return_value = other_held or set()
     return gw
 
 

@@ -42,8 +42,8 @@ try:
     )
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
-    _gen_mermaid = _mod._gen_mermaid
-    _gen_index_md = _mod._gen_index_md
+    _gen_mermaid = _mod.gen_mermaid
+    _gen_index_md = _mod.gen_index_md
 except Exception as e:  # noqa: BLE001
     pytest.skip(
         f"generate_dataflow_diagram 模块加载失败（可能缺少 zephyr 依赖）: {e}",

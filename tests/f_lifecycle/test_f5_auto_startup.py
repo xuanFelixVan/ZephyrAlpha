@@ -179,7 +179,7 @@ class TestOnShutdown:
         integration.on_startup()
         # Add some state to deadlock detector
         integration.deadlock_detector.add_edge("a", "b")
-        assert len(integration.deadlock_detector._wait_graph) > 0
+        assert len(integration.deadlock_detector.wait_graph) > 0
         result = integration.on_shutdown()
         assert result.details["deadlock_graph_reset"] is True
 
@@ -231,7 +231,7 @@ class TestRunPeriodicChecks:
         integration.deadlock_detector.try_acquire("resource-1", "holder-1")
         # Backdate the timestamp
         import time as _time
-        integration.deadlock_detector._lock_timestamps["resource-1"] = _time.monotonic() - 400
+        integration.deadlock_detector.lock_timestamps["resource-1"] = _time.monotonic() - 400
         result = integration.run_health_checks()
         assert "resource-1" in result["expired_locks"]
 

@@ -55,7 +55,7 @@ def _try_import(module_path: str) -> bool:
 @attack("A1", "模型元数据伪造: 虚假model_id/model_version注入")
 def attack_01_metadata_forgery() -> dict[str, Any]:
     try:
-        from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline.reset_run_state()
@@ -85,7 +85,7 @@ def attack_01_metadata_forgery() -> dict[str, Any]:
 @attack("A2", "推理结果篡改: 篡改prediction/confidence绕过验证")
 def attack_02_inference_tampering() -> dict[str, Any]:
     try:
-        from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline.reset_run_state()
@@ -127,7 +127,7 @@ def attack_02_inference_tampering() -> dict[str, Any]:
 def attack_03_p_hacking() -> dict[str, Any]:
     """模拟p-hacking: 多次运行变体实验寻找虚假显著性。"""
     try:
-        from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
 
         MLExperimentPipeline.reset_run_state()
 
@@ -165,7 +165,7 @@ def attack_03_p_hacking() -> dict[str, Any]:
 @attack("A4", "生产提升绕过: 绕过promotion threshold")
 def attack_04_promotion_bypass() -> dict[str, Any]:
     try:
-        from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
         from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline.reset_run_state()
@@ -213,7 +213,7 @@ def attack_04_promotion_bypass() -> dict[str, Any]:
 @attack("A5", "特征数据泄漏: 注入敏感训练数据特征")
 def attack_05_feature_leakage() -> dict[str, Any]:
     try:
-        from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
 
         MLExperimentPipeline.reset_run_state()
 
@@ -264,7 +264,7 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
 
         original_builtins_keys = set(builtins.__dict__.keys())
 
-        from zephyr.shared._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.shared.cross_layer.ml_experiment_pipeline import MLExperimentPipeline
 
         pipeline = MLExperimentPipeline()
         clean_snapshot = pipeline.snapshot_builtins()

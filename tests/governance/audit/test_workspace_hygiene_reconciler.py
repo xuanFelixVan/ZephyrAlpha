@@ -242,7 +242,7 @@ class TestIsAutoSyncProduct:
     def test_blueprint_md_in_modules_dir(self):
         # #ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 (2026-07-21): blueprint.md 已从 auto-sync 清单移除
         # 原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级分类误伤正文编辑
-        # frontmatter 变更由 blueprint_frontmatter_reconciler._commit_auto 自动提交，无需 auto-restore
+        # frontmatter 变更由 blueprint_frontmatter_reconciler.commit_auto 自动提交，无需 auto-restore
         assert _is_auto_sync_product("docs/03_modules/_domain_foo/blueprint.md") is False
         assert _is_auto_sync_product("docs/03_modules/_cross_layer/bar/blueprint.md") is False
 

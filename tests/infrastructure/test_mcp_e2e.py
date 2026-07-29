@@ -40,7 +40,7 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.integration.mcp._base_server import (
+from zephyr.integration.mcp.base_server import (
     ERR_INVALID_REQUEST,
     ERR_METHOD_NOT_FOUND,
     ERR_PARSE_ERROR,

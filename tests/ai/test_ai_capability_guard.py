@@ -89,21 +89,21 @@ class TestRequireCapability:
         def sample_func():
             return 42
 
-        assert sample_func._capability_operation == "test_op"
+        assert sample_func.capability_operation == "test_op"
 
     def test_decorator_marks_min_level_default(self):
         @require_capability("default_level_op")
         def sample_func():
             return 1
 
-        assert sample_func._capability_min_level is CapabilityLevel.EXTEND
+        assert sample_func.capability_min_level is CapabilityLevel.EXTEND
 
     def test_decorator_marks_min_level_explicit(self):
         @require_capability("explicit_op", min_level=CapabilityLevel.FULL)
         def sample_func():
             return 2
 
-        assert sample_func._capability_min_level is CapabilityLevel.FULL
+        assert sample_func.capability_min_level is CapabilityLevel.FULL
 
     def test_decorator_preserves_function_result(self):
         @require_capability("add_op")
@@ -228,7 +228,7 @@ class TestBoundaryConditions:
         def empty_op():
             return True
 
-        assert empty_op._capability_operation == ""
+        assert empty_op.capability_operation == ""
         assert empty_op() is True
 
     def test_check_file_level_with_none_raises(self):

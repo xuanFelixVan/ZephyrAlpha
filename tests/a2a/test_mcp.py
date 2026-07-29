@@ -343,14 +343,14 @@ class TestBaseMCPServer:
 
     def test_ok_response_format(self):
         server = BaseMCPServer("test_server", "1.0.0", "Test", enable_rbac=False)
-        resp = server._ok(42, {"data": "value"})
+        resp = server.ok(42, {"data": "value"})
         assert resp["jsonrpc"] == "2.0"
         assert resp["id"] == 42
         assert resp["result"] == {"data": "value"}
 
     def test_err_response_format(self):
         server = BaseMCPServer("test_server", "1.0.0", "Test", enable_rbac=False)
-        resp = server._err(42, -32001, "not found", {"detail": "x"})
+        resp = server.err(42, -32001, "not found", {"detail": "x"})
         assert resp["jsonrpc"] == "2.0"
         assert resp["id"] == 42
         assert resp["error"]["code"] == -32001
@@ -358,13 +358,13 @@ class TestBaseMCPServer:
 
     def test_err_response_no_data(self):
         server = BaseMCPServer("test_server", "1.0.0", "Test", enable_rbac=False)
-        resp = server._err(42, -32001, "not found")
+        resp = server.err(42, -32001, "not found")
         assert "data" not in resp["error"]
 
     def test_disable_rbac(self):
         server = BaseMCPServer("test_server", "1.0.0", "Test", enable_rbac=False)
         server.disable_rbac()
-        assert server._rbac_guard is None
+        assert server.rbac_guard is None
 
     def test_register_tool_decorator(self):
         class MyServer(BaseMCPServer):
@@ -380,7 +380,7 @@ class TestBaseMCPServer:
                 return {"message": "hello"}
 
         server = MyServer()
-        server._install_decorated_tools()
+        server.install_decorated_tools()
         assert "my_server.hello" in server.tool_names
 
     def test_content_length_read(self):

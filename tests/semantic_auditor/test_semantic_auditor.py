@@ -109,7 +109,7 @@ class TestFeedbackSelfAuditor:
 
     def test_instantiation_custom_threshold(self):
         auditor = FeedbackSelfAuditor(amplification_threshold=3.0)
-        assert auditor._amplification_threshold == 3.0
+        assert auditor.amplification_threshold == 3.0
 
     def test_detect_self_reinforcement_insufficient_events(self):
         auditor = FeedbackSelfAuditor()

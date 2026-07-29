@@ -277,3 +277,15 @@ if __name__ == "__main__":
     # 模拟触发（dashboard.py 在 committed_files 中）
     result = spec.reconcile([str(_DASHBOARD_FILE)], "manual-test")
     print(f"result={result}")
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def read_text(path) -> str | None:
+    """公共接口：read_text（Stage 4 公共化）。"""
+    return _read_text(path)
+
+
+# ── Stage 4 公共化（2026-07-29）：public wrapper ──
+def get_metric_count() -> int | None:
+    """公共接口：get_metric_count（Stage 4 公共化）。"""
+    return _get_metric_count()
+

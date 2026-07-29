@@ -137,7 +137,7 @@ class TestValidateTaskCapabilityContracts:
         assert validate_task_capability_contracts([task], metas) == []
 
     def test_unknown_source_skipped(self):
-        """source 不在 metas 中跳过（由 scheduler._validate_provider_and_policy 处理）。"""
+        """source 不在 metas 中跳过（由 scheduler.validate_provider_and_policy 处理）。"""
         task = {"task_id": "t1", "source": "unknown", "capability": "x"}
         assert validate_task_capability_contracts([task], {}) == []
 

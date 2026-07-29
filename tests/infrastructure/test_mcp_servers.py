@@ -23,7 +23,7 @@ import io
 import json
 from typing import Any
 
-from zephyr.integration.mcp._base_server import (
+from zephyr.integration.mcp.base_server import (
     ERR_METHOD_NOT_FOUND,
     ERR_TOOL_NOT_FOUND,
     BaseMCPServer,

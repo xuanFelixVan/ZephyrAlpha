@@ -30,6 +30,12 @@ class FakeRepo:
         self._tasks = list(tasks or [])
         self._transitions = []
 
+    @property
+    def transitions(self):
+        """只读：transitions（R5 公共化）。"""
+        return self._transitions
+
+
     def list_by_status(self, status):
         return [t for t in self._tasks if t.status.lower() == status.lower()]
 
@@ -105,7 +111,7 @@ class TestTaskQueueTick:
         n = q._tick()
         assert n == 2
         assert len(orch.dispatched) == 2
-        assert repo._transitions == [("T-1", "IN_PROGRESS"), ("T-2", "IN_PROGRESS")]
+        assert repo.transitions == [("T-1", "IN_PROGRESS"), ("T-2", "IN_PROGRESS")]
 
     def test_tick_respects_max_per_cycle(self):
         tasks = [FakeTaskCard(task_id=f"T-{i}") for i in range(5)]
@@ -127,7 +133,7 @@ class TestTaskQueueTick:
         q = TaskQueue(repo, orchestrator=None, max_per_cycle=3)
         n = q._tick()
         assert n == 1
-        assert repo._transitions == [("T-1", "IN_PROGRESS")]
+        assert repo.transitions == [("T-1", "IN_PROGRESS")]
 
     def test_tick_handles_dispatch_error(self):
         tasks = [FakeTaskCard(task_id="T-1")]

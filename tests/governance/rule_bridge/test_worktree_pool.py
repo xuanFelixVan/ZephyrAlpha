@@ -39,7 +39,7 @@ _TEST_SID_2 = "sess-pytest-pool-B"
 
 
 def _force_rmtree(path: Path) -> None:
-    """Windows 文件锁兜底强删目录（对标 test_session_worktree._force_rmtree）。"""
+    """Windows 文件锁兜底强删目录（对标 test_session_worktree.force_rmtree）。"""
     def _on_error(func, p, exc_info):  # noqa: ANN001
         for attempt in range(3):
             try:

@@ -74,7 +74,7 @@ def _python_type_display(py_type: type | str) -> str:
     if hasattr(py_type, "__name__"):
         return py_type.__name__
     if hasattr(py_type, "_name"):
-        return str(py_type._name)
+        return str(py_type.name)
     return str(py_type)
 
 

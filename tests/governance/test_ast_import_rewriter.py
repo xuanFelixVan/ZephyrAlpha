@@ -65,23 +65,23 @@ def rewriter(simple_moves: list[MoveEntry]) -> ImportRewriter:
 
 class TestFindReplacement:
     def test_exact_match(self, rewriter: ImportRewriter):
-        assert rewriter._find_replacement("zephyr.governance.escalation_api") == \
+        assert rewriter.find_replacement("zephyr.governance.escalation_api") == \
             "zephyr.governance.escalation.escalation_api"
 
     def test_no_match(self, rewriter: ImportRewriter):
-        assert rewriter._find_replacement("zephyr.governance.unknown") is None
+        assert rewriter.find_replacement("zephyr.governance.unknown") is None
 
     def test_prefix_match(self, rewriter: ImportRewriter):
         # zephyr.governance.escalation_api.models should map to ...escalation.escalation_api.models
-        result = rewriter._find_replacement("zephyr.governance.escalation_api.models")
+        result = rewriter.find_replacement("zephyr.governance.escalation_api.models")
         assert result == "zephyr.governance.escalation.escalation_api.models"
 
     def test_idempotent_already_new(self, rewriter: ImportRewriter):
         # Already a new module path → should return None (no change needed)
-        assert rewriter._find_replacement("zephyr.governance.escalation.escalation_api") is None
+        assert rewriter.find_replacement("zephyr.governance.escalation.escalation_api") is None
 
     def test_empty_module(self, rewriter: ImportRewriter):
-        assert rewriter._find_replacement("") is None
+        assert rewriter.find_replacement("") is None
 
 
 # ------------------------------------------------------------------

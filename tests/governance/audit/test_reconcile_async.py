@@ -19,7 +19,7 @@
   1. reconcile_runner.write_status_file / read_status_file 原子读写 + 僵尸判定
   2. reconcile_runner.launch_reconcile_async spawn subprocess + payload/status file 写入
   3. reconcile_runner.query_reconcile_status 状态查询（running/done/failed/stale/unknown）
-  4. reconcile_worker._load_payload 读后即焚
+  4. reconcile_worker.load_payload 读后即焚
   5. GitCommitGateway.run_post_commit_reconcile 分发（sync env / async 默认）
   6. _run_post_commit_reconcile_async fallback（commit_sha 缺失 / launch 失败）
 """
@@ -299,12 +299,12 @@ class TestQueryReconcileStatus:
 
 
 # ---------------------------------------------------------------------------
-# reconcile_worker._load_payload
+# reconcile_worker.load_payload
 # ---------------------------------------------------------------------------
 
 
 class TestWorkerLoadPayload:
-    """reconcile_worker._load_payload 读后即焚。"""
+    """reconcile_worker.load_payload 读后即焚。"""
 
     def test_load_payload_deletes_file(self, tmp_repo):
         """payload file 读取后立即删除。"""

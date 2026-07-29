@@ -43,7 +43,7 @@ from zephyr.governance.persistence.intent_parser import (
     IntentParser,
     LLMIntentVerdict,
 )
-from zephyr.integration.mcp._base_server import JSONRPC_VERSION, BaseMCPServer
+from zephyr.integration.mcp.base_server import JSONRPC_VERSION, BaseMCPServer
 from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 from zephyr.integration.mcp.gate_engine_server import GateEngineServer
 from zephyr.integration.mcp.sentinel_server import SentinelServer

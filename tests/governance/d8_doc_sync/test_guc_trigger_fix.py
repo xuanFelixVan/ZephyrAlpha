@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_GUC_TRIGGER_FIX | tests/governance/d8_doc_sync/test_guc_trigger_fix.py | §ARCH-GUC-TRIGGER-FIX-001
 # [MODULE] tests.governance.d8_doc_sync.test_guc_trigger_fix
 # [DOMAIN] D_GOV_DOCS
-# [DEPENDENCIES] scripts.governance.d8_doc_sync.sync_yaml_to_depgraph; scripts.governance._shared.constants
+# [DEPENDENCIES] scripts.governance.d8_doc_sync.sync_yaml_to_depgraph; scripts.governance.shared.constants
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production

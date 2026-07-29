@@ -291,7 +291,7 @@ class TestClearDepgraphDirtyFlag:
         commit_result = MagicMock()
         commit_result.status = "OK"
         commit_result.message = ""
-        gateway._commit_auto.return_value = commit_result
+        gateway.commit_auto.return_value = commit_result
 
         spec = _make_spec(tmp_path, gateway=gateway)
         result = spec.reconcile([], "test-session-id")

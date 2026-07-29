@@ -15,7 +15,7 @@
 # [TTL] permanent
 """test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX 门禁单元测试
 
-覆盖 r5_digit_suffix_gate._check 的核心场景：
+覆盖 r5_digit_suffix_gate.check 的核心场景：
 1. GateSpec 属性（gate_id / priority / isinstance）
 2. 无数字后缀目录 → 通过
 3. 新建 _NN 数字后缀目录 → 阻断

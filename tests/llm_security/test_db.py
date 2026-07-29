@@ -309,7 +309,7 @@ class TestAtomicTransactionManager:
         with atm.transaction() as tx:
             tx.execute("CREATE TABLE IF NOT EXISTS test_items (id INTEGER PRIMARY KEY, name TEXT)")
             tx.execute("INSERT INTO test_items (id, name) VALUES (?, ?)", (1, "alpha"))
-        row = atm._conn.execute("SELECT name FROM test_items WHERE id=1").fetchone()
+        row = atm.conn.execute("SELECT name FROM test_items WHERE id=1").fetchone()
         assert row[0] == "alpha"
         atm.close()
 
@@ -323,7 +323,7 @@ class TestAtomicTransactionManager:
             tx.execute("INSERT INTO test_items (id, name) VALUES (?, ?)", (2, "beta"))
             raise RuntimeError("force rollback")
 
-        rows = atm._conn.execute("SELECT COUNT(*) FROM test_items").fetchone()
+        rows = atm.conn.execute("SELECT COUNT(*) FROM test_items").fetchone()
         assert rows[0] == 1
         atm.close()
 

@@ -126,7 +126,7 @@ def _mcp_health_check(
     gateway,
     cmd_builder: Any,
 ) -> dict[str, str]:
-    """模拟 boot_cron_jobs._mcp_health_check 的完整逻辑。
+    """模拟 boot_cron_jobs.mcp_health_check 的完整逻辑。
 
     遍历所有 MCP server，检测死亡进程并自动重启。
 

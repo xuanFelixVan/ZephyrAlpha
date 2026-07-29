@@ -154,21 +154,21 @@ class TestPrincpledCheck:
             return 0
 
         assert hasattr(my_func, "_zephyr_principles")
-        assert my_func._zephyr_principles == [ArchPrinciple.P1_SSOT, ArchPrinciple.P4_OCP]
+        assert my_func.zephyr_principles == [ArchPrinciple.P1_SSOT, ArchPrinciple.P4_OCP]
 
     def test_decorator_single_principle(self):
         @princpled_check(ArchPrinciple.P2_YAML_SCHEMA)
         def my_func():
             return "ok"
 
-        assert my_func._zephyr_principles == [ArchPrinciple.P2_YAML_SCHEMA]
+        assert my_func.zephyr_principles == [ArchPrinciple.P2_YAML_SCHEMA]
 
     def test_decorator_all_principles(self):
         @princpled_check(*ArchPrinciple)
         def my_func():
             return "all"
 
-        assert len(my_func._zephyr_principles) == 5
+        assert len(my_func.zephyr_principles) == 5
 
     def test_decorator_preserves_function_name(self):
         @princpled_check(ArchPrinciple.P1_SSOT)
@@ -182,7 +182,7 @@ class TestPrincpledCheck:
         def my_func():
             return "empty"
 
-        assert my_func._zephyr_principles == []
+        assert my_func.zephyr_principles == []
         assert my_func() == "empty"
 
 

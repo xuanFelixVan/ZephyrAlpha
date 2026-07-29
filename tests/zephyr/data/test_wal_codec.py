@@ -77,10 +77,10 @@ class TestTsvCodec:
         assert decoded[1][0] == "000002"
 
     def test_roundtrip_with_ch_writer_consistency(self):
-        """编码结果与 wal_writer._serialize_tsv 完全一致。"""
+        """编码结果与 wal_writer.serialize_tsv 完全一致。"""
         from zephyr.data import ch_writer
         rows = [("000001", "10.5", None), ("000002", "hello\tworld")]
-        # wal_writer._serialize_tsv 的逻辑
+        # wal_writer.serialize_tsv 的逻辑
         expected = "\n".join(
             "\t".join(ch_writer.tsv_escape(v) for v in row) for row in rows
         ).encode("utf-8")

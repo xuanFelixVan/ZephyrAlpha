@@ -27,7 +27,7 @@ class TestParser:
         parser = _build_parser()
         # 找到 subparsers action（choices 属性包含子命令）
         sub_action = None
-        for action in parser._actions:
+        for action in parser.actions:
             if hasattr(action, "choices") and isinstance(action.choices, dict):
                 sub_action = action
                 break

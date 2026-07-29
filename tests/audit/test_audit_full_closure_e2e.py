@@ -148,7 +148,7 @@ class TestFullClosureE2E:
 
         monkeypatch.chdir(tmp_path)
         engine = AutoFixEngine()
-        engine._close_related_finding("zombie_cleanup", "src/zephyr/closure_test.py")
+        engine.close_related_finding("zombie_cleanup", "src/zephyr/closure_test.py")
 
         updated = json.loads(db_file.read_text(encoding="utf-8"))
         assert updated["findings"]["FIND-D5-20260526-closure001"]["status"] == "FIXED"
@@ -231,7 +231,7 @@ class TestFullClosureE2E:
 
         monkeypatch.chdir(tmp_path)
         engine = AutoFixEngine()
-        engine._close_related_finding("zombie_cleanup", findings[0].target.file_path)
+        engine.close_related_finding("zombie_cleanup", findings[0].target.file_path)
 
         updated = json.loads(db_file.read_text(encoding="utf-8"))
         assert updated["findings"][findings[0].finding_id]["status"] == "FIXED"

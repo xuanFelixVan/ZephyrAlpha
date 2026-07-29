@@ -817,8 +817,8 @@ def test_sweep_one_dir_force_clean_skips_when_disabled():
         _git_result(stdout="subject1", returncode=0),  # git log -1 format=%s
         _git_result(stdout="", returncode=0),  # git log HEAD --format=%s (head_subjects empty → not superseded)
     ])
-    mgr._branch_name = lambda sid: f"session/{sid}"
-    mgr._worktree_exists = lambda sid: False
+    mgr.branch_name = lambda sid: f"session/{sid}"
+    mgr.worktree_exists = lambda sid: False
     mgr.repo_root = Path(REPO_ROOT)
 
     # 创建老化的 worktree 目录
@@ -866,8 +866,8 @@ def test_sweep_one_dir_force_clean_triggers_when_over_age():
         _git_result(returncode=0),  # worktree prune (again)
         _git_result(returncode=0),  # branch -D
     ])
-    mgr._branch_name = lambda sid: f"session/{sid}"
-    mgr._worktree_exists = lambda sid: False
+    mgr.branch_name = lambda sid: f"session/{sid}"
+    mgr.worktree_exists = lambda sid: False
     mgr.repo_root = Path(REPO_ROOT)
 
     old_dir = Path(REPO_ROOT) / ".aidrafts" / "sess-force-clean-trigger"

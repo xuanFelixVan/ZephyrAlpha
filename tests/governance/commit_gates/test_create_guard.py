@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """test_create_guard.py — CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）
 
-覆盖 create_guard._check 的核心场景：
+覆盖 create_guard.check 的核心场景：
 1. 新增 .py 文件无 creation_token → 硬阻断
 2. 其他 session 的 staged .py 不误判（files 参数过滤治本）
 3. tests/ 目录下 .py 文件豁免

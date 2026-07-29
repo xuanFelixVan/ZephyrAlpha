@@ -212,8 +212,8 @@ class TestReconcile:
         assert result.action == "auto_committed"
         assert "2 files auto-reconciled" in result.detail
         # 验证 _commit_auto 被调用
-        assert len(gw._commit_calls) == 1
-        session_id, files, msg = gw._commit_calls[0]
+        assert len(gw.commit_calls) == 1
+        session_id, files, msg = gw.commit_calls[0]
         assert session_id == "sess-test"
         assert len(files) == 2
         assert "GATE-BLUEPRINT-FRONTMATTER-SYNC" in msg
@@ -259,7 +259,7 @@ class TestReconcile:
         result = spec.reconcile(["foo.py"], "sess-test")
         assert result.action == "clean"
         assert "no drift" in result.detail
-        assert len(gw._commit_calls) == 0
+        assert len(gw.commit_calls) == 0
 
     @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
     def test_git_diff_failure_returns_warn(self, mock_sub, tmp_path):

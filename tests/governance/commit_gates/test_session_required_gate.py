@@ -13,15 +13,15 @@
 测试组：
 - TestGateSpecFields: gate_id / priority / isinstance(GateSpec)
 - TestReservedIds: _RESERVED_SESSION_IDS 成员/类型
-- TestGatewayIntegration: mock gateway._registry
+- TestGatewayIntegration: mock gateway.registry
   - allow_overlap=True → 放行（逃生通道）
   - session_id 为空/unknown/none/null → 阻断
   - session_id 未注册（get_session 返回 None）→ 阻断
   - session_id 已注册 → 放行
   - get_session 异常 → fail-open 放行
 
-注意：本 gate 不读 git diff，只读 gateway._registry.get_session(session_id)。
-测试隔离：MagicMock 模拟 gateway._registry，不触碰真实 session registry。
+注意：本 gate 不读 git diff，只读 gateway.registry.get_session(session_id)。
+测试隔离：MagicMock 模拟 gateway.registry，不触碰真实 session registry。
 """
 from __future__ import annotations
 
@@ -45,11 +45,11 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # 
 def _make_gateway(session_info=None, get_session_raises=False):
     """构造 mock gateway——_registry.get_session 返回 session_info 或抛异常。"""
     gw = MagicMock()
-    gw._registry = MagicMock()
+    gw.registry = MagicMock()
     if get_session_raises:
-        gw._registry.get_session.side_effect = RuntimeError("registry down")
+        gw.registry.get_session.side_effect = RuntimeError("registry down")
     else:
-        gw._registry.get_session.return_value = session_info
+        gw.registry.get_session.return_value = session_info
     return gw
 
 
@@ -173,4 +173,4 @@ class TestGatewayIntegration:
             gw, [], session_id="unknown"
         )
         assert not passed
-        gw._registry.get_session.assert_not_called()
+        gw.registry.get_session.assert_not_called()
