@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-30'
-total_scripts: 601
+total_scripts: 603
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -505,6 +505,22 @@ scripts:
 - name: ch/apply_timezone_migration.py
   path: ch/apply_timezone_migration.py
   description: 背景（audit_01_schema_review.md）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/lint_symbol_convention.py
+  path: ch/lint_symbol_convention.py
+  description: 静态 lint 校验（无 DB 连接，快速 pre-commit 适用）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/verify_exchange_coverage.py
+  path: ch/verify_exchange_coverage.py
+  description: 与 apply_exchange_columns.py --verify 互补：
   domain: ch
   execution_plane: warm-path
   status: registered
