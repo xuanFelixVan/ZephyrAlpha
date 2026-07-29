@@ -55,9 +55,16 @@ def pytest_configure(config):
 
     _rt_tmp = _PROJECT_ROOT / ".runtime" / "tmp"
     _rt_tmp.mkdir(parents=True, exist_ok=True)
-    # basetemp：tmp_path fixture 的根。默认指向 .runtime/tmp/pytest（绝对路径，与 cwd 无关）。
+    # basetemp：tmp_path fixture 的根。绝对路径，与 cwd 无关。
+    # 治本 #ARCH-XDIST-WORKER-CRASH-001: PID-unique basetemp 避免 Windows 文件锁定。
+    # 病根：原静态 .runtime/tmp/pytest 被每次 run 复用，上次崩溃/被杀 xdist worker
+    # 在该目录留下锁定文件，下次 pytest 启动时 getbasetemp() 调 rm_rf 清理 →
+    # PermissionError → INTERNALERROR（测试无法启动，--max-worker-restart 无法解决
+    # ——错误发生在 worker 启动前的清理阶段）。
+    # 治本：PID-unique 路径确保新 run 的 basetemp 不存在 → rm_rf 是 no-op → 无冲突。
+    # 旧目录由 runtime_cleanup reconciler（TTL 7d 文件清理 + 空目录回收）自动回收。
     if getattr(config.option, "basetemp", None) is None:
-        config.option.basetemp = str(_rt_tmp / "pytest")
+        config.option.basetemp = str(_rt_tmp / f"pytest_{_os_conf.getpid()}")
     # junitxml：AI 调用（ZEPHYR_AI_PYTEST=1）默认输出到 .runtime/tmp/junit.xml，
     # 避免 AI 显式传 --junit-xml=tmp_junit_p0.xml 污染根目录。仅当未显式指定时生效。
     if (

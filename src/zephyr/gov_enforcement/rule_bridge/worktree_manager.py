@@ -228,6 +228,10 @@ class WorktreeManager:
         """session worktree 的分支名。"""
         return f"{_BRANCH_PREFIX}{session_id}"
 
+    def branch_name(self, session_id: str) -> str:
+        """公共接口：branch_name（Stage 4 公共化，委托到 _branch_name）。"""
+        return self._branch_name(session_id)
+
     def _current_head_sha(self) -> str:
         """获取主工作目录当前 HEAD 的 commit SHA。"""
         r = self.run_git(["git", "rev-parse", "HEAD"])
@@ -247,6 +251,10 @@ class WorktreeManager:
             if os.path.normcase(entry.get("path", "")) == wt:
                 return True
         return False
+
+    def worktree_exists(self, session_id: str) -> bool:
+        """公共接口：worktree_exists（Stage 4 公共化，委托到 _worktree_exists）。"""
+        return self._worktree_exists(session_id)
 
     def _list_porcelain(self) -> list[dict]:
         """解析 git worktree list --porcelain 输出为 dict 列表。

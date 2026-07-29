@@ -1761,7 +1761,7 @@ def _sweep_one_dir(
 
     # 判据 3：分支 tip 在 main（有未合并提交时检测是否已被取代）
 
-    branch = manager._branch_name(sid)
+    branch = manager.branch_name(sid)
 
     r_v = manager.run_git(["git", "rev-parse", "--verify", branch])
 
@@ -1839,7 +1839,7 @@ def _sweep_one_dir(
 
     try:
 
-        is_registered = manager._worktree_exists(sid)
+        is_registered = manager.worktree_exists(sid)
 
         if is_registered:
 
@@ -2937,7 +2937,7 @@ def session_worktree_start(
 
         wt_path = manager._wt_path(sid)
 
-        already_exists = manager._worktree_exists(sid)
+        already_exists = manager.worktree_exists(sid)
 
         if not already_exists:
 
@@ -4787,7 +4787,7 @@ def session_worktree_commit(
 
     manager = _get_manager(root)
 
-    if not manager._worktree_exists(session_id):
+    if not manager.worktree_exists(session_id):
 
         return {
 
@@ -6665,7 +6665,7 @@ def _execute_merge_and_build_msg(
 
         wt_path = manager._wt_path(session_id)
 
-        if manager._worktree_exists(session_id) or wt_path.exists():
+        if manager.worktree_exists(session_id) or wt_path.exists():
 
             parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
 
@@ -6981,7 +6981,7 @@ def session_worktree_merge(
 
         _expected_hash = _marker.get("commit_hash", "")
 
-        _branch = manager._branch_name(session_id)
+        _branch = manager.branch_name(session_id)
 
         _r_tip = manager.run_git(
 
@@ -7937,7 +7937,7 @@ def session_worktree_status(
 
     registry = _get_registry(root)
 
-    exists = manager._worktree_exists(session_id)
+    exists = manager.worktree_exists(session_id)
 
     wt_path = manager._wt_path(session_id)
 
@@ -8680,7 +8680,7 @@ def _log_workspace_drift_warn(
         )
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def run_git_with_retry(cmd, cwd, retries, timeout) -> subprocess.CompletedProcess | None:
+def run_git_with_retry(cmd, cwd, retries=3, timeout=10) -> subprocess.CompletedProcess | None:
     """公共接口：run_git_with_retry（Stage 4 公共化，委托到 _run_git_with_retry）。"""
     return _run_git_with_retry(cmd, cwd, retries, timeout)
 

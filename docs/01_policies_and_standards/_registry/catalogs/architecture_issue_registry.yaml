@@ -9769,3 +9769,11 @@ entries:
   status: decided
   created: '2026-07-29'
   last_updated: '2026-07-29'
+- issue_id: '#ARCH-XDIST-WORKER-CRASH-001'
+  title: xdist worker 启动失败——静态 basetemp Windows 文件锁定致 INTERNALERROR
+  severity: P1高
+  adjudication: '病根（第一性原理）：tests/conftest.py:59-60 将 pytest basetemp 设为静态 .runtime/tmp/pytest，每次 run 复用同一目录。xdist worker 崩溃/被杀时在该目录留下锁定文件（.pyc/临时句柄），下次 pytest 启动时 _tmp_path_factory.getbasetemp() 调 rm_rf 清理该目录 → shutil.rmtree 遇 PermissionError → INTERNALERROR（测试根本无法启动）。--max-worker-restart=5 只能处理 run 中 worker 崩溃（自动重启），无法处理启动前清理阶段的失败——错误发生在 worker 分配之前。AI 绕过方式（手动传 --basetemp=pytest_xxx）导致 .runtime/tmp/ 下累积 70+ 遗留目录（违反"临时文件分类存放"硬约束）。治本三层：①conftest.py basetemp 改为 PID-unique（.runtime/tmp/pytest_{pid}）——新 run 的 basetemp 不存在 → rm_rf 是 no-op → 无冲突，彻底消除 INTERNALERROR；②runtime_cleanup reconciler 增强空 pytest_* 目录回收（防复发——PID-unique 产生的空目录由 TTL 文件清理后此循环回收，防止目录线性膨胀）；③一次性清理 70+ 遗留目录；④--max-worker-restart=5（commit 1ed639d302 已落地）处理 run 中 worker 崩溃。四层互补：①治启动失败根因，②防复发，③清存量，④治 run 中崩溃。'
+  fix_phase: '已落地（conftest.py PID-unique basetemp + reconciliation_registry.py 空目录回收 + 70+ 遗留目录清理 + pyproject.toml --max-worker-restart=5）'
+  status: resolved
+  created: '2026-07-29'
+  last_updated: '2026-07-29'

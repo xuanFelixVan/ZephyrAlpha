@@ -8656,6 +8656,38 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
                     errors += 1
 
+        # 治本 #ARCH-XDIST-WORKER-CRASH-001: 清理空 pytest_* 目录（PID-unique basetemp
+
+        # 的防复发——conftest.py 每个 PID 创建 .runtime/tmp/pytest_{pid}/，文件被上方
+
+        # TTL 循环清理后空目录残留，此循环回收空目录，防止目录线性膨胀）。
+
+        _tmp_dir = runtime_dir / "tmp"
+
+        if _tmp_dir.exists():
+
+            for _name in os.listdir(_tmp_dir):
+
+                if not _name.startswith("pytest_"):
+
+                    continue
+
+                _dirpath = _tmp_dir / _name
+
+                if not _dirpath.is_dir():
+
+                    continue
+
+                try:
+
+                    os.rmdir(str(_dirpath))  # 仅删空目录（非空抛 OSError 自动跳过）
+
+                    deleted += 1
+
+                except OSError:
+
+                    pass  # 非空或锁定，跳过
+
         return ReconcileResult(
 
             action="clean" if errors == 0 else "warn",
