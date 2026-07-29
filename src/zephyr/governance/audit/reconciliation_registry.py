@@ -6404,7 +6404,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
     - 旧 GATE-DOMAIN-DOC (priority=600)：PG 写入脚本 commit 后跑
 
-      generate_domain_doc.py --all + generate_domain_dependency_diagram.py --all
+      generate_domain_doc.py --all（generate_domain_dependency_diagram.py 已于 2026-07-30 下线，.mmd 由域文档内嵌 mermaid 替代）
 
       重生所有域制品，有变更自动提交。
 
@@ -6544,7 +6544,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
         # 1. 重生所有域制品（生成器不含时间戳，相同 DB 输入->相同输出）
 
-        for gen_name in ("generate_domain_doc.py", "generate_domain_dependency_diagram.py"):
+        for gen_name in ("generate_domain_doc.py",):
 
             gen_result = _run_subprocess(
 
@@ -9126,7 +9126,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
 
       - generate_domain_doc.py --all
 
-      - generate_domain_dependency_diagram.py --all
+      - generate_domain_dependency_diagram.py --all  # 已于 2026-07-30 下线（.mmd 由域文档内嵌 mermaid 替代）
 
       - generate_domain_index.py
 

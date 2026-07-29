@@ -21,7 +21,7 @@
 | 全景图总数 | 37 |
 | 已建覆盖率 | 56.8% |
 
-| 已建产物存在 | 20/21 |
+| 已建产物存在 | 18/21 |
 
 ### 数据库真源健康度
 
@@ -103,11 +103,11 @@
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | [`04_architecture_principles_decisions`](../04_architecture_principles_decisions/dependency_path_panorama.md) | ✅存在 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
-| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ✅存在(72文件) |
+| PAN-BUILT-04 | 模块依赖图（depgraph nodes/edges） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `generate_domain_dependency_diagram.py` | `generated/domains/` | ❌缺失 |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/overview.md) | ✅存在 |
 | PAN-BUILT-02 | C4 L1/L2/L3 架构图 | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/c4_l1_l2_views.md) | ✅存在 |
-| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/topology_views.md) | ✅存在 |
+| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | 架构视图 | 手工 | 手工 | `(手工维护)` | `target_architecture/` | ❌缺失 |
 | PAN-BUILT-16 | 架构债务注册表（已归档） | 治理健康度 | 手工 | 手工 | `(手工维护)` | `_archive/` | ❌缺失 |
 
 ---
@@ -262,7 +262,7 @@
 |------|------|:---:|------|------|------|
 | PAN-BUILT-01 | TOGAF 4视图 + 6正交视图 | ✅已建 | 手工 | TOGAF 业务/信息/应用/技术 4视图 + 安全/集成/运营/治理/前端/运行时平面/能力热力图 6正交视图 | 真源：YAML (architecture_model/) + 手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/overview.md`](../target_architecture/overview.md) |
 | PAN-BUILT-02 | C4 L1/L2/L3 架构图 | ✅已建 | 手工 | C4 模型 L1 系统上下文 / L2 容器 / L3 组件图（d_ex_core / d_mkt_data / d_ml_train）。内嵌于 c4_l1_l2_views.md（L1/L2）+ c4_component_views.md（L3） | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/c4_l1_l2_views.md`](../target_architecture/c4_l1_l2_views.md) |
-| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | ✅已建 | 手工 | 拓扑/时序/数据流/部署/激活甘特/三层治理等 28 张 Mermaid 图。内嵌于 topology/dataflow/governance/application_flows _views.md | 真源：手工<br>生成器：`(手工维护)`<br>产物：[`target_architecture/topology_views.md`](../target_architecture/topology_views.md) |
+| PAN-BUILT-03 | 28个 Mermaid 图（拓扑/时序/数据流） | ✅已建 | 手工 | 拓扑/时序/数据流/部署/激活甘特/三层治理等 28 张 Mermaid 图。内嵌于 topology/dataflow/governance/application_flows _views.md | 真源：手工<br>生成器：`(手工维护)`<br>产物：`target_architecture/topology_views.md` |
 
 ### 08 资产全景（待建）
 
