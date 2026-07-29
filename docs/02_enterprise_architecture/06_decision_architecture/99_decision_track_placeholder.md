@@ -1,6 +1,6 @@
 # 决策流图 · 占位轨（Placeholder Track）
 
-> 生成时间: 2026-07-20T01:15:30
+> 生成时间: 2026-07-30T01:41:53
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 99
@@ -41,13 +41,13 @@
 | MOD-BT-001 | MOD-BT-001 | MOD-BT-001 | placeholder | MOD-BT-001 | - | - | - | - | design | stable |
 | MOD-C1-MARKETCH | MOD-C1-MARKETCH | MOD-C1-MARKETCH | placeholder | MOD-C1-MARKETCH | - | - | - | - | design | planned |
 | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | placeholder | MOD-CONTEXT_ENGINE | docs__03_modules___cross_layer__context_engine__blueprint_md | - | - | - | design | planned |
-| MOD-CROSS_ASSET | MOD-CROSS_ASSET | MOD-CROSS_ASSET | placeholder | MOD-CROSS_ASSET | 跨资产域 | - | - | - | design | planned |
+| MOD-CROSS_ASSET | MOD-CROSS_ASSET | MOD-CROSS_ASSET | placeholder | MOD-CROSS_ASSET | - | - | - | - | design | planned |
 | MOD-D5-ARCH-TOOLS | MOD-D5-ARCH-TOOLS | MOD-D5-ARCH-TOOLS | placeholder | MOD-D5-ARCH-TOOLS | - | - | - | - | production | generated |
 | MOD-DATABASE | MOD-DATABASE | MOD-DATABASE | placeholder | MOD-DATABASE | - | - | - | - | production | generated |
 | MOD-DATA_ENG | MOD-DATA_ENG | MOD-DATA_ENG | placeholder | MOD-DATA_ENG | - | - | - | - | production | generated |
 | MOD-DATA_GOV | MOD-DATA_GOV | MOD-DATA_GOV | placeholder | MOD-DATA_GOV | - | - | - | - | production | generated |
 | MOD-DATA_SEC | MOD-DATA_SEC | MOD-DATA_SEC | placeholder | MOD-DATA_SEC | - | - | - | - | production | generated |
-| MOD-DIGITAL_TWIN | MOD-DIGITAL_TWIN | MOD-DIGITAL_TWIN | placeholder | MOD-DIGITAL_TWIN | 数字孪生域 | - | - | - | design | planned |
+| MOD-DIGITAL_TWIN | MOD-DIGITAL_TWIN | MOD-DIGITAL_TWIN | placeholder | MOD-DIGITAL_TWIN | - | - | - | - | design | planned |
 | MOD-EXEC_SIM | MOD-EXEC_SIM | MOD-EXEC_SIM | placeholder | MOD-EXEC_SIM | - | - | - | - | production | generated |
 | MOD-EX_SOR | MOD-EX_SOR | MOD-EX_SOR | placeholder | MOD-EX_SOR | - | - | - | - | production | generated |
 | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | placeholder | MOD-FEEDBACK_LOOP | docs__03_modules___cross_layer__feedback_loop__blueprint_md | - | - | - | design | planned |
@@ -179,9 +179,10 @@
 | MOD-INF-042 | MOD-INF-042 | MOD-INF-042 | placeholder | MOD-INF-042 | - | - | - | - | production | generated |
 | MOD-INF-043 | MOD-INF-043 | MOD-INF-043 | placeholder | MOD-INF-043 | - | - | - | - | production | generated |
 | MOD-INF-GOV | MOD-INF-GOV | MOD-INF-GOV | placeholder | MOD-INF-GOV | - | - | - | - | production | generated |
-| MOD-INFRA_OPS | MOD-INFRA_OPS | MOD-INFRA_OPS | placeholder | MOD-INFRA_OPS | 基础设施运维域 | - | - | - | design | planned |
+| MOD-INFRA_OPS | MOD-INFRA_OPS | MOD-INFRA_OPS | placeholder | MOD-INFRA_OPS | - | - | - | - | design | planned |
 | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | placeholder | MOD-INFRA_RUNTIME | - | - | - | - | production | generated |
 | MOD-INTEGRATION | MOD-INTEGRATION | MOD-INTEGRATION | placeholder | MOD-INTEGRATION | - | - | - | - | production | generated |
+| MOD-KB-001 | MOD-KB-001 | MOD-KB-001 | placeholder | MOD-KB-001 | - | - | - | - | production | stable |
 | MOD-L00-001 | MOD-L00-001 | MOD-L00-001 | placeholder | MOD-L00-001 | - | - | - | - | design | generated |
 | MOD-L00-002 | MOD-L00-002 | MOD-L00-002 | placeholder | MOD-L00-002 | - | - | - | - | design | stable |
 | MOD-L00-003 | MOD-L00-003 | MOD-L00-003 | placeholder | MOD-L00-003 | - | - | - | - | design | stable |
@@ -207,7 +208,7 @@
 | MOD-OPS-018 | MOD-OPS-018 | MOD-OPS-018 | placeholder | MOD-OPS-018 | - | - | - | - | production | generated |
 | MOD-ORC-trigger_router | MOD-ORC-trigger_router | MOD-ORC-trigger_router | placeholder | MOD-ORC-trigger_router | - | - | - | - | production | generated |
 | MOD-PFC-001 | MOD-PFC-001 | MOD-PFC-001 | placeholder | MOD-PFC-001 | - | - | - | - | production | stable |
-| MOD-PF_ALLOC | MOD-PF_ALLOC | MOD-PF_ALLOC | placeholder | MOD-PF_ALLOC | 组合分配域 | - | - | - | design | planned |
+| MOD-PF_ALLOC | MOD-PF_ALLOC | MOD-PF_ALLOC | placeholder | MOD-PF_ALLOC | - | - | - | - | design | planned |
 | MOD-REMEDIATION_PROGRESS | MOD-REMEDIATION_PROGRESS | MOD-REMEDIATION_PROGRESS | placeholder | MOD-REMEDIATION_PROGRESS | - | - | - | - | production | generated |
 | MOD-REMEDIATION_PROGRESS_SMOKE | MOD-REMEDIATION_PROGRESS_SMOKE | MOD-REMEDIATION_PROGRESS_SMOKE | placeholder | MOD-REMEDIATION_PROGRESS_SMOKE | - | - | - | - | production | generated |
 | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | placeholder | MOD-RESOURCE_OPTIMIZATION_ENGINE | docs__03_modules___cross_layer__resource_optimization_engine__blueprint_md | - | - | - | design | planned |
@@ -222,7 +223,7 @@
 | MOD-SHR_converters | MOD-SHR_converters | MOD-SHR_converters | placeholder | MOD-SHR_converters | - | - | - | - | production | stable |
 | MOD-SIGNAL_ASHARE | MOD-SIGNAL_ASHARE | MOD-SIGNAL_ASHARE | placeholder | MOD-SIGNAL_ASHARE | - | - | - | - | production | generated |
 | MOD-SIGQC-001 | MOD-SIGQC-001 | MOD-SIGQC-001 | placeholder | MOD-SIGQC-001 | - | - | - | - | production | generated |
-| MOD-SIMULATION | MOD-SIMULATION | MOD-SIMULATION | placeholder | MOD-SIMULATION | 仿真核心域 | - | - | - | design | planned |
+| MOD-SIMULATION | MOD-SIMULATION | MOD-SIMULATION | placeholder | MOD-SIMULATION | - | - | - | - | design | planned |
 | MOD-SMOKE-TEST | MOD-SMOKE-TEST | MOD-SMOKE-TEST | placeholder | MOD-SMOKE-TEST | - | - | - | - | design | planned |
 | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | placeholder | MOD-TASK_SYSTEM | - | - | - | - | production | generated |
 | MOD-TEST | MOD-TEST | MOD-TEST | placeholder | MOD-TEST | - | - | - | - | design | planned |

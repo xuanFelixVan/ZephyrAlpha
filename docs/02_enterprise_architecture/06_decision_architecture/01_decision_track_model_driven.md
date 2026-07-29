@@ -1,6 +1,6 @@
 # 决策流图 · 模型驱动轨（Model-Driven Track）
 
-> 生成时间: 2026-07-20T01:15:30
+> 生成时间: 2026-07-30T01:41:53
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 1
@@ -14,7 +14,7 @@
 
 | Layer 数 | 决策节点数 | 域内边数 | 跨轨边数 |
 |----------|-----------|----------|----------|
-| 10 | 214 | 213 | 0 |
+| 10 | 213 | 211 | 0 |
 
 ## Layer 骨架图
 
@@ -58,7 +58,7 @@ flowchart TD
 | 06 | L2A | data | 3 | [📄 06_decision_l2a_data.md](06_decision_l2a_data.md) |
 | 07 | L2A | factor | 2 | [📄 07_decision_l2a_factor.md](07_decision_l2a_factor.md) |
 | 08 | L2A | frontend | 6 | [📄 08_decision_l2a_frontend.md](08_decision_l2a_frontend.md) |
-| 09 | L2A | research | 7 | [📄 09_decision_l2a_research.md](09_decision_l2a_research.md) |
+| 09 | L2A | research | 6 | [📄 09_decision_l2a_research.md](09_decision_l2a_research.md) |
 | 10 | L2A | sell | 19 | [📄 10_decision_l2a_sell.md](10_decision_l2a_sell.md) |
 | 11 | L2A | signal | 13 | [📄 11_decision_l2a_signal.md](11_decision_l2a_signal.md) |
 | 12 | L2A | simulation | 15 | [📄 12_decision_l2a_simulation.md](12_decision_l2a_simulation.md) |
@@ -79,6 +79,7 @@ flowchart TD
 | L2A | 信号层 | Signal Generation | model_driven | - | - | - | 信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强 → 共形预测 产出：signal（Insight: direction/confidence/horizon） | daily | design | planned |
 | L2B | 主力行为层 | Main Force Behavior Analysis | model_driven | - | - | - | 六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟 产出：main_force_signal（主力行为画像） | daily | design | planned |
 | L2C | 市场状态与大盘预测层 | Market State & Index Prediction | model_driven | - | - | - | 3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日8态走势预测 + 体制转换检测(HMM/变点) 产出：market_state_prediction（大盘方向/波动率/体制判断） | daily | design | planned |
+| L2D | 知识图谱与因果推演层 | Knowledge Graph & Causal Inference | model_driven | MOD-KB-001 | - | - | 六类知识图谱 → 事件影响链分析 → 因果传导推演 → GNN股票关系建模 → Causal ML 产出：causal_inference_result（因果推断结果） | daily | design | planned |
 | L3 | 策略组合层 | Strategy & Portfolio Combination | model_driven | MOD-L05-001 | - | - | 多策略信号合成 → 资本分配 → 元策略路由 → 组合构建 产出：portfolio_target（PortfolioTarget: 目标仓位） | daily | design | planned |
 | L4 | 风控层 | Risk Control | model_driven | MOD-L04-001 | - | - | Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估 产出：risk_check（RiskDecision: approve/veto/adjust） | realtime | production | stable |
 | L5 | 学习层 | Learning & Optimization | model_driven | - | - | - | 7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环 产出：learning_feedback（策略优化建议） | weekly | design | planned |

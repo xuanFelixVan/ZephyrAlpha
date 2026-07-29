@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain research（研究）
 
-> 生成时间: 2026-07-20T01:15:30
+> 生成时间: 2026-07-30T01:41:53
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → research
@@ -9,14 +9,14 @@
 
 ## 统计
 
-- 设计态节点数: 7
-- 域内边数: 6
-- 跨域出边: 1（1 个外部域）
+- 设计态节点数: 6
+- 域内边数: 5
+- 跨域出边: 0（0 个外部域）
 - 跨域入边: 1（1 个外部域）
 
 ## 设计态全景图
 
-> 共 7 层，6 边。
+> 共 7 层，5 边。
 
 ```mermaid
 flowchart TD
@@ -34,8 +34,6 @@ flowchart TD
         LL2A --- N212
         N213("[design]signal: 异常决策自检 Anomaly Decision Self-Check<br/>path: decision/research/rs_06"):::bsPlanned
         LL2A --- N213
-        N214("[design]signal: Knowledge Feedback Loop 知识反馈循环<br/>path: decision/research/rs_07"):::bsPlanned
-        LL2A --- N214
         LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]:::bsPlanned
         LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]:::bsPlanned
         LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]:::bsPlanned
@@ -54,7 +52,6 @@ flowchart TD
     N206 -->|informing| N211
     N211 -->|informing| N212
     N212 -->|informing| N213
-    N213 -->|informing| N214
 
     classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
     classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
@@ -73,7 +70,6 @@ flowchart TD
 | 211 | L2A | signal | 策略可解释性报告器 Strategy Explainability Reporter | decision/research/rs_04 | - | - | design | planned |
 | 212 | L2A | signal | A股绩效审计与优化触发器 A-Share Performance Audit | decision/research/rs_05 | - | - | design | planned |
 | 213 | L2A | signal | 异常决策自检 Anomaly Decision Self-Check | decision/research/rs_06 | - | - | design | planned |
-| 214 | L2A | signal | Knowledge Feedback Loop 知识反馈循环 | decision/research/rs_07 | - | - | design | planned |
 
 ## Edge 清单（域内）
 
@@ -84,13 +80,10 @@ flowchart TD
 | 14 | 206 | 211 | informing | L2A层内顺序流 | - |
 | 15 | 211 | 212 | informing | L2A层内顺序流 | - |
 | 16 | 212 | 213 | informing | L2A层内顺序流 | - |
-| 17 | 213 | 214 | informing | L2A层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
-|:--:|---------|:--:|---------|---------|
-| 1 | decision/research/rs_07 | → | decision/sell/sell_00 | informing |
+> （无跨域出边）
 
 ## 跨域入边（Depended By）
 
@@ -100,13 +93,11 @@ flowchart TD
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
+> 本域与 1 个外部域直接连接 / This domain directly connects to 1 external domain(s).
 
 ```mermaid
 flowchart LR
     SELF["research（研究）"]:::selfDomain
-    EXT_sell["sell（卖出）"]:::extDomain
-    SELF -->|出 1| EXT_sell
     EXT_frontend["frontend（前端）"]:::extDomain
     EXT_frontend -->|入 1| SELF
 

@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain sell（卖出）
 
-> 生成时间: 2026-07-20T01:15:30
+> 生成时间: 2026-07-30T01:41:53
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell
@@ -12,7 +12,7 @@
 - 设计态节点数: 19
 - 域内边数: 18
 - 跨域出边: 1（1 个外部域）
-- 跨域入边: 1（1 个外部域）
+- 跨域入边: 0（0 个外部域）
 
 ## 设计态全景图
 
@@ -154,21 +154,17 @@ flowchart TD
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
-|:--:|---------|:--:|---------|---------|
-| 1 | decision/research/rs_07 | → | decision/sell/sell_00 | informing |
+> （无跨域入边）
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
+> 本域与 1 个外部域直接连接 / This domain directly connects to 1 external domain(s).
 
 ```mermaid
 flowchart LR
     SELF["sell（卖出）"]:::selfDomain
     EXT_signal["signal（信号）"]:::extDomain
     SELF -->|出 1| EXT_signal
-    EXT_research["research（研究）"]:::extDomain
-    EXT_research -->|入 1| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000
     classDef extDomain fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,color:#000

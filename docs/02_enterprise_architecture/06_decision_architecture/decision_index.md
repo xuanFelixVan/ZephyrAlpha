@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-20T01:15:30
+> 生成时间: 2026-07-30T01:41:53
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -20,12 +20,12 @@
 |------|------|
 | Track（轨） | 5 |
 | Layer（层） | 658 |
-| Node（节点） | 214 |
-| Edge（边） | 213 |
-| 运营态 Layer（design_maturity=production） | 23 |
-| 设计态 Layer（design_maturity=design） | 635 |
+| Node（节点） | 213 |
+| Edge（边） | 211 |
+| 运营态 Layer（design_maturity=production） | 595 |
+| 设计态 Layer（design_maturity=design） | 63 |
 | 运营态 Node（design_maturity=production） | 0 |
-| 设计态 Node（design_maturity=design） | 214 |
+| 设计态 Node（design_maturity=design） | 213 |
 
 > **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。对标 depgraph 的设计态/运营态机制。
 
@@ -33,7 +33,7 @@
 
 | 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | [📄 文档](.) |
 |------|----------|------|--------|----------|---------|------|
-| 01 | model_driven | 模型驱动轨 | 1 | 10 | 214 | [📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md) |
+| 01 | model_driven | 模型驱动轨 | 1 | 10 | 213 | [📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md) |
 | 02 | data_driven | 数据驱动轨 | 2 | 0 | 0 | [📄 02_decision_track_data_driven.md](02_decision_track_data_driven.md) |
 | 03 | human_override | 人工指令轨 | 3 | 0 | 0 | [📄 03_decision_track_human_override.md](03_decision_track_human_override.md) |
 | 04 | emergency | 应急保命轨 | 4 | 0 | 0 | [📄 04_decision_track_emergency.md](04_decision_track_emergency.md) |
@@ -46,7 +46,7 @@
 | 06 | data | 3 | [📄 06_decision_l2a_data.md](06_decision_l2a_data.md) |
 | 07 | factor | 2 | [📄 07_decision_l2a_factor.md](07_decision_l2a_factor.md) |
 | 08 | frontend | 6 | [📄 08_decision_l2a_frontend.md](08_decision_l2a_frontend.md) |
-| 09 | research | 7 | [📄 09_decision_l2a_research.md](09_decision_l2a_research.md) |
+| 09 | research | 6 | [📄 09_decision_l2a_research.md](09_decision_l2a_research.md) |
 | 10 | sell | 19 | [📄 10_decision_l2a_sell.md](10_decision_l2a_sell.md) |
 | 11 | signal | 13 | [📄 11_decision_l2a_signal.md](11_decision_l2a_signal.md) |
 | 12 | simulation | 15 | [📄 12_decision_l2a_simulation.md](12_decision_l2a_simulation.md) |
