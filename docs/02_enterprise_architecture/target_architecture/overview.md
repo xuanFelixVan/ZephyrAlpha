@@ -76,17 +76,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 | 14层信息保留方式 | 作为域的`layer_id`属性 | 属性不是分类，不产生二元性 |
 | L00-L13层YAML文件 | 废弃，信息合并入depgraph域定义 | 避免SSoT分裂 |
 
-**当前域层级分布**（数据源：depgraph `domains` 表）：
-
-| layer_id | 域数量 | 说明 |
-|----------|:---:|------|
-| `L0_infrastructure` | 5 | D_INFRA_A2A, D_INFRA_OPS, D_INFRA_RECOVERY, D_INFRA_RUNTIME, D_INFRA_TELEMETRY |
-| `L1_foundation` | 15 | D_ALT_DATA, D_AUTONOMY_CORE, D_BEHAVIORAL_AUDIT, D_DATA_ENG, D_DATA_GOV... |
-| `L2_domain` | 32 | D_ASHARE_SIGNAL, D_AUDITTEST, D_AUTONOMY_PERM, D_BACKTEST, D_COMPLIANCE... |
-| `unassigned` | 1 | D_GOV_REPAIR |
-
-
-**域总数**：53 | **节点总数**：6501 | **依赖边总数**：7191
+**当前域层级分布**：由 depgraph `domains` 表派生，禁止在此硬编码（避免计数漂移）。最新域总数 / 节点数 / 依赖边数见 [`generated/`](../generated/) 派生视图与 [`global_capability_heatmap.md`](../01_global_architecture_diagram/global_capability_heatmap.md) §统计概览（depgraph 自动生成）。
 
 > **注（v2.1.0）**：派生工具链与派生产出目录的真源在 [`docs/02_enterprise_architecture/generated/`](../generated/) 目录及 AGENTS.md，不再于此硬编码。
 

@@ -9,7 +9,6 @@ valid_from: 2026-07-22
 ttl: permanent
 tags:
 - architecture-view
-- pending-review
 ---
 
 # 治理架构图

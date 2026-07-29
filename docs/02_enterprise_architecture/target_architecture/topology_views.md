@@ -3,18 +3,19 @@ module_id: VIEW-TA-TOPO
 title: 架构拓扑图
 doc_type: architecture_view
 status: Active
-version: 0.1.0
+version: 0.2.0
 owner: ZephyrAlpha-Owner
 valid_from: 2026-07-22
 ttl: permanent
 tags:
 - architecture-view
-- pending-review
 ---
 
 # 架构拓扑图
 
 > **单一真源 / Single Source of Truth** — 本文档内嵌 mermaid 图，原独立 `.mmd` 已删除。
+
+> **生成视图 / Generated View** — 集成拓扑图（integration topology）已由 `generate_integration_topology.py` 从 depgraph 自动生成，见 [`01_global_architecture_diagram/integration_topology.md`](../01_global_architecture_diagram/integration_topology.md)。本文件仅保留无生成器的手绘概念图（TOGAF 层栈 + docs/scripts/runtime 拓扑）。
 
 ---
 
@@ -84,7 +85,7 @@ graph TB
     style GOV fill:#fef2f2,stroke:#ef4444
     style ARCH fill:#eff6ff,stroke:#3b82f6
     style DESIGN fill:#fffbeb,stroke:#f59e0b
-    style MOD fill:#f0fdf4,stroke:#22c55e
+    style MOD fill:#f0fdf4,stroke:#16a34a
     style KB fill:#fdf4ff,stroke:#a855f7
     style WS fill:#f8fafc,stroke:#94a3b8
     style AR fill:#f1f5f9,stroke:#cbd5e1
@@ -123,95 +124,11 @@ graph LR
     style GOV fill:#dcfce7,stroke:#16a34a
     style ARCH_GUARD fill:#fce7f3,stroke:#db2777
     style PRECOMMIT fill:#e0f2fe,stroke:#0284c7
-    style REPORTS fill:#f0fdf4,stroke:#22c55e
+    style REPORTS fill:#f0fdf4,stroke:#16a34a
     style MCP fill:#fdf4ff,stroke:#a855f7
     style OPS fill:#fffbeb,stroke:#f59e0b
     style CONSTRUCTION fill:#f1f5f9,stroke:#cbd5e1
     style D10 fill:#eff6ff,stroke:#3b82f6
-```
-
----
-
-## integration topology
-
-> 重写时间: 2026-06-26 (DM-200913 Phase4-B)
-> 基于§2.1裁定: 14层降级为域属性，53域为唯一物理分类体系
-> 数据源: depgraph
-> 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
-> 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
-> Source: architecture_model/contracts/cross_layer_contracts.yaml（external_contracts EXT 系列 + CTR 数据流）
-> v2.0.0: 14层节点→53域节点，保留P0跨层契约标注
-
-```mermaid
-graph LR
-    subgraph External["外部系统 External Systems"]
-        MD["行情数据源<br/>Market Data Provider<br/>(EI-002)"]
-        BK["券商 API<br/>Broker API<br/>(EI-001)"]
-        LLM["LLM 服务商<br/>LLM Providers<br/>(EI-003)"]
-        FS["飞书 Feishu<br/>(EI-004)"]
-        ALT["另类数据源<br/>Alternative Data<br/>(EI-005)"]
-    end
-
-    subgraph ACL_Layer["反腐层 Anti-Corruption Layer"]
-        CONN["D-MKT_DATA connectors/<br/>(ACL for market data)"]
-        BROKER_A["D-EX_CORE adapters/<br/>(ACL for broker)"]
-        LLM_A["D-FRONTEND/<br/>(ACL for LLM)"]
-    end
-
-    subgraph Core["ZephyrAlpha Core Domains (depgraph派生)"]
-        D_MKT_DATA["D-MKT_DATA<br/>行情数据"]
-        D_ALT_DATA["D-ALT_DATA<br/>另类数据"]
-        D_FACTOR["D-FACTOR<br/>因子"]
-        D_SIGNAL["D-SIGLEGACY<br/>信号"]
-        D_RISK["D-RISK<br/>风控"]
-        D_PF_CORE["D-PF_CORE<br/>组合核心"]
-        D_EX_CORE["D-EX_CORE<br/>执行核心"]
-        D_TRADING["D-TRADING<br/>交易运营"]
-        D_REPORTING["D-REPORTING<br/>报告"]
-        D_FRONTEND["D-FRONTEND<br/>前端"]
-        D_ML_TRAIN["D-ML_TRAIN<br/>训练"]
-        D_OPS["D-OPS<br/>反馈循环"]
-    end
-
-    subgraph Notify["通知输出 Output"]
-        FS2["飞书 Feishu<br/>报告/通知"]
-    end
-
-    MD -- "REST/WebSocket<br/>行情数据" --> CONN
-    ALT -- "REST/File<br/>另类数据" --> CONN
-    CONN --> D_MKT_DATA
-    BK -- "REST/FIX<br/>订单/成交" --> BROKER_A
-    BROKER_A --> D_EX_CORE
-    LLM -- "REST<br/>OpenAI-compatible" --> LLM_A
-    LLM_A --> D_FRONTEND
-    D_FRONTEND -- "决策/报告" --> FS2
-
-    %% P0 Cross-Layer Contracts / 跨层数据契约承重墙
-    %% 契约真源: cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
-    D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D-MKT_DATA → D-FACTOR" --> D_FACTOR
-
-    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGLEGACY" --> D_SIGNAL
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-RISK" --> D_RISK
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-PF_CORE" --> D_PF_CORE
-
-    %% CTR-003: RiskLimits (frozen) — D-RISK → D-PF_CORE
-    D_RISK -- "🔒 CTR-003<br/>RiskLimits<br/>D-RISK → D-PF_CORE" --> D_PF_CORE
-
-    %% CTR-004: Order (mutable) — D-PF_CORE → D-EX_CORE
-    D_PF_CORE -- "🔓 CTR-004<br/>Order<br/>D-PF_CORE → D-EX_CORE" --> D_EX_CORE
-
-    %% CTR-005: Fill (frozen) — D-EX_CORE → D-TRADING
-    D_EX_CORE -- "🔒 CTR-005<br/>Fill<br/>D-EX_CORE → D-TRADING" --> D_TRADING
-
-    %% CTR-006: PositionSnapshot (frozen) — D-EX_CORE/D-TRADING → D-RISK/D-ML_TRAIN
-    D_EX_CORE -- "🔒 CTR-006<br/>PositionSnapshot<br/>D-EX_CORE → D-RISK" --> D_RISK
-    D_TRADING -- "🔒 CTR-006<br/>PositionSnapshot<br/>D-TRADING → D-ML_TRAIN" --> D_ML_TRAIN
-
-    D_TRADING -- "PnL/Risk Metrics" --> D_OPS
-    D_ML_TRAIN -- "ModelPrediction" --> D_FACTOR
-    D_ML_TRAIN -- "ModelPrediction" --> D_PF_CORE
 ```
 
 ---
