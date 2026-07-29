@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-24T16:48:40Z
+# 自动生成于 2026-07-29T17:49:41Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-24T16:48:40Z'
+generated_at: '2026-07-29T17:49:41Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 364
+total_scripts: 366
 with_manifest: 314
-missing_manifest: 50
+missing_manifest: 52
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 26
+  governance: 28
   governance:d10_performance: 1
   governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 23
   governance:d4_paths: 4
-  governance:d5_architecture: 104
+  governance:d5_architecture: 103
   governance:d6_security: 14
   governance:d7_code: 40
   governance:d8_doc_sync: 11
@@ -31,6 +31,7 @@ categories:
   governance:observability: 1
   governance:oneoff: 3
   governance:repair: 7
+  governance:shared: 1
   governance:vms: 9
 scripts:
 - name: _sync/check_p0_status.py
@@ -105,6 +106,16 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
+- name: add_deferred_design_edges.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: apply_dataflowgraph.py
   owner: governance
   dimensions: []
@@ -717,8 +728,8 @@ scripts:
   args:
   - --fix
   warn_only: false
-  description: 项目根目录孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/governance/ / src/zephyr/
-    / tests/）
+  description: 全库孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/** / src/zephyr/** / tests/**
+    任意子目录）
   tags:
   - Critical
   - Quick
@@ -1755,10 +1766,10 @@ scripts:
   dimensions:
   - D5
   priority: P2
-  timeout_seconds: 60
+  timeout_seconds: 90
   args: []
   warn_only: false
-  description: 'G-WIKI: 自动同步 code_wiki.md 中 4 个 AUTO 标记块的统计数据'
+  description: 'G-WIKI: 自动同步 project_handbook/ 下 7 文件 11 个 AUTO 标记块的统计数据'
   tags:
   - Critical
   - Disruptive
@@ -1849,16 +1860,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: d5_architecture/generators/generate_design_vs_production.py
-  owner: governance:d5_architecture
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d5_architecture/generators/generate_domain_dependency_diagram.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
@@ -4273,6 +4274,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: register_deferred_modules.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: repair/apply_verification_results.py
   owner: governance:repair
   dimensions:
@@ -4399,6 +4410,16 @@ scripts:
   _manifest_missing: true
 - name: session_worktree_cli.py
   owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: shared/frontmatter.py
+  owner: governance:shared
   dimensions: []
   priority: P2
   timeout_seconds: 60
