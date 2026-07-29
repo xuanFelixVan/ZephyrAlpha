@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -83,6 +84,11 @@ _L3_SEQ_OFFSET = 13   # 13..19
 _LAYERS_FILE_NAME = "20_decision_layers.md"
 _INVARIANTS_FILE_NAME = "21_decision_invariants.md"
 _STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
+# 架构层 ID 正则：L0-L6（含 L2A/L2B/L2C/L2D 子层）。decision_layers 表还含
+# 模块级条目（MOD-*/CFG-*/INFRA-*/SH-*/SYS-*，约 650 个），层级详情图只画
+# L0-L6 架构层——模块详情已在 01-19 per-track/per-domain 文件覆盖，全画会导致
+# mermaid 节点数超限（>300）渲染失败。
+_ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 
 # 功能域英文→中文映射（双语标题/节点标签用）
 _DOMAIN_NAME_ZH: dict[str, str] = {
@@ -366,7 +372,13 @@ def _gen_overview_mmd(
 
 
 def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
-    """生成层级详情图：10 层卡片 + 频率/成熟度/状态 + 流向箭头。"""
+    """生成层级详情图：L0-L6 架构层卡片 + 频率/成熟度/状态 + 流向箭头。
+
+    只渲染 L0-L6 架构层（约 10 个节点），过滤 decision_layers 表中的模块级/
+    基础设施级条目（MOD-*/CFG-*/INFRA-*/SH-*/SYS-*）——这些详情已在 01-19
+    per-track/per-domain 文件覆盖。全量渲染（~660 节点）会导致 mermaid 渲染失败。
+    """
+    layers = [l for l in layers if _ARCH_LAYER_RE.match(l["id"])]
     lines = ["flowchart LR"]
 
     for layer in layers:
@@ -408,11 +420,11 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         to_lid = layer_ids[i + 1].replace("-", "_")
         lines.append(f'    L{from_lid} -->|triggering| L{to_lid}')
 
-    # 反馈边（L6 → L1/L5，学习闭环）
+    # 反馈边（L6 → L1/L5，学习闭环）。节点 ID = "L" + layer_id（与上方定义一致）
     if len(layer_ids) >= 6:
-        l1 = layer_ids[1].replace("-", "_") if len(layer_ids) > 1 else None
-        l5 = "L5"
-        l6 = "L6"
+        l1 = f"L{layer_ids[1].replace('-', '_')}" if len(layer_ids) > 1 else None
+        l5 = f"L{layer_ids[-2].replace('-', '_')}"  # 倒数第 2 = L5
+        l6 = f"L{layer_ids[-1].replace('-', '_')}"  # 最后 = L6
         if l1:
             lines.append(f'    {l6} -.->|feedback| {l1}')
         lines.append(f'    {l6} -.->|feedback| {l5}')
