@@ -520,3 +520,18 @@ class TestRSSProvider:
         # 测试 fail-open（robots.txt 读取失败 → 允许）
         with patch("urllib.robotparser.RobotFileParser.read", side_effect=Exception("net error")):
             assert p.is_allowed("https://example.com/feed.xml") is True
+
+    def test_robots_403_disallow_all_fail_open(self):
+        """401/403 on robots.txt → RobotFileParser 内部置 disallow_all=True（不抛异常），
+        应按 fail-open 处理。模拟 Investing.com 等 Cloudflare 站点 robots.txt 返回 403 的场景：
+        若不处理 disallow_all，can_fetch 会返回 False（误判全站禁止），导致 RSS 源被跳过。"""
+        from src.zephyr.data.implementations.rss_provider import RSSProvider
+        p = self._make_provider()
+        RSSProvider.robots_cache.clear()
+
+        def fake_read(self_rp):
+            # 模拟 CPython RobotFileParser.read 对 401/403 的内部处理：置 disallow_all=True，不抛异常
+            self_rp.disallow_all = True
+
+        with patch("urllib.robotparser.RobotFileParser.read", fake_read):
+            assert p.is_allowed("https://www.investing.com/rss/news_25.rss") is True

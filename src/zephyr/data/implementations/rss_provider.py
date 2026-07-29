@@ -52,14 +52,16 @@ log = logging.getLogger(__name__)
 _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 
-# 默认财经 RSS 源（国内可访问 + 本地 RSSHub 路由）
-# 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200）
+# 默认财经 RSS 源（国内源 + 海外源）
+# 国内源：直连 RSS + 本地 RSSHub 路由（V2rayN 规则模式国内域名直连，不走代理）
+# 海外源：Yahoo Finance 经 RSSHub 代理走 V2rayN SOCKS5(10808)；Investing.com 直连可达
+# 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200，ecosystem.config.cjs 配 PROXY_URI）
 from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 _DEFAULT_RSS_FEEDS = [
-    # 直连 RSS
+    # ---- 国内源：直连 RSS ----
     "https://36kr.com/feed",                              # 36氪（直连）
     "https://www.tmtpost.com/feed",                       # 钛媒体（直连）
-    # 本地 RSSHub 路由（D:\RSSHub，pm2 守护，监听 localhost:1200）
+    # ---- 国内源：本地 RSSHub 路由 ----
     f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",            # 华尔街见闻
     f"{DEFAULT_RSSHUB_URL}/eastmoney/report/strategyreport",  # 东方财富-策略报告
     f"{DEFAULT_RSSHUB_URL}/eastmoney/report/macresearch",     # 东方财富-宏观研究
@@ -70,6 +72,14 @@ _DEFAULT_RSS_FEEDS = [
     f"{DEFAULT_RSSHUB_URL}/caixin/latest",                # 财新网
     f"{DEFAULT_RSSHUB_URL}/36kr/newsflashes",             # 36氪快讯
     f"{DEFAULT_RSSHUB_URL}/jin10/index",                  # 金十数据
+    # ---- 海外源：Yahoo Finance（RSSHub 路由，出站走 SOCKS5 代理）----
+    # 路由 /yahoo/news/:region/:category，财经类 category：hk=business / tw=finance / us=business
+    f"{DEFAULT_RSSHUB_URL}/yahoo/news/us/business",       # Yahoo Finance 美国-商业（英文，全球财经）
+    f"{DEFAULT_RSSHUB_URL}/yahoo/news/hk/business",       # Yahoo 財經 香港（中文，港股/全球）
+    f"{DEFAULT_RSSHUB_URL}/yahoo/news/tw/finance",        # Yahoo 財經 台湾（中文，台股/全球）
+    # ---- 海外源：Investing.com 直连 RSS（bot UA 可访问，robots.txt 403 fail-open）----
+    "https://www.investing.com/rss/news_1.rss",           # Investing.com 头条
+    "https://www.investing.com/rss/news_25.rss",          # Investing.com 股市新闻
 ]
 
 
@@ -95,6 +105,10 @@ class RSSProvider(DataSourceBase):
     # robots.txt 缓存（per-domain）
     _robots_cache: dict[str, RobotFileParser | None] = {}
     robots_cache: dict[str, RobotFileParser | None] = _robots_cache  # public alias（Stage 4 公共化）
+
+    def is_allowed(self, url: str) -> bool:
+        """公共接口（R5 公共化）：robots.txt 是否允许抓取该 URL。委托 _is_allowed。"""
+        return self._is_allowed(url)
 
 
     # ---- 生命周期 ----
@@ -229,7 +243,15 @@ class RSSProvider(DataSourceBase):
             rp.set_url(f"{domain}/robots.txt")
             try:
                 rp.read()
-                self._robots_cache[domain] = rp
+                # RobotFileParser 对 401/403 不抛异常，而是内部置 disallow_all=True
+                # （CPython urllib.robotparser.read 行为）。站点拒绝公开 robots.txt
+                # （如 Cloudflare 默认 403）时，按 fail-open 处理——无法读取规则即不强制，
+                # 而非误判为"全站禁止"。显式 Disallow: / 走 parse() 仍会被正常尊重。
+                if rp.disallow_all:
+                    self._log.debug(f"robots.txt 不可读(401/403) {domain}，默认允许")
+                    self._robots_cache[domain] = None
+                else:
+                    self._robots_cache[domain] = rp
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # robots.txt 读取失败 -> 默认允许（fail-open）
                 self._log.debug(f"robots.txt 读取失败 {domain}: {e}，默认允许")
