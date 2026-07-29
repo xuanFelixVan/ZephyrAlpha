@@ -18,7 +18,6 @@ tags:
 - sequence-diagram
 - application-flow
 - methodology
-- pending-review
 summary: 5 张应用流程端到端时序图（订单提交 / 成交回报 / 风控触发 / 组合再平衡 / 异常处置），原 .mmd 已删除，本文档为应用流程时序图单一真源（内嵌 mermaid）。
 date: '2026-07-22'
 ttl: permanent
