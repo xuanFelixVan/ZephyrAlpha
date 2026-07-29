@@ -206,11 +206,11 @@ class RSSProvider(DataSourceBase):
                         elapsed_sec=time.time() - t0,
                     )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                self._log.warning(f"RSS {feed_url} 获取失败: {e}")
-                yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key="", elapsed_sec=time.time() - t0, error=str(e),
-                )
+                # 单源失败不中断整个任务：scheduler._fetch_and_write 遇 FetchResult.error 会 break，
+                # 若此处 yield error 会导致后续 feed（含海外源）永不被抓取（如 domestic 源 503 时
+                # 海外 Yahoo/Investing.com 排在其后会被跳过）。仅记录告警并跳过该源，继续抓取后续 feed。
+                # 失败可见性由本 warning 日志保证；全部源均 0 行时 scheduler 会发 "SUCCESS 但 0 行写入" 告警。
+                self._log.warning(f"RSS {feed_url} 获取失败，跳过该源继续后续 feed: {e}")
 
     # ---- source_name 提取 ----
 

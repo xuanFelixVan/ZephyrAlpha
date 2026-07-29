@@ -535,3 +535,52 @@ class TestRSSProvider:
 
         with patch("urllib.robotparser.RobotFileParser.read", fake_read):
             assert p.is_allowed("https://www.investing.com/rss/news_25.rss") is True
+
+    def test_single_feed_failure_does_not_abort_others(self):
+        """单源失败不中断整个任务：scheduler._fetch_and_write 遇 FetchResult.error 会 break，
+        故 provider 对单 feed 失败不应 yield error（仅 log + 跳过）。验证：feed1 失败、feed2 成功时，
+        结果中无 error FetchResult，且 feed2 的行被正确返回（模拟 domestic 源 503 后海外源仍能入库）。"""
+        import pandas as pd  # noqa: F401  确保 pandas 可用
+        requests_mock = MagicMock()
+        ok_response = MagicMock()
+        ok_response.content = b"<rss>...</rss>"
+        ok_response.raise_for_status.return_value = None
+
+        def fake_get(url, **kwargs):
+            if "feed1.example.com" in url:
+                raise Exception("503 Server Error: Service Unavailable")
+            return ok_response
+        requests_mock.get.side_effect = fake_get
+
+        fp = MagicMock()
+        mock_parsed = MagicMock()
+        mock_parsed.entries = [
+            {"published": "2026-07-05", "title": "news_ok",
+             "link": "http://ok", "summary": "sum_ok"},
+        ]
+        fp.parse.return_value = mock_parsed
+
+        with patch.dict("sys.modules", {
+            "feedparser": fp,
+            "requests": requests_mock,
+        }):
+            p = self._make_provider()
+            p.connect()
+            policy = SourcePolicy(respect_robots_txt=False)
+            payload = FetchPayload(
+                table="c3_fundamental.news_data",
+                symbols=["https://feed1.example.com/fail.xml",
+                         "https://feed2.example.com/ok.xml"],
+                start=datetime.date(2026, 7, 1),
+                end=datetime.date(2026, 7, 6),
+                extra={"capability": "news_data"},
+            )
+            results = list(p.fetch(payload, policy))
+
+        # 关键断言：无 error FetchResult（scheduler._fetch_and_write 不会 break）
+        assert all(r.error is None for r in results), \
+            f"单源失败不应 yield error，但得到: {[r.error for r in results]}"
+        # feed2 的行被正确返回（失败的 feed1 被跳过）
+        assert len(results) == 1
+        assert len(results[0].rows) == 1
+        assert results[0].rows[0][2] == "news_ok"
