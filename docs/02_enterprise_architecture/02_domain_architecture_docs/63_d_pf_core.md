@@ -25,18 +25,18 @@ ttl: permanent
 | 域ID | D_PF_CORE | Domain ID | D_PF_CORE |
 | 域名称 | 组合核心 | Domain Name | Portfolio Core |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 3 | Module Count | 3 |
+| 模块数 | 4 | Module Count | 4 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 2 | Design Modules | 2 |
-| 生产态模块 | 1 | Production Modules | 1 |
-| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
+| 生产态模块 | 2 | Production Modules | 2 |
+| 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 组合核心，负责投资组合构建、持仓管理和组合优化 | Description | 组合核心，负责投资组合构建、持仓管理和组合优化 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 3 个模块 / 3 modules）。
+> 按 architecture_layer 分组的模块清单（共 4 个模块 / 4 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (1 modules)
 
@@ -44,12 +44,13 @@ ttl: permanent
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/pf_core/strategy_engine/__init__.py | D_PORTFOLIO_CORE — Portfolio Construction Stra... | 生产态 / production |  |
 
-### L2 领域层 / Domain Layer (2 modules)
+### L2 领域层 / Domain Layer (3 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/pf_core/strategy_engine/strategy_runner.py | D_PORTFOLIO_CORE — StrategyRunner 策略运行器（... | 设计态 / design |  |
 | 2 | src/zephyr/pf_core/topn_momentum_strategy.py | D_PORTFOLIO_CORE — TopN 动量等权策略 | 设计态 / design |  |
+| 3 | tests/pf_core/test_strategy_runner_tick.py | StrategyRunner.run_tick_backtest 单元测试（路径... | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -63,7 +64,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 3 个模块（生产态 1 + 设计态 2），标签标注成熟度。
+> 展示全部 4 个模块（生产态 2 + 设计态 2），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -71,6 +72,7 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
         src_zephyr_pf_core_strategy_engine_strategy_runner_py["(设计态 / design) D_PORTFOLIO_CORE — StrategyRunner 策略运行器（...<br/>文件: strategy_runner.py"]
         src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: topn_momentum_strategy.py"]
+        tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) StrategyRunner.run_tick_backtest 单元测试（路径...<br/>文件: test_strategy_runner_tick.py"]
     end
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
@@ -80,7 +82,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_strategy_engine_init_py production
+    class src_zephyr_pf_core_strategy_engine_init_py,tests_pf_core_test_strategy_runner_tick_py production
     class src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_topn_momentum_strategy_py design
     class D_PF_ALLOC external_prod
     class D_EX_CORE external_design
@@ -88,12 +90,13 @@ graph TD
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 1 个，0 条域内依赖）。
+> 仅展示已上线运行的模块（共 2 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_PF_CORE["D_PF_CORE 组合核心"]
         src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
+        tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) StrategyRunner.run_tick_backtest 单元测试（路径...<br/>文件: test_strategy_runner_tick.py"]
     end
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
@@ -101,7 +104,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_strategy_engine_init_py production
+    class src_zephyr_pf_core_strategy_engine_init_py,tests_pf_core_test_strategy_runner_tick_py production
     class D_PF_ALLOC external_prod
 ```
 
