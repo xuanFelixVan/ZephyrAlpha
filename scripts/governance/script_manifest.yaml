@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-29T17:49:41Z
+# 自动生成于 2026-07-30T15:57:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-29T17:49:41Z'
+generated_at: '2026-07-30T15:57:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 366
@@ -159,7 +159,8 @@ scripts:
   - --snapshot
   - --metric
   warn_only: true
-  description: 架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期）
+  description: 架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md（文档已删 2026-07-30，git
+    历史可查） §四 第0期）
   tags:
   - Critical
 - name: ast_import_rewriter.py
@@ -1686,7 +1687,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。
+  description: 从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。
   tags:
   - Critical
 - name: d5_architecture/generators/_common.py
@@ -1769,7 +1770,7 @@ scripts:
   timeout_seconds: 90
   args: []
   warn_only: false
-  description: 'G-WIKI: 自动同步 project_handbook/ 下 7 文件 11 个 AUTO 标记块的统计数据'
+  description: 'G-WIKI: 自动同步 04 下 8 文件 12 个 AUTO 标记块的统计数据'
   tags:
   - Critical
   - Disruptive
@@ -2227,7 +2228,7 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
+  description: B 轨 b_track 一致性校验（index.yaml b_track ↔ layers/b_*.yaml 双向对账）
   tags:
   - Critical
 - name: d5_architecture/validators/validate_blind_spot_status.py

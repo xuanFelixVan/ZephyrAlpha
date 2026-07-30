@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_DATA_GOV 数据治理架构文档
 version: "1.0"
 status: active
-date: 2026-07-25
+date: 2026-07-30
 owner: auto-generator
 ttl: permanent
 ---
@@ -25,20 +25,20 @@ ttl: permanent
 | 域ID | D_DATA_GOV | Domain ID | D_DATA_GOV |
 | 域名称 | 数据治理 | Domain Name | Data Governance |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
-| 模块数 | 7 | Module Count | 7 |
-| 域内依赖 | 0 | Internal Dependencies | 0 |
+| 模块数 | 10 | Module Count | 10 |
+| 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 生产态模块 | 7 | Production Modules | 7 |
-| 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
+| 生产态模块 | 10 | Production Modules | 10 |
+| 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 数据治理，负责数据标准、元数据管理和数据生命周期治理 | Description | 数据治理，负责数据标准、元数据管理和数据生命周期治理 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
+> 按 architecture_layer 分组的模块清单（共 10 个模块 / 10 modules）。
 
-### L1 基础层 / Foundation Layer (7 modules)
+### L1 基础层 / Foundation Layer (10 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -46,9 +46,12 @@ ttl: permanent
 | 2 | src/zephyr/data_governance/_extensions/__init__.py | __init__.py | 生产态 / production |  |
 | 3 | src/zephyr/data_governance/api/__init__.py | __init__.py | 生产态 / production |  |
 | 4 | src/zephyr/data_governance/core/__init__.py | __init__.py | 生产态 / production |  |
-| 5 | src/zephyr/data_governance/infrastructure/__init__.py | __init__.py | 生产态 / production |  |
-| 6 | src/zephyr/data_governance/models/__init__.py | __init__.py | 生产态 / production |  |
-| 7 | src/zephyr/data_governance/services/__init__.py | __init__.py | 生产态 / production |  |
+| 5 | src/zephyr/data_governance/core/lineage_tracker.py | D-DATA-GOV Lineage Tracker——数据血缘追踪。 | 生产态 / production |  |
+| 6 | src/zephyr/data_governance/core/metadata_registry.py | D-DATA-GOV Metadata Registry——元数据管理。 | 生产态 / production |  |
+| 7 | src/zephyr/data_governance/core/schema_registry.py | D-DATA-GOV Schema Registry——表结构注册与查询。 | 生产态 / production |  |
+| 8 | src/zephyr/data_governance/infrastructure/__init__.py | __init__.py | 生产态 / production |  |
+| 9 | src/zephyr/data_governance/models/__init__.py | __init__.py | 生产态 / production |  |
+| 10 | src/zephyr/data_governance/services/__init__.py | __init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -62,7 +65,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 7 个模块（生产态 7 + 设计态 0），标签标注成熟度。
+> 展示全部 10 个模块（生产态 10 + 设计态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -71,20 +74,24 @@ graph TD
         src_zephyr_data_governance_extensions_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_api_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_core_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_data_governance_core_lineage_tracker_py["(生产态 / production) D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>文件: lineage_tracker.py"]
+        src_zephyr_data_governance_core_metadata_registry_py["(生产态 / production) D-DATA-GOV Metadata Registry——元数据管理。<br/>文件: metadata_registry.py"]
+        src_zephyr_data_governance_core_schema_registry_py["(生产态 / production) D-DATA-GOV Schema Registry——表结构注册与查询。<br/>文件: schema_registry.py"]
         src_zephyr_data_governance_infrastructure_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_models_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_services_init_py["(生产态 / production) __init__.py"]
     end
+    src_zephyr_data_governance_core_init_py -->|config_depends / config_depends| src_zephyr_data_governance_core_lineage_tracker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_data_governance_init_py,src_zephyr_data_governance_extensions_init_py,src_zephyr_data_governance_api_init_py,src_zephyr_data_governance_core_init_py,src_zephyr_data_governance_infrastructure_init_py,src_zephyr_data_governance_models_init_py,src_zephyr_data_governance_services_init_py production
+    class src_zephyr_data_governance_init_py,src_zephyr_data_governance_extensions_init_py,src_zephyr_data_governance_api_init_py,src_zephyr_data_governance_core_init_py,src_zephyr_data_governance_core_lineage_tracker_py,src_zephyr_data_governance_core_metadata_registry_py,src_zephyr_data_governance_core_schema_registry_py,src_zephyr_data_governance_infrastructure_init_py,src_zephyr_data_governance_models_init_py,src_zephyr_data_governance_services_init_py production
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 7 个，0 条域内依赖）。
+> 仅展示已上线运行的模块（共 10 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -93,15 +100,19 @@ graph TD
         src_zephyr_data_governance_extensions_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_api_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_core_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_data_governance_core_lineage_tracker_py["(生产态 / production) D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>文件: lineage_tracker.py"]
+        src_zephyr_data_governance_core_metadata_registry_py["(生产态 / production) D-DATA-GOV Metadata Registry——元数据管理。<br/>文件: metadata_registry.py"]
+        src_zephyr_data_governance_core_schema_registry_py["(生产态 / production) D-DATA-GOV Schema Registry——表结构注册与查询。<br/>文件: schema_registry.py"]
         src_zephyr_data_governance_infrastructure_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_models_init_py["(生产态 / production) __init__.py"]
         src_zephyr_data_governance_services_init_py["(生产态 / production) __init__.py"]
     end
+    src_zephyr_data_governance_core_init_py -->|config_depends / config_depends| src_zephyr_data_governance_core_lineage_tracker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_data_governance_init_py,src_zephyr_data_governance_extensions_init_py,src_zephyr_data_governance_api_init_py,src_zephyr_data_governance_core_init_py,src_zephyr_data_governance_infrastructure_init_py,src_zephyr_data_governance_models_init_py,src_zephyr_data_governance_services_init_py production
+    class src_zephyr_data_governance_init_py,src_zephyr_data_governance_extensions_init_py,src_zephyr_data_governance_api_init_py,src_zephyr_data_governance_core_init_py,src_zephyr_data_governance_core_lineage_tracker_py,src_zephyr_data_governance_core_metadata_registry_py,src_zephyr_data_governance_core_schema_registry_py,src_zephyr_data_governance_infrastructure_init_py,src_zephyr_data_governance_models_init_py,src_zephyr_data_governance_services_init_py production
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

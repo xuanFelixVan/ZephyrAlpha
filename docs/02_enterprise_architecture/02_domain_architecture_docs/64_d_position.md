@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_POSITION 仓位管理架构文档
 version: "1.0"
 status: active
-date: 2026-07-25
+date: 2026-07-30
 owner: auto-generator
 ttl: permanent
 ---
@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 1 | Production Modules | 1 |
@@ -104,9 +104,16 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 2 个外部域直接连接（出边 0 条 + 入边 2 条 = 2 条）。只显示直接连接的域，不展开具体节点。
 
-> （无跨域依赖 / No cross-domain dependencies）
+```mermaid
+graph LR
+    D_POSITION["D_POSITION<br/>仓位管理"]
+    D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_TRADING["D_TRADING<br/>交易运营"]
+    D_PF_CORE -->|1条 导入依赖 / import_depends| D_POSITION
+    D_TRADING -->|1条 导入依赖 / import_depends| D_POSITION
+```
 
 ## 说明 / Notes
 

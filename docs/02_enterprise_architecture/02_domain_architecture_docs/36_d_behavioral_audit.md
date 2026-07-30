@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_BEHAVIORAL_AUDIT 行为审计架构文档
 version: "1.0"
 status: active
-date: 2026-07-25
+date: 2026-07-30
 owner: auto-generator
 ttl: permanent
 ---
