@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: 数据采集流图 / Data Acquisition Flow
 version: "2.0"
 status: active
-date: 2026-07-30
+date: 2026-07-31
 owner: auto-generator
 ttl: permanent
 ---
@@ -19,7 +19,7 @@ ttl: permanent
 
 ## 一句话说清楚（自动生成 · 生成器: generate_data_acquisition_flow.py）
 
-系统每天从 **12 个数据源**采集 **145 个任务**，灌进 ClickHouse 的 **2 个库**：
+系统每天从 **12 个数据源**采集 **146 个任务**，灌进 ClickHouse 的 **2 个库**：
 
 - `c1_market` — 行情库（K线、指数、期货、资金、估值等）
 - `c3_fundamental` — 基本面库（财务报表、新闻、股东、分红等）
@@ -31,7 +31,7 @@ ttl: permanent
 | 数据源 | 任务数 | 主要采什么 |
 |--------|--------|-----------|
 | **miniqmt**（迅投QMT） | 60 | K线行情、财务报表、股东数据、期权可转债 |
-| **akshare**（AKShare） | 54 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
+| **akshare**（AKShare） | 55 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
 | **ifind**（同花顺iFind） | 8 | 资金流向、股权质押、行业分类 |
 | **tdx**（通达信） | 7 | 板块分类、板块K线、板块成分股 |
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
@@ -42,7 +42,7 @@ ttl: permanent
 | eastmoney_news | 1 | - |
 | **tushare**（Tushare） | 1 | 新闻快讯、证券新闻 |
 | backfill | 1 | - |
-| **合计** | **145** | |
+| **合计** | **146** | |
 
 ---
 
@@ -122,7 +122,7 @@ ttl: permanent
 
 ---
 
-### 2. akshare（AKShare）— 54 个任务
+### 2. akshare（AKShare）— 55 个任务
 
 **一句话**：开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。
 
@@ -135,6 +135,7 @@ ttl: permanent
 | block_trade_detail_incremental | c1_market.block_trade_detail | 盘后 17:00 | AKShare大宗交易每日统计增量 |
 | block_trade_incremental | c1_market.block_trade | 盘后 17:00 | 大宗交易增量 |
 | dragon_tiger_incremental | c1_market.dragon_tiger | 盘后 17:00 | 龙虎榜增量 |
+| dragon_tiger_seat_incremental | c1_market.dragon_tiger_seat | 盘后 17:00 | 龙虎榜席位明细增量 |
 | hk_connect_flow_full | c1_market.hk_connect_flow | 盘后 17:00 | AKShare沪深港通北向资金 |
 | hk_connect_flow_incremental | c1_market.hk_connect_flow | 盘后 17:00 | 沪深港通资金历史 |
 | restricted_shares_incremental | c3_fundamental.restricted_shares | 盘后 17:00 | AKShare限售股明细增量 |
@@ -177,10 +178,10 @@ ttl: permanent
 | news_baidu_incremental | c3_fundamental.news_data | event_driven | AKShare百度热搜新闻增量 |
 | news_cctv_incremental | c3_fundamental.news_data | event_driven | AKShare央视新闻联播增量 |
 | news_economic_baidu_incremental | c3_fundamental.news_data | event_driven | AKShare百度经济日历增量 |
-| news_stock_em_incremental | c3_fundamental.news_data | event_driven | AKShare个股新闻增量 |
+| news_stock_em_incremental | c3_fundamental.news_data | news_slow | AKShare个股新闻增量 |
 | news_stock_incremental | c3_fundamental.news_data | event_driven | AKShare股票新闻增量 |
 | repurchase_full_refresh | c3_fundamental.repurchase | weekend_calibration | 回购数据全量刷新 |
-| research_report_incremental | c3_fundamental.news_data | event_driven | AKShare东方财富个股研报增量 |
+| research_report_incremental | c3_fundamental.news_data | news_slow | AKShare东方财富个股研报增量 |
 | stock_indicator_full_refresh | c1_market.stock_indicator | weekend_calibration | 技术指标全量刷新 |
 | top10_circulating_shareholders_incremental | c3_fundamental.top10_circulating_shareholders | nightly_financial | 十大流通股东增量 |
 | top10_shareholders_incremental | c3_fundamental.top10_shareholders | nightly_financial | 十大股东增量 |
@@ -344,18 +345,19 @@ ttl: permanent
 | 调度时段 | 时间 | 任务数 | 说明 |
 |---------|------|--------|------|
 | 盘后 16:30 | 16:30 周一-五 | 18 | 日K线、周月K线、分钟K线、估值 |
-| 盘后 17:00 | 17:00 周一-五 | 18 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
+| 盘后 17:00 | 17:00 周一-五 | 19 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
 | 盘后 18:00 | 18:00 周一-五 | 14 | 新闻、股东、分红、质押、解禁、分析师预期 |
 | 月初 09:00 | 月初 09:00 | 17 | 交易日历、股票列表、行业分类、全量刷新 |
 | nightly_financial | nightly_financial | 8 | - |
 | intraday_realtime | intraday_realtime | 13 | - |
-| event_driven | event_driven | 13 | - |
+| event_driven | event_driven | 11 | - |
 | intraday_minute | intraday_minute | 15 | - |
 | weekend_calibration | weekend_calibration | 21 | - |
+| news_slow | news_slow | 2 | - |
 | auction_highfreq | auction_highfreq | 2 | - |
 | weekend_backfill | weekend_backfill | 1 | - |
 | intraday_sector | intraday_sector | 5 | - |
-| **合计** | | **145** | |
+| **合计** | | **146** | |
 
 ---
 
@@ -365,7 +367,7 @@ ttl: permanent
 flowchart LR
     subgraph 外部数据源
         S6["miniqmt<br/>迅投QMT<br/>60任务"]
-        S0["akshare<br/>AKShare<br/>54任务"]
+        S0["akshare<br/>AKShare<br/>55任务"]
         S5["ifind<br/>同花顺iFind<br/>8任务"]
         S8["tdx<br/>通达信<br/>7任务"]
         S9["tickflow<br/>TickFlow<br/>4任务"]

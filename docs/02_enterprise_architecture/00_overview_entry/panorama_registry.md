@@ -30,11 +30,11 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5806 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5806 个 |
-| 依赖图 depgraph | `edges` | 7978 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7978 条 |
-| 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 756 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
-| 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
+| 依赖图 depgraph | `nodes` | 5812 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5812 个 |
+| 依赖图 depgraph | `edges` | 7999 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7999 条 |
+| 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 819 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |

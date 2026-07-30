@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-30'
-total_scripts: 603
+generated_at: '2026-07-31'
+total_scripts: 608
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1672,7 +1672,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/dm200916_write_direct.py
   path: governance/d5_architecture/dm200916_write_direct.py
-  description: 治本改造（2026-06-29）：
+  description: 治本改造（2026-07-30，#ARCH-INDEX-005）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2216,7 +2216,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_b_track_packages.py
   path: governance/d5_architecture/validators/validate_b_track_packages.py
-  description: 对标：GOV-DOC-002 §四（B 轨新包创建门槛）
+  description: 治本重构（2026-07-30，#ARCH-INDEX-005）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4182,6 +4182,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/_shared/terminology_loader.py
+  path: governance/_shared/terminology_loader.py
+  description: 对标 SCRIPT-QUALITY-001 D-D-05（禁止跨脚本复制粘贴逻辑）+ SSoT 真源分类铁律（TRAE-062）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/_shared/thresholds.py
   path: governance/_shared/thresholds.py
   description: thresholds.py — 阈值集中配置加载器
@@ -4362,6 +4370,38 @@ scripts:
   path: pre_commit/verify_dedup.py
   description: 在 pre_commit hook 中调用：
   domain: pre_commit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_qmt_broker.py
+  path: tests/smoke_test_qmt_broker.py
+  description: 治本核心（#ARCH-XTQUANT-API-COMPAT-001）：用运行时实证堵住 100% AI 开发的契约漂移。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_tick_backtest.py
+  path: tests/smoke_test_tick_backtest.py
+  description: 验证路径 A 集成链路：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_tick_data.py
+  path: tests/smoke_test_tick_data.py
+  description: 治本核心（#ARCH-EDE-TICK-FUEL-001）：用运行时实证堵住 EDE 燃料层的契约漂移。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_trading_session.py
+  path: tests/smoke_test_trading_session.py
+  description: 验证 TradingSession 编排器与 MiniQmtBroker 的完整集成：
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60

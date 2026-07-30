@@ -32,7 +32,7 @@ ttl: permanent
 | D_DATA | 数据接入层 | 162 | 150 | +12 |
 | D_GOVERNANCE | 生命周期管理 | 220 | 150 | +70 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 150 | +19 |
-| D_GOV_SCRIPTS | 脚本治理 | 380 | 150 | +230 |
+| D_GOV_SCRIPTS | 脚本治理 | 381 | 150 | +231 |
 | D_INFRA_RUNTIME | 运行时集成 | 160 | 150 | +10 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
@@ -93,7 +93,7 @@ ttl: permanent
 | D_DATA_SEC | 数据安全与契约 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DIGITAL_TWIN | 数字孪生 | L2_domain | 7 | 150 | 4.7% | 正常 |
 | D_EXEC_SIM | 执行仿真 | L2_domain | 7 | 150 | 4.7% | 正常 |
-| D_EX_CORE | 执行核心 | L2_domain | 7 | 150 | 4.7% | 正常 |
+| D_EX_CORE | 执行核心 | L2_domain | 8 | 150 | 5.3% | 正常 |
 | D_EX_SOR | 执行路由 | L2_domain | 7 | 150 | 4.7% | 正常 |
 | D_FACTOR | 因子 | L2_domain | 37 | 150 | 24.7% | 正常 |
 | D_FBL_DETECTORS | 反馈检测器 | L1_foundation | 65 | 150 | 43.3% | 正常 |
@@ -111,7 +111,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 91 | 150 | 60.7% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_GOV_RULE | 规则治理 | L2_domain | 35 | 150 | 23.3% | 正常 |
-| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 380 | 150 | 253.3% | 超容 |
+| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 381 | 150 | 254.0% | 超容 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | L0_infrastructure | 25 | 150 | 16.7% | 正常 |
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
@@ -129,7 +129,7 @@ ttl: permanent
 | D_OPS | 反馈循环 | L1_foundation | 11 | 150 | 7.3% | 正常 |
 | D_ORCHESTRATOR | 代理编排器 | L1_foundation | 70 | 150 | 46.7% | 正常 |
 | D_PF_ALLOC | 组合分配 | L2_domain | 2 | 150 | 1.3% | 正常 |
-| D_PF_CORE | 组合核心 | L2_domain | 1 | 150 | 0.7% | 正常 |
+| D_PF_CORE | 组合核心 | L2_domain | 5 | 150 | 3.3% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_REPORTING | 报告 | L1_foundation | 3 | 150 | 2.0% | 正常 |
 | D_RISK | 风控 | L2_domain | 11 | 150 | 7.3% | 正常 |

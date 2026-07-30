@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-30T21:17:12
+> 生成时间: 2026-07-30T22:18:45
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -19,11 +19,11 @@
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 658 |
+| Layer（层） | 554 |
 | Node（节点） | 213 |
 | Edge（边） | 211 |
-| 运营态 Layer（design_maturity=production） | 595 |
-| 设计态 Layer（design_maturity=design） | 63 |
+| 运营态 Layer（design_maturity=production） | 512 |
+| 设计态 Layer（design_maturity=design） | 42 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 213 |
 
@@ -37,7 +37,7 @@
 | 02 | data_driven | 数据驱动轨 | 2 | 0 | 0 | [📄 02_decision_track_data_driven.md](02_decision_track_data_driven.md) |
 | 03 | human_override | 人工指令轨 | 3 | 0 | 0 | [📄 03_decision_track_human_override.md](03_decision_track_human_override.md) |
 | 04 | emergency | 应急保命轨 | 4 | 0 | 0 | [📄 04_decision_track_emergency.md](04_decision_track_emergency.md) |
-| 99 | placeholder | 占位轨 | 99 | 648 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
+| 99 | placeholder | 占位轨 | 99 | 544 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
 
 ## L2A 信号层 · 功能域导航（7 域）
 
