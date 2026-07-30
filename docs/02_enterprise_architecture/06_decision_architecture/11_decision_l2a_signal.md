@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain signal（信号）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → signal
@@ -19,41 +19,42 @@
 > 共 7 层，12 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        N177("[design]signal: Synthesizer 信号合成+权重分配<br/>path: decision/signal/sg_01")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        N177("signal: Synthesizer 信号合成+权重分配")
         LL2A --- N177
-        N178("[design]signal: Signal Priority Router 信号优先级路由<br/>path: decision/signal/sg_02")
+        N178("signal: Signal Priority Router 信号优先级路由")
         LL2A --- N178
-        N179("[design]signal: LLM Strategy Agent LLM策略Agent<br/>path: decision/signal/sg_03")
+        N179("signal: LLM Strategy Agent LLM策略Agent")
         LL2A --- N179
-        N180("[design]signal: Signal Tail Risk Protector 信号尾部风险保护<br/>path: decision/signal/sg_04")
+        N180("signal: Signal Tail Risk Protector 信号尾部风险保护")
         LL2A --- N180
-        N181("[design]signal: A-Share Plan Conformity Evaluator A股计划吻合度评估<br/>path: decision/signal/sg_05")
+        N181("signal: A-Share Plan Conformity Evaluator A股计划吻合度评估")
         LL2A --- N181
-        N182("[design]signal: A-Share Emergency Opportunity Evaluator A股应急机会评估<br/>path: decision/signal/sg_06")
+        N182("signal: A-Share Emergency Opportunity Evaluator A股应急机会评估")
         LL2A --- N182
-        N183("[design]signal: A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁<br/>path: decision/signal/sg_07")
+        N183("signal: A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁")
         LL2A --- N183
-        N184("[design]signal: Regime Special Override Priority Manager Regime特殊覆盖优先级<br/>path: decision/signal/sg_08")
+        N184("signal: Regime Special Override Priority Manager Regime特殊覆盖优先级")
         LL2A --- N184
-        N185("[design]signal: Risk-Signal Interaction Sequencer 风控-信号交互时序<br/>path: decision/signal/sg_09")
+        N185("signal: Risk-Signal Interaction Sequencer 风控-信号交互时序")
         LL2A --- N185
-        N186("[design]signal: 36环节决策框架实现器 36-Step Decision Framework<br/>path: decision/signal/sg_10")
+        N186("signal: 36环节决策框架实现器 36-Step Decision Framework")
         LL2A --- N186
-        N187("[design]signal: 策略替换与淘汰决策器 Strategy Replacement Decision<br/>path: decision/signal/sg_11")
+        N187("signal: 策略替换与淘汰决策器 Strategy Replacement Decision")
         LL2A --- N187
-        N188("[design]signal: 信号冲突解决 Signal Conflict Resolution<br/>path: decision/signal/sg_12")
+        N188("signal: 信号冲突解决 Signal Conflict Resolution")
         LL2A --- N188
-        N189("[design]signal: 信号融合模块 Signal Fusion Module<br/>path: decision/signal/sg_13")
+        N189("signal: 信号融合模块 Signal Fusion Module")
         LL2A --- N189
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -127,11 +128,14 @@ flowchart TD
 > 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["signal（信号）"]
-    EXT_simulation["simulation（仿真）"]
-    SELF -->|出 1| EXT_simulation
-    EXT_sell["sell（卖出）"]
-    EXT_sell -->|入 1| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["signal（信号）"]
+        EXT_simulation["simulation（仿真）"]
+        SELF -->|出 1| EXT_simulation
+        EXT_sell["sell（卖出）"]
+        EXT_sell -->|入 1| SELF
+    end
 ```
 

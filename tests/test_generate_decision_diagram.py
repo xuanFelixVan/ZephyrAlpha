@@ -346,7 +346,7 @@ class TestGenOverviewMmd:
     def test_starts_with_flowchart_td(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """mmd 以 flowchart TD 开头。"""
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert mmd.startswith("flowchart TD")
+        assert "flowchart TD" in mmd
 
     def test_contains_subgraphs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """mmd 包含有 layer 的 track 的 subgraph（emergency 无 layer → 不出现）。"""
@@ -375,14 +375,14 @@ class TestGenOverviewMmd:
         assert t_count == 0
         assert l_count == 0
         assert e_count == 0
-        assert mmd.startswith("flowchart TD")
+        assert "flowchart TD" in mmd
 
-    def test_maturity_tag_in_labels(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """全景图节点标签包含 [design]/[production] 标注。"""
+    def test_maturity_in_labels(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """全景图节点标签包含 maturity/build 文字标注（精简后无方括号）。"""
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
         # sample_layers 中 L0/L1/L4=production, L2A=design
-        assert "[production]" in mmd
-        assert "[design]" in mmd
+        assert "production" in mmd
+        assert "design" in mmd
 
     def test_production_only_filters_design(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """production_only=True 过滤掉 design_maturity=design 的 layer/node。"""
@@ -413,7 +413,7 @@ class TestGenOverviewMmd:
             sample_tracks, design_only_layers, [], [], production_only=True
         )
         assert l_count == 0
-        assert mmd.startswith("flowchart TD")
+        assert "flowchart TD" in mmd
 
     def test_design_only_filters_production(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """design_only=True 过滤掉 design_maturity=production 的 layer/node。"""
@@ -444,7 +444,7 @@ class TestGenOverviewMmd:
             sample_tracks, prod_only_layers, [], [], design_only=True
         )
         assert l_count == 0
-        assert mmd.startswith("flowchart TD")
+        assert "flowchart TD" in mmd
 
 
 # ---------- _maturity_tag 测试 ----------
@@ -482,7 +482,7 @@ class TestGenLayersMmd:
     def test_starts_with_flowchart_lr(self, sample_tracks, sample_layers):
         """mmd 以 flowchart LR 开头。"""
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert mmd.startswith("flowchart LR")
+        assert "flowchart LR" in mmd
 
     def test_contains_layer_cards(self, sample_tracks, sample_layers):
         """mmd 包含每个 layer 的卡片。"""
@@ -506,7 +506,7 @@ class TestGenLayersMmd:
     def test_empty_input(self):
         """空输入返回空图。"""
         mmd = _gen_layers_mmd([], [])
-        assert mmd.startswith("flowchart LR")
+        assert "flowchart LR" in mmd
 
 
 # ---------- _gen_invariants_mmd 测试 ----------
@@ -522,7 +522,7 @@ class TestGenInvariantsMmd:
     def test_starts_with_flowchart_td(self, sample_invariants):
         """mmd 以 flowchart TD 开头。"""
         mmd = _gen_invariants_mmd(sample_invariants)
-        assert mmd.startswith("flowchart TD")
+        assert "flowchart TD" in mmd
 
     def test_contains_six_node_types(self, sample_invariants):
         """mmd 包含 6 个节点类型（signal/portfolio_target/risk_check/order/execution/feedback）。"""
@@ -634,26 +634,27 @@ class TestNewFields:
         result = _truncate("第一行\n第二行", max_len=50)
         assert "\n" not in result
 
-    def test_overview_contains_blueprint_name(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """全景图标签包含蓝图名（module_id 有值时）。"""
-        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        # L0 有 module_id=MOD-DATA-001, blueprint_name=数据接入蓝图
-        assert "蓝图: 数据接入蓝图" in mmd
-        # L4 有 module_id=MOD-RISK-001, blueprint_name=风控蓝图
-        assert "蓝图: 风控蓝图" in mmd
+    def test_track_file_contains_blueprint_name(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Track 文件 Layer 清单表含蓝图名（精简后字段从 mermaid label 移到表格）。"""
+        _di = _build_domain_index(sample_tracks, sample_layers, sample_nodes)
+        md = _gen_track_file_md(sample_tracks[0], sample_tracks, sample_layers, sample_nodes, sample_edges, _di)
+        # L0 blueprint_name=数据接入蓝图, L4=风控蓝图（Layer 清单表"蓝图名(派生)"列）
+        assert "数据接入蓝图" in md
+        assert "风控蓝图" in md
 
-    def test_overview_contains_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """全景图标签包含代码引用（source_code_ref 有值时）。"""
-        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "代码: src/zephyr/data/ingestion.py" in mmd
-        assert "代码: src/zephyr/risk/checker.py" in mmd
+    def test_track_file_contains_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Track 文件 Layer 清单表含代码引用。"""
+        _di = _build_domain_index(sample_tracks, sample_layers, sample_nodes)
+        md = _gen_track_file_md(sample_tracks[0], sample_tracks, sample_layers, sample_nodes, sample_edges, _di)
+        assert "src/zephyr/data/ingestion.py" in md
+        assert "src/zephyr/risk/checker.py" in md
 
-    def test_overview_contains_description(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """全景图标签包含功能简述（desc 有值时，截断到~20字）。"""
-        mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        # 使用 _truncate 计算期望值，避免截断导致的断言失败
-        assert f"功能: {_truncate('miniQMT+iFind数据接入与预处理')}" in mmd
-        assert f"功能: {_truncate('Pre/Post-Trade风控校验')}" in mmd
+    def test_track_file_contains_description(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """Track 文件 Layer 清单表含功能简述。"""
+        _di = _build_domain_index(sample_tracks, sample_layers, sample_nodes)
+        md = _gen_track_file_md(sample_tracks[0], sample_tracks, sample_layers, sample_nodes, sample_edges, _di)
+        assert "miniQMT+iFind数据接入与预处理" in md
+        assert "Pre/Post-Trade风控校验" in md
 
     def test_overview_no_blueprint_when_empty(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """module_id 为空时不显示蓝图行。"""
@@ -664,22 +665,6 @@ class TestNewFields:
         assert l2a_section
         for line in l2a_section:
             assert "蓝图:" not in line
-
-    def test_layers_mmd_contains_blueprint_name(self, sample_tracks, sample_layers):
-        """层级详情图标签包含蓝图名。"""
-        mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "蓝图: 数据接入蓝图" in mmd
-        assert "蓝图: 因子计算蓝图" in mmd
-
-    def test_layers_mmd_contains_code_ref(self, sample_tracks, sample_layers):
-        """层级详情图标签包含代码引用。"""
-        mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "代码: src/zephyr/factor/calc.py" in mmd
-
-    def test_layers_mmd_contains_description(self, sample_tracks, sample_layers):
-        """层级详情图标签包含功能简述。"""
-        mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "功能: 因子工厂全生命周期管理" in mmd
 
     def test_resolve_blueprint_names_empty_input(self):
         """_resolve_blueprint_names 无 module_id 时返回空 dict。"""

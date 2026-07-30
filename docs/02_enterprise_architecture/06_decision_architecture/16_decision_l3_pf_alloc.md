@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain pf_alloc（组合分配）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → pf_alloc
@@ -19,27 +19,28 @@
 > 共 7 层，5 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        N32("[design]portfolio_target: 策略分配 Strategy Allocation<br/>path: decision/pf_alloc/pa_01")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        N32("portfolio_target: 策略分配 Strategy Allocation")
         LL3 --- N32
-        N33("[design]portfolio_target: 风险平价 Risk Parity<br/>path: decision/pf_alloc/pa_02")
+        N33("portfolio_target: 风险平价 Risk Parity")
         LL3 --- N33
-        N34("[design]portfolio_target: 动态权重 Dynamic Weighting<br/>path: decision/pf_alloc/pa_03")
+        N34("portfolio_target: 动态权重 Dynamic Weighting")
         LL3 --- N34
-        N35("[design]portfolio_target: 策略权重再平衡 Strategy Weight Rebalance<br/>path: decision/pf_alloc/pa_04")
+        N35("portfolio_target: 策略权重再平衡 Strategy Weight Rebalance")
         LL3 --- N35
-        N36("[design]portfolio_target: 多策略共识 Multi-Strategy Consensus<br/>path: decision/pf_alloc/pa_05")
+        N36("portfolio_target: 多策略共识 Multi-Strategy Consensus")
         LL3 --- N36
-        N37("[design]portfolio_target: 元策略选择 Meta-Strategy Selection<br/>path: decision/pf_alloc/pa_06")
+        N37("portfolio_target: 元策略选择 Meta-Strategy Selection")
         LL3 --- N37
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -92,11 +93,14 @@ flowchart TD
 > 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["pf_alloc（组合分配）"]
-    EXT_pf_core["pf_core（组合核心）"]
-    SELF -->|出 1| EXT_pf_core
-    EXT_ex_sor["ex_sor（执行排序）"]
-    EXT_ex_sor -->|入 1| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["pf_alloc（组合分配）"]
+        EXT_pf_core["pf_core（组合核心）"]
+        SELF -->|出 1| EXT_pf_core
+        EXT_ex_sor["ex_sor（执行排序）"]
+        EXT_ex_sor -->|入 1| SELF
+    end
 ```
 

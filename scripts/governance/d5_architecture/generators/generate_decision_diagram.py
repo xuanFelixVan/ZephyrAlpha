@@ -90,11 +90,19 @@ _STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
 # mermaid 节点数超限（>300）渲染失败。
 _ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 
-# --- Mermaid 样式策略 ---
-# 直接照搬 application_flows.md 的内嵌 mermaid 风格：纯默认主题，零 classDef，
-# 零 :::类名 引用。深色/浅色底色由渲染器默认主题决定，避免自定义 fill/color 配色
-# 在不同主题下出现"底色变白、文字不可读"等问题。
-# _build_status_color() 函数保留供测试与未来恢复着色使用，但生成逻辑不再调用。
+# --- Mermaid 主题策略（用户 VS Code 1.129.1 实测确认 2026-07-30）---
+# 用户在 VS Code Markdown Preview 中实测确认：
+#   1. %%{init}%% 主题变量生效——flowchart 节点填充为 #eaeaea 灰色 ✓
+#   2. subgraph 容器改善高度——用户反馈"方案4 subgraph 的高度就很舒服" ✓
+# clusterBkg/clusterBorder 控制 subgraph 背景色，使 subgraph 容器也有灰色背景，
+# 与 application_flows.md 的 sequenceDiagram 灰色生命线带视觉一致。
+# _build_status_color() 保留供测试使用；生成逻辑用文字标注 build_status。
+_MERMAID_INIT = (
+    "%%{init: {'theme': 'base', 'themeVariables': "
+    "{'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
+    "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
+    "'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%"
+)
 
 # 功能域英文→中文映射（双语标题/节点标签用）
 _DOMAIN_NAME_ZH: dict[str, str] = {
@@ -316,7 +324,7 @@ def _gen_overview_mmd(
         track_id=track_id, path_prefix=path_prefix,
     )
 
-    lines = ["flowchart TD"]
+    lines = [_MERMAID_INIT, "flowchart TD"]
 
     # 按 track 分 subgraph
     for track in tracks:
@@ -327,28 +335,15 @@ def _gen_overview_mmd(
         for layer in track_layers:
             lid = layer["id"]
             safe_lid = lid.replace("-", "_")
-            mtag = _maturity_tag(layer.get("maturity"))
-            label = f'{mtag}{layer["id"]}: {layer["name"]}' if mtag else f'{layer["id"]}: {layer["name"]}'
-            is_design = layer.get("maturity") == "design"
-            mid = layer.get("module_id")
-            if mid and not is_design:
-                bp_name = layer.get("blueprint_name") or mid
-                label += f'<br/>蓝图: {bp_name}'
-            scr = layer.get("source_code_ref")
-            if scr and not is_design:
-                label += f'<br/>代码: {_truncate(scr, 30)}'
-            desc = layer.get("desc")
-            if desc:
-                label += f'<br/>功能: {_truncate(desc)}'
-            if layer["freq"]:
-                label += f'<br/>freq: {layer["freq"]}'
-            label += f'<br/>build: {layer["build"]}'
+            # 精简 label：层 ID+名称+maturity/build（2 行）。蓝图/代码/功能/频率在表格。
+            _mat = layer.get("maturity") or "-"
+            label = f'{layer["id"]}: {layer["name"]}<br/>{_mat}/{layer["build"]}'
             lines.append(f'        L{safe_lid}["{label}"]')
             if not skeleton_only:
                 layer_nodes = [n for n in nodes if n["layer_id"] == lid]
                 for n in layer_nodes:
-                    nmtag = _maturity_tag(n.get("maturity"))
-                    nlabel = f'{nmtag}{n["type"]}: {n["name"]}<br/>path: {n["path"]}' if nmtag else f'{n["type"]}: {n["name"]}<br/>path: {n["path"]}'
+                    # 精简：仅 type+name（1 行），path 在 Node 清单表
+                    nlabel = f'{n["type"]}: {n["name"]}'
                     lines.append(f'        N{n["id"]}("{nlabel}")')
                     lines.append(f'        L{safe_lid} --- N{n["id"]}')
         lines.append("    end")
@@ -374,41 +369,23 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
     只渲染 L0-L6 架构层（约 10 个节点），过滤 decision_layers 表中的模块级/
     基础设施级条目（MOD-*/CFG-*/INFRA-*/SH-*/SYS-*）——这些详情已在 01-19
     per-track/per-domain 文件覆盖。全量渲染（~660 节点）会导致 mermaid 渲染失败。
+
+    用 subgraph 容器包裹所有层节点——用户实测确认 subgraph 容器使图高度更舒适
+    （方案4反馈"高度就很舒服"），且 clusterBkg 主题变量使 subgraph 背景为灰色。
     """
     layers = [l for l in layers if _ARCH_LAYER_RE.match(l["id"])]
-    lines = ["flowchart LR"]
+    lines = [_MERMAID_INIT, "flowchart LR"]
 
+    # subgraph 容器（改善高度 + 灰色背景）
+    lines.append('    subgraph layers_sg["决策层级（Decision Layers）"]')
     for layer in layers:
         lid = layer["id"].replace("-", "_")
-        mtag = _maturity_tag(layer.get("maturity"))
-        # 去重：避免 id/name/name_en 相同时重复显示（CFG/INFRA/MOD 聚合节点常见）
-        _lid_raw = layer["id"]
-        _lname = layer["name"]
-        _lname_en = layer["name_en"]
-        _name_parts = [_lid_raw]
-        if _lname and _lname != _lid_raw:
-            _name_parts.append(_lname)
-        label = " ".join(_name_parts)
-        if _lname_en and _lname_en != _lid_raw and _lname_en != _lname:
-            label += f'<br/>{_lname_en}'
-        if mtag:
-            label = f'{mtag} {label}'
-        is_design = layer.get("maturity") == "design"
-        mid = layer.get("module_id")
-        if mid and not is_design:
-            bp_name = layer.get("blueprint_name") or mid
-            label += f'<br/>蓝图: {bp_name}'
-        scr = layer.get("source_code_ref")
-        if scr and not is_design:
-            label += f'<br/>代码: {_truncate(scr, 30)}'
-        desc = layer.get("desc")
-        if desc:
-            label += f'<br/>功能: {_truncate(desc)}'
-        if layer["freq"]:
-            label += f'<br/>频率: {layer["freq"]}'
-        label += f'<br/>成熟度: {layer["maturity"]}'
-        label += f'<br/>build: {layer["build"]}'
-        lines.append(f'    L{lid}["{label}"]')
+        # 精简 label：层 ID+名称+maturity/build（2 行）。蓝图/代码/功能/频率详情在
+        # 同文件 Layer 清单表（_layer_table），图只承载视觉概览，避免节点过高。
+        _mat = layer.get("maturity") or "-"
+        label = f'{layer["id"]} {layer["name"]}<br/>{_mat}/{layer["build"]}'
+        lines.append(f'        L{lid}["{label}"]')
+    lines.append("    end")
 
     layer_ids = [l["id"] for l in layers]
     for i in range(len(layer_ids) - 1):
@@ -429,9 +406,14 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
 
 
 def _gen_invariants_mmd(invariants: list[dict]) -> str:
-    """生成不变量图：6 节点类型 + 5 不变量标注 + 合法/非法连接。"""
-    lines = ["flowchart TD"]
+    """生成不变量图：6 节点类型 + 5 不变量标注 + 合法/非法连接。
 
+    用两个 subgraph 容器分别包裹节点类型和不变量——改善高度 + 灰色背景
+    （clusterBkg 主题变量），且概念分组更清晰。
+    """
+    lines = [_MERMAID_INIT, "flowchart TD"]
+
+    # subgraph 1: 节点类型
     node_types = [
         ("signal", "信号节点<br/>Signal"),
         ("portfolio_target", "仓位目标节点<br/>Portfolio Target"),
@@ -440,10 +422,13 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
         ("execution", "执行节点<br/>Execution"),
         ("feedback", "反馈节点<br/>Feedback"),
     ]
+    lines.append('    subgraph nt_sg["节点类型（Node Types）"]')
     for nt, label in node_types:
         safe = nt.replace("-", "_")
-        lines.append(f'    NT_{safe}["{label}"]')
+        lines.append(f'        NT_{safe}["{label}"]')
+    lines.append("    end")
 
+    # 节点类型间的边（subgraph 外，保持 edge 序号不变以兼容 linkStyle 6）
     lines.append("    NT_signal -->|portfolio_target| NT_portfolio_target")
     lines.append("    NT_portfolio_target -->|risk_check| NT_risk_check")
     lines.append("    NT_risk_check -->|approving| NT_order")
@@ -454,12 +439,16 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     lines.append("    NT_signal -.->|禁止| NT_order")
     lines.append("    linkStyle 6 stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5")
 
+    # subgraph 2: 不变量
+    lines.append('    subgraph inv_sg["承重墙不变量（Invariants）"]')
     for inv in invariants:
         iid = inv["id"]
         safe_iid = iid.replace("-", "_")
         label = f'{iid}<br/>{inv["name"]}<br/>{inv["name_en"]}'
-        lines.append(f'    INV_{safe_iid}(["{label}"])')
+        lines.append(f'        INV_{safe_iid}(["{label}"])')
+    lines.append("    end")
 
+    # 不变量与节点类型的关联边（subgraph 外）
     lines.append("    INV_DEC_INV_001 -.- NT_order")
     lines.append("    INV_DEC_INV_002 -.- NT_signal")
     lines.append("    INV_DEC_INV_003 -.- NT_feedback")
@@ -584,28 +573,31 @@ def _gen_cross_domain_mermaid(
     """跨域依赖图：graph LR，本域居中，外部域为外围节点，边标计数。
 
     参照 generate_domain_doc.py L544-598 改写（决策边只有单个 type 字段）。
+    subgraph 容器提供灰色背景 + 改善高度（clusterBkg 主题变量）。
     """
-    lines = ["flowchart LR"]
+    lines = [_MERMAID_INIT, "flowchart LR"]
     safe_self = self_domain.replace("-", "_")
     _self_zh = _DOMAIN_NAME_ZH.get(self_domain, self_domain)
-    lines.append(f'    SELF["{self_domain}（{_self_zh}）"]')
+    lines.append('    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]')
+    lines.append(f'        SELF["{self_domain}（{_self_zh}）"]')
     seen: set[str] = set()
     for d in outgoing_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
             _other_zh = _DOMAIN_NAME_ZH.get(other, other)
-            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]')
+            lines.append(f'        EXT_{safe}["{other}（{_other_zh}）"]')
             seen.add(other)
-        lines.append(f'    SELF -->|出 {d["count"]}| EXT_{safe}')
+        lines.append(f'        SELF -->|出 {d["count"]}| EXT_{safe}')
     for d in incoming_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
             _other_zh = _DOMAIN_NAME_ZH.get(other, other)
-            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]')
+            lines.append(f'        EXT_{safe}["{other}（{_other_zh}）"]')
             seen.add(other)
-        lines.append(f'    EXT_{safe} -->|入 {d["count"]}| SELF')
+        lines.append(f'        EXT_{safe} -->|入 {d["count"]}| SELF')
+    lines.append("    end")
     return "\n".join(lines) + "\n"
 
 

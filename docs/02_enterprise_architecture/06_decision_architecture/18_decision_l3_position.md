@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain position（持仓）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → position
@@ -19,53 +19,54 @@
 > 共 7 层，18 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        N38("[design]portfolio_target: 仓位唯一裁决中心 C-047 Position Sole Arbiter<br/>path: decision/position/pos_01")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        N38("portfolio_target: 仓位唯一裁决中心 C-047 Position Sole Arbiter")
         LL3 --- N38
-        N39("[design]portfolio_target: 持仓状态机 Position State Machine<br/>path: decision/position/pos_02")
+        N39("portfolio_target: 持仓状态机 Position State Machine")
         LL3 --- N39
-        N40("[design]portfolio_target: 仓位漂移监控 Position Drift Monitor<br/>path: decision/position/pos_03")
+        N40("portfolio_target: 仓位漂移监控 Position Drift Monitor")
         LL3 --- N40
-        N41("[design]portfolio_target: Kelly仓位决策 Kelly Position Decision<br/>path: decision/position/pos_04")
+        N41("portfolio_target: Kelly仓位决策 Kelly Position Decision")
         LL3 --- N41
-        N42("[design]portfolio_target: 风险配额 Risk Quota<br/>path: decision/position/pos_05")
+        N42("portfolio_target: 风险配额 Risk Quota")
         LL3 --- N42
-        N43("[design]portfolio_target: 11种市场状态→仓位上限 Market State Position Cap<br/>path: decision/position/pos_06")
+        N43("portfolio_target: 11种市场状态→仓位上限 Market State Position Cap")
         LL3 --- N43
-        N44("[design]portfolio_target: 组合层决策 Portfolio Layer Decision<br/>path: decision/position/pos_07")
+        N44("portfolio_target: 组合层决策 Portfolio Layer Decision")
         LL3 --- N44
-        N45("[design]portfolio_target: 策略层决策 Strategy Layer Decision<br/>path: decision/position/pos_08")
+        N45("portfolio_target: 策略层决策 Strategy Layer Decision")
         LL3 --- N45
-        N46("[design]portfolio_target: 标层决策 Instrument Layer Decision<br/>path: decision/position/pos_09")
+        N46("portfolio_target: 标层决策 Instrument Layer Decision")
         LL3 --- N46
-        N47("[design]portfolio_target: 动态层决策 Dynamic Layer Decision<br/>path: decision/position/pos_10")
+        N47("portfolio_target: 动态层决策 Dynamic Layer Decision")
         LL3 --- N47
-        N48("[design]portfolio_target: 再平衡触发 Rebalance Trigger<br/>path: decision/position/pos_11")
+        N48("portfolio_target: 再平衡触发 Rebalance Trigger")
         LL3 --- N48
-        N49("[design]portfolio_target: 仓位上限硬约束 Position Cap Hard Constraint<br/>path: decision/position/pos_12")
+        N49("portfolio_target: 仓位上限硬约束 Position Cap Hard Constraint")
         LL3 --- N49
-        N50("[design]portfolio_target: REDUCING→EXITING状态转换 REDUCING to EXITING<br/>path: decision/position/pos_13")
+        N50("portfolio_target: REDUCING→EXITING状态转换 REDUCING to EXITING")
         LL3 --- N50
-        N51("[design]portfolio_target: 风险预算→Kelly决策 Risk Budget to Kelly<br/>path: decision/position/pos_14")
+        N51("portfolio_target: 风险预算→Kelly决策 Risk Budget to Kelly")
         LL3 --- N51
-        N52("[design]portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap<br/>path: decision/position/pos_15")
+        N52("portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap")
         LL3 --- N52
-        N53("[design]portfolio_target: 仓位降级 Position Degradation<br/>path: decision/position/pos_16")
+        N53("portfolio_target: 仓位降级 Position Degradation")
         LL3 --- N53
-        N54("[design]portfolio_target: 持仓状态→卖出阈值 Position State to Sell Threshold<br/>path: decision/position/pos_17")
+        N54("portfolio_target: 持仓状态→卖出阈值 Position State to Sell Threshold")
         LL3 --- N54
-        N55("[design]portfolio_target: 仓位四轨决策 Position Four-Track Decision<br/>path: decision/position/pos_18")
+        N55("portfolio_target: 仓位四轨决策 Position Four-Track Decision")
         LL3 --- N55
-        N56("[design]portfolio_target: 仓位裁决→执行 Position Arbitration to Execution<br/>path: decision/position/pos_19")
+        N56("portfolio_target: 仓位裁决→执行 Position Arbitration to Execution")
         LL3 --- N56
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -157,11 +158,14 @@ flowchart TD
 > 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["position（持仓）"]
-    EXT_trading["trading（交易）"]
-    SELF -->|出 1| EXT_trading
-    EXT_pf_core["pf_core（组合核心）"]
-    EXT_pf_core -->|入 1| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["position（持仓）"]
+        EXT_trading["trading（交易）"]
+        SELF -->|出 1| EXT_trading
+        EXT_pf_core["pf_core（组合核心）"]
+        EXT_pf_core -->|入 1| SELF
+    end
 ```
 

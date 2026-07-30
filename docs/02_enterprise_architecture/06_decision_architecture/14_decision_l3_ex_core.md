@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
@@ -19,33 +19,34 @@
 > 共 7 层，8 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        N59("[design]order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed<br/>path: decision/ex_core/ex_03")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        N59("order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed")
         LL3 --- N59
-        N60("[design]order: Saga编排式事务 Saga Orchestrated Transaction<br/>path: decision/ex_core/ex_04")
+        N60("order: Saga编排式事务 Saga Orchestrated Transaction")
         LL3 --- N60
-        N61("[design]order: 风控检查 Risk Check<br/>path: decision/ex_core/ex_05")
+        N61("order: 风控检查 Risk Check")
         LL3 --- N61
-        N62("[design]order: 信号确认 Signal Confirmation<br/>path: decision/ex_core/ex_06")
+        N62("order: 信号确认 Signal Confirmation")
         LL3 --- N62
-        N63("[design]order: 下单提交 Order Submit<br/>path: decision/ex_core/ex_07")
+        N63("order: 下单提交 Order Submit")
         LL3 --- N63
-        N64("[design]order: 成交确认 Fill Confirmation<br/>path: decision/ex_core/ex_08")
+        N64("order: 成交确认 Fill Confirmation")
         LL3 --- N64
-        N65("[design]order: 持仓更新 Position Update<br/>path: decision/ex_core/ex_09")
+        N65("order: 持仓更新 Position Update")
         LL3 --- N65
-        N66("[design]order: 报告生成 Report Generation<br/>path: decision/ex_core/ex_10")
+        N66("order: 报告生成 Report Generation")
         LL3 --- N66
-        N71("[design]order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase<br/>path: decision/ex_core/ex_15")
+        N71("order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase")
         LL3 --- N71
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -109,13 +110,16 @@ flowchart TD
 > 本域与 3 个外部域直接连接 / This domain directly connects to 3 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["ex_core（执行核心）"]
-    EXT_ex_sor["ex_sor（执行排序）"]
-    SELF -->|出 2| EXT_ex_sor
-    EXT_aut_core["aut_core（自主核心）"]
-    EXT_aut_core -->|入 1| SELF
-    EXT_compliance["compliance（compliance）"]
-    EXT_compliance -->|入 1| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["ex_core（执行核心）"]
+        EXT_ex_sor["ex_sor（执行排序）"]
+        SELF -->|出 2| EXT_ex_sor
+        EXT_aut_core["aut_core（自主核心）"]
+        EXT_aut_core -->|入 1| SELF
+        EXT_compliance["compliance（compliance）"]
+        EXT_compliance -->|入 1| SELF
+    end
 ```
 

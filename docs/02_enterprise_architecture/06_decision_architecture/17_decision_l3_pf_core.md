@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain pf_core（组合核心）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → pf_core
@@ -19,39 +19,40 @@
 > 共 7 层，11 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        N20("[design]portfolio_target: 组合核心引擎 Portfolio Core Engine<br/>path: decision/pf_core/pc_01")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        N20("portfolio_target: 组合核心引擎 Portfolio Core Engine")
         LL3 --- N20
-        N21("[design]portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap<br/>path: decision/pf_core/pc_02")
+        N21("portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap")
         LL3 --- N21
-        N22("[design]portfolio_target: 风险预算 Risk Budget<br/>path: decision/pf_core/pc_03")
+        N22("portfolio_target: 风险预算 Risk Budget")
         LL3 --- N22
-        N23("[design]portfolio_target: 再平衡决策 Rebalance Decision<br/>path: decision/pf_core/pc_04")
+        N23("portfolio_target: 再平衡决策 Rebalance Decision")
         LL3 --- N23
-        N24("[design]portfolio_target: 仲裁优先级体系 Arbitration Priority<br/>path: decision/pf_core/pc_05")
+        N24("portfolio_target: 仲裁优先级体系 Arbitration Priority")
         LL3 --- N24
-        N25("[design]portfolio_target: 多策略共振融合 Strategy Convergence Fusion<br/>path: decision/pf_core/pc_06")
+        N25("portfolio_target: 多策略共振融合 Strategy Convergence Fusion")
         LL3 --- N25
-        N26("[design]portfolio_target: 因子直通裁决 Factor Bypass Arbitration<br/>path: decision/pf_core/pc_07")
+        N26("portfolio_target: 因子直通裁决 Factor Bypass Arbitration")
         LL3 --- N26
-        N27("[design]portfolio_target: 元策略路由 Meta-Strategy Router<br/>path: decision/pf_core/pc_08")
+        N27("portfolio_target: 元策略路由 Meta-Strategy Router")
         LL3 --- N27
-        N28("[design]portfolio_target: 组合优化 Portfolio Optimization<br/>path: decision/pf_core/pc_09")
+        N28("portfolio_target: 组合优化 Portfolio Optimization")
         LL3 --- N28
-        N29("[design]portfolio_target: 资本分配 Capital Allocation<br/>path: decision/pf_core/pc_10")
+        N29("portfolio_target: 资本分配 Capital Allocation")
         LL3 --- N29
-        N30("[design]portfolio_target: 决策编排器 Decision Orchestrator<br/>path: decision/pf_core/pc_11")
+        N30("portfolio_target: 决策编排器 Decision Orchestrator")
         LL3 --- N30
-        N31("[design]portfolio_target: 四轨融合器 Multi-Track Fusion<br/>path: decision/pf_core/pc_12")
+        N31("portfolio_target: 四轨融合器 Multi-Track Fusion")
         LL3 --- N31
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -122,11 +123,14 @@ flowchart TD
 > 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["pf_core（组合核心）"]
-    EXT_position["position（持仓）"]
-    SELF -->|出 1| EXT_position
-    EXT_pf_alloc["pf_alloc（组合分配）"]
-    EXT_pf_alloc -->|入 1| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["pf_core（组合核心）"]
+        EXT_position["position（持仓）"]
+        SELF -->|出 1| EXT_position
+        EXT_pf_alloc["pf_alloc（组合分配）"]
+        EXT_pf_alloc -->|入 1| SELF
+    end
 ```
 

@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain trading（交易）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → trading
@@ -19,37 +19,38 @@
 > 共 7 层，10 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        N102("[design]order: 外部订单观察者 External Order Watcher<br/>path: decision/trading/trd_01")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        N102("order: 外部订单观察者 External Order Watcher")
         LL3 --- N102
-        N103("[design]order: 结算引擎 Settlement Engine<br/>path: decision/trading/trd_02")
+        N103("order: 结算引擎 Settlement Engine")
         LL3 --- N103
-        N104("[design]order: 公司行动 Corporate Action<br/>path: decision/trading/trd_03")
+        N104("order: 公司行动 Corporate Action")
         LL3 --- N104
-        N105("[design]order: 保证金管理 Margin Manager<br/>path: decision/trading/trd_04")
+        N105("order: 保证金管理 Margin Manager")
         LL3 --- N105
-        N106("[design]order: 多账户 Multi-Account<br/>path: decision/trading/trd_05")
+        N106("order: 多账户 Multi-Account")
         LL3 --- N106
-        N107("[design]order: 微信枢纽 WeChat Hub<br/>path: decision/trading/trd_06")
+        N107("order: 微信枢纽 WeChat Hub")
         LL3 --- N107
-        N108("[design]order: C-013 4级优先级 C-013 4-Level Priority<br/>path: decision/trading/trd_07")
+        N108("order: C-013 4级优先级 C-013 4-Level Priority")
         LL3 --- N108
-        N109("[design]order: A股交易纪律四项必做 A-Share Trading 4-Do<br/>path: decision/trading/trd_08")
+        N109("order: A股交易纪律四项必做 A-Share Trading 4-Do")
         LL3 --- N109
-        N110("[design]order: A股交易纪律四项严禁 A-Share Trading 4-Forbidden<br/>path: decision/trading/trd_09")
+        N110("order: A股交易纪律四项严禁 A-Share Trading 4-Forbidden")
         LL3 --- N110
-        N111("[design]order: 监管报送 Regulatory Reporting<br/>path: decision/trading/trd_10")
+        N111("order: 监管报送 Regulatory Reporting")
         LL3 --- N111
-        N112("[design]order: 盘中即时反应决策引擎 Intraday Instant Reaction Decision Engine<br/>path: decision/trading/trd_11")
+        N112("order: 盘中即时反应决策引擎 Intraday Instant Reaction Decision Engine")
         LL3 --- N112
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -117,11 +118,14 @@ flowchart TD
 > 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["trading（交易）"]
-    EXT_aut_core["aut_core（自主核心）"]
-    SELF -->|出 1| EXT_aut_core
-    EXT_position["position（持仓）"]
-    EXT_position -->|入 1| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["trading（交易）"]
+        EXT_aut_core["aut_core（自主核心）"]
+        SELF -->|出 1| EXT_aut_core
+        EXT_position["position（持仓）"]
+        EXT_position -->|入 1| SELF
+    end
 ```
 

@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_sor（执行排序）
 
-> 生成时间: 2026-07-30T17:35:01
+> 生成时间: 2026-07-30T17:45:57
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_sor
@@ -19,25 +19,26 @@
 > 共 7 层，4 边。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
-        N72("[design]order: 订单路由决策 Order Routing Decision<br/>path: decision/ex_sor/ex_16")
+        LL2A["L2A: 信号层<br/>design/planned"]
+        LL2B["L2B: 主力行为层<br/>design/planned"]
+        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+        LL3["L3: 策略组合层<br/>design/planned"]
+        N72("order: 订单路由决策 Order Routing Decision")
         LL3 --- N72
-        N73("[design]order: SOR路由决策延迟 SOR Routing Latency<br/>path: decision/ex_sor/ex_17")
+        N73("order: SOR路由决策延迟 SOR Routing Latency")
         LL3 --- N73
-        N75("[design]order: 交易通道熔断人工恢复 Trading Channel Manual Recovery<br/>path: decision/ex_sor/ex_19")
+        N75("order: 交易通道熔断人工恢复 Trading Channel Manual Recovery")
         LL3 --- N75
-        N77("[design]order: Kill-Switch四级阶梯 Kill-Switch 4-Level Cascade<br/>path: decision/ex_sor/ex_21")
+        N77("order: Kill-Switch四级阶梯 Kill-Switch 4-Level Cascade")
         LL3 --- N77
-        N78("[design]order: 熔断器矩阵 Circuit Breaker Matrix<br/>path: decision/ex_sor/ex_22")
+        N78("order: 熔断器矩阵 Circuit Breaker Matrix")
         LL3 --- N78
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
+        LL5["L5: 学习层<br/>design/planned"]
+        LL6["L6: 自评估层<br/>design/planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -89,13 +90,16 @@ flowchart TD
 > 本域与 3 个外部域直接连接 / This domain directly connects to 3 external domain(s).
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
-    SELF["ex_sor（执行排序）"]
-    EXT_pf_alloc["pf_alloc（组合分配）"]
-    SELF -->|出 1| EXT_pf_alloc
-    EXT_governance["governance（governance）"]
-    SELF -->|出 1| EXT_governance
-    EXT_ex_core["ex_core（执行核心）"]
-    EXT_ex_core -->|入 2| SELF
+    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
+        SELF["ex_sor（执行排序）"]
+        EXT_pf_alloc["pf_alloc（组合分配）"]
+        SELF -->|出 1| EXT_pf_alloc
+        EXT_governance["governance（governance）"]
+        SELF -->|出 1| EXT_governance
+        EXT_ex_core["ex_core（执行核心）"]
+        EXT_ex_core -->|入 2| SELF
+    end
 ```
 
