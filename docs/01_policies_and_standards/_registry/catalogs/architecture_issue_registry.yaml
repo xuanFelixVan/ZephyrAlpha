@@ -9801,3 +9801,11 @@ entries:
   status: decided
   created: '2026-07-30'
   last_updated: '2026-07-30'
+- issue_id: '#ARCH-REGISTRY-DISCOVERY-SSOT-001'
+  title: 注册表发现真源裁定——ROOR 为 SSoT，master_index 为 catalogs 派生缓存，推翻原 W-3 合并误诊
+  severity: P2中
+  adjudication: '病根（第一性原理实证）：审计 W-3 原诊断"两索引分裂应合并 + ROOR 转 stub"为误诊。实证对账：ROOR（docs/registry_of_registries.yaml，52 条 REG-*，覆盖 yaml/markdown/postgresql/directory/code_inline 全格式，title 自述"全项目唯一真源总纲"，被 RegistryManager.discover_registry_files()/load_all() 资产盘点主管线消费）与 master_index（catalogs/registry_master_index.yaml，32 条 CFG-*/PS-REG-*/GOV-*，32/32 physical_path 全在 catalogs/，由 generate_registry_master_index.py 扫 frontmatter 自动生成，GATE-REGISTRY-SYNC reconciler 维护）是性质不同的两工件——ID 方案仅 ~2 个交集，master_index 提取的是 catalogs 文件自身 module_id 而非注册表编号，是 catalogs/ 目录漂移缓存而非 registry-of-registries。原合并方案不可行（生成器无法自动发现 code_inline/directory/postgresql 三类注册表）且破坏 SSoT（stub 化 ROOR 会击碎主管线 + 丢 rich metadata）。真正 Bug 两处：①discover_all_registries() 误读 master_index（派生缓存）返回 catalogs 文件 module_id 且零外部调用者=误导性死代码；②AGENTS.md RULE-REGISTRY 硬编码"31"（已 stale：master_index=32/ROOR=52）并指 master_index 为"项目所有 registry 总索引"=第二决策点。治本裁定：ROOR 维持注册表发现 SSoT 不动；master_index 维持 catalogs 派生缓存不动；discover_all_registries() 改读 ROOR 返回 52 条 REG-*；AGENTS.md 移除硬编码 31 改指 ROOR。catalogs/index.md L33"以本文件为准"为目录级正确声明不动。边界裁定类议题（推翻既有审计诊断方向），按铁律#9 标 proposed 待用户确认。'
+  fix_phase: '已落地（registry_adapter.py discover_all_registries 改读 ROOR + AGENTS.md RULE-REGISTRY 修正 + 测试补齐）；议题 status=proposed 待用户确认裁定方向'
+  status: proposed
+  created: '2026-07-30'
+  last_updated: '2026-07-30'

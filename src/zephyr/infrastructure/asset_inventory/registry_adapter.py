@@ -818,36 +818,60 @@ class RegistryManager:
 
 
 # ============================================================================
-# ARCH-053: discover_all_registries() — AI 发现全部 registry 的统一入口
+# ARCH-053 / #ARCH-REGISTRY-DISCOVERY-SSOT-001: discover_all_registries()
+# AI 发现全部 registry 的统一入口
 # ============================================================================
 
-def discover_all_registries() -> list[dict]:
-    """读取 registry_master_index.yaml，返回全部 registry 的元数据列表。
+# 真源单一化（#ARCH-REGISTRY-DISCOVERY-SSOT-001，2026-07-30 治本）：
+# 注册表发现的唯一真源 = registry_of_registries.yaml（ROOR，title="全项目唯一真源总纲"，
+# 人工 human_gated，52 条 REG-*，覆盖 yaml/markdown/postgresql/directory/code_inline 全格式）。
+# registry_master_index.yaml 是 catalogs/ 目录的自动派生缓存（drift detection 用，32 条
+# CFG/PS-REG/GOV-* = catalogs 文件自身 module_id，非注册表编号），不是 registry-of-registries。
+# 原 discover_all_registries() 误读 master_index（派生缓存）→ 返回 catalogs 文件 module_id
+# 而非注册表目录，且零外部调用者 = 误导性死代码。治本：改读 ROOR（SSoT）。
+_ROOR_REL = "docs/registry_of_registries.yaml"
 
-    ARCH-053 裁定：AI 代码启动时调用此函数即可发现项目全部 25+ 个 registry，
-    不再依赖硬编码路径或 AGENTS.md 提示。
+
+def discover_all_registries() -> list[dict]:
+    """读取 registry_of_registries.yaml（ROOR，SSoT），返回全部 registry 的元数据列表。
+
+    #ARCH-REGISTRY-DISCOVERY-SSOT-001 裁定（2026-07-30）：AI 代码启动时调用此函数即可
+    发现项目全部 registry（REG-* 编号），不再依赖硬编码路径或 AGENTS.md 提示。ROOR 是
+    注册表发现的唯一真源（含全格式：yaml/markdown/postgresql/directory/code_inline）；
+    registry_master_index.yaml 仅为 catalogs/ 目录的派生缓存，不作为发现真源。
 
     Returns:
-        list[dict]: 每个元素含 registry_id/name/category/physical_path/format/
-                    maintenance/entry_count/status
+        list[dict]: 每个元素含 registry_id/name/physical_path/format/maintenance/
+                    entry_count/status（字段源自 ROOR tiers.registries 条目，flatten 后透传）
 
     Example:
         >>> regs = discover_all_registries()
         >>> print(f"项目共 {len(regs)} 个 registry")
-        >>> infra = [r for r in regs if 'infrastructure' in r['name']]
+        >>> infra = [r for r in regs if 'infrastructure' in r.get('name','')]
         >>> print(f"基础设施相关: {infra}")
     """
     import yaml
     from zephyr.shared.io.paths import REPO_ROOT
 
-    # registry_master_index.yaml 是自动生成的总索引（reconciler 维护）
-    # P1 修复：使用 REPO_ROOT 绝对路径，禁止相对路径（硬约束）
-    master_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_master_index.yaml"
-    if not master_path.exists():
+    # ROOR 是注册表发现的唯一真源（human_gated）。绝对路径（硬约束）。
+    roor_path = REPO_ROOT / _ROOR_REL
+    if not roor_path.exists():
         return []
 
-    data = yaml.safe_load(master_path.read_text(encoding="utf-8"))
-    if not data or "registries" not in data:
+    data = yaml.safe_load(roor_path.read_text(encoding="utf-8"))
+    if not data or "tiers" not in data:
         return []
 
-    return data["registries"]
+    # flatten tiers → 单一 registries 列表（保留 tier 元信息便于调用方分层）
+    registries: list[dict] = []
+    for tier in data.get("tiers", []):
+        tier_name = tier.get("name", "")
+        tier_level = tier.get("tier", "")
+        for reg in tier.get("registries", []):
+            if not isinstance(reg, dict):
+                continue
+            entry = dict(reg)  # 透传 ROOR rich metadata（owner/ssot_for/version/...）
+            entry.setdefault("tier_level", tier_level)
+            entry.setdefault("tier_name", tier_name)
+            registries.append(entry)
+    return registries

@@ -95,9 +95,13 @@
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
-> **查项目所有 registry**：MUST 先读 [`registry_master_index.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml)（31 个 registry 的总索引，自动生成，精确数量以该文件 `total_registries` 字段为准）或调用 `discover_all_registries()` 函数（`zephyr.infrastructure.asset_inventory.registry_adapter`）。
+> **查项目所有 registry**：MUST 先读 [`registry_of_registries.yaml`](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml)（ROOR，title="全项目唯一真源总纲"，注册表发现的唯一真源；精确数量以该文件 `summary.total_registries` 字段为准，**勿在文档/AI 记忆中写死**）或调用 `discover_all_registries()` 函数（`zephyr.infrastructure.asset_inventory.registry_adapter`，读 ROOR 返回全部 registry）。
 >
-> **为什么**：项目有 31 个 registry（精确数量以总索引 `total_registries` 字段为准；基础设施/门禁/规则/脚本/测试/接口契约/聚合节点等），硬编码路径只能覆盖 ~7 个。AI 启动时通过总索引发现全部 registry，避免"不知道某表存在"导致重复造轮子或绕过治理。
+> **为什么**：项目有 50+ 个 registry（精确数量以 ROOR `summary.total_registries` 为准；基础设施/门禁/规则/脚本/测试/接口契约/聚合节点/数据库/code_inline/directory 等全格式），硬编码路径只能覆盖 ~7 个。AI 启动时通过 ROOR 发现全部 registry，避免"不知道某表存在"导致重复造轮子或绕过治理。
+>
+> **真源分类（#ARCH-REGISTRY-DISCOVERY-SSOT-001 治本，2026-07-30）**——两个索引性质不同，**勿混用**：
+> - **ROOR**（`docs/registry_of_registries.yaml`，人工 human_gated，`REG-*` 编号）= 注册表发现真源，覆盖全格式（yaml/markdown/postgresql/directory/code_inline）。被 `RegistryManager.discover_registry_files()`/`load_all()` 资产盘点主管线消费。
+> - **master_index**（`docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml`，自动生成，`CFG-*/PS-REG-*/GOV-*` = catalogs 文件自身 module_id）= **catalogs/ 目录的派生漂移缓存**（GATE-REGISTRY-SYNC reconciler 维护），**不是** registry-of-registries，不可作为发现真源。
 >
 > **关键 registry 速查**：
 > - 基础设施（数据库/缓存/队列）：[`infrastructure_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)
