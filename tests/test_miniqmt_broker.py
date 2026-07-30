@@ -5,11 +5,17 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
 # [TTL] permanent
-"""miniqmt_broker 正式测试（原 scripts/tests/ 临时验证脚本转正）"""
+"""miniqmt_broker 正式测试（原 scripts/tests/ 临时验证脚本转正）
+
+适配新版 xtquant 250807.1.2 API（#ARCH-XTQUANT-API-COMPAT-001）：
+  - order_stock 返回 order_id（正整数=成功，-1=失败），非旧版错误码
+  - account 参数传 StockAccount 对象，非 str session_id
+  - start() 在 connect() 时调一次，submit_order 不再调 start()
+"""
 import importlib.util
-from pathlib import Path
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -60,13 +66,24 @@ def make_order(
     )
 
 
-def test_idempotency():
-    """测试幂等去重"""
-    broker = MiniQmtBroker(path="mock", session_id="test")
+def make_broker(account_id="test_account"):
+    """构造测试用 broker：绕过 connect()，直接 mock xttrader + StockAccount。
+
+    新版 xtquant 适配后：
+      - account_id 构造 StockAccount，submit_order 用 self._account 下单
+      - order_stock 返回 order_id（正整数=成功）
+    """
+    broker = MiniQmtBroker(path="mock", session_id="test", account_id=account_id)
     broker.connected = True
     broker.xttrader = MagicMock()
-    broker.xttrader.start.return_value = 0
-    broker.xttrader.order_stock.return_value = 0
+    broker._account = MagicMock(name="StockAccount")  # 模拟 StockAccount 对象
+    broker.xttrader.order_stock.return_value = 1001  # 正整数 order_id = 成功
+    return broker
+
+
+def test_idempotency():
+    """测试幂等去重"""
+    broker = make_broker()
 
     order1 = make_order(idempotency_key="idem-001")
     broker_order_id1 = broker.submit_order(order1)
@@ -74,13 +91,12 @@ def test_idempotency():
     order2 = make_order(idempotency_key="idem-001")
     broker_order_id2 = broker.submit_order(order2)
     assert broker_order_id1 == broker_order_id2, "幂等去重应返回相同 order_id"
+    assert broker_order_id1 == "1001", "broker_order_id 应为券商返回的 order_id"
 
 
 def test_a_share_constraints():
     """测试A股约束校验"""
-    broker = MiniQmtBroker(path="mock", session_id="test")
-    broker.connected = True
-    broker.xttrader = MagicMock()
+    broker = make_broker()
 
     try:
         broker.submit_order(make_order(qty=50, idempotency_key="qty-001"))
@@ -106,11 +122,7 @@ def test_a_share_constraints():
 @pytest.mark.xfail(reason="broker 涨停校验需 prev_close 数据，mock 不完整；T+1 逻辑依赖持仓状态，需补充 mock")
 def test_t_plus_1():
     """测试T+1锁定"""
-    broker = MiniQmtBroker(path="mock", session_id="test")
-    broker.connected = True
-    broker.xttrader = MagicMock()
-    broker.xttrader.start.return_value = 0
-    broker.xttrader.order_stock.return_value = 0
+    broker = make_broker()
 
     buy_order = make_order(side=OrderSide.BUY, idempotency_key="t1-buy-001")
     broker.submit_order(buy_order)
@@ -123,33 +135,65 @@ def test_t_plus_1():
         assert e.error_code == -2
 
 
-def test_error_code_mapping():
-    """测试错误码映射"""
-    broker = MiniQmtBroker(path="mock", session_id="test")
-    broker.connected = True
-    broker.xttrader = MagicMock()
-    broker.xttrader.start.return_value = 0
+def test_order_stock_failure():
+    """测试下单失败：order_stock 返回 -1（新版 xtquant 失败码）。
 
-    broker.xttrader.order_stock.return_value = 50
+    新版 xtquant 250807.1.2：order_stock 返回 order_id（正整数=成功，-1=失败），
+    不再返回 50/54 等业务错误码（那些通过 on_order_error 回调推送）。
+    """
+    broker = make_broker()
+    broker.xttrader.order_stock.return_value = -1
+
     try:
         broker.submit_order(make_order(idempotency_key="err-001"))
-        assert False, "涨停应被拒绝"
+        assert False, "order_stock 返回 -1 应被拒绝"
     except MiniQmtBrokerError as e:
-        assert e.error_code == 50
+        assert e.error_code == -1
 
-    broker.xttrader.order_stock.return_value = 54
-    try:
-        broker.submit_order(make_order(idempotency_key="err-002"))
-        assert False, "资金不足应被拒绝"
-    except MiniQmtBrokerError as e:
-        assert e.error_code == 54
+
+def test_account_passed_to_xttrader():
+    """测试 StockAccount 对象传给 order_stock（非 str session_id）。
+
+    新版 xtquant 适配核心（#ARCH-XTQUANT-API-COMPAT-001）：
+    order_stock 第一个参数必须是 StockAccount 对象，旧版传 str 已废弃。
+    """
+    broker = make_broker()
+
+    broker.submit_order(make_order(idempotency_key="acc-001"))
+
+    # 断言 order_stock 第一个位置参数是 _account（StockAccount 对象，非 str）
+    broker.xttrader.order_stock.assert_called_once()
+    call_args = broker.xttrader.order_stock.call_args
+    first_arg = call_args.args[0] if call_args.args else None
+    assert first_arg is broker._account, "order_stock 应传 StockAccount 对象（非 str）"
+
+
+def test_order_side_mapping():
+    """测试买卖方向映射（23=买/24=卖，非旧版订单类型 5/11）。
+
+    新版 xtquant order_type 是买卖方向，price_type 区分限价/市价。
+    """
+    broker = make_broker()
+
+    # 买单 → order_type=23
+    broker.submit_order(make_order(side=OrderSide.BUY, idempotency_key="buy-001"))
+    buy_call = broker.xttrader.order_stock.call_args
+    assert buy_call.args[2] == 23, "买单 order_type 应为 23"
+
+    # 卖单 → order_type=24（需先重置 mock + 清幂等缓存）
+    broker.xttrader.order_stock.reset_mock()
+    broker.xttrader.order_stock.return_value = 1002
+    broker._idempotency_map.clear()
+    broker.submit_order(make_order(side=OrderSide.SELL, idempotency_key="sell-001"))
+    sell_call = broker.xttrader.order_stock.call_args
+    assert sell_call.args[2] == 24, "卖单 order_type 应为 24"
 
 
 def test_pre_trade_simulate():
     """测试回测=实盘一致性：预成交模拟"""
     logic = MatchingLogic(MatchingConfig())
     broker = MiniQmtBroker(
-        path="mock", session_id="test", matching_logic=logic,
+        path="mock", session_id="test", account_id="test_account", matching_logic=logic,
     )
 
     ob = OrderBookSnapshot(
@@ -175,7 +219,7 @@ def test_pre_trade_simulate():
 
 def test_thread_safety():
     """测试线程安全（Lock）"""
-    broker = MiniQmtBroker(path="mock", session_id="test")
+    broker = MiniQmtBroker(path="mock", session_id="test", account_id="test_account")
     assert hasattr(broker, "_lock"), "broker 必须有 _lock"
     import threading
     assert isinstance(broker.lock, type(threading.Lock())), "_lock 必须是 threading.Lock 实例"

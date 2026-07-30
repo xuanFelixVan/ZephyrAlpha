@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters.miniqmt_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.governance.data_governance.miniqmt_provider
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.data.implementations.miniqmt_provider
 # [CONSUMERS] zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.position_monitor
 # [STARTUP] manual
 # [MATURITY] production
@@ -46,13 +46,12 @@ SSoT: docs/03_modules/_domain_execution_core/blueprint.md §16.7.1 MiniQmtBroker
 
 from __future__ import annotations
 
-from typing import Final
 import logging
 import threading
-from datetime import datetime
 from collections.abc import Callable
+from datetime import datetime
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Final, Optional
 
 from zephyr.backtest.core.matching_logic import (
     MatchingConfig,
@@ -61,6 +60,7 @@ from zephyr.backtest.core.matching_logic import (
     MatchOrderInput,
     OrderBookSnapshot,
 )
+from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import (
     BrokerInterface,
     FillCallback,
@@ -73,7 +73,6 @@ from zephyr.trading.trading_contracts.execution.order import (
     OrderType,
 )
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
-from zephyr.shared.utils.time_utils import now_utc
 
 _logger = logging.getLogger(__name__)
 
@@ -91,16 +90,18 @@ XTTRADER_ERROR_CODES: Final[dict[int, str]] = {
     55: "持仓不足",
 }
 
-# xttrader 订单类型映射
-_XTTRADER_ORDER_TYPE = {
-    OrderType.MARKET: 5,    # 市价单
-    OrderType.LIMIT: 11,    # 限价单（ xttrader LATEST_PRICE=11）
+# xttrader 买卖方向映射（新版 xtquant 250807.1.2：order_type 是买卖方向，非订单类型）
+# 23=买, 24=卖（见 xttrader.order_stock docstring）
+_XT_ORDER_SIDE = {
+    OrderSide.BUY: 23,
+    OrderSide.SELL: 24,
 }
 
-# xttrader 价格类型映射
-_XTTRADER_PRICE_TYPE = {
-    OrderType.MARKET: -1,   # 市价：最新价
-    OrderType.LIMIT: 0,     # 限价：指定价格
+# xttrader 价格类型映射（price_type 区分限价/市价）
+# 0=限价指定价, 5=市价最新价（见 xtquant 帮助手册；#ARCH-XTQUANT-API-COMPAT-001）
+_XT_PRICE_TYPE = {
+    OrderType.LIMIT: 0,
+    OrderType.MARKET: 5,
 }
 
 # xttrader 方向常量（XtOrder.order_type 字段值，参考 xtquant 文档）
@@ -112,7 +113,7 @@ class MiniQmtBrokerError(Exception):
     """MiniQMT 券商错误"""
     error_code = "ZA-XC-0001"
 
-    def __init__(self, message: str, error_code: Optional[int] = None):
+    def __init__(self, message: str, error_code: int | None = None):
         super().__init__(message)
         if error_code is not None:
             self.error_code = error_code
@@ -131,11 +132,13 @@ class MiniQmtBroker(BrokerInterface):
       - 回测=实盘一致性: 共用 MatchingLogic，submit_order 内置 pre_trade_simulate 预校验
 
     Usage:
+        # 配置从 config/.env.qmt 读取（QMT_SIM_PATH / QMT_SIM_ACCOUNT）
         # 与 D_DATA 共用 xtquant 连接
-        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
+        provider = MiniQmtProvider(path=qmt_path)
         broker = MiniQmtBroker(
-            path="E:/国金证券QMT交易端/userdata_mini",
+            path=qmt_path,
             session_id="zephyr_session",
+            account_id=qmt_account,  # 资金账号，构造 StockAccount 下单/查询
             shared_xtquant_conn=provider,  # 共用连接
             matching_logic=MatchingLogic(MatchingConfig()),  # 共用撮合逻辑
         )
@@ -173,16 +176,20 @@ class MiniQmtBroker(BrokerInterface):
         self,
         path: str = "",
         session_id: str = "zephyr_session",
+        account_id: str = "",
         shared_xtquant_conn: object | None = None,
-        matching_logic: Optional[MatchingLogic] = None,
-        matching_config: Optional[MatchingConfig] = None,
+        matching_logic: MatchingLogic | None = None,
+        matching_config: MatchingConfig | None = None,
         reconnect_max_retries: int = 3,
     ):
         """初始化 MiniQMT 券商适配器
 
         Args:
             path: miniQMT 安装路径（userdata_mini 目录）
-            session_id: 会话 ID（用于 xttrader 连接标识）
+            session_id: 会话 ID（语义标识，用于日志/PositionSnapshot.portfolio_id；
+                内部转 int 传给 XtQuantTrader，新版 xtquant 要求 int session）
+            account_id: 券商资金账号（如 "8886156677"，从 config/.env.qmt 读取；
+                用于构造 StockAccount 下单/查询，新版 xtquant 要求 StockAccount 对象）
             shared_xtquant_conn: 与 D_DATA 共用的 MiniQmtProvider 实例（可选）
                 若提供，则复用其 xtquant 连接，避免重复 connect 到 miniQMT 终端
             matching_logic: 与 D_BACKTEST 共用的 MatchingLogic 实例（可选）
@@ -191,6 +198,9 @@ class MiniQmtBroker(BrokerInterface):
         """
         self._path = path
         self._session_id = session_id
+        self._account_id = account_id
+        # XtQuantTrader 新版要求 int session；session_id 是 str 语义标识，转 int
+        self._session_int = abs(hash(session_id)) % 1000000
         self._shared_conn = shared_xtquant_conn
         self._matching_logic = matching_logic or MatchingLogic(
             matching_config or MatchingConfig()
@@ -199,7 +209,9 @@ class MiniQmtBroker(BrokerInterface):
 
         # xttrader 懒加载
         self._xttrader: Any = None
+        self._account: Any = None  # StockAccount 懒加载（_init_xttrader 中构造）
         self._connected = False
+        self._started = False  # start() 只调一次（启动后台线程池，不返回错误码）
 
         # 线程安全锁（xttrader 非线程安全；保护共享状态如 _fill_callbacks）
         self._lock = threading.Lock()
@@ -258,6 +270,10 @@ class MiniQmtBroker(BrokerInterface):
     def connect(self) -> bool:
         """建立与 MiniQMT 终端的连接
 
+        新版 xtquant 250807.1.2 连接流程：
+          _init_xttrader() → start()（启动后台线程池，只调一次）→
+          connect()（TCP 连接终端）→ subscribe(account)（订阅账户推送）
+
         Returns:
             True = 连接成功
 
@@ -270,9 +286,12 @@ class MiniQmtBroker(BrokerInterface):
 
             try:
                 self._init_xttrader()
+                self._start_once()
                 self._do_connect_with_retry()
+                self._subscribe_account()
                 self._connected = True
-                _logger.info("MiniQMT 券商连接成功 path=%s session=%s", self._path, self._session_id)
+                _logger.info("MiniQMT 券商连接成功 path=%s session=%s account=%s",
+                             self._path, self._session_id, self._account_id)
                 return True
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._connected = False
@@ -290,13 +309,15 @@ class MiniQmtBroker(BrokerInterface):
                     _logger.warning("断开连接时出错: %s", e, exc_info=True)
                 self._xttrader = None
             self._connected = False
+            self._started = False
+            self._account = None
             _logger.info("MiniQMT 券商已断开")
 
     def submit_order(
         self,
         order: Order,
-        order_book: Optional[OrderBookSnapshot] = None,
-        prev_close: Optional[Decimal] = None,
+        order_book: OrderBookSnapshot | None = None,
+        prev_close: Decimal | None = None,
     ) -> str:
         """发送委托订单
 
@@ -348,27 +369,22 @@ class MiniQmtBroker(BrokerInterface):
                 raise MiniQmtBrokerError("未连接，请先调用 connect()", error_code=-1)
 
             try:
-                seq = self._xttrader.start()
-                if seq < 0:
-                    raise MiniQmtBrokerError(
-                        f"xttrader.start() 失败: {XTTRADER_ERROR_CODES.get(seq, '未知错误')}",
-                        error_code=seq,
-                    )
-
-                # 构造 xttrader 订单
-                xt_order_type = _XTTRADER_ORDER_TYPE.get(order.order_type, 11)
-                xt_price_type = _XTTRADER_PRICE_TYPE.get(order.order_type, 0)
+                # 构造 xttrader 订单（新版 xtquant 250807.1.2 位置参数）
+                # order_type 是买卖方向（23=买/24=卖），price_type 区分限价/市价
+                xt_order_side = _XT_ORDER_SIDE.get(order.side, 23)
+                xt_price_type = _XT_PRICE_TYPE.get(order.order_type, 0)
                 limit_price = float(order.limit_price) if order.limit_price else 0.0
 
                 result = self._call_xttrader_with_reconnect(
                     lambda: self._xttrader.order_stock(
-                        account=self._session_id,
-                        order_id=order.order_id,
-                        code=order.symbol,
-                        price=limit_price,
-                        volume=int(order.quantity),
-                        price_type=xt_price_type,
-                        order_type=xt_order_type,
+                        self._account,            # StockAccount 对象（非 str）
+                        order.symbol,             # stock_code
+                        xt_order_side,            # order_type=买卖方向（23买/24卖）
+                        int(order.quantity),      # order_volume
+                        xt_price_type,            # price_type
+                        limit_price,              # price
+                        strategy_name=order.strategy_id,
+                        order_remark=order.idempotency_key,
                     )
                 )
             except MiniQmtBrokerError:
@@ -378,16 +394,15 @@ class MiniQmtBroker(BrokerInterface):
                     f"xttrader 下单异常: {e}", error_code=-1
                 ) from e
 
-            # 5. 错误码映射
-            if result != 0:
-                error_msg = XTTRADER_ERROR_CODES.get(result, f"未知错误码: {result}")
+            # 5. 返回值映射：新版 order_stock 返回 order_id（正整数=成功，-1=失败）
+            if result is None or (isinstance(result, int) and result < 0):
                 raise MiniQmtBrokerError(
-                    f"下单失败: {error_msg} (code={result})",
-                    error_code=result,
+                    f"下单失败: xttrader 返回 order_id={result}",
+                    error_code=-1,
                 )
 
-            # 6. 缓存订单
-            broker_order_id = order.order_id
+            # 6. 缓存订单（broker_order_id 用券商返回的 order_id，非本地 order.order_id）
+            broker_order_id = str(result)
             order.status = OrderStatus.SUBMITTED
             order.broker_order_id = broker_order_id
             order.updated_at = now_utc()
@@ -419,8 +434,8 @@ class MiniQmtBroker(BrokerInterface):
             try:
                 result = self._call_xttrader_with_reconnect(
                     lambda: self._xttrader.cancel_order_stock(
-                        account=self._session_id,
-                        order_id=broker_order_id,
+                        self._account,
+                        int(broker_order_id),
                     )
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -443,7 +458,7 @@ class MiniQmtBroker(BrokerInterface):
             _logger.info("撤单成功: broker_order_id=%s", broker_order_id)
             return True
 
-    def query_order(self, broker_order_id: str) -> Optional[Order]:
+    def query_order(self, broker_order_id: str) -> Order | None:
         """查询委托状态
 
         Args:
@@ -458,7 +473,7 @@ class MiniQmtBroker(BrokerInterface):
 
             try:
                 orders = self._call_xttrader_with_reconnect(
-                    lambda: self._xttrader.query_stock_orders(account=self._session_id)
+                    lambda: self._xttrader.query_stock_orders(self._account)
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(
@@ -498,14 +513,10 @@ class MiniQmtBroker(BrokerInterface):
 
             try:
                 xt_positions = self._call_xttrader_with_reconnect(
-                    lambda: self._xttrader.query_stock_positions(
-                        account=self._session_id
-                    )
+                    lambda: self._xttrader.query_stock_positions(self._account)
                 )
                 xt_asset = self._call_xttrader_with_reconnect(
-                    lambda: self._xttrader.query_stock_asset(
-                        account=self._session_id
-                    )
+                    lambda: self._xttrader.query_stock_asset(self._account)
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(
@@ -605,12 +616,17 @@ class MiniQmtBroker(BrokerInterface):
     # ------------------------------------------------------------------
 
     def _init_xttrader(self) -> None:
-        """懒加载 xttrader 模块并初始化 XtQuantTrader
+        """懒加载 xttrader 模块并初始化 XtQuantTrader + StockAccount
+
+        新版 xtquant 250807.1.2（#ARCH-XTQUANT-API-COMPAT-001）：
+          - XtQuantTrader(path, session_int, callback=None)  # session 必须 int
+          - StockAccount(account_id, 'STOCK')  # 下单/查询必须传 StockAccount 对象
 
         若提供了 shared_xtquant_conn（D_DATA MiniQmtProvider），优先复用其连接，
         避免重复 connect 到 miniQMT 终端（Blueprint §16.7.1 F 共用 xtquant 连接）。
         """
         if self._xttrader is not None:
+            self._init_account()
             return
 
         # 优先复用 D_DATA MiniQmtProvider 的 xttrader 连接
@@ -620,23 +636,70 @@ class MiniQmtBroker(BrokerInterface):
             if shared_trader is not None:
                 self._xttrader = shared_trader
                 _logger.info("复用 D_DATA MiniQmtProvider 的 xttrader 连接")
+                self._init_account()
                 return
 
-        # 懒加载 xtquant 并新建 XtQuantTrader
+        # 懒加载 xtquant 并新建 XtQuantTrader（session 必须 int）
         try:
             from xtquant.xttrader import XtQuantTrader  # type: ignore[import-not-found]
         except ImportError as e:
             raise MiniQmtBrokerError(
-                "xtquant 未安装。请从 QMT 安装目录 bin.x64/Lib/site-packages/xtquant "
-                "拷贝到 Python 环境的 site-packages。",
+                "xtquant 未安装。请安装新版 xtquant 250807.1.2+（支持 Python 3.12），"
+                "或从 QMT 安装目录拷贝。详见 #ARCH-XTQUANT-API-COMPAT-001。",
                 error_code=-1,
             ) from e
 
-        self._xttrader = XtQuantTrader(self._path, self._session_id)
+        self._xttrader = XtQuantTrader(self._path, self._session_int)
+        self._init_account()
+
+    def _init_account(self) -> None:
+        """构造 StockAccount（下单/查询必须的账户对象）。
+
+        新版 xtquant 要求 order_stock/query_stock_* 传 StockAccount 对象，非 str。
+        """
+        if self._account is not None:
+            return
+        if not self._account_id:
+            raise MiniQmtBrokerError(
+                "account_id 未配置。请从 config/.env.qmt 读取 QMT_SIM_ACCOUNT 传入。",
+                error_code=-1,
+            )
+        try:
+            from xtquant.xttype import StockAccount  # type: ignore[import-not-found]
+        except ImportError as e:
+            raise MiniQmtBrokerError(
+                "xtquant.xttype.StockAccount 不可用，请确认 xtquant 250807.1.2+ 已安装。",
+                error_code=-1,
+            ) from e
+        self._account = StockAccount(self._account_id, 'STOCK')
+        _logger.info("StockAccount 构造成功 account_id=%s", self._account_id)
+
+    def _start_once(self) -> None:
+        """启动 xttrader 后台线程池（start() 只调一次，不返回错误码）。
+
+        新版 xtquant 250807.1.2：start() 返回 None，启动 executor 用于回调推送。
+        旧代码误将 start() 返回值当错误码判断（None < 0 → TypeError），此处修正。
+        """
+        if self._started:
+            return
+        self._xttrader.start()
+        self._started = True
+
+    def _subscribe_account(self) -> None:
+        """订阅账户推送（新版 xtquant 下单前需 subscribe 账户）。
+
+        subscribe(account) 返回 0=成功，非零仅告警不阻断（查询类操作仍可用）。
+        """
+        if self._account is None:
+            _logger.warning("StockAccount 未构造，跳过 subscribe")
+            return
+        result = self._xttrader.subscribe(self._account)
+        if result != 0:
+            _logger.warning("subscribe 账户返回非零: %s（继续，不阻断连接）", result)
 
     def _do_connect_with_retry(self) -> None:
         """带重试的连接"""
-        last_error: Optional[Exception] = None
+        last_error: Exception | None = None
         for attempt in range(self._reconnect_max_retries):
             try:
                 result = self._xttrader.connect()
@@ -691,9 +754,13 @@ class MiniQmtBroker(BrokerInterface):
         _logger.info("尝试断线重连...")
         try:
             self._connected = False
+            self._started = False
+            self._account = None
             self._xttrader = None
             self._init_xttrader()
+            self._start_once()
             self._do_connect_with_retry()
+            self._subscribe_account()
             self._connected = True
             _logger.info("断线重连成功")
             return True
@@ -702,7 +769,7 @@ class MiniQmtBroker(BrokerInterface):
             return False
 
     def _validate_a_share_constraints(
-        self, order: Order, prev_close: Optional[Decimal] = None
+        self, order: Order, prev_close: Decimal | None = None
     ) -> None:
         """A股约束校验
 
@@ -753,7 +820,7 @@ class MiniQmtBroker(BrokerInterface):
             MiniQmtBrokerError: T+1锁定中或可用不足
         """
         try:
-            positions = self._xttrader.query_stock_positions(account=self._session_id)
+            positions = self._xttrader.query_stock_positions(self._account)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("T+1校验查询持仓失败，跳过: %s", e, exc_info=True)
             return
@@ -780,7 +847,7 @@ class MiniQmtBroker(BrokerInterface):
         symbol: str,
         price: Decimal,
         side: OrderSide,
-        prev_close: Optional[Decimal] = None,
+        prev_close: Decimal | None = None,
     ) -> None:
         """涨跌停检查
 
@@ -865,17 +932,24 @@ class MiniQmtBroker(BrokerInterface):
         return OrderSide.BUY
 
     def _xt_order_to_order(self, xt_order: object) -> Order:
-        """将 xttrader 订单对象转换为 Order"""
+        """将 xttrader 订单对象转换为 Order（fallback 路径，主路径用 _order_cache）。
+
+        新版 xtquant XtOrder 字段（xttype.py）：
+          order_type=买卖方向（23买/24卖，非限价/市价），price_type 区分限价/市价，
+          order_volume=委托数量（非 volume），traded_volume=成交数量。
+        """
+        order_id_str = str(xt_order.order_id)
+        price_type = getattr(xt_order, 'price_type', 0)
         return Order(
-            idempotency_key=xt_order.order_id,
-            order_id=xt_order.order_id,
-            order_type=OrderType.LIMIT if xt_order.order_type in (11, 23, 24) else OrderType.MARKET,
-            quantity=Decimal(str(xt_order.volume)),
+            idempotency_key=order_id_str,
+            order_id=order_id_str,
+            order_type=OrderType.LIMIT if price_type == 0 else OrderType.MARKET,
+            quantity=Decimal(str(getattr(xt_order, 'order_volume', 0))),
             side=self._map_xt_side(xt_order),
             strategy_id=self._session_id,
             symbol=xt_order.stock_code,
             avg_fill_price=Decimal(str(xt_order.traded_price)) if xt_order.traded_price > 0 else None,
-            broker_order_id=xt_order.order_id,
+            broker_order_id=order_id_str,
             filled_quantity=Decimal(str(xt_order.traded_volume)),
             status=self._map_xt_status(xt_order.order_status),
             updated_at=now_utc(),

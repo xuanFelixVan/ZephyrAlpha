@@ -375,7 +375,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | 7 | **v2.2.0**: A股T+1锁定 | MiniQmtBroker.submit_order MUST 在下单前校验available_quantity(扣除当日买入), 违规抛TPlusOneViolationError |
 | 8 | **v2.2.0**: A股涨跌停限制 | MiniQmtBroker MUST 捕获xttrader涨跌停拒绝错误码, 转换为OrderRejectedError + 订单状态REJECTED |
 | 9 | **v2.2.0**: MiniQMT终端依赖 | MiniQmtBroker.connect() MUST 检测XtMiniQmt.exe进程存在, 不存在则抛BrokerConnectionError |
-| 10 | **v2.2.0**: xtquant版本约束 | Python 3.6/3.7/3.8 only, 国金证券xtquant库路径固定 |
+| 10 | **v2.2.0**: xtquant版本约束 | Python >=3.12 + 独立 xtquant 250807.1.2+（不走 QMT 内置 Python 3.6），路径见 config/.env.qmt（#ARCH-XTQUANT-API-COMPAT-001） |
 
 ### 5.2 容量估算
 

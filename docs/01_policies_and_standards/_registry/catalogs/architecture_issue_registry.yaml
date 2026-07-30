@@ -9849,3 +9849,11 @@ entries:
   status: decided
   created: '2026-07-30'
   last_updated: '2026-07-30'
+- issue_id: '#ARCH-XTQUANT-API-COMPAT-001'
+  title: miniqmt_broker 契约漂移治本——旧版 xtquant API 假设与新版 250807.1.2 适配（含运行时冒烟测试防漂移）
+  severity: P1高
+  adjudication: '病根（第一性原理实证）：三层事实链辨明"非 QMT 软件太老、非 xtquant 库太老，是 broker 代码基于旧版 xtquant API 假设编写，与项目实际使用的新版 xtquant 250807.1.2 契约漂移"。QMT 终端正常运行（模拟账户已连通），新版 xtquant 250807.1.2 已可用并验证 import 成功（支持 Python 3.12），但 broker 代码（session_id 当 str、order_stock 当 keyword 调用、order_type 当订单类型、返回值当错误码）与新版 API 13 处差异全部不兼容。根因：blueprint L378"Python 3.6/3.7/3.8 only"是基于 QMT 内置旧环境的过时假设，与项目"Python >=3.12 + 独立 xtquant 250807.1.2"实际架构直接矛盾——100% AI 开发场景下 AI 参考过时文档/记忆产出漂移代码的典型模式。治本三阶段：①broker 代码全面适配新 API（构造函数 account_id/session_int 分离、StockAccount 对象下单/查询、order_type=买卖方向23/24、price_type=限价0/市价5、order_stock 返回 order_id 非错误码、start() 返回 None、subscribe 账户）；②文档同步（blueprint L378 版本约束修正 + broker DEPENDENCIES 头部旧路径修正 + docstring 去硬编码）；③测试更新（mock 适配新返回值 + StockAccount 断言）+ 运行时冒烟测试脚本（connect→get_positions→挂远期限价单→query_order→cancel_order→验证撤单状态）。长远战略：xtquant 是非 pip 管理的外部依赖（Windows-only、随 QMT 分发或独立安装），运行时冒烟测试是堵住 AI 契约漂移的治本核心——静态阅读源码无法 100% 确认的开放点（order_stock 失败返回值、price_type 精确值、subscribe 必要性、session int 要求）由运行时实证堵住。BrokerInterface OCP-003 扩展点契约不变，xtquant API 变化在 broker 内部消化不泄露。边界裁定类议题，按铁律#9 标 proposed 待用户确认。'
+  fix_phase: '已落地（broker 代码适配 + 文档同步 + 测试更新 + 冒烟测试脚本；待 pytest+ruff 验证 + 运行时冒烟测试 manual 验证后转 decided）'
+  status: proposed
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
