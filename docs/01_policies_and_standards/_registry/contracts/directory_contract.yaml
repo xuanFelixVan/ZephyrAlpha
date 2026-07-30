@@ -113,6 +113,8 @@ directory_zones:
       - "docs/02_enterprise_architecture/01_global_architecture_diagram/"
       - "docs/02_enterprise_architecture/02_domain_architecture_docs/"
       - "docs/02_enterprise_architecture/03_governance_reports/"
+      - "docs/02_enterprise_architecture/05_dataflow_architecture/"
+      - "docs/02_enterprise_architecture/06_decision_architecture/"
 
   temporary:
     description: "临时工作区——过程性文档，post-commit reconciler 自动归档"
@@ -833,6 +835,7 @@ generator_exempt_paths:
   - "docs/02_enterprise_architecture/01_global_architecture_diagram/"
   - "docs/02_enterprise_architecture/02_domain_architecture_docs/"
   - "docs/02_enterprise_architecture/03_governance_reports/"
+  - "docs/02_enterprise_architecture/05_dataflow_architecture/"
   - "docs/02_enterprise_architecture/06_decision_architecture/"
   - "docs/02_enterprise_architecture/generated/"
   # 注：不含 taskcards/ 子目录（手工任务卡）和 04_architecture_principles_decisions/（手工架构决策）

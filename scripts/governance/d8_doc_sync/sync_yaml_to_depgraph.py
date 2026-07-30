@@ -1494,53 +1494,63 @@ def sync_dataflow_registry(cur):
     jobs = data.get("jobs", [])
     job_name_to_id: dict[str, int] = {}  # job_name -> PG job_id（保留）
     job_yaml_id_to_pg_id: dict[str, int] = {}  # YAML job_id(JOB-NNN) -> PG job_id（用于派生 edges）
+    job_yaml_id_to_design: dict[str, str] = {}  # YAML job_id -> design_maturity（用于派生 edges）
     synced_jobs = 0
     for j in jobs:
         job_name = j.get("job_name", "")
         if not job_name:
             continue
+        j_design = j.get("design_maturity", "production")
+        j_build = 'planned' if j_design == 'design' else 'generated'
         cur.execute("""
             INSERT INTO dataflow_jobs
                 (job_name, entity_type, scope, source_code_ref, trigger_type,
                  run_context, pit_relevance, description, design_maturity,
                  build_status, module_id, last_updated)
-            VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, 'production', 'generated', %s, %s)
+            VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING job_id
         """, (
             job_name, j.get("scope", "production"),
             j.get("source_code_ref"), j.get("trigger_type"),
             j.get("run_context"), j.get("pit_relevance", "strict"),
-            j.get("description"), j.get("module_id") or None, now_iso,
+            j.get("description"), j_design, j_build,
+            j.get("module_id") or None, now_iso,
         ))
         job_id = cur.fetchone()["job_id"]
         job_name_to_id[job_name] = job_id
         job_yaml_id_to_pg_id[j.get("job_id", "")] = job_id
+        job_yaml_id_to_design[j.get("job_id", "")] = j_design
         synced_jobs += 1
 
     # --- 同步 datasets ---
     datasets = data.get("datasets", [])
     dataset_name_to_id: dict[str, int] = {}  # entity_name -> dataset_id（用于派生 edges）
+    dataset_name_to_design: dict[str, str] = {}  # entity_name -> design_maturity（用于派生 edges）
     synced_datasets = 0
     for d in datasets:
         entity_name = d.get("entity_name", "")
         if not entity_name:
             continue
+        d_design = d.get("design_maturity", "production")
+        d_build = 'planned' if d_design == 'design' else 'generated'
         cur.execute("""
             INSERT INTO dataflow_datasets
                 (entity_name, entity_type, scope, contract_ref, physical_type,
                  produced_by_job, domain_id, design_maturity, build_status,
                  pit_policy, format_summary, valid_since, module_id, last_updated)
-            VALUES (%s, 'dataset', %s, %s, %s, %s, %s, 'production', 'generated', %s, %s, %s, %s, %s)
+            VALUES (%s, 'dataset', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING dataset_id
         """, (
             entity_name, d.get("scope", "production"),
             d.get("contract_ref"), d.get("physical_type"),
             d.get("produced_by_job"), d.get("domain_id"),
+            d_design, d_build,
             d.get("pit_policy", "strict"), d.get("format_summary"),
             d.get("valid_since"), d.get("module_id") or None, now_iso,
         ))
         dataset_id = cur.fetchone()["dataset_id"]
         dataset_name_to_id[entity_name] = dataset_id
+        dataset_name_to_design[entity_name] = d_design
         synced_datasets += 1
 
     # --- 派生 edges ---
@@ -1552,11 +1562,12 @@ def sync_dataflow_registry(cur):
         entity_name = d.get("entity_name", "")
         produced_by = d.get("produced_by_job")
         if entity_name in dataset_name_to_id and produced_by in job_yaml_id_to_pg_id:
+            edge_design = job_yaml_id_to_design.get(produced_by, 'production')
             cur.execute("""
                 INSERT INTO dataflow_edges
                     (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
-                VALUES (%s, %s, 'job', 'dataset', 'push', 'production', %s)
-            """, (job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name], now_iso))
+                VALUES (%s, %s, 'job', 'dataset', 'push', %s, %s)
+            """, (job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name], edge_design, now_iso))
             synced_edges += 1
 
     # 2. Dataset→Job 消费（consumed_by_jobs）→ edge_type=pull
@@ -1564,13 +1575,14 @@ def sync_dataflow_registry(cur):
         entity_name = d.get("entity_name", "")
         consumed_by = d.get("consumed_by_jobs", []) or []
         if entity_name in dataset_name_to_id:
+            edge_design = dataset_name_to_design.get(entity_name, 'production')
             for consumed_job_yaml_id in consumed_by:
                 if consumed_job_yaml_id in job_yaml_id_to_pg_id:
                     cur.execute("""
                         INSERT INTO dataflow_edges
                             (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
-                        VALUES (%s, %s, 'dataset', 'job', 'pull', 'production', %s)
-                    """, (dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id], now_iso))
+                        VALUES (%s, %s, 'dataset', 'job', 'pull', %s, %s)
+                    """, (dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id], edge_design, now_iso))
                     synced_edges += 1
 
     print(f"  同步 {synced_jobs} 个 Job, {synced_datasets} 个 Dataset, {synced_edges} 条 edges")

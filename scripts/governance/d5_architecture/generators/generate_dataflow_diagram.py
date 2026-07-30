@@ -406,15 +406,218 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     return "\n".join(lines) + "\n"
 
 
+# ============================================================
+# 域分组配置（设计态按域拆分输出）
+# ============================================================
+# D_FACTOR 模块多（32 个），按子目录拆 3 组；其他域按域或合并小域。
+_DOMAIN_GROUPS = [
+    {"key": "d_factor_ashare", "title": "因子域-A股因子计算（设计态）",
+     "domains": {"D_FACTOR"}, "path_contains": "/ashare/"},
+    {"key": "d_factor_analysis", "title": "因子域-因子分析（设计态）",
+     "domains": {"D_FACTOR"}, "path_contains": "/analysis/"},
+    {"key": "d_factor_barra_mine", "title": "因子域-Barra风险模型与因子挖掘（设计态）",
+     "domains": {"D_FACTOR"}, "path_contains": ("/barra/", "/mine/")},
+    {"key": "d_backtest", "title": "回测域-回测服务（设计态）",
+     "domains": {"D_BACKTEST"}},
+    {"key": "d_data", "title": "数据域-数据采集管理（设计态）",
+     "domains": {"D_DATA"}},
+    {"key": "d_data_eng", "title": "数据工程域-数据工程服务（设计态）",
+     "domains": {"D_DATA_ENG"}},
+    {"key": "d_ex_pf_core", "title": "执行核心+组合核心域（设计态）",
+     "domains": {"D_EX_CORE", "D_PF_CORE"}},
+    {"key": "d_others", "title": "其他域-ML训练+风控+交易（设计态）",
+     "domains": {"D_ML_TRAIN", "D_RISK", "D_TRADING"}},
+]
+
+
+def _job_domain_group(job: dict, datasets: list[dict], edges: list[dict]) -> str:
+    """确定 Job 所属的域分组 key。通过 Job 产出 Dataset 的 domain_id 反查。"""
+    job_id = job["id"]
+    job_domain = None
+    for e in edges:
+        if e["from_type"] == "job" and e["from_id"] == job_id and e["to_type"] == "dataset":
+            for d in datasets:
+                if d["id"] == e["to_id"]:
+                    job_domain = d.get("domain", "")
+                    break
+            if job_domain:
+                break
+    if not job_domain:
+        return "d_unknown"
+    src = job.get("source", "") or ""
+    for grp in _DOMAIN_GROUPS:
+        if job_domain in grp["domains"]:
+            pc = grp.get("path_contains")
+            if pc is None:
+                return grp["key"]
+            if isinstance(pc, str):
+                if pc in src:
+                    return grp["key"]
+            elif isinstance(pc, tuple):
+                if any(p in src for p in pc):
+                    return grp["key"]
+    return "d_unknown"
+
+
+def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
+    """生成单个域分组的设计态 Markdown 文档（frontmatter + Mermaid + 清单）。"""
+    now = datetime.now().isoformat(timespec="seconds")
+    title = grp["title"]
+    key = grp["key"]
+
+    lines = []
+    lines.append("---")
+    lines.append("doc_type: architecture_view")
+    lines.append(f"title: {title}")
+    lines.append('version: "1.0"')
+    lines.append("status: active")
+    lines.append(f"date: {now.split('T')[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
+    lines.append("---")
+    lines.append("")
+    lines.append(f"# {title}")
+    lines.append("")
+    lines.append(f"> 生成时间: {now}")
+    lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表")
+    lines.append(f"> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
+    lines.append("")
+
+    # Mermaid 图
+    lines.append("## 数据流图（设计态）")
+    lines.append("")
+    mmd, ds_cnt, job_cnt, edge_cnt = _gen_mermaid(
+        datasets, jobs, edges, scope_filter=None, maturity_filter="design"
+    )
+    lines.append(f"> 节点数: {ds_cnt} datasets / 数据集, {job_cnt} jobs / 作业, {edge_cnt} edges / 边")
+    lines.append("")
+    lines.append("```mermaid")
+    lines.append(mmd.rstrip())
+    lines.append("```")
+    lines.append("")
+
+    # Dataset 清单
+    lines.append("## Dataset 清单")
+    lines.append("")
+    lines.append("| ID | entity_name / 实体名 | scope / 范围 | domain / 域 | module_id / 蓝图 | 功能简述 |")
+    lines.append("|----|----------------------|--------------|------------|------------------|----------|")
+    for d in datasets:
+        if d.get("maturity") != "design":
+            continue
+        fmt = (d.get("format_summary") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
+        lines.append(
+            f"| DS-{d['id']:03d} | {_en_zh(d['name'])} | {_en_zh(d['scope'])} | "
+            f"{_en_zh(d['domain'] or '-')} | {d.get('module_id') or '-'} | {fmt} |"
+        )
+
+    # Job 清单
+    lines.append("")
+    lines.append("## Job 清单")
+    lines.append("")
+    lines.append("| ID | job_name / 作业名 | trigger_type / 触发类型 | module_id / 蓝图 | 功能简述 |")
+    lines.append("|----|-------------------|----------------------------|------------------|----------|")
+    for j in jobs:
+        if j.get("maturity") != "design":
+            continue
+        jdesc = (j.get("description") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
+        lines.append(
+            f"| JOB-{j['id']:03d} | {_en_zh(j['name'])} | "
+            f"{_en_zh(j['trigger'] or '-')} | {j.get('module_id') or '-'} | {jdesc} |"
+        )
+
+    lines.append("")
+    lines.append(f"[← 返回索引](dataflow_index.md)")
+    return "\n".join(lines) + "\n"
+
+
+def _gen_overview_index(datasets: list[dict], jobs: list[dict], edges: list[dict],
+                        group_counts: dict[str, dict]) -> str:
+    """生成索引文件（概览 + 统计 + 链接到各域文件）。"""
+    now = datetime.now().isoformat(timespec="seconds")
+    prod_ds = sum(1 for d in datasets if d.get("maturity") != "design")
+    design_ds = sum(1 for d in datasets if d.get("maturity") == "design")
+    prod_job = sum(1 for j in jobs if j.get("maturity") != "design")
+    design_job = sum(1 for j in jobs if j.get("maturity") == "design")
+    prod_edge = sum(1 for e in edges if e.get("design") != "design")
+    design_edge = sum(1 for e in edges if e.get("design") == "design")
+
+    lines = []
+    lines.append("---")
+    lines.append("doc_type: architecture_view")
+    lines.append("title: 数据流图（dataflowgraph）索引")
+    lines.append('version: "1.0"')
+    lines.append("status: active")
+    lines.append(f"date: {now.split('T')[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
+    lines.append("---")
+    lines.append("")
+    lines.append("# 数据流图（dataflowgraph）索引")
+    lines.append("")
+    lines.append(f"> 生成时间: {now}")
+    lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
+    lines.append(f"> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
+    lines.append("")
+
+    # 统计
+    lines.append("## 统计")
+    lines.append("")
+    lines.append("| 类型 | 运营态 (production) | 设计态 (design) | 合计 |")
+    lines.append("|------|:---:|:---:|:---:|")
+    lines.append(f"| Dataset | {prod_ds} | {design_ds} | {len(datasets)} |")
+    lines.append(f"| Job | {prod_job} | {design_job} | {len(jobs)} |")
+    lines.append(f"| Edge | {prod_edge} | {design_edge} | {len(edges)} |")
+    lines.append("")
+
+    # 运营态链接
+    lines.append("## 运营态数据流（已实现）")
+    lines.append("")
+    lines.append(f"> {prod_job} 个作业 / {prod_ds} 个数据集 / {prod_edge} 条边")
+    lines.append("")
+    lines.append("- [dataflow_production.md](dataflow_production.md) — 运营态全景图 + Dataset/Job 清单")
+    lines.append("")
+
+    # 设计态域文件链接
+    lines.append("## 设计态数据流（按域拆分）")
+    lines.append("")
+    lines.append(f"> {design_job} 个作业 / {design_ds} 个数据集 / {design_edge} 条边，按功能域拆分为多个文件：")
+    lines.append("")
+    lines.append("| 文件 | 功能域 | Job 数 | Dataset 数 |")
+    lines.append("|------|--------|:---:|:---:|")
+    for grp in _DOMAIN_GROUPS:
+        gc = group_counts.get(grp["key"], {"jobs": 0, "datasets": 0})
+        lines.append(
+            f"| [{grp['key']}.md]({grp['key']}.md) | {grp['title']} | {gc['jobs']} | {gc['datasets']} |"
+        )
+    lines.append("")
+
+    lines.append("## 概述")
+    lines.append("")
+    lines.append("数据流图（dataflowgraph）是与依赖图（depgraph）正交的第三维度全景图。")
+    lines.append('- depgraph 表达"谁依赖谁"（模块依赖）')
+    lines.append('- dataflowgraph 表达"数据从哪流到哪"（数据流向）')
+    lines.append("- 通过 `Job.source_code_ref` 引用 depgraph 模块 path，建立跨图关联")
+    lines.append("")
+    lines.append("> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。")
+    lines.append("")
+
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
-    """Entry point: parse args, run logic, return exit code."""
+    """Entry point: parse args, run logic, return exit code.
+
+    生成多文件：
+    - dataflow_index.md     — 索引+统计+链接
+    - dataflow_production.md — 运营态全景图+清单
+    - d_factor_ashare.md 等  — 设计态按域拆分（8 个域文件）
+    """
     parser = argparse.ArgumentParser(
         description="从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）",
     )
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     args = parser.parse_args()
 
-    # 验证 dataflowgraph schema
     try:
         init_dataflow_db()
     except RuntimeError as e:
@@ -427,18 +630,82 @@ def main() -> int:
         conn.close()
 
     if not datasets and not jobs:
-        print("[WARN] dataflowgraph 表为空，请先运行 sync_yaml_to_depgraph.py 同步 dataflow_graph_registry.yaml")
+        print("[WARN] dataflowgraph 表为空，请先运行 sync_yaml_to_depgraph.py")
         return EXIT_ERROR
-    # 创建输出目录
+
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 生成单 MD 文档（内嵌 4 张 Mermaid 图 + 统计 + 清单），不再输出独立 .mmd 文件
-    md = _gen_index_md(datasets, jobs, edges)
-    (out_dir / "dataflow_index.md").write_text(md, encoding="utf-8")
-    print(f"[OK] 生成 dataflow_index.md（内嵌 4 张 Mermaid 图 + 统计 + Dataset/Job 清单）")
+    # 为 edges 附加 design_maturity 标记（用于统计）
+    ds_design = {d["id"] for d in datasets if d.get("maturity") == "design"}
+    job_design = {j["id"] for j in jobs if j.get("maturity") == "design"}
+    for e in edges:
+        if e["from_type"] == "job" and e["from_id"] in job_design:
+            e["design"] = "design"
+        elif e["from_type"] == "dataset" and e["from_id"] in ds_design:
+            e["design"] = "design"
+        else:
+            e["design"] = "production"
+
+    # 1. 生成运营态文件
+    prod_datasets = [d for d in datasets if d.get("maturity") != "design"]
+    prod_jobs = [j for j in jobs if j.get("maturity") != "design"]
+    prod_md = _gen_index_md(prod_datasets, prod_jobs, edges)
+    (out_dir / "dataflow_production.md").write_text(prod_md, encoding="utf-8")
+    print(f"[OK] 生成 dataflow_production.md（{len(prod_jobs)} jobs / {len(prod_datasets)} datasets）")
+
+    # 2. 按域分组设计态 Job + Dataset
+    design_jobs = [j for j in jobs if j.get("maturity") == "design"]
+    design_datasets = [d for d in datasets if d.get("maturity") == "design"]
+
+    group_jobs: dict[str, list] = {g["key"]: [] for g in _DOMAIN_GROUPS}
+    group_jobs["d_unknown"] = []
+    for j in design_jobs:
+        grp_key = _job_domain_group(j, datasets, edges)
+        group_jobs.setdefault(grp_key, []).append(j)
+
+    # 为每个域分组找对应的 datasets（通过 push edges: job→dataset）
+    group_datasets: dict[str, list] = {g["key"]: [] for g in _DOMAIN_GROUPS}
+    group_datasets["d_unknown"] = []
+    for grp_key, grp_jobs_list in group_jobs.items():
+        job_ids = {j["id"] for j in grp_jobs_list}
+        produced_ds_ids = {e["to_id"] for e in edges
+                           if e["from_type"] == "job" and e["from_id"] in job_ids}
+        for d in design_datasets:
+            if d["id"] in produced_ds_ids:
+                group_datasets[grp_key].append(d)
+
+    # 3. 生成各域文件
+    group_counts = {}
+    for grp in _DOMAIN_GROUPS:
+        key = grp["key"]
+        g_jobs = group_jobs.get(key, [])
+        g_ds = group_datasets.get(key, [])
+        if not g_jobs:
+            continue
+        md = _gen_domain_md(grp, g_ds, g_jobs, edges)
+        (out_dir / f"{key}.md").write_text(md, encoding="utf-8")
+        print(f"[OK] 生成 {key}.md（{len(g_jobs)} jobs / {len(g_ds)} datasets）")
+        group_counts[key] = {"jobs": len(g_jobs), "datasets": len(g_ds)}
+
+    # 处理未知域
+    if group_jobs.get("d_unknown"):
+        g_jobs = group_jobs["d_unknown"]
+        g_ds = group_datasets.get("d_unknown", [])
+        unk_grp = {"key": "d_unknown", "title": "未分类域（设计态）"}
+        md = _gen_domain_md(unk_grp, g_ds, g_jobs, edges)
+        (out_dir / "d_unknown.md").write_text(md, encoding="utf-8")
+        print(f"[OK] 生成 d_unknown.md（{len(g_jobs)} jobs）")
+        group_counts["d_unknown"] = {"jobs": len(g_jobs), "datasets": len(g_ds)}
+
+    # 4. 生成索引文件
+    index_md = _gen_overview_index(datasets, jobs, edges, group_counts)
+    (out_dir / "dataflow_index.md").write_text(index_md, encoding="utf-8")
+    print(f"[OK] 生成 dataflow_index.md（索引+统计+链接）")
 
     print(f"\n输出目录: {out_dir}")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

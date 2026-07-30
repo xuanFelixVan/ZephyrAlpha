@@ -32,6 +32,7 @@ dataset_schema:
   format_summary: str
   valid_since: str
   module_id: str
+  design_maturity: str
 job_schema:
   job_id: str
   job_name: str
@@ -45,6 +46,7 @@ job_schema:
   pit_relevance: str
   description: str
   module_id: str
+  design_maturity: str
 datasets:
 - dataset_id: DS-001
   entity_name: market_data.tick
@@ -242,6 +244,937 @@ datasets:
   format_summary: 回测净值序列（timestamp/nav/cash/positions），组合更新产出
   valid_since: '2020-01-01'
   module_id: MOD-BT-001
+
+- dataset_id: DS-015
+  entity_name: factor.ashare_alpha87
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/alpha87/
+  produced_by_job: JOB-014
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股Alpha#87因子信号（多因子截面排名）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-016
+  entity_name: factor.ashare_capital_flow
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/capital_flow/
+  produced_by_job: JOB-015
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股资金流向因子（主力资金净流入/流出）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-017
+  entity_name: factor.ashare_cross_market
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/cross_market/
+  produced_by_job: JOB-016
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股跨市场因子（AH股溢价/跨市套利信号）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-018
+  entity_name: factor.ashare_fundamental
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/fundamental/
+  produced_by_job: JOB-017
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股基本面因子（PE/PB/ROE/股息率等）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-019
+  entity_name: factor.ashare_institutional
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/institutional/
+  produced_by_job: JOB-018
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股机构持仓变动因子（基金/外资持仓变化）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-020
+  entity_name: factor.ashare_intraday
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/intraday/
+  produced_by_job: JOB-019
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股日内动量因子（开盘/尾盘效应）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-021
+  entity_name: factor.ashare_irl
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/irl/
+  produced_by_job: JOB-020
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股IRL因子（逆强化学习推导的交易偏好信号）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-022
+  entity_name: factor.ashare_market_structure
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/market_structure/
+  produced_by_job: JOB-021
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股市场结构因子（支撑压力/趋势结构）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-023
+  entity_name: factor.ashare_microstructure
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/microstructure/
+  produced_by_job: JOB-022
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股微观结构因子（订单簿不平衡/买卖价差）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-024
+  entity_name: factor.ashare_pattern_signal
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/pattern_signal/
+  produced_by_job: JOB-023
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股K线形态因子（技术形态识别信号）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-025
+  entity_name: factor.ashare_ps_liquidity
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/ps_liquidity/
+  produced_by_job: JOB-024
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股PS流动性因子（换手率/成交额流动性指标）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-026
+  entity_name: factor.ashare_sector
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/sector/
+  produced_by_job: JOB-025
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股板块轮动因子（行业板块动量/资金流）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-027
+  entity_name: factor.ashare_smc
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/smc/
+  produced_by_job: JOB-026
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股SMC因子（智能货币概念/机构筹码分布）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-028
+  entity_name: factor.ashare_technical_indicator
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/ashare/technical_indicator/
+  produced_by_job: JOB-027
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: A股技术指标因子（MACD/RSI/KDJ等）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-029
+  entity_name: factor_analysis.correlation_analyzer
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/correlation_analyzer/
+  produced_by_job: JOB-028
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 因子间相关系数矩阵（识别冗余因子）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-030
+  entity_name: factor_analysis.correlation_dedup
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/correlation_dedup/
+  produced_by_job: JOB-029
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 去重后的因子集合（移除高相关冗余因子）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-031
+  entity_name: factor_analysis.decay_monitor
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/decay_monitor/
+  produced_by_job: JOB-030
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 因子衰减报告（IC随时间衰减趋势）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-032
+  entity_name: factor_analysis.factor_attribution
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/factor_attribution/
+  produced_by_job: JOB-031
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 因子归因报告（各因子对收益的贡献分解）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-033
+  entity_name: factor_analysis.factor_optimization
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/factor_optimization/
+  produced_by_job: JOB-032
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 优化后的因子权重（最大化IC/最小化相关性）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-034
+  entity_name: factor_analysis.ic_decay
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/ic_decay/
+  produced_by_job: JOB-033
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: IC衰减曲线（因子预测力随滞后的变化）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-035
+  entity_name: factor_analysis.ic_ir_calc
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/ic_ir_calc/
+  produced_by_job: JOB-034
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: IC/IR指标序列（因子信息系数/信息比率）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-036
+  entity_name: factor_analysis.ic_ir_evaluator
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/ic_ir_evaluator/
+  produced_by_job: JOB-035
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: IC/IR评估报告（因子有效性评级）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-037
+  entity_name: factor_analysis.layered_backtest
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/layered_backtest/
+  produced_by_job: JOB-036
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 分层回测结果（按因子分层的收益统计）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-038
+  entity_name: factor_analysis.multifactor_synthesis
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/multifactor_synthesis/
+  produced_by_job: JOB-037
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 合成因子信号（多因子加权/截面排名/置信度）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-039
+  entity_name: factor_analysis.three_level_judgment
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/three_level_judgment/
+  produced_by_job: JOB-038
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 三级研判结果（因子有效性/稳定性/贡献度评级）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-040
+  entity_name: factor_analysis.turnover_analyzer
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/analysis/turnover_analyzer/
+  produced_by_job: JOB-039
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 换手率分析报告（因子换手成本评估）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-041
+  entity_name: factor.barra_esg
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/barra/esg/
+  produced_by_job: JOB-040
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: ESG风险因子（环境/社会/治理评分）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-042
+  entity_name: factor.barra_exposure_calculator
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/barra/exposure_calculator/
+  produced_by_job: JOB-041
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: Barra因子暴露矩阵（风险因子敞口）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-043
+  entity_name: factor.barra_risk_budget_allocator
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/barra/risk_budget_allocator/
+  produced_by_job: JOB-042
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 风险预算分配方案（各因子风险贡献权重）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-044
+  entity_name: factor.barra_risk_model
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/barra/risk_model/
+  produced_by_job: JOB-043
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: Barra风险模型协方差矩阵（因子收益协方差）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-045
+  entity_name: factor_mining.causal_validator
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/mine/causal_validator/
+  produced_by_job: JOB-044
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 因子因果性验证报告（统计因果检验结果）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-046
+  entity_name: factor_mining.mining_agent
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/factor/mine/mining_agent/
+  produced_by_job: JOB-045
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 候选因子集合（AI挖掘的新因子列表及回测指标）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- dataset_id: DS-047
+  entity_name: backtest.anomaly_diagnoser_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/anomaly_diagnoser.py
+  produced_by_job: JOB-046
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 回测异常诊断报告（识别异常收益/过拟合信号）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-023'
+  design_maturity: design
+
+- dataset_id: DS-048
+  entity_name: backtest.data_quality_checker_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/data_quality_checker.py
+  produced_by_job: JOB-047
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 数据质量报告（缺失值/异常值/完整性检查）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-022'
+  design_maturity: design
+
+- dataset_id: DS-049
+  entity_name: backtest.decay_monitor_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/decay_monitor.py
+  produced_by_job: JOB-048
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 策略衰减报告（策略性能随时间衰减趋势）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-018'
+  design_maturity: design
+
+- dataset_id: DS-050
+  entity_name: backtest.nan_processor_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/nan_processor.py
+  produced_by_job: JOB-049
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 清洗后数据（NaN值处理/插值/标记）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-026'
+  design_maturity: design
+
+- dataset_id: DS-051
+  entity_name: backtest.param_analyzer_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/param_analyzer.py
+  produced_by_job: JOB-050
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 参数敏感性分析报告（参数变化对收益的影响）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-021'
+  design_maturity: design
+
+- dataset_id: DS-052
+  entity_name: backtest.report_generator_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/report_generator.py
+  produced_by_job: JOB-051
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 回测报告（净值/回撤/交易明细/绩效归因）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-019'
+  design_maturity: design
+
+- dataset_id: DS-053
+  entity_name: backtest.result_comparator_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/result_comparator.py
+  produced_by_job: JOB-052
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 回测对比报告（多策略/多周期收益对比）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-024'
+  design_maturity: design
+
+- dataset_id: DS-054
+  entity_name: backtest.result_deployer_result
+  entity_type: dataset
+  scope: backtest_internal
+  contract_ref: null
+  physical_type: src/zephyr/backtest/services/result_deployer.py
+  produced_by_job: JOB-053
+  consumed_by_jobs: []
+  domain_id: D_BACKTEST
+  pit_policy: strict
+  format_summary: 部署状态记录（回测结果发布到外部系统）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-BT-025'
+  design_maturity: design
+
+- dataset_id: DS-055
+  entity_name: data.feature_store
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/feature_store/
+  produced_by_job: JOB-054
+  consumed_by_jobs: []
+  domain_id: D_DATA
+  pit_policy: strict
+  format_summary: 特征数据集（特征值/特征元数据/版本管理）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- dataset_id: DS-056
+  entity_name: data.realtime_push_manager
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/realtime_push_manager/
+  produced_by_job: JOB-055
+  consumed_by_jobs: []
+  domain_id: D_DATA
+  pit_policy: strict
+  format_summary: 实时推送数据流（实时行情/交易推送）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- dataset_id: DS-057
+  entity_name: data.tick_data_manager
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/tick_data_manager/
+  produced_by_job: JOB-056
+  consumed_by_jobs: []
+  domain_id: D_DATA
+  pit_policy: strict
+  format_summary: Tick数据管理记录（Tick数据生命周期/清理）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- dataset_id: DS-058
+  entity_name: data.kline_resampler
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: zephyr.data.kline_resampler
+  produced_by_job: JOB-057
+  consumed_by_jobs: []
+  domain_id: D_DATA
+  pit_policy: strict
+  format_summary: 重采样K线数据（多周期K线/自定义周期重采样）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- dataset_id: DS-059
+  entity_name: data.sector_snapshot_collector
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: zephyr.data.sector_snapshot_collector
+  produced_by_job: JOB-058
+  consumed_by_jobs: []
+  domain_id: D_DATA
+  pit_policy: strict
+  format_summary: 板块快照数据（板块成分/权重/涨跌统计）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- dataset_id: DS-060
+  entity_name: data_eng.data_lake_manager
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data_eng/services/data_lake_manager/
+  produced_by_job: JOB-059
+  consumed_by_jobs: []
+  domain_id: D_DATA_ENG
+  pit_policy: strict
+  format_summary: 数据湖资产清单（数据湖存储/分区/生命周期管理）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- dataset_id: DS-061
+  entity_name: data_eng.knowledge_cleaning
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data_eng/services/knowledge_cleaning/
+  produced_by_job: JOB-060
+  consumed_by_jobs: []
+  domain_id: D_DATA_ENG
+  pit_policy: strict
+  format_summary: 清洗后知识库（知识数据去重/纠错/标准化）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- dataset_id: DS-062
+  entity_name: data_eng.stream_processing
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data_eng/services/stream_processing/
+  produced_by_job: JOB-061
+  consumed_by_jobs: []
+  domain_id: D_DATA_ENG
+  pit_policy: strict
+  format_summary: 流处理结果（实时数据流计算/窗口聚合）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- dataset_id: DS-063
+  entity_name: data_eng.synthetic_data
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data_eng/services/synthetic_data/
+  produced_by_job: JOB-062
+  consumed_by_jobs: []
+  domain_id: D_DATA_ENG
+  pit_policy: strict
+  format_summary: 合成数据集（模拟行情/场景生成数据）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- dataset_id: DS-064
+  entity_name: data_eng.training_data_manager
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data_eng/services/training_data_manager/
+  produced_by_job: JOB-063
+  consumed_by_jobs: []
+  domain_id: D_DATA_ENG
+  pit_policy: strict
+  format_summary: 训练数据集（特征/标签/样本管理）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- dataset_id: DS-065
+  entity_name: execution.audit_journal
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/ex_core/audit_journal/
+  produced_by_job: JOB-064
+  consumed_by_jobs: []
+  domain_id: D_EX_CORE
+  pit_policy: strict
+  format_summary: 审计日志记录（交易/系统操作审计流水）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-EX-003'
+  design_maturity: design
+
+- dataset_id: DS-066
+  entity_name: execution.fill_handler
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/ex_core/fill_handler.py
+  produced_by_job: JOB-065
+  consumed_by_jobs: []
+  domain_id: D_EX_CORE
+  pit_policy: strict
+  format_summary: 成交处理记录（成交回报处理/状态更新）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-EX-001'
+  design_maturity: design
+
+- dataset_id: DS-067
+  entity_name: execution.position_tracker
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/ex_core/position_tracker/
+  produced_by_job: JOB-066
+  consumed_by_jobs: []
+  domain_id: D_EX_CORE
+  pit_policy: strict
+  format_summary: 持仓跟踪记录（实时持仓/成本/盈亏跟踪）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-EX-002'
+  design_maturity: design
+
+- dataset_id: DS-068
+  entity_name: execution.live_portfolio
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/ex_core/services/live_portfolio.py
+  produced_by_job: JOB-067
+  consumed_by_jobs: []
+  domain_id: D_EX_CORE
+  pit_policy: strict
+  format_summary: 实盘组合状态（实时组合/资金/持仓汇总）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L06-001'
+  design_maturity: design
+
+- dataset_id: DS-069
+  entity_name: portfolio.optimizer
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/pf_core/optimizer/
+  produced_by_job: JOB-068
+  consumed_by_jobs: []
+  domain_id: D_PF_CORE
+  pit_policy: strict
+  format_summary: 优化后目标权重（均值方差/风险平价/Black-Litterman）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-PF-001'
+  design_maturity: design
+
+- dataset_id: DS-070
+  entity_name: portfolio.portfolio_aggregate
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/pf_core/portfolio_aggregate/
+  produced_by_job: JOB-069
+  consumed_by_jobs: []
+  domain_id: D_PF_CORE
+  pit_policy: strict
+  format_summary: 组合汇总状态（多策略组合/资金分配/持仓汇总）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-PF-003'
+  design_maturity: design
+
+- dataset_id: DS-071
+  entity_name: portfolio.strategy_runner
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/pf_core/strategy_engine/strategy_runner.py
+  produced_by_job: JOB-070
+  consumed_by_jobs: []
+  domain_id: D_PF_CORE
+  pit_policy: strict
+  format_summary: 策略目标权重（策略信号→目标权重转换）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L05-001'
+  design_maturity: design
+
+- dataset_id: DS-072
+  entity_name: portfolio.topn_momentum_strategy
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/pf_core/topn_momentum_strategy.py
+  produced_by_job: JOB-071
+  consumed_by_jobs: []
+  domain_id: D_PF_CORE
+  pit_policy: strict
+  format_summary: TopN动量信号（TopN选股/动量排名信号）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-L05-001'
+  design_maturity: design
+
+- dataset_id: DS-073
+  entity_name: ml.ai_operator_decisions
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/ml_train/ai_operator/
+  produced_by_job: JOB-072
+  consumed_by_jobs: []
+  domain_id: D_ML_TRAIN
+  pit_policy: strict
+  format_summary: AI操作员决策记录（模型推理/决策建议/置信度）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-ML-002'
+  design_maturity: design
+
+- dataset_id: DS-074
+  entity_name: ml.training_dataset
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/ml_train/training_pipeline/
+  produced_by_job: JOB-073
+  consumed_by_jobs: []
+  domain_id: D_ML_TRAIN
+  pit_policy: strict
+  format_summary: 训练数据集（特征/标签/样本/版本管理）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-ML-001'
+  design_maturity: design
+
+- dataset_id: DS-075
+  entity_name: risk.drawdown_metric
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/risk/drawdown_tracker/
+  produced_by_job: JOB-074
+  consumed_by_jobs: []
+  domain_id: D_RISK
+  pit_policy: strict
+  format_summary: 回撤指标序列（最大回撤/当前回撤/恢复时间）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-RISK-001'
+  design_maturity: design
+
+- dataset_id: DS-076
+  entity_name: trading.pnl
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/trading/pnl_calculator/
+  produced_by_job: JOB-075
+  consumed_by_jobs: []
+  domain_id: D_TRADING
+  pit_policy: strict
+  format_summary: 盈亏序列（已实现/未实现盈亏/总盈亏）
+  valid_since: '2020-01-01'
+  module_id: 'MOD-TRADING-002'
+  design_maturity: design
+
 jobs:
 - job_id: JOB-001
   job_name: ingest.ifind_kline
@@ -427,6 +1360,1008 @@ jobs:
   pit_relevance: strict
   description: 回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result
   module_id: MOD-BT-001
+
+- job_id: JOB-014
+  job_name: compute.ashare_alpha87
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/alpha87/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-015
+  pit_relevance: strict
+  description: 计算Alpha#87因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-015
+  job_name: compute.ashare_capital_flow
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/capital_flow/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-016
+  pit_relevance: strict
+  description: 计算资金流因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-016
+  job_name: compute.ashare_cross_market
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/cross_market/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-017
+  pit_relevance: strict
+  description: 计算跨市场因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-017
+  job_name: compute.ashare_fundamental
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/fundamental/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-018
+  pit_relevance: strict
+  description: 计算基本面因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-018
+  job_name: compute.ashare_institutional
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/institutional/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-019
+  pit_relevance: strict
+  description: 计算机构行为因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-019
+  job_name: compute.ashare_intraday
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/intraday/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-020
+  pit_relevance: strict
+  description: 计算日内因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-020
+  job_name: compute.ashare_irl
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/irl/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-021
+  pit_relevance: strict
+  description: 计算逆强化学习因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-021
+  job_name: compute.ashare_market_structure
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/market_structure/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-022
+  pit_relevance: strict
+  description: 计算市场结构因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-022
+  job_name: compute.ashare_microstructure
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/microstructure/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-023
+  pit_relevance: strict
+  description: 计算微观结构因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-023
+  job_name: compute.ashare_pattern_signal
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/pattern_signal/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-024
+  pit_relevance: strict
+  description: 计算形态信号因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-024
+  job_name: compute.ashare_ps_liquidity
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/ps_liquidity/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-025
+  pit_relevance: strict
+  description: 计算流动性因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-025
+  job_name: compute.ashare_sector
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/sector/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-026
+  pit_relevance: strict
+  description: 计算板块因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-026
+  job_name: compute.ashare_smc
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/smc/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-027
+  pit_relevance: strict
+  description: 计算智能货币概念因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-027
+  job_name: compute.ashare_technical_indicator
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/ashare/technical_indicator/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-028
+  pit_relevance: strict
+  description: 计算技术指标因子（消费OHLC K线，产出因子信号）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-028
+  job_name: analyze.correlation_analyzer
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/correlation_analyzer/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-029
+  pit_relevance: strict
+  description: 因子相关性分析（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-029
+  job_name: analyze.correlation_dedup
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/correlation_dedup/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-030
+  pit_relevance: strict
+  description: 因子去重（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-030
+  job_name: analyze.decay_monitor
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/decay_monitor/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-031
+  pit_relevance: strict
+  description: 因子衰减监控（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-031
+  job_name: analyze.factor_attribution
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/factor_attribution/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-032
+  pit_relevance: strict
+  description: 因子归因（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-032
+  job_name: analyze.factor_optimization
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/factor_optimization/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-033
+  pit_relevance: strict
+  description: 因子优化（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-033
+  job_name: analyze.ic_decay
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/ic_decay/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-034
+  pit_relevance: strict
+  description: IC衰减分析（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-034
+  job_name: analyze.ic_ir_calc
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/ic_ir_calc/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-035
+  pit_relevance: strict
+  description: IC/IR计算（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-035
+  job_name: analyze.ic_ir_evaluator
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/ic_ir_evaluator/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-036
+  pit_relevance: strict
+  description: IC/IR评估（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-036
+  job_name: analyze.layered_backtest
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/layered_backtest/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-037
+  pit_relevance: strict
+  description: 分层回测（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-037
+  job_name: analyze.multifactor_synthesis
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/multifactor_synthesis/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-038
+  pit_relevance: strict
+  description: 多因子合成（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-038
+  job_name: analyze.three_level_judgment
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/three_level_judgment/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-039
+  pit_relevance: strict
+  description: 三级研判（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-039
+  job_name: analyze.turnover_analyzer
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/analysis/turnover_analyzer/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-040
+  pit_relevance: strict
+  description: 换手率分析（消费因子信号，产出分析结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-040
+  job_name: compute.barra_esg
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/barra/esg/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-041
+  pit_relevance: strict
+  description: 计算ESG风险因子（消费市场数据，产出风险因子）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-041
+  job_name: compute.barra_exposure_calculator
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/barra/exposure_calculator/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-042
+  pit_relevance: strict
+  description: 计算Barra暴露计算（消费市场数据，产出风险因子）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-042
+  job_name: compute.barra_risk_budget_allocator
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/barra/risk_budget_allocator/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-043
+  pit_relevance: strict
+  description: 计算风险预算分配（消费市场数据，产出风险因子）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-043
+  job_name: compute.barra_risk_model
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/barra/risk_model/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-002
+  outputs:
+  - DS-044
+  pit_relevance: strict
+  description: 计算Barra风险模型（消费市场数据，产出风险因子）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-044
+  job_name: mine.causal_validator
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/mine/causal_validator/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-045
+  pit_relevance: strict
+  description: 因果性验证（消费因子数据，产出挖掘/验证结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-045
+  job_name: mine.mining_agent
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/factor/mine/mining_agent/
+  trigger_type: manual
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-046
+  pit_relevance: strict
+  description: 因子挖掘（消费因子数据，产出挖掘/验证结果）
+  module_id: 'MOD-L02-001'
+  design_maturity: design
+
+- job_id: JOB-046
+  job_name: backtest.anomaly_diagnoser
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/anomaly_diagnoser.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-047
+  pit_relevance: strict
+  description: 回测异常诊断（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-023'
+  design_maturity: design
+
+- job_id: JOB-047
+  job_name: backtest.data_quality_checker
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/data_quality_checker.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-048
+  pit_relevance: strict
+  description: 回测数据质量检查（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-022'
+  design_maturity: design
+
+- job_id: JOB-048
+  job_name: backtest.decay_monitor
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/decay_monitor.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-049
+  pit_relevance: strict
+  description: 策略衰减监控（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-018'
+  design_maturity: design
+
+- job_id: JOB-049
+  job_name: backtest.nan_processor
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/nan_processor.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-050
+  pit_relevance: strict
+  description: NaN数据处理（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-026'
+  design_maturity: design
+
+- job_id: JOB-050
+  job_name: backtest.param_analyzer
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/param_analyzer.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-051
+  pit_relevance: strict
+  description: 参数分析（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-021'
+  design_maturity: design
+
+- job_id: JOB-051
+  job_name: backtest.report_generator
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/report_generator.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-052
+  pit_relevance: strict
+  description: 回测报告生成（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-019'
+  design_maturity: design
+
+- job_id: JOB-052
+  job_name: backtest.result_comparator
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/result_comparator.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-053
+  pit_relevance: strict
+  description: 回测结果比较（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-024'
+  design_maturity: design
+
+- job_id: JOB-053
+  job_name: backtest.result_deployer
+  entity_type: job
+  scope: backtest_internal
+  source_code_ref: src/zephyr/backtest/services/result_deployer.py
+  trigger_type: manual
+  run_context: backtest_tick
+  inputs:
+  - DS-010
+  outputs:
+  - DS-054
+  pit_relevance: strict
+  description: 回测结果部署（消费回测结果，产出分析/报告）
+  module_id: 'MOD-BT-025'
+  design_maturity: design
+
+- job_id: JOB-054
+  job_name: data.feature_store
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/feature_store/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-055
+  pit_relevance: strict
+  description: 特征存储管理（数据采集/管理服务）
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- job_id: JOB-055
+  job_name: data.realtime_push_manager
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/realtime_push_manager/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-056
+  pit_relevance: strict
+  description: 实时推送管理（数据采集/管理服务）
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- job_id: JOB-056
+  job_name: data.tick_data_manager
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/tick_data_manager/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-057
+  pit_relevance: strict
+  description: Tick数据管理（数据采集/管理服务）
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- job_id: JOB-057
+  job_name: data.kline_resampler
+  entity_type: job
+  scope: production
+  source_code_ref: zephyr.data.kline_resampler
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-058
+  pit_relevance: strict
+  description: K线重采样（数据采集/管理服务）
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- job_id: JOB-058
+  job_name: data.sector_snapshot_collector
+  entity_type: job
+  scope: production
+  source_code_ref: zephyr.data.sector_snapshot_collector
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-059
+  pit_relevance: strict
+  description: 板块快照采集（数据采集/管理服务）
+  module_id: 'MOD-L00-004'
+  design_maturity: design
+
+- job_id: JOB-059
+  job_name: data_eng.data_lake_manager
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data_eng/services/data_lake_manager/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-060
+  pit_relevance: strict
+  description: 数据湖管理（数据工程服务）
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- job_id: JOB-060
+  job_name: data_eng.knowledge_cleaning
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data_eng/services/knowledge_cleaning/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-061
+  pit_relevance: strict
+  description: 知识清洗（数据工程服务）
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- job_id: JOB-061
+  job_name: data_eng.stream_processing
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data_eng/services/stream_processing/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-062
+  pit_relevance: strict
+  description: 流处理（数据工程服务）
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- job_id: JOB-062
+  job_name: data_eng.synthetic_data
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data_eng/services/synthetic_data/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-063
+  pit_relevance: strict
+  description: 合成数据生成（数据工程服务）
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- job_id: JOB-063
+  job_name: data_eng.training_data_manager
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data_eng/services/training_data_manager/
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-064
+  pit_relevance: strict
+  description: 训练数据管理（数据工程服务）
+  module_id: 'MOD-DATA_ENG'
+  design_maturity: design
+
+- job_id: JOB-064
+  job_name: ex_core.audit_journal
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/ex_core/audit_journal/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-008
+  - DS-009
+  outputs:
+  - DS-065
+  pit_relevance: strict
+  description: 审计日志（消费成交/持仓数据，产出执行核心记录）
+  module_id: 'MOD-EX-003'
+  design_maturity: design
+
+- job_id: JOB-065
+  job_name: ex_core.fill_handler
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/ex_core/fill_handler.py
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-008
+  - DS-009
+  outputs:
+  - DS-066
+  pit_relevance: strict
+  description: 成交处理（消费成交/持仓数据，产出执行核心记录）
+  module_id: 'MOD-EX-001'
+  design_maturity: design
+
+- job_id: JOB-066
+  job_name: ex_core.position_tracker
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/ex_core/position_tracker/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-008
+  - DS-009
+  outputs:
+  - DS-067
+  pit_relevance: strict
+  description: 持仓跟踪（消费成交/持仓数据，产出执行核心记录）
+  module_id: 'MOD-EX-002'
+  design_maturity: design
+
+- job_id: JOB-067
+  job_name: ex_core.live_portfolio
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/ex_core/services/live_portfolio.py
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-008
+  - DS-009
+  outputs:
+  - DS-068
+  pit_relevance: strict
+  description: 实盘组合（消费成交/持仓数据，产出执行核心记录）
+  module_id: 'MOD-L06-001'
+  design_maturity: design
+
+- job_id: JOB-068
+  job_name: pf_core.optimizer
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/pf_core/optimizer/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-005
+  outputs:
+  - DS-069
+  pit_relevance: strict
+  description: 组合优化（消费信号，产出组合/权重）
+  module_id: 'MOD-PF-001'
+  design_maturity: design
+
+- job_id: JOB-069
+  job_name: pf_core.portfolio_aggregate
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/pf_core/portfolio_aggregate/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-005
+  outputs:
+  - DS-070
+  pit_relevance: strict
+  description: 组合汇总（消费信号，产出组合/权重）
+  module_id: 'MOD-PF-003'
+  design_maturity: design
+
+- job_id: JOB-070
+  job_name: pf_core.strategy_runner
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/pf_core/strategy_engine/strategy_runner.py
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-005
+  outputs:
+  - DS-071
+  pit_relevance: strict
+  description: 策略运行（消费信号，产出组合/权重）
+  module_id: 'MOD-L05-001'
+  design_maturity: design
+
+- job_id: JOB-071
+  job_name: pf_core.topn_momentum_strategy
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/pf_core/topn_momentum_strategy.py
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-005
+  outputs:
+  - DS-072
+  pit_relevance: strict
+  description: TopN动量策略（消费信号，产出组合/权重）
+  module_id: 'MOD-L05-001'
+  design_maturity: design
+
+- job_id: JOB-072
+  job_name: ml_train.ai_operator
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/ml_train/ai_operator/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-005
+  outputs:
+  - DS-073
+  pit_relevance: strict
+  description: AI操作员决策（消费信号，产出AI辅助决策）
+  module_id: 'MOD-ML-002'
+  design_maturity: design
+
+- job_id: JOB-073
+  job_name: ml_train.training_pipeline
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/ml_train/training_pipeline/
+  trigger_type: scheduled
+  run_context: production
+  inputs:
+  - DS-003
+  - DS-004
+  outputs:
+  - DS-074
+  pit_relevance: strict
+  description: ML训练流水线（消费因子数据，产出训练数据集）
+  module_id: 'MOD-ML-001'
+  design_maturity: design
+
+- job_id: JOB-074
+  job_name: risk.track_drawdown
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/risk/drawdown_tracker/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-009
+  outputs:
+  - DS-075
+  pit_relevance: strict
+  description: 回撤跟踪（消费持仓快照，产出回撤指标）
+  module_id: 'MOD-RISK-001'
+  design_maturity: design
+
+- job_id: JOB-075
+  job_name: trading.calc_pnl
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/trading/pnl_calculator/
+  trigger_type: event_driven
+  run_context: production
+  inputs:
+  - DS-008
+  outputs:
+  - DS-076
+  pit_relevance: strict
+  description: PnL计算（消费成交数据，产出盈亏）
+  module_id: 'MOD-TRADING-002'
+  design_maturity: design
+
 edges_note: '数据流边由 Dataset 的 produced_by_job/consumed_by_jobs 字段派生，无需手工维护。 sync_dataflow_registry() 读取 datasets/jobs 后自动生成
   edges 写入 dataflow_edges 表。 边类型（edge_type）枚举：push（Job→Dataset 产出）/ pull（Dataset→Job 消费）/ sync（同步调用）/ async（异步消息）/ event_driven（事件驱动）。
   Phase 1 仅生成 push/pull 两类；Phase 3 运行时 instrumentation 补充 sync/async/event_driven。
