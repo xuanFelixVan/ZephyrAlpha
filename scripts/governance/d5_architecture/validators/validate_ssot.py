@@ -21,10 +21,18 @@
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 
-from _shared.constants import REPO_ROOT
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS
+from _shared.encoding import ensure_utf8_stdout
+
+ensure_utf8_stdout()
 
 __manifest__ = """
 args: []
@@ -512,7 +520,8 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="SSoT 完整性校验（裁定#207 R3-3）")
-    parser.add_argument("--scan", action="store_true", help="运行 SSoT 覆盖范围一致性校验")
+    parser.add_argument("--ci", action="store_true", help="CI 硬阻断模式（默认即硬阻断，与 governance.yml --ci 对齐）")
+    parser.add_argument("--scan", action="store_true", help="运行 SSoT 覆盖范围一致性校验（--ci 兼容别名）")
     args = parser.parse_args()
 
     violations = check_ssot_coverage_completeness()

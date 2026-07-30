@@ -406,7 +406,7 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 | 高风险操作（批量/安全） | `EscalationEngine().evaluate(RuleCategory, desc)` | 可能执行应变 blocked 的操作 |
 | 多Agent/MCP 委托 | `DelegationEngine.delegate(event, strategy)` | 死锁/循环委托/深度溢出 |
 | LLM API 调用前 | `BudgetEngine().pre_flight_check(operation_id, tokens, cost)` | 超预算 → 降级或拒绝 |
-| 施工前/后：知识 | `kb.search("<关键词>")` / `kb.write(topic, content, provenance)` | 重复造轮子 / 知识丢失 |
+| 施工前/后：知识 | `get_unified_memory_api().search(query="<关键词>")` / `.write(topic, content, provenance=WriteTrace(...))` | 重复造轮子 / 知识丢失 |
 | **脚本运行慢/卡死** | PERF-001 十项检查清单 → `trae_034_task_card_standard.yaml §9` | 凭直觉改 → 治标不治本 |
 
 ---

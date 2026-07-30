@@ -346,7 +346,7 @@ STEP 3  — Session Continuity 恢复: 上一个 session 做了啥 / 未完成�
 STEP 4  — Phase Manager: 当前施工阶段（46 个门控检查）
 STEP 4.5 — 资产盘点: unified_asset_index.yaml（总资产/健康评分/孤儿率）
 STEP 4.6 — Skill 发现: 查看 data/capability_cards/ 目录（22 个 skill_*.yaml）
-STEP 4.7 — KB 自检: bootstrap 扫描文档 → 填充知识库 → 施工前查已有 KE
+STEP 4.7 — VMS 记忆自检: 施工前查已有记忆（`get_unified_memory_api().search(query)` 跨 topic 语义检索；`recall(topic)` 主题召回；KB 已删除，禁用 `kb.*` 旧 API）
 STEP 4.8 — Escalation Protocol 激活: 升级/委托安全网
 STEP 4.9 — Drift Detector 初始化: 全部漂移检测器 + 漂移预算检查
 STEP 4.10 — Agent RBAC 激活: 身份注册 + PermissionGuard + 全部模块完整性
@@ -389,8 +389,8 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | Session 结束 | 见 L0 "Session 开关门 → 关门" | 不可关闭 |
 | 进入新 Session | 见 L0 "Session 开关门 → 进门" + 本文件 §五 | 不可开工 |
 | 按领域施工 | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read 对应 yaml | 未加载 Skill → 盲目施工 |
-| 施工前：检查已有知识 | `kb.search("<关键词>")` | 重复造轮子 / 违反已有决策 |
-| 施工后：写入知识 | `kb.write(topic="...", content="...", provenance=build_provenance(...))` | 知识丢失 → 下个 session 不知道 |
+| 施工前：检查已有知识 | `get_unified_memory_api().search(query="<关键词>")` | 重复造轮子 / 违反已有决策 |
+| 施工后：写入知识 | `get_unified_memory_api().write(topic="...", content="...", provenance=WriteTrace(origin=..., audit_chain=[...]))` | 知识丢失 → 下个 session 不知道 |
 | 回滚/撤销/undo | `python scripts/rollback.py preflight` → CLEAN → `rollback.py <cmd>` | preflight FAIL → 禁止回滚 |
 | Agent 间协作/多 Agent | `GovernanceAdapter.verify_pair(a, b)` + Skill 路由 `a2a` | 静默失败 + 死锁无防护 |
 | 高风险操作（批量/安全） | `EscalationEngine().evaluate(RuleCategory, desc)` | 可能执行应被 blocked 的操作 |
@@ -626,7 +626,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 触发条件/适用场景 | "何时应执行此规则"的判定逻辑 |
 | 完成标准/通过条件 | "此流程完成"的 exit criteria |
 | 多步流程中的步骤 | 不可部分删除——删一步则全流程断裂 |
-| 可解析引用 | 项目术语 KB 决策记录/KB/TaskCard/Gate 后必须有路径 |
+| 可解析引用 | 项目术语/VMS 决策记录/TaskCard/Gate 后必须有路径 |
 | 导航路径/冷启动序列 | "新 AI 如何找到这个文件、如何开始使用"——命令链或 3-5 步路径 |
 | **施工规格** | **协议定义（字段级）、函数签名（参数+返回类型）、触发逻辑（scheduler 注册参数）、验收标准（机械可判定 exit code+预期输出）、跨系统影响（上游调用点+下游消费者）** |
 
@@ -1105,7 +1105,7 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 
 ### 域归属铁律
 
-**模块归入已有域（当前 43 域，见 `extract_depgraph.py --summary`），不新建域。** 新建功能域/子域 MUST 经 Owner 书面审批。AI 遇到模块无域归属时，优先根据 `[BLUEPRINT]` 字段归入已有域；只有穷尽所有已有域仍无法合理归属时，才可提议新建域并等待 Owner 审批。
+**模块归入已有域（数量见 `extract_depgraph.py --summary`，动态派生禁止在此硬编码数字），不新建域。** 新建功能域/子域 MUST 经 Owner 书面审批。AI 遇到模块无域归属时，优先根据 `[BLUEPRINT]` 字段归入已有域；只有穷尽所有已有域仍无法合理归属时，才可提议新建域并等待 Owner 审批。
 
 > 详见 [onboarding_detail.md §15](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 
@@ -1142,7 +1142,7 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 | ❌ | 按数量从大到小治理 | 前面的决定可能让后面的问题消失，白做 |
 | ❌ | 用"零消费者"判定删除 | 误删有价值的安全/治理组件 |
 | ❌ | 先补测试再重构 | 重构改代码，测试白写 |
-| ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（当前 43 域），新建域必须 Owner 书面同意 |
+| ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（数量见 `extract_depgraph.py --summary`），新建域必须 Owner 书面同意 |
 | ❌ | **编排器直接依赖下层具体实现(runtime)** | 违反DIP，控制平面耦合数据平面（应改为contract依赖抽象接口） |
 | ❌ | **同层循环依赖** | 同层单向允许，但禁止形成环（如 F2→F4→F2） |
 
@@ -1174,7 +1174,7 @@ depgraph (PostgreSQL)的 schema 变更必须遵循 DDL-as-Code 流程，禁止�
 读取 depgraph 数据:
   STEP 1: 确定需要什么数据（域摘要？指定域？指定模块？顶级元数据？路径列表？）
   STEP 2: 运行对应提取命令
-          python scripts/governance/extract_depgraph.py --summary     # 43域+模块数
+          python scripts/governance/extract_depgraph.py --summary     # 域数+模块数（动态派生，勿硬编码）
           python scripts/governance/extract_depgraph.py --domains D_FACTOR,D_RISK
           python scripts/governance/extract_depgraph.py --modules D-FACTOR-01
           python scripts/governance/extract_depgraph.py --top          # 顶级元数据
