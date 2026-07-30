@@ -76,15 +76,15 @@ depgraph 节点两态生命周期：`design`（设计态，蓝图阶段代码未
 ## 项目快照（自动生成）
 
 <!-- AUTO-START:project_snapshot -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-07-29 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-07-30 -->
 
 | 指标 | 值 |
 |------|----|
 | 功能域 / Domains | 72 |
-| 代码节点 / Nodes | 5775 |
-| 依赖边 / Edges | 7920 |
+| 代码节点 / Nodes | 5798 |
+| 依赖边 / Edges | 7948 |
 | 孤儿节点 / Orphans | 0 |
-| 运营态占比 / Production ratio | 97.9%（stable+generated） |
+| 运营态占比 / Production ratio | 97.7%（stable+generated） |
 <!-- AUTO-END:project_snapshot -->
 
 > 完整统计见 [project_handbook/07_dependencies.md](project_handbook/07_dependencies.md)。
@@ -117,7 +117,7 @@ pip install -r requirements.txt
 | 部分 | 路径 | 回答什么 |
 |------|------|---------|
 | **项目现状手册** | [project_handbook/](project_handbook/) | 项目**是什么**：仓库布局、数据层、数据源、交易域、治理基础设施、依赖关系（大白话 + AUTO 统计 + 外链权威源） |
-| **架构原则** | [principles/](principles/) | 项目**该怎么**：14 份永恒框架原则（业务/应用/数据/治理/集成/运维/运行平面/安全/技术/前端/信息/能力成熟度/AI 治理） |
+| **架构原则** | [principles/](principles/) | 项目**该怎么**：10 份永恒框架原则（架构/治理/AI治理/应用/数据/业务/能力成熟度/运行平面/安全/技术） |
 | **全景图能力** | [panorama/](panorama/) | depgraph 双态模型、SSoT 分层、生成器角色——AI 干活前必查的依赖与路径全景 |
 | **自动化说明** | [_automation/](_automation/) | 哪些文档自动生成、AUTO 标记块清单、触发方式、维护规则 |
 

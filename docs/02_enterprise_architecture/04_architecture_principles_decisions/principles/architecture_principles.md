@@ -3,107 +3,45 @@ module_id: ARCH-004
 title: Architecture Principles / 架构原则
 doc_type: architecture_view
 status: Active
-version: 2.0.3
+version: 3.0.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
-classification: confidential
 language: zh
 created_by: agent
-valid_from: 2026-05-02
+valid_from: 2026-07-30
 superseded_by: null
 supersedes: null
-related_rationale: []
-related_open_questions: []
 tags:
 - architecture-principles
-- architecture-methodology
-- togaf
-- c4
-- iso-42010
-- open-source-first
 - safety-red-lines
-- security-principles
 - domain-driven
-summary: ZephyrAlpha 架构原则+方法论集中 SSoT。包含架构方法论（TOGAF/C4/功能域裁定/三棵树）+ 4 条安全红线 + 开源优先机构对标 + 核心架构决策。
-date: '2026-07-19'
+- open-source-first
+summary: ZephyrAlpha 架构原则总纲精简版。仅保留不可降级核心：功能域唯一裁定 + 4 条安全红线 + 开源优先原则 + 核心架构决策。删除 TOGAF/C4/ISO 通用方法论教学、开源机构对标论证、门禁状态快照（以 .pre-commit-config.yaml 为准）。
+date: '2026-07-30'
 ttl: permanent
 ---
 
-# Architecture Principles / 架构原则
+# 架构原则（Architecture Principles）
+
+> 精简版 v3.0（2026-07-30）：删除三标准合成教学（TOGAF/C4/ISO 是通用知识）、开源机构对标论证（Two Sigma/Man AHL 等教学材料）、门禁状态快照（以 `.pre-commit-config.yaml` 为准）。保留功能域裁定 + 4 条安全红线 + 核心决策。
 
 ---
 
-## 0. 本文档定位
+## §1 功能域唯一分类裁定
 
-本文档是 ZephyrAlpha 2.0 **所有架构原则与方法的 SSoT（Single Source of Truth / 唯一真源）**。
+**裁定**：按功能分域是唯一的分类方式。逻辑层只作为域的一个属性（`layer_id`），不当作独立的分类法。
 
-包含三类内容：
-1. **架构方法论**（§1）——怎么描述架构（TOGAF/C4/功能域裁定/三棵树）
-2. **架构原则**（§2-§3）——应该怎么做（安全红线/开源优先）
-3. **核心架构决策**（§4）——系统定位与定死的决策
-
-任何其他文件中对同一原则或方法论的描述均为**只读引用**，不得独立修改正文。如有冲突，以本文档为准。
-
----
-
-## 1. 架构方法论
-
-### 1.1 三标准合成
-
-本项目用三个国际标准来组织架构文档（不是发明新方法，是站在巨人肩膀上）：
-
-| 标准 | 大白话 | 在本项目中的作用 |
-|------|--------|-----------------|
-| **ISO/IEC/IEEE 42010:2011** | 一个系统要从多个角度看，每个角度解决不同人的关心 | 方法论：用多个视图描述系统 |
-| **TOGAF 9.2 / 10** | 从业务→信息→应用→技术四层看系统 | 四层视图分类法 |
-| **C4 Model** (Simon Brown) | 画图从大到小分四级：全景→容器→组件→代码 | 应用层可视化：画 L1 系统上下文 + L2 容器图 |
-
-### 1.2 功能域唯一分类裁定
-
-**裁定**：按功能分域是唯一的分类方式。逻辑层只作为域的一个属性（layer_id），不当作独立的分类法。
-
-| 裁定项 | 结论 | 大白话理由 |
-|--------|------|-----------|
+| 裁定项 | 结论 | 理由 |
+|--------|------|------|
 | 逻辑层 vs 功能域 | **功能域唯一** | 两套分类并存=AI 每次要判断用哪套=幻觉温床 |
-| 逻辑层怎么保留 | 作为域的 layer_id 属性 | 属性不是分类，不会产生两套并行的分法 |
+| 逻辑层怎么保留 | 作为域的 `layer_id` 属性 | 属性不是分类，不会产生两套并行的分法 |
 | 逻辑层 YAML 文件 | 废弃，合并进 depgraph | 避免两个地方同时存同一信息（真源分裂） |
 
-**当前域层级分布**：由 depgraph `domains` 表派生（详见 depgraph 数据库或 `domains` 表）。禁止在本文硬编码域数量/节点数/边数。
-
-### 1.3 TOGAF 四层
-
-文档按 TOGAF 四层组织（就是从四个角度看系统，上层驱动下层）：
-- **BA 业务架构**：系统服务谁、做什么、核心流程是什么
-- **IA 信息架构**：有哪些信息资产、怎么组织
-- **AA 应用架构**：有哪些模块/服务、怎么交互
-- **TA 技术架构**：用什么技术栈支撑
-
-> **注**：TOGAF 四层是**看文档的角度**，不是代码的物理分层。代码怎么放以功能域为准（见§1.2裁定）。
-
-### 1.4 C4 模型
-
-TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画图"（从大到小分四级，像 Google Earth 从卫星到街道）：
-
-| 级别 | 大白话 | 本项目用法 |
-|------|--------|-----------|
-| **L1 — System Context** | 系统在外部世界的位置（卫星视角） | ✅ 必画 |
-| **L2 — Container** | 系统内的独立部署单元（城市视角） | ✅ 必画 |
-| **L3 — Component** | 容器内的组件（街道视角） | 🟡 按需，在蓝图内 |
-| **L4 — Code** | 类/函数级别（建筑内部） | ❌ 不画（代码本身就是文档）|
-
-### 1.5 三棵树映射
-
-项目根有多个顶层目录，其中三个是业务代码树（"三棵树"），各归一个架构视图管。运行时/工件目录（`data/` `logs/` `tmp/` `config/` `tests/` 等）不在三棵树范围：
-
-| 目录 | 大白话 | 归属视图 | 归属文档 |
-|------|--------|---------|---------|
-| `docs/` | 所有文档（架构/蓝图/规则/报告） | 信息架构 | `information_principles.md` |
-| `src/` | 所有业务代码 | 应用架构 | `application_principles.md` |
-| `scripts/` | 所有脚本（治理/生成器/工具） | 应用架构（子视图） | `application_principles.md` |
+> 域层级分布由 depgraph `domains` 表派生，禁止在本文硬编码域数量/节点数/边数。
 
 ---
 
-## 2. 安全红线（Safety Red Lines / 不可撤销原则）
+## §2 安全红线（Safety Red Lines / 不可撤销原则）
 
 以下 4 条原则是系统最高优先级约束，**任何架构决策、代码变更、AI 自治行为不得违反**。违反任一红线视为 P0 阻断。
 
@@ -114,74 +52,45 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 | **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | 风控层 hard check before 执行层 |
 | **R4** | **PRD 永远不改** | 生产数据库（PRD）永远不做 DDL 变更/手动 UPDATE/DELETE；所有变更走迁移脚本 + 审计日志 | DB 权限只读连接 + 迁移脚本强制记录 |
 
-### §2bis 门禁追溯（CI / 本地工件）— 状态快照（T0 阶段）
+**红线优先级**：高于所有其他架构原则。在其他原则与红线冲突时，**红线无条件优先**。
 
-> **注**：门禁追溯原则本身永恒保留；下表的 ✅/⚠️ 状态标记与脚本路径为 T0 阶段状态快照，会随门禁演进过时，最新状态以 `.pre-commit-config.yaml` / `.github/workflows/governance.yml` 为准。
-
-| # | gate_ref | 落地状态 | 说明 |
-|---|----------|:---:|------|
-| **R1** | `.pre-commit-config.yaml`（私钥检测 hook）；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交 |
-| **R2** | 源码静态扫描 + 运行时日志扫描 | ⚠️ **部分落地** | 源码扫描脚本已开发未接入门禁；运行时日志扫描待 T1 实盘后落地 |
-| **R3** | **目标态**：风控参数 hard check before 执行层 | ⚠️ **T1 待落地** | CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用）。T1 实盘后须满足 hard-check 与适应度函数阈值 |
-| **R4** | 数据治理策略（权限只读连接 + 迁移审计流程） | ✅ 已落地 | `database_service.py` 双连接机制：治理/依赖图连接独立只读，禁止写操作（实现细节见模块蓝图） |
-
-**红线优先级**：高于所有其他架构原则。在其他原则（如 §3 "开源优先"）与红线冲突时，**红线无条件优先**。
-
-**与 06-SEC 安全架构的关系**：06-SEC 定义了防御深度、GRC 矩阵、威胁模型等技术实现；本节定义的是不可妥协的最高原则。前者是"怎么做"，后者是"什么绝不能做"。
+> 门禁落地状态以 `.pre-commit-config.yaml` / `.github/workflows/governance.yml` 为准，不在本文档维护状态快照。详细安全实现见 [security_principles.md](security_principles.md)。
 
 ---
 
-## 3. 开源优先 / Open Source First
+## §3 开源优先 / Open Source First
 
-### 3.1 专业机构为什么"开源优先"？
+**原则**：能用成熟开源库就不自研。单人 + AI 的开发模式比专业机构**更应该**开源优先——无 QA、无 oncall、无测试团队，开源社区是唯一的质量反哺来源。
 
-#### 3.1.1 直接对标（量化领域代表性机构）
-
-| 机构 | 开源使用情况 | 关键证据 |
-|------|------------|--------|
-| **Two Sigma** | 重度使用 + 大量反哺 | 开源 `BeakerX`, `Cook`（数据科学生态）|
-| **Man AHL** | 开源 `arctic` 时序库 | 全球 Python 时序管理标杆 |
-| **Microsoft (Qlib)** | 开源 `Qlib` 完整 AI 量化平台 | 因子 / 训练 / 回测全栈 |
-
-#### 3.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）
-
-1. **边际成本更低**：维护一个活跃开源项目 vs 自研从零，后者人力成本高一个数量级
-2. **社区质量反哺**：Bug 由全球开发者发现，而不是只有你一个人
-3. **人才流动性**：新员工熟悉开源工具，onboarding 成本低
-4. **监管透明**：开源代码比自研代码更容易通过审计（可读、有历史、有社区审查）
-5. **退出成本低**：用开源意味着随时可换（社区分叉），自研意味着绑死自己
-
-#### 3.1.3 独立开发者更应该开源优先
-
-> **注**：下表维度框架永恒；ZephyrAlpha 列的具体值（1 人 + AI / 无 QA 等）为当前阶段快照，随团队规模演进。
-
-| 维度 | 机构（10 人团队） | ZephyrAlpha（1 人 + AI，当前阶段快照） |
-|-----|---------------|:---:|
-| 人力成本 | 高 | **无限制** |
-| 测试资源 | 专职 QA | **无 QA** |
-| Bug 修复时间 | 有 oncall | **只有你** |
-| 开源节省的人力 | 基线 | **远高于机构** |
-
-**结论**：单人 + AI 的开发模式比专业机构**更应该**开源优先。
+> 开源选型清单与版本决策见 `technology_principles.md` / `technology_landscape.yaml`，不在本文档重复。
 
 ---
 
-## 4. 核心架构决策
+## §4 核心架构决策
 
-**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI 原生重构，采用功能域唯一物理分类体系（按功能把代码分成独立的块，每块一个域，不按技术层分），Python 全栈，Vibe Coding 驱动（用 AI IDE 写代码；具体 IDE 选型为决策快照，当前 Cursor + Trae 双工具）。
+**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI 原生重构，采用功能域唯一物理分类体系，Python 全栈，Vibe Coding 驱动。
 
-**核心架构决策**（定死的原则，不可推翻）：
-- **功能域唯一分类**：按功能分域，不按技术层分。逻辑层只作为域的一个属性（layer_id），不当并行分类（两套分类法并存=AI 不知道用哪套=幻觉温床）。
-- **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）从 depgraph 数据库自动生成，禁止手编（手编必过时）。
-- **运行时平面**：Hot Path / Warm Path / Cold Path 三平面（详见 [runtime_planes_principles.md](runtime_planes_principles.md)）。激活状态见 `architecture_model/cross_cutting/runtime_planes.yaml`，不在本文档硬编码
-- **治理三层**（Policy / Factory / Runtime，详见 [governance_principles.md](governance_principles.md)）→ 治理三层与业务层平级正交横切（非上下层），每层有准入和退出门禁
-- **安全红线**：4 条不可撤销（详见 §2）
+**定死原则（不可推翻）**：
+
+- **功能域唯一分类**：按功能分域，不按技术层分。逻辑层只作为域的 `layer_id` 属性（§1）
+- **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）从 depgraph 数据库自动生成，禁止手编
+- **运行时平面**：Hot / Warm / Cold 三平面（详见 [runtime_planes_principles.md](runtime_planes_principles.md)）；激活状态见 `architecture_model/cross_cutting/runtime_planes.yaml`
+- **治理三层**：Policy / Factory / Runtime（详见 [governance_principles.md](governance_principles.md)）→ 与业务层平级正交横切，每层有准入和退出门禁
+- **安全红线**：4 条不可撤销（§2）
 - **技术栈**（决策快照，具体组件可变）：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议
 
 ---
 
-## 5. 与其他文档的关系
+## §5 待合并节占位（capability_maturity + business 核心节）
 
-| 关系 | 对象 | 说明 |
-|:---|:---|:---|
-| 方法论被采用 | `*_principles.md`（BA/IA/AA/TA 四层） | 共用本文档 §1 描述的 TOGAF/C4/功能域方法论 |
+> **状态**：占位区。capability_maturity_principles.md 和 business_principles.md 的核心永恒约束将在用户审查精简版后合并至此。
+
+待合并内容预判：
+- **能力成熟度**：L0-L5 五档模型（`capability_heatmap.yaml` 的评分依据）
+- **业务 NFR 三原则**：Non-HFT / 市场时段分层 / 可审计 ≫ 可用性（具体 SLO 值在 `value_stream_map.yaml`）
+
+> 合并完成后，capability_maturity_principles.md 和 business_principles.md 将被删除，导航同步更新。
+
+---
+
+> **文档维护原则**：本文档只包含不可降级的核心裁定与红线。方法论教学（TOGAF/C4/ISO）、机构对标论证、门禁状态快照等可变/可派生内容不在本文档。

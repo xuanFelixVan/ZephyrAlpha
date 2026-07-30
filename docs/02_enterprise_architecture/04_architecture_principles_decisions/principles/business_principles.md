@@ -50,7 +50,6 @@ ttl: permanent
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
 - [data_principles.md](data_principles.md)：数据架构原则
 - [security_principles.md](security_principles.md)：安全架构原则
-- [integration_principles.md](integration_principles.md)：集成架构原则
 - 本文：业务架构原则（能力地图/VSM/NFR/SLO）
 
 ---
@@ -244,7 +243,6 @@ KB决策 append-only 铁律：100%（永恒不可降）。AI决策日志七维�
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
 - [data_principles.md](data_principles.md)：数据架构原则
 - [security_principles.md](security_principles.md)：安全架构原则
-- [integration_principles.md](integration_principles.md)：集成架构原则
 - 本文：业务架构原则（能力地图/VSM/NFR/SLO）
 
 ---

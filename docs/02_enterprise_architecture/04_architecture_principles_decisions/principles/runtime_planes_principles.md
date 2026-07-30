@@ -381,14 +381,12 @@ D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Tr
 | 全局技术基线（Python/Redis/PostgreSQL）| `technology_principles.md` |
 | 全域业务分层（What）| `application_principles.md` |
 | 治理三层（Policy/Factory/Runtime）| `governance_principles.md` |
-| 前端平面归属（Hot-adjacent 概念）| `frontend_principles.md` |
 
 ### 11.3 与其他原则文档关系
 
 - [application_principles.md](application_principles.md)：应用架构 全域业务 What（本视图定义 How/When）
 - [technology_principles.md](technology_principles.md)：技术架构全局技术基线
 - [governance_principles.md](governance_principles.md)：治理三层（与本视图三平面正交独立）
-- [frontend_principles.md](frontend_principles.md)：前端架构原则（含 Hot-adjacent 概念）
 - 本文：运行平面正交视图（Hot/Warm/Cold 三平面 + 跨面协议 + Sim-to-Real 保障）
 
 ---

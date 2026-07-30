@@ -58,9 +58,7 @@ ttl: permanent
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
 - [data_principles.md](data_principles.md)：数据架构原则
 - [security_principles.md](security_principles.md)：安全架构原则
-- [integration_principles.md](integration_principles.md)：集成架构原则
 - [business_principles.md](business_principles.md)：业务架构原则
-- [information_principles.md](information_principles.md)：信息架构原则
 - [application_principles.md](application_principles.md)：应用架构原则
 - 本文：技术架构原则（技术栈决策/运行时拓扑/DR/BCP/环境矩阵/可观测性）
 
@@ -299,18 +297,16 @@ ttl: permanent
 | LLM Token 预算 | 运营态 metrics |
 | 成本预算与预警阈值 | 运营态维护 |
 | 伸缩触发点 | 运营态维护 |
-| 第三方集成清单 | `integration_principles.md`（EI 系列）|
+| 第三方集成清单 | `cross_layer_contracts.yaml`（CTR 契约）|
 | 安全认证机制 | `security_principles.md` |
-| 运维告警 | `operations_principles.md`|
+| 运维告警 | `governance_systems_registry.yaml`|
 
 ### 8.3 与其他原则文档关系
 
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
 - [data_principles.md](data_principles.md)：数据架构原则
 - [security_principles.md](security_principles.md)：安全架构原则
-- [integration_principles.md](integration_principles.md)：集成架构原则
 - [business_principles.md](business_principles.md)：业务架构原则
-- [information_principles.md](information_principles.md)：信息架构原则
 - [application_principles.md](application_principles.md)：应用架构原则
 - 本文：技术架构原则（技术栈决策/运行时拓扑/DR/BCP/环境矩阵/可观测性）
 
