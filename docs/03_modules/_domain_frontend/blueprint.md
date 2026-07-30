@@ -42,7 +42,7 @@ depends_on:
     why: "v2.2.0新增: trade_panel/position_monitor组件调用D_EX_CORE ExecutionEngine.execute_order(broker_id='miniqmt')触发实盘下单, MiniQmtBroker.get_positions()展示实盘持仓"
   - target: "MOD-L00-001"
     at: "§16.7.1"
-    why: "v2.2.0新增: order_book组件调用D_DATA MiniQmtProvider.get_order_book()展示5档盘口"
+    why: "v2.2.0新增: order_book组件调用D_DATA MiniQmtQuoteProvider.get_order_book()展示5档盘口"
 references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l08_human_ai_interface.yaml"
     section: ""
@@ -55,7 +55,7 @@ references:
     why: "ExecutionEngine.execute_order + MiniQmtBroker.get_positions, trade_panel/position_monitor组件调用接口"
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_data\\blueprint.md"
     section: "§16.7.1"
-    why: "MiniQmtProvider.get_order_book(5档盘口), order_book组件数据源"
+    why: "MiniQmtQuoteProvider.get_order_book(5档盘口), order_book组件数据源"
 codification_level: L1
 codification_at: "2026-05-15"
 responsibility_domain: 
@@ -201,7 +201,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 5 | ✅ 包含 | Fitness Functions 展示 | EXT-DASHBOARD-FLE-001 消费 FLE Facade |
 | 6 | ✅ 包含 | **v2.2.0新增** 回测结果可视化 | backtest_results组件消费D_BACKTEST BacktestResult(CTR-P1-016), 净值曲线/回撤/Sharpe/IC/IR |
 | 7 | ✅ 包含 | **v2.2.0新增** Tick回放可视化 | tick_replay组件消费D_BACKTEST tick_replay引擎, 逐Tick回放+5档盘口快照 |
-| 8 | ✅ 包含 | **v2.2.0新增** 5档盘口实时展示 | order_book组件消费D_DATA MiniQmtProvider.get_order_book() |
+| 8 | ✅ 包含 | **v2.2.0新增** 5档盘口实时展示 | order_book组件消费D_DATA MiniQmtQuoteProvider.get_order_book() |
 | 9 | ✅ 包含 | **v2.2.0新增** 实盘持仓监控 | position_monitor组件消费D_EX_CORE MiniQmtBroker.get_positions() |
 | 10 | ✅ 包含 | **v2.2.0新增** 实盘交易面板 | trade_panel组件调用D_EX_CORE ExecutionEngine.execute_order(broker_id="miniqmt") |
 | 11 | ❌ 排除 | 风险计算 | D_RISK |
@@ -293,7 +293,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 7 | ApprovalRequest | 审批请求 dataclass | — | 数据传递 |
 | 8 | **backtest_results** (v3.0.0) | 回测结果可视化组件 | D_BACKTEST BacktestResult | fetch+render |
 | 9 | **tick_replay** (v3.0.0) | Tick回放可视化组件 | D_BACKTEST tick_replay引擎 | fetch+render |
-| 10 | **order_book** (v3.0.0) | 5档盘口实时展示组件 | D_DATA MiniQmtProvider | fetch+render |
+| 10 | **order_book** (v3.0.0) | 5档盘口实时展示组件 | D_DATA MiniQmtQuoteProvider | fetch+render |
 | 11 | **position_monitor** (v3.0.0) | 实盘持仓监控组件 | D_EX_CORE MiniQmtBroker | fetch+render |
 | 12 | **trade_panel** (v3.0.0) | 实盘交易面板组件 | D_EX_CORE ExecutionEngine | submit+render |
 | 13 | **ChartFactory** (v3.0.0, v3.1.0扩展) | 图表统一工厂(make_equity/make_drawdown/make_kline/make_tick/make_heatmap/make_orderbook/make_position/make_orderflow + v3.1.0新增 make_gate_chart/make_trend_line) | HoloViews/Plotly/plotly_resampler | 工厂模式 |
@@ -310,7 +310,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 5 | D_REPORTING | CTR-P1-009 消费 | Dashboard | PerformanceAttributionReport |
 | 6 | **D_BACKTEST BacktestResult** (v2.2.0) | fetch → render | 用户 | BacktestResultVisualization(净值/回撤/Sharpe/IC/IR/3阶段门控) |
 | 7 | **D_BACKTEST tick_replay** (v2.2.0) | fetch → render | 用户 | TickReplayVisualization(逐Tick+5档盘口快照+做T标记) |
-| 8 | **D_DATA MiniQmtProvider** (v2.2.0) | fetch → render | 用户 | OrderBookVisualization(askPrice/bidPrice/askVol/bidVol 5档) |
+| 8 | **D_DATA MiniQmtQuoteProvider** (v2.2.0) | fetch → render | 用户 | OrderBookVisualization(askPrice/bidPrice/askVol/bidVol 5档) |
 | 9 | **D_EX_CORE MiniQmtBroker** (v2.2.0) | fetch → render | 用户 | PositionSnapshot(持仓/盈亏/T+1提示) |
 | 10 | **D_EX_CORE ExecutionEngine** (v2.2.0) | submit → render | 用户 | Order+Fill(下单+订单状态实时更新) |
 
@@ -519,7 +519,7 @@ class FitnessDashboardData(BaseModel):
 | MOD-GATE_ENGINE 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` |
 | **MOD-BT-001** (v2.2.0) | 必须 | BacktestResult(CTR-P1-016) + tick_replay引擎 | v1.1.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_backtest\blueprint.md` |
 | **MOD-L06-001** (v2.2.0) | 必须 | ExecutionEngine.execute_order + MiniQmtBroker.get_positions | v2.2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_execution_core\blueprint.md` |
-| **MOD-L00-001** (v2.2.0) | 必须 | MiniQmtProvider.get_order_book(5档盘口) | v4.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
+| **MOD-L00-001** (v2.2.0) | 必须 | MiniQmtQuoteProvider.get_order_book(5档盘口) | v4.0.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain_data\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -797,7 +797,7 @@ class FitnessDashboardData(BaseModel):
 | 1 | DashboardApp 页面路由 | 算法 | page_name → fetch_{page}() → render_{page}() | dashboard/app.py |
 | 2 | **backtest_results规格** (v2.2.0) | 协议 | fetch(BacktestResult)→BacktestResultData; render: 净值曲线+回撤+Sharpe+Sortino+MaxDD+IC+IR+3阶段门控(IS→WFA→OOS) — 见§16.7.1 | backtest_results.py(待施工) |
 | 3 | **tick_replay规格** (v2.2.0) | 协议 | fetch(TickData)→TickReplayData; render: 逐Tick回放(real_time/fast_forward/max_speed)+5档盘口快照+做T标记 — 见§16.7.2 | tick_replay.py(待施工) |
-| 4 | **order_book规格** (v2.2.0) | 协议 | fetch(MiniQmtProvider.get_order_book)→OrderBookData; render: 5档askPrice/bidPrice/askVol/bidVol+盘口压力 — 见§16.7.3 | order_book.py(待施工) |
+| 4 | **order_book规格** (v2.2.0) | 协议 | fetch(MiniQmtQuoteProvider.get_order_book)→OrderBookData; render: 5档askPrice/bidPrice/askVol/bidVol+盘口压力 — 见§16.7.3 | order_book.py(待施工) |
 | 5 | **position_monitor规格** (v2.2.0) | 协议 | fetch(MiniQmtBroker.get_positions)→PositionMonitorData; render: 持仓+盈亏+T+1提示+账户资金 — 见§16.7.4 | position_monitor.py(待施工) |
 | 6 | **trade_panel规格** (v2.2.0) | 协议 | submit(Order)→ExecutionEngine.execute_order(broker_id="miniqmt"); render: 下单表单+订单状态机+撤单+风控提示 — 见§16.7.5 | trade_panel.py(待施工) |
 
@@ -943,7 +943,7 @@ def render_tick_replay(data: TickReplayData) -> None:
 | 字段 | 值 | 说明 |
 |------|-----|------|
 | 组件名 | order_book | Panel 页面组件 (v3.0.0技术栈切换) |
-| 数据源 | D_DATA MiniQmtProvider.get_order_book() | 5档盘口实时数据 |
+| 数据源 | D_DATA MiniQmtQuoteProvider.get_order_book() | 5档盘口实时数据 |
 | 页面路由 | /order-book | DashboardApp 路由 |
 | 刷新策略 | 100ms Bokeh WebSocket推送 | 原生WebSocket, 无rerun开销 |
 | callback约束 | Panel callback仅编排, 业务逻辑独立为纯函数 | fetch→ChartFactory.make_orderbook()→callback |

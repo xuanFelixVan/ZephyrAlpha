@@ -261,7 +261,7 @@ ZephyrAlpha数据库即将建成,因子库开发在即。回测引擎是验证�
 
 - 回测为离线批量运行,非实时(单进程同步调用)
 - **数据来源(v1.1.0多源化)**:
-  - Tick+5档盘口: D_DATA MiniQMT Provider(`MiniQmtProvider.fetch_historical(interval="tick")`)
+  - Tick+5档盘口: D_DATA MiniQMT Provider(`MiniQmtQuoteProvider.fetch_historical(interval="tick")`)
   - 历史日线批量: ClickHouse(c1_market)通过DatabaseService访问,禁止裸clickhouse_driver.connect
 - PIT(Point-in-Time)正确性:回测必须使用时间戳截面对齐,禁止未来函数
 - A股特有约束:T+1锁定、涨跌停限制、停牌跳过、ST特别处理
@@ -699,7 +699,7 @@ class MyEngine(BacktestEngineBase):
 - **Look-Ahead Bias Detector(P1-27)**:幸存者偏差检测+重述数据检测,CI/CD自动扫描(来源:14-D-ALT-DATA/安全架构)
 - **FeatureStore PIT AS OF JOIN + PITManager(P1-30)**:强制AS OF时间点查询+PITManager管理版本对齐(来源:15-D-DATA-ENG/02-D-DATA)
 - **v1.1.0多源化**: 新增 `MultiSourceDataHandler` 支持双源切换:
-  - **Tick源**: `MiniQmtProvider.fetch_historical(interval="tick")` 提供18字段Tick+5档盘口(秒级做T)
+  - **Tick源**: `MiniQmtQuoteProvider.fetch_historical(interval="tick")` 提供18字段Tick+5档盘口(秒级做T)
   - **批量源**: ClickHouse(c1_market) 通过DatabaseService访问(日线/分钟线批量回测)
   - **源选择策略**: 由 `BacktestConfig.data_source` 决定(tick/batch/auto)
   - **统一接口**: `next_bar()` / `next_tick()` 双模式,EventDrivenEngine按场景调用
@@ -721,7 +721,7 @@ class MyEngine(BacktestEngineBase):
 - **接口**:
   ```python
   class TickReplayEngine:
-      def __init__(self, provider: MiniQmtProvider, symbols: list[str],
+      def __init__(self, provider: MiniQmtQuoteProvider, symbols: list[str],
                    start: datetime, end: datetime,
                    speed: str = "max_speed", time_window: tuple | None = None): ...
       def run(self, callback: Callable[[TickEvent], None]) -> None: ...

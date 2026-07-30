@@ -347,7 +347,7 @@ class DataSourceMeta:
 | Provider | source_name | SDK | 登录方式 | 线程安全 | 核心能力 |
 |----------|-------------|-----|---------|---------|---------|
 | IFindProvider | ifind | iFinDPy | THS_iFinDLogin(user,pwd) | thread_local | THS_RQ/THS_BD/iwencai/EDB |
-| MiniQMTProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
+| MiniQmtIngestProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
 | AkshareIngestProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
 | BaostockProvider | baostock | baostock | bs.login() 匿名 | **thread_local**（每线程独立登录） | K线/财务（滞后1周） |
 | TushareProvider | tushare | tushare | token | shared | 新闻（历史截止2024-08） |
@@ -362,8 +362,8 @@ class DataSourceMeta:
 | _fetch_valuation.py | IFindProvider | daily_valuation 增量 |
 | _fetch_index_constituent.py | IFindProvider | index_constituent 全量 |
 | _fetch_industry_class.py | IFindProvider | industry_class 全量 |
-| _fetch_hk_daily_kline.py | MiniQMTProvider | hk_daily_kline 增量 |
-| _fetch_futures_kline.py | MiniQMTProvider | futures_kline 增量 |
+| _fetch_hk_daily_kline.py | MiniQmtIngestProvider | hk_daily_kline 增量 |
+| _fetch_futures_kline.py | MiniQmtIngestProvider | futures_kline 增量 |
 | _fetch_margin_trading.py | IFindProvider | margin_trading 增量 |
 | _fetch_block_trade.py | IFindProvider | block_trade 增量 |
 | _fetch_dragon_tiger.py | IFindProvider | dragon_tiger 增量 |

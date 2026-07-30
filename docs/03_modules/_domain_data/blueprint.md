@@ -731,7 +731,7 @@ class QualityReport:
 
 **Provider 元数据**:
 ```python
-class MiniQmtProvider(DataSourceBase):
+class MiniQmtQuoteProvider(DataSourceBase):
     provider_id = "miniqmt"
     provider_name = "MiniQMT 实盘行情"
     asset_classes = ["stock", "etf", "convertible_bond", "futures", "options"]
@@ -771,7 +771,7 @@ class MiniQmtProvider(DataSourceBase):
 **核心API规格**:
 
 ```python
-class MiniQmtProvider(DataSourceBase):
+class MiniQmtQuoteProvider(DataSourceBase):
     """MiniQMT 实盘行情Provider——对接xtdata，提供Tick+5档盘口"""
 
     def __init__(self, path: str = "", session_id: str = "zephyr_session"):

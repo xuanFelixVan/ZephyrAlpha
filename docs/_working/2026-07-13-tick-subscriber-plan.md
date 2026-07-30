@@ -8,7 +8,7 @@ ttl: task_bound
 
 **Goal:** 创建独立常驻服务，通过 `xtdata.subscribe_quote(period="tick")` 实时订阅全市场 tick，写入 ClickHouse `c1_market.tick_data` 表（3秒粒度）。
 
-**Architecture:** 不走 scheduler cron（分钟级），而是独立进程。QMT callback 线程把 tick dict 放入线程安全 `queue.Queue`（最小开销），后台 flush 线程从队列取数据，转换为14字段 tuple，通过 BufferedWriter 攒批写入 ClickHouse。不复用 governance MiniQmtProvider（它返回 DataFrame 24字段，同步回调开销大）。
+**Architecture:** 不走 scheduler cron（分钟级），而是独立进程。QMT callback 线程把 tick dict 放入线程安全 `queue.Queue`（最小开销），后台 flush 线程从队列取数据，转换为14字段 tuple，通过 BufferedWriter 攒批写入 ClickHouse。不复用 governance MiniQmtQuoteProvider（它返回 DataFrame 24字段，同步回调开销大）。
 
 **Tech Stack:** xtquant/xtdata API, queue.Queue, BufferedWriter, ClickHouse MergeTree, signal
 
