@@ -21,7 +21,7 @@
 | 全景图总数 | 35 |
 | 已建覆盖率 | 54.3% |
 
-| 已建产物存在 | 16/19 |
+| 已建产物存在 | 17/19 |
 
 ### 数据库真源健康度
 
@@ -30,16 +30,16 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5801 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5801 个 |
-| 依赖图 depgraph | `edges` | 7964 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7964 条 |
+| 依赖图 depgraph | `nodes` | 5806 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5806 个 |
+| 依赖图 depgraph | `edges` | 7978 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7978 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 775 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 756 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 5 | 决策轨——5 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
-| 决策流图 decisiongraph | `decision_layers` | 658 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
+| 决策流图 decisiongraph | `decision_layers` | 554 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 213 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 211 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），211 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
@@ -101,12 +101,12 @@
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | `04_architecture_principles_decisions/` | ❌缺失 |
-| PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | `04_architecture_principles_decisions/principles/` | ❌缺失 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-03 | 手绘 Mermaid 图（时序/治理） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/application_flows.md) | ✅存在 |
 | PAN-BUILT-16 | 架构债务注册表（已归档） | 治理健康度 | 手工 | 手工 | `(手工维护)` | `_archive/` | ❌缺失 |
+| PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | `architecture_model/` | ✅存在(4文件) |
 
 ---
 
@@ -234,7 +234,6 @@
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | ✅已建 | 手工 | 依赖与路径全景图能力定位书（双态模型 + SSoT 分层 + 生命周期 + 生成器覆盖矩阵） | 真源：手工<br>生成器：`(手工维护)`<br>产物：`04_architecture_principles_decisions/dependency_path_panorama.md` |
-| PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | ✅已建 | 手工 | 架构方法论 SSoT：TOGAF/C4/功能域裁定/三棵树 + 4条安全红线 + 核心架构决策（原 target_architecture/overview.md v3.5.0 删除，80%+内容已在此 SSoT） | 真源：YAML (architecture_model/) + 手工<br>生成器：`(手工维护)`<br>产物：`04_architecture_principles_decisions/principles/architecture_principles.md` |
 
 ### 05 数据流架构
 
@@ -311,6 +310,12 @@
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
 | PAN-BUILT-16 | 架构债务注册表（已归档） | ✅已建 | 手工 | 已归档（2026-07-24 裁定#221/#222）。活跃治理改由 architecture_model/cross_cutting/invariants.yaml + trae_081_audit_dimensions_framework.yaml + architecture_issue_registry.yaml 三件套承接（原 ai_first_governance_principles.md 已删 2026-07-30，git 历史可查） | 真源：手工<br>生成器：`(手工维护)`<br>产物：`architecture_debt_registry_v2.md` |
+
+### architecture_model
+
+| ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
+|------|------|:---:|------|------|------|
+| PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | ✅已建 | 手工 | 架构方法论 SSoT：TOGAF/C4/功能域裁定/三棵树 + 4条安全红线 + 核心架构决策。已从原则 md 迁移为 architecture_model/ 下 YAML 真源集合（2026-07-30，原 principles/architecture_principles.md 已删，git 历史可查） | 真源：YAML (architecture_model/) + 手工<br>生成器：`(手工维护)`<br>产物：`architecture_model/` |
 
 ---
 

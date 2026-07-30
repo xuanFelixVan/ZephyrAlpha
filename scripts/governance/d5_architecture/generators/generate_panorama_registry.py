@@ -287,9 +287,9 @@ BUILT_PANORAMAS: list[dict] = [
         "data_source": "YAML (architecture_model/) + 手工",
         "source_architecture": "手工",
         "generator": "(手工维护)",
-        "output_path": "04_architecture_principles_decisions/principles/",
-        "artifact_path": "04_architecture_principles_decisions/principles/architecture_principles.md",
-        "description": "架构方法论 SSoT：TOGAF/C4/功能域裁定/三棵树 + 4条安全红线 + 核心架构决策（原 target_architecture/overview.md v3.5.0 删除，80%+内容已在此 SSoT）",
+        "output_path": "architecture_model/",
+        "artifact_path": "architecture_model/",
+        "description": "架构方法论 SSoT：TOGAF/C4/功能域裁定/三棵树 + 4条安全红线 + 核心架构决策。已从原则 md 迁移为 architecture_model/ 下 YAML 真源集合（2026-07-30，原 principles/architecture_principles.md 已删，git 历史可查）",
     },
     {
         "panorama_id": "PAN-BUILT-03",
@@ -868,6 +868,10 @@ def _check_artifact(artifact_path: str) -> tuple[str, int]:
         count: 文件数（目录）或 1（文件）或 0（缺失）
     """
     full_path = BASE_DIR / artifact_path
+    if not full_path.exists():
+        # 回退到仓库根：artifact_path 可能是仓库根相对路径（如 architecture_model/），
+        # 而非 docs/02_enterprise_architecture/ 下的子路径。BASE_DIR 下找不到时查 REPO_ROOT。
+        full_path = REPO_ROOT / artifact_path
     if not full_path.exists():
         return ("❌缺失", 0)
     if full_path.is_file():
