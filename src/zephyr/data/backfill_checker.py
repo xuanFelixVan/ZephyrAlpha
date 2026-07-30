@@ -808,7 +808,9 @@ def run_known_gap_backfill(scheduler=None) -> dict:
     }
 
 
-def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> dict:
+def run_weekend_backfill(
+    scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS, skip_known_gaps: bool = False,
+) -> dict:
     """L10 周末补下载主入口（全表覆盖）。
 
     流程：
@@ -822,6 +824,7 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
     Args:
         scheduler: IntegratorScheduler 实例（可选，用于记录进度和告警）
         days: 回溯天数（默认7天）
+        skip_known_gaps: 跳过已知历史缺口检测（每日调用时设True，避免重复检查）
 
     Returns:
         {"missing_tables": [...], "total_rows": int, "success": bool}
@@ -862,7 +865,11 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
 
     # 5. 检测已知历史缺口（audit 2.7/3.8 治本，#ARCH-CH-029）
     #    与 7 天窗口互补：7 天窗口检测增量缺口，known_gap 检测已登记历史缺口
-    known_result = run_known_gap_backfill(scheduler)
+    #    每日调用时跳过（skip_known_gaps=True），历史缺口由周末 L10 负责
+    if skip_known_gaps:
+        known_result = {"checked": 0, "still_missing": 0, "backfilled_rows": 0, "details": []}
+    else:
+        known_result = run_known_gap_backfill(scheduler)
     total_rows += known_result.get("backfilled_rows", 0)
 
     return {
@@ -871,6 +878,39 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
         "success": True,
         "known_gaps": known_result,
     }
+
+
+def run_daily_backfill(scheduler=None) -> dict:
+    """L10.5 每日盘后补下载主入口（检测当日缺口并补下载）。
+
+    治本场景（2026-07-30，#ARCH-DATA-TICK-GAP-001）：
+      - 7-29 QMT 客户端 15:31 断连 → intraday_realtime tick 采集停止
+      - 7-29 仅 4.2M 行（正常 ~20M），7-30 0 行
+      - L11 integrity_check 23:00 检测到但只告警，不补下载
+      - L10 weekend_backfill 仅周一 02:00 运行 → 要等 5 天才发现
+      - 本函数每日盘后 17:00 运行 → 当天发现当天补
+
+    与 run_weekend_backfill 的区别：
+      - days=1: 只检测今天，不回溯 7 天
+      - skip_known_gaps=True: 跳过历史缺口检测（由周末 L10 负责）
+      - 轻量级：正常情况下无缺口，几秒完成；有缺口才触发补下载
+
+    调用方式：
+      scheduler.run_schedule("daily_backfill") → run_daily_backfill(scheduler)
+      也可独立调用：python -c "from zephyr.data.backfill_checker import run_daily_backfill; run_daily_backfill()"
+    """
+    log.info("=" * 60)
+    log.info("L10.5 每日盘后补下载开始 (检测当日, 治本 #ARCH-DATA-TICK-GAP-001)")
+    log.info("=" * 60)
+
+    result = run_weekend_backfill(scheduler, days=1, skip_known_gaps=True)
+
+    log.info("=" * 60)
+    log.info("L10.5 每日盘后补下载完成: 缺失表=%d 总行数=%d",
+             len(result.get("missing_tables", [])), result.get("total_rows", 0))
+    log.info("=" * 60)
+
+    return result
 
 
 if __name__ == "__main__":

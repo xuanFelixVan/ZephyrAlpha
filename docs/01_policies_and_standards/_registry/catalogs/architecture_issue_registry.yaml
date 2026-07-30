@@ -9793,3 +9793,11 @@ entries:
   status: resolved
   created: '2026-07-29'
   last_updated: '2026-07-29'
+- issue_id: '#ARCH-DATA-TICK-GAP-001'
+  title: tick_data 盘中中断无当日补下载机制——新增 L10.5 daily_backfill 每日盘后补下载层
+  severity: P1高
+  adjudication: '病根（第一性原理）：7-29 QMT 客户端 15:31 断连导致 intraday_realtime tick 采集停止（7-29 仅 4.2M行/1000标的，正常~20M/5202标的；7-30 tick_subscriber 早于 QMT 客户端启动导致 subscribe_quote 全失败，0行）。现有机制两层断裂：①L11 integrity_check(23:00每日)只检测+告警不补下载；②L10 weekend_backfill(周一02:00)才检测+补下载，要等5天。用户期望"盘后会检查然后下载缺失数据"的机制存在但有断层——检测到了但没人补，补的要等到下周一。治本：新增 L10.5 daily_backfill 调度层（每日17:00盘后），调用 run_weekend_backfill(days=1, skip_known_gaps=True)，当天发现当天补。修改4文件：backfill_checker.py 新增 run_daily_backfill()；schedule.yaml 新增 daily_backfill cron "00 17 * * 0-4"；scheduler.py _run_special_schedule 注册；trading_calendar.py TRADING_DAY_GUARDED_SCHEDULES 添加。纯技术修复（机制补全，无价值判断），AI 直接标 decided。'
+  fix_phase: '已落地（4文件修改 + 7-29全市场tick_data补下载 + tick_subscriber重启）'
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'

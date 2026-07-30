@@ -127,7 +127,7 @@ def _schedule_should_skip(schedule_name: str, sched_config: dict) -> bool:
 def _run_special_schedule(
     scheduler: "IntegratorScheduler", schedule_name: str,
 ) -> dict[str, bool] | None:
-    """处理 weekend_backfill / integrity_check 特殊时段。
+    """处理 weekend_backfill / daily_backfill / integrity_check 特殊时段。
 
     返回结果字典表示已处理；返回 None 表示非特殊时段，交给常规 DAG 流程。
     """
@@ -136,6 +136,11 @@ def _run_special_schedule(
         from zephyr.data.backfill_checker import run_weekend_backfill
         result = run_weekend_backfill(scheduler)
         return {"tick_backfill_weekly": result.get("success", False)}
+    # L10.5 每日盘后补下载层：检测当日缺口并补下载（治本 #ARCH-DATA-TICK-GAP-001）
+    if schedule_name == "daily_backfill":
+        from zephyr.data.backfill_checker import run_daily_backfill
+        result = run_daily_backfill(scheduler)
+        return {"daily_backfill": result.get("success", False)}
     # 每日数据完整性巡检：动态发现全表，检测当日数据是否达标
     if schedule_name == "integrity_check":
         from zephyr.data.integrity_checker import run_daily_check
