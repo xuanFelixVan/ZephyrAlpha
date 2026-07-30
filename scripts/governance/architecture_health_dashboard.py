@@ -5,8 +5,8 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 30 项架构健康度指标自动化检测基线（ai_first_governance_principles.md §四 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）；M21 5病根×3要素覆盖缺口数追踪 Phase 3.6 病根治本闭环（persistence+discoverability+enforceability，target=0 全 15 cell 覆盖）
-# [MODIFY-GUARD] 指标清单变更 MUST 同步 ai_first_governance_principles.md §四 + 本文件 METRICS 列表
+# [INVARIANTS] 30 项架构健康度指标自动化检测基线（ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）；M21 5病根×3要素覆盖缺口数追踪 Phase 3.6 病根治本闭环（persistence+discoverability+enforceability，target=0 全 15 cell 覆盖）
+# [MODIFY-GUARD] 指标清单变更 MUST 同步 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -16,7 +16,7 @@
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
 
-对标 ai_first_governance_principles.md §四 第0期：
+对标 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期：
   建立自动化检测基线，每次 commit 自动生成架构健康度指标，替代手动调研。
 
 病根（前文 3193 个违规点的 5 个病根）：
@@ -42,7 +42,7 @@
 设计原则：
   - 复用优先：现有检测脚本通过 subprocess 调用，解析 stdout 计数
   - 独立降级：单检测器异常不中断其余，记录到 error 字段
-  - SSoT 对账：每项指标可追溯到 ai_first_governance_principles.md §二 病根
+  - SSoT 对账：每项指标可追溯到 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §二 病根
   - warn-only 起步：第0期仅记录基线，第1期才转 hard block
 
 集成点：
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md §四 第0期）
+description: 架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期）
 dimensions:
 - D5
 priority: P1
@@ -534,7 +534,7 @@ def metric_06_reconciler_health() -> dict:
     """reconciler 健康度——post-commit reconciler 数（目标收敛 3-5）。
 
     病根：治理层臃肿——17 个 post-commit reconciler 应收敛为 3-5 个 pre-commit 阻断
-    （ai_first_governance_principles.md §四 第3期）。
+    （ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第3期）。
     检测：扫描 src/zephyr/governance/ 与 scripts/governance/ 下 .py，
     计数实际 reconciler 注册调用点（``.register`` + ``ReconcilerSpec`` 组合，排除 registry 定义文件自身）。
     健康度 = 当前 post-commit reconciler 注册数（>5 视为债务，目标 3-5）。
@@ -1622,7 +1622,7 @@ def _format_coverage_details(
 def metric_21_root_cause_coverage() -> dict:
     """5 病根 × 3 要素覆盖缺口数（#ARCH-GOV-CONVERGENCE-META Phase 3.6）。
 
-    病根治本闭环指标：ai_first_governance_principles.md §二 定义的 5 个病根，
+    病根治本闭环指标：ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §二 定义的 5 个病根，
     每个病根需 3 要素治本闭环（持久化 + 可发现 + 可阻断）。
     M21 = 未覆盖 cell 数（15 - covered）。
 
@@ -2266,7 +2266,7 @@ def format_console_report(result: dict) -> str:
         "=" * 78,
         "ZephyrAlpha 架构健康度仪表盘（第0期 - 自动化检测基线）",
         f"生成时间: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}",
-        "真源: ai_first_governance_principles.md §四",
+        "真源: ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四",
         "=" * 78,
         "",
         f"{'ID':<5} {'指标':<32} {'当前值':>8} {'目标':>6} {'来源':<18} {'状态':<8}",
@@ -2329,7 +2329,7 @@ def _cleanup_old_snapshots(output_dir, max_age_days: int = 30) -> int:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md §四 第0期）"
+        description="架构健康度仪表盘（30 项指标自动化检测基线，ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")

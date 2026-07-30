@@ -1396,9 +1396,9 @@ entries:
     PAIRING gate（priority=61）已落地，强制 trae_*.yaml 必须有 enforcement.paired_gate_id
     字段（null 允许文档型规则，字符串须在 gate_registry 注册，[no-pairing:reason] 逃生通道）。
     本裁定将该 commit-time 机制上升为战略原则，并取代原"暂停新增规则 6 个月"表述。
-    原则文档见 ai_first_governance_principles.md §裁定1（修正版）。
+    原则文档见 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §裁定1（修正版）。
   affected_files:
-    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\ai_first_governance_principles.md
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\ai_first_governance_principles.md  # 已删 2026-07-30，git 历史可查
     - d:\ZephyrAlpha\docs\_archive\architecture_debt_registry_v2.md
     - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\rule_execution_pairing_gate.py
   related_arch:
@@ -1427,13 +1427,13 @@ entries:
     status=deprecated=已废弃不施工，adjudication 说明 wontfix 理由）；(2) 本裁定统一确认
     R102/R103 的 40 项 wontfix 决策有效，防复发门禁已在册（见各维度防复发 gate/metric）；
     (3) architecture_debt_registry.md 已归档至 docs/_archive/architecture_debt_registry_v2.md，活跃治理改由
-    ai_first_governance_principles.md（原则）+ trae_081_audit_dimensions_framework.yaml（维度清单）
+    ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查）（原则）+ trae_081_audit_dimensions_framework.yaml（维度清单）
     + architecture_issue_registry.yaml（议题真源）三件套承接。wontfix 项翻案条件：MUST
     经架构师新裁定（裁定#NNN）并更新本条目的 related_rulings。
   affected_files:
     - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\architecture_issue_registry.yaml
     - d:\ZephyrAlpha\docs\_archive\architecture_debt_registry_v2.md
-    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\ai_first_governance_principles.md
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\ai_first_governance_principles.md  # 已删 2026-07-30，git 历史可查
     - d:\ZephyrAlpha\docs\02_enterprise_architecture\trae_081_audit_dimensions_framework.yaml
   related_arch:
     - '#ARCH-DEBT-001'

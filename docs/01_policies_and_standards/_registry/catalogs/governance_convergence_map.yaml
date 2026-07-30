@@ -5,7 +5,7 @@
 # 真源：本文件是治理组件→核心功能收敛映射的 SSoT。
 # 消费方：architecture_health_dashboard.py M19 指标
 #
-# 背景（ai_first_governance_principles.md §二）：
+# 背景（ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §二）：
 #   治理体系自身 52 GATE + 17 reconciler + 34 词表 + 48 注册表 = 151 个治理组件
 #   治理组件数 > 被治理组件数时，治理体系自身就是最大漂移源
 #   战略建议：L5 治理层应从 14 功能收敛为 5-6 功能
@@ -106,7 +106,7 @@ convergence_summary:
   # 目标：M19 ≤ 6（仅 6 个核心功能入口点）
 
 # ── 5 病根 × 3 要素覆盖矩阵（#ARCH-GOV-CONVERGENCE-META Phase 3.6）─────────
-# 病源：ai_first_governance_principles.md §二（5 个病根导致 3193 个问题）
+# 病源：ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §二（5 个病根导致 3193 个问题）
 # 3 要素（对标 capability_canonical_file_registry 的治本闭环模式）：
 #   - persistence（持久化）：治本方案持久化到 YAML/DB（非内存/脚本临时态）
 #   - discoverability（可发现）：新 AI 可通过 capability registry / MCP / metric 发现治本方案

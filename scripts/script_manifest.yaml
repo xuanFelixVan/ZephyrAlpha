@@ -704,7 +704,7 @@ scripts:
   dimensions: []
 - name: governance/architecture_health_dashboard.py
   path: governance/architecture_health_dashboard.py
-  description: 对标 ai_first_governance_principles.md §四 第0期：
+  description: 对标 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期：
   domain: governance
   execution_plane: warm-path
   status: registered

@@ -314,7 +314,7 @@ BUILT_PANORAMAS: list[dict] = [
         "generator": "(手工维护)",
         "output_path": "_archive/",
         "artifact_path": "architecture_debt_registry_v2.md",
-        "description": "已归档（2026-07-24 裁定#221/#222）。活跃治理改由 ai_first_governance_principles.md + trae_081_audit_dimensions_framework.yaml + architecture_issue_registry.yaml 三件套承接",
+        "description": "已归档（2026-07-24 裁定#221/#222）。活跃治理改由 architecture_model/cross_cutting/invariants.yaml + trae_081_audit_dimensions_framework.yaml + architecture_issue_registry.yaml 三件套承接（原 ai_first_governance_principles.md 已删 2026-07-30，git 历史可查）",
     },
 ]
 

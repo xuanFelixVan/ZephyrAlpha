@@ -6,17 +6,17 @@ layer: L2_domain
 ttl: permanent
 status: superseded
 completes_when: 已归档（2026-07-24，裁定#221/#222）
-superseded_by: ai_first_governance_principles.md + audit_dimensions_checklist.md + architecture_issue_registry.yaml
+superseded_by: architecture_model/cross_cutting/invariants.yaml + trae_081_audit_dimensions_framework.yaml + architecture_issue_registry.yaml
 ---
 
 # 架构债务注册表（Architecture Debt Registry）v2.0.0 [已归档]
 
 > **⚠ 归档声明（2026-07-24，裁定#221/#222）**：本文档已归档，不再是活跃真源。内容已按关注点分离拆分至三件套承接：
-> - **架构原则（5 病根 + 5 裁定）** → [`ai_first_governance_principles.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/ai_first_governance_principles.md)（裁定1 已修正为"新增规则必须同时新增门禁"，裁定#221）
-> - **审计维度清单（54 维度）** → [`audit_dimensions_checklist.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/audit_dimensions_checklist.md)
+> - **架构原则（5 病根 + 5 裁定）** → [`architecture_model/cross_cutting/invariants.yaml`](file:///d:/ZephyrAlpha/architecture_model/cross_cutting/invariants.yaml) + `architecture_model/` YAML 集（原 ai_first_governance_principles.md 已删 2026-07-30，git 历史可查）（裁定1 已修正为"新增规则必须同时新增门禁"，裁定#221）
+> - **审计维度清单（54 维度）** → [`trae_081_audit_dimensions_framework.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml)（原 audit_dimensions_checklist.md 已删 2026-07-30）
 > - **wontfix 议题（40 项，6 维度）** → [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) #ARCH-DEBT-001~006（裁定#222 确认）
 >
-> **修正记录**：原 §三裁定1"暂停新增规则文档 6 个月"表述错误，已由裁定#221 修正为"新增规则必须同时新增门禁（规则-执行配对铁律）"。本归档文件保留历史原文不作修改，修正后的裁定以 ai_first_governance_principles.md 为准。
+> **修正记录**：原 §三裁定1"暂停新增规则文档 6 个月"表述错误，已由裁定#221 修正为"新增规则必须同时新增门禁（规则-执行配对铁律）"。本归档文件保留历史原文不作修改，修正后的裁定以 architecture_model/cross_cutting/invariants.yaml 为准（原 ai_first_governance_principles.md 已删 2026-07-30，git 历史可查）。
 >
 > **文档性质（历史）**：活跃架构债务单一真源（SSoT）+ 未来审计审查系统的**维度清单基座**。
 > **瘦身说明（v2.0.0，2026-07-19）**：本文档自 4492 行瘦身重构。已完成任务的逐项修复日志（第 1-101 轮多轮状态行、执行摘要 3193 计数大表、已 FIXED 条目详情）全部移出正文——**已完成历史唯一追溯渠道是 git log**（第 102 轮 36 批提交，merge `44ebb73b26`，及此前全部修复 commit）。

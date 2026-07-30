@@ -2521,7 +2521,7 @@ entries:
 
     核心矛盾（architecture_debt_registry_v2.md line 365）：
     "规则:执行 ≈ 10:1。100% AI 开发场景下，建议性规则是反模式——AI 没有自觉，只有被阻断。"
-    病根3（ai_first_governance_principles.md §二）："CapabilityLookup 是建议性反查而非强制性消费"——与本次 #ARCH-CH-018
+    病根3（ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §二）："CapabilityLookup 是建议性反查而非强制性消费"——与本次 #ARCH-CH-018
     漂移案例同源。注释契约在 100% AI 开发模式下遵守率约 10%，AI 凭记忆推断契约=幻觉/漂移温床。
 
     契约三形态演进：
@@ -2542,7 +2542,7 @@ entries:
     4. scheduler.start() 插入 _validate_capability_contracts()：有 ERROR 级违规则 raise RuntimeError 阻断启动
     5. 渐进式收紧：初期 WARN-only 收集数据，逐步收紧为 ERROR（100% AI 模式下只有阻断才能 ~100% 遵守）
 
-    遵循裁定#221（原 ai_first_governance_principles.md §裁定1，已修正）："新增规则必须同时新增门禁
+    遵循裁定#221（原 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §裁定1，已修正）："新增规则必须同时新增门禁
     （规则-执行配对铁律），新违规一律转化为AST门禁或reconciler"。
     本次不新增 .md 规则文档，转化为启动时校验（reconciler 式 fail-closed）。
 

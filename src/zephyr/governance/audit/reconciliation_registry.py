@@ -8708,7 +8708,7 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
     )
 
-# trae_060-reviewed: 架构健康度仪表盘 post-commit 基线记录（第0期 warn-only，ai_first_governance_principles.md §四）。
+# trae_060-reviewed: 架构健康度仪表盘 post-commit 基线记录（第0期 warn-only，ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四）。
 
 # 触发条件：任何 .py 文件变更（30 项指标覆盖代码/脚本/门禁/depgraph 维度）
 
@@ -8716,13 +8716,13 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 非阻断：ReconcileResult(action="clean"/"warn")，第0期仅记录基线不阻断 commit
 
-# 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 ai_first_governance_principles.md §四 第1期
+# 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第1期
 
 def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 
     """构造架构健康度仪表盘 post-commit 基线记录 reconciler（第0期 warn-only）。
 
-    ai_first_governance_principles.md §四 第0期：每次 commit 自动生成架构健康度指标快照，
+    ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第0期：每次 commit 自动生成架构健康度指标快照，
 
     替代手动调研。仪表盘 30 项指标（M01-M31），warn-only 模式（exit 0 不阻断 commit）。
 
@@ -8738,7 +8738,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 
     第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见
 
-    ai_first_governance_principles.md §四 第1期。
+    ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第1期。
 
     Args:
 
