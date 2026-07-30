@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `signal`（信号）
 
+> **域职责 / Responsibility**: Alpha 信号合成、优先级路由、LLM 策略 Agent 与尾部风险保护
+
 ## 统计
 
 - 设计态节点数: 13
@@ -76,50 +78,50 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 177 | L2A | signal | Synthesizer 信号合成+权重分配 | decision/signal/sg_01 | - | - | design | planned |
-| 178 | L2A | signal | Signal Priority Router 信号优先级路由 | decision/signal/sg_02 | - | - | design | planned |
-| 179 | L2A | signal | LLM Strategy Agent LLM策略Agent | decision/signal/sg_03 | - | - | design | planned |
-| 180 | L2A | signal | Signal Tail Risk Protector 信号尾部风险保护 | decision/signal/sg_04 | - | - | design | planned |
-| 181 | L2A | signal | A-Share Plan Conformity Evaluator A股计划吻合度评估 | decision/signal/sg_05 | - | - | design | planned |
-| 182 | L2A | signal | A-Share Emergency Opportunity Evaluator A股应急机会评估 | decision/signal/sg_06 | - | - | design | planned |
-| 183 | L2A | signal | A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁 | decision/signal/sg_07 | - | - | design | planned |
-| 184 | L2A | signal | Regime Special Override Priority Manager Regime特殊覆盖优先级 | decision/signal/sg_08 | - | - | design | planned |
-| 185 | L2A | signal | Risk-Signal Interaction Sequencer 风控-信号交互时序 | decision/signal/sg_09 | - | - | design | planned |
-| 186 | L2A | signal | 36环节决策框架实现器 36-Step Decision Framework | decision/signal/sg_10 | - | - | design | planned |
-| 187 | L2A | signal | 策略替换与淘汰决策器 Strategy Replacement Decision | decision/signal/sg_11 | - | - | design | planned |
-| 188 | L2A | signal | 信号冲突解决 Signal Conflict Resolution | decision/signal/sg_12 | - | - | design | planned |
-| 189 | L2A | signal | 信号融合模块 Signal Fusion Module | decision/signal/sg_13 | - | - | design | planned |
+| 177 | L2A | signal / 信号节点 | Synthesizer 信号合成+权重分配 | decision/signal/sg_01 | - | - | design / 设计 | planned / 已规划 |
+| 178 | L2A | signal / 信号节点 | Signal Priority Router 信号优先级路由 | decision/signal/sg_02 | - | - | design / 设计 | planned / 已规划 |
+| 179 | L2A | signal / 信号节点 | LLM Strategy Agent LLM策略Agent | decision/signal/sg_03 | - | - | design / 设计 | planned / 已规划 |
+| 180 | L2A | signal / 信号节点 | Signal Tail Risk Protector 信号尾部风险保护 | decision/signal/sg_04 | - | - | design / 设计 | planned / 已规划 |
+| 181 | L2A | signal / 信号节点 | A-Share Plan Conformity Evaluator A股计划吻合度评估 | decision/signal/sg_05 | - | - | design / 设计 | planned / 已规划 |
+| 182 | L2A | signal / 信号节点 | A-Share Emergency Opportunity Evaluator A股应急机会评估 | decision/signal/sg_06 | - | - | design / 设计 | planned / 已规划 |
+| 183 | L2A | signal / 信号节点 | A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁 | decision/signal/sg_07 | - | - | design / 设计 | planned / 已规划 |
+| 184 | L2A | signal / 信号节点 | Regime Special Override Priority Manager Regime特殊覆盖优先级 | decision/signal/sg_08 | - | - | design / 设计 | planned / 已规划 |
+| 185 | L2A | signal / 信号节点 | Risk-Signal Interaction Sequencer 风控-信号交互时序 | decision/signal/sg_09 | - | - | design / 设计 | planned / 已规划 |
+| 186 | L2A | signal / 信号节点 | 36环节决策框架实现器 36-Step Decision Framework | decision/signal/sg_10 | - | - | design / 设计 | planned / 已规划 |
+| 187 | L2A | signal / 信号节点 | 策略替换与淘汰决策器 Strategy Replacement Decision | decision/signal/sg_11 | - | - | design / 设计 | planned / 已规划 |
+| 188 | L2A | signal / 信号节点 | 信号冲突解决 Signal Conflict Resolution | decision/signal/sg_12 | - | - | design / 设计 | planned / 已规划 |
+| 189 | L2A | signal / 信号节点 | 信号融合模块 Signal Fusion Module | decision/signal/sg_13 | - | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 38 | 177 | 178 | informing | L2A层内顺序流 | - |
-| 39 | 178 | 179 | informing | L2A层内顺序流 | - |
-| 40 | 179 | 180 | informing | L2A层内顺序流 | - |
-| 41 | 180 | 181 | informing | L2A层内顺序流 | - |
-| 42 | 181 | 182 | informing | L2A层内顺序流 | - |
-| 43 | 182 | 183 | informing | L2A层内顺序流 | - |
-| 44 | 183 | 184 | informing | L2A层内顺序流 | - |
-| 45 | 184 | 185 | informing | L2A层内顺序流 | - |
-| 46 | 185 | 186 | informing | L2A层内顺序流 | - |
-| 47 | 186 | 187 | informing | L2A层内顺序流 | - |
-| 48 | 187 | 188 | informing | L2A层内顺序流 | - |
-| 49 | 188 | 189 | informing | L2A层内顺序流 | - |
+| 38 | 177 | 178 | informing / 告知 | L2A层内顺序流 | - |
+| 39 | 178 | 179 | informing / 告知 | L2A层内顺序流 | - |
+| 40 | 179 | 180 | informing / 告知 | L2A层内顺序流 | - |
+| 41 | 180 | 181 | informing / 告知 | L2A层内顺序流 | - |
+| 42 | 181 | 182 | informing / 告知 | L2A层内顺序流 | - |
+| 43 | 182 | 183 | informing / 告知 | L2A层内顺序流 | - |
+| 44 | 183 | 184 | informing / 告知 | L2A层内顺序流 | - |
+| 45 | 184 | 185 | informing / 告知 | L2A层内顺序流 | - |
+| 46 | 185 | 186 | informing / 告知 | L2A层内顺序流 | - |
+| 47 | 186 | 187 | informing / 告知 | L2A层内顺序流 | - |
+| 48 | 187 | 188 | informing / 告知 | L2A层内顺序流 | - |
+| 49 | 188 | 189 | informing / 告知 | L2A层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
+| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/signal/sg_13 | → | decision/simulation/sim_01 | informing |
+| 1 | decision/signal/sg_13 | → | decision/simulation/sim_01 | informing / 告知 |
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/sell/sell_18 | → | decision/signal/sg_01 | informing |
+| 1 | decision/sell/sell_18 | → | decision/signal/sg_01 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 

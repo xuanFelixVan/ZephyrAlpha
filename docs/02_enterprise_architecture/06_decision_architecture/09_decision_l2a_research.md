@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `research`（研究）
 
+> **域职责 / Responsibility**: 风控决策门控、决策审计链、策略可解释性与 A 股绩效审计优化
+
 ## 统计
 
 - 设计态节点数: 6
@@ -55,24 +57,24 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 204 | L2A | signal | 4级风控决策 APPROVE/REDUCE/REJECT/FLATTEN | decision/research/rs_01 | - | - | design | planned |
-| 205 | L2A | signal | 3阶段决策门控 IS→WFA→OOS 3-Stage Decision Gate | decision/research/rs_02 | - | - | design | planned |
-| 206 | L2A | signal | Decision Audit Trail R-102 Decision Audit Trail | decision/research/rs_03 | - | - | design | planned |
-| 211 | L2A | signal | 策略可解释性报告器 Strategy Explainability Reporter | decision/research/rs_04 | - | - | design | planned |
-| 212 | L2A | signal | A股绩效审计与优化触发器 A-Share Performance Audit | decision/research/rs_05 | - | - | design | planned |
-| 213 | L2A | signal | 异常决策自检 Anomaly Decision Self-Check | decision/research/rs_06 | - | - | design | planned |
+| 204 | L2A | signal / 信号节点 | 4级风控决策 APPROVE/REDUCE/REJECT/FLATTEN | decision/research/rs_01 | - | - | design / 设计 | planned / 已规划 |
+| 205 | L2A | signal / 信号节点 | 3阶段决策门控 IS→WFA→OOS 3-Stage Decision Gate | decision/research/rs_02 | - | - | design / 设计 | planned / 已规划 |
+| 206 | L2A | signal / 信号节点 | Decision Audit Trail R-102 Decision Audit Trail | decision/research/rs_03 | - | - | design / 设计 | planned / 已规划 |
+| 211 | L2A | signal / 信号节点 | 策略可解释性报告器 Strategy Explainability Reporter | decision/research/rs_04 | - | - | design / 设计 | planned / 已规划 |
+| 212 | L2A | signal / 信号节点 | A股绩效审计与优化触发器 A-Share Performance Audit | decision/research/rs_05 | - | - | design / 设计 | planned / 已规划 |
+| 213 | L2A | signal / 信号节点 | 异常决策自检 Anomaly Decision Self-Check | decision/research/rs_06 | - | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 12 | 204 | 205 | informing | L2A层内顺序流 | - |
-| 13 | 205 | 206 | informing | L2A层内顺序流 | - |
-| 14 | 206 | 211 | informing | L2A层内顺序流 | - |
-| 15 | 211 | 212 | informing | L2A层内顺序流 | - |
-| 16 | 212 | 213 | informing | L2A层内顺序流 | - |
+| 12 | 204 | 205 | informing / 告知 | L2A层内顺序流 | - |
+| 13 | 205 | 206 | informing / 告知 | L2A层内顺序流 | - |
+| 14 | 206 | 211 | informing / 告知 | L2A层内顺序流 | - |
+| 15 | 211 | 212 | informing / 告知 | L2A层内顺序流 | - |
+| 16 | 212 | 213 | informing / 告知 | L2A层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
@@ -80,9 +82,9 @@ flowchart TD
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/frontend/fe_m76 | → | decision/research/rs_01 | informing |
+| 1 | decision/frontend/fe_m76 | → | decision/research/rs_01 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 

@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `pf_core`（组合核心）
 
+> **域职责 / Responsibility**: 组合管理核心——组合引擎、Kelly 上限、风险预算、再平衡决策与多策略融合
+
 ## 统计
 
 - 设计态节点数: 12
@@ -73,48 +75,48 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 20 | L3 | portfolio_target | 组合核心引擎 Portfolio Core Engine | decision/pf_core/pc_01 | MOD-L05-001 | - | design | planned |
-| 21 | L3 | portfolio_target | 半Kelly硬上限 Half-Kelly Hard Cap | decision/pf_core/pc_02 | MOD-L05-001 | - | design | planned |
-| 22 | L3 | portfolio_target | 风险预算 Risk Budget | decision/pf_core/pc_03 | MOD-L05-001 | - | design | planned |
-| 23 | L3 | portfolio_target | 再平衡决策 Rebalance Decision | decision/pf_core/pc_04 | MOD-L05-001 | - | design | planned |
-| 24 | L3 | portfolio_target | 仲裁优先级体系 Arbitration Priority | decision/pf_core/pc_05 | MOD-L05-001 | - | design | planned |
-| 25 | L3 | portfolio_target | 多策略共振融合 Strategy Convergence Fusion | decision/pf_core/pc_06 | MOD-L05-001 | - | design | planned |
-| 26 | L3 | portfolio_target | 因子直通裁决 Factor Bypass Arbitration | decision/pf_core/pc_07 | MOD-L05-001 | - | design | planned |
-| 27 | L3 | portfolio_target | 元策略路由 Meta-Strategy Router | decision/pf_core/pc_08 | MOD-L05-001 | - | design | planned |
-| 28 | L3 | portfolio_target | 组合优化 Portfolio Optimization | decision/pf_core/pc_09 | MOD-L05-001 | - | design | planned |
-| 29 | L3 | portfolio_target | 资本分配 Capital Allocation | decision/pf_core/pc_10 | MOD-L05-001 | - | design | planned |
-| 30 | L3 | portfolio_target | 决策编排器 Decision Orchestrator | decision/pf_core/pc_11 | MOD-L05-001 | - | design | planned |
-| 31 | L3 | portfolio_target | 四轨融合器 Multi-Track Fusion | decision/pf_core/pc_12 | MOD-L05-001 | - | design | planned |
+| 20 | L3 | portfolio_target / 组合目标节点 | 组合核心引擎 Portfolio Core Engine | decision/pf_core/pc_01 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 21 | L3 | portfolio_target / 组合目标节点 | 半Kelly硬上限 Half-Kelly Hard Cap | decision/pf_core/pc_02 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 22 | L3 | portfolio_target / 组合目标节点 | 风险预算 Risk Budget | decision/pf_core/pc_03 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 23 | L3 | portfolio_target / 组合目标节点 | 再平衡决策 Rebalance Decision | decision/pf_core/pc_04 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 24 | L3 | portfolio_target / 组合目标节点 | 仲裁优先级体系 Arbitration Priority | decision/pf_core/pc_05 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 25 | L3 | portfolio_target / 组合目标节点 | 多策略共振融合 Strategy Convergence Fusion | decision/pf_core/pc_06 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 26 | L3 | portfolio_target / 组合目标节点 | 因子直通裁决 Factor Bypass Arbitration | decision/pf_core/pc_07 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 27 | L3 | portfolio_target / 组合目标节点 | 元策略路由 Meta-Strategy Router | decision/pf_core/pc_08 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 28 | L3 | portfolio_target / 组合目标节点 | 组合优化 Portfolio Optimization | decision/pf_core/pc_09 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 29 | L3 | portfolio_target / 组合目标节点 | 资本分配 Capital Allocation | decision/pf_core/pc_10 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 30 | L3 | portfolio_target / 组合目标节点 | 决策编排器 Decision Orchestrator | decision/pf_core/pc_11 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 31 | L3 | portfolio_target / 组合目标节点 | 四轨融合器 Multi-Track Fusion | decision/pf_core/pc_12 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 96 | 20 | 21 | informing | L3层内顺序流 | - |
-| 97 | 21 | 22 | informing | L3层内顺序流 | - |
-| 98 | 22 | 23 | informing | L3层内顺序流 | - |
-| 99 | 23 | 24 | informing | L3层内顺序流 | - |
-| 100 | 24 | 25 | informing | L3层内顺序流 | - |
-| 101 | 25 | 26 | informing | L3层内顺序流 | - |
-| 102 | 26 | 27 | informing | L3层内顺序流 | - |
-| 103 | 27 | 28 | informing | L3层内顺序流 | - |
-| 104 | 28 | 29 | informing | L3层内顺序流 | - |
-| 105 | 29 | 30 | informing | L3层内顺序流 | - |
-| 106 | 30 | 31 | informing | L3层内顺序流 | - |
+| 96 | 20 | 21 | informing / 告知 | L3层内顺序流 | - |
+| 97 | 21 | 22 | informing / 告知 | L3层内顺序流 | - |
+| 98 | 22 | 23 | informing / 告知 | L3层内顺序流 | - |
+| 99 | 23 | 24 | informing / 告知 | L3层内顺序流 | - |
+| 100 | 24 | 25 | informing / 告知 | L3层内顺序流 | - |
+| 101 | 25 | 26 | informing / 告知 | L3层内顺序流 | - |
+| 102 | 26 | 27 | informing / 告知 | L3层内顺序流 | - |
+| 103 | 27 | 28 | informing / 告知 | L3层内顺序流 | - |
+| 104 | 28 | 29 | informing / 告知 | L3层内顺序流 | - |
+| 105 | 29 | 30 | informing / 告知 | L3层内顺序流 | - |
+| 106 | 30 | 31 | informing / 告知 | L3层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
+| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/pf_core/pc_12 | → | decision/position/pos_01 | informing |
+| 1 | decision/pf_core/pc_12 | → | decision/position/pos_01 | informing / 告知 |
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/pf_alloc/pa_06 | → | decision/pf_core/pc_01 | informing |
+| 1 | decision/pf_alloc/pa_06 | → | decision/pf_core/pc_01 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 

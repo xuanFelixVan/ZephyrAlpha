@@ -1,0 +1,847 @@
+# [A_config] module_id=CFG-terminology-glossary | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+module_id: REG-TERMINOLOGY-001
+ttl: permanent
+title: 架构文档术语词汇表（中英对照真源）
+doc_type: register
+registry_id: REG-TERMINOLOGY-001
+name: 架构文档术语词汇表
+description: |
+  架构文档生成器共享的中文术语翻译真源（英文→中文）。SSoT 真源分类铁律（TRAE-062）：
+  词汇表属规则数据 → 真源是本 YAML 文件，生成器通过 _shared/terminology_loader.py 共享读取，
+  禁止在生成器代码硬编码中文字典（domain_name_mapping.py 的 DOMAIN_NAME_ZH 测试域 fallback 例外）。
+
+  与 functional_domain_registry.yaml 的关系：
+  - functional_domain_registry.yaml 的 domain_name_zh 是功能域规范名（D_XXX 形式）的 SSoT，
+    经 sync_yaml_to_depgraph.py 同步到 DB domains.domain_name，由 domain_name_mapping.py 消费。
+  - 本词汇表的 domain_id_display 类别仅为数据流图的"图示显示名"，含 D_SIGNAL/D_ORDER 等
+    已按裁定#204 改名/废弃的遗留域（functional_domain_registry 不含），二者职责不同，
+    非重复真源。规范域中文名请改 functional_domain_registry.yaml，勿在此重复登记。
+
+  类别清单（category 字段）：
+  - edge_type：决策/数据流边类型（triggering/informing/constraining/.../produces/consumed by）
+  - build_status：构建状态（planned/generated/testing/stable/deprecated）
+  - maturity：设计成熟度（design/production）
+  - node_type：决策节点类型（signal/portfolio_target/risk_check/order/compliance_check/sell_decision）
+  - pit_policy：PIT 策略（strict/loose/none）
+  - trigger_type：触发类型（event_driven/scheduled/manual/stream）
+  - scope：作用域（production/backtest_internal）
+  - entity_name：数据流 Dataset/Job 实体名（market_data.tick 等）
+  - decision_domain_short：决策轨短名域（data/factor/...，非 D_XXX 规范形式）
+  - domain_responsibility：功能域核心职责（domain 文件头部展示，14 域各 1-2 句）
+  - domain_id_display：数据流图示显示名（D_XXX 形式，含遗留域）
+  - data_source：数据采集中文名（miniqmt/akshare/...）
+  - table_name：数据清单表中文名（tick_data/daily_kline/...）
+  - layer_name_short：导航页短名层（L0_infrastructure→基础设施层，无层号前缀；
+    长名层 L0 基础设施层 的 SSoT 在 domain_name_mapping.LAYER_NAME_BILINGUAL）
+
+  新增 Dataset/Job/表/数据源后，在对应类别补 en/zh 条目即可，无需改生成器代码。
+owner: MOD-INF-005
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-07-30'
+last_updated: '2026-07-30'
+unique_key:
+- category
+- en
+entry_schema:
+  category: str
+  en: str
+  zh: str
+  description: str
+entries:
+  # ───────── edge_type：决策/数据流边类型（decision + dataflow 共享）─────────
+  - category: edge_type
+    en: triggering
+    zh: 触发
+    description: 触发型决策边
+  - category: edge_type
+    en: informing
+    zh: 告知
+    description: 告知型决策边
+  - category: edge_type
+    en: approving
+    zh: 批准
+    description: 批准型决策边
+  - category: edge_type
+    en: feedback
+    zh: 反馈
+    description: 反馈型决策边
+  - category: edge_type
+    en: portfolio_target
+    zh: 仓位目标
+    description: 仓位目标型决策边
+  - category: edge_type
+    en: risk_check
+    zh: 风控检查
+    description: 风控检查型决策边
+  - category: edge_type
+    en: constraining
+    zh: 约束
+    description: 约束型决策边（u 施加约束限制 v 的行动空间）
+  - category: edge_type
+    en: produces
+    zh: 产出
+    description: 数据流 Job→Dataset 产出边
+  - category: edge_type
+    en: consumed by
+    zh: 被消费于
+    description: 数据流 Dataset→Job 被消费边
+
+  # ───────── build_status：构建状态 ─────────
+  - category: build_status
+    en: design
+    zh: 设计
+    description: 设计态（蓝图规划，代码未写）
+  - category: build_status
+    en: generated
+    zh: 已生成
+    description: 已生成（代码已落地）
+  - category: build_status
+    en: planned
+    zh: 已规划
+    description: 已规划（已登记但尚未开始）
+  - category: build_status
+    en: testing
+    zh: 测试中
+    description: 测试中（正在测试）
+  - category: build_status
+    en: stable
+    zh: 稳定
+    description: 稳定（已通过测试，生产就绪）
+  - category: build_status
+    en: deprecated
+    zh: 已弃用
+    description: 已弃用（终态，不可再迁移）
+
+  # ───────── maturity：设计成熟度 ─────────
+  - category: maturity
+    en: design
+    zh: 设计
+    description: 设计成熟度-设计态
+  - category: maturity
+    en: production
+    zh: 生产
+    description: 设计成熟度-生产态
+
+  # ───────── pit_policy：PIT 策略 ─────────
+  - category: pit_policy
+    en: strict
+    zh: 严格
+    description: 严格 PIT（禁止未来函数）
+  - category: pit_policy
+    en: loose
+    zh: 宽松
+    description: 宽松 PIT
+  - category: pit_policy
+    en: none
+    zh: 无
+    description: 无 PIT 约束
+
+  # ───────── trigger_type：触发类型 ─────────
+  - category: trigger_type
+    en: event_driven
+    zh: 事件驱动
+    description: 事件驱动触发
+  - category: trigger_type
+    en: scheduled
+    zh: 定时
+    description: 定时调度触发
+  - category: trigger_type
+    en: manual
+    zh: 手动
+    description: 手动触发
+  - category: trigger_type
+    en: stream
+    zh: 流式
+    description: 流式触发
+
+  # ───────── scope：作用域 ─────────
+  - category: scope
+    en: production
+    zh: 生产
+    description: 生产作用域
+  - category: scope
+    en: backtest_internal
+    zh: 回测内部
+    description: 回测内部作用域
+
+  # ───────── node_type：决策节点类型（Node 清单表用 英文 / 中文）─────────
+  - category: node_type
+    en: signal
+    zh: 信号节点
+    description: Alpha 层输出，含方向/置信度/时间跨度
+  - category: node_type
+    en: portfolio_target
+    zh: 组合目标节点
+    description: 组合构造层输出，目标仓位
+  - category: node_type
+    en: risk_check
+    zh: 风控检查节点
+    description: 风控层输出，含 approve/veto/adjust
+  - category: node_type
+    en: order
+    zh: 订单节点
+    description: 执行层输出，订单指令
+  - category: node_type
+    en: compliance_check
+    zh: 合规检查节点
+    description: 合规层输出，合规审批
+  - category: node_type
+    en: sell_decision
+    zh: 卖出决策节点
+    description: 卖出信号融合仲裁 + 卖出策略工厂
+
+  # ───────── domain_responsibility：功能域核心职责（domain 文件头部展示）─────────
+  - category: domain_responsibility
+    en: data
+    zh: 多源行情/基本面数据接入、优先级路由、跨源对账与跨频率融合
+    description: L2A data 域核心职责
+  - category: domain_responsibility
+    en: factor
+    zh: 因子计算与因子工厂全生命周期管理（末位淘汰、批量裁剪、IC 评估）
+    description: L2A factor 域核心职责
+  - category: domain_responsibility
+    en: frontend
+    zh: 决策结果可视化、审批流程界面、通知路由与跨域运维事件追踪
+    description: L2A frontend 域核心职责
+  - category: domain_responsibility
+    en: research
+    zh: 风控决策门控、决策审计链、策略可解释性与 A 股绩效审计优化
+    description: L2A research 域核心职责
+  - category: domain_responsibility
+    en: sell
+    zh: 卖出信号生成（止盈/止损/移动止损/主力出货/量价背离/突破关键位）
+    description: L2A sell 域核心职责
+  - category: domain_responsibility
+    en: signal
+    zh: Alpha 信号合成、优先级路由、LLM 策略 Agent 与尾部风险保护
+    description: L2A signal 域核心职责
+  - category: domain_responsibility
+    en: simulation
+    zh: 市场/策略/风控仿真、压力测试、场景生成与历史重放
+    description: L2A simulation 域核心职责
+  - category: domain_responsibility
+    en: aut_core
+    zh: 自主决策编排——权限守卫、自愈回滚、预算执行、健康监控、漂移检测、自动修复与 Agent 编排
+    description: L3 aut_core 域核心职责
+  - category: domain_responsibility
+    en: ex_core
+    zh: 订单执行核心——SLA 保障、Saga 事务、风控检查、下单/成交确认与持仓更新
+    description: L3 ex_core 域核心职责
+  - category: domain_responsibility
+    en: ex_sor
+    zh: 智能订单路由(SOR)——路由决策、通道熔断、Kill-Switch 与熔断器矩阵
+    description: L3 ex_sor 域核心职责
+  - category: domain_responsibility
+    en: pf_alloc
+    zh: 组合资本分配——策略分配、风险平价、动态权重、再平衡与元策略选择
+    description: L3 pf_alloc 域核心职责
+  - category: domain_responsibility
+    en: pf_core
+    zh: 组合管理核心——组合引擎、Kelly 上限、风险预算、再平衡决策与多策略融合
+    description: L3 pf_core 域核心职责
+  - category: domain_responsibility
+    en: position
+    zh: 持仓管理——仓位唯一裁决、状态机、漂移监控、Kelly 决策与市场状态仓位上限
+    description: L3 position 域核心职责
+  - category: domain_responsibility
+    en: trading
+    zh: 交易管理——结算、公司行动、保证金、多账户、微信枢纽与交易纪律执行
+    description: L3 trading 域核心职责
+
+  # ───────── entity_name：数据流 Dataset 实体名 ─────────
+  - category: entity_name
+    en: market_data.tick
+    zh: 市场数据.Tick行情
+  - category: entity_name
+    en: market_data.ohlc_bar
+    zh: 市场数据.OHLC K线
+  - category: entity_name
+    en: factor.value_factor
+    zh: 因子.价值因子
+  - category: entity_name
+    en: factor.momentum_20d
+    zh: 因子.20日动量
+  - category: entity_name
+    en: signal.composite
+    zh: 信号.合成信号
+  - category: entity_name
+    en: risk.limits
+    zh: 风险.限额
+  - category: entity_name
+    en: order.target
+    zh: 订单.目标订单
+  - category: entity_name
+    en: fill.executed
+    zh: 成交.已成交
+  - category: entity_name
+    en: position.snapshot
+    zh: 持仓.快照
+  - category: entity_name
+    en: backtest.result
+    zh: 回测.结果
+  - category: entity_name
+    en: backtest.tick_event
+    zh: 回测.Tick事件
+  - category: entity_name
+    en: backtest.target_weights
+    zh: 回测.目标权重
+  - category: entity_name
+    en: backtest.fills
+    zh: 回测.模拟成交
+  - category: entity_name
+    en: backtest.nav_series
+    zh: 回测.净值序列
+
+  # ───────── entity_name：数据流 Job 实体名 ─────────
+  - category: entity_name
+    en: ingest.ifind_kline
+    zh: 采集.iFind行情
+  - category: entity_name
+    en: aggregate.ohlc_bar
+    zh: 聚合.OHLC K线
+  - category: entity_name
+    en: compute.value_factor
+    zh: 计算.价值因子
+  - category: entity_name
+    en: compute.momentum_20d
+    zh: 计算.20日动量
+  - category: entity_name
+    en: synthesize.signal
+    zh: 合成.信号
+  - category: entity_name
+    en: check.risk_limits
+    zh: 检查.风险限额
+  - category: entity_name
+    en: generate.order
+    zh: 生成.订单
+  - category: entity_name
+    en: execute.order
+    zh: 执行.订单
+  - category: entity_name
+    en: backtest.replay_ticks
+    zh: 回测.Tick重放
+  - category: entity_name
+    en: backtest.run_event_driven
+    zh: 回测.事件驱动运行
+  - category: entity_name
+    en: backtest.match_fills
+    zh: 回测.撮合成交
+  - category: entity_name
+    en: backtest.update_portfolio
+    zh: 回测.更新组合
+  - category: entity_name
+    en: backtest.calc_metrics
+    zh: 回测.计算指标
+
+  # ───────── decision_domain_short：决策轨短名域（非 D_XXX 规范形式）─────────
+  - category: decision_domain_short
+    en: data
+    zh: 数据
+  - category: decision_domain_short
+    en: factor
+    zh: 因子
+  - category: decision_domain_short
+    en: frontend
+    zh: 前端
+  - category: decision_domain_short
+    en: research
+    zh: 研究
+  - category: decision_domain_short
+    en: sell
+    zh: 卖出
+  - category: decision_domain_short
+    en: signal
+    zh: 信号
+  - category: decision_domain_short
+    en: simulation
+    zh: 仿真
+  - category: decision_domain_short
+    en: aut_core
+    zh: 自主核心
+  - category: decision_domain_short
+    en: ex_core
+    zh: 执行核心
+  - category: decision_domain_short
+    en: ex_sor
+    zh: 执行排序
+  - category: decision_domain_short
+    en: pf_alloc
+    zh: 组合分配
+  - category: decision_domain_short
+    en: pf_core
+    zh: 组合核心
+  - category: decision_domain_short
+    en: position
+    zh: 持仓
+  - category: decision_domain_short
+    en: trading
+    zh: 交易
+
+  # ───────── domain_id_display：数据流图示显示名（D_XXX 形式，含遗留域）─────────
+  - category: domain_id_display
+    en: D_MKT_DATA
+    zh: 市场数据
+  - category: domain_id_display
+    en: D_FACTOR
+    zh: 因子
+  - category: domain_id_display
+    en: D_SIGNAL
+    zh: 信号
+    description: 遗留域（裁定#204 已改名为 D_SIGLEGACY，数据流图示沿用旧名）
+  - category: domain_id_display
+    en: D_SIGLEGACY
+    zh: 信号(legacy)
+  - category: domain_id_display
+    en: D_RISK
+    zh: 风险
+  - category: domain_id_display
+    en: D_ORDER
+    zh: 订单
+    description: 数据流图示用名（规范域 D_TRADING/D_POSITION，图示沿用 D_ORDER）
+  - category: domain_id_display
+    en: D_EXECUTION
+    zh: 执行
+    description: 数据流图示用名（规范域 D_EX_CORE/D_EX_SOR，图示沿用 D_EXECUTION）
+  - category: domain_id_display
+    en: D_EX_CORE
+    zh: 执行核心
+  - category: domain_id_display
+    en: D_PORTFOLIO
+    zh: 持仓
+    description: 数据流图示用名（规范域 D_PF_CORE，图示沿用 D_PORTFOLIO）
+  - category: domain_id_display
+    en: D_PF_CORE
+    zh: 持仓核心
+  - category: domain_id_display
+    en: D_BACKTEST
+    zh: 回测
+
+  # ───────── data_source：数据采集中文名 ─────────
+  - category: data_source
+    en: miniqmt
+    zh: 迅投QMT
+  - category: data_source
+    en: akshare
+    zh: AKShare
+  - category: data_source
+    en: ifind
+    zh: 同花顺iFind
+  - category: data_source
+    en: tickflow
+    zh: TickFlow
+  - category: data_source
+    en: tqcenter
+    zh: 通达信tqcenter
+  - category: data_source
+    en: tdx
+    zh: 通达信
+  - category: data_source
+    en: baostock
+    zh: BaoStock
+  - category: data_source
+    en: tushare
+    zh: Tushare
+  - category: data_source
+    en: rss
+    zh: RSS
+
+  # ───────── layer_name_short：导航页短名层（无层号前缀）─────────
+  - category: layer_name_short
+    en: L0_infrastructure
+    zh: 基础设施层
+    description: 导航页短名（长名 L0 基础设施层 在 domain_name_mapping.LAYER_NAME_BILINGUAL）
+  - category: layer_name_short
+    en: L1_foundation
+    zh: 基础层
+  - category: layer_name_short
+    en: L1_platform
+    zh: 平台层
+  - category: layer_name_short
+    en: L2_domain
+    zh: 业务域层
+
+  # ───────── table_name：数据清单表中文名（c1_market）─────────
+  - category: table_name
+    en: _pepb_staging
+    zh: PE/PB暂存表
+  - category: table_name
+    en: adj_factor
+    zh: 复权因子
+  - category: table_name
+    en: analyst_forecast
+    zh: 分析师预测
+  - category: table_name
+    en: auction_snapshot
+    zh: 集合竞价快照
+  - category: table_name
+    en: block_trade
+    zh: 大宗交易
+  - category: table_name
+    en: convertible_bond_iv
+    zh: 可转债隐含波动率
+  - category: table_name
+    en: convertible_bond_list
+    zh: 可转债列表
+  - category: table_name
+    en: daily_kline
+    zh: A股日K线（原始）
+  - category: table_name
+    en: daily_valuation
+    zh: 每日估值
+  - category: table_name
+    en: dragon_tiger
+    zh: 龙虎榜
+  - category: table_name
+    en: etf_benchmark
+    zh: ETF基准
+  - category: table_name
+    en: etf_kline_15min
+    zh: ETF15分钟K线
+  - category: table_name
+    en: etf_kline_1min
+    zh: ETF1分钟K线
+  - category: table_name
+    en: etf_kline_30min
+    zh: ETF30分钟K线
+  - category: table_name
+    en: etf_kline_5min
+    zh: ETF5分钟K线
+  - category: table_name
+    en: etf_kline_60min
+    zh: ETF60分钟K线
+  - category: table_name
+    en: etf_list
+    zh: ETF列表
+  - category: table_name
+    en: futures_kline
+    zh: 期货K线
+  - category: table_name
+    en: futures_position
+    zh: 期货持仓
+  - category: table_name
+    en: futures_term_structure
+    zh: 期货期限结构
+  - category: table_name
+    en: hk_daily_kline
+    zh: 港股日K线
+  - category: table_name
+    en: hk_stock_list
+    zh: 港股股票列表
+  - category: table_name
+    en: hk_trade_calendar
+    zh: 港股交易日历
+  - category: table_name
+    en: index_constituent
+    zh: 指数成分股
+  - category: table_name
+    en: index_kline
+    zh: 指数日K线
+  - category: table_name
+    en: index_list
+    zh: 指数列表
+  - category: table_name
+    en: index_quote
+    zh: 指数报价
+  - category: table_name
+    en: industry_class
+    zh: 行业分类
+  - category: table_name
+    en: kline_15min
+    zh: A股15分钟K线
+  - category: table_name
+    en: kline_1min
+    zh: A股1分钟K线
+  - category: table_name
+    en: kline_30min
+    zh: A股30分钟K线
+  - category: table_name
+    en: kline_5min
+    zh: A股5分钟K线
+  - category: table_name
+    en: kline_60min
+    zh: A股60分钟K线
+  - category: table_name
+    en: kline_daily
+    zh: A股日K线（前复权）
+  - category: table_name
+    en: kline_daily_hfq
+    zh: A股日K线（后复权）
+  - category: table_name
+    en: kline_daily_none
+    zh: A股日K线（不复权）
+  - category: table_name
+    en: kline_monthly
+    zh: A股月K线（前复权）
+  - category: table_name
+    en: kline_monthly_hfq
+    zh: A股月K线（后复权）
+  - category: table_name
+    en: kline_monthly_none
+    zh: A股月K线（不复权）
+  - category: table_name
+    en: kline_weekly
+    zh: A股周K线（前复权）
+  - category: table_name
+    en: kline_weekly_hfq
+    zh: A股周K线（后复权）
+  - category: table_name
+    en: kline_weekly_none
+    zh: A股周K线（不复权）
+  - category: table_name
+    en: lof_kline_15min
+    zh: LOF15分钟K线
+  - category: table_name
+    en: lof_kline_1min
+    zh: LOF1分钟K线
+  - category: table_name
+    en: lof_kline_30min
+    zh: LOF30分钟K线
+  - category: table_name
+    en: lof_kline_5min
+    zh: LOF5分钟K线
+  - category: table_name
+    en: lof_kline_60min
+    zh: LOF60分钟K线
+  - category: table_name
+    en: lof_list
+    zh: LOF列表
+  - category: table_name
+    en: macro_data
+    zh: 宏观经济数据
+  - category: table_name
+    en: margin_trading
+    zh: 融资融券
+  - category: table_name
+    en: money_flow
+    zh: 资金流向
+  - category: table_name
+    en: option_iv_surface
+    zh: 期权波动率曲面
+  - category: table_name
+    en: sector_kline
+    zh: 板块指数K线
+  - category: table_name
+    en: stock_list
+    zh: A股股票列表
+  - category: table_name
+    en: tdx_market_index
+    zh: 通达信板块指数
+  - category: table_name
+    en: tdx_sector_info
+    zh: 通达信板块信息
+  - category: table_name
+    en: tick_data
+    zh: Tick数据（实时）
+  - category: table_name
+    en: tick_history
+    zh: Tick数据（历史）
+  - category: table_name
+    en: trade_calendar
+    zh: 交易日历
+  - category: table_name
+    en: us_daily_kline
+    zh: 美股日K线
+  - category: table_name
+    en: us_index
+    zh: 美股指数
+  # c1_market 新增表
+  - category: table_name
+    en: auction_book
+    zh: 集合竞价簿
+  - category: table_name
+    en: block_trade_detail
+    zh: 大宗交易明细
+  - category: table_name
+    en: concept_board
+    zh: 概念板块
+  - category: table_name
+    en: concept_board_constituent
+    zh: 概念板块成分股
+  - category: table_name
+    en: concept_sector
+    zh: 概念板块列表
+  - category: table_name
+    en: edb_data
+    zh: EDB宏观数据
+  - category: table_name
+    en: etf_nav
+    zh: ETF净值
+  - category: table_name
+    en: futures_kline_qmt
+    zh: 期货K线（QMT）
+  - category: table_name
+    en: hk_connect_flow
+    zh: 沪深港通资金
+  - category: table_name
+    en: hk_kline
+    zh: 港股K线
+  - category: table_name
+    en: index_weight
+    zh: 指数权重
+  - category: table_name
+    en: kline_cb
+    zh: 可转债K线
+  - category: table_name
+    en: kline_futures
+    zh: 期货K线
+  - category: table_name
+    en: kline_hk_daily
+    zh: 港股日K线
+  - category: table_name
+    en: kline_index
+    zh: 指数K线
+  - category: table_name
+    en: kline_sector
+    zh: 板块K线
+  - category: table_name
+    en: kline_us_daily
+    zh: 美股日K线
+  - category: table_name
+    en: limit_up_down
+    zh: 涨跌停
+  - category: table_name
+    en: market_index_meta
+    zh: 市场指数元数据
+  - category: table_name
+    en: option_greeks
+    zh: 期权Greeks
+  - category: table_name
+    en: option_kline
+    zh: 期权K线
+  - category: table_name
+    en: realtime_snapshot
+    zh: 实时快照
+  - category: table_name
+    en: sector_list
+    zh: 板块列表
+  - category: table_name
+    en: sector_meta
+    zh: 板块元数据
+  - category: table_name
+    en: st_stock_list
+    zh: ST股票列表
+  - category: table_name
+    en: stock_indicator
+    zh: 股票指标
+  - category: table_name
+    en: kline_etf_15min
+    zh: ETF15分钟K线
+  - category: table_name
+    en: kline_etf_1min
+    zh: ETF1分钟K线
+  - category: table_name
+    en: kline_etf_30min
+    zh: ETF30分钟K线
+  - category: table_name
+    en: kline_etf_5min
+    zh: ETF5分钟K线
+  - category: table_name
+    en: kline_etf_60min
+    zh: ETF60分钟K线
+  - category: table_name
+    en: kline_lof_15min
+    zh: LOF15分钟K线
+  - category: table_name
+    en: kline_lof_1min
+    zh: LOF1分钟K线
+  - category: table_name
+    en: kline_lof_30min
+    zh: LOF30分钟K线
+  - category: table_name
+    en: kline_lof_5min
+    zh: LOF5分钟K线
+  - category: table_name
+    en: kline_lof_60min
+    zh: LOF60分钟K线
+  - category: table_name
+    en: l2_tick
+    zh: Level2 Tick数据
+
+  # ───────── table_name：数据清单表中文名（c3_fundamental）─────────
+  - category: table_name
+    en: audit_opinion
+    zh: 审计意见
+  - category: table_name
+    en: balance_sheet
+    zh: 资产负债表
+  - category: table_name
+    en: cashflow_statement
+    zh: 现金流量表
+  - category: table_name
+    en: disclosure_plan
+    zh: 财报披露计划
+  - category: table_name
+    en: dividend
+    zh: 分红数据
+  - category: table_name
+    en: earnings_forecast
+    zh: 业绩预告
+  - category: table_name
+    en: equity_pledge
+    zh: 股权质押
+  - category: table_name
+    en: equity_pledge_detail
+    zh: 股权质押明细
+  - category: table_name
+    en: equity_pledge_summary
+    zh: 股权质押汇总
+  - category: table_name
+    en: express_report
+    zh: 业绩快报
+  - category: table_name
+    en: financial_indicator
+    zh: 财务指标
+  - category: table_name
+    en: income_statement
+    zh: 利润表
+  - category: table_name
+    en: industry_class_ifind
+    zh: iFind行业分类
+  - category: table_name
+    en: main_business
+    zh: 主营业务构成
+  - category: table_name
+    en: news_data
+    zh: 新闻数据（爬虫）
+  - category: table_name
+    en: news_news_info
+    zh: 新闻信息（tushare）
+  - category: table_name
+    en: news_security
+    zh: 新闻-股票关联
+  - category: table_name
+    en: restricted_shares
+    zh: 限售解禁
+  - category: table_name
+    en: rights_issue
+    zh: 配股/分红方案
+  - category: table_name
+    en: sector_constituent
+    zh: 板块成分股
+  - category: table_name
+    en: share_unlock
+    zh: 限售解禁
+  - category: table_name
+    en: shareholder
+    zh: 股东数据
+  - category: table_name
+    en: shareholder_count
+    zh: 股东户数
+  - category: table_name
+    en: top10_circulating_shareholders
+    zh: 十大流通股东
+  - category: table_name
+    en: top10_shareholders
+    zh: 十大股东
+  # c3_fundamental 新增表
+  - category: table_name
+    en: industry_class_suppl
+    zh: 行业分类补充
+  - category: table_name
+    en: repurchase
+    zh: 回购
+  - category: table_name
+    en: share_change
+    zh: 股本变动

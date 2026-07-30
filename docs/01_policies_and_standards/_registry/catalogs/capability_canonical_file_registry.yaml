@@ -5191,6 +5191,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- 术语词汇表真源（2026-07-30，terminology_loader SSoT 重构，文件此前未入库补登记）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml"
+    token: "auto-terminology-glossary-20260730"
+    created_by: "session-sess-5332-20260730211359"
+    capability: "domain_architecture_generators"
+
   # --- DDL-as-Code 真源回写 Wave 1（2026-07-25，#ARCH-CH-025 Schema 真源体系收口；P0-8 八表 DB 已 ReplacingMergeTree 但无真源，补齐 + 治本校验脚本）---
   - file: "scripts/ch/verify_schema_truth.py"
     token: "auto-schema-truth-verifier-20260725"

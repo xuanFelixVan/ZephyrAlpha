@@ -57,6 +57,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+# 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
+from _shared.terminology_loader import get_category_map
 try:
     from _common import DB_DISPLAY_NAME, cleanup_stale_files  # noqa: E402
 except ImportError:
@@ -109,24 +111,22 @@ _MERMAID_INIT = (
 )
 
 # 功能域英文→中文映射（双语标题/节点标签用）
-_DOMAIN_NAME_ZH: dict[str, str] = {
-    # L2A 信号层
-    "data": "数据", "factor": "因子", "frontend": "前端", "research": "研究",
-    "sell": "卖出", "signal": "信号", "simulation": "仿真",
-    # L3 策略组合层
-    "aut_core": "自主核心", "ex_core": "执行核心", "ex_sor": "执行排序",
-    "pf_alloc": "组合分配", "pf_core": "组合核心", "position": "持仓", "trading": "交易",
-}
+# 真源：terminology_glossary.yaml 的 decision_domain_short 类别（经 _shared.terminology_loader 加载）
+# 原硬编码字典已提升为 YAML 真源，消除跨生成器重复维护（D_FACTOR→因子 等不再三处各存）
+_DOMAIN_NAME_ZH: dict[str, str] = get_category_map("decision_domain_short")
 
-# 边类型英文→中文映射（mermaid 边标签用 英文 / 中文 格式，参考 dataflow 风格）
-_EDGE_TYPE_ZH: dict[str, str] = {
-    "triggering": "触发",
-    "informing": "告知",
-    "approving": "批准",
-    "feedback": "反馈",
-    "portfolio_target": "仓位目标",
-    "risk_check": "风控检查",
-}
+# 边类型英文→中文映射（mermaid 边标签 + 表格用 英文 / 中文 格式，参考 dataflow 风格）
+# 真源：terminology_glossary.yaml 的 edge_type 类别（decision + dataflow 共享）
+_EDGE_TYPE_ZH: dict[str, str] = get_category_map("edge_type")
+
+# 节点类型英文→中文（Node 清单表用 英文 / 中文）。真源：glossary node_type 类别。
+_NODE_TYPE_ZH: dict[str, str] = get_category_map("node_type")
+# build_status 英文→中文（表格用 英文 / 中文）。真源：glossary build_status 类别。
+_BUILD_STATUS_ZH: dict[str, str] = get_category_map("build_status")
+# design_maturity 英文→中文（表格用 英文 / 中文）。真源：glossary maturity 类别。
+_MATURITY_ZH: dict[str, str] = get_category_map("maturity")
+# 功能域核心职责（domain 文件头部"功能域"行后展示）。真源：glossary domain_responsibility 类别。
+_DOMAIN_RESPONSIBILITY_ZH: dict[str, str] = get_category_map("domain_responsibility")
 
 
 def _git_commit_timestamp() -> str:
@@ -273,6 +273,14 @@ def _edge_label(edge_type: str) -> str:
     if zh:
         return f"{edge_type} / {zh}"
     return edge_type
+
+
+def _bilingual(value: str | None, zh_map: dict[str, str]) -> str:
+    """值 → ``英文 / 中文``（表格单元格用）。无映射返回原值，None/空返回 ``-``。"""
+    if not value:
+        return "-"
+    zh = zh_map.get(value)
+    return f"{value} / {zh}" if zh else value
 
 
 def _maturity_tag(maturity: str | None) -> str:
@@ -680,9 +688,9 @@ def _md_header(title: str, breadcrumb: str) -> list[str]:
 
 
 def _layer_table(layers: list[dict]) -> list[str]:
-    """Layer 清单表（Markdown 行列表）。"""
+    """Layer 清单表（表头与枚举值中英对照）。"""
     lines = [
-        "| layer_id | 名称 | 英文名 | 所属轨 | 蓝图(module_id) | 蓝图名(派生) | 代码引用 | 功能简述 | 决策频率 | 成熟度 | build_status |",
+        "| layer_id / 层ID | 名称 / name | 英文名 / name_en | 所属轨 / track | 蓝图(module_id) | 蓝图名 / bp | 代码引用 / ref | 功能简述 / desc | 决策频率 / freq | maturity / 成熟度 | build_status / 构建状态 |",
         "|----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|",
     ]
     for l in layers:
@@ -693,39 +701,39 @@ def _layer_table(layers: list[dict]) -> list[str]:
         lines.append(
             f"| {l['id']} | {l['name']} | {l['name_en']} | {l['track']} | "
             f"{mid} | {bp_name} | {scr} | {desc} | "
-            f"{l['freq'] or '-'} | {l['maturity']} | {l['build']} |"
+            f"{l['freq'] or '-'} | {_bilingual(l['maturity'], _MATURITY_ZH)} | {_bilingual(l['build'], _BUILD_STATUS_ZH)} |"
         )
     return lines
 
 
 def _node_table(nodes: list[dict]) -> list[str]:
-    """Node 清单表。"""
+    """Node 清单表（表头与枚举值均中英对照）。"""
     if not nodes:
         return ["> （无节点）"]
     lines = [
-        "| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |",
+        "| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |",
         "|---------|-------|------|------|------|-----------|----------|--------|--------------|",
     ]
     for n in nodes:
         nscr = n.get("source_code_ref") or "-"
         lines.append(
-            f"| {n['id']} | {n['layer_id']} | {n['type']} | {n['name']} | "
-            f"{n['path']} | {n['module_id'] or '-'} | {nscr} | {n.get('maturity') or '-'} | {n['build']} |"
+            f"| {n['id']} | {n['layer_id']} | {_bilingual(n['type'], _NODE_TYPE_ZH)} | {n['name']} | "
+            f"{n['path']} | {n['module_id'] or '-'} | {nscr} | {_bilingual(n.get('maturity'), _MATURITY_ZH)} | {_bilingual(n['build'], _BUILD_STATUS_ZH)} |"
         )
     return lines
 
 
 def _edge_table(edges: list[dict]) -> list[str]:
-    """Edge 清单表。"""
+    """Edge 清单表（表头与 type 值中英对照）。"""
     if not edges:
         return ["> （无决策因果边）"]
     lines = [
-        "| edge_id | from | to | type | condition | track |",
+        "| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |",
         "|---------|-------|-----|------|-----------|-------|",
     ]
     for e in edges:
         lines.append(
-            f"| {e['id']} | {e['from']} | {e['to']} | {e['type']} | "
+            f"| {e['id']} | {e['from']} | {e['to']} | {_bilingual(e['type'], _EDGE_TYPE_ZH)} | "
             f"{e['condition'] or '-'} | {e['track'] or '-'} |"
         )
     return lines
@@ -825,11 +833,11 @@ def _gen_track_file_md(
     lines += ["## 跨轨边", ""]
     if cross_track_edges:
         lines += [
-            "| edge_id | from | to | type | condition |",
+            "| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 |",
             "|---------|-------|-----|------|-----------|",
         ]
         for e in cross_track_edges:
-            lines.append(f"| {e['id']} | {e['from']} | {e['to']} | {e['type']} | {e['condition'] or '-'} |")
+            lines.append(f"| {e['id']} | {e['from']} | {e['to']} | {_bilingual(e['type'], _EDGE_TYPE_ZH)} | {e['condition'] or '-'} |")
     else:
         lines += ["> （无跨轨边）"]
     lines += [""]
@@ -857,9 +865,14 @@ def _gen_domain_file_md(
         f"Decision Flow · {layer_id} Functional Domain {domain}（{_domain_zh}）",
         f"{track['name']} → {layer_id} → {domain}",
     )
+    _responsibility = _DOMAIN_RESPONSIBILITY_ZH.get(domain, "")
     lines += [
         f"**所属轨**: {track['name']}（`{track['id']}`） | **所属层**: {layer_id} | **功能域**: `{domain}`（{_domain_zh}）",
         "",
+    ]
+    if _responsibility:
+        lines += [f"> **域职责 / Responsibility**: {_responsibility}", ""]
+    lines += [
         "## 统计",
         "",
         f"- 设计态节点数: {len(domain_nodes)}",
@@ -884,9 +897,9 @@ def _gen_domain_file_md(
     # 跨域出边
     lines += ["## 跨域出边（Depends On）", ""]
     if outgoing_detail:
-        lines += ["| # | 本域节点 | → | 外部域-目标节点 | type |", "|:--:|---------|:--:|---------|---------|"]
+        lines += ["| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |", "|:--:|---------|:--:|---------|---------|"]
         for i, d in enumerate(outgoing_detail, 1):
-            lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {d['type']} |")
+            lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {_bilingual(d['type'], _EDGE_TYPE_ZH)} |")
     else:
         lines += ["> （无跨域出边）"]
     lines += [""]
@@ -894,9 +907,9 @@ def _gen_domain_file_md(
     # 跨域入边
     lines += ["## 跨域入边（Depended By）", ""]
     if incoming_detail:
-        lines += ["| # | 外部域-源节点 | → | 本域节点 | type |", "|:--:|---------|:--:|---------|---------|"]
+        lines += ["| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |", "|:--:|---------|:--:|---------|---------|"]
         for i, d in enumerate(incoming_detail, 1):
-            lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {d['type']} |")
+            lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {_bilingual(d['type'], _EDGE_TYPE_ZH)} |")
     else:
         lines += ["> （无跨域入边）"]
     lines += [""]

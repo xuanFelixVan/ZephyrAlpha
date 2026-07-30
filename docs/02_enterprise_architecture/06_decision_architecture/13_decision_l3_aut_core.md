@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `aut_core`（自主核心）
 
+> **域职责 / Responsibility**: 自主决策编排——权限守卫、自愈回滚、预算执行、健康监控、漂移检测、自动修复与 Agent 编排
+
 ## 统计
 
 - 设计态节点数: 11
@@ -70,48 +72,48 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 113 | L3 | portfolio_target | Permission Guard 七层纵深防御 | decision/aut_core/ac_01 | MOD-L05-001 | - | design | planned |
-| 115 | L3 | portfolio_target | Self-Healing Git-native自愈 | decision/aut_core/ac_03 | MOD-L05-001 | - | design | planned |
-| 116 | L3 | portfolio_target | Budget Enforcer 七级预算 | decision/aut_core/ac_04 | MOD-L05-001 | - | design | planned |
-| 117 | L3 | portfolio_target | Health Monitor 9子系统监控 | decision/aut_core/ac_05 | MOD-L05-001 | - | design | planned |
-| 118 | L3 | portfolio_target | Escalation Engine 升级引擎 | decision/aut_core/ac_06 | MOD-L05-001 | - | design | planned |
-| 119 | L3 | portfolio_target | Rollback Engine Git-native回滚 | decision/aut_core/ac_07 | MOD-L05-001 | - | design | planned |
-| 120 | L3 | portfolio_target | Drift Detector 39检测器 | decision/aut_core/ac_08 | MOD-L05-001 | - | design | planned |
-| 121 | L3 | portfolio_target | Auto-Fix Engine 16修复器 | decision/aut_core/ac_09 | MOD-L05-001 | - | design | planned |
-| 133 | L3 | portfolio_target | 编排Agent Orchestrator | decision/aut_core/ac_21 | MOD-L05-001 | - | design | planned |
-| 135 | L3 | portfolio_target | 做TAgent T0Trader | decision/aut_core/ac_23 | MOD-L05-001 | - | design | planned |
-| 136 | L3 | portfolio_target | 路由Agent Router | decision/aut_core/ac_24 | MOD-L05-001 | - | design | planned |
+| 113 | L3 | portfolio_target / 组合目标节点 | Permission Guard 七层纵深防御 | decision/aut_core/ac_01 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 115 | L3 | portfolio_target / 组合目标节点 | Self-Healing Git-native自愈 | decision/aut_core/ac_03 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 116 | L3 | portfolio_target / 组合目标节点 | Budget Enforcer 七级预算 | decision/aut_core/ac_04 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 117 | L3 | portfolio_target / 组合目标节点 | Health Monitor 9子系统监控 | decision/aut_core/ac_05 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 118 | L3 | portfolio_target / 组合目标节点 | Escalation Engine 升级引擎 | decision/aut_core/ac_06 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 119 | L3 | portfolio_target / 组合目标节点 | Rollback Engine Git-native回滚 | decision/aut_core/ac_07 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 120 | L3 | portfolio_target / 组合目标节点 | Drift Detector 39检测器 | decision/aut_core/ac_08 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 121 | L3 | portfolio_target / 组合目标节点 | Auto-Fix Engine 16修复器 | decision/aut_core/ac_09 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 133 | L3 | portfolio_target / 组合目标节点 | 编排Agent Orchestrator | decision/aut_core/ac_21 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 135 | L3 | portfolio_target / 组合目标节点 | 做TAgent T0Trader | decision/aut_core/ac_23 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 136 | L3 | portfolio_target / 组合目标节点 | 路由Agent Router | decision/aut_core/ac_24 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 65 | 113 | 115 | informing | L3层内顺序流 | - |
-| 66 | 115 | 116 | informing | L3层内顺序流 | - |
-| 67 | 116 | 117 | informing | L3层内顺序流 | - |
-| 68 | 117 | 118 | informing | L3层内顺序流 | - |
-| 69 | 118 | 119 | informing | L3层内顺序流 | - |
-| 70 | 119 | 120 | informing | L3层内顺序流 | - |
-| 71 | 120 | 121 | informing | L3层内顺序流 | - |
-| 72 | 121 | 133 | informing | L3层内顺序流 | - |
-| 73 | 133 | 135 | informing | L3层内顺序流 | - |
-| 74 | 135 | 136 | informing | L3层内顺序流 | - |
+| 65 | 113 | 115 | informing / 告知 | L3层内顺序流 | - |
+| 66 | 115 | 116 | informing / 告知 | L3层内顺序流 | - |
+| 67 | 116 | 117 | informing / 告知 | L3层内顺序流 | - |
+| 68 | 117 | 118 | informing / 告知 | L3层内顺序流 | - |
+| 69 | 118 | 119 | informing / 告知 | L3层内顺序流 | - |
+| 70 | 119 | 120 | informing / 告知 | L3层内顺序流 | - |
+| 71 | 120 | 121 | informing / 告知 | L3层内顺序流 | - |
+| 72 | 121 | 133 | informing / 告知 | L3层内顺序流 | - |
+| 73 | 133 | 135 | informing / 告知 | L3层内顺序流 | - |
+| 74 | 135 | 136 | informing / 告知 | L3层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
+| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/aut_core/ac_24 | → | decision/ex_core/ex_03 | informing |
-| 2 | decision/aut_core/ac_22 | → | decision/aut_perm/ap_11 | informing |
+| 1 | decision/aut_core/ac_24 | → | decision/ex_core/ex_03 | informing / 告知 |
+| 2 | decision/aut_core/ac_22 | → | decision/aut_perm/ap_11 | informing / 告知 |
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/simulation/sim_g1 | → | decision/aut_core/ac_01 | informing |
-| 2 | decision/trading/trd_11 | → | decision/aut_core/ac_02 | informing |
+| 1 | decision/simulation/sim_g1 | → | decision/aut_core/ac_01 | informing / 告知 |
+| 2 | decision/trading/trd_11 | → | decision/aut_core/ac_02 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 

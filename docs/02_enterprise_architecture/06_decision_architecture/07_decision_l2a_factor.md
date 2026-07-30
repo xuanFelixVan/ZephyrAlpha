@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `factor`（因子）
 
+> **域职责 / Responsibility**: 因子计算与因子工厂全生命周期管理（末位淘汰、批量裁剪、IC 评估）
+
 ## 统计
 
 - 设计态节点数: 2
@@ -43,28 +45,28 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 190 | L2A | signal | 末位淘汰 IC-Based Factor Replacement | decision/factor/fc_01 | - | - | design | planned |
-| 191 | L2A | signal | 批量裁剪 Batch Factor Pruning | decision/factor/fc_02 | - | - | design | planned |
+| 190 | L2A | signal / 信号节点 | 末位淘汰 IC-Based Factor Replacement | decision/factor/fc_01 | - | - | design / 设计 | planned / 已规划 |
+| 191 | L2A | signal / 信号节点 | 批量裁剪 Batch Factor Pruning | decision/factor/fc_02 | - | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 4 | 190 | 191 | informing | L2A层内顺序流 | - |
+| 4 | 190 | 191 | informing / 告知 | L2A层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
+| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/factor/fc_02 | → | decision/frontend/fe_09 | informing |
+| 1 | decision/factor/fc_02 | → | decision/frontend/fe_09 | informing / 告知 |
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/data/dt_03 | → | decision/factor/fc_01 | informing |
+| 1 | decision/data/dt_03 | → | decision/factor/fc_01 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 

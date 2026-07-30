@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `pf_alloc`（组合分配）
 
+> **域职责 / Responsibility**: 组合资本分配——策略分配、风险平价、动态权重、再平衡与元策略选择
+
 ## 统计
 
 - 设计态节点数: 6
@@ -55,36 +57,36 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 32 | L3 | portfolio_target | 策略分配 Strategy Allocation | decision/pf_alloc/pa_01 | MOD-L05-001 | - | design | planned |
-| 33 | L3 | portfolio_target | 风险平价 Risk Parity | decision/pf_alloc/pa_02 | MOD-L05-001 | - | design | planned |
-| 34 | L3 | portfolio_target | 动态权重 Dynamic Weighting | decision/pf_alloc/pa_03 | MOD-L05-001 | - | design | planned |
-| 35 | L3 | portfolio_target | 策略权重再平衡 Strategy Weight Rebalance | decision/pf_alloc/pa_04 | MOD-L05-001 | - | design | planned |
-| 36 | L3 | portfolio_target | 多策略共识 Multi-Strategy Consensus | decision/pf_alloc/pa_05 | MOD-L05-001 | - | design | planned |
-| 37 | L3 | portfolio_target | 元策略选择 Meta-Strategy Selection | decision/pf_alloc/pa_06 | MOD-L05-001 | - | design | planned |
+| 32 | L3 | portfolio_target / 组合目标节点 | 策略分配 Strategy Allocation | decision/pf_alloc/pa_01 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 33 | L3 | portfolio_target / 组合目标节点 | 风险平价 Risk Parity | decision/pf_alloc/pa_02 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 34 | L3 | portfolio_target / 组合目标节点 | 动态权重 Dynamic Weighting | decision/pf_alloc/pa_03 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 35 | L3 | portfolio_target / 组合目标节点 | 策略权重再平衡 Strategy Weight Rebalance | decision/pf_alloc/pa_04 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 36 | L3 | portfolio_target / 组合目标节点 | 多策略共识 Multi-Strategy Consensus | decision/pf_alloc/pa_05 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 37 | L3 | portfolio_target / 组合目标节点 | 元策略选择 Meta-Strategy Selection | decision/pf_alloc/pa_06 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 90 | 32 | 33 | informing | L3层内顺序流 | - |
-| 91 | 33 | 34 | informing | L3层内顺序流 | - |
-| 92 | 34 | 35 | informing | L3层内顺序流 | - |
-| 93 | 35 | 36 | informing | L3层内顺序流 | - |
-| 94 | 36 | 37 | informing | L3层内顺序流 | - |
+| 90 | 32 | 33 | informing / 告知 | L3层内顺序流 | - |
+| 91 | 33 | 34 | informing / 告知 | L3层内顺序流 | - |
+| 92 | 34 | 35 | informing / 告知 | L3层内顺序流 | - |
+| 93 | 35 | 36 | informing / 告知 | L3层内顺序流 | - |
+| 94 | 36 | 37 | informing / 告知 | L3层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
+| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/pf_alloc/pa_06 | → | decision/pf_core/pc_01 | informing |
+| 1 | decision/pf_alloc/pa_06 | → | decision/pf_core/pc_01 | informing / 告知 |
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/ex_sor/ex_22 | → | decision/pf_alloc/pa_01 | informing |
+| 1 | decision/ex_sor/ex_22 | → | decision/pf_alloc/pa_01 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 

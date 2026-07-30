@@ -7,6 +7,8 @@
 
 **所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `ex_sor`（执行排序）
 
+> **域职责 / Responsibility**: 智能订单路由(SOR)——路由决策、通道熔断、Kill-Switch 与熔断器矩阵
+
 ## 统计
 
 - 设计态节点数: 5
@@ -52,36 +54,36 @@ flowchart TD
 
 ## Node 清单
 
-| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |
+| node_id / 节点ID | layer / 层 | type / 类型 | name / 名称 | path / 路径 | module_id / 模块 | 代码引用 / ref | maturity / 成熟度 | build_status / 构建状态 |
 |---------|-------|------|------|------|-----------|----------|--------|--------------|
-| 72 | L3 | order | 订单路由决策 Order Routing Decision | decision/ex_sor/ex_16 | MOD-L05-001 | - | design | planned |
-| 73 | L3 | order | SOR路由决策延迟 SOR Routing Latency | decision/ex_sor/ex_17 | MOD-L05-001 | - | design | planned |
-| 75 | L3 | order | 交易通道熔断人工恢复 Trading Channel Manual Recovery | decision/ex_sor/ex_19 | MOD-L05-001 | - | design | planned |
-| 77 | L3 | order | Kill-Switch四级阶梯 Kill-Switch 4-Level Cascade | decision/ex_sor/ex_21 | MOD-L05-001 | - | design | planned |
-| 78 | L3 | order | 熔断器矩阵 Circuit Breaker Matrix | decision/ex_sor/ex_22 | MOD-L05-001 | - | design | planned |
+| 72 | L3 | order / 订单节点 | 订单路由决策 Order Routing Decision | decision/ex_sor/ex_16 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 73 | L3 | order / 订单节点 | SOR路由决策延迟 SOR Routing Latency | decision/ex_sor/ex_17 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 75 | L3 | order / 订单节点 | 交易通道熔断人工恢复 Trading Channel Manual Recovery | decision/ex_sor/ex_19 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 77 | L3 | order / 订单节点 | Kill-Switch四级阶梯 Kill-Switch 4-Level Cascade | decision/ex_sor/ex_21 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
+| 78 | L3 | order / 订单节点 | 熔断器矩阵 Circuit Breaker Matrix | decision/ex_sor/ex_22 | MOD-L05-001 | - | design / 设计 | planned / 已规划 |
 
 ## Edge 清单（域内）
 
-| edge_id | from | to | type | condition | track |
+| edge_id / 边ID | from / 起点 | to / 终点 | type / 类型 | condition / 条件 | track / 轨 |
 |---------|-------|-----|------|-----------|-------|
-| 85 | 72 | 73 | informing | L3层内顺序流 | - |
-| 86 | 73 | 75 | informing | L3层内顺序流 | - |
-| 87 | 75 | 77 | informing | L3层内顺序流 | - |
-| 88 | 77 | 78 | informing | L3层内顺序流 | - |
+| 85 | 72 | 73 | informing / 告知 | L3层内顺序流 | - |
+| 86 | 73 | 75 | informing / 告知 | L3层内顺序流 | - |
+| 87 | 75 | 77 | informing / 告知 | L3层内顺序流 | - |
+| 88 | 77 | 78 | informing / 告知 | L3层内顺序流 | - |
 
 ## 跨域出边（Depends On）
 
-| # | 本域节点 | → | 外部域-目标节点 | type |
+| # | 本域节点 / from | → | 外部域-目标节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/ex_sor/ex_22 | → | decision/pf_alloc/pa_01 | informing |
-| 2 | decision/ex_sor/ex_23 | → | decision/governance/gov_001 | informing |
+| 1 | decision/ex_sor/ex_22 | → | decision/pf_alloc/pa_01 | informing / 告知 |
+| 2 | decision/ex_sor/ex_23 | → | decision/governance/gov_001 | informing / 告知 |
 
 ## 跨域入边（Depended By）
 
-| # | 外部域-源节点 | → | 本域节点 | type |
+| # | 外部域-源节点 / from | → | 本域节点 / to | type / 类型 |
 |:--:|---------|:--:|---------|---------|
-| 1 | decision/ex_core/ex_15 | → | decision/ex_sor/ex_16 | informing |
-| 2 | decision/ex_core/ex_14 | → | decision/ex_sor/ex_18 | informing |
+| 1 | decision/ex_core/ex_15 | → | decision/ex_sor/ex_16 | informing / 告知 |
+| 2 | decision/ex_core/ex_14 | → | decision/ex_sor/ex_18 | informing / 告知 |
 
 ## 跨域依赖图（Cross-Domain Dependency Graph）
 
