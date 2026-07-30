@@ -1065,7 +1065,7 @@ common_traps:
     in same query
   consequence: 向量维度不匹配——ChromaDB 直接报错或返回全零相似度
   correct: EmbeddingRouter ?collection_name 自动路由；CrossCollectionRetriever 分别编码后合并结
-- trap: 绕开 kb/chromadb_init.py 直接操作 ChromaDB——在 VMS 中重复初始化 ChromaDB client
+- trap: 绕开 InProcessVectorMemory 直接操作 ChromaDB——在 VMS 中重复初始化 ChromaDB client
   consequence: 多进程持有多 ChromaDB client ?SQLite 文件锁冲??写入被阻??数据不一
   correct: 通过 BridgeLayer 共享同一 ChromaDB client 单例；InProcessVectorMemory 是唯一 ChromaDB
     入口

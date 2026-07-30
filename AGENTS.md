@@ -470,7 +470,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - `data/audit_logs/`: AI 行为审计日志
 - `data/capability_cards/`: 能力卡片定义
 - `data/work_dags/`: 工作 DAG 定义（待创建）
-- `architecture_model/`（仓库根，单树，2026-06-30 治本合并）: 架构模型 YAML SSoT——53域清单（depgraph 派生）+ 跨层契约（`contracts/`）+ 不变量（`cross_cutting/`）+ `module_id_registry` + 领域事件（`events/`）+ DDD 模型（`domain/`）+ b_track 施工视图（`layers/b_*.yaml`）；53域是唯一物理分类（depgraph），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的 `layer_id` 属性枚举（真源：`depgraph_schema.py` DB trigger）
+- `architecture_model/`（仓库根，单树，2026-06-30 治本合并）: 架构模型 YAML SSoT——72域清单（depgraph 派生）+ 跨层契约（`contracts/`）+ 不变量（`cross_cutting/`）+ `module_id_registry` + 领域事件（`events/`）+ DDD 模型（`domain/`）+ b_track 施工视图（`layers/b_*.yaml`）；72域是唯一物理分类（depgraph），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的 `layer_id` 属性枚举（真源：`depgraph_schema.py` DB trigger）
 
 ### 6.1 目录生命周期（AI-03 审计 P10，2026-07-05）
 
