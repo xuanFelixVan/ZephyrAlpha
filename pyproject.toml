@@ -40,6 +40,9 @@ dependencies = [
     "structlog>=24.1.0,<25.0.0",
     "pyarrow>=15.0.0,<20.0.0",
     "psycopg2-binary>=2.9.0,<3.0.0",
+    # ClickHouse native protocol 驱动：核心基础设施 database_service(MOD-INF-002) lazy-import
+    # 原误判为 demo 可选——CH 是主行情库(c1_market)，pip install . 后应能直连 (#ARCH-REQ-CLASSIFY-001)
+    "clickhouse-driver>=0.2.6,<1.0.0",
     "plotly>=6.0.0,<7.0.0",
     "streamlit>=1.50.0,<2.0.0",
     # v3.0.0 可视化技术栈切换 (#ARCH-047): Panel+HoloViz+plotly_resampler
@@ -75,9 +78,8 @@ dev = [
 ]
 demo = [
     "akshare>=1.12.0",
-    # Phase 4: 数据源依赖（按需安装，非核心包）
+    # Phase 4: 数据源依赖（按需安装，非核心包）。clickhouse-driver 已升级为核心依赖（见上）
     "baostock>=0.8.8,<0.9.0",          # 交易日历/沪深300成分股（baostock_provider）
-    "clickhouse-driver>=0.2.6,<1.0.0",   # ClickHouse native protocol（ch_writer/ch_reader 备选）
 ]
 
 [tool.pytest.ini_options]

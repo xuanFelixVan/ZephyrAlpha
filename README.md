@@ -26,10 +26,20 @@ python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
-# 可选：端到端演示 demo_e2e_pipeline.py（L00 需 Akshare）
+# 可选：端到端演示 demo_e2e_pipeline.py（L00 需 Akshare/Baostock）
 pip install -r requirements-demo.txt
 # 或等价：pip install -e ".[demo]"
 ```
+
+### 启动应用
+
+| 入口 | 命令 | 用途（真源：AGENTS.md §3） |
+|------|------|------|
+| AutoRuntime Core | `python -m zephyr.trading` | 主运行时（Dockerfile CMD） |
+| zephyr CLI | `zephyr` | 主 CLI（pyproject `[project.scripts]`） |
+| 数据源集成器 | `integrator status\|list\|run\|rerun-failed\|pause <src>\|resume <src>\|start` | MOD-L00-004 数据源集成器（7 子命令） |
+| 主 Dashboard | `panel serve src/zephyr/frontend/dashboard/app_panel.py --port 5006` | Panel 可视化（#ARCH-047） |
+| LLM Security Dashboard | `streamlit run src/zephyr/security/llm_defense/llm_security/dashboard/app.py` | 安全网关监控（MOD-SEC-app，production） |
 
 端到端演示（依赖网络与 Akshare）：
 
@@ -56,7 +66,9 @@ python scripts/demos/demo_e2e_pipeline.py
 
 ## 环境要求（新机器 restore 开箱即用清单）
 
-> 灾备验收标准：新机器按本清单准备环境后，执行 `scripts/backup/restore.ps1 latest` 即可恢复全部项目代码、配置与数据库 dump。详见 [disaster_recovery_backup/blueprint.md](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md)。
+> **灾备真源（2026-07-30 治本 #ARCH-README-BACKUP-POINTER）**：备份配置以 [`scripts/backup/backup_config.yaml`](scripts/backup/backup_config.yaml)（v2.0.0，robocopy + CH 增量）为唯一真源；恢复步骤以 [`dr_runbook.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/dr_runbook.md)（AI 可执行操作手册）为唯一操作手册；备份清单见 [`backup_inventory.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/backup_inventory.md)。本节仅列环境要求与版本号，不重复灾备架构叙事（消除第二真源漂移；restic/MinIO 方案已于 2026-07-28 退役）。
+>
+> 灾备验收：新机器按本清单准备环境后，执行 `scripts/backup/restore.ps1 all` 即可恢复全部项目代码、配置与数据库 dump。
 
 ### 系统层
 
@@ -67,7 +79,7 @@ python scripts/demos/demo_e2e_pipeline.py
 | CPU | ≥12 核 | VM 分配 12 vCPU，宿主为 Windows 留 ≥8 逻辑处理器 |
 | 内存 | ≥64 GB | VM 固定 32 GB，宿主为 Windows 留 ≥16 GB |
 | D 盘 | NVMe ≥1 TB | 项目根 `D:\ZephyrAlpha` + VM 数据 VHDX |
-| F 盘 | 移动硬盘 ≥2 TB | restic 备份仓库 + ClickHouse 备份中转（即异地副本） |
+| F 盘 | 移动硬盘 ≥2 TB | 备份仓库（robocopy 代码 + DB dump + CH VHDX 增量 + VM 周备） |
 
 ### 运行时与数据库
 
@@ -81,61 +93,22 @@ python scripts/demos/demo_e2e_pipeline.py
 | ChromaDB | 0.5.23 | 向量检索（VMS 双后端过渡期，`data/vector_db/`；真源下限：[pyproject.toml](pyproject.toml) `chromadb>=0.4.24,<1.0.0`，0.5.23 为实际安装版本） | — |
 | SQLite | 3.45.1 | 任务库 `governance.db`（随 Python 自带，版本随 Python 走，无独立真源） | — |
 
-### 外部工具
-
-> **真源说明**：本表为宿主实际安装版本，无项目内真源（灾备恢复时按表中所列版本安装）。`pg_dump` 版本随 PostgreSQL 16 安装，Hyper-V 为 Windows 内置功能。
-
-| 工具 | 版本 | 用途 | 获取 |
-|---|---|---|---|
-| git | 2.48+ | 版本控制 | https://git-scm.com/ |
-| restic | 0.19.1 | 灾备备份（AES-256 加密 + CDC 去重） | https://restic.net/ |
-| MinIO | RELEASE.2025-07-23 | ClickHouse 备份中转对象存储 | `D:\tools\minio\minio.exe` |
-| pg_dump | 16.14 | PostgreSQL dump（随 PostgreSQL 16 安装） | `C:\Program Files\PostgreSQL\16\bin\` |
-| Hyper-V | Windows 内置 | ClickHouse VM 虚拟化 | 启用 Windows 功能 |
-
-### 凭据与配置文件
-
-| 文件 | 用途 | 灾备注意 |
-|---|---|---|
-| [config/.env.postgres](config/.env.postgres) | PostgreSQL 连接（含 `zephyr` 角色密码） | 备份内含，restore 后可直接读 |
-| [config/.env.clickhouse](config/.env.clickhouse) | ClickHouse 连接（`172.24.30.100:9000`） | 备份内含 |
-| [config/.env.ch_backup](config/.env.ch_backup) | MinIO + CH S3 备份凭据 | 备份内含 |
-| [config/.env.restic](config/.env.restic) | **restic 仓库加密密码** | ⚠️ **必须离线物理副本**（U盘/纸质）— 密码本身在备份内被仓库加密，无密码无法解密备份 = 死锁 |
-
-### 关键路径
-
-| 路径 | 内容 |
-|---|---|
-| `D:\ZephyrAlpha\` | 项目根（代码、配置、文档、SQLite DB、向量库） |
-| `D:\tmp_db_dumps\` | PostgreSQL dump 临时输出（备份过程产物） |
-| `F:\restic-zephyr\` | restic 仓库（项目代码 + PG dump，AES-256 加密） |
-| `F:\ch_backup_store\` | ClickHouse 备份中转（MinIO bucket `chbk`，输出 `market.zip`） |
-| Hyper-V VM `172.24.30.100` | ClickHouse 数据库（`/var/lib/clickhouse`，3000 亿条行情） |
-
 ### 灾备恢复入口
 
+> 完整恢复步骤（含前置条件、手工动作、验证命令）见 [`dr_runbook.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/dr_runbook.md)。备份产物清单见 [`backup_inventory.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/backup_inventory.md)。
+
 ```powershell
-# 1. 列出所有快照
-.\scripts\backup\restore.ps1 list
+# 1. 确认 F 盘备份产物存在
+.\scripts\backup\restore.ps1 inventory
 
-# 2. 验证某快照（restore 到 D:\restore_test\，不动生产）
-.\scripts\backup\restore.ps1 verify <snapshot_id>
+# 2. 验证备份完整性（只读，安全）
+.\scripts\backup\restore.ps1 verify
 
-# 3. 灾难恢复最新快照到 D:\ZephyrAlpha\
-.\scripts\backup\restore.ps1 latest
-
-# 4. 恢复 ClickHouse（从 F:\ch_backup_store\chbk\market.zip）
-.\scripts\backup\restore.ps1 ch
+# 3. 灾难恢复全链路（vm → ch → pg → sqlite → code）
+.\scripts\backup\restore.ps1 all
 ```
 
-恢复后还需执行的手工动作：
-1. **PostgreSQL 角色密码**：`pg_roles` dump 不含密码哈希，需手工 `ALTER ROLE zephyr PASSWORD '...';`
-2. **ClickHouse VM**：需先在 Hyper-V 管理器重建 Ubuntu VM（IP `172.24.30.100`），安装 ClickHouse 26.6.1，再用 `restore.ps1 ch` 恢复数据
-3. **Python 依赖**：
-   ```powershell
-   pip install -r requirements.txt
-   pip install -r requirements-dev.txt
-   ```
+恢复后还需执行的手工动作详见 dr_runbook.md §2-§3（PostgreSQL 角色密码、ClickHouse VM、Python 依赖）。
 
 ## 许可证
 
