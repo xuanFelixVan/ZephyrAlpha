@@ -258,6 +258,7 @@ class AKShareProvider(DataSourceBase):
             CapabilityContract("margin_trading", supports_symbols_null=True),
             CapabilityContract("block_trade", supports_symbols_null=True),
             CapabilityContract("dragon_tiger", supports_symbols_null=True),
+            CapabilityContract("dragon_tiger_seat", supports_symbols_null=True),
             CapabilityContract("share_unlock", supports_symbols_null=True),
             CapabilityContract("audit_opinion", supports_symbols_null=True),
             CapabilityContract("equity_pledge_summary", supports_symbols_null=True),
