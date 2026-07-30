@@ -56,12 +56,9 @@ ZephyrAlpha 对标业界共识的 5 档能力成熟度模型（CMMI-aligned）�
 
 ## 3. 能力域划分原则
 
-能力域采用"7 业务 + 3 横切"的二维分类（当前快照，随域增减演进）：
+能力域采用"7 业务 + 3 横切"的二维分类。**能力域的永恒定义真源是 [business_principles.md §2](business_principles.md) 的 C1-C7（业务能力域）+ CC1-CC3（横切能力域）框架**，本文档不重复列举，避免真源分裂与顺序漂移。
 
-- **业务能力域（7）**：数据接入、因子研究、策略决策、执行交易、风险控制、回测仿真、ML 平台
-- **横切能力域（3）**：治理、安全、基础设施
-
-能力域到具体域的映射由 `architecture_model/cross_cutting/capability_heatmap.yaml`（canonical schema）定义，随域增减而演进。
+能力域到具体物理域的映射由 `architecture_model/cross_cutting/capability_heatmap.yaml`（canonical schema）定义，随域增减而演进。
 
 ## 4. 季度 Review 机制
 
