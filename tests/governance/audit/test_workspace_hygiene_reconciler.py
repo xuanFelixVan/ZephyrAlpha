@@ -573,9 +573,10 @@ class TestReconcile:
         # 异常降级为 warn（reconciler 永不抛异常）
         gw = _FakeGateway(tmp_path)
         spec = make_workspace_hygiene_reconciler(gw)
-        # mock _git_status_porcelain 抛异常
+        # mock _git_status_porcelain 抛异常——必须 patch 私有名 _git_status_porcelain
+        # （_reconcile 调用的是私有函数，patch 公共别名 git_status_porcelain 无效）
         with patch(
-            "zephyr.governance.audit.workspace_hygiene_reconciler.git_status_porcelain",
+            "zephyr.governance.audit.workspace_hygiene_reconciler._git_status_porcelain",
             side_effect=RuntimeError("simulated failure"),
         ):
             result = spec.reconcile(["any"], "test-session")
@@ -645,3 +646,111 @@ class TestGitBudgetCompliance:
         assert mock_batcher.git_restore_batch.call_count == 1
         # 批量失败 → warn
         assert result.action == "warn"
+
+
+# ============================================================================
+# #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001 治本测试
+# ============================================================================
+
+
+class _FakeBatcher:
+    """模拟 BatchedAutoCommitter，仅提供 buffered_files() 方法。"""
+
+    def __init__(self, buffered: set[str] | None = None):
+        self._buffered = buffered or set()
+
+    def buffered_files(self) -> set[str]:
+        return set(self._buffered)
+
+
+class TestBufferedFileExclusion:
+    """#ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001 治本回归测试。
+
+    病根：GATE-ASSET-INDEX(priority=170) bootstrap 写索引文件后 buffer() 延迟提交，
+    workspace_hygiene(priority=890) 若 git restore 该文件 → flush() 时 NOTHING_TO_COMMIT，
+    但 reconciler 已记 auto_committed，造成"日志说已重生实际未重生"的治理盲区。
+
+    治本：workspace_hygiene 跳过 batcher.buffered_files() 中的文件，让 flush() 正常提交。
+    """
+
+    def test_auto_sync_skips_buffered_files(self, tmp_path):
+        # buffered 中的 auto-sync 文件不应被 restore——让 flush() 正常提交
+        _init_git_repo(tmp_path)
+        asset_index = "data/asset_index/unified-asset-index.yaml"
+        _commit_file(tmp_path, asset_index, "v1\n")
+        (tmp_path / asset_index).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / asset_index).write_text("v2-regenerated\n", encoding="utf-8")
+        # 验证 git status 看到修改
+        assert asset_index in _git_status_porcelain(str(tmp_path))
+        # gateway 带 _batcher，标记 asset_index 为 buffered
+        gw = _FakeGateway(tmp_path)
+        gw._batcher = _FakeBatcher(buffered={asset_index})
+        spec = make_workspace_hygiene_reconciler(gw)
+        result = spec.reconcile([asset_index], "test-session")
+        # buffered 文件被排除后无 auto_sync_files 可 restore，也无 real_changes → clean
+        # （skip 仅用于工作区完全无 modified 文件；此处有 modified 但全部被 buffer 排除）
+        assert result.action == "clean", f"expected clean, got {result.action}: {result.detail}"
+        # 关键：文件未被还原（仍是 v2-regenerated，等待 flush 提交）
+        content = (tmp_path / asset_index).read_text(encoding="utf-8")
+        assert content == "v2-regenerated\n", (
+            f"buffered 文件被错误还原为 HEAD 版本：{content!r}——flush() 将 NOTHING_TO_COMMIT"
+        )
+
+    def test_mixed_buffered_and_unbuffered_auto_sync(self, tmp_path):
+        # 混合场景：buffered 文件跳过，未 buffered 的 auto-sync 文件仍被 restore
+        _init_git_repo(tmp_path)
+        buffered_file = "data/asset_index/unified-asset-index.yaml"
+        unbuffered_file = "data/reports/dashboard.json"
+        for f in (buffered_file, unbuffered_file):
+            _commit_file(tmp_path, f, "v1\n")
+            (tmp_path / f).parent.mkdir(parents=True, exist_ok=True)
+            (tmp_path / f).write_text("v2\n", encoding="utf-8")
+        gw = _FakeGateway(tmp_path)
+        gw._batcher = _FakeBatcher(buffered={buffered_file})
+        spec = make_workspace_hygiene_reconciler(gw)
+        result = spec.reconcile([buffered_file, unbuffered_file], "test-session")
+        # 有 unbuffered auto-sync 被 restore → clean
+        assert result.action == "clean"
+        assert "restored" in result.detail
+        # buffered 文件未被还原
+        assert (tmp_path / buffered_file).read_text(encoding="utf-8") == "v2\n"
+        # unbuffered 文件被还原到 HEAD
+        assert (tmp_path / unbuffered_file).read_text(encoding="utf-8") == "v1\n"
+
+    def test_no_batcher_fail_open_restores_all(self, tmp_path):
+        # gateway 无 _batcher（旧路径/降级场景）→ fail-open，所有 auto-sync 文件正常 restore
+        # 这保证治本改动向后兼容，不破坏无 batcher 的调用方
+        _init_git_repo(tmp_path)
+        asset_index = "data/asset_index/unified-asset-index.yaml"
+        _commit_file(tmp_path, asset_index, "v1\n")
+        (tmp_path / asset_index).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / asset_index).write_text("v2\n", encoding="utf-8")
+        gw = _FakeGateway(tmp_path)  # 无 _batcher 属性
+        spec = make_workspace_hygiene_reconciler(gw)
+        result = spec.reconcile([asset_index], "test-session")
+        # fail-open：无 batcher → 不排除 → 正常 restore
+        assert result.action == "clean"
+        assert (tmp_path / asset_index).read_text(encoding="utf-8") == "v1\n"
+
+    def test_buffered_file_with_real_change_still_warns(self, tmp_path):
+        # buffered auto-sync 文件 + 真实代码修改 → warn 真实代码修改，
+        # 但 buffered 文件不被 restore
+        _init_git_repo(tmp_path)
+        buffered_file = "data/asset_index/unified-asset-index.yaml"
+        real_file = "src/foo.py"
+        for f in (buffered_file, real_file):
+            _commit_file(tmp_path, f, "v1\n")
+        (tmp_path / buffered_file).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / buffered_file).write_text("v2-buffered\n", encoding="utf-8")
+        (tmp_path / "src" / "foo.py").write_text("v2-real\n", encoding="utf-8")
+        gw = _FakeGateway(tmp_path)
+        gw._batcher = _FakeBatcher(buffered={buffered_file})
+        spec = make_workspace_hygiene_reconciler(gw)
+        result = spec.reconcile([buffered_file, real_file], "test-session")
+        # 有真实代码修改 → warn
+        assert result.action == "warn"
+        assert "non-auto-sync" in result.detail.lower() or "real" in result.detail.lower()
+        # buffered 文件未被还原
+        assert (tmp_path / buffered_file).read_text(encoding="utf-8") == "v2-buffered\n"
+        # 真实代码文件未被还原
+        assert (tmp_path / "src" / "foo.py").read_text(encoding="utf-8") == "v2-real\n"

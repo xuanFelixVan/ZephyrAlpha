@@ -5831,7 +5831,10 @@ def _run_reconcilers_after_merge_sync(
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
 
-        from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
+        from zephyr.governance.audit.reconciliation_registry import (
+            _log_reconcile_results,
+            _downgrade_auto_committed_on_flush_failure,
+        )
 
         gateway = GitCommitGateway(project_root=root)
 
@@ -5846,6 +5849,11 @@ def _run_reconcilers_after_merge_sync(
                 committed_files, session_id, commit_message="",
 
             )
+
+        # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级 auto_committed → warn
+        _downgrade_auto_committed_on_flush_failure(
+            results, getattr(gateway._batcher, "_last_flush_result", None),
+        )
 
         _log_reconcile_results(
 
@@ -6801,7 +6809,10 @@ def _run_post_commit_reconcile(
 
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
 
-        from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
+        from zephyr.governance.audit.reconciliation_registry import (
+            _log_reconcile_results,
+            _downgrade_auto_committed_on_flush_failure,
+        )
 
         gateway = GitCommitGateway(project_root=root)
 
@@ -6816,6 +6827,11 @@ def _run_post_commit_reconcile(
                 committed_files, session_id, commit_message="",
 
             )
+
+        # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级 auto_committed → warn
+        _downgrade_auto_committed_on_flush_failure(
+            results, getattr(gateway._batcher, "_last_flush_result", None),
+        )
 
         # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化到 governance.db
 

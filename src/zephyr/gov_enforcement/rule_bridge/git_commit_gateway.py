@@ -83,6 +83,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_root_temp_sweep_reconciler,  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803）
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
+    _downgrade_auto_committed_on_flush_failure,  # #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001 治本
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
     _print_block_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2
 )
@@ -953,6 +954,11 @@ class GitCommitGateway:
                 )
             if result is not None:
                 result.reconcile = reconcile_results
+            # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
+            # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。
+            _downgrade_auto_committed_on_flush_failure(
+                reconcile_results, getattr(self._batcher, "_last_flush_result", None),
+            )
             # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
             # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
             # Phase 3.4 断点7: 同时持久化 commit_message 供审计追溯。
@@ -991,6 +997,11 @@ class GitCommitGateway:
             reconcile_results = self._reconciliation_registry.reconcile_for(
                 existing, session_id, commit_message=commit_message,
             )
+        # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
+        # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。
+        _downgrade_auto_committed_on_flush_failure(
+            reconcile_results, getattr(self._batcher, "_last_flush_result", None),
+        )
         _log_reconcile_results(
             self.project_root, reconcile_results, session_id,
             trigger_source="post_commit_async", committed_files=existing,

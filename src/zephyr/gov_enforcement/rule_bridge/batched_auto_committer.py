@@ -81,6 +81,7 @@ from __future__ import annotations
 __all__ = ["BatchedAutoCommitter", "BufferedCommit"]
 
 import logging
+import os
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -151,6 +152,10 @@ class BatchedAutoCommitter:
         self._enabled: bool = False
         self._session_id: str = ""
         self._buffer: list[BufferedCommit] = []
+        # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：记录最近一次 flush 结果，
+        # 供调用方（_run_post_commit_reconcile_sync_worker 等）在 with 块后验证
+        # auto_committed 结果是否真正落地为 git commit。
+        self._last_flush_result: "object | None" = None
 
     # ── 状态控制 ──────────────────────────────────────────────────────
 
@@ -182,6 +187,34 @@ class BatchedAutoCommitter:
     def is_enabled(self) -> bool:  # noqa: m03-duplicate  M03豁免: 平凡一行属性getter(return self._enabled)，AI趋同演化非复制粘贴
         """当前是否处于 batching 模式。"""
         return self._enabled
+
+    def buffered_files(self) -> set[str]:
+        """返回当前 buffer 中所有文件的相对路径集合（POSIX 风格，相对 project_root）。
+
+        治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：
+        供后序 reconciler（如 workspace_hygiene）检测冲突——避免 ``git restore``
+        还原已被前序 reconciler 写盘并 buffer 待提交的文件。
+
+        病根：GATE-ASSET-INDEX(priority=170) 写索引文件 → ``_commit_auto`` 被
+        ``buffer()`` 拦截返回合成 OK（未真正提交）；workspace_hygiene(priority=890)
+        随后把该文件当 auto-sync 产物 ``git restore`` 还原回 HEAD；flush() 时
+        ``git diff --cached --quiet`` 返回 0 → NOTHING_TO_COMMIT，但 reconciler
+        已记 auto_committed，造成"日志说已重生实际未重生"的治理盲区。
+
+        Returns:
+            buffer 中所有文件的相对路径集合（POSIX 风格）。batcher 未启用或
+            buffer 为空时返回空集合。
+        """
+        if not self._buffer:
+            return set()
+        root = str(self._gateway.project_root)
+        root_abs = os.path.abspath(root)
+        result: set[str] = set()
+        for entry in self._buffer:
+            for f in entry.files:
+                rel = os.path.relpath(os.path.abspath(f), root_abs).replace("\\", "/")
+                result.add(rel)
+        return result
 
     # ── 拦截入口 ──────────────────────────────────────────────────────
 
@@ -300,6 +333,9 @@ class BatchedAutoCommitter:
                     "buffered=%d, files=%d)",
                     result.status, result.message[:200], buffer_count, files_count,
                 )
+            # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：记录 flush 结果，
+            # 供调用方在 with 块后验证 auto_committed 是否真正落地。
+            self._last_flush_result = result
             return result
         finally:
             self._buffer = []

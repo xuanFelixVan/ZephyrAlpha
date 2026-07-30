@@ -607,10 +607,28 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 
+            # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001（2026-07-30）：
+            # 排除已被前序 reconciler 写盘并 buffer 待提交的文件——这些文件正等待
+            # flush() 批量提交。若 git restore 还原它们，flush() 时
+            # git diff --cached --quiet 返回 0（NOTHING_TO_COMMIT），而前序 reconciler
+            # 已记 auto_committed，造成"日志说已重生实际未重生"的治理盲区。
+            #
+            # 典型冲突：GATE-ASSET-INDEX(priority=170) bootstrap 写索引文件 → buffer()；
+            # workspace_hygiene(priority=890) 若 restore 该文件 → flush() 提交空变更。
+            # 修复：workspace_hygiene 跳过 buffer 中的文件，让 flush() 正常提交。
+            buffered_pending: set[str] = set()
+            try:
+                buffered_pending = gateway._batcher.buffered_files()
+            except Exception:  # noqa: BLE001 — 防御性：batcher 不可用时 fail-open
+                pass
+            if buffered_pending:
+                auto_sync_files = [f for f in auto_sync_files if f not in buffered_pending]
+
+
+
             # 3. auto-sync 产物：批量 git restore 还原（GIT-BUDGET-INV-002 合规）
 
             # batcher.git_restore_batch 单次 `git restore -- <files>` 调用，
-
             # fail-open 返回成功还原的文件列表（不逐个重试——那是 GIT-BUDGET-INV-002 反模式）
 
             restored_count = 0

@@ -946,6 +946,53 @@ def _ensure_error_pattern_id_column(conn: "object") -> None:
 
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ERROR_PATTERN_ID)
 
+def _downgrade_auto_committed_on_flush_failure(
+    results: "list[ReconcileResult]",
+    flush_result: "object | None",
+) -> None:
+    """治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001（2026-07-30）：
+    flush() 失败时降级 auto_committed → warn，防止日志误报"已自动提交"。
+
+    病根：BatchedAutoCommitter.buffer() 返回合成 CommitResult(status=OK,
+    commit_hash="BUFFERED")，reconciler 据此返回 action="auto_committed"。
+    但实际 git commit 在 flush() 中执行，可能因 NOTHING_TO_COMMIT /
+    COMMIT_FAILED / NAMING_VIOLATION 等失败。此时 auto_committed 是误报，
+    需降级为 warn 并记录 flush 失败原因，使日志与实际行为一致。
+
+    典型场景：GATE-ASSET-INDEX bootstrap 写索引文件 → buffer() 返回 OK →
+    auto_committed；workspace_hygiene 把索引文件 git restore 还原 →
+    flush() git diff --cached --quiet 返回 0 → NOTHING_TO_COMMIT。
+    降级后 DB 记 warn 而非 auto_committed，消除治理盲区。
+
+    原地修改 results 列表（修改 ReconcileResult.action/detail）。
+    flush 成功时不做任何修改（auto_committed 准确）。
+
+    Args:
+        results: reconcile_for 返回的 ReconcileResult 列表（原地修改）。
+        flush_result: batcher.flush() 的返回值（CommitResult 或 None）。
+    """
+    if flush_result is None:
+        return
+    flush_status = getattr(flush_result, "status", None)
+    # CommitStatus 是 str Enum：CommitStatus.OK == "OK" 为 True（str 子类相等），
+    # 但 str(CommitStatus.OK) 在 Py3.11+ 返回 "CommitStatus.OK"（非 "OK"），
+    # 故必须用 == 比较，禁止 str() 比较（否则成功也被误降级）。
+    # real _commit_auto 返回 OK 仅当 git commit 真正成功
+    # （NOTHING_TO_COMMIT / COMMIT_FAILED 等不在此列）
+    if flush_status == "OK":
+        return  # flush 成功，auto_committed 准确，无需降级
+    # flush 失败或未真正提交：降级所有 auto_committed → warn
+    flush_msg = str(getattr(flush_result, "message", ""))[:200]
+    for r in results:
+        if r.action == "auto_committed":
+            r.action = "warn"
+            orig_detail = r.detail or ""
+            r.detail = (
+                f"index regeneration buffered but flush() did not commit "
+                f"(flush_status={flush_status}, flush_msg={flush_msg}); "
+                f"original: {orig_detail}"
+            )
+
 def _log_reconcile_results(
 
     project_root: "object",
@@ -8518,11 +8565,22 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
         if commit_result.status == "OK":
 
+            # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：当 commit_hash=="BUFFERED"
+            # 时，commit 被 batcher 延迟到 flush()。detail 标注"pending flush"，
+            # flush 失败时由 _downgrade_auto_committed_on_flush_failure 降级为 warn。
+            is_buffered = getattr(commit_result, "commit_hash", "") == "BUFFERED"
+
+            detail = "unified-asset-index drift detected and auto-regenerated"
+
+            if is_buffered:
+
+                detail += " (batched, pending flush)"
+
             return ReconcileResult(
 
                 action="auto_committed",
 
-                detail="unified-asset-index drift detected and auto-regenerated",
+                detail=detail,
 
             )
 
