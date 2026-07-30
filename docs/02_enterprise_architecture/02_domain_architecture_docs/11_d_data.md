@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_DATA 数据接入层架构文档
 version: "1.0"
 status: active
-date: 2026-07-30
+date: 2026-07-31
 owner: auto-generator
 ttl: permanent
 ---

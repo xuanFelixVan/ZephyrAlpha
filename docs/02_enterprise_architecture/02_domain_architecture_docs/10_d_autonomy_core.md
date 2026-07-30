@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_AUTONOMY_CORE 自治核心架构文档
 version: "1.0"
 status: active
-date: 2026-07-30
+date: 2026-07-31
 owner: auto-generator
 ttl: permanent
 ---
