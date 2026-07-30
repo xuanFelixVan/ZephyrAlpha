@@ -249,3 +249,22 @@ def format_symbols(symbols) -> str:
     """公共接口：format_symbols（Stage 4 公共化）。"""
     return _format_symbols(symbols)
 
+
+# ── Stage 4 公共化（2026-07-30）：public wrapper for D_PORTFOLIO_CORE StrategyRunner ──
+def compute_factor_panel(factor_cls: type, history: pd.DataFrame) -> pd.DataFrame:
+    """公共接口：逐标的计算因子值并组装 (date×symbol) 面板。
+
+    供 D_PORTFOLIO_CORE StrategyRunner 复用（裁定：策略层直连因子评估运行器，
+    跳过已坏的 AlphaSignalPipeline）。包裹私有 _compute_factor_panel，行为不变。
+
+    Args:
+        factor_cls: FactorBase 子类（已 @FactorRegistry.register 注册）
+        history: load_history() 返回的 MultiIndex(symbol, trade_date) DataFrame，
+                 columns 至少含 close（动量类因子需要）
+
+    Returns:
+        DataFrame(index=trade_date, columns=symbol)，值为因子截面得分。
+        空输入返回空 DataFrame。
+    """
+    return _compute_factor_panel(factor_cls, history)
+

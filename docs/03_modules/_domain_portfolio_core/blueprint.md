@@ -25,7 +25,7 @@ generation: 2
 rule_form: structural
 scope: module
 stability: evolving
-design_maturity: production
+design_maturity: design
 verifiability: manual
 summary: "D_PORTFOLIO_CORE 组合构建层——StrategyBase OCP-002 扩展点 + StrategyRegistry。Phase 1 部分实现：策略骨架 + 默认股票多头策略 + 注册表。"
 priority: P0
@@ -95,6 +95,9 @@ build_status: generated
 | 3 | `strategies/default_equity_strategy.py` | §3.1 | 默认股票多头策略（等权/信号加权） | 已实现 | — |
 | 4 | `strategies/__init__.py` | §11 | 策略子包初始化 | 已实现 | — |
 | 5 | `__init__.py` | §11 | 包初始化 + CTR 声明 | 已实现 | — |
+| 6 | `strategy_engine/strategy_runner.py` | §3.1 | StrategyRunner 策略运行器（因子→合成→策略→回测胶水层，盘后回测入口，三态共用） | 已实现 | — |
+| 7 | `strategy_engine/__init__.py` | §11 | strategy_engine 子包初始化（re-export StrategyRunner / StrategyRunnerConfig） | 已实现 | — |
+| 8 | `topn_momentum_strategy.py` | §3.1 | TopN动量等权策略（MVP，验证策略层端到端通路） | 已实现 | — |
 
 > YAML SSoT 列出 `default_equity_strategy.py` 在根目录，实际磁盘位于 `strategies/` 子目录。
 

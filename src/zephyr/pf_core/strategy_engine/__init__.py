@@ -13,9 +13,10 @@
 # [TTL] permanent
 """D_PORTFOLIO_CORE — Portfolio Construction Strategies
 
-Phase C 具体策略实现包。
+策略引擎包：策略运行器 + 具体策略实现。
 
 实现清单：
+  - StrategyRunner : 策略运行器（因子→合成→策略→回测 胶水层，盘后回测入口）
   - DefaultEquityStrategy : StrategyBase 的具体实现（等权/信号加权/最小方差配置）
 """
 
@@ -23,5 +24,14 @@ from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
+from zephyr.pf_core.strategy_engine.strategy_runner import (
+    StrategyRunner,
+    StrategyRunnerConfig,
+)
 
-__all__ = ["DefaultEquityStrategy", "RebalanceMode"]
+__all__ = [
+    "DefaultEquityStrategy",
+    "RebalanceMode",
+    "StrategyRunner",
+    "StrategyRunnerConfig",
+]
