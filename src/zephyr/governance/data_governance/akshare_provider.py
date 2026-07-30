@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-DAT-akshare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-akshare_quote | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---
@@ -66,7 +66,7 @@ __meta__ = DataSourceMeta(
 )
 
 
-class AkshareProvider(DataSourceBase):
+class AkshareQuoteProvider(DataSourceBase):
     """Akshare 数据源——A 股历史数据接入"""
 
     __meta__ = __meta__
@@ -154,7 +154,7 @@ class AkshareProvider(DataSourceBase):
 
     def subscribe_realtime(self, symbols: list[str]) -> None:
         """Akshare 不支持实时推送"""
-        _logger.warning("AkshareProvider does not support realtime subscription. Use MarketStack or XTX for realtime.")
+        _logger.warning("AkshareQuoteProvider does not support realtime subscription. Use MarketStack or XTX for realtime.")
 
     def get_stock_list(self) -> pd.DataFrame:
         """获取全 A 股股票列表"""
@@ -221,4 +221,4 @@ class AkshareProvider(DataSourceBase):
         return df
 
 
-__all__ = ["AkshareProvider"]
+__all__ = ["AkshareQuoteProvider"]

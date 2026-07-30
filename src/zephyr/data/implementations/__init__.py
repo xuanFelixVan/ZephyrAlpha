@@ -9,6 +9,6 @@ SDK import 在方法内部（懒加载），模块加载时不依赖具体 SDK �
 """
 from .ifind_provider import IFindProvider
 from .miniqmt_provider import MiniQmtIngestProvider
-from .akshare_provider import AKShareProvider
+from .akshare_provider import AkshareIngestProvider
 
-__all__ = ["IFindProvider", "MiniQmtIngestProvider", "AKShareProvider"]
+__all__ = ["IFindProvider", "MiniQmtIngestProvider", "AkshareIngestProvider"]

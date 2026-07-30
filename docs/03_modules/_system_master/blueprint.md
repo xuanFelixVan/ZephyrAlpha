@@ -1326,7 +1326,7 @@ WQA 七维加权评分 (每Session):
 
 | 步骤 | 组件 | 职责 |
 |:--:|------|------|
-| 1 | AkshareProvider | 拉取A股日线/分钟线→sqlite |
+| 1 | AkshareQuoteProvider | 拉取A股日线/分钟线→sqlite |
 | 2 | DataValidator | 完整性/及时性/有效性校验(§29) |
 | 3 | FeatureStore | 因子计算+特征存储(§42.1) |
 

@@ -274,7 +274,7 @@ _AKSHARE_STYLE = textwrap.dedent('''
     })
 
 
-    class AKShareProvider:
+    class AkshareIngestProvider:
         meta: DataSourceMeta = DataSourceMeta(
             name="akshare", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,

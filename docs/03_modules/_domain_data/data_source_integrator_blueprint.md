@@ -348,7 +348,7 @@ class DataSourceMeta:
 |----------|-------------|-----|---------|---------|---------|
 | IFindProvider | ifind | iFinDPy | THS_iFinDLogin(user,pwd) | thread_local | THS_RQ/THS_BD/iwencai/EDB |
 | MiniQMTProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
-| AKShareProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
+| AkshareIngestProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
 | BaostockProvider | baostock | baostock | bs.login() 匿名 | **thread_local**（每线程独立登录） | K线/财务（滞后1周） |
 | TushareProvider | tushare | tushare | token | shared | 新闻（历史截止2024-08） |
 | TickFlowProvider | tickflow | tickflow | 无需 key | shared | 美股/港股 K线 |
@@ -368,8 +368,8 @@ class DataSourceMeta:
 | _fetch_block_trade.py | IFindProvider | block_trade 增量 |
 | _fetch_dragon_tiger.py | IFindProvider | dragon_tiger 增量 |
 | _fetch_money_flow.py | IFindProvider | money_flow 增量 |
-| _fetch_macro_data.py | AKShareProvider | macro_data 增量 |
-| _fetch_analyst_forecast.py | AKShareProvider | analyst_forecast 增量 |
+| _fetch_macro_data.py | AkshareIngestProvider | macro_data 增量 |
+| _fetch_analyst_forecast.py | AkshareIngestProvider | analyst_forecast 增量 |
 | _fetch_us_index.py | TickFlowProvider | us_index 增量 |
 
 ---

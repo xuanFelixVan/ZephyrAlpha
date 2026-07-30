@@ -9,7 +9,7 @@
 """Phase E — Akshare 真实数据端到端测试
 
 用 Akshare 真实 A 股市场数据，验证 C-track 全线流水线：
-  L00 (AkshareProvider → QualityGate) → L02 (FactorRegistry) →
+  L00 (AkshareQuoteProvider → QualityGate) → L02 (FactorRegistry) →
   L03 (SignalAggregator → CapitalAllocator) →
   L04 (RiskValidator) → L05 (EquityStrategy) →
   L06 (SimulationBroker → ExecutionEngine) → L09 (BacktestEngine)
@@ -105,9 +105,9 @@ def _akshare_has_usable_bar_data() -> bool:
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            from zephyr.data.akshare_provider import AkshareProvider
+            from zephyr.governance.data_governance.akshare_provider import AkshareQuoteProvider
 
-            provider = AkshareProvider()
+            provider = AkshareQuoteProvider()
             end = datetime.now(UTC)
             start = end - timedelta(days=120)
             df = provider.fetch_historical("600519", start=start, end=end)
@@ -140,12 +140,12 @@ class TestAkshareRealData:
     """真实数据接入层测试"""
 
     def test_provider_instantiation(self):
-        """实例化 AkshareProvider 并加载 lazy import"""
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        """实例化 AkshareQuoteProvider 并加载 lazy import"""
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         assert provider is not None
         assert provider.ak is None
         _ = provider.akshare
@@ -153,11 +153,11 @@ class TestAkshareRealData:
 
     def test_get_stock_list(self):
         """获取全 A 股股票列表"""
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         df = provider.get_stock_list()
         assert df is not None
         assert len(df) > 1000, f"Expected >1000 stocks, got {len(df)}"
@@ -167,11 +167,11 @@ class TestAkshareRealData:
 
     def test_get_csi300_constituents(self):
         """获取沪深 300 成分股"""
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         df = provider.get_index_constituents("000300")
         assert df is not None
         assert len(df) >= 200, f"Expected >=200 CSI300 members, got {len(df)}"
@@ -185,11 +185,11 @@ class TestAkshareRealData:
         """获取贵州茅台最近 60 日 K 线数据"""
         from datetime import datetime, timedelta
 
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         end = datetime.now(UTC)
         start = end - timedelta(days=90)
 
@@ -207,11 +207,11 @@ class TestAkshareRealData:
         """获取多只 CSI 300 成分股最近 30 日数据"""
         from datetime import datetime, timedelta
 
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         end = datetime.now(UTC)
         start = end - timedelta(days=60)
 
@@ -230,15 +230,15 @@ class TestAkshareRealData:
         """用真实行情数据过 Quality Gate"""
         from datetime import datetime, timedelta
 
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
         from zephyr.gov_enforcement.rule_enforcement.default_quality_gate import (
             DefaultQualityGate,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         gate = DefaultQualityGate(max_stale_seconds=86400 * 30)
 
         end = datetime.now(UTC)
@@ -275,11 +275,11 @@ class TestAkshareMiniPipeline:
         """获取 5 只 CSI 300 成分股最近 120 日数据"""
         from datetime import datetime, timedelta
 
-        from zephyr.data.akshare_provider import (
-            AkshareProvider,
+        from zephyr.governance.data_governance.akshare_provider import (
+            AkshareQuoteProvider,
         )
 
-        provider = AkshareProvider()
+        provider = AkshareQuoteProvider()
         end = datetime.now(UTC)
         start = end - timedelta(days=180)
 

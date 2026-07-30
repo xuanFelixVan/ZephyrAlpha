@@ -16,7 +16,7 @@
 """C-track 端到端演示 —— 全流水线一次性运行
 
 演示路径：
-  D_DATA (AkshareProvider → QualityGate)
+  D_DATA (AkshareQuoteProvider → QualityGate)
   → D_FACTOR (FactorRegistry → MomentumFactor)
   → D_SIGNAL (SignalAggregator → CapitalAllocator)
   → D_RISK (RiskValidator → StopLoss)
@@ -82,14 +82,14 @@ def verdict(step: str, ok: bool, note: str = "") -> str:
 def run_data() -> dict[str, Any]:
     banner("D_DATA: DataSource — 真实行情获取 + Quality Gate")
 
-    from zephyr.data.akshare_provider import (
-        AkshareProvider,
+    from zephyr.governance.data_governance.akshare_provider import (
+        AkshareQuoteProvider,
     )
     from zephyr.data.default_quality_gate import (
         DefaultQualityGate,
     )
 
-    provider = AkshareProvider()
+    provider = AkshareQuoteProvider()
     gate = DefaultQualityGate(max_stale_seconds=86400 * 30)
 
     end = datetime.now(UTC)

@@ -256,8 +256,8 @@ def _make_provider(source: str):
         from zephyr.data.implementations.ifind_provider import IFindProvider
         return IFindProvider()
     elif source == "akshare":
-        from zephyr.data.implementations.akshare_provider import AKShareProvider
-        return AKShareProvider()
+        from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
+        return AkshareIngestProvider()
     elif source == "baostock":
         from zephyr.data.implementations.baostock_provider import BaostockProvider
         return BaostockProvider()

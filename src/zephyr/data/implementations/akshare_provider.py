@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)
 # [TESTS] tests/zephyr/data/test_providers.py::TestAKShareHelpers
-# [A_module] module_id=MOD-GOV-akshare_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-akshare_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
@@ -93,7 +93,7 @@ _TBL_TOP10_SHAREHOLDERS = get_registry().table("fund_top10_shareholders")
 
 
 # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
-# 原 AKShareProvider.fetch 95行 McCabe=41（38个elif分支能力路由，均调用 self._fetch_{cap}(payload, policy)）。
+# 原 AkshareIngestProvider.fetch 95行 McCabe=41（38个elif分支能力路由，均调用 self._fetch_{cap}(payload, policy)）。
 # 治本：提取为 frozenset + getattr 动态分发，主函数简化为编排（McCabe=2）。
 # 行为等价：所有路由调用签名/参数完全保留，unsupported capability 错误消息不变。
 _AKSHARE_CAPABILITIES = frozenset({
@@ -148,7 +148,7 @@ def _merge_lhb_seats(provider, ak, policy, symbol: str, date_str: str) -> dict:
     """合并龙虎榜买入/卖出 Top5 席位，按 seat_name 去重为每席位一行。
 
     Args:
-        provider: AKShareProvider 实例（用于 _call_with_policy）
+        provider: AkshareIngestProvider 实例（用于 _call_with_policy）
         ak: akshare 模块
         policy: SourcePolicy 限流策略
         symbol: 6 位证券代码
@@ -221,7 +221,7 @@ SQL_STOCK_CODE_FROM_LIST = (
 )
 
 
-class AKShareProvider(DataSourceBase):
+class AkshareIngestProvider(DataSourceBase):
     """AKShare 免费开源数据源 Provider。
 
     匿名访问、无需登录；线程安全模型为 shared（多线程共享 akshare 模块）。
@@ -463,7 +463,7 @@ class AKShareProvider(DataSourceBase):
     @staticmethod
     def _quarter_to_date(s: str) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return AKShareProvider.quarter_to_date(s)
+        return AkshareIngestProvider.quarter_to_date(s)
 
     @staticmethod
     def month_to_date(s: str) -> str:
@@ -478,7 +478,7 @@ class AKShareProvider(DataSourceBase):
     @staticmethod
     def _month_to_date(s: str) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return AKShareProvider.month_to_date(s)
+        return AkshareIngestProvider.month_to_date(s)
 
     # ---- 通用辅助（日期/标的） ----
 
@@ -1232,9 +1232,9 @@ class AKShareProvider(DataSourceBase):
         """解析单行分红数据。"""
         return (
             code,
-            AKShareProvider._norm_date_str(row.get("除权除息日")),
-            AKShareProvider._norm_date_str(row.get("股权登记日")),
-            AKShareProvider._norm_date_str(row.get("公告日期")),
+            AkshareIngestProvider._norm_date_str(row.get("除权除息日")),
+            AkshareIngestProvider._norm_date_str(row.get("股权登记日")),
+            AkshareIngestProvider._norm_date_str(row.get("公告日期")),
             safe_float(row.get("每10股派息")),
             safe_float(row.get("每10股送股")),
             safe_float(row.get("每10股转增")),
@@ -1292,7 +1292,7 @@ class AKShareProvider(DataSourceBase):
         """解析单行限售解禁数据。"""
         return (
             code,
-            AKShareProvider._norm_date_str(row.get("解禁时间")),
+            AkshareIngestProvider._norm_date_str(row.get("解禁时间")),
             safe_float(row.get("解禁数量")),
             safe_float(row.get("解禁股本占比")),
             safe_float(row.get("解禁前流通股本")),
@@ -1315,10 +1315,10 @@ class AKShareProvider(DataSourceBase):
         if df is None or len(df) == 0:
             return rows
         for _, row in df.iterrows():
-            title = AKShareProvider._row_first(row, "新闻标题", "标题", "title", "事件", "tag", "event")
-            pub_date = AKShareProvider._row_first(row, "发布时间", "时间", "日期", "date")
-            link = AKShareProvider._row_first(row, "新闻链接", "链接", "url", "link")
-            summary = AKShareProvider._row_first(row, "新闻内容", "摘要", "内容", "content", "summary")
+            title = AkshareIngestProvider._row_first(row, "新闻标题", "标题", "title", "事件", "tag", "event")
+            pub_date = AkshareIngestProvider._row_first(row, "发布时间", "时间", "日期", "date")
+            link = AkshareIngestProvider._row_first(row, "新闻链接", "链接", "url", "link")
+            summary = AkshareIngestProvider._row_first(row, "新闻内容", "摘要", "内容", "content", "summary")
             rows.append(build_news_row(
                 pub_date, title, link, summary, source_name, "akshare",
             ))
@@ -1659,7 +1659,7 @@ class AKShareProvider(DataSourceBase):
         return (
             str(row.get("股票代码", "")).zfill(6),
             str(row.get("公司简称", row.get("名称", ""))),
-            AKShareProvider._norm_date_str(row.get("配股公告日", row.get("配股日期"))),
+            AkshareIngestProvider._norm_date_str(row.get("配股公告日", row.get("配股日期"))),
             safe_float(row.get("配股价", row.get("配股价格"))),
             safe_float(row.get("配股比例", row.get("配股比例"))),
             safe_float(row.get("配股数量", row.get("配股股数"))),
@@ -1675,7 +1675,7 @@ class AKShareProvider(DataSourceBase):
         title = str(row.get("报告名称") or "")
         if not title:
             return None
-        pub_date = AKShareProvider._norm_date_str(row.get("日期"))
+        pub_date = AkshareIngestProvider._norm_date_str(row.get("日期"))
         link = str(row.get("报告PDF链接") or "")
         parts = []
         org = str(row.get("机构") or "").strip()
@@ -1750,7 +1750,7 @@ class AKShareProvider(DataSourceBase):
 
         港交所 2024-08-16 后停止公布实时北向资金，AKShare 返回 NaN 行需过滤。
         """
-        trade_date = AKShareProvider._norm_date_str(row.get("日期"))
+        trade_date = AkshareIngestProvider._norm_date_str(row.get("日期"))
         if not trade_date:
             return None
         net_buy = safe_float(row.get("当日成交净买额"))
@@ -1879,7 +1879,7 @@ class AKShareProvider(DataSourceBase):
         """解析单行股本变动数据。"""
         return (
             code,
-            AKShareProvider._norm_date_str(row.get("公告日期")),
+            AkshareIngestProvider._norm_date_str(row.get("公告日期")),
             str(row.get("变动原因") or ""),
             None,  # change_amount 接口未直接提供
             safe_float(row.get("总股本")),
@@ -2314,7 +2314,7 @@ class AKShareProvider(DataSourceBase):
     def _parse_block_trade_detail_row(row) -> tuple:
         """解析单行大宗交易每日统计数据。"""
         sym = str(row.get("证券代码") or "").zfill(6)
-        trade_date = AKShareProvider._norm_date_str(row.get("交易日期"))
+        trade_date = AkshareIngestProvider._norm_date_str(row.get("交易日期"))
         vol = safe_float(row.get("成交总量"))
         return (
             trade_date, sym,
@@ -2373,7 +2373,7 @@ class AKShareProvider(DataSourceBase):
     @staticmethod
     def _parse_kline_futures_row(row, contract_sym: str, start_str: str, end_str: str) -> tuple | None:
         """解析单行期货K线数据，不在日期范围内返回 None。"""
-        trade_date = AKShareProvider._norm_date_str(row.get("日期"))
+        trade_date = AkshareIngestProvider._norm_date_str(row.get("日期"))
         if not trade_date or trade_date < start_str or trade_date > end_str:
             return None
         vol = safe_float(row.get("成交量"))
@@ -2482,7 +2482,7 @@ class AKShareProvider(DataSourceBase):
 
         ak.stock_hk_hist 返回列: 日期, 开盘, 收盘, 最高, 最低, 成交量, 成交额, ...
         """
-        trade_date = AKShareProvider._norm_date_str(row.get("日期"))
+        trade_date = AkshareIngestProvider._norm_date_str(row.get("日期"))
         if not trade_date or trade_date < start_str or trade_date > end_str:
             return None
         return (
@@ -3155,18 +3155,18 @@ class AKShareProvider(DataSourceBase):
             safe_float(r.get("发行价格")),
             safe_float(r.get("发行规模")),
             safe_float(r.get("债券余额")),
-            AKShareProvider._norm_date_str(r.get("起始日期")),
-            AKShareProvider._norm_date_str(r.get("截止日期")),
+            AkshareIngestProvider._norm_date_str(r.get("起始日期")),
+            AkshareIngestProvider._norm_date_str(r.get("截止日期")),
             str(r.get("利率类型", "") or ""),
             safe_float(r.get("票面利率")),
             safe_float(r.get("补偿利率")),
             int(safe_float(r.get("付息频率")) or 0),
-            AKShareProvider._norm_date_str(r.get("上市日期")),
-            AKShareProvider._norm_date_str(r.get("摘牌日期")),
+            AkshareIngestProvider._norm_date_str(r.get("上市日期")),
+            AkshareIngestProvider._norm_date_str(r.get("摘牌日期")),
             str(r.get("上市地点", "") or ""),
-            AKShareProvider._norm_date_str(r.get("转股起始日")),
-            AKShareProvider._norm_date_str(r.get("转股截止日")),
-            AKShareProvider._norm_date_str(r.get("停止转股日")),
+            AkshareIngestProvider._norm_date_str(r.get("转股起始日")),
+            AkshareIngestProvider._norm_date_str(r.get("转股截止日")),
+            AkshareIngestProvider._norm_date_str(r.get("停止转股日")),
             safe_float(r.get("初始转股价")),
             safe_float(r.get("最新转股价")),
             str(r.get("利率说明", "") or ""),
@@ -3215,8 +3215,8 @@ class AKShareProvider(DataSourceBase):
             str(r.get("全称", "") or ""),
             str(r.get("跟踪指数代码", "") or ""),
             str(r.get("跟踪指数名称", "") or ""),
-            AKShareProvider._norm_date_str(r.get("成立日期")),
-            AKShareProvider._norm_date_str(r.get("上市日期")),
+            AkshareIngestProvider._norm_date_str(r.get("成立日期")),
+            AkshareIngestProvider._norm_date_str(r.get("上市日期")),
             str(r.get("上市状态", "") or ""),
             str(r.get("交易市场", "") or ""),
             str(r.get("管理人", "") or ""),

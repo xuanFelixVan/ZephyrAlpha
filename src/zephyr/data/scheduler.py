@@ -844,7 +844,7 @@ class IntegratorScheduler:
         # 收集 tasks 涉及的所有 source，通过类属性读取 meta（无需实例化）
         metas: dict[str, Any] = {}
         source_to_meta = {
-            "akshare": ("zephyr.data.implementations.akshare_provider", "AKShareProvider"),
+            "akshare": ("zephyr.data.implementations.akshare_provider", "AkshareIngestProvider"),
             "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQmtIngestProvider"),
             "ifind": ("zephyr.data.implementations.ifind_provider", "IFindProvider"),
         }
@@ -935,8 +935,8 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
                 return MiniQmtIngestProvider()
             elif source == "akshare":
-                from zephyr.data.implementations.akshare_provider import AKShareProvider
-                return AKShareProvider()
+                from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
+                return AkshareIngestProvider()
             elif source == "baostock":
                 from zephyr.data.implementations.baostock_provider import BaostockProvider
                 return BaostockProvider()

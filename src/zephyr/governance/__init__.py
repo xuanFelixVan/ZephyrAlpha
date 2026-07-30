@@ -119,7 +119,7 @@ def __getattr__(name):
 # 用 try/except 包裹避免单个 import 失败阻塞整个包初始化（符合 __getattr__ 延迟导入设计）。
 try:
     from zephyr.gov_audit.agent_signer import AgentSigner
-    from zephyr.governance.data_governance.akshare_provider import AkshareProvider
+    from zephyr.governance.data_governance.akshare_provider import AkshareQuoteProvider
     from zephyr.factor.factor_base import FactorMeta
     from zephyr.gov_code_quality.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
     from zephyr.governance.capability_lookup import CapabilityLookup
@@ -242,7 +242,7 @@ __all__ = [
     "AdmissionResponseBuilder",
     "AdmissionResponseStatus",
     "AgentSigner",
-    "AkshareProvider",
+    "AkshareQuoteProvider",
     "AssetType",
     "BlameRecord",
     "BlindSpotStatus",

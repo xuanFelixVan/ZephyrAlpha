@@ -15,7 +15,7 @@ from src.zephyr.data.provider_base import FetchPayload, FetchResult
 from src.zephyr.data.policy_registry import SourcePolicy
 from src.zephyr.data.implementations.ifind_provider import IFindProvider
 from src.zephyr.data.implementations.akshare_provider import (
-    AKShareProvider,
+    AkshareIngestProvider,
     safe_float as ak_safe_float,
 )
 from src.zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
@@ -116,33 +116,33 @@ class TestIFindFetchRoute:
         assert "月度配额" in IFindProvider.meta.known_issues[0]
 
 
-# ============== AKShareProvider 测试 ==============
+# ============== AkshareIngestProvider 测试 ==============
 
 class TestAKShareHelpers:
     def test_quarter_to_date_q1(self):
-        assert AKShareProvider.quarter_to_date("2025年第1季度") == "2025-03-31"
+        assert AkshareIngestProvider.quarter_to_date("2025年第1季度") == "2025-03-31"
 
     def test_quarter_to_date_q4(self):
-        assert AKShareProvider.quarter_to_date("2024年第4季度") == "2024-12-31"
+        assert AkshareIngestProvider.quarter_to_date("2024年第4季度") == "2024-12-31"
 
     def test_quarter_to_date_q2(self):
-        assert AKShareProvider.quarter_to_date("2025年第2季度") == "2025-06-30"
+        assert AkshareIngestProvider.quarter_to_date("2025年第2季度") == "2025-06-30"
 
     def test_quarter_to_date_q3(self):
-        assert AKShareProvider.quarter_to_date("2025年第3季度") == "2025-09-30"
+        assert AkshareIngestProvider.quarter_to_date("2025年第3季度") == "2025-09-30"
 
     def test_month_to_date_june(self):
-        assert AKShareProvider.month_to_date("2025年6月") == "2025-06-30"
+        assert AkshareIngestProvider.month_to_date("2025年6月") == "2025-06-30"
 
     def test_month_to_date_december(self):
-        assert AKShareProvider.month_to_date("2025年12月") == "2025-12-31"
+        assert AkshareIngestProvider.month_to_date("2025年12月") == "2025-12-31"
 
     def test_month_to_date_february_leap(self):
         """闰年 2 月末。"""
-        assert AKShareProvider.month_to_date("2024年2月") == "2024-02-29"
+        assert AkshareIngestProvider.month_to_date("2024年2月") == "2024-02-29"
 
     def test_month_to_date_february_nonleap(self):
-        assert AKShareProvider.month_to_date("2025年2月") == "2025-02-28"
+        assert AkshareIngestProvider.month_to_date("2025年2月") == "2025-02-28"
 
     def test_module_safe_float(self):
         assert ak_safe_float(1.5) == 1.5
@@ -152,7 +152,7 @@ class TestAKShareHelpers:
 
 class TestAKShareFetchRoute:
     def test_unknown_capability_yields_error(self):
-        p = AKShareProvider()
+        p = AkshareIngestProvider()
         payload = FetchPayload(
             table="t", symbols=None,
             start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 2),
@@ -163,9 +163,9 @@ class TestAKShareFetchRoute:
         assert results[0].error is not None
 
     def test_meta(self):
-        assert AKShareProvider.meta.name == "akshare"
-        assert AKShareProvider.source_name == "akshare"
-        assert "VPN" in AKShareProvider.meta.known_issues[0] or "vpn" in AKShareProvider.meta.known_issues[0].lower()
+        assert AkshareIngestProvider.meta.name == "akshare"
+        assert AkshareIngestProvider.source_name == "akshare"
+        assert "VPN" in AkshareIngestProvider.meta.known_issues[0] or "vpn" in AkshareIngestProvider.meta.known_issues[0].lower()
 
 
 # ============== MiniQmtIngestProvider 测试 ==============
