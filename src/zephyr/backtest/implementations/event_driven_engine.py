@@ -223,9 +223,15 @@ class EventDrivenEngine(BacktestEngineBase):
             if event.sequence == -1:
                 return
 
+            tick_data = event.tick_data
+            # 跳过无成交价的盘前/无效 tick（实证：集合竞价前 last_price=0，
+            # 见 #ARCH-EDE-TICK-FUEL-001）。否则 last_prices 被置 0 导致市值归零，
+            # 且 callback 返回权重时会以 0 价撮合。
+            if tick_data.last_price <= 0:
+                return
+
             ticks_processed += 1
             symbol = event.symbol
-            tick_data = event.tick_data
             timestamp = event.timestamp
 
             # 更新最新价格

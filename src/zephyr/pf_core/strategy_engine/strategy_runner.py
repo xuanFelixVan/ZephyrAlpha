@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md
 # [MODULE] zephyr.pf_core.strategy_engine.strategy_runner
 # [DOMAIN] D_PF_CORE
-# [DEPENDENCIES] zephyr.factor.core.evaluation.backtest; zephyr.factor.analysis.multifactor_synthesis; zephyr.factor.factor_base; zephyr.governance.strategies.strategy_base; zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.core.engine_base
+# [DEPENDENCIES] zephyr.factor.core.evaluation.backtest; zephyr.factor.analysis.multifactor_synthesis; zephyr.factor.factor_base; zephyr.governance.strategies.strategy_base; zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine; zephyr.backtest.core.engine_base
 # [CONSUMERS] tests/pf_core/test_strategy_runner_mvp.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -139,6 +139,194 @@ class StrategyRunner:
         return engine.run(
             data=data, signals=signals, strategy_name=config.strategy_id
         )
+
+    def run_tick_backtest(
+        self,
+        symbols: list[str],
+        start: str,
+        end: str,
+        config: StrategyRunnerConfig,
+        provider: object,
+        tick_config: Optional[object] = None,
+    ) -> BacktestResult:
+        """Tick 级事件驱动回测（路径 A：日频信号 × tick 5档盘口撮合）。
+
+        复用 build_weight_panel 生成日频目标权重面板，再由 EventDrivenEngine 逐 Tick
+        回放 + 5档盘口撮合。每个交易日的开盘后第一个有效 tick（09:30+，EDE 已过滤
+        last_price<=0 的盘前 tick）触发当日目标权重调仓，其余 tick 持仓不变（callback
+        返回空）。非调仓日目标权重与昨日相同（weight_panel 已 ffill），delta=0 不下单。
+
+        与 run_backtest（向量化日频）互补：本方法用真实 tick 盘口撮合提升回测保真度，
+        适合策略精确验证；run_backtest 适合快速因子筛选。设计参见
+        docs/03_modules/_domain_backtest/blueprint.md 双模式架构。
+
+        Args:
+            symbols: 标的代码列表（带后缀 "600000.SH"，需与 provider 数据源一致）
+            start: 起始日期 "YYYY-MM-DD"
+            end: 结束日期 "YYYY-MM-DD"
+            config: 策略运行器配置
+            provider: 实现 fetch_historical(symbol, start, end, interval="tick") 的
+                provider（如 MiniQmtQuoteProvider——注意是小写 qmt 那个，非 data.implementations
+                的大写 QMT 版本，后者接口是 fetch(payload,policy) 不兼容 EDE 契约）
+            tick_config: TickReplayConfig（可选，默认 max_speed 全天回放；可设
+                time_window=("09:30","15:00") 仅回放连续竞价段）
+
+        Returns:
+            BacktestResult（与 run_backtest 同构，CTR-P1-016 11 必填字段）
+
+        Raises:
+            EventDrivenEngineError: 回测执行失败时返回空结果（已捕获并记日志）
+        """
+        # 延迟 import 避免循环依赖（EDE 依赖链较重）
+        from datetime import datetime as _dt
+
+        from zephyr.backtest.implementations.event_driven_engine import (
+            EventDrivenEngine,
+            EventDrivenEngineError,
+        )
+
+        data, weight_panel = self.build_weight_panel(symbols, start, end, config)
+        if weight_panel.empty or data.empty:
+            _logger.warning("run_tick_backtest: 数据/信号面板为空，无法回测")
+            return self._empty_result(config)
+
+        strategy_callback = self._build_tick_callback(weight_panel)
+
+        bt_config = config.backtest_config or BacktestConfig(
+            initial_capital=Decimal(str(config.initial_capital))
+        )
+        engine = EventDrivenEngine(config=bt_config)
+        start_dt = _dt.strptime(start, "%Y-%m-%d")
+        end_dt = _dt.strptime(end, "%Y-%m-%d")
+        try:
+            return engine.run_tick(
+                provider=provider,
+                symbols=symbols,
+                start=start_dt,
+                end=end_dt,
+                strategy_callback=strategy_callback,
+                tick_config=tick_config,
+                strategy_name=config.strategy_id,
+            )
+        except EventDrivenEngineError as e:
+            _logger.error("run_tick_backtest: EDE 执行失败: %s", e, exc_info=True)
+            return self._empty_result(config)
+
+    def run_tick_strategy_backtest(
+        self,
+        symbols: list[str],
+        start: str,
+        end: str,
+        strategy_id: str,
+        provider: object,
+        initial_capital: float = 1_000_000.0,
+        tick_config: Optional[object] = None,
+        backtest_config: Optional[BacktestConfig] = None,
+    ) -> BacktestResult:
+        """Tick 级策略回测（路径 B：tick 级策略 × EDE 撮合）。
+
+        与 run_tick_backtest（日频信号 × tick 撮合，路径 A）不同：本方法用
+        TickStrategyBase 策略，其 on_tick 每个 tick 用 5 档盘口数据生成目标权重，
+        适合做 T 策略（如 30 秒冲高回落）。策略维护内部状态，EDE 负责撮合。
+
+        Args:
+            symbols: 标的代码列表（带后缀 "600000.SH"）
+            start: 起始日期 "YYYY-MM-DD"
+            end: 结束日期 "YYYY-MM-DD"
+            strategy_id: 已注册的 TickStrategyBase 策略 ID
+            provider: 实现 fetch_historical(interval="tick") 的 provider（如 MiniQmtQuoteProvider）
+            initial_capital: 初始资金
+            tick_config: TickReplayConfig（可选）
+            backtest_config: BacktestConfig（可选，覆盖 initial_capital）
+
+        Returns:
+            BacktestResult（EDE 执行失败时返回空 result）
+
+        Raises:
+            KeyError: strategy_id 未注册
+        """
+        from datetime import datetime as _dt, timezone
+
+        from zephyr.backtest.implementations.event_driven_engine import (
+            EventDrivenEngine,
+            EventDrivenEngineError,
+        )
+        from zephyr.pf_core.strategy_engine.tick_strategy_base import (
+            TickStrategyBase,
+            autodiscover_tick_strategies,
+        )
+
+        cls = TickStrategyBase.get(strategy_id)
+        if cls is None:
+            autodiscover_tick_strategies("zephyr.pf_core")
+            cls = TickStrategyBase.get(strategy_id)
+        if cls is None:
+            raise KeyError(f"TickStrategy '{strategy_id}' 未注册")
+
+        strategy = cls()
+        bt_config = backtest_config or BacktestConfig(
+            initial_capital=Decimal(str(initial_capital))
+        )
+        engine = EventDrivenEngine(config=bt_config)
+        start_dt = _dt.strptime(start, "%Y-%m-%d")
+        end_dt = _dt.strptime(end, "%Y-%m-%d")
+        try:
+            return engine.run_tick(
+                provider=provider,
+                symbols=symbols,
+                start=start_dt,
+                end=end_dt,
+                strategy_callback=strategy.on_tick,
+                tick_config=tick_config,
+                strategy_name=strategy_id,
+            )
+        except EventDrivenEngineError as e:
+            _logger.error("run_tick_strategy_backtest: EDE 执行失败: %s", e, exc_info=True)
+            now = _dt.now(timezone.utc)
+            return BacktestResult(
+                annual_return=0.0,
+                end_date=now,
+                idempotency_key="bt-tick-empty",
+                max_drawdown=0.0,
+                sharpe_ratio=0.0,
+                start_date=now,
+                strategy_id=strategy_id,
+                timestamp=now,
+                total_return=0.0,
+                trades_count=0,
+                win_rate=0.0,
+            )
+
+    @staticmethod
+    def _build_tick_callback(weight_panel: pd.DataFrame):
+        """从日频权重面板构造 EDE strategy_callback（提取以便独立测试）。
+
+        callback 语义：每 tick 调用，仅当日在开盘后第一个有效 tick（09:30+）时
+        返回当日目标权重 dict，其余返回空。fired 集合保证每日只触发一次。非调仓日
+        目标权重与昨日相同（weight_panel 已 ffill），EDE 算 delta=0 不下单。
+        """
+        from datetime import time as dtime
+
+        daily_weights: dict = {}
+        for ts in weight_panel.index:
+            row = weight_panel.loc[ts]
+            weights = {str(sym): float(w) for sym, w in row.items() if w != 0}
+            d = ts.date() if hasattr(ts, "date") else ts
+            daily_weights[d] = weights
+
+        fired: set = set()
+
+        def callback(event) -> dict[str, float]:
+            ts = event.timestamp
+            d = ts.date() if hasattr(ts, "date") else ts
+            if d in daily_weights and d not in fired:
+                t = ts.time() if hasattr(ts, "time") else None
+                if t is not None and t >= dtime(9, 30):
+                    fired.add(d)
+                    return daily_weights[d]
+            return {}
+
+        return callback
 
     def build_weight_panel(
         self,
