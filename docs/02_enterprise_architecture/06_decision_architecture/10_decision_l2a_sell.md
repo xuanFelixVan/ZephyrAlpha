@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain sell（卖出）
 
-> 生成时间: 2026-07-30T20:16:54
+> 生成时间: 2026-07-30T20:58:07
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell
@@ -66,30 +66,30 @@ flowchart TD
     LL3["L3: 策略组合层<br/>design/planned<br/>多策略信号合成 → 资本分配 → 元策略路由 → 组合构建…"]
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
-    LL2A -.->|triggering| LL2B
-    LL2B -.->|triggering| LL2C
-    LL2C -.->|triggering| LL2D
-    LL2D -.->|triggering| LL3
-    LL3 -.->|triggering| LL5
-    LL5 -.->|triggering| LL6
-    N1 -->|informing| N2
-    N2 -->|informing| N3
-    N3 -->|informing| N4
-    N4 -->|informing| N5
-    N5 -->|informing| N6
-    N6 -->|informing| N7
-    N7 -->|informing| N8
-    N8 -->|informing| N9
-    N9 -->|informing| N10
-    N10 -->|informing| N11
-    N11 -->|informing| N12
-    N12 -->|informing| N13
-    N13 -->|informing| N14
-    N14 -->|informing| N15
-    N15 -->|informing| N16
-    N16 -->|informing| N17
-    N17 -->|informing| N18
-    N18 -->|informing| N19
+    LL2A -.->|triggering / 触发| LL2B
+    LL2B -.->|triggering / 触发| LL2C
+    LL2C -.->|triggering / 触发| LL2D
+    LL2D -.->|triggering / 触发| LL3
+    LL3 -.->|triggering / 触发| LL5
+    LL5 -.->|triggering / 触发| LL6
+    N1 -->|informing / 告知| N2
+    N2 -->|informing / 告知| N3
+    N3 -->|informing / 告知| N4
+    N4 -->|informing / 告知| N5
+    N5 -->|informing / 告知| N6
+    N6 -->|informing / 告知| N7
+    N7 -->|informing / 告知| N8
+    N8 -->|informing / 告知| N9
+    N9 -->|informing / 告知| N10
+    N10 -->|informing / 告知| N11
+    N11 -->|informing / 告知| N12
+    N12 -->|informing / 告知| N13
+    N13 -->|informing / 告知| N14
+    N14 -->|informing / 告知| N15
+    N15 -->|informing / 告知| N16
+    N16 -->|informing / 告知| N17
+    N17 -->|informing / 告知| N18
+    N18 -->|informing / 告知| N19
 ```
 
 ## Node 清单

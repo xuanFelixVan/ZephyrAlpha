@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain trading（交易）
 
-> 生成时间: 2026-07-30T20:16:54
+> 生成时间: 2026-07-30T20:58:07
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → trading
@@ -50,22 +50,22 @@ flowchart TD
     LL3 --- N112
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
-    LL2A -.->|triggering| LL2B
-    LL2B -.->|triggering| LL2C
-    LL2C -.->|triggering| LL2D
-    LL2D -.->|triggering| LL3
-    LL3 -.->|triggering| LL5
-    LL5 -.->|triggering| LL6
-    N102 -->|informing| N103
-    N103 -->|informing| N104
-    N104 -->|informing| N105
-    N105 -->|informing| N106
-    N106 -->|informing| N107
-    N107 -->|informing| N108
-    N108 -->|informing| N109
-    N109 -->|informing| N110
-    N110 -->|informing| N111
-    N111 -->|informing| N112
+    LL2A -.->|triggering / 触发| LL2B
+    LL2B -.->|triggering / 触发| LL2C
+    LL2C -.->|triggering / 触发| LL2D
+    LL2D -.->|triggering / 触发| LL3
+    LL3 -.->|triggering / 触发| LL5
+    LL5 -.->|triggering / 触发| LL6
+    N102 -->|informing / 告知| N103
+    N103 -->|informing / 告知| N104
+    N104 -->|informing / 告知| N105
+    N105 -->|informing / 告知| N106
+    N106 -->|informing / 告知| N107
+    N107 -->|informing / 告知| N108
+    N108 -->|informing / 告知| N109
+    N109 -->|informing / 告知| N110
+    N110 -->|informing / 告知| N111
+    N111 -->|informing / 告知| N112
 ```
 
 ## Node 清单

@@ -118,6 +118,16 @@ _DOMAIN_NAME_ZH: dict[str, str] = {
     "pf_alloc": "组合分配", "pf_core": "组合核心", "position": "持仓", "trading": "交易",
 }
 
+# 边类型英文→中文映射（mermaid 边标签用 英文 / 中文 格式，参考 dataflow 风格）
+_EDGE_TYPE_ZH: dict[str, str] = {
+    "triggering": "触发",
+    "informing": "告知",
+    "approving": "批准",
+    "feedback": "反馈",
+    "portfolio_target": "仓位目标",
+    "risk_check": "风控检查",
+}
+
 
 def _git_commit_timestamp() -> str:
     """获取本生成器脚本最近一次 git commit 时间（ISO 8601 秒精度）。
@@ -257,6 +267,14 @@ def _build_status_color(build: str) -> str:
     }.get(build, "bsGenerated")
 
 
+def _edge_label(edge_type: str) -> str:
+    """边类型 → 中英文标签（英文 / 中文），参考 dataflow 的 produces / 产出风格。"""
+    zh = _EDGE_TYPE_ZH.get(edge_type)
+    if zh:
+        return f"{edge_type} / {zh}"
+    return edge_type
+
+
 def _maturity_tag(maturity: str | None) -> str:
     """design_maturity → 标注标签（[production]/[design]/空）。"""
     if not maturity:
@@ -362,12 +380,12 @@ def _gen_overview_mmd(
     for i in range(len(layer_ids) - 1):
         from_lid = layer_ids[i].replace("-", "_")
         to_lid = layer_ids[i + 1].replace("-", "_")
-        lines.append(f'    L{from_lid} -.->|triggering| L{to_lid}')
+        lines.append(f'    L{from_lid} -.->|{_edge_label("triggering")}| L{to_lid}')
 
     # 节点间边（skeleton_only 模式下跳过——无决策节点）
     if not skeleton_only:
         for e in edges:
-            lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
+            lines.append(f'    N{e["from"]} -->|{_edge_label(e["type"])}| N{e["to"]}')
 
     return "\n".join(lines) + "\n", len(tracks), len(layers), len(edges)
 
@@ -401,7 +419,7 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
     for i in range(len(layer_ids) - 1):
         from_lid = layer_ids[i].replace("-", "_")
         to_lid = layer_ids[i + 1].replace("-", "_")
-        lines.append(f'    L{from_lid} -->|triggering| L{to_lid}')
+        lines.append(f'    L{from_lid} -->|{_edge_label("triggering")}| L{to_lid}')
 
     # 反馈边（L6 → L1/L5，学习闭环）。节点 ID = "L" + layer_id（与上方定义一致）
     if len(layer_ids) >= 6:
@@ -409,8 +427,8 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         l5 = f"L{layer_ids[-2].replace('-', '_')}"  # 倒数第 2 = L5
         l6 = f"L{layer_ids[-1].replace('-', '_')}"  # 最后 = L6
         if l1:
-            lines.append(f'    {l6} -.->|feedback| {l1}')
-        lines.append(f'    {l6} -.->|feedback| {l5}')
+            lines.append(f'    {l6} -.->|{_edge_label("feedback")}| {l1}')
+        lines.append(f'    {l6} -.->|{_edge_label("feedback")}| {l5}')
 
     return "\n".join(lines) + "\n"
 
@@ -435,12 +453,12 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
         safe = nt.replace("-", "_")
         lines.append(f'    NT_{safe}["{label}"]')
 
-    lines.append("    NT_signal -->|portfolio_target| NT_portfolio_target")
-    lines.append("    NT_portfolio_target -->|risk_check| NT_risk_check")
-    lines.append("    NT_risk_check -->|approving| NT_order")
-    lines.append("    NT_order -->|triggering| NT_execution")
-    lines.append("    NT_execution -.->|feedback| NT_feedback")
-    lines.append("    NT_feedback -.->|informing| NT_signal")
+    lines.append(f"    NT_signal -->|{_edge_label('portfolio_target')}| NT_portfolio_target")
+    lines.append(f"    NT_portfolio_target -->|{_edge_label('risk_check')}| NT_risk_check")
+    lines.append(f"    NT_risk_check -->|{_edge_label('approving')}| NT_order")
+    lines.append(f"    NT_order -->|{_edge_label('triggering')}| NT_execution")
+    lines.append(f"    NT_execution -.->|{_edge_label('feedback')}| NT_feedback")
+    lines.append(f"    NT_feedback -.->|{_edge_label('informing')}| NT_signal")
 
     lines.append("    NT_signal -.->|禁止| NT_order")
     lines.append("    linkStyle 6 stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5")

@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain position（持仓）
 
-> 生成时间: 2026-07-30T20:16:54
+> 生成时间: 2026-07-30T20:58:07
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → position
@@ -66,30 +66,30 @@ flowchart TD
     LL3 --- N56
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
-    LL2A -.->|triggering| LL2B
-    LL2B -.->|triggering| LL2C
-    LL2C -.->|triggering| LL2D
-    LL2D -.->|triggering| LL3
-    LL3 -.->|triggering| LL5
-    LL5 -.->|triggering| LL6
-    N38 -->|informing| N39
-    N39 -->|informing| N40
-    N40 -->|informing| N41
-    N41 -->|informing| N42
-    N42 -->|informing| N43
-    N43 -->|informing| N44
-    N44 -->|informing| N45
-    N45 -->|informing| N46
-    N46 -->|informing| N47
-    N47 -->|informing| N48
-    N48 -->|informing| N49
-    N49 -->|informing| N50
-    N50 -->|informing| N51
-    N51 -->|informing| N52
-    N52 -->|informing| N53
-    N53 -->|informing| N54
-    N54 -->|informing| N55
-    N55 -->|informing| N56
+    LL2A -.->|triggering / 触发| LL2B
+    LL2B -.->|triggering / 触发| LL2C
+    LL2C -.->|triggering / 触发| LL2D
+    LL2D -.->|triggering / 触发| LL3
+    LL3 -.->|triggering / 触发| LL5
+    LL5 -.->|triggering / 触发| LL6
+    N38 -->|informing / 告知| N39
+    N39 -->|informing / 告知| N40
+    N40 -->|informing / 告知| N41
+    N41 -->|informing / 告知| N42
+    N42 -->|informing / 告知| N43
+    N43 -->|informing / 告知| N44
+    N44 -->|informing / 告知| N45
+    N45 -->|informing / 告知| N46
+    N46 -->|informing / 告知| N47
+    N47 -->|informing / 告知| N48
+    N48 -->|informing / 告知| N49
+    N49 -->|informing / 告知| N50
+    N50 -->|informing / 告知| N51
+    N51 -->|informing / 告知| N52
+    N52 -->|informing / 告知| N53
+    N53 -->|informing / 告知| N54
+    N54 -->|informing / 告知| N55
+    N55 -->|informing / 告知| N56
 ```
 
 ## Node 清单

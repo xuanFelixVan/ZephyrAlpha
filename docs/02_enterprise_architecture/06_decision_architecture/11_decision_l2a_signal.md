@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain signal（信号）
 
-> 生成时间: 2026-07-30T20:16:54
+> 生成时间: 2026-07-30T20:58:07
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → signal
@@ -54,24 +54,24 @@ flowchart TD
     LL3["L3: 策略组合层<br/>design/planned<br/>多策略信号合成 → 资本分配 → 元策略路由 → 组合构建…"]
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
-    LL2A -.->|triggering| LL2B
-    LL2B -.->|triggering| LL2C
-    LL2C -.->|triggering| LL2D
-    LL2D -.->|triggering| LL3
-    LL3 -.->|triggering| LL5
-    LL5 -.->|triggering| LL6
-    N177 -->|informing| N178
-    N178 -->|informing| N179
-    N179 -->|informing| N180
-    N180 -->|informing| N181
-    N181 -->|informing| N182
-    N182 -->|informing| N183
-    N183 -->|informing| N184
-    N184 -->|informing| N185
-    N185 -->|informing| N186
-    N186 -->|informing| N187
-    N187 -->|informing| N188
-    N188 -->|informing| N189
+    LL2A -.->|triggering / 触发| LL2B
+    LL2B -.->|triggering / 触发| LL2C
+    LL2C -.->|triggering / 触发| LL2D
+    LL2D -.->|triggering / 触发| LL3
+    LL3 -.->|triggering / 触发| LL5
+    LL5 -.->|triggering / 触发| LL6
+    N177 -->|informing / 告知| N178
+    N178 -->|informing / 告知| N179
+    N179 -->|informing / 告知| N180
+    N180 -->|informing / 告知| N181
+    N181 -->|informing / 告知| N182
+    N182 -->|informing / 告知| N183
+    N183 -->|informing / 告知| N184
+    N184 -->|informing / 告知| N185
+    N185 -->|informing / 告知| N186
+    N186 -->|informing / 告知| N187
+    N187 -->|informing / 告知| N188
+    N188 -->|informing / 告知| N189
 ```
 
 ## Node 清单

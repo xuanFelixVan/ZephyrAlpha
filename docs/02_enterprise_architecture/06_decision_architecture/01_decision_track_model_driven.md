@@ -1,6 +1,6 @@
 # 决策流图 · 模型驱动轨（Model-Driven Track）
 
-> 生成时间: 2026-07-30T20:16:54
+> 生成时间: 2026-07-30T20:58:07
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 1
@@ -33,15 +33,15 @@ flowchart TD
     LL4["L4: 风控层<br/>production/stable<br/>Pre/Post-Trade 风控校验 + Kill Sw…"]
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
-    LL0 -.->|triggering| LL1
-    LL1 -.->|triggering| LL2A
-    LL2A -.->|triggering| LL2B
-    LL2B -.->|triggering| LL2C
-    LL2C -.->|triggering| LL2D
-    LL2D -.->|triggering| LL3
-    LL3 -.->|triggering| LL4
-    LL4 -.->|triggering| LL5
-    LL5 -.->|triggering| LL6
+    LL0 -.->|triggering / 触发| LL1
+    LL1 -.->|triggering / 触发| LL2A
+    LL2A -.->|triggering / 触发| LL2B
+    LL2B -.->|triggering / 触发| LL2C
+    LL2C -.->|triggering / 触发| LL2D
+    LL2D -.->|triggering / 触发| LL3
+    LL3 -.->|triggering / 触发| LL4
+    LL4 -.->|triggering / 触发| LL5
+    LL5 -.->|triggering / 触发| LL6
 ```
 
 ## 功能域文件（L2A/L3 拆分）

@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-07-30T20:16:54
+> 生成时间: 2026-07-30T20:58:07
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
@@ -46,20 +46,20 @@ flowchart TD
     LL3 --- N71
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
-    LL2A -.->|triggering| LL2B
-    LL2B -.->|triggering| LL2C
-    LL2C -.->|triggering| LL2D
-    LL2D -.->|triggering| LL3
-    LL3 -.->|triggering| LL5
-    LL5 -.->|triggering| LL6
-    N59 -->|informing| N60
-    N60 -->|informing| N61
-    N61 -->|informing| N62
-    N62 -->|informing| N63
-    N63 -->|informing| N64
-    N64 -->|informing| N65
-    N65 -->|informing| N66
-    N66 -->|informing| N71
+    LL2A -.->|triggering / 触发| LL2B
+    LL2B -.->|triggering / 触发| LL2C
+    LL2C -.->|triggering / 触发| LL2D
+    LL2D -.->|triggering / 触发| LL3
+    LL3 -.->|triggering / 触发| LL5
+    LL5 -.->|triggering / 触发| LL6
+    N59 -->|informing / 告知| N60
+    N60 -->|informing / 告知| N61
+    N61 -->|informing / 告知| N62
+    N62 -->|informing / 告知| N63
+    N63 -->|informing / 告知| N64
+    N64 -->|informing / 告知| N65
+    N65 -->|informing / 告知| N66
+    N66 -->|informing / 告知| N71
 ```
 
 ## Node 清单

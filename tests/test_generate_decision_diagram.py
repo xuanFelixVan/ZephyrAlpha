@@ -496,9 +496,9 @@ class TestGenLayersMmd:
         assert "LL4" in mmd
 
     def test_contains_triggering_edges(self, sample_tracks, sample_layers):
-        """mmd 包含层间 triggering 边。"""
+        """mmd 包含层间 triggering 边标签（中英文格式）。"""
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "|triggering|" in mmd
+        assert "|triggering / 触发|" in mmd
 
     def test_no_class_defs(self, sample_tracks, sample_layers):
         """mmd 不含 classDef / :::类名（纯默认主题）。"""
