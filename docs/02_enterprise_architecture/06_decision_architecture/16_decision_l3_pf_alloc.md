@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain pf_alloc（组合分配）
 
-> 生成时间: 2026-07-30T02:46:13
+> 生成时间: 2026-07-30T17:35:01
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → pf_alloc
@@ -21,25 +21,25 @@
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        N32("[design]portfolio_target: 策略分配 Strategy Allocation<br/>path: decision/pf_alloc/pa_01"):::bsPlanned
+        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
+        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
+        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
+        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
+        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
+        N32("[design]portfolio_target: 策略分配 Strategy Allocation<br/>path: decision/pf_alloc/pa_01")
         LL3 --- N32
-        N33("[design]portfolio_target: 风险平价 Risk Parity<br/>path: decision/pf_alloc/pa_02"):::bsPlanned
+        N33("[design]portfolio_target: 风险平价 Risk Parity<br/>path: decision/pf_alloc/pa_02")
         LL3 --- N33
-        N34("[design]portfolio_target: 动态权重 Dynamic Weighting<br/>path: decision/pf_alloc/pa_03"):::bsPlanned
+        N34("[design]portfolio_target: 动态权重 Dynamic Weighting<br/>path: decision/pf_alloc/pa_03")
         LL3 --- N34
-        N35("[design]portfolio_target: 策略权重再平衡 Strategy Weight Rebalance<br/>path: decision/pf_alloc/pa_04"):::bsPlanned
+        N35("[design]portfolio_target: 策略权重再平衡 Strategy Weight Rebalance<br/>path: decision/pf_alloc/pa_04")
         LL3 --- N35
-        N36("[design]portfolio_target: 多策略共识 Multi-Strategy Consensus<br/>path: decision/pf_alloc/pa_05"):::bsPlanned
+        N36("[design]portfolio_target: 多策略共识 Multi-Strategy Consensus<br/>path: decision/pf_alloc/pa_05")
         LL3 --- N36
-        N37("[design]portfolio_target: 元策略选择 Meta-Strategy Selection<br/>path: decision/pf_alloc/pa_06"):::bsPlanned
+        N37("[design]portfolio_target: 元策略选择 Meta-Strategy Selection<br/>path: decision/pf_alloc/pa_06")
         LL3 --- N37
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
+        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -52,12 +52,6 @@ flowchart TD
     N34 -->|informing| N35
     N35 -->|informing| N36
     N36 -->|informing| N37
-
-    classDef bsStable fill:#1b2e1b,stroke:#4caf50,stroke-width:2px,color:#fff
-    classDef bsGenerated fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff
-    classDef bsTesting fill:#2e1d0d,stroke:#ff8a65,stroke-width:2px,color:#fff
-    classDef bsPlanned fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-    classDef bsDeprecated fill:#2e0d0d,stroke:#e57373,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
 ## Node 清单
@@ -99,13 +93,10 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    SELF["pf_alloc（组合分配）"]:::selfDomain
-    EXT_pf_core["pf_core（组合核心）"]:::extDomain
+    SELF["pf_alloc（组合分配）"]
+    EXT_pf_core["pf_core（组合核心）"]
     SELF -->|出 1| EXT_pf_core
-    EXT_ex_sor["ex_sor（执行排序）"]:::extDomain
+    EXT_ex_sor["ex_sor（执行排序）"]
     EXT_ex_sor -->|入 1| SELF
-
-    classDef selfDomain fill:#2e2a0d,stroke:#ffd54f,stroke-width:3px,color:#fff
-    classDef extDomain fill:#0d1b2e,stroke:#64b5f6,stroke-width:1px,color:#fff
 ```
 

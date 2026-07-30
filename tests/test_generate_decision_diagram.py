@@ -16,7 +16,7 @@
 覆盖：
   - _build_status_color 颜色映射（5 个 build_status + 默认值）
   - _load_invariants 从 YAML 真源读取 5 条承重墙不变量
-  - _gen_overview_mmd 返回值类型（tuple[str, int, int, int]）+ subgraph + classDef
+  - _gen_overview_mmd 返回值类型（tuple[str, int, int, int]）+ subgraph（纯默认主题，无 classDef）
   - _gen_layers_mmd 层级卡片 + 反馈边（L6 → L1/L5）
   - _gen_invariants_mmd 6 节点类型 + 5 不变量 + 非法连接标注
   - _gen_index_md 统计表 + Track/Layer 清单
@@ -363,14 +363,11 @@ class TestGenOverviewMmd:
         assert "LL2A" in mmd
         assert "LL4" in mmd
 
-    def test_contains_class_defs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """mmd 包含 5 个 classDef 样式定义。"""
+    def test_no_class_defs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """mmd 不含 classDef / :::类名（照搬 application_flows.md 纯默认主题）。"""
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "classDef bsStable" in mmd
-        assert "classDef bsGenerated" in mmd
-        assert "classDef bsTesting" in mmd
-        assert "classDef bsPlanned" in mmd
-        assert "classDef bsDeprecated" in mmd
+        assert "classDef" not in mmd
+        assert ":::" not in mmd
 
     def test_empty_input(self):
         """空输入返回空图 + 零计数。"""
@@ -500,11 +497,11 @@ class TestGenLayersMmd:
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
         assert "|triggering|" in mmd
 
-    def test_contains_class_defs(self, sample_tracks, sample_layers):
-        """mmd 包含 classDef 样式。"""
+    def test_no_class_defs(self, sample_tracks, sample_layers):
+        """mmd 不含 classDef / :::类名（纯默认主题）。"""
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "classDef bsStable" in mmd
-        assert "classDef bsPlanned" in mmd
+        assert "classDef" not in mmd
+        assert ":::" not in mmd
 
     def test_empty_input(self):
         """空输入返回空图。"""
@@ -553,11 +550,11 @@ class TestGenInvariantsMmd:
         assert "NT_signal" in mmd
         assert "NT_order" in mmd
 
-    def test_contains_class_defs(self, sample_invariants):
-        """mmd 包含 nodeType + invariant classDef。"""
+    def test_no_class_defs(self, sample_invariants):
+        """mmd 不含 classDef / :::类名（纯默认主题）。"""
         mmd = _gen_invariants_mmd(sample_invariants)
-        assert "classDef nodeType" in mmd
-        assert "classDef invariant" in mmd
+        assert "classDef" not in mmd
+        assert ":::" not in mmd
 
     def test_empty_invariants(self):
         """空 invariants 仍生成 6 节点类型（不变量标注为空）。"""

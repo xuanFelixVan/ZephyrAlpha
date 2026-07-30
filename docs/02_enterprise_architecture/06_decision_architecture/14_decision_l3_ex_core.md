@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-07-30T02:46:13
+> 生成时间: 2026-07-30T17:35:01
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
@@ -21,31 +21,31 @@
 ```mermaid
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]:::bsPlanned
-        N59("[design]order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed<br/>path: decision/ex_core/ex_03"):::bsPlanned
+        LL2A["[design]L2A: 信号层<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>freq: daily<br/>build: planned"]
+        LL2B["[design]L2B: 主力行为层<br/>功能: 六阶段识别 + 自迭代推演 + 庄家专…<br/>freq: daily<br/>build: planned"]
+        LL2C["[design]L2C: 市场状态与大盘预测层<br/>功能: 3×3矩阵 + 2叠加态 + 三层大盘…<br/>freq: daily<br/>build: planned"]
+        LL2D["[design]L2D: 知识图谱与因果推演层<br/>功能: 六类知识图谱 → 事件影响链分析 → …<br/>freq: daily<br/>build: planned"]
+        LL3["[design]L3: 策略组合层<br/>功能: 多策略信号合成 → 资本分配 → 元策…<br/>freq: daily<br/>build: planned"]
+        N59("[design]order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed<br/>path: decision/ex_core/ex_03")
         LL3 --- N59
-        N60("[design]order: Saga编排式事务 Saga Orchestrated Transaction<br/>path: decision/ex_core/ex_04"):::bsPlanned
+        N60("[design]order: Saga编排式事务 Saga Orchestrated Transaction<br/>path: decision/ex_core/ex_04")
         LL3 --- N60
-        N61("[design]order: 风控检查 Risk Check<br/>path: decision/ex_core/ex_05"):::bsPlanned
+        N61("[design]order: 风控检查 Risk Check<br/>path: decision/ex_core/ex_05")
         LL3 --- N61
-        N62("[design]order: 信号确认 Signal Confirmation<br/>path: decision/ex_core/ex_06"):::bsPlanned
+        N62("[design]order: 信号确认 Signal Confirmation<br/>path: decision/ex_core/ex_06")
         LL3 --- N62
-        N63("[design]order: 下单提交 Order Submit<br/>path: decision/ex_core/ex_07"):::bsPlanned
+        N63("[design]order: 下单提交 Order Submit<br/>path: decision/ex_core/ex_07")
         LL3 --- N63
-        N64("[design]order: 成交确认 Fill Confirmation<br/>path: decision/ex_core/ex_08"):::bsPlanned
+        N64("[design]order: 成交确认 Fill Confirmation<br/>path: decision/ex_core/ex_08")
         LL3 --- N64
-        N65("[design]order: 持仓更新 Position Update<br/>path: decision/ex_core/ex_09"):::bsPlanned
+        N65("[design]order: 持仓更新 Position Update<br/>path: decision/ex_core/ex_09")
         LL3 --- N65
-        N66("[design]order: 报告生成 Report Generation<br/>path: decision/ex_core/ex_10"):::bsPlanned
+        N66("[design]order: 报告生成 Report Generation<br/>path: decision/ex_core/ex_10")
         LL3 --- N66
-        N71("[design]order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase<br/>path: decision/ex_core/ex_15"):::bsPlanned
+        N71("[design]order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase<br/>path: decision/ex_core/ex_15")
         LL3 --- N71
-        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
-        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]:::bsPlanned
+        LL5["[design]L5: 学习层<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>freq: weekly<br/>build: planned"]
+        LL6["[design]L6: 自评估层<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>freq: weekly<br/>build: planned"]
     end
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
@@ -61,12 +61,6 @@ flowchart TD
     N64 -->|informing| N65
     N65 -->|informing| N66
     N66 -->|informing| N71
-
-    classDef bsStable fill:#1b2e1b,stroke:#4caf50,stroke-width:2px,color:#fff
-    classDef bsGenerated fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff
-    classDef bsTesting fill:#2e1d0d,stroke:#ff8a65,stroke-width:2px,color:#fff
-    classDef bsPlanned fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-    classDef bsDeprecated fill:#2e0d0d,stroke:#e57373,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
 ## Node 清单
@@ -116,15 +110,12 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    SELF["ex_core（执行核心）"]:::selfDomain
-    EXT_ex_sor["ex_sor（执行排序）"]:::extDomain
+    SELF["ex_core（执行核心）"]
+    EXT_ex_sor["ex_sor（执行排序）"]
     SELF -->|出 2| EXT_ex_sor
-    EXT_aut_core["aut_core（自主核心）"]:::extDomain
+    EXT_aut_core["aut_core（自主核心）"]
     EXT_aut_core -->|入 1| SELF
-    EXT_compliance["compliance（compliance）"]:::extDomain
+    EXT_compliance["compliance（compliance）"]
     EXT_compliance -->|入 1| SELF
-
-    classDef selfDomain fill:#2e2a0d,stroke:#ffd54f,stroke-width:3px,color:#fff
-    classDef extDomain fill:#0d1b2e,stroke:#64b5f6,stroke-width:1px,color:#fff
 ```
 

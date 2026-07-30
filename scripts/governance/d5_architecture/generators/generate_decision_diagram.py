@@ -90,24 +90,11 @@ _STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
 # mermaid 节点数超限（>300）渲染失败。
 _ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 
-# --- Mermaid classDef（深色主题友好：深色填充 + 白色字 + 语义色边框）---
-# 对齐 application_flows.md 的深色主题视觉风格（深色底/白色字/彩色边框）。
-# 原 浅色填充+黑色字(color:#000) 在深色主题下不可读；改为深色填充+白色字(color:#fff)。
-_BUILD_STATUS_CLASSDEFS: list[str] = [
-    "    classDef bsStable fill:#1b2e1b,stroke:#4caf50,stroke-width:2px,color:#fff",
-    "    classDef bsGenerated fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff",
-    "    classDef bsTesting fill:#2e1d0d,stroke:#ff8a65,stroke-width:2px,color:#fff",
-    "    classDef bsPlanned fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff,stroke-dasharray: 5 5",
-    "    classDef bsDeprecated fill:#2e0d0d,stroke:#e57373,stroke-width:2px,color:#fff,stroke-dasharray: 5 5",
-]
-_INVARIANT_CLASSDEFS: list[str] = [
-    "    classDef nodeType fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff",
-    "    classDef invariant fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff",
-]
-_CROSS_DOMAIN_CLASSDEFS: list[str] = [
-    "    classDef selfDomain fill:#2e2a0d,stroke:#ffd54f,stroke-width:3px,color:#fff",
-    "    classDef extDomain fill:#0d1b2e,stroke:#64b5f6,stroke-width:1px,color:#fff",
-]
+# --- Mermaid 样式策略 ---
+# 直接照搬 application_flows.md 的内嵌 mermaid 风格：纯默认主题，零 classDef，
+# 零 :::类名 引用。深色/浅色底色由渲染器默认主题决定，避免自定义 fill/color 配色
+# 在不同主题下出现"底色变白、文字不可读"等问题。
+# _build_status_color() 函数保留供测试与未来恢复着色使用，但生成逻辑不再调用。
 
 # 功能域英文→中文映射（双语标题/节点标签用）
 _DOMAIN_NAME_ZH: dict[str, str] = {
@@ -356,15 +343,13 @@ def _gen_overview_mmd(
             if layer["freq"]:
                 label += f'<br/>freq: {layer["freq"]}'
             label += f'<br/>build: {layer["build"]}'
-            cls = _build_status_color(layer["build"])
-            lines.append(f'        L{safe_lid}["{label}"]:::{cls}')
+            lines.append(f'        L{safe_lid}["{label}"]')
             if not skeleton_only:
                 layer_nodes = [n for n in nodes if n["layer_id"] == lid]
                 for n in layer_nodes:
                     nmtag = _maturity_tag(n.get("maturity"))
                     nlabel = f'{nmtag}{n["type"]}: {n["name"]}<br/>path: {n["path"]}' if nmtag else f'{n["type"]}: {n["name"]}<br/>path: {n["path"]}'
-                    ncls = _build_status_color(n["build"])
-                    lines.append(f'        N{n["id"]}("{nlabel}"):::{ncls}')
+                    lines.append(f'        N{n["id"]}("{nlabel}")')
                     lines.append(f'        L{safe_lid} --- N{n["id"]}')
         lines.append("    end")
 
@@ -379,9 +364,6 @@ def _gen_overview_mmd(
     if not skeleton_only:
         for e in edges:
             lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
-
-    lines.append("")
-    lines.extend(_BUILD_STATUS_CLASSDEFS)
 
     return "\n".join(lines) + "\n", len(tracks), len(layers), len(edges)
 
@@ -426,8 +408,7 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
             label += f'<br/>频率: {layer["freq"]}'
         label += f'<br/>成熟度: {layer["maturity"]}'
         label += f'<br/>build: {layer["build"]}'
-        cls = _build_status_color(layer["build"])
-        lines.append(f'    L{lid}["{label}"]:::{cls}')
+        lines.append(f'    L{lid}["{label}"]')
 
     layer_ids = [l["id"] for l in layers]
     for i in range(len(layer_ids) - 1):
@@ -443,9 +424,6 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         if l1:
             lines.append(f'    {l6} -.->|feedback| {l1}')
         lines.append(f'    {l6} -.->|feedback| {l5}')
-
-    lines.append("")
-    lines.extend(_BUILD_STATUS_CLASSDEFS)
 
     return "\n".join(lines) + "\n"
 
@@ -464,7 +442,7 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     ]
     for nt, label in node_types:
         safe = nt.replace("-", "_")
-        lines.append(f'    NT_{safe}["{label}"]:::nodeType')
+        lines.append(f'    NT_{safe}["{label}"]')
 
     lines.append("    NT_signal -->|portfolio_target| NT_portfolio_target")
     lines.append("    NT_portfolio_target -->|risk_check| NT_risk_check")
@@ -480,15 +458,12 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
         iid = inv["id"]
         safe_iid = iid.replace("-", "_")
         label = f'{iid}<br/>{inv["name"]}<br/>{inv["name_en"]}'
-        lines.append(f'    INV_{safe_iid}(["{label}"]):::invariant')
+        lines.append(f'    INV_{safe_iid}(["{label}"])')
 
     lines.append("    INV_DEC_INV_001 -.- NT_order")
     lines.append("    INV_DEC_INV_002 -.- NT_signal")
     lines.append("    INV_DEC_INV_003 -.- NT_feedback")
     lines.append("    INV_DEC_INV_005 -.- NT_signal")
-
-    lines.append("")
-    lines.extend(_INVARIANT_CLASSDEFS)
 
     return "\n".join(lines) + "\n"
 
@@ -613,14 +588,14 @@ def _gen_cross_domain_mermaid(
     lines = ["flowchart LR"]
     safe_self = self_domain.replace("-", "_")
     _self_zh = _DOMAIN_NAME_ZH.get(self_domain, self_domain)
-    lines.append(f'    SELF["{self_domain}（{_self_zh}）"]:::selfDomain')
+    lines.append(f'    SELF["{self_domain}（{_self_zh}）"]')
     seen: set[str] = set()
     for d in outgoing_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
             _other_zh = _DOMAIN_NAME_ZH.get(other, other)
-            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]:::extDomain')
+            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]')
             seen.add(other)
         lines.append(f'    SELF -->|出 {d["count"]}| EXT_{safe}')
     for d in incoming_agg:
@@ -628,11 +603,9 @@ def _gen_cross_domain_mermaid(
         safe = other.replace("-", "_")
         if other not in seen:
             _other_zh = _DOMAIN_NAME_ZH.get(other, other)
-            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]:::extDomain')
+            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]')
             seen.add(other)
         lines.append(f'    EXT_{safe} -->|入 {d["count"]}| SELF')
-    lines.append("")
-    lines.extend(_CROSS_DOMAIN_CLASSDEFS)
     return "\n".join(lines) + "\n"
 
 

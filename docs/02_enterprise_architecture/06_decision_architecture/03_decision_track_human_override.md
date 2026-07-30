@@ -1,6 +1,6 @@
 # 决策流图 · 人工指令轨（Human Override Track）
 
-> 生成时间: 2026-07-30T02:46:13
+> 生成时间: 2026-07-30T17:35:01
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 3
