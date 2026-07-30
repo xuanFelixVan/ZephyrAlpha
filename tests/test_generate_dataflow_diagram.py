@@ -42,8 +42,8 @@ try:
     )
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
-    _gen_mermaid = _mod.gen_mermaid
-    _gen_index_md = _mod.gen_index_md
+    _gen_mermaid = _mod._gen_mermaid
+    _gen_index_md = _mod._gen_index_md
 except Exception as e:  # noqa: BLE001
     pytest.skip(
         f"generate_dataflow_diagram 模块加载失败（可能缺少 zephyr 依赖）: {e}",
@@ -215,7 +215,7 @@ class TestGenMermaid:
         assert ds_count == 0
         assert job_count == 0
         assert edge_count == 0
-        assert mmd.startswith("flowchart LR")
+        assert "flowchart TD" in mmd
 
     def test_mmd_contains_edge_labels(self, sample_datasets, sample_jobs, sample_edges):
         """mmd 文本包含 produces / consumed by 边标签（中英并列）。"""
@@ -223,19 +223,14 @@ class TestGenMermaid:
         assert "|produces / 产出|" in mmd
         assert "|consumed by / 被消费于|" in mmd
 
-    def test_mmd_contains_class_defs(self, sample_datasets, sample_jobs, sample_edges):
-        """mmd 文本包含样式定义（scope-based + design_maturity-based）。"""
+    def test_mmd_uses_gray_theme_no_classdef(self, sample_datasets, sample_jobs, sample_edges):
+        """mmd 使用灰色主题（%%{init}%% + TD），不使用 classDef（对齐决策流程图视觉）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
-        # scope-based
-        assert "classDef dsProd" in mmd
-        assert "classDef dsBacktest" in mmd
-        assert "classDef jobProd" in mmd
-        assert "classDef jobBacktest" in mmd
-        # design_maturity-based（紫色设计态 + 黄色原型态）
-        assert "classDef dsDesign" in mmd
-        assert "classDef jobDesign" in mmd
-        assert "classDef dsProto" in mmd
-        assert "classDef jobProto" in mmd
+        assert "%%{init:" in mmd
+        assert "'primaryColor': '#eaeaea'" in mmd
+        assert "flowchart TD" in mmd
+        # 不应有 classDef（视觉对齐决策流程图，全灰）
+        assert "classDef" not in mmd
 
     def test_mmd_contains_maturity_prefix(self, sample_datasets, sample_jobs, sample_edges):
         """mmd 节点标签包含 [production] design_maturity 前缀（运营态 fixture）。"""
@@ -247,21 +242,20 @@ class TestGenMermaid:
 # ---------- 设计态/运营态（design_maturity）测试 ----------
 
 class TestDesignMaturity:
-    """design_maturity 维度测试：设计态紫色 + [design] 前缀 + maturity_filter。"""
+    """design_maturity 维度测试：[design] 前缀 + maturity_filter（灰色主题，无 classDef）。"""
 
-    def test_design_node_gets_purple_class(
+    def test_design_node_no_classdef_uses_prefix(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
     ):
-        """design_maturity=design 的节点使用紫色 class（dsDesign/jobDesign）。"""
+        """design_maturity=design 的节点无 class，靠 [design] 标签前缀区分（灰色主题）。"""
         mmd, _, _, _ = _gen_mermaid(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        # DS4 是设计态 Dataset → dsDesign class
+        # DS4 是设计态 Dataset → 节点定义存在 + 无 :::class
         assert "DS4" in mmd
-        assert ":::dsDesign" in mmd
-        # JOB13 是设计态 Job → jobDesign class
+        assert ":::" not in mmd
+        # JOB13 是设计态 Job → 节点定义存在
         assert "JOB13" in mmd
-        assert ":::jobDesign" in mmd
 
     def test_design_node_has_design_prefix(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
@@ -272,16 +266,16 @@ class TestDesignMaturity:
         )
         assert "[design]" in mmd
 
-    def test_production_node_keeps_scope_class(
+    def test_production_node_no_classdef(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
     ):
-        """design_maturity=production 的节点仍使用 scope-based 着色（非紫色）。"""
+        """design_maturity=production 的节点无 class（灰色主题，全靠标签前缀）。"""
         mmd, _, _, _ = _gen_mermaid(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        # DS1 是 production scope + production maturity → dsProd class（非 dsDesign）
+        # DS1 是 production scope + production maturity → 节点定义存在 + 无 :::class
         assert "DS1" in mmd
-        assert ":::dsProd" in mmd
+        assert ":::" not in mmd
 
     def test_maturity_filter_production_excludes_design(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
@@ -331,10 +325,10 @@ class TestGenIndexMd:
         md = _gen_index_md(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        # 4 dataset: 3 production + 1 design
-        assert "| Dataset | 3 | 1 | 0 | 4 |" in md
+        # 4 dataset: 3 production + 1 design（4 列：运营态/设计态/合计）
+        assert "| Dataset | 3 | 1 | 4 |" in md
         # 4 job: 3 production + 1 design
-        assert "| Job | 3 | 1 | 0 | 4 |" in md
+        assert "| Job | 3 | 1 | 4 |" in md
         # 设计态 vs 运营态说明
         assert "设计态 vs 运营态" in md
 

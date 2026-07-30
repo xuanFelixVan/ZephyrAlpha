@@ -112,20 +112,6 @@ def _en_zh(en: str | None, sep: str = " / ") -> str:
     return en
 
 
-def _truncate(text: str | None, max_len: int = 40) -> str:
-    """截断文本到指定长度，超出加省略号。None/空串返回空串。
-
-    用于 Mermaid 节点 label 内的功能简述（对标 decision_index.md 的 _truncate，
-    dataflow 的 description/format_summary 普遍较长，默认 40 字保留更多信息）。
-    """
-    if not text:
-        return ""
-    text = text.strip().replace("\n", " ").replace(">", "》")
-    if len(text) <= max_len:
-        return text
-    return text[:max_len - 1] + "…"
-
-
 def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
     """从 PG 读取 datasets/jobs/edges。
 
@@ -150,10 +136,15 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
             for r in cur.fetchall()
         ]
 
+        # ARCH-056：dataflow_jobs 含两类记录——
+        #   entity_type='job'（13 个真实数据流作业，yaml 真源同步）
+        #   entity_type='module_placeholder'（depgraph 模块占位投影，四图对齐用，非数据流作业）
+        # 本生成器只展示真实数据流作业，占位投影由 sync_panorama_module.py 维护、不画入图。
         cur.execute("""
             SELECT job_id, job_name, scope, source_code_ref, trigger_type,
                    run_context, design_maturity, build_status, module_id, description
             FROM dataflow_jobs
+            WHERE entity_type = 'job'
             ORDER BY scope, job_name
         """)
         jobs = [
@@ -184,35 +175,32 @@ def _maturity_tag(maturity: str | None) -> str:
     return ""
 
 
-def _node_class(scope: str, maturity: str | None, is_job: bool) -> str:
-    """根据 design_maturity（优先）和 scope 决定节点样式类。
-
-    - design → 紫色（bsDesign）—— 标识设计态（蓝图规划，代码未写）
-    - production 或未设置 → 按 scope 着色（运营态）
-    """
-    if maturity == "design":
-        return "jobDesign" if is_job else "dsDesign"
-    # production 或未设置：使用 scope-based 着色
-    if is_job:
-        return "jobProd" if scope == "production" else "jobBacktest"
-    return "dsProd" if scope == "production" else "dsBacktest"
-
-
 def _gen_mermaid(
     datasets: list[dict], jobs: list[dict], edges: list[dict],
     scope_filter: str | None = None, maturity_filter: str | None = None,
 ) -> tuple[str, int, int, int]:
-    """生成 Mermaid flowchart LR 图表。
+    """生成 Mermaid flowchart TD 图表（灰色主题，对齐 06_decision_architecture 视觉风格）。
+
+    视觉对齐决策流程图：%%{init}%% 配置 base 主题 + primaryColor/secondaryColor/tertiaryColor
+    全设 #eaeaea 确保 subgraph 内外节点一致灰色；不使用 classDef，design/production 用
+    [标签] 前缀区分；Dataset 矩形 / Job 圆角矩形靠节点语法区分形状。
 
     :param scope_filter: None=全部, 'production'=仅生产, 'backtest_internal'=仅回测
     :param maturity_filter: None=全部, 'production'=仅运营态, 'design'=仅设计态
     :return: (mmd_text, ds_count, job_count, edge_count) —— 计数均为过滤后实数
     """
-    lines = ["flowchart LR"]
+    # 灰色主题（对齐 06_decision_architecture 的 _MERMAID_INIT，无 classDef）
+    lines = [
+        "%%{init: {'theme': 'base', 'themeVariables': {"
+        "'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
+        "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
+        "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+        "'fontSize': '14px'}}}%%",
+        "flowchart TD",
+    ]
 
     # 过滤（scope + maturity 双维度）
     def _match(item: dict) -> bool:
-        """_match implementation."""
         if scope_filter and item["scope"] != scope_filter:
             return False
         if maturity_filter and item.get("maturity") != maturity_filter:
@@ -225,41 +213,21 @@ def _gen_mermaid(
     ds_ids = {d["id"] for d in ds_list}
     job_ids = {j["id"] for j in job_list}
 
-    # Dataset 节点（矩形）—— [maturity]标签前缀 + 英文+中文并列 + 功能简述
+    # Dataset 节点（矩形）—— label 精简为 2 行：[maturity]英文名 / 中文名
+    # 详细信息（CTR/域/蓝图/功能简述）见同文档 Dataset 清单表
     for d in ds_list:
         tag = _maturity_tag(d.get("maturity"))
-        label = f"{tag}{_en_zh(d['name'], sep='<br/>')}"
-        if d["contract"]:
-            label += f"<br/>CTR: {d['contract']}"
-        if d["domain"]:
-            label += f"<br/>[{_en_zh(d['domain'])}]"
-        # 议题1约束：蓝图仅 production 态显示（design 态代码未写、蓝图未建）
-        mid = d.get("module_id")
-        if mid and d.get("maturity") != "design":
-            label += f"<br/>蓝图: {mid}"
-        # 功能简述（截断到 40 字，对标 decision_index.md 的 功能: 渲染）
-        fmt = d.get("format_summary")
-        if fmt:
-            label += f"<br/>功能: {_truncate(fmt)}"
-        node_class = _node_class(d["scope"], d.get("maturity"), is_job=False)
-        lines.append(f'    DS{d["id"]}["{label}"]:::{node_class}')
+        zh = _zh(d["name"])
+        label = f"{tag}{d['name']}" + (f"<br/>{zh}" if zh else "")
+        lines.append(f'    DS{d["id"]}["{label}"]')
 
-    # Job 节点（圆角矩形）—— [maturity]标签前缀 + 英文+中文并列 + 功能简述
+    # Job 节点（圆角矩形）—— label 精简为 2 行：[maturity]英文名 / 中文名
+    # 详细信息（trigger/蓝图/功能简述）见同文档 Job 清单表
     for j in job_list:
         tag = _maturity_tag(j.get("maturity"))
-        label = f"{tag}{_en_zh(j['name'], sep='<br/>')}"
-        if j["trigger"]:
-            label += f"<br/>trigger: {_en_zh(j['trigger'])}"
-        # 议题1约束：蓝图仅 production 态显示（design 态代码未写、蓝图未建）
-        mid = j.get("module_id")
-        if mid and j.get("maturity") != "design":
-            label += f"<br/>蓝图: {mid}"
-        # 功能简述（截断到 40 字，对标 decision_index.md 的 功能: 渲染）
-        jdesc = j.get("description")
-        if jdesc:
-            label += f"<br/>功能: {_truncate(jdesc)}"
-        node_class = _node_class(j["scope"], j.get("maturity"), is_job=True)
-        lines.append(f'    JOB{j["id"]}("{label}"):::{node_class}')
+        zh = _zh(j["name"])
+        label = f"{tag}{j['name']}" + (f"<br/>{zh}" if zh else "")
+        lines.append(f'    JOB{j["id"]}("{label}")')
 
     # Edges —— 边标签英文+中文并列
     edge_count = 0
@@ -272,18 +240,6 @@ def _gen_mermaid(
             if e["from_id"] in ds_ids and e["to_id"] in job_ids:
                 lines.append(f'    DS{e["from_id"]} -->|{_en_zh("consumed by")}| JOB{e["to_id"]}')
                 edge_count += 1
-
-    # 样式定义（scope-based + design_maturity-based）
-    # 填色用 Material Design 100-level（对齐 decision_index.md，50-level 太浅字体看不清）
-    # 显式 color 设深色字体，确保各主题下可读
-    lines.append("")
-    lines.append("    classDef dsProd fill:#bbdefb,stroke:#1565c0,stroke-width:2px,color:#0d47a1")
-    lines.append("    classDef dsBacktest fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#e65100")
-    lines.append("    classDef jobProd fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20")
-    lines.append("    classDef jobBacktest fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c")
-    # 设计态=紫色（对标 decision_index.md 的 bsPlanned，但用紫色以区分 dataflow 维度）
-    lines.append("    classDef dsDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c")
-    lines.append("    classDef jobDesign fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c")
 
     return "\n".join(lines) + "\n", len(ds_list), len(job_list), edge_count
 
@@ -323,7 +279,8 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("# 数据流图（dataflowgraph）索引")
     lines.append("")
     lines.append(f"> 生成时间: {now}")
-    lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
+    lines.append(f"> 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）")
+    lines.append(f"> 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于四图对齐 ARCH-056，非数据流作业，本文档不展示）")
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
     lines.append(f"> 生成器: `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
@@ -360,22 +317,16 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # 内嵌 Mermaid 图
     lines.append("## Mermaid 图表（自动生成 · 生成器: generate_dataflow_diagram.py）")
     lines.append("")
-    lines.append("> 图表内嵌在本文档中，IDE 可直接渲染显示。")
+    lines.append("> 图表内嵌在本文档中，IDE 可直接渲染显示。视觉风格对齐 06_decision_architecture（灰色主题 + TD 竖向）。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append(">")
-    lines.append("> **设计态优先着色（design_maturity）**：")
-    lines.append("> - **紫色** = 设计态节点（design_maturity=design，蓝图规划，代码未写）")
-    lines.append(">")
-    lines.append("> **运营态按 scope 着色（design_maturity=production）**：")
-    lines.append("> - **蓝色矩形** = 生产 Dataset（dsProd）")
-    lines.append("> - **橙色矩形** = 回测 Dataset（dsBacktest）")
-    lines.append("> - **绿色圆角矩形** = 生产 Job（jobProd）")
-    lines.append("> - **粉色圆角矩形** = 回测 Job（jobBacktest）")
-    lines.append(">")
+    lines.append("> - **灰色矩形** = Dataset（数据集）")
+    lines.append("> - **灰色圆角矩形** = Job（作业）")
+    lines.append("> - 节点标签前缀 `[design]`/`[production]` 标注 design_maturity")
     lines.append("> - `JOB -->|produces / 产出| DS` = Job 产出 Dataset")
     lines.append("> - `DS -->|consumed by / 被消费于| JOB` = Job 消费 Dataset")
-    lines.append("> - 节点标签前缀 `[design]`/`[production]` 标注 design_maturity")
+    lines.append("> - 节点 label 仅含名称（2 行）；详细信息（CTR/域/蓝图/功能简述）见下方 Dataset/Job 清单表")
     lines.append("")
 
     # 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）
