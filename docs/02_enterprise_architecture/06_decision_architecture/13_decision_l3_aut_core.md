@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain aut_core（自主核心）
 
-> 生成时间: 2026-07-30T17:45:57
+> 生成时间: 2026-07-30T19:38:34
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → aut_core
@@ -19,7 +19,7 @@
 > 共 7 层，10 边。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
         LL2A["L2A: 信号层<br/>design/planned"]
@@ -120,7 +120,7 @@ flowchart TD
 > 本域与 4 个外部域直接连接 / This domain directly connects to 4 external domain(s).
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
     subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
         SELF["aut_core（自主核心）"]

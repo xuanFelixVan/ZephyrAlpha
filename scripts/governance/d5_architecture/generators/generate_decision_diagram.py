@@ -94,14 +94,14 @@ _ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 # 用户在 VS Code Markdown Preview 中实测确认：
 #   1. %%{init}%% 主题变量生效——flowchart 节点填充为 #eaeaea 灰色 ✓
 #   2. subgraph 容器改善高度——用户反馈"方案4 subgraph 的高度就很舒服" ✓
-# clusterBkg/clusterBorder 控制 subgraph 背景色，使 subgraph 容器也有灰色背景，
-# 与 application_flows.md 的 sequenceDiagram 灰色生命线带视觉一致。
+#   3. clusterBkg/clusterBorder 会破坏 %%{init}%% 解析（导致全部主题变量失效，
+#      节点回退白色）——实测去掉后颜色恢复灰色。用户确认当前图高度/内容已满意，
+#      只需修复颜色，故仅保留 primaryColor 等 5 个变量，不含 clusterBkg/clusterBorder。
 # _build_status_color() 保留供测试使用；生成逻辑用文字标注 build_status。
 _MERMAID_INIT = (
     "%%{init: {'theme': 'base', 'themeVariables': "
     "{'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
-    "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
-    "'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%"
+    "'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%"
 )
 
 # 功能域英文→中文映射（双语标题/节点标签用）

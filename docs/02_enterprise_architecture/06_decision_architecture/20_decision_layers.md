@@ -1,6 +1,6 @@
 # 决策流图 · 层级详情图
 
-> 生成时间: 2026-07-30T17:45:57
+> 生成时间: 2026-07-30T19:38:34
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 辅助图
@@ -8,7 +8,7 @@
 L0-L6 层级卡片 + 频率/成熟度/状态 + 流向箭头 + 学习闭环反馈边。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
 flowchart LR
     subgraph layers_sg["决策层级（Decision Layers）"]
         LL0["L0 数据接入与预处理层<br/>production/stable"]

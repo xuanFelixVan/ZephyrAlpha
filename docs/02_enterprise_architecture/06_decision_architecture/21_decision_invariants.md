@@ -1,6 +1,6 @@
 # 决策流图 · 不变量图
 
-> 生成时间: 2026-07-30T17:45:57
+> 生成时间: 2026-07-30T19:38:34
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 辅助图
@@ -8,7 +8,7 @@
 6 节点类型 + 5 承重墙不变量 + 合法/非法连接标注。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'clusterBkg': '#eaeaea', 'clusterBorder': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph nt_sg["节点类型（Node Types）"]
         NT_signal["信号节点<br/>Signal"]
