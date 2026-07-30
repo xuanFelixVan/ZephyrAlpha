@@ -90,6 +90,25 @@ _STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
 # mermaid 节点数超限（>300）渲染失败。
 _ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 
+# --- Mermaid classDef（深色主题友好：深色填充 + 白色字 + 语义色边框）---
+# 对齐 application_flows.md 的深色主题视觉风格（深色底/白色字/彩色边框）。
+# 原 浅色填充+黑色字(color:#000) 在深色主题下不可读；改为深色填充+白色字(color:#fff)。
+_BUILD_STATUS_CLASSDEFS: list[str] = [
+    "    classDef bsStable fill:#1b2e1b,stroke:#4caf50,stroke-width:2px,color:#fff",
+    "    classDef bsGenerated fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff",
+    "    classDef bsTesting fill:#2e1d0d,stroke:#ff8a65,stroke-width:2px,color:#fff",
+    "    classDef bsPlanned fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff,stroke-dasharray: 5 5",
+    "    classDef bsDeprecated fill:#2e0d0d,stroke:#e57373,stroke-width:2px,color:#fff,stroke-dasharray: 5 5",
+]
+_INVARIANT_CLASSDEFS: list[str] = [
+    "    classDef nodeType fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff",
+    "    classDef invariant fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff",
+]
+_CROSS_DOMAIN_CLASSDEFS: list[str] = [
+    "    classDef selfDomain fill:#2e2a0d,stroke:#ffd54f,stroke-width:3px,color:#fff",
+    "    classDef extDomain fill:#0d1b2e,stroke:#64b5f6,stroke-width:1px,color:#fff",
+]
+
 # 功能域英文→中文映射（双语标题/节点标签用）
 _DOMAIN_NAME_ZH: dict[str, str] = {
     # L2A 信号层
@@ -362,11 +381,7 @@ def _gen_overview_mmd(
             lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
 
     lines.append("")
-    lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
-    lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000")
-    lines.append("    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000")
-    lines.append("    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
-    lines.append("    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
+    lines.extend(_BUILD_STATUS_CLASSDEFS)
 
     return "\n".join(lines) + "\n", len(tracks), len(layers), len(edges)
 
@@ -430,11 +445,7 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         lines.append(f'    {l6} -.->|feedback| {l5}')
 
     lines.append("")
-    lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
-    lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000")
-    lines.append("    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000")
-    lines.append("    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
-    lines.append("    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
+    lines.extend(_BUILD_STATUS_CLASSDEFS)
 
     return "\n".join(lines) + "\n"
 
@@ -477,8 +488,7 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     lines.append("    INV_DEC_INV_005 -.- NT_signal")
 
     lines.append("")
-    lines.append("    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000")
-    lines.append("    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#000")
+    lines.extend(_INVARIANT_CLASSDEFS)
 
     return "\n".join(lines) + "\n"
 
@@ -622,8 +632,7 @@ def _gen_cross_domain_mermaid(
             seen.add(other)
         lines.append(f'    EXT_{safe} -->|入 {d["count"]}| SELF')
     lines.append("")
-    lines.append("    classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000")
-    lines.append("    classDef extDomain fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,color:#000")
+    lines.extend(_CROSS_DOMAIN_CLASSDEFS)
     return "\n".join(lines) + "\n"
 
 

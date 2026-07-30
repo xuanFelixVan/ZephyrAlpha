@@ -53,11 +53,11 @@ flowchart TD
     N35 -->|informing| N36
     N36 -->|informing| N37
 
-    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
-    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000
-    classDef bsTesting fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,color:#000
-    classDef bsPlanned fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef bsDeprecated fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef bsStable fill:#1b2e1b,stroke:#4caf50,stroke-width:2px,color:#fff
+    classDef bsGenerated fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff
+    classDef bsTesting fill:#2e1d0d,stroke:#ff8a65,stroke-width:2px,color:#fff
+    classDef bsPlanned fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    classDef bsDeprecated fill:#2e0d0d,stroke:#e57373,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
 ## Node 清单
@@ -105,7 +105,7 @@ flowchart LR
     EXT_ex_sor["ex_sor（执行排序）"]:::extDomain
     EXT_ex_sor -->|入 1| SELF
 
-    classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000
-    classDef extDomain fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,color:#000
+    classDef selfDomain fill:#2e2a0d,stroke:#ffd54f,stroke-width:3px,color:#fff
+    classDef extDomain fill:#0d1b2e,stroke:#64b5f6,stroke-width:1px,color:#fff
 ```
 

@@ -33,7 +33,7 @@ flowchart TD
     INV_DEC_INV_003 -.- NT_feedback
     INV_DEC_INV_005 -.- NT_signal
 
-    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000
-    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#000
+    classDef nodeType fill:#0d1b2e,stroke:#64b5f6,stroke-width:2px,color:#fff
+    classDef invariant fill:#2e2a0d,stroke:#ffd54f,stroke-width:2px,color:#fff
 ```
 
