@@ -26,7 +26,7 @@ ttl: permanent
 | 域名称 | 脚本治理 | Domain Name | Script Governance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 382 | Module Count | 382 |
-| 域内依赖 | 23 | Internal Dependencies | 23 |
+| 域内依赖 | 24 | Internal Dependencies | 24 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
 | 跨域出边 | 126 | Cross-domain Outgoing | 126 |
 | 设计态模块 | 1 | Design Modules | 1 |
@@ -1126,7 +1126,7 @@ graph TD
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 381 个，23 条域内依赖）。
+> 仅展示已上线运行的模块（共 381 个，24 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -1516,6 +1516,7 @@ graph TD
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| scripts_governance_meta_backup_runtime_state_py
     scripts_governance_d3_metadata_check_naming_convention_py -->|导入依赖 / import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
+    scripts_governance_d5_architecture_generators_generate_dataflow_diagram_py -->|runtime / runtime| scripts_governance_shared_terminology_loader_py
     scripts_governance_d7_code_any_type_inferrer_py -->|导入依赖 / import_depends| scripts_governance_d7_code_check_any_abuse_py
     scripts_governance_meta_benchmark_test_fixtures_bad_imports_py -->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
     scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py -->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_bad_imports_py
