@@ -54,19 +54,18 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
+# 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
+from _shared.terminology_loader import get_category_map
 from _common import DB_DISPLAY_NAME
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
 OUTPUT_DIR = BASE_DIR / "00_overview_entry"
 
-# 层级中文名映射
-LAYER_NAME_ZH = {
-    "L0_infrastructure": "基础设施层",
-    "L1_foundation": "基础层",
-    "L1_platform": "平台层",
-    "L2_domain": "业务域层",
-}
+# 层级中文名映射（真源：terminology_glossary.yaml 的 layer_name_short 类别）
+# 导航页用短名层（无层号前缀，如"基础设施层"）；长名层（L0 基础设施层）在
+# domain_name_mapping.LAYER_NAME_BILINGUAL，由 generate_domain_doc.py 消费。
+LAYER_NAME_ZH = get_category_map("layer_name_short")
 
 
 def scan_directory(dir_path: Path) -> list[str]:

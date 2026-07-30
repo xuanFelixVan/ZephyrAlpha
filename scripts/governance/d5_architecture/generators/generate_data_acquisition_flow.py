@@ -52,6 +52,8 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_ERROR
+# 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
+from _shared.terminology_loader import get_category_map
 try:
     from _common import DB_DISPLAY_NAME  # noqa: E402
 except ImportError:
@@ -78,18 +80,8 @@ OUTPUT_PATH = (
 # 术语映射
 # ============================================================
 
-# 数据源中文名
-_SOURCE_ZH: dict[str, str] = {
-    "miniqmt": "迅投QMT",
-    "akshare": "AKShare",
-    "ifind": "同花顺iFind",
-    "tickflow": "TickFlow",
-    "tqcenter": "通达信tqcenter",
-    "tdx": "通达信",
-    "baostock": "BaoStock",
-    "tushare": "Tushare",
-    "rss": "RSS",
-}
+# 数据源中文名（真源：terminology_glossary.yaml 的 data_source 类别）
+_SOURCE_ZH: dict[str, str] = get_category_map("data_source")
 
 # 数据源一句话总结
 _SOURCE_SUMMARY: dict[str, str] = {

@@ -63,6 +63,8 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
 )
 from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+# 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
+from _shared.terminology_loader import get_flat_map
 
 # maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
@@ -74,70 +76,23 @@ OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_a
 # ============================================================
 # 中文术语映射（英文 → 中文）
 # ============================================================
-# 新增 Dataset/Job 时，在此添加对应中文翻译。
-# 维护策略：dataflow_graph_registry.yaml 新增节点后，同步在此添加映射。
-# 未映射的英文将原样显示（不附加中文）。
-_ZH_MAP: dict[str, str] = {
-    # --- Dataset entity_name → 中文 ---
-    "market_data.tick": "市场数据.Tick行情",
-    "market_data.ohlc_bar": "市场数据.OHLC K线",
-    "factor.value_factor": "因子.价值因子",
-    "factor.momentum_20d": "因子.20日动量",
-    "signal.composite": "信号.合成信号",
-    "risk.limits": "风险.限额",
-    "order.target": "订单.目标订单",
-    "fill.executed": "成交.已成交",
-    "position.snapshot": "持仓.快照",
-    "backtest.result": "回测.结果",
-    "backtest.tick_event": "回测.Tick事件",
-    "backtest.target_weights": "回测.目标权重",
-    "backtest.fills": "回测.模拟成交",
-    "backtest.nav_series": "回测.净值序列",
-    # --- Job job_name → 中文 ---
-    "ingest.ifind_kline": "采集.iFind行情",
-    "aggregate.ohlc_bar": "聚合.OHLC K线",
-    "compute.value_factor": "计算.价值因子",
-    "compute.momentum_20d": "计算.20日动量",
-    "synthesize.signal": "合成.信号",
-    "check.risk_limits": "检查.风险限额",
-    "generate.order": "生成.订单",
-    "execute.order": "执行.订单",
-    "backtest.replay_ticks": "回测.Tick重放",
-    "backtest.run_event_driven": "回测.事件驱动运行",
-    "backtest.match_fills": "回测.撮合成交",
-    "backtest.update_portfolio": "回测.更新组合",
-    "backtest.calc_metrics": "回测.计算指标",
-    # --- domain_id → 中文 ---
-    "D_MKT_DATA": "市场数据",
-    "D_FACTOR": "因子",
-    "D_SIGNAL": "信号",
-    "D_SIGLEGACY": "信号(legacy)",
-    "D_RISK": "风险",
-    "D_ORDER": "订单",
-    "D_EXECUTION": "执行",
-    "D_EX_CORE": "执行核心",
-    "D_PORTFOLIO": "持仓",
-    "D_PF_CORE": "持仓核心",
-    "D_BACKTEST": "回测",
-    # --- scope ---
-    "production": "生产",
-    "backtest_internal": "回测内部",
-    # --- build_status / design_maturity ---
-    "design": "设计",
-    "generated": "已生成",
-    # --- pit_policy ---
-    "strict": "严格",
-    "loose": "宽松",
-    "none": "无",
-    # --- trigger_type ---
-    "event_driven": "事件驱动",
-    "scheduled": "定时",
-    "manual": "手动",
-    "stream": "流式",
-    # --- edge labels ---
-    "produces": "产出",
-    "consumed by": "被消费于",
-}
+# 真源：terminology_glossary.yaml（SSoT，经 _shared.terminology_loader 加载）。
+# 新增 Dataset/Job 时，在 terminology_glossary.yaml 的对应类别补 en/zh 条目即可，
+# 无需改本生成器代码。未映射的英文将原样显示（不附加中文）。
+# 显式列出 dataflow 消费的类别，合并为扁平 _ZH_MAP（_zh(en) 按 key 查无 category 参数）。
+# edge_type 类别含 produces/consumed by（dataflow 用）+ 6 个 decision 专用边类型
+# （dataflow 不查，无害）；保留共享类别以与 decision 生成器对齐。
+_DATAFLOW_CATEGORIES = [
+    "entity_name",        # Dataset/Job 实体名
+    "domain_id_display",  # D_XXX 图示显示名（含 D_SIGNAL 等遗留域）
+    "scope",              # production / backtest_internal
+    "build_status",       # design / generated
+    "maturity",           # design / production（design_maturity 值）
+    "pit_policy",         # strict / loose / none
+    "trigger_type",      # event_driven / scheduled / manual / stream
+    "edge_type",          # produces / consumed by（+ 6 个 decision 边类型，不查无害）
+]
+_ZH_MAP: dict[str, str] = get_flat_map(_DATAFLOW_CATEGORIES)
 
 
 def _zh(en: str | None) -> str:
