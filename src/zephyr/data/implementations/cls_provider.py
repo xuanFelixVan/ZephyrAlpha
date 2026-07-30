@@ -16,7 +16,7 @@
 # [TTL] permanent
 """财联社电报数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-通过RSSHub公共实例获取财联社电报，继承DataSourceBase。
+通过RSSHub公共实例获取财联社电报，继承IngestProviderBase。
 - 匿名访问，无需登录
 - 财联社直连API需要sign加密，改用RSSHub路由
 - 分钟级财经快讯
@@ -33,8 +33,8 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -56,7 +56,7 @@ _CLS_HEADERS = {
 }
 
 
-class ClsProvider(DataSourceBase):
+class ClsProvider(IngestProviderBase):
     """财联社电报数据源 Provider。
 
     匿名访问、shared 线程安全模型。
@@ -64,7 +64,7 @@ class ClsProvider(DataSourceBase):
     """
 
     source_name: str = "cls"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="cls",
         display_name="财联社电报",
         auth_type="anonymous",

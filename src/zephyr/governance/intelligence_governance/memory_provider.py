@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md
 # [MODULE] zephyr.governance.intelligence_governance.memory_provider
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.intelligence_governance.provider_base
+# [DEPENDENCIES] zephyr.data.provider_base (IngestProviderBase/Meta + FetchPayload/Result)
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-DAT-memory_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---
@@ -24,7 +24,7 @@
 
 """D_DATA — Memory Provider
 
-内存模拟数据源。实现 DataSourceBase (OCP 扩展点)，用于测试和离线环境。
+内存模拟数据源。实现 IngestProviderBase (OCP 扩展点)，用于测试和离线环境。
 生成符合真实统计特征的合成 OHLCV 数据，无需外部网络依赖。
 
 核心职责：
@@ -49,8 +49,8 @@ import numpy as np
 import pandas as pd
 
 from zephyr.data.provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -60,7 +60,7 @@ if TYPE_CHECKING:
 
 _logger = logging.getLogger(__name__)
 
-__meta__ = DataSourceMeta(
+__meta__ = IngestProviderMeta(
     name="memory",
     display_name="Memory 合成数据",
     auth_type="anonymous",
@@ -128,7 +128,7 @@ DEFAULT_SYMBOLS: Final[list] = [
 ]
 
 
-class MemoryProvider(DataSourceBase):
+class MemoryProvider(IngestProviderBase):
     """内存数据源——合成行情数据生成器"""
 
     __meta__ = __meta__
@@ -158,7 +158,7 @@ class MemoryProvider(DataSourceBase):
         self._seed = seed
         self._cache: dict[str, pd.DataFrame] = {}
 
-    # ---- DataSourceBase 抽象方法实现 ----
+    # ---- IngestProviderBase 抽象方法实现 ----
 
     def connect(self) -> None:
         """建立连接。内存数据源无需外部资源，直接标记为已连接。"""

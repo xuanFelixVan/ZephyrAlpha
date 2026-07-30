@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md
 # [MODULE] zephyr.governance.intelligence_governance.provider_base
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-DAT-provider_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---
@@ -36,7 +36,7 @@ D_DATA — Data Source Layer
   - TraceContext 创建（CTR-TRACE-001——本层为链头，生成全局 trace_id）
 
 扩展点：
-  - DataSourceBase（OCP 扩展点：新增数据源只需实现 fetch_historical / subscribe_realtime）
+  - QuoteProviderBase（OCP 扩展点：新增数据源只需实现 fetch_historical / subscribe_realtime）
   - DataQualityGate（数据质量门禁）
 
 跨层契约：
@@ -60,7 +60,7 @@ import pandas as pd
 
 
 @dataclass(frozen=True)
-class DataSourceMeta:
+class QuoteProviderMeta:
     """数据源元数据"""
 
     provider_id: str
@@ -73,29 +73,29 @@ class DataSourceMeta:
     rate_limit_per_min: int = 60
 
 
-class DataSourceBase(abc.ABC):
+class QuoteProviderBase(abc.ABC):
 
     """
     数据源抽象基类（OCP 扩展点）
 
     新增数据源：
-      1. 继承 DataSourceBase
+      1. 继承 QuoteProviderBase
       2. 实现 fetch_historical / subscribe_realtime
-      3. 设置 __meta__ = DataSourceMeta(...) 类属性（__init_subclass__ 自动注册到 _registry）
+      3. 设置 __meta__ = QuoteProviderMeta(...) 类属性（__init_subclass__ 自动注册到 _registry）
 
     禁止直接修改本文件中的抽象接口。
     """
 
     # Phase-B 骨架，插件注册表备将来发现（__init_subclass__ 自动注册，读取侧工厂待 Phase-B 落地）
-    _registry: ClassVar[dict[str, type[DataSourceBase]]] = {}
-    registry: ClassVar[dict[str, type[DataSourceBase]]] = _registry  # public alias（Stage 4 公共化）
+    _registry: ClassVar[dict[str, type[QuoteProviderBase]]] = {}
+    registry: ClassVar[dict[str, type[QuoteProviderBase]]] = _registry  # public alias（Stage 4 公共化）
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         if not inspect.isabstract(cls) and "__meta__" in cls.__dict__:
             meta = cls.__meta__
-            if isinstance(meta, DataSourceMeta):
-                DataSourceBase._registry[meta.provider_id] = cls
+            if isinstance(meta, QuoteProviderMeta):
+                QuoteProviderBase._registry[meta.provider_id] = cls
 
     @abc.abstractmethod
     def fetch_historical(self, symbol: str, start: datetime, end: datetime, interval: str = "1d") -> pd.DataFrame:
@@ -115,9 +115,9 @@ class DataSourceBase(abc.ABC):
     @property
     def is_local(self) -> bool:
         """是否支持本地数据读取（无需联网）"""
-        if hasattr(self, "__meta__") and isinstance(self.__meta__, DataSourceMeta):
+        if hasattr(self, "__meta__") and isinstance(self.__meta__, QuoteProviderMeta):
             return self.__meta__.supports_local
         return False
 
 
-__all__ = ["DataSourceBase", "DataSourceMeta"]
+__all__ = ["QuoteProviderBase", "QuoteProviderMeta"]

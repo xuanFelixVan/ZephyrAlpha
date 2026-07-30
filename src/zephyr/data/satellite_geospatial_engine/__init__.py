@@ -1,5 +1,5 @@
-# [A_module] module_id=MOD-DAT-satellite_geospatial_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
+# [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md
 # [MODULE] zephyr.data.satellite_geospatial_engine
 # [DOMAIN] D_DATA
 # [INVARIANTS] pending_review
@@ -22,7 +22,7 @@
 
 子模块
 ------
-- provider_base.py : 数据源适配基类 (DataSourceBase) + 自动注册 (OCP 扩展点)
+- provider_base.py : 数据源适配基类 (IngestProviderBase) + 自动注册 (OCP 扩展点)
 - quality_gate.py  : 数据质量门禁 (DataQualityGate) — Phase B 骨架已生成
 
 CTR 契约依赖声明（承重墙标记）
@@ -48,7 +48,7 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 
 from __future__ import annotations
 
-from zephyr.data.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.data.provider_base import IngestProviderBase, IngestProviderMeta
 from zephyr.gov_enforcement.rule_enforcement.quality_gate import DataQualityGate
 
-__all__ = ["DataQualityGate", "DataSourceBase", "DataSourceMeta", "provider_base", "quality_gate"]
+__all__ = ["DataQualityGate", "IngestProviderBase", "IngestProviderMeta", "provider_base", "quality_gate"]

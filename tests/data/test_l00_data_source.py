@@ -21,8 +21,8 @@ import pytest
 provider_base = pytest.importorskip("zephyr.l00_data_source.provider_base")
 quality_gate = pytest.importorskip("zephyr.l00_data_source.quality_gate")
 
-DataSourceBase = provider_base.DataSourceBase
-DataSourceMeta = provider_base.DataSourceMeta
+QuoteProviderBase = provider_base.QuoteProviderBase
+QuoteProviderMeta = provider_base.QuoteProviderMeta
 
 DataQualityGate = quality_gate.DataQualityGate
 QualityReport = quality_gate.QualityReport
@@ -30,9 +30,9 @@ QualityFailureReason = quality_gate.QualityFailureReason
 RecoveryHint = quality_gate.RecoveryHint
 
 
-class TestDataSourceMeta:
+class TestQuoteProviderMeta:
     def test_create_frozen(self):
-        meta = DataSourceMeta(
+        meta = QuoteProviderMeta(
             provider_id="test_provider",
             provider_name="Test Provider",
             asset_classes=["equity"],
@@ -45,7 +45,7 @@ class TestDataSourceMeta:
         assert meta.rate_limit_per_min == 60
 
     def test_frozen_immutable(self):
-        meta = DataSourceMeta(
+        meta = QuoteProviderMeta(
             provider_id="p1",
             provider_name="P1",
             asset_classes=["eq"],
@@ -55,7 +55,7 @@ class TestDataSourceMeta:
             meta.provider_id = "changed"
 
     def test_with_realtime(self):
-        meta = DataSourceMeta(
+        meta = QuoteProviderMeta(
             provider_id="rt",
             provider_name="RT",
             asset_classes=["fx"],
@@ -65,14 +65,14 @@ class TestDataSourceMeta:
         assert meta.supports_realtime is True
 
 
-class TestDataSourceBase:
+class TestQuoteProviderBase:
     def test_cannot_instantiate_abc(self):
         with pytest.raises(TypeError):
-            DataSourceBase()
+            QuoteProviderBase()
 
     def test_concrete_subclass(self):
-        class MockDataSource(DataSourceBase):
-            __meta__ = DataSourceMeta(
+        class MockDataSource(QuoteProviderBase):
+            __meta__ = QuoteProviderMeta(
                 provider_id="mock",
                 provider_name="Mock",
                 asset_classes=["equity"],
@@ -94,8 +94,8 @@ class TestDataSourceBase:
         assert "close" in df.columns
 
     def test_validate_schema_valid(self):
-        class MockDataSource(DataSourceBase):
-            __meta__ = DataSourceMeta(
+        class MockDataSource(QuoteProviderBase):
+            __meta__ = QuoteProviderMeta(
                 provider_id="mock2",
                 provider_name="Mock2",
                 asset_classes=["eq"],
@@ -117,8 +117,8 @@ class TestDataSourceBase:
         assert ds.validate_schema(valid_df) is True
 
     def test_validate_schema_missing_columns(self):
-        class MockDataSource(DataSourceBase):
-            __meta__ = DataSourceMeta(
+        class MockDataSource(QuoteProviderBase):
+            __meta__ = QuoteProviderMeta(
                 provider_id="mock3",
                 provider_name="Mock3",
                 asset_classes=["eq"],
@@ -140,8 +140,8 @@ class TestDataSourceBase:
         assert ds.validate_schema(bad_df) is False
 
     def test_is_local_property(self):
-        class LocalSource(DataSourceBase):
-            __meta__ = DataSourceMeta(
+        class LocalSource(QuoteProviderBase):
+            __meta__ = QuoteProviderMeta(
                 provider_id="local_src",
                 provider_name="Local",
                 asset_classes=["eq"],
@@ -161,8 +161,8 @@ class TestDataSourceBase:
         assert ds.is_local is True
 
     def test_is_local_default_false(self):
-        class RemoteSource(DataSourceBase):
-            __meta__ = DataSourceMeta(
+        class RemoteSource(QuoteProviderBase):
+            __meta__ = QuoteProviderMeta(
                 provider_id="remote_src",
                 provider_name="Remote",
                 asset_classes=["eq"],
@@ -181,7 +181,7 @@ class TestDataSourceBase:
         assert ds.is_local is False
 
     def test_is_local_no_meta(self):
-        class NoMetaSource(DataSourceBase):
+        class NoMetaSource(QuoteProviderBase):
             def fetch_historical(self, symbol, start, end, interval="1d"):
                 import pandas as pd
 

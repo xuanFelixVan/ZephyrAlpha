@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md
 # [MODULE] zephyr.governance.data_governance.akshare_provider
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.provider_base
@@ -24,7 +24,7 @@
 
 """D_DATA — Akshare Data Provider
 
-Akshare 数据源适配器。实现 DataSourceBase (OCP 扩展点)，接入 Akshare 金融数据库。
+Akshare 数据源适配器。实现 QuoteProviderBase (OCP 扩展点)，接入 Akshare 金融数据库。
 
 核心职责：
   - 获取 A 股日线/分钟线历史数据
@@ -51,11 +51,11 @@ from datetime import datetime
 
 import pandas as pd
 
-from zephyr.governance.intelligence_governance.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.governance.intelligence_governance.provider_base import QuoteProviderBase, QuoteProviderMeta
 
 _logger = logging.getLogger(__name__)
 
-__meta__ = DataSourceMeta(
+__meta__ = QuoteProviderMeta(
     provider_id="akshare",
     provider_name="Akshare 金融数据",
     asset_classes=["equity", "index"],
@@ -66,7 +66,7 @@ __meta__ = DataSourceMeta(
 )
 
 
-class AkshareQuoteProvider(DataSourceBase):
+class AkshareQuoteProvider(QuoteProviderBase):
     """Akshare 数据源——A 股历史数据接入"""
 
     __meta__ = __meta__

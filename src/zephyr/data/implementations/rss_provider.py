@@ -16,7 +16,7 @@
 # [TTL] permanent
 """RSS 财经新闻数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-封装 feedparser + requests，继承 DataSourceBase。
+封装 feedparser + requests，继承 IngestProviderBase。
 - 匿名访问，无需登录
 - 偶发 SSL 错误需重试（policy.retry_on=["SSLError", ...]）
 - 须尊重 robots.txt（policy.respect_robots_txt=True 时先查 robots.txt）
@@ -37,8 +37,8 @@ from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -83,7 +83,7 @@ _DEFAULT_RSS_FEEDS = [
 ]
 
 
-class RSSProvider(DataSourceBase):
+class RSSProvider(IngestProviderBase):
     """RSS 财经新闻数据源 Provider。
 
     匿名访问、shared 线程安全模型。
@@ -91,7 +91,7 @@ class RSSProvider(DataSourceBase):
     """
 
     source_name: str = "rss"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="rss",
         display_name="RSS 财经新闻",
         auth_type="anonymous",

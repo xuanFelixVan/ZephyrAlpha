@@ -9941,3 +9941,59 @@ entries:
   status: decided
   created: '2026-07-30'
   last_updated: '2026-07-30'
+# --- #ARCH-PROVIDER-BASENAME-001: 基类 DataSourceBase/DataSourceMeta 两域同名消歧治本（2026-07-31）---
+# 关联：#ARCH-PROVIDER-NEARNAME-001 已治本子类近名，本议题治本基类同名（该议题明列"属独立议题"）
+- issue_id: '#ARCH-PROVIDER-BASENAME-001'
+  title: '两域同名基类消歧——DataSourceBase/DataSourceMeta → IngestProviderBase/QuoteProviderBase 命名治本'
+  category: refactor
+  severity: P2中
+  adjudication: |-
+    2026-07-31 纯技术重构（命名消歧，无价值判断），承接 #ARCH-PROVIDER-NEARNAME-001 的基类独立议题。
+
+    病根（第一性原理实证）：
+    项目存在两对同名基类，分属 D_DATA 与 D_GOVERNANCE 两域，类名完全相同但接口契约截然不同——
+    100% AI 开发场景下 AI 凭类名推断接口必错：
+    1. DataSourceBase 对：
+       - data 域（MOD-L00-004）: connect/health_check/fetch(payload,policy)->Iterator[FetchResult]/disconnect
+         ——ETL 入库管线基类，11 个子类（*IngestProvider），62 处引用
+       - governance 域（MOD-L00-001）: fetch_historical(symbol,start,end,interval)->DataFrame/subscribe_realtime
+         ——行情读取基类，3 个子类（*QuoteProvider），29 处引用
+    2. DataSourceMeta 对：
+       - data 域: name/display_name/auth_type/requires_process/thread_safety/capabilities/known_issues
+       - governance 域: provider_id/provider_name/asset_classes/markets/supports_realtime/supports_historical
+         字段集完全不同，AI 凭类名访问字段必错。
+
+    两文件均含 class-name-alias 注释承认"同名不同义，过渡期共存（阶段4退役旧版）"，但注释不解决问题——
+    AI 读注释仍需二次判断哪个 DataSourceBase 是"本文件版"，认知负担=幻觉温床。
+
+    治本方案（语义后缀消歧，对齐 #ARCH-PROVIDER-NEARNAME-001 已建立的子类命名约定）：
+    子类已用 Ingest/Quote 后缀消歧（MiniQmtIngestProvider / MiniQmtQuoteProvider），基类应同步对齐：
+    - data 域 DataSourceBase → IngestProviderBase（所有 *IngestProvider 的基类）
+    - governance 域 DataSourceBase → QuoteProviderBase（所有 *QuoteProvider 的基类）
+    - data 域 DataSourceMeta → IngestProviderMeta
+    - governance 域 DataSourceMeta → QuoteProviderMeta
+    后缀直接暴露架构角色（Ingest=入库ETL管线；Quote=行情读取接口），AI 凭类名即可推断接口，零幻觉空间。
+    纯重命名无行为变更，不保留别名（别名=延续歧义，违背治本原则）。
+
+    同时修复发现的文件头部元数据 bug（实证）：
+    1. [A_module] module_id 互换：data/provider_base.py 误标 MOD-GOV-provider_base（应 MOD-L00-004），
+       governance/provider_base.py 误标 MOD-DAT-provider_base（应 MOD-L00-001）——典型复制粘贴错误
+    2. governance/provider_base.py 的 [BLUEPRINT] 路径 docs/03_modules/_domain-data/datasource-core/blueprint.md
+       不存在（Test-Path=False），正确路径 docs/03_modules/_domain_data/blueprint.md
+    3. 两处 [A_module] module_id 值（MOD-GOV-provider_base / MOD-DAT-provider_base）不符合裁定#208三轨制
+       （无 -NNN 后缀），修正为 [BLUEPRINT] 一致的 MOD-L00-004 / MOD-L00-001
+
+    非 risk acceptance/wontfix/边界裁定——纯技术重构，AI 直接标 decided。
+  impact:
+    - 'src/zephyr/data/provider_base.py（DataSourceBase→IngestProviderBase, DataSourceMeta→IngestProviderMeta, [A_module]修正）'
+    - 'src/zephyr/governance/intelligence_governance/provider_base.py（DataSourceBase→QuoteProviderBase, DataSourceMeta→QuoteProviderMeta, [A_module]+[BLUEPRINT]路径修正）'
+    - 'src/zephyr/data/__init__.py + satellite_geospatial_engine/__init__.py（导出名同步）'
+    - 'src/zephyr/data/scheduler.py + capability_validator.py（类型标注同步）'
+    - 'src/zephyr/data/implementations/*.py（11个Ingest Provider子类继承名同步）'
+    - 'src/zephyr/governance/data_governance/{akshare,miniqmt}_provider.py + intelligence_governance/memory_provider.py（3个Quote Provider子类继承名同步）'
+    - 'tests/zephyr/data/test_{provider_base,scheduler,capability_validator}.py + tests/governance/integration/test_provider_base_contract.py + tests/data/test_l00_data_source.py（测试同步）'
+  fix_phase: |-
+    待落地（本次执行）。
+  status: decided
+  created: '2026-07-31'
+  last_updated: '2026-07-31'

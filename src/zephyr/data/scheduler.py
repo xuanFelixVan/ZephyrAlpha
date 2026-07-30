@@ -42,7 +42,7 @@ from pathlib import Path
 from socketserver import ThreadingMixIn
 from typing import Callable, Any
 
-from zephyr.data.provider_base import DataSourceBase, FetchPayload, FetchResult
+from zephyr.data.provider_base import IngestProviderBase, FetchPayload, FetchResult
 from zephyr.data.policy_registry import PolicyRegistry, get_registry
 from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.task_queue import TaskQueue, SUCCESS, FAILED, PENDING, RUNNING
@@ -321,7 +321,7 @@ class IntegratorScheduler:
         self._alerter = Alerter()
         self._task_queue = TaskQueue()
         self._metrics: IntegratorMetrics = get_metrics()
-        self._providers: dict[str, DataSourceBase] = {}
+        self._providers: dict[str, IngestProviderBase] = {}
         self._provider_lock = threading.Lock()
         # APScheduler 实例（懒初始化）
         self._scheduler = None
@@ -900,7 +900,7 @@ class IntegratorScheduler:
 
     # ============== Provider 管理 ==============
 
-    def _get_provider(self, source: str) -> DataSourceBase | None:
+    def _get_provider(self, source: str) -> IngestProviderBase | None:
         """获取/创建 Provider 实例（懒初始化，线程安全）。"""
         with self._provider_lock:
             if source in self._providers:
@@ -925,7 +925,7 @@ class IntegratorScheduler:
                 )
                 return None
 
-    def create_provider(self, source: str) -> DataSourceBase | None:
+    def create_provider(self, source: str) -> IngestProviderBase | None:
         """创建 Provider 实例（Stage 4 公共化，primary）。"""
         try:
             if source == "ifind":
@@ -968,7 +968,7 @@ class IntegratorScheduler:
             log.error("创建 Provider %s 异常: %s", source, e)
             return None
 
-    def _create_provider(self, source: str) -> DataSourceBase | None:
+    def _create_provider(self, source: str) -> IngestProviderBase | None:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.create_provider(source)
 

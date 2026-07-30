@@ -8,16 +8,16 @@
 # [TTL] task_bound
 from __future__ import annotations
 
-"""L00 provider_base — DataSourceBase 最小可实例化桩与注册。"""
+"""L00 provider_base — QuoteProviderBase 最小可实例化桩与注册。"""
 
 
 from datetime import datetime
 
 import pandas as pd
 
-from zephyr.governance.intelligence_governance.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.governance.intelligence_governance.provider_base import QuoteProviderBase, QuoteProviderMeta
 
-_META = DataSourceMeta(
+_META = QuoteProviderMeta(
     provider_id="unit-stub-provider",
     provider_name="Unit Stub",
     asset_classes=["equity"],
@@ -25,7 +25,7 @@ _META = DataSourceMeta(
 )
 
 
-class _UnitStubProvider(DataSourceBase):
+class _UnitStubProvider(QuoteProviderBase):
     __meta__ = _META
 
     def fetch_historical(self, symbol: str, start: datetime, end: datetime, interval: str = "1d") -> pd.DataFrame:
@@ -37,7 +37,7 @@ class _UnitStubProvider(DataSourceBase):
 
 
 def test_stub_provider_registers_in_registry() -> None:
-    assert DataSourceBase.registry.get("unit-stub-provider") is _UnitStubProvider
+    assert QuoteProviderBase.registry.get("unit-stub-provider") is _UnitStubProvider
 
 
 def test_stub_validate_schema_empty_frame_columns_only_ok() -> None:

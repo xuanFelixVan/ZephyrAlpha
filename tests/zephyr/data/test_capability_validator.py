@@ -37,7 +37,7 @@ from src.zephyr.data.capability_validator import (
 )
 from src.zephyr.data.provider_base import (
     CapabilityContract,
-    DataSourceMeta,
+    IngestProviderMeta,
     _normalize_capabilities,
 )
 
@@ -79,8 +79,8 @@ class TestNormalizeCapabilities:
             _normalize_capabilities([123])
 
     def test_data_source_meta_post_init_normalizes(self):
-        """DataSourceMeta.__post_init__ 自动归一化 capabilities。"""
-        meta = DataSourceMeta(
+        """IngestProviderMeta.__post_init__ 自动归一化 capabilities。"""
+        meta = IngestProviderMeta(
             name="test", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["kline_daily", CapabilityContract("money_flow", supports_symbols_null=True)],
@@ -93,7 +93,7 @@ class TestNormalizeCapabilities:
 
     def test_get_capability_contract_returns_none_if_not_found(self):
         """get_capability_contract 不存在时返回 None。"""
-        meta = DataSourceMeta(
+        meta = IngestProviderMeta(
             name="test", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["kline_daily"],
@@ -103,7 +103,7 @@ class TestNormalizeCapabilities:
 
     def test_capabilities_as_strings_backward_compat(self):
         """capabilities_as_strings 返回字符串列表（向后兼容）。"""
-        meta = DataSourceMeta(
+        meta = IngestProviderMeta(
             name="test", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["kline_daily", CapabilityContract("money_flow", supports_symbols_null=True)],
@@ -113,9 +113,9 @@ class TestNormalizeCapabilities:
 
 # ============== validate_task_capability_contracts 三条规则 ==============
 
-def _make_meta(caps: list) -> DataSourceMeta:
-    """构造测试用 DataSourceMeta。"""
-    return DataSourceMeta(
+def _make_meta(caps: list) -> IngestProviderMeta:
+    """构造测试用 IngestProviderMeta。"""
+    return IngestProviderMeta(
         name="test", display_name="t", auth_type="anonymous",
         requires_process=False, thread_safety="shared", rate_limit_default=0,
         capabilities=caps,
@@ -275,7 +275,7 @@ _AKSHARE_STYLE = textwrap.dedent('''
 
 
     class AkshareIngestProvider:
-        meta: DataSourceMeta = DataSourceMeta(
+        meta: IngestProviderMeta = IngestProviderMeta(
             name="akshare", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["kline_daily", "money_flow", "stock_list"],
@@ -300,7 +300,7 @@ _MINIQMT_STYLE = textwrap.dedent('''
 
 
     class MiniQmtIngestProvider:
-        meta: DataSourceMeta = DataSourceMeta(
+        meta: IngestProviderMeta = IngestProviderMeta(
             name="miniqmt", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["kline_daily", "kline_1min", "adj_factor", "index_constituent"],
@@ -310,7 +310,7 @@ _MINIQMT_STYLE = textwrap.dedent('''
 _IFIND_STYLE = textwrap.dedent('''
     """ifind 风格：if-elif 链 (capability == "xxx")。"""
     class IFindProvider:
-        meta: DataSourceMeta = DataSourceMeta(
+        meta: IngestProviderMeta = IngestProviderMeta(
             name="ifind", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["daily_valuation", "kline_daily", "money_flow"],
@@ -332,7 +332,7 @@ _INCONSISTENT_STYLE = textwrap.dedent('''
 
 
     class BadProvider:
-        meta: DataSourceMeta = DataSourceMeta(
+        meta: IngestProviderMeta = IngestProviderMeta(
             name="bad", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["money_flow", "not_in_route"],
@@ -348,7 +348,7 @@ _INSTANCE_META_STYLE = textwrap.dedent('''
 
     class InstanceMetaProvider:
         def __init__(self):
-            self.meta = DataSourceMeta(
+            self.meta = IngestProviderMeta(
                 name="inst", display_name="t", auth_type="anonymous",
                 requires_process=False, thread_safety="shared", rate_limit_default=0,
                 capabilities=["kline_daily"],
@@ -406,7 +406,7 @@ class TestExtractMetaCapabilities:
     """extract_meta_capabilities / _meta_caps_from_tree meta 能力提取。"""
 
     def test_meta_caps_from_annassign(self):
-        """类属性 meta: DataSourceMeta = ... (AnnAssign) 检测。"""
+        """类属性 meta: IngestProviderMeta = ... (AnnAssign) 检测。"""
         import ast
         tree = ast.parse(_MINIQMT_STYLE)
         caps = _meta_caps_from_tree(tree)
@@ -422,10 +422,10 @@ class TestExtractMetaCapabilities:
     def test_meta_caps_capability_contract_first_arg(self):
         """CapabilityContract("xxx", ...) 第一参数提取。"""
         content = textwrap.dedent('''
-            from src.zephyr.data.provider_base import DataSourceMeta, CapabilityContract
+            from src.zephyr.data.provider_base import IngestProviderMeta, CapabilityContract
 
             class P:
-                meta: DataSourceMeta = DataSourceMeta(
+                meta: IngestProviderMeta = IngestProviderMeta(
                     name="p", display_name="t", auth_type="anonymous",
                     requires_process=False, thread_safety="shared", rate_limit_default=0,
                     capabilities=[

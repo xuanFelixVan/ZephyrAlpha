@@ -16,7 +16,7 @@
 # [TTL] permanent
 """东方财富新闻数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-HTTP直连东方财富7x24快讯API，继承DataSourceBase。
+HTTP直连东方财富7x24快讯API，继承IngestProviderBase。
 - 匿名访问，无需登录
 - 7x24小时财经快讯
 - 当前能力：news_data（东方财富快讯）
@@ -32,8 +32,8 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -54,7 +54,7 @@ _EM_HEADERS = {
 }
 
 
-class EastmoneyNewsProvider(DataSourceBase):
+class EastmoneyNewsProvider(IngestProviderBase):
     """东方财富新闻数据源 Provider。
 
     匿名访问、shared 线程安全模型。
@@ -62,7 +62,7 @@ class EastmoneyNewsProvider(DataSourceBase):
     """
 
     source_name: str = "eastmoney_news"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="eastmoney_news",
         display_name="东方财富新闻",
         auth_type="anonymous",

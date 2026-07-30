@@ -16,7 +16,7 @@
 # [TTL] permanent
 """Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-封装 baostock SDK，继承 DataSourceBase。
+封装 baostock SDK，继承 IngestProviderBase。
 - 匿名访问（bs.login() 无需 token）
 - **thread_local 登录模型**：每线程独立 bs.login()，结束时 bs.logout()
 - 数据滞后约 1 周（last_key < today-7 时标记 stale）
@@ -36,8 +36,8 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
     CapabilityContract,
@@ -53,7 +53,7 @@ _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 
 
-class BaostockProvider(DataSourceBase):
+class BaostockProvider(IngestProviderBase):
     """Baostock 免费数据源 Provider。
 
     匿名访问、thread_local 登录模型。每线程独立 bs.login() 会话。
@@ -61,7 +61,7 @@ class BaostockProvider(DataSourceBase):
     """
 
     source_name: str = "baostock"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="baostock",
         display_name="BaoStock 免费",
         auth_type="anonymous",

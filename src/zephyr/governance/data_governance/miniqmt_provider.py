@@ -44,27 +44,34 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any, Optional
+from zoneinfo import ZoneInfo
 
 from zephyr.shared.utils.time_utils import now_utc
 
 import pandas as pd
 
 from zephyr.governance.intelligence_governance.provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    QuoteProviderBase,
+    QuoteProviderMeta,
 )
 
 _logger = logging.getLogger(__name__)
 
-# DataSourceMeta 蓝图额外字段（DataSourceMeta 不支持，用类属性补充）
+# xtdata 返回的 tick 时间戳为 UTC 毫秒（见 smoke_test_tick_data 实证）。
+# 下游 TickReplayEngine.time_window 按 "09:30" 等北京时间字符串过滤，必须在此治本转换为
+# naive 北京时间，否则 UTC 01:15 会被 "09:30" 窗口全部滤掉。实时订阅回调同理需北京时间。
+_UTC = timezone.utc
+_SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
+
+# QuoteProviderMeta 蓝图额外字段（QuoteProviderMeta 不支持，用类属性补充）
 # category_id: 品类标识 Level-1 Tick(含5档盘口)
 # calc_mode: 回测调度模式 replay=Tick回放
 # enabled: 已开通
 
-__meta__ = DataSourceMeta(
+__meta__ = QuoteProviderMeta(
     provider_id="miniqmt",
     provider_name="MiniQMT 实盘行情",
     asset_classes=["stock", "etf", "convertible_bond", "futures", "options"],
@@ -86,7 +93,7 @@ class MiniQmtProviderError(Exception):
             self.error_code = error_code
 
 
-class MiniQmtQuoteProvider(DataSourceBase):
+class MiniQmtQuoteProvider(QuoteProviderBase):
     """MiniQMT 实盘行情 Provider——对接 xtdata，提供 Tick + 5档盘口
 
     对接国金证券 MiniQMT 终端（Level-1 五档盘口），支持:
@@ -113,7 +120,7 @@ class MiniQmtQuoteProvider(DataSourceBase):
 
     __meta__ = __meta__
 
-    # 蓝图额外元数据（DataSourceMeta 不支持的字段）
+    # 蓝图额外元数据（QuoteProviderMeta 不支持的字段）
     category_id: str = "market_tick_l1"
     calc_mode: str = "replay"
     enabled: bool = True
@@ -401,9 +408,13 @@ class MiniQmtQuoteProvider(DataSourceBase):
                     )
                 df = df.drop(columns=[prefix])
 
-        # timestamp 毫秒 -> datetime
+        # timestamp 毫秒(UTC) -> naive 北京时间
         if "timestamp" in df.columns:
-            df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
+            df["timestamp"] = (
+                pd.to_datetime(df["timestamp"], unit="ms", utc=True)
+                .dt.tz_convert(_SHANGHAI_TZ)
+                .dt.tz_localize(None)
+            )
 
         df["symbol"] = symbol
         return df
@@ -412,8 +423,15 @@ class MiniQmtQuoteProvider(DataSourceBase):
         """标准化单个 Tick（实时回调用）"""
         row: dict[str, Any] = {"symbol": symbol}
 
-        # 基础字段
-        row["timestamp"] = datetime.fromtimestamp(tick.get("time", 0) / 1000)
+        # xtdata time 为 UTC 毫秒，统一转 naive 北京时间（与 _normalize_tick_data 一致，
+        # 修复实时回调与历史回放 timestamp 语义不一致的隐藏 bug：原 fromtimestamp 无 tz
+        # 参数返回系统本地时间，与批量路径的 naive UTC 差 8 小时）
+        _ts = tick.get("time", 0) / 1000
+        row["timestamp"] = (
+            datetime.fromtimestamp(_ts, tz=_UTC)
+            .astimezone(_SHANGHAI_TZ)
+            .replace(tzinfo=None)
+        )
         row["last_price"] = Decimal(str(tick.get("lastPrice", 0)))
         row["open"] = Decimal(str(tick.get("open", 0)))
         row["high"] = Decimal(str(tick.get("high", 0)))

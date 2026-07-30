@@ -16,7 +16,7 @@
 # [TTL] permanent
 """Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-封装 tushare SDK，继承 DataSourceBase。
+封装 tushare SDK，继承 IngestProviderBase。
 - token 认证（环境变量 TUSHARE_TOKEN）
 - 历史数据截止 2024-08（新闻数据）
 - 积分不足时 API 调用受限（TPMaxQueryLimitError 触发重试）
@@ -34,8 +34,8 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -50,7 +50,7 @@ log = logging.getLogger(__name__)
 _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 
-class TushareProvider(DataSourceBase):
+class TushareProvider(IngestProviderBase):
     """Tushare 数据源 Provider。
 
     token 认证、shared 线程安全模型。
@@ -58,7 +58,7 @@ class TushareProvider(DataSourceBase):
     """
 
     source_name: str = "tushare"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="tushare",
         display_name="Tushare Pro",
         auth_type="token",

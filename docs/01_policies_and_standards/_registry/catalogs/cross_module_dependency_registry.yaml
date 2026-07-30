@@ -1249,7 +1249,7 @@ dependencies:
   target_name: datasource-core
   type: contract
   strength: hard
-  description: '数据源集成器接管 datasource-core 的 Provider 抽象部分（DataSourceBase/DataSourceMeta/per-source 实现）。MOD-L00-001 §0.1/§3.1/§4/§16.6 的 Provider 相关章节已移交 MOD-L00-004，仅保留 DataQualityGate 与 CTR-001/002/003 输出契约。'
+  description: '数据源集成器接管 datasource-core 的 Provider 抽象部分（IngestProviderBase/IngestProviderMeta/per-source 实现）。MOD-L00-001 §0.1/§3.1/§4/§16.6 的 Provider 相关章节已移交 MOD-L00-004，仅保留 DataQualityGate 与 CTR-001/002/003 输出契约。'
   contract_anchor: data_source_integrator_blueprint.md §0.1
   direction: upstream
   valid_since: '2026-07-06'

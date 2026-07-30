@@ -12,15 +12,15 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] _call_with_policy 超时/异常->RuntimeError；retry_exhausted->RuntimeError
 # [TESTS] tests/zephyr/data/test_provider_base.py
-# [A_module] module_id=MOD-GOV-provider_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """数据源 Provider 抽象基类（MOD-L00-004 §4）。
 
 定义所有数据源封装的统一接口：
-- DataSourceBase：抽象基类，子类实现 connect/health_check/fetch/disconnect
+- IngestProviderBase：抽象基类，子类实现 connect/health_check/fetch/disconnect
 - FetchPayload：下载请求（表/标的/起止日期/增量标记）
 - FetchResult：下载结果（列顺序/数据行/断点键/统计）
-- DataSourceMeta：数据源元数据（登录方式/线程安全/已知问题）
+- IngestProviderMeta：数据源元数据（登录方式/线程安全/已知问题）
 
 策略应用（限流/重试）由基类的 _call_with_policy 提供，子类直接调用。
 SourcePolicy 定义在 policy_registry.py，本模块用 TYPE_CHECKING 前向引用避免循环依赖。
@@ -95,7 +95,6 @@ class FetchResult:
             self.rows_fetched = len(self.rows)
 
 
-# class-name-alias: MOD-L00-004 数据源 Provider 元数据，与 governance/provider_base.py 的 LLM Provider 同名不同义，过渡期共存（阶段4退役旧版）
 @dataclass
 class CapabilityContract:
     """单个 capability 的行为契约（裁定 #ARCH-CH-022）。
@@ -137,7 +136,7 @@ def _normalize_capabilities(items: list) -> list[CapabilityContract]:
 
 
 @dataclass
-class DataSourceMeta:
+class IngestProviderMeta:
     """数据源元数据（静态描述）。
 
     Attributes:
@@ -183,8 +182,7 @@ class DataSourceMeta:
 
 # ============== 抽象基类 ==============
 
-# class-name-alias: MOD-L00-004 数据源 Provider 抽象基类，与 governance/provider_base.py 的 LLM Provider 同名不同义，过渡期共存（阶段4退役旧版）
-class DataSourceBase(abc.ABC):
+class IngestProviderBase(abc.ABC):
     """数据源 Provider 抽象基类。
 
     子类需实现：
@@ -200,7 +198,7 @@ class DataSourceBase(abc.ABC):
     """
 
     source_name: str = "base"
-    meta: DataSourceMeta = None
+    meta: IngestProviderMeta = None
 
     def __init__(self):
         self._log = logging.getLogger(f"integrator.{self.source_name}")
@@ -340,7 +338,7 @@ class DataSourceBase(abc.ABC):
     @staticmethod
     def _calc_backoff(mode: str, initial: float, attempt: int) -> float:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return DataSourceBase.calc_backoff(mode, initial, attempt)
+        return IngestProviderBase.calc_backoff(mode, initial, attempt)
 
     # ---- 上下文管理（支持 with 语法） ----
 

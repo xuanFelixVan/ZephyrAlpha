@@ -45,7 +45,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from zephyr.data.provider_base import DataSourceMeta
+from zephyr.data.provider_base import IngestProviderMeta
 
 log = logging.getLogger(__name__)
 
@@ -69,9 +69,9 @@ class Violation:
 
 
 def _get_meta_for_task(
-    task: dict, metas: dict[str, DataSourceMeta]
-) -> DataSourceMeta | None:
-    """根据 task.source 获取 Provider 的 DataSourceMeta。"""
+    task: dict, metas: dict[str, IngestProviderMeta]
+) -> IngestProviderMeta | None:
+    """根据 task.source 获取 Provider 的 IngestProviderMeta。"""
     source = task.get("source")
     if not source:
         return None
@@ -79,7 +79,7 @@ def _get_meta_for_task(
 
 
 def _check_capability_exists(
-    task: dict, meta: DataSourceMeta, violations: list[Violation],
+    task: dict, meta: IngestProviderMeta, violations: list[Violation],
 ) -> bool:
     """规则1: task.capability 必须在 provider.meta 中（ERROR 阻断）。"""
     cap_id = task.get("capability")
@@ -100,7 +100,7 @@ def _check_capability_exists(
 
 
 def _check_symbols_null(
-    task: dict, meta: DataSourceMeta, violations: list[Violation],
+    task: dict, meta: IngestProviderMeta, violations: list[Violation],
 ) -> None:
     """规则2: task.symbols=null 时，capability 应声明 supports_symbols_null=True（WARN）。"""
     symbols = task.get("symbols")
@@ -126,7 +126,7 @@ def _check_symbols_null(
 
 
 def _check_incremental(
-    task: dict, meta: DataSourceMeta, violations: list[Violation],
+    task: dict, meta: IngestProviderMeta, violations: list[Violation],
 ) -> None:
     """规则3: task.incremental=true 时，capability 应声明 supports_incremental=True（WARN）。"""
     extra = task.get("extra") or {}
@@ -152,13 +152,13 @@ def _check_incremental(
 
 def validate_task_capability_contracts(
     tasks: list[dict],
-    metas: dict[str, DataSourceMeta],
+    metas: dict[str, IngestProviderMeta],
 ) -> list[Violation]:
     """校验 tasks.yaml 的 task 声明与 provider 行为契约一致性。
 
     Args:
         tasks: tasks.yaml 加载的任务列表
-        metas: {source_name: DataSourceMeta} 字典（通过 Provider 类的 meta 类属性获取，无需实例化）
+        metas: {source_name: IngestProviderMeta} 字典（通过 Provider 类的 meta 类属性获取，无需实例化）
 
     Returns:
         Violation 列表。空列表=全部通过。
@@ -306,7 +306,7 @@ def extract_route_capabilities(file_path: Path) -> set[str] | None:
 
 
 def _extract_caps_from_meta_call(call: ast.Call, out: set[str]) -> None:
-    """从 DataSourceMeta(...) 调用的 capabilities keyword 提取 capability_id。"""
+    """从 IngestProviderMeta(...) 调用的 capabilities keyword 提取 capability_id。"""
     for kw in call.keywords:
         if kw.arg != "capabilities" or not isinstance(kw.value, ast.List):
             continue
@@ -319,15 +319,15 @@ def _extract_caps_from_meta_call(call: ast.Call, out: set[str]) -> None:
 
 
 def _meta_caps_from_tree(tree: ast.Module) -> set[str]:
-    """从已解析的 AST 提取 DataSourceMeta(capabilities=[...]) 的 capability_id 集合（pure AST）。
+    """从已解析的 AST 提取 IngestProviderMeta(capabilities=[...]) 的 capability_id 集合（pure AST）。
 
-    检测 ``meta = DataSourceMeta(..., capabilities=[...])`` 中的：
+    检测 ``meta = IngestProviderMeta(..., capabilities=[...])`` 中的：
     - ``"xxx"`` 字符串字面量
     - ``CapabilityContract("xxx", ...)`` 构造调用的第一个参数
 
-    同时检测 AnnAssign（类属性 ``meta: DataSourceMeta = DataSourceMeta(...)``）、
-    Assign with Name target（类属性 ``meta = DataSourceMeta(...)`` 无注解）、
-    和 Assign with Attribute target（实例级 ``self.meta = DataSourceMeta(...)``）。
+    同时检测 AnnAssign（类属性 ``meta: IngestProviderMeta = IngestProviderMeta(...)``）、
+    Assign with Name target（类属性 ``meta = IngestProviderMeta(...)`` 无注解）、
+    和 Assign with Attribute target（实例级 ``self.meta = IngestProviderMeta(...)``）。
     """
     meta_caps: set[str] = set()
     for node in ast.walk(tree):
@@ -350,7 +350,7 @@ def _meta_caps_from_tree(tree: ast.Module) -> set[str]:
 
 
 def extract_meta_capabilities(file_path: Path) -> set[str] | None:
-    """AST 解析 provider 文件，提取 DataSourceMeta(capabilities=[...]) 的 capability_id 集合。
+    """AST 解析 provider 文件，提取 IngestProviderMeta(capabilities=[...]) 的 capability_id 集合。
 
     文件不存在/解析失败返回 None（fail-open）。
     内容解析逻辑委托给 ``_meta_caps_from_tree``（pure AST）。

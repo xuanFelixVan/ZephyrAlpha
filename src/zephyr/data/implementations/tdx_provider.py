@@ -16,7 +16,7 @@
 # [TTL] permanent
 """通达信数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-封装 mootdx SDK，继承 DataSourceBase。
+封装 mootdx SDK，继承 IngestProviderBase。
 - bestip 自动选最快服务器
 - 单线程串行
 - 板块指数 K 线 + 成分股列表
@@ -36,8 +36,8 @@ from typing import Iterator
 
 from ..provider_base import (
     CapabilityContract,
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -165,7 +165,7 @@ def _patch_mootdx_to_data_coerce() -> None:
 _patch_mootdx_to_data_coerce()
 
 
-class TDXProvider(DataSourceBase):
+class TDXProvider(IngestProviderBase):
     """通达信数据源 Provider。
 
     bestip 自动选服务器、single_thread 线程安全模型。
@@ -173,7 +173,7 @@ class TDXProvider(DataSourceBase):
     """
 
     source_name: str = "tdx"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="tdx",
         display_name="通达信",
         auth_type="anonymous",

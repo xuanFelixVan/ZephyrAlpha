@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] tqcenter SDK封装为DataSourceBase；880xxx板块日K+成分股+快照；需通达信客户端运行；50只/批分批下载
+# [INVARIANTS] tqcenter SDK封装为IngestProviderBase；880xxx板块日K+成分股+快照；需通达信客户端运行；50只/批分批下载
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,7 +15,7 @@
 # [TTL] permanent
 """tqcenter 数据源 Provider 实现。
 
-封装 tqcenter SDK（通达信插件），继承 DataSourceBase。
+封装 tqcenter SDK（通达信插件），继承 IngestProviderBase。
 - 880xxx 板块指数日K线（get_market_data）
 - 板块成分股映射（get_stock_list_in_sector）
 - 板块实时快照轮询（get_market_snapshot）
@@ -42,8 +42,8 @@ from typing import Iterator
 from ..policy_registry import SourcePolicy
 from ..provider_base import (
     CapabilityContract,
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -119,7 +119,7 @@ def _safe_val(val, default):
     return val
 
 
-class TQCenterProvider(DataSourceBase):
+class TQCenterProvider(IngestProviderBase):
     """tqcenter（通达信插件）数据源 Provider。
 
     封装 tqcenter SDK，支持 880xxx 板块日K线、成分股、快照。
@@ -127,7 +127,7 @@ class TQCenterProvider(DataSourceBase):
     """
 
     source_name: str = "tqcenter"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="tqcenter",
         display_name="通达信插件",
         auth_type="anonymous",

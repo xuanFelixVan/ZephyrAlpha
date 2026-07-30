@@ -60,7 +60,7 @@ pathways:
     test_dir: "tests/"
     config: ""
     status: "skeleton"
-    note: "Phase B 骨架就位 — DataSourceBase + DataSourceMeta 接口完整"
+    note: "Phase B 骨架就位 — IngestProviderBase + IngestProviderMeta 接口完整"
 
   - module_id: "MOD-L01-001"
     name: "infrastructure"

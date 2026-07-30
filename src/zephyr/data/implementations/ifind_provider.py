@@ -16,7 +16,7 @@
 # [TTL] permanent
 """IFindProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
 
-封装同花顺 iFinDPy SDK，继承 DataSourceBase，提供日频估值等数据拉取能力。
+封装同花顺 iFinDPy SDK，继承 IngestProviderBase，提供日频估值等数据拉取能力。
 
 支持的能力（capability，通过 payload.extra["capability"] 路由）：
 - daily_valuation: 日频估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation
@@ -38,7 +38,7 @@ import logging
 import datetime
 from typing import Any, Iterator
 
-from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta, CapabilityContract
+from ..provider_base import IngestProviderBase, FetchPayload, FetchResult, IngestProviderMeta, CapabilityContract
 from ..policy_registry import SourcePolicy
 from ..table_registry import get_registry
 
@@ -90,7 +90,7 @@ def _build_money_flow_row(date_iso, symbol, col_data, idx, safe_float):
     )
 
 
-class IFindProvider(DataSourceBase):
+class IFindProvider(IngestProviderBase):
     """同花顺 iFind 数据源 Provider。
 
     通过 iFinDPy SDK 拉取 A 股估值/K线/资金流等数据。
@@ -99,7 +99,7 @@ class IFindProvider(DataSourceBase):
     """
 
     source_name: str = "ifind"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="ifind",
         display_name="同花顺 iFind",
         auth_type="username_password",

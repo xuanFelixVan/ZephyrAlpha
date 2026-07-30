@@ -3,10 +3,10 @@
 """provider_base 单测（MOD-L00-004 阶段1）。
 
 测试内容：
-- FetchPayload / FetchResult / DataSourceMeta 数据类
-- DataSourceBase.call_with_policy（限流+重试）
-- DataSourceBase.rate_limit_sleep
-- DataSourceBase.calc_backoff
+- FetchPayload / FetchResult / IngestProviderMeta 数据类
+- IngestProviderBase.call_with_policy（限流+重试）
+- IngestProviderBase.rate_limit_sleep
+- IngestProviderBase.calc_backoff
 - 上下文管理（with 语法）
 
 不依赖真实 SDK，用 mock 子类和 mock 函数。
@@ -16,8 +16,8 @@ import datetime
 import pytest
 
 from src.zephyr.data.provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -26,10 +26,10 @@ from src.zephyr.data.policy_registry import SourcePolicy
 
 # ============== 测试用 mock 子类 ==============
 
-class _MockProvider(DataSourceBase):
-    """最小可实例化的 DataSourceBase 子类（实现所有抽象方法）。"""
+class _MockProvider(IngestProviderBase):
+    """最小可实例化的 IngestProviderBase 子类（实现所有抽象方法）。"""
     source_name = "mock"
-    meta = DataSourceMeta(
+    meta = IngestProviderMeta(
         name="mock", display_name="Mock", auth_type="anonymous",
         requires_process=False, thread_safety="shared", rate_limit_default=0,
     )
@@ -93,9 +93,9 @@ class TestFetchResult:
         assert r.error is None
 
 
-class TestDataSourceMeta:
+class TestIngestProviderMeta:
     def test_defaults(self):
-        m = DataSourceMeta(
+        m = IngestProviderMeta(
             name="x", display_name="X", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
         )
@@ -224,24 +224,24 @@ class TestRateLimitSleep:
 
 class TestCalcBackoff:
     def test_fixed(self):
-        assert DataSourceBase.calc_backoff("fixed", 2.0, 0) == 2.0
-        assert DataSourceBase.calc_backoff("fixed", 2.0, 3) == 2.0
+        assert IngestProviderBase.calc_backoff("fixed", 2.0, 0) == 2.0
+        assert IngestProviderBase.calc_backoff("fixed", 2.0, 3) == 2.0
 
     def test_exponential(self):
-        assert DataSourceBase.calc_backoff("exponential", 1.0, 0) == 1.0
-        assert DataSourceBase.calc_backoff("exponential", 1.0, 1) == 2.0
-        assert DataSourceBase.calc_backoff("exponential", 1.0, 2) == 4.0
-        assert DataSourceBase.calc_backoff("exponential", 1.0, 3) == 8.0
+        assert IngestProviderBase.calc_backoff("exponential", 1.0, 0) == 1.0
+        assert IngestProviderBase.calc_backoff("exponential", 1.0, 1) == 2.0
+        assert IngestProviderBase.calc_backoff("exponential", 1.0, 2) == 4.0
+        assert IngestProviderBase.calc_backoff("exponential", 1.0, 3) == 8.0
 
     def test_jittered(self):
         """jittered = exponential ± 0.5。"""
         for attempt in range(5):
-            val = DataSourceBase.calc_backoff("jittered", 1.0, attempt)
+            val = IngestProviderBase.calc_backoff("jittered", 1.0, attempt)
             base = 1.0 * (2 ** attempt)
             assert base - 0.5 <= val <= base + 0.5
 
     def test_unknown_mode_defaults_fixed(self):
-        assert DataSourceBase.calc_backoff("unknown", 3.0, 2) == 3.0
+        assert IngestProviderBase.calc_backoff("unknown", 3.0, 2) == 3.0
 
 
 # ============== 上下文管理测试 ==============

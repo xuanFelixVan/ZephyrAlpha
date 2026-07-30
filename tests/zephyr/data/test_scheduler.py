@@ -20,16 +20,16 @@ from unittest.mock import patch, MagicMock, PropertyMock
 import pytest
 
 from src.zephyr.data.scheduler import IntegratorScheduler
-from src.zephyr.data.provider_base import FetchPayload, FetchResult, DataSourceBase, DataSourceMeta
+from src.zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase, IngestProviderMeta
 from src.zephyr.data.ch_writer import WriteDisposition, WriteOutcome
 
 
 # ============== 测试用 Mock Provider ==============
 
-class _MockProvider(DataSourceBase):
-    """最小可实例化的 DataSourceBase 子类。"""
+class _MockProvider(IngestProviderBase):
+    """最小可实例化的 IngestProviderBase 子类。"""
     source_name = "mock"
-    meta = DataSourceMeta(
+    meta = IngestProviderMeta(
         name="mock", display_name="Mock", auth_type="anonymous",
         requires_process=False, thread_safety="shared", rate_limit_default=0,
     )

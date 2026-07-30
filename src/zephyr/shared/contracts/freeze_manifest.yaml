@@ -281,7 +281,7 @@ external_contracts:
 frozen_layer_interfaces:
   D_DATA:
     file: "src/zephyr/data/provider_base.py"
-    class: "DataSourceBase"
+    class: "IngestProviderBase"
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 就位 provider_base 接口完整"
@@ -350,7 +350,7 @@ frozen_layer_interfaces:
 
   D_DATA_meta:
     file: "src/zephyr/data/provider_base.py"
-    classes: ["DataSourceMeta"]
+    classes: ["IngestProviderMeta"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 就位 数据源元数据模板"

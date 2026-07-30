@@ -16,7 +16,7 @@ language: zh
 
 统一管理多数据源（iFind / miniQMT / AKShare）的自动下载、调度与 ClickHouse 持久化。
 
-**数据流**：`CLI → get_integrator() → IntegratorScheduler → DataSourceBase providers → ch_writer.write_result() → ClickHouse`
+**数据流**：`CLI → get_integrator() → IntegratorScheduler → IngestProviderBase providers → ch_writer.write_result() → ClickHouse`
 
 ## 2. 数据源清单
 
@@ -36,7 +36,7 @@ language: zh
 
 | 机制 | 说明 |
 |------|------|
-| Provider 抽象 | `DataSourceBase` 策略注入（connect/health_check/fetch/disconnect） |
+| Provider 抽象 | `IngestProviderBase` 策略注入（connect/health_check/fetch/disconnect） |
 | 限流与重试 | per-source 策略 |
 | 断点续传 | `ProgressStore` 记录进度 |
 | 熔断 | 失败累积触发熔断 + fallback 源 |

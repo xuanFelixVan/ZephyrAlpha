@@ -3973,8 +3973,8 @@ capabilities:
   # --------------------------------------------------------------------------
   - capability_id: data_source_provider_abstraction
     aliases:
-      - DataSourceBase
-      - DataSourceMeta
+      - IngestProviderBase
+      - IngestProviderMeta
       - FetchPayload
       - FetchResult
       - data_source_provider
@@ -3982,7 +3982,7 @@ capabilities:
     description: >-
       数据源 Provider 抽象层（MOD-L00-004 §4）。统一封装 iFind/miniQMT/AKShare/Baostock/
       Tushare/TickFlow/TDX/RSS 共 8 个数据源 SDK 的连接/拉取/断开生命周期，提供限流+重试+退避策略应用。
-      canonical = src/zephyr/data/provider_base.py（DataSourceBase ABC）。
+      canonical = src/zephyr/data/provider_base.py（IngestProviderBase ABC）。
       配套文件：policy_registry.py（SourcePolicy + PolicyRegistry）、
       implementations/{ifind,miniqmt,akshare,baostock,tushare,tickflow,tdx,rss}_provider.py（8 个 Provider 实现）、
       scheduler.py（阶段3 调度编排层完整实现，IntegratorScheduler + APScheduler，8源路由 + 事件订阅）、

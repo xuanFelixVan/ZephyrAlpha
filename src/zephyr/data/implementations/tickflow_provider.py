@@ -16,7 +16,7 @@
 # [TTL] permanent
 """TickFlow 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-封装 tickflow SDK，继承 DataSourceBase。
+封装 tickflow SDK，继承 IngestProviderBase。
 - 免费无 key
 - 60 次/分钟限流（必须 _call_with_policy 包裹以触发 RPM 限流）
 - 美股日/周/月/季/年 K 线
@@ -35,8 +35,8 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
 )
@@ -73,7 +73,7 @@ _US_INDEX_ETF = {
 }
 
 
-class TickFlowProvider(DataSourceBase):
+class TickFlowProvider(IngestProviderBase):
     """TickFlow 免费美股数据源 Provider。
 
     匿名访问、shared 线程安全模型。
@@ -81,7 +81,7 @@ class TickFlowProvider(DataSourceBase):
     """
 
     source_name: str = "tickflow"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="tickflow",
         display_name="TickFlow 美股",
         auth_type="anonymous",

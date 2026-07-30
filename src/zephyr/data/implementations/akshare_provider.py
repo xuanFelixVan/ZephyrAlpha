@@ -16,7 +16,7 @@
 # [TTL] permanent
 """AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。
 
-封装 AKShare 开源金融数据 SDK，继承 DataSourceBase。
+封装 AKShare 开源金融数据 SDK，继承 IngestProviderBase。
 - 匿名访问，无需登录；但须断开 VPN（爬国内网站，海外 IP 会被拒）
 - 当前能力：macro_data（GDP/CPI/PMI/货币供应量）
 - 每个指标函数作为一批 yield FetchResult，异常时 yield error 不抛出
@@ -35,8 +35,8 @@ import time
 from typing import Iterator
 
 from ..provider_base import (
-    DataSourceBase,
-    DataSourceMeta,
+    IngestProviderBase,
+    IngestProviderMeta,
     FetchPayload,
     FetchResult,
     CapabilityContract,
@@ -221,7 +221,7 @@ SQL_STOCK_CODE_FROM_LIST = (
 )
 
 
-class AkshareIngestProvider(DataSourceBase):
+class AkshareIngestProvider(IngestProviderBase):
     """AKShare 免费开源数据源 Provider。
 
     匿名访问、无需登录；线程安全模型为 shared（多线程共享 akshare 模块）。
@@ -229,7 +229,7 @@ class AkshareIngestProvider(DataSourceBase):
     """
 
     source_name: str = "akshare"
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="akshare",
         display_name="AKShare 免费开源",
         auth_type="anonymous",

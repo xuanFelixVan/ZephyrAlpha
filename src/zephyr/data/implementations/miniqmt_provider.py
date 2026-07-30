@@ -17,7 +17,7 @@
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """MOD-L00-004 数据源集成器 · MiniQmtIngestProvider 实现。
 
-封装 xtquant SDK（miniQMT），继承 DataSourceBase。
+封装 xtquant SDK（miniQMT），继承 IngestProviderBase。
 
 设计要点：
 - xtquant 连接的是本地 XtMiniQmt.exe 进程，无需显式登录，但要求进程在跑
@@ -35,7 +35,7 @@ import time
 import logging
 from typing import Iterator
 
-from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta, CapabilityContract
+from ..provider_base import IngestProviderBase, FetchPayload, FetchResult, IngestProviderMeta, CapabilityContract
 from ..policy_registry import SourcePolicy
 from .. import ch_reader
 from ..table_registry import get_registry
@@ -363,7 +363,7 @@ def _resolve_kline_aggregated_table(freq, payload, dividend_type):
     return payload.table or (_TBL_KLINE_MONTHLY_HFQ if is_hfq else _TBL_KLINE_MONTHLY)
 
 
-class MiniQmtIngestProvider(DataSourceBase):
+class MiniQmtIngestProvider(IngestProviderBase):
     """miniQMT（迅投 xtquant）数据源 Provider。
 
     通过本地 XtMiniQmt.exe 进程获取行情/财务/指数成分数据。
@@ -376,7 +376,7 @@ class MiniQmtIngestProvider(DataSourceBase):
     # _probe_l2_permission 首次探测后写入实例属性覆盖此类默认值
     _has_l2: bool | None = None
 
-    meta: DataSourceMeta = DataSourceMeta(
+    meta: IngestProviderMeta = IngestProviderMeta(
         name="miniqmt",
         display_name="miniQMT 迅投",
         auth_type="account",
