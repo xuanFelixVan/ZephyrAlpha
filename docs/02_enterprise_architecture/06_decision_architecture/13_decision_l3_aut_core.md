@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain aut_core（自主核心）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → aut_core
@@ -21,37 +21,35 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        N113("portfolio_target: Permission Guard 七层纵深防御")
-        LL3 --- N113
-        N115("portfolio_target: Self-Healing Git-native自愈")
-        LL3 --- N115
-        N116("portfolio_target: Budget Enforcer 七级预算")
-        LL3 --- N116
-        N117("portfolio_target: Health Monitor 9子系统监控")
-        LL3 --- N117
-        N118("portfolio_target: Escalation Engine 升级引擎")
-        LL3 --- N118
-        N119("portfolio_target: Rollback Engine Git-native回滚")
-        LL3 --- N119
-        N120("portfolio_target: Drift Detector 39检测器")
-        LL3 --- N120
-        N121("portfolio_target: Auto-Fix Engine 16修复器")
-        LL3 --- N121
-        N133("portfolio_target: 编排Agent Orchestrator")
-        LL3 --- N133
-        N135("portfolio_target: 做TAgent T0Trader")
-        LL3 --- N135
-        N136("portfolio_target: 路由Agent Router")
-        LL3 --- N136
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    N113("portfolio_target: Permission Guard 七层纵深防御")
+    LL3 --- N113
+    N115("portfolio_target: Self-Healing Git-native自愈")
+    LL3 --- N115
+    N116("portfolio_target: Budget Enforcer 七级预算")
+    LL3 --- N116
+    N117("portfolio_target: Health Monitor 9子系统监控")
+    LL3 --- N117
+    N118("portfolio_target: Escalation Engine 升级引擎")
+    LL3 --- N118
+    N119("portfolio_target: Rollback Engine Git-native回滚")
+    LL3 --- N119
+    N120("portfolio_target: Drift Detector 39检测器")
+    LL3 --- N120
+    N121("portfolio_target: Auto-Fix Engine 16修复器")
+    LL3 --- N121
+    N133("portfolio_target: 编排Agent Orchestrator")
+    LL3 --- N133
+    N135("portfolio_target: 做TAgent T0Trader")
+    LL3 --- N135
+    N136("portfolio_target: 路由Agent Router")
+    LL3 --- N136
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain sell（卖出）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell
@@ -21,53 +21,51 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        N1("sell_decision: 卖出决策域入口 Sell Decision Entry")
-        LL2A --- N1
-        N2("sell_decision: 止盈信号 Take-Profit Signal")
-        LL2A --- N2
-        N3("sell_decision: 止损信号 Stop-Loss Signal")
-        LL2A --- N3
-        N4("sell_decision: 移动止损 Trailing Stop")
-        LL2A --- N4
-        N5("sell_decision: 主力出货信号 Main Force Distribution Signal")
-        LL2A --- N5
-        N6("sell_decision: 量价背离卖出 Volume-Price Divergence Sell")
-        LL2A --- N6
-        N7("sell_decision: 突破关键位卖出 Key-Level Breakdown Sell")
-        LL2A --- N7
-        N8("sell_decision: Watch List 实时卖出 Watch List Realtime Sell")
-        LL2A --- N8
-        N9("sell_decision: Monitor List 定期扫描 Monitor List Periodic Scan")
-        LL2A --- N9
-        N10("sell_decision: 卖出信号融合仲裁 Sell Signal Fusion Arbiter")
-        LL2A --- N10
-        N11("sell_decision: 买卖冲突仲裁 Buy-Sell Conflict Arbiter")
-        LL2A --- N11
-        N12("sell_decision: 部分卖出vs全部清仓决策 Partial vs Full Sell Decision")
-        LL2A --- N12
-        N13("sell_decision: D-S证据理论融合 D-S Evidence Theory Fusion")
-        LL2A --- N13
-        N14("sell_decision: 做T决策协调 T-Trade Coordinator")
-        LL2A --- N14
-        N15("sell_decision: 黑天鹅强制卖出 Black Swan Forced Sell")
-        LL2A --- N15
-        N16("sell_decision: Gap开盘决策框架 Gap Opening Decision Framework")
-        LL2A --- N16
-        N17("sell_decision: 强制清仓信号 Forced Liquidation Signal")
-        LL2A --- N17
-        N18("sell_decision: 卖出降级模式 Sell Degradation Mode")
-        LL2A --- N18
-        N19("sell_decision: 卖出决策闭环优化 Sell Decision Closed-Loop")
-        LL2A --- N19
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    N1("sell_decision: 卖出决策域入口 Sell Decision Entry")
+    LL2A --- N1
+    N2("sell_decision: 止盈信号 Take-Profit Signal")
+    LL2A --- N2
+    N3("sell_decision: 止损信号 Stop-Loss Signal")
+    LL2A --- N3
+    N4("sell_decision: 移动止损 Trailing Stop")
+    LL2A --- N4
+    N5("sell_decision: 主力出货信号 Main Force Distribution Signal")
+    LL2A --- N5
+    N6("sell_decision: 量价背离卖出 Volume-Price Divergence Sell")
+    LL2A --- N6
+    N7("sell_decision: 突破关键位卖出 Key-Level Breakdown Sell")
+    LL2A --- N7
+    N8("sell_decision: Watch List 实时卖出 Watch List Realtime Sell")
+    LL2A --- N8
+    N9("sell_decision: Monitor List 定期扫描 Monitor List Periodic Scan")
+    LL2A --- N9
+    N10("sell_decision: 卖出信号融合仲裁 Sell Signal Fusion Arbiter")
+    LL2A --- N10
+    N11("sell_decision: 买卖冲突仲裁 Buy-Sell Conflict Arbiter")
+    LL2A --- N11
+    N12("sell_decision: 部分卖出vs全部清仓决策 Partial vs Full Sell Decision")
+    LL2A --- N12
+    N13("sell_decision: D-S证据理论融合 D-S Evidence Theory Fusion")
+    LL2A --- N13
+    N14("sell_decision: 做T决策协调 T-Trade Coordinator")
+    LL2A --- N14
+    N15("sell_decision: 黑天鹅强制卖出 Black Swan Forced Sell")
+    LL2A --- N15
+    N16("sell_decision: Gap开盘决策框架 Gap Opening Decision Framework")
+    LL2A --- N16
+    N17("sell_decision: 强制清仓信号 Forced Liquidation Signal")
+    LL2A --- N17
+    N18("sell_decision: 卖出降级模式 Sell Degradation Mode")
+    LL2A --- N18
+    N19("sell_decision: 卖出决策闭环优化 Sell Decision Closed-Loop")
+    LL2A --- N19
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

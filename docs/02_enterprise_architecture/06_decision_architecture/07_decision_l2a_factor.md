@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain factor（因子）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → factor
@@ -21,19 +21,17 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        N190("signal: 末位淘汰 IC-Based Factor Replacement")
-        LL2A --- N190
-        N191("signal: 批量裁剪 Batch Factor Pruning")
-        LL2A --- N191
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    N190("signal: 末位淘汰 IC-Based Factor Replacement")
+    LL2A --- N190
+    N191("signal: 批量裁剪 Batch Factor Pruning")
+    LL2A --- N191
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

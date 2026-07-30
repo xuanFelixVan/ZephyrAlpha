@@ -1,6 +1,6 @@
 # 决策流图 · 模型驱动轨（Model-Driven Track）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 1
@@ -23,18 +23,16 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL0["L0: 数据接入与预处理层<br/>production/stable"]
-        LL1["L1: 因子计算层<br/>production/stable"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        LL4["L4: 风控层<br/>production/stable"]
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL0["L0: 数据接入与预处理层<br/>production/stable"]
+    LL1["L1: 因子计算层<br/>production/stable"]
+    LL2A["L2A: 信号层<br/>design/planned"]
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    LL4["L4: 风控层<br/>production/stable"]
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL0 -.->|triggering| LL1
     LL1 -.->|triggering| LL2A
     LL2A -.->|triggering| LL2B

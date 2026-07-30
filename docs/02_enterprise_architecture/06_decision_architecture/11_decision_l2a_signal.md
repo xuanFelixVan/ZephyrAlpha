@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain signal（信号）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → signal
@@ -21,41 +21,39 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        N177("signal: Synthesizer 信号合成+权重分配")
-        LL2A --- N177
-        N178("signal: Signal Priority Router 信号优先级路由")
-        LL2A --- N178
-        N179("signal: LLM Strategy Agent LLM策略Agent")
-        LL2A --- N179
-        N180("signal: Signal Tail Risk Protector 信号尾部风险保护")
-        LL2A --- N180
-        N181("signal: A-Share Plan Conformity Evaluator A股计划吻合度评估")
-        LL2A --- N181
-        N182("signal: A-Share Emergency Opportunity Evaluator A股应急机会评估")
-        LL2A --- N182
-        N183("signal: A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁")
-        LL2A --- N183
-        N184("signal: Regime Special Override Priority Manager Regime特殊覆盖优先级")
-        LL2A --- N184
-        N185("signal: Risk-Signal Interaction Sequencer 风控-信号交互时序")
-        LL2A --- N185
-        N186("signal: 36环节决策框架实现器 36-Step Decision Framework")
-        LL2A --- N186
-        N187("signal: 策略替换与淘汰决策器 Strategy Replacement Decision")
-        LL2A --- N187
-        N188("signal: 信号冲突解决 Signal Conflict Resolution")
-        LL2A --- N188
-        N189("signal: 信号融合模块 Signal Fusion Module")
-        LL2A --- N189
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    N177("signal: Synthesizer 信号合成+权重分配")
+    LL2A --- N177
+    N178("signal: Signal Priority Router 信号优先级路由")
+    LL2A --- N178
+    N179("signal: LLM Strategy Agent LLM策略Agent")
+    LL2A --- N179
+    N180("signal: Signal Tail Risk Protector 信号尾部风险保护")
+    LL2A --- N180
+    N181("signal: A-Share Plan Conformity Evaluator A股计划吻合度评估")
+    LL2A --- N181
+    N182("signal: A-Share Emergency Opportunity Evaluator A股应急机会评估")
+    LL2A --- N182
+    N183("signal: A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁")
+    LL2A --- N183
+    N184("signal: Regime Special Override Priority Manager Regime特殊覆盖优先级")
+    LL2A --- N184
+    N185("signal: Risk-Signal Interaction Sequencer 风控-信号交互时序")
+    LL2A --- N185
+    N186("signal: 36环节决策框架实现器 36-Step Decision Framework")
+    LL2A --- N186
+    N187("signal: 策略替换与淘汰决策器 Strategy Replacement Decision")
+    LL2A --- N187
+    N188("signal: 信号冲突解决 Signal Conflict Resolution")
+    LL2A --- N188
+    N189("signal: 信号融合模块 Signal Fusion Module")
+    LL2A --- N189
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain pf_core（组合核心）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → pf_core
@@ -21,39 +21,37 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        N20("portfolio_target: 组合核心引擎 Portfolio Core Engine")
-        LL3 --- N20
-        N21("portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap")
-        LL3 --- N21
-        N22("portfolio_target: 风险预算 Risk Budget")
-        LL3 --- N22
-        N23("portfolio_target: 再平衡决策 Rebalance Decision")
-        LL3 --- N23
-        N24("portfolio_target: 仲裁优先级体系 Arbitration Priority")
-        LL3 --- N24
-        N25("portfolio_target: 多策略共振融合 Strategy Convergence Fusion")
-        LL3 --- N25
-        N26("portfolio_target: 因子直通裁决 Factor Bypass Arbitration")
-        LL3 --- N26
-        N27("portfolio_target: 元策略路由 Meta-Strategy Router")
-        LL3 --- N27
-        N28("portfolio_target: 组合优化 Portfolio Optimization")
-        LL3 --- N28
-        N29("portfolio_target: 资本分配 Capital Allocation")
-        LL3 --- N29
-        N30("portfolio_target: 决策编排器 Decision Orchestrator")
-        LL3 --- N30
-        N31("portfolio_target: 四轨融合器 Multi-Track Fusion")
-        LL3 --- N31
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    N20("portfolio_target: 组合核心引擎 Portfolio Core Engine")
+    LL3 --- N20
+    N21("portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap")
+    LL3 --- N21
+    N22("portfolio_target: 风险预算 Risk Budget")
+    LL3 --- N22
+    N23("portfolio_target: 再平衡决策 Rebalance Decision")
+    LL3 --- N23
+    N24("portfolio_target: 仲裁优先级体系 Arbitration Priority")
+    LL3 --- N24
+    N25("portfolio_target: 多策略共振融合 Strategy Convergence Fusion")
+    LL3 --- N25
+    N26("portfolio_target: 因子直通裁决 Factor Bypass Arbitration")
+    LL3 --- N26
+    N27("portfolio_target: 元策略路由 Meta-Strategy Router")
+    LL3 --- N27
+    N28("portfolio_target: 组合优化 Portfolio Optimization")
+    LL3 --- N28
+    N29("portfolio_target: 资本分配 Capital Allocation")
+    LL3 --- N29
+    N30("portfolio_target: 决策编排器 Decision Orchestrator")
+    LL3 --- N30
+    N31("portfolio_target: 四轨融合器 Multi-Track Fusion")
+    LL3 --- N31
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

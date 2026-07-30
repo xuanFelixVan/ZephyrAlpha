@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain trading（交易）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → trading
@@ -21,37 +21,35 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        N102("order: 外部订单观察者 External Order Watcher")
-        LL3 --- N102
-        N103("order: 结算引擎 Settlement Engine")
-        LL3 --- N103
-        N104("order: 公司行动 Corporate Action")
-        LL3 --- N104
-        N105("order: 保证金管理 Margin Manager")
-        LL3 --- N105
-        N106("order: 多账户 Multi-Account")
-        LL3 --- N106
-        N107("order: 微信枢纽 WeChat Hub")
-        LL3 --- N107
-        N108("order: C-013 4级优先级 C-013 4-Level Priority")
-        LL3 --- N108
-        N109("order: A股交易纪律四项必做 A-Share Trading 4-Do")
-        LL3 --- N109
-        N110("order: A股交易纪律四项严禁 A-Share Trading 4-Forbidden")
-        LL3 --- N110
-        N111("order: 监管报送 Regulatory Reporting")
-        LL3 --- N111
-        N112("order: 盘中即时反应决策引擎 Intraday Instant Reaction Decision Engine")
-        LL3 --- N112
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    N102("order: 外部订单观察者 External Order Watcher")
+    LL3 --- N102
+    N103("order: 结算引擎 Settlement Engine")
+    LL3 --- N103
+    N104("order: 公司行动 Corporate Action")
+    LL3 --- N104
+    N105("order: 保证金管理 Margin Manager")
+    LL3 --- N105
+    N106("order: 多账户 Multi-Account")
+    LL3 --- N106
+    N107("order: 微信枢纽 WeChat Hub")
+    LL3 --- N107
+    N108("order: C-013 4级优先级 C-013 4-Level Priority")
+    LL3 --- N108
+    N109("order: A股交易纪律四项必做 A-Share Trading 4-Do")
+    LL3 --- N109
+    N110("order: A股交易纪律四项严禁 A-Share Trading 4-Forbidden")
+    LL3 --- N110
+    N111("order: 监管报送 Regulatory Reporting")
+    LL3 --- N111
+    N112("order: 盘中即时反应决策引擎 Intraday Instant Reaction Decision Engine")
+    LL3 --- N112
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

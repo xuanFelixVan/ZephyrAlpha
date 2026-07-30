@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-07-30T19:53:22
+> 生成时间: 2026-07-30T19:59:19
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
@@ -21,33 +21,31 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
-        LL2A["L2A: 信号层<br/>design/planned"]
-        LL2B["L2B: 主力行为层<br/>design/planned"]
-        LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-        LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-        LL3["L3: 策略组合层<br/>design/planned"]
-        N59("order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed")
-        LL3 --- N59
-        N60("order: Saga编排式事务 Saga Orchestrated Transaction")
-        LL3 --- N60
-        N61("order: 风控检查 Risk Check")
-        LL3 --- N61
-        N62("order: 信号确认 Signal Confirmation")
-        LL3 --- N62
-        N63("order: 下单提交 Order Submit")
-        LL3 --- N63
-        N64("order: 成交确认 Fill Confirmation")
-        LL3 --- N64
-        N65("order: 持仓更新 Position Update")
-        LL3 --- N65
-        N66("order: 报告生成 Report Generation")
-        LL3 --- N66
-        N71("order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase")
-        LL3 --- N71
-        LL5["L5: 学习层<br/>design/planned"]
-        LL6["L6: 自评估层<br/>design/planned"]
-    end
+    LL2A["L2A: 信号层<br/>design/planned"]
+    LL2B["L2B: 主力行为层<br/>design/planned"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
+    LL3["L3: 策略组合层<br/>design/planned"]
+    N59("order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed")
+    LL3 --- N59
+    N60("order: Saga编排式事务 Saga Orchestrated Transaction")
+    LL3 --- N60
+    N61("order: 风控检查 Risk Check")
+    LL3 --- N61
+    N62("order: 信号确认 Signal Confirmation")
+    LL3 --- N62
+    N63("order: 下单提交 Order Submit")
+    LL3 --- N63
+    N64("order: 成交确认 Fill Confirmation")
+    LL3 --- N64
+    N65("order: 持仓更新 Position Update")
+    LL3 --- N65
+    N66("order: 报告生成 Report Generation")
+    LL3 --- N66
+    N71("order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase")
+    LL3 --- N71
+    LL5["L5: 学习层<br/>design/planned"]
+    LL6["L6: 自评估层<br/>design/planned"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D

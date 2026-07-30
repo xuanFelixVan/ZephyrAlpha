@@ -311,7 +311,7 @@ def _gen_overview_mmd(
     track_id: str | None = None, path_prefix: str | None = None,
     skeleton_only: bool = False,
 ) -> tuple[str, int, int, int]:
-    """生成全景图：L0-L6 层级 + 四轨并行 subgraph + 节点/边。
+    """生成全景图：L0-L6 层级 + 节点/边（扁平布局，无 subgraph）。
 
     Args:
         production_only: True 时仅 design_maturity='production'。
@@ -330,11 +330,14 @@ def _gen_overview_mmd(
 
     lines = [_MERMAID_INIT, "flowchart TD"]
 
-    # 按 track 分 subgraph
+    # 扁平布局（不使用 subgraph）——与 _gen_layers_mmd/_gen_invariants_mmd 一致。
+    # 用户实测确认（2026-07-30）：subgraph 内节点使用 secondaryColor 而非 primaryColor，
+    # 导致 %%{init}%% 设的 primaryColor 不生效（节点白色）；subgraph 容器背景
+    # (clusterBkg) VS Code 渲染器不识别主题变量，回退白色，与灰色节点不协调且
+    # 增加整体高度。去掉 subgraph 后 primaryColor 生效（节点灰色）、高度更紧凑。
+    # per-track/per-domain 文件经 track_id/path_prefix 过滤后只有 1 个 track，无需分组。
     for track in tracks:
         tid = track["id"]
-        safe_tid = tid.replace("-", "_")
-        lines.append(f'    subgraph track_{safe_tid}["{track["name"]}（{track["name_en"]}）"]')
         track_layers = [l for l in layers if l["track"] == tid]
         for layer in track_layers:
             lid = layer["id"]
@@ -342,15 +345,14 @@ def _gen_overview_mmd(
             # 精简 label：层 ID+名称+maturity/build（2 行）。蓝图/代码/功能/频率在表格。
             _mat = layer.get("maturity") or "-"
             label = f'{layer["id"]}: {layer["name"]}<br/>{_mat}/{layer["build"]}'
-            lines.append(f'        L{safe_lid}["{label}"]')
+            lines.append(f'    L{safe_lid}["{label}"]')
             if not skeleton_only:
                 layer_nodes = [n for n in nodes if n["layer_id"] == lid]
                 for n in layer_nodes:
                     # 精简：仅 type+name（1 行），path 在 Node 清单表
                     nlabel = f'{n["type"]}: {n["name"]}'
-                    lines.append(f'        N{n["id"]}("{nlabel}")')
-                    lines.append(f'        L{safe_lid} --- N{n["id"]}')
-        lines.append("    end")
+                    lines.append(f'    N{n["id"]}("{nlabel}")')
+                    lines.append(f'    L{safe_lid} --- N{n["id"]}')
 
     # 层间边（triggering，按 layer 顺序）
     layer_ids = [l["id"] for l in layers]

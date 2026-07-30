@@ -16,7 +16,7 @@
 覆盖：
   - _build_status_color 颜色映射（5 个 build_status + 默认值）
   - _load_invariants 从 YAML 真源读取 5 条承重墙不变量
-  - _gen_overview_mmd 返回值类型（tuple[str, int, int, int]）+ subgraph（纯默认主题，无 classDef）
+  - _gen_overview_mmd 返回值类型（tuple[str, int, int, int]）+ 扁平布局（无 subgraph，纯默认主题，无 classDef）
   - _gen_layers_mmd 层级卡片 + 反馈边（L6 → L1/L5）
   - _gen_invariants_mmd 6 节点类型 + 5 不变量 + 非法连接标注
   - _gen_index_md 统计表 + Track/Layer 清单
@@ -348,12 +348,15 @@ class TestGenOverviewMmd:
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
         assert "flowchart TD" in mmd
 
-    def test_contains_subgraphs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """mmd 包含有 layer 的 track 的 subgraph（emergency 无 layer → 不出现）。"""
+    def test_no_subgraphs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """mmd 不含 subgraph（扁平布局，与 _gen_layers_mmd/_gen_invariants_mmd 一致）。
+
+        用户实测确认（2026-07-30）：subgraph 内节点使用 secondaryColor 而非
+        primaryColor，导致 %%{init}%% 设的 primaryColor 不生效（节点白色）；
+        subgraph 容器背景 VS Code 渲染器不识别主题变量，回退白色且增加高度。
+        """
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "subgraph track_model_driven" in mmd
-        # emergency 在 sample_tracks 中但 sample_layers 无 emergency 层 → 被 _filter_overview_inputs 过滤
-        assert "subgraph track_emergency" not in mmd
+        assert "subgraph" not in mmd
 
     def test_contains_layer_nodes(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """mmd 包含 layer 节点（L0/L1/L2A/L4）。"""
