@@ -342,9 +342,12 @@ def _gen_overview_mmd(
         for layer in track_layers:
             lid = layer["id"]
             safe_lid = lid.replace("-", "_")
-            # 精简 label：层 ID+名称+maturity/build（2 行）。蓝图/代码/功能/频率在表格。
+            # 精简 label：层 ID+名称+maturity/build+功能简介（截断）。蓝图/代码/频率在表格。
             _mat = layer.get("maturity") or "-"
+            _desc = _truncate(layer.get("desc", ""), 30)
             label = f'{layer["id"]}: {layer["name"]}<br/>{_mat}/{layer["build"]}'
+            if _desc:
+                label = f'{label}<br/>{_desc}'
             lines.append(f'    L{safe_lid}["{label}"]')
             if not skeleton_only:
                 layer_nodes = [n for n in nodes if n["layer_id"] == lid]
@@ -385,10 +388,13 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
 
     for layer in layers:
         lid = layer["id"].replace("-", "_")
-        # 精简 label：层 ID+名称+maturity/build（2 行）。蓝图/代码/功能/频率详情在
-        # 同文件 Layer 清单表（_layer_table），图只承载视觉概览，避免节点过高。
+        # 精简 label：层 ID+名称+maturity/build+功能简介（截断）。蓝图/代码/频率详情在
+        # 同文件 Layer 清单表（_layer_table），图只承载视觉概览。
         _mat = layer.get("maturity") or "-"
+        _desc = _truncate(layer.get("desc", ""), 30)
         label = f'{layer["id"]} {layer["name"]}<br/>{_mat}/{layer["build"]}'
+        if _desc:
+            label = f'{label}<br/>{_desc}'
         lines.append(f'    L{lid}["{label}"]')
 
     layer_ids = [l["id"] for l in layers]

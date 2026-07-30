@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain simulation（仿真）
 
-> 生成时间: 2026-07-30T19:59:19
+> 生成时间: 2026-07-30T20:16:54
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → simulation
@@ -21,7 +21,7 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL2A["L2A: 信号层<br/>design/planned"]
+    LL2A["L2A: 信号层<br/>design/planned<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 → Tr…"]
     N141("signal: 市场仿真器 Market Simulator")
     LL2A --- N141
     N142("signal: 策略仿真器 Strategy Simulator")
@@ -52,12 +52,12 @@ flowchart TD
     LL2A --- N154
     N155("signal: 3阶段决策门控 IS→WFA→OOS 3-Stage Decision Gate")
     LL2A --- N155
-    LL2B["L2B: 主力行为层<br/>design/planned"]
-    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned"]
-    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned"]
-    LL3["L3: 策略组合层<br/>design/planned"]
-    LL5["L5: 学习层<br/>design/planned"]
-    LL6["L6: 自评估层<br/>design/planned"]
+    LL2B["L2B: 主力行为层<br/>design/planned<br/>六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟…"]
+    LL2C["L2C: 市场状态与大盘预测层<br/>design/planned<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日…"]
+    LL2D["L2D: 知识图谱与因果推演层<br/>design/planned<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 → G…"]
+    LL3["L3: 策略组合层<br/>design/planned<br/>多策略信号合成 → 资本分配 → 元策略路由 → 组合构建…"]
+    LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
+    LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
     LL2A -.->|triggering| LL2B
     LL2B -.->|triggering| LL2C
     LL2C -.->|triggering| LL2D
