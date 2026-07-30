@@ -229,7 +229,7 @@ except PermissionError:
 | 新 `.py` 模块（`src/zephyr/` 下） | 对应 `__init__.py` 导出 + 至少一个 import 引用点 |
 | 新门禁/gate | `phase_manager.py` PHASE_SEQUENCE 注册 + `_registry.yaml` |
 | 新设计模式/方法论 | `project_rules.md` 或 `AGENTS.md` + `rule-registry.md` TRAE 域 |
-| 新增 RULE-* 到 `project_rules.md` | `rule-registry.md` TRAE 域强制登记 → `python scripts/governance/sync_rule_registry.py` 自动校验 |
+| 新增 RULE-* 到 `project_rules.md` | `rule-registry.md` TRAE 域强制登记 → `python scripts/governance/d8_doc_sync/sync_rule_registry.py` 自动校验 |
 | 新配置/数据文件 | 使用方代码中的显式路径引用 |
 | 新 CLI 工具 | `script-manifest.yaml` + 用法写入相关 blueprint |
 | 新测试文件（`tests/` 下） | 治理锚定表头（A_test 6字段简化版）+ pytest 命名约定。豁免注册表登记 |
@@ -381,7 +381,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 修改 `src/zephyr/` 下源码 | `python -m pytest tests/ --collect-only -q` | 语法错误 → 禁止提交 |
 | 修改 YAML 契约/配置 | `python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` | 契约断裂 → 禁止合并 |
 | 修改 AGENTS.md | `python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check` | LoadPath 断裂 → 禁止提交 |
-| 修改 project_rules.md | `python scripts/governance/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
+| 修改 project_rules.md | `python scripts/governance/d8_doc_sync/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
 | 任何文件变更后 | `python scripts/governance/d11_compliance/audit_registration.py` | 有孤儿 → 禁止关闭任务 |
 | 写入文件后 | `python scripts/git_guard.py add <具体文件>` + `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（RULE-TWENTY） | 未提交 = 代码丢失 → 禁止关闭任务 |
 | 涉及安全敏感的变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
@@ -991,7 +991,7 @@ STEP 3: 评估修改对每个消费者的影响 → 无影响 → 继续 / 有�
 # python scripts/governance/generate_project_depgraph.py --max-workers 8  # 正常期才运行
 
 # 2. 诊断依赖图
-python scripts/governance/diagnose_depgraph.py
+python scripts/governance/d5_architecture/diagnose_depgraph.py
 
 # 3. 重新生成物理路径树
 python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
@@ -1000,7 +1000,7 @@ python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
 python scripts/governance/d11_compliance/audit_registration.py
 
 # 5. 关键模块导入测试
-python scripts/governance/verify_key_imports.py
+python scripts/governance/d11_compliance/verify_key_imports.py
 ```
 
 **任何一步失败 = 回滚变更。**
@@ -1160,7 +1160,7 @@ depgraph (PostgreSQL)的 schema 变更必须遵循 DDL-as-Code 流程，禁止�
 1. **改 DDL 声明**：结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 常量（表 DDL 真源）或 `_DDL_INDEXES`（索引真源）
 2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 PostgreSQL 报错）
 3. **跑 init_db()**：执行 `init_db()` 幂等应用 pending migrations（事务包裹，失败自动 ROLLBACK）
-4. **过门禁**：`python scripts/governance/verify_schema_health.py` 自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即 exit 1 阻断
+4. **过门禁**：`python scripts/governance/d11_compliance/verify_schema_health.py` 自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即 exit 1 阻断
 
 禁止：直接改 apply_depgraph.py 等写入代码的 SQL 来跳过 DDL 声明；直接改数据库绕过 migration。
 

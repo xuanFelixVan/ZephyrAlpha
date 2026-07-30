@@ -185,7 +185,7 @@ python scripts/scaffold.py rule <主题_描述>           # 创建规则文件�
 | 新 `.py` 脚本（`scripts/` 下） | `script_manifest.yaml` 注册 + `phase_manager` gate 引用 |
 | 新 `.py` 模块（`src/zephyr/` 下） | 对应 `__init__.py` 导出 + 至少一个 import 引用点 |
 | 新门禁/gate | `phase_manager.py` PHASE_SEQUENCE 注册 + `_registry.yaml` |
-| 新增 RULE-* | `rule-registry.md` TRAE 域强制登记 → `python scripts/governance/sync_rule_registry.py` |
+| 新增 RULE-* | `rule-registry.md` TRAE 域强制登记 → `python scripts/governance/d8_doc_sync/sync_rule_registry.py` |
 | 新 `.md` 文档 | frontmatter MUST 含 `ttl` 字段；过程性文档默认落 `docs/_working/`（ttl=task_bound） |
 
 ### 绝对禁止
