@@ -1357,6 +1357,61 @@ dependencies:
   contract_anchor: trae_077_capability_lookup_scene_classify.yaml
   direction: upstream
   valid_since: '2026-07-22'
+- dep_id: DEP-106
+  source: MOD-GOV_SCRIPTS
+  source_name: generate-decision-diagram
+  target: SH-TERM-001
+  target_name: terminology-loader
+  type: runtime
+  strength: hard
+  description: '决策图生成器 import _shared.terminology_loader 取 edge_type/node_type/build_status/maturity/decision_domain_short/domain_responsibility 6 类中文翻译；loader 缺失则回退硬编码 fallback（6 类共享术语），不崩溃但翻译降级为 en-only。SSoT 分类铁律 TRAE-062：词汇表真源是 terminology_glossary.yaml。'
+  contract_anchor: terminology_glossary.yaml
+  direction: upstream
+  valid_since: '2026-07-30'
+- dep_id: DEP-107
+  source: MOD-GOV_DATAFLOW_DIAGRAM
+  source_name: generate-dataflow-diagram
+  target: SH-TERM-001
+  target_name: terminology-loader
+  type: runtime
+  strength: hard
+  description: '数据流图生成器经 get_flat_map 合并 8 类别（entity_name/domain_id_display/scope/build_status/maturity/pit_policy/trigger_type/edge_type）为扁平 _ZH_MAP；loader 缺失则回退硬编码 fallback。SSoT 分类铁律 TRAE-062。'
+  contract_anchor: terminology_glossary.yaml
+  direction: upstream
+  valid_since: '2026-07-30'
+- dep_id: DEP-108
+  source: MOD-L00-004
+  source_name: generate-data-acquisition-flow
+  target: SH-TERM-001
+  target_name: terminology-loader
+  type: runtime
+  strength: hard
+  description: '数据采集流生成器取 data_source 类别中文翻译（miniqmt→迅投QMT 等 9 项）；loader 缺失则回退硬编码 fallback。SSoT 分类铁律 TRAE-062。'
+  contract_anchor: terminology_glossary.yaml
+  direction: upstream
+  valid_since: '2026-07-30'
+- dep_id: DEP-109
+  source: MOD-L00-001
+  source_name: generate-data-inventory
+  target: SH-TERM-001
+  target_name: terminology-loader
+  type: runtime
+  strength: hard
+  description: '数据清单生成器取 table_name 类别中文翻译（126 表名 en→zh）；loader 缺失则回退硬编码 fallback。SSoT 分类铁律 TRAE-062。'
+  contract_anchor: terminology_glossary.yaml
+  direction: upstream
+  valid_since: '2026-07-30'
+- dep_id: DEP-110
+  source: MOD-GOV_GENERATE_NAVIGATION_INDEX
+  source_name: generate-navigation-index
+  target: SH-TERM-001
+  target_name: terminology-loader
+  type: runtime
+  strength: hard
+  description: '导航索引生成器取 layer_name_short 类别中文翻译（L0_infrastructure→基础设施层 等 4 项）；loader 缺失则回退硬编码 fallback。SSoT 分类铁律 TRAE-062。'
+  contract_anchor: terminology_glossary.yaml
+  direction: upstream
+  valid_since: '2026-07-30'
 dependency_graph:
   forward:
     SYS-MASTER-001:

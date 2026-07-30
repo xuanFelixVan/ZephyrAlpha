@@ -5161,6 +5161,29 @@ capabilities:
       scripts/governance/oneoff/data_domain_design_state_complete.py。
       功能：补全数据域 subdomain_id + 登记 design 节点 + 修复契约 fulfillment_status。
       域：D_DATA。一次性脚本（MATURITY=oneoff），已执行完毕。
+  - capability_id: terminology_translator
+    aliases:
+      - terminology_loader
+      - get_category_map
+      - get_flat_map
+      - get_zh
+      - get_en_zh
+      - architecture_terminology_loader
+      - glossary_loader
+      - term_translator
+    description: >-
+      架构文档生成器共享的中文术语翻译加载器（SSoT 真源入口）。canonical =
+      scripts/governance/_shared/terminology_loader.py。真源：terminology_glossary.yaml
+      （REG-TERMINOLOGY-001，237 条目 13 类别）。对标 SCRIPT-QUALITY-001 D-D-05（禁止
+      跨脚本复制粘贴逻辑）+ SSoT 真源分类铁律 TRAE-062（词汇表属规则数据，真源是 YAML）。
+      三级降级：terminology_glossary.yaml（主真源）→ 硬编码 fallback（6 类共享术语，YAML
+      缺失时降级，保证生成器不崩溃）→ 返回空串/en-only。提供 get_category_map /
+      get_flat_map / get_zh / get_en_zh 四个 API。消费者：5 个生成器（decision /
+      dataflow / data_acquisition / data_inventory / navigation_index）。与
+      domain_name_mapping.py 分工：本模块管图示术语翻译（边类型/构建状态/作用域/实体名
+      等），domain_name_mapping.py 管功能域规范名（D_XXX）。改术语改 glossary YAML 即可，
+      禁止在生成器代码硬编码中文字典。AI 发现路径：搜索 get_category_map /
+      terminology_loader → 命中本条目 → canonical 路径找源码 → glossary YAML 改条目。
 
 
 # ============================================================================
