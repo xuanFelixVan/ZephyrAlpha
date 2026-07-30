@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] validate 返回错误列表（不抛）；topological_layers 检测到环抛 ValueError；build_dag_from_registry 对未注册因子抛 KeyError
 # [TESTS] tests/factor/test_factor_dag.py
 # [TTL] permanent
-"""D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn 拓扑分层算法。
+r"""D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn 拓扑分层算法。
 
 提供：
 - FactorNode / FactorEdge / FactorDAG：pydantic 数据结构（复用 BASE_CONFIG）
