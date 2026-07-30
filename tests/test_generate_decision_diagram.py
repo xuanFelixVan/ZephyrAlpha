@@ -480,9 +480,9 @@ class TestGenLayersMmd:
         assert isinstance(mmd, str)
 
     def test_starts_with_flowchart_lr(self, sample_tracks, sample_layers):
-        """mmd 以 flowchart LR 开头。"""
+        """mmd 以 flowchart TD 开头。"""
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "flowchart LR" in mmd
+        assert "flowchart TD" in mmd
 
     def test_contains_layer_cards(self, sample_tracks, sample_layers):
         """mmd 包含每个 layer 的卡片。"""
@@ -506,7 +506,7 @@ class TestGenLayersMmd:
     def test_empty_input(self):
         """空输入返回空图。"""
         mmd = _gen_layers_mmd([], [])
-        assert "flowchart LR" in mmd
+        assert "flowchart TD" in mmd
 
 
 # ---------- _gen_invariants_mmd 测试 ----------
@@ -1005,9 +1005,9 @@ class TestGenLayersFileMd:
         assert md.count("```mermaid") == 1
 
     def test_contains_flowchart_lr(self, sample_tracks, sample_layers_expanded):
-        """mermaid 使用 flowchart LR。"""
+        """mermaid 使用 flowchart TD。"""
         md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
-        assert "flowchart LR" in md
+        assert "flowchart TD" in md
 
 
 class TestGenInvariantsFileMd:

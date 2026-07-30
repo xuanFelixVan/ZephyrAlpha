@@ -1,6 +1,6 @@
 # 决策流图 · 模型驱动轨（Model-Driven Track）
 
-> 生成时间: 2026-07-30T19:38:34
+> 生成时间: 2026-07-30T19:53:22
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 1
@@ -21,7 +21,7 @@
 > 仅展示 Layer 节点与层间流向；决策节点详情见下方「功能域文件」链接。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
         LL0["L0: 数据接入与预处理层<br/>production/stable"]

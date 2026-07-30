@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain factor（因子）
 
-> 生成时间: 2026-07-30T19:38:34
+> 生成时间: 2026-07-30T19:53:22
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → factor
@@ -19,7 +19,7 @@
 > 共 7 层，1 边。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
         LL2A["L2A: 信号层<br/>design/planned"]
@@ -73,14 +73,12 @@ flowchart TD
 > 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart LR
-    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
-        SELF["factor（因子）"]
-        EXT_frontend["frontend（前端）"]
-        SELF -->|出 1| EXT_frontend
-        EXT_data["data（数据）"]
-        EXT_data -->|入 1| SELF
-    end
+    SELF["factor（因子）"]
+    EXT_frontend["frontend（前端）"]
+    SELF -->|出 1| EXT_frontend
+    EXT_data["data（数据）"]
+    EXT_data -->|入 1| SELF
 ```
 

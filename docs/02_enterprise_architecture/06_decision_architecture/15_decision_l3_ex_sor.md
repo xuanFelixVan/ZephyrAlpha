@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_sor（执行排序）
 
-> 生成时间: 2026-07-30T19:38:34
+> 生成时间: 2026-07-30T19:53:22
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_sor
@@ -19,7 +19,7 @@
 > 共 7 层，4 边。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph track_model_driven["模型驱动轨（Model-Driven Track）"]
         LL2A["L2A: 信号层<br/>design/planned"]
@@ -90,16 +90,14 @@ flowchart TD
 > 本域与 3 个外部域直接连接 / This domain directly connects to 3 external domain(s).
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart LR
-    subgraph cd_sg["跨域依赖（Cross-Domain Dependency）"]
-        SELF["ex_sor（执行排序）"]
-        EXT_pf_alloc["pf_alloc（组合分配）"]
-        SELF -->|出 1| EXT_pf_alloc
-        EXT_governance["governance（governance）"]
-        SELF -->|出 1| EXT_governance
-        EXT_ex_core["ex_core（执行核心）"]
-        EXT_ex_core -->|入 2| SELF
-    end
+    SELF["ex_sor（执行排序）"]
+    EXT_pf_alloc["pf_alloc（组合分配）"]
+    SELF -->|出 1| EXT_pf_alloc
+    EXT_governance["governance（governance）"]
+    SELF -->|出 1| EXT_governance
+    EXT_ex_core["ex_core（执行核心）"]
+    EXT_ex_core -->|入 2| SELF
 ```
 
