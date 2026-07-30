@@ -9873,3 +9873,71 @@ entries:
   status: decided
   created: '2026-07-30'
   last_updated: '2026-07-30'
+- issue_id: '#ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001'
+  title: GATE-ASSET-INDEX reconciler 误报 auto_committed——batched flush 与 workspace_hygiene restore 竞态致索引未真正重生
+  severity: P1高
+  adjudication: '病根（第一性原理实证）：reconcile_execution_log 表 2026-07-30 12:31~15:21 UTC 有 7 条 GATE-ASSET-INDEX action=auto_committed 记录（detail="unified-asset-index drift detected and auto-regenerated"），但索引产物 data/asset_index/unified-asset-index.yaml 的 generated_at 仍是 6 天前（2026-07-24T07:33:16Z），total_assets=10286，且已删文档 ai_first_governance_principles.md 的 stale 引用仍残留 line 51378。手动跑 `python -m zephyr.infrastructure.asset_inventory bootstrap` 能正确重建（11967 files / ghosts=0 / generated_at 更新 / stale 清除，commit 7185953df7）。根因定位（代码路径实证）：①GATE-ASSET-INDEX reconciler（priority=170，reconciliation_registry.py L8467 _reconcile）调用 bootstrap 生成索引文件后，通过 BatchedAutoCommitter.buffer() 延迟提交——buffer() 返回合成 CommitResult(status=OK, commit_hash="BUFFERED")，reconciler 据此返回 action="auto_committed"；②实际 git commit 在 batcher.flush() 中执行（晚于所有 reconciler）；③但 workspace_hygiene_reconciler（priority=890，晚于 170）检测到索引文件是 auto-sync 产物（_AUTO_SYNC_PREFIXES 含 data/asset_index/unified-asset-index.yaml），执行 git restore 还原到 HEAD 版本；④flush() 时 git diff --cached --quiet 返回 0（NOTHING_TO_COMMIT），索引变更被还原→未提交；⑤但 reconciler 已在步骤①记录 auto_committed，日志与实际行为不一致。这是一个会导致漂移 silently 累积的治理盲区——日志声称已重生但实际未重生。治本三处修复：Fix1（workspace_hygiene_reconciler.py）——reconcile 中调用 gateway._batcher.buffered_files() 获取待提交文件集，从 auto_sync_files 中排除缓冲文件，避免还原待提交索引（fail-open：batcher 不可用时不过滤）；Fix2（reconciliation_registry.py 新增 _downgrade_auto_committed_on_flush_failure + git_commit_gateway.py/session_worktree.py 调用）——框架级 post-flush 验证：flush() 后检查 _last_flush_result，若 status≠OK（NOTHING_TO_COMMIT/COMMIT_FAILED 等）则将所有 auto_committed 结果降级为 warn 并记录 flush 失败原因，使日志与实际行为一致；Fix3（reconciliation_registry.py GATE-ASSET-INDEX）——commit_hash=="BUFFERED" 时 detail 追加 "(batched, pending flush)" 标注缓冲状态。测试覆盖：TestBufferedFileExclusion（4 测试，buffered 文件不被 restore + 混合场景 + fail-open 向后兼容 + buffered+real_change warn）；test_downgrade_auto_committed_on_flush_failure.py（12 测试，flush 成功/None 不降级 + flush 失败降级 + 选择性降级 + 边界场景）；修复中测试还抓出两个 bug——①降级函数原用 str(flush_status)=="OK" 对 str Enum 失效（Py3.11+ str(CommitStatus.OK)="CommitStatus.OK"≠"OK" 会误降级成功），改用 == 比较；②预存测试 test_reconcile_never_raises_on_exception patch 公共别名 git_status_porcelain 但代码调私有 _git_status_porcelain 致 mock 空转，修正 patch 目标。验证：91 测试全通过。边界裁定类议题（接受"治本方案已落地但需用户确认是否采纳"现状），按铁律#9 标 proposed 待用户确认。'
+  fix_phase: '已落地（Fix1 workspace_hygiene buffered 排除 + Fix2 框架级 post-flush 降级 + Fix3 BUFFERED 标注 + 16 新测试 + 2 bug 修复）；议题 status=proposed 待用户确认治本方向'
+  status: proposed
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+# --- #ARCH-PROVIDER-NEARNAME-001: Provider 近名类消歧治本（2026-07-30）---
+# 关联：MiniQmtProvider/AKShareProvider 两域同名 provider 接口完全不同致 AI 混淆
+- issue_id: '#ARCH-PROVIDER-NEARNAME-001'
+  title: '两域近名 Provider 类消歧——MiniQmt{Ingest,Quote}Provider / Akshare{Ingest,Quote}Provider 命名治本'
+  category: refactor
+  severity: P2中
+  adjudication: |-
+    2026-07-30 纯技术重构（命名消歧，无价值判断），AI 直接标 decided。
+
+    病根（第一性原理实证）：
+    项目存在两对近名 Provider 类，分属 D_DATA 与 D_GOVERNANCE 两域，类名仅一字母大小写差异，
+    但接口契约完全不同——100% AI 开发场景下 AI 凭类名推断接口必错：
+    1. MiniQmtPair: data 版 MiniQMTProvider（大写QMT，fetch(payload,policy) 能力路由，入库ETL）
+       vs governance 版 MiniQmtProvider（小写qmt，fetch_historical/subscribe_realtime，实盘行情）
+    2. AksharePair: data 版 AKShareProvider（大写K，fetch(payload,policy)，宏观/分析师入库）
+       vs governance 版 AkshareProvider（小写k，fetch_historical，A股日线/分钟线历史行情）
+
+    近名危害实证：smoke_test_tick_data.py 静态核查发现 EDE 的 TickReplayEngine 调
+    provider.fetch_historical(interval="tick")，真正实现该方法的 governance 版 MiniQmtProvider，
+    而 data 版 MiniQMTProvider 无此方法——AI 按类名易误用 data 版导致 AttributeError。
+    test_phase_c_import_chain.py:30 路径 data implementations 但类名误写小写k（getattr 必失败，
+    预存 bug）。多处 demo/test 用 zephyr.data.akshare_provider / zephyr.l00_data_source.* 等
+    已失效的 stale import 路径。
+
+    治本方案（语义后缀消歧，对齐接口职责）：
+    - data 域（入库ETL）→ Ingest 后缀：MiniQmtIngestProvider / AkshareIngestProvider
+    - governance 域（行情读取）→ Quote 后缀：MiniQmtQuoteProvider / AkshareQuoteProvider
+    后缀直接暴露接口职责（Ingest=fetch(payload,policy) 能力路由入库；Quote=fetch_historical
+    历史行情/subscribe_realtime 实时盘口），AI 凭类名即可推断接口，零幻觉空间。
+    同时修正两个 akshare provider 预存的 module_id 域错配（data 版误标 MOD-GOV、governance 版
+    误标 MOD-DAT）→ MOD-DAT-akshare_ingest / MOD-GOV-akshare_quote。
+    顺带修复 test_phase_c_import_chain.py:30 预存类名 typo + demo/test stale import 路径
+    （统一指向 governance.data_governance.akshare_provider）。
+
+    非近名的基类 DataSourceBase（data.provider_base vs governance.intelligence_governance.provider_base，
+    62+29=91 引用）不在本次范围——基类不直接实例化、模块路径清晰区分，近名危害远低于 Provider，
+    属独立议题。
+
+    非 risk acceptance/wontfix/边界裁定——纯技术重构，AI 直接标 decided。
+  impact:
+    - 'src/zephyr/data/implementations/miniqmt_provider.py（MiniQMTProvider→MiniQmtIngestProvider, commit 0025a42e）'
+    - 'src/zephyr/governance/data_governance/miniqmt_provider.py（MiniQmtProvider→MiniQmtQuoteProvider, commit 8da246fa）'
+    - 'src/zephyr/data/implementations/akshare_provider.py（AKShareProvider→AkshareIngestProvider + module_id 修正, commit 05f795ff）'
+    - 'src/zephyr/governance/data_governance/akshare_provider.py（AkshareProvider→AkshareQuoteProvider + module_id 修正, commit 05f795ff）'
+    - 'tests/phase/test_phase_c_import_chain.py（类名 typo 修复 + import chain 实证）'
+    - 'tests/zephyr/data/test_providers.py / test_capability_validator.py（测试同步）'
+    - 'docs/03_modules/_domain_data/blueprint.md / data_source_integrator_blueprint.md / _system_master/blueprint.md（文档同步）'
+  fix_phase: |-
+    已落地（三批 commit）：
+      - Batch A（8da246fa）: governance MiniQmtProvider→MiniQmtQuoteProvider，11 文件
+      - Batch B（0025a42e）: data MiniQMTProvider→MiniQmtIngestProvider，7 文件
+      - Batch C（05f795ff）: akshare 两版消歧 + module_id 修正 + stale 路径修复 + 文档同步，15 文件
+    验证：
+      - 全仓 grep 确认 4 个旧类名（MiniQMTProvider/MiniQmtProvider/AKShareProvider/AkshareProvider）零残留
+      - 4 个重命名 provider 冒烟导入全部成功
+      - test_phase_c_import_chain.py 25 passed（import chain 实证重命名类可导入）
+      - test_providers.py + test_capability_validator.py 160 passed
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
