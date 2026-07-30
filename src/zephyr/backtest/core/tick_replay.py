@@ -28,7 +28,7 @@
 
 约束:
   - PIT 铁律：仅推送当前时间戳的 Tick，不预读未来数据
-  - 数据来源：MiniQmtProvider.fetch_historical(interval="tick")
+  - 数据来源：MiniQmtQuoteProvider.fetch_historical(interval="tick")
   - 禁止跨 Tick 跳跃（即使时间戳间隔很大也按原始顺序推送）
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7 tick_replay.py 详细规格
@@ -136,7 +136,7 @@ class TickReplayEngine:
       - 盘口挂单监控: 实时推送 askVol/bidVol 变化
 
     Usage:
-        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
+        provider = MiniQmtQuoteProvider(path="E:/国金证券QMT交易端/userdata_mini")
         engine = TickReplayEngine(
             provider=provider,
             symbols=["600000.SH", "000001.SZ"],
@@ -166,7 +166,7 @@ class TickReplayEngine:
         """初始化 Tick 回放引擎
 
         Args:
-            provider: MiniQmtProvider 实例（提供 fetch_historical interval="tick"）
+            provider: MiniQmtQuoteProvider 实例（提供 fetch_historical interval="tick"）
             symbols: 标的代码列表
             start: 回放开始时间
             end: 回放结束时间

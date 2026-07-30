@@ -28,7 +28,7 @@
   - xttrader 非线程安全，所有调用需加锁（threading.Lock）
   - MiniQMT 仅 Windows，必须先启动 XtMiniQmt.exe 终端
   - xttrader 需开通 A 股实盘权限
-  - 与 D_DATA MiniQmtProvider 共用 xtquant 连接（shared_xtquant_conn）
+  - 与 D_DATA MiniQmtQuoteProvider 共用 xtquant 连接（shared_xtquant_conn）
 
 xttrader 错误码映射:
   0=成功, -1=连接失败, -2=未就绪, -3=订单号重复,
@@ -134,7 +134,7 @@ class MiniQmtBroker(BrokerInterface):
     Usage:
         # 配置从 config/.env.qmt 读取（QMT_SIM_PATH / QMT_SIM_ACCOUNT）
         # 与 D_DATA 共用 xtquant 连接
-        provider = MiniQmtProvider(path=qmt_path)
+        provider = MiniQmtQuoteProvider(path=qmt_path)
         broker = MiniQmtBroker(
             path=qmt_path,
             session_id="zephyr_session",
@@ -190,7 +190,7 @@ class MiniQmtBroker(BrokerInterface):
                 内部转 int 传给 XtQuantTrader，新版 xtquant 要求 int session）
             account_id: 券商资金账号（如 "8886156677"，从 config/.env.qmt 读取；
                 用于构造 StockAccount 下单/查询，新版 xtquant 要求 StockAccount 对象）
-            shared_xtquant_conn: 与 D_DATA 共用的 MiniQmtProvider 实例（可选）
+            shared_xtquant_conn: 与 D_DATA 共用的 MiniQmtQuoteProvider 实例（可选）
                 若提供，则复用其 xtquant 连接，避免重复 connect 到 miniQMT 终端
             matching_logic: 与 D_BACKTEST 共用的 MatchingLogic 实例（可选）
             matching_config: 撮合配置（matching_logic 为空时用此创建，可选）
@@ -570,7 +570,7 @@ class MiniQmtBroker(BrokerInterface):
 
         Args:
             order: 委托订单
-            order_book: 当前5档盘口快照（从 MiniQmtProvider.get_order_book 获取）
+            order_book: 当前5档盘口快照（从 MiniQmtQuoteProvider.get_order_book 获取）
 
         Returns:
             MatchingFill 预估成交结果
@@ -622,20 +622,20 @@ class MiniQmtBroker(BrokerInterface):
           - XtQuantTrader(path, session_int, callback=None)  # session 必须 int
           - StockAccount(account_id, 'STOCK')  # 下单/查询必须传 StockAccount 对象
 
-        若提供了 shared_xtquant_conn（D_DATA MiniQmtProvider），优先复用其连接，
+        若提供了 shared_xtquant_conn（D_DATA MiniQmtQuoteProvider），优先复用其连接，
         避免重复 connect 到 miniQMT 终端（Blueprint §16.7.1 F 共用 xtquant 连接）。
         """
         if self._xttrader is not None:
             self._init_account()
             return
 
-        # 优先复用 D_DATA MiniQmtProvider 的 xttrader 连接
+        # 优先复用 D_DATA MiniQmtQuoteProvider 的 xttrader 连接
         if self._shared_conn is not None:
             shared_trader = getattr(self._shared_conn, "xttrader", None) \
                 or getattr(self._shared_conn, "_xttrader", None)
             if shared_trader is not None:
                 self._xttrader = shared_trader
-                _logger.info("复用 D_DATA MiniQmtProvider 的 xttrader 连接")
+                _logger.info("复用 D_DATA MiniQmtQuoteProvider 的 xttrader 连接")
                 self._init_account()
                 return
 

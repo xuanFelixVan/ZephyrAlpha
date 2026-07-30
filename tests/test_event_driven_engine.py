@@ -21,7 +21,7 @@ from zephyr.backtest.core.engine_base import BacktestResult
 
 
 class MockTickProvider:
-    """模拟 MiniQmtProvider"""
+    """模拟 MiniQmtQuoteProvider"""
 
     def fetch_historical(self, symbol, start, end, interval="tick"):
         base_time = datetime(2024, 1, 15, 9, 30, 0)

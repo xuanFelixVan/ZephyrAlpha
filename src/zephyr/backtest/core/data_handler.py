@@ -21,7 +21,7 @@
   - 支持 DataFrame 输入（快速回测）
   - 支持 ClickHouse 加载（生产模式，通过 DatabaseService）
   - v1.1.0 新增: MultiSourceDataHandler 支持 Tick + 批量双源切换
-    - Tick 源: MiniQmtProvider.fetch_historical(interval="tick")
+    - Tick 源: MiniQmtQuoteProvider.fetch_historical(interval="tick")
     - 批量源: ClickHouse 通过 DatabaseService
     - 统一接口: next_bar() / next_tick() 双模式
 
@@ -354,7 +354,7 @@ class MultiSourceDataHandler:
     """多源数据处理器（v1.1.0 新增，Tick + 批量双源）
 
     支持双源切换:
-      - Tick 源: MiniQmtProvider.fetch_historical(interval="tick") 提供18字段Tick+5档盘口
+      - Tick 源: MiniQmtQuoteProvider.fetch_historical(interval="tick") 提供18字段Tick+5档盘口
       - 批量源: ClickHouse(c1_market) 通过 DatabaseService 访问（日线/分钟线批量回测）
 
     源选择策略（由 mode 决定）:
@@ -372,7 +372,7 @@ class MultiSourceDataHandler:
 
     Usage:
         # Tick 模式（做T回测）
-        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini")
+        provider = MiniQmtQuoteProvider(path="E:/国金证券QMT交易端/userdata_mini")
         handler = MultiSourceDataHandler(
             tick_provider=provider,
             symbols=["600000.SH"],
@@ -418,7 +418,7 @@ class MultiSourceDataHandler:
             start: 开始时间（datetime）
             end: 结束时间（datetime）
             mode: 源选择策略 "tick" | "batch" | "auto"
-            tick_provider: MiniQmtProvider 实例（mode="tick"/"auto" 时必填）
+            tick_provider: MiniQmtQuoteProvider 实例（mode="tick"/"auto" 时必填）
             batch_data: 批量数据 DataFrame（可选，优先于 ClickHouse）
             database_service: DatabaseService 实例（mode="batch"/"auto" 时可选）
             table: ClickHouse 表名（默认 daily_kline）

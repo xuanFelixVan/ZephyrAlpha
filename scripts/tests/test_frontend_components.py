@@ -165,7 +165,7 @@ def test_tick_replay():
 
 def test_order_book():
     print("=== Test 3: order_book ===")
-    # Mock MiniQmtProvider
+    # Mock MiniQmtQuoteProvider
     class MockProvider:
         def get_order_book(self, symbol):
             return {

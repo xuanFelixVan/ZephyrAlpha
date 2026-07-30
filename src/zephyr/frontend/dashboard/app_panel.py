@@ -149,7 +149,7 @@ class DashboardPanelApp:
     tick_data : list | None
         Tick 数据序列（Tick 回放数据源, D_BACKTEST）
     miniqmt_provider : Any | None
-        MiniQmtProvider 实例（5档盘口数据源, D_DATA）
+        MiniQmtQuoteProvider 实例（5档盘口数据源, D_DATA）
     miniqmt_broker : Any | None
         MiniQmtBroker 实例（持仓数据源, D_EX_CORE）
     execution_engine : Any | None

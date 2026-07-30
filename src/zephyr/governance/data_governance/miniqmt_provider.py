@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MiniQmtProviderError
 # [TESTS]
-# [A_module] module_id=MOD-GOV-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-miniqmt_quote | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MiniQMT 实盘行情 Provider（Tick + 5档盘口）
 
@@ -86,7 +86,7 @@ class MiniQmtProviderError(Exception):
             self.error_code = error_code
 
 
-class MiniQmtProvider(DataSourceBase):
+class MiniQmtQuoteProvider(DataSourceBase):
     """MiniQMT 实盘行情 Provider——对接 xtdata，提供 Tick + 5档盘口
 
     对接国金证券 MiniQMT 终端（Level-1 五档盘口），支持:
@@ -96,7 +96,7 @@ class MiniQmtProvider(DataSourceBase):
       - ClickHouse 历史日线（通过 DatabaseService）
 
     Usage:
-        provider = MiniQmtProvider(path="E:/国金证券QMT交易端/userdata_mini", session_id="zephyr")
+        provider = MiniQmtQuoteProvider(path="E:/国金证券QMT交易端/userdata_mini", session_id="zephyr")
         # 历史 Tick
         df = provider.fetch_historical("600000.SH", start, end, interval="tick")
         # 5档盘口
@@ -489,4 +489,4 @@ class MiniQmtProvider(DataSourceBase):
             return 0
 
 
-__all__ = ["MiniQmtProvider", "MiniQmtProviderError"]
+__all__ = ["MiniQmtQuoteProvider", "MiniQmtProviderError"]

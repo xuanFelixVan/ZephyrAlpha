@@ -25,7 +25,7 @@ from zephyr.backtest.core.matching_logic import TickSnapshot
 
 
 class MockTickProvider:
-    """模拟 MiniQmtProvider（避免依赖 xtquant）"""
+    """模拟 MiniQmtQuoteProvider（避免依赖 xtquant）"""
 
     def fetch_historical(self, symbol, start, end, interval="tick"):
         base_time = datetime(2024, 1, 15, 9, 30, 0)

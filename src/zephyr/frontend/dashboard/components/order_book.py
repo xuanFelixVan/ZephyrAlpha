@@ -17,7 +17,7 @@
 """order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_frontend/blueprint.md §16.7.3
-数据源: D_DATA MiniQmtProvider.get_order_book() 5档盘口实时数据
+数据源: D_DATA MiniQmtQuoteProvider.get_order_book() 5档盘口实时数据
 渲染依赖: Panel(布局) + ChartFactory.make_orderbook(图表)
 
 v3.0.0 变更 (#ARCH-047):
@@ -108,10 +108,10 @@ def _compute_pressure(ask_v: list[int], bid_v: list[int]) -> float:
 
 
 def fetch_order_book(miniqmt_provider: object, symbol: str) -> OrderBookData:
-    """从 D_DATA MiniQmtProvider 获取5档盘口（纯函数，无副作用）
+    """从 D_DATA MiniQmtQuoteProvider 获取5档盘口（纯函数，无副作用）
 
     蓝图 §16.7.3:
-      - 输入: MiniQmtProvider 实例（依赖注入），标的代码
+      - 输入: MiniQmtQuoteProvider 实例（依赖注入），标的代码
       - 输出: OrderBookData（5档 ask/bid price/vol + 压力比）
     """
     if miniqmt_provider is None:
