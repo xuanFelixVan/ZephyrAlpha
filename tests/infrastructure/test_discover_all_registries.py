@@ -100,6 +100,18 @@ class TestAgentsMdNoHardcodedCount:
         section = m.group(0)
         assert "catalogs" in section and "缓存" in section, "未声明 master_index 为 catalogs 派生缓存"
 
+    def test_no_stale_ruling_count_hardcode(self):
+        """RULE-RULING 不应硬编码裁定条目计数（曾硬编码"54"，实际 ruling_registry=56）。
+        同类病根：AGENTS.md 硬编码 registry 计数，registry 增长后漂移。"""
+        text = _AGENTS.read_text(encoding="utf-8")
+        m = re.search(r"## RULE-RULING.*?(?=\n## )", text, re.DOTALL)
+        assert m, "未找到 RULE-RULING 段落"
+        section = m.group(0)
+        # 禁止"\d+ 个裁定条目"这类硬编码计数
+        assert not re.search(r"\d+\s*个\s*裁定条目", section), "RULE-RULING 仍含硬编码裁定计数"
+        # 必须声明"勿写死"并指向 entries 真源
+        assert "勿在文档/AI 记忆中写死" in section or "勿写死" in section, "RULE-RULING 未声明计数勿写死"
+
 
 class TestSsotAlignment:
     """真源对齐：ROOR（SSoT）条目数 ≥ master_index（派生缓存），且 master_index 全在 catalogs/。"""
