@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2841 | 95.9% |
+| production（生产态） | 2847 | 95.9% |
 | design（设计态） | 123 | 4.1% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2964** | **100%** |
+| **总计** | **2970** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4014 | 135.4% |
-| stable | 1641 | 55.4% |
+| generated | 4016 | 135.2% |
+| stable | 1645 | 55.4% |
 | planned | 115 | 3.9% |
 | deprecated | 4 | 0.1% |
 
@@ -53,7 +53,7 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_CONTRACTS | 共享契约 | 0 | 0 | 0 | 0 | N/A |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 173 | 160 | 13 | 0 | 92.5% |
+| D_DATA | 数据接入层 | 175 | 162 | 13 | 0 | 92.6% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 13 | 0 | 35.0% |
 | D_DATA_GOV | 数据治理 | 10 | 10 | 0 | 0 | 100.0% |
 | D_DATA_SCRIPTS | 数据治理脚本 | 0 | 0 | 0 | 0 | N/A |
@@ -83,7 +83,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 157 | 156 | 1 | 0 | 99.4% |
+| D_INFRA_RUNTIME | 运行时集成 | 161 | 160 | 1 | 0 | 99.4% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
 | D_INTEGRATION | 管线路由 | 71 | 71 | 0 | 0 | 100.0% |
 | D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | N/A |

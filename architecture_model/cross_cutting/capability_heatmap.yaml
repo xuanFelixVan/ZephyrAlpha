@@ -18,7 +18,7 @@ partition:
     能力成熟度热力图（50域×10能力域矩阵）。
     五档成熟度：L0 Missing / L1 Designed / L2 Drafted / L3 Usable / L4 Production / L5 Leading。
     结构化数据从depgraph派生（PostgreSQL INFRA-DB-003）。
-  source_view: capability_maturity_principles.md
+  source_view: null  # 原则文档已删（2026-07-30），档位/评分/能力域定义已内化为本 YAML canonical schema
   related_kb_ref:
   baseline_date: '2026-06-23'
   review_cadence: quarterly

@@ -125,21 +125,21 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 ## 5. 依赖统计
 
 <!-- AUTO-START:dependency_stats -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-07-29 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-07-30 -->
 
 | 指标 | 值 |
 |------|----|
 | 域总数 / Total domains | 72 |
-| 节点总数 / Total nodes | 5775 |
-| 依赖边总数 / Total edges | 7920 |
+| 节点总数 / Total nodes | 5798 |
+| 依赖边总数 / Total edges | 7956 |
 | 孤儿节点数 / Orphan nodes | 0 |
 
 | build_status | 节点数 |
 |--------------|--------|
 | `deprecated` | 4 |
-| `generated` | 4015 |
-| `planned` | 115 |
-| `stable` | 1641 |
+| `generated` | 4020 |
+| `planned` | 129 |
+| `stable` | 1645 |
 <!-- AUTO-END:dependency_stats -->
 
 <!-- AUTO-START:external_deps -->
@@ -156,6 +156,7 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | `structlog>=24.1.0,<25.0.0` | 结构化日志 / Structured logging |
 | `pyarrow>=15.0.0,<20.0.0` | Parquet I/O / Parquet I/O |
 | `psycopg2-binary>=2.9.0,<3.0.0` | PostgreSQL 驱动 / PostgreSQL driver |
+| `clickhouse-driver>=0.2.6,<1.0.0` | — / — |
 | `plotly>=6.0.0,<7.0.0` | 可视化 / Visualization |
 | `streamlit>=1.50.0,<2.0.0` | 早期仪表盘 / Legacy dashboard |
 | `panel>=1.5.0,<2.0.0` | 仪表盘 / Dashboard |

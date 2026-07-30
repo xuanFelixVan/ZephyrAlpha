@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-07-30 03:02:40
+> 自动生成时间: 2026-07-30 11:49:32
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 246
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-07-30 03:02:40
+%% 生成时间: 2026-07-30 11:49:32
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 246
 
@@ -22,14 +22,14 @@ graph LR
         D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信<br/>(72模块)"]
         D_INFRA_OPS["D_INFRA_OPS<br/>基础设施运维<br/>(0模块)"]
         D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复<br/>(55模块)"]
-        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(157模块)"]
+        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(161模块)"]
         D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性<br/>(0模块)"]
         D_SHARED["D_SHARED<br/>共享服务<br/>(184模块)"]
     end
     subgraph L1_foundation[L1_foundation]
         D_ALT_DATA["D_ALT_DATA<br/>另类数据<br/>(8模块)"]
         D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心<br/>(130模块)"]
-        D_DATA["D_DATA<br/>数据接入层<br/>(173模块)"]
+        D_DATA["D_DATA<br/>数据接入层<br/>(175模块)"]
         D_DATA_ENG["D_DATA_ENG<br/>数据工程<br/>(20模块)"]
         D_DATA_GOV["D_DATA_GOV<br/>数据治理<br/>(10模块)"]
         D_DATA_SEC["D_DATA_SEC<br/>数据安全与契约<br/>(7模块)"]

@@ -66,7 +66,7 @@ python scripts/demos/demo_e2e_pipeline.py
 
 ## 环境要求（新机器 restore 开箱即用清单）
 
-> **灾备真源（2026-07-30 治本 #ARCH-README-BACKUP-POINTER）**：备份配置以 [`scripts/backup/backup_config.yaml`](scripts/backup/backup_config.yaml)（v2.0.0，robocopy + CH 增量）为唯一真源；恢复步骤以 [`dr_runbook.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/dr_runbook.md)（AI 可执行操作手册）为唯一操作手册；备份清单见 [`backup_inventory.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/backup_inventory.md)。本节仅列环境要求与版本号，不重复灾备架构叙事（消除第二真源漂移；restic/MinIO 方案已于 2026-07-28 退役）。
+> **灾备真源（2026-07-30 治本 #ARCH-README-BACKUP-001）**：备份配置以 [`scripts/backup/backup_config.yaml`](scripts/backup/backup_config.yaml)（v2.0.0，robocopy + CH 增量）为唯一真源；恢复步骤以 [`dr_runbook.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/dr_runbook.md)（AI 可执行操作手册）为唯一操作手册；备份清单见 [`backup_inventory.md`](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/backup_inventory.md)。本节仅列环境要求与版本号，不重复灾备架构叙事（消除第二真源漂移；restic/MinIO 方案已于 2026-07-28 退役）。
 >
 > 灾备验收：新机器按本清单准备环境后，执行 `scripts/backup/restore.ps1 all` 即可恢复全部项目代码、配置与数据库 dump。
 

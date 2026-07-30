@@ -98,7 +98,7 @@ quant_special_scenarios:
     - "③ 分类(已成交/部分成交/仅提交/未提交)"
     - "④ 处置决策写入 audit journal"
     - "⑤ T+1 对账"
-  idempotency_key_ref: "application_principles.md §9(去重唯一依据)"
+  idempotency_key_ref: "#ARCH-TRADING-IDEMPOTENCY-001（broker ACK 回执去重唯一依据，T1 实现）"
   data_loss_tolerance:
     order_audit_log: "0 容忍"
     factor_parquet: "可重算"

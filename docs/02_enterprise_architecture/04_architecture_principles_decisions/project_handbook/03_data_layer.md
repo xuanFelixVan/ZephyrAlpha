@@ -34,19 +34,19 @@ language: zh
 | Warm | 中频历史数据 | DuckDB + Parquet | daily_kline 等 |
 | Cold | 长期归档（7 年合规） | Parquet | 合规归档 |
 
-> 详见原则 [../principles/runtime_planes_principles.md](../principles/runtime_planes_principles.md) 与 [../principles/data_principles.md](../principles/data_principles.md)。
+> 详见原则 [../principles/runtime_planes_principles.md](../principles/runtime_planes_principles.md)。
 
 ## 4. 表计数
 
 <!-- AUTO-START:table_counts -->
-<!-- 数据源：table_registry 内存加载 | 最后同步：2026-07-29 -->
+<!-- 数据源：table_registry 内存加载 | 最后同步：2026-07-30 -->
 
 | 数据库 / Database | 表数 / Tables |
 |------|------|
 | `c0_meta` | 1 |
-| `c1_market` | 86 |
+| `c1_market` | 87 |
 | `c3_fundamental` | 23 |
-| **合计 / Total** | **110** |
+| **合计 / Total** | **111** |
 <!-- AUTO-END:table_counts -->
 
 ## 5. 外部权威源（全量表清单与逐表 schema）
@@ -57,4 +57,4 @@ language: zh
 | 数据采集流 | L0→L1 标准化管线 | `docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md` |
 | 数据流图 | 端到端数据流 | `docs/02_enterprise_architecture/05_dataflow_architecture/` |
 
-> 数据架构原则（PIT/血缘/质量门/MDM/保留）见 [../principles/data_principles.md](../principles/data_principles.md)。
+> 数据架构红线（PIT/反幸存者偏差）由 fitness functions 强制执行（`scripts/arch_guard/fitness_functions/check_pit_compliance.py` + `check_survivorship_bias.py`）；runtime 血缘见 #ARCH-DATA-LINEAGE-001。

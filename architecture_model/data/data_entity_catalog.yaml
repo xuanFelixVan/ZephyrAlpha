@@ -1,6 +1,5 @@
 # [A_config] module_id=CFG-data-entity-catalog | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
-# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/data_principles.md
 # module_id: CFG-DATA-ENTITY-CATALOG
 # stability: evolving
 # safety_level: L
@@ -9,13 +8,13 @@
 # --- 治理锚定结束 ---
 # v1.0.0: 概念数据实体清单真源,从 target_architecture/data_architecture.md §2 迁移(2026-07-23, B3-doc3)
 #         19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类。
-#         永恒原则(PIT/Survivorship/Lineage/MDM/Quality/Retention/Classification)见 data_principles.md
+#         永恒原则: PIT/Survivorship 由 scripts/arch_guard/fitness_functions/check_pit_compliance.py + check_survivorship_bias.py 强制执行; Lineage runtime 见 #ARCH-DATA-LINEAGE-001; MDM/Quality/Retention/Classification 由本 schema + fitness_functions 落地
 #         物理表清单(97 张 ClickHouse 表)见 05_dataflow_architecture/data_inventory.md(自动生成)
 #         本文件是"逻辑/概念数据模型",data_inventory.md 是"物理表存储",两者层次不同
 
 module_id: CFG-DATA-ENTITY-CATALOG
 version: "1.0.0"
-description: "概念数据实体清单——19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类(温度×节奏×来源)。从 data_architecture.md §2 迁移。永恒原则见 data_principles.md;物理表清单见 data_inventory.md。"
+description: "概念数据实体清单——19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类(温度×节奏×来源)。从 data_architecture.md §2 迁移。PIT/Survivorship 由 fitness functions 强制执行(见 scripts/arch_guard/fitness_functions/);物理表清单见 data_inventory.md。"
 
 # PIT 敏感度图例:
 #   high   = 任何错误都会让回测/归因撒谎(原 🔴 高)
@@ -294,7 +293,7 @@ entities:
       source: external
 
 # ========== 实体上下游关系(一句话叙事,源自 data_architecture.md §2.7) ==========
-# 每条 → 对应 data_principles.md §4 的一条血缘边(lineage edge),有 lineage_root 字段在实体里显式登记
+# 数据流 lineage edge(静态设计态)。runtime lineage_root 字段未实现,见 #ARCH-DATA-LINEAGE-001
 
 relationships:
   - flow: "Tick / OrderBookSnapshot → (聚合) → Bar"

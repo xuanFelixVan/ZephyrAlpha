@@ -6416,42 +6416,16 @@ creation_tokens:
     created_by: "sess-3352-20260719032034"
     capability: "debt_permanent_rulings"
 
-  # 治本（2026-07-19，target_architecture 清理第一批）：从 capability_heatmap.md 提取永恒方法论到 04 永久区
-  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/capability_maturity_principles.md"
-    token: "auto-capability-maturity-principles-20260719"
-    created_by: "sess-27136-20260719030938"
-    capability: "capability_maturity_principles"
-  # 治本（2026-07-19，target_architecture 清理第二批）：从 data_architecture.md 提取永恒原则到 04 永久区
-  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/data_principles.md"
-    token: "auto-data-principles-20260719"
-    created_by: "sess-16052-20260719032636"
-    capability: "data_architecture_principles"
   # 治本（2026-07-19，target_architecture 清理第三批）：从 security_architecture.md 提取永恒原则到 04 永久区
   - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/security_principles.md"
     token: "auto-security-principles-20260719"
     created_by: "sess-16052-20260719032636"
     capability: "security_architecture_principles"
-  # 治本（2026-07-19，target_architecture 清理第四批）：从 integration_architecture.md 提取永恒原则到 04 永久区
-  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/integration_principles.md"
-    token: "auto-integration-principles-20260719"
-    created_by: "sess-16052-20260719032636"
-    capability: "integration_architecture_principles"
   # 治本（2026-07-19，target_architecture 清理第五批）：从 business_architecture.md 提取永恒原则到 04 永久区
   - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/business_principles.md"
     token: "auto-business-principles-20260719"
     created_by: "sess-16052-20260719032636"
     capability: "business_architecture_principles"
-  # 治本（2026-07-19，target_architecture 清理第五批）：从 information_architecture.md 提取永恒原则到 04 永久区
-  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/information_principles.md"
-    token: "auto-information-principles-20260719"
-    created_by: "sess-16052-20260719032636"
-    capability: "information_architecture_principles"
-  # 治本（2026-07-19，target_architecture 清理第五批）：从 application_architecture.md 提取永恒原则到 04 永久区
-  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/application_principles.md"
-    token: "auto-application-principles-20260719"
-    created_by: "sess-16052-20260719032636"
-    capability: "application_architecture_principles"
-
   # 治本进度持久化 reconciler（#ARCH-GOV-CONVERGENCE-META Phase 3.1，修复 broken import）
   # 背景：Task I commit b4dd7e8d97 意外包含 orphaned import+registration，但文件未提交→clean checkout broken
   - file: "src/zephyr/governance/audit/remediation_progress_reconciler.py"

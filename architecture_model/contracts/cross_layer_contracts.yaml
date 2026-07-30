@@ -33,7 +33,6 @@ partition:
     外部系统契约 5 条 + AI 治理三接口（已 superseded）。
     来源：interface-contracts.md v1.1.0 迁移 + 2026-05-04 架构盲点补全。
   source_views:
-    - application_principles.md
     - 04-technology_architecture.md
   related_kb_refs:
 

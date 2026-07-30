@@ -33,19 +33,15 @@ created_by: agent
 
 ## 二、架构原则（principles/）— 规范"该怎么"
 
-10 份永恒框架原则。阅读顺序见 [principles/README.md](principles/README.md)。
+6 份永恒框架原则。阅读顺序见 [principles/README.md](principles/README.md)。
 
 | 文件 | 主题 |
 |------|------|
-| [architecture_principles.md](principles/architecture_principles.md) | 架构方法论 / 安全红线 / 开源优先 / 核心决策 |
 | [business_principles.md](principles/business_principles.md) | 业务能力地图 / 价值流 / NFR·SLA |
-| [application_principles.md](principles/application_principles.md) | C4 视图 / 模块归属 / 五大服务 / 幂等容错 |
-| [data_principles.md](principles/data_principles.md) | PIT / 反幸存者偏差 / 血缘 / 质量门 / MDM |
 | [governance_principles.md](principles/governance_principles.md) | 三层治理边界 / D2-B 闭环 / D3-B 自治 / D4 激活 |
 | [runtime_planes_principles.md](principles/runtime_planes_principles.md) | Hot/Warm/Cold 正交视图 / 跨平面协议 |
 | [security_principles.md](principles/security_principles.md) | 威胁模型 / LSG / Agent 沙箱 / 密钥 / IAM |
 | [technology_principles.md](principles/technology_principles.md) | 技术栈决策 / 运行时拓扑 / 部署 / DR-BCP |
-| [capability_maturity_principles.md](principles/capability_maturity_principles.md) | 五档成熟度模型 / 季度 Review |
 | [ai_first_governance_principles.md](principles/ai_first_governance_principles.md) | 100% AI 开发治理 / 病根分析 / 4 期治本框架 |
 
 ## 三、全景图能力（panorama/）

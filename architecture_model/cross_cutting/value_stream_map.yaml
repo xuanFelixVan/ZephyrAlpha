@@ -208,7 +208,7 @@ slo_matrix:
       name: "Data Freshness / 数据新鲜度"
       definition: "市场时段行情从 vendor 发布到数据湖可查询的端到端延迟"
       target: "分钟级 bar:p50 ≤ 15 s / p95 ≤ 60 s / p99 ≤ 180 s;日度结算:T+1 11:00 UTC+8 前 100% 到齐(p99);Reference 数据:T 日 18:00 UTC+8 前到齐"
-      sli_method: "ts_ingest − vendor_release_ts 差值(见 data_principles.md §4 PIT 三字段);histogram export to Prometheus"
+      sli_method: "ts_ingest − vendor_release_ts 差值(PIT 三字段,由 scripts/arch_guard/fitness_functions/check_pit_compliance.py 强制);histogram export to Prometheus"
       violation_consequence: "触发 B1 降级 + 阻塞因子刷新(SLO-5)"
     - id: "SLO-2"
       name: "Signal Generation Latency / 信号生成端到端延迟"

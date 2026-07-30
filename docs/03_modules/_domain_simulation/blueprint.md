@@ -36,9 +36,6 @@ references:
   - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l13_experimentation.yaml"
     section: "§0"
     why: SSoT YAML 真源
-  - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\04_architecture_principles_decisions\\application_principles.md"
-    section: "§4.3"
-    why: AI/ML Platform 架构上下文
 summary: "实验层。ExperimentPipelineBase + ScoutAgentBase OCP 扩展点 + ExperimentConfig/ExperimentMetric。Phase B 骨架已就位，CTR-009~012 待施工。"
 tags: [experimentation, l13, c-track, ocp, scout-agent, ab-test, t2-deferred]
 priority: P2

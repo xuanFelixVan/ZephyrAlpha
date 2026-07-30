@@ -82,7 +82,7 @@ depgraph 节点两态生命周期：`design`（设计态，蓝图阶段代码未
 |------|----|
 | 功能域 / Domains | 72 |
 | 代码节点 / Nodes | 5798 |
-| 依赖边 / Edges | 7948 |
+| 依赖边 / Edges | 7956 |
 | 孤儿节点 / Orphans | 0 |
 | 运营态占比 / Production ratio | 97.7%（stable+generated） |
 <!-- AUTO-END:project_snapshot -->
@@ -117,7 +117,7 @@ pip install -r requirements.txt
 | 部分 | 路径 | 回答什么 |
 |------|------|---------|
 | **项目现状手册** | [project_handbook/](project_handbook/) | 项目**是什么**：仓库布局、数据层、数据源、交易域、治理基础设施、依赖关系（大白话 + AUTO 统计 + 外链权威源） |
-| **架构原则** | [principles/](principles/) | 项目**该怎么**：10 份永恒框架原则（架构/治理/AI治理/应用/数据/业务/能力成熟度/运行平面/安全/技术） |
+| **架构原则** | [principles/](principles/) | 项目**该怎么**：6 份永恒框架原则（治理/AI治理/业务/运行平面/安全/技术） |
 | **全景图能力** | [panorama/](panorama/) | depgraph 双态模型、SSoT 分层、生成器角色——AI 干活前必查的依赖与路径全景 |
 | **自动化说明** | [_automation/](_automation/) | 哪些文档自动生成、AUTO 标记块清单、触发方式、维护规则 |
 
@@ -148,7 +148,7 @@ pip install -r requirements.txt
 | 能力反查 | 写 src/zephyr 业务代码前 MUST 调用能力反查（MCP 或 Python API） |
 | 数据操作 | 破坏性 DB 操作前 MUST 三步验证（必要性+真实性+可逆性） |
 
-> 完整铁律与裁定见 [AGENTS.md](../../../AGENTS.md) 与 [principles/architecture_principles.md](principles/architecture_principles.md)。
+> 完整铁律与裁定见 [AGENTS.md](../../../AGENTS.md)。
 
 ---
 

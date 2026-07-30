@@ -9809,3 +9809,43 @@ entries:
   status: proposed
   created: '2026-07-30'
   last_updated: '2026-07-30'
+- issue_id: '#ARCH-FINSAFETY-001'
+  title: R3 金融不盲信AI——admission_controller 未接线 risk_validator（量化红线待实现，原则文档已删迁移至议题登记）
+  severity: P1高
+  adjudication: '病根（第一性原理实证）：原 architecture_principles.md §2 R3"金融不盲信任AI"为裸原则。实证 depgraph 查询：admission_controller (node_id=7476288, D_TRADING, production/stable) 现有出边=0；D_TRADING→D_RISK 依赖边=0 条；risk_validator (node_id=7475773, D_RISK, production/stable) 风控模块已建设但未接入交易执行链。trae_051 含"风控限额策略"但 severity=warning（非硬阻断）。apply_depgraph --add-design-edge 因 from_node=production 被拒（design edge 要求 from=design）。治本裁定：R3 意图从 markdown 原则文档迁移至本议题登记（架构议题真源），architecture_principles.md 删除。T1 实盘时补 admission_controller→risk_validator 依赖接线 + 升 trae_051 severity warning→deny hard gate。当前接受"风控模块已建未接线"现状（trading 域未实盘，无实际交易风险）。边界裁定类议题（接受量化红线当前未执行的现状），按铁律#9 标 proposed 待用户确认。'
+  fix_phase: 'T1（真实资金接入）——补 admission_controller→risk_validator 依赖边 + 升 trae_051 为 deny hard gate'
+  status: proposed
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+- issue_id: '#ARCH-TRADING-IDEMPOTENCY-001'
+  title: HO-4 订单提交幂等——broker ACK 回执持久化未实现（量化红线待实现，原则文档已删迁移至议题登记）
+  severity: P1高
+  adjudication: '病根（第一性原理实证）：原 application_principles.md §4 幂等性铁律 HO-4"订单提交（Portfolio→Broker）幂等 + broker ACK 回执持久化——订单重发重复是量化红线"为裸原则。实证：trading 域未实盘（同 #ARCH-FINSAFETY-001 R3 现状），订单提交/broker adapter 执行链未建设，idempotency key 命中率作为 SLO-3 SLI 尚无代码承载。rg 全库确认 HO-4/broker ACK/订单幂等未在任何 trae_*.yaml 规则或本议题登记中跟踪（唯一出处为已删 application_principles.md §4）。治本裁定：HO-4 意图从 markdown 原则文档迁移至本议题登记（架构议题真源），application_principles.md 删除。T1 实盘时建设 broker_adapter 幂等重试 + ACK 回执持久化 + idempotency key SLO 监控，并补 trae 规则将"订单重发重复"升为 deny hard gate。当前接受"订单幂等未实现"现状（trading 域未实盘，无实际交易风险）。边界裁定类议题（接受量化红线当前未执行的现状），按铁律#9 标 proposed 待用户确认。'
+  fix_phase: 'T1（真实资金接入）——建设 broker_adapter 幂等重试 + ACK 回执持久化 + 补 trae 规则 deny hard gate'
+  status: proposed
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+- issue_id: '#ARCH-DATA-LINEAGE-001'
+  title: 数据血缘 runtime lineage_root 未强制——派生实体无血缘字段 + commit 无 gate（可追溯红线待实现，原则文档已删迁移至议题登记）
+  severity: P2中
+  adjudication: '病根（第一性原理实证）：原 data_principles.md §3 Data Lineage 极简契约为裸原则。实证：rg 全库 src/architecture_model 确认 lineage_root 字段未在任何实体 schema 中实际登记（data_entity_catalog.yaml L297 注释声称"有 lineage_root 字段在实体里显式登记"但实体定义无此字段=stale 注释）；无 check_lineage fitness function；无 commit gate 拦截"无血缘派生实体"。静态数据流 lineage（Tick→Bar→FactorValue→Signal→PnL）已在 data_entity_catalog.yaml relationships 段设计态建模，但 runtime 可追溯（分钟级 PnL→Tick 反向追溯）未实现。§1 PIT + §2 Survivorship 已由 scripts/arch_guard/fitness_functions/check_pit_compliance.py + check_survivorship_bias.py 强制执行（文档是解释书，冗余删除）。治本裁定：§3 Lineage 意图迁移至本议题登记，data_principles.md 删除。T1/T2 实现时补 lineage_root 字段到派生实体 schema + check_lineage fitness function + commit gate。当前接受"runtime 血缘未强制"现状（回测/实盘 PnL 追溯需求未紧迫）。边界裁定类议题，按铁律#9 标 proposed 待用户确认。'
+  fix_phase: 'T1/T2——派生实体 schema 补 lineage_root 字段 + check_lineage fitness function + commit gate'
+  status: proposed
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+- issue_id: '#ARCH-REQ-CLASSIFY-001'
+  title: clickhouse-driver 依赖分类修正——从 demo 可选升级为核心依赖
+  severity: P2中
+  adjudication: '病根（第一性原理实证）：clickhouse-driver 原归类为 [project.optional-dependencies] demo 可选依赖，但 ClickHouse 是主行情库（c1_market，MOD-INF-002 database_service lazy-import），pip install . 后应能直连。将 clickhouse-driver 从 demo 移入 [project.dependencies] 核心依赖，requirements.txt 同步，requirements-demo.txt 移除并补 baostock 与 pyproject 对齐。纯技术修复（依赖分类纠正，无价值判断），AI 直接标 decided。'
+  fix_phase: '已落地（commit b8da7f6aa8：pyproject.toml + requirements.txt + requirements-demo.txt 三文件同步）'
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+- issue_id: '#ARCH-README-BACKUP-001'
+  title: README 灾备章节指针式重写——消除第二真源漂移，指向 backup_config.yaml + dr_runbook.md
+  severity: P2中
+  adjudication: '病根（第一性原理实证）：README 灾备章节原含已退役 restic/MinIO 方案叙事，与 backup_config.yaml（v2.0.0 robocopy+CH增量）真源漂移。治本：README 改为指针式文档——仅列环境要求与版本号，灾备架构叙事指向 backup_config.yaml（备份配置唯一真源）+ dr_runbook.md（恢复操作手册）+ backup_inventory.md（备份产物清单），消除第二真源。同时增补"启动应用"入口段（5 入口表）。原命名 #ARCH-README-BACKUP-POINTER 不符合 ARCH ID 命名规范（须以数字结尾），重命名为 #ARCH-README-BACKUP-001。纯技术修复（文档指针化+命名规范纠正），AI 直接标 decided。'
+  fix_phase: '已落地（commit b8da7f6aa8：README.md 指针式重写 + 启动入口段；本轮审计补登 registry 条目 + 重命名 ARCH ID）'
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'

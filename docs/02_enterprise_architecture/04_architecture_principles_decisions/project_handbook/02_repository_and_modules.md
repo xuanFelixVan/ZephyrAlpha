@@ -80,7 +80,7 @@ ZephyrAlpha/
 ## 3. 模块计数
 
 <!-- AUTO-START:module_counts -->
-<!-- 数据源：module_id_registry.yaml + 文件系统扫描 | 最后同步：2026-07-29 -->
+<!-- 数据源：module_id_registry.yaml + 文件系统扫描 | 最后同步：2026-07-30 -->
 
 | 指标 | 值 |
 |------|----|
@@ -90,14 +90,14 @@ ZephyrAlpha/
 <!-- AUTO-END:module_counts -->
 
 <!-- AUTO-START:py_file_total -->
-<!-- 数据源：文件系统扫描 | 最后同步：2026-07-29 -->
+<!-- 数据源：文件系统扫描 | 最后同步：2026-07-30 -->
 
 | 目录 | .py 文件数（排除 __init__.py） |
 |------|------|
-| `src/zephyr/` | 2072 |
+| `src/zephyr/` | 2074 |
 | `scripts/governance/` | 420 |
-| `tests/` | 2219 |
-| **合计 / Total** | **4711** |
+| `tests/` | 2221 |
+| **合计 / Total** | **4715** |
 <!-- AUTO-END:py_file_total -->
 
 ## 4. 外部权威源（全量明细）
