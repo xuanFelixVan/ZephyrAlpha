@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-dr-bcp-matrix | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
-# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/technology_principles.md
+# blueprint: architecture_model/technology/dr_bcp_matrix.yaml (self-contained; 原 technology_principles.md 已删 2026-07-30)
 # module_id: CFG-DR-BCP-MATRIX
 # stability: evolving
 # safety_level: L
@@ -10,23 +10,23 @@
 # v1.0.0: 技术架构运营结构化数据真源,从 target_architecture/technology_architecture.md §8/§9.2/§10.1 迁移(2026-07-23, B3-doc5)
 #         DR/BCP 7 行域名级 RTO/RPO 矩阵(含市场/非市场时段) + 三级灾备预案(含当前阶段成本) + 量化特殊场景
 #         + 4 环境×6 维度矩阵 + 可观测性指标目录(具体 metric name)
-#         永恒方法论(技术栈决策/运行时拓扑/部署框架/DR-BCP 框架/环境矩阵/可观测性三支柱)见 technology_principles.md
-#         容量模型(§11)与成本架构(§12)按 technology_principles.md §8.2 边界声明,由 depgraph(域资源预算时点快照)
+#         永恒方法论原 technology_principles.md 已删(2026-07-30),设计大纲留 git 历史;可执行约束在本 YAML + invariants.yaml
+#         容量模型(§11)与成本架构(§12)由 depgraph(域资源预算时点快照)
 #         与运营态(LLM Token/成本预算/伸缩触发)维护,不迁入本文件;git 历史可查 technology_architecture.md §11-§12
 
 module_id: CFG-DR-BCP-MATRIX
 version: "1.0.0"
-description: "技术架构运营结构化数据真源——DR/BCP 7 行域名级 RTO/RPO 矩阵(含市场/非市场时段) + 三级灾备预案(含当前阶段成本) + 量化特殊场景 + 4 环境×6 维度矩阵 + 可观测性指标目录(具体 metric name)。从 technology_architecture.md §8/§9.2/§10.1 迁移。永恒方法论见 technology_principles.md。"
+description: "技术架构运营结构化数据真源——DR/BCP 7 行域名级 RTO/RPO 矩阵(含市场/非市场时段) + 三级灾备预案(含当前阶段成本) + 量化特殊场景 + 4 环境×6 维度矩阵 + 可观测性指标目录(具体 metric name)。从 technology_architecture.md §8/§9.2/§10.1 迁移。"
 
 # ============================================================================
 # §8 DR/BCP — Disaster Recovery & Business Continuity / 灾备与业务连续性
-# 永恒框架(RTO/RPO 分层原则、三级灾备、量化特殊场景铁律)见 technology_principles.md §5
+# 永恒框架(RTO/RPO 分层原则、三级灾备、量化特殊场景铁律)原 technology_principles.md §5 已删(2026-07-30),可执行约束在本 YAML;设计大纲留 git 历史
 # 本节为 principles §5.1(5 行泛化版)的详细展开:7 行域名级,含非市场时段 RTO
 # ============================================================================
 
 dr_bcp_matrix:
   description: "RTO/RPO 核心链路分层矩阵(域名级,含市场/非市场时段)"
-  eternal_principles_ref: "technology_principles.md §5.1(5 行泛化版)"
+  eternal_principles_ref: "原 technology_principles.md §5.1(5 行泛化版) 已删(2026-07-30);git 历史可查"
   rows:
     - link: "D_EX_CORE 订单 + 成交回报"
       asset_level: "🔴 金融资金"
@@ -73,7 +73,7 @@ dr_bcp_matrix:
 
 tiered_recovery_plans:
   description: "三级灾备预案(含当前阶段成本)"
-  eternal_principles_ref: "technology_principles.md §5.2"
+  eternal_principles_ref: "原 technology_principles.md §5.2 已删(2026-07-30);git 历史可查"
   tiers:
     - tier: "Tier 1 热备"
       applies_to: "D_EX_CORE 订单 + D_GOV_AUDIT Audit"
@@ -90,7 +90,7 @@ tiered_recovery_plans:
 
 quant_special_scenarios:
   description: "量化特殊场景(资金安全红线)"
-  eternal_principles_ref: "technology_principles.md §5.3"
+  eternal_principles_ref: "原 technology_principles.md §5.3 已删(2026-07-30);git 历史可查"
   pending_order_recovery_flow:
     - "故障触发"
     - "① 查询 broker 订单状态"
@@ -106,13 +106,13 @@ quant_special_scenarios:
 
 # ============================================================================
 # §9.2 Environment × Dimension Matrix / 4 环境×6 维度矩阵
-# 永恒框架(4 环境定义 + 晋级门禁)见 technology_principles.md §6
+# 永恒框架(4 环境定义 + 晋级门禁)原 technology_principles.md §6 已删(2026-07-30),可执行约束在本 YAML;设计大纲留 git 历史
 # 本节为 principles §6 未覆盖的"当前状态"维度矩阵(数据源/LLM/资金/监控/审批/回退)
 # ============================================================================
 
 environment_dimension_matrix:
   description: "4 环境×6 维度矩阵(当前状态)"
-  eternal_framework_ref: "technology_principles.md §6(环境定义 + 晋级门禁)"
+  eternal_framework_ref: "原 technology_principles.md §6(环境定义 + 晋级门禁) 已删(2026-07-30);git 历史可查"
   dimensions: ["数据源", "LLM", "资金", "监控", "审批", "回退"]
   environments:
     Dev:
@@ -146,13 +146,13 @@ environment_dimension_matrix:
 
 # ============================================================================
 # §10.1 Observability Metrics Catalog / 可观测性指标目录
-# 永恒框架(Metrics/Logs/Traces 三支柱 + OTel 集成)见 technology_principles.md §7
+# 永恒框架(Metrics/Logs/Traces 三支柱 + OTel 集成)原 technology_principles.md §7 已删(2026-07-30),可执行约束在本 YAML;设计大纲留 git 历史
 # 本节为 principles §7 未覆盖的具体 metric name 与 SLO/告警映射(运营态派生数据)
 # ============================================================================
 
 observability_metrics_catalog:
   description: "可观测性指标目录(具体 metric name 与 SLO/告警映射)"
-  eternal_framework_ref: "technology_principles.md §7(三支柱框架)"
+  eternal_framework_ref: "原 technology_principles.md §7(三支柱框架) 已删(2026-07-30);git 历史可查"
   business_metrics:
     - name: "zephyr_orders_total"
       description: "订单提交总数"
@@ -195,7 +195,7 @@ observability_metrics_catalog:
 
 # ============================================================================
 # 容量模型(§11)与成本架构(§12)——不迁入本文件
-# 按 technology_principles.md §8.2 边界声明:
+# 按原 technology_principles.md §8.2 已删(2026-07-30) 边界声明:
 #   - 域资源预算数字 → depgraph(时点快照)
 #   - LLM Token 预算 → 运营态 metrics
 #   - 成本预算与预警阈值 → 运营态维护
@@ -204,5 +204,5 @@ observability_metrics_catalog:
 # ============================================================================
 capacity_and_cost_note:
   description: "容量模型(§11)与成本架构(§12)不迁入本文件"
-  reason: "按 technology_principles.md §8.2 边界声明,由 depgraph(域资源预算时点快照)与运营态(LLM Token/成本预算/伸缩触发)维护"
+  reason: "按原 technology_principles.md §8.2 已删(2026-07-30) 边界声明,由 depgraph(域资源预算时点快照)与运营态(LLM Token/成本预算/伸缩触发)维护"
   source_at_deletion: "docs/02_enterprise_architecture/target_architecture/technology_architecture.md §11-§12(git 历史可查)"

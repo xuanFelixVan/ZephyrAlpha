@@ -31,18 +31,9 @@ created_by: agent
 | [06_governance_and_infra.md](project_handbook/06_governance_and_infra.md) | 治理与基础设施 | governance_script_counts / gate_counts | 03_governance_reports |
 | [07_dependencies.md](project_handbook/07_dependencies.md) | 依赖关系图 | edge_stats | 01_global/contract_catalog |
 
-## 二、架构原则（principles/）— 规范"该怎么"
+## 二、架构原则层（已取消，2026-07-30）
 
-6 份永恒框架原则。阅读顺序见 [principles/README.md](principles/README.md)。
-
-| 文件 | 主题 |
-|------|------|
-| [business_principles.md](principles/business_principles.md) | 业务能力地图 / 价值流 / NFR·SLA |
-| [governance_principles.md](principles/governance_principles.md) | 三层治理边界 / D2-B 闭环 / D3-B 自治 / D4 激活 |
-| [runtime_planes_principles.md](principles/runtime_planes_principles.md) | Hot/Warm/Cold 正交视图 / 跨平面协议 |
-| [security_principles.md](principles/security_principles.md) | 威胁模型 / LSG / Agent 沙箱 / 密钥 / IAM |
-| [technology_principles.md](principles/technology_principles.md) | 技术栈决策 / 运行时拓扑 / 部署 / DR-BCP |
-| [ai_first_governance_principles.md](principles/ai_first_governance_principles.md) | 100% AI 开发治理 / 病根分析 / 4 期治本框架 |
+> 原 `principles/` 下 10 份原则文档已全部删除。原因：可执行约束由 `architecture_model/cross_cutting/invariants.yaml`（20 条不变量 + fitness function）+ `trae_*.yaml` 规则 + commit gates 强制执行，原则文档是已执行不变量的人类可读副本 + 通用教学，且与 depgraph 实际状态脱节。设计大纲留 git 历史。
 
 ## 三、全景图能力（panorama/）
 

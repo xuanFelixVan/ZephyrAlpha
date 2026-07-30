@@ -1,6 +1,6 @@
 # Decision Flow · L2A Functional Domain sell（卖出）
 
-> 生成时间: 2026-07-30T20:58:07
+> 生成时间: 2026-07-30T21:17:12
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell

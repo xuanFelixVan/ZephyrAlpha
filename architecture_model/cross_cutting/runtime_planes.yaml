@@ -12,8 +12,8 @@ schema_version: "3.0"
 partition:
   id: cross-cutting-runtime-planes
   name: Runtime Planes
-  description: Hot/Warm/Cold 运行平面标注（来源：runtime_planes_principles.md）
-  source_view: runtime_planes_principles.md
+  description: Hot/Warm/Cold 运行平面标注（来源：runtime_planes_principles.md（已删 2026-07-30, git 历史可查））
+  source_view: runtime_planes_principles.md (已删 2026-07-30, git 历史可查)
   activation_note: >
     当前（2026-04-21）处于 Warm-only 阶段（T0）。
     Hot Path 未激活（T1 真实资金接入后首激活）。

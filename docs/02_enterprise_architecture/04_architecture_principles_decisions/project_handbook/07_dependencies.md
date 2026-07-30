@@ -57,12 +57,12 @@ governance/ (桥接层, G-CT-001~008 契约)
 |----------|------|
 | `import_depends` | 3644 |
 | `test_depends` | 3560 |
-| `config_depends` | 714 |
+| `config_depends` | 712 |
 | `import` | 22 |
 | `data` | 7 |
 | `runtime` | 6 |
 | `event` | 3 |
-| **合计 / Total** | **7956** |
+| **合计 / Total** | **7954** |
 
 **跨域边 / Cross-domain edges：1713** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->

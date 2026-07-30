@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-SECURITY-THREAT-MODEL | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
-# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/security_principles.md
+# blueprint: architecture_model/security/threat_model.yaml (self-contained; 原 security_principles.md 已删 2026-07-30)
 # module_id: CFG-SECURITY-THREAT-MODEL
 # stability: evolving
 # safety_level: L
@@ -11,28 +11,28 @@
 #         STRIDE-Lite 详细版(6 行,含 severity P0/P1 + 所在域列) + OWASP LLM Top 10 详细版(10 行,含本系统暴露面 + 参考列)
 #         + 数据保留与销毁表(4 行) + 审计日志消费者表(4 行)
 #         永恒方法论(安全域划分/STRIDE 框架/OWASP 覆盖矩阵/LSG 四层防御/Sandbox 规则/Secret 三道防线/IAM/数据分级/审计/事件响应)
-#         见 security_principles.md §2-§10
+#         原 security_principles.md §2-§10 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
 #         密钥资产清单(§6.1)/Phase Roadmap(§10)/Open Questions SEC-OQ-01~05(§13)/安全域状态(§2.1)/P0 攻击树(§3.3)
-#         按 security_principles.md §11.2 边界声明不迁入,由各自既定真源维护;git 历史(security_architecture.md)可查
+#         按原 security_principles.md §11.2 已删(2026-07-30) 边界声明不迁入,由各自既定真源维护;git 历史(security_architecture.md)可查
 #         注:源文档 security_architecture.md 存在严重编码乱码(U+FFFD),本文件迁移时已恢复为干净 UTF-8
 
 module_id: CFG-SECURITY-THREAT-MODEL
 version: "1.0.0"
-description: "安全架构运营结构化数据真源——STRIDE-Lite 详细威胁映射(6 行,含 severity + 所在域列) + OWASP LLM Top 10 详细覆盖矩阵(10 行,含本系统暴露面 + 参考列) + 数据保留与销毁表(4 行) + 审计日志消费者表(4 行)。从 security_architecture.md §3.1/§3.2/§8.3/§9.4 迁移。永恒方法论见 security_principles.md §2-§10。"
+description: "安全架构运营结构化数据真源——STRIDE-Lite 详细威胁映射(6 行,含 severity + 所在域列) + OWASP LLM Top 10 详细覆盖矩阵(10 行,含本系统暴露面 + 参考列) + 数据保留与销毁表(4 行) + 审计日志消费者表(4 行)。从 security_architecture.md §3.1/§3.2/§8.3/§9.4 迁移。"
 
 # ============================================================================
 # §3.1 STRIDE-Lite 威胁分析（详细版）
-# 永恒框架（威胁类别/代表威胁/影响域/缓解措施）见 security_principles.md §3.1
+# 永恒框架（威胁类别/代表威胁/影响域/缓解措施）原 security_principles.md §3.1 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
 # 本节为 principles §3.1 的详细展开：新增 severity（P0/P1）+ 所在域 列
 # ============================================================================
 
 threat_model:
   description: "STRIDE-Lite + OWASP LLM Top 10 详细威胁映射（运营态，含 severity/exposure 等详细列）"
-  eternal_framework_ref: "security_principles.md §3（永恒框架：STRIDE 6 类 + OWASP 10 条 + 防御深度原则）"
+  eternal_framework_ref: "原 security_principles.md §3（永恒框架：STRIDE 6 类 + OWASP 10 条 + 防御深度原则） 已删(2026-07-30);git 历史可查"
 
   stride_lite_detailed:
     description: "STRIDE-Lite 威胁分析详细版——6 行，含 severity（P0/P1）+ 所在域列"
-    eternal_framework_ref: "security_principles.md §3.1（永恒框架版，4 列：威胁类别/代表威胁/影响域/缓解措施）"
+    eternal_framework_ref: "原 security_principles.md §3.1（永恒框架版，4 列：威胁类别/代表威胁/影响域/缓解措施） 已删(2026-07-30);git 历史可查"
     columns: [threat_id, category, representative_threat, impact_domain, severity, mitigation, located_domain]
     rows:
       - threat_id: T1
@@ -81,7 +81,7 @@ threat_model:
 
   owasp_llm_top10_detailed:
     description: "OWASP LLM Top 10（2023/2024）详细覆盖矩阵——10 行，含本系统暴露面 + 参考列"
-    eternal_framework_ref: "security_principles.md §3.2（永恒框架版，3 列：OWASP ID/威胁/防御原则）"
+    eternal_framework_ref: "原 security_principles.md §3.2（永恒框架版，3 列：OWASP ID/威胁/防御原则） 已删(2026-07-30);git 历史可查"
     columns: [owasp_id, threat, system_exposure, experimental_defense, reference]
     rows:
       - owasp_id: LLM01
@@ -138,13 +138,13 @@ threat_model:
 
 # ============================================================================
 # §8.3 数据保留与销毁
-# 永恒数据分级（L1-L4）与关键约束见 security_principles.md §8
+# 永恒数据分级（L1-L4）与关键约束原 security_principles.md §8 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
 # 本节为运营态保留策略（具体保留期 + 销毁动作），principles §8 不含此表
 # ============================================================================
 
 data_protection:
   description: "数据保护运营态数据——保留与销毁策略"
-  eternal_framework_ref: "security_principles.md §8（永恒：数据分级 L1-L4 + 关键约束）"
+  eternal_framework_ref: "原 security_principles.md §8（永恒：数据分级 L1-L4 + 关键约束） 已删(2026-07-30);git 历史可查"
 
   retention_and_destruction:
     description: "数据保留与销毁表——4 行"
@@ -165,13 +165,13 @@ data_protection:
 
 # ============================================================================
 # §9.4 审计日志消费者
-# 永恒审计架构（双轨存储 + 关键字段 + 防篡改）见 security_principles.md §9
+# 永恒审计架构（双轨存储 + 关键字段 + 防篡改）原 security_principles.md §9 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
 # 本节为运营态消费者清单，principles §9 不含此表
 # ============================================================================
 
 audit_logging:
   description: "审计日志运营态数据——消费者清单"
-  eternal_framework_ref: "security_principles.md §9（永恒：双轨存储 + 关键字段 + 防篡改机制）"
+  eternal_framework_ref: "原 security_principles.md §9（永恒：双轨存储 + 关键字段 + 防篡改机制） 已删(2026-07-30);git 历史可查"
 
   log_consumers:
     description: "日志消费者表——4 行"
@@ -191,13 +191,13 @@ audit_logging:
         access_mode: "历史回放"
 
 # ============================================================================
-# 不迁入内容声明（按 security_principles.md §11.2 边界）
+# 不迁入内容声明（按原 security_principles.md §11.2 已删(2026-07-30) 边界）
 # 以下内容由各自既定真源维护，本文件不承载；git 历史（security_architecture.md）可查
 # ============================================================================
 
 not_migrated_note:
-  description: "按 security_principles.md §11.2 边界声明，以下内容不迁入本文件，由各自既定真源维护；git 历史（security_architecture.md）可查"
-  principles_boundary_ref: "security_principles.md §11.2"
+  description: "按原 security_principles.md §11.2 已删(2026-07-30) 边界声明，以下内容不迁入本文件，由各自既定真源维护；git 历史（security_architecture.md）可查"
+  principles_boundary_ref: "原 security_principles.md §11.2 已删(2026-07-30);git 历史可查"
   items:
     - content: "密钥资产清单（§6.1：LLM API Key / Broker API Key / Feishu Token / 1Password Token + 轮换频率）"
       owner: "scripts/governance/scan_secret_leak.py 自动扫描"
@@ -209,8 +209,8 @@ not_migrated_note:
       owner: "决策注册表（04_architecture_principles_decisions/）"
       git_history_ref: "security_architecture.md §13"
     - content: "安全域状态表（§2.1 experimental 状态列：🔴 P0 待建 / 🟡 部分 / ✅ 已有）"
-      owner: "capability_heatmap（depgraph design_maturity 派生）+ security_principles.md §2 永恒域划分"
+      owner: "capability_heatmap（depgraph design_maturity 派生）+ 原 security_principles.md §2 永恒域划分(已删 2026-07-30;git 历史可查)"
       git_history_ref: "security_architecture.md §2.1"
     - content: "P0 攻击树（§3.3 路径 A/B/C 密钥泄露场景）"
-      owner: "security_principles.md §3.3（永恒）"
+      owner: "原 security_principles.md §3.3(已删 2026-07-30;git 历史可查)"
       git_history_ref: "security_architecture.md §3.3"

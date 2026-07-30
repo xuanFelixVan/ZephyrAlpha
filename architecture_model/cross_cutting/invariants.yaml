@@ -16,7 +16,7 @@ partition:
   source_views:
     - ARCHITECTURE-AS-CODE-PLAN-v2.0.md §3.5
     - 09-governance_architecture.md
-    - runtime_planes_principles.md §4.2
+    - runtime_planes_principles.md §4.2（已删 2026-07-30，git 历史可查）
 
 invariants:
 

@@ -82,7 +82,7 @@ depgraph 节点两态生命周期：`design`（设计态，蓝图阶段代码未
 |------|----|
 | 功能域 / Domains | 72 |
 | 代码节点 / Nodes | 5798 |
-| 依赖边 / Edges | 7956 |
+| 依赖边 / Edges | 7954 |
 | 孤儿节点 / Orphans | 0 |
 | 运营态占比 / Production ratio | 97.7%（stable+generated） |
 <!-- AUTO-END:project_snapshot -->
@@ -112,14 +112,15 @@ pip install -r requirements.txt
 
 ## 哪里找什么（导航）
 
-本文件夹分四部分，从"是什么"到"该怎么"：
+本文件夹分三部分：
 
 | 部分 | 路径 | 回答什么 |
 |------|------|---------|
 | **项目现状手册** | [project_handbook/](project_handbook/) | 项目**是什么**：仓库布局、数据层、数据源、交易域、治理基础设施、依赖关系（大白话 + AUTO 统计 + 外链权威源） |
-| **架构原则** | [principles/](principles/) | 项目**该怎么**：6 份永恒框架原则（治理/AI治理/业务/运行平面/安全/技术） |
 | **全景图能力** | [panorama/](panorama/) | depgraph 双态模型、SSoT 分层、生成器角色——AI 干活前必查的依赖与路径全景 |
 | **自动化说明** | [_automation/](_automation/) | 哪些文档自动生成、AUTO 标记块清单、触发方式、维护规则 |
+
+> **原则文档层已取消（2026-07-30）**：原 `principles/` 下 10 份原则文档已全部删除——可执行约束由 `architecture_model/cross_cutting/invariants.yaml`（20 条不变量 + fitness function）+ `trae_*.yaml` 规则 + commit gates 强制执行，原则文档是已执行不变量的人类可读副本 + TOGAF/STRIDE 通用教学，无人读、AI 不消费、且与 depgraph 实际状态脱节（如 security_principles.md 称 LSG/Agent Sandbox 为"T1+ deferred 待建"，实证 depgraph 显示早 production）。设计大纲留 git 历史。
 
 ### 外部权威源（深度明细，不在本文件夹重复）
 

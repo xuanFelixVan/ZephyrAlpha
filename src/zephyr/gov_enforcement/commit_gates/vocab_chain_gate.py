@@ -17,7 +17,7 @@
 # noqa: m01-vocab-hardcode  M01豁免: 本文件是VOCAB-CHAIN检测器自身,源码含SSoT路径模式字符串用于AST匹配,非实际硬编码
 """vocab_chain_gate.py — SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc2 enforceability）
 
-病根（ai_first_governance_principles.md §二）
+病根（裁定#221，原 ai_first_governance_principles.md §二，文档已删 2026-07-30，git 历史可查）
 ------------------------------------------------
 rc2_vocab_chain_blindspot: 词表→代码消费链机械盲区
 VOCAB-HARDCODE gate (priority=80) 仅检测硬编码字符串（词表合法值），

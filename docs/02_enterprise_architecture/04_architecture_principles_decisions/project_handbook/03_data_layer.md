@@ -34,7 +34,7 @@ language: zh
 | Warm | 中频历史数据 | DuckDB + Parquet | daily_kline 等 |
 | Cold | 长期归档（7 年合规） | Parquet | 合规归档 |
 
-> 详见原则 [../principles/runtime_planes_principles.md](../principles/runtime_planes_principles.md)。
+> 三平面定义与跨平面通信铁律由 `architecture_model/cross_cutting/invariants.yaml`（INV-010/011/012/018-020）强制执行。
 
 ## 4. 表计数
 

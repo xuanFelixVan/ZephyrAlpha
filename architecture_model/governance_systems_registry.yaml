@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-governance-systems-registry | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
-# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/governance_principles.md
+# blueprint: architecture_model/governance_systems_registry.yaml (self-contained; 原 governance_principles.md 已删 2026-07-30)
 # module_id: CFG-GOVERNANCE-SYSTEMS-REGISTRY
 # stability: evolving
 # safety_level: L
@@ -9,12 +9,12 @@
 # --- 治理锚定结束 ---
 # v1.0.0: 治理系统注册表真源,从 target_architecture/governance_architecture.md §4/§5.2/§6.5 迁移(2026-07-23, B3-doc4)
 #         46 治理系统分层归属(A21+B1+C17+VB1+D6) + 6 大核心服务治理归属 + AI 员工三层预留口子
-#         永恒原则(三层边界/D2-B 闭环/D3-B 预留/D4 激活/T0-T7 触发/Runtime Plane 铁律)见 governance_principles.md
+#         永恒原则(三层边界/D2-B 闭环/D3-B 预留/D4 激活/T0-T7 触发/Runtime Plane 铁律)原 governance_principles.md 已删(2026-07-30);git 历史可查
 #         三层物理位置详细路径由 depgraph 维护(domain_id IN D_GOVERNANCE/D_GOV_AUDIT/D_GOV_RULE)
 
 module_id: CFG-GOVERNANCE-SYSTEMS-REGISTRY
 version: "1.0.0"
-description: "治理系统注册表——46 治理系统分层归属(A21+B1+C17+VB1+D6) + 6 大核心服务治理归属 + AI 员工三层预留口子。从 governance_architecture.md §4/§5.2/§6.5 迁移。永恒原则见 governance_principles.md。"
+description: "治理系统注册表——46 治理系统分层归属(A21+B1+C17+VB1+D6) + 6 大核心服务治理归属 + AI 员工三层预留口子。从 governance_architecture.md §4/§5.2/§6.5 迁移。永恒原则原 governance_principles.md 已删(2026-07-30);git 历史可查。"
 
 # 主层(main_layer)取值: Policy / Factory / Runtime / 全三层
 # 次层(secondary_layer)为辅助归属,可为 null

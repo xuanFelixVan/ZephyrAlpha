@@ -20,7 +20,7 @@
 ``git commit --no-verify`` 绕过所有 pre-commit hooks，文件复制检测沦为君子协定。
 本 gate 在 GitCommitGateway pre-commit 阶段（in-process）注册，``--no-verify`` 绕不过。
 
-病根（ai_first_governance_principles.md §四 第1期）
+病根（裁定#221，原 ai_first_governance_principles.md §四 第1期，文档已删 2026-07-30，git 历史可查）
 -------------------------------------------------
 M05 检出 159 对文件复制（基线）。check_code_duplication.py 能检出但：
   1. 是手动脚本（无自动触发，--no-verify 绕过）
@@ -38,7 +38,7 @@ M05 检出 159 对文件复制（基线）。check_code_duplication.py 能检出
    跨 basename 比对成本高且误报多，同名比对覆盖主要场景。
 3. **AST 归一化**：parse->unparse 自动剥离注释/空白/格式差异，聚焦代码结构。
    比 SequenceMatcher 原始行比较更鲁棒（改注释/格式不误报）。
-4. **threshold=0.7**：对标 ai_first_governance_principles.md §四"AST共享行百分比>70%即阻断"。
+4. **threshold=0.7**：对标裁定#221（原 ai_first_governance_principles.md §四，文档已删 2026-07-30，git 历史可查）"AST共享行百分比>70%即阻断"。
 5. **fail-open on script error**：脚本故障（exit 2）是环境异常，不阻断 commit。
 6. **priority=85**：在 VOCAB-HARDCODE(80) 之后、CAPABILITY-OVERLAP(200) 之前。
 7. **路径解析用 gateway.project_root**：check_code_duplication.py 扫描主仓库已有文件，
@@ -80,7 +80,7 @@ _DUP_SCRIPT = os.path.join(
     _SCRIPT_PATH, "scripts", "governance", "d5_architecture", "checkers", "check_code_duplication.py"
 )
 
-# AST 共享行百分比阈值（ai_first_governance_principles.md §四：>70%即阻断）
+# AST 共享行百分比阈值（裁定#221，原 ai_first_governance_principles.md §四：>70%即阻断；文档已删 2026-07-30，git 历史可查）
 _THRESHOLD = 0.7
 
 

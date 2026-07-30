@@ -19,7 +19,7 @@ tags:
 
 ## governance d2b loop
 
-> Source: 04_architecture_principles_decisions/governance_principles.md
+> Source: architecture_model/governance_systems_registry.yaml（治理系统归属真源）；原 governance_principles.md 已删（2026-07-30），设计大纲留 git 历史
 
 ```mermaid
 graph LR
@@ -48,7 +48,7 @@ graph LR
 
 ## governance three layers
 
-> Source: 04_architecture_principles_decisions/governance_principles.md
+> Source: architecture_model/governance_systems_registry.yaml（治理系统归属真源）；原 governance_principles.md 已删（2026-07-30）
 
 ```mermaid
 graph TB

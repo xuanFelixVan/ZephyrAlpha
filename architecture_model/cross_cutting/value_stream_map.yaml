@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-value-stream-map | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
-# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/business_principles.md
+# blueprint: architecture_model/cross_cutting/value_stream_map.yaml (self-contained; 原 business_principles.md 已删 2026-07-30)
 # module_id: CFG-VALUE-STREAM-MAP
 # stability: evolving
 # safety_level: L
@@ -10,22 +10,22 @@
 # v1.0.0: 业务架构运营结构化数据真源,从 target_architecture/business_architecture.md §4/§5.2/§5.3 迁移(2026-07-23, B3-doc6)
 #         VSM 阶段级指标表(LT/PT/%C&A 当前估算) + Handoff 契约(含交接物) + 瓶颈/浪费点 B1-B6
 #         + SLO 目标值矩阵(SLO-1~SLO-7,被 dr_bcp_matrix.yaml 指标目录引用) + SLA 现实
-#         永恒方法论(能力地图框架/VSM 概念/Handoff 治理/精益七浪费/NFR 定位/SLO 术语铁律)见 business_principles.md
-#         Stakeholder Roster + RACI 矩阵按 business_principles.md §7.2 边界声明,保留在 git 历史(v1.2.0,激活时恢复),不迁入本文件
+#         永恒方法论(能力地图框架/VSM 概念/Handoff 治理/精益七浪费/NFR 定位/SLO 术语铁律)原 business_principles.md 已删(2026-07-30);git 历史可查
+#         Stakeholder Roster + RACI 矩阵按原 business_principles.md §7.2 已删(2026-07-30) 边界声明,保留在 git 历史(v1.2.0,激活时恢复),不迁入本文件
 
 module_id: CFG-VALUE-STREAM-MAP
 version: "1.0.0"
-description: "业务架构运营结构化数据真源——VSM 阶段级指标表(LT/PT/%C&A 当前估算) + Handoff 契约(含交接物) + 瓶颈/浪费点 B1-B6 + SLO 目标值矩阵(SLO-1~SLO-7) + SLA 现实。从 business_architecture.md §4/§5.2/§5.3 迁移。永恒方法论见 business_principles.md。"
+description: "业务架构运营结构化数据真源——VSM 阶段级指标表(LT/PT/%C&A 当前估算) + Handoff 契约(含交接物) + 瓶颈/浪费点 B1-B6 + SLO 目标值矩阵(SLO-1~SLO-7) + SLA 现实。从 business_architecture.md §4/§5.2/§5.3 迁移。永恒方法论原 business_principles.md 已删(2026-07-30);git 历史可查。"
 
 # ============================================================================
 # §4.2 VSM Stage-level Metrics / 阶段级指标表(当前估算基线)
-# 永恒 VSM 概念(LT/PT/%C&A 定义 + 11 标准阶段)见 business_principles.md §3.1/§3.2
-# 本节为 principles §3.2 注明"derived,运营态采集"的当前阶段估算基线
+# 永恒 VSM 概念(LT/PT/%C&A 定义 + 11 标准阶段)原 business_principles.md §3.1/§3.2 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
+# 本节为 原 principles §3.2 已删(2026-07-30) 注明"derived,运营态采集"的当前阶段估算基线
 # ============================================================================
 
 vsm_stage_metrics:
   description: "VSM 阶段级指标表(当前阶段估算基线)"
-  eternal_framework_ref: "business_principles.md §3.1/§3.2(LT/PT/%C&A 概念 + 11 标准阶段)"
+  eternal_framework_ref: "原 business_principles.md §3.1/§3.2(LT/PT/%C&A 概念 + 11 标准阶段) 已删(2026-07-30);git 历史可查"
   rewrite_trigger: "接入 L1 行情/portfolio ≥ $10M → 整体向秒级压缩重写"
   stages:
     - stage: "Factor Research"
@@ -101,13 +101,13 @@ vsm_stage_metrics:
 
 # ============================================================================
 # §4.3 Handoff Contracts / 关键交接点契约(含交接物)
-# 永恒 Handoff 治理原则见 business_principles.md §3.3(HO-1~HO-5)
-# 本节为 principles §3.3 的详细展开:增加"交接物(handoff_artifact)"列
+# 永恒 Handoff 治理原则原 business_principles.md §3.3(HO-1~HO-5) 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
+# 本节为 原 principles §3.3 已删(2026-07-30) 的详细展开:增加"交接物(handoff_artifact)"列
 # ============================================================================
 
 handoff_contracts:
   description: "关键交接点契约(含交接物)"
-  eternal_principles_ref: "business_principles.md §3.3(HO-1~HO-5 永恒列表)"
+  eternal_principles_ref: "原 business_principles.md §3.3(HO-1~HO-5 永恒列表) 已删(2026-07-30);git 历史可查"
   handoffs:
     - id: "HO-1"
       name: "Vendor → Data Lake(市场数据入仓)"
@@ -142,13 +142,13 @@ handoff_contracts:
 
 # ============================================================================
 # §4.4 Bottlenecks & Waste / 瓶颈与浪费点(B1-B6)
-# 永恒精益七浪费框架见 business_principles.md §3.4
-# 本节为 principles §3.4 未覆盖的具体瓶颈实例(当前阶段识别)
+# 永恒精益七浪费框架原 business_principles.md §3.4 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
+# 本节为 原 principles §3.4 已删(2026-07-30) 未覆盖的具体瓶颈实例(当前阶段识别)
 # ============================================================================
 
 bottlenecks:
   description: "瓶颈与浪费点(B1-B6,当前阶段识别)"
-  eternal_framework_ref: "business_principles.md §3.4(精益七浪费框架)"
+  eternal_framework_ref: "原 business_principles.md §3.4(精益七浪费框架) 已删(2026-07-30);git 历史可查"
   items:
     - id: "B1"
       waste_type: "等待(Wait)"
@@ -189,15 +189,15 @@ bottlenecks:
 
 # ============================================================================
 # §5.2 SLO Target Matrix / SLO 目标值矩阵(SLO-1~SLO-7)
-# 永恒 SLO/SLA/SLI 术语铁律 + SLO-Audit(不可降)见 business_principles.md §4.3/§4.5
-# 本节为 principles §7.2 注明"运营态维护"的 SLO 目标值(被 dr_bcp_matrix.yaml 指标目录引用)
-# SLO-Audit 永恒不可降,已在 principles §4.5,此处不重复
+# 永恒 SLO/SLA/SLI 术语铁律 + SLO-Audit(不可降)原 business_principles.md §4.3/§4.5 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
+# 本节为 原 principles §7.2 已删(2026-07-30) 注明"运营态维护"的 SLO 目标值(被 dr_bcp_matrix.yaml 指标目录引用)
+# SLO-Audit 永恒不可降,已在原 principles §4.5(已删 2026-07-30),此处不重复
 # ============================================================================
 
 slo_matrix:
   description: "SLO 目标值矩阵(SLO-1~SLO-7,被 dr_bcp_matrix.yaml 指标目录引用)"
-  eternal_framework_ref: "business_principles.md §4.3/§4.5(SLO 术语铁律 + SLO-Audit 不可降)"
-  measurement_location_ref: "technology_principles.md §7 + dr_bcp_matrix.yaml(指标目录)"
+  eternal_framework_ref: "原 business_principles.md §4.3/§4.5(SLO 术语铁律 + SLO-Audit 不可降) 已删(2026-07-30);git 历史可查"
+  measurement_location_ref: "原 technology_principles.md §7 已删(2026-07-30);git 历史可查 + dr_bcp_matrix.yaml(指标目录)"
   rewrite_triggers:
     - "接入 L1 行情 / portfolio ≥ $10M → 整体时延 SLO 从秒级压缩到毫秒级"
     - "S11 合伙人或 S12 监管激活 → SLA 列从 internal 转对外承诺"
@@ -249,12 +249,12 @@ slo_matrix:
 
 # ============================================================================
 # §5.3 SLA Reality / 当前阶段的 SLA 现实
-# 永恒 SLA 术语铁律见 business_principles.md §4.3
+# 永恒 SLA 术语铁律原 business_principles.md §4.3 已删(2026-07-30);可执行约束在本 YAML;git 历史可查
 # ============================================================================
 
 sla_reality:
   description: "当前阶段的 SLA 现实(单人,无外部合同)"
-  eternal_framework_ref: "business_principles.md §4.3(SLA/SLO/SLI 术语铁律)"
+  eternal_framework_ref: "原 business_principles.md §4.3(SLA/SLO/SLI 术语铁律) 已删(2026-07-30);git 历史可查"
   counterparties:
     - counterparty: "S10 iFinD(Vendor)"
       has_real_sla: true
@@ -270,14 +270,14 @@ sla_reality:
       note: "单人;当前所有 SLO 都是对自己的承诺,性质接近 OKR;仍必须量化、否则无法治理"
 
 # ============================================================================
-# 不迁入本文件的内容(按 business_principles.md §7.2 边界声明)
+# 不迁入本文件的内容(按原 business_principles.md §7.2 已删(2026-07-30) 边界声明)
 # - Stakeholder Roster(S1-S12)+ RACI 矩阵(A01-A18)→ git 历史(v1.2.0,激活时恢复)
 # - 全域→能力域映射 + 能力成熟度评分 → architecture_model/cross_cutting/capability_heatmap.yaml
-# - 业务约束完整列表 → architecture_principles.md(R1-R4)
-# - Architecture Runway(RW-BA-01~05)→ business_principles.md §6(永恒)
+# - 业务约束完整列表 → 原 architecture_principles.md(R1-R4,已删;R1-R4 由 secrets.py/msg_exposure_gate.py/invariants.yaml 强制执行)
+# - Architecture Runway(RW-BA-01~05)→ 原 business_principles.md §6(永恒,已删 2026-07-30;git 历史可查)
 # ============================================================================
 not_migrated_note:
-  description: "不迁入本文件的内容(按 business_principles.md §7.2 边界声明)"
+  description: "不迁入本文件的内容(按原 business_principles.md §7.2 已删(2026-07-30) 边界声明)"
   items:
     - content: "Stakeholder Roster(S1-S12)+ RACI 矩阵(A01-A18)"
       home: "git 历史(v1.2.0,激活时恢复)"
@@ -286,4 +286,4 @@ not_migrated_note:
     - content: "业务约束完整列表"
       home: "architecture_principles.md(R1-R4)"
     - content: "Architecture Runway(RW-BA-01~05)"
-      home: "business_principles.md §6(永恒)"
+      home: "原 business_principles.md §6(永恒) 已删(2026-07-30);git 历史可查"

@@ -55,7 +55,6 @@ ttl: permanent
 
 | 文件 | 说明 | 轨道 |
 |------|------|:---:|
-| 04_architecture_principles_decisions/ai_first_governance_principles.md | AI-first 治理原则（5 病根 + 5 裁定，裁定1 已修正为"新增规则必须同时新增门禁"） | 人类视图 |
 | [→ rules/trae_081_audit_dimensions_framework.yaml](../01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml) | 审计审查维度框架（54 维度基座，维度号+名+核心问题） | 规则 |
 | _archive/architecture_debt_registry_v2.md | 已归档：架构债务注册表 v2.0.0（2026-07-24 归档，裁定#221/#222，活跃治理改由三件套承接） | 人类视图 |
 | 04_architecture_principles_decisions/dependency_path_panorama.md | 依赖与路径全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |

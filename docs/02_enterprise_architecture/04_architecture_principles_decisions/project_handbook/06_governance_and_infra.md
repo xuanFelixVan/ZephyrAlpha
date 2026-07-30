@@ -97,4 +97,4 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py  # 四�
 | 治理报告 | 容量/约束违反/设计 vs 运营态 | `docs/02_enterprise_architecture/03_governance_reports/` |
 | 全景注册表 | 全 registry 总索引 | `docs/02_enterprise_architecture/00_overview_entry/panorama_registry.md` |
 
-> 治理原则（三层边界/D2-B/D3-B/D4）见 [../principles/governance_principles.md](../principles/governance_principles.md)。
+> 治理原则（三层边界/D2-B/D3-B/D4）由 `architecture_model/governance_systems_registry.yaml` 强制执行（原 governance_principles.md 已删 2026-07-30，git 历史可查）。
