@@ -56,8 +56,7 @@ modules:
       - vector_memory/embedding_router.py
       - vector_memory/in_process_vector_memory.py
       - vector_memory/cache_layer.py
-      - kb/reranker.py
-      - kb/chromadb_init.py
+      - intelligence/model_evaluation/reranker.py
     interfaces:
       - contract_id: CT-EXEC-LOCAL-001
         role: producer

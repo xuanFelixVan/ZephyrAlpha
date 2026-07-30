@@ -9854,7 +9854,15 @@ entries:
   severity: P1高
   adjudication: '病根（第一性原理实证）：三层事实链辨明"非 QMT 软件太老、非 xtquant 库太老，是 broker 代码基于旧版 xtquant API 假设编写，与项目实际使用的新版 xtquant 250807.1.2 契约漂移"。QMT 终端正常运行（模拟账户已连通），新版 xtquant 250807.1.2 已可用并验证 import 成功（支持 Python 3.12），但 broker 代码（session_id 当 str、order_stock 当 keyword 调用、order_type 当订单类型、返回值当错误码）与新版 API 13 处差异全部不兼容。根因：blueprint L378"Python 3.6/3.7/3.8 only"是基于 QMT 内置旧环境的过时假设，与项目"Python >=3.12 + 独立 xtquant 250807.1.2"实际架构直接矛盾——100% AI 开发场景下 AI 参考过时文档/记忆产出漂移代码的典型模式。治本三阶段：①broker 代码全面适配新 API（构造函数 account_id/session_int 分离、StockAccount 对象下单/查询、order_type=买卖方向23/24、price_type=限价0/市价5、order_stock 返回 order_id 非错误码、start() 返回 None、subscribe 账户）；②文档同步（blueprint L378 版本约束修正 + broker DEPENDENCIES 头部旧路径修正 + docstring 去硬编码）；③测试更新（mock 适配新返回值 + StockAccount 断言）+ 运行时冒烟测试脚本（connect→get_positions→挂远期限价单→query_order→cancel_order→验证撤单状态）。长远战略：xtquant 是非 pip 管理的外部依赖（Windows-only、随 QMT 分发或独立安装），运行时冒烟测试是堵住 AI 契约漂移的治本核心——静态阅读源码无法 100% 确认的开放点（order_stock 失败返回值、price_type 精确值、subscribe 必要性、session int 要求）由运行时实证堵住。BrokerInterface OCP-003 扩展点契约不变，xtquant API 变化在 broker 内部消化不泄露。边界裁定类议题，按铁律#9 标 proposed 待用户确认。'
   fix_phase: '已落地（broker 代码适配 + 文档同步 + 测试更新 + 冒烟测试脚本；待 pytest+ruff 验证 + 运行时冒烟测试 manual 验证后转 decided）'
-  status: proposed
+  status: decided
+  created: '2026-07-30'
+  last_updated: '2026-07-30'
+- issue_id: '#ARCH-INDEX-005'
+  title: b_track 横切模块清单动态派生 + 彻底清除 kb 幻影模块（用户裁定3项）
+  severity: P2中
+  adjudication: '病根（第一性原理实证）：dm200916_write_direct.py 内嵌 f-string 手工模板维护 b_track 模块列表，与 layers/b_*.yaml 物理蓝图文件脱节，产生两类漂移：①幻影模块 kb（b_kb.yaml 物理文件从未存在，KBG→VMS 迁移时已删，但 index.yaml 仍列为 implemented）；②漏登模块 execution_model 与 system_telemetry（物理文件 b_execution_model.yaml/b_system_telemetry.yaml 存在但 index.yaml 未登记）。原 validate_b_track_packages.py 用 B_TRACK_DIRS 硬编码 kebab_case 集合（含幻影 kb），与 src/zephyr/ snake_case 目录名永不匹配，校验空转抓不到漂移。治本（用户裁定3项）：①b_track 保留，改从 layers/b_*.yaml 物理文件动态派生（glob + yaml.safe_load），消除手工模板第二真源；②kb 彻底清除（b_kb.yaml 从未存在，属幻影条目）；③execution_model + system_telemetry 补登 b_track。配套：validate_b_track_packages.py 重构为 index.yaml↔layers/b_*.yaml 双向一致性校验（幻影/漏登检测），governance.yml 接入 B-Track Consistency CI 步骤（hard-block），b_execution_model.yaml 幻影路径 kb/reranker.py→intelligence/model_evaluation/reranker.py 修正。验证：index.yaml 重生 v3.0.3（72域 + 13 b_track 模块无 kb），validator 零问题通过。纯技术修复（SSoT 漂移治本，无价值判断），AI 直接标 decided。'
+  fix_phase: '已落地（dm200916 动态派生 + validate_b_track_packages 重构 + governance.yml CI 接入 + b_execution_model 路径修正 + index.yaml 重生 v3.0.3）'
+  status: decided
   created: '2026-07-30'
   last_updated: '2026-07-30'
 - issue_id: '#ARCH-RECONCILER-TIMEOUT-001'

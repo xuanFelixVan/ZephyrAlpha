@@ -156,6 +156,10 @@ jobs:
         run: python scripts/governance/d5_architecture/validators/validate_ssot.py --ci
         continue-on-error: false
 
+      - name: B-Track Consistency (index.yaml ↔ layers/b_*.yaml)
+        run: python scripts/governance/d5_architecture/validators/validate_b_track_packages.py
+        continue-on-error: false
+
       - name: G6 CTR Compliance Gate
         run: python scripts/governance/d5_architecture/checkers/check_g6_ctr_compliance.py
         continue-on-error: false

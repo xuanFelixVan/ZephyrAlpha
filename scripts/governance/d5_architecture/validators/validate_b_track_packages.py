@@ -3,7 +3,7 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
 # [CONSUMERS]
-# [STARTUP] manual
+# [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
@@ -13,16 +13,21 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""validate_b_track_packages.py — B 轨包完整性校验
+# noqa: m11-perm-manual-legitimate  M11豁免: CI 治理门禁（governance.yml B-Track Consistency 步骤 + run_all D5 编排）按需调用，非常驻服务
+"""validate_b_track_packages.py — B 轨 b_track 一致性校验
 
+治本重构（2026-07-30，#ARCH-INDEX-005）：
+- 原实现：B_TRACK_DIRS 硬编码 kebab_case 集合（含幻影 "kb"），与 src/zephyr/
+  snake_case 目录名永远不匹配 → 校验空转，抓不到 kb 幻影。
+- 新实现：从 index.yaml 动态读 b_track modules 列表，与 layers/b_*.yaml 物理文件
+  集合对比一致性。能抓两类漂移：
+  - 幻影模块：index.yaml 列出但 layers/b_{id}.yaml 不存在（如原 kb）
+  - 漏登模块：layers/b_*.yaml 物理存在但 index.yaml 未列（如原 execution_model）
+- index.yaml 现由 dm200916_write_direct.py 从物理文件派生，本 validator 作为
+  防御性校验：若 dm200916 损坏或有人手改 index.yaml，本校验能拦截。
 
-
-对标：GOV-DOC-002 §四（B 轨新包创建门槛）
-
-检测内容：
-- B 轨新包必须有 ADR
-- B 轨新包必须有 interface.md
-- B 轨新包必须有 Phase 路线
+校验维度：
+- index.yaml b_track modules[].id ↔ layers/b_{id}.yaml 物理文件 双向对账
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -31,7 +36,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: B 轨包完整性校验（GOV-DOC-002 §四 — interface.md必填）
+description: B 轨 b_track 一致性校验（index.yaml b_track ↔ layers/b_*.yaml 双向对账）
 dimensions:
 - D5
 priority: P2
@@ -41,6 +46,8 @@ warn_only: false
 
 import sys
 from pathlib import Path
+
+import yaml
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
@@ -52,76 +59,87 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-import argparse
+ARCH_MODEL = REPO_ROOT / "architecture_model"
+INDEX_YAML = ARCH_MODEL / "index.yaml"
+LAYERS_DIR = ARCH_MODEL / "layers"
 
-B_TRACK_DIRS = {
-    "llm-security",
-    "vector-memory",
-    "context-engine",
-    "orchestrator",
-    "feedback-loop",
-    "gates",
-    "db",
-    "kb",
-    "mcp",
-    "shared",
-    "pipeline",
-    "core",
-}
 
-REQUIRED_FILES = {"interface.md"}
+def _load_index_b_track() -> list[dict]:
+    """从 index.yaml 读取 b_track modules 列表（真源：dm200916 派生产物）."""
+    if not INDEX_YAML.exists():
+        return []
+    data = yaml.safe_load(INDEX_YAML.read_text(encoding="utf-8")) or {}
+    # index.yaml partitions 列表中 id=b_track 的条目
+    for part in data.get("partitions", []) or []:
+        if part.get("id") == "b_track":
+            return part.get("modules", []) or []
+    return []
+
+
+def _scan_physical_b_track() -> set[str]:
+    """扫描 layers/b_*.yaml 物理文件，返回 b_track module id 集合.
+
+    b_ 前缀 = b_track 成员资格（schema.yaml 约定 track 仅 b_track）。
+    id 取文件名去 b_ 前缀（与 dm200916 派生逻辑一致）。
+    """
+    ids = set()
+    if not LAYERS_DIR.exists():
+        return ids
+    for f in LAYERS_DIR.glob("b_*.yaml"):
+        stem = f.stem
+        mod_id = stem[2:] if stem.startswith("b_") else stem
+        ids.add(mod_id)
+    return ids
 
 
 def scan_b_track_packages() -> list[dict]:
-    """扫描 B-track 包合规性."""
-    findings = []
-    """扫描并返回发现列表."""
-    src_dir = REPO_ROOT / "src" / "zephyr"
-    if not src_dir.exists():
-        return findings
+    """校验 index.yaml b_track ↔ layers/b_*.yaml 物理文件一致性."""
+    findings: list[dict] = []
 
-    for pkg_dir in src_dir.iterdir():
-        if not pkg_dir.is_dir():
-            continue
-        if pkg_dir.name not in B_TRACK_DIRS:
-            continue
-        if pkg_dir.name.startswith("_") or pkg_dir.name.startswith("."):
-            continue
+    index_modules = _load_index_b_track()
+    index_ids = {m.get("id") for m in index_modules if m.get("id")}
+    physical_ids = _scan_physical_b_track()
 
-        pkg_files = {f.name for f in pkg_dir.iterdir() if f.is_file()}
-        pkg_subdirs = {f.name for f in pkg_dir.iterdir() if f.is_dir()}
+    # 幻影模块：index.yaml 列出但物理文件不存在
+    phantom = index_ids - physical_ids
+    for mod_id in sorted(phantom):
+        findings.append({
+            "module": mod_id,
+            "type": "PHANTOM_MODULE",
+            "detail": f"index.yaml b_track 列出模块 '{mod_id}' 但 layers/b_{mod_id}.yaml 不存在（幻影模块）",
+            "severity": "HIGH",
+        })
 
-        has_interface = "interface.md" in pkg_files or any((pkg_dir / d / "interface.md").exists() for d in pkg_subdirs)
-
-        if not has_interface:
-            findings.append(
-                {
-                    "package": pkg_dir.name,
-                    "type": "MISSING_INTERFACE",
-                    "detail": f"B 轨包 '{pkg_dir.name}' 缺少 interface.md",
-                    "severity": "LOW",
-                }
-            )
+    # 漏登模块：物理文件存在但 index.yaml 未列
+    missing = physical_ids - index_ids
+    for mod_id in sorted(missing):
+        findings.append({
+            "module": mod_id,
+            "type": "MISSING_FROM_INDEX",
+            "detail": f"layers/b_{mod_id}.yaml 物理存在但 index.yaml b_track 未登记（漏登）",
+            "severity": "HIGH",
+        })
 
     return findings
-    """扫描 B-track 包合规性."""
 
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description="B 轨包完整性校验（GOV-DOC-002 §四）")
+    import argparse
+
+    parser = argparse.ArgumentParser(description="B 轨 b_track 一致性校验（index.yaml ↔ layers/b_*.yaml）")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")
     args = parser.parse_args()
 
     findings = scan_b_track_packages()
 
     if findings:
-        print(f"\n[B-TRACK] {len(findings)} 个 B 轨包完整性问题:", file=sys.stderr)
+        print(f"\n[B-TRACK] {len(findings)} 个 b_track 一致性问题:", file=sys.stderr)
         for f in findings:
-            print(f"  [{f['severity']}] {f['package']}", file=sys.stderr)
+            print(f"  [{f['severity']}] {f['module']} ({f['type']})", file=sys.stderr)
             print(f"    {f['detail']}", file=sys.stderr)
     else:
-        print("[B-TRACK] B 轨包完整性合规", file=sys.stderr)
+        print("[B-TRACK] b_track 一致性合规（index.yaml ↔ layers/b_*.yaml 对账通过）", file=sys.stderr)
 
     if args.warn_only:
         sys.exit(EXIT_PASS)

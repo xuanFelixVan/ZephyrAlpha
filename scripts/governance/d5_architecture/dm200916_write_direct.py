@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-GOV_DM200916_WRITE_DIRECT
-# [MODULE]# [MODULE] scripts.governance.d5_architecture.dm200916_write_direct
+# [MODULE] scripts.governance.d5_architecture.dm200916_write_direct
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]
@@ -13,37 +13,38 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。
+"""从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。
 
-治本改造（2026-06-29）：
-- 原脚本是一次性写入脚本，硬编码 52域 + §2.1 裁定语境，会覆盖手工修复
-- 现改为真正的派生脚本：从 depgraph (PostgreSQL) 读取域列表，动态生成 index.yaml
-- 不再生成 index.md 和 capability_heatmap.yaml（含手工内容，应手工维护）
-- 域数用 f-string 动态生成（{len(domains)}域），消除硬编码数字漂移源
+治本改造（2026-07-30，#ARCH-INDEX-005）：
+- domains 段：从 depgraph (PostgreSQL) domains 表派生（保留）
+- b_track 段：原为脚本内嵌 f-string 手工模板（已漂移：幻影 kb + 漏登
+  execution_model/system_telemetry + 硬编码统计数字 + 62↔72 域过期）
+  现改为从物理蓝图文件 layers/b_*.yaml 派生（glob + yaml.safe_load）：
+  - 物理文件即真源：b_ 前缀 = b_track 成员资格（schema.yaml 约定 track 仅 b_track）
+  - 自动消除幻影 kb（无文件）
+  - 自动纳入 execution_model/system_telemetry（有文件且 track: b_track）
+  - 统计数字动态计算，禁止硬编码
+  - 兼容两种 partition 格式（partition 块 / 顶层字段）
 
-v3.0.2 融合版（2026-06-30 双树合并治本）：
-- 模板从 v3.0.1（EA 树 11 partitions）升级为 v3.0.2（根树 12 partitions + b_track 12 模块 + governance）
-- BASE 路径从 EA 树改为根树 architecture_model/
-- domains path 从 ../../../../data/databases/depgraph.db（EA 树相对）改为 ../data/databases/depgraph.db（根树相对）
-- shared path 从 layers/shared.yaml 改为 layers/b_shared.yaml
-- query_hints 中 cross-cutting 规范化为 cross_cutting
+历史：
+- v3.0.2 融合版（2026-06-30）：双树合并，b_track 12 模块手工模板
+- v3.0.3 治本版（2026-07-30）：b_track 从物理文件派生，消除手工模板第二真源
 
 派生范围：
-- index.yaml 的 domains 列表 + global_stats.total_domains（从 depgraph (PostgreSQL) 派生）
-- index.yaml 的其他部分（partitions, b_track, query_hints, id_conventions, governance）是手工模板（不变）
+- domains 列表 + global_stats.total_domains（从 depgraph domains 表）
+- b_track 模块列表 + global_stats.b_track_*（从 layers/b_*.yaml 物理文件）
 
-不派生的文件（手工维护）：
-- index.md：含责任声明、物理分类说明等手工内容（注：根树不允许 .md，人读视图在 docs/ 树）
-- cross_cutting/capability_heatmap.yaml：含 maturity_score 等手工评估数据
+不派生（手工维护，静态设计意图）：
+- partitions / query_hints / id_conventions / governance
 
-循环安全：本脚本不修改 depgraph (PostgreSQL)，可被 reconciler 自动触发。
+循环安全：本脚本不修改 depgraph，不修改 layers/b_*.yaml，可被 reconciler 自动触发。
 """
 import sys
 from pathlib import Path
 
 __manifest__ = """
 args: []
-description: 从 depgraph (PostgreSQL) 派生 architecture_model/index.yaml。
+description: 从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。
 dimensions:
 - D5
 priority: P2
@@ -57,12 +58,13 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+import yaml  # noqa: E402
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 BASE = REPO_ROOT / "architecture_model"
 
-# 查询域列表（真源：depgraph (PostgreSQL) domains 表）
+# === 派生1: domains 列表（真源：depgraph (PostgreSQL) domains 表）===
 conn = get_depgraph_pg_connection(autocommit=True)
 rows = conn.execute("""
     SELECT domain_id, domain_name, layer_id
@@ -75,13 +77,65 @@ domains = [(r["domain_id"], r["domain_name"], r["layer_id"] or "") for r in rows
 domain_count = len(domains)
 print(f"域总数: {domain_count}")
 
-# 生成 index.yaml 内容（domains 列表从 PG 派生，其他部分手工模板 v3.0.2 融合版）
-yaml_content = f"""# v3.0.2: 融合版（EA v3.0.1 域视图 + 根树 v2.0.0 b_track 施工视图 + governance）
+# === 派生2: b_track 模块列表（真源：layers/b_*.yaml 物理蓝图文件）===
+# 治本（2026-07-30，#ARCH-INDEX-005）：b_track 从物理文件派生，消除手工模板第二真源。
+# b_ 前缀 = b_track 成员资格（schema.yaml 约定 track 仅 b_track）。
+# 兼容两种格式：partition 块格式（partition.id/name/track/status）与顶层字段格式
+# （顶层 name/human_name/architecture_track/status，如 b_feedback_loop.yaml）。
+LAYERS_DIR = BASE / "layers"
+b_track_files = sorted(LAYERS_DIR.glob("b_*.yaml"))
+b_track_modules = []
+for f in b_track_files:
+    # 文件名去 b_ 前缀作为 id（物理真源，稳定，不受 partition.id 不一致影响）
+    mod_id = f.stem[2:] if f.stem.startswith("b_") else f.stem
+    try:
+        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        data = {}
+    partition = data.get("partition", {}) if isinstance(data, dict) else {}
+    name = (partition.get("name") or data.get("human_name")
+            or data.get("name") or mod_id)
+    status = partition.get("status") or data.get("status") or "unknown"
+    description = (partition.get("note") or data.get("description") or "")
+    if isinstance(description, str):
+        description = description.strip().split("\n")[0].strip()
+    else:
+        description = ""
+    b_track_modules.append({
+        "id": mod_id,
+        "name": name,
+        "path": f"layers/{f.name}",
+        "status": status,
+        "description": description,
+    })
+
+b_track_count = len(b_track_modules)
+b_track_implemented = sum(1 for m in b_track_modules if m["status"] == "implemented")
+b_track_skeleton = sum(1 for m in b_track_modules if m["status"] == "skeleton")
+print(f"b_track 模块数: {b_track_count} (implemented={b_track_implemented}, skeleton={b_track_skeleton})")
+
+# 生成 b_track modules YAML 片段（动态派生，禁止手工编辑）
+b_track_yaml_lines = []
+for m in b_track_modules:
+    b_track_yaml_lines.append(f"  - id: {m['id']}")
+    b_track_yaml_lines.append(f"    name: {m['name']}")
+    b_track_yaml_lines.append(f"    path: {m['path']}")
+    b_track_yaml_lines.append(f"    status: {m['status']}")
+    if m["description"]:
+        b_track_yaml_lines.append(f"    description: {m['description']}")
+b_track_yaml_block = "\n".join(b_track_yaml_lines)
+
+# 生成 index.yaml 内容（domains 从 depgraph 派生，b_track 从物理文件派生，其余手工模板）
+yaml_content = f"""# v3.0.3: 治本版（b_track 从 layers/b_*.yaml 物理蓝图文件派生，消除手工模板第二真源）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
 # c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
-# 本文件由 dm200916_write_direct.py 从 depgraph (PostgreSQL) 派生，禁止手工编辑 domains 列表
+# 本文件由 dm200916_write_direct.py 派生，禁止手工编辑 domains 与 b_track 列表：
+#   - domains 列表：depgraph (PostgreSQL) domains 表派生
+#   - b_track 模块列表：layers/b_*.yaml 物理蓝图文件派生（b_ 前缀即成员资格）
 module_id: MOD-GOVERNANCE
-schema_version: '3.0.2'
+schema_version: '3.0.3'
+doc_type: register
+ttl: permanent
 system:
   name: ZephyrAlpha
   description: 个人量化交易系统
@@ -94,12 +148,13 @@ governance:
   gate_alignment: "GATE-A 代码↔YAML 对齐"
   domains_source: >
     domains 列表由 dm200916_write_direct.py 从 depgraph domains 表派生，禁止手编。
-    改 depgraph 后由 GATE-ARCH-MODEL reconciler 自动重生。
+    b_track 模块列表从 layers/b_*.yaml 物理文件派生，禁止手编。
+    改 depgraph 或 layers/b_*.yaml 后由 GATE-ARCH-MODEL reconciler 自动重生。
 
 # === 分区管理约定（Partition Management Convention）===
 # {domain_count}域是唯一物理分类体系（depgraph domains表），4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
 # AI找模块只有一条路：按域找。
-# b_track 是横切基础设施模块的施工视图（代码目录对齐），独立于域分类。
+# b_track 是横切基础设施模块的施工视图（物理蓝图文件对齐），独立于域分类。
 
 partitions:
 # === {domain_count}域索引（物理分类唯一真源：depgraph domains表）===
@@ -119,8 +174,7 @@ partitions:
   description: 前端独立平台 FE-L1~L4
   status: planned
 - id: scripts
-  path: scripts/scripts_model.yaml
-  description: 治理/审计/部署脚本
+  description: 治理/审计/部署脚本（待建 scripts_model.yaml）
   status: planned
 - id: cross_cutting
   path: cross_cutting/
@@ -138,78 +192,17 @@ partitions:
   path: technology/
   description: 技术选型与版本治理SSoT
 - id: core-services
-  path: infra/core_services.yaml
-  description: Vibe Coding 2.0 6大核心服务
+  description: Vibe Coding 2.0 6大核心服务（待建 infra/core_services.yaml）
   status: planned
 - id: shared-infra
-  path: infra/shared_infra.yaml
-  description: 跨域共享基础设施
+  description: 跨域共享基础设施（待建 infra/shared_infra.yaml）
   status: planned
 
-# === b_track 横切基础设施模块（施工视图，代码目录对齐）===
+# === b_track 横切基础设施模块（从 layers/b_*.yaml 物理文件派生，禁止手工编辑）===
 - id: b_track
-  description: 横切基础设施模块施工视图（context_engine/core/db 等代码模块对齐登记）
+  description: 横切基础设施模块施工视图（从 layers/b_*.yaml 物理文件派生，b_ 前缀即成员资格）
   modules:
-  - id: context_engine
-    name: Context Engine (CE)
-    path: layers/b_context_engine.yaml
-    status: implemented
-    description: 上下文四阶段流水线：build→compress→validate→inject
-  - id: core
-    name: Core
-    path: layers/b_core.yaml
-    status: implemented
-    description: 蓝图分解器 + TaskCard 核心模型
-  - id: db
-    name: Database
-    path: layers/b_db.yaml
-    status: implemented
-    description: 元数据持久化层（SQLite + PostgreSQL）+ 原子事务管理器
-  - id: feedback_loop
-    name: Feedback Loop Engine (FLE)
-    path: layers/b_feedback_loop.yaml
-    status: implemented
-    description: 系统自调节闭环：collect→detect→dispatch
-  - id: gates
-    name: Gates
-    path: layers/b_gates.yaml
-    status: implemented
-    description: 门禁引擎、断路器、契约模板管理器
-  - id: kb
-    name: Knowledge Base
-    path: layers/b_kb.yaml
-    status: implemented
-    description: 知识生命周期管理：摄取→分析→提取→验证→激活
-  - id: llm_security
-    name: LLM Security Gateway (LSG)
-    path: layers/b_llm_security.yaml
-    status: implemented
-    description: LLM 四层安全防御：输入/System Prompt/输出/Pattern
-  - id: mcp
-    name: MCP Servers
-    path: layers/b_mcp.yaml
-    status: implemented
-    description: MCP 协议服务端：task_manager/gate_engine 等
-  - id: orchestrator
-    name: Agent Orchestrator (Orc)
-    path: layers/b_orchestrator.yaml
-    status: implemented
-    description: 任务生命周期 + Agent 调度 + 沙箱执行 + 幻觉检测
-  - id: pipeline
-    name: Pipeline
-    path: layers/b_pipeline.yaml
-    status: implemented
-    description: M1-M11 双管线：生产管线(M1-M5) + 审计管线(M6-M11)
-  - id: shared
-    name: Shared
-    path: layers/b_shared.yaml
-    status: implemented
-    description: 跨层共享基础设施：契约、工具、不可变核心
-  - id: vector_memory
-    name: Vector Memory Service (VMS)
-    path: layers/b_vector_memory.yaml
-    status: skeleton
-    description: 向量化存储与检索：ChromaDB + BGE-M3 ONNX（代码以骨架为主，部分能力由 kb/ 过渡承担）
+{b_track_yaml_block}
 
 # === {domain_count}域清单（从depgraph派生，禁止手工编辑）===
 domains:
@@ -224,14 +217,14 @@ yaml_content += f"""
 global_stats:
   total_domains: {domain_count}
   total_partitions: 12
-  b_track_modules: 12
-  b_track_implemented: 11
-  b_track_skeleton: 1
+  b_track_modules: {b_track_count}
+  b_track_implemented: {b_track_implemented}
+  b_track_skeleton: {b_track_skeleton}
   notes: >
     {domain_count}域唯一物理分类体系，14层是域的layer_id属性枚举。
-    b_track 12横切基础设施模块（context_engine/core/db等），implemented 11 + skeleton 1(vector_memory)。
-    结构化数据从depgraph派生，禁止在MD中硬编码会变化的数字。
-  last_updated: '2026-06-30'
+    b_track {b_track_count}横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
+    结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
+  last_updated: '2026-07-30'
 
 query_hints:
 - question: 系统有哪些域？
@@ -297,4 +290,3 @@ print(f"✅ index.yaml 验证: 首行='{first_line.strip()}', 大小={size}")
 # 治本说明：不生成 index.md 和 capability_heatmap.yaml
 # - index.md：根树不允许 .md（directory_contract.yaml 强制），人读视图在 docs/ 树
 # - cross_cutting/capability_heatmap.yaml：含 maturity_score 等手工评估数据，手工维护
-# 如需重生这两个文件，应手工编辑或新建专门的派生生成器（区分框架派生 vs 数据手工）
