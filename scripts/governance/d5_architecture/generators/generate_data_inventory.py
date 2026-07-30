@@ -84,6 +84,13 @@ _SQL_SYMBOL_UNIQ = "SELECT uniq({symbol_col}) FROM {table_name}"
 _SQL_TABLE_ROWS = "SELECT total_rows FROM system.tables WHERE database='{db}' AND name='{table}'"
 _SQL_PARTS_DATES_SINGLE = "SELECT min(min_date), max(max_date) FROM system.parts WHERE database='{db}' AND table='{table}' AND active=1"
 
+# 标的数/日期范围查询的行数上限：超过此值的表跳过 uniq(symbol) 与全表 min/max(date) 扫描
+# 治本（2026-07-30，#ARCH-RECONCILER-TIMEOUT-001）：原 docstring 声明"只对小表（<1000万行）查，大表跳过"
+# 但代码无 size guard——对 tick_data（14.5B 行）执行 uniq(symbol)/min(trade_date) 触发全列扫描，
+# 导致 GATE-ARCH-DIAGRAM reconciler 180s 超时（24h 内 3 次 critical_warn）。大表 parts 日期常为空
+# （1970-01-01），使 _query_date_range 回退全表扫描更甚。大表两项统计显示为"—"（同空表）。
+SYMBOL_COUNT_MAX_ROWS = 10_000_000
+
 # 业务数据库列表
 _BUSINESS_DBS = ("c1_market", "c2_factor", "c3_fundamental", "c4_reference")
 
@@ -459,7 +466,7 @@ def _scan_table(db: str, table: str) -> dict:
 
     # 3. 用 uniq() 近似函数查标的数（秒级，不受表大小限制）
     symbol_count = ""
-    if total_rows > 0:
+    if 0 < total_rows < SYMBOL_COUNT_MAX_ROWS:
         columns = _get_table_columns(db, table)
         symbol_col = _detect_column(columns, _SYMBOL_COL_PRIORITY)
         if symbol_col:
@@ -676,19 +683,20 @@ def main() -> int:
         date_col = _detect_column(columns, _DATE_COL_PRIORITY)
         symbol_col = _detect_column(columns, _SYMBOL_COL_PRIORITY)
 
-        # 如果 system.tables 没有 min/max_date，尝试从 system.parts 获取
+        # 日期范围：system.parts 返回空时，仅对小表回退全表 min/max 扫描
+        # （大表 parts 日期常为空=1970-01-01，全表 min(date) 触发 180s 超时——同阈值跳过）
         min_date = t["min_date"]
         max_date = t["max_date"]
-        if (not min_date or not max_date) and date_col and t["total_rows"] > 0:
+        if (not min_date or not max_date) and date_col and 0 < t["total_rows"] < SYMBOL_COUNT_MAX_ROWS:
             d_min, d_max = _query_date_range(db, table, date_col)
             if d_min:
                 min_date = d_min
             if d_max:
                 max_date = d_max
 
-        # 标的数（只对非空表且检测到标的列的查）
+        # 标的数（只对非空表且检测到标的列的查；大表跳过 uniq 全列扫描）
         symbol_count = 0
-        if symbol_col and t["total_rows"] > 0:
+        if symbol_col and 0 < t["total_rows"] < SYMBOL_COUNT_MAX_ROWS:
             symbol_count = _query_symbol_count(db, table, symbol_col)
 
         all_tables.append({
