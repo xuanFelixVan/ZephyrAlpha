@@ -845,7 +845,7 @@ class IntegratorScheduler:
         metas: dict[str, Any] = {}
         source_to_meta = {
             "akshare": ("zephyr.data.implementations.akshare_provider", "AKShareProvider"),
-            "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQMTProvider"),
+            "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQmtIngestProvider"),
             "ifind": ("zephyr.data.implementations.ifind_provider", "IFindProvider"),
         }
         # provider 文件路径映射（Phase 4.3 路由-meta 一致性校验用）
@@ -932,8 +932,8 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.ifind_provider import IFindProvider
                 return IFindProvider()
             elif source == "miniqmt":
-                from zephyr.data.implementations.miniqmt_provider import MiniQMTProvider
-                return MiniQMTProvider()
+                from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
+                return MiniQmtIngestProvider()
             elif source == "akshare":
                 from zephyr.data.implementations.akshare_provider import AKShareProvider
                 return AKShareProvider()

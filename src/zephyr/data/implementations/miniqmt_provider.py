@@ -12,10 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] fetch 异常->yield FetchResult(error=str)；_ts_to_date 按 UTC 解释避免跨日
 # [TESTS] tests/zephyr/data/test_providers.py::TestMiniQMTHelpers
-# [A_module] module_id=MOD-GOV-miniqmt_provider | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-DAT-miniqmt_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
-"""MOD-L00-004 数据源集成器 · MiniQMTProvider 实现。
+"""MOD-L00-004 数据源集成器 · MiniQmtIngestProvider 实现。
 
 封装 xtquant SDK（miniQMT），继承 DataSourceBase。
 
@@ -79,7 +79,7 @@ _TBL_TICK_DATA = get_registry().table("market_tick")
 
 
 # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
-# 原 MiniQMTProvider.fetch 166行 McCabe=42（~40个elif分支能力路由）。
+# 原 MiniQmtIngestProvider.fetch 166行 McCabe=42（~40个elif分支能力路由）。
 # 治本：提取为 dispatch table 模式（dict 映射 capability→handler），主函数简化为编排（McCabe≈7）。
 # 行为等价：所有路由调用签名/顺序/参数完全保留，LOF特殊处理提取到 _route_kline_capability。
 _KLINE_CAPABILITIES = {
@@ -363,7 +363,7 @@ def _resolve_kline_aggregated_table(freq, payload, dividend_type):
     return payload.table or (_TBL_KLINE_MONTHLY_HFQ if is_hfq else _TBL_KLINE_MONTHLY)
 
 
-class MiniQMTProvider(DataSourceBase):
+class MiniQmtIngestProvider(DataSourceBase):
     """miniQMT（迅投 xtquant）数据源 Provider。
 
     通过本地 XtMiniQmt.exe 进程获取行情/财务/指数成分数据。
@@ -756,7 +756,7 @@ class MiniQMTProvider(DataSourceBase):
         rows = []
         if df is None or len(df) == 0:
             return rows
-        symbol = MiniQMTProvider._stock_to_symbol(stock_code)
+        symbol = MiniQmtIngestProvider._stock_to_symbol(stock_code)
         times = [int(ts) for ts in df.index]
         opens = df["open"].tolist()
         highs = df["high"].tolist()
@@ -770,30 +770,30 @@ class MiniQMTProvider(DataSourceBase):
                 # 日K：YYYYMMDD（8 位）-> YYYY-MM-DD
                 trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
                 # volume 在 ClickHouse 中是 UInt64，需转 int
-                vol = MiniQMTProvider.safe_float(volumes[i])
+                vol = MiniQmtIngestProvider.safe_float(volumes[i])
                 vol = int(vol) if vol is not None else None
                 if is_hfq:
                     # kline_daily_hfq 表列为 OCLH 顺序
                     rows.append((
                         trade_date,
                         symbol,
-                        MiniQMTProvider.safe_float(opens[i]),
-                        MiniQMTProvider.safe_float(closes[i]),
-                        MiniQMTProvider.safe_float(highs[i]),
-                        MiniQMTProvider.safe_float(lows[i]),
+                        MiniQmtIngestProvider.safe_float(opens[i]),
+                        MiniQmtIngestProvider.safe_float(closes[i]),
+                        MiniQmtIngestProvider.safe_float(highs[i]),
+                        MiniQmtIngestProvider.safe_float(lows[i]),
                         vol,
-                        MiniQMTProvider.safe_float(amounts[i]),
+                        MiniQmtIngestProvider.safe_float(amounts[i]),
                     ))
                 else:
                     rows.append((
                         trade_date,
                         symbol,
-                        MiniQMTProvider.safe_float(opens[i]),
-                        MiniQMTProvider.safe_float(highs[i]),
-                        MiniQMTProvider.safe_float(lows[i]),
-                        MiniQMTProvider.safe_float(closes[i]),
+                        MiniQmtIngestProvider.safe_float(opens[i]),
+                        MiniQmtIngestProvider.safe_float(highs[i]),
+                        MiniQmtIngestProvider.safe_float(lows[i]),
+                        MiniQmtIngestProvider.safe_float(closes[i]),
                         vol,
-                        MiniQMTProvider.safe_float(amounts[i]),
+                        MiniQmtIngestProvider.safe_float(amounts[i]),
                     ))
             else:
                 # 分钟K：YYYYMMDDHHMMSS（14 位）-> 拆分 date 和 datetime
@@ -802,7 +802,7 @@ class MiniQMTProvider(DataSourceBase):
                     f"{s[:4]}-{s[4:6]}-{s[6:8]} "
                     f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
                 )
-                vol = MiniQMTProvider.safe_float(volumes[i])
+                vol = MiniQmtIngestProvider.safe_float(volumes[i])
                 vol = int(vol) if vol is not None else None
                 if "kline_1min" in table:
                     # kline_1min: 补充 pct_change=0, amplitude=0
@@ -810,12 +810,12 @@ class MiniQMTProvider(DataSourceBase):
                         trade_date,
                         trade_time,
                         symbol,
-                        MiniQMTProvider.safe_float(opens[i]),
-                        MiniQMTProvider.safe_float(closes[i]),
-                        MiniQMTProvider.safe_float(highs[i]),
-                        MiniQMTProvider.safe_float(lows[i]),
+                        MiniQmtIngestProvider.safe_float(opens[i]),
+                        MiniQmtIngestProvider.safe_float(closes[i]),
+                        MiniQmtIngestProvider.safe_float(highs[i]),
+                        MiniQmtIngestProvider.safe_float(lows[i]),
                         vol,
-                        MiniQMTProvider.safe_float(amounts[i]),
+                        MiniQmtIngestProvider.safe_float(amounts[i]),
                         0,  # pct_change（miniQMT 不提供）
                         0,  # amplitude（miniQMT 不提供）
                     ))
@@ -824,12 +824,12 @@ class MiniQMTProvider(DataSourceBase):
                     rows.append((
                         trade_time,
                         symbol,
-                        MiniQMTProvider.safe_float(opens[i]),
-                        MiniQMTProvider.safe_float(highs[i]),
-                        MiniQMTProvider.safe_float(lows[i]),
-                        MiniQMTProvider.safe_float(closes[i]),
+                        MiniQmtIngestProvider.safe_float(opens[i]),
+                        MiniQmtIngestProvider.safe_float(highs[i]),
+                        MiniQmtIngestProvider.safe_float(lows[i]),
+                        MiniQmtIngestProvider.safe_float(closes[i]),
                         vol,
-                        MiniQMTProvider.safe_float(amounts[i]),
+                        MiniQmtIngestProvider.safe_float(amounts[i]),
                         "miniqmt",  # data_source
                     ))
                 else:
@@ -837,12 +837,12 @@ class MiniQMTProvider(DataSourceBase):
                         trade_date,
                         trade_time,
                         symbol,
-                        MiniQMTProvider.safe_float(opens[i]),
-                        MiniQMTProvider.safe_float(highs[i]),
-                        MiniQMTProvider.safe_float(lows[i]),
-                        MiniQMTProvider.safe_float(closes[i]),
+                        MiniQmtIngestProvider.safe_float(opens[i]),
+                        MiniQmtIngestProvider.safe_float(highs[i]),
+                        MiniQmtIngestProvider.safe_float(lows[i]),
+                        MiniQmtIngestProvider.safe_float(closes[i]),
                         vol,
-                        MiniQMTProvider.safe_float(amounts[i]),
+                        MiniQmtIngestProvider.safe_float(amounts[i]),
                     ))
         return rows
 
@@ -1178,7 +1178,7 @@ class MiniQMTProvider(DataSourceBase):
         for i in range(len(times)):
             s = str(times[i])
             trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-            vol = MiniQMTProvider.safe_float(volumes[i])
+            vol = MiniQmtIngestProvider.safe_float(volumes[i])
             if vol is not None and vol < 0:
                 vol = 0
             vol = int(vol) if vol is not None else 0
@@ -1186,12 +1186,12 @@ class MiniQMTProvider(DataSourceBase):
                 trade_date,
                 symbol,
                 name,
-                MiniQMTProvider.safe_float(opens[i]),
-                MiniQMTProvider.safe_float(highs[i]),
-                MiniQMTProvider.safe_float(lows[i]),
-                MiniQMTProvider.safe_float(closes[i]),
+                MiniQmtIngestProvider.safe_float(opens[i]),
+                MiniQmtIngestProvider.safe_float(highs[i]),
+                MiniQmtIngestProvider.safe_float(lows[i]),
+                MiniQmtIngestProvider.safe_float(closes[i]),
                 vol,
-                MiniQMTProvider.safe_float(amounts[i]),
+                MiniQmtIngestProvider.safe_float(amounts[i]),
                 "miniqmt",  # data_source
             ))
         return rows
@@ -1569,7 +1569,7 @@ class MiniQMTProvider(DataSourceBase):
             return None
         rows = []
         for dt in kline_df.index:
-            oi = MiniQMTProvider.safe_float(kline_df.loc[dt, oi_col])
+            oi = MiniQmtIngestProvider.safe_float(kline_df.loc[dt, oi_col])
             rows.append((
                 pd.Timestamp(dt).strftime("%Y-%m-%d"),
                 symbol,
@@ -2136,7 +2136,7 @@ class MiniQMTProvider(DataSourceBase):
 
         ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
                         expiry, opt_type, exp_date, r)
-        return MiniQMTProvider._compute_iv_rows(ctx)
+        return MiniQmtIngestProvider._compute_iv_rows(ctx)
 
     @staticmethod
     def _compute_iv_rows(ctx: _OptionCtx) -> list[tuple]:
@@ -2145,8 +2145,8 @@ class MiniQMTProvider(DataSourceBase):
         rows = []
         common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
         for dt in common_dates:
-            opt_close = MiniQMTProvider.safe_float(ctx.opt_df.loc[dt, "close"])
-            spot = MiniQMTProvider.safe_float(ctx.ul_df.loc[dt, "close"])
+            opt_close = MiniQmtIngestProvider.safe_float(ctx.opt_df.loc[dt, "close"])
+            spot = MiniQmtIngestProvider.safe_float(ctx.ul_df.loc[dt, "close"])
             if opt_close is None or opt_close <= 0 or spot is None or spot <= 0:
                 continue
             if ctx.exp_date:
@@ -2694,7 +2694,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _detect_market_type(stock_code: str) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.detect_market_type(stock_code)
+        return MiniQmtIngestProvider.detect_market_type(stock_code)
 
     @staticmethod
     def format_tick_timestamp(s: str, end_date) -> tuple[str, str]:
@@ -2725,7 +2725,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _format_tick_timestamp(s: str, end_date) -> tuple[str, str]:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.format_tick_timestamp(s, end_date)
+        return MiniQmtIngestProvider.format_tick_timestamp(s, end_date)
 
     # ============== 集合竞价快照（占位） ==============
 
@@ -3213,7 +3213,7 @@ class MiniQMTProvider(DataSourceBase):
 
         ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
                         expiry, opt_type, exp_date, r)
-        return MiniQMTProvider._compute_greeks_rows(ctx)
+        return MiniQmtIngestProvider._compute_greeks_rows(ctx)
 
     @staticmethod
     def _compute_greeks_rows(ctx: _OptionCtx) -> list[tuple]:
@@ -3224,7 +3224,7 @@ class MiniQMTProvider(DataSourceBase):
         common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
         rows = []
         for dt in common_dates:
-            spot = MiniQMTProvider.safe_float(ctx.ul_df.loc[dt, "close"])
+            spot = MiniQmtIngestProvider.safe_float(ctx.ul_df.loc[dt, "close"])
             if spot is None or spot <= 0:
                 continue
             if ctx.exp_date:
@@ -3233,8 +3233,8 @@ class MiniQMTProvider(DataSourceBase):
                 T = max(days / 365.0, 0.001)
             else:
                 T = 0.25
-            sigma = MiniQMTProvider._calc_hist_vol(ctx.ul_df, ul_ret, dt)
-            greeks = MiniQMTProvider._calc_bs_greeks(spot, ctx.strike, T, ctx.r, sigma, ctx.opt_type)
+            sigma = MiniQmtIngestProvider._calc_hist_vol(ctx.ul_df, ul_ret, dt)
+            greeks = MiniQmtIngestProvider._calc_bs_greeks(spot, ctx.strike, T, ctx.r, sigma, ctx.opt_type)
             if greeks:
                 rows.append((
                     pd.Timestamp(dt).strftime("%Y-%m-%d"),
@@ -3253,7 +3253,7 @@ class MiniQMTProvider(DataSourceBase):
         pos = ul_df.index.get_loc(dt)
         if pos >= 20:
             hist_vol = ul_ret.iloc[pos - 19 : pos + 1].std()
-            sigma = MiniQMTProvider.safe_float(hist_vol)
+            sigma = MiniQmtIngestProvider.safe_float(hist_vol)
             if sigma is None or sigma <= 0:
                 return 0.3
             return sigma * (244 ** 0.5)
@@ -3348,7 +3348,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _calc_bs_greeks(S, K, T, r, sigma, opt_type):
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.calc_bs_greeks(S, K, T, r, sigma, opt_type)
+        return MiniQmtIngestProvider.calc_bs_greeks(S, K, T, r, sigma, opt_type)
 
     # ============== 指数权重 ==============
 
@@ -3595,7 +3595,7 @@ class MiniQMTProvider(DataSourceBase):
         """从 numpy record 的数组字段中提取首个价格（降低复杂度）。"""
         arr = rec[field_name]
         if arr is not None and len(arr) > 0:
-            return MiniQMTProvider.safe_float(arr[0])
+            return MiniQmtIngestProvider.safe_float(arr[0])
         return None
 
     # ============== 集合竞价数据 ==============
@@ -4068,7 +4068,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _date_to_str(d: datetime.date) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.date_to_str(d)
+        return MiniQmtIngestProvider.date_to_str(d)
 
     @staticmethod
     def ts_to_date(ts_ms) -> str:
@@ -4082,7 +4082,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _ts_to_date(ts_ms) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.ts_to_date(ts_ms)
+        return MiniQmtIngestProvider.ts_to_date(ts_ms)
 
     @staticmethod
     def ts_to_datetime(ts_ms) -> str:
@@ -4095,7 +4095,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _ts_to_datetime(ts_ms) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.ts_to_datetime(ts_ms)
+        return MiniQmtIngestProvider.ts_to_datetime(ts_ms)
 
     @staticmethod
     def stock_to_symbol(stock_code: str) -> str:
@@ -4105,7 +4105,7 @@ class MiniQMTProvider(DataSourceBase):
     @staticmethod
     def _stock_to_symbol(stock_code: str) -> str:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
-        return MiniQMTProvider.stock_to_symbol(stock_code)
+        return MiniQmtIngestProvider.stock_to_symbol(stock_code)
 
     @staticmethod
     def safe_float(v) -> float | None:

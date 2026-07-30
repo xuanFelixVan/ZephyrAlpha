@@ -299,7 +299,7 @@ _MINIQMT_STYLE = textwrap.dedent('''
     }
 
 
-    class MiniQMTProvider:
+    class MiniQmtIngestProvider:
         meta: DataSourceMeta = DataSourceMeta(
             name="miniqmt", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,

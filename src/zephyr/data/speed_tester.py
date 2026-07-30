@@ -250,8 +250,8 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
 def _make_provider(source: str):
     """按 source 名称实例化 Provider。"""
     if source == "miniqmt":
-        from zephyr.data.implementations.miniqmt_provider import MiniQMTProvider
-        return MiniQMTProvider()
+        from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
+        return MiniQmtIngestProvider()
     elif source == "ifind":
         from zephyr.data.implementations.ifind_provider import IFindProvider
         return IFindProvider()

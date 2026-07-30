@@ -18,7 +18,7 @@ from src.zephyr.data.implementations.akshare_provider import (
     AKShareProvider,
     safe_float as ak_safe_float,
 )
-from src.zephyr.data.implementations.miniqmt_provider import MiniQMTProvider
+from src.zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
 from src.zephyr.data.implementations.tqcenter_provider import (
     TQCenterProvider,
     _safe_val as tq_safe_val,
@@ -168,46 +168,46 @@ class TestAKShareFetchRoute:
         assert "VPN" in AKShareProvider.meta.known_issues[0] or "vpn" in AKShareProvider.meta.known_issues[0].lower()
 
 
-# ============== MiniQMTProvider 测试 ==============
+# ============== MiniQmtIngestProvider 测试 ==============
 
 class TestMiniQMTHelpers:
     def test_date_to_str(self):
-        assert MiniQMTProvider.date_to_str(datetime.date(2024, 1, 9)) == "20240109"
-        assert MiniQMTProvider.date_to_str(datetime.date(2024, 12, 31)) == "20241231"
+        assert MiniQmtIngestProvider.date_to_str(datetime.date(2024, 1, 9)) == "20240109"
+        assert MiniQmtIngestProvider.date_to_str(datetime.date(2024, 12, 31)) == "20241231"
 
     def test_ts_to_date(self):
         """毫秒时间戳 → YYYY-MM-DD。1704067200000 = 2024-01-01 00:00:00 UTC。"""
-        result = MiniQMTProvider.ts_to_date(1704067200000)
+        result = MiniQmtIngestProvider.ts_to_date(1704067200000)
         assert result == "2024-01-01"
 
     def test_ts_to_date_end_of_day(self):
         """2024-01-01 23:59:59 UTC → 2024-01-01。"""
-        result = MiniQMTProvider.ts_to_date(1704153599000)
+        result = MiniQmtIngestProvider.ts_to_date(1704153599000)
         assert result == "2024-01-01"
 
     def test_stock_to_symbol_sz(self):
-        assert MiniQMTProvider.stock_to_symbol("000001.SZ") == "000001"
+        assert MiniQmtIngestProvider.stock_to_symbol("000001.SZ") == "000001"
 
     def test_stock_to_symbol_sh(self):
-        assert MiniQMTProvider.stock_to_symbol("600000.SH") == "600000"
+        assert MiniQmtIngestProvider.stock_to_symbol("600000.SH") == "600000"
 
     def test_safe_float_normal(self):
-        assert MiniQMTProvider.safe_float(1.5) == 1.5
-        assert MiniQMTProvider.safe_float("2.3") == 2.3
+        assert MiniQmtIngestProvider.safe_float(1.5) == 1.5
+        assert MiniQmtIngestProvider.safe_float("2.3") == 2.3
 
     def test_safe_float_none(self):
-        assert MiniQMTProvider.safe_float(None) is None
+        assert MiniQmtIngestProvider.safe_float(None) is None
 
     def test_safe_float_nan(self):
-        assert MiniQMTProvider.safe_float(float("nan")) is None
+        assert MiniQmtIngestProvider.safe_float(float("nan")) is None
 
     def test_safe_float_invalid(self):
-        assert MiniQMTProvider.safe_float("abc") is None
+        assert MiniQmtIngestProvider.safe_float("abc") is None
 
 
 class TestMiniQMTFetchRoute:
     def test_unknown_capability_yields_error(self):
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         payload = FetchPayload(
             table="t", symbols=["000001.SZ"],
             start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 2),
@@ -218,10 +218,10 @@ class TestMiniQMTFetchRoute:
         assert results[0].error is not None
 
     def test_meta(self):
-        assert MiniQMTProvider.meta.name == "miniqmt"
-        assert MiniQMTProvider.source_name == "miniqmt"
-        assert MiniQMTProvider.meta.requires_process is True
-        assert MiniQMTProvider.meta.thread_safety == "single_thread"
+        assert MiniQmtIngestProvider.meta.name == "miniqmt"
+        assert MiniQmtIngestProvider.source_name == "miniqmt"
+        assert MiniQmtIngestProvider.meta.requires_process is True
+        assert MiniQmtIngestProvider.meta.thread_safety == "single_thread"
 
 
 # ============== TQCenterProvider 测试 ==============
@@ -791,21 +791,21 @@ class TestIFindNewCapabilities:
 
 
 class TestMiniQMTNewCapabilities:
-    """MiniQMTProvider 新增能力（kline_1min/financial_statement/index_constituent）的单元测试。"""
+    """MiniQmtIngestProvider 新增能力（kline_1min/financial_statement/index_constituent）的单元测试。"""
 
     def test_ts_to_datetime(self):
         """毫秒时间戳 → YYYY-MM-DD HH:MM:SS。1704067200000 = 2024-01-01 00:00:00 UTC。"""
-        result = MiniQMTProvider.ts_to_datetime(1704067200000)
+        result = MiniQmtIngestProvider.ts_to_datetime(1704067200000)
         assert result == "2024-01-01 00:00:00"
 
     def test_ts_to_datetime_end_of_day(self):
         """2024-01-01 23:59:59 UTC。"""
-        result = MiniQMTProvider.ts_to_datetime(1704153599000)
+        result = MiniQmtIngestProvider.ts_to_datetime(1704153599000)
         assert result == "2024-01-01 23:59:59"
 
     def test_kline_1min_route(self, monkeypatch):
         """fetch(capability=kline_1min) 路由到 _fetch_kline(period=1m)。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = {}
 
         def fake_fetch_kline(self, payload, policy, period, **kwargs):
@@ -815,7 +815,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_kline", fake_fetch_kline)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
             table="c1_market.kline_1min", symbols=["000001.SZ"],
             start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
@@ -826,7 +826,7 @@ class TestMiniQMTNewCapabilities:
 
     def test_kline_5min_route(self, monkeypatch):
         """fetch(capability=kline_5min) 路由到 _fetch_kline(period=5m)。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = {}
 
         def fake_fetch_kline(self, payload, policy, period, **kwargs):
@@ -836,7 +836,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_kline", fake_fetch_kline)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
             table="c1_market.kline_5min", symbols=["000001.SZ"],
             start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
@@ -847,7 +847,7 @@ class TestMiniQMTNewCapabilities:
 
     def test_kline_daily_route(self, monkeypatch):
         """fetch(capability=kline_daily) 路由到 _fetch_kline(period=1d)。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = {}
 
         def fake_fetch_kline(self, payload, policy, period, **kwargs):
@@ -857,7 +857,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_kline", fake_fetch_kline)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline", fake_fetch_kline)
         payload = FetchPayload(
             table="c1_market.kline_daily", symbols=["000001.SZ"],
             start=datetime.date(2025, 6, 1), end=datetime.date(2025, 6, 30),
@@ -868,7 +868,7 @@ class TestMiniQMTNewCapabilities:
 
     def test_balance_sheet_route(self, monkeypatch):
         """fetch(capability=balance_sheet) 路由到 _fetch_financial_statement(Balance)。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = {}
 
         def fake_fetch(self, payload, policy, table_list):
@@ -878,7 +878,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_financial_statement", fake_fetch)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_financial_statement", fake_fetch)
         payload = FetchPayload(
             table="c3_fundamental.balance", symbols=["000001.SZ"],
             start=datetime.date(2024, 1, 1), end=datetime.date(2025, 6, 30),
@@ -889,7 +889,7 @@ class TestMiniQMTNewCapabilities:
 
     def test_index_constituent_route(self, monkeypatch):
         """fetch(capability=index_constituent) 路由到 _fetch_index_constituent。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake_fetch(self, payload, policy):
@@ -899,7 +899,7 @@ class TestMiniQMTNewCapabilities:
                 last_key="", elapsed_sec=0.0,
             )
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_index_constituent", fake_fetch)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_index_constituent", fake_fetch)
         payload = FetchPayload(
             table="c1_market.index_constituent", symbols=None,
             start=datetime.date(2025, 6, 30), end=datetime.date(2025, 6, 30),
@@ -910,7 +910,7 @@ class TestMiniQMTNewCapabilities:
 
     def test_financial_capabilities_map(self):
         """验证财务能力映射完整性。"""
-        from src.zephyr.data.implementations.miniqmt_provider import MiniQMTProvider as M
+        from src.zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider as M
         # 检查 fetch 方法中的映射字典
         # 由于 _FINANCIAL_CAPABILITIES 是方法内局部变量，这里通过路由测试间接验证
         # 已在 test_balance_sheet_route 中验证 Balance 映射
@@ -922,11 +922,11 @@ class TestMiniQMTNewCapabilities:
 # ============== 第二批新增能力测试（15 个数据下载能力）==============
 
 class TestMiniQMTBatch2Capabilities:
-    """MiniQMTProvider 第二批新增能力（15 个数据下载）的单元测试。"""
+    """MiniQmtIngestProvider 第二批新增能力（15 个数据下载）的单元测试。"""
 
     def test_all_15_capabilities_registered(self):
         """验证 15 个新能力均已注册到 meta.capabilities。"""
-        caps = MiniQMTProvider.meta.capabilities
+        caps = MiniQmtIngestProvider.meta.capabilities
         # 兼容 str 与 CapabilityContract（治本修复#ARCH-CAP-NULL-SYMBOLS-001）
         cap_ids = {c.capability_id if hasattr(c, "capability_id") else c for c in caps}
         new_caps = [
@@ -940,7 +940,7 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_calc_bs_greeks_call(self):
         """BS 模型 call Greeks 计算（S=100,K=100,T=0.25,r=0.05,sigma=0.2）。"""
-        g = MiniQMTProvider.calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "call")
+        g = MiniQmtIngestProvider.calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "call")
         assert g is not None
         assert abs(g["delta"] - 0.569) < 0.01
         assert abs(g["gamma"] - 0.0393) < 0.001
@@ -948,175 +948,175 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_calc_bs_greeks_put(self):
         """BS 模型 put Greeks 计算。"""
-        g = MiniQMTProvider.calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "put")
+        g = MiniQmtIngestProvider.calc_bs_greeks(100, 100, 0.25, 0.05, 0.2, "put")
         assert g is not None
         assert g["delta"] < 0  # put delta 为负
         assert abs(g["delta"] - (-0.431)) < 0.01
 
     def test_calc_bs_greeks_none_params(self):
         """参数不足时返回 None。"""
-        assert MiniQMTProvider.calc_bs_greeks(None, 100, 0.25, 0.05, 0.2, "call") is None
-        assert MiniQMTProvider.calc_bs_greeks(100, None, 0.25, 0.05, 0.2, "call") is None
-        assert MiniQMTProvider.calc_bs_greeks(100, 0, 0.25, 0.05, 0.2, "call") is None
-        assert MiniQMTProvider.calc_bs_greeks(100, 100, 0, 0.05, 0.2, "call") is None
+        assert MiniQmtIngestProvider.calc_bs_greeks(None, 100, 0.25, 0.05, 0.2, "call") is None
+        assert MiniQmtIngestProvider.calc_bs_greeks(100, None, 0.25, 0.05, 0.2, "call") is None
+        assert MiniQmtIngestProvider.calc_bs_greeks(100, 0, 0.25, 0.05, 0.2, "call") is None
+        assert MiniQmtIngestProvider.calc_bs_greeks(100, 100, 0, 0.05, 0.2, "call") is None
 
     def test_cb_kline_route(self, monkeypatch):
         """fetch(capability=kline_cb) 路由到 _fetch_kline_cb。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("kline_cb")
             yield FetchResult(table="c1_market.cb_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_kline_cb", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline_cb", fake)
         payload = FetchPayload(table="", symbols=["113001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_cb"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["kline_cb"]
 
     def test_option_kline_route(self, monkeypatch):
         """fetch(capability=option_kline) 路由到 _fetch_option_kline。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("option_kline")
             yield FetchResult(table="c1_market.option_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_option_kline", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_option_kline", fake)
         payload = FetchPayload(table="", symbols=["10000001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "option_kline"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["option_kline"]
 
     def test_option_greeks_route(self, monkeypatch):
         """fetch(capability=option_greeks) 路由到 _fetch_option_greeks。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("option_greeks")
             yield FetchResult(table="c1_market.option_greeks", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_option_greeks", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_option_greeks", fake)
         payload = FetchPayload(table="", symbols=["10000001.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "option_greeks"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["option_greeks"]
 
     def test_index_weight_route(self, monkeypatch):
         """fetch(capability=index_weight) 路由到 _fetch_index_weight。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("index_weight")
             yield FetchResult(table="c1_market.index_weight", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_index_weight", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_index_weight", fake)
         payload = FetchPayload(table="", symbols=["000300.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "index_weight"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["index_weight"]
 
     def test_sector_list_route(self, monkeypatch):
         """fetch(capability=sector_list) 路由到 _fetch_sector_list。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("sector_list")
             yield FetchResult(table="c1_market.sector_list", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_sector_list", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_sector_list", fake)
         payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "sector_list"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["sector_list"]
 
     def test_l2_tick_route(self, monkeypatch):
         """fetch(capability=l2_tick) 路由到 _fetch_l2_tick。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("l2_tick")
             yield FetchResult(table="c1_market.l2_tick", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_l2_tick", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_l2_tick", fake)
         payload = FetchPayload(table="", symbols=["000001.SZ"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "l2_tick"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["l2_tick"]
 
     def test_auction_data_route(self, monkeypatch):
         """fetch(capability=auction_data) 路由到 _fetch_auction_data。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("auction_data")
             yield FetchResult(table="c1_market.auction_snapshot", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_auction_data", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_auction_data", fake)
         payload = FetchPayload(table="", symbols=["000001.SZ"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "auction_data"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["auction_data"]
 
     def test_futures_kline_qmt_route(self, monkeypatch):
         """fetch(capability=futures_kline_qmt) 路由到 _fetch_kline_futures_qmt。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("futures_kline_qmt")
             yield FetchResult(table="c1_market.futures_kline_qmt", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_kline_futures_qmt", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_kline_futures_qmt", fake)
         payload = FetchPayload(table="", symbols=["IF2407.CFFEX"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "futures_kline_qmt"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["futures_kline_qmt"]
 
     def test_hk_kline_route(self, monkeypatch):
         """fetch(capability=hk_kline) 路由到 _fetch_hk_kline。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("hk_kline")
             yield FetchResult(table="c1_market.hk_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_hk_kline", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_hk_kline", fake)
         payload = FetchPayload(table="", symbols=["00700.HK"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "hk_kline"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["hk_kline"]
 
     def test_us_kline_route(self, monkeypatch):
         """fetch(capability=kline_us_daily) 路由到 _fetch_us_kline。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("kline_us_daily")
             yield FetchResult(table="c1_market.us_kline", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_us_kline", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_us_kline", fake)
         payload = FetchPayload(table="", symbols=["AAPL.US"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "kline_us_daily"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["kline_us_daily"]
 
     def test_etf_nav_route(self, monkeypatch):
         """fetch(capability=etf_nav) 路由到 _fetch_etf_nav。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         called = []
 
         def fake(self, payload, policy):
             called.append("etf_nav")
             yield FetchResult(table="c1_market.etf_nav", columns=[], rows=[], last_key="", elapsed_sec=0.0)
 
-        monkeypatch.setattr(MiniQMTProvider, "fetch_etf_nav", fake)
+        monkeypatch.setattr(MiniQmtIngestProvider, "fetch_etf_nav", fake)
         payload = FetchPayload(table="", symbols=["510050.SH"], start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "etf_nav"})
         list(p.fetch(payload, SourcePolicy()))
         assert called == ["etf_nav"]
 
     def test_repurchase_returns_error(self):
         """repurchase 占位方法返回 error。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "repurchase"})
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
@@ -1125,7 +1125,7 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_margin_trading_qmt_returns_error(self):
         """margin_trading_qmt 占位方法返回 error。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "margin_trading_qmt"})
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
@@ -1133,7 +1133,7 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_dragon_tiger_qmt_returns_error(self):
         """dragon_tiger_qmt 占位方法返回 error。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "dragon_tiger_qmt"})
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
@@ -1141,7 +1141,7 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_block_trade_qmt_returns_error(self):
         """block_trade_qmt 占位方法返回 error。"""
-        p = MiniQMTProvider()
+        p = MiniQmtIngestProvider()
         payload = FetchPayload(table="", symbols=None, start=datetime.date(2024, 1, 1), end=datetime.date(2024, 1, 10), extra={"capability": "block_trade_qmt"})
         results = list(p.fetch(payload, SourcePolicy()))
         assert len(results) == 1
@@ -1149,11 +1149,11 @@ class TestMiniQMTBatch2Capabilities:
 
     def test_detect_market_type_cb(self):
         """可转债代码识别为 cb。"""
-        assert MiniQMTProvider.detect_market_type("113001.SH") == "cb"
-        assert MiniQMTProvider.detect_market_type("128001.SZ") == "cb"
+        assert MiniQmtIngestProvider.detect_market_type("113001.SH") == "cb"
+        assert MiniQmtIngestProvider.detect_market_type("128001.SZ") == "cb"
 
     def test_format_tick_timestamp(self):
         """tick 时间戳格式化。"""
-        td, ts = MiniQMTProvider.format_tick_timestamp("20240103093015", datetime.date(2024, 1, 3))
+        td, ts = MiniQmtIngestProvider.format_tick_timestamp("20240103093015", datetime.date(2024, 1, 3))
         assert td == "2024-01-03"
         assert ts == "2024-01-03 09:30:15"
