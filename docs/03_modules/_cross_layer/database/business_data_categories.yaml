@@ -1095,6 +1095,22 @@
   data_source: [exchange]
   blueprint: null
 
+- category_id: market_dragon_tiger_seat
+  name: "龙虎榜席位明细"
+  engine: clickhouse
+  database: c1_market
+  table: dragon_tiger_seat
+  schema_file: schemas/categories/market_dragon_tiger_seat.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
 - category_id: market_block_trade
   name: "大宗交易"
   engine: clickhouse

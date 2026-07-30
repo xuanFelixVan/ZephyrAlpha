@@ -59,6 +59,7 @@ _TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
 _TBL_DISCLOSURE_PLAN = get_registry().table("fund_disclosure_plan")
 _TBL_DIVIDEND = get_registry().table("fund_dividend")
 _TBL_DRAGON_TIGER = get_registry().table("market_dragon_tiger")
+_TBL_DRAGON_TIGER_SEAT = get_registry().table("market_dragon_tiger_seat")
 _TBL_EQUITY_PLEDGE_DETAIL = get_registry().table("fund_equity_pledge_detail")
 _TBL_EQUITY_PLEDGE_SUMMARY = get_registry().table("fund_equity_pledge_summary")
 _TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
@@ -97,7 +98,7 @@ _TBL_TOP10_SHAREHOLDERS = get_registry().table("fund_top10_shareholders")
 # 行为等价：所有路由调用签名/参数完全保留，unsupported capability 错误消息不变。
 _AKSHARE_CAPABILITIES = frozenset({
     "macro_data", "daily_valuation", "margin_trading", "block_trade",
-    "dragon_tiger", "money_flow", "share_unlock", "audit_opinion",
+    "dragon_tiger", "dragon_tiger_seat", "money_flow", "share_unlock", "audit_opinion",
     "equity_pledge", "equity_pledge_summary", "dividend", "restricted_shares",
     "stock_news_em", "news_cctv", "news_economic_baidu", "news_baidu",
     "news_stock", "analyst_forecast", "rights_issue", "research_report",
@@ -132,6 +133,55 @@ def safe_int(v) -> int | None:
         return int(f)
     except (ValueError, TypeError):
         return None
+
+
+def _classify_seat(name: str) -> str:
+    """龙虎榜席位类型分类：institution/broker/connect。"""
+    if "机构专用" in name:
+        return "institution"
+    if "股通" in name:  # 深股通/沪股通/港股通
+        return "connect"
+    return "broker"
+
+
+def _merge_lhb_seats(provider, ak, policy, symbol: str, date_str: str) -> dict:
+    """合并龙虎榜买入/卖出 Top5 席位，按 seat_name 去重为每席位一行。
+
+    Args:
+        provider: AKShareProvider 实例（用于 _call_with_policy）
+        ak: akshare 模块
+        policy: SourcePolicy 限流策略
+        symbol: 6 位证券代码
+        date_str: YYYYMMDD 日期串
+
+    Returns:
+        {seat_name: {buy, sell, net, buy_rank, sell_rank}}
+    """
+    seat_map: dict[str, dict] = {}
+    for side, rank_key in (("买入", "buy_rank"), ("卖出", "sell_rank")):
+        try:
+            df_s = provider._call_with_policy(
+                ak.stock_lhb_stock_detail_em, policy,
+                symbol=symbol, date=date_str, flag=side,
+            )
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            df_s = None
+        if df_s is None or len(df_s) == 0:
+            continue
+        for rank, (_, srow) in enumerate(df_s.iterrows(), 1):
+            seat = str(srow.get("交易营业部名称") or "")
+            if not seat:
+                continue
+            if seat not in seat_map:
+                seat_map[seat] = {
+                    "buy": None, "sell": None, "net": None,
+                    "buy_rank": None, "sell_rank": None,
+                }
+            seat_map[seat]["buy"] = safe_float(srow.get("买入金额"))
+            seat_map[seat]["sell"] = safe_float(srow.get("卖出金额"))
+            seat_map[seat]["net"] = safe_float(srow.get("净额"))
+            seat_map[seat][rank_key] = rank
+    return seat_map
 
 
 def _build_valuation_col_map(df, norm_date_fn, start_str, end_str):
@@ -769,10 +819,71 @@ class AKShareProvider(DataSourceBase):
                     trade_date, sym,
                     str(row.get("名称") or ""),
                     str(row.get("上榜原因") or ""),
-                    safe_float(row.get("净买额") or row.get("净买入额")),
-                    safe_float(row.get("买入额") or row.get("买入金额")),
-                    safe_float(row.get("卖出额") or row.get("卖出金额")),
+                    safe_float(row.get("龙虎榜净买额") or row.get("净买额") or row.get("净买入额")),
+                    safe_float(row.get("龙虎榜买入额") or row.get("买入额") or row.get("买入金额")),
+                    safe_float(row.get("龙虎榜卖出额") or row.get("卖出额") or row.get("卖出金额")),
                 ))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 4b. 龙虎榜席位明细（dragon_tiger_seat） ----
+
+    def _fetch_dragon_tiger_seat(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取龙虎榜席位明细，写入 c1_market.dragon_tiger_seat。
+
+        先调 ak.stock_lhb_detail_em 拿上榜股列表，再对每只调
+        ak.stock_lhb_stock_detail_em(flag='买入'/'卖出') 取 Top5 营业部，
+        合并去重为每席位一行（_merge_lhb_seats）。
+        """
+        import akshare as ak
+
+        table = _TBL_DRAGON_TIGER_SEAT
+        columns = [
+            "trade_date", "symbol", "seat_name", "buy_amount", "sell_amount",
+            "net_amount", "buy_rank", "sell_rank", "seat_type", "reason",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.time()
+        start_str = payload.start.strftime("%Y%m%d")
+        end_str = payload.end.strftime("%Y%m%d")
+
+        try:
+            df_list = self._call_with_policy(
+                ak.stock_lhb_detail_em, policy,
+                start_date=start_str, end_date=end_str,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key=last_key,
+                elapsed_sec=time.time() - t0, error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df_list is not None and len(df_list) > 0:
+            for _, lrow in df_list.iterrows():
+                sym = str(lrow.get("代码") or "").zfill(6)
+                if not sym:
+                    continue
+                trade_date = self._norm_date_str(
+                    lrow.get("上榜日") or lrow.get("日期")
+                )
+                if not trade_date:
+                    trade_date = last_key
+                reason = str(lrow.get("上榜原因") or "")
+                date_str = trade_date.replace("-", "")
+                seat_map = _merge_lhb_seats(self, ak, policy, sym, date_str)
+                for seat_name, v in seat_map.items():
+                    rows.append((
+                        trade_date, sym, seat_name,
+                        v["buy"], v["sell"], v["net"],
+                        v["buy_rank"], v["sell_rank"],
+                        _classify_seat(seat_name), reason,
+                    ))
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=last_key, elapsed_sec=time.time() - t0,

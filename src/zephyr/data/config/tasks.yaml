@@ -146,6 +146,18 @@ tasks:
   fallback_sources:
   - source: exchange
     capability: dragon_tiger
+- task_id: dragon_tiger_seat_incremental
+  table: c1_market.dragon_tiger_seat
+  source: akshare
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: dragon_tiger_seat
+  symbols:
+  extra:
+    description: "龙虎榜席位明细增量（AKShare stock_lhb_stock_detail_em，Top5 买卖席位合并去重）"
+  fallback_sources: []
 - task_id: kline_hk_daily_incremental
   table: c1_market.kline_hk_daily
   source: miniqmt
