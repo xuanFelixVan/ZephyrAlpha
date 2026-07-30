@@ -29,9 +29,9 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
    - 无 ingest_ts 版本列，重复行按插入顺序保留最后一条
    - 数据源重复导入产生的 5 字段完全重复行被自动合并（正确行为）
 4. direction 列 LowCardinality(String)
-   - A 股逐笔成交方向（买/卖/中性），index 数据无方向填空串
+   - A股3秒Tick方向（买/卖/中性），index 数据无方向填空串
 5. bid/ask 价格量 Nullable
-   - 逐笔成交无买卖盘信息，index 数据填 NULL
+   - 3秒Tick无买卖盘信息，index 数据填 NULL
 6. recorded_time 列（2026-07-22 新增，P0-1 双时间戳）
    - event_time=timestamp（上游市场时间），recorded_time=录制器本地接收时间
    - recorded_time - timestamp = 端到端延迟，用于回测延迟建模
@@ -51,7 +51,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 from __future__ import annotations
 
 # category_id: market_tick
-# calc_mode: replay（回测时逐笔回放，保证=实盘）
+# calc_mode: replay（回测时逐条回放3秒Tick，保证=实盘）
 
 TICK_DATA_DDL = """
 CREATE TABLE IF NOT EXISTS c1_market.tick_data

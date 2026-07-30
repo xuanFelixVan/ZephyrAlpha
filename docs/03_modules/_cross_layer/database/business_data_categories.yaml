@@ -217,12 +217,13 @@
   data_source: [miniqmt]
   blueprint: null
 
-# --- A股逐笔成交 ---
+# --- A股3秒Tick快照 ---
 # tick_data 表通过 market_type 列区分 8 种品种：stock/etf/cb/lof/index/sector/stock_bj/mkt_index
-# 注意：tick_data(market_type='index') 是指数分笔成交，与 kline_index(指数日K线) 不同
+# 注意：tick_data(market_type='index') 是指数3秒Tick，与 kline_index(指数日K线) 不同
+# ⚠️ tick_data 是3秒采样快照（miniqmt get_full_tick），不是逐笔成交。逐笔成交见 market_l2_tick（已禁用）
 
 - category_id: market_tick
-  name: "A股逐笔成交（含stock/etf/cb/lof/index/sector/stock_bj/mkt_index 8种market_type）"
+  name: "A股3秒Tick快照（含stock/etf/cb/lof/index/sector/stock_bj/mkt_index 8种market_type）"
   engine: clickhouse
   database: c1_market
   table: tick_data
@@ -535,7 +536,7 @@
 # --- 指数数据 ---
 # 注意："index"一词在此有多义：
 #   kline_index = 指数日K线（开高低收），1990-2026完整
-#   tick_data(market_type='index') = 指数分笔成交（每3秒价位成交额），201610+202201-202606
+#   tick_data(market_type='index') = 指数3秒Tick（每3秒价位成交额），202201-至今
 #   index_list = 指数列表（732个指数代码），base_date=1970-01-01表示基准日期缺失
 #   index_constituent = 指数成分股
 #   index_weight = 指数权重
@@ -544,7 +545,7 @@
 #   us_index = 美股指数
 
 - category_id: market_index_kline
-  name: "指数日K线（开高低收成交量，区别于tick_data的指数分笔成交）"
+  name: "指数日K线（开高低收成交量，区别于tick_data的指数3秒Tick）"
   engine: clickhouse
   database: c1_market
   table: kline_index
@@ -1392,8 +1393,14 @@
   data_source: []
   blueprint: null
 
+# --- Level2逐笔行情（禁用：无L2数据源） ---
+# ⚠️ AI注意：此表当前 0 行，因无 L2 行情权限（券商资金门槛50万+）而禁用。
+# 与 tick_data（3秒Tick快照）是不同的数据——l2_tick 是每笔真实成交，tick_data 是3秒采样快照。
+# 恢复方式：获取 L2 权限后，将 enabled 改为 true + tasks.yaml l2_tick_snapshot 的 disabled 改为 false。
+# 裁定见 #ARCH-DATA-014。
+
 - category_id: market_l2_tick
-  name: "Level2逐笔行情（含买卖盘）"
+  name: "Level2逐笔行情（含买卖盘，禁用：无L2数据源）"
   engine: clickhouse
   database: c1_market
   table: l2_tick
@@ -1401,7 +1408,7 @@
   data_type: 行情
   lifecycle: permanent  # #ARCH-CH-022 P1-6：预留表统一permanent（声明-实现对齐，无TTL即永久保留）
   sla_level: L3
-  enabled: true
+  enabled: false  # #ARCH-DATA-014: 无L2行情权限，禁用。获取权限后改 true 即可恢复
   hard_constraint: null
   calc_mode: replay
   frequency: 逐笔
