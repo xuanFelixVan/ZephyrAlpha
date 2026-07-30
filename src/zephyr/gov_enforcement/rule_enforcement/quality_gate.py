@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain-data/datasource-core/blueprint.md
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.quality_gate
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES]

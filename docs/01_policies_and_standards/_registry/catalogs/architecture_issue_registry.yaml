@@ -9997,3 +9997,23 @@ entries:
   status: decided
   created: '2026-07-31'
   last_updated: '2026-07-31'
+# --- #ARCH-EDE-TICK-FUEL-001: EDE 盘前无效 Tick 过滤治本（2026-07-31）---
+- issue_id: '#ARCH-EDE-TICK-FUEL-001'
+  title: 'EDE 盘前无效 Tick 过滤——last_price<=0 守卫治本'
+  category: bugfix
+  severity: P2中
+  adjudication: |-
+    2026-07-31 EventDrivenEngine.on_tick 增加 last_price<=0 守卫，跳过集合竞价前无效 Tick。
+
+    病根（实证）：MiniQmtProvider 回放的集合竞价前 Tick 的 last_price=0，EDE 未过滤直接进入
+    撮合流程，导致 last_prices 被置 0、持仓市值归零，且 strategy_callback 返回目标权重时会以
+    0 价撮合下单，产生大量伪成交。
+
+    治本：on_tick 入口处（sequence!=-1 守卫之后）增加 last_price<=0 直接 return，零价 Tick
+    不进入撮合/Callback 流程。非 risk acceptance——纯 bugfix，AI 直接标 decided。
+  impact:
+    - 'src/zephyr/backtest/implementations/event_driven_engine.py（on_tick 增加 last_price<=0 守卫）'
+  fix_phase: 已执行（event_driven_engine.py on_tick 守卫，2026-07-31）
+  status: decided
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
