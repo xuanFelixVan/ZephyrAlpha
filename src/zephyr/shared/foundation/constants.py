@@ -86,6 +86,15 @@ DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:
 # RSSHub 本地实例 URL（部署在 D:\RSSHub，npm start，监听 1200 端口）
 DEFAULT_RSSHUB_URL: Final[str] = os.getenv("RSSHUB_BASE_URL", "http://localhost:1200")
 
+# HTTP 请求默认 User-Agent（模拟浏览器，避免被反爬/WAF 识别为 bot）
+# #ARCH-RSS-INVESTING-403-001：原 rss_provider.py 硬编码 "ZephyrAlpha-DataBot/1.0"
+# 触发 Cloudflare WAF 间歇 403，集中化为浏览器 UA（直连源 36kr/tmtpost 等受益）
+DEFAULT_HTTP_UA: Final[str] = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/126.0.0.0 Safari/537.36"
+)
+
 # 5.141 修复：DeepSeek API URL 集中化为共享常量（原散落 3 处字面量重复：
 # integration/local_model/deepseek_chat.py / infrastructure/pipeline/llm_gateway.py /
 # intelligence/model_profiling/deepseek_v4_chat.py）
@@ -129,6 +138,7 @@ __all__ = [
     "COLD_PATH_LATENCY_BUDGET_MS",
     "COLD_PATH_PARTIAL_ACTIVATED",
     "DEFAULT_DEEPSEEK_URL",
+    "DEFAULT_HTTP_UA",
     "DEFAULT_OLLAMA_URL",
     "DEFAULT_RSSHUB_URL",
     "ETF",

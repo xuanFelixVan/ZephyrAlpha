@@ -130,7 +130,9 @@ DEFAULT_POLICIES: Final[dict[str, dict]] = {
     },
     "rss": {
         "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "exponential",
-        "initial_wait_sec": 5.0, "retry_on": ["SSLError", "ConnectionError", "HTTPError"],
+        "initial_wait_sec": 5.0,
+        # #ARCH-RSS-INVESTING-403-001：仅重试网络错误 + 5xx；4xx（WAF 403）不重试
+        "retry_on": ["SSLError", "ConnectionError", "500", "502", "503", "504"],
         "respect_robots_txt": True,
     },
 }

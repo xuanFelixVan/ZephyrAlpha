@@ -57,7 +57,7 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 # 国内源：直连 RSS + 本地 RSSHub 路由（V2rayN 规则模式国内域名直连，不走代理）
 # 海外源：Yahoo Finance 经 RSSHub 代理走 V2rayN SOCKS5(10808)；统一走代理，无直连异类
 # 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200，ecosystem.config.cjs 配 PROXY_URI）
-from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
+from zephyr.shared.foundation.constants import DEFAULT_HTTP_UA, DEFAULT_RSSHUB_URL
 _DEFAULT_RSS_FEEDS = [
     # ---- 国内源：直连 RSS ----
     "https://36kr.com/feed",                              # 36氪（直连）
@@ -112,6 +112,43 @@ def _is_vpn_ready(port: int = _VPN_SOCKS5_PORT, timeout: float = 1.0) -> bool:
 def _is_overseas_feed(feed_url: str) -> bool:
     """判断 feed 是否为海外源（依赖 VPN/SOCKS5 代理）。"""
     return any(p in feed_url for p in _OVERSEAS_FEED_PATTERNS)
+
+
+# Yahoo Finance 路由 region 段 → (region, language) 映射
+# 路由格式 /yahoo/news/:region/:category，国内源默认 (CN, zh)
+# #ARCH-RSS-INVESTING-403-001：海外新闻显式标记 region/language，避免被表 DEFAULT 误标 CN/zh
+_YAHOO_REGION_MAP = {
+    "us": ("US", "en"),  # Yahoo Finance 美国（英文）
+    "hk": ("HK", "zh"),  # Yahoo 財經 香港（繁中）
+    "tw": ("TW", "zh"),  # Yahoo 財經 台湾（繁中）
+}
+
+
+def _extract_region_language(feed_url: str) -> tuple[str, str]:
+    """从 feed URL 提取 (region, language) 标记。
+
+    海外 Yahoo 源路由 /yahoo/news/:region/:category，按 region 段映射；
+    国内源（直连 + 本地 RSSHub 国内路由）默认 (CN, zh)。
+    """
+    if "/yahoo/news/" in feed_url:
+        # 路径形如 /yahoo/news/us/business，取第 3 段为 region
+        parts = feed_url.split("/yahoo/news/", 1)[1].split("/", 1)
+        if parts:
+            return _YAHOO_REGION_MAP.get(parts[0], ("CN", "zh"))
+    return ("CN", "zh")
+
+
+def _get_feed_response(feed_url: str, timeout: int = 30, headers: dict | None = None):
+    """requests.get + raise_for_status，供 _call_with_policy 重试包裹。
+
+    #ARCH-RSS-INVESTING-403-001：将 raise_for_status 纳入重试循环——
+    5xx（503/502 等瞬时服务端错误）匹配 retry_on 触发重试；
+    4xx（403 WAF 拦截）不匹配 retry_on → 立即抛出不重试（避免无效重试浪费 ~35s）。
+    """
+    import requests
+    resp = requests.get(feed_url, timeout=timeout, headers=headers or {})
+    resp.raise_for_status()
+    return resp
 
 
 class RSSProvider(IngestProviderBase):
@@ -188,10 +225,10 @@ class RSSProvider(IngestProviderBase):
         """获取财经新闻（feedparser.parse）。
 
         每个 RSS 源作为一批 yield FetchResult。
-        用 requests.get 拉取 XML（支持 SSL 重试），feedparser.parse 解析。
+        用 _get_feed_response 拉取 XML 并校验状态码（含 raise_for_status，纳入重试循环：
+        5xx 重试、4xx 不重试），feedparser.parse 解析。
         """
         import feedparser
-        import requests
 
         table = payload.table or _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
@@ -222,20 +259,22 @@ class RSSProvider(IngestProviderBase):
                     self._log.info(f"RSS {feed_url} 被 robots.txt 禁止，跳过")
                     continue
 
-                # 用 _call_with_policy 包裹 requests.get（支持 SSL 重试）
+                # 用 _call_with_policy 包裹 _get_feed_response（含 raise_for_status）
+                # #ARCH-RSS-INVESTING-403-001：raise_for_status 纳入重试循环——
+                # 5xx 匹配 retry_on 重试；4xx（WAF 403）不匹配 → 立即抛出不重试
                 response = self._call_with_policy(
-                    requests.get,
+                    _get_feed_response,
                     policy,
                     feed_url,
                     timeout=30,
-                    headers={"User-Agent": "ZephyrAlpha-DataBot/1.0"},
+                    headers={"User-Agent": DEFAULT_HTTP_UA},
                 )
-                response.raise_for_status()
 
                 # feedparser 解析 XML
                 parsed = feedparser.parse(response.content)
                 rows: list[tuple] = []
                 source_name = self._extract_source_name(feed_url)
+                region, language = _extract_region_language(feed_url)
                 for entry in parsed.entries:
                     pub_date = entry.get("published", entry.get("updated", ""))
                     title = entry.get("title", "")
@@ -243,6 +282,7 @@ class RSSProvider(IngestProviderBase):
                     summary = entry.get("summary", entry.get("description", ""))
                     rows.append(build_news_row(
                         pub_date, title, link, summary, source_name, "rss",
+                        region=region, language=language,
                     ))
 
                 self._log.info(f"RSS {source_name}: {len(rows)} 行")

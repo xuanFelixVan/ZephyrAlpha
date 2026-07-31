@@ -241,7 +241,10 @@ data_sources:
       max_retries: 3
       backoff: exponential
       initial_wait_sec: 5.0
-      retry_on: ["SSLError", "ConnectionError", "HTTPError"]
+      # #ARCH-RSS-INVESTING-403-001：仅重试网络错误 + 5xx 服务端错误；
+      # 4xx（403 WAF 拦截）不重试——相同 UA/IP 重试仍 4xx，避免每轮浪费 ~35s。
+      # status code 字符串按 retry 机制 substring 匹配 HTTPError.message（如 "503 Server Error"）
+      retry_on: ["SSLError", "ConnectionError", "500", "502", "503", "504"]
       respect_robots_txt: true
 
   - id: DS-CLS

@@ -112,7 +112,10 @@ rss:
   retry_on:
   - SSLError
   - ConnectionError
-  - HTTPError
+  - '500'
+  - '502'
+  - '503'
+  - '504'
   respect_robots_txt: true
 cls:
   rpm: 30

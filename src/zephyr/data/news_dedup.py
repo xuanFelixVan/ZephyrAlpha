@@ -52,10 +52,12 @@ _SQL_DEDUP_QUERY_TEMPLATE = (
 
 # news_data 表标准列顺序（与 c3_fundamental.news_data schema 对齐）
 # 必填列（无 DEFAULT）：news_id, publish_time, title, content, source, data_source
-# 可选列（有 DEFAULT）：summary, source_url, category, region, ...
+# 可选列（有 DEFAULT）：summary, source_url, category, region(默认'CN'), language(默认'zh'), ...
+# #ARCH-RSS-INVESTING-403-001：显式写入 region/language，避免海外新闻被表 DEFAULT 误标 CN/zh
 NEWS_DATA_COLUMNS = [
     "news_id", "publish_time", "title", "content",
     "summary", "source", "source_url", "data_source",
+    "region", "language",
 ]
 
 # title 在 NEWS_DATA_COLUMNS 中的索引（dedup_news_result 用）
@@ -86,6 +88,8 @@ def build_news_row(
     summary: str,
     source: str,
     data_source: str,
+    region: str = "CN",
+    language: str = "zh",
 ) -> tuple:
     """构造 news_data 表标准行，对齐 ClickHouse schema。
 
@@ -99,9 +103,13 @@ def build_news_row(
         summary: 摘要/内容 → 同时填入 content 和 summary
         source: 来源标识
         data_source: 数据源名称（Provider 的 source_name）
+        region: 区域标记（默认 CN；海外源应传 US/HK/TW 等，
+            #ARCH-RSS-INVESTING-403-001：避免海外新闻被表 DEFAULT 误标 CN）
+        language: 语言标记（默认 zh；英文源应传 en）
 
     Returns:
-        tuple: (news_id, publish_time, title, content, summary, source, source_url, data_source)
+        tuple: (news_id, publish_time, title, content, summary, source,
+                source_url, data_source, region, language)
     """
     publish_time = _parse_datetime(str(pub_date))
     title_str = str(title) or ""
@@ -110,6 +118,8 @@ def build_news_row(
     source_str = str(source) or ""
     source_url_str = str(link) or ""
     data_source_str = str(data_source) or ""
+    region_str = str(region) or "CN"
+    language_str = str(language) or "zh"
 
     news_id = hashlib.md5(
         f"{source_str}{title_str}{publish_time}".encode("utf-8")
@@ -118,6 +128,7 @@ def build_news_row(
     return (
         news_id, publish_time, title_str, content_str,
         summary_str, source_str, source_url_str, data_source_str,
+        region_str, language_str,
     )
 
 
