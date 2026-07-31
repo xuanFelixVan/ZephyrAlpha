@@ -442,6 +442,74 @@ class TickSubscriber:
             log.info("获取全市场标的: %d 只（去重后）", len(symbols))
         return symbols
 
+    def _wait_for_qmt_ready(self, timeout: float = 120.0, interval: float = 5.0) -> bool:
+        """等待 QMT 就绪——连通性检测 + 轮询重试。
+
+        治本（#ARCH-DATA-TICK-GAP-001 后续，2026-07-31）：
+        tick_subscriber 启动早于 QMT 客户端时，subscribe_quote 静默失败。
+        本方法在订阅前用 get_market_data_ex 探活，QMT 未就绪则等待重试。
+        """
+        deadline = time.time() + timeout
+        attempt = 0
+        while time.time() < deadline:
+            attempt += 1
+            try:
+                data = self._xtdata.get_market_data_ex(
+                    [], ["000001.SZ"], period="1m", count=1
+                )
+                if data and "000001.SZ" in data:
+                    df = data["000001.SZ"]
+                    if df is not None and len(df) > 0:
+                        log.info("QMT 连通性检测通过 (attempt=%d)", attempt)
+                        return True
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.debug("QMT 探活异常 (attempt=%d): %s", attempt, e)
+            remaining = deadline - time.time()
+            if remaining > 0:
+                log.warning(
+                    "QMT 未就绪 (attempt=%d)，%.0fs 后重试（剩余 %.0fs）",
+                    attempt, interval, remaining,
+                )
+                time.sleep(interval)
+        log.error("QMT 连通性检测超时(%.0fs)，订阅可能失败", timeout)
+        return False
+
+    def _subscribe_all_symbols(self, symbols: list[str]) -> int:
+        """订阅全市场标的，返回成功订阅数。"""
+        for symbol in symbols:
+            try:
+                self._xtdata.subscribe_quote(symbol, period="tick", callback=self._on_tick)
+                self._subscribed.add(symbol)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.error("订阅失败 %s: %s", symbol, e)
+        return len(self._subscribed)
+
+    def _wait_for_first_tick(self, symbols: list[str], timeout: float = 30.0) -> bool:
+        """预热等待首个 tick，超时则重新订阅一次再等待。
+
+        Returns: True 如果收到首个 tick，False 如果两次等待都超时。
+        """
+        if not self._subscribed:
+            return False
+        log.info("预热等待: 已订阅 %d 只标的，等待首个 tick...", len(self._subscribed))
+        if self._first_tick_received.wait(timeout=timeout):
+            elapsed = time.time() - self._start_time
+            log.info("预热完成: 首个 tick 已收到 (耗时 %.1fs)", elapsed)
+            return True
+        # 治本：预热超时 → 重新订阅（QMT 可能刚就绪，初始订阅可能失败）
+        log.warning("预热超时(%.0fs)未收到首个 tick，重新订阅全市场标的...", timeout)
+        self._subscribed.clear()
+        self._subscribe_all_symbols(symbols)
+        if not self._subscribed:
+            return False
+        log.info("重新订阅完成: %d 只，再次等待首个 tick...", len(self._subscribed))
+        if self._first_tick_received.wait(timeout=timeout):
+            elapsed = time.time() - self._start_time
+            log.info("预热完成: 首个 tick 已收到 (耗时 %.1fs)", elapsed)
+            return True
+        log.warning("重新订阅后仍未收到 tick，继续运行（可能存在数据缺口）")
+        return False
+
     def start(self) -> bool:
         """启动订阅服务。"""
         try:
@@ -472,30 +540,22 @@ class TickSubscriber:
         self._flush_thread = threading.Thread(target=self._flush_loop, daemon=True, name="tick-flush")
         self._flush_thread.start()
 
-        # 订阅
+        # 治本（#ARCH-DATA-TICK-GAP-001 后续，2026-07-31）：
+        # tick_subscriber 启动早于 QMT 客户端时，subscribe_quote 静默失败（7-30 0行根因）。
+        # 三阶段启动：①等待 QMT 连通性就绪 → ②订阅全市场 → ③等待首个 tick（超时重新订阅）。
         self._start_time = time.time()  # P0-2: 预热计时起点
-        symbols = self._get_all_symbols()
-        for symbol in symbols:
-            try:
-                self._xtdata.subscribe_quote(symbol, period="tick", callback=self._on_tick)
-                self._subscribed.add(symbol)
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                log.error("订阅失败 %s: %s", symbol, e)
 
-        # P0-2: 预热等待——订阅完成 + 首个 tick 收到 = ready
+        # ① 等待 QMT 连通性就绪（最长 120s 轮询重试，治标 7-30 启动顺序问题）
+        if not self._wait_for_qmt_ready(timeout=120.0, interval=5.0):
+            log.warning("QMT 未就绪，继续尝试订阅（best-effort）")
+
+        # ② 订阅全市场标的
+        symbols = self._get_all_symbols()
+        self._subscribe_all_symbols(symbols)
+
+        # ③ P0-2: 预热等待首个 tick——超时则重新订阅一次再等待
         # 避免开盘瞬间数据缺口：subscribe_quote 是异步的，订阅完成不代表数据已到达
-        # 等待首个 tick 确认数据通道已建立，超时则降级继续（best-effort，不阻断）
-        if self._subscribed:
-            log.info("预热等待: 已订阅 %d 只标的，等待首个 tick...", len(self._subscribed))
-            warmup_timeout = 30.0
-            if not self._first_tick_received.wait(timeout=warmup_timeout):
-                log.warning(
-                    "预热超时(%.0fs)未收到首个 tick，继续运行（可能存在数据缺口）",
-                    warmup_timeout,
-                )
-            else:
-                elapsed = time.time() - self._start_time
-                log.info("预热完成: 首个 tick 已收到 (耗时 %.1fs)", elapsed)
+        self._wait_for_first_tick(symbols, timeout=30.0)
 
         # P1-3: 启动双源切换器（主源 QMT + 备源 TDX 自动切换）
         if self._backup_provider is not None and self._heartbeat is not None:
