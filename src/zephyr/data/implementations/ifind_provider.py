@@ -2139,7 +2139,7 @@ class IFindProvider(IngestProviderBase):
 
         每日盘后更新，trade_date 为当日。
         """
-        from iFinDPy import THS_WC
+        from iFinDPy import THS_iwencai
 
         table = _TBL_SECTOR_META
         columns = [
@@ -2150,13 +2150,13 @@ class IFindProvider(IngestProviderBase):
         today_str = datetime.date.today().strftime("%Y-%m-%d")
         t0 = time.time()
 
-        # 问财查询：同花顺881二级行业板块
+        # i问财查询：同花顺881二级行业板块（THS_WC 接口已失效返回 data=None，
+        # 改用 THS_iwencai i问财接口，裁定 #ARCH-IFIND-SECTORMETA-FIX 2026-07-31）
         try:
             raw = self._call_with_policy(
-                THS_WC, policy,
-                "同花顺二级行业板块",
-                "总市值,流通市值,成份股个数,总股本,流通A股",
-                "",
+                THS_iwencai, policy,
+                "同花顺二级行业板块 总市值 流通市值 成份股个数 总股本 流通A股",
+                "板块",
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
@@ -2195,19 +2195,19 @@ class IFindProvider(IngestProviderBase):
                 # 导致 sector_codes=[] → rows=[] → 静默SUCCESS 0行（数据过期21天未发现）。
                 # 修复：使用 _extract_wencai_column 模糊匹配，与其他列保持一致。
                 sector_codes = self._extract_wencai_column(
-                    tbl, ["thscode", "板块代码", "THSCODE", "code", "股票代码", "板块编号"]
+                    tbl, ["指数代码", "thscode", "板块代码", "THSCODE", "code", "股票代码", "板块编号"]
                 )
                 if not sector_codes:
                     self._log.warning(
                         "sector_meta: thscode 列为空，tbl 实际键名=%s",
                         list(tbl.keys()) if isinstance(tbl, dict) else type(tbl).__name__,
                     )
-                sector_names = self._extract_wencai_column(tbl, ["板块名称", "名称", "sector_name"])
+                sector_names = self._extract_wencai_column(tbl, ["指数简称", "板块名称", "名称", "sector_name"])
                 total_mv = self._extract_wencai_column(tbl, ["总市值", "ths_total_mv_index"])
                 float_mv = self._extract_wencai_column(tbl, ["流通市值", "ths_float_mv_index"])
-                constituent_num = self._extract_wencai_column(tbl, ["成份股个数", "成分股数量", "ths_constituent_num_index"])
+                constituent_num = self._extract_wencai_column(tbl, ["成分股总数", "成份股个数", "成分股数量", "ths_constituent_num_index"])
                 total_share = self._extract_wencai_column(tbl, ["总股本", "ths_total_shares_index"])
-                float_share = self._extract_wencai_column(tbl, ["流通A股", "ths_float_a_share_index"])
+                float_share = self._extract_wencai_column(tbl, ["流通a股", "流通A股", "ths_float_a_share_index"])
 
                 for i, sc in enumerate(sector_codes):
                     def _safe_get(lst, idx):
