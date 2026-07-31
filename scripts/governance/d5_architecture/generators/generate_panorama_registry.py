@@ -265,6 +265,19 @@ BUILT_PANORAMAS: list[dict] = [
         "artifact_path": "06_decision_architecture/decision_index.md",
         "description": "决策流图 decisiongraph（L0-L6 四轨），三图正交第三维度",
     },
+    # --- 07_trading_decision_architecture/（decisiongraph 业务流程视图） ---
+    {
+        "panorama_id": "PAN-BUILT-21",
+        "name": "交易决策架构视图",
+        "category": "决策流",
+        "category_id": "decision",
+        "data_source": DB_DISPLAY_NAME,
+        "source_architecture": "decisiongraph",
+        "generator": "generate_trading_flow_diagram.py",
+        "output_path": "07_trading_decision_architecture/",
+        "artifact_path": "07_trading_decision_architecture/trading_flow_index.md",
+        "description": "decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐",
+    },
     # --- generated/ ---
     {
         "panorama_id": "PAN-BUILT-07",

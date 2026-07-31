@@ -219,6 +219,30 @@ class DecisionGraphReader:
             _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
         ]
 
+    def get_nodes_by_flow_stage(
+        self, flow_stage: str, design_maturity: str | None = None
+    ) -> list[dict[str, Any]]:
+        """按 flow_stage 查询节点（可选按 design_maturity 过滤，07_ 交易决策架构视图用）。
+
+        :param flow_stage: 业务流程阶段（stock_selection/buy_flow/sell_flow/
+                           position_management/execution/reconciliation）
+        :param design_maturity: 可选，按 design/production 过滤
+        """
+        conn = self._get_conn()
+        if design_maturity is None:
+            cursor = conn.execute(
+                "SELECT * FROM decision_nodes WHERE flow_stage = %s ORDER BY node_id",
+                (flow_stage,),
+            )
+        else:
+            cursor = conn.execute(
+                "SELECT * FROM decision_nodes WHERE flow_stage = %s AND design_maturity = %s ORDER BY node_id",
+                (flow_stage, design_maturity),
+            )
+        return [
+            _parse_jsonb(dict(row), _JSONB_NODE_FIELDS) for row in cursor.fetchall()
+        ]
+
     # ── 边查询 ────────────────────────────────────────────────
 
     def get_all_edges(self) -> list[dict[str, Any]]:

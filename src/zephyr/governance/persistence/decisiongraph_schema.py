@@ -214,6 +214,9 @@ CREATE TABLE IF NOT EXISTS decision_nodes (
     build_status     TEXT    DEFAULT 'generated'
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     source_code_ref  TEXT,
+    flow_stage       TEXT
+        CHECK (flow_stage IS NULL OR flow_stage IN ('stock_selection', 'buy_flow', 'sell_flow',
+                      'position_management', 'execution', 'reconciliation')),
     created_at       TIMESTAMPTZ DEFAULT NOW(),
     finalized_at     TIMESTAMPTZ
 )

@@ -1,0 +1,390 @@
+# [A_config] module_id=CFG-trading_flow_narrative | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §trading-flow-panorama
+# module_id: CFG-trading_flow_narrative
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# trading_flow_narrative.yaml — 交易决策架构视图叙事真源
+#
+# 定位：07_trading_decision_architecture/ 视图的"叙事层"真源。
+#       生成器 generate_trading_flow_diagram.py 读取本文件 + decisiongraph (PostgreSQL)
+#       → 拼装 07_ 目录的 7 个 MD。
+# SSoT 分工：
+#   - 结构化数据（节点/边/flow_stage 字段）真源 = decisiongraph (PostgreSQL) + decision_graph_model.yaml
+#   - 叙事层（大白话/ASCII框图/指挥AI提示）真源 = 本文件
+#   - 07_ MD = 生成器派生产物（只读视图）
+# 内容范围：实盘主链路（数据→因子→信号→策略→风控→仓位→执行→撮合→对账）。
+#           过度工程（KAN/Mamba/Kronos 等）不进本文件，归 candidate_module_registry.yaml。
+#
+# 变更历史：
+#   v1.0.0 (2026-07-31): 初版——6 阶段叙事 + 横切层 + 四模式开关，对标草稿 v9.0 剥离过度工程。
+
+schema_version: "1.0.0"
+doc_type: trading_flow_narrative
+module_id: CFG-trading_flow_narrative
+version: "1.0.0"
+title: "交易决策架构视图叙事真源"
+status: active
+depends_on:
+  - target: architecture_model/domain/decision_graph_model.yaml
+    at: "flow_stages 段（6 阶段定义与映射）"
+    why: "本文件的 stage_id 与 decision_graph_model.yaml 的 flow_stages 对齐"
+  - target: decisiongraph (PostgreSQL)
+    at: "decision_nodes.flow_stage 字段 + decision_nodes/edges 表"
+    why: "生成器读取 DB 节点/边，与本文件叙事拼装成 MD"
+
+# === 横切层叙事（07_ 总览文档用）===
+cross_cutting:
+
+  four_tracks:
+    title: 四轨并行架构
+    narrative: |
+      交易决策不是单条流水线，而是四条轨道同时跑，按优先级接管：
+        ① 模型驱动轨（主力）—— L0数据→L1因子→L2信号→L3策略→L4风控，正常交易走这条
+        ② 数据驱动轨（补充）—— 端到端 DL 信号，模型驱动轨信号不足时补充
+        ③ 人工指令轨（干预）—— 人工买入/卖出/调仓/风控干预，优先级高于自动轨
+        ④ 应急保命轨（兜底）—— 全系统降级到最简规则，仅执行卖出 + 硬编码上限
+      四轨的输出在 L3 策略组合层融合，按优先级仲裁。人工指令 > 模型驱动 > 数据驱动；
+      应急保命轨触发时压制所有其他轨。
+    module_anchors: [MOD-GOVERNANCE]
+
+  shared_signal_injection:
+    title: 共享信号注入层
+    narrative: |
+      选股、买入、卖出三个流程共享同一批信号源——不重复造信号。
+      信号工厂统一产出 Insight（方向/置信度/时间跨度），注入到：
+        - 选股流：信号作为筛选漏斗的输入
+        - 买入流：信号作为四轨融合的输入
+        - 卖出流：信号反转作为卖出触发之一
+      信号仓位分离铁律：signal 节点不能直接连 order，必须经 portfolio_target 中转。
+
+  emergency_degradation:
+    title: 应急保命降级路径
+    narrative: |
+      当模型/策略/信号失效时，系统逐级降级保命：
+        - L2 信号失效 → 硬编码均线信号
+        - L3 策略失效 → 固定比例仓位
+        - L4 风控失效 → 硬编码 10% 单票上限
+        - 数据断流   → 仅执行卖出（不买入）
+      降级触发由 Kill Switch 熔断 + 数据健康监控驱动。
+
+  four_modes:
+    title: 四模式开关（回测/Paper/Shadow/实盘）
+    narrative: |
+      同一套决策代码路径，通过模式开关切换运行形态，保证 sim↔实盘同构：
+        - backtest  —— 历史数据回放 + 模拟撮合，验证策略
+        - paper     —— 实时数据 + 模拟下单不成交，验证实时链路
+        - shadow    —— 实时数据 + 全链路实跑不下单，测量 sim↔live divergence
+        - live      —— 实时数据 + 真实下单
+      模式开关在执行层（execution flow）生效，不影响信号/策略/风控的决策逻辑。
+      实盘同构铁律：回测引擎必须串入 D_POSITION + D_RISK，不跳过仓位和风控。
+    modes:
+      - mode_id: backtest
+        mode_name: 回测模式
+        data_source: 历史回放
+        order_mode: 模拟撮合
+      - mode_id: paper
+        mode_name: Paper 模式
+        data_source: 实时
+        order_mode: 模拟下单不成交
+      - mode_id: shadow
+        mode_name: Shadow 模式
+        data_source: 实时
+        order_mode: 全链路实跑不下单
+      - mode_id: live
+        mode_name: 实盘模式
+        data_source: 实时
+        order_mode: 真实下单
+
+# === 6 阶段叙事 ===
+flow_stages:
+
+  - stage_id: stock_selection
+    stage_name: 选股决策流
+    narrative: |
+      选股是"从全市场 5000+ 标的里筛出今天值得关注的 10 只"。
+      用多层漏斗，每一层砍掉一批，最后剩下的进候选池：
+        第一层：流动性过滤——砍掉成交量太低、没法买的
+        第二层：基本面过滤——砍掉财务有问题的（ST/退市预警/财报异常）
+        第三层：因子打分——用因子工厂产出的因子给标的打分，留下高分池
+        第四层：信号生成——对高分池生成买卖信号（Insight）
+        第五层：风控预筛——砍掉触及风控红线的（持仓超限/禁止标的）
+        第六层：候选池——最终可买入标的清单
+      漏斗的每一层都对应 decisiongraph 的具体决策节点，可追溯。
+    ascii_diagram: |
+      全市场 5000+
+          │ ① 流动性过滤（成交量/换手）
+          ▼
+        ~800
+          │ ② 基本面过滤（ST/财报/退市）
+          ▼
+        ~200
+          │ ③ 因子打分（factor_value 排序）
+          ▼
+        ~50
+          │ ④ 信号生成（Insight: 方向/置信度）
+          ▼
+        ~20
+          │ ⑤ 风控预筛（持仓超限/禁止标的）
+          ▼
+        ~10 → 候选池 candidate_pool
+    ai_directive: |
+      改选股流时，先查 decisiongraph 里 flow_stage=stock_selection 的节点，
+      定位到具体层（L0/L1/L2A）和 module_id，再改对应代码。
+      常见改动：调整漏斗某层的阈值、增删因子、改信号生成逻辑。
+      注意：选股产出的是 candidate_pool，不是订单——信号仓位分离铁律。
+    module_anchors: [MOD-MKT_DATA, MOD-L02-001]
+    sub_flows:
+      - sub_id: filter_liquidity
+        name: 流动性过滤
+        narrative: 按成交量/换手率过滤，砍掉流动性不足的标的。
+        module_anchors: [MOD-MKT_DATA]
+      - sub_id: filter_fundamental
+        name: 基本面过滤
+        narrative: 按 ST 标记/财报异常/退市预警过滤。
+        module_anchors: [MOD-L02-001]
+      - sub_id: factor_scoring
+        name: 因子打分
+        narrative: 用因子工厂产出的 factor_value 给标的打分排序。
+        module_anchors: [MOD-L02-001]
+      - sub_id: signal_generation
+        name: 信号生成
+        narrative: 对高分池生成 Insight（方向/置信度/时间跨度）。
+        module_anchors: [MOD-L02-001]
+
+  - stage_id: buy_flow
+    stage_name: 买入决策流
+    narrative: |
+      买入流把候选池里的标的变成"买什么、买多少"的目标仓位。
+      四轨的信号在这里融合：
+        - 模型驱动轨：L2A 信号 + L2B 主力行为 + L2C 大盘预测 + L2D 因果推演
+        - 数据驱动轨：端到端 DL 信号补充
+        - 人工指令轨：人工买入指令（优先级高）
+        - 应急保命轨：降级时硬编码信号
+      融合后的信号进 L3 策略组合层：
+        - 多策略信号合成（多个策略的信号加权/投票）
+        - 元策略路由（按市场状态选策略族）
+        - 资本分配（总资金分给各策略）
+        - 组合构造（产出 portfolio_target：每只股票目标仓位）
+      portfolio_target 是买入流的终点，下一步进仓位裁决或直接进风控。
+    ascii_diagram: |
+      候选池 candidate_pool
+          │
+          ├─→ 模型驱动轨 ──┐
+          ├─→ 数据驱动轨 ──┤
+          ├─→ 人工指令轨 ──┼─→ 四轨融合 → 信号合成 → 策略路由 → 资本分配 → 组合构造
+          └─→ 应急保命轨 ──┘                                              │
+                                                                              ▼
+                                                                    portfolio_target
+    ai_directive: |
+      改买入流时，先查 decisiongraph 里 flow_stage=buy_flow 的节点。
+      常见改动：调四轨融合权重、加策略、改资本分配规则。
+      注意：signal 节点不能直接连 order，必须经 portfolio_target（不变量 DEC-INV-002）。
+    module_anchors: [MOD-L05-001]
+    sub_flows:
+      - sub_id: track_fusion
+        name: 四轨融合
+        narrative: 四轨信号按优先级融合，人工 > 模型 > 数据，应急压制其他。
+        module_anchors: [MOD-L05-001]
+      - sub_id: signal_aggregation
+        name: 信号合成
+        narrative: 多策略信号加权/投票，产出统一信号。
+        module_anchors: [MOD-L05-001]
+      - sub_id: strategy_routing
+        name: 元策略路由
+        narrative: 按市场状态（L2C 大盘预测）选策略族。
+        module_anchors: [MOD-L05-001]
+      - sub_id: capital_allocation
+        name: 资本分配
+        narrative: 总资金分给各策略/标的。
+        module_anchors: [MOD-L05-001]
+
+  - stage_id: sell_flow
+    stage_name: 卖出决策流
+    narrative: |
+      卖出流决定"持仓里的哪只该卖、为什么卖、什么时候卖"。
+      卖出信号来源多，需要融合仲裁：
+        ① 止损信号——跌破止损线
+        ② 止盈信号——达到止盈目标
+        ③ 信号反转——买入信号消失或反向
+        ④ 风控触发——持仓触及风控红线
+        ⑤ 主力行为——主力出货信号（L2B）
+        ⑥ 大盘预警——大盘走弱需减仓（L2C）
+        ⑦ 时间到期——持仓时间到上限
+        ⑧ 人工卖出——人工指令
+      多源卖出信号融合仲裁，产出 sell_decision（卖/不卖/部分卖）。
+      卖出流和买入流共享信号源（共享信号注入层），但仲裁逻辑独立。
+    ascii_diagram: |
+      持仓 position
+          │
+          ├─→ 止损信号     ──┐
+          ├─→ 止盈信号     ──┤
+          ├─→ 信号反转     ──┤
+          ├─→ 风控触发     ──┤
+          ├─→ 主力出货     ──┼─→ 卖出信号融合仲裁 → sell_decision（卖/不卖/部分卖）
+          ├─→ 大盘预警     ──┤
+          ├─→ 时间到期     ──┤
+          └─→ 人工卖出     ──┘
+    ai_directive: |
+      改卖出流时，先查 decisiongraph 里 flow_stage=sell_flow 的节点（sell_decision 类型）。
+      常见改动：调止损/止盈阈值、加卖出触发源、改融合仲裁权重。
+      注意：sell_decision 节点不能直接连 order，必须经 portfolio_target（不变量 DEC-INV-002）。
+    module_anchors: [MOD-L05-001]
+    sub_flows:
+      - sub_id: stop_loss
+        name: 止损信号
+        narrative: 跌破止损线触发卖出。
+        module_anchors: [MOD-L04-001]
+      - sub_id: stop_profit
+        name: 止盈信号
+        narrative: 达到止盈目标触发卖出。
+        module_anchors: [MOD-L05-001]
+      - sub_id: signal_reversal
+        name: 信号反转
+        narrative: 买入信号消失或反向触发卖出。
+        module_anchors: [MOD-L05-001]
+      - sub_id: sell_arbitration
+        name: 卖出信号融合仲裁
+        narrative: 多源卖出信号融合，产出 sell_decision。
+        module_anchors: [MOD-L05-001]
+
+  - stage_id: position_management
+    stage_name: 仓位裁决
+    narrative: |
+      仓位裁决把"想买多少"变成"实际能买多少"。
+      portfolio_target 进来后，经过多层约束裁决：
+        - 单票上限：单只股票不超过总资金的 N%
+        - 行业集中度：单行业不超过 M%
+        - 总仓位上限：总持仓不超过总资金的 K%
+        - 资金可用性：可用资金是否够
+        - 持仓冲突：和现有持仓是否冲突
+      裁决后产出 portfolio_target_adjusted（实际目标仓位）。
+      仓位裁决是实盘同构的关键——回测引擎必须串入仓位裁决，不能跳过。
+      D_POSITION 域当前实现率仅 10%，是实盘主链路的关键缺口。
+    ascii_diagram: |
+      portfolio_target（想买多少）
+          │
+          ├─ 单票上限约束    ──┐
+          ├─ 行业集中度约束  ──┤
+          ├─ 总仓位上限约束  ──┼─→ 仓位裁决 → portfolio_target_adjusted（实际能买多少）
+          ├─ 资金可用性检查  ──┤
+          └─ 持仓冲突检查    ──┘
+    ai_directive: |
+      改仓位裁决时，先查 decisiongraph 里 flow_stage=position_management 的节点。
+      常见改动：调上限阈值、加约束规则、改裁决顺序。
+      实盘同构：回测引擎必须调用仓位裁决，不能跳过（D_POSITION 实现率缺口）。
+    module_anchors: [MOD-L05-001]
+    sub_flows:
+      - sub_id: single_position_limit
+        name: 单票上限
+        narrative: 单只股票不超过总资金的 N%。
+        module_anchors: [MOD-L04-001]
+      - sub_id: sector_concentration
+        name: 行业集中度
+        narrative: 单行业不超过 M%。
+        module_anchors: [MOD-L04-001]
+      - sub_id: total_position_limit
+        name: 总仓位上限
+        narrative: 总持仓不超过总资金的 K%。
+        module_anchors: [MOD-L04-001]
+
+  - stage_id: execution
+    stage_name: 执行
+    narrative: |
+      执行把目标仓位变成真实成交。
+      流程：portfolio_target_adjusted → 风控审批 → 订单生成 → 智能路由 → 撮合 → 成交。
+      风控一票否决铁律：order 节点必须有至少一条 approving 入边来自 risk_check
+      （不变量 DEC-INV-001）。风控不批，订单不下。
+      订单生命周期状态机：
+        submit → ack → partial_fill → fill → complete
+                 │
+                 └→ cancel（撤单）
+      智能路由（SOR）决定订单发到哪个渠道（miniqmt/akshare 等）。
+      四模式开关在这一层生效：backtest 模拟撮合、paper 不成交、shadow 不下单、live 真实下单。
+    ascii_diagram: |
+      portfolio_target_adjusted
+          │
+          ▼
+      risk_check（风控审批，一票否决）
+          │ approving
+          ▼
+      order 生成 ──→ SOR 智能路由 ──→ 撮合引擎
+                                          │
+          ┌───────────────────────────────┘
+          ▼
+      submit → ack → partial_fill → fill → complete
+                   │
+                   └→ cancel
+      （模式开关：backtest/paper/shadow/live 在此层切换）
+    ai_directive: |
+      改执行流时，先查 decisiongraph 里 flow_stage=execution 的节点（order/risk_check 类型）。
+      常见改动：加风控规则、改订单生命周期、调 SOR 路由逻辑、加模式开关分支。
+      注意：order 节点必须有 risk_check 的 approving 入边（不变量 DEC-INV-001）。
+    module_anchors: [MOD-L04-001]
+    sub_flows:
+      - sub_id: pre_trade_risk
+        name: Pre-Trade 风控
+        narrative: 下单前风控审批，一票否决。
+        module_anchors: [MOD-L04-001]
+      - sub_id: order_generation
+        name: 订单生成
+        narrative: 从 portfolio_target 生成订单指令。
+        module_anchors: [MOD-L05-001]
+      - sub_id: smart_order_routing
+        name: 智能路由
+        narrative: 订单发到哪个渠道（miniqmt/akshare）。
+        module_anchors: [MOD-MKT_DATA]
+      - sub_id: order_lifecycle
+        name: 订单生命周期
+        narrative: submit→ack→partial_fill→fill→complete/cancel 状态机。
+        module_anchors: [MOD-L04-001]
+
+  - stage_id: reconciliation
+    stage_name: 对账
+    narrative: |
+      对账是成交后的核对和持久化。
+      流程：fill → 合规检查 → 持仓更新 → 成交记录 → 对账。
+        - 合规检查：成交是否符合合规规则（T+1/涨跌停/持仓比例）
+        - 持仓更新：成交后更新持仓表
+        - 成交记录：记录成交明细（价格/数量/时间/渠道）
+        - 对账：和券商/交易所的成交数据核对，发现差异告警
+      对账是实盘的最后一道防线，确保系统持仓和真实持仓一致。
+    ascii_diagram: |
+      fill（成交）
+          │
+          ▼
+      合规检查（T+1/涨跌停/持仓比例）
+          │
+          ▼
+      持仓更新 ──→ 持仓表 position
+          │
+          ▼
+      成交记录 ──→ 成交明细表
+          │
+          ▼
+      对账（vs 券商/交易所）──→ 差异告警
+    ai_directive: |
+      改对账流时，先查 decisiongraph 里 flow_stage=reconciliation 的节点（compliance_check 类型）。
+      常见改动：加合规规则、改持仓更新逻辑、加对账校验项。
+      注意：对账差异必须告警，不能静默吞掉。
+    module_anchors: [MOD-L04-001]
+    sub_flows:
+      - sub_id: compliance_check
+        name: 合规检查
+        narrative: 成交是否符合合规规则。
+        module_anchors: [MOD-L04-001]
+      - sub_id: position_update
+        name: 持仓更新
+        narrative: 成交后更新持仓表。
+        module_anchors: [MOD-L05-001]
+      - sub_id: fill_record
+        name: 成交记录
+        narrative: 记录成交明细。
+        module_anchors: [MOD-L05-001]
+      - sub_id: reconciliation_check
+        name: 对账核对
+        narrative: 和券商/交易所成交数据核对。
+        module_anchors: [MOD-L04-001]

@@ -445,7 +445,7 @@ def op_update_node_field(
     _ALLOWED_FIELDS = {
         "decision_name", "decision_name_en", "module_id",
         "inputs", "outputs", "conditions", "facets", "evidence_hash",
-        "design_maturity", "source_code_ref",
+        "design_maturity", "source_code_ref", "flow_stage",
     }
     if field not in _ALLOWED_FIELDS:
         raise ValueError(
@@ -829,6 +829,8 @@ build_status 状态机（单调推进，禁止跳态）：
                         help="更新节点字段")
     parser.add_argument("--field", type=str, help="字段名（白名单）")
     parser.add_argument("--value", type=str, help="字段值（JSON 字符串）")
+    parser.add_argument("--set-flow-stage", type=str,
+        help="设置节点业务流程阶段（stock_selection/buy_flow/sell_flow/position_management/execution/reconciliation）")
 
     # add-edge 参数
     parser.add_argument("--add-edge", action="store_true", help="添加边")
@@ -902,6 +904,11 @@ build_status 状态机（单调推进，禁止跳态）：
                 result = op_update_node_field(
                     conn, node_id=args.node_id, field=args.field,
                     value=value, dry_run=args.dry_run,
+                )
+            elif args.set_flow_stage:
+                result = op_update_node_field(
+                    conn, node_id=args.node_id, field="flow_stage",
+                    value=args.set_flow_stage, dry_run=args.dry_run,
                 )
             elif args.add_edge:
                 evidence_bundle = (

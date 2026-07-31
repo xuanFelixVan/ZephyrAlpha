@@ -133,6 +133,24 @@ ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS domain_id TEXT;
 CREATE INDEX IF NOT EXISTS idx_decision_layers_domain ON decision_layers(domain_id);
 CREATE INDEX IF NOT EXISTS idx_decision_nodes_domain ON decision_nodes(domain_id);
 
+-- v1.4.0 (2026-07-31): decision_nodes 加 flow_stage（07_ 交易决策架构视图组织维度，与 layers 正交）
+ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS flow_stage TEXT;
+CREATE INDEX IF NOT EXISTS idx_decision_nodes_flow_stage ON decision_nodes(flow_stage);
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'chk_decision_nodes_flow_stage'
+          AND conrelid = 'decision_nodes'::regclass
+    ) THEN
+        ALTER TABLE decision_nodes
+            ADD CONSTRAINT chk_decision_nodes_flow_stage
+            CHECK (flow_stage IS NULL OR flow_stage IN ('stock_selection', 'buy_flow', 'sell_flow',
+                          'position_management', 'execution', 'reconciliation'));
+    END IF;
+END
+$$;
+
 -- ========== 6. 触发器：承重墙不变量 ==========
 -- DEC-INV-002 信号仓位分离：signal 节点不能直接连 order 节点
 CREATE OR REPLACE FUNCTION check_signal_order_separation()

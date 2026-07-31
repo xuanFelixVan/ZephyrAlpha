@@ -360,3 +360,66 @@ invariants:
     description: 每个节点必须有 evidence_hash（决策时数据+模型版本哈希）
     enforcement: DB NOT NULL on decision_nodes.evidence_hash
     violation_action: reject_insert
+
+# === 业务流程阶段定义（07_ 交易决策架构视图组织维度，与 layers/tracks 正交）===
+# flow_stage 字段存储在 decision_nodes 表，用于把零件决策流按"钱怎么赚"的业务流程重新组织。
+# 真源：本 YAML 段（规则数据）→ sync 到 DB CHECK 约束；叙事真源见 trading_flow_narrative.yaml。
+flow_stages:
+  - stage_id: stock_selection
+    stage_name: 选股决策流
+    stage_name_en: Stock Selection Flow
+    description: >
+      全市场 → 多层筛选漏斗 → 候选池。从数据接入、因子计算到信号生成，
+      产出可买入的候选标的清单。
+    mapped_layers: [L0, L1, L2A]
+    mapped_node_types: [signal]
+    output_contract: candidate_pool
+
+  - stage_id: buy_flow
+    stage_name: 买入决策流
+    stage_name_en: Buy Flow
+    description: >
+      候选池 → 四轨融合（战略/战役/战术/操作）→ 买入信号 → 组合目标。
+      把选股结果转化为具体的买入指令意图。
+    mapped_layers: [L2A, L2B, L2C, L2D, L3]
+    mapped_node_types: [signal, portfolio_target]
+    output_contract: buy_signal
+
+  - stage_id: sell_flow
+    stage_name: 卖出决策流
+    stage_name_en: Sell Flow
+    description: >
+      持仓 → 卖出八层架构（止盈/止损/趋势反转/基本面恶化/...）→ 卖出信号。
+      决定何时卖、为什么卖。
+    mapped_layers: [L2A, L3]
+    mapped_node_types: [sell_decision]
+    output_contract: sell_signal
+
+  - stage_id: position_management
+    stage_name: 仓位裁决
+    stage_name_en: Position Management
+    description: >
+      买入/卖出信号 → 仓位计算 → 上限约束 → 最终目标仓位。
+      决定买多少、卖多少，受风控上限约束。
+    mapped_layers: [L3]
+    mapped_node_types: [portfolio_target]
+    output_contract: target_position
+
+  - stage_id: execution
+    stage_name: 执行
+    stage_name_en: Execution
+    description: >
+      目标仓位 → 风控审批 → 下单 → 订单生命周期（报单/部分成交/撤单）。
+      把仓位意图变为真实订单。
+    mapped_layers: [L3, L4]
+    mapped_node_types: [order, risk_check]
+    output_contract: executed_order
+
+  - stage_id: reconciliation
+    stage_name: 对账
+    stage_name_en: Reconciliation
+    description: >
+      成交回报 → 合规核对 → 持仓更新 → 日终对账。确保账实相符、合规无违规。
+    mapped_layers: [L4]
+    mapped_node_types: [compliance_check]
+    output_contract: reconciliation_report

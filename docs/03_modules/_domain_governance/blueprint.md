@@ -2136,6 +2136,26 @@ STEP 3: 拆分后验证
 - **写入设计态**：`apply_decisiongraph.py`（pg_advisory_lock=424244）
 - **可视化文档**：`docs/02_enterprise_architecture/06_decision_architecture/`（index + 3 Mermaid）
 
+### §19.5 交易决策架构视图（07_，decisiongraph 业务流程视图）
+
+> 07_ 是 decisiongraph 的业务流程视图（不是新图），对标 application_flows.md 先例。
+> 把 decision_nodes 按 flow_stage（选股/买入/卖出/仓位/执行/对账）重新组织，串成「钱怎么赚」的叙事。
+
+| 文件 | 角色 | 能力 ID |
+|------|------|---------|
+| `architecture_model/domain/decision_graph_model.yaml` §flow_stages | 6 阶段定义真源（规则数据） | trading_flow_stages_definition |
+| `architecture_model/domain/trading_flow_narrative.yaml` | 叙事真源（大白话/ASCII框图/ai_directive） | trading_flow_narrative |
+| `scripts/governance/d5_architecture/generators/generate_trading_flow_diagram.py` | 生成器（读 DB+YAML→07_ MD） | trading_flow_generator |
+| `docs/02_enterprise_architecture/07_trading_decision_architecture/` | 生成产物（7 个 MD） | trading_flow_artifacts |
+| `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/trading_flow_panorama.md` | 能力定位书 | trading_flow_capability_doc |
+
+**SSoT 分工**：
+- 结构化数据（节点/边/flow_stage 字段）真源 = decisiongraph (PostgreSQL)
+- 规则数据（flow_stages 定义/叙事）真源 = YAML
+- 07_ MD = 生成器派生产物（只读视图）
+
+**与四图对齐的关系**：不进 align_panoramas 四图对齐（视图不是图），通过 module_id 链回 decisiongraph + depgraph。在 panorama_registry 登记为 PAN-BUILT-21。
+
 ---
 
 ## 12. 已实现代码完整路径索引
