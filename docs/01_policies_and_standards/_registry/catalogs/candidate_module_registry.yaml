@@ -725,3 +725,670 @@ entries:
     next_review_date: '2027-07-31'
     review_frequency: yearly
     last_review_outcome: "rejected,overruled_by_user #ARCH-CH-032。除非场景升级为多用户/多站点,否则不再评估"
+  # ----------------------------------------------------------
+  # CAND-EX-001: 富途/IB券商适配器（deferred，四问②挂，MiniQMT已够用）
+  # 来源: D_EX_CORE蓝图 §1.6 GAP-L06-002
+  # ----------------------------------------------------------
+  - id: CAND-EX-001
+    name: "Futu/IB Broker Adapters / 富途IB券商适配器"
+    aliases: ["富途适配器", "IB适配器", "futu_broker", "ib_broker", "多券商接入"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 24
+    sub_layer: "adapters 券商适配层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-EX-016
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-EX-006"]
+          downstream: []
+        insertion_description: "插入 D_EX_CORE adapters 区,与 MiniQmtBroker 并列"
+        target_edges:
+          - {from: "MOD-EX-006", to: "MOD-EX-016", type: runtime, reason: "订单路由→富途/IB执行"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: sink
+        data_flow_path: "订单 → [富途/IB适配器] → 券商API → 成交回报"
+        upstream_data: ["OrderRequest", "BrokerConfig"]
+        downstream_data: ["ExecutionReport(CTR-P1-007)"]
+        insertion_description: "在 D_EX_CORE 执行流末端,与 SimulationBroker/MiniQmtBroker 并列"
+      decisiongraph:
+        has_position: true
+        target_layer: "L6"
+        target_track: "execution"
+        decision_frequency: intraday_realtime
+        decision_path: "订单决策 → 路由选择 → [富途/IB执行] → 成交确认"
+        insertion_description: "L6 执行层,券商路由决策"
+      blueprint:
+        has_position: true
+        target_ref: "06-D-EX-CORE-执行核心域.md §4.2 GAP-L06-002 adapters/futu_broker.py"
+        design_maturity: design
+    description: "富途/IB券商适配器:对接富途OpenAPI/IB TWS API,实现真实券商下单/查询/撤单,与MiniQmtBroker并列可动态注册"
+    capability: "C-025"
+    problem_it_solves: "实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器"
+    trigger_signals:
+      - "实盘扩展到港股/美股/期货市场(MiniQMT仅覆盖A股)"
+      - "用户主动要求接入富途/IB券商"
+      - "MiniQMT渠道出现不可用需备用券商"
+    keywords: ["券商适配器", "futu", "IB", "多券商", "broker adapter"]
+    upstream_deps:
+      - {contract: "CTR-P1-004", from_domain: D_EX_CORE, dep_type: H, availability: available, note: "OrderRequest订单请求"}
+    downstream_consumers:
+      - {consumer: "D_REPORTING", contract: "ExecutionReport", note: "执行报告产出(依赖GAP-L06-003先实现)"}
+    contracts_to_produce:
+      - {id: "CTR-P1-007(共享)", name: "ExecutionReport"}
+    contracts_to_consume:
+      - {id: "CTR-P1-004", note: "OrderRequest"}
+    prerequisites:
+      - {condition: "ExecutionReport(GAP-L06-003)已实现", check: "execution_report.py存在", met: false, note: "P0缺口未填,优先于本候选"}
+      - {condition: "富途/IB API凭证配置", check: "broker_config.yaml", met: false}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["MOD-EX-006"], evidence: "现有SimulationBroker+MiniQmtBroker,grep无futu/ib_broker"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "MiniQMT已施工覆盖A股实盘,当前无非MiniQMT渠道需求"}
+      q3_domain_alive: {result: true, evidence: "D_EX_CORE 24节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "需对接券商SDK真实API,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P1
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_execution_core/blueprint.md"
+    source_section: "§1.6 GAP-L06-002, §4.2 adapters/futu_broker.py Phase 3 待施工"
+    original_id: "GAP-L06-002"
+    estimated_complexity: L
+    estimated_effort: "12人天/券商"
+    tech_notes: "对接富途OpenD/IB TWS API;实现register_broker()动态注册;复用ExecutionEngine提交逻辑"
+    risks: ["券商API版本变更需持续维护", "需真实账户测试"]
+    alternatives: "MiniQMT渠道(已施工,覆盖A股实盘)。代价:无法接入港股/美股/期货"
+    tags: ["扩展", "多券商", "待需求驱动", "P1规划", "实盘扩展"]
+    search_terms: ["futu broker", "ib broker", "富途适配器", "券商接入", "multi broker"]
+    related_candidates: ["CAND-EX-002"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-01-31'
+    review_frequency: half_yearly
+    last_review_outcome: "首次登记,待非MiniQMT渠道需求或实盘扩展时重新评估"
+  # ----------------------------------------------------------
+  # CAND-EX-002: 多线程订单处理（deferred，四问②挂，单线程够用）
+  # 来源: D_EX_CORE蓝图 §1.6 GAP-L06-001
+  # ----------------------------------------------------------
+  - id: CAND-EX-002
+    name: "Multi-threaded Order Processing / 多线程订单处理"
+    aliases: ["并发订单", "ThreadPool订单", "订单多线程"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 24
+    sub_layer: "execution_engine 执行引擎核心"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-EX-017
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-EX-001"]
+          downstream: ["MOD-EX-006"]
+        insertion_description: "重构 execution_engine.py 内部,从单线程改为ThreadPoolExecutor"
+        target_edges:
+          - {from: "MOD-EX-001", to: "MOD-EX-017", type: runtime, reason: "订单提交→线程池分发"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "订单请求 → [线程池并发处理] → 券商提交 → 成交回报聚合"
+        upstream_data: ["OrderRequest批次"]
+        downstream_data: ["ExecutionReport批次"]
+        insertion_description: "在 execution_engine 内部,提交环节改为并发"
+      decisiongraph:
+        has_position: true
+        target_layer: "L6"
+        target_track: "execution"
+        decision_frequency: intraday_realtime
+        decision_path: "订单批次 → [并发调度] → 多线程提交 → 汇总"
+        insertion_description: "L6 执行层并发调度"
+      blueprint:
+        has_position: true
+        target_ref: "06-D-EX-CORE-执行核心域.md §1.6 GAP-L06-001, §4.2 execution_engine.py Phase 2"
+        design_maturity: design
+    description: "多线程订单处理:execution_engine 从单线程升级为 ThreadPoolExecutor + 锁,支持并发订单提交"
+    capability: "C-024"
+    problem_it_solves: "高频/批量下单时单线程订单处理成为瓶颈(并发>10)"
+    trigger_signals:
+      - "并发订单数持续>10"
+      - "订单提交延迟>100ms"
+      - "实盘策略数量增长到需批量下单"
+    keywords: ["多线程", "并发", "ThreadPool", "订单并发", "GIL"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites:
+      - {condition: "ExecutionReport(GAP-L06-003)已实现", check: "execution_report.py存在", met: false, note: "并发产出报告依赖它"}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "execution_engine.py 当前单线程,grep无ThreadPool/concurrent.futures"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前订单并发<10,单线程够用,无性能瓶颈"}
+      q3_domain_alive: {result: true, evidence: "D_EX_CORE 24节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "并发控制+锁是工程问题,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P1
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_execution_core/blueprint.md"
+    source_section: "§1.6 GAP-L06-001, §4.2 v2.1.0 待施工"
+    original_id: "GAP-L06-001"
+    estimated_complexity: M
+    estimated_effort: "8人天"
+    tech_notes: "ThreadPoolExecutor + 线程锁;注意MiniQmtBroker的线程安全性(QMT SDK可能非线程安全)"
+    risks: ["券商SDK线程安全问题", "锁粒度过粗影响吞吐"]
+    alternatives: "单线程顺序提交(当前实现)。代价:并发>10时延迟增加"
+    tags: ["扩展", "性能", "待需求驱动", "并发", "P1规划"]
+    search_terms: ["multi-thread", "并发订单", "thread pool", "concurrent orders"]
+    related_candidates: ["CAND-EX-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-01-31'
+    review_frequency: half_yearly
+    last_review_outcome: "首次登记,待并发订单>10或提交延迟>100ms时重新评估"
+  # ----------------------------------------------------------
+  # CAND-SIG-002: ML驱动信号合成（deferred，四问②挂，因子数不足）
+  # 来源: D_SIGNAL蓝图 §1.6 GAP-002
+  # ----------------------------------------------------------
+  - id: CAND-SIG-002
+    name: "ML-driven Signal Synthesizer / ML驱动信号合成"
+    aliases: ["ML信号合成", "IC加权合成", "ml_signal_synthesizer"]
+    domain: D_SIGNAL
+    domain_status: active
+    domain_node_count: 4
+    sub_layer: "synthesizer 合成器层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-SIG-002
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-SIG-001"]
+          downstream: []
+        insertion_description: "插入 D_SIGNAL synthesizer 区,扩展 SignalSynthesizerBase"
+        target_edges:
+          - {from: "MOD-SIG-001", to: "MOD-SIG-002", type: runtime, reason: "因子→ML合成→信号"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "多因子 → [ML加权合成] → 综合信号"
+        upstream_data: ["FactorScores", "IC序列"]
+        downstream_data: ["CompositeSignal"]
+        insertion_description: "在 D_SIGNAL 合成环节,替代当前IC加权占位"
+      decisiongraph:
+        has_position: true
+        target_layer: "L2"
+        target_track: "signal"
+        decision_frequency: daily
+        decision_path: "因子打分 → [ML权重学习] → 信号合成 → 选股"
+        insertion_description: "L2 信号决策层,ML权重学习"
+      blueprint:
+        has_position: true
+        target_ref: "10-D-SIGNAL-信号域.md §1.6 GAP-002, §4.2 ml_signal_synthesizer.py Phase ∞ 规划"
+        design_maturity: design
+    description: "ML驱动信号合成:用机器学习模型学习因子IC权重,替代当前IC加权占位实现"
+    capability: "C-012"
+    problem_it_solves: "因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系"
+    trigger_signals:
+      - "因子数量>50(当前不足,需D_FACTOR扩展)"
+      - "IC加权占位实现的信号质量不达标(IC<0.03)"
+      - "用户主动要求ML驱动选股"
+    keywords: ["ML合成", "IC加权", "信号合成", "机器学习", "因子权重"]
+    upstream_deps:
+      - {contract: "CTR-003", from_domain: D_FACTOR, dep_type: H, availability: available, note: "因子打分"}
+    downstream_consumers:
+      - {consumer: "D_PF_CORE", contract: "CompositeSignal", note: "组合构建消费"}
+    contracts_to_produce:
+      - {id: "CTR-008(共享)", name: "CompositeSignal"}
+    contracts_to_consume:
+      - {id: "CTR-003", note: "因子打分"}
+    prerequisites:
+      - {condition: "因子数>50", check: "D_FACTOR因子清单", met: false, note: "当前因子不足"}
+      - {condition: "D_ML_TRAIN训练管线就绪", check: "ML_TRAIN模块", met: false}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["MOD-SIG-001"], evidence: "当前DefaultSignalAggregator仅IC加权占位,grep无ml_signal_synthesizer"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前因子数<50,IC加权占位够用,无ML需求"}
+      q3_domain_alive: {result: true, evidence: "D_SIGNAL 4节点,活跃(含D_ASHARE/FUND子域)"}
+      q4_ai_replaceable: {result: false, evidence: "需ML模型训练+部署管线,非纯AI语义可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_signal/blueprint.md"
+    source_section: "§1.6 GAP-002, §4.2 ml_signal_synthesizer.py Phase ∞ 规划"
+    original_id: "GAP-002"
+    estimated_complexity: L
+    estimated_effort: "20人天"
+    tech_notes: "需D_ML_TRAIN训练管线;模型可选LightGBM/线性回归;注意过拟合(需SIM-18过拟合检测)"
+    risks: ["过拟合风险(需回测验证)", "因子数不足时ML权重不稳定"]
+    alternatives: "IC加权占位(当前实现)。代价:无法捕捉因子非线性关系"
+    tags: ["扩展", "ML", "待需求驱动", "因子驱动", "P2规划"]
+    search_terms: ["ml signal", "ml合成", "ic weighting", "machine learning signal"]
+    related_candidates: ["CAND-FAC-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "首次登记,待因子数>50或IC加权信号质量不达标时重新评估"
+  # ----------------------------------------------------------
+  # CAND-FAC-001: FactorCache（deferred，四问②挂，因子数不足）
+  # 来源: D_FACTOR蓝图 §1.6 GAP-L02-001
+  # ----------------------------------------------------------
+  - id: CAND-FAC-001
+    name: "Factor Cache / 因子缓存"
+    aliases: ["因子缓存", "FactorCache", "因子预计算"]
+    domain: D_FACTOR
+    domain_status: active
+    domain_node_count: 86
+    sub_layer: "cache 缓存层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-FAC-001
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-FAC-003"]
+          downstream: ["MOD-FAC-002"]
+        insertion_description: "插入 D_FACTOR cache 层,因子计算与消费之间"
+        target_edges:
+          - {from: "MOD-FAC-003", to: "MOD-FAC-001", type: runtime, reason: "因子计算结果→缓存"}
+          - {from: "MOD-FAC-001", to: "MOD-FAC-002", type: runtime, reason: "缓存→因子消费"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "因子计算 → [缓存] → 因子消费(命中则跳过重算)"
+        upstream_data: ["FactorResult"]
+        downstream_data: ["CachedFactor"]
+        insertion_description: "在 D_FACTOR 数据流中段,计算与消费之间"
+      decisiongraph:
+        has_position: true
+        target_layer: "L1"
+        target_track: "factor"
+        decision_frequency: daily
+        decision_path: "因子请求 → [缓存命中判断] → 命中返回/未命中计算"
+        insertion_description: "L1 因子层缓存决策"
+      blueprint:
+        has_position: true
+        target_ref: "02-D-FACTOR-因子域.md §1.6 GAP-L02-001, §4.2 factor_cache.py Phase 3"
+        design_maturity: design
+    description: "因子缓存:缓存因子计算结果,避免重复计算,降低计算延迟"
+    capability: "C-006"
+    problem_it_solves: "因子数量增长后,每日全量重算导致计算延迟>50ms"
+    trigger_signals:
+      - "因子数量>10(当前不足)"
+      - "因子计算延迟>50ms"
+      - "回测频繁调用相同因子"
+    keywords: ["因子缓存", "cache", "预计算", "性能优化", "FactorCache"]
+    upstream_deps: []
+    downstream_consumers:
+      - {consumer: "D_SIGNAL", contract: "FactorResult", note: "信号合成消费因子"}
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无factor_cache,当前每次重算"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前因子<10,重算延迟可接受,无缓存需求"}
+      q3_domain_alive: {result: true, evidence: "D_FACTOR 86节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "缓存策略是工程问题,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_factor/blueprint.md"
+    source_section: "§1.6 GAP-L02-001, §4.2 factor_cache.py Phase 3 待施工"
+    original_id: "GAP-L02-001"
+    estimated_complexity: S
+    estimated_effort: "5人天"
+    tech_notes: "LRU缓存+磁盘持久化;注意因子时效性(T+1数据当日有效)"
+    risks: ["缓存失效策略不当导致脏数据"]
+    alternatives: "每次重算(当前实现)。代价:因子多时延迟增加"
+    tags: ["扩展", "性能", "待需求驱动", "缓存", "P2规划"]
+    search_terms: ["factor cache", "因子缓存", "预计算", "factor precompute"]
+    related_candidates: ["CAND-SIG-002"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "首次登记,待因子>10或计算延迟>50ms时重新评估"
+  # ----------------------------------------------------------
+  # CAND-SIM-002: 实验队列调度（deferred，四问②挂，并发实验不足）
+  # 来源: D_SIMULATION蓝图 §1.6 GAP-002
+  # ----------------------------------------------------------
+  - id: CAND-SIM-002
+    name: "Experiment Queue Scheduler / 实验队列调度"
+    aliases: ["实验队列", "并发实验调度", "experiment_scheduler"]
+    domain: D_SIMULATION
+    domain_status: active
+    domain_node_count: 10
+    sub_layer: "scheduler 调度层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-SIM-002
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-SIM-001"]
+          downstream: []
+        insertion_description: "插入 D_SIMULATION scheduler 区,实验管线之前"
+        target_edges:
+          - {from: "MOD-SIM-001", to: "MOD-SIM-002", type: runtime, reason: "实验请求→队列调度→管线"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "实验请求 → [优先级队列] → 并发执行 → 结果归集"
+        upstream_data: ["ExperimentConfig批次"]
+        downstream_data: ["ScheduledExperiment"]
+        insertion_description: "在 D_SIMULATION 数据流入口,管线之前"
+      decisiongraph:
+        has_position: true
+        target_layer: "L1"
+        target_track: "simulation"
+        decision_frequency: on_demand
+        decision_path: "实验请求 → [优先级排序] → 资源分配 → 调度执行"
+        insertion_description: "L1 实验层调度决策"
+      blueprint:
+        has_position: true
+        target_ref: "13-D-SIMULATION-仿真域.md §1.6 GAP-002, §4.2 v3.0.0 待施工"
+        design_maturity: design
+    description: "实验队列调度:支持实验优先级排序+并发执行调度,当前为单次顺序执行"
+    capability: "C-015"
+    problem_it_solves: "并发实验>10时,顺序执行导致等待时间长"
+    trigger_signals:
+      - "并发实验数>10"
+      - "实验等待时间>1小时"
+      - "用户要求实验优先级排序"
+    keywords: ["实验队列", "调度", "并发实验", "优先级", "scheduler"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无experiment_scheduler,当前顺序执行"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前并发实验<10,顺序执行可接受"}
+      q3_domain_alive: {result: true, evidence: "D_SIMULATION 10节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "并发调度是工程问题,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_simulation/blueprint.md"
+    source_section: "§1.6 GAP-002, §4.2 v3.0.0 待施工"
+    original_id: "GAP-002"
+    estimated_complexity: M
+    estimated_effort: "8人天"
+    tech_notes: "优先级队列+资源池;注意实验间资源隔离(GPU/CPU)"
+    risks: ["资源竞争死锁", "长实验阻塞短实验"]
+    alternatives: "顺序执行(当前实现)。代价:并发实验>10时等待时间长"
+    tags: ["扩展", "性能", "待需求驱动", "并发", "P2规划"]
+    search_terms: ["experiment queue", "实验队列", "并发调度", "experiment scheduler"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "首次登记,待并发实验>10时重新评估"
+  # ----------------------------------------------------------
+  # CAND-BT-001: 回测v2.0辅助模块（deferred，四问②挂，按需开发）
+  # 来源: D_BACKTEST蓝图 §1.6 v2.0备忘
+  # ----------------------------------------------------------
+  - id: CAND-BT-001
+    name: "Backtest v2.0 Auxiliary Modules / 回测v2.0辅助模块"
+    aliases: ["回测辅助", "scheduler/decay_monitor/report_generator/cache_manager", "bt辅助模块"]
+    domain: D_BACKTEST
+    domain_status: active
+    domain_node_count: 27
+    sub_layer: "辅助模块层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-BT-009
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-BT-001"]
+          downstream: []
+        insertion_description: "插入 D_BACKTEST 辅助区,核心引擎之后"
+        target_edges:
+          - {from: "MOD-BT-001", to: "MOD-BT-009", type: runtime, reason: "回测引擎→辅助模块"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "回测结果 → [调度/衰减监控/报告/缓存] → 增强输出"
+        upstream_data: ["BacktestResult"]
+        downstream_data: ["BacktestReport", "DecayMetrics"]
+        insertion_description: "在 D_BACKTEST 数据流后段,结果产出之后"
+      decisiongraph:
+        has_position: true
+        target_layer: "L3"
+        target_track: "backtest"
+        decision_frequency: on_demand
+        decision_path: "回测完成 → [辅助模块调度] → 报告/监控输出"
+        insertion_description: "L3 回测层辅助决策"
+      blueprint:
+        has_position: true
+        target_ref: "12-D-BACKTEST-回测域.md §1.6 v2.0备忘, 按需开发"
+        design_maturity: design
+    description: "回测v2.0辅助模块:scheduler(调度)+decay_monitor(衰减监控)+report_generator(报告)+cache_manager(缓存)4个辅助模块"
+    capability: "C-014"
+    problem_it_solves: "回测需批量调度/衰减监控/自动报告/结果缓存时,无对应辅助模块"
+    trigger_signals:
+      - "回测需批量调度多策略(当前单策略)"
+      - "需自动生成回测报告(当前手动)"
+      - "因子/信号衰减需监控"
+      - "回测结果需缓存避免重算"
+    keywords: ["回测辅助", "scheduler", "decay", "report", "cache", "v2.0"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无scheduler/decay_monitor/report_generator/cache_manager in backtest"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前回测单策略手动,无批量/自动报告需求"}
+      q3_domain_alive: {result: true, evidence: "D_BACKTEST 27节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "调度/监控/报告是工程问题,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_backtest/blueprint.md"
+    source_section: "§1.6 v2.0辅助模块未实现,低优先级备忘"
+    original_id: "v2.0-aux"
+    estimated_complexity: M
+    estimated_effort: "10人天(4模块)"
+    tech_notes: "4个独立辅助模块;可独立实现,按需启用"
+    risks: ["辅助模块与核心引擎耦合需控制"]
+    alternatives: "当前手动单策略回测。代价:无批量调度/自动报告/衰减监控"
+    tags: ["扩展", "辅助", "待需求驱动", "v2.0备忘", "P2规划"]
+    search_terms: ["backtest auxiliary", "回测辅助", "scheduler", "decay monitor", "report generator"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "首次登记,待回测需批量调度/自动报告时重新评估"
+  # ----------------------------------------------------------
+  # CAND-DAT-001: DataFrame→Pydantic迁移（deferred，四问②挂，dataclass够用）
+  # 来源: D_DATA蓝图 §1.6 GAP-L00-003
+  # ----------------------------------------------------------
+  - id: CAND-DAT-001
+    name: "DataFrame to Pydantic Migration / DataFrame迁移Pydantic"
+    aliases: ["Pydantic迁移", "DataFrame迁移", "KBG-0040迁移"]
+    domain: D_DATA
+    domain_status: active
+    domain_node_count: 175
+    sub_layer: "models 数据模型层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-DAT-001
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-DAT-002"]
+          downstream: ["MOD-DAT-003"]
+        insertion_description: "重构 D_DATA models 层,DataFrame→Pydantic BaseModel"
+        target_edges:
+          - {from: "MOD-DAT-002", to: "MOD-DAT-001", type: refactor, reason: "数据模型迁移"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "原始数据 → [Pydantic校验] → 标准化数据"
+        upstream_data: ["RawDataFrame"]
+        downstream_data: ["ValidatedPydanticModel"]
+        insertion_description: "在 D_DATA 数据流入口,校验环节"
+      decisiongraph:
+        has_position: true
+        target_layer: "L1"
+        target_track: "data"
+        decision_frequency: daily
+        decision_path: "数据获取 → [Pydantic校验] → 标准化存储"
+        insertion_description: "L1 数据层校验决策"
+      blueprint:
+        has_position: true
+        target_ref: "01-D-DATA-数据域.md §1.6 GAP-L00-003, §4.2 v2.0.0 待施工"
+        design_maturity: design
+    description: "DataFrame→Pydantic迁移:将数据层输出从pandas DataFrame迁移到Pydantic V2 BaseModel,满足KBG-0040规范"
+    capability: "C-001"
+    problem_it_solves: "DataFrame无运行时类型校验,下游D_FACTOR消费端要求Pydantic强类型契约"
+    trigger_signals:
+      - "D_FACTOR消费端明确要求Pydantic(KBG-0040强制)"
+      - "DataFrame导致下游类型错误频发"
+      - "数据契约需严格校验"
+    keywords: ["Pydantic", "DataFrame迁移", "KBG-0040", "数据模型", "类型校验"]
+    upstream_deps: []
+    downstream_consumers:
+      - {consumer: "D_FACTOR", contract: "DataModel", note: "因子消费端要求Pydantic"}
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites:
+      - {condition: "D_FACTOR消费端确认要求Pydantic", check: "factor_base.py类型注解", met: false}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "D_DATA当前用DataFrame+dataclass,grep无Pydantic BaseModel输出"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前DataFrame够用,D_FACTOR未强制要求Pydantic"}
+      q3_domain_alive: {result: true, evidence: "D_DATA 175节点,最活跃域之一"}
+      q4_ai_replaceable: {result: false, evidence: "数据模型迁移是工程问题,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_data/blueprint.md"
+    source_section: "§1.6 GAP-L00-003, §4.2 v2.0.0 待施工"
+    original_id: "GAP-L00-003"
+    estimated_complexity: L
+    estimated_effort: "15人天"
+    tech_notes: "全量迁移DataFrame→Pydantic;注意性能(Pydantic V2比DataFrame慢);需回归测试"
+    risks: ["性能回退(Pydantic校验开销)", "迁移范围大可能引入bug"]
+    alternatives: "DataFrame+dataclass(当前实现)。代价:无运行时类型校验,下游类型错误难发现"
+    tags: ["重构", "迁移", "待需求驱动", "KBG-0040", "P2规划"]
+    search_terms: ["pydantic migration", "dataframe迁移", "KBG-0040", "数据模型迁移"]
+    related_candidates: ["CAND-FAC-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "首次登记,待D_FACTOR强制要求Pydantic或KBG-0040强制时重新评估"
+  # ----------------------------------------------------------
+  # CAND-INT-001: ONNX推理优化（deferred，四问②挂，PyTorch够用）
+  # 来源: D_INTEGRATION蓝图 §3
+  # ----------------------------------------------------------
+  - id: CAND-INT-001
+    name: "ONNX Inference Optimization / ONNX推理优化"
+    aliases: ["ONNX后端", "推理加速", "onnx_runtime"]
+    domain: D_INTEGRATION
+    domain_status: active
+    domain_node_count: 71
+    sub_layer: "inference 推理层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-INT-001
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-INT-002"]
+          downstream: []
+        insertion_description: "重构 D_INTEGRATION inference 后端,PyTorch→ONNX"
+        target_edges:
+          - {from: "MOD-INT-002", to: "MOD-INT-001", type: refactor, reason: "推理后端切换"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "模型输入 → [ONNX推理] → 预测输出"
+        upstream_data: ["ModelInput", "ONNXModel"]
+        downstream_data: ["PredictionResult"]
+        insertion_description: "在 D_INTEGRATION 推理环节,替代PyTorch后端"
+      decisiongraph:
+        has_position: true
+        target_layer: "L6"
+        target_track: "integration"
+        decision_frequency: intraday_realtime
+        decision_path: "模型输入 → [ONNX推理] → 预测"
+        insertion_description: "L6 集成层推理决策"
+      blueprint:
+        has_position: true
+        target_ref: "docs/03_modules/_domain_integration/blueprint.md §3 ONNX推理优化 待施工"
+        design_maturity: design
+    description: "ONNX推理优化:将ML模型推理后端从PyTorch切换到ONNX Runtime,实现2-3x加速"
+    capability: "C-030"
+    problem_it_solves: "PyTorch推理延迟高,实盘盘中推理成为瓶颈"
+    trigger_signals:
+      - "PyTorch推理延迟>50ms(盘中)"
+      - "模型推理成为实盘性能瓶颈"
+      - "需部署到资源受限环境(ONNX更轻量)"
+    keywords: ["ONNX", "推理优化", "加速", "onnx_runtime", "推理后端"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites:
+      - {condition: "ML模型已训练并稳定", check: "D_ML_TRAIN模型产出", met: false, note: "当前无稳定ML模型"}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无onnx_runtime,当前PyTorch后端"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前PyTorch推理延迟可接受,无性能瓶颈"}
+      q3_domain_alive: {result: true, evidence: "D_INTEGRATION 71节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "推理后端优化是工程问题,非AI可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain_integration/blueprint.md"
+    source_section: "§3 ONNX推理优化 待施工"
+    original_id: "INT-onnx"
+    estimated_complexity: M
+    estimated_effort: "8人天"
+    tech_notes: "PyTorch→ONNX导出;onnxruntime推理;注意算子兼容性"
+    risks: ["ONNX算子不支持某些PyTorch操作", "精度损失需验证"]
+    alternatives: "PyTorch后端(当前实现)。代价:推理延迟较高"
+    tags: ["扩展", "性能", "待需求驱动", "ONNX", "P2规划"]
+    search_terms: ["onnx", "推理优化", "inference optimization", "onnx runtime"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估"
