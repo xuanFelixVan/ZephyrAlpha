@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain position（持仓）
 
-> 生成时间: 2026-07-30T21:17:12
+> 生成时间: 2026-07-30T22:18:45
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → position
@@ -18,7 +18,7 @@
 
 ## 设计态全景图
 
-> 共 7 层，18 边。
+> 共 6 层，0 边。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -27,71 +27,13 @@ flowchart TD
     LL2B["L2B: 主力行为层<br/>design/planned<br/>六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟…"]
     LL2C["L2C: 市场状态与大盘预测层<br/>design/planned<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日…"]
     LL2D["L2D: 知识图谱与因果推演层<br/>design/planned<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 → G…"]
-    LL3["L3: 策略组合层<br/>design/planned<br/>多策略信号合成 → 资本分配 → 元策略路由 → 组合构建…"]
-    N38("portfolio_target: 仓位唯一裁决中心 C-047 Position Sole Arbiter")
-    LL3 --- N38
-    N39("portfolio_target: 持仓状态机 Position State Machine")
-    LL3 --- N39
-    N40("portfolio_target: 仓位漂移监控 Position Drift Monitor")
-    LL3 --- N40
-    N41("portfolio_target: Kelly仓位决策 Kelly Position Decision")
-    LL3 --- N41
-    N42("portfolio_target: 风险配额 Risk Quota")
-    LL3 --- N42
-    N43("portfolio_target: 11种市场状态→仓位上限 Market State Position Cap")
-    LL3 --- N43
-    N44("portfolio_target: 组合层决策 Portfolio Layer Decision")
-    LL3 --- N44
-    N45("portfolio_target: 策略层决策 Strategy Layer Decision")
-    LL3 --- N45
-    N46("portfolio_target: 标层决策 Instrument Layer Decision")
-    LL3 --- N46
-    N47("portfolio_target: 动态层决策 Dynamic Layer Decision")
-    LL3 --- N47
-    N48("portfolio_target: 再平衡触发 Rebalance Trigger")
-    LL3 --- N48
-    N49("portfolio_target: 仓位上限硬约束 Position Cap Hard Constraint")
-    LL3 --- N49
-    N50("portfolio_target: REDUCING→EXITING状态转换 REDUCING to EXITING")
-    LL3 --- N50
-    N51("portfolio_target: 风险预算→Kelly决策 Risk Budget to Kelly")
-    LL3 --- N51
-    N52("portfolio_target: 半Kelly硬上限 Half-Kelly Hard Cap")
-    LL3 --- N52
-    N53("portfolio_target: 仓位降级 Position Degradation")
-    LL3 --- N53
-    N54("portfolio_target: 持仓状态→卖出阈值 Position State to Sell Threshold")
-    LL3 --- N54
-    N55("portfolio_target: 仓位四轨决策 Position Four-Track Decision")
-    LL3 --- N55
-    N56("portfolio_target: 仓位裁决→执行 Position Arbitration to Execution")
-    LL3 --- N56
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D
-    LL2D -.->|triggering / 触发| LL3
-    LL3 -.->|triggering / 触发| LL5
+    LL2D -.->|triggering / 触发| LL5
     LL5 -.->|triggering / 触发| LL6
-    N38 -->|informing / 告知| N39
-    N39 -->|informing / 告知| N40
-    N40 -->|informing / 告知| N41
-    N41 -->|informing / 告知| N42
-    N42 -->|informing / 告知| N43
-    N43 -->|informing / 告知| N44
-    N44 -->|informing / 告知| N45
-    N45 -->|informing / 告知| N46
-    N46 -->|informing / 告知| N47
-    N47 -->|informing / 告知| N48
-    N48 -->|informing / 告知| N49
-    N49 -->|informing / 告知| N50
-    N50 -->|informing / 告知| N51
-    N51 -->|informing / 告知| N52
-    N52 -->|informing / 告知| N53
-    N53 -->|informing / 告知| N54
-    N54 -->|informing / 告知| N55
-    N55 -->|informing / 告知| N56
 ```
 
 ## Node 清单

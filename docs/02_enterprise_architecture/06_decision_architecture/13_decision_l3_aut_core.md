@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain aut_core（自主核心）
 
-> 生成时间: 2026-07-30T21:17:12
+> 生成时间: 2026-07-30T22:18:45
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → aut_core
@@ -18,7 +18,7 @@
 
 ## 设计态全景图
 
-> 共 7 层，10 边。
+> 共 6 层，0 边。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -27,47 +27,13 @@ flowchart TD
     LL2B["L2B: 主力行为层<br/>design/planned<br/>六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟…"]
     LL2C["L2C: 市场状态与大盘预测层<br/>design/planned<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日…"]
     LL2D["L2D: 知识图谱与因果推演层<br/>design/planned<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 → G…"]
-    LL3["L3: 策略组合层<br/>design/planned<br/>多策略信号合成 → 资本分配 → 元策略路由 → 组合构建…"]
-    N113("portfolio_target: Permission Guard 七层纵深防御")
-    LL3 --- N113
-    N115("portfolio_target: Self-Healing Git-native自愈")
-    LL3 --- N115
-    N116("portfolio_target: Budget Enforcer 七级预算")
-    LL3 --- N116
-    N117("portfolio_target: Health Monitor 9子系统监控")
-    LL3 --- N117
-    N118("portfolio_target: Escalation Engine 升级引擎")
-    LL3 --- N118
-    N119("portfolio_target: Rollback Engine Git-native回滚")
-    LL3 --- N119
-    N120("portfolio_target: Drift Detector 39检测器")
-    LL3 --- N120
-    N121("portfolio_target: Auto-Fix Engine 16修复器")
-    LL3 --- N121
-    N133("portfolio_target: 编排Agent Orchestrator")
-    LL3 --- N133
-    N135("portfolio_target: 做TAgent T0Trader")
-    LL3 --- N135
-    N136("portfolio_target: 路由Agent Router")
-    LL3 --- N136
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D
-    LL2D -.->|triggering / 触发| LL3
-    LL3 -.->|triggering / 触发| LL5
+    LL2D -.->|triggering / 触发| LL5
     LL5 -.->|triggering / 触发| LL6
-    N113 -->|informing / 告知| N115
-    N115 -->|informing / 告知| N116
-    N116 -->|informing / 告知| N117
-    N117 -->|informing / 告知| N118
-    N118 -->|informing / 告知| N119
-    N119 -->|informing / 告知| N120
-    N120 -->|informing / 告知| N121
-    N121 -->|informing / 告知| N133
-    N133 -->|informing / 告知| N135
-    N135 -->|informing / 告知| N136
 ```
 
 ## Node 清单

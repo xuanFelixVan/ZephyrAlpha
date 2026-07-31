@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: 数据流图（dataflowgraph）索引
+title: 数据流图（dataflowgraph）运营态全景
 version: "1.0"
 status: active
 date: 2026-07-31
@@ -8,9 +8,9 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 数据流图（dataflowgraph）索引
+# 数据流图（dataflowgraph）运营态全景
 
-> 生成时间: 2026-07-31T17:03:35
+> 生成时间: 2026-07-31T17:14:43
 > 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）
 > 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于四图对齐 ARCH-056，非数据流作业，本文档不展示）
 > 数据库: depgraph (PostgreSQL)

@@ -1,6 +1,6 @@
 # Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-07-30T21:17:12
+> 生成时间: 2026-07-30T22:18:45
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
@@ -18,7 +18,7 @@
 
 ## 设计态全景图
 
-> 共 7 层，8 边。
+> 共 6 层，0 边。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -27,41 +27,13 @@ flowchart TD
     LL2B["L2B: 主力行为层<br/>design/planned<br/>六阶段识别 + 自迭代推演 + 庄家专项 + 群体博弈模拟…"]
     LL2C["L2C: 市场状态与大盘预测层<br/>design/planned<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 + T+1次日…"]
     LL2D["L2D: 知识图谱与因果推演层<br/>design/planned<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 → G…"]
-    LL3["L3: 策略组合层<br/>design/planned<br/>多策略信号合成 → 资本分配 → 元策略路由 → 组合构建…"]
-    N59("order: 50ms SLA Fail-Closed 50ms SLA Fail-Closed")
-    LL3 --- N59
-    N60("order: Saga编排式事务 Saga Orchestrated Transaction")
-    LL3 --- N60
-    N61("order: 风控检查 Risk Check")
-    LL3 --- N61
-    N62("order: 信号确认 Signal Confirmation")
-    LL3 --- N62
-    N63("order: 下单提交 Order Submit")
-    LL3 --- N63
-    N64("order: 成交确认 Fill Confirmation")
-    LL3 --- N64
-    N65("order: 持仓更新 Position Update")
-    LL3 --- N65
-    N66("order: 报告生成 Report Generation")
-    LL3 --- N66
-    N71("order: 流动性螺旋3阶段 Liquidity Spiral 3-Phase")
-    LL3 --- N71
     LL5["L5: 学习层<br/>design/planned<br/>7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环…"]
     LL6["L6: 自评估层<br/>design/planned<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理…"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D
-    LL2D -.->|triggering / 触发| LL3
-    LL3 -.->|triggering / 触发| LL5
+    LL2D -.->|triggering / 触发| LL5
     LL5 -.->|triggering / 触发| LL6
-    N59 -->|informing / 告知| N60
-    N60 -->|informing / 告知| N61
-    N61 -->|informing / 告知| N62
-    N62 -->|informing / 告知| N63
-    N63 -->|informing / 告知| N64
-    N64 -->|informing / 告知| N65
-    N65 -->|informing / 告知| N66
-    N66 -->|informing / 告知| N71
 ```
 
 ## Node 清单

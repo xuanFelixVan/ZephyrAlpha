@@ -75,6 +75,57 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "06_decision_architecture"
 _YAML_PATH = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
 
+
+# 治本（2026-07-31）：在决策流图索引头部加大白话解释，让入口索引对非架构读者也友好。
+# 覆盖：决策流是什么、决策流图是什么、有什么用、和依赖图啥关系、这份索引看什么。
+# 风格对齐 generate_domain_index.py 的 _PLAIN_LANGUAGE_INTRO。
+_DECISION_PLAIN_LANGUAGE_INTRO = """\
+## 这是什么？大白话讲决策流图
+
+这份"决策流图索引"背后是一张**决策流图（decisiongraph）**。在往下看清单之前，先用大白话讲清楚它是什么、有什么用、为什么要看。
+
+### 一、决策流是什么意思？
+
+一笔交易要一步步做决定：先产生信号 → 再做风控检查 → 再决定买什么买多少 → 再下单 → 最后执行。这条"决策一步步怎么往下走"的链路，就叫**决策流**。
+
+把项目里所有这种"决策怎么产生、怎么往下传"的关系记下来，就是**决策流**。
+
+### 二、决策流图是什么？
+
+把决策链上的**每一步**当成点，把"前一步触发后一步"当成连线，画成一张大网，就是决策流图。
+
+- 它不是一张图片，是存在数据库（`depgraph`）里的一张表
+- 四个基本元件：
+  - **Track（轨）** —— 决策走哪条道（模型驱动 / 数据驱动 / 人工指令 / 应急保命）
+  - **Layer（层）** —— 决策链的第几步（L0 信号 → … → L6 反馈）
+  - **Node（节点）** —— 每一步具体做什么的决策点
+  - **Edge（边）** —— 上下步之间怎么触发、怎么传
+
+### 三、决策流图有什么用？它和依赖图啥关系？
+
+这个项目有三张正交的全景图，各管一摊：
+
+| 全景图 | 管什么 | 举个例子 |
+|---|---|---|
+| 依赖图 depgraph | 模块**谁依赖谁**（静态） | 风控模块 import 了因子模块 |
+| 数据流图 dataflowgraph | 数据从哪流到哪（动态） | 行情数据 → 因子 → 回测 |
+| **决策流图 decisiongraph** | **决策怎么产生**（动态） | 信号 → 风控 → 下单 → 执行 |
+
+**为什么要看决策流图**：看决策链（一笔交易从信号到执行经过哪些步）、找断点（该有的风控检查有没有）、排查"这个决定是谁做的"（某个下单是模型驱动还是人工指令，走哪条轨）。
+
+**一句话**：依赖图管"模块关系"，决策流图管"决策走向"——一个看代码结构，一个看决策逻辑。
+
+### 四、这份索引主要看什么？
+
+1. **决策链有几条轨** —— 看"Track 导航"表，5 条轨各有分工
+2. **决策链长啥样** —— 点进各 Track 文档看 Mermaid 图
+3. **每一步是什么** —— 看 Layer / Node 清单，知道决策链上每步具体做什么
+
+> 运营态 = 实际代码已实现的决策步；设计态 = 还在图纸上没动工的决策步。
+
+---
+"""
+
 # --- 文件编号（硬编码，字母序保证跨重生成稳定） ---
 # Track 01-05 按 priority（DB ORDER BY priority）；L2A 06-12 按域名字母序；L3 13-19 按域名字母序
 _L2A_DOMAINS_ALPHA = ["data", "factor", "frontend", "research", "sell", "signal", "simulation"]
@@ -988,6 +1039,9 @@ def _gen_index_md(
         f"> 生成时间: {_git_commit_timestamp()}",
         f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）",
         f"> 数据库: {DB_DISPLAY_NAME}",
+        "",
+        # 大白话解释决策流图（治本 2026-07-31）：让入口索引对非架构读者也友好
+        *_DECISION_PLAIN_LANGUAGE_INTRO.splitlines(),
         "",
         "## 概述",
         "",

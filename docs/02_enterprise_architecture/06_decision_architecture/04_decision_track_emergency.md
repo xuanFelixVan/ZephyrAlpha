@@ -1,6 +1,6 @@
 # 决策流图 · 应急保命轨（Emergency Track）
 
-> 生成时间: 2026-07-30T21:17:12
+> 生成时间: 2026-07-30T22:18:45
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 4

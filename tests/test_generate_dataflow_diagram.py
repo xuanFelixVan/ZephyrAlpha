@@ -17,7 +17,7 @@
   - _gen_mermaid 返回值类型（tuple[str, int, int, int]）—— 修复"日志显示过滤前总数"瑕疵后补充
   - scope_filter 过滤逻辑（production / backtest_internal / None）
   - edge 计数（仅统计两端都在过滤后集合的边，跨 scope 边不计入）
-  - _gen_index_md 统计正确性
+  - _gen_production_md 统计正确性
 
 依据：ARCH-051 裁定（2026-07-06）；commit 748e0d0356 返回值改型。
 """
@@ -43,7 +43,7 @@ try:
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
     _gen_mermaid = _mod._gen_mermaid
-    _gen_index_md = _mod._gen_index_md
+    _gen_production_md = _mod._gen_production_md
     _gen_domain_md = _mod._gen_domain_md
     _extract_zh_label = _mod._extract_zh_label
 except Exception as e:  # noqa: BLE001
@@ -138,6 +138,54 @@ def sample_edges():
         # dataset -> job (consumed by)
         {"from_id": 1, "to_id": 11, "from_type": "dataset", "to_type": "job", "type": "consumed_by"},
         {"from_id": 3, "to_id": 12, "from_type": "dataset", "to_type": "job", "type": "consumed_by"},
+    ]
+
+
+@pytest.fixture
+def design_only_datasets():
+    """3 个设计态 Dataset（含 format_summary，名称未收录于 glossary，走回退提取中文）。"""
+    return [
+        {"id": 21, "name": "factor.ashare_alpha87", "scope": "production", "contract": None,
+         "physical_type": "table", "produced_by": "JOB-021", "domain": "D_FACTOR",
+         "maturity": "design", "build": "planned", "pit": "strict",
+         "format_summary": "A股Alpha#87因子信号（多因子截面排名）"},
+        {"id": 22, "name": "factor.ashare_capital_flow", "scope": "production", "contract": None,
+         "physical_type": "table", "produced_by": "JOB-022", "domain": "D_FACTOR",
+         "maturity": "design", "build": "planned", "pit": "strict",
+         "format_summary": "A股资金流向因子（主力资金净流入/流出）"},
+        {"id": 23, "name": "factor.ashare_fundamental", "scope": "production", "contract": None,
+         "physical_type": "table", "produced_by": "JOB-023", "domain": "D_FACTOR",
+         "maturity": "design", "build": "planned", "pit": "strict",
+         "format_summary": "A股基本面因子（PE/PB/ROE/股息率等）"},
+    ]
+
+
+@pytest.fixture
+def design_only_jobs():
+    """3 个设计态 Job（含 description，名称未收录于 glossary，走回退提取中文）。"""
+    return [
+        {"id": 31, "name": "compute.ashare_alpha87", "scope": "production",
+         "source": "src/zephyr/factor/ashare/alpha87.py", "trigger": "event_driven",
+         "context": "production", "maturity": "design", "build": "planned",
+         "description": "计算Alpha#87因子（消费OHLC K线，产出因子信号）"},
+        {"id": 32, "name": "compute.ashare_capital_flow", "scope": "production",
+         "source": "src/zephyr/factor/ashare/capital_flow.py", "trigger": "event_driven",
+         "context": "production", "maturity": "design", "build": "planned",
+         "description": "计算资金流因子（消费OHLC K线，产出因子信号）"},
+        {"id": 33, "name": "compute.ashare_fundamental", "scope": "production",
+         "source": "src/zephyr/factor/ashare/fundamental.py", "trigger": "event_driven",
+         "context": "production", "maturity": "design", "build": "planned",
+         "description": "计算基本面因子（消费OHLC K线，产出因子信号）"},
+    ]
+
+
+@pytest.fixture
+def design_only_edges():
+    """3 条 produces 边（job→dataset），单向 push，无交叉消费（横向铺开场景）。"""
+    return [
+        {"from_id": 31, "to_id": 21, "from_type": "job", "to_type": "dataset", "type": "produces"},
+        {"from_id": 32, "to_id": 22, "from_type": "job", "to_type": "dataset", "type": "produces"},
+        {"from_id": 33, "to_id": 23, "from_type": "job", "to_type": "dataset", "type": "produces"},
     ]
 
 
@@ -309,22 +357,22 @@ class TestDesignMaturity:
         assert "DS1" not in mmd
 
 
-# ---------- _gen_index_md 测试 ----------
+# ---------- _gen_production_md 测试 ----------
 
-class TestGenIndexMd:
-    """_gen_index_md 统计正确性测试。"""
+class TestGenProductionMd:
+    """_gen_production_md 统计正确性测试。"""
 
     def test_stats_table(self, sample_datasets, sample_jobs, sample_edges):
-        """索引文档统计表正确。"""
-        md = _gen_index_md(sample_datasets, sample_jobs, sample_edges)
+        """运营态全景文档统计表正确。"""
+        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
         # | Dataset | 2 | 1 | 3 |  production=2, backtest=1, total=3
         assert "| Dataset | 2 | 1 | 3 |" in md
         assert "| Job | 2 | 1 | 3 |" in md
         assert "| Edge | - | - | 5 |" in md
 
     def test_design_maturity_stats_table(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
-        """索引文档包含设计态/运营态统计子表（design_maturity 维度）。"""
-        md = _gen_index_md(
+        """运营态全景文档包含设计态/运营态统计子表（design_maturity 维度）。"""
+        md = _gen_production_md(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
         # 4 dataset: 3 production + 1 design（4 列：运营态/设计态/合计）
@@ -335,8 +383,8 @@ class TestGenIndexMd:
         assert "设计态 vs 运营态" in md
 
     def test_contains_operation_state_diagram(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
-        """索引文档包含运营态全景图章节（仅 design_maturity=production）。"""
-        md = _gen_index_md(
+        """运营态全景文档包含运营态全景图章节（仅 design_maturity=production）。"""
+        md = _gen_production_md(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
         assert "运营态全景图" in md
@@ -345,15 +393,15 @@ class TestGenIndexMd:
         assert "### 运营态全景图（仅 design_maturity=production）" in md
 
     def test_contains_dataset_list(self, sample_datasets, sample_jobs, sample_edges):
-        """索引文档包含 Dataset 清单。"""
-        md = _gen_index_md(sample_datasets, sample_jobs, sample_edges)
+        """运营态全景文档包含 Dataset 清单。"""
+        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
         assert "market_data.tick" in md
         assert "signal.composite" in md
         assert "backtest.fills" in md
 
     def test_contains_job_list(self, sample_datasets, sample_jobs, sample_edges):
-        """索引文档包含 Job 清单。"""
-        md = _gen_index_md(sample_datasets, sample_jobs, sample_edges)
+        """运营态全景文档包含 Job 清单。"""
+        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
         assert "ingest.ifind_kline" in md
         assert "synthesize.signal" in md
         assert "backtest.replay_ticks" in md

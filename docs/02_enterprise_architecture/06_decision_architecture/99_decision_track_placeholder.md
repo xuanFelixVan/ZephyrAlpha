@@ -1,6 +1,6 @@
 # 决策流图 · 占位轨（Placeholder Track）
 
-> 生成时间: 2026-07-30T21:17:12
+> 生成时间: 2026-07-30T22:18:45
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 99
@@ -13,7 +13,7 @@
 
 | Layer 数 | 决策节点数 | 域内边数 | 跨轨边数 |
 |----------|-----------|----------|----------|
-| 648 | 0 | 0 | 0 |
+| 540 | 0 | 0 | 0 |
 
 ## Layer 骨架图
 
@@ -31,18 +31,11 @@
 | CFG-rule-registry-collection | CFG-rule-registry-collection | CFG-rule-registry-collection | placeholder | CFG-rule-registry-collection | 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
 | CFG-scripts-registry | CFG-scripts-registry | CFG-scripts-registry | placeholder | CFG-scripts-registry | 脚本集 / Script Collection — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
 | CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | 测试集 / Test Suite — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
-| INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | - | - | - | - | production / 生产 | stable / 稳定 |
-| INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | - | - | - | - | production / 生产 | stable / 稳定 |
-| INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | - | - | - | - | production / 生产 | stable / 稳定 |
-| INFRA-DB-006 | INFRA-DB-006 | INFRA-DB-006 | placeholder | INFRA-DB-006 | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-ALT_DATA | MOD-ALT_DATA | MOD-ALT_DATA | placeholder | MOD-ALT_DATA | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | placeholder | MOD-ARCH-BIZDB | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | placeholder | MOD-AUTONOMY_CORE | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-BT-001 | MOD-BT-001 | MOD-BT-001 | placeholder | MOD-BT-001 | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-C1-MARKETCH | MOD-C1-MARKETCH | MOD-C1-MARKETCH | placeholder | MOD-C1-MARKETCH | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | placeholder | MOD-CONTEXT_ENGINE | docs__03_modules___cross_layer__context_engine__blueprint_md | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-CROSS_ASSET | MOD-CROSS_ASSET | MOD-CROSS_ASSET | placeholder | MOD-CROSS_ASSET | - | - | - | - | design / 设计 | planned / 已规划 |
-| MOD-D5-ARCH-TOOLS | MOD-D5-ARCH-TOOLS | MOD-D5-ARCH-TOOLS | placeholder | MOD-D5-ARCH-TOOLS | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-DATABASE | MOD-DATABASE | MOD-DATABASE | placeholder | MOD-DATABASE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-DATA_ENG | MOD-DATA_ENG | MOD-DATA_ENG | placeholder | MOD-DATA_ENG | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-DATA_GOV | MOD-DATA_GOV | MOD-DATA_GOV | placeholder | MOD-DATA_GOV | - | - | - | - | production / 生产 | generated / 已生成 |
@@ -55,94 +48,16 @@
 | MOD-GOV-019 | MOD-GOV-019 | MOD-GOV-019 | placeholder | MOD-GOV-019 | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-GOV-029 | MOD-GOV-029 | MOD-GOV-029 | placeholder | MOD-GOV-029 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV-041 | MOD-GOV-041 | MOD-GOV-041 | placeholder | MOD-GOV-041 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | placeholder | MOD-GOV-ALIGN-PANORAMAS | - | - | - | - | design / 设计 | stable / 稳定 |
 | MOD-GOV-DOCS | MOD-GOV-DOCS | MOD-GOV-DOCS | placeholder | MOD-GOV-DOCS | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-REPAIR | MOD-GOV-REPAIR | MOD-GOV-REPAIR | placeholder | MOD-GOV-REPAIR | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | placeholder | MOD-GOV-SCRIPTS | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-SCRIPTS-ARCH | MOD-GOV-SCRIPTS-ARCH | MOD-GOV-SCRIPTS-ARCH | placeholder | MOD-GOV-SCRIPTS-ARCH | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-SYNC-PANORAMA | MOD-GOV-SYNC-PANORAMA | MOD-GOV-SYNC-PANORAMA | placeholder | MOD-GOV-SYNC-PANORAMA | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-arch_reference_gate | MOD-GOV-arch_reference_gate | MOD-GOV-arch_reference_gate | placeholder | MOD-GOV-arch_reference_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-audit_return_contract_usage | MOD-GOV-audit_return_contract_usage | MOD-GOV-audit_return_contract_usage | placeholder | MOD-GOV-audit_return_contract_usage | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-audit_worktree_ops_telemetry | MOD-GOV-audit_worktree_ops_telemetry | MOD-GOV-audit_worktree_ops_telemetry | placeholder | MOD-GOV-audit_worktree_ops_telemetry | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-bare_getenv_gate | MOD-GOV-bare_getenv_gate | MOD-GOV-bare_getenv_gate | placeholder | MOD-GOV-bare_getenv_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-bare_sql_gate | MOD-GOV-bare_sql_gate | MOD-GOV-bare_sql_gate | placeholder | MOD-GOV-bare_sql_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-batched_auto_committer | MOD-GOV-batched_auto_committer | MOD-GOV-batched_auto_committer | placeholder | MOD-GOV-batched_auto_committer | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-blueprint_amodule_consistency_gate | MOD-GOV-blueprint_amodule_consistency_gate | MOD-GOV-blueprint_amodule_consistency_gate | placeholder | MOD-GOV-blueprint_amodule_consistency_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-capability_overlap_gate | MOD-GOV-capability_overlap_gate | MOD-GOV-capability_overlap_gate | placeholder | MOD-GOV-capability_overlap_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-check_vocab_hardcode | MOD-GOV-check_vocab_hardcode | MOD-GOV-check_vocab_hardcode | placeholder | MOD-GOV-check_vocab_hardcode | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-claim_required_gate | MOD-GOV-claim_required_gate | MOD-GOV-claim_required_gate | placeholder | MOD-GOV-claim_required_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-commit_gate_registry | MOD-GOV-commit_gate_registry | MOD-GOV-commit_gate_registry | placeholder | MOD-GOV-commit_gate_registry | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-commit_gates | MOD-GOV-commit_gates | MOD-GOV-commit_gates | placeholder | MOD-GOV-commit_gates | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-create_guard | MOD-GOV-create_guard | MOD-GOV-create_guard | placeholder | MOD-GOV-create_guard | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-dangling_reference_gate | MOD-GOV-dangling_reference_gate | MOD-GOV-dangling_reference_gate | placeholder | MOD-GOV-dangling_reference_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-diff_helpers | MOD-GOV-diff_helpers | MOD-GOV-diff_helpers | placeholder | MOD-GOV-diff_helpers | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-doc_ref_broken_gate | MOD-GOV-doc_ref_broken_gate | MOD-GOV-doc_ref_broken_gate | placeholder | MOD-GOV-doc_ref_broken_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-domain_fk_gate | MOD-GOV-domain_fk_gate | MOD-GOV-domain_fk_gate | placeholder | MOD-GOV-domain_fk_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-emergency_commit | MOD-GOV-emergency_commit | MOD-GOV-emergency_commit | placeholder | MOD-GOV-emergency_commit | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-empty_handler_gate | MOD-GOV-empty_handler_gate | MOD-GOV-empty_handler_gate | placeholder | MOD-GOV-empty_handler_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-exempt_zone_frontmatter_gate | MOD-GOV-exempt_zone_frontmatter_gate | MOD-GOV-exempt_zone_frontmatter_gate | placeholder | MOD-GOV-exempt_zone_frontmatter_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-file_copy_gate | MOD-GOV-file_copy_gate | MOD-GOV-file_copy_gate | placeholder | MOD-GOV-file_copy_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-function_dup_gate | MOD-GOV-function_dup_gate | MOD-GOV-function_dup_gate | placeholder | MOD-GOV-function_dup_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-god_class_gate | MOD-GOV-god_class_gate | MOD-GOV-god_class_gate | placeholder | MOD-GOV-god_class_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-hardcoded_url_gate | MOD-GOV-hardcoded_url_gate | MOD-GOV-hardcoded_url_gate | placeholder | MOD-GOV-hardcoded_url_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-held_overlap_gate | MOD-GOV-held_overlap_gate | MOD-GOV-held_overlap_gate | placeholder | MOD-GOV-held_overlap_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-high_complexity_gate | MOD-GOV-high_complexity_gate | MOD-GOV-high_complexity_gate | placeholder | MOD-GOV-high_complexity_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-id_uniqueness_gate | MOD-GOV-id_uniqueness_gate | MOD-GOV-id_uniqueness_gate | placeholder | MOD-GOV-id_uniqueness_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-import_direction_gate | MOD-GOV-import_direction_gate | MOD-GOV-import_direction_gate | placeholder | MOD-GOV-import_direction_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-long_param_list_gate | MOD-GOV-long_param_list_gate | MOD-GOV-long_param_list_gate | placeholder | MOD-GOV-long_param_list_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-manual_only_permanent_gate | MOD-GOV-manual_only_permanent_gate | MOD-GOV-manual_only_permanent_gate | placeholder | MOD-GOV-manual_only_permanent_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-migrate_metadata | MOD-GOV-migrate_metadata | MOD-GOV-migrate_metadata | placeholder | MOD-GOV-migrate_metadata | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-module_id_consistency_gate | MOD-GOV-module_id_consistency_gate | MOD-GOV-module_id_consistency_gate | placeholder | MOD-GOV-module_id_consistency_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-no_import_side_effect_gate | MOD-GOV-no_import_side_effect_gate | MOD-GOV-no_import_side_effect_gate | placeholder | MOD-GOV-no_import_side_effect_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-orphan_module_gate | MOD-GOV-orphan_module_gate | MOD-GOV-orphan_module_gate | placeholder | MOD-GOV-orphan_module_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-panorama_alignment_gate | MOD-GOV-panorama_alignment_gate | MOD-GOV-panorama_alignment_gate | placeholder | MOD-GOV-panorama_alignment_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-perm_trigger_gate | MOD-GOV-perm_trigger_gate | MOD-GOV-perm_trigger_gate | placeholder | MOD-GOV-perm_trigger_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-pre_write_gate | MOD-GOV-pre_write_gate | MOD-GOV-pre_write_gate | placeholder | MOD-GOV-pre_write_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-r5_digit_suffix_gate | MOD-GOV-r5_digit_suffix_gate | MOD-GOV-r5_digit_suffix_gate | placeholder | MOD-GOV-r5_digit_suffix_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-reconcile_runner | MOD-GOV-reconcile_runner | MOD-GOV-reconcile_runner | placeholder | MOD-GOV-reconcile_runner | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-reconcile_worker | MOD-GOV-reconcile_worker | MOD-GOV-reconcile_worker | placeholder | MOD-GOV-reconcile_worker | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-reconciliation_registry | MOD-GOV-reconciliation_registry | MOD-GOV-reconciliation_registry | placeholder | MOD-GOV-reconciliation_registry | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-rename_depgraph_sync_gate | MOD-GOV-rename_depgraph_sync_gate | MOD-GOV-rename_depgraph_sync_gate | placeholder | MOD-GOV-rename_depgraph_sync_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-rule_execution_pairing_gate | MOD-GOV-rule_execution_pairing_gate | MOD-GOV-rule_execution_pairing_gate | placeholder | MOD-GOV-rule_execution_pairing_gate | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-GOV-rule_four_way_alignment_gate | MOD-GOV-rule_four_way_alignment_gate | MOD-GOV-rule_four_way_alignment_gate | placeholder | MOD-GOV-rule_four_way_alignment_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-rule_patterns | MOD-GOV-rule_patterns | MOD-GOV-rule_patterns | placeholder | MOD-GOV-rule_patterns | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-ruling_reference_gate | MOD-GOV-ruling_reference_gate | MOD-GOV-ruling_reference_gate | placeholder | MOD-GOV-ruling_reference_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-run_silent_failure_regression | MOD-GOV-run_silent_failure_regression | MOD-GOV-run_silent_failure_regression | placeholder | MOD-GOV-run_silent_failure_regression | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-session_claim | MOD-GOV-session_claim | MOD-GOV-session_claim | placeholder | MOD-GOV-session_claim | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-session_required_gate | MOD-GOV-session_required_gate | MOD-GOV-session_required_gate | placeholder | MOD-GOV-session_required_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-session_startup_health_check | MOD-GOV-session_startup_health_check | MOD-GOV-session_startup_health_check | placeholder | MOD-GOV-session_startup_health_check | - | - | - | - | design / 设计 | planned / 已规划 |
-| MOD-GOV-session_worktree | MOD-GOV-session_worktree | MOD-GOV-session_worktree | placeholder | MOD-GOV-session_worktree | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV-ssot_redefinition_gate | MOD-GOV-ssot_redefinition_gate | MOD-GOV-ssot_redefinition_gate | placeholder | MOD-GOV-ssot_redefinition_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-test_claim_files_for_edit | MOD-GOV-test_claim_files_for_edit | MOD-GOV-test_claim_files_for_edit | placeholder | MOD-GOV-test_claim_files_for_edit | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-test_emergency_commit | MOD-GOV-test_emergency_commit | MOD-GOV-test_emergency_commit | placeholder | MOD-GOV-test_emergency_commit | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-test_reconcile_async | MOD-GOV-test_reconcile_async | MOD-GOV-test_reconcile_async | placeholder | MOD-GOV-test_reconcile_async | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-test_source_consistency_gate | MOD-GOV-test_source_consistency_gate | MOD-GOV-test_source_consistency_gate | placeholder | MOD-GOV-test_source_consistency_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-vocab_hardcode_gate | MOD-GOV-vocab_hardcode_gate | MOD-GOV-vocab_hardcode_gate | placeholder | MOD-GOV-vocab_hardcode_gate | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-workspace_hygiene_reconciler | MOD-GOV-workspace_hygiene_reconciler | MOD-GOV-workspace_hygiene_reconciler | placeholder | MOD-GOV-workspace_hygiene_reconciler | - | - | - | - | design / 设计 | planned / 已规划 |
-| MOD-GOV-worktree_manager | MOD-GOV-worktree_manager | MOD-GOV-worktree_manager | placeholder | MOD-GOV-worktree_manager | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-GOVERNANCE | MOD-GOVERNANCE | MOD-GOVERNANCE | placeholder | MOD-GOVERNANCE | docs__03_modules___domain_governance__blueprint_md | - | - | - | design / 设计 | generated / 已生成 |
 | MOD-GOV_COMMON | MOD-GOV_COMMON | MOD-GOV_COMMON | placeholder | MOD-GOV_COMMON | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_DATAFLOW_DIAGRAM | MOD-GOV_DATAFLOW_DIAGRAM | MOD-GOV_DATAFLOW_DIAGRAM | placeholder | MOD-GOV_DATAFLOW_DIAGRAM | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_DQ | MOD-GOV_DQ | MOD-GOV_DQ | placeholder | MOD-GOV_DQ | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_ENFORCEMENT | MOD-GOV_ENFORCEMENT | MOD-GOV_ENFORCEMENT | placeholder | MOD-GOV_ENFORCEMENT | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_ENFORCEMENT_worktree_pool | MOD-GOV_ENFORCEMENT_worktree_pool | MOD-GOV_ENFORCEMENT_worktree_pool | placeholder | MOD-GOV_ENFORCEMENT_worktree_pool | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-GOV_GATE_CACHE | MOD-GOV_GATE_CACHE | MOD-GOV_GATE_CACHE | placeholder | MOD-GOV_GATE_CACHE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_HEALTH_SMOKE | MOD-GOV_HEALTH_SMOKE | MOD-GOV_HEALTH_SMOKE | placeholder | MOD-GOV_HEALTH_SMOKE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_SILENT_FAILURE_REGRESSION | MOD-GOV_SILENT_FAILURE_REGRESSION | MOD-GOV_SILENT_FAILURE_REGRESSION | placeholder | MOD-GOV_SILENT_FAILURE_REGRESSION | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_behavioral_admission | MOD-GOV_behavioral_admission | MOD-GOV_behavioral_admission | placeholder | MOD-GOV_behavioral_admission | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_code_quality_domain | MOD-GOV_code_quality_domain | MOD-GOV_code_quality_domain | placeholder | MOD-GOV_code_quality_domain | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_commit_gates | MOD-GOV_commit_gates | MOD-GOV_commit_gates | placeholder | MOD-GOV_commit_gates | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV_commit_gateway_abuse_monitor | MOD-GOV_commit_gateway_abuse_monitor | MOD-GOV_commit_gateway_abuse_monitor | placeholder | MOD-GOV_commit_gateway_abuse_monitor | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV_git_performance_monitor | MOD-GOV_git_performance_monitor | MOD-GOV_git_performance_monitor | placeholder | MOD-GOV_git_performance_monitor | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-GOV_guc_trigger_fix | MOD-GOV_guc_trigger_fix | MOD-GOV_guc_trigger_fix | placeholder | MOD-GOV_guc_trigger_fix | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_resilience_governance | MOD-GOV_resilience_governance | MOD-GOV_resilience_governance | placeholder | MOD-GOV_resilience_governance | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_rule_domain | MOD-GOV_rule_domain | MOD-GOV_rule_domain | placeholder | MOD-GOV_rule_domain | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_rule_execution_pairing_gate | MOD-GOV_rule_execution_pairing_gate | MOD-GOV_rule_execution_pairing_gate | placeholder | MOD-GOV_rule_execution_pairing_gate | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-GOV_runtime_violation_snapshot | MOD-GOV_runtime_violation_snapshot | MOD-GOV_runtime_violation_snapshot | placeholder | MOD-GOV_runtime_violation_snapshot | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-GOV_runtime_violation_snapshot_reconciler | MOD-GOV_runtime_violation_snapshot_reconciler | MOD-GOV_runtime_violation_snapshot_reconciler | placeholder | MOD-GOV_runtime_violation_snapshot_reconciler | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-GOV_security_governance | MOD-GOV_security_governance | MOD-GOV_security_governance | placeholder | MOD-GOV_security_governance | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_sync_savepoint_test | MOD-GOV_sync_savepoint_test | MOD-GOV_sync_savepoint_test | placeholder | MOD-GOV_sync_savepoint_test | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_yaml_sync_error_class | MOD-GOV_yaml_sync_error_class | MOD-GOV_yaml_sync_error_class | placeholder | MOD-GOV_yaml_sync_error_class | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-001 | MOD-INF-001 | MOD-INF-001 | placeholder | MOD-INF-001 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-002 | MOD-INF-002 | MOD-INF-002 | placeholder | MOD-INF-002 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-003 | MOD-INF-003 | MOD-INF-003 | placeholder | MOD-INF-003 | - | - | - | - | production / 生产 | generated / 已生成 |
@@ -178,14 +93,9 @@
 | MOD-INF-040 | MOD-INF-040 | MOD-INF-040 | placeholder | MOD-INF-040 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-042 | MOD-INF-042 | MOD-INF-042 | placeholder | MOD-INF-042 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-043 | MOD-INF-043 | MOD-INF-043 | placeholder | MOD-INF-043 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-INF-GOV | MOD-INF-GOV | MOD-INF-GOV | placeholder | MOD-INF-GOV | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-INFRA_OPS | MOD-INFRA_OPS | MOD-INFRA_OPS | placeholder | MOD-INFRA_OPS | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | MOD-INFRA_RUNTIME | placeholder | MOD-INFRA_RUNTIME | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INTEGRATION | MOD-INTEGRATION | MOD-INTEGRATION | placeholder | MOD-INTEGRATION | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-KB-001 | MOD-KB-001 | MOD-KB-001 | placeholder | MOD-KB-001 | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-L00-001 | MOD-L00-001 | MOD-L00-001 | placeholder | MOD-L00-001 | - | - | - | - | design / 设计 | generated / 已生成 |
-| MOD-L00-002 | MOD-L00-002 | MOD-L00-002 | placeholder | MOD-L00-002 | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-L00-003 | MOD-L00-003 | MOD-L00-003 | placeholder | MOD-L00-003 | - | - | - | - | design / 设计 | stable / 稳定 |
 | MOD-L00-004 | MOD-L00-004 | MOD-L00-004 | placeholder | MOD-L00-004 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-L02-001 | MOD-L02-001 | MOD-L02-001 | placeholder | MOD-L02-001 | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-L03-001 | MOD-L03-001 | MOD-L03-001 | placeholder | MOD-L03-001 | - | - | - | - | production / 生产 | generated / 已生成 |
@@ -199,32 +109,20 @@
 | MOD-L11-001 | MOD-L11-001 | MOD-L11-001 | placeholder | MOD-L11-001 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-L13-001 | MOD-L13-001 | MOD-L13-001 | placeholder | MOD-L13-001 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-LLM_SECURITY | MOD-LLM_SECURITY | MOD-LLM_SECURITY | placeholder | MOD-LLM_SECURITY | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-MASTER-001 | MOD-MASTER-001 | MOD-MASTER-001 | placeholder | MOD-MASTER-001 | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-MASTER-002 | MOD-MASTER-002 | MOD-MASTER-002 | placeholder | MOD-MASTER-002 | - | - | - | - | design / 设计 | stable / 稳定 |
-| MOD-MASTER-003 | MOD-MASTER-003 | MOD-MASTER-003 | placeholder | MOD-MASTER-003 | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-MASTER_BLUEPRINT | MOD-MASTER_BLUEPRINT | MOD-MASTER_BLUEPRINT | placeholder | MOD-MASTER_BLUEPRINT | docs__03_modules___master_blueprint__blueprint_md | - | - | - | design / 设计 | deprecated / 已弃用 |
 | MOD-MKT_DATA | MOD-MKT_DATA | MOD-MKT_DATA | placeholder | MOD-MKT_DATA | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-ML_SERVE | MOD-ML_SERVE | MOD-ML_SERVE | placeholder | MOD-ML_SERVE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-OPS-018 | MOD-OPS-018 | MOD-OPS-018 | placeholder | MOD-OPS-018 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-ORC-trigger_router | MOD-ORC-trigger_router | MOD-ORC-trigger_router | placeholder | MOD-ORC-trigger_router | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-PFC-001 | MOD-PFC-001 | MOD-PFC-001 | placeholder | MOD-PFC-001 | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-PF_ALLOC | MOD-PF_ALLOC | MOD-PF_ALLOC | placeholder | MOD-PF_ALLOC | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-REMEDIATION_PROGRESS | MOD-REMEDIATION_PROGRESS | MOD-REMEDIATION_PROGRESS | placeholder | MOD-REMEDIATION_PROGRESS | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-REMEDIATION_PROGRESS_SMOKE | MOD-REMEDIATION_PROGRESS_SMOKE | MOD-REMEDIATION_PROGRESS_SMOKE | placeholder | MOD-REMEDIATION_PROGRESS_SMOKE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | MOD-RESOURCE_OPTIMIZATION_ENGINE | placeholder | MOD-RESOURCE_OPTIMIZATION_ENGINE | docs__03_modules___cross_layer__resource_optimization_engine__blueprint_md | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-RULE_ENGINE | MOD-RULE_ENGINE | MOD-RULE_ENGINE | placeholder | MOD-RULE_ENGINE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-SEC-030 | MOD-SEC-030 | MOD-SEC-030 | placeholder | MOD-SEC-030 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-SEC-immutable_core | MOD-SEC-immutable_core | MOD-SEC-immutable_core | placeholder | MOD-SEC-immutable_core | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-SELL_DECISION | MOD-SELL_DECISION | MOD-SELL_DECISION | placeholder | MOD-SELL_DECISION | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-SHARED-001 | MOD-SHARED-001 | MOD-SHARED-001 | placeholder | MOD-SHARED-001 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-SHARED-002 | MOD-SHARED-002 | MOD-SHARED-002 | placeholder | MOD-SHARED-002 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-SHR-io-yaml | MOD-SHR-io-yaml | MOD-SHR-io-yaml | placeholder | MOD-SHR-io-yaml | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-SHR-workspace_telemetry | MOD-SHR-workspace_telemetry | MOD-SHR-workspace_telemetry | placeholder | MOD-SHR-workspace_telemetry | - | - | - | - | production / 生产 | stable / 稳定 |
-| MOD-SHR_converters | MOD-SHR_converters | MOD-SHR_converters | placeholder | MOD-SHR_converters | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-SIGNAL_ASHARE | MOD-SIGNAL_ASHARE | MOD-SIGNAL_ASHARE | placeholder | MOD-SIGNAL_ASHARE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-SIGQC-001 | MOD-SIGQC-001 | MOD-SIGQC-001 | placeholder | MOD-SIGQC-001 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-SIMULATION | MOD-SIMULATION | MOD-SIMULATION | placeholder | MOD-SIMULATION | - | - | - | - | design / 设计 | planned / 已规划 |
-| MOD-SMOKE-TEST | MOD-SMOKE-TEST | MOD-SMOKE-TEST | placeholder | MOD-SMOKE-TEST | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | placeholder | MOD-TASK_SYSTEM | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST | MOD-TEST | MOD-TEST | placeholder | MOD-TEST | - | - | - | - | design / 设计 | planned / 已规划 |
 | MOD-TEST-202 | MOD-TEST-202 | MOD-TEST-202 | placeholder | MOD-TEST-202 | - | - | - | - | production / 生产 | generated / 已生成 |
@@ -276,7 +174,6 @@
 | MOD-TEST-256 | MOD-TEST-256 | MOD-TEST-256 | placeholder | MOD-TEST-256 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-257 | MOD-TEST-257 | MOD-TEST-257 | placeholder | MOD-TEST-257 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-258 | MOD-TEST-258 | MOD-TEST-258 | placeholder | MOD-TEST-258 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-TEST-259 | MOD-TEST-259 | MOD-TEST-259 | placeholder | MOD-TEST-259 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-260 | MOD-TEST-260 | MOD-TEST-260 | placeholder | MOD-TEST-260 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-261 | MOD-TEST-261 | MOD-TEST-261 | placeholder | MOD-TEST-261 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-262 | MOD-TEST-262 | MOD-TEST-262 | placeholder | MOD-TEST-262 | - | - | - | - | production / 生产 | generated / 已生成 |
@@ -284,7 +181,6 @@
 | MOD-TEST-264 | MOD-TEST-264 | MOD-TEST-264 | placeholder | MOD-TEST-264 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-265 | MOD-TEST-265 | MOD-TEST-265 | placeholder | MOD-TEST-265 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-266 | MOD-TEST-266 | MOD-TEST-266 | placeholder | MOD-TEST-266 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-TEST-267 | MOD-TEST-267 | MOD-TEST-267 | placeholder | MOD-TEST-267 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-268 | MOD-TEST-268 | MOD-TEST-268 | placeholder | MOD-TEST-268 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-272 | MOD-TEST-272 | MOD-TEST-272 | placeholder | MOD-TEST-272 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-273 | MOD-TEST-273 | MOD-TEST-273 | placeholder | MOD-TEST-273 | - | - | - | - | production / 生产 | generated / 已生成 |
@@ -661,20 +557,16 @@
 | MOD-TEST-706 | MOD-TEST-706 | MOD-TEST-706 | placeholder | MOD-TEST-706 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-708 | MOD-TEST-708 | MOD-TEST-708 | placeholder | MOD-TEST-708 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TEST-710 | MOD-TEST-710 | MOD-TEST-710 | placeholder | MOD-TEST-710 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-TEST-apply_depgraph_smoke | MOD-TEST-apply_depgraph_smoke | MOD-TEST-apply_depgraph_smoke | placeholder | MOD-TEST-apply_depgraph_smoke | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-TEST_apply_depgraph_smoke | MOD-TEST_apply_depgraph_smoke | MOD-TEST_apply_depgraph_smoke | placeholder | MOD-TEST_apply_depgraph_smoke | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-TRADING-001 | MOD-TRADING-001 | MOD-TRADING-001 | placeholder | MOD-TRADING-001 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-WORKSPACE_TELEMETRY | MOD-WORKSPACE_TELEMETRY | MOD-WORKSPACE_TELEMETRY | placeholder | MOD-WORKSPACE_TELEMETRY | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-XLR-003 | MOD-XLR-003 | MOD-XLR-003 | placeholder | MOD-XLR-003 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-migrate_sqlite_to_pg | MOD-migrate_sqlite_to_pg | MOD-migrate_sqlite_to_pg | placeholder | MOD-migrate_sqlite_to_pg | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-readme_version_sync | MOD-readme_version_sync | MOD-readme_version_sync | placeholder | MOD-readme_version_sync | - | - | - | - | production / 生产 | generated / 已生成 |
-| PLACEHOLDER-MOD-GOV-SYNC-PANORAMA | PLACEHOLDER-MOD-GOV-SYNC-PANORAMA | PLACEHOLDER-MOD-GOV-SYNC-PANORAMA | placeholder | PLACEHOLDER-MOD-GOV-SYNC-PANORAMA | - | - | - | - | design / 设计 | planned / 已规划 |
 | SH-DB-001 | SH-DB-001 | SH-DB-001 | placeholder | SH-DB-001 | docs__03_modules___cross_layer__database__blueprint_md | - | - | - | design / 设计 | planned / 已规划 |
 | SH-DB-002 | SH-DB-002 | SH-DB-002 | placeholder | SH-DB-002 | - | - | - | - | production / 生产 | stable / 稳定 |
 | SH-GOV-003 | SH-GOV-003 | SH-GOV-003 | placeholder | SH-GOV-003 | - | - | - | - | production / 生产 | generated / 已生成 |
 | SH-GOV-004 | SH-GOV-004 | SH-GOV-004 | placeholder | SH-GOV-004 | - | - | - | - | production / 生产 | generated / 已生成 |
 | SH-MAIN-001 | SH-MAIN-001 | SH-MAIN-001 | placeholder | SH-MAIN-001 | - | - | - | - | production / 生产 | generated / 已生成 |
-| SYS-MASTER-001 | SYS-MASTER-001 | SYS-MASTER-001 | placeholder | SYS-MASTER-001 | - | - | - | - | design / 设计 | stable / 稳定 |
 
 ## 跨轨边
 

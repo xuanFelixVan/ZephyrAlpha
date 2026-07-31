@@ -388,9 +388,11 @@ def _append_maturity_classes(lines: list[str], ds_list: list[dict], job_list: li
         lines.append(f"    class {','.join(prod_nodes)} production")
 
 
-def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
-    """生成索引文档（frontmatter + 内嵌 Mermaid 图 + 统计 + 清单，英文+中文并列）。
+def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
+    """生成运营态全景文档 dataflow_production.md（frontmatter + 内嵌 Mermaid 图 + 统计 + 清单，英文+中文并列）。
 
+    治本（2026-07-31）：原函数名 _gen_index_md 误导（实际生成 production.md 而非索引），
+    重命名为 _gen_production_md 以显化职责，消除 AI 幻觉/漂移温床。
     单 MD 文件可看全部（图 + 清单），符合 02_domain_architecture_docs/ 风格。
     所有英文术语后附加中文翻译（通过 _ZH_MAP 映射，新增节点时需同步更新映射）。
     """
@@ -411,7 +413,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
     lines.append("doc_type: architecture_view")
-    lines.append("title: 数据流图（dataflowgraph）索引")
+    lines.append("title: 数据流图（dataflowgraph）运营态全景")
     lines.append('version: "1.0"')
     lines.append("status: active")
     lines.append(f"date: {now.split('T')[0]}")
@@ -419,8 +421,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-
-    lines.append("# 数据流图（dataflowgraph）索引")
+    lines.append("# 数据流图（dataflowgraph）运营态全景")
     lines.append("")
     lines.append(f"> 生成时间: {now}")
     lines.append(f"> 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）")
@@ -853,7 +854,7 @@ def main() -> int:
     # 1. 生成运营态文件
     prod_datasets = [d for d in datasets if d.get("maturity") != "design"]
     prod_jobs = [j for j in jobs if j.get("maturity") != "design"]
-    prod_md = _gen_index_md(prod_datasets, prod_jobs, edges)
+    prod_md = _gen_production_md(prod_datasets, prod_jobs, edges)
     (out_dir / "dataflow_production.md").write_text(prod_md, encoding="utf-8")
     print(f"[OK] 生成 dataflow_production.md（{len(prod_jobs)} jobs / {len(prod_datasets)} datasets）")
 

@@ -10,7 +10,7 @@ ttl: permanent
 
 # 因子域-Barra风险模型与因子挖掘
 
-> 生成时间: 2026-07-31T17:03:35
+> 生成时间: 2026-07-31T17:14:43
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
