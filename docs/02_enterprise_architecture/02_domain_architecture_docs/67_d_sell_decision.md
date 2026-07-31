@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 7 | Production Modules | 7 |
@@ -122,13 +122,15 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 2 个外部域直接连接（出边 1 条 + 入边 4 条 = 5 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
     D_POSITION["D_POSITION<br/>仓位管理"]
+    D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_SELL_DECISION -->|1条 runtime / runtime| D_POSITION
+    D_EX_CORE -->|4条 runtime / runtime| D_SELL_DECISION
 ```
 
 ## 说明 / Notes

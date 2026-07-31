@@ -27,8 +27,8 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 9 | Module Count | 9 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
-| 跨域出边 | 29 | Cross-domain Outgoing | 29 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
+| 跨域出边 | 35 | Cross-domain Outgoing | 35 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 8 | Production Modules | 8 |
 | 容量 | 8/150 (正常) | Capacity | 8/150 (正常) |
@@ -87,27 +87,28 @@ graph TD
     src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| D_TRADING
-    D_PF_CORE["(生产态 / production) D_PF_CORE"]
-    src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| D_PF_CORE
-    src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_TRADING
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
+    D_TRADING["(生产态 / production) D_TRADING"]
+    src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_TRADING
+    D_PF_CORE["(生产态 / production) D_PF_CORE"]
+    src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| D_PF_CORE
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_simulation_broker_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -116,7 +117,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_miniqmt_broker_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_adapters_simulation_broker_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_signal_providers_py,src_zephyr_governance_escalation_order_state_escalator_py production
     class src_zephyr_ex_core_trading_session_py design
-    class D_INFRASTRUCTURE,D_TRADING,D_PF_CORE,D_GOVERNANCE,D_FACTOR,D_BACKTEST external_prod
+    class D_GOVERNANCE,D_TRADING,D_PF_CORE,D_INFRASTRUCTURE,D_SHARED,D_FACTOR,D_BACKTEST external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -138,26 +139,26 @@ graph TD
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_simulation_broker_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -165,7 +166,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_miniqmt_broker_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_adapters_simulation_broker_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_signal_providers_py,src_zephyr_governance_escalation_order_state_escalator_py production
-    class D_INFRASTRUCTURE,D_TRADING,D_FACTOR,D_GOVERNANCE,D_SHARED,D_BACKTEST external_prod
+    class D_INFRASTRUCTURE,D_SHARED,D_TRADING,D_FACTOR,D_BACKTEST,D_GOVERNANCE external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -233,27 +234,31 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 29 条 + 入边 3 条 = 32 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 9 个外部域直接连接（出边 35 条 + 入边 4 条 = 39 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
     D_FACTOR["D_FACTOR<br/>因子"]
+    D_RISK["D_RISK<br/>风控"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
     D_EX_CORE -->|9条 contract / contract, 导入依赖 / import_depends| D_TRADING
     D_EX_CORE -->|7条 contract / contract, 导入依赖 / import_depends| D_GOVERNANCE
+    D_EX_CORE -->|4条 runtime / runtime| D_SELL_DECISION
     D_EX_CORE -->|4条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_CORE -->|3条 导入依赖 / import_depends| D_BACKTEST
     D_EX_CORE -->|3条 导入依赖 / import_depends| D_FACTOR
+    D_EX_CORE -->|2条 runtime / runtime| D_RISK
     D_EX_CORE -->|2条 导入依赖 / import_depends| D_SHARED
     D_EX_CORE -->|1条 导入依赖 / import_depends| D_PF_CORE
     D_BACKTEST -->|2条 导入依赖 / import_depends| D_EX_CORE
-    D_TRADING -->|1条 import / import| D_EX_CORE
+    D_TRADING -->|2条 import / import, runtime / runtime| D_EX_CORE
 ```
 
 ## 说明 / Notes

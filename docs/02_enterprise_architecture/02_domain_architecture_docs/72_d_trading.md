@@ -28,7 +28,7 @@ ttl: permanent
 | 模块数 | 37 | Module Count | 37 |
 | 域内依赖 | 12 | Internal Dependencies | 12 |
 | 跨域入边 | 28 | Cross-domain Incoming | 28 |
-| 跨域出边 | 56 | Cross-domain Outgoing | 56 |
+| 跨域出边 | 59 | Cross-domain Outgoing | 59 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 37 | Production Modules | 37 |
 | 容量 | 37/150 (正常) | Capacity | 37/150 (正常) |
@@ -137,8 +137,8 @@ graph TD
     end
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -206,9 +206,9 @@ graph TD
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_RISK["(生产态 / production) D_RISK"]
     D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
@@ -266,13 +266,13 @@ graph TD
         src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["(生产态 / production) trading_kill_switch.py"]
         src_zephyr_trading_verdict_engine_py["(生产态 / production) verdict_engine.py"]
     end
-    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
+    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
@@ -423,7 +423,7 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 15 个外部域直接连接（出边 56 条 + 入边 28 条 = 84 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 16 个外部域直接连接（出边 59 条 + 入边 28 条 = 87 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -433,9 +433,10 @@ graph LR
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
-    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
+    D_DATA["D_DATA<br/>数据接入层"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
+    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_POSITION["D_POSITION<br/>仓位管理"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_RISK["D_RISK<br/>风控"]
@@ -448,9 +449,10 @@ graph LR
     D_TRADING -->|6条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_TRADING -->|4条 导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING -->|3条 导入依赖 / import_depends| D_ORCHESTRATOR
-    D_TRADING -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
-    D_TRADING -->|1条 import / import| D_EX_CORE
+    D_TRADING -->|2条 runtime / runtime| D_DATA
+    D_TRADING -->|2条 import / import, runtime / runtime| D_EX_CORE
     D_TRADING -->|1条 导入依赖 / import_depends| D_INTEGRATION
+    D_TRADING -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
     D_TRADING -->|1条 导入依赖 / import_depends| D_POSITION
     D_EX_CORE -->|9条 contract / contract, 导入依赖 / import_depends| D_TRADING
     D_FUNDAMENTAL_SIGNAL -->|5条 导入依赖 / import_depends| D_TRADING

@@ -21,9 +21,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3059 |
-| 生产态模块 | 2854 |
-| 设计态模块 | 205 |
+| 模块总数 | 3072 |
+| 生产态模块 | 2855 |
+| 设计态模块 | 217 |
 
 ## 域清单（按架构层分组）
 
@@ -84,12 +84,12 @@ ttl: permanent
 | D_DATA_SCRIPTS | 数据治理脚本 / D_DATA_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 41_d_data_scripts.md](41_d_data_scripts.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 14 | 8 | 6 | 14/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 24 | 8 | 16 | 24/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 7 | 10 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 86 | 37 | 49 | 86/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 12 | 12 | 0 | 12/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 13 | 10 | 3 | 13/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
-| D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 220 | 220 | 0 | 220/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
+| D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 221 | 221 | 0 | 221/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 124 | 121 | 3 | 124/150 (OK) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 26 | 2 | 24 | 26/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
 | D_GOV_DRIFT | 漂移检测 / Drift Detection | 75 | 74 | 1 | 75/150 (OK) | [📄 52_d_gov_drift.md](52_d_gov_drift.md) |
@@ -112,4 +112,4 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 10 | 2 | 8 | 10/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
-| D_TRADING | 交易运营 / Trading Operations | 38 | 37 | 1 | 38/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 40 | 37 | 3 | 40/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
