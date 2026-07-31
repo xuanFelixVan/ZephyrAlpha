@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共263项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共262项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -24,10 +24,10 @@ ttl: permanent
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
-| 配置项 | 35 | config/*.yaml |
-| 数据流作业 | 203 | dataflow_graph_registry.yaml |
+| 配置项 | 34 | config/*.yaml |
+| 数据流作业 | 897 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **263** | |
+| **合计** | **262** | |
 
 ## 2. 外部数据源资产
 
@@ -192,7 +192,6 @@ ttl: permanent
 | `config/sandbox_policy.yaml` | 1.5 | 2026-07-05 |
 | `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
 | `config/sli_registry.yaml` | 2.8 | 2026-07-02 |
-| `config/survivorship_policy.yaml` | 0.8 | 2026-07-24 |
 | `config/tech_stack_manifest.yaml` | 5.4 | 2026-07-19 |
 | `config/trigger_router.yaml` | 5.0 | 2026-07-14 |
 | `config/worktree_state_machine.yaml` | 7.3 | 2026-07-21 |

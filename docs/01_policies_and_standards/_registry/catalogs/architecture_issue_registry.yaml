@@ -10124,3 +10124,116 @@ entries:
   related_rules: 'AGENTS.md RULE-SSOT, #ARCH-AKSHARE-ANTICRAWLER-001'
   created: '2026-07-31'
   last_updated: '2026-07-31'
+
+# --- #ARCH-SSOT-SURVIVORSHIP-CLEANUP-001: survivorship_policy.yaml 迁移残留清理（audit 2026-07-31 议题3）---
+- issue_id: '#ARCH-SSOT-SURVIVORSHIP-CLEANUP-001'
+  title: 'survivorship_policy.yaml 迁移残留清理——删除 redirect stub + 重生成陈旧文档引用'
+  category: ssot_governance
+  severity: P2中
+  adjudication: |-
+    病根（第一性原理，2026-07-31 audit 议题3 调研）：config/survivorship_policy.yaml 于
+    2026-07-23（#ARCH-CH-021 P0-1）迁移至 config/data/survivorship_policy.yaml，代码侧已通过
+    _arch_ssot.SURVIVORSHIP_POLICY_PATH 集中常量全部切换至新路径。但旧文件作为 redirect stub
+    （_deprecated: true / _redirect_to）保留至今，且自动生成文档（unified-asset-index.yaml、
+    full_project_tree_zh.md/en.md、asset_catalog.md）仍列出旧路径——迁移未做文档/索引侧清理。
+
+    对 100% AI 开发的特殊危害：AI 扫描文档见到 config/survivorship_policy.yaml 仍存在，无法
+    确定性判断该读哪个——redirect stub 是"薛定谔的真源"，AI 可能误用旧路径写入。
+
+    治本裁定（用户已确认 2026-07-31 "全部执行"）：①删除 config/survivorship_policy.yaml 旧
+    redirect stub（代码已无消费者，向后兼容目的已失效）；②重生成自动文档消除旧路径引用；
+    ③注册本议题跟踪迁移清理闭环（#ARCH-CH-021 只跟踪数据层兑现，非文件迁移）。
+
+    否决备选：保留 redirect stub 待 Owner 审批——搁置多日未触发，且 100% AI 开发下保留 stub
+    比删除风险更高（AI 误读 > 删除后无引用）。
+  impact:
+    - 'config/survivorship_policy.yaml（删除 redirect stub）'
+    - 'data/asset_index/unified-asset-index.yaml（重生成消除旧路径条目）'
+    - 'docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md（重生成）'
+    - 'docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md（重生成）'
+    - 'docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md（重生成）'
+  fix_phase: '删除旧文件 + 重生成自动文档 + 验证零残留'
+  status: decided
+  related_rules: 'AGENTS.md RULE-SSOT, #ARCH-CH-021 (P0-1 数据层兑现，本议题为文件迁移清理)'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
+
+# --- #ARCH-VMS-WRITETRACE-CONSOLIDATE-001: WriteTrace 重复类合并（audit 2026-07-31 议题1）---
+- issue_id: '#ARCH-VMS-WRITETRACE-CONSOLIDATE-001'
+  title: 'WriteTrace 重复类合并——以 vms_schemas.WriteTrace 为唯一 SSoT，消除跨域漂移'
+  category: architecture_consolidation
+  severity: P1高
+  adjudication: |-
+    病根（第一性原理，2026-07-31 audit 议题1 调研）：项目存在两个同名 WriteTrace 类——
+    ①vms_schemas.WriteTrace（MOD-INF-011/D_INTEGRATION，松散：origin/audit_chain 允许空、
+    可变、有 content_hash/timestamp）；②unified_memory_api.WriteTrace（MOD-INF-036/
+    D_INTELLIGENCE，严格：frozen/extra forbid/min_length 强制）。
+
+    关键漂移证据：delegated_vector_memory.py（D_INTEGRATION）跨域 import 了 D_INTELLIGENCE
+    的 unified_memory_api.WriteTrace，而其同子系统的 provenance_enforcer.py/design_principles.py
+    用 vms_schemas.WriteTrace——VMS 子系统内部使用两个不兼容的同名类。blueprint MOD-INF-011
+    已声明 vms_schemas 为"Pydantic V2 数据模型 SSoT"，但 unified_memory_api.WriteTrace 是
+    v0.7.0 VMS 整合前的遗留物（RI-02 实验性统一记忆 API，2026-04-27），整合时未清理。
+
+    代码异味：因 vms_schemas.WriteTrace 松散（允许空构造），ProvenanceEnforcer.validate() 不得不
+    做手动 if-not-empty 校验——schema 层缺失的约束用过程式代码补偿，AI 易遗漏调用 enforcer。
+
+    对 100% AI 开发的特殊危害：AI 见两个同名 WriteTrace 类无法确定性选择，随机 import 导致
+    provenance 校验强度不一致；松散版允许空 provenance 静默写入。
+
+    治本裁定（用户已确认 2026-07-31 "全部执行"）：以 vms_schemas.WriteTrace 为唯一规范
+    （尊重蓝图声明的 SSoT），收紧约束（frozen/min_length/extra forbid），unified_memory_api
+    改为 re-export 保持公开 API 向后兼容，ProvenanceEnforcer.validate() 简化（schema 已强制）。
+
+    否决备选：①新建 zephyr.shared.provenance 共享模块——增加新模块+蓝图+depgraph 节点，
+    100% AI 开发下更多表面积=更多漂移风险，over-engineering；②以 unified_memory_api 为
+    规范——违反蓝图声明的 vms_schemas SSoT 且字段更少。
+  impact:
+    - 'src/zephyr/integration/vector_memory/vms_schemas.py（WriteTrace 收紧约束：frozen/min_length/extra forbid）'
+    - 'src/zephyr/intelligence/model_evaluation/unified_memory_api.py（删本地 WriteTrace，re-export from vms_schemas）'
+    - 'src/zephyr/integration/vector_memory/provenance_enforcer.py（validate 简化，schema 已强制）'
+    - 'tests/memory/test_vms_adversarial_injection.py（空构造改为 pytest.raises ValidationError）'
+    - 'tests/memory/test_unified_memory_api_unit.py（TestWriteTrace 约束测试适配 re-export）'
+  fix_phase: 'depgraph 登记新依赖边 → 收紧 vms_schemas.WriteTrace → re-export → 简化 enforcer → 更新测试 → 四图对齐验证'
+  status: decided
+  related_rules: 'AGENTS.md RULE-SSOT, RULE-DEPGRAPH (依赖关系先行), 四图对齐铁律'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
+
+# --- #ARCH-VOCAB-NOQA-CONVERGENCE-001: vocab hardcode noqa 趋势收敛（audit 2026-07-31 议题2）---
+- issue_id: '#ARCH-VOCAB-NOQA-CONVERGENCE-001'
+  title: 'vocab hardcode noqa 趋势收敛——结构化登记表 + 基线自动校准 + SSoT 函数扩展'
+  category: governance_convergence
+  severity: P2中
+  adjudication: |-
+    病根（第一性原理，2026-07-31 audit 议题2 调研）：check_vocab_hardcode.py 的 # noqa: gate-vocab
+    豁免机制是开环系统——只增不减。审计时 74 个（基线 33，趋势 +41），2026-07-31 实测已增至 98 个
+    （趋势 +65，恶化 +24）——exemption 传染正在发生。
+
+    根因链：①每个新治理脚本需读词表值做自身逻辑时，最省力路径是加 # noqa: gate-vocab 而非扩展
+    SSoT 函数 load_vocabulary_values()；②基线 _NOQA_BASELINE=33 是硬编码魔数，治本降低豁免后
+    无人更新——趋势永远显示正值，产生"狼来了"麻木效应；③check_vocab_hardcode.py 自身豁免 19 次
+    （守门人是最大违规者）——_SSOT_EXEMPT_FILES 仅豁免 yaml_utils.py 不含自身，规则盲区；
+    ④无结构化豁免登记表——每个 noqa 无审批人/理由/退役计划。
+
+    对 100% AI 开发的特殊危害：AI 看到 # noqa: gate-vocab 模式会模仿添加而非治本——exemption
+    传染的根源。+24 恶化证明传染正在发生。
+
+    治本裁定（用户已确认 2026-07-31 "全部执行"）分两期：
+    Phase 1（止血）：建立 config/governance/noqa_exempt_registry.yaml 结构化登记表，每个
+    # noqa: gate-vocab 必须登记（file/line/reason/retire_plan），否则 commit gate 阻断；
+    基线改为从登记表自动计算 len(exemptions)，消除硬编码魔数；_SSOT_EXEMPT_FILES 扩展纳入
+    check_vocab_hardcode.py 自身（它是 SSoT 真源实现非消费者）。
+    Phase 2（治本）：扩展 load_vocabulary_values() 支持批量/分组模式，治理脚本改为合法调用
+    消除豁免需求。Phase 2 本轮先登记不施工（需逐个脚本分析模式）。
+
+    否决备选：①一次性删除所有 noqa 强制 SSoT——破坏面过大，治理脚本自身确实需要读词表；
+    ②提高基线到 98 掩盖问题——开环系统仍只增不减。
+  impact:
+    - 'config/governance/noqa_exempt_registry.yaml（新建结构化豁免登记表）'
+    - 'scripts/governance/d3_metadata/check_vocab_hardcode.py（_SSOT_EXEMPT_FILES 扩展 + 基线自动计算 + 登记表校验）'
+  fix_phase: 'Phase 1 建表+扩展豁免+基线自动化；Phase 2 SSoT 函数批量模式（后续）'
+  status: decided
+  related_rules: 'AGENTS.md RULE-SSOT, AD-GOV-001 (收敛期约束)'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
