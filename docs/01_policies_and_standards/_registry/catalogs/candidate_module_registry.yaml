@@ -1392,3 +1392,99 @@ entries:
     next_review_date: '2027-07-31'
     review_frequency: yearly
     last_review_outcome: "首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-PFALLOC-001: Min-Variance & Risk-Parity 再平衡模式（deferred，形态=补方法非建模块）
+  # 来源: 实盘缺口挖掘 P1 + 源码实证 default_equity_strategy.py L57-127
+  # 修正记录: 原 P1 登记为独立策略文件节点 MOD-PF-004/MOD-PF-005（min_variance_strategy.py/
+  #   risk_parity_strategy.py），经源码验证为错误形态——min_variance/risk_parity 是
+  #   DefaultEquityStrategy.RebalanceMode 枚举值(L60-61)，实现应是 _alloc 方法(L151/162同级)，
+  #   当前 else 分支 fallback 到 equal_weight(L127)。两错误节点已软删除(deprecated)，
+  #   gap 改录候选库（补方法到既有 production 节点，不建新模块）。
+  # ----------------------------------------------------------
+  - id: CAND-PFALLOC-001
+    name: "Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式"
+    aliases: ["min_variance", "risk_parity", "最小方差", "风险平价", "RebalanceMode", "MIN_VARIANCE", "RISK_PARITY", "_min_variance_alloc", "_risk_parity_alloc"]
+    domain: D_PF_ALLOC
+    domain_status: active
+    domain_node_count: 5
+    sub_layer: "组合分配 DefaultEquityStrategy 再平衡逻辑"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-L05-001
+        target_node_id: 7714457
+        target_node_path: src/zephyr/pf_core/default_equity_strategy.py
+        target_build_status: production
+        target_neighbors:
+          upstream: []
+          downstream: ["D_EXECUTION_CORE (CTR-004 Order)"]
+        insertion_description: "不建新节点——在既有 default_equity_strategy.py 的 DefaultEquityStrategy 类内补 _min_variance_alloc()/_risk_parity_alloc() 方法，与 _equal_weight_alloc()(L151)/_signal_weight_alloc()(L162) 同级；并在 L122-127 的 if/elif 补 MIN_VARIANCE/RISK_PARITY 分支(当前 else fallback 到 equal_weight)"
+        target_edges: []
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "SynthesizedSignal + RiskLimits → [DefaultEquityStrategy.generate_target_weights 按 RebalanceMode 分发] → 目标权重 dict → CTR-004 Order"
+        upstream_data: ["CTR-P1-015 SynthesizedSignal", "CTR-003 RiskLimits"]
+        downstream_data: ["CTR-004 Order (目标权重)"]
+        insertion_description: "在 D_PF_ALLOC 权重计算环节,补两条权重计算分支"
+      decisiongraph:
+        has_position: true
+        target_layer: "L5"
+        target_track: "portfolio"
+        decision_frequency: end_of_day
+        decision_path: "信号合成 → [RebalanceMode 分发: min_variance/risk_parity] → 目标权重 → 订单"
+        insertion_description: "L5 组合层权重决策,补两种分配算法分支"
+      blueprint:
+        has_position: true
+        target_ref: "docs/03_modules/_domain_portfolio_core/blueprint.md §4.2 RebalanceMode 枚举(L289) + §4.1 generate_target_weights(L267)"
+        design_maturity: design
+    description: "在 DefaultEquityStrategy 内实现 RebalanceMode.MIN_VARIANCE 与 RISK_PARITY 两种权重分配算法:最小方差(组合方差最小化,需协方差矩阵+scipy.optimize)与风险平价(各资产风险贡献均衡,迭代求解)。当前枚举值已定义但 _alloc 方法缺失,else 分支 fallback 到 equal_weight。"
+    capability: "C-024"
+    problem_it_solves: "实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化分配方法——当前 min_variance/risk_parity 模式静默 fallback 到 equal_weight,实盘分配与预期不符"
+    trigger_signals:
+      - "实盘需启用 min_variance/risk_parity 分配模式"
+      - "回测对比需 min-variance/risk-parity 基准"
+      - "RebalanceMode 枚举值被实际调用且非 fallback"
+    keywords: ["最小方差", "风险平价", "min_variance", "risk_parity", "RebalanceMode", "组合分配", "权重优化"]
+    upstream_deps:
+      - {contract: "CTR-P1-015", from_domain: D_SIGNAL, dep_type: H, availability: available, note: "SynthesizedSignal 输入"}
+      - {contract: "CTR-003", from_domain: D_RISK, dep_type: H, availability: available, note: "RiskLimits 风控约束"}
+    downstream_consumers:
+      - {consumer: "MOD-L06-001 (ExecutionEngine)", contract: "CTR-004 Order", note: "目标权重→委托"}
+    contracts_to_produce: []
+    contracts_to_consume:
+      - {id: "CTR-P1-015", note: "SynthesizedSignal"}
+      - {id: "CTR-003", note: "RiskLimits"}
+    prerequisites:
+      - {condition: "协方差矩阵计算可用(历史收益率)", check: "D_DATA 历史日线数据", met: true, note: "c1_market 有日线"}
+      - {condition: "scipy.optimize 可用", check: "依赖 scipy", met: true, note: "scipy 已在依赖"}
+      - {condition: "DefaultEquityStrategy.generate_target_weights 分发逻辑稳定", check: "L122-127 if/elif", met: true}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["7714457 (default_equity_strategy.py)"], evidence: "枚举值已定义(L60-61)但 _min_variance_alloc/_risk_parity_alloc 方法不存在,L127 else fallback 到 equal_weight——部分实现(占位),实际未生效"}
+      q2_demand_driven: {result: true, trigger_pain_point: "实盘需 min-variance/risk-parity 分配,当前静默 fallback 与预期不符", evidence: "基础量化分配方法,实盘缺口挖掘 P1"}
+      q3_domain_alive: {result: true, evidence: "D_PF_ALLOC 5节点,active;default_equity_strategy.py=production"}
+      q4_ai_replaceable: {result: false, evidence: "需数值优化代码(协方差矩阵/scipy.optimize/迭代求解),非AI语义理解可替代"}
+      blocking_question: none
+      result: deferred
+    status: deferred
+    priority: P1
+    created_at: '2026-08-01'
+    last_reviewed_at: '2026-08-01'
+    promoted_to: ""
+    source_draft: "实盘缺口挖掘 P1 (2026-07-31) + 源码实证 default_equity_strategy.py"
+    source_section: "L57-127 RebalanceMode 枚举与 generate_target_weights 分发"
+    original_id: "PFALLOC-rebalance-modes"
+    estimated_complexity: M
+    estimated_effort: "5人天"
+    tech_notes: "实现:1) _min_variance_alloc(): w=argmin wᵀΣw s.t. Σw=1, scipy.optimize.minimize(SLSQP);2) _risk_parity_alloc(): 迭代使各资产风险贡献均衡;3) 在 generate_target_weights L122-127 补 elif MIN_VARIANCE/RISK_PARITY 分支移除 else fallback;4) 单测覆盖。注意:不建新文件/新节点,补方法到既有 DefaultEquityStrategy 类(节点 7714457)"
+    risks: ["协方差矩阵估计噪声大需 shrinkage", "风险平价迭代不收敛需 fallback", "与 signal_weight 模式语义边界需厘清"]
+    alternatives: "维持 equal_weight/signal_weight。代价:无法执行 min-variance/risk-parity 分配,实盘分配策略受限"
+    tags: ["实盘缺口", "P1", "补方法非建模块", "组合分配", "已修正错误登记", "deferred"]
+    search_terms: ["min variance", "risk parity", "最小方差", "风险平价", "rebalance mode", "default equity strategy"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2026-11-30'
+    review_frequency: quarterly
+    last_review_outcome: "首次登记(修正错误登记后)。原误登记为独立策略文件节点 MOD-PF-004/MOD-PF-005,源码验证为枚举方法级缺口后软删除节点并改录候选。待实盘需启用 min-variance/risk-parity 分配时晋升为 DefaultEquityStrategy 代码补丁(非新 depgraph 节点)"
