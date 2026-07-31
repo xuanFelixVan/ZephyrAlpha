@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 """候选模块登记表查询工具。
 
