@@ -95,7 +95,7 @@ ttl: permanent
 #### 第 1 页 / 共 2 页
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '20px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_governance_generators_generate_script_manifest_py["(生产态 / production) generate_script_manifest.py — 脚本清单自动生成器<br/>文件: generate_script_manifest.py"]
     src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py["(生产态 / production) 自适应阈值——双模式：概率型（PASS/FAIL outcome...<br/>文件: adaptive_threshold.py"]
@@ -217,7 +217,7 @@ flowchart TD
 #### 第 2 页 / 共 2 页
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '20px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) TaskCompletionGate: scan for residual files out...<br/>文件: task_completion_gate.py"]
     src_zephyr_gov_enforcement_rule_enforcement_task_types_py["(生产态 / production) task_types.py"]
@@ -264,7 +264,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 35 个，12 条域内依赖）。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '20px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_governance_generators_generate_script_manifest_py["(生产态 / production) generate_script_manifest.py — 脚本清单自动生成器<br/>文件: generate_script_manifest.py"]
     src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py["(生产态 / production) 自适应阈值——双模式：概率型（PASS/FAIL outcome...<br/>文件: adaptive_threshold.py"]
@@ -476,7 +476,7 @@ flowchart TD
 > 本域与 13 个外部域直接连接（出边 32 条 + 入边 29 条 = 61 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '20px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
     D_SHARED["D_SHARED<br/>共享服务"]

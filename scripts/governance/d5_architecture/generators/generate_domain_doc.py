@@ -766,7 +766,7 @@ _MERMAID_GRAY_THEME = (
     "%%{init: {'theme': 'base', 'themeVariables': {"
     "'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
     "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
-    "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '20px'"
+    "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'"
     "}}}%%"
 )
 
