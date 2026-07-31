@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_ARCH_SCRIPTS 架构治理脚本架构文档
 version: "1.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
@@ -14,6 +14,8 @@ ttl: permanent
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
+
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/31_d_arch_scripts.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 域基本信息 / Domain Overview
 

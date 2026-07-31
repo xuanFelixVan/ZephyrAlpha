@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INFRASTRUCTURE 跨层契约基础设施架构文档
 version: "1.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
@@ -16,6 +16,8 @@ ttl: permanent
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
+
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/02_d_infrastructure.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 域基本信息 / Domain Overview
 
@@ -85,8 +87,8 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_backup_backup_reconciler_py["(生产态 / production) backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>文件: backup/backup_reconciler.py"]
-    src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>文件: config/__init__.py"]
+    scripts_backup_backup_reconciler_py["(生产态 / production) backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>文件: backup/backup_reconciler.py"]
+    src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>文件: config/__init__.py"]
     src_zephyr_shared_contracts_capital_allocation_result_py["(生产态 / production) contracts/capital_allocation_result.py"]
     src_zephyr_shared_contracts_compliance_rule_py["(生产态 / production) contracts/compliance_rule.py"]
     src_zephyr_shared_contracts_execution_report_py["(生产态 / production) contracts/execution_report.py"]
@@ -132,15 +134,15 @@ flowchart TD
     src_zephyr_shared_contracts_synthesized_signal_py ~~~ src_zephyr_shared_contracts_system_configuration_py
     src_zephyr_shared_contracts_system_configuration_py ~~~ src_zephyr_shared_contracts_telemetry_emitter_py
     src_zephyr_shared_contracts_telemetry_emitter_py ~~~ src_zephyr_shared_contracts_trace_context_py
-    src_zephyr_infrastructure_config_app_config_py["(生产态 / production) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: config/app_config.py"]
+    src_zephyr_infrastructure_config_app_config_py["(生产态 / production) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: config/app_config.py"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
@@ -155,20 +157,20 @@ flowchart TD
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_SIGQC["(生产态 / production) D_SIGQC 信号质量控制"]
     D_SIGQC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL 基本面信号"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC 组合分配"]
     D_PF_ALLOC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY 代码质量治理"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
@@ -184,8 +186,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_backup_backup_reconciler_py["(生产态 / production) backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>文件: backup/backup_reconciler.py"]
-    src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>文件: config/__init__.py"]
+    scripts_backup_backup_reconciler_py["(生产态 / production) backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>文件: backup/backup_reconciler.py"]
+    src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>文件: config/__init__.py"]
     src_zephyr_shared_contracts_capital_allocation_result_py["(生产态 / production) contracts/capital_allocation_result.py"]
     src_zephyr_shared_contracts_compliance_rule_py["(生产态 / production) contracts/compliance_rule.py"]
     src_zephyr_shared_contracts_execution_report_py["(生产态 / production) contracts/execution_report.py"]
@@ -231,15 +233,15 @@ flowchart TD
     src_zephyr_shared_contracts_synthesized_signal_py ~~~ src_zephyr_shared_contracts_system_configuration_py
     src_zephyr_shared_contracts_system_configuration_py ~~~ src_zephyr_shared_contracts_telemetry_emitter_py
     src_zephyr_shared_contracts_telemetry_emitter_py ~~~ src_zephyr_shared_contracts_trace_context_py
-    src_zephyr_infrastructure_config_app_config_py["(生产态 / production) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: config/app_config.py"]
+    src_zephyr_infrastructure_config_app_config_py["(生产态 / production) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: config/app_config.py"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
@@ -254,20 +256,20 @@ flowchart TD
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_SIGQC["(生产态 / production) D_SIGQC 信号质量控制"]
     D_SIGQC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL 基本面信号"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC 组合分配"]
     D_PF_ALLOC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY 代码质量治理"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
@@ -288,13 +290,13 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | backup_reconciler.py — 灾备备份系统事件触发器... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
+| 1 | backup_reconciler.py — 灾备备份系统事件触发器（post-comm... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 2 | contracts/experiment_result.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 3 | contracts/factor_signal.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 4 | contracts/fill.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 5 | contracts/market_data.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 6 | contracts/order.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
-| 7 | contracts/order.py | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
+| 7 | contracts/order.py | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
 | 8 | contracts/position.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 9 | contracts/risk_limits.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 10 | contracts/synthesized_signal.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
@@ -303,59 +305,59 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Execution Engine (ex_core/e... | → | contracts/order.py | 导入依赖 / import_depends |
-| 2 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Execution Engine (ex_core/e... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
-| 3 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/orde... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 4 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/orde... | → | contracts/order.py | 导入依赖 / import_depends |
-| 5 | D_FACTOR 因子: CTR-001 NormalizedMarketData 消费者——数据适配... | → | contracts/market_data.py | 导入依赖 / import_depends |
-| 6 | D_FACTOR 因子: CTR-002 FactorSignal 生产者——信号适配层。 (ct... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 7 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggreg... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 8 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggreg... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (implemen... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (implemen... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (implemen... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (synth/signal_sy... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 15 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (synth/signal_sy... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 16 | D_GOVERNANCE 生命周期管理: A2A Protocol 全链路满分验证脚本 (scripts/a2a_fu... | → | ZephyrAlpha — 基础设施 Infrastructure Layer —... | 导入依赖 / import_depends |
-| 17 | D_GOVERNANCE 生命周期管理: local_layer_daemon.py — L2 本地模型层守护进程... | → | ZephyrAlpha — 基础设施 Infrastructure Layer —... | 导入依赖 / import_depends |
-| 18 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
-| 19 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 20 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | → | contracts/order.py | 导入依赖 / import_depends |
-| 21 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | → | contracts/position.py | 导入依赖 / import_depends |
-| 22 | D_GOV_CODE_QUALITY 代码质量治理: 配置管理 — 策略树 YAML 加载 + 项目规模感知四 T... | → | app_config.py — 应用配置数据类与加载/热重载逻... | 导入依赖 / import_depends |
-| 23 | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z... | → | contracts/compliance_rule.py | 导入依赖 / import_depends |
-| 24 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/healt... | → | contracts/telemetry_emitter.py | 导入依赖 / import_depends |
+| 1 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Execution Engine (ex_core/execution_e... | → | contracts/order.py | 导入依赖 / import_depends |
+| 2 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Execution Engine (ex_core/execution_e... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
+| 3 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | contracts/fill.py | 导入依赖 / import_depends |
+| 4 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | contracts/order.py | 导入依赖 / import_depends |
+| 5 | D_FACTOR 因子: CTR-001 NormalizedMarketData 消费者——数据适配层。 (ctr0... | → | contracts/market_data.py | 导入依赖 / import_depends |
+| 6 | D_FACTOR 因子: CTR-002 FactorSignal 生产者——信号适配层。 (ctr002_produ... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 7 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 8 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (implementations/de... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (implementations/de... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (implementations/de... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 15 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 16 | D_GOVERNANCE 生命周期管理: A2A Protocol 全链路满分验证脚本 (scripts/a2a_full_verific... | → | ZephyrAlpha — 基础设施 Infrastructure Layer — Configura... | 导入依赖 / import_depends |
+| 17 | D_GOVERNANCE 生命周期管理: local_layer_daemon.py — L2 本地模型层守护进程（薄包装，D... | → | ZephyrAlpha — 基础设施 Infrastructure Layer — Configura... | 导入依赖 / import_depends |
+| 18 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
+| 19 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | contracts/fill.py | 导入依赖 / import_depends |
+| 20 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | contracts/order.py | 导入依赖 / import_depends |
+| 21 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | contracts/position.py | 导入依赖 / import_depends |
+| 22 | D_GOV_CODE_QUALITY 代码质量治理: 配置管理 — 策略树 YAML 加载 + 项目规模感知四 Tier 自适应... | → | app_config.py — 应用配置数据类与加载/热重载逻辑 (config/... | 导入依赖 / import_depends |
+| 23 | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 zephyr.shar... | → | contracts/compliance_rule.py | 导入依赖 / import_depends |
+| 24 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | contracts/telemetry_emitter.py | 导入依赖 / import_depends |
 | 25 | D_MKT_DATA 行情数据: market_data/__init__.py | → | contracts/market_data.py | 导入依赖 / import_depends |
-| 26 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FA... | → | contracts/market_data.py | 导入依赖 / import_depends |
+| 26 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | contracts/market_data.py | 导入依赖 / import_depends |
 | 27 | D_PF_ALLOC 组合分配: pf_alloc/strategy_lifecycle_event.py | → | contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
-| 28 | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | contracts/order.py | 导入依赖 / import_depends |
-| 29 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (repo... | → | contracts/execution_report.py | 导入依赖 / import_depends |
-| 30 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (repo... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 31 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (repo... | → | contracts/order.py | 导入依赖 / import_depends |
-| 32 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (repo... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 33 | D_REPORTING 报告: D_REPORTING — Default Attribution Engine (repo... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 34 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/de... | → | contracts/execution_report.py | 导入依赖 / import_depends |
-| 35 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/de... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 36 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/de... | → | contracts/order.py | 导入依赖 / import_depends |
-| 37 | D_RISK 风控: D_RISK — Risk Limits Calculator (risk/risk_lim... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
-| 38 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
-| 39 | D_SHARED 共享服务: Re-export shim — 真源已收敛至 zephyr.shared.co... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 40 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor B... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 41 | D_SIMULATION 仿真: 实验 — Experimentation Pipeline Layer (simulat... | → | contracts/experiment_result.py | 导入依赖 / import_depends |
-| 42 | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_co... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 43 | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_co... | → | contracts/order.py | 导入依赖 / import_depends |
-| 44 | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_co... | → | contracts/position.py | 导入依赖 / import_depends |
+| 28 | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | contracts/order.py | 导入依赖 / import_depends |
+| 29 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/execution_report.py | 导入依赖 / import_depends |
+| 30 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/fill.py | 导入依赖 / import_depends |
+| 31 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/order.py | 导入依赖 / import_depends |
+| 32 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 33 | D_REPORTING 报告: D_REPORTING — Default Attribution Engine (reporting/defa... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 34 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | contracts/execution_report.py | 导入依赖 / import_depends |
+| 35 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | contracts/fill.py | 导入依赖 / import_depends |
+| 36 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | contracts/order.py | 导入依赖 / import_depends |
+| 37 | D_RISK 风控: D_RISK — Risk Limits Calculator (risk/risk_limits.py) | → | contracts/risk_limits.py | 导入依赖 / import_depends |
+| 38 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
+| 39 | D_SHARED 共享服务: Re-export shim — 真源已收敛至 zephyr.shared.contracts.pe... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 40 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor Base (signa... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 41 | D_SIMULATION 仿真: 实验 — Experimentation Pipeline Layer (simulation/pipeli... | → | contracts/experiment_result.py | 导入依赖 / import_depends |
+| 42 | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | → | contracts/fill.py | 导入依赖 / import_depends |
+| 43 | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | → | contracts/order.py | 导入依赖 / import_depends |
+| 44 | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | → | contracts/position.py | 导入依赖 / import_depends |
 | 45 | D_TRADING 交易运营: execution/execution_rejection_error.py | → | contracts/trace_context.py | 导入依赖 / import_depends |
-| 46 | D_TRADING 交易运营: Re-export wrapper: ExecutionReport 真源在 zephy... | → | contracts/execution_report.py | 导入依赖 / import_depends |
-| 47 | D_TRADING 交易运营: Re-export wrapper: Fill 真源在 zephyr.shared.co... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 48 | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.c... | → | contracts/order.py | 导入依赖 / import_depends |
-| 49 | D_TRADING 交易运营: Re-export wrapper: PositionSnapshot 真源在 zeph... | → | contracts/position.py | 导入依赖 / import_depends |
-| 50 | D_TRADING 交易运营: trading-contracts/factories.py — 交易域数据契... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 51 | D_TRADING 交易运营: trading-contracts/factories.py — 交易域数据契... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 46 | D_TRADING 交易运营: Re-export wrapper: ExecutionReport 真源在 zephyr.shared.c... | → | contracts/execution_report.py | 导入依赖 / import_depends |
+| 47 | D_TRADING 交易运营: Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fi... | → | contracts/fill.py | 导入依赖 / import_depends |
+| 48 | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | → | contracts/order.py | 导入依赖 / import_depends |
+| 49 | D_TRADING 交易运营: Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | → | contracts/position.py | 导入依赖 / import_depends |
+| 50 | D_TRADING 交易运营: trading-contracts/factories.py — 交易域数据契约工厂方法 ... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 51 | D_TRADING 交易运营: trading-contracts/factories.py — 交易域数据契约工厂方法 ... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
 | 52 | D_TRADING 交易运营: market/signal_degradation_warning.py | → | contracts/trace_context.py | 导入依赖 / import_depends |
-| 53 | D_TRADING 交易运营: Re-export shim — 真源已收敛至 zephyr.shared.co... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 53 | D_TRADING 交易运营: Re-export shim — 真源已收敛至 zephyr.shared.contracts.pe... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
 | 54 | D_TRADING 交易运营: contracts/strategy_lifecycle_event.py | → | contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
 | 55 | D_TRADING 交易运营: risk/risk_limit_violation_error.py | → | contracts/trace_context.py | 导入依赖 / import_depends |
 | 56 | D_TRADING 交易运营: risk/risk_limits.py | → | contracts/trace_context.py | 导入依赖 / import_depends |

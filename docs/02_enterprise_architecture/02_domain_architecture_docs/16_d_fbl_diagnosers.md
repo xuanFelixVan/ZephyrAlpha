@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_FBL_DIAGNOSERS 反馈诊断器架构文档
 version: "1.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
@@ -16,6 +16,8 @@ ttl: permanent
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
+
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/16_d_fbl_diagnosers.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 域基本信息 / Domain Overview
 
@@ -138,33 +140,33 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>文件: diagnosers/__init__.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: cognitive/adaptive_param_tuning.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive/cognitive_load.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive/cognitive_load_budget.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py["(生产态 / production) Collaborative Learning — v0.7.0 R82<br/>文件: cognitive/collaborative_learning.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py["(生产态 / production) Confidence Decomposer — v0.7.0 R83<br/>文件: cognitive/confidence_decomposer.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py["(生产态 / production) Gamification — v0.8.0 R101<br/>文件: cognitive/gamification.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py["(生产态 / production) R516: MetaGuardLatencyBudget<br/>文件: cognitive/meta_guard_latency_budget.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py["(生产态 / production) Socratic Questions — v0.7.0 R81<br/>文件: cognitive/socratic_questions.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py["(生产态 / production) Tone Adapter — v0.9.0 R127<br/>文件: cognitive/tone_adapter.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py["(生产态 / production) Tone Adapter v2 — v0.10.0 R141<br/>文件: cognitive/tone_adapter_v2.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py["(生产态 / production) Auto Diagnosis — v0.3.0 R16<br/>文件: diagnosis/auto_diagnosis.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py["(生产态 / production) Causal Inference Engine — v0.3.0 R5-R7<br/>文件: diagnosis/causal_inference_engine.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py["(生产态 / production) Counterfactual Engine — v0.6.0 R60<br/>文件: diagnosis/counterfactual.py"]
+    src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>文件: diagnosers/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: cognitive/adaptive_param_tuning.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive/cognitive_load.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive/cognitive_load_budget.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py["(生产态 / production) Collaborative Learning — v0.7.0 R82<br/>Collaborative Learning — v0.7.0 R82<br/>文件: cognitive/collaborative_learning.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py["(生产态 / production) Confidence Decomposer — v0.7.0 R83<br/>Confidence Decomposer — v0.7.0 R83<br/>文件: cognitive/confidence_decomposer.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py["(生产态 / production) Gamification — v0.8.0 R101<br/>Gamification — v0.8.0 R101<br/>文件: cognitive/gamification.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py["(生产态 / production) R516: MetaGuardLatencyBudget<br/>R516: MetaGuardLatencyBudget<br/>文件: cognitive/meta_guard_latency_budget.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py["(生产态 / production) Socratic Questions — v0.7.0 R81<br/>Socratic Questions — v0.7.0 R81<br/>文件: cognitive/socratic_questions.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py["(生产态 / production) Tone Adapter — v0.9.0 R127<br/>Tone Adapter — v0.9.0 R127<br/>文件: cognitive/tone_adapter.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py["(生产态 / production) Tone Adapter v2 — v0.10.0 R141<br/>Tone Adapter v2 — v0.10.0 R141<br/>文件: cognitive/tone_adapter_v2.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py["(生产态 / production) Auto Diagnosis — v0.3.0 R16<br/>Auto Diagnosis — v0.3.0 R16<br/>文件: diagnosis/auto_diagnosis.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py["(生产态 / production) Causal Inference Engine — v0.3.0 R5-R7<br/>Causal Inference Engine — v0.3.0 R5-R7<br/>文件: diagnosis/causal_inference_engine.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py["(生产态 / production) Counterfactual Engine — v0.6.0 R60<br/>Counterfactual Engine — v0.6.0 R60<br/>文件: diagnosis/counterfactual.py"]
     src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py["(生产态 / production) diagnosis/diagnosis_engine.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py["(生产态 / production) Diagnosis KPI — v0.9.0 R116<br/>文件: diagnosis/diagnosis_kpi.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py["(生产态 / production) Impact Predictor — v0.9.0 R121<br/>文件: diagnosis/impact_predictor.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py["(生产态 / production) R504: IncidentKnowledgeInjector<br/>文件: diagnosis/incident_knowledge_injector.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py["(生产态 / production) Interactive Diagnosis — v0.7.0 R80<br/>文件: diagnosis/interactive_diagnosis.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py["(生产态 / production) Knowledge Bus Factor Monitor — v0.38.0 R481<br/>文件: diagnosis/knowledge_bus_factor_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py["(生产态 / production) Knowledge Market — v0.9.0 R126<br/>文件: diagnosis/knowledge_market.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py["(生产态 / production) MTTI Tracker — v0.16.0 R221<br/>文件: diagnosis/mtti_tracker.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py["(生产态 / production) Nonstationary Effectiveness — v0.37.0 R455<br/>文件: diagnosis/nonstationary_effectiveness.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py["(生产态 / production) Statistical Hygiene Auditor — v0.38.0 R476<br/>文件: diagnosis/statistical_hygiene_auditor.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py["(生产态 / production) Vertical Self Assessment — v0.10.0 R137<br/>文件: diagnosis/vertical_self_assessment.py"]
-    src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py["(生产态 / production) R511: ActionCompositionHealthMonitor<br/>文件: health/action_composition_health_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py["(生产态 / production) DR Resilience Metrics — v0.17.0+ R231-R236<br/>文件: health/dr_resilience_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py["(生产态 / production) Diagnosis KPI — v0.9.0 R116<br/>Diagnosis KPI — v0.9.0 R116<br/>文件: diagnosis/diagnosis_kpi.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py["(生产态 / production) Impact Predictor — v0.9.0 R121<br/>Impact Predictor — v0.9.0 R121<br/>文件: diagnosis/impact_predictor.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py["(生产态 / production) R504: IncidentKnowledgeInjector<br/>R504: IncidentKnowledgeInjector<br/>文件: diagnosis/incident_knowledge_injector.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py["(生产态 / production) Interactive Diagnosis — v0.7.0 R80<br/>Interactive Diagnosis — v0.7.0 R80<br/>文件: diagnosis/interactive_diagnosis.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py["(生产态 / production) Knowledge Bus Factor Monitor — v0.38.0 R481<br/>Knowledge Bus Factor Monitor — v0.38.0 R481<br/>文件: diagnosis/knowledge_bus_factor_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py["(生产态 / production) Knowledge Market — v0.9.0 R126<br/>Knowledge Market — v0.9.0 R126<br/>文件: diagnosis/knowledge_market.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py["(生产态 / production) MTTI Tracker — v0.16.0 R221<br/>MTTI Tracker — v0.16.0 R221<br/>文件: diagnosis/mtti_tracker.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py["(生产态 / production) Nonstationary Effectiveness — v0.37.0 R455<br/>Nonstationary Effectiveness — v0.37.0 R455<br/>文件: diagnosis/nonstationary_effectiveness.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py["(生产态 / production) Statistical Hygiene Auditor — v0.38.0 R476<br/>Statistical Hygiene Auditor — v0.38.0 R476<br/>文件: diagnosis/statistical_hygiene_auditor.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py["(生产态 / production) Vertical Self Assessment — v0.10.0 R137<br/>Vertical Self Assessment — v0.10.0 R137<br/>文件: diagnosis/vertical_self_assessment.py"]
+    src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py["(生产态 / production) R511: ActionCompositionHealthMonitor<br/>R511: ActionCompositionHealthMonitor<br/>文件: health/action_composition_health_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py["(生产态 / production) DR Resilience Metrics — v0.17.0+ R231-R236<br/>DR Resilience Metrics — v0.17.0+ R231-R236<br/>文件: health/dr_resilience_metrics.py"]
     src_zephyr_feedback_loop_diagnosers_init_py ~~~ src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py
     src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py ~~~ src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py
     src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py ~~~ src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py
@@ -222,36 +224,36 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py["(生产态 / production) E2E Integration Health Monitor — v0.39.0 R489<br/>文件: health/e2e_integration_health.py"]
-    src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py["(生产态 / production) FLE Dogfood Monitor — v0.38.0 R480<br/>文件: health/fle_dogfood_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py["(生产态 / production) FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>文件: health/fle_self_slo_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_health_global_health_map_py["(生产态 / production) Global Health Map — v0.8.0 R103<br/>文件: health/global_health_map.py"]
-    src_zephyr_feedback_loop_diagnosers_health_memory_self_check_py["(生产态 / production) Memory Self Check — v0.8.0 R105<br/>文件: health/memory_self_check.py"]
-    src_zephyr_feedback_loop_diagnosers_health_model_health_py["(生产态 / production) Model Health Monitor — v0.5.0 R40<br/>文件: health/model_health.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py["(生产态 / production) Self Benchmark — v0.9.0 R115<br/>文件: health/self_benchmark.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py["(生产态 / production) Self-Bottleneck Detector — v0.38.0 R479<br/>文件: health/self_bottleneck_detector.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py["(生产态 / production) Self Health Monitor — v0.4.0 R29<br/>文件: health/self_health_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py["(生产态 / production) Self LLM Observability — v0.12.0 R160<br/>文件: health/self_llm_observability.py"]
+    src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py["(生产态 / production) E2E Integration Health Monitor — v0.39.0 R489<br/>E2E Integration Health Monitor — v0.39.0 R489<br/>文件: health/e2e_integration_health.py"]
+    src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py["(生产态 / production) FLE Dogfood Monitor — v0.38.0 R480<br/>FLE Dogfood Monitor — v0.38.0 R480<br/>文件: health/fle_dogfood_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py["(生产态 / production) FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>文件: health/fle_self_slo_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_health_global_health_map_py["(生产态 / production) Global Health Map — v0.8.0 R103<br/>Global Health Map — v0.8.0 R103<br/>文件: health/global_health_map.py"]
+    src_zephyr_feedback_loop_diagnosers_health_memory_self_check_py["(生产态 / production) Memory Self Check — v0.8.0 R105<br/>Memory Self Check — v0.8.0 R105<br/>文件: health/memory_self_check.py"]
+    src_zephyr_feedback_loop_diagnosers_health_model_health_py["(生产态 / production) Model Health Monitor — v0.5.0 R40<br/>Model Health Monitor — v0.5.0 R40<br/>文件: health/model_health.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py["(生产态 / production) Self Benchmark — v0.9.0 R115<br/>Self Benchmark — v0.9.0 R115<br/>文件: health/self_benchmark.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py["(生产态 / production) Self-Bottleneck Detector — v0.38.0 R479<br/>Self-Bottleneck Detector — v0.38.0 R479<br/>文件: health/self_bottleneck_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py["(生产态 / production) Self Health Monitor — v0.4.0 R29<br/>Self Health Monitor — v0.4.0 R29<br/>文件: health/self_health_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py["(生产态 / production) Self LLM Observability — v0.12.0 R160<br/>Self LLM Observability — v0.12.0 R160<br/>文件: health/self_llm_observability.py"]
     src_zephyr_feedback_loop_diagnosers_reliability_init_py["(生产态 / production) reliability/__init__.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py["(生产态 / production) Amplification Guard — v0.10.0 R134<br/>文件: reliability/amplification_guard.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py["(生产态 / production) API Dependency Metrics — v0.17.0+ R237-R242<br/>文件: reliability/api_dependency_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py["(生产态 / production) Burn Rate Alerter — v0.14.0 R200<br/>文件: reliability/burn_rate_alerter.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_burnout_alarm_py["(生产态 / production) Burnout Alarm — v0.8.0 R100<br/>文件: reliability/burnout_alarm.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py["(生产态 / production) Capacity Aware Repair — v0.9.0 R120<br/>文件: reliability/capacity_aware_repair.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py["(生产态 / production) R509: ColdStartConservativeMode<br/>文件: reliability/cold_start_conservative_mode.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py["(生产态 / production) Context Truncation Detector — v0.9.0 R122<br/>文件: reliability/context_truncation.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py["(生产态 / production) R506: ContextWindowPressureManager<br/>文件: reliability/context_window_pressure_manager.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_cross_guard_conflict_detector_py["(生产态 / production) R513: CrossGuardConflictDetector<br/>文件: reliability/cross_guard_conflict_detector.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_cross_session_consistency_validator_py["(生产态 / production) R510: CrossSessionConsistencyValidator<br/>文件: reliability/cross_session_consistency_validator.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py["(生产态 / production) Data Volume Growth Monitor — v0.39.0 R492<br/>文件: reliability/data_volume_growth_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_feedback_delay_compensator_py["(生产态 / production) Feedback Delay Compensator — v0.38.0 R477<br/>文件: reliability/feedback_delay_compensator.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py["(生产态 / production) R518: GuardInteractionTopologyMapper<br/>文件: reliability/guard_interaction_topology_mapper.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py["(生产态 / production) R512: GuardSelfConsistencyAuditor<br/>文件: reliability/guard_self_consistency_auditor.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_human_anomaly_flood_detector_py["(生产态 / production) Human Anomaly Flood Detector — v0.40.0 R500<br/>文件: reliability/human_anomaly_flood_detector.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py["(生产态 / production) Latency SLO Monitor — v0.14.0 R192<br/>文件: reliability/latency_slo.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_llm_provider_integrity_py["(生产态 / production) LLM Provider Integrity — v0.15.0 R217<br/>文件: reliability/llm_provider_integrity.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py["(生产态 / production) LLM Quality Regression — v0.12.0 R161<br/>文件: reliability/llm_quality_regression.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py["(生产态 / production) Model Rotation — v0.9.0 R125<br/>文件: reliability/model_rotation.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py["(生产态 / production) Amplification Guard — v0.10.0 R134<br/>Amplification Guard — v0.10.0 R134<br/>文件: reliability/amplification_guard.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py["(生产态 / production) API Dependency Metrics — v0.17.0+ R237-R242<br/>API Dependency Metrics — v0.17.0+ R237-R242<br/>文件: reliability/api_dependency_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py["(生产态 / production) Burn Rate Alerter — v0.14.0 R200<br/>Burn Rate Alerter — v0.14.0 R200<br/>文件: reliability/burn_rate_alerter.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_burnout_alarm_py["(生产态 / production) Burnout Alarm — v0.8.0 R100<br/>Burnout Alarm — v0.8.0 R100<br/>文件: reliability/burnout_alarm.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py["(生产态 / production) Capacity Aware Repair — v0.9.0 R120<br/>Capacity Aware Repair — v0.9.0 R120<br/>文件: reliability/capacity_aware_repair.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py["(生产态 / production) R509: ColdStartConservativeMode<br/>R509: ColdStartConservativeMode<br/>文件: reliability/cold_start_conservative_mode.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py["(生产态 / production) Context Truncation Detector — v0.9.0 R122<br/>Context Truncation Detector — v0.9.0 R122<br/>文件: reliability/context_truncation.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py["(生产态 / production) R506: ContextWindowPressureManager<br/>R506: ContextWindowPressureManager<br/>文件: reliability/context_window_pressure_manager.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_cross_guard_conflict_detector_py["(生产态 / production) R513: CrossGuardConflictDetector<br/>R513: CrossGuardConflictDetector<br/>文件: reliability/cross_guard_conflict_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_cross_session_consistency_validator_py["(生产态 / production) R510: CrossSessionConsistencyValidator<br/>R510: CrossSessionConsistencyValidator<br/>文件: reliability/cross_session_consistency_validator.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py["(生产态 / production) Data Volume Growth Monitor — v0.39.0 R492<br/>Data Volume Growth Monitor — v0.39.0 R492<br/>文件: reliability/data_volume_growth_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_feedback_delay_compensator_py["(生产态 / production) Feedback Delay Compensator — v0.38.0 R477<br/>Feedback Delay Compensator — v0.38.0 R477<br/>文件: reliability/feedback_delay_compensator.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py["(生产态 / production) R518: GuardInteractionTopologyMapper<br/>R518: GuardInteractionTopologyMapper<br/>文件: reliability/guard_interaction_topology_mapper.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py["(生产态 / production) R512: GuardSelfConsistencyAuditor<br/>R512: GuardSelfConsistencyAuditor<br/>文件: reliability/guard_self_consistency_auditor.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_human_anomaly_flood_detector_py["(生产态 / production) Human Anomaly Flood Detector — v0.40.0 R500<br/>Human Anomaly Flood Detector — v0.40.0 R500<br/>文件: reliability/human_anomaly_flood_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py["(生产态 / production) Latency SLO Monitor — v0.14.0 R192<br/>Latency SLO Monitor — v0.14.0 R192<br/>文件: reliability/latency_slo.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_llm_provider_integrity_py["(生产态 / production) LLM Provider Integrity — v0.15.0 R217<br/>LLM Provider Integrity — v0.15.0 R217<br/>文件: reliability/llm_provider_integrity.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py["(生产态 / production) LLM Quality Regression — v0.12.0 R161<br/>LLM Quality Regression — v0.12.0 R161<br/>文件: reliability/llm_quality_regression.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py["(生产态 / production) Model Rotation — v0.9.0 R125<br/>Model Rotation — v0.9.0 R125<br/>文件: reliability/model_rotation.py"]
     src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py ~~~ src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py
     src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py ~~~ src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py
     src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py ~~~ src_zephyr_feedback_loop_diagnosers_health_global_health_map_py
@@ -293,22 +295,22 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py["(生产态 / production) Model Rotation v2 — v0.10.0 R140<br/>文件: reliability/model_rotation_v2.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py["(生产态 / production) Model Version Semantic Drift Monitor — v0.39.0 R493<br/>文件: reliability/model_version_semantic_drift.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py["(生产态 / production) Numerical Stability Guard — v0.38.0 R475<br/>文件: reliability/numerical_stability_guard.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py["(生产态 / production) Operational Seasonality — v0.16.0 R228<br/>文件: reliability/operational_seasonality.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py["(生产态 / production) Prompt Fingerprint — v0.3.0 R14<br/>文件: reliability/prompt_fingerprint.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py["(生产态 / production) Prompt Sanitizer — v0.10.0 R133<br/>文件: reliability/prompt_sanitizer.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py["(生产态 / production) Recovery Time Statistics — v0.37.0 R454<br/>文件: reliability/recovery_time_stats.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py["(生产态 / production) Regime Gain Scheduling — v0.37.0 R453<br/>文件: reliability/regime_gain_scheduling.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py["(生产态 / production) Retirement Planner — v0.10.0 R139<br/>文件: reliability/retirement_planner.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py["(生产态 / production) SLO Capacity Metrics — v0.17.0+ R243-R248<br/>文件: reliability/slo_capacity_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py["(生产态 / production) R527: SystemEntropyMonitor<br/>文件: reliability/system_entropy_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py["(生产态 / production) Temporal Integrity Guard — v0.38.0 R478<br/>文件: reliability/temporal_integrity_guard.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py["(生产态 / production) Timezone Semantic Reasoner — v0.37.0 R456<br/>文件: reliability/timezone_semantic_reasoner.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py["(生产态 / production) Toil Quantification — v0.37.0 R457<br/>文件: reliability/toil_quantification.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py["(生产态 / production) Value Added Baseline — v0.10.0 R138<br/>文件: reliability/value_added_baseline.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py["(生产态 / production) Zombie FLE Detector — v0.16.0 R222<br/>文件: reliability/zombie_fle_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py["(生产态 / production) Model Rotation v2 — v0.10.0 R140<br/>Model Rotation v2 — v0.10.0 R140<br/>文件: reliability/model_rotation_v2.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py["(生产态 / production) Model Version Semantic Drift Monitor — v0.39.0 R493<br/>Model Version Semantic Drift Monitor — v0.39.0 R493<br/>文件: reliability/model_version_semantic_drift.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py["(生产态 / production) Numerical Stability Guard — v0.38.0 R475<br/>Numerical Stability Guard — v0.38.0 R475<br/>文件: reliability/numerical_stability_guard.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py["(生产态 / production) Operational Seasonality — v0.16.0 R228<br/>Operational Seasonality — v0.16.0 R228<br/>文件: reliability/operational_seasonality.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py["(生产态 / production) Prompt Fingerprint — v0.3.0 R14<br/>Prompt Fingerprint — v0.3.0 R14<br/>文件: reliability/prompt_fingerprint.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py["(生产态 / production) Prompt Sanitizer — v0.10.0 R133<br/>Prompt Sanitizer — v0.10.0 R133<br/>文件: reliability/prompt_sanitizer.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py["(生产态 / production) Recovery Time Statistics — v0.37.0 R454<br/>Recovery Time Statistics — v0.37.0 R454<br/>文件: reliability/recovery_time_stats.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py["(生产态 / production) Regime Gain Scheduling — v0.37.0 R453<br/>Regime Gain Scheduling — v0.37.0 R453<br/>文件: reliability/regime_gain_scheduling.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py["(生产态 / production) Retirement Planner — v0.10.0 R139<br/>Retirement Planner — v0.10.0 R139<br/>文件: reliability/retirement_planner.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py["(生产态 / production) SLO Capacity Metrics — v0.17.0+ R243-R248<br/>SLO Capacity Metrics — v0.17.0+ R243-R248<br/>文件: reliability/slo_capacity_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py["(生产态 / production) R527: SystemEntropyMonitor<br/>R527: SystemEntropyMonitor<br/>文件: reliability/system_entropy_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py["(生产态 / production) Temporal Integrity Guard — v0.38.0 R478<br/>Temporal Integrity Guard — v0.38.0 R478<br/>文件: reliability/temporal_integrity_guard.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py["(生产态 / production) Timezone Semantic Reasoner — v0.37.0 R456<br/>Timezone Semantic Reasoner — v0.37.0 R456<br/>文件: reliability/timezone_semantic_reasoner.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py["(生产态 / production) Toil Quantification — v0.37.0 R457<br/>Toil Quantification — v0.37.0 R457<br/>文件: reliability/toil_quantification.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py["(生产态 / production) Value Added Baseline — v0.10.0 R138<br/>Value Added Baseline — v0.10.0 R138<br/>文件: reliability/value_added_baseline.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py["(生产态 / production) Zombie FLE Detector — v0.16.0 R222<br/>Zombie FLE Detector — v0.16.0 R222<br/>文件: reliability/zombie_fle_detector.py"]
     src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py
     src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py
     src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py
@@ -341,78 +343,78 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>文件: diagnosers/__init__.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: cognitive/adaptive_param_tuning.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive/cognitive_load.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive/cognitive_load_budget.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py["(生产态 / production) Collaborative Learning — v0.7.0 R82<br/>文件: cognitive/collaborative_learning.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py["(生产态 / production) Confidence Decomposer — v0.7.0 R83<br/>文件: cognitive/confidence_decomposer.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py["(生产态 / production) Gamification — v0.8.0 R101<br/>文件: cognitive/gamification.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py["(生产态 / production) R516: MetaGuardLatencyBudget<br/>文件: cognitive/meta_guard_latency_budget.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py["(生产态 / production) Socratic Questions — v0.7.0 R81<br/>文件: cognitive/socratic_questions.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py["(生产态 / production) Tone Adapter — v0.9.0 R127<br/>文件: cognitive/tone_adapter.py"]
-    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py["(生产态 / production) Tone Adapter v2 — v0.10.0 R141<br/>文件: cognitive/tone_adapter_v2.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py["(生产态 / production) Auto Diagnosis — v0.3.0 R16<br/>文件: diagnosis/auto_diagnosis.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py["(生产态 / production) Causal Inference Engine — v0.3.0 R5-R7<br/>文件: diagnosis/causal_inference_engine.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py["(生产态 / production) Counterfactual Engine — v0.6.0 R60<br/>文件: diagnosis/counterfactual.py"]
+    src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>文件: diagnosers/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: cognitive/adaptive_param_tuning.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive/cognitive_load.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive/cognitive_load_budget.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py["(生产态 / production) Collaborative Learning — v0.7.0 R82<br/>Collaborative Learning — v0.7.0 R82<br/>文件: cognitive/collaborative_learning.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py["(生产态 / production) Confidence Decomposer — v0.7.0 R83<br/>Confidence Decomposer — v0.7.0 R83<br/>文件: cognitive/confidence_decomposer.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py["(生产态 / production) Gamification — v0.8.0 R101<br/>Gamification — v0.8.0 R101<br/>文件: cognitive/gamification.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py["(生产态 / production) R516: MetaGuardLatencyBudget<br/>R516: MetaGuardLatencyBudget<br/>文件: cognitive/meta_guard_latency_budget.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py["(生产态 / production) Socratic Questions — v0.7.0 R81<br/>Socratic Questions — v0.7.0 R81<br/>文件: cognitive/socratic_questions.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py["(生产态 / production) Tone Adapter — v0.9.0 R127<br/>Tone Adapter — v0.9.0 R127<br/>文件: cognitive/tone_adapter.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py["(生产态 / production) Tone Adapter v2 — v0.10.0 R141<br/>Tone Adapter v2 — v0.10.0 R141<br/>文件: cognitive/tone_adapter_v2.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py["(生产态 / production) Auto Diagnosis — v0.3.0 R16<br/>Auto Diagnosis — v0.3.0 R16<br/>文件: diagnosis/auto_diagnosis.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py["(生产态 / production) Causal Inference Engine — v0.3.0 R5-R7<br/>Causal Inference Engine — v0.3.0 R5-R7<br/>文件: diagnosis/causal_inference_engine.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py["(生产态 / production) Counterfactual Engine — v0.6.0 R60<br/>Counterfactual Engine — v0.6.0 R60<br/>文件: diagnosis/counterfactual.py"]
     src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py["(生产态 / production) diagnosis/diagnosis_engine.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py["(生产态 / production) Diagnosis KPI — v0.9.0 R116<br/>文件: diagnosis/diagnosis_kpi.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py["(生产态 / production) Impact Predictor — v0.9.0 R121<br/>文件: diagnosis/impact_predictor.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py["(生产态 / production) R504: IncidentKnowledgeInjector<br/>文件: diagnosis/incident_knowledge_injector.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py["(生产态 / production) Interactive Diagnosis — v0.7.0 R80<br/>文件: diagnosis/interactive_diagnosis.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py["(生产态 / production) Knowledge Bus Factor Monitor — v0.38.0 R481<br/>文件: diagnosis/knowledge_bus_factor_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py["(生产态 / production) Knowledge Market — v0.9.0 R126<br/>文件: diagnosis/knowledge_market.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py["(生产态 / production) MTTI Tracker — v0.16.0 R221<br/>文件: diagnosis/mtti_tracker.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py["(生产态 / production) Nonstationary Effectiveness — v0.37.0 R455<br/>文件: diagnosis/nonstationary_effectiveness.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py["(生产态 / production) Statistical Hygiene Auditor — v0.38.0 R476<br/>文件: diagnosis/statistical_hygiene_auditor.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py["(生产态 / production) Vertical Self Assessment — v0.10.0 R137<br/>文件: diagnosis/vertical_self_assessment.py"]
-    src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py["(生产态 / production) R511: ActionCompositionHealthMonitor<br/>文件: health/action_composition_health_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py["(生产态 / production) DR Resilience Metrics — v0.17.0+ R231-R236<br/>文件: health/dr_resilience_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py["(生产态 / production) E2E Integration Health Monitor — v0.39.0 R489<br/>文件: health/e2e_integration_health.py"]
-    src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py["(生产态 / production) FLE Dogfood Monitor — v0.38.0 R480<br/>文件: health/fle_dogfood_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py["(生产态 / production) FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>文件: health/fle_self_slo_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_health_global_health_map_py["(生产态 / production) Global Health Map — v0.8.0 R103<br/>文件: health/global_health_map.py"]
-    src_zephyr_feedback_loop_diagnosers_health_memory_self_check_py["(生产态 / production) Memory Self Check — v0.8.0 R105<br/>文件: health/memory_self_check.py"]
-    src_zephyr_feedback_loop_diagnosers_health_model_health_py["(生产态 / production) Model Health Monitor — v0.5.0 R40<br/>文件: health/model_health.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py["(生产态 / production) Self Benchmark — v0.9.0 R115<br/>文件: health/self_benchmark.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py["(生产态 / production) Self-Bottleneck Detector — v0.38.0 R479<br/>文件: health/self_bottleneck_detector.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py["(生产态 / production) Self Health Monitor — v0.4.0 R29<br/>文件: health/self_health_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py["(生产态 / production) Self LLM Observability — v0.12.0 R160<br/>文件: health/self_llm_observability.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py["(生产态 / production) Amplification Guard — v0.10.0 R134<br/>文件: reliability/amplification_guard.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py["(生产态 / production) API Dependency Metrics — v0.17.0+ R237-R242<br/>文件: reliability/api_dependency_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py["(生产态 / production) Burn Rate Alerter — v0.14.0 R200<br/>文件: reliability/burn_rate_alerter.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_burnout_alarm_py["(生产态 / production) Burnout Alarm — v0.8.0 R100<br/>文件: reliability/burnout_alarm.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py["(生产态 / production) Capacity Aware Repair — v0.9.0 R120<br/>文件: reliability/capacity_aware_repair.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py["(生产态 / production) R509: ColdStartConservativeMode<br/>文件: reliability/cold_start_conservative_mode.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py["(生产态 / production) Context Truncation Detector — v0.9.0 R122<br/>文件: reliability/context_truncation.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py["(生产态 / production) R506: ContextWindowPressureManager<br/>文件: reliability/context_window_pressure_manager.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_cross_guard_conflict_detector_py["(生产态 / production) R513: CrossGuardConflictDetector<br/>文件: reliability/cross_guard_conflict_detector.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_cross_session_consistency_validator_py["(生产态 / production) R510: CrossSessionConsistencyValidator<br/>文件: reliability/cross_session_consistency_validator.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py["(生产态 / production) Data Volume Growth Monitor — v0.39.0 R492<br/>文件: reliability/data_volume_growth_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_feedback_delay_compensator_py["(生产态 / production) Feedback Delay Compensator — v0.38.0 R477<br/>文件: reliability/feedback_delay_compensator.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py["(生产态 / production) R518: GuardInteractionTopologyMapper<br/>文件: reliability/guard_interaction_topology_mapper.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py["(生产态 / production) R512: GuardSelfConsistencyAuditor<br/>文件: reliability/guard_self_consistency_auditor.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_human_anomaly_flood_detector_py["(生产态 / production) Human Anomaly Flood Detector — v0.40.0 R500<br/>文件: reliability/human_anomaly_flood_detector.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py["(生产态 / production) Latency SLO Monitor — v0.14.0 R192<br/>文件: reliability/latency_slo.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_llm_provider_integrity_py["(生产态 / production) LLM Provider Integrity — v0.15.0 R217<br/>文件: reliability/llm_provider_integrity.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py["(生产态 / production) LLM Quality Regression — v0.12.0 R161<br/>文件: reliability/llm_quality_regression.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py["(生产态 / production) Model Rotation — v0.9.0 R125<br/>文件: reliability/model_rotation.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py["(生产态 / production) Model Rotation v2 — v0.10.0 R140<br/>文件: reliability/model_rotation_v2.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py["(生产态 / production) Model Version Semantic Drift Monitor — v0.39.0 R493<br/>文件: reliability/model_version_semantic_drift.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py["(生产态 / production) Numerical Stability Guard — v0.38.0 R475<br/>文件: reliability/numerical_stability_guard.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py["(生产态 / production) Operational Seasonality — v0.16.0 R228<br/>文件: reliability/operational_seasonality.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py["(生产态 / production) Prompt Fingerprint — v0.3.0 R14<br/>文件: reliability/prompt_fingerprint.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py["(生产态 / production) Prompt Sanitizer — v0.10.0 R133<br/>文件: reliability/prompt_sanitizer.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py["(生产态 / production) Recovery Time Statistics — v0.37.0 R454<br/>文件: reliability/recovery_time_stats.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py["(生产态 / production) Regime Gain Scheduling — v0.37.0 R453<br/>文件: reliability/regime_gain_scheduling.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py["(生产态 / production) Retirement Planner — v0.10.0 R139<br/>文件: reliability/retirement_planner.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py["(生产态 / production) SLO Capacity Metrics — v0.17.0+ R243-R248<br/>文件: reliability/slo_capacity_metrics.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py["(生产态 / production) R527: SystemEntropyMonitor<br/>文件: reliability/system_entropy_monitor.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py["(生产态 / production) Temporal Integrity Guard — v0.38.0 R478<br/>文件: reliability/temporal_integrity_guard.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py["(生产态 / production) Timezone Semantic Reasoner — v0.37.0 R456<br/>文件: reliability/timezone_semantic_reasoner.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py["(生产态 / production) Toil Quantification — v0.37.0 R457<br/>文件: reliability/toil_quantification.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py["(生产态 / production) Value Added Baseline — v0.10.0 R138<br/>文件: reliability/value_added_baseline.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py["(生产态 / production) Zombie FLE Detector — v0.16.0 R222<br/>文件: reliability/zombie_fle_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py["(生产态 / production) Diagnosis KPI — v0.9.0 R116<br/>Diagnosis KPI — v0.9.0 R116<br/>文件: diagnosis/diagnosis_kpi.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py["(生产态 / production) Impact Predictor — v0.9.0 R121<br/>Impact Predictor — v0.9.0 R121<br/>文件: diagnosis/impact_predictor.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py["(生产态 / production) R504: IncidentKnowledgeInjector<br/>R504: IncidentKnowledgeInjector<br/>文件: diagnosis/incident_knowledge_injector.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py["(生产态 / production) Interactive Diagnosis — v0.7.0 R80<br/>Interactive Diagnosis — v0.7.0 R80<br/>文件: diagnosis/interactive_diagnosis.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py["(生产态 / production) Knowledge Bus Factor Monitor — v0.38.0 R481<br/>Knowledge Bus Factor Monitor — v0.38.0 R481<br/>文件: diagnosis/knowledge_bus_factor_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py["(生产态 / production) Knowledge Market — v0.9.0 R126<br/>Knowledge Market — v0.9.0 R126<br/>文件: diagnosis/knowledge_market.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py["(生产态 / production) MTTI Tracker — v0.16.0 R221<br/>MTTI Tracker — v0.16.0 R221<br/>文件: diagnosis/mtti_tracker.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py["(生产态 / production) Nonstationary Effectiveness — v0.37.0 R455<br/>Nonstationary Effectiveness — v0.37.0 R455<br/>文件: diagnosis/nonstationary_effectiveness.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py["(生产态 / production) Statistical Hygiene Auditor — v0.38.0 R476<br/>Statistical Hygiene Auditor — v0.38.0 R476<br/>文件: diagnosis/statistical_hygiene_auditor.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py["(生产态 / production) Vertical Self Assessment — v0.10.0 R137<br/>Vertical Self Assessment — v0.10.0 R137<br/>文件: diagnosis/vertical_self_assessment.py"]
+    src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py["(生产态 / production) R511: ActionCompositionHealthMonitor<br/>R511: ActionCompositionHealthMonitor<br/>文件: health/action_composition_health_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py["(生产态 / production) DR Resilience Metrics — v0.17.0+ R231-R236<br/>DR Resilience Metrics — v0.17.0+ R231-R236<br/>文件: health/dr_resilience_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py["(生产态 / production) E2E Integration Health Monitor — v0.39.0 R489<br/>E2E Integration Health Monitor — v0.39.0 R489<br/>文件: health/e2e_integration_health.py"]
+    src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py["(生产态 / production) FLE Dogfood Monitor — v0.38.0 R480<br/>FLE Dogfood Monitor — v0.38.0 R480<br/>文件: health/fle_dogfood_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py["(生产态 / production) FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>文件: health/fle_self_slo_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_health_global_health_map_py["(生产态 / production) Global Health Map — v0.8.0 R103<br/>Global Health Map — v0.8.0 R103<br/>文件: health/global_health_map.py"]
+    src_zephyr_feedback_loop_diagnosers_health_memory_self_check_py["(生产态 / production) Memory Self Check — v0.8.0 R105<br/>Memory Self Check — v0.8.0 R105<br/>文件: health/memory_self_check.py"]
+    src_zephyr_feedback_loop_diagnosers_health_model_health_py["(生产态 / production) Model Health Monitor — v0.5.0 R40<br/>Model Health Monitor — v0.5.0 R40<br/>文件: health/model_health.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py["(生产态 / production) Self Benchmark — v0.9.0 R115<br/>Self Benchmark — v0.9.0 R115<br/>文件: health/self_benchmark.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py["(生产态 / production) Self-Bottleneck Detector — v0.38.0 R479<br/>Self-Bottleneck Detector — v0.38.0 R479<br/>文件: health/self_bottleneck_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py["(生产态 / production) Self Health Monitor — v0.4.0 R29<br/>Self Health Monitor — v0.4.0 R29<br/>文件: health/self_health_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py["(生产态 / production) Self LLM Observability — v0.12.0 R160<br/>Self LLM Observability — v0.12.0 R160<br/>文件: health/self_llm_observability.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py["(生产态 / production) Amplification Guard — v0.10.0 R134<br/>Amplification Guard — v0.10.0 R134<br/>文件: reliability/amplification_guard.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py["(生产态 / production) API Dependency Metrics — v0.17.0+ R237-R242<br/>API Dependency Metrics — v0.17.0+ R237-R242<br/>文件: reliability/api_dependency_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py["(生产态 / production) Burn Rate Alerter — v0.14.0 R200<br/>Burn Rate Alerter — v0.14.0 R200<br/>文件: reliability/burn_rate_alerter.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_burnout_alarm_py["(生产态 / production) Burnout Alarm — v0.8.0 R100<br/>Burnout Alarm — v0.8.0 R100<br/>文件: reliability/burnout_alarm.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py["(生产态 / production) Capacity Aware Repair — v0.9.0 R120<br/>Capacity Aware Repair — v0.9.0 R120<br/>文件: reliability/capacity_aware_repair.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py["(生产态 / production) R509: ColdStartConservativeMode<br/>R509: ColdStartConservativeMode<br/>文件: reliability/cold_start_conservative_mode.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py["(生产态 / production) Context Truncation Detector — v0.9.0 R122<br/>Context Truncation Detector — v0.9.0 R122<br/>文件: reliability/context_truncation.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py["(生产态 / production) R506: ContextWindowPressureManager<br/>R506: ContextWindowPressureManager<br/>文件: reliability/context_window_pressure_manager.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_cross_guard_conflict_detector_py["(生产态 / production) R513: CrossGuardConflictDetector<br/>R513: CrossGuardConflictDetector<br/>文件: reliability/cross_guard_conflict_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_cross_session_consistency_validator_py["(生产态 / production) R510: CrossSessionConsistencyValidator<br/>R510: CrossSessionConsistencyValidator<br/>文件: reliability/cross_session_consistency_validator.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py["(生产态 / production) Data Volume Growth Monitor — v0.39.0 R492<br/>Data Volume Growth Monitor — v0.39.0 R492<br/>文件: reliability/data_volume_growth_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_feedback_delay_compensator_py["(生产态 / production) Feedback Delay Compensator — v0.38.0 R477<br/>Feedback Delay Compensator — v0.38.0 R477<br/>文件: reliability/feedback_delay_compensator.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py["(生产态 / production) R518: GuardInteractionTopologyMapper<br/>R518: GuardInteractionTopologyMapper<br/>文件: reliability/guard_interaction_topology_mapper.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py["(生产态 / production) R512: GuardSelfConsistencyAuditor<br/>R512: GuardSelfConsistencyAuditor<br/>文件: reliability/guard_self_consistency_auditor.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_human_anomaly_flood_detector_py["(生产态 / production) Human Anomaly Flood Detector — v0.40.0 R500<br/>Human Anomaly Flood Detector — v0.40.0 R500<br/>文件: reliability/human_anomaly_flood_detector.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py["(生产态 / production) Latency SLO Monitor — v0.14.0 R192<br/>Latency SLO Monitor — v0.14.0 R192<br/>文件: reliability/latency_slo.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_llm_provider_integrity_py["(生产态 / production) LLM Provider Integrity — v0.15.0 R217<br/>LLM Provider Integrity — v0.15.0 R217<br/>文件: reliability/llm_provider_integrity.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py["(生产态 / production) LLM Quality Regression — v0.12.0 R161<br/>LLM Quality Regression — v0.12.0 R161<br/>文件: reliability/llm_quality_regression.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py["(生产态 / production) Model Rotation — v0.9.0 R125<br/>Model Rotation — v0.9.0 R125<br/>文件: reliability/model_rotation.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py["(生产态 / production) Model Rotation v2 — v0.10.0 R140<br/>Model Rotation v2 — v0.10.0 R140<br/>文件: reliability/model_rotation_v2.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py["(生产态 / production) Model Version Semantic Drift Monitor — v0.39.0 R493<br/>Model Version Semantic Drift Monitor — v0.39.0 R493<br/>文件: reliability/model_version_semantic_drift.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py["(生产态 / production) Numerical Stability Guard — v0.38.0 R475<br/>Numerical Stability Guard — v0.38.0 R475<br/>文件: reliability/numerical_stability_guard.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py["(生产态 / production) Operational Seasonality — v0.16.0 R228<br/>Operational Seasonality — v0.16.0 R228<br/>文件: reliability/operational_seasonality.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py["(生产态 / production) Prompt Fingerprint — v0.3.0 R14<br/>Prompt Fingerprint — v0.3.0 R14<br/>文件: reliability/prompt_fingerprint.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py["(生产态 / production) Prompt Sanitizer — v0.10.0 R133<br/>Prompt Sanitizer — v0.10.0 R133<br/>文件: reliability/prompt_sanitizer.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py["(生产态 / production) Recovery Time Statistics — v0.37.0 R454<br/>Recovery Time Statistics — v0.37.0 R454<br/>文件: reliability/recovery_time_stats.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py["(生产态 / production) Regime Gain Scheduling — v0.37.0 R453<br/>Regime Gain Scheduling — v0.37.0 R453<br/>文件: reliability/regime_gain_scheduling.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py["(生产态 / production) Retirement Planner — v0.10.0 R139<br/>Retirement Planner — v0.10.0 R139<br/>文件: reliability/retirement_planner.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py["(生产态 / production) SLO Capacity Metrics — v0.17.0+ R243-R248<br/>SLO Capacity Metrics — v0.17.0+ R243-R248<br/>文件: reliability/slo_capacity_metrics.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py["(生产态 / production) R527: SystemEntropyMonitor<br/>R527: SystemEntropyMonitor<br/>文件: reliability/system_entropy_monitor.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py["(生产态 / production) Temporal Integrity Guard — v0.38.0 R478<br/>Temporal Integrity Guard — v0.38.0 R478<br/>文件: reliability/temporal_integrity_guard.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py["(生产态 / production) Timezone Semantic Reasoner — v0.37.0 R456<br/>Timezone Semantic Reasoner — v0.37.0 R456<br/>文件: reliability/timezone_semantic_reasoner.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py["(生产态 / production) Toil Quantification — v0.37.0 R457<br/>Toil Quantification — v0.37.0 R457<br/>文件: reliability/toil_quantification.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py["(生产态 / production) Value Added Baseline — v0.10.0 R138<br/>Value Added Baseline — v0.10.0 R138<br/>文件: reliability/value_added_baseline.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py["(生产态 / production) Zombie FLE Detector — v0.16.0 R222<br/>Zombie FLE Detector — v0.16.0 R222<br/>文件: reliability/zombie_fle_detector.py"]
     src_zephyr_feedback_loop_diagnosers_init_py ~~~ src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py
     src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py ~~~ src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py
     src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py ~~~ src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py
@@ -527,19 +529,19 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Operational Seasonality — v0.16.0 R228 (reliab... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 1 | Operational Seasonality — v0.16.0 R228 (reliability/oper... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | diagnosis/diagnosis_engine.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_safety.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 7 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | diagnosis/diagnosis_engine.py | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_safety.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 7 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

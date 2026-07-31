@@ -13,8 +13,8 @@ depends_on:
 construction_progress: prototype
 language: zh
 description: WAL 段文件编解码层——当前 TSV 格式（已施工），Protobuf 为 P3 远期备选
-build_status: stable
-design_maturity: production
+build_status: planned
+design_maturity: design
 responsibility_domain: 
 ---
 

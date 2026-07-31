@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_GOV_REPAIR 治理修复架构文档
 version: "1.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
@@ -16,6 +16,8 @@ ttl: permanent
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
+
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/54_d_gov_repair.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 域基本信息 / Domain Overview
 
@@ -132,19 +134,19 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | financial_governance/budget_enforcement.py | → | D_AUTONOMY_CORE 自治核心: skills/skill_executor.py | 导入依赖 / import_depends |
 | 2 | financial_governance/budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: intelligence_governance/model_router.py | 导入依赖 / import_depends |
-| 3 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Burn Rate Monitor — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 3 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Burn Rate Monitor — MOD-INF-024 (ops_governance/burn_rat... | 导入依赖 / import_depends |
 | 4 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/degradation_manager.py | 导入依赖 / import_depends |
 | 5 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/timeout_guard.py | 导入依赖 / import_depends |
-| 6 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops... | 导入依赖 / import_depends |
-| 7 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (ops... | 导入依赖 / import_depends |
+| 6 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 7 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 8 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: ops_governance/budget_tracker.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
-| 2 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层。 (budget_enforceme... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
+| 1 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 ... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
+| 2 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层。 (budget_enforcement/__init_... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

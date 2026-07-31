@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-31T11:41:33Z
+# 自动生成于 2026-07-31T16:52:21Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-31T11:41:33Z'
+generated_at: '2026-07-31T16:52:21Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 36
+total_registries: 37
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -191,6 +191,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
+- registry_id: REG-MODULE-TRANSLATION-001
+  name: 模块级翻译注册表（中英对照真源）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 35
+  status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
   category: governance_rule
@@ -229,7 +237,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 186
+  entry_count: 187
   status: active
 - registry_id: CFG-rule-enforcement-registry
   name: 门禁规则集登记表

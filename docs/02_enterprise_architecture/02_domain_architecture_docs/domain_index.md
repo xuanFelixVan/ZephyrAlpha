@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3080 |
-| 生产态模块 | 2860 |
-| 设计态模块 | 220 |
+| 模块总数 | 3091 |
+| 生产态模块 | 2861 |
+| 设计态模块 | 230 |
 
 ## 域清单（按架构层分组）
 
@@ -91,7 +91,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|------|------|
 | D_ALT_DATA | 另类数据 / Alternative Data | 8 | 7 | 1 | 8/150 (OK) | [📄 09_d_alt_data.md](09_d_alt_data.md) |
 | D_AUTONOMY_CORE | 自治核心 / Autonomy Core | 130 | 130 | 0 | 130/150 (OK) | [📄 10_d_autonomy_core.md](10_d_autonomy_core.md) |
-| D_DATA | 数据接入层 / Data Access Layer | 175 | 162 | 13 | 175/150 (超容) | [📄 11_d_data.md](11_d_data.md) |
+| D_DATA | 数据接入层 / Data Access Layer | 179 | 162 | 17 | 179/150 (超容) | [📄 11_d_data.md](11_d_data.md) |
 | D_DATA_ENG | 数据工程 / Data Engineering | 20 | 7 | 13 | 20/150 (OK) | [📄 12_d_data_eng.md](12_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 10 | 10 | 0 | 10/150 (OK) | [📄 13_d_data_gov.md](13_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 7 | 0 | 7/150 (OK) | [📄 14_d_data_sec.md](14_d_data_sec.md) |
@@ -123,16 +123,16 @@ ttl: permanent
 | D_BACKTEST | 回测 / Backtest | 27 | 18 | 9 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
 | D_BEHAVIORAL_AUDIT | 行为审计 / Behavioral Audit | 0 | 0 | 0 | 0/150 (OK) | [📄 36_d_behavioral_audit.md](36_d_behavioral_audit.md) |
 | D_CODE_SCRIPTS | 代码质量脚本 / D_CODE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 37_d_code_scripts.md](37_d_code_scripts.md) |
-| D_COMPLIANCE | 合规 / Compliance | 2 | 2 | 0 | 2/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |
+| D_COMPLIANCE | 合规 / Compliance | 3 | 2 | 1 | 3/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 / D_COMPLIANCE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 39_d_compliance_scripts.md](39_d_compliance_scripts.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 7 | 7 | 0 | 7/150 (OK) | [📄 40_d_cross_asset.md](40_d_cross_asset.md) |
 | D_DATA_SCRIPTS | 数据治理脚本 / D_DATA_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 41_d_data_scripts.md](41_d_data_scripts.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 24 | 8 | 16 | 24/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 25 | 8 | 17 | 25/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 7 | 10 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 86 | 37 | 49 | 86/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
-| D_FRONTEND | 前端 / Frontend | 12 | 12 | 0 | 12/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
+| D_FRONTEND | 前端 / Frontend | 14 | 12 | 2 | 14/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 13 | 10 | 3 | 13/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
 | D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 221 | 221 | 0 | 221/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 124 | 121 | 3 | 124/150 (OK) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
@@ -141,14 +141,14 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 41 | 40 | 1 | 41/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 35 | 0 | 35/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 383 | 382 | 1 | 383/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 384 | 383 | 1 | 384/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 5 | 2 | 3 | 5/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
-| D_PF_CORE | 组合核心 / Portfolio Core | 14 | 10 | 4 | 14/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
+| D_PF_CORE | 组合核心 / Portfolio Core | 16 | 10 | 6 | 16/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 11 | 1 | 10 | 11/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 15 | 11 | 4 | 15/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
