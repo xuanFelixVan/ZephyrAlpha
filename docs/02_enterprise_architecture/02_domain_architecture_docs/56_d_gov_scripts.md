@@ -28,7 +28,7 @@ ttl: permanent
 | 域名称 | 脚本治理 | Domain Name | Script Governance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 384 | Module Count | 384 |
-| 域内依赖 | 24 | Internal Dependencies | 24 |
+| 域内依赖 | 30 | Internal Dependencies | 30 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
 | 跨域出边 | 127 | Cross-domain Outgoing | 127 |
 | 设计态模块 | 1 | Design Modules | 1 |
@@ -382,7 +382,6 @@ ttl: permanent
 flowchart TD
     docs_01_policies_and_standards_registry_catalogs_scripts_registry_yaml["(生产态 / production) catalogs/scripts_registry.yaml"]
     scripts_archive_governance_dm106_p2b_verification_py["(生产态 / production) DM-106: P2-B 迁移全量验证脚本<br/>DM-106: P2-B 迁移全量验证脚本<br/>文件: governance/dm106_p2b_verification.py"]
-    scripts_governance_archive_one_off_audit_post_sync_commands_py["(生产态 / production) audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>文件: one_off/audit_post_sync_commands.py"]
     scripts_governance_archive_one_off_check_exam_case_consistency_py["(生产态 / production) 考试题库一致性检查——根因治本，防止'定义-注册脱钩'复发。<br/>考试题库一致性检查——根因治本，防止'定义-注册脱钩'复发。<br/>文件: one_off/check_exam_case_consistency.py"]
     scripts_governance_archive_one_off_create_alignment_tasks_py["(生产态 / production) # (BLUEPRINT) MOD-INF-005 / scripts/governance/create_alignment_tasks.py / §7<br/># (BLUEPRINT) MOD-INF-005 / scripts/governance/create_alignment_tasks.py / §7<br/>文件: one_off/create_alignment_tasks.py"]
     scripts_governance_archive_one_off_dm105_depgraph_triage_py["(生产态 / production) DM-105: depgraph 未分配节点三策略处理脚本<br/>DM-105: depgraph 未分配节点三策略处理脚本<br/>文件: one_off/dm105_depgraph_triage.py"]
@@ -394,7 +393,7 @@ flowchart TD
     scripts_governance_archive_one_off_test_lock_scenarios_py["(生产态 / production) test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证<br/>test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证<br/>文件: one_off/test_lock_scenarios.py"]
     scripts_governance_archive_one_off_verify_final_delivery_py["(生产态 / production) (INVARIANTS) 设计态节点数>=1128; 规则表各表>0<br/>(INVARIANTS) 设计态节点数>=1128; 规则表各表>0<br/>文件: one_off/verify_final_delivery.py"]
     scripts_governance_archive_one_off_verify_rule_yaml_migration_py["(生产态 / production) verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migra...<br/>verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migra...<br/>文件: one_off/verify_rule_yaml_migration.py"]
-    scripts_governance_archive_prototype_audit_domain_nodes_py["(生产态 / production) SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>文件: prototype/audit_domain_nodes.py"]
+    scripts_governance_archive_prototype_adversarial_sys_master_test_py["(生产态 / production) Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>文件: prototype/adversarial_sys_master_test.py"]
     scripts_governance_archive_prototype_changelog_py["(生产态 / production) changelog.py — 治理域变更日志生成/追加工具.<br/>changelog.py — 治理域变更日志生成/追加工具.<br/>文件: prototype/changelog.py"]
     scripts_governance_archive_prototype_check_audit_rbac_isolation_py["(生产态 / production) check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.<br/>check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.<br/>文件: prototype/check_audit_rbac_isolation.py"]
     scripts_governance_archive_prototype_construction_gate_py["(生产态 / production) Construction Gate — 施工前路径校验门禁<br/>Construction Gate — 施工前路径校验门禁<br/>文件: prototype/construction_gate.py"]
@@ -405,10 +404,9 @@ flowchart TD
     scripts_governance_archive_prototype_session_simulator_py["(生产态 / production) session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器<br/>session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器<br/>文件: prototype/session_simulator.py"]
     scripts_governance_archive_prototype_sync_blueprint_status_py["(生产态 / production) 机械强制：construction_plan=phase_2_complete → blueprint.status=Active.<br/>机械强制：construction_plan=phase_2_complete → blueprint.status=Active.<br/>文件: prototype/sync_blueprint_status.py"]
     scripts_governance_archive_vms_ri_ri_boundary_check_py["(生产态 / production) Runtime Integration 边界验证脚本 — MOD-INF-002<br/>Runtime Integration 边界验证脚本 — MOD-INF-002<br/>文件: vms_ri/ri_boundary_check.py"]
-    scripts_governance_archive_vms_ri_vms_build_completion_check_py["(生产态 / production) VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>文件: vms_ri/vms_build_completion_check.py"]
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py["(生产态 / production) Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>文件: vms_ri/ri_build_completion_check.py"]
     docs_01_policies_and_standards_registry_catalogs_scripts_registry_yaml ~~~ scripts_archive_governance_dm106_p2b_verification_py
-    scripts_archive_governance_dm106_p2b_verification_py ~~~ scripts_governance_archive_one_off_audit_post_sync_commands_py
-    scripts_governance_archive_one_off_audit_post_sync_commands_py ~~~ scripts_governance_archive_one_off_check_exam_case_consistency_py
+    scripts_archive_governance_dm106_p2b_verification_py ~~~ scripts_governance_archive_one_off_check_exam_case_consistency_py
     scripts_governance_archive_one_off_check_exam_case_consistency_py ~~~ scripts_governance_archive_one_off_create_alignment_tasks_py
     scripts_governance_archive_one_off_create_alignment_tasks_py ~~~ scripts_governance_archive_one_off_dm105_depgraph_triage_py
     scripts_governance_archive_one_off_dm105_depgraph_triage_py ~~~ scripts_governance_archive_one_off_fix_broken_post_sync_py
@@ -419,8 +417,8 @@ flowchart TD
     scripts_governance_archive_one_off_rename_whitelist_cleanup_py ~~~ scripts_governance_archive_one_off_test_lock_scenarios_py
     scripts_governance_archive_one_off_test_lock_scenarios_py ~~~ scripts_governance_archive_one_off_verify_final_delivery_py
     scripts_governance_archive_one_off_verify_final_delivery_py ~~~ scripts_governance_archive_one_off_verify_rule_yaml_migration_py
-    scripts_governance_archive_one_off_verify_rule_yaml_migration_py ~~~ scripts_governance_archive_prototype_audit_domain_nodes_py
-    scripts_governance_archive_prototype_audit_domain_nodes_py ~~~ scripts_governance_archive_prototype_changelog_py
+    scripts_governance_archive_one_off_verify_rule_yaml_migration_py ~~~ scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_adversarial_sys_master_test_py ~~~ scripts_governance_archive_prototype_changelog_py
     scripts_governance_archive_prototype_changelog_py ~~~ scripts_governance_archive_prototype_check_audit_rbac_isolation_py
     scripts_governance_archive_prototype_check_audit_rbac_isolation_py ~~~ scripts_governance_archive_prototype_construction_gate_py
     scripts_governance_archive_prototype_construction_gate_py ~~~ scripts_governance_archive_prototype_generate_asset_index_py
@@ -430,24 +428,32 @@ flowchart TD
     scripts_governance_archive_prototype_scan_ground_truth_deps_py ~~~ scripts_governance_archive_prototype_session_simulator_py
     scripts_governance_archive_prototype_session_simulator_py ~~~ scripts_governance_archive_prototype_sync_blueprint_status_py
     scripts_governance_archive_prototype_sync_blueprint_status_py ~~~ scripts_governance_archive_vms_ri_ri_boundary_check_py
-    scripts_governance_archive_vms_ri_ri_boundary_check_py ~~~ scripts_governance_archive_vms_ri_vms_build_completion_check_py
+    scripts_governance_archive_vms_ri_ri_boundary_check_py ~~~ scripts_governance_archive_vms_ri_ri_build_completion_check_py
+    scripts_governance_archive_one_off_audit_post_sync_commands_py["(生产态 / production) audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>文件: one_off/audit_post_sync_commands.py"]
     scripts_governance_archive_prototype_adversarial_log_py["(生产态 / production) 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪<br/>红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪<br/>文件: prototype/adversarial_log.py"]
-    scripts_governance_archive_vms_ri_ri_build_completion_check_py["(生产态 / production) Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>文件: vms_ri/ri_build_completion_check.py"]
-    scripts_governance_archive_prototype_adversarial_log_py ~~~ scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_prototype_adversarial_sys_master_test_py["(生产态 / production) Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>文件: prototype/adversarial_sys_master_test.py"]
     scripts_governance_archive_vms_ri_vms_blindspot_check_py["(生产态 / production) VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)<br/>VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)<br/>文件: vms_ri/vms_blindspot_check.py"]
-    scripts_governance_archive_prototype_adversarial_sys_master_test_py ~~~ scripts_governance_archive_vms_ri_vms_blindspot_check_py
-    scripts_governance_archive_prototype_adversarial_log_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
-    scripts_governance_archive_prototype_audit_domain_nodes_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
+    scripts_governance_archive_one_off_audit_post_sync_commands_py ~~~ scripts_governance_archive_prototype_adversarial_log_py
+    scripts_governance_archive_prototype_adversarial_log_py ~~~ scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_prototype_audit_domain_nodes_py["(生产态 / production) SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>文件: prototype/audit_domain_nodes.py"]
+    scripts_governance_archive_vms_ri_vms_build_completion_check_py["(生产态 / production) VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>文件: vms_ri/vms_build_completion_check.py"]
+    scripts_governance_archive_prototype_audit_domain_nodes_py ~~~ scripts_governance_archive_vms_ri_vms_build_completion_check_py
+    scripts_governance_archive_one_off_list_phase0_tasks_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_phase_a_backup_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_rename_kebab_to_snake_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_rename_whitelist_cleanup_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_test_lock_scenarios_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_verify_final_delivery_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_verify_rule_yaml_migration_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_prototype_adversarial_log_py -->|config_depends / config_depends| scripts_governance_archive_prototype_audit_domain_nodes_py
+    scripts_governance_archive_prototype_changelog_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_generate_asset_index_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_generate_nav_table_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_changelog_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_check_audit_rbac_isolation_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_scan_ground_truth_deps_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_ri_build_completion_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_vms_blindspot_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_build_completion_check_py
     scripts_governance_archive_prototype_sync_blueprint_status_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_vms_build_completion_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_vms_ri_ri_boundary_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_ri_boundary_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
     scripts_governance_archive_prototype_rebuild_audit_index_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
@@ -496,7 +502,7 @@ flowchart TD
     scripts_governance_shared_thresholds_py["(生产态 / production) thresholds.py — 阈值集中配置加载器<br/>thresholds.py — 阈值集中配置加载器<br/>文件: _shared/thresholds.py"]
     scripts_governance_shared_walk_py["(生产态 / production) walk.py — 目录遍历共享工具<br/>walk.py — 目录遍历共享工具<br/>文件: _shared/walk.py"]
     scripts_governance_shared_yaml_utils_py["(生产态 / production) _shared/yaml_utils.py — YAML 文件加载共享工具<br/>_shared/yaml_utils.py — YAML 文件加载共享工具<br/>文件: _shared/yaml_utils.py"]
-    scripts_governance_sync_check_p0_status_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: _sync/check_p0_status.py"]
+    scripts_governance_sync_cleanup_p0_auto_bridged_py["(生产态 / production) 清理历史 P0 自动桥接任务<br/>清理历史 P0 自动桥接任务<br/>文件: _sync/cleanup_p0_auto_bridged.py"]
     scripts_governance_sync_fix_orphan_deps_py["(生产态 / production) fix_orphan_deps.py — 一次性修复孤儿依赖引用<br/>fix_orphan_deps.py — 一次性修复孤儿依赖引用<br/>文件: _sync/fix_orphan_deps.py"]
     scripts_governance_tasks_list_phase0_tasks_py["(生产态 / production) (INVARIANTS) 仅查询不修改; 连接失败→exit 1<br/>(INVARIANTS) 仅查询不修改; 连接失败→exit 1<br/>文件: _tasks/list_phase0_tasks.py"]
     scripts_governance_tasks_task_show_py["(生产态 / production) governance/task_show 脚本 — 任务卡详情查询 CLI。<br/>governance/task_show 脚本 — 任务卡详情查询 CLI。<br/>文件: _tasks/task_show.py"]
@@ -523,8 +529,8 @@ flowchart TD
     scripts_governance_shared_terminology_loader_py ~~~ scripts_governance_shared_thresholds_py
     scripts_governance_shared_thresholds_py ~~~ scripts_governance_shared_walk_py
     scripts_governance_shared_walk_py ~~~ scripts_governance_shared_yaml_utils_py
-    scripts_governance_shared_yaml_utils_py ~~~ scripts_governance_sync_check_p0_status_py
-    scripts_governance_sync_check_p0_status_py ~~~ scripts_governance_sync_fix_orphan_deps_py
+    scripts_governance_shared_yaml_utils_py ~~~ scripts_governance_sync_cleanup_p0_auto_bridged_py
+    scripts_governance_sync_cleanup_p0_auto_bridged_py ~~~ scripts_governance_sync_fix_orphan_deps_py
     scripts_governance_sync_fix_orphan_deps_py ~~~ scripts_governance_tasks_list_phase0_tasks_py
     scripts_governance_tasks_list_phase0_tasks_py ~~~ scripts_governance_tasks_task_show_py
     scripts_governance_tasks_task_show_py ~~~ scripts_governance_tasks_task_summary_py
@@ -532,11 +538,11 @@ flowchart TD
     scripts_governance_add_deferred_design_edges_py ~~~ scripts_governance_apply_dataflowgraph_py
     scripts_governance_apply_dataflowgraph_py ~~~ scripts_governance_apply_decisiongraph_py
     scripts_governance_apply_decisiongraph_py ~~~ scripts_governance_apply_depgraph_py
+    scripts_governance_sync_check_p0_status_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: _sync/check_p0_status.py"]
     scripts_governance_sync_cleanup_p0_ops_pending_py["(生产态 / production) cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成<br/>cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成<br/>文件: _sync/cleanup_p0_ops_pending.py"]
-    scripts_governance_sync_cleanup_p0_auto_bridged_py["(生产态 / production) 清理历史 P0 自动桥接任务<br/>清理历史 P0 自动桥接任务<br/>文件: _sync/cleanup_p0_auto_bridged.py"]
-    scripts_governance_sync_cleanup_p0_ops_pending_py -->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_auto_bridged_py
-    scripts_governance_sync_fix_orphan_deps_py -->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_ops_pending_py
     scripts_governance_sync_check_p0_status_py -->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_ops_pending_py
+    scripts_governance_sync_cleanup_p0_auto_bridged_py -->|config_depends / config_depends| scripts_governance_sync_check_p0_status_py
+    scripts_governance_sync_fix_orphan_deps_py -->|config_depends / config_depends| scripts_governance_sync_check_p0_status_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION 管线路由"]
     scripts_governance_archive_vms_ri_vms_cron_monitor_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME 运行时集成"]
@@ -1479,14 +1485,13 @@ flowchart TD
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 383 个，24 条域内依赖）。
+> 仅展示已上线运行的模块（共 383 个，30 条域内依赖）。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     docs_01_policies_and_standards_registry_catalogs_scripts_registry_yaml["(生产态 / production) catalogs/scripts_registry.yaml"]
     scripts_archive_governance_dm106_p2b_verification_py["(生产态 / production) DM-106: P2-B 迁移全量验证脚本<br/>DM-106: P2-B 迁移全量验证脚本<br/>文件: governance/dm106_p2b_verification.py"]
-    scripts_governance_archive_one_off_audit_post_sync_commands_py["(生产态 / production) audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>文件: one_off/audit_post_sync_commands.py"]
     scripts_governance_archive_one_off_check_exam_case_consistency_py["(生产态 / production) 考试题库一致性检查——根因治本，防止'定义-注册脱钩'复发。<br/>考试题库一致性检查——根因治本，防止'定义-注册脱钩'复发。<br/>文件: one_off/check_exam_case_consistency.py"]
     scripts_governance_archive_one_off_create_alignment_tasks_py["(生产态 / production) # (BLUEPRINT) MOD-INF-005 / scripts/governance/create_alignment_tasks.py / §7<br/># (BLUEPRINT) MOD-INF-005 / scripts/governance/create_alignment_tasks.py / §7<br/>文件: one_off/create_alignment_tasks.py"]
     scripts_governance_archive_one_off_dm105_depgraph_triage_py["(生产态 / production) DM-105: depgraph 未分配节点三策略处理脚本<br/>DM-105: depgraph 未分配节点三策略处理脚本<br/>文件: one_off/dm105_depgraph_triage.py"]
@@ -1498,7 +1503,7 @@ flowchart TD
     scripts_governance_archive_one_off_test_lock_scenarios_py["(生产态 / production) test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证<br/>test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证<br/>文件: one_off/test_lock_scenarios.py"]
     scripts_governance_archive_one_off_verify_final_delivery_py["(生产态 / production) (INVARIANTS) 设计态节点数>=1128; 规则表各表>0<br/>(INVARIANTS) 设计态节点数>=1128; 规则表各表>0<br/>文件: one_off/verify_final_delivery.py"]
     scripts_governance_archive_one_off_verify_rule_yaml_migration_py["(生产态 / production) verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migra...<br/>verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migra...<br/>文件: one_off/verify_rule_yaml_migration.py"]
-    scripts_governance_archive_prototype_audit_domain_nodes_py["(生产态 / production) SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>文件: prototype/audit_domain_nodes.py"]
+    scripts_governance_archive_prototype_adversarial_sys_master_test_py["(生产态 / production) Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>文件: prototype/adversarial_sys_master_test.py"]
     scripts_governance_archive_prototype_changelog_py["(生产态 / production) changelog.py — 治理域变更日志生成/追加工具.<br/>changelog.py — 治理域变更日志生成/追加工具.<br/>文件: prototype/changelog.py"]
     scripts_governance_archive_prototype_check_audit_rbac_isolation_py["(生产态 / production) check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.<br/>check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.<br/>文件: prototype/check_audit_rbac_isolation.py"]
     scripts_governance_archive_prototype_construction_gate_py["(生产态 / production) Construction Gate — 施工前路径校验门禁<br/>Construction Gate — 施工前路径校验门禁<br/>文件: prototype/construction_gate.py"]
@@ -1509,7 +1514,7 @@ flowchart TD
     scripts_governance_archive_prototype_session_simulator_py["(生产态 / production) session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器<br/>session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器<br/>文件: prototype/session_simulator.py"]
     scripts_governance_archive_prototype_sync_blueprint_status_py["(生产态 / production) 机械强制：construction_plan=phase_2_complete → blueprint.status=Active.<br/>机械强制：construction_plan=phase_2_complete → blueprint.status=Active.<br/>文件: prototype/sync_blueprint_status.py"]
     scripts_governance_archive_vms_ri_ri_boundary_check_py["(生产态 / production) Runtime Integration 边界验证脚本 — MOD-INF-002<br/>Runtime Integration 边界验证脚本 — MOD-INF-002<br/>文件: vms_ri/ri_boundary_check.py"]
-    scripts_governance_archive_vms_ri_vms_build_completion_check_py["(生产态 / production) VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>文件: vms_ri/vms_build_completion_check.py"]
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py["(生产态 / production) Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>文件: vms_ri/ri_build_completion_check.py"]
     scripts_governance_archive_vms_ri_vms_cron_monitor_py["(生产态 / production) VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224<br/>VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224<br/>文件: vms_ri/vms_cron_monitor.py"]
     scripts_governance_archive_vms_ri_vms_cross_file_check_py["(生产态 / production) VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211<br/>VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211<br/>文件: vms_ri/vms_cross_file_check.py"]
     scripts_governance_archive_vms_ri_vms_health_check_py["(生产态 / production) VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化<br/>VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化<br/>文件: vms_ri/vms_health_check.py"]
@@ -1529,7 +1534,7 @@ flowchart TD
     scripts_governance_shared_thresholds_py["(生产态 / production) thresholds.py — 阈值集中配置加载器<br/>thresholds.py — 阈值集中配置加载器<br/>文件: _shared/thresholds.py"]
     scripts_governance_shared_walk_py["(生产态 / production) walk.py — 目录遍历共享工具<br/>walk.py — 目录遍历共享工具<br/>文件: _shared/walk.py"]
     scripts_governance_shared_yaml_utils_py["(生产态 / production) _shared/yaml_utils.py — YAML 文件加载共享工具<br/>_shared/yaml_utils.py — YAML 文件加载共享工具<br/>文件: _shared/yaml_utils.py"]
-    scripts_governance_sync_check_p0_status_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: _sync/check_p0_status.py"]
+    scripts_governance_sync_cleanup_p0_auto_bridged_py["(生产态 / production) 清理历史 P0 自动桥接任务<br/>清理历史 P0 自动桥接任务<br/>文件: _sync/cleanup_p0_auto_bridged.py"]
     scripts_governance_sync_fix_orphan_deps_py["(生产态 / production) fix_orphan_deps.py — 一次性修复孤儿依赖引用<br/>fix_orphan_deps.py — 一次性修复孤儿依赖引用<br/>文件: _sync/fix_orphan_deps.py"]
     scripts_governance_tasks_list_phase0_tasks_py["(生产态 / production) (INVARIANTS) 仅查询不修改; 连接失败→exit 1<br/>(INVARIANTS) 仅查询不修改; 连接失败→exit 1<br/>文件: _tasks/list_phase0_tasks.py"]
     scripts_governance_tasks_task_show_py["(生产态 / production) governance/task_show 脚本 — 任务卡详情查询 CLI。<br/>governance/task_show 脚本 — 任务卡详情查询 CLI。<br/>文件: _tasks/task_show.py"]
@@ -1856,8 +1861,7 @@ flowchart TD
     tests_governance_scripts_governance_test_pre_write_gate_py["(生产态 / production) test_pre_write_gate.py — _check_session_overlap 单元测试（claim 前移协议防线）<br/>test_pre_write_gate.py — _check_session_overlap 单元测试（claim 前移协议防线）<br/>文件: scripts_governance/test_pre_write_gate.py"]
     tests_governance_test_check_blueprint_code_alignment_py["(生产态 / production) tests for check_blueprint_code_alignment.py — ARCH-FRONTMATTER-STATE-001 Pha...<br/>tests for check_blueprint_code_alignment.py — ARCH-FRONTMATTER-STATE-001 Pha...<br/>文件: governance/test_check_blueprint_code_alignment.py"]
     docs_01_policies_and_standards_registry_catalogs_scripts_registry_yaml ~~~ scripts_archive_governance_dm106_p2b_verification_py
-    scripts_archive_governance_dm106_p2b_verification_py ~~~ scripts_governance_archive_one_off_audit_post_sync_commands_py
-    scripts_governance_archive_one_off_audit_post_sync_commands_py ~~~ scripts_governance_archive_one_off_check_exam_case_consistency_py
+    scripts_archive_governance_dm106_p2b_verification_py ~~~ scripts_governance_archive_one_off_check_exam_case_consistency_py
     scripts_governance_archive_one_off_check_exam_case_consistency_py ~~~ scripts_governance_archive_one_off_create_alignment_tasks_py
     scripts_governance_archive_one_off_create_alignment_tasks_py ~~~ scripts_governance_archive_one_off_dm105_depgraph_triage_py
     scripts_governance_archive_one_off_dm105_depgraph_triage_py ~~~ scripts_governance_archive_one_off_fix_broken_post_sync_py
@@ -1868,8 +1872,8 @@ flowchart TD
     scripts_governance_archive_one_off_rename_whitelist_cleanup_py ~~~ scripts_governance_archive_one_off_test_lock_scenarios_py
     scripts_governance_archive_one_off_test_lock_scenarios_py ~~~ scripts_governance_archive_one_off_verify_final_delivery_py
     scripts_governance_archive_one_off_verify_final_delivery_py ~~~ scripts_governance_archive_one_off_verify_rule_yaml_migration_py
-    scripts_governance_archive_one_off_verify_rule_yaml_migration_py ~~~ scripts_governance_archive_prototype_audit_domain_nodes_py
-    scripts_governance_archive_prototype_audit_domain_nodes_py ~~~ scripts_governance_archive_prototype_changelog_py
+    scripts_governance_archive_one_off_verify_rule_yaml_migration_py ~~~ scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_adversarial_sys_master_test_py ~~~ scripts_governance_archive_prototype_changelog_py
     scripts_governance_archive_prototype_changelog_py ~~~ scripts_governance_archive_prototype_check_audit_rbac_isolation_py
     scripts_governance_archive_prototype_check_audit_rbac_isolation_py ~~~ scripts_governance_archive_prototype_construction_gate_py
     scripts_governance_archive_prototype_construction_gate_py ~~~ scripts_governance_archive_prototype_generate_asset_index_py
@@ -1879,8 +1883,8 @@ flowchart TD
     scripts_governance_archive_prototype_scan_ground_truth_deps_py ~~~ scripts_governance_archive_prototype_session_simulator_py
     scripts_governance_archive_prototype_session_simulator_py ~~~ scripts_governance_archive_prototype_sync_blueprint_status_py
     scripts_governance_archive_prototype_sync_blueprint_status_py ~~~ scripts_governance_archive_vms_ri_ri_boundary_check_py
-    scripts_governance_archive_vms_ri_ri_boundary_check_py ~~~ scripts_governance_archive_vms_ri_vms_build_completion_check_py
-    scripts_governance_archive_vms_ri_vms_build_completion_check_py ~~~ scripts_governance_archive_vms_ri_vms_cron_monitor_py
+    scripts_governance_archive_vms_ri_ri_boundary_check_py ~~~ scripts_governance_archive_vms_ri_ri_build_completion_check_py
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py ~~~ scripts_governance_archive_vms_ri_vms_cron_monitor_py
     scripts_governance_archive_vms_ri_vms_cron_monitor_py ~~~ scripts_governance_archive_vms_ri_vms_cross_file_check_py
     scripts_governance_archive_vms_ri_vms_cross_file_check_py ~~~ scripts_governance_archive_vms_ri_vms_health_check_py
     scripts_governance_archive_vms_ri_vms_health_check_py ~~~ scripts_governance_archive_vms_ri_vms_migrate_py
@@ -1899,8 +1903,8 @@ flowchart TD
     scripts_governance_shared_terminology_loader_py ~~~ scripts_governance_shared_thresholds_py
     scripts_governance_shared_thresholds_py ~~~ scripts_governance_shared_walk_py
     scripts_governance_shared_walk_py ~~~ scripts_governance_shared_yaml_utils_py
-    scripts_governance_shared_yaml_utils_py ~~~ scripts_governance_sync_check_p0_status_py
-    scripts_governance_sync_check_p0_status_py ~~~ scripts_governance_sync_fix_orphan_deps_py
+    scripts_governance_shared_yaml_utils_py ~~~ scripts_governance_sync_cleanup_p0_auto_bridged_py
+    scripts_governance_sync_cleanup_p0_auto_bridged_py ~~~ scripts_governance_sync_fix_orphan_deps_py
     scripts_governance_sync_fix_orphan_deps_py ~~~ scripts_governance_tasks_list_phase0_tasks_py
     scripts_governance_tasks_list_phase0_tasks_py ~~~ scripts_governance_tasks_task_show_py
     scripts_governance_tasks_task_show_py ~~~ scripts_governance_tasks_task_summary_py
@@ -2225,75 +2229,83 @@ flowchart TD
     tests_governance_scripts_governance_test_check_canonical_yaml_drift_py ~~~ tests_governance_scripts_governance_test_check_vocab_hardcode_py
     tests_governance_scripts_governance_test_check_vocab_hardcode_py ~~~ tests_governance_scripts_governance_test_pre_write_gate_py
     tests_governance_scripts_governance_test_pre_write_gate_py ~~~ tests_governance_test_check_blueprint_code_alignment_py
+    scripts_governance_archive_one_off_audit_post_sync_commands_py["(生产态 / production) audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL...<br/>文件: one_off/audit_post_sync_commands.py"]
     scripts_governance_archive_prototype_adversarial_log_py["(生产态 / production) 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪<br/>红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪<br/>文件: prototype/adversarial_log.py"]
-    scripts_governance_archive_vms_ri_ri_build_completion_check_py["(生产态 / production) Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>文件: vms_ri/ri_build_completion_check.py"]
-    scripts_governance_sync_cleanup_p0_ops_pending_py["(生产态 / production) cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成<br/>cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成<br/>文件: _sync/cleanup_p0_ops_pending.py"]
+    scripts_governance_archive_vms_ri_vms_blindspot_check_py["(生产态 / production) VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)<br/>VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)<br/>文件: vms_ri/vms_blindspot_check.py"]
+    scripts_governance_sync_check_p0_status_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: _sync/check_p0_status.py"]
     scripts_governance_d3_metadata_validate_module_id_naming_py["(生产态 / production) module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本...<br/>module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本...<br/>文件: d3_metadata/validate_module_id_naming.py"]
     scripts_governance_d7_code_check_any_abuse_py["(生产态 / production) 类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入，...<br/>类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入，...<br/>文件: d7_code/check_any_abuse.py"]
     scripts_governance_meta_backup_runtime_state_py["(生产态 / production) backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）<br/>backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）<br/>文件: meta/backup_runtime_state.py"]
     scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: test_fixtures/orphan_file_without_module_registration.py"]
     scripts_governance_migrate_sqlite_to_pg_migrate_data_py["(生产态 / production) SQLite → PostgreSQL 运营数据迁移脚本<br/>SQLite → PostgreSQL 运营数据迁移脚本<br/>文件: migrate_sqlite_to_pg/migrate_data.py"]
-    scripts_governance_archive_prototype_adversarial_log_py ~~~ scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_vms_ri_ri_build_completion_check_py ~~~ scripts_governance_sync_cleanup_p0_ops_pending_py
-    scripts_governance_sync_cleanup_p0_ops_pending_py ~~~ scripts_governance_d3_metadata_validate_module_id_naming_py
+    scripts_governance_archive_one_off_audit_post_sync_commands_py ~~~ scripts_governance_archive_prototype_adversarial_log_py
+    scripts_governance_archive_prototype_adversarial_log_py ~~~ scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_vms_blindspot_check_py ~~~ scripts_governance_sync_check_p0_status_py
+    scripts_governance_sync_check_p0_status_py ~~~ scripts_governance_d3_metadata_validate_module_id_naming_py
     scripts_governance_d3_metadata_validate_module_id_naming_py ~~~ scripts_governance_d7_code_check_any_abuse_py
     scripts_governance_d7_code_check_any_abuse_py ~~~ scripts_governance_meta_backup_runtime_state_py
     scripts_governance_meta_backup_runtime_state_py ~~~ scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py
     scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py ~~~ scripts_governance_migrate_sqlite_to_pg_migrate_data_py
-    scripts_governance_archive_prototype_adversarial_sys_master_test_py["(生产态 / production) Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte...<br/>文件: prototype/adversarial_sys_master_test.py"]
-    scripts_governance_archive_vms_ri_vms_blindspot_check_py["(生产态 / production) VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)<br/>VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)<br/>文件: vms_ri/vms_blindspot_check.py"]
-    scripts_governance_sync_cleanup_p0_auto_bridged_py["(生产态 / production) 清理历史 P0 自动桥接任务<br/>清理历史 P0 自动桥接任务<br/>文件: _sync/cleanup_p0_auto_bridged.py"]
+    scripts_governance_archive_prototype_audit_domain_nodes_py["(生产态 / production) SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>SRC-100200: Audit 13 over-capacity domains granularity distribution.<br/>文件: prototype/audit_domain_nodes.py"]
+    scripts_governance_archive_vms_ri_vms_build_completion_check_py["(生产态 / production) VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217<br/>文件: vms_ri/vms_build_completion_check.py"]
+    scripts_governance_sync_cleanup_p0_ops_pending_py["(生产态 / production) cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成<br/>cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成<br/>文件: _sync/cleanup_p0_ops_pending.py"]
     scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: test_fixtures/incomplete_module.py"]
-    scripts_governance_archive_prototype_adversarial_sys_master_test_py ~~~ scripts_governance_archive_vms_ri_vms_blindspot_check_py
-    scripts_governance_archive_vms_ri_vms_blindspot_check_py ~~~ scripts_governance_sync_cleanup_p0_auto_bridged_py
-    scripts_governance_sync_cleanup_p0_auto_bridged_py ~~~ scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
+    scripts_governance_archive_prototype_audit_domain_nodes_py ~~~ scripts_governance_archive_vms_ri_vms_build_completion_check_py
+    scripts_governance_archive_vms_ri_vms_build_completion_check_py ~~~ scripts_governance_sync_cleanup_p0_ops_pending_py
+    scripts_governance_sync_cleanup_p0_ops_pending_py ~~~ scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| scripts_governance_meta_backup_runtime_state_py
     scripts_governance_d3_metadata_check_naming_convention_py -->|导入依赖 / import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
     scripts_governance_d7_code_any_type_inferrer_py -->|导入依赖 / import_depends| scripts_governance_d7_code_check_any_abuse_py
     scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py -->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
-    scripts_governance_meta_benchmark_test_fixtures_bad_imports_py -->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py
     scripts_governance_migrate_sqlite_to_pg_seed_from_yaml_py -->|config_depends / config_depends| scripts_governance_migrate_sqlite_to_pg_migrate_data_py
-    scripts_governance_archive_prototype_adversarial_log_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
-    scripts_governance_archive_prototype_audit_domain_nodes_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
+    scripts_governance_meta_benchmark_test_fixtures_bad_imports_py -->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py
+    scripts_governance_archive_one_off_list_phase0_tasks_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_phase_a_backup_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_rename_kebab_to_snake_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_rename_whitelist_cleanup_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_test_lock_scenarios_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_verify_final_delivery_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_one_off_verify_rule_yaml_migration_py -->|config_depends / config_depends| scripts_governance_archive_one_off_audit_post_sync_commands_py
+    scripts_governance_archive_prototype_adversarial_log_py -->|config_depends / config_depends| scripts_governance_archive_prototype_audit_domain_nodes_py
+    scripts_governance_archive_prototype_changelog_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_generate_asset_index_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_generate_nav_table_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_changelog_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_check_audit_rbac_isolation_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
     scripts_governance_archive_prototype_scan_ground_truth_deps_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_ri_build_completion_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_vms_blindspot_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_build_completion_check_py
     scripts_governance_archive_prototype_sync_blueprint_status_py -->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_vms_build_completion_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_vms_ri_vms_cross_file_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_vms_ri_ri_boundary_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_vms_ri_vms_phase_rollback_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_vms_ri_vms_version_sync_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_sync_cleanup_p0_ops_pending_py -->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_auto_bridged_py
-    scripts_governance_sync_fix_orphan_deps_py -->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_ops_pending_py
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_ri_boundary_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_vms_phase_rollback_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_vms_cross_file_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_vms_ri_vms_version_sync_check_py -->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
     scripts_governance_sync_check_p0_status_py -->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_ops_pending_py
+    scripts_governance_sync_cleanup_p0_auto_bridged_py -->|config_depends / config_depends| scripts_governance_sync_check_p0_status_py
+    scripts_governance_sync_fix_orphan_deps_py -->|config_depends / config_depends| scripts_governance_sync_check_p0_status_py
     D_DATA["(生产态 / production) D_DATA 数据接入层"]
     scripts_governance_d5_architecture_generators_generate_data_inventory_py -->|导入依赖 / import_depends| D_DATA
     scripts_governance_d5_architecture_generators_generate_data_inventory_py -->|导入依赖 / import_depends| D_DATA
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
-    scripts_governance_tasks_task_summary_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    scripts_governance_tasks_task_summary_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    scripts_governance_add_deferred_design_edges_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_apply_dataflowgraph_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_apply_decisiongraph_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     scripts_governance_apply_decisiongraph_py -->|导入依赖 / import_depends| D_SHARED
+    scripts_governance_add_deferred_design_edges_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
     scripts_governance_architecture_health_dashboard_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| D_SHARED
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| D_SHARED
     scripts_governance_apply_depgraph_py -->|导入依赖 / import_depends| D_SHARED
+    scripts_governance_check_ssot_gate_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    scripts_governance_check_ssot_gate_py -->|导入依赖 / import_depends| D_SHARED
     scripts_governance_extract_decisiongraph_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_extract_decisiongraph_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_extract_decisiongraph_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -->|导入依赖 / import_depends| scripts_governance_d3_metadata_check_naming_convention_py
     D_GOV_AUDIT -->|导入依赖 / import_depends| scripts_governance_d3_metadata_validate_module_id_naming_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| scripts_governance_generators_generate_gate_registry_py
     D_GOV_AUDIT -->|导入依赖 / import_depends| scripts_governance_generators_check_gate_inventory_drift_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| scripts_governance_generators_generate_gate_registry_py
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT 漂移检测"]
     D_GOV_DRIFT -->|导入依赖 / import_depends| scripts_governance_shared_frontmatter_py
     D_GOV_DRIFT -->|导入依赖 / import_depends| scripts_governance_shared_frontmatter_py

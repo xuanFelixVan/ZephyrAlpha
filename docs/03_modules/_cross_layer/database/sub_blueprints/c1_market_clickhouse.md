@@ -296,7 +296,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 流向 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |------|--------|--------|---------|---------|
-| 写入 | D_DATA DataSourceBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
+| 写入 | D_DATA QuoteProviderBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
 | 存储 | C1MarketWriter | ClickHouse C1 表(8张) | 行情记录 | 批量 INSERT |
 | 回测加载 | C1BacktestLoader | 回测引擎内存工作台 | 范围查询结果 | 分层批量加载 |
 | 实盘查询 | C1MarketReader | 实盘引擎 | 最新行情 | 实时查询 |
@@ -435,7 +435,7 @@ COMMENT '日线OHLCV(成品聚合,preload)'
 | TTL | 无（日线永久保留） |
 | calc_mode | **preload**（回测时预加载到内存） |
 | category_id | **market_kline_daily** |
-| 说明 | 对接 D_DATA DataSourceBase.fetch_historical 输出 CTR-001 |
+| 说明 | 对接 D_DATA QuoteProviderBase.fetch_historical 输出 CTR-001 |
 
 ### §4.3 auction_snapshot（集合竞价快照 — preload模式）
 
@@ -718,7 +718,7 @@ class C1MarketWriter:
 
     def upsert_kline_daily(self, df: pd.DataFrame) -> int:
         """
-        日线 OHLCV 写入（对接 D_DATA DataSourceBase.fetch_historical 输出 CTR-001）
+        日线 OHLCV 写入（对接 D_DATA QuoteProviderBase.fetch_historical 输出 CTR-001）
 
         Args:
             df: OHLCV DataFrame（trade_date/symbol/open/high/low/close/volume/amount/adj_factor）
@@ -840,7 +840,7 @@ class C1BacktestLoader:
 
 | 契约ID | 对应表 | Producer | Consumer | 版本 | 状态 |
 |--------|--------|----------|----------|------|:----:|
-| CTR-001 | kline_daily | D_DATA DataSourceBase | C1MarketWriter | 1.0.0 | 待实现 |
+| CTR-001 | kline_daily | D_DATA QuoteProviderBase | C1MarketWriter | 1.0.0 | 待实现 |
 | CTR-002 | tick_data | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-003 | auction_snapshot | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-004 | index_quote | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
@@ -996,7 +996,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |--------|--------|---------|---------|
-| D_DATA DataSourceBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
+| D_DATA QuoteProviderBase | C1MarketWriter | CTR-001~008 DataFrame | 函数调用 |
 | C1MarketWriter | ClickHouse C1 表(8张) | 行情记录 | 批量 INSERT |
 | ClickHouse C1 表 | C1MarketReader | 查询结果 | SQL 查询 |
 | ClickHouse C1 表 | C1BacktestLoader | 范围数据 | 分层批量加载 |

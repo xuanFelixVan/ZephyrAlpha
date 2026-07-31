@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-31'
-total_scripts: 613
+generated_at: '2026-08-01'
+total_scripts: 614
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -4185,6 +4185,14 @@ scripts:
 - name: governance/_shared/libcst_docstring_adder.py
   path: governance/_shared/libcst_docstring_adder.py
   description: Uses Concrete Syntax Tree (CST) instead of ast.unparse() to preserve
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_shared/module_translation_loader.py
+  path: governance/_shared/module_translation_loader.py
+  description: 对标 SCRIPT-QUALITY-001 D-D-05（禁止跨脚本复制粘贴逻辑）+ SSoT 真源分类铁律（TRAE-062）：
   domain: governance
   execution_plane: warm-path
   status: registered
