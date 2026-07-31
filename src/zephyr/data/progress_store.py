@@ -117,6 +117,18 @@ class ProgressStore:
             log.error("ProgressStore._init_db 失败: %s", e)
             raise
 
+    # ============== 公共属性（R5: 消除测试私有访问） ==============
+
+    @property
+    def conn(self) -> sqlite3.Connection:
+        """底层 SQLite 连接（只读暴露，供测试验证 DB 状态）。"""
+        return self._conn
+
+    @property
+    def db_path(self) -> Path:
+        """数据库文件路径。"""
+        return self._db_path
+
     # ============== 断点续传 ==============
 
     def get_last_key(self, task_id: str) -> str | None:

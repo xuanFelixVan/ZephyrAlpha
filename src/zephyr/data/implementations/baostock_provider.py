@@ -85,6 +85,13 @@ class BaostockProvider(IngestProviderBase):
         # 线程局部存储：每线程独立的登录态
         self._tls = threading.local()
 
+    # ---- 公共属性（R5: 消除测试私有访问） ----
+
+    @property
+    def tls(self) -> threading.local:
+        """线程局部存储（只读暴露，供测试验证 per-thread 登录态）。"""
+        return self._tls
+
     # ---- 生命周期 ----
 
     def connect(self) -> None:

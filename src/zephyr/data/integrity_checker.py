@@ -111,8 +111,8 @@ def run_daily_check(scheduler=None) -> dict:
     today = datetime.date.today()
     log.info("开始每日数据完整性巡检: date=%s", today.isoformat())
 
-    # 动态发现所有表
-    tables_info = _discover_backfill_tables()
+    # 动态发现所有表（使用公共别名，使测试 mock 可生效）
+    tables_info = discover_backfill_tables()
     log.info("动态发现 %d 张表需要巡检", len(tables_info))
 
     results: list[dict] = []

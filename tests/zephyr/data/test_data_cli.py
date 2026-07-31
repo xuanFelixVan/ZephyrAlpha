@@ -17,7 +17,7 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from zephyr.data.cli import main, _build_parser
+from zephyr.data.cli import main, _build_parser, get_subcommands
 from zephyr.data.policy_registry import SourcePolicy
 
 
@@ -27,14 +27,7 @@ class TestParser:
     def test_build_parser_has_8_subcommands(self):
         """parser 应注册 8 个子命令。"""
         parser = _build_parser()
-        # 找到 subparsers action（choices 属性包含子命令）
-        sub_action = None
-        for action in parser.actions:
-            if hasattr(action, "choices") and isinstance(action.choices, dict):
-                sub_action = action
-                break
-        assert sub_action is not None
-        cmds = set(sub_action.choices.keys())
+        cmds = get_subcommands(parser)
         assert cmds == {"status", "list", "run", "rerun-failed", "pause", "resume", "start", "speed-test"}
 
     def test_no_command_exits(self):

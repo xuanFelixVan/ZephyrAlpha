@@ -352,6 +352,21 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def get_subcommands(parser: argparse.ArgumentParser) -> set[str]:
+    """返回 parser 注册的子命令集合（封装 argparse 私有访问，R5: 消除测试私有访问）。
+
+    Args:
+        parser: _build_parser() 返回的 ArgumentParser
+
+    Returns:
+        已注册的子命令名称集合
+    """
+    for action in parser._actions:
+        if hasattr(action, "choices") and isinstance(action.choices, dict):
+            return set(action.choices.keys())
+    return set()
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI 主入口。
 

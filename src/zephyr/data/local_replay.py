@@ -172,6 +172,11 @@ def _read_manifest() -> list[dict]:
     return entries
 
 
+def read_manifest() -> list[dict]:
+    """读取 manifest 全部条目（公共接口，R5: 消除测试私有访问）。"""
+    return _read_manifest()
+
+
 def _write_manifest(entries: list[dict]) -> None:
     """重写 manifest（只保留未回灌的条目，线程安全）。"""
     with _manifest_lock:
