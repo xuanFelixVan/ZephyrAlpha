@@ -4,7 +4,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [TTL] task_bound
+# [TTL] permanent
 """QMT Broker 运行时冒烟测试（manual，不入 CI）。
 
 治本核心（#ARCH-XTQUANT-API-COMPAT-001）：用运行时实证堵住 100% AI 开发的契约漂移。

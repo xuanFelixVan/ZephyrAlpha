@@ -10017,3 +10017,47 @@ entries:
   status: decided
   created: '2026-07-31'
   last_updated: '2026-07-31'
+# --- #ARCH-EXT-CONTRACT-VERIFY-001: 外部契约验证治理框架缺位（2026-07-31）---
+- issue_id: '#ARCH-EXT-CONTRACT-VERIFY-001'
+  title: '外部契约验证治理框架缺位——xtquant/QMT runtime 契约无登记/无 fixture/无实盘门禁'
+  category: governance_gap
+  severity: P1高
+  adjudication: |-
+    2026-07-31 审查 EDE 双路径集成遗留三项待办时发现：项目已有完善的"内部机制"验证闭环
+    （TRAE-068 六层闭环、capability_lookup 启动 smoke test G7、session 心跳），但"外部契约"
+    （xtquant SDK / QMT broker API）的 runtime 验证治理是空白。
+
+    病根（第一性原理）：
+    AI 的能力边界是静态分析——读源码、查类型、追调用链。但外部 SDK 的运行时契约（返回值语义、
+    时间戳格式、字段结构、price_type 取值）存在"静态不可证区间"：源码不透明或版本漂移，AI 凭
+    阅读推断必留开放点。两个 smoke test（smoke_test_qmt_broker / smoke_test_tick_data）注释
+    自承"用运行时实证堵住 100% AI 开发的契约漂移…静态阅读无法 100% 确认的开放点"。
+
+    四个具体缺口：
+    1. TTL 错配：两个 smoke test 标 task_bound（临时），但本质是 SDK 升级回归测试，应 permanent。
+    2. 无验证登记：无 registry 追踪"谁跑过/何时跑/哪个 SDK 版本/结果如何"。
+    3. 无 fixture 兜底：首次跑通后未捕获真实返回，时区转换等 normalization 逻辑无法在 CI 无终端
+       环境下回归，每次 SDK 升级都得人工重跑全链路。
+    4. 无上线门禁：项目目标"全自动实盘对接 QMT"，但 broker/tick 契约验证无"实盘前必须通过"硬门禁。
+       回测期错只影响数值，实盘期错是真金白银损失。
+
+    治本方案（三阶段）：
+    阶段1（本次执行）：TTL task_bound→permanent + 新建 external_contract_verification_registry.yaml
+      登记表（契约/smoke test/SDK 版本/验证状态/实盘门禁标记）。
+    阶段2（待用户首次跑通 smoke test）：smoke_test_tick_data 增 --capture-fixture 模式，捕获真实
+      tick 返回为 fixture，CI 可无终端回归 normalization 逻辑（含时区转换）。
+    阶段3（实盘立项时）：新增 external_contract_live_gate（仅 ZEPHYR_ENV=live 启用），检查所有
+      blocks_live_trading=true 条目 last_result=passed 且 SDK 版本达标，否则阻断实盘部署。
+
+    非 risk acceptance/wontfix——治理框架缺位，AI 直接标 proposed（涉及实盘门禁，待用户确认后转 decided）。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/external_contract_verification_registry.yaml（新建登记表）'
+    - 'scripts/tests/smoke_test_qmt_broker.py（TTL task_bound→permanent）'
+    - 'scripts/tests/smoke_test_tick_data.py（TTL task_bound→permanent）'
+  fix_phase: |-
+    阶段1 已执行（TTL 修正 + 登记表建立，2026-07-31）。
+    阶段2 待用户首次跑通 smoke test 后衔接（fixture 捕获 + CI 离线回归）。
+    阶段3 待实盘立项（external_contract_live_gate 硬门禁）。
+  status: proposed
+  created: '2026-07-31'
+  last_updated: '2026-07-31'

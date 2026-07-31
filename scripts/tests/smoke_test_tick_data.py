@@ -4,7 +4,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [TTL] task_bound
+# [TTL] permanent
 """Tick 数据源运行时冒烟测试（manual，不入 CI）。
 
 治本核心（#ARCH-EDE-TICK-FUEL-001）：用运行时实证堵住 EDE 燃料层的契约漂移。
