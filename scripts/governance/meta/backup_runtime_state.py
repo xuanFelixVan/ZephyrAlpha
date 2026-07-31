@@ -27,7 +27,8 @@ PG depgraph 备份已实现（ARCH-041 §5.33.1 治本）：backup_pg_depgraph()
 函数。.runtime/ 被 .gitignore 整目录忽略（git 非真源），需独立物理备份；
 保留最近 10 份（对齐 backup_pg_depgraph 标杆），RPO/RTO 真源见 config/dr_policy.yaml。
 
-YAML/JSONL 快照功能仍保留（向后兼容），但已标记 DEPRECATED。
+YAML/JSONL 物理快照已删除（ARCH-041 + AI-03 P5 治本）：git history 是 yaml/jsonl
+文件真源（directory_contract L740），物理快照违反真源唯一原则且无清理机制导致无限累积。
 
 Usage:
     python scripts/governance/meta/backup_runtime_state.py
@@ -39,7 +40,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 运行时状态备份 — SQLite导出JSON+YAML快照→commit（灾备 §33）
+description: 运行时状态备份 — PG depgraph + .runtime/handoffs 物理备份（灾备 §33）
 dimensions:
 - D1
 priority: P1
@@ -65,81 +66,8 @@ ensure_utf8_stdout()
 
 from _shared.constants import EXIT_PASS, REPO_ROOT, SCRIPTS_DIR
 
-META_DIR = SCRIPTS_DIR / "meta"
 # ARCH-041: 默认输出路径从 meta/_backups/（deprecated）改为 tmp/runtime_backups/（不进 git）
 DEFAULT_BACKUP_DIR = REPO_ROOT / "tmp" / "runtime_backups"
-
-
-def backup_yaml_files(backup_dir: Path) -> list[str]:
-    """备份所有 meta/ 下的 YAML 状态文件。
-
-    Args:
-        backup_dir: 备份输出目录
-
-    Returns:
-        list[str]: 备份的文件列表
-    """
-    backed_up: list[str] = []
-    yaml_files = list(META_DIR.glob("*.yaml"))
-    for yf in yaml_files:
-        if yf.name.startswith("_"):
-            continue
-        dst = backup_dir / yf.name
-        try:
-            content = yf.read_bytes()
-            tmp = f"{dst}.tmp"
-            with open(tmp, "wb") as f:
-                f.write(content)
-            os.replace(tmp, str(dst))
-            backed_up.append(str(yf.relative_to(SCRIPTS_DIR)))
-        except OSError:
-            continue
-    return backed_up
-
-
-def backup_jsonl_files(backup_dir: Path) -> list[str]:
-    """备份所有 meta/ 下的 JSONL 文件。
-
-    Args:
-        backup_dir: 备份输出目录
-
-    Returns:
-        list[str]: 备份的文件列表
-    """
-    backed_up: list[str] = []
-    jsonl_files = list(META_DIR.glob("*.jsonl"))
-    for jf in jsonl_files:
-        dst = backup_dir / jf.name
-        try:
-            content = jf.read_bytes()
-            tmp = f"{dst}.tmp"
-            with open(tmp, "wb") as f:
-                f.write(content)
-            os.replace(tmp, str(dst))
-            backed_up.append(str(jf.relative_to(SCRIPTS_DIR)))
-        except OSError:
-            continue
-    return backed_up
-
-
-def create_manifest(backup_dir: Path, backed_up: list[str]) -> None:
-    """创建备份 manifest。
-
-    Args:
-        backup_dir: 备份目录
-        backed_up: 备份文件列表
-    """
-    manifest = {
-        "timestamp": datetime.now(UTC).isoformat(),
-        "backup_type": "runtime_state_snapshot",
-        "files": backed_up,
-        "source": str(META_DIR.relative_to(REPO_ROOT)),
-    }
-    manifest_path = backup_dir / "backup_manifest.json"
-    tmp = f"{manifest_path}.tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, str(manifest_path))
 
 
 # ── PG depgraph 备份（ARCH-041 §5.33.1 治本）──────────────────────────────
@@ -335,7 +263,6 @@ def main() -> None:
     yaml/jsonl 文件真源（directory_contract L740），物理快照违反真源唯一原则且
     snapshot_* 目录无清理机制导致无限累积（实测 4 次调用产生 3292+ 碎文件）。
     main() 现仅执行有效的 .runtime/ handoffs 物理备份（5.33.7 治本，git 非真源）。
-    backup_yaml_files/backup_jsonl_files 函数保留（向后兼容）但不再被 main() 调用。
     """
     parser = argparse.ArgumentParser(description="运行时状态备份")
     parser.add_argument(
