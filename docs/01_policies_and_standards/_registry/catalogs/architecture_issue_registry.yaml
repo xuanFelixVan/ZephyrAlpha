@@ -10237,3 +10237,34 @@ entries:
   related_rules: 'AGENTS.md RULE-SSOT, AD-GOV-001 (收敛期约束)'
   created: '2026-07-31'
   last_updated: '2026-07-31'
+
+# --- #ARCH-IFIND-SECTORMETA-FIX: sector_meta 停更28天修复 + total_share 幻觉温床删除 ---
+- issue_id: '#ARCH-IFIND-SECTORMETA-FIX'
+  title: 'sector_meta 停更28天修复（THS_WC失效→THS_iwencai）+ total_share 永远为0字段删除'
+  category: data_quality
+  severity: P2中
+  adjudication: |-
+    病根（2026-07-31 诊断）：sector_meta_refresh 任务自 2026-07-03 起每天"成功 0 行"静默失败，
+    停更 28 天。双重根因：①THS_WC 接口已失效（返回 THSData.data=None，换查询词也空）；
+    ②_fetch_sector_meta 解析假设 raw 为 dict，但 THS_WC 返回 THSData 对象，
+    isinstance(raw, dict) 判断失败直接走 else 返回空。
+
+    治本修复（commit 90f000e6）：THS_WC → THS_iwencai i问财接口（与 concept_sector 同接口，
+    已验证稳定），查询词"同花顺二级行业板块 总市值 流通市值 成份股个数 总股本 流通A股"/
+    分类"板块"，候选列名适配 i问财返回键名（指数代码/指数简称/成分股总数/流通a股）。
+    验证：重跑写入 90 行（trade_date=2026-07-31）。
+
+    续作治本（commit 4e31e44e）：i问财不返回"总股本"字段（板块层面该指标本就非标准），
+    provider 用 `or 0.0` 兜底导致 total_share 永远为 0。无任何业务读取，但残留字段会成为
+    AI 幻觉温床（误以为有板块总股本数据）。用户确认"全部删除"方案：删 schema DDL +
+    INSERT_COLUMNS + provider 4处引用 + DB ALTER DROP COLUMN（13列→12列）。
+    验证：重跑 90 行正常，DESCRIBE 确认 DB 12列与 DDL 12列一致。
+  impact:
+    - 'src/zephyr/data/implementations/ifind_provider.py（_fetch_sector_meta: THS_WC→THS_iwencai + 删 total_share 4处引用 + 表头 DEPENDENCIES 补 THS_iwencai）'
+    - 'schemas/categories/market_sector_meta.py（删 total_share DDL + INSERT_COLUMNS + 注释）'
+    - 'ClickHouse c1_market.sector_meta（ALTER DROP COLUMN total_share，13列→12列）'
+  fix_phase: '已完成（2 commit: 90f000e6 + 4e31e44e）'
+  status: resolved
+  related_rules: 'AGENTS.md RULE-SSOT（删字段防幻觉温床）, known_data_gaps.yaml'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
