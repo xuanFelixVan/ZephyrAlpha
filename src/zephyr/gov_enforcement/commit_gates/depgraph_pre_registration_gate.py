@@ -210,15 +210,19 @@ def _scan_violations(gateway, py_files: list[str]) -> list[str]:
 
     for rel in py_files:
         abs_path = os.path.join(str(project_root), rel)
-        ttl = _extract_ttl(abs_path)
+        # 治本（2026-08-01）：用 public alias（extract_ttl/query_build_status/
+        # count_impl_lines）而非私有引用（_extract_ttl 等），使 monkeypatch 能
+        # 拦截——public alias 设计初衷即为测试可注入（Stage 4 公共化）。原代码用
+        # 私有引用绕过了 alias，导致测试无法 mock（与 reconciler_health_gate 同病根）。
+        ttl = extract_ttl(abs_path)
         if ttl != "permanent":
             continue  # 只检测永久模块
 
-        status = _query_build_status(rel)
+        status = query_build_status(rel)
         if status != "planned":
             continue  # 非 planned 不检测（generated/stable/deprecated 放行）
 
-        impl_lines = _count_impl_lines(abs_path)
+        impl_lines = count_impl_lines(abs_path)
         if impl_lines <= _IMPL_THRESHOLD:
             continue  # 骨架/桩代码，planned 合理
 

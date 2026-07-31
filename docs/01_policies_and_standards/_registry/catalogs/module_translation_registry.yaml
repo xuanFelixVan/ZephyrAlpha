@@ -6,13 +6,14 @@ doc_type: register
 registry_id: REG-MODULE-TRANSLATION-001
 name: 模块级翻译注册表
 description: |
-  每个 .py 模块的中英文名+功能简介中英文 SSoT。生成器通过 _shared/module_translation_loader.py 共享读取。
+  每个 .py 模块的中英文名+功能简介中英文+大白话解释(plain_zh) SSoT。生成器通过 _shared/module_translation_loader.py 共享读取。
   模块级翻译属规则数据 → 真源是本 YAML 文件，禁止在生成器代码硬编码模块翻译字典。
   与 terminology_glossary.yaml（术语级）和 functional_domain_registry.yaml（域级）分工：本注册表是模块级，粒度不同。
+  plain_zh 是面向非开发读者的大白话解释（做什么/解决什么），用日常语言避免技术黑话，用于 Mermaid 节点标签等需要易懂描述的场景。
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 0.2.0
+version: 0.3.1
 created: '2026-07-31'
 last_updated: '2026-08-01'
 unique_key:
@@ -24,6 +25,7 @@ entry_schema:
   name_en: str
   desc_zh: str
   desc_en: str
+  plain_zh: str
 entries:
 - module_path: scripts/governance/generators/generate_script_manifest.py
   domain_id: D_GOV_RULE
@@ -31,207 +33,242 @@ entries:
   name_en: Script Manifest Generator
   desc_zh: '扫描 scripts/governance/ 下 .py 文件提取 __manifest__ 生成 script_manifest.yaml'
   desc_en: 'Scans .py files under scripts/governance/ to extract __manifest__ and generate script_manifest.yaml'
+  plain_zh: '把每个脚本自己填的信息卡片收集起来，做成一张总清单。老方法太死板，遇到特殊格式就漏抓导致清单不准，现在多种方式兜底确保不漏。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/adaptive_threshold.py
   domain_id: D_GOV_RULE
   name_zh: 自适应阈值
   name_en: Adaptive Threshold
   desc_zh: '自适应阈值——双模式：概率型（PASS/FAIL outcome 调节）+ 次数型（EWMA 基线 × factor）'
   desc_en: 'Adaptive threshold - dual mode: probability-based (PASS/FAIL outcome adjustment) + count-based (EWMA baseline x factor)'
+  plain_zh: '给告警算什么程度该报警的红线。两种算法：一种看成功率自动调，一种看最近一周的平均值定线。设了最低底线，防止红线越降越低、把问题掩盖掉。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/adversarial_strategies.py
   domain_id: D_GOV_RULE
   name_zh: 对抗样本生成器
   name_en: Adversarial Strategies
   desc_zh: '对抗样本生成器——5 种攻击策略用于门禁验证'
   desc_en: 'Adversarial sample generator with 5 attack strategies for gate validation'
+  plain_zh: '生成 5 种假想敌攻击套路，专门用来刁难系统，测门禁挡不挡得住。上线前自己先攻击一遍，比等真出事再发现强。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/ai_capability_guard.py
   domain_id: D_GOV_RULE
   name_zh: AI 能力边界守卫
   name_en: AI Capability Guard
   desc_zh: '@require_capability 装饰器 + AI 能力边界运行时检查'
   desc_en: 'AI capability boundary guard with @require_capability decorator'
+  plain_zh: '给函数贴需要什么权限的标签，检查 AI 有没有越权干没授权的事。只负责标记不拦，让后续检查环节去抓违规。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/anti_pattern_guard.py
   domain_id: D_GOV_RULE
   name_zh: 反模式防护引擎
   name_en: Anti-Pattern Guard
   desc_zh: 'Anti-Patterns 防护引擎——检测并阻止常见架构反模式'
   desc_en: 'Anti-pattern guard engine - detects and blocks common architectural anti-patterns'
+  plain_zh: '把蓝图里列的 8 条 AI 集成禁止行为做成自动检查，挂进门禁流程。防止 AI 集成时踩常见的坑，比如绕过门禁、擅自越权。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/can_i_deploy.py
   domain_id: D_GOV_RULE
   name_zh: 预部署门禁
   name_en: Can-I-Deploy
   desc_zh: 'Can-I-Deploy 预部署门禁（GATE-CDC-1）'
   desc_en: 'Can-I-Deploy pre-deployment gate (GATE-CDC-1)'
+  plain_zh: '部署前问一句现在能部署吗。检查四样：别人对我的期望满足没、版本兼容不、契约一致不、服务健康不。避免一部署就出事。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/capability_checker.py
   domain_id: D_GOV_RULE
   name_zh: 能力检查器
   name_en: Capability Checker
   desc_zh: '能力检查器——验证模块/脚本是否声明了所需能力'
   desc_en: 'Capability checker - verifies modules/scripts declare required capabilities'
+  plain_zh: '运行时核对模块有没有真的声明所需权限，再校验权限表没被偷偷改过。确保声明的能力和实际用的对得上，防止钻空子。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/cbac_matrix.py
   domain_id: D_GOV_RULE
   name_zh: CBAC 能力矩阵
   name_en: CBAC Matrix
   desc_zh: 'CBAC 能力矩阵（Capability-Based Access Control Matrix）'
   desc_en: 'CBAC Capability-Based Access Control Matrix'
+  plain_zh: '一张谁能干什么的授权表，按能力而非角色控权——有什么能力才能干什么。是权限判断的统一依据，别的模块都查它。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/cdc_broker.py
   domain_id: D_GOV_RULE
   name_zh: CDC 契约经纪人
   name_en: CDC Broker
   desc_zh: 'CDC 契约经纪人（Consumer-Driven Contract Broker）'
   desc_en: 'CDC Consumer-Driven Contract Broker'
+  plain_zh: '管消费者驱动契约的本地中介：消费方声明期望提供方给什么，提供方改了代码就自动验证有没有破坏消费方。不依赖外部服务，本地就能跑。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py
   domain_id: D_GOV_RULE
   name_zh: 单向熔断器
   name_en: Circuit Breaker
   desc_zh: 'CircuitBreakerGateway——模块间调用单向熔断器'
   desc_en: 'CircuitBreakerGateway - unidirectional circuit breaker for inter-module calls'
+  plain_zh: '模块间调用的保险丝。被调模块连续失败就跳闸，后续调用直接拒绝不再打它，防止故障扩散。跳闸后要人工手动恢复。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/contract_template_manager.py
   domain_id: D_GOV_RULE
   name_zh: 契约模板管理器
   name_en: Contract Template Manager
   desc_zh: '管理 MCP 工具契约模板'
   desc_en: 'Contract template manager for MCP tool contracts'
+  plain_zh: '管理工具契约模板：注册新模板、按名字查模板、校验调用对不对、存成文件。让每个工具有统一的接口说明书，调用前能核对参数。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/end_to_end_walkthrough.py
   domain_id: D_GOV_RULE
   name_zh: 端到端走查验证器
   name_en: End-to-End Walkthrough
   desc_zh: '端到端场景走查验证器'
   desc_en: 'End-to-end scenario walkthrough validator'
+  plain_zh: '按预设场景把系统从头到尾走一遍，验证关键链路通不通、各环节衔接对不对。专门找单个测试发现不了的衔接问题。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/__init__.py
   domain_id: D_GOV_RULE
   name_zh: 门禁引擎模块集
   name_en: Gate Engine Package
   desc_zh: 'gate_engine package——门禁引擎模块集合（ARCH-042 阶段1 拆分产物）'
   desc_en: 'gate_engine package - gate engine module collection (ARCH-042 phase 1 split product)'
+  plain_zh: '门禁引擎的文件夹入口，把门禁相关的几个模块归到一起。本身不含逻辑，只是给它们一个稳定归属。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/adversarial_validation.py
   domain_id: D_GOV_RULE
   name_zh: 对抗验证门禁
   name_en: Adversarial Validation
   desc_zh: '对抗验证门禁——验证输出对抗对抗性攻击'
   desc_en: 'AdversarialValidationGate validates outputs against adversarial attacks'
+  plain_zh: '专门验证输出抗攻击的门禁。拿假想敌样本去冲击系统输出，看结果有没有被恶意输入带偏。不仅查输入合规，也查输出没被污染。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_context.py
   domain_id: D_GOV_RULE
   name_zh: 门禁上下文传播
   name_en: Gate Context
   desc_zh: 'GateContext 构建/序列化/跨模块注入'
   desc_en: 'GateContext construction, serialization, and cross-module injection'
+  plain_zh: '把门禁运行需要的上下文打包好，跨模块传递，让不同环节的门禁检查共享同一份信息。顺带统一了结果格式，避免各写各的对不上。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py
   domain_id: D_GOV_RULE
   name_zh: 门禁裁决引擎
   name_en: Gate Engine
   desc_zh: 'GateEngine——KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁决引擎'
   desc_en: 'GateEngine - KMS G1-G6 + Orc G0/G7 + Trading G10-G12 gate adjudication engine'
+  plain_zh: '门禁系统的裁判。从配置加载门禁规则，执行检查，判通过还是失败，结果记进库。覆盖知识库、任务编排、交易三类门禁。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_override.py
   domain_id: D_GOV_RULE
   name_zh: 门禁紧急旁路
   name_en: Gate Override
   desc_zh: 'Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪'
   desc_en: 'Owner emergency bypass - time-limited temporary gate bypass with audit trail'
+  plain_zh: '给负责人的紧急通道：特殊情况可临时绕过某道门禁，但严格限时、全程留痕。既允许紧急放行，又保证每次绕过可追溯、不能乱用。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_pipeline.py
   domain_id: D_GOV_RULE
   name_zh: 门禁评估管线
   name_en: Gate Pipeline
   desc_zh: '门禁评估管线——排序解析、组合逻辑（AND/OR/NOT）、并行调度'
   desc_en: 'Gate evaluation pipeline - ordering resolution, combinatorial logic (AND/OR/NOT), parallel scheduling'
+  plain_zh: '把多道门禁编排成一条流水线：定先后顺序、支持与或非组合、可并行跑。让跑哪些门禁怎么组合可配置，不写死在代码里。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_simulator.py
   domain_id: D_GOV_RULE
   name_zh: 门禁模拟器
   name_en: Gate Simulator
   desc_zh: '门禁模拟器——dry-run 全链路门禁演练，不修改任何状态'
   desc_en: 'Gate simulator - dry-run full-chain gate rehearsal without modifying any state'
+  plain_zh: '门禁的演习工具。把全链路门禁空跑一遍，但不改任何状态不写库。让开发者提前看门禁会怎么判，避免真跑时才出问题。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/gate_types.py
   domain_id: D_GOV_RULE
   name_zh: 门禁类型定义
   name_en: Gate Types
   desc_zh: 'GateType 枚举与 gate 相关 dataclass（GateContext/GateResult 等）'
   desc_en: 'GateType enum and gate-related dataclasses (GateContext/GateResult etc.)'
+  plain_zh: '定义门禁系统的数据格式标准（类型、上下文、结果结构），供引擎、流水线、模拟器共用。相当于门禁模块的数据字典，避免各处格式不统一。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/integration_test_runner.py
   domain_id: D_GOV_RULE
   name_zh: 集成测试运行器
   name_en: Integration Test Runner
   desc_zh: '集成测试运行器——运行跨模块集成测试'
   desc_en: 'Integration test runner - runs cross-module integration tests'
+  plain_zh: '跑跨模块集成测试的引擎，加载契约、执行断言、对接门禁。分四级：最关键的冒烟、全量核心、契约校验、健康探针，不同场景跑不同级别。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_001_circular_dependency.py
   domain_id: D_GOV_RULE
   name_zh: 循环依赖扫描器
   name_en: Circular Dependency Scanner
   desc_zh: 'EN-001 循环依赖扫描器——Kahn 拓扑排序检测模块导入环'
   desc_en: 'EN-001 circular dependency scanner - Kahn topological sort to detect module import cycles'
+  plain_zh: '扫描所有模块的依赖关系，揪出我依赖你、你又依赖我的死循环。这种循环会导致加载失败或卡死，越早发现越好。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_003_contract_compatibility.py
   domain_id: D_GOV_RULE
   name_zh: 契约兼容性检查器
   name_en: Contract Compatibility Checker
   desc_zh: 'EN-003 契约兼容性检查器——字段/类型/必填对齐差异比对'
   desc_en: 'EN-003 contract compatibility checker - field/type/required alignment diff comparison'
+  plain_zh: '逐字段比对契约文档写的和代码实际写的：字段有没有、类型对不对、必填一致不。专查文档和代码对不上的漂移。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_process_lifecycle_gateway.py
   domain_id: D_GOV_RULE
   name_zh: 进程生命周期网关
   name_en: Process Lifecycle Gateway
   desc_zh: '进程创建入口校验门禁'
   desc_en: 'Process creation entry validation gate'
+  plain_zh: '扫描代码里直接起进程的地方——这些绕过了统一管理入口，有失控风险。强制所有起进程都走同一个网关，便于治理。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/invariants/zero_residue_check.py
   domain_id: D_GOV_RULE
   name_zh: 零残留检查器
   name_en: Zero Residue Check
   desc_zh: '验证治理操作后无残留文件/目录/引用'
   desc_en: 'Verifies no residual files/directories/references remain after governance operations'
+  plain_zh: '清理操作做完后扫一遍，确认没留下临时文件、空目录、悬空引用。保证清理干净，不留垃圾。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/kiss_enforcer.py
   domain_id: D_GOV_RULE
   name_zh: KISS 约束执行器
   name_en: KISS Enforcer
   desc_zh: 'KISS 约束执行器——AI 产出复杂度检测 + bloat check'
   desc_en: 'KISS constraint enforcer - AI output complexity detection + bloat check'
+  plain_zh: '守保持简单原则的检查器。检测 AI 写的代码有没有过度复杂、堆冗余。防止 AI 为了看起来完整而过度设计。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/risk_ssot.py
   domain_id: D_GOV_RULE
   name_zh: 风险真源加载器
   name_en: Risk SSoT
   desc_zh: '从 config/risk_params.yaml 加载风险真源（INV-002 等）'
   desc_en: 'Loads risk SSoT from config/risk_params.yaml (INV-002 etc.)'
+  plain_zh: '从配置文件加载风险参数（如各种限额），供交易门禁校验参数对不对。把风险红线收口到一个地方，避免各处自己写、互相打架。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/__init__.py
   domain_id: D_GOV_RULE
   name_zh: 规则引擎模块集
   name_en: Rule Engine Package
   desc_zh: 'rule_engine package——规则引擎模块集合（ARCH-042 阶段1 拆分产物）'
   desc_en: 'rule_engine package - rule engine module collection (ARCH-042 phase 1 split product)'
+  plain_zh: '规则引擎的文件夹入口，把规则相关的模块归到一起。本身不含逻辑，只是给它们一个稳定归属。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py
   domain_id: D_GOV_RULE
   name_zh: 规则加载器
   name_en: Rule Loader
   desc_zh: 'RuleLoader——规则加载核心 API'
   desc_en: 'RuleLoader - core rule loading API'
+  plain_zh: '按需加载规则的核心接口。先查索引找规则文件，读出来用；找不到再扫目录。让规则按需加载、有索引可循，不每次全量扫。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py
   domain_id: D_GOV_RULE
   name_zh: Secrets 守护
   name_en: Secrets Guard
   desc_zh: '.env 校验 + git log 扫描 + 日志脱敏'
   desc_en: '.env validation + git log scanning + log desensitization'
+  plain_zh: '守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
   domain_id: D_GOV_RULE
   name_zh: 任务完成门禁
   name_en: Task Completion Gate
   desc_zh: '扫描 files_in_scope 外的残留文件，验证任务完成无遗漏'
   desc_en: 'Scans for residual files outside files_in_scope to verify task completion without omissions'
+  plain_zh: '任务收尾门禁。扫任务范围之外有没有残留的临时文件、备份、缓存，验证任务真做干净了。防止做一半留堆垃圾就算交付。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/task_types.py
   domain_id: D_GOV_RULE
   name_zh: 任务类型定义
   name_en: Task Types
   desc_zh: 'Task model——任务卡字段的 SSoT（SQLite tasks 表对齐）'
   desc_en: 'Task model - SSoT for task card fields (aligned with SQLite tasks table)'
+  plain_zh: '定义任务卡的数据结构（状态、优先级等），是任务字段的统一标准，和数据库表对齐。避免各处对任务字段理解不一致。'
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py
   domain_id: D_GOV_RULE
   name_zh: 三方对齐门禁
   name_en: Triple Alignment
   desc_zh: '蓝图↔代码↔依赖图三方对齐门禁'
   desc_en: 'Blueprint-code-dependency graph triple alignment gate'
+  plain_zh: '守三方对齐的门禁：检查蓝图、代码、依赖图三样对不对得上。防止蓝图写了没做、依赖图登记了但代码没有这类脱节。'
 - module_path: src/zephyr/gov_rule/__init__.py
   domain_id: D_GOV_RULE
   name_zh: 规则治理域包
   name_en: Gov Rule Package
   desc_zh: 'gov_rule domain package——rule governance'
   desc_en: 'gov_rule domain package - rule governance'
+  plain_zh: '规则治理域的文件夹入口，标记这个域的边界。本身不含逻辑，给域内模块一个归属。'
 - module_path: src/zephyr/gov_rule/constitutional_update/constitutional_update.py
   domain_id: D_GOV_RULE
   name_zh: 宪法自愈
   name_en: Constitutional Update
   desc_zh: '宪法自愈——Phase 14 盲点 B27 修复'
   desc_en: 'Constitutional self-healing - Phase 14 blind spot B27 fix'
+  plain_zh: '让项目宪法自我进化。从历史错误里提取经验，提议更新，经人审查后再安全写入。解决宪法是静态的、AI 犯错学不到的问题。'

@@ -42,10 +42,12 @@ def _make_gateway(
     """
     gw = MagicMock()
     gw.project_root = project_root
+    # gate 访问 gateway._registry（GitCommitGateway 私有属性，经 registry property 暴露），
+    # mock 需配置 _registry 而非 registry（MagicMock 二者是独立 auto-attribute）
     if raise_exc is not None:
-        gw.registry.other_held_files.side_effect = raise_exc
+        gw._registry.other_held_files.side_effect = raise_exc
     else:
-        gw.registry.other_held_files.return_value = other_held or set()
+        gw._registry.other_held_files.return_value = other_held or set()
     return gw
 
 

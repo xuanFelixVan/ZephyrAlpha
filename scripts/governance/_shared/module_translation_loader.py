@@ -112,6 +112,7 @@ def _load_from_yaml() -> dict[str, dict[str, str]]:
                 "name_en": str(entry.get("name_en") or ""),
                 "desc_zh": str(entry.get("desc_zh") or ""),
                 "desc_en": str(entry.get("desc_en") or ""),
+                "plain_zh": str(entry.get("plain_zh") or ""),
             }
         return result
     except Exception:  # noqa: BLE001 — YAML 不可用时静默降级
@@ -211,3 +212,22 @@ def preload() -> dict[str, dict[str, str]]:
     安全调用：YAML 不可用时静默返回空 dict。
     """
     return _ensure_loaded()
+
+
+def get_module_plain(module_path: str) -> str:
+    """返回模块的大白话解释（plain_zh，纯中文）。
+
+    大白话解释覆盖：模块做什么用、目的、解决什么问题、如何实现。
+    用于 Mermaid 节点标签——比 desc 更易懂、面向非开发读者。
+    未登记或无 plain_zh 时返回空串（调用方决定是否回退到 desc_zh）。
+
+    Args:
+        module_path: 模块相对路径
+
+    Returns:
+        大白话解释字符串，或 ``""``
+    """
+    trans = get_module_translation(module_path)
+    if not trans:
+        return ""
+    return trans.get("plain_zh", "")

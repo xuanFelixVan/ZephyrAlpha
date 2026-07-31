@@ -87,8 +87,11 @@ def make_reconciler_health_gate() -> GateSpec:
         project_root = gateway.project_root
 
         # 1. 检查 block_next 级别失败——硬阻断
+        # 治本（2026-08-01）：用 public alias（check_recent_blocks）而非私有引用
+        # （_check_recent_blocks），使 monkeypatch 能拦截——public alias 设计初衷即为
+        # 测试可注入（Stage 4 公共化）。原代码用私有引用绕过了 alias，导致测试无法 mock。
         try:
-            blocks = _check_recent_blocks(project_root)
+            blocks = check_recent_blocks(project_root)
         except Exception as e:  # noqa: BLE001 — fail-open: 查询异常不阻断
             logger.warning("RECONCILER-HEALTH: block_next query failed: %s", e)
             blocks = []
@@ -111,7 +114,7 @@ def make_reconciler_health_gate() -> GateSpec:
 
         # 2. 检查 critical_warn 级别失败——打印警告不阻断
         try:
-            warns = _check_recent_critical_warns(project_root)
+            warns = check_recent_critical_warns(project_root)
         except Exception as e:  # noqa: BLE001 — fail-open: 查询异常不阻断
             logger.warning("RECONCILER-HEALTH: critical_warn query failed: %s", e)
             warns = []

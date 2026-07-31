@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 55_d_gov_rule / 规则治理 / Rule Governance
+# 55_d_gov_rule / 规则治理域 / Rule Governance
 
 > **功能简介 / Overview**: 规则治理，负责规则注册、规则版本和规则依赖管理
 

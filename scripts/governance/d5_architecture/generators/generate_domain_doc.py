@@ -16,8 +16,7 @@
 """G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档
 
 包含：
-- 模块清单（按 architecture_layer 分组）
-- 域内依赖图（内嵌 Mermaid，分页显示）
+- 域内依赖图（内嵌 Mermaid，分页显示，节点含成熟度+中英文名+大白话+文件路径）
 - 跨域依赖（出边/入边聚合）
 - 架构分层视图（ASCII art 分层可视化）
 - 依赖关系图（ASCII art 按 dep_type 分组）
@@ -74,7 +73,7 @@ import yaml
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, PgConnExecuteWrapper  # 治本 #ARCH-TOOL-HEALTH-V1：PgConnExecuteWrapper 用于类型注解（8 处使用）
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402
-from _shared.module_translation_loader import get_module_translation, get_module_name_bilingual, get_module_desc_bilingual  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
+from _shared.module_translation_loader import get_module_translation, get_module_name_bilingual, get_module_desc_bilingual, get_module_plain  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
 
@@ -88,84 +87,8 @@ OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_arch
 # 注意：.html 文件本身已 gitignore（dev-local 衍生产物），故链接仅在生成端开发机可用，这是预期行为。
 _DOC_HTTP_BASE = "http://localhost:8765"
 
-# 蓝图注册表路径（用于 blueprint_id → 蓝图 MD 文件路径跳转链接）
-_BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
-
-
-def _load_blueprint_path_map() -> dict[str, str]:
-    """加载 blueprint_registry.yaml，构建 {module_id: 相对路径} 映射。
-
-    用于模块清单表格的"蓝图"列——从节点的 blueprint_id 构造跳转链接。
-    registry 不存在或解析失败时返回空字典，表格该列显示为空。
-    """
-    if not _BLUEPRINT_REGISTRY_PATH.exists():
-        return {}
-    try:
-        data = yaml.safe_load(_BLUEPRINT_REGISTRY_PATH.read_text(encoding="utf-8", errors="replace"))
-        if not isinstance(data, dict):
-            return {}
-        blueprints = data.get("blueprints", []) or []
-        result: dict[str, str] = {}
-        for bp in blueprints:
-            if not isinstance(bp, dict):
-                continue
-            mid = bp.get("module_id", "")
-            fp = bp.get("file_path", "")
-            if mid and fp:
-                # file_path 格式如 "03_modules/_domain_xxx/yyy/blueprint.md"
-                result[mid] = fp
-        return result
-    except Exception:
-        return {}
-
-
-# 模块级缓存（一次生成周期内只加载一次）
-_BLUEPRINT_PATH_CACHE: dict[str, str] | None = None
-
-
-def _get_blueprint_link(blueprint_id: str) -> str:
-    """根据 blueprint_id 返回跳转链接 markdown 文本，无则返回空字符串。
-
-    链接使用相对路径（相对于域文档输出目录 docs/02_enterprise_architecture/02_domain_architecture_docs/）。
-    从该目录到 docs/03_modules/ 需要上跳两级：../../03_modules/...
-    """
-    global _BLUEPRINT_PATH_CACHE
-    if not blueprint_id:
-        return ""
-    if _BLUEPRINT_PATH_CACHE is None:
-        _BLUEPRINT_PATH_CACHE = _load_blueprint_path_map()
-    fp = _BLUEPRINT_PATH_CACHE.get(blueprint_id, "")
-    if not fp:
-        return ""
-    # registry file_path 格式如 "03_modules/_domain_xxx/yyy/blueprint.md"
-    # 域文档在 docs/02_enterprise_architecture/02_domain_architecture_docs/，
-    # 到 docs/03_modules/ 需上跳两级 → ../../03_modules/
-    if "03_modules/" in fp:
-        relative_path = "../../" + fp
-        return f"[{blueprint_id}]({relative_path})"
-    return ""
-
-# ARCH-052: 聚合节点类型——配置对象集（门禁/脚本/测试/规则文件）用 1 个聚合节点代表
-# 图视图只显示聚合节点本身；清单视图展开 registry.yaml 列出内部 items
-AGGREGATE_NODE_TYPES = {
-    "gate_rule_set",           # 门禁规则集（D_GOV_ENFORCEMENT）
-    "script_collection",       # 脚本集（D_GOV_SCRIPTS）
-    "test_suite",              # 测试集（D_AUDITTEST）
-    "strategy_collection",     # 策略集（D_TRADING）
-    "rule_registry_collection",  # 规则注册表集（D_GOVERNANCE）
-}
-
-# 层级排序：编号按此顺序分组分配
+# 层级排序：编号按此顺序分组分配（build_numbering_map 按 LAYER_ORDER 给域编号）
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]  # noqa: gate-vocab  显示排序用，含历史遗留 L1_platform（layer_vocabulary v2.0.0 已移除，保留仅为兼容旧域文档分组）
-
-# 层级中文显示名映射（合并自 generate_domain_architecture_diagram.py）
-LAYER_DISPLAY = {
-    "L0_infrastructure": "L0 基础设施层 / Infrastructure Layer",
-    "L1_foundation": "L1 基础层 / Foundation Layer",
-    "L1_platform": "L1 平台层 / Platform Layer",
-    "L2_domain": "L2 领域层 / Domain Layer",
-    "L3_application": "L3 应用层 / Application Layer",
-}
 
 
 def _is_ghost(path: str) -> bool:
@@ -230,27 +153,6 @@ def _extract_yaml_description(path: str) -> str:
     except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败（YAMLError/IO）时返回空简介继续生成文档，尽力而为语义
         pass
     return ""
-
-
-def _load_registry_items(registry_path: str) -> list[dict]:
-    """加载 registry.yaml 的 items 列表（ARCH-052 聚合节点展开用）。
-
-    registry_path 是聚合节点的 path 字段（SSoT 指针），指向 registry.yaml 文件。
-    返回 items 列表，每个 item 含 file/description 等字段。
-    """
-    if not registry_path:
-        return []
-    abs_path = REPO_ROOT / registry_path
-    if not abs_path.exists() or not abs_path.suffix in ('.yaml', '.yml'):
-        return []
-    try:
-        data = yaml.safe_load(abs_path.read_text(encoding='utf-8', errors='replace'))
-        if isinstance(data, dict):
-            items = data.get('items', []) or []
-            return items if isinstance(items, list) else []
-    except Exception:  # noqa: BLE001 — registry.yaml 读取/解析失败时按无 items 处理（返回空列表），聚合节点仅显示自身行，尽力而为语义
-        pass
-    return []
 
 
 # ---------------------------------------------------------------------------
@@ -372,29 +274,36 @@ def _node_bilingual_desc(n: dict) -> str:
 
 
 def _node_mermaid_label(n: dict) -> str:
-    """生成 Mermaid 节点标签（双语名称+双语简介+成熟度，中文在前）。
+    """生成 Mermaid 节点标签：成熟度全称 + 中英文名 + 大白话 + 文件路径。
 
-    格式（用户偏好：中文在前英文在后，最后是文件名）：
-        (生产态 / production) 中文名 / English<br/>中文简介 / English<br/>文件: short_name
+    用户要求节点塞入全部必要信息（不放模块清单表格）：
+        (生产态 / production) 中文名 / English
+        大白话解释（做什么/目的/解决什么/如何实现）
+        文件: 父目录/文件名
 
-    无英文时降级为单语；无翻译真源条目时回退到 docstring 首行。
+    只展示必须存在的字段——空字段跳过，避免空行。
+    大白话(plain_zh)优先；未登记时回退到中文简介(desc_zh)。
+    长文本换行由 HTML 渲染层 CSS 处理（nodeLabel word-break + max-width），
+    配合 Ctrl+滚轮缩放 + 拖动平移查看完整内容。
     """
     maturity = _maturity_display(n.get("design_maturity") or "unknown")
     short_name = _node_short_name(n)
+    path = n.get("path") or ""
     name_bi = _node_bilingual_name(n)
-    desc_bi = _node_bilingual_desc(n)
+    # 大白话优先；无则回退中文简介（_node_desc_zh 内部已封装 docstring 降级）
+    plain = get_module_plain(path) if path else ""
+    if not plain:
+        plain = _node_desc_zh(n)
 
-    # 名称和简介都有：完整三行
-    if name_bi and desc_bi:
-        return f"({maturity}) {name_bi}<br/>{desc_bi}<br/>文件: {short_name}"
-    # 仅有名称（无简介）
-    if name_bi:
-        return f"({maturity}) {name_bi}<br/>文件: {short_name}"
-    # 仅有简介（名称回退失败，但简介有）
-    if desc_bi:
-        return f"({maturity}) {desc_bi}<br/>文件: {short_name}"
-    # 都无：仅成熟度+文件名
-    return f"({maturity}) {short_name}"
+    # 第 1 行：成熟度（+中英文名，若有）
+    line1 = f"({maturity})" if not name_bi else f"({maturity}) {name_bi}"
+    parts = [line1]
+    # 第 2 行：大白话/简介（若有）
+    if plain:
+        parts.append(plain)
+    # 第 3 行：文件路径（始终存在）
+    parts.append(f"文件: {short_name}")
+    return "<br/>".join(parts)
 
 
 def _bilingual_label_from_path(path: str, max_len: int = 60) -> str:
@@ -855,11 +764,12 @@ _MERMAID_GRAY_THEME = (
     "}}}%%"
 )
 
-# 灰主题协调的低饱和状态色：填充接近 #eaeaea 灰基调，边框保留状态色相深色确保可辨识
-_CLASSDEF_PRODUCTION = "classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a"
-_CLASSDEF_DESIGN = "classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5"
-_CLASSDEF_EXTERNAL_PROD = "classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a"
-_CLASSDEF_EXTERNAL_DESIGN = "classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5"
+# 状态色（对齐 dataflow 图 d_ex_pf_core.md 风格，用颜色增强运营态/设计态区分）：
+# 🟦 蓝色 = 运营态（已实现）/ 🟧 橙色虚线 = 设计态（未实现）
+_CLASSDEF_PRODUCTION = "classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000"
+_CLASSDEF_DESIGN = "classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5"
+_CLASSDEF_EXTERNAL_PROD = "classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000"
+_CLASSDEF_EXTERNAL_DESIGN = "classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
 
 
 def generate_internal_mermaid(
@@ -935,7 +845,12 @@ def generate_internal_mermaid(
     external_nodes: dict[str, tuple[str, str]] = {}  # ext_domain -> (mermaid_id, maturity)
 
     def _get_or_create_external(ext_domain: str, maturity: str) -> str:
-        """_get_or_create_external implementation."""
+        """跨域节点代表"另一个域"（非单个模块），标签同样塞入完整信息。
+
+        与域内节点 _node_mermaid_label 对齐：成熟度全称 + 域中英文名(中文在前)
+        + 域功能简介(大白话) + 跨域节点标识。域无单一文件，用"跨域节点"代替文件路径行。
+        域信息取自 domain_name_mapping（中文名 DB 优先 / 英文名+简介硬编码真源）。
+        """
         if ext_domain in external_nodes:
             return external_nodes[ext_domain][0]
         ext_id = sanitize_node_id(ext_domain)
@@ -946,11 +861,25 @@ def generate_internal_mermaid(
             idx += 1
         used_ids.add(ext_id)
         external_nodes[ext_domain] = (ext_id, maturity)
-        ext_name_zh = get_domain_name_zh_strict(ext_domain)
-        ext_label_text = f"{ext_domain} {ext_name_zh}" if ext_name_zh else ext_domain
-        ext_label = _sanitize_mermaid_label(ext_label_text)
         ext_maturity = _maturity_display(maturity)
-        lines.append(f'    {ext_id}["({ext_maturity}) {ext_label}"]')
+        ext_name_zh = get_domain_name_zh_strict(ext_domain)
+        ext_name_en = get_domain_name_en(ext_domain)
+        ext_desc = get_domain_desc_zh(ext_domain)
+        # 第 1 行：成熟度 + 域中英文名（中文在前，与域内节点格式一致）
+        if ext_name_zh and ext_name_en and ext_name_en != ext_domain:
+            name_bi = f"{ext_name_zh} / {ext_name_en}"
+        elif ext_name_zh:
+            name_bi = f"{ext_domain} {ext_name_zh}"
+        else:
+            name_bi = ext_domain
+        parts = [f"({ext_maturity}) {name_bi}"]
+        # 第 2 行：域功能简介（大白话，若有）
+        if ext_desc:
+            parts.append(ext_desc)
+        # 第 3 行：跨域节点标识（域无单一文件，用此标识代替文件路径行）
+        parts.append("跨域节点 / cross-domain")
+        ext_label = _sanitize_mermaid_label("<br/>".join(parts))
+        lines.append(f'    {ext_id}["{ext_label}"]')
         return ext_id
 
     # 跨域出边
@@ -1068,105 +997,6 @@ def _truncate(text: str, max_len: int = 40) -> str:
     return result + "..."
 
 
-def _layer_sort_key(layer: str) -> tuple[int, str]:
-    """层级排序键：LAYER_ORDER 优先，其余按字母序，空值最后。"""
-    if layer in LAYER_ORDER:
-        return (LAYER_ORDER.index(layer), layer)
-    elif layer:
-        return (len(LAYER_ORDER), layer)
-    else:
-        return (len(LAYER_ORDER) + 1, "")
-
-
-def generate_module_layered_list(nodes: list[dict]) -> str:
-    """生成模块分层清单表格（按 architecture_layer 分组，中英文表头）。"""
-    # 按 architecture_layer 分组
-    layer_groups: dict[str, list[dict]] = {}
-    for n in nodes:
-        layer = n["architecture_layer"] or ""
-        layer_groups.setdefault(layer, []).append(n)
-
-    sorted_layers = sorted(layer_groups.keys(), key=_layer_sort_key)
-
-    if not sorted_layers:
-        return "（无模块 / No modules）\n"
-
-    lines: list[str] = []
-
-    MAX_PER_LAYER = 200
-    for layer in sorted_layers:
-        layer_nodes = layer_nodes_all = layer_groups[layer]
-        display_name = LAYER_DISPLAY.get(layer, layer) if layer else "未分类 / Unclassified"
-
-        lines.append(f"### {display_name} ({len(layer_nodes_all)} modules)")
-        lines.append("")
-
-        shown = layer_nodes_all[:MAX_PER_LAYER]
-        lines.append(
-            "| # | 模块路径 / Module Path | "
-            "模块名称 / Module Name (功能简介 / Description) | "
-            "成熟度 / Maturity | 蓝图 / Blueprint |"
-        )
-        lines.append("|:--:|---------|---------|:---:|:---:|")
-
-        for i, n in enumerate(shown, 1):
-            path_display = _truncate(n["path"] or "", 60)
-            # 模块名称列：优先用模块翻译真源的双语名称（中文在前 / English），
-            # 回退到 docstring 首行 / 短文件名（_node_bilingual_name 已封装降级）
-            name_display = _node_bilingual_name(n) or _node_short_name(n)
-            name_display = _truncate(name_display, 100)
-            node_type = n.get("node_type", "")
-            # 蓝图跳转链接（从 blueprint_id 构造，无则为空）
-            blueprint_link = _get_blueprint_link(n.get("blueprint_id", ""))
-
-            # ARCH-052: 聚合节点——显示自身一行 + 展开 registry.yaml 列出内部 items
-            if node_type in AGGREGATE_NODE_TYPES:
-                registry_path = n["path"] or ""
-                registry_data = _load_registry_items(registry_path)
-                # 聚合节点本身一行
-                # 从 registry.yaml 取 collection_name 作为 description
-                collection_desc = ""
-                try:
-                    abs_reg = REPO_ROOT / registry_path
-                    if abs_reg.exists():
-                        reg_data = yaml.safe_load(abs_reg.read_text(encoding='utf-8', errors='replace'))
-                        if isinstance(reg_data, dict):
-                            collection_desc = reg_data.get("collection_name", "") or ""
-                            items_count = len(registry_data)
-                            collection_desc = f"[聚合节点 / Aggregated] {collection_desc} ({items_count} items)"
-                except Exception:  # noqa: BLE001 — registry.yaml 读取/解析失败时 collection_desc 留空回退到 name_display，不影响表格生成，尽力而为语义
-                    pass
-                lines.append(
-                    f"| {i} | {path_display} | "
-                    f"{collection_desc or name_display} | {_maturity_display(n['design_maturity'])} | {blueprint_link} |"
-                )
-                # 展开内部 items（最多显示前 100 个，避免表格过长）
-                MAX_ITEMS = 100
-                for j, item in enumerate(registry_data[:MAX_ITEMS], 1):
-                    item_file = item.get("file", "") or ""
-                    item_desc = (item.get("description", "") or "").strip().split('\n')[0].strip()
-                    item_desc = _truncate(item_desc, 80)
-                    item_path_display = _truncate(f"  ↳ {item_file}", 60)
-                    lines.append(
-                        f"| ↳{j} | {item_path_display} | "
-                        f"{item_desc} | - | - |"
-                    )
-                if len(registry_data) > MAX_ITEMS:
-                    lines.append(f"| | | > (仅显示前 {MAX_ITEMS} 个 items，共 {len(registry_data)} 个) | | |")
-            else:
-                # 普通节点——显示功能简介（docstring首行/yaml description）
-                lines.append(
-                    f"| {i} | {path_display} | "
-                    f"{name_display} | {_maturity_display(n['design_maturity'])} | {blueprint_link} |"
-                )
-
-        if len(layer_nodes_all) > MAX_PER_LAYER:
-            lines.append(f"\n> (仅显示前 {MAX_PER_LAYER} 个模块，共 {len(layer_nodes_all)} 个)")
-        lines.append("")
-
-    return "\n".join(lines)
-
-
 # ---------------------------------------------------------------------------
 # 原子写入（合并自 generate_domain_architecture_diagram.py）
 # ---------------------------------------------------------------------------
@@ -1232,12 +1062,13 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh} / {domain_name_en}")
+    # 标题中文加"域"后缀（如"规则治理域"），明确标识这是功能域；英文不加（Rule Governance 已含 governance）
+    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh}域 / {domain_name_en}")
     lines.append("")
     if domain_desc_zh:
         lines.append(f"> **功能简介 / Overview**: {domain_desc_zh}")
         lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
+    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。")
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     # DM-90974 Phase 2: 移除 per-second `最后更新: {now}` body 行——违反"相同 DB 输入→相同输出"幂等 invariant
@@ -1283,96 +1114,34 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append(f"| 描述 | {info['description']} | Description | {info['description']} |")
     lines.append("")
 
-    # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
-    lines.append("## 模块分层清单 / Module Layered List")
-    lines.append("")
-    lines.append(
-        f"> 按 architecture_layer 分组的模块清单（共 {len(nodes)} 个模块 / {len(nodes)} modules）。"
-    )
-    lines.append("")
-    lines.append(generate_module_layered_list(nodes))
-
     # 域内依赖图（内嵌 Mermaid，三视图：合并+运营态+设计态）
+    # 模块信息（成熟度全称+中英文名+大白话+文件路径）已内嵌于 Mermaid 节点标签，
+    # 不再单独输出模块清单表格——避免信息重复，单图即全景。
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
-    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。")
+    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
-    lines.append("> - **实线边框 = 运营态模块**（production，已上线运行）")
-    lines.append("> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）")
+    lines.append("> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）")
+    lines.append("> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）")
     lines.append("> - **实线箭头 = 运营态依赖**（已生效的依赖关系）")
     lines.append("> - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）")
     lines.append("")
 
-    # --- 视图1：合并全景图（标注 [production]/[design]，分页显示全部节点）---
-    lines.append("### 合并全景图（全部模块，标签标注成熟度）")
+    # 全景依赖图（全部模块，颜色区分运营态/设计态；不分页、不拆子图）
+    # 网页版支持 Ctrl+滚轮缩放 + 拖动平移，无需分页；颜色已区分运营态/设计态，无需重复拆子图。
+    lines.append("### 全景依赖图（全部模块，颜色区分运营态/设计态）")
     lines.append("")
-    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count}），标签标注成熟度。")
-    lines.append("")
-
-    PAGE_SIZE = 30
-    total_pages = (len(nodes) + PAGE_SIZE - 1) // PAGE_SIZE if nodes else 1
-    for page_idx in range(total_pages):
-        start = page_idx * PAGE_SIZE
-        end = start + PAGE_SIZE
-        page_nodes = nodes[start:end]
-        # 跨域边详情（仅涉及当前页节点）
-        page_outgoing, page_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in page_nodes])
-
-        if total_pages > 1:
-            lines.append(f"#### 第 {page_idx + 1} 页 / 共 {total_pages} 页")
-            lines.append("")
-
-        mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh, page_nodes, edges, page_outgoing, page_incoming
-        )
-        lines.append("```mermaid")
-        lines.append(mermaid_code)
-        lines.append("```")
-        lines.append("")
-
-    # --- 视图2：运营态子图（仅 production 节点和边）---
-    prod_nodes_list = [n for n in nodes if n["design_maturity"] == "production"]
-    prod_node_ids = {n["node_id"] for n in prod_nodes_list}
-    prod_edges_list = [e for e in edges if e["from_node_id"] in prod_node_ids and e["to_node_id"] in prod_node_ids]
-    prod_outgoing, prod_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in prod_nodes_list])
-
-    lines.append("### 运营态子图（仅 design_maturity=production 的模块和依赖）")
-    lines.append("")
-    lines.append(f"> 仅展示已上线运行的模块（共 {len(prod_nodes_list)} 个，{len(prod_edges_list)} 条域内依赖）。")
+    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count}），节点含成熟度+中英文名+大白话+文件路径。")
     lines.append("")
 
-    if prod_nodes_list:
-        mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh, prod_nodes_list, prod_edges_list, prod_outgoing, prod_incoming
-        )
-        lines.append("```mermaid")
-        lines.append(mermaid_code)
-        lines.append("```")
-    else:
-        lines.append("> （无运营态模块 / No production modules）")
-    lines.append("")
-
-    # --- 视图3：设计态子图（仅 design 节点和边）---
-    design_only_nodes_list = [n for n in nodes if n["design_maturity"] == "design"]
-    design_only_node_ids = {n["node_id"] for n in design_only_nodes_list}
-    design_only_edges_list = [e for e in edges if e["from_node_id"] in design_only_node_ids and e["to_node_id"] in design_only_node_ids]
-    design_only_outgoing, design_only_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in design_only_nodes_list])
-
-    lines.append("### 设计态子图（仅 design_maturity=design 的模块和依赖）")
-    lines.append("")
-    lines.append(f"> 仅展示蓝图阶段、代码未写的设计态模块（共 {len(design_only_nodes_list)} 个，{len(design_only_edges_list)} 条域内依赖）。")
-    lines.append("")
-
-    if design_only_nodes_list:
-        mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh, design_only_nodes_list, design_only_edges_list, design_only_outgoing, design_only_incoming
-        )
-        lines.append("```mermaid")
-        lines.append(mermaid_code)
-        lines.append("```")
-    else:
-        lines.append("> （无设计态模块 / No design modules）")
+    all_outgoing, all_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in nodes])
+    mermaid_code = generate_internal_mermaid(
+        domain_id, domain_name_zh, nodes, edges, all_outgoing, all_incoming
+    )
+    lines.append("```mermaid")
+    lines.append(mermaid_code)
+    lines.append("```")
     lines.append("")
 
     # 跨域依赖（中英文对照）
@@ -1458,7 +1227,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 def main() -> None:
     """入口：生成指定域的 MD 文档（含 Mermaid 依赖图 + ASCII art 架构图）。"""
     parser = argparse.ArgumentParser(
-        description="G2+G10 合并: 生成域架构文档(含内嵌Mermaid依赖图+ASCII art架构图+分层清单+依赖关系图)"
+        description="G2+G10 合并: 生成域架构文档(含内嵌Mermaid依赖图+跨域依赖图，模块信息内嵌节点)"
     )
     parser.add_argument(
         "domain_id",
