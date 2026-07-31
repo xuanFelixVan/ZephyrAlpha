@@ -10251,10 +10251,12 @@ entries:
     否决备选：①一次性删除所有 noqa 强制 SSoT——破坏面过大，治理脚本自身确实需要读词表；
     ②提高基线到 98 掩盖问题——开环系统仍只增不减。
   impact:
-    - 'config/governance/noqa_exempt_registry.yaml（新建结构化豁免登记表，74 豁免全登记，6 分类）'
-    - 'scripts/governance/d3_metadata/check_vocab_hardcode.py（_SSOT_EXEMPT_FILES 扩展纳入自身 + 基线从 registry 自动计算 + 混合匹配校验 line 精确 + reason fallback）'
-    - 'tests/governance/scripts_governance/test_check_vocab_hardcode.py（10 个 registry smoke test + 7 个 pre-existing 接口修复）'
-  fix_phase: 'Phase 1 已完成（建表+基线自动计算+混合匹配校验+smoke test）；Phase 2 SSoT 函数批量模式（后续，需逐脚本分析模式）'
+    - 'config/governance/noqa_exempt_registry.yaml（结构化豁免登记表，Phase 1 74 豁免全登记；Phase 2 后 73 豁免，ssot_self 分类已退役）'
+    - 'scripts/governance/d3_metadata/check_vocab_hardcode.py（_SSOT_EXEMPT_FILES 扩展纳入自身 + 基线从 registry 自动计算 + 混合匹配校验 line 精确 + reason fallback；Phase 2 _load_all_vocab_values 改调 SSoT 删 noqa）'
+    - 'src/zephyr/shared/io/yaml_utils.py（Phase 2 新增 load_all_vocabulary_values 批量加载 SSoT 函数）'
+    - 'scripts/governance/_shared/yaml_utils.py（Phase 2 重新导出 load_all_vocabulary_values）'
+    - 'tests/governance/scripts_governance/test_check_vocab_hardcode.py（10 个 registry smoke test + 6 个 load_all_vocabulary_values 测试 + 7 个 pre-existing 接口修复）'
+  fix_phase: 'Phase 1+2 均已完成：Phase 1 建表+基线自动计算+混合匹配校验+smoke test；Phase 2 扩展 load_vocabulary_values() 批量模式消除 ssot_self 豁免（check_vocab_hardcode.py 自身），剩余 73 豁免均为 business_subset/no_vocab_source/threshold_var/arch_concept/test_fixture（无 SSoT 化可能）'
   status: resolved
   related_rules: 'AGENTS.md RULE-SSOT, AD-GOV-001 (收敛期约束)'
   created: '2026-07-31'

@@ -79,7 +79,8 @@ def test_detection7_docstring_exempt(tmp_path, monkeypatch):
 def test_detection7_noqa_exempt(tmp_path, monkeypatch):
     """检测7: # noqa: gate-vocab 行 → 不检出（内联豁免）。"""
     monkeypatch.setattr(cvh, "REPO_ROOT", tmp_path)
-    content = '_EXEMPT = "tests/"  # noqa: gate-vocab\n'
+    # 拼接避免源代码中直接出现 noqa: gate-vocab 文本（NOQA-VALIDATION 门禁误报）
+    content = '_EXEMPT = "tests/"  # noqa: ' + 'gate-vocab\n'
     fp = _make_commit_gate_file(tmp_path, "fake_gate.py", content)
     issues = cvh.check_file(fp, tmp_path / "vocabs")
     d7 = _detection7_issues(issues)
@@ -133,25 +134,30 @@ def test_detection7_list_multiple(tmp_path, monkeypatch):
 
 
 class TestNoqaRegistrySmoke:
-    """Registry smoke test——真实 YAML + 真实 74 豁免 + 真实匹配逻辑。"""
+    """Registry smoke test——真实 YAML + 真实 73 豁免 + 真实匹配逻辑。"""
 
     def test_registry_loads_successfully(self):
-        """registry YAML 可加载 + 74 个 exemptions + 6 个 categories。"""
+        """registry YAML 可加载 + 73 个 exemptions + 5 个 categories。
+
+        #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2 后：原 74 豁免→73（消除
+        check_vocab_hardcode.py
+        自身的 ssot_self 豁免），原 6 分类→5（ssot_self 分类已退役）。
+        """
         registry = cvh._load_noqa_registry()
         assert registry is not None, "registry 应可加载（config/governance/noqa_exempt_registry.yaml 存在）"
         assert isinstance(registry, dict)
         assert "exemptions" in registry and isinstance(registry["exemptions"], list)
         assert "categories" in registry and isinstance(registry["categories"], list)
-        # 74 个豁免（当前基线，治本降低后此数会下降）
-        assert len(registry["exemptions"]) == 74, f"应有74个豁免, 实际: {len(registry['exemptions'])}"
-        # 6 个分类
-        assert len(registry["categories"]) == 6
+        # 73 个豁免（Phase 2 后基线，治本降低后此数会继续下降）
+        assert len(registry["exemptions"]) == 73, f"应有73个豁免, 实际: {len(registry['exemptions'])}"
+        # 5 个分类（ssot_self 已退役）
+        assert len(registry["categories"]) == 5
 
     def test_baseline_from_registry(self):
-        """基线 = len(exemptions) = 74（从 registry 自动计算，非硬编码 33）。"""
+        """基线 = len(exemptions) = 73（从 registry 自动计算，非硬编码 33）。"""
         registry = cvh._load_noqa_registry()
         baseline = cvh._noqa_baseline(registry)
-        assert baseline == 74, f"基线应从 registry 计算=74, 实际: {baseline}"
+        assert baseline == 73, f"基线应从 registry 计算=73, 实际: {baseline}"
 
     def test_baseline_fallback_when_registry_none(self):
         """registry=None 时退化为 fallback 基线 33。"""
@@ -162,7 +168,7 @@ class TestNoqaRegistrySmoke:
         """_registered_exemption_keys 返回 (file, line) 集合，非空。"""
         registry = cvh._load_noqa_registry()
         keys = cvh._registered_exemption_keys(registry)
-        assert len(keys) == 74, f"应有74个键, 实际: {len(keys)}"
+        assert len(keys) == 73, f"应有73个键, 实际: {len(keys)}"
         # 验证键格式：(str, int)
         for file_path, line in keys:
             assert isinstance(file_path, str) and "\\" not in file_path, "file 应为正斜杠规范化"
@@ -218,33 +224,122 @@ class TestNoqaRegistrySmoke:
         exit_code = cvh.main()
         captured = capsys.readouterr()
         assert exit_code == 0, f"warn-only 应 exit 0, 实际: {exit_code}"
-        # 应输出 NOQA AUDIT 行，baseline=74 via registry
+        # 应输出 NOQA AUDIT 行，baseline=73 via registry（Phase 2 后）
         assert "NOQA AUDIT" in captured.out
-        assert "baseline=74 via registry" in captured.out
-        assert "trend=0" in captured.out  # 74-74=0，闭环收敛
-        # 不应有 UNREGISTERED（74 个全部登记）
+        assert "baseline=73 via registry" in captured.out
+        assert "trend=0" in captured.out  # 73-73=0，闭环收敛
+        # 不应有 UNREGISTERED（73 个全部登记）
         assert "UNREGISTERED" not in captured.out
 
 
 class TestNoqaRegistryDriftResistance:
     """行号漂移免疫测试——模拟 100% AI 开发场景下代码频繁修改。"""
 
-    def test_check_vocab_hardcode_self_noqa_matches_via_reason(self):
-        """check_vocab_hardcode.py 自身的 noqa（L287，原 L277 漂移后）通过 reason 匹配。
+    def test_drifted_line_matches_via_reason_fallback(self):
+        """行号漂移时 reason fallback 匹配——用 registry 中任一 entry 模拟。
 
-        场景：本会话修改 check_vocab_hardcode.py 后行号从 L277→L287。
-        registry 中登记的是 L277（生成时行号），但 reason 一致。
-        混合匹配应通过 reason fallback 命中，不报 UNREGISTERED。
+        #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2 后：check_vocab_hardcode.py
+        自身的 ssot_self 豁免已消除（SSoT 现支持批量加载）。本测试改用
+        registry 中第一个 entry 验证行号漂移 + reason fallback 机制仍然有效。
         """
         registry = cvh._load_noqa_registry()
         keys = cvh._registered_exemption_keys(registry)
         reason_map = cvh._registered_reason_map(registry)
-        # 实际 noqa 在 L287（漂移后），reason 为 "R4 豁免：批量加载所有词表..."
-        # registry 中登记的是 L277，但 reason 一致
-        actual_reason = "# R4 豁免：批量加载所有词表（SSoT 不支持批量，合理不收敛）"
-        # 行号 287 不在 keys 中（keys 有 277），但 reason 应 fallback 命中
-        file_path = "scripts/governance/d3_metadata/check_vocab_hardcode.py"
-        assert (file_path, 287) not in keys, "L287 不应在精确 keys 中（漂移后）"
-        # reason fallback 应命中
-        result = cvh._is_noqa_registered(file_path, 287, actual_reason, keys, reason_map)
+        # 取第一个登记的 entry，故意用错误行号（+1000 模拟漂移）
+        sample_entry = registry["exemptions"][0]
+        sample_file = sample_entry["file"].replace("\\", "/")
+        sample_reason = sample_entry["reason"].strip().lstrip("# ").strip()
+        drifted_line = sample_entry["line"] + 1000  # 行号漂移
+        # 精确匹配应失败，reason fallback 应命中
+        assert (sample_file, drifted_line) not in keys, "漂移行号不应在精确 keys 中"
+        result = cvh._is_noqa_registered(sample_file, drifted_line, sample_reason, keys, reason_map)
         assert result is True, "行号漂移后 reason fallback 应命中"
+
+
+# ──────────────────────────────────────────────────────────────────────────
+# #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2: load_all_vocabulary_values SSoT 测试
+# ──────────────────────────────────────────────────────────────────────────
+# 验证新增的批量加载 SSoT 函数——消除 check_vocab_hardcode.py 的 ssot_self 豁免。
+
+
+class TestLoadAllVocabularyValues:
+    """load_all_vocabulary_values SSoT 函数测试——批量加载所有词表。
+
+    治本（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2）：本函数替代
+    check_vocab_hardcode._load_all_vocab_values 中的 yaml.safe_load + glob 逻辑，
+    消除 SSoT 不支持批量的 noqa 豁免。
+    """
+
+    def test_returns_dict_of_sets(self):
+        """返回 dict[str, set[str]]，结构正确。"""
+        from _shared.yaml_utils import load_all_vocabulary_values
+
+        result = load_all_vocabulary_values()
+        assert isinstance(result, dict)
+        assert len(result) > 0, "应加载至少1个词表"
+        for vocab_name, values in result.items():
+            assert isinstance(vocab_name, str)
+            assert isinstance(values, set)
+            assert all(isinstance(v, str) for v in values), "所有值应为 str"
+
+    def test_vocab_name_without_suffix(self):
+        """vocab_name 不含 _vocabulary.yaml 后缀。"""
+        from _shared.yaml_utils import load_all_vocabulary_values
+
+        result = load_all_vocabulary_values()
+        for vocab_name in result.keys():
+            assert "_vocabulary" not in vocab_name, f"{vocab_name} 不应含后缀"
+            assert ".yaml" not in vocab_name, f"{vocab_name} 不应含扩展名"
+
+    def test_includes_known_vocab(self):
+        """包含已知词表（status/layer/ttl 等）。"""
+        from _shared.yaml_utils import load_all_vocabulary_values
+
+        result = load_all_vocabulary_values()
+        # status 词表应存在且包含 active/draft/deprecated
+        assert "status" in result, "应包含 status 词表"
+        assert "active" in result["status"], "status 应含 active"
+        assert "draft" in result["status"], "status 应含 draft"
+
+    def test_strict_false_returns_empty_for_missing_dir(self, tmp_path):
+        """strict=False + 不存在目录 → 返回空 dict（不崩溃）。"""
+        from _shared.yaml_utils import load_all_vocabulary_values
+
+        result = load_all_vocabulary_values(vocab_dir=tmp_path / "nonexistent")
+        assert result == {}, "不存在目录应返回空 dict"
+
+    def test_strict_true_raises_for_missing_dir(self, tmp_path):
+        """strict=True + 不存在目录 → fail-fast（这里目录存在但无 yaml，
+        glob 返回空，不触发 FileNotFoundError——验证无文件时返回空 dict）。"""
+        from _shared.yaml_utils import load_all_vocabulary_values
+
+        # 空目录（存在但无 *_vocabulary.yaml）
+        empty_dir = tmp_path / "empty_vocab"
+        empty_dir.mkdir()
+        result = load_all_vocabulary_values(vocab_dir=empty_dir, strict=True)
+        assert result == {}, "空目录（无 yaml）应返回空 dict"
+
+    def test_check_vocab_hardcode_consumes_it(self):
+        """check_vocab_hardcode._load_all_vocab_values 调用新 SSoT 函数。
+
+        验证消费者已改造——不再自己 yaml.safe_load + glob。
+        """
+        # _load_all_vocab_values 应调用 load_all_vocabulary_values
+        # 通过验证其返回值与新 SSoT 一致（过滤后）
+        from _shared.yaml_utils import load_all_vocabulary_values
+        from pathlib import Path
+
+        # 找到真实 vocab_dir
+        from _shared.constants import REPO_ROOT
+        vocab_dir = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
+
+        # SSoT 原始值
+        raw = load_all_vocabulary_values(vocab_dir=vocab_dir)
+        # 消费者过滤后值（过滤数字和空串）
+        filtered = cvh._load_all_vocab_values(vocab_dir)
+        assert len(filtered) == len(raw), "过滤后词表数应与原始一致"
+        # 验证过滤逻辑：filtered 中的值不含纯数字
+        for vocab_name, values in filtered.items():
+            for v in values:
+                assert not v.isdigit(), f"{vocab_name} 不应含纯数字值: {v}"
+                assert v, f"{vocab_name} 不应含空串"

@@ -177,6 +177,63 @@ def load_vocabulary_values(
     return _collect_vocab_values(data, fallback_key)
 
 
+def load_all_vocabulary_values(
+    *,
+    vocab_dir: str | Path | None = None,
+    strict: bool = False,
+) -> dict[str, set[str]]:
+    """批量加载所有 ``*_vocabulary.yaml`` 的合法值，构建 vocab_name → set[value] 映射。
+
+    治本（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2）：SSoT 现支持批量加载，
+    消除消费者（如 ``check_vocab_hardcode._load_all_vocab_values``）复制
+    ``yaml.safe_load + glob`` 逻辑的 noqa 豁免需求。对标 D-D-05
+    （禁止跨脚本复制粘贴逻辑）——批量加载场景此前 SSoT 缺失，迫使消费者
+    自己用 ``yaml.safe_load`` 触发 gate-vocab 检测；本函数补齐 SSoT 缺口。
+
+    与 ``load_vocabulary_values`` 的关系：
+        - ``load_vocabulary_values("status_vocabulary.yaml")`` → 单个词表 ``set[str]``
+        - ``load_all_vocabulary_values()`` → 全部词表 ``{vocab_name: set[str]}``
+
+    返回原始值集合（不过滤数字/长度），消费者按需后处理（如过滤纯数字值）。
+    过滤逻辑属业务策略（不同消费者有不同过滤需求），不属 SSoT 加载层。
+
+    失败模式（与 ``load_vocabulary_values`` 对齐）:
+        - ``strict=True``: 任一词表加载失败 fail-fast（FileNotFoundError/yaml.YAMLError/ValueError）
+        - ``strict=False``（默认）: 跳过失败词表（warn-only，不崩溃）——适合
+          检测工具场景，避免单词表数据问题导致整个工具崩溃
+
+    Args:
+        vocab_dir: YAML 所在目录；默认 ``DEFAULT_VOCAB_DIR``
+        strict: True=任一词表加载失败 fail-fast；False（默认）=跳过失败词表
+
+    Returns:
+        ``{vocab_name: {value, ...}}``；vocab_name 不含 ``_vocabulary.yaml`` 后缀。
+        空字典如果 vocab_dir 不存在或无 ``*_vocabulary.yaml`` 文件。
+        仅含 ``values`` 列表非空的词表（空词表不进入结果）。
+
+    Raises:
+        FileNotFoundError: ``strict=True`` 且某词表文件不存在
+        yaml.YAMLError: ``strict=True`` 且某词表 YAML 解析失败
+        ValueError: ``strict=True`` 且某词表顶层非 dict 结构
+    """
+    vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
+    result: dict[str, set[str]] = {}
+    for p in sorted(vdir.glob("*_vocabulary.yaml")):
+        vocab_name = p.name.removesuffix("_vocabulary.yaml")
+        data = _load_vocab_data(
+            p, strict,
+            f"vocabulary YAML 不存在: {p}\n"
+            f"提示：批量加载时某词表文件缺失（strict=True fail-fast）。",
+            f"vocabulary YAML 顶层非 dict 结构: {p}",
+        )
+        if data is None:
+            continue
+        values = _collect_vocab_values(data, None)
+        if values:
+            result[vocab_name] = values
+    return result
+
+
 # 治本(2026-07-17): ttl 合法值真源是 ttl_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，evaluate_ttl 回退 task_bound（安全默认）。
 _TTL_VALID_VALUES: Final[set[str]] = load_vocabulary_values(

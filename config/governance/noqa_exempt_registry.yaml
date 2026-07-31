@@ -15,8 +15,10 @@ meta:
   issue: '#ARCH-VOCAB-NOQA-CONVERGENCE-001'
   description: |
     check_vocab_hardcode.py 的 # noqa: gate-vocab 豁免结构化登记表。
-    治本三阶段：Phase 1 建表+基线自动计算（本提交）；Phase 2 扩展
-    load_vocabulary_values() 批量/分组模式消除高频豁免（后续）。
+    治本三阶段：Phase 1 建表+基线自动计算（已完成）；Phase 2 扩展
+    load_vocabulary_values() 批量模式消除 ssot_self 豁免（已完成）。
+    剩余 73 个豁免均为业务子集/无词表真源/阈值变量/架构概念/测试夹具，
+    无 SSoT 化可能（业务语义稳定，非词表成员校验）。
 
 categories:
   - id: business_subset
@@ -39,10 +41,6 @@ categories:
     name: '测试夹具/断言'
     description: 测试断言中的字面量集合（非生产代码）
     default_retire_plan: 不退役（测试夹具固有）
-  - id: ssot_self
-    name: 'SSoT 真源文件自身'
-    description: SSoT 真源实现（如 check_vocab_hardcode.py 自身批量加载），豁免检测5
-    default_retire_plan: Phase 2 扩展 load_vocabulary_values 批量模式后退役
 
 exemptions:
   - file: scripts/arch_guard/check_cross_plane_communication.py
@@ -101,10 +99,6 @@ exemptions:
     line: 69
     category: business_subset
     reason: '层目录名，非 domain 值'
-  - file: scripts/governance/d3_metadata/check_vocab_hardcode.py
-    line: 277
-    category: ssot_self
-    reason: 'R4 豁免：批量加载所有词表（SSoT 不支持批量，合理不收敛）'
   - file: scripts/governance/d3_metadata/classify_ttl_by_content.py
     line: 77
     category: business_subset
@@ -342,4 +336,4 @@ exemptions:
     category: business_subset
     reason: '业务逻辑：L0/L1 层映射 warm 运行面，其余 cold（非词表成员校验）'
 
-# Statistics: total=74, by_category={'business_subset': 40, 'arch_concept': 6, 'threshold_var': 12, 'ssot_self': 1, 'no_vocab_source': 14, 'test_fixture': 1}
+# Statistics: total=73, by_category={'business_subset': 40, 'arch_concept': 6, 'threshold_var': 12, 'no_vocab_source': 14, 'test_fixture': 1}

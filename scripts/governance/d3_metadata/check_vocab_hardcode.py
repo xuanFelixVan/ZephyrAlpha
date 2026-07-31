@@ -69,7 +69,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXCLUDE_DIRS, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.walk import iter_files  # noqa: E402
-from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  # D-D-05：词表加载收敛到 SSoT
+from _shared.yaml_utils import load_all_vocabulary_values, load_vocabulary_values  # noqa: E402  # D-D-05：词表加载收敛到 SSoT（含批量 #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2）
 
 # ── 词表前缀 → YAML 文件名映射（用于输出建议）──
 _VOCAB_FILES: dict[str, str] = {
@@ -284,8 +284,12 @@ def _is_number_literal_or_collection(value: ast.expr) -> bool:
     return False
 
 
-def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:  # noqa: gate-vocab  # R4 豁免：批量加载所有词表（SSoT 不支持批量，合理不收敛）
+def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:
     """加载所有 *_vocabulary.yaml 的合法值，构建 vocab_name → set[value] 映射。
+
+    治本（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2）：改为调用 SSoT
+    ``load_all_vocabulary_values()``，消除 noqa 豁免——SSoT 现支持批量加载，
+    不再需要消费者自己 ``yaml.safe_load + glob``（D-D-05 收敛）。
 
     用于值匹配检测（检测4）：不限变量名，扫描字面量集合的字符串值，
     若命中数 ≥ 1，标记为疑似硬编码（盲区5 治本：阈值从 ≥2 降到 ≥1）。
@@ -293,27 +297,16 @@ def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:  # noqa: gat
 
     Returns:
         {vocab_name: {value, ...}}；vocab_name 不含 _vocabulary.yaml 后缀。
-        过滤纯数字值（避免误报），保留单字符值（盲区3 治本：H/M/L 等单字符词表值需检测）。
-        文件异常时跳过（warn-only，不崩溃）。
+        过滤纯数字值（避免误报）和空串，保留单字符值（盲区3 治本：H/M/L 等需检测）。
+        SSoT 返回原始值（含数字/空串），此处后处理过滤（业务策略，不属 SSoT 加载层）。
     """
+    raw = load_all_vocabulary_values(vocab_dir=vocab_dir)
+    # 后处理：过滤纯数字值（避免误报）和空串，保留单字符值（H/M/L 等需检测）
     result: dict[str, set[str]] = {}
-    for p in sorted(vocab_dir.glob("*_vocabulary.yaml")):
-        vocab_name = p.name.removesuffix("_vocabulary.yaml")
-        try:
-            data = yaml.safe_load(p.read_text(encoding="utf-8"))
-        except (OSError, yaml.YAMLError):  # noqa: BLE001 — 单词表文件读取/解析失败跳过（docstring 已声明 warn-only）
-            continue
-        if not isinstance(data, dict):
-            continue
-        values: set[str] = set()
-        for v in data.get("values", []) or []:
-            if isinstance(v, dict) and "value" in v:
-                val = v["value"]
-                # 盲区3 治本：移除 len(val) >= 2 过滤，改为 >= 1（H/M/L 等单字符词表值需检测）
-                if isinstance(val, str) and len(val) >= 1 and not val.isdigit():
-                    values.add(val)
-        if values:
-            result[vocab_name] = values
+    for vocab_name, values in raw.items():
+        filtered = {v for v in values if v and not v.isdigit()}
+        if filtered:
+            result[vocab_name] = filtered
     return result
 
 
