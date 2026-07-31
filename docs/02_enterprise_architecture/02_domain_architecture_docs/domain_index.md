@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3075 |
-| 生产态模块 | 2855 |
+| 模块总数 | 3077 |
+| 生产态模块 | 2857 |
 | 设计态模块 | 220 |
 
 ## 域清单（按架构层分组）
@@ -148,7 +148,7 @@ ttl: permanent
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 5 | 2 | 3 | 5/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
-| D_PF_CORE | 组合核心 / Portfolio Core | 10 | 6 | 4 | 10/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
+| D_PF_CORE | 组合核心 / Portfolio Core | 12 | 8 | 4 | 12/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 11 | 1 | 10 | 11/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 15 | 11 | 4 | 15/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
