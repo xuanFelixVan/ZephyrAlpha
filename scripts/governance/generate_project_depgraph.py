@@ -319,7 +319,7 @@ CROSS_MODULE_REGISTRY_PATH = (
     / "01_policies_and_standards"
     / "_registry"
     / "catalogs"
-    / "cross-module-dependency-registry.yaml"
+    / "cross_module_dependency_registry.yaml"
 )
 
 DEPGRAPH_DESIGN_DIR = PROJECT_ROOT / "data" / "asset_index"
@@ -1190,6 +1190,46 @@ def parse_md_frontmatter(filepath: Path) -> dict:
     return info
 
 
+def _resolve_gov_bare_import(module: str, importing_file: Path) -> str | None:
+    """解析 scripts/governance/ 树的裸模块导入，返回 scripts.* 点路径或 None。
+
+    治本（2026-08-01，#ARCH-DEPGRAPH-GOV-BARE-IMPORT-001）：
+    scripts/governance/ 树通过两种 sys.path 机制使裸模块导入可解析——
+      1. Python 自动将脚本所在目录加入 sys.path[0] → 解析同目录模块（_common, domain_name_mapping）
+      2. _GOV_DIR（scripts/governance/）显式注入 sys.path → 解析 _shared.X 子包
+    原扫描器仅匹配 zephyr/scripts 前缀，漏掉全部裸模块导入（857 条 / 15 模块）。
+
+    按文件存在性解析（.py 或 __init__.py），零误报：仅当目标文件确实存在于
+    scripts/ 树下时才返回点路径，否则返回 None（stdlib/三方包自然跳过）。
+    """
+    if not module:
+        return None
+    mod_slashed = module.replace(".", "/")
+    file_dir = importing_file.parent
+    gov_dir = PROJECT_ROOT / "scripts" / "governance"
+    for base in [file_dir, gov_dir]:
+        candidate_file = base / (mod_slashed + ".py")
+        candidate_pkg = base / mod_slashed / "__init__.py"
+        resolved = candidate_file if candidate_file.exists() else (
+            candidate_pkg if candidate_pkg.exists() else None
+        )
+        if resolved is None:
+            continue
+        try:
+            rel = resolved.relative_to(PROJECT_ROOT)
+        except ValueError:
+            continue
+        rel_str = str(rel).replace("\\", "/")
+        if not rel_str.startswith("scripts/"):
+            continue  # 仅跟踪 scripts/ 树，避免 stdlib 同名误报
+        if rel_str.endswith("/__init__.py"):
+            rel_str = rel_str[: -len("/__init__.py")]
+        else:
+            rel_str = rel_str[:-3]  # strip .py
+        return rel_str.replace("/", ".")
+    return None
+
+
 def extract_py_imports(filepath: Path) -> list:
     """extract_py_imports implementation."""
     imports = []
@@ -1236,6 +1276,20 @@ def extract_py_imports(filepath: Path) -> list:
                         alias_path = f"{node.module}.{alias.name}"
                         if alias_path not in imports:
                             imports.append(alias_path)
+                else:
+                    # 治本（2026-08-01，#ARCH-DEPGRAPH-GOV-BARE-IMPORT-001）：
+                    # 解析 scripts/governance/ 树的裸模块导入（from _shared.X / from _common /
+                    # from domain_name_mapping import Y）。原扫描器仅匹配 zephyr/scripts 前缀，
+                    # 漏掉 857 条裸导入。按文件存在性解析为 scripts.* 点路径，复用既有边创建逻辑。
+                    resolved = _resolve_gov_bare_import(node.module or "", filepath)
+                    if resolved:
+                        imports.append(resolved)
+                        for alias in node.names:
+                            if alias.name == "*":
+                                continue
+                            alias_path = f"{resolved}.{alias.name}"
+                            if alias_path not in imports:
+                                imports.append(alias_path)
     except Exception:  # noqa: BLE001 — 单文件 AST 解析或导入分析失败返回已收集导入，不中断全量扫描
         pass
     return imports
@@ -4651,7 +4705,7 @@ def main():
             print(f"[WARN] project_handbook 统计刷新 rc={_result.returncode}: {_err}", file=sys.stderr)
         else:
             print("[DEPGRAPH] project_handbook 统计块已同步")
-    except Exception as e:  # noqa: m12-broad-except-legitimate  钩子必须非阻断
+    except Exception as e:  # noqa: m12-broad-except-legitimate  钩子必须非阻断，异常不能中断主流程
         print(f"[WARN] project_handbook 统计刷新跳过（非阻断）: {e}", file=sys.stderr)
 
     sys.exit(EXIT_PASS)

@@ -62,7 +62,7 @@ REGISTRIES = {
     "blueprint": PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml",
     "gate": PROJECT_ROOT / "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
     "cross_dep": PROJECT_ROOT
-    / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",
+    / "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml",
 }
 
 # ARCH-036: 路径修正 — 真实物理路径为 src/zephyr/feedback_loop/（下划线，已从 trading/ 迁出至顶层）；

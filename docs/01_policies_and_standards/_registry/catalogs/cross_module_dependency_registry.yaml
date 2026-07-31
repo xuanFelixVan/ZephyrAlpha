@@ -1412,6 +1412,17 @@ dependencies:
   contract_anchor: terminology_glossary.yaml
   direction: upstream
   valid_since: '2026-07-30'
+- dep_id: DEP-111
+  source: MOD-GOV_GENERATE_DOMAIN_DOC
+  source_name: generate-domain-doc
+  target: SH-MODULE-TRANSLATION-001
+  target_name: module-translation-loader
+  type: runtime
+  strength: hard
+  description: '域文档生成器 import _shared.module_translation_loader 取模块中英文名+功能简介双语标签（Mermaid 节点标签/模块清单/跨域依赖表三处接入）；loader 缺失则回退文件名/英文名，不崩溃但标签降级为非双语。SSoT 分类铁律 TRAE-062：模块翻译真源是 module_translation_registry.yaml。#ARCH-SSOT-GLOSSARY-MERGE-001。'
+  contract_anchor: module_translation_registry.yaml
+  direction: upstream
+  valid_since: '2026-08-01'
 dependency_graph:
   forward:
     SYS-MASTER-001:

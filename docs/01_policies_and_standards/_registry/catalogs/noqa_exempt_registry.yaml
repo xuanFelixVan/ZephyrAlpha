@@ -357,6 +357,21 @@ markers:
     created: "2026-07-29"
     created_by: "ARCH-TABLE-NAME-REGISTRY-001"
 
+  # ── 广义 except 合法豁免（钩子/回调非阻断场景，2026-08-01）──────────────────
+  - marker: "m12-broad-except-legitimate"
+    metric_id: null  # 非 dashboard 指标，是广义 except 合法场景豁免
+    description: "广义 except Exception 合法豁免——钩子/回调/post-commit 非阻断场景必须吞异常"
+    applicable_conditions:
+      - "post-commit 钩子必须非阻断（异常不能中断主流程）"
+      - "回调函数吞异常以保证主流程继续（如统计刷新失败不阻断 commit）"
+      - "非业务核心路径的 best-effort 操作（失败可降级/跳过）"
+    reason_required: true
+    reason_format: "M12豁免: <具体理由>（必须说明为何必须吞异常）"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-08-01"
+    created_by: "ARCH-SSOT-GLOSSARY-MERGE-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

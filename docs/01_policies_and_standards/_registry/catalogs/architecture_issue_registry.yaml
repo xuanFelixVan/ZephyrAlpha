@@ -10345,3 +10345,37 @@ entries:
   related_adjudication: 'trae_062 (SSoT 真源分类铁律), 裁定#204 (域改名)'
   created: '2026-07-31'
   last_updated: '2026-07-31'
+# --- #ARCH-DEPGRAPH-GOV-BARE-IMPORT-001: depgraph 扫描器漏扫 scripts/governance 裸模块导入 ---
+- issue_id: '#ARCH-DEPGRAPH-GOV-BARE-IMPORT-001'
+  title: generate_project_depgraph extract_py_imports 漏扫 scripts/governance 树裸模块导入（857条/15模块）
+  severity: P2中
+  adjudication: |
+    问题：scripts/governance/ 树通过两种 sys.path 机制使裸模块导入可解析——
+      1. Python 自动将脚本所在目录加入 sys.path[0] → 解析同目录模块（_common, domain_name_mapping）
+      2. _GOV_DIR（scripts/governance/）显式注入 sys.path → 解析 _shared.X 子包
+    但 extract_py_imports 仅匹配 zephyr/scripts 前缀的 import，漏掉全部裸模块导入
+    （from _shared.X import Y / from _common import Y / from domain_name_mapping import Y），
+    共 857 条导入语句、15 个模块（含 module_translation_loader、terminology_loader 等）。
+    depgraph 作为依赖关系唯一真源（零幻觉空间），缺这 857 条边意味着 AI 查询依赖关系时
+    系统性盲区——例如查"谁依赖 module_translation_loader"返回 0，实际有 1 个直接消费者；
+    terminology_loader 有 6 个直接消费者但 0 条入边。
+
+    根因：extract_py_imports 的 ImportFrom 分支用 startswith("zephyr")/"scripts" 过滤，
+    未覆盖 sys.path 注入的裸模块。边创建逻辑（line ~1891）同样用前缀过滤跳过。
+
+    治本（2026-08-01，本轮施工）：在 extract_py_imports 新增 else 分支，调用
+    _resolve_gov_bare_import(module, importing_file) 按文件存在性解析裸模块——
+    检查 importing_file 同目录 + scripts/governance/ 两个基址下是否存在 .py 或 __init__.py，
+    命中则转为 scripts.* 点路径返回（复用既有边创建逻辑，零改动下游）。stdlib/三方包
+    自然返回 None（文件不存在）跳过，零误报。修复后重跑 generate_project_depgraph 全量
+    重建，857 条裸导入边自动入库。
+
+    替代方案否决：(A) 手动 apply_depgraph --add-edge 登记单条 design 边——治标，且
+    scanner 每次 DELETE+重建 production 边时 design 边虽保留但语义不符（实为 production
+    import）；857 条逐一手动登记不可行。(B) 不修 scanner 仅文档记录——违背 depgraph
+    零幻觉铁律，AI 推断依赖=幻觉根源。
+  fix_phase: '本轮施工（2026-08-01）：extract_py_imports 新增 _resolve_gov_bare_import + else 分支'
+  status: resolved
+  related_adjudication: 'AGENTS.md RULE-DEPGRAPH（依赖关系先行铁律）, trae_062（SSoT真源分类）'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'

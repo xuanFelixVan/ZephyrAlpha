@@ -114,7 +114,7 @@ DEPENDENCY_GRAPH_PATHS = [
     / "01_policies_and_standards"
     / "_registry"
     / "catalogs"
-    / "cross-module-dependency-registry.yaml",
+    / "cross_module_dependency_registry.yaml",
 ]
 
 TEMPLATE_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "templates" / "dependency-graph-template.md"
@@ -358,7 +358,7 @@ def main() -> int:
         / "01_policies_and_standards"
         / "_registry"
         / "catalogs"
-        / "cross-module-dependency-registry.yaml"
+        / "cross_module_dependency_registry.yaml"
     )
     if cross_module_yaml.exists():
         findings = validate_cross_module_registry(cross_module_yaml)
