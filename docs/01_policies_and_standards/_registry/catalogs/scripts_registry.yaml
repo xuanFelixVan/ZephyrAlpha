@@ -1083,6 +1083,10 @@ items:
   name: detect_vague_terms.py
   node_type: script
   status: active
+- file: scripts/governance/d6_security/retire_tmp_artifacts.py
+  name: retire_tmp_artifacts.py
+  node_type: script
+  status: active
 - file: scripts/governance/d6_security/run_adversarial_checks.py
   name: run_adversarial_checks.py
   node_type: script
