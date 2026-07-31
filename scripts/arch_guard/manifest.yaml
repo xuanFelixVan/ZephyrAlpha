@@ -123,7 +123,7 @@ fitness_functions:
     status: active
     priority: P0
     runtime_plane: cold
-    note: "config/survivorship_policy.yaml 声明开关"
+    note: "config/data/survivorship_policy.yaml 声明开关"
 
   - id: FF-016
     invariant_id: INV-016

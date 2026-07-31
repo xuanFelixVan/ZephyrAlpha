@@ -16,7 +16,7 @@
 """
 check_survivorship_bias.py — Survivorship 策略门禁 (INV-014)
 
-  - 读取 config/survivorship_policy.yaml
+  - 读取 config/data/survivorship_policy.yaml（真源，经 _arch_ssot.SURVIVORSHIP_POLICY_PATH 引用）
   - 要求 require_delisted_symbols_in_backtest == true（声明级闭环）
 
 exit: 0=pass, 1=fail
@@ -36,7 +36,7 @@ from _arch_ssot import SURVIVORSHIP_POLICY_PATH, load_yaml  # noqa: E402
 
 def main() -> int:
     if not SURVIVORSHIP_POLICY_PATH.is_file():
-        print("FAIL: 缺少 config/survivorship_policy.yaml")
+        print("FAIL: 缺少 config/data/survivorship_policy.yaml")
         return 1
 
     pol = load_yaml(SURVIVORSHIP_POLICY_PATH)
