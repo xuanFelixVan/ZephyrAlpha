@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 130 | Module Count | 130 |
 | 域内依赖 | 43 | Internal Dependencies | 43 |
-| 跨域入边 | 13 | Cross-domain Incoming | 13 |
+| 跨域入边 | 11 | Cross-domain Incoming | 11 |
 | 跨域出边 | 59 | Cross-domain Outgoing | 59 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 130 | Production Modules | 130 |
@@ -1051,7 +1051,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 11 个外部域直接连接（出边 59 条 + 入边 13 条 = 72 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 10 个外部域直接连接（出边 59 条 + 入边 11 条 = 70 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1065,7 +1065,6 @@ graph LR
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
-    D_RISK["D_RISK<br/>风控"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]
     D_AUTONOMY_CORE -->|25条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
@@ -1077,13 +1076,12 @@ graph LR
     D_AUTONOMY_CORE -->|1条 导入依赖 / import_depends| D_ORCHESTRATOR
     D_AUTONOMY_CORE -->|1条 导入依赖 / import_depends| D_SECURITY
     D_INTEGRATION -->|3条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_ORCHESTRATOR -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_RISK -->|2条 runtime / runtime| D_AUTONOMY_CORE
     D_INFRA_RUNTIME -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_SECURITY -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_ORCHESTRATOR -->|2条 导入依赖 / import_depends| D_AUTONOMY_CORE
     D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_SECURITY -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
 ```
 
 ## 说明 / Notes

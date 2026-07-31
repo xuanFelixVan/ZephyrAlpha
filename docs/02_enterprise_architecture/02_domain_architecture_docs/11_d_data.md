@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 163 | Module Count | 163 |
 | 域内依赖 | 260 | Internal Dependencies | 260 |
-| 跨域入边 | 26 | Cross-domain Incoming | 26 |
+| 跨域入边 | 25 | Cross-domain Incoming | 25 |
 | 跨域出边 | 22 | Cross-domain Outgoing | 22 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 162 | Production Modules | 162 |
@@ -1485,7 +1485,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 12 个外部域直接连接（出边 22 条 + 入边 26 条 = 48 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 11 个外部域直接连接（出边 22 条 + 入边 25 条 = 47 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1498,10 +1498,9 @@ graph LR
     D_FACTOR["D_FACTOR<br/>因子"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
-    D_BACKTEST["D_BACKTEST<br/>回测"]
     D_TRADING["D_TRADING<br/>交易运营"]
+    D_BACKTEST["D_BACKTEST<br/>回测"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
-    D_RISK["D_RISK<br/>风控"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_DATA -->|19条 导入依赖 / import_depends| D_SHARED
     D_DATA -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
@@ -1510,10 +1509,9 @@ graph LR
     D_FACTOR -->|3条 导入依赖 / import_depends| D_DATA
     D_GOVERNANCE -->|3条 导入依赖 / import_depends| D_DATA
     D_GOV_CODE_QUALITY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
-    D_BACKTEST -->|2条 导入依赖 / import_depends| D_DATA
     D_TRADING -->|2条 runtime / runtime| D_DATA
+    D_BACKTEST -->|2条 导入依赖 / import_depends| D_DATA
     D_ML_TRAIN -->|1条 data / data| D_DATA
-    D_RISK -->|1条 runtime / runtime| D_DATA
     D_INFRA_RUNTIME -->|1条 导入依赖 / import_depends| D_DATA
 ```
 
