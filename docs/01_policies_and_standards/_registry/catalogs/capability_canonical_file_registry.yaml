@@ -5200,10 +5200,21 @@ capabilities:
       幻影模块（index.yaml 列出但 layers/b_{id}.yaml 不存在）与漏登模块
       （layers/b_*.yaml 物理存在但 index.yaml 未列）。CI 硬阻断门禁（.github/workflows/
       governance.yml 的 B-Track Consistency 步骤），exit code 1=发现漂移，0=通过。改
-      b_track 模块需同步改 layers/b_*.yaml 物理文件。b_track 模块清单从 layers/b_*.yaml
-      物理蓝图文件动态派生（index.yaml v3.0.3 治本），消除手工模板第二真源。AI 发现路径：
+      b_track 模块需同步改 layers/b_*.yaml 物理文件。b_track 模块清单从 layers/b_*.yaml 物理蓝图文件动态派生（index.yaml v3.0.3 治本），消除手工模板第二真源。AI 发现路径：
       搜 validate_b_track / b_track_packages → 命中本条目 → canonical 路径找源码。
 
+  # --------------------------------------------------------------------------
+  - capability_id: candidate_registry_query
+    aliases:
+      - query_candidate_registry
+      - candidate_module_registry
+      - candidate_lookup
+    description: >-
+      候选模块登记表查询工具。解决"草稿散乱+设计态污染"痛点——过度工程/死域/待开发
+      候选不进 depgraph 设计态（违反四问铁律），而是登记在 candidate_module_registry.yaml
+      候选库，支持按域/痛点/关键词/ID/状态多维检索 + 四图定位展示。对标敏捷 Product
+      Backlog / 量化 Alpha Idea Pipeline。canonical: scripts/governance/query_candidate_registry.py;
+      数据真源: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml。
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
@@ -7184,6 +7195,16 @@ creation_tokens:
     token: "auto-default-equity-strategy-orderbook-20260731"
     created_by: "session-sess-28792-20260731172121"
     capability: "default_equity_strategy"
+
+  # --- 候选模块登记表（2026-07-31，过度工程/死域候选库；治本"草稿散乱+设计态污染"痛点）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml"
+    token: "auto-candidate-module-registry-20260731"
+    created_by: "session-sess-cand-001-20260731172121"
+    capability: "candidate_registry_query"
+  - file: "scripts/governance/query_candidate_registry.py"
+    token: "auto-candidate-registry-query-20260731"
+    created_by: "session-sess-cand-001-20260731172121"
+    capability: "candidate_registry_query"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
