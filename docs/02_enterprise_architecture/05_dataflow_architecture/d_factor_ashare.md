@@ -10,9 +10,11 @@ ttl: permanent
 
 # 因子域-A股因子计算（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: A股Alpha因子计算——Alpha87/资金流/跨市场/基本面/机构/日内/IRL/市场结构/微观结构/形态/PS流动性/板块/SMC/技术指标等14类截面因子信号
 
 ## 数据流图（设计态）
 
@@ -21,34 +23,34 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11213["[design]factor.ashare_alpha87"]
-    DS11214["[design]factor.ashare_capital_flow"]
-    DS11215["[design]factor.ashare_cross_market"]
-    DS11216["[design]factor.ashare_fundamental"]
-    DS11217["[design]factor.ashare_institutional"]
-    DS11218["[design]factor.ashare_intraday"]
-    DS11219["[design]factor.ashare_irl"]
-    DS11220["[design]factor.ashare_market_structure"]
-    DS11221["[design]factor.ashare_microstructure"]
-    DS11222["[design]factor.ashare_pattern_signal"]
-    DS11223["[design]factor.ashare_ps_liquidity"]
-    DS11224["[design]factor.ashare_sector"]
-    DS11225["[design]factor.ashare_smc"]
-    DS11226["[design]factor.ashare_technical_indicator"]
-    JOB757577("[design]compute.ashare_alpha87")
-    JOB757578("[design]compute.ashare_capital_flow")
-    JOB757579("[design]compute.ashare_cross_market")
-    JOB757580("[design]compute.ashare_fundamental")
-    JOB757581("[design]compute.ashare_institutional")
-    JOB757582("[design]compute.ashare_intraday")
-    JOB757583("[design]compute.ashare_irl")
-    JOB757584("[design]compute.ashare_market_structure")
-    JOB757585("[design]compute.ashare_microstructure")
-    JOB757586("[design]compute.ashare_pattern_signal")
-    JOB757587("[design]compute.ashare_ps_liquidity")
-    JOB757588("[design]compute.ashare_sector")
-    JOB757589("[design]compute.ashare_smc")
-    JOB757590("[design]compute.ashare_technical_indicator")
+    DS11213["[design]factor.ashare_alpha87<br/>A股Alpha#87因子信号"]
+    DS11214["[design]factor.ashare_capital_flow<br/>A股资金流向因子"]
+    DS11215["[design]factor.ashare_cross_market<br/>A股跨市场因子"]
+    DS11216["[design]factor.ashare_fundamental<br/>A股基本面因子"]
+    DS11217["[design]factor.ashare_institutional<br/>A股机构持仓变动因子"]
+    DS11218["[design]factor.ashare_intraday<br/>A股日内动量因子"]
+    DS11219["[design]factor.ashare_irl<br/>A股IRL因子"]
+    DS11220["[design]factor.ashare_market_structure<br/>A股市场结构因子"]
+    DS11221["[design]factor.ashare_microstructure<br/>A股微观结构因子"]
+    DS11222["[design]factor.ashare_pattern_signal<br/>A股K线形态因子"]
+    DS11223["[design]factor.ashare_ps_liquidity<br/>A股PS流动性因子"]
+    DS11224["[design]factor.ashare_sector<br/>A股板块轮动因子"]
+    DS11225["[design]factor.ashare_smc<br/>A股SMC因子"]
+    DS11226["[design]factor.ashare_technical_indicator<br/>A股技术指标因子"]
+    JOB757577("[design]compute.ashare_alpha87<br/>计算Alpha#87因子")
+    JOB757578("[design]compute.ashare_capital_flow<br/>计算资金流因子")
+    JOB757579("[design]compute.ashare_cross_market<br/>计算跨市场因子")
+    JOB757580("[design]compute.ashare_fundamental<br/>计算基本面因子")
+    JOB757581("[design]compute.ashare_institutional<br/>计算机构行为因子")
+    JOB757582("[design]compute.ashare_intraday<br/>计算日内因子")
+    JOB757583("[design]compute.ashare_irl<br/>计算逆强化学习因子")
+    JOB757584("[design]compute.ashare_market_structure<br/>计算市场结构因子")
+    JOB757585("[design]compute.ashare_microstructure<br/>计算微观结构因子")
+    JOB757586("[design]compute.ashare_pattern_signal<br/>计算形态信号因子")
+    JOB757587("[design]compute.ashare_ps_liquidity<br/>计算流动性因子")
+    JOB757588("[design]compute.ashare_sector<br/>计算板块因子")
+    JOB757589("[design]compute.ashare_smc<br/>计算智能货币概念因子")
+    JOB757590("[design]compute.ashare_technical_indicator<br/>计算技术指标因子")
     JOB757577 -->|produces / 产出| DS11213
     JOB757578 -->|produces / 产出| DS11214
     JOB757579 -->|produces / 产出| DS11215
@@ -63,6 +65,19 @@ flowchart TD
     JOB757588 -->|produces / 产出| DS11224
     JOB757589 -->|produces / 产出| DS11225
     JOB757590 -->|produces / 产出| DS11226
+    DS11213 ~~~ JOB757578
+    DS11214 ~~~ JOB757579
+    DS11215 ~~~ JOB757580
+    DS11216 ~~~ JOB757581
+    DS11217 ~~~ JOB757582
+    DS11218 ~~~ JOB757583
+    DS11219 ~~~ JOB757584
+    DS11220 ~~~ JOB757585
+    DS11221 ~~~ JOB757586
+    DS11222 ~~~ JOB757587
+    DS11223 ~~~ JOB757588
+    DS11224 ~~~ JOB757589
+    DS11225 ~~~ JOB757590
 ```
 
 ## Dataset 清单

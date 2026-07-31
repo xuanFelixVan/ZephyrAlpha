@@ -10,9 +10,11 @@ ttl: permanent
 
 # 因子域-Barra风险模型与因子挖掘（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: Barra风险模型与因子挖掘——ESG/暴露计算/风险预算/协方差风险模型 + 因果性验证/AI因子挖掘Agent
 
 ## 数据流图（设计态）
 
@@ -21,24 +23,29 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11239["[design]factor.barra_esg"]
-    DS11240["[design]factor.barra_exposure_calculator"]
-    DS11241["[design]factor.barra_risk_budget_allocator"]
-    DS11242["[design]factor.barra_risk_model"]
-    DS11243["[design]factor_mining.causal_validator"]
-    DS11244["[design]factor_mining.mining_agent"]
-    JOB757603("[design]compute.barra_esg")
-    JOB757604("[design]compute.barra_exposure_calculator")
-    JOB757605("[design]compute.barra_risk_budget_allocator")
-    JOB757606("[design]compute.barra_risk_model")
-    JOB757607("[design]mine.causal_validator")
-    JOB757608("[design]mine.mining_agent")
+    DS11239["[design]factor.barra_esg<br/>ESG风险因子"]
+    DS11240["[design]factor.barra_exposure_calculator<br/>Barra因子暴露矩阵"]
+    DS11241["[design]factor.barra_risk_budget_allocator<br/>风险预算分配方案"]
+    DS11242["[design]factor.barra_risk_model<br/>Barra风险模型协方差矩阵"]
+    DS11243["[design]factor_mining.causal_validator<br/>因子因果性验证报告"]
+    DS11244["[design]factor_mining.mining_agent<br/>候选因子集合"]
+    JOB757603("[design]compute.barra_esg<br/>计算ESG风险因子")
+    JOB757604("[design]compute.barra_exposure_calculator<br/>计算Barra暴露计算")
+    JOB757605("[design]compute.barra_risk_budget_allocator<br/>计算风险预算分配")
+    JOB757606("[design]compute.barra_risk_model<br/>计算Barra风险模型")
+    JOB757607("[design]mine.causal_validator<br/>因果性验证")
+    JOB757608("[design]mine.mining_agent<br/>因子挖掘")
     JOB757603 -->|produces / 产出| DS11239
     JOB757604 -->|produces / 产出| DS11240
     JOB757605 -->|produces / 产出| DS11241
     JOB757606 -->|produces / 产出| DS11242
     JOB757607 -->|produces / 产出| DS11243
     JOB757608 -->|produces / 产出| DS11244
+    DS11239 ~~~ JOB757604
+    DS11240 ~~~ JOB757605
+    DS11241 ~~~ JOB757606
+    DS11242 ~~~ JOB757607
+    DS11243 ~~~ JOB757608
 ```
 
 ## Dataset 清单

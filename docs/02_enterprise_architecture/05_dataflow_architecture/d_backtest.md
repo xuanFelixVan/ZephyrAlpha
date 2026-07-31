@@ -10,9 +10,11 @@ ttl: permanent
 
 # 回测域-回测服务（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: 回测分析服务——异常诊断/数据质量检查/衰减监控/NaN处理/参数分析/报告生成/结果对比/结果部署
 
 ## 数据流图（设计态）
 
@@ -21,22 +23,22 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11245["[design]backtest.anomaly_diagnoser_result"]
-    DS11246["[design]backtest.data_quality_checker_result"]
-    DS11247["[design]backtest.decay_monitor_result"]
-    DS11248["[design]backtest.nan_processor_result"]
-    DS11249["[design]backtest.param_analyzer_result"]
-    DS11250["[design]backtest.report_generator_result"]
-    DS11251["[design]backtest.result_comparator_result"]
-    DS11252["[design]backtest.result_deployer_result"]
-    JOB757609("[design]backtest.anomaly_diagnoser")
-    JOB757610("[design]backtest.data_quality_checker")
-    JOB757611("[design]backtest.decay_monitor")
-    JOB757612("[design]backtest.nan_processor")
-    JOB757613("[design]backtest.param_analyzer")
-    JOB757614("[design]backtest.report_generator")
-    JOB757615("[design]backtest.result_comparator")
-    JOB757616("[design]backtest.result_deployer")
+    DS11245["[design]backtest.anomaly_diagnoser_result<br/>回测异常诊断报告"]
+    DS11246["[design]backtest.data_quality_checker_result<br/>数据质量报告"]
+    DS11247["[design]backtest.decay_monitor_result<br/>策略衰减报告"]
+    DS11248["[design]backtest.nan_processor_result<br/>清洗后数据"]
+    DS11249["[design]backtest.param_analyzer_result<br/>参数敏感性分析报告"]
+    DS11250["[design]backtest.report_generator_result<br/>回测报告"]
+    DS11251["[design]backtest.result_comparator_result<br/>回测对比报告"]
+    DS11252["[design]backtest.result_deployer_result<br/>部署状态记录"]
+    JOB757609("[design]backtest.anomaly_diagnoser<br/>回测异常诊断")
+    JOB757610("[design]backtest.data_quality_checker<br/>回测数据质量检查")
+    JOB757611("[design]backtest.decay_monitor<br/>策略衰减监控")
+    JOB757612("[design]backtest.nan_processor<br/>NaN数据处理")
+    JOB757613("[design]backtest.param_analyzer<br/>参数分析")
+    JOB757614("[design]backtest.report_generator<br/>回测报告生成")
+    JOB757615("[design]backtest.result_comparator<br/>回测结果比较")
+    JOB757616("[design]backtest.result_deployer<br/>回测结果部署")
     JOB757609 -->|produces / 产出| DS11245
     JOB757610 -->|produces / 产出| DS11246
     JOB757611 -->|produces / 产出| DS11247
@@ -45,6 +47,13 @@ flowchart TD
     JOB757614 -->|produces / 产出| DS11250
     JOB757615 -->|produces / 产出| DS11251
     JOB757616 -->|produces / 产出| DS11252
+    DS11245 ~~~ JOB757610
+    DS11246 ~~~ JOB757611
+    DS11247 ~~~ JOB757612
+    DS11248 ~~~ JOB757613
+    DS11249 ~~~ JOB757614
+    DS11250 ~~~ JOB757615
+    DS11251 ~~~ JOB757616
 ```
 
 ## Dataset 清单

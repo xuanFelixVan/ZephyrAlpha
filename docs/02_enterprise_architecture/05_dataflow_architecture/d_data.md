@@ -10,9 +10,11 @@ ttl: permanent
 
 # 数据域-数据采集管理（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: 数据采集与管理——特征存储/K线重采样/实时推送管理/板块快照采集/Tick数据管理
 
 ## 数据流图（设计态）
 
@@ -21,21 +23,25 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11253["[design]data.feature_store"]
-    DS11256["[design]data.kline_resampler"]
-    DS11254["[design]data.realtime_push_manager"]
-    DS11257["[design]data.sector_snapshot_collector"]
-    DS11255["[design]data.tick_data_manager"]
-    JOB757617("[design]data.feature_store")
-    JOB757620("[design]data.kline_resampler")
-    JOB757618("[design]data.realtime_push_manager")
-    JOB757621("[design]data.sector_snapshot_collector")
-    JOB757619("[design]data.tick_data_manager")
+    DS11253["[design]data.feature_store<br/>特征数据集"]
+    DS11256["[design]data.kline_resampler<br/>重采样K线数据"]
+    DS11254["[design]data.realtime_push_manager<br/>实时推送数据流"]
+    DS11257["[design]data.sector_snapshot_collector<br/>板块快照数据"]
+    DS11255["[design]data.tick_data_manager<br/>Tick数据管理记录"]
+    JOB757617("[design]data.feature_store<br/>特征存储管理")
+    JOB757620("[design]data.kline_resampler<br/>K线重采样")
+    JOB757618("[design]data.realtime_push_manager<br/>实时推送管理")
+    JOB757621("[design]data.sector_snapshot_collector<br/>板块快照采集")
+    JOB757619("[design]data.tick_data_manager<br/>Tick数据管理")
     JOB757617 -->|produces / 产出| DS11253
     JOB757618 -->|produces / 产出| DS11254
     JOB757619 -->|produces / 产出| DS11255
     JOB757620 -->|produces / 产出| DS11256
     JOB757621 -->|produces / 产出| DS11257
+    DS11253 ~~~ JOB757620
+    DS11256 ~~~ JOB757618
+    DS11254 ~~~ JOB757621
+    DS11257 ~~~ JOB757619
 ```
 
 ## Dataset 清单

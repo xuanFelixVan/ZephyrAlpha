@@ -10,9 +10,11 @@ ttl: permanent
 
 # 其他域-ML训练+风控+交易（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: ML训练+风控+交易——AI操作员决策/训练流水线 + 回撤跟踪 + PnL计算
 
 ## 数据流图（设计态）
 
@@ -21,18 +23,21 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11271["[design]ml.ai_operator_decisions"]
-    DS11272["[design]ml.training_dataset"]
-    DS11273["[design]risk.drawdown_metric"]
-    DS11274["[design]trading.pnl"]
-    JOB757635("[design]ml_train.ai_operator")
-    JOB757636("[design]ml_train.training_pipeline")
-    JOB757637("[design]risk.track_drawdown")
-    JOB757638("[design]trading.calc_pnl")
+    DS11271["[design]ml.ai_operator_decisions<br/>AI操作员决策记录"]
+    DS11272["[design]ml.training_dataset<br/>训练数据集"]
+    DS11273["[design]risk.drawdown_metric<br/>回撤指标序列"]
+    DS11274["[design]trading.pnl<br/>盈亏序列"]
+    JOB757635("[design]ml_train.ai_operator<br/>AI操作员决策")
+    JOB757636("[design]ml_train.training_pipeline<br/>ML训练流水线")
+    JOB757637("[design]risk.track_drawdown<br/>回撤跟踪")
+    JOB757638("[design]trading.calc_pnl<br/>PnL计算")
     JOB757635 -->|produces / 产出| DS11271
     JOB757636 -->|produces / 产出| DS11272
     JOB757637 -->|produces / 产出| DS11273
     JOB757638 -->|produces / 产出| DS11274
+    DS11271 ~~~ JOB757636
+    DS11272 ~~~ JOB757637
+    DS11273 ~~~ JOB757638
 ```
 
 ## Dataset 清单

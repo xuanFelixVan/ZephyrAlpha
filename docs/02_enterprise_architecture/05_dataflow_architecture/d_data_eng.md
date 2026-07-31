@@ -10,9 +10,11 @@ ttl: permanent
 
 # 数据工程域-数据工程服务（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: 数据工程服务——数据湖管理/知识清洗/流处理/合成数据生成/训练数据管理
 
 ## 数据流图（设计态）
 
@@ -21,21 +23,25 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11258["[design]data_eng.data_lake_manager"]
-    DS11259["[design]data_eng.knowledge_cleaning"]
-    DS11260["[design]data_eng.stream_processing"]
-    DS11261["[design]data_eng.synthetic_data"]
-    DS11262["[design]data_eng.training_data_manager"]
-    JOB757622("[design]data_eng.data_lake_manager")
-    JOB757623("[design]data_eng.knowledge_cleaning")
-    JOB757624("[design]data_eng.stream_processing")
-    JOB757625("[design]data_eng.synthetic_data")
-    JOB757626("[design]data_eng.training_data_manager")
+    DS11258["[design]data_eng.data_lake_manager<br/>数据湖资产清单"]
+    DS11259["[design]data_eng.knowledge_cleaning<br/>清洗后知识库"]
+    DS11260["[design]data_eng.stream_processing<br/>流处理结果"]
+    DS11261["[design]data_eng.synthetic_data<br/>合成数据集"]
+    DS11262["[design]data_eng.training_data_manager<br/>训练数据集"]
+    JOB757622("[design]data_eng.data_lake_manager<br/>数据湖管理")
+    JOB757623("[design]data_eng.knowledge_cleaning<br/>知识清洗")
+    JOB757624("[design]data_eng.stream_processing<br/>流处理")
+    JOB757625("[design]data_eng.synthetic_data<br/>合成数据生成")
+    JOB757626("[design]data_eng.training_data_manager<br/>训练数据管理")
     JOB757622 -->|produces / 产出| DS11258
     JOB757623 -->|produces / 产出| DS11259
     JOB757624 -->|produces / 产出| DS11260
     JOB757625 -->|produces / 产出| DS11261
     JOB757626 -->|produces / 产出| DS11262
+    DS11258 ~~~ JOB757623
+    DS11259 ~~~ JOB757624
+    DS11260 ~~~ JOB757625
+    DS11261 ~~~ JOB757626
 ```
 
 ## Dataset 清单

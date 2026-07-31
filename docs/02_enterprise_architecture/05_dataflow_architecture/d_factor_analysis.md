@@ -10,9 +10,11 @@ ttl: permanent
 
 # 因子域-因子分析（设计态）
 
-> 生成时间: 2026-07-31T01:05:49
+> 生成时间: 2026-07-31T16:17:50
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
+
+> **域职责 / Responsibility**: 因子分析与评估——IC/IR计算评估、衰减监控、相关性去重、归因、优化、分层回测、多因子合成、三级研判、换手率分析
 
 ## 数据流图（设计态）
 
@@ -21,30 +23,30 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11227["[design]factor_analysis.correlation_analyzer"]
-    DS11228["[design]factor_analysis.correlation_dedup"]
-    DS11229["[design]factor_analysis.decay_monitor"]
-    DS11230["[design]factor_analysis.factor_attribution"]
-    DS11231["[design]factor_analysis.factor_optimization"]
-    DS11232["[design]factor_analysis.ic_decay"]
-    DS11233["[design]factor_analysis.ic_ir_calc"]
-    DS11234["[design]factor_analysis.ic_ir_evaluator"]
-    DS11235["[design]factor_analysis.layered_backtest"]
-    DS11236["[design]factor_analysis.multifactor_synthesis"]
-    DS11237["[design]factor_analysis.three_level_judgment"]
-    DS11238["[design]factor_analysis.turnover_analyzer"]
-    JOB757591("[design]analyze.correlation_analyzer")
-    JOB757592("[design]analyze.correlation_dedup")
-    JOB757593("[design]analyze.decay_monitor")
-    JOB757594("[design]analyze.factor_attribution")
-    JOB757595("[design]analyze.factor_optimization")
-    JOB757596("[design]analyze.ic_decay")
-    JOB757597("[design]analyze.ic_ir_calc")
-    JOB757598("[design]analyze.ic_ir_evaluator")
-    JOB757599("[design]analyze.layered_backtest")
-    JOB757600("[design]analyze.multifactor_synthesis")
-    JOB757601("[design]analyze.three_level_judgment")
-    JOB757602("[design]analyze.turnover_analyzer")
+    DS11227["[design]factor_analysis.correlation_analyzer<br/>因子间相关系数矩阵"]
+    DS11228["[design]factor_analysis.correlation_dedup<br/>去重后的因子集合"]
+    DS11229["[design]factor_analysis.decay_monitor<br/>因子衰减报告"]
+    DS11230["[design]factor_analysis.factor_attribution<br/>因子归因报告"]
+    DS11231["[design]factor_analysis.factor_optimization<br/>优化后的因子权重"]
+    DS11232["[design]factor_analysis.ic_decay<br/>IC衰减曲线"]
+    DS11233["[design]factor_analysis.ic_ir_calc<br/>IC/IR指标序列"]
+    DS11234["[design]factor_analysis.ic_ir_evaluator<br/>IC/IR评估报告"]
+    DS11235["[design]factor_analysis.layered_backtest<br/>分层回测结果"]
+    DS11236["[design]factor_analysis.multifactor_synthesis<br/>合成因子信号"]
+    DS11237["[design]factor_analysis.three_level_judgment<br/>三级研判结果"]
+    DS11238["[design]factor_analysis.turnover_analyzer<br/>换手率分析报告"]
+    JOB757591("[design]analyze.correlation_analyzer<br/>因子相关性分析")
+    JOB757592("[design]analyze.correlation_dedup<br/>因子去重")
+    JOB757593("[design]analyze.decay_monitor<br/>因子衰减监控")
+    JOB757594("[design]analyze.factor_attribution<br/>因子归因")
+    JOB757595("[design]analyze.factor_optimization<br/>因子优化")
+    JOB757596("[design]analyze.ic_decay<br/>IC衰减分析")
+    JOB757597("[design]analyze.ic_ir_calc<br/>IC/IR计算")
+    JOB757598("[design]analyze.ic_ir_evaluator<br/>IC/IR评估")
+    JOB757599("[design]analyze.layered_backtest<br/>分层回测")
+    JOB757600("[design]analyze.multifactor_synthesis<br/>多因子合成")
+    JOB757601("[design]analyze.three_level_judgment<br/>三级研判")
+    JOB757602("[design]analyze.turnover_analyzer<br/>换手率分析")
     JOB757591 -->|produces / 产出| DS11227
     JOB757592 -->|produces / 产出| DS11228
     JOB757593 -->|produces / 产出| DS11229
@@ -57,6 +59,17 @@ flowchart TD
     JOB757600 -->|produces / 产出| DS11236
     JOB757601 -->|produces / 产出| DS11237
     JOB757602 -->|produces / 产出| DS11238
+    DS11227 ~~~ JOB757592
+    DS11228 ~~~ JOB757593
+    DS11229 ~~~ JOB757594
+    DS11230 ~~~ JOB757595
+    DS11231 ~~~ JOB757596
+    DS11232 ~~~ JOB757597
+    DS11233 ~~~ JOB757598
+    DS11234 ~~~ JOB757599
+    DS11235 ~~~ JOB757600
+    DS11236 ~~~ JOB757601
+    DS11237 ~~~ JOB757602
 ```
 
 ## Dataset 清单

@@ -112,6 +112,26 @@ def _en_zh(en: str | None, sep: str = " / ") -> str:
     return en
 
 
+def _extract_zh_label(summary: str | None, max_len: int = 20) -> str:
+    """从 format_summary/description 提取简短中文标签。
+
+    设计态 Dataset/Job 名称（如 factor.ashare_alpha87）未收录于
+    terminology_glossary.yaml，``_zh`` 查无映射时回退到本函数：取功能简述
+    中首个"（"前的部分作为节点中文标签，超长截断。运营态节点优先用
+    glossary 短名（如"回测.模拟成交"），不走本回退。
+    """
+    if not summary:
+        return ""
+    s = summary.strip()
+    for sep in ("（", "("):
+        if sep in s:
+            s = s.split(sep)[0].strip()
+            break
+    if len(s) > max_len:
+        s = s[:max_len] + "…"
+    return s
+
+
 def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
     """从 PG 读取 datasets/jobs/edges。
 
@@ -178,6 +198,7 @@ def _maturity_tag(maturity: str | None) -> str:
 def _gen_mermaid(
     datasets: list[dict], jobs: list[dict], edges: list[dict],
     scope_filter: str | None = None, maturity_filter: str | None = None,
+    force_vertical: bool = False,
 ) -> tuple[str, int, int, int]:
     """生成 Mermaid flowchart TD 图表（灰色主题，对齐 06_decision_architecture 视觉风格）。
 
@@ -187,6 +208,9 @@ def _gen_mermaid(
 
     :param scope_filter: None=全部, 'production'=仅生产, 'backtest_internal'=仅回测
     :param maturity_filter: None=全部, 'production'=仅运营态, 'design'=仅设计态
+    :param force_vertical: 设计态域文档仅有 JOB→DS 单向 push 边，mermaid 默认横向铺开；
+        为 True 时用 ~~~ 不可见链接将相邻 JOB→DS 对纵向串联，强制竖向高列布局
+        （对齐 dataflow_production.md / 06_decision_architecture 的竖向显示风格）
     :return: (mmd_text, ds_count, job_count, edge_count) —— 计数均为过滤后实数
     """
     # 灰色主题（对齐 06_decision_architecture 的 _MERMAID_INIT，无 classDef）
@@ -215,9 +239,11 @@ def _gen_mermaid(
 
     # Dataset 节点（矩形）—— label 精简为 2 行：[maturity]英文名 / 中文名
     # 详细信息（CTR/域/蓝图/功能简述）见同文档 Dataset 清单表
+    # 中文名优先取 terminology_glossary 短名（如"回测.模拟成交"），未收录时回退
+    # 到 format_summary 提取（设计态名称多未收录 glossary，需回退保证中英文并列）
     for d in ds_list:
         tag = _maturity_tag(d.get("maturity"))
-        zh = _zh(d["name"])
+        zh = _zh(d["name"]) or _extract_zh_label(d.get("format_summary"))
         label = f"{tag}{d['name']}" + (f"<br/>{zh}" if zh else "")
         lines.append(f'    DS{d["id"]}["{label}"]')
 
@@ -225,7 +251,7 @@ def _gen_mermaid(
     # 详细信息（trigger/蓝图/功能简述）见同文档 Job 清单表
     for j in job_list:
         tag = _maturity_tag(j.get("maturity"))
-        zh = _zh(j["name"])
+        zh = _zh(j["name"]) or _extract_zh_label(j.get("description"))
         label = f"{tag}{j['name']}" + (f"<br/>{zh}" if zh else "")
         lines.append(f'    JOB{j["id"]}("{label}")')
 
@@ -240,6 +266,25 @@ def _gen_mermaid(
             if e["from_id"] in ds_ids and e["to_id"] in job_ids:
                 lines.append(f'    DS{e["from_id"]} -->|{_en_zh("consumed by")}| JOB{e["to_id"]}')
                 edge_count += 1
+
+    # 强制竖向布局（设计态域文档）：仅有 JOB→DS 单向 push 边时 mermaid 默认横向铺开，
+    # 用 ~~~ 不可见链接将前一个 JOB 的产出 DS 串联到下一个 JOB，形成单一纵列
+    # （JOB1→DS1~~~JOB2→DS2~~~…），对齐运营态/决策流程图的竖向高列显示。
+    # ~~~ 为 Mermaid 不可见链接（9.3+），不影响视觉、不计入 edge_count。
+    if force_vertical and len(job_list) > 1:
+        job_to_last_ds: dict[int, int] = {}
+        for e in edges:
+            if e["from_type"] == "job" and e["to_type"] == "dataset":
+                if e["from_id"] in job_ids and e["to_id"] in ds_ids:
+                    job_to_last_ds[e["from_id"]] = e["to_id"]
+        for i in range(len(job_list) - 1):
+            cur_job_id = job_list[i]["id"]
+            next_job_id = job_list[i + 1]["id"]
+            last_ds = job_to_last_ds.get(cur_job_id)
+            if last_ds is not None:
+                lines.append(f"    DS{last_ds} ~~~ JOB{next_job_id}")
+            else:
+                lines.append(f"    JOB{cur_job_id} ~~~ JOB{next_job_id}")
 
     return "\n".join(lines) + "\n", len(ds_list), len(job_list), edge_count
 
@@ -410,23 +455,33 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
 # 域分组配置（设计态按域拆分输出）
 # ============================================================
 # D_FACTOR 模块多（32 个），按子目录拆 3 组；其他域按域或合并小域。
+# responsibility 字段对标 06_decision_architecture 的"域职责"说明，简述该域
+# 数据流职责，由 _gen_domain_md 渲染到文档头部。
 _DOMAIN_GROUPS = [
     {"key": "d_factor_ashare", "title": "因子域-A股因子计算（设计态）",
-     "domains": {"D_FACTOR"}, "path_contains": "/ashare/"},
+     "domains": {"D_FACTOR"}, "path_contains": "/ashare/",
+     "responsibility": "A股Alpha因子计算——Alpha87/资金流/跨市场/基本面/机构/日内/IRL/市场结构/微观结构/形态/PS流动性/板块/SMC/技术指标等14类截面因子信号"},
     {"key": "d_factor_analysis", "title": "因子域-因子分析（设计态）",
-     "domains": {"D_FACTOR"}, "path_contains": "/analysis/"},
+     "domains": {"D_FACTOR"}, "path_contains": "/analysis/",
+     "responsibility": "因子分析与评估——IC/IR计算评估、衰减监控、相关性去重、归因、优化、分层回测、多因子合成、三级研判、换手率分析"},
     {"key": "d_factor_barra_mine", "title": "因子域-Barra风险模型与因子挖掘（设计态）",
-     "domains": {"D_FACTOR"}, "path_contains": ("/barra/", "/mine/")},
+     "domains": {"D_FACTOR"}, "path_contains": ("/barra/", "/mine/"),
+     "responsibility": "Barra风险模型与因子挖掘——ESG/暴露计算/风险预算/协方差风险模型 + 因果性验证/AI因子挖掘Agent"},
     {"key": "d_backtest", "title": "回测域-回测服务（设计态）",
-     "domains": {"D_BACKTEST"}},
+     "domains": {"D_BACKTEST"},
+     "responsibility": "回测分析服务——异常诊断/数据质量检查/衰减监控/NaN处理/参数分析/报告生成/结果对比/结果部署"},
     {"key": "d_data", "title": "数据域-数据采集管理（设计态）",
-     "domains": {"D_DATA"}},
+     "domains": {"D_DATA"},
+     "responsibility": "数据采集与管理——特征存储/K线重采样/实时推送管理/板块快照采集/Tick数据管理"},
     {"key": "d_data_eng", "title": "数据工程域-数据工程服务（设计态）",
-     "domains": {"D_DATA_ENG"}},
+     "domains": {"D_DATA_ENG"},
+     "responsibility": "数据工程服务——数据湖管理/知识清洗/流处理/合成数据生成/训练数据管理"},
     {"key": "d_ex_pf_core", "title": "执行核心+组合核心域（设计态）",
-     "domains": {"D_EX_CORE", "D_PF_CORE"}},
+     "domains": {"D_EX_CORE", "D_PF_CORE"},
+     "responsibility": "执行核心+组合核心——审计日志/成交处理/持仓跟踪/实盘组合 + 组合优化/汇总/策略运行/TopN动量策略"},
     {"key": "d_others", "title": "其他域-ML训练+风控+交易（设计态）",
-     "domains": {"D_ML_TRAIN", "D_RISK", "D_TRADING"}},
+     "domains": {"D_ML_TRAIN", "D_RISK", "D_TRADING"},
+     "responsibility": "ML训练+风控+交易——AI操作员决策/训练流水线 + 回撤跟踪 + PnL计算"},
 ]
 
 
@@ -483,11 +538,18 @@ def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: lis
     lines.append(f"> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
 
-    # Mermaid 图
+    # 域职责（对标 06_decision_architecture 的"域职责 / Responsibility"说明）
+    responsibility = grp.get("responsibility", "")
+    if responsibility:
+        lines.append(f"> **域职责 / Responsibility**: {responsibility}")
+        lines.append("")
+
+    # Mermaid 图（force_vertical=True 强制竖向高列布局，对齐运营态/决策流程图风格）
     lines.append("## 数据流图（设计态）")
     lines.append("")
     mmd, ds_cnt, job_cnt, edge_cnt = _gen_mermaid(
-        datasets, jobs, edges, scope_filter=None, maturity_filter="design"
+        datasets, jobs, edges, scope_filter=None, maturity_filter="design",
+        force_vertical=True,
     )
     lines.append(f"> 节点数: {ds_cnt} datasets / 数据集, {job_cnt} jobs / 作业, {edge_cnt} edges / 边")
     lines.append("")
