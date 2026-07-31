@@ -134,30 +134,30 @@ def test_detection7_list_multiple(tmp_path, monkeypatch):
 
 
 class TestNoqaRegistrySmoke:
-    """Registry smoke test——真实 YAML + 真实 73 豁免 + 真实匹配逻辑。"""
+    """Registry smoke test——真实 YAML + 真实 74 豁免 + 真实匹配逻辑。"""
 
     def test_registry_loads_successfully(self):
-        """registry YAML 可加载 + 73 个 exemptions + 5 个 categories。
+        """registry YAML 可加载 + 74 个 exemptions + 5 个 categories。
 
         #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2 后：原 74 豁免→73（消除
-        check_vocab_hardcode.py
-        自身的 ssot_self 豁免），原 6 分类→5（ssot_self 分类已退役）。
+        check_vocab_hardcode.py 自身的 ssot_self 豁免），原 6 分类→5（ssot_self 分类已退役）。
+        2026-08-01 +1 m12-broad-except-legitimate（post-commit 钩子非阻断广义 except 豁免）→74。
         """
         registry = cvh._load_noqa_registry()
         assert registry is not None, "registry 应可加载（config/governance/noqa_exempt_registry.yaml 存在）"
         assert isinstance(registry, dict)
         assert "exemptions" in registry and isinstance(registry["exemptions"], list)
         assert "categories" in registry and isinstance(registry["categories"], list)
-        # 73 个豁免（Phase 2 后基线，治本降低后此数会继续下降）
-        assert len(registry["exemptions"]) == 73, f"应有73个豁免, 实际: {len(registry['exemptions'])}"
+        # 74 个豁免（Phase 2 后 73 基线 + m12-broad-except-legitimate 1 条）
+        assert len(registry["exemptions"]) == 74, f"应有74个豁免, 实际: {len(registry['exemptions'])}"
         # 5 个分类（ssot_self 已退役）
         assert len(registry["categories"]) == 5
 
     def test_baseline_from_registry(self):
-        """基线 = len(exemptions) = 73（从 registry 自动计算，非硬编码 33）。"""
+        """基线 = len(exemptions) = 74（从 registry 自动计算，非硬编码 33）。"""
         registry = cvh._load_noqa_registry()
         baseline = cvh._noqa_baseline(registry)
-        assert baseline == 73, f"基线应从 registry 计算=73, 实际: {baseline}"
+        assert baseline == 74, f"基线应从 registry 计算=74, 实际: {baseline}"
 
     def test_baseline_fallback_when_registry_none(self):
         """registry=None 时退化为 fallback 基线 33。"""
@@ -168,7 +168,7 @@ class TestNoqaRegistrySmoke:
         """_registered_exemption_keys 返回 (file, line) 集合，非空。"""
         registry = cvh._load_noqa_registry()
         keys = cvh._registered_exemption_keys(registry)
-        assert len(keys) == 73, f"应有73个键, 实际: {len(keys)}"
+        assert len(keys) == 74, f"应有74个键, 实际: {len(keys)}"
         # 验证键格式：(str, int)
         for file_path, line in keys:
             assert isinstance(file_path, str) and "\\" not in file_path, "file 应为正斜杠规范化"
@@ -224,11 +224,11 @@ class TestNoqaRegistrySmoke:
         exit_code = cvh.main()
         captured = capsys.readouterr()
         assert exit_code == 0, f"warn-only 应 exit 0, 实际: {exit_code}"
-        # 应输出 NOQA AUDIT 行，baseline=73 via registry（Phase 2 后）
+        # 应输出 NOQA AUDIT 行，baseline=74 via registry（Phase 2 后 73 + m12 豁免）
         assert "NOQA AUDIT" in captured.out
-        assert "baseline=73 via registry" in captured.out
-        assert "trend=0" in captured.out  # 73-73=0，闭环收敛
-        # 不应有 UNREGISTERED（73 个全部登记）
+        assert "baseline=74 via registry" in captured.out
+        assert "trend=0" in captured.out  # 74-74=0，闭环收敛
+        # 不应有 UNREGISTERED（74 个全部登记）
         assert "UNREGISTERED" not in captured.out
 
 
