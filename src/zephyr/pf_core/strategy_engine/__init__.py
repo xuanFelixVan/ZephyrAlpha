@@ -18,6 +18,11 @@
 实现清单：
   - StrategyRunner : 策略运行器（因子→合成→策略→回测 胶水层，盘后回测入口）
   - DefaultEquityStrategy : StrategyBase 的具体实现（等权/信号加权/最小方差配置）
+  - 路径 B tick 级做T策略（TickStrategyBase 子类，@TickStrategyBase.register 注册，
+    经 StrategyRunner.run_tick_strategy_backtest 显式 import + autodiscover 注册）：
+    * IntradaySurgeFallStrategy : 30秒冲高回落做T（动量反转）
+    * VWAPReversionStrategy     : VWAP 回归做T（均值回归）
+    * OrderBookImbalanceStrategy: 盘口失衡反转做T（订单流反转）
 """
 
 from zephyr.pf_core.default_equity_strategy import (

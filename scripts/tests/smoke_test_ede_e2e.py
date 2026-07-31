@@ -18,9 +18,11 @@
 两个测试：
   A. IntradaySurgeFallStrategy（路径 B 策略）：30秒冲高回落做T + 5档盘口撮合
   B. Buy-and-Hold 基线：首 tick 全仓买入后持有——验证最简撮合路径
+  C. VWAPReversionStrategy（路径 B 策略）：VWAP 均值回归做T + 5档盘口撮合
+  D. OrderBookImbalanceStrategy（路径 B 策略）：盘口失衡反转做T + 5档盘口撮合
 
-⚠️ 策略 A 的 P&L 不具参考意义——IntradaySurgeFallStrategy 设计前提是有底仓（T+0
-round-trip），而 EDE 从 100% 现金起步。本脚本验证的是管线完整性，非策略盈利能力。
+⚠️ 策略 A/C/D 的 P&L 不具参考意义——做T策略设计前提是有底仓（T+0 round-trip），
+而 EDE 从 100% 现金起步。本脚本验证的是管线完整性，非策略盈利能力。
 
 前置条件：
   1. miniQMT 模拟终端已启动并登录（XtMiniQmt.exe 运行中）
@@ -132,6 +134,8 @@ def main() -> int:
     from zephyr.backtest.implementations.vectorized_engine import BacktestConfig
     from zephyr.governance.data_governance.miniqmt_provider import MiniQmtQuoteProvider
     from zephyr.pf_core.intraday_surge_fall_strategy import IntradaySurgeFallStrategy
+    from zephyr.pf_core.orderbook_imbalance_strategy import OrderBookImbalanceStrategy
+    from zephyr.pf_core.vwap_reversion_strategy import VWAPReversionStrategy
 
     # 0. 环境检查
     print("=== STEP 0: 环境检查 ===")
@@ -228,6 +232,87 @@ def main() -> int:
         return 1
 
     _print_result("结果 B: Buy-and-Hold", result_b, counters_b)
+
+    # --- 测试 C: VWAPReversionStrategy（路径 B 均值回归做T）---
+    print("\n--- 测试 C: VWAPReversionStrategy（VWAP回归做T）---")
+    vwap_strategy = VWAPReversionStrategy(
+        entry_threshold=0.003,  # 价格低于 VWAP 0.3% 买入
+        exit_threshold=0.0,     # 回归 VWAP 即卖
+        base_weight=0.95,
+        use_order_book=True,
+        ob_block_threshold=-0.3,
+    )
+    counters_c = {"ticks_seen": 0, "signals": 0, "buy_signals": 0, "sell_signals": 0}
+
+    def vwap_callback(event):
+        counters_c["ticks_seen"] += 1
+        result = vwap_strategy.on_tick(event)
+        if result:
+            counters_c["signals"] += 1
+            for _sym, w in result.items():
+                if w > 0:
+                    counters_c["buy_signals"] += 1
+                elif w == 0:
+                    counters_c["sell_signals"] += 1
+        return result
+
+    engine_c = EventDrivenEngine(config=BacktestConfig(initial_capital=initial_capital))
+    try:
+        result_c = engine_c.run_tick(
+            provider=provider,
+            symbols=[symbol],
+            start=start_dt,
+            end=end_dt,
+            strategy_callback=vwap_callback,
+            strategy_name="vwap-reversion",
+        )
+    except Exception as e:  # noqa: BLE001
+        print(f"[FAIL] 测试 C 回测失败: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+
+    _print_result("结果 C: VWAPReversionStrategy", result_c, counters_c)
+
+    # --- 测试 D: OrderBookImbalanceStrategy（路径 B 盘口失衡反转做T）---
+    print("\n--- 测试 D: OrderBookImbalanceStrategy（盘口失衡反转做T）---")
+    ob_strategy = OrderBookImbalanceStrategy(
+        entry_threshold=0.5,   # ob<=-0.5（卖盘占~75%）时买入
+        exit_threshold=0.0,    # ob>=0（盘口恢复）时卖出
+        base_weight=0.95,
+        use_5levels=True,
+    )
+    counters_d = {"ticks_seen": 0, "signals": 0, "buy_signals": 0, "sell_signals": 0}
+
+    def ob_callback(event):
+        counters_d["ticks_seen"] += 1
+        result = ob_strategy.on_tick(event)
+        if result:
+            counters_d["signals"] += 1
+            for _sym, w in result.items():
+                if w > 0:
+                    counters_d["buy_signals"] += 1
+                elif w == 0:
+                    counters_d["sell_signals"] += 1
+        return result
+
+    engine_d = EventDrivenEngine(config=BacktestConfig(initial_capital=initial_capital))
+    try:
+        result_d = engine_d.run_tick(
+            provider=provider,
+            symbols=[symbol],
+            start=start_dt,
+            end=end_dt,
+            strategy_callback=ob_callback,
+            strategy_name="orderbook-imbalance",
+        )
+    except Exception as e:  # noqa: BLE001
+        print(f"[FAIL] 测试 D 回测失败: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+
+    _print_result("结果 D: OrderBookImbalanceStrategy", result_d, counters_d)
 
     # 3. 验收检查
     print("\n=== STEP 3: 验收检查 ===")
