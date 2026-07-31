@@ -38,7 +38,7 @@ design_maturity: design
 
 | 职责 | 归属 | 说明 |
 |------|------|------|
-| Provider 抽象（DataSourceBase / DataSourceMeta） | **本蓝图接管** | 原蓝图 §3.1/§4/§16.6 声称已实现但磁盘不存在，移交本蓝图重建 |
+| Provider 抽象（IngestProviderBase / IngestProviderMeta） | **本蓝图接管** | 原蓝图 §3.1/§4/§16.6 声称已实现但磁盘不存在，移交本蓝图重建 |
 | 数据质量门禁（DataQualityGate） | 保留原蓝图 | 与下载调度解耦，由消费方在读取时调用 |
 | CTR-001/002/003 输出契约 | 保留原蓝图 | 数据格式规范不变 |
 | 调度编排 / 策略注册表 / 进度统一 / 告警 | **本蓝图新增** | 原蓝图未设计 |
@@ -49,7 +49,7 @@ design_maturity: design
 ```
 src/zephyr/data/
 ├── __init__.py
-├── provider_base.py              # DataSourceBase 抽象 + DataSourceMeta + CapabilityContract（裁定 #ARCH-CH-022）
+├── provider_base.py              # IngestProviderBase 抽象 + IngestProviderMeta + CapabilityContract（裁定 #ARCH-CH-022）
 ├── capability_validator.py       # Provider 行为契约校验器（裁定 #ARCH-CH-022，3 规则 + AST 路由-meta 一致性）
 ├── policy_registry.py            # SourcePolicy + per-source 策略注册表
 ├── scheduler.py                  # APScheduler 调度器封装
@@ -84,7 +84,7 @@ src/zephyr/data/
 | 断点续传 | 13 个 per-script JSON 文件 | 统一 SQLite 进度存储 |
 | 失败告警 | 无（靠人看日志） | 日志 + 失败汇总文件 + 可选钉钉/邮件 |
 | 数据源连接 | 脚本内直接 `import` SDK | Provider 封装，统一生命周期管理 |
-| Provider 抽象 | 不存在 | DataSourceBase + 8 个实现 |
+| Provider 抽象 | 不存在 | IngestProviderBase + 8 个实现 |
 | 代码位置 | `tmp/_fetch_*.py`（TTL=task_bound） | `src/zephyr/data/`（长期资产） |
 
 ---
@@ -152,7 +152,7 @@ src/zephyr/data/
 ### §1.3 范围
 
 **In scope**：
-- Provider 抽象层（DataSourceBase + 8 个实现）
+- Provider 抽象层（IngestProviderBase + 8 个实现）
 - per-source 策略注册表（限流/重试/反爬/登录）
 - APScheduler 调度编排（4 档时段）
 - 进度统一存储（SQLite，取代 per-script JSON）
@@ -275,7 +275,7 @@ PENDING → RUNNING → SUCCESS
 
 ## §4 Provider 抽象层
 
-### §4.1 DataSourceBase 接口
+### §4.1 IngestProviderBase 接口
 
 ```python
 from abc import ABC, abstractmethod
@@ -304,11 +304,11 @@ class FetchResult:
     skipped: int = 0              # 跳过行数（已存在/脏数据）
     error: str | None = None
 
-class DataSourceBase(ABC):
+class IngestProviderBase(ABC):
     """数据源 Provider 抽象基类"""
 
     source_name: str              # "ifind" / "miniqmt" / "akshare" ...
-    meta: "DataSourceMeta"
+    meta: "IngestProviderMeta"
 
     @abstractmethod
     def connect(self) -> None:
@@ -327,11 +327,11 @@ class DataSourceBase(ABC):
         """关闭连接/登出"""
 ```
 
-### §4.2 DataSourceMeta 元数据
+### §4.2 IngestProviderMeta 元数据
 
 ```python
 @dataclass
-class DataSourceMeta:
+class IngestProviderMeta:
     name: str                     # "ifind"
     display_name: str             # "同花顺 iFind"
     auth_type: str                # "license_key" / "account" / "anonymous"
@@ -731,7 +731,7 @@ integrator resume <source>        # 恢复
 
 ```python
 # src/zephyr/data/__init__.py
-from .provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
+from .provider_base import IngestProviderBase, FetchPayload, FetchResult, IngestProviderMeta
 from .policy_registry import SourcePolicy, PolicyRegistry
 from .scheduler import IntegratorScheduler
 from .progress_store import ProgressStore
@@ -871,7 +871,7 @@ akshare:
 ### §15.1 阶段1：Provider 抽象 + 3 个核心源 ✅ 已完成（2026-07-06，commit e1050fc27b）
 
 **交付**：
-- `src/zephyr/data/provider_base.py`（DataSourceBase + FetchPayload + FetchResult + DataSourceMeta）
+- `src/zephyr/data/provider_base.py`（IngestProviderBase + FetchPayload + FetchResult + IngestProviderMeta）
 - `src/zephyr/data/implementations/ifind_provider.py`
 - `src/zephyr/data/implementations/miniqmt_provider.py`
 - `src/zephyr/data/implementations/akshare_provider.py`
@@ -1248,7 +1248,7 @@ akshare:
 
 ## 术语表
 
-- **Provider**：数据源封装类，实现 DataSourceBase 接口
+- **Provider**：数据源封装类，实现 IngestProviderBase 接口
 - **SourcePolicy**：per-source 调用策略（限流/重试/反爬/登录）
 - **Task**：调度任务单元，对应一个表 + 一个 Provider + 一个策略
 - **DAG**：任务依赖图（有向无环图）

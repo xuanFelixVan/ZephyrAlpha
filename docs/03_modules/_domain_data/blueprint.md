@@ -69,7 +69,7 @@ design_maturity: production
 
 > ⚠️ **职责拆分通知（2026-07-06）**
 >
-> 本蓝图的 **Provider 抽象部分（DataSourceBase / DataSourceMeta / per-source 实现）** 已移交新蓝图：
+> 本蓝图的 **Provider 抽象部分（IngestProviderBase / IngestProviderMeta / per-source 实现）** 已移交新蓝图：
 > 👉 [data_source_integrator_blueprint.md](data_source_integrator_blueprint.md)（MOD-L00-004 数据源集成器）
 >
 > **移交原因**：本蓝图 §0.1/§0.3/§16.6 声称 Provider "已实现/已重建"，但 `src/zephyr/data/` 实际为空目录（仅 `__init__.py`），声明与磁盘不符。借 MOD-L00-004 一并重建，同时补齐本蓝图未设计的**调度编排层 / per-source 策略注册表 / 进度统一存储 / 告警**四块短板。
@@ -86,7 +86,7 @@ design_maturity: production
 本蓝图描述 ZephyrAlpha 数据接入层——它是业务数据库母蓝图([MOD-ARCH-BIZDB](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md))的**上游**，为 C1/C2/C3 仓库提供原料数据，解决外部数据源格式各异、API限流、数据质量参差不齐的标准化接入问题。
 
 核心职责：
-- **数据源OCP扩展点**(DataSourceBase)：多数据源标准化接入
+- **数据源OCP扩展点**(QuoteProviderBase)：多数据源标准化接入
 - **数据质量门禁**(DataQualityGate)：对接 CTR 契约质量门禁
 - **标准化输出**(CTR-001~CTR-003)：NormalizedMarketData 及新闻/宏观契约
 - **对接母蓝图§5品类全景**：69 品类摄取能力（行情/基本面/另类/宏观/新闻/舆情）
@@ -122,7 +122,7 @@ design_maturity: production
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
-| 1 | provider_base.py | §3.1 | DataSourceBase OCP扩展点 + DataSourceMeta | 已实现 |
+| 1 | provider_base.py | §3.1 | QuoteProviderBase OCP扩展点 + QuoteProviderMeta | 已实现 |
 | 2 | quality_gate.py | §3.1 | DataQualityGate抽象 + QualityReport + QualityFailureReason + RecoveryHint | 已实现 |
 | 3 | implementations/akshare_provider.py | §3.1 | AkShare数据源实现 | 已实现 |
 | 4 | implementations/default_quality_gate.py | §3.1 | 默认质量校验实现(5项规则) | 已实现 |
@@ -142,9 +142,9 @@ design_maturity: production
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
 | v0.1.0 (占位) | 无代码 | 全部 | partially_implemented |
-| v2.1.0 (模板升级) | DataSourceBase + DataQualityGate + 3个实现 | connectors/normalizers/storage/cache子模块 | C轨占位 |
+| v2.1.0 (模板升级) | QuoteProviderBase + DataQualityGate + 3个实现 | connectors/normalizers/storage/cache子模块 | C轨占位 |
 | v3.0.0 (回填+对齐) | 同 v2.1.0 | 同 v2.1.0 | C轨占位 |
-| v4.0.0 (重建) | DataSourceBase + DataQualityGate + 3个实现(已重建) | 多品类扩展(category_id/calc_mode/CategoryManager) + §16.7.1 MiniQMT Provider规格(待施工) | 待Spiral扩展 |
+| v4.0.0 (重建) | QuoteProviderBase + DataQualityGate + 3个实现(已重建) | 多品类扩展(category_id/calc_mode/CategoryManager) + §16.7.1 MiniQMT Provider规格(待施工) | 待Spiral扩展 |
 
 ---
 
@@ -189,7 +189,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH-BIZDB §5)定义了 **69 个数据
 
 | # | 类型 | 内容 | 标准/原因 |
 |---|:----:|------|----------|
-| 1 | ✅ 包含 | 多数据源标准化接入 | AkShare/miniQMT/iFind/tushare/爬虫，DataSourceBase OCP扩展点 |
+| 1 | ✅ 包含 | 多数据源标准化接入 | AkShare/miniQMT/iFind/tushare/爬虫，QuoteProviderBase OCP扩展点 |
 | 2 | ✅ 包含 | 品类摄取覆盖母蓝图69品类 | 行情/基本面/另类/宏观/新闻/舆情原料摄取 |
 | 3 | ✅ 包含 | 数据质量门禁 | DataQualityGate 对接 CTR 契约质量门禁 |
 | 4 | ✅ 包含 | 标准化输出 | CTR-001~CTR-003 (NormalizedMarketData/新闻/宏观) |
@@ -254,7 +254,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH-BIZDB §5)定义了 **69 个数据
 
 | # | 类型 | 职责 | 详情 | 负责方 |
 |---|:----:|------|------|--------|
-| 1 | ✅ 包含 | 数据源适配 | DataSourceBase 抽象 + AkShareProvider/MemoryProvider 实现(多数据源OCP扩展) | 本模块 |
+| 1 | ✅ 包含 | 数据源适配 | QuoteProviderBase 抽象 + AkShareProvider/MemoryProvider 实现(多数据源OCP扩展) | 本模块 |
 | 2 | ✅ 包含 | 数据质量校验 | DataQualityGate + DefaultQualityGate(5项规则) 对接 CTR 契约门禁 | 本模块 |
 | 3 | ✅ 包含 | 标准化输出 | CTR-001~003 (NormalizedMarketData/新闻/宏观) | 本模块 |
 | 4 | ✅ 包含 | 品类注册表对接 | category_id + enabled 二元开关(母蓝图§6/§8.2) | 本模块 |
@@ -275,18 +275,18 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH-BIZDB §5)定义了 **69 个数据
 
 | # | 组件 | 职责 | 依赖 | 交互方式 | 母蓝图对接 |
 |---|------|------|------|---------|---------|
-| 1 | DataSourceBase | 数据源OCP扩展点(ABC)，支持多品类fetch | — | 同步调用 | §6 第3层CTR契约Producer |
-| 2 | DataSourceMeta | 数据源元数据(frozen dataclass)，含 category_id/calc_mode/enabled | — | 数据类 | §6 第1层注册表字段 + §7.5 calc_mode |
-| 3 | DataQualityGate | 数据质量校验(ABC)，对接CTR契约门禁 | DataSourceBase | 同步调用 | §6 第3层质量门禁 |
+| 1 | QuoteProviderBase | 数据源OCP扩展点(ABC)，支持多品类fetch | — | 同步调用 | §6 第3层CTR契约Producer |
+| 2 | QuoteProviderMeta | 数据源元数据(frozen dataclass)，含 category_id/calc_mode/enabled | — | 数据类 | §6 第1层注册表字段 + §7.5 calc_mode |
+| 3 | DataQualityGate | 数据质量校验(ABC)，对接CTR契约门禁 | QuoteProviderBase | 同步调用 | §6 第3层质量门禁 |
 | 4 | QualityReport | 质量校验报告(frozen dataclass) | — | 数据类 | — |
 | 5 | QualityFailureReason | 失败原因枚举 | — | 枚举 | — |
 | 6 | RecoveryHint | 恢复建议枚举 | — | 枚举 | — |
-| 7 | AkShareProvider | AkShare数据源实现(免费行情+基本面) | DataSourceBase | 继承 | — |
+| 7 | AkShareProvider | AkShare数据源实现(免费行情+基本面) | QuoteProviderBase | 继承 | — |
 | 8 | DefaultQualityGate | 默认校验规则(5项) | DataQualityGate | 继承 | — |
-| 9 | MemoryProvider | 内存合成数据源(测试/离线) | DataSourceBase | 继承 | — |
+| 9 | MemoryProvider | 内存合成数据源(测试/离线) | QuoteProviderBase | 继承 | — |
 | 10 | CategoryManager | 品类发现与路由(母蓝图§6 第4层) | 品类注册表 | 自动扫描 | **未来Spiral(不在当前§0.1代码清单)** |
 
-> ⚠️ CategoryManager 为母蓝图§6 第4层机制，属未来 Spiral 扩展（步骤3），不纳入当前§0.1代码清单。当前由 DataSourceBase 的 `__init_subclass__` 自动注册机制承担发现职责。
+> ⚠️ CategoryManager 为母蓝图§6 第4层机制，属未来 Spiral 扩展（步骤3），不纳入当前§0.1代码清单。当前由 QuoteProviderBase 的 `__init_subclass__` 自动注册机制承担发现职责。
 
 ### 3.2 数据流
 
@@ -298,24 +298,24 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH-BIZDB §5)定义了 **69 个数据
 | 4 | MemoryProvider | 合成数据生成 → validate_schema | 测试/D_FACTOR | pd.DataFrame (OHLCV) |
 | 5 | 任意Provider | fetch → DataQualityGate.check | 仓库层 | QualityReport |
 
-> 数据流方向：外部API → DataSourceBase.fetch(多品类) → 标准化 → QualityGate.check → CTR契约输出 → C1~C4仓库层。
+> 数据流方向：外部API → QuoteProviderBase.fetch(多品类) → 标准化 → QualityGate.check → CTR契约输出 → C1~C4仓库层。
 
 ### 3.3 状态生命周期
 
-本模块无状态机。DataSourceBase 通过 `__init_subclass__` 实现自动注册（key=provider_id），DataQualityGate 同理。多品类扩展后，品类发现由 CategoryManager 启动扫描注册表（未来 Spiral）。
+本模块无状态机。QuoteProviderBase 通过 `__init_subclass__` 实现自动注册（key=provider_id），DataQualityGate 同理。多品类扩展后，品类发现由 CategoryManager 启动扫描注册表（未来 Spiral）。
 
 ---
 
 ## §4 接口契约
 
 > ⚠️ v4.0.0重建决策：数据输出格式使用 `pd.DataFrame`（CTR-001 NormalizedMarketData），待 KBG-0040 迁移窗口再评估 Pydantic V2 迁移。
-> ⚠️ v4.0.0对接母蓝图：DataSourceBase/DataSourceMeta 扩展 category_id/calc_mode/enabled 字段（步骤3施工），保持向后兼容(默认值)。
+> ⚠️ v4.0.0对接母蓝图：QuoteProviderBase/QuoteProviderMeta 扩展 category_id/calc_mode/enabled 字段（步骤3施工），保持向后兼容(默认值)。
 
 ### 4.1 公共 API
 
 ```python
-class DataSourceBase(abc.ABC):
-    _registry: ClassVar[dict[str, type["DataSourceBase"]]]
+class QuoteProviderBase(abc.ABC):
+    _registry: ClassVar[dict[str, type["QuoteProviderBase"]]]
     def __init_subclass__(cls, **kwargs): ...
     # v4.0.0 对接母蓝图§6/§7 扩展（步骤3施工，默认值保证向后兼容）
     category_id: ClassVar[str] = "market_ohlcv"   # 品类标识(母蓝图§6 第1层 category_id)
@@ -341,7 +341,7 @@ class DataQualityGate(abc.ABC):
 
 ```python
 @dataclass(frozen=True)
-class DataSourceMeta:
+class QuoteProviderMeta:
     provider_id: str
     provider_name: str
     asset_classes: list[str]
@@ -412,8 +412,8 @@ class QualityReport:
 
 | 契约部分 | 兼容性 | 说明 |
 |---------|:---:|------|
-| 新增DataSourceBase子类 | ✅ 向后兼容 | OCP扩展(新数据源/新品类) |
-| DataSourceMeta新增 category_id/calc_mode/enabled | ✅ 向后兼容 | 默认值保证(母蓝图§6/§7/§8) |
+| 新增QuoteProviderBase子类 | ✅ 向后兼容 | OCP扩展(新数据源/新品类) |
+| QuoteProviderMeta新增 category_id/calc_mode/enabled | ✅ 向后兼容 | 默认值保证(母蓝图§6/§7/§8) |
 | DataFrame列新增 | ✅ 向后兼容 | 不影响已有消费者 |
 | DataFrame列删除 | ❌ 破坏性 | 需Owner审批+迁移方案 |
 | QualityFailureReason新增枚举值 | ✅ 向后兼容 | 不破坏已有逻辑 |
@@ -430,7 +430,7 @@ class QualityReport:
 
 | # | 约束 | 值 |
 |---|------|-----|
-| 1 | DataSourceBase 为OCP扩展点 | 新数据源/新品类只加不改 |
+| 1 | QuoteProviderBase 为OCP扩展点 | 新数据源/新品类只加不改 |
 | 2 | 数据输出必须标准化 | CTR-001~003 (母蓝图§6 第3层契约) |
 | 3 | QUALITY_THRESHOLD = 0.7 | 硬编码最低线，禁止降级 |
 | 4 | 禁止静默丢弃数据 | 不合格必须显式返回 QualityReport(passed=False) |
@@ -466,7 +466,7 @@ class QualityReport:
 |---|:----:|--------|-----------|------|
 | 1 | 编码模式 | 静默丢弃不合格数据 | 返回QualityReport(passed=False) | 下游必须知道数据质量 |
 | 2 | 编码模式 | 降级QUALITY_THRESHOLD | 保持0.7硬编码最低线 | 质量底线不可妥协 |
-| 3 | 编码模式 | 直接修改DataSourceBase抽象接口 | 继承+实现新子类 | OCP原则 |
+| 3 | 编码模式 | 直接修改QuoteProviderBase抽象接口 | 继承+实现新子类 | OCP原则 |
 | 4 | 编码模式 | 硬边界品类enabled=true摄取 | enabled=false预留接口(母蓝图§8.2) | 资金/合规硬边界 |
 | 5 | 编码模式 | 品类未标注calc_mode接入 | 每品类标注replay/preload/hybrid | 母蓝图§7.5回测调度要求 |
 | 6 | 导入源 | zephyr.signal.* / zephyr.factor.* | 仅允许被下游导入 | 分层约束：data 不依赖 signal+ |
@@ -515,7 +515,7 @@ class QualityReport:
 
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
-| 1 | 单元测试 | DataSourceBase | 注册机制+validate_schema | tests/data/test_provider_base_contract.py |
+| 1 | 单元测试 | QuoteProviderBase | 注册机制+validate_schema | tests/data/test_provider_base_contract.py |
 | 2 | 单元测试 | DataQualityGate | QualityReport+QualityFailureReason+is_within_normal_range+QUALITY_THRESHOLD | tests/data/test_quality_gate.py |
 | 3 | 集成测试 | AkShareProvider | fetch_historical返回OHLCV | 待补充(需网络) |
 | 4 | 集成测试 | MemoryProvider | 合成数据质量 | 待补充 |
@@ -604,7 +604,7 @@ class QualityReport:
 |---|-------------|------|------|---------|------|
 | 1 | AkShare API限流 | 高 | 数据延迟 | 请求限速 + 缓存 | 风险 |
 | 2 | 数据源格式变更 | 中 | 解析失败 | Schema版本化 + Drift Detector | 风险 |
-| 3 | 新数据源需实现DataSourceBase | — | 中 | OCP扩展点设计，新数据源继承即可 | 负面后果 |
+| 3 | 新数据源需实现QuoteProviderBase | — | 中 | OCP扩展点设计，新数据源继承即可 | 负面后果 |
 | 4 | v4.0.0重建期间代码不可用 | — | 中 | 优先重建抽象层+实现层 | 负面后果 |
 | 5 | 架构层YAML与代码结构不对齐 | — | 中 | v4.0.0重建时消除 | 负面后果 |
 
@@ -649,8 +649,8 @@ class QualityReport:
 |------|------|
 | 对应蓝图契约 | §4.1 / §4.2 |
 | 产出位置 | `provider_base.py` + `quality_gate.py` |
-| 验收标准 | DataSourceBase 可继承注册，DataQualityGate 可继承注册 |
-| 验证命令 | `python -c "from zephyr.data.provider_base import DataSourceBase"` |
+| 验收标准 | QuoteProviderBase 可继承注册，DataQualityGate 可继承注册 |
+| 验证命令 | `python -c "from zephyr.governance.intelligence_governance.provider_base import QuoteProviderBase"` |
 | 状态 | ✅ 已重建 |
 | G7 检查项 | 上游无依赖，下游D_FACTOR可消费 |
 
@@ -672,7 +672,7 @@ class QualityReport:
 | 对应蓝图契约 | §4.1 category_id/calc_mode + §4.2 enabled + §3.1 CategoryManager |
 | 产出位置 | `provider_base.py`(扩展字段) + 未来 CategoryManager(不在当前§0.1清单) |
 | 对接母蓝图 | §6 插拔式4层机制 / §5 69品类 / §7.5 calc_mode / §8.2 硬边界enabled |
-| 验收标准 | DataSourceMeta 支持 category_id/calc_mode/enabled；品类注册表enabled二元开关生效 |
+| 验收标准 | QuoteProviderMeta 支持 category_id/calc_mode/enabled；品类注册表enabled二元开关生效 |
 | 验证命令 | 待施工后补充 |
 | 状态 | ⬜ 待施工（未来 Spiral） |
 | G7 检查项 | 向后兼容(默认值)，硬边界品类enabled=false不破坏现有消费 |
@@ -711,7 +711,7 @@ class QualityReport:
 
 | # | 规格名称 | 类型 | 规格内容 | 对应代码 |
 |---|---------|------|---------|---------|
-| 1 | DataSourceBase注册机制 | 协议 | `__init_subclass__` + `__meta__` → `_registry[provider_id] = cls` | provider_base.py |
+| 1 | QuoteProviderBase注册机制 | 协议 | `__init_subclass__` + `__meta__` → `_registry[provider_id] = cls` | provider_base.py |
 | 2 | DefaultQualityGate 5项规则 | 算法 | close≤0→0分; stale>300s→-0.3; future timestamp→-0.5; high<low→-0.5; volume=0→-0.4 | default_quality_gate.py |
 | 3 | AkShare列名映射 | 协议 | 日期→date/开盘→open/收盘→close/最高→high/最低→low/成交量→volume/成交额→amount | akshare_provider.py |
 | 4 | calc_mode 取值集合 | 协议 | replay(回测实时重算) / preload(预计算值) / hybrid(预计算+微调) — 对接母蓝图§7.5 | provider_base.py(步骤3) |
@@ -731,7 +731,7 @@ class QualityReport:
 
 **Provider 元数据**:
 ```python
-class MiniQmtQuoteProvider(DataSourceBase):
+class MiniQmtQuoteProvider(QuoteProviderBase):
     provider_id = "miniqmt"
     provider_name = "MiniQMT 实盘行情"
     asset_classes = ["stock", "etf", "convertible_bond", "futures", "options"]
@@ -771,7 +771,7 @@ class MiniQmtQuoteProvider(DataSourceBase):
 **核心API规格**:
 
 ```python
-class MiniQmtQuoteProvider(DataSourceBase):
+class MiniQmtQuoteProvider(QuoteProviderBase):
     """MiniQMT 实盘行情Provider——对接xtdata，提供Tick+5档盘口"""
 
     def __init__(self, path: str = "", session_id: str = "zephyr_session"):
@@ -880,11 +880,11 @@ class MiniQmtQuoteProvider(DataSourceBase):
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -c "from zephyr.data.provider_base import DataSourceBase"` | 验证DataSourceBase可导入 | — | 无报错 |
+| 1 | 命令 | `python -c "from zephyr.governance.intelligence_governance.provider_base import QuoteProviderBase"` | 验证QuoteProviderBase可导入 | — | 无报错 |
 | 2 | 命令 | `python -c "from zephyr.data.quality_gate import DataQualityGate"` | 验证DataQualityGate可导入 | — | 无报错 |
-| 3 | 配置 | `DataSourceMeta.rate_limit_per_min` | API限流配置 | int, 默认60 | AkShare=60, Memory=999999 |
-| 4 | 配置 | `DataSourceMeta.calc_mode` | 回测调度模式(母蓝图§7.5) | str, 默认"preload" | replay/preload/hybrid |
-| 5 | 配置 | `DataSourceMeta.enabled` | 硬边界品类开关(母蓝图§8.2) | bool, 默认True | false=预留不摄取 |
+| 3 | 配置 | `QuoteProviderMeta.rate_limit_per_min` | API限流配置 | int, 默认60 | AkShare=60, Memory=999999 |
+| 4 | 配置 | `QuoteProviderMeta.calc_mode` | 回测调度模式(母蓝图§7.5) | str, 默认"preload" | replay/preload/hybrid |
+| 5 | 配置 | `QuoteProviderMeta.enabled` | 硬边界品类开关(母蓝图§8.2) | bool, 默认True | false=预留不摄取 |
 
 ### 16.10 故障与操作手册
 
@@ -909,7 +909,7 @@ class MiniQmtQuoteProvider(DataSourceBase):
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 数据源数量 | 2 (AkShare+Memory) | DataSourceBase._registry计数 |
+| 数据源数量 | 2 (AkShare+Memory) | QuoteProviderBase._registry计数 |
 | 日摄取记录 | ~5000 | 日志统计 |
 | QualityGate子类 | 1 (Default) | DataQualityGate._registry计数 |
 
@@ -946,7 +946,7 @@ class MiniQmtQuoteProvider(DataSourceBase):
 
 | # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
 |---|--------|------|------|------|------|------|
-| 1 | D-L00-01 | DataSourceBase使用OCP扩展点 | 继承/注册表/直接调用 | 继承 | 新数据源只加不改 | 2026-05-05 |
+| 1 | D-L00-01 | QuoteProviderBase使用OCP扩展点 | 继承/注册表/直接调用 | 继承 | 新数据源只加不改 | 2026-05-05 |
 | 2 | D-L00-02 | 数据输出格式为DataFrame(非Pydantic) | dict/Pydantic/dataclass/DataFrame | DataFrame | v4.0.0重建使用DataFrame，待KBG-0040迁移窗口 | 2026-05-05 |
 | 3 | D-L00-03 | QualityGate独立于Provider | 内建/独立 | 独立 | 质量校验与数据获取职责分离 | 2026-05-05 |
 | 4 | D-L00-04 | QUALITY_THRESHOLD=0.7硬编码 | 可配置/硬编码 | 硬编码 | 质量底线不可妥协 | 2026-05-05 |
@@ -961,7 +961,7 @@ class MiniQmtQuoteProvider(DataSourceBase):
 
 | 术语 | 精确定义 | 易混淆术语 | 区别 |
 |------|---------|-----------|------|
-| DataSourceBase | 数据源抽象基类，OCP扩展点 | ProviderBase(旧名) | 代码实际类名为DataSourceBase |
+| QuoteProviderBase | 数据源抽象基类，OCP扩展点 | ProviderBase(旧名) | 代码实际类名为QuoteProviderBase |
 | DataQualityGate | 数据质量门禁抽象基类 | QualityGate(旧名) | 代码实际类名为DataQualityGate |
 | CTR-001 | NormalizedMarketData跨层契约 | — | 本层为Producer，D_FACTOR/D_SIGNAL/D_RESEARCH为Consumer |
 | OHLCV | Open/High/Low/Close/Volume标准行情格式 | — | 本模块的标准化输出格式(CTR-001) |
