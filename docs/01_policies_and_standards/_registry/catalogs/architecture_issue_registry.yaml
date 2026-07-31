@@ -10118,9 +10118,17 @@ entries:
     region/language 标记修复（build_news_row 增 region 参数，海外新闻当前被表 DEFAULT
     标为 CN/zh）、retry_on 4xx 不重试优化。
   impact:
-    - 'src/zephyr/data/implementations/rss_provider.py（_DEFAULT_RSS_FEEDS 删 2 个 investing URL + _OVERSEAS_FEED_PATTERNS 移除 investing.com + 注释/docstring 更新）'
-  fix_phase: '已落地（移除 investing.com 直连源，海外源统一为 Yahoo Finance 走 RSSHub+SOCKS5）'
-  status: decided
+    - 'src/zephyr/data/implementations/rss_provider.py（移除 investing.com 直连源 + UA 集中化 + region/language 标记 + _http_get 共享方法）'
+    - 'src/zephyr/data/provider_base.py（新增 _http_get 共享方法——raise_for_status 纳入重试循环）'
+    - 'src/zephyr/data/implementations/cls_provider.py（改用 _http_get + retry_on 5xx-only）'
+    - 'src/zephyr/data/implementations/eastmoney_news_provider.py（改用 _http_get + retry_on 5xx-only）'
+    - 'src/zephyr/data/news_dedup.py（build_news_row 增 region/language 参数 + NEWS_DATA_COLUMNS 补 2 列）'
+    - 'src/zephyr/shared/foundation/constants.py（新增 DEFAULT_HTTP_UA）'
+    - 'src/zephyr/data/policy_registry.py（DEFAULT_POLICIES rss retry_on 同步）'
+    - 'architecture_model/data/data_sources_registry.yaml（DS-RSS/DS-CLS/DS-EASTMONEY_NEWS retry_on 5xx-only）'
+    - 'src/zephyr/data/config/policies.yaml（regenerate 派生物）'
+  fix_phase: '全部落地。主修复：移除 investing.com 直连源，海外源统一为 Yahoo Finance。配套议题（commit dcdab03e4d）：UA 集中化 + region/language 标记修复 + retry_on 4xx 不重试。审查治本扩展：_http_get 提取到 provider_base 共享方法，cls/eastmoney_news 同款 5xx 重试缺口一并修复，3 个 news provider retry_on 统一为 5xx-only。生产验证：海外新闻 US/en、TW/zh 正确标记；503 重试 3 次、403 不重试。'
+  status: resolved
   related_rules: 'AGENTS.md RULE-SSOT, #ARCH-AKSHARE-ANTICRAWLER-001'
   created: '2026-07-31'
   last_updated: '2026-07-31'
@@ -10266,5 +10274,35 @@ entries:
   fix_phase: '已完成（2 commit: 90f000e6 + 4e31e44e）'
   status: resolved
   related_rules: 'AGENTS.md RULE-SSOT（删字段防幻觉温床）, known_data_gaps.yaml'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
+
+# --- #ARCH-EDE-PATHA-SYM-001: Path A symbol格式对齐修复 ---
+- issue_id: '#ARCH-EDE-PATHA-SYM-001'
+  title: 'Path A symbol格式不对齐——weight_panel去后缀 vs EDE event.symbol带后缀，tick撮合永不触发'
+  category: integration_bug
+  severity: P1高
+  adjudication: |-
+    病根（2026-07-31 端到端验证发现）：StrategyRunner.run_tick_backtest 调用
+    build_weight_panel → load_history，后者将 symbol 去后缀（"600000.SH"→"600000"）。
+    weight_panel 列名为去后缀格式，_build_tick_callback 返回 {"600000": 0.95}。
+    但 EDE 的 event.symbol 来自 provider（MiniQmtQuoteProvider），带后缀 "600000.SH"。
+    on_tick 检查 `symbol in target_weights` → "600000.SH" in {"600000": 0.95} → False，
+    导致 tick 撮合永不触发，trades_count=0。
+
+    单元测试未覆盖：test_strategy_runner_tick.py 用合成 weight_panel（列名已带后缀），
+    未走 load_history 的去后缀路径，故未发现此 bug。
+
+    治本修复：在 run_tick_backtest 中 build_weight_panel 后、_build_tick_callback 前，
+    将 weight_panel 列名从去后缀格式映射回带后缀格式（strip_map = {sym.split(".")[0]: sym}）。
+
+    验证：smoke_test_ede_path_a.py 端到端验证通过——115478 ticks 回放, 2 fills applied,
+    trades=2, return=-0.04%。17 单元测试无回归。
+  impact:
+    - 'src/zephyr/pf_core/strategy_engine/strategy_runner.py（run_tick_backtest: 新增 strip_map 列名映射）'
+    - 'scripts/tests/smoke_test_ede_path_a.py（新增 Path A 端到端验证脚本）'
+  fix_phase: '已完成（2026-07-31）'
+  status: resolved
+  related_rules: 'AGENTS.md RULE-DEPGRAPH（回测=实盘一致性）, #ARCH-EDE-TICK-FUEL-001'
   created: '2026-07-31'
   last_updated: '2026-07-31'

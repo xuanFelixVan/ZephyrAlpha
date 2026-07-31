@@ -190,6 +190,15 @@ class StrategyRunner:
             _logger.warning("run_tick_backtest: 数据/信号面板为空，无法回测")
             return self._empty_result(config)
 
+        # Symbol 格式对齐：load_history 去后缀（600000），但 EDE event.symbol
+        # 带后缀（600000.SH，来自 provider）。不映射则 callback 返回的 symbol
+        # 与 EDE event.symbol 不匹配，tick 撮合永不触发（#ARCH-EDE-PATHA-SYM-001）。
+        strip_map = {sym.split(".")[0]: sym for sym in symbols if "." in sym}
+        if strip_map:
+            col_rename = {s: o for s, o in strip_map.items() if s in weight_panel.columns}
+            if col_rename:
+                weight_panel = weight_panel.rename(columns=col_rename)
+
         strategy_callback = self._build_tick_callback(weight_panel)
 
         bt_config = config.backtest_config or BacktestConfig(
