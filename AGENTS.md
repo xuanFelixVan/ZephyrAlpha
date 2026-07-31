@@ -120,6 +120,16 @@
 >
 > **常见错误**：❌ 误以为"YAML 是真源"适用于所有数据（实际只适用规则数据，架构数据真源在 DB）。
 > **判定流程**：拿到数据 → 先问"规则数据还是架构数据？" → 规则数据改 YAML→sync 到 DB；架构数据用 apply_*.py 直接写 DB。边界模糊查 §11.0.2。
+>
+> **翻译真源三层体系**（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级）——生成器输出中英文标签时 MUST 通过对应 loader 读取翻译真源，禁止硬编码翻译字典。三层粒度互补不重叠：
+>
+> | 层级 | 真源 YAML | 加载器 | 粒度 | 示例 |
+> |------|----------|--------|------|------|
+> | 术语级 | `terminology_glossary.yaml` | `_shared/terminology_loader.py` | 图示术语 | edge_type→触发 |
+> | 域级 | `functional_domain_registry.yaml` | `domain_name_mapping.py` | D_XXX 域 | D_GOV_RULE→规则治理 |
+> | 模块级 | `module_translation_registry.yaml` | `_shared/module_translation_loader.py` | .py 文件 | gate_types.py→门禁类型定义 / Gate Types |
+>
+> 新增模块翻译：往 `module_translation_registry.yaml` 加条目（module_path/name_zh/name_en/desc_zh/desc_en），零代码改动。
 
 ## RULE-DATA-OPS：第六件事（数据库破坏性操作纪律，2026-07-16 事故治本，#ARCH-CH-020）
 

@@ -74,6 +74,7 @@ import yaml
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, PgConnExecuteWrapper  # 治本 #ARCH-TOOL-HEALTH-V1：PgConnExecuteWrapper 用于类型注解（8 处使用）
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402
+from _shared.module_translation_loader import get_module_translation, get_module_name_bilingual, get_module_desc_bilingual  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
 
@@ -286,13 +287,17 @@ def _dep_types_display(dep_types_str: str) -> str:
 
 
 def _node_short_name(n: dict) -> str:
-    """从节点数据提取短名称（文件名，不含路径）。"""
+    """从节点数据提取短名称（父目录/文件名，便于区分同名文件如 __init__.py）。"""
+    path = n.get("path") or ""
+    # 优先用 path（结构化路径），取最后两段：父目录/文件名
+    if path:
+        parts = path.rsplit("/", 2)
+        if len(parts) >= 2:
+            return f"{parts[-2]}/{parts[-1]}"
+        return parts[-1]
     node_name = n.get("node_name") or ""
     if node_name:
         return node_name.rsplit("/", 1)[-1]
-    path = n.get("path") or ""
-    if path:
-        return path.rsplit("/", 1)[-1]
     return f"node_{n.get('node_id', '?')}"
 
 
@@ -313,27 +318,99 @@ def _node_desc_zh(n: dict) -> str:
         return ""
     doc_desc = _extract_docstring_first_line(path)
     if doc_desc:
-        return _truncate(doc_desc, 50)
+        return _truncate(doc_desc, 80)
     if path.endswith(('.yaml', '.yml')):
         yaml_desc = _extract_yaml_description(path)
         if yaml_desc:
-            return _truncate(yaml_desc, 50)
+            return _truncate(yaml_desc, 80)
     return ""
 
 
-def _node_mermaid_label(n: dict) -> str:
-    """生成 Mermaid 节点标签（中文功能简介在前+成熟度中英文）。
+def _node_bilingual_name(n: dict) -> str:
+    """返回节点双语名称（中文在前 / English）。
 
-    格式参考 decision_index.md：(状态中英文) 中文名<br/>文件: 文件名
+    优先查模块翻译真源（module_translation_registry.yaml）；
+    未登记时回退到 docstring 首行（单语，可能是中文或英文）；
+    都无则返回空串。
+
+    Returns:
+        ``"中文名 / English"`` / ``"中文名"`` / ``"English"`` / ``""``
     """
-    desc_zh = _node_desc_zh(n)
+    path = n.get("path") or ""
+    if path:
+        bi = get_module_name_bilingual(path)
+        if bi:
+            return bi
+    # fallback: docstring 首行（单语）
+    return _node_desc_zh(n)
+
+
+def _node_bilingual_desc(n: dict) -> str:
+    """返回节点双语功能简介（中文在前 / English）。
+
+    优先查模块翻译真源；未登记时回退到 docstring 首行（单语）；
+    都无则返回空串。
+
+    Returns:
+        ``"中文简介 / English"`` / ``"中文简介"`` / ``"English"`` / ``""``
+    """
+    path = n.get("path") or ""
+    if path:
+        bi = get_module_desc_bilingual(path)
+        if bi:
+            return bi
+    # fallback: docstring 首行（单语）
+    return _node_desc_zh(n)
+
+
+def _node_mermaid_label(n: dict) -> str:
+    """生成 Mermaid 节点标签（双语名称+双语简介+成熟度，中文在前）。
+
+    格式（用户偏好：中文在前英文在后，最后是文件名）：
+        (生产态 / production) 中文名 / English<br/>中文简介 / English<br/>文件: short_name
+
+    无英文时降级为单语；无翻译真源条目时回退到 docstring 首行。
+    """
     maturity = _maturity_display(n.get("design_maturity") or "unknown")
     short_name = _node_short_name(n)
+    name_bi = _node_bilingual_name(n)
+    desc_bi = _node_bilingual_desc(n)
 
-    if desc_zh:
-        return f"({maturity}) {desc_zh}<br/>文件: {short_name}"
+    # 名称和简介都有：完整三行
+    if name_bi and desc_bi:
+        return f"({maturity}) {name_bi}<br/>{desc_bi}<br/>文件: {short_name}"
+    # 仅有名称（无简介）
+    if name_bi:
+        return f"({maturity}) {name_bi}<br/>文件: {short_name}"
+    # 仅有简介（名称回退失败，但简介有）
+    if desc_bi:
+        return f"({maturity}) {desc_bi}<br/>文件: {short_name}"
+    # 都无：仅成熟度+文件名
+    return f"({maturity}) {short_name}"
+
+
+def _bilingual_label_from_path(path: str, max_len: int = 60) -> str:
+    """从模块路径构建跨域表格用的双语标签（中文名 / English (short_name)）。
+
+    优先用模块翻译真源的双语名称；未登记回退到 docstring 首行；都无则仅 short_name。
+    格式：``"中文名 / English (dir/file.py)"``，截断到 max_len。
+
+    用于跨域依赖表格的源/目标模块列——只传 path 即可，无需完整节点 dict。
+    """
+    if not path:
+        return ""
+    # 优先双语名称（_node_bilingual_name 内部已封装 docstring 降级）
+    name_bi = get_module_name_bilingual(path)
+    short = _node_short_name({"path": path})
+    if name_bi and short:
+        label = f"{name_bi} ({short})"
+    elif name_bi:
+        label = name_bi
     else:
-        return f"({maturity}) {short_name}"
+        # 真源未登记且无双语名称：回退到 docstring 首行（单语）
+        desc = _node_desc_zh({"path": path, "description": ""})
+        label = f"{desc} ({short})" if desc and short else (desc or short or "")
+    return _truncate(label, max_len)
 
 
 # ---------------------------------------------------------------------------
@@ -1020,9 +1097,10 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
 
         for i, n in enumerate(shown, 1):
             path_display = _truncate(n["path"] or "", 60)
-            # 模块名称列：优先显示功能简介（中文docstring首行/yaml description），回退到短文件名
-            name_display = _node_desc_zh(n) or _node_short_name(n)
-            name_display = _truncate(name_display, 80)
+            # 模块名称列：优先用模块翻译真源的双语名称（中文在前 / English），
+            # 回退到 docstring 首行 / 短文件名（_node_bilingual_name 已封装降级）
+            name_display = _node_bilingual_name(n) or _node_short_name(n)
+            name_display = _truncate(name_display, 100)
             node_type = n.get("node_type", "")
             # 蓝图跳转链接（从 blueprint_id 构造，无则为空）
             blueprint_link = _get_blueprint_link(n.get("blueprint_id", ""))
@@ -1153,6 +1231,12 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 生成时间由 git log 提供；frontmatter date 字段保留粗粒度（每日）元数据。
     lines.append(f"> 数据源: {DB_DISPLAY_NAME} nodes表 + edges表")
     lines.append("")
+    # HTML 可缩放版本快速跳转链接（IDE MD 预览无法无限放大 Mermaid，HTML 版支持 Ctrl+滚轮缩放+拖动平移）
+    # 注意：不要在链接前加 emoji（如 🖼️）——4 字节字符 + 变体选择符会干扰部分 markdown 渲染器
+    # 把 [text](url) 识别为链接，导致链接变成不可点击的纯文本。
+    safe_name_html = f"{number:02d}_{domain_id.replace('-', '_').lower()}.html"
+    lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({safe_name_html})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
+    lines.append("")
 
     # 域基本信息（中英文对照）
     lines.append("## 域基本信息 / Domain Overview")
@@ -1281,17 +1365,11 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |")
         lines.append("|:--:|---------|:--:|---------|---------|")
         for i, d in enumerate(outgoing_detail, 1):
-            src_desc = _node_desc_zh({"path": d["from_path"], "description": ""}) or ""
-            src_short = _node_short_name({"path": d["from_path"]})
-            src_label = f"{src_desc} ({src_short})" if src_desc else src_short
-            src_label = _truncate(src_label, 50)
+            src_label = _bilingual_label_from_path(d["from_path"])
             tgt_domain = d["to_domain"]
             tgt_domain_zh = get_domain_name_zh_strict(tgt_domain)
             tgt_domain_label = f"{tgt_domain} {tgt_domain_zh}" if tgt_domain_zh else tgt_domain
-            tgt_desc = _node_desc_zh({"path": d["to_path"], "description": ""}) or ""
-            tgt_short = _node_short_name({"path": d["to_path"]})
-            tgt_label = f"{tgt_desc} ({tgt_short})" if tgt_desc else tgt_short
-            tgt_label = _truncate(tgt_label, 50)
+            tgt_label = _bilingual_label_from_path(d["to_path"])
             lines.append(f"| {i} | {src_label} | → | {tgt_domain_label}: {tgt_label} | {_dep_type_display(d['dep_type'])} |")
     else:
         lines.append("无跨域出边依赖 / No cross-domain outgoing dependencies")
@@ -1307,14 +1385,8 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             src_domain = d["from_domain"]
             src_domain_zh = get_domain_name_zh_strict(src_domain)
             src_domain_label = f"{src_domain} {src_domain_zh}" if src_domain_zh else src_domain
-            src_desc = _node_desc_zh({"path": d["from_path"], "description": ""}) or ""
-            src_short = _node_short_name({"path": d["from_path"]})
-            src_label = f"{src_desc} ({src_short})" if src_desc else src_short
-            src_label = _truncate(src_label, 50)
-            tgt_desc = _node_desc_zh({"path": d["to_path"], "description": ""}) or ""
-            tgt_short = _node_short_name({"path": d["to_path"]})
-            tgt_label = f"{tgt_desc} ({tgt_short})" if tgt_desc else tgt_short
-            tgt_label = _truncate(tgt_label, 50)
+            src_label = _bilingual_label_from_path(d["from_path"])
+            tgt_label = _bilingual_label_from_path(d["to_path"])
             lines.append(f"| {i} | {src_domain_label}: {src_label} | → | {tgt_label} | {_dep_type_display(d['dep_type'])} |")
     else:
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
