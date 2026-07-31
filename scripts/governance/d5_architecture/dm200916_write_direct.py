@@ -112,8 +112,10 @@ for f in b_track_files:
 
 b_track_count = len(b_track_modules)
 b_track_implemented = sum(1 for m in b_track_modules if m["status"] == "implemented")
+b_track_under_construction = sum(1 for m in b_track_modules if m["status"] == "under_construction")
+b_track_phase_2_complete = sum(1 for m in b_track_modules if m["status"] == "phase_2_complete")
 b_track_skeleton = sum(1 for m in b_track_modules if m["status"] == "skeleton")
-print(f"b_track 模块数: {b_track_count} (implemented={b_track_implemented}, skeleton={b_track_skeleton})")
+print(f"b_track 模块数: {b_track_count} (implemented={b_track_implemented}, under_construction={b_track_under_construction}, phase_2_complete={b_track_phase_2_complete}, skeleton={b_track_skeleton})")
 
 # 生成 b_track modules YAML 片段（动态派生，禁止手工编辑）
 b_track_yaml_lines = []
@@ -236,6 +238,8 @@ global_stats:
   total_partitions: 12
   b_track_modules: {b_track_count}
   b_track_implemented: {b_track_implemented}
+  b_track_under_construction: {b_track_under_construction}
+  b_track_phase_2_complete: {b_track_phase_2_complete}
   b_track_skeleton: {b_track_skeleton}
   notes: >
     {domain_count}域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。

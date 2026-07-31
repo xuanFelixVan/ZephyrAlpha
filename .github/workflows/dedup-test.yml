@@ -8,13 +8,13 @@ name: Dedup Test
 # - 测试调用改为实际路径 tests/governance/code_quality/test_code_dedup_engine*.py
 on:
   push:
-    branches: [main, master, "phase/*", "sprint/*", "feature/*"]
+    branches: [main, master, dev, "phase/*", "sprint/*", "feature/*"]
     paths:
       - "src/zephyr/gov_code_quality/code_dedup/**"
       - "tests/governance/code_quality/test_code_dedup_engine*.py"
       - ".github/workflows/dedup-test.yml"
   pull_request:
-    branches: [main, master]
+    branches: [main, master, dev]
     paths:
       - "src/zephyr/gov_code_quality/code_dedup/**"
       - "tests/governance/code_quality/test_code_dedup_engine*.py"

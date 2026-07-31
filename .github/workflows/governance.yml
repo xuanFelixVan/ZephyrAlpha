@@ -18,7 +18,7 @@ name: Governance Audit
 
 on:
   push:
-    branches: [main, master, "phase/*", "sprint/*", "feature/*"]
+    branches: [main, master, dev, "phase/*", "sprint/*", "feature/*"]
     paths:
       - ".github/workflows/**"
       # 治本(2026-07-17): 原 scripts/governance/** 漏检 scripts/arch_guard/、scripts/context/、
@@ -56,7 +56,7 @@ on:
       - ".trae/**"
       - "_patches/**"
   pull_request:
-    branches: [main, master]
+    branches: [main, master, dev]
     paths:
       - ".github/workflows/**"
       # 治本(2026-07-17): push/PR paths 对称——原 PR 漏检 scripts/ 非 governance 子目录

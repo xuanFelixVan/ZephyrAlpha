@@ -5,14 +5,10 @@ collection_name: 规则注册表集 / Rule Registry Collection
 collection_path: src/zephyr/governance/
 owner_module: MOD-GOVERNANCE
 node_type: rule_registry_collection
-total_registered: 246
+total_registered: 245
 items:
 - file: config/ai_capability_matrix.yaml
   name: ai_capability_matrix.yaml
-  node_type: config
-  status: active
-- file: config/auto_fix_cron.yaml
-  name: auto_fix_cron.yaml
   node_type: config
   status: active
 - file: config/blueprint_routing.yaml

@@ -1,13 +1,15 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
-# module_id: MOD-INF-002
+# blueprint: MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §
+# module_id: MOD-INF-015
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 version: "0.9.0"
 module_id: MOD-INF-015
-last_updated: "2026_05_08"
+ttl: permanent
+last_updated: "2026-05-08"
 
 flags:
   metrics:

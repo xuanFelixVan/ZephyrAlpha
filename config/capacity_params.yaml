@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 容量参数统一配置（SSoT — Single Source of Truth）
@@ -12,9 +13,7 @@
 # 所有模块蓝图引用此文件，代码启动时从此文件加载。
 # 变更此文件后执行: python scripts/governance/d1_structure/validate_config_integrity.py
 # ============================================================================
-# module_id: CFG-CAP-001
 # version: 1.0.0
-# belongs_to: mod_master_001
 # references:
 #   - mod_inf_009 (Pipeline) §0.6
 #   - mod_inf_001 (Capacity Assurance) §13
@@ -24,6 +23,7 @@
 # ============================================================================
 
 module_id: MOD-INF-002
+ttl: permanent
 design_capacity:
   max_modules: 1500
   max_scripts: 10000
@@ -61,7 +61,7 @@ scan_modes:
     debounce_ms: 500                 # git diff 后去抖，避免重复触发
   full:
     enabled: true
-    schedule: "0 2 * * 0"           # cron: 每周日凌晨 2:00
+    # schedule: CI 批量兜底声明（governance.yml workflow_dispatch 触发），无进程内定时器（RULE-FIFTEEN 合规）
     timeout_seconds: 10800           # 3 小时
   partial:
     enabled: true                    # 增量失败时的回退模式

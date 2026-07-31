@@ -2,6 +2,7 @@
 # 同步? docs/03_modules/_cross_layer/feedback_loop/blueprint.md §1.1
 
 module_id: MOD-FEEDBACK_LOOP
+ttl: permanent
 name: feedback_loop
 human_name: Feedback Loop Engine
 version: 0.41.0
@@ -13,9 +14,9 @@ architecture_layer: L12
 architecture_track: B
 
 description: |
-  Vibe Coding 2.0 基础设施 ?L12 跨层支撑??5 大核心服务之一
-  系统自调节的闭环大脑: collect_metric ?detect_anomaly ?dispatch_action
-  第三?v0.38.0): +18治理级盲?| 第四?v0.39.0): +6 | 第五?v0.40.0): +8 | 第六?v0.41.0): +10
+  Vibe Coding 2.0 基础设施 L12 跨层支撑，核心服务之一。
+  系统自调节的闭环大脑: collect_metric → detect_anomaly → dispatch_action。
+  多期治理级盲点扩展: v0.38.0 +18 | v0.39.0 +6 | v0.40.0 +8 | v0.41.0 +10。
 
 subsystems:
   - collectors

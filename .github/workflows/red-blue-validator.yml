@@ -3,7 +3,7 @@ name: Red-Blue Adversarial Validator
 
 on:
   push:
-    branches: [main, master, "phase/*", "sprint/*", "feature/*"]
+    branches: [main, master, dev, "phase/*", "sprint/*", "feature/*"]
     paths:
       - "src/zephyr/red_blue_validator/**"
       - "src/zephyr/gov_enforcement/rule_enforcement/**"
@@ -16,7 +16,7 @@ on:
       - "src/zephyr/drift_detector/**"
       - ".github/workflows/red-blue-validator.yml"
   pull_request:
-    branches: [main, master]
+    branches: [main, master, dev]
     paths:
       # 治本(2026-07-17): 修复 push/PR paths 不对称——原 PR 仅 2 条路径，
       # 导致 PR 提交时 red_blue_validator 模块变更不触发对抗验证

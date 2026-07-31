@@ -1,9 +1,10 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance_automation/blueprint.md | §
-# module_id: MOD-INF-005
+# blueprint: MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §7.3
+# module_id: MOD-INF-015
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # config/sli_registry.yaml — Service Level Indicators Registry
 # module_id: MOD-INF-015
@@ -15,7 +16,8 @@
 
 version: "0.1.0"
 module_id: MOD-INF-015
-last_updated: "2026_05_08"
+ttl: permanent
+last_updated: "2026-05-08"
 
 slis:
   task_system:
