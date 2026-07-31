@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -120,14 +120,6 @@ flowchart TD
     class D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_SHARED,D_GOV_SCRIPTS,D_INFRA_RECOVERY,D_GOVERNANCE,D_INTEGRATION,D_GOV_ENFORCEMENT,D_GOV_REPAIR,D_INFRA_RUNTIME external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 11 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -144,8 +136,8 @@ flowchart TD
 | 8 | ops_governance/budget_tracker.py | → | D_INFRA_RECOVERY 回滚恢复: G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |
 | 9 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 10 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_SHARED 共享服务: escalation/budget_alert.py | 导入依赖 / import_depends |
-| 11 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 \| 盲... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 12 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 \| 盲... | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
+| 11 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 12 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

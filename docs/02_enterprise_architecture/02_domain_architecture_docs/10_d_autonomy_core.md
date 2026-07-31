@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -394,14 +394,6 @@ flowchart TD
     class D_SHARED,D_INFRA_RUNTIME,D_ORCHESTRATOR,D_INTEGRATION,D_GOV_CODE_QUALITY,D_SECURITY,D_GOV_REPAIR,D_FEEDBACK_LOOP external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 130 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -457,9 +449,9 @@ flowchart TD
 | 47 | skills/skill_factory.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 48 | MOD-INF-019: Agent Spec — Skill Feedback Loop (skills/sk... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 49 | MOD-INF-019: Agent Spec — Skill Freshness Extensions (sk... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 50 | skill-registry.py —— Skill 注册基座（Phase 14 \| 盲点 B3... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 51 | skill-registry.py —— Skill 注册基座（Phase 14 \| 盲点 B3... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 52 | skill-registry.py —— Skill 注册基座（Phase 14 \| 盲点 B3... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
+| 50 | skill-registry.py —— Skill 注册基座（Phase 14 | 盲点 B3... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 51 | skill-registry.py —— Skill 注册基座（Phase 14 | 盲点 B3... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
+| 52 | skill-registry.py —— Skill 注册基座（Phase 14 | 盲点 B3... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 53 | IntentKeywordMapper - Stage 1 of three-stage intent parsi... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 54 | IntentParser · 意图三阶段级联解析器（V-09） (persistence... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 55 | SystemSnapshotter — M1 系统状态镜像（CL-017 RI 扩展模式... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |

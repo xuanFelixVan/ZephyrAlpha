@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -547,14 +547,6 @@ flowchart TD
     class D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_SHARED,D_INFRA_RUNTIME,D_GOVERNANCE,D_COMPLIANCE,D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 166 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -626,7 +618,7 @@ flowchart TD
 | 63 | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 64 | Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 65 | Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 66 | ABACGuard — 基于属性的权限守卫. (guards/abac_guard.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 66 | ABACGuard — 基于属性的权限守卫. (guards/abac_guard.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 67 | Agent identity — 角色与成熟度定义. (access_control/ident... | → | D_SHARED 共享服务: identity/agent_identity.py | 导入依赖 / import_depends |
 | 68 | ImmutableCore — 不可变核心验证器. (access_control/immuta... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 69 | orphan_judge/__main__.py | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
@@ -641,7 +633,7 @@ flowchart TD
 | 78 | adversarial_validation/steady_state.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 79 | adversarial_validation/validator.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 80 | ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 81 | llm_security/behavior_audit_logger.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 81 | llm_security/behavior_audit_logger.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 82 | LLM Security Gateway - Streamlit Dashboard. (dashboard/ap... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 83 | layers/l0_supply_chain.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 84 | layers/l0_supply_chain.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
@@ -651,11 +643,11 @@ flowchart TD
 | 88 | layers/l2a_process_sandbox.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 89 | layers/l3_output.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 90 | layers/l4_agent.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 91 | layers/l4_agent.py | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 91 | layers/l4_agent.py | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 92 | layers/l5_resource_protection.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 93 | L6 Observability Layer — security event logging, alertin... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 94 | layers/l8_multi_agent.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 95 | patterns/secrets.py | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 95 | patterns/secrets.py | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 96 | L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 97 | L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 98 | llm_security/protocol.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |

@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -190,14 +190,6 @@ flowchart TD
     class src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_analysis_init_py,src_zephyr_factor_analysis_correlation_analyzer_py,src_zephyr_factor_analysis_correlation_dedup_py,src_zephyr_factor_analysis_decay_monitor_py,src_zephyr_factor_analysis_factor_attribution_py,src_zephyr_factor_analysis_factor_optimization_py,src_zephyr_factor_analysis_ic_decay_py,src_zephyr_factor_analysis_ic_ir_calc_py,src_zephyr_factor_analysis_ic_ir_evaluator_py,src_zephyr_factor_analysis_layered_backtest_py,src_zephyr_factor_analysis_multifactor_synthesis_py,src_zephyr_factor_analysis_three_level_judgment_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_backpressure_init_py,src_zephyr_factor_core_batch_output_init_py,src_zephyr_factor_core_config_manager_init_py,src_zephyr_factor_core_ctr001_consumer_init_py,src_zephyr_factor_core_ctr001_consumer_converter_py,src_zephyr_factor_core_ctr002_producer_init_py,src_zephyr_factor_core_ctr002_producer_converter_py,src_zephyr_factor_core_dag_manager_init_py,src_zephyr_factor_core_dist_feature_eng_init_py,src_zephyr_factor_core_evaluation_init_py,src_zephyr_factor_core_evaluation_backtest_py,src_zephyr_factor_core_evaluation_metrics_py,src_zephyr_factor_core_factor_dag_init_py,src_zephyr_factor_factor_base_py,src_zephyr_factor_governance_init_py,src_zephyr_factor_governance_abs001_gate_py,src_zephyr_factor_governance_engine_py,src_zephyr_factor_governance_factor_pool_manager_py,src_zephyr_factor_governance_grayscale_rollout_py,src_zephyr_factor_governance_lifecycle_state_machine_py,src_zephyr_factor_governance_six_step_flow_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py production
     class D_INFRASTRUCTURE,D_SHARED,D_DATA,D_FUNDAMENTAL_SIGNAL,D_GOV_OPS_RESILIENCE,D_PF_CORE,D_EX_CORE external_prod
 ```
-
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 37 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 

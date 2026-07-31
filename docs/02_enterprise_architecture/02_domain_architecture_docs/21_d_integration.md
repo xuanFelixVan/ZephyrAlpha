@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -309,14 +309,6 @@ flowchart TD
     class D_SHARED,D_OPS,D_GOV_AUDIT,D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_INTELLIGENCE,D_TRADING,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_ORCHESTRATOR,D_FEEDBACK_LOOP,D_GOV_DRIFT,D_GOV_ENFORCEMENT external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 71 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -348,7 +340,7 @@ flowchart TD
 | 23 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INFRA_RUNTIME 运行时集成: Pipeline Lock — 双管线并发锁 (pipeline/pipeline_lock.py) | 导入依赖 / import_depends |
 | 24 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INFRA_RUNTIME 运行时集成: PreemptionManager -- 优先级抢占管理器 (pipeline/preemptio... | 导入依赖 / import_depends |
 | 25 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INFRA_RUNTIME 运行时集成: Pipeline Routing Plugin System — K8s Scheduling Framewor... | 导入依赖 / import_depends |
-| 26 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INFRA_RUNTIME 运行时集成: hooks.py —— 模块生命周期钩子（Phase 2 新增 \| 盲点 B8 修... | 导入依赖 / import_depends |
+| 26 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INFRA_RUNTIME 运行时集成: hooks.py —— 模块生命周期钩子（Phase 2 新增 | 盲点 B8 修... | 导入依赖 / import_depends |
 | 27 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3 (model_evalu... | 导入依赖 / import_depends |
 | 28 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | 导入依赖 / import_depends |
 | 29 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | 导入依赖 / import_depends |
@@ -367,9 +359,9 @@ flowchart TD
 | 42 | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 (mc... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 43 | BlueprintSearchServer — MCP Server for blueprint discove... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 44 | DocGuardServer: 跨会话交接协议服务 MCP Server (mcp/doc_gu... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 45 | DocGuardServer: 跨会话交接协议服务 MCP Server (mcp/doc_gu... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 45 | DocGuardServer: 跨会话交接协议服务 MCP Server (mcp/doc_gu... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 46 | GateEngineServer: 门禁裁决服务 MCP Server (mcp/gate_engin... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 47 | GateEngineServer: 门禁裁决服务 MCP Server (mcp/gate_engin... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 47 | GateEngineServer: 门禁裁决服务 MCP Server (mcp/gate_engin... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 48 | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 49 | MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。 (... | → | D_SHARED 共享服务: infra/limiter.py | 导入依赖 / import_depends |
 | 50 | MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -380,7 +372,7 @@ flowchart TD
 | 55 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 56 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 57 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_SHARED 共享服务: schema/severity_types.py | 导入依赖 / import_depends |
-| 58 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 58 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 59 | ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 60 | VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 ... | → | D_SHARED 共享服务: ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
 | 61 | AssetInventory MCP Server — MOD-INF-026 蓝图 §21 (integ... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
@@ -394,7 +386,7 @@ flowchart TD
 | 69 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_SHARED 共享服务: ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
 | 70 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
 | 71 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 72 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 72 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 73 | errors/contract_violation_error.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 74 | CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误 (e... | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
 | 75 | errors/execution_rejection_error.py | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |

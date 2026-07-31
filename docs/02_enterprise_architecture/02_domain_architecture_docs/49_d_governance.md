@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -588,14 +588,6 @@ flowchart TD
     class D_INFRA_RUNTIME,D_DATA,D_INFRASTRUCTURE,D_INFRA_A2A,D_GOV_CODE_QUALITY,D_GOV_ENFORCEMENT,D_SECURITY,D_SHARED,D_GOV_RULE,D_GOV_SCRIPTS,D_TRADING,D_EX_CORE,D_GOV_AUDIT,D_GOV_OPS_RESILIENCE,D_FEEDBACK_LOOP external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 221 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -742,15 +734,15 @@ flowchart TD
 | 138 | 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
 | 139 | construction/reset_test_task.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 140 | generate_architecture_context.py — 预编译架构上下文包生... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 141 | 诊断 breadth_failed 能力的根因。 (scripts/diagnose_breadt... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 141 | 诊断 breadth_failed 能力的根因。 (scripts/diagnose_breadt... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 142 | lock_files.py —— AI 对话文件锁协议（硬规则执行工具） (s... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 143 | lock_files.py —— AI 对话文件锁协议（硬规则执行工具） (s... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 144 | MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLi... | → | D_SHARED 共享服务: ProcessLifecycleGateway — 进程生命周期统一入口 (infra/pr... | 导入依赖 / import_depends |
 | 145 | 文件头部完整性校验（6 格式统一入口） (ops/verify_header_c... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 146 | DeepSeek V4 入职考试运行脚本 (scripts/run_deepseek_v4_exa... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 146 | DeepSeek V4 入职考试运行脚本 (scripts/run_deepseek_v4_exa... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 147 | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
 | 148 | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 149 | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 149 | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 150 | G-CT-007 契约：Budget -> RBAC 配额限制. (agent_spec/rbac_... | → | D_SHARED 共享服务: identity/agent_identity.py | 导入依赖 / import_depends |
 | 151 | G-CT-003 契约：Agent Spec -> RBAC 能力检查. (agent_spec/r... | → | D_SHARED 共享服务: contracts/skill_protocol.py | 导入依赖 / import_depends |
 | 152 | LLMImpactAnalyzer — LLM-based commit 语义影响分析器。 (a... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
@@ -761,15 +753,15 @@ flowchart TD
 | 157 | CapabilityLookup — 能力->真源文件反查注册表的查询 API + ... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 158 | CapabilityLookup — 能力->真源文件反查注册表的查询 API + ... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 159 | Context Package — D-022-08 委托上下文包: 升级原因+证据链... | → | D_SHARED 共享服务: A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
-| 160 | MiniQMT 实盘行情 Provider（Tick + 5档盘口） (data_governa... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 160 | MiniQMT 实盘行情 Provider（Tick + 5档盘口） (data_governa... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 161 | data_governance/pricing_sync.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 162 | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 163 | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 164 | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 164 | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 165 | 实验 — Experimentation Pipeline Layer (engine/pipeline_b... | → | D_SHARED 共享服务: experiment/experiment_result.py | 导入依赖 / import_depends |
 | 166 | governance/evidence_pack.py | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 167 | AtomicTransactionManager — SQLite + 文件系统的跨介质原子... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 168 | AtomicTransactionManager — SQLite + 文件系统的跨介质原子... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 168 | AtomicTransactionManager — SQLite + 文件系统的跨介质原子... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 169 | AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 170 | CrossAgentConflictDetector — 多 Agent 并发冲突检测。 (in... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 171 | Delegation Engine — MOD-INF-022 (intelligence_governance... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
@@ -780,10 +772,10 @@ flowchart TD
 | 176 | QueryMetrics — SQL 查询性能监控装饰器（SH-DB-001 v2.0） ... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 177 | base_repo — 异常类、状态机常量、工具函数（从 task_repo.p... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 178 | base_repo — 异常类、状态机常量、工具函数（从 task_repo.p... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 179 | base_repo — 异常类、状态机常量、工具函数（从 task_repo.p... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 179 | base_repo — 异常类、状态机常量、工具函数（从 task_repo.p... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 180 | DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
 | 181 | DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 182 | DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 182 | DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 183 | decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 184 | decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 185 | SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -792,7 +784,7 @@ flowchart TD
 | 188 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 189 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: schema/severity_types.py | 导入依赖 / import_depends |
 | 190 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 191 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 191 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 192 | Escalation Adapter — MOD-INF-022 统一集成入口. (services... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 193 | A2A GovernanceAdapter — Phase 4 治理集成桥接器 (governan... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 194 | A2A GovernanceAdapter — Phase 4 治理集成桥接器 (governan... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
@@ -870,7 +862,7 @@ flowchart TD
 | 54 | D_GOV_RULE 规则治理: 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | pg_wrapper.py — psycopg2 connection 的 sqlite3 兼容 exec... | 导入依赖 / import_depends |
 | 55 | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
 | 56 | D_GOV_SCRIPTS 脚本治理: audit_post_sync_commands.py — post_sync_standard 命令可... | → | post_sync_validator — post_sync_standard 命令校验逻辑的... | 导入依赖 / import_depends |
-| 57 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 \| scripts/governance/create_ali... | → | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
+| 57 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_ali... | → | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
 | 58 | D_GOV_SCRIPTS 脚本治理: fix_broken_post_sync.py — 批量修复历史 broken post_sync_... | → | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
 | 59 | D_GOV_SCRIPTS 脚本治理: Construction Gate — 施工前路径校验门禁 (prototype/constr... | → | PathResolver — 模块路径解析器 (architecture_governance/p... | 导入依赖 / import_depends |
 | 60 | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
@@ -902,7 +894,7 @@ flowchart TD
 | 86 | D_GOV_SCRIPTS 脚本治理: extract_decisiongraph - decisiongraph on-demand extractio... | → | decision_graph_reader.py — 决策流图数据库只读查询工具模... | 导入依赖 / import_depends |
 | 87 | D_GOV_SCRIPTS 脚本治理: extract_decisiongraph - decisiongraph on-demand extractio... | → | decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | 导入依赖 / import_depends |
 | 88 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] YAML 是唯一真源; DB 为只读缓存; 同步单向 YAM... | → | decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | 导入依赖 / import_depends |
-| 89 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 \| scripts/governance/generate_p... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
+| 89 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_p... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
 | 90 | D_GOV_SCRIPTS 脚本治理: 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
 | 91 | D_GOV_SCRIPTS 脚本治理: 从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明... | → | rule_patterns.py — 治理规则正则 + 安全审计模式唯一真源 (... | 导入依赖 / import_depends |
 | 92 | D_GOV_SCRIPTS 脚本治理: backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |

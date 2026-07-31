@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-31T19:40:43Z'
+generated_at: '2026-07-31T19:50:38Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 187
+total_files: 188
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1680,6 +1680,26 @@ files:
   - canonical_symbol
   - ARCH-DATA-SYMBOL-001
   section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_083_design_intent_source_discipline.yaml
+  module_id: TRAE-083
+  title: 设计意图查询真源铁律（问题类型→查询源映射）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: design_intent_source_discipline
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-DESIGN-INTENT-SOURCE
+  - 设计意图真源
+  - 查询源映射
+  - 四问前置读设计
+  - read_source_discipline
+  section_count: 2
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
   title: Blueprint Construction Template

@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -184,14 +184,6 @@ flowchart TD
     class D_SHARED,D_INFRA_RUNTIME,D_GOV_RULE,D_TRADING,D_ML_TRAIN,D_GOVERNANCE,D_INTEGRATION,D_SECURITY,D_GOV_OPS_RESILIENCE external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 31 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -213,19 +205,19 @@ flowchart TD
 | 13 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） (... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
 | 14 | CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 15 | CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 16 | CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 16 | CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 17 | 真实多文件注入装配器（Phase 3 极限深度）。 (model_profili... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 18 | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 19 | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 19 | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 20 | ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 21 | JobMatcher --- 模型岗位匹配器 (model_profiling/job_matche... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 22 | ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
 | 23 | ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 24 | ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
-| 25 | Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 24 | ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 25 | Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 26 | ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 27 | ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
-| 28 | Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 27 | ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 28 | Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 29 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: execution/model_serving_request.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

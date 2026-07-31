@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 8 | Cross-domain Outgoing | 8 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 3 | Production Modules | 3 |
@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -81,14 +81,6 @@ flowchart TD
     class D_INFRASTRUCTURE,D_GOV_AUDIT,D_GOVERNANCE external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 3 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -114,7 +106,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 8 条 + 入边 3 条 = 11 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 8 条 + 入边 4 条 = 12 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -122,9 +114,11 @@ graph LR
     D_REPORTING["D_REPORTING<br/>报告"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
+    D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_REPORTING -->|8条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT -->|2条 导入依赖 / import_depends| D_REPORTING
+    D_EX_CORE -->|1条 data / data| D_REPORTING
     D_GOVERNANCE -->|1条 导入依赖 / import_depends| D_REPORTING
 ```
 

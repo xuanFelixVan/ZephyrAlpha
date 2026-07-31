@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -250,14 +250,6 @@ flowchart TD
     class D_GOV_DRIFT,D_SHARED,D_GOV_OPS_RESILIENCE,D_INFRA_RUNTIME,D_INTEGRATION,D_GOVERNANCE,D_TRADING,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOV_SCRIPTS external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 70 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -278,12 +270,12 @@ flowchart TD
 | 12 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
 | 13 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SECURITY 对抗验证: InputSanitizer: path whitelist + command whitelist + toke... | 导入依赖 / import_depends |
 | 14 | AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 15 | AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 15 | AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 16 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 17 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 18 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 19 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 20 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 20 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 21 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
 | 22 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
 | 23 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
@@ -309,16 +301,16 @@ flowchart TD
 | 43 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 44 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
 | 45 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 46 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 46 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 47 | HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 48 | HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 48 | HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 49 | StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 50 | StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 51 | StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | D_SHARED 共享服务: db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 52 | StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 52 | StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 53 | RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 54 | RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | D_SHARED 共享服务: db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 55 | RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 55 | RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

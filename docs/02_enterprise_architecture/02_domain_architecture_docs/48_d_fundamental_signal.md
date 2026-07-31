@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -106,14 +106,6 @@ flowchart TD
     class D_INFRASTRUCTURE,D_TRADING,D_FACTOR,D_SHARED,D_GOVERNANCE external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 10 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -131,7 +123,7 @@ flowchart TD
 | 9 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
 | 10 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
 | 11 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 12 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 12 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 13 | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
 | 14 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
 | 15 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: market/signal_degradation_warning.py | 导入依赖 / import_depends |

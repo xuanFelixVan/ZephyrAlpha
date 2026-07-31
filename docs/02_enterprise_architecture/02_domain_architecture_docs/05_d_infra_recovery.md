@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -220,14 +220,6 @@ flowchart TD
     class D_SHARED,D_GOV_OPS_RESILIENCE,D_SECURITY,D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_RULE,D_GOVERNANCE,D_INTEGRATION,D_GOV_DRIFT,D_FEEDBACK_LOOP,D_OPS external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 55 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -245,7 +237,7 @@ flowchart TD
 | 9 | AgentCooldown — Agent 冷却隔离器。 (rollback/agent_coold... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 10 | External Merkle Proof — 外部可验证回滚完整性证明。 (roll... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 11 | Forensic Engine — 取证基础设施（Phase 8 完整实现）。 (ro... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 12 | Forensic Engine — 取证基础设施（Phase 8 完整实现）。 (ro... | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新增 \| 盲点 ... | 导入依赖 / import_depends |
+| 12 | Forensic Engine — 取证基础设施（Phase 8 完整实现）。 (ro... | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
 | 13 | ForwardFixRunner — Forward-Fix 执行器。 (rollback/forwar... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 14 | ForwardFixRunner — Forward-Fix 执行器。 (rollback/forwar... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 15 | Right to be Forgotten — GDPR 遗忘权合规检查器。 (rollbac... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -259,8 +251,8 @@ flowchart TD
 | 23 | Rollback Integration — executor 集成增强层。 (rollback/r... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 24 | Rollback Integration — executor 集成增强层。 (rollback/r... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 25 | Rollback Integration — executor 集成增强层。 (rollback/r... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 26 | Rollback Integration — executor 集成增强层。 (rollback/r... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
-| 27 | RollbackLock — 全局回滚锁管理。 (rollback/rollback_lock.py) | → | D_SHARED 共享服务: lock.py —— 分布式锁抽象（Phase 10 新增 \| 盲点 B23 修复... | 导入依赖 / import_depends |
+| 26 | Rollback Integration — executor 集成增强层。 (rollback/r... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
+| 27 | RollbackLock — 全局回滚锁管理。 (rollback/rollback_lock.py) | → | D_SHARED 共享服务: lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复... | 导入依赖 / import_depends |
 | 28 | RollbackSimulator — 回滚模拟器（CI 集成）。 (rollback/ro... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 29 | RollbackTargetStaleness — 回滚目标陈旧度检测。 (rollback... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 30 | RollbackVerifier — 回滚后验证器。 (rollback/rollback_ver... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
@@ -269,7 +261,7 @@ flowchart TD
 | 33 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 34 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 35 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 36 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 36 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 37 | Submodule Sync — Submodule/Monorepo 多仓库同步回滚。 (ro... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 38 | TopologyChangeLog — 分支拓扑变更日志。 (rollback/topolog... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 39 | VenvSync — venv/conda 版本同步保障。 (rollback/venv_sync.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |

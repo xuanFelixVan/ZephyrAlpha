@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -270,14 +270,6 @@ flowchart TD
     class D_SHARED,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_INFRA_RUNTIME external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 72 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -292,8 +284,8 @@ flowchart TD
 | 6 | Handoff Manager — Agent 间任务交接 (layer2_communication... | → | D_SHARED 共享服务: A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
 | 7 | A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | → | D_SHARED 共享服务: A2A Coordination — shared interface definitions for mult... | 导入依赖 / import_depends |
 | 8 | 施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 9 | Supervisor — A2A Layer 3 Coordination (layer3_coordinati... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
-| 10 | multi_agent.py —— Multi-Agent 编排基座（Phase 14 \| 盲点... | → | D_SHARED 共享服务: A2A Coordination — shared interface definitions for mult... | 导入依赖 / import_depends |
+| 9 | Supervisor — A2A Layer 3 Coordination (layer3_coordinati... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 10 | multi_agent.py —— Multi-Agent 编排基座（Phase 14 | 盲点... | → | D_SHARED 共享服务: A2A Coordination — shared interface definitions for mult... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

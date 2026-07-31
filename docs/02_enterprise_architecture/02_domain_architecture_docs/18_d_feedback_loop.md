@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -468,14 +468,6 @@ flowchart TD
     class D_FBL_DIAGNOSERS,D_SHARED,D_FBL_DETECTORS,D_FBL_VERIFICATION,D_INFRA_RUNTIME,D_GOVERNANCE,D_AUTONOMY_CORE,D_FRONTEND,D_ORCHESTRATOR,D_GOV_AUDIT,D_SECURITY external_prod
 ```
 
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 本域 125 个模块全部为运营态（production），上方全景图即运营态全貌，不再重复绘制。
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> （无设计态模块 / No design modules）
-
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
@@ -547,17 +539,17 @@ flowchart TD
 | 63 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入口 (vector... | 导入依赖 / import_depends |
 | 64 | FLE->Orc 告警分派器 — dispatch() 生产者 (feedback_loop/a... | → | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | 导入依赖 / import_depends |
 | 65 | feedback_loop/evolution_engine.py | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
-| 66 | API Version Contract — v0.14.0 R188 (actors/api_version_... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 66 | API Version Contract — v0.14.0 R188 (actors/api_version_... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 67 | FeedbackLoop core — 反馈闭环核心类。 (feedback_loop/core.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 68 | FeedbackLoop core — 反馈闭环核心类。 (feedback_loop/core.py) | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 69 | FeedbackLoop core — 反馈闭环核心类。 (feedback_loop/core.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 69 | FeedbackLoop core — 反馈闭环核心类。 (feedback_loop/core.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 70 | FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_sche... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 71 | feedback_loop/evolution_engine.py | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 72 | FeedbackCollector: collect task execution feedback (feedb... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 73 | FeedbackCollector: collect task execution feedback (feedb... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 74 | FeedbackCollector: collect task execution feedback (feedb... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 74 | FeedbackCollector: collect task execution feedback (feedb... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 75 | feedback_loop/fitness_functions.py | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 76 | Self-Modification Audit — v0.15.0 R218 (forensic/self_mo... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 \| 盲点 B19... | 导入依赖 / import_depends |
+| 76 | Self-Modification Audit — v0.15.0 R218 (forensic/self_mo... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 77 | MetricsCollector: append-only metrics recording. (feedbac... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 78 | Config Hot-Reload Guard — v0.40.0 R498 (resilience/confi... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 79 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
@@ -566,7 +558,7 @@ flowchart TD
 | 82 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 83 | feedback_loop/scheduler_act.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 84 | feedback_loop/scheduler_safety.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 85 | Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | 导入依赖 / import_depends |
+| 85 | Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 86 | feedback_loop/slo_manager.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 87 | feedback_loop/slo_manager.py | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
 
@@ -586,7 +578,7 @@ flowchart TD
 | 10 | D_INFRA_RUNTIME 运行时集成: trading/lifecycle_manager.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
 | 11 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | Feedback Loop Decision Engine (feedback_loop/decision_eng... | 导入依赖 / import_depends |
 | 12 | D_SECURITY 对抗验证: orphan_judge/feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
-| 13 | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 \| 盲点 B12... | → | Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | 导入依赖 / import_depends |
+| 13 | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | → | Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
