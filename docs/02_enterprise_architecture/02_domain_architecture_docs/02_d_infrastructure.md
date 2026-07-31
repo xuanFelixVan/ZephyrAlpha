@@ -113,6 +113,7 @@ graph TD
     end
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
@@ -122,7 +123,6 @@ graph TD
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_fill_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
@@ -190,6 +190,7 @@ graph TD
     end
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
@@ -199,7 +200,6 @@ graph TD
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_fill_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
