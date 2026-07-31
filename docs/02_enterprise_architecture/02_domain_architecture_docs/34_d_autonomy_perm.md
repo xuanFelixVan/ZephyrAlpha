@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 2 | Module Count | 2 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
@@ -67,11 +67,16 @@ flowchart TD
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>文件: fitness_functions/check_kill_switch_latency.py"]
     scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
+    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
+    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
+    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
+    class D_GOV_SCRIPTS external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -84,11 +89,16 @@ flowchart TD
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>文件: fitness_functions/check_kill_switch_latency.py"]
     scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
+    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
+    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
+    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
+    class D_GOV_SCRIPTS external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -101,7 +111,11 @@ flowchart TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 2 | manage_kill_switch.py — Kill Switch 管理工具 (meta/manag... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 3 | manage_kill_switch.py — Kill Switch 管理工具 (meta/manag... | → | D_GOV_SCRIPTS 脚本治理: _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -109,9 +123,15 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 1 个外部域直接连接（出边 3 条 + 入边 0 条 = 3 条）。只显示直接连接的域，不展开具体节点。
 
-> （无跨域依赖 / No cross-domain dependencies）
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+graph LR
+    D_AUTONOMY_PERM["D_AUTONOMY_PERM<br/>自治保护"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
+    D_AUTONOMY_PERM -->|3条 导入依赖 / import_depends| D_GOV_SCRIPTS
+```
 
 ## 说明 / Notes
 
