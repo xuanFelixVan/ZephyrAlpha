@@ -40,6 +40,7 @@
 循环安全：本脚本不修改 depgraph，不修改 layers/b_*.yaml，可被 reconciler 自动触发。
 """
 import sys
+from datetime import date
 from pathlib import Path
 
 __manifest__ = """
