@@ -38,7 +38,7 @@ ttl: permanent
 
 > 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
 
-### L0 基础设施层 / Infrastructure Layer (6 modules)
+### L0 基础设施层 / Infrastructure Layer (8 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -48,16 +48,16 @@ ttl: permanent
 | 4 | src/zephyr/pf_core/strategy_engine/strategy_runner.py | D_PORTFOLIO_CORE — StrategyRunner 策略运行器（... | 生产态 / production |  |
 | 5 | src/zephyr/pf_core/strategy_engine/tick_strategy_base.py | D_PORTFOLIO_CORE — TickStrategyBase + TickStra... | 生产态 / production |  |
 | 6 | src/zephyr/pf_core/vwap_reversion_strategy.py | D_PORTFOLIO_CORE — VWAP 回归做T策略（路径 B 策略） | 生产态 / production |  |
+| 7 | tests/pf_core/test_orderbook_imbalance_strategy.py | OrderBookImbalanceStrategy 单元测试（路径 B 盘... | 生产态 / production |  |
+| 8 | tests/pf_core/test_vwap_reversion_strategy.py | VWAPReversionStrategy 单元测试（路径 B 均值回归... | 生产态 / production |  |
 
-### L2 领域层 / Domain Layer (5 modules)
+### L2 领域层 / Domain Layer (3 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/pf_core/topn_momentum_strategy.py | D_PORTFOLIO_CORE — TopN 动量等权策略 | 设计态 / design |  |
 | 2 | tests/pf_core/test_intraday_surge_fall_strategy.py | IntradaySurgeFallStrategy 单元测试（路径 B 示例... | 生产态 / production |  |
-| 3 | tests/pf_core/test_orderbook_imbalance_strategy.py | OrderBookImbalanceStrategy 单元测试（路径 B 盘... | 生产态 / production |  |
-| 4 | tests/pf_core/test_strategy_runner_tick.py | StrategyRunner.run_tick_backtest 单元测试（路径... | 生产态 / production |  |
-| 5 | tests/pf_core/test_vwap_reversion_strategy.py | VWAPReversionStrategy 单元测试（路径 B 均值回归... | 生产态 / production |  |
+| 3 | tests/pf_core/test_strategy_runner_tick.py | StrategyRunner.run_tick_backtest 单元测试（路径... | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
