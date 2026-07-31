@@ -15,6 +15,7 @@
 # 版本：2.0.0
 # 创建日期：2026-07-10
 # 最后更新：2026-07-31 — 批量豁免174个 depgraph-only 模块（GATE-PANORAMA-ALIGNMENT warn 治本）
+# 2026-08-01 — 增补 SH-MODULE-TRANSLATION-001（module_translation_loader，SH-TERM-001 sibling，同类工具脚本）
 
 exempt_module_ids:
   # --- 历史豁免 ---
@@ -77,7 +78,7 @@ exempt_module_ids:
   - MOD-GOV_TEST_SOURCE_CONSISTENCY_GATE
   - MOD-GOV_VOCAB_HARDCODE_GATE
   - MOD-GOV_YAML_SYNC_ERROR_CLASS
-  # --- 脚本工具（39个）：治理/工具脚本，仅 depgraph 依赖追溯 ---
+  # --- 脚本工具（40个）：治理/工具脚本，仅 depgraph 依赖追溯 ---
   - MOD-D5_ARCH_TOOLS
   - MOD-D_GOV_SCRIPTS
   - MOD-GOV-008
@@ -117,6 +118,7 @@ exempt_module_ids:
   - MOD-SCRIPTS-006
   - MOD-metric_count_drift
   - SH-TERM-001
+  - SH-MODULE-TRANSLATION-001  # module_translation_loader.py，SH-TERM-001 sibling（模块级翻译加载器，同类工具脚本）
   # --- 归档脚本（5个）：scripts/_archive 历史归档 ---
   - MOD-GOV_ANALYZE_ORPHAN_CONSUMERS
   - MOD-GOV_CHECK_RULE_COVERAGE
