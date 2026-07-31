@@ -554,7 +554,7 @@ def generate_cross_domain_mermaid(
     - 只显示直接连接的域，不展开具体节点
     - 外部域节点显示中英文域名
     """
-    lines = ["graph LR"]
+    lines = [_MERMAID_GRAY_THEME, "graph LR"]
 
     # 本域节点
     self_id = sanitize_node_id(domain_id)
@@ -722,6 +722,61 @@ def _sanitize_subgraph_label(text: str) -> str:
     return _sanitize_mermaid_label(text).replace("/", "_")
 
 
+def _compute_topo_layers(nodes: list[dict], edges: list[dict]) -> dict[int, int]:
+    """计算节点拓扑层级（用于强制竖排分层）。
+
+    返回 {node_id: layer}。layer 0 = 当前页内入度为 0 的节点；
+    layer(node) = max(layer(前驱)) + 1（Kahn 算法）。环内节点（Kahn 未覆盖）
+    统一分配 max_layer+1；孤立节点（无入无出）归 layer 0。
+    仅考虑两端都在当前页 nodes 列表内的边。
+    """
+    node_ids = {n["node_id"] for n in nodes}
+    out_edges: dict[int, list[int]] = {nid: [] for nid in node_ids}
+    in_degree: dict[int, int] = {nid: 0 for nid in node_ids}
+    for e in edges:
+        f, t = e["from_node_id"], e["to_node_id"]
+        if f in node_ids and t in node_ids:
+            out_edges[f].append(t)
+            in_degree[t] += 1
+
+    layer: dict[int, int] = {}
+    queue = [nid for nid in node_ids if in_degree[nid] == 0]
+    for nid in queue:
+        layer[nid] = 0
+    while queue:
+        cur = queue.pop(0)
+        for nxt in out_edges[cur]:
+            in_degree[nxt] -= 1
+            layer[nxt] = max(layer.get(nxt, 0), layer[cur] + 1)
+            if in_degree[nxt] == 0:
+                queue.append(nxt)
+
+    # 环内剩余节点（Kahn 未覆盖）—— 拓扑排序无法破环，统一放最大层 +1
+    remaining = [nid for nid in node_ids if nid not in layer]
+    if remaining:
+        max_layer = max(layer.values()) if layer else 0
+        for nid in remaining:
+            layer[nid] = max_layer + 1
+
+    return layer
+
+
+# Mermaid 灰色主题（对齐 decision_index.md / 09_decision_l2a_research.md 风格）
+_MERMAID_GRAY_THEME = (
+    "%%{init: {'theme': 'base', 'themeVariables': {"
+    "'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
+    "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
+    "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'"
+    "}}}%%"
+)
+
+# 灰主题协调的低饱和状态色：填充接近 #eaeaea 灰基调，边框保留状态色相深色确保可辨识
+_CLASSDEF_PRODUCTION = "classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a"
+_CLASSDEF_DESIGN = "classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5"
+_CLASSDEF_EXTERNAL_PROD = "classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a"
+_CLASSDEF_EXTERNAL_DESIGN = "classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5"
+
+
 def generate_internal_mermaid(
     domain_id: str,
     domain_name: str,
@@ -732,21 +787,18 @@ def generate_internal_mermaid(
 ) -> str:
     """生成内嵌 Mermaid 依赖图代码（单页，节点子集由调用方传入）。
 
-    - graph TD 格式
-    - subgraph 包裹本域模块
-    - 实线箭头 --> = 运营态依赖（from和to都是production）
-    - 虚线箭头 -.-> = 设计态依赖（任一方非production）
-    - 跨域入边和出边用 external 节点表示
-    - nodes 参数即当前页的节点子集，由调用方分页传入
+    风格对齐 decision_index.md / 09_decision_l2a_research.md：
+    - flowchart TD + 灰色 init 主题（primaryColor #eaeaea / lineColor #666666 / fontSize 14px）
+    - 拓扑分层强制竖排：Kahn 算法计算层级，同层节点用不可见边 ~~~ 横向串联强制同 rank，
+      层间靠依赖边纵向连接，整体从上到下分层流动（每层一行）
+    - 去掉 subgraph 域边界框（subgraph 让 dagre 在框内横向铺开，是竖向效果差元凶）
+    - 保留 production/design/external 状态色，但降为与灰主题协调的低饱和配色
+    - 实线箭头 --> = 运营态依赖（from和to都是production），虚线箭头 -.-> = 非运营态依赖
+    - 跨域入边和出边用 external 节点表示；nodes 参数即当前页的节点子集
     """
     displayed_node_ids = {n["node_id"] for n in nodes}
 
-    lines = ["graph TD"]
-
-    # subgraph 包裹本域模块
-    subgraph_id = sanitize_node_id(domain_id)
-    safe_domain_name = _sanitize_subgraph_label(domain_name)
-    lines.append(f'    subgraph {subgraph_id}["{domain_id} {safe_domain_name}"]')
+    lines = [_MERMAID_GRAY_THEME, "flowchart TD"]
 
     # 节点定义 + 构建 path→mermaid_id 映射
     node_id_map: dict[int, str] = {}
@@ -764,9 +816,23 @@ def generate_internal_mermaid(
         if n["path"]:
             path_to_mermaid[n["path"]] = mermaid_id
 
-        label = _sanitize_mermaid_label(_node_mermaid_label(n))
-        lines.append(f'        {mermaid_id}["{label}"]')
-    lines.append("    end")
+    # 拓扑分层 + 按层级分组声明节点（强制竖排：每层一行，层间纵向流动）
+    layers = _compute_topo_layers(nodes, edges)
+    layer_groups: dict[int, list[dict]] = {}
+    for n in nodes:
+        layer_groups.setdefault(layers.get(n["node_id"], 0), []).append(n)
+
+    for layer_idx in sorted(layer_groups.keys()):
+        group = layer_groups[layer_idx]
+        for n in group:
+            mermaid_id = node_id_map[n["node_id"]]
+            label = _sanitize_mermaid_label(_node_mermaid_label(n))
+            lines.append(f'    {mermaid_id}["{label}"]')
+        # 同层节点用不可见边 ~~~ 横向串联，强制 dagre 同 rank（每层一行）
+        if len(group) > 1:
+            ids = [node_id_map[n["node_id"]] for n in group]
+            for i in range(len(ids) - 1):
+                lines.append(f"    {ids[i]} ~~~ {ids[i + 1]}")
 
     # 域内依赖边
     for e in edges:
@@ -826,13 +892,11 @@ def generate_internal_mermaid(
         dep_label = _sanitize_mermaid_label(_dep_type_display(e["dep_type"])) or "dep"
         lines.append(f"    {ext_id} {arrow}|{dep_label}| {to_mermaid}")
 
-    # classDef 样式（所有都加 color:#000 确保黑字）
-    lines.append("    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000")
-    lines.append("    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
-    lines.append("    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000")
-    lines.append(
-        "    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
-    )
+    # classDef 样式（灰主题协调的低饱和状态色）
+    lines.append(f"    {_CLASSDEF_PRODUCTION}")
+    lines.append(f"    {_CLASSDEF_DESIGN}")
+    lines.append(f"    {_CLASSDEF_EXTERNAL_PROD}")
+    lines.append(f"    {_CLASSDEF_EXTERNAL_DESIGN}")
 
     # 应用样式到内部节点
     prod_nodes = []
