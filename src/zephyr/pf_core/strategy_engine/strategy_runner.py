@@ -265,6 +265,14 @@ class StrategyRunner:
             autodiscover_tick_strategies,
         )
 
+        # 显式 import 路径 B tick 策略：触发 @TickStrategyBase.register 注册（副作用导入）。
+        # 函数级 import 避免与 strategy_engine/__init__ 循环依赖（tick 策略 import
+        # tick_strategy_base 触发 __init__，模块级 import 会循环）；同时满足
+        # ORPHAN-MODULE 门禁（src/ 内有静态 import 引用，新 AI 可 grep 发现）。
+        from zephyr.pf_core.intraday_surge_fall_strategy import IntradaySurgeFallStrategy  # noqa: F401,E402
+        from zephyr.pf_core.orderbook_imbalance_strategy import OrderBookImbalanceStrategy  # noqa: F401,E402
+        from zephyr.pf_core.vwap_reversion_strategy import VWAPReversionStrategy  # noqa: F401,E402
+
         cls = TickStrategyBase.get(strategy_id)
         if cls is None:
             autodiscover_tick_strategies("zephyr.pf_core")
