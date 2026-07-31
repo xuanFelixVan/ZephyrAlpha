@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-31'
-total_scripts: 611
+total_scripts: 613
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2121,6 +2121,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_policies.py
   path: governance/d5_architecture/generators/generate_policies.py
   description: 真源：architecture_model/data/data_sources_registry.yaml
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_trading_flow_diagram.py
+  path: governance/d5_architecture/generators/generate_trading_flow_diagram.py
+  description: '- 从 decision_graph_model.yaml 读 flow_stages 定义（6阶段）'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4393,6 +4401,14 @@ scripts:
 - name: tests/smoke_test_ede_path_a.py
   path: tests/smoke_test_ede_path_a.py
   description: 验证全链路（#ARCH-EDE-PATHA-SYM-001 修复后）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_ede_path_a_multi.py
+  path: tests/smoke_test_ede_path_a_multi.py
+  description: 在单标的验证（smoke_test_ede_path_a.py）基础上扩展到 3 标的组合，重点验证：
   domain: test
   execution_plane: warm-path
   status: registered

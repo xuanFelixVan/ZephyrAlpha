@@ -63,10 +63,10 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) D_REPORTING — Default Attribution Engine<br/>文件: default_attribution_engine.py"]
-    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>文件: default_tca_engine.py"]
+    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py"]
+    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
-    src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>文件: analytics_base.py"]
+    src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
@@ -98,10 +98,10 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) D_REPORTING — Default Attribution Engine<br/>文件: default_attribution_engine.py"]
-    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>文件: default_tca_engine.py"]
+    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py"]
+    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
-    src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>文件: analytics_base.py"]
+    src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
@@ -138,22 +138,22 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: execution_report.py | 导入依赖 / import_depends |
-| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: fill.py | 导入依赖 / import_depends |
-| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: order.py | 导入依赖 / import_depends |
-| 4 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: performance_attribution_report.py | 导入依赖 / import_depends |
-| 5 | D_REPORTING — Default Attribution Engine (defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: performance_attribution_report.py | 导入依赖 / import_depends |
-| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: execution_report.py | 导入依赖 / import_depends |
-| 7 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: fill.py | 导入依赖 / import_depends |
-| 8 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: order.py | 导入依赖 / import_depends |
+| 1 | D_REPORTING — Post-Trade Analytics Layer (repo... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
+| 2 | D_REPORTING — Post-Trade Analytics Layer (repo... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
+| 3 | D_REPORTING — Post-Trade Analytics Layer (repo... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
+| 4 | D_REPORTING — Post-Trade Analytics Layer (repo... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 5 | D_REPORTING — Default Attribution Engine (repo... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 6 | D_REPORTING — Default TCA Engine (reporting/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
+| 7 | D_REPORTING — Default TCA Engine (reporting/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
+| 8 | D_REPORTING — Default TCA Engine (reporting/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: Re-export wrapper: analytics_base canonical at ... | → | D_REPORTING — Post-Trade Analytics Layer (anal... | 导入依赖 / import_depends |
-| 2 | D_GOV_AUDIT 审计追踪: Re-export wrapper: default_attribution_engine c... | → | D_REPORTING — Default Attribution Engine (defa... | 导入依赖 / import_depends |
-| 3 | D_GOV_AUDIT 审计追踪: Re-export wrapper: default_tca_engine canonical... | → | D_REPORTING — Default TCA Engine (default_tca_... | 导入依赖 / import_depends |
+| 1 | D_GOVERNANCE 生命周期管理: Re-export wrapper: analytics_base canonical at ... | → | D_REPORTING — Post-Trade Analytics Layer (repo... | 导入依赖 / import_depends |
+| 2 | D_GOV_AUDIT 审计追踪: Re-export wrapper: default_attribution_engine c... | → | D_REPORTING — Default Attribution Engine (repo... | 导入依赖 / import_depends |
+| 3 | D_GOV_AUDIT 审计追踪: Re-export wrapper: default_tca_engine canonical... | → | D_REPORTING — Default TCA Engine (reporting/de... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

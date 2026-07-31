@@ -42,13 +42,13 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only St... | 生产态 / production |  |
+| 1 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy | 生产态 / production |  |
 
 ### L2 领域层 / Domain Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | strategy_lifecycle_event.py | 生产态 / production |  |
+| 1 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | pf_alloc/strategy_lifecycle_event.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -67,8 +67,8 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["(生产态 / production) strategy_lifecycle_event.py"]
-    src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["(生产态 / production) pf_alloc/strategy_lifecycle_event.py"]
+    src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only Strategy<br/>文件: pf_core/default_equity_strategy.py"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
@@ -94,8 +94,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["(生产态 / production) strategy_lifecycle_event.py"]
-    src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["(生产态 / production) pf_alloc/strategy_lifecycle_event.py"]
+    src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only Strategy<br/>文件: pf_core/default_equity_strategy.py"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
@@ -127,8 +127,8 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | 导入依赖 / import_depends |
-| 2 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE 跨层契约基础设施: strategy_lifecycle_event.py | 导入依赖 / import_depends |
-| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE 跨层契约基础设施: order.py | 导入依赖 / import_depends |
+| 2 | pf_alloc/strategy_lifecycle_event.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
 | 4 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

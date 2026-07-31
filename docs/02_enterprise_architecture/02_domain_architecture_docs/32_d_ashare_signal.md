@@ -42,13 +42,13 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_ashare/__init__.py | __init__.py | 生产态 / production |  |
-| 2 | src/zephyr/signal_ashare/_extensions/__init__.py | __init__.py | 生产态 / production |  |
-| 3 | src/zephyr/signal_ashare/api/__init__.py | __init__.py | 生产态 / production |  |
-| 4 | src/zephyr/signal_ashare/core/__init__.py | __init__.py | 生产态 / production |  |
-| 5 | src/zephyr/signal_ashare/infrastructure/__init__.py | __init__.py | 生产态 / production |  |
-| 6 | src/zephyr/signal_ashare/models/__init__.py | __init__.py | 生产态 / production |  |
-| 7 | src/zephyr/signal_ashare/services/__init__.py | __init__.py | 生产态 / production |  |
+| 1 | src/zephyr/signal_ashare/__init__.py | signal_ashare/__init__.py | 生产态 / production |  |
+| 2 | src/zephyr/signal_ashare/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
+| 3 | src/zephyr/signal_ashare/api/__init__.py | api/__init__.py | 生产态 / production |  |
+| 4 | src/zephyr/signal_ashare/core/__init__.py | core/__init__.py | 生产态 / production |  |
+| 5 | src/zephyr/signal_ashare/infrastructure/__init__.py | infrastructure/__init__.py | 生产态 / production |  |
+| 6 | src/zephyr/signal_ashare/models/__init__.py | models/__init__.py | 生产态 / production |  |
+| 7 | src/zephyr/signal_ashare/services/__init__.py | services/__init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -67,13 +67,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_ashare_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_api_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_core_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_models_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_signal_ashare_init_py["(生产态 / production) signal_ashare/__init__.py"]
+    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) _extensions/__init__.py"]
+    src_zephyr_signal_ashare_api_init_py["(生产态 / production) api/__init__.py"]
+    src_zephyr_signal_ashare_core_init_py["(生产态 / production) core/__init__.py"]
+    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) infrastructure/__init__.py"]
+    src_zephyr_signal_ashare_models_init_py["(生产态 / production) models/__init__.py"]
+    src_zephyr_signal_ashare_services_init_py["(生产态 / production) services/__init__.py"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_api_init_py
     src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_core_init_py
@@ -94,13 +94,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_ashare_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_api_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_core_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_models_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_signal_ashare_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_signal_ashare_init_py["(生产态 / production) signal_ashare/__init__.py"]
+    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) _extensions/__init__.py"]
+    src_zephyr_signal_ashare_api_init_py["(生产态 / production) api/__init__.py"]
+    src_zephyr_signal_ashare_core_init_py["(生产态 / production) core/__init__.py"]
+    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) infrastructure/__init__.py"]
+    src_zephyr_signal_ashare_models_init_py["(生产态 / production) models/__init__.py"]
+    src_zephyr_signal_ashare_services_init_py["(生产态 / production) services/__init__.py"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_api_init_py
     src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_core_init_py

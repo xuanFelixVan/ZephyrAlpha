@@ -42,61 +42,61 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/rollback/contracts.py | rollback/contracts.py — G-CT-002 Rollback 契约... | 生产态 / production |  |
-| 2 | src/zephyr/infrastructure/rollback/_manifest.py | MOD-INF-021 Rollback System — 模块文件清单 (_m... | 生产态 / production |  |
+| 1 | src/zephyr/governance/rollback/contracts.py | rollback/contracts.py — G-CT-002 Rollback 契约（re-export）。 | 生产态 / production |  |
+| 2 | src/zephyr/infrastructure/rollback/_manifest.py | MOD-INF-021 Rollback System — 模块文件清单 (_manifest_)。 | 生产态 / production |  |
 | 3 | src/zephyr/infrastructure/rollback/agent_cooldown.py | AgentCooldown — Agent 冷却隔离器。 | 生产态 / production |  |
 | 4 | src/zephyr/infrastructure/rollback/auditor.py | G-CT-004 契约：Rollback -> Audit 记录回滚操作. | 生产态 / production |  |
 | 5 | src/zephyr/infrastructure/rollback/auto_rollback_trigger.py | AutoRollbackTrigger — 自动回滚触发器。 | 生产态 / production |  |
-| 6 | src/zephyr/infrastructure/rollback/budget_tracker.py | G-CT-009 契约：Rollback -> Budget 回滚成本计入... | 生产态 / production |  |
+| 6 | src/zephyr/infrastructure/rollback/budget_tracker.py | G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. | 生产态 / production |  |
 | 7 | src/zephyr/infrastructure/rollback/checkpoint_gc.py | CheckpointGC — Checkpoint 垃圾回收。 | 生产态 / production |  |
 | 8 | src/zephyr/infrastructure/rollback/commit_quality_gate.py | CommitQualityGate — Commit 质量基础设施。 | 生产态 / production |  |
 | 9 | src/zephyr/infrastructure/rollback/complexity_budget.py | ComplexityBudget — 回滚复杂度元 Budget 监控。 | 生产态 / production |  |
-| 10 | src/zephyr/infrastructure/rollback/contract.py | CT-RBK-GATE-001 集成契约落地——Rollback System... | 生产态 / production |  |
-| 11 | src/zephyr/infrastructure/rollback/contracts.py | G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | 生产态 / production |  |
-| 12 | src/zephyr/infrastructure/rollback/credential_rotation_tr... | CredentialRotationDetector — 回滚后凭据泄露检... | 生产态 / production |  |
+| 10 | src/zephyr/infrastructure/rollback/contract.py | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code 完整定义。 | 生产态 / production |  |
+| 11 | src/zephyr/infrastructure/rollback/contracts.py | G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口. | 生产态 / production |  |
+| 12 | src/zephyr/infrastructure/rollback/credential_rotation_tr... | CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。 | 生产态 / production |  |
 | 13 | src/zephyr/infrastructure/rollback/cross_platform_shell.py | CrossPlatformShell — 跨平台 Shell 脚本双输出。 | 生产态 / production |  |
-| 14 | src/zephyr/infrastructure/rollback/drift_fix.py | drift_fix.py | 生产态 / production |  |
+| 14 | src/zephyr/infrastructure/rollback/drift_fix.py | rollback/drift_fix.py | 生产态 / production |  |
 | 15 | src/zephyr/infrastructure/rollback/env_watcher.py | EnvWatcher — 环境变量热重载监控器。 | 生产态 / production |  |
 | 16 | src/zephyr/infrastructure/rollback/external_merkle_proof.py | External Merkle Proof — 外部可验证回滚完整性证明。 | 生产态 / production |  |
-| 17 | src/zephyr/infrastructure/rollback/forensic.py | Forensic Engine — 取证基础设施（Phase 8 完整实... | 生产态 / production |  |
+| 17 | src/zephyr/infrastructure/rollback/forensic.py | Forensic Engine — 取证基础设施（Phase 8 完整实现）。 | 生产态 / production |  |
 | 18 | src/zephyr/infrastructure/rollback/forward_fix_runner.py | ForwardFixRunner — Forward-Fix 执行器。 | 生产态 / production |  |
 | 19 | src/zephyr/infrastructure/rollback/git_infra_snapshot.py | GitInfraSnapshot — Git 基础设施快照与污染防护。 | 生产态 / production |  |
-| 20 | src/zephyr/infrastructure/rollback/hallucination_guard.py | HallucinationGuard — AI 幻觉防护：回滚后强制状... | 生产态 / production |  |
+| 20 | src/zephyr/infrastructure/rollback/hallucination_guard.py | HallucinationGuard — AI 幻觉防护：回滚后强制状态验证。 | 生产态 / production |  |
 | 21 | src/zephyr/infrastructure/rollback/intent_archiver.py | IntentArchiver — 意图存档保护。 | 生产态 / production |  |
 | 22 | src/zephyr/infrastructure/rollback/kill_switch.py | KillSwitchManager — 三级 Kill Switch 管理器。 | 生产态 / production |  |
 | 23 | src/zephyr/infrastructure/rollback/knowngoodstate_ledger.py | KnowngoodstateLedger — 已验证正确状态收据。 | 生产态 / production |  |
 | 24 | src/zephyr/infrastructure/rollback/right_to_be_forgotten.py | Right to be Forgotten — GDPR 遗忘权合规检查器。 | 生产态 / production |  |
 | 25 | src/zephyr/infrastructure/rollback/rollback_abuse_detecto... | RollbackAbuseDetector — 回滚滥用检测。 | 生产态 / production |  |
-| 26 | src/zephyr/infrastructure/rollback/rollback_audit_nexus.py | RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | 生产态 / production |  |
-| 27 | src/zephyr/infrastructure/rollback/rollback_boot_integrat... | RollbackBootIntegration — 回滚系统自动启动/关... | 生产态 / production |  |
+| 26 | src/zephyr/infrastructure/rollback/rollback_audit_nexus.py | RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. | 生产态 / production |  |
+| 27 | src/zephyr/infrastructure/rollback/rollback_boot_integrat... | RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2). | 生产态 / production |  |
 | 28 | src/zephyr/infrastructure/rollback/rollback_bootstrap.py | RollbackBootstrap — 零依赖自举回滚器。 | 生产态 / production |  |
 | 29 | src/zephyr/infrastructure/rollback/rollback_budget.py | RollbackBudget — 回滚预算管理器。 | 生产态 / production |  |
 | 30 | src/zephyr/infrastructure/rollback/rollback_context_resto... | RollbackContextRestorer — 上下文恢复器。 | 生产态 / production |  |
-| 31 | src/zephyr/infrastructure/rollback/rollback_dashboard.py | RollbackDashboard — 回滚仪表盘（零依赖 Markdow... | 生产态 / production |  |
+| 31 | src/zephyr/infrastructure/rollback/rollback_dashboard.py | RollbackDashboard — 回滚仪表盘（零依赖 Markdown）。 | 生产态 / production |  |
 | 32 | src/zephyr/infrastructure/rollback/rollback_drill.py | RollbackDrill — 定期回滚演练调度器 (DiRT-style)。 | 生产态 / production |  |
 | 33 | src/zephyr/infrastructure/rollback/rollback_executor.py | RollbackExecutor — 回滚执行器核心封装。 | 生产态 / production |  |
 | 34 | src/zephyr/infrastructure/rollback/rollback_integration.py | Rollback Integration — executor 集成增强层。 | 生产态 / production |  |
 | 35 | src/zephyr/infrastructure/rollback/rollback_lock.py | RollbackLock — 全局回滚锁管理。 | 生产态 / production |  |
 | 36 | src/zephyr/infrastructure/rollback/rollback_loop_detector.py | RollbackLoopDetector — 回滚循环检测器。 | 生产态 / production |  |
-| 37 | src/zephyr/infrastructure/rollback/rollback_scheduler.py | RollbackScheduler — 回滚系统事件驱动调度器 (MO... | 生产态 / production |  |
+| 37 | src/zephyr/infrastructure/rollback/rollback_scheduler.py | RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3). | 生产态 / production |  |
 | 38 | src/zephyr/infrastructure/rollback/rollback_simulator.py | RollbackSimulator — 回滚模拟器（CI 集成）。 | 生产态 / production |  |
 | 39 | src/zephyr/infrastructure/rollback/rollback_state_machine.py | RollbackStateMachine — 回滚步骤级状态机。 | 生产态 / production |  |
 | 40 | src/zephyr/infrastructure/rollback/rollback_target_stalen... | RollbackTargetStaleness — 回滚目标陈旧度检测。 | 生产态 / production |  |
 | 41 | src/zephyr/infrastructure/rollback/rollback_verifier.py | RollbackVerifier — 回滚后验证器。 | 生产态 / production |  |
 | 42 | src/zephyr/infrastructure/rollback/rollback_wal.py | RollbackWAL — 回滚预写日志。 | 生产态 / production |  |
 | 43 | src/zephyr/infrastructure/rollback/runbook_generator.py | RunbookGenerator — 回滚操作 Runbook 自动生成。 | 生产态 / production |  |
-| 44 | src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py | S3 Snapshot Lifecycle Manager — 快照防生命周期... | 生产态 / production |  |
+| 44 | src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py | S3 Snapshot Lifecycle Manager — 快照防生命周期过期。 | 生产态 / production |  |
 | 45 | src/zephyr/infrastructure/rollback/secret_rotation_aware.py | SecretRotationAware — 密钥轮替感知器。 | 生产态 / production |  |
 | 46 | src/zephyr/infrastructure/rollback/semantic_rollback_tag.py | SemanticRollbackTag — 语义化 Rollback Tag 管理器。 | 生产态 / production |  |
 | 47 | src/zephyr/infrastructure/rollback/semantic_similar_detec... | SemanticSimilarDetector — 语义变形攻击检测。 | 生产态 / production |  |
-| 48 | src/zephyr/infrastructure/rollback/sqlite_dumper.py | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | 生产态 / production |  |
-| 49 | src/zephyr/infrastructure/rollback/submodule_sync.py | Submodule Sync — Submodule/Monorepo 多仓库同步... | 生产态 / production |  |
+| 48 | src/zephyr/infrastructure/rollback/sqlite_dumper.py | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / restore / verify。 | 生产态 / production |  |
+| 49 | src/zephyr/infrastructure/rollback/submodule_sync.py | Submodule Sync — Submodule/Monorepo 多仓库同步回滚。 | 生产态 / production |  |
 | 50 | src/zephyr/infrastructure/rollback/temporal_context_adapt... | TemporalContextAdapter — AI 时间上下文断裂修复。 | 生产态 / production |  |
 | 51 | src/zephyr/infrastructure/rollback/topology_change_log.py | TopologyChangeLog — 分支拓扑变更日志。 | 生产态 / production |  |
 | 52 | src/zephyr/infrastructure/rollback/venv_sync.py | VenvSync — venv/conda 版本同步保障。 | 生产态 / production |  |
 | 53 | src/zephyr/infrastructure/rollback/vulnerability_rescanne... | VulnerabilityRescanner — 依赖漏洞复扫。 | 生产态 / production |  |
 | 54 | src/zephyr/infrastructure/rollback/warm_standby.py | WarmStandby — 温备热切（git worktree 副本维护）。 | 生产态 / production |  |
-| 55 | tests/rollback/test_rollback_scheduler.py | DM-201911 红蓝对抗极端测试: RollbackScheduler ... | 生产态 / production |  |
+| 55 | tests/rollback/test_rollback_scheduler.py | DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度. | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -117,34 +117,34 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_rollback_contracts_py["(生产态 / production) rollback/contracts.py — G-CT-002 Rollback 契约...<br/>文件: contracts.py"]
-    src_zephyr_infrastructure_rollback_manifest_py["(生产态 / production) MOD-INF-021 Rollback System — 模块文件清单 (_m...<br/>文件: _manifest.py"]
-    src_zephyr_infrastructure_rollback_agent_cooldown_py["(生产态 / production) AgentCooldown — Agent 冷却隔离器。<br/>文件: agent_cooldown.py"]
-    src_zephyr_infrastructure_rollback_auditor_py["(生产态 / production) G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>文件: auditor.py"]
-    src_zephyr_infrastructure_rollback_budget_tracker_py["(生产态 / production) G-CT-009 契约：Rollback -> Budget 回滚成本计入...<br/>文件: budget_tracker.py"]
-    src_zephyr_infrastructure_rollback_checkpoint_gc_py["(生产态 / production) CheckpointGC — Checkpoint 垃圾回收。<br/>文件: checkpoint_gc.py"]
-    src_zephyr_infrastructure_rollback_commit_quality_gate_py["(生产态 / production) CommitQualityGate — Commit 质量基础设施。<br/>文件: commit_quality_gate.py"]
-    src_zephyr_infrastructure_rollback_complexity_budget_py["(生产态 / production) ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>文件: complexity_budget.py"]
-    src_zephyr_infrastructure_rollback_contract_py["(生产态 / production) CT-RBK-GATE-001 集成契约落地——Rollback System...<br/>文件: contract.py"]
-    src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["(生产态 / production) CredentialRotationDetector — 回滚后凭据泄露检...<br/>文件: credential_rotation_trigger.py"]
-    src_zephyr_infrastructure_rollback_cross_platform_shell_py["(生产态 / production) CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>文件: cross_platform_shell.py"]
-    src_zephyr_infrastructure_rollback_drift_fix_py["(生产态 / production) drift_fix.py"]
-    src_zephyr_infrastructure_rollback_env_watcher_py["(生产态 / production) EnvWatcher — 环境变量热重载监控器。<br/>文件: env_watcher.py"]
-    src_zephyr_infrastructure_rollback_external_merkle_proof_py["(生产态 / production) External Merkle Proof — 外部可验证回滚完整性证明。<br/>文件: external_merkle_proof.py"]
-    src_zephyr_infrastructure_rollback_forensic_py["(生产态 / production) Forensic Engine — 取证基础设施（Phase 8 完整实...<br/>文件: forensic.py"]
-    src_zephyr_infrastructure_rollback_forward_fix_runner_py["(生产态 / production) ForwardFixRunner — Forward-Fix 执行器。<br/>文件: forward_fix_runner.py"]
-    src_zephyr_infrastructure_rollback_git_infra_snapshot_py["(生产态 / production) GitInfraSnapshot — Git 基础设施快照与污染防护。<br/>文件: git_infra_snapshot.py"]
-    src_zephyr_infrastructure_rollback_hallucination_guard_py["(生产态 / production) HallucinationGuard — AI 幻觉防护：回滚后强制状...<br/>文件: hallucination_guard.py"]
-    src_zephyr_infrastructure_rollback_intent_archiver_py["(生产态 / production) IntentArchiver — 意图存档保护。<br/>文件: intent_archiver.py"]
-    src_zephyr_infrastructure_rollback_kill_switch_py["(生产态 / production) KillSwitchManager — 三级 Kill Switch 管理器。<br/>文件: kill_switch.py"]
-    src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py["(生产态 / production) KnowngoodstateLedger — 已验证正确状态收据。<br/>文件: knowngoodstate_ledger.py"]
-    src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["(生产态 / production) Right to be Forgotten — GDPR 遗忘权合规检查器。<br/>文件: right_to_be_forgotten.py"]
-    src_zephyr_infrastructure_rollback_rollback_abuse_detector_py["(生产态 / production) RollbackAbuseDetector — 回滚滥用检测。<br/>文件: rollback_abuse_detector.py"]
-    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["(生产态 / production) RollbackAuditNexus — 回滚审计记录聚合到 Nexus ...<br/>文件: rollback_audit_nexus.py"]
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py["(生产态 / production) RollbackBootIntegration — 回滚系统自动启动/关...<br/>文件: rollback_boot_integration.py"]
-    src_zephyr_infrastructure_rollback_rollback_bootstrap_py["(生产态 / production) RollbackBootstrap — 零依赖自举回滚器。<br/>文件: rollback_bootstrap.py"]
-    src_zephyr_infrastructure_rollback_rollback_budget_py["(生产态 / production) RollbackBudget — 回滚预算管理器。<br/>文件: rollback_budget.py"]
-    src_zephyr_infrastructure_rollback_rollback_context_restorer_py["(生产态 / production) RollbackContextRestorer — 上下文恢复器。<br/>文件: rollback_context_restorer.py"]
+    src_zephyr_governance_rollback_contracts_py["(生产态 / production) rollback/contracts.py — G-CT-002 Rollback 契约（re-export）。<br/>文件: rollback/contracts.py"]
+    src_zephyr_infrastructure_rollback_manifest_py["(生产态 / production) MOD-INF-021 Rollback System — 模块文件清单 (_manifest_)。<br/>文件: rollback/_manifest.py"]
+    src_zephyr_infrastructure_rollback_agent_cooldown_py["(生产态 / production) AgentCooldown — Agent 冷却隔离器。<br/>文件: rollback/agent_cooldown.py"]
+    src_zephyr_infrastructure_rollback_auditor_py["(生产态 / production) G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>文件: rollback/auditor.py"]
+    src_zephyr_infrastructure_rollback_budget_tracker_py["(生产态 / production) G-CT-009 契约：Rollback -> Budget 回滚成本计入预算.<br/>文件: rollback/budget_tracker.py"]
+    src_zephyr_infrastructure_rollback_checkpoint_gc_py["(生产态 / production) CheckpointGC — Checkpoint 垃圾回收。<br/>文件: rollback/checkpoint_gc.py"]
+    src_zephyr_infrastructure_rollback_commit_quality_gate_py["(生产态 / production) CommitQualityGate — Commit 质量基础设施。<br/>文件: rollback/commit_quality_gate.py"]
+    src_zephyr_infrastructure_rollback_complexity_budget_py["(生产态 / production) ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>文件: rollback/complexity_budget.py"]
+    src_zephyr_infrastructure_rollback_contract_py["(生产态 / production) CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code 完整定义。<br/>文件: rollback/contract.py"]
+    src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["(生产态 / production) CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。<br/>文件: rollback/credential_rotation_trigger.py"]
+    src_zephyr_infrastructure_rollback_cross_platform_shell_py["(生产态 / production) CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>文件: rollback/cross_platform_shell.py"]
+    src_zephyr_infrastructure_rollback_drift_fix_py["(生产态 / production) rollback/drift_fix.py"]
+    src_zephyr_infrastructure_rollback_env_watcher_py["(生产态 / production) EnvWatcher — 环境变量热重载监控器。<br/>文件: rollback/env_watcher.py"]
+    src_zephyr_infrastructure_rollback_external_merkle_proof_py["(生产态 / production) External Merkle Proof — 外部可验证回滚完整性证明。<br/>文件: rollback/external_merkle_proof.py"]
+    src_zephyr_infrastructure_rollback_forensic_py["(生产态 / production) Forensic Engine — 取证基础设施（Phase 8 完整实现）。<br/>文件: rollback/forensic.py"]
+    src_zephyr_infrastructure_rollback_forward_fix_runner_py["(生产态 / production) ForwardFixRunner — Forward-Fix 执行器。<br/>文件: rollback/forward_fix_runner.py"]
+    src_zephyr_infrastructure_rollback_git_infra_snapshot_py["(生产态 / production) GitInfraSnapshot — Git 基础设施快照与污染防护。<br/>文件: rollback/git_infra_snapshot.py"]
+    src_zephyr_infrastructure_rollback_hallucination_guard_py["(生产态 / production) HallucinationGuard — AI 幻觉防护：回滚后强制状态验证。<br/>文件: rollback/hallucination_guard.py"]
+    src_zephyr_infrastructure_rollback_intent_archiver_py["(生产态 / production) IntentArchiver — 意图存档保护。<br/>文件: rollback/intent_archiver.py"]
+    src_zephyr_infrastructure_rollback_kill_switch_py["(生产态 / production) KillSwitchManager — 三级 Kill Switch 管理器。<br/>文件: rollback/kill_switch.py"]
+    src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py["(生产态 / production) KnowngoodstateLedger — 已验证正确状态收据。<br/>文件: rollback/knowngoodstate_ledger.py"]
+    src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["(生产态 / production) Right to be Forgotten — GDPR 遗忘权合规检查器。<br/>文件: rollback/right_to_be_forgotten.py"]
+    src_zephyr_infrastructure_rollback_rollback_abuse_detector_py["(生产态 / production) RollbackAbuseDetector — 回滚滥用检测。<br/>文件: rollback/rollback_abuse_detector.py"]
+    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["(生产态 / production) RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog.<br/>文件: rollback/rollback_audit_nexus.py"]
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py["(生产态 / production) RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2).<br/>文件: rollback/rollback_boot_integration.py"]
+    src_zephyr_infrastructure_rollback_rollback_bootstrap_py["(生产态 / production) RollbackBootstrap — 零依赖自举回滚器。<br/>文件: rollback/rollback_bootstrap.py"]
+    src_zephyr_infrastructure_rollback_rollback_budget_py["(生产态 / production) RollbackBudget — 回滚预算管理器。<br/>文件: rollback/rollback_budget.py"]
+    src_zephyr_infrastructure_rollback_rollback_context_restorer_py["(生产态 / production) RollbackContextRestorer — 上下文恢复器。<br/>文件: rollback/rollback_context_restorer.py"]
     src_zephyr_governance_rollback_contracts_py ~~~ src_zephyr_infrastructure_rollback_manifest_py
     src_zephyr_infrastructure_rollback_manifest_py ~~~ src_zephyr_infrastructure_rollback_agent_cooldown_py
     src_zephyr_infrastructure_rollback_agent_cooldown_py ~~~ src_zephyr_infrastructure_rollback_auditor_py
@@ -172,8 +172,8 @@ flowchart TD
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py ~~~ src_zephyr_infrastructure_rollback_rollback_bootstrap_py
     src_zephyr_infrastructure_rollback_rollback_bootstrap_py ~~~ src_zephyr_infrastructure_rollback_rollback_budget_py
     src_zephyr_infrastructure_rollback_rollback_budget_py ~~~ src_zephyr_infrastructure_rollback_rollback_context_restorer_py
-    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["(生产态 / production) AutoRollbackTrigger — 自动回滚触发器。<br/>文件: auto_rollback_trigger.py"]
-    src_zephyr_infrastructure_rollback_contracts_py["(生产态 / production) G-CT-002 Rollback 消费端 — on_audit_anomaly() ...<br/>文件: contracts.py"]
+    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["(生产态 / production) AutoRollbackTrigger — 自动回滚触发器。<br/>文件: rollback/auto_rollback_trigger.py"]
+    src_zephyr_infrastructure_rollback_contracts_py["(生产态 / production) G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口.<br/>文件: rollback/contracts.py"]
     src_zephyr_infrastructure_rollback_auto_rollback_trigger_py ~~~ src_zephyr_infrastructure_rollback_contracts_py
     src_zephyr_governance_rollback_contracts_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contracts_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
@@ -220,26 +220,26 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_infrastructure_rollback_rollback_dashboard_py["(生产态 / production) RollbackDashboard — 回滚仪表盘（零依赖 Markdow...<br/>文件: rollback_dashboard.py"]
-    src_zephyr_infrastructure_rollback_rollback_executor_py["(生产态 / production) RollbackExecutor — 回滚执行器核心封装。<br/>文件: rollback_executor.py"]
-    src_zephyr_infrastructure_rollback_rollback_integration_py["(生产态 / production) Rollback Integration — executor 集成增强层。<br/>文件: rollback_integration.py"]
-    src_zephyr_infrastructure_rollback_rollback_loop_detector_py["(生产态 / production) RollbackLoopDetector — 回滚循环检测器。<br/>文件: rollback_loop_detector.py"]
-    src_zephyr_infrastructure_rollback_rollback_simulator_py["(生产态 / production) RollbackSimulator — 回滚模拟器（CI 集成）。<br/>文件: rollback_simulator.py"]
-    src_zephyr_infrastructure_rollback_rollback_state_machine_py["(生产态 / production) RollbackStateMachine — 回滚步骤级状态机。<br/>文件: rollback_state_machine.py"]
-    src_zephyr_infrastructure_rollback_rollback_target_staleness_py["(生产态 / production) RollbackTargetStaleness — 回滚目标陈旧度检测。<br/>文件: rollback_target_staleness.py"]
-    src_zephyr_infrastructure_rollback_rollback_verifier_py["(生产态 / production) RollbackVerifier — 回滚后验证器。<br/>文件: rollback_verifier.py"]
-    src_zephyr_infrastructure_rollback_runbook_generator_py["(生产态 / production) RunbookGenerator — 回滚操作 Runbook 自动生成。<br/>文件: runbook_generator.py"]
-    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["(生产态 / production) S3 Snapshot Lifecycle Manager — 快照防生命周期...<br/>文件: s3_snapshot_lifecycle.py"]
-    src_zephyr_infrastructure_rollback_secret_rotation_aware_py["(生产态 / production) SecretRotationAware — 密钥轮替感知器。<br/>文件: secret_rotation_aware.py"]
-    src_zephyr_infrastructure_rollback_semantic_rollback_tag_py["(生产态 / production) SemanticRollbackTag — 语义化 Rollback Tag 管理器。<br/>文件: semantic_rollback_tag.py"]
-    src_zephyr_infrastructure_rollback_semantic_similar_detector_py["(生产态 / production) SemanticSimilarDetector — 语义变形攻击检测。<br/>文件: semantic_similar_detector.py"]
-    src_zephyr_infrastructure_rollback_submodule_sync_py["(生产态 / production) Submodule Sync — Submodule/Monorepo 多仓库同步...<br/>文件: submodule_sync.py"]
-    src_zephyr_infrastructure_rollback_temporal_context_adapter_py["(生产态 / production) TemporalContextAdapter — AI 时间上下文断裂修复。<br/>文件: temporal_context_adapter.py"]
-    src_zephyr_infrastructure_rollback_topology_change_log_py["(生产态 / production) TopologyChangeLog — 分支拓扑变更日志。<br/>文件: topology_change_log.py"]
-    src_zephyr_infrastructure_rollback_venv_sync_py["(生产态 / production) VenvSync — venv/conda 版本同步保障。<br/>文件: venv_sync.py"]
-    src_zephyr_infrastructure_rollback_vulnerability_rescanner_py["(生产态 / production) VulnerabilityRescanner — 依赖漏洞复扫。<br/>文件: vulnerability_rescanner.py"]
-    src_zephyr_infrastructure_rollback_warm_standby_py["(生产态 / production) WarmStandby — 温备热切（git worktree 副本维护）。<br/>文件: warm_standby.py"]
-    tests_rollback_test_rollback_scheduler_py["(生产态 / production) DM-201911 红蓝对抗极端测试: RollbackScheduler ...<br/>文件: test_rollback_scheduler.py"]
+    src_zephyr_infrastructure_rollback_rollback_dashboard_py["(生产态 / production) RollbackDashboard — 回滚仪表盘（零依赖 Markdown）。<br/>文件: rollback/rollback_dashboard.py"]
+    src_zephyr_infrastructure_rollback_rollback_executor_py["(生产态 / production) RollbackExecutor — 回滚执行器核心封装。<br/>文件: rollback/rollback_executor.py"]
+    src_zephyr_infrastructure_rollback_rollback_integration_py["(生产态 / production) Rollback Integration — executor 集成增强层。<br/>文件: rollback/rollback_integration.py"]
+    src_zephyr_infrastructure_rollback_rollback_loop_detector_py["(生产态 / production) RollbackLoopDetector — 回滚循环检测器。<br/>文件: rollback/rollback_loop_detector.py"]
+    src_zephyr_infrastructure_rollback_rollback_simulator_py["(生产态 / production) RollbackSimulator — 回滚模拟器（CI 集成）。<br/>文件: rollback/rollback_simulator.py"]
+    src_zephyr_infrastructure_rollback_rollback_state_machine_py["(生产态 / production) RollbackStateMachine — 回滚步骤级状态机。<br/>文件: rollback/rollback_state_machine.py"]
+    src_zephyr_infrastructure_rollback_rollback_target_staleness_py["(生产态 / production) RollbackTargetStaleness — 回滚目标陈旧度检测。<br/>文件: rollback/rollback_target_staleness.py"]
+    src_zephyr_infrastructure_rollback_rollback_verifier_py["(生产态 / production) RollbackVerifier — 回滚后验证器。<br/>文件: rollback/rollback_verifier.py"]
+    src_zephyr_infrastructure_rollback_runbook_generator_py["(生产态 / production) RunbookGenerator — 回滚操作 Runbook 自动生成。<br/>文件: rollback/runbook_generator.py"]
+    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["(生产态 / production) S3 Snapshot Lifecycle Manager — 快照防生命周期过期。<br/>文件: rollback/s3_snapshot_lifecycle.py"]
+    src_zephyr_infrastructure_rollback_secret_rotation_aware_py["(生产态 / production) SecretRotationAware — 密钥轮替感知器。<br/>文件: rollback/secret_rotation_aware.py"]
+    src_zephyr_infrastructure_rollback_semantic_rollback_tag_py["(生产态 / production) SemanticRollbackTag — 语义化 Rollback Tag 管理器。<br/>文件: rollback/semantic_rollback_tag.py"]
+    src_zephyr_infrastructure_rollback_semantic_similar_detector_py["(生产态 / production) SemanticSimilarDetector — 语义变形攻击检测。<br/>文件: rollback/semantic_similar_detector.py"]
+    src_zephyr_infrastructure_rollback_submodule_sync_py["(生产态 / production) Submodule Sync — Submodule/Monorepo 多仓库同步回滚。<br/>文件: rollback/submodule_sync.py"]
+    src_zephyr_infrastructure_rollback_temporal_context_adapter_py["(生产态 / production) TemporalContextAdapter — AI 时间上下文断裂修复。<br/>文件: rollback/temporal_context_adapter.py"]
+    src_zephyr_infrastructure_rollback_topology_change_log_py["(生产态 / production) TopologyChangeLog — 分支拓扑变更日志。<br/>文件: rollback/topology_change_log.py"]
+    src_zephyr_infrastructure_rollback_venv_sync_py["(生产态 / production) VenvSync — venv/conda 版本同步保障。<br/>文件: rollback/venv_sync.py"]
+    src_zephyr_infrastructure_rollback_vulnerability_rescanner_py["(生产态 / production) VulnerabilityRescanner — 依赖漏洞复扫。<br/>文件: rollback/vulnerability_rescanner.py"]
+    src_zephyr_infrastructure_rollback_warm_standby_py["(生产态 / production) WarmStandby — 温备热切（git worktree 副本维护）。<br/>文件: rollback/warm_standby.py"]
+    tests_rollback_test_rollback_scheduler_py["(生产态 / production) DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度.<br/>文件: rollback/test_rollback_scheduler.py"]
     src_zephyr_infrastructure_rollback_rollback_dashboard_py ~~~ src_zephyr_infrastructure_rollback_rollback_executor_py
     src_zephyr_infrastructure_rollback_rollback_executor_py ~~~ src_zephyr_infrastructure_rollback_rollback_integration_py
     src_zephyr_infrastructure_rollback_rollback_integration_py ~~~ src_zephyr_infrastructure_rollback_rollback_loop_detector_py
@@ -259,13 +259,13 @@ flowchart TD
     src_zephyr_infrastructure_rollback_venv_sync_py ~~~ src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
     src_zephyr_infrastructure_rollback_vulnerability_rescanner_py ~~~ src_zephyr_infrastructure_rollback_warm_standby_py
     src_zephyr_infrastructure_rollback_warm_standby_py ~~~ tests_rollback_test_rollback_scheduler_py
-    src_zephyr_infrastructure_rollback_rollback_lock_py["(生产态 / production) RollbackLock — 全局回滚锁管理。<br/>文件: rollback_lock.py"]
-    src_zephyr_infrastructure_rollback_rollback_scheduler_py["(生产态 / production) RollbackScheduler — 回滚系统事件驱动调度器 (MO...<br/>文件: rollback_scheduler.py"]
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py["(生产态 / production) SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层...<br/>文件: sqlite_dumper.py"]
+    src_zephyr_infrastructure_rollback_rollback_lock_py["(生产态 / production) RollbackLock — 全局回滚锁管理。<br/>文件: rollback/rollback_lock.py"]
+    src_zephyr_infrastructure_rollback_rollback_scheduler_py["(生产态 / production) RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3).<br/>文件: rollback/rollback_scheduler.py"]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py["(生产态 / production) SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / restore / verify。<br/>文件: rollback/sqlite_dumper.py"]
     src_zephyr_infrastructure_rollback_rollback_lock_py ~~~ src_zephyr_infrastructure_rollback_rollback_scheduler_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py ~~~ src_zephyr_infrastructure_rollback_sqlite_dumper_py
-    src_zephyr_infrastructure_rollback_rollback_drill_py["(生产态 / production) RollbackDrill — 定期回滚演练调度器 (DiRT-style)。<br/>文件: rollback_drill.py"]
-    src_zephyr_infrastructure_rollback_rollback_wal_py["(生产态 / production) RollbackWAL — 回滚预写日志。<br/>文件: rollback_wal.py"]
+    src_zephyr_infrastructure_rollback_rollback_drill_py["(生产态 / production) RollbackDrill — 定期回滚演练调度器 (DiRT-style)。<br/>文件: rollback/rollback_drill.py"]
+    src_zephyr_infrastructure_rollback_rollback_wal_py["(生产态 / production) RollbackWAL — 回滚预写日志。<br/>文件: rollback/rollback_wal.py"]
     src_zephyr_infrastructure_rollback_rollback_drill_py ~~~ src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
@@ -313,51 +313,51 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_rollback_contracts_py["(生产态 / production) rollback/contracts.py — G-CT-002 Rollback 契约...<br/>文件: contracts.py"]
-    src_zephyr_infrastructure_rollback_manifest_py["(生产态 / production) MOD-INF-021 Rollback System — 模块文件清单 (_m...<br/>文件: _manifest.py"]
-    src_zephyr_infrastructure_rollback_agent_cooldown_py["(生产态 / production) AgentCooldown — Agent 冷却隔离器。<br/>文件: agent_cooldown.py"]
-    src_zephyr_infrastructure_rollback_auditor_py["(生产态 / production) G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>文件: auditor.py"]
-    src_zephyr_infrastructure_rollback_budget_tracker_py["(生产态 / production) G-CT-009 契约：Rollback -> Budget 回滚成本计入...<br/>文件: budget_tracker.py"]
-    src_zephyr_infrastructure_rollback_checkpoint_gc_py["(生产态 / production) CheckpointGC — Checkpoint 垃圾回收。<br/>文件: checkpoint_gc.py"]
-    src_zephyr_infrastructure_rollback_commit_quality_gate_py["(生产态 / production) CommitQualityGate — Commit 质量基础设施。<br/>文件: commit_quality_gate.py"]
-    src_zephyr_infrastructure_rollback_complexity_budget_py["(生产态 / production) ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>文件: complexity_budget.py"]
-    src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["(生产态 / production) CredentialRotationDetector — 回滚后凭据泄露检...<br/>文件: credential_rotation_trigger.py"]
-    src_zephyr_infrastructure_rollback_cross_platform_shell_py["(生产态 / production) CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>文件: cross_platform_shell.py"]
-    src_zephyr_infrastructure_rollback_drift_fix_py["(生产态 / production) drift_fix.py"]
-    src_zephyr_infrastructure_rollback_env_watcher_py["(生产态 / production) EnvWatcher — 环境变量热重载监控器。<br/>文件: env_watcher.py"]
-    src_zephyr_infrastructure_rollback_external_merkle_proof_py["(生产态 / production) External Merkle Proof — 外部可验证回滚完整性证明。<br/>文件: external_merkle_proof.py"]
-    src_zephyr_infrastructure_rollback_forensic_py["(生产态 / production) Forensic Engine — 取证基础设施（Phase 8 完整实...<br/>文件: forensic.py"]
-    src_zephyr_infrastructure_rollback_forward_fix_runner_py["(生产态 / production) ForwardFixRunner — Forward-Fix 执行器。<br/>文件: forward_fix_runner.py"]
-    src_zephyr_infrastructure_rollback_git_infra_snapshot_py["(生产态 / production) GitInfraSnapshot — Git 基础设施快照与污染防护。<br/>文件: git_infra_snapshot.py"]
-    src_zephyr_infrastructure_rollback_hallucination_guard_py["(生产态 / production) HallucinationGuard — AI 幻觉防护：回滚后强制状...<br/>文件: hallucination_guard.py"]
-    src_zephyr_infrastructure_rollback_intent_archiver_py["(生产态 / production) IntentArchiver — 意图存档保护。<br/>文件: intent_archiver.py"]
-    src_zephyr_infrastructure_rollback_kill_switch_py["(生产态 / production) KillSwitchManager — 三级 Kill Switch 管理器。<br/>文件: kill_switch.py"]
-    src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py["(生产态 / production) KnowngoodstateLedger — 已验证正确状态收据。<br/>文件: knowngoodstate_ledger.py"]
-    src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["(生产态 / production) Right to be Forgotten — GDPR 遗忘权合规检查器。<br/>文件: right_to_be_forgotten.py"]
-    src_zephyr_infrastructure_rollback_rollback_abuse_detector_py["(生产态 / production) RollbackAbuseDetector — 回滚滥用检测。<br/>文件: rollback_abuse_detector.py"]
-    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["(生产态 / production) RollbackAuditNexus — 回滚审计记录聚合到 Nexus ...<br/>文件: rollback_audit_nexus.py"]
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py["(生产态 / production) RollbackBootIntegration — 回滚系统自动启动/关...<br/>文件: rollback_boot_integration.py"]
-    src_zephyr_infrastructure_rollback_rollback_bootstrap_py["(生产态 / production) RollbackBootstrap — 零依赖自举回滚器。<br/>文件: rollback_bootstrap.py"]
-    src_zephyr_infrastructure_rollback_rollback_budget_py["(生产态 / production) RollbackBudget — 回滚预算管理器。<br/>文件: rollback_budget.py"]
-    src_zephyr_infrastructure_rollback_rollback_context_restorer_py["(生产态 / production) RollbackContextRestorer — 上下文恢复器。<br/>文件: rollback_context_restorer.py"]
-    src_zephyr_infrastructure_rollback_rollback_dashboard_py["(生产态 / production) RollbackDashboard — 回滚仪表盘（零依赖 Markdow...<br/>文件: rollback_dashboard.py"]
-    src_zephyr_infrastructure_rollback_rollback_integration_py["(生产态 / production) Rollback Integration — executor 集成增强层。<br/>文件: rollback_integration.py"]
-    src_zephyr_infrastructure_rollback_rollback_loop_detector_py["(生产态 / production) RollbackLoopDetector — 回滚循环检测器。<br/>文件: rollback_loop_detector.py"]
-    src_zephyr_infrastructure_rollback_rollback_simulator_py["(生产态 / production) RollbackSimulator — 回滚模拟器（CI 集成）。<br/>文件: rollback_simulator.py"]
-    src_zephyr_infrastructure_rollback_rollback_state_machine_py["(生产态 / production) RollbackStateMachine — 回滚步骤级状态机。<br/>文件: rollback_state_machine.py"]
-    src_zephyr_infrastructure_rollback_rollback_target_staleness_py["(生产态 / production) RollbackTargetStaleness — 回滚目标陈旧度检测。<br/>文件: rollback_target_staleness.py"]
-    src_zephyr_infrastructure_rollback_runbook_generator_py["(生产态 / production) RunbookGenerator — 回滚操作 Runbook 自动生成。<br/>文件: runbook_generator.py"]
-    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["(生产态 / production) S3 Snapshot Lifecycle Manager — 快照防生命周期...<br/>文件: s3_snapshot_lifecycle.py"]
-    src_zephyr_infrastructure_rollback_secret_rotation_aware_py["(生产态 / production) SecretRotationAware — 密钥轮替感知器。<br/>文件: secret_rotation_aware.py"]
-    src_zephyr_infrastructure_rollback_semantic_rollback_tag_py["(生产态 / production) SemanticRollbackTag — 语义化 Rollback Tag 管理器。<br/>文件: semantic_rollback_tag.py"]
-    src_zephyr_infrastructure_rollback_semantic_similar_detector_py["(生产态 / production) SemanticSimilarDetector — 语义变形攻击检测。<br/>文件: semantic_similar_detector.py"]
-    src_zephyr_infrastructure_rollback_submodule_sync_py["(生产态 / production) Submodule Sync — Submodule/Monorepo 多仓库同步...<br/>文件: submodule_sync.py"]
-    src_zephyr_infrastructure_rollback_temporal_context_adapter_py["(生产态 / production) TemporalContextAdapter — AI 时间上下文断裂修复。<br/>文件: temporal_context_adapter.py"]
-    src_zephyr_infrastructure_rollback_topology_change_log_py["(生产态 / production) TopologyChangeLog — 分支拓扑变更日志。<br/>文件: topology_change_log.py"]
-    src_zephyr_infrastructure_rollback_venv_sync_py["(生产态 / production) VenvSync — venv/conda 版本同步保障。<br/>文件: venv_sync.py"]
-    src_zephyr_infrastructure_rollback_vulnerability_rescanner_py["(生产态 / production) VulnerabilityRescanner — 依赖漏洞复扫。<br/>文件: vulnerability_rescanner.py"]
-    src_zephyr_infrastructure_rollback_warm_standby_py["(生产态 / production) WarmStandby — 温备热切（git worktree 副本维护）。<br/>文件: warm_standby.py"]
-    tests_rollback_test_rollback_scheduler_py["(生产态 / production) DM-201911 红蓝对抗极端测试: RollbackScheduler ...<br/>文件: test_rollback_scheduler.py"]
+    src_zephyr_governance_rollback_contracts_py["(生产态 / production) rollback/contracts.py — G-CT-002 Rollback 契约（re-export）。<br/>文件: rollback/contracts.py"]
+    src_zephyr_infrastructure_rollback_manifest_py["(生产态 / production) MOD-INF-021 Rollback System — 模块文件清单 (_manifest_)。<br/>文件: rollback/_manifest.py"]
+    src_zephyr_infrastructure_rollback_agent_cooldown_py["(生产态 / production) AgentCooldown — Agent 冷却隔离器。<br/>文件: rollback/agent_cooldown.py"]
+    src_zephyr_infrastructure_rollback_auditor_py["(生产态 / production) G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>文件: rollback/auditor.py"]
+    src_zephyr_infrastructure_rollback_budget_tracker_py["(生产态 / production) G-CT-009 契约：Rollback -> Budget 回滚成本计入预算.<br/>文件: rollback/budget_tracker.py"]
+    src_zephyr_infrastructure_rollback_checkpoint_gc_py["(生产态 / production) CheckpointGC — Checkpoint 垃圾回收。<br/>文件: rollback/checkpoint_gc.py"]
+    src_zephyr_infrastructure_rollback_commit_quality_gate_py["(生产态 / production) CommitQualityGate — Commit 质量基础设施。<br/>文件: rollback/commit_quality_gate.py"]
+    src_zephyr_infrastructure_rollback_complexity_budget_py["(生产态 / production) ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>文件: rollback/complexity_budget.py"]
+    src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["(生产态 / production) CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。<br/>文件: rollback/credential_rotation_trigger.py"]
+    src_zephyr_infrastructure_rollback_cross_platform_shell_py["(生产态 / production) CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>文件: rollback/cross_platform_shell.py"]
+    src_zephyr_infrastructure_rollback_drift_fix_py["(生产态 / production) rollback/drift_fix.py"]
+    src_zephyr_infrastructure_rollback_env_watcher_py["(生产态 / production) EnvWatcher — 环境变量热重载监控器。<br/>文件: rollback/env_watcher.py"]
+    src_zephyr_infrastructure_rollback_external_merkle_proof_py["(生产态 / production) External Merkle Proof — 外部可验证回滚完整性证明。<br/>文件: rollback/external_merkle_proof.py"]
+    src_zephyr_infrastructure_rollback_forensic_py["(生产态 / production) Forensic Engine — 取证基础设施（Phase 8 完整实现）。<br/>文件: rollback/forensic.py"]
+    src_zephyr_infrastructure_rollback_forward_fix_runner_py["(生产态 / production) ForwardFixRunner — Forward-Fix 执行器。<br/>文件: rollback/forward_fix_runner.py"]
+    src_zephyr_infrastructure_rollback_git_infra_snapshot_py["(生产态 / production) GitInfraSnapshot — Git 基础设施快照与污染防护。<br/>文件: rollback/git_infra_snapshot.py"]
+    src_zephyr_infrastructure_rollback_hallucination_guard_py["(生产态 / production) HallucinationGuard — AI 幻觉防护：回滚后强制状态验证。<br/>文件: rollback/hallucination_guard.py"]
+    src_zephyr_infrastructure_rollback_intent_archiver_py["(生产态 / production) IntentArchiver — 意图存档保护。<br/>文件: rollback/intent_archiver.py"]
+    src_zephyr_infrastructure_rollback_kill_switch_py["(生产态 / production) KillSwitchManager — 三级 Kill Switch 管理器。<br/>文件: rollback/kill_switch.py"]
+    src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py["(生产态 / production) KnowngoodstateLedger — 已验证正确状态收据。<br/>文件: rollback/knowngoodstate_ledger.py"]
+    src_zephyr_infrastructure_rollback_right_to_be_forgotten_py["(生产态 / production) Right to be Forgotten — GDPR 遗忘权合规检查器。<br/>文件: rollback/right_to_be_forgotten.py"]
+    src_zephyr_infrastructure_rollback_rollback_abuse_detector_py["(生产态 / production) RollbackAbuseDetector — 回滚滥用检测。<br/>文件: rollback/rollback_abuse_detector.py"]
+    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py["(生产态 / production) RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog.<br/>文件: rollback/rollback_audit_nexus.py"]
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py["(生产态 / production) RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2).<br/>文件: rollback/rollback_boot_integration.py"]
+    src_zephyr_infrastructure_rollback_rollback_bootstrap_py["(生产态 / production) RollbackBootstrap — 零依赖自举回滚器。<br/>文件: rollback/rollback_bootstrap.py"]
+    src_zephyr_infrastructure_rollback_rollback_budget_py["(生产态 / production) RollbackBudget — 回滚预算管理器。<br/>文件: rollback/rollback_budget.py"]
+    src_zephyr_infrastructure_rollback_rollback_context_restorer_py["(生产态 / production) RollbackContextRestorer — 上下文恢复器。<br/>文件: rollback/rollback_context_restorer.py"]
+    src_zephyr_infrastructure_rollback_rollback_dashboard_py["(生产态 / production) RollbackDashboard — 回滚仪表盘（零依赖 Markdown）。<br/>文件: rollback/rollback_dashboard.py"]
+    src_zephyr_infrastructure_rollback_rollback_integration_py["(生产态 / production) Rollback Integration — executor 集成增强层。<br/>文件: rollback/rollback_integration.py"]
+    src_zephyr_infrastructure_rollback_rollback_loop_detector_py["(生产态 / production) RollbackLoopDetector — 回滚循环检测器。<br/>文件: rollback/rollback_loop_detector.py"]
+    src_zephyr_infrastructure_rollback_rollback_simulator_py["(生产态 / production) RollbackSimulator — 回滚模拟器（CI 集成）。<br/>文件: rollback/rollback_simulator.py"]
+    src_zephyr_infrastructure_rollback_rollback_state_machine_py["(生产态 / production) RollbackStateMachine — 回滚步骤级状态机。<br/>文件: rollback/rollback_state_machine.py"]
+    src_zephyr_infrastructure_rollback_rollback_target_staleness_py["(生产态 / production) RollbackTargetStaleness — 回滚目标陈旧度检测。<br/>文件: rollback/rollback_target_staleness.py"]
+    src_zephyr_infrastructure_rollback_runbook_generator_py["(生产态 / production) RunbookGenerator — 回滚操作 Runbook 自动生成。<br/>文件: rollback/runbook_generator.py"]
+    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["(生产态 / production) S3 Snapshot Lifecycle Manager — 快照防生命周期过期。<br/>文件: rollback/s3_snapshot_lifecycle.py"]
+    src_zephyr_infrastructure_rollback_secret_rotation_aware_py["(生产态 / production) SecretRotationAware — 密钥轮替感知器。<br/>文件: rollback/secret_rotation_aware.py"]
+    src_zephyr_infrastructure_rollback_semantic_rollback_tag_py["(生产态 / production) SemanticRollbackTag — 语义化 Rollback Tag 管理器。<br/>文件: rollback/semantic_rollback_tag.py"]
+    src_zephyr_infrastructure_rollback_semantic_similar_detector_py["(生产态 / production) SemanticSimilarDetector — 语义变形攻击检测。<br/>文件: rollback/semantic_similar_detector.py"]
+    src_zephyr_infrastructure_rollback_submodule_sync_py["(生产态 / production) Submodule Sync — Submodule/Monorepo 多仓库同步回滚。<br/>文件: rollback/submodule_sync.py"]
+    src_zephyr_infrastructure_rollback_temporal_context_adapter_py["(生产态 / production) TemporalContextAdapter — AI 时间上下文断裂修复。<br/>文件: rollback/temporal_context_adapter.py"]
+    src_zephyr_infrastructure_rollback_topology_change_log_py["(生产态 / production) TopologyChangeLog — 分支拓扑变更日志。<br/>文件: rollback/topology_change_log.py"]
+    src_zephyr_infrastructure_rollback_venv_sync_py["(生产态 / production) VenvSync — venv/conda 版本同步保障。<br/>文件: rollback/venv_sync.py"]
+    src_zephyr_infrastructure_rollback_vulnerability_rescanner_py["(生产态 / production) VulnerabilityRescanner — 依赖漏洞复扫。<br/>文件: rollback/vulnerability_rescanner.py"]
+    src_zephyr_infrastructure_rollback_warm_standby_py["(生产态 / production) WarmStandby — 温备热切（git worktree 副本维护）。<br/>文件: rollback/warm_standby.py"]
+    tests_rollback_test_rollback_scheduler_py["(生产态 / production) DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度.<br/>文件: rollback/test_rollback_scheduler.py"]
     src_zephyr_governance_rollback_contracts_py ~~~ src_zephyr_infrastructure_rollback_manifest_py
     src_zephyr_infrastructure_rollback_manifest_py ~~~ src_zephyr_infrastructure_rollback_agent_cooldown_py
     src_zephyr_infrastructure_rollback_agent_cooldown_py ~~~ src_zephyr_infrastructure_rollback_auditor_py
@@ -402,20 +402,20 @@ flowchart TD
     src_zephyr_infrastructure_rollback_venv_sync_py ~~~ src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
     src_zephyr_infrastructure_rollback_vulnerability_rescanner_py ~~~ src_zephyr_infrastructure_rollback_warm_standby_py
     src_zephyr_infrastructure_rollback_warm_standby_py ~~~ tests_rollback_test_rollback_scheduler_py
-    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["(生产态 / production) AutoRollbackTrigger — 自动回滚触发器。<br/>文件: auto_rollback_trigger.py"]
-    src_zephyr_infrastructure_rollback_contracts_py["(生产态 / production) G-CT-002 Rollback 消费端 — on_audit_anomaly() ...<br/>文件: contracts.py"]
-    src_zephyr_infrastructure_rollback_rollback_executor_py["(生产态 / production) RollbackExecutor — 回滚执行器核心封装。<br/>文件: rollback_executor.py"]
-    src_zephyr_infrastructure_rollback_rollback_scheduler_py["(生产态 / production) RollbackScheduler — 回滚系统事件驱动调度器 (MO...<br/>文件: rollback_scheduler.py"]
-    src_zephyr_infrastructure_rollback_rollback_verifier_py["(生产态 / production) RollbackVerifier — 回滚后验证器。<br/>文件: rollback_verifier.py"]
+    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["(生产态 / production) AutoRollbackTrigger — 自动回滚触发器。<br/>文件: rollback/auto_rollback_trigger.py"]
+    src_zephyr_infrastructure_rollback_contracts_py["(生产态 / production) G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口.<br/>文件: rollback/contracts.py"]
+    src_zephyr_infrastructure_rollback_rollback_executor_py["(生产态 / production) RollbackExecutor — 回滚执行器核心封装。<br/>文件: rollback/rollback_executor.py"]
+    src_zephyr_infrastructure_rollback_rollback_scheduler_py["(生产态 / production) RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3).<br/>文件: rollback/rollback_scheduler.py"]
+    src_zephyr_infrastructure_rollback_rollback_verifier_py["(生产态 / production) RollbackVerifier — 回滚后验证器。<br/>文件: rollback/rollback_verifier.py"]
     src_zephyr_infrastructure_rollback_auto_rollback_trigger_py ~~~ src_zephyr_infrastructure_rollback_contracts_py
     src_zephyr_infrastructure_rollback_contracts_py ~~~ src_zephyr_infrastructure_rollback_rollback_executor_py
     src_zephyr_infrastructure_rollback_rollback_executor_py ~~~ src_zephyr_infrastructure_rollback_rollback_scheduler_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py ~~~ src_zephyr_infrastructure_rollback_rollback_verifier_py
-    src_zephyr_infrastructure_rollback_contract_py["(生产态 / production) CT-RBK-GATE-001 集成契约落地——Rollback System...<br/>文件: contract.py"]
-    src_zephyr_infrastructure_rollback_rollback_drill_py["(生产态 / production) RollbackDrill — 定期回滚演练调度器 (DiRT-style)。<br/>文件: rollback_drill.py"]
-    src_zephyr_infrastructure_rollback_rollback_lock_py["(生产态 / production) RollbackLock — 全局回滚锁管理。<br/>文件: rollback_lock.py"]
-    src_zephyr_infrastructure_rollback_rollback_wal_py["(生产态 / production) RollbackWAL — 回滚预写日志。<br/>文件: rollback_wal.py"]
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py["(生产态 / production) SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层...<br/>文件: sqlite_dumper.py"]
+    src_zephyr_infrastructure_rollback_contract_py["(生产态 / production) CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code 完整定义。<br/>文件: rollback/contract.py"]
+    src_zephyr_infrastructure_rollback_rollback_drill_py["(生产态 / production) RollbackDrill — 定期回滚演练调度器 (DiRT-style)。<br/>文件: rollback/rollback_drill.py"]
+    src_zephyr_infrastructure_rollback_rollback_lock_py["(生产态 / production) RollbackLock — 全局回滚锁管理。<br/>文件: rollback/rollback_lock.py"]
+    src_zephyr_infrastructure_rollback_rollback_wal_py["(生产态 / production) RollbackWAL — 回滚预写日志。<br/>文件: rollback/rollback_wal.py"]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py["(生产态 / production) SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / restore / verify。<br/>文件: rollback/sqlite_dumper.py"]
     src_zephyr_infrastructure_rollback_contract_py ~~~ src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_drill_py ~~~ src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_lock_py ~~~ src_zephyr_infrastructure_rollback_rollback_wal_py
@@ -490,46 +490,46 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | D_GOV_AUDIT 审计追踪: contracts.py | 导入依赖 / import_depends |
-| 2 | RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | D_GOV_AUDIT 审计追踪: query.py | 导入依赖 / import_depends |
-| 3 | RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
-| 4 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
-| 5 | RollbackBootIntegration — 回滚系统自动启动/关.... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
-| 6 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 导入依赖 / import_depends |
-| 7 | drift_fix.py | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
+| 1 | G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | D_GOV_AUDIT 审计追踪: gov_audit/contracts.py | 导入依赖 / import_depends |
+| 2 | RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | D_GOV_AUDIT 审计追踪: gov_audit/query.py | 导入依赖 / import_depends |
+| 3 | RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 4 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 5 | RollbackBootIntegration — 回滚系统自动启动/关... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: EventHook — 声明式任务系统事件订阅 (ops_govern... | 导入依赖 / import_depends |
+| 6 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (ru... | 导入依赖 / import_depends |
+| 7 | rollback/drift_fix.py | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
 | 8 | RunbookGenerator — 回滚操作 Runbook 自动生成。... | → | D_SECURITY 对抗验证: Drift Runbook Generator — 漂移演练手册自动生成... | 导入依赖 / import_depends |
-| 9 | AgentCooldown — Agent 冷却隔离器。 (agent_cool... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 9 | AgentCooldown — Agent 冷却隔离器。 (rollback/a... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 10 | External Merkle Proof — 外部可验证回滚完整性证... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 11 | Forensic Engine — 取证基础设施（Phase 8 完整实... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 12 | Forensic Engine — 取证基础设施（Phase 8 完整实... | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新... | 导入依赖 / import_depends |
-| 13 | ForwardFixRunner — Forward-Fix 执行器。 (forwa... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 14 | ForwardFixRunner — Forward-Fix 执行器。 (forwa... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 13 | ForwardFixRunner — Forward-Fix 执行器。 (rollb... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
+| 14 | ForwardFixRunner — Forward-Fix 执行器。 (rollb... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 15 | Right to be Forgotten — GDPR 遗忘权合规检查器... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 16 | RollbackBootIntegration — 回滚系统自动启动/关.... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 16 | RollbackBootIntegration — 回滚系统自动启动/关... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (share... | 导入依赖 / import_depends |
 | 17 | RollbackBootstrap — 零依赖自举回滚器。 (rollba... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 18 | RollbackDrill — 定期回滚演练调度器 (DiRT-style... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 19 | RollbackDrill — 定期回滚演练调度器 (DiRT-style... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 19 | RollbackDrill — 定期回滚演练调度器 (DiRT-style... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 20 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 21 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 22 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 22 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 ... | 导入依赖 / import_depends |
 | 23 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 24 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 25 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 25 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 26 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 27 | RollbackLock — 全局回滚锁管理。 (rollback_lock.py) | → | D_SHARED 共享服务: lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点... | 导入依赖 / import_depends |
+| 27 | RollbackLock — 全局回滚锁管理。 (rollback/roll... | → | D_SHARED 共享服务: lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点... | 导入依赖 / import_depends |
 | 28 | RollbackSimulator — 回滚模拟器（CI 集成）。 (r... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 29 | RollbackTargetStaleness — 回滚目标陈旧度检测。... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 30 | RollbackVerifier — 回滚后验证器。 (rollback_ve... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 30 | RollbackVerifier — 回滚后验证器。 (rollback/ro... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 31 | S3 Snapshot Lifecycle Manager — 快照防生命周期... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 32 | SemanticRollbackTag — 语义化 Rollback Tag 管理... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 33 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 34 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 35 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 35 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 36 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 | 37 | Submodule Sync — Submodule/Monorepo 多仓库同步... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 38 | TopologyChangeLog — 分支拓扑变更日志。 (topolo... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 39 | VenvSync — venv/conda 版本同步保障。 (venv_syn... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 40 | VulnerabilityRescanner — 依赖漏洞复扫。 (vulne... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
+| 38 | TopologyChangeLog — 分支拓扑变更日志。 (rollba... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
+| 39 | VenvSync — venv/conda 版本同步保障。 (rollback... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
+| 40 | VulnerabilityRescanner — 依赖漏洞复扫。 (rollb... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 41 | WarmStandby — 温备热切（git worktree 副本维护... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
 | 42 | WarmStandby — 温备热切（git worktree 副本维护... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
 
@@ -537,18 +537,18 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
 | 2 | D_GOVERNANCE 生命周期管理: Rollback System CLI — MOD-INF-021 v0.10.0 Git-... | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
-| 3 | D_GOVERNANCE 生命周期管理: Rollback System CLI — MOD-INF-021 v0.10.0 Git-... | → | RollbackVerifier — 回滚后验证器。 (rollback_ve... | 导入依赖 / import_depends |
-| 4 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
-| 5 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov... | → | drift_fix.py | 导入依赖 / import_depends |
+| 3 | D_GOVERNANCE 生命周期管理: Rollback System CLI — MOD-INF-021 v0.10.0 Git-... | → | RollbackVerifier — 回滚后验证器。 (rollback/ro... | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/govern... | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
+| 5 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov... | → | rollback/drift_fix.py | 导入依赖 / import_depends |
 | 6 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failu... | → | G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | 导入依赖 / import_depends |
-| 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | KillSwitchManager — 三级 Kill Switch 管理器。 ... | 导入依赖 / import_depends |
-| 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
+| 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 ... | → | KillSwitchManager — 三级 Kill Switch 管理器。 ... | 导入依赖 / import_depends |
+| 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 ... | → | RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
 | 9 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | → | CT-RBK-GATE-001 集成契约落地——Rollback System... | 导入依赖 / import_depends |
-| 10 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | RollbackBootIntegration — 回滚系统自动启动/关.... | 导入依赖 / import_depends |
-| 11 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | CT-RBK-GATE-001 集成契约落地——Rollback System... | 导入依赖 / import_depends |
-| 12 | D_OPS 反馈循环: budget_tracker.py | → | G-CT-009 契约：Rollback -> Budget 回滚成本计入.... | 导入依赖 / import_depends |
+| 10 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | RollbackBootIntegration — 回滚系统自动启动/关... | 导入依赖 / import_depends |
+| 11 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (inte... | → | CT-RBK-GATE-001 集成契约落地——Rollback System... | 导入依赖 / import_depends |
+| 12 | D_OPS 反馈循环: ops_governance/budget_tracker.py | → | G-CT-009 契约：Rollback -> Budget 回滚成本计入... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

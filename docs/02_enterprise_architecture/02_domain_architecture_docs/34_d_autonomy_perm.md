@@ -42,7 +42,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | scripts/arch_guard/fitness_functions/check_kill_switch_la... | check_kill_switch_latency.py — Kill Switch 延... | 生产态 / production |  |
+| 1 | scripts/arch_guard/fitness_functions/check_kill_switch_la... | check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001) | 生产态 / production |  |
 | 2 | scripts/governance/meta/manage_kill_switch.py | manage_kill_switch.py — Kill Switch 管理工具 | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -62,8 +62,8 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
-    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>文件: fitness_functions/check_kill_switch_latency.py"]
+    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
@@ -79,8 +79,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
-    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>文件: fitness_functions/check_kill_switch_latency.py"]
+    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5

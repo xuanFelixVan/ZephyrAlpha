@@ -42,13 +42,13 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/alt_data/__init__.py | __init__.py | 生产态 / production |  |
-| 2 | src/zephyr/alt_data/_extensions/__init__.py | __init__.py | 生产态 / production |  |
-| 3 | src/zephyr/alt_data/api/__init__.py | __init__.py | 生产态 / production |  |
-| 4 | src/zephyr/alt_data/core/__init__.py | __init__.py | 生产态 / production |  |
-| 5 | src/zephyr/alt_data/infrastructure/__init__.py | __init__.py | 生产态 / production |  |
-| 6 | src/zephyr/alt_data/models/__init__.py | __init__.py | 生产态 / production |  |
-| 7 | src/zephyr/alt_data/services/__init__.py | __init__.py | 生产态 / production |  |
+| 1 | src/zephyr/alt_data/__init__.py | alt_data/__init__.py | 生产态 / production |  |
+| 2 | src/zephyr/alt_data/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
+| 3 | src/zephyr/alt_data/api/__init__.py | api/__init__.py | 生产态 / production |  |
+| 4 | src/zephyr/alt_data/core/__init__.py | core/__init__.py | 生产态 / production |  |
+| 5 | src/zephyr/alt_data/infrastructure/__init__.py | infrastructure/__init__.py | 生产态 / production |  |
+| 6 | src/zephyr/alt_data/models/__init__.py | models/__init__.py | 生产态 / production |  |
+| 7 | src/zephyr/alt_data/services/__init__.py | services/__init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -67,13 +67,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_extensions_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_api_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_core_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_infrastructure_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_models_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_alt_data_init_py["(生产态 / production) alt_data/__init__.py"]
+    src_zephyr_alt_data_extensions_init_py["(生产态 / production) _extensions/__init__.py"]
+    src_zephyr_alt_data_api_init_py["(生产态 / production) api/__init__.py"]
+    src_zephyr_alt_data_core_init_py["(生产态 / production) core/__init__.py"]
+    src_zephyr_alt_data_infrastructure_init_py["(生产态 / production) infrastructure/__init__.py"]
+    src_zephyr_alt_data_models_init_py["(生产态 / production) models/__init__.py"]
+    src_zephyr_alt_data_services_init_py["(生产态 / production) services/__init__.py"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py
@@ -94,13 +94,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_extensions_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_api_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_core_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_infrastructure_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_models_init_py["(生产态 / production) __init__.py"]
-    src_zephyr_alt_data_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_alt_data_init_py["(生产态 / production) alt_data/__init__.py"]
+    src_zephyr_alt_data_extensions_init_py["(生产态 / production) _extensions/__init__.py"]
+    src_zephyr_alt_data_api_init_py["(生产态 / production) api/__init__.py"]
+    src_zephyr_alt_data_core_init_py["(生产态 / production) core/__init__.py"]
+    src_zephyr_alt_data_infrastructure_init_py["(生产态 / production) infrastructure/__init__.py"]
+    src_zephyr_alt_data_models_init_py["(生产态 / production) models/__init__.py"]
+    src_zephyr_alt_data_services_init_py["(生产态 / production) services/__init__.py"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py

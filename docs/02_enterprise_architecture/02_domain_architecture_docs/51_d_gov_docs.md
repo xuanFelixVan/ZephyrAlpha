@@ -42,35 +42,35 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | docs__03_modules___cross_layer__auto_fix_engine__blueprint_md | 设计态 / design |  |
-| 2 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | docs__03_modules___cross_layer__auto_runtime_core__blueprint_md | 设计态 / design |  |
-| 3 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | docs__03_modules___cross_layer__behavioral_auditor__blueprint_md | 设计态 / design |  |
-| 4 | docs/03_modules/_cross_layer/context_engine/blueprint.md | docs__03_modules___cross_layer__context_engine__blueprint_md | 设计态 / design |  |
-| 5 | docs/03_modules/_cross_layer/database/blueprint.md | docs__03_modules___cross_layer__database__blueprint_md | 设计态 / design |  |
-| 6 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | docs__03_modules___cross_layer__feedback_loop__blueprint_md | 设计态 / design |  |
-| 7 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | docs__03_modules___cross_layer__gate_engine__blueprint_md | 设计态 / design |  |
-| 8 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | docs__03_modules___cross_layer__model_capability_exam__blueprint_md | 设计态 / design |  |
-| 9 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | docs__03_modules___cross_layer__orphan_judge__blueprint_md | 设计态 / design |  |
-| 10 | docs/03_modules/_cross_layer/pipeline/blueprint.md | docs__03_modules___cross_layer__pipeline__blueprint_md | 设计态 / design |  |
-| 11 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | docs__03_modules___cross_layer__red_blue_validator__blueprint_md | 设计态 / design |  |
-| 12 | docs/03_modules/_cross_layer/resource_optimization_engine... | docs__03_modules___cross_layer__resource_optimization_engine__blueprint_md | 设计态 / design |  |
-| 13 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | docs__03_modules___cross_layer__semantic_auditor__blueprint_md | 设计态 / design |  |
-| 14 | docs/03_modules/_cross_layer/shared_core/blueprint.md | docs__03_modules___cross_layer__shared_core__blueprint_md | 设计态 / design |  |
-| 15 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md | 设计态 / design |  |
-| 16 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | docs__03_modules___domain_autonomy_core__rollback_system__blueprint_md | 设计态 / design |  |
-| 17 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | docs__03_modules___domain_autonomy_perm__budget_enforcer__blueprint_md | 设计态 / design |  |
-| 18 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md | 设计态 / design |  |
-| 19 | docs/03_modules/_domain_governance/blueprint.md | docs__03_modules___domain_governance__blueprint_md | 设计态 / design |  |
-| 20 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | docs__03_modules___domain_governance__code_dedup_engine__blueprint_md | 设计态 / design |  |
-| 21 | docs/03_modules/_domain_governance/governance_automation/... | docs__03_modules___domain_governance__governance_automation__blueprint_md | 设计态 / design |  |
-| 22 | docs/03_modules/_domain_governance/registry_governance/bl... | docs__03_modules___domain_governance__registry_governance__blueprint_md | 设计态 / design |  |
+| 1 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | auto_fix_engine/blueprint.md | 设计态 / design |  |
+| 2 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | auto_runtime_core/blueprint.md | 设计态 / design |  |
+| 3 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | behavioral_auditor/blueprint.md | 设计态 / design |  |
+| 4 | docs/03_modules/_cross_layer/context_engine/blueprint.md | context_engine/blueprint.md | 设计态 / design |  |
+| 5 | docs/03_modules/_cross_layer/database/blueprint.md | database/blueprint.md | 设计态 / design |  |
+| 6 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | feedback_loop/blueprint.md | 设计态 / design |  |
+| 7 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | gate_engine/blueprint.md | 设计态 / design |  |
+| 8 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | model_capability_exam/blueprint.md | 设计态 / design |  |
+| 9 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | orphan_judge/blueprint.md | 设计态 / design |  |
+| 10 | docs/03_modules/_cross_layer/pipeline/blueprint.md | pipeline/blueprint.md | 设计态 / design |  |
+| 11 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | red_blue_validator/blueprint.md | 设计态 / design |  |
+| 12 | docs/03_modules/_cross_layer/resource_optimization_engine... | resource_optimization_engine/blueprint.md | 设计态 / design |  |
+| 13 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | semantic_auditor/blueprint.md | 设计态 / design |  |
+| 14 | docs/03_modules/_cross_layer/shared_core/blueprint.md | shared_core/blueprint.md | 设计态 / design |  |
+| 15 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | agent_spec/blueprint.md | 设计态 / design |  |
+| 16 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | rollback_system/blueprint.md | 设计态 / design |  |
+| 17 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | budget_enforcer/blueprint.md | 设计态 / design |  |
+| 18 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | escalation_protocol/blueprint.md | 设计态 / design |  |
+| 19 | docs/03_modules/_domain_governance/blueprint.md | _domain_governance/blueprint.md | 设计态 / design |  |
+| 20 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | code_dedup_engine/blueprint.md | 设计态 / design |  |
+| 21 | docs/03_modules/_domain_governance/governance_automation/... | governance_automation/blueprint.md | 设计态 / design |  |
+| 22 | docs/03_modules/_domain_governance/registry_governance/bl... | registry_governance/blueprint.md | 设计态 / design |  |
 
 ### L2 领域层 / Domain Layer (2 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | tests/governance/d8_doc_sync/test_guc_trigger_fix.py | test_guc_trigger_fix.py — GUC 触发器缺陷修复的... | 生产态 / production |  |
-| 2 | tests/governance/d8_doc_sync/test_sync_savepoint_isolatio... | test_sync_savepoint_isolation.py — sync_all() ... | 生产态 / production |  |
+| 1 | tests/governance/d8_doc_sync/test_guc_trigger_fix.py | test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（... | 生产态 / production |  |
+| 2 | tests/governance/d8_doc_sync/test_sync_savepoint_isolatio... | test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（... | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -89,30 +89,30 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__auto_fix_engine__blueprint_md"]
-    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__auto_runtime_core__blueprint_md"]
-    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__behavioral_auditor__blueprint_md"]
-    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__context_engine__blueprint_md"]
-    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__database__blueprint_md"]
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__feedback_loop__blueprint_md"]
-    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__gate_engine__blueprint_md"]
-    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_capability_exam__blueprint_md"]
-    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__orphan_judge__blueprint_md"]
-    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__pipeline__blueprint_md"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__red_blue_validator__blueprint_md"]
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__resource_optimization_engine__blueprint_md"]
-    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__semantic_auditor__blueprint_md"]
-    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__shared_core__blueprint_md"]
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_core__rollback_system__blueprint_md"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_perm__budget_enforcer__blueprint_md"]
-    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md"]
-    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__blueprint_md"]
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__code_dedup_engine__blueprint_md"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__governance_automation__blueprint_md"]
-    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__registry_governance__blueprint_md"]
-    tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) test_guc_trigger_fix.py — GUC 触发器缺陷修复的...<br/>文件: test_guc_trigger_fix.py"]
-    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) test_sync_savepoint_isolation.py — sync_all() ...<br/>文件: test_sync_savepoint_isolation.py"]
+    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) auto_fix_engine/blueprint.md"]
+    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) auto_runtime_core/blueprint.md"]
+    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) behavioral_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) context_engine/blueprint.md"]
+    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) database/blueprint.md"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) feedback_loop/blueprint.md"]
+    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) gate_engine/blueprint.md"]
+    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) model_capability_exam/blueprint.md"]
+    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) orphan_judge/blueprint.md"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) pipeline/blueprint.md"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) red_blue_validator/blueprint.md"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) resource_optimization_engine/blueprint.md"]
+    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) semantic_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) shared_core/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) agent_spec/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) rollback_system/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) budget_enforcer/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) escalation_protocol/blueprint.md"]
+    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) _domain_governance/blueprint.md"]
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) code_dedup_engine/blueprint.md"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) governance_automation/blueprint.md"]
+    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) registry_governance/blueprint.md"]
+    tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（...<br/>文件: d8_doc_sync/test_guc_trigger_fix.py"]
+    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（...<br/>文件: d8_doc_sync/test_sync_savepoint_isolation.py"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md ~~~ docs_03_modules_cross_layer_behavioral_auditor_blueprint_md
     docs_03_modules_cross_layer_behavioral_auditor_blueprint_md ~~~ docs_03_modules_cross_layer_context_engine_blueprint_md
@@ -151,8 +151,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) test_guc_trigger_fix.py — GUC 触发器缺陷修复的...<br/>文件: test_guc_trigger_fix.py"]
-    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) test_sync_savepoint_isolation.py — sync_all() ...<br/>文件: test_sync_savepoint_isolation.py"]
+    tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（...<br/>文件: d8_doc_sync/test_guc_trigger_fix.py"]
+    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（...<br/>文件: d8_doc_sync/test_sync_savepoint_isolation.py"]
     tests_governance_d8_doc_sync_test_guc_trigger_fix_py ~~~ tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
@@ -168,28 +168,28 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__auto_fix_engine__blueprint_md"]
-    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__auto_runtime_core__blueprint_md"]
-    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__behavioral_auditor__blueprint_md"]
-    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__context_engine__blueprint_md"]
-    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__database__blueprint_md"]
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__feedback_loop__blueprint_md"]
-    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__gate_engine__blueprint_md"]
-    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_capability_exam__blueprint_md"]
-    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__orphan_judge__blueprint_md"]
-    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__pipeline__blueprint_md"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__red_blue_validator__blueprint_md"]
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__resource_optimization_engine__blueprint_md"]
-    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__semantic_auditor__blueprint_md"]
-    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__shared_core__blueprint_md"]
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_core__agent_spec__blueprint_md"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_core__rollback_system__blueprint_md"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_perm__budget_enforcer__blueprint_md"]
-    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) docs__03_modules___domain_autonomy_perm__escalation_protocol__blueprint_md"]
-    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__blueprint_md"]
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__code_dedup_engine__blueprint_md"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__governance_automation__blueprint_md"]
-    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) docs__03_modules___domain_governance__registry_governance__blueprint_md"]
+    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) auto_fix_engine/blueprint.md"]
+    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) auto_runtime_core/blueprint.md"]
+    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) behavioral_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) context_engine/blueprint.md"]
+    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) database/blueprint.md"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) feedback_loop/blueprint.md"]
+    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) gate_engine/blueprint.md"]
+    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) model_capability_exam/blueprint.md"]
+    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) orphan_judge/blueprint.md"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) pipeline/blueprint.md"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) red_blue_validator/blueprint.md"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) resource_optimization_engine/blueprint.md"]
+    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) semantic_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) shared_core/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) agent_spec/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) rollback_system/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) budget_enforcer/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) escalation_protocol/blueprint.md"]
+    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) _domain_governance/blueprint.md"]
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) code_dedup_engine/blueprint.md"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) governance_automation/blueprint.md"]
+    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) registry_governance/blueprint.md"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md ~~~ docs_03_modules_cross_layer_behavioral_auditor_blueprint_md
     docs_03_modules_cross_layer_behavioral_auditor_blueprint_md ~~~ docs_03_modules_cross_layer_context_engine_blueprint_md

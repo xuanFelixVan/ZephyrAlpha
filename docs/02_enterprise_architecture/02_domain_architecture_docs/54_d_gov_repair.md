@@ -42,7 +42,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/financial_governance/budget_enforce... | budget_enforcement.py | 生产态 / production |  |
+| 1 | src/zephyr/governance/financial_governance/budget_enforce... | financial_governance/budget_enforcement.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -61,7 +61,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) budget_enforcement.py"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) financial_governance/budget_enforcement.py"]
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE 运维弹性治理"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
@@ -93,7 +93,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) budget_enforcement.py"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) financial_governance/budget_enforcement.py"]
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE 运维弹性治理"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
@@ -130,21 +130,21 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | budget_enforcement.py | → | D_AUTONOMY_CORE 自治核心: skill_executor.py | 导入依赖 / import_depends |
-| 2 | budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: model_router.py | 导入依赖 / import_depends |
-| 3 | budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Burn Rate Monitor — MOD-INF-024 (burn_rate_mon... | 导入依赖 / import_depends |
-| 4 | budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: degradation_manager.py | 导入依赖 / import_depends |
-| 5 | budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: timeout_guard.py | 导入依赖 / import_depends |
-| 6 | budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 7 | budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 8 | budget_enforcement.py | → | D_OPS 反馈循环: budget_tracker.py | 导入依赖 / import_depends |
+| 1 | financial_governance/budget_enforcement.py | → | D_AUTONOMY_CORE 自治核心: skills/skill_executor.py | 导入依赖 / import_depends |
+| 2 | financial_governance/budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: intelligence_governance/model_router.py | 导入依赖 / import_depends |
+| 3 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Burn Rate Monitor — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 4 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/degradation_manager.py | 导入依赖 / import_depends |
+| 5 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/timeout_guard.py | 导入依赖 / import_depends |
+| 6 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops... | 导入依赖 / import_depends |
+| 7 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (ops... | 导入依赖 / import_depends |
+| 8 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: ops_governance/budget_tracker.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须.... | → | budget_enforcement.py | 导入依赖 / import_depends |
-| 2 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层。 (__init__.py) | → | budget_enforcement.py | 导入依赖 / import_depends |
+| 1 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
+| 2 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层。 (budget_enforceme... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
