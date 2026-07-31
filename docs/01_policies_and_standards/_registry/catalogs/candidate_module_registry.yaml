@@ -1488,3 +1488,89 @@ entries:
     next_review_date: '2026-11-30'
     review_frequency: quarterly
     last_review_outcome: "首次登记(修正错误登记后)。原误登记为独立策略文件节点 MOD-PF-004/MOD-PF-005,源码验证为枚举方法级缺口后软删除节点并改录候选。待实盘需启用 min-variance/risk-parity 分配时晋升为 DefaultEquityStrategy 代码补丁(非新 depgraph 节点)"
+
+  # ----------------------------------------------------------
+  # CAND-FAC-002: FactorMeta Pydantic 迁移（deferred，形态=既有文件 refactor 非建模块）
+  # 来源: 实盘缺口挖掘 P1 + 源码实证 factor_base.py L49-50
+  # ----------------------------------------------------------
+  - id: CAND-FAC-002
+    name: "FactorMeta Pydantic Migration / FactorMeta Pydantic迁移"
+    aliases: ["FactorMeta", "factor_meta", "Pydantic迁移", "KBG-0040", "@dataclass→BaseModel", "factor_base重构"]
+    domain: D_FACTOR
+    domain_status: active
+    domain_node_count: 37
+    sub_layer: "因子元数据 FactorMeta 数据模型"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-L02-001
+        target_node_id: 7712833
+        target_node_path: src/zephyr/factor/factor_base.py
+        target_build_status: production
+        target_neighbors:
+          upstream: []
+          downstream: ["D_SIGNAL (FactorSignal 消费 FactorMeta)"]
+        insertion_description: "不建新节点——在既有 factor_base.py 内将 FactorMeta 从 @dataclass(frozen=True)(L49-50) 重构为 Pydantic V2 BaseModel,符合 KBG-0040 强制约束"
+        target_edges: []
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "因子定义 → [FactorMeta @dataclass→BaseModel] → 因子元数据序列化/校验 → D_SIGNAL 消费"
+        upstream_data: ["因子定义参数"]
+        downstream_data: ["FactorMeta (Pydantic BaseModel)"]
+        insertion_description: "在 D_FACTOR 因子元数据环节,数据模型格式迁移"
+      decisiongraph:
+        has_position: true
+        target_layer: "L2"
+        target_track: "factor"
+        decision_frequency: n_a
+        decision_path: "N/A — 数据模型 refactor,非决策流"
+        insertion_description: "L2 因子层元数据结构(非决策)"
+      blueprint:
+        has_position: true
+        target_ref: "docs/03_modules/_domain_factor/blueprint.md FactorMeta 数据模型 (factor_base.py L49-50)"
+        design_maturity: design
+    description: "将 factor_base.py 的 FactorMeta 从 @dataclass(frozen=True)(L49-50) 迁移到 Pydantic V2 BaseModel,符合 KBG-0040(强制 Pydantic V2 BaseModel,禁止 @dataclass)。迁移含:字段类型注解、frozen 等价配置(frozen=True via model_config)、序列化/校验行为对齐、下游 FactorSignal 消费兼容性验证。"
+    capability: "C-012"
+    problem_it_solves: "FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统其余 Pydantic 数据模型不一致,序列化/校验行为不统一"
+    trigger_signals:
+      - "KBG-0040 Pydantic 强制门禁启用(当前君子协定)"
+      - "FactorMeta 序列化/校验出现 @dataclass 与 Pydantic 行为差异"
+      - "下游 FactorSignal 消费需 Pydantic 校验能力"
+    keywords: ["FactorMeta", "Pydantic", "dataclass", "KBG-0040", "迁移", "factor_base", "数据模型"]
+    upstream_deps: []
+    downstream_consumers:
+      - {consumer: "D_SIGNAL (FactorSignal)", contract: "FactorMeta", note: "信号消费因子元数据"}
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites:
+      - {condition: "KBG-0040 强制启用或 FactorMeta 序列化出现兼容问题", check: "门禁状态", met: false, note: "当前 KBG-0040 为君子协定"}
+      - {condition: "下游 FactorSignal 消费方对 @dataclass→BaseModel 兼容性验证", check: "FactorSignal 单测", met: false}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["7712833 (factor_base.py)"], evidence: "factor_base.py L49-50 @dataclass class FactorMeta,未迁移 Pydantic;grep 无 BaseModel"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "当前 KBG-0040 为君子协定,@dataclass 可用,无即时痛点"}
+      q3_domain_alive: {result: true, evidence: "D_FACTOR 37节点,active;factor_base.py=production"}
+      q4_ai_replaceable: {result: false, evidence: "数据模型 refactor 需字段对齐+下游兼容验证,非AI语义理解可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P1
+    created_at: '2026-08-01'
+    last_reviewed_at: '2026-08-01'
+    promoted_to: ""
+    source_draft: "实盘缺口挖掘 P1 (2026-07-31) + 源码实证 factor_base.py"
+    source_section: "L49-50 @dataclass class FactorMeta"
+    original_id: "FAC-factormeta-pydantic"
+    estimated_complexity: S
+    estimated_effort: "2人天"
+    tech_notes: "实现:1) FactorMeta 从 @dataclass(frozen=True)→Pydantic BaseModel,model_config=frozen;2) 字段类型注解对齐;3) 验证序列化(dict()/json)与 @dataclass asdict 行为一致;4) 下游 FactorSignal 消费兼容单测;5) 不建新文件/新节点,refactor 既有 factor_base.py(节点 7712833)"
+    risks: ["@dataclass asdict 与 Pydantic model_dump 序列化差异", "frozen 行为需 model_config 配置", "下游 FactorSignal 隐式依赖 dataclass 行为"]
+    alternatives: "维持 @dataclass。代价:违反 KBG-0040,与系统 Pydantic 统一性不一致"
+    tags: ["实盘缺口", "P1", "refactor非建模块", "数据模型", "KBG-0040", "deferred"]
+    search_terms: ["factormeta", "pydantic migration", "dataclass to basemodel", "kbg-0040", "factor base"]
+    related_candidates: ["CAND-FAC-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2026-11-30'
+    review_frequency: quarterly
+    last_review_outcome: "首次登记。待 KBG-0040 强制启用或 FactorMeta 序列化出现兼容问题时晋升为 factor_base.py refactor 补丁(非新 depgraph 节点)"
