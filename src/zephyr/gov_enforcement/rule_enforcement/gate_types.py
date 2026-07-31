@@ -14,7 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV-gate_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""门禁类型定义——GateType 枚举与 gate 相关 dataclass（GateContext/GateResult 等）。
 
+定义门禁系统的类型契约，供 gate_engine / gate_pipeline / gate_simulator 共用。
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field

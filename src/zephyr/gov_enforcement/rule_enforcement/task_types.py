@@ -14,7 +14,10 @@
 # [TESTS] tests/task/test_task_types.py
 # [A_module] module_id=MOD-GOV-task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""任务类型定义——Task model 是任务卡字段的 SSoT（SQLite tasks 表对齐）。
 
+定义任务的数据模型（TaskStatus/TaskPriority 枚举 + Task dataclass），供 task_repo/task_card 共用。
+"""
 from __future__ import annotations
 
 from datetime import datetime

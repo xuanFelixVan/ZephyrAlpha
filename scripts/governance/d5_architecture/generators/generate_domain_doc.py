@@ -861,7 +861,9 @@ def generate_internal_mermaid(
             idx += 1
         used_ids.add(ext_id)
         external_nodes[ext_domain] = (ext_id, maturity)
-        ext_label = _sanitize_mermaid_label(ext_domain)
+        ext_name_zh = get_domain_name_zh_strict(ext_domain)
+        ext_label_text = f"{ext_domain} {ext_name_zh}" if ext_name_zh else ext_domain
+        ext_label = _sanitize_mermaid_label(ext_label_text)
         ext_maturity = _maturity_display(maturity)
         lines.append(f'    {ext_id}["({ext_maturity}) {ext_label}"]')
         return ext_id

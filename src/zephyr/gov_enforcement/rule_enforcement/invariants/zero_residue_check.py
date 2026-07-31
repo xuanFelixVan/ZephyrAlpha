@@ -14,6 +14,10 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV-zero_residue_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""零残留检查器——验证治理操作后无残留文件/目录/引用。
+
+扫描工作区确保清理操作（如 deprecate/migrate）无遗漏，返回残留清单供 reconciler 兜底。
+"""
 import os
 import subprocess
 import sys
