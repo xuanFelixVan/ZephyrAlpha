@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -165,12 +166,21 @@ class TestWhitelistProtection:
         assert "WHITELIST" in content or "EXEMPT" in content, "MODIFY-GUARD 应提及白名单保护"
 
     def test_whitelist_minimal(self) -> None:
-        """白名单应只包含 AGENTS.md（其他已迁移为小写）。"""
+        """FILENAME_UPPERCASE_WHITELIST（N-01 大写白名单）应只包含 AGENTS.md。
+
+        注意：README.md 合法出现在 N-16 docs 豁免清单（GitHub 约定每目录可有自己的 README），
+        但不应出现在 N-01 大写白名单——N-01 由 _GITHUB_CONVENTION_RE 路径感知豁免处理。
+        本测试只检查 FILENAME_UPPERCASE_WHITELIST 赋值块，不做全文件泛化字符串搜索，
+        避免误伤 N-16 豁免清单等无关区域。
+        """
         content = CHECK_SCRIPT.read_text(encoding="utf-8")
-        assert '"README.md"' not in content, "README.md 应已从白名单移除"
-        assert '"index.md"' not in content, "index.md 应已从白名单移除"
-        assert '"CHANGELOG.md"' not in content, "CHANGELOG.md 应已从白名单移除"
-        assert '"AGENTS.md"' in content, "AGENTS.md 应保留在白名单中"
+        m = re.search(r"FILENAME_UPPERCASE_WHITELIST[^=]*=\s*\[(.*?)\]", content, re.DOTALL)
+        assert m, "FILENAME_UPPERCASE_WHITELIST 定义未找到"
+        whitelist_block = m.group(1)
+        assert '"README.md"' not in whitelist_block, "README.md 不应在 N-01 大写白名单中（由 _GITHUB_CONVENTION_RE 处理）"
+        assert '"index.md"' not in whitelist_block, "index.md 不应在 N-01 大写白名单中"
+        assert '"CHANGELOG.md"' not in whitelist_block, "CHANGELOG.md 不应在 N-01 大写白名单中"
+        assert '"AGENTS.md"' in whitelist_block, "AGENTS.md 应保留在 N-01 大写白名单中"
 
 
 class TestDirectWriteBypassDetection:

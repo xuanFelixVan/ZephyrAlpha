@@ -918,7 +918,7 @@ _N16_YAML_PATH = (
 # fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)
 _N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
 _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset({
-    "blueprint.md", "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
+    "blueprint.md", "README.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
     'index.md',
 })
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
@@ -978,7 +978,7 @@ def _load_n16_exemptions_from_yaml() -> tuple[frozenset[str], frozenset[str], se
 _N16_TESTS_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_RAW
 
 # docs/ 豁免：继承 tests/ 基线 + docs 专属豁免（基于实际扫描校准）
-#   index.md (169x) / blueprint.md (59x) / readme.md (4x) / changelog.md (2x) /
+#   index.md (169x) / blueprint.md (59x) / README.md (4x) / changelog.md (2x) /
 #   spec.md (2x) / .gitkeep (3x) / _index.yaml (2x)
 # 注：用继承关系消除 __init__.py/conftest.py 的同步复制（RULE-ONE 真源唯一）
 #     继承关系在代码侧体现: tests | docs_extra,真源值在YAML n16_config
@@ -1076,7 +1076,7 @@ def check_test_name_uniqueness(project_root: Path | None = None) -> list[NamingV
 def check_docs_name_uniqueness(project_root: Path | None = None) -> list[NamingViolation]:
     """扫描 docs/ 下所有文件，同名文件（basename 相同）视为违规。
 
-    豁免: 约定俗成的跨目录同名文件（index.md / blueprint.md / readme.md /
+    豁免: 约定俗成的跨目录同名文件（index.md / blueprint.md / README.md /
     changelog.md / spec.md / .gitkeep / _index.yaml / __init__.py / conftest.py）。
     跳过: _archive / _backups / session_logs / _DO_NOT_USE_old_tree（运行时产物/归档）。
     """

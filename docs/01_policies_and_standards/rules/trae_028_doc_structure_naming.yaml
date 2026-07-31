@@ -1146,7 +1146,7 @@ sections:
       exempt_names_docs_extra:
       - index.md
       - blueprint.md
-      - readme.md
+      - README.md
       - changelog.md
       - spec.md
       - .gitkeep
@@ -1172,7 +1172,7 @@ sections:
       fail: 其他文件跨目录同名
     - type: constraint
       check: docs/豁免清单(继承tests/基线)
-      pass: 继承tests/豁免(conftest.py/__init__.py)+docs专属豁免(index.md/blueprint.md/readme.md/changelog.md/spec.md/.gitkeep/_index.yaml)
+      pass: 继承tests/豁免(conftest.py/__init__.py)+docs专属豁免(index.md/blueprint.md/README.md/changelog.md/spec.md/.gitkeep/_index.yaml)
       fail: 其他docs文件跨目录同名
       rationale: 用继承关系消除__init__.py/conftest.py的同步复制(真源唯一原则)
     - type: constraint
