@@ -44,9 +44,9 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/reporting/analytics_base.py | D_REPORTING — Post-Trade Analytics Layer | 生产态 / production |  |
-| 2 | src/zephyr/reporting/default_attribution_engine.py | D_REPORTING — Default Attribution Engine | 生产态 / production |  |
-| 3 | src/zephyr/reporting/default_tca_engine.py | D_REPORTING — Default TCA Engine | 生产态 / production |  |
+| 1 | src/zephyr/reporting/analytics_base.py | D_REPORTING — Post-Trade Analytics Layer | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
+| 2 | src/zephyr/reporting/default_attribution_engine.py | D_REPORTING — Default Attribution Engine | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
+| 3 | src/zephyr/reporting/default_tca_engine.py | D_REPORTING — Default TCA Engine | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -69,8 +69,8 @@ flowchart TD
     src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
     src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
-    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -83,8 +83,8 @@ flowchart TD
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
-    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -104,8 +104,8 @@ flowchart TD
     src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
     src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
-    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -118,8 +118,8 @@ flowchart TD
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
-    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

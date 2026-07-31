@@ -44,41 +44,41 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | scripts/governance/generators/generate_script_manifest.py | 脚本清单自动生成器 / Script Manifest Generator | 生产态 / production |  |
-| 2 | src/zephyr/gov_enforcement/rule_enforcement/adaptive_thre... | 自适应阈值 / Adaptive Threshold | 生产态 / production |  |
-| 3 | src/zephyr/gov_enforcement/rule_enforcement/adversarial_s... | 对抗样本生成器 / Adversarial Strategies | 生产态 / production |  |
-| 4 | src/zephyr/gov_enforcement/rule_enforcement/ai_capability... | AI 能力边界守卫 / AI Capability Guard | 生产态 / production |  |
-| 5 | src/zephyr/gov_enforcement/rule_enforcement/anti_pattern_... | 反模式防护引擎 / Anti-Pattern Guard | 生产态 / production |  |
-| 6 | src/zephyr/gov_enforcement/rule_enforcement/can_i_deploy.py | 预部署门禁 / Can-I-Deploy | 生产态 / production |  |
-| 7 | src/zephyr/gov_enforcement/rule_enforcement/capability_ch... | 能力检查器 / Capability Checker | 生产态 / production |  |
-| 8 | src/zephyr/gov_enforcement/rule_enforcement/cbac_matrix.py | CBAC 能力矩阵 / CBAC Matrix | 生产态 / production |  |
-| 9 | src/zephyr/gov_enforcement/rule_enforcement/cdc_broker.py | CDC 契约经纪人 / CDC Broker | 生产态 / production |  |
-| 10 | src/zephyr/gov_enforcement/rule_enforcement/circuit_break... | 单向熔断器 / Circuit Breaker | 生产态 / production |  |
-| 11 | src/zephyr/gov_enforcement/rule_enforcement/contract_temp... | 契约模板管理器 / Contract Template Manager | 生产态 / production |  |
-| 12 | src/zephyr/gov_enforcement/rule_enforcement/end_to_end_wa... | 端到端走查验证器 / End-to-End Walkthrough | 生产态 / production |  |
-| 13 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/_... | 门禁引擎模块集 / Gate Engine Package | 生产态 / production |  |
-| 14 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/a... | 对抗验证门禁 / Adversarial Validation | 生产态 / production |  |
-| 15 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁上下文传播 / Gate Context | 生产态 / production |  |
-| 16 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁裁决引擎 / Gate Engine | 生产态 / production |  |
-| 17 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁紧急旁路 / Gate Override | 生产态 / production |  |
-| 18 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁评估管线 / Gate Pipeline | 生产态 / production |  |
-| 19 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁模拟器 / Gate Simulator | 生产态 / production |  |
-| 20 | src/zephyr/gov_enforcement/rule_enforcement/gate_types.py | 门禁类型定义 / Gate Types | 生产态 / production |  |
-| 21 | src/zephyr/gov_enforcement/rule_enforcement/integration_t... | 集成测试运行器 / Integration Test Runner | 生产态 / production |  |
-| 22 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 循环依赖扫描器 / Circular Dependency Scanner | 生产态 / production |  |
-| 23 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 契约兼容性检查器 / Contract Compatibility Checker | 生产态 / production |  |
-| 24 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 进程生命周期网关 / Process Lifecycle Gateway | 生产态 / production |  |
-| 25 | src/zephyr/gov_enforcement/rule_enforcement/invariants/ze... | 零残留检查器 / Zero Residue Check | 生产态 / production |  |
-| 26 | src/zephyr/gov_enforcement/rule_enforcement/kiss_enforcer.py | KISS 约束执行器 / KISS Enforcer | 生产态 / production |  |
-| 27 | src/zephyr/gov_enforcement/rule_enforcement/risk_ssot.py | 风险真源加载器 / Risk SSoT | 生产态 / production |  |
+| 1 | scripts/governance/generators/generate_script_manifest.py | 脚本清单自动生成器 / Script Manifest Generator | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
+| 2 | src/zephyr/gov_enforcement/rule_enforcement/adaptive_thre... | 自适应阈值 / Adaptive Threshold | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 3 | src/zephyr/gov_enforcement/rule_enforcement/adversarial_s... | 对抗样本生成器 / Adversarial Strategies | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 4 | src/zephyr/gov_enforcement/rule_enforcement/ai_capability... | AI 能力边界守卫 / AI Capability Guard | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 5 | src/zephyr/gov_enforcement/rule_enforcement/anti_pattern_... | 反模式防护引擎 / Anti-Pattern Guard | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 6 | src/zephyr/gov_enforcement/rule_enforcement/can_i_deploy.py | 预部署门禁 / Can-I-Deploy | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 7 | src/zephyr/gov_enforcement/rule_enforcement/capability_ch... | 能力检查器 / Capability Checker | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 8 | src/zephyr/gov_enforcement/rule_enforcement/cbac_matrix.py | CBAC 能力矩阵 / CBAC Matrix | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 9 | src/zephyr/gov_enforcement/rule_enforcement/cdc_broker.py | CDC 契约经纪人 / CDC Broker | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 10 | src/zephyr/gov_enforcement/rule_enforcement/circuit_break... | 单向熔断器 / Circuit Breaker | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 11 | src/zephyr/gov_enforcement/rule_enforcement/contract_temp... | 契约模板管理器 / Contract Template Manager | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 12 | src/zephyr/gov_enforcement/rule_enforcement/end_to_end_wa... | 端到端走查验证器 / End-to-End Walkthrough | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 13 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/_... | 门禁引擎模块集 / Gate Engine Package | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 14 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/a... | 对抗验证门禁 / Adversarial Validation | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 15 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁上下文传播 / Gate Context | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 16 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁裁决引擎 / Gate Engine | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 17 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁紧急旁路 / Gate Override | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 18 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁评估管线 / Gate Pipeline | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 19 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁模拟器 / Gate Simulator | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 20 | src/zephyr/gov_enforcement/rule_enforcement/gate_types.py | 门禁类型定义 / Gate Types | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 21 | src/zephyr/gov_enforcement/rule_enforcement/integration_t... | 集成测试运行器 / Integration Test Runner | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 22 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 循环依赖扫描器 / Circular Dependency Scanner | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 23 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 契约兼容性检查器 / Contract Compatibility Checker | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 24 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | 进程生命周期网关 / Process Lifecycle Gateway | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 25 | src/zephyr/gov_enforcement/rule_enforcement/invariants/ze... | 零残留检查器 / Zero Residue Check | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 26 | src/zephyr/gov_enforcement/rule_enforcement/kiss_enforcer.py | KISS 约束执行器 / KISS Enforcer | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 27 | src/zephyr/gov_enforcement/rule_enforcement/risk_ssot.py | 风险真源加载器 / Risk SSoT | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
 | 28 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/_... | 规则引擎模块集 / Rule Engine Package | 生产态 / production |  |
 | 29 | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/r... | 规则加载器 / Rule Loader | 生产态 / production |  |
-| 30 | src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py | Secrets 守护 / Secrets Guard | 生产态 / production |  |
-| 31 | src/zephyr/gov_enforcement/rule_enforcement/task_completi... | 任务完成门禁 / Task Completion Gate | 生产态 / production |  |
-| 32 | src/zephyr/gov_enforcement/rule_enforcement/task_types.py | 任务类型定义 / Task Types | 生产态 / production |  |
-| 33 | src/zephyr/gov_enforcement/rule_enforcement/triple_alignm... | 三方对齐门禁 / Triple Alignment | 生产态 / production |  |
+| 30 | src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py | Secrets 守护 / Secrets Guard | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 31 | src/zephyr/gov_enforcement/rule_enforcement/task_completi... | 任务完成门禁 / Task Completion Gate | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 32 | src/zephyr/gov_enforcement/rule_enforcement/task_types.py | 任务类型定义 / Task Types | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 33 | src/zephyr/gov_enforcement/rule_enforcement/triple_alignm... | 三方对齐门禁 / Triple Alignment | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
 | 34 | src/zephyr/gov_rule/__init__.py | 规则治理域包 / Gov Rule Package | 生产态 / production |  |
-| 35 | src/zephyr/gov_rule/constitutional_update/constitutional_... | 宪法自愈 / Constitutional Update | 生产态 / production |  |
+| 35 | src/zephyr/gov_rule/constitutional_update/constitutional_... | 宪法自愈 / Constitutional Update | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -157,16 +157,18 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py["(生产态 / production) 门禁上下文传播 / Gate Context<br/>门禁上下文传播——GateContext 构建/序列化/跨模块注入（beta）<br/>文件: gate_engine/gate_context.py"]
     src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
+    src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
@@ -176,7 +178,6 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
@@ -184,7 +185,6 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE 上下文管理"]
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py
@@ -211,7 +211,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_generators_generate_script_manifest_py,src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py,src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py,src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py,src_zephyr_gov_enforcement_rule_enforcement_anti_pattern_guard_py,src_zephyr_gov_enforcement_rule_enforcement_can_i_deploy_py,src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py,src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py,src_zephyr_gov_enforcement_rule_enforcement_cdc_broker_py,src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py,src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py,src_zephyr_gov_enforcement_rule_enforcement_end_to_end_walkthrough_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py,src_zephyr_gov_enforcement_rule_enforcement_gate_types_py,src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_process_lifecycle_gateway_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py,src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py,src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py,src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py production
-    class D_GOV_SCRIPTS,D_GOV_AUDIT,D_GOVERNANCE,D_SHARED,D_INTELLIGENCE,D_INTEGRATION,D_SECURITY,D_GOV_OPS_RESILIENCE,D_AUTONOMY_CORE external_prod
+    class D_SHARED,D_GOV_SCRIPTS,D_GOV_AUDIT,D_GOVERNANCE,D_INTELLIGENCE,D_INTEGRATION,D_SECURITY,D_GOV_OPS_RESILIENCE,D_AUTONOMY_CORE external_prod
 ```
 
 #### 第 2 页 / 共 2 页
@@ -334,17 +334,19 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py["(生产态 / production) 门禁上下文传播 / Gate Context<br/>门禁上下文传播——GateContext 构建/序列化/跨模块注入（beta）<br/>文件: gate_engine/gate_context.py"]
     src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
+    src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
@@ -354,7 +356,6 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME 运行时集成"]
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
@@ -364,7 +365,6 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_task_types_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_rule_constitutional_update_constitutional_update_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE 上下文管理"]
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py
@@ -388,7 +388,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_generators_generate_script_manifest_py,src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py,src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py,src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py,src_zephyr_gov_enforcement_rule_enforcement_anti_pattern_guard_py,src_zephyr_gov_enforcement_rule_enforcement_can_i_deploy_py,src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py,src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py,src_zephyr_gov_enforcement_rule_enforcement_cdc_broker_py,src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py,src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py,src_zephyr_gov_enforcement_rule_enforcement_end_to_end_walkthrough_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py,src_zephyr_gov_enforcement_rule_enforcement_gate_types_py,src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_process_lifecycle_gateway_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py,src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py,src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py,src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py,src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py,src_zephyr_gov_enforcement_rule_enforcement_task_types_py,src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py,src_zephyr_gov_rule_init_py,src_zephyr_gov_rule_constitutional_update_constitutional_update_py production
-    class D_GOV_SCRIPTS,D_GOV_AUDIT,D_GOVERNANCE,D_SHARED,D_INFRA_RUNTIME,D_INTELLIGENCE,D_INTEGRATION,D_SECURITY external_prod
+    class D_SHARED,D_GOV_SCRIPTS,D_GOV_AUDIT,D_GOVERNANCE,D_INFRA_RUNTIME,D_INTELLIGENCE,D_INTEGRATION,D_SECURITY external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

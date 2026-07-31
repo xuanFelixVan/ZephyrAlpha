@@ -44,8 +44,8 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/simulation/implementations/default_experiment_... | 实验 — Default Experiment Pipeline | 生产态 / production |  |
-| 2 | src/zephyr/simulation/pipeline_base.py | 实验 — Experimentation Pipeline Layer | 生产态 / production |  |
+| 1 | src/zephyr/simulation/implementations/default_experiment_... | 实验 — Default Experiment Pipeline | 生产态 / production | [MOD-L13-001](../../03_modules/_domain_simulation/blueprint.md) |
+| 2 | src/zephyr/simulation/pipeline_base.py | 实验 — Experimentation Pipeline Layer | 生产态 / production | [MOD-L13-001](../../03_modules/_domain_simulation/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

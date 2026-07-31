@@ -44,7 +44,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/position/position_reconciler.py | Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter... | 生产态 / production |  |
+| 1 | src/zephyr/position/position_reconciler.py | Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

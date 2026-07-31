@@ -44,13 +44,13 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy | 生产态 / production |  |
+| 1 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
 
 ### L2 领域层 / Domain Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | pf_alloc/strategy_lifecycle_event.py | 生产态 / production |  |
+| 1 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | pf_alloc/strategy_lifecycle_event.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

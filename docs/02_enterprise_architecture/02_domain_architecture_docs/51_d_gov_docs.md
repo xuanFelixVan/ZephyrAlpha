@@ -44,28 +44,28 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | auto_fix_engine/blueprint.md | 设计态 / design |  |
-| 2 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | auto_runtime_core/blueprint.md | 设计态 / design |  |
-| 3 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | behavioral_auditor/blueprint.md | 设计态 / design |  |
-| 4 | docs/03_modules/_cross_layer/context_engine/blueprint.md | context_engine/blueprint.md | 设计态 / design |  |
-| 5 | docs/03_modules/_cross_layer/database/blueprint.md | database/blueprint.md | 设计态 / design |  |
-| 6 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | feedback_loop/blueprint.md | 设计态 / design |  |
-| 7 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | gate_engine/blueprint.md | 设计态 / design |  |
-| 8 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | model_capability_exam/blueprint.md | 设计态 / design |  |
-| 9 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | orphan_judge/blueprint.md | 设计态 / design |  |
-| 10 | docs/03_modules/_cross_layer/pipeline/blueprint.md | pipeline/blueprint.md | 设计态 / design |  |
-| 11 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | red_blue_validator/blueprint.md | 设计态 / design |  |
-| 12 | docs/03_modules/_cross_layer/resource_optimization_engine... | resource_optimization_engine/blueprint.md | 设计态 / design |  |
-| 13 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | semantic_auditor/blueprint.md | 设计态 / design |  |
-| 14 | docs/03_modules/_cross_layer/shared_core/blueprint.md | shared_core/blueprint.md | 设计态 / design |  |
-| 15 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | agent_spec/blueprint.md | 设计态 / design |  |
-| 16 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | rollback_system/blueprint.md | 设计态 / design |  |
-| 17 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | budget_enforcer/blueprint.md | 设计态 / design |  |
-| 18 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | escalation_protocol/blueprint.md | 设计态 / design |  |
-| 19 | docs/03_modules/_domain_governance/blueprint.md | _domain_governance/blueprint.md | 设计态 / design |  |
-| 20 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | code_dedup_engine/blueprint.md | 设计态 / design |  |
-| 21 | docs/03_modules/_domain_governance/governance_automation/... | governance_automation/blueprint.md | 设计态 / design |  |
-| 22 | docs/03_modules/_domain_governance/registry_governance/bl... | registry_governance/blueprint.md | 设计态 / design |  |
+| 1 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | auto_fix_engine/blueprint.md | 设计态 / design | [MOD-INF-031](../../03_modules/_cross_layer/auto_fix_engine/blueprint.md) |
+| 2 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | auto_runtime_core/blueprint.md | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 3 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | behavioral_auditor/blueprint.md | 设计态 / design | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 4 | docs/03_modules/_cross_layer/context_engine/blueprint.md | context_engine/blueprint.md | 设计态 / design | [MOD-CONTEXT_ENGINE](../../03_modules/_cross_layer/context_engine/blueprint.md) |
+| 5 | docs/03_modules/_cross_layer/database/blueprint.md | database/blueprint.md | 设计态 / design | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
+| 6 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | feedback_loop/blueprint.md | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
+| 7 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | gate_engine/blueprint.md | 设计态 / design | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
+| 8 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | model_capability_exam/blueprint.md | 设计态 / design | [MOD-INF-036](../../03_modules/_cross_layer/model_capability_exam/blueprint.md) |
+| 9 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | orphan_judge/blueprint.md | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
+| 10 | docs/03_modules/_cross_layer/pipeline/blueprint.md | pipeline/blueprint.md | 设计态 / design | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
+| 11 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | red_blue_validator/blueprint.md | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
+| 12 | docs/03_modules/_cross_layer/resource_optimization_engine... | resource_optimization_engine/blueprint.md | 设计态 / design | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
+| 13 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | semantic_auditor/blueprint.md | 设计态 / design | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
+| 14 | docs/03_modules/_cross_layer/shared_core/blueprint.md | shared_core/blueprint.md | 设计态 / design | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 15 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | agent_spec/blueprint.md | 设计态 / design | [MOD-INF-019](../../03_modules/_domain_autonomy_core/agent_spec/blueprint.md) |
+| 16 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | rollback_system/blueprint.md | 设计态 / design | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
+| 17 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | budget_enforcer/blueprint.md | 设计态 / design | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
+| 18 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | escalation_protocol/blueprint.md | 设计态 / design | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
+| 19 | docs/03_modules/_domain_governance/blueprint.md | _domain_governance/blueprint.md | 设计态 / design | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
+| 20 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | code_dedup_engine/blueprint.md | 设计态 / design | [MOD-INF-017](../../03_modules/_domain_governance/code_dedup_engine/blueprint.md) |
+| 21 | docs/03_modules/_domain_governance/governance_automation/... | governance_automation/blueprint.md | 设计态 / design | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
+| 22 | docs/03_modules/_domain_governance/registry_governance/bl... | registry_governance/blueprint.md | 设计态 / design | [MOD-INF-037](../../03_modules/_domain_governance/registry_governance/blueprint.md) |
 
 ### L2 领域层 / Domain Layer (2 modules)
 

@@ -44,7 +44,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | vector_memory/blueprint.md | 设计态 / design |  |
+| 1 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | vector_memory/blueprint.md | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

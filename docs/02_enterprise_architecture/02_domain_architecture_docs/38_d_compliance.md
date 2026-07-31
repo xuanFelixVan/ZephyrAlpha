@@ -44,13 +44,13 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py | D_COMPLIANCE Compliance | 生产态 / production |  |
+| 1 | src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py | D_COMPLIANCE Compliance | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
 
 ### L2 领域层 / Domain Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/compliance/behavioral_auditor/__init__.py | behavioral_auditor/__init__.py | 生产态 / production |  |
+| 1 | src/zephyr/compliance/behavioral_auditor/__init__.py | behavioral_auditor/__init__.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -72,9 +72,11 @@ flowchart TD
     src_zephyr_compliance_behavioral_auditor_init_py["(生产态 / production)<br/>文件: behavioral_auditor/__init__.py"]
     src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(生产态 / production) D_COMPLIANCE Compliance<br/>D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py"]
     src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
+    D_SECURITY["(生产态 / production) D_SECURITY 对抗验证"]
+    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_SECURITY
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME 运行时集成"]
+    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT 漂移检测"]
-    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -93,7 +95,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py production
-    class D_GOV_DRIFT external_prod
+    class D_SECURITY,D_INFRA_RUNTIME,D_GOV_DRIFT external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -106,9 +108,11 @@ flowchart TD
     src_zephyr_compliance_behavioral_auditor_init_py["(生产态 / production)<br/>文件: behavioral_auditor/__init__.py"]
     src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(生产态 / production) D_COMPLIANCE Compliance<br/>D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py"]
     src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
+    D_SECURITY["(生产态 / production) D_SECURITY 对抗验证"]
+    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_SECURITY
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME 运行时集成"]
+    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT 漂移检测"]
-    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -127,7 +131,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py production
-    class D_GOV_DRIFT external_prod
+    class D_SECURITY,D_INFRA_RUNTIME,D_GOV_DRIFT external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

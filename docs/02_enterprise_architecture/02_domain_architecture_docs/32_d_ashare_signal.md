@@ -44,7 +44,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_ashare/__init__.py | signal_ashare/__init__.py | 生产态 / production |  |
+| 1 | src/zephyr/signal_ashare/__init__.py | signal_ashare/__init__.py | 生产态 / production | [MOD-INF-038](../../03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md) |
 | 2 | src/zephyr/signal_ashare/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
 | 3 | src/zephyr/signal_ashare/api/__init__.py | api/__init__.py | 生产态 / production |  |
 | 4 | src/zephyr/signal_ashare/core/__init__.py | core/__init__.py | 生产态 / production |  |

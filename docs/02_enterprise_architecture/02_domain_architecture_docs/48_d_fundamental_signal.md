@@ -44,16 +44,16 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_fundamental/__init__.py | D_SIGNAL Signal Domain | 生产态 / production |  |
-| 2 | src/zephyr/signal_fundamental/capital/capital_allocation_... | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim | 生产态 / production |  |
-| 3 | src/zephyr/signal_fundamental/capital/capital_allocator.py | D_SIGNAL — Capital Allocator（兼容 re-export shim） | 生产态 / production |  |
-| 4 | src/zephyr/signal_fundamental/capital/default_capital_all... | D_SIGNAL — Default Capital Allocator（兼容 re-export shim） | 生产态 / production |  |
-| 5 | src/zephyr/signal_fundamental/gen/aggregator_base.py | D_SIGNAL — Signal Generation Layer | 生产态 / production |  |
-| 6 | src/zephyr/signal_fundamental/gen/implementations/default... | D_SIGNAL — Default Signal Aggregator | 生产态 / production |  |
-| 7 | src/zephyr/signal_fundamental/pipeline.py | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 | 生产态 / production |  |
-| 8 | src/zephyr/signal_fundamental/strategy/capital_allocator.py | D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） | 生产态 / production |  |
-| 9 | src/zephyr/signal_fundamental/strategy/implementations/de... | D_SIGNAL — Default Capital Allocator | 生产态 / production |  |
-| 10 | src/zephyr/signal_fundamental/synth/signal_synthesizer.py | D_SIGNAL — Signal Synthesizer | 生产态 / production |  |
+| 1 | src/zephyr/signal_fundamental/__init__.py | D_SIGNAL Signal Domain | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 2 | src/zephyr/signal_fundamental/capital/capital_allocation_... | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 3 | src/zephyr/signal_fundamental/capital/capital_allocator.py | D_SIGNAL — Capital Allocator（兼容 re-export shim） | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 4 | src/zephyr/signal_fundamental/capital/default_capital_all... | D_SIGNAL — Default Capital Allocator（兼容 re-export shim） | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 5 | src/zephyr/signal_fundamental/gen/aggregator_base.py | D_SIGNAL — Signal Generation Layer | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 6 | src/zephyr/signal_fundamental/gen/implementations/default... | D_SIGNAL — Default Signal Aggregator | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 7 | src/zephyr/signal_fundamental/pipeline.py | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 8 | src/zephyr/signal_fundamental/strategy/capital_allocator.py | D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 9 | src/zephyr/signal_fundamental/strategy/implementations/de... | D_SIGNAL — Default Capital Allocator | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 10 | src/zephyr/signal_fundamental/synth/signal_synthesizer.py | D_SIGNAL — Signal Synthesizer | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -93,8 +93,8 @@ flowchart TD
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING 交易运营"]
@@ -153,8 +153,8 @@ flowchart TD
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING 交易运营"]
