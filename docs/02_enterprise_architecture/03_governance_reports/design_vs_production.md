@@ -29,10 +29,10 @@ ttl: permanent
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4026 | 134.5% |
+| generated | 4024 | 134.4% |
 | stable | 1654 | 55.3% |
-| planned | 129 | 4.3% |
-| deprecated | 4 | 0.1% |
+| deprecated | 78 | 2.6% |
+| planned | 57 | 1.9% |
 
 ## 各域设计成熟度统计
 

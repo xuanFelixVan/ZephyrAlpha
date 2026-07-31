@@ -28,7 +28,7 @@ ttl: permanent
 | 模块数 | 4 | Module Count | 4 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
 | 跨域入边 | 5 | Cross-domain Incoming | 5 |
-| 跨域出边 | 8 | Cross-domain Outgoing | 8 |
+| 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
@@ -169,19 +169,19 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 5 个外部域直接连接（出边 8 条 + 入边 5 条 = 13 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 5 个外部域直接连接（出边 7 条 + 入边 5 条 = 12 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_SHARED["D_SHARED<br/>共享服务"]
-    D_DATA["D_DATA<br/>数据接入层"]
     D_TRADING["D_TRADING<br/>交易运营"]
+    D_DATA["D_DATA<br/>数据接入层"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_ML_TRAIN -->|3条 导入依赖 / import_depends| D_SHARED
-    D_ML_TRAIN -->|2条 data / data| D_DATA
     D_ML_TRAIN -->|2条 导入依赖 / import_depends| D_TRADING
+    D_ML_TRAIN -->|1条 data / data| D_DATA
     D_ML_TRAIN -->|1条 runtime / runtime| D_ORCHESTRATOR
     D_INTELLIGENCE -->|4条 导入依赖 / import_depends| D_ML_TRAIN
     D_SHARED -->|1条 导入依赖 / import_depends| D_ML_TRAIN

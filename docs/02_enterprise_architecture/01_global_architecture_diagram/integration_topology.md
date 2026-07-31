@@ -2,16 +2,16 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-07-31 13:06:15
+> 自动生成时间: 2026-07-31 13:22:52
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
-> 跨域依赖对数: 259
+> 跨域依赖对数: 257
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-07-31 13:06:15
+%% 生成时间: 2026-07-31 13:22:52
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
-%% 跨域依赖对数: 259
+%% 跨域依赖对数: 257
 
 graph LR
 
@@ -112,96 +112,96 @@ graph LR
     D_GOV_DRIFT -->|34条 import_depends| D_SHARED
     D_AUTONOMY_CORE -->|25条 import_depends| D_SHARED
     D_TRADING -->|23条 import_depends| D_SHARED
-    D_GOV_ENFORCEMENT -->|22条 import_depends| D_SHARED
-    D_GOV_ENFORCEMENT -->|22条 import_depends| D_GOV_AUDIT
     D_FEEDBACK_LOOP -->|22条 import_depends| D_SHARED
-    D_AUTONOMY_CORE -->|22条 import_depends| D_INFRA_RUNTIME
     D_GOV_RULE -->|22条 import_depends| D_SHARED
-    D_INTELLIGENCE -->|19条 import_depends| D_SHARED
+    D_GOV_ENFORCEMENT -->|22条 import_depends| D_SHARED
+    D_AUTONOMY_CORE -->|22条 import_depends| D_INFRA_RUNTIME
+    D_GOV_ENFORCEMENT -->|22条 import_depends| D_GOV_AUDIT
     D_DATA -->|19条 import_depends| D_SHARED
+    D_INTELLIGENCE -->|19条 import_depends| D_SHARED
     D_GOV_CODE_QUALITY -->|19条 import_depends| D_SHARED
     D_TRADING -->|16条 import_depends| D_INFRASTRUCTURE
     D_GOV_SCRIPTS -->|14条 import_depends| D_INTEGRATION
-    D_INTEGRATION -->|13条 import_depends| D_INFRA_RUNTIME
     D_GOV_OPS_RESILIENCE -->|13条 import_depends| D_SHARED
-    D_GOVERNANCE -->|12条 import_depends| D_GOV_OPS_RESILIENCE
+    D_INTEGRATION -->|13条 import_depends| D_INFRA_RUNTIME
     D_INFRA_RUNTIME -->|12条 import_depends| D_GOVERNANCE
+    D_GOVERNANCE -->|12条 import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_AUDIT -->|11条 import_depends| D_GOVERNANCE
     D_GOVERNANCE -->|9条 import_depends| D_INTELLIGENCE
-    D_GOVERNANCE -->|9条 import_depends| D_GOV_ENFORCEMENT
     D_INFRA_A2A -->|9条 import_depends| D_SHARED
-    D_INFRASTRUCTURE -->|9条 import_depends| D_SHARED
     D_EX_CORE -->|9条 contract| D_TRADING
-    D_GOV_OPS_RESILIENCE -->|9条 import_depends| D_INTEGRATION
+    D_GOVERNANCE -->|9条 import_depends| D_GOV_ENFORCEMENT
     D_FUNDAMENTAL_SIGNAL -->|9条 import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE -->|9条 import_depends| D_INFRA_RUNTIME
-    D_INFRA_RUNTIME -->|8条 import_depends| D_INTEGRATION
-    D_REPORTING -->|8条 import_depends| D_INFRASTRUCTURE
-    D_GOV_CODE_QUALITY -->|8条 import_depends| D_GOVERNANCE
+    D_INFRASTRUCTURE -->|9条 import_depends| D_SHARED
+    D_GOV_OPS_RESILIENCE -->|9条 import_depends| D_INTEGRATION
     D_GOV_OPS_RESILIENCE -->|8条 import_depends| D_GOVERNANCE
-    D_EX_CORE -->|7条 contract| D_GOVERNANCE
+    D_GOV_CODE_QUALITY -->|8条 import_depends| D_GOVERNANCE
+    D_REPORTING -->|8条 import_depends| D_INFRASTRUCTURE
+    D_INFRA_RUNTIME -->|8条 import_depends| D_INTEGRATION
+    D_GOV_DRIFT -->|7条 import_depends| D_GOV_AUDIT
+    D_GOV_SCRIPTS -->|7条 import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT -->|7条 import_depends| D_GOV_ENFORCEMENT
     D_FEEDBACK_LOOP -->|7条 import_depends| D_FBL_DIAGNOSERS
     D_GOV_OPS_RESILIENCE -->|7条 import_depends| D_OPS
-    D_GOV_DRIFT -->|7条 import_depends| D_GOV_AUDIT
+    D_EX_CORE -->|7条 contract| D_GOVERNANCE
     D_GOV_DRIFT -->|7条 import_depends| D_GOVERNANCE
-    D_GOV_AUDIT -->|7条 import_depends| D_GOV_ENFORCEMENT
-    D_GOV_SCRIPTS -->|7条 import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT -->|6条 import_depends| D_GOV_DRIFT
+    D_GOV_SCRIPTS -->|6条 import_depends| D_GOV_RULE
     D_FEEDBACK_LOOP -->|6条 import_depends| D_FBL_DETECTORS
     D_TRADING -->|6条 import_depends| D_INFRA_RUNTIME
-    D_GOV_ENFORCEMENT -->|6条 import_depends| D_GOV_CODE_QUALITY
-    D_GOV_SCRIPTS -->|6条 import_depends| D_GOV_RULE
-    D_GOV_AUDIT -->|6条 import_depends| D_GOV_DRIFT
-    D_GOV_ENFORCEMENT -->|6条 import_depends| D_SECURITY
-    D_GOVERNANCE -->|6条 import_depends| D_INFRA_A2A
     D_GOVERNANCE -->|6条 import_depends| D_INFRASTRUCTURE
-    D_GOV_OPS_RESILIENCE -->|6条 import_depends| D_GOV_AUDIT
+    D_GOVERNANCE -->|6条 import_depends| D_INFRA_A2A
     D_GOVERNANCE -->|6条 import_depends| D_SECURITY
+    D_GOV_ENFORCEMENT -->|6条 import_depends| D_GOV_CODE_QUALITY
+    D_GOV_ENFORCEMENT -->|6条 import_depends| D_SECURITY
+    D_GOV_OPS_RESILIENCE -->|6条 import_depends| D_GOV_AUDIT
+    D_GOV_AUDIT -->|5条 import_depends| D_SECURITY
+    D_COMPLIANCE -->|5条 import_depends| D_SECURITY
+    D_GOVERNANCE -->|5条 import_depends| D_INTEGRATION
     D_INFRA_RUNTIME -->|5条 import_depends| D_SECURITY
     D_GOV_SCRIPTS -->|5条 import_depends| D_DATA
     D_SECURITY -->|5条 import_depends| D_GOV_AUDIT
-    D_PF_CORE -->|5条 import_depends| D_BACKTEST
-    D_FUNDAMENTAL_SIGNAL -->|5条 import_depends| D_TRADING
-    D_MKT_DATA -->|5条 data| D_DATA
-    D_GOVERNANCE -->|5条 import_depends| D_INTEGRATION
-    D_GOV_AUDIT -->|5条 import_depends| D_GOV_CODE_QUALITY
-    D_GOV_AUDIT -->|5条 import_depends| D_SECURITY
-    D_COMPLIANCE -->|5条 import_depends| D_SECURITY
     D_INTEGRATION -->|5条 import_depends| D_INTELLIGENCE
-    D_GOV_OPS_RESILIENCE -->|4条 import_depends| D_SECURITY
+    D_PF_CORE -->|5条 import_depends| D_BACKTEST
+    D_GOV_AUDIT -->|5条 import_depends| D_GOV_CODE_QUALITY
+    D_MKT_DATA -->|5条 data| D_DATA
+    D_FUNDAMENTAL_SIGNAL -->|5条 import_depends| D_TRADING
     D_AUTONOMY_CORE -->|4条 import_depends| D_INTEGRATION
-    D_SHARED -->|4条 import_depends| D_INFRA_RUNTIME
-    D_EX_CORE -->|4条 import_depends| D_INFRASTRUCTURE
-    D_INFRA_RECOVERY -->|4条 import_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME -->|4条 import_depends| D_GOV_OPS_RESILIENCE
-    D_GOV_SCRIPTS -->|4条 import_depends| D_GOV_AUDIT
-    D_FACTOR -->|4条 import_depends| D_SHARED
-    D_GOVERNANCE -->|4条 import_depends| D_GOV_AUDIT
-    D_SECURITY -->|4条 import_depends| D_GOV_RULE
+    D_GOV_OPS_RESILIENCE -->|4条 import_depends| D_SECURITY
     D_TRADING -->|4条 import_depends| D_GOVERNANCE
-    D_INTELLIGENCE -->|4条 import_depends| D_ML_TRAIN
-    D_INTEGRATION -->|4条 import_depends| D_GOVERNANCE
-    D_FEEDBACK_LOOP -->|4条 import_depends| D_GOVERNANCE
+    D_SECURITY -->|4条 import_depends| D_GOV_RULE
     D_GOV_OPS_RESILIENCE -->|4条 import_depends| D_INFRA_A2A
-    D_OPS -->|4条 import_depends| D_SHARED
-    D_GOVERNANCE -->|4条 import_depends| D_GOV_RULE
-    D_FACTOR -->|4条 import_depends| D_DATA
-    D_RISK -->|4条 import| D_TRADING
-    D_INFRA_RUNTIME -->|4条 import_depends| D_GOV_RULE
     D_GOVERNANCE -->|4条 import_depends| D_OPS
-    D_GOV_DRIFT -->|3条 import_depends| D_SECURITY
-    D_GOV_ENFORCEMENT -->|3条 import_depends| D_GOVERNANCE
-    D_SECURITY -->|3条 import_depends| D_INFRA_RUNTIME
-    D_INFRA_RUNTIME -->|3条 import_depends| D_TRADING
-    D_INFRA_RUNTIME -->|3条 import_depends| D_INTELLIGENCE
-    D_INFRA_RUNTIME -->|3条 import_depends| D_FEEDBACK_LOOP
-    D_EX_CORE -->|3条 import_depends| D_FACTOR
-    D_EX_CORE -->|3条 import_depends| D_BACKTEST
-    %% ... 还有 159 条跨域依赖未显示
+    D_GOVERNANCE -->|4条 import_depends| D_GOV_AUDIT
+    D_FEEDBACK_LOOP -->|4条 import_depends| D_GOVERNANCE
+    D_GOVERNANCE -->|4条 import_depends| D_GOV_RULE
+    D_INFRA_RECOVERY -->|4条 import_depends| D_GOV_AUDIT
+    D_GOV_SCRIPTS -->|4条 import_depends| D_GOV_AUDIT
+    D_SHARED -->|4条 import_depends| D_INFRA_RUNTIME
+    D_INTEGRATION -->|4条 import_depends| D_GOVERNANCE
+    D_INFRA_RUNTIME -->|4条 import_depends| D_GOV_RULE
+    D_OPS -->|4条 import_depends| D_SHARED
+    D_RISK -->|4条 import| D_TRADING
+    D_INFRA_RUNTIME -->|4条 import_depends| D_GOV_OPS_RESILIENCE
+    D_EX_CORE -->|4条 import_depends| D_INFRASTRUCTURE
+    D_INTELLIGENCE -->|4条 import_depends| D_ML_TRAIN
+    D_GOV_RULE -->|3条 import_depends| D_GOVERNANCE
+    D_GOV_REPAIR -->|3条 import_depends| D_GOV_OPS_RESILIENCE
+    D_GOVERNANCE -->|3条 import_depends| D_DATA
+    D_ML_TRAIN -->|3条 import_depends| D_SHARED
+    D_GOVERNANCE -->|3条 import_depends| D_GOV_CODE_QUALITY
+    D_GOVERNANCE -->|3条 import_depends| D_GOV_DRIFT
+    D_GOV_REPAIR -->|3条 import_depends| D_OPS
+    D_BACKTEST -->|3条 import_depends| D_SHARED
+    D_GOV_OPS_RESILIENCE -->|3条 import_depends| D_INFRA_RECOVERY
+    D_INFRA_RUNTIME -->|3条 import_depends| D_INFRA_A2A
+    %% ... 还有 157 条跨域依赖未显示
 
     %% 统计
     %% 域总数: 72
-    %% 跨域依赖对数: 259
-    %% 跨域依赖边总数: 1729
+    %% 跨域依赖对数: 257
+    %% 跨域依赖边总数: 1721
 
     %% Top 10 依赖对
     %% 1. D_INFRA_RUNTIME -> D_SHARED: 163 条
