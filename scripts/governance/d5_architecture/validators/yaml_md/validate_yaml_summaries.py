@@ -77,6 +77,9 @@ SCAN_ENTRIES = [
     ("frontend", ARCH_MODEL / "frontend", True),
     ("cross-cutting", ARCH_MODEL / "cross-cutting", True),
     ("technology", ARCH_MODEL / "technology", True),
+    ("data", ARCH_MODEL / "data", True),
+    ("events", ARCH_MODEL / "events", True),
+    ("domain", ARCH_MODEL / "domain", True),
 ]
 
 
@@ -91,6 +94,31 @@ def _count_by(items: list[dict], field: str) -> dict[str, int]:
             val = "(empty)"
         counts[val] = counts.get(val, 0) + 1
     return counts
+
+
+def _check_count_dim(
+    items: list[dict],
+    item_field: str,
+    summary: dict,
+    summary_key: str,
+    file_label: str,
+    errors: list[str],
+) -> None:
+    """检查 summary 中某个分组维度（如 by_domain/by_frequency）与实际数据是否一致。
+
+    若 summary 中不存在该维度键则跳过（返回 None），避免对无此维度的文件误报。
+    """
+    declared = summary.get(summary_key, {})
+    if not isinstance(declared, dict) or not declared:
+        return
+    actual = _count_by(items, item_field)
+    for key, declared_count in sorted(declared.items()):
+        actual_count = actual.get(key, 0)
+        if declared_count != actual_count:
+            errors.append(f"{file_label}: summary.{summary_key}.{key}={declared_count}，实际={actual_count}")
+    for key, actual_count in sorted(actual.items()):
+        if key not in declared:
+            errors.append(f"{file_label}: {item_field}={key} 存在 {actual_count} 个，summary.{summary_key} 未声明")
 
 
 def validate_yaml_summaries() -> tuple[bool, list[str]]:
@@ -108,7 +136,7 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                 continue
             items = None
             item_key = None
-            for key in ("modules", "services", "capabilities", "technologies"):
+            for key in ("modules", "services", "capabilities", "technologies", "entities", "events"):
                 candidate = data.get(key)
                 if isinstance(candidate, list):
                     items = candidate
@@ -126,6 +154,8 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                 or summary.get("total_technologies")
                 or summary.get("total_capabilities")
                 or summary.get("total_services")
+                or summary.get("total_entities")
+                or summary.get("total_events")
             )
             if declared_total is not None and declared_total != actual_total:
                 errors.append(f"{file_label}: summary 声称 {declared_total} 个 {item_key}，实际 {actual_total} 个")
@@ -180,6 +210,9 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                     actual_count = actual.get(quadrant, 0)
                     if declared != actual_count:
                         errors.append(f"{file_label}: summary.by_quadrant.{quadrant}={declared}，实际={actual_count}")
+            _check_count_dim(items, "domain", summary, "by_domain", file_label, errors)
+            _check_count_dim(items, "frequency", summary, "by_frequency", file_label, errors)
+            _check_count_dim(items, "audit_level", summary, "by_audit_level", file_label, errors)
     registry_path = ARCH_MODEL / "module_id_registry.yaml"
     if registry_path.exists():
         data = load_yaml(registry_path)

@@ -76,6 +76,7 @@ from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, g
 from _shared.module_translation_loader import get_module_translation, get_module_name_bilingual, get_module_desc_bilingual, get_module_plain  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
+from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
@@ -1082,11 +1083,12 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     # 注意：不要在链接前加 emoji（如 🖼️）——会干扰 markdown 渲染器把 [text](url) 识别为链接。
     safe_name_html = f"{number:02d}_{domain_id.replace('-', '_').lower()}.html"
     try:
-        html_rel = (OUTPUT_DIR / safe_name_html).relative_to(REPO_ROOT).as_posix()
+        # HTML 集中在 _zoomable_html/ 子文件夹（zoomable_html.emit_zoomable_html 联动生成）
+        html_rel = (OUTPUT_DIR / HTML_SUBDIR / safe_name_html).relative_to(REPO_ROOT).as_posix()
         html_url = f"{_DOC_HTTP_BASE}/{html_rel}"
     except ValueError:
         # output-dir 在仓库根之外时降级为相对路径（罕见，仅 --output-dir 手动覆盖时触发）
-        html_url = safe_name_html
+        html_url = f"{HTML_SUBDIR}/{safe_name_html}"
     lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
     lines.append("")
 
@@ -1283,7 +1285,10 @@ def main() -> None:
                     safe_name = did.replace("-", "_").lower()
                     out_path = output_dir / f"{number:02d}_{safe_name}.md"
                     _atomic_write(out_path, content)
-                    print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
+                    # 联动生成可缩放 HTML 到 _zoomable_html/ 子文件夹（md 刷新即 HTML 刷新）
+                    html_path = emit_zoomable_html(out_path, content)
+                    html_info = f" +HTML({HTML_SUBDIR}/{html_path.name})" if html_path else ""
+                    print(f"[OK] 生成 {out_path} ({len(content)} 字符){html_info}")
                     success += 1
             print(f"\n共生成 {success}/{len(domain_ids)} 个域文档")
             # 治本：清理残留文件（解决只增不删）
@@ -1303,6 +1308,13 @@ def main() -> None:
             )
             if deleted_arch:
                 print(f"[CLEANUP] 删除 {len(deleted_arch)} 个过时 _architecture.md 孤儿制品: {deleted_arch}")
+            # 3. 清理 _zoomable_html/ 子文件夹中过时的 HTML（域被删除时联动 HTML 不残留）
+            expected_html = {name.replace(".md", ".html") for name in expected_docs}
+            deleted_html = cleanup_stale_files(
+                output_dir / HTML_SUBDIR, expected_html, r'^\d{2}_d_[a-z0-9_]+\.html$'
+            )
+            if deleted_html:
+                print(f"[CLEANUP] 删除 {len(deleted_html)} 个过时 HTML: {deleted_html}")
         else:
             # 生成单个域的文档
             number = numbering_map.get(args.domain_id, 0)
@@ -1312,7 +1324,10 @@ def main() -> None:
             safe_name = args.domain_id.replace("-", "_").lower()
             out_path = output_dir / f"{number:02d}_{safe_name}.md"
             _atomic_write(out_path, content)
-            print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
+            # 联动生成可缩放 HTML 到 _zoomable_html/ 子文件夹（md 刷新即 HTML 刷新）
+            html_path = emit_zoomable_html(out_path, content)
+            html_info = f" +HTML({HTML_SUBDIR}/{html_path.name})" if html_path else ""
+            print(f"[OK] 生成 {out_path} ({len(content)} 字符){html_info}")
     finally:
         conn.close()
 

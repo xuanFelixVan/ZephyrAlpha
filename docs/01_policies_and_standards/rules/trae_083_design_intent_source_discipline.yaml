@@ -1,0 +1,197 @@
+rule_id: TRAE-083
+title: 设计意图查询真源铁律（问题类型→查询源映射）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-083
+depends_on:
+- TRAE-054
+- TRAE-062
+- TRAE-080
+tags:
+- TRAE
+- design_intent_source
+- L1_foundation
+- ssot_read
+- 四问过滤
+- source_of_truth
+- query_source_mapping
+- 防误判
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-DESIGN-INTENT-SOURCE
+- 设计意图真源
+- 查询源映射
+- 四问前置读设计
+- read_source_discipline
+severity: critical
+scope: design_intent_source_discipline
+domain: TRAE
+triggers:
+- operation: module_deprecate_decision
+- operation: over_engineering_audit
+- operation: cross_domain_duplicate_judgment
+- operation: four_question_filter
+- operation: real_trading_gap_mining
+- operation: candidate_registry_entry
+- operation: design_intent_query
+- operation: module_priority_query
+- operation: module_responsibility_query
+- operation: panorama_position_inference
+sections:
+  design_intent_source:
+    section_type: procedure
+    title: 设计意图查询真源铁律（问题类型→查询源映射）
+    original_rules:
+    - RULE-DESIGN-INTENT-SOURCE
+    conditions:
+    - type: trigger
+      check: 任何需要回答"模块干什么/优先级/门禁/是不是过度工程/是不是跨域重复/要不要弃用/四问②需求驱动"等设计意图问题的操作
+      pass: 先按问题类型→查询源映射表确定正确真源，读取该真源后再下判断
+      fail: 单凭 depgraph 结构状态回答设计意图问题 → 答不上来就臆测 → 误判合法设计为过度工程/跨域重复 → 错误弃用/错误入候选库
+    - type: constraint
+      check: 项目有三类查询真源——结构状态真源(depgraph DB)、设计意图真源(依赖图/架构图文档)、规则数据真源(YAML)。按问题类型机械判定查询源，禁止凭记忆/凭模块名臆测
+      pass: 拿到问题先分类（结构/意图/规则），查对应真源后再回答
+      fail: 用 depgraph 回答设计意图问题（depgraph 只记"谁连谁"，不记"为什么/做什么/是不是互补"）→ 结构无意图 → 臆测填补 → 误判
+    actions:
+    - type: mandatory
+      step: '问题类型→查询源映射表（机械判定，禁止凭记忆）: 【结构状态问题】（谁连谁/建没建/孤儿/状态漂移/build_status/domain_id）→ 真源 depgraph PostgreSQL，工具 extract_depgraph.py。【设计意图问题】（模块干什么/职责边界/优先级P0P1P2/建设门禁/契约输入输出/是不是过度工程/是不是跨域重复/是不是互补/四问②需求驱动/要不要弃用）→ 真源 D:\临时工作区\依赖图\XX-D-*-域.md + D:\临时工作区\架构图\*.md 设计文档。【规则/契约问题】（应该有什么门禁/字段/标准/受控值）→ 真源 docs/01_policies_and_standards/ YAML 文件'
+    - type: mandatory
+      step: '铁律1: 设计意图问题禁止单用 depgraph 回答。depgraph.nodes/edges 只记结构（谁连谁、build_status、路径），不记意图（为什么连、做什么、优先级、门禁、是不是互补）。用结构数据回答意图问题=让哑巴说话=臆测填补=误判根源'
+    - type: mandatory
+      step: '铁律2: 四问过滤（特别是②需求驱动）前置 MUST 读设计文档。四问②"有需求驱动？"是设计意图问题——MUST 先读对应域的 D:\临时工作区\依赖图\XX-D-*-域.md（含模块职责/优先级/门禁/建设状态✅可建❌受限），再结合 depgraph 结构综合判定。禁止单凭 depgraph planned 状态+模块名臆测需求驱动性'
+    - type: mandatory
+      step: '铁律3: 弃用/重复判定双源对比法。判定"模块是否过度工程/跨域重复/职责越界" MUST 双源对比——①读设计文档确认设计意图（这模块设计上干啥、优先级、门禁、与别域是互补还是重复）②查 depgraph 确认当前实现状态（有没有建、连了什么边）③两者对比得出结论。单源（仅 depgraph 或仅设计文档）下弃用判定=违规'
+    - type: mandatory
+      step: '铁律4: 实盘缺口挖掘双源对比法。挖"实盘缺什么" MUST 双源对比——①读依赖图/架构图设计文档确认"设计上应该有什么"（含 P0/P1/P2 优先级+建设门禁）②查 depgraph 确认"实际建了什么"（build_status=generated/stable）③两者之差=真正缺口。单凭 depgraph planned 节点列表挖缺口=把"已设计未建"误判成"缺口"或"重复"，两种误判都错'
+    - type: mandatory
+      step: '铁律5: 设计意图真源声明。正式确立 D:\临时工作区\依赖图\（30+ 域设计文档，含模块清单/职责/优先级/门禁/契约/上下游/建设状态✅可建❌受限）+ D:\临时工作区\架构图\（9+1 架构图，含跨域关系/决策流/数据流/能力卡片）为"模块设计意图真源"。与 depgraph（结构状态真源）、docs/01_policies_and_standards/（规则数据真源）三足鼎立。三源各司其职，禁止互相替代'
+    - type: mandatory
+      step: '判定流程: 拿到一个问题 → ①先问"这是结构状态/设计意图/规则契约哪类问题？" → ②按映射表查对应真源 → ③设计意图问题 MUST 读 D:\临时工作区\依赖图\对应域文档 + 必要时查 depgraph 补结构状态 → ④双源对比后下判断 → ⑤弃用/重复判定 MUST 在证据中引用设计文档原文（章节号+原文）+ depgraph 查询结果'
+    - type: forbidden
+      step: '禁止: 用 depgraph 单源回答设计意图问题（如"这模块是不是过度工程""是不是跨域重复""要不要弃用""四问②需求驱动"）——depgraph 无意图数据，答不上来就臆测，臆测就误判'
+    - type: forbidden
+      step: '禁止: 凭模块名+depgraph planned 状态臆测分类（如看到 report_publisher 就判"机构级"、看到 realtime_pnl_dashboard 就判"跨域重复"）——模块名不承载完整职责，职责在设计文档里'
+    - type: forbidden
+      step: '禁止: 四问过滤不读设计文档就判 q2 需求驱动——q2 是设计意图问题，depgraph planned 状态不等于"无需求驱动"，planned 可能是"有需求但门禁未满足"'
+    - type: forbidden
+      step: '禁止: 单源下弃用判定（仅 depgraph 或仅设计文档）——弃用是不可逆决策（软删除+候选库登记），MUST 双源对比+证据引用'
+    - type: forbidden
+      step: '禁止: 把 D:\临时工作区\依赖图\ 当"草稿"随意忽略——它是模块设计意图真源（含优先级/门禁/契约），不是草稿。称其为"草稿"或"临时文档"=真源认知错误'
+    invariants:
+    - id: DIS-INV-001
+      title: 问题类型三分法
+      description: 查询问题分三类——结构状态(depgraph)、设计意图(依赖图/架构图文档)、规则数据(YAML)。按类型查对应真源，禁止跨类替代
+      enforcement: 人工审查 + AI 操作前必读本规则 + 弃用/重复判定证据中 MUST 引用设计文档原文
+      violation_action: reject_judgment
+    - id: DIS-INV-002
+      title: 设计意图问题禁用 depgraph 单源
+      description: 回答"模块干什么/优先级/门禁/是不是重复/要不要弃用/四问②需求驱动"等设计意图问题，禁止单用 depgraph。MUST 先读 D:\临时工作区\依赖图\对应域文档
+      enforcement: 人工审查 + 候选库条目 four_question.q2_demand_driven.evidence 字段 MUST 引用设计文档章节
+      violation_action: reject_judgment
+    - id: DIS-INV-003
+      title: 弃用判定双源对比
+      description: 任何弃用/重复/过度工程判定 MUST 双源对比（设计文档定义 vs depgraph 实现状态），单源判定无效。证据 MUST 同时引用设计文档原文+depgraph 查询结果
+      enforcement: 人工审查 + 候选库条目 tech_notes 字段 MUST 含双源证据
+      violation_action: reject_judgment
+    - id: DIS-INV-004
+      title: 设计意图真源地位
+      description: D:\临时工作区\依赖图\ + D:\临时工作区\架构图\ 是模块设计意图真源（含职责/优先级/门禁/契约/上下游）。禁止当草稿忽略，禁止用 depgraph 替代
+      enforcement: 人工审查 + AI 操作前必读本规则 §真源声明
+      violation_action: reject_judgment
+    examples:
+    - problem_type: 结构状态问题
+      问题示例: "D_EX_SOR 域有多少节点？MOD-RPT-003 连了哪些边？"
+      正确真源: depgraph PostgreSQL（extract_depgraph.py）
+      错误做法: 去 D:\临时工作区\依赖图\ 翻文档数节点（文档可能滞后于 DB）
+    - problem_type: 设计意图问题
+      问题示例: "MOD-RPT-003 report_publisher 是不是过度工程？要不要弃用？四问②需求驱动？"
+      正确真源: D:\临时工作区\依赖图\10-D-REPORTING-报告域.md（§1.1 P0 核心模块 D-REPORTING-03 Report Publisher，✅可建，职责"所有分析结果汇聚至此发布，微信Webhook+邮件SMTP"）
+      错误做法: 单凭 depgraph planned 状态 + 模块名"report_publisher"臆测"机构级多接收方=个人无需求"→误判弃用
+    - problem_type: 跨域重复判定
+      问题示例: "D_EX_SOR 的 slippage_analyzer 是不是重复 D_REPORTING 的 TCA？"
+      正确真源: '双源对比——①D:\临时工作区\依赖图\09-D-EX-SOR-执行路由域.md（XS-EXT-01 滑点分析，实时执行分析）+ 10-D-REPORTING-报告域.md（D-REPORTING-01 TCA Engine，事后成本分析）②depgraph 确认两者实现状态。结论: 互补非重复（一个实时一个事后，§3.2 产出表明确分工）'
+      错误做法: '单凭 depgraph 看到两个名字相近的节点就判"跨域重复"'
+    - problem_type: 实盘缺口挖掘
+      问题示例: "实盘执行链路缺什么？"
+      正确真源: 双源对比——①D:\临时工作区\依赖图\08-D-EX-CORE + 09-D-EX-SOR 确认设计上应该有什么（含 P0/P1 优先级+门禁）②depgraph 确认实际建了什么（build_status=generated/stable）③两者之差=真正缺口
+      错误做法: 单凭 depgraph planned 节点列表挖缺口（planned 可能是"有需求门禁未满足"非"缺口"，也可能是"已设计未来做"非"现在缺"）
+    common_mistakes:
+    - '❌ 用 depgraph 单源回答设计意图问题——depgraph 无意图数据，臆测填补=误判根源（2026-08-01 D_REPORTING 7模块误删事故根因）'
+    - '❌ 凭模块名臆测分类——report_publisher≠机构级，realtime_pnl_dashboard≠跨域重复，模块名不承载完整职责'
+    - '❌ 四问②需求驱动不读设计文档就判——planned 状态不等于无需求，可能是门禁未满足'
+    - '❌ 弃用判定单源下结论——弃用不可逆，MUST 双源对比+证据引用'
+    - '❌ 把 D:\临时工作区\依赖图\ 当草稿忽略——它是设计意图真源，不是草稿'
+    - '❌ 挖实盘缺口只看 depgraph planned 节点——planned 含义需设计文档澄清（缺口/已设计未来做/门禁未满足三选一）'
+  incident_2026_08_01:
+    section_type: context
+    title: 2026-08-01 D_REPORTING 7模块误删事故（本规则治本动机）
+    original_rules:
+    - RULE-DESIGN-INTENT-SOURCE
+    conditions:
+    - type: trigger
+      check: 本规则正式确立前的历史事故，作为治本动机记录
+      pass: 新规则防止同类事故复发
+      fail: 无本规则 → 同类事故持续复发
+    rationale:
+      what_happened: '2026-08-01 D_REPORTING 过度工程审计中，7个合法设计模块被误判为过度工程/跨域重复并软删除（commit 67c84e43），另2条rejected候选条目录入候选库'
+      root_cause: '审计全程用 depgraph（DB）单源判断设计意图问题（四问过滤②需求驱动、是不是跨域重复、要不要弃用），未读 D:\临时工作区\依赖图\10-D-REPORTING-报告域.md。depgraph 无意图数据，凭模块名臆测——report_publisher误判"机构级"、realtime_pnl_dashboard误判"跨域重复"、risk_report_engine误判"重复D_RISK"。实际设计文档明确7个全是✅可建的合法设计（P0/P1/P2各有职责+门禁）'
+      why_no_guardrail: '"四问过滤铁律"此前只是被引用的概念名，从未被正式定义为TRAE规则，无enforcement无前置检查。TRAE-062 SSoT分类只管"写入真源方向"（YAML→规则数据，DB→架构数据），完全没管"读取真源方向"。D:\临时工作区\依赖图\ 从未被任何规则/契约正式确立为设计意图真源'
+      recovery: '另一AI session执行回滚——7节点build_status恢复planned、edge 9856420恢复、CAND-RPT-001/002从候选库删除、新提交覆盖commit 67c84e43'
+      prevention: '本规则TRAE-083——确立问题类型→查询源映射、四问前置读设计文档、弃用双源对比法、设计意图真源声明。与TRAE-062互补（062管写，083管读）'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-062
+  - TRAE-080
+  design_intent_sources:
+  - 'D:\临时工作区\依赖图\00-总览与索引.md'
+  - 'D:\临时工作区\依赖图\02-D-DATA-数据域.md 至 32-D-BACKTEST-回测引擎域.md（30+ 域设计文档）'
+  - 'D:\临时工作区\依赖图\01-跨域交叉点与因果链.md'
+  - 'D:\临时工作区\依赖图\project-entity-depgraph.yaml'
+  - 'D:\临时工作区\架构图\00-架构图总览与索引.md'
+  - 'D:\临时工作区\架构图\交易决策架构.md'
+  - 'D:\临时工作区\架构图\数据架构.md'
+  - 'D:\临时工作区\架构图\风险架构.md'
+  - 'D:\临时工作区\架构图\治理架构.md'
+  - 'D:\临时工作区\架构图\安全架构.md'
+  - 'D:\临时工作区\架构图\合规架构.md'
+  - 'D:\临时工作区\架构图\Agent架构.md'
+  - 'D:\临时工作区\架构图\学习系统架构.md'
+  - 'D:\临时工作区\架构图\运维架构.md'
+  - 'D:\临时工作区\架构图\集成架构.md'
+  structure_state_sources:
+  - 'PostgreSQL depgraph（localhost:5432，通过 extract_depgraph.py / apply_depgraph.py 访问，详见 TRAE-054）'
+  rule_data_sources:
+  - 'docs/01_policies_and_standards/rules/trae_*.yaml'
+  - 'docs/01_policies_and_standards/_registry/catalogs/*.yaml'
+  scripts:
+  - scripts/governance/extract_depgraph.py
+  - scripts/governance/apply_depgraph.py
+  modules:
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_domain_governance/blueprint.md
+  related_artifacts:
+  - docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
+  - docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/trading_flow_panorama.md
+enforcement:
+  paired_gate_id: null
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  bypass_allowed: false
+  note: '君子协定强制——不新建硬门禁（与TRAE-080四图对齐一致，规则落地优先于门禁自动化）。强制点落在候选库条目字段校验：four_question.q2_demand_driven.evidence MUST引用设计文档章节、弃用条目tech_notes MUST含双源证据。未来可考虑在候选库录入脚本加校验'
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: null
+provenance:
+  extracted_at: '2026-08-01T00:00:00'
+  extracted_by: ai-governance-scaffold
+  reason: '治本2026-08-01 D_REPORTING 7模块误删事故。根因=用depgraph单源回答设计意图问题。本规则确立问题类型→查询源映射、四问前置读设计文档、弃用双源对比法、设计意图真源声明，与TRAE-062互补（062管写，083管读），防同类事故复发'

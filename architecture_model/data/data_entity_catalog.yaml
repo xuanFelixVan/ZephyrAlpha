@@ -7,14 +7,14 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 # v1.0.0: 概念数据实体清单真源,从 target_architecture/data_architecture.md §2 迁移(2026-07-23, B3-doc3)
-#         19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类。
+#         核心业务数据实体（数量以 entities 列表为准,见 summary,禁止手写计数避免漂移）,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类。
 #         永恒原则: PIT/Survivorship 由 scripts/arch_guard/fitness_functions/check_pit_compliance.py + check_survivorship_bias.py 强制执行; Lineage runtime 见 #ARCH-DATA-LINEAGE-001; MDM/Quality/Retention/Classification 由本 schema + fitness_functions 落地
 #         物理表清单(97 张 ClickHouse 表)见 05_dataflow_architecture/data_inventory.md(自动生成)
 #         本文件是"逻辑/概念数据模型",data_inventory.md 是"物理表存储",两者层次不同
 
 module_id: CFG-DATA-ENTITY-CATALOG
 version: "1.0.0"
-description: "概念数据实体清单——19 条核心业务数据实体,分 6 个域。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类(温度×节奏×来源)。从 data_architecture.md §2 迁移。PIT/Survivorship 由 fitness functions 强制执行(见 scripts/arch_guard/fitness_functions/);物理表清单见 data_inventory.md。"
+description: "概念数据实体清单——核心业务数据实体,分 6 个域(数量以 entities 列表为准,见 summary,禁止手写计数避免漂移)。每条含描述/字段族、生命周期、PIT 敏感度、存储 hint、三维分类(温度×节奏×来源)。从 data_architecture.md §2 迁移。PIT/Survivorship 由 fitness functions 强制执行(见 scripts/arch_guard/fitness_functions/);物理表清单见 data_inventory.md。"
 
 # PIT 敏感度图例:
 #   high   = 任何错误都会让回测/归因撒谎(原 🔴 高)
@@ -26,6 +26,16 @@ description: "概念数据实体清单——19 条核心业务数据实体,分 6
 #   temperature: hot(热,实时读写) / warm(温,当日/近期) / cold(冷,历史按需重载)
 #   rhythm:      stream(流,持续到达) / batch(批,周期性快照)
 #   source:      external(外,vendor) / internal(内,系统自产) / derived(派生,由其他实体计算)
+
+summary:
+  total_entities: 19
+  by_domain:
+    market_data: 4
+    reference_master: 3
+    research_factor: 3
+    signal_strategy: 2
+    execution_position: 4
+    risk_pnl: 3
 
 entities:
   # ========== Market Data 域(行情数据) ==========

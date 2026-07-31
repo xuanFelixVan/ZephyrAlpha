@@ -16,7 +16,8 @@ partition:
   type: cross-cutting
   description: >
     技术全景图 SSoT（ThoughtWorks Technology Radar 风格）。
-    43 条技术条目，Adopt/Trial/Assess/Hold/Build 五象限。
+    技术条目数量以 technologies 列表为准（见 summary.total_technologies，禁止手写计数避免漂移），
+    Adopt/Trial/Assess/Hold/Build 五象限。
     活文档，每 3 个月刷新一次。
     来源：technology-landscape.md v1.0.0 迁移。
     2026-07-24 Phase B：新增 G0.5 Python 过渡层 5 条（T-A13~T-A17，ARCH-047 裁定），总数 43→48。
@@ -612,9 +613,9 @@ llm_provider_specialty:
 # 统计摘要
 # =============================================================================
 summary:
-  total_technologies: 43
+  total_technologies: 48
   by_quadrant:
-    adopt: 12
+    adopt: 17
     trial: 9
     assess: 10
     hold: 6

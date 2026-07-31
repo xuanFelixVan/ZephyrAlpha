@@ -60,9 +60,9 @@ tiers:
         physical_path: docs/03_modules/module_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 44
-        status: active
-        description: 44 个模块的 canonical 登记——module_id/layer/blueprint/construction_plan
+        entry_count: 0
+        status: retired
+        description: 已退役（commit 94c44f435b SSoT 收敛）。模块登记数据已合并至 architecture_model/module_id_registry.yaml（REG-001），本文件已删除。
 
       - registry_id: REG-PIPE-001
         name: Pipeline 路由清单

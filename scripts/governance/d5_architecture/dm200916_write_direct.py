@@ -125,6 +125,22 @@ for m in b_track_modules:
         b_track_yaml_lines.append(f"    description: {m['description']}")
 b_track_yaml_block = "\n".join(b_track_yaml_lines)
 
+# === 派生3: 领域事件统计（真源：events/domain_events.yaml，禁止手写计数避免漂移）===
+events_path = BASE / "events" / "domain_events.yaml"
+try:
+    events_data = yaml.safe_load(events_path.read_text(encoding="utf-8")) or {}
+    events_list = events_data.get("events", []) or []
+    event_count = len(events_list)
+    event_domain_count = len(
+        sorted(set(e.get("domain", "") for e in events_list if isinstance(e, dict) and e.get("domain")))
+    )
+except (FileNotFoundError, yaml.YAMLError):
+    event_count = 0
+    event_domain_count = 0
+print(f"领域事件: {event_count} 条 / {event_domain_count} 域")
+
+today = date.today().isoformat()
+
 # 生成 index.yaml 内容（domains 从 depgraph 派生，b_track 从物理文件派生，其余手工模板）
 yaml_content = f"""# v3.0.3: 治本版（b_track 从 layers/b_*.yaml 物理蓝图文件派生，消除手工模板第二真源）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
@@ -184,7 +200,7 @@ partitions:
   description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
 - id: events
   path: events/domain_events.yaml
-  description: 22条领域事件（6域）、事件链、频率等级与运行时声明
+  description: {event_count}条领域事件（{event_domain_count}域）、事件链、频率等级与运行时声明
 - id: ddd-model
   path: domain/ddd_model.yaml
   description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
@@ -221,10 +237,10 @@ global_stats:
   b_track_implemented: {b_track_implemented}
   b_track_skeleton: {b_track_skeleton}
   notes: >
-    {domain_count}域唯一物理分类体系，14层是域的layer_id属性枚举。
+    {domain_count}域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track {b_track_count}横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-07-30'
+  last_updated: '{today}'
 
 query_hints:
 - question: 系统有哪些域？

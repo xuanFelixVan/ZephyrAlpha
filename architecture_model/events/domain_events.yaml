@@ -787,19 +787,20 @@ event_chains:
 # 统计摘要
 # =============================================================================
 summary:
-  total_events: 22
+  total_events: 25
   by_domain:
     research: 3
+    backtest: 3
     signal: 3
     portfolio: 2
     execution: 7
     risk: 4
     ops: 3
   by_frequency:
-    L1: 5
-    L2: 5
+    L1: 7
+    L2: 4
     L3: 5
-    L4: 7
+    L4: 9
   by_audit_level:
-    high: 16
-    medium: 6
+    high: 18
+    medium: 7
