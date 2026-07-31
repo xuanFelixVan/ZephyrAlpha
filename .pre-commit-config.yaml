@@ -299,7 +299,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^.*\\.py$"
-        description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §9 — .py只允许在合法三目录中）"
+        description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §9 — .py只允许在合法三目录中；豁免 Python 平台约定根级文件，豁免清单真源见 detect_orphan_py.py 的 EXCLUDE_NAMES 常量）"
 
       # ── GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）──
       # 权威依据：GOV-DOC-018 文件夹平铺容量阈值协议（T_hard=60/T_soft=120）

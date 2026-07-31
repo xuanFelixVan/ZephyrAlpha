@@ -2,7 +2,9 @@
 root_package = zephyr
 
 # ZephyrAlpha import-linter 配置
-# 真源：src/zephyr/ 实际包结构（37 个顶层包）
+# 真源：src/zephyr/ 实际包结构（业务包随 src/zephyr/ 演进，禁止写死包数计数——会漂移）
+# 维护：新增/重命名/删除 src/zephyr/ 顶层业务包时 MUST 同步 forbidden_modules（shared 除外）
+#   生成校验命令（PowerShell）：Get-ChildItem src/zephyr -Directory | ? { $_.Name -notmatch '^__|^\.|^_' -and (Test-Path "$($_.FullName)/__init__.py") -and $_.Name -ne 'shared' } | % { "zephyr.$($_.Name)" } | Sort-Object
 # 仅保留最核心约束：shared 层禁止 import 业务层（向下依赖原则，AGENTS.md §7 ZephyrBaseError 真源归一）
 # 分层契约的完整守护由 depgraph (PostgreSQL) 拓扑验证承担（apply_depgraph.py，AGENTS.md §11）
 # 未接入 pre-commit（warn-only 诊断用途）；如需强制请登记 GATE-IMPORT-LAYER capability
@@ -15,41 +17,48 @@ type = forbidden
 source_modules =
     zephyr.shared
 forbidden_modules =
-    zephyr.trading
-    zephyr.backtest
-    zephyr.frontend
-    zephyr.market_data
-    zephyr.risk
-    zephyr.ex_core
-    zephyr.ex_sor
-    zephyr.pf_core
-    zephyr.pf_alloc
-    zephyr.position
-    zephyr.factor
-    zephyr.signal_ashare
-    zephyr.signal_fundamental
-    zephyr.signal_quality
-    zephyr.compliance
-    zephyr.reporting
-    zephyr.research
-    zephyr.ml_train
-    zephyr.ml_serve
-    zephyr.intelligence
-    zephyr.knowledge
-    zephyr.autonomy_core
-    zephyr.autonomy_perm
-    zephyr.security
     zephyr.alt_data
+    zephyr.autonomy_core
+    zephyr.backtest
+    zephyr.compliance
     zephyr.cross_asset
-    zephyr.digital_twin
-    zephyr.simulation
-    zephyr.execution_simulation
-    zephyr.sell_decision
+    zephyr.data
     zephyr.data_eng
     zephyr.data_governance
     zephyr.data_security
+    zephyr.digital_twin
+    zephyr.ex_core
+    zephyr.ex_sor
+    zephyr.execution_simulation
+    zephyr.factor
+    zephyr.feedback_loop
+    zephyr.frontend
+    zephyr.gov_audit
+    zephyr.gov_code_quality
+    zephyr.gov_drift
+    zephyr.gov_enforcement
+    zephyr.gov_rule
     zephyr.governance
     zephyr.infrastructure
     zephyr.integration
+    zephyr.intelligence
+    zephyr.market_data
+    zephyr.ml_serve
+    zephyr.ml_train
+    zephyr.orchestrator
+    zephyr.pf_alloc
+    zephyr.pf_core
+    zephyr.position
+    zephyr.red_blue_validator
+    zephyr.reporting
+    zephyr.research
+    zephyr.risk
+    zephyr.security
+    zephyr.sell_decision
+    zephyr.signal_ashare
+    zephyr.signal_fundamental
+    zephyr.signal_quality
+    zephyr.simulation
+    zephyr.trading
 ignore_imports =
     zephyr.shared.contract_bus

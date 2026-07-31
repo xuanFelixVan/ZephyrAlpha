@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "MCP Gateway + 10 Server 集中式配置（mod_inf_013 §12 SSoT）",
+  "description": "MCP Gateway 集中式配置（mod_inf_013 §12 SSoT；servers 数以实际为准，勿写死计数）",
 
   "gateway": {
     "server_id": "mcp_gateway",

@@ -4,7 +4,7 @@
 
 发行版版本以 `pyproject.toml` 为准（当前 2.0.0）。
 
-> **AI 入群规则入口**: [`.trae/rules/project_rules.md`](.trae/rules/project_rules.md)（IDE 自动注入，87 行，全读完再开工）
+> **AI 入群规则入口**: [`.trae/rules/project_rules.md`](.trae/rules/project_rules.md)（IDE 自动注入，全读完再开工；规则体量随项目演进，勿写死行数）
 
 ## 项目结构
 
