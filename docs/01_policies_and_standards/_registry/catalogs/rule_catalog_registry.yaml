@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-31T11:43:18Z'
+generated_at: '2026-07-31T12:10:01Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 186
+total_files: 187
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2256,6 +2256,21 @@ files:
   doc_type: ''
   status: ''
   version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  module_id: REG-MODULE-TRANSLATION-001
+  title: 模块级翻译注册表（中英对照真源）
+  doc_type: register
+  status: active
+  version: 0.1.0
   rule_form: ''
   scope: ''
   stability: ''
