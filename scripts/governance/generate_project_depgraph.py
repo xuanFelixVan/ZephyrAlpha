@@ -1649,7 +1649,7 @@ def collect_all_files() -> list:
 # 安全: 仍全量 DELETE+INSERT DB（事务原子），无 DB 一致性风险。
 # 失效: content_hash 变 → 单文件 miss；domain_derivation 变 → 全缓存失效
 # (fingerprint)；scan 逻辑变 → bump SCAN_LOGIC_VERSION 全失效。
-_SCAN_LOGIC_VERSION = 1  # scan_*_file 逻辑变更时 bump → 全缓存失效
+_SCAN_LOGIC_VERSION = 2  # scan_*_file 逻辑变更时 bump → 全缓存失效（v2: #ARCH-DEPGRAPH-GOV-BARE-IMPORT-001 裸模块导入解析）
 _DEFAULT_CACHE_FILE = PROJECT_ROOT / ".runtime" / "depgraph_scan_cache.json"
 
 
