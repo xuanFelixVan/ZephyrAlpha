@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-31'
-total_scripts: 608
+total_scripts: 610
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -4370,6 +4370,22 @@ scripts:
   path: pre_commit/verify_dedup.py
   description: 在 pre_commit hook 中调用：
   domain: pre_commit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_ede_e2e.py
+  path: tests/smoke_test_ede_e2e.py
+  description: 验证全链路（#ARCH-EDE-TICK-FUEL-001 续）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/smoke_test_ede_path_a.py
+  path: tests/smoke_test_ede_path_a.py
+  description: 验证全链路（#ARCH-EDE-PATHA-SYM-001 修复后）：
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
