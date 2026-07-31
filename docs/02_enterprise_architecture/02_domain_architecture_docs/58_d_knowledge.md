@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 58_d_knowledge / 知识管理 / Knowledge Management
+# 58_d_knowledge / 知识管理域 / Knowledge Management
 
 > **功能简介 / Overview**: 知识管理，负责知识库构建、向量索引和知识检索
 
@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -60,6 +60,14 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_knowledge_vector_memory_blueprint_md design
 ```
+
+### 运营态子图（仅 design_maturity=production 的模块和依赖）
+
+> （无运营态模块 / No production modules）
+
+### 设计态子图（仅 design_maturity=design 的模块和依赖）
+
+> 本域 1 个模块全部为设计态（design），上方全景图即设计态全貌，不再重复绘制。
 
 ## 跨域依赖 / Cross-domain Dependencies
 

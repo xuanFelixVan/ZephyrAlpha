@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 59_d_meta_scripts / 元治理脚本 / D_META_SCRIPTS
+# 59_d_meta_scripts / 元治理脚本域 / D_META_SCRIPTS
 
 > **文档作用 / Purpose**: 展示 元治理脚本（D_META_SCRIPTS）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。含三个视图：全景图（颜色区分运营态/设计态）+ 运营态子图 + 设计态子图；全景图不分页。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -56,6 +56,14 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
 ```
+
+### 运营态子图（仅 design_maturity=production 的模块和依赖）
+
+> （无运营态模块 / No production modules）
+
+### 设计态子图（仅 design_maturity=design 的模块和依赖）
+
+> （无设计态模块 / No design modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 

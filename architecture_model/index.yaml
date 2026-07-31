@@ -376,7 +376,7 @@ query_hints:
 - question: 运行平面分布？
   answer: 读cross_cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross_cutting/capability_heatmap.yaml（能力成熟度热力图，覆盖域数以 capabilities 列表为准）
+  answer: 读cross_cutting/capability_heatmap.yaml（72域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？

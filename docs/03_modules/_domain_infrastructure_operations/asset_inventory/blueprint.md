@@ -5,7 +5,7 @@ title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "3.1.2"
+version: "3.1.3"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -41,7 +41,7 @@ responsibility_domain:
 build_status: stable
 design_maturity: production
 ---
-> module_id: MOD-INF-026 | version: 3.1.2 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-026 | version: 3.1.3 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed
 
 # Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -3863,6 +3863,7 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 | `tests/dependency/test_dependency_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_classifier_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_dashboard_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_discover_all_registries.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_index_generator_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_lifecycle_root.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_metadata.py` | ✅ 已实现 | |

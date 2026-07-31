@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.5"
+version: "2.2.6"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.5 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.6 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -947,6 +947,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_convertible_bond_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_daily_valuation.py` | ✅ 已实现 | |
 | `schemas/categories/market_dragon_tiger.py` | ✅ 已实现 | |
+| `schemas/categories/market_dragon_tiger_seat.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_benchmark.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_nav.py` | ✅ 已实现 | |

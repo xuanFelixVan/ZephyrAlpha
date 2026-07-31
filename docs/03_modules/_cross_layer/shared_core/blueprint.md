@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.2"
+version: "0.19.3"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -393,7 +393,6 @@ build_status: planned
 | `src/zephyr/shared/contracts/compliance_rule.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/contract_bus.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/enums/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/enums/order_enums.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/contract_violation_error.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/data_quality_error.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/execution_rejection_error.py` | ✅ 已实现 | |
@@ -427,7 +426,6 @@ build_status: planned
 | `src/zephyr/shared/contracts/portfolio/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/portfolio/performance_attribution_report.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/portfolio/position.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/position.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/protocols.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/compliance_rule.py` | ⚠️ 骨架 | |
