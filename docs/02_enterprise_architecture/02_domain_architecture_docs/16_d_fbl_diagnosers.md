@@ -201,7 +201,7 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_health_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py -->|config_depends / config_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py -->|config_depends / config_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP 反馈循环引擎"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
@@ -324,7 +324,7 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py
     src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py
     src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py
-    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py -->|导入依赖 / import_depends| D_SHARED
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
@@ -497,9 +497,9 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_reliability_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py -->|config_depends / config_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py -->|config_depends / config_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
-    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py -->|导入依赖 / import_depends| D_SHARED
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP 反馈循环引擎"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py

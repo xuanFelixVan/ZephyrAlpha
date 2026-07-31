@@ -134,11 +134,11 @@ flowchart TD
     src_zephyr_shared_contracts_telemetry_emitter_py ~~~ src_zephyr_shared_contracts_trace_context_py
     src_zephyr_infrastructure_config_app_config_py["(生产态 / production) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
-    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
@@ -146,25 +146,25 @@ flowchart TD
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_fill_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["(生产态 / production) D_TRADING"]
+    D_TRADING["(生产态 / production) D_TRADING 交易运营"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
-    D_FACTOR["(生产态 / production) D_FACTOR"]
+    D_FACTOR["(生产态 / production) D_FACTOR 因子"]
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_data_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
-    D_EX_CORE["(生产态 / production) D_EX_CORE"]
+    D_EX_CORE["(生产态 / production) D_EX_CORE 执行核心"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
-    D_SIGQC["(生产态 / production) D_SIGQC"]
+    D_SIGQC["(生产态 / production) D_SIGQC 信号质量控制"]
     D_SIGQC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
+    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC 组合分配"]
     D_PF_ALLOC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL 基本面信号"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY 代码质量治理"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
@@ -233,11 +233,11 @@ flowchart TD
     src_zephyr_shared_contracts_telemetry_emitter_py ~~~ src_zephyr_shared_contracts_trace_context_py
     src_zephyr_infrastructure_config_app_config_py["(生产态 / production) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
-    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT 审计追踪"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
@@ -245,25 +245,25 @@ flowchart TD
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_fill_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["(生产态 / production) D_TRADING"]
+    D_TRADING["(生产态 / production) D_TRADING 交易运营"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
-    D_FACTOR["(生产态 / production) D_FACTOR"]
+    D_FACTOR["(生产态 / production) D_FACTOR 因子"]
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_data_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
-    D_EX_CORE["(生产态 / production) D_EX_CORE"]
+    D_EX_CORE["(生产态 / production) D_EX_CORE 执行核心"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
-    D_SIGQC["(生产态 / production) D_SIGQC"]
+    D_SIGQC["(生产态 / production) D_SIGQC 信号质量控制"]
     D_SIGQC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
+    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC 组合分配"]
     D_PF_ALLOC -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL 基本面信号"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY 代码质量治理"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py

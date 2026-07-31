@@ -70,21 +70,21 @@ flowchart TD
     src_zephyr_pf_alloc_strategy_lifecycle_event_py["(生产态 / production) strategy_lifecycle_event.py"]
     src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_PF_CORE["(生产态 / production) D_PF_CORE"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_PF_CORE["(生产态 / production) D_PF_CORE 组合核心"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py production
-    class D_INFRASTRUCTURE,D_SHARED,D_GOVERNANCE,D_PF_CORE external_prod
+    class D_SHARED,D_INFRASTRUCTURE,D_GOVERNANCE,D_PF_CORE external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -97,21 +97,21 @@ flowchart TD
     src_zephyr_pf_alloc_strategy_lifecycle_event_py["(生产态 / production) strategy_lifecycle_event.py"]
     src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_PF_CORE["(生产态 / production) D_PF_CORE"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_PF_CORE["(生产态 / production) D_PF_CORE 组合核心"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py production
-    class D_INFRASTRUCTURE,D_SHARED,D_GOVERNANCE,D_PF_CORE external_prod
+    class D_SHARED,D_INFRASTRUCTURE,D_GOVERNANCE,D_PF_CORE external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

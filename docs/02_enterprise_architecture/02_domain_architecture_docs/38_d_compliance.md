@@ -70,7 +70,7 @@ flowchart TD
     src_zephyr_compliance_behavioral_auditor_init_py["(生产态 / production) __init__.py"]
     src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(生产态 / production) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT 漂移检测"]
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -104,7 +104,7 @@ flowchart TD
     src_zephyr_compliance_behavioral_auditor_init_py["(生产态 / production) __init__.py"]
     src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(生产态 / production) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT 漂移检测"]
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT

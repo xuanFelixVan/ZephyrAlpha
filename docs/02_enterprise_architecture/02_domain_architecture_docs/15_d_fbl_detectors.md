@@ -187,7 +187,7 @@ flowchart TD
     src_zephyr_feedback_loop_detectors_anomaly_init_py ~~~ src_zephyr_feedback_loop_detectors_correlation_init_py
     src_zephyr_feedback_loop_detectors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_anomaly_init_py
     src_zephyr_feedback_loop_detectors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_correlation_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP 反馈循环引擎"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
@@ -437,7 +437,7 @@ flowchart TD
     src_zephyr_feedback_loop_detectors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_drift_init_py
     src_zephyr_feedback_loop_detectors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_guard_init_py
     src_zephyr_feedback_loop_detectors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_reliability_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP 反馈循环引擎"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP

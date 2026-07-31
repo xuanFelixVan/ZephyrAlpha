@@ -62,28 +62,28 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) budget_enforcement.py"]
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_OPS["(生产态 / production) D_OPS 反馈循环"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE 运维弹性治理"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE 自治核心"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_AUTONOMY_CORE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME 运行时集成"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_governance_financial_governance_budget_enforcement_py production
-    class D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_OPS,D_AUTONOMY_CORE,D_GOV_SCRIPTS,D_INFRA_RUNTIME external_prod
+    class D_OPS,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_AUTONOMY_CORE,D_GOV_SCRIPTS,D_INFRA_RUNTIME external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -94,28 +94,28 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) budget_enforcement.py"]
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_OPS["(生产态 / production) D_OPS 反馈循环"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE 运维弹性治理"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE 自治核心"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_AUTONOMY_CORE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME 运行时集成"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_governance_financial_governance_budget_enforcement_py production
-    class D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_OPS,D_AUTONOMY_CORE,D_GOV_SCRIPTS,D_INFRA_RUNTIME external_prod
+    class D_OPS,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_AUTONOMY_CORE,D_GOV_SCRIPTS,D_INFRA_RUNTIME external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

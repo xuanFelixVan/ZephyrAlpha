@@ -65,9 +65,9 @@ flowchart TD
     src_zephyr_signal_quality_init_py["(生产态 / production) D_SIGQC — Signal Quality Domain<br/>文件: __init__.py"]
     src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_TRADING["(生产态 / production) D_TRADING"]
+    D_TRADING["(生产态 / production) D_TRADING 交易运营"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
@@ -87,9 +87,9 @@ flowchart TD
     src_zephyr_signal_quality_init_py["(生产态 / production) D_SIGQC — Signal Quality Domain<br/>文件: __init__.py"]
     src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE 跨层契约基础设施"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_TRADING["(生产态 / production) D_TRADING"]
+    D_TRADING["(生产态 / production) D_TRADING 交易运营"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
