@@ -82,7 +82,7 @@ LEGACY_TYPES = (
 # 被 L0/L1/L2 所有层使用，无法归入单一层级行列。
 # 层级违规检测豁免这些域的边（from 或 to 任一端在跨切域即豁免）。
 # 同时豁免测试文件（tests/* 路径）的层级违规——测试可导入任意层。
-CROSS_CUTTING_DOMAINS = frozenset({
+CROSS_CUTTING_DOMAINS = frozenset({  # noqa: gate-vocab  # 业务子集：跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验
     "D_GOV_AUDIT",          # 审计追踪——所有层都需要审计
     "D_GOV_DRIFT",          # 漂移检测——所有层都需要漂移监控
     "D_GOV_ENFORCEMENT",    # 规则执行——所有层都需要门禁

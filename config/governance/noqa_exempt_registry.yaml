@@ -135,6 +135,10 @@ exemptions:
     line: 72
     category: business_subset
     reason: '孤儿节点豁免类型业务子集'
+  - file: scripts/governance/d5_architecture/detect_constraint_violations.py
+    line: 85
+    category: business_subset
+    reason: '跨切域清单业务子集（#ARCH-CROSS-CUTTING-EXEMPT-001）：提供跨层治理服务的域子集，非 target_layer 词表全集校验'
   - file: scripts/governance/d5_architecture/generators/generate_capability_heatmap.py
     line: 109
     category: business_subset
@@ -336,4 +340,4 @@ exemptions:
     category: business_subset
     reason: '业务逻辑：L0/L1 层映射 warm 运行面，其余 cold（非词表成员校验）'
 
-# Statistics: total=73, by_category={'business_subset': 40, 'arch_concept': 6, 'threshold_var': 12, 'no_vocab_source': 14, 'test_fixture': 1}
+# Statistics: total=74, by_category={'business_subset': 41, 'arch_concept': 6, 'threshold_var': 12, 'no_vocab_source': 14, 'test_fixture': 1}

@@ -106,7 +106,7 @@ __all__ = [
 
 
 # ---------------------------------------------------------------------------
-# tests/ 豁免真源（治本2，2026-06-30）
+# tests/ 豁免真源（治本2，2026-06-30；治本4，2026-07-31）
 # ---------------------------------------------------------------------------
 # 病根：tests/ 豁免前缀在 create_guard.py / capability_overlap_gate.py 两处硬编码，
 # 且实现不一致（create_guard L99 先归一再比对；capability_overlap_gate L87 直接 startswith，
@@ -116,25 +116,43 @@ __all__ = [
 # 放此处而非 capability_lookup.py：tests/ 豁免是 gate 行为配置（哪些文件跳过 token 检查），
 # 非能力索引关注点——关注点分离。
 #
+# 治本4（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase A4，2026-07-31）：
+# consumers_accuracy_gate.py:573 baseline-scan 硬编码 `"/tests/" in py_file or
+# py_file.startswith("tests/")` 检查嵌套 tests/ 目录（如 scripts/tests/），但
+# 原 is_test_exempt 仅 startswith 匹配顶级 tests/。将匹配语义从"前缀"升级为
+# "路径段"——任意层级的 tests/ 目录均豁免（scripts/tests/、tests/ 等）。这是更
+# 正确的"测试文件豁免"语义：测试文件无论位于何处都应豁免生产检查。50+ 调用方
+# 语义更宽松（多豁免嵌套测试文件），符合测试豁免意图。
+#
 # 安全约束：本常量是高价值篡改目标（加 "src/" 可豁免所有源码绕过 create_guard），
 # 已纳入 validate_rules_integrity.py RULES_MANIFEST C 层 golden hash 保护。
+# 值保持 ("tests/",) 不变（golden hash 稳定）；匹配逻辑从 startswith 改为段匹配，
+# 段名取 prefix.rstrip("/") 消除尾部斜杠。
 TEST_EXEMPT_PREFIXES: Final[tuple[str, ...]] = ("tests/",)
 
 
 def is_test_exempt(file_path: str) -> bool:
-    """判断文件是否在 tests/ 豁免区（归一化反斜杠后比对，消除 Windows 路径漂移）。
+    """判断文件是否在 tests/ 豁免区（路径段匹配，覆盖嵌套测试目录如 scripts/tests/）。
 
     治本2：封装归一化+比对逻辑，消除两 gate 实现不一致（create_guard 归一化、
     capability_overlap_gate 未归一化）。调用方不再自行实现 startswith 判断。
+
+    治本4（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase A4，2026-07-31）：
+    从 startswith 升级为路径段匹配——不仅匹配顶级 tests/，还匹配任意层级的
+    tests/ 目录（如 scripts/tests/）。consumers_accuracy_gate.py:573 的硬编码
+    `"/tests/" in path` 检查由本函数统一承担，消除调用方自行实现 contains 判断。
 
     Args:
         file_path: 文件相对路径（可能含正斜杠或反斜杠）。
 
     Returns:
         True 表示文件在 tests/ 豁免区（不需要 creation_token / 不检测 capability 重叠）。
+        匹配任意路径段名为 tests 的目录（tests/foo.py、scripts/tests/foo.py 均命中）。
     """
     normalized = file_path.replace("\\", "/")
-    return any(normalized.startswith(prefix) for prefix in TEST_EXEMPT_PREFIXES)
+    segments = normalized.split("/")
+    test_segments = {prefix.rstrip("/") for prefix in TEST_EXEMPT_PREFIXES}
+    return any(seg in test_segments for seg in segments)
 
 
 def run_checker_script(

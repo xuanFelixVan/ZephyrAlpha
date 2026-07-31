@@ -569,8 +569,8 @@ def scan_all_for_consumers_accuracy(
             if idx < 0:
                 continue
             py_file = rel[idx:]
-            # 排除 tests/ 文件
-            if "/tests/" in py_file or py_file.startswith("tests/"):
+            # 排除 tests/ 文件（SSoT: is_test_exempt 路径段匹配，覆盖嵌套 tests/ 目录）
+            if is_test_exempt(py_file):
                 continue
             try:
                 with open(py_file_path, encoding="utf-8", errors="replace") as fh:

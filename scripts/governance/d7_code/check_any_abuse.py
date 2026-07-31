@@ -4,7 +4,7 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/re)
 # [CONSUMERS] .pre-commit-config.yaml gate-any-abuse
-# [STARTUP] pre-commit
+# [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现，不依赖 ruff/mypy
 # [MODIFY-GUARD] 修改阈值需同步更新 AGENTS.md §8 GATE-ANY-ABUSE 条目

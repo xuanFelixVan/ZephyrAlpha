@@ -80,11 +80,12 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 from _shared.constants import EXIT_FINDINGS
+from _common import DB_DISPLAY_NAME  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
-
-# DB_DISPLAY_NAME 内联定义（避免 import _common 触发 IMPORT-INTEGRITY worktree 误报）
-# 真源：scripts/governance/d5_architecture/generators/_common.py DB_DISPLAY_NAME
-DB_DISPLAY_NAME = "depgraph (PostgreSQL)"
+# 治本（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase A3，2026-07-31）：移除内联
+# DB_DISPLAY_NAME 定义——原注释谎称"避免 import _common 触发 IMPORT-INTEGRITY
+# worktree 误报"，实证 18 个 sibling generators 均成功 from _common import
+# DB_DISPLAY_NAME，该借口不成立（陈旧 worktree 兼容代码已无必要）。
 
 # ============================================================
 # 目标文档（半自动维护：生成器只更新 AUTO 标记块内内容）
@@ -482,7 +483,7 @@ def _count_tables_from_dbs() -> dict[str, int]:
                 "SELECT COUNT(*) AS cnt FROM information_schema.tables "
                 "WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
             )
-            result["depgraph (PostgreSQL)"] = cur.fetchone()["cnt"]
+            result[DB_DISPLAY_NAME] = cur.fetchone()["cnt"]
         finally:
             conn.close()
     except Exception:  # noqa: m12-broad-except-legitimate  降级兜底
