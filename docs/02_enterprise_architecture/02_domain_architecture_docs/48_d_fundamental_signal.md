@@ -88,26 +88,26 @@ flowchart TD
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_gen_aggregator_base_py["(生产态 / production) D_SIGNAL — Signal Generation Layer<br/>文件: aggregator_base.py"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
-    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_TRADING
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING
@@ -148,26 +148,26 @@ flowchart TD
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_gen_aggregator_base_py["(生产态 / production) D_SIGNAL — Signal Generation Layer<br/>文件: aggregator_base.py"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
-    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_TRADING
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING

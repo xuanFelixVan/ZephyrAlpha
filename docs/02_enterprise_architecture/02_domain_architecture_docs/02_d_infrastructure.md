@@ -138,9 +138,9 @@ flowchart TD
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
@@ -161,19 +161,20 @@ flowchart TD
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
+    D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_TRADING,D_FACTOR,D_EX_CORE,D_SIGQC,D_PF_ALLOC,D_FUNDAMENTAL_SIGNAL,D_GOVERNANCE external_prod
+    class D_SHARED,D_GOV_AUDIT,D_TRADING,D_FACTOR,D_EX_CORE,D_SIGQC,D_PF_ALLOC,D_FUNDAMENTAL_SIGNAL,D_GOVERNANCE,D_GOV_CODE_QUALITY external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -236,9 +237,9 @@ flowchart TD
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
@@ -259,19 +260,20 @@ flowchart TD
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
+    D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_TRADING,D_FACTOR,D_EX_CORE,D_SIGQC,D_PF_ALLOC,D_FUNDAMENTAL_SIGNAL,D_GOVERNANCE external_prod
+    class D_SHARED,D_GOV_AUDIT,D_TRADING,D_FACTOR,D_EX_CORE,D_SIGQC,D_PF_ALLOC,D_FUNDAMENTAL_SIGNAL,D_GOVERNANCE,D_GOV_CODE_QUALITY external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
