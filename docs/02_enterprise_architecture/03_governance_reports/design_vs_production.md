@@ -20,19 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2854 | 93.3% |
-| design（设计态） | 205 | 6.7% |
+| production（生产态） | 2859 | 92.9% |
+| design（设计态） | 220 | 7.1% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3059** | **100%** |
+| **总计** | **3079** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4024 | 131.5% |
-| stable | 1654 | 54.1% |
-| planned | 123 | 4.0% |
-| deprecated | 78 | 2.5% |
+| generated | 4031 | 130.9% |
+| stable | 1656 | 53.8% |
+| planned | 135 | 4.4% |
+| deprecated | 81 | 2.6% |
 
 ## 各域设计成熟度统计
 
@@ -60,7 +60,7 @@ ttl: permanent
 | D_DATA_SEC | 数据安全与契约 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DIGITAL_TWIN | 数字孪生 | 7 | 7 | 0 | 0 | 100.0% |
 | D_EXEC_SIM | 执行仿真 | 7 | 7 | 0 | 0 | 100.0% |
-| D_EX_CORE | 执行核心 | 14 | 8 | 6 | 0 | 57.1% |
+| D_EX_CORE | 执行核心 | 24 | 8 | 16 | 0 | 33.3% |
 | D_EX_SOR | 执行路由 | 17 | 7 | 10 | 0 | 41.2% |
 | D_FACTOR | 因子 | 86 | 37 | 49 | 0 | 43.0% |
 | D_FBL_DETECTORS | 反馈检测器 | 65 | 65 | 0 | 0 | 100.0% |
@@ -69,7 +69,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
 | D_FRONTEND | 前端 | 12 | 12 | 0 | 0 | 100.0% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 13 | 10 | 3 | 0 | 76.9% |
-| D_GOVERNANCE | 生命周期管理 | 220 | 220 | 0 | 0 | 100.0% |
+| D_GOVERNANCE | 生命周期管理 | 221 | 221 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 124 | 121 | 3 | 0 | 97.6% |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 169 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 26 | 2 | 24 | 0 | 7.7% |
@@ -96,10 +96,10 @@ ttl: permanent
 | D_OPS | 反馈循环 | 11 | 11 | 0 | 0 | 100.0% |
 | D_ORCHESTRATOR | 代理编排器 | 70 | 70 | 0 | 0 | 100.0% |
 | D_PF_ALLOC | 组合分配 | 5 | 2 | 3 | 0 | 40.0% |
-| D_PF_CORE | 组合核心 | 10 | 6 | 4 | 0 | 60.0% |
+| D_PF_CORE | 组合核心 | 14 | 10 | 4 | 0 | 71.4% |
 | D_POSITION | 仓位管理 | 11 | 1 | 10 | 0 | 9.1% |
 | D_REPORTING | 报告 | 12 | 3 | 9 | 0 | 25.0% |
-| D_RISK | 风控 | 12 | 11 | 1 | 0 | 91.7% |
+| D_RISK | 风控 | 15 | 11 | 4 | 0 | 73.3% |
 | D_SECURITY | 对抗验证 | 166 | 166 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
 | D_SEC_SCRIPTS | 安全治理脚本 | 0 | 0 | 0 | 0 | N/A |
@@ -109,7 +109,7 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 | 2 | 2 | 0 | 0 | 100.0% |
 | D_SIMULATION | 仿真 | 10 | 2 | 8 | 0 | 20.0% |
 | D_STRUCT_SCRIPTS | 结构治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_TRADING | 交易运营 | 38 | 37 | 1 | 0 | 97.4% |
+| D_TRADING | 交易运营 | 40 | 37 | 3 | 0 | 92.5% |
 
 ## 生产化率最低的域（Top 10，需优先推进）
 
@@ -120,8 +120,8 @@ ttl: permanent
 | D_POSITION | 仓位管理 | 11 | 1 | 9.1% |
 | D_SIMULATION | 仿真 | 10 | 2 | 20.0% |
 | D_REPORTING | 报告 | 12 | 3 | 25.0% |
+| D_EX_CORE | 执行核心 | 24 | 8 | 33.3% |
 | D_SELL_DECISION | 卖出决策 | 21 | 7 | 33.3% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
 | D_PF_ALLOC | 组合分配 | 5 | 2 | 40.0% |
 | D_ASHARE_SIGNAL | A股特色信号 | 17 | 7 | 41.2% |
-| D_EX_SOR | 执行路由 | 17 | 7 | 41.2% |

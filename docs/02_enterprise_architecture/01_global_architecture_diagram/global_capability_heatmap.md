@@ -140,9 +140,9 @@ ttl: permanent
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | C1 | 数据接入 | 4 | 199 | 166 | 33 | 2.25 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 118 | 56 | 62 | 2.00 | 🟡 部分覆盖 / Partial |
-| C3 | 风险控制 | 2 | 14 | 13 | 1 | 2.50 | 🟡 部分覆盖 / Partial |
-| C4 | 策略决策 | 4 | 41 | 20 | 21 | 2.50 | 🟡 部分覆盖 / Partial |
-| C5 | 执行交易 | 4 | 80 | 53 | 27 | 2.75 | 🟡 部分覆盖 / Partial |
+| C3 | 风险控制 | 2 | 17 | 13 | 4 | 2.50 | 🟡 部分覆盖 / Partial |
+| C4 | 策略决策 | 4 | 43 | 22 | 21 | 2.50 | 🟡 部分覆盖 / Partial |
+| C5 | 执行交易 | 4 | 92 | 53 | 39 | 2.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 13 | 10 | 3 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 51 | 34 | 17 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1004 | 975 | 29 | 2.86 | 🟡 部分覆盖 / Partial |
@@ -163,15 +163,15 @@ ttl: permanent
 | D_SIGLEGACY | 信号遗留设计态 | C2 | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_SIGQC | 信号质量控制 | C2 | L2_domain | 2 | 2 | 0 | 0 | L2 🟡 | 🟡 |
 | D_COMPLIANCE | 合规 | C3 | L2_domain | 2 | 2 | 0 | 0 | L2 🟡 | 🟡 |
-| D_RISK | 风控 | C3 | L2_domain | 12 | 11 | 1 | 9 | L3 🟢 | ✅ |
+| D_RISK | 风控 | C3 | L2_domain | 15 | 11 | 4 | 9 | L3 🟢 | ✅ |
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_PF_ALLOC | 组合分配 | C4 | L2_domain | 5 | 2 | 3 | 1 | L3 🟢 | ✅ |
-| D_PF_CORE | 组合核心 | C4 | L2_domain | 8 | 4 | 4 | 3 | L3 🟢 | ✅ |
+| D_PF_CORE | 组合核心 | C4 | L2_domain | 10 | 6 | 4 | 5 | L3 🟢 | ✅ |
 | D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 21 | 7 | 14 | 0 | L2 🟡 | 🟡 |
-| D_EX_CORE | 执行核心 | C5 | L2_domain | 14 | 8 | 6 | 5 | L3 🟢 | ✅ |
+| D_EX_CORE | 执行核心 | C5 | L2_domain | 24 | 8 | 16 | 5 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 17 | 7 | 10 | 0 | L2 🟡 | 🟡 |
 | D_POSITION | 仓位管理 | C5 | L2_domain | 11 | 1 | 10 | 1 | L3 🟢 | ✅ |
-| D_TRADING | 交易运营 | C5 | L2_domain | 38 | 37 | 1 | 20 | L3 🟢 | ✅ |
+| D_TRADING | 交易运营 | C5 | L2_domain | 40 | 37 | 3 | 20 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ML_TRAIN | 训练 | C6 | L2_domain | 6 | 3 | 3 | 0 | L2 🟡 | 🟡 |
 | D_BACKTEST | 回测 | C7 | L2_domain | 27 | 18 | 9 | 10 | L3 🟢 | ✅ |
@@ -276,12 +276,12 @@ ttl: permanent
 | D_DATA | 数据接入层 | C1 | L3 | 156 |
 | D_FACTOR | 因子 | C2 | L3 | 86 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L3 | 13 |
-| D_RISK | 风控 | C3 | L3 | 12 |
+| D_RISK | 风控 | C3 | L3 | 15 |
 | D_PF_ALLOC | 组合分配 | C4 | L3 | 5 |
-| D_PF_CORE | 组合核心 | C4 | L3 | 8 |
-| D_EX_CORE | 执行核心 | C5 | L3 | 14 |
+| D_PF_CORE | 组合核心 | C4 | L3 | 10 |
+| D_EX_CORE | 执行核心 | C5 | L3 | 24 |
 | D_POSITION | 仓位管理 | C5 | L3 | 11 |
-| D_TRADING | 交易运营 | C5 | L3 | 38 |
+| D_TRADING | 交易运营 | C5 | L3 | 40 |
 | D_BACKTEST | 回测 | C7 | L3 | 27 |
 | D_SIMULATION | 仿真 | C7 | L3 | 10 |
 | D_DATA_GOV | 数据治理 | CC1 | L3 | 10 |

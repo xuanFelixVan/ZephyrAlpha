@@ -30,7 +30,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
 | D_DATA | 数据接入层 | 162 | 150 | +12 |
-| D_GOVERNANCE | 生命周期管理 | 220 | 150 | +70 |
+| D_GOVERNANCE | 生命周期管理 | 221 | 150 | +71 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 169 | 150 | +19 |
 | D_GOV_SCRIPTS | 脚本治理 | 381 | 150 | +231 |
 | D_INFRA_RUNTIME | 运行时集成 | 160 | 150 | +10 |
@@ -102,7 +102,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 125 | 150 | 83.3% | 接近超容 |
 | D_FRONTEND | 前端 | L2_domain | 12 | 150 | 8.0% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 10 | 150 | 6.7% | 正常 |
-| D_GOVERNANCE | 生命周期管理 | L2_domain | 220 | 150 | 146.7% | 超容 |
+| D_GOVERNANCE | 生命周期管理 | L2_domain | 221 | 150 | 147.3% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 121 | 150 | 80.7% | 接近超容 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 169 | 150 | 112.7% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
@@ -129,7 +129,7 @@ ttl: permanent
 | D_OPS | 反馈循环 | L1_foundation | 11 | 150 | 7.3% | 正常 |
 | D_ORCHESTRATOR | 代理编排器 | L1_foundation | 70 | 150 | 46.7% | 正常 |
 | D_PF_ALLOC | 组合分配 | L2_domain | 2 | 150 | 1.3% | 正常 |
-| D_PF_CORE | 组合核心 | L2_domain | 6 | 150 | 4.0% | 正常 |
+| D_PF_CORE | 组合核心 | L2_domain | 10 | 150 | 6.7% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_REPORTING | 报告 | L1_foundation | 3 | 150 | 2.0% | 正常 |
 | D_RISK | 风控 | L2_domain | 11 | 150 | 7.3% | 正常 |
