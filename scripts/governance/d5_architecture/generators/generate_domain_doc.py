@@ -80,6 +80,14 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
+# 本地 HTTP 文档服务器基址（用于生成可缩放 HTML 的浏览器跳转链接）
+# 原理：Trae/VS Code 预览面板对 file:/// 和相对路径链接会在编辑器内打开源码，
+# 只有 http:// 链接会交给外部浏览器渲染。因此需要本地起一个 http server 服务仓库根目录：
+#   python -m http.server 8765 --bind 127.0.0.1   （在仓库根目录执行）
+# 启动脚本：scripts/serve_docs_http.bat（双击即可，gitignore 为 dev-local 工具）。端口变更时同步修改此处。
+# 注意：.html 文件本身已 gitignore（dev-local 衍生产物），故链接仅在生成端开发机可用，这是预期行为。
+_DOC_HTTP_BASE = "http://localhost:8765"
+
 # 蓝图注册表路径（用于 blueprint_id → 蓝图 MD 文件路径跳转链接）
 _BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
@@ -1232,10 +1240,17 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append(f"> 数据源: {DB_DISPLAY_NAME} nodes表 + edges表")
     lines.append("")
     # HTML 可缩放版本快速跳转链接（IDE MD 预览无法无限放大 Mermaid，HTML 版支持 Ctrl+滚轮缩放+拖动平移）
-    # 注意：不要在链接前加 emoji（如 🖼️）——4 字节字符 + 变体选择符会干扰部分 markdown 渲染器
-    # 把 [text](url) 识别为链接，导致链接变成不可点击的纯文本。
+    # 必须用 http:// 链接：Trae 预览面板对 file:/// 和相对路径链接会在编辑器内打开源码，
+    # 只有 http:// 链接会交给外部浏览器渲染。需本地 http server（见 _DOC_HTTP_BASE 注释）。
+    # 注意：不要在链接前加 emoji（如 🖼️）——会干扰 markdown 渲染器把 [text](url) 识别为链接。
     safe_name_html = f"{number:02d}_{domain_id.replace('-', '_').lower()}.html"
-    lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({safe_name_html})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
+    try:
+        html_rel = (OUTPUT_DIR / safe_name_html).relative_to(REPO_ROOT).as_posix()
+        html_url = f"{_DOC_HTTP_BASE}/{html_rel}"
+    except ValueError:
+        # output-dir 在仓库根之外时降级为相对路径（罕见，仅 --output-dir 手动覆盖时触发）
+        html_url = safe_name_html
+    lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
     lines.append("")
 
     # 域基本信息（中英文对照）

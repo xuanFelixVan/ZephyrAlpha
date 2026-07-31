@@ -411,3 +411,9 @@ scripts/governance/reports/
 
 # Domain doc HTML (derived from .md by tmp/md_to_mermaid_html.py, regenerable, 3.5MB each)
 docs/02_enterprise_architecture/02_domain_architecture_docs/*.html
+
+# Local doc HTTP server script (dev-local viewing tool for zoomable-HTML browser links; regenerable)
+scripts/serve_docs_http.bat
+
+# Generated panorama alignment report (regenerable by align_panoramas.py)
+docs/02_enterprise_architecture/generated/
