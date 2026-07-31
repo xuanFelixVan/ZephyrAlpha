@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-31T19:50:54Z
+# 自动生成于 2026-07-31T20:08:40Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-31T19:50:54Z'
+generated_at: '2026-07-31T20:08:40Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 369
+total_scripts: 370
 with_manifest: 314
-missing_manifest: 55
+missing_manifest: 56
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 23
   governance:d4_paths: 4
-  governance:d5_architecture: 104
+  governance:d5_architecture: 105
   governance:d6_security: 15
   governance:d7_code: 40
   governance:d8_doc_sync: 11
@@ -1954,6 +1954,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d5_architecture/generators/zoomable_html.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/panorama_common.py
   owner: governance:d5_architecture
   dimensions: []
@@ -3636,7 +3646,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: true
-  description: 运行时状态备份 — SQLite导出JSON+YAML快照→commit（灾备 §33）
+  description: 运行时状态备份 — PG depgraph + .runtime/handoffs 物理备份（灾备 §33）
   tags:
   - Quick
 - name: meta/compute_sla_metrics.py

@@ -17,7 +17,7 @@ ttl: permanent
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
-> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/13_d_data_gov.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/13_d_data_gov.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 域基本信息 / Domain Overview
 
@@ -58,7 +58,7 @@ flowchart TD
     src_zephyr_data_governance_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
     src_zephyr_data_governance_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
     src_zephyr_data_governance_core_lineage_tracker_py["(生产态 / production) D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>文件: core/lineage_tracker.py"]
-    src_zephyr_data_governance_core_schema_registry_py["(生产态 / production) D-DATA-GOV Schema Registry——表结构注册与查询。<br/>D-DATA-GOV Schema Registry——表结构注册与查询。<br/>文件: core/schema_registry.py"]
+    src_zephyr_data_governance_core_metadata_registry_py["(生产态 / production) D-DATA-GOV Metadata Registry——元数据管理。<br/>D-DATA-GOV Metadata Registry——元数据管理。<br/>文件: core/metadata_registry.py"]
     src_zephyr_data_governance_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
     src_zephyr_data_governance_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
     src_zephyr_data_governance_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
@@ -66,12 +66,12 @@ flowchart TD
     src_zephyr_data_governance_extensions_init_py ~~~ src_zephyr_data_governance_api_init_py
     src_zephyr_data_governance_api_init_py ~~~ src_zephyr_data_governance_core_init_py
     src_zephyr_data_governance_core_init_py ~~~ src_zephyr_data_governance_core_lineage_tracker_py
-    src_zephyr_data_governance_core_lineage_tracker_py ~~~ src_zephyr_data_governance_core_schema_registry_py
-    src_zephyr_data_governance_core_schema_registry_py ~~~ src_zephyr_data_governance_infrastructure_init_py
+    src_zephyr_data_governance_core_lineage_tracker_py ~~~ src_zephyr_data_governance_core_metadata_registry_py
+    src_zephyr_data_governance_core_metadata_registry_py ~~~ src_zephyr_data_governance_infrastructure_init_py
     src_zephyr_data_governance_infrastructure_init_py ~~~ src_zephyr_data_governance_models_init_py
     src_zephyr_data_governance_models_init_py ~~~ src_zephyr_data_governance_services_init_py
-    src_zephyr_data_governance_core_metadata_registry_py["(生产态 / production) D-DATA-GOV Metadata Registry——元数据管理。<br/>D-DATA-GOV Metadata Registry——元数据管理。<br/>文件: core/metadata_registry.py"]
-    src_zephyr_data_governance_core_init_py -->|config_depends / config_depends| src_zephyr_data_governance_core_metadata_registry_py
+    src_zephyr_data_governance_core_schema_registry_py["(生产态 / production) D-DATA-GOV Schema Registry——表结构注册与查询。<br/>D-DATA-GOV Schema Registry——表结构注册与查询。<br/>文件: core/schema_registry.py"]
+    src_zephyr_data_governance_core_init_py -->|config_depends / config_depends| src_zephyr_data_governance_core_schema_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
