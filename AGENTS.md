@@ -1046,20 +1046,20 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
 - **改 DB 节点/路径** → `python scripts/governance/apply_depgraph.py --help`（35+ 子命令）
 - **批量改 DB（多 op 原子事务）** → `python scripts/governance/apply_depgraph.py --batch changes.json`（先 `--dry-run` 预览）。op 清单运行 `--list-ops` 查看（从 `_DOMAIN_OPS`/`_NODE_OPS` 注册表自动派生，真源唯一——禁止手工同步到 docstring/AGENTS.md，§6.2 铁律）；所有 op 共享单一 PostgreSQL 事务，全部成功才 commit，任一失败全部 rollback。批量重命名域 ID 时**禁止**手写 `_tmp_batch_rename.py` 调 `--rename-domain` 单命令循环（失去原子性，部分失败留半成品数据）。
-- **查哪些表不能手写** → `python scripts/governance/sync_yaml_to_depgraph.py --list-readonly-tables`
+- **查哪些表不能手写** → `python scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py --list-readonly-tables`
 - **文件结构变更后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-PATH-TREE reconciler，无需手动）
 - **DB 变更后重生域文档** → 自动完成（GitCommitGateway post-commit GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能），无需手动）
 - **文件删除后重生域文档** → 自动完成（GATE-REGENERATE trigger 已扩展：committed 文件不在磁盘 = 删除 commit 时也触发生成器重生。生成器内置 ghost 过滤，重生后的文档自动排除已删除文件的节点，无需手动 deprecate）
 - **scripts/ 下 .py 增删后重生 manifest** → 自动完成（GitCommitGateway post-commit GATE-MANIFEST reconciler，priority=620，2026-07-01 新增。无需手动跑 generate_script_manifest.py）
 - **铁律：架构文档（02_domain_architecture_docs/ + generated/domains/）由生成器自动产出，禁止手动编辑**。手动编辑会被下次生成器运行覆盖。如需修改内容，改 depgraph 或生成器代码，不要改输出文件。
-- **改了 YAML 规则文件后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-YAML-SYNC reconciler，无需手动）。手动调试可跑 `python scripts/governance/sync_yaml_to_depgraph.py`
+- **改了 YAML 规则文件后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-YAML-SYNC reconciler，无需手动）。手动调试可跑 `python scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py`
 - **改了 rules/ 下规则文件后同步 catalog** → 自动完成（GitCommitGateway post-commit GATE-RULE-AUDIT reconciler（含原 RULE-CATALOG 功能），无需手动）。catalog 真源：`_registry/catalogs/rule_catalog_registry.yaml`（由 `scripts/governance/d3_metadata/generate_rule_catalog.py` 自动生成，60 条规则元数据；#ARCH-024 治本：原 `rules/_index.yaml` 手工索引已删除）
 - **改了 infrastructure_registry.yaml 后同步 registry_master_index** → 自动完成（GitCommitGateway post-commit GATE-REGISTRY-SYNC reconciler（含原 REGISTRY-INDEX 功能），无需手动）
-- **查 PG 运行时健康** → `python scripts/governance/verify_schema_health.py --warn-only`（校验4：死锁/连接饱和/长事务，pre-commit 自动跑；`--skip-runtime` 可跳过）
+- **查 PG 运行时健康** → `python scripts/governance/d11_compliance/verify_schema_health.py --warn-only`（校验4：死锁/连接饱和/长事务，pre-commit 自动跑；`--skip-runtime` 可跳过）
 
 > **GATE-SCHEMA-HEALTH 门禁（ARCH-016/017/018 治本，2026-06-26）**：depgraph (PostgreSQL) Schema 健康度校验，4 项校验（DDL 列一致性/只读触发器/Schema 版本/PG 运行时健康）。**门禁路由**：原独立 `gate-schema-health` 已于 ARCH-017 治本时合并到 **GATE-C2**（run_gate_chain 顺序执行 check_contract_code_drift + check_contract_physical_path + verify_schema_health），`.pre-commit-config.yaml` stages 从 manual 升级为 commit（--no-verify 绕不过 GitCommitGateway in-process gate）。**检测真源**：`scripts/governance/d11_compliance/verify_schema_health.py`（capability=schema_health_verification，aliases 含 GATE-SCHEMA-HEALTH/verify_schema_health/schema_health）。**重定向锚点**：gate_registry.yaml 保留 GATE-SCHEMA-HEALTH 条目（status=deprecated, redirect_to=GATE-C2）供历史引用可追溯。退出码：0=健康/1=漂移/2=脚本错误；模式：--ci 硬阻断（默认）/--warn-only 软警告/--skip-runtime 跳过校验4。
 
-> 改 depgraph 前必须通过 `pg_dump` 或 apply_depgraph.py 内置物理备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/diagnose_depgraph.py`。
+> 改 depgraph 前必须通过 `pg_dump` 或 apply_depgraph.py 内置物理备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/d5_architecture/diagnose_depgraph.py`。
 
 > **ghost 自动检测+自动清理（已实现，勿重复造）**：删除文件 commit 时，GitCommitGateway post-commit 的 `GATE-DELETE-AUDIT` reconciler（含原 GHOST 功能，priority=400）自动调用 `diagnose_depgraph.py` 检测 ghost node（磁盘已删但 DB 残留），报告落盘 `.runtime/reconcile_reports/ghost_*.json`。无需手动跑 diagnose 检测 ghost。**清理路径（2026-07-04 P1 治本，auto_clean 闭环）**：① ghost 数 ≤ 50 → reconciler 自动调 `apply_depgraph.py --cleanup-orphan-nodes` + `--cleanup-orphan-edges` 清理（备份先行：`_backup_depgraph_for_autoclean` 用 F1 裸 psycopg2 connection + copy_expert 导出 nodes/edges CSV 到 `tmp/pg_backups/ghost_autoclean_<ts>/`（.gitignored，与 backup_pg_depgraph 标杆对齐；保留最近 10 个，`_cleanup_old_ghost_backups` 自动清理过期，ARCH-DEBT-BACKUP-CLEANUP 2026-07-08 治本），备份失败 fail-closed 不清理）；② ghost 数 > 50 或解析失败 → 走 warn 不清理（防批量误删），需人工 `apply_depgraph.py --cleanup-orphan-nodes`。阈值 `_GHOST_AUTO_CLEAN_THRESHOLD=50`（reconciliation_registry.py），与 generate_project_depgraph.py `_GHOST_WARNING_THRESHOLD=50` 对齐。trigger 仅覆盖"删除 commit"是 intentional（删除才会产生 ghost），勿扩展到 PG 写入脚本 commit（脚本 commit ≠ DB 内容变更，扩展会引入噪音）。
 
@@ -1275,8 +1275,8 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 |---|------|------|------|
 | 14 | DualDBRouter | **删除** | P2 迁移完成，过渡期前提消失；由 [`get_depgraph_pg_connection()`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py)（PG）+ [`get_db_connection()`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py)（SQLite）双入口覆盖（无路由器，见 §11.4） |
 | 15 | WriteBatcher | **暂缓**（待 L 级） | 真问题（SQLite 单写锁）但 L 级（5000+脚本）需求，当前 S 级 571 脚本无写争抢实证 |
-| 16 | ScriptScheduler | **删除** | [BulkheadExecutorV2](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py)（四池+熔断）已覆盖；MOD-INF-005 已有同名组件 |
-| 17 | ScriptRegistry | **已覆盖** ✅ | 已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py) ScriptRegistry 类覆盖，CT-DB-005 契约对齐现有类 |
+| 16 | ScriptScheduler | **删除** | [BulkheadExecutorV2](file:///d:/ZephyrAlpha/scripts/governance/meta/_concurrency.py)（四池+熔断）已覆盖；MOD-INF-005 已有同名组件 |
+| 17 | ScriptRegistry | **已覆盖** ✅ | 已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/meta/_concurrency.py) ScriptRegistry 类覆盖，CT-DB-005 契约对齐现有类 |
 | 18 | ScriptExecutionLogger | **暂缓**（待 M-1 级） | 571 脚本已达 M-1 下限 500，纯新增低风险，待 JSONL 查询痛点实证后启动 |
 
 **禁止新建的文件**（违反则为重复造轮子）：
@@ -1288,7 +1288,7 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - `script_execution_logger.py` — 待 M-1 级（500+脚本，当前 571 已达）JSONL 查询痛点实证
 
 **已覆盖清单**（不新建，扩展现有）：
-- `script_registry.py` — 已存在于 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py)，CT-DB-005 契约对齐
+- `script_registry.py` — 已存在于 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/meta/_concurrency.py)，CT-DB-005 契约对齐
 
 **跨文档同步修改**（已完成的断链修复）：
 - [audit_orchestrator/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md)：DualDBRouter 引用改为 get_depgraph_pg_connection()（PG）+ get_db_connection()（SQLite）双入口
