@@ -13,9 +13,9 @@ description: |
   与 functional_domain_registry.yaml 的关系：
   - functional_domain_registry.yaml 的 domain_name_zh 是功能域规范名（D_XXX 形式）的 SSoT，
     经 sync_yaml_to_depgraph.py 同步到 DB domains.domain_name，由 domain_name_mapping.py 消费。
-  - 本词汇表的 domain_id_display 类别仅为数据流图的"图示显示名"，含 D_SIGNAL/D_ORDER 等
-    已按裁定#204 改名/废弃的遗留域（functional_domain_registry 不含），二者职责不同，
-    非重复真源。规范域中文名请改 functional_domain_registry.yaml，勿在此重复登记。
+  - 域中文名（含 D_SIGNAL/D_ORDER 等遗留图示用名）单一真源归 functional_domain_registry.yaml
+    （#ARCH-SSOT-GLOSSARY-MERGE-001）。本词汇表原 domain_id_display 类别已删除，避免双重真源；
+    数据流图域中文名改走 domain_name_mapping._domain_en_zh 查询。
 
   类别清单（category 字段）：
   - edge_type：决策/数据流边类型（triggering/informing/constraining/.../produces/consumed by）
@@ -28,7 +28,6 @@ description: |
   - entity_name：数据流 Dataset/Job 实体名（market_data.tick 等）
   - decision_domain_short：决策轨短名域（data/factor/...，非 D_XXX 规范形式）
   - domain_responsibility：功能域核心职责（domain 文件头部展示，14 域各 1-2 句）
-  - domain_id_display：数据流图示显示名（D_XXX 形式，含遗留域）
   - data_source：数据采集中文名（miniqmt/akshare/...）
   - table_name：数据清单表中文名（tick_data/daily_kline/...）
   - layer_name_short：导航页短名层（L0_infrastructure→基础设施层，无层号前缀；
@@ -40,7 +39,7 @@ tier: tier_1_governance
 status: active
 version: 1.0.0
 created: '2026-07-30'
-last_updated: '2026-07-30'
+last_updated: '2026-07-31'
 unique_key:
 - category
 - en

@@ -1375,7 +1375,7 @@ dependencies:
   target_name: terminology-loader
   type: runtime
   strength: hard
-  description: '数据流图生成器经 get_flat_map 合并 8 类别（entity_name/domain_id_display/scope/build_status/maturity/pit_policy/trigger_type/edge_type）为扁平 _ZH_MAP；loader 缺失则回退硬编码 fallback。SSoT 分类铁律 TRAE-062。'
+  description: '数据流图生成器经 get_flat_map 合并 7 类别（entity_name/scope/build_status/maturity/pit_policy/trigger_type/edge_type）为扁平 _ZH_MAP；域中文名经 domain_name_mapping 加载（#ARCH-SSOT-GLOSSARY-MERGE-001）；loader 缺失则回退硬编码 fallback。SSoT 分类铁律 TRAE-062。'
   contract_anchor: terminology_glossary.yaml
   direction: upstream
   valid_since: '2026-07-30'

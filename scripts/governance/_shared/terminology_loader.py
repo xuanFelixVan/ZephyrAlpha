@@ -27,10 +27,11 @@
 3. 返回空串 / 原文（最终降级，generator 显示 en-only）
 
 与 domain_name_mapping.py 的分工：
-- domain_name_mapping.py：功能域规范名（D_XXX）的 SSoT，读 functional_domain_registry.yaml / DB。
+- domain_name_mapping.py：功能域规范名（D_XXX，含遗留图示用名）的 SSoT，
+  读 functional_domain_registry.yaml / DB。
 - 本模块：图示术语翻译（边类型/构建状态/作用域/实体名/数据源/表名 等），
-  其中 domain_id_display 类别是数据流图示显示名（含 D_SIGNAL 等遗留域），
-  与 functional_domain_registry 的规范域名职责不同（详见 YAML 注释）。
+  不含域中文名——域中文名真源归 functional_domain_registry.yaml
+  （#ARCH-SSOT-GLOSSARY-MERGE-001），原 domain_id_display 类别已从本词汇表删除。
 
 用法 / Usage:
     from _shared.terminology_loader import get_category_map, get_flat_map, get_zh, get_en_zh
@@ -71,7 +72,7 @@ _CATEGORY_CACHE: dict[str, dict[str, str]] | None = None
 
 # ── 硬编码 fallback（仅跨生成器共享类别，YAML 缺失时降级）──────────────────────
 # 不含生成器专用大类别（entity_name/table_name/data_source/decision_domain_short/
-# domain_id_display/layer_name_short）——这些类别 YAML 缺失时返回空，generator 显示 en-only。
+# layer_name_short）——这些类别 YAML 缺失时返回空，generator 显示 en-only。
 # 仅覆盖 edge_type/build_status/maturity/pit_policy/trigger_type/scope 6 类共享术语。
 _HARDCODED_FALLBACK: dict[str, dict[str, str]] = {
     "edge_type": {

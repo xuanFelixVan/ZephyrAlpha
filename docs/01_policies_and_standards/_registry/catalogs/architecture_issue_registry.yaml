@@ -10341,7 +10341,7 @@ entries:
     4. generate_dataflow_diagram 改用 domain_name_mapping 查域中文名（代替 glossary domain_id_display）
     遗留域中文名经 domain_name_mapping 的 YAML fallback（_load_domain_names_from_yaml）查到。
   fix_phase: '本轮施工（2026-07-31）'
-  status: decided
+  status: resolved
   related_adjudication: 'trae_062 (SSoT 真源分类铁律), 裁定#204 (域改名)'
   created: '2026-07-31'
   last_updated: '2026-07-31'
