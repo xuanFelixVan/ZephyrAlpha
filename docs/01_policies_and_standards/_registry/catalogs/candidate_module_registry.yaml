@@ -218,3 +218,421 @@ entries:
     next_review_date: '2027-07-31'
     review_frequency: yearly
     last_review_outcome: "rejected,确认死域。除非D_PF_CORE多策略出现重大缺口,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-PTC-001: Pre-Trade Checker / 盘前检查器（rejected，四问①挂——重复实现）
+  # 来源: application_flows.md 审查 (2026-07-30)
+  # ----------------------------------------------------------
+  - id: CAND-PTC-001
+    name: "Pre-Trade Checker / 盘前统一检查器"
+    aliases: ["盘前检查", "PreTradeChecker", "下单前校验", "UnifiedPreTradeValidator"]
+    domain: D_RISK
+    domain_status: active
+    domain_node_count: 12
+    sub_layer: "L1 事前风控"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: "MOD-RSK-PTC (勿新增——已由组合实现)"
+        target_build_status: production
+        target_neighbors:
+          upstream: ["MOD-RSK-003"]
+          downstream: ["MOD-EX-002"]
+        insertion_description: "拟插入 D_RISK L1 事前风控区,但已由 risk_validator+risk_validation_bridge+position_limit_checker 三件组合承接,无需新增独立节点"
+        target_edges: []
+        note: "四问①挂:重复实现。四图位置仅作'若强行实现会插哪'的参考,实际不新增节点"
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "下单请求 → [盘前检查] → 风控放行/拒绝"
+        upstream_data: ["OrderRequest", "PositionSnapshot", "RiskLimitConfig"]
+        downstream_data: ["OrderApproved事件", "OrderRejected事件"]
+        insertion_description: "在 D_EX_CORE 下单链路入口,已有 risk_validation_bridge 承接"
+      decisiongraph:
+        has_position: true
+        target_layer: "L6"
+        target_track: "execution"
+        decision_frequency: intraday
+        decision_path: "下单 → [盘前检查] → 放行/拒绝决策"
+        insertion_description: "L6 执行层入口,已由组合实现"
+      blueprint:
+        has_position: true
+        target_ref: "11-D-RISK-风控域.md §1 L1 事前风控"
+        design_maturity: production
+    description: "盘前统一检查器:下单前校验持仓限额/资金/合规/黑名单等,返回放行或拒绝"
+    capability: ""
+    problem_it_solves: "下单前需统一校验风控约束,避免违规下单"
+    trigger_signals:
+      - "risk_validation_bridge 出现性能瓶颈或校验漏项"
+      - "新增合规规则需统一入口"
+    keywords: ["盘前检查", "pre_trade", "下单校验", "风控前置", "事前风控"]
+    upstream_deps:
+      - {contract: CTR-001, from_domain: D_DATA, dep_type: H, availability: available, note: "持仓快照"}
+    downstream_consumers:
+      - {consumer: "MOD-EX-002", contract: "OrderApproved", note: "放行→执行"}
+    contracts_to_produce: []
+    contracts_to_consume:
+      - {id: CTR-001, note: "行情/持仓数据"}
+    prerequisites:
+      - {condition: "risk_validation_bridge 出现缺口", check: "grep 验证现有承接完整性", met: false, note: "当前组合完整承接,无缺口"}
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-RSK-risk_validator", "MOD-RSK-risk_validation_bridge", "MOD-RSK-position_limit_checker"], evidence: "三件组合已完整实现盘前校验链路,grep 确认覆盖持仓/资金/合规/黑名单"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "无缺口痛点,组合实现运行良好"}
+      q3_domain_alive: {result: true, evidence: "D_RISK 12节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "application_flows.md (2026-07-30 四问过滤审查)"
+    source_section: "§Pre-Trade Checker 候选"
+    original_id: "PTC"
+    estimated_complexity: M
+    estimated_effort: ""
+    tech_notes: "独立 Pre-Trade Checker 是重复造轮子;现有 risk_validator+risk_validation_bridge+position_limit_checker 三件组合已覆盖"
+    risks: ["硬新增独立模块会导致双真源:同一校验逻辑两处维护"]
+    alternatives: "维持现有 risk_validation_bridge 组合。代价:无,组合已完整"
+    tags: ["重复功能", "rejected", "已实现组合", "防重复造轮子"]
+    search_terms: ["pre trade check", "盘前检查", "pre trade validator", "下单前校验"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "rejected,q1已实现。除非 risk_validation_bridge 组合出现重大缺口,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-WFO-001: Walk-Forward Optimizer / 滚动前进优化器（deferred，四问②挂——无需求驱动）
+  # 来源: 量化经典过度工程模块 (2026-07-31)
+  # ----------------------------------------------------------
+  - id: CAND-WFO-001
+    name: "Walk-Forward Optimizer / 滚动前进优化器"
+    aliases: ["滚动优化", "WalkForwardOpt", "WF Optimization", "前推回测优化"]
+    domain: D_BACKTEST
+    domain_status: active
+    domain_node_count: 8
+    sub_layer: "L2 参数优化"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-BT-WFO
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-BT-001"]
+          downstream: ["MOD-BT-003"]
+        insertion_description: "插入 D_BACKTEST §2 参数优化区,在 BT-01 基础回测之后、BT-03 策略挑选之前"
+        target_edges:
+          - {from: "MOD-BT-001", to: "MOD-BT-WFO", type: runtime, reason: "回测结果→滚动优化"}
+          - {from: "MOD-BT-WFO", to: "MOD-BT-003", type: runtime, reason: "优化参数→策略挑选"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "历史数据 → 基础回测 → [滚动前进优化] → 稳健参数集"
+        upstream_data: ["HistoricalBarData", "BacktestResult"]
+        downstream_data: ["RobustParameterSet", "OverfitReport"]
+        insertion_description: "在 D_BACKTEST 数据流中段,回测输出之后"
+      decisiongraph:
+        has_position: true
+        target_layer: "L1"
+        target_track: "backtest"
+        decision_frequency: daily
+        decision_path: "回测 → [滚动前进优化] → 参数稳健性决策"
+        insertion_description: "L1 离线决策层,回测之后"
+      blueprint:
+        has_position: true
+        target_ref: "13-D-BACKTEST-回测域.md §2 参数优化 WFO"
+        design_maturity: design
+    description: "Walk-Forward 滚动优化:训练窗固定、测试窗前推,评估参数稳健性防过拟合,产出样本外表现曲线"
+    capability: ""
+    problem_it_solves: "回测参数过拟合风险——单一全样本优化容易拟合历史噪声,实盘表现衰退"
+    trigger_signals:
+      - "实盘策略表现与回测显著背离(过拟合迹象)"
+      - "用户主动要求参数稳健性验证"
+      - "D_BACKTEST 进入 Phase2 参数优化阶段"
+    keywords: ["滚动优化", "walk_forward", "过拟合", "参数稳健性", "样本外"]
+    upstream_deps:
+      - {contract: CTR-001, from_domain: D_DATA, dep_type: H, availability: available, note: "历史数据"}
+      - {contract: "CTR-BT-01", from_domain: D_BACKTEST, dep_type: H, availability: available, note: "回测结果喂入"}
+    downstream_consumers:
+      - {consumer: "MOD-BT-003", contract: "RobustParameterSet", note: "稳健参数→策略挑选"}
+    contracts_to_produce:
+      - {id: "CTR-BT-WFO(拟定)", name: "RobustParameterSet"}
+    contracts_to_consume:
+      - {id: CTR-001, note: "历史数据"}
+    prerequisites:
+      - {condition: "D_BACKTEST 基础回测稳定", check: "MOD-BT-001=production", met: true}
+      - {condition: "实盘出现过拟合迹象", check: "回测 vs 实盘表现背离", met: false, note: "当前无明显过拟合"}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep 无 walk_forward 实现"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "无实盘过拟合触发,纯学术架构"}
+      q3_domain_alive: {result: true, evidence: "D_BACKTEST 8节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "需滚动窗口计算+统计检验,非AI语义理解可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "量化经典过度工程模块清单"
+    source_section: "§参数稳健性 WFO"
+    original_id: "WFO"
+    estimated_complexity: L
+    estimated_effort: "12人天"
+    tech_notes: "滚动窗口管理+参数优化器+样本外统计检验+过拟合报告"
+    risks: ["滚动窗口选择本身可能引入偏差", "计算量大需并行化"]
+    alternatives: "靠 D_BACKTEST 基础回测 + 人工参数审查。代价:过拟合风险不可量化"
+    tags: ["过度工程", "deferred", "学术架构", "防过拟合", "待需求驱动"]
+    search_terms: ["walk forward", "滚动优化", "walk forward optimization", "参数稳健"]
+    related_candidates: ["CAND-RSK-014"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-01-31'
+    review_frequency: half_yearly
+    last_review_outcome: "首次登记,待实盘出现过拟合迹象或 D_BACKTEST Phase2 启动时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-AISA-001: AI Sentiment Analyzer / AI 舆情分析器（candidate，四问待评估）
+  # 来源: A股政策驱动需求 (2026-07-31)
+  # ----------------------------------------------------------
+  - id: CAND-AISA-001
+    name: "AI Sentiment Analyzer / AI 舆情分析器"
+    aliases: ["舆情分析", "SentimentAnalyzer", "新闻情绪", "政策舆情", "AI舆情"]
+    domain: D_INTELLIGENCE
+    domain_status: active
+    domain_node_count: 5
+    sub_layer: "L2 非结构化数据"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-INT-AISA
+        target_build_status: design
+        target_neighbors:
+          upstream: ["MOD-INT-001"]
+          downstream: ["MOD-SIG-002"]
+        insertion_description: "插入 D_INTELLIGENCE §2 非结构化区,在 INT-01 数据采集之后、SIG-02 信号生成之前(拟定,待四问确认)"
+        target_edges:
+          - {from: "MOD-INT-001", to: "MOD-INT-AISA", type: runtime, reason: "新闻/公告→舆情分析"}
+          - {from: "MOD-INT-AISA", to: "MOD-SIG-002", type: runtime, reason: "舆情分数→信号"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "新闻/公告/研报 → [AI舆情分析] → 舆情分数信号"
+        upstream_data: ["NewsText", "AnnouncementText", "ResearchReport"]
+        downstream_data: ["SentimentScore", "SentimentEvent"]
+        insertion_description: "在 D_INTELLIGENCE 数据流中段,非结构化输入之后(拟定)"
+      decisiongraph:
+        has_position: true
+        target_layer: "L2"
+        target_track: "intelligence"
+        decision_frequency: event_driven
+        decision_path: "数据采集 → [AI舆情分析] → 舆情信号决策"
+        insertion_description: "L2 情报层,数据采集之后(拟定)"
+      blueprint:
+        has_position: true
+        target_ref: "57-D-INTELLIGENCE-智能域.md §2 非结构化 AISA"
+        design_maturity: design
+    description: "AI 舆情分析:对新闻/公告/研报做 NLP 情绪打分,产出舆情分数与事件信号,辅助 A 股政策驱动行情判断"
+    capability: ""
+    problem_it_solves: "A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后"
+    trigger_signals:
+      - "实盘出现政策驱动的板块异动但信号系统未捕获"
+      - "用户主动要求舆情辅助决策"
+      - "D_INTELLIGENCE 进入 Phase2 非结构化扩展"
+    keywords: ["舆情", "sentiment", "NLP", "政策驱动", "新闻情绪", "AI分析"]
+    upstream_deps:
+      - {contract: "CTR-INT-01", from_domain: D_INTELLIGENCE, dep_type: H, availability: available, note: "非结构化数据采集"}
+    downstream_consumers:
+      - {consumer: "MOD-SIG-002", contract: "SentimentScore", note: "舆情→信号"}
+    contracts_to_produce:
+      - {id: "CTR-INT-AISA(拟定)", name: "SentimentScore"}
+    contracts_to_consume:
+      - {id: "CTR-INT-01", note: "新闻/公告文本"}
+    prerequisites:
+      - {condition: "D_INTELLIGENCE 数据采集稳定", check: "MOD-INT-001=production", met: true}
+      - {condition: "确认非AI可替代", check: "四问④评估", met: false, note: "待评估:TRAE AI 可能直接胜任舆情理解,无需建独立模块"}
+    four_question:
+      q1_implemented: {result: pending, equivalent_nodes: [], evidence: "待评估:需 grep 确认 D_INTELLIGENCE 是否已有舆情实现"}
+      q2_demand_driven: {result: pending, trigger_pain_point: "A 股政策驱动行情响应滞后", evidence: "待评估:痛点存在但需确认是否驱动到需要独立模块"}
+      q3_domain_alive: {result: true, evidence: "D_INTELLIGENCE 5节点,活跃"}
+      q4_ai_replaceable: {result: pending, evidence: "待评估:TRAE AI 可能直接做 NLP 舆情理解,或需建模块固化 prompt 与事件抽取"}
+      blocking_question: pending
+      result: pending
+    status: candidate
+    priority: P1
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "A股政策驱动需求讨论"
+    source_section: "§舆情辅助决策"
+    original_id: "AISA"
+    estimated_complexity: L
+    estimated_effort: "20人天"
+    tech_notes: "NLP 情绪模型+事件抽取+prompt 工程+舆情分数聚合。关键决策:自建模块 vs 依赖 TRAE AI 运行时理解"
+    risks: ["舆情数据源合规性", "NLP 模型漂移需定期重训", "若 TRAE AI 可替代则建模块属过度工程"]
+    alternatives: "依赖 TRAE AI 运行时做舆情理解(不建模块)。代价:无固化信号产出,每次需 AI 重新分析"
+    tags: ["candidate", "待四问评估", "A股特色", "政策驱动", "AI替代待定"]
+    search_terms: ["sentiment", "舆情", "news sentiment", "政策舆情", "NLP情绪"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2026-10-31'
+    review_frequency: quarterly
+    last_review_outcome: "首次登记为 candidate,待四问评估。重点评估 q4:TRAE AI 是否可替代独立模块"
+
+  # ----------------------------------------------------------
+  # CAND-BACL-001: Broker ACL 三层架构（rejected，四问②挂——无重构驱动）
+  # 来源: governance_views.md 审查 (2026-07-30)
+  # ----------------------------------------------------------
+  - id: CAND-BACL-001
+    name: "Broker ACL 三层架构重构 / 经纪商访问控制分层"
+    aliases: ["BrokerACL三层", "经纪商权限分层", "Broker访问控制重构", "三层ACL"]
+    domain: D_INTEGRATION
+    domain_status: active
+    domain_node_count: 6
+    sub_layer: "L1 适配层"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: "MOD-INT-BACL (勿新增——现有2 adapter够用)"
+        target_build_status: production
+        target_neighbors:
+          upstream: ["MOD-INT-001"]
+          downstream: ["MOD-EX-003"]
+        insertion_description: "拟重构 D_INTEGRATION L1 适配层为三层ACL,但现有2 adapter平铺已满足,无重构驱动"
+        target_edges: []
+        note: "四问②挂:无重构驱动。位置仅作'若强行重构会变成哪样'的参考"
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "下单 → [ACL权限校验] → 经纪商适配 → 执行"
+        upstream_data: ["OrderRequest", "BrokerCredential"]
+        downstream_data: ["BrokerAuthenticatedOrder"]
+        insertion_description: "现有2 adapter平铺已承接,重构无新增数据流价值"
+      decisiongraph:
+        has_position: true
+        target_layer: "L6"
+        target_track: "execution"
+        decision_frequency: intraday
+        decision_path: "下单 → [ACL校验] → 经纪商选择 → 执行"
+        insertion_description: "L6 执行层,现有结构已覆盖"
+      blueprint:
+        has_position: true
+        target_ref: "21-D-INTEGRATION-集成域.md §1 适配层"
+        design_maturity: production
+    description: "将经纪商访问控制重构为三层ACL(认证/授权/审计分层),提升安全与可扩展性"
+    capability: ""
+    problem_it_solves: "多经纪商接入时权限管理散乱,理论上有分层重构价值"
+    trigger_signals:
+      - "经纪商数量超过5个且权限规则出现冲突"
+      - "合规审计要求 ACL 分层留痕"
+    keywords: ["ACL", "经纪商", "访问控制", "权限分层", "broker", "重构"]
+    upstream_deps:
+      - {contract: "CTR-INT-01", from_domain: D_INTEGRATION, dep_type: H, availability: available, note: "经纪商凭证"}
+    downstream_consumers:
+      - {consumer: "MOD-EX-003", contract: "AuthenticatedOrder", note: "已认证订单→执行"}
+    contracts_to_produce: []
+    contracts_to_consume:
+      - {id: "CTR-INT-01", note: "经纪商凭证"}
+    prerequisites:
+      - {condition: "现有2 adapter出现权限管理瓶颈", check: "经纪商数量与冲突检测", met: false, note: "当前2 adapter平铺够用,无瓶颈"}
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-INT-broker_adapter_qmt", "MOD-INT-broker_adapter_akshare"], evidence: "现有2 adapter平铺已实现经纪商访问控制"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "2 adapter平铺够用,无重构驱动;纯'目标重构方向'无具体触发痛点"}
+      q3_domain_alive: {result: true, evidence: "D_INTEGRATION 6节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q2
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "governance_views.md (2026-07-30 四问过滤审查)"
+    source_section: "§Broker ACL 三层候选"
+    original_id: "BACL"
+    estimated_complexity: M
+    estimated_effort: ""
+    tech_notes: "三层ACL重构属过度设计;现有2 broker adapter平铺(qmt+akshare)已满足访问控制需求"
+    risks: ["强行重构会破坏现有稳定适配层,引入新缺陷"]
+    alternatives: "维持现有2 adapter平铺。代价:无,已满足需求"
+    tags: ["过度工程", "rejected", "无重构驱动", "防过度设计"]
+    search_terms: ["broker acl", "经纪商权限", "访问控制分层", "三层 acl"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "rejected,q2无重构驱动。除非经纪商数量超5个且权限规则冲突,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-PC-001: Policy Compiler / 策略编译器（rejected，四问④挂——AI 替代）
+  # 来源: 四问过滤审查 (2026-07-30)
+  # ----------------------------------------------------------
+  - id: CAND-PC-001
+    name: "Policy Compiler / 策略编译器"
+    aliases: ["策略编译", "PolicyCompiler", "规则编译器", "RuleCompiler", "DSL编译"]
+    domain: D_GOV_RULE
+    domain_status: active
+    domain_node_count: 7
+    sub_layer: "L2 规则引擎"
+    panorama_position:
+      depgraph:
+        has_position: false
+        note: "四问④挂:AI替代。不建代码模块,规则→检查器翻译由 TRAE AI 运行时胜任,无需独立编译器节点"
+      dataflowgraph:
+        has_position: false
+        note: "AI替代,无独立数据流节点;翻译由 AI 运行时完成"
+      decisiongraph:
+        has_position: false
+        note: "AI替代,无决策层节点"
+      blueprint:
+        has_position: false
+        note: "AI替代,不建蓝图模块;翻译逻辑由 TRAE AI prompt 承载"
+    description: "策略编译器:将高层策略 DSL 编译为可执行检查器代码,实现规则→检查器自动翻译"
+    capability: ""
+    problem_it_solves: "策略规则到检查器代码的翻译需自动化,避免手工编写检查器"
+    trigger_signals:
+      - "规则数量爆炸且频繁变更,人工编写检查器成本高"
+      - "TRAE AI 翻译能力不足(当前未出现)"
+    keywords: ["策略编译", "policy_compiler", "DSL", "规则翻译", "检查器生成"]
+    upstream_deps:
+      - {contract: "CTR-GOV-01", from_domain: D_GOV_RULE, dep_type: H, availability: available, note: "策略 DSL"}
+    downstream_consumers:
+      - {consumer: "MOD-RSK-checkers", contract: "CompiledChecker", note: "编译产物→检查器(拟)"}
+    contracts_to_produce: []
+    contracts_to_consume:
+      - {id: "CTR-GOV-01", note: "策略 DSL"}
+    prerequisites:
+      - {condition: "TRAE AI 翻译能力不足", check: "AI 规则→检查器翻译测试", met: false, note: "当前 TRAE AI 可胜任规则翻译"}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep 无 policy_compiler 实现"}
+      q2_demand_driven: {result: true, trigger_pain_point: "规则→检查器翻译有自动化需求", evidence: "规则变更时需翻译为检查器"}
+      q3_domain_alive: {result: true, evidence: "D_GOV_RULE 7节点,活跃"}
+      q4_ai_replaceable: {result: true, evidence: "规则→检查器翻译属语义理解+代码生成,TRAE AI 运行时直接胜任,硬造编译器不现实且过度工程"}
+      blocking_question: q4
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "四问过滤审查 (2026-07-30)"
+    source_section: "§Policy Compiler 候选"
+    original_id: "PC"
+    estimated_complexity: XL
+    estimated_effort: ""
+    tech_notes: "AI替代:规则→检查器翻译由 TRAE AI 运行时胜任,建独立编译器属过度工程。翻译逻辑由 AI prompt 承载,无需代码模块固化"
+    risks: ["硬造编译器会与 TRAE AI 能力重叠,双真源维护"]
+    alternatives: "依赖 TRAE AI 运行时做规则→检查器翻译。代价:无固化产物,但 AI 翻译足够可靠"
+    tags: ["AI替代", "rejected", "过度工程", "语义理解类", "防硬造编译器"]
+    search_terms: ["policy compiler", "策略编译", "rule compiler", "dsl 编译", "规则翻译器"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "rejected,q4 AI替代。除非 TRAE AI 翻译能力显著退化,否则不再评估"
