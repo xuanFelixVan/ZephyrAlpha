@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-31T03:03:51Z
+# 自动生成于 2026-07-31T05:15:27Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-31T03:03:51Z'
+generated_at: '2026-07-31T05:15:27Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 34
+total_registries: 35
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 262
+  entry_count: 264
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -94,6 +94,14 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 5
+  status: active
+- registry_id: REG-EXT-CONTRACT-001
+  name: 外部契约验证登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/external_contract_verification_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 2
   status: active
 - registry_id: GOV-001
   name: 前沿大模型综合能力排名登记表
@@ -213,7 +221,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 184
+  entry_count: 185
   status: active
 - registry_id: CFG-rule-enforcement-registry
   name: 门禁规则集登记表

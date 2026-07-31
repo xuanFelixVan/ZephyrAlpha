@@ -266,35 +266,35 @@ graph TD
         schemas_categories_market_etf_benchmark_py["(生产态 / production) etf_benchmark 表 DDL-as-Code（category_id: mark...<br/>文件: market_etf_benchmark.py"]
         schemas_categories_market_etf_list_py["(生产态 / production) etf_list 表 DDL-as-Code（category_id: market_et...<br/>文件: market_etf_list.py"]
     end
-    schemas_categories_fundamental_analyst_forecast_py -->|config_depends / config_depends| schemas_categories_fundamental_cashflow_statement_py
-    schemas_categories_cross_validation_log_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_analyst_forecast_py -->|config_depends / config_depends| schemas_categories_cross_validation_log_py
+    schemas_categories_fundamental_cashflow_statement_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_disclosure_plan_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_balance_sheet_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_equity_pledge_detail_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_fundamental_industry_class_suppl_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_income_statement_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_industry_class_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_restricted_shares_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_fundamental_share_change_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_fundamental_share_unlock_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_adj_factor_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_industry_class_suppl_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_rights_issue_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_macro_edb_data_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_adj_factor_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_macro_macro_data_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_auction_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_share_unlock_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_macro_edb_data_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_share_change_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_auction_book_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_auction_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_block_trade_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_concept_board_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_concept_board_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_concept_sector_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_cb_iv_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_daily_valuation_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_block_trade_detail_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_dragon_tiger_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_convertible_bond_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_etf_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_block_trade_detail_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_concept_sector_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_concept_board_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_etf_benchmark_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_daily_valuation_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_dragon_tiger_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_dragon_tiger_seat_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_etf_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -425,10 +425,10 @@ graph TD
         src_zephyr_data_ch_writer_py["(生产态 / production) ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6...<br/>文件: ch_writer.py"]
         src_zephyr_data_cli_py["(生产态 / production) 数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>文件: cli.py"]
     end
+    src_zephyr_data_buffered_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_buffered_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_ch_reader_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_ch_reader_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
     src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
@@ -440,25 +440,25 @@ graph TD
     scripts_ch_apply_fundamental_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
     scripts_ch_apply_exchange_columns_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_apply_exchange_columns_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    scripts_ch_apply_rbac_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    scripts_ch_lint_symbol_convention_py -->|config_depends / config_depends| scripts_ch_apply_fundamental_tables_ddl_py
     scripts_ch_apply_market_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_apply_market_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    scripts_ch_apply_rbac_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    scripts_ch_recovery_drill_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    scripts_ch_lint_symbol_convention_py -->|config_depends / config_depends| scripts_ch_apply_fundamental_tables_ddl_py
     scripts_ch_apply_timezone_migration_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     scripts_ch_data_inventory_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    scripts_ch_recovery_drill_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    scripts_ch_verify_schema_truth_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     scripts_ch_verify_exchange_coverage_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_verify_exchange_coverage_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
     scripts_ch_verify_exchange_coverage_py -->|导入依赖 / import_depends| scripts_ch_apply_exchange_columns_py
-    scripts_ch_verify_schema_truth_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     scripts_ops_verify_alert_channels_py -->|导入依赖 / import_depends| src_zephyr_data_alerter_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
     D_FACTOR["(设计态 / design) D_FACTOR"]
     D_FACTOR -.->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     D_MKT_DATA["(生产态 / production) D_MKT_DATA"]
@@ -469,8 +469,8 @@ graph TD
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_init_py
@@ -527,38 +527,40 @@ graph TD
     end
     src_zephyr_data_news_dedup_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_provider_base_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
-    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_ifind_provider_py
+    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
+    src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_satellite_geospatial_engine_init_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_data_progress_store_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     src_zephyr_data_quality_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
@@ -566,8 +568,6 @@ graph TD
     src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_satellite_geospatial_engine_init_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_data_metrics_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_progress_store_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_progress_store_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
@@ -606,30 +606,30 @@ graph TD
         tests_zephyr_data_test_tick_subscriber_py["(生产态 / production) tick_subscriber 单元测试（含 Phase C: WalWriter...<br/>文件: test_tick_subscriber.py"]
     end
     src_zephyr_data_sector_kline_downloader_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_task_queue_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_trading_calendar_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_sector_snapshot_collector_py -->|导入依赖 / import_depends| src_zephyr_data_sector_ranking_engine_py
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| src_zephyr_data_wal_writer_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_task_queue_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_trading_calendar_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_symbol_normalizer_init_py -->|导入依赖 / import_depends| src_zephyr_data_symbol_normalizer_normalizer_py
     tests_zephyr_data_test_tick_subscriber_py -->|测试依赖 / test_depends| src_zephyr_data_tick_subscriber_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     tests_data_test_market_quality_validator_py -->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_table_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_data_symbol_normalizer_init_py
-    D_MKT_DATA["(生产态 / production) D_MKT_DATA"]
-    D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    D_MKT_DATA["(生产态 / production) D_MKT_DATA"]
+    D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_FACTOR["(生产态 / production) D_FACTOR"]
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
@@ -639,7 +639,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_scheduler_py,src_zephyr_data_sector_kline_downloader_py,src_zephyr_data_sector_ranking_engine_py,src_zephyr_data_sector_snapshot_collector_py,src_zephyr_data_speed_tester_py,src_zephyr_data_symbol_normalizer_init_py,src_zephyr_data_symbol_normalizer_normalizer_py,src_zephyr_data_table_registry_py,src_zephyr_data_task_queue_py,src_zephyr_data_tick_subscriber_py,src_zephyr_data_trading_calendar_py,src_zephyr_data_wal_codec_init_py,src_zephyr_data_wal_writer_py,tests_data_test_market_quality_validator_py,tests_data_test_pit_query_py,tests_zephyr_data_test_cross_source_validator_py,tests_zephyr_data_test_tick_subscriber_py production
     class src_zephyr_data_symbol_normalizer design
-    class D_SHARED,D_GOV_ENFORCEMENT,D_GOV_CODE_QUALITY,D_MKT_DATA,D_GOV_SCRIPTS,D_FACTOR external_prod
+    class D_SHARED,D_GOV_ENFORCEMENT,D_GOV_CODE_QUALITY,D_GOV_SCRIPTS,D_MKT_DATA,D_FACTOR external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -812,299 +812,299 @@ graph TD
         tests_zephyr_data_test_cross_source_validator_py["(生产态 / production) cross_source_validator 单元测试（P1-4 多源交叉...<br/>文件: test_cross_source_validator.py"]
         tests_zephyr_data_test_tick_subscriber_py["(生产态 / production) tick_subscriber 单元测试（含 Phase C: WalWriter...<br/>文件: test_tick_subscriber.py"]
     end
-    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_tick_subscriber_py
     src_zephyr_data_buffered_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_buffered_writer_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_capability_validator_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
+    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_backfill_checker_py -->|导入依赖 / import_depends| src_zephyr_data_tick_subscriber_py
     src_zephyr_data_ch_reader_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_ch_reader_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_local_replay_py
-    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_quality_gate_py
-    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_progress_store_py
-    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_scheduler_py
-    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_speed_tester_py
-    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_kline_resampler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     src_zephyr_data_integrity_checker_py -->|导入依赖 / import_depends| src_zephyr_data_backfill_checker_py
     src_zephyr_data_integrity_checker_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     src_zephyr_data_integrity_checker_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_local_replay_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_cross_source_validator_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     src_zephyr_data_cross_source_validator_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_cross_source_validator_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_cross_source_validator_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_cross_source_validator_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_local_replay_py
+    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| src_zephyr_data_quality_gate_py
     src_zephyr_data_news_dedup_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     src_zephyr_data_news_dedup_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_news_dedup_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_local_replay_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_kline_resampler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_progress_store_py
+    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_speed_tester_py
+    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_cli_py -->|导入依赖 / import_depends| src_zephyr_data_scheduler_py
     src_zephyr_data_pit_query_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    src_zephyr_data_pit_query_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_pit_query_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_pit_query_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_provider_base_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_sector_kline_downloader_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     src_zephyr_data_sector_kline_downloader_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_sector_kline_downloader_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_sector_kline_downloader_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_provider_base_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_alerter_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_backfill_checker_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_buffered_writer_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_error_classifier_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_integrity_checker_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_local_replay_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_metrics_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_progress_store_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_task_queue_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_trading_calendar_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_eastmoney_news_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_baostock_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_cls_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tickflow_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_rss_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tqcenter_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_ifind_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tdx_provider_py
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tushare_provider_py
+    src_zephyr_data_sector_kline_downloader_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_eastmoney_news_provider_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_baostock_provider_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_cls_provider_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tickflow_provider_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_rss_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_baostock_provider_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_ifind_provider_py
-    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tdx_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_eastmoney_news_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tickflow_provider_py
     src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tushare_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tdx_provider_py
+    src_zephyr_data_speed_tester_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_rss_provider_py
     src_zephyr_data_sector_snapshot_collector_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     src_zephyr_data_sector_snapshot_collector_py -->|导入依赖 / import_depends| src_zephyr_data_sector_ranking_engine_py
-    src_zephyr_data_init_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_init_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_init_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_init_py -->|导入依赖 / import_depends| src_zephyr_data_scheduler_py
-    src_zephyr_data_main_py -->|导入依赖 / import_depends| src_zephyr_data_cli_py
-    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| src_zephyr_data_local_replay_py
-    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| src_zephyr_data_wal_writer_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_buffered_writer_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_alerter_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_backfill_checker_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_error_classifier_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_integrity_checker_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_local_replay_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_metrics_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_progress_store_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_task_queue_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_trading_calendar_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_cls_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_baostock_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_ifind_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_eastmoney_news_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tickflow_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tqcenter_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tushare_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_tdx_provider_py
+    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_rss_provider_py
+    src_zephyr_data_main_py -->|导入依赖 / import_depends| src_zephyr_data_cli_py
+    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| src_zephyr_data_local_replay_py
+    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
+    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_baostock_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_eastmoney_news_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_miniqmt_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_akshare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_ifind_provider_py
+    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
+    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
     src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tickflow_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
-    src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tqcenter_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_ifind_provider_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
-    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_akshare_provider_py
-    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_miniqmt_provider_py
-    src_zephyr_data_implementations_init_py -->|导入依赖 / import_depends| src_zephyr_data_implementations_ifind_provider_py
     src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
-    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
+    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_tdx_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     src_zephyr_data_satellite_geospatial_engine_init_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
     src_zephyr_data_symbol_normalizer_init_py -->|导入依赖 / import_depends| src_zephyr_data_symbol_normalizer_normalizer_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_news_dedup_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
+    src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     scripts_ch_apply_fundamental_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     scripts_ch_apply_fundamental_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_apply_fundamental_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
     scripts_ch_apply_exchange_columns_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_apply_exchange_columns_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
     scripts_ch_apply_exchange_columns_py -->|导入依赖 / import_depends| src_zephyr_data_symbol_normalizer_normalizer_py
-    scripts_ch_apply_rbac_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    scripts_ch_lint_symbol_convention_py -->|config_depends / config_depends| scripts_ch_apply_fundamental_tables_ddl_py
     scripts_ch_apply_market_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_apply_market_tables_ddl_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    scripts_ch_apply_rbac_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    scripts_ch_recovery_drill_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    scripts_ch_lint_symbol_convention_py -->|config_depends / config_depends| scripts_ch_apply_fundamental_tables_ddl_py
     scripts_ch_apply_timezone_migration_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     scripts_ch_data_inventory_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    scripts_ch_recovery_drill_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
+    scripts_ch_verify_schema_truth_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     scripts_ch_verify_exchange_coverage_py -->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     scripts_ch_verify_exchange_coverage_py -->|导入依赖 / import_depends| src_zephyr_data_init_py
     scripts_ch_verify_exchange_coverage_py -->|导入依赖 / import_depends| scripts_ch_apply_exchange_columns_py
-    scripts_ch_verify_schema_truth_py -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     scripts_ops_verify_alert_channels_py -->|导入依赖 / import_depends| src_zephyr_data_alerter_py
     tests_data_test_pit_query_py -->|测试依赖 / test_depends| src_zephyr_data_pit_query_py
     tests_data_test_pit_query_py -->|测试依赖 / test_depends| src_zephyr_data_init_py
     tests_zephyr_data_test_cross_source_validator_py -->|测试依赖 / test_depends| src_zephyr_data_cross_source_validator_py
     tests_zephyr_data_test_tick_subscriber_py -->|测试依赖 / test_depends| src_zephyr_data_tick_subscriber_py
-    schemas_categories_fundamental_analyst_forecast_py -->|config_depends / config_depends| schemas_categories_fundamental_cashflow_statement_py
-    schemas_categories_cross_validation_log_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_analyst_forecast_py -->|config_depends / config_depends| schemas_categories_cross_validation_log_py
+    schemas_categories_fundamental_cashflow_statement_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_disclosure_plan_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_balance_sheet_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_equity_pledge_detail_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_fundamental_industry_class_suppl_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_income_statement_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_industry_class_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_restricted_shares_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_fundamental_share_change_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_fundamental_share_unlock_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_adj_factor_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_industry_class_suppl_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_fundamental_rights_issue_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_macro_edb_data_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_adj_factor_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_macro_macro_data_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_auction_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_share_unlock_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_macro_edb_data_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_fundamental_share_change_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_auction_book_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_auction_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_block_trade_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_concept_board_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_concept_board_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_concept_sector_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_cb_iv_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_daily_valuation_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_block_trade_detail_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_dragon_tiger_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_convertible_bond_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_block_trade_detail_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_concept_sector_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_concept_board_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_etf_benchmark_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_daily_valuation_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_dragon_tiger_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_dragon_tiger_seat_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_futures_kline_qmt_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_futures_position_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_etf_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_etf_benchmark_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_etf_nav_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_futures_term_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_etf_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_hk_connect_flow_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_dragon_tiger_seat_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_hk_stock_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_index_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_hk_kline_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_hk_trade_calendar_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_index_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_15min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_index_weight_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_30min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_1min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_5min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_index_meta_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_index_weight_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_index_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_30min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_60min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_15min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_cb_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_etf_15min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_etf_30min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_daily_hfq_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_daily_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_1min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_etf_1min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_futures_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_hk_daily_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_etf_15min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_5min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_daily_hfq_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_etf_5min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_etf_30min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_lof_15min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_etf_60min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_etf_5min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_daily_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_futures_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_lof_1min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_lof_30min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_lof_60min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_monthly_hfq_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_monthly_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_sector_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_sector_880_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_sector_intraday_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_hk_daily_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_lof_5min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_kline_us_daily_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_sector_880_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_weekly_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_l2_tick_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_lof_30min_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_sector_intraday_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_sector_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_monthly_hfq_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_kline_us_daily_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_kline_weekly_hfq_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_limit_up_down_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_option_greeks_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_margin_trading_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_option_iv_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_lof_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_option_kline_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_money_flow_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_sector_meta_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_sector_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_sector_snapshot_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_l2_tick_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_limit_up_down_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_option_iv_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_realtime_snapshot_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_sector_constituent_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_money_flow_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_sector_snapshot_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_option_kline_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_st_stock_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_option_greeks_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_stock_indicator_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_sector_meta_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_sector_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_stock_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_stock_indicator_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_us_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
-    schemas_categories_market_trade_calendar_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_tick_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_trade_calendar_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    schemas_categories_market_us_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_data_implementations_tushare_provider_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_data_progress_store_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_implementations_rss_provider_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     tests_data_test_market_quality_validator_py -->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    src_zephyr_data_wal_writer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_table_registry_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_data_ch_writer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_quality_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_data_table_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_local_replay_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_implementations_cls_provider_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_satellite_geospatial_engine_init_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_scheduler_py -->|导入依赖 / import_depends| D_SHARED
     D_FACTOR["(设计态 / design) D_FACTOR"]
     D_FACTOR -.->|导入依赖 / import_depends| src_zephyr_data_ch_writer_py
     D_MKT_DATA["(生产态 / production) D_MKT_DATA"]
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_data_symbol_normalizer_init_py
+    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
