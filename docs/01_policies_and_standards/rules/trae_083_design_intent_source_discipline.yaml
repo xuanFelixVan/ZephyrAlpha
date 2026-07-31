@@ -1,6 +1,6 @@
 rule_id: TRAE-083
 title: 设计意图查询真源铁律（问题类型→查询源映射）
-version: '1.0.0'
+version: '1.1.0'
 layer: L1_foundation
 module_id: TRAE-083
 depends_on:
@@ -69,6 +69,8 @@ sections:
     - type: mandatory
       step: '铁律5: 设计意图真源声明。正式确立 D:\临时工作区\依赖图\（30+ 域设计文档，含模块清单/职责/优先级/门禁/契约/上下游/建设状态✅可建❌受限）+ D:\临时工作区\架构图\（9+1 架构图，含跨域关系/决策流/数据流/能力卡片）为"模块设计意图真源"。与 depgraph（结构状态真源）、docs/01_policies_and_standards/（规则数据真源）三足鼎立。三源各司其职，禁止互相替代'
     - type: mandatory
+      step: '铁律6: 孤儿/孤立信号禁直接弃用。看到结构孤立信号（align_panoramas 的 design_isolation、0入边0出边、ghost_autoclean 告警、孤儿检测器输出）MUST 先查设计文档确认是否为合法设计（如 P0 核心模块因下游尚未开发而孤立、设计态节点尚未连线、上游契约未建），禁止直接软删除/标记 deprecated。结构孤立≠设计冗余——孤立可能是"设计已规划未实现"的暂态，弃用前 MUST 双源对比（设计文档定义 vs depgraph 结构状态）。2026-08-01 D_RISK MOD-RSK-009/010/011 误删事故根因即此——三模块为 INV-003 P0 核心承载，因下游未开发而孤立，被单凭孤立信号误判弃用'
+    - type: mandatory
       step: '判定流程: 拿到一个问题 → ①先问"这是结构状态/设计意图/规则契约哪类问题？" → ②按映射表查对应真源 → ③设计意图问题 MUST 读 D:\临时工作区\依赖图\对应域文档 + 必要时查 depgraph 补结构状态 → ④双源对比后下判断 → ⑤弃用/重复判定 MUST 在证据中引用设计文档原文（章节号+原文）+ depgraph 查询结果'
     - type: forbidden
       step: '禁止: 用 depgraph 单源回答设计意图问题（如"这模块是不是过度工程""是不是跨域重复""要不要弃用""四问②需求驱动"）——depgraph 无意图数据，答不上来就臆测，臆测就误判'
@@ -80,6 +82,8 @@ sections:
       step: '禁止: 单源下弃用判定（仅 depgraph 或仅设计文档）——弃用是不可逆决策（软删除+候选库登记），MUST 双源对比+证据引用'
     - type: forbidden
       step: '禁止: 把 D:\临时工作区\依赖图\ 当"草稿"随意忽略——它是模块设计意图真源（含优先级/门禁/契约），不是草稿。称其为"草稿"或"临时文档"=真源认知错误'
+    - type: forbidden
+      step: '禁止: 单凭 align_panoramas/孤儿检测器的孤立信号（design_isolation、0入边0出边、ghost_autoclean 告警）直接软删除/标记 deprecated——孤立≠冗余，可能是"设计已规划未实现"暂态（P0 核心模块下游未开发、设计态节点尚未连线）。弃用前 MUST 读设计文档双源对比（2026-08-01 D_RISK 3模块误删事故根因）'
     invariants:
     - id: DIS-INV-001
       title: 问题类型三分法
@@ -100,6 +104,11 @@ sections:
       title: 设计意图真源地位
       description: D:\临时工作区\依赖图\ + D:\临时工作区\架构图\ 是模块设计意图真源（含职责/优先级/门禁/契约/上下游）。禁止当草稿忽略，禁止用 depgraph 替代
       enforcement: 人工审查 + AI 操作前必读本规则 §真源声明
+      violation_action: reject_judgment
+    - id: DIS-INV-005
+      title: 孤儿/孤立信号禁直接弃用
+      description: 看到 align_panoramas/孤儿检测器/ghost_autoclean 的结构孤立信号，禁止直接软删除/标记 deprecated。孤立≠冗余，可能是"设计已规划未实现"暂态。MUST 先读设计文档双源对比确认设计意图
+      enforcement: 人工审查 + AI 操作前必读本规则 §铁律6
       violation_action: reject_judgment
     examples:
     - problem_type: 结构状态问题
@@ -125,6 +134,7 @@ sections:
     - '❌ 弃用判定单源下结论——弃用不可逆，MUST 双源对比+证据引用'
     - '❌ 把 D:\临时工作区\依赖图\ 当草稿忽略——它是设计意图真源，不是草稿'
     - '❌ 挖实盘缺口只看 depgraph planned 节点——planned 含义需设计文档澄清（缺口/已设计未来做/门禁未满足三选一）'
+    - '❌ 单凭 align_panoramas/孤儿检测器的孤立信号（design_isolation/0入边0出边）直接弃用——孤立≠冗余，可能是"设计已规划未实现"暂态（2026-08-01 D_RISK 3模块误删事故根因，三模块为 INV-003 P0 核心承载，因下游未开发而孤立）'
   incident_2026_08_01:
     section_type: context
     title: 2026-08-01 D_REPORTING 7模块误删事故（本规则治本动机）

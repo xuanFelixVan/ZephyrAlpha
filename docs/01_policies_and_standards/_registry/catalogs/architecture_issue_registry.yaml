@@ -10379,3 +10379,46 @@ entries:
   related_adjudication: 'AGENTS.md RULE-DEPGRAPH（依赖关系先行铁律）, trae_062（SSoT真源分类）'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+# --- #ARCH-RSK-ROLLBACK-001: D_RISK 3个P0核心模块误删回滚（MOD-RSK-009/010/011）---
+- issue_id: '#ARCH-RSK-ROLLBACK-001'
+  title: D_RISK 3个P0核心模块误删回滚（MOD-RSK-009 A股止损引擎/MOD-RSK-010 系统性风险检测/MOD-RSK-011 回撤实时跟踪）
+  severity: P1高
+  adjudication: |
+    问题：2026-07-31 17:21，D_RISK 域3个P0核心设计态模块被误标 deprecated（build_status planned→deprecated）：
+      MOD-RSK-009 (7621471 ashare_stop_loss_rule_engine.py)、MOD-RSK-010 (7621472 ashare_systemic_risk_detector.py)、
+      MOD-RSK-011 (7621473 drawdown_realtime_tracker.py)。3节点均孤立（0入边0出边），被 align_panoramas
+      design_isolation 信号+ghost_autoclean 误判为"幽灵节点"软删除。
+
+    设计文档双源证据（D:\临时工作区\依赖图\11-D-RISK-风控域.md §1.2）：
+      RK-09 A-Share Stop-Loss Rule Engine（P0，6种A股止损+日2%/周5%/月10%亏损限额，对齐 INV-003 日损失限额触发自动暂停）
+      RK-10 A-Share Systemic Risk Detector（P0，5大系统性风险信号+三级警报+情绪断路器+逃生执行器）
+      RK-11 Drawdown Real-Time Tracker（P0，最大回撤实时跟踪+三级阈值-5%/-10%/-15%，对齐 C-032 资金曲线自诊断）
+      三者均为✅可建的合法P0设计（非过度工程），§1.4 P0能力对齐验证明确标注"❌待开发"（INV-003对应RK-09）。
+
+    根因：用结构状态（孤儿/孤立信号）单源判定"该不该弃用"，未查阅设计文档确认设计意图。
+      depgraph只记"谁连谁"不记"为什么/做什么"，3节点因孤立被误判为幽灵节点。
+      与2026-08-01 D_REPORTING 7模块误删（commit 67c84e43，已回滚）同根因——违反 TRAE-083 设计意图查询真源铁律。
+
+    治本回滚（2026-08-01）：
+      1. delete 3个 deprecated 节点（7621471/7621472/7621473，apply_depgraph --delete-nodes）
+      2. re-add 为 planned/design 态（7741058/7741059/7741060，--add-design-node --granularity file）
+      3. 按§2域内依赖登记3条design态依赖边（消除孤立防再被清）：
+         RK-09(7741058)→stop_loss/RK-04(7737310) edge=9939159
+         RK-10(7741059)→risk_validator/RK-02(7737308) edge=9939160  [kill_switch触发逻辑在risk_validator]
+         RK-11(7741060)→risk_validator/RK-02(7737308) edge=9939161  [kill_switch触发逻辑在risk_validator]
+      4. align_panoramas 验证：问题总数0（孤儿=0/状态漂移=0/域不一致=0/设计态孤立=0）
+
+    设计意图与实现差异记录：§2域内依赖画 RK-10/RK-11→RK-17(Kill Switch Integration)，但 D_RISK 域
+      无独立 RK-17 节点——§0决策"Kill Switch归属基础设施层(D-AUTONOMY)拥有，D-RISK执行触发动作"，
+      实际 kill_switch 触发逻辑由 risk_validator.py(RK-02)承担（代码证据：risk_validator.py:119
+      is_kill_switch_triggered()/:85 kill_switch触发后阻断所有订单）。按四问过滤①(功能已实现)不新建
+      RK-17节点（会与risk_validator重复），依赖边指向 risk_validator 如实记录实现现状。
+
+    前置审计（避免遗漏）：回滚前全面审计85个deprecated节点（双源验证），确认除D_RISK 3个外无其他误删
+      （48有gate_reason暂缓/6有明确处置重登候选库路径迁移/~20 D_FACTOR目录占位符P1P2因子族/schema测试文档节点）；
+      快照path对比检测硬删除：0个planned/design被硬删除。
+  fix_phase: '已执行回滚（2026-08-01）：delete 3 deprecated + re-add planned/design(7741058/459/460) + 登记3条design依赖边(9939159/160/161) + align_panoramas 0问题'
+  status: decided
+  related_adjudication: 'TRAE-083（设计意图查询真源铁律，D_REPORTING误删同根因治本）, TRAE-062（SSoT真源分类）'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
