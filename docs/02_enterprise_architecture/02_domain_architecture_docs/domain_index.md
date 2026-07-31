@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3091 |
+| 模块总数 | 3093 |
 | 生产态模块 | 2861 |
-| 设计态模块 | 230 |
+| 设计态模块 | 232 |
 
 ## 域清单（按架构层分组）
 
@@ -132,7 +132,7 @@ ttl: permanent
 | D_EX_CORE | 执行核心 / Execution Core | 25 | 8 | 17 | 25/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 7 | 10 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 86 | 37 | 49 | 86/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
-| D_FRONTEND | 前端 / Frontend | 14 | 12 | 2 | 14/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
+| D_FRONTEND | 前端 / Frontend | 16 | 12 | 4 | 16/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 13 | 10 | 3 | 13/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
 | D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 221 | 221 | 0 | 221/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 124 | 121 | 3 | 124/150 (OK) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |

@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 2 | Module Count | 2 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 49 | Cross-domain Outgoing | 49 |
+| 跨域出边 | 50 | Cross-domain Outgoing | 50 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
@@ -198,7 +198,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 49 条 + 入边 0 条 = 49 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 50 条 + 入边 0 条 = 50 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -206,9 +206,11 @@ graph LR
     D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
+    D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_COMPLIANCE -->|43条 导入依赖 / import_depends| D_GOV_DRIFT
     D_COMPLIANCE -->|5条 导入依赖 / import_depends| D_SECURITY
+    D_COMPLIANCE -->|1条 runtime / runtime| D_GOV_OPS_RESILIENCE
     D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
 ```
 
