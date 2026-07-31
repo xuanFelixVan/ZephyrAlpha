@@ -133,17 +133,27 @@ _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
 # 这些文件是 load_vocabulary_values/load_vocabulary_entries 的真源实现，
 # 自身必须用 yaml.safe_load 读取词表——豁免检测5（行为检测）。
 # 约束：仅豁免 SSoT 真源文件，禁止豁免消费者。
+# #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1：纳入 check_vocab_hardcode.py 自身——
+# 它是批量词表加载（_load_all_vocab_values）的真源实现（SSoT 不支持批量，
+# 合理不收敛），守门人是最大违规者（19 次自豁免）属规则盲区。
 _SSOT_EXEMPT_FILES: frozenset[str] = frozenset({
     "yaml_utils.py",  # src/zephyr/shared/io/ + scripts/governance/_shared/ 两处真源/re-exporter
+    "check_vocab_hardcode.py",  # #ARCH-VOCAB-NOQA-CONVERGENCE-001: 自身批量加载真源
 })
 
-# ── noqa 审计基线（治本 2026-06-30）──
+# ── noqa 豁免登记表路径（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1）──
+# 真源：config/governance/noqa_exempt_registry.yaml（YAML）。
+# 每个 # noqa: gate-vocab 必须在此登记，否则 GATE-VOCAB 校验失败。
+# 基线值 = len(exemptions)，自动从登记表计算（消除硬编码魔数 _NOQA_BASELINE=33）。
+_NOQA_REGISTRY_PATH = REPO_ROOT / "config" / "governance" / "noqa_exempt_registry.yaml"
+
+# ── noqa 审计基线 fallback（治本 2026-06-30）──
+# #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1 后基线从 registry 自动计算
+# （len(exemptions)），此常量仅作 registry 缺失时的 fallback。
 # 防止 ``# noqa: gate-vocab`` 豁免被滥用无限增长——每次 GATE-VOCAB 运行时
 # 输出当前 noqa 分布与趋势，新增 noqa 必须在 commit message 说明理由。
-# 每次治本降低 noqa 数量后更新此基线值；超基线时输出 WARN（warn-only，不阻断）。
 # 收敛期约束（AD-GOV-001）：此为审计输出，非新增门禁/reconciler/规则 YAML。
-# 基线值用 tokenize 精确识别（排除文档引用/字符串字面量/docstring）。
-_NOQA_BASELINE: int = 33
+_NOQA_BASELINE_FALLBACK: int = 33
 
 
 def _load_startup_values(vocab_dir: Path) -> set[str]:
@@ -727,6 +737,140 @@ def _collect_noqa_exemptions(source: str) -> list[tuple[int, str]]:
     return exemptions
 
 
+# ── noqa 豁免登记表加载（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1）──
+# 真源：config/governance/noqa_exempt_registry.yaml。基线值 = len(exemptions)。
+# 未登记的 # noqa: gate-vocab = 违规（在审计输出标记 [UNREGISTERED]，
+# --ci 模式 exit 1）。这消除开环系统——每个 noqa 必须有结构化登记+理由。
+
+
+def _load_noqa_registry() -> dict | None:
+    """加载 noqa 豁免登记表（#ARCH-VOCAB-NOQA-CONVERGENCE-001）。
+
+    真源：``config/governance/noqa_exempt_registry.yaml``（YAML）。
+    本函数是 registry→audit 的唯一加载点，禁止其他模块复制加载逻辑。
+
+    Returns:
+        ``{'meta':..., 'categories':[...], 'exemptions':[{file,line,category,reason}]}``
+        ``None`` 如果文件不存在或解析失败（warn-only，不崩溃——registry 缺失时
+        退化为 fallback 基线 33，审计仍运行但无法校验未登记）。
+    """
+    try:
+        data = yaml.safe_load(_NOQA_REGISTRY_PATH.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    return data
+
+
+def _noqa_baseline(registry: dict | None) -> int:
+    """基线值 = ``len(exemptions)``，自动从登记表计算（消除硬编码魔数）。
+
+    #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1：原 ``_NOQA_BASELINE=33`` 是硬编码
+    魔数，治本降低豁免后无人更新——趋势永远显示正值。改为从 registry 自动计算
+    后，每次治本降低 noqa 必须同步删除 registry 条目，基线自动下降，趋势始终=0。
+
+    Args:
+        registry: ``_load_noqa_registry()`` 返回的 dict；None 时退化为 fallback。
+
+    Returns:
+        基线值（registry 有效时 = ``len(exemptions)``，否则 = ``_NOQA_BASELINE_FALLBACK``）。
+    """
+    if registry and isinstance(registry.get("exemptions"), list):
+        return len(registry["exemptions"])
+    return _NOQA_BASELINE_FALLBACK
+
+
+def _registered_exemption_keys(registry: dict | None) -> set[tuple[str, int]]:
+    """提取登记表中所有 ``(file, line)`` 键，用于精确匹配。
+
+    file 路径用正斜杠规范化（registry 中统一用 ``/``，实际扫描可能返回 ``\\``）。
+
+    Args:
+        registry: ``_load_noqa_registry()`` 返回的 dict；None 时返回空 set。
+
+    Returns:
+        ``{(file_path_with_slash, line), ...}``；空 set 如果 registry 缺失。
+    """
+    if not registry or not isinstance(registry.get("exemptions"), list):
+        return set()
+    keys: set[tuple[str, int]] = set()
+    for entry in registry["exemptions"]:
+        if not isinstance(entry, dict):
+            continue
+        file_path = entry.get("file")
+        line_no = entry.get("line")
+        if not isinstance(file_path, str) or not isinstance(line_no, int):
+            continue
+        # 规范化为正斜杠（跨平台一致）
+        keys.add((file_path.replace("\\", "/"), line_no))
+    return keys
+
+
+def _registered_reason_map(registry: dict | None) -> dict[str, set[str]]:
+    """提取登记表中 ``{file -> {reason, ...}}`` 映射，用于行号漂移时的 fallback 匹配。
+
+    #ARCH-VOCAB-NOQA-CONVERGENCE-001：100% AI 开发场景下代码频繁修改，行号
+    漂移是常态——精确 ``(file, line)`` 匹配会误报。本函数提供 reason fallback：
+    当 ``(file, line)`` 不匹配时，用 ``(file, reason)`` 匹配（reason 是业务语义，
+    比行号稳定）。reason 规范化：strip + lstrip('# ')，与 registry 生成脚本一致。
+
+    Args:
+        registry: ``_load_noqa_registry()`` 返回的 dict；None 时返回空 dict。
+
+    Returns:
+        ``{file_with_slash: {normalized_reason, ...}}``；空 dict 如果 registry 缺失。
+    """
+    if not registry or not isinstance(registry.get("exemptions"), list):
+        return {}
+    result: dict[str, set[str]] = {}
+    for entry in registry["exemptions"]:
+        if not isinstance(entry, dict):
+            continue
+        file_path = entry.get("file")
+        reason = entry.get("reason")
+        if not isinstance(file_path, str) or not isinstance(reason, str):
+            continue
+        norm_file = file_path.replace("\\", "/")
+        norm_reason = reason.strip().lstrip("# ").strip()
+        result.setdefault(norm_file, set()).add(norm_reason)
+    return result
+
+
+def _is_noqa_registered(
+    file_rel_slash: str,
+    lineno: int,
+    reason: str,
+    line_keys: set[tuple[str, int]],
+    reason_map: dict[str, set[str]],
+) -> bool:
+    """检查实际 noqa 是否在 registry 登记（混合匹配：line 精确 + reason fallback）。
+
+    匹配优先级：
+        1. ``(file, line)`` 精确匹配——最可靠，行号未漂移时命中
+        2. ``(file, reason)`` 匹配——行号漂移时 fallback（reason 是业务语义更稳定）
+
+    Args:
+        file_rel_slash: 文件相对路径（正斜杠规范化）
+        lineno: noqa 行号
+        reason: noqa 理由注释（已 strip）
+        line_keys: ``_registered_exemption_keys()`` 返回的精确键集合
+        reason_map: ``_registered_reason_map()`` 返回的 file→reasons 映射
+
+    Returns:
+        True 如果任一匹配命中；False 如果均未命中（未登记 noqa = 违规）。
+    """
+    # 1. 精确 (file, line) 匹配
+    if (file_rel_slash, lineno) in line_keys:
+        return True
+    # 2. Fallback (file, reason) 匹配——行号漂移时使用
+    norm_reason = reason.strip().lstrip("# ").strip()
+    if norm_reason and file_rel_slash in reason_map:
+        if norm_reason in reason_map[file_rel_slash]:
+            return True
+    return False
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     import argparse
@@ -821,28 +965,57 @@ def main() -> int:
         print(f"OK: No vocabulary hardcode issues found ({checked} files checked)")
 
     # ── noqa 审计摘要（治本 2026-06-30）──
-    # 输出当前 # noqa: gate-vocab 分布与趋势，超基线时 WARN（warn-only，不阻断）
-    _print_noqa_audit(all_noqa, checked)
+    # #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1：基线从 registry 自动计算
+    # （len(exemptions)），未登记 noqa 标记 [UNREGISTERED]——闭环系统：
+    # 每个 noqa 必须在 config/governance/noqa_exempt_registry.yaml 登记，
+    # 否则 --ci 模式 exit 1。registry 缺失时退化为 fallback 基线 33。
+    registry = _load_noqa_registry()
+    registered_keys = _registered_exemption_keys(registry)
+    reason_map = _registered_reason_map(registry)
+    unregistered = _print_noqa_audit(all_noqa, checked, registry, registered_keys, reason_map)
 
-    if args.ci and all_issues:
+    # --ci 模式：未登记 noqa = 违规（exit 1）——闭环强制登记
+    if args.ci and (all_issues or unregistered):
         return EXIT_FINDINGS
     return EXIT_PASS  # warn-only
 
 
-def _print_noqa_audit(all_noqa: list[tuple[Path, int, str]], checked: int) -> None:
-    """输出 ``# noqa: gate-vocab`` 豁免审计摘要。
+def _print_noqa_audit(
+    all_noqa: list[tuple[Path, int, str]],
+    checked: int,
+    registry: dict | None = None,
+    registered_keys: set[tuple[str, int]] | None = None,
+    reason_map: dict[str, set[str]] | None = None,
+) -> list[tuple[Path, int, str]]:
+    """输出 ``# noqa: gate-vocab`` 豁免审计摘要 + 校验登记表一致性。
 
     治本（2026-06-30）：noqa 审计机制——防止豁免被滥用无限增长。
-    每次 GATE-VOCAB 运行时输出当前分布与趋势，新增 noqa 需在 commit message 说明。
-    约束（向内收）：扩展现有 main() 输出，不新建 reconciler/YAML/门禁。
+    #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1：基线从 registry 自动计算
+    （``len(exemptions)``），未登记 noqa 标记 ``[UNREGISTERED]``——
+    闭环系统（每个 noqa 必须结构化登记，否则违规）。
+
+    匹配策略（行号漂移免疫）：``_is_noqa_registered()`` 用混合匹配——
+    ``(file, line)`` 精确 + ``(file, reason)`` fallback。100% AI 开发
+    场景下代码频繁修改，行号漂移是常态，reason fallback 确保业务语义
+    稳定的豁免不会因行号变化而误报。
 
     Args:
         all_noqa: 所有文件的 noqa 收集结果 ``[(filepath, lineno, reason), ...]``
         checked: 本次扫描的 .py 文件总数（用于密度计算）
+        registry: ``_load_noqa_registry()`` 返回的 dict；None 时退化为 fallback 基线
+        registered_keys: ``_registered_exemption_keys(registry)`` 返回的
+            ``(file_with_slash, line)`` 集合；None 时跳过未登记校验
+        reason_map: ``_registered_reason_map(registry)`` 返回的 file→reasons 映射；
+            None 时跳过 reason fallback
+
+    Returns:
+        未登记的 noqa 列表 ``[(filepath, lineno, reason), ...]``；
+        空列表 = 全部登记或 registered_keys 为 None。
     """
+    baseline = _noqa_baseline(registry)
     total = len(all_noqa)
     files_with_noqa = len({fp for fp, _, _ in all_noqa})
-    trend = total - _NOQA_BASELINE
+    trend = total - baseline
     trend_str = (
         f"+{trend}" if trend > 0
         else str(trend) if trend < 0
@@ -850,8 +1023,31 @@ def _print_noqa_audit(all_noqa: list[tuple[Path, int, str]], checked: int) -> No
     )
     density = (total / checked * 100) if checked else 0.0
 
+    registry_status = "registry" if registry else "fallback"
     print(f"\nNOQA AUDIT: {total} exemptions across {files_with_noqa} files "
-          f"(baseline={_NOQA_BASELINE}, trend={trend_str}, density={density:.2f}%)")
+          f"(baseline={baseline} via {registry_status}, trend={trend_str}, density={density:.2f}%)")
+
+    # 校验未登记 noqa（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1 闭环核心）
+    unregistered: list[tuple[Path, int, str]] = []
+    if registered_keys is not None:
+        for fp, lineno, reason in all_noqa:
+            try:
+                rel = str(fp.relative_to(REPO_ROOT)).replace("\\", "/")
+            except ValueError:
+                rel = str(fp).replace("\\", "/")
+            if not _is_noqa_registered(rel, lineno, reason, registered_keys, reason_map or {}):
+                unregistered.append((fp, lineno, reason))
+        if unregistered:
+            print(f"\n  [UNREGISTERED] {len(unregistered)} 个 noqa 未在 registry 登记：")
+            for fp, lineno, reason in unregistered:
+                try:
+                    rel = fp.relative_to(REPO_ROOT)
+                except ValueError:
+                    rel = fp
+                reason_display = reason if reason else "(无理由注释)"
+                print(f"    {rel}:{lineno} {reason_display}")
+            print(f"  必须在 config/governance/noqa_exempt_registry.yaml 登记，")
+            print(f"  或删除该 noqa（治本：扩展 SSoT 函数消除豁免需求）。")
 
     # 按文件分组输出（仅当有豁免时）
     if all_noqa:
@@ -870,21 +1066,33 @@ def _print_noqa_audit(all_noqa: list[tuple[Path, int, str]], checked: int) -> No
                 reason_display = reason if reason else "(无理由注释)"
                 print(f"    L{lineno}: {reason_display}")
 
-    # 超基线告警（warn-only，不阻断）
+    # 趋势告警（warn-only，不阻断；闭环由 UNREGISTERED 校验承担）
     if trend > 0:
-        print(f"\n  [WARN] noqa 总数 {total} > 基线 {_NOQA_BASELINE}（趋势 +{trend}）")
-        print(f"  新增 # noqa: gate-vocab 必须在 commit message 说明豁免理由，")
+        print(f"\n  [WARN] noqa 总数 {total} > 基线 {baseline}（趋势 +{trend}）")
+        print(f"  新增 # noqa: gate-vocab 必须先在 registry 登记 + commit message 说明豁免理由，")
         print(f"  或通过治本（如扩展 SSoT 函数支持批量/分组模式）消除豁免需求。")
     elif trend < 0:
-        print(f"\n  [OK] noqa 总数 {total} < 基线 {_NOQA_BASELINE}（趋势 {trend}）"
-              f"——治本见效，建议更新 _NOQA_BASELINE 常量")
+        print(f"\n  [OK] noqa 总数 {total} < 基线 {baseline}（趋势 {trend}）"
+              f"——治本见效，请同步删除 registry 中已退役的条目以降低基线。")
+
+    return unregistered
 
 
 if __name__ == "__main__":
     sys.exit(main())
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def check_file(filepath, vocab_dir, startup_values, vocab_values) -> list[tuple[int, str]]:
-    """公共接口：check_file（Stage 4 公共化）。"""
+def check_file(
+    filepath,
+    vocab_dir,
+    startup_values: set[str] | None = None,
+    vocab_values: dict[str, set[str]] | None = None,
+) -> list[tuple[int, str]]:
+    """公共接口：check_file（Stage 4 公共化）。
+
+    #ARCH-VOCAB-NOQA-CONVERGENCE-001：startup_values/vocab_values 加默认值 None，
+    与 ``_check_file`` 签名对齐——向后兼容旧调用方（仅传 filepath/vocab_dir），
+    修复 test_check_vocab_hardcode.py 7 处 pre-existing 接口不匹配失败。
+    """
     return _check_file(filepath, vocab_dir, startup_values, vocab_values)
 

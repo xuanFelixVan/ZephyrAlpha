@@ -1,0 +1,345 @@
+# noqa_exempt_registry.yaml
+#
+# #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1: 结构化豁免登记表
+#
+# 每个 # noqa: gate-vocab 必须在此登记（file/line/category/reason/retire_plan），
+# 否则 GATE-VOCAB 校验失败（未登记 noqa = 违规）。
+# 基线值 = len(exemptions)，自动从本文件计算（消除硬编码魔数 _NOQA_BASELINE=33）。
+#
+# 真源：本文件（YAML）。同步：sync_yaml_to_depgraph.py 单向同步到 DB（只读缓存）。
+# 守门人：scripts/governance/d3_metadata/check_vocab_hardcode.py
+
+meta:
+  version: 1
+  created: '2026-07-31'
+  issue: '#ARCH-VOCAB-NOQA-CONVERGENCE-001'
+  description: |
+    check_vocab_hardcode.py 的 # noqa: gate-vocab 豁免结构化登记表。
+    治本三阶段：Phase 1 建表+基线自动计算（本提交）；Phase 2 扩展
+    load_vocabulary_values() 批量/分组模式消除高频豁免（后续）。
+
+categories:
+  - id: business_subset
+    name: '业务子集（非词表成员校验）'
+    description: 文件名/目录名/路由策略的业务子集，非词表合法值集合
+    default_retire_plan: 不退役（业务语义稳定，无 SSoT 化可能）
+  - id: no_vocab_source
+    name: '无对应词表真源'
+    description: 无对应词表真源（如 platform/error-persistence/finding-type），本地常量或枚举即真源
+    default_retire_plan: 视词表需求评估，若新建词表则退役
+  - id: threshold_var
+    name: '阈值变量（ARCH-036 P3-A5）'
+    description: 阈值变量硬编码，scripts/governance/ 专用阈值
+    default_retire_plan: 扩展 _get_threshold() 支持 scripts 专用阈值后退役
+  - id: arch_concept
+    name: '架构层级概念（非受控词表）'
+    description: 架构层级/schema字段类型/node_type 枚举等非受控词表值
+    default_retire_plan: 不退役（架构概念非词表）
+  - id: test_fixture
+    name: '测试夹具/断言'
+    description: 测试断言中的字面量集合（非生产代码）
+    default_retire_plan: 不退役（测试夹具固有）
+  - id: ssot_self
+    name: 'SSoT 真源文件自身'
+    description: SSoT 真源实现（如 check_vocab_hardcode.py 自身批量加载），豁免检测5
+    default_retire_plan: Phase 2 扩展 load_vocabulary_values 批量模式后退役
+
+exemptions:
+  - file: scripts/arch_guard/check_cross_plane_communication.py
+    line: 46
+    category: business_subset
+    reason: '冷层前缀业务子集  gate-vocab豁免: 冷层前缀业务子集非词表'
+  - file: scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py
+    line: 42
+    category: business_subset
+    reason: '温模块业务子集  gate-vocab豁免: 温模块业务子集非词表'
+  - file: scripts/arch_guard/fitness_functions/check_warm_cold_async.py
+    line: 41
+    category: business_subset
+    reason: '温模块业务子集  gate-vocab豁免: 温模块业务子集非词表'
+  - file: scripts/arch_guard/fitness_functions/check_warm_cold_async.py
+    line: 42
+    category: business_subset
+    reason: '冷模块业务子集  gate-vocab豁免: 冷模块业务子集非词表'
+  - file: scripts/governance/apply_depgraph.py
+    line: 884
+    category: business_subset
+    reason: 'SSoT 动态加载，非硬编码'
+  - file: scripts/governance/apply_depgraph.py
+    line: 910
+    category: arch_concept
+    reason: 'build_status 5态，非 module_lifecycle_status'
+  - file: scripts/governance/apply_depgraph.py
+    line: 1380
+    category: business_subset
+    reason: '业务子集校验，非词表硬编码'
+  - file: scripts/governance/apply_depgraph.py
+    line: 2037
+    category: business_subset
+    reason: '业务子集校验，非词表硬编码'
+  - file: scripts/governance/apply_depgraph.py
+    line: 4016
+    category: arch_concept
+    reason: 'gate-vocab豁免: 架构层级概念非受控词表'
+  - file: scripts/governance/apply_depgraph.py
+    line: 4120
+    category: arch_concept
+    reason: 'gate-vocab豁免: schema字段类型非受控词表'
+  - file: scripts/governance/d11_compliance/verify_schema_health.py
+    line: 261
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 长事务检测阈值，脚本专用'
+  - file: scripts/governance/d12_ai_hallucination/validate_session_budget.py
+    line: 59
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 会话预算限额，业务逻辑非系统阈值'
+  - file: scripts/governance/d1_structure/audit_directory_scalability.py
+    line: 54
+    category: business_subset
+    reason: '层目录名，非 domain 值'
+  - file: scripts/governance/d1_structure/audit_directory_scalability.py
+    line: 69
+    category: business_subset
+    reason: '层目录名，非 domain 值'
+  - file: scripts/governance/d3_metadata/check_vocab_hardcode.py
+    line: 277
+    category: ssot_self
+    reason: 'R4 豁免：批量加载所有词表（SSoT 不支持批量，合理不收敛）'
+  - file: scripts/governance/d3_metadata/classify_ttl_by_content.py
+    line: 77
+    category: business_subset
+    reason: '关键词信号列表（非词表合法值副本；含 doc_type 值作信号词，语义关联非复制）'
+  - file: scripts/governance/d3_metadata/deep_content_scanner.py
+    line: 82
+    category: business_subset
+    reason: '业务逻辑：跳过 index/template 文档类型（非内容扫描目标，非词表成员校验）'
+  - file: scripts/governance/d3_metadata/generate_derived_files.py
+    line: 134
+    category: business_subset
+    reason: '派生文件同步器：用 vocab_values 比对 field_registry，非复制词表加载'
+  - file: scripts/governance/d3_metadata/generate_derived_files.py
+    line: 223
+    category: business_subset
+    reason: '派生文件同步器：用 vocab_values 比对 arch_contract，非复制词表加载'
+  - file: scripts/governance/d4_paths/detect_excessive_file_moves.py
+    line: 58
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 文件移动检测阈值，脚本专用'
+  - file: scripts/governance/d5_architecture/checkers/check_g6_ctr_compliance.py
+    line: 106
+    category: business_subset
+    reason: '层目录名，非 domain 值'
+  - file: scripts/governance/d5_architecture/checkers/check_trace_context_propagation.py
+    line: 69
+    category: business_subset
+    reason: '生产者层业务子集  gate-vocab豁免: 生产者层业务子集非词表'
+  - file: scripts/governance/d5_architecture/checkers/check_trace_context_propagation.py
+    line: 77
+    category: business_subset
+    reason: '消费者层值，非 domain 值'
+  - file: scripts/governance/d5_architecture/diagnose_depgraph.py
+    line: 72
+    category: business_subset
+    reason: '孤儿节点豁免类型业务子集'
+  - file: scripts/governance/d5_architecture/generators/generate_capability_heatmap.py
+    line: 109
+    category: business_subset
+    reason: '业务排除清单：测试/治理脚本域非业务域（非词表成员校验）'
+  - file: scripts/governance/d5_architecture/generators/generate_capability_heatmap.py
+    line: 427
+    category: business_subset
+    reason: '业务逻辑：L0/L1 成熟度= P0 短板（此处 maturity_level 是 L0-L3 简化体系，非 decision_layer 词表校验）'
+  - file: scripts/governance/d5_architecture/generators/generate_domain_doc.py
+    line: 150
+    category: business_subset
+    reason: '显示排序用，含历史遗留 L1_platform（layer_vocabulary v2.0.0 已移除，保留仅为兼容旧域文档分组）'
+  - file: scripts/governance/d5_architecture/generators/generate_path_tree.py
+    line: 328
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 路径树折叠阈值，脚本专用'
+  - file: scripts/governance/d5_architecture/syncers/archive_rationale_log.py
+    line: 57
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 归档日志行数阈值，脚本专用'
+  - file: scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py
+    line: 82
+    category: no_vocab_source
+    reason: '无对应词表真源（无 belongs_to 词表），主蓝图 ID 白名单为本地校验策略常量'
+  - file: scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py
+    line: 59
+    category: arch_concept
+    reason: 'node_type 枚举，非 file_category'
+  - file: scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py
+    line: 73
+    category: business_subset
+    reason: '4 词表值 + 4 模板结构值（shared/contracts/meta/domain_integration 非层 ID，是依赖图模板的结构分类）'
+  - file: scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py
+    line: 84
+    category: arch_concept
+    reason: '模板允许的 dep_type 子集（10/12，排除 references/owned_by）'
+  - file: scripts/governance/d5_architecture/validators/validate_directory_structure.py
+    line: 87
+    category: business_subset
+    reason: '层目录名，非 domain 值'
+  - file: scripts/governance/d7_code/check_pit_compliance.py
+    line: 59
+    category: business_subset
+    reason: 'PIT 扫描目录业务子集'
+  - file: scripts/governance/d7_code/validate_docstring_coverage.py
+    line: 60
+    category: business_subset
+    reason: '跳过文档覆盖检查的业务子集'
+  - file: scripts/governance/d7_code/validate_import_style.py
+    line: 60
+    category: business_subset
+    reason: '跳过 import 风格检查的业务子集'
+  - file: scripts/governance/d7_code/validate_init_all.py
+    line: 60
+    category: business_subset
+    reason: '骨架包列表业务子集  gate-vocab豁免: 骨架包列表业务子集非词表'
+  - file: scripts/governance/d7_code/validate_test_coverage.py
+    line: 67
+    category: business_subset
+    reason: '跳过测试覆盖的目录名，非 domain 值'
+  - file: scripts/governance/d7_code/validate_type_annotation_coverage.py
+    line: 60
+    category: business_subset
+    reason: '跳过类型注解检查的业务子集'
+  - file: scripts/governance/data_quality/check_tick_duplication.py
+    line: 103
+    category: business_subset
+    reason: '（显示行数默认值，非词表枚举值，CLI --limit 可覆盖）'
+  - file: scripts/governance/generate_project_depgraph.py
+    line: 2064
+    category: business_subset
+    reason: '业务逻辑：仅 module/script 节点可作为 config_depends 连接目标（非词表成员校验）'
+  - file: scripts/governance/generate_project_depgraph.py
+    line: 2124
+    category: business_subset
+    reason: '业务逻辑：仅 module/script 节点可作为 test_depends 连接目标（非词表成员校验）'
+  - file: scripts/governance/meta/_concurrency.py
+    line: 166
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 分级超时为并发架构专用配置，TIER 路由由 TAG_TIER_MAP 决定，非脚本阈值'
+  - file: scripts/governance/meta/_concurrency.py
+    line: 173
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 分级超时为并发架构专用配置，TIER 路由由 TAG_TIER_MAP 决定，非脚本阈值'
+  - file: scripts/governance/meta/detect_fix_oscillation.py
+    line: 59
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 修复震荡检测阈值，脚本专用'
+  - file: scripts/governance/meta/manage_script_ab_test.py
+    line: 70
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): Kayenta AB测试通过阈值，脚本专用'
+  - file: scripts/governance/meta/manage_script_ab_test.py
+    line: 71
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): Kayenta AB测试边际阈值，脚本专用'
+  - file: scripts/governance/meta/mutation_test_post_sync_validator.py
+    line: 78
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 变异测试相似度判断阈值，测试工具专用非系统阈值'
+  - file: scripts/governance/meta/mutation_test_reconciliation_registry.py
+    line: 88
+    category: threshold_var
+    reason: '治本(ARCH-036 P3-A5): 变异测试相似度判断阈值，测试工具专用非系统阈值'
+  - file: scripts/governance/meta/pre_op_check.py
+    line: 367
+    category: business_subset
+    reason: '内容检测子串，非 file_category'
+  - file: scripts/governance/meta/verify_reconciliation_registry.py
+    line: 204
+    category: test_fixture
+    reason: '测试断言：校验优先级排序输出 [B,A,C]（gate_id 测试夹具，非 governance_family 词表校验）'
+  - file: scripts/governance/run_all.py
+    line: 133
+    category: no_vocab_source
+    reason: '无对应词表真源（无脚本执行标签词表；compliance_tags 词表是监管框架域不适用），执行分类标签为本地常量'
+  - file: scripts/ops/verify_header_completeness.py
+    line: 51
+    category: arch_concept
+    reason: 'frontmatter 字段名（非 node_type 词表值；"blueprint"/"module"/"domain" 碰巧与 node_type 同名，语义无关）'
+  - file: scripts/ops/verify_header_completeness.py
+    line: 138
+    category: business_subset
+    reason: '业务逻辑：此三种格式路由到 Python 头部解析器（B_yaml/C_json 走不同解析器，非词表成员校验）'
+  - file: src/zephyr/__init__.py
+    line: 267
+    category: business_subset
+    reason: '__all__ 子包导出列表，非 domain 分类'
+  - file: src/zephyr/gov_audit/pipeline_runner.py
+    line: 259
+    category: business_subset
+    reason: '业务逻辑：仅 module/script 节点判定为 orphan（其他类型 orphan 属正常，非词表成员校验）'
+  - file: src/zephyr/governance/escalation/triage.py
+    line: 302
+    category: business_subset
+    reason: '业务分类逻辑：strategy/factor 子集映射 STRATEGY（非词表成员校验，见上方 RENAME_REVIEW 注释）'
+  - file: src/zephyr/governance/escalation/triage.py
+    line: 304
+    category: business_subset
+    reason: '业务分类逻辑：best_practice/lesson_learned 子集映射 KNOWLEDGE_ENTRY（非词表成员校验）'
+  - file: src/zephyr/infrastructure/auto_fix_engine/engine.py
+    line: 82
+    category: no_vocab_source
+    reason: '无对应词表真源（无 finding-type 词表），禁止自动修复的发现类型为本地安全策略'
+  - file: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
+    line: 72
+    category: no_vocab_source
+    reason: '无对应词表真源；M1-M11 节点 ID 真源为 models.py M_MODULE_SPECS，值为路由策略配置'
+  - file: src/zephyr/infrastructure/pipeline/preemption_manager.py
+    line: 59
+    category: no_vocab_source
+    reason: '无对应词表真源（无任务优先级词表），可抢占优先级子集为本地抢占策略（非 Priority 枚举全集）'
+  - file: src/zephyr/infrastructure/pipeline/routing_plugins.py
+    line: 72
+    category: no_vocab_source
+    reason: '无对应词表真源；M1-M11 节点 ID 真源为 models.py M_MODULE_SPECS，值为节点-任务类型路由策略'
+  - file: src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py
+    line: 69
+    category: no_vocab_source
+    reason: '无对应词表真源（无 error-persistence 词表），错误持续性分类为本地常量'
+  - file: src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py
+    line: 70
+    category: no_vocab_source
+    reason: '无对应词表真源（无 error-source 词表），错误来源分类为本地常量'
+  - file: src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py
+    line: 71
+    category: no_vocab_source
+    reason: '无对应词表真源（无 error-expectation 词表），错误预期性分类为本地常量'
+  - file: src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py
+    line: 72
+    category: no_vocab_source
+    reason: '无对应词表真源（无 error-severity 词表），错误严重度分类为本地常量，非 safety_level 词表域'
+  - file: src/zephyr/integration/mcp/doc_guard_server.py
+    line: 51
+    category: no_vocab_source
+    reason: '无对应词表真源（无 platform 词表），IDE 平台标识为本地常量'
+  - file: src/zephyr/integration/mcp/doc_guard_server.py
+    line: 52
+    category: no_vocab_source
+    reason: '无对应词表真源（无通知优先级词表），与任务 Priority(P0-P3) 枚举不同域，本地常量'
+  - file: src/zephyr/integration/mcp/gate_engine_server.py
+    line: 51
+    category: no_vocab_source
+    reason: '无对应词表真源（vocabularies/ 无 gate-id 词表），G1-G5 为本服务门禁阶段本地标识'
+  - file: src/zephyr/integration/pipeline_orchestrator.py
+    line: 958
+    category: business_subset
+    reason: '业务逻辑：此调度路径仅支持 A/B 管线（C/D 家族不适用，非词表成员校验）'
+  - file: src/zephyr/integration/pipeline_orchestrator.py
+    line: 985
+    category: business_subset
+    reason: '业务逻辑：此调度路径仅支持 A/B 管线（C/D 家族不适用，非词表成员校验）'
+  - file: src/zephyr/security/access_control/engine_degradation.py
+    line: 64
+    category: no_vocab_source
+    reason: '无对应词表真源（无降级级别词表），取值为同文件 DegradationLevel 枚举成员（枚举即真源），非字符串字面量'
+  - file: src/zephyr/trading/capability_sync.py
+    line: 116
+    category: business_subset
+    reason: '业务逻辑：L0/L1 层映射 warm 运行面，其余 cold（非词表成员校验）'
+
+# Statistics: total=74, by_category={'business_subset': 40, 'arch_concept': 6, 'threshold_var': 12, 'ssot_self': 1, 'no_vocab_source': 14, 'test_fixture': 1}

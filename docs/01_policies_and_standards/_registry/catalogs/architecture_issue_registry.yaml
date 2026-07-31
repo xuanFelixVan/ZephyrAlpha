@@ -10160,8 +10160,8 @@ entries:
     - 'docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md（重生成）'
     - 'docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md（重生成）'
     - 'docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md（重生成）'
-  fix_phase: '删除旧文件 + 重生成自动文档 + 验证零残留'
-  status: decided
+  fix_phase: '已完成（commit b7609c9542）：删除旧文件 + 重生成自动文档 + 验证零残留'
+  status: resolved
   related_rules: 'AGENTS.md RULE-SSOT, #ARCH-CH-021 (P0-1 数据层兑现，本议题为文件迁移清理)'
   created: '2026-07-31'
   last_updated: '2026-07-31'
@@ -10196,14 +10196,27 @@ entries:
     否决备选：①新建 zephyr.shared.provenance 共享模块——增加新模块+蓝图+depgraph 节点，
     100% AI 开发下更多表面积=更多漂移风险，over-engineering；②以 unified_memory_api 为
     规范——违反蓝图声明的 vms_schemas SSoT 且字段更少。
+
+    实施更新（2026-07-31 commit 76c628a7d0）：实施时发现依赖方向冲突——
+    vms_memory_backend→unified_memory_api→vms_schemas 边已存在，若 vms_schemas 顶层
+    import unified_memory_api 会闭合循环导入。故裁定方向调整（君子协定）：以
+    unified_memory_api.WriteTrace 为 SSoT（保留严格 frozen/min_length/extra forbid
+    约束），vms_schemas 删除本地 WriteTrace 定义改用 PEP 562 module __getattr__ 懒加载
+    转发——模块加载期无循环依赖，运行时 `from vms_schemas import WriteTrace` 经
+    __getattr__ 拿到 unified_memory_api.WriteTrace 并缓存到 globals()。depgraph 不
+    登记此 lazy import 边（非真架构依赖，仅为破环技术手段）。SSoT 实际承载者从
+    vms_schemas 迁移至 unified_memory_api，但对外 API 兼容（vms_schemas.WriteTrace
+    仍可 import，identity 一致）。design_principles.validate_provenance 在 schema
+    前转业务异常 ProvenanceMissingError（避免暴露 ValidationError 给上层）。
   impact:
-    - 'src/zephyr/integration/vector_memory/vms_schemas.py（WriteTrace 收紧约束：frozen/min_length/extra forbid）'
-    - 'src/zephyr/intelligence/model_evaluation/unified_memory_api.py（删本地 WriteTrace，re-export from vms_schemas）'
-    - 'src/zephyr/integration/vector_memory/provenance_enforcer.py（validate 简化，schema 已强制）'
-    - 'tests/memory/test_vms_adversarial_injection.py（空构造改为 pytest.raises ValidationError）'
-    - 'tests/memory/test_unified_memory_api_unit.py（TestWriteTrace 约束测试适配 re-export）'
-  fix_phase: 'depgraph 登记新依赖边 → 收紧 vms_schemas.WriteTrace → re-export → 简化 enforcer → 更新测试 → 四图对齐验证'
-  status: decided
+    - 'src/zephyr/integration/vector_memory/vms_schemas.py（删本地 WriteTrace，PEP 562 __getattr__ 懒加载转发）'
+    - 'src/zephyr/intelligence/model_evaluation/unified_memory_api.py（保留严格 WriteTrace 作 SSoT：frozen/min_length/extra forbid）'
+    - 'src/zephyr/integration/vector_memory/provenance_enforcer.py（validate 简化，schema 已强制 origin/audit_chain）'
+    - 'src/zephyr/integration/vector_memory/design_principles.py（validate_provenance 在 schema 前转业务异常）'
+    - 'tests/memory/test_vms_adversarial_injection.py（空构造改为 pytest.raises ValidationError，红蓝对抗前置防御）'
+    - 'tests/memory/test_unified_memory_api_unit.py（TestWriteTrace 严格约束测试：frozen/required/forbid）'
+  fix_phase: '已完成（commit 76c628a7d0）：__getattr__ 懒加载 + 严格 WriteTrace + enforcer 简化 + 测试更新'
+  status: resolved
   related_rules: 'AGENTS.md RULE-SSOT, RULE-DEPGRAPH (依赖关系先行), 四图对齐铁律'
   created: '2026-07-31'
   last_updated: '2026-07-31'
@@ -10238,10 +10251,11 @@ entries:
     否决备选：①一次性删除所有 noqa 强制 SSoT——破坏面过大，治理脚本自身确实需要读词表；
     ②提高基线到 98 掩盖问题——开环系统仍只增不减。
   impact:
-    - 'config/governance/noqa_exempt_registry.yaml（新建结构化豁免登记表）'
-    - 'scripts/governance/d3_metadata/check_vocab_hardcode.py（_SSOT_EXEMPT_FILES 扩展 + 基线自动计算 + 登记表校验）'
-  fix_phase: 'Phase 1 建表+扩展豁免+基线自动化；Phase 2 SSoT 函数批量模式（后续）'
-  status: decided
+    - 'config/governance/noqa_exempt_registry.yaml（新建结构化豁免登记表，74 豁免全登记，6 分类）'
+    - 'scripts/governance/d3_metadata/check_vocab_hardcode.py（_SSOT_EXEMPT_FILES 扩展纳入自身 + 基线从 registry 自动计算 + 混合匹配校验 line 精确 + reason fallback）'
+    - 'tests/governance/scripts_governance/test_check_vocab_hardcode.py（10 个 registry smoke test + 7 个 pre-existing 接口修复）'
+  fix_phase: 'Phase 1 已完成（建表+基线自动计算+混合匹配校验+smoke test）；Phase 2 SSoT 函数批量模式（后续，需逐脚本分析模式）'
+  status: resolved
   related_rules: 'AGENTS.md RULE-SSOT, AD-GOV-001 (收敛期约束)'
   created: '2026-07-31'
   last_updated: '2026-07-31'
