@@ -25,7 +25,7 @@ SCD-2 时点版本（#ARCH-CH-021 P0-6, 2026-07-23）：
 
 Float64→Decimal 治本修复（Phase 3-A, 2026-07-23）：
     total_mv/float_mv: Float64→Decimal(18,2)（市值精度治本）
-    total_share/float_share: Float64→Decimal(18,4)（股本精度治本）
+    float_share: Float64→Decimal(18,4)（股本精度治本）
 """
 from __future__ import annotations
 
@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS c1_market.sector_meta
     sector_name      String           COMMENT '板块名称',
     sector_type      String           COMMENT '板块类型',
     constituent_num  UInt16           COMMENT '成分股数量',
-    total_share      Decimal(18,4)    COMMENT '总股本',
     float_share      Decimal(18,4)    COMMENT '流通股本',
     total_mv         Decimal(18,2)    COMMENT '总市值(元)',
     float_mv         Decimal(18,2)    COMMENT '流通市值(元)',
@@ -67,5 +66,5 @@ ORDER_BY = "(sector_code, trade_date)"
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
 INSERT_COLUMNS = (
     "(sector_code, trade_date, sector_name, sector_type, constituent_num, "
-    "total_share, float_share, total_mv, float_mv)"
+    "float_share, total_mv, float_mv)"
 )

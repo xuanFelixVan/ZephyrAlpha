@@ -2134,7 +2134,7 @@ class IFindProvider(IngestProviderBase):
         通过 THS_WC 问财接口查询881二级行业板块的：
         - 板块代码(sector_code)、板块名称(sector_name)
         - 成分股数量(constituent_num)
-        - 总股本(total_share)、流通股本(float_share)
+        - 流通股本(float_share)
         - 总市值(total_mv)、流通市值(float_mv)
 
         每日盘后更新，trade_date 为当日。
@@ -2144,7 +2144,7 @@ class IFindProvider(IngestProviderBase):
         table = _TBL_SECTOR_META
         columns = [
             "sector_code", "trade_date", "sector_name", "sector_type",
-            "constituent_num", "total_share", "float_share",
+            "constituent_num", "float_share",
             "total_mv", "float_mv",
         ]
         today_str = datetime.date.today().strftime("%Y-%m-%d")
@@ -2206,7 +2206,6 @@ class IFindProvider(IngestProviderBase):
                 total_mv = self._extract_wencai_column(tbl, ["总市值", "ths_total_mv_index"])
                 float_mv = self._extract_wencai_column(tbl, ["流通市值", "ths_float_mv_index"])
                 constituent_num = self._extract_wencai_column(tbl, ["成分股总数", "成份股个数", "成分股数量", "ths_constituent_num_index"])
-                total_share = self._extract_wencai_column(tbl, ["总股本", "ths_total_shares_index"])
                 float_share = self._extract_wencai_column(tbl, ["流通a股", "流通A股", "ths_float_a_share_index"])
 
                 for i, sc in enumerate(sector_codes):
@@ -2220,7 +2219,6 @@ class IFindProvider(IngestProviderBase):
                         str(_safe_get(sector_names, i) or ""),
                         "同花顺二级行业",
                         int(self.safe_float(_safe_get(constituent_num, i)) or 0),
-                        self.safe_float(_safe_get(total_share, i)) or 0.0,
                         self.safe_float(_safe_get(float_share, i)) or 0.0,
                         self.safe_float(_safe_get(total_mv, i)) or 0.0,
                         self.safe_float(_safe_get(float_mv, i)) or 0.0,
