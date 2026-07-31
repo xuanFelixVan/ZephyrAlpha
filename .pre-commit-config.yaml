@@ -399,7 +399,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^(schemas/categories/.*\\.py|scripts/ch/verify_schema_truth\\.py)$"
-        stages: [commit]
+        stages: [pre-commit]
         description: "校验 schemas/categories/*.py 的 DDL 真源与 ClickHouse 实际表结构一致性——列/类型/引擎/排序键漂移即阻断提交。CH 不可达不阻断（exit 0 + WARN），仅漂移阻断（exit 1）"
 
       # ── GATE-SYMBOL-CONVENTION: Symbol 约定 lint 门禁（TRAE-082 #ARCH-DATA-SYMBOL-002）──
@@ -416,7 +416,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^schemas/categories/.*\\.py$"
-        stages: [commit]
+        stages: [pre-commit]
         description: "静态 lint 校验所有含 symbol 列的 securities 表 DDL 必含 exchange+symbol_canonical 列——缺列即阻断提交（防回退）"
 
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
@@ -448,7 +448,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^(src/zephyr/|scripts/).*\\.py$"
-        stages: [commit]
+        stages: [pre-commit]
         description: "代码 SSoT 合并门禁——GATE-SSOT(module_path冲突) + SINGLESOURCE(文件名级) + NO-PURE-SHIM(纯re-export shim，无参数全量扫描src/zephyr/)，run_gate_chain 顺序执行"
 
       # ── GATE-SSOT-SINGLESOURCE 已合并到 GATE-SSOT-CODE（见上 gate-ssot-code）──
@@ -687,7 +687,7 @@ repos:
       #           ① check_contract_code_drift.py --ci（契约-代码双写漂移）
       #           ② check_contract_physical_path.py --ci（physical_path 连字符目录阻断）
       #           ③ verify_schema_health.py --ci（depgraph Schema 健康度）
-      # 行为变化：原三 hook 均 pass_filenames=false 自扫描，合并后 files 覆盖三者触发范围，stages: [commit]（ARCH-017 升级，原 manual）。
+      # 行为变化：原三 hook 均 pass_filenames=false 自扫描，合并后 files 覆盖三者触发范围，stages: [pre-commit]（ARCH-017 升级，原 manual；2026-08-01 pre-commit v3→v4 stage 名迁移 commit→pre-commit）。
       - id: gate-c2
         name: "GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）"
         entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci scripts/governance/d5_architecture/checkers/check_contract_physical_path.py,--ci scripts/governance/d11_compliance/verify_schema_health.py,--ci
@@ -695,8 +695,8 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\\.py|scripts/governance/(d8_doc_sync/sync_yaml_to_depgraph|d11_compliance/verify_schema_health)\\.py)$"
-        stages: [commit]
-        description: "契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录) + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，commit 阶段自动触发（ARCH-017 升级）"
+        stages: [pre-commit]
+        description: "契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录) + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，pre-commit 阶段自动触发（ARCH-017 升级）"
 
       # ── GATE-CONTRACT-PHYSICAL-PATH 已合并到 GATE-C2（见上 gate-c2）──
 
@@ -713,7 +713,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^(architecture_model/technology/technology_landscape\\.yaml|architecture_model/contracts/cross_layer_contracts\\.yaml|architecture_model/cross_cutting/runtime_planes\\.yaml|architecture_model/governance_systems_registry\\.yaml|pyproject\\.toml|src/zephyr/frontend/dashboard/components/chart_factory\\.py)$"
-        stages: [commit]
+        stages: [pre-commit]
         description: "canonical YAML SSoT 防漂移——5 项断言防止 Phase A 修过的 markdown 同步到 YAML 后再被改回陈旧值（human_gated YAML 无 reconciler 自动重生，靠本门禁兜底）"
 
       # ── GATE-ENCODING: 编码安全+mojibake+BOM检测（合并 GATE-BOM，DM-379 强制执行层）──

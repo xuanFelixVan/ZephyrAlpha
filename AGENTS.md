@@ -660,7 +660,7 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
   - **路径解析**：三重尝试——①先相对于文件目录（markdown 链接习惯）②再相对于项目根（CSV/YAML 项目根相对路径）③basename 全局搜索兜底（裸文件名如 blueprint.md 在项目其他目录存在）。注意：index.md 清单检测**禁用 basename 兜底**（本目录契约语义，兜底会掩盖幻觉）。
   - **capability 反查**已登记 `broken_link_detector`（canonical = `scripts/governance/d2_links/audit_broken_links.py`）。新 AI 想做"断链检测/ghost ref/phantom reference"前，CapabilityLookup 会反查到本脚本，提示"扩展本脚本（加提取器函数），勿新建 checker"。
   - **治本 GAP-1**：解决"非 .md 文件（.csv/.yaml/.json）中的路径引用无检测"防护缺口。真源：[`audit_broken_links.py` `_extract_csv_paths`/`_extract_text_paths`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
-  - **治本 GAP-2**：解决"frontmatter.blueprint_id 引用的蓝图是否存在无检测"防护缺口。检测 .md frontmatter 的 blueprint_id 字段值是否在 `blueprint_registry.yaml` 中存在（**注：该文件已退役**，commit `303fb9c9b2` KB 退役清理删除；`audit_broken_links.py` 的 `_load_blueprint_registry_module_ids()` 仍引用此路径，文件缺失时返回空集，该检测当前实际不生效）。空值跳过（合法，如 index.md 无归属蓝图）；格式非法跳过（交给 GATE-NAMING N-06 双轨制格式校验）。真源：[`audit_broken_links.py` `_check_blueprint_id_exists`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
+  - **治本 GAP-2**：解决"frontmatter.blueprint_id 引用的蓝图是否存在无检测"防护缺口。检测 .md frontmatter 的 blueprint_id 字段值是否在 `blueprint_registry.yaml` 中存在。**注**：该文件曾于 commit `303fb9c9b2` 被 KB 清理误删（导致 `_load_blueprint_registry_module_ids()` 返回空集、检测静默失效），已于 2026-08-01 恢复并同步至 57 条目，检测恢复生效（详见 #ARCH-BP-REGISTRY-DELETION-001）；漂移由 GATE-21 守护。空值跳过（合法，如 index.md 无归属蓝图）；格式非法跳过（交给 GATE-NAMING N-06 双轨制格式校验）。真源：[`audit_broken_links.py` `_check_blueprint_id_exists`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
   - **治本 GAP-3**：解决"index.md 列出的文件清单是否存在无检测"防护缺口。对名为 index.md 的文件做**严格本地解析**（仅相对 source.parent，禁 basename 兜底——本目录契约语义）。处理 markdown 链接 + `file:///D:/ZephyrAlpha/...` 绝对 URL 两种格式。真源：[`audit_broken_links.py` `_check_index_md_inventory`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
   - **治本 GAP-4**：解决"audit_report 审计对象存在性无检测"防护缺口。对 doc_type=audit_report 的 .md 文件，校验三类引用：①frontmatter.blueprint_id ②frontmatter.module_id ③正文 MODULE_ID 匹配（MOD-XXX-NNN module_id / D-XXX-NNN submodule_id / SH-XXX-NNN module_id 双轨制+submodule_id）。自动生成 audit_report（无 blueprint_id 无 module_id）跳过。真源：[`audit_broken_links.py` `_check_audit_report_objects`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。已检出幻觉：ai_12/17/18_report.md 引用不存在的 `MOD-DB_DEPGRAPH_PG`/`MOD-INF`。
 
@@ -969,6 +969,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 **强制执行**：`GATE-PRECOMMIT-OFFLINE`（priority=111，A 层 in-process gate）检测 `.pre-commit-config.yaml` 中外部 repo 引用 + `language` 非 `system`，硬阻断 commit。
 
 **替代脚本**（纯 stdlib，local hook entry）：`check_merge_conflict.py` / `detect_private_key.py` / `check_no_tests_unit.py`
+
+**stage 名迁移记录**（2026-08-01 一次性维护）：pre-commit v3→v4 将弃用的 stage 名 `commit` 重命名为 `pre-commit`。本项目 5 个 hook（gate-c2 / gate-arch / gate-naming 等簇合并 hook）原用 `stages: [commit]` 或 `stages: [manual]`，已执行 `pre-commit migrate-config` 自动迁移为 `stages: [pre-commit]`。**约束**：新增/修改 hook 时 `stages` 字段 MUST 用 `pre-commit`（v4 名），禁用旧名 `commit`（v4 起静默失效，hook 不触发）。迁移已内联标注于 `.pre-commit-config.yaml` 各 hook 注释。
 
 ## 11. depgraph 使用指引（唯一全景真源）
 
@@ -1304,7 +1306,7 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - [audit_orchestrator/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md)：DualDBRouter 引用改为 get_depgraph_pg_connection()（PG）+ get_db_connection()（SQLite）双入口
 - [shared_core/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/shared_core/blueprint.md)：WriteBatcher 标注"暂缓待 L 级"
 - [governance_automation/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/governance_automation/blueprint.md) §36.4/36.5：标注暂缓条件
-- ~~`blueprint_registry.yaml`~~：**已退役**（commit `303fb9c9b2` KB 退役清理删除），summary 更新机制需另寻真源
+- `blueprint_registry.yaml`：**误删已回滚**——commit `303fb9c9b2` KB 清理误删该派生文件（导致 20+ 消费者静默降级，GAP-2 检测失效），已于 2026-08-01 从 `303fb9c9b2^` 恢复并 `sync_registry_from_blueprints.py --write` 同步至 57 条目（v2.7.11）。真源=物理 `docs/03_modules/**/blueprint.md` frontmatter，派生文件禁止手改；漂移由 GATE-21（[`validate_static_manifest_drift.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py) CHECKS 第3项 dry-run）守护。详见 #ARCH-BP-REGISTRY-DELETION-001
 
 ### 11.4 数据库连接函数真源冲突治本（2026-06-28）
 

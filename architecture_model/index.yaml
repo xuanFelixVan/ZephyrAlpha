@@ -56,7 +56,7 @@ partitions:
   description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
 - id: events
   path: events/domain_events.yaml
-  description: 22条领域事件（6域）、事件链、频率等级与运行时声明
+  description: 25条领域事件（7域）、事件链、频率等级与运行时声明
 - id: ddd-model
   path: domain/ddd_model.yaml
   description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
@@ -357,10 +357,10 @@ global_stats:
   b_track_implemented: 11
   b_track_skeleton: 0
   notes: >
-    72域唯一物理分类体系，14层是域的layer_id属性枚举。
+    72域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track 13横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-07-30'
+  last_updated: '2026-08-01'
 
 query_hints:
 - question: 系统有哪些域？

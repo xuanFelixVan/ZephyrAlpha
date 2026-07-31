@@ -71,6 +71,7 @@ if os.environ.get("PYTHONPATH"):
 _SUBPROCESS_ENV = {**os.environ, "PYTHONPATH": os.pathsep.join(_pp_parts)}
 
 GENERATORS_DIR = _GOV_DIR / "generators"
+SYNCERS_DIR = _GOV_DIR / "d5_architecture" / "syncers"
 
 CHECKS = [
     {
@@ -80,6 +81,17 @@ CHECKS = [
     {
         "name": "gate_registry.yaml",
         "cmd": [sys.executable, str(GENERATORS_DIR / "generate_gate_registry.py"), "--check"],
+    },
+    {
+        # 治本（2026-08-01，#ARCH-BP-REGISTRY-DELETION-001）：
+        # blueprint_registry.yaml 曾被误删（KB 清理误伤，commit 303fb9c9b2）后无 gate 检测，
+        # 20+ 消费者静默降级（GAP-2 全通过等）。现接入 dry-run（无 --write）：
+        #   文件缺失→exit 2（ERROR）→GATE-21 阻断；条目漂移→exit 1（FINDINGS）→阻断。
+        # 真源：物理 docs/03_modules/**/blueprint.md frontmatter → sync_registry_from_blueprints.py
+        # → blueprint_registry.yaml（派生文件，禁止手改）。
+        # 注：sync_registry_from_blueprints.py 无 --check 参数，默认（无 --write）即 dry-run。
+        "name": "blueprint_registry.yaml",
+        "cmd": [sys.executable, str(SYNCERS_DIR / "sync_registry_from_blueprints.py")],
     },
 ]
 
@@ -113,6 +125,7 @@ def main() -> None:
     print("\nFix: 运行对应生成器（不带 --check）重新生成，例如：")
     print("  python scripts/governance/generators/generate_script_manifest.py")
     print("  python scripts/governance/generators/generate_gate_registry.py")
+    print("  python scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py --write")
     sys.exit(EXIT_FINDINGS)
 
 
