@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "3fb00fa6dc92b863",
+      "hash": "d57797bd9fb99f04",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,41 +36,41 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "82c9a7773664e72b",
+      "hash": "dd06c7dc87da6238",
       "critical": true,
       "desc": "脚本注册表"
     },
     "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py": {
-      "hash": "c26f30f98c526bba",
+      "hash": "c7642692378f0ed6",
       "critical": true,
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "c27ed15eb63a6139",
+      "hash": "9cac8d493acfda20",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "17e724904a237fd3",
+      "hash": "6945f5447b721723",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
-      "hash": "b12cb9d37bdc617f",
+      "hash": "ecffe230aaa67628",
       "critical": true,
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "389674a804d522f7",
+      "hash": "a6226fcbedb1f0a9",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
-      "hash": "7ee6b52c07f28747",
+      "hash": "04762955e50d84d4",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-07-21T21:32:19.131793+00:00",
-  "last_check_at": "2026-07-21T21:31:28.958388+00:00"
+  "registered_at": "2026-07-31T18:28:04.738570+00:00",
+  "last_check_at": "2026-07-31T18:26:14.377629+00:00"
 }
