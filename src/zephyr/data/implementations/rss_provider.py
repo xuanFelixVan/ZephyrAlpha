@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import socket
 import time
 from typing import Iterator
 from urllib.parse import urlparse
@@ -81,6 +82,37 @@ _DEFAULT_RSS_FEEDS = [
     "https://www.investing.com/rss/news_1.rss",           # Investing.com 头条
     "https://www.investing.com/rss/news_25.rss",          # Investing.com 股市新闻
 ]
+
+# 海外源 URL 特征——这些源经 RSSHub 走 SOCKS5 代理或直连海外站点，
+# 依赖 V2rayN VPN（127.0.0.1:10808）开启。新增海外源时需同步更新此列表。
+_OVERSEAS_FEED_PATTERNS = ("/yahoo/", "investing.com")
+
+# V2rayN SOCKS5 代理监听端口（RSSHub PROXY_URI 指向此端口）
+_VPN_SOCKS5_PORT = 10808
+
+
+def _is_vpn_ready(port: int = _VPN_SOCKS5_PORT, timeout: float = 1.0) -> bool:
+    """探测 V2rayN SOCKS5 代理端口是否在监听（VPN 开关状态）。
+
+    海外新闻源（Yahoo/Investing）依赖 VPN 走 SOCKS5 代理。VPN 关闭时
+    SOCKS5 端口不监听，本函数快速返回 False（1s 超时），避免海外源请求
+    在 RSSHub 内部超时拖慢整轮 RSS 拉取。
+
+    Returns: True 如果 VPN 开启（端口监听中），False 如果 VPN 关闭。
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    try:
+        s.connect(("127.0.0.1", port))
+        s.close()
+        return True
+    except OSError:
+        return False
+
+
+def _is_overseas_feed(feed_url: str) -> bool:
+    """判断 feed 是否为海外源（依赖 VPN/SOCKS5 代理）。"""
+    return any(p in feed_url for p in _OVERSEAS_FEED_PATTERNS)
 
 
 class RSSProvider(IngestProviderBase):
@@ -167,7 +199,23 @@ class RSSProvider(IngestProviderBase):
         feeds = payload.symbols or _DEFAULT_RSS_FEEDS
         respect_robots = policy.respect_robots_txt if policy else True
 
+        # 海外源 VPN 状态探测（治本 2026-07-31）：
+        # 海外源（Yahoo/Investing）依赖 V2rayN SOCKS5(10808)。VPN 关闭时若仍请求
+        # 海外源，RSSHub 内部代理连接会超时，串行拖慢整轮（含国内源）。
+        # 探测一次缓存结果：VPN 关→跳过海外源（快速失败），国内源正常；VPN 开→正常拉取。
+        # 下一轮（≤3min）重新探测，VPN 开了自动恢复海外源——实现"海外源与 VPN 开关绑定"。
+        vpn_ready = _is_vpn_ready()
+        if not vpn_ready:
+            overseas_count = sum(1 for f in feeds if _is_overseas_feed(f))
+            if overseas_count:
+                self._log.info(
+                    f"VPN 未开启（SOCKS5 {_VPN_SOCKS5_PORT} 未监听），"
+                    f"跳过 {overseas_count} 个海外新闻源；国内源正常拉取"
+                )
+
         for feed_url in feeds:
+            if _is_overseas_feed(feed_url) and not vpn_ready:
+                continue  # VPN 关闭，跳过海外源（已在循环外统一告警）
             t0 = time.time()
             try:
                 # 检查 robots.txt
