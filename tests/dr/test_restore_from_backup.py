@@ -118,6 +118,31 @@ def test_pg_backup_prunes_old_snapshots(monkeypatch, tmp_path):
     assert remaining[-1] == Path(path)  # 最新备份保留
 
 
+def test_pg_backup_throttle_skips_recent(monkeypatch, tmp_path):
+    """Obs2 治本：throttle_seconds 窗口内跳过冗余快照，返回上次备份路径。
+
+    模拟 apply_depgraph 连续调用：首次备份成功，60s 内第二次被节流跳过。
+    """
+    _install_fake_pg(monkeypatch, tmp_path, [(1, "a.py", "D_GOV")], [])
+    backup_dir = tmp_path / "tmp" / "pg_backups"
+    backup_dir.mkdir(parents=True)
+
+    # 首次备份（throttle_seconds=0 不节流，模拟 apply_depgraph 首次调用前的状态）
+    first = brs.backup_pg_depgraph(max_backups=10, throttle_seconds=0)
+    assert first is not None
+    first_path = Path(first)
+    assert first_path.is_file()
+
+    # 60s 内再次调用（throttle_seconds=60）——应跳过并返回上次路径
+    skipped = brs.backup_pg_depgraph(max_backups=10, throttle_seconds=60)
+    assert skipped == first  # 返回上次备份路径，不创建新文件
+
+    # 仅 1 份备份（节流生效，未产生第 2 份）
+    remaining = sorted(backup_dir.glob("depgraph_*.json"))
+    assert len(remaining) == 1
+    assert remaining[0] == first_path
+
+
 # ── 5.33.7 配套：backup_runtime_handoffs 可回读恢复 + 保留 10 份 ─────────
 
 def test_handoffs_backup_roundtrip_and_prune(monkeypatch, tmp_path):

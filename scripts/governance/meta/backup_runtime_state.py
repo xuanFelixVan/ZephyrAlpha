@@ -147,18 +147,28 @@ def create_manifest(backup_dir: Path, backed_up: list[str]) -> None:
 # 触发方式：apply_depgraph.py 成功修改 depgraph 后自动调用（事件触发，非时间触发）。
 # 自动清理：保留最近 max_backups 个备份。
 
-def backup_pg_depgraph(max_backups: int = 10) -> str | None:
+def backup_pg_depgraph(
+    max_backups: int = 10, throttle_seconds: int = 0
+) -> str | None:
     """备份 PG depgraph 数据（nodes + edges 表）到 tmp/pg_backups/。
 
     ARCH-041 §5.33.1 治本：PG depgraph 无备份脚本，此处补强。
     使用 psycopg2 查询导出为 JSON（pg_dump 不可用时的 fallback）。
     自动清理旧备份（保留最近 max_backups 个）。
 
+    Obs2 治本（节流）：连续 apply_depgraph 调用会在数秒内产生大量冗余快照
+    （实测 14 秒 8 份）。DR 备份无需如此细粒度——depgraph 变更已由 git commit
+    追溯（trae_054 STEP0 铁律：改 depgraph 前必须 git commit 备份），throttle_seconds
+    窗口内的多次变更合并为下一次备份即可，RPO 损失可接受（中间态可由 git 历史重放）。
+    默认 0 = 不节流（向后兼容测试）；apply_depgraph 事件触发入口传 60。
+
     Args:
         max_backups: 保留的备份数量
+        throttle_seconds: 节流窗口（秒）。>0 时若距上次备份不足该秒数则跳过
+            并返回上次备份路径；0 = 不节流
 
     Returns:
-        备份文件路径，失败返回 None
+        备份文件路径（节流时返回上次备份路径），失败返回 None
     """
     import psycopg2
 
@@ -170,6 +180,26 @@ def backup_pg_depgraph(max_backups: int = 10) -> str | None:
 
     backup_dir = REPO_ROOT / "tmp" / "pg_backups"
     backup_dir.mkdir(parents=True, exist_ok=True)
+
+    # Obs2 治本节流：距上次备份不足 throttle_seconds 则跳过冗余快照。
+    # DR 备份目的=灾难恢复（非版本控制），git commit 已提供变更追溯。
+    if throttle_seconds > 0:
+        existing = sorted(backup_dir.glob("depgraph_*.json"))
+        if existing:
+            try:
+                import time as _time
+
+                age = _time.time() - existing[-1].stat().st_mtime
+                if age < throttle_seconds:
+                    print(
+                        f"[BACKUP-PG] SKIP: 距上次备份 {int(age)}s < {throttle_seconds}s "
+                        f"节流窗口（DR 备份，git commit 已追溯变更），跳过冗余快照: "
+                        f"{existing[-1].name}",
+                        file=sys.stderr,
+                    )
+                    return str(existing[-1])
+            except OSError:
+                pass  # stat 失败则不节流，继续备份（保守：宁可多备不漏）
 
     timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
     backup_path = backup_dir / f"depgraph_{timestamp}.json"

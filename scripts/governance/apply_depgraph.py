@@ -5181,7 +5181,10 @@ if __name__ == "__main__":
                     from scripts.governance.meta.backup_runtime_state import backup_pg_depgraph
                 except ImportError:
                     from meta.backup_runtime_state import backup_pg_depgraph
-                backup_pg_depgraph()
+                # Obs2 治本：传 throttle_seconds=60 节流——连续 apply_depgraph 调用
+                # 在数秒内产生冗余快照（实测 14 秒 8 份），DR 备份无需细粒度
+                # （git commit 已追溯 depgraph 变更，trae_054 STEP0 铁律）。
+                backup_pg_depgraph(throttle_seconds=60)
             except Exception as _e:
                 # 备份失败不阻断主流程（main 已成功），仅记录到 stderr
                 print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
