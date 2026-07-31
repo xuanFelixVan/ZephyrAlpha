@@ -418,6 +418,7 @@ def sync_decision_graph(
     dry_run: bool = False,
     force: bool = False,
     validate_only: bool = False,
+    allow_design_edit: bool = False,
 ) -> dict:
     """主入口：YAML→DB 同步。
 
@@ -426,6 +427,11 @@ def sync_decision_graph(
         dry_run: True 时只打印 SQL 不写入
         force: True 时破坏性重建（清空 tracks+layers 后重写）
         validate_only: True 时只校验 YAML 不变量不写 DB
+        allow_design_edit: True 时启用 ARCH-053 逃生通道
+            （SET app.allow_design_maturity_delete = on），允许 YAML 真源驱动
+            design→production 合法状态迁移同步到 DB。仅在 YAML 真源明确将某 layer
+            从 design 升级到 production（对应代码已落盘）时使用，需在 commit 信息中
+            记录裁定依据。
 
     Returns:
         同步统计 dict
@@ -451,7 +457,12 @@ def sync_decision_graph(
     tracks = data.get("tracks", [])
     layers = data.get("layers", [])
 
-    conn = get_decisiongraph_pg_connection(autocommit=False)
+    # ARCH-053 逃生通道：YAML 真源驱动 design→production 合法迁移
+    # 仅在 --allow-design-edit 显式启用时绕过 protect_decision_design_maturity 触发器，
+    # 避免 design 态 layer 被意外覆盖（如手工改 DB），同时允许 YAML 真源升级同步。
+    conn = get_decisiongraph_pg_connection(
+        autocommit=False, allow_design_delete=allow_design_edit
+    )
     try:
         with _decision_sync_lock(conn):
             if force:
@@ -499,6 +510,13 @@ DB 目标：PostgreSQL decision_layers + decision_tracks 表
                         help="破坏性重建：清空 tracks+layers 后重写（保留 nodes/edges）")
     parser.add_argument("--validate-only", action="store_true",
                         help="仅校验 YAML 不变量，不写 DB")
+    parser.add_argument(
+        "--allow-design-edit",
+        action="store_true",
+        help="启用 ARCH-053 逃生通道：允许 YAML 真源驱动 design→production 合法状态"
+             "迁移同步到 DB（如 layer 已落盘代码、YAML 升级 design_maturity）。"
+             "仅用于 YAML 真源明确升级 design→production，需在 commit 信息中记录裁定依据。",
+    )
     parser.add_argument("--yaml-path", type=str, default=str(_YAML_PATH),
                         help=f"YAML 真源路径（默认 {_YAML_PATH}）")
     args = parser.parse_args()
@@ -509,6 +527,7 @@ DB 目标：PostgreSQL decision_layers + decision_tracks 表
         dry_run=args.dry_run,
         force=args.force,
         validate_only=args.validate_only,
+        allow_design_edit=args.allow_design_edit,
     )
     print(json.dumps(stats, ensure_ascii=False, indent=2))
 

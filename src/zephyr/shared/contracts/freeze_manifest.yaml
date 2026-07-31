@@ -29,7 +29,7 @@ overview:
   total_contracts: 31
   total_layers: 14
   frozen_contracts: 31
-  frozen_interface_files: 11
+  frozen_interface_files: 13
   frozen_shared_contracts: 18
 
 # ── P0 承重墙契约（不可变更，变更需 ADR）──
@@ -354,6 +354,20 @@ frozen_layer_interfaces:
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 就位 数据源元数据模板"
+
+  D_GOVERNANCE:
+    file: "src/zephyr/governance/intelligence_governance/provider_base.py"
+    class: "QuoteProviderBase"
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "行情数据源基类 D_GOVERNANCE 生产, D_FACTOR/D_SIGNAL 消费（EXT-001 MarketDataProvider 的内部 OCP 落点）"
+
+  D_GOVERNANCE_meta:
+    file: "src/zephyr/governance/intelligence_governance/provider_base.py"
+    classes: ["QuoteProviderMeta"]
+    version: "1.0"
+    status: "skeleton_frozen"
+    note: "行情数据源元数据模板（与 D_DATA_meta 对称，登记 D_GOVERNANCE 域 provider_base）"
 
 # ── 变更控制规则 ──
 change_control:
