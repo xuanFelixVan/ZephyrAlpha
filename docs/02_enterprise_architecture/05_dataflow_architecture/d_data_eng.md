@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据工程域-数据工程服务
 
-> 生成时间: 2026-07-31T17:14:43
+> 生成时间: 2026-07-31T19:29:38
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -77,11 +77,11 @@ flowchart TD
 
 | ID | entity_name / 实体名 | scope / 范围 | domain / 域 | design_maturity / 设计成熟度 | module_id / 蓝图 | 功能简述 |
 |----|----------------------|--------------|------------|------------------------------|------------------|----------|
-| DS-11258 | data_eng.data_lake_manager | production / 生产 | D_DATA_ENG | design / 设计 | MOD-DATA_ENG | 数据湖资产清单（数据湖存储/分区/生命周期管理） |
-| DS-11259 | data_eng.knowledge_cleaning | production / 生产 | D_DATA_ENG | design / 设计 | MOD-DATA_ENG | 清洗后知识库（知识数据去重/纠错/标准化） |
-| DS-11260 | data_eng.stream_processing | production / 生产 | D_DATA_ENG | design / 设计 | MOD-DATA_ENG | 流处理结果（实时数据流计算/窗口聚合） |
-| DS-11261 | data_eng.synthetic_data | production / 生产 | D_DATA_ENG | design / 设计 | MOD-DATA_ENG | 合成数据集（模拟行情/场景生成数据） |
-| DS-11262 | data_eng.training_data_manager | production / 生产 | D_DATA_ENG | design / 设计 | MOD-DATA_ENG | 训练数据集（特征/标签/样本管理） |
+| DS-11258 | data_eng.data_lake_manager | production / 生产 | D_DATA_ENG / 数据工程 | design / 设计 | MOD-DATA_ENG | 数据湖资产清单（数据湖存储/分区/生命周期管理） |
+| DS-11259 | data_eng.knowledge_cleaning | production / 生产 | D_DATA_ENG / 数据工程 | design / 设计 | MOD-DATA_ENG | 清洗后知识库（知识数据去重/纠错/标准化） |
+| DS-11260 | data_eng.stream_processing | production / 生产 | D_DATA_ENG / 数据工程 | design / 设计 | MOD-DATA_ENG | 流处理结果（实时数据流计算/窗口聚合） |
+| DS-11261 | data_eng.synthetic_data | production / 生产 | D_DATA_ENG / 数据工程 | design / 设计 | MOD-DATA_ENG | 合成数据集（模拟行情/场景生成数据） |
+| DS-11262 | data_eng.training_data_manager | production / 生产 | D_DATA_ENG / 数据工程 | design / 设计 | MOD-DATA_ENG | 训练数据集（特征/标签/样本管理） |
 
 ## Job 清单
 

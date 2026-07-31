@@ -65,6 +65,8 @@ from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合�
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_flat_map
+# 域中文名真源（#ARCH-SSOT-GLOSSARY-MERGE-001）：functional_domain_registry.yaml 经 domain_name_mapping 加载
+from domain_name_mapping import get_domain_name_zh_strict  # noqa: E402
 
 # maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
@@ -133,7 +135,6 @@ _DATAFLOW_PLAIN_LANGUAGE_INTRO = """\
 # （dataflow 不查，无害）；保留共享类别以与 decision 生成器对齐。
 _DATAFLOW_CATEGORIES = [
     "entity_name",        # Dataset/Job 实体名
-    "domain_id_display",  # D_XXX 图示显示名（含 D_SIGNAL 等遗留域）
     "scope",              # production / backtest_internal
     "build_status",       # design / generated
     "maturity",           # design / production（design_maturity 值）
@@ -142,6 +143,21 @@ _DATAFLOW_CATEGORIES = [
     "edge_type",          # produces / consumed by（+ 6 个 decision 边类型，不查无害）
 ]
 _ZH_MAP: dict[str, str] = get_flat_map(_DATAFLOW_CATEGORIES)
+
+
+def _domain_en_zh(en: str | None, sep: str = " / ") -> str:
+    """域ID → 英文+中文并列（D_XXX → D_XXX 中文名）。
+
+    真源：functional_domain_registry.yaml（经 domain_name_mapping 加载）。
+    替代原 glossary domain_id_display 类别（#ARCH-SSOT-GLOSSARY-MERGE-001）。
+    找不到中文时返回原 domain_id（不重复显示）。
+    """
+    if not en or en == "-":
+        return "-"
+    zh = get_domain_name_zh_strict(en)
+    if zh and zh != en:
+        return f"{en}{sep}{zh}"
+    return en
 
 
 def _zh(en: str | None) -> str:
@@ -532,7 +548,7 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
         fmt = (d.get("format_summary") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
         lines.append(
             f"| DS-{d['id']:03d} | {_en_zh(d['name'])} | {_en_zh(d['scope'])} | "
-            f"{d['contract'] or '-'} | {_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {d.get('module_id') or '-'} | {_en_zh(d.get('maturity') or '-')} | {_en_zh(d['build'])} | {fmt} |"
+            f"{d['contract'] or '-'} | {_domain_en_zh(d['domain'] or '-')} | {_en_zh(d['pit'])} | {d.get('module_id') or '-'} | {_en_zh(d.get('maturity') or '-')} | {_en_zh(d['build'])} | {fmt} |"
         )
 
     # Job 清单
@@ -707,7 +723,7 @@ def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: lis
         fmt = (d.get("format_summary") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
         lines.append(
             f"| DS-{d['id']:03d} | {_en_zh(d['name'])} | {_en_zh(d['scope'])} | "
-            f"{_en_zh(d['domain'] or '-')} | {_en_zh(d.get('maturity') or '-')} | "
+            f"{_domain_en_zh(d['domain'] or '-')} | {_en_zh(d.get('maturity') or '-')} | "
             f"{d.get('module_id') or '-'} | {fmt} |"
         )
 

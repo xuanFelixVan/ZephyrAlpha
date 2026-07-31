@@ -705,6 +705,14 @@ def sync_functional_domain_registry(cur):
             )
             skipped += 1
             continue
+        # 治本（#ARCH-SSOT-GLOSSARY-MERGE-001）：跳过遗留图示用名域（stability=deprecated），
+        # 防止废弃域污染 depgraph domains 表。遗留域中文名经 domain_name_mapping YAML fallback 查到。
+        if d.get("stability") == "deprecated":
+            print(
+                f"  SKIP: 跳过遗留域 '{domain_id}' (stability=deprecated)——不 sync 到 depgraph"
+            )
+            skipped += 1
+            continue
         # DM-100252: domains 表去重——YAML 同一 domain_id 有多 subdomain entry，
         # domains 表以 domain_id 为主键，重复 INSERT 会 ON CONFLICT 覆盖（折叠为最后一条）。
         # 每个 domain_id 只 INSERT 首次出现的 entry；arch_path_mappings 仍同步所有 entry 的 ssot_path。

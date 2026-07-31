@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）运营态全景
 
-> 生成时间: 2026-07-31T17:14:43
+> 生成时间: 2026-07-31T19:29:38
 > 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）
 > 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于四图对齐 ARCH-056，非数据流作业，本文档不展示）
 > 数据库: depgraph (PostgreSQL)
@@ -60,61 +60,61 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11667["[production]backtest.fills<br/>回测模拟成交<br/>（symbol/quantity/price/commission/slippage）"]
-    DS11668["[production]backtest.nav_series<br/>回测净值序列<br/>（timestamp/nav/cash/positions）"]
-    DS11666["[production]backtest.target_weights<br/>回测目标权重<br/>（symbol/target_weight/timestamp）"]
-    DS11665["[production]backtest.tick_event<br/>回测Tick事件<br/>（历史tick重放，含timestamp/symbol/price/volume）"]
-    DS11664["[production]backtest.result<br/>回测结果<br/>（nav_series/sharpe/max_drawdown/trades）"]
-    DS11658["[production]factor.momentum_20d<br/>20日动量因子信号<br/>（factor_id/symbol/as_of_date/raw_value/rank_pc…"]
-    DS11657["[production]factor.value_factor<br/>价值因子信号<br/>（factor_id/symbol/as_of_date/raw_value/normalized…"]
-    DS11662["[production]fill.executed<br/>成交回报<br/>（symbol/quantity/price/commission/timestamp）"]
-    DS11656["[production]market_data.ohlc_bar<br/>聚合OHLC K线<br/>（1m/5m/日线，由tick聚合）"]
-    DS11655["[production]market_data.tick<br/>标准化Tick行情<br/>（symbol/timestamp/OHLCV/quality_score）"]
-    DS11661["[production]order.target<br/>目标订单<br/>（symbol/side/quantity/price/order_type）"]
-    DS11663["[production]position.snapshot<br/>持仓快照<br/>（symbol/quantity/avg_cost/market_value/timestamp）"]
-    DS11660["[production]risk.limits<br/>风险限额<br/>（max_position/max_drawdown/exposure_limits）"]
-    DS11659["[production]signal.composite<br/>合成交易信号<br/>（多因子加权/截面排名/置信度）"]
-    JOB784153("[production]backtest.calc_metrics<br/>回测指标计算<br/>（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验）")
-    JOB784151("[production]backtest.match_fills<br/>回测撮合引擎<br/>（根据目标权重模拟成交，含滑点/手续费）")
-    JOB784149("[production]backtest.replay_ticks<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放）")
-    JOB784150("[production]backtest.run_event_driven<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重）")
-    JOB784152("[production]backtest.update_portfolio<br/>回测组合更新<br/>（根据成交更新持仓/现金/净值）")
-    JOB784142("[production]aggregate.ohlc_bar<br/>将Tick数据聚合为OHLC K线<br/>（1m/5m/日线）")
-    JOB784146("[production]check.risk_limits<br/>风险限额检查<br/>（持仓/回撤/暴露度）")
-    JOB784144("[production]compute.momentum_20d<br/>计算20日动量因子<br/>（收益率/相对强度）")
-    JOB784143("[production]compute.value_factor<br/>计算价值因子<br/>（PE/PB/股息率等）")
-    JOB784148("[production]execute.order<br/>执行订单<br/>（实盘/模拟）")
-    JOB784147("[production]generate.order<br/>根据信号+风险限额生成目标订单，产出DS-007 order.target")
-    JOB784141("[production]ingest.ifind_kline<br/>从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick")
-    JOB784145("[production]synthesize.signal<br/>合成多因子信号<br/>（加权/截面排名/置信度）")
-    JOB784141 -->|produces / 产出| DS11655
-    JOB784142 -->|produces / 产出| DS11656
-    JOB784143 -->|produces / 产出| DS11657
-    JOB784144 -->|produces / 产出| DS11658
-    JOB784145 -->|produces / 产出| DS11659
-    JOB784146 -->|produces / 产出| DS11660
-    JOB784147 -->|produces / 产出| DS11661
-    JOB784148 -->|produces / 产出| DS11662
-    JOB784148 -->|produces / 产出| DS11663
-    JOB784153 -->|produces / 产出| DS11664
-    JOB784149 -->|produces / 产出| DS11665
-    JOB784150 -->|produces / 产出| DS11666
-    JOB784151 -->|produces / 产出| DS11667
-    JOB784152 -->|produces / 产出| DS11668
-    DS11655 -->|consumed by / 被消费于| JOB784142
-    DS11655 -->|consumed by / 被消费于| JOB784149
-    DS11656 -->|consumed by / 被消费于| JOB784143
-    DS11656 -->|consumed by / 被消费于| JOB784144
-    DS11657 -->|consumed by / 被消费于| JOB784145
-    DS11658 -->|consumed by / 被消费于| JOB784145
-    DS11659 -->|consumed by / 被消费于| JOB784146
-    DS11659 -->|consumed by / 被消费于| JOB784147
-    DS11660 -->|consumed by / 被消费于| JOB784147
-    DS11661 -->|consumed by / 被消费于| JOB784148
-    DS11665 -->|consumed by / 被消费于| JOB784150
-    DS11666 -->|consumed by / 被消费于| JOB784151
-    DS11667 -->|consumed by / 被消费于| JOB784152
-    DS11668 -->|consumed by / 被消费于| JOB784153
+    DS12959["[production]backtest.fills<br/>回测模拟成交<br/>（symbol/quantity/price/commission/slippage）"]
+    DS12960["[production]backtest.nav_series<br/>回测净值序列<br/>（timestamp/nav/cash/positions）"]
+    DS12958["[production]backtest.target_weights<br/>回测目标权重<br/>（symbol/target_weight/timestamp）"]
+    DS12957["[production]backtest.tick_event<br/>回测Tick事件<br/>（历史tick重放，含timestamp/symbol/price/volume）"]
+    DS12956["[production]backtest.result<br/>回测结果<br/>（nav_series/sharpe/max_drawdown/trades）"]
+    DS12950["[production]factor.momentum_20d<br/>20日动量因子信号<br/>（factor_id/symbol/as_of_date/raw_value/rank_pc…"]
+    DS12949["[production]factor.value_factor<br/>价值因子信号<br/>（factor_id/symbol/as_of_date/raw_value/normalized…"]
+    DS12954["[production]fill.executed<br/>成交回报<br/>（symbol/quantity/price/commission/timestamp）"]
+    DS12948["[production]market_data.ohlc_bar<br/>聚合OHLC K线<br/>（1m/5m/日线，由tick聚合）"]
+    DS12947["[production]market_data.tick<br/>标准化Tick行情<br/>（symbol/timestamp/OHLCV/quality_score）"]
+    DS12953["[production]order.target<br/>目标订单<br/>（symbol/side/quantity/price/order_type）"]
+    DS12955["[production]position.snapshot<br/>持仓快照<br/>（symbol/quantity/avg_cost/market_value/timestamp）"]
+    DS12952["[production]risk.limits<br/>风险限额<br/>（max_position/max_drawdown/exposure_limits）"]
+    DS12951["[production]signal.composite<br/>合成交易信号<br/>（多因子加权/截面排名/置信度）"]
+    JOB807126("[production]backtest.calc_metrics<br/>回测指标计算<br/>（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验）")
+    JOB807124("[production]backtest.match_fills<br/>回测撮合引擎<br/>（根据目标权重模拟成交，含滑点/手续费）")
+    JOB807122("[production]backtest.replay_ticks<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放）")
+    JOB807123("[production]backtest.run_event_driven<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重）")
+    JOB807125("[production]backtest.update_portfolio<br/>回测组合更新<br/>（根据成交更新持仓/现金/净值）")
+    JOB807115("[production]aggregate.ohlc_bar<br/>将Tick数据聚合为OHLC K线<br/>（1m/5m/日线）")
+    JOB807119("[production]check.risk_limits<br/>风险限额检查<br/>（持仓/回撤/暴露度）")
+    JOB807117("[production]compute.momentum_20d<br/>计算20日动量因子<br/>（收益率/相对强度）")
+    JOB807116("[production]compute.value_factor<br/>计算价值因子<br/>（PE/PB/股息率等）")
+    JOB807121("[production]execute.order<br/>执行订单<br/>（实盘/模拟）")
+    JOB807120("[production]generate.order<br/>根据信号+风险限额生成目标订单，产出DS-007 order.target")
+    JOB807114("[production]ingest.ifind_kline<br/>从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick")
+    JOB807118("[production]synthesize.signal<br/>合成多因子信号<br/>（加权/截面排名/置信度）")
+    JOB807114 -->|produces / 产出| DS12947
+    JOB807115 -->|produces / 产出| DS12948
+    JOB807116 -->|produces / 产出| DS12949
+    JOB807117 -->|produces / 产出| DS12950
+    JOB807118 -->|produces / 产出| DS12951
+    JOB807119 -->|produces / 产出| DS12952
+    JOB807120 -->|produces / 产出| DS12953
+    JOB807121 -->|produces / 产出| DS12954
+    JOB807121 -->|produces / 产出| DS12955
+    JOB807126 -->|produces / 产出| DS12956
+    JOB807122 -->|produces / 产出| DS12957
+    JOB807123 -->|produces / 产出| DS12958
+    JOB807124 -->|produces / 产出| DS12959
+    JOB807125 -->|produces / 产出| DS12960
+    DS12947 -->|consumed by / 被消费于| JOB807115
+    DS12947 -->|consumed by / 被消费于| JOB807122
+    DS12948 -->|consumed by / 被消费于| JOB807116
+    DS12948 -->|consumed by / 被消费于| JOB807117
+    DS12949 -->|consumed by / 被消费于| JOB807118
+    DS12950 -->|consumed by / 被消费于| JOB807118
+    DS12951 -->|consumed by / 被消费于| JOB807119
+    DS12951 -->|consumed by / 被消费于| JOB807120
+    DS12952 -->|consumed by / 被消费于| JOB807120
+    DS12953 -->|consumed by / 被消费于| JOB807121
+    DS12957 -->|consumed by / 被消费于| JOB807123
+    DS12958 -->|consumed by / 被消费于| JOB807124
+    DS12959 -->|consumed by / 被消费于| JOB807125
+    DS12960 -->|consumed by / 被消费于| JOB807126
 ```
 
 ### 运营态全景图（仅 design_maturity=production）
@@ -124,61 +124,61 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11667["[production]backtest.fills<br/>回测模拟成交<br/>（symbol/quantity/price/commission/slippage）"]
-    DS11668["[production]backtest.nav_series<br/>回测净值序列<br/>（timestamp/nav/cash/positions）"]
-    DS11666["[production]backtest.target_weights<br/>回测目标权重<br/>（symbol/target_weight/timestamp）"]
-    DS11665["[production]backtest.tick_event<br/>回测Tick事件<br/>（历史tick重放，含timestamp/symbol/price/volume）"]
-    DS11664["[production]backtest.result<br/>回测结果<br/>（nav_series/sharpe/max_drawdown/trades）"]
-    DS11658["[production]factor.momentum_20d<br/>20日动量因子信号<br/>（factor_id/symbol/as_of_date/raw_value/rank_pc…"]
-    DS11657["[production]factor.value_factor<br/>价值因子信号<br/>（factor_id/symbol/as_of_date/raw_value/normalized…"]
-    DS11662["[production]fill.executed<br/>成交回报<br/>（symbol/quantity/price/commission/timestamp）"]
-    DS11656["[production]market_data.ohlc_bar<br/>聚合OHLC K线<br/>（1m/5m/日线，由tick聚合）"]
-    DS11655["[production]market_data.tick<br/>标准化Tick行情<br/>（symbol/timestamp/OHLCV/quality_score）"]
-    DS11661["[production]order.target<br/>目标订单<br/>（symbol/side/quantity/price/order_type）"]
-    DS11663["[production]position.snapshot<br/>持仓快照<br/>（symbol/quantity/avg_cost/market_value/timestamp）"]
-    DS11660["[production]risk.limits<br/>风险限额<br/>（max_position/max_drawdown/exposure_limits）"]
-    DS11659["[production]signal.composite<br/>合成交易信号<br/>（多因子加权/截面排名/置信度）"]
-    JOB784153("[production]backtest.calc_metrics<br/>回测指标计算<br/>（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验）")
-    JOB784151("[production]backtest.match_fills<br/>回测撮合引擎<br/>（根据目标权重模拟成交，含滑点/手续费）")
-    JOB784149("[production]backtest.replay_ticks<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放）")
-    JOB784150("[production]backtest.run_event_driven<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重）")
-    JOB784152("[production]backtest.update_portfolio<br/>回测组合更新<br/>（根据成交更新持仓/现金/净值）")
-    JOB784142("[production]aggregate.ohlc_bar<br/>将Tick数据聚合为OHLC K线<br/>（1m/5m/日线）")
-    JOB784146("[production]check.risk_limits<br/>风险限额检查<br/>（持仓/回撤/暴露度）")
-    JOB784144("[production]compute.momentum_20d<br/>计算20日动量因子<br/>（收益率/相对强度）")
-    JOB784143("[production]compute.value_factor<br/>计算价值因子<br/>（PE/PB/股息率等）")
-    JOB784148("[production]execute.order<br/>执行订单<br/>（实盘/模拟）")
-    JOB784147("[production]generate.order<br/>根据信号+风险限额生成目标订单，产出DS-007 order.target")
-    JOB784141("[production]ingest.ifind_kline<br/>从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick")
-    JOB784145("[production]synthesize.signal<br/>合成多因子信号<br/>（加权/截面排名/置信度）")
-    JOB784141 -->|produces / 产出| DS11655
-    JOB784142 -->|produces / 产出| DS11656
-    JOB784143 -->|produces / 产出| DS11657
-    JOB784144 -->|produces / 产出| DS11658
-    JOB784145 -->|produces / 产出| DS11659
-    JOB784146 -->|produces / 产出| DS11660
-    JOB784147 -->|produces / 产出| DS11661
-    JOB784148 -->|produces / 产出| DS11662
-    JOB784148 -->|produces / 产出| DS11663
-    JOB784153 -->|produces / 产出| DS11664
-    JOB784149 -->|produces / 产出| DS11665
-    JOB784150 -->|produces / 产出| DS11666
-    JOB784151 -->|produces / 产出| DS11667
-    JOB784152 -->|produces / 产出| DS11668
-    DS11655 -->|consumed by / 被消费于| JOB784142
-    DS11655 -->|consumed by / 被消费于| JOB784149
-    DS11656 -->|consumed by / 被消费于| JOB784143
-    DS11656 -->|consumed by / 被消费于| JOB784144
-    DS11657 -->|consumed by / 被消费于| JOB784145
-    DS11658 -->|consumed by / 被消费于| JOB784145
-    DS11659 -->|consumed by / 被消费于| JOB784146
-    DS11659 -->|consumed by / 被消费于| JOB784147
-    DS11660 -->|consumed by / 被消费于| JOB784147
-    DS11661 -->|consumed by / 被消费于| JOB784148
-    DS11665 -->|consumed by / 被消费于| JOB784150
-    DS11666 -->|consumed by / 被消费于| JOB784151
-    DS11667 -->|consumed by / 被消费于| JOB784152
-    DS11668 -->|consumed by / 被消费于| JOB784153
+    DS12959["[production]backtest.fills<br/>回测模拟成交<br/>（symbol/quantity/price/commission/slippage）"]
+    DS12960["[production]backtest.nav_series<br/>回测净值序列<br/>（timestamp/nav/cash/positions）"]
+    DS12958["[production]backtest.target_weights<br/>回测目标权重<br/>（symbol/target_weight/timestamp）"]
+    DS12957["[production]backtest.tick_event<br/>回测Tick事件<br/>（历史tick重放，含timestamp/symbol/price/volume）"]
+    DS12956["[production]backtest.result<br/>回测结果<br/>（nav_series/sharpe/max_drawdown/trades）"]
+    DS12950["[production]factor.momentum_20d<br/>20日动量因子信号<br/>（factor_id/symbol/as_of_date/raw_value/rank_pc…"]
+    DS12949["[production]factor.value_factor<br/>价值因子信号<br/>（factor_id/symbol/as_of_date/raw_value/normalized…"]
+    DS12954["[production]fill.executed<br/>成交回报<br/>（symbol/quantity/price/commission/timestamp）"]
+    DS12948["[production]market_data.ohlc_bar<br/>聚合OHLC K线<br/>（1m/5m/日线，由tick聚合）"]
+    DS12947["[production]market_data.tick<br/>标准化Tick行情<br/>（symbol/timestamp/OHLCV/quality_score）"]
+    DS12953["[production]order.target<br/>目标订单<br/>（symbol/side/quantity/price/order_type）"]
+    DS12955["[production]position.snapshot<br/>持仓快照<br/>（symbol/quantity/avg_cost/market_value/timestamp）"]
+    DS12952["[production]risk.limits<br/>风险限额<br/>（max_position/max_drawdown/exposure_limits）"]
+    DS12951["[production]signal.composite<br/>合成交易信号<br/>（多因子加权/截面排名/置信度）"]
+    JOB807126("[production]backtest.calc_metrics<br/>回测指标计算<br/>（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验）")
+    JOB807124("[production]backtest.match_fills<br/>回测撮合引擎<br/>（根据目标权重模拟成交，含滑点/手续费）")
+    JOB807122("[production]backtest.replay_ticks<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放）")
+    JOB807123("[production]backtest.run_event_driven<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重）")
+    JOB807125("[production]backtest.update_portfolio<br/>回测组合更新<br/>（根据成交更新持仓/现金/净值）")
+    JOB807115("[production]aggregate.ohlc_bar<br/>将Tick数据聚合为OHLC K线<br/>（1m/5m/日线）")
+    JOB807119("[production]check.risk_limits<br/>风险限额检查<br/>（持仓/回撤/暴露度）")
+    JOB807117("[production]compute.momentum_20d<br/>计算20日动量因子<br/>（收益率/相对强度）")
+    JOB807116("[production]compute.value_factor<br/>计算价值因子<br/>（PE/PB/股息率等）")
+    JOB807121("[production]execute.order<br/>执行订单<br/>（实盘/模拟）")
+    JOB807120("[production]generate.order<br/>根据信号+风险限额生成目标订单，产出DS-007 order.target")
+    JOB807114("[production]ingest.ifind_kline<br/>从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick")
+    JOB807118("[production]synthesize.signal<br/>合成多因子信号<br/>（加权/截面排名/置信度）")
+    JOB807114 -->|produces / 产出| DS12947
+    JOB807115 -->|produces / 产出| DS12948
+    JOB807116 -->|produces / 产出| DS12949
+    JOB807117 -->|produces / 产出| DS12950
+    JOB807118 -->|produces / 产出| DS12951
+    JOB807119 -->|produces / 产出| DS12952
+    JOB807120 -->|produces / 产出| DS12953
+    JOB807121 -->|produces / 产出| DS12954
+    JOB807121 -->|produces / 产出| DS12955
+    JOB807126 -->|produces / 产出| DS12956
+    JOB807122 -->|produces / 产出| DS12957
+    JOB807123 -->|produces / 产出| DS12958
+    JOB807124 -->|produces / 产出| DS12959
+    JOB807125 -->|produces / 产出| DS12960
+    DS12947 -->|consumed by / 被消费于| JOB807115
+    DS12947 -->|consumed by / 被消费于| JOB807122
+    DS12948 -->|consumed by / 被消费于| JOB807116
+    DS12948 -->|consumed by / 被消费于| JOB807117
+    DS12949 -->|consumed by / 被消费于| JOB807118
+    DS12950 -->|consumed by / 被消费于| JOB807118
+    DS12951 -->|consumed by / 被消费于| JOB807119
+    DS12951 -->|consumed by / 被消费于| JOB807120
+    DS12952 -->|consumed by / 被消费于| JOB807120
+    DS12953 -->|consumed by / 被消费于| JOB807121
+    DS12957 -->|consumed by / 被消费于| JOB807123
+    DS12958 -->|consumed by / 被消费于| JOB807124
+    DS12959 -->|consumed by / 被消费于| JOB807125
+    DS12960 -->|consumed by / 被消费于| JOB807126
 ```
 
 ### 生产数据流图（scope=production）
@@ -188,42 +188,42 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11664["[production]backtest.result<br/>回测结果<br/>（nav_series/sharpe/max_drawdown/trades）"]
-    DS11658["[production]factor.momentum_20d<br/>20日动量因子信号<br/>（factor_id/symbol/as_of_date/raw_value/rank_pc…"]
-    DS11657["[production]factor.value_factor<br/>价值因子信号<br/>（factor_id/symbol/as_of_date/raw_value/normalized…"]
-    DS11662["[production]fill.executed<br/>成交回报<br/>（symbol/quantity/price/commission/timestamp）"]
-    DS11656["[production]market_data.ohlc_bar<br/>聚合OHLC K线<br/>（1m/5m/日线，由tick聚合）"]
-    DS11655["[production]market_data.tick<br/>标准化Tick行情<br/>（symbol/timestamp/OHLCV/quality_score）"]
-    DS11661["[production]order.target<br/>目标订单<br/>（symbol/side/quantity/price/order_type）"]
-    DS11663["[production]position.snapshot<br/>持仓快照<br/>（symbol/quantity/avg_cost/market_value/timestamp）"]
-    DS11660["[production]risk.limits<br/>风险限额<br/>（max_position/max_drawdown/exposure_limits）"]
-    DS11659["[production]signal.composite<br/>合成交易信号<br/>（多因子加权/截面排名/置信度）"]
-    JOB784142("[production]aggregate.ohlc_bar<br/>将Tick数据聚合为OHLC K线<br/>（1m/5m/日线）")
-    JOB784146("[production]check.risk_limits<br/>风险限额检查<br/>（持仓/回撤/暴露度）")
-    JOB784144("[production]compute.momentum_20d<br/>计算20日动量因子<br/>（收益率/相对强度）")
-    JOB784143("[production]compute.value_factor<br/>计算价值因子<br/>（PE/PB/股息率等）")
-    JOB784148("[production]execute.order<br/>执行订单<br/>（实盘/模拟）")
-    JOB784147("[production]generate.order<br/>根据信号+风险限额生成目标订单，产出DS-007 order.target")
-    JOB784141("[production]ingest.ifind_kline<br/>从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick")
-    JOB784145("[production]synthesize.signal<br/>合成多因子信号<br/>（加权/截面排名/置信度）")
-    JOB784141 -->|produces / 产出| DS11655
-    JOB784142 -->|produces / 产出| DS11656
-    JOB784143 -->|produces / 产出| DS11657
-    JOB784144 -->|produces / 产出| DS11658
-    JOB784145 -->|produces / 产出| DS11659
-    JOB784146 -->|produces / 产出| DS11660
-    JOB784147 -->|produces / 产出| DS11661
-    JOB784148 -->|produces / 产出| DS11662
-    JOB784148 -->|produces / 产出| DS11663
-    DS11655 -->|consumed by / 被消费于| JOB784142
-    DS11656 -->|consumed by / 被消费于| JOB784143
-    DS11656 -->|consumed by / 被消费于| JOB784144
-    DS11657 -->|consumed by / 被消费于| JOB784145
-    DS11658 -->|consumed by / 被消费于| JOB784145
-    DS11659 -->|consumed by / 被消费于| JOB784146
-    DS11659 -->|consumed by / 被消费于| JOB784147
-    DS11660 -->|consumed by / 被消费于| JOB784147
-    DS11661 -->|consumed by / 被消费于| JOB784148
+    DS12956["[production]backtest.result<br/>回测结果<br/>（nav_series/sharpe/max_drawdown/trades）"]
+    DS12950["[production]factor.momentum_20d<br/>20日动量因子信号<br/>（factor_id/symbol/as_of_date/raw_value/rank_pc…"]
+    DS12949["[production]factor.value_factor<br/>价值因子信号<br/>（factor_id/symbol/as_of_date/raw_value/normalized…"]
+    DS12954["[production]fill.executed<br/>成交回报<br/>（symbol/quantity/price/commission/timestamp）"]
+    DS12948["[production]market_data.ohlc_bar<br/>聚合OHLC K线<br/>（1m/5m/日线，由tick聚合）"]
+    DS12947["[production]market_data.tick<br/>标准化Tick行情<br/>（symbol/timestamp/OHLCV/quality_score）"]
+    DS12953["[production]order.target<br/>目标订单<br/>（symbol/side/quantity/price/order_type）"]
+    DS12955["[production]position.snapshot<br/>持仓快照<br/>（symbol/quantity/avg_cost/market_value/timestamp）"]
+    DS12952["[production]risk.limits<br/>风险限额<br/>（max_position/max_drawdown/exposure_limits）"]
+    DS12951["[production]signal.composite<br/>合成交易信号<br/>（多因子加权/截面排名/置信度）"]
+    JOB807115("[production]aggregate.ohlc_bar<br/>将Tick数据聚合为OHLC K线<br/>（1m/5m/日线）")
+    JOB807119("[production]check.risk_limits<br/>风险限额检查<br/>（持仓/回撤/暴露度）")
+    JOB807117("[production]compute.momentum_20d<br/>计算20日动量因子<br/>（收益率/相对强度）")
+    JOB807116("[production]compute.value_factor<br/>计算价值因子<br/>（PE/PB/股息率等）")
+    JOB807121("[production]execute.order<br/>执行订单<br/>（实盘/模拟）")
+    JOB807120("[production]generate.order<br/>根据信号+风险限额生成目标订单，产出DS-007 order.target")
+    JOB807114("[production]ingest.ifind_kline<br/>从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick")
+    JOB807118("[production]synthesize.signal<br/>合成多因子信号<br/>（加权/截面排名/置信度）")
+    JOB807114 -->|produces / 产出| DS12947
+    JOB807115 -->|produces / 产出| DS12948
+    JOB807116 -->|produces / 产出| DS12949
+    JOB807117 -->|produces / 产出| DS12950
+    JOB807118 -->|produces / 产出| DS12951
+    JOB807119 -->|produces / 产出| DS12952
+    JOB807120 -->|produces / 产出| DS12953
+    JOB807121 -->|produces / 产出| DS12954
+    JOB807121 -->|produces / 产出| DS12955
+    DS12947 -->|consumed by / 被消费于| JOB807115
+    DS12948 -->|consumed by / 被消费于| JOB807116
+    DS12948 -->|consumed by / 被消费于| JOB807117
+    DS12949 -->|consumed by / 被消费于| JOB807118
+    DS12950 -->|consumed by / 被消费于| JOB807118
+    DS12951 -->|consumed by / 被消费于| JOB807119
+    DS12951 -->|consumed by / 被消费于| JOB807120
+    DS12952 -->|consumed by / 被消费于| JOB807120
+    DS12953 -->|consumed by / 被消费于| JOB807121
 ```
 
 ### 回测内部数据流图（scope=backtest_internal）
@@ -233,58 +233,58 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS11667["[production]backtest.fills<br/>回测模拟成交<br/>（symbol/quantity/price/commission/slippage）"]
-    DS11668["[production]backtest.nav_series<br/>回测净值序列<br/>（timestamp/nav/cash/positions）"]
-    DS11666["[production]backtest.target_weights<br/>回测目标权重<br/>（symbol/target_weight/timestamp）"]
-    DS11665["[production]backtest.tick_event<br/>回测Tick事件<br/>（历史tick重放，含timestamp/symbol/price/volume）"]
-    JOB784153("[production]backtest.calc_metrics<br/>回测指标计算<br/>（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验）")
-    JOB784151("[production]backtest.match_fills<br/>回测撮合引擎<br/>（根据目标权重模拟成交，含滑点/手续费）")
-    JOB784149("[production]backtest.replay_ticks<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放）")
-    JOB784150("[production]backtest.run_event_driven<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重）")
-    JOB784152("[production]backtest.update_portfolio<br/>回测组合更新<br/>（根据成交更新持仓/现金/净值）")
-    JOB784149 -->|produces / 产出| DS11665
-    JOB784150 -->|produces / 产出| DS11666
-    JOB784151 -->|produces / 产出| DS11667
-    JOB784152 -->|produces / 产出| DS11668
-    DS11665 -->|consumed by / 被消费于| JOB784150
-    DS11666 -->|consumed by / 被消费于| JOB784151
-    DS11667 -->|consumed by / 被消费于| JOB784152
-    DS11668 -->|consumed by / 被消费于| JOB784153
+    DS12959["[production]backtest.fills<br/>回测模拟成交<br/>（symbol/quantity/price/commission/slippage）"]
+    DS12960["[production]backtest.nav_series<br/>回测净值序列<br/>（timestamp/nav/cash/positions）"]
+    DS12958["[production]backtest.target_weights<br/>回测目标权重<br/>（symbol/target_weight/timestamp）"]
+    DS12957["[production]backtest.tick_event<br/>回测Tick事件<br/>（历史tick重放，含timestamp/symbol/price/volume）"]
+    JOB807126("[production]backtest.calc_metrics<br/>回测指标计算<br/>（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验）")
+    JOB807124("[production]backtest.match_fills<br/>回测撮合引擎<br/>（根据目标权重模拟成交，含滑点/手续费）")
+    JOB807122("[production]backtest.replay_ticks<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放）")
+    JOB807123("[production]backtest.run_event_driven<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重）")
+    JOB807125("[production]backtest.update_portfolio<br/>回测组合更新<br/>（根据成交更新持仓/现金/净值）")
+    JOB807122 -->|produces / 产出| DS12957
+    JOB807123 -->|produces / 产出| DS12958
+    JOB807124 -->|produces / 产出| DS12959
+    JOB807125 -->|produces / 产出| DS12960
+    DS12957 -->|consumed by / 被消费于| JOB807123
+    DS12958 -->|consumed by / 被消费于| JOB807124
+    DS12959 -->|consumed by / 被消费于| JOB807125
+    DS12960 -->|consumed by / 被消费于| JOB807126
 ```
 
 ## Dataset 清单（自动生成 · 生成器: generate_dataflow_diagram.py）
 
 | ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |
 |----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|----------|
-| DS-11667 | backtest.fills / 回测.模拟成交 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测模拟成交（symbol/quantity/price/commission/slippage），撮合引擎产出 |
-| DS-11668 | backtest.nav_series / 回测.净值序列 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测净值序列（timestamp/nav/cash/positions），组合更新产出 |
-| DS-11666 | backtest.target_weights / 回测.目标权重 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测目标权重（symbol/target_weight/timestamp），策略根据tick事件生成 |
-| DS-11665 | backtest.tick_event / 回测.Tick事件 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测Tick事件（历史tick重放，含timestamp/symbol/price/volume），回测内部类型 |
-| DS-11664 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测结果（nav_series/sharpe/max_drawdown/trades），CTR-P1-016 BacktestResult |
-| DS-11658 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 20日动量因子信号（factor_id/symbol/as_of_date/raw_value/rank_pct），CTR-002 FactorSignal |
-| DS-11657 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 价值因子信号（factor_id/symbol/as_of_date/raw_value/normalized_value），CTR-002 FactorSignal |
-| DS-11662 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill |
-| DS-11656 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001 derived |
-| DS-11655 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 市场数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 标准化Tick行情（symbol/timestamp/OHLCV/quality_score），CTR-001 NormalizedMarketData |
-| DS-11661 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 持仓核心 | strict / 严格 | MOD-L05-001 | production / 生产 | generated / 已生成 | 目标订单（symbol/side/quantity/price/order_type），CTR-004 Order |
-| DS-11663 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot |
-| DS-11660 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风险 | strict / 严格 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额（max_position/max_drawdown/exposure_limits），CTR-003 RiskLimits |
-| DS-11659 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号(legacy) | strict / 严格 | - | production / 生产 | generated / 已生成 | 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal |
+| DS-12959 | backtest.fills / 回测.模拟成交 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测模拟成交（symbol/quantity/price/commission/slippage），撮合引擎产出 |
+| DS-12960 | backtest.nav_series / 回测.净值序列 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测净值序列（timestamp/nav/cash/positions），组合更新产出 |
+| DS-12958 | backtest.target_weights / 回测.目标权重 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测目标权重（symbol/target_weight/timestamp），策略根据tick事件生成 |
+| DS-12957 | backtest.tick_event / 回测.Tick事件 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测Tick事件（历史tick重放，含timestamp/symbol/price/volume），回测内部类型 |
+| DS-12956 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测结果（nav_series/sharpe/max_drawdown/trades），CTR-P1-016 BacktestResult |
+| DS-12950 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 20日动量因子信号（factor_id/symbol/as_of_date/raw_value/rank_pct），CTR-002 FactorSignal |
+| DS-12949 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 价值因子信号（factor_id/symbol/as_of_date/raw_value/normalized_value），CTR-002 FactorSignal |
+| DS-12954 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill |
+| DS-12948 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 行情数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001 derived |
+| DS-12947 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 行情数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 标准化Tick行情（symbol/timestamp/OHLCV/quality_score），CTR-001 NormalizedMarketData |
+| DS-12953 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 组合核心 | strict / 严格 | MOD-L05-001 | production / 生产 | generated / 已生成 | 目标订单（symbol/side/quantity/price/order_type），CTR-004 Order |
+| DS-12955 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot |
+| DS-12952 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风控 | strict / 严格 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额（max_position/max_drawdown/exposure_limits），CTR-003 RiskLimits |
+| DS-12951 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号遗留设计态 | strict / 严格 | - | production / 生产 | generated / 已生成 | 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal |
 
 ## Job 清单（自动生成 · 生成器: generate_dataflow_diagram.py）
 
 | ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |
 |----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|----------|
-| JOB-784153 | backtest.calc_metrics / 回测.计算指标 | backtest_internal / 回测内部 | src/zephyr/backtest/metrics.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result |
-| JOB-784151 | backtest.match_fills / 回测.撮合成交 | backtest_internal / 回测内部 | src/zephyr/backtest/matching_logic.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测撮合引擎（根据目标权重模拟成交，含滑点/手续费），产出DS-013 backtest.fills |
-| JOB-784149 | backtest.replay_ticks / 回测.Tick重放 | backtest_internal / 回测内部 | src/zephyr/backtest/tick_replay.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 历史Tick重放（从DS-001读取历史tick，按时间顺序重放），产出DS-011 backtest.tick_event |
-| JOB-784150 | backtest.run_event_driven / 回测.事件驱动运行 | backtest_internal / 回测内部 | src/zephyr/backtest/event_engine.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 事件驱动回测引擎（消费tick事件，运行策略生成目标权重），产出DS-012 backtest.target_weights |
-| JOB-784152 | backtest.update_portfolio / 回测.更新组合 | backtest_internal / 回测内部 | src/zephyr/backtest/portfolio.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测组合更新（根据成交更新持仓/现金/净值），产出DS-014 backtest.nav_series |
-| JOB-784142 | aggregate.ohlc_bar / 聚合.OHLC K线 | production / 生产 | src/zephyr/data/aggregator.py | event_driven / 事件驱动 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 将Tick数据聚合为OHLC K线（1m/5m/日线），产出DS-002 market_data.ohlc_bar |
-| JOB-784146 | check.risk_limits / 检查.风险限额 | production / 生产 | src/zephyr/risk/risk_checker.py | event_driven / 事件驱动 | production / 生产 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额检查（持仓/回撤/暴露度），产出DS-006 risk.limits |
-| JOB-784144 | compute.momentum_20d / 计算.20日动量 | production / 生产 | src/zephyr/factor/momentum.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算20日动量因子（收益率/相对强度），产出DS-004 factor.momentum_20d |
-| JOB-784143 | compute.value_factor / 计算.价值因子 | production / 生产 | src/zephyr/factor/value_factor.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算价值因子（PE/PB/股息率等），产出DS-003 factor.value_factor |
-| JOB-784148 | execute.order / 执行.订单 | production / 生产 | src/zephyr/ex_core/executor.py | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | production / 生产 | generated / 已生成 | 执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot |
-| JOB-784147 | generate.order / 生成.订单 | production / 生产 | src/zephyr/pf_core/order_generator.py | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | production / 生产 | generated / 已生成 | 根据信号+风险限额生成目标订单，产出DS-007 order.target |
-| JOB-784141 | ingest.ifind_kline / 采集.iFind行情 | production / 生产 | src/zephyr/data/ingest_ifind.py | scheduled / 定时 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick |
-| JOB-784145 | synthesize.signal / 合成.信号 | production / 生产 | src/zephyr/signal_ashare/synthesizer.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 | 合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite |
+| JOB-807126 | backtest.calc_metrics / 回测.计算指标 | backtest_internal / 回测内部 | src/zephyr/backtest/metrics.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result |
+| JOB-807124 | backtest.match_fills / 回测.撮合成交 | backtest_internal / 回测内部 | src/zephyr/backtest/matching_logic.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测撮合引擎（根据目标权重模拟成交，含滑点/手续费），产出DS-013 backtest.fills |
+| JOB-807122 | backtest.replay_ticks / 回测.Tick重放 | backtest_internal / 回测内部 | src/zephyr/backtest/tick_replay.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 历史Tick重放（从DS-001读取历史tick，按时间顺序重放），产出DS-011 backtest.tick_event |
+| JOB-807123 | backtest.run_event_driven / 回测.事件驱动运行 | backtest_internal / 回测内部 | src/zephyr/backtest/event_engine.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 事件驱动回测引擎（消费tick事件，运行策略生成目标权重），产出DS-012 backtest.target_weights |
+| JOB-807125 | backtest.update_portfolio / 回测.更新组合 | backtest_internal / 回测内部 | src/zephyr/backtest/portfolio.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测组合更新（根据成交更新持仓/现金/净值），产出DS-014 backtest.nav_series |
+| JOB-807115 | aggregate.ohlc_bar / 聚合.OHLC K线 | production / 生产 | src/zephyr/data/aggregator.py | event_driven / 事件驱动 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 将Tick数据聚合为OHLC K线（1m/5m/日线），产出DS-002 market_data.ohlc_bar |
+| JOB-807119 | check.risk_limits / 检查.风险限额 | production / 生产 | src/zephyr/risk/risk_checker.py | event_driven / 事件驱动 | production / 生产 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额检查（持仓/回撤/暴露度），产出DS-006 risk.limits |
+| JOB-807117 | compute.momentum_20d / 计算.20日动量 | production / 生产 | src/zephyr/factor/momentum.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算20日动量因子（收益率/相对强度），产出DS-004 factor.momentum_20d |
+| JOB-807116 | compute.value_factor / 计算.价值因子 | production / 生产 | src/zephyr/factor/value_factor.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算价值因子（PE/PB/股息率等），产出DS-003 factor.value_factor |
+| JOB-807121 | execute.order / 执行.订单 | production / 生产 | src/zephyr/ex_core/executor.py | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | production / 生产 | generated / 已生成 | 执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot |
+| JOB-807120 | generate.order / 生成.订单 | production / 生产 | src/zephyr/pf_core/order_generator.py | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | production / 生产 | generated / 已生成 | 根据信号+风险限额生成目标订单，产出DS-007 order.target |
+| JOB-807114 | ingest.ifind_kline / 采集.iFind行情 | production / 生产 | src/zephyr/data/ingest_ifind.py | scheduled / 定时 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick |
+| JOB-807118 | synthesize.signal / 合成.信号 | production / 生产 | src/zephyr/signal_ashare/synthesizer.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 | 合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite |

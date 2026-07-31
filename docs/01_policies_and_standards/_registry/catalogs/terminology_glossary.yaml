@@ -379,44 +379,9 @@ entries:
     en: trading
     zh: 交易
 
-  # ───────── domain_id_display：数据流图示显示名（D_XXX 形式，含遗留域）─────────
-  - category: domain_id_display
-    en: D_MKT_DATA
-    zh: 市场数据
-  - category: domain_id_display
-    en: D_FACTOR
-    zh: 因子
-  - category: domain_id_display
-    en: D_SIGNAL
-    zh: 信号
-    description: 遗留域（裁定#204 已改名为 D_SIGLEGACY，数据流图示沿用旧名）
-  - category: domain_id_display
-    en: D_SIGLEGACY
-    zh: 信号(legacy)
-  - category: domain_id_display
-    en: D_RISK
-    zh: 风险
-  - category: domain_id_display
-    en: D_ORDER
-    zh: 订单
-    description: 数据流图示用名（规范域 D_TRADING/D_POSITION，图示沿用 D_ORDER）
-  - category: domain_id_display
-    en: D_EXECUTION
-    zh: 执行
-    description: 数据流图示用名（规范域 D_EX_CORE/D_EX_SOR，图示沿用 D_EXECUTION）
-  - category: domain_id_display
-    en: D_EX_CORE
-    zh: 执行核心
-  - category: domain_id_display
-    en: D_PORTFOLIO
-    zh: 持仓
-    description: 数据流图示用名（规范域 D_PF_CORE，图示沿用 D_PORTFOLIO）
-  - category: domain_id_display
-    en: D_PF_CORE
-    zh: 持仓核心
-  - category: domain_id_display
-    en: D_BACKTEST
-    zh: 回测
+  # domain_id_display 类别已删除（#ARCH-SSOT-GLOSSARY-MERGE-001）
+  # 域中文名单一真源归 functional_domain_registry.yaml（经 domain_name_mapping 加载）
+  # 遗留域（D_SIGNAL/D_ORDER/D_EXECUTION/D_PORTFOLIO）已补进 registry（stability=deprecated）
 
   # ───────── data_source：数据采集中文名 ─────────
   - category: data_source

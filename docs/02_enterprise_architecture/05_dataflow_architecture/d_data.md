@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据域-数据采集管理
 
-> 生成时间: 2026-07-31T17:14:43
+> 生成时间: 2026-07-31T19:29:38
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -77,11 +77,11 @@ flowchart TD
 
 | ID | entity_name / 实体名 | scope / 范围 | domain / 域 | design_maturity / 设计成熟度 | module_id / 蓝图 | 功能简述 |
 |----|----------------------|--------------|------------|------------------------------|------------------|----------|
-| DS-11253 | data.feature_store | production / 生产 | D_DATA | design / 设计 | MOD-L00-004 | 特征数据集（特征值/特征元数据/版本管理） |
-| DS-11256 | data.kline_resampler | production / 生产 | D_DATA | design / 设计 | MOD-L00-004 | 重采样K线数据（多周期K线/自定义周期重采样） |
-| DS-11254 | data.realtime_push_manager | production / 生产 | D_DATA | design / 设计 | MOD-L00-004 | 实时推送数据流（实时行情/交易推送） |
-| DS-11257 | data.sector_snapshot_collector | production / 生产 | D_DATA | design / 设计 | MOD-L00-004 | 板块快照数据（板块成分/权重/涨跌统计） |
-| DS-11255 | data.tick_data_manager | production / 生产 | D_DATA | design / 设计 | MOD-L00-004 | Tick数据管理记录（Tick数据生命周期/清理） |
+| DS-11253 | data.feature_store | production / 生产 | D_DATA / 数据接入层 | design / 设计 | MOD-L00-004 | 特征数据集（特征值/特征元数据/版本管理） |
+| DS-11256 | data.kline_resampler | production / 生产 | D_DATA / 数据接入层 | design / 设计 | MOD-L00-004 | 重采样K线数据（多周期K线/自定义周期重采样） |
+| DS-11254 | data.realtime_push_manager | production / 生产 | D_DATA / 数据接入层 | design / 设计 | MOD-L00-004 | 实时推送数据流（实时行情/交易推送） |
+| DS-11257 | data.sector_snapshot_collector | production / 生产 | D_DATA / 数据接入层 | design / 设计 | MOD-L00-004 | 板块快照数据（板块成分/权重/涨跌统计） |
+| DS-11255 | data.tick_data_manager | production / 生产 | D_DATA / 数据接入层 | design / 设计 | MOD-L00-004 | Tick数据管理记录（Tick数据生命周期/清理） |
 
 ## Job 清单
 

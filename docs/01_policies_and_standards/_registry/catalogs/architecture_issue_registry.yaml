@@ -10323,3 +10323,25 @@ entries:
   related_rules: 'AGENTS.md RULE-DEPGRAPH（回测=实盘一致性）, #ARCH-EDE-TICK-FUEL-001'
   created: '2026-07-31'
   last_updated: '2026-07-31'
+
+# --- #ARCH-SSOT-GLOSSARY-MERGE-001: 消除 terminology_glossary domain_id_display 与 functional_domain_registry 真源重叠 ---
+- issue_id: '#ARCH-SSOT-GLOSSARY-MERGE-001'
+  title: 消除 terminology_glossary 的 domain_id_display 与 functional_domain_registry 的真源重叠
+  severity: P2中
+  adjudication: |
+    问题：terminology_glossary.yaml 的 domain_id_display 类别（11 条）与 functional_domain_registry.yaml
+    的 domain_name_zh（77 条）有 7 条重叠，且 4 条中文名不一致（D_MKT_DATA 行情数据/市场数据、
+    D_RISK 风控/风险、D_PF_CORE 组合核心/持仓核心、D_SIGLEGACY 信号遗留设计态/信号(legacy)）。
+    两套真源对同一批域各存中文名，不同生成器读不同值，产出不一致文档。
+
+    治本（方案A，用户确认 2026-07-31）：域中文名单一真源归 functional_domain_registry.yaml。
+    1. glossary 删除 domain_id_display 类别（11 条）——消除与 registry 的 7 条重叠
+    2. 4 个遗留域（D_SIGNAL/D_ORDER/D_EXECUTION/D_PORTFOLIO）补进 registry（stability=deprecated）
+    3. sync_yaml_to_depgraph 加跳过 stability=deprecated 过滤——遗留域不污染 depgraph DB
+    4. generate_dataflow_diagram 改用 domain_name_mapping 查域中文名（代替 glossary domain_id_display）
+    遗留域中文名经 domain_name_mapping 的 YAML fallback（_load_domain_names_from_yaml）查到。
+  fix_phase: '本轮施工（2026-07-31）'
+  status: decided
+  related_adjudication: 'trae_062 (SSoT 真源分类铁律), 裁定#204 (域改名)'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'

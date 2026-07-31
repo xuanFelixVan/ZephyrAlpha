@@ -280,6 +280,8 @@ LAYER_NAME_BILINGUAL: dict[str, tuple[str, str]] = {
 
 # 模块级缓存：避免重复查询 db（None=未加载，dict=已加载，{}=加载失败回退硬编码）
 _DOMAIN_NAME_CACHE: dict[str, str] | None = None
+# YAML fallback 缓存（#ARCH-SSOT-GLOSSARY-MERGE-001：遗留域不在 DB，从 YAML 补查）
+_YAML_NAMES_CACHE: dict[str, str] | None = None
 
 
 def _load_domain_names_from_yaml() -> dict[str, str]:
@@ -292,6 +294,9 @@ def _load_domain_names_from_yaml() -> dict[str, str]:
     Returns:
         dict[domain_id, domain_name_zh]；失败时返回空 dict。
     """
+    global _YAML_NAMES_CACHE
+    if _YAML_NAMES_CACHE is not None:
+        return _YAML_NAMES_CACHE
     try:
         import yaml  # type: ignore[import-untyped]
         from _shared.constants import REPO_ROOT
@@ -311,6 +316,7 @@ def _load_domain_names_from_yaml() -> dict[str, str]:
             if domain_id and name_zh:
                 if domain_id not in result:
                     result[domain_id] = name_zh
+        _YAML_NAMES_CACHE = result
         return result
     except Exception:
         return {}
@@ -390,6 +396,10 @@ def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
     db_names = _load_domain_names_from_db()
     if domain_id in db_names:
         return db_names[domain_id]
+    # YAML fallback：DB 连接成功但域不在 DB（如遗留域 stability=deprecated 未 sync）
+    yaml_names = _load_domain_names_from_yaml()
+    if domain_id in yaml_names:
+        return yaml_names[domain_id]
     # 回退到硬编码映射表（v2.3：仅测试域；生产域 DB 不可用时返回 fallback/domain_id）
     return DOMAIN_NAME_ZH.get(domain_id, fallback or domain_id)
 
@@ -412,6 +422,10 @@ def get_domain_name_zh_strict(domain_id: str) -> str:
     db_names = _load_domain_names_from_db()
     if domain_id in db_names:
         return db_names[domain_id]
+    # YAML fallback：DB 连接成功但域不在 DB（如遗留域 stability=deprecated 未 sync）
+    yaml_names = _load_domain_names_from_yaml()
+    if domain_id in yaml_names:
+        return yaml_names[domain_id]
     return DOMAIN_NAME_ZH.get(domain_id, "")
 
 
