@@ -166,7 +166,7 @@ ttl: permanent
 | D_RISK | 风控 | C3 | L2_domain | 12 | 11 | 1 | 9 | L3 🟢 | ✅ |
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_PF_ALLOC | 组合分配 | C4 | L2_domain | 2 | 2 | 0 | 1 | L3 🟢 | ✅ |
-| D_PF_CORE | 组合核心 | C4 | L2_domain | 8 | 4 | 4 | 2 | L3 🟢 | ✅ |
+| D_PF_CORE | 组合核心 | C4 | L2_domain | 8 | 4 | 4 | 3 | L3 🟢 | ✅ |
 | D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_EX_CORE | 执行核心 | C5 | L2_domain | 14 | 8 | 6 | 5 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |

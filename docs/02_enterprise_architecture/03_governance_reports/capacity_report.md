@@ -129,7 +129,7 @@ ttl: permanent
 | D_OPS | 反馈循环 | L1_foundation | 11 | 150 | 7.3% | 正常 |
 | D_ORCHESTRATOR | 代理编排器 | L1_foundation | 70 | 150 | 46.7% | 正常 |
 | D_PF_ALLOC | 组合分配 | L2_domain | 2 | 150 | 1.3% | 正常 |
-| D_PF_CORE | 组合核心 | L2_domain | 5 | 150 | 3.3% | 正常 |
+| D_PF_CORE | 组合核心 | L2_domain | 6 | 150 | 4.0% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_REPORTING | 报告 | L1_foundation | 3 | 150 | 2.0% | 正常 |
 | D_RISK | 风控 | L2_domain | 11 | 150 | 7.3% | 正常 |
