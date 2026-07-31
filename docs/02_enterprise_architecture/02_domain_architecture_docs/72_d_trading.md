@@ -136,24 +136,24 @@ graph TD
         src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(生产态 / production) compliance_rule.py"]
     end
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_trading_trading_contracts_execution_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_action_dispatcher_annotation_writer_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_trading_trading_contracts_execution_execution_report_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_action_dispatcher_audit_log_writer_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_auto_dispatcher_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_trading_contracts_execution_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED
@@ -269,28 +269,28 @@ graph TD
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_trading_trading_contracts_risk_risk_limits_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_trading_trading_contracts_execution_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_action_dispatcher_annotation_writer_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_trading_contracts_execution_execution_report_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_action_dispatcher_audit_log_writer_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_auto_dispatcher_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_trading_contracts_execution_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED

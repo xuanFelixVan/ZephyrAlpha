@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-31T03:06:05Z'
+generated_at: '2026-07-31T04:21:09Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 184
+total_files: 185
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2043,6 +2043,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
   module_id: REG-DOMAIN-NAMING-001
   title: 域命名规则表
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/external_contract_verification_registry.yaml
+  module_id: REG-EXT-CONTRACT-001
+  title: 外部契约验证登记表
   doc_type: register
   status: active
   version: 1.0.0
