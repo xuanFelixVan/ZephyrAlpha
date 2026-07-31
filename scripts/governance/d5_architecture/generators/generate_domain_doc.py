@@ -1059,6 +1059,12 @@ def _truncate(text: str, max_len: int = 40) -> str:
         full = re.match(r'#ARCH-[A-Z0-9-]+', text[m.start():])
         if full and full.group() != m.group():
             result = result[:m.start()].rstrip()
+    # 保护 裁定#NNN 引用：截断点落在裁定编号中间时回退到编号之前（避免裁定编号被截断成不完整片段误触发 RULING_ATOMICITY 门禁）
+    m2 = re.search(r'裁定#\d*$', result)
+    if m2:
+        full2 = re.match(r'裁定#\d+', text[m2.start():])
+        if full2 and full2.group() != m2.group():
+            result = result[:m2.start()].rstrip('（( \t　')
     return result + "..."
 
 
