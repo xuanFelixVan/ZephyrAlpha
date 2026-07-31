@@ -1464,7 +1464,7 @@ def sync_dataflow_registry(cur):
     from datetime import datetime, UTC
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
-    # --- 清空运营态数据（DELETE + INSERT 模式，保护设计态）---
+    # --- 清空运营态数据（DELETE + UPSERT 模式，保护设计态）---
     # ARCH-052: 与 generate_project_depgraph.py 对齐——保护 design_maturity='design' 的设计态数据
     # apply_dataflowgraph.py --add-design-* 写入的数据（design_maturity='design', build_status='planned'）
     # 不得被常规 sync 清空。NULL != 'design' 为 NULL（非 TRUE），需显式处理。
@@ -1477,6 +1477,12 @@ def sync_dataflow_registry(cur):
     # （design/production），prototype 已移除；此谓词天然保护 design。
     # 配套 P0-4：protect_dataflow_design_maturity 触发器双重防御（谓词层 + 触发器层），
     # 即使谓词漏判，触发器仍阻断。
+    #
+    # TRAE-082 数据流设计态治本（2026-07-31）：
+    # jobs/datasets 改用 UPSERT（ON CONFLICT DO UPDATE）——design 记录不被 DELETE，
+    # 但通过 UPSERT 幂等更新（YAML 是 SSoT，design 记录同时存在于 YAML 和 DB）。
+    # edges 无唯一约束且受 ARCH-053 触发器保护（禁止 DELETE design 态），
+    # 故只 DELETE production edges，INSERT 时用 WHERE NOT EXISTS 避免重复。
     cur.execute(
         "DELETE FROM dataflow_edges "
         "WHERE design_maturity IS NULL OR design_maturity = 'production'"
@@ -1508,6 +1514,17 @@ def sync_dataflow_registry(cur):
                  run_context, pit_relevance, description, design_maturity,
                  build_status, module_id, last_updated)
             VALUES (%s, 'job', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (job_name) DO UPDATE SET
+                scope = EXCLUDED.scope,
+                source_code_ref = EXCLUDED.source_code_ref,
+                trigger_type = EXCLUDED.trigger_type,
+                run_context = EXCLUDED.run_context,
+                pit_relevance = EXCLUDED.pit_relevance,
+                description = EXCLUDED.description,
+                design_maturity = EXCLUDED.design_maturity,
+                build_status = EXCLUDED.build_status,
+                module_id = EXCLUDED.module_id,
+                last_updated = EXCLUDED.last_updated
             RETURNING job_id
         """, (
             job_name, j.get("scope", "production"),
@@ -1539,6 +1556,19 @@ def sync_dataflow_registry(cur):
                  produced_by_job, domain_id, design_maturity, build_status,
                  pit_policy, format_summary, valid_since, module_id, last_updated)
             VALUES (%s, 'dataset', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (entity_name) DO UPDATE SET
+                scope = EXCLUDED.scope,
+                contract_ref = EXCLUDED.contract_ref,
+                physical_type = EXCLUDED.physical_type,
+                produced_by_job = EXCLUDED.produced_by_job,
+                domain_id = EXCLUDED.domain_id,
+                design_maturity = EXCLUDED.design_maturity,
+                build_status = EXCLUDED.build_status,
+                pit_policy = EXCLUDED.pit_policy,
+                format_summary = EXCLUDED.format_summary,
+                valid_since = EXCLUDED.valid_since,
+                module_id = EXCLUDED.module_id,
+                last_updated = EXCLUDED.last_updated
             RETURNING dataset_id
         """, (
             entity_name, d.get("scope", "production"),
@@ -1566,8 +1596,13 @@ def sync_dataflow_registry(cur):
             cur.execute("""
                 INSERT INTO dataflow_edges
                     (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
-                VALUES (%s, %s, 'job', 'dataset', 'push', %s, %s)
-            """, (job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name], edge_design, now_iso))
+                SELECT %s, %s, 'job', 'dataset', 'push', %s, %s
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM dataflow_edges
+                    WHERE from_entity_id = %s AND to_entity_id = %s AND edge_type = 'push'
+                )
+            """, (job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name], edge_design, now_iso,
+                  job_yaml_id_to_pg_id[produced_by], dataset_name_to_id[entity_name]))
             synced_edges += 1
 
     # 2. Dataset→Job 消费（consumed_by_jobs）→ edge_type=pull
@@ -1581,8 +1616,13 @@ def sync_dataflow_registry(cur):
                     cur.execute("""
                         INSERT INTO dataflow_edges
                             (from_entity_id, to_entity_id, from_entity_type, to_entity_type, edge_type, design_maturity, last_updated)
-                        VALUES (%s, %s, 'dataset', 'job', 'pull', %s, %s)
-                    """, (dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id], edge_design, now_iso))
+                        SELECT %s, %s, 'dataset', 'job', 'pull', %s, %s
+                        WHERE NOT EXISTS (
+                            SELECT 1 FROM dataflow_edges
+                            WHERE from_entity_id = %s AND to_entity_id = %s AND edge_type = 'pull'
+                        )
+                    """, (dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id], edge_design, now_iso,
+                          dataset_name_to_id[entity_name], job_yaml_id_to_pg_id[consumed_job_yaml_id]))
                     synced_edges += 1
 
     print(f"  同步 {synced_jobs} 个 Job, {synced_datasets} 个 Dataset, {synced_edges} 条 edges")
