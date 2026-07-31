@@ -329,7 +329,14 @@ def backup_runtime_handoffs(max_backups: int = 10, backup_dir: Path | None = Non
 
 
 def main() -> None:
-    """Entry point: parse args, run logic, return exit code."""
+    """Entry point: parse args, run logic, return exit code.
+
+    ARCH-041 治本（P5 根因修复）：YAML/JSONL snapshot 创建已移除——git history 是
+    yaml/jsonl 文件真源（directory_contract L740），物理快照违反真源唯一原则且
+    snapshot_* 目录无清理机制导致无限累积（实测 4 次调用产生 3292+ 碎文件）。
+    main() 现仅执行有效的 .runtime/ handoffs 物理备份（5.33.7 治本，git 非真源）。
+    backup_yaml_files/backup_jsonl_files 函数保留（向后兼容）但不再被 main() 调用。
+    """
     parser = argparse.ArgumentParser(description="运行时状态备份")
     parser.add_argument(
         "--output-dir",
@@ -340,39 +347,18 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true", help="警告模式")
     args = parser.parse_args()
 
-    # ARCH-041: 运行时 DEPRECATED 警告——防止新 AI 误用过时脚本
-    import warnings
-    warnings.warn(
-        "backup_runtime_state.py YAML/JSONL 快照已 DEPRECATED（ARCH-041）。"
-        "git history 已是 yaml/jsonl 文件真源。"
-        "PG depgraph 备份请用 backup_pg_depgraph() 函数（apply_depgraph.py 自动调用）。",
-        DeprecationWarning,
-        stacklevel=1,
-    )
+    # ARCH-041: YAML/JSONL snapshot 已移除（P5 治本），仅保留 .runtime/ handoffs 备份
     print(
-        "\n⚠ DEPRECATED (ARCH-041): YAML/JSONL 快照已过时。"
-        "git history 是 YAML/JSONL 真源。PG 备份用 backup_pg_depgraph()。\n",
+        "[BACKUP-RUNTIME] ARCH-041: YAML/JSONL snapshot 已移除（git 是真源），"
+        "仅执行 .runtime/ handoffs 物理备份（5.33.7 治本）\n",
         file=sys.stderr,
     )
 
     backup_dir = Path(args.output_dir)
     backup_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-    snapshot_dir = backup_dir / f"snapshot_{timestamp}"
-    snapshot_dir.mkdir(parents=True, exist_ok=True)
-
-    yaml_files = backup_yaml_files(snapshot_dir)
-    jsonl_files = backup_jsonl_files(snapshot_dir)
-    all_files = yaml_files + jsonl_files
-
-    create_manifest(snapshot_dir, all_files)
-
-    print(f"\n[BACKUP] {len(all_files)} 文件已备份到 {snapshot_dir.relative_to(REPO_ROOT)}\n", file=sys.stderr)
-    for f in all_files:
-        print(f"  ✅ {f}", file=sys.stderr)
-
     # 5.33.7 治本：.runtime/ handoffs + reconcile_reports 物理备份（保留最近 10 份）
+    # .runtime/ 被 .gitignore 整目录忽略（git 非真源），需独立物理备份
     backup_runtime_handoffs(backup_dir=backup_dir)
 
     if args.warn_only:
