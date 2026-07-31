@@ -416,12 +416,10 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
 ```
 你是项目审计 AI-03，负责审计以下区域（临时+日志+工具）：
 
-d:\ZephyrAlpha\tmp\                             （含 base_tsv/, _ds_progress/, pg_backups/ 及大量临时脚本）
+d:\ZephyrAlpha\tmp\                             （含 data_gap_check/, pg_backups/, runtime_backups/ 及大量临时脚本）
 d:\ZephyrAlpha\logs\
 d:\ZephyrAlpha\session_logs\
-d:\ZephyrAlpha\session-logs\
 d:\ZephyrAlpha\_journals\
-d:\ZephyrAlpha\tools\                           （_gen_dedup_tests.py 等）
 
 审计重点：一次性脚本 TTL 治理（task_bound 脚本是否退役）、临时文件是否污染版本控制、日志是否含敏感信息。
 
