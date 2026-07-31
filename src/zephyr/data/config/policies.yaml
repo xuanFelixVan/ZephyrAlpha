@@ -124,9 +124,12 @@ cls:
   backoff: exponential
   initial_wait_sec: 2.0
   retry_on:
-  - HTTPError
   - ConnectionError
   - TimeoutError
+  - '500'
+  - '502'
+  - '503'
+  - '504'
   session_ttl_sec: 0
   relogin_on_auth_error: false
   extra:
@@ -139,9 +142,12 @@ eastmoney_news:
   backoff: exponential
   initial_wait_sec: 2.0
   retry_on:
-  - HTTPError
   - ConnectionError
   - TimeoutError
+  - '500'
+  - '502'
+  - '503'
+  - '504'
   session_ttl_sec: 0
   relogin_on_auth_error: false
 tqcenter:

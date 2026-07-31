@@ -301,6 +301,25 @@ class IngestProviderBase(abc.ABC):
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.call_with_policy(fn, policy, *args, **kwargs)
 
+    def _http_get(
+        self, url: str, timeout: float = 30,
+        headers: dict | None = None, params: dict | None = None,
+    ):
+        """HTTP GET + raise_for_status，供 _call_with_policy 重试包裹（#ARCH-RSS-INVESTING-403-001）。
+
+        将 raise_for_status 纳入 _call_with_policy 重试循环：
+        - 5xx（503/502 等瞬时服务端错误）匹配 retry_on 触发重试
+        - 4xx（403 WAF 拦截等）不匹配 → 立即抛出不重试
+
+        用法：resp = self._call_with_policy(self._http_get, policy, url, timeout=30, headers={...})
+
+        Returns: requests.Response（已校验状态码）
+        """
+        import requests
+        resp = requests.get(url, timeout=timeout, headers=headers or {}, params=params)
+        resp.raise_for_status()
+        return resp
+
     def rate_limit_sleep(self, policy: "SourcePolicy") -> None:
         """按 RPM 限流：确保两次调用间隔 >= 60/RPM 秒（Stage 4 公共化，primary）。"""
         if not policy or policy.rpm <= 0:

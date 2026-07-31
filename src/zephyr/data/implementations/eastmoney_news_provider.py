@@ -121,8 +121,6 @@ class EastmoneyNewsProvider(IngestProviderBase):
         HTTP直连 https://np-listapi.eastmoney.com/comm/web/getNewsByColumns。
         支持分页：通过 payload.extra["page_size"] 控制每批数量（默认50）。
         """
-        import requests
-
         table = payload.table or _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         page_size = (payload.extra or {}).get("page_size", 50)
@@ -140,10 +138,9 @@ class EastmoneyNewsProvider(IngestProviderBase):
                 "req_trace": str(int(time.time() * 1000)),
             }
             resp = self._call_with_policy(
-                requests.get, policy,
+                self._http_get, policy,
                 _EM_NEWS_URL, params=params, headers=_EM_HEADERS, timeout=15,
             )
-            resp.raise_for_status()
             data = resp.json()
             news_list = (data.get("data") or {}).get("list") or []
             rows = self._parse_em_news(news_list)

@@ -123,8 +123,6 @@ class ClsProvider(IngestProviderBase):
         通过RSSHub公共实例 https://rsshub.app/cls/telegraph 获取（JSON格式）。
         RSSHub返回 {items: [{title, pubDate, link, description, ...}]}。
         """
-        import requests
-
         table = payload.table or _TBL_NEWS_DATA
         columns = NEWS_DATA_COLUMNS
         t0 = time.time()
@@ -132,10 +130,9 @@ class ClsProvider(IngestProviderBase):
         try:
             params = {"format": "json"}
             resp = self._call_with_policy(
-                requests.get, policy,
+                self._http_get, policy,
                 _CLS_RSSHUB_URL, params=params, headers=_CLS_HEADERS, timeout=20,
             )
-            resp.raise_for_status()
             data = resp.json()
             items = data.get("items") or []
             rows = self._parse_cls_news(items)

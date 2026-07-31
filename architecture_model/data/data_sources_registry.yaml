@@ -270,7 +270,8 @@ data_sources:
       max_retries: 3
       backoff: exponential
       initial_wait_sec: 2.0
-      retry_on: ["HTTPError", "ConnectionError", "TimeoutError"]
+      # #ARCH-RSS-INVESTING-403-001：移除 HTTPError（4xx 不重试），增 5xx 状态码
+      retry_on: ["ConnectionError", "TimeoutError", "500", "502", "503", "504"]
       session_ttl_sec: 0
       relogin_on_auth_error: false
       extra:
@@ -300,7 +301,8 @@ data_sources:
       max_retries: 3
       backoff: exponential
       initial_wait_sec: 2.0
-      retry_on: ["HTTPError", "ConnectionError", "TimeoutError"]
+      # #ARCH-RSS-INVESTING-403-001：移除 HTTPError（4xx 不重试），增 5xx 状态码
+      retry_on: ["ConnectionError", "TimeoutError", "500", "502", "503", "504"]
       session_ttl_sec: 0
       relogin_on_auth_error: false
 

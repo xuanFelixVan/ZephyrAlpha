@@ -138,19 +138,6 @@ def _extract_region_language(feed_url: str) -> tuple[str, str]:
     return ("CN", "zh")
 
 
-def _get_feed_response(feed_url: str, timeout: int = 30, headers: dict | None = None):
-    """requests.get + raise_for_status，供 _call_with_policy 重试包裹。
-
-    #ARCH-RSS-INVESTING-403-001：将 raise_for_status 纳入重试循环——
-    5xx（503/502 等瞬时服务端错误）匹配 retry_on 触发重试；
-    4xx（403 WAF 拦截）不匹配 retry_on → 立即抛出不重试（避免无效重试浪费 ~35s）。
-    """
-    import requests
-    resp = requests.get(feed_url, timeout=timeout, headers=headers or {})
-    resp.raise_for_status()
-    return resp
-
-
 class RSSProvider(IngestProviderBase):
     """RSS 财经新闻数据源 Provider。
 
@@ -259,11 +246,11 @@ class RSSProvider(IngestProviderBase):
                     self._log.info(f"RSS {feed_url} 被 robots.txt 禁止，跳过")
                     continue
 
-                # 用 _call_with_policy 包裹 _get_feed_response（含 raise_for_status）
+                # 用 _call_with_policy 包裹 self._http_get（含 raise_for_status）
                 # #ARCH-RSS-INVESTING-403-001：raise_for_status 纳入重试循环——
                 # 5xx 匹配 retry_on 重试；4xx（WAF 403）不匹配 → 立即抛出不重试
                 response = self._call_with_policy(
-                    _get_feed_response,
+                    self._http_get,
                     policy,
                     feed_url,
                     timeout=30,
