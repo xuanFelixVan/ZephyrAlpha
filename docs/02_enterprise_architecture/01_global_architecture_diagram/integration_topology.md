@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-07-31 18:59:22
+> 自动生成时间: 2026-07-31 19:26:10
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 263
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-07-31 18:59:22
+%% 生成时间: 2026-07-31 19:26:10
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 263
 
@@ -76,7 +76,7 @@ graph LR
         D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行<br/>(41模块)"]
         D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复<br/>(1模块)"]
         D_GOV_RULE["D_GOV_RULE<br/>规则治理<br/>(35模块)"]
-        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(382模块)"]
+        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(383模块)"]
         D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理<br/>(31模块)"]
         D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理<br/>(1模块)"]
         D_META_SCRIPTS["D_META_SCRIPTS<br/>元治理脚本<br/>(0模块)"]
@@ -101,7 +101,7 @@ graph LR
     D_GOVERNANCE -->|71条 import_depends| D_SHARED
     D_INTEGRATION -->|61条 import_depends| D_SHARED
     D_GOV_AUDIT -->|58条 import_depends| D_SHARED
-    D_GOV_SCRIPTS -->|47条 import_depends| D_GOVERNANCE
+    D_GOV_SCRIPTS -->|48条 import_depends| D_GOVERNANCE
     D_SECURITY -->|44条 import_depends| D_GOV_DRIFT
     D_COMPLIANCE -->|43条 import_depends| D_GOV_DRIFT
     D_ORCHESTRATOR -->|42条 import_depends| D_SHARED
@@ -201,7 +201,7 @@ graph LR
     %% 统计
     %% 域总数: 72
     %% 跨域依赖对数: 263
-    %% 跨域依赖边总数: 1736
+    %% 跨域依赖边总数: 1737
 
     %% Top 10 依赖对
     %% 1. D_INFRA_RUNTIME -> D_SHARED: 163 条
@@ -209,7 +209,7 @@ graph LR
     %% 3. D_GOVERNANCE -> D_SHARED: 71 条
     %% 4. D_INTEGRATION -> D_SHARED: 61 条
     %% 5. D_GOV_AUDIT -> D_SHARED: 58 条
-    %% 6. D_GOV_SCRIPTS -> D_GOVERNANCE: 47 条
+    %% 6. D_GOV_SCRIPTS -> D_GOVERNANCE: 48 条
     %% 7. D_SECURITY -> D_GOV_DRIFT: 44 条
     %% 8. D_COMPLIANCE -> D_GOV_DRIFT: 43 条
     %% 9. D_ORCHESTRATOR -> D_SHARED: 42 条

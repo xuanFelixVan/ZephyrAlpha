@@ -16,12 +16,12 @@
 
 | 维度 | 值 |
 |------|:---:|
-| 已建全景图总数 | 19 |
+| 已建全景图总数 | 20 |
 | 待建全景图总数 | 16 |
-| 全景图总数 | 35 |
-| 已建覆盖率 | 54.3% |
+| 全景图总数 | 36 |
+| 已建覆盖率 | 55.6% |
 
-| 已建产物存在 | 17/19 |
+| 已建产物存在 | 18/20 |
 
 ### 数据库真源健康度
 
@@ -30,10 +30,10 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5903 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5903 个 |
-| 依赖图 depgraph | `edges` | 8007 | 依赖边——节点间的依赖关系（import/契约/事件订阅），8007 条 |
+| 依赖图 depgraph | `nodes` | 5905 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5905 个 |
+| 依赖图 depgraph | `edges` | 8011 | 依赖边——节点间的依赖关系（import/契约/事件订阅），8011 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 218 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 900 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
@@ -82,7 +82,7 @@
 
 ## 已建全景图清单
 
-> 共 19 项已建全景图。状态由生成器扫描实际产物文件自动验证。
+> 共 20 项已建全景图。状态由生成器扫描实际产物文件自动验证。
 >
 > 排序：按输出目录顺序（00→01→02→...→target_architecture）。
 
@@ -105,6 +105,7 @@
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-03 | 手绘 Mermaid 图（时序/治理） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/application_flows.md) | ✅存在 |
+| PAN-BUILT-21 | 交易决策架构视图 | 决策流 | decisiongraph | depgraph (PostgreSQL) | `generate_trading_flow_diagram.py` | [`07_trading_decision_architecture`](../07_trading_decision_architecture/trading_flow_index.md) | ✅存在 |
 | PAN-BUILT-16 | 架构债务注册表（已归档） | 治理健康度 | 手工 | 手工 | `(手工维护)` | `_archive/` | ❌缺失 |
 | PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | `architecture_model/` | ✅存在(4文件) |
 
@@ -177,9 +178,9 @@
 | depgraph | 10 | 依赖图——模块节点和依赖边，生成域文档/矩阵/拓扑/热力图/容量/违规等 |
 | 待裁定（depgraph 域派生 vs 独立表） | 4 | 待裁定真源类型 |
 | 手工 | 4 | 人工维护的架构文档，无自动生成器 |
+| decisiongraph | 2 | 决策流图——L0-L6 四轨，生成决策流图 |
 | 文件系统扫描 | 2 | 扫描实际文件系统派生，无 DB 真源 |
 | dataflowgraph | 1 | 数据流图——Dataset/Job/Edge，生成数据流图 |
-| decisiongraph | 1 | 决策流图——L0-L6 四轨，生成决策流图 |
 | depgraph + dataflowgraph + decisiongraph | 1 | 综合三个架构图派生（如本总表） |
 | 待裁定（AlertManager API vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（GitHub Actions API vs 独立表） | 1 | 待裁定真源类型 |
@@ -193,7 +194,7 @@
 | 待裁定（depgraph contracts 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（代码扫描派生 vs 独立表） | 1 | 待裁定真源类型 |
-| **合计** | **35** | 已建 19 + 待建 16 |
+| **合计** | **36** | 已建 20 + 待建 16 |
 
 ---
 
@@ -304,6 +305,12 @@
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
 | PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已有 TOGAF 视图，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_architecture.md`](../target_architecture/frontend_architecture.md) |
+
+### 07_trading_decision_architecture
+
+| ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
+|------|------|:---:|------|------|------|
+| PAN-BUILT-21 | 交易决策架构视图 | ✅已建 | decisiongraph | decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_trading_flow_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_trading_flow_diagram.py)<br>产物：[`07_trading_decision_architecture/trading_flow_index.md`](../07_trading_decision_architecture/trading_flow_index.md) |
 
 ### _archive
 
