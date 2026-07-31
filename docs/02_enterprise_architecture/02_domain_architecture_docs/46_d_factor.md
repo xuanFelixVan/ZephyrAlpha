@@ -97,53 +97,78 @@ ttl: permanent
 #### 第 1 页 / 共 2 页
 
 ```mermaid
-graph TD
-    subgraph D_FACTOR["D_FACTOR 因子"]
-        src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production) alpha_signal_pipeline.py"]
-        src_zephyr_factor_analysis_init_py["(生产态 / production) D_FACTOR analysis 子包——因子分析与评估工具链。<br/>文件: __init__.py"]
-        src_zephyr_factor_analysis_correlation_analyzer_py["(生产态 / production) D-FACTOR-ANA-04 因子相关性分析——计算因子间相...<br/>文件: correlation_analyzer.py"]
-        src_zephyr_factor_analysis_correlation_dedup_py["(生产态 / production) D-FACTOR-ANA-05 因子相关性去重——基于相关性矩...<br/>文件: correlation_dedup.py"]
-        src_zephyr_factor_analysis_decay_monitor_py["(生产态 / production) D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速...<br/>文件: decay_monitor.py"]
-        src_zephyr_factor_analysis_factor_attribution_py["(生产态 / production) D-FACTOR-ANA-09 因子归因——按时间和行业维度分...<br/>文件: factor_attribution.py"]
-        src_zephyr_factor_analysis_factor_optimization_py["(生产态 / production) D-FACTOR-ANA-11 因子优化——优化多因子合成权重...<br/>文件: factor_optimization.py"]
-        src_zephyr_factor_analysis_ic_decay_py["(生产态 / production) D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC ...<br/>文件: ic_decay.py"]
-        src_zephyr_factor_analysis_ic_ir_calc_py["(生产态 / production) D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/I...<br/>文件: ic_ir_calc.py"]
-        src_zephyr_factor_analysis_ic_ir_evaluator_py["(生产态 / production) D-FACTOR-ANA-02 多因子评估报告器——批量评估+格...<br/>文件: ic_ir_evaluator.py"]
-        src_zephyr_factor_analysis_layered_backtest_py["(生产态 / production) D-FACTOR-ANA-06 分层回测——按因子值分组计算各...<br/>文件: layered_backtest.py"]
-        src_zephyr_factor_analysis_multifactor_synthesis_py["(生产态 / production) D-FACTOR-ANA-10 多因子合成——将多个因子值合成...<br/>文件: multifactor_synthesis.py"]
-        src_zephyr_factor_analysis_three_level_judgment_py["(生产态 / production) D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分...<br/>文件: three_level_judgment.py"]
-        src_zephyr_factor_bus_factor_defense_py["(生产态 / production) bus_factor_defense.py"]
-        src_zephyr_factor_core_backpressure_init_py["(生产态 / production) D_FACTOR core backpressure 子包——进程内在途并...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_batch_output_init_py["(生产态 / production) D_FACTOR core batch_output 子包——FactorSignal...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_config_manager_init_py["(生产态 / production) D_FACTOR core config_manager 子包——core 基础...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_ctr001_consumer_init_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者包入口。<br/>文件: __init__.py"]
-        src_zephyr_factor_core_ctr001_consumer_converter_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者——数据适配层。<br/>文件: converter.py"]
-        src_zephyr_factor_core_ctr002_producer_init_py["(生产态 / production) CTR-002 FactorSignal 生产者包入口。<br/>文件: __init__.py"]
-        src_zephyr_factor_core_ctr002_producer_converter_py["(生产态 / production) CTR-002 FactorSignal 生产者——信号适配层。<br/>文件: converter.py"]
-        src_zephyr_factor_core_dag_manager_init_py["(生产态 / production) D_FACTOR core dag_manager 子包——DAG 调度执行器。<br/>文件: __init__.py"]
-        src_zephyr_factor_core_dist_feature_eng_init_py["(生产态 / production) D_FACTOR core dist_feature_eng 子包——分布式特...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_evaluation_init_py["(生产态 / production) D-FACTOR-03 因子评估包——IC/IR/OOS 正率/过拟合...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_evaluation_backtest_py["(生产态 / production) D-FACTOR-03 因子评估回测运行器——端到端因子评估。<br/>文件: backtest.py"]
-        src_zephyr_factor_core_evaluation_metrics_py["(生产态 / production) D-FACTOR-03 因子评估指标——纯函数模块（无 IO ...<br/>文件: metrics.py"]
-        src_zephyr_factor_core_factor_dag_init_py["(生产态 / production) D_FACTOR core factor_dag 子包——因子 DAG 数据...<br/>文件: __init__.py"]
-        src_zephyr_factor_factor_base_py["(生产态 / production) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: factor_base.py"]
-        src_zephyr_factor_governance_init_py["(生产态 / production) D_FACTOR governance 子包——因子生命周期治理工具链。<br/>文件: __init__.py"]
-        src_zephyr_factor_governance_abs001_gate_py["(生产态 / production) D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度...<br/>文件: abs001_gate.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production) alpha_signal_pipeline.py"]
+    src_zephyr_factor_analysis_correlation_dedup_py["(生产态 / production) D-FACTOR-ANA-05 因子相关性去重——基于相关性矩...<br/>文件: correlation_dedup.py"]
+    src_zephyr_factor_analysis_decay_monitor_py["(生产态 / production) D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速...<br/>文件: decay_monitor.py"]
+    src_zephyr_factor_analysis_factor_attribution_py["(生产态 / production) D-FACTOR-ANA-09 因子归因——按时间和行业维度分...<br/>文件: factor_attribution.py"]
+    src_zephyr_factor_analysis_factor_optimization_py["(生产态 / production) D-FACTOR-ANA-11 因子优化——优化多因子合成权重...<br/>文件: factor_optimization.py"]
+    src_zephyr_factor_analysis_ic_ir_calc_py["(生产态 / production) D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/I...<br/>文件: ic_ir_calc.py"]
+    src_zephyr_factor_analysis_ic_ir_evaluator_py["(生产态 / production) D-FACTOR-ANA-02 多因子评估报告器——批量评估+格...<br/>文件: ic_ir_evaluator.py"]
+    src_zephyr_factor_analysis_layered_backtest_py["(生产态 / production) D-FACTOR-ANA-06 分层回测——按因子值分组计算各...<br/>文件: layered_backtest.py"]
+    src_zephyr_factor_analysis_three_level_judgment_py["(生产态 / production) D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分...<br/>文件: three_level_judgment.py"]
+    src_zephyr_factor_bus_factor_defense_py["(生产态 / production) bus_factor_defense.py"]
+    src_zephyr_factor_core_backpressure_init_py["(生产态 / production) D_FACTOR core backpressure 子包——进程内在途并...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_batch_output_init_py["(生产态 / production) D_FACTOR core batch_output 子包——FactorSignal...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_config_manager_init_py["(生产态 / production) D_FACTOR core config_manager 子包——core 基础...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_ctr001_consumer_init_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者包入口。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_ctr002_producer_init_py["(生产态 / production) CTR-002 FactorSignal 生产者包入口。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_dag_manager_init_py["(生产态 / production) D_FACTOR core dag_manager 子包——DAG 调度执行器。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_dist_feature_eng_init_py["(生产态 / production) D_FACTOR core dist_feature_eng 子包——分布式特...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_evaluation_init_py["(生产态 / production) D-FACTOR-03 因子评估包——IC/IR/OOS 正率/过拟合...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_factor_dag_init_py["(生产态 / production) D_FACTOR core factor_dag 子包——因子 DAG 数据...<br/>文件: __init__.py"]
+    src_zephyr_factor_governance_abs001_gate_py["(生产态 / production) D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度...<br/>文件: abs001_gate.py"]
+    src_zephyr_factor_alpha_signal_pipeline_py ~~~ src_zephyr_factor_analysis_correlation_dedup_py
+    src_zephyr_factor_analysis_correlation_dedup_py ~~~ src_zephyr_factor_analysis_decay_monitor_py
+    src_zephyr_factor_analysis_decay_monitor_py ~~~ src_zephyr_factor_analysis_factor_attribution_py
+    src_zephyr_factor_analysis_factor_attribution_py ~~~ src_zephyr_factor_analysis_factor_optimization_py
+    src_zephyr_factor_analysis_factor_optimization_py ~~~ src_zephyr_factor_analysis_ic_ir_calc_py
+    src_zephyr_factor_analysis_ic_ir_calc_py ~~~ src_zephyr_factor_analysis_ic_ir_evaluator_py
+    src_zephyr_factor_analysis_ic_ir_evaluator_py ~~~ src_zephyr_factor_analysis_layered_backtest_py
+    src_zephyr_factor_analysis_layered_backtest_py ~~~ src_zephyr_factor_analysis_three_level_judgment_py
+    src_zephyr_factor_analysis_three_level_judgment_py ~~~ src_zephyr_factor_bus_factor_defense_py
+    src_zephyr_factor_bus_factor_defense_py ~~~ src_zephyr_factor_core_backpressure_init_py
+    src_zephyr_factor_core_backpressure_init_py ~~~ src_zephyr_factor_core_batch_output_init_py
+    src_zephyr_factor_core_batch_output_init_py ~~~ src_zephyr_factor_core_config_manager_init_py
+    src_zephyr_factor_core_config_manager_init_py ~~~ src_zephyr_factor_core_ctr001_consumer_init_py
+    src_zephyr_factor_core_ctr001_consumer_init_py ~~~ src_zephyr_factor_core_ctr002_producer_init_py
+    src_zephyr_factor_core_ctr002_producer_init_py ~~~ src_zephyr_factor_core_dag_manager_init_py
+    src_zephyr_factor_core_dag_manager_init_py ~~~ src_zephyr_factor_core_dist_feature_eng_init_py
+    src_zephyr_factor_core_dist_feature_eng_init_py ~~~ src_zephyr_factor_core_evaluation_init_py
+    src_zephyr_factor_core_evaluation_init_py ~~~ src_zephyr_factor_core_factor_dag_init_py
+    src_zephyr_factor_core_factor_dag_init_py ~~~ src_zephyr_factor_governance_abs001_gate_py
+    src_zephyr_factor_analysis_init_py["(生产态 / production) D_FACTOR analysis 子包——因子分析与评估工具链。<br/>文件: __init__.py"]
+    src_zephyr_factor_analysis_correlation_analyzer_py["(生产态 / production) D-FACTOR-ANA-04 因子相关性分析——计算因子间相...<br/>文件: correlation_analyzer.py"]
+    src_zephyr_factor_analysis_ic_decay_py["(生产态 / production) D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC ...<br/>文件: ic_decay.py"]
+    src_zephyr_factor_analysis_multifactor_synthesis_py["(生产态 / production) D-FACTOR-ANA-10 多因子合成——将多个因子值合成...<br/>文件: multifactor_synthesis.py"]
+    src_zephyr_factor_core_ctr001_consumer_converter_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者——数据适配层。<br/>文件: converter.py"]
+    src_zephyr_factor_core_ctr002_producer_converter_py["(生产态 / production) CTR-002 FactorSignal 生产者——信号适配层。<br/>文件: converter.py"]
+    src_zephyr_factor_governance_init_py["(生产态 / production) D_FACTOR governance 子包——因子生命周期治理工具链。<br/>文件: __init__.py"]
+    src_zephyr_factor_analysis_init_py ~~~ src_zephyr_factor_analysis_correlation_analyzer_py
+    src_zephyr_factor_analysis_correlation_analyzer_py ~~~ src_zephyr_factor_analysis_ic_decay_py
+    src_zephyr_factor_analysis_ic_decay_py ~~~ src_zephyr_factor_analysis_multifactor_synthesis_py
+    src_zephyr_factor_analysis_multifactor_synthesis_py ~~~ src_zephyr_factor_core_ctr001_consumer_converter_py
+    src_zephyr_factor_core_ctr001_consumer_converter_py ~~~ src_zephyr_factor_core_ctr002_producer_converter_py
+    src_zephyr_factor_core_ctr002_producer_converter_py ~~~ src_zephyr_factor_governance_init_py
+    src_zephyr_factor_core_evaluation_backtest_py["(生产态 / production) D-FACTOR-03 因子评估回测运行器——端到端因子评估。<br/>文件: backtest.py"]
+    src_zephyr_factor_core_evaluation_metrics_py["(生产态 / production) D-FACTOR-03 因子评估指标——纯函数模块（无 IO ...<br/>文件: metrics.py"]
+    src_zephyr_factor_factor_base_py["(生产态 / production) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: factor_base.py"]
+    src_zephyr_factor_core_evaluation_metrics_py ~~~ src_zephyr_factor_factor_base_py
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_analysis_correlation_dedup_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_correlation_analyzer_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_ic_decay_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_factor_attribution_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_ic_ir_calc_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
     src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_analysis_ic_ir_evaluator_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_analysis_ic_ir_calc_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_core_ctr001_consumer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr001_consumer_converter_py
@@ -163,8 +188,6 @@ graph TD
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| D_DATA
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
@@ -174,38 +197,43 @@ graph TD
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_analysis_init_py,src_zephyr_factor_analysis_correlation_analyzer_py,src_zephyr_factor_analysis_correlation_dedup_py,src_zephyr_factor_analysis_decay_monitor_py,src_zephyr_factor_analysis_factor_attribution_py,src_zephyr_factor_analysis_factor_optimization_py,src_zephyr_factor_analysis_ic_decay_py,src_zephyr_factor_analysis_ic_ir_calc_py,src_zephyr_factor_analysis_ic_ir_evaluator_py,src_zephyr_factor_analysis_layered_backtest_py,src_zephyr_factor_analysis_multifactor_synthesis_py,src_zephyr_factor_analysis_three_level_judgment_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_backpressure_init_py,src_zephyr_factor_core_batch_output_init_py,src_zephyr_factor_core_config_manager_init_py,src_zephyr_factor_core_ctr001_consumer_init_py,src_zephyr_factor_core_ctr001_consumer_converter_py,src_zephyr_factor_core_ctr002_producer_init_py,src_zephyr_factor_core_ctr002_producer_converter_py,src_zephyr_factor_core_dag_manager_init_py,src_zephyr_factor_core_dist_feature_eng_init_py,src_zephyr_factor_core_evaluation_init_py,src_zephyr_factor_core_evaluation_backtest_py,src_zephyr_factor_core_evaluation_metrics_py,src_zephyr_factor_core_factor_dag_init_py,src_zephyr_factor_factor_base_py,src_zephyr_factor_governance_init_py,src_zephyr_factor_governance_abs001_gate_py production
-    class D_INFRASTRUCTURE,D_DATA,D_FUNDAMENTAL_SIGNAL,D_GOV_OPS_RESILIENCE,D_EX_CORE,D_PF_CORE external_prod
+    class D_INFRASTRUCTURE,D_DATA,D_FUNDAMENTAL_SIGNAL,D_EX_CORE,D_PF_CORE,D_GOV_OPS_RESILIENCE external_prod
 ```
 
 #### 第 2 页 / 共 2 页
 
 ```mermaid
-graph TD
-    subgraph D_FACTOR["D_FACTOR 因子"]
-        src_zephyr_factor_governance_engine_py["(生产态 / production) D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流...<br/>文件: engine.py"]
-        src_zephyr_factor_governance_factor_pool_manager_py["(生产态 / production) D-FACTOR-08 因子池容量管理——活跃池/休眠池 + I...<br/>文件: factor_pool_manager.py"]
-        src_zephyr_factor_governance_grayscale_rollout_py["(生产态 / production) D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 3...<br/>文件: grayscale_rollout.py"]
-        src_zephyr_factor_governance_lifecycle_state_machine_py["(生产态 / production) D-FACTOR-GOV-01 因子生命周期状态机——复用项目...<br/>文件: lifecycle_state_machine.py"]
-        src_zephyr_factor_governance_six_step_flow_py["(生产态 / production) D-FACTOR-GOV-04 六步流程编排——因子从研究到实...<br/>文件: six_step_flow.py"]
-        src_zephyr_factor_momentum_factor_py["(生产态 / production) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
-        src_zephyr_factor_value_factor_py["(生产态 / production) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
-    end
-    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
-    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_six_step_flow_py
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_factor_governance_engine_py["(生产态 / production) D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流...<br/>文件: engine.py"]
+    src_zephyr_factor_governance_factor_pool_manager_py["(生产态 / production) D-FACTOR-08 因子池容量管理——活跃池/休眠池 + I...<br/>文件: factor_pool_manager.py"]
+    src_zephyr_factor_momentum_factor_py["(生产态 / production) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
+    src_zephyr_factor_value_factor_py["(生产态 / production) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
+    src_zephyr_factor_governance_engine_py ~~~ src_zephyr_factor_governance_factor_pool_manager_py
+    src_zephyr_factor_governance_factor_pool_manager_py ~~~ src_zephyr_factor_momentum_factor_py
+    src_zephyr_factor_momentum_factor_py ~~~ src_zephyr_factor_value_factor_py
+    src_zephyr_factor_governance_grayscale_rollout_py["(生产态 / production) D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 3...<br/>文件: grayscale_rollout.py"]
+    src_zephyr_factor_governance_six_step_flow_py["(生产态 / production) D-FACTOR-GOV-04 六步流程编排——因子从研究到实...<br/>文件: six_step_flow.py"]
+    src_zephyr_factor_governance_grayscale_rollout_py ~~~ src_zephyr_factor_governance_six_step_flow_py
+    src_zephyr_factor_governance_lifecycle_state_machine_py["(生产态 / production) D-FACTOR-GOV-01 因子生命周期状态机——复用项目...<br/>文件: lifecycle_state_machine.py"]
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_grayscale_rollout_py
+    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_six_step_flow_py
+    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| D_SHARED
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_factor_governance_engine_py,src_zephyr_factor_governance_factor_pool_manager_py,src_zephyr_factor_governance_grayscale_rollout_py,src_zephyr_factor_governance_lifecycle_state_machine_py,src_zephyr_factor_governance_six_step_flow_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py production
     class D_SHARED external_prod
 ```
@@ -215,84 +243,115 @@ graph TD
 > 仅展示已上线运行的模块（共 37 个，38 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_FACTOR["D_FACTOR 因子"]
-        src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production) alpha_signal_pipeline.py"]
-        src_zephyr_factor_analysis_init_py["(生产态 / production) D_FACTOR analysis 子包——因子分析与评估工具链。<br/>文件: __init__.py"]
-        src_zephyr_factor_analysis_correlation_analyzer_py["(生产态 / production) D-FACTOR-ANA-04 因子相关性分析——计算因子间相...<br/>文件: correlation_analyzer.py"]
-        src_zephyr_factor_analysis_correlation_dedup_py["(生产态 / production) D-FACTOR-ANA-05 因子相关性去重——基于相关性矩...<br/>文件: correlation_dedup.py"]
-        src_zephyr_factor_analysis_decay_monitor_py["(生产态 / production) D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速...<br/>文件: decay_monitor.py"]
-        src_zephyr_factor_analysis_factor_attribution_py["(生产态 / production) D-FACTOR-ANA-09 因子归因——按时间和行业维度分...<br/>文件: factor_attribution.py"]
-        src_zephyr_factor_analysis_factor_optimization_py["(生产态 / production) D-FACTOR-ANA-11 因子优化——优化多因子合成权重...<br/>文件: factor_optimization.py"]
-        src_zephyr_factor_analysis_ic_decay_py["(生产态 / production) D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC ...<br/>文件: ic_decay.py"]
-        src_zephyr_factor_analysis_ic_ir_calc_py["(生产态 / production) D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/I...<br/>文件: ic_ir_calc.py"]
-        src_zephyr_factor_analysis_ic_ir_evaluator_py["(生产态 / production) D-FACTOR-ANA-02 多因子评估报告器——批量评估+格...<br/>文件: ic_ir_evaluator.py"]
-        src_zephyr_factor_analysis_layered_backtest_py["(生产态 / production) D-FACTOR-ANA-06 分层回测——按因子值分组计算各...<br/>文件: layered_backtest.py"]
-        src_zephyr_factor_analysis_multifactor_synthesis_py["(生产态 / production) D-FACTOR-ANA-10 多因子合成——将多个因子值合成...<br/>文件: multifactor_synthesis.py"]
-        src_zephyr_factor_analysis_three_level_judgment_py["(生产态 / production) D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分...<br/>文件: three_level_judgment.py"]
-        src_zephyr_factor_bus_factor_defense_py["(生产态 / production) bus_factor_defense.py"]
-        src_zephyr_factor_core_backpressure_init_py["(生产态 / production) D_FACTOR core backpressure 子包——进程内在途并...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_batch_output_init_py["(生产态 / production) D_FACTOR core batch_output 子包——FactorSignal...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_config_manager_init_py["(生产态 / production) D_FACTOR core config_manager 子包——core 基础...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_ctr001_consumer_init_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者包入口。<br/>文件: __init__.py"]
-        src_zephyr_factor_core_ctr001_consumer_converter_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者——数据适配层。<br/>文件: converter.py"]
-        src_zephyr_factor_core_ctr002_producer_init_py["(生产态 / production) CTR-002 FactorSignal 生产者包入口。<br/>文件: __init__.py"]
-        src_zephyr_factor_core_ctr002_producer_converter_py["(生产态 / production) CTR-002 FactorSignal 生产者——信号适配层。<br/>文件: converter.py"]
-        src_zephyr_factor_core_dag_manager_init_py["(生产态 / production) D_FACTOR core dag_manager 子包——DAG 调度执行器。<br/>文件: __init__.py"]
-        src_zephyr_factor_core_dist_feature_eng_init_py["(生产态 / production) D_FACTOR core dist_feature_eng 子包——分布式特...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_evaluation_init_py["(生产态 / production) D-FACTOR-03 因子评估包——IC/IR/OOS 正率/过拟合...<br/>文件: __init__.py"]
-        src_zephyr_factor_core_evaluation_backtest_py["(生产态 / production) D-FACTOR-03 因子评估回测运行器——端到端因子评估。<br/>文件: backtest.py"]
-        src_zephyr_factor_core_evaluation_metrics_py["(生产态 / production) D-FACTOR-03 因子评估指标——纯函数模块（无 IO ...<br/>文件: metrics.py"]
-        src_zephyr_factor_core_factor_dag_init_py["(生产态 / production) D_FACTOR core factor_dag 子包——因子 DAG 数据...<br/>文件: __init__.py"]
-        src_zephyr_factor_factor_base_py["(生产态 / production) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: factor_base.py"]
-        src_zephyr_factor_governance_init_py["(生产态 / production) D_FACTOR governance 子包——因子生命周期治理工具链。<br/>文件: __init__.py"]
-        src_zephyr_factor_governance_abs001_gate_py["(生产态 / production) D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度...<br/>文件: abs001_gate.py"]
-        src_zephyr_factor_governance_engine_py["(生产态 / production) D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流...<br/>文件: engine.py"]
-        src_zephyr_factor_governance_factor_pool_manager_py["(生产态 / production) D-FACTOR-08 因子池容量管理——活跃池/休眠池 + I...<br/>文件: factor_pool_manager.py"]
-        src_zephyr_factor_governance_grayscale_rollout_py["(生产态 / production) D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 3...<br/>文件: grayscale_rollout.py"]
-        src_zephyr_factor_governance_lifecycle_state_machine_py["(生产态 / production) D-FACTOR-GOV-01 因子生命周期状态机——复用项目...<br/>文件: lifecycle_state_machine.py"]
-        src_zephyr_factor_governance_six_step_flow_py["(生产态 / production) D-FACTOR-GOV-04 六步流程编排——因子从研究到实...<br/>文件: six_step_flow.py"]
-        src_zephyr_factor_momentum_factor_py["(生产态 / production) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
-        src_zephyr_factor_value_factor_py["(生产态 / production) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production) alpha_signal_pipeline.py"]
+    src_zephyr_factor_analysis_correlation_dedup_py["(生产态 / production) D-FACTOR-ANA-05 因子相关性去重——基于相关性矩...<br/>文件: correlation_dedup.py"]
+    src_zephyr_factor_analysis_decay_monitor_py["(生产态 / production) D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速...<br/>文件: decay_monitor.py"]
+    src_zephyr_factor_analysis_factor_attribution_py["(生产态 / production) D-FACTOR-ANA-09 因子归因——按时间和行业维度分...<br/>文件: factor_attribution.py"]
+    src_zephyr_factor_analysis_factor_optimization_py["(生产态 / production) D-FACTOR-ANA-11 因子优化——优化多因子合成权重...<br/>文件: factor_optimization.py"]
+    src_zephyr_factor_analysis_ic_ir_calc_py["(生产态 / production) D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/I...<br/>文件: ic_ir_calc.py"]
+    src_zephyr_factor_analysis_ic_ir_evaluator_py["(生产态 / production) D-FACTOR-ANA-02 多因子评估报告器——批量评估+格...<br/>文件: ic_ir_evaluator.py"]
+    src_zephyr_factor_analysis_layered_backtest_py["(生产态 / production) D-FACTOR-ANA-06 分层回测——按因子值分组计算各...<br/>文件: layered_backtest.py"]
+    src_zephyr_factor_analysis_three_level_judgment_py["(生产态 / production) D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分...<br/>文件: three_level_judgment.py"]
+    src_zephyr_factor_bus_factor_defense_py["(生产态 / production) bus_factor_defense.py"]
+    src_zephyr_factor_core_backpressure_init_py["(生产态 / production) D_FACTOR core backpressure 子包——进程内在途并...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_batch_output_init_py["(生产态 / production) D_FACTOR core batch_output 子包——FactorSignal...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_config_manager_init_py["(生产态 / production) D_FACTOR core config_manager 子包——core 基础...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_ctr001_consumer_init_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者包入口。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_ctr002_producer_init_py["(生产态 / production) CTR-002 FactorSignal 生产者包入口。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_dag_manager_init_py["(生产态 / production) D_FACTOR core dag_manager 子包——DAG 调度执行器。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_dist_feature_eng_init_py["(生产态 / production) D_FACTOR core dist_feature_eng 子包——分布式特...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_evaluation_init_py["(生产态 / production) D-FACTOR-03 因子评估包——IC/IR/OOS 正率/过拟合...<br/>文件: __init__.py"]
+    src_zephyr_factor_core_factor_dag_init_py["(生产态 / production) D_FACTOR core factor_dag 子包——因子 DAG 数据...<br/>文件: __init__.py"]
+    src_zephyr_factor_governance_engine_py["(生产态 / production) D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流...<br/>文件: engine.py"]
+    src_zephyr_factor_governance_factor_pool_manager_py["(生产态 / production) D-FACTOR-08 因子池容量管理——活跃池/休眠池 + I...<br/>文件: factor_pool_manager.py"]
+    src_zephyr_factor_momentum_factor_py["(生产态 / production) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
+    src_zephyr_factor_value_factor_py["(生产态 / production) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
+    src_zephyr_factor_alpha_signal_pipeline_py ~~~ src_zephyr_factor_analysis_correlation_dedup_py
+    src_zephyr_factor_analysis_correlation_dedup_py ~~~ src_zephyr_factor_analysis_decay_monitor_py
+    src_zephyr_factor_analysis_decay_monitor_py ~~~ src_zephyr_factor_analysis_factor_attribution_py
+    src_zephyr_factor_analysis_factor_attribution_py ~~~ src_zephyr_factor_analysis_factor_optimization_py
+    src_zephyr_factor_analysis_factor_optimization_py ~~~ src_zephyr_factor_analysis_ic_ir_calc_py
+    src_zephyr_factor_analysis_ic_ir_calc_py ~~~ src_zephyr_factor_analysis_ic_ir_evaluator_py
+    src_zephyr_factor_analysis_ic_ir_evaluator_py ~~~ src_zephyr_factor_analysis_layered_backtest_py
+    src_zephyr_factor_analysis_layered_backtest_py ~~~ src_zephyr_factor_analysis_three_level_judgment_py
+    src_zephyr_factor_analysis_three_level_judgment_py ~~~ src_zephyr_factor_bus_factor_defense_py
+    src_zephyr_factor_bus_factor_defense_py ~~~ src_zephyr_factor_core_backpressure_init_py
+    src_zephyr_factor_core_backpressure_init_py ~~~ src_zephyr_factor_core_batch_output_init_py
+    src_zephyr_factor_core_batch_output_init_py ~~~ src_zephyr_factor_core_config_manager_init_py
+    src_zephyr_factor_core_config_manager_init_py ~~~ src_zephyr_factor_core_ctr001_consumer_init_py
+    src_zephyr_factor_core_ctr001_consumer_init_py ~~~ src_zephyr_factor_core_ctr002_producer_init_py
+    src_zephyr_factor_core_ctr002_producer_init_py ~~~ src_zephyr_factor_core_dag_manager_init_py
+    src_zephyr_factor_core_dag_manager_init_py ~~~ src_zephyr_factor_core_dist_feature_eng_init_py
+    src_zephyr_factor_core_dist_feature_eng_init_py ~~~ src_zephyr_factor_core_evaluation_init_py
+    src_zephyr_factor_core_evaluation_init_py ~~~ src_zephyr_factor_core_factor_dag_init_py
+    src_zephyr_factor_core_factor_dag_init_py ~~~ src_zephyr_factor_governance_engine_py
+    src_zephyr_factor_governance_engine_py ~~~ src_zephyr_factor_governance_factor_pool_manager_py
+    src_zephyr_factor_governance_factor_pool_manager_py ~~~ src_zephyr_factor_momentum_factor_py
+    src_zephyr_factor_momentum_factor_py ~~~ src_zephyr_factor_value_factor_py
+    src_zephyr_factor_analysis_init_py["(生产态 / production) D_FACTOR analysis 子包——因子分析与评估工具链。<br/>文件: __init__.py"]
+    src_zephyr_factor_analysis_correlation_analyzer_py["(生产态 / production) D-FACTOR-ANA-04 因子相关性分析——计算因子间相...<br/>文件: correlation_analyzer.py"]
+    src_zephyr_factor_analysis_ic_decay_py["(生产态 / production) D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC ...<br/>文件: ic_decay.py"]
+    src_zephyr_factor_analysis_multifactor_synthesis_py["(生产态 / production) D-FACTOR-ANA-10 多因子合成——将多个因子值合成...<br/>文件: multifactor_synthesis.py"]
+    src_zephyr_factor_core_ctr001_consumer_converter_py["(生产态 / production) CTR-001 NormalizedMarketData 消费者——数据适配层。<br/>文件: converter.py"]
+    src_zephyr_factor_core_ctr002_producer_converter_py["(生产态 / production) CTR-002 FactorSignal 生产者——信号适配层。<br/>文件: converter.py"]
+    src_zephyr_factor_governance_grayscale_rollout_py["(生产态 / production) D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 3...<br/>文件: grayscale_rollout.py"]
+    src_zephyr_factor_governance_six_step_flow_py["(生产态 / production) D-FACTOR-GOV-04 六步流程编排——因子从研究到实...<br/>文件: six_step_flow.py"]
+    src_zephyr_factor_analysis_init_py ~~~ src_zephyr_factor_analysis_correlation_analyzer_py
+    src_zephyr_factor_analysis_correlation_analyzer_py ~~~ src_zephyr_factor_analysis_ic_decay_py
+    src_zephyr_factor_analysis_ic_decay_py ~~~ src_zephyr_factor_analysis_multifactor_synthesis_py
+    src_zephyr_factor_analysis_multifactor_synthesis_py ~~~ src_zephyr_factor_core_ctr001_consumer_converter_py
+    src_zephyr_factor_core_ctr001_consumer_converter_py ~~~ src_zephyr_factor_core_ctr002_producer_converter_py
+    src_zephyr_factor_core_ctr002_producer_converter_py ~~~ src_zephyr_factor_governance_grayscale_rollout_py
+    src_zephyr_factor_governance_grayscale_rollout_py ~~~ src_zephyr_factor_governance_six_step_flow_py
+    src_zephyr_factor_governance_abs001_gate_py["(生产态 / production) D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度...<br/>文件: abs001_gate.py"]
+    src_zephyr_factor_governance_lifecycle_state_machine_py["(生产态 / production) D-FACTOR-GOV-01 因子生命周期状态机——复用项目...<br/>文件: lifecycle_state_machine.py"]
+    src_zephyr_factor_governance_abs001_gate_py ~~~ src_zephyr_factor_governance_lifecycle_state_machine_py
+    src_zephyr_factor_core_evaluation_backtest_py["(生产态 / production) D-FACTOR-03 因子评估回测运行器——端到端因子评估。<br/>文件: backtest.py"]
+    src_zephyr_factor_governance_init_py["(生产态 / production) D_FACTOR governance 子包——因子生命周期治理工具链。<br/>文件: __init__.py"]
+    src_zephyr_factor_core_evaluation_backtest_py ~~~ src_zephyr_factor_governance_init_py
+    src_zephyr_factor_core_evaluation_metrics_py["(生产态 / production) D-FACTOR-03 因子评估指标——纯函数模块（无 IO ...<br/>文件: metrics.py"]
+    src_zephyr_factor_factor_base_py["(生产态 / production) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: factor_base.py"]
+    src_zephyr_factor_core_evaluation_metrics_py ~~~ src_zephyr_factor_factor_base_py
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_analysis_correlation_dedup_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_correlation_analyzer_py
     src_zephyr_factor_value_factor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_analysis_correlation_dedup_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_correlation_analyzer_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_ic_decay_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_factor_attribution_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_ic_ir_calc_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
     src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_analysis_ic_ir_evaluator_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_analysis_ic_ir_calc_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_core_ctr001_consumer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr001_consumer_converter_py
     src_zephyr_factor_core_ctr002_producer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr002_producer_converter_py
-    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
-    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_six_step_flow_py
-    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_grayscale_rollout_py
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
-    src_zephyr_factor_governance_factor_pool_manager_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
-    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
-    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
+    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_grayscale_rollout_py
+    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_six_step_flow_py
+    src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
     src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
     src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
+    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
+    src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_factor_pool_manager_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_factor_core_ctr001_consumer_converter_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_factor_core_ctr002_producer_converter_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -305,8 +364,6 @@ graph TD
     src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| D_SHARED
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
@@ -316,12 +373,14 @@ graph TD
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_analysis_init_py,src_zephyr_factor_analysis_correlation_analyzer_py,src_zephyr_factor_analysis_correlation_dedup_py,src_zephyr_factor_analysis_decay_monitor_py,src_zephyr_factor_analysis_factor_attribution_py,src_zephyr_factor_analysis_factor_optimization_py,src_zephyr_factor_analysis_ic_decay_py,src_zephyr_factor_analysis_ic_ir_calc_py,src_zephyr_factor_analysis_ic_ir_evaluator_py,src_zephyr_factor_analysis_layered_backtest_py,src_zephyr_factor_analysis_multifactor_synthesis_py,src_zephyr_factor_analysis_three_level_judgment_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_backpressure_init_py,src_zephyr_factor_core_batch_output_init_py,src_zephyr_factor_core_config_manager_init_py,src_zephyr_factor_core_ctr001_consumer_init_py,src_zephyr_factor_core_ctr001_consumer_converter_py,src_zephyr_factor_core_ctr002_producer_init_py,src_zephyr_factor_core_ctr002_producer_converter_py,src_zephyr_factor_core_dag_manager_init_py,src_zephyr_factor_core_dist_feature_eng_init_py,src_zephyr_factor_core_evaluation_init_py,src_zephyr_factor_core_evaluation_backtest_py,src_zephyr_factor_core_evaluation_metrics_py,src_zephyr_factor_core_factor_dag_init_py,src_zephyr_factor_factor_base_py,src_zephyr_factor_governance_init_py,src_zephyr_factor_governance_abs001_gate_py,src_zephyr_factor_governance_engine_py,src_zephyr_factor_governance_factor_pool_manager_py,src_zephyr_factor_governance_grayscale_rollout_py,src_zephyr_factor_governance_lifecycle_state_machine_py,src_zephyr_factor_governance_six_step_flow_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py production
-    class D_INFRASTRUCTURE,D_DATA,D_SHARED,D_FUNDAMENTAL_SIGNAL,D_GOV_OPS_RESILIENCE,D_EX_CORE,D_PF_CORE external_prod
+    class D_INFRASTRUCTURE,D_DATA,D_SHARED,D_FUNDAMENTAL_SIGNAL,D_EX_CORE,D_PF_CORE,D_GOV_OPS_RESILIENCE external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -363,6 +422,7 @@ graph TD
 > 本域与 7 个外部域直接连接（出边 8 条 + 入边 8 条 = 16 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_FACTOR["D_FACTOR<br/>因子"]
     D_DATA["D_DATA<br/>数据接入层"]

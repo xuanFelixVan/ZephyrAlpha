@@ -62,21 +62,21 @@ ttl: permanent
 > 展示全部 4 个模块（生产态 3 + 设计态 1），标签标注成熟度。
 
 ```mermaid
-graph TD
-    subgraph D_ML_TRAIN["D_ML_TRAIN 训练"]
-        docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_profiler__blueprint_md"]
-        src_zephyr_ml_train_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
-        src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
-        src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_profiler__blueprint_md"]
+    src_zephyr_ml_train_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
+    docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_implementations_default_inference_engine_py
+    src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
+    src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
@@ -85,10 +85,10 @@ graph TD
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py production
     class docs_03_modules_cross_layer_model_profiler_blueprint_md design
     class D_TRADING,D_SHARED,D_INTELLIGENCE external_prod
@@ -99,12 +99,11 @@ graph TD
 > 仅展示已上线运行的模块（共 3 个，3 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_ML_TRAIN["D_ML_TRAIN 训练"]
-        src_zephyr_ml_train_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
-        src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
-        src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_ml_train_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>文件: default_inference_engine.py"]
+    src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>文件: inference_base.py"]
+    src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
@@ -117,14 +116,14 @@ graph TD
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    D_SHARED -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    D_SHARED -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py production
     class D_TRADING,D_SHARED,D_INTELLIGENCE external_prod
 ```
@@ -134,14 +133,13 @@ graph TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 1 个，0 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_ML_TRAIN["D_ML_TRAIN 训练"]
-        docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_profiler__blueprint_md"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_profiler__blueprint_md"]
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_model_profiler_blueprint_md design
 ```
 
@@ -172,6 +170,7 @@ graph TD
 > 本域与 5 个外部域直接连接（出边 7 条 + 入边 5 条 = 12 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_SHARED["D_SHARED<br/>共享服务"]

@@ -60,15 +60,15 @@ ttl: permanent
 > 展示全部 2 个模块（生产态 2 + 设计态 0），标签标注成熟度。
 
 ```mermaid
-graph TD
-    subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM 自治保护"]
-        scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
-        scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
+    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
 ```
 
@@ -77,15 +77,15 @@ graph TD
 > 仅展示已上线运行的模块（共 2 个，0 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_AUTONOMY_PERM["D_AUTONOMY_PERM 自治保护"]
-        scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
-        scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延...<br/>文件: check_kill_switch_latency.py"]
+    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>文件: manage_kill_switch.py"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
 ```
 

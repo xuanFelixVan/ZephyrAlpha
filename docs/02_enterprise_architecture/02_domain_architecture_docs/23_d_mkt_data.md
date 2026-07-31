@@ -67,30 +67,36 @@ ttl: permanent
 > 展示全部 9 个模块（生产态 9 + 设计态 0），标签标注成熟度。
 
 ```mermaid
-graph TD
-    subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
-        src_zephyr_market_data_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_extensions_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_api_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_core_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_infrastructure_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_models_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) NormalizedMarketData 生产者包——D_MKT_DATA→D_...<br/>文件: __init__.py"]
-        src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) NormalizedMarketData 生产者——D_MKT_DATA→D_FA...<br/>文件: producer.py"]
-        src_zephyr_market_data_services_init_py["(生产态 / production) __init__.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_market_data_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_extensions_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_api_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_core_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_infrastructure_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_models_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) NormalizedMarketData 生产者包——D_MKT_DATA→D_...<br/>文件: __init__.py"]
+    src_zephyr_market_data_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_init_py ~~~ src_zephyr_market_data_extensions_init_py
+    src_zephyr_market_data_extensions_init_py ~~~ src_zephyr_market_data_api_init_py
+    src_zephyr_market_data_api_init_py ~~~ src_zephyr_market_data_core_init_py
+    src_zephyr_market_data_core_init_py ~~~ src_zephyr_market_data_infrastructure_init_py
+    src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
+    src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
+    src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) NormalizedMarketData 生产者——D_MKT_DATA→D_FA...<br/>文件: producer.py"]
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_DATA["(生产态 / production) D_DATA"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_normalized_market_data_producer_init_py,src_zephyr_market_data_normalized_market_data_producer_producer_py,src_zephyr_market_data_services_init_py production
     class D_INFRASTRUCTURE,D_DATA external_prod
 ```
@@ -100,30 +106,36 @@ graph TD
 > 仅展示已上线运行的模块（共 9 个，1 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
-        src_zephyr_market_data_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_extensions_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_api_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_core_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_infrastructure_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_models_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) NormalizedMarketData 生产者包——D_MKT_DATA→D_...<br/>文件: __init__.py"]
-        src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) NormalizedMarketData 生产者——D_MKT_DATA→D_FA...<br/>文件: producer.py"]
-        src_zephyr_market_data_services_init_py["(生产态 / production) __init__.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_market_data_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_extensions_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_api_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_core_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_infrastructure_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_models_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) NormalizedMarketData 生产者包——D_MKT_DATA→D_...<br/>文件: __init__.py"]
+    src_zephyr_market_data_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_market_data_init_py ~~~ src_zephyr_market_data_extensions_init_py
+    src_zephyr_market_data_extensions_init_py ~~~ src_zephyr_market_data_api_init_py
+    src_zephyr_market_data_api_init_py ~~~ src_zephyr_market_data_core_init_py
+    src_zephyr_market_data_core_init_py ~~~ src_zephyr_market_data_infrastructure_init_py
+    src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
+    src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
+    src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) NormalizedMarketData 生产者——D_MKT_DATA→D_FA...<br/>文件: producer.py"]
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_DATA["(生产态 / production) D_DATA"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_normalized_market_data_producer_init_py,src_zephyr_market_data_normalized_market_data_producer_producer_py,src_zephyr_market_data_services_init_py production
     class D_INFRASTRUCTURE,D_DATA external_prod
 ```
@@ -155,6 +167,7 @@ graph TD
 > 本域与 3 个外部域直接连接（出边 7 条 + 入边 1 条 = 8 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_DATA["D_DATA<br/>数据接入层"]

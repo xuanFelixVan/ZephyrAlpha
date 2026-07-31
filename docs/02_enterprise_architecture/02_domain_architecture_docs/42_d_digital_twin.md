@@ -65,20 +65,25 @@ ttl: permanent
 > 展示全部 7 个模块（生产态 7 + 设计态 0），标签标注成熟度。
 
 ```mermaid
-graph TD
-    subgraph D_DIGITAL_TWIN["D_DIGITAL_TWIN 数字孪生"]
-        src_zephyr_digital_twin_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_extensions_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_api_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_core_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_infrastructure_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_models_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_services_init_py["(生产态 / production) __init__.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_digital_twin_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_extensions_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_api_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_core_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_infrastructure_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_models_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_init_py ~~~ src_zephyr_digital_twin_extensions_init_py
+    src_zephyr_digital_twin_extensions_init_py ~~~ src_zephyr_digital_twin_api_init_py
+    src_zephyr_digital_twin_api_init_py ~~~ src_zephyr_digital_twin_core_init_py
+    src_zephyr_digital_twin_core_init_py ~~~ src_zephyr_digital_twin_infrastructure_init_py
+    src_zephyr_digital_twin_infrastructure_init_py ~~~ src_zephyr_digital_twin_models_init_py
+    src_zephyr_digital_twin_models_init_py ~~~ src_zephyr_digital_twin_services_init_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_digital_twin_init_py,src_zephyr_digital_twin_extensions_init_py,src_zephyr_digital_twin_api_init_py,src_zephyr_digital_twin_core_init_py,src_zephyr_digital_twin_infrastructure_init_py,src_zephyr_digital_twin_models_init_py,src_zephyr_digital_twin_services_init_py production
 ```
 
@@ -87,20 +92,25 @@ graph TD
 > 仅展示已上线运行的模块（共 7 个，0 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_DIGITAL_TWIN["D_DIGITAL_TWIN 数字孪生"]
-        src_zephyr_digital_twin_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_extensions_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_api_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_core_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_infrastructure_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_models_init_py["(生产态 / production) __init__.py"]
-        src_zephyr_digital_twin_services_init_py["(生产态 / production) __init__.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_digital_twin_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_extensions_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_api_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_core_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_infrastructure_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_models_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_services_init_py["(生产态 / production) __init__.py"]
+    src_zephyr_digital_twin_init_py ~~~ src_zephyr_digital_twin_extensions_init_py
+    src_zephyr_digital_twin_extensions_init_py ~~~ src_zephyr_digital_twin_api_init_py
+    src_zephyr_digital_twin_api_init_py ~~~ src_zephyr_digital_twin_core_init_py
+    src_zephyr_digital_twin_core_init_py ~~~ src_zephyr_digital_twin_infrastructure_init_py
+    src_zephyr_digital_twin_infrastructure_init_py ~~~ src_zephyr_digital_twin_models_init_py
+    src_zephyr_digital_twin_models_init_py ~~~ src_zephyr_digital_twin_services_init_py
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_digital_twin_init_py,src_zephyr_digital_twin_extensions_init_py,src_zephyr_digital_twin_api_init_py,src_zephyr_digital_twin_core_init_py,src_zephyr_digital_twin_infrastructure_init_py,src_zephyr_digital_twin_models_init_py,src_zephyr_digital_twin_services_init_py production
 ```
 

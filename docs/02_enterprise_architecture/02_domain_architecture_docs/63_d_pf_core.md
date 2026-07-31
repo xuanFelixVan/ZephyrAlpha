@@ -70,45 +70,48 @@ ttl: permanent
 > 展示全部 7 个模块（生产态 6 + 设计态 1），标签标注成熟度。
 
 ```mermaid
-graph TD
-    subgraph D_PF_CORE["D_PF_CORE 组合核心"]
-        src_zephyr_pf_core_intraday_surge_fall_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B...<br/>文件: intraday_surge_fall_strategy.py"]
-        src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
-        src_zephyr_pf_core_strategy_engine_strategy_runner_py["(生产态 / production) D_PORTFOLIO_CORE — StrategyRunner 策略运行器（...<br/>文件: strategy_runner.py"]
-        src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["(生产态 / production) D_PORTFOLIO_CORE — TickStrategyBase + TickStra...<br/>文件: tick_strategy_base.py"]
-        src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: topn_momentum_strategy.py"]
-        tests_pf_core_test_intraday_surge_fall_strategy_py["(生产态 / production) IntradaySurgeFallStrategy 单元测试（路径 B 示例...<br/>文件: test_intraday_surge_fall_strategy.py"]
-        tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) StrategyRunner.run_tick_backtest 单元测试（路径...<br/>文件: test_strategy_runner_tick.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
+    src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: topn_momentum_strategy.py"]
+    tests_pf_core_test_intraday_surge_fall_strategy_py["(生产态 / production) IntradaySurgeFallStrategy 单元测试（路径 B 示例...<br/>文件: test_intraday_surge_fall_strategy.py"]
+    tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) StrategyRunner.run_tick_backtest 单元测试（路径...<br/>文件: test_strategy_runner_tick.py"]
+    src_zephyr_pf_core_strategy_engine_init_py ~~~ src_zephyr_pf_core_topn_momentum_strategy_py
+    src_zephyr_pf_core_topn_momentum_strategy_py ~~~ tests_pf_core_test_intraday_surge_fall_strategy_py
+    tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_strategy_runner_tick_py
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B...<br/>文件: intraday_surge_fall_strategy.py"]
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py["(生产态 / production) D_PORTFOLIO_CORE — StrategyRunner 策略运行器（...<br/>文件: strategy_runner.py"]
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["(生产态 / production) D_PORTFOLIO_CORE — TickStrategyBase + TickStra...<br/>文件: tick_strategy_base.py"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
-    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
-    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
+    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
+    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_strategy_runner_tick_py production
     class src_zephyr_pf_core_topn_momentum_strategy_py design
-    class D_BACKTEST,D_PF_ALLOC,D_FACTOR,D_GOVERNANCE external_prod
+    class D_FACTOR,D_GOVERNANCE,D_BACKTEST,D_PF_ALLOC external_prod
     class D_EX_CORE external_design
 ```
 
@@ -117,25 +120,24 @@ graph TD
 > 仅展示已上线运行的模块（共 6 个，6 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_PF_CORE["D_PF_CORE 组合核心"]
-        src_zephyr_pf_core_intraday_surge_fall_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B...<br/>文件: intraday_surge_fall_strategy.py"]
-        src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
-        src_zephyr_pf_core_strategy_engine_strategy_runner_py["(生产态 / production) D_PORTFOLIO_CORE — StrategyRunner 策略运行器（...<br/>文件: strategy_runner.py"]
-        src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["(生产态 / production) D_PORTFOLIO_CORE — TickStrategyBase + TickStra...<br/>文件: tick_strategy_base.py"]
-        tests_pf_core_test_intraday_surge_fall_strategy_py["(生产态 / production) IntradaySurgeFallStrategy 单元测试（路径 B 示例...<br/>文件: test_intraday_surge_fall_strategy.py"]
-        tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) StrategyRunner.run_tick_backtest 单元测试（路径...<br/>文件: test_strategy_runner_tick.py"]
-    end
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
+    tests_pf_core_test_intraday_surge_fall_strategy_py["(生产态 / production) IntradaySurgeFallStrategy 单元测试（路径 B 示例...<br/>文件: test_intraday_surge_fall_strategy.py"]
+    tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) StrategyRunner.run_tick_backtest 单元测试（路径...<br/>文件: test_strategy_runner_tick.py"]
+    src_zephyr_pf_core_strategy_engine_init_py ~~~ tests_pf_core_test_intraday_surge_fall_strategy_py
+    tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_strategy_runner_tick_py
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B...<br/>文件: intraday_surge_fall_strategy.py"]
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py["(生产态 / production) D_PORTFOLIO_CORE — StrategyRunner 策略运行器（...<br/>文件: strategy_runner.py"]
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["(生产态 / production) D_PORTFOLIO_CORE — TickStrategyBase + TickStra...<br/>文件: tick_strategy_base.py"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
-    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
-    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     D_FACTOR["(生产态 / production) D_FACTOR"]
@@ -145,15 +147,18 @@ graph TD
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
+    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
+    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_strategy_runner_tick_py production
-    class D_BACKTEST,D_PF_ALLOC,D_FACTOR,D_GOVERNANCE external_prod
+    class D_BACKTEST,D_FACTOR,D_GOVERNANCE,D_PF_ALLOC external_prod
     class D_EX_CORE external_design
 ```
 
@@ -162,14 +167,13 @@ graph TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 1 个，0 条域内依赖）。
 
 ```mermaid
-graph TD
-    subgraph D_PF_CORE["D_PF_CORE 组合核心"]
-        src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: topn_momentum_strategy.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: topn_momentum_strategy.py"]
+    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
+    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
+    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_pf_core_topn_momentum_strategy_py design
 ```
 
@@ -201,6 +205,7 @@ graph TD
 > 本域与 7 个外部域直接连接（出边 12 条 + 入边 1 条 = 13 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
