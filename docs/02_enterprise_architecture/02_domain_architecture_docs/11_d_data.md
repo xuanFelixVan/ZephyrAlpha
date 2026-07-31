@@ -218,8 +218,8 @@ ttl: permanent
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
-> - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -318,10 +318,10 @@ flowchart TD
     schemas_categories_market_etf_benchmark_py -->|config_depends / config_depends| schemas_categories_cross_validation_log_py
     schemas_categories_market_dragon_tiger_py -->|config_depends / config_depends| schemas_categories_cross_validation_log_py
     schemas_categories_market_etf_list_py -->|config_depends / config_depends| schemas_categories_cross_validation_log_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class schemas_categories_cross_validation_log_py,schemas_categories_fundamental_analyst_forecast_py,schemas_categories_fundamental_balance_sheet_py,schemas_categories_fundamental_cashflow_statement_py,schemas_categories_fundamental_disclosure_plan_py,schemas_categories_fundamental_equity_pledge_detail_py,schemas_categories_fundamental_income_statement_py,schemas_categories_fundamental_industry_class_py,schemas_categories_fundamental_industry_class_suppl_py,schemas_categories_fundamental_restricted_shares_py,schemas_categories_fundamental_rights_issue_py,schemas_categories_fundamental_share_change_py,schemas_categories_fundamental_share_unlock_py,schemas_categories_macro_edb_data_py,schemas_categories_macro_macro_data_py,schemas_categories_market_adj_factor_py,schemas_categories_market_auction_py,schemas_categories_market_auction_book_py,schemas_categories_market_block_trade_py,schemas_categories_market_block_trade_detail_py,schemas_categories_market_cb_iv_py,schemas_categories_market_concept_board_py,schemas_categories_market_concept_board_constituent_py,schemas_categories_market_concept_sector_py,schemas_categories_market_convertible_bond_list_py,schemas_categories_market_daily_valuation_py,schemas_categories_market_dragon_tiger_py,schemas_categories_market_dragon_tiger_seat_py,schemas_categories_market_etf_benchmark_py,schemas_categories_market_etf_list_py production
 ```
 
@@ -389,10 +389,10 @@ flowchart TD
     schemas_categories_market_kline_futures_py ~~~ schemas_categories_market_kline_hk_daily_py
     schemas_categories_market_kline_hk_daily_py ~~~ schemas_categories_market_kline_index_py
     schemas_categories_market_kline_index_py ~~~ schemas_categories_market_kline_lof_15min_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class schemas_categories_market_etf_nav_py,schemas_categories_market_futures_kline_qmt_py,schemas_categories_market_futures_position_py,schemas_categories_market_futures_term_py,schemas_categories_market_hk_connect_flow_py,schemas_categories_market_hk_kline_py,schemas_categories_market_hk_stock_list_py,schemas_categories_market_hk_trade_calendar_py,schemas_categories_market_index_py,schemas_categories_market_index_constituent_py,schemas_categories_market_index_list_py,schemas_categories_market_index_meta_py,schemas_categories_market_index_weight_py,schemas_categories_market_kline_15min_py,schemas_categories_market_kline_1min_py,schemas_categories_market_kline_30min_py,schemas_categories_market_kline_5min_py,schemas_categories_market_kline_60min_py,schemas_categories_market_kline_cb_py,schemas_categories_market_kline_daily_py,schemas_categories_market_kline_daily_hfq_py,schemas_categories_market_kline_etf_15min_py,schemas_categories_market_kline_etf_1min_py,schemas_categories_market_kline_etf_30min_py,schemas_categories_market_kline_etf_5min_py,schemas_categories_market_kline_etf_60min_py,schemas_categories_market_kline_futures_py,schemas_categories_market_kline_hk_daily_py,schemas_categories_market_kline_index_py,schemas_categories_market_kline_lof_15min_py production
 ```
 
@@ -460,10 +460,10 @@ flowchart TD
     schemas_categories_market_stock_indicator_py ~~~ schemas_categories_market_stock_list_py
     schemas_categories_market_stock_list_py ~~~ schemas_categories_market_tick_py
     schemas_categories_market_tick_py ~~~ schemas_categories_market_trade_calendar_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class schemas_categories_market_kline_lof_1min_py,schemas_categories_market_kline_lof_30min_py,schemas_categories_market_kline_lof_5min_py,schemas_categories_market_kline_lof_60min_py,schemas_categories_market_kline_monthly_py,schemas_categories_market_kline_monthly_hfq_py,schemas_categories_market_kline_sector_py,schemas_categories_market_kline_sector_880_py,schemas_categories_market_kline_sector_intraday_py,schemas_categories_market_kline_us_daily_py,schemas_categories_market_kline_weekly_py,schemas_categories_market_kline_weekly_hfq_py,schemas_categories_market_l2_tick_py,schemas_categories_market_limit_up_down_py,schemas_categories_market_lof_list_py,schemas_categories_market_margin_trading_py,schemas_categories_market_money_flow_py,schemas_categories_market_option_greeks_py,schemas_categories_market_option_iv_py,schemas_categories_market_option_kline_py,schemas_categories_market_realtime_snapshot_py,schemas_categories_market_sector_constituent_py,schemas_categories_market_sector_list_py,schemas_categories_market_sector_meta_py,schemas_categories_market_sector_snapshot_py,schemas_categories_market_st_stock_list_py,schemas_categories_market_stock_indicator_py,schemas_categories_market_stock_list_py,schemas_categories_market_tick_py,schemas_categories_market_trade_calendar_py production
 ```
 
@@ -483,17 +483,17 @@ flowchart TD
     scripts_ch_verify_exchange_coverage_py["(生产态 / production) exchange+symbol_canonical 数据覆盖率校验器（TRAE-082 1.1.0 阶段2 配套）。<br/>exchange+symbol_canonical 数据覆盖率校验器（TRAE-082 1.1.0 阶段2 配套）。<br/>文件: ch/verify_exchange_coverage.py"]
     scripts_ch_verify_schema_truth_py["(生产态 / production) DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。<br/>DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。<br/>文件: ch/verify_schema_truth.py"]
     scripts_ops_verify_alert_channels_py["(生产态 / production) 告警通道端到端验证（B2，#ARCH-CH-023，2026-07-25）。<br/>告警通道端到端验证（B2，#ARCH-CH-023，2026-07-25）。<br/>文件: ops/verify_alert_channels.py"]
-    scripts_register_aux_tasks_ps1["(生产态 / production) scripts/register_aux_tasks.ps1"]
-    scripts_register_guard_tasks_ps1["(生产态 / production) scripts/register_guard_tasks.ps1"]
-    scripts_start_scheduler_ps1["(生产态 / production) scripts/start_scheduler.ps1"]
-    scripts_start_tick_subscriber_ps1["(生产态 / production) scripts/start_tick_subscriber.ps1"]
+    scripts_register_aux_tasks_ps1["(生产态 / production)<br/>文件: scripts/register_aux_tasks.ps1"]
+    scripts_register_guard_tasks_ps1["(生产态 / production)<br/>文件: scripts/register_guard_tasks.ps1"]
+    scripts_start_scheduler_ps1["(生产态 / production)<br/>文件: scripts/start_scheduler.ps1"]
+    scripts_start_tick_subscriber_ps1["(生产态 / production)<br/>文件: scripts/start_tick_subscriber.ps1"]
     src_zephyr_data_main_py["(生产态 / production) python -m zephyr.data — 数据源集成器 CLI 入口。<br/>python -m zephyr.data — 数据源集成器 CLI 入口。<br/>文件: data/__main__.py"]
     src_zephyr_data_backfill_checker_py["(生产态 / production) L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。<br/>L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。<br/>文件: data/backfill_checker.py"]
     src_zephyr_data_buffered_writer_py["(生产态 / production) 批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003）。<br/>批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003）。<br/>文件: data/buffered_writer.py"]
     src_zephyr_data_capability_validator_py["(生产态 / production) Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。<br/>Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。<br/>文件: data/capability_validator.py"]
-    src_zephyr_data_config_policies_yaml["(生产态 / production) config/policies.yaml"]
-    src_zephyr_data_config_schedule_yaml["(生产态 / production) config/schedule.yaml"]
-    src_zephyr_data_config_tasks_yaml["(生产态 / production) config/tasks.yaml"]
+    src_zephyr_data_config_policies_yaml["(生产态 / production)<br/>文件: config/policies.yaml"]
+    src_zephyr_data_config_schedule_yaml["(生产态 / production)<br/>文件: config/schedule.yaml"]
+    src_zephyr_data_config_tasks_yaml["(生产态 / production)<br/>文件: config/tasks.yaml"]
     src_zephyr_data_cross_source_validator_py["(生产态 / production) 多源交叉校验器——比较 QMT 主源与 TDX 备源 tick 数据一致性（P1-4）。<br/>多源交叉校验器——比较 QMT 主源与 TDX 备源 tick 数据一致性（P1-4）。<br/>文件: data/cross_source_validator.py"]
     schemas_categories_market_us_index_py ~~~ scripts_ch_data_inventory_py
     scripts_ch_data_inventory_py ~~~ scripts_ch_recovery_drill_py
@@ -585,10 +585,10 @@ flowchart TD
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class schemas_categories_market_us_index_py,scripts_ch_data_inventory_py,scripts_ch_recovery_drill_py,scripts_ch_apply_exchange_columns_py,scripts_ch_apply_fundamental_tables_ddl_py,scripts_ch_apply_market_tables_ddl_py,scripts_ch_apply_rbac_py,scripts_ch_apply_timezone_migration_py,scripts_ch_lint_symbol_convention_py,scripts_ch_verify_exchange_coverage_py,scripts_ch_verify_schema_truth_py,scripts_ops_verify_alert_channels_py,scripts_register_aux_tasks_ps1,scripts_register_guard_tasks_ps1,scripts_start_scheduler_ps1,scripts_start_tick_subscriber_ps1,src_zephyr_data_init_py,src_zephyr_data_main_py,src_zephyr_data_alerter_py,src_zephyr_data_backfill_checker_py,src_zephyr_data_buffered_writer_py,src_zephyr_data_capability_validator_py,src_zephyr_data_ch_config_py,src_zephyr_data_ch_reader_py,src_zephyr_data_ch_writer_py,src_zephyr_data_cli_py,src_zephyr_data_config_policies_yaml,src_zephyr_data_config_schedule_yaml,src_zephyr_data_config_tasks_yaml,src_zephyr_data_cross_source_validator_py production
     class D_SHARED,D_GOV_SCRIPTS,D_FACTOR,D_MKT_DATA,D_GOV_CODE_QUALITY,D_BACKTEST,D_INFRA_RUNTIME,D_GOVERNANCE external_prod
 ```
@@ -601,7 +601,7 @@ flowchart TD
     src_zephyr_data_implementations_init_py["(生产态 / production) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: implementations/__init__.py"]
     src_zephyr_data_kline_resampler_py["(生产态 / production) 880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。<br/>880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。<br/>文件: data/kline_resampler.py"]
     src_zephyr_data_pit_query_py["(生产态 / production) 财报 Point-In-Time (PIT) 查询能力（#ARCH-CH-021 P0-5）。<br/>财报 Point-In-Time (PIT) 查询能力（#ARCH-CH-021 P0-5）。<br/>文件: data/pit_query.py"]
-    src_zephyr_data_pit_query_py_1["(设计态 / design) pit_query.py/"]
+    src_zephyr_data_pit_query_py_1["(设计态 / design)<br/>文件: pit_query.py/"]
     src_zephyr_data_quality_gate_py["(生产态 / production) Re-export wrapper: QualityReport 真源在 zephyr.gov_enforcement.rule_enforceme...<br/>Re-export wrapper: QualityReport 真源在 zephyr.gov_enforcement.rule_enforceme...<br/>文件: data/quality_gate.py"]
     src_zephyr_data_redundant_source_init_py["(生产态 / production) 数据源冗余与热切换模块（MOD-L00-005）。<br/>数据源冗余与热切换模块（MOD-L00-005）。<br/>文件: redundant_source/__init__.py"]
     src_zephyr_data_satellite_geospatial_engine_init_py["(生产态 / production) D_DATA Data Source<br/>D_DATA Data Source<br/>文件: satellite_geospatial_engine/__init__.py"]
@@ -722,10 +722,10 @@ flowchart TD
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_data_policy_registry_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_error_classifier_py,src_zephyr_data_implementations_init_py,src_zephyr_data_implementations_akshare_provider_py,src_zephyr_data_implementations_baostock_provider_py,src_zephyr_data_implementations_cls_provider_py,src_zephyr_data_implementations_eastmoney_news_provider_py,src_zephyr_data_implementations_ifind_provider_py,src_zephyr_data_implementations_miniqmt_provider_py,src_zephyr_data_implementations_rss_provider_py,src_zephyr_data_implementations_tdx_provider_py,src_zephyr_data_implementations_tickflow_provider_py,src_zephyr_data_implementations_tqcenter_provider_py,src_zephyr_data_implementations_tushare_provider_py,src_zephyr_data_integrity_checker_py,src_zephyr_data_kline_resampler_py,src_zephyr_data_local_replay_py,src_zephyr_data_metrics_py,src_zephyr_data_news_dedup_py,src_zephyr_data_pit_query_py,src_zephyr_data_policy_registry_py,src_zephyr_data_progress_store_py,src_zephyr_data_provider_base_py,src_zephyr_data_quality_gate_py,src_zephyr_data_redundant_source_init_py,src_zephyr_data_satellite_geospatial_engine_init_py,src_zephyr_data_scheduler_py,src_zephyr_data_sector_kline_downloader_py,src_zephyr_data_sector_ranking_engine_py,src_zephyr_data_sector_snapshot_collector_py production
     class src_zephyr_data_pit_query_py_1 design
     class D_SHARED,D_GOV_ENFORCEMENT,D_GOVERNANCE external_prod
@@ -781,10 +781,10 @@ flowchart TD
     D_FACTOR["(生产态 / production) D_FACTOR 因子"]
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_speed_tester_py,src_zephyr_data_symbol_normalizer_init_py,src_zephyr_data_symbol_normalizer_normalizer_py,src_zephyr_data_table_registry_py,src_zephyr_data_task_queue_py,src_zephyr_data_tick_subscriber_py,src_zephyr_data_trading_calendar_py,src_zephyr_data_wal_codec_init_py,src_zephyr_data_wal_writer_py,tests_data_test_market_quality_validator_py,tests_data_test_pit_query_py,tests_zephyr_data_test_cross_source_validator_py,tests_zephyr_data_test_tick_subscriber_py production
     class D_SHARED,D_GOV_ENFORCEMENT,D_GOV_SCRIPTS,D_GOV_CODE_QUALITY,D_MKT_DATA,D_FACTOR external_prod
 ```
@@ -895,14 +895,14 @@ flowchart TD
     scripts_ch_verify_exchange_coverage_py["(生产态 / production) exchange+symbol_canonical 数据覆盖率校验器（TRAE-082 1.1.0 阶段2 配套）。<br/>exchange+symbol_canonical 数据覆盖率校验器（TRAE-082 1.1.0 阶段2 配套）。<br/>文件: ch/verify_exchange_coverage.py"]
     scripts_ch_verify_schema_truth_py["(生产态 / production) DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。<br/>DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。<br/>文件: ch/verify_schema_truth.py"]
     scripts_ops_verify_alert_channels_py["(生产态 / production) 告警通道端到端验证（B2，#ARCH-CH-023，2026-07-25）。<br/>告警通道端到端验证（B2，#ARCH-CH-023，2026-07-25）。<br/>文件: ops/verify_alert_channels.py"]
-    scripts_register_aux_tasks_ps1["(生产态 / production) scripts/register_aux_tasks.ps1"]
-    scripts_register_guard_tasks_ps1["(生产态 / production) scripts/register_guard_tasks.ps1"]
-    scripts_start_scheduler_ps1["(生产态 / production) scripts/start_scheduler.ps1"]
-    scripts_start_tick_subscriber_ps1["(生产态 / production) scripts/start_tick_subscriber.ps1"]
+    scripts_register_aux_tasks_ps1["(生产态 / production)<br/>文件: scripts/register_aux_tasks.ps1"]
+    scripts_register_guard_tasks_ps1["(生产态 / production)<br/>文件: scripts/register_guard_tasks.ps1"]
+    scripts_start_scheduler_ps1["(生产态 / production)<br/>文件: scripts/start_scheduler.ps1"]
+    scripts_start_tick_subscriber_ps1["(生产态 / production)<br/>文件: scripts/start_tick_subscriber.ps1"]
     src_zephyr_data_main_py["(生产态 / production) python -m zephyr.data — 数据源集成器 CLI 入口。<br/>python -m zephyr.data — 数据源集成器 CLI 入口。<br/>文件: data/__main__.py"]
-    src_zephyr_data_config_policies_yaml["(生产态 / production) config/policies.yaml"]
-    src_zephyr_data_config_schedule_yaml["(生产态 / production) config/schedule.yaml"]
-    src_zephyr_data_config_tasks_yaml["(生产态 / production) config/tasks.yaml"]
+    src_zephyr_data_config_policies_yaml["(生产态 / production)<br/>文件: config/policies.yaml"]
+    src_zephyr_data_config_schedule_yaml["(生产态 / production)<br/>文件: config/schedule.yaml"]
+    src_zephyr_data_config_tasks_yaml["(生产态 / production)<br/>文件: config/tasks.yaml"]
     src_zephyr_data_implementations_init_py["(生产态 / production) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: implementations/__init__.py"]
     src_zephyr_data_kline_resampler_py["(生产态 / production) 880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。<br/>880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。<br/>文件: data/kline_resampler.py"]
     src_zephyr_data_redundant_source_init_py["(生产态 / production) 数据源冗余与热切换模块（MOD-L00-005）。<br/>数据源冗余与热切换模块（MOD-L00-005）。<br/>文件: redundant_source/__init__.py"]
@@ -1408,10 +1408,10 @@ flowchart TD
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class schemas_categories_cross_validation_log_py,schemas_categories_fundamental_analyst_forecast_py,schemas_categories_fundamental_balance_sheet_py,schemas_categories_fundamental_cashflow_statement_py,schemas_categories_fundamental_disclosure_plan_py,schemas_categories_fundamental_equity_pledge_detail_py,schemas_categories_fundamental_income_statement_py,schemas_categories_fundamental_industry_class_py,schemas_categories_fundamental_industry_class_suppl_py,schemas_categories_fundamental_restricted_shares_py,schemas_categories_fundamental_rights_issue_py,schemas_categories_fundamental_share_change_py,schemas_categories_fundamental_share_unlock_py,schemas_categories_macro_edb_data_py,schemas_categories_macro_macro_data_py,schemas_categories_market_adj_factor_py,schemas_categories_market_auction_py,schemas_categories_market_auction_book_py,schemas_categories_market_block_trade_py,schemas_categories_market_block_trade_detail_py,schemas_categories_market_cb_iv_py,schemas_categories_market_concept_board_py,schemas_categories_market_concept_board_constituent_py,schemas_categories_market_concept_sector_py,schemas_categories_market_convertible_bond_list_py,schemas_categories_market_daily_valuation_py,schemas_categories_market_dragon_tiger_py,schemas_categories_market_dragon_tiger_seat_py,schemas_categories_market_etf_benchmark_py,schemas_categories_market_etf_list_py,schemas_categories_market_etf_nav_py,schemas_categories_market_futures_kline_qmt_py,schemas_categories_market_futures_position_py,schemas_categories_market_futures_term_py,schemas_categories_market_hk_connect_flow_py,schemas_categories_market_hk_kline_py,schemas_categories_market_hk_stock_list_py,schemas_categories_market_hk_trade_calendar_py,schemas_categories_market_index_py,schemas_categories_market_index_constituent_py,schemas_categories_market_index_list_py,schemas_categories_market_index_meta_py,schemas_categories_market_index_weight_py,schemas_categories_market_kline_15min_py,schemas_categories_market_kline_1min_py,schemas_categories_market_kline_30min_py,schemas_categories_market_kline_5min_py,schemas_categories_market_kline_60min_py,schemas_categories_market_kline_cb_py,schemas_categories_market_kline_daily_py,schemas_categories_market_kline_daily_hfq_py,schemas_categories_market_kline_etf_15min_py,schemas_categories_market_kline_etf_1min_py,schemas_categories_market_kline_etf_30min_py,schemas_categories_market_kline_etf_5min_py,schemas_categories_market_kline_etf_60min_py,schemas_categories_market_kline_futures_py,schemas_categories_market_kline_hk_daily_py,schemas_categories_market_kline_index_py,schemas_categories_market_kline_lof_15min_py,schemas_categories_market_kline_lof_1min_py,schemas_categories_market_kline_lof_30min_py,schemas_categories_market_kline_lof_5min_py,schemas_categories_market_kline_lof_60min_py,schemas_categories_market_kline_monthly_py,schemas_categories_market_kline_monthly_hfq_py,schemas_categories_market_kline_sector_py,schemas_categories_market_kline_sector_880_py,schemas_categories_market_kline_sector_intraday_py,schemas_categories_market_kline_us_daily_py,schemas_categories_market_kline_weekly_py,schemas_categories_market_kline_weekly_hfq_py,schemas_categories_market_l2_tick_py,schemas_categories_market_limit_up_down_py,schemas_categories_market_lof_list_py,schemas_categories_market_margin_trading_py,schemas_categories_market_money_flow_py,schemas_categories_market_option_greeks_py,schemas_categories_market_option_iv_py,schemas_categories_market_option_kline_py,schemas_categories_market_realtime_snapshot_py,schemas_categories_market_sector_constituent_py,schemas_categories_market_sector_list_py,schemas_categories_market_sector_meta_py,schemas_categories_market_sector_snapshot_py,schemas_categories_market_st_stock_list_py,schemas_categories_market_stock_indicator_py,schemas_categories_market_stock_list_py,schemas_categories_market_tick_py,schemas_categories_market_trade_calendar_py,schemas_categories_market_us_index_py,scripts_ch_data_inventory_py,scripts_ch_recovery_drill_py,scripts_ch_apply_exchange_columns_py,scripts_ch_apply_fundamental_tables_ddl_py,scripts_ch_apply_market_tables_ddl_py,scripts_ch_apply_rbac_py,scripts_ch_apply_timezone_migration_py,scripts_ch_lint_symbol_convention_py,scripts_ch_verify_exchange_coverage_py,scripts_ch_verify_schema_truth_py,scripts_ops_verify_alert_channels_py,scripts_register_aux_tasks_ps1,scripts_register_guard_tasks_ps1,scripts_start_scheduler_ps1,scripts_start_tick_subscriber_ps1,src_zephyr_data_init_py,src_zephyr_data_main_py,src_zephyr_data_alerter_py,src_zephyr_data_backfill_checker_py,src_zephyr_data_buffered_writer_py,src_zephyr_data_capability_validator_py,src_zephyr_data_ch_config_py,src_zephyr_data_ch_reader_py,src_zephyr_data_ch_writer_py,src_zephyr_data_cli_py,src_zephyr_data_config_policies_yaml,src_zephyr_data_config_schedule_yaml,src_zephyr_data_config_tasks_yaml,src_zephyr_data_cross_source_validator_py,src_zephyr_data_error_classifier_py,src_zephyr_data_implementations_init_py,src_zephyr_data_implementations_akshare_provider_py,src_zephyr_data_implementations_baostock_provider_py,src_zephyr_data_implementations_cls_provider_py,src_zephyr_data_implementations_eastmoney_news_provider_py,src_zephyr_data_implementations_ifind_provider_py,src_zephyr_data_implementations_miniqmt_provider_py,src_zephyr_data_implementations_rss_provider_py,src_zephyr_data_implementations_tdx_provider_py,src_zephyr_data_implementations_tickflow_provider_py,src_zephyr_data_implementations_tqcenter_provider_py,src_zephyr_data_implementations_tushare_provider_py,src_zephyr_data_integrity_checker_py,src_zephyr_data_kline_resampler_py,src_zephyr_data_local_replay_py,src_zephyr_data_metrics_py,src_zephyr_data_news_dedup_py,src_zephyr_data_pit_query_py,src_zephyr_data_policy_registry_py,src_zephyr_data_progress_store_py,src_zephyr_data_provider_base_py,src_zephyr_data_quality_gate_py,src_zephyr_data_redundant_source_init_py,src_zephyr_data_satellite_geospatial_engine_init_py,src_zephyr_data_scheduler_py,src_zephyr_data_sector_kline_downloader_py,src_zephyr_data_sector_ranking_engine_py,src_zephyr_data_sector_snapshot_collector_py,src_zephyr_data_speed_tester_py,src_zephyr_data_symbol_normalizer_init_py,src_zephyr_data_symbol_normalizer_normalizer_py,src_zephyr_data_table_registry_py,src_zephyr_data_task_queue_py,src_zephyr_data_tick_subscriber_py,src_zephyr_data_trading_calendar_py,src_zephyr_data_wal_codec_init_py,src_zephyr_data_wal_writer_py,tests_data_test_market_quality_validator_py,tests_data_test_pit_query_py,tests_zephyr_data_test_cross_source_validator_py,tests_zephyr_data_test_tick_subscriber_py production
     class D_SHARED,D_GOV_ENFORCEMENT,D_GOV_SCRIPTS,D_GOV_CODE_QUALITY,D_FACTOR,D_MKT_DATA external_prod
 ```
@@ -1423,11 +1423,11 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_pit_query_py["(设计态 / design) pit_query.py/"]
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    src_zephyr_data_pit_query_py["(设计态 / design)<br/>文件: pit_query.py/"]
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_pit_query_py design
 ```
 

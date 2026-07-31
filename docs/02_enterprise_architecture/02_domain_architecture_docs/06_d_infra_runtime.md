@@ -216,8 +216,8 @@ ttl: permanent
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
-> - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -230,24 +230,24 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-001"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-002"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-003"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-006"]
-    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["(设计态 / design) agent_orchestrator/blueprint.md"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-001"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-002"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-003"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-006"]
+    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["(设计态 / design)<br/>文件: agent_orchestrator/blueprint.md"]
     src_zephyr_infrastructure_asset_inventory_main_py["(生产态 / production) Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>文件: asset_inventory/__main__.py"]
     src_zephyr_infrastructure_asset_inventory_lifecycle_py["(生产态 / production) AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器<br/>AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器<br/>文件: asset_inventory/lifecycle.py"]
     src_zephyr_infrastructure_asset_inventory_mcp_server_py["(生产态 / production) AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: asset_inventory/mcp_server.py"]
-    src_zephyr_infrastructure_asset_inventory_metadata_py["(生产态 / production) asset_inventory/metadata.py"]
-    src_zephyr_infrastructure_asset_inventory_trust_anchor_py["(生产态 / production) asset_inventory/trust_anchor.py"]
+    src_zephyr_infrastructure_asset_inventory_metadata_py["(生产态 / production)<br/>文件: asset_inventory/metadata.py"]
+    src_zephyr_infrastructure_asset_inventory_trust_anchor_py["(生产态 / production)<br/>文件: asset_inventory/trust_anchor.py"]
     src_zephyr_infrastructure_auto_diagnostics_py["(生产态 / production) RI-12 AutoDiagnostics — 自动诊断引擎<br/>RI-12 AutoDiagnostics — 自动诊断引擎<br/>文件: infrastructure/auto_diagnostics.py"]
-    src_zephyr_infrastructure_auto_fix_engine_main_py["(生产态 / production) auto_fix_engine/__main__.py"]
-    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production) auto_fix_engine/alignment_syncer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production) auto_fix_engine/all_completer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production) auto_fix_engine/config_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) auto_fix_engine/dedup_extractor.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production) auto_fix_engine/dep_version_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production) auto_fix_engine/drift_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_main_py["(生产态 / production)<br/>文件: auto_fix_engine/__main__.py"]
+    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production)<br/>文件: auto_fix_engine/alignment_syncer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production)<br/>文件: auto_fix_engine/all_completer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/config_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production)<br/>文件: auto_fix_engine/dedup_extractor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/dep_version_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/drift_fixer.py"]
     docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001 ~~~ docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002
     docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002 ~~~ docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003
     docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003 ~~~ docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006
@@ -273,7 +273,7 @@ flowchart TD
     src_zephyr_infrastructure_asset_inventory_registry_adapter_py["(生产态 / production) MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。<br/>MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。<br/>文件: asset_inventory/registry_adapter.py"]
     src_zephyr_infrastructure_asset_inventory_scanner_py["(生产态 / production) AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器<br/>AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器<br/>文件: asset_inventory/scanner.py"]
     src_zephyr_infrastructure_asset_inventory_telemetry_py["(生产态 / production) AssetInventoryTelemetry — MOD-INF-026 自监控指标<br/>AssetInventoryTelemetry — MOD-INF-026 自监控指标<br/>文件: asset_inventory/telemetry.py"]
-    src_zephyr_infrastructure_auto_fix_engine_engine_py["(生产态 / production) auto_fix_engine/engine.py"]
+    src_zephyr_infrastructure_auto_fix_engine_engine_py["(生产态 / production)<br/>文件: auto_fix_engine/engine.py"]
     src_zephyr_infrastructure_asset_inventory_classifier_py ~~~ src_zephyr_infrastructure_asset_inventory_dashboard_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py ~~~ src_zephyr_infrastructure_asset_inventory_dependency_py
     src_zephyr_infrastructure_asset_inventory_dependency_py ~~~ src_zephyr_infrastructure_asset_inventory_index_generator_py
@@ -283,8 +283,8 @@ flowchart TD
     src_zephyr_infrastructure_asset_inventory_scanner_py ~~~ src_zephyr_infrastructure_asset_inventory_telemetry_py
     src_zephyr_infrastructure_asset_inventory_telemetry_py ~~~ src_zephyr_infrastructure_auto_fix_engine_engine_py
     src_zephyr_infrastructure_asset_inventory_models_py["(生产态 / production) AssetInventoryModels — MOD-INF-026 Pydantic V2 共享数据模型<br/>AssetInventoryModels — MOD-INF-026 Pydantic V2 共享数据模型<br/>文件: asset_inventory/models.py"]
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py["(生产态 / production) auto_fix_engine/batch_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py["(生产态 / production) auto_fix_engine/compliance_auditor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/batch_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py["(生产态 / production)<br/>文件: auto_fix_engine/compliance_auditor.py"]
     src_zephyr_infrastructure_asset_inventory_models_py ~~~ src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
     src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py ~~~ src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py
     src_zephyr_infrastructure_asset_inventory_classifier_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
@@ -329,10 +329,10 @@ flowchart TD
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_mcp_server_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE 生命周期管理"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001,docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002,docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003,docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006,src_zephyr_infrastructure_asset_inventory_main_py,src_zephyr_infrastructure_asset_inventory_classifier_py,src_zephyr_infrastructure_asset_inventory_dashboard_py,src_zephyr_infrastructure_asset_inventory_dependency_py,src_zephyr_infrastructure_asset_inventory_index_generator_py,src_zephyr_infrastructure_asset_inventory_lifecycle_py,src_zephyr_infrastructure_asset_inventory_mcp_server_py,src_zephyr_infrastructure_asset_inventory_metadata_py,src_zephyr_infrastructure_asset_inventory_models_py,src_zephyr_infrastructure_asset_inventory_reconciler_py,src_zephyr_infrastructure_asset_inventory_registry_adapter_py,src_zephyr_infrastructure_asset_inventory_scanner_py,src_zephyr_infrastructure_asset_inventory_telemetry_py,src_zephyr_infrastructure_asset_inventory_trust_anchor_py,src_zephyr_infrastructure_auto_diagnostics_py,src_zephyr_infrastructure_auto_fix_engine_main_py,src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py,src_zephyr_infrastructure_auto_fix_engine_all_completer_py,src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py,src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py,src_zephyr_infrastructure_auto_fix_engine_config_fixer_py,src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py,src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py,src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py,src_zephyr_infrastructure_auto_fix_engine_engine_py production
     class docs_03_modules_cross_layer_agent_orchestrator_blueprint_md design
     class D_SHARED,D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_SECURITY,D_GOVERNANCE external_prod
@@ -343,23 +343,23 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py["(生产态 / production) auto_fix_engine/escalation_bridge.py"]
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production) auto_fix_engine/event_hooks.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py["(生产态 / production) auto_fix_engine/fix_budget.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["(生产态 / production) auto_fix_engine/fix_diff.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py["(生产态 / production) auto_fix_engine/fix_health_check.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["(生产态 / production) auto_fix_engine/fix_pattern_miner.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py["(生产态 / production) auto_fix_engine/fix_reliability.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_report_py["(生产态 / production) auto_fix_engine/fix_report.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["(生产态 / production) auto_fix_engine/fix_scheduler.py"]
-    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["(生产态 / production) auto_fix_engine/import_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py["(生产态 / production) auto_fix_engine/interrupt_guard.py"]
-    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py["(生产态 / production) auto_fix_engine/llm_fix_adapter.py"]
-    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py["(生产态 / production) auto_fix_engine/scaffold_registrar.py"]
-    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py["(生产态 / production) auto_fix_engine/self_heal_agent.py"]
-    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["(生产态 / production) auto_fix_engine/shadow_workspace.py"]
-    src_zephyr_infrastructure_auto_fix_engine_state_machine_py["(生产态 / production) auto_fix_engine/state_machine.py"]
-    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["(生产态 / production) auto_fix_engine/zombie_cleaner.py"]
+    src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py["(生产态 / production)<br/>文件: auto_fix_engine/escalation_bridge.py"]
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production)<br/>文件: auto_fix_engine/event_hooks.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_budget.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_diff.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_health_check.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_pattern_miner.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_reliability.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_report_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_report.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_scheduler.py"]
+    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/import_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py["(生产态 / production)<br/>文件: auto_fix_engine/interrupt_guard.py"]
+    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py["(生产态 / production)<br/>文件: auto_fix_engine/llm_fix_adapter.py"]
+    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py["(生产态 / production)<br/>文件: auto_fix_engine/scaffold_registrar.py"]
+    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py["(生产态 / production)<br/>文件: auto_fix_engine/self_heal_agent.py"]
+    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["(生产态 / production)<br/>文件: auto_fix_engine/shadow_workspace.py"]
+    src_zephyr_infrastructure_auto_fix_engine_state_machine_py["(生产态 / production)<br/>文件: auto_fix_engine/state_machine.py"]
+    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["(生产态 / production)<br/>文件: auto_fix_engine/zombie_cleaner.py"]
     src_zephyr_infrastructure_blueprint_code_sync_py["(生产态 / production) Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>文件: infrastructure/blueprint_code_sync.py"]
     src_zephyr_infrastructure_budget_enforcement_init_py["(生产态 / production) budget_enforcement 包聚合层。<br/>budget_enforcement 包聚合层。<br/>文件: budget_enforcement/__init__.py"]
     src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py["(生产态 / production) budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)<br/>budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)<br/>文件: capacity_assurance/budget_forecaster.py"]
@@ -392,14 +392,14 @@ flowchart TD
     src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py ~~~ src_zephyr_infrastructure_capacity_assurance_host_resource_governor_py
     src_zephyr_infrastructure_capacity_assurance_host_resource_governor_py ~~~ src_zephyr_infrastructure_capacity_assurance_kill_switch_py
     src_zephyr_infrastructure_capacity_assurance_kill_switch_py ~~~ src_zephyr_infrastructure_capacity_assurance_risk_mitigation_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["(生产态 / production) auto_fix_engine/fix_safety.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_safety.py"]
     src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py["(生产态 / production) budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。<br/>budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。<br/>文件: budget_enforcement/rbac_bridge.py"]
     src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py["(生产态 / production) Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budg...<br/>Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budg...<br/>文件: contracts/batch1_infra.py"]
     src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py["(生产态 / production) Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预...<br/>Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预...<br/>文件: contracts/batch3_integration.py"]
     src_zephyr_infrastructure_auto_fix_engine_fix_safety_py ~~~ src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py
     src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py ~~~ src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py
     src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py ~~~ src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py
-    src_zephyr_infrastructure_auto_fix_engine_models_py["(生产态 / production) auto_fix_engine/models.py"]
+    src_zephyr_infrastructure_auto_fix_engine_models_py["(生产态 / production)<br/>文件: auto_fix_engine/models.py"]
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
@@ -443,10 +443,10 @@ flowchart TD
     D_COMPLIANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE 自治核心"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_kill_switch_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py,src_zephyr_infrastructure_auto_fix_engine_event_hooks_py,src_zephyr_infrastructure_auto_fix_engine_fix_budget_py,src_zephyr_infrastructure_auto_fix_engine_fix_diff_py,src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py,src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py,src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py,src_zephyr_infrastructure_auto_fix_engine_fix_report_py,src_zephyr_infrastructure_auto_fix_engine_fix_safety_py,src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py,src_zephyr_infrastructure_auto_fix_engine_import_fixer_py,src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py,src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py,src_zephyr_infrastructure_auto_fix_engine_models_py,src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py,src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py,src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py,src_zephyr_infrastructure_auto_fix_engine_state_machine_py,src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py,src_zephyr_infrastructure_blueprint_code_sync_py,src_zephyr_infrastructure_budget_enforcement_init_py,src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py,src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py,src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py,src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py,src_zephyr_infrastructure_capacity_assurance_host_resource_governor_py,src_zephyr_infrastructure_capacity_assurance_kill_switch_py,src_zephyr_infrastructure_capacity_assurance_risk_mitigation_py production
     class D_SHARED,D_GOV_DRIFT,D_GOV_REPAIR,D_GOVERNANCE,D_COMPLIANCE,D_AUTONOMY_CORE external_prod
 ```
@@ -468,7 +468,7 @@ flowchart TD
     src_zephyr_infrastructure_event_bus_upgrade_py["(生产态 / production) DEPRECATED: 此文件已废弃。<br/>DEPRECATED: 此文件已废弃。<br/>文件: infrastructure/event_bus_upgrade.py"]
     src_zephyr_infrastructure_event_store_py["(生产态 / production) RI-13 EventStore — 事件存储<br/>RI-13 EventStore — 事件存储<br/>文件: infrastructure/event_store.py"]
     src_zephyr_infrastructure_events_event_store_py["(生产态 / production) Event Store — 事件持久化存储。<br/>Event Store — 事件持久化存储。<br/>文件: events/event_store.py"]
-    src_zephyr_infrastructure_file_watcher_py["(生产态 / production) infrastructure/file_watcher.py"]
+    src_zephyr_infrastructure_file_watcher_py["(生产态 / production)<br/>文件: infrastructure/file_watcher.py"]
     src_zephyr_infrastructure_finding_task_bridge_py["(生产态 / production) Finding->TaskCard 桥接器<br/>Finding->TaskCard 桥接器<br/>文件: infrastructure/finding_task_bridge.py"]
     src_zephyr_infrastructure_git_batcher_py["(生产态 / production) git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGET P2.2，2026-07-19）<br/>git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGET P2.2，2026-07-19）<br/>文件: infrastructure/git_batcher.py"]
     src_zephyr_infrastructure_health_monitor_health_aggregator_py["(生产态 / production) 全系统健康聚合 — check_all_systems()<br/>全系统健康聚合 — check_all_systems()<br/>文件: health_monitor/health_aggregator.py"]
@@ -480,7 +480,7 @@ flowchart TD
     src_zephyr_infrastructure_lifecycle_scope_guard_py["(生产态 / production) Scope Guard — 范围蔓延检测与阻断。<br/>Scope Guard — 范围蔓延检测与阻断。<br/>文件: lifecycle/scope_guard.py"]
     src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py["(生产态 / production) Task Lifecycle Manager — G0-G7 任务生命周期门禁。<br/>Task Lifecycle Manager — G0-G7 任务生命周期门禁。<br/>文件: lifecycle/task_lifecycle_manager.py"]
     src_zephyr_infrastructure_observability_notifier_py["(生产态 / production) Notifier — 多渠道 Owner 通知。<br/>Notifier — 多渠道 Owner 通知。<br/>文件: observability/notifier.py"]
-    src_zephyr_infrastructure_observability_trace_decorator_py["(生产态 / production) observability/trace_decorator.py"]
+    src_zephyr_infrastructure_observability_trace_decorator_py["(生产态 / production)<br/>文件: observability/trace_decorator.py"]
     src_zephyr_infrastructure_pipeline_backpressure_manager_py["(生产态 / production) Pipeline — Backpressure Manager<br/>Pipeline — Backpressure Manager<br/>文件: pipeline/backpressure_manager.py"]
     src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py["(生产态 / production) CircuitBreakerManager -- standalone circuit breaker manager (Netflix Hystrix ...<br/>CircuitBreakerManager -- standalone circuit breaker manager (Netflix Hystrix ...<br/>文件: pipeline/circuit_breaker_manager.py"]
     src_zephyr_infrastructure_pipeline_cost_tracker_py["(生产态 / production) CostTracker —— LLM 调用成本追踪器（SRC-0025）<br/>CostTracker —— LLM 调用成本追踪器（SRC-0025）<br/>文件: pipeline/cost_tracker.py"]
@@ -553,10 +553,10 @@ flowchart TD
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR 代理编排器"]
     D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_capacity_assurance_schema_py,src_zephyr_infrastructure_capacity_assurance_sli_instrumentation_py,src_zephyr_infrastructure_capacity_assurance_tech_stack_py,src_zephyr_infrastructure_capacity_assurance_token_budget_py,src_zephyr_infrastructure_config_validator_py,src_zephyr_infrastructure_contract_tester_py,src_zephyr_infrastructure_cost_tracker_py,src_zephyr_infrastructure_database_service_py,src_zephyr_infrastructure_dry_run_simulator_py,src_zephyr_infrastructure_event_bus_upgrade_py,src_zephyr_infrastructure_event_store_py,src_zephyr_infrastructure_events_event_store_py,src_zephyr_infrastructure_file_watcher_py,src_zephyr_infrastructure_finding_task_bridge_py,src_zephyr_infrastructure_git_batcher_py,src_zephyr_infrastructure_health_monitor_health_aggregator_py,src_zephyr_infrastructure_hooks_event_hook_py,src_zephyr_infrastructure_impact_impact_propagator_py,src_zephyr_infrastructure_impact_llm_impact_analyzer_py,src_zephyr_infrastructure_infrastructure_base_py,src_zephyr_infrastructure_kill_switch_sim_py,src_zephyr_infrastructure_lifecycle_scope_guard_py,src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py,src_zephyr_infrastructure_observability_notifier_py,src_zephyr_infrastructure_observability_trace_decorator_py,src_zephyr_infrastructure_pipeline_backpressure_manager_py,src_zephyr_infrastructure_pipeline_backpressure_types_py,src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py,src_zephyr_infrastructure_pipeline_cost_tracker_py,src_zephyr_infrastructure_pipeline_ct_pipe_routing_py production
     class D_GOV_RULE,D_SHARED,D_INTEGRATION,D_GOV_AUDIT,D_AUTONOMY_CORE,D_GOV_ENFORCEMENT,D_GOVERNANCE,D_ORCHESTRATOR external_prod
 ```
@@ -583,11 +583,11 @@ flowchart TD
     src_zephyr_infrastructure_runtime_concurrency_guard_py["(生产态 / production) concurrency_guard — 回滚操作并发安全守卫。<br/>concurrency_guard — 回滚操作并发安全守卫。<br/>文件: runtime/concurrency_guard.py"]
     src_zephyr_infrastructure_runtime_gate_coordinator_py["(生产态 / production) Rollback->Gate 协调器 — freeze_all / thaw_all<br/>Rollback->Gate 协调器 — freeze_all / thaw_all<br/>文件: runtime/gate_coordinator.py"]
     src_zephyr_infrastructure_runtime_sandbox_enforcer_py["(生产态 / production) SandboxEnforcer — Agent 沙盒隔离。<br/>SandboxEnforcer — Agent 沙盒隔离。<br/>文件: runtime/sandbox_enforcer.py"]
-    src_zephyr_infrastructure_runtime_startup_shutdown_py["(生产态 / production) runtime/startup_shutdown.py"]
+    src_zephyr_infrastructure_runtime_startup_shutdown_py["(生产态 / production)<br/>文件: runtime/startup_shutdown.py"]
     src_zephyr_infrastructure_script_system_finding_py["(生产态 / production) Finding Schema — 审计发现标准化数据模型<br/>Finding Schema — 审计发现标准化数据模型<br/>文件: script_system/finding.py"]
     src_zephyr_infrastructure_script_system_gate_bridge_py["(生产态 / production) Script->Gate 门禁桥接器 — submit_findings() 生产者<br/>Script->Gate 门禁桥接器 — submit_findings() 生产者<br/>文件: script_system/gate_bridge.py"]
     src_zephyr_infrastructure_sla_sla_monitor_py["(生产态 / production) SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。<br/>SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。<br/>文件: sla/sla_monitor.py"]
-    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["(生产态 / production) system_telemetry/_trace_bridge.py"]
+    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["(生产态 / production)<br/>文件: system_telemetry/_trace_bridge.py"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["(生产态 / production) auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）<br/>auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/auto_bootstrap.py"]
     src_zephyr_infrastructure_pipeline_dead_letter_queue_py ~~~ src_zephyr_infrastructure_pipeline_llm_gateway_py
     src_zephyr_infrastructure_pipeline_llm_gateway_py ~~~ src_zephyr_infrastructure_pipeline_model_router_py
@@ -612,7 +612,7 @@ flowchart TD
     src_zephyr_infrastructure_sla_sla_monitor_py ~~~ src_zephyr_infrastructure_system_telemetry_trace_bridge_py
     src_zephyr_infrastructure_system_telemetry_trace_bridge_py ~~~ src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
     src_zephyr_infrastructure_pipeline_models_py["(生产态 / production) Pipeline 数据模型<br/>Pipeline 数据模型<br/>文件: pipeline/models.py"]
-    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["(生产态 / production) system_telemetry/_budget_telemetry_bridge.py"]
+    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["(生产态 / production)<br/>文件: system_telemetry/_budget_telemetry_bridge.py"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py["(生产态 / production) ZephyrAlpha — system-telemetry/contract_metrics.py<br/>ZephyrAlpha — system-telemetry/contract_metrics.py<br/>文件: system_telemetry/contract_metrics.py"]
     src_zephyr_infrastructure_system_telemetry_facade_py["(生产态 / production) Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）<br/>Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/facade.py"]
     src_zephyr_infrastructure_pipeline_models_py ~~~ src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
@@ -671,10 +671,10 @@ flowchart TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_runtime_concurrency_guard_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_runtime_concurrency_guard_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_pipeline_lock_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_pipeline_dead_letter_queue_py,src_zephyr_infrastructure_pipeline_llm_gateway_py,src_zephyr_infrastructure_pipeline_model_router_py,src_zephyr_infrastructure_pipeline_models_py,src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py,src_zephyr_infrastructure_pipeline_pipeline_lock_py,src_zephyr_infrastructure_pipeline_pipeline_roadmap_py,src_zephyr_infrastructure_pipeline_preemption_manager_py,src_zephyr_infrastructure_pipeline_routing_plugins_py,src_zephyr_infrastructure_pydantic_v2_migrator_py,src_zephyr_infrastructure_quality_quality_monitor_py,src_zephyr_infrastructure_queue_task_queue_py,src_zephyr_infrastructure_queue_task_scheduler_py,src_zephyr_infrastructure_reliability_circuit_breaker_py,src_zephyr_infrastructure_reliability_context_guard_py,src_zephyr_infrastructure_runtime_concurrency_guard_py,src_zephyr_infrastructure_runtime_gate_coordinator_py,src_zephyr_infrastructure_runtime_sandbox_enforcer_py,src_zephyr_infrastructure_runtime_startup_shutdown_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_sla_sla_monitor_py,src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py,src_zephyr_infrastructure_system_telemetry_trace_bridge_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py,src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py,src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py,src_zephyr_infrastructure_system_telemetry_contract_metrics_py,src_zephyr_infrastructure_system_telemetry_facade_py,src_zephyr_infrastructure_system_telemetry_health_aggregator_py production
     class D_SHARED,D_GOV_DRIFT,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_GOV_SCRIPTS,D_INTEGRATION,D_AUTONOMY_CORE,D_TRADING external_prod
 ```
@@ -715,9 +715,9 @@ flowchart TD
     src_zephyr_trading_auto_runtime_core_py["(生产态 / production) AutoRuntimeCore — 三层运行时运营中心（系统大脑）<br/>AutoRuntimeCore — 三层运行时运营中心（系统大脑）<br/>文件: trading/auto_runtime_core.py"]
     src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py ~~~ src_zephyr_trading_auto_runtime_core_py
     src_zephyr_trading_auto_integrator_py["(生产态 / production) AutoIntegrator — 自动接入器<br/>AutoIntegrator — 自动接入器<br/>文件: trading/auto_integrator.py"]
-    src_zephyr_trading_boot_hooks_py["(生产态 / production) trading/boot_hooks.py"]
-    src_zephyr_trading_capability_sync_py["(生产态 / production) trading/capability_sync.py"]
-    src_zephyr_trading_lifecycle_manager_py["(生产态 / production) trading/lifecycle_manager.py"]
+    src_zephyr_trading_boot_hooks_py["(生产态 / production)<br/>文件: trading/boot_hooks.py"]
+    src_zephyr_trading_capability_sync_py["(生产态 / production)<br/>文件: trading/capability_sync.py"]
+    src_zephyr_trading_lifecycle_manager_py["(生产态 / production)<br/>文件: trading/lifecycle_manager.py"]
     src_zephyr_trading_orphan_detector_py["(生产态 / production) OrphanDetector — 孤儿检测器<br/>OrphanDetector — 孤儿检测器<br/>文件: trading/orphan_detector.py"]
     src_zephyr_trading_auto_integrator_py ~~~ src_zephyr_trading_boot_hooks_py
     src_zephyr_trading_boot_hooks_py ~~~ src_zephyr_trading_capability_sync_py
@@ -807,10 +807,10 @@ flowchart TD
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION 管线路由"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_hooks_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_system_telemetry_health_probes_py,src_zephyr_infrastructure_system_telemetry_logs_init_py,src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py,src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py,src_zephyr_infrastructure_system_telemetry_metrics_bridge_py,src_zephyr_infrastructure_system_telemetry_traces_span_stub_py,src_zephyr_infrastructure_system_telemetry_watchdog_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_trading_main_py,src_zephyr_trading_action_dispatcher_py,src_zephyr_trading_ai_audit_logger_py,src_zephyr_trading_auto_integrator_py,src_zephyr_trading_auto_runtime_core_py,src_zephyr_trading_auto_task_generator_py,src_zephyr_trading_boot_hooks_py,src_zephyr_trading_capability_card_py,src_zephyr_trading_capability_registry_py,src_zephyr_trading_capability_sync_py,src_zephyr_trading_dream_cycle_py,src_zephyr_trading_finalizer_py,src_zephyr_trading_health_monitor_py,src_zephyr_trading_integration_registry_py,src_zephyr_trading_lifecycle_manager_py,src_zephyr_trading_module_onboarding_scanner_py,src_zephyr_trading_night_shift_queue_py,src_zephyr_trading_orphan_detector_py production
     class D_SHARED,D_AUTONOMY_CORE,D_TRADING,D_FEEDBACK_LOOP,D_GOVERNANCE,D_GOV_SCRIPTS,D_INTEGRATION external_prod
 ```
@@ -835,8 +835,8 @@ flowchart TD
     src_zephyr_trading_stop_gate_py ~~~ src_zephyr_trading_task_gate_py
     src_zephyr_trading_task_gate_py ~~~ src_zephyr_trading_windows_service_py
     src_zephyr_trading_windows_service_py ~~~ src_zephyr_trading_zombie_scanner_py
-    src_zephyr_trading_runtime_config_py["(生产态 / production) trading/runtime_config.py"]
-    src_zephyr_trading_work_orchestrator_py["(生产态 / production) trading/work_orchestrator.py"]
+    src_zephyr_trading_runtime_config_py["(生产态 / production)<br/>文件: trading/runtime_config.py"]
+    src_zephyr_trading_work_orchestrator_py["(生产态 / production)<br/>文件: trading/work_orchestrator.py"]
     src_zephyr_trading_runtime_config_py ~~~ src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_work_dag_py["(生产态 / production) WorkDAG + WorkItem — 工作编排数据模型<br/>WorkDAG + WorkItem — 工作编排数据模型<br/>文件: trading/work_dag.py"]
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
@@ -870,10 +870,10 @@ flowchart TD
     D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_work_orchestrator_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_resource_optimization_py
     D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_runtime_config_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_ports_py,src_zephyr_trading_resource_optimization_py,src_zephyr_trading_runtime_config_py,src_zephyr_trading_staging_area_py,src_zephyr_trading_status_dashboard_py,src_zephyr_trading_stop_gate_py,src_zephyr_trading_task_gate_py,src_zephyr_trading_windows_service_py,src_zephyr_trading_work_dag_py,src_zephyr_trading_work_orchestrator_py,src_zephyr_trading_zombie_scanner_py production
     class D_SHARED,D_INTEGRATION,D_GOV_RULE,D_GOV_AUDIT,D_GOVERNANCE,D_TRADING,D_AUTONOMY_CORE external_prod
 ```
@@ -885,33 +885,33 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-001"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-002"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-003"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["(生产态 / production) catalogs/infrastructure_registry.yaml#INFRA-DB-006"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-001"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-002"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-003"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["(生产态 / production)<br/>文件: catalogs/infrastructure_registry.yaml#INFRA-DB-006"]
     src_zephyr_infrastructure_asset_inventory_main_py["(生产态 / production) Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>文件: asset_inventory/__main__.py"]
     src_zephyr_infrastructure_asset_inventory_lifecycle_py["(生产态 / production) AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器<br/>AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器<br/>文件: asset_inventory/lifecycle.py"]
     src_zephyr_infrastructure_asset_inventory_mcp_server_py["(生产态 / production) AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: asset_inventory/mcp_server.py"]
-    src_zephyr_infrastructure_asset_inventory_metadata_py["(生产态 / production) asset_inventory/metadata.py"]
-    src_zephyr_infrastructure_asset_inventory_trust_anchor_py["(生产态 / production) asset_inventory/trust_anchor.py"]
+    src_zephyr_infrastructure_asset_inventory_metadata_py["(生产态 / production)<br/>文件: asset_inventory/metadata.py"]
+    src_zephyr_infrastructure_asset_inventory_trust_anchor_py["(生产态 / production)<br/>文件: asset_inventory/trust_anchor.py"]
     src_zephyr_infrastructure_auto_diagnostics_py["(生产态 / production) RI-12 AutoDiagnostics — 自动诊断引擎<br/>RI-12 AutoDiagnostics — 自动诊断引擎<br/>文件: infrastructure/auto_diagnostics.py"]
-    src_zephyr_infrastructure_auto_fix_engine_main_py["(生产态 / production) auto_fix_engine/__main__.py"]
-    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production) auto_fix_engine/alignment_syncer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production) auto_fix_engine/all_completer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production) auto_fix_engine/config_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) auto_fix_engine/dedup_extractor.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production) auto_fix_engine/dep_version_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production) auto_fix_engine/drift_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production) auto_fix_engine/event_hooks.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["(生产态 / production) auto_fix_engine/fix_diff.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["(生产态 / production) auto_fix_engine/fix_scheduler.py"]
-    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["(生产态 / production) auto_fix_engine/import_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py["(生产态 / production) auto_fix_engine/interrupt_guard.py"]
-    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py["(生产态 / production) auto_fix_engine/llm_fix_adapter.py"]
-    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py["(生产态 / production) auto_fix_engine/scaffold_registrar.py"]
-    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py["(生产态 / production) auto_fix_engine/self_heal_agent.py"]
-    src_zephyr_infrastructure_auto_fix_engine_state_machine_py["(生产态 / production) auto_fix_engine/state_machine.py"]
-    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["(生产态 / production) auto_fix_engine/zombie_cleaner.py"]
+    src_zephyr_infrastructure_auto_fix_engine_main_py["(生产态 / production)<br/>文件: auto_fix_engine/__main__.py"]
+    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production)<br/>文件: auto_fix_engine/alignment_syncer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production)<br/>文件: auto_fix_engine/all_completer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/config_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production)<br/>文件: auto_fix_engine/dedup_extractor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/dep_version_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/drift_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production)<br/>文件: auto_fix_engine/event_hooks.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_diff.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_scheduler.py"]
+    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/import_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py["(生产态 / production)<br/>文件: auto_fix_engine/interrupt_guard.py"]
+    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py["(生产态 / production)<br/>文件: auto_fix_engine/llm_fix_adapter.py"]
+    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py["(生产态 / production)<br/>文件: auto_fix_engine/scaffold_registrar.py"]
+    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py["(生产态 / production)<br/>文件: auto_fix_engine/self_heal_agent.py"]
+    src_zephyr_infrastructure_auto_fix_engine_state_machine_py["(生产态 / production)<br/>文件: auto_fix_engine/state_machine.py"]
+    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["(生产态 / production)<br/>文件: auto_fix_engine/zombie_cleaner.py"]
     src_zephyr_infrastructure_blueprint_code_sync_py["(生产态 / production) Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>文件: infrastructure/blueprint_code_sync.py"]
     src_zephyr_infrastructure_budget_enforcement_init_py["(生产态 / production) budget_enforcement 包聚合层。<br/>budget_enforcement 包聚合层。<br/>文件: budget_enforcement/__init__.py"]
     src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py["(生产态 / production) budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)<br/>budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)<br/>文件: capacity_assurance/budget_forecaster.py"]
@@ -940,7 +940,7 @@ flowchart TD
     src_zephyr_infrastructure_kill_switch_sim_py["(生产态 / production) Kill Switch T0 Hardware Simulator<br/>Kill Switch T0 Hardware Simulator<br/>文件: infrastructure/kill_switch_sim.py"]
     src_zephyr_infrastructure_lifecycle_scope_guard_py["(生产态 / production) Scope Guard — 范围蔓延检测与阻断。<br/>Scope Guard — 范围蔓延检测与阻断。<br/>文件: lifecycle/scope_guard.py"]
     src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py["(生产态 / production) Task Lifecycle Manager — G0-G7 任务生命周期门禁。<br/>Task Lifecycle Manager — G0-G7 任务生命周期门禁。<br/>文件: lifecycle/task_lifecycle_manager.py"]
-    src_zephyr_infrastructure_observability_trace_decorator_py["(生产态 / production) observability/trace_decorator.py"]
+    src_zephyr_infrastructure_observability_trace_decorator_py["(生产态 / production)<br/>文件: observability/trace_decorator.py"]
     src_zephyr_infrastructure_pipeline_backpressure_manager_py["(生产态 / production) Pipeline — Backpressure Manager<br/>Pipeline — Backpressure Manager<br/>文件: pipeline/backpressure_manager.py"]
     src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py["(生产态 / production) CircuitBreakerManager -- standalone circuit breaker manager (Netflix Hystrix ...<br/>CircuitBreakerManager -- standalone circuit breaker manager (Netflix Hystrix ...<br/>文件: pipeline/circuit_breaker_manager.py"]
     src_zephyr_infrastructure_pipeline_cost_tracker_py["(生产态 / production) CostTracker —— LLM 调用成本追踪器（SRC-0025）<br/>CostTracker —— LLM 调用成本追踪器（SRC-0025）<br/>文件: pipeline/cost_tracker.py"]
@@ -957,7 +957,7 @@ flowchart TD
     src_zephyr_infrastructure_reliability_context_guard_py["(生产态 / production) Context Guard — 上下文契约守卫。<br/>Context Guard — 上下文契约守卫。<br/>文件: reliability/context_guard.py"]
     src_zephyr_infrastructure_runtime_concurrency_guard_py["(生产态 / production) concurrency_guard — 回滚操作并发安全守卫。<br/>concurrency_guard — 回滚操作并发安全守卫。<br/>文件: runtime/concurrency_guard.py"]
     src_zephyr_infrastructure_runtime_sandbox_enforcer_py["(生产态 / production) SandboxEnforcer — Agent 沙盒隔离。<br/>SandboxEnforcer — Agent 沙盒隔离。<br/>文件: runtime/sandbox_enforcer.py"]
-    src_zephyr_infrastructure_runtime_startup_shutdown_py["(生产态 / production) runtime/startup_shutdown.py"]
+    src_zephyr_infrastructure_runtime_startup_shutdown_py["(生产态 / production)<br/>文件: runtime/startup_shutdown.py"]
     src_zephyr_infrastructure_script_system_finding_py["(生产态 / production) Finding Schema — 审计发现标准化数据模型<br/>Finding Schema — 审计发现标准化数据模型<br/>文件: script_system/finding.py"]
     src_zephyr_infrastructure_script_system_gate_bridge_py["(生产态 / production) Script->Gate 门禁桥接器 — submit_findings() 生产者<br/>Script->Gate 门禁桥接器 — submit_findings() 生产者<br/>文件: script_system/gate_bridge.py"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["(生产态 / production) auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）<br/>auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/auto_bootstrap.py"]
@@ -1066,7 +1066,7 @@ flowchart TD
     src_zephyr_infrastructure_asset_inventory_registry_adapter_py["(生产态 / production) MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。<br/>MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。<br/>文件: asset_inventory/registry_adapter.py"]
     src_zephyr_infrastructure_asset_inventory_scanner_py["(生产态 / production) AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器<br/>AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描器<br/>文件: asset_inventory/scanner.py"]
     src_zephyr_infrastructure_asset_inventory_telemetry_py["(生产态 / production) AssetInventoryTelemetry — MOD-INF-026 自监控指标<br/>AssetInventoryTelemetry — MOD-INF-026 自监控指标<br/>文件: asset_inventory/telemetry.py"]
-    src_zephyr_infrastructure_auto_fix_engine_engine_py["(生产态 / production) auto_fix_engine/engine.py"]
+    src_zephyr_infrastructure_auto_fix_engine_engine_py["(生产态 / production)<br/>文件: auto_fix_engine/engine.py"]
     src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py["(生产态 / production) budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。<br/>budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。<br/>文件: budget_enforcement/rbac_bridge.py"]
     src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py["(生产态 / production) Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budg...<br/>Batch1 基础设施层契约 — 15条 Pydantic v2 Schema（SLO/Error Budget/Token Budg...<br/>文件: contracts/batch1_infra.py"]
     src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py["(生产态 / production) Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预...<br/>Batch3 集成层契约 — 14条 Pydantic v2 Schema（OTel/W3C/跨模块CT-1~4/DR/容量预...<br/>文件: contracts/batch3_integration.py"]
@@ -1076,7 +1076,7 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py["(生产态 / production) CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由<br/>CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由<br/>文件: pipeline/ct_pipe_routing.py"]
     src_zephyr_infrastructure_pipeline_model_router_py["(生产态 / production) ModelRouter — 模型路由与降级链管理<br/>ModelRouter — 模型路由与降级链管理<br/>文件: pipeline/model_router.py"]
     src_zephyr_infrastructure_queue_task_scheduler_py["(生产态 / production) Task Scheduler — 任务调度器。<br/>Task Scheduler — 任务调度器。<br/>文件: queue/task_scheduler.py"]
-    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["(生产态 / production) system_telemetry/_budget_telemetry_bridge.py"]
+    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["(生产态 / production)<br/>文件: system_telemetry/_budget_telemetry_bridge.py"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py["(生产态 / production) ZephyrAlpha — system-telemetry/contract_metrics.py<br/>ZephyrAlpha — system-telemetry/contract_metrics.py<br/>文件: system_telemetry/contract_metrics.py"]
     src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["(生产态 / production) blueprint_metrics — 蓝图使用追踪 instrumentation<br/>blueprint_metrics — 蓝图使用追踪 instrumentation<br/>文件: metrics/blueprint_metrics.py"]
     src_zephyr_trading_main_py["(生产态 / production) python -m zephyr.trading — AutoRuntime Core 入口<br/>python -m zephyr.trading — AutoRuntime Core 入口<br/>文件: trading/__main__.py"]
@@ -1102,14 +1102,14 @@ flowchart TD
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py ~~~ src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
     src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py ~~~ src_zephyr_trading_main_py
     src_zephyr_infrastructure_asset_inventory_models_py["(生产态 / production) AssetInventoryModels — MOD-INF-026 Pydantic V2 共享数据模型<br/>AssetInventoryModels — MOD-INF-026 Pydantic V2 共享数据模型<br/>文件: asset_inventory/models.py"]
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py["(生产态 / production) auto_fix_engine/batch_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py["(生产态 / production) auto_fix_engine/compliance_auditor.py"]
-    src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py["(生产态 / production) auto_fix_engine/escalation_bridge.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py["(生产态 / production) auto_fix_engine/fix_health_check.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["(生产态 / production) auto_fix_engine/fix_pattern_miner.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_report_py["(生产态 / production) auto_fix_engine/fix_report.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["(生产态 / production) auto_fix_engine/fix_safety.py"]
-    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["(生产态 / production) auto_fix_engine/shadow_workspace.py"]
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/batch_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py["(生产态 / production)<br/>文件: auto_fix_engine/compliance_auditor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py["(生产态 / production)<br/>文件: auto_fix_engine/escalation_bridge.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_health_check.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_pattern_miner.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_report_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_report.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_safety.py"]
+    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["(生产态 / production)<br/>文件: auto_fix_engine/shadow_workspace.py"]
     src_zephyr_infrastructure_pipeline_models_py["(生产态 / production) Pipeline 数据模型<br/>Pipeline 数据模型<br/>文件: pipeline/models.py"]
     src_zephyr_infrastructure_system_telemetry_facade_py["(生产态 / production) Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）<br/>Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/facade.py"]
     src_zephyr_trading_auto_runtime_core_py["(生产态 / production) AutoRuntimeCore — 三层运行时运营中心（系统大脑）<br/>AutoRuntimeCore — 三层运行时运营中心（系统大脑）<br/>文件: trading/auto_runtime_core.py"]
@@ -1124,18 +1124,18 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py ~~~ src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_models_py ~~~ src_zephyr_infrastructure_system_telemetry_facade_py
     src_zephyr_infrastructure_system_telemetry_facade_py ~~~ src_zephyr_trading_auto_runtime_core_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py["(生产态 / production) auto_fix_engine/fix_budget.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py["(生产态 / production) auto_fix_engine/fix_reliability.py"]
-    src_zephyr_infrastructure_file_watcher_py["(生产态 / production) infrastructure/file_watcher.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_budget.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_reliability.py"]
+    src_zephyr_infrastructure_file_watcher_py["(生产态 / production)<br/>文件: infrastructure/file_watcher.py"]
     src_zephyr_infrastructure_queue_task_queue_py["(生产态 / production) Task Queue — 后台任务队列 + 自动 Dispatch。<br/>Task Queue — 后台任务队列 + 自动 Dispatch。<br/>文件: queue/task_queue.py"]
     src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py["(生产态 / production) 遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。<br/>遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。<br/>文件: ai_behavior/event_sink.py"]
     src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py["(生产态 / production) 遥测 · archive/cold_stub — 冷存储归档管道。<br/>遥测 · archive/cold_stub — 冷存储归档管道。<br/>文件: archive/cold_stub.py"]
     src_zephyr_infrastructure_system_telemetry_traces_span_stub_py["(生产态 / production) 遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。<br/>遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。<br/>文件: traces/span_stub.py"]
     src_zephyr_infrastructure_system_telemetry_watchdog_py["(生产态 / production) 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。<br/>三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。<br/>文件: system_telemetry/watchdog.py"]
     src_zephyr_trading_auto_integrator_py["(生产态 / production) AutoIntegrator — 自动接入器<br/>AutoIntegrator — 自动接入器<br/>文件: trading/auto_integrator.py"]
-    src_zephyr_trading_boot_hooks_py["(生产态 / production) trading/boot_hooks.py"]
-    src_zephyr_trading_capability_sync_py["(生产态 / production) trading/capability_sync.py"]
-    src_zephyr_trading_lifecycle_manager_py["(生产态 / production) trading/lifecycle_manager.py"]
+    src_zephyr_trading_boot_hooks_py["(生产态 / production)<br/>文件: trading/boot_hooks.py"]
+    src_zephyr_trading_capability_sync_py["(生产态 / production)<br/>文件: trading/capability_sync.py"]
+    src_zephyr_trading_lifecycle_manager_py["(生产态 / production)<br/>文件: trading/lifecycle_manager.py"]
     src_zephyr_trading_status_dashboard_py["(生产态 / production) StatusDashboard — 实时状态面板<br/>StatusDashboard — 实时状态面板<br/>文件: trading/status_dashboard.py"]
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py ~~~ src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py ~~~ src_zephyr_infrastructure_file_watcher_py
@@ -1149,7 +1149,7 @@ flowchart TD
     src_zephyr_trading_boot_hooks_py ~~~ src_zephyr_trading_capability_sync_py
     src_zephyr_trading_capability_sync_py ~~~ src_zephyr_trading_lifecycle_manager_py
     src_zephyr_trading_lifecycle_manager_py ~~~ src_zephyr_trading_status_dashboard_py
-    src_zephyr_infrastructure_auto_fix_engine_models_py["(生产态 / production) auto_fix_engine/models.py"]
+    src_zephyr_infrastructure_auto_fix_engine_models_py["(生产态 / production)<br/>文件: auto_fix_engine/models.py"]
     src_zephyr_infrastructure_observability_notifier_py["(生产态 / production) Notifier — 多渠道 Owner 通知。<br/>Notifier — 多渠道 Owner 通知。<br/>文件: observability/notifier.py"]
     src_zephyr_infrastructure_runtime_gate_coordinator_py["(生产态 / production) Rollback->Gate 协调器 — freeze_all / thaw_all<br/>Rollback->Gate 协调器 — freeze_all / thaw_all<br/>文件: runtime/gate_coordinator.py"]
     src_zephyr_infrastructure_sla_sla_monitor_py["(生产态 / production) SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。<br/>SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。<br/>文件: sla/sla_monitor.py"]
@@ -1162,9 +1162,9 @@ flowchart TD
     src_zephyr_trading_integration_registry_py["(生产态 / production) IntegrationRegistry — 集成注册表<br/>IntegrationRegistry — 集成注册表<br/>文件: trading/integration_registry.py"]
     src_zephyr_trading_night_shift_queue_py["(生产态 / production) NightShiftQueue — 夜班登记表持久化<br/>NightShiftQueue — 夜班登记表持久化<br/>文件: trading/night_shift_queue.py"]
     src_zephyr_trading_orphan_detector_py["(生产态 / production) OrphanDetector — 孤儿检测器<br/>OrphanDetector — 孤儿检测器<br/>文件: trading/orphan_detector.py"]
-    src_zephyr_trading_runtime_config_py["(生产态 / production) trading/runtime_config.py"]
+    src_zephyr_trading_runtime_config_py["(生产态 / production)<br/>文件: trading/runtime_config.py"]
     src_zephyr_trading_stop_gate_py["(生产态 / production) StopGate — 质量闸门<br/>StopGate — 质量闸门<br/>文件: trading/stop_gate.py"]
-    src_zephyr_trading_work_orchestrator_py["(生产态 / production) trading/work_orchestrator.py"]
+    src_zephyr_trading_work_orchestrator_py["(生产态 / production)<br/>文件: trading/work_orchestrator.py"]
     src_zephyr_infrastructure_auto_fix_engine_models_py ~~~ src_zephyr_infrastructure_observability_notifier_py
     src_zephyr_infrastructure_observability_notifier_py ~~~ src_zephyr_infrastructure_runtime_gate_coordinator_py
     src_zephyr_infrastructure_runtime_gate_coordinator_py ~~~ src_zephyr_infrastructure_sla_sla_monitor_py
@@ -1180,7 +1180,7 @@ flowchart TD
     src_zephyr_trading_orphan_detector_py ~~~ src_zephyr_trading_runtime_config_py
     src_zephyr_trading_runtime_config_py ~~~ src_zephyr_trading_stop_gate_py
     src_zephyr_trading_stop_gate_py ~~~ src_zephyr_trading_work_orchestrator_py
-    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["(生产态 / production) system_telemetry/_trace_bridge.py"]
+    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["(生产态 / production)<br/>文件: system_telemetry/_trace_bridge.py"]
     src_zephyr_infrastructure_system_telemetry_health_probes_py["(生产态 / production) 三态健康探针协议（Health Probes — CT-HEALTH-001）<br/>三态健康探针协议（Health Probes — CT-HEALTH-001）<br/>文件: system_telemetry/health_probes.py"]
     src_zephyr_trading_module_onboarding_scanner_py["(生产态 / production) ModuleOnboardingScanner — 模块接入扫描器<br/>ModuleOnboardingScanner — 模块接入扫描器<br/>文件: trading/module_onboarding_scanner.py"]
     src_zephyr_trading_resource_optimization_py["(生产态 / production) resource_optimization.py - MAPE-K autonomic resource optimization engine<br/>resource_optimization.py - MAPE-K autonomic resource optimization engine<br/>文件: trading/resource_optimization.py"]
@@ -1383,10 +1383,10 @@ flowchart TD
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001,docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002,docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003,docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006,src_zephyr_infrastructure_asset_inventory_main_py,src_zephyr_infrastructure_asset_inventory_classifier_py,src_zephyr_infrastructure_asset_inventory_dashboard_py,src_zephyr_infrastructure_asset_inventory_dependency_py,src_zephyr_infrastructure_asset_inventory_index_generator_py,src_zephyr_infrastructure_asset_inventory_lifecycle_py,src_zephyr_infrastructure_asset_inventory_mcp_server_py,src_zephyr_infrastructure_asset_inventory_metadata_py,src_zephyr_infrastructure_asset_inventory_models_py,src_zephyr_infrastructure_asset_inventory_reconciler_py,src_zephyr_infrastructure_asset_inventory_registry_adapter_py,src_zephyr_infrastructure_asset_inventory_scanner_py,src_zephyr_infrastructure_asset_inventory_telemetry_py,src_zephyr_infrastructure_asset_inventory_trust_anchor_py,src_zephyr_infrastructure_auto_diagnostics_py,src_zephyr_infrastructure_auto_fix_engine_main_py,src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py,src_zephyr_infrastructure_auto_fix_engine_all_completer_py,src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py,src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py,src_zephyr_infrastructure_auto_fix_engine_config_fixer_py,src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py,src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py,src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py,src_zephyr_infrastructure_auto_fix_engine_engine_py,src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py,src_zephyr_infrastructure_auto_fix_engine_event_hooks_py,src_zephyr_infrastructure_auto_fix_engine_fix_budget_py,src_zephyr_infrastructure_auto_fix_engine_fix_diff_py,src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py,src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py,src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py,src_zephyr_infrastructure_auto_fix_engine_fix_report_py,src_zephyr_infrastructure_auto_fix_engine_fix_safety_py,src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py,src_zephyr_infrastructure_auto_fix_engine_import_fixer_py,src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py,src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py,src_zephyr_infrastructure_auto_fix_engine_models_py,src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py,src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py,src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py,src_zephyr_infrastructure_auto_fix_engine_state_machine_py,src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py,src_zephyr_infrastructure_blueprint_code_sync_py,src_zephyr_infrastructure_budget_enforcement_init_py,src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py,src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py,src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py,src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py,src_zephyr_infrastructure_capacity_assurance_host_resource_governor_py,src_zephyr_infrastructure_capacity_assurance_kill_switch_py,src_zephyr_infrastructure_capacity_assurance_risk_mitigation_py,src_zephyr_infrastructure_capacity_assurance_schema_py,src_zephyr_infrastructure_capacity_assurance_sli_instrumentation_py,src_zephyr_infrastructure_capacity_assurance_tech_stack_py,src_zephyr_infrastructure_capacity_assurance_token_budget_py,src_zephyr_infrastructure_config_validator_py,src_zephyr_infrastructure_contract_tester_py,src_zephyr_infrastructure_cost_tracker_py,src_zephyr_infrastructure_database_service_py,src_zephyr_infrastructure_dry_run_simulator_py,src_zephyr_infrastructure_event_bus_upgrade_py,src_zephyr_infrastructure_event_store_py,src_zephyr_infrastructure_events_event_store_py,src_zephyr_infrastructure_file_watcher_py,src_zephyr_infrastructure_finding_task_bridge_py,src_zephyr_infrastructure_git_batcher_py,src_zephyr_infrastructure_health_monitor_health_aggregator_py,src_zephyr_infrastructure_hooks_event_hook_py,src_zephyr_infrastructure_impact_impact_propagator_py,src_zephyr_infrastructure_impact_llm_impact_analyzer_py,src_zephyr_infrastructure_infrastructure_base_py,src_zephyr_infrastructure_kill_switch_sim_py,src_zephyr_infrastructure_lifecycle_scope_guard_py,src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py,src_zephyr_infrastructure_observability_notifier_py,src_zephyr_infrastructure_observability_trace_decorator_py,src_zephyr_infrastructure_pipeline_backpressure_manager_py,src_zephyr_infrastructure_pipeline_backpressure_types_py,src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py,src_zephyr_infrastructure_pipeline_cost_tracker_py,src_zephyr_infrastructure_pipeline_ct_pipe_routing_py,src_zephyr_infrastructure_pipeline_dead_letter_queue_py,src_zephyr_infrastructure_pipeline_llm_gateway_py,src_zephyr_infrastructure_pipeline_model_router_py,src_zephyr_infrastructure_pipeline_models_py,src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py,src_zephyr_infrastructure_pipeline_pipeline_lock_py,src_zephyr_infrastructure_pipeline_pipeline_roadmap_py,src_zephyr_infrastructure_pipeline_preemption_manager_py,src_zephyr_infrastructure_pipeline_routing_plugins_py,src_zephyr_infrastructure_pydantic_v2_migrator_py,src_zephyr_infrastructure_quality_quality_monitor_py,src_zephyr_infrastructure_queue_task_queue_py,src_zephyr_infrastructure_queue_task_scheduler_py,src_zephyr_infrastructure_reliability_circuit_breaker_py,src_zephyr_infrastructure_reliability_context_guard_py,src_zephyr_infrastructure_runtime_concurrency_guard_py,src_zephyr_infrastructure_runtime_gate_coordinator_py,src_zephyr_infrastructure_runtime_sandbox_enforcer_py,src_zephyr_infrastructure_runtime_startup_shutdown_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_sla_sla_monitor_py,src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py,src_zephyr_infrastructure_system_telemetry_trace_bridge_py,src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py,src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py,src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py,src_zephyr_infrastructure_system_telemetry_contract_metrics_py,src_zephyr_infrastructure_system_telemetry_facade_py,src_zephyr_infrastructure_system_telemetry_health_aggregator_py,src_zephyr_infrastructure_system_telemetry_health_probes_py,src_zephyr_infrastructure_system_telemetry_logs_init_py,src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py,src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py,src_zephyr_infrastructure_system_telemetry_metrics_bridge_py,src_zephyr_infrastructure_system_telemetry_traces_span_stub_py,src_zephyr_infrastructure_system_telemetry_watchdog_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_trading_main_py,src_zephyr_trading_action_dispatcher_py,src_zephyr_trading_ai_audit_logger_py,src_zephyr_trading_auto_integrator_py,src_zephyr_trading_auto_runtime_core_py,src_zephyr_trading_auto_task_generator_py,src_zephyr_trading_boot_hooks_py,src_zephyr_trading_capability_card_py,src_zephyr_trading_capability_registry_py,src_zephyr_trading_capability_sync_py,src_zephyr_trading_dream_cycle_py,src_zephyr_trading_finalizer_py,src_zephyr_trading_health_monitor_py,src_zephyr_trading_integration_registry_py,src_zephyr_trading_lifecycle_manager_py,src_zephyr_trading_module_onboarding_scanner_py,src_zephyr_trading_night_shift_queue_py,src_zephyr_trading_orphan_detector_py,src_zephyr_trading_ports_py,src_zephyr_trading_resource_optimization_py,src_zephyr_trading_runtime_config_py,src_zephyr_trading_staging_area_py,src_zephyr_trading_status_dashboard_py,src_zephyr_trading_stop_gate_py,src_zephyr_trading_task_gate_py,src_zephyr_trading_windows_service_py,src_zephyr_trading_work_dag_py,src_zephyr_trading_work_orchestrator_py,src_zephyr_trading_zombie_scanner_py production
     class D_SHARED,D_GOV_RULE,D_INTEGRATION,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOV_SCRIPTS,D_GOV_AUDIT,D_TRADING external_prod
 ```
@@ -1398,11 +1398,11 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["(设计态 / design) agent_orchestrator/blueprint.md"]
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["(设计态 / design)<br/>文件: agent_orchestrator/blueprint.md"]
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_agent_orchestrator_blueprint_md design
 ```
 

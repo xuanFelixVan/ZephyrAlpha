@@ -75,8 +75,8 @@ ttl: permanent
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
-> - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -89,28 +89,28 @@ ttl: permanent
 flowchart TD
     scripts_backup_backup_reconciler_py["(生产态 / production) backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>文件: backup/backup_reconciler.py"]
     src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>文件: config/__init__.py"]
-    src_zephyr_shared_contracts_capital_allocation_result_py["(生产态 / production) contracts/capital_allocation_result.py"]
-    src_zephyr_shared_contracts_compliance_rule_py["(生产态 / production) contracts/compliance_rule.py"]
-    src_zephyr_shared_contracts_execution_report_py["(生产态 / production) contracts/execution_report.py"]
-    src_zephyr_shared_contracts_experiment_result_py["(生产态 / production) contracts/experiment_result.py"]
-    src_zephyr_shared_contracts_factor_monitor_report_py["(生产态 / production) contracts/factor_monitor_report.py"]
-    src_zephyr_shared_contracts_factor_signal_py["(生产态 / production) contracts/factor_signal.py"]
-    src_zephyr_shared_contracts_fill_py["(生产态 / production) contracts/fill.py"]
-    src_zephyr_shared_contracts_macro_factor_signal_py["(生产态 / production) contracts/macro_factor_signal.py"]
-    src_zephyr_shared_contracts_market_data_py["(生产态 / production) contracts/market_data.py"]
-    src_zephyr_shared_contracts_model_serving_request_py["(生产态 / production) contracts/model_serving_request.py"]
-    src_zephyr_shared_contracts_model_serving_response_py["(生产态 / production) contracts/model_serving_response.py"]
-    src_zephyr_shared_contracts_order_py["(生产态 / production) contracts/order.py"]
-    src_zephyr_shared_contracts_performance_attribution_report_py["(生产态 / production) contracts/performance_attribution_report.py"]
-    src_zephyr_shared_contracts_position_py["(生产态 / production) contracts/position.py"]
-    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(生产态 / production) contracts/risk_dashboard_snapshot.py"]
-    src_zephyr_shared_contracts_risk_limits_py["(生产态 / production) contracts/risk_limits.py"]
-    src_zephyr_shared_contracts_risk_metrics_py["(生产态 / production) contracts/risk_metrics.py"]
-    src_zephyr_shared_contracts_strategy_lifecycle_event_py["(生产态 / production) contracts/strategy_lifecycle_event.py"]
-    src_zephyr_shared_contracts_synthesized_signal_py["(生产态 / production) contracts/synthesized_signal.py"]
-    src_zephyr_shared_contracts_system_configuration_py["(生产态 / production) contracts/system_configuration.py"]
-    src_zephyr_shared_contracts_telemetry_emitter_py["(生产态 / production) contracts/telemetry_emitter.py"]
-    src_zephyr_shared_contracts_trace_context_py["(生产态 / production) contracts/trace_context.py"]
+    src_zephyr_shared_contracts_capital_allocation_result_py["(生产态 / production)<br/>文件: contracts/capital_allocation_result.py"]
+    src_zephyr_shared_contracts_compliance_rule_py["(生产态 / production)<br/>文件: contracts/compliance_rule.py"]
+    src_zephyr_shared_contracts_execution_report_py["(生产态 / production)<br/>文件: contracts/execution_report.py"]
+    src_zephyr_shared_contracts_experiment_result_py["(生产态 / production)<br/>文件: contracts/experiment_result.py"]
+    src_zephyr_shared_contracts_factor_monitor_report_py["(生产态 / production)<br/>文件: contracts/factor_monitor_report.py"]
+    src_zephyr_shared_contracts_factor_signal_py["(生产态 / production)<br/>文件: contracts/factor_signal.py"]
+    src_zephyr_shared_contracts_fill_py["(生产态 / production)<br/>文件: contracts/fill.py"]
+    src_zephyr_shared_contracts_macro_factor_signal_py["(生产态 / production)<br/>文件: contracts/macro_factor_signal.py"]
+    src_zephyr_shared_contracts_market_data_py["(生产态 / production)<br/>文件: contracts/market_data.py"]
+    src_zephyr_shared_contracts_model_serving_request_py["(生产态 / production)<br/>文件: contracts/model_serving_request.py"]
+    src_zephyr_shared_contracts_model_serving_response_py["(生产态 / production)<br/>文件: contracts/model_serving_response.py"]
+    src_zephyr_shared_contracts_order_py["(生产态 / production)<br/>文件: contracts/order.py"]
+    src_zephyr_shared_contracts_performance_attribution_report_py["(生产态 / production)<br/>文件: contracts/performance_attribution_report.py"]
+    src_zephyr_shared_contracts_position_py["(生产态 / production)<br/>文件: contracts/position.py"]
+    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(生产态 / production)<br/>文件: contracts/risk_dashboard_snapshot.py"]
+    src_zephyr_shared_contracts_risk_limits_py["(生产态 / production)<br/>文件: contracts/risk_limits.py"]
+    src_zephyr_shared_contracts_risk_metrics_py["(生产态 / production)<br/>文件: contracts/risk_metrics.py"]
+    src_zephyr_shared_contracts_strategy_lifecycle_event_py["(生产态 / production)<br/>文件: contracts/strategy_lifecycle_event.py"]
+    src_zephyr_shared_contracts_synthesized_signal_py["(生产态 / production)<br/>文件: contracts/synthesized_signal.py"]
+    src_zephyr_shared_contracts_system_configuration_py["(生产态 / production)<br/>文件: contracts/system_configuration.py"]
+    src_zephyr_shared_contracts_telemetry_emitter_py["(生产态 / production)<br/>文件: contracts/telemetry_emitter.py"]
+    src_zephyr_shared_contracts_trace_context_py["(生产态 / production)<br/>文件: contracts/trace_context.py"]
     scripts_backup_backup_reconciler_py ~~~ src_zephyr_infrastructure_config_init_py
     src_zephyr_infrastructure_config_init_py ~~~ src_zephyr_shared_contracts_capital_allocation_result_py
     src_zephyr_shared_contracts_capital_allocation_result_py ~~~ src_zephyr_shared_contracts_compliance_rule_py
@@ -172,10 +172,10 @@ flowchart TD
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_RISK["(生产态 / production) D_RISK 风控"]
     D_RISK -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
     class D_SHARED,D_GOV_AUDIT,D_TRADING,D_FACTOR,D_EX_CORE,D_SIGQC,D_FUNDAMENTAL_SIGNAL,D_GOVERNANCE,D_PF_ALLOC,D_GOV_CODE_QUALITY,D_RISK external_prod
 ```
@@ -189,28 +189,28 @@ flowchart TD
 flowchart TD
     scripts_backup_backup_reconciler_py["(生产态 / production) backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）<br/>文件: backup/backup_reconciler.py"]
     src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management<br/>文件: config/__init__.py"]
-    src_zephyr_shared_contracts_capital_allocation_result_py["(生产态 / production) contracts/capital_allocation_result.py"]
-    src_zephyr_shared_contracts_compliance_rule_py["(生产态 / production) contracts/compliance_rule.py"]
-    src_zephyr_shared_contracts_execution_report_py["(生产态 / production) contracts/execution_report.py"]
-    src_zephyr_shared_contracts_experiment_result_py["(生产态 / production) contracts/experiment_result.py"]
-    src_zephyr_shared_contracts_factor_monitor_report_py["(生产态 / production) contracts/factor_monitor_report.py"]
-    src_zephyr_shared_contracts_factor_signal_py["(生产态 / production) contracts/factor_signal.py"]
-    src_zephyr_shared_contracts_fill_py["(生产态 / production) contracts/fill.py"]
-    src_zephyr_shared_contracts_macro_factor_signal_py["(生产态 / production) contracts/macro_factor_signal.py"]
-    src_zephyr_shared_contracts_market_data_py["(生产态 / production) contracts/market_data.py"]
-    src_zephyr_shared_contracts_model_serving_request_py["(生产态 / production) contracts/model_serving_request.py"]
-    src_zephyr_shared_contracts_model_serving_response_py["(生产态 / production) contracts/model_serving_response.py"]
-    src_zephyr_shared_contracts_order_py["(生产态 / production) contracts/order.py"]
-    src_zephyr_shared_contracts_performance_attribution_report_py["(生产态 / production) contracts/performance_attribution_report.py"]
-    src_zephyr_shared_contracts_position_py["(生产态 / production) contracts/position.py"]
-    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(生产态 / production) contracts/risk_dashboard_snapshot.py"]
-    src_zephyr_shared_contracts_risk_limits_py["(生产态 / production) contracts/risk_limits.py"]
-    src_zephyr_shared_contracts_risk_metrics_py["(生产态 / production) contracts/risk_metrics.py"]
-    src_zephyr_shared_contracts_strategy_lifecycle_event_py["(生产态 / production) contracts/strategy_lifecycle_event.py"]
-    src_zephyr_shared_contracts_synthesized_signal_py["(生产态 / production) contracts/synthesized_signal.py"]
-    src_zephyr_shared_contracts_system_configuration_py["(生产态 / production) contracts/system_configuration.py"]
-    src_zephyr_shared_contracts_telemetry_emitter_py["(生产态 / production) contracts/telemetry_emitter.py"]
-    src_zephyr_shared_contracts_trace_context_py["(生产态 / production) contracts/trace_context.py"]
+    src_zephyr_shared_contracts_capital_allocation_result_py["(生产态 / production)<br/>文件: contracts/capital_allocation_result.py"]
+    src_zephyr_shared_contracts_compliance_rule_py["(生产态 / production)<br/>文件: contracts/compliance_rule.py"]
+    src_zephyr_shared_contracts_execution_report_py["(生产态 / production)<br/>文件: contracts/execution_report.py"]
+    src_zephyr_shared_contracts_experiment_result_py["(生产态 / production)<br/>文件: contracts/experiment_result.py"]
+    src_zephyr_shared_contracts_factor_monitor_report_py["(生产态 / production)<br/>文件: contracts/factor_monitor_report.py"]
+    src_zephyr_shared_contracts_factor_signal_py["(生产态 / production)<br/>文件: contracts/factor_signal.py"]
+    src_zephyr_shared_contracts_fill_py["(生产态 / production)<br/>文件: contracts/fill.py"]
+    src_zephyr_shared_contracts_macro_factor_signal_py["(生产态 / production)<br/>文件: contracts/macro_factor_signal.py"]
+    src_zephyr_shared_contracts_market_data_py["(生产态 / production)<br/>文件: contracts/market_data.py"]
+    src_zephyr_shared_contracts_model_serving_request_py["(生产态 / production)<br/>文件: contracts/model_serving_request.py"]
+    src_zephyr_shared_contracts_model_serving_response_py["(生产态 / production)<br/>文件: contracts/model_serving_response.py"]
+    src_zephyr_shared_contracts_order_py["(生产态 / production)<br/>文件: contracts/order.py"]
+    src_zephyr_shared_contracts_performance_attribution_report_py["(生产态 / production)<br/>文件: contracts/performance_attribution_report.py"]
+    src_zephyr_shared_contracts_position_py["(生产态 / production)<br/>文件: contracts/position.py"]
+    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["(生产态 / production)<br/>文件: contracts/risk_dashboard_snapshot.py"]
+    src_zephyr_shared_contracts_risk_limits_py["(生产态 / production)<br/>文件: contracts/risk_limits.py"]
+    src_zephyr_shared_contracts_risk_metrics_py["(生产态 / production)<br/>文件: contracts/risk_metrics.py"]
+    src_zephyr_shared_contracts_strategy_lifecycle_event_py["(生产态 / production)<br/>文件: contracts/strategy_lifecycle_event.py"]
+    src_zephyr_shared_contracts_synthesized_signal_py["(生产态 / production)<br/>文件: contracts/synthesized_signal.py"]
+    src_zephyr_shared_contracts_system_configuration_py["(生产态 / production)<br/>文件: contracts/system_configuration.py"]
+    src_zephyr_shared_contracts_telemetry_emitter_py["(生产态 / production)<br/>文件: contracts/telemetry_emitter.py"]
+    src_zephyr_shared_contracts_trace_context_py["(生产态 / production)<br/>文件: contracts/trace_context.py"]
     scripts_backup_backup_reconciler_py ~~~ src_zephyr_infrastructure_config_init_py
     src_zephyr_infrastructure_config_init_py ~~~ src_zephyr_shared_contracts_capital_allocation_result_py
     src_zephyr_shared_contracts_capital_allocation_result_py ~~~ src_zephyr_shared_contracts_compliance_rule_py
@@ -272,10 +272,10 @@ flowchart TD
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_RISK["(生产态 / production) D_RISK 风控"]
     D_RISK -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
     class D_SHARED,D_GOV_AUDIT,D_TRADING,D_FACTOR,D_EX_CORE,D_SIGQC,D_FUNDAMENTAL_SIGNAL,D_GOVERNANCE,D_PF_ALLOC,D_GOV_CODE_QUALITY,D_RISK external_prod
 ```

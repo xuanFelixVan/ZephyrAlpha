@@ -61,8 +61,8 @@ ttl: permanent
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
-> - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -75,14 +75,14 @@ ttl: permanent
 flowchart TD
     scripts_governance_observability_gate_cache_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: observability/gate_cache.py"]
     scripts_setup_dev_env_py["(生产态 / production) 开发环境一次性初始化（裁定 #ARCH-PYTHON-SITECUSTOMIZE）。<br/>开发环境一次性初始化（裁定 #ARCH-PYTHON-SITECUSTOMIZE）。<br/>文件: scripts/setup_dev_env.py"]
-    src_zephyr_governance_observability_governance_observability_dashboard_py["(生产态 / production) observability_governance/observability_dashboard.py"]
+    src_zephyr_governance_observability_governance_observability_dashboard_py["(生产态 / production)<br/>文件: observability_governance/observability_dashboard.py"]
     src_zephyr_governance_ops_governance_budget_engine_py["(生产态 / production) Budget Enforcer core engine — MOD-INF-024<br/>Budget Enforcer core engine — MOD-INF-024<br/>文件: ops_governance/budget_engine.py"]
     src_zephyr_governance_ops_governance_budget_handler_py["(生产态 / production) G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.<br/>G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.<br/>文件: ops_governance/budget_handler.py"]
-    src_zephyr_governance_ops_governance_budget_profile_manager_py["(生产态 / production) ops_governance/budget_profile_manager.py"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["(生产态 / production) ops_governance/budget_tracker.py"]
+    src_zephyr_governance_ops_governance_budget_profile_manager_py["(生产态 / production)<br/>文件: ops_governance/budget_profile_manager.py"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["(生产态 / production)<br/>文件: ops_governance/budget_tracker.py"]
     src_zephyr_governance_ops_governance_cost_budget_py["(生产态 / production) cost_budget.py —— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget.py —— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>文件: ops_governance/cost_budget.py"]
     src_zephyr_governance_ops_governance_meta_observability_py["(生产态 / production) Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca...<br/>Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca...<br/>文件: ops_governance/meta_observability.py"]
-    src_zephyr_governance_ops_governance_token_budget_py["(生产态 / production) ops_governance/token_budget.py"]
+    src_zephyr_governance_ops_governance_token_budget_py["(生产态 / production)<br/>文件: ops_governance/token_budget.py"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -130,10 +130,10 @@ flowchart TD
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_observability_gate_cache_py,scripts_setup_dev_env_py,src_zephyr_governance_observability_governance_observability_dashboard_py,src_zephyr_governance_ops_governance_budget_engine_py,src_zephyr_governance_ops_governance_budget_handler_py,src_zephyr_governance_ops_governance_budget_models_py,src_zephyr_governance_ops_governance_budget_profile_manager_py,src_zephyr_governance_ops_governance_budget_tracker_py,src_zephyr_governance_ops_governance_cost_budget_py,src_zephyr_governance_ops_governance_meta_observability_py,src_zephyr_governance_ops_governance_token_budget_py production
     class D_GOV_SCRIPTS,D_GOV_DRIFT,D_INFRA_RECOVERY,D_GOVERNANCE,D_SHARED,D_GOV_OPS_RESILIENCE,D_INTEGRATION,D_GOV_ENFORCEMENT external_prod
 ```
@@ -147,14 +147,14 @@ flowchart TD
 flowchart TD
     scripts_governance_observability_gate_cache_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: observability/gate_cache.py"]
     scripts_setup_dev_env_py["(生产态 / production) 开发环境一次性初始化（裁定 #ARCH-PYTHON-SITECUSTOMIZE）。<br/>开发环境一次性初始化（裁定 #ARCH-PYTHON-SITECUSTOMIZE）。<br/>文件: scripts/setup_dev_env.py"]
-    src_zephyr_governance_observability_governance_observability_dashboard_py["(生产态 / production) observability_governance/observability_dashboard.py"]
+    src_zephyr_governance_observability_governance_observability_dashboard_py["(生产态 / production)<br/>文件: observability_governance/observability_dashboard.py"]
     src_zephyr_governance_ops_governance_budget_engine_py["(生产态 / production) Budget Enforcer core engine — MOD-INF-024<br/>Budget Enforcer core engine — MOD-INF-024<br/>文件: ops_governance/budget_engine.py"]
     src_zephyr_governance_ops_governance_budget_handler_py["(生产态 / production) G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.<br/>G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.<br/>文件: ops_governance/budget_handler.py"]
-    src_zephyr_governance_ops_governance_budget_profile_manager_py["(生产态 / production) ops_governance/budget_profile_manager.py"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["(生产态 / production) ops_governance/budget_tracker.py"]
+    src_zephyr_governance_ops_governance_budget_profile_manager_py["(生产态 / production)<br/>文件: ops_governance/budget_profile_manager.py"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["(生产态 / production)<br/>文件: ops_governance/budget_tracker.py"]
     src_zephyr_governance_ops_governance_cost_budget_py["(生产态 / production) cost_budget.py —— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget.py —— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>文件: ops_governance/cost_budget.py"]
     src_zephyr_governance_ops_governance_meta_observability_py["(生产态 / production) Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca...<br/>Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca...<br/>文件: ops_governance/meta_observability.py"]
-    src_zephyr_governance_ops_governance_token_budget_py["(生产态 / production) ops_governance/token_budget.py"]
+    src_zephyr_governance_ops_governance_token_budget_py["(生产态 / production)<br/>文件: ops_governance/token_budget.py"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -202,10 +202,10 @@ flowchart TD
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_observability_gate_cache_py,scripts_setup_dev_env_py,src_zephyr_governance_observability_governance_observability_dashboard_py,src_zephyr_governance_ops_governance_budget_engine_py,src_zephyr_governance_ops_governance_budget_handler_py,src_zephyr_governance_ops_governance_budget_models_py,src_zephyr_governance_ops_governance_budget_profile_manager_py,src_zephyr_governance_ops_governance_budget_tracker_py,src_zephyr_governance_ops_governance_cost_budget_py,src_zephyr_governance_ops_governance_meta_observability_py,src_zephyr_governance_ops_governance_token_budget_py production
     class D_GOV_SCRIPTS,D_GOV_DRIFT,D_INFRA_RECOVERY,D_GOVERNANCE,D_SHARED,D_GOV_OPS_RESILIENCE,D_INTEGRATION,D_GOV_ENFORCEMENT external_prod
 ```

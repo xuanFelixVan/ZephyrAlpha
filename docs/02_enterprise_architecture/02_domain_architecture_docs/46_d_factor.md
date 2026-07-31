@@ -87,8 +87,8 @@ ttl: permanent
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
-> - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -101,7 +101,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production) factor/alpha_signal_pipeline.py"]
+    src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production)<br/>文件: factor/alpha_signal_pipeline.py"]
     src_zephyr_factor_analysis_correlation_dedup_py["(生产态 / production) D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。<br/>D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。<br/>文件: analysis/correlation_dedup.py"]
     src_zephyr_factor_analysis_decay_monitor_py["(生产态 / production) D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。<br/>D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。<br/>文件: analysis/decay_monitor.py"]
     src_zephyr_factor_analysis_factor_attribution_py["(生产态 / production) D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。<br/>D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。<br/>文件: analysis/factor_attribution.py"]
@@ -110,7 +110,7 @@ flowchart TD
     src_zephyr_factor_analysis_ic_ir_evaluator_py["(生产态 / production) D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。<br/>D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。<br/>文件: analysis/ic_ir_evaluator.py"]
     src_zephyr_factor_analysis_layered_backtest_py["(生产态 / production) D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空收益差。<br/>D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空收益差。<br/>文件: analysis/layered_backtest.py"]
     src_zephyr_factor_analysis_three_level_judgment_py["(生产态 / production) D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘汰。<br/>D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘汰。<br/>文件: analysis/three_level_judgment.py"]
-    src_zephyr_factor_bus_factor_defense_py["(生产态 / production) factor/bus_factor_defense.py"]
+    src_zephyr_factor_bus_factor_defense_py["(生产态 / production)<br/>文件: factor/bus_factor_defense.py"]
     src_zephyr_factor_core_backpressure_init_py["(生产态 / production) D_FACTOR core backpressure 子包——进程内在途并发限流器。<br/>D_FACTOR core backpressure 子包——进程内在途并发限流器。<br/>文件: backpressure/__init__.py"]
     src_zephyr_factor_core_batch_output_init_py["(生产态 / production) D_FACTOR core batch_output 子包——FactorSignal 批量缓冲写入器。<br/>D_FACTOR core batch_output 子包——FactorSignal 批量缓冲写入器。<br/>文件: batch_output/__init__.py"]
     src_zephyr_factor_core_config_manager_init_py["(生产态 / production) D_FACTOR core config_manager 子包——core 基础设施模块策略参数加载器。<br/>D_FACTOR core config_manager 子包——core 基础设施模块策略参数加载器。<br/>文件: config_manager/__init__.py"]
@@ -201,10 +201,10 @@ flowchart TD
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE 运维弹性治理"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_analysis_init_py,src_zephyr_factor_analysis_correlation_analyzer_py,src_zephyr_factor_analysis_correlation_dedup_py,src_zephyr_factor_analysis_decay_monitor_py,src_zephyr_factor_analysis_factor_attribution_py,src_zephyr_factor_analysis_factor_optimization_py,src_zephyr_factor_analysis_ic_decay_py,src_zephyr_factor_analysis_ic_ir_calc_py,src_zephyr_factor_analysis_ic_ir_evaluator_py,src_zephyr_factor_analysis_layered_backtest_py,src_zephyr_factor_analysis_multifactor_synthesis_py,src_zephyr_factor_analysis_three_level_judgment_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_backpressure_init_py,src_zephyr_factor_core_batch_output_init_py,src_zephyr_factor_core_config_manager_init_py,src_zephyr_factor_core_ctr001_consumer_init_py,src_zephyr_factor_core_ctr001_consumer_converter_py,src_zephyr_factor_core_ctr002_producer_init_py,src_zephyr_factor_core_ctr002_producer_converter_py,src_zephyr_factor_core_dag_manager_init_py,src_zephyr_factor_core_dist_feature_eng_init_py,src_zephyr_factor_core_evaluation_init_py,src_zephyr_factor_core_evaluation_backtest_py,src_zephyr_factor_core_evaluation_metrics_py,src_zephyr_factor_core_factor_dag_init_py,src_zephyr_factor_factor_base_py,src_zephyr_factor_governance_init_py,src_zephyr_factor_governance_abs001_gate_py production
     class D_INFRASTRUCTURE,D_DATA,D_FUNDAMENTAL_SIGNAL,D_PF_CORE,D_EX_CORE,D_GOV_OPS_RESILIENCE external_prod
 ```
@@ -232,10 +232,10 @@ flowchart TD
     D_SHARED["(生产态 / production) D_SHARED 共享服务"]
     src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| D_SHARED
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_governance_engine_py,src_zephyr_factor_governance_factor_pool_manager_py,src_zephyr_factor_governance_grayscale_rollout_py,src_zephyr_factor_governance_lifecycle_state_machine_py,src_zephyr_factor_governance_six_step_flow_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py production
     class D_SHARED external_prod
 ```
@@ -247,7 +247,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production) factor/alpha_signal_pipeline.py"]
+    src_zephyr_factor_alpha_signal_pipeline_py["(生产态 / production)<br/>文件: factor/alpha_signal_pipeline.py"]
     src_zephyr_factor_analysis_correlation_dedup_py["(生产态 / production) D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。<br/>D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。<br/>文件: analysis/correlation_dedup.py"]
     src_zephyr_factor_analysis_decay_monitor_py["(生产态 / production) D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。<br/>D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。<br/>文件: analysis/decay_monitor.py"]
     src_zephyr_factor_analysis_factor_attribution_py["(生产态 / production) D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。<br/>D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。<br/>文件: analysis/factor_attribution.py"]
@@ -256,7 +256,7 @@ flowchart TD
     src_zephyr_factor_analysis_ic_ir_evaluator_py["(生产态 / production) D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。<br/>D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。<br/>文件: analysis/ic_ir_evaluator.py"]
     src_zephyr_factor_analysis_layered_backtest_py["(生产态 / production) D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空收益差。<br/>D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空收益差。<br/>文件: analysis/layered_backtest.py"]
     src_zephyr_factor_analysis_three_level_judgment_py["(生产态 / production) D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘汰。<br/>D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘汰。<br/>文件: analysis/three_level_judgment.py"]
-    src_zephyr_factor_bus_factor_defense_py["(生产态 / production) factor/bus_factor_defense.py"]
+    src_zephyr_factor_bus_factor_defense_py["(生产态 / production)<br/>文件: factor/bus_factor_defense.py"]
     src_zephyr_factor_core_backpressure_init_py["(生产态 / production) D_FACTOR core backpressure 子包——进程内在途并发限流器。<br/>D_FACTOR core backpressure 子包——进程内在途并发限流器。<br/>文件: backpressure/__init__.py"]
     src_zephyr_factor_core_batch_output_init_py["(生产态 / production) D_FACTOR core batch_output 子包——FactorSignal 批量缓冲写入器。<br/>D_FACTOR core batch_output 子包——FactorSignal 批量缓冲写入器。<br/>文件: batch_output/__init__.py"]
     src_zephyr_factor_core_config_manager_init_py["(生产态 / production) D_FACTOR core config_manager 子包——core 基础设施模块策略参数加载器。<br/>D_FACTOR core config_manager 子包——core 基础设施模块策略参数加载器。<br/>文件: config_manager/__init__.py"]
@@ -377,10 +377,10 @@ flowchart TD
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE 运维弹性治理"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_analysis_init_py,src_zephyr_factor_analysis_correlation_analyzer_py,src_zephyr_factor_analysis_correlation_dedup_py,src_zephyr_factor_analysis_decay_monitor_py,src_zephyr_factor_analysis_factor_attribution_py,src_zephyr_factor_analysis_factor_optimization_py,src_zephyr_factor_analysis_ic_decay_py,src_zephyr_factor_analysis_ic_ir_calc_py,src_zephyr_factor_analysis_ic_ir_evaluator_py,src_zephyr_factor_analysis_layered_backtest_py,src_zephyr_factor_analysis_multifactor_synthesis_py,src_zephyr_factor_analysis_three_level_judgment_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_backpressure_init_py,src_zephyr_factor_core_batch_output_init_py,src_zephyr_factor_core_config_manager_init_py,src_zephyr_factor_core_ctr001_consumer_init_py,src_zephyr_factor_core_ctr001_consumer_converter_py,src_zephyr_factor_core_ctr002_producer_init_py,src_zephyr_factor_core_ctr002_producer_converter_py,src_zephyr_factor_core_dag_manager_init_py,src_zephyr_factor_core_dist_feature_eng_init_py,src_zephyr_factor_core_evaluation_init_py,src_zephyr_factor_core_evaluation_backtest_py,src_zephyr_factor_core_evaluation_metrics_py,src_zephyr_factor_core_factor_dag_init_py,src_zephyr_factor_factor_base_py,src_zephyr_factor_governance_init_py,src_zephyr_factor_governance_abs001_gate_py,src_zephyr_factor_governance_engine_py,src_zephyr_factor_governance_factor_pool_manager_py,src_zephyr_factor_governance_grayscale_rollout_py,src_zephyr_factor_governance_lifecycle_state_machine_py,src_zephyr_factor_governance_six_step_flow_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py production
     class D_INFRASTRUCTURE,D_SHARED,D_DATA,D_FUNDAMENTAL_SIGNAL,D_PF_CORE,D_EX_CORE,D_GOV_OPS_RESILIENCE external_prod
 ```

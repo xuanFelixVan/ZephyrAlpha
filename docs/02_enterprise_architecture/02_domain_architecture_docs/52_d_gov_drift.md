@@ -130,8 +130,8 @@ ttl: permanent
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
 >
 > **图例说明 / Legend**：
-> - **实线边框 = 运营态模块**（production，已上线运行）
-> - **虚线边框 = 设计态模块**（design，蓝图阶段，代码未写）
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
@@ -144,12 +144,12 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_domain_governance_drift_detector_blueprint_md["(设计态 / design) drift_detector/blueprint.md"]
+    docs_03_modules_domain_governance_drift_detector_blueprint_md["(设计态 / design)<br/>文件: drift_detector/blueprint.md"]
     scripts_governance_d11_compliance_validate_blueprint_overlap_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: d11_compliance/validate_blueprint_overlap.py"]
     scripts_governance_d11_compliance_validate_truth_source_cascade_py["(生产态 / production) validate_truth_source_cascade.py — 真源级联一致性校验<br/>validate_truth_source_cascade.py — 真源级联一致性校验<br/>文件: d11_compliance/validate_truth_source_cascade.py"]
     scripts_governance_d5_architecture_validators_validate_authority_registry_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: validators/validate_authority_registry.py"]
     scripts_governance_d5_architecture_validators_validate_ssot_py["(生产态 / production) SSoT 文件头一致性校验器.<br/>SSoT 文件头一致性校验器.<br/>文件: validators/validate_ssot.py"]
-    src_zephyr_gov_audit_self_monitor_py["(生产态 / production) gov_audit/self_monitor.py"]
+    src_zephyr_gov_audit_self_monitor_py["(生产态 / production)<br/>文件: gov_audit/self_monitor.py"]
     src_zephyr_gov_drift_absence_manager_py["(生产态 / production) Owner Absence Manager — Owner缺席模式 §6.32。<br/>Owner Absence Manager — Owner缺席模式 §6.32。<br/>文件: gov_drift/absence_manager.py"]
     src_zephyr_gov_drift_ai_construction_detectors_py["(生产态 / production) Drift Detector AI 施工检测器 — ai_construction_detectors.py<br/>Drift Detector AI 施工检测器 — ai_construction_detectors.py<br/>文件: gov_drift/ai_construction_detectors.py"]
     src_zephyr_gov_drift_ai_context_injector_py["(生产态 / production) AI Context Injector — 施工前预检D-023-16 · §6.8。<br/>AI Context Injector — 施工前预检D-023-16 · §6.8。<br/>文件: gov_drift/ai_context_injector.py"]
@@ -158,7 +158,7 @@ flowchart TD
     src_zephyr_gov_drift_backcompat_checker_py["(生产态 / production) Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。<br/>Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。<br/>文件: gov_drift/backcompat_checker.py"]
     src_zephyr_gov_drift_baseline_manager_py["(生产态 / production) Baseline Manager — baseline_manager.py<br/>Baseline Manager — baseline_manager.py<br/>文件: gov_drift/baseline_manager.py"]
     src_zephyr_gov_drift_baseline_poisoning_guard_py["(生产态 / production) Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。<br/>Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。<br/>文件: gov_drift/baseline_poisoning_guard.py"]
-    src_zephyr_gov_drift_bootstrapping_calibrator_py["(生产态 / production) gov_drift/bootstrapping_calibrator.py"]
+    src_zephyr_gov_drift_bootstrapping_calibrator_py["(生产态 / production)<br/>文件: gov_drift/bootstrapping_calibrator.py"]
     src_zephyr_gov_drift_brain_integration_py["(生产态 / production) ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation<br/>ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation<br/>文件: gov_drift/brain_integration.py"]
     src_zephyr_gov_drift_canary_controller_py["(生产态 / production) Detector Canary Controller — 检测器金丝雀部署 §6.11。<br/>Detector Canary Controller — 检测器金丝雀部署 §6.11。<br/>文件: gov_drift/canary_controller.py"]
     src_zephyr_gov_drift_cascade_detector_py["(生产态 / production) Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。<br/>Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。<br/>文件: gov_drift/cascade_detector.py"]
@@ -169,7 +169,7 @@ flowchart TD
     src_zephyr_gov_drift_dashboard_py["(生产态 / production) Coverage Dashboard — dashboard.py<br/>Coverage Dashboard — dashboard.py<br/>文件: gov_drift/dashboard.py"]
     src_zephyr_gov_drift_detector_core_init_py["(生产态 / production) MOD-INF-023 drift_detector core module.<br/>MOD-INF-023 drift_detector core module.<br/>文件: detector_core/__init__.py"]
     src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py["(生产态 / production) DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).<br/>DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).<br/>文件: bridges/drift_bridge.py"]
-    src_zephyr_gov_drift_detector_core_ml_engineering_py["(生产态 / production) detector_core/ml_engineering.py"]
+    src_zephyr_gov_drift_detector_core_ml_engineering_py["(生产态 / production)<br/>文件: detector_core/ml_engineering.py"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md ~~~ scripts_governance_d11_compliance_validate_blueprint_overlap_py
     scripts_governance_d11_compliance_validate_blueprint_overlap_py ~~~ scripts_governance_d11_compliance_validate_truth_source_cascade_py
     scripts_governance_d11_compliance_validate_truth_source_cascade_py ~~~ scripts_governance_d5_architecture_validators_validate_authority_registry_py
@@ -195,10 +195,10 @@ flowchart TD
     src_zephyr_gov_drift_dashboard_py ~~~ src_zephyr_gov_drift_detector_core_init_py
     src_zephyr_gov_drift_detector_core_init_py ~~~ src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py
     src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py ~~~ src_zephyr_gov_drift_detector_core_ml_engineering_py
-    src_zephyr_gov_audit_drift_bridge_py["(生产态 / production) gov_audit/drift_bridge.py"]
+    src_zephyr_gov_audit_drift_bridge_py["(生产态 / production)<br/>文件: gov_audit/drift_bridge.py"]
     src_zephyr_gov_drift_correlation_engine_py["(生产态 / production) Correlation Engine — correlation_engine.py<br/>Correlation Engine — correlation_engine.py<br/>文件: gov_drift/correlation_engine.py"]
     src_zephyr_gov_drift_credibility_engine_py["(生产态 / production) Credibility Engine — credibility_engine.py<br/>Credibility Engine — credibility_engine.py<br/>文件: gov_drift/credibility_engine.py"]
-    src_zephyr_gov_drift_detector_core_benchmark_integrity_py["(生产态 / production) detector_core/benchmark_integrity.py"]
+    src_zephyr_gov_drift_detector_core_benchmark_integrity_py["(生产态 / production)<br/>文件: detector_core/benchmark_integrity.py"]
     src_zephyr_gov_audit_drift_bridge_py ~~~ src_zephyr_gov_drift_correlation_engine_py
     src_zephyr_gov_drift_correlation_engine_py ~~~ src_zephyr_gov_drift_credibility_engine_py
     src_zephyr_gov_drift_credibility_engine_py ~~~ src_zephyr_gov_drift_detector_core_benchmark_integrity_py
@@ -242,10 +242,10 @@ flowchart TD
     D_COMPLIANCE -->|导入依赖 / import_depends| src_zephyr_gov_drift_correlation_engine_py
     D_COMPLIANCE -->|导入依赖 / import_depends| src_zephyr_gov_drift_cross_module_score_py
     D_COMPLIANCE -->|导入依赖 / import_depends| src_zephyr_gov_drift_config_consistency_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_d11_compliance_validate_blueprint_overlap_py,scripts_governance_d11_compliance_validate_truth_source_cascade_py,scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_gov_audit_drift_bridge_py,src_zephyr_gov_audit_self_monitor_py,src_zephyr_gov_drift_absence_manager_py,src_zephyr_gov_drift_ai_construction_detectors_py,src_zephyr_gov_drift_ai_context_injector_py,src_zephyr_gov_drift_artifact_scanner_py,src_zephyr_gov_drift_autonomy_regressor_py,src_zephyr_gov_drift_backcompat_checker_py,src_zephyr_gov_drift_baseline_manager_py,src_zephyr_gov_drift_baseline_poisoning_guard_py,src_zephyr_gov_drift_bootstrapping_calibrator_py,src_zephyr_gov_drift_brain_integration_py,src_zephyr_gov_drift_canary_controller_py,src_zephyr_gov_drift_cascade_detector_py,src_zephyr_gov_drift_chaos_injector_py,src_zephyr_gov_drift_config_consistency_py,src_zephyr_gov_drift_contract_drift_detector_py,src_zephyr_gov_drift_correlation_engine_py,src_zephyr_gov_drift_credibility_engine_py,src_zephyr_gov_drift_cross_module_score_py,src_zephyr_gov_drift_dashboard_py,src_zephyr_gov_drift_detector_core_init_py,src_zephyr_gov_drift_detector_core_benchmark_integrity_py,src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py,src_zephyr_gov_drift_detector_core_ml_engineering_py production
     class docs_03_modules_domain_governance_drift_detector_blueprint_md design
     class D_GOV_AUDIT,D_SHARED,D_SECURITY,D_GOVERNANCE,D_COMPLIANCE,D_INFRA_RUNTIME external_prod
@@ -256,9 +256,9 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_gov_drift_detector_core_model_drift_monitor_py["(生产态 / production) detector_core/model_drift_monitor.py"]
-    src_zephyr_gov_drift_detector_core_performance_baseline_py["(生产态 / production) detector_core/performance_baseline.py"]
-    src_zephyr_gov_drift_detector_core_regime_detector_py["(生产态 / production) detector_core/regime_detector.py"]
+    src_zephyr_gov_drift_detector_core_model_drift_monitor_py["(生产态 / production)<br/>文件: detector_core/model_drift_monitor.py"]
+    src_zephyr_gov_drift_detector_core_performance_baseline_py["(生产态 / production)<br/>文件: detector_core/performance_baseline.py"]
+    src_zephyr_gov_drift_detector_core_regime_detector_py["(生产态 / production)<br/>文件: detector_core/regime_detector.py"]
     src_zephyr_gov_drift_detector_dispatcher_py["(生产态 / production) Detector Dispatcher — detector_dispatcher.py<br/>Detector Dispatcher — detector_dispatcher.py<br/>文件: gov_drift/detector_dispatcher.py"]
     src_zephyr_gov_drift_drift_detector_py["(生产态 / production) Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).<br/>Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).<br/>文件: gov_drift/drift_detector.py"]
     src_zephyr_gov_drift_drift_hotfix_bypass_py["(生产态 / production) Drift Hotfix Bypass — drift_hotfix_bypass.py<br/>Drift Hotfix Bypass — drift_hotfix_bypass.py<br/>文件: gov_drift/drift_hotfix_bypass.py"]
@@ -358,10 +358,10 @@ flowchart TD
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_drift_naming_magic_checker_py
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_drift_detector_core_model_drift_monitor_py,src_zephyr_gov_drift_detector_core_performance_baseline_py,src_zephyr_gov_drift_detector_core_regime_detector_py,src_zephyr_gov_drift_detector_dispatcher_py,src_zephyr_gov_drift_drift_detector_py,src_zephyr_gov_drift_drift_engine_py,src_zephyr_gov_drift_drift_hotfix_bypass_py,src_zephyr_gov_drift_drift_infrastructure_py,src_zephyr_gov_drift_drift_models_py,src_zephyr_gov_drift_drift_result_types_py,src_zephyr_gov_drift_drift_training_py,src_zephyr_gov_drift_file_attr_checker_py,src_zephyr_gov_drift_forensics_engine_py,src_zephyr_gov_drift_gate_persistence_py,src_zephyr_gov_drift_git_bisector_py,src_zephyr_gov_drift_gitignore_auditor_py,src_zephyr_gov_drift_handoff_manager_py,src_zephyr_gov_drift_headless_scanner_py,src_zephyr_gov_drift_incremental_scanner_py,src_zephyr_gov_drift_naming_magic_checker_py,src_zephyr_gov_drift_orphan_scanner_py,src_zephyr_gov_drift_python_compat_py,src_zephyr_gov_drift_resource_guard_py,src_zephyr_gov_drift_reward_hacking_rebound_detector_py,src_zephyr_gov_drift_roi_engine_py,src_zephyr_gov_drift_rollback_bridge_py,src_zephyr_gov_drift_scan_mutex_py,src_zephyr_gov_drift_self_check_py,src_zephyr_gov_drift_self_test_verifier_py,src_zephyr_gov_drift_silence_detector_py production
     class D_SHARED,D_GOV_AUDIT,D_GOVERNANCE,D_INTEGRATION,D_FEEDBACK_LOOP,D_SECURITY,D_COMPLIANCE external_prod
 ```
@@ -371,7 +371,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_gov_drift_spiral_ews_py["(生产态 / production) gov_drift/spiral_ews.py"]
+    src_zephyr_gov_drift_spiral_ews_py["(生产态 / production)<br/>文件: gov_drift/spiral_ews.py"]
     src_zephyr_gov_drift_suppression_learner_py["(生产态 / production) Suppression Learner — suppression_learner.py<br/>Suppression Learner — suppression_learner.py<br/>文件: gov_drift/suppression_learner.py"]
     src_zephyr_gov_drift_symlink_checker_py["(生产态 / production) Symlink Integrity Checker — 软链接完整性检测 §6.29。<br/>Symlink Integrity Checker — 软链接完整性检测 §6.29。<br/>文件: gov_drift/symlink_checker.py"]
     src_zephyr_gov_drift_tamper_proof_audit_py["(生产态 / production) Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。<br/>Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。<br/>文件: gov_drift/tamper_proof_audit.py"]
@@ -384,8 +384,8 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_integrity_guard_py["(生产态 / production) 门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta）<br/>门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta）<br/>文件: gate_engine/gate_integrity_guard.py"]
     src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_py["(生产态 / production) EN-002 — Enforcement Mode Validator<br/>EN-002 — Enforcement Mode Validator<br/>文件: invariants/en_002_enforcement_validator.py"]
     src_zephyr_gov_enforcement_rule_enforcement_truth_source_validator_py["(生产态 / production) 真源优先级裁决器（Truth Source Validator）<br/>真源优先级裁决器（Truth Source Validator）<br/>文件: rule_enforcement/truth_source_validator.py"]
-    src_zephyr_governance_drift_detector_init_py["(生产态 / production) drift-detector/__init__.py"]
-    src_zephyr_governance_integrity_py["(生产态 / production) governance/integrity.py"]
+    src_zephyr_governance_drift_detector_init_py["(生产态 / production)<br/>文件: drift-detector/__init__.py"]
+    src_zephyr_governance_integrity_py["(生产态 / production)<br/>文件: governance/integrity.py"]
     src_zephyr_gov_drift_spiral_ews_py ~~~ src_zephyr_gov_drift_suppression_learner_py
     src_zephyr_gov_drift_suppression_learner_py ~~~ src_zephyr_gov_drift_symlink_checker_py
     src_zephyr_gov_drift_symlink_checker_py ~~~ src_zephyr_gov_drift_tamper_proof_audit_py
@@ -440,10 +440,10 @@ flowchart TD
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR 代理编排器"]
     D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_drift_detector_py
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_drift_detector_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_drift_spiral_ews_py,src_zephyr_gov_drift_suppression_learner_py,src_zephyr_gov_drift_symlink_checker_py,src_zephyr_gov_drift_tamper_proof_audit_py,src_zephyr_gov_drift_test_fixture_checker_py,src_zephyr_gov_drift_trend_analyzer_py,src_zephyr_gov_drift_vigil_runtime_py,src_zephyr_gov_enforcement_rule_enforcement_breaking_change_detector_py,src_zephyr_gov_enforcement_rule_enforcement_drift_detector_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_health_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_integrity_guard_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_py,src_zephyr_gov_enforcement_rule_enforcement_truth_source_validator_py,src_zephyr_governance_drift_detector_init_py,src_zephyr_governance_integrity_py production
     class D_SHARED,D_INFRA_RECOVERY,D_GOV_AUDIT,D_GOV_ENFORCEMENT,D_GOVERNANCE,D_SECURITY,D_COMPLIANCE,D_FEEDBACK_LOOP,D_OPS,D_ORCHESTRATOR external_prod
 ```
@@ -459,7 +459,7 @@ flowchart TD
     scripts_governance_d11_compliance_validate_truth_source_cascade_py["(生产态 / production) validate_truth_source_cascade.py — 真源级联一致性校验<br/>validate_truth_source_cascade.py — 真源级联一致性校验<br/>文件: d11_compliance/validate_truth_source_cascade.py"]
     scripts_governance_d5_architecture_validators_validate_authority_registry_py["(生产态 / production) Module docstring — see module-level docstring for details.<br/>Module docstring — see module-level docstring for details.<br/>文件: validators/validate_authority_registry.py"]
     scripts_governance_d5_architecture_validators_validate_ssot_py["(生产态 / production) SSoT 文件头一致性校验器.<br/>SSoT 文件头一致性校验器.<br/>文件: validators/validate_ssot.py"]
-    src_zephyr_gov_audit_self_monitor_py["(生产态 / production) gov_audit/self_monitor.py"]
+    src_zephyr_gov_audit_self_monitor_py["(生产态 / production)<br/>文件: gov_audit/self_monitor.py"]
     src_zephyr_gov_drift_absence_manager_py["(生产态 / production) Owner Absence Manager — Owner缺席模式 §6.32。<br/>Owner Absence Manager — Owner缺席模式 §6.32。<br/>文件: gov_drift/absence_manager.py"]
     src_zephyr_gov_drift_ai_construction_detectors_py["(生产态 / production) Drift Detector AI 施工检测器 — ai_construction_detectors.py<br/>Drift Detector AI 施工检测器 — ai_construction_detectors.py<br/>文件: gov_drift/ai_construction_detectors.py"]
     src_zephyr_gov_drift_ai_context_injector_py["(生产态 / production) AI Context Injector — 施工前预检D-023-16 · §6.8。<br/>AI Context Injector — 施工前预检D-023-16 · §6.8。<br/>文件: gov_drift/ai_context_injector.py"]
@@ -468,7 +468,7 @@ flowchart TD
     src_zephyr_gov_drift_backcompat_checker_py["(生产态 / production) Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。<br/>Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。<br/>文件: gov_drift/backcompat_checker.py"]
     src_zephyr_gov_drift_baseline_manager_py["(生产态 / production) Baseline Manager — baseline_manager.py<br/>Baseline Manager — baseline_manager.py<br/>文件: gov_drift/baseline_manager.py"]
     src_zephyr_gov_drift_baseline_poisoning_guard_py["(生产态 / production) Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。<br/>Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。<br/>文件: gov_drift/baseline_poisoning_guard.py"]
-    src_zephyr_gov_drift_bootstrapping_calibrator_py["(生产态 / production) gov_drift/bootstrapping_calibrator.py"]
+    src_zephyr_gov_drift_bootstrapping_calibrator_py["(生产态 / production)<br/>文件: gov_drift/bootstrapping_calibrator.py"]
     src_zephyr_gov_drift_brain_integration_py["(生产态 / production) ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation<br/>ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation<br/>文件: gov_drift/brain_integration.py"]
     src_zephyr_gov_drift_canary_controller_py["(生产态 / production) Detector Canary Controller — 检测器金丝雀部署 §6.11。<br/>Detector Canary Controller — 检测器金丝雀部署 §6.11。<br/>文件: gov_drift/canary_controller.py"]
     src_zephyr_gov_drift_chaos_injector_py["(生产态 / production) Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。<br/>Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。<br/>文件: gov_drift/chaos_injector.py"]
@@ -478,10 +478,10 @@ flowchart TD
     src_zephyr_gov_drift_dashboard_py["(生产态 / production) Coverage Dashboard — dashboard.py<br/>Coverage Dashboard — dashboard.py<br/>文件: gov_drift/dashboard.py"]
     src_zephyr_gov_drift_detector_core_init_py["(生产态 / production) MOD-INF-023 drift_detector core module.<br/>MOD-INF-023 drift_detector core module.<br/>文件: detector_core/__init__.py"]
     src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py["(生产态 / production) DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).<br/>DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).<br/>文件: bridges/drift_bridge.py"]
-    src_zephyr_gov_drift_detector_core_ml_engineering_py["(生产态 / production) detector_core/ml_engineering.py"]
-    src_zephyr_gov_drift_detector_core_model_drift_monitor_py["(生产态 / production) detector_core/model_drift_monitor.py"]
-    src_zephyr_gov_drift_detector_core_performance_baseline_py["(生产态 / production) detector_core/performance_baseline.py"]
-    src_zephyr_gov_drift_detector_core_regime_detector_py["(生产态 / production) detector_core/regime_detector.py"]
+    src_zephyr_gov_drift_detector_core_ml_engineering_py["(生产态 / production)<br/>文件: detector_core/ml_engineering.py"]
+    src_zephyr_gov_drift_detector_core_model_drift_monitor_py["(生产态 / production)<br/>文件: detector_core/model_drift_monitor.py"]
+    src_zephyr_gov_drift_detector_core_performance_baseline_py["(生产态 / production)<br/>文件: detector_core/performance_baseline.py"]
+    src_zephyr_gov_drift_detector_core_regime_detector_py["(生产态 / production)<br/>文件: detector_core/regime_detector.py"]
     src_zephyr_gov_drift_detector_dispatcher_py["(生产态 / production) Detector Dispatcher — detector_dispatcher.py<br/>Detector Dispatcher — detector_dispatcher.py<br/>文件: gov_drift/detector_dispatcher.py"]
     src_zephyr_gov_drift_drift_result_types_py["(生产态 / production) Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py<br/>Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py<br/>文件: gov_drift/drift_result_types.py"]
     src_zephyr_gov_drift_drift_training_py["(生产态 / production) Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py<br/>Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py<br/>文件: gov_drift/drift_training.py"]
@@ -501,7 +501,7 @@ flowchart TD
     src_zephyr_gov_drift_scan_mutex_py["(生产态 / production) Scan Mutex — scan_mutex.py<br/>Scan Mutex — scan_mutex.py<br/>文件: gov_drift/scan_mutex.py"]
     src_zephyr_gov_drift_self_test_verifier_py["(生产态 / production) Self Test Verifier — self_test_verifier.py<br/>Self Test Verifier — self_test_verifier.py<br/>文件: gov_drift/self_test_verifier.py"]
     src_zephyr_gov_drift_silence_detector_py["(生产态 / production) Silence Detector — v0.8.0 静默窗口检测器: agent无响应超时+heartbeat缺失检测。<br/>Silence Detector — v0.8.0 静默窗口检测器: agent无响应超时+heartbeat缺失检测。<br/>文件: gov_drift/silence_detector.py"]
-    src_zephyr_gov_drift_spiral_ews_py["(生产态 / production) gov_drift/spiral_ews.py"]
+    src_zephyr_gov_drift_spiral_ews_py["(生产态 / production)<br/>文件: gov_drift/spiral_ews.py"]
     src_zephyr_gov_drift_suppression_learner_py["(生产态 / production) Suppression Learner — suppression_learner.py<br/>Suppression Learner — suppression_learner.py<br/>文件: gov_drift/suppression_learner.py"]
     src_zephyr_gov_drift_symlink_checker_py["(生产态 / production) Symlink Integrity Checker — 软链接完整性检测 §6.29。<br/>Symlink Integrity Checker — 软链接完整性检测 §6.29。<br/>文件: gov_drift/symlink_checker.py"]
     src_zephyr_gov_drift_tamper_proof_audit_py["(生产态 / production) Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。<br/>Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。<br/>文件: gov_drift/tamper_proof_audit.py"]
@@ -514,8 +514,8 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_integrity_guard_py["(生产态 / production) 门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta）<br/>门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta）<br/>文件: gate_engine/gate_integrity_guard.py"]
     src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_py["(生产态 / production) EN-002 — Enforcement Mode Validator<br/>EN-002 — Enforcement Mode Validator<br/>文件: invariants/en_002_enforcement_validator.py"]
     src_zephyr_gov_enforcement_rule_enforcement_truth_source_validator_py["(生产态 / production) 真源优先级裁决器（Truth Source Validator）<br/>真源优先级裁决器（Truth Source Validator）<br/>文件: rule_enforcement/truth_source_validator.py"]
-    src_zephyr_governance_drift_detector_init_py["(生产态 / production) drift-detector/__init__.py"]
-    src_zephyr_governance_integrity_py["(生产态 / production) governance/integrity.py"]
+    src_zephyr_governance_drift_detector_init_py["(生产态 / production)<br/>文件: drift-detector/__init__.py"]
+    src_zephyr_governance_integrity_py["(生产态 / production)<br/>文件: governance/integrity.py"]
     scripts_governance_d11_compliance_validate_blueprint_overlap_py ~~~ scripts_governance_d11_compliance_validate_truth_source_cascade_py
     scripts_governance_d11_compliance_validate_truth_source_cascade_py ~~~ scripts_governance_d5_architecture_validators_validate_authority_registry_py
     scripts_governance_d5_architecture_validators_validate_authority_registry_py ~~~ scripts_governance_d5_architecture_validators_validate_ssot_py
@@ -576,11 +576,11 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_truth_source_validator_py
     src_zephyr_gov_enforcement_rule_enforcement_truth_source_validator_py ~~~ src_zephyr_governance_drift_detector_init_py
     src_zephyr_governance_drift_detector_init_py ~~~ src_zephyr_governance_integrity_py
-    src_zephyr_gov_audit_drift_bridge_py["(生产态 / production) gov_audit/drift_bridge.py"]
+    src_zephyr_gov_audit_drift_bridge_py["(生产态 / production)<br/>文件: gov_audit/drift_bridge.py"]
     src_zephyr_gov_drift_cascade_detector_py["(生产态 / production) Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。<br/>Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。<br/>文件: gov_drift/cascade_detector.py"]
     src_zephyr_gov_drift_correlation_engine_py["(生产态 / production) Correlation Engine — correlation_engine.py<br/>Correlation Engine — correlation_engine.py<br/>文件: gov_drift/correlation_engine.py"]
     src_zephyr_gov_drift_credibility_engine_py["(生产态 / production) Credibility Engine — credibility_engine.py<br/>Credibility Engine — credibility_engine.py<br/>文件: gov_drift/credibility_engine.py"]
-    src_zephyr_gov_drift_detector_core_benchmark_integrity_py["(生产态 / production) detector_core/benchmark_integrity.py"]
+    src_zephyr_gov_drift_detector_core_benchmark_integrity_py["(生产态 / production)<br/>文件: detector_core/benchmark_integrity.py"]
     src_zephyr_gov_drift_drift_engine_py["(生产态 / production) Drift Engine — 编排器核心 (SRC-0030 精简后)<br/>Drift Engine — 编排器核心 (SRC-0030 精简后)<br/>文件: gov_drift/drift_engine.py"]
     src_zephyr_gov_drift_drift_hotfix_bypass_py["(生产态 / production) Drift Hotfix Bypass — drift_hotfix_bypass.py<br/>Drift Hotfix Bypass — drift_hotfix_bypass.py<br/>文件: gov_drift/drift_hotfix_bypass.py"]
     src_zephyr_gov_drift_forensics_engine_py["(生产态 / production) Drift Forensics Engine — 漂移取证引擎 §6.17。<br/>Drift Forensics Engine — 漂移取证引擎 §6.17。<br/>文件: gov_drift/forensics_engine.py"]
@@ -662,10 +662,10 @@ flowchart TD
     D_OPS["(生产态 / production) D_OPS 反馈循环"]
     D_OPS -->|导入依赖 / import_depends| src_zephyr_gov_drift_spiral_ews_py
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_infrastructure_py
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_d11_compliance_validate_blueprint_overlap_py,scripts_governance_d11_compliance_validate_truth_source_cascade_py,scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_gov_audit_drift_bridge_py,src_zephyr_gov_audit_self_monitor_py,src_zephyr_gov_drift_absence_manager_py,src_zephyr_gov_drift_ai_construction_detectors_py,src_zephyr_gov_drift_ai_context_injector_py,src_zephyr_gov_drift_artifact_scanner_py,src_zephyr_gov_drift_autonomy_regressor_py,src_zephyr_gov_drift_backcompat_checker_py,src_zephyr_gov_drift_baseline_manager_py,src_zephyr_gov_drift_baseline_poisoning_guard_py,src_zephyr_gov_drift_bootstrapping_calibrator_py,src_zephyr_gov_drift_brain_integration_py,src_zephyr_gov_drift_canary_controller_py,src_zephyr_gov_drift_cascade_detector_py,src_zephyr_gov_drift_chaos_injector_py,src_zephyr_gov_drift_config_consistency_py,src_zephyr_gov_drift_contract_drift_detector_py,src_zephyr_gov_drift_correlation_engine_py,src_zephyr_gov_drift_credibility_engine_py,src_zephyr_gov_drift_cross_module_score_py,src_zephyr_gov_drift_dashboard_py,src_zephyr_gov_drift_detector_core_init_py,src_zephyr_gov_drift_detector_core_benchmark_integrity_py,src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py,src_zephyr_gov_drift_detector_core_ml_engineering_py,src_zephyr_gov_drift_detector_core_model_drift_monitor_py,src_zephyr_gov_drift_detector_core_performance_baseline_py,src_zephyr_gov_drift_detector_core_regime_detector_py,src_zephyr_gov_drift_detector_dispatcher_py,src_zephyr_gov_drift_drift_detector_py,src_zephyr_gov_drift_drift_engine_py,src_zephyr_gov_drift_drift_hotfix_bypass_py,src_zephyr_gov_drift_drift_infrastructure_py,src_zephyr_gov_drift_drift_models_py,src_zephyr_gov_drift_drift_result_types_py,src_zephyr_gov_drift_drift_training_py,src_zephyr_gov_drift_file_attr_checker_py,src_zephyr_gov_drift_forensics_engine_py,src_zephyr_gov_drift_gate_persistence_py,src_zephyr_gov_drift_git_bisector_py,src_zephyr_gov_drift_gitignore_auditor_py,src_zephyr_gov_drift_handoff_manager_py,src_zephyr_gov_drift_headless_scanner_py,src_zephyr_gov_drift_incremental_scanner_py,src_zephyr_gov_drift_naming_magic_checker_py,src_zephyr_gov_drift_orphan_scanner_py,src_zephyr_gov_drift_python_compat_py,src_zephyr_gov_drift_resource_guard_py,src_zephyr_gov_drift_reward_hacking_rebound_detector_py,src_zephyr_gov_drift_roi_engine_py,src_zephyr_gov_drift_rollback_bridge_py,src_zephyr_gov_drift_scan_mutex_py,src_zephyr_gov_drift_self_check_py,src_zephyr_gov_drift_self_test_verifier_py,src_zephyr_gov_drift_silence_detector_py,src_zephyr_gov_drift_spiral_ews_py,src_zephyr_gov_drift_suppression_learner_py,src_zephyr_gov_drift_symlink_checker_py,src_zephyr_gov_drift_tamper_proof_audit_py,src_zephyr_gov_drift_test_fixture_checker_py,src_zephyr_gov_drift_trend_analyzer_py,src_zephyr_gov_drift_vigil_runtime_py,src_zephyr_gov_enforcement_rule_enforcement_breaking_change_detector_py,src_zephyr_gov_enforcement_rule_enforcement_drift_detector_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_health_py,src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_integrity_guard_py,src_zephyr_gov_enforcement_rule_enforcement_invariants_en_002_enforcement_validator_py,src_zephyr_gov_enforcement_rule_enforcement_truth_source_validator_py,src_zephyr_governance_drift_detector_init_py,src_zephyr_governance_integrity_py production
     class D_GOV_SCRIPTS,D_SHARED,D_SECURITY,D_GOV_AUDIT,D_INFRA_RECOVERY,D_COMPLIANCE,D_FEEDBACK_LOOP,D_GOVERNANCE,D_OPS external_prod
 ```
@@ -677,11 +677,11 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_domain_governance_drift_detector_blueprint_md["(设计态 / design) drift_detector/blueprint.md"]
-    classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
-    classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
-    classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
+    docs_03_modules_domain_governance_drift_detector_blueprint_md["(设计态 / design)<br/>文件: drift_detector/blueprint.md"]
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_governance_drift_detector_blueprint_md design
 ```
 
