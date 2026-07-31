@@ -104,7 +104,8 @@ DEFAULT_POLICIES: Final[dict[str, dict]] = {
     },
     "akshare": {
         "rpm": 60, "concurrency": 4, "max_retries": 5, "backoff": "jittered",
-        "initial_wait_sec": 2.0, "retry_on": ["HTTPError", "JSONDecodeError", "ConnectionError"],
+        # #ARCH-RSS-INVESTING-403-001 治本扩展：移除 HTTPError（dead config），akshare 逐 symbol 请求不重试 5xx
+        "initial_wait_sec": 2.0, "retry_on": ["JSONDecodeError", "ConnectionError"],
         "disconnect_vpn": True,
     },
     "baostock": {

@@ -902,7 +902,6 @@ class AkshareIngestProvider(IngestProviderBase):
         klines 格式: 日期,主力净流入,小单净流入,中单净流入,大单净流入,超大单净流入,主力占比,小单占比,中单占比,大单占比,超大单占比
         close/pct_change 接口未提供，填 None。
         """
-        import requests
         import akshare as ak  # 用于 _get_all_a_symbols 获取标的列表（裁定 #ARCH-CH-018）
 
         table = _TBL_MONEY_FLOW
@@ -949,12 +948,12 @@ class AkshareIngestProvider(IngestProviderBase):
                 "fields2": fields2,
             }
             try:
+                # #ARCH-RSS-INVESTING-403-001 治本扩展：切到 _http_get（raise_for_status），
+                # 移除手动 status_code 检查——5xx/4xx 抛 HTTPError 不匹配 retry_on → except → continue
                 resp = self._call_with_policy(
-                    requests.get, policy, url,
+                    self._http_get, policy, url,
                     params=params, headers=headers, timeout=15,
                 )
-                if resp is None or resp.status_code != 200:
-                    continue
                 data = resp.json()
                 klines = (data.get("data") or {}).get("klines") or []
                 for line in klines:

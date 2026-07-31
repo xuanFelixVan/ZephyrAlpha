@@ -212,7 +212,7 @@ class RSSProvider(IngestProviderBase):
         """获取财经新闻（feedparser.parse）。
 
         每个 RSS 源作为一批 yield FetchResult。
-        用 _get_feed_response 拉取 XML 并校验状态码（含 raise_for_status，纳入重试循环：
+        用 self._http_get 拉取 XML 并校验状态码（含 raise_for_status，纳入重试循环：
         5xx 重试、4xx 不重试），feedparser.parse 解析。
         """
         import feedparser

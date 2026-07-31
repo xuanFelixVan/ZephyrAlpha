@@ -51,7 +51,6 @@ akshare:
   backoff: jittered
   initial_wait_sec: 2.0
   retry_on:
-  - HTTPError
   - JSONDecodeError
   - ConnectionError
   disconnect_vpn: true
