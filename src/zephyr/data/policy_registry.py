@@ -122,7 +122,8 @@ DEFAULT_POLICIES: Final[dict[str, dict]] = {
     },
     "tickflow": {
         "rpm": 60, "concurrency": 2, "max_retries": 3, "backoff": "jittered",
-        "initial_wait_sec": 1.0, "retry_on": ["HTTPError", "ConnectionError"],
+        # #ARCH-RSS-INVESTING-403-001 治本扩展：移除 HTTPError（dead config，tickflow SDK 抛自定义异常）
+        "initial_wait_sec": 1.0, "retry_on": ["ConnectionError"],
     },
     "tdx": {
         "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "fixed",

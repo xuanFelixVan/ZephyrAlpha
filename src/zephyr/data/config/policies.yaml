@@ -89,7 +89,6 @@ tickflow:
   backoff: jittered
   initial_wait_sec: 1.0
   retry_on:
-  - HTTPError
   - ConnectionError
 tdx:
   rpm: 0

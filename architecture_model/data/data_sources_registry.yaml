@@ -189,7 +189,8 @@ data_sources:
       max_retries: 3
       backoff: jittered
       initial_wait_sec: 1.0
-      retry_on: ["HTTPError", "ConnectionError"]
+      # #ARCH-RSS-INVESTING-403-001 治本扩展：移除 HTTPError（dead config，tickflow SDK 抛 InternalServerError 等自定义异常，类名不含 HTTPError）
+      retry_on: ["ConnectionError"]
 
   - id: DS-TDX
     runtime_id: tdx
