@@ -21,9 +21,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3002 |
+| 模块总数 | 3059 |
 | 生产态模块 | 2854 |
-| 设计态模块 | 148 |
+| 设计态模块 | 205 |
 
 ## 域清单（按架构层分组）
 
@@ -61,7 +61,7 @@ ttl: permanent
 | D_MKT_DATA | 行情数据 / Market Data | 15 | 9 | 6 | 15/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
-| D_REPORTING | 报告 / Reporting | 3 | 3 | 0 | 3/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
+| D_REPORTING | 报告 / Reporting | 12 | 3 | 9 | 12/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
 | D_SECURITY | 对抗验证 / Adversarial Validation | 166 | 166 | 0 | 166/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
 | D_SECURITY_LLM | LLM防御 / LLM Defense | 0 | 0 | 0 | 0/150 (OK) | [📄 28_d_security_llm.md](28_d_security_llm.md) |
 
@@ -72,7 +72,7 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts / D_ARCHIVE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 29_d_archive_scripts.md](29_d_archive_scripts.md) |
 | D_ARCH_GUARD | 架构守护脚本 / D_ARCH_GUARD | 0 | 0 | 0 | 0/150 (OK) | [📄 30_d_arch_guard.md](30_d_arch_guard.md) |
 | D_ARCH_SCRIPTS | 架构治理脚本 / D_ARCH_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 31_d_arch_scripts.md](31_d_arch_scripts.md) |
-| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 8 | 7 | 1 | 8/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
+| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 17 | 7 | 10 | 17/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 27 | 18 | 9 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
@@ -85,10 +85,10 @@ ttl: permanent
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
 | D_EX_CORE | 执行核心 / Execution Core | 14 | 8 | 6 | 14/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
-| D_EX_SOR | 执行路由 / Execution Routing | 7 | 7 | 0 | 7/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
+| D_EX_SOR | 执行路由 / Execution Routing | 17 | 7 | 10 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 86 | 37 | 49 | 86/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 12 | 12 | 0 | 12/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
-| D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 10 | 10 | 0 | 10/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
+| D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 13 | 10 | 3 | 13/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
 | D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 220 | 220 | 0 | 220/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 124 | 121 | 3 | 124/150 (OK) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 26 | 2 | 24 | 26/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
@@ -102,14 +102,14 @@ ttl: permanent
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
-| D_PF_ALLOC | 组合分配 / Portfolio Allocation | 2 | 2 | 0 | 2/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
+| D_PF_ALLOC | 组合分配 / Portfolio Allocation | 5 | 2 | 3 | 5/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 10 | 6 | 4 | 10/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
-| D_POSITION | 仓位管理 / Position Management | 10 | 1 | 9 | 10/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
+| D_POSITION | 仓位管理 / Position Management | 11 | 1 | 10 | 11/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 12 | 11 | 1 | 12/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
-| D_SELL_DECISION | 卖出决策 / Sell Decision | 7 | 7 | 0 | 7/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
+| D_SELL_DECISION | 卖出决策 / Sell Decision | 21 | 7 | 14 | 21/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
 | D_SIGLEGACY | 信号遗留设计态 / Signal Legacy (Design) | 0 | 0 | 0 | 0/150 (OK) | [📄 68_d_siglegacy.md](68_d_siglegacy.md) |
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
-| D_SIMULATION | 仿真 / Simulation | 2 | 2 | 0 | 2/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
+| D_SIMULATION | 仿真 / Simulation | 10 | 2 | 8 | 10/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
 | D_TRADING | 交易运营 / Trading Operations | 38 | 37 | 1 | 38/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |

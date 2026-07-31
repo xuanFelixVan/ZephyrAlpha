@@ -28,7 +28,7 @@ ttl: permanent
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
@@ -122,9 +122,14 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
 
-> （无跨域依赖 / No cross-domain dependencies）
+```mermaid
+graph LR
+    D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
+    D_POSITION["D_POSITION<br/>仓位管理"]
+    D_SELL_DECISION -->|1条 runtime / runtime| D_POSITION
+```
 
 ## 说明 / Notes
 
