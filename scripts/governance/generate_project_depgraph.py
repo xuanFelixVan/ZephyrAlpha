@@ -1225,20 +1225,17 @@ def extract_py_imports(filepath: Path) -> list:
                             imports.append(dot_path)
                 elif node.module and (node.module.startswith("zephyr") or node.module.startswith("scripts")):
                     imports.append(node.module)
-                    # 解析 from package import module 格式中的子模块依赖
-                    # 例：from zephyr.data import ch_reader → 额外记录 zephyr.data.ch_reader
+                    # 治本（2026-07-31）：统一记录 alias 级路径（类或子模块），与相对 import 处理一致
+                    # 修复前：绝对 import 仅当 alias 是子模块（文件/包存在）时才记录 alias 级路径，
+                    #         导致 from zephyr.x import ClassY 的类级依赖丢失（仅记模块路径）。
+                    # 修复后：无论 alias 是子模块还是类/函数/常量，都记录 module.alias 级路径，
+                    #         与相对 import 分支（line 1217-1224）行为对齐，消除粒度不一致。
                     for alias in node.names:
                         if alias.name == "*":
                             continue
-                        parts = node.module.split(".")
-                        if node.module.startswith("zephyr"):
-                            base_path = PROJECT_ROOT / "src" / Path(*parts)
-                        else:
-                            base_path = PROJECT_ROOT / Path(*parts)
-                        if (base_path / f"{alias.name}.py").exists() or (base_path / alias.name / "__init__.py").exists():
-                            sub_mod = f"{node.module}.{alias.name}"
-                            if sub_mod not in imports:
-                                imports.append(sub_mod)
+                        alias_path = f"{node.module}.{alias.name}"
+                        if alias_path not in imports:
+                            imports.append(alias_path)
     except Exception:  # noqa: BLE001 — 单文件 AST 解析或导入分析失败返回已收集导入，不中断全量扫描
         pass
     return imports
