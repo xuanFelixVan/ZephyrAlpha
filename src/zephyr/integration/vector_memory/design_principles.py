@@ -97,6 +97,15 @@ class DesignPrinciplesEnforcer:
         arbitration = prov.get("arbitration", "") if isinstance(prov, dict) else ""
         if not arbitration:
             arbitration = metadata.get("arbitration", "")
+        # #ARCH-VMS-WRITETRACE-CONSOLIDATE-001 后 WriteTrace schema 已强制
+        # origin(min_length=1)/audit_chain(min_length=1)——空值在构造时即抛
+        # ValidationError。此处业务语义为"缺失 provenance 字段"，应在 schema
+        # 校验前转为业务异常 ProvenanceMissingError（避免暴露 pydantic ValidationError
+        # 给上层调用方，保持业务异常契约稳定）。
+        if not origin or not audit_chain:
+            raise ProvenanceMissingError(
+                "provenance 校验失败: origin/audit_chain 不完整（要求 origin 非空 + audit_chain 至少 1 项）"
+            )
         trace = WriteTrace(origin=origin, audit_chain=audit_chain, arbitration=arbitration)
         if not ProvenanceEnforcer.validate(trace):
             raise ProvenanceMissingError("provenance 校验失败: origin/audit_chain/arbitration 不完整")

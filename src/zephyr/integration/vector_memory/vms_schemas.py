@@ -90,14 +90,10 @@ class Chunk(BaseModel):
     overlap_with_next: bool = False
 
 
-class WriteTrace(BaseModel):
-    model_config = BASE_CONFIG
-
-    origin: str = ""
-    audit_chain: list[str] = Field(default_factory=list)
-    arbitration: str = ""
-    content_hash: str = ""
-    timestamp: str = ""
+# WriteTrace 已合并至 unified_memory_api（#ARCH-VMS-WRITETRACE-CONSOLIDATE-001）
+# 依赖方向裁定：unified_memory_api→vms_schemas 路径已存在（经 vms_memory_backend 链），
+# 直接 import 会闭合循环导入。故用 __getattr__ 懒加载——运行时访问 WriteTrace 时才 import，
+# 模块加载期无循环依赖。depgraph 不登记此边（君子协定：lazy import 破环，非真架构依赖）。
 
 
 class CollectionMetadata(BaseModel):
@@ -109,3 +105,27 @@ class CollectionMetadata(BaseModel):
     chunk_strategy: str = ""
     ttl_days: int = 0
     ai_autonomy_level: str = ""
+
+
+# WriteTrace 懒加载实现（PEP 562 module __getattr__）
+# `from zephyr.integration.vector_memory.vms_schemas import WriteTrace` 在运行时
+# 触发本函数，从 unified_memory_api 拿到 WriteTrace 并缓存到 globals()——后续访问
+# 直接 __dict__ 命中，无重复 import 开销。模块加载期不触发，避免循环导入。
+
+
+def __getattr__(name: str):
+    """模块级懒加载（PEP 562）— #ARCH-VMS-WRITETRACE-CONSOLIDATE-001。
+
+    WriteTrace 已合并至 ``unified_memory_api``（SSoT）。本模块不顶层 import
+    以避免循环依赖（vms_memory_backend→unified_memory_api→vms_schemas 边
+    已存在，反向会闭环）。运行时 ``from vms_schemas import WriteTrace``
+    经此函数转发至 unified_memory_api.WriteTrace。
+    """
+    if name == "WriteTrace":
+        from zephyr.intelligence.model_evaluation.unified_memory_api import (
+            WriteTrace as _WriteTrace,
+        )
+
+        globals()["WriteTrace"] = _WriteTrace  # cache：后续直接 __dict__ 命中
+        return _WriteTrace
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

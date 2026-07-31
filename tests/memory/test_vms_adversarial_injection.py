@@ -22,37 +22,41 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from pydantic import ValidationError
 
 
 class TestAdversarialProvenance:
-    """红蓝对抗：ProvenanceEnforcer 投毒检测"""
+    """红蓝对抗：ProvenanceEnforcer 投毒检测
+
+    #ARCH-VMS-WRITETRACE-CONSOLIDATE-001 后，WriteTrace schema 已强制
+    origin(min_length=1)/audit_chain(min_length=1)——空值在构造时即抛
+    ValidationError（fail-fast at construction），比到 ProvenanceEnforcer
+    才拒绝更强（防御前置）。以下测试验证 schema 层拦截。
+    """
 
     def test_forged_empty_origin_rejected(self):
-        """伪造空 origin → ProvenanceEnforcer 必须拒绝"""
-        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        """伪造空 origin → schema 层即拒绝（ValidationError，无需到 Enforcer）"""
         from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
-        trace = WriteTrace(origin="", audit_chain=["session-1"], arbitration="autonomous")
-        assert ProvenanceEnforcer.validate(trace) is False
+        with pytest.raises(ValidationError):
+            WriteTrace(origin="", audit_chain=["session-1"], arbitration="autonomous")
 
     def test_forged_whitespace_origin_rejected(self):
-        """伪造纯空格 origin → 必须拒绝"""
-        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        """伪造纯空格 origin → str_strip_whitespace 后为空，schema 层拒绝"""
         from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
-        trace = WriteTrace(origin="   ", audit_chain=["session-1"], arbitration="autonomous")
-        assert ProvenanceEnforcer.validate(trace) is False
+        with pytest.raises(ValidationError):
+            WriteTrace(origin="   ", audit_chain=["session-1"], arbitration="autonomous")
 
     def test_tampered_empty_audit_chain_rejected(self):
-        """篡改 audit_chain 为空列表 → 必须拒绝"""
-        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        """篡改 audit_chain 为空列表 → schema 层 min_length=1 拒绝"""
         from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
-        trace = WriteTrace(origin="orc/decision", audit_chain=[], arbitration="autonomous")
-        assert ProvenanceEnforcer.validate(trace) is False
+        with pytest.raises(ValidationError):
+            WriteTrace(origin="orc/decision", audit_chain=[], arbitration="autonomous")
 
     def test_missing_arbitration_rejected(self):
-        """缺失 arbitration → 必须拒绝"""
+        """缺失 arbitration（空串）→ schema 允许（可选字段），ProvenanceEnforcer 业务拒绝"""
         from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
         from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 

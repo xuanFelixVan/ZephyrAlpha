@@ -124,8 +124,14 @@ class WriteTraceMissing(Exception):
 # ---------------------------------------------------------------------------
 
 
+# WriteTrace 规范定义（#ARCH-VMS-WRITETRACE-CONSOLIDATE-001）
+# vms_schemas.WriteTrace 已删除并 re-export 此处——消除两个同名类的跨域漂移。
+# 选择此处为规范（非 vms_schemas）因依赖方向：D_INTEGRATION→D_INTELLIGENCE 已存在
+# （delegated_vector_memory→unified_memory_api），反向会导致循环导入。
+
+
 class WriteTrace(BaseModel):
-    """RI-02 写入溯源（Pydantic v2 frozen 不可变）。
+    """写入溯源（Pydantic v2 frozen 不可变，SSoT — #ARCH-VMS-WRITETRACE-CONSOLIDATE-001）。
 
     字段
     ----

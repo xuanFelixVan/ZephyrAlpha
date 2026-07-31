@@ -40,17 +40,18 @@ from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 class ProvenanceEnforcer:
     @staticmethod
     def validate(trace: WriteTrace) -> bool:
+        """校验 WriteTrace 完整性。
+
+        #ARCH-VMS-WRITETRACE-CONSOLIDATE-001 后，WriteTrace schema 已强制
+        origin(min_length=1)/audit_chain(min_length=1)/frozen/extra forbid——
+        空值在构造时即抛 ValidationError（fail-fast at construction）。
+        此处仅保留 None 与 arbitration 业务校验（arbitration 可选但生产建议填写）。
+        """
         if trace is None:
             _logger.warning("ProvenanceEnforcer: WriteTrace 为 None")
             return False
-        if not trace.origin:
-            _logger.warning("ProvenanceEnforcer: origin 为空")
-            return False
-        if not trace.audit_chain or len(trace.audit_chain) < 1:
-            _logger.warning("ProvenanceEnforcer: audit_chain 不完整")
-            return False
         if not trace.arbitration:
-            _logger.warning("ProvenanceEnforcer: arbitration 为空")
+            _logger.warning("ProvenanceEnforcer: arbitration 为空（可选字段，生产建议填写）")
             return False
         return True
 

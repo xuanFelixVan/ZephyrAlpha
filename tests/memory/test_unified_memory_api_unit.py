@@ -105,22 +105,35 @@ def cbac_yaml(tmp_path: Path) -> Path:
 
 
 class TestWriteTrace:
-    def test_mutable(self):
+    # #ARCH-VMS-WRITETRACE-CONSOLIDATE-001：WriteTrace 严格约束
+    # （frozen + min_length + extra forbid），以下测试验证严格语义。
+
+    def test_frozen_immutable(self):
+        """frozen=True → 赋值必须抛 ValidationError（防回填污染）"""
+        from pydantic import ValidationError
+
         prov = WriteTrace(origin="M1", audit_chain=["T-1"])
-        prov.origin = "updated"
-        assert prov.origin == "updated"
+        with pytest.raises(ValidationError):
+            prov.origin = "updated"
 
-    def test_default_origin(self):
-        prov = WriteTrace(audit_chain=["T-1"])
-        assert prov.origin == ""
+    def test_origin_required(self):
+        """origin min_length=1 → 缺失必须抛 ValidationError"""
+        from pydantic import ValidationError
 
-    def test_default_audit_chain(self):
-        prov = WriteTrace(origin="M1")
-        assert prov.audit_chain == []
+        with pytest.raises(ValidationError):
+            WriteTrace(audit_chain=["T-1"])
 
-    def test_arbitration_default(self):
+    def test_audit_chain_required(self):
+        """audit_chain min_length=1 → 缺失必须抛 ValidationError"""
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            WriteTrace(origin="M1")
+
+    def test_arbitration_default_none(self):
+        """arbitration 默认 None（可选字段，非空串）"""
         prov = WriteTrace(origin="M1", audit_chain=["T-1"])
-        assert prov.arbitration == ""
+        assert prov.arbitration is None
 
     def test_extra_field_forbidden(self):
         with pytest.raises(Exception):
