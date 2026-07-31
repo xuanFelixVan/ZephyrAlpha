@@ -54,13 +54,13 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_gov_drift_main_py["(生产态 / production) Drift Detector MOD-INF-023 CLI — 漂移扫描入口。<br/>Drift Detector MOD-INF-023 CLI — 漂移扫描入口。<br/>文件: gov_drift/__main__.py"]
-    src_zephyr_gov_drift_analysis_py["(生产态 / production)<br/>文件: gov_drift/_analysis.py"]
-    src_zephyr_gov_drift_core_py["(生产态 / production)<br/>文件: gov_drift/_core.py"]
-    src_zephyr_gov_drift_drift_py["(生产态 / production)<br/>文件: gov_drift/_drift.py"]
-    src_zephyr_gov_drift_infrastructure_py["(生产态 / production)<br/>文件: gov_drift/_infrastructure.py"]
-    src_zephyr_gov_drift_scanners_py["(生产态 / production)<br/>文件: gov_drift/_scanners.py"]
+    src_zephyr_gov_drift_analysis_py["(生产态 / production) _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034）<br/>_analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034）<br/>文件: gov_drift/_analysis.py"]
+    src_zephyr_gov_drift_core_py["(生产态 / production) _core 聚合 — 核心引擎与状态机（功能域门面，ARCH-034）<br/>_core 聚合 — 核心引擎与状态机（功能域门面，ARCH-034）<br/>文件: gov_drift/_core.py"]
+    src_zephyr_gov_drift_drift_py["(生产态 / production) _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034）<br/>_drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034）<br/>文件: gov_drift/_drift.py"]
+    src_zephyr_gov_drift_infrastructure_py["(生产态 / production) _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034）<br/>_infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034）<br/>文件: gov_drift/_infrastructure.py"]
+    src_zephyr_gov_drift_scanners_py["(生产态 / production) _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034）<br/>_scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034）<br/>文件: gov_drift/_scanners.py"]
     src_zephyr_governance_agent_rbac_contracts_py["(生产态 / production) agent-rbac/contracts.py — G-CT-001 RBAC 契约（re-export）。<br/>agent-rbac/contracts.py — G-CT-001 RBAC 契约（re-export）。<br/>文件: agent-rbac/contracts.py"]
-    src_zephyr_red_blue_validator_init_py["(生产态 / production) red_blue_validator — re-export shim for zephyr.security.adversarial_validation.<br/>red_blue_validator — re-export shim for zephyr.security.adversarial_validation.<br/>文件: red_blue_validator/__init__.py"]
+    src_zephyr_red_blue_validator_init_py["(生产态 / production) Red Blue Validator包 / Red Blue Validator Domain Package<br/>Red Blue Validator 包的文件夹入口，本身不含业务逻辑，只是组织归属。<br/>文件: red_blue_validator/__init__.py"]
     src_zephyr_security_access_control_a2a_check_py["(生产态 / production) A2A 通信对验证——校验两个 agent 之间是否允许通信。<br/>A2A 通信对验证——校验两个 agent 之间是否允许通信。<br/>文件: access_control/a2a_check.py"]
     src_zephyr_security_access_control_adversarial_resilience_py["(生产态 / production) AdversarialResilience - adversarial resilience & OWASP coverage.<br/>AdversarialResilience - adversarial resilience & OWASP coverage.<br/>文件: access_control/adversarial_resilience.py"]
     src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) AgentCreationPolicy — Agent 创建策略.<br/>AgentCreationPolicy — Agent 创建策略.<br/>文件: access_control/agent_creation_policy.py"]
@@ -125,7 +125,7 @@ flowchart TD
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py["(生产态 / production)<br/>文件: orphan_judge/feedback_bridge.py"]
     src_zephyr_security_access_control_orphan_judge_kb_bridge_py["(生产态 / production)<br/>文件: orphan_judge/kb_bridge.py"]
     src_zephyr_security_access_control_orphan_judge_mcp_integration_py["(生产态 / production)<br/>文件: orphan_judge/mcp_integration.py"]
-    src_zephyr_security_access_control_orphan_judge_orphan_collector_py["(生产态 / production)<br/>文件: orphan_judge/orphan_collector.py"]
+    src_zephyr_security_access_control_orphan_judge_orphan_collector_py["(生产态 / production) 孤儿文件收集与处置器——整合 SafetyFence 安全检查后执行处置动作。<br/>孤儿文件收集与处置器——整合 SafetyFence 安全检查后执行处置动作。<br/>文件: orphan_judge/orphan_collector.py"]
     src_zephyr_security_access_control_orphan_judge_orphan_detector_py["(生产态 / production) (INVARIANTS) 蓝图 §4 文件清单与代码双向对齐<br/>(INVARIANTS) 蓝图 §4 文件清单与代码双向对齐<br/>文件: orphan_judge/orphan_detector.py"]
     src_zephyr_security_access_control_orphan_judge_rbac_bridge_py["(生产态 / production)<br/>文件: orphan_judge/rbac_bridge.py"]
     src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py["(生产态 / production) AST解析+import链遍历，判断文件是否被其他文件引用。<br/>AST解析+import链遍历，判断文件是否被其他文件引用。<br/>文件: orphan_judge/reference_graph_engine.py"]
@@ -136,7 +136,7 @@ flowchart TD
     src_zephyr_security_access_control_orphan_judge_unique_analyzer_py["(生产态 / production) AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。<br/>AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。<br/>文件: orphan_judge/unique_analyzer.py"]
     src_zephyr_security_access_control_permission_hooks_py["(生产态 / production) PermissionHooks — 权限钩子注册表.<br/>PermissionHooks — 权限钩子注册表.<br/>文件: access_control/permission_hooks.py"]
     src_zephyr_security_access_control_permission_mode_manager_py["(生产态 / production) Stub module: zephyr.security.access_control.permission_mode_manager — implem...<br/>Stub module: zephyr.security.access_control.permission_mode_manager — implem...<br/>文件: access_control/permission_mode_manager.py"]
-    src_zephyr_security_access_control_phase_executor_py["(生产态 / production)<br/>文件: access_control/phase_executor.py"]
+    src_zephyr_security_access_control_phase_executor_py["(生产态 / production) Module stub: zephyr.security.access_control.phase_executor<br/>Module stub: zephyr.security.access_control.phase_executor<br/>文件: access_control/phase_executor.py"]
     src_zephyr_security_access_control_risk_mitigation_py["(生产态 / production) RiskMitigation — 风险评估与缓解策略.<br/>RiskMitigation — 风险评估与缓解策略.<br/>文件: access_control/risk_mitigation.py"]
     src_zephyr_security_access_control_rollback_sandbox_py["(生产态 / production) RollbackSandbox - isolate/execute/rollback pattern for reversible operations.<br/>RollbackSandbox - isolate/execute/rollback pattern for reversible operations.<br/>文件: access_control/rollback_sandbox.py"]
     src_zephyr_security_access_control_secrets_lifecycle_py["(生产态 / production) Stub module: zephyr.security.access_control.secrets_lifecycle — implementati...<br/>Stub module: zephyr.security.access_control.secrets_lifecycle — implementati...<br/>文件: access_control/secrets_lifecycle.py"]
@@ -161,8 +161,8 @@ flowchart TD
     src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py["(生产态 / production)<br/>文件: layers/l6_data_flow.py"]
     src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py["(生产态 / production)<br/>文件: layers/l8_compliance.py"]
     src_zephyr_security_llm_defense_llm_security_process_sandbox_py["(生产态 / production) L2a ProcessSandbox — subprocess 路径白名单沙箱<br/>L2a ProcessSandbox — subprocess 路径白名单沙箱<br/>文件: llm_security/process_sandbox.py"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py["(生产态 / production)<br/>文件: self_protection/adversarial_mutator.py"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py["(生产态 / production)<br/>文件: self_protection/red_team_scanner.py"]
+    src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py["(生产态 / production) 对抗变异生成器 — 对 Red Team 载荷施加 10 种变异技术，检验 LSG 抗干扰能力.<br/>对抗变异生成器 — 对 Red Team 载荷施加 10 种变异技术，检验 LSG 抗干扰能力.<br/>文件: self_protection/adversarial_mutator.py"]
+    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: self_protection/red_team_scanner.py"]
     src_zephyr_gov_drift_main_py ~~~ src_zephyr_gov_drift_analysis_py
     src_zephyr_gov_drift_analysis_py ~~~ src_zephyr_gov_drift_core_py
     src_zephyr_gov_drift_core_py ~~~ src_zephyr_gov_drift_drift_py
@@ -284,21 +284,21 @@ flowchart TD
     src_zephyr_security_access_control_engine_degradation_py["(生产态 / production) EngineDegradation — 引擎降级管理.<br/>EngineDegradation — 引擎降级管理.<br/>文件: access_control/engine_degradation.py"]
     src_zephyr_security_access_control_guards_permission_guard_py["(生产态 / production) PermissionGuard — 七层权限编排器.<br/>PermissionGuard — 七层权限编排器.<br/>文件: guards/permission_guard.py"]
     src_zephyr_security_access_control_kill_switch_py["(生产态 / production) KillSwitch — 熔断器.<br/>KillSwitch — 熔断器.<br/>文件: access_control/kill_switch.py"]
-    src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py["(生产态 / production)<br/>文件: orphan_judge/cascade_analyzer.py"]
+    src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py["(生产态 / production) 删除级联分析器——分析删除文件对项目的影响。<br/>删除级联分析器——分析删除文件对项目的影响。<br/>文件: orphan_judge/cascade_analyzer.py"]
     src_zephyr_security_access_control_orphan_judge_db_py["(生产态 / production)<br/>文件: orphan_judge/db.py"]
-    src_zephyr_security_access_control_orphan_judge_decision_table_py["(生产态 / production)<br/>文件: orphan_judge/decision_table.py"]
-    src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py["(生产态 / production)<br/>文件: orphan_judge/deprecation_tracker.py"]
-    src_zephyr_security_access_control_orphan_judge_safety_fence_py["(生产态 / production)<br/>文件: orphan_judge/safety_fence.py"]
+    src_zephyr_security_access_control_orphan_judge_decision_table_py["(生产态 / production) 五层判定结果 -> 处置动作映射表。<br/>五层判定结果 -> 处置动作映射表。<br/>文件: orphan_judge/decision_table.py"]
+    src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py["(生产态 / production) 废弃文件追踪器——标记和追踪废弃文件的生命周期。<br/>废弃文件追踪器——标记和追踪废弃文件的生命周期。<br/>文件: orphan_judge/deprecation_tracker.py"]
+    src_zephyr_security_access_control_orphan_judge_safety_fence_py["(生产态 / production) 安全围栏——阻止删除 frozen/immutable_core 文件。<br/>安全围栏——阻止删除 frozen/immutable_core 文件。<br/>文件: orphan_judge/safety_fence.py"]
     src_zephyr_security_adversarial_validation_circuit_breaker_py["(生产态 / production)<br/>文件: adversarial_validation/circuit_breaker.py"]
     src_zephyr_security_adversarial_validation_cli_py["(生产态 / production)<br/>文件: adversarial_validation/cli.py"]
     src_zephyr_security_adversarial_validation_constitution_guard_py["(生产态 / production)<br/>文件: adversarial_validation/constitution_guard.py"]
     src_zephyr_security_adversarial_validation_convergence_checker_py["(生产态 / production)<br/>文件: adversarial_validation/convergence_checker.py"]
-    src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py["(生产态 / production)<br/>文件: llm_security/behavior_audit_logger.py"]
-    src_zephyr_security_llm_defense_llm_security_gateway_py["(生产态 / production)<br/>文件: llm_security/gateway.py"]
+    src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py["(生产态 / production) Append-only AI behavior audit logger.<br/>Append-only AI behavior audit logger.<br/>文件: llm_security/behavior_audit_logger.py"]
+    src_zephyr_security_llm_defense_llm_security_gateway_py["(生产态 / production) LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.<br/>LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.<br/>文件: llm_security/gateway.py"]
     src_zephyr_security_llm_defense_llm_security_input_sanitizer_py["(生产态 / production) InputSanitizer: path whitelist + command whitelist + token budget guard.<br/>InputSanitizer: path whitelist + command whitelist + token budget guard.<br/>文件: llm_security/input_sanitizer.py"]
-    src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py["(生产态 / production)<br/>文件: patterns/injection_patterns.py"]
+    src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py["(生产态 / production) Legacy injection pattern descriptor.<br/>Legacy injection pattern descriptor.<br/>文件: patterns/injection_patterns.py"]
     src_zephyr_security_llm_defense_llm_security_patterns_secrets_py["(生产态 / production)<br/>文件: patterns/secrets.py"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py["(生产态 / production)<br/>文件: self_protection/isolation.py"]
+    src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: self_protection/isolation.py"]
     src_zephyr_gov_drift_alert_router_py ~~~ src_zephyr_gov_drift_cold_start_py
     src_zephyr_gov_drift_cold_start_py ~~~ src_zephyr_gov_drift_events_py
     src_zephyr_gov_drift_events_py ~~~ src_zephyr_gov_drift_reconciler_py
@@ -329,17 +329,17 @@ flowchart TD
     src_zephyr_security_access_control_orphan_judge_models_py["(生产态 / production)<br/>文件: orphan_judge/models.py"]
     src_zephyr_security_adversarial_validation_cold_start_py["(生产态 / production)<br/>文件: adversarial_validation/cold_start.py"]
     src_zephyr_security_adversarial_validation_game_day_runner_py["(生产态 / production)<br/>文件: adversarial_validation/game_day_runner.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py["(生产态 / production)<br/>文件: layers/l0_supply_chain.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l1_input_py["(生产态 / production)<br/>文件: layers/l1_input.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py["(生产态 / production)<br/>文件: layers/l2_prompt_protection.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py["(生产态 / production)<br/>文件: layers/l2a_process_sandbox.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py["(生产态 / production)<br/>文件: layers/l3_output.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py["(生产态 / production)<br/>文件: layers/l4_agent.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py["(生产态 / production)<br/>文件: layers/l5_resource_protection.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: layers/l0_supply_chain.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l1_input_py["(生产态 / production) 输入来源类型。<br/>输入来源类型。<br/>文件: layers/l1_input.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py["(生产态 / production) prompt 泄露扫描结果。<br/>prompt 泄露扫描结果。<br/>文件: layers/l2_prompt_protection.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: layers/l2a_process_sandbox.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py["(生产态 / production) 兼容旧接口的输出过滤层。<br/>兼容旧接口的输出过滤层。<br/>文件: layers/l3_output.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py["(生产态 / production) 解析 L4 HMAC 密钥（5.62.4 治本）：显式参数 > SecretProvider（ZEPHYR_LSG_L4_HM...<br/>解析 L4 HMAC 密钥（5.62.4 治本）：显式参数 > SecretProvider（ZEPHYR_LSG_L4_HM...<br/>文件: layers/l4_agent.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py["(生产态 / production) L5 资源保护层：token/cost/rate 限额 + 成本不对称检测。<br/>L5 资源保护层：token/cost/rate 限额 + 成本不对称检测。<br/>文件: layers/l5_resource_protection.py"]
     src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py["(生产态 / production) L6 Observability Layer — security event logging, alerting, and reporting.<br/>L6 Observability Layer — security event logging, alerting, and reporting.<br/>文件: layers/l6_observability.py"]
-    src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py["(生产态 / production)<br/>文件: layers/l8_multi_agent.py"]
+    src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py["(生产态 / production) Represents a communication item between agents.<br/>Represents a communication item between agents.<br/>文件: layers/l8_multi_agent.py"]
     src_zephyr_security_llm_defense_llm_security_runtime_interceptor_py["(生产态 / production) runtime_interceptor.py — 运行时 LLM 裸调拦截器（GATE-20 后备防线）<br/>runtime_interceptor.py — 运行时 LLM 裸调拦截器（GATE-20 后备防线）<br/>文件: llm_security/runtime_interceptor.py"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py["(生产态 / production)<br/>文件: self_protection/l7_validation.py"]
+    src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py["(生产态 / production) Manages special risks for DeepSeek models.<br/>Manages special risks for DeepSeek models.<br/>文件: self_protection/l7_validation.py"]
     src_zephyr_security_access_control_guards_rbac_guard_py ~~~ src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_orphan_judge_models_py ~~~ src_zephyr_security_adversarial_validation_cold_start_py
     src_zephyr_security_adversarial_validation_cold_start_py ~~~ src_zephyr_security_adversarial_validation_game_day_runner_py
@@ -356,16 +356,16 @@ flowchart TD
     src_zephyr_security_llm_defense_llm_security_runtime_interceptor_py ~~~ src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py
     src_zephyr_security_access_control_identity_py["(生产态 / production) Agent identity — 角色与成熟度定义.<br/>Agent identity — 角色与成熟度定义.<br/>文件: access_control/identity.py"]
     src_zephyr_security_access_control_immutable_core_py["(生产态 / production) ImmutableCore — 不可变核心验证器.<br/>ImmutableCore — 不可变核心验证器.<br/>文件: access_control/immutable_core.py"]
-    src_zephyr_security_access_control_orphan_judge_judge_py["(生产态 / production)<br/>文件: orphan_judge/judge.py"]
+    src_zephyr_security_access_control_orphan_judge_judge_py["(生产态 / production) OrphanJudge 模块基础异常<br/>OrphanJudge 模块基础异常<br/>文件: orphan_judge/judge.py"]
     src_zephyr_security_adversarial_validation_validator_py["(生产态 / production)<br/>文件: adversarial_validation/validator.py"]
-    src_zephyr_security_llm_defense_llm_security_protocol_py["(生产态 / production)<br/>文件: llm_security/protocol.py"]
+    src_zephyr_security_llm_defense_llm_security_protocol_py["(生产态 / production) LLM Security Gateway 九层防御统一接口契约（L0-L8）。<br/>LLM Security Gateway 九层防御统一接口契约（L0-L8）。<br/>文件: llm_security/protocol.py"]
     src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py["(生产态 / production)<br/>文件: self_protection/code_integrity.py"]
     src_zephyr_security_access_control_identity_py ~~~ src_zephyr_security_access_control_immutable_core_py
     src_zephyr_security_access_control_immutable_core_py ~~~ src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_judge_py ~~~ src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_validator_py ~~~ src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_protocol_py ~~~ src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
-    src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(生产态 / production)<br/>文件: orphan_judge/duplicate_detector.py"]
+    src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(生产态 / production) L2 功能重复检测器——基于 AST 哈希的 Jaccard 相似度检测模块间功能重叠。<br/>L2 功能重复检测器——基于 AST 哈希的 Jaccard 相似度检测模块间功能重叠。<br/>文件: orphan_judge/duplicate_detector.py"]
     src_zephyr_security_adversarial_validation_blast_radius_py["(生产态 / production)<br/>文件: adversarial_validation/blast_radius.py"]
     src_zephyr_security_adversarial_validation_bypass_recorder_py["(生产态 / production)<br/>文件: adversarial_validation/bypass_recorder.py"]
     src_zephyr_security_adversarial_validation_cleanup_py["(生产态 / production)<br/>文件: adversarial_validation/cleanup.py"]
@@ -553,52 +553,52 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | Agent capability scope verification — 拒绝受限能力声明、... | → | D_AUTONOMY_CORE 自治核心: G-CT-003: Agent Spec -> RBAC capability check. (autonomy_... | 导入依赖 / import_depends |
-| 2 | orphan_judge/feedback_bridge.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 2 | orphan_judge/feedback_bridge.py | → | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 3 | orphan_judge/db.py | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
-| 4 | G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. (access_... | → | D_GOV_AUDIT 审计追踪: gov_audit/contracts.py | 导入依赖 / import_depends |
-| 5 | orphan_judge/judge.py | → | D_GOV_AUDIT 审计追踪: gov_audit/finding_model.py | 导入依赖 / import_depends |
+| 4 | G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. (access_... | → | D_GOV_AUDIT 审计追踪: 获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 Audit... | 导入依赖 / import_depends |
+| 5 | OrphanJudge 模块基础异常 (orphan_judge/judge.py) | → | D_GOV_AUDIT 审计追踪: gov_audit/finding_model.py | 导入依赖 / import_depends |
 | 6 | adversarial_validation/defense_runner.py | → | D_GOV_AUDIT 审计追踪: gov_audit/finding_model.py | 导入依赖 / import_depends |
-| 7 | llm_security/behavior_audit_logger.py | → | D_GOV_AUDIT 审计追踪: gov_audit/bridge.py | 导入依赖 / import_depends |
-| 8 | self_protection/isolation.py | → | D_GOV_AUDIT 审计追踪: gov_audit/bridge.py | 导入依赖 / import_depends |
+| 7 | Append-only AI behavior audit logger. (llm_security/behav... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 8 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
 | 9 | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
 | 10 | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
 | 11 | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | D_GOV_DRIFT 漂移检测: Self-Drift Check — self_check.py (gov_drift/self_check.py) | 导入依赖 / import_depends |
 | 12 | Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | D_GOV_DRIFT 漂移检测: Self Test Verifier — self_test_verifier.py (gov_drift/se... | 导入依赖 / import_depends |
-| 13 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Correlation Engine — correlation_engine.py (gov_drift/co... | 导入依赖 / import_depends |
-| 14 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Credibility Engine — credibility_engine.py (gov_drift/cr... | 导入依赖 / import_depends |
-| 15 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Cross Module Score — cross_module_score.py (gov_drift/cr... | 导入依赖 / import_depends |
-| 16 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Drift Forensics Engine — 漂移取证引擎 §6.17。 (gov_drif... | 导入依赖 / import_depends |
-| 17 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Git Bisector — git_bisector.py (gov_drift/git_bisector.py) | 导入依赖 / import_depends |
-| 18 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: ROI Engine — roi_engine.py (gov_drift/roi_engine.py) | 导入依赖 / import_depends |
-| 19 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: G-CT-006 契约：Drift -> Rollback 漂移触发回滚. (gov_drift... | 导入依赖 / import_depends |
-| 20 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Self-Drift Check — self_check.py (gov_drift/self_check.py) | 导入依赖 / import_depends |
-| 21 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Suppression Learner — suppression_learner.py (gov_drift/... | 导入依赖 / import_depends |
-| 22 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 (go... | 导入依赖 / import_depends |
-| 23 | gov_drift/_analysis.py | → | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (gov_drift/trend_anal... | 导入依赖 / import_depends |
-| 24 | gov_drift/_core.py | → | D_GOV_DRIFT 漂移检测: Config Consistency Checker — 配置多源一致性 D-023-29 · ... | 导入依赖 / import_depends |
-| 25 | gov_drift/_core.py | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
-| 26 | gov_drift/_core.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
-| 27 | gov_drift/_drift.py | → | D_GOV_DRIFT 漂移检测: contract_drift_detector — 契约漂移检测器。 (gov_drift/co... | 导入依赖 / import_depends |
-| 28 | gov_drift/_drift.py | → | D_GOV_DRIFT 漂移检测: Drift Hotfix Bypass — drift_hotfix_bypass.py (gov_drift/... | 导入依赖 / import_depends |
-| 29 | gov_drift/_drift.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
-| 30 | gov_drift/_drift.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 结果类型 + 专项检测函数 — drift_result_ty... | 导入依赖 / import_depends |
-| 31 | gov_drift/_drift.py | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 训练闭环 + 跨语言检测 — drift_training... | 导入依赖 / import_depends |
-| 32 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Owner Absence Manager — Owner缺席模式 §6.32。 (gov_drif... | 导入依赖 / import_depends |
-| 33 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: AI Context Injector — 施工前预检D-023-16 · §6.8。 (gov... | 导入依赖 / import_depends |
-| 34 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Baseline Manager — baseline_manager.py (gov_drift/baseli... | 导入依赖 / import_depends |
-| 35 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Detector Canary Controller — 检测器金丝雀部署 §6.11。 (... | 导入依赖 / import_depends |
-| 36 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Config Consistency Checker — 配置多源一致性 D-023-29 · ... | 导入依赖 / import_depends |
-| 37 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Coverage Dashboard — dashboard.py (gov_drift/dashboard.py) | 导入依赖 / import_depends |
-| 38 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gov_drift/gate_p... | 导入依赖 / import_depends |
-| 39 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Cross-Session Handoff Manager — 跨Session修复上下文交接 ... | 导入依赖 / import_depends |
-| 40 | gov_drift/_infrastructure.py | → | D_GOV_DRIFT 漂移检测: Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。... | 导入依赖 / import_depends |
-| 41 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Incremental Scanner — incremental_scanner.py (gov_drift/... | 导入依赖 / import_depends |
-| 42 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。 (... | 导入依赖 / import_depends |
-| 43 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Orphan Resource Scanner — 孤儿资源检测 §6.28。 (gov_dri... | 导入依赖 / import_depends |
-| 44 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Python Compatibility Checker — Python版本兼容性漂移 D-02... | 导入依赖 / import_depends |
-| 45 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Scan Mutex — scan_mutex.py (gov_drift/scan_mutex.py) | 导入依赖 / import_depends |
-| 46 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Symlink Integrity Checker — 软链接完整性检测 §6.29。 (g... | 导入依赖 / import_depends |
-| 47 | gov_drift/_scanners.py | → | D_GOV_DRIFT 漂移检测: Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.... | 导入依赖 / import_depends |
+| 13 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Correlation Engine — correlation_engine.py (gov_drift/co... | 导入依赖 / import_depends |
+| 14 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Credibility Engine — credibility_engine.py (gov_drift/cr... | 导入依赖 / import_depends |
+| 15 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Cross Module Score — cross_module_score.py (gov_drift/cr... | 导入依赖 / import_depends |
+| 16 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Drift Forensics Engine — 漂移取证引擎 §6.17。 (gov_drif... | 导入依赖 / import_depends |
+| 17 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Git Bisector — git_bisector.py (gov_drift/git_bisector.py) | 导入依赖 / import_depends |
+| 18 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: ROI Engine — roi_engine.py (gov_drift/roi_engine.py) | 导入依赖 / import_depends |
+| 19 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: G-CT-006 契约：Drift -> Rollback 漂移触发回滚. (gov_drift... | 导入依赖 / import_depends |
+| 20 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Self-Drift Check — self_check.py (gov_drift/self_check.py) | 导入依赖 / import_depends |
+| 21 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Suppression Learner — suppression_learner.py (gov_drift/... | 导入依赖 / import_depends |
+| 22 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 (go... | 导入依赖 / import_depends |
+| 23 | _analysis 聚合 — 分析与报告簇（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (gov_drift/trend_anal... | 导入依赖 / import_depends |
+| 24 | _core 聚合 — 核心引擎与状态机（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Config Consistency Checker — 配置多源一致性 D-023-29 · ... | 导入依赖 / import_depends |
+| 25 | _core 聚合 — 核心引擎与状态机（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
+| 26 | _core 聚合 — 核心引擎与状态机（功能域门面，ARCH-034） (g... | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
+| 27 | _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034） (gov_... | → | D_GOV_DRIFT 漂移检测: contract_drift_detector — 契约漂移检测器。 (gov_drift/co... | 导入依赖 / import_depends |
+| 28 | _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034） (gov_... | → | D_GOV_DRIFT 漂移检测: Drift Hotfix Bypass — drift_hotfix_bypass.py (gov_drift/... | 导入依赖 / import_depends |
+| 29 | _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034） (gov_... | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
+| 30 | _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034） (gov_... | → | D_GOV_DRIFT 漂移检测: Drift Detector 结果类型 + 专项检测函数 — drift_result_ty... | 导入依赖 / import_depends |
+| 31 | _drift 聚合 — 漂移检测器簇（功能域门面，ARCH-034） (gov_... | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 训练闭环 + 跨语言检测 — drift_training... | 导入依赖 / import_depends |
+| 32 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Owner Absence Manager — Owner缺席模式 §6.32。 (gov_drif... | 导入依赖 / import_depends |
+| 33 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: AI Context Injector — 施工前预检D-023-16 · §6.8。 (gov... | 导入依赖 / import_depends |
+| 34 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Baseline Manager — baseline_manager.py (gov_drift/baseli... | 导入依赖 / import_depends |
+| 35 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Detector Canary Controller — 检测器金丝雀部署 §6.11。 (... | 导入依赖 / import_depends |
+| 36 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Config Consistency Checker — 配置多源一致性 D-023-29 · ... | 导入依赖 / import_depends |
+| 37 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Coverage Dashboard — dashboard.py (gov_drift/dashboard.py) | 导入依赖 / import_depends |
+| 38 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gov_drift/gate_p... | 导入依赖 / import_depends |
+| 39 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Cross-Session Handoff Manager — 跨Session修复上下文交接 ... | 导入依赖 / import_depends |
+| 40 | _infrastructure 聚合 — 基础设施簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。... | 导入依赖 / import_depends |
+| 41 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Incremental Scanner — incremental_scanner.py (gov_drift/... | 导入依赖 / import_depends |
+| 42 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。 (... | 导入依赖 / import_depends |
+| 43 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Orphan Resource Scanner — 孤儿资源检测 §6.28。 (gov_dri... | 导入依赖 / import_depends |
+| 44 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Python Compatibility Checker — Python版本兼容性漂移 D-02... | 导入依赖 / import_depends |
+| 45 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Scan Mutex — scan_mutex.py (gov_drift/scan_mutex.py) | 导入依赖 / import_depends |
+| 46 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Symlink Integrity Checker — 软链接完整性检测 §6.29。 (g... | 导入依赖 / import_depends |
+| 47 | _scanners 聚合 — 扫描器与检查器簇（功能域门面，ARCH-034... | → | D_GOV_DRIFT 漂移检测: Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.... | 导入依赖 / import_depends |
 | 48 | Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
 | 49 | Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
 | 50 | Drift Runbook Generator — 漂移演练手册自动生成。 (gov_dr... | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
@@ -606,7 +606,7 @@ flowchart TD
 | 52 | orphan_judge/drift_bridge.py | → | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov_enforceme... | 导入依赖 / import_depends |
 | 53 | orphan_judge/escalation_bridge.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 54 | adversarial_validation/game_day_scheduler.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
-| 55 | orphan_judge/judge.py | → | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 55 | OrphanJudge 模块基础异常 (orphan_judge/judge.py) | → | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
 | 56 | adversarial_validation/constitution_guard.py | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 57 | adversarial_validation/defense_runner.py | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 58 | adversarial_validation/defense_runner.py | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
@@ -628,50 +628,50 @@ flowchart TD
 | 74 | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 75 | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 76 | adversarial_validation/defense_runner.py | → | D_SHARED 共享服务: schema/execution_model.py | 导入依赖 / import_depends |
-| 77 | adversarial_validation/defense_runner.py | → | D_SHARED 共享服务: schema/severity_types.py | 导入依赖 / import_depends |
+| 77 | adversarial_validation/defense_runner.py | → | D_SHARED 共享服务: Circuit breaker states — re-homed from infrastructure_ru... | 导入依赖 / import_depends |
 | 78 | adversarial_validation/steady_state.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 79 | adversarial_validation/validator.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 80 | ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 81 | llm_security/behavior_audit_logger.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 81 | Append-only AI behavior audit logger. (llm_security/behav... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 82 | LLM Security Gateway - Streamlit Dashboard. (dashboard/ap... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 83 | layers/l0_supply_chain.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 84 | layers/l0_supply_chain.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 85 | layers/l1_input.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 86 | layers/l2_prompt_protection.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 87 | layers/l2a_process_sandbox.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 88 | layers/l2a_process_sandbox.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 89 | layers/l3_output.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 90 | layers/l4_agent.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 91 | layers/l4_agent.py | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 92 | layers/l5_resource_protection.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 83 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 84 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 85 | 输入来源类型。 (layers/l1_input.py) | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 86 | prompt 泄露扫描结果。 (layers/l2_prompt_protection.py) | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 87 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 88 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 89 | 兼容旧接口的输出过滤层。 (layers/l3_output.py) | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 90 | 解析 L4 HMAC 密钥（5.62.4 治本）：显式参数 > SecretProvid... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 91 | 解析 L4 HMAC 密钥（5.62.4 治本）：显式参数 > SecretProvid... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
+| 92 | L5 资源保护层：token/cost/rate 限额 + 成本不对称检测。 (l... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 93 | L6 Observability Layer — security event logging, alertin... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 94 | layers/l8_multi_agent.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 94 | Represents a communication item between agents. (layers/l... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
 | 95 | patterns/secrets.py | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 96 | L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 97 | L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 98 | llm_security/protocol.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 99 | self_protection/adversarial_mutator.py | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 100 | self_protection/l7_validation.py | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
-| 101 | self_protection/red_team_scanner.py | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 98 | LLM Security Gateway 九层防御统一接口契约（L0-L8）。 (llm... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 99 | 对抗变异生成器 — 对 Red Team 载荷施加 10 种变异技术，检... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 100 | Manages special risks for DeepSeek models. (self_protecti... | → | D_SHARED 共享服务: security/security_decision.py | 导入依赖 / import_depends |
+| 101 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: ContextInjector: retrieve and inject relevant knowledge i... | → | llm_security/gateway.py | 导入依赖 / import_depends |
-| 2 | D_COMPLIANCE 合规: behavioral_auditor/__init__.py | → | Alert Router — alert_router.py (gov_drift/alert_router.py) | 导入依赖 / import_depends |
-| 3 | D_COMPLIANCE 合规: behavioral_auditor/__init__.py | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | 导入依赖 / import_depends |
-| 4 | D_COMPLIANCE 合规: behavioral_auditor/__init__.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
-| 5 | D_COMPLIANCE 合规: behavioral_auditor/__init__.py | → | Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | 导入依赖 / import_depends |
-| 6 | D_COMPLIANCE 合规: behavioral_auditor/__init__.py | → | Drift Runbook Generator — 漂移演练手册自动生成。 (gov_dr... | 导入依赖 / import_depends |
-| 7 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/evolution_engine.py | → | llm_security/gateway.py | 导入依赖 / import_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: ContextInjector: retrieve and inject relevant knowledge i... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
+| 2 | D_COMPLIANCE 合规: 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | Alert Router — alert_router.py (gov_drift/alert_router.py) | 导入依赖 / import_depends |
+| 3 | D_COMPLIANCE 合规: 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | 导入依赖 / import_depends |
+| 4 | D_COMPLIANCE 合规: 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
+| 5 | D_COMPLIANCE 合规: 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | 导入依赖 / import_depends |
+| 6 | D_COMPLIANCE 合规: 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | Drift Runbook Generator — 漂移演练手册自动生成。 (gov_dr... | 导入依赖 / import_depends |
+| 7 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/evolution_engine.py | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 8 | D_GOVERNANCE 生命周期管理: git_commit.py — GitCommitGateway CLI 封装（OPS-202606251... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
 | 9 | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. (agent_spec/rbac_... | → | PermissionGuard — 七层权限编排器. (guards/permission_gua... | 导入依赖 / import_depends |
-| 10 | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (intelligence_governance... | → | llm_security/gateway.py | 导入依赖 / import_depends |
+| 10 | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (intelligence_governance... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 11 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | 导入依赖 / import_depends |
 | 12 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | PermissionGuard — 七层权限编排器. (guards/permission_gua... | 导入依赖 / import_depends |
 | 13 | D_GOVERNANCE 生命周期管理: session 隔离 stash 红蓝对抗极限测试。 (agent_rbac/test_se... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 测试依赖 / test_depends |
-| 14 | D_GOV_AUDIT 审计追踪: gov_audit/cli.py | → | orphan_judge/judge.py | 导入依赖 / import_depends |
+| 14 | D_GOV_AUDIT 审计追踪: gov_audit/cli.py | → | OrphanJudge 模块基础异常 (orphan_judge/judge.py) | 导入依赖 / import_depends |
 | 15 | D_GOV_AUDIT 审计追踪: gov_audit/cli.py | → | adversarial_validation/validator.py | 导入依赖 / import_depends |
 | 16 | D_GOV_AUDIT 审计追踪: reconcile_runner.py — Reconciler 链路异步化（Ruling:100P... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
 | 17 | D_GOV_AUDIT 审计追踪: reconcile_worker.py — 异步 reconciler worker（Ruling:100... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
@@ -687,22 +687,22 @@ flowchart TD
 | 27 | D_GOV_ENFORCEMENT 规则执行: session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
 | 28 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
 | 29 | D_GOV_ENFORCEMENT 规则执行: test_claim_files_for_edit.py — P2-2 并发 session 文件级... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 测试依赖 / test_depends |
-| 30 | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | → | llm_security/gateway.py | 导入依赖 / import_depends |
+| 30 | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 31 | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
-| 32 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | llm_security/gateway.py | 导入依赖 / import_depends |
+| 32 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 33 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | InputSanitizer: path whitelist + command whitelist + toke... | 导入依赖 / import_depends |
 | 34 | D_GOV_SCRIPTS 脚本治理: AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+... | → | Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
-| 35 | D_INFRA_RECOVERY 回滚恢复: rollback/drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
+| 35 | D_INFRA_RECOVERY 回滚恢复: 漂移自动修复处理器 — G-CT-005 消费端. (rollback/drift_fi... | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
 | 36 | D_INFRA_RECOVERY 回滚恢复: RunbookGenerator — 回滚操作 Runbook 自动生成。 (rollback... | → | Drift Runbook Generator — 漂移演练手册自动生成。 (gov_dr... | 导入依赖 / import_depends |
 | 37 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | GenesisBootstrap — RBAC系统启动引导器. (access_control/g... | 导入依赖 / import_depends |
-| 38 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | GenesisBootstrap — RBAC系统启动引导器. (access_control/g... | 导入依赖 / import_depends |
-| 39 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | KillSwitch — 熔断器. (access_control/kill_switch.py) | 导入依赖 / import_depends |
-| 40 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | NonRepudiation — 不可抵赖性审计签名. (access_control/non... | 导入依赖 / import_depends |
-| 41 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | 导入依赖 / import_depends |
-| 42 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | llm_security/gateway.py | 导入依赖 / import_depends |
-| 43 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | llm_security/protocol.py | 导入依赖 / import_depends |
-| 44 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | llm_security/gateway.py | 导入依赖 / import_depends |
-| 45 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | llm_security/gateway.py | 导入依赖 / import_depends |
+| 38 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | GenesisBootstrap — RBAC系统启动引导器. (access_control/g... | 导入依赖 / import_depends |
+| 39 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | KillSwitch — 熔断器. (access_control/kill_switch.py) | 导入依赖 / import_depends |
+| 40 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | NonRepudiation — 不可抵赖性审计签名. (access_control/non... | 导入依赖 / import_depends |
+| 41 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | 导入依赖 / import_depends |
+| 42 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
+| 43 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | LLM Security Gateway 九层防御统一接口契约（L0-L8）。 (llm... | 导入依赖 / import_depends |
+| 44 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
+| 45 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 46 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | InputSanitizer: path whitelist + command whitelist + toke... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

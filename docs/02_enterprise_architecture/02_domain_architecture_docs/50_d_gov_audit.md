@@ -77,10 +77,10 @@ flowchart TD
     src_zephyr_gov_audit_cold_start_py["(生产态 / production) BootstrapCache — 审计冷启动共享单例缓存。<br/>BootstrapCache — 审计冷启动共享单例缓存。<br/>文件: gov_audit/cold_start.py"]
     src_zephyr_gov_audit_compliance_map_py["(生产态 / production) audit-trail.compliance_map — MOD-INF-020 · 合规框架映射<br/>audit-trail.compliance_map — MOD-INF-020 · 合规框架映射<br/>文件: gov_audit/compliance_map.py"]
     src_zephyr_gov_audit_corporate_actions_py["(生产态 / production)<br/>文件: gov_audit/corporate_actions.py"]
-    src_zephyr_gov_audit_delegation_auditor_py["(生产态 / production)<br/>文件: gov_audit/delegation_auditor.py"]
+    src_zephyr_gov_audit_delegation_auditor_py["(生产态 / production) 委托链升级类型 -- str+Enum 使 == 'string_value' 可用.<br/>委托链升级类型 -- str+Enum 使 == 'string_value' 可用.<br/>文件: gov_audit/delegation_auditor.py"]
     src_zephyr_gov_audit_dora_metrics_py["(生产态 / production)<br/>文件: gov_audit/dora_metrics.py"]
     src_zephyr_gov_audit_evidence_pack_py["(生产态 / production) audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器<br/>audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器<br/>文件: gov_audit/evidence_pack.py"]
-    src_zephyr_gov_audit_external_tool_audit_py["(生产态 / production)<br/>文件: gov_audit/external_tool_audit.py"]
+    src_zephyr_gov_audit_external_tool_audit_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: gov_audit/external_tool_audit.py"]
     src_zephyr_gov_audit_feedback_policy_py["(生产态 / production) feedback_policy.py — Audit-findings → policy recommendation bridge.<br/>feedback_policy.py — Audit-findings → policy recommendation bridge.<br/>文件: gov_audit/feedback_policy.py"]
     src_zephyr_gov_audit_feedback_self_audit_py["(生产态 / production) audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计<br/>audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计<br/>文件: gov_audit/feedback_self_audit.py"]
     src_zephyr_gov_audit_forensic_package_py["(生产态 / production) Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+times...<br/>Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+times...<br/>文件: gov_audit/forensic_package.py"]
@@ -89,14 +89,14 @@ flowchart TD
     src_zephyr_gov_audit_incremental_review_py["(生产态 / production)<br/>文件: gov_audit/incremental_review.py"]
     src_zephyr_gov_audit_integrity_verifier_py["(生产态 / production) Integrity Verifier — v0.8.0 代码完整性验证器: hash校验+diff detection+rollback。<br/>Integrity Verifier — v0.8.0 代码完整性验证器: hash校验+diff detection+rollback。<br/>文件: gov_audit/integrity_verifier.py"]
     src_zephyr_gov_audit_kb_gate_py["(生产态 / production) audit-trail.kb_gate — MOD-INF-020 · KB 审计门控<br/>audit-trail.kb_gate — MOD-INF-020 · KB 审计门控<br/>文件: gov_audit/kb_gate.py"]
-    src_zephyr_gov_audit_log_rotation_py["(生产态 / production)<br/>文件: gov_audit/log_rotation.py"]
+    src_zephyr_gov_audit_log_rotation_py["(生产态 / production) 审计日志轮转管理器——按天轮转 events.jsonl，支持压缩和过期清理。<br/>审计日志轮转管理器——按天轮转 events.jsonl，支持压缩和过期清理。<br/>文件: gov_audit/log_rotation.py"]
     src_zephyr_gov_audit_merkle_audit_py["(生产态 / production) Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).<br/>Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).<br/>文件: gov_audit/merkle_audit.py"]
     src_zephyr_gov_audit_observability_dashboard_py["(生产态 / production)<br/>文件: gov_audit/observability_dashboard.py"]
     src_zephyr_gov_audit_pipeline_runner_py["(生产态 / production)<br/>文件: gov_audit/pipeline_runner.py"]
     src_zephyr_gov_audit_privacy_py["(生产态 / production) audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏<br/>audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏<br/>文件: gov_audit/privacy.py"]
     src_zephyr_gov_audit_provenance_tracker_py["(生产态 / production)<br/>文件: gov_audit/provenance_tracker.py"]
-    src_zephyr_gov_audit_replay_engine_py["(生产态 / production)<br/>文件: gov_audit/replay_engine.py"]
-    src_zephyr_gov_audit_retention_py["(生产态 / production)<br/>文件: gov_audit/retention.py"]
+    src_zephyr_gov_audit_replay_engine_py["(生产态 / production) 重放快照（补全测试期望接口）。<br/>重放快照（补全测试期望接口）。<br/>文件: gov_audit/replay_engine.py"]
+    src_zephyr_gov_audit_retention_py["(生产态 / production) 保留策略（补全测试期望接口）。<br/>保留策略（补全测试期望接口）。<br/>文件: gov_audit/retention.py"]
     src_zephyr_gov_audit_sbom_generator_py["(生产态 / production) LicenseType 枚举——许可证类型定义（P3 价值审判退役残留）。<br/>LicenseType 枚举——许可证类型定义（P3 价值审判退役残留）。<br/>文件: gov_audit/sbom_generator.py"]
     src_zephyr_gov_audit_spec_auditor_py["(生产态 / production)<br/>文件: gov_audit/spec_auditor.py"]
     src_zephyr_gov_audit_supply_chain_py["(生产态 / production) audit-trail.supply_chain — MOD-INF-020 · 供应链审计<br/>audit-trail.supply_chain — MOD-INF-020 · 供应链审计<br/>文件: gov_audit/supply_chain.py"]
@@ -214,11 +214,11 @@ flowchart TD
     tests_governance_audit_test_reconcile_worker_selfheal_py ~~~ tests_governance_audit_test_trae_069_threshold_sync_smoke_py
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py ~~~ tests_governance_rule_bridge_test_session_worktree_async_reconcile_py
     tests_governance_rule_bridge_test_session_worktree_async_reconcile_py ~~~ tests_governance_test_workspace_telemetry_shared_py
-    src_zephyr_gov_audit_anomaly_py["(生产态 / production)<br/>文件: gov_audit/anomaly.py"]
+    src_zephyr_gov_audit_anomaly_py["(生产态 / production) 治本（裁定#18 G3 + G-CT-002）：本文件原为桩实现——AnomalyDetector 仅有 feed/...<br/>治本（裁定#18 G3 + G-CT-002）：本文件原为桩实现——AnomalyDetector 仅有 feed/...<br/>文件: gov_audit/anomaly.py"]
     src_zephyr_gov_audit_audit_admission_controller_py["(生产态 / production)<br/>文件: gov_audit/audit_admission_controller.py"]
-    src_zephyr_gov_audit_bridge_py["(生产态 / production)<br/>文件: gov_audit/bridge.py"]
+    src_zephyr_gov_audit_bridge_py["(生产态 / production) 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 events.jsonl。<br/>写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 events.jsonl。<br/>文件: gov_audit/bridge.py"]
     src_zephyr_gov_audit_event_store_py["(生产态 / production) EventStore — Event Sourcing 事件追加与回放（DW-0002）<br/>EventStore — Event Sourcing 事件追加与回放（DW-0002）<br/>文件: gov_audit/event_store.py"]
-    src_zephyr_gov_audit_query_py["(生产态 / production)<br/>文件: gov_audit/query.py"]
+    src_zephyr_gov_audit_query_py["(生产态 / production) 净化文本以安全传递给 AI 上下文。<br/>净化文本以安全传递给 AI 上下文。<br/>文件: gov_audit/query.py"]
     src_zephyr_gov_audit_resource_aware_pool_py["(生产态 / production)<br/>文件: gov_audit/resource_aware_pool.py"]
     src_zephyr_gov_audit_text_to_finding_adapter_py["(生产态 / production)<br/>文件: gov_audit/text_to_finding_adapter.py"]
     src_zephyr_governance_audit_git_helpers_py["(生产态 / production) _git_helpers.py — audit reconciler 共享 git 工具模块<br/>_git_helpers.py — audit reconciler 共享 git 工具模块<br/>文件: audit/_git_helpers.py"]
@@ -257,12 +257,12 @@ flowchart TD
     src_zephyr_governance_semantic_audit_safety_boundary_py ~~~ src_zephyr_governance_semantic_audit_self_healer_py
     src_zephyr_governance_semantic_audit_self_healer_py ~~~ src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_self_health_py ~~~ src_zephyr_governance_semantic_audit_trigger_engine_py
-    src_zephyr_gov_audit_delegation_bridge_py["(生产态 / production)<br/>文件: gov_audit/delegation_bridge.py"]
-    src_zephyr_gov_audit_feedback_bridge_py["(生产态 / production)<br/>文件: gov_audit/feedback_bridge.py"]
+    src_zephyr_gov_audit_delegation_bridge_py["(生产态 / production) Module-level __getattr__ -- expose AuditWriter for patch compatibility.<br/>Module-level __getattr__ -- expose AuditWriter for patch compatibility.<br/>文件: gov_audit/delegation_bridge.py"]
+    src_zephyr_gov_audit_feedback_bridge_py["(生产态 / production) Bridge between audit-trail anomaly findings and the Feedback Loop Engine.<br/>Bridge between audit-trail anomaly findings and the Feedback Loop Engine.<br/>文件: gov_audit/feedback_bridge.py"]
     src_zephyr_gov_audit_finding_ingest_py["(生产态 / production)<br/>文件: gov_audit/finding_ingest.py"]
-    src_zephyr_gov_audit_indexer_py["(生产态 / production)<br/>文件: gov_audit/indexer.py"]
+    src_zephyr_gov_audit_indexer_py["(生产态 / production) 治本（裁定#18 G5）：本文件原为桩实现——__init__(index_dir) + build_index/lookup/<br/>治本（裁定#18 G5）：本文件原为桩实现——__init__(index_dir) + build_index/lookup/<br/>文件: gov_audit/indexer.py"]
     src_zephyr_gov_audit_merkle_hourly_py["(生产态 / production) audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合<br/>audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合<br/>文件: gov_audit/merkle_hourly.py"]
-    src_zephyr_gov_audit_models_py["(生产态 / production)<br/>文件: gov_audit/models.py"]
+    src_zephyr_gov_audit_models_py["(生产态 / production) 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/FileActionType/Provena...<br/>治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/FileActionType/Provena...<br/>文件: gov_audit/models.py"]
     src_zephyr_gov_audit_tiered_storage_bridge_py["(生产态 / production)<br/>文件: gov_audit/tiered_storage_bridge.py"]
     src_zephyr_gov_audit_trust_bridge_py["(生产态 / production)<br/>文件: gov_audit/trust_bridge.py"]
     src_zephyr_governance_audit_health_score_calculator_py["(生产态 / production) health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#...<br/>health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#...<br/>文件: audit/health_score_calculator.py"]
@@ -278,12 +278,12 @@ flowchart TD
     src_zephyr_gov_audit_trust_bridge_py ~~~ src_zephyr_governance_audit_health_score_calculator_py
     src_zephyr_governance_audit_health_score_calculator_py ~~~ src_zephyr_governance_audit_reconcile_runner_py
     src_zephyr_governance_audit_reconcile_runner_py ~~~ src_zephyr_governance_semantic_audit_reference_extractor_py
-    src_zephyr_gov_audit_contracts_py["(生产态 / production)<br/>文件: gov_audit/contracts.py"]
+    src_zephyr_gov_audit_contracts_py["(生产态 / production) 获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 AuditWriter.write 委托桥接。<br/>获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 AuditWriter.write 委托桥接。<br/>文件: gov_audit/contracts.py"]
     src_zephyr_gov_audit_finding_model_py["(生产态 / production)<br/>文件: gov_audit/finding_model.py"]
     src_zephyr_gov_audit_integrity_py["(生产态 / production) audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器<br/>audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器<br/>文件: gov_audit/integrity.py"]
-    src_zephyr_gov_audit_tiered_storage_py["(生产态 / production)<br/>文件: gov_audit/tiered_storage.py"]
-    src_zephyr_gov_audit_trust_engine_py["(生产态 / production)<br/>文件: gov_audit/trust_engine.py"]
-    src_zephyr_gov_audit_writer_py["(生产态 / production)<br/>文件: gov_audit/writer.py"]
+    src_zephyr_gov_audit_tiered_storage_py["(生产态 / production) 旧版分层存储（保留以兼容现有调用方）。<br/>旧版分层存储（保留以兼容现有调用方）。<br/>文件: gov_audit/tiered_storage.py"]
+    src_zephyr_gov_audit_trust_engine_py["(生产态 / production) 信任评分调整记录（补全测试期望接口）。<br/>信任评分调整记录（补全测试期望接口）。<br/>文件: gov_audit/trust_engine.py"]
+    src_zephyr_gov_audit_writer_py["(生产态 / production) 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SHA256 签名 + Lamport ...<br/>不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SHA256 签名 + Lamport ...<br/>文件: gov_audit/writer.py"]
     src_zephyr_governance_audit_reconciliation_registry_py["(生产态 / production) reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2...<br/>reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2...<br/>文件: audit/reconciliation_registry.py"]
     src_zephyr_governance_semantic_audit_models_py["(生产态 / production) 语义审计管线数据模型 — MOD-INF-028 §4.2<br/>语义审计管线数据模型 — MOD-INF-028 §4.2<br/>文件: semantic_audit/models.py"]
     src_zephyr_gov_audit_contracts_py ~~~ src_zephyr_gov_audit_finding_model_py
@@ -450,7 +450,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | gov_audit/feedback_bridge.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 1 | Bridge between audit-trail anomaly findings and the Feedb... | → | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 2 | audit_schema — 审计视图与查询入口（SH-DB-001 v2.0） (gov... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 3 | Audit ↔ ContinuousTrust 信任分数桥接. (bridges/audit_tru... | → | D_GOVERNANCE 生命周期管理: Continuous Trust Ledger — 持续信任评估引擎。 (intelligen... | 导入依赖 / import_depends |
 | 4 | EventStore — Event Sourcing 事件追加与回放（DW-0002） (g... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
@@ -468,7 +468,7 @@ flowchart TD
 | 16 | reconciliation_registry.py — GitCommitGateway post-commi... | → | D_GOV_CODE_QUALITY 代码质量治理: undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 导入依赖 / import_depends |
 | 17 | reconciliation_registry.py — GitCommitGateway post-commi... | → | D_GOV_CODE_QUALITY 代码质量治理: gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
 | 18 | audit-orchestrator 兼容重导出层（ARCH-042 阶段4 修复双 MO... | → | D_GOV_DRIFT 漂移检测: gov_audit/self_monitor.py | 导入依赖 / import_depends |
-| 19 | gov_audit/bridge.py | → | D_GOV_DRIFT 漂移检测: gov_audit/drift_bridge.py | 导入依赖 / import_depends |
+| 19 | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | → | D_GOV_DRIFT 漂移检测: drift bridge sync result -- 对齐 test_bridges_drift_bridg... | 导入依赖 / import_depends |
 | 20 | G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020 ↔ MOD-IN... | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
 | 21 | G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020 ↔ MOD-IN... | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
 | 22 | gov_audit/cli.py | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
@@ -480,7 +480,7 @@ flowchart TD
 | 28 | test_reconcile_async.py — P2-3 reconciler 链路异步化测试... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
 | 29 | test_reconcile_worker_selfheal.py —... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
 | 30 | test_session_worktree_async_reconcile.py — _run_reconcil... | → | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | 测试依赖 / test_depends |
-| 31 | gov_audit/delegation_bridge.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
+| 31 | Module-level __getattr__ -- expose AuditWriter for patch ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 32 | gov_audit/pipeline_runner.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
 | 33 | 审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta... | → | D_GOV_RULE 规则治理: 门禁上下文传播 / Gate Context (gate_engine/gate_context.py) | 导入依赖 / import_depends |
 | 34 | commit_gateway_abuse_monitor_reconciler.py — commit gate... | → | D_GOV_RULE 规则治理: 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 导入依赖 / import_depends |
@@ -494,7 +494,7 @@ flowchart TD
 | 42 | workspace_hygiene_reconciler.py — 工作区卫生自动清理 rec... | → | D_INFRA_RUNTIME 运行时集成: git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGE... | 导入依赖 / import_depends |
 | 43 | Re-export wrapper: default_attribution_engine canonical a... | → | D_REPORTING 报告: D_REPORTING — Default Attribution Engine (reporting/defa... | 导入依赖 / import_depends |
 | 44 | Re-export wrapper: default_tca_engine canonical at zephyr... | → | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | 导入依赖 / import_depends |
-| 45 | gov_audit/cli.py | → | D_SECURITY 对抗验证: orphan_judge/judge.py | 导入依赖 / import_depends |
+| 45 | gov_audit/cli.py | → | D_SECURITY 对抗验证: OrphanJudge 模块基础异常 (orphan_judge/judge.py) | 导入依赖 / import_depends |
 | 46 | gov_audit/cli.py | → | D_SECURITY 对抗验证: adversarial_validation/validator.py | 导入依赖 / import_depends |
 | 47 | reconcile_runner.py — Reconciler 链路异步化（Ruling:100P... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
 | 48 | reconcile_worker.py — 异步 reconciler worker（Ruling:100... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
@@ -511,27 +511,27 @@ flowchart TD
 | 59 | BootstrapCache — 审计冷启动共享单例缓存。 (gov_audit/col... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 60 | EventStore — Event Sourcing 事件追加与回放（DW-0002） (g... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 61 | audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器 ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 62 | gov_audit/external_tool_audit.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 63 | gov_audit/feedback_bridge.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 62 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 63 | Bridge between audit-trail anomaly findings and the Feedb... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 64 | gov_audit/finding_ingest.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 65 | gov_audit/finding_model.py | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
 | 66 | Forensic Package — v0.8.0 取证就绪: escalation event bun... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 67 | gov_audit/indexer.py | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 68 | gov_audit/indexer.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 67 | 治本（裁定#18 G5）：本文件原为桩实现——__init__(index_di... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 68 | 治本（裁定#18 G5）：本文件原为桩实现——__init__(index_di... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 69 | audit-trail.integrity — MOD-INF-020 · 密码学完整性验证... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 70 | audit-trail.integrity — MOD-INF-020 · 密码学完整性验证... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 71 | gov_audit/log_rotation.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 71 | 审计日志轮转管理器——按天轮转 events.jsonl，支持压缩和过... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 72 | audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 73 | gov_audit/pipeline_runner.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 74 | gov_audit/pipeline_runner.py | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
-| 75 | gov_audit/query.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 76 | gov_audit/retention.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 75 | 净化文本以安全传递给 AI 上下文。 (gov_audit/query.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 76 | 保留策略（补全测试期望接口）。 (gov_audit/retention.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 77 | audit-trail.supply_chain — MOD-INF-020 · 供应链审计 (go... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 78 | gov_audit/text_to_finding_adapter.py | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
-| 79 | gov_audit/tiered_storage.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 80 | gov_audit/writer.py | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 81 | gov_audit/writer.py | → | D_SHARED 共享服务: session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
-| 82 | gov_audit/writer.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 79 | 旧版分层存储（保留以兼容现有调用方）。 (gov_audit/tiered_... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 80 | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 81 | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | → | D_SHARED 共享服务: session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
+| 82 | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 83 | behavioral_admission/mcp_result_push.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 84 | post_process.py —— AI 生成代码后处理管道（Phase 13 | 盲... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 85 | 审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
@@ -562,30 +562,30 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: skills/skill_executor.py | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 2 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Sandbox (skills/skill_sa... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
-| 3 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引... | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 4 | D_FBL_VERIFICATION 反馈验证: Safety Gates L66-L67 — Financial Prudence + Full Integra... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: Skill 加载前创建回滚检查点 (skills/skill_executor.py) | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 2 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Sandbox (skills/skill_sa... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 3 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 4 | D_FBL_VERIFICATION 反馈验证: Safety Gates L66-L67 — Financial Prudence + Full Integra... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
 | 5 | D_GOVERNANCE 生命周期管理: git_commit.py — GitCommitGateway CLI 封装（OPS-202606251... | → | workspace_hygiene_reconciler.py — 工作区卫生自动清理 rec... | 导入依赖 / import_depends |
 | 6 | D_GOVERNANCE 生命周期管理: ProjectionEngine — 事件折叠为当前状态（DW-0003） (observ... | → | EventStore — Event Sourcing 事件追加与回放（DW-0002） (g... | 导入依赖 / import_depends |
 | 7 | D_GOVERNANCE 生命周期管理: DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | audit_schema — 审计视图与查询入口（SH-DB-001 v2.0） (gov... | 导入依赖 / import_depends |
-| 8 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | gov_audit/writer.py | 导入依赖 / import_depends |
+| 8 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 9 | D_GOV_CODE_QUALITY 代码质量治理: panorama_alignment_gate.py — 三图模块对齐门禁（四图模块... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 10 | D_GOV_CODE_QUALITY 代码质量治理: reconciler_health_gate.py — reconciler 健康度门禁（#ARCH... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
-| 11 | D_GOV_DRIFT 漂移检测: gov_audit/drift_bridge.py | → | gov_audit/anomaly.py | 导入依赖 / import_depends |
+| 11 | D_GOV_DRIFT 漂移检测: drift bridge sync result -- 对齐 test_bridges_drift_bridg... | → | 治本（裁定#18 G3 + G-CT-002）：本文件原为桩实现——Anomal... | 导入依赖 / import_depends |
 | 12 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | → | gov_audit/finding_ingest.py | 导入依赖 / import_depends |
 | 13 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | → | gov_audit/finding_model.py | 导入依赖 / import_depends |
-| 14 | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (rule_enforcem... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
+| 14 | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (rule_enforcem... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
 | 15 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle... | 导入依赖 / import_depends |
-| 16 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | gov_audit/models.py | 导入依赖 / import_depends |
+| 16 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/Fi... | 导入依赖 / import_depends |
 | 17 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | gov_audit/trust_bridge.py | 导入依赖 / import_depends |
 | 18 | D_GOV_ENFORCEMENT 规则执行: metric_count_drift_reconciler.py — dashboard 指标数描述... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 19 | D_GOV_ENFORCEMENT 规则执行: readme_version_sync_reconciler.py — README 版本号派生展... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
-| 20 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | behavioral_admission/mcp_result_push.py | 导入依赖 / import_depends |
-| 21 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | post_process.py —— AI 生成代码后处理管道（Phase 13 | 盲... | 导入依赖 / import_depends |
-| 22 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | behavioral_admission/vibe_coding_enforcer.py | 导入依赖 / import_depends |
+| 20 | D_GOV_ENFORCEMENT 规则执行: 规则执行Behavioral Admission包 / Gov Enforcement Behavior... | → | behavioral_admission/mcp_result_push.py | 导入依赖 / import_depends |
+| 21 | D_GOV_ENFORCEMENT 规则执行: 规则执行Behavioral Admission包 / Gov Enforcement Behavior... | → | post_process.py —— AI 生成代码后处理管道（Phase 13 | 盲... | 导入依赖 / import_depends |
+| 22 | D_GOV_ENFORCEMENT 规则执行: 规则执行Behavioral Admission包 / Gov Enforcement Behavior... | → | behavioral_admission/vibe_coding_enforcer.py | 导入依赖 / import_depends |
 | 23 | D_GOV_ENFORCEMENT 规则执行: GateEventAdapter — GateRepo 事件适配器（DW-0006） (behav... | → | EventStore — Event Sourcing 事件追加与回放（DW-0002） (g... | 导入依赖 / import_depends |
-| 24 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/verdict_engine.py | → | gov_audit/models.py | 导入依赖 / import_depends |
+| 24 | D_GOV_ENFORCEMENT 规则执行: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/Fi... | 导入依赖 / import_depends |
 | 25 | D_GOV_ENFORCEMENT 规则执行: emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOV... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 26 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | blueprint_status_transition_reconciler.py — 蓝图状态单调... | 导入依赖 / import_depends |
 | 27 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | commit_gateway_abuse_monitor_reconciler.py — commit gate... | 导入依赖 / import_depends |
@@ -602,34 +602,34 @@ flowchart TD
 | 38 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 39 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | workspace_hygiene_reconciler.py — 工作区卫生自动清理 rec... | 导入依赖 / import_depends |
 | 40 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | audit-trail.integrity — MOD-INF-020 · 密码学完整性验证... | 导入依赖 / import_depends |
-| 41 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | gov_audit/query.py | 导入依赖 / import_depends |
-| 42 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | gov_audit/writer.py | 导入依赖 / import_depends |
+| 41 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | 净化文本以安全传递给 AI 上下文。 (gov_audit/query.py) | 导入依赖 / import_depends |
+| 42 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 43 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | SYS-MASTER-001 Compliance Checker (rule_enforcement/sys_m... | 导入依赖 / import_depends |
 | 44 | D_GOV_OPS_RESILIENCE 运维弹性治理: blast_radius — MOD-INF-028 §3.1 Stage 9 (resilience_gov... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (semantic_audit... | 导入依赖 / import_depends |
-| 45 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/tamper_evident_log.py | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 46 | D_GOV_RULE 规则治理: 能力检查器 / Capability Checker (rule_enforcement/capabil... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
-| 47 | D_GOV_RULE 规则治理: 门禁紧急旁路 / Gate Override (gate_engine/gate_override.py) | → | gov_audit/bridge.py | 导入依赖 / import_depends |
+| 45 | D_GOV_OPS_RESILIENCE 运维弹性治理: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 46 | D_GOV_RULE 规则治理: 能力检查器 / Capability Checker (rule_enforcement/capabil... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 47 | D_GOV_RULE 规则治理: 门禁紧急旁路 / Gate Override (gate_engine/gate_override.py) | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
 | 48 | D_GOV_SCRIPTS 脚本治理: Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-M... | → | SYS-MASTER-001 Compliance Checker (rule_enforcement/sys_m... | 导入依赖 / import_depends |
-| 49 | D_GOV_SCRIPTS 脚本治理: scripts/governance/rebuild_audit_index.py — 重建 audit-t... | → | gov_audit/indexer.py | 导入依赖 / import_depends |
+| 49 | D_GOV_SCRIPTS 脚本治理: scripts/governance/rebuild_audit_index.py — 重建 audit-t... | → | 治本（裁定#18 G5）：本文件原为桩实现——__init__(index_di... | 导入依赖 / import_depends |
 | 50 | D_GOV_SCRIPTS 脚本治理: architecture_health_dashboard.py — 架构健康度仪表盘（自... | → | runtime_violation_snapshot.py — trae_060 §5 evidence 运... | 导入依赖 / import_depends |
 | 51 | D_GOV_SCRIPTS 脚本治理: session_startup_health_check.py — AI session 启动健康度... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 52 | D_INFRASTRUCTURE 跨层契约基础设施: backup_reconciler.py — 灾备备份系统事件触发器（post-comm... | → | reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
-| 53 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | → | gov_audit/contracts.py | 导入依赖 / import_depends |
-| 54 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollback/rollbac... | → | gov_audit/query.py | 导入依赖 / import_depends |
-| 55 | D_INFRA_RECOVERY 回滚恢复: RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. ... | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 56 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 57 | D_INFRA_RUNTIME 运行时集成: AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | gov_audit/writer.py | 导入依赖 / import_depends |
+| 53 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | → | 获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 Audit... | 导入依赖 / import_depends |
+| 54 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollback/rollbac... | → | 净化文本以安全传递给 AI 上下文。 (gov_audit/query.py) | 导入依赖 / import_depends |
+| 55 | D_INFRA_RECOVERY 回滚恢复: RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. ... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 56 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 57 | D_INFRA_RUNTIME 运行时集成: AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 58 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/engine.py | → | gov_audit/finding_model.py | 导入依赖 / import_depends |
-| 59 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
+| 59 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
 | 60 | D_INTEGRATION 管线路由: 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (semantic_audit... | 导入依赖 / import_depends |
-| 61 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 (mc... | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 62 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 63 | D_SECURITY 对抗验证: G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. (access_... | → | gov_audit/contracts.py | 导入依赖 / import_depends |
-| 64 | D_SECURITY 对抗验证: orphan_judge/judge.py | → | gov_audit/finding_model.py | 导入依赖 / import_depends |
+| 61 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 (mc... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 62 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 63 | D_SECURITY 对抗验证: G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. (access_... | → | 获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 Audit... | 导入依赖 / import_depends |
+| 64 | D_SECURITY 对抗验证: OrphanJudge 模块基础异常 (orphan_judge/judge.py) | → | gov_audit/finding_model.py | 导入依赖 / import_depends |
 | 65 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | gov_audit/finding_model.py | 导入依赖 / import_depends |
-| 66 | D_SECURITY 对抗验证: llm_security/behavior_audit_logger.py | → | gov_audit/bridge.py | 导入依赖 / import_depends |
-| 67 | D_SECURITY 对抗验证: self_protection/isolation.py | → | gov_audit/bridge.py | 导入依赖 / import_depends |
-| 68 | D_TRADING 交易运营: trading/verdict_engine.py | → | gov_audit/models.py | 导入依赖 / import_depends |
+| 66 | D_SECURITY 对抗验证: Append-only AI behavior audit logger. (llm_security/behav... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 67 | D_SECURITY 对抗验证: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 68 | D_TRADING 交易运营: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/Fi... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_fundamental_init_py["(生产态 / production) D_SIGNAL Signal Domain<br/>D_SIGNAL Signal Domain<br/>文件: signal_fundamental/__init__.py"]
+    src_zephyr_signal_fundamental_init_py["(生产态 / production) 基本面信号域包 / Signal Fundamental Domain Package<br/>基本面信号域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: signal_fundamental/__init__.py"]
     src_zephyr_signal_fundamental_capital_capital_allocation_result_py["(生产态 / production) D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>文件: capital/capital_allocation_result.py"]
     src_zephyr_signal_fundamental_capital_capital_allocator_py["(生产态 / production) D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>文件: capital/capital_allocator.py"]
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py["(生产态 / production) D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>文件: capital/default_capital_allocator.py"]
@@ -113,29 +113,29 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_FACTOR 因子: ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
-| 2 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
-| 3 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 4 | D_SIGNAL — Default Signal Aggregator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
-| 5 | D_SIGNAL — Default Signal Aggregator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 6 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
-| 7 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 8 | D_SIGNAL — Default Capital Allocator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 9 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
-| 10 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 2 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-002 ==== (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 3 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-015 ==== (contracts/synthesized_... | 导入依赖 / import_depends |
+| 4 | D_SIGNAL — Default Signal Aggregator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-002 ==== (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 5 | D_SIGNAL — Default Signal Aggregator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-015 ==== (contracts/synthesized_... | 导入依赖 / import_depends |
+| 6 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-002 ==== (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 7 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-015 ==== (contracts/synthesized_... | 导入依赖 / import_depends |
+| 8 | D_SIGNAL — Default Capital Allocator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-015 ==== (contracts/synthesized_... | 导入依赖 / import_depends |
+| 9 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-002 ==== (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 10 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-015 ==== (contracts/synthesized_... | 导入依赖 / import_depends |
 | 11 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
 | 12 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 13 | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
-| 14 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
-| 15 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: market/signal_degradation_warning.py | 导入依赖 / import_depends |
-| 16 | D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） (st... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
-| 17 | D_SIGNAL — Default Capital Allocator (implementations/de... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export... | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
+| 14 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
+| 15 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-ERR-003 ==== (market/signal_degrada... | 导入依赖 / import_depends |
+| 16 | D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） (st... | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
+| 17 | D_SIGNAL — Default Capital Allocator (implementations/de... | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FACTOR 因子: factor/alpha_signal_pipeline.py | → | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | 导入依赖 / import_depends |
-| 2 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_SIGNAL Signal Domain (signal_fundamental/__init__.py) | 导入依赖 / import_depends |
+| 1 | D_FACTOR 因子: Re-export from signal domain SSoT — zephyr.signal_fundam... | → | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | 导入依赖 / import_depends |
+| 2 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | 基本面信号域包 / Signal Fundamental Domain Package (signa... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_cross_asset_init_py["(生产态 / production)<br/>文件: cross_asset/__init__.py"]
-    src_zephyr_cross_asset_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_cross_asset_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_cross_asset_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_cross_asset_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_cross_asset_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_cross_asset_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_cross_asset_init_py["(生产态 / production) 跨资产域包 / Cross Asset Domain Package<br/>跨资产域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: cross_asset/__init__.py"]
+    src_zephyr_cross_asset_extensions_init_py["(生产态 / production) 跨资产扩展包 / Cross Asset Extensions Package<br/>跨资产域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_cross_asset_api_init_py["(生产态 / production) 跨资产API包 / Cross Asset API Package<br/>跨资产域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_cross_asset_core_init_py["(生产态 / production) 跨资产核心包 / Cross Asset Core Package<br/>跨资产域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_cross_asset_infrastructure_init_py["(生产态 / production) 跨资产基础设施包 / Cross Asset Infrastructure Package<br/>跨资产域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_cross_asset_models_init_py["(生产态 / production) 跨资产模型包 / Cross Asset Models Package<br/>跨资产域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_cross_asset_services_init_py["(生产态 / production) 跨资产服务包 / Cross Asset Services Package<br/>跨资产域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_cross_asset_init_py ~~~ src_zephyr_cross_asset_extensions_init_py
     src_zephyr_cross_asset_extensions_init_py ~~~ src_zephyr_cross_asset_api_init_py
     src_zephyr_cross_asset_api_init_py ~~~ src_zephyr_cross_asset_core_init_py

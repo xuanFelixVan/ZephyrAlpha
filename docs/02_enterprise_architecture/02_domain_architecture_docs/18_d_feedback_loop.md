@@ -53,35 +53,35 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_init_py["(生产态 / production) Feedback Loop Engine — MOD-FEEDBACK_LOOP.<br/>Feedback Loop Engine — MOD-FEEDBACK_LOOP.<br/>文件: feedback_loop/__init__.py"]
+    src_zephyr_feedback_loop_init_py["(生产态 / production) 反馈循环域包 / Feedback Loop Domain Package<br/>反馈循环域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: feedback_loop/__init__.py"]
     src_zephyr_feedback_loop_gen_inherited_py["(生产态 / production)<br/>文件: feedback_loop/_gen_inherited.py"]
-    src_zephyr_feedback_loop_actors_init_py["(生产态 / production) feedback-loop.actors — auto-generated package init.<br/>feedback-loop.actors — auto-generated package init.<br/>文件: actors/__init__.py"]
+    src_zephyr_feedback_loop_actors_init_py["(生产态 / production) 反馈循环Actors包 / Feedback Loop Actors Package<br/>反馈循环域下 actors 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: actors/__init__.py"]
     src_zephyr_feedback_loop_auto_evolution_py["(生产态 / production)<br/>文件: feedback_loop/auto_evolution.py"]
     src_zephyr_feedback_loop_backpressure_bridge_py["(生产态 / production) FLE -> Pipeline 背压桥接（CTR-BP-001~003）<br/>FLE -> Pipeline 背压桥接（CTR-BP-001~003）<br/>文件: feedback_loop/backpressure_bridge.py"]
-    src_zephyr_feedback_loop_collectors_init_py["(生产态 / production) feedback-loop.collectors — auto-generated package init.<br/>feedback-loop.collectors — auto-generated package init.<br/>文件: collectors/__init__.py"]
+    src_zephyr_feedback_loop_collectors_init_py["(生产态 / production) 反馈循环Collectors包 / Feedback Loop Collectors Package<br/>反馈循环域下 collectors 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: collectors/__init__.py"]
     src_zephyr_feedback_loop_config_py["(生产态 / production)<br/>文件: feedback_loop/config.py"]
     src_zephyr_feedback_loop_db_bridge_py["(生产态 / production) FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics<br/>FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_schema连接写入fle_metrics<br/>文件: feedback_loop/db_bridge.py"]
     src_zephyr_feedback_loop_decision_engine_py["(生产态 / production) Feedback Loop Decision Engine<br/>Feedback Loop Decision Engine<br/>文件: feedback_loop/decision_engine.py"]
-    src_zephyr_feedback_loop_docs_init_py["(生产态 / production) feedback-loop.docs — auto-generated package init.<br/>feedback-loop.docs — auto-generated package init.<br/>文件: docs/__init__.py"]
+    src_zephyr_feedback_loop_docs_init_py["(生产态 / production) 反馈循环Docs包 / Feedback Loop Docs Package<br/>反馈循环域下 docs 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: docs/__init__.py"]
     src_zephyr_feedback_loop_error_budget_py["(生产态 / production) Error Budget 状态机——monthly budget + burn_rate + exhaust_policy。<br/>Error Budget 状态机——monthly budget + burn_rate + exhaust_policy。<br/>文件: feedback_loop/error_budget.py"]
     src_zephyr_feedback_loop_eval_harness_py["(生产态 / production)<br/>文件: feedback_loop/eval_harness.py"]
-    src_zephyr_feedback_loop_evolution_init_py["(生产态 / production) feedback-loop.evolution — auto-generated package init.<br/>feedback-loop.evolution — auto-generated package init.<br/>文件: evolution/__init__.py"]
+    src_zephyr_feedback_loop_evolution_init_py["(生产态 / production) 反馈循环Evolution包 / Feedback Loop Evolution Package<br/>反馈循环域下 evolution 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: evolution/__init__.py"]
     src_zephyr_feedback_loop_exceptions_py["(生产态 / production)<br/>文件: feedback_loop/exceptions.py"]
     src_zephyr_feedback_loop_feedback_collector_py["(生产态 / production) FeedbackCollector: collect task execution feedback<br/>FeedbackCollector: collect task execution feedback<br/>文件: feedback_loop/feedback_collector.py"]
     src_zephyr_feedback_loop_fitness_functions_py["(生产态 / production)<br/>文件: feedback_loop/fitness_functions.py"]
-    src_zephyr_feedback_loop_forensic_init_py["(生产态 / production) feedback-loop.forensic — auto-generated package init.<br/>feedback-loop.forensic — auto-generated package init.<br/>文件: forensic/__init__.py"]
-    src_zephyr_feedback_loop_gates_init_py["(生产态 / production) feedback-loop.gates — auto-generated package init.<br/>feedback-loop.gates — auto-generated package init.<br/>文件: gates/__init__.py"]
-    src_zephyr_feedback_loop_generator_py["(生产态 / production)<br/>文件: feedback_loop/generator.py"]
+    src_zephyr_feedback_loop_forensic_init_py["(生产态 / production) 反馈循环Forensic包 / Feedback Loop Forensic Package<br/>反馈循环域下 forensic 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: forensic/__init__.py"]
+    src_zephyr_feedback_loop_gates_init_py["(生产态 / production) 反馈循环Gates包 / Feedback Loop Gates Package<br/>反馈循环域下 gates 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: gates/__init__.py"]
+    src_zephyr_feedback_loop_generator_py["(生产态 / production) 执行骨骼代码生成. 返回 (created, skipped, errors).<br/>执行骨骼代码生成. 返回 (created, skipped, errors).<br/>文件: feedback_loop/generator.py"]
     src_zephyr_feedback_loop_metrics_collector_py["(生产态 / production) MetricsCollector: append-only metrics recording.<br/>MetricsCollector: append-only metrics recording.<br/>文件: feedback_loop/metrics_collector.py"]
-    src_zephyr_feedback_loop_resilience_init_py["(生产态 / production) feedback-loop.resilience — auto-generated package init.<br/>feedback-loop.resilience — auto-generated package init.<br/>文件: resilience/__init__.py"]
+    src_zephyr_feedback_loop_resilience_init_py["(生产态 / production) 反馈循环Resilience包 / Feedback Loop Resilience Package<br/>反馈循环域下 resilience 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: resilience/__init__.py"]
     src_zephyr_feedback_loop_scheduler_py["(生产态 / production) FLE 全链路调度器 —— collect->detect->diagnose->act->verify 闭环。<br/>FLE 全链路调度器 —— collect->detect->diagnose->act->verify 闭环。<br/>文件: feedback_loop/scheduler.py"]
-    src_zephyr_feedback_loop_security_init_py["(生产态 / production) feedback-loop.security — auto-generated package init.<br/>feedback-loop.security — auto-generated package init.<br/>文件: security/__init__.py"]
+    src_zephyr_feedback_loop_security_init_py["(生产态 / production) 反馈循环Security包 / Feedback Loop Security Package<br/>反馈循环域下 security 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: security/__init__.py"]
     src_zephyr_feedback_loop_self_diagnosis_py["(生产态 / production) self_diagnosis.py — 自我诊断 (DD120, TASK-020)<br/>self_diagnosis.py — 自我诊断 (DD120, TASK-020)<br/>文件: feedback_loop/self_diagnosis.py"]
     src_zephyr_feedback_loop_session_learner_py["(生产态 / production) session_learner.py — 在线学习 (DD114, TASK-020)<br/>session_learner.py — 在线学习 (DD114, TASK-020)<br/>文件: feedback_loop/session_learner.py"]
-    src_zephyr_feedback_loop_slo_manager_py["(生产态 / production)<br/>文件: feedback_loop/slo_manager.py"]
-    src_zephyr_feedback_loop_tests_e2e_init_py["(生产态 / production) feedback-loop.tests.e2e — auto-generated package init.<br/>feedback-loop.tests.e2e — auto-generated package init.<br/>文件: e2e/__init__.py"]
-    src_zephyr_feedback_loop_validator_py["(生产态 / production)<br/>文件: feedback_loop/validator.py"]
-    src_zephyr_feedback_loop_verifiers_init_py["(生产态 / production) feedback-loop.verifiers — auto-generated package init.<br/>feedback-loop.verifiers — auto-generated package init.<br/>文件: verifiers/__init__.py"]
+    src_zephyr_feedback_loop_slo_manager_py["(生产态 / production) 5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）。<br/>5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）。<br/>文件: feedback_loop/slo_manager.py"]
+    src_zephyr_feedback_loop_tests_e2e_init_py["(生产态 / production) 反馈循环E2e包 / Feedback Loop E2e Package<br/>反馈循环域下 e2e 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: e2e/__init__.py"]
+    src_zephyr_feedback_loop_validator_py["(生产态 / production) 返回尚未生成的骨骼文件列表.<br/>返回尚未生成的骨骼文件列表.<br/>文件: feedback_loop/validator.py"]
+    src_zephyr_feedback_loop_verifiers_init_py["(生产态 / production) 反馈验证域包 / Verifiers Domain Package<br/>反馈验证域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: verifiers/__init__.py"]
     src_zephyr_feedback_loop_init_py ~~~ src_zephyr_feedback_loop_gen_inherited_py
     src_zephyr_feedback_loop_gen_inherited_py ~~~ src_zephyr_feedback_loop_actors_init_py
     src_zephyr_feedback_loop_actors_init_py ~~~ src_zephyr_feedback_loop_auto_evolution_py
@@ -476,23 +476,23 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_AUTONOMY_CORE 自治核心: VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001) ... | 导入依赖 / import_depends |
-| 2 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_DETECTORS 反馈检测器: feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
+| 2 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_DETECTORS 反馈检测器: 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
 | 3 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_DETECTORS 反馈检测器: anomaly/anomaly_detector.py | 导入依赖 / import_depends |
-| 4 | feedback_loop/scheduler_act.py | → | D_FBL_DETECTORS 反馈检测器: feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 5 | feedback_loop/scheduler_collect_detect.py | → | D_FBL_DETECTORS 反馈检测器: feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 6 | feedback_loop/scheduler_health.py | → | D_FBL_DETECTORS 反馈检测器: feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 7 | E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | D_FBL_DETECTORS 反馈检测器: feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 8 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_DIAGNOSERS 反馈诊断器: feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 4 | feedback_loop/scheduler_act.py | → | D_FBL_DETECTORS 反馈检测器: 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 5 | feedback_loop/scheduler_collect_detect.py | → | D_FBL_DETECTORS 反馈检测器: 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 6 | feedback_loop/scheduler_health.py | → | D_FBL_DETECTORS 反馈检测器: 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 7 | E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | D_FBL_DETECTORS 反馈检测器: 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 8 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_DIAGNOSERS 反馈诊断器: 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
 | 9 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_DIAGNOSERS 反馈诊断器: diagnosis/diagnosis_engine.py | 导入依赖 / import_depends |
-| 10 | feedback_loop/scheduler_act.py | → | D_FBL_DIAGNOSERS 反馈诊断器: feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 11 | feedback_loop/scheduler_collect_detect.py | → | D_FBL_DIAGNOSERS 反馈诊断器: feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 12 | feedback_loop/scheduler_health.py | → | D_FBL_DIAGNOSERS 反馈诊断器: feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 13 | feedback_loop/scheduler_safety.py | → | D_FBL_DIAGNOSERS 反馈诊断器: feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 14 | E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | D_FBL_DIAGNOSERS 反馈诊断器: feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 15 | feedback-loop.gates — auto-generated package init. (gate... | → | D_FBL_VERIFICATION 反馈验证: gates/_governance_gates.py | 导入依赖 / import_depends |
-| 16 | feedback-loop.gates — auto-generated package init. (gate... | → | D_FBL_VERIFICATION 反馈验证: gates/_operational_gates.py | 导入依赖 / import_depends |
-| 17 | feedback-loop.gates — auto-generated package init. (gate... | → | D_FBL_VERIFICATION 反馈验证: gates/_safety_gates.py | 导入依赖 / import_depends |
-| 18 | feedback-loop.gates — auto-generated package init. (gate... | → | D_FBL_VERIFICATION 反馈验证: gates/_security_gates.py | 导入依赖 / import_depends |
+| 10 | feedback_loop/scheduler_act.py | → | D_FBL_DIAGNOSERS 反馈诊断器: 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 11 | feedback_loop/scheduler_collect_detect.py | → | D_FBL_DIAGNOSERS 反馈诊断器: 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 12 | feedback_loop/scheduler_health.py | → | D_FBL_DIAGNOSERS 反馈诊断器: 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 13 | feedback_loop/scheduler_safety.py | → | D_FBL_DIAGNOSERS 反馈诊断器: 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 14 | E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | D_FBL_DIAGNOSERS 反馈诊断器: 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 15 | 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | D_FBL_VERIFICATION 反馈验证: gates/_governance_gates.py | 导入依赖 / import_depends |
+| 16 | 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | D_FBL_VERIFICATION 反馈验证: gates/_operational_gates.py | 导入依赖 / import_depends |
+| 17 | 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | D_FBL_VERIFICATION 反馈验证: gates/_safety_gates.py | 导入依赖 / import_depends |
+| 18 | 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | D_FBL_VERIFICATION 反馈验证: gates/_security_gates.py | 导入依赖 / import_depends |
 | 19 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_FBL_VERIFICATION 反馈验证: verifiers/verification_engine.py | 导入依赖 / import_depends |
 | 20 | feedback_loop/scheduler_act.py | → | D_FBL_VERIFICATION 反馈验证: Cascading Rollback Analyzer — v0.38.0 R482 (verifiers/ca... | 导入依赖 / import_depends |
 | 21 | feedback_loop/scheduler_act.py | → | D_FBL_VERIFICATION 反馈验证: Stochastic Diagnosis Verifier — v0.38.0 R483 (verifiers/... | 导入依赖 / import_depends |
@@ -501,29 +501,29 @@ flowchart TD
 | 24 | feedback_loop/scheduler_safety.py | → | D_FBL_VERIFICATION 反馈验证: Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOO... | 导入依赖 / import_depends |
 | 25 | E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | D_FBL_VERIFICATION 反馈验证: Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOO... | 导入依赖 / import_depends |
 | 26 | E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | D_FBL_VERIFICATION 反馈验证: Safety Gates L66-L67 — Financial Prudence + Full Integra... | 导入依赖 / import_depends |
-| 27 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: A/B Test Verifier — v0.9.0 R117 (verifiers/ab_test.py) | 导入依赖 / import_depends |
-| 28 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Action Explainability — v0.3.0 R15 (verifiers/action_exp... | 导入依赖 / import_depends |
-| 29 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: AI Comment Veracity — v0.37.0 R459 (verifiers/ai_comment... | 导入依赖 / import_depends |
-| 30 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Attack Simulator — v0.6.0 R57 (verifiers/attack_simulato... | 导入依赖 / import_depends |
-| 31 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Auto Rollback — v0.8.0 R93 (verifiers/auto_rollback.py) | 导入依赖 / import_depends |
-| 32 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Build Reproducibility Verifier — v0.38.0 R484 (verifiers... | 导入依赖 / import_depends |
-| 33 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Canary Repair — v0.8.0 R104b (verifiers/canary_repair.py) | 导入依赖 / import_depends |
-| 34 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Cascading Rollback Analyzer — v0.38.0 R482 (verifiers/ca... | 导入依赖 / import_depends |
-| 35 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Cross-Blueprint Contract Drift Monitor — v0.39.0 R490 (v... | 导入依赖 / import_depends |
-| 36 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Cross-Module Integration Verifier — v0.5.0 R39 (verifier... | 导入依赖 / import_depends |
-| 37 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Cross-Session Knowledge Integrity — v0.16.0 R225 (verifi... | 导入依赖 / import_depends |
-| 38 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Digital Twin Sandbox — v0.6.0 R55 (verifiers/digital_twi... | 导入依赖 / import_depends |
-| 39 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Dry Run Sandbox — v0.3.0 R19 (verifiers/dry_run_sandbox.py) | 导入依赖 / import_depends |
-| 40 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Federated Protocol — v0.10.0 R129 (verifiers/federated_p... | 导入依赖 / import_depends |
-| 41 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Golden Test External — v0.15.0 R214 (verifiers/golden_te... | 导入依赖 / import_depends |
-| 42 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: No-LLM Degradation Mode — v0.8.0 R94 (verifiers/no_llm_d... | 导入依赖 / import_depends |
-| 43 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Pre-Flight Simulator — v0.12.0 R169b (verifiers/pre_flig... | 导入依赖 / import_depends |
-| 44 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Preventive Repair — v0.6.0 R69 (verifiers/preventive_rep... | 导入依赖 / import_depends |
-| 45 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Rollback Integrity — v0.3.0 R18b (verifiers/rollback_int... | 导入依赖 / import_depends |
-| 46 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Sim2Real Calibration — v0.6.0 R56 (verifiers/sim2real_ca... | 导入依赖 / import_depends |
-| 47 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: Stochastic Diagnosis Verifier — v0.38.0 R483 (verifiers/... | 导入依赖 / import_depends |
-| 48 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: TOCTOU Revalidation — v0.37.0 R458 (verifiers/toctou_rev... | 导入依赖 / import_depends |
-| 49 | feedback-loop.verifiers — auto-generated package init. (... | → | D_FBL_VERIFICATION 反馈验证: verifiers/verification_engine.py | 导入依赖 / import_depends |
+| 27 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: A/B Test Verifier — v0.9.0 R117 (verifiers/ab_test.py) | 导入依赖 / import_depends |
+| 28 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Action Explainability — v0.3.0 R15 (verifiers/action_exp... | 导入依赖 / import_depends |
+| 29 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: AI Comment Veracity — v0.37.0 R459 (verifiers/ai_comment... | 导入依赖 / import_depends |
+| 30 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Attack Simulator — v0.6.0 R57 (verifiers/attack_simulato... | 导入依赖 / import_depends |
+| 31 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Auto Rollback — v0.8.0 R93 (verifiers/auto_rollback.py) | 导入依赖 / import_depends |
+| 32 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Build Reproducibility Verifier — v0.38.0 R484 (verifiers... | 导入依赖 / import_depends |
+| 33 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Canary Repair — v0.8.0 R104b (verifiers/canary_repair.py) | 导入依赖 / import_depends |
+| 34 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Cascading Rollback Analyzer — v0.38.0 R482 (verifiers/ca... | 导入依赖 / import_depends |
+| 35 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Cross-Blueprint Contract Drift Monitor — v0.39.0 R490 (v... | 导入依赖 / import_depends |
+| 36 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Cross-Module Integration Verifier — v0.5.0 R39 (verifier... | 导入依赖 / import_depends |
+| 37 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Cross-Session Knowledge Integrity — v0.16.0 R225 (verifi... | 导入依赖 / import_depends |
+| 38 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Digital Twin Sandbox — v0.6.0 R55 (verifiers/digital_twi... | 导入依赖 / import_depends |
+| 39 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Dry Run Sandbox — v0.3.0 R19 (verifiers/dry_run_sandbox.py) | 导入依赖 / import_depends |
+| 40 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Federated Protocol — v0.10.0 R129 (verifiers/federated_p... | 导入依赖 / import_depends |
+| 41 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Golden Test External — v0.15.0 R214 (verifiers/golden_te... | 导入依赖 / import_depends |
+| 42 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: No-LLM Degradation Mode — v0.8.0 R94 (verifiers/no_llm_d... | 导入依赖 / import_depends |
+| 43 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Pre-Flight Simulator — v0.12.0 R169b (verifiers/pre_flig... | 导入依赖 / import_depends |
+| 44 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Preventive Repair — v0.6.0 R69 (verifiers/preventive_rep... | 导入依赖 / import_depends |
+| 45 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Rollback Integrity — v0.3.0 R18b (verifiers/rollback_int... | 导入依赖 / import_depends |
+| 46 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Sim2Real Calibration — v0.6.0 R56 (verifiers/sim2real_ca... | 导入依赖 / import_depends |
+| 47 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: Stochastic Diagnosis Verifier — v0.38.0 R483 (verifiers/... | 导入依赖 / import_depends |
+| 48 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: TOCTOU Revalidation — v0.37.0 R458 (verifiers/toctou_rev... | 导入依赖 / import_depends |
+| 49 | 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | D_FBL_VERIFICATION 反馈验证: verifiers/verification_engine.py | 导入依赖 / import_depends |
 | 50 | FLE->Orc 告警分派器 — dispatch() 生产者 (feedback_loop/a... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 51 | FLE DB契约适配器 — 通过规范zephyr.governance.sqlite_sche... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 52 | FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQL... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
@@ -539,7 +539,7 @@ flowchart TD
 | 62 | feedback_loop/protocols.py | → | D_INTEGRATION 管线路由: Structural Protocol interfaces for cross-module contracts... | 导入依赖 / import_depends |
 | 63 | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入口 (vector... | 导入依赖 / import_depends |
 | 64 | FLE->Orc 告警分派器 — dispatch() 生产者 (feedback_loop/a... | → | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | 导入依赖 / import_depends |
-| 65 | feedback_loop/evolution_engine.py | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
+| 65 | feedback_loop/evolution_engine.py | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 66 | API Version Contract — v0.14.0 R188 (actors/api_version_... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 67 | FeedbackLoop core — 反馈闭环核心类。 (feedback_loop/core.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 68 | FeedbackLoop core — 反馈闭环核心类。 (feedback_loop/core.py) | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
@@ -560,8 +560,8 @@ flowchart TD
 | 83 | feedback_loop/scheduler_act.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 84 | feedback_loop/scheduler_safety.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 85 | Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 86 | feedback_loop/slo_manager.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 87 | feedback_loop/slo_manager.py | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
+| 86 | 5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 87 | 5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）... | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -573,12 +573,12 @@ flowchart TD
 | 4 | D_FBL_DETECTORS 反馈检测器: anomaly/anomaly_detector.py | → | collectors/metrics_collector.py | 导入依赖 / import_depends |
 | 5 | D_FBL_DETECTORS 反馈检测器: anomaly/anomaly_detector.py | → | feedback_loop/protocols.py | 导入依赖 / import_depends |
 | 6 | D_FRONTEND 前端: fitness_functions · Fitness Functions 仪表盘组件（v3.1.0... | → | feedback_loop/fitness_functions.py | 导入依赖 / import_depends |
-| 7 | D_GOV_AUDIT 审计追踪: gov_audit/feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
-| 8 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 7 | D_GOV_AUDIT 审计追踪: Bridge between audit-trail anomaly findings and the Feedb... | → | 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
+| 8 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 9 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | 导入依赖 / import_depends |
-| 10 | D_INFRA_RUNTIME 运行时集成: trading/lifecycle_manager.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 10 | D_INFRA_RUNTIME 运行时集成: 删除 circadian_scheduler 参数（boot_sequence/shutdown_seq... | → | 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 11 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | Feedback Loop Decision Engine (feedback_loop/decision_eng... | 导入依赖 / import_depends |
-| 12 | D_SECURITY 对抗验证: orphan_judge/feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 12 | D_SECURITY 对抗验证: orphan_judge/feedback_bridge.py | → | 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 13 | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | → | Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

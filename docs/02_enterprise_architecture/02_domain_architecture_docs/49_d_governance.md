@@ -101,7 +101,7 @@ flowchart TD
     scripts_governance_d5_architecture_generators_zoomable_html_py["(生产态 / production) 可缩放 Mermaid HTML 生成器（共享模块）。<br/>可缩放 Mermaid HTML 生成器（共享模块）。<br/>文件: generators/zoomable_html.py"]
     scripts_governance_d7_code_check_pure_shim_py["(生产态 / production) check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）<br/>check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）<br/>文件: d7_code/check_pure_shim.py"]
     scripts_governance_generators_generate_rule_ai_perception_index_py["(生产态 / production) generate_rule_ai_perception_index.py — 规则AI感知索引生成器（...<br/>generate_rule_ai_perception_index.py — 规则AI感知索引生成器（...<br/>文件: generators/generate_rule_ai_perception_index.py"]
-    scripts_hooks_auto_handoff_log_py["(生产态 / production)<br/>文件: hooks/auto_handoff_log.py"]
+    scripts_hooks_auto_handoff_log_py["(生产态 / production) 执行 git 命令并返回 stdout（UTF-8 解码）。<br/>执行 git 命令并返回 stdout（UTF-8 解码）。<br/>文件: hooks/auto_handoff_log.py"]
     scripts_lock_files_py["(生产态 / production) lock_files.py —— AI 对话文件锁协议（硬规则执行工具）<br/>lock_files.py —— AI 对话文件锁协议（硬规则执行工具）<br/>文件: scripts/lock_files.py"]
     scripts_mcp_launcher_py["(生产态 / production) MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。<br/>MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。<br/>文件: mcp/launcher.py"]
     scripts_mcp_start_all_py["(生产态 / production) MCP 全 Server 启动脚本 — DEPRECATED.<br/>MCP 全 Server 启动脚本 — DEPRECATED.<br/>文件: mcp/start_all.py"]
@@ -117,15 +117,15 @@ flowchart TD
     scripts_run_ollama_exam_py["(生产态 / production) Ollama 入职考试运行脚本<br/>Ollama 入职考试运行脚本<br/>文件: scripts/run_ollama_exam.py"]
     scripts_scaffold_py["(生产态 / production) scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执行器）<br/>scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执行器）<br/>文件: scripts/scaffold.py"]
     scripts_setup_git_guard_aliases_py["(生产态 / production) Setup/Remove Git Aliases for Git Guard — 自动化集成入口。<br/>Setup/Remove Git Aliases for Git Guard — 自动化集成入口。<br/>文件: scripts/setup_git_guard_aliases.py"]
-    src_zephyr_governance_a2a_init_py["(生产态 / production)<br/>文件: a2a/__init__.py"]
+    src_zephyr_governance_a2a_init_py["(生产态 / production) 治理修复A2a包 / Governance A2a Package<br/>治理修复域下 a2a 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: a2a/__init__.py"]
     src_zephyr_governance_adapters_risk_validation_bridge_py["(生产态 / production) D_EXECUTION_CORE — Risk Validation Bridge (DW-239)<br/>D_EXECUTION_CORE — Risk Validation Bridge (DW-239)<br/>文件: adapters/risk_validation_bridge.py"]
     src_zephyr_governance_adapters_simulation_broker_py["(生产态 / production) D_EXECUTION_CORE — Simulation Broker Adapter<br/>D_EXECUTION_CORE — Simulation Broker Adapter<br/>文件: adapters/simulation_broker.py"]
-    src_zephyr_governance_agent_spec_init_py["(生产态 / production)<br/>文件: agent-spec/__init__.py"]
+    src_zephyr_governance_agent_spec_init_py["(生产态 / production) 治理修复Agent-spec包 / Governance Agent-spec Package<br/>治理修复域下 agent-spec 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: agent-spec/__init__.py"]
     src_zephyr_governance_agent_spec_a2a_failure_py["(生产态 / production) G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent 通信失败升级.<br/>G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent 通信失败升级.<br/>文件: agent_spec/a2a_failure.py"]
     src_zephyr_governance_agent_spec_rbac_bridge_py["(生产态 / production) G-CT-007 契约：Budget -> RBAC 配额限制.<br/>G-CT-007 契约：Budget -> RBAC 配额限制.<br/>文件: agent_spec/rbac_bridge.py"]
     src_zephyr_governance_agent_spec_registry_py["(生产态 / production) G-CT-003 契约：Agent Spec -> RBAC 能力检查.<br/>G-CT-003 契约：Agent Spec -> RBAC 能力检查.<br/>文件: agent_spec/registry.py"]
     src_zephyr_governance_architecture_governance_architecture_contracts_py["(生产态 / production)<br/>文件: architecture_governance/architecture_contracts.py"]
-    src_zephyr_governance_architecture_governance_architecture_principles_py["(生产态 / production)<br/>文件: architecture_governance/architecture_principles.py"]
+    src_zephyr_governance_architecture_governance_architecture_principles_py["(生产态 / production) 装饰器：为函数标记适用的架构原则。<br/>装饰器：为函数标记适用的架构原则。<br/>文件: architecture_governance/architecture_principles.py"]
     src_zephyr_governance_architecture_governance_blueprint_bloat_monitor_py["(生产态 / production) Blueprint Bloat Monitor — v0.11.0 蓝图膨胀监控器。<br/>Blueprint Bloat Monitor — v0.11.0 蓝图膨胀监控器。<br/>文件: architecture_governance/blueprint_bloat_monitor.py"]
     src_zephyr_governance_architecture_governance_blueprint_code_consistency_py["(生产态 / production) Blueprint-Code Consistency Gate — MOD-INF-022.<br/>Blueprint-Code Consistency Gate — MOD-INF-022.<br/>文件: architecture_governance/blueprint_code_consistency.py"]
     src_zephyr_governance_architecture_governance_blueprint_reconciler_py["(生产态 / production) Blueprint Reconciler — v0.10.0 蓝图实现一致性校验器。<br/>Blueprint Reconciler — v0.10.0 蓝图实现一致性校验器。<br/>文件: architecture_governance/blueprint_reconciler.py"]
@@ -154,10 +154,10 @@ flowchart TD
     src_zephyr_governance_context_governance_prompt_lifecycle_py["(生产态 / production)<br/>文件: context_governance/prompt_lifecycle.py"]
     src_zephyr_governance_context_governance_protocol_self_context_py["(生产态 / production) Protocol Self Context — v0.10.0 协议自维护上下文管理器。<br/>Protocol Self Context — v0.10.0 协议自维护上下文管理器。<br/>文件: context_governance/protocol_self_context.py"]
     src_zephyr_governance_context_governance_think_time_model_py["(生产态 / production)<br/>文件: context_governance/think_time_model.py"]
-    src_zephyr_governance_data_governance_data_classification_py["(生产态 / production)<br/>文件: data_governance/data_classification.py"]
+    src_zephyr_governance_data_governance_data_classification_py["(生产态 / production) 检查 self_level 是否有权限访问 target_level 的数据。<br/>检查 self_level 是否有权限访问 target_level 的数据。<br/>文件: data_governance/data_classification.py"]
     src_zephyr_governance_data_governance_data_lifecycle_py["(生产态 / production)<br/>文件: data_governance/data_lifecycle.py"]
     src_zephyr_governance_data_governance_data_pipeline_guard_py["(生产态 / production) Data Pipeline Guard — v0.10.0 数据管道完整性防护: schema validation+row coun...<br/>Data Pipeline Guard — v0.10.0 数据管道完整性防护: schema validation+row coun...<br/>文件: data_governance/data_pipeline_guard.py"]
-    src_zephyr_governance_data_governance_data_quality_py["(生产态 / production)<br/>文件: data_governance/data_quality.py"]
+    src_zephyr_governance_data_governance_data_quality_py["(生产态 / production) ARCH-031: migrated from governance/governance/data_quality.py to root (canoni...<br/>ARCH-031: migrated from governance/governance/data_quality.py to root (canoni...<br/>文件: data_governance/data_quality.py"]
     src_zephyr_governance_data_governance_data_source_reliability_py["(生产态 / production)<br/>文件: data_governance/data_source_reliability.py"]
     src_zephyr_governance_data_governance_exchange_partition_detector_py["(生产态 / production) Exchange Partition Detector — v0.12.0 交易所网络分区检测器。<br/>Exchange Partition Detector — v0.12.0 交易所网络分区检测器。<br/>文件: data_governance/exchange_partition_detector.py"]
     src_zephyr_governance_data_governance_exchange_reg_monitor_py["(生产态 / production) Exchange Reg Monitor — v0.11.0 交易所规则变更监控器。<br/>Exchange Reg Monitor — v0.11.0 交易所规则变更监控器。<br/>文件: data_governance/exchange_reg_monitor.py"]
@@ -176,8 +176,8 @@ flowchart TD
     src_zephyr_governance_financial_governance_strategy_portfolio_py["(生产态 / production)<br/>文件: financial_governance/strategy_portfolio.py"]
     src_zephyr_governance_financial_governance_strategy_scoper_py["(生产态 / production) Strategy Scoper — v0.6.0 策略范围隔离器: SIG/Strat/Capital多层策略隔离。<br/>Strategy Scoper — v0.6.0 策略范围隔离器: SIG/Strat/Capital多层策略隔离。<br/>文件: financial_governance/strategy_scoper.py"]
     src_zephyr_governance_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
-    src_zephyr_governance_implementations_default_security_gateway_py["(生产态 / production)<br/>文件: implementations/default_security_gateway.py"]
-    src_zephyr_governance_intelligence_governance_agent_debate_py["(生产态 / production)<br/>文件: intelligence_governance/agent_debate.py"]
+    src_zephyr_governance_implementations_default_security_gateway_py["(生产态 / production) Re-export shim: canonical source = zephyr.governance.security_governance.defa...<br/>Re-export shim: canonical source = zephyr.governance.security_governance.defa...<br/>文件: implementations/default_security_gateway.py"]
+    src_zephyr_governance_intelligence_governance_agent_debate_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: intelligence_governance/agent_debate.py"]
     src_zephyr_governance_intelligence_governance_ai_self_diagnosis_py["(生产态 / production)<br/>文件: intelligence_governance/ai_self_diagnosis.py"]
     src_zephyr_governance_intelligence_governance_aisg_sandbox_py["(生产态 / production) AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV-015 升级)<br/>AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV-015 升级)<br/>文件: intelligence_governance/aisg_sandbox.py"]
     src_zephyr_governance_intelligence_governance_autonomy_dashboard_py["(生产态 / production) Autonomy Dashboard — AI 自主感知健康仪表。<br/>Autonomy Dashboard — AI 自主感知健康仪表。<br/>文件: intelligence_governance/autonomy_dashboard.py"]
@@ -201,7 +201,7 @@ flowchart TD
     src_zephyr_governance_intelligence_governance_subagent_hook_propagator_py["(生产态 / production) Subagent Hook Propagator — v0.13.0 子Agent Hook旁路防护器。<br/>Subagent Hook Propagator — v0.13.0 子Agent Hook旁路防护器。<br/>文件: intelligence_governance/subagent_hook_propagator.py"]
     src_zephyr_governance_lifecycle_governance_api_lifecycle_py["(生产态 / production)<br/>文件: lifecycle_governance/api_lifecycle.py"]
     src_zephyr_governance_lifecycle_governance_migration_strategy_py["(生产态 / production)<br/>文件: lifecycle_governance/migration_strategy.py"]
-    src_zephyr_governance_lifecycle_governance_paper_live_transition_py["(生产态 / production)<br/>文件: lifecycle_governance/paper_live_transition.py"]
+    src_zephyr_governance_lifecycle_governance_paper_live_transition_py["(生产态 / production) 检查是否可跳Phase——不可跳, 只允许顺序next。<br/>检查是否可跳Phase——不可跳, 只允许顺序next。<br/>文件: lifecycle_governance/paper_live_transition.py"]
     src_zephyr_governance_lifecycle_governance_post_live_verification_py["(生产态 / production)<br/>文件: lifecycle_governance/post_live_verification.py"]
     src_zephyr_governance_lifecycle_governance_transition_py["(生产态 / production) transition — 状态机转换 Mixin（从 task_repo.py 拆分，SRC-0066）<br/>transition — 状态机转换 Mixin（从 task_repo.py 拆分，SRC-0066）<br/>文件: lifecycle_governance/transition.py"]
     src_zephyr_governance_observability_governance_analytics_base_py["(生产态 / production) Re-export wrapper: analytics_base canonical at zephyr.reporting.analytics_base.<br/>Re-export wrapper: analytics_base canonical at zephyr.reporting.analytics_base.<br/>文件: observability_governance/analytics_base.py"]
@@ -217,14 +217,14 @@ flowchart TD
     src_zephyr_governance_services_memory_provenance_py["(生产态 / production) Memory Provenance — v0.9.0 记忆溯源追踪: 每条memory record的来源agent+timest...<br/>Memory Provenance — v0.9.0 记忆溯源追踪: 每条memory record的来源agent+timest...<br/>文件: services/memory_provenance.py"]
     src_zephyr_governance_strategies_strategy_registry_py["(生产态 / production) StrategyRegistry 卫星模块（OCP-002）<br/>StrategyRegistry 卫星模块（OCP-002）<br/>文件: strategies/strategy_registry.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_base_server_py["(生产态 / production)<br/>文件: governance/_base_server.py"]
-    src_zephyr_infrastructure_a2a_protocol_governance_audit_logger_py["(生产态 / production)<br/>文件: governance/audit_logger.py"]
+    src_zephyr_infrastructure_a2a_protocol_governance_audit_logger_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: governance/audit_logger.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_auditor_py["(生产态 / production) G-CT-008 契约：A2A -> Audit 审计 Agent 间通信.<br/>G-CT-008 契约：A2A -> Audit 审计 Agent 间通信.<br/>文件: governance/auditor.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py["(生产态 / production)<br/>文件: governance/error_codes.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py["(生产态 / production) A2A GovernanceAdapter — Phase 4 治理集成桥接器<br/>A2A GovernanceAdapter — Phase 4 治理集成桥接器<br/>文件: governance/governance_adapter.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py["(生产态 / production) Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工.<br/>Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工.<br/>文件: governance/phase_hold.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_policy_engine_py["(生产态 / production)<br/>文件: governance/policy_engine.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_protocol_py["(生产态 / production) G-CT-008 — A2ACommunication Pydantic V2 BaseModel agent-to-agent 通信数据结构.<br/>G-CT-008 — A2ACommunication Pydantic V2 BaseModel agent-to-agent 通信数据结构.<br/>文件: governance/protocol.py"]
-    src_zephyr_infrastructure_a2a_protocol_governance_rate_limiter_py["(生产态 / production)<br/>文件: governance/rate_limiter.py"]
+    src_zephyr_infrastructure_a2a_protocol_governance_rate_limiter_py["(生产态 / production) Sliding window 速率限制器，支持 per-key 分桶。<br/>Sliding window 速率限制器，支持 per-key 分桶。<br/>文件: governance/rate_limiter.py"]
     src_zephyr_infrastructure_a2a_protocol_governance_session_manager_py["(生产态 / production)<br/>文件: governance/session_manager.py"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py["(生产态 / production) Re-export bridge for layer3_coordination governance integration symbols.<br/>Re-export bridge for layer3_coordination governance integration symbols.<br/>文件: layer3_coordination/_governance_integration.py"]
     src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py["(生产态 / production) Batch2 治理层契约 — 15条 Pydantic v2 Schema（Provenance/AI审计守卫/TechStack...<br/>Batch2 治理层契约 — 15条 Pydantic v2 Schema（Provenance/AI审计守卫/TechStack...<br/>文件: contracts/batch2_governance.py"]
@@ -596,14 +596,14 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 1 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 2 | D_DATA — Memory Provider (intelligence_governance/memory... | → | D_DATA 数据接入层: per-source 调用策略注册表（MOD-L00-004 §5）。 (data/poli... | 导入依赖 / import_depends |
 | 3 | D_DATA — Memory Provider (intelligence_governance/memory... | → | D_DATA 数据接入层: 数据源 Provider 抽象基类（MOD-L00-004 §4）。 (data/provi... | 导入依赖 / import_depends |
-| 4 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL Signal Domain (signal_fundamental/__init__.py) | 导入依赖 / import_depends |
+| 4 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: 基本面信号域包 / Signal Fundamental Domain Package (signa... | 导入依赖 / import_depends |
 | 5 | git_commit.py — GitCommitGateway CLI 封装（OPS-202606251... | → | D_GOV_AUDIT 审计追踪: workspace_hygiene_reconciler.py — 工作区卫生自动清理 rec... | 导入依赖 / import_depends |
 | 6 | ProjectionEngine — 事件折叠为当前状态（DW-0003） (observ... | → | D_GOV_AUDIT 审计追踪: EventStore — Event Sourcing 事件追加与回放（DW-0002） (g... | 导入依赖 / import_depends |
 | 7 | DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | D_GOV_AUDIT 审计追踪: audit_schema — 审计视图与查询入口（SH-DB-001 v2.0） (gov... | 导入依赖 / import_depends |
-| 8 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 8 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 9 | Self-Benchmark (W3-7) — 5 组已知对自验证 + 引擎退化告警.... | → | D_GOV_CODE_QUALITY 代码质量治理: Stage 2: AST 级精确比对器. (code_dedup/ast_comparator.py) | 导入依赖 / import_depends |
 | 10 | Self-Benchmark (W3-7) — 5 组已知对自验证 + 引擎退化告警.... | → | D_GOV_CODE_QUALITY 代码质量治理: 行为采样验证器 — Stage 0.25 低成本快速验证. (code_dedup/... | 导入依赖 / import_depends |
 | 11 | Self-Benchmark (W3-7) — 5 组已知对自验证 + 引擎退化告警.... | → | D_GOV_CODE_QUALITY 代码质量治理: 微型克隆检测器 — n-gram频率计数, 1-2行高频模式聚合. (cod... | 导入依赖 / import_depends |
@@ -620,7 +620,7 @@ flowchart TD
 | 22 | test_git_commit_gateway.py — GitCommitGateway 单元测试（... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
 | 23 | test_task_repo_gateway_e2e.py — 端到端链路测试（OPS-2026... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
 | 24 | G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | 导入依赖 / import_depends |
-| 25 | implementations/default_security_gateway.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | 导入依赖 / import_depends |
+| 25 | Re-export shim: canonical source = zephyr.governance.secu... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | 导入依赖 / import_depends |
 | 26 | Delegation Engine — MOD-INF-022 (intelligence_governance... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
 | 27 | Escalation Protocol Self-Test — MOD-INF-022. (intelligen... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 28 | Escalation Protocol Self-Test — MOD-INF-022. (intelligen... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
@@ -667,7 +667,7 @@ flowchart TD
 | 69 | check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 70 | check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1... | → | D_GOV_SCRIPTS 脚本治理: encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
 | 71 | generate_rule_ai_perception_index.py — 规则AI感知索引生... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 72 | hooks/auto_handoff_log.py | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 72 | 执行 git 命令并返回 stdout（UTF-8 解码）。 (hooks/auto_ha... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 73 | 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 ... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 74 | MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLi... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 75 | MCP 全 Server 启动脚本 — DEPRECATED. (mcp/start_all.py) | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
@@ -680,12 +680,12 @@ flowchart TD
 | 82 | scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执... | → | D_GOV_SCRIPTS 脚本治理: _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
 | 83 | scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执... | → | D_GOV_SCRIPTS 脚本治理: GATE-11 命名规范门禁 — 全类型命名检测。 (d3_metadata/che... | 导入依赖 / import_depends |
 | 84 | test_generate_gate_registry.py — generate_gate_registry.... | → | D_GOV_SCRIPTS 脚本治理: generate_gate_registry.py — 门禁登记表自动生成器 (genera... | 测试依赖 / test_depends |
-| 85 | A2A Protocol 全链路满分验证脚本 (scripts/a2a_full_verific... | → | D_INFRASTRUCTURE 跨层契约基础设施: ZephyrAlpha — 基础设施 Infrastructure Layer — Configura... | 导入依赖 / import_depends |
-| 86 | local_layer_daemon.py — L2 本地模型层守护进程（薄包装，D... | → | D_INFRASTRUCTURE 跨层契约基础设施: ZephyrAlpha — 基础设施 Infrastructure Layer — Configura... | 导入依赖 / import_depends |
-| 87 | D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/risk_limits.py | 导入依赖 / import_depends |
-| 88 | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
-| 89 | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
-| 90 | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/position.py | 导入依赖 / import_depends |
+| 85 | A2A Protocol 全链路满分验证脚本 (scripts/a2a_full_verific... | → | D_INFRASTRUCTURE 跨层契约基础设施: 反馈循环配置包 / Infrastructure Config Package (config/__... | 导入依赖 / import_depends |
+| 86 | local_layer_daemon.py — L2 本地模型层守护进程（薄包装，D... | → | D_INFRASTRUCTURE 跨层契约基础设施: 反馈循环配置包 / Infrastructure Config Package (config/__... | 导入依赖 / import_depends |
+| 87 | D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-003 ==== (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 88 | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-005 ==== (contracts/fill.py) | 导入依赖 / import_depends |
+| 89 | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
+| 90 | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-006 ==== (contracts/position.py) | 导入依赖 / import_depends |
 | 91 | Re-export bridge for layer3_coordination governance integ... | → | D_INFRA_A2A A2A通信: A2A 监控仪表盘 — Agent 集群运行状态可视化面板 (layer3_co... | 导入依赖 / import_depends |
 | 92 | Re-export bridge for layer3_coordination governance integ... | → | D_INFRA_A2A A2A通信: A2A 形式化验证 — 协议属性模型检查 (layer3_coordination/a... | 导入依赖 / import_depends |
 | 93 | Re-export bridge for layer3_coordination governance integ... | → | D_INFRA_A2A A2A通信: A2A ANP 帧协商协议 — Agent Negotiation Protocol 帧层协商... | 导入依赖 / import_depends |
@@ -727,7 +727,7 @@ flowchart TD
 | 129 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_RISK 风控: D_RISK — Stop-Loss & Kill Switch 兼容层 (risk/stop_loss.py) | 导入依赖 / import_depends |
 | 130 | git_commit.py — GitCommitGateway CLI 封装（OPS-202606251... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
 | 131 | G-CT-007 契约：Budget -> RBAC 配额限制. (agent_spec/rbac_... | → | D_SECURITY 对抗验证: PermissionGuard — 七层权限编排器. (guards/permission_gua... | 导入依赖 / import_depends |
-| 132 | Delegation Engine — MOD-INF-022 (intelligence_governance... | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
+| 132 | Delegation Engine — MOD-INF-022 (intelligence_governance... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 133 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SECURITY 对抗验证: Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | 导入依赖 / import_depends |
 | 134 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SECURITY 对抗验证: PermissionGuard — 七层权限编排器. (guards/permission_gua... | 导入依赖 / import_depends |
 | 135 | session 隔离 stash 红蓝对抗极限测试。 (agent_rbac/test_se... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 测试依赖 / test_depends |
@@ -746,7 +746,7 @@ flowchart TD
 | 148 | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 149 | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 150 | G-CT-007 契约：Budget -> RBAC 配额限制. (agent_spec/rbac_... | → | D_SHARED 共享服务: identity/agent_identity.py | 导入依赖 / import_depends |
-| 151 | G-CT-003 契约：Agent Spec -> RBAC 能力检查. (agent_spec/r... | → | D_SHARED 共享服务: contracts/skill_protocol.py | 导入依赖 / import_depends |
+| 151 | G-CT-003 契约：Agent Spec -> RBAC 能力检查. (agent_spec/r... | → | D_SHARED 共享服务: Skill加载器协议——解耦D-INFRA/D-GOV对D-ORCH的直接依赖。 ... | 导入依赖 / import_depends |
 | 152 | LLMImpactAnalyzer — LLM-based commit 语义影响分析器。 (a... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 153 | LLMImpactAnalyzer — LLM-based commit 语义影响分析器。 (a... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 154 | PathResolver — 模块路径解析器 (architecture_governance/p... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -784,7 +784,7 @@ flowchart TD
 | 186 | SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 187 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 188 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 189 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: schema/severity_types.py | 导入依赖 / import_depends |
+| 189 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: Circuit breaker states — re-homed from infrastructure_ru... | 导入依赖 / import_depends |
 | 190 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
 | 191 | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 192 | Escalation Adapter — MOD-INF-022 统一集成入口. (services... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
@@ -795,7 +795,7 @@ flowchart TD
 | 197 | A2A 治理适配器 — 连接 A2A 协议与 Governance 层 (layer3_c... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 198 | Registry Governance — MOD-INF-037 (infrastructure/regist... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 199 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SHARED 共享服务: identity/agent_identity.py | 导入依赖 / import_depends |
-| 200 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SHARED 共享服务: contracts/skill_protocol.py | 导入依赖 / import_depends |
+| 200 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SHARED 共享服务: Skill加载器协议——解耦D-INFRA/D-GOV对D-ORCH的直接依赖。 ... | 导入依赖 / import_depends |
 | 201 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 202 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 203 | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
@@ -809,8 +809,8 @@ flowchart TD
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_BACKTEST 回测: BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5... | → | decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | 导入依赖 / import_depends |
-| 2 | D_EX_CORE 执行核心: D_EX_CORE adapters — 券商/风控适配器 re-export wrapper (... | → | D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
-| 3 | D_EX_CORE 执行核心: D_EX_CORE adapters — 券商/风控适配器 re-export wrapper (... | → | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | 导入依赖 / import_depends |
+| 2 | D_EX_CORE 执行核心: 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
+| 3 | D_EX_CORE 执行核心: 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | 导入依赖 / import_depends |
 | 4 | D_EX_CORE 执行核心: Re-export wrapper: risk_validation_bridge 真源在 zephyr.g... | → | D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
 | 5 | D_EX_CORE 执行核心: Re-export wrapper: simulation_broker 真源在 zephyr.govern... | → | D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | 导入依赖 / import_depends |
 | 6 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Execution Engine (ex_core/execution_e... | → | D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
@@ -848,7 +848,7 @@ flowchart TD
 | 38 | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gov_drift/gate_p... | → | SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 39 | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 (go... | → | SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 40 | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (gov_drift/trend_anal... | → | SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
-| 41 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | 导入依赖 / import_depends |
+| 41 | D_GOV_ENFORCEMENT 规则执行: 规则执行Behavioral Admission包 / Gov Enforcement Behavior... | → | WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换... | 导入依赖 / import_depends |
 | 42 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | CapabilityLookup — 能力->真源文件反查注册表的查询 API + ... | 导入依赖 / import_depends |
 | 43 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | CapabilityLookup — 能力->真源文件反查注册表的查询 API + ... | 导入依赖 / import_depends |
 | 44 | D_GOV_OPS_RESILIENCE 运维弹性治理: GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器. ... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
@@ -859,7 +859,7 @@ flowchart TD
 | 49 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3). (... | → | Escalation Adapter — MOD-INF-022 统一集成入口. (services... | 导入依赖 / import_depends |
 | 50 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | → | SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 51 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV... | 导入依赖 / import_depends |
-| 52 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | intelligence_governance/model_router.py | 导入依赖 / import_depends |
+| 52 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | intelligence_governance/model_router.py | 导入依赖 / import_depends |
 | 53 | D_GOV_RULE 规则治理: 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
 | 54 | D_GOV_RULE 规则治理: 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | pg_wrapper.py — psycopg2 connection 的 sqlite3 兼容 exec... | 导入依赖 / import_depends |
 | 55 | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
@@ -921,7 +921,7 @@ flowchart TD
 | 111 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | intelligence_governance/model_router.py | 导入依赖 / import_depends |
 | 112 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
 | 113 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | Escalation Adapter — MOD-INF-022 统一集成入口. (services... | 导入依赖 / import_depends |
-| 114 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
+| 114 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
 | 115 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | capacity_governance/capacity_governance_loop.py | 导入依赖 / import_depends |
 | 116 | D_INTEGRATION 管线路由: BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类 (mcp/_b... | → | G-CT-007 契约：Budget -> RBAC 配额限制. (agent_spec/rbac_... | 导入依赖 / import_depends |
 | 117 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | 导入依赖 / import_depends |

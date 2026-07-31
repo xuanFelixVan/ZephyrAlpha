@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_execution_simulation_init_py["(生产态 / production)<br/>文件: execution_simulation/__init__.py"]
-    src_zephyr_execution_simulation_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_execution_simulation_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_execution_simulation_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_execution_simulation_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_execution_simulation_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_execution_simulation_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_execution_simulation_init_py["(生产态 / production) 执行仿真域包 / Execution Simulation Domain Package<br/>执行仿真域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: execution_simulation/__init__.py"]
+    src_zephyr_execution_simulation_extensions_init_py["(生产态 / production) 执行仿真扩展包 / Execution Simulation Extensions Package<br/>执行仿真域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_execution_simulation_api_init_py["(生产态 / production) 执行仿真API包 / Execution Simulation API Package<br/>执行仿真域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_execution_simulation_core_init_py["(生产态 / production) 执行仿真核心包 / Execution Simulation Core Package<br/>执行仿真域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_execution_simulation_infrastructure_init_py["(生产态 / production) 执行仿真基础设施包 / Execution Simulation Infrastructure Package<br/>执行仿真域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_execution_simulation_models_init_py["(生产态 / production) 执行仿真模型包 / Execution Simulation Models Package<br/>执行仿真域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_execution_simulation_services_init_py["(生产态 / production) 执行仿真服务包 / Execution Simulation Services Package<br/>执行仿真域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_execution_simulation_init_py ~~~ src_zephyr_execution_simulation_extensions_init_py
     src_zephyr_execution_simulation_extensions_init_py ~~~ src_zephyr_execution_simulation_api_init_py
     src_zephyr_execution_simulation_api_init_py ~~~ src_zephyr_execution_simulation_core_init_py

@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_eng_init_py["(生产态 / production)<br/>文件: data_eng/__init__.py"]
-    src_zephyr_data_eng_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_data_eng_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_data_eng_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_data_eng_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_data_eng_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_data_eng_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_data_eng_init_py["(生产态 / production) 数据工程域包 / Data Eng Domain Package<br/>数据工程域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: data_eng/__init__.py"]
+    src_zephyr_data_eng_extensions_init_py["(生产态 / production) 数据工程扩展包 / Data Eng Extensions Package<br/>数据工程域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_data_eng_api_init_py["(生产态 / production) 数据工程API包 / Data Eng API Package<br/>数据工程域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_data_eng_core_init_py["(生产态 / production) 数据工程核心包 / Data Eng Core Package<br/>数据工程域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_data_eng_infrastructure_init_py["(生产态 / production) 数据工程基础设施包 / Data Eng Infrastructure Package<br/>数据工程域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_data_eng_models_init_py["(生产态 / production) 数据工程模型包 / Data Eng Models Package<br/>数据工程域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_data_eng_services_init_py["(生产态 / production) 数据工程服务包 / Data Eng Services Package<br/>数据工程域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_data_eng_init_py ~~~ src_zephyr_data_eng_extensions_init_py
     src_zephyr_data_eng_extensions_init_py ~~~ src_zephyr_data_eng_api_init_py
     src_zephyr_data_eng_api_init_py ~~~ src_zephyr_data_eng_core_init_py

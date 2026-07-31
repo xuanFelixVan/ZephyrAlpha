@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ml_serve_init_py["(生产态 / production)<br/>文件: ml_serve/__init__.py"]
-    src_zephyr_ml_serve_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_ml_serve_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_ml_serve_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_ml_serve_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_ml_serve_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_ml_serve_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_ml_serve_init_py["(生产态 / production) 推理域包 / Ml Serve Domain Package<br/>推理域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: ml_serve/__init__.py"]
+    src_zephyr_ml_serve_extensions_init_py["(生产态 / production) 推理扩展包 / Ml Serve Extensions Package<br/>推理域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_ml_serve_api_init_py["(生产态 / production) 推理API包 / Ml Serve API Package<br/>推理域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_ml_serve_core_init_py["(生产态 / production) 推理核心包 / Ml Serve Core Package<br/>推理域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_ml_serve_infrastructure_init_py["(生产态 / production) 推理基础设施包 / Ml Serve Infrastructure Package<br/>推理域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_ml_serve_models_init_py["(生产态 / production) 推理模型包 / Ml Serve Models Package<br/>推理域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_ml_serve_services_init_py["(生产态 / production) 推理服务包 / Ml Serve Services Package<br/>推理域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_ml_serve_init_py ~~~ src_zephyr_ml_serve_extensions_init_py
     src_zephyr_ml_serve_extensions_init_py ~~~ src_zephyr_ml_serve_api_init_py
     src_zephyr_ml_serve_api_init_py ~~~ src_zephyr_ml_serve_core_init_py

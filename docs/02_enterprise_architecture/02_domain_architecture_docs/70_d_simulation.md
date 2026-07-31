@@ -72,7 +72,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 实验 — Experimentation Pipeline Layer (simulation/pipeli... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/experiment_result.py | 导入依赖 / import_depends |
+| 1 | 实验 — Experimentation Pipeline Layer (simulation/pipeli... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-014 ==== (contracts/experiment_r... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

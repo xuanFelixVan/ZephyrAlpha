@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) D_PORTFOLIO_CORE — Portfolio Construction Strategies<br/>D_PORTFOLIO_CORE — Portfolio Construction Strategies<br/>文件: strategy_engine/__init__.py"]
+    src_zephyr_pf_core_strategy_engine_init_py["(生产态 / production) 组合核心Strategy Engine包 / Pf Core Strategy Engine Package<br/>组合核心域下 strategy_engine 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: strategy_engine/__init__.py"]
     src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) D_PORTFOLIO_CORE — TopN 动量等权策略<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: pf_core/topn_momentum_strategy.py"]
     tests_pf_core_test_intraday_surge_fall_strategy_py["(生产态 / production) IntradaySurgeFallStrategy 单元测试（路径 B 示例策略）。<br/>IntradaySurgeFallStrategy 单元测试（路径 B 示例策略）。<br/>文件: pf_core/test_intraday_surge_fall_strategy.py"]
     tests_pf_core_test_orderbook_imbalance_strategy_py["(生产态 / production) OrderBookImbalanceStrategy 单元测试（路径 B 盘口失衡反转策略）。<br/>OrderBookImbalanceStrategy 单元测试（路径 B 盘口失衡反转策略）。<br/>文件: pf_core/test_orderbook_imbalance_strategy.py"]
@@ -131,7 +131,7 @@ flowchart TD
 | 9 | D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | 导入依赖 / import_depends |
 | 10 | D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | D_FACTOR 因子: ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
 | 11 | D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta + Strateg... | 导入依赖 / import_depends |
-| 12 | D_PORTFOLIO_CORE — Portfolio Construction Strategies (st... | → | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 导入依赖 / import_depends |
+| 12 | 组合核心Strategy Engine包 / Pf Core Strategy Engine Packa... | → | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

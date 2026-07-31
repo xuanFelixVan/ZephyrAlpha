@@ -58,11 +58,11 @@ flowchart TD
     src_zephyr_governance_observability_governance_observability_dashboard_py["(生产态 / production)<br/>文件: observability_governance/observability_dashboard.py"]
     src_zephyr_governance_ops_governance_budget_engine_py["(生产态 / production) Budget Enforcer core engine — MOD-INF-024<br/>Budget Enforcer core engine — MOD-INF-024<br/>文件: ops_governance/budget_engine.py"]
     src_zephyr_governance_ops_governance_budget_handler_py["(生产态 / production) G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.<br/>G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理.<br/>文件: ops_governance/budget_handler.py"]
-    src_zephyr_governance_ops_governance_budget_profile_manager_py["(生产态 / production)<br/>文件: ops_governance/budget_profile_manager.py"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["(生产态 / production)<br/>文件: ops_governance/budget_tracker.py"]
+    src_zephyr_governance_ops_governance_budget_profile_manager_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: ops_governance/budget_profile_manager.py"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: ops_governance/budget_tracker.py"]
     src_zephyr_governance_ops_governance_cost_budget_py["(生产态 / production) cost_budget.py —— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget.py —— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>文件: ops_governance/cost_budget.py"]
     src_zephyr_governance_ops_governance_meta_observability_py["(生产态 / production) Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca...<br/>Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca...<br/>文件: ops_governance/meta_observability.py"]
-    src_zephyr_governance_ops_governance_token_budget_py["(生产态 / production)<br/>文件: ops_governance/token_budget.py"]
+    src_zephyr_governance_ops_governance_token_budget_py["(生产态 / production) 三级 Token Budget 管理器。<br/>三级 Token Budget 管理器。<br/>文件: ops_governance/token_budget.py"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -127,11 +127,11 @@ flowchart TD
 | 1 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_GOVERNANCE 生命周期管理: Escalation Adapter — MOD-INF-022 统一集成入口. (services... | 导入依赖 / import_depends |
 | 2 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
 | 3 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_DRIFT 漂移检测: gov_drift/spiral_ews.py | 导入依赖 / import_depends |
-| 4 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/ipi_defense.py | 导入依赖 / import_depends |
+| 4 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | 导入依赖 / import_depends |
 | 5 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | 导入依赖 / import_depends |
 | 6 | Module docstring — see module-level docstring for detail... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 7 | Module docstring — see module-level docstring for detail... | → | D_GOV_SCRIPTS 脚本治理: _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
-| 8 | ops_governance/budget_tracker.py | → | D_INFRA_RECOVERY 回滚恢复: G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |
+| 8 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_INFRA_RECOVERY 回滚恢复: G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |
 | 9 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 10 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_SHARED 共享服务: escalation/budget_alert.py | 导入依赖 / import_depends |
 | 11 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
@@ -154,10 +154,10 @@ flowchart TD
 | 11 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 12 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/adversarial_tester.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 13 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/adversarial_tester.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 14 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 15 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 16 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | ops_governance/budget_tracker.py | 导入依赖 / import_depends |
-| 17 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 14 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 15 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 16 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | 导入依赖 / import_depends |
+| 17 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 18 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理 (loc... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 19 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 20 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |

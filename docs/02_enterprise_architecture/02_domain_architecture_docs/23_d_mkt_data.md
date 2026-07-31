@@ -53,14 +53,14 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_market_data_init_py["(生产态 / production)<br/>文件: market_data/__init__.py"]
-    src_zephyr_market_data_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_market_data_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_market_data_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_market_data_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_market_data_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) NormalizedMarketData 生产者包——D_MKT_DATA→D_FACTOR 数据供给。<br/>NormalizedMarketData 生产者包——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer/__init__.py"]
-    src_zephyr_market_data_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_market_data_init_py["(生产态 / production) 行情数据域包 / Market Data Domain Package<br/>行情数据域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: market_data/__init__.py"]
+    src_zephyr_market_data_extensions_init_py["(生产态 / production) 行情数据扩展包 / Market Data Extensions Package<br/>行情数据域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_market_data_api_init_py["(生产态 / production) 行情数据API包 / Market Data API Package<br/>行情数据域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_market_data_core_init_py["(生产态 / production) 行情数据核心包 / Market Data Core Package<br/>行情数据域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_market_data_infrastructure_init_py["(生产态 / production) 行情数据基础设施包 / Market Data Infrastructure Package<br/>行情数据域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_market_data_models_init_py["(生产态 / production) 行情数据模型包 / Market Data Models Package<br/>行情数据域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) 行情数据Normalized Market Data Producer包 / Market Data Normalized Market Data Producer Package<br/>行情数据域下 normalized_market_data_producer 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: normalized_market_data_producer/__init__.py"]
+    src_zephyr_market_data_services_init_py["(生产态 / production) 行情数据服务包 / Market Data Services Package<br/>行情数据域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_market_data_init_py ~~~ src_zephyr_market_data_extensions_init_py
     src_zephyr_market_data_extensions_init_py ~~~ src_zephyr_market_data_api_init_py
     src_zephyr_market_data_api_init_py ~~~ src_zephyr_market_data_core_init_py
@@ -91,11 +91,11 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 1 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 2 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 3 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 4 | market_data/__init__.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
-| 5 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
+| 4 | 行情数据域包 / Market Data Domain Package (market_data/__... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-001 ==== (contracts/market_data.py) | 导入依赖 / import_depends |
+| 5 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-001 ==== (contracts/market_data.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

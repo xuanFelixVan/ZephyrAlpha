@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit...<br/>文件: diagnosers/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) 反馈诊断器域包 / Diagnosers Domain Package<br/>反馈诊断器域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: diagnosers/__init__.py"]
     src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: cognitive/adaptive_param_tuning.py"]
     src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive/cognitive_load.py"]
     src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive/cognitive_load_budget.py"]
@@ -196,10 +196,10 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py
     src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py
     src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py
-    src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(生产态 / production)<br/>文件: cognitive/__init__.py"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(生产态 / production)<br/>文件: diagnosis/__init__.py"]
-    src_zephyr_feedback_loop_diagnosers_health_init_py["(生产态 / production)<br/>文件: health/__init__.py"]
-    src_zephyr_feedback_loop_diagnosers_reliability_init_py["(生产态 / production)<br/>文件: reliability/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(生产态 / production) 反馈诊断器Cognitive包 / Diagnosers Cognitive Package<br/>反馈诊断器域下 cognitive 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: cognitive/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(生产态 / production) 反馈诊断器Diagnosis包 / Diagnosers Diagnosis Package<br/>反馈诊断器域下 diagnosis 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: diagnosis/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_health_init_py["(生产态 / production) 反馈诊断器Health包 / Diagnosers Health Package<br/>反馈诊断器域下 health 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: health/__init__.py"]
+    src_zephyr_feedback_loop_diagnosers_reliability_init_py["(生产态 / production) 反馈诊断器Reliability包 / Diagnosers Reliability Package<br/>反馈诊断器域下 reliability 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: reliability/__init__.py"]
     src_zephyr_feedback_loop_diagnosers_cognitive_init_py ~~~ src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_init_py ~~~ src_zephyr_feedback_loop_diagnosers_health_init_py
     src_zephyr_feedback_loop_diagnosers_health_init_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_init_py
@@ -239,13 +239,13 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
 | 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | diagnosis/diagnosis_engine.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_safety.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
-| 7 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分... | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_safety.py | → | 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
+| 7 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | 反馈诊断器域包 / Diagnosers Domain Package (diagnosers/__... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

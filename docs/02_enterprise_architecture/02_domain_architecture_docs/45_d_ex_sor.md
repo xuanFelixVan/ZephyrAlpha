@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ex_sor_init_py["(生产态 / production)<br/>文件: ex_sor/__init__.py"]
-    src_zephyr_ex_sor_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_ex_sor_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_ex_sor_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_ex_sor_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_ex_sor_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_ex_sor_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_ex_sor_init_py["(生产态 / production) 执行路由域包 / Ex Sor Domain Package<br/>执行路由域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: ex_sor/__init__.py"]
+    src_zephyr_ex_sor_extensions_init_py["(生产态 / production) 执行路由扩展包 / Ex Sor Extensions Package<br/>执行路由域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_ex_sor_api_init_py["(生产态 / production) 执行路由API包 / Ex Sor API Package<br/>执行路由域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_ex_sor_core_init_py["(生产态 / production) 执行路由核心包 / Ex Sor Core Package<br/>执行路由域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_ex_sor_infrastructure_init_py["(生产态 / production) 执行路由基础设施包 / Ex Sor Infrastructure Package<br/>执行路由域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_ex_sor_models_init_py["(生产态 / production) 执行路由模型包 / Ex Sor Models Package<br/>执行路由域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_ex_sor_services_init_py["(生产态 / production) 执行路由服务包 / Ex Sor Services Package<br/>执行路由域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_ex_sor_init_py ~~~ src_zephyr_ex_sor_extensions_init_py
     src_zephyr_ex_sor_extensions_init_py ~~~ src_zephyr_ex_sor_api_init_py
     src_zephyr_ex_sor_api_init_py ~~~ src_zephyr_ex_sor_core_init_py

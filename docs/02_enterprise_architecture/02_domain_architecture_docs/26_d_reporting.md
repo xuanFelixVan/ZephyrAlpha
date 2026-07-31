@@ -87,14 +87,14 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
-| 2 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
-| 3 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
-| 4 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 5 | D_REPORTING — Default Attribution Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 6 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
-| 7 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
-| 8 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
+| 1 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-007 ==== (contracts/execution_re... | 导入依赖 / import_depends |
+| 2 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-005 ==== (contracts/fill.py) | 导入依赖 / import_depends |
+| 3 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
+| 4 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-009 ==== (contracts/performance_... | 导入依赖 / import_depends |
+| 5 | D_REPORTING — Default Attribution Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-009 ==== (contracts/performance_... | 导入依赖 / import_depends |
+| 6 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-007 ==== (contracts/execution_re... | 导入依赖 / import_depends |
+| 7 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-005 ==== (contracts/fill.py) | 导入依赖 / import_depends |
+| 8 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

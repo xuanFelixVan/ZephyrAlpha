@@ -115,7 +115,7 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_durable_py["(生产态 / production) MOD-INF-019: Agent Spec — Durable Execution<br/>MOD-INF-019: Agent Spec — Durable Execution<br/>文件: skills/skill_durable.py"]
     src_zephyr_autonomy_core_skills_skill_economics_py["(生产态 / production) MOD-INF-019: Agent Spec — Skill Economics<br/>MOD-INF-019: Agent Spec — Skill Economics<br/>文件: skills/skill_economics.py"]
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py["(生产态 / production) MOD-INF-019: Agent Spec — Skill Efficacy Calibrator<br/>MOD-INF-019: Agent Spec — Skill Efficacy Calibrator<br/>文件: skills/skill_efficacy_calibrator.py"]
-    src_zephyr_autonomy_core_skills_skill_executor_py["(生产态 / production)<br/>文件: skills/skill_executor.py"]
+    src_zephyr_autonomy_core_skills_skill_executor_py["(生产态 / production) Skill 加载前创建回滚检查点<br/>Skill 加载前创建回滚检查点<br/>文件: skills/skill_executor.py"]
     src_zephyr_autonomy_core_skills_skill_explain_py["(生产态 / production) MOD-INF-019: Agent Spec — XAI Explainable Skill Engine<br/>MOD-INF-019: Agent Spec — XAI Explainable Skill Engine<br/>文件: skills/skill_explain.py"]
     src_zephyr_autonomy_core_skills_skill_feature_flags_py["(生产态 / production) MOD-INF-019: Agent Spec — Skill Feature Flags<br/>MOD-INF-019: Agent Spec — Skill Feature Flags<br/>文件: skills/skill_feature_flags.py"]
     src_zephyr_autonomy_core_skills_skill_feedback_py["(生产态 / production) MOD-INF-019: Agent Spec — Skill Feedback Loop<br/>MOD-INF-019: Agent Spec — Skill Feedback Loop<br/>文件: skills/skill_feedback.py"]
@@ -402,10 +402,10 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | D_FEEDBACK_LOOP 反馈循环引擎: Error Budget 状态机——monthly budget + burn_rate + exhau... | 测试依赖 / test_depends |
 | 2 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | 测试依赖 / test_depends |
-| 3 | skills/skill_executor.py | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
-| 4 | MOD-INF-019: Agent Spec — Skill Sandbox (skills/skill_sa... | → | D_GOV_AUDIT 审计追踪: gov_audit/bridge.py | 导入依赖 / import_depends |
-| 5 | MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
-| 6 | skills/skill_executor.py | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 3 | Skill 加载前创建回滚检查点 (skills/skill_executor.py) | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 4 | MOD-INF-019: Agent Spec — Skill Sandbox (skills/skill_sa... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 5 | MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 6 | Skill 加载前创建回滚检查点 (skills/skill_executor.py) | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 7 | ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (capacity_assuranc... | 导入依赖 / import_depends |
 | 8 | TruncationStrategy — TruncationStrategy (context/context... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (capacity_assuranc... | 导入依赖 / import_depends |
 | 9 | ContextBudgetTracker: token budget management with 3-leve... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (capacity_assuranc... | 导入依赖 / import_depends |
@@ -417,9 +417,9 @@ flowchart TD
 | 15 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (trading/capability_re... | 测试依赖 / test_depends |
 | 16 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (trading/dream_cycle.py) | 测试依赖 / test_depends |
 | 17 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | 测试依赖 / test_depends |
-| 18 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: trading/runtime_config.py | 测试依赖 / test_depends |
+| 18 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: 启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围... | 测试依赖 / test_depends |
 | 19 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (trading/work_dag.py) | 测试依赖 / test_depends |
-| 20 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: trading/work_orchestrator.py | 测试依赖 / test_depends |
+| 20 | F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | D_INFRA_RUNTIME 运行时集成: 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | 测试依赖 / test_depends |
 | 21 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | D_INFRA_RUNTIME 运行时集成: Pipeline — Backpressure Manager (pipeline/backpressure_m... | 测试依赖 / test_depends |
 | 22 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure signal data... | 测试依赖 / test_depends |
 | 23 | F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | D_INFRA_RUNTIME 运行时集成: DeadLetterQueue — 死信队列 (pipeline/dead_letter_queue.py) | 测试依赖 / test_depends |
@@ -427,13 +427,13 @@ flowchart TD
 | 25 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (trading/dream_cycle.py) | 测试依赖 / test_depends |
 | 26 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | 测试依赖 / test_depends |
 | 27 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (trading/work_dag.py) | 测试依赖 / test_depends |
-| 28 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | D_INFRA_RUNTIME 运行时集成: trading/work_orchestrator.py | 测试依赖 / test_depends |
-| 29 | skills/skill_executor.py | → | D_INTEGRATION 管线路由: Structural Protocol interfaces for cross-module contracts... | 导入依赖 / import_depends |
+| 28 | F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | D_INFRA_RUNTIME 运行时集成: 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | 测试依赖 / test_depends |
+| 29 | Skill 加载前创建回滚检查点 (skills/skill_executor.py) | → | D_INTEGRATION 管线路由: Structural Protocol interfaces for cross-module contracts... | 导入依赖 / import_depends |
 | 30 | skills/skill_router.py | → | D_INTEGRATION 管线路由: EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (local_mode... | 导入依赖 / import_depends |
 | 31 | MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引... | → | D_INTEGRATION 管线路由: Structural Protocol interfaces for cross-module contracts... | 导入依赖 / import_depends |
 | 32 | CE 向量写入器 — vectorize_and_store() 生产者 (vector_mem... | → | D_INTEGRATION 管线路由: VMS 上下文注入器 — ingest_context() 消费者 (vector_memor... | 导入依赖 / import_depends |
-| 33 | ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | D_ORCHESTRATOR 代理编排器: contracts — orchestrator contracts subpackage. (contract... | 导入依赖 / import_depends |
-| 34 | ContextInjector: retrieve and inject relevant knowledge i... | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
+| 33 | ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | D_ORCHESTRATOR 代理编排器: 代理编排器契约包 / Orchestrator Contracts Package (contra... | 导入依赖 / import_depends |
+| 34 | ContextInjector: retrieve and inject relevant knowledge i... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 35 | checkpoint_manager.py — Inject 前快照 (DD100, TASK-019) ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 36 | ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | D_SHARED 共享服务: ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
 | 37 | ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
@@ -466,9 +466,9 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001) ... | 导入依赖 / import_depends |
 | 2 | D_GOV_CODE_QUALITY 代码质量治理: 集成协调器 — 24集成+19更新+16GitHub整合. (code_dedup/int... | → | context/context_rule_registry.py | 导入依赖 / import_depends |
-| 3 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | skills/skill_executor.py | 导入依赖 / import_depends |
-| 4 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | MOD-INF-019: Agent Spec — Skill Freshness Extensions (sk... | 导入依赖 / import_depends |
-| 5 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | MOD-INF-019: Agent Spec — Skill Lifecycle (skills/skill_... | 导入依赖 / import_depends |
+| 3 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | Skill 加载前创建回滚检查点 (skills/skill_executor.py) | 导入依赖 / import_depends |
+| 4 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | MOD-INF-019: Agent Spec — Skill Freshness Extensions (sk... | 导入依赖 / import_depends |
+| 5 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | MOD-INF-019: Agent Spec — Skill Lifecycle (skills/skill_... | 导入依赖 / import_depends |
 | 6 | D_INTEGRATION 管线路由: SentinelServer: 意图路由哨兵 MCP Server (mcp/sentinel_ser... | → | IntentKeywordMapper - Stage 1 of three-stage intent parsi... | 导入依赖 / import_depends |
 | 7 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | PipelineSkillBridge — Agent Spec -> Pipeline 双向桥接 (i... | 导入依赖 / import_depends |
 | 8 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | MOD-INF-019: Agent Spec — Skill Feedback Loop (skills/sk... | 导入依赖 / import_depends |

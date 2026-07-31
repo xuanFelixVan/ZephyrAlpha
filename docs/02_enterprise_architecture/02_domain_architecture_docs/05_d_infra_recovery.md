@@ -63,7 +63,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_complexity_budget_py["(生产态 / production) ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>文件: rollback/complexity_budget.py"]
     src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["(生产态 / production) CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。<br/>CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。<br/>文件: rollback/credential_rotation_trigger.py"]
     src_zephyr_infrastructure_rollback_cross_platform_shell_py["(生产态 / production) CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>文件: rollback/cross_platform_shell.py"]
-    src_zephyr_infrastructure_rollback_drift_fix_py["(生产态 / production)<br/>文件: rollback/drift_fix.py"]
+    src_zephyr_infrastructure_rollback_drift_fix_py["(生产态 / production) 漂移自动修复处理器 — G-CT-005 消费端.<br/>漂移自动修复处理器 — G-CT-005 消费端.<br/>文件: rollback/drift_fix.py"]
     src_zephyr_infrastructure_rollback_env_watcher_py["(生产态 / production) EnvWatcher — 环境变量热重载监控器。<br/>EnvWatcher — 环境变量热重载监控器。<br/>文件: rollback/env_watcher.py"]
     src_zephyr_infrastructure_rollback_external_merkle_proof_py["(生产态 / production) External Merkle Proof — 外部可验证回滚完整性证明。<br/>External Merkle Proof — 外部可验证回滚完整性证明。<br/>文件: rollback/external_merkle_proof.py"]
     src_zephyr_infrastructure_rollback_forensic_py["(生产态 / production) Forensic Engine — 取证基础设施（Phase 8 完整实现）。<br/>Forensic Engine — 取证基础设施（Phase 8 完整实现）。<br/>文件: rollback/forensic.py"]
@@ -225,13 +225,13 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | → | D_GOV_AUDIT 审计追踪: gov_audit/contracts.py | 导入依赖 / import_depends |
-| 2 | RollbackAbuseDetector — 回滚滥用检测。 (rollback/rollbac... | → | D_GOV_AUDIT 审计追踪: gov_audit/query.py | 导入依赖 / import_depends |
-| 3 | RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. ... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
-| 4 | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 1 | G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | → | D_GOV_AUDIT 审计追踪: 获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 Audit... | 导入依赖 / import_depends |
+| 2 | RollbackAbuseDetector — 回滚滥用检测。 (rollback/rollbac... | → | D_GOV_AUDIT 审计追踪: 净化文本以安全传递给 AI 上下文。 (gov_audit/query.py) | 导入依赖 / import_depends |
+| 3 | RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. ... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
+| 4 | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 5 | RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: EventHook — 声明式任务系统事件订阅 (ops_governance/event... | 导入依赖 / import_depends |
 | 6 | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (runtime/conc... | 导入依赖 / import_depends |
-| 7 | rollback/drift_fix.py | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
+| 7 | 漂移自动修复处理器 — G-CT-005 消费端. (rollback/drift_fi... | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
 | 8 | RunbookGenerator — 回滚操作 Runbook 自动生成。 (rollback... | → | D_SECURITY 对抗验证: Drift Runbook Generator — 漂移演练手册自动生成。 (gov_dr... | 导入依赖 / import_depends |
 | 9 | AgentCooldown — Agent 冷却隔离器。 (rollback/agent_coold... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 10 | External Merkle Proof — 外部可验证回滚完整性证明。 (roll... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -276,14 +276,14 @@ flowchart TD
 | 2 | D_GOVERNANCE 生命周期管理: Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQL... | → | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | 导入依赖 / import_depends |
 | 3 | D_GOVERNANCE 生命周期管理: Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQL... | → | RollbackVerifier — 回滚后验证器。 (rollback/rollback_ver... | 导入依赖 / import_depends |
 | 4 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | 导入依赖 / import_depends |
-| 5 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov_enforceme... | → | rollback/drift_fix.py | 导入依赖 / import_depends |
+| 5 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov_enforceme... | → | 漂移自动修复处理器 — G-CT-005 消费端. (rollback/drift_fi... | 导入依赖 / import_depends |
 | 6 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | → | G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口. (rol... | 导入依赖 / import_depends |
 | 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | KillSwitchManager — 三级 Kill Switch 管理器。 (rollback/... | 导入依赖 / import_depends |
 | 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | 导入依赖 / import_depends |
 | 9 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code... | 导入依赖 / import_depends |
-| 10 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | 导入依赖 / import_depends |
+| 10 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | 导入依赖 / import_depends |
 | 11 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code... | 导入依赖 / import_depends |
-| 12 | D_OPS 反馈循环: ops_governance/budget_tracker.py | → | G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |
+| 12 | D_OPS 反馈循环: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

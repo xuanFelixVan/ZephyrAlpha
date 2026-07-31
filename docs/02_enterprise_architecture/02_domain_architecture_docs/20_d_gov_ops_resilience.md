@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_budget_enforcer_init_py["(生产态 / production)<br/>文件: budget-enforcer/__init__.py"]
+    src_zephyr_governance_budget_enforcer_init_py["(生产态 / production) 治理修复Budget-enforcer包 / Governance Budget-enforcer Package<br/>治理修复域下 budget-enforcer 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: budget-enforcer/__init__.py"]
     src_zephyr_governance_escalation_alternative_path_blocker_py["(生产态 / production) Alternative Path Blocker — v0.13.0 替代工具路径拦截器。<br/>Alternative Path Blocker — v0.13.0 替代工具路径拦截器。<br/>文件: escalation/alternative_path_blocker.py"]
     src_zephyr_governance_escalation_consequence_manager_py["(生产态 / production)<br/>文件: escalation/consequence_manager.py"]
     src_zephyr_governance_escalation_contracts_py["(生产态 / production) G-CT-003 消费端 — Escalation.on_rollback_failure() + G-CT-004/G-CT-006/G-CT-...<br/>G-CT-003 消费端 — Escalation.on_rollback_failure() + G-CT-004/G-CT-006/G-CT-...<br/>文件: escalation/contracts.py"]
@@ -69,14 +69,14 @@ flowchart TD
     src_zephyr_governance_escalation_result_types_py["(生产态 / production) G-CT-003 — RollbackResult backward-compat re-export facade.<br/>G-CT-003 — RollbackResult backward-compat re-export facade.<br/>文件: escalation/result_types.py"]
     src_zephyr_governance_escalation_spof_checker_py["(生产态 / production)<br/>文件: escalation/spof_checker.py"]
     src_zephyr_governance_escalation_triage_py["(生产态 / production) G2 Triage 门禁 — 知识分类评分（T-2-13-B）<br/>G2 Triage 门禁 — 知识分类评分（T-2-13-B）<br/>文件: escalation/triage.py"]
-    src_zephyr_governance_ops_governance_agent_dispatch_py["(生产态 / production)<br/>文件: ops_governance/agent_dispatch.py"]
+    src_zephyr_governance_ops_governance_agent_dispatch_py["(生产态 / production) 根据 domain key 返回分派信息。找不到返回 None。<br/>根据 domain key 返回分派信息。找不到返回 None。<br/>文件: ops_governance/agent_dispatch.py"]
     src_zephyr_governance_ops_governance_auto_runner_py["(生产态 / production) GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.<br/>GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.<br/>文件: ops_governance/auto_runner.py"]
     src_zephyr_governance_ops_governance_bandwidth_optimizer_py["(生产态 / production)<br/>文件: ops_governance/bandwidth_optimizer.py"]
     src_zephyr_governance_ops_governance_burn_rate_monitor_py["(生产态 / production) Burn Rate Monitor — MOD-INF-024<br/>Burn Rate Monitor — MOD-INF-024<br/>文件: ops_governance/burn_rate_monitor.py"]
     src_zephyr_governance_ops_governance_clock_guard_py["(生产态 / production) Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检测+wall clock monotonic验证。<br/>Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检测+wall clock monotonic验证。<br/>文件: ops_governance/clock_guard.py"]
     src_zephyr_governance_ops_governance_coldstart_manager_py["(生产态 / production) Coldstart Manager — v0.7.0 冷启动管理器: escalation rules加载+引擎初始化+健...<br/>Coldstart Manager — v0.7.0 冷启动管理器: escalation rules加载+引擎初始化+健...<br/>文件: ops_governance/coldstart_manager.py"]
     src_zephyr_governance_ops_governance_cost_attributor_py["(生产态 / production)<br/>文件: ops_governance/cost_attributor.py"]
-    src_zephyr_governance_ops_governance_cost_router_py["(生产态 / production)<br/>文件: ops_governance/cost_router.py"]
+    src_zephyr_governance_ops_governance_cost_router_py["(生产态 / production) 根据预估token总量计算成本。<br/>根据预估token总量计算成本。<br/>文件: ops_governance/cost_router.py"]
     src_zephyr_governance_ops_governance_daily_ops_py["(生产态 / production)<br/>文件: ops_governance/daily_ops.py"]
     src_zephyr_governance_ops_governance_decision_fatigue_py["(生产态 / production)<br/>文件: ops_governance/decision_fatigue.py"]
     src_zephyr_governance_ops_governance_degradation_manager_py["(生产态 / production)<br/>文件: ops_governance/degradation_manager.py"]
@@ -93,11 +93,11 @@ flowchart TD
     src_zephyr_governance_ops_governance_startup_shutdown_cli_py["(生产态 / production)<br/>文件: ops_governance/startup_shutdown_cli.py"]
     src_zephyr_governance_ops_governance_tco_model_py["(生产态 / production)<br/>文件: ops_governance/tco_model.py"]
     src_zephyr_governance_ops_governance_time_sync_py["(生产态 / production)<br/>文件: ops_governance/time_sync.py"]
-    src_zephyr_governance_ops_governance_timeout_guard_py["(生产态 / production)<br/>文件: ops_governance/timeout_guard.py"]
-    src_zephyr_governance_resilience_governance_init_py["(生产态 / production)<br/>文件: resilience_governance/__init__.py"]
+    src_zephyr_governance_ops_governance_timeout_guard_py["(生产态 / production) noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周...<br/>noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周...<br/>文件: ops_governance/timeout_guard.py"]
+    src_zephyr_governance_resilience_governance_init_py["(生产态 / production) 治理修复Resilience Governance包 / Governance Resilience Governance Package<br/>治理修复域下 resilience_governance 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: resilience_governance/__init__.py"]
     src_zephyr_governance_resilience_governance_account_isolator_py["(生产态 / production) Account Isolator — v0.10.0 多账户升级隔离器。<br/>Account Isolator — v0.10.0 多账户升级隔离器。<br/>文件: resilience_governance/account_isolator.py"]
     src_zephyr_governance_resilience_governance_broker_resilience_py["(生产态 / production)<br/>文件: resilience_governance/broker_resilience.py"]
-    src_zephyr_governance_resilience_governance_bus_factor_defense_py["(生产态 / production)<br/>文件: resilience_governance/bus_factor_defense.py"]
+    src_zephyr_governance_resilience_governance_bus_factor_defense_py["(生产态 / production) Re-export shim: canonical source = zephyr.factor.bus_factor_defense (SSoT 收...<br/>Re-export shim: canonical source = zephyr.factor.bus_factor_defense (SSoT 收...<br/>文件: resilience_governance/bus_factor_defense.py"]
     src_zephyr_governance_resilience_governance_decision_fatigue_cli_py["(生产态 / production)<br/>文件: resilience_governance/decision_fatigue_cli.py"]
     src_zephyr_governance_resilience_governance_engine_sandbox_py["(生产态 / production) EngineSandbox — D-022-08 OS-level sandboxing for the escalation engine.<br/>EngineSandbox — D-022-08 OS-level sandboxing for the escalation engine.<br/>文件: resilience_governance/engine_sandbox.py"]
     src_zephyr_governance_resilience_governance_f5_boot_integration_py["(生产态 / production) F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2).<br/>F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2).<br/>文件: resilience_governance/f5_boot_integration.py"]
@@ -106,12 +106,12 @@ flowchart TD
     src_zephyr_governance_resilience_governance_fail_mode_manager_py["(生产态 / production)<br/>文件: resilience_governance/fail_mode_manager.py"]
     src_zephyr_governance_resilience_governance_fault_tolerance_py["(生产态 / production)<br/>文件: resilience_governance/fault_tolerance.py"]
     src_zephyr_governance_resilience_governance_last_resort_watchdog_py["(生产态 / production) Last Resort Watchdog — v0.8.0 终极逃生舱: 所有escalation失败后的final fallba...<br/>Last Resort Watchdog — v0.8.0 终极逃生舱: 所有escalation失败后的final fallba...<br/>文件: resilience_governance/last_resort_watchdog.py"]
-    src_zephyr_governance_resilience_governance_offline_autonomy_py["(生产态 / production)<br/>文件: resilience_governance/offline_autonomy.py"]
-    src_zephyr_governance_resilience_governance_offline_resilience_py["(生产态 / production)<br/>文件: resilience_governance/offline_resilience.py"]
+    src_zephyr_governance_resilience_governance_offline_autonomy_py["(生产态 / production) Re-export shim: canonical source = zephyr.infrastructure.a2a_protocol.offline...<br/>Re-export shim: canonical source = zephyr.infrastructure.a2a_protocol.offline...<br/>文件: resilience_governance/offline_autonomy.py"]
+    src_zephyr_governance_resilience_governance_offline_resilience_py["(生产态 / production) Re-export shim: canonical source = zephyr.infrastructure.a2a_protocol.offline...<br/>Re-export shim: canonical source = zephyr.infrastructure.a2a_protocol.offline...<br/>文件: resilience_governance/offline_resilience.py"]
     src_zephyr_governance_resilience_governance_policy_sandbox_py["(生产态 / production)<br/>文件: resilience_governance/policy_sandbox.py"]
     src_zephyr_governance_resilience_governance_process_isolator_py["(生产态 / production) Process Isolator — v0.6.0 进程隔离器: engine运行在独立进程+资源限制+crash恢复。<br/>Process Isolator — v0.6.0 进程隔离器: engine运行在独立进程+资源限制+crash恢复。<br/>文件: resilience_governance/process_isolator.py"]
     src_zephyr_governance_resilience_governance_witness_isolation_py["(生产态 / production) Witness Isolation — v0.8.0 Witness隔离: N版本decision验证+投票机制+majority...<br/>Witness Isolation — v0.8.0 Witness隔离: N版本decision验证+投票机制+majority...<br/>文件: resilience_governance/witness_isolation.py"]
-    src_zephyr_governance_security_governance_init_py["(生产态 / production)<br/>文件: security_governance/__init__.py"]
+    src_zephyr_governance_security_governance_init_py["(生产态 / production) 治理修复Security Governance包 / Governance Security Governance Package<br/>治理修复域下 security_governance 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: security_governance/__init__.py"]
     src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) Anti-Automation Bias — D-022-09 mandatory human oversight enforcement.<br/>Anti-Automation Bias — D-022-09 mandatory human oversight enforcement.<br/>文件: security_governance/anti_automation_bias.py"]
     src_zephyr_governance_security_governance_api_response_sanitizer_py["(生产态 / production) API Response Sanitizer — v0.9.0 API响应清洗器: 外部API返回内容清洗+injection...<br/>API Response Sanitizer — v0.9.0 API响应清洗器: 外部API返回内容清洗+injection...<br/>文件: security_governance/api_response_sanitizer.py"]
     src_zephyr_governance_security_governance_bare_repo_scanner_py["(生产态 / production) Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>文件: security_governance/bare_repo_scanner.py"]
@@ -127,7 +127,7 @@ flowchart TD
     src_zephyr_governance_security_governance_poison_cascade_detector_py["(生产态 / production)<br/>文件: security_governance/poison_cascade_detector.py"]
     src_zephyr_governance_security_governance_sbom_guard_py["(生产态 / production) SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁定+脆弱性扫描+cve告警。<br/>SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁定+脆弱性扫描+cve告警。<br/>文件: security_governance/sbom_guard.py"]
     src_zephyr_governance_security_governance_security_config_scanner_py["(生产态 / production) Security Config Scanner — v0.13.0 缺失安全配置扫描器。<br/>Security Config Scanner — v0.13.0 缺失安全配置扫描器。<br/>文件: security_governance/security_config_scanner.py"]
-    src_zephyr_governance_security_governance_tamper_evident_log_py["(生产态 / production)<br/>文件: security_governance/tamper_evident_log.py"]
+    src_zephyr_governance_security_governance_tamper_evident_log_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: security_governance/tamper_evident_log.py"]
     src_zephyr_governance_security_governance_vibe_security_verify_py["(生产态 / production) Vibe Security Verifier — v0.9.0 Vibe Coding安全验证器: AI生成代码安全基线检查。<br/>Vibe Security Verifier — v0.9.0 Vibe Coding安全验证器: AI生成代码安全基线检查。<br/>文件: security_governance/vibe_security_verify.py"]
     src_zephyr_governance_security_governance_vibe_verify_integration_py["(生产态 / production) VibeVerify Integration — v0.9.0 VibeVerify集成器: auto_guard级别+增量修复+co...<br/>VibeVerify Integration — v0.9.0 VibeVerify集成器: auto_guard级别+增量修复+co...<br/>文件: security_governance/vibe_verify_integration.py"]
     src_zephyr_governance_budget_enforcer_init_py ~~~ src_zephyr_governance_escalation_alternative_path_blocker_py
@@ -226,7 +226,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_phase_check_registry_py["(生产态 / production) PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.<br/>PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.<br/>文件: ops_governance/phase_check_registry.py"]
     src_zephyr_governance_ops_governance_stream_abort_guard_py["(生产态 / production) StreamAbortGuard — 流式中断守卫<br/>StreamAbortGuard — 流式中断守卫<br/>文件: ops_governance/stream_abort_guard.py"]
     src_zephyr_governance_resilience_governance_circuit_breaker_py["(生产态 / production) Circuit Breaker — MOD-INF-022<br/>Circuit Breaker — MOD-INF-022<br/>文件: resilience_governance/circuit_breaker.py"]
-    src_zephyr_governance_security_governance_ipi_defense_py["(生产态 / production)<br/>文件: security_governance/ipi_defense.py"]
+    src_zephyr_governance_security_governance_ipi_defense_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: security_governance/ipi_defense.py"]
     src_zephyr_governance_escalation_escalation_metrics_py ~~~ src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_models_py ~~~ src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_phase_check_registry_py ~~~ src_zephyr_governance_ops_governance_stream_abort_guard_py
@@ -306,7 +306,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | resilience_governance/bus_factor_defense.py | → | D_FACTOR 因子: factor/bus_factor_defense.py | 导入依赖 / import_depends |
+| 1 | Re-export shim: canonical source = zephyr.factor.bus_fact... | → | D_FACTOR 因子: factor/bus_factor_defense.py | 导入依赖 / import_depends |
 | 2 | GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器. ... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
 | 3 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOVERNANCE 生命周期管理: Escalation Protocol Self-Test — MOD-INF-022. (intelligen... | 导入依赖 / import_depends |
 | 4 | D-DATA -> ServiceRegistry 注册模块 (ops_governance/servic... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
@@ -316,18 +316,18 @@ flowchart TD
 | 8 | F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-... | 导入依赖 / import_depends |
 | 9 | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | D_GOVERNANCE 生命周期管理: AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV... | 导入依赖 / import_depends |
 | 10 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOV_AUDIT 审计追踪: audit-trail.integrity — MOD-INF-020 · 密码学完整性验证... | 导入依赖 / import_depends |
-| 11 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOV_AUDIT 审计追踪: gov_audit/query.py | 导入依赖 / import_depends |
-| 12 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 11 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOV_AUDIT 审计追踪: 净化文本以安全传递给 AI 上下文。 (gov_audit/query.py) | 导入依赖 / import_depends |
+| 12 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 13 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_GOV_AUDIT 审计追踪: SYS-MASTER-001 Compliance Checker (rule_enforcement/sys_m... | 导入依赖 / import_depends |
 | 14 | blast_radius — MOD-INF-028 §3.1 Stage 9 (resilience_gov... | → | D_GOV_AUDIT 审计追踪: 语义审计管线数据模型 — MOD-INF-028 §4.2 (semantic_audit... | 导入依赖 / import_depends |
-| 15 | security_governance/tamper_evident_log.py | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 15 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 16 | D_COMPLIANCE — Governance & Compliance Layer (security_g... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 zephyr.shar... | 导入依赖 / import_depends |
 | 17 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 18 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
 | 19 | F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | 导入依赖 / import_depends |
 | 20 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3). (... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | 导入依赖 / import_depends |
-| 21 | resilience_governance/offline_autonomy.py | → | D_INFRA_A2A A2A通信: a2a_protocol/offline_autonomy.py | 导入依赖 / import_depends |
-| 22 | resilience_governance/offline_resilience.py | → | D_INFRA_A2A A2A通信: a2a_protocol/offline_resilience.py | 导入依赖 / import_depends |
+| 21 | Re-export shim: canonical source = zephyr.infrastructure.... | → | D_INFRA_A2A A2A通信: noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | 导入依赖 / import_depends |
+| 22 | Re-export shim: canonical source = zephyr.infrastructure.... | → | D_INFRA_A2A A2A通信: a2a_protocol/offline_resilience.py | 导入依赖 / import_depends |
 | 23 | G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | → | D_INFRA_RECOVERY 回滚恢复: G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口. (rol... | 导入依赖 / import_depends |
 | 24 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_INFRA_RECOVERY 回滚恢复: KillSwitchManager — 三级 Kill Switch 管理器。 (rollback/... | 导入依赖 / import_depends |
 | 25 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | 导入依赖 / import_depends |
@@ -349,9 +349,9 @@ flowchart TD
 | 41 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 42 | security_governance/adversarial_tester.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
 | 43 | security_governance/adversarial_tester.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 44 | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
+| 44 | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 45 | Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
-| 46 | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
+| 46 | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 47 | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | D_SECURITY 对抗验证: InputSanitizer: path whitelist + command whitelist + toke... | 导入依赖 / import_depends |
 | 48 | G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | → | D_SHARED 共享服务: escalation/budget_alert.py | 导入依赖 / import_depends |
 | 49 | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
@@ -374,7 +374,7 @@ flowchart TD
 | 1 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 2 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
 | 3 | D_GOVERNANCE 生命周期管理: G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent ... | → | G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | 导入依赖 / import_depends |
-| 4 | D_GOVERNANCE 生命周期管理: implementations/default_security_gateway.py | → | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: Re-export shim: canonical source = zephyr.governance.secu... | → | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | 导入依赖 / import_depends |
 | 5 | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (intelligence_governance... | → | Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
 | 6 | D_GOVERNANCE 生命周期管理: Escalation Protocol Self-Test — MOD-INF-022. (intelligen... | → | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 7 | D_GOVERNANCE 生命周期管理: Escalation Protocol Self-Test — MOD-INF-022. (intelligen... | → | Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
@@ -385,21 +385,21 @@ flowchart TD
 | 12 | D_GOVERNANCE 生命周期管理: Escalation Adapter — MOD-INF-022 统一集成入口. (services... | → | Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
 | 13 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 14 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
-| 15 | D_GOV_AUDIT 审计追踪: gov_audit/delegation_bridge.py | → | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
+| 15 | D_GOV_AUDIT 审计追踪: Module-level __getattr__ -- expose AuditWriter for patch ... | → | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 16 | D_GOV_AUDIT 审计追踪: gov_audit/pipeline_runner.py | → | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
 | 17 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
-| 18 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | Burn Rate Monitor — MOD-INF-024 (ops_governance/burn_rat... | 导入依赖 / import_depends |
-| 19 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | ops_governance/degradation_manager.py | 导入依赖 / import_depends |
-| 20 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | ops_governance/timeout_guard.py | 导入依赖 / import_depends |
+| 18 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | Burn Rate Monitor — MOD-INF-024 (ops_governance/burn_rat... | 导入依赖 / import_depends |
+| 19 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | ops_governance/degradation_manager.py | 导入依赖 / import_depends |
+| 20 | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | → | noqa: m10-time-trigger  M10豁免: threading.Timer用于一次... | 导入依赖 / import_depends |
 | 21 | D_GOV_SCRIPTS 脚本治理: Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状... | → | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
 | 22 | D_GOV_SCRIPTS 脚本治理: Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状... | → | Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
 | 23 | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | → | Escalation Protocol data models — MOD-INF-022 (escalatio... | 导入依赖 / import_depends |
 | 24 | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | → | EventHook — 声明式任务系统事件订阅 (ops_governance/event... | 导入依赖 / import_depends |
 | 25 | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0... | → | Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
 | 26 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | Coldstart Manager — v0.7.0 冷启动管理器: escalation rule... | 导入依赖 / import_depends |
-| 27 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | 导入依赖 / import_depends |
-| 28 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | 导入依赖 / import_depends |
-| 29 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | security_governance/ipi_defense.py | 导入依赖 / import_depends |
+| 27 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | 导入依赖 / import_depends |
+| 28 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | 导入依赖 / import_depends |
+| 29 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | 导入依赖 / import_depends |
 | 30 | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | 导入依赖 / import_depends |
 | 31 | D_ORCHESTRATOR 代理编排器: FailurePatternMatcher — 任务失败模式识别与纠正建议 (resi... | → | EventHook — 声明式任务系统事件订阅 (ops_governance/event... | 导入依赖 / import_depends |
 | 32 | D_SECURITY 对抗验证: orphan_judge/escalation_bridge.py | → | Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |

@@ -94,7 +94,7 @@ partitions:
     name: Feedback Loop Engine
     path: layers/b_feedback_loop.yaml
     status: under_construction
-    description: Vibe Coding 2.0 基础设施 ?L12 跨层支撑??5 大核心服务之一
+    description: Vibe Coding 2.0 基础设施 L12 跨层支撑，核心服务之一。
   - id: gates
     name: Gates
     path: layers/b_gates.yaml
@@ -355,6 +355,8 @@ global_stats:
   total_partitions: 12
   b_track_modules: 13
   b_track_implemented: 11
+  b_track_under_construction: 1
+  b_track_phase_2_complete: 1
   b_track_skeleton: 0
   notes: >
     72域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。

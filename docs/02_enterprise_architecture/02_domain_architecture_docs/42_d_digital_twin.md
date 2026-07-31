@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_digital_twin_init_py["(生产态 / production)<br/>文件: digital_twin/__init__.py"]
-    src_zephyr_digital_twin_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_digital_twin_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_digital_twin_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_digital_twin_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_digital_twin_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_digital_twin_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_digital_twin_init_py["(生产态 / production) 数字孪生域包 / Digital Twin Domain Package<br/>数字孪生域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: digital_twin/__init__.py"]
+    src_zephyr_digital_twin_extensions_init_py["(生产态 / production) 数字孪生扩展包 / Digital Twin Extensions Package<br/>数字孪生域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_digital_twin_api_init_py["(生产态 / production) 数字孪生API包 / Digital Twin API Package<br/>数字孪生域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_digital_twin_core_init_py["(生产态 / production) 数字孪生核心包 / Digital Twin Core Package<br/>数字孪生域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_digital_twin_infrastructure_init_py["(生产态 / production) 数字孪生基础设施包 / Digital Twin Infrastructure Package<br/>数字孪生域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_digital_twin_models_init_py["(生产态 / production) 数字孪生模型包 / Digital Twin Models Package<br/>数字孪生域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_digital_twin_services_init_py["(生产态 / production) 数字孪生服务包 / Digital Twin Services Package<br/>数字孪生域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_digital_twin_init_py ~~~ src_zephyr_digital_twin_extensions_init_py
     src_zephyr_digital_twin_extensions_init_py ~~~ src_zephyr_digital_twin_api_init_py
     src_zephyr_digital_twin_api_init_py ~~~ src_zephyr_digital_twin_core_init_py

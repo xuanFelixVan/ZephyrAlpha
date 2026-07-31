@@ -55,7 +55,7 @@ ttl: permanent
 flowchart TD
     src_zephyr_backtest_core_data_handler_py["(生产态 / production) 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>文件: core/data_handler.py"]
     src_zephyr_backtest_implementations_event_driven_engine_py["(生产态 / production) 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>文件: implementations/event_driven_engine.py"]
-    src_zephyr_backtest_io_init_py["(生产态 / production) io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新增，#ARCH-047）<br/>io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新增，#ARCH-047）<br/>文件: io/__init__.py"]
+    src_zephyr_backtest_io_init_py["(生产态 / production) 回测Io包 / Backtest Io Package<br/>回测域下 io 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: io/__init__.py"]
     src_zephyr_backtest_services_scheduler_py["(生产态 / production) D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。<br/>D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。<br/>文件: services/scheduler.py"]
     src_zephyr_backtest_core_data_handler_py ~~~ src_zephyr_backtest_implementations_event_driven_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py ~~~ src_zephyr_backtest_io_init_py
@@ -151,7 +151,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 1 | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 2 | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 3 | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | → | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | 导入依赖 / import_depends |
 | 4 | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | → | D_EX_CORE 执行核心: Re-export wrapper: simulation_broker 真源在 zephyr.govern... | 导入依赖 / import_depends |

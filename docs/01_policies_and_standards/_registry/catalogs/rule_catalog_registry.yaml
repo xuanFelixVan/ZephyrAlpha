@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-31T20:08:46Z'
+generated_at: '2026-07-31T20:42:46Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 188
@@ -1685,7 +1685,7 @@ files:
   title: 设计意图查询真源铁律（问题类型→查询源映射）
   doc_type: ''
   status: ''
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: design_intent_source_discipline
   stability: evolving

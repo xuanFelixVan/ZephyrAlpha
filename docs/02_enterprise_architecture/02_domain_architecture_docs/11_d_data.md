@@ -159,15 +159,15 @@ flowchart TD
     src_zephyr_data_config_policies_yaml["(生产态 / production)<br/>文件: config/policies.yaml"]
     src_zephyr_data_config_schedule_yaml["(生产态 / production)<br/>文件: config/schedule.yaml"]
     src_zephyr_data_config_tasks_yaml["(生产态 / production)<br/>文件: config/tasks.yaml"]
-    src_zephyr_data_implementations_init_py["(生产态 / production) 数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>数据源 Provider 实现集合（MOD-L00-004 §4.3）。<br/>文件: implementations/__init__.py"]
+    src_zephyr_data_implementations_init_py["(生产态 / production) 数据接入层Implementations包 / Data Implementations Package<br/>数据接入层域下 implementations 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: implementations/__init__.py"]
     src_zephyr_data_kline_resampler_py["(生产态 / production) 880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。<br/>880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m 写入 ClickHouse。<br/>文件: data/kline_resampler.py"]
     src_zephyr_data_pit_query_py_1["(设计态 / design)<br/>文件: pit_query.py/"]
-    src_zephyr_data_redundant_source_init_py["(生产态 / production) 数据源冗余与热切换模块（MOD-L00-005）。<br/>数据源冗余与热切换模块（MOD-L00-005）。<br/>文件: redundant_source/__init__.py"]
-    src_zephyr_data_satellite_geospatial_engine_init_py["(生产态 / production) D_DATA Data Source<br/>D_DATA Data Source<br/>文件: satellite_geospatial_engine/__init__.py"]
+    src_zephyr_data_redundant_source_init_py["(生产态 / production) 数据接入层Redundant Source包 / Data Redundant Source Package<br/>数据接入层域下 redundant_source 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: redundant_source/__init__.py"]
+    src_zephyr_data_satellite_geospatial_engine_init_py["(生产态 / production) 数据接入层Satellite Geospatial Engine包 / Data Satellite Geospatial Engine Package<br/>数据接入层域下 satellite_geospatial_engine 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: satellite_geospatial_engine/__init__.py"]
     src_zephyr_data_sector_kline_downloader_py["(生产态 / production) 880xxx 板块指数K线下载器——盘后从 tqcenter 下载日K/分钟K写入 ClickHouse。<br/>880xxx 板块指数K线下载器——盘后从 tqcenter 下载日K/分钟K写入 ClickHouse。<br/>文件: data/sector_kline_downloader.py"]
     src_zephyr_data_sector_snapshot_collector_py["(生产态 / production) 880xxx 板块实时快照采集器（tqcenter → ClickHouse sector_snapshot 表）。<br/>880xxx 板块实时快照采集器（tqcenter → ClickHouse sector_snapshot 表）。<br/>文件: data/sector_snapshot_collector.py"]
-    src_zephyr_data_symbol_normalizer_init_py["(生产态 / production) Symbol 标准化模块——TRAE-082 symbol 约定铁律的实现真源。<br/>Symbol 标准化模块——TRAE-082 symbol 约定铁律的实现真源。<br/>文件: symbol_normalizer/__init__.py"]
-    src_zephyr_data_wal_codec_init_py["(生产态 / production) WAL 段编解码模块（MOD-L00-006）。<br/>WAL 段编解码模块（MOD-L00-006）。<br/>文件: wal_codec/__init__.py"]
+    src_zephyr_data_symbol_normalizer_init_py["(生产态 / production) 数据接入层Symbol Normalizer包 / Data Symbol Normalizer Package<br/>数据接入层域下 symbol_normalizer 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: symbol_normalizer/__init__.py"]
+    src_zephyr_data_wal_codec_init_py["(生产态 / production) 数据接入层Wal Codec包 / Data Wal Codec Package<br/>数据接入层域下 wal_codec 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: wal_codec/__init__.py"]
     tests_data_test_market_quality_validator_py["(生产态 / production) #ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。<br/>#ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。<br/>文件: data/test_market_quality_validator.py"]
     tests_data_test_pit_query_py["(生产态 / production) #ARCH-CH-021 P0-5: 财报 PIT 查询能力测试。<br/>#ARCH-CH-021 P0-5: 财报 PIT 查询能力测试。<br/>文件: data/test_pit_query.py"]
     tests_zephyr_data_test_cross_source_validator_py["(生产态 / production) cross_source_validator 单元测试（P1-4 多源交叉校验）。<br/>cross_source_validator 单元测试（P1-4 多源交叉校验）。<br/>文件: data/test_cross_source_validator.py"]
@@ -320,7 +320,7 @@ flowchart TD
     src_zephyr_data_progress_store_py ~~~ src_zephyr_data_scheduler_py
     src_zephyr_data_scheduler_py ~~~ src_zephyr_data_speed_tester_py
     src_zephyr_data_speed_tester_py ~~~ src_zephyr_data_symbol_normalizer_normalizer_py
-    src_zephyr_data_init_py["(生产态 / production) zephyr.data — 数据源集成器（MOD-L00-004）。<br/>zephyr.data — 数据源集成器（MOD-L00-004）。<br/>文件: data/__init__.py"]
+    src_zephyr_data_init_py["(生产态 / production) 数据接入层域包 / Data Domain Package<br/>数据接入层域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: data/__init__.py"]
     src_zephyr_data_ch_writer_py["(生产态 / production) ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。<br/>ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。<br/>文件: data/ch_writer.py"]
     src_zephyr_data_implementations_akshare_provider_py["(生产态 / production) AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>AKShare 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: implementations/akshare_provider.py"]
     src_zephyr_data_implementations_baostock_provider_py["(生产态 / production) Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>Baostock 数据源 Provider 实现（MOD-L00-004 §4.3）。<br/>文件: implementations/baostock_provider.py"]
@@ -681,7 +681,7 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | Re-export wrapper: QualityReport 真源在 zephyr.gov_enforc... | → | D_GOV_ENFORCEMENT 规则执行: D_DATA — Data Quality Gate (rule_enforcement/quality_gat... | 导入依赖 / import_depends |
-| 2 | D_DATA Data Source (satellite_geospatial_engine/__init__.py) | → | D_GOV_ENFORCEMENT 规则执行: D_DATA — Data Quality Gate (rule_enforcement/quality_gat... | 导入依赖 / import_depends |
+| 2 | 数据接入层Satellite Geospatial Engine包 / Data Satellite ... | → | D_GOV_ENFORCEMENT 规则执行: D_DATA — Data Quality Gate (rule_enforcement/quality_gat... | 导入依赖 / import_depends |
 | 3 | #ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。 (data... | → | D_GOV_ENFORCEMENT 规则执行: D_DATA — Data Quality Gate (rule_enforcement/quality_gat... | 测试依赖 / test_depends |
 | 4 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 5 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
@@ -707,24 +707,24 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_BACKTEST 回测: 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 1 | D_BACKTEST 回测: 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 2 | D_BACKTEST 回测: 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
-| 3 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 3 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 4 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 5 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 6 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 6 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 7 | D_GOVERNANCE 生命周期管理: D_DATA — Memory Provider (intelligence_governance/memory... | → | per-source 调用策略注册表（MOD-L00-004 §5）。 (data/poli... | 导入依赖 / import_depends |
 | 8 | D_GOVERNANCE 生命周期管理: D_DATA — Memory Provider (intelligence_governance/memory... | → | 数据源 Provider 抽象基类（MOD-L00-004 §4）。 (data/provi... | 导入依赖 / import_depends |
 | 9 | D_GOV_CODE_QUALITY 代码质量治理: capability_consistency_gate.py — Provider 路由-meta 一致... | → | Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。... | 导入依赖 / import_depends |
 | 10 | D_GOV_CODE_QUALITY 代码质量治理: table_name_registry_gate.py — TABLE-NAME-REGISTRY block ... | → | 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 11 | D_GOV_CODE_QUALITY 代码质量治理: test_symbol_normalizer.py — TRAE-082 symbol 标准化模块测... | → | Symbol 标准化模块——TRAE-082 symbol 约定铁律的实现真源。... | 测试依赖 / test_depends |
+| 11 | D_GOV_CODE_QUALITY 代码质量治理: test_symbol_normalizer.py — TRAE-082 symbol 标准化模块测... | → | 数据接入层Symbol Normalizer包 / Data Symbol Normalizer Pa... | 测试依赖 / test_depends |
 | 12 | D_GOV_SCRIPTS 脚本治理: Code Wiki 统计数据生成器（半自动维护机制）。 (generators/... | → | 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 13 | D_GOV_SCRIPTS 脚本治理: G-inventory: 扫描 ClickHouse 生成业务数据清单 MD (generat... | → | zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 13 | D_GOV_SCRIPTS 脚本治理: G-inventory: 扫描 ClickHouse 生成业务数据清单 MD (generat... | → | 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 14 | D_GOV_SCRIPTS 脚本治理: G-inventory: 扫描 ClickHouse 生成业务数据清单 MD (generat... | → | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
-| 15 | D_GOV_SCRIPTS 脚本治理: tick_data 表真重复检查工具（RULE-DATA-OPS 配套，TRAE-063 ... | → | zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 15 | D_GOV_SCRIPTS 脚本治理: tick_data 表真重复检查工具（RULE-DATA-OPS 配套，TRAE-063 ... | → | 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 16 | D_GOV_SCRIPTS 脚本治理: tick_data 表真重复检查工具（RULE-DATA-OPS 配套，TRAE-063 ... | → | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 17 | D_INFRA_RUNTIME 运行时集成: DatabaseService: 统一管理数据库的连接池、生命周期、健康检... | → | ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARC... | 导入依赖 / import_depends |
-| 18 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 18 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 19 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 20 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
 

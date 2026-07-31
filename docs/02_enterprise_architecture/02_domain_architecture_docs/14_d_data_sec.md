@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_security_init_py["(生产态 / production)<br/>文件: data_security/__init__.py"]
-    src_zephyr_data_security_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_data_security_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_data_security_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_data_security_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_data_security_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_data_security_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_data_security_init_py["(生产态 / production) 数据安全与契约域包 / Data Security Domain Package<br/>数据安全与契约域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: data_security/__init__.py"]
+    src_zephyr_data_security_extensions_init_py["(生产态 / production) 数据安全与契约扩展包 / Data Security Extensions Package<br/>数据安全与契约域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_data_security_api_init_py["(生产态 / production) 数据安全与契约API包 / Data Security API Package<br/>数据安全与契约域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_data_security_core_init_py["(生产态 / production) 数据安全与契约核心包 / Data Security Core Package<br/>数据安全与契约域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_data_security_infrastructure_init_py["(生产态 / production) 数据安全与契约基础设施包 / Data Security Infrastructure Package<br/>数据安全与契约域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_data_security_models_init_py["(生产态 / production) 数据安全与契约模型包 / Data Security Models Package<br/>数据安全与契约域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_data_security_services_init_py["(生产态 / production) 数据安全与契约服务包 / Data Security Services Package<br/>数据安全与契约域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_data_security_init_py ~~~ src_zephyr_data_security_extensions_init_py
     src_zephyr_data_security_extensions_init_py ~~~ src_zephyr_data_security_api_init_py
     src_zephyr_data_security_api_init_py ~~~ src_zephyr_data_security_core_init_py

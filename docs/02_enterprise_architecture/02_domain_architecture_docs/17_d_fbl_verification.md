@@ -242,16 +242,16 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Safety Gates L66-L67 — Financial Prudence + Full Integra... | → | D_GOV_AUDIT 审计追踪: gov_audit/bridge.py | 导入依赖 / import_depends |
+| 1 | Safety Gates L66-L67 — Financial Prudence + Full Integra... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package init. (gate... | → | gates/_governance_gates.py | 导入依赖 / import_depends |
-| 2 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package init. (gate... | → | gates/_operational_gates.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package init. (gate... | → | gates/_safety_gates.py | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package init. (gate... | → | gates/_security_gates.py | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | gates/_governance_gates.py | 导入依赖 / import_depends |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | gates/_operational_gates.py | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | gates/_safety_gates.py | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环Gates包 / Feedback Loop Gates Package (gates/__in... | → | gates/_security_gates.py | 导入依赖 / import_depends |
 | 5 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | verifiers/verification_engine.py | 导入依赖 / import_depends |
 | 6 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | Cascading Rollback Analyzer — v0.38.0 R482 (verifiers/ca... | 导入依赖 / import_depends |
 | 7 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (verifiers/... | 导入依赖 / import_depends |
@@ -260,29 +260,29 @@ flowchart TD
 | 10 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_safety.py | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOO... | 导入依赖 / import_depends |
 | 11 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOO... | 导入依赖 / import_depends |
 | 12 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | Safety Gates L66-L67 — Financial Prudence + Full Integra... | 导入依赖 / import_depends |
-| 13 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | A/B Test Verifier — v0.9.0 R117 (verifiers/ab_test.py) | 导入依赖 / import_depends |
-| 14 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Action Explainability — v0.3.0 R15 (verifiers/action_exp... | 导入依赖 / import_depends |
-| 15 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | AI Comment Veracity — v0.37.0 R459 (verifiers/ai_comment... | 导入依赖 / import_depends |
-| 16 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Attack Simulator — v0.6.0 R57 (verifiers/attack_simulato... | 导入依赖 / import_depends |
-| 17 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Auto Rollback — v0.8.0 R93 (verifiers/auto_rollback.py) | 导入依赖 / import_depends |
-| 18 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Build Reproducibility Verifier — v0.38.0 R484 (verifiers... | 导入依赖 / import_depends |
-| 19 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Canary Repair — v0.8.0 R104b (verifiers/canary_repair.py) | 导入依赖 / import_depends |
-| 20 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Cascading Rollback Analyzer — v0.38.0 R482 (verifiers/ca... | 导入依赖 / import_depends |
-| 21 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Cross-Blueprint Contract Drift Monitor — v0.39.0 R490 (v... | 导入依赖 / import_depends |
-| 22 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Cross-Module Integration Verifier — v0.5.0 R39 (verifier... | 导入依赖 / import_depends |
-| 23 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Cross-Session Knowledge Integrity — v0.16.0 R225 (verifi... | 导入依赖 / import_depends |
-| 24 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Digital Twin Sandbox — v0.6.0 R55 (verifiers/digital_twi... | 导入依赖 / import_depends |
-| 25 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Dry Run Sandbox — v0.3.0 R19 (verifiers/dry_run_sandbox.py) | 导入依赖 / import_depends |
-| 26 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Federated Protocol — v0.10.0 R129 (verifiers/federated_p... | 导入依赖 / import_depends |
-| 27 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Golden Test External — v0.15.0 R214 (verifiers/golden_te... | 导入依赖 / import_depends |
-| 28 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | No-LLM Degradation Mode — v0.8.0 R94 (verifiers/no_llm_d... | 导入依赖 / import_depends |
-| 29 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Pre-Flight Simulator — v0.12.0 R169b (verifiers/pre_flig... | 导入依赖 / import_depends |
-| 30 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Preventive Repair — v0.6.0 R69 (verifiers/preventive_rep... | 导入依赖 / import_depends |
-| 31 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Rollback Integrity — v0.3.0 R18b (verifiers/rollback_int... | 导入依赖 / import_depends |
-| 32 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Sim2Real Calibration — v0.6.0 R56 (verifiers/sim2real_ca... | 导入依赖 / import_depends |
-| 33 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (verifiers/... | 导入依赖 / import_depends |
-| 34 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | TOCTOU Revalidation — v0.37.0 R458 (verifiers/toctou_rev... | 导入依赖 / import_depends |
-| 35 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated package init. (... | → | verifiers/verification_engine.py | 导入依赖 / import_depends |
+| 13 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | A/B Test Verifier — v0.9.0 R117 (verifiers/ab_test.py) | 导入依赖 / import_depends |
+| 14 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Action Explainability — v0.3.0 R15 (verifiers/action_exp... | 导入依赖 / import_depends |
+| 15 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | AI Comment Veracity — v0.37.0 R459 (verifiers/ai_comment... | 导入依赖 / import_depends |
+| 16 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Attack Simulator — v0.6.0 R57 (verifiers/attack_simulato... | 导入依赖 / import_depends |
+| 17 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Auto Rollback — v0.8.0 R93 (verifiers/auto_rollback.py) | 导入依赖 / import_depends |
+| 18 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Build Reproducibility Verifier — v0.38.0 R484 (verifiers... | 导入依赖 / import_depends |
+| 19 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Canary Repair — v0.8.0 R104b (verifiers/canary_repair.py) | 导入依赖 / import_depends |
+| 20 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Cascading Rollback Analyzer — v0.38.0 R482 (verifiers/ca... | 导入依赖 / import_depends |
+| 21 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Cross-Blueprint Contract Drift Monitor — v0.39.0 R490 (v... | 导入依赖 / import_depends |
+| 22 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Cross-Module Integration Verifier — v0.5.0 R39 (verifier... | 导入依赖 / import_depends |
+| 23 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Cross-Session Knowledge Integrity — v0.16.0 R225 (verifi... | 导入依赖 / import_depends |
+| 24 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Digital Twin Sandbox — v0.6.0 R55 (verifiers/digital_twi... | 导入依赖 / import_depends |
+| 25 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Dry Run Sandbox — v0.3.0 R19 (verifiers/dry_run_sandbox.py) | 导入依赖 / import_depends |
+| 26 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Federated Protocol — v0.10.0 R129 (verifiers/federated_p... | 导入依赖 / import_depends |
+| 27 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Golden Test External — v0.15.0 R214 (verifiers/golden_te... | 导入依赖 / import_depends |
+| 28 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | No-LLM Degradation Mode — v0.8.0 R94 (verifiers/no_llm_d... | 导入依赖 / import_depends |
+| 29 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Pre-Flight Simulator — v0.12.0 R169b (verifiers/pre_flig... | 导入依赖 / import_depends |
+| 30 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Preventive Repair — v0.6.0 R69 (verifiers/preventive_rep... | 导入依赖 / import_depends |
+| 31 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Rollback Integrity — v0.3.0 R18b (verifiers/rollback_int... | 导入依赖 / import_depends |
+| 32 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Sim2Real Calibration — v0.6.0 R56 (verifiers/sim2real_ca... | 导入依赖 / import_depends |
+| 33 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (verifiers/... | 导入依赖 / import_depends |
+| 34 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | TOCTOU Revalidation — v0.37.0 R458 (verifiers/toctou_rev... | 导入依赖 / import_depends |
+| 35 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈验证域包 / Verifiers Domain Package (verifiers/__init... | → | verifiers/verification_engine.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

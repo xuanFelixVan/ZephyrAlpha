@@ -85,7 +85,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["(生产态 / production)<br/>文件: a2a_protocol/migration_strategy.py"]
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py["(生产态 / production) multi_agent.py —— Multi-Agent 编排基座（Phase 14 / 盲点 B33）<br/>multi_agent.py —— Multi-Agent 编排基座（Phase 14 / 盲点 B33）<br/>文件: a2a_protocol/multi_agent.py"]
     src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["(生产态 / production)<br/>文件: a2a_protocol/multi_model_consensus.py"]
-    src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["(生产态 / production)<br/>文件: a2a_protocol/offline_autonomy.py"]
+    src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: a2a_protocol/offline_autonomy.py"]
     src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["(生产态 / production)<br/>文件: a2a_protocol/offline_resilience.py"]
     src_zephyr_infrastructure_a2a_protocol_phase_hold_py["(生产态 / production) Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工.<br/>Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他 Phase 3 模块不可并发施工.<br/>文件: a2a_protocol/phase_hold.py"]
     src_zephyr_infrastructure_a2a_protocol_prompt_lifecycle_py["(生产态 / production)<br/>文件: a2a_protocol/prompt_lifecycle.py"]
@@ -299,8 +299,8 @@ flowchart TD
 | 6 | D_GOVERNANCE 生命周期管理: Re-export bridge for layer3_coordination governance integ... | → | A2A Living Spec 同步 — 蓝图与实现的双向漂移管理 (layer3_... | 导入依赖 / import_depends |
 | 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | → | A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | 导入依赖 / import_depends |
 | 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3). (... | → | A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | 导入依赖 / import_depends |
-| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: resilience_governance/offline_autonomy.py | → | a2a_protocol/offline_autonomy.py | 导入依赖 / import_depends |
-| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: resilience_governance/offline_resilience.py | → | a2a_protocol/offline_resilience.py | 导入依赖 / import_depends |
+| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: Re-export shim: canonical source = zephyr.infrastructure.... | → | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | 导入依赖 / import_depends |
+| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: Re-export shim: canonical source = zephyr.infrastructure.... | → | a2a_protocol/offline_resilience.py | 导入依赖 / import_depends |
 | 11 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | A2A Card Registry — 全局 Agent Card 注册单例 (a2a_protoc... | 导入依赖 / import_depends |
 | 12 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | A2A 协议网关 — Agent 间请求分发与协议转换 (layer3_coordi... | 导入依赖 / import_depends |
 | 13 | D_INFRA_RUNTIME 运行时集成: trading/capability_sync.py | → | A2A Registry — Agent Card 注册与发现 (layer1_discovery/a... | 导入依赖 / import_depends |

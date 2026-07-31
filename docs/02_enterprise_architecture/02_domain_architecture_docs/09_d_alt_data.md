@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["(生产态 / production)<br/>文件: alt_data/__init__.py"]
-    src_zephyr_alt_data_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_alt_data_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_alt_data_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_alt_data_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_alt_data_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_alt_data_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_alt_data_init_py["(生产态 / production) 另类数据域包 / Alt Data Domain Package<br/>另类数据域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: alt_data/__init__.py"]
+    src_zephyr_alt_data_extensions_init_py["(生产态 / production) 另类数据扩展包 / Alt Data Extensions Package<br/>另类数据域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_alt_data_api_init_py["(生产态 / production) 另类数据API包 / Alt Data API Package<br/>另类数据域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_alt_data_core_init_py["(生产态 / production) 另类数据核心包 / Alt Data Core Package<br/>另类数据域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_alt_data_infrastructure_init_py["(生产态 / production) 另类数据基础设施包 / Alt Data Infrastructure Package<br/>另类数据域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_alt_data_models_init_py["(生产态 / production) 另类数据模型包 / Alt Data Models Package<br/>另类数据域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_alt_data_services_init_py["(生产态 / production) 另类数据服务包 / Alt Data Services Package<br/>另类数据域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py

@@ -58,7 +58,7 @@ flowchart TD
     src_zephyr_intelligence_model_drift_detector_py["(生产态 / production) ModelDriftDetector — LLM 模型行为漂移检测。<br/>ModelDriftDetector — LLM 模型行为漂移检测。<br/>文件: intelligence/model_drift_detector.py"]
     src_zephyr_intelligence_model_evaluation_activate_py["(生产态 / production) G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: model_evaluation/activate.py"]
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_engine.py"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py["(生产态 / production)<br/>文件: model_evaluation/inference_base.py"]
+    src_zephyr_intelligence_model_evaluation_inference_base_py["(生产态 / production) MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and zephyr.ml_train.infe...<br/>MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and zephyr.ml_train.infe...<br/>文件: model_evaluation/inference_base.py"]
     src_zephyr_intelligence_model_evaluation_reranker_py["(生产态 / production) Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: model_evaluation/reranker.py"]
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py["(生产态 / production) UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）<br/>UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装）<br/>文件: model_evaluation/unified_memory_api.py"]
     src_zephyr_intelligence_model_profiling_cli_py["(生产态 / production) model-profiler.cli — 模型性能检测命令行入口<br/>model-profiler.cli — 模型性能检测命令行入口<br/>文件: model_profiling/cli.py"]
@@ -196,10 +196,10 @@ flowchart TD
 | 5 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） (... | → | D_INTEGRATION 管线路由: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器 (v... | 导入依赖 / import_depends |
 | 6 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
 | 7 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
-| 8 | model_evaluation/inference_base.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
-| 9 | model_evaluation/inference_base.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 8 | MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and ... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
+| 9 | MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and ... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 | 10 | ModelDriftDetector — LLM 模型行为漂移检测。 (intelligenc... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 11 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 11 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: ==== BEGIN CODGEN:CTR-P1-005 ==== (experiment/model_servi... | 导入依赖 / import_depends |
 | 12 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 13 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） (... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
 | 14 | CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -217,7 +217,7 @@ flowchart TD
 | 26 | ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
 | 27 | ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 28 | Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 29 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: execution/model_serving_request.py | 导入依赖 / import_depends |
+| 29 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

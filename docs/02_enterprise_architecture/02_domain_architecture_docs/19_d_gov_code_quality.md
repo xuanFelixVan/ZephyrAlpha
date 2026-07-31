@@ -55,8 +55,8 @@ ttl: permanent
 flowchart TD
     scripts_governance_d3_metadata_check_pure_assertion_py["(生产态 / production) check_pure_assertion.py — GOV-DOC-016 纯陈述原则检测真源（SSoT）。<br/>check_pure_assertion.py — GOV-DOC-016 纯陈述原则检测真源（SSoT）。<br/>文件: d3_metadata/check_pure_assertion.py"]
     scripts_governance_d7_code_check_module_id_consistency_py["(生产态 / production) check_module_id_consistency.py — module_id 全仓一致性扫描（--scan-existing ...<br/>check_module_id_consistency.py — module_id 全仓一致性扫描（--scan-existing ...<br/>文件: d7_code/check_module_id_consistency.py"]
-    src_zephyr_gov_code_quality_init_py["(生产态 / production) gov_code_quality domain package — code quality governance (D_GOV_CODE_QUALITY).<br/>gov_code_quality domain package — code quality governance (D_GOV_CODE_QUALITY).<br/>文件: gov_code_quality/__init__.py"]
-    src_zephyr_gov_code_quality_code_dedup_init_py["(生产态 / production) code-dedup-engine 子包 — 重复代码检测与治理引擎.<br/>code-dedup-engine 子包 — 重复代码检测与治理引擎.<br/>文件: code_dedup/__init__.py"]
+    src_zephyr_gov_code_quality_init_py["(生产态 / production) 脚本治理域包 / Gov Code Quality Domain Package<br/>脚本治理域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: gov_code_quality/__init__.py"]
+    src_zephyr_gov_code_quality_code_dedup_init_py["(生产态 / production) 脚本治理域包 / Code Dedup Domain Package<br/>脚本治理域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: code_dedup/__init__.py"]
     src_zephyr_gov_code_quality_code_dedup_annotations_py["(生产态 / production) 共享函数注解引擎 — @shared / @known_dup / @intentional 三注解.<br/>共享函数注解引擎 — @shared / @known_dup / @intentional 三注解.<br/>文件: code_dedup/annotations.py"]
     src_zephyr_gov_code_quality_code_dedup_ast_comparator_py["(生产态 / production) Stage 2: AST 级精确比对器.<br/>Stage 2: AST 级精确比对器.<br/>文件: code_dedup/ast_comparator.py"]
     src_zephyr_gov_code_quality_code_dedup_behavioral_sampler_py["(生产态 / production) 行为采样验证器 — Stage 0.25 低成本快速验证.<br/>行为采样验证器 — Stage 0.25 低成本快速验证.<br/>文件: code_dedup/behavioral_sampler.py"]
@@ -108,14 +108,14 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_success_validator_py["(生产态 / production) 成功验证——判断一次去重操作是否真正消灭了克隆.<br/>成功验证——判断一次去重操作是否真正消灭了克隆.<br/>文件: code_dedup/success_validator.py"]
     src_zephyr_gov_code_quality_code_dedup_symbol_index_py["(生产态 / production) 符号索引 — 全局函数/类/import映射表.<br/>符号索引 — 全局函数/类/import映射表.<br/>文件: code_dedup/symbol_index.py"]
     src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py["(生产态 / production) 主题聚类器 — 噪声信号比·告警疲劳缓解.<br/>主题聚类器 — 噪声信号比·告警疲劳缓解.<br/>文件: code_dedup/thematic_clusterer.py"]
-    src_zephyr_gov_code_quality_code_dedup_trackers_init_py["(生产态 / production) tracker 族子包 — 风险/盲点/热点跟踪器集合.<br/>tracker 族子包 — 风险/盲点/热点跟踪器集合.<br/>文件: trackers/__init__.py"]
+    src_zephyr_gov_code_quality_code_dedup_trackers_init_py["(生产态 / production) 脚本治理Trackers包 / Code Dedup Trackers Package<br/>脚本治理域下 trackers 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: trackers/__init__.py"]
     src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py["(生产态 / production) 后果追踪——记录每次修复操作对依赖方的影响.<br/>后果追踪——记录每次修复操作对依赖方的影响.<br/>文件: trackers/consequence_tracker.py"]
     src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py["(生产态 / production) 热点追踪器 — 90天滑动窗口 + 高频变动检测 + 新项目预热清单.<br/>热点追踪器 — 90天滑动窗口 + 高频变动检测 + 新项目预热清单.<br/>文件: trackers/hotspot_tracker.py"]
     src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py["(生产态 / production) Import表面积负债追踪 — SBS 0-100 + shared burden score.<br/>Import表面积负债追踪 — SBS 0-100 + shared burden score.<br/>文件: trackers/import_surface_tracker.py"]
     src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py["(生产态 / production) 问题追踪——扫描中发现需要人工处理的问题.<br/>问题追踪——扫描中发现需要人工处理的问题.<br/>文件: trackers/question_tracker.py"]
     src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py["(生产态 / production) 风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍未fix.<br/>风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍未fix.<br/>文件: trackers/risk_mitigation_tracker.py"]
     src_zephyr_gov_code_quality_code_dedup_verifier_py["(生产态 / production) 修复验证器 — import + 类型 + 行为采样验证.<br/>修复验证器 — import + 类型 + 行为采样验证.<br/>文件: code_dedup/verifier.py"]
-    src_zephyr_gov_enforcement_commit_gates_init_py["(生产态 / production) commit_gates — GitCommitGateway pre-commit 门禁实现包。<br/>commit_gates — GitCommitGateway pre-commit 门禁实现包。<br/>文件: commit_gates/__init__.py"]
+    src_zephyr_gov_enforcement_commit_gates_init_py["(生产态 / production) 规则执行Commit Gates包 / Gov Enforcement Commit Gates Package<br/>规则执行域下 commit_gates 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: commit_gates/__init__.py"]
     src_zephyr_gov_enforcement_commit_gates_arch_reference_gate_py["(生产态 / production) arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（...<br/>arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（...<br/>文件: commit_gates/arch_reference_gate.py"]
     src_zephyr_gov_enforcement_commit_gates_asyncio_run_in_context_gate_py["(生产态 / production) asyncio_run_in_context_gate.py — 异步上下文误用硬阻断门禁（ASYNCIO-RUN-IN-CO...<br/>asyncio_run_in_context_gate.py — 异步上下文误用硬阻断门禁（ASYNCIO-RUN-IN-CO...<br/>文件: commit_gates/asyncio_run_in_context_gate.py"]
     src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py["(生产态 / production) bare_getenv_gate.py — 裸 os.getenv 读密钥阻断门禁（NO-BARE-GETENV，§5.17.10...<br/>bare_getenv_gate.py — 裸 os.getenv 读密钥阻断门禁（NO-BARE-GETENV，§5.17.10...<br/>文件: commit_gates/bare_getenv_gate.py"]
@@ -485,7 +485,7 @@ flowchart TD
 | 1 | 集成协调器 — 24集成+19更新+16GitHub整合. (code_dedup/int... | → | D_AUTONOMY_CORE 自治核心: context/context_rule_registry.py | 导入依赖 / import_depends |
 | 2 | capability_consistency_gate.py — Provider 路由-meta 一致... | → | D_DATA 数据接入层: Provider Capability 行为契约校验器（裁定 #ARCH-CH-022）。... | 导入依赖 / import_depends |
 | 3 | table_name_registry_gate.py — TABLE-NAME-REGISTRY block ... | → | D_DATA 数据接入层: 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 4 | test_symbol_normalizer.py — TRAE-082 symbol 标准化模块测... | → | D_DATA 数据接入层: Symbol 标准化模块——TRAE-082 symbol 约定铁律的实现真源。... | 测试依赖 / test_depends |
+| 4 | test_symbol_normalizer.py — TRAE-082 symbol 标准化模块测... | → | D_DATA 数据接入层: 数据接入层Symbol Normalizer包 / Data Symbol Normalizer Pa... | 测试依赖 / test_depends |
 | 5 | code-dedup-engine CLI——子命令映射+退出码+扫描入口. (cod... | → | D_GOVERNANCE 生命周期管理: Self-Benchmark (W3-7) — 5 组已知对自验证 + 引擎退化告警.... | 导入依赖 / import_depends |
 | 6 | capability_overlap_gate.py — 新建 .py 文件 CapabilityLoo... | → | D_GOVERNANCE 生命周期管理: CapabilityLookup — 能力->真源文件反查注册表的查询 API + ... | 导入依赖 / import_depends |
 | 7 | create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creati... | → | D_GOVERNANCE 生命周期管理: CapabilityLookup — 能力->真源文件反查注册表的查询 API + ... | 导入依赖 / import_depends |
@@ -621,7 +621,7 @@ flowchart TD
 | 7 | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway post-commi... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 导入依赖 / import_depends |
 | 8 | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway post-commi... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
 | 9 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
-| 10 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | commit_gates — GitCommitGateway pre-commit 门禁实现包。 ... | 导入依赖 / import_depends |
+| 10 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | 规则执行Commit Gates包 / Gov Enforcement Commit Gates Pac... | 导入依赖 / import_depends |
 | 11 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | capability_lookup_required_gate.py — Capability Lookup ... | 导入依赖 / import_depends |
 | 12 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | test_source_consistency_gate.py — 测试-源码符号一致性门... | 导入依赖 / import_depends |
 | 13 | D_GOV_ENFORCEMENT 规则执行: test_create_guard.py — CREATE-GUARD 门禁单元测试（2026-0... | → | create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creati... | 测试依赖 / test_depends |

@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_ashare_init_py["(生产态 / production)<br/>文件: signal_ashare/__init__.py"]
-    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
-    src_zephyr_signal_ashare_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
-    src_zephyr_signal_ashare_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
-    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_signal_ashare_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
-    src_zephyr_signal_ashare_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_signal_ashare_init_py["(生产态 / production) A股特色信号域包 / Signal Ashare Domain Package<br/>A股特色信号域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: signal_ashare/__init__.py"]
+    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) A股特色信号扩展包 / Signal Ashare Extensions Package<br/>A股特色信号域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_signal_ashare_api_init_py["(生产态 / production) A股特色信号API包 / Signal Ashare API Package<br/>A股特色信号域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
+    src_zephyr_signal_ashare_core_init_py["(生产态 / production) A股特色信号核心包 / Signal Ashare Core Package<br/>A股特色信号域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
+    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) A股特色信号基础设施包 / Signal Ashare Infrastructure Package<br/>A股特色信号域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_signal_ashare_models_init_py["(生产态 / production) A股特色信号模型包 / Signal Ashare Models Package<br/>A股特色信号域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
+    src_zephyr_signal_ashare_services_init_py["(生产态 / production) A股特色信号服务包 / Signal Ashare Services Package<br/>A股特色信号域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_api_init_py
     src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_core_init_py

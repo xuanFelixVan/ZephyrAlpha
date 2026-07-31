@@ -89,11 +89,11 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 1 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: ==== BEGIN CODGEN:CTR-P1-005 ==== (experiment/model_servi... | 导入依赖 / import_depends |
 | 2 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 3 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_SHARED 共享服务: experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 4 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: execution/model_serving_request.py | 导入依赖 / import_depends |
-| 5 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_TRADING 交易运营: execution/model_serving_request.py | 导入依赖 / import_depends |
+| 3 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_SHARED 共享服务: ==== BEGIN CODGEN:CTR-P1-005 ==== (experiment/model_servi... | 导入依赖 / import_depends |
+| 4 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
+| 5 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -101,8 +101,8 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
 | 2 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
-| 3 | D_INTELLIGENCE 上下文管理: model_evaluation/inference_base.py | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
-| 4 | D_INTELLIGENCE 上下文管理: model_evaluation/inference_base.py | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 3 | D_INTELLIGENCE 上下文管理: MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and ... | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
+| 4 | D_INTELLIGENCE 上下文管理: MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and ... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 | 5 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

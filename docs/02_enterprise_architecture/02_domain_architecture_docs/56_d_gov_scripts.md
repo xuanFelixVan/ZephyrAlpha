@@ -1615,9 +1615,9 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | Code Wiki 统计数据生成器（半自动维护机制）。 (generators/... | → | D_DATA 数据接入层: 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 2 | G-inventory: 扫描 ClickHouse 生成业务数据清单 MD (generat... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 2 | G-inventory: 扫描 ClickHouse 生成业务数据清单 MD (generat... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 3 | G-inventory: 扫描 ClickHouse 生成业务数据清单 MD (generat... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
-| 4 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套，TRAE-063 ... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
+| 4 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套，TRAE-063 ... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
 | 5 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套，TRAE-063 ... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 6 | audit_post_sync_commands.py — post_sync_standard 命令可... | → | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令校验逻辑的... | 导入依赖 / import_depends |
 | 7 | # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_ali... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
@@ -1668,7 +1668,7 @@ flowchart TD
 | 52 | sync_panorama_module.py — 四图模块同步引擎（ARCH-056） (... | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (persistence/dataflow... | 导入依赖 / import_depends |
 | 53 | sync_panorama_module.py — 四图模块同步引擎（ARCH-056） (... | → | D_GOVERNANCE 生命周期管理: decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | 导入依赖 / import_depends |
 | 54 | Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-M... | → | D_GOV_AUDIT 审计追踪: SYS-MASTER-001 Compliance Checker (rule_enforcement/sys_m... | 导入依赖 / import_depends |
-| 55 | scripts/governance/rebuild_audit_index.py — 重建 audit-t... | → | D_GOV_AUDIT 审计追踪: gov_audit/indexer.py | 导入依赖 / import_depends |
+| 55 | scripts/governance/rebuild_audit_index.py — 重建 audit-t... | → | D_GOV_AUDIT 审计追踪: 治本（裁定#18 G5）：本文件原为桩实现——__init__(index_di... | 导入依赖 / import_depends |
 | 56 | architecture_health_dashboard.py — 架构健康度仪表盘（自... | → | D_GOV_AUDIT 审计追踪: runtime_violation_snapshot.py — trae_060 §5 evidence 运... | 导入依赖 / import_depends |
 | 57 | session_startup_health_check.py — AI session 启动健康度... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway post-commi... | 导入依赖 / import_depends |
 | 58 | scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseli... | → | D_GOV_CODE_QUALITY 代码质量治理: _diff_helpers.py — gate 共享 diff 解析工具模块 (commit_g... | 导入依赖 / import_depends |
@@ -1676,7 +1676,7 @@ flowchart TD
 | 60 | concurrent_commit_test.py — 幽灵提交红蓝对抗脚本（OPS-20... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 导入依赖 / import_depends |
 | 61 | Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
 | 62 | Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
-| 63 | [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 ... | → | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
+| 63 | [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 ... | → | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | 导入依赖 / import_depends |
 | 64 | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) ... | → | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
 | 65 | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) ... | → | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
 | 66 | create_task_from_finding.py — Finding → 任务卡自动创建... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
@@ -1714,7 +1714,7 @@ flowchart TD
 | 98 | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
 | 99 | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 100 | [INVARIANTS] pg_advisory_lock 写锁; build_status 单调推进... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 101 | [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | D_SHARED 共享服务: foundation/env.py | 导入依赖 / import_depends |
+| 101 | [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | D_SHARED 共享服务: 仅在 dev 环境下为 True——生产环境永远 False。 (foundatio... | 导入依赖 / import_depends |
 | 102 | [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 103 | [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 104 | GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。 (gov... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -1781,7 +1781,7 @@ flowchart TD
 | 33 | D_GOVERNANCE 生命周期管理: check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 34 | D_GOVERNANCE 生命周期管理: check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1... | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
 | 35 | D_GOVERNANCE 生命周期管理: generate_rule_ai_perception_index.py — 规则AI感知索引生... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 36 | D_GOVERNANCE 生命周期管理: hooks/auto_handoff_log.py | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 36 | D_GOVERNANCE 生命周期管理: 执行 git 命令并返回 stdout（UTF-8 解码）。 (hooks/auto_ha... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 37 | D_GOVERNANCE 生命周期管理: 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 ... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 38 | D_GOVERNANCE 生命周期管理: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLi... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 39 | D_GOVERNANCE 生命周期管理: MCP 全 Server 启动脚本 — DEPRECATED. (mcp/start_all.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |

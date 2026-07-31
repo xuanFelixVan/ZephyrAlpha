@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_feedback_loop_detectors_init_py["(生产态 / production) feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly...<br/>feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly...<br/>文件: detectors/__init__.py"]
+    src_zephyr_feedback_loop_detectors_init_py["(生产态 / production) 反馈检测器域包 / Detectors Domain Package<br/>反馈检测器域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: detectors/__init__.py"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py["(生产态 / production) Anomaly Clustering — v0.9.0 R119<br/>Anomaly Clustering — v0.9.0 R119<br/>文件: anomaly/anomaly_clustering.py"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py["(生产态 / production)<br/>文件: anomaly/anomaly_detector.py"]
     src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py["(生产态 / production) Emergent Behavior Detector — v0.38.0 R473<br/>Emergent Behavior Detector — v0.38.0 R473<br/>文件: anomaly/emergent_behavior_detector.py"]
@@ -172,11 +172,11 @@ flowchart TD
     src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py ~~~ src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py
     src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py ~~~ src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py
     src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py ~~~ src_zephyr_feedback_loop_detectors_reliability_version_migrator_py
-    src_zephyr_feedback_loop_detectors_anomaly_init_py["(生产态 / production)<br/>文件: anomaly/__init__.py"]
-    src_zephyr_feedback_loop_detectors_correlation_init_py["(生产态 / production)<br/>文件: correlation/__init__.py"]
-    src_zephyr_feedback_loop_detectors_drift_init_py["(生产态 / production)<br/>文件: drift/__init__.py"]
-    src_zephyr_feedback_loop_detectors_guard_init_py["(生产态 / production)<br/>文件: guard/__init__.py"]
-    src_zephyr_feedback_loop_detectors_reliability_init_py["(生产态 / production)<br/>文件: reliability/__init__.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_init_py["(生产态 / production) 反馈检测器Anomaly包 / Detectors Anomaly Package<br/>反馈检测器域下 anomaly 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: anomaly/__init__.py"]
+    src_zephyr_feedback_loop_detectors_correlation_init_py["(生产态 / production) 反馈检测器Correlation包 / Detectors Correlation Package<br/>反馈检测器域下 correlation 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: correlation/__init__.py"]
+    src_zephyr_feedback_loop_detectors_drift_init_py["(生产态 / production) 反馈检测器Drift包 / Detectors Drift Package<br/>反馈检测器域下 drift 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: drift/__init__.py"]
+    src_zephyr_feedback_loop_detectors_guard_init_py["(生产态 / production) 反馈检测器Guard包 / Detectors Guard Package<br/>反馈检测器域下 guard 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: guard/__init__.py"]
+    src_zephyr_feedback_loop_detectors_reliability_init_py["(生产态 / production) 反馈检测器Reliability包 / Detectors Reliability Package<br/>反馈检测器域下 reliability 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: reliability/__init__.py"]
     src_zephyr_feedback_loop_detectors_anomaly_init_py ~~~ src_zephyr_feedback_loop_detectors_correlation_init_py
     src_zephyr_feedback_loop_detectors_correlation_init_py ~~~ src_zephyr_feedback_loop_detectors_drift_init_py
     src_zephyr_feedback_loop_detectors_drift_init_py ~~~ src_zephyr_feedback_loop_detectors_guard_init_py
@@ -218,12 +218,12 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
 | 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | anomaly/anomaly_detector.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶子模块拆分... | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

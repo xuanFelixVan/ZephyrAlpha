@@ -61,28 +61,28 @@ flowchart TD
     src_zephyr_infrastructure_asset_inventory_main_py["(生产态 / production) Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>文件: asset_inventory/__main__.py"]
     src_zephyr_infrastructure_asset_inventory_lifecycle_py["(生产态 / production) AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器<br/>AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器<br/>文件: asset_inventory/lifecycle.py"]
     src_zephyr_infrastructure_asset_inventory_mcp_server_py["(生产态 / production) AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: asset_inventory/mcp_server.py"]
-    src_zephyr_infrastructure_asset_inventory_metadata_py["(生产态 / production)<br/>文件: asset_inventory/metadata.py"]
-    src_zephyr_infrastructure_asset_inventory_trust_anchor_py["(生产态 / production)<br/>文件: asset_inventory/trust_anchor.py"]
+    src_zephyr_infrastructure_asset_inventory_metadata_py["(生产态 / production) 多 IDE 规则文件生成器——从 asset-inventory 配置生成。<br/>多 IDE 规则文件生成器——从 asset-inventory 配置生成。<br/>文件: asset_inventory/metadata.py"]
+    src_zephyr_infrastructure_asset_inventory_trust_anchor_py["(生产态 / production) 旁路状态——对标 K8s Admission Webhook 的 emergency bypass。<br/>旁路状态——对标 K8s Admission Webhook 的 emergency bypass。<br/>文件: asset_inventory/trust_anchor.py"]
     src_zephyr_infrastructure_auto_diagnostics_py["(生产态 / production) RI-12 AutoDiagnostics — 自动诊断引擎<br/>RI-12 AutoDiagnostics — 自动诊断引擎<br/>文件: infrastructure/auto_diagnostics.py"]
     src_zephyr_infrastructure_auto_fix_engine_main_py["(生产态 / production)<br/>文件: auto_fix_engine/__main__.py"]
     src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production)<br/>文件: auto_fix_engine/alignment_syncer.py"]
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production)<br/>文件: auto_fix_engine/all_completer.py"]
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/config_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production)<br/>文件: auto_fix_engine/dedup_extractor.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/dep_version_fixer.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: auto_fix_engine/dedup_extractor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: auto_fix_engine/dep_version_fixer.py"]
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/drift_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production)<br/>文件: auto_fix_engine/event_hooks.py"]
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: auto_fix_engine/event_hooks.py"]
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_diff.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_scheduler.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: auto_fix_engine/fix_scheduler.py"]
     src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["(生产态 / production)<br/>文件: auto_fix_engine/import_fixer.py"]
     src_zephyr_infrastructure_auto_fix_engine_interrupt_guard_py["(生产态 / production)<br/>文件: auto_fix_engine/interrupt_guard.py"]
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py["(生产态 / production)<br/>文件: auto_fix_engine/llm_fix_adapter.py"]
-    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py["(生产态 / production)<br/>文件: auto_fix_engine/scaffold_registrar.py"]
+    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py["(生产态 / production) 从 script-manifest.yaml 加载已注册脚本路径集合。<br/>从 script-manifest.yaml 加载已注册脚本路径集合。<br/>文件: auto_fix_engine/scaffold_registrar.py"]
     src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py["(生产态 / production)<br/>文件: auto_fix_engine/self_heal_agent.py"]
-    src_zephyr_infrastructure_auto_fix_engine_state_machine_py["(生产态 / production)<br/>文件: auto_fix_engine/state_machine.py"]
-    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["(生产态 / production)<br/>文件: auto_fix_engine/zombie_cleaner.py"]
+    src_zephyr_infrastructure_auto_fix_engine_state_machine_py["(生产态 / production) 漂移事件记录——对齐 test_state_machine.py 契约（裁定#17 F1 治本）。<br/>漂移事件记录——对齐 test_state_machine.py 契约（裁定#17 F1 治本）。<br/>文件: auto_fix_engine/state_machine.py"]
+    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["(生产态 / production) 移除 content 中指向不存在文件的僵尸引用，返回清理后的内容。<br/>移除 content 中指向不存在文件的僵尸引用，返回清理后的内容。<br/>文件: auto_fix_engine/zombie_cleaner.py"]
     src_zephyr_infrastructure_blueprint_code_sync_py["(生产态 / production) Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>文件: infrastructure/blueprint_code_sync.py"]
-    src_zephyr_infrastructure_budget_enforcement_init_py["(生产态 / production) budget_enforcement 包聚合层。<br/>budget_enforcement 包聚合层。<br/>文件: budget_enforcement/__init__.py"]
+    src_zephyr_infrastructure_budget_enforcement_init_py["(生产态 / production) 反馈循环Budget Enforcement包 / Infrastructure Budget Enforcement Package<br/>反馈循环域下 budget_enforcement 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: budget_enforcement/__init__.py"]
     src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py["(生产态 / production) budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)<br/>budget_forecaster.py — Token 预算预测 (DD120-extra, TASK-020)<br/>文件: capacity_assurance/budget_forecaster.py"]
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py["(生产态 / production) ContractBus loader — 加载全部44条容量保障契约的Pydantic v2 Schema（DD-9三批...<br/>ContractBus loader — 加载全部44条容量保障契约的Pydantic v2 Schema（DD-9三批...<br/>文件: contracts/contract_bus.py"]
     src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py["(生产态 / production) Cross-module integration — CT-1~CT-4 跨模块集成契约实现（对标蓝图 §17）.<br/>Cross-module integration — CT-1~CT-4 跨模块集成契约实现（对标蓝图 §17）.<br/>文件: capacity_assurance/cross_module_integration.py"]
@@ -130,7 +130,7 @@ flowchart TD
     src_zephyr_infrastructure_script_system_finding_py["(生产态 / production) Finding Schema — 审计发现标准化数据模型<br/>Finding Schema — 审计发现标准化数据模型<br/>文件: script_system/finding.py"]
     src_zephyr_infrastructure_script_system_gate_bridge_py["(生产态 / production) Script->Gate 门禁桥接器 — submit_findings() 生产者<br/>Script->Gate 门禁桥接器 — submit_findings() 生产者<br/>文件: script_system/gate_bridge.py"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["(生产态 / production) auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）<br/>auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/auto_bootstrap.py"]
-    src_zephyr_infrastructure_system_telemetry_logs_init_py["(生产态 / production) logs — 结构化日志流（structlog + JSONL + trace注入）（D_SYSTEM_TELEMETRY）<br/>logs — 结构化日志流（structlog + JSONL + trace注入）（D_SYSTEM_TELEMETRY）<br/>文件: logs/__init__.py"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py["(生产态 / production) 反馈循环Logs包 / System Telemetry Logs Package<br/>反馈循环域下 logs 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: logs/__init__.py"]
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py["(生产态 / production) TELE->FLE 指标桥接 — emit_metrics() 生产者<br/>TELE->FLE 指标桥接 — emit_metrics() 生产者<br/>文件: system_telemetry/metrics_bridge.py"]
     src_zephyr_infrastructure_warm_hot_gate_py["(生产态 / production) M-14 WarmHotGate — Warm->Hot 阻断门<br/>M-14 WarmHotGate — Warm->Hot 阻断门<br/>文件: infrastructure/warm_hot_gate.py"]
     src_zephyr_shared_lifecycle_hooks_py["(生产态 / production) hooks.py —— 模块生命周期钩子（Phase 2 新增 / 盲点 B8 修复）<br/>hooks.py —— 模块生命周期钩子（Phase 2 新增 / 盲点 B8 修复）<br/>文件: lifecycle/hooks.py"]
@@ -279,7 +279,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_pattern_miner.py"]
     src_zephyr_infrastructure_auto_fix_engine_fix_report_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_report.py"]
     src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_safety.py"]
-    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["(生产态 / production)<br/>文件: auto_fix_engine/shadow_workspace.py"]
+    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["(生产态 / production) Create the shadow dir, validate the target exists, and write the patched file.<br/>Create the shadow dir, validate the target exists, and write the patched file.<br/>文件: auto_fix_engine/shadow_workspace.py"]
     src_zephyr_infrastructure_pipeline_models_py["(生产态 / production) Pipeline 数据模型<br/>Pipeline 数据模型<br/>文件: pipeline/models.py"]
     src_zephyr_infrastructure_system_telemetry_facade_py["(生产态 / production) Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）<br/>Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/facade.py"]
     src_zephyr_trading_auto_runtime_core_py["(生产态 / production) AutoRuntimeCore — 三层运行时运营中心（系统大脑）<br/>AutoRuntimeCore — 三层运行时运营中心（系统大脑）<br/>文件: trading/auto_runtime_core.py"]
@@ -295,7 +295,7 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_models_py ~~~ src_zephyr_infrastructure_system_telemetry_facade_py
     src_zephyr_infrastructure_system_telemetry_facade_py ~~~ src_zephyr_trading_auto_runtime_core_py
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_budget.py"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py["(生产态 / production)<br/>文件: auto_fix_engine/fix_reliability.py"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: auto_fix_engine/fix_reliability.py"]
     src_zephyr_infrastructure_file_watcher_py["(生产态 / production)<br/>文件: infrastructure/file_watcher.py"]
     src_zephyr_infrastructure_queue_task_queue_py["(生产态 / production) Task Queue — 后台任务队列 + 自动 Dispatch。<br/>Task Queue — 后台任务队列 + 自动 Dispatch。<br/>文件: queue/task_queue.py"]
     src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py["(生产态 / production) 遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。<br/>遥测 · ai_behavior/event_sink — AI 行为遥测事件管道。<br/>文件: ai_behavior/event_sink.py"]
@@ -303,9 +303,9 @@ flowchart TD
     src_zephyr_infrastructure_system_telemetry_traces_span_stub_py["(生产态 / production) 遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。<br/>遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。<br/>文件: traces/span_stub.py"]
     src_zephyr_infrastructure_system_telemetry_watchdog_py["(生产态 / production) 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。<br/>三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。<br/>文件: system_telemetry/watchdog.py"]
     src_zephyr_trading_auto_integrator_py["(生产态 / production) AutoIntegrator — 自动接入器<br/>AutoIntegrator — 自动接入器<br/>文件: trading/auto_integrator.py"]
-    src_zephyr_trading_boot_hooks_py["(生产态 / production)<br/>文件: trading/boot_hooks.py"]
+    src_zephyr_trading_boot_hooks_py["(生产态 / production) 从 TaskRepository 查询 task 的 source_blueprint，失败返回空串。<br/>从 TaskRepository 查询 task 的 source_blueprint，失败返回空串。<br/>文件: trading/boot_hooks.py"]
     src_zephyr_trading_capability_sync_py["(生产态 / production)<br/>文件: trading/capability_sync.py"]
-    src_zephyr_trading_lifecycle_manager_py["(生产态 / production)<br/>文件: trading/lifecycle_manager.py"]
+    src_zephyr_trading_lifecycle_manager_py["(生产态 / production) 删除 circadian_scheduler 参数（boot_sequence/shutdown_sequence）、_register_a...<br/>删除 circadian_scheduler 参数（boot_sequence/shutdown_sequence）、_register_a...<br/>文件: trading/lifecycle_manager.py"]
     src_zephyr_trading_status_dashboard_py["(生产态 / production) StatusDashboard — 实时状态面板<br/>StatusDashboard — 实时状态面板<br/>文件: trading/status_dashboard.py"]
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py ~~~ src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py ~~~ src_zephyr_infrastructure_file_watcher_py
@@ -332,9 +332,9 @@ flowchart TD
     src_zephyr_trading_integration_registry_py["(生产态 / production) IntegrationRegistry — 集成注册表<br/>IntegrationRegistry — 集成注册表<br/>文件: trading/integration_registry.py"]
     src_zephyr_trading_night_shift_queue_py["(生产态 / production) NightShiftQueue — 夜班登记表持久化<br/>NightShiftQueue — 夜班登记表持久化<br/>文件: trading/night_shift_queue.py"]
     src_zephyr_trading_orphan_detector_py["(生产态 / production) OrphanDetector — 孤儿检测器<br/>OrphanDetector — 孤儿检测器<br/>文件: trading/orphan_detector.py"]
-    src_zephyr_trading_runtime_config_py["(生产态 / production)<br/>文件: trading/runtime_config.py"]
+    src_zephyr_trading_runtime_config_py["(生产态 / production) 启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围，失败 fail-fast。<br/>启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围，失败 fail-fast。<br/>文件: trading/runtime_config.py"]
     src_zephyr_trading_stop_gate_py["(生产态 / production) StopGate — 质量闸门<br/>StopGate — 质量闸门<br/>文件: trading/stop_gate.py"]
-    src_zephyr_trading_work_orchestrator_py["(生产态 / production)<br/>文件: trading/work_orchestrator.py"]
+    src_zephyr_trading_work_orchestrator_py["(生产态 / production) 工作编排子系统——决定什么工作、什么时候、用什么模型、什么顺序。<br/>工作编排子系统——决定什么工作、什么时候、用什么模型、什么顺序。<br/>文件: trading/work_orchestrator.py"]
     src_zephyr_infrastructure_auto_fix_engine_models_py ~~~ src_zephyr_infrastructure_observability_notifier_py
     src_zephyr_infrastructure_observability_notifier_py ~~~ src_zephyr_infrastructure_runtime_gate_coordinator_py
     src_zephyr_infrastructure_runtime_gate_coordinator_py ~~~ src_zephyr_infrastructure_sla_sla_monitor_py
@@ -571,12 +571,12 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | trading/boot_hooks.py | → | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Freshness Extensions (sk... | 导入依赖 / import_depends |
-| 2 | trading/boot_hooks.py | → | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Lifecycle (skills/skill_... | 导入依赖 / import_depends |
+| 1 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Freshness Extensions (sk... | 导入依赖 / import_depends |
+| 2 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Lifecycle (skills/skill_... | 导入依赖 / import_depends |
 | 3 | DatabaseService: 统一管理数据库的连接池、生命周期、健康检... | → | D_DATA 数据接入层: ClickHouse 连接配置单真源加载器（裁定 #ARCH-CH-017 / #ARC... | 导入依赖 / import_depends |
-| 4 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 4 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 5 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | 导入依赖 / import_depends |
-| 6 | trading/lifecycle_manager.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feedback_loop... | 导入依赖 / import_depends |
+| 6 | 删除 circadian_scheduler 参数（boot_sequence/shutdown_seq... | → | D_FEEDBACK_LOOP 反馈循环引擎: 反馈循环域包 / Feedback Loop Domain Package (feedback_loo... | 导入依赖 / import_depends |
 | 7 | AssetDashboard — MOD-INF-026 资产健康仪表盘生成器 (asset... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 (governance/depgraph... | 导入依赖 / import_depends |
 | 8 | auto_fix_engine/escalation_bridge.py | → | D_GOVERNANCE 生命周期管理: Escalation Adapter — MOD-INF-022 统一集成入口. (services... | 导入依赖 / import_depends |
 | 9 | budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适... | → | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. (agent_spec/rbac_... | 导入依赖 / import_depends |
@@ -587,28 +587,28 @@ flowchart TD
 | 14 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_GOVERNANCE 生命周期管理: intelligence_governance/model_router.py | 导入依赖 / import_depends |
 | 15 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
 | 16 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_GOVERNANCE 生命周期管理: Escalation Adapter — MOD-INF-022 统一集成入口. (services... | 导入依赖 / import_depends |
-| 17 | trading/boot_hooks.py | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
+| 17 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
 | 18 | resource_optimization.py - MAPE-K autonomic resource opti... | → | D_GOVERNANCE 生命周期管理: capacity_governance/capacity_governance_loop.py | 导入依赖 / import_depends |
-| 19 | AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
+| 19 | AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈希链 + HMAC-SH... | 导入依赖 / import_depends |
 | 20 | auto_fix_engine/engine.py | → | D_GOV_AUDIT 审计追踪: gov_audit/finding_model.py | 导入依赖 / import_depends |
-| 21 | resource_optimization.py - MAPE-K autonomic resource opti... | → | D_GOV_AUDIT 审计追踪: gov_audit/bridge.py | 导入依赖 / import_depends |
-| 22 | auto_fix_engine/state_machine.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
+| 21 | resource_optimization.py - MAPE-K autonomic resource opti... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 e... | 导入依赖 / import_depends |
+| 22 | 漂移事件记录——对齐 test_state_machine.py 契约（裁定#17 ... | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
 | 23 | ZephyrAlpha — system-telemetry/contract_metrics.py (syst... | → | D_GOV_DRIFT 漂移检测: contract_drift_detector — 契约漂移检测器。 (gov_drift/co... | 导入依赖 / import_depends |
-| 24 | trading/lifecycle_manager.py | → | D_GOV_DRIFT 漂移检测: gov_audit/self_monitor.py | 导入依赖 / import_depends |
+| 24 | 删除 circadian_scheduler 参数（boot_sequence/shutdown_seq... | → | D_GOV_DRIFT 漂移检测: gov_audit/self_monitor.py | 导入依赖 / import_depends |
 | 25 | auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
 | 26 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Coldstart Manager — v0.7.0 冷启动管理器: escalation rule... | 导入依赖 / import_depends |
-| 27 | trading/boot_hooks.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | 导入依赖 / import_depends |
-| 28 | trading/boot_hooks.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | 导入依赖 / import_depends |
-| 29 | budget_enforcement 包聚合层。 (budget_enforcement/__init_... | → | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
+| 27 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | 导入依赖 / import_depends |
+| 28 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | 导入依赖 / import_depends |
+| 29 | 反馈循环Budget Enforcement包 / Infrastructure Budget Enfo... | → | D_GOV_REPAIR 治理修复: 代理模块：将 zephyr.governance.budget_enforcement 重定向... | 导入依赖 / import_depends |
 | 30 | Task Lifecycle Manager — G0-G7 任务生命周期门禁。 (lifec... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 31 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
-| 32 | trading/boot_hooks.py | → | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
-| 33 | trading/work_orchestrator.py | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 34 | HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/telemetry_emitter.py | 导入依赖 / import_depends |
+| 32 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
+| 33 | 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 34 | HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-013 ==== (contracts/telemetry_em... | 导入依赖 / import_depends |
 | 35 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INFRA_A2A A2A通信: A2A Card Registry — 全局 Agent Card 注册单例 (a2a_protoc... | 导入依赖 / import_depends |
 | 36 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INFRA_A2A A2A通信: A2A 协议网关 — Agent 间请求分发与协议转换 (layer3_coordi... | 导入依赖 / import_depends |
 | 37 | trading/capability_sync.py | → | D_INFRA_A2A A2A通信: A2A Registry — Agent Card 注册与发现 (layer1_discovery/a... | 导入依赖 / import_depends |
-| 38 | trading/boot_hooks.py | → | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | 导入依赖 / import_depends |
+| 38 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | 导入依赖 / import_depends |
 | 39 | DEPRECATED: 此文件已废弃。 (infrastructure/event_bus_upgr... | → | D_INTEGRATION 管线路由: EventBus 升级策略引擎 (events/upgrade_strategy.py) | 导入依赖 / import_depends |
 | 40 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INTEGRATION 管线路由: EmbeddingRouter — MOD-INF-011 双嵌入维度路由 (local_mode... | 导入依赖 / import_depends |
 | 41 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INTEGRATION 管线路由: LocalModelScheduler — L2 本地模型 24/7 调度循环 (local_m... | 导入依赖 / import_depends |
@@ -616,17 +616,17 @@ flowchart TD
 | 43 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | 导入依赖 / import_depends |
 | 44 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入口 (vector... | 导入依赖 / import_depends |
 | 45 | AutoTaskGenerator — 自动任务生成器 (trading/auto_task_ge... | → | D_INTEGRATION 管线路由: LocalModelScheduler — L2 本地模型 24/7 调度循环 (local_m... | 导入依赖 / import_depends |
-| 46 | trading/runtime_config.py | → | D_INTEGRATION 管线路由: contracts/runtime_types.py | 导入依赖 / import_depends |
+| 46 | 启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围... | → | D_INTEGRATION 管线路由: contracts/runtime_types.py | 导入依赖 / import_depends |
 | 47 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | 导入依赖 / import_depends |
 | 48 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_INTELLIGENCE 上下文管理: ModelTaskMatrix — 任务×模型性能学习引擎 (model_profilin... | 导入依赖 / import_depends |
 | 49 | TaskGate --- 任务门控 (trading/task_gate.py) | → | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | 导入依赖 / import_depends |
-| 50 | trading/boot_hooks.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 51 | trading/boot_hooks.py | → | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 (execution/memory_writer.py) | 导入依赖 / import_depends |
+| 50 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 51 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 (execution/memory_writer.py) | 导入依赖 / import_depends |
 | 52 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_SECURITY 对抗验证: GenesisBootstrap — RBAC系统启动引导器. (access_control/g... | 导入依赖 / import_depends |
-| 53 | trading/boot_hooks.py | → | D_SECURITY 对抗验证: GenesisBootstrap — RBAC系统启动引导器. (access_control/g... | 导入依赖 / import_depends |
-| 54 | trading/boot_hooks.py | → | D_SECURITY 对抗验证: KillSwitch — 熔断器. (access_control/kill_switch.py) | 导入依赖 / import_depends |
-| 55 | trading/boot_hooks.py | → | D_SECURITY 对抗验证: NonRepudiation — 不可抵赖性审计签名. (access_control/non... | 导入依赖 / import_depends |
-| 56 | trading/boot_hooks.py | → | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | 导入依赖 / import_depends |
+| 53 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SECURITY 对抗验证: GenesisBootstrap — RBAC系统启动引导器. (access_control/g... | 导入依赖 / import_depends |
+| 54 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SECURITY 对抗验证: KillSwitch — 熔断器. (access_control/kill_switch.py) | 导入依赖 / import_depends |
+| 55 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SECURITY 对抗验证: NonRepudiation — 不可抵赖性审计签名. (access_control/non... | 导入依赖 / import_depends |
+| 56 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | 导入依赖 / import_depends |
 | 57 | Asset Inventory CLI — MOD-INF-026 蓝图 §31 (asset_inven... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 58 | Asset Inventory CLI — MOD-INF-026 蓝图 §31 (asset_inven... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 59 | Asset Inventory CLI — MOD-INF-026 蓝图 §31 (asset_inven... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
@@ -635,40 +635,40 @@ flowchart TD
 | 62 | UnifiedAssetIndex — MOD-INF-026 L3 统一资产索引生成器 (a... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 63 | AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 64 | AssetInventory MCP Server — MOD-INF-026 蓝图 §21 (asset... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 65 | asset_inventory/metadata.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 65 | 多 IDE 规则文件生成器——从 asset-inventory 配置生成。 (a... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 66 | ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 67 | MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。 (asse... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 68 | MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。 (asse... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 69 | AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 70 | AssetInventoryTelemetry — MOD-INF-026 自监控指标 (asset_... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 71 | asset_inventory/trust_anchor.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 72 | asset_inventory/trust_anchor.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 71 | 旁路状态——对标 K8s Admission Webhook 的 emergency bypas... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 72 | 旁路状态——对标 K8s Admission Webhook 的 emergency bypas... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 73 | auto_fix_engine/alignment_syncer.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 74 | auto_fix_engine/all_completer.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 75 | auto_fix_engine/compliance_auditor.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 76 | auto_fix_engine/compliance_auditor.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 77 | auto_fix_engine/config_fixer.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 78 | auto_fix_engine/dedup_extractor.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 79 | auto_fix_engine/dep_version_fixer.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 78 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 79 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 80 | auto_fix_engine/drift_fixer.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 81 | auto_fix_engine/event_hooks.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 81 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 82 | auto_fix_engine/fix_budget.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 83 | auto_fix_engine/fix_budget.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 84 | auto_fix_engine/fix_health_check.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 85 | auto_fix_engine/fix_health_check.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 86 | auto_fix_engine/fix_pattern_miner.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 87 | auto_fix_engine/fix_pattern_miner.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 88 | auto_fix_engine/fix_reliability.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 89 | auto_fix_engine/fix_reliability.py | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
+| 88 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 89 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 90 | auto_fix_engine/fix_safety.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 91 | auto_fix_engine/fix_safety.py | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
 | 92 | auto_fix_engine/import_fixer.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 93 | auto_fix_engine/interrupt_guard.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 94 | auto_fix_engine/llm_fix_adapter.py | → | D_SHARED 共享服务: LLMGatewayProtocol — LLM 网关抽象接口 (contracts/llm_gat... | 导入依赖 / import_depends |
-| 95 | auto_fix_engine/scaffold_registrar.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 96 | auto_fix_engine/shadow_workspace.py | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 97 | auto_fix_engine/shadow_workspace.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 98 | auto_fix_engine/zombie_cleaner.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 95 | 从 script-manifest.yaml 加载已注册脚本路径集合。 (auto_fi... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 96 | Create the shadow dir, validate the target exists, and wr... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 97 | Create the shadow dir, validate the target exists, and wr... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 98 | 移除 content 中指向不存在文件的僵尸引用，返回清理后的内容... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 99 | Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 100 | SchemaManager — 容量保障体系数据库 Schema 管理器 (capaci... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
 | 101 | RI-15 CostTracker — 成本追踪器 (infrastructure/cost_trac... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -699,7 +699,7 @@ flowchart TD
 | 126 | CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 (pipeline... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 127 | CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 (pipeline... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 128 | MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 129 | MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | D_SHARED 共享服务: foundation/env.py | 导入依赖 / import_depends |
+| 129 | MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | D_SHARED 共享服务: 仅在 dev 环境下为 True——生产环境永远 False。 (foundatio... | 导入依赖 / import_depends |
 | 130 | MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
 | 131 | MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
 | 132 | ModelRouter — 模型路由与降级链管理 (pipeline/model_route... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
@@ -744,16 +744,16 @@ flowchart TD
 | 171 | AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | D_SHARED 共享服务: A2A Registry and Agent Card contracts — discovery and id... | 导入依赖 / import_depends |
 | 172 | AutoTaskGenerator — 自动任务生成器 (trading/auto_task_ge... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
 | 173 | AutoTaskGenerator — 自动任务生成器 (trading/auto_task_ge... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 174 | trading/boot_hooks.py | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 175 | trading/boot_hooks.py | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 176 | trading/boot_hooks.py | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 177 | trading/boot_hooks.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 178 | trading/boot_hooks.py | → | D_SHARED 共享服务: health.py —— ZephyrAlpha 聚合健康检查 (lifecycle/health.py) | 导入依赖 / import_depends |
-| 179 | trading/boot_hooks.py | → | D_SHARED 共享服务: CT-HEALTH-001: System-wide Health Discovery Registration.... | 导入依赖 / import_depends |
-| 180 | trading/boot_hooks.py | → | D_SHARED 共享服务: lifecycle/healthcheck_service.py | 导入依赖 / import_depends |
-| 181 | trading/boot_hooks.py | → | D_SHARED 共享服务: lifecycle/longevity_monitor.py | 导入依赖 / import_depends |
-| 182 | trading/boot_hooks.py | → | D_SHARED 共享服务: Autonomy Monitor — AI 自主等级监控与降级。 (maintenance/... | 导入依赖 / import_depends |
-| 183 | trading/boot_hooks.py | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
+| 174 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 175 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 176 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 177 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 178 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: health.py —— ZephyrAlpha 聚合健康检查 (lifecycle/health.py) | 导入依赖 / import_depends |
+| 179 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: CT-HEALTH-001: System-wide Health Discovery Registration.... | 导入依赖 / import_depends |
+| 180 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: lifecycle/healthcheck_service.py | 导入依赖 / import_depends |
+| 181 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: lifecycle/longevity_monitor.py | 导入依赖 / import_depends |
+| 182 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: Autonomy Monitor — AI 自主等级监控与降级。 (maintenance/... | 导入依赖 / import_depends |
+| 183 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
 | 184 | CapabilityCard — 能力卡片数据模型 (trading/capability_ca... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 185 | CapabilityCard — 能力卡片数据模型 (trading/capability_ca... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 186 | CapabilityRegistry — 能力注册中心 (trading/capability_re... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
@@ -769,7 +769,7 @@ flowchart TD
 | 196 | HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 197 | HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 198 | IntegrationRegistry — 集成注册表 (trading/integration_re... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 199 | trading/lifecycle_manager.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 199 | 删除 circadian_scheduler 参数（boot_sequence/shutdown_seq... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 200 | NightShiftQueue — 夜班登记表持久化 (trading/night_shift_... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 201 | NightShiftQueue — 夜班登记表持久化 (trading/night_shift_... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 202 | NightShiftQueue — 夜班登记表持久化 (trading/night_shift_... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
@@ -787,10 +787,10 @@ flowchart TD
 | 214 | StopGate — 质量闸门 (trading/stop_gate.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 215 | WindowsService — Windows Service 包装器 (trading/windows... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
 | 216 | WorkDAG + WorkItem — 工作编排数据模型 (trading/work_dag.py) | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 217 | trading/work_orchestrator.py | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 218 | trading/work_orchestrator.py | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 217 | 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 218 | 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
 | 219 | zombie_scanner.py — 僵尸 Python 进程检测与自动处置 (trad... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 220 | trading/boot_hooks.py | → | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
+| 220 | 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
 | 221 | resource_optimization.py - MAPE-K autonomic resource opti... | → | D_TRADING 交易运营: gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | 导入依赖 / import_depends |
 | 222 | resource_optimization.py - MAPE-K autonomic resource opti... | → | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
 
@@ -809,9 +809,9 @@ flowchart TD
 | 9 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | CapabilityRegistry — 能力注册中心 (trading/capability_re... | 测试依赖 / test_depends |
 | 10 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | DreamCycle — 知识固化引擎 (trading/dream_cycle.py) | 测试依赖 / test_depends |
 | 11 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | 测试依赖 / test_depends |
-| 12 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | trading/runtime_config.py | 测试依赖 / test_depends |
+| 12 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | 启动前配置完整性校验（5.71.1 治本）——必填字段/类型/范围... | 测试依赖 / test_depends |
 | 13 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | WorkDAG + WorkItem — 工作编排数据模型 (trading/work_dag.py) | 测试依赖 / test_depends |
-| 14 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | trading/work_orchestrator.py | 测试依赖 / test_depends |
+| 14 | D_AUTONOMY_CORE 自治核心: F1 AutoRuntimeCore 非mock端到端集成测试 (automation/test_... | → | 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | 测试依赖 / test_depends |
 | 15 | D_AUTONOMY_CORE 自治核心: F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | Pipeline — Backpressure Manager (pipeline/backpressure_m... | 测试依赖 / test_depends |
 | 16 | D_AUTONOMY_CORE 自治核心: F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | backpressure_types.py - Pipeline backpressure signal data... | 测试依赖 / test_depends |
 | 17 | D_AUTONOMY_CORE 自治核心: F14 管线编排/反馈环 — 红蓝对抗端到端极端测试 (extreme/te... | → | DeadLetterQueue — 死信队列 (pipeline/dead_letter_queue.py) | 测试依赖 / test_depends |
@@ -819,9 +819,9 @@ flowchart TD
 | 19 | D_AUTONOMY_CORE 自治核心: F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | DreamCycle — 知识固化引擎 (trading/dream_cycle.py) | 测试依赖 / test_depends |
 | 20 | D_AUTONOMY_CORE 自治核心: F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | 测试依赖 / test_depends |
 | 21 | D_AUTONOMY_CORE 自治核心: F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | WorkDAG + WorkItem — 工作编排数据模型 (trading/work_dag.py) | 测试依赖 / test_depends |
-| 22 | D_AUTONOMY_CORE 自治核心: F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | trading/work_orchestrator.py | 测试依赖 / test_depends |
+| 22 | D_AUTONOMY_CORE 自治核心: F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试 (extreme... | → | 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | 测试依赖 / test_depends |
 | 23 | D_BACKTEST 回测: 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | DatabaseService: 统一管理数据库的连接池、生命周期、健康检... | 导入依赖 / import_depends |
-| 24 | D_COMPLIANCE 合规: behavioral_auditor/__init__.py | → | auto_fix_engine/state_machine.py | 导入依赖 / import_depends |
+| 24 | D_COMPLIANCE 合规: 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | 漂移事件记录——对齐 test_state_machine.py 契约（裁定#17 ... | 导入依赖 / import_depends |
 | 25 | D_FEEDBACK_LOOP 反馈循环引擎: FLE -> Pipeline 背压桥接（CTR-BP-001~003） (feedback_loop... | → | Pipeline — Backpressure Manager (pipeline/backpressure_m... | 导入依赖 / import_depends |
 | 26 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 持久化写入器 — 写 metrics/alerts/dispatch_log 到 SQL... | → | TELE->FLE 指标桥接 — emit_metrics() 生产者 (system_telem... | 导入依赖 / import_depends |
 | 27 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | TELE->FLE 指标桥接 — emit_metrics() 生产者 (system_telem... | 导入依赖 / import_depends |
@@ -870,7 +870,7 @@ flowchart TD
 | 70 | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | → | models.py - Pydantic data models for resource optimizatio... | 导入依赖 / import_depends |
 | 71 | D_SHARED 共享服务: io_cache.py - File-level I/O cache with LRU eviction (io/... | → | models.py - Pydantic data models for resource optimizatio... | 导入依赖 / import_depends |
 | 72 | D_SHARED 共享服务: health.py —— ZephyrAlpha 聚合健康检查 (lifecycle/health.py) | → | hooks.py —— 模块生命周期钩子（Phase 2 新增 | 盲点 B8 修... | 导入依赖 / import_depends |
-| 73 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | Task Scheduler — 任务调度器。 (queue/task_scheduler.py) | 导入依赖 / import_depends |
+| 73 | D_TRADING 交易运营: 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | Task Scheduler — 任务调度器。 (queue/task_scheduler.py) | 导入依赖 / import_depends |
 | 74 | D_TRADING 交易运营: 注释注解写入器（从 ActionDispatcher._annotate_py_file/_ta... | → | ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |
 | 75 | D_TRADING 交易运营: 审计日志写入器（从 ActionDispatcher._write_triage_log 提... | → | ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |
 | 76 | D_TRADING 交易运营: 文件生命周期管理器（从 ActionDispatcher._create_file / _d... | → | ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |

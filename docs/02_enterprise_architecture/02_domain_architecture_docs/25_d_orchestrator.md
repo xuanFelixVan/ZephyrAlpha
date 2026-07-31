@@ -53,17 +53,17 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_orchestrator_init_py["(生产态 / production)<br/>文件: orchestrator/__init__.py"]
+    src_zephyr_orchestrator_init_py["(生产态 / production) 代理编排器域包 / Orchestrator Domain Package<br/>代理编排器域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: orchestrator/__init__.py"]
     src_zephyr_orchestrator_agent_health_monitor_py["(生产态 / production) AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO）<br/>AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO）<br/>文件: orchestrator/agent_health_monitor.py"]
-    src_zephyr_orchestrator_contracts_init_py["(生产态 / production) contracts — orchestrator contracts subpackage.<br/>contracts — orchestrator contracts subpackage.<br/>文件: contracts/__init__.py"]
+    src_zephyr_orchestrator_contracts_init_py["(生产态 / production) 代理编排器契约包 / Orchestrator Contracts Package<br/>代理编排器域下 contracts 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: contracts/__init__.py"]
     src_zephyr_orchestrator_contracts_construction_guide_py["(生产态 / production) 施工指南引擎（Construction Guide）<br/>施工指南引擎（Construction Guide）<br/>文件: contracts/construction_guide.py"]
     src_zephyr_orchestrator_contracts_contract_router_py["(生产态 / production) 契约路由（Contract Router）<br/>契约路由（Contract Router）<br/>文件: contracts/contract_router.py"]
     src_zephyr_orchestrator_contracts_design_decisions_py["(生产态 / production)<br/>文件: contracts/design_decisions.py"]
     src_zephyr_orchestrator_contracts_finding_bridge_py["(生产态 / production) CT-ORC-SCRIPT-001 运行时桥接<br/>CT-ORC-SCRIPT-001 运行时桥接<br/>文件: contracts/finding_bridge.py"]
     src_zephyr_orchestrator_contracts_prompt_version_py["(生产态 / production) AI Prompt 版本控制（CT-PROMPT-VERSION）——prompt template版本化+部署前diff。<br/>AI Prompt 版本控制（CT-PROMPT-VERSION）——prompt template版本化+部署前diff。<br/>文件: contracts/prompt_version.py"]
-    src_zephyr_orchestrator_core_init_py["(生产态 / production) orchestrator.core — auto-generated package init.<br/>orchestrator.core — auto-generated package init.<br/>文件: core/__init__.py"]
+    src_zephyr_orchestrator_core_init_py["(生产态 / production) 代理编排器核心包 / Orchestrator Core Package<br/>代理编排器域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
     src_zephyr_orchestrator_deferred_queue_py["(生产态 / production) DeferredQueue: WAITING -> READY task scheduler.<br/>DeferredQueue: WAITING -> READY task scheduler.<br/>文件: orchestrator/deferred_queue.py"]
-    src_zephyr_orchestrator_execution_init_py["(生产态 / production) execution — orchestrator execution subpackage.<br/>execution — orchestrator execution subpackage.<br/>文件: execution/__init__.py"]
+    src_zephyr_orchestrator_execution_init_py["(生产态 / production) 代理编排器Execution包 / Orchestrator Execution Package<br/>代理编排器域下 execution 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: execution/__init__.py"]
     src_zephyr_orchestrator_execution_batch_orchestrator_py["(生产态 / production) BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）<br/>BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）<br/>文件: execution/batch_orchestrator.py"]
     src_zephyr_orchestrator_execution_data_lifecycle_py["(生产态 / production)<br/>文件: execution/data_lifecycle.py"]
     src_zephyr_orchestrator_execution_dispatch_table_py["(生产态 / production) AI Agent 冷启动分派表（Dispatch Table）<br/>AI Agent 冷启动分派表（Dispatch Table）<br/>文件: execution/dispatch_table.py"]
@@ -72,13 +72,13 @@ flowchart TD
     src_zephyr_orchestrator_execution_reconciliation_loop_py["(生产态 / production)<br/>文件: execution/reconciliation_loop.py"]
     src_zephyr_orchestrator_execution_trigger_router_py["(生产态 / production) TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）<br/>TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派）<br/>文件: execution/trigger_router.py"]
     src_zephyr_orchestrator_execution_wave_generator_py["(生产态 / production) WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03）<br/>WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03）<br/>文件: execution/wave_generator.py"]
-    src_zephyr_orchestrator_fault_tolerance_init_py["(生产态 / production) fault_tolerance — orchestrator fault_tolerance subpackage.<br/>fault_tolerance — orchestrator fault_tolerance subpackage.<br/>文件: fault_tolerance/__init__.py"]
+    src_zephyr_orchestrator_fault_tolerance_init_py["(生产态 / production) 代理编排器Fault Tolerance包 / Orchestrator Fault Tolerance Package<br/>代理编排器域下 fault_tolerance 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: fault_tolerance/__init__.py"]
     src_zephyr_orchestrator_fault_tolerance_canary_manager_py["(生产态 / production) 金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。<br/>金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。<br/>文件: fault_tolerance/canary_manager.py"]
     src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py["(生产态 / production) ChaosHook — integrates ChaosEngine with the orchestrator execution loop.<br/>ChaosHook — integrates ChaosEngine with the orchestrator execution loop.<br/>文件: fault_tolerance/chaos_hooks.py"]
     src_zephyr_orchestrator_fault_tolerance_degrade_cascade_py["(生产态 / production)<br/>文件: fault_tolerance/degrade_cascade.py"]
     src_zephyr_orchestrator_fault_tolerance_disk_guard_py["(生产态 / production)<br/>文件: fault_tolerance/disk_guard.py"]
     src_zephyr_orchestrator_fault_tolerance_network_partition_py["(生产态 / production) 网络分区容忍（CT-NETWORK-PARTITION）——CAP定理CP优先+脑裂检测+quorum write。<br/>网络分区容忍（CT-NETWORK-PARTITION）——CAP定理CP优先+脑裂检测+quorum write。<br/>文件: fault_tolerance/network_partition.py"]
-    src_zephyr_orchestrator_governance_init_py["(生产态 / production) governance — orchestrator governance subpackage.<br/>governance — orchestrator governance subpackage.<br/>文件: governance/__init__.py"]
+    src_zephyr_orchestrator_governance_init_py["(生产态 / production) 代理编排器Governance包 / Orchestrator Governance Package<br/>代理编排器域下 governance 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: governance/__init__.py"]
     src_zephyr_orchestrator_governance_capacity_budget_py["(生产态 / production) 全局容量预算控制器（Capacity Budget Controller）<br/>全局容量预算控制器（Capacity Budget Controller）<br/>文件: governance/capacity_budget.py"]
     src_zephyr_orchestrator_governance_dependency_lock_py["(生产态 / production) 外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash验证+安全审计。<br/>外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash验证+安全审计。<br/>文件: governance/dependency_lock.py"]
     src_zephyr_orchestrator_governance_model_registry_py["(生产态 / production)<br/>文件: governance/model_registry.py"]
@@ -87,7 +87,7 @@ flowchart TD
     src_zephyr_orchestrator_governance_schema_migration_py["(生产态 / production) 数据库 Schema 演化契约（CT-SCHEMA-MIGRATE）——向后兼容迁移+回滚脚本。<br/>数据库 Schema 演化契约（CT-SCHEMA-MIGRATE）——向后兼容迁移+回滚脚本。<br/>文件: governance/schema_migration.py"]
     src_zephyr_orchestrator_governance_version_manifest_py["(生产态 / production)<br/>文件: governance/version_manifest.py"]
     src_zephyr_orchestrator_hallucination_detector_py["(生产态 / production) HallucinationDetector · Chain-of-Verification（CoVe）幻觉检测器<br/>HallucinationDetector · Chain-of-Verification（CoVe）幻觉检测器<br/>文件: orchestrator/hallucination_detector.py"]
-    src_zephyr_orchestrator_lifecycle_init_py["(生产态 / production) lifecycle — orchestrator lifecycle subpackage.<br/>lifecycle — orchestrator lifecycle subpackage.<br/>文件: lifecycle/__init__.py"]
+    src_zephyr_orchestrator_lifecycle_init_py["(生产态 / production) 代理编排器Lifecycle包 / Orchestrator Lifecycle Package<br/>代理编排器域下 lifecycle 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: lifecycle/__init__.py"]
     src_zephyr_orchestrator_lifecycle_incident_postmortem_py["(生产态 / production) 事件复盘管理器（CT-INCIDENT）——incident记录+timeline+action_items+postmortem。<br/>事件复盘管理器（CT-INCIDENT）——incident记录+timeline+action_items+postmortem。<br/>文件: lifecycle/incident_postmortem.py"]
     src_zephyr_orchestrator_lifecycle_rolling_upgrade_py["(生产态 / production) 零停机滚动升级（CT-DEPLOY）——graceful shutdown+流量摘除+health check wait。<br/>零停机滚动升级（CT-DEPLOY）——graceful shutdown+流量摘除+health check wait。<br/>文件: lifecycle/rolling_upgrade.py"]
     src_zephyr_orchestrator_lifecycle_session_conflict_py["(生产态 / production) Session 冲突预防契约（CT-SESSION-CONFLICT）——文件锁+并发session检测+冲突res...<br/>Session 冲突预防契约（CT-SESSION-CONFLICT）——文件锁+并发session检测+冲突res...<br/>文件: lifecycle/session_conflict.py"]
@@ -103,7 +103,7 @@ flowchart TD
     src_zephyr_orchestrator_quality_knowledge_freshness_py["(生产态 / production) 知识新鲜度废止管理器（CT-KNOWLEDGE-FRESHNESS）——KE过期标记+自动失效。<br/>知识新鲜度废止管理器（CT-KNOWLEDGE-FRESHNESS）——KE过期标记+自动失效。<br/>文件: quality/knowledge_freshness.py"]
     src_zephyr_orchestrator_quality_lean_scanner_py["(生产态 / production) 死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。<br/>死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。<br/>文件: quality/lean_scanner.py"]
     src_zephyr_orchestrator_quality_stability_guard_py["(生产态 / production) API 稳定性守护（CT-STABILITY）——public API签名锁+breaking change检测。<br/>API 稳定性守护（CT-STABILITY）——public API签名锁+breaking change检测。<br/>文件: quality/stability_guard.py"]
-    src_zephyr_orchestrator_resilience_init_py["(生产态 / production) orchestrator.resilience — auto-generated package init.<br/>orchestrator.resilience — auto-generated package init.<br/>文件: resilience/__init__.py"]
+    src_zephyr_orchestrator_resilience_init_py["(生产态 / production) 代理编排器Resilience包 / Orchestrator Resilience Package<br/>代理编排器域下 resilience 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: resilience/__init__.py"]
     src_zephyr_orchestrator_rollback_manager_py["(生产态 / production) RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚。<br/>RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚。<br/>文件: orchestrator/rollback_manager.py"]
     src_zephyr_orchestrator_task_queue_py["(生产态 / production) ActiveTaskQueue — 后台任务轮询与自动分发<br/>ActiveTaskQueue — 后台任务轮询与自动分发<br/>文件: orchestrator/task_queue.py"]
     src_zephyr_orchestrator_init_py ~~~ src_zephyr_orchestrator_agent_health_monitor_py
@@ -171,7 +171,7 @@ flowchart TD
     src_zephyr_orchestrator_file_task_mapper_py["(生产态 / production) FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）<br/>FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写）<br/>文件: orchestrator/file_task_mapper.py"]
     src_zephyr_orchestrator_governance_autonomy_guard_py["(生产态 / production) Owner 缺位分级自治（CT-AUTONOMY）——Owner离线->自动降级->最小安全运行。<br/>Owner 缺位分级自治（CT-AUTONOMY）——Owner离线->自动降级->最小安全运行。<br/>文件: governance/autonomy_guard.py"]
     src_zephyr_orchestrator_lifecycle_housekeeping_py["(生产态 / production) 文件卫生保洁管理器（CT-HOUSEKEEPING）——临时文件扫描+日志轮转+废弃目录清理。<br/>文件卫生保洁管理器（CT-HOUSEKEEPING）——临时文件扫描+日志轮转+废弃目录清理。<br/>文件: lifecycle/housekeeping.py"]
-    src_zephyr_orchestrator_quality_init_py["(生产态 / production) quality — orchestrator quality subpackage.<br/>quality — orchestrator quality subpackage.<br/>文件: quality/__init__.py"]
+    src_zephyr_orchestrator_quality_init_py["(生产态 / production) 代理编排器Quality包 / Orchestrator Quality Package<br/>代理编排器域下 quality 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: quality/__init__.py"]
     src_zephyr_orchestrator_quality_blueprint_scorer_py["(生产态 / production) BlueprintScorer — 蓝图路由统一打分逻辑<br/>BlueprintScorer — 蓝图路由统一打分逻辑<br/>文件: quality/blueprint_scorer.py"]
     src_zephyr_orchestrator_resilience_failure_matcher_py["(生产态 / production) FailurePatternMatcher — 任务失败模式识别与纠正建议<br/>FailurePatternMatcher — 任务失败模式识别与纠正建议<br/>文件: resilience/failure_matcher.py"]
     src_zephyr_orchestrator_agent_orchestrator_py ~~~ src_zephyr_orchestrator_contracts_alert_handler_py
@@ -264,7 +264,7 @@ flowchart TD
 | 9 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_INFRA_RUNTIME 运行时集成: token_budget.py — Token 估算工具 SSoT (capacity_assuranc... | 导入依赖 / import_depends |
 | 10 | Orc->Script 脚本执行器 — run_audit() 生产者 (execution/s... | → | D_INFRA_RUNTIME 运行时集成: Script->Gate 门禁桥接器 — submit_findings() 生产者 (scri... | 导入依赖 / import_depends |
 | 11 | Orc->VMS 记忆写入器 (execution/memory_writer.py) | → | D_INTEGRATION 管线路由: InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎 (vecto... | 导入依赖 / import_depends |
-| 12 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SECURITY 对抗验证: llm_security/gateway.py | 导入依赖 / import_depends |
+| 12 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九层纵深防御统一编排入口. (... | 导入依赖 / import_depends |
 | 13 | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | D_SECURITY 对抗验证: InputSanitizer: path whitelist + command whitelist + toke... | 导入依赖 / import_depends |
 | 14 | AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
 | 15 | AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
@@ -277,7 +277,7 @@ flowchart TD
 | 22 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
 | 23 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
 | 24 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: schema/execution_model.py | 导入依赖 / import_depends |
-| 25 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: schema/severity_types.py | 导入依赖 / import_depends |
+| 25 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: Circuit breaker states — re-homed from infrastructure_ru... | 导入依赖 / import_depends |
 | 26 | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
 | 27 | CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
 | 28 | CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -293,7 +293,7 @@ flowchart TD
 | 38 | TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 39 | WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 40 | WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | D_SHARED 共享服务: db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 41 | ChaosHook — integrates ChaosEngine with the orchestrator... | → | D_SHARED 共享服务: contracts/orchestration_protocol.py | 导入依赖 / import_depends |
+| 41 | ChaosHook — integrates ChaosEngine with the orchestrator... | → | D_SHARED 共享服务: Shadow canary deployment protocol - decouples D-RES/D-GOV... | 导入依赖 / import_depends |
 | 42 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 43 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
 | 44 | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
@@ -313,10 +313,10 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | contracts — orchestrator contracts subpackage. (contract... | 导入依赖 / import_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: ContextAssembler — 上下文装配、校验、影子留档 (context/c... | → | 代理编排器契约包 / Orchestrator Contracts Package (contra... | 导入依赖 / import_depends |
 | 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (feedback_loop/a... | → | Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | 导入依赖 / import_depends |
 | 3 | D_GOV_SCRIPTS 脚本治理: check_handoff_manifests.py — AI Session Handoff Manifest... | → | 集成契约注册表（Contract Registry） (contracts/contract_r... | 导入依赖 / import_depends |
-| 4 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | Orc->VMS 记忆写入器 (execution/memory_writer.py) | 导入依赖 / import_depends |
+| 4 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | Orc->VMS 记忆写入器 (execution/memory_writer.py) | 导入依赖 / import_depends |
 | 5 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | ActiveTaskQueue — 后台任务轮询与自动分发 (core/task_queu... | 导入依赖 / import_depends |
 | 6 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | Orc->CE 上下文桥接 — request_context() 生产者 (execution... | 导入依赖 / import_depends |
 | 7 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | Orc->Script 脚本执行器 — run_audit() 生产者 (execution/s... | 导入依赖 / import_depends |
