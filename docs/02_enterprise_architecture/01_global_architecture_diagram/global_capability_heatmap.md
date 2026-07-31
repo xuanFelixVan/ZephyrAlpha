@@ -142,7 +142,7 @@ ttl: permanent
 | C2 | 因子研究 | 5 | 106 | 56 | 50 | 2.00 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 14 | 13 | 1 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 24 | 20 | 4 | 2.50 | 🟡 部分覆盖 / Partial |
-| C5 | 执行交易 | 4 | 60 | 53 | 7 | 2.75 | 🟡 部分覆盖 / Partial |
+| C5 | 执行交易 | 4 | 69 | 53 | 16 | 2.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 13 | 10 | 3 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 43 | 34 | 9 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1004 | 975 | 29 | 2.86 | 🟡 部分覆盖 / Partial |
@@ -170,7 +170,7 @@ ttl: permanent
 | D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_EX_CORE | 执行核心 | C5 | L2_domain | 14 | 8 | 6 | 5 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
-| D_POSITION | 仓位管理 | C5 | L2_domain | 1 | 1 | 0 | 1 | L3 🟢 | ✅ |
+| D_POSITION | 仓位管理 | C5 | L2_domain | 10 | 1 | 9 | 1 | L3 🟢 | ✅ |
 | D_TRADING | 交易运营 | C5 | L2_domain | 38 | 37 | 1 | 20 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ML_TRAIN | 训练 | C6 | L2_domain | 6 | 3 | 3 | 0 | L2 🟡 | 🟡 |
@@ -280,7 +280,7 @@ ttl: permanent
 | D_PF_ALLOC | 组合分配 | C4 | L3 | 2 |
 | D_PF_CORE | 组合核心 | C4 | L3 | 8 |
 | D_EX_CORE | 执行核心 | C5 | L3 | 14 |
-| D_POSITION | 仓位管理 | C5 | L3 | 1 |
+| D_POSITION | 仓位管理 | C5 | L3 | 10 |
 | D_TRADING | 交易运营 | C5 | L3 | 38 |
 | D_BACKTEST | 回测 | C7 | L3 | 27 |
 | D_SIMULATION | 仿真 | C7 | L3 | 2 |

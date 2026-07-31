@@ -143,10 +143,10 @@ graph TD
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
+    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -220,10 +220,10 @@ graph TD
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
+    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000

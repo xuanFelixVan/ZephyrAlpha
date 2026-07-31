@@ -22,8 +22,8 @@
 | Layer（层） | 554 |
 | Node（节点） | 213 |
 | Edge（边） | 211 |
-| 运营态 Layer（design_maturity=production） | 512 |
-| 设计态 Layer（design_maturity=design） | 42 |
+| 运营态 Layer（design_maturity=production） | 513 |
+| 设计态 Layer（design_maturity=design） | 41 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 213 |
 

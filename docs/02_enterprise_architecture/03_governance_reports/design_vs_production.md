@@ -20,19 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2854 | 95.4% |
-| design（设计态） | 139 | 4.6% |
+| production（生产态） | 2854 | 95.1% |
+| design（设计态） | 148 | 4.9% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **2993** | **100%** |
+| **总计** | **3002** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4024 | 134.4% |
-| stable | 1654 | 55.3% |
+| generated | 4024 | 134.0% |
+| stable | 1654 | 55.1% |
 | deprecated | 78 | 2.6% |
-| planned | 57 | 1.9% |
+| planned | 66 | 2.2% |
 
 ## 各域设计成熟度统计
 
@@ -97,7 +97,7 @@ ttl: permanent
 | D_ORCHESTRATOR | 代理编排器 | 70 | 70 | 0 | 0 | 100.0% |
 | D_PF_ALLOC | 组合分配 | 2 | 2 | 0 | 0 | 100.0% |
 | D_PF_CORE | 组合核心 | 10 | 6 | 4 | 0 | 60.0% |
-| D_POSITION | 仓位管理 | 1 | 1 | 0 | 0 | 100.0% |
+| D_POSITION | 仓位管理 | 10 | 1 | 9 | 0 | 10.0% |
 | D_REPORTING | 报告 | 3 | 3 | 0 | 0 | 100.0% |
 | D_RISK | 风控 | 12 | 11 | 1 | 0 | 91.7% |
 | D_SECURITY | 对抗验证 | 166 | 166 | 0 | 0 | 100.0% |
@@ -117,6 +117,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 0.0% |
 | D_GOV_DOCS | 架构文档治理 | 26 | 2 | 7.7% |
+| D_POSITION | 仓位管理 | 10 | 1 | 10.0% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
 | D_FACTOR | 因子 | 86 | 37 | 43.0% |
 | D_ML_TRAIN | 训练 | 6 | 3 | 50.0% |
@@ -124,4 +125,3 @@ ttl: permanent
 | D_MKT_DATA | 行情数据 | 15 | 9 | 60.0% |
 | D_PF_CORE | 组合核心 | 10 | 6 | 60.0% |
 | D_BACKTEST | 回测 | 27 | 18 | 66.7% |
-| D_ALT_DATA | 另类数据 | 8 | 7 | 87.5% |
