@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分三个视图：合并全景图、运营态子图、设计态子图（按 design_maturity 实际值拆分）。
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -46,9 +46,9 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 合并全景图（全部模块，标签标注成熟度）
+### 全景依赖图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 2 个模块（生产态 2 + 设计态 0），标签标注成熟度。
+> 展示全部 2 个模块（生产态 2 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -56,7 +56,7 @@ flowchart TD
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>文件: fitness_functions/check_kill_switch_latency.py"]
     scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
-    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
+    D_GOV_SCRIPTS["(生产态 / production) 脚本治理 / Script Governance<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>跨域节点 / cross-domain"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
@@ -67,34 +67,6 @@ flowchart TD
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
     class D_GOV_SCRIPTS external_prod
 ```
-
-### 运营态子图（仅 design_maturity=production 的模块和依赖）
-
-> 仅展示已上线运行的模块（共 2 个，0 条域内依赖）。
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
-flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV-001)<br/>文件: fitness_functions/check_kill_switch_latency.py"]
-    scripts_governance_meta_manage_kill_switch_py["(生产态 / production) manage_kill_switch.py — Kill Switch 管理工具<br/>manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
-    D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS 脚本治理"]
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
-    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
-    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
-    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py production
-    class D_GOV_SCRIPTS external_prod
-```
-
-### 设计态子图（仅 design_maturity=design 的模块和依赖）
-
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
-
-> （无设计态模块 / No design modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 
