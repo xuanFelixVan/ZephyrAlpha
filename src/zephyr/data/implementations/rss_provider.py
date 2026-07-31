@@ -55,7 +55,7 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 # 默认财经 RSS 源（国内源 + 海外源）
 # 国内源：直连 RSS + 本地 RSSHub 路由（V2rayN 规则模式国内域名直连，不走代理）
-# 海外源：Yahoo Finance 经 RSSHub 代理走 V2rayN SOCKS5(10808)；Investing.com 直连可达
+# 海外源：Yahoo Finance 经 RSSHub 代理走 V2rayN SOCKS5(10808)；统一走代理，无直连异类
 # 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200，ecosystem.config.cjs 配 PROXY_URI）
 from zephyr.shared.foundation.constants import DEFAULT_RSSHUB_URL
 _DEFAULT_RSS_FEEDS = [
@@ -78,14 +78,13 @@ _DEFAULT_RSS_FEEDS = [
     f"{DEFAULT_RSSHUB_URL}/yahoo/news/us/business",       # Yahoo Finance 美国-商业（英文，全球财经）
     f"{DEFAULT_RSSHUB_URL}/yahoo/news/hk/business",       # Yahoo 財經 香港（中文，港股/全球）
     f"{DEFAULT_RSSHUB_URL}/yahoo/news/tw/finance",        # Yahoo 財經 台湾（中文，台股/全球）
-    # ---- 海外源：Investing.com 直连 RSS（bot UA 可访问，robots.txt 403 fail-open）----
-    "https://www.investing.com/rss/news_1.rss",           # Investing.com 头条
-    "https://www.investing.com/rss/news_25.rss",          # Investing.com 股市新闻
+    # 注：Investing.com 直连源已移除（#ARCH-RSS-INVESTING-403-001）——bot UA 触发 WAF 间歇 403，
+    # 内容与 Yahoo Finance 重叠，海外源统一走 RSSHub+SOCKS5 代理架构。
 ]
 
-# 海外源 URL 特征——这些源经 RSSHub 走 SOCKS5 代理或直连海外站点，
+# 海外源 URL 特征——所有海外源统一经 RSSHub 走 SOCKS5 代理，
 # 依赖 V2rayN VPN（127.0.0.1:10808）开启。新增海外源时需同步更新此列表。
-_OVERSEAS_FEED_PATTERNS = ("/yahoo/", "investing.com")
+_OVERSEAS_FEED_PATTERNS = ("/yahoo/",)
 
 # V2rayN SOCKS5 代理监听端口（RSSHub PROXY_URI 指向此端口）
 _VPN_SOCKS5_PORT = 10808
@@ -94,7 +93,7 @@ _VPN_SOCKS5_PORT = 10808
 def _is_vpn_ready(port: int = _VPN_SOCKS5_PORT, timeout: float = 1.0) -> bool:
     """探测 V2rayN SOCKS5 代理端口是否在监听（VPN 开关状态）。
 
-    海外新闻源（Yahoo/Investing）依赖 VPN 走 SOCKS5 代理。VPN 关闭时
+    海外新闻源（Yahoo Finance）依赖 VPN 走 SOCKS5 代理。VPN 关闭时
     SOCKS5 端口不监听，本函数快速返回 False（1s 超时），避免海外源请求
     在 RSSHub 内部超时拖慢整轮 RSS 拉取。
 

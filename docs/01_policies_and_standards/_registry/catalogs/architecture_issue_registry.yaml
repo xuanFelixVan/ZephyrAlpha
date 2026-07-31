@@ -10089,3 +10089,38 @@ entries:
   status: resolved
   created: '2026-07-31'
   last_updated: '2026-07-31'
+
+# --- #ARCH-RSS-INVESTING-403-001: investing.com 直连源 403 治本（移除直连异类，海外源统一走 RSSHub+SOCKS5）---
+- issue_id: '#ARCH-RSS-INVESTING-403-001'
+  title: 'investing.com 直连源触发 WAF 间歇 403——移除直连异类，海外源统一走 RSSHub+SOCKS5 代理架构'
+  category: data_source
+  severity: P1中
+  adjudication: |-
+    病根（第一性原理，2026-07-31 调研）：investing.com 是唯一一个"直连海外站点"的 RSS 源，
+    其他海外源（Yahoo us/hk/tw）统一走 RSSHub 代理 + SOCKS5。直连模式暴露：真实国内 IP +
+    bot UA "ZephyrAlpha-DataBot/1.0"（rss_provider.py 硬编码），触发 Cloudflare WAF 间歇性
+    403 拦截。入库数据佐证：investing.com 7-30 完全 0 条、7-31 下午起 403（间歇失效）；
+    对照组 Yahoo 走代理稳定（7-29 98 条、7-31 115 条）。retry_on HTTPError 重试 3 次
+    （5/10/20s 指数退避）对 WAF 403 无效（相同 UA/IP 重试仍 403），每轮浪费 ~35s。
+
+    治本裁定（用户已确认 2026-07-31）：移除 investing.com 直连源（2 个 URL），海外源统一为
+    Yahoo Finance（3 个，走 RSSHub+SOCKS5+VPN 绑定）。否决备选：①改走 RSSHub 路由
+    （RSSHub 无 investing 路由，自建成本高）；②换浏览器 UA（治标，WAF 升级仍会失效，
+    不解决直连国内 IP 问题）；③走 SOCKS5+浏览器 UA（内容与 Yahoo 重叠，不值得维护异类逻辑）。
+
+    裁定依据：①内容重叠（Yahoo us/hk/tw 已覆盖全球财经，investing 无独家价值）；
+    ②架构统一（消除唯一"直连海外"异类，所有海外源行为一致，与本会话刚实施的 VPN 状态探测
+    _is_vpn_ready 逻辑完全契合）；③稳定性（investing 间歇失效 vs Yahoo 稳定）；
+    ④反爬原则（符合 #ARCH-AKSHARE-ANTICRAWLER-001 "切换到无反爬路径"治本思路——
+    此处为"移除有反爬风险的源"）；⑤100% AI 维护性（少一个不稳定源 = 少一个排查点）。
+
+    配套议题（单独处理，不阻塞）：UA 集中化（constants.py 提取 DEFAULT_HTTP_UA）、
+    region/language 标记修复（build_news_row 增 region 参数，海外新闻当前被表 DEFAULT
+    标为 CN/zh）、retry_on 4xx 不重试优化。
+  impact:
+    - 'src/zephyr/data/implementations/rss_provider.py（_DEFAULT_RSS_FEEDS 删 2 个 investing URL + _OVERSEAS_FEED_PATTERNS 移除 investing.com + 注释/docstring 更新）'
+  fix_phase: '已落地（移除 investing.com 直连源，海外源统一为 Yahoo Finance 走 RSSHub+SOCKS5）'
+  status: decided
+  related_rules: 'AGENTS.md RULE-SSOT, #ARCH-AKSHARE-ANTICRAWLER-001'
+  created: '2026-07-31'
+  last_updated: '2026-07-31'
